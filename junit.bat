@@ -1,0 +1,1 @@
+java -cp out\distribution\content;out\lib\*;out\distribution\unittest.classes -Xmx5000M -Xss200M -XX:+UseSerialGC -Djava.library.path=out/distribution/lib/native/64bit org.junit.runner.JUnitCore uk.ac.manchester.cs.mekon.frames.model.CAnnotationsTest > JUNIT-OUTPUT
