@@ -20,7 +20,7 @@ Both the knowledge sources and reasoning mechanisms that drive the MEKON models 
 ----
 == Frames Model  ==
 
-The frames model ((FM) provides a *domain-neutral API*, in which all domain concepts are represented via generic *frame* objects, and inter-concept relations and data-valued attributes via *slots* attached to the concepts.
+The FM provides a *domain-neutral API*, in which all domain concepts are represented via generic *frame* objects, and inter-concept relations and data-valued attributes via *slots* attached to the concepts.
 
 ----
 == MEKON Applicability  ==
