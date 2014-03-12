@@ -4,8 +4,6 @@
 
 MEKON is a framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms* are accessed via a generic in-memory *frames model (FM)* and specifically-created instantiations of that model.
 
-See also [MEKONAPIs MEKON APIs].
-
 ----
 == Simplified Knowledge/Reasoning Access ==
 
@@ -42,11 +40,9 @@ MEKON incorporates the following APIs:
 
 *Model API:* Client representation of the FM.
 
-*Mechanism API:* The plug-in API (or SPI - Service Provider Interface) for providers of the following types of plug-in:
+*Mechanism API:* Provides the mechanisms for building and configuring the MEKON models. Incorporates the MEKON plug-ins API (or SPI - Service Provider Interface) that is used by providers of the following types of plug-in:
 
  * *Model-section builders:* Responsible for building sections of the FM derived from external knowledge sources of specific types
  * *Reasoners:* Responsible for dynamic updating of model-instantiations based on reasoning mechanisms associated with external knowledge sources of specific types
 
 For detailed descriptions of these APIs see the MEKON javadoc.
-
-
