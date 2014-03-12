@@ -4,6 +4,8 @@
 
 MEKON is a framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms* are accessed via a generic in-memory *frames model (FM)* and specifically-created instantiations of that model.
 
+See also [MEKONAPIs MEKON APIs].
+
 ----
 == Simplified Knowledge/Reasoning Access ==
 
