@@ -1,5 +1,7 @@
 #summary Overview description of the HOBO framework.
 
+= HOBO =
+
 HOBO is an extension of [MEKON] that enables the creation of *hybrid models* wherein individual entities from a domain specific Java *object model (OM)* are bound to entities from a frames-based MEKON model, enabling seamless integration between the OM and a set of externally represented *knowledge sources*, with model-instantiation updates being determined via both external *reasoning mechanisms* and internal *procedural processing*, as provided by the OM.
 
 With HOBO, each entity in the frames-based model will correspond to either (a) an entity represented directly in the OM, (b) an entity represented in an external knowledge source, or (c) an entity represented in both the OM and an external knowledge source, with the mapping provided via the HOBO configuration system.
