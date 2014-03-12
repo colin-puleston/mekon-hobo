@@ -34,3 +34,19 @@ MEKON is particularly suitable for models and applications for which the followi
  * *Totally generic applications:* The model will not be driving applications that need to embody any domain-specific knowledge
 
 If the any of the above constraints do not hold then it may well be that a [HOBO] model will better meet your requirements.
+
+----
+== MEKON APIs ==
+
+MEKON incorporates the following APIs:
+
+*Model API:* Client representation of the FM.
+
+*Mechanism API:* The plug-in API (or SPI - Service Provider Interface) for providers of the following types of plug-in:
+
+ * *Model-section builders:* Responsible for building sections of the FM derived from external knowledge sources of specific types
+ * *Reasoners:* Responsible for dynamic updating of model-instantiations based on reasoning mechanisms associated with external knowledge sources of specific types
+
+For detailed descriptions of these APIs see the MEKON javadoc.
+
+
