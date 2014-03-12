@@ -2,14 +2,14 @@
 
 = MEKON =
 
-MEKON is a framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms* are accessed via a generic in-memory *frames-based model* and specifically-created instantiations of that model.
+MEKON is a framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms* are accessed via a generic in-memory *frames model (FM)* and specifically-created instantiations of that model.
 
 ----
 == Simplified Knowledge/Reasoning Access ==
 
 MEKON simplifies client access of the underlying resources in the following ways:
 
- * *Knowledge access:* The frames-based model can hide much of the complexity of the representations in the underlying ontologies or other knowledge sources
+ * *Knowledge access:* The FM can hide much of the complexity of the representations in the underlying ontologies or other knowledge sources
  * *Reasoning access:* Model-instantiations are automatically updated as a result of behind-the-scenes invocations of the reasoning mechanisms
 
 ----
@@ -18,9 +18,9 @@ MEKON simplifies client access of the underlying resources in the following ways
 Both the knowledge sources and reasoning mechanisms that drive the MEKON models are delivered via generic plug-in APIs, with MEKON itself being entirely agnostic as to the underlying formats and mechanisms. This enables applications to benefit from the *seamless integration* of various *disparate knowledge sources* and *disparate reasoning mechanisms*.
 
 ----
-== Frames-Based Model  ==
+== Frames Model  ==
 
-The frames-based model provides a *domain-neutral API*, in which all domain concepts are represented via generic *frame* objects, and inter-concept relations and data-valued attributes via *slots* attached to the concepts.
+The frames model ((FM) provides a *domain-neutral API*, in which all domain concepts are represented via generic *frame* objects, and inter-concept relations and data-valued attributes via *slots* attached to the concepts.
 
 ----
 == MEKON Applicability  ==
