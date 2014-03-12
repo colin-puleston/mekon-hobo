@@ -4,8 +4,6 @@
 
 HOBO is an extension of [MEKON] that enables the creation of *hybrid models* wherein individual entities from a domain specific Java *object model (OM)* are bound to entities from a MEKON *frames model (FM)*, enabling seamless integration between the OM and a set of externally represented *knowledge sources*, with model-instantiation updates being determined via both external *reasoning mechanisms* and internal *procedural processing*, as provided by the OM.
 
-See also [HOBOAPIs HOBO APIs].
-
 ----
 == Hybrid Models ==
 
@@ -44,3 +42,20 @@ Use of a HOBO OM can offer the following advantages over use of a raw MEKON FM:
  * *Model extendability:* Allows additional entities, useful to the applications that the model will drive, to be added to the those derived from the external knowledge sources
 
 If none of the above features are required then it is likely that a raw [MEKON] model will better meet your requirements.
+
+
+----
+== HOBO APIs ==
+
+HOBO incorporates the following APIs:
+
+*Model/Modeller APIs:* The API that a specific HOBO-compliant OM provides to the client will consist of:
+
+ * Domain-specific OM classes (provided by the OM developer)
+ * Generic OM-framework classes and interfaces (provided by HOBO) 
+
+These generic OM-framework classes constitute the HOBO *Model API*, and the collection of classes that are used by the OM developer in building the OM, but that are not visible to the client code, constitute the HOBO *Modeller API*. 
+
+*Mechanism API:* Provides the mechanisms for building and configuring the HOBO models.
+
+For detailed descriptions of these APIs see the HOBO javadoc.
