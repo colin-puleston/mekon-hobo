@@ -25,10 +25,10 @@ The frames-based model provides a *domain-neutral API*, in which all domain conc
 ----
 == MEKON Applicability  ==
 
-MEKON is particularly suitable for models and applications where the following constraints hold:
+MEKON is particularly suitable for models and applications for which the following constraints hold:
 
  * *Externally-derived model:* The model can be derived entirely from a set of external knowledge sources
  * *No domain-specific mechanisms:* There is no requirement for any domain-specific procedural processing mechanisms to be attached to the model
  * *Totally generic applications:* The model will not be driving applications that need to embody any domain-specific knowledge
 
-If the any of the above constraints do not hold then it may well be the a [HOBO] model will better meet your requirements.
+If the any of the above constraints do not hold then it may well be that a [HOBO] model will better meet your requirements.
