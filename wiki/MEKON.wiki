@@ -1,7 +1,8 @@
-#summary One-sentence summary of this page.
+#summary Overview description of the MEKON framework.
 
-=MEKON=
-A framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms* are accessed via a generic in-memory *frames-based model* and specifically-created instantiations of that model.
+= MEKON Overview =
+
+Mekon is a framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms* are accessed via a generic in-memory *frames-based model* and specifically-created instantiations of that model.
 
 MEKON simplifies client access of the underlying resources in the following ways:
 
