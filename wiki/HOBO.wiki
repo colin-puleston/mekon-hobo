@@ -23,6 +23,6 @@ Use of a HOBO OM can offer the following advantages over simply using a MEKON fr
 
  * *Domain-specific API:* Provides a more natural way of accessing the model when the application itself needs to embody domain-specific knowledge
  * *Domain-specific processing:* Can be provided via the OM, meaning that an OM can sometimes be useful even when the application will only be using the generic frames-based API
- * *Model extension:* Allows additional entities, useful to the applications that the model will drive, to be added to the those derived from the external knowledge sources
+ * *Model extendability:* Allows additional entities, useful to the applications that the model will drive, to be added to the those derived from the external knowledge sources
 
 If none of the above features are required then it is likely that a raw [MEKON] model will best suit your requirements.
