@@ -19,9 +19,20 @@ HOBO models are hybrid in two distinct senses:
  * The domain-specific OM provides a *domain-specific API*
  * The generic frames-based model provides a *Domain-neutral API*
 
-Each entity in the frames-based model will correspond to either (a) an entity represented directly in the OM, (b) an entity represented in an external knowledge source, or (c) an entity represented in both the OM and an external knowledge source, with the mapping provided via the HOBO configuration system.
+In general the OM will cover a relatively small core section of the model, providing the central structure but representing only the most general domain concepts, whilst one or more external knowledge sources (possibly of varying types) will provide the, generally vastly larger, body of detailed domain knowledge.
 
-Any updates to OM instantiations, made via the domain-specific API, will be reflected in corresponding updates to the frames-based model-instantiations, whilst conversely any updates to frames-based model-instantiations, made via the domain-neutral API, will be reflected in corresponding updates to the OM instantiations.
+A small number of "key" entities (concepts, concept-relations and concept-attributes) will be represented both in the OM and the external knowledge sources, with appropriate mappings being provided via the HOBO configuration system. It may well be that all OM entities are in fact key entities.
+
+----
+== Binding of Object Model to Frames Model ==
+
+All entities in the OM (i.e. classes and fields) will be bound to corresponding entities in the indirect representation (i.e. concept-level frames and slots).
+
+Creation of model-instantiations in either representation, will cause corresponding instantiations to be automatically created in the other.
+
+Any updates to OM instantiations, made either manually via the domain-specific API, or automatically as the result of procedural mechanisms attached to the OM, will be reflected in corresponding updates to the frames-based model-instantiations.
+
+Conversely, any updates to frames-based model-instantiations, made either manually via the domain-neutral API, or automatically as the result of reasoning associated with external knowledge sources, will be reflected in corresponding updates to the OM instantiations.
 
 ----
 == HOBO Applicability ==
