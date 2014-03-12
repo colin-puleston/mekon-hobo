@@ -4,6 +4,8 @@
 
 HOBO is an extension of [MEKON] that enables the creation of *hybrid models* wherein individual entities from a domain specific Java *object model (OM)* are bound to entities from a frames-based MEKON model, enabling seamless integration between the OM and a set of externally represented *knowledge sources*, with model-instantiation updates being determined via both external *reasoning mechanisms* and internal *procedural processing*, as provided by the OM.
 
+== Hybrid Models ==
+
 With HOBO, each entity in the frames-based model will correspond to either (a) an entity represented directly in the OM, (b) an entity represented in an external knowledge source, or (c) an entity represented in both the OM and an external knowledge source, with the mapping provided via the HOBO configuration system.
 
 HOBO models are hybrid in two distinct senses. As well as being derived from *hybrid sources* (i.e. the OM plus the external knowledge sources), they also provide *hybrid access*, being accessible via complimentary model-access APIs:
@@ -13,7 +15,12 @@ HOBO models are hybrid in two distinct senses. As well as being derived from *hy
 
 Any updates to OM instantiations, made via the domain-specific API, will be reflected in corresponding updates to the frames-based model-instantiations, whilst conversely any updates to frames-based model-instantiations, made via the domain-neutral API, will be reflected in corresponding updates to the OM instantiations.
 
-For applicable applications, use of a HOBO OM can offer two distinct advantages over simply using a MEKON frames-based model:
+== HOBO Applicability ==
+
+Use of a HOBO OM can offer the following advantages over simply using a MEKON frames-based model:
 
  * *Domain-specific API:* Provides a more natural way of accessing the model when the application itself needs to embody domain-specific knowledge
  * *Domain-specific processing:* Can be provided via the OM, meaning that an OM can sometimes be useful even when the application will only be using the generic frames-based API
+ * *Model extension:* Allows additional entities, useful to the applications that the model will drive, to be added to the those derived from the external knowledge sources
+
+If none of the above features are required then it is likely that a raw [MEKON] model will best suit your requirements.
