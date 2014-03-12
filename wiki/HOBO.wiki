@@ -4,6 +4,7 @@
 
 HOBO is an extension of [MEKON] that enables the creation of *hybrid models* wherein individual entities from a domain specific Java *object model (OM)* are bound to entities from a frames-based MEKON model, enabling seamless integration between the OM and a set of externally represented *knowledge sources*, with model-instantiation updates being determined via both external *reasoning mechanisms* and internal *procedural processing*, as provided by the OM.
 
+----
 == Hybrid Models ==
 
 With HOBO, each entity in the frames-based model will correspond to either (a) an entity represented directly in the OM, (b) an entity represented in an external knowledge source, or (c) an entity represented in both the OM and an external knowledge source, with the mapping provided via the HOBO configuration system.
@@ -15,6 +16,7 @@ HOBO models are hybrid in two distinct senses. As well as being derived from *hy
 
 Any updates to OM instantiations, made via the domain-specific API, will be reflected in corresponding updates to the frames-based model-instantiations, whilst conversely any updates to frames-based model-instantiations, made via the domain-neutral API, will be reflected in corresponding updates to the OM instantiations.
 
+----
 == HOBO Applicability ==
 
 Use of a HOBO OM can offer the following advantages over simply using a MEKON frames-based model:
