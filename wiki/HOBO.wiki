@@ -1,0 +1,16 @@
+#summary One-sentence summary of this page.
+
+
+With HOBO, each entity in the frames-based model will correspond to either (a) an entity represented directly in the OM, (b) an entity represented in an external knowledge source, or (c) an entity represented in both the OM and an external knowledge source, with the mapping provided via the HOBO configuration system.
+
+HOBO models are hybrid in two distinct senses. As well as being derived from *hybrid sources* (i.e. the OM plus the external knowledge sources), they also provide *hybrid access*, being accessible via complimentary model-access APIs:
+
+ * *Domain-specific API:* As provided by the domain-specific OM
+ * *Domain-neutral API:* The generic API provided by the frames-based model
+
+Any updates to OM instantiations, made via the domain-specific API, will be reflected in corresponding updates to the frames-based model-instantiations, whilst conversely any updates to frames-based model-instantiations, made via the domain-neutral API, will be reflected in corresponding updates to the OM instantiations.
+
+For applicable applications, use of a HOBO OM can offer two distinct advantages over simply using a MEKON frames-based model:
+
+ * *Domain-specific API:* Provides a more natural way of accessing the model when the application itself needs to embody domain-specific knowledge
+ * *Domain-specific processing:* Can be provided via the OM, meaning that an OM can sometimes be useful even when the application will only be using the generic frames-based API
