@@ -13,9 +13,9 @@ MEKON simplifies client access of the underlying resources in the following ways
  * *Reasoning access:* Model-instantiations are automatically updated as a result of behind-the-scenes invocations of the reasoning mechanisms
 
 ----
-== Plug-In APIs + Knowledge Integration ==
+== Knowledge Integration ==
 
-Both the knowledge sources and reasoning mechanisms that drive the MEKON models are delivered via generic plug-in APIs, with MEKON itself being entirely agnostic as to the underlying formats and mechanisms. This enables applications to benefit from the *seamless integration* of various *disparate knowledge sources* and *disparate reasoning mechanisms*.
+Both the knowledge sources and reasoning mechanisms that drive the MEKON models are delivered via generic *plug-in APIs*, with MEKON itself being entirely agnostic as to the underlying formats and mechanisms. This enables applications to benefit from the *seamless integration* of various *disparate knowledge sources* and *disparate reasoning mechanisms*.
 
 ----
 == Frames Model  ==
