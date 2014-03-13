@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.hobo.modeller;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.hobo.model.*;
-import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
  * Abstract implementation of {@link DObject} whose extensions
