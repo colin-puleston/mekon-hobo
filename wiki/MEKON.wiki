@@ -38,7 +38,7 @@ If the any of the above constraints do not hold then it may well be that a [HOBO
 ----
 == MEKON APIs ==
 
-MEKON incorporates the following APIs:
+The MEKON framework provides the following APIs:
 
 *Model API:* Client representation of the FM.
 
