@@ -47,7 +47,7 @@ If none of the above features are required then it is likely that a raw [MEKON] 
 ----
 == HOBO APIs ==
 
-HOBO incorporates the following APIs:
+The HOBO framework provides the following APIs:
 
 *Model/Modeller APIs:* The API that a specific HOBO-compliant OM provides to the client will consist of:
 
