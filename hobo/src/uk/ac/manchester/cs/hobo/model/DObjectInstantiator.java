@@ -24,9 +24,9 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
@@ -66,7 +66,7 @@ class DObjectInstantiator<D extends DObject> {
 			return new DObjectDefault(model, frame);
 		}
 
-		throw new KAccessException(
+		throw new HAccessException(
 					"Cannot instantiate DObject of type: " + dBaseClass
 					+ " for frame: " + frame);
 	}

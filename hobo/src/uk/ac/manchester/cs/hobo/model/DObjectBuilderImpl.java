@@ -26,9 +26,9 @@ package uk.ac.manchester.cs.hobo.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
@@ -310,7 +310,7 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 		if (attributes == null) {
 
-			throw new KAccessException(
+			throw new HAccessException(
 						"Specified field has not "
 						+ "been constructed by this class");
 		}

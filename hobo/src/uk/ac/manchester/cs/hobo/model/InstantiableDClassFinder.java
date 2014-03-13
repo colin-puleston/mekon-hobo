@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.hobo.model;
 import java.util.*;
 import java.lang.reflect.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.hobo.*;
 
 /**
  * @author Colin Puleston
@@ -122,7 +122,7 @@ class InstantiableDClassFinder extends DClassFinder {
 			return mostSpecifics.iterator().next();
 		}
 
-		throw new KAccessException(
+		throw new HAccessException(
 					"Multiple instantiable DObject classes found for: "
 					+ type
 					+ " (" + mostSpecifics + ")");

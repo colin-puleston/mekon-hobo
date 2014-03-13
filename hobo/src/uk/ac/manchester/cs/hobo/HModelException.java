@@ -22,61 +22,35 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.model;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.hobo.*;
+package uk.ac.manchester.cs.hobo;
 
 /**
- * Represents a single-valued field in the Object Model (OM).
+ * Exception thrown when some problem with the HOBO model
+ * is detected.
  *
  * @author Colin Puleston
  */
-public class DCell<V> extends DField<V> implements DCellView<V> {
+public class HModelException extends HRuntimeException {
+
+	static private final long serialVersionUID = -1;
 
 	/**
-	 * Sets the current value of the field.
+	 * Constructor.
 	 *
-	 * @param value Value to set
+	 * @param exception Wrapped exception
 	 */
-	public void set(V value) {
+	public HModelException(Exception exception) {
 
-		super.add(value);
+		super(exception);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Constructor.
+	 *
+	 * @param message Error message
 	 */
-	public boolean isSet() {
+	public HModelException(String message) {
 
-		return !getAll().isEmpty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public V get() {
-
-		if (!isSet()) {
-
-			throw new HAccessException("Field value not set");
-		}
-
-		return getAll().get(0);
-	}
-
-	DCell(DModel model, DValueType<V> valueType) {
-
-		super(model, valueType);
-	}
-
-	DCellViewer<V> createViewer() {
-
-		return new DCellViewer<V>(this);
-	}
-
-	CCardinality getCardinality() {
-
-		return CCardinality.SINGLETON;
+		super(message);
 	}
 }

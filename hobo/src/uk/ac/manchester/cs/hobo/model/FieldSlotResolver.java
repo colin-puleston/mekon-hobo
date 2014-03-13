@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.hobo.model;
 import java.util.*;
 import java.lang.reflect.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.hobo.*;
 
 /**
  * @author Colin Puleston
@@ -86,7 +86,7 @@ class FieldSlotResolver {
 
 			if (attribute == null) {
 
-				throw new KAccessException(
+				throw new HAccessException(
 							name
 							+ " has not been specified "
 							+ " for a field on object: "
