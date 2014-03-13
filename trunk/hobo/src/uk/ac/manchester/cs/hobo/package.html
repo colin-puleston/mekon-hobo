@@ -1,6 +1,6 @@
 <HTML>
 <BODY>
-Root package for the HOBO framework that provides HOBO-specific exception classes, and general overview documentation for the framework.
+Root package for the HOBO framework, which contains all HOBO-specific exception classes, as well as providing the general overview documentation for the framework.
 
 <H1>HOBO Overview</H1>
 
@@ -10,22 +10,26 @@ For a general overview of the HOBO framework, the MEKON framework on which it is
 
 <H1>HOBO Packages</H1>
 
-The HOBO framework provides the following APIs:
+<H3>HOBO APIs</H3>
 
-<b>Model/Modeller APIs:</b> The API that a specific HOBO-compliant OM provides to the client will consist of:
+The API that a specific HOBO-compliant OM provides to the client will consist of:
 <ul>
   <li>Domain-specific OM classes (provided by the OM developer)
   <li>Generic OM-framework classes and interfaces (provided by HOBO)
 </ul>
 These generic OM-framework classes constitute the HOBO <b>Model API</b>, and the collection of classes that are used by the OM developer in building the OM, but that are not visible to the client code, constitute the HOBO <b>Modeller API</b>.
 <p>
-<b>Mechanism API:</b> Provides the mechanisms for building and configuring the HOBO models.
+The <b>Mechanism API</b> Provides the mechanisms for building and configuring the HOBO models.
+
+See below for further details on each of these APIs.
+
+<H3>HOBO Class/Interface Naming Conventions</H3>
 
 HOBO follows the MEKON convention of using single-character class-name prefixes to distinguish the broad category into which a class falls.
-
+<p>
 Within the HOBO API packages, the following single-character class-name prefix is used:
 <ul>
-  <li><b>D:</b> All direct-representation component entities
+  <li><b>D:</b> All model/modeller/mechanism component entities
 </ul>
 
 For the HOBO-specific exception classes the following prefix is used:
@@ -51,6 +55,8 @@ In addition to directly providing the core model representation, the OM also pro
 <i>Package:</i> {@link uk.ac.manchester.cs.hobo.modeller}
 <p>
 The abstract {@link uk.ac.manchester.cs.hobo.modeller.DObjectShell} class provides a skeleton implementation for {@link uk.ac.manchester.cs.hobo.model.DObject}, to be extended by the individual OM classes. These extensions are able to access mechanisms for the creation, initialisation, monitoring and updating of the associated OM fields (as represented via {@link uk.ac.manchester.cs.hobo.model.DField} and it's extensions).
+<p>
+Each implementation of {@link uk.ac.manchester.cs.hobo.model.DObject} is required to provide a constructor that takes a single parameter of type {@link uk.ac.manchester.cs.hobo.modeller.DObjectBuilder}, which is a modeller class that provides access, either directly or indirectly, to methods for initialising and modifying the OM instantiations, and the FM instantiations to which they are bound, in ways that are not not available to the OM client.
 
 <H3>Mechanism API</H3>
 <i>Package:</i> {@link uk.ac.manchester.cs.hobo.mechanism}

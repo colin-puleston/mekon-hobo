@@ -36,15 +36,14 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  * Represents the HOBO direct model, which is an Object Model
  * (OM) within which domain concepts are represented directly
  * by domain-specific Java classes (OM classes). The direct
- * model will be associated with a frames-based model, as
+ * model will be associated with a Frames Model (FM), as
  * represented via a {@link CModel} object.
  * <p>
  * Each class in the OM will implement the {@link DObject}
  * interface and will be bound to a {@link CFrame} object in
- * the frames-based model. The OM fields associated with the
- * OM classes will be represented via {@link DField} objects
- * of the different types and will be bound to a {@link CSlot}
- * objects in the frames-based model.
+ * the FM. The OM fields associated with the OM classes will be
+ * represented via {@link DField} objects of the different types
+ * and will be bound to a {@link CSlot} objects in the FM.
  *
  * @author Colin Puleston
  */
@@ -115,9 +114,9 @@ public abstract class DModel {
 	}
 
 	/**
-	 * Provides the associated frames-based model.
+	 * Provides the associated FM.
 	 *
-	 * @return Associated frames-based model
+	 * @return Associated FM
 	 */
 	public CModel getCModel() {
 
