@@ -30,16 +30,16 @@ import uk.ac.manchester.cs.hobo.model.*;
 
 /**
  * Provides mechanisms for building the HOBO direct model,
- * together with the associated frames-based model to which
- * it is bound (represented respectively via {@link DModel}
- * and {@link CModel} objects).
+ * together with the associated Frames Model (FM) to which it is
+ * bound (represented respectively via {@link DModel} and
+ * {@link CModel} objects).
  * <p>
  * Provides methods for registering the {@link DObject}-derived
  * classes that will represent the concepts in the Object Model
  * (OM). Also enables the specification of required mappings
  * between entities in the OM and corresponding entities in the
  * indirect model(s) that will also contribute towards the
- * specification of the frames-based model.
+ * specification of the FM.
  *
  * @author Colin Puleston
  */
@@ -69,20 +69,18 @@ public interface DBuilder {
 	public void addDClasses(String basePackageName);
 
 	/**
-	 * Builds the frames-based model, which will incorporate entities
-	 * (frames and slots) derived from both direct and indirect models,
-	 * with each entity-specification coming from one or the other or
-	 * both, and  with bindings to the relevant OM entities where
-	 * applicable.
+	 * Builds the FM, which will incorporate entities (frames and
+	 * slots) derived from both direct and indirect models, with each
+	 * entity-specification coming from one or the other or both, and
+	 * with bindings to the relevant OM entities where applicable.
 	 *
-	 * @return Built direct model (from which frames-based model can
+	 * @return Built direct model (from which FM can
 	 * be retrieved)
 	 */
 	public DModel build();
 
 	/**
-	 * Provides the builder for the frames-based model, which this
-	 * model-builder wraps.
+	 * Provides the builder for the FM, which this model-builder wraps.
 	 *
 	 * @return Frames-based model builder
 	 */

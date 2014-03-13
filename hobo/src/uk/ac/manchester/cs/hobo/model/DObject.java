@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * Interface implemented by all classes in the Object Model (OM).
  * Each such class will be bound to a {@link CFrame} object,
- * representing a concept-level frame in the frames-based model,
+ * representing a concept-level frame in the Frames Model (FM),
  * and individual instantiations of the class will be bound to
  * {@link IFrame} objects, representing specific "instantiations"
  * of the concept-level frame.
