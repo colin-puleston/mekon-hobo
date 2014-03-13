@@ -26,8 +26,8 @@ package uk.ac.manchester.cs.hobo.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.hobo.*;
 
 /**
  * @author Colin Puleston
@@ -67,7 +67,7 @@ class DBindings {
 
 		if (map == null) {
 
-			throw new KModelException("Direct class not loaded: " + dClass);
+			throw new HModelException("Direct class not loaded: " + dClass);
 		}
 
 		return map;
@@ -79,7 +79,7 @@ class DBindings {
 
 		if (map == null) {
 
-			throw new KModelException("No direct class loaded for: " + frame);
+			throw new HModelException("No direct class loaded for: " + frame);
 		}
 
 		return map;

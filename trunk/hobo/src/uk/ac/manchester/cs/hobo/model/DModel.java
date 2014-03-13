@@ -26,9 +26,9 @@ package uk.ac.manchester.cs.hobo.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 import uk.ac.manchester.cs.hobo.mechanism.*;
 
@@ -158,7 +158,7 @@ public abstract class DModel {
 	 * @param identity Identity of frame for which bound OM class is
 	 * required
 	 * @return OM class bound to specified frame
-	 * @throws KModelException if no such binding exists
+	 * @throws HModelException if no such binding exists
 	 */
 	public Class<? extends DObject> getDClass(CIdentity identity) {
 
@@ -171,7 +171,7 @@ public abstract class DModel {
 	 *
 	 * @param frame Frame for which bound OM class is required
 	 * @return OM class bound to specified frame
-	 * @throws KModelException if no such binding exists
+	 * @throws HModelException if no such binding exists
 	 */
 	public Class<? extends DObject> getDClass(CFrame frame) {
 
@@ -184,7 +184,7 @@ public abstract class DModel {
 	 *
 	 * @param dClass OM class for which bound frame is required
 	 * @return Frame bound to specified OM class
-	 * @throws KModelException if no such binding exists
+	 * @throws HModelException if no such binding exists
 	 */
 	public CFrame getFrame(Class<? extends DObject> dClass) {
 
@@ -225,7 +225,7 @@ public abstract class DModel {
 	 * the represented concept
 	 * @param frame Frame representation of concept
 	 * @return Representation of relevant concept
-	 * @throws KModelException if specified frame is not subsumed by
+	 * @throws HModelException if specified frame is not subsumed by
 	 * specified root-concept-class
 	 */
 	public <D extends DObject>DConcept<D> getConcept(
@@ -234,7 +234,7 @@ public abstract class DModel {
 
 		if (!getFrame(rootConceptClass).subsumes(frame)) {
 
-			throw new KAccessException(
+			throw new HAccessException(
 						"Cannot instantiate DConcept for root-concept-class: "
 						+ rootConceptClass
 						+ ", attempting to instantiate for invalid CFrame: "
@@ -251,7 +251,7 @@ public abstract class DModel {
 	 * the represented concept
 	 * @param identity Identity of frame representation of concept
 	 * @return Representation of relevant concept
-	 * @throws KModelException if specified frame is not subsumed by
+	 * @throws HModelException if specified frame is not subsumed by
 	 * specified root-concept-class
 	 */
 	public <D extends DObject>DConcept<D> getConcept(
@@ -271,7 +271,7 @@ public abstract class DModel {
 	 *
 	 * @param dClass OM class to be instantiated
 	 * @return Required OM class instantiation
-	 * @throws KModelException if specified OM class is not instantiable
+	 * @throws HModelException if specified OM class is not instantiable
 	 */
 	public <D extends DObject>D instantiate(Class<D> dClass) {
 
@@ -288,7 +288,7 @@ public abstract class DModel {
 	 * @param dClass OM class to be instantiated
 	 * @param identity Identity of frame representing relevant concept
 	 * @return Resulting OM object
-	 * @throws KModelException if specified OM class or frame is not
+	 * @throws HModelException if specified OM class or frame is not
 	 * instantiable
 	 */
 	public <D extends DObject>D instantiate(Class<D> dClass, CIdentity identity) {
@@ -306,7 +306,7 @@ public abstract class DModel {
 	 * @param dClass OM class to be instantiated
 	 * @param frame Frame representing relevant concept
 	 * @return Resulting OM object
-	 * @throws KModelException if specified OM class or frame is not
+	 * @throws HModelException if specified OM class or frame is not
 	 * instantiable
 	 */
 	public <D extends DObject>D instantiate(Class<D> dClass, CFrame frame) {
@@ -320,7 +320,7 @@ public abstract class DModel {
 	 *
 	 * @param frame Frame for which OM object is required
 	 * @return Required OM object
-	 * @throws KAccessException if frame is not part of this model
+	 * @throws HAccessException if frame is not part of this model
 	 */
 	public DObject getDObject(IFrame frame) {
 
@@ -334,7 +334,7 @@ public abstract class DModel {
 	 * @param frame Frame for which OM object is required
 	 * @param dClass Expected type of OM object
 	 * @return Required OM object
-	 * @throws KAccessException if frame is not part of this model or if OM
+	 * @throws HAccessException if frame is not part of this model or if OM
 	 * object is not of the specified type
 	 */
 	public <D extends DObject>D getDObject(IFrame frame, Class<D> dClass) {
@@ -343,7 +343,7 @@ public abstract class DModel {
 
 		if (dObject == null) {
 
-			throw new KAccessException("Mapped-object not set for: " + frame);
+			throw new HAccessException("Mapped-object not set for: " + frame);
 		}
 
 		return dObject;
@@ -436,7 +436,7 @@ public abstract class DModel {
 
 		if (frame.getSource().direct()) {
 
-			throw new KModelException("Cannot remove frame with direct source: " + frame);
+			throw new HModelException("Cannot remove frame with direct source: " + frame);
 		}
 	}
 
@@ -444,7 +444,7 @@ public abstract class DModel {
 
 		if (slot.getSource().direct()) {
 
-			throw new KModelException(
+			throw new HModelException(
 						"Cannot remove slot with direct source: "
 						+ slot
 						+ ", frame: "

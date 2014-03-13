@@ -1,5 +1,57 @@
 <HTML>
 <BODY>
-Provides general HOBO exception classes.
+Root package for the HOBO framework that provides HOBO-specific exception classes, and general overview documentation for the framework.
+
+<H1>HOBO Overview</H1>
+
+<b>HOBO</b> is an extension of <b>MEKON</b> that enables the creation of <b>hybrid models</b> wherein individual entities from a domain specific Java <b>object model (OM)</b> are bound to entities from a MEKON <b>frames model (FM)</b>, enabling seamless integration between the OM and a set of externally represented <b>knowledge sources</b>, with model-instantiation updates being determined via both external <b>reasoning mechanisms</b> and internal <b>procedural processing</b>, as provided by the OM.
+<p>
+For a general overview of the HOBO framework, the MEKON framework on which it is built, and other related software see <a href="http://code.google.com/p/mekon/" target="_blank">Mekon project website</a>.
+
+<H1>HOBO Packages</H1>
+
+The HOBO framework provides the following APIs:
+
+<b>Model/Modeller APIs:</b> The API that a specific HOBO-compliant OM provides to the client will consist of:
+<ul>
+  <li>Domain-specific OM classes (provided by the OM developer)
+  <li>Generic OM-framework classes and interfaces (provided by HOBO)
+</ul>
+These generic OM-framework classes constitute the HOBO <b>Model API</b>, and the collection of classes that are used by the OM developer in building the OM, but that are not visible to the client code, constitute the HOBO <b>Modeller API</b>.
+<p>
+<b>Mechanism API:</b> Provides the mechanisms for building and configuring the HOBO models.
+
+<H3>Model API</H3>
+<i>Package:</i> {@link uk.ac.manchester.cs.hobo.model}
+<p>
+Each OM class or interface (i.e. the entities that represent the individual domain-specific concepts) will implement or extend the {@link uk.ac.manchester.cs.hobo.model.DObject} interface. Each OM field (i.e. a field on an OM class that is itself part of the OM) will be represented by a {@link uk.ac.manchester.cs.hobo.model.DField} object, which is an abstract class whose concrete extensions are {@link uk.ac.manchester.cs.hobo.model.DCell} for representing single-valued fields and {@link uk.ac.manchester.cs.hobo.model.DArray} for multi-valued fields.
+<p>
+Each OM entity is bound to a corresponding entity in the FM model. OM classes are bound to specific {@link uk.ac.manchester.cs.mekon.model.CFrame} objects, and OM fields (at the class-level) are bound to specific {@link uk.ac.manchester.cs.mekon.model.CSlot} objects.
+<p>
+In addition to directly providing the core model representation, the OM also provides access to those externally derived sections of the model that it does not cover directly itself. For instance, in general the OM will only directly represent the higher-level concepts within specific hierarchies in which the detailed content is derived solely from the external knowledge sources. Hence:
+<ul>
+  <li>An OM class that maps to a specific concept from an external knowledge source, may be instantiated to represent a particular descendant of that concept that is represented in the external knowledge source but not in the OM.
+  <li>In such a case, the relevant {@link uk.ac.manchester.cs.mekon.model.IFrame} object may have associated {@link uk.ac.manchester.cs.mekon.model.ISlot} objects that are not represented at the higher-level and therefore not bound to specific OM fields.
+  <li>Similarly, the valid values for a concept-valued slot are defined by a root-concept as specified via an appropriate {@link uk.ac.manchester.cs.mekon.model.CFrame} object, which may or may not be bound to a corresponding OM class.
+</ul>
+
+<H3>Modeller API</H3>
+<i>Package:</i> {@link uk.ac.manchester.cs.hobo.modeller}
+<p>
+The abstract {@link uk.ac.manchester.cs.hobo.modeller.DObjectShell} class provides a skeleton implementation for {@link uk.ac.manchester.cs.hobo.model.DObject}, to be extended by the individual OM classes. These extensions are able to access mechanisms for the creation, initialisation, monitoring and updating of the associated OM fields (as represented via {@link uk.ac.manchester.cs.hobo.model.DField} and it's extensions).
+
+<H3>Mechanism API</H3>
+<i>Package:</i> {@link uk.ac.manchester.cs.hobo.mechanism}
+<p>
+The {@link uk.ac.manchester.cs.hobo.mechanism.DBuilder} class is a wrapper around {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder} and is responsible for:
+<ul>
+  <li>Registration of required OM packages
+  <li>Registration of mappings between OM entities and entities derived from external knowledge sources
+  <li>Registration (via wrapped {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder}) of special frames-model section-builder plugin to build the FM entities that will be bound to the OM entities
+  <li>Registration (via wrapped {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder}) of frames-model section-builder plugins to build the FM entities that will be bound to externally-derived entities
+  <li>Invocation (via wrapped {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder}) of all registered frames-model section-builder plugins, including special section-builder for OM-derived entities, to create {@link uk.ac.manchester.cs.mekon.model.CModel} object
+  <li>Creation of resulting {@link uk.ac.manchester.cs.hobo.model.DModel} object (providing access to wrapped {@link uk.ac.manchester.cs.mekon.model.CModel} object)
+</ul>
+Along with the registration of the section-builder plugins, the registration of the OM classes and the specification of the entity mappings can be done either via the API or via the HOBO configuration system.
 </BODY>
 </HTML>
