@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Represents an entity in the frames-based model with a
+ * Represents an entity in the Frames Model (FM) with a
  * source-type represented via a directly attached {@link CSource}
  * object.
  *

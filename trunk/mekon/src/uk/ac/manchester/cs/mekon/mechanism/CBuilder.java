@@ -29,7 +29,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Provides mechanisms for building a frames-based model, as
+ * Provides mechanisms for building a Frames Model (FM), as
  * represented by a {@link CModel}.
  *
  * @author Colin Puleston

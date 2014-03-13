@@ -28,7 +28,7 @@ import uk.ac.manchester.cs.mekon.*;
 
 /**
  * Abstract base-class for visitors that visit entities from the
- * frames-based model.
+ * Frames Model (FM).
  *
  * @author Colin Puleston
  */

@@ -197,8 +197,8 @@ public abstract class CFrame
 	 * Stipulates that the frame is instantiable if and only if
 	 * it is a model-frame with visibility status of exposed, and
 	 * is not mapped to some non-instantiable entity in an extension
-	 * of the frames model, or is an extension-frame that extends an
-	 * instantiable model-frame.
+	 * of the Frames Model (FM), or is an extension-frame that extends
+	 * an instantiable model-frame.
 	 *
 	 * @return True if frame is an exposed model-frame, not mapped t
 	 * a non-instantiable entity, or is an extension of such a frame

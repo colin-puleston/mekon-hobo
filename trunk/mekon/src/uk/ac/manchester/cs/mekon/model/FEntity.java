@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Represents an entity in the frames-based model (meta-level,
+ * Represents an entity in the Frames Model (FM) (meta-level,
  * concept-level or instance-level).
  *
  * @author Colin Puleston
