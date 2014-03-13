@@ -144,7 +144,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 
 	/**
 	 * Sets the attribute that determines whether or not any of the
-	 * slots that are generated in the frames-based model can have
+	 * slots that are generated in the Frames Model (FM) can have
 	 * a value-type defined via an {@link MFrame} object. If this
 	 * attribute is set to "true" then any slot derived from an
 	 * OWL object-restriction for which none of the potential named
@@ -175,7 +175,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 
 	/**
 	 * Provides the object that specifies the OWL classes that will
-	 * be used in generating frames in the frames-based model.
+	 * be used in generating frames in the FM.
 	 *
 	 * @return Object for specifying required OWL classes
 	 */
@@ -186,7 +186,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 
 	/**
 	 * Provides the object that specifies the OWL properties that
-	 * will be used in generating slots in the frames-based model.
+	 * will be used in generating slots in the FM.
 	 *
 	 * @return Object for specifying required OWL properties
 	 */

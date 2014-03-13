@@ -46,7 +46,7 @@ public class OSEntityAnnotationType {
 	 *
 	 * @param annotationPropertyIRI IRI of OWL annotation property
 	 * @param framesAnnotationId Identifier for annotation-type in
-	 * frames-based model
+	 * Frames Model (FM)
 	 */
 	public OSEntityAnnotationType(
 				IRI annotationPropertyIRI,

@@ -28,7 +28,7 @@ import org.semanticweb.owlapi.model.*;
 
 /**
  * Represents an entity derived from an <code>OWLNamedObject</code>
- * that will be used to generate a frames-based model entity.
+ * that will be used to generate a Frames Model (FM) entity.
  *
  * @author Colin Puleston
  */
