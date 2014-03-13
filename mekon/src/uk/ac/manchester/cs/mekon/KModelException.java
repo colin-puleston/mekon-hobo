@@ -25,8 +25,8 @@
 package uk.ac.manchester.cs.mekon;
 
 /**
- * Exception thrown when some problem with the model is
- * detected.
+ * Exception thrown when some problem with the MEKON model
+ * is detected.
  *
  * @author Colin Puleston
  */
