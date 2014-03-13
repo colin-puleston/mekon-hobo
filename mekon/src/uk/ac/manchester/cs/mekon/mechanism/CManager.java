@@ -43,7 +43,7 @@ public class CManager {
 	}
 
 	/**
-	 * Creates model-builder to build a frames-based model.
+	 * Creates model-builder to build a Frames Model (FM).
 	 *
 	 * @return Created model-builder
 	 */

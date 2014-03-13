@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Represents an entity in the frames-based model that is
+ * Represents an entity in the Frames Model (FM) that is
  * identified via a directly attached {@link CIdentity}
  * object.
  *

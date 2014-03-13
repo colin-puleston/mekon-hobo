@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
- * Represents the generic MEKON frames-based model, within
+ * Represents the generic MEKON Frames Model (FM), within
  * which domain concepts are represented by {@link CFrame}
  * objects, and inter-concept relationships and
  * concept-attributes by {@link CSlot} objects.

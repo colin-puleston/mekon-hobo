@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.model;
 
 /**
  * Represents the type(s) of source from which the definition
- * of some concept-level model-entity in the frames-based model
+ * of some concept-level model-entity in the Frames Model (FM)
  * has been derived.
  *
  * @author Colin Puleston

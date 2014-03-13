@@ -1,6 +1,6 @@
 <HTML>
 <BODY>
-Root package for the MEKON framework that provides MEKON-specific exception classes, and general overview documentation for the framework.
+Root package for the MEKON framework, which contains all MEKON-specific exception classes, as well as providing the general overview documentation for the framework.
 
 <H1>MEKON Overview</H1>
 
@@ -10,18 +10,21 @@ For a general overview of the MEKON framework and related software see <a href="
 
 <H1>MEKON Packages</H1>
 
-The MEKON framework provides the following APIs:
+<H3>MEKON APIs</H3>
 
-<b>Model API:</b> Client representation of the FM.
-
-<b>Mechanism API:</b> Provides the mechanisms for building and configuring the MEKON models. Incorporates the MEKON plug-ins API (or SPI - Service Provider Interface) that is used by providers of the following types of plug-in:
-
+The <b>Model API:</b> provides the client representation of the FM.
+<p>
+The <b>Mechanism API:</b> provides the mechanisms for building and configuring the MEKON models. Incorporates the MEKON plug-ins API (or SPI - Service Provider Interface) that is used by providers of the following types of plug-in:
 <ul>
   <li><b>Model-section builders:</b> Responsible for building sections of the FM derived from external knowledge sources of specific types
   <li><b>Reasoners:</b> Responsible for dynamic updating of model-instantiations based on reasoning mechanisms associated with external knowledge sources of specific types
 </ul>
 
-Within the MEKON API packages, the following single-character class-name prefixes are used to distinguish the broad category into which a class falls:
+See below for further details on each of these APIs.
+
+<H3>MEKON Class/Interface Naming Conventions</H3>
+
+Within the MEKON API packages, the following single-character class-name prefixes are used to distinguish the broad category into which a class or interface falls:
 <ul>
   <li><b>I:</b> Instance-level entities
   <li><b>C:</b> Concept-level entities
