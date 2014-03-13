@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * Represents the set of OWL properties that will be used in
- * generating slots in the frames-based model.
+ * generating slots in the Frames Model (FM).
  *
  * @author Colin Puleston
  */

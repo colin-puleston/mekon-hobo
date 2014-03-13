@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * Represents a set of OWL entities that will be used in
- * generating entities in the frames-based model.
+ * generating entities in the Frames Model (FM).
  *
  * @author Colin Puleston
  */

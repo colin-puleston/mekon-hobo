@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * Represents the set of OWL classes that will be used in
- * generating frames in the frames-based model.
+ * generating frames in the Frames Model (FM).
  *
  * @author Colin Puleston
  */
