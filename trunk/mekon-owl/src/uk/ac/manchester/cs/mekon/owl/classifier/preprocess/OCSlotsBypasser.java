@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.owl.classifier.preprocess;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.classifier.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
 
 /**

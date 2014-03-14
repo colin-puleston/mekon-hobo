@@ -1,5 +1,29 @@
 <HTML>
 <BODY>
-Provides general MEKON-friendly access of OWL models for the MEKON-OWL plugin packages.
+Root package for the MEKON-OWL plug-ins, which contains a collection of MEKON-friendly wrapper classes for the OWL API, which are used by the plug-ins, as well as providing the general MEKON-OWL overview documentation.
+
+<H1>MEKON-OWL Overview</H1>
+
+MEKON-OWL consists of a pair <b>OWL-specific plug-ins</b> for MEKON (and hence for HOBO). These plug-ins enable (a) MEKON/HOBO models to be derived from <b>OWL ontologies</b>, and (b) the automatic model-instantiation updating to be based on <b>Description Logic (DL)</b> reasoning. Both plug-ins are built on top of the <b>OWL API</b>.
+<p>
+The plug-ins are:
+<ul>
+  <li><b>Model-Section Builder:</b> {@link uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.CSectionBuilder} which builds an indirect section of the frames-based model (FM) based on a set of OWL ontologies loaded via a standard "sanctioning" mechanism.
+  <li><b>Instance Reasoner:</b> {@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.IReasoner} that uses a Description Logic (DL) reasoner operating over a set of OWL ontologies
+</ul>
+
+These plug-ins are compatible with each other, and can be used either together or seperately, in conjunction with other compatible section-building and reasoning plug-ins.
+<p>
+Both plug-ins are configurable in various ways, either via methods on the relevant classes or else via the general MEKON configuration system.
+<p>
+{@link uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder} can be configured to determine which collections of entities will be loaded from the relevant ontologies, and exactly how they will be used in creating the MEKON FM entities.
+<p>
+{@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} can be configured to determine how the FM will be interpreted semantically when composing the OWL expressions that are to be classified. It is also possible to add implementations of {@link uk.ac.manchester.cs.mekon.owl.classifier.OCPreProcessor} to {@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} to reshape the FM instantiation prior to it's conversion into the OWL expression that is to be classified.
+<p>
+Both plug-ins make use of {@link uk.ac.manchester.cs.mekon.owl.OModel}, which provides MEKON-friendly access of OWL ontologies and DL reasoners via the OWL API. Similarly to the plug-ins themselves, the {@link uk.ac.manchester.cs.mekon.owl.OModel} can be configured either via methods on the class itself or else via the general MEKON configuration system.
+
+<p>
+For a general overview of MEKON-OWL, the MEKON framework, and other related software see <a href="http://code.google.com/p/mekon/" target="_blank">Mekon project website</a>.
+
 </BODY>
 </HTML>
