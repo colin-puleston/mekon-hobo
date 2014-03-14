@@ -9,7 +9,7 @@ MEKON-OWL consists of a pair <b>OWL-specific plug-ins</b> for MEKON (and hence f
 The plug-ins are:
 <ul>
   <li><b>Model-Section Builder:</b> {@link uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.CSectionBuilder} which builds an indirect section of the frames-based model (FM) based on a set of OWL ontologies loaded via a standard "sanctioning" mechanism.
-  <li><b>Instance Reasoner:</b> {@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.IReasoner} that uses a Description Logic (DL) reasoner operating over a set of OWL ontologies
+  <li><b>Instance Reasoner:</b> {@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.IReasoner} that based on DL reasoner operating over a set of OWL ontologies to provide the model-instantiation updates.
 </ul>
 
 These plug-ins are compatible with each other, and can be used either together or seperately, in conjunction with other compatible section-building and reasoning plug-ins.
