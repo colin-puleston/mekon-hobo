@@ -14,13 +14,13 @@ The plug-ins are:
 
 These plug-ins are compatible with each other, and can be used either together or seperately, in conjunction with other compatible section-building and reasoning plug-ins.
 <p>
-Both plug-ins are configurable in various ways, either via methods on the relevant classes or else via the general MEKON configuration system.
+Both plug-ins are configurable in various ways, either programatically, via methods on the relevant classes, or else via the general MEKON configuration system.
 <p>
 {@link uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder} can be configured to determine which collections of entities will be loaded from the relevant ontologies, and exactly how they will be used in creating the MEKON FM entities.
 <p>
-{@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} can be configured to determine how the FM will be interpreted semantically when composing the OWL expressions that are to be classified. It is also possible to add implementations of {@link uk.ac.manchester.cs.mekon.owl.classifier.OCPreProcessor} to {@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} to reshape the FM instantiation prior to it's conversion into the OWL expression that is to be classified.
+{@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier} can be configured to determine how the FM will be interpreted semantically when composing the OWL expressions that are to be classified. It is also possible to add implementations of {@link uk.ac.manchester.cs.mekon.owl.classifier.OCPreProcessor} to instances of {@link uk.ac.manchester.cs.mekon.owl.classifier.OCClassifier}, which will reshape the FM instantiations prior to conversion into the OWL expression that will be classified.
 <p>
-Both plug-ins make use of {@link uk.ac.manchester.cs.mekon.owl.OModel}, which provides MEKON-friendly access of OWL ontologies and DL reasoners via the OWL API. Similarly to the plug-ins themselves, the {@link uk.ac.manchester.cs.mekon.owl.OModel} can be configured either via methods on the class itself or else via the general MEKON configuration system.
+Both plug-ins make use of the {@link uk.ac.manchester.cs.mekon.owl.OModel} class, which provides MEKON-friendly access of OWL ontologies and DL reasoners via the OWL API. Similarly to the plug-ins themselves, the {@link uk.ac.manchester.cs.mekon.owl.OModel} can be configured either programatically or else via the general MEKON configuration system.
 
 <p>
 For a general overview of MEKON-OWL, the MEKON framework, and other related software see <a href="http://code.google.com/p/mekon/" target="_blank">Mekon project website</a>.
