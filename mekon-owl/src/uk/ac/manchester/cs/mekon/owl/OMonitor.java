@@ -30,8 +30,8 @@ import java.util.*;
 import org.semanticweb.owlapi.reasoner.*;
 
 /**
- * Monitor for loading of the OWL ontology loading and reasoner
- * loading (creation and initial classification).
+ * Monitor for loading of the OWL ontology and loading of the
+ * reasoner.
  * <p>
  * The class maintains a static list of current monitors, whose
  * appropriate methods will be invoked at the relevant points in

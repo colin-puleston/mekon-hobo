@@ -22,9 +22,10 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.frames;
+package uk.ac.manchester.cs.mekon.owl.classifier;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
 
 /**
  * Interface whose implementations will perform certain

@@ -28,6 +28,7 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.classifier.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
 
 /**
