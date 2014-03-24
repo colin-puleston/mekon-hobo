@@ -37,7 +37,7 @@ public class HoboModelExplorer extends MekonModelExplorer {
 
 	static public void main(String[] args) {
 
-		new HoboModelExplorer(new DManager().createBuilder().build());
+		new HoboModelExplorer(DManager.createBuilder().build());
 	}
 
 	public HoboModelExplorer(DModel model) {
