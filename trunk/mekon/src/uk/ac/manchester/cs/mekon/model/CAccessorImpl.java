@@ -33,19 +33,14 @@ class CAccessorImpl implements CAccessor {
 
 	private CModel model;
 
-	public CBuilder createBuilder(boolean delayCompletion) {
+	public CBuilder createBuilder() {
 
-		return new CBuilderImpl(model, delayCompletion);
+		return new CBuilderImpl(model);
 	}
 
 	public void setAdjuster(CAdjuster adjuster) {
 
 		model.setAdjuster(adjuster);
-	}
-
-	public void completeModelInitialisation() {
-
-		model.completeInitialisation();
 	}
 
 	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
