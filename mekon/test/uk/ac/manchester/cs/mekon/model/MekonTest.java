@@ -30,12 +30,12 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class FramesModelTest extends FramesTestUtils {
+public class MekonTest extends FramesTestUtils {
 
 	private CModel model;
 	private IReasoner iReasoner;
 
-	public FramesModelTest(CModel model) {
+	public MekonTest(CModel model) {
 
 		this(model, new InertIReasoner());
 	}
@@ -144,17 +144,17 @@ public class FramesModelTest extends FramesTestUtils {
 		return model;
 	}
 
-	FramesModelTest() {
+	MekonTest() {
 
 		this(new InertIReasoner());
 	}
 
-	FramesModelTest(IReasoner iReasoner) {
+	MekonTest(IReasoner iReasoner) {
 
 		this(new CModel(){}, iReasoner);
 	}
 
-	private FramesModelTest(CModel model, IReasoner iReasoner) {
+	private MekonTest(CModel model, IReasoner iReasoner) {
 
 		this.model = model;
 		this.iReasoner = iReasoner;

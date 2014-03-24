@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 /**
  * @author Colin Puleston
  */
-public abstract class CValueTest<V extends CValue<?>> extends FramesModelTest {
+public abstract class CValueTest<V extends CValue<?>> extends MekonTest {
 
 	void testStrictSubsumption(V subsumer, V subsumed) {
 

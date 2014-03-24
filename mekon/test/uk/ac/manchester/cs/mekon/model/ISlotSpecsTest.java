@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotSpecsTest extends FramesModelTest {
+public class ISlotSpecsTest extends MekonTest {
 
 	private CModelFrame ta = createCFrame("A");
 	private CModelFrame tb = createCFrame("B");

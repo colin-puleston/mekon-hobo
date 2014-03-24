@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class CSlotValuesTest extends FramesModelTest {
+public class CSlotValuesTest extends MekonTest {
 
 	private CModelFrame container = createCFrame("CONTAINER");
 

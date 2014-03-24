@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * @author Colin Puleston
  */
-public class MostSpecificCFramesTest extends FramesModelTest {
+public class MostSpecificCFramesTest extends MekonTest {
 
 	private CFrame fa = createCFrame("FA");
 	private CFrame fax = createCFrame("FAX");

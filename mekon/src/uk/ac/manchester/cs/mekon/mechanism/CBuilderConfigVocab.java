@@ -22,32 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
-
-import org.junit.Test;
-
-import uk.ac.manchester.cs.mekon.*;
+package uk.ac.manchester.cs.mekon.mechanism;
 
 /**
+ * Vocabulary used in the {@link CBuilder}-definition section
+ * of the MEKON configuration file.
+ *
  * @author Colin Puleston
  */
-public class ISlotTest extends MekonTest {
+public interface CBuilderConfigVocab {
 
-	@Test(expected = KAccessException.class)
-	public void test_getValuesEditorfailsForInactiveSlot() {
+	static public final String MODEL_SECTION_ID = "IndirectSection";
 
-		ISlot s = createISlot(CCardinality.FREE);
-
-		s.createEditor().setActive(false);
-		s.getValuesEditor();
-	}
-
-	@Test(expected = KAccessException.class)
-	public void test_getValuesEditorfailsForNonEditableSlot() {
-
-		ISlot s = createISlot(CCardinality.FREE);
-
-		s.createEditor().setEditable(false);
-		s.getValuesEditor();
-	}
+	static public final String SECTION_BLDER_CLASS_ATTR = "sectionBuilder";
 }

@@ -22,32 +22,49 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.mechanism;
 
-import org.junit.Test;
-
-import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
  */
-public class ISlotTest extends MekonTest {
+class CBuilderConfig implements CBuilderConfigVocab {
 
-	@Test(expected = KAccessException.class)
-	public void test_getValuesEditorfailsForInactiveSlot() {
+	private KConfigNode rootNode;
 
-		ISlot s = createISlot(CCardinality.FREE);
+	CBuilderConfig(KConfigNode rootNode) {
 
-		s.createEditor().setActive(false);
-		s.getValuesEditor();
+		this.rootNode = rootNode;
 	}
 
-	@Test(expected = KAccessException.class)
-	public void test_getValuesEditorfailsForNonEditableSlot() {
+	void configure(CBuilder builder) {
 
-		ISlot s = createISlot(CCardinality.FREE);
+		loadSectionBuilders(builder);
+	}
 
-		s.createEditor().setEditable(false);
-		s.getValuesEditor();
+	private void loadSectionBuilders(CBuilder builder) {
+
+		for (KConfigNode sectionNode : rootNode.getChildren(MODEL_SECTION_ID)) {
+
+			loadSectionBuilder(builder, sectionNode);
+		}
+	}
+
+	private void loadSectionBuilder(CBuilder builder, KConfigNode sectionNode) {
+
+		builder.addSectionBuilder(createSectionBuilder(sectionNode));
+	}
+
+	private CSectionBuilder createSectionBuilder(KConfigNode sectionNode) {
+
+		Class<? extends CSectionBuilder> type = loadSectionBuilderClass(sectionNode);
+
+		return new KConfigObjectConstructor<CSectionBuilder>(type).construct(sectionNode);
+	}
+
+	private Class<? extends CSectionBuilder> loadSectionBuilderClass(KConfigNode sectionNode) {
+
+		return sectionNode.getClass(SECTION_BLDER_CLASS_ATTR, CSectionBuilder.class);
 	}
 }
