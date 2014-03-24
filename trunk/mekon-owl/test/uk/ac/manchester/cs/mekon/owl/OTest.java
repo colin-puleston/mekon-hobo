@@ -43,7 +43,7 @@ public class OTest extends FramesTestUtils {
 
 	public void buildModel(OSSectionBuilder sectionBuilder) {
 
-		CBuilder cBuilder = new CManager().createBuilder();
+		CBuilder cBuilder = new CManager().createEmptyBuilder();
 
 		cBuilder.addSectionBuilder(sectionBuilder);
 
