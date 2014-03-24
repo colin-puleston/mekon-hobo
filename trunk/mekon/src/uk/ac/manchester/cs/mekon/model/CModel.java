@@ -39,6 +39,9 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public abstract class CModel implements CAnnotatable {
 
+	private CAccessor accessor = new CAccessorImpl(this);
+	private CAdjuster adjuster = new CAdjusterDefault();
+
 	private CFrame rootFrame;
 
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
@@ -46,7 +49,6 @@ public abstract class CModel implements CAnnotatable {
 
 	private CAnnotations annotations = new CAnnotations(this);
 
-	private CAdjuster adjuster = new CAdjuster();
 	private IEditor iEditor = new IEditorImpl(this);
 	private boolean autoUpdate = true;
 
@@ -54,62 +56,6 @@ public abstract class CModel implements CAnnotatable {
 							= new ArrayList<InitialisationListener>();
 
 	private boolean initialised = false;
-
-	/**
-	 * Part of the MEKON mechanism - not relevant to the client.
-	 */
-	public class CAdjuster {
-
-		protected void onFrameAdded(CFrame frame) {
-		}
-
-		protected void onFrameRemoved(CFrame frame) {
-		}
-
-		protected void onSlotRemoveded(CSlot slot) {
-		}
-
-		protected boolean mappedToNonInstantiableObject(CFrame frame) {
-
-			return false;
-		}
-	}
-
-	/**
-	 * Part of the MEKON mechanism - not relevant to the client.
-	 */
-	public class CAccessor {
-
-		public void setAdjuster(CAdjuster adjuster) {
-
-			CModel.this.adjuster = adjuster;
-		}
-
-		public CBuilder createBuilder(boolean delayCompletion) {
-
-			return new CBuilderImpl(CModel.this, delayCompletion);
-		}
-
-		public void completeModelInitialisation() {
-
-			CModel.this.completeInitialisation();
-		}
-
-		public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
-
-			frame.setMappedObject(mappedObject);
-		}
-
-		public <T>T getIFrameMappedObject(IFrame frame, Class<T> expectedType) {
-
-			return frame.getMappedObject(expectedType);
-		}
-
-		public IEditor getIEditor() {
-
-			return iEditor;
-		}
-	}
 
 	/**
 	 * Enables or disables the {@link #autoUpdate} facility.
@@ -187,11 +133,28 @@ public abstract class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Part of the MEKON mechanism - not relevant to the client.
+	 * Constructor (used by the implementation - not relevant to the
+	 * model client).
 	 */
 	protected CModel() {
 
 		rootFrame = new CRootFrame(this, DefaultIReasoner.singleton);
+	}
+
+	/**
+	 * Retrieves the accessor object for the model (used by the
+	 * implementation - not relevant to the model client).
+	 *
+	 * @return Accessor object for model
+	 */
+	protected CAccessor getAccessor() {
+
+		return accessor;
+	}
+
+	void setAdjuster(CAdjuster adjuster) {
+
+		this.adjuster = adjuster;
 	}
 
 	void addInitialisationListener(InitialisationListener listener) {
@@ -233,7 +196,7 @@ public abstract class CModel implements CAnnotatable {
 
 	void registerRemovedSlot(CSlot slot) {
 
-		adjuster.onSlotRemoveded(slot);
+		adjuster.onSlotRemoved(slot);
 	}
 
 	void startInitialisation() {
