@@ -35,8 +35,6 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 class CBuilderImpl implements CBuilder {
 
 	private CModel model;
-	private boolean delayCompletion;
-
 	private List<CSectionBuilder> sectionBuilders = new ArrayList<CSectionBuilder>();
 
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {
@@ -157,11 +155,7 @@ class CBuilderImpl implements CBuilder {
 
 		model.startInitialisation();
 		buildSections();
-
-		if (!delayCompletion) {
-
-			model.completeInitialisation();
-		}
+		model.completeInitialisation();
 
 		return model;
 	}
@@ -171,10 +165,9 @@ class CBuilderImpl implements CBuilder {
 		model.optimiseSubsumptionTesting();
 	}
 
-	CBuilderImpl(CModel model, boolean delayCompletion) {
+	CBuilderImpl(CModel model) {
 
 		this.model = model;
-		this.delayCompletion = delayCompletion;
 	}
 
 	private void buildSections() {

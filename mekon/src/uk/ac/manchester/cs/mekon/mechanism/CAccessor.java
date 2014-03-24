@@ -36,12 +36,8 @@ public interface CAccessor {
 
 	/**
 	 * Creates a builder for the model.
-	 *
-	 * @param delayCompletion True if the final completion of the
-	 * model initialisation process is to be delayed
-	 * @return Created builder
 	 */
-	public CBuilder createBuilder(boolean delayCompletion);
+	public CBuilder createBuilder();
 
 	/**
 	 * Sets an adjuster object for the model.
@@ -49,12 +45,6 @@ public interface CAccessor {
 	 * @param adjuster Adjuster to set
 	 */
 	public void setAdjuster(CAdjuster adjuster);
-
-	/**
-	 * Instigates the final completion of the model initialisation
-	 * process is to be delayed
-	 */
-	public void completeModelInitialisation();
 
 	/**
 	 * Maps an object to an instance-level frame.
