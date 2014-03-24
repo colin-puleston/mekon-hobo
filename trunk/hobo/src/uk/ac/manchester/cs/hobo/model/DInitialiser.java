@@ -141,9 +141,9 @@ class DInitialiser {
 
 	private void checkAddSuperFrame(DBinding binding, Class<? extends DObject> dClass) {
 
-		for (Class<? extends DObject> rawParent : getRawParents(dClass)) {
+		for (Class<? extends DObject> parentDClass : getParentDClasses(dClass)) {
 
-			DBinding superBinding = bindings.getOrNull(rawParent);
+			DBinding superBinding = bindings.getOrNull(parentDClass);
 
 			if (superBinding != null) {
 
@@ -151,19 +151,19 @@ class DInitialiser {
 			}
 			else {
 
-				checkAddSuperFrame(binding, rawParent);
+				checkAddSuperFrame(binding, parentDClass);
 			}
 		}
 	}
 
-	private Set<Class<? extends DObject>> getRawParents(Class<?> dClass) {
+	private Set<Class<? extends DObject>> getParentDClasses(Class<?> dClass) {
 
 		Set<Class<? extends DObject>> parents = new HashSet<Class<? extends DObject>>();
-		Class<?> rawSuper = dClass.getSuperclass();
+		Class<?> sup = dClass.getSuperclass();
 
-		if (rawSuper != null) {
+		if (sup != null) {
 
-			checkAddParent(parents, rawSuper);
+			checkAddParent(parents, sup);
 		}
 
 		for (Class<?> iface : dClass.getInterfaces()) {
