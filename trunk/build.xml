@@ -234,7 +234,7 @@
 		</javac>
 	</target>
 
-	<target name="unittest" depends="hobo-test, mekon-owl-test, hobo-jar, mekon-owl-jar">
+	<target name="unittest" depends="hobo-test, mekon-owl-test, hobo-jar, mekon-owl-jar, testmodel">
 		<echo file="${out.unittest.run.sh}">java -cp ${out.unittest.classpath.sh} ${out.unittest.java.args}</echo>
 		<echo file="${out.unittest.run.win}">java -cp ${out.unittest.classpath.win} ${out.unittest.java.args}</echo>
 		<echo file="${out.unittest.run.sh.64}">java -cp ${out.unittest.classpath.sh} ${out.unittest.java.args}</echo>
