@@ -44,9 +44,9 @@ public class DManager {
 
 	private class DModelLocal extends DModel {
 
-		protected DBuilder createBuilder() {
+		protected DBuilder getBuilder() {
 
-			return super.createBuilder();
+			return super.getBuilder();
 		}
 
 		DModelLocal() {
@@ -63,7 +63,7 @@ public class DManager {
 	 */
 	public DBuilder createEmptyBuilder() {
 
-		return new DModelLocal().createBuilder();
+		return new DModelLocal().getBuilder();
 	}
 
 	/**

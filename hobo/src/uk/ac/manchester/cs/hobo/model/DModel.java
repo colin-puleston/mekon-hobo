@@ -29,7 +29,6 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.hobo.*;
-import uk.ac.manchester.cs.hobo.modeller.*;
 import uk.ac.manchester.cs.hobo.mechanism.*;
 
 /**
@@ -49,58 +48,11 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  */
 public abstract class DModel {
 
-	private CModelLocal cModel = new CModelLocal();
-	private CBuilder cBuilder = cModel.accessor.createBuilder();
+	private CModelLocal cModel = new CModelLocal(this);
+	private CAccessor cAccessor = cModel.getAccessor();
 
+	private DBuilder builder = new DBuilderImpl(cAccessor.createBuilder(), this);
 	private DBindings bindings = new DBindings();
-	private IFrameMapper iFrameMapper = new IFrameMapper();
-	private boolean labelsFromDirectFields = true;
-
-	private class CModelLocal extends CModel {
-
-		final CAccessor accessor = getAccessor();
-
-		private class CAdjusterLocal implements CAdjuster {
-
-			public void onFrameAdded(CFrame frame) {
-
-				frame.addListener(iFrameMapper);
-			}
-
-			public void onFrameRemoved(CFrame frame) {
-
-				checkRemovableFrame(frame);
-			}
-
-			public void onSlotRemoved(CSlot slot) {
-
-				checkRemovableSlot(slot);
-			}
-
-			public boolean mappedToNonInstantiableObject(CFrame frame) {
-
-				return !instantiableDClassFor(frame);
-			}
-		}
-
-		CModelLocal() {
-
-			accessor.setAdjuster(new CAdjusterLocal());
-		}
-	}
-
-	private class IFrameMapper implements CFrameListener {
-
-		public void onExtended(CFrame extension) {
-
-			extension.addListener(this);
-		}
-
-		public void onInstantiated(IFrame instance) {
-
-			ensureMappedDObject(instance);
-		}
-	}
 
 	/**
 	 * Provides the associated FM.
@@ -327,7 +279,7 @@ public abstract class DModel {
 	 */
 	public <D extends DObject>D getDObject(IFrame frame, Class<D> dClass) {
 
-		D dObject = cModel.accessor.getIFrameMappedObject(frame, dClass);
+		D dObject = cAccessor.getIFrameMappedObject(frame, dClass);
 
 		if (dObject == null) {
 
@@ -345,31 +297,40 @@ public abstract class DModel {
 	}
 
 	/**
-	 * Creates the builder for the model (used by the implementation
+	 * Provides the builder for the model (used by the implementation
 	 * - not relevant to the client).
 	 *
 	 * @return Created builder for model
 	 */
-	protected DBuilder createBuilder() {
+	protected DBuilder getBuilder() {
 
-		return new DBuilderImpl(getCBuilder(), this);
+		if (builder == null) {
+
+			throw new Error("DBuilder no longer available");
+		}
+
+		return builder;
 	}
 
-	void initialise(
-			DModelMap modelMap,
-			Set<Class<? extends DObject>> dClasses) {
+	void initialise(Set<Class<? extends DObject>> dClasses) {
 
-		labelsFromDirectFields = modelMap.labelsFromDirectFields();
-
-		createBindings(modelMap, dClasses);
+		new DBinder(this).createBindings(dClasses);
 		bindings.initialise(this);
 
-		cBuilder = null;
+		builder = null;
 	}
 
 	boolean initialised() {
 
-		return cBuilder == null;
+		return builder == null;
+	}
+
+	void ensureMappedDObject(IFrame frame) {
+
+		if (cAccessor.getIFrameMappedObject(frame, DObject.class) == null) {
+
+			instantiate(DObject.class, frame);
+		}
 	}
 
 	DBindings getBindings() {
@@ -379,81 +340,31 @@ public abstract class DModel {
 
 	CBuilder getCBuilder() {
 
-		if (cBuilder == null) {
+		return getBuilder().getCBuilder();
+	}
 
-			throw new Error("CBuilder no longer available");
-		}
+	DModelMap getModelMap() {
 
-		return cBuilder;
+		return getBuilder().getModelMap();
 	}
 
 	IEditor getIEditor() {
 
-		return cModel.accessor.getIEditor();
+		return cAccessor.getIEditor();
 	}
 
 	ISlotValuesEditor getISlotValuesEditor(ISlot slot) {
 
-		return cModel.accessor.getIEditor().getSlotValuesEditor(slot);
-	}
-
-	boolean labelsFromDirectFields() {
-
-		return labelsFromDirectFields;
-	}
-
-	private void createBindings(
-					DModelMap modelMap,
-					Set<Class<? extends DObject>> dClasses) {
-
-		new DBinder(cBuilder, modelMap, bindings).createBindings(dClasses);
-	}
-
-	private boolean instantiableDClassFor(CFrame frame) {
-
-		if (frame.getSource().direct()) {
-
-			return new InstantiableDClassFinder(this).anyFor(frame);
-		}
-
-		return true;
+		return getIEditor().getSlotValuesEditor(slot);
 	}
 
 	private <D extends DObject>D instantiate(Class<D> dClass, IFrame frame) {
 
 		D dObject = new DObjectInstantiator<D>(this, dClass).instantiate(frame);
 
-		cModel.accessor.setIFrameMappedObject(frame, dObject);
+		cAccessor.setIFrameMappedObject(frame, dObject);
 
 		return dObject;
-	}
-
-	private void ensureMappedDObject(IFrame frame) {
-
-		if (cModel.accessor.getIFrameMappedObject(frame, DObject.class) == null) {
-
-			instantiate(DObject.class, frame);
-		}
-	}
-
-	private void checkRemovableFrame(CFrame frame) {
-
-		if (frame.getSource().direct()) {
-
-			throw new HModelException("Cannot remove frame with direct source: " + frame);
-		}
-	}
-
-	private void checkRemovableSlot(CSlot slot) {
-
-		if (slot.getSource().direct()) {
-
-			throw new HModelException(
-						"Cannot remove slot with direct source: "
-						+ slot
-						+ ", frame: "
-						+ slot.getContainer());
-		}
 	}
 
 	private CFrame getFrame(CIdentity identity) {

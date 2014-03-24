@@ -103,7 +103,7 @@ class FieldSlotInitialiser {
 		CProperty property = slotType.getProperty();
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
-		if (model.labelsFromDirectFields()) {
+		if (model.getModelMap().labelsFromDirectFields()) {
 
 			getPropertyEditor(property).resetLabel(slotLabel);
 		}

@@ -52,7 +52,7 @@ class DBuilderImpl implements DBuilder {
 
 		public void build(CBuilder builder) {
 
-			model.initialise(modelMap, dClasses);
+			model.initialise(dClasses);
 		}
 	}
 
