@@ -40,7 +40,7 @@ class DBuilderImpl implements DBuilder {
 	private CBuilder cBuilder;
 
 	private DModel model;
-	private DModelMap modelMap;
+	private DModelMap modelMap = new DModelMap();
 	private DBinder binder;
 
 	private class DSectionBuilder implements CSectionBuilder {
@@ -94,12 +94,11 @@ class DBuilderImpl implements DBuilder {
 		return modelMap;
 	}
 
-	DBuilderImpl(CModel cModel, CBuilder cBuilder, DModel model, DModelMap modelMap) {
+	DBuilderImpl(CModel cModel, CBuilder cBuilder, DModel model) {
 
 		this.cModel = cModel;
 		this.cBuilder = cBuilder;
 		this.model = model;
-		this.modelMap = modelMap;
 
 		binder = new DBinder(cBuilder, model, modelMap);
 	}

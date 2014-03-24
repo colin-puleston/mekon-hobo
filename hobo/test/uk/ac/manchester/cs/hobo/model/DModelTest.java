@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class DModelTest extends DirectModelTest {
+public class DModelTest extends HoboTest {
 
 	static private String INTERFACE_R_ID = InterfaceR.class.getName();
 	static private String CLASS_A_ID = ClassA.class.getName();
@@ -170,18 +170,18 @@ public class DModelTest extends DirectModelTest {
 
 	private DModel createModel(boolean labelsFromDirectModel) {
 
-		DModelMap map = createModelMap(labelsFromDirectModel);
-		DBuilder dBuilder = new DManager().createBuilder(map);
+		DBuilder dBuilder = new DManager().createEmptyBuilder();
 
+		populateModelMap(dBuilder, labelsFromDirectModel);
 		dBuilder.addDClasses(getTestModelPackageName());
 		dBuilder.getCBuilder().addSectionBuilder(new IndirectSectionBuilder());
 
 		return dBuilder.build();
 	}
 
-	private DModelMap createModelMap(boolean labelsFromDirectModel) {
+	private void populateModelMap(DBuilder dBuilder, boolean labelsFromDirectModel) {
 
-		DModelMap map = new DModelMap();
+		DModelMap map = dBuilder.getModelMap();
 
 		map.setLabelsFromDirectClasses(labelsFromDirectModel);
 		map.setLabelsFromDirectFields(labelsFromDirectModel);
@@ -189,8 +189,6 @@ public class DModelTest extends DirectModelTest {
 		DClassMap classAMap = map.addClassMap(ClassA.class, A_EXTERNAL_ID);
 
 		classAMap.addFieldMap(INT_CELL_VAR_NAME, INT_EXTERNAL_ID);
-
-		return map;
 	}
 
 	private CNumber getIntegerValueType() {

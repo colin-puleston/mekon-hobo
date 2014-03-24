@@ -85,4 +85,12 @@ public interface DBuilder {
 	 * @return Frames-based model builder
 	 */
 	public CBuilder getCBuilder();
+
+	/**
+	 * Provides the mappings between direct and indirect model sections.
+	 *
+	 * @param modelMap Mappings between direct and indirect model
+	 * sections
+	 */
+	public DModelMap getModelMap();
 }

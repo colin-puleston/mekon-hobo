@@ -50,7 +50,7 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 public abstract class DModel {
 
 	private CModelLocal cModel = new CModelLocal();
-	private CBuilder cBuilder = cModel.accessor.createBuilder(false);
+	private CBuilder cBuilder = cModel.accessor.createBuilder(true);
 
 	private DBindings bindings = new DBindings();
 	private IFrameMapper iFrameMapper = new IFrameMapper();
@@ -61,9 +61,9 @@ public abstract class DModel {
 	 */
 	public class DAccessor {
 
-		public DBuilder createBuilder(DModelMap modelMap) {
+		public DBuilder createBuilder() {
 
-			return new DBuilderImpl(cModel, getCBuilder(), DModel.this, modelMap);
+			return new DBuilderImpl(cModel, getCBuilder(), DModel.this);
 		}
 	}
 
@@ -359,7 +359,7 @@ public abstract class DModel {
 		this.labelsFromDirectFields = labelsFromDirectFields;
 
 		bindings.initialise(this);
-		cModel.accessor.completeInitialisation();
+		cModel.accessor.completeModelInitialisation();
 
 		cBuilder = null;
 	}

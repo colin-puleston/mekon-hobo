@@ -25,16 +25,18 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.hobo.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-class DirectModelTest extends FramesModelTest {
+class HoboTest extends MekonTest {
 
 	private DModel model;
 
-	DirectModelTest() {
+	HoboTest() {
 
 		this(new DModel(){});
 	}
@@ -66,7 +68,7 @@ class DirectModelTest extends FramesModelTest {
 		return getCNumber(def.getNumberType(), def.getMin(), def.getMax());
 	}
 
-	private DirectModelTest(DModel model) {
+	private HoboTest(DModel model) {
 
 		super(model.getCModel());
 

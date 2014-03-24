@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.hobo.mechanism;
 
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
 /**
@@ -40,31 +39,27 @@ class DBuilderConfig implements DBuilderConfigVocab {
 		this.rootNode = rootNode;
 	}
 
-	DModelMap loadModelMap() {
+	void configure(DBuilder builder) {
 
-		DModelMap modelMap = new DModelMap();
+		loadModelMap(builder);
+		loadDirectPackages(builder);
+	}
+
+	private void loadModelMap(DBuilder builder) {
+
+		DModelMap modelMap = builder.getModelMap();
 
 		modelMap.setLabelsFromDirectClasses(labelsFromDirectClasses());
 		modelMap.setLabelsFromDirectFields(labelsFromDirectFields());
 
 		loadClassMaps(modelMap);
-
-		return modelMap;
 	}
 
-	void loadDirectPackages(DBuilder builder) {
+	private void loadDirectPackages(DBuilder builder) {
 
 		for (KConfigNode clusterNode : rootNode.getChildren(DIRECT_SECTION_ID)) {
 
 			loadDirectPackages(builder, clusterNode);
-		}
-	}
-
-	void loadIndirectSectionBuilders(CBuilder cBuilder) {
-
-		for (KConfigNode sectionNode : rootNode.getChildren(INDIRECT_SECTION_ID)) {
-
-			loadIndirectSectionBuilder(cBuilder, sectionNode);
 		}
 	}
 
@@ -123,22 +118,5 @@ class DBuilderConfig implements DBuilderConfigVocab {
 	private void loadDirectPackages(DBuilder builder, KConfigNode clusterNode) {
 
 		builder.addDClasses(clusterNode.getString(TOP_LEVEL_PKG_ATTR));
-	}
-
-	private void loadIndirectSectionBuilder(CBuilder cBuilder, KConfigNode sectionNode) {
-
-		cBuilder.addSectionBuilder(createIndirectSectionBuilder(sectionNode));
-	}
-
-	private CSectionBuilder createIndirectSectionBuilder(KConfigNode sectionNode) {
-
-		Class<? extends CSectionBuilder> type = loadSectionBuilderClass(sectionNode);
-
-		return new KConfigObjectConstructor<CSectionBuilder>(type).construct(sectionNode);
-	}
-
-	private Class<? extends CSectionBuilder> loadSectionBuilderClass(KConfigNode sectionNode) {
-
-		return sectionNode.getClass(SECTION_BLDER_CLASS_ATTR, CSectionBuilder.class);
 	}
 }

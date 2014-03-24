@@ -24,8 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.mechanism;
 
-import java.io.*;
-
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
@@ -35,9 +34,9 @@ import uk.ac.manchester.cs.hobo.model.*;
  * which it is bound.
  * <p>
  * Optionally, both the configuration information for the
- * indirect model(s), and the mappings between entities in the
- * direct and indirect models, can be provided via the general
- * HOBO/MEKON configuration system.
+ * indirect model section(s), and the mappings between entities
+ * in the direct and indirect model sections, can be provided via
+ * the general HOBO/MEKON configuration system.
  *
  * @author Colin Puleston
  */
@@ -47,10 +46,26 @@ public class DManager {
 
 		private DAccessor accessor = new DAccessor();
 
-		DBuilder createBuilder(DModelMap modelMap) {
-
-			return accessor.createBuilder(modelMap);
+		DModelLocal() {
 		}
+
+		DBuilder createBuilder() {
+
+			return new DAccessor().createBuilder();
+		}
+	}
+
+	/**
+	 * Creates model-builder to build model for which the
+	 * specification of both the indirect model section(s) and the
+	 * mappings between direct and indirect sections must be
+	 * provided via the relevant methods.
+	 *
+	 * @return Resulting model-builder
+	 */
+	public DBuilder createEmptyBuilder() {
+
+		return new DModelLocal().createBuilder();
 	}
 
 	/**
@@ -82,36 +97,19 @@ public class DManager {
 	 * exist or does not contain correctly specified configuration
 	 * information
 	 */
-	public DBuilder createBuilder(File configFile) {
+	public DBuilder createBuilder(KConfigFile configFile) {
 
-		return createBuilder(new KConfigFile(configFile));
+		DBuilder dBuilder = createEmptyBuilder();
+		CBuilder cBuilder = dBuilder.getCBuilder();
+
+		CManager.configureBuilder(cBuilder, configFile);
+		createConfig(configFile).configure(dBuilder);
+
+		return dBuilder;
 	}
 
-	/**
-	 * Creates model-builder to build model incorporating the
-	 * specified mappings between direct and indirect sections.
-	 *
-	 * @param modelMap Mappings between direct and indirect model
-	 * sections
-	 * @return Resulting model-builder
-	 */
-	public DBuilder createBuilder(DModelMap modelMap) {
+	private DBuilderConfig createConfig(KConfigFile configFile) {
 
-		return new DModelLocal().createBuilder(modelMap);
-	}
-
-	private DBuilder createBuilder(KConfigFile configFile) {
-
-		return createBuilder(new DBuilderConfig(configFile.getRootNode()));
-	}
-
-	private DBuilder createBuilder(DBuilderConfig config) {
-
-		DBuilder builder = createBuilder(config.loadModelMap());
-
-		config.loadDirectPackages(builder);
-		config.loadIndirectSectionBuilders(builder.getCBuilder());
-
-		return builder;
+		return new DBuilderConfig(configFile.getRootNode());
 	}
 }
