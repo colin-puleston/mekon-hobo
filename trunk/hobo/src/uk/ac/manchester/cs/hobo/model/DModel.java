@@ -301,12 +301,14 @@ public abstract class DModel {
 	 * - not relevant to the client).
 	 *
 	 * @return Created builder for model
+	 * @throws HAccessException If build is complete and hence builder
+	 * is no longer available
 	 */
 	protected DBuilder getBuilder() {
 
 		if (builder == null) {
 
-			throw new Error("DBuilder no longer available");
+			throw new HAccessException("DBuilder no longer available");
 		}
 
 		return builder;
