@@ -298,31 +298,26 @@ public class OSSectionBuilderTest extends OTest {
 
 	private void test_slots() {
 
-		CFrame job = getCFrame(JOB_CLASS);
-		CValue<?> tax = getNoStructureFrameSlotValueType(TAX_CLASS);
-		CValue<?> zeroTax = getNoStructureFrameSlotValueType(ZERO_TAX_CLASS);
-		CValue<?> travelClass = getNoStructureFrameSlotValueType(TRAVEL_CLASS_CLASS);
-
 		testSlot(
 			CITIZEN_CLASS,
 			TAX_PAID_PROPERTY,
 			CCardinality.SINGLETON,
-			tax);
+			getNoStructureFrameSlotValueType(TAX_CLASS));
 		testSlot(
 			UNEMPLOYED_CITIZEN_CLASS,
 			TAX_PAID_PROPERTY,
 			CCardinality.SINGLETON,
-			zeroTax);
+			getNoStructureFrameSlotValueType(ZERO_TAX_CLASS));
 		testSlot(
 			EMPLOYMENT_CLASS,
 			JOB_PROPERTY,
 			CCardinality.FREE,
-			job);
+			getCFrame(JOB_CLASS));
 		testSlot(
 			TRAIN_CLASS,
 			TRAVEL_CLASS_PROPERTY,
 			CCardinality.SINGLETON,
-			travelClass);
+			getNoStructureFrameSlotValueType(TRAVEL_CLASS_CLASS));
 		testSlot(
 			PERSONAL_CLASS,
 			AGE_PROPERTY,
@@ -332,8 +327,6 @@ public class OSSectionBuilderTest extends OTest {
 
 	private void test_slotValues() {
 
-		IValue unemploy = getNoStructureFrameSlotRootValue(UNEMPLOYMENT_BENEFIT_CLASS);
-
 		testSlotValues(
 			UNEMPLOYED_CITIZEN_CLASS,
 			TAX_PAID_PROPERTY,
@@ -341,7 +334,7 @@ public class OSSectionBuilderTest extends OTest {
 		testSlotValues(
 			UNEMPLOYED_CITIZEN_CLASS,
 			BENEFIT_RECIEVED_PROPERTY,
-			Collections.<IValue>singletonList(unemploy));
+			getNoStructureFrameSlotFixedValues(UNEMPLOYMENT_BENEFIT_CLASS));
 	}
 
 	private void buildModel() {
@@ -513,10 +506,15 @@ public class OSSectionBuilderTest extends OTest {
 		return metaFrameSlotsEnabled ? frame.getType() : frame;
 	}
 
-	private IValue getNoStructureFrameSlotRootValue(String frameName) {
+	private List<IValue> getNoStructureFrameSlotFixedValues(String frameName) {
 
-		CFrame frame = getCFrame(frameName);
+		List<IValue> values = new ArrayList<IValue>();
 
-		return metaFrameSlotsEnabled ? frame : frame.instantiate();
+		if (metaFrameSlotsEnabled) {
+
+			values.add(getCFrame(frameName));
+		}
+
+		return values;
 	}
 }
