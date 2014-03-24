@@ -170,7 +170,7 @@ public class DModelTest extends HoboTest {
 
 	private DModel createModel(boolean labelsFromDirectModel) {
 
-		DBuilder dBuilder = new DManager().createEmptyBuilder();
+		DBuilder dBuilder = DManager.createEmptyBuilder();
 
 		populateModelMap(dBuilder, labelsFromDirectModel);
 		dBuilder.addDClasses(getTestModelPackageName());
