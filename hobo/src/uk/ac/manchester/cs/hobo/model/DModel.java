@@ -51,8 +51,8 @@ public abstract class DModel {
 	private CModelLocal cModel = new CModelLocal(this);
 	private CAccessor cAccessor = cModel.getAccessor();
 
-	private DBuilder builder = new DBuilderImpl(cAccessor.createBuilder(), this);
 	private DBindings bindings = new DBindings();
+	private DInitialiser initialiser = new DInitialiser(cModel.createBuilder(), bindings);
 
 	/**
 	 * Provides the associated FM.
@@ -297,34 +297,47 @@ public abstract class DModel {
 	}
 
 	/**
-	 * Provides the builder for the model (used by the implementation
+	 * Creates the builder for the model (used by the implementation
 	 * - not relevant to the client).
 	 *
 	 * @return Created builder for model
-	 * @throws HAccessException If build is complete and hence builder
-	 * is no longer available
 	 */
-	protected DBuilder getBuilder() {
+	protected DBuilder createBuilder() {
 
-		if (builder == null) {
-
-			throw new HAccessException("DBuilder no longer available");
-		}
-
-		return builder;
+		return new DBuilderImpl(this, initialiser);
 	}
 
-	void initialise(Set<Class<? extends DObject>> dClasses) {
+	void initialise() {
 
-		new DBinder(this).createBindings(dClasses);
-		bindings.initialise(this);
-
-		builder = null;
+		initialiser.initialise(this);
+		initialiser = null;
 	}
 
 	boolean initialised() {
 
-		return builder == null;
+		return initialiser == null;
+	}
+
+	DInitialiser getInitialiser() {
+
+		if (initialiser == null) {
+
+			throw new Error(
+						"Cannot perform operation: "
+						+ "Build has completed");
+		}
+
+		return initialiser;
+	}
+
+	DBindings getBindings() {
+
+		return bindings;
+	}
+
+	IEditor getIEditor() {
+
+		return cAccessor.getIEditor();
 	}
 
 	void ensureMappedDObject(IFrame frame) {
@@ -333,26 +346,6 @@ public abstract class DModel {
 
 			instantiate(DObject.class, frame);
 		}
-	}
-
-	DBindings getBindings() {
-
-		return bindings;
-	}
-
-	CBuilder getCBuilder() {
-
-		return getBuilder().getCBuilder();
-	}
-
-	DModelMap getModelMap() {
-
-		return getBuilder().getModelMap();
-	}
-
-	IEditor getIEditor() {
-
-		return cAccessor.getIEditor();
 	}
 
 	ISlotValuesEditor getISlotValuesEditor(ISlot slot) {

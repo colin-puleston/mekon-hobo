@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.hobo.mechanism.*;
 
 /**
  * @author Colin Puleston
@@ -103,7 +104,7 @@ class FieldSlotInitialiser {
 		CProperty property = slotType.getProperty();
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
-		if (model.getModelMap().labelsFromDirectFields()) {
+		if (getModelMap().labelsFromDirectFields()) {
 
 			getPropertyEditor(property).resetLabel(slotLabel);
 		}
@@ -146,6 +147,11 @@ class FieldSlotInitialiser {
 
 	private CBuilder getCBuilder() {
 
-		return model.getCBuilder();
+		return model.getInitialiser().getCBuilder();
+	}
+
+	private DModelMap getModelMap() {
+
+		return model.getInitialiser().getModelMap();
 	}
 }

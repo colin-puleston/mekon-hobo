@@ -31,11 +31,8 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 class DModelLocal extends DModel {
 
-	protected DBuilder getBuilder() {
+	protected DBuilder createBuilder() {
 
-		return super.getBuilder();
-	}
-
-	DModelLocal() {
+		return super.createBuilder();
 	}
 }

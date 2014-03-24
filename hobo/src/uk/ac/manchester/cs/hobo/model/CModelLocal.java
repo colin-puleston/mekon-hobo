@@ -72,6 +72,11 @@ class CModelLocal extends CModel {
 		}
 	}
 
+	protected CBuilder createBuilder() {
+
+		return super.createBuilder();
+	}
+
 	protected CAccessor getAccessor() {
 
 		return super.getAccessor();
