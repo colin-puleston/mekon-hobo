@@ -85,9 +85,19 @@ class DBindings {
 		return map;
 	}
 
+	DBinding getOrNull(Class<?> dClass) {
+
+		return byClass.get(dClass);
+	}
+
 	DBinding getOrNull(CFrame frame) {
 
 		return byFrame.get(frame);
+	}
+
+	Collection<DBinding> getAll() {
+
+		return byClass.values();
 	}
 
 	boolean isBound(CFrame frame) {

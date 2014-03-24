@@ -36,37 +36,27 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 class DBinder {
 
 	private CBuilder cBuilder;
-	private DModel model;
 	private DModelMap modelMap;
+	private DBindings bindings;
 
-	private Set<Class<? extends DObject>> dClasses
-				= new HashSet<Class<? extends DObject>>();
-	private Map<Class<? extends DObject>, DBinding> bindings
-				= new HashMap<Class<? extends DObject>, DBinding>();
-
-	DBinder(CBuilder cBuilder, DModel model, DModelMap modelMap) {
+	DBinder(CBuilder cBuilder, DModelMap modelMap, DBindings bindings) {
 
 		this.cBuilder = cBuilder;
-		this.model = model;
 		this.modelMap = modelMap;
+		this.bindings = bindings;
 	}
 
-	void addDClass(Class<? extends DObject> dClass) {
+	void createBindings(Set<Class<? extends DObject>> dClasses) {
 
-		dClasses.add(dClass);
-	}
-
-	void createBindings() {
-
-		bindClasses();
+		bindClasses(dClasses);
 		updateFrameHierarchy();
 	}
 
-	private void bindClasses() {
+	private void bindClasses(Set<Class<? extends DObject>> dClasses) {
 
 		for (Class<? extends DObject> dClass : dClasses) {
 
-			bindings.put(dClass, bindClass(dClass));
+			bindClass(dClass);
 		}
 	}
 
@@ -93,7 +83,7 @@ class DBinder {
 
 		getFrameEditor(frame).setSource(source);
 
-		return model.addDClass(dClass, frame);
+		return bindings.add(dClass, frame);
 	}
 
 	private DBinding bindMappedClass(
@@ -101,7 +91,7 @@ class DBinder {
 						Class<? extends DObject> dClass) {
 
 		CFrame frame = getFrame(getFrameId(classMap, dClass));
-		DBinding binding = model.addDClass(dClass, frame);
+		DBinding binding = bindings.add(dClass, frame);
 		CFrameEditor frameEditor = getFrameEditor(frame);
 
 		if (modelMap.labelsFromDirectClasses()) {
@@ -125,7 +115,7 @@ class DBinder {
 
 	private void updateFrameHierarchy() {
 
-		for (DBinding binding : bindings.values()) {
+		for (DBinding binding : bindings.getAll()) {
 
 			checkAddSuperFrame(binding, binding.getDClass());
 		}
@@ -135,7 +125,7 @@ class DBinder {
 
 		for (Class<? extends DObject> rawParent : getRawParents(dClass)) {
 
-			DBinding superBinding = bindings.get(rawParent);
+			DBinding superBinding = bindings.getOrNull(rawParent);
 
 			if (superBinding != null) {
 
@@ -155,24 +145,24 @@ class DBinder {
 
 		if (rawSuper != null) {
 
-			checkAddDClass(parents, rawSuper);
+			checkAddParent(parents, rawSuper);
 		}
 
 		for (Class<?> iface : dClass.getInterfaces()) {
 
-			checkAddDClass(parents, iface);
+			checkAddParent(parents, iface);
 		}
 
 		return parents;
 	}
 
-	private void checkAddDClass(
-					Set<Class<? extends DObject>> dClasses,
+	private void checkAddParent(
+					Set<Class<? extends DObject>> parents,
 					Class<?> dClass) {
 
 		if (DObject.class.isAssignableFrom(dClass)) {
 
-			dClasses.add(dClass.asSubclass(DObject.class));
+			parents.add(dClass.asSubclass(DObject.class));
 		}
 	}
 

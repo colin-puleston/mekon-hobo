@@ -36,12 +36,12 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  */
 class DBuilderImpl implements DBuilder {
 
-	private CModel cModel;
 	private CBuilder cBuilder;
 
 	private DModel model;
 	private DModelMap modelMap = new DModelMap();
-	private DBinder binder;
+	private Set<Class<? extends DObject>> dClasses
+				= new HashSet<Class<? extends DObject>>();
 
 	private class DSectionBuilder implements CSectionBuilder {
 
@@ -52,8 +52,7 @@ class DBuilderImpl implements DBuilder {
 
 		public void build(CBuilder builder) {
 
-			binder.createBindings();
-			model.initialise(modelMap.labelsFromDirectFields());
+			model.initialise(modelMap, dClasses);
 		}
 	}
 
@@ -64,7 +63,7 @@ class DBuilderImpl implements DBuilder {
 
 	public void addDClass(Class<? extends DObject> dClass) {
 
-		binder.addDClass(dClass);
+		dClasses.add(dClass);
 	}
 
 	public void addDClasses(String basePackageName) {
@@ -93,13 +92,10 @@ class DBuilderImpl implements DBuilder {
 		return modelMap;
 	}
 
-	DBuilderImpl(CModel cModel, CBuilder cBuilder, DModel model) {
+	DBuilderImpl(CBuilder cBuilder, DModel model) {
 
-		this.cModel = cModel;
 		this.cBuilder = cBuilder;
 		this.model = model;
-
-		binder = new DBinder(cBuilder, model, modelMap);
 	}
 
 	private List<Class<? extends DObject>> loadDClasses(String basePackageName) {
