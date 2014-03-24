@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
@@ -38,6 +37,54 @@ import uk.ac.manchester.cs.mekon.config.*;
  * @author Colin Puleston
  */
 public class CManager {
+
+	/**
+	 * Creates model-builder to build model for which the
+	 * specification of the model section(s) must be provided via
+	 * the relevant methods.
+	 *
+	 * @return Resulting model-builder
+	 */
+	static public CBuilder createEmptyBuilder() {
+
+		return new CModelLocal().createBuilder();
+	}
+
+	/**
+	 * Creates model-builder to build model for which the
+	 * specification of the model section(s) will come from a
+	 * configuration file with the standard MEKON configuration
+	 * file-name located somewhere on the classpath.
+	 *
+	 * @return Resulting model-builder
+	 * @throws KConfigFileException if configuration file does not
+	 * exist or does not contain correctly specified configuration
+	 * information
+	 */
+	static public CBuilder createBuilder() {
+
+		return createBuilder(new KConfigFile());
+	}
+
+	/**
+	 * Creates model-builder to build model for which the
+	 * specification of the model section(s) will come from the
+	 * specified configuration file.
+	 *
+	 * @param configFile Relevant configuration file
+	 * @return Resulting model-builder
+	 * @throws KConfigFileException if configuration file does not
+	 * exist or does not contain correctly specified configuration
+	 * information
+	 */
+	static public CBuilder createBuilder(KConfigFile configFile) {
+
+		CBuilder builder = createEmptyBuilder();
+
+		configureBuilder(builder, configFile);
+
+		return builder;
+	}
 
 	/**
 	 * Configures previously created model-builder to build model
@@ -58,61 +105,5 @@ public class CManager {
 	static private CBuilderConfig createConfig(KConfigFile configFile) {
 
 		return new CBuilderConfig(configFile.getRootNode());
-	}
-
-	private class CModelLocal extends CModel {
-
-		CBuilder createBuilder() {
-
-			return getAccessor().createBuilder();
-		}
-	}
-
-	/**
-	 * Creates model-builder to build model for which the
-	 * specification of the model section(s) must be provided via
-	 * the relevant methods.
-	 *
-	 * @return Resulting model-builder
-	 */
-	public CBuilder createEmptyBuilder() {
-
-		return new CModelLocal().createBuilder();
-	}
-
-	/**
-	 * Creates model-builder to build model for which the
-	 * specification of the model section(s) will come from a
-	 * configuration file with the standard MEKON configuration
-	 * file-name located somewhere on the classpath.
-	 *
-	 * @return Resulting model-builder
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
-	 */
-	public CBuilder createBuilder() {
-
-		return createBuilder(new KConfigFile());
-	}
-
-	/**
-	 * Creates model-builder to build model for which the
-	 * specification of the model section(s) will come from the
-	 * specified configuration file.
-	 *
-	 * @param configFile Relevant configuration file
-	 * @return Resulting model-builder
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
-	 */
-	public CBuilder createBuilder(KConfigFile configFile) {
-
-		CBuilder builder = createEmptyBuilder();
-
-		configureBuilder(builder, configFile);
-
-		return builder;
 	}
 }
