@@ -281,6 +281,7 @@ public class OSSectionBuilderTest extends OTest {
 		test_slotValues();
 	}
 
+	@Test
 	public void test_slotValues_metaFrameSlotsDisabled() {
 
 		buildModel();
