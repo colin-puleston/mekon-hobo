@@ -44,14 +44,12 @@ public class DManager {
 
 	private class DModelLocal extends DModel {
 
-		private DAccessor accessor = new DAccessor();
+		protected DBuilder createBuilder() {
 
-		DModelLocal() {
+			return super.createBuilder();
 		}
 
-		DBuilder createBuilder() {
-
-			return new DAccessor().createBuilder();
+		DModelLocal() {
 		}
 	}
 
