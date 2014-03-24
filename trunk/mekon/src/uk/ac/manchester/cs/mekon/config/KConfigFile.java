@@ -85,23 +85,20 @@ public class KConfigFile {
 
 	/**
 	 * Constructs object for accessing the configuration file with
-	 * the standard MEKON configuration file-name, located somewhere
-	 * on the classpath.
+	 * the specified file-name, located somewhere on the classpath.
 	 *
-	 * @param filePath Path of relevant configuration file
+	 * @param fileName Name of relevant configuration file
 	 * @throws KConfigFileException if configuration file does not
 	 * exist or does not contain correctly specified configuration
 	 * information
 	 */
-	public KConfigFile(String filePath) {
+	public KConfigFile(String fileName) {
 
-		this(getFile(filePath));
+		this(getFile(fileName));
 	}
 
 	/**
-	 * Constructs object for accessing the configuration file with
-	 * the standard MEKON configuration file-name, located somewhere
-	 * on the classpath.
+	 * Constructs object for accessing the configuration file.
 	 *
 	 * @param file Relevant configuration file
 	 * @throws KConfigFileException if configuration file does not

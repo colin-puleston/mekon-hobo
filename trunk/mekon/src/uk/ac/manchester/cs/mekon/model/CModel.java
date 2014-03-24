@@ -80,17 +80,17 @@ public abstract class CModel implements CAnnotatable {
 	 */
 	public class CAccessor {
 
-		public CBuilder createBuilder(boolean completeInitialisation) {
-
-			return new CBuilderImpl(CModel.this, completeInitialisation);
-		}
-
 		public void setAdjuster(CAdjuster adjuster) {
 
 			CModel.this.adjuster = adjuster;
 		}
 
-		public void completeInitialisation() {
+		public CBuilder createBuilder(boolean delayCompletion) {
+
+			return new CBuilderImpl(CModel.this, delayCompletion);
+		}
+
+		public void completeModelInitialisation() {
 
 			CModel.this.completeInitialisation();
 		}
