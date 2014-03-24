@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.hobo.mechanism;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.hobo.model.*;
 
 /**
  * Point-of-entry for applications using a direct HOBO model,
@@ -42,17 +41,6 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public class DManager {
 
-	private class DModelLocal extends DModel {
-
-		protected DBuilder getBuilder() {
-
-			return super.getBuilder();
-		}
-
-		DModelLocal() {
-		}
-	}
-
 	/**
 	 * Creates model-builder to build model for which the
 	 * specification of both the indirect model section(s) and the
@@ -61,7 +49,7 @@ public class DManager {
 	 *
 	 * @return Resulting model-builder
 	 */
-	public DBuilder createEmptyBuilder() {
+	static public DBuilder createEmptyBuilder() {
 
 		return new DModelLocal().getBuilder();
 	}
@@ -78,7 +66,7 @@ public class DManager {
 	 * exist or does not contain correctly specified configuration
 	 * information
 	 */
-	public DBuilder createBuilder() {
+	static public DBuilder createBuilder() {
 
 		return createBuilder(new KConfigFile());
 	}
@@ -95,7 +83,7 @@ public class DManager {
 	 * exist or does not contain correctly specified configuration
 	 * information
 	 */
-	public DBuilder createBuilder(KConfigFile configFile) {
+	static public DBuilder createBuilder(KConfigFile configFile) {
 
 		DBuilder dBuilder = createEmptyBuilder();
 		CBuilder cBuilder = dBuilder.getCBuilder();
@@ -106,7 +94,7 @@ public class DManager {
 		return dBuilder;
 	}
 
-	private DBuilderConfig createConfig(KConfigFile configFile) {
+	static private DBuilderConfig createConfig(KConfigFile configFile) {
 
 		return new DBuilderConfig(configFile.getRootNode());
 	}
