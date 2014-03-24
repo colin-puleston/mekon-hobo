@@ -56,39 +56,28 @@ public abstract class DModel {
 	private IFrameMapper iFrameMapper = new IFrameMapper();
 	private boolean labelsFromDirectFields = true;
 
-	/**
-	 * Part of the HOBO mechanism - not relevant to the client.
-	 */
-	public class DAccessor {
-
-		public DBuilder createBuilder() {
-
-			return new DBuilderImpl(cModel, getCBuilder(), DModel.this);
-		}
-	}
-
 	private class CModelLocal extends CModel {
 
-		final CAccessor accessor = new CAccessor();
+		final CAccessor accessor = getAccessor();
 
-		private class LocalAdjuster extends CAdjuster {
+		private class CAdjusterLocal implements CAdjuster {
 
-			protected void onFrameAdded(CFrame frame) {
+			public void onFrameAdded(CFrame frame) {
 
 				frame.addListener(iFrameMapper);
 			}
 
-			protected void onFrameRemoved(CFrame frame) {
+			public void onFrameRemoved(CFrame frame) {
 
 				checkRemovableFrame(frame);
 			}
 
-			protected void onSlotRemoveded(CSlot slot) {
+			public void onSlotRemoved(CSlot slot) {
 
 				checkRemovableSlot(slot);
 			}
 
-			protected boolean mappedToNonInstantiableObject(CFrame frame) {
+			public boolean mappedToNonInstantiableObject(CFrame frame) {
 
 				return !instantiableDClassFor(frame);
 			}
@@ -96,7 +85,7 @@ public abstract class DModel {
 
 		CModelLocal() {
 
-			accessor.setAdjuster(new LocalAdjuster());
+			accessor.setAdjuster(new CAdjusterLocal());
 		}
 	}
 
@@ -349,9 +338,21 @@ public abstract class DModel {
 	}
 
 	/**
-	 * Part of the HOBO mechanism - not relevant to the client.
+	 * Constructor (used by the implementation - not relevant to the
+	 * client).
 	 */
 	protected DModel() {
+	}
+
+	/**
+	 * Creates the builder for the model (used by the implementation
+	 * - not relevant to the client).
+	 *
+	 * @return Created builder for model
+	 */
+	protected DBuilder createBuilder() {
+
+		return new DBuilderImpl(cModel, getCBuilder(), this);
 	}
 
 	void initialise(boolean labelsFromDirectFields) {
