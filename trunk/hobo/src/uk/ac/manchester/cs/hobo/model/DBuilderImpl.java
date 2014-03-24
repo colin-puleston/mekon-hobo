@@ -53,6 +53,7 @@ class DBuilderImpl implements DBuilder {
 		public void build(CBuilder builder) {
 
 			binder.createBindings();
+			model.initialise(modelMap.labelsFromDirectFields());
 		}
 	}
 
@@ -78,8 +79,6 @@ class DBuilderImpl implements DBuilder {
 
 		cBuilder.addSectionBuilder(new DSectionBuilder());
 		cBuilder.build();
-
-		model.initialise(modelMap.labelsFromDirectFields());
 
 		return model;
 	}
