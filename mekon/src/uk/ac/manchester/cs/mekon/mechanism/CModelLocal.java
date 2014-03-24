@@ -31,8 +31,8 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CModelLocal extends CModel {
 
-	CBuilder createBuilder() {
+	protected CBuilder createBuilder() {
 
-		return getAccessor().createBuilder();
+		return super.createBuilder();
 	}
 }

@@ -142,6 +142,17 @@ public abstract class CModel implements CAnnotatable {
 	}
 
 	/**
+	 * Creates the builder for the model (used by the implementation
+	 * - not relevant to the client).
+	 *
+	 * @return Created builder for model
+	 */
+	protected CBuilder createBuilder() {
+
+		return new CBuilderImpl(this);
+	}
+
+	/**
 	 * Retrieves the accessor object for the model (used by the
 	 * implementation - not relevant to the model client).
 	 *

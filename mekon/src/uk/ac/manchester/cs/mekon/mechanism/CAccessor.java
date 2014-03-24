@@ -27,20 +27,15 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Provides privileged access of the MEKON model, both for
- * the MEKON mechanisms and for extensions of the MEKON system.
+ * Provides privileged access to the MEKON model for extensions
+ * of the MEKON system.
  *
  * @author Colin Puleston
  */
 public interface CAccessor {
 
 	/**
-	 * Creates a builder for the model.
-	 */
-	public CBuilder createBuilder();
-
-	/**
-	 * Sets an customiser object for the model.
+	 * Sets a customiser object for the model.
 	 *
 	 * @param customiser Customiser to set
 	 */

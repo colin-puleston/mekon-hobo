@@ -33,11 +33,6 @@ class CAccessorImpl implements CAccessor {
 
 	private CModel model;
 
-	public CBuilder createBuilder() {
-
-		return new CBuilderImpl(model);
-	}
-
 	public void setCustomiser(CCustomiser customiser) {
 
 		model.setCustomiser(customiser);
