@@ -22,46 +22,26 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
+package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
- * Allows extensions of the MEKON system to intervene in, and
- * modify, the default MEKON behaviour.
- *
  * @author Colin Puleston
  */
-public interface CAdjuster {
+class CCustomiserDefault implements CCustomiser {
 
-	/**
-	 * Method invoked when a frame is added to the model.
-	 *
-	 * @param frame Added frame
-	 */
-	public void onFrameAdded(CFrame frame);
+	public void onFrameAdded(CFrame frame) {
+	}
 
-	/**
-	 * Method invoked when a frame is removed to from model.
-	 *
-	 * @param frame Removed frame
-	 */
-	public void onFrameRemoved(CFrame frame);
+	public void onFrameRemoved(CFrame frame) {
+	}
 
-	/**
-	 * Method invoked when a slot is removed from a model-frame.
-	 *
-	 * @param slot Removed slot
-	 */
-	public void onSlotRemoved(CSlot slot);
+	public void onSlotRemoved(CSlot slot) {
+	}
 
-	/**
-	 * Checks whether a frame is mapped to some object that cannot
-	 * be instantiated, which will mean that the frame itself
-	 * cannot be instantiated.
-	 *
-	 * @param frame Frame to check
-	 * @return True if frame is mapped to a non-instantiable object
-	 */
-	public boolean mappedToNonInstantiableObject(CFrame frame);
+	public boolean mappedToNonInstantiableObject(CFrame frame) {
+
+		return false;
+	}
 }

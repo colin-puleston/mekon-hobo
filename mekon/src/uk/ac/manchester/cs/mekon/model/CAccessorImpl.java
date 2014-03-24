@@ -38,9 +38,9 @@ class CAccessorImpl implements CAccessor {
 		return new CBuilderImpl(model);
 	}
 
-	public void setAdjuster(CAdjuster adjuster) {
+	public void setCustomiser(CCustomiser customiser) {
 
-		model.setAdjuster(adjuster);
+		model.setCustomiser(customiser);
 	}
 
 	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {

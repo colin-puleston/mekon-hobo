@@ -40,11 +40,11 @@ public interface CAccessor {
 	public CBuilder createBuilder();
 
 	/**
-	 * Sets an adjuster object for the model.
+	 * Sets an customiser object for the model.
 	 *
-	 * @param adjuster Adjuster to set
+	 * @param customiser Customiser to set
 	 */
-	public void setAdjuster(CAdjuster adjuster);
+	public void setCustomiser(CCustomiser customiser);
 
 	/**
 	 * Maps an object to an instance-level frame.
