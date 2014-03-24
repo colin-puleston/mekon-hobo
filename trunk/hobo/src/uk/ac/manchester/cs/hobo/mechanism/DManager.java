@@ -51,7 +51,7 @@ public class DManager {
 	 */
 	static public DBuilder createEmptyBuilder() {
 
-		return new DModelLocal().getBuilder();
+		return new DModelLocal().createBuilder();
 	}
 
 	/**

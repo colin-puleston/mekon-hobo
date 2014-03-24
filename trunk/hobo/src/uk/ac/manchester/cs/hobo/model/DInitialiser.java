@@ -33,26 +33,44 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class DBinder {
+class DInitialiser {
 
 	private CBuilder cBuilder;
-	private DModelMap modelMap;
 	private DBindings bindings;
+	private DModelMap modelMap = new DModelMap();
 
-	DBinder(DModel model) {
+	private Set<Class<? extends DObject>> dClasses
+				= new HashSet<Class<? extends DObject>>();
 
-		cBuilder = model.getCBuilder();
-		modelMap = model.getModelMap();
-		bindings = model.getBindings();
+	DInitialiser(CBuilder cBuilder, DBindings bindings) {
+
+		this.cBuilder = cBuilder;
+		this.bindings = bindings;
 	}
 
-	void createBindings(Set<Class<? extends DObject>> dClasses) {
+	void addDClass(Class<? extends DObject> dClass) {
 
-		bindClasses(dClasses);
+		dClasses.add(dClass);
+	}
+
+	CBuilder getCBuilder() {
+
+		return cBuilder;
+	}
+
+	DModelMap getModelMap() {
+
+		return modelMap;
+	}
+
+	void initialise(DModel model) {
+
+		bindClasses();
 		updateFrameHierarchy();
+		bindings.initialise(model);
 	}
 
-	private void bindClasses(Set<Class<? extends DObject>> dClasses) {
+	private void bindClasses() {
 
 		for (Class<? extends DObject> dClass : dClasses) {
 
