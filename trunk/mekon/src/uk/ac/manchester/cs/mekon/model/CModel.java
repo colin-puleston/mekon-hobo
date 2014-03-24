@@ -40,7 +40,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 public abstract class CModel implements CAnnotatable {
 
 	private CAccessor accessor = new CAccessorImpl(this);
-	private CAdjuster adjuster = new CAdjusterDefault();
+	private CCustomiser customiser = new CCustomiserDefault();
 
 	private CFrame rootFrame;
 
@@ -152,9 +152,9 @@ public abstract class CModel implements CAnnotatable {
 		return accessor;
 	}
 
-	void setAdjuster(CAdjuster adjuster) {
+	void setCustomiser(CCustomiser customiser) {
 
-		this.adjuster = adjuster;
+		this.customiser = customiser;
 	}
 
 	void addInitialisationListener(InitialisationListener listener) {
@@ -172,7 +172,7 @@ public abstract class CModel implements CAnnotatable {
 		CModelFrame frame = new CModelFrame(this, identity, hidden, iReasoner);
 
 		frames.add(frame);
-		adjuster.onFrameAdded(frame);
+		customiser.onFrameAdded(frame);
 
 		return frame;
 	}
@@ -182,7 +182,7 @@ public abstract class CModel implements CAnnotatable {
 		frames.remove(frame);
 
 		removeFrameTraces(frame);
-		adjuster.onFrameRemoved(frame);
+		customiser.onFrameRemoved(frame);
 	}
 
 	CProperty addProperty(CIdentity identity) {
@@ -196,7 +196,7 @@ public abstract class CModel implements CAnnotatable {
 
 	void registerRemovedSlot(CSlot slot) {
 
-		adjuster.onSlotRemoved(slot);
+		customiser.onSlotRemoved(slot);
 	}
 
 	void startInitialisation() {
@@ -228,7 +228,7 @@ public abstract class CModel implements CAnnotatable {
 
 	boolean mappedToNonInstantiableObject(CFrame frame) {
 
-		return adjuster.mappedToNonInstantiableObject(frame);
+		return customiser.mappedToNonInstantiableObject(frame);
 	}
 
 	IEditor getIEditor() {
