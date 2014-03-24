@@ -352,25 +352,24 @@ public abstract class DModel {
 	 */
 	protected DBuilder createBuilder() {
 
-		return new DBuilderImpl(cModel, getCBuilder(), this);
+		return new DBuilderImpl(getCBuilder(), this);
 	}
 
-	void initialise(boolean labelsFromDirectFields) {
+	void initialise(
+			DModelMap modelMap,
+			Set<Class<? extends DObject>> dClasses) {
 
-		this.labelsFromDirectFields = labelsFromDirectFields;
+		labelsFromDirectFields = modelMap.labelsFromDirectFields();
 
+		createBindings(modelMap, dClasses);
 		bindings.initialise(this);
+
 		cBuilder = null;
 	}
 
 	boolean initialised() {
 
 		return cBuilder == null;
-	}
-
-	DBinding addDClass(Class<? extends DObject> dClass, CFrame frame) {
-
-		return bindings.add(dClass, frame);
 	}
 
 	DBindings getBindings() {
@@ -401,6 +400,13 @@ public abstract class DModel {
 	boolean labelsFromDirectFields() {
 
 		return labelsFromDirectFields;
+	}
+
+	private void createBindings(
+					DModelMap modelMap,
+					Set<Class<? extends DObject>> dClasses) {
+
+		new DBinder(cBuilder, modelMap, bindings).createBindings(dClasses);
 	}
 
 	private boolean instantiableDClassFor(CFrame frame) {
