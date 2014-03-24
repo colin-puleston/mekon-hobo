@@ -39,11 +39,11 @@ class DBinder {
 	private DModelMap modelMap;
 	private DBindings bindings;
 
-	DBinder(CBuilder cBuilder, DModelMap modelMap, DBindings bindings) {
+	DBinder(DModel model) {
 
-		this.cBuilder = cBuilder;
-		this.modelMap = modelMap;
-		this.bindings = bindings;
+		cBuilder = model.getCBuilder();
+		modelMap = model.getModelMap();
+		bindings = model.getBindings();
 	}
 
 	void createBindings(Set<Class<? extends DObject>> dClasses) {
