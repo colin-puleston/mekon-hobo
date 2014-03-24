@@ -36,7 +36,7 @@ class CModelLocal extends CModel {
 	private DModel dModel;
 	private IFrameMapper iFrameMapper = new IFrameMapper();
 
-	private class CAdjusterLocal implements CAdjuster {
+	private class CCustomiserLocal implements CCustomiser {
 
 		public void onFrameAdded(CFrame frame) {
 
@@ -81,7 +81,7 @@ class CModelLocal extends CModel {
 
 		this.dModel = dModel;
 
-		getAccessor().setAdjuster(new CAdjusterLocal());
+		getAccessor().setCustomiser(new CCustomiserLocal());
 	}
 
 	private void checkRemovableFrame(CFrame frame) {
