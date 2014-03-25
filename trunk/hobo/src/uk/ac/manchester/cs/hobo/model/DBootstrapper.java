@@ -42,8 +42,7 @@ public class DBootstrapper {
 	private DBuilder builder;
 
 	/**
-	 * Constructor (used by the implementation - not relevant to the
-	 * model client).
+	 * Constructor.
 	 */
 	protected DBootstrapper() {
 
