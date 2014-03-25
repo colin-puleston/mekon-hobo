@@ -22,17 +22,33 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism;
+package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-class DModelLocal extends DModel {
+class CBootstrapperLocal extends CBootstrapper {
 
-	protected DBuilder createBuilder() {
+	protected CModel getModel() {
 
-		return super.createBuilder();
+		return super.getModel();
+	}
+
+	protected CBuilder getBuilder() {
+
+		return super.getBuilder();
+	}
+
+	protected CAccessor getAccessor() {
+
+		return super.getAccessor();
+	}
+
+	CBootstrapperLocal(DModel dModel) {
+
+		super(new CCustomiserLocal(dModel));
 	}
 }

@@ -46,13 +46,13 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  *
  * @author Colin Puleston
  */
-public abstract class DModel {
+public class DModel {
 
-	private CModelLocal cModel = new CModelLocal(this);
-	private CAccessor cAccessor = cModel.getAccessor();
+	private CModel cModel;
+	private CAccessor cAccessor;
 
+	private DInitialiser initialiser;
 	private DBindings bindings = new DBindings();
-	private DInitialiser initialiser = new DInitialiser(cModel.createBuilder(), bindings);
 
 	/**
 	 * Provides the associated FM.
@@ -289,22 +289,14 @@ public abstract class DModel {
 		return dObject;
 	}
 
-	/**
-	 * Constructor (used by the implementation - not relevant to the
-	 * client).
-	 */
-	protected DModel() {
-	}
+	DModel() {
 
-	/**
-	 * Creates the builder for the model (used by the implementation
-	 * - not relevant to the client).
-	 *
-	 * @return Created builder for model
-	 */
-	protected DBuilder createBuilder() {
+		CBootstrapperLocal cBooter = new CBootstrapperLocal(this);
 
-		return new DBuilderImpl(this, initialiser);
+		cModel = cBooter.getModel();
+		cAccessor = cBooter.getAccessor();
+
+		initialiser = new DInitialiser(cBooter.getBuilder(), bindings);
 	}
 
 	void initialise() {
