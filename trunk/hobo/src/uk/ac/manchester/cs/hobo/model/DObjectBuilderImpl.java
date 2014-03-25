@@ -40,11 +40,8 @@ class DObjectBuilderImpl implements DObjectBuilder {
 	private IFrame frame;
 	private DEditor dEditor = new DEditorImpl();
 
-	private List<DObjectInitialiser> initialisers
-				= new ArrayList<DObjectInitialiser>();
-
-	private Map<DField<?>, FieldAttributes> fieldsToAttributes
-						= new HashMap<DField<?>, FieldAttributes>();
+	private List<DObjectInitialiser> initialisers = new ArrayList<DObjectInitialiser>();
+	private Map<DField<?>, FieldSlot> fieldSlots = new HashMap<DField<?>, FieldSlot>();
 
 	private class DEditorImpl implements DEditor {
 
@@ -133,22 +130,22 @@ class DObjectBuilderImpl implements DObjectBuilder {
 					DField<?> field,
 					Class<? extends DObject> containerClass) {
 
-		getFieldAttributes(field).setContainerClass(containerClass);
+		getFieldSlot(field).setContainerClass(containerClass);
 	}
 
 	public void setFieldName(DField<?> field, String fieldName) {
 
-		getFieldAttributes(field).setFieldName(fieldName);
+		getFieldSlot(field).setFieldName(fieldName);
 	}
 
 	public void setSlotLabel(DField<?> field, String slotLabel) {
 
-		getFieldAttributes(field).setSlotLabel(slotLabel);
+		getFieldSlot(field).setSlotLabel(slotLabel);
 	}
 
 	public void setEditable(DField<?> field, boolean editable) {
 
-		getFieldAttributes(field).setEditable(editable);
+		getFieldSlot(field).setEditable(editable);
 	}
 
 	public void setUniqueTypes(DArray<?> array, boolean uniqueTypes) {
@@ -271,16 +268,16 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	private <F extends DField<?>>F addField(F field) {
 
-		fieldsToAttributes.put(field, new FieldAttributes());
+		fieldSlots.put(field, new FieldSlot(model, field));
 
 		return field;
 	}
 
 	private void configureFields(DObject containerObj) {
 
-		for (DField<?> field : fieldsToAttributes.keySet()) {
+		for (DField<?> field : fieldSlots.keySet()) {
 
-			field.setSlot(resolveFieldSlot(containerObj, field));
+			field.setSlot(getFieldSlot(field).resolveSlot(containerObj));
 		}
 	}
 
@@ -292,30 +289,18 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		}
 	}
 
-	private ISlot resolveFieldSlot(DObject containerObj, DField<?> field) {
+	private FieldSlot getFieldSlot(DField<?> field) {
 
-		return createFieldSlotResolver(containerObj, field).resolveSlot();
-	}
+		FieldSlot fieldSlot = fieldSlots.get(field);
 
-	private FieldSlotResolver createFieldSlotResolver(DObject containerObj, DField<?> field) {
-
-		FieldAttributes attrs = getFieldAttributes(field);
-
-		return new FieldSlotResolver(model, containerObj, field, attrs);
-	}
-
-	private FieldAttributes getFieldAttributes(DField<?> field) {
-
-		FieldAttributes attributes = fieldsToAttributes.get(field);
-
-		if (attributes == null) {
+		if (fieldSlot == null) {
 
 			throw new HAccessException(
 						"Specified field has not "
 						+ "been constructed by this class");
 		}
 
-		return attributes;
+		return fieldSlot;
 	}
 
 	private CFrame getCFrame(Class<? extends DObject> dClass) {

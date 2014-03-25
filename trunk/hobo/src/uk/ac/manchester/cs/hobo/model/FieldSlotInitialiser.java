@@ -43,25 +43,22 @@ class FieldSlotInitialiser {
 	private boolean editable;
 	private boolean boundField;
 
-	FieldSlotInitialiser(
-		DModel model,
-		DBinding binding,
-		IFrame frame,
-		DField<?> field,
-		String fieldName,
-		String slotLabel,
-		boolean editable) {
+	FieldSlotInitialiser(DModel model, IFrame frame, FieldSlot fieldSlot) {
 
 		this.model = model;
 		this.frame = frame;
-		this.slotLabel = slotLabel;
-		this.editable = editable;
+
+		DField<?> field = fieldSlot.getField();
+		String fieldName = fieldSlot.getFieldName();
+		DBinding binding = fieldSlot.getBinding();
 
 		frameType = binding.getFrame();
 		slotId = binding.getSlotId(fieldName);
-		boundField = binding.isBoundField(fieldName);
+		slotLabel = fieldSlot.getSlotLabel();
 		cardinality = field.getCardinality();
 		valueType = field.getSlotValueType();
+		editable = fieldSlot.editable();
+		boundField = binding.isBoundField(fieldName);
 	}
 
 	ISlot initialiseSlot() {

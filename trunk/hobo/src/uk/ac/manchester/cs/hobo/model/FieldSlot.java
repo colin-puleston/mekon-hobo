@@ -33,20 +33,26 @@ import uk.ac.manchester.cs.hobo.*;
 /**
  * @author Colin Puleston
  */
-class FieldSlotResolver {
+class FieldSlot {
 
 	private DModel model;
-	private DObject containerObj;
 	private DField<?> field;
 
-	private Class<? extends DObject> containerClass;
-	private String fieldName;
-	private String slotLabel;
-	private Boolean editable;
+	private Class<? extends DObject> containerClass = null;
+	private String fieldName = null;
+	private String slotLabel = null;
+	private Boolean editable = null;
 
-	private class Initialiser {
+	private class AttributeResolver {
 
-		void initialise() {
+		private DObject containerObj;
+
+		AttributeResolver(DObject containerObj) {
+
+			this.containerObj = containerObj;
+		}
+
+		void resolve() {
 
 			if (fieldName == null || editable == null) {
 
@@ -67,13 +73,18 @@ class FieldSlotResolver {
 
 		private void checkClassVariables() {
 
-			for (Field var : containerObj.getClass().getFields()) {
+			for (Field variable : containerObj.getClass().getFields()) {
 
-				if (new ClassVariableBasedInitialiser(var).checkInitialise()) {
+				if (checkClassVariable(variable)) {
 
 					break;
 				}
 			}
+		}
+
+		private boolean checkClassVariable(Field variable) {
+
+			return new ClassVariableAttributeResolver(containerObj, variable).check();
 		}
 
 		private void checkInitialised() {
@@ -95,16 +106,18 @@ class FieldSlotResolver {
 		}
 	}
 
-	private class ClassVariableBasedInitialiser {
+	private class ClassVariableAttributeResolver {
 
+		private DObject containerObj;
 		private Field variable;
 
-		ClassVariableBasedInitialiser(Field variable) {
+		ClassVariableAttributeResolver(DObject containerObj, Field variable) {
 
+			this.containerObj = containerObj;
 			this.variable = variable;
 		}
 
-		boolean checkInitialise() {
+		boolean check() {
 
 			return checkFieldVariable() || checkViewerVariable();
 		}
@@ -127,7 +140,7 @@ class FieldSlotResolver {
 
 				if (containerClass == null) {
 
-					containerClass = variable.getDeclaringClass().asSubclass(DObject.class);
+					containerClass = getDeclaringClass();
 				}
 
 				if (fieldName == null) {
@@ -171,6 +184,11 @@ class FieldSlotResolver {
 			}
 		}
 
+		private Class<? extends DObject> getDeclaringClass() {
+
+			return variable.getDeclaringClass().asSubclass(DObject.class);
+		}
+
 		private boolean isPublicFinalInstanceVariable() {
 
 			int mods = variable.getModifiers();
@@ -181,54 +199,82 @@ class FieldSlotResolver {
 		}
 	}
 
-	FieldSlotResolver(
-		DModel model,
-		DObject containerObj,
-		DField<?> field,
-		FieldAttributes attributes) {
+	FieldSlot(DModel model, DField<?> field) {
 
 		this.model = model;
-		this.containerObj = containerObj;
 		this.field = field;
-
-		containerClass = attributes.getContainerClass();
-		fieldName = attributes.getFieldName();
-		slotLabel = attributes.getSlotLabel();
-		editable = attributes.editable();
-
-		new Initialiser().initialise();
 	}
 
-	ISlot resolveSlot() {
+	void setContainerClass(Class<? extends DObject> containerClass) {
 
-		DBinding binding = model.getBindings().get(containerClass);
-
-		return model.initialised() ? retrieveSlot(binding) : initialiseSlot(binding);
+		this.containerClass = containerClass;
 	}
 
-	private ISlot retrieveSlot(DBinding binding) {
+	void setFieldName(String fieldName) {
 
-		String id = binding.getSlotId(fieldName);
+		this.fieldName = fieldName;
+	}
+
+	void setSlotLabel(String slotLabel) {
+
+		this.slotLabel = slotLabel;
+	}
+
+	void setEditable(boolean editable) {
+
+		this.editable = editable;
+	}
+
+	DField<?> getField() {
+
+		return field;
+	}
+
+	String getFieldName() {
+
+		return fieldName;
+	}
+
+	String getSlotLabel() {
+
+		return slotLabel;
+	}
+
+	Boolean editable() {
+
+		return editable;
+	}
+
+	DBinding getBinding() {
+
+		return model.getBindings().get(containerClass);
+	}
+
+	ISlot resolveSlot(DObject containerObj) {
+
+		resolveAttributes(containerObj);
+
+		return model.initialised()
+					? retrieveSlot(containerObj)
+					: initialiseSlot(containerObj);
+	}
+
+	private void resolveAttributes(DObject containerObj) {
+
+		new AttributeResolver(containerObj).resolve();
+	}
+
+	private ISlot retrieveSlot(DObject containerObj) {
+
+		String id = getBinding().getSlotId(fieldName);
 
 		return containerObj.getFrame().getSlots().get(id);
 	}
 
-	private ISlot initialiseSlot(DBinding binding) {
-
-		return createSlotInitialiser(binding).initialiseSlot();
-	}
-
-	private FieldSlotInitialiser createSlotInitialiser(DBinding binding) {
+	private ISlot initialiseSlot(DObject containerObj) {
 
 		IFrame frame = containerObj.getFrame();
 
-		return new FieldSlotInitialiser(
-						model,
-						binding,
-						frame,
-						field,
-						fieldName,
-						slotLabel,
-						editable);
+		return new FieldSlotInitialiser(model, frame, this).initialiseSlot();
 	}
 }
