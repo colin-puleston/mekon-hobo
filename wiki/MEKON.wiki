@@ -2,7 +2,7 @@
 
 = MEKON =
 
-MEKON is a framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms* are accessed via a generic in-memory *frames model (FM)* and specifically-created instantiations of that model.
+MEKON is a framework for the creation of ontology-driven applications, within which a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms*, are accessed via a generic in-memory *frames model (FM)*, and automatically mutating instantiations of that model.
 
 The [HOBO] framework is built on top of MEKON.
 
