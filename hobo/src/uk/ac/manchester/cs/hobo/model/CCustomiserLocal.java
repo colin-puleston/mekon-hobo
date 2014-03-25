@@ -31,33 +31,10 @@ import uk.ac.manchester.cs.hobo.*;
 /**
  * @author Colin Puleston
  */
-class CModelLocal extends CModel {
+class CCustomiserLocal implements CCustomiser {
 
 	private DModel dModel;
 	private IFrameMapper iFrameMapper = new IFrameMapper();
-
-	private class CCustomiserLocal implements CCustomiser {
-
-		public void onFrameAdded(CFrame frame) {
-
-			frame.addListener(iFrameMapper);
-		}
-
-		public void onFrameRemoved(CFrame frame) {
-
-			checkRemovableFrame(frame);
-		}
-
-		public void onSlotRemoved(CSlot slot) {
-
-			checkRemovableSlot(slot);
-		}
-
-		public boolean mappedToNonInstantiableObject(CFrame frame) {
-
-			return !instantiableDClassFor(frame);
-		}
-	}
 
 	private class IFrameMapper implements CFrameListener {
 
@@ -72,21 +49,29 @@ class CModelLocal extends CModel {
 		}
 	}
 
-	protected CBuilder createBuilder() {
+	public void onFrameAdded(CFrame frame) {
 
-		return super.createBuilder();
+		frame.addListener(iFrameMapper);
 	}
 
-	protected CAccessor getAccessor() {
+	public void onFrameRemoved(CFrame frame) {
 
-		return super.getAccessor();
+		checkRemovableFrame(frame);
 	}
 
-	CModelLocal(DModel dModel) {
+	public void onSlotRemoved(CSlot slot) {
+
+		checkRemovableSlot(slot);
+	}
+
+	public boolean mappedToNonInstantiableObject(CFrame frame) {
+
+		return !instantiableDClassFor(frame);
+	}
+
+	CCustomiserLocal(DModel dModel) {
 
 		this.dModel = dModel;
-
-		getAccessor().setCustomiser(new CCustomiserLocal());
 	}
 
 	private void checkRemovableFrame(CFrame frame) {

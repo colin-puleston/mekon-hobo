@@ -37,7 +37,6 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 class DBuilderImpl implements DBuilder {
 
 	private DModel model;
-	private DInitialiser initialiser;
 
 	private class DSectionBuilder implements CSectionBuilder {
 
@@ -59,7 +58,7 @@ class DBuilderImpl implements DBuilder {
 
 	public void addDClass(Class<? extends DObject> dClass) {
 
-		initialiser.addDClass(dClass);
+		getInitialiser().addDClass(dClass);
 	}
 
 	public void addDClasses(String basePackageName) {
@@ -82,18 +81,17 @@ class DBuilderImpl implements DBuilder {
 
 	public CBuilder getCBuilder() {
 
-		return initialiser.getCBuilder();
+		return getInitialiser().getCBuilder();
 	}
 
 	public DModelMap getModelMap() {
 
-		return initialiser.getModelMap();
+		return getInitialiser().getModelMap();
 	}
 
-	DBuilderImpl(DModel model, DInitialiser initialiser) {
+	DBuilderImpl(DModel model) {
 
 		this.model = model;
-		this.initialiser = initialiser;
 	}
 
 	private List<Class<? extends DObject>> loadDClasses(String basePackageName) {
@@ -104,5 +102,10 @@ class DBuilderImpl implements DBuilder {
 	private Class<? extends DObject> loadDClass(String dClassName) {
 
 		return new KConfigClassLoader(dClassName).load(DObject.class);
+	}
+
+	private DInitialiser getInitialiser() {
+
+		return model.getInitialiser();
 	}
 }
