@@ -11,7 +11,7 @@
 		derived entirely from the ontology, with no associated
 		Object Model.)
 	-->
-	<DirectSection topLevelPackage="uk.ac.manchester.cs.hobo.testmodel"/>
+	<DirectModelSection topLevelPackage="uk.ac.manchester.cs.hobo.testmodel"/>
 
 	<!--
 		Specification of ontology to be loaded. Can be multiple such
@@ -22,8 +22,8 @@
 		Specified plug-in class is OSSectionBuilder which loads OWL
 		ontologies via a "sanctioning" mechanism.
 	-->
-	<IndirectSection
-		sectionBuilder="uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder">
+	<ModelSection
+		builder="uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder">
 
 		<!--
 			Information concerning location of OWL ontology, type
@@ -103,7 +103,7 @@
 			</PropertyInclusion>
 		</OWLSanctionedModel>
 
-	</IndirectSection>
+	</ModelSection>
 
 	<!--
 		Mappings between Java classes/fields from the Object Model
