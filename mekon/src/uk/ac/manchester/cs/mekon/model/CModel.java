@@ -37,10 +37,10 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  *
  * @author Colin Puleston
  */
-public abstract class CModel implements CAnnotatable {
+public class CModel implements CAnnotatable {
 
 	private CAccessor accessor = new CAccessorImpl(this);
-	private CCustomiser customiser = new CCustomiserDefault();
+	private CCustomiser customiser;
 
 	private CFrame rootFrame;
 
@@ -132,40 +132,16 @@ public abstract class CModel implements CAnnotatable {
 		return getFrames().get(identity).instantiate();
 	}
 
-	/**
-	 * Constructor (used by the implementation - not relevant to the
-	 * model client).
-	 */
-	protected CModel() {
+	CModel() {
 
-		rootFrame = new CRootFrame(this, DefaultIReasoner.singleton);
+		this(new CCustomiserDefault());
 	}
 
-	/**
-	 * Creates the builder for the model (used by the implementation
-	 * - not relevant to the client).
-	 *
-	 * @return Created builder for model
-	 */
-	protected CBuilder createBuilder() {
-
-		return new CBuilderImpl(this);
-	}
-
-	/**
-	 * Retrieves the accessor object for the model (used by the
-	 * implementation - not relevant to the model client).
-	 *
-	 * @return Accessor object for model
-	 */
-	protected CAccessor getAccessor() {
-
-		return accessor;
-	}
-
-	void setCustomiser(CCustomiser customiser) {
+	CModel(CCustomiser customiser) {
 
 		this.customiser = customiser;
+
+		rootFrame = new CRootFrame(this, DefaultIReasoner.singleton);
 	}
 
 	void addInitialisationListener(InitialisationListener listener) {
@@ -237,14 +213,19 @@ public abstract class CModel implements CAnnotatable {
 		return initialised;
 	}
 
-	boolean mappedToNonInstantiableObject(CFrame frame) {
+	CAccessor getAccessor() {
 
-		return customiser.mappedToNonInstantiableObject(frame);
+		return accessor;
 	}
 
 	IEditor getIEditor() {
 
 		return iEditor;
+	}
+
+	boolean mappedToNonInstantiableObject(CFrame frame) {
+
+		return customiser.mappedToNonInstantiableObject(frame);
 	}
 
 	private void removeFrameTraces(CModelFrame frame) {

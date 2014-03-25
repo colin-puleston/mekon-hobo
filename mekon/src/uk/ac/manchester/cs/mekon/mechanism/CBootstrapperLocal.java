@@ -29,10 +29,10 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class CModelLocal extends CModel {
+class CBootstrapperLocal extends CBootstrapper {
 
-	protected CBuilder createBuilder() {
+	protected CBuilder getBuilder() {
 
-		return super.createBuilder();
+		return super.getBuilder();
 	}
 }

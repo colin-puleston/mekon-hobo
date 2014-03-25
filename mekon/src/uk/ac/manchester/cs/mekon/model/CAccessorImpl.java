@@ -33,11 +33,6 @@ class CAccessorImpl implements CAccessor {
 
 	private CModel model;
 
-	public void setCustomiser(CCustomiser customiser) {
-
-		model.setCustomiser(customiser);
-	}
-
 	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
 
 		frame.setMappedObject(mappedObject);
