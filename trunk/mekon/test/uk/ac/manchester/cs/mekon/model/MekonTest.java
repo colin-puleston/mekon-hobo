@@ -151,7 +151,7 @@ public class MekonTest extends FramesTestUtils {
 
 	MekonTest(IReasoner iReasoner) {
 
-		this(new CModel(){}, iReasoner);
+		this(new CModel(), iReasoner);
 	}
 
 	private MekonTest(CModel model, IReasoner iReasoner) {

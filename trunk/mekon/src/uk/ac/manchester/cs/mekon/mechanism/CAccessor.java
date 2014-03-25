@@ -28,18 +28,11 @@ import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Provides privileged access to the MEKON model for extensions
- * of the MEKON system.
+ * of the MEKON framework.
  *
  * @author Colin Puleston
  */
 public interface CAccessor {
-
-	/**
-	 * Sets a customiser object for the model.
-	 *
-	 * @param customiser Customiser to set
-	 */
-	public void setCustomiser(CCustomiser customiser);
 
 	/**
 	 * Maps an object to an instance-level frame.
