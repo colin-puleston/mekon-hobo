@@ -67,8 +67,6 @@
 	<!-- unit-test invocation -->
 	<property name="out.unittest.run.sh" location="${out}/unittest.sh"/>
 	<property name="out.unittest.run.win" location="${out}/unittest.bat"/>
-	<property name="out.unittest.run.sh.64" location="${out}/unittest64.sh"/>
-	<property name="out.unittest.run.win.64" location="${out}/unittest64.bat"/>
 
 	<property name="junit.mainclass" value="org.junit.runner.JUnitCore"/>
 	<property name="unittest.testsuites"
@@ -84,8 +82,6 @@
 	<!-- model-explorer GUI + test-model invocation -->
 	<property name="out.testmodel.run.sh" location="${out}/testmodel.sh"/>
 	<property name="out.testmodel.run.win" location="${out}/testmodel.bat"/>
-	<property name="out.testmodel.run.sh.64" location="${out}/testmodel64.sh"/>
-	<property name="out.testmodel.run.win.64" location="${out}/testmodel64.bat"/>
 
 	<property name="hobogui.mainclass" value="uk.ac.manchester.cs.hobo.gui.HoboModelExplorer"/>
 
@@ -237,8 +233,6 @@
 	<target name="unittest" depends="hobo-test, mekon-owl-test, hobo-jar, mekon-owl-jar, testmodel">
 		<echo file="${out.unittest.run.sh}">java -cp ${out.unittest.classpath.sh} ${out.unittest.java.args}</echo>
 		<echo file="${out.unittest.run.win}">java -cp ${out.unittest.classpath.win} ${out.unittest.java.args}</echo>
-		<echo file="${out.unittest.run.sh.64}">java -cp ${out.unittest.classpath.sh} ${out.unittest.java.args}</echo>
-		<echo file="${out.unittest.run.win.64}">java -cp ${out.unittest.classpath.win} ${out.unittest.java.args}</echo>
 		<chmod dir="${out}" includes="unittest.*" perm="+x"/>
 	</target>
 
@@ -253,8 +247,6 @@
 	<target name="testmodel" depends="testmodel-classes, hobo-gui-jar, mekon-owl-jar">
 		<echo file="${out.testmodel.run.sh}">java -cp ${out.testmodel.classpath.sh} ${out.testmodel.java.args}</echo>
 		<echo file="${out.testmodel.run.win}">java -cp ${out.testmodel.classpath.win} ${out.testmodel.java.args}</echo>
-		<echo file="${out.testmodel.run.sh.64}">java -cp ${out.testmodel.classpath.sh} ${out.testmodel.java.args}</echo>
-		<echo file="${out.testmodel.run.win.64}">java -cp ${out.testmodel.classpath.win} ${out.testmodel.java.args}</echo>
 		<chmod dir="${out}" includes="testmodel.*" perm="+x"/>
 	</target>
 
