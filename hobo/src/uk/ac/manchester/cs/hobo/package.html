@@ -71,5 +71,22 @@ The {@link uk.ac.manchester.cs.hobo.mechanism.DBuilder} class is a wrapper aroun
   <li>Creation of resulting {@link uk.ac.manchester.cs.hobo.model.DModel} object (providing access to wrapped {@link uk.ac.manchester.cs.mekon.model.CModel} object)
 </ul>
 Along with the registration of the section-builder plugins, the registration of the OM classes and the specification of the entity mappings can be done either via the API or via the HOBO configuration system.
+
+<H3>Model/Modeller/Mechanism Dependencies</H3>
+
+The model, modeller and mechanism packages, in addition to providing the respective APIs, also collectively provide the implementations for those APIs. This involves circular dependencies at the implementation level, both between the model and modeller packages and between the model and mechanism packages. However, in both cases, at the API level the dependencies are strictly one way - from modeller to model, and from mechanism to model. There are no direct dependencies, at either the API or implementation levels, between the modeller and mechanism packages. Hence we have:
+<p>
+<b>API dependencies:</b>
+<ul>
+  <li>Modeller ==> Model
+  <li>Mechanism ==> Model
+</ul>
+<b>Implementation dependencies:</b>
+<ul>
+  <li>Modeller &lt;==> Model
+  <li>Mechanism &lt;==> Model
+</ul>
+NOTE: The implementation is facilitated by a special {@link uk.ac.manchester.cs.hobo.model.DBootstrapper} class in the model package, which is used by the mechanism package. Even though this is a public class in the model package, it is not directly relevant to the client, and hence is not considered to be part of the model API.
+
 </BODY>
 </HTML>
