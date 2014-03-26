@@ -37,7 +37,8 @@ Within the non-API MEKON packages (see below) the following prefix is used:
   <li><b>K:</b> General/utility MEKON classes
 </ul>
 
-<H3>Frames Model API</H3>
+<H3>Model API</H3>
+
 <i>Package:</i> {@link uk.ac.manchester.cs.mekon.model}
 <p>
 Models are loaded into the API as a concept-level {@link uk.ac.manchester.cs.mekon.model.CFrame}/{@link uk.ac.manchester.cs.mekon.model.CSlot} network. Individual model-instantiations can then by created by the client in the form of instance-level {@link uk.ac.manchester.cs.mekon.model.IFrame}/{@link uk.ac.manchester.cs.mekon.model.ISlot} networks.
@@ -50,7 +51,8 @@ The instance-level networks are dynamic in that any client-provided value-update
 </ul>
 Such updates will be provided either by generic reasoning mechanisms associated with the external knowledge sources, or by procedural mechanisms associated with the OM.
 
-<H3>Frames Mechanism API</H3>
+<H3>Mechanism API</H3>
+
 <i>Package:</i> {@link uk.ac.manchester.cs.mekon.mechanism}
 <p>
 The {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder} class is responsible for building the FM, which involves the following steps:
@@ -62,6 +64,20 @@ The {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder} class is responsible fo
 The section-builder plugins are instances of specific extensions of {@link uk.ac.manchester.cs.mekon.mechanism.CSectionBuilder}, with each such extension being responsible for loading ontologies of a specific type. The section-builders will use mechanisms accessible from {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder} to create and register an appropriate set of FM entities. The section-builders are also responsible for providing reasoning plugins, in the form of specific implementations of {@link uk.ac.manchester.cs.mekon.mechanism.IReasoner}, and attaching them to appropriate frames, over whose instantiations they will perform any required reasoning.
 <p>
 The registration of the section-builder plugins can be done either via the API or via the MEKON configuration system.
+
+<H3>Model/Mechanism Dependencies</H3>
+
+The model and mechanism packages, in addition to providing the respective APIs, also collectively provide the implementations for those APIs. This involves circular dependencies between the two packages at the implementation level, though at the API level the dependencies are strictly one way - from mechanism to model. Hence we have:
+<p>
+<b>API dependencies:</b>
+<ul>
+  <li>Mechanism ==> Model
+</ul>
+<b>Implementation dependencies:</b>
+<ul>
+  <li>Mechanism &lt;==> Model
+</ul>
+NOTE: The implementation is facilitated by a special {@link uk.ac.manchester.cs.mekon.model.CBootstrapper} class in the model package, which is used by the mechanism package. Even though this is a public class in the model package, it is not directly relevant to the client, and hence is not considered to be part of the model API.
 
 <H3>General/Utility Packages</H3>
 
