@@ -2,15 +2,15 @@
 
 The MEKON/HOBO source code is divided up by sub-project, with each sub-project being contained within a top-level folder. The sub-project folders are:
 
- * mekon
- * mekon-owl
- * mekon-gui
- * hobo
- * hobo-gui
+ * *mekon*
+ * *mekon-owl*
+ * *mekon-gui*
+ * *hobo*
+ * *hobo-gui*
 
 ("gui" == "model-explorer")
 
 Each top-level sub-project folder is split into:
 
- * src: Contains main sub-project source code
- * test: Contains sub-project unit-test source code
+ * *src:* Contains main sub-project source code
+ * *test:* Contains sub-project unit-test source code
