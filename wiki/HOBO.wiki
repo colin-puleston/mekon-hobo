@@ -58,4 +58,4 @@ These generic OM-framework classes constitute the HOBO *Model API*, and the coll
 
 *Mechanism API:* Provides the mechanisms for building and configuring the HOBO models.
 
-For detailed descriptions of these APIs see the *HOBO javadoc*.
+For detailed descriptions of these APIs see the HOBO [javadoc].
