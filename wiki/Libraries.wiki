@@ -3,5 +3,5 @@
 The libraries folder "lib" contains external jars used by the MEKON/HOBO code. Currently this consists of:
 
  * *junit:* Used for all unit testing
- * *owl-api:* Used by [MEKON-OWL] plug-ins
+ * *owl-api:* Used by [MEKONOWL MEKON-OWL] plug-ins
  * *jfact:* Reference DL reasoner (specified in the configuration file for the [TestModel] - no hard-coded dependency)
