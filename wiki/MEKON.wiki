@@ -20,12 +20,12 @@ MEKON simplifies client access of the underlying resources in the following ways
 Both the knowledge sources and reasoning mechanisms that drive the MEKON models are delivered via generic *plug-in APIs*, with MEKON itself being entirely agnostic as to the underlying formats and mechanisms. This enables applications to benefit from the *seamless integration* of various *disparate knowledge sources* and *disparate reasoning mechanisms*.
 
 ----
-== Frames Model  ==
+== Frames Model (FM) ==
 
 The FM provides a *domain-neutral API*, in which all domain concepts are represented via generic *frame* objects, and inter-concept relations and data-valued attributes via *slots* attached to the concepts.
 
 ----
-== MEKON Applicability  ==
+== MEKON Applicability ==
 
 MEKON is particularly suitable for models and applications for which the following constraints hold:
 
