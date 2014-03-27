@@ -1,1 +1,10 @@
 = MEKON/HOBO Ant Build-Script =
+
+The top-level folder in the MEKON project SVN contains an Ant build script, *build.xml*. This script contains the following main targets:
+
+ * *jars:* Builds individual jar files for each of the 5 sub-projects (this is the default target).
+ * *test:* Builds everything required to run unit-tests for each of the 5 sub-projects, including a "test.bat/sh" invocation script (depends on "jars" target).
+ * *mekon-demo:* Builds everything required to run the MEKON [Demo], including a "mekon-demo.bat/sh" invocation script  (depends on "jars" target).
+ * *hobo-demo:* Builds everything required to run the HOBO [Demo], including a "hobo-demo.bat/sh" invocation script  (depends on "jars" target).
+
+Everything is built within a "*build*" folder, which is created in the top-level folder by the Ant build script.
