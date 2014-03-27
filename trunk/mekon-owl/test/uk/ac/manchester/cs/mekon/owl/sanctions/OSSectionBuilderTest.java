@@ -330,7 +330,7 @@ public class OSSectionBuilderTest extends OTest {
 		testSlotValues(
 			UNEMPLOYED_CITIZEN_CLASS,
 			TAX_PAID_PROPERTY,
-			NO_IVALUES);
+			getNoStructureFrameSlotFixedValues(ZERO_TAX_CLASS));
 		testSlotValues(
 			UNEMPLOYED_CITIZEN_CLASS,
 			BENEFIT_RECIEVED_PROPERTY,
