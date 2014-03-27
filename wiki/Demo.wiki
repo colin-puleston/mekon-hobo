@@ -14,7 +14,7 @@ The demo consists of the following:
 
 The [Ant] build-script will create two scripts that will load the demo model into the MEKON/HOBO model-explorer GUI:
 
- * *mekon-demo-bat/sh:* Invokes MEKON model-explorer to explore the ontology-derived section only.
- * *hobo-demo-bat/sh:* Invokes HOBO model-explorer to explore hybrid combination of ontology-derived and OM-derived sections.
+ * *mekon-demo.bat/sh:* Invokes MEKON model-explorer to explore the ontology-derived section only.
+ * *hobo-demo.bat/sh:* Invokes HOBO model-explorer to explore hybrid combination of ontology-derived and OM-derived sections.
 
  
