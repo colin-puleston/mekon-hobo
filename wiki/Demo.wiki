@@ -8,7 +8,7 @@ The demo consists of the following:
  * *Demo HOBO object model (OM):* Source code for a "citizen" OM, covering the core parts of the "citizen" ontology, and also including some additional entities not in the ontology. 
  * *Demo configuration file:* Configuration file containing (a) core MEKON constructs specifying the demo ontology as the source for the main section of the FM, plus (b) HOBO-specific constructs specifying the demo OM and the required OM/FM mappings.
 
-The [ANT] build-scripts creates two "demo" scripts that will load the demo model into:
+The [Ant] build-scripts creates two "demo" scripts that will load the demo model into:
 
  * *MEKON model-explorer:* To explore the ontology-derived section only.
  * *HOBO model-explorer:* To explore hybrid combination of ontology and OM-derived sections.
