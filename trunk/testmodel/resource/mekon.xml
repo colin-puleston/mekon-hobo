@@ -11,7 +11,7 @@
 		derived entirely from the ontology, with no associated
 		Object Model.)
 	-->
-	<DirectModelSection topLevelPackage="uk.ac.manchester.cs.hobo.testmodel"/>
+	<DirectModelSection topLevelPackage="uk.ac.manchester.cs.hobo.demo"/>
 
 	<!--
 		Specification of ontology to be loaded. Can be multiple such
@@ -32,9 +32,9 @@
 			OSSectionBuilder and OCClassifier plug-in classes).
 		-->
 		<OWLModel
-			owlFile="test.owl"
+			owlFile="demo.owl"
 			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
-			numericProperty="http://mekon/test.owl#numericValue">
+			numericProperty="http://mekon/demo.owl#numericValue">
 		</OWLModel>
 
 		<!--
@@ -50,7 +50,7 @@
 			loggingEnabled="FALSE">
 			<SlotSemantics
 				default="OPEN_WORLD">
-				<ExceptionProperty uri="http://mekon/test.owl#job"/>
+				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
 			</SlotSemantics>
 		</OWLClassifier>
 
@@ -84,20 +84,20 @@
 			retainOnlyDeclarationAxioms="TRUE">
 			<ConceptInclusion>
 				<Group
-					rootURI="http://mekon/test.owl#DataTypeConcept"
+					rootURI="http://mekon/demo.owl#DataTypeConcept"
 					includeRoot="TRUE"/>
 				<Group
-					rootURI="http://mekon/test.owl#DomainConcept"
+					rootURI="http://mekon/demo.owl#DomainConcept"
 					includeRoot="TRUE"
 					conceptHidingScope="ALL"
 					conceptHidingFilter="DEFINIED_SUB_TREES_ONLY"/>
 			</ConceptInclusion>
 			<PropertyInclusion>
 				<Group
-					rootURI="http://mekon/test.owl#simpleObjectProperty"
+					rootURI="http://mekon/demo.owl#simpleObjectProperty"
 					includeRoot="FALSE"/>
 				<Group
-					rootURI="http://mekon/test.owl#referencableObjectProperty"
+					rootURI="http://mekon/demo.owl#referencableObjectProperty"
 					includeRoot="TRUE"
 					mirrorAsFrames="TRUE"/>
 			</PropertyInclusion>
@@ -111,49 +111,49 @@
 	-->
 	<Mappings>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.Citizen"
-			externalId="http://mekon/test.owl#Citizen">
-			<FieldMap fieldName="employment" externalId="http://mekon/test.owl#employment"/>
-			<FieldMap fieldName="tax" externalId="http://mekon/test.owl#taxPaid"/>
-			<FieldMap fieldName="benefits" externalId="http://mekon/test.owl#benefitReceived"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.Citizen"
+			externalId="http://mekon/demo.owl#Citizen">
+			<FieldMap fieldName="employment" externalId="http://mekon/demo.owl#employment"/>
+			<FieldMap fieldName="tax" externalId="http://mekon/demo.owl#taxPaid"/>
+			<FieldMap fieldName="benefits" externalId="http://mekon/demo.owl#benefitReceived"/>
 		</ClassMap>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.Employment"
-			externalId="http://mekon/test.owl#Employment">
-			<FieldMap fieldName="jobs" externalId="http://mekon/test.owl#job"/>
-			<FieldMap fieldName="jobCount" externalId="http://mekon/test.owl#jobCount"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.Employment"
+			externalId="http://mekon/demo.owl#Employment">
+			<FieldMap fieldName="jobs" externalId="http://mekon/demo.owl#job"/>
+			<FieldMap fieldName="jobCount" externalId="http://mekon/demo.owl#jobCount"/>
 		</ClassMap>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.Job"
-			externalId="http://mekon/test.owl#Job">
-			<FieldMap fieldName="hourlyPay" externalId="http://mekon/test.owl#hourlyPay"/>
-			<FieldMap fieldName="weeklyPay" externalId="http://mekon/test.owl#weeklyPay"/>
-			<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/test.owl#hoursPerWeek"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.Job"
+			externalId="http://mekon/demo.owl#Job">
+			<FieldMap fieldName="hourlyPay" externalId="http://mekon/demo.owl#hourlyPay"/>
+			<FieldMap fieldName="weeklyPay" externalId="http://mekon/demo.owl#weeklyPay"/>
+			<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/demo.owl#hoursPerWeek"/>
 		</ClassMap>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.CitizenAspect"
-			externalId="http://mekon/test.owl#CitizenAspect"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.CitizenAspect"
+			externalId="http://mekon/demo.owl#CitizenAspect"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.TravelAspect"
-			externalId="http://mekon/test.owl#TravelAspect"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.TravelAspect"
+			externalId="http://mekon/demo.owl#TravelAspect"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.Tax"
-			externalId="http://mekon/test.owl#Tax"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.Tax"
+			externalId="http://mekon/demo.owl#Tax"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.NonZeroTax"
-			externalId="http://mekon/test.owl#NonZeroTax"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.NonZeroTax"
+			externalId="http://mekon/demo.owl#NonZeroTax"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.Benefit"
-			externalId="http://mekon/test.owl#Benefit"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.Benefit"
+			externalId="http://mekon/demo.owl#Benefit"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.UnemploymentBenefit"
-			externalId="http://mekon/test.owl#UnemploymentBenefit"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.UnemploymentBenefit"
+			externalId="http://mekon/demo.owl#UnemploymentBenefit"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.TravelMode"
-			externalId="http://mekon/test.owl#TravelMode"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.TravelMode"
+			externalId="http://mekon/demo.owl#TravelMode"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.testmodel.summary.PropertyRef"
-			externalId="http://mekon/test.owl#referencableObjectProperty"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.summary.PropertyRef"
+			externalId="http://mekon/demo.owl#referencableObjectProperty"/>
 	</Mappings>
 
 </HOBOModel>
