@@ -19,5 +19,5 @@ The javadoc generation folder contains the following files:
 
  * *mkmekon.bat/sh:* Script that builds the MEKON javadoc
  * *mkhobo.bat/sh:* Script that builds the HOBO javadoc
- * *mekon.overview.html:* General overview description file for the MEKON javadoc
- * *hobo.overview.html:* General overview description file for the HOBO javadoc
+ * *mekon-overview.html:* General overview description file for the MEKON javadoc
+ * *hobo-overview.html:* General overview description file for the HOBO javadoc
