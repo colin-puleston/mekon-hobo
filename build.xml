@@ -20,74 +20,73 @@
 	<property name="hobo.test" value="hobo/test/"/>
 	<property name="hobo-gui.src" value="hobo-gui/src/"/>
 
-	<property name="testmodel" value="testmodel"/>
-	<property name="testmodel.src" value="${testmodel}/src"/>
-	<property name="testmodel.resource" value="${testmodel}/resource"/>
+	<property name="demo" value="demo"/>
+	<property name="demo.src" value="${demo}/src"/>
+	<property name="demo.resource" value="${demo}/resource"/>
 
 	<!-- output classes -->
-	<property name="out" location="out"/>
-	<property name="out.classes" location="${out}/classes" />
-	<property name="out.classes.mekon" location="${out.classes}/mekon" />
-	<property name="out.classes.mekon-owl" location="${out.classes}/mekon-owl" />
-	<property name="out.classes.mekon-gui" location="${out.classes}/mekon-gui" />
-	<property name="out.classes.hobo" location="${out.classes}/hobo" />
-	<property name="out.classes.hobo-gui" location="${out.classes}/hobo-gui" />
+	<property name="build" location="build"/>
+	<property name="build.classes" location="${build}/classes" />
+	<property name="build.classes.mekon" location="${build.classes}/mekon" />
+	<property name="build.classes.mekon-owl" location="${build.classes}/mekon-owl" />
+	<property name="build.classes.mekon-gui" location="${build.classes}/mekon-gui" />
+	<property name="build.classes.hobo" location="${build.classes}/hobo" />
+	<property name="build.classes.hobo-gui" location="${build.classes}/hobo-gui" />
 
 	<!-- output lib -->
-	<property name="out.lib.rel" value="lib" />
-	<property name="out.lib" location="${out}/${out.lib.rel}" />
+	<property name="build.lib.rel" value="lib" />
+	<property name="build.lib" location="${build}/${build.lib.rel}" />
 
 	<!-- output jars -->
-	<property name="out.mekon.jar" location="${out.lib}/mekon.jar"/>
-	<property name="out.mekon-owl.jar" location="${out.lib}/mekon-owl.jar"/>
-	<property name="out.mekon-gui.jar" location="${out.lib}/mekon-gui.jar"/>
-	<property name="out.hobo.jar" location="${out.lib}/hobo.jar"/>
-	<property name="out.hobo-gui.jar" location="${out.lib}/hobo-gui.jar"/>
+	<property name="build.mekon.jar" location="${build.lib}/mekon.jar"/>
+	<property name="build.mekon-owl.jar" location="${build.lib}/mekon-owl.jar"/>
+	<property name="build.mekon-gui.jar" location="${build.lib}/mekon-gui.jar"/>
+	<property name="build.hobo.jar" location="${build.lib}/hobo.jar"/>
+	<property name="build.hobo-gui.jar" location="${build.lib}/hobo-gui.jar"/>
+
+	<!-- output resource -->
+	<property name="build.resource.rel" value="resource" />
+	<property name="build.resource" location="${build}/${build.resource.rel}" />
+
+	<!-- output demo -->
+	<property name="build.demo.rel" value="demo" />
+	<property name="build.demo" location="${build}/${build.demo.rel}" />
+	<property name="build.demo.classes.rel" value="${build.demo.rel}/classes" />
+	<property name="build.demo.classes" location="${build}/${build.demo.classes.rel}" />
 
 	<!-- output test -->
-	<property name="out.test.rel" value="test" />
-	<property name="out.test" location="${out}/${out.test.rel}" />
-
-	<property name="out.test.resource.rel" value="${out.test.rel}/resource" />
-	<property name="out.test.resource" location="${out}/${out.test.resource.rel}" />
-
-	<property name="out.unittest.rel" value="${out.test.rel}/unittest" />
-	<property name="out.unittest" location="${out}/${out.unittest.rel}" />
-	<property name="out.unittest.classes.rel" value="${out.unittest.rel}/classes" />
-	<property name="out.unittest.classes" location="${out}/${out.unittest.classes.rel}" />
-
-	<property name="out.testmodel.rel" value="${out.test.rel}/testmodel" />
-	<property name="out.testmodel" location="${out}/${out.testmodel.rel}" />
-	<property name="out.testmodel.classes.rel" value="${out.testmodel.rel}/classes" />
-	<property name="out.testmodel.classes" location="${out}/${out.testmodel.classes.rel}" />
+	<property name="build.test.rel" value="test" />
+	<property name="build.test" location="${build}/${build.test.rel}" />
+	<property name="build.test.classes.rel" value="${build.test.rel}/classes" />
+	<property name="build.test.classes" location="${build}/${build.test.classes.rel}" />
 
 	<!-- java options -->
 	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC"/>
 
-	<!-- unit-test invocation -->
-	<property name="out.unittest.run.sh" location="${out}/unittest.sh"/>
-	<property name="out.unittest.run.win" location="${out}/unittest.bat"/>
+	<!-- test invocation -->
+	<property name="build.test.run.sh" location="${build}/test.sh"/>
+	<property name="build.test.run.win" location="${build}/test.bat"/>
 
 	<property name="junit.mainclass" value="org.junit.runner.JUnitCore"/>
-	<property name="unittest.testsuites"
+	<property name="test.testsuites"
 		value=
 			"uk.ac.manchester.cs.mekon.MekonTestSuite
 			uk.ac.manchester.cs.mekon.owl.MekonOWLTestSuite
 			uk.ac.manchester.cs.hobo.HoboTestSuite"/>
 
-	<property name="out.unittest.classpath.sh" value="${out.lib.rel}/*:${out.unittest.classes.rel}:${out.test.resource.rel}"/>
-	<property name="out.unittest.classpath.win" value="${out.lib.rel}/*;${out.unittest.classes.rel};${out.test.resource.rel}"/>
-	<property name="out.unittest.java.args" value="${java.opts} ${junit.mainclass} ${unittest.testsuites}"/>
+	<property name="build.test.classpath.sh" value="${build.lib.rel}/*:${build.test.classes.rel}:${build.resource.rel}"/>
+	<property name="build.test.classpath.win" value="${build.lib.rel}/*;${build.test.classes.rel};${build.resource.rel}"/>
+	<property name="build.test.java.args" value="${java.opts} ${junit.mainclass} ${test.testsuites}"/>
 
-	<!-- model-explorer GUI + test-model invocation -->
-	<property name="out.testmodel.run.sh" location="${out}/testmodel.sh"/>
-	<property name="out.testmodel.run.win" location="${out}/testmodel.bat"/>
+	<!-- demo/model-explorer invocation -->
+	<property name="build.demo.run.sh" location="${build}/demo.sh"/>
+	<property name="build.demo.run.win" location="${build}/demo.bat"/>
 
 	<property name="hobogui.mainclass" value="uk.ac.manchester.cs.hobo.gui.HoboModelExplorer"/>
 
-	<property name="out.testmodel.classpath.sh" value="${out.lib.rel}/*:${out.testmodel.classes.rel}:${out.test.resource.rel}"/>
-	<property name="out.testmodel.classpath.win" value="${out.lib.rel}/*;${out.testmodel.classes.rel};${out.test.resource.rel}"/>
-	<property name="out.testmodel.java.args" value="${java.opts} ${hobogui.mainclass}"/>
+	<property name="build.demo.classpath.sh" value="${build.lib.rel}/*:${build.demo.classes.rel}:${build.resource.rel}"/>
+	<property name="build.demo.classpath.win" value="${build.lib.rel}/*;${build.demo.classes.rel};${build.resource.rel}"/>
+	<property name="build.demo.java.args" value="${java.opts} ${hobogui.mainclass}"/>
 
 	<!-- debug property -->
 
@@ -96,13 +95,13 @@
 	<!-- clean -->
 
 	<target name="clean">
-		<delete dir="${out}"/>
+		<delete dir="${build}"/>
 	</target>
 
 	<!-- class-path -->
 
 	<path id="classpath">
-		<fileset dir="${out.lib}">
+		<fileset dir="${build.lib}">
 			<include name="*.jar"/>
 		</fileset>
 	</path>
@@ -110,99 +109,99 @@
 	<!-- output dir structure -->
 
 	<target name="base">
-		<mkdir dir="${out.classes.mekon}"/>
-		<mkdir dir="${out.classes.mekon-owl}"/>
-		<mkdir dir="${out.classes.mekon-gui}"/>
-		<mkdir dir="${out.classes.hobo}"/>
-		<mkdir dir="${out.classes.hobo-gui}"/>
-		<mkdir dir="${out.lib}"/>
-		<copy todir="${out.lib}">
+		<mkdir dir="${build.classes.mekon}"/>
+		<mkdir dir="${build.classes.mekon-owl}"/>
+		<mkdir dir="${build.classes.mekon-gui}"/>
+		<mkdir dir="${build.classes.hobo}"/>
+		<mkdir dir="${build.classes.hobo-gui}"/>
+		<mkdir dir="${build.lib}"/>
+		<copy todir="${build.lib}">
 			<fileset dir="${src.lib}/">
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
 	</target>
 
-	<target name="test-base" depends="base">
-		<copy todir="${out.test.resource}" >
-			<fileset dir="${testmodel.resource}">
+	<target name="resource-base" depends="base">
+		<copy todir="${build.resource}" >
+			<fileset dir="${demo.resource}">
 				<include name="**/*.owl"/>
 				<include name="**/*.xml"/>
 			</fileset>
 		</copy>
 	</target>
 
-	<target name="unittest-base" depends="test-base">
-		<mkdir dir="${out.unittest.classes}"/>
+	<target name="demo-base" depends="resource-base">
+		<mkdir dir="${build.demo.classes}"/>
 	</target>
 
-	<target name="testmodel-base" depends="test-base">
-		<mkdir dir="${out.testmodel.classes}"/>
+	<target name="test-base" depends="resource-base">
+		<mkdir dir="${build.test.classes}"/>
 	</target>
 
 	<!-- targets -->
 
 	<target name="mekon" depends="base">
-		<javac srcdir="${mekon.src}" classpathref="classpath" destdir="${out.classes.mekon}" debug="${debug}">
+		<javac srcdir="${mekon.src}" classpathref="classpath" destdir="${build.classes.mekon}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
 	<target name="mekon-jar" depends="mekon">
-		<jar destfile="${out.mekon.jar}">
-			<fileset dir="${out.classes.mekon}" />
+		<jar destfile="${build.mekon.jar}">
+			<fileset dir="${build.classes.mekon}" />
 			<fileset dir="${mekon.src}" includes="**/*.java"/>
 		</jar>
 	</target>
 
 	<target name="mekon-owl" depends="mekon-jar">
-		<javac srcdir="${mekon-owl.src}" classpathref="classpath" destdir="${out.classes.mekon-owl}" debug="${debug}">
+		<javac srcdir="${mekon-owl.src}" classpathref="classpath" destdir="${build.classes.mekon-owl}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
 	<target name="mekon-owl-jar" depends="mekon-owl">
-		<jar destfile="${out.mekon-owl.jar}">
-			<fileset dir="${out.classes.mekon-owl}" />
+		<jar destfile="${build.mekon-owl.jar}">
+			<fileset dir="${build.classes.mekon-owl}" />
 			<fileset dir="${mekon-owl.src}" includes="**/*.java"/>
 		</jar>
 	</target>
 
 	<target name="mekon-gui" depends="mekon-jar">
-		<javac srcdir="${mekon-gui.src}" classpathref="classpath" destdir="${out.classes.mekon-gui}" debug="${debug}">
+		<javac srcdir="${mekon-gui.src}" classpathref="classpath" destdir="${build.classes.mekon-gui}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
 	<target name="mekon-gui-jar" depends="mekon-gui">
-		<jar destfile="${out.mekon-gui.jar}">
-			<fileset dir="${out.classes.mekon-gui}" />
+		<jar destfile="${build.mekon-gui.jar}">
+			<fileset dir="${build.classes.mekon-gui}" />
 			<fileset dir="${mekon-gui.src}" includes="**/*.java"/>
 		</jar>
 	</target>
 
 	<target name="hobo" depends="mekon-jar">
-		<javac srcdir="${hobo.src}" classpathref="classpath" destdir="${out.classes.hobo}" debug="${debug}">
+		<javac srcdir="${hobo.src}" classpathref="classpath" destdir="${build.classes.hobo}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
 	<target name="hobo-jar" depends="hobo">
-		<jar destfile="${out.hobo.jar}">
-			<fileset dir="${out.classes.hobo}" />
+		<jar destfile="${build.hobo.jar}">
+			<fileset dir="${build.classes.hobo}" />
 			<fileset dir="${hobo.src}" includes="**/*.java"/>
 		</jar>
 	</target>
 
 	<target name="hobo-gui" depends="hobo-jar, mekon-gui-jar">
-		<javac srcdir="${hobo-gui.src}" classpathref="classpath" destdir="${out.classes.hobo-gui}" debug="${debug}">
+		<javac srcdir="${hobo-gui.src}" classpathref="classpath" destdir="${build.classes.hobo-gui}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
 	<target name="hobo-gui-jar" depends="hobo-gui">
-		<jar destfile="${out.hobo-gui.jar}">
-			<fileset dir="${out.classes.hobo-gui}" />
+		<jar destfile="${build.hobo-gui.jar}">
+			<fileset dir="${build.classes.hobo-gui}" />
 			<fileset dir="${hobo-gui.src}" includes="**/*.java"/>
 		</jar>
 	</target>
@@ -210,44 +209,44 @@
 	<target name="jars" depends="hobo-jar, hobo-gui-jar, mekon-owl-jar">
 	</target>
 
-	<!-- unittest targets -->
+	<!-- demo targets -->
 
-	<target name="mekon-test" depends="mekon-jar, unittest-base">
-		<javac srcdir="${mekon.test}" classpathref="classpath" destdir="${out.unittest.classes}" debug="${debug}">
+	<target name="demo-classes" depends="hobo-jar, demo-base">
+		<javac srcdir="${demo.src}" classpathref="classpath" destdir="${build.demo.classes}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="demo" depends="demo-classes, hobo-gui-jar, mekon-owl-jar">
+		<echo file="${build.demo.run.sh}">java -cp ${build.demo.classpath.sh} ${build.demo.java.args}</echo>
+		<echo file="${build.demo.run.win}">java -cp ${build.demo.classpath.win} ${build.demo.java.args}</echo>
+		<chmod dir="${build}" includes="demo.*" perm="+x"/>
+	</target>
+
+	<!-- test targets -->
+
+	<target name="mekon-test" depends="mekon-jar, test-base">
+		<javac srcdir="${mekon.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
 	<target name="mekon-owl-test" depends="mekon-owl-jar, mekon-test">
-		<javac srcdir="${mekon-owl.test}" classpathref="classpath" destdir="${out.unittest.classes}" debug="${debug}">
+		<javac srcdir="${mekon-owl.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
 	<target name="hobo-test" depends="hobo-jar, mekon-test">
-		<javac srcdir="${hobo.test}" classpathref="classpath" destdir="${out.unittest.classes}" debug="${debug}">
+		<javac srcdir="${hobo.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
-	<target name="unittest" depends="hobo-test, mekon-owl-test, hobo-jar, mekon-owl-jar, testmodel">
-		<echo file="${out.unittest.run.sh}">java -cp ${out.unittest.classpath.sh} ${out.unittest.java.args}</echo>
-		<echo file="${out.unittest.run.win}">java -cp ${out.unittest.classpath.win} ${out.unittest.java.args}</echo>
-		<chmod dir="${out}" includes="unittest.*" perm="+x"/>
-	</target>
-
-	<!-- testmodel targets -->
-
-	<target name="testmodel-classes" depends="hobo-jar, testmodel-base">
-		<javac srcdir="${testmodel.src}" classpathref="classpath" destdir="${out.testmodel.classes}" debug="${debug}">
-			<compilerarg value="-Xlint"/>
-		</javac>
-	</target>
-
-	<target name="testmodel" depends="testmodel-classes, hobo-gui-jar, mekon-owl-jar">
-		<echo file="${out.testmodel.run.sh}">java -cp ${out.testmodel.classpath.sh} ${out.testmodel.java.args}</echo>
-		<echo file="${out.testmodel.run.win}">java -cp ${out.testmodel.classpath.win} ${out.testmodel.java.args}</echo>
-		<chmod dir="${out}" includes="testmodel.*" perm="+x"/>
+	<target name="test" depends="hobo-test, mekon-owl-test, hobo-jar, mekon-owl-jar, demo">
+		<echo file="${build.test.run.sh}">java -cp ${build.test.classpath.sh} ${build.test.java.args}</echo>
+		<echo file="${build.test.run.win}">java -cp ${build.test.classpath.win} ${build.test.java.args}</echo>
+		<chmod dir="${build}" includes="test.*" perm="+x"/>
 	</target>
 
 </project>
