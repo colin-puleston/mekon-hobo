@@ -1,0 +1,5 @@
+= MEKON-OWL =
+
+Although the core MEKON and HOBO frameworks are *totally agnostic* concerning underlying knowledge sources and reasoning mechanisms, these frameworks were initially designed specifically with OWL-based applications in mind, and hence are *particularly suited* to *OWL-derived models* and *DL reasoners*.
+
+MEKON-OWL consists of a pair *OWL-specific plug-ins* for MEKON (and hence for HOBO). These plug-ins enable (a) MEKON models to be derived from *OWL ontologies*, and (b) the automatic model-instantiation updating to be based on *Description Logic (DL)* based reasoning over those OWL ontologies. Both plug-ins are built on top of the *OWL API*.
