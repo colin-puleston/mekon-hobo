@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.testmodel;
+package uk.ac.manchester.cs.hobo.demo;
 
 import uk.ac.manchester.cs.hobo.modeller.*;
 

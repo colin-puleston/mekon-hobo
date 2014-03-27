@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.testmodel.summary;
+package uk.ac.manchester.cs.hobo.demo.summary;
 
 import java.util.*;
 
