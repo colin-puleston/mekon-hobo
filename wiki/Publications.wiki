@@ -7,4 +7,4 @@ The following paper provides a brief description of HOBO from an OWL-based appli
 The following are papers describing the CLEF Chronicle Framework, which was the predecessor of HOBO, and introducing the general notion of ontology-backed hybrid-models:
 
  * [http://link.springer.com/chapter/10.1007%2F978-3-540-88564-1_9#page-1 Integrating Object-Oriented and Ontological Representations: A Case Study with Java and OWL (ISWC 2008)]
- * [ceur-ws.org/Vol-496/owled2008dc_paper_16.pdf A Generic Software Framework for Building Hybrid Ontology-Backed Models for Driving Applications (OWLED 2008)]
+ * [http://link.springer.com/chapter/10.1007%2F978-3-540-88564-1_9#page-1 A Generic Software Framework for Building Hybrid Ontology-Backed Models for Driving Applications (OWLED 2008)]
