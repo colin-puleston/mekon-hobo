@@ -1,1 +1,9 @@
 = HOBO Tutorial =
+
+TO BE CREATED
+
+Outline:
+
+ # Configuring HOBO Model
+ # Accessing HOBO Object Model (OM) / Using Direct Model API
+ # Creating HOBO Object Model (OM) / Using Direct Modeller API
