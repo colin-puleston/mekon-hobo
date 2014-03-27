@@ -1,1 +1,23 @@
 = MEKON/HOBO Javadoc =
+
+All MEKON, MEKON-OWL and HOBO API code comes with *comprehensive Javadoc* comments. In all three cases, a detailed *overview description* of the sub-project code is provided by the package-overview file for the *root-package* of the relevant sub-project.
+
+== Javadoc Generation Folder ==
+
+The top-level folder in the MEKON project SVN contains a javadoc generation folder, "javadoc". This folder contains scripts for building:
+
+ * *MEKON javadoc:* Javadoc for MEKON and MEKON-OWL
+ * *HOBO javadoc:* Javadoc for HOBO, MEKON and MEKON-OWL
+
+In each case, the script references a *general overview description* file, which provides the description that will appear on the main index page of the javadoc. In both cases, this top-level overview description merely provides references to the overview descriptions for the component sub-projects (as mentioned above).
+
+In each case, the javadoc is created in a sub-folder of "the "javadoc" folder with an appropriate name (i.e. "mekon" and "hobo", respectively).
+
+== Contents of Javadoc Generation Folder ==
+
+The javadoc generation folder contains the following files:
+
+ * *mkmekon.bat/sh:* Script that builds the MEKON javadoc
+ * *mkhobo.bat/sh:* Script that builds the HOBO javadoc
+ * *mekon.overview.html:* General overview description file for the MEKON javadoc
+ * *hobo.overview.html:* General overview description file for the HOBO javadoc
