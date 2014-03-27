@@ -1,6 +1,6 @@
 = MEKON/HOBO Javadoc =
 
-All MEKON, MEKON-OWL and HOBO API code comes with *comprehensive Javadoc* comments. In all three cases, a detailed *overview description* of the sub-project code is provided by the package-overview file for the *root-package* of the relevant sub-project.
+All [MEKON], [MEKON-OWL] and [HOBO] API code comes with *comprehensive Javadoc* comments. In all three cases, a detailed *overview description* of the sub-project code is provided by the package-overview file for the *root-package* of the relevant sub-project.
 
 == Javadoc Generation Folder ==
 
