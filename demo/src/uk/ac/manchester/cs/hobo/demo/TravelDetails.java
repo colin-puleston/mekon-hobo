@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.testmodel;
+package uk.ac.manchester.cs.hobo.demo;
 
 import java.util.*;
 
@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
-import uk.ac.manchester.cs.hobo.testmodel.summary.*;
+import uk.ac.manchester.cs.hobo.demo.summary.*;
 
 /**
  * @author Colin Puleston
