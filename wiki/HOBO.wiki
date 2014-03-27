@@ -24,7 +24,7 @@ In general the OM will cover a relatively small *core section* of the model, pro
 A small number of "key" entities (concepts, concept-relations and concept-attributes) will be represented both in the OM and the external knowledge sources, with appropriate *mappings* being provided via the *HOBO configuration system*. It may well be that all OM entities are in fact key entities, meaning that all entities in the OM are also represented in the  external knowledge sources.
 
 ----
-== Binding of Object Model to Frames Model ==
+== Binding of Object Model (OM) to Frames Model (FM) ==
 
 All entities in the *OM* (i.e. classes and fields) will be bound to *corresponding entities* in the *FM* (i.e. concept-level frames and slots). Creation of model-instantiations in either representation, will cause *corresponding instantiations* to automatically occur in the other.
 
