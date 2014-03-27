@@ -9,9 +9,9 @@ The top-level folder in the MEKON project SVN contains a javadoc generation fold
  * *MEKON javadoc:* Javadoc for MEKON and MEKON-OWL
  * *HOBO javadoc:* Javadoc for HOBO, MEKON and MEKON-OWL
 
-In each case, the script references a *general overview description* file, which provides the description that will appear on the main index page of the javadoc. In both cases, this top-level overview description merely provides references to the overview descriptions for the component sub-projects (as mentioned above).
+In both cases, the script references a *general overview description* file, which provides the description that will appear on the main index page of the javadoc. In both cases, this top-level overview description merely provides references to the overview descriptions for the component sub-projects (as mentioned above).
 
-In each case, the javadoc is created in a sub-folder of "the "javadoc" folder with an appropriate name (i.e. "mekon" and "hobo", respectively).
+In both cases, the javadoc is created in a sub-folder of "the "javadoc" folder with an appropriate name (i.e. "mekon" and "hobo", respectively).
 
 == Contents of Javadoc Generation Folder ==
 
