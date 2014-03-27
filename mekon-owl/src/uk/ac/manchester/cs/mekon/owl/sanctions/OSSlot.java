@@ -63,16 +63,14 @@ abstract class OSSlot extends OIdentified {
 		}
 		else {
 
+			if (topLevelSlot.singleValued) {
+
+				containerEd.addSlot(cProperty, CCardinality.SINGLETON, cValue);
+			}
+
 			if (canBeFixedValue(cValue)) {
 
 				containerEd.addSlotValue(cProperty, cValue);
-			}
-			else {
-
-				if (topLevelSlot.singleValued) {
-
-					containerEd.addSlot(cProperty, CCardinality.SINGLETON, cValue);
-				}
 			}
 		}
 	}

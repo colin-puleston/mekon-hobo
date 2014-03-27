@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.sanctions.*;
  */
 public class OTest extends FramesTestUtils {
 
-	static private final String TEST_NAMESPACE = "http://mekon/test.owl#";
+	static private final String TEST_NAMESPACE = "http://mekon/demo.owl#";
 
 	private CModel model;
 

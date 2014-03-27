@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.jfact.JFactFactory;
  */
 public class TestOModel {
 
-	static private final String OWL_FILE = "test.owl";
+	static private final String OWL_FILE = "demo.owl";
 	static private final String NUMERIC_PROPERTY = "numericValue";
 
 	static public OModel create() {
