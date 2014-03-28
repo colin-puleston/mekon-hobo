@@ -34,8 +34,33 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 class ITreeCollapsedNodes {
 
 	private GNode rootNode;
-	private Map<GNode, Set<GNode>> collapsedsToDescendants
-							= new HashMap<GNode, Set<GNode>>();
+	private Map<GNode, Set<GNodeState>> collapsedsToDescendants
+							= new HashMap<GNode, Set<GNodeState>>();
+
+	private class GNodeState {
+
+		private GNode node;
+		private String label;
+
+		public boolean equals(Object other) {
+
+			GNodeState o = (GNodeState)other;
+
+			return node.equals(o.node) && label.equals(o.label);
+		}
+
+		public int hashCode() {
+
+			return node.hashCode() + label.hashCode();
+		}
+
+		GNodeState(GNode node) {
+
+			this.node = node;
+
+			label = node.getLabel();
+		}
+	}
 
 	ITreeCollapsedNodes(GNode rootNode) {
 
@@ -56,7 +81,7 @@ class ITreeCollapsedNodes {
 
 	boolean updatedDescendants(GNode node) {
 
-		Set<GNode> start = getDescendants(node);
+		Set<GNodeState> start = getDescendants(node);
 
 		return start != null && !start.equals(findDescendants(node));
 	}
@@ -115,18 +140,18 @@ class ITreeCollapsedNodes {
 		return collapsedsToDescendants.containsKey(node);
 	}
 
-	private Set<GNode> getDescendants(GNode node) {
+	private Set<GNodeState> getDescendants(GNode node) {
 
 		return collapsedsToDescendants.get(node);
 	}
 
-	private Set<GNode> findDescendants(GNode node) {
+	private Set<GNodeState> findDescendants(GNode node) {
 
-		Set<GNode> descendants = new HashSet<GNode>();
+		Set<GNodeState> descendants = new HashSet<GNodeState>();
 
 		for (GNode child : node.getChildren()) {
 
-			descendants.add(child);
+			descendants.add(new GNodeState(child));
 			descendants.addAll(findDescendants(child));
 		}
 
