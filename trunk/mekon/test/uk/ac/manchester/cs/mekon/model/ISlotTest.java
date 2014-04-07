@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.*;
 public class ISlotTest extends MekonTest {
 
 	@Test(expected = KAccessException.class)
-	public void test_getValuesEditorfailsForInactiveSlot() {
+	public void test_getValuesEditor_failsForInactiveSlot() {
 
 		ISlot s = createISlot(CCardinality.FREE);
 
@@ -43,11 +43,11 @@ public class ISlotTest extends MekonTest {
 	}
 
 	@Test(expected = KAccessException.class)
-	public void test_getValuesEditorfailsForNonEditableSlot() {
+	public void test_getValuesEditor_failsForDerivedValuesSlot() {
 
 		ISlot s = createISlot(CCardinality.FREE);
 
-		s.createEditor().setEditable(false);
+		s.createEditor().setDerivedValues(true);
 		s.getValuesEditor();
 	}
 }

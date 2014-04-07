@@ -41,7 +41,7 @@ class ISlotSpec {
 	private Set<CValue<?>> valueTypes = new HashSet<CValue<?>>();
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private boolean active = false;
-	private boolean editable = true;
+	private boolean derivedValues = false;
 
 	ISlotSpec(IEditor iEditor, CProperty property) {
 
@@ -55,7 +55,7 @@ class ISlotSpec {
 		cardinality = cardinality.getMoreRestrictive(slotType.getCardinality());
 		valueTypes.add(slotType.getValueType());
 		active |= slotType.active();
-		editable &= slotType.editable();
+		derivedValues |= slotType.derivedValues();
 	}
 
 	void absorbFixedValues(List<IValue> newFixedValues) {
@@ -69,26 +69,23 @@ class ISlotSpec {
 		}
 	}
 
-	ISlot addSlot(IFrame container) {
+	void chekAddSlot(IFrame container) {
 
-		CValue<?> valueType = getValueType();
-		IFrameEditor containerEd = getFrameEditor(container);
-		ISlot slot = containerEd.addSlot(property, source, cardinality, valueType);
-		ISlotEditor slotEd = getSlotEditor(slot);
+		CValue<?> valueType = getValueTypeOrNull();
 
-		slotEd.setActive(active);
-		slotEd.setEditable(editable);
-		slotEd.setFixedValues(fixedValues);
+		if (valueType != null) {
 
-		return slot;
+			addSlot(container, valueType);
+		}
 	}
 
-	void updateSlot(ISlot slot) {
+	boolean checkUpdateSlot(ISlot slot) {
 
-		ISlotEditor slotEd = getSlotEditor(slot);
+		CValue<?> valueType = getValueTypeOrNull();
 
-		slotEd.setValueType(getValueType());
-		slotEd.setFixedValues(fixedValues);
+		return valueType != null
+					? updateSlot(slot, valueType)
+					: removeSlot(slot);
 	}
 
 	CProperty getProperty() {
@@ -96,9 +93,44 @@ class ISlotSpec {
 		return property;
 	}
 
-	private CValue<?> getValueType() {
+	private void addSlot(IFrame container, CValue<?> valueType) {
 
-		return new CValueIntersection(valueTypes).getSingleValue();
+		IFrameEditor contEd = getFrameEditor(container);
+		ISlot slot = contEd.addSlot(property, source, cardinality, valueType);
+
+		setAttributesAndFixedValues(slot);
+	}
+
+	private boolean updateSlot(ISlot slot, CValue<?> valueType) {
+
+		ISlotValues slotValues = slot.getValues();
+		List<IValue> oldValues = slotValues.asList();
+
+		getSlotEditor(slot).setValueType(valueType);
+		setAttributesAndFixedValues(slot);
+
+		return !slotValues.asList().equals(oldValues);
+	}
+
+	private boolean removeSlot(ISlot slot) {
+
+		getFrameEditor(slot.getContainer()).removeSlot(slot);
+
+		return !slot.getValues().isEmpty();
+	}
+
+	private void setAttributesAndFixedValues(ISlot slot) {
+
+		ISlotEditor slotEd = getSlotEditor(slot);
+
+		slotEd.setActive(active);
+		slotEd.setDerivedValues(derivedValues);
+		slotEd.setFixedValues(fixedValues);
+	}
+
+	private CValue<?> getValueTypeOrNull() {
+
+		return new CValueIntersection(valueTypes).getOrNull();
 	}
 
 	private IFrameEditor getFrameEditor(IFrame frame) {

@@ -35,7 +35,7 @@ public class CLongDef extends CNumberDef {
 	/**
 	 * Represents an unconstrained long-type definition.
 	 */
-	static public final CLongDef UNCONSTRAINED = range(null, null);
+	static public final CLongDef UNCONSTRAINED = new CLongDef();
 
 	/**
 	 * Creates an long-type definition with the specified limits.
@@ -78,6 +78,11 @@ public class CLongDef extends CNumberDef {
 	static private INumber resolveMax(Long max) {
 
 		return max != null ? new INumber(max) : INumber.PLUS_INFINITY;
+	}
+
+	private CLongDef() {
+
+		super(Long.class, INumber.MINUS_INFINITY, INumber.PLUS_INFINITY);
 	}
 
 	private CLongDef(INumber min, INumber max) {

@@ -86,10 +86,10 @@ public class ISlotSpecsTest extends MekonTest {
 		testSlotValueType(tz);
 	}
 
-	@Test(expected = KModelException.class)
-	public void test_nonConvergingValueTypesFails() {
+	public void test_nonConvergingValueTypes() {
 
 		updateContainerSlots(tb, td);
+		testSlotCount(0);
 	}
 
 	@Test
@@ -125,43 +125,29 @@ public class ISlotSpecsTest extends MekonTest {
 	}
 
 	@Test
-	public void test_activeStatusInitialUpdate() {
+	public void test_activeStatusUpdates() {
 
 		sa.getAttributes().setActive(false);
 
+		updateContainerSlots(ta);
+		testSlotActive(false);
 		updateContainerSlots(tc, td);
+		testSlotActive(true);
+		updateContainerSlots(ta, tc);
 		testSlotActive(true);
 	}
 
 	@Test
-	public void test_activeStatusSubsequentNonUpdate() {
+	public void test_derivedValuesStatusUpdates() {
 
-		sa.getAttributes().setActive(false);
-
-		updateContainerSlots(ta);
-		testSlotActive(false);
-		updateContainerSlots(tc, td);
-		testSlotActive(false);
-	}
-
-	@Test
-	public void test_editableStatusInitialUpdate() {
-
-		sc.getAttributes().setEditable(false);
-
-		updateContainerSlots(tc, td);
-		testSlotEditable(false);
-	}
-
-	@Test
-	public void test_editableStatusSubsequentNonUpdate() {
-
-		sc.getAttributes().setEditable(false);
+		sc.getAttributes().setDerivedValues(true);
 
 		updateContainerSlots(ta);
-		testSlotEditable(true);
+		testDerivedValuesSlot(false);
 		updateContainerSlots(tc, td);
-		testSlotEditable(true);
+		testDerivedValuesSlot(true);
+		updateContainerSlots(ta, tc);
+		testDerivedValuesSlot(true);
 	}
 
 	private void updateContainerSlots(CFrame... containerTypes) {
@@ -201,11 +187,11 @@ public class ISlotSpecsTest extends MekonTest {
 		assertTrue("Unexpected slot active-status: " + got, got == expected);
 	}
 
-	private void testSlotEditable(boolean expected) {
+	private void testDerivedValuesSlot(boolean expected) {
 
-		boolean got = testSingleSlot().editable();
+		boolean got = testSingleSlot().derivedValues();
 
-		assertTrue("Unexpected slot editable-status: " + got, got == expected);
+		assertTrue("Unexpected slot derived-values-status: " + got, got == expected);
 	}
 
 	private ISlot testSingleSlot() {

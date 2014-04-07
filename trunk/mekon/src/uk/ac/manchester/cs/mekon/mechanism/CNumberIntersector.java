@@ -33,31 +33,31 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CNumberIntersector extends CTypeValueIntersector<CNumber> {
 
-	private Set<CNumber> intersection = new HashSet<CNumber>();
+	private Set<CNumber> mostSpecifics = new HashSet<CNumber>();
 
-	void addTypeOperand(CNumber operand) {
+	void addOperand(CNumber operand) {
 
-		for (CNumber currentOp : intersection) {
+		for (CNumber mostSpecific : mostSpecifics) {
 
-			if (operand.intersectsWith(currentOp)) {
+			if (operand.intersectsWith(mostSpecific)) {
 
-				operand = operand.getIntersection(currentOp);
-				intersection.remove(currentOp);
+				operand = operand.getIntersection(mostSpecific);
+				mostSpecifics.remove(mostSpecific);
 
 				break;
 			}
 		}
 
-		intersection.add(operand);
-	}
-
-	Set<CNumber> getIntersection() {
-
-		return intersection;
+		mostSpecifics.add(operand);
 	}
 
 	Class<CNumber> getOperandType() {
 
 		return CNumber.class;
+	}
+
+	CNumber getIntersectionOrNull() {
+
+		return mostSpecifics.size() == 1 ? mostSpecifics.iterator().next() : null;
 	}
 }

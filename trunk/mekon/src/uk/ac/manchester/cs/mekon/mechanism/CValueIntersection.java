@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CValueIntersection {
 
-	private Set<CValue<?>> intersection = null;
+	private CValue<?> intersection;
 
 	private class IntersectorCreator extends CValueVisitor {
 
@@ -55,61 +55,48 @@ class CValueIntersection {
 			intersector = new MFrameIntersector();
 		}
 
-		CTypeValueIntersector<?> create(CValue<?> value) {
+		CTypeValueIntersector<?> create(CValue<?> firstOp) {
 
-			visit(value);
+			visit(firstOp);
 
 			return intersector;
 		}
 	}
 
-	CValueIntersection(Set<CValue<?>> values) {
+	CValueIntersection(Set<CValue<?>> operands) {
 
-		intersection = createIntersection(values);
+		intersection = getIntersectionOrNull(operands);
 	}
 
-	Set<CValue<?>> getValues() {
+	CValue<?> getOrNull() {
 
 		return intersection;
 	}
 
-	CValue<?> getSingleValue() {
+	private CValue<?> getIntersectionOrNull(Set<CValue<?>> operands) {
 
-		if (intersection.size() == 1) {
-
-			return intersection.iterator().next();
-		}
-
-		if (intersection.isEmpty()) {
-
-			throw new KModelException("Intersection is empty-set");
-		}
-
-		throw new KModelException(
-					"Intersection consists of multiple values "
-					+ "(" + intersection + ")");
-	}
-
-	private Set<CValue<?>> createIntersection(Set<CValue<?>> values) {
-
-		CTypeValueIntersector<?> intersector = createIntersector(values);
-
-		for (CValue<?> value : values) {
-
-			intersector.addOperand(value);
-		}
-
-		return new HashSet<CValue<?>>(intersector.getIntersection());
-	}
-
-	private CTypeValueIntersector<?> createIntersector(Set<CValue<?>> values) {
-
-		if (values.isEmpty()) {
+		if (operands.isEmpty()) {
 
 			throw new KModelException("Cannot create intersection for empty value-set");
 		}
 
-		return new IntersectorCreator().create(values.iterator().next());
+		CValue<?> firstOp = operands.iterator().next();
+
+		if (operands.size() == 1) {
+
+			return firstOp;
+		}
+
+		CTypeValueIntersector<?> intersector = createIntersector(firstOp);
+
+		intersector.addOperands(operands);
+
+		return intersector.getIntersectionOrNull();
+	}
+
+	private CTypeValueIntersector<?> createIntersector(CValue<?> firstOp) {
+
+		return new IntersectorCreator().create(firstOp);
 	}
 }
 

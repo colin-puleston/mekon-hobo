@@ -38,7 +38,7 @@ public class CSlot implements CSourced {
 	private CSource source = CSource.INDIRECT;
 	private CCardinality cardinality;
 	private CAnnotations annotations = new CAnnotations(this);
-	private ISlotAttributes attributes;
+	private FSlotAttributes attributes;
 
 	private class Editor implements CSlotEditor {
 
@@ -62,9 +62,9 @@ public class CSlot implements CSourced {
 			attributes.absorbActive(otherActive);
 		}
 
-		public void absorbEditable(boolean otherEditable) {
+		public void absorbDerivedValues(boolean otherDerivedValues) {
 
-			attributes.absorbEditable(otherEditable);
+			attributes.absorbDerivedValues(otherDerivedValues);
 		}
 	}
 
@@ -139,15 +139,10 @@ public class CSlot implements CSourced {
 	}
 
 	/**
-	 * Specifies whether the slot is "active" on the particular frame
-	 * to which it is attached. If an instance-level slot is inactive
-	 * then it will never have any current values. A slot that is
-	 * inactive on a particular frame may be active on one or more
-	 * descendant frames, which allows slots that are mapped to fields
-	 * in the direct model to effectively only appear on objects that
-	 * are mapped to frames at lower levels in the hierarchy.
+	 * Specifies the default "active" status any instantiations of
+	 * this slot (see {@link ISlot#active}).
 	 *
-	 * @return True if slot is active
+	 * @return True instantiations of slot will by default by active
 	 */
 	public boolean active() {
 
@@ -155,16 +150,15 @@ public class CSlot implements CSourced {
 	}
 
 	/**
-	 * Specifies whether the slot is "editable" on the particular frame
-	 * to which it is attached. If an instance-level slot is not editable
-	 * then any current values will be provided by the model rather than
-	 * the client.
+	 * Specifies the default "derived-values" status any instantiations
+	 * of this slot (see {@link ISlot#derivedValues}).
 	 *
-	 * @return True if slot is editable
+	 * @return True instantiations of slot will by default be for
+	 * derived-values
 	 */
-	public boolean editable() {
+	public boolean derivedValues() {
 
-		return attributes.editable();
+		return attributes.derivedValues();
 	}
 
 	CSlot(
@@ -177,7 +171,7 @@ public class CSlot implements CSourced {
 		this.property = property;
 		this.cardinality = cardinality;
 
-		attributes = new ISlotAttributes(valueType);
+		attributes = new FSlotAttributes(valueType);
 	}
 
 	CSlotEditor createEditor() {
@@ -195,7 +189,7 @@ public class CSlot implements CSourced {
 		container.getSlots().remove(this);
 	}
 
-	ISlotAttributes getAttributes() {
+	FSlotAttributes getAttributes() {
 
 		return attributes;
 	}

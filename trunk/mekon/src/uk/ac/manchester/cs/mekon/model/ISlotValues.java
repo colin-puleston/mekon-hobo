@@ -336,6 +336,21 @@ public abstract class ISlotValues extends KList<IValue> {
 		return false;
 	}
 
+	private boolean validValue(IValue value) {
+
+		return validTypeValue(value) && validValueAbstractionLevel(value);
+	}
+
+	private boolean validTypeValue(IValue value) {
+
+		return getValueType().validValue(value);
+	}
+
+	private boolean validValueAbstractionLevel(IValue value) {
+
+		return getModel().abstractInstantiations() || !value.abstractValue();
+	}
+
 	private void validateValues(Collection<IValue> values) {
 
 		for (IValue value : values) {
@@ -346,18 +361,20 @@ public abstract class ISlotValues extends KList<IValue> {
 
 	private void validateValue(IValue value) {
 
-		if (!validValue(value)) {
+		if (!validTypeValue(value)) {
 
-			throw new KAccessException(
-						"Invalid value for slot: " + slot
-						+ " (expected value of type: " + getValueType()
-						+ ", found value: " + value + ")");
+			throwInvalidValueException(
+				value,
+				"expected value of type: " + getValueType());
 		}
-	}
 
-	private boolean validValue(IValue value) {
+		if (!validValueAbstractionLevel(value)) {
 
-		return getValueType().validValue(value);
+			throwInvalidValueException(
+				value,
+				"cannot set abstract slot-value "
+				+ "for non-abstract model-instantiation");
+		}
 	}
 
 	private void validateFixedValueCombination(Collection<IValue> fixedValues) {
@@ -369,6 +386,14 @@ public abstract class ISlotValues extends KList<IValue> {
 						+ "for single-valued slot: "
 						+ slot);
 		}
+	}
+
+	private void throwInvalidValueException(IValue value, String extraMsg) {
+
+		throw new KAccessException(
+					"Invalid slot-value: " + value
+					+ ", for slot: " + slot
+					+ ": " + extraMsg);
 	}
 
 	private Set<IValue> valuesAsSet(Collection<? extends IValue> values) {
@@ -384,6 +409,11 @@ public abstract class ISlotValues extends KList<IValue> {
 	private boolean valueSubsumption(IValue testSubsumer, IValue testSubsumed) {
 
 		return IValueSubsumptions.subsumption(testSubsumer, testSubsumed);
+	}
+
+	private CModel getModel() {
+
+		return slot.getContainer().getType().getModel();
 	}
 
 	private CValue<?> getValueType() {

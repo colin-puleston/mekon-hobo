@@ -39,8 +39,10 @@ public class IFrame implements IEntity, IValue {
 
 	private CFrame type;
 	private CIdentifiedsLocal<CFrame> inferredTypes = new CIdentifiedsLocal<CFrame>();
+
 	private ISlots slots = new ISlots();
 	private ISlots referencingSlots = new ISlots();
+
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
@@ -195,6 +197,18 @@ public class IFrame implements IEntity, IValue {
 	public CFrame getType() {
 
 		return type;
+	}
+
+	/**
+	 * Stipulates that this frame is abstract if and only if the
+	 * concept-level frame representing it's type is a
+	 * {@link CFrame#disjunction} frame.
+	 *
+	 * @return True if type-frame is a disjunction frame
+	 */
+	public boolean abstractValue() {
+
+		return type.disjunction();
 	}
 
 	/**

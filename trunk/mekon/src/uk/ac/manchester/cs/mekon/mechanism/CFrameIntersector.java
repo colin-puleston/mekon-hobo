@@ -33,36 +33,67 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CFrameIntersector extends CTypeValueIntersector<CFrame> {
 
-	private Set<CFrame> allOperands = new HashSet<CFrame>();
-	private Set<CFrame> mostSpecificOperands = new HashSet<CFrame>();
+	private List<CFrame> intersection = new ArrayList<CFrame>();
 
-	void addTypeOperand(CFrame operand) {
+	void addOperand(CFrame operand) {
 
-		allOperands.add(operand);
+		if (intersection != null) {
 
-		for (CFrame op : new HashSet<CFrame>(mostSpecificOperands)) {
+			List<CFrame> expandedOp = expandOperand(operand);
 
-			if (operand.subsumes(op)) {
+			if (intersection.isEmpty()) {
 
-				return;
+				intersection.addAll(expandedOp);
 			}
+			else {
 
-			if (op.subsumes(operand)) {
+				intersection.retainAll(expandedOp);
 
-				mostSpecificOperands.remove(op);
+				if (intersection.isEmpty()) {
+
+					intersection = null;
+				}
 			}
 		}
-
-		mostSpecificOperands.add(operand);
-	}
-
-	Set<CFrame> getIntersection() {
-
-		return mostSpecificOperands;
 	}
 
 	Class<CFrame> getOperandType() {
 
 		return CFrame.class;
+	}
+
+	CFrame getIntersectionOrNull() {
+
+		if (intersection == null) {
+
+			return null;
+		}
+
+		purgeIntersection();
+
+		if (intersection.size() == 1) {
+
+			return intersection.get(0);
+		}
+
+		return CFrame.createDisjunction(intersection);
+	}
+
+	private List<CFrame> expandOperand(CFrame operand) {
+
+		List<CFrame> expanded = new ArrayList<CFrame>();
+
+		expanded.add(operand);
+		expanded.addAll(operand.getDescendants());
+
+		return expanded;
+	}
+
+	private void purgeIntersection() {
+
+		for (CFrame intOp : new ArrayList<CFrame>(intersection)) {
+
+			intersection.removeAll(intOp.getSubs());
+		}
 	}
 }

@@ -50,7 +50,9 @@ public class CModel implements CAnnotatable {
 	private CAnnotations annotations = new CAnnotations(this);
 
 	private IEditor iEditor = new IEditorImpl(this);
+
 	private boolean autoUpdate = true;
+	private boolean abstractInstantiations = false;
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
@@ -68,6 +70,17 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
+	 * Enables or disables {@link #abstractInstantiations}.
+	 *
+	 * @param abstractInstantiations True if abstract model-instantiations
+	 * are to be allowed
+	 */
+	public void setAbstractInstantiations(boolean abstractInstantiations) {
+
+		this.abstractInstantiations = abstractInstantiations;
+	}
+
+	/**
 	 * Specifies whether the sets of slots for specific
 	 * instance-level frames will be dynamically updated based on
 	 * the current states of the frames. By default auto-update
@@ -78,6 +91,33 @@ public class CModel implements CAnnotatable {
 	public boolean autoUpdate() {
 
 		return autoUpdate;
+	}
+
+	/**
+	 * Specifies whether abstract model-instantiations, representing
+	 * sets of possible instances, rather than specific concrete
+	 * instances, are allowed.
+	 * <p>
+	 * Abstract instantiations differ from concrete instantiations in
+	 * the following ways:
+	 * <li>
+	 *   <ul>Disjunction-frames (see {@link CFrame#disjunction})
+	 *   can be instantiated
+	 *   <ul>Disjunction-frames, or instances of disjunction-frames,
+	 *   can be used as slot-values
+	 *   <ul>Indefinite numeric values (see {@link INumber#indefinite})
+	 *   can be used as slot-values
+	 *   <ul>Derived-values slots (see {@link ISlot#derivedValues}) are
+	 *   editable by the client (see {@link ISlot#editable}), which is
+	 *   not the case for concrete instances.
+	 * </li>
+	 * By default abstract model-instantiations will not be allowed.
+	 *
+	 * @return True if abstract model-instantiations are allowed
+	 */
+	public boolean abstractInstantiations() {
+
+		return abstractInstantiations;
 	}
 
 	/**

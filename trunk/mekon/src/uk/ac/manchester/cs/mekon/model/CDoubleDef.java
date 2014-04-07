@@ -35,7 +35,7 @@ public class CDoubleDef extends CNumberDef {
 	/**
 	 * Represents an unconstrained double-type definition.
 	 */
-	static public final CDoubleDef UNCONSTRAINED = range(null, null);
+	static public final CDoubleDef UNCONSTRAINED = new CDoubleDef();
 
 	/**
 	 * Creates an double-type definition with the specified limits.
@@ -78,6 +78,11 @@ public class CDoubleDef extends CNumberDef {
 	static private INumber resolveMax(Double max) {
 
 		return max != null ? new INumber(max) : INumber.PLUS_INFINITY;
+	}
+
+	private CDoubleDef() {
+
+		super(Double.class, INumber.MINUS_INFINITY, INumber.PLUS_INFINITY);
 	}
 
 	private CDoubleDef(INumber min, INumber max) {

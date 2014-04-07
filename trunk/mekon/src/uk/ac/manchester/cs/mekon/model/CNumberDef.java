@@ -33,7 +33,64 @@ import uk.ac.manchester.cs.mekon.*;
  *
  * @author Colin Puleston
  */
-public abstract class CNumberDef {
+public class CNumberDef {
+
+	/**
+	 * Creates a number-type definition with the specified limits.
+	 *
+	 * @param min Minimnum value for number-type
+	 * @param max Maximnum value for number-type
+	 * @throws KModelException if minimnum value is greater than
+	 * maximnum value, or if minimnum and maximnum values have
+	 * incompatible number-types
+	 */
+	static public CNumberDef range(INumber min, INumber max) {
+
+		return new CNumberDef(getRangeNumberType(min, max), min, max);
+	}
+
+	/**
+	 * Creates a number-type definition with the specified minimum
+	 * value.
+	 *
+	 * @param min Minimnum value for number-type
+	 */
+	static public CNumberDef min(INumber min) {
+
+		return new CNumberDef(min.getNumberType(), min, INumber.PLUS_INFINITY);
+	}
+
+	/**
+	 * Creates a number-type definition with the specified maximum
+	 * value.
+	 *
+	 * @param max Maximnum value for number-type
+	 */
+	static public CNumberDef max(INumber max) {
+
+		return new CNumberDef(max.getNumberType(), INumber.MINUS_INFINITY, max);
+	}
+
+	static private Class<? extends Number> getRangeNumberType(INumber min, INumber max) {
+
+		Class<? extends Number> minType = min.getNumberType();
+		Class<? extends Number> maxType = max.getNumberType();
+
+		if (minType == Number.class) {
+
+			return maxType;
+		}
+
+		if (maxType == Number.class || minType == maxType) {
+
+			return minType;
+		}
+
+		throw new KModelException(
+					"Incompatible numeric limit types: "
+					+ "minimum-type = " + minType
+					+ ", maximum-type = " + maxType);
+	}
 
 	private Class<? extends Number> numberType;
 
@@ -98,12 +155,31 @@ public abstract class CNumberDef {
 		this.min = min;
 		this.max = max;
 
+		validateRange();
+
+		checkDefiniteLimit(min, "Minimum");
+		checkDefiniteLimit(max, "Maximum");
+	}
+
+	private void validateRange() {
+
 		if (min.moreThan(max)) {
 
 			throw new KModelException(
 						"Illegal numeric limits: "
-						+ "(minimum = " + min
-						+ ", maximum = " + max + ")");
+						+ "minimum = " + min
+						+ ", maximum = " + max);
+		}
+	}
+
+	private void checkDefiniteLimit(INumber limit, String limitName) {
+
+		if (limit.indefinite()) {
+
+			throw new KModelException(
+						limitName
+						+ "-value cannot be indefinite value: "
+						+ limit);
 		}
 	}
 }

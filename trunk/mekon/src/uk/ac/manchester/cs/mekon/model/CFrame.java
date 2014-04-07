@@ -92,7 +92,7 @@ public abstract class CFrame
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
-	public static CDisjunction createDisjunction(List<CFrame> disjuncts) {
+	public static CFrame createDisjunction(List<CFrame> disjuncts) {
 
 		return createDisjunction(null, disjuncts);
 	}
@@ -108,7 +108,7 @@ public abstract class CFrame
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
-	public static CDisjunction createDisjunction(String label, List<CFrame> disjuncts) {
+	public static CFrame createDisjunction(String label, List<CFrame> disjuncts) {
 
 		return new CDisjunction(label, disjuncts);
 	}
@@ -166,6 +166,42 @@ public abstract class CFrame
 	public abstract CSource getSource();
 
 	/**
+	 * Specifies whether this is a model-frame. This is
+	 * equivalent to {@link #getCategory} returning a value of
+	 * {@link CFrameCategory#MODEL}.
+	 *
+	 * @return True if model-frame.
+	 */
+	public boolean modelFrame() {
+
+		return getCategory() == CFrameCategory.MODEL;
+	}
+
+	/**
+	 * Specifies whether this is an extension-frame. This is
+	 * equivalent to {@link #getCategory} returning a value of
+	 * {@link CFrameCategory#EXTENSION}.
+	 *
+	 * @return True if extension-frame.
+	 */
+	public boolean extension() {
+
+		return getCategory() == CFrameCategory.EXTENSION;
+	}
+
+	/**
+	 * Specifies whether this is a disjunction-frame. This is
+	 * equivalent to {@link #getCategory} returning a value of
+	 * {@link CFrameCategory#DISJUNCTION}.
+	 *
+	 * @return True if disjunction-frame.
+	 */
+	public boolean disjunction() {
+
+		return getCategory() == CFrameCategory.DISJUNCTION;
+	}
+
+	/**
 	 * Provides the frame-category.
 	 *
 	 * @return Frame-category.
@@ -178,6 +214,17 @@ public abstract class CFrame
 	public MFrame getType() {
 
 		return type;
+	}
+
+	/**
+	 * Stipulates that this frame is abstract if and only if it
+	 * is a {@link #disjunction} frame.
+	 *
+	 * @return True if disjunction-frame
+	 */
+	public boolean abstractValue() {
+
+		return disjunction();
 	}
 
 	/**
@@ -194,16 +241,24 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Stipulates that the frame is instantiable if and only if
-	 * it is a model-frame with visibility status of exposed, and
-	 * is not mapped to some non-instantiable entity in an extension
-	 * of the Frames Model (FM), or is an extension-frame that extends
-	 * an instantiable model-frame.
+	 * Specifies whether the frame is instantiable. This will be the
+	 * case if and only if:
+	 * <ul>
+	 *   <li>It is a model-frame with visibility status of
+	 *   exposed, which is not mapped to some non-instantiable entity
+	 *   in an extension of the Frames Model (FM)
+	 *   <li>OR it is an extension-frame whose model-frame is
+	 *   instantiable (see {@link #getModelFrame})
+	 *   <li>OR the model is {@link CModel#abstractInstantiations} and
+	 *   the frame is a disjunction-frame whose model-frame is
+	 *   instantiable
 	 *
-	 * @return True if frame is an exposed model-frame, not mapped t
-	 * a non-instantiable entity, or is an extension of such a frame
+	 * @return True if frame is instantiable
 	 */
-	public abstract boolean instantiable();
+	public boolean instantiable() {
+
+		return getModelFrame().asModelFrame().instantiableModelFrame();
+	}
 
 	/**
 	 * Specifies whether the frame is hidden (see {@link CFrame}).
@@ -537,10 +592,7 @@ public abstract class CFrame
 	 */
 	public IFrame instantiate() {
 
-		if (!instantiable()) {
-
-			throw new KAccessException("Cannot instantiate frame: " + this);
-		}
+		checkInstantiable();
 
 		IFrame instance = new IFrame(this);
 
@@ -613,6 +665,14 @@ public abstract class CFrame
 		}
 
 		return false;
+	}
+
+	private void checkInstantiable() {
+
+		if (!instantiable()) {
+
+			throw new KAccessException( "Cannot instantiate frame: " + this);
+		}
 	}
 
 	private boolean updateInstance(IFrame instance) {

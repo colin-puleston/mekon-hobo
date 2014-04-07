@@ -160,7 +160,7 @@ class CDisjunction extends CExpression {
 
 	public boolean instantiable() {
 
-		return false;
+		return getModel().abstractInstantiations() && super.instantiable();
 	}
 
 	public CModel getModel() {

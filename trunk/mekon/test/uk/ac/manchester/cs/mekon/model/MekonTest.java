@@ -127,13 +127,6 @@ public class MekonTest extends FramesTestUtils {
 		return container.createEditor().addSlot(type);
 	}
 
-	public ISlot setISlotNonEditable(ISlot slot) {
-
-		slot.createEditor().setEditable(false);
-
-		return slot;
-	}
-
 	public void normaliseCFramesHierarchy() {
 
 		new CHierarchyNormaliser(model);

@@ -77,10 +77,10 @@ public class ISlotSpecs {
 	 *   <li>The most-specific of the slot value-types will be retained
 	 *   (as defined by
 	 *   {@link CCardinality#moreRestrictiveThan(CCardinality)})
-	 *   <li>The "active" status will true if either the existing or
-	 *   the new status is true
-	 *   <li>The "editable" status will be true if and only if both the
-	 *   existing and the new status's are true
+	 *   <li>The "active" status will be true if and only if the both
+	 *   the existing status and the new status are true
+	 *   <li>The "derived-values" status will be true if either the
+	 *   existing or the new status is true
 	 * </ul>
 	 *
 	 * @param frameType Concept-level frame whose slot-related
@@ -129,7 +129,7 @@ public class ISlotSpecs {
 
 		for (ISlotSpec spec : specs) {
 
-			spec.addSlot(frame);
+			spec.chekAddSlot(frame);
 		}
 	}
 
@@ -222,17 +222,22 @@ public class ISlotSpecs {
 
 		if (slots.containsSlotFor(property)) {
 
-			ISlot slot = slots.getSlotFor(property);
-			List<IValue> oldValues = slot.getValues().asList();
-
-			spec.updateSlot(slot);
-
-			return !slot.getValues().asList().equals(oldValues);
+			return checkUpdateSlot(slots.getSlotFor(property), spec);
 		}
 
-		spec.addSlot(frame);
+		spec.chekAddSlot(frame);
 
 		return true;
+	}
+
+	private boolean checkUpdateSlot(ISlot slot, ISlotSpec spec) {
+
+		ISlotValues slotValues = slot.getValues();
+		List<IValue> oldValues = slotValues.asList();
+
+		spec.checkUpdateSlot(slot);
+
+		return !slotValues.asList().equals(oldValues);
 	}
 
 	private boolean removeIfRedundant(IFrame container, ISlot slot) {
