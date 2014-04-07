@@ -55,17 +55,18 @@ import uk.ac.manchester.cs.hobo.model.*;
  * itself or a viewer for the field.
  * <p>
  * For each field, unless the "container-class", "field-name" and
- * "editable" attribute-values have been explicitly specified (via the
- * appropriate methods) then they will be automatically derived from
+ * "derived-values" attribute-values have been explicitly specified
+ * (via the appropriate methods) then they will be automatically derived from
  * the relevant Java variable, assuming that it exists. The field-name
  * will be taken directly from the variable name, and the
- * editable-status will be derived from the variable type ({@link
- * DField} implies editable, {@link DFieldViewer} implies non-editable).
+ * derived-values status will be derived from the variable type
+ * ({@link DFieldViewer} implies derived-values, {@link DField} implies
+ * otherwise).
  * <p>
  * For each field, a field-name must be provided, either explicitly
  * or via an appropriate Java variable. Otherwise an exception
- * will be thrown. If the editable-status has not been provided by
- * either means, then it will default to "true". The "slot-label"
+ * will be thrown. If the derived-values status has not been provided
+ * by either means, then it will default to "false". The "slot-label"
  * attribute (for which values can also be explicitly provided) will
  * by default be set equal to the field-name.
  *
@@ -236,16 +237,16 @@ public interface DObjectBuilder {
 	public void setSlotLabel(DField<?> field, String slotLabel);
 
 	/**
-	 * Enables the explicit specification of the "editable"
-	 * attribute for a particular field that has been constructed
-	 * by this fields-factory.
+	 * Enables the explicit specification of the "derived-values"
+	 * attribute for the slot associated with a particular field
+	 * that has been constructed by this fields-factory.
 	 *
 	 * @param field Field whose attribute is to be set
-	 * @param editable Value for attribute
+	 * @param derivedValues Value for attribute
 	 * @throws KAccessException if the field was not constructed
 	 * by this fields-factory
 	 */
-	public void setEditable(DField<?> field, boolean editable);
+	public void setDerivedValues(DField<?> field, boolean derivedValues);
 
 	/**
 	 * Enables the explicit specification of the "unique-types"

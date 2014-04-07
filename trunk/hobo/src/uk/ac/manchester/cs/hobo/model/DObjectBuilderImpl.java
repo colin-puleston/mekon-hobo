@@ -143,9 +143,9 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		getFieldSlot(field).setSlotLabel(slotLabel);
 	}
 
-	public void setEditable(DField<?> field, boolean editable) {
+	public void setDerivedValues(DField<?> field, boolean derivedValues) {
 
-		getFieldSlot(field).setEditable(editable);
+		getFieldSlot(field).setDerivedValues(derivedValues);
 	}
 
 	public void setUniqueTypes(DArray<?> array, boolean uniqueTypes) {
