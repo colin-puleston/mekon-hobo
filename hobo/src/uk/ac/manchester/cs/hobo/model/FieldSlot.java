@@ -41,7 +41,7 @@ class FieldSlot {
 	private Class<? extends DObject> containerClass = null;
 	private String fieldName = null;
 	private String slotLabel = null;
-	private Boolean editable = null;
+	private Boolean derivedValues = null;
 
 	private class AttributeResolver {
 
@@ -54,7 +54,7 @@ class FieldSlot {
 
 		void resolve() {
 
-			if (fieldName == null || editable == null) {
+			if (fieldName == null || derivedValues == null) {
 
 				checkClassVariables();
 				checkInitialised();
@@ -65,9 +65,9 @@ class FieldSlot {
 				slotLabel = DIdentity.createLabel(fieldName);
 			}
 
-			if (editable == null) {
+			if (derivedValues == null) {
 
-				editable = true;
+				derivedValues = true;
 			}
 		}
 
@@ -148,9 +148,9 @@ class FieldSlot {
 					fieldName = variable.getName();
 				}
 
-				if (editable == null) {
+				if (derivedValues == null) {
 
-					editable = !varIsViewer;
+					derivedValues = varIsViewer;
 				}
 
 				return true;
@@ -220,9 +220,9 @@ class FieldSlot {
 		this.slotLabel = slotLabel;
 	}
 
-	void setEditable(boolean editable) {
+	void setDerivedValues(boolean derivedValues) {
 
-		this.editable = editable;
+		this.derivedValues = derivedValues;
 	}
 
 	DField<?> getField() {
@@ -240,9 +240,9 @@ class FieldSlot {
 		return slotLabel;
 	}
 
-	Boolean editable() {
+	Boolean derivedValues() {
 
-		return editable;
+		return derivedValues;
 	}
 
 	DBinding getBinding() {

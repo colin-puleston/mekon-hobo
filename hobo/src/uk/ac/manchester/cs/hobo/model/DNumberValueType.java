@@ -56,6 +56,11 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 		return numberType.cast(slotValueType.castValue(value).asTypeNumber());
 	}
 
+	boolean convertibleToFieldValue(IValue value) {
+
+		return !slotValueType.castValue(value).indefinite();
+	}
+
 	private CNumber createNumber(CNumberDef definition) {
 
 		checkNumberDef(definition);

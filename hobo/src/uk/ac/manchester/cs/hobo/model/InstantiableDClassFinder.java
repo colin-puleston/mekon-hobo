@@ -125,6 +125,18 @@ class InstantiableDClassFinder extends DClassFinder {
 		throw new HAccessException(
 					"Multiple instantiable DObject classes found for: "
 					+ type
-					+ " (" + mostSpecifics + ")");
+					+ " (" + getDClasses(mostSpecifics) + ")");
+	}
+
+	private Set<Class<? extends DObject>> getDClasses(Set<DBinding> bindings) {
+
+		Set<Class<? extends DObject>> dClasses = new HashSet<Class<? extends DObject>>();
+
+		for (DBinding binding : bindings) {
+
+			dClasses.add(binding.getDClass());
+		}
+
+		return dClasses;
 	}
 }

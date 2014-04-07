@@ -36,4 +36,9 @@ abstract class DValueType<V> {
 	abstract IValue toSlotValue(V value);
 
 	abstract V toFieldValue(IValue value);
+
+	boolean convertibleToFieldValue(IValue value) {
+
+		return true;
+	}
 }

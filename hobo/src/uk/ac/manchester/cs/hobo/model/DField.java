@@ -52,12 +52,18 @@ public abstract class DField<V> implements DFieldView<V> {
 
 		public void onAdded(IValue value) {
 
-			fieldListener.onAdded(toFieldValue(value));
+			if (convertibleToFieldValue(value)) {
+
+				fieldListener.onAdded(toFieldValue(value));
+			}
 		}
 
 		public void onRemoved(IValue value) {
 
-			fieldListener.onRemoved(toFieldValue(value));
+			if (convertibleToFieldValue(value)) {
+
+				fieldListener.onRemoved(toFieldValue(value));
+			}
 		}
 
 		public void onCleared(List<IValue> values) {
@@ -230,7 +236,10 @@ public abstract class DField<V> implements DFieldView<V> {
 
 		for (IValue slotValue : slotValues) {
 
-			values.add(toFieldValue(slotValue));
+			if (convertibleToFieldValue(slotValue)) {
+
+				values.add(toFieldValue(slotValue));
+			}
 		}
 
 		return values;
@@ -239,6 +248,11 @@ public abstract class DField<V> implements DFieldView<V> {
 	private V toFieldValue(IValue slotValue) {
 
 		return valueType.toFieldValue(slotValue);
+	}
+
+	private boolean convertibleToFieldValue(IValue slotValue) {
+
+		return valueType.convertibleToFieldValue(slotValue);
 	}
 
 	private ISlotValues getSlotValues() {
