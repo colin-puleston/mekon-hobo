@@ -236,6 +236,30 @@ public class OCFramesInstance {
 
 	private OCFrame createFrame(CFrame cFrame) {
 
+		return cFrame.disjunction()
+				? createDisjunctionFrame(cFrame)
+				: createModelFrame(cFrame);
+	}
+
+	private OCFrame createDisjunctionFrame(CFrame cFrame) {
+
+		OCFrame oFrame = new OCFrame(cFrame, null);
+
+		for (CFrame disjunct : cFrame.getSubs()) {
+
+			IRI iri = getNearestConceptIRIOrNull(disjunct);
+
+			if (iri != null) {
+
+				oFrame.addTypeDisjunctIRI(iri);
+			}
+		}
+
+		return oFrame;
+	}
+
+	private OCFrame createModelFrame(CFrame cFrame) {
+
 		return new OCFrame(cFrame, getNearestConceptIRIOrNull(cFrame));
 	}
 
