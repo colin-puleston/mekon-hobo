@@ -38,13 +38,13 @@ interface EntityIconConstants {
 	static final Color UNSPECIFIED_ENTITY_SOURCE_CLR = Color.gray;
 	static final Color NUMBER_CLR = Color.green.darker().darker();
 	static final Color HIDDEN_FRAME_INDICATOR_CLR = Color.darkGray.darker();
-	static final Color NON_EDIT_INDICATOR_CLR = Color.darkGray.darker();
+	static final Color DERIVED_VALUES_INDICATOR_CLR = Color.darkGray.darker();
 
 	static final int ENTITY_INNER_SIZE = 8;
 	static final int ENTITY_RIM_SIZE = 3;
 	static final int ENTITY_SIZE = ENTITY_INNER_SIZE + (ENTITY_RIM_SIZE * 2);
 	static final int HIDDEN_FRAME_INDICATOR_WIDTH = ENTITY_SIZE;
 	static final int HIDDEN_FRAME_INDICATOR_HEIGHT = 4;
-	static final int NON_EDIT_INDICATOR_WIDTH = 4;
-	static final int NON_EDIT_INDICATOR_HEIGHT = ENTITY_SIZE;
+	static final int DERIVED_VALUES_INDICATOR_WIDTH = 4;
+	static final int DERIVED_VALUES_INDICATOR_HEIGHT = ENTITY_SIZE;
 }

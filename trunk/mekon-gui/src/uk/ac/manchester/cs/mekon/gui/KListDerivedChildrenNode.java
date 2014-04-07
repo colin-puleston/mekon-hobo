@@ -45,7 +45,7 @@ abstract class KListDerivedChildrenNode<V> extends GNode {
 
 			if (requiresValueNode(value)) {
 
-				addChild(value);
+				addValueNode(value);
 				expand();
 			}
 		}
@@ -71,7 +71,7 @@ abstract class KListDerivedChildrenNode<V> extends GNode {
 
 			if (requiresValueNode(value)) {
 
-				addChild(value);
+				addValueNode(value);
 			}
 		}
 	}
@@ -92,7 +92,7 @@ abstract class KListDerivedChildrenNode<V> extends GNode {
 
 	abstract GNode createValueNode(V value);
 
-	private GNode addChild(V value) {
+	private GNode addValueNode(V value) {
 
 		GNode node = createValueNode(value);
 

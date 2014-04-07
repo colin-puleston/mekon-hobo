@@ -64,7 +64,7 @@ public class MekonModelExplorer extends GFrame {
 
 			selections = new ModelFrameSelections();
 			framesPanel = new ModelFramesPanel(model);
-			selectionsPanel = new ModelFrameSelectionPanel();
+			selectionsPanel = new ModelFrameSelectionPanel(model);
 
 			selections.addSelectionRelay(framesPanel.getSelectionRelay());
 			selections.addSelectionRelay(selectionsPanel.getSelectionRelay());

@@ -33,11 +33,11 @@ import uk.ac.manchester.cs.mekon.gui.util.icon.*;
  */
 class SlotIcons extends EntityIconsBySource {
 
-	private boolean editableSlots;
+	private boolean derivedValuesSlots;
 
-	SlotIcons(boolean editableSlots) {
+	SlotIcons(boolean derivedValuesSlots) {
 
-		this.editableSlots = editableSlots;
+		this.derivedValuesSlots = derivedValuesSlots;
 
 		initialise();
 	}
@@ -46,9 +46,9 @@ class SlotIcons extends EntityIconsBySource {
 
 		GIcon icon = super.create(mainClr, innerClr);
 
-		if (!editableSlots) {
+		if (derivedValuesSlots) {
 
-			icon.addRenderer(createNonEditRenderer());
+			icon.addRenderer(createDerivedValuesIndicatorRenderer());
 		}
 
 		return icon;
@@ -63,12 +63,12 @@ class SlotIcons extends EntityIconsBySource {
 						size);
 	}
 
-	private GIconRenderer createNonEditRenderer() {
+	private GIconRenderer createDerivedValuesIndicatorRenderer() {
 
 		GIconRenderer r = new GRectangleRenderer(
-									NON_EDIT_INDICATOR_CLR,
-									NON_EDIT_INDICATOR_WIDTH,
-									NON_EDIT_INDICATOR_HEIGHT);
+									DERIVED_VALUES_INDICATOR_CLR,
+									DERIVED_VALUES_INDICATOR_WIDTH,
+									DERIVED_VALUES_INDICATOR_HEIGHT);
 
 		r.setXOffset(ENTITY_SIZE);
 
