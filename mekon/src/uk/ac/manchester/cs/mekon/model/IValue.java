@@ -41,4 +41,12 @@ public interface IValue extends FEntity {
 	 * @return Type of value-entity
 	 */
 	public CValue<?> getType();
+
+	/**
+	 * Specifies whether the value-entity represents a set of possible
+	 * values, rather than a specific concrete value.
+	 *
+	 * @return True if value-entity is abstract
+	 */
+	public boolean abstractValue();
 }

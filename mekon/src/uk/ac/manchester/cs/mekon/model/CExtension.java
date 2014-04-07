@@ -86,11 +86,6 @@ class CExtension extends CExpression {
 		return CFrameCategory.EXTENSION;
 	}
 
-	public boolean instantiable() {
-
-		return extendedFrame.instantiable();
-	}
-
 	public CModel getModel() {
 
 		return extendedFrame.getModel();

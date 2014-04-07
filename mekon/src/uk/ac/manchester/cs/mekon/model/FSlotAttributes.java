@@ -29,20 +29,20 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-class ISlotAttributes {
+class FSlotAttributes {
 
 	private CValue<?> valueType;
 	private boolean active;
-	private boolean editable;
+	private boolean derivedValues;
 
-	ISlotAttributes(CValue<?> valueType) {
+	FSlotAttributes(CValue<?> valueType) {
 
-		this(valueType, true, true);
+		this(valueType, true, false);
 	}
 
-	ISlotAttributes copy() {
+	FSlotAttributes copy() {
 
-		return new ISlotAttributes(valueType, active, editable);
+		return new FSlotAttributes(valueType, active, derivedValues);
 	}
 
 	CValue<?> getValueType() {
@@ -55,9 +55,9 @@ class ISlotAttributes {
 		return active;
 	}
 
-	boolean editable() {
+	boolean derivedValues() {
 
-		return editable;
+		return derivedValues;
 	}
 
 	void setValueType(CValue<?> valueType) {
@@ -70,9 +70,9 @@ class ISlotAttributes {
 		this.active = active;
 	}
 
-	void setEditable(boolean editable) {
+	void setDerivedValues(boolean derivedValues) {
 
-		this.editable = editable;
+		this.derivedValues = derivedValues;
 	}
 
 	void absorbValueType(CSlot slotType, CValue<?> otherValueType) {
@@ -95,15 +95,18 @@ class ISlotAttributes {
 		active &= otherActive;
 	}
 
-	void absorbEditable(boolean otherEditable) {
+	void absorbDerivedValues(boolean otherDerivedValues) {
 
-		editable &= otherEditable;
+		derivedValues |= otherDerivedValues;
 	}
 
-	private ISlotAttributes(CValue<?> valueType, boolean active, boolean editable) {
+	private FSlotAttributes(
+				CValue<?> valueType,
+				boolean active,
+				boolean derivedValues) {
 
 		this.valueType = valueType;
 		this.active = active;
-		this.editable = editable;
+		this.derivedValues = derivedValues;
 	}
 }

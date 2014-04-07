@@ -38,7 +38,7 @@ public class ISlot implements IEntity {
 
 	private CSlot type;
 	private IFrame container;
-	private ISlotAttributes attributes;
+	private FSlotAttributes attributes;
 	private ISlotValues values;
 	private ISlotValuesEditor valuesEditor;
 	private List<ISlotListener> listeners = new ArrayList<ISlotListener>();
@@ -50,14 +50,14 @@ public class ISlot implements IEntity {
 			attributes.setActive(active);
 		}
 
-		public void setEditable(boolean editable) {
+		public void setDerivedValues(boolean editable) {
 
-			attributes.setEditable(editable);
+			attributes.setDerivedValues(editable);
 		}
 
 		public boolean setValueType(CValue<?> valueType) {
 
-			if (!valueType.equals(attributes.getValueType())) {
+			if (!valueType.equals(getValueType())) {
 
 				attributes.setValueType(valueType);
 
@@ -134,10 +134,12 @@ public class ISlot implements IEntity {
 	}
 
 	/**
-	 * Specifies the current "active" status of the slot (see
-	 * {@link CSlot#active}).
+	 * Specifies whether the slot is "active" on the particular frame
+	 * to which it is attached. If a slot is inactive then it will
+	 * never have any current values. A slot that is inactive on a
+	 * particular frame may be active on one or more descendant frames.
 	 *
-	 * @return True if slot is currently active
+	 * @return True if slot is active
 	 */
 	public boolean active() {
 
@@ -145,14 +147,29 @@ public class ISlot implements IEntity {
 	}
 
 	/**
-	 * Specifies the current "editable" status of the slot (see
-	 * {@link CSlot#active}).
+	 * Specifies whether the values for the slot can be entirely
+	 * determined by the model, based on the current values of other
+	 * slots in the model-instantiation.
 	 *
-	 * @return True if slot is currently editable
+	 * @return True if all slot-values can be entirely determined by
+	 * the model
+	 */
+	public boolean derivedValues() {
+
+		return attributes.derivedValues();
+	}
+
+	/**
+	 * Specifies whether the slot-values can be edited by the client.
+	 * This will always be the case if the model has been specified as
+	 * {@link CModel#abstractInstantiations}. Otherwise it will only be
+	 * the case for non-{@link #derivedValues} slots.
+	 *
+	 * @return True if slot is currently editable by client
 	 */
 	public boolean editable() {
 
-		return attributes.editable();
+		return getModel().abstractInstantiations() || !derivedValues();
 	}
 
 	/**
@@ -173,8 +190,8 @@ public class ISlot implements IEntity {
 	 */
 	public ISlotValuesEditor getValuesEditor() {
 
-		checkExternalValuesEditorAccess(attributes.active(), "inactive");
-		checkExternalValuesEditorAccess(attributes.editable(), "non-editable");
+		checkExternalValuesEditorAccess(active(), "inactive");
+		checkExternalValuesEditorAccess(editable(), "non-editable");
 
 		return getValuesEditorInternal();
 	}
@@ -199,9 +216,14 @@ public class ISlot implements IEntity {
 		return valuesEditor;
 	}
 
+	private CModel getModel() {
+
+		return container.getType().getModel();
+	}
+
 	private void checkExternalValuesEditorAccess(
-					boolean legalAccess,
-					String accessProblem) {
+						boolean legalAccess,
+						String accessProblem) {
 
 		if (!legalAccess) {
 
@@ -215,7 +237,7 @@ public class ISlot implements IEntity {
 
 		for (ISlotListener listener : copyListeners()) {
 
-			listener.onUpdatedValueType(attributes.getValueType());
+			listener.onUpdatedValueType(getValueType());
 		}
 	}
 

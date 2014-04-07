@@ -71,11 +71,12 @@ public interface CSlotEditor {
 	public void absorbActive(boolean otherActive);
 
 	/**
-	 * Updates the "editable" status of the slot to incorporate the
-	 * specified additional status (combined status will be true if
-	 * and only if both current status and specified status are true).
+	 * Updates the "derived-values" status of the slot to incorporate
+	 * the specified additional status (combined status will be true
+	 * if and only if both current status and specified status are
+	 * true).
 	 *
-	 * @param otherEditable Additional status to incorporate
+	 * @param otherDerivedValues Additional status to incorporate
 	 */
-	public void absorbEditable(boolean otherEditable);
+	public void absorbDerivedValues(boolean otherDerivedValues);
 }

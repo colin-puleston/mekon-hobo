@@ -87,17 +87,43 @@ public class INumber implements IEntity, IValue {
 
 		abstract boolean infinite();
 
+		abstract boolean indefinite();
+
 		abstract Class<? extends Number> getNumberType();
 
 		abstract CNumber getValueType();
 
-		abstract String asString();
+		abstract String getDescription();
 
 		abstract Number asTypeNumber();
 
 		abstract BigDecimal asBigDecimal();
 
-		abstract int compareTo(Value other);
+		abstract boolean equalTo(Value other);
+
+		abstract boolean lessThan(Value other);
+
+		abstract boolean moreThan(Value other);
+
+		boolean lessThanOrEqualTo(Value other) {
+
+			return !moreThan(other);
+		}
+
+		boolean moreThanOrEqualTo(Value other) {
+
+			return !lessThan(other);
+		}
+
+		boolean undefinedMinMax(Value other) {
+
+			if (other.indefinite()) {
+
+				return other.undefinedMinMax(this);
+			}
+
+			return false;
+		}
 
 		abstract INumber toINumber(BigDecimal value);
 	}
@@ -123,6 +149,11 @@ public class INumber implements IEntity, IValue {
 			return false;
 		}
 
+		boolean indefinite() {
+
+			return false;
+		}
+
 		Class<? extends Number> getNumberType() {
 
 			return operations.getNumberType();
@@ -135,7 +166,7 @@ public class INumber implements IEntity, IValue {
 			return new CNumber(numberType, INumber.this, INumber.this);
 		}
 
-		String asString() {
+		String getDescription() {
 
 			return value.toString();
 		}
@@ -155,12 +186,37 @@ public class INumber implements IEntity, IValue {
 			return operations.toINumber(value);
 		}
 
-		int compareTo(Value other) {
+		boolean equalTo(Value other) {
 
-			if (other.infinite()) {
+			if (other.infinite() || other.indefinite()) {
 
-				return -other.compareTo(this);
+				return other.equalTo(this);
 			}
+
+			return compareTo(other) == 0;
+		}
+
+		boolean lessThan(Value other) {
+
+			if (other.infinite() || other.indefinite()) {
+
+				return other.moreThan(this);
+			}
+
+			return compareTo(other) == -1;
+		}
+
+		boolean moreThan(Value other) {
+
+			if (other.infinite() || other.indefinite()) {
+
+				return other.lessThan(this);
+			}
+
+			return compareTo(other) == 1;
+		}
+
+		private int compareTo(Value other) {
 
 			return asBigDecimal().compareTo(other.asBigDecimal());
 		}
@@ -175,6 +231,11 @@ public class INumber implements IEntity, IValue {
 			return true;
 		}
 
+		boolean indefinite() {
+
+			return false;
+		}
+
 		Class<? extends Number> getNumberType() {
 
 			return Number.class;
@@ -185,7 +246,7 @@ public class INumber implements IEntity, IValue {
 			throw createInvalidOperationException();
 		}
 
-		String asString() {
+		String getDescription() {
 
 			return getNamePrefix() + NAME_BODY;
 		}
@@ -200,17 +261,15 @@ public class INumber implements IEntity, IValue {
 			throw createInvalidOperationException();
 		}
 
-		int compareTo(Value other) {
+		boolean equalTo(Value other) {
 
-			return other == this ? 0 : getCompareToAllOthersValue();
+			return this == other;
 		}
 
 		INumber toINumber(BigDecimal value) {
 
 			throw createInvalidOperationException();
 		}
-
-		abstract int getCompareToAllOthersValue();
 
 		abstract String getNamePrefix();
 
@@ -226,9 +285,14 @@ public class INumber implements IEntity, IValue {
 
 		static private final String NAME_PREFIX = "PLUS";
 
-		int getCompareToAllOthersValue() {
+		boolean lessThan(Value other) {
 
-			return 1;
+			return false;
+		}
+
+		boolean moreThan(Value other) {
+
+			return this != other;
 		}
 
 		String getNamePrefix() {
@@ -241,14 +305,131 @@ public class INumber implements IEntity, IValue {
 
 		static private final String NAME_PREFIX = "MINUS";
 
-		int getCompareToAllOthersValue() {
+		boolean lessThan(Value other) {
 
-			return -1;
+			return this != other;
+		}
+
+		boolean moreThan(Value other) {
+
+			return false;
 		}
 
 		String getNamePrefix() {
 
 			return NAME_PREFIX;
+		}
+	}
+
+	private class IndefiniteValue extends Value {
+
+		private CNumber valueType;
+
+		public int hashCode() {
+
+			return valueType.hashCode();
+		}
+
+		IndefiniteValue(CNumber valueType) {
+
+			this.valueType = valueType;
+		}
+
+		boolean infinite() {
+
+			return false;
+		}
+
+		boolean indefinite() {
+
+			return true;
+		}
+
+		Class<? extends Number> getNumberType() {
+
+			return valueType.getNumberType();
+		}
+
+		CNumber getValueType() {
+
+			return valueType;
+		}
+
+		String getDescription() {
+
+			return valueType.getLimitsString();
+		}
+
+		Number asTypeNumber() {
+
+			throw createInvalidOperationException();
+		}
+
+		BigDecimal asBigDecimal() {
+
+			throw createInvalidOperationException();
+		}
+
+		INumber toINumber(BigDecimal value) {
+
+			throw createInvalidOperationException();
+		}
+
+		boolean equalTo(Value other) {
+
+			return valueType.equals(other.getValueType());
+		}
+
+		boolean lessThan(Value other) {
+
+			return strictOrder(this, other);
+		}
+
+		boolean moreThan(Value other) {
+
+			return strictOrder(other, this);
+		}
+
+		boolean lessThanOrEqualTo(Value other) {
+
+			return lessThan(other) || maxMinEqual(this, other);
+		}
+
+		boolean moreThanOrEqualTo(Value other) {
+
+			return moreThan(other) || maxMinEqual(other, this);
+		}
+
+		boolean undefinedMinMax(Value other) {
+
+			return !equalTo(other) && !lessThan(other) && !moreThan(other);
+		}
+
+		private boolean strictOrder(Value one, Value two) {
+
+			return getMax(one).lessThan(getMin(two));
+		}
+
+		private boolean maxMinEqual(Value one, Value two) {
+
+			return getMax(one).equalTo(getMin(two));
+		}
+
+		private INumber getMin(Value value) {
+
+			return value.getValueType().getMin();
+		}
+
+		private INumber getMax(Value value) {
+
+			return value.getValueType().getMax();
+		}
+
+		private KAccessException createInvalidOperationException() {
+
+			return new KAccessException(
+						"Cannot perform operation on indefinite value: "
+						+ INumber.this);
 		}
 	}
 
@@ -335,11 +516,23 @@ public class INumber implements IEntity, IValue {
 	}
 
 	/**
+	 * Specifies whether this object represents an indefinite
+	 * value, for which only the <code>Number</code>-type and
+	 * range are specified.
+	 *
+	 * @return True if object represents indefinite value
+	 */
+	public boolean indefinite() {
+
+		return value.indefinite();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String toString() {
 
-		return FEntityDescriber.entityToString(this, value.asString());
+		return FEntityDescriber.entityToString(this, value.getDescription());
 	}
 
 	/**
@@ -347,7 +540,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public String getDisplayLabel() {
 
-		return value.asString();
+		return value.getDescription();
 	}
 
 	/**
@@ -361,6 +554,17 @@ public class INumber implements IEntity, IValue {
 	public CNumber getType() {
 
 		return value.getValueType();
+	}
+
+	/**
+	 * Stipulates that this frame is abstract if and only if it is
+	 * an {@link #indefinite} number.
+	 *
+	 * @return True if indefinite number
+	 */
+	public boolean abstractValue() {
+
+		return indefinite();
 	}
 
 	/**
@@ -397,7 +601,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean equalTo(INumber other) {
 
-		return compareTo(other) == 0;
+		return value.equalTo(other.value);
 	}
 
 	/**
@@ -410,7 +614,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean lessThan(INumber other) {
 
-		return compareTo(other) == -1;
+		return value.lessThan(other.value);
 	}
 
 	/**
@@ -423,7 +627,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean lessThanOrEqualTo(INumber other) {
 
-		return compareTo(other) != 1;
+		return value.lessThanOrEqualTo(other.value);
 	}
 
 	/**
@@ -436,7 +640,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean moreThan(INumber other) {
 
-		return !lessThanOrEqualTo(other);
+		return value.moreThan(other.value);
 	}
 
 	/**
@@ -449,16 +653,23 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean moreThanOrEqualTo(INumber other) {
 
-		return !lessThan(other);
+		return value.moreThanOrEqualTo(other.value);
 	}
 
 	/**
 	 * Provides the minimum between this and another numeric-value.
 	 *
 	 * @param other Other numeric-value to compare to this one
-	 * @return Minimum of the two numeric-values
+	 * @return Minimum of the two numeric-values, or null if there is no
+	 * defined minimum (which can happen if either of the values is
+	 * {@link #indefinite}
 	 */
 	public INumber min(INumber other) {
+
+		if (undefinedMinMax(other)) {
+
+			return null;
+		}
 
 		return lessThan(other) ? this : other;
 	}
@@ -467,9 +678,16 @@ public class INumber implements IEntity, IValue {
 	 * Provides the maximum between this and another numeric-value.
 	 *
 	 * @param other Other numeric-value to compare to this one
-	 * @return Maximum of the two numeric-values
+	 * @return Maximum of the two numeric-values, or null if there is no
+	 * defined maximum (which can happen if either of the values is
+	 * {@link #indefinite}
 	 */
 	public INumber max(INumber other) {
+
+		if (undefinedMinMax(other)) {
+
+			return null;
+		}
 
 		return moreThan(other) ? this : other;
 	}
@@ -574,6 +792,11 @@ public class INumber implements IEntity, IValue {
 		return asBigDecimal().doubleValue();
 	}
 
+	INumber(CNumber valueType) {
+
+		value = new IndefiniteValue(valueType);
+	}
+
 	CNumber toExactType() {
 
 		return new CNumber(getNumberType(), this, this);
@@ -598,14 +821,14 @@ public class INumber implements IEntity, IValue {
 				: new NegativeInfiniteValue();
 	}
 
+	private boolean undefinedMinMax(INumber other) {
+
+		return value.undefinedMinMax(other.value);
+	}
+
 	private BigDecimal asBigDecimal() {
 
 		return value.asBigDecimal();
-	}
-
-	private int compareTo(INumber other) {
-
-		return value.compareTo(other.value);
 	}
 
 	private INumber toINumber(BigDecimal value) {

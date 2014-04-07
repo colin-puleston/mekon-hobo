@@ -130,7 +130,7 @@ public class CSlotValuesTest extends MekonTest {
 		addAndValidate(p1, badValue);
 	}
 
-	private void addAndValidate(CProperty p, CValue  value) {
+	private void addAndValidate(CProperty p, CValue<?> value) {
 
 		container.addSlotValue(p, value);
 		getSlotValues().validateAll(container);

@@ -172,11 +172,6 @@ class CModelFrame extends CFrame {
 		return CFrameCategory.MODEL;
 	}
 
-	public boolean instantiable() {
-
-		return !hidden && !getModel().mappedToNonInstantiableObject(this);
-	}
-
 	public boolean hidden() {
 
 		return hidden;
@@ -366,6 +361,11 @@ class CModelFrame extends CFrame {
 	void acceptVisitor(CValueVisitor visitor) throws Exception {
 
 		visitor.visit(this);
+	}
+
+	boolean instantiableModelFrame() {
+
+		return !hidden && !getModel().mappedToNonInstantiableObject(this);
 	}
 
 	CExtension createExtension(String label, CSlotValues slotValues) {

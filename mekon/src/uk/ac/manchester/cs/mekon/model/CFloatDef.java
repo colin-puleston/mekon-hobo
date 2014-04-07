@@ -35,7 +35,7 @@ public class CFloatDef extends CNumberDef {
 	/**
 	 * Represents an unconstrained float-type definition.
 	 */
-	static public final CFloatDef UNCONSTRAINED = range(null, null);
+	static public final CFloatDef UNCONSTRAINED = new CFloatDef();
 
 	/**
 	 * Creates an float-type definition with the specified limits.
@@ -78,6 +78,11 @@ public class CFloatDef extends CNumberDef {
 	static private INumber resolveMax(Float max) {
 
 		return max != null ? new INumber(max) : INumber.PLUS_INFINITY;
+	}
+
+	private CFloatDef() {
+
+		super(Float.class, INumber.MINUS_INFINITY, INumber.PLUS_INFINITY);
 	}
 
 	private CFloatDef(INumber min, INumber max) {

@@ -35,7 +35,7 @@ public class CIntegerDef extends CNumberDef {
 	/**
 	 * Represents an unconstrained integer-type definition.
 	 */
-	static public final CIntegerDef UNCONSTRAINED = range(null, null);
+	static public final CIntegerDef UNCONSTRAINED = new CIntegerDef();
 
 	/**
 	 * Creates an integer-type definition with the specified limits.
@@ -78,6 +78,11 @@ public class CIntegerDef extends CNumberDef {
 	static private INumber resolveMax(Integer max) {
 
 		return max != null ? new INumber(max) : INumber.PLUS_INFINITY;
+	}
+
+	private CIntegerDef() {
+
+		super(Integer.class, INumber.MINUS_INFINITY, INumber.PLUS_INFINITY);
 	}
 
 	private CIntegerDef(INumber min, INumber max) {

@@ -91,7 +91,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	 */
 	public String getDisplayLabel() {
 
-		return numberType.getSimpleName() + getLimitsString();
+		return getDescription();
 	}
 
 	/**
@@ -264,7 +264,8 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	 * numeric-type, and which includes all annotations from both
 	 * sources.
 	 *
-	 * @param other Other numeric-type to whose range is to be intersected
+	 * @param other Other numeric-type to whose range is to be
+	 * intersected
 	 * @return Resulting numeric-type
 	 */
 	public CNumber getIntersection(CNumber other) {
@@ -276,6 +277,20 @@ public class CNumber extends CValue<INumber> implements CEntity {
 		intersectAnnos.addAll(other.annotations);
 
 		return intersect;
+	}
+
+	/**
+	 * Provides an instance-level representation of this numeric-type.
+	 * If the numeric-type represents an exact value (see {@link
+	 * #exactValue}) then the returned object will represent that
+	 * particular value, otherwise it will represent the appropriate
+	 * indefinite value (see {@link INumber#indefinite}).
+	 *
+	 * @return Instance-level representation of this numeric-type
+	 */
+	public INumber asINumber() {
+
+		return exactValue() ? min : new INumber(this);
 	}
 
 	/**
@@ -321,7 +336,12 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 	boolean validTypeValue(INumber value) {
 
-		return value.moreThanOrEqualTo(min) && value.lessThanOrEqualTo(max);
+		return contains(value.getType());
+	}
+
+	String getLimitsString() {
+
+		return "[" + minToString() + "-" + maxToString() + "]";
 	}
 
 	private CNumber createCNumber(INumber min, INumber max) {
@@ -342,11 +362,6 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	private String getDescription() {
 
 		return numberType.getSimpleName() + getLimitsString();
-	}
-
-	private String getLimitsString() {
-
-		return "[" + minToString() + "-" + maxToString() + "]";
 	}
 
 	private String minToString() {

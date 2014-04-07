@@ -33,14 +33,17 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 abstract class CTypeValueIntersector<V extends CValue<?>> {
 
-	void addOperand(CValue<?> operand) {
+	void addOperands(Set<CValue<?>> operands) {
 
-		addTypeOperand(operand.castAs(getOperandType()));
+		for (CValue<?> operand : operands) {
+
+			addOperand(operand.castAs(getOperandType()));
+		}
 	}
 
-	abstract void addTypeOperand(V operand);
-
-	abstract Set<V> getIntersection();
+	abstract void addOperand(V operand);
 
 	abstract Class<V> getOperandType();
+
+	abstract V getIntersectionOrNull();
 }

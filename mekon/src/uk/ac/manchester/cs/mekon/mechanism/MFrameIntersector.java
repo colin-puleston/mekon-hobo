@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -33,27 +31,22 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class MFrameIntersector extends CTypeValueIntersector<MFrame> {
 
-	private CFrameIntersector rootCFrameIntersector = new CFrameIntersector();
+	private CFrameIntersector cIntersector = new CFrameIntersector();
 
-	void addTypeOperand(MFrame operand) {
+	void addOperand(MFrame operand) {
 
-		rootCFrameIntersector.addTypeOperand(operand.getRootCFrame());
-	}
-
-	Set<MFrame> getIntersection() {
-
-		Set<MFrame> intersection = new HashSet<MFrame>();
-
-		for (CFrame rootCFrame : rootCFrameIntersector.getIntersection()) {
-
-			intersection.add(rootCFrame.getType());
-		}
-
-		return intersection;
+		cIntersector.addOperand(operand.getRootCFrame());
 	}
 
 	Class<MFrame> getOperandType() {
 
 		return MFrame.class;
+	}
+
+	MFrame getIntersectionOrNull() {
+
+		CFrame cIntersection = cIntersector.getIntersectionOrNull();
+
+		return cIntersection != null ? cIntersection.getType() : null;
 	}
 }
