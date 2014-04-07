@@ -61,7 +61,7 @@ abstract class IValuesNode extends KListDerivedChildrenNode<IValue> {
 
 			if (value != null) {
 
-				slot.getValuesEditor().add(value);
+				addValue(value);
 			}
 		}
 	}
@@ -74,7 +74,7 @@ abstract class IValuesNode extends KListDerivedChildrenNode<IValue> {
 
 			if (slot.editable()) {
 
-				slot.getValuesEditor().remove(value);
+				removeValue(value);
 			}
 		}
 
@@ -116,5 +116,15 @@ abstract class IValuesNode extends KListDerivedChildrenNode<IValue> {
 	GNodeAction getRemoveValueAction(IValue value) {
 
 		return new RemoveValueAction(value);
+	}
+
+	void addValue(IValue value) {
+
+		slot.getValuesEditor().add(value);
+	}
+
+	void removeValue(IValue value) {
+
+		slot.getValuesEditor().remove(value);
 	}
 }

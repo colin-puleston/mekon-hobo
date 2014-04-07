@@ -52,9 +52,16 @@ class InstantiationFrame extends GFrame {
 		return MekonModelExplorer.getSystemTitle(localTitle);
 	}
 
+	private CFrame frameType;
+
 	InstantiationFrame(CFrame frameType) {
 
 		super(getTitle(frameType), WIDTH, HEIGHT);
+
+		this.frameType = frameType;
+	}
+
+	void display() {
 
 		display(createMainComponent(frameType.instantiate()));
 	}

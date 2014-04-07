@@ -78,7 +78,12 @@ class INumberValuesNode extends IValuesNode {
 
 	IValue checkObtainValue() {
 
-		return new INumberSelector(tree, getValueType()).getSelectionOrNull();
+		return createSelector().getSelectionOrNull();
+	}
+
+	private INumberSelector createSelector() {
+
+		return new INumberSelector(tree, getValueType(), abstractInstance());
 	}
 
 	private INumber getNumberValue(IValue value) {
@@ -89,5 +94,10 @@ class INumberValuesNode extends IValuesNode {
 	private CNumber getValueType() {
 
 		return slot.getValueType().castAs(CNumber.class);
+	}
+
+	private boolean abstractInstance() {
+
+		return slot.getContainer().getType().getModel().abstractInstantiations();
 	}
 }

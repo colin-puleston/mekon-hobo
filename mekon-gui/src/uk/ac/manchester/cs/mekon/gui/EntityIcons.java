@@ -43,8 +43,8 @@ class EntityIcons implements EntityIconConstants {
 	FrameIcons exposedFrames = new FrameIcons(false);
 	FrameIcons hiddenFrames = new FrameIcons(true);
 	EntityIconsByLevel numbers = new EntityIconsByLevel(NUMBER_CLR, ENTITY_SIZE);
-	SlotIcons editableSlots = new SlotIcons(true);
-	SlotIcons nonEditableSlots = new SlotIcons(false);
+	SlotIcons derivedValuesSlots = new SlotIcons(true);
+	SlotIcons assertedValuesSlots = new SlotIcons(false);
 
 	Icon get(IFrame frame) {
 
@@ -73,12 +73,12 @@ class EntityIcons implements EntityIconConstants {
 
 	Icon get(CSlot slot) {
 
-		return getSlotIcons(slot.editable()).get(slot.getSource());
+		return getSlotIcons(slot.derivedValues()).get(slot.getSource());
 	}
 
 	Icon get(ISlot slot) {
 
-		return getSlotIcons(slot.editable()).get(slot.getType().getSource());
+		return getSlotIcons(!slot.editable()).get(slot.getType().getSource());
 	}
 
 	Icon forCSlotValues() {
@@ -96,9 +96,9 @@ class EntityIcons implements EntityIconConstants {
 		return frame.hidden() ? hiddenFrames : exposedFrames;
 	}
 
-	private SlotIcons getSlotIcons(boolean editable) {
+	private SlotIcons getSlotIcons(boolean derivedValues) {
 
-		return editable ? editableSlots : nonEditableSlots;
+		return derivedValues ? derivedValuesSlots : assertedValuesSlots;
 	}
 }
 

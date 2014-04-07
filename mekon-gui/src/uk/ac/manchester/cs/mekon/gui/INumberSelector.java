@@ -26,7 +26,9 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -39,7 +41,12 @@ class INumberSelector extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension WINDOW_SIZE = new Dimension(200, 70);
+	static private final Dimension EXACT_VALUE_WINDOW_SIZE = new Dimension(200, 70);
+	static private final Dimension RANGE_VALUE_WINDOW_SIZE = new Dimension(200, 200);
+
+	static private final String EXACT_VALUE_LABEL = "Exact";
+	static private final String MIN_VALUE_LABEL = "Minimum";
+	static private final String MAX_VALUE_LABEL = "Maximum";
 
 	private CNumber type;
 	private INumber selection = null;
@@ -48,31 +55,216 @@ class INumberSelector extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
+		private Set<InputField> conflictingFields = new HashSet<InputField>();
+
 		private class ValueEntryListener extends KeyAdapter {
 
 			public void keyPressed(KeyEvent event) {
 
-				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+				onKeyPressed(event);
+			}
+		}
 
-					checkSetValue(getText());
-				}
+		private class FieldExitListener extends FocusAdapter {
+
+			public void focusLost(FocusEvent e) {
+
+				checkValueEntered();
 			}
 		}
 
 		InputField() {
 
 			addKeyListener(new ValueEntryListener());
+			addFocusListener(new FieldExitListener());
+		}
+
+		void addConflictingField(InputField conflictingField) {
+
+			conflictingFields.add(conflictingField);
+		}
+
+		void clear() {
+
+			setText("");
+		}
+
+		void onValueEntered(INumber value) {
+		}
+
+		INumber getSelection(INumber value) {
+
+			return value;
+		}
+
+		private void onKeyPressed(KeyEvent event) {
+
+			clearConflictingFields();
+
+			if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+
+				checkSelect();
+			}
+		}
+
+		private void clearConflictingFields() {
+
+			for (InputField field : conflictingFields) {
+
+				field.clear();
+			}
+		}
+
+		private void checkSelect() {
+
+			INumber value = getValue();
+
+			if (value != null) {
+
+				selection = getSelection(value);
+
+				dispose();
+			}
+		}
+
+		private void checkValueEntered() {
+
+			INumber value = getValue();
+
+			if (value != null) {
+
+				onValueEntered(value);
+			}
+		}
+
+		private INumber getValue() {
+
+			return parseValue(getText());
 		}
 	}
 
-	INumberSelector(JComponent parent, CNumber type) {
+	private class RangeDisplay extends JPanel {
+
+		static private final long serialVersionUID = -1;
+
+		private InputField exactField = new InputField();
+
+		private LimitField minField = new LimitField();
+		private LimitField maxField = new LimitField();
+
+		private class LimitField extends InputField {
+
+			static private final long serialVersionUID = -1;
+
+			private INumber limit = null;
+			private LimitField otherLimitField = null;
+
+			void setOtherLimitField(LimitField otherLimitField) {
+
+				this.otherLimitField = otherLimitField;
+			}
+
+			void clear() {
+
+				super.clear();
+
+				limit = null;
+			}
+
+			void onValueEntered(INumber value) {
+
+				setLimit(value);
+			}
+
+			INumber getSelection(INumber value) {
+
+				setLimit(value);
+
+				return createRangeValue();
+			}
+
+			private void setLimit(INumber value) {
+
+				limit = value;
+
+				if (illegalRange()) {
+
+					otherLimitField.clear();
+				}
+			}
+		}
+
+		RangeDisplay() {
+
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+			exactField.addConflictingField(minField);
+			exactField.addConflictingField(maxField);
+
+			minField.addConflictingField(exactField);
+			maxField.addConflictingField(exactField);
+
+			minField.setOtherLimitField(maxField);
+			maxField.setOtherLimitField(minField);
+
+			addField(EXACT_VALUE_LABEL, exactField);
+			addField(MIN_VALUE_LABEL, minField);
+			addField(MAX_VALUE_LABEL, maxField);
+		}
+
+		private void addField(String label, InputField field) {
+
+			JPanel panel = new JPanel(new GridLayout(1, 1));
+
+			panel.setBorder(new TitledBorder(label + ":"));
+			panel.add(field);
+
+			add(panel);
+		}
+
+		private boolean illegalRange() {
+
+			INumber min = minField.limit;
+			INumber max = maxField.limit;
+
+			return min != null && max != null && min.moreThan(max);
+		}
+
+		private INumber createRangeValue() {
+
+			return createRangeDef().createNumber().asINumber();
+		}
+
+		private CNumberDef createRangeDef() {
+
+			return CNumberDef.range(resolveMin(), resolveMax());
+		}
+
+		private INumber resolveMin() {
+
+			INumber min = minField.limit;
+			INumber typeMin = type.getMin();
+
+			return min != null ? min.max(typeMin) : typeMin;
+		}
+
+		private INumber resolveMax() {
+
+			INumber max = maxField.limit;
+			INumber typeMax = type.getMax();
+
+			return max != null ? max.min(typeMax) : typeMax;
+		}
+	}
+
+	INumberSelector(JComponent parent, CNumber type, boolean abstractInstance) {
 
 		super(parent, type.getDisplayLabel(), true);
 
 		this.type = type;
 
-		setPreferredSize(WINDOW_SIZE);
-		display(new InputField());
+		setPreferredSize(getPreferredSize(abstractInstance));
+		display(getDisplay(abstractInstance));
 	}
 
 	INumber getSelectionOrNull() {
@@ -80,18 +272,29 @@ class INumberSelector extends GDialog {
 		return selection;
 	}
 
-	private void checkSetValue(String value) {
+	private Dimension getPreferredSize(boolean abstractInstance) {
 
-		if (type.validNumberValue(value)) {
+		return abstractInstance ? RANGE_VALUE_WINDOW_SIZE : EXACT_VALUE_WINDOW_SIZE;
+	}
 
-			selection = INumber.create(type.getNumberType(), value);
+	private JComponent getDisplay(boolean abstractInstance) {
 
-			dispose();
-		}
-		else {
+		return abstractInstance ? new RangeDisplay() : new InputField();
+	}
+
+	private INumber parseValue(String value) {
+
+		if (value.length() != 0) {
+
+			if (type.validNumberValue(value)) {
+
+				return INumber.create(type.getNumberType(), value);
+			}
 
 			JOptionPane.showMessageDialog(null, "Invalid Input!");
 		}
+
+		return null;
 	}
 }
 

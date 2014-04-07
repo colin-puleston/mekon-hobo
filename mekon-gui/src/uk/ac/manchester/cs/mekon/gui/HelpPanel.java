@@ -50,10 +50,10 @@ class HelpPanel extends JTabbedPane {
 	static final Icon mValueShape = getValueShape(EntityLevel.META);
 	static final Icon cValueShape = getValueShape(EntityLevel.CONCEPT);
 	static final Icon iValueShape = getValueShape(EntityLevel.INSTANCE);
-	static final Icon slotShape = getSlotShape();
 	static final Icon hiddenMFrameShape = getHiddenFrameShape(EntityLevel.META);
 	static final Icon hiddenCFrameShape = getHiddenFrameShape(EntityLevel.CONCEPT);
-	static final Icon nonEditSlotShape = getNonEditSlotShape();
+	static final Icon slotShape = getSlotShape();
+	static final Icon derivedValuesSlotShape = getDerivedValuesSlotShape();
 
 	static final Icon directColour = getColour(CSource.DIRECT);
 	static final Icon indirectColour = getColour(CSource.INDIRECT);
@@ -67,7 +67,7 @@ class HelpPanel extends JTabbedPane {
 
 	static private Icon getSlotShape() {
 
-		return getIcons().editableSlots.get(DEFAULT_SOURCE);
+		return getIcons().assertedValuesSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getHiddenFrameShape(EntityLevel level) {
@@ -75,9 +75,9 @@ class HelpPanel extends JTabbedPane {
 		return getIcons().hiddenFrames.get(DEFAULT_SOURCE, level);
 	}
 
-	static private Icon getNonEditSlotShape() {
+	static private Icon getDerivedValuesSlotShape() {
 
-		return getIcons().nonEditableSlots.get(DEFAULT_SOURCE);
+		return getIcons().derivedValuesSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getColour(CSource source) {
@@ -214,9 +214,14 @@ class HelpPanel extends JTabbedPane {
 					"Frame is hidden",
 					"CFrame");
 				addRow(
-					nonEditSlotShape,
-					"Slot is non-editable",
-					"CSlot, ISlot");
+					derivedValuesSlotShape,
+					"Slot-values are automatically derived",
+					"CSlot");
+				addRow(
+					derivedValuesSlotShape,
+					"Slot is non-editable "
+					+ "(i.e. automatically-derived-values slot on concrete instance)",
+					"ISlot");
 			}
 		}
 

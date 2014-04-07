@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -38,7 +40,22 @@ class CFrameValuesNode extends IValuesNode {
 
 	private class ValueNode extends GNode {
 
-		private CFrame frame;
+		final CFrame frame;
+
+		private class AddDisjunctAction extends GNodeAction {
+
+			protected void perform() {
+
+				checkAddValueDisjunct(ValueNode.this);
+			}
+		}
+
+		protected GNodeAction getPositiveAction() {
+
+			return abstractInstance()
+					? new AddDisjunctAction()
+					: super.getPositiveAction();
+		}
 
 		protected GNodeAction getNegativeAction() {
 
@@ -78,6 +95,43 @@ class CFrameValuesNode extends IValuesNode {
 
 	IValue checkObtainValue() {
 
+		return checkObtainFrameValue();
+	}
+
+	private void checkAddValueDisjunct(ValueNode valueNode) {
+
+		CFrame newDisjunct = checkObtainFrameValue();
+
+		if (newDisjunct != null) {
+
+			List<CFrame> disjuncts = valueAsDisjuncts(valueNode.frame);
+
+			if (disjuncts.add(newDisjunct)) {
+
+				removeValue(valueNode.frame);
+				addValue(CFrame.createDisjunction(disjuncts));
+			}
+		}
+	}
+
+	private List<CFrame> valueAsDisjuncts(CFrame value) {
+
+		List<CFrame> disjuncts = new ArrayList<CFrame>();
+
+		if (value.disjunction()) {
+
+			disjuncts.addAll(value.getSubs());
+		}
+		else {
+
+			disjuncts.add(value);
+		}
+
+		return disjuncts;
+	}
+
+	private CFrame checkObtainFrameValue() {
+
 		CFrame rootValue = getValueType().getRootCFrame();
 
 		if (rootValue.getSubs(CFrameVisibility.EXPOSED).isEmpty()) {
@@ -96,5 +150,10 @@ class CFrameValuesNode extends IValuesNode {
 	private MFrame getValueType() {
 
 		return slot.getValueType().castAs(MFrame.class);
+	}
+
+	private boolean abstractInstance() {
+
+		return slot.getContainer().getType().getModel().abstractInstantiations();
 	}
 }
