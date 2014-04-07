@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
@@ -40,6 +39,7 @@ class OCInstance {
 
 	private OModel model;
 	private OWLDataFactory dataFactory;
+	private NumberConstructs numberConstructs;
 
 	private OCFrame rootFrame;
 	private OWLClassExpression description;
@@ -47,13 +47,15 @@ class OCInstance {
 	private class FrameDescriber {
 
 		private OCFrame frame;
+		private OWLClassExpression type;
 
 		private Set<OWLClassExpression> slotValueDescriptions
 								= new HashSet<OWLClassExpression>();
 
-		FrameDescriber(OCFrame frame) {
+		FrameDescriber(OCFrame frame, OWLClassExpression type) {
 
 			this.frame = frame;
+			this.type = type;
 		}
 
 		OWLClassExpression describe() {
@@ -68,7 +70,7 @@ class OCInstance {
 				describeNumberSlotValues(slot);
 			}
 
-			return getExpression();
+			return slotValueDescriptions.isEmpty() ? type : createCompoundType();
 		}
 
 		private void describeConceptSlotValues(OCConceptSlot slot) {
@@ -81,20 +83,11 @@ class OCInstance {
 			new NumberSlotValuesDescriber(slot, slotValueDescriptions).describe();
 		}
 
-		private OWLClassExpression getExpression() {
-
-			OWLClass typeConcept = getConcept(frame);
-
-			return slotValueDescriptions.isEmpty()
-						? typeConcept
-						: createCompoundExpression(typeConcept);
-		}
-
-		private OWLClassExpression createCompoundExpression(OWLClass typeConcept) {
+		private OWLClassExpression createCompoundType() {
 
 			Set<OWLClassExpression> ops = new HashSet<OWLClassExpression>();
 
-			ops.add(typeConcept);
+			ops.add(type);
 			ops.addAll(slotValueDescriptions);
 
 			return dataFactory.getOWLObjectIntersectionOf(ops);
@@ -171,7 +164,29 @@ class OCInstance {
 
 		OWLClassExpression getFillerOrNull(OCFrame value) {
 
-			return value.mapsToOWLEntity() ? describeFrame(value) : null;
+			if (value.mapsToOWLEntity()) {
+
+				return describeFrame(value);
+			}
+
+			if (value.disjunctionType()) {
+
+				return describeFrame(value, createIntersection(value));
+			}
+
+			return null;
+		}
+
+		private OWLObjectIntersectionOf createIntersection(OCFrame disjunction) {
+
+			Set<OWLClass> ops = new HashSet<OWLClass>();
+
+			for (IRI iri : disjunction.getTypeDisjunctIRIs()) {
+
+				ops.add(getConcept(iri));
+			}
+
+			return dataFactory.getOWLObjectIntersectionOf(ops);
 		}
 	}
 
@@ -186,7 +201,7 @@ class OCInstance {
 
 		OWLClassExpression getFillerOrNull(INumber value) {
 
-			return createNumberConstruct(value);
+			return numberConstructs.createFor(value);
 		}
 	}
 
@@ -196,6 +211,7 @@ class OCInstance {
 		this.rootFrame = rootFrame;
 
 		dataFactory = model.getDataFactory();
+		numberConstructs = new NumberConstructs(model);
 
 		description = describeFrame(rootFrame);
 	}
@@ -211,7 +227,14 @@ class OCInstance {
 
 	private OWLClassExpression describeFrame(OCFrame frame) {
 
-		return new FrameDescriber(frame).describe();
+		return describeFrame(frame, getConcept(frame));
+	}
+
+	private OWLClassExpression describeFrame(
+									OCFrame frame,
+									OWLClassExpression type) {
+
+		return new FrameDescriber(frame, type).describe();
 	}
 
 	private OWLClassExpression createHasValueConstruct(
@@ -226,46 +249,6 @@ class OCInstance {
 									Set<OWLClassExpression> fillers) {
 
 		return dataFactory.getOWLObjectAllValuesFrom(property, getUnion(fillers));
-	}
-
-	private OWLClassExpression createNumberConstruct(INumber number) {
-
-		if (model.numericPropertyDefined()) {
-
-			OWLDataProperty property = model.getNumericProperty();
-			OWLLiteral literal = toLiteral(number);
-
-			return dataFactory.getOWLDataHasValue(property, literal);
-		}
-
-		return dataFactory.getOWLThing();
-	}
-
-	private OWLLiteral toLiteral(INumber number) {
-
-		Class<? extends Number> type = number.getNumberType();
-
-		if (type == Integer.class) {
-
-			return dataFactory.getOWLLiteral(number.asInteger());
-		}
-
-		if (type == Long.class) {
-
-			return dataFactory.getOWLLiteral(number.asLong());
-		}
-
-		if (type == Float.class) {
-
-			return dataFactory.getOWLLiteral(number.asFloat());
-		}
-
-		if (type == Double.class) {
-
-			return dataFactory.getOWLLiteral(number.asDouble());
-		}
-
-		throw new KModelException("Cannot handle number-type: " + type);
 	}
 
 	private Set<OWLClass> getEquivalentsOrSupers() {

@@ -41,6 +41,8 @@ public class OCFrame extends OCFramesEntity {
 	private CFrame cFrame = null;
 	private IFrame iFrame = null;
 
+	private Set<IRI> typeDisjunctIRIs = new HashSet<IRI>();
+
 	private Set<OCConceptSlot> conceptSlots = new HashSet<OCConceptSlot>();
 	private Set<OCNumberSlot> numberSlots = new HashSet<OCNumberSlot>();
 
@@ -66,6 +68,26 @@ public class OCFrame extends OCFramesEntity {
 	public OCFrame(String identifier, IRI iri) {
 
 		super(identifier, iri);
+	}
+
+	/**
+	 * Adds a type-disjunct for the frame.
+	 *
+	 * @param typeDisjunctIRI IRI of type-disjunct to add
+	 */
+	public void addTypeDisjunctIRI(IRI typeDisjunctIRI) {
+
+		typeDisjunctIRIs.add(typeDisjunctIRI);
+	}
+
+	/**
+	 * Removes a type-disjunct from the frame.
+	 *
+	 * @param typeDisjunctIRI IRI of type-disjunct to remove
+	 */
+	public void removeTypeDisjunctIRI(IRI typeDisjunctIRI) {
+
+		typeDisjunctIRIs.remove(typeDisjunctIRI);
 	}
 
 	/**
@@ -106,6 +128,30 @@ public class OCFrame extends OCFramesEntity {
 	public void removeSlot(OCNumberSlot slot) {
 
 		numberSlots.remove(slot);
+	}
+
+	/**
+	 * Specifies whether the type of the frame is a disjunction
+	 * of concepts, rather than a single concept.
+	 *
+	 * @return True if frame has a concept-disjunction type
+	 */
+	public boolean disjunctionType() {
+
+		return !typeDisjunctIRIs.isEmpty();
+	}
+
+	/**
+	 * Provides all type-disjuncts for the frame, for frames where
+	 * the type of the frame is a disjunction of concepts, rather
+	 * than a single concept.
+	 *
+	 * @return IRIs of all type-disjuncts, or empty set if frame
+	 * does not have a concept-disjunction type
+	 */
+	public Set<IRI> getTypeDisjunctIRIs() {
+
+		return new HashSet<IRI>(typeDisjunctIRIs);
 	}
 
 	/**
