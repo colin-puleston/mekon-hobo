@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -34,19 +33,21 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class KListDerivedChildrenNode<V> extends GNode {
+abstract class KListDerivedValueNodes<V> {
 
-	private KList<V> list;
+	private GNode parentNode;
 	private Map<V, GNode> valueNodes = new HashMap<V, GNode>();
 
-	private class ModelListListener implements KValuesListener<V> {
+	private KList<V> values;
+
+	private class ModelValuesListener implements KValuesListener<V> {
 
 		public void onAdded(V value) {
 
 			if (requiresValueNode(value)) {
 
 				addValueNode(value);
-				expand();
+				parentNode.expand();
 			}
 		}
 
@@ -60,14 +61,14 @@ abstract class KListDerivedChildrenNode<V> extends GNode {
 
 		public void onCleared(List<V> values) {
 
-			clearChildren();
+			parentNode.clearChildren();
 			valueNodes.clear();
 		}
 	}
 
 	protected void addInitialChildren() {
 
-		for (V value : list.asList()) {
+		for (V value : values.asList()) {
 
 			if (requiresValueNode(value)) {
 
@@ -76,13 +77,23 @@ abstract class KListDerivedChildrenNode<V> extends GNode {
 		}
 	}
 
-	KListDerivedChildrenNode(ITree tree, KList<V> list) {
+	KListDerivedValueNodes(GNode parentNode, KList<V> values) {
 
-		super(tree);
+		this.parentNode = parentNode;
+		this.values = values;
 
-		this.list = list;
+		values.addValuesListener(new ModelValuesListener());
+	}
 
-		list.addValuesListener(new ModelListListener());
+	void addInitialValueNodes() {
+
+		for (V value : values.asList()) {
+
+			if (requiresValueNode(value)) {
+
+				addValueNode(value);
+			}
+		}
 	}
 
 	boolean requiresValueNode(V value) {
@@ -97,7 +108,7 @@ abstract class KListDerivedChildrenNode<V> extends GNode {
 		GNode node = createValueNode(value);
 
 		valueNodes.put(value, node);
-		addChild(node);
+		parentNode.addChild(node);
 
 		return node;
 	}

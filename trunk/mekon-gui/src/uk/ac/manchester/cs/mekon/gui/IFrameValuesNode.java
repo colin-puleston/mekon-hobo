@@ -24,6 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -39,6 +42,39 @@ class IFrameValuesNode extends IValuesNode {
 	private class ValueNode extends IFrameNode {
 
 		private IFrame frame;
+
+		private class AddDisjunctAction extends AddCFrameDisjunctAction {
+
+			AddDisjunctAction() {
+
+				super(frame.getType());
+			}
+
+			CFrame checkObtainNewDisjunct() {
+
+				return checkObtainValueType();
+			}
+
+			void onDisjunctAdded(CFrame updatedType) {
+
+				IFrame updatedFrame = checkUpdateValueType(frame, updatedType);
+
+				if (updatedFrame != null) {
+
+					removeValue(frame);
+					addValue(updatedFrame);
+
+					frame = updatedFrame;
+				}
+			}
+		}
+
+		protected GNodeAction getPositiveAction() {
+
+			return abstractInstance()
+					? new AddDisjunctAction()
+					: GNodeAction.INERT_ACTION;
+		}
 
 		protected GNodeAction getNegativeAction() {
 
@@ -76,6 +112,44 @@ class IFrameValuesNode extends IValuesNode {
 		CFrame type = checkObtainValueType();
 
 		return type != null ? type.instantiate() : null;
+	}
+
+	private IFrame checkUpdateValueType(IFrame value, CFrame newType) {
+
+		if (newType.instantiable()) {
+
+			IFrame newValue = newType.instantiate();
+
+			copySlotValues(value, newValue);
+
+			return newValue;
+		}
+
+		JOptionPane.showMessageDialog(
+			null,
+			"Cannot instantiate: " + newType.getDisplayLabel());
+
+		return null;
+	}
+
+	private void copySlotValues(IFrame from, IFrame to) {
+
+		ISlots toSlots = to.getSlots();
+
+		for (ISlot slot : from.getSlots().asList()) {
+
+			List<IValue> values = slot.getValues().asList();
+
+			if (!values.isEmpty()) {
+
+				CProperty p = slot.getType().getProperty();
+
+				if (toSlots.containsSlotFor(p)) {
+
+					toSlots.getSlotFor(p).getValuesEditor().addAll(values);
+				}
+			}
+		}
 	}
 
 	private CFrame checkObtainValueType() {

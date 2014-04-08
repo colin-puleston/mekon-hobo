@@ -29,7 +29,7 @@ package uk.ac.manchester.cs.mekon.gui.util;
  */
 public abstract class GNodeAction {
 
-	static final GNodeAction INERT_ACTION =
+	static public final GNodeAction INERT_ACTION =
 
 		new GNodeAction() {
 
