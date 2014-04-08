@@ -151,9 +151,4 @@ abstract class IValuesNode extends GNode {
 
 		slot.getValuesEditor().remove(value);
 	}
-
-	boolean abstractInstance() {
-
-		return slot.getContainer().getType().getModel().abstractInstantiations();
-	}
 }
