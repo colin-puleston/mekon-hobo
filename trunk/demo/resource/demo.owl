@@ -242,6 +242,15 @@
     
 
 
+    <!-- http://mekon/demo.owl#sector -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#sector">
+        <rdfs:domain rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#jobAspect"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://mekon/demo.owl#simpleObjectProperty -->
 
     <owl:ObjectProperty rdf:about="http://mekon/demo.owl#simpleObjectProperty">
@@ -497,15 +506,15 @@
         <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DomainConcept"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#employment"/>
-                <owl:onClass rdf:resource="http://mekon/demo.owl#Employment"/>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Tax"/>
                 <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
-                <owl:onClass rdf:resource="http://mekon/demo.owl#Tax"/>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#employment"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Employment"/>
                 <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -580,6 +589,13 @@
 
     <owl:Class rdf:about="http://mekon/demo.owl#Education">
         <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#sector"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -807,6 +823,13 @@
 
     <owl:Class rdf:about="http://mekon/demo.owl#Health">
         <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#sector"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -863,10 +886,10 @@
                         <owl:onDatatype rdf:resource="&xsd;integer"/>
                         <owl:withRestrictions rdf:parseType="Collection">
                             <rdf:Description>
-                                <xsd:maxInclusive rdf:datatype="&xsd;integer">20</xsd:maxInclusive>
+                                <xsd:minInclusive rdf:datatype="&xsd;integer">10</xsd:minInclusive>
                             </rdf:Description>
                             <rdf:Description>
-                                <xsd:minInclusive rdf:datatype="&xsd;integer">10</xsd:minInclusive>
+                                <xsd:maxInclusive rdf:datatype="&xsd;integer">20</xsd:maxInclusive>
                             </rdf:Description>
                         </owl:withRestrictions>
                     </rdfs:Datatype>
@@ -889,10 +912,10 @@
                         <owl:onDatatype rdf:resource="&xsd;integer"/>
                         <owl:withRestrictions rdf:parseType="Collection">
                             <rdf:Description>
-                                <xsd:maxInclusive rdf:datatype="&xsd;integer">60</xsd:maxInclusive>
+                                <xsd:minInclusive rdf:datatype="&xsd;integer">10</xsd:minInclusive>
                             </rdf:Description>
                             <rdf:Description>
-                                <xsd:minInclusive rdf:datatype="&xsd;integer">10</xsd:minInclusive>
+                                <xsd:maxInclusive rdf:datatype="&xsd;integer">60</xsd:maxInclusive>
                             </rdf:Description>
                         </owl:withRestrictions>
                     </rdfs:Datatype>
@@ -919,6 +942,14 @@
     
 
 
+    <!-- http://mekon/demo.owl#IndustrySector -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#IndustrySector">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#JobAspect"/>
+    </owl:Class>
+    
+
+
     <!-- http://mekon/demo.owl#IntegerQuantity -->
 
     <owl:Class rdf:about="http://mekon/demo.owl#IntegerQuantity">
@@ -939,15 +970,8 @@
         <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#EmploymentAspect"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
-                <owl:onClass rdf:resource="http://mekon/demo.owl#JobType"/>
-                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#weeklyPay"/>
-                <owl:onClass rdf:resource="http://mekon/demo.owl#WeeklyPayQuantity"/>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Industry"/>
                 <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -960,8 +984,15 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
-                <owl:onClass rdf:resource="http://mekon/demo.owl#Industry"/>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#weeklyPay"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#WeeklyPayQuantity"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#JobType"/>
                 <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -1192,13 +1223,6 @@
         <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CitizenAspect"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#age"/>
-                <owl:onClass rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
-                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo.owl#children"/>
                 <owl:onClass rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
                 <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
@@ -1208,6 +1232,13 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo.owl#gender"/>
                 <owl:onClass rdf:resource="http://mekon/demo.owl#Gender"/>
+                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#age"/>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
                 <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -1297,6 +1328,22 @@
 
     <owl:Class rdf:about="http://mekon/demo.owl#PrimarySchoolStudent">
         <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#SchoolStudent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Private -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Private">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Public -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Public">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#IndustrySector"/>
     </owl:Class>
     
 
@@ -1642,14 +1689,14 @@
         <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Citizen"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
-                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#ZeroTax"/>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#benefitReceived"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#UnemploymentBenefit"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://mekon/demo.owl#benefitReceived"/>
-                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#UnemploymentBenefit"/>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#ZeroTax"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
