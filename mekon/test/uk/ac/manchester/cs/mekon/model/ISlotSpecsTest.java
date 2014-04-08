@@ -80,16 +80,17 @@ public class ISlotSpecsTest extends MekonTest {
 	}
 
 	@Test
-	public void test_convergingValueTypes() {
+	public void test_intersectionOfSubsumingValueTypes() {
 
 		updateContainerSlots(tc, td);
 		testSlotValueType(tz);
 	}
 
-	public void test_nonConvergingValueTypes() {
+	@Test
+	public void test_intersectionOfValueTypesWithCommonDescendant() {
 
 		updateContainerSlots(tb, td);
-		testSlotCount(0);
+		testSlotValueType(tz);
 	}
 
 	@Test
