@@ -77,7 +77,11 @@ public abstract class ValueSummary<V> extends DObjectShell {
 	void addSlot(ISlot slot) {
 
 		slots.add(slot);
-		slot.getValues().addValuesListener(updater);
+
+		if (!getFrame().abstractInstance()) {
+
+			slot.getValues().addValuesListener(updater);
+		}
 
 		update();
 	}
@@ -100,9 +104,9 @@ public abstract class ValueSummary<V> extends DObjectShell {
 
 		clear();
 
-		List<V> values = getAllValuesOrNull();
+		List<V> values = getAllValues();
 
-		if (values != null) {
+		if (!values.isEmpty()) {
 
 			set(values);
 		}
@@ -121,7 +125,7 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		return getModel().getConcept(PropertyRef.class, id);
 	}
 
-	private List<V> getAllValuesOrNull() {
+	private List<V> getAllValues() {
 
 		List<V> values = new ArrayList<V>();
 

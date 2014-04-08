@@ -71,7 +71,10 @@ public class Job extends DObjectShell {
 
 		public void initialise() {
 
-			new WeeklyPayUpdater();
+			if (!getFrame().abstractInstance()) {
+
+				new WeeklyPayUpdater();
+			}
 		}
 	}
 

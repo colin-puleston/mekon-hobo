@@ -118,7 +118,10 @@ public class Employment extends DObjectShell {
 
 		public void initialise() {
 
-			new JobConsequenceUpdater();
+			if (!getFrame().abstractInstance()) {
+
+				new JobConsequenceUpdater();
+			}
 		}
 	}
 
