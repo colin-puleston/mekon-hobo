@@ -95,9 +95,4 @@ class INumberValuesNode extends IValuesNode {
 
 		return slot.getValueType().castAs(CNumber.class);
 	}
-
-	private boolean abstractInstance() {
-
-		return slot.getContainer().getType().getModel().abstractInstantiations();
-	}
 }
