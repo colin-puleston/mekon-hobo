@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -40,13 +38,26 @@ class CFrameValuesNode extends IValuesNode {
 
 	private class ValueNode extends GNode {
 
-		final CFrame frame;
+		private CFrame frame;
 
-		private class AddDisjunctAction extends GNodeAction {
+		private class AddDisjunctAction extends AddCFrameDisjunctAction {
 
-			protected void perform() {
+			AddDisjunctAction() {
 
-				checkAddValueDisjunct(ValueNode.this);
+				super(frame);
+			}
+
+			CFrame checkObtainNewDisjunct() {
+
+				return checkObtainFrameValue();
+			}
+
+			void onDisjunctAdded(CFrame updatedFrame) {
+
+				removeValue(frame);
+				addValue(updatedFrame);
+
+				frame = updatedFrame;
 			}
 		}
 
@@ -54,7 +65,7 @@ class CFrameValuesNode extends IValuesNode {
 
 			return abstractInstance()
 					? new AddDisjunctAction()
-					: super.getPositiveAction();
+					: GNodeAction.INERT_ACTION;
 		}
 
 		protected GNodeAction getNegativeAction() {
@@ -98,38 +109,6 @@ class CFrameValuesNode extends IValuesNode {
 		return checkObtainFrameValue();
 	}
 
-	private void checkAddValueDisjunct(ValueNode valueNode) {
-
-		CFrame newDisjunct = checkObtainFrameValue();
-
-		if (newDisjunct != null) {
-
-			List<CFrame> disjuncts = valueAsDisjuncts(valueNode.frame);
-
-			if (disjuncts.add(newDisjunct)) {
-
-				removeValue(valueNode.frame);
-				addValue(CFrame.createDisjunction(disjuncts));
-			}
-		}
-	}
-
-	private List<CFrame> valueAsDisjuncts(CFrame value) {
-
-		List<CFrame> disjuncts = new ArrayList<CFrame>();
-
-		if (value.disjunction()) {
-
-			disjuncts.addAll(value.getSubs());
-		}
-		else {
-
-			disjuncts.add(value);
-		}
-
-		return disjuncts;
-	}
-
 	private CFrame checkObtainFrameValue() {
 
 		CFrame rootValue = getValueType().getRootCFrame();
@@ -150,10 +129,5 @@ class CFrameValuesNode extends IValuesNode {
 	private MFrame getValueType() {
 
 		return slot.getValueType().castAs(MFrame.class);
-	}
-
-	private boolean abstractInstance() {
-
-		return slot.getContainer().getType().getModel().abstractInstantiations();
 	}
 }

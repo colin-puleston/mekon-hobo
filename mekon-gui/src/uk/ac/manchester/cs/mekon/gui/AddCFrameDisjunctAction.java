@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -31,48 +33,54 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class IFrameNode extends GNode {
+abstract class AddCFrameDisjunctAction extends GNodeAction {
 
-	private ITree tree;
-	private IFrame iFrame;
+	private CFrame frame;
 
-	private ValueNodes valueNodes;
+	protected void perform() {
 
-	private class ValueNodes extends KListDerivedValueNodes<ISlot> {
+		checkAddDisjunct();
+	}
 
-		ValueNodes() {
+	AddCFrameDisjunctAction(CFrame frame) {
 
-			super(IFrameNode.this, iFrame.getSlots());
-		}
+		this.frame = frame;
+	}
 
-		boolean requiresValueNode(ISlot slot) {
+	abstract CFrame checkObtainNewDisjunct();
 
-			return slot.active();
-		}
+	abstract void onDisjunctAdded(CFrame updatedFrame);
 
-		GNode createValueNode(ISlot slot) {
+	private void checkAddDisjunct() {
 
-			return new ISlotNode(tree, slot);
+		CFrame newDisjunct = checkObtainNewDisjunct();
+
+		if (newDisjunct != null) {
+
+			List<CFrame> disjuncts = valueAsDisjuncts(frame);
+
+			if (disjuncts.add(newDisjunct)) {
+
+				frame = CFrame.createDisjunction(disjuncts);
+
+				onDisjunctAdded(frame);
+			}
 		}
 	}
 
-	protected void addInitialChildren() {
+	private List<CFrame> valueAsDisjuncts(CFrame value) {
 
-		valueNodes.addInitialValueNodes();
-	}
+		List<CFrame> disjuncts = new ArrayList<CFrame>();
 
-	protected GCellDisplay getDisplay() {
+		if (value.disjunction()) {
 
-		return EntityDisplays.get().get(iFrame);
-	}
+			disjuncts.addAll(value.getSubs());
+		}
+		else {
 
-	IFrameNode(ITree tree, IFrame iFrame) {
+			disjuncts.add(value);
+		}
 
-		super(tree);
-
-		this.tree = tree;
-		this.iFrame = iFrame;
-
-		valueNodes = new ValueNodes();
+		return disjuncts;
 	}
 }

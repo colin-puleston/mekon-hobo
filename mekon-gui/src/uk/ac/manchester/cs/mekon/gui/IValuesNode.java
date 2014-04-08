@@ -33,9 +33,11 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class IValuesNode extends KListDerivedChildrenNode<IValue> {
+abstract class IValuesNode extends GNode {
 
 	private ISlot slot;
+
+	private ValueNodes valueNodes;
 
 	private class DisplayUpdater implements ISlotListener {
 
@@ -92,6 +94,24 @@ abstract class IValuesNode extends KListDerivedChildrenNode<IValue> {
 		}
 	}
 
+	private class ValueNodes extends KListDerivedValueNodes<IValue> {
+
+		ValueNodes() {
+
+			super(IValuesNode.this, slot.getValues());
+		}
+
+		GNode createValueNode(IValue value) {
+
+			return IValuesNode.this.createValueNode(value);
+		}
+	}
+
+	protected void addInitialChildren() {
+
+		valueNodes.addInitialValueNodes();
+	}
+
 	protected GNodeAction getPositiveAction() {
 
 		return new AddValueAction();
@@ -104,14 +124,18 @@ abstract class IValuesNode extends KListDerivedChildrenNode<IValue> {
 
 	IValuesNode(ITree tree, ISlot slot) {
 
-		super(tree, slot.getValues());
+		super(tree);
 
 		this.slot = slot;
+
+		valueNodes = new ValueNodes();
 
 		slot.addListener(new DisplayUpdater());
 	}
 
 	abstract IValue checkObtainValue();
+
+	abstract GNode createValueNode(IValue value);
 
 	GNodeAction getRemoveValueAction(IValue value) {
 
@@ -126,5 +150,10 @@ abstract class IValuesNode extends KListDerivedChildrenNode<IValue> {
 	void removeValue(IValue value) {
 
 		slot.getValuesEditor().remove(value);
+	}
+
+	boolean abstractInstance() {
+
+		return slot.getContainer().getType().getModel().abstractInstantiations();
 	}
 }
