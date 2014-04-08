@@ -94,22 +94,22 @@ abstract class IValuesNode extends GNode {
 		}
 	}
 
-	private class ValueNodes extends KListDerivedValueNodes<IValue> {
+	private class ValueNodes extends KListDerivedChildNodes<IValue> {
 
 		ValueNodes() {
 
 			super(IValuesNode.this, slot.getValues());
 		}
 
-		GNode createValueNode(IValue value) {
+		GNode createChildNode(IValue value) {
 
-			return IValuesNode.this.createValueNode(value);
+			return createValueNode(value);
 		}
 	}
 
 	protected void addInitialChildren() {
 
-		valueNodes.addInitialValueNodes();
+		valueNodes.addInitialChildNodes();
 	}
 
 	protected GNodeAction getPositiveAction() {

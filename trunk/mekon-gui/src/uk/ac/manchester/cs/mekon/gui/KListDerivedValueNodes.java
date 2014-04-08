@@ -33,10 +33,10 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class KListDerivedValueNodes<V> {
+abstract class KListDerivedChildNodes<V> {
 
 	private GNode parentNode;
-	private Map<V, GNode> valueNodes = new HashMap<V, GNode>();
+	private Map<V, GNode> childNodes = new HashMap<V, GNode>();
 
 	private KList<V> values;
 
@@ -44,25 +44,25 @@ abstract class KListDerivedValueNodes<V> {
 
 		public void onAdded(V value) {
 
-			if (requiresValueNode(value)) {
+			if (childNodeRequiredFor(value)) {
 
-				addValueNode(value);
+				addChildNode(value);
 				parentNode.expand();
 			}
 		}
 
 		public void onRemoved(V value) {
 
-			if (requiresValueNode(value)) {
+			if (childNodeRequiredFor(value)) {
 
-				valueNodes.remove(value).remove();
+				childNodes.remove(value).remove();
 			}
 		}
 
 		public void onCleared(List<V> values) {
 
 			parentNode.clearChildren();
-			valueNodes.clear();
+			childNodes.clear();
 		}
 	}
 
@@ -70,14 +70,14 @@ abstract class KListDerivedValueNodes<V> {
 
 		for (V value : values.asList()) {
 
-			if (requiresValueNode(value)) {
+			if (childNodeRequiredFor(value)) {
 
-				addValueNode(value);
+				addChildNode(value);
 			}
 		}
 	}
 
-	KListDerivedValueNodes(GNode parentNode, KList<V> values) {
+	KListDerivedChildNodes(GNode parentNode, KList<V> values) {
 
 		this.parentNode = parentNode;
 		this.values = values;
@@ -85,29 +85,29 @@ abstract class KListDerivedValueNodes<V> {
 		values.addValuesListener(new ModelValuesListener());
 	}
 
-	void addInitialValueNodes() {
+	void addInitialChildNodes() {
 
 		for (V value : values.asList()) {
 
-			if (requiresValueNode(value)) {
+			if (childNodeRequiredFor(value)) {
 
-				addValueNode(value);
+				addChildNode(value);
 			}
 		}
 	}
 
-	boolean requiresValueNode(V value) {
+	boolean childNodeRequiredFor(V value) {
 
 		return true;
 	}
 
-	abstract GNode createValueNode(V value);
+	abstract GNode createChildNode(V value);
 
-	private GNode addValueNode(V value) {
+	private GNode addChildNode(V value) {
 
-		GNode node = createValueNode(value);
+		GNode node = createChildNode(value);
 
-		valueNodes.put(value, node);
+		childNodes.put(value, node);
 		parentNode.addChild(node);
 
 		return node;

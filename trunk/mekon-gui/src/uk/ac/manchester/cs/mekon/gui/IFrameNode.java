@@ -38,19 +38,19 @@ class IFrameNode extends GNode {
 
 	private ValueNodes valueNodes;
 
-	private class ValueNodes extends KListDerivedValueNodes<ISlot> {
+	private class ValueNodes extends KListDerivedChildNodes<ISlot> {
 
 		ValueNodes() {
 
 			super(IFrameNode.this, iFrame.getSlots());
 		}
 
-		boolean requiresValueNode(ISlot slot) {
+		boolean childNodeRequiredFor(ISlot slot) {
 
 			return slot.active();
 		}
 
-		GNode createValueNode(ISlot slot) {
+		GNode createChildNode(ISlot slot) {
 
 			return new ISlotNode(tree, slot);
 		}
@@ -58,7 +58,7 @@ class IFrameNode extends GNode {
 
 	protected void addInitialChildren() {
 
-		valueNodes.addInitialValueNodes();
+		valueNodes.addInitialChildNodes();
 	}
 
 	protected GCellDisplay getDisplay() {
