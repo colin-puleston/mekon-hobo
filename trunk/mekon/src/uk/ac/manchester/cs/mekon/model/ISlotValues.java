@@ -156,20 +156,23 @@ public abstract class ISlotValues extends KList<IValue> {
 
 	boolean updateFixedValues(Collection<IValue> newFixedValues) {
 
-		retainOnlyMostSpecificValues(newFixedValues);
+		if (!slot.abstractInstance()) {
 
-		if (!fixedValues.equals(newFixedValues)) {
+			retainOnlyMostSpecificValues(newFixedValues);
 
-			validateValues(newFixedValues);
-			validateFixedValueCombination(newFixedValues);
+			if (!fixedValues.equals(newFixedValues)) {
 
-			fixedValues.clear();
-			fixedValues.addAll(newFixedValues);
+				validateValues(newFixedValues);
+				validateFixedValueCombination(newFixedValues);
 
-			removeRedundantAsserteds();
-			updateSlotValues();
+				fixedValues.clear();
+				fixedValues.addAll(newFixedValues);
 
-			return true;
+				removeRedundantAsserteds();
+				updateSlotValues();
+
+				return true;
+			}
 		}
 
 		return false;
@@ -348,7 +351,7 @@ public abstract class ISlotValues extends KList<IValue> {
 
 	private boolean validValueAbstractionLevel(IValue value) {
 
-		return getModel().abstractInstantiations() || !value.abstractValue();
+		return slot.abstractInstance() || !value.abstractValue();
 	}
 
 	private void validateValues(Collection<IValue> values) {
@@ -373,7 +376,7 @@ public abstract class ISlotValues extends KList<IValue> {
 			throwInvalidValueException(
 				value,
 				"cannot set abstract slot-value "
-				+ "for non-abstract model-instantiation");
+				+ "for non-abstract instance");
 		}
 	}
 

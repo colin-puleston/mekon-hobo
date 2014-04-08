@@ -161,15 +161,26 @@ public class ISlot implements IEntity {
 
 	/**
 	 * Specifies whether the slot-values can be edited by the client.
-	 * This will always be the case if the model has been specified as
-	 * {@link CModel#abstractInstantiations}. Otherwise it will only be
-	 * the case for non-{@link #derivedValues} slots.
+	 * This will always be the case if the slot is part of an abstract
+	 * model-instantiation (see {@link #abstractInstance}. Otherwise it
+	 * will only be the case for non-{@link #derivedValues} slots.
 	 *
 	 * @return True if slot is currently editable by client
 	 */
 	public boolean editable() {
 
-		return getModel().abstractInstantiations() || !derivedValues();
+		return abstractInstance() || !derivedValues();
+	}
+
+	/**
+	 * Specifies whether this slot is part of an abstract
+	 * model-instantiation.
+	 *
+	 * @return True if part of an abstract model-instantiation
+	 */
+	public boolean abstractInstance() {
+
+		return container.abstractInstance();
 	}
 
 	/**

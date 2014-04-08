@@ -200,6 +200,17 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Specifies whether this frame is part of an abstract
+	 * model-instantiation.
+	 *
+	 * @return True if part of an abstract model-instantiation
+	 */
+	public boolean abstractInstance() {
+
+		return type.getModel().abstractInstantiations();
+	}
+
+	/**
 	 * Stipulates that this frame is abstract if and only if the
 	 * concept-level frame representing it's type is a
 	 * {@link CFrame#disjunction} frame.
