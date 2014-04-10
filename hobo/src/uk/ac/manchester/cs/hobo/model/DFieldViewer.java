@@ -49,6 +49,14 @@ public class DFieldViewer<V, F extends DField<V>> implements DFieldView<V> {
 	/**
 	 * {@inheritDoc}
 	 */
+	public void addConcreteOnlyUpdateListener(KUpdateListener listener) {
+
+		field.addConcreteOnlyUpdateListener(listener);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void removeUpdateListener(KUpdateListener listener) {
 
 		field.removeUpdateListener(listener);
@@ -60,6 +68,14 @@ public class DFieldViewer<V, F extends DField<V>> implements DFieldView<V> {
 	public void addValuesListener(KValuesListener<V> listener) {
 
 		field.addValuesListener(listener);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addConcreteOnlyValuesListener(KValuesListener<V> listener) {
+
+		field.addConcreteOnlyValuesListener(listener);
 	}
 
 	/**
