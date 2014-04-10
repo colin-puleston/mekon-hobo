@@ -24,7 +24,6 @@
 package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -38,113 +37,67 @@ class InstantiatonsPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String INSTANTIATE_BUTTON_LABEL = "Instantiate";
-	static private final String ABSTRACT_SELECTOR_LABEL = "Abstract Instances";
+	static private final String CONCRETE_BUTTON_LABEL = "Instantiate";
+	static private final String QUERY_BUTTON_LABEL = "Create Query";
 
-	static private final float ABSTRACT_SELECTOR_FONT_SIZE = 14;
+	private CFrame frame;
 
-	private CModel model;
-	private CFrame frame = null;
-
-	private int instantiationCount = 0;
-	private InstantiationEndListener instantiationEndListener
-										= new InstantiationEndListener();
-
-	private InstantiateButton instantiateButton = new InstantiateButton();
-	private AbstractToggler abstractToggler = new AbstractToggler();
-
-	private class AbstractToggler
-					extends JCheckBox
-					implements ActionListener {
-
-		static private final long serialVersionUID = -1;
-
-		public void actionPerformed(ActionEvent event) {
-
-			toggleAbstract();
-		}
-
-		AbstractToggler() {
-
-			super(ABSTRACT_SELECTOR_LABEL);
-
-			setFontSize();
-			addActionListener(this);
-		}
-
-		private void setFontSize() {
-
-			setFont(getFont().deriveFont(ABSTRACT_SELECTOR_FONT_SIZE));
-		}
-	}
-
-	private class InstantiateButton extends GButton {
+	private abstract class InstantiateButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			instantiate();
+			new InstantiationFrame(instantiate()).display();
 		}
 
-		InstantiateButton() {
+		InstantiateButton(String label) {
 
-			super(INSTANTIATE_BUTTON_LABEL + "...");
+			super(label + "...");
+		}
 
-			setEnabled(false);
+		abstract IFrame instantiate();
+	}
+
+	private class InstantiateConcreteButton extends InstantiateButton {
+
+		static private final long serialVersionUID = -1;
+
+		InstantiateConcreteButton() {
+
+			super(CONCRETE_BUTTON_LABEL);
+		}
+
+		IFrame instantiate() {
+
+			return frame.instantiate();
 		}
 	}
 
-	private class InstantiationEndListener extends WindowAdapter {
+	private class InstantiateQueryButton extends InstantiateButton {
 
-		public void windowClosing(WindowEvent e) {
+		static private final long serialVersionUID = -1;
 
-			onInstantiationEnd();
+		InstantiateQueryButton() {
+
+			super(QUERY_BUTTON_LABEL);
+
+			setEnabled(frame.getModel().queriesEnabled());
+		}
+
+		IFrame instantiate() {
+
+			return frame.instantiateQuery();
 		}
 	}
 
-	InstantiatonsPanel(CModel model) {
+	InstantiatonsPanel(CFrame frame) {
 
-		super(new BorderLayout());
-
-		this.model = model;
-
-		add(abstractToggler, BorderLayout.WEST);
-		add(instantiateButton, BorderLayout.EAST);
-	}
-
-	void setSelectedFrame(CFrame frame) {
+		super(new FlowLayout());
 
 		this.frame = frame;
 
-		instantiateButton.setEnabled(frame.instantiable());
-	}
-
-	private void toggleAbstract() {
-
-		boolean current = model.abstractInstantiations();
-
-		model.setAbstractInstantiations(!current);
-	}
-
-	private void instantiate() {
-
-		InstantiationFrame instFrame = new InstantiationFrame(frame);
-
-		instFrame.addWindowListener(instantiationEndListener);
-		instFrame.display();
-
-		if (++instantiationCount == 1) {
-
-			abstractToggler.setEnabled(false);
-		}
-	}
-
-	private void onInstantiationEnd() {
-
-		if (--instantiationCount == 0) {
-
-			abstractToggler.setEnabled(true);
-		}
+		add(new InstantiateConcreteButton());
+		add(new InstantiateQueryButton());
 	}
 }

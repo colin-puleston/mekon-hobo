@@ -40,8 +40,6 @@ class ModelFrameSelectionPanel extends JPanel {
 	static private final String USAGE_TITLE = "Usage";
 	static private final String ANNOTATIONS_TITLE = "Annotations";
 
-	private InstantiatonsPanel instantiatonsPanel;
-
 	private ReselectionListener reselectionListener = new ReselectionListener();
 	private CFrameSelectionListeners reselectors = new CFrameSelectionListeners();
 
@@ -92,8 +90,6 @@ class ModelFrameSelectionPanel extends JPanel {
 	ModelFrameSelectionPanel(CModel model) {
 
 		super(new BorderLayout());
-
-		instantiatonsPanel = new InstantiatonsPanel(model);
 	}
 
 	CFrameSelectionRelay getSelectionRelay() {
@@ -103,12 +99,10 @@ class ModelFrameSelectionPanel extends JPanel {
 
 	private void showSelected(CFrame selected) {
 
-		instantiatonsPanel.setSelectedFrame(selected);
-
 		removeAll();
 
 		add(createAspectsPanel(selected), BorderLayout.CENTER);
-		add(instantiatonsPanel, BorderLayout.SOUTH);
+		add(new InstantiatonsPanel(selected), BorderLayout.SOUTH);
 
 		revalidate();
 	}
