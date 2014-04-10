@@ -32,13 +32,21 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class IFrameISlotValueUpdateProcessor implements KValuesListener<IValue> {
+class IFrameSlotValueUpdateProcessor implements KValuesListener<IValue> {
+
+	static void checkAddTo(ISlot slot) {
+
+		if (slot.getValueType() instanceof CFrame) {
+
+			new IFrameSlotValueUpdateProcessor(slot);
+		}
+	}
 
 	private ISlot slot;
 
 	public void onAdded(IValue value) {
 
-		IFrame frame = extractFrame(value);
+		IFrame frame = (IFrame)value;
 
 		if (frame.getType().hidden()) {
 
@@ -53,7 +61,7 @@ class IFrameISlotValueUpdateProcessor implements KValuesListener<IValue> {
 
 	public void onRemoved(IValue value) {
 
-		extractFrame(value).removeReferencingSlot(slot);
+		((IFrame)value).removeReferencingSlot(slot);
 	}
 
 	public void onCleared(List<IValue> values) {
@@ -64,20 +72,10 @@ class IFrameISlotValueUpdateProcessor implements KValuesListener<IValue> {
 		}
 	}
 
-	IFrameISlotValueUpdateProcessor(ISlot slot) {
+	private IFrameSlotValueUpdateProcessor(ISlot slot) {
 
 		this.slot = slot;
 
 		slot.getValues().addValuesListener(this);
-	}
-
-	private IFrame extractFrame(IValue value) {
-
-		return castValueType().castValue(value);
-	}
-
-	private CFrame castValueType() {
-
-		return slot.getValueType().castAs(CFrame.class);
 	}
 }

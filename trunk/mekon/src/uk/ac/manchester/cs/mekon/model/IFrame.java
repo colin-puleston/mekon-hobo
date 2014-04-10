@@ -87,8 +87,8 @@ public class IFrame implements IEntity, IValue {
 
 			ISlot slot = new ISlot(IFrame.this, slotType);
 
-			new ISlotInitialiser(slot);
 			new DynamicUpdater(slot);
+			IFrameSlotValueUpdateProcessor.checkAddTo(slot);
 
 			slots.add(slot);
 
