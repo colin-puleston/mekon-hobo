@@ -43,10 +43,10 @@ public abstract class DField<V> implements DFieldView<V> {
 	private DValueType<V> valueType;
 	private ISlot slot = null;
 
-	private Map<KValuesListener<V>, ProxyValuesListener> proxyValuesListeners
-						= new HashMap<KValuesListener<V>, ProxyValuesListener>();
+	private Map<KValuesListener<V>, SlotValuesListener> slotValuesListeners
+						= new HashMap<KValuesListener<V>, SlotValuesListener>();
 
-	private class ProxyValuesListener implements KValuesListener<IValue> {
+	private class SlotValuesListener implements KValuesListener<IValue> {
 
 		private KValuesListener<V> fieldListener;
 
@@ -71,9 +71,11 @@ public abstract class DField<V> implements DFieldView<V> {
 			fieldListener.onCleared(toFieldValues(values));
 		}
 
-		ProxyValuesListener(KValuesListener<V> fieldListener) {
+		SlotValuesListener(KValuesListener<V> fieldListener) {
 
 			this.fieldListener = fieldListener;
+
+			slotValuesListeners.put(fieldListener, this);
 		}
 	}
 
@@ -83,6 +85,14 @@ public abstract class DField<V> implements DFieldView<V> {
 	public void addUpdateListener(KUpdateListener listener) {
 
 		getSlotValues().addUpdateListener(listener);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addConcreteOnlyUpdateListener(KUpdateListener listener) {
+
+		getSlotValues().addConcreteOnlyUpdateListener(listener);
 	}
 
 	/**
@@ -98,10 +108,15 @@ public abstract class DField<V> implements DFieldView<V> {
 	 */
 	public void addValuesListener(KValuesListener<V> listener) {
 
-		ProxyValuesListener proxy = new ProxyValuesListener(listener);
+		getSlotValues().addValuesListener(new SlotValuesListener(listener));
+	}
 
-		getSlotValues().addValuesListener(proxy);
-		proxyValuesListeners.put(listener, proxy);
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addConcreteOnlyValuesListener(KValuesListener<V> listener) {
+
+		getSlotValues().addConcreteOnlyValuesListener(new SlotValuesListener(listener));
 	}
 
 	/**
@@ -109,11 +124,11 @@ public abstract class DField<V> implements DFieldView<V> {
 	 */
 	public void removeValuesListener(KValuesListener<V> listener) {
 
-		ProxyValuesListener proxy = proxyValuesListeners.get(listener);
+		SlotValuesListener slotListener = slotValuesListeners.get(listener);
 
-		if (proxy != null) {
+		if (slotListener != null) {
 
-			getSlotValues().removeValuesListener(proxy);
+			getSlotValues().removeValuesListener(slotListener);
 		}
 	}
 
