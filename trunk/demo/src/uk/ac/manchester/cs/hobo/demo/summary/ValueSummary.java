@@ -77,11 +77,7 @@ public abstract class ValueSummary<V> extends DObjectShell {
 	void addSlot(ISlot slot) {
 
 		slots.add(slot);
-
-		if (!getFrame().abstractInstance()) {
-
-			slot.getValues().addValuesListener(updater);
-		}
+		slot.getValues().addConcreteOnlyValuesListener(updater);
 
 		update();
 	}

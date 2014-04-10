@@ -57,8 +57,8 @@ public class Job extends DObjectShell {
 
 		WeeklyPayUpdater() {
 
-			hourlyPay.addUpdateListener(this);
-			hoursPerWeek.addUpdateListener(this);
+			hourlyPay.addConcreteOnlyUpdateListener(this);
+			hoursPerWeek.addConcreteOnlyUpdateListener(this);
 		}
 
 		private DCell<Integer> getWeeklyPay() {
@@ -71,10 +71,7 @@ public class Job extends DObjectShell {
 
 		public void initialise() {
 
-			if (!getFrame().abstractInstance()) {
-
-				new WeeklyPayUpdater();
-			}
+			new WeeklyPayUpdater();
 		}
 	}
 

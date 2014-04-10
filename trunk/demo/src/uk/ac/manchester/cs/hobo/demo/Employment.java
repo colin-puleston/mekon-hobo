@@ -53,7 +53,7 @@ public class Employment extends DObjectShell {
 
 			UpdaterForJobWeeklyPay(Job job) {
 
-				job.weeklyPay.addUpdateListener(this);
+				job.weeklyPay.addConcreteOnlyUpdateListener(this);
 			}
 		}
 
@@ -79,7 +79,7 @@ public class Employment extends DObjectShell {
 			setJobCount(0);
 			setTotalWeeklyPay(0);
 
-			jobs.addValuesListener(this);
+			jobs.addConcreteOnlyValuesListener(this);
 		}
 
 		private void update() {
@@ -118,10 +118,7 @@ public class Employment extends DObjectShell {
 
 		public void initialise() {
 
-			if (!getFrame().abstractInstance()) {
-
-				new JobConsequenceUpdater();
-			}
+			new JobConsequenceUpdater();
 		}
 	}
 
