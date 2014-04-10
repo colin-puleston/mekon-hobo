@@ -25,18 +25,17 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Represents an entity that can be the value for an
- * instance-level slot. Value-entities can be either
- * instance-level or concept-level.
+ * Represents an entity that can be the value for an instance-level
+ * slot. Value-entities can be either instance-level or concept-level.
  *
  * @author Colin Puleston
  */
 public interface IValue extends FEntity {
 
 	/**
-	 * Provides the type of the value-entity (which could be
-	 * either a concept-level entity or a meta-level entity,
-	 * depending on the level of the value-entity).
+	 * Provides the type of the value-entity (which could be either a
+	 * concept-level entity or a meta-level entity, depending on the
+	 * level of the value-entity).
 	 *
 	 * @return Type of value-entity
 	 */

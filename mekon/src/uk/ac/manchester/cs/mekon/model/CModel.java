@@ -52,7 +52,7 @@ public class CModel implements CAnnotatable {
 	private IEditor iEditor = new IEditorImpl(this);
 
 	private boolean autoUpdate = true;
-	private boolean abstractInstantiations = false;
+	private boolean queriesEnabled = false;
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
@@ -70,17 +70,6 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Enables or disables {@link #abstractInstantiations}.
-	 *
-	 * @param abstractInstantiations True if abstract model-instantiations
-	 * are to be allowed
-	 */
-	public void setAbstractInstantiations(boolean abstractInstantiations) {
-
-		this.abstractInstantiations = abstractInstantiations;
-	}
-
-	/**
 	 * Specifies whether the sets of slots for specific
 	 * instance-level frames will be dynamically updated based on
 	 * the current states of the frames. By default auto-update
@@ -94,30 +83,16 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Specifies whether abstract model-instantiations, representing
-	 * sets of possible instances, rather than specific concrete
-	 * instances, are allowed.
+	 * Specifies whether query-instances are allowed (see {@link
+	 * IFrame}.
 	 * <p>
-	 * Abstract instantiations differ from concrete instantiations in
-	 * the following ways:
-	 * <li>
-	 *   <ul>Disjunction-frames (see {@link CFrame#disjunction})
-	 *   can be instantiated
-	 *   <ul>Disjunction-frames, or instances of disjunction-frames,
-	 *   can be used as slot-values
-	 *   <ul>Indefinite numeric values (see {@link INumber#indefinite})
-	 *   can be used as slot-values
-	 *   <ul>Derived-values slots (see {@link ISlot#derivedValues}) are
-	 *   editable by the client (see {@link ISlot#editable}), which is
-	 *   not the case for concrete instances.
-	 * </li>
-	 * By default abstract model-instantiations will not be allowed.
+	 * By default query-instances will not be allowed.
 	 *
-	 * @return True if abstract model-instantiations are allowed
+	 * @return True if query-instances are allowed
 	 */
-	public boolean abstractInstantiations() {
+	public boolean queriesEnabled() {
 
-		return abstractInstantiations;
+		return queriesEnabled;
 	}
 
 	/**
@@ -162,7 +137,8 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Instantiates a model-frame.
+	 * Instantiates a frame as a concrete-instance (see {@link
+	 * IFrame}).
 	 *
 	 * @param identity Identity of frame to be instantiated
 	 * @return Instantiation of specified frame
@@ -170,6 +146,18 @@ public class CModel implements CAnnotatable {
 	public IFrame instantiate(CIdentity identity) {
 
 		return getFrames().get(identity).instantiate();
+	}
+
+	/**
+	 * Instantiates a frame as a query-instance (see {@link
+	 * IFrame}).
+	 *
+	 * @param identity Identity of frame to be instantiated
+	 * @return Instantiation of specified frame
+	 */
+	public IFrame instantiateQuery(CIdentity identity) {
+
+		return getFrames().get(identity).instantiateQuery();
 	}
 
 	CModel() {
@@ -192,6 +180,11 @@ public class CModel implements CAnnotatable {
 	void removeInitialisationListener(InitialisationListener listener) {
 
 		initialisationListeners.remove(listener);
+	}
+
+	void setQueriesEnabled(boolean queriesEnabled) {
+
+		this.queriesEnabled = queriesEnabled;
 	}
 
 	CModelFrame addFrame(CIdentity identity, boolean hidden, IReasoner iReasoner) {
