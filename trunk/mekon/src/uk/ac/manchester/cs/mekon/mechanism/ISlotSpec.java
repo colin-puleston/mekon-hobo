@@ -125,7 +125,11 @@ class ISlotSpec {
 
 		slotEd.setActive(active);
 		slotEd.setDerivedValues(derivedValues);
-		slotEd.setFixedValues(fixedValues);
+
+		if (!slot.queryInstance()) {
+
+			slotEd.setFixedValues(fixedValues);
+		}
 	}
 
 	private CValue<?> getValueTypeOrNull() {

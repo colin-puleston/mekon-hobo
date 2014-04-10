@@ -158,11 +158,6 @@ class CDisjunction extends CExpression {
 		return CFrameCategory.DISJUNCTION;
 	}
 
-	public boolean instantiable() {
-
-		return getModel().abstractInstantiations() && super.instantiable();
-	}
-
 	public CModel getModel() {
 
 		return disjuncts.get(0).getModel();

@@ -47,6 +47,80 @@ public abstract class ISlotValues extends KList<IValue> {
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private List<IValue> assertedValues = new ArrayList<IValue>();
 
+	private class ConcreteOnlyUpdateListener implements KUpdateListener {
+
+		private KUpdateListener clientListener;
+
+		public void onUpdated() {
+
+			if (!slot.queryInstance()) {
+
+				clientListener.onUpdated();
+			}
+		}
+
+		ConcreteOnlyUpdateListener(KUpdateListener clientListener) {
+
+			this.clientListener = clientListener;
+		}
+	}
+
+	private class ConcreteOnlyValuesListener implements KValuesListener<IValue> {
+
+		private KValuesListener<IValue> clientListener;
+
+		public void onAdded(IValue value) {
+
+			if (!slot.queryInstance()) {
+
+				clientListener.onAdded(value);
+			}
+		}
+
+		public void onRemoved(IValue value) {
+
+			if (!slot.queryInstance()) {
+
+				clientListener.onRemoved(value);
+			}
+		}
+
+		public void onCleared(List<IValue> values) {
+
+			if (!slot.queryInstance()) {
+
+				clientListener.onCleared(values);
+			}
+		}
+
+		ConcreteOnlyValuesListener(KValuesListener<IValue> clientListener) {
+
+			this.clientListener = clientListener;
+		}
+	}
+
+	/**
+	 * Adds a general-update listener that will only fire if the
+	 * slot's container-frame is a concrete-instance.
+	 *
+	 * @param listener Listener to add
+	 */
+	public void addConcreteOnlyUpdateListener(KUpdateListener listener) {
+
+		addUpdateListener(new ConcreteOnlyUpdateListener(listener));
+	}
+
+	/**
+	 * Adds a listener for specific types of value-updates that will
+	 * only fire if the slot's container-frame is a concrete-instance.
+	 *
+	 * @param listener Listener to add
+	 */
+	public void addConcreteOnlyValuesListener(KValuesListener<IValue> listener) {
+
+		addValuesListener(new ConcreteOnlyValuesListener(listener));
+	}
+
 	/**
 	 * Provides the current set of fixed values.
 	 *
@@ -156,23 +230,20 @@ public abstract class ISlotValues extends KList<IValue> {
 
 	boolean updateFixedValues(Collection<IValue> newFixedValues) {
 
-		if (!slot.abstractInstance()) {
+		retainOnlyMostSpecificValues(newFixedValues);
 
-			retainOnlyMostSpecificValues(newFixedValues);
+		if (!fixedValues.equals(newFixedValues)) {
 
-			if (!fixedValues.equals(newFixedValues)) {
+			validateValues(newFixedValues);
+			validateFixedValueCombination(newFixedValues);
 
-				validateValues(newFixedValues);
-				validateFixedValueCombination(newFixedValues);
+			fixedValues.clear();
+			fixedValues.addAll(newFixedValues);
 
-				fixedValues.clear();
-				fixedValues.addAll(newFixedValues);
+			removeRedundantAsserteds();
+			updateSlotValues();
 
-				removeRedundantAsserteds();
-				updateSlotValues();
-
-				return true;
-			}
+			return true;
 		}
 
 		return false;
@@ -243,7 +314,7 @@ public abstract class ISlotValues extends KList<IValue> {
 
 		for (IValue value : new ArrayList<IValue>(values)) {
 
-			if (!validValue(value)) {
+			if (invalidatedValue(value)) {
 
 				values.remove(value);
 			}
@@ -254,7 +325,7 @@ public abstract class ISlotValues extends KList<IValue> {
 
 		for (IValue fixed : getFixedValues()) {
 
-			if (!validValue(fixed)) {
+			if (invalidatedValue(fixed)) {
 
 				fixedValues.remove(fixed);
 			}
@@ -339,19 +410,14 @@ public abstract class ISlotValues extends KList<IValue> {
 		return false;
 	}
 
-	private boolean validValue(IValue value) {
+	private boolean invalidatedValue(IValue value) {
 
-		return validTypeValue(value) && validValueAbstractionLevel(value);
+		return !validTypeValue(value);
 	}
 
 	private boolean validTypeValue(IValue value) {
 
 		return getValueType().validValue(value);
-	}
-
-	private boolean validValueAbstractionLevel(IValue value) {
-
-		return slot.abstractInstance() || !value.abstractValue();
 	}
 
 	private void validateValues(Collection<IValue> values) {
@@ -371,12 +437,11 @@ public abstract class ISlotValues extends KList<IValue> {
 				"expected value of type: " + getValueType());
 		}
 
-		if (!validValueAbstractionLevel(value)) {
+		if (!slot.queryInstance() && value.abstractValue()) {
 
 			throwInvalidValueException(
 				value,
-				"cannot set abstract slot-value "
-				+ "for non-abstract instance");
+				"cannot set abstract slot-value for concrete-instance");
 		}
 	}
 

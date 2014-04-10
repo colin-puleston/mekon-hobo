@@ -161,26 +161,26 @@ public class ISlot implements IEntity {
 
 	/**
 	 * Specifies whether the slot-values can be edited by the client.
-	 * This will always be the case if the slot is part of an abstract
-	 * model-instantiation (see {@link #abstractInstance}. Otherwise it
+	 * This will always be the case if the container-frame of the slot
+	 * is a query-instance (see {@link #queryInstance}). Otherwise it
 	 * will only be the case for non-{@link #derivedValues} slots.
 	 *
 	 * @return True if slot is currently editable by client
 	 */
 	public boolean editable() {
 
-		return abstractInstance() || !derivedValues();
+		return queryInstance() || !derivedValues();
 	}
 
 	/**
-	 * Specifies whether this slot is part of an abstract
-	 * model-instantiation.
+	 * Specifies whether the container-frame of the slot is a
+	 * query-instance.
 	 *
-	 * @return True if part of an abstract model-instantiation
+	 * @return True slot is on a query-instance
 	 */
-	public boolean abstractInstance() {
+	public boolean queryInstance() {
 
-		return container.abstractInstance();
+		return container.queryInstance();
 	}
 
 	/**

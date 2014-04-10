@@ -31,7 +31,33 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * Represents an instance-level model-frame.
+ * Represents an instance-level model-frame. The frame is defined
+ * as either:
+ * <ul>
+ *   <li><i>Concrete-instance:</i> Represents a specific concrete
+ *   instantiation
+ *   <li><i>Query-instance:</i> Represents a set of possible
+ *   instantiations
+ * </ul>
+ * Concrete-instances differ from query-instances in the following
+ * ways:
+ * <ul>
+ *   <li>Concrete-instances can only be instantiations of
+ *   model-frames (see {@link CFrame#modelFrame})
+ *   <li>Slots on concrete-instances cannot have abstract values
+ *   (see {@link IValue#abstractValue})
+ *   <li>Derived-values slots on query-instances (see {@link
+ *   ISlot#derivedValues}) are editable by the client (see {@link
+ *   ISlot#editable}), which is not the case for derived-values
+ *   slots on concrete-instances
+ * </ul>
+ * Query-instances and concrete-instances cannot be mixed within a
+ * single model-instantiation. Attempting to add a query-instance
+ * as a slot-value on a concrete-instance will result in an
+ * exception. However, a concrete-instance can be added as a
+ * slot-value on a query-instance, since it will then automatically
+ * become a query-instance (unless it is already a slot-value on a
+ * concrete-instance, in which case an exception will result).
  *
  * @author Colin Puleston
  */
@@ -39,6 +65,7 @@ public class IFrame implements IEntity, IValue {
 
 	private CFrame type;
 	private CIdentifiedsLocal<CFrame> inferredTypes = new CIdentifiedsLocal<CFrame>();
+	private boolean queryInstance;
 
 	private ISlots slots = new ISlots();
 	private ISlots referencingSlots = new ISlots();
@@ -200,26 +227,25 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Specifies whether this frame is part of an abstract
-	 * model-instantiation.
+	 * Specifies whether this frame is a query-instance.
 	 *
-	 * @return True if part of an abstract model-instantiation
+	 * @return True if query-instance
 	 */
-	public boolean abstractInstance() {
+	public boolean queryInstance() {
 
-		return type.getModel().abstractInstantiations();
+		return queryInstance;
 	}
 
 	/**
 	 * Stipulates that this frame is abstract if and only if the
-	 * concept-level frame representing it's type is a
-	 * {@link CFrame#disjunction} frame.
+	 * concept-level frame representing it's type is anything but
+	 * a {@link CFrame#modelFrame} frame.
 	 *
-	 * @return True if type-frame is a disjunction frame
+	 * @return True if type-frame is not a model-frame
 	 */
 	public boolean abstractValue() {
 
-		return type.disjunction();
+		return type.abstractValue();
 	}
 
 	/**
@@ -255,9 +281,10 @@ public class IFrame implements IEntity, IValue {
 		return referencingSlots;
 	}
 
-	IFrame(CFrame type) {
+	IFrame(CFrame type, boolean queryInstance) {
 
 		this.type = type;
+		this.queryInstance = queryInstance;
 	}
 
 	IFrameEditor createEditor() {
@@ -267,6 +294,7 @@ public class IFrame implements IEntity, IValue {
 
 	void addReferencingSlot(ISlot slot) {
 
+		checkReferencingFrame(slot.getContainer());
 		referencingSlots.add(slot);
 	}
 
@@ -296,8 +324,79 @@ public class IFrame implements IEntity, IValue {
 
 		throw new KAccessException(
 					"Mapped-object not of expected type for: " + this
-					+ " (expected type: " + expectedType
-					+ " , found type: " + mappedType + ")");
+					+ ", expected type: " + expectedType
+					+ " , found type: " + mappedType);
+	}
+
+	private void checkReferencingFrame(IFrame referencingFrame) {
+
+		referencingFrame.validateAsReferencingFrame();
+
+		if (queryInstance != referencingFrame.queryInstance) {
+
+			if (queryInstance) {
+
+				throwReferencingFrameException(
+					referencingFrame,
+					"Cannot add query-instance frame "
+					+ "as slot-value for concrete-instance");
+			}
+
+			if (!referencingSlots.isEmpty()) {
+
+				throwReferencingFrameException(
+					referencingFrame,
+					"Cannot use frame as slot-value "
+					+ "for both concrete and query-instances");
+			}
+
+			ensureQueryInstancesFromThis();
+		}
+	}
+
+	private void ensureQueryInstancesFromThis() {
+
+		if (!queryInstance) {
+
+			queryInstance = true;
+
+			ensureQueryInstancesFromSlotValues();
+		}
+	}
+
+	private void ensureQueryInstancesFromSlotValues() {
+
+		for (ISlot slot : slots.asList()) {
+
+			if (slot.getValueType() instanceof CFrame) {
+
+				for (IValue value : slot.getValues().asList()) {
+
+					((IFrame)value).ensureQueryInstancesFromThis();
+				}
+			}
+		}
+	}
+
+	private void validateAsReferencingFrame() {
+
+		if (!queryInstance && !type.modelFrame()) {
+
+			throw new KAccessException(
+						"Cannot add slot-values to "
+						+ "concrete-instance of expression-frame: "
+						+ this);
+		}
+	}
+
+	private void throwReferencingFrameException(
+					IFrame referencingFrame,
+					String extraMsg) {
+
+		throw new KAccessException(
+					"Cannot add frame: " + this
+					+ " as slot-value on frame: " + referencingFrame
+					+ ": " + extraMsg);
 	}
 
 	private void performDynamicUpdate() {

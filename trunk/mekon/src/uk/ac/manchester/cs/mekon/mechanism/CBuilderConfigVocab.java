@@ -34,5 +34,6 @@ public interface CBuilderConfigVocab {
 
 	static public final String MODEL_SECTION_ID = "ModelSection";
 
+	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
 	static public final String SECTION_BLDER_CLASS_ATTR = "builder";
 }

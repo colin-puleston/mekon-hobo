@@ -37,6 +37,14 @@ import uk.ac.manchester.cs.mekon.model.*;
 public interface CBuilder {
 
 	/**
+	 * Sets the {@link CModel#queriesEnabled} flag.
+	 *
+	 * @param queriesEnabled True if query-instances are to be
+	 * allowed
+	 */
+	public void setQueriesEnabled(boolean queriesEnabled);
+
+	/**
 	 * Enables the specification of some mechanism that will build
 	 * a section of the model.
 	 *

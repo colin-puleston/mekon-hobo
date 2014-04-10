@@ -123,10 +123,10 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	public abstract boolean constrained();
 
 	/**
-	 * Specifies whether this value-type-entity can be instantiated
-	 * as value-entities. Since this will always be the case with
-	 * most kinds of value-type-entity, this base-version of the
-	 * method always returns true.
+	 * Specifies whether this value-type-entity can be instantiated.
+	 * Since this will always be the case with most kinds of
+	 * value-type-entity, this base-version of the method always
+	 * returns true.
 	 *
 	 * @return True if instantiable
 	 */

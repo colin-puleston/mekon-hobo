@@ -37,6 +37,11 @@ class CBuilderImpl implements CBuilder {
 	private CModel model;
 	private List<CSectionBuilder> sectionBuilders = new ArrayList<CSectionBuilder>();
 
+	public void setQueriesEnabled(boolean queriesEnabled) {
+
+		model.setQueriesEnabled(queriesEnabled);
+	}
+
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {
 
 		sectionBuilders.add(sectionBuilder);

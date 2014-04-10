@@ -217,14 +217,14 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Stipulates that this frame is abstract if and only if it
-	 * is a {@link #disjunction} frame.
+	 * Stipulates that this frame is abstract if and only if it is
+	 * anything but a model-frame.
 	 *
-	 * @return True if disjunction-frame
+	 * @return True if not a model-frame
 	 */
 	public boolean abstractValue() {
 
-		return disjunction();
+		return !modelFrame();
 	}
 
 	/**
@@ -242,16 +242,13 @@ public abstract class CFrame
 
 	/**
 	 * Specifies whether the frame is instantiable. This will be the
-	 * case if and only if:
+	 * case if and only if it is either:
 	 * <ul>
-	 *   <li>It is a model-frame with visibility status of
-	 *   exposed, which is not mapped to some non-instantiable entity
-	 *   in an extension of the Frames Model (FM)
-	 *   <li>OR it is an extension-frame whose model-frame is
-	 *   instantiable (see {@link #getModelFrame})
-	 *   <li>OR the model is {@link CModel#abstractInstantiations} and
-	 *   the frame is a disjunction-frame whose model-frame is
-	 *   instantiable
+	 *   <li>A {@link #modelFrame} with visibility status of exposed,
+	 *   which is not mapped to some non-instantiable entity in an
+	 *   extension of the Frames Model (FM)
+	 *   <li>An extension-frame or a disjunction-frame whose model-frame
+	 *   is instantiable (see {@link #getModelFrame})
 	 *
 	 * @return True if frame is instantiable
 	 */
@@ -283,9 +280,9 @@ public abstract class CFrame
 	 * can be unambiguosly defined. This will depend on the type of
 	 * this frame as follows:
 	 * <ul>
-	 *   <li><i>Model-frames</i> The frame itself
-	 *   <li><i>Extension-frame</i> The model-frame that it extends
-	 *   <li><i>Disjunction-frame</i> The closest model-frame that
+	 *   <li><i>Model-frames:</i> The frame itself
+	 *   <li><i>Extension-frame:</i> The model-frame that it extends
+	 *   <li><i>Disjunction-frame:</i> The closest model-frame that
 	 *   (a) subsumes all disjuncts and (b) is either an ancestor or a
 	 *   descendant of any other model-frame that subsumes all disjuncts
 	 * </ul>
@@ -586,20 +583,29 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Instantiates this frame.
+	 * Instantiates the frame as a concrete-instance (see {@link
+	 * IFrame}).
 	 *
-	 * @return Instantiation of frame
+	 * @param identity Identity of frame to be instantiated
+	 * @return Instantiation of specified frame
 	 */
 	public IFrame instantiate() {
 
-		checkInstantiable();
+		return instantiate(false);
+	}
 
-		IFrame instance = new IFrame(this);
+	/**
+	 * Instantiates the frame as a concrete-instance (see {@link
+	 * IFrame}).
+	 *
+	 * @param identity Identity of frame to be instantiated
+	 * @return Instantiation of specified frame
+	 */
+	public IFrame instantiateQuery() {
 
-		getIReasoner().initialiseFrame(getModel().getIEditor(), instance);
-		pollListenersForInstantiated(instance);
+		checkQueryInstantiable();
 
-		return instance;
+		return instantiate(true);
 	}
 
 	CFrame() {
@@ -667,11 +673,31 @@ public abstract class CFrame
 		return false;
 	}
 
+	private IFrame instantiate(boolean asQuery) {
+
+		checkInstantiable();
+
+		IFrame instance = new IFrame(this, asQuery);
+
+		getIReasoner().initialiseFrame(getModel().getIEditor(), instance);
+		pollListenersForInstantiated(instance);
+
+		return instance;
+	}
+
 	private void checkInstantiable() {
 
 		if (!instantiable()) {
 
-			throw new KAccessException( "Cannot instantiate frame: " + this);
+			throw new KAccessException("Cannot instantiate frame: " + this);
+		}
+	}
+
+	private void checkQueryInstantiable() {
+
+		if (!getModel().queriesEnabled()) {
+
+			throw new KAccessException("Query-instances not enabled for model");
 		}
 	}
 

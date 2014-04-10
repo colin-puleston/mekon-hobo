@@ -40,7 +40,13 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	void configure(CBuilder builder) {
 
+		setQueriesEnabled(builder);
 		loadSectionBuilders(builder);
+	}
+
+	private void setQueriesEnabled(CBuilder builder) {
+
+		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR));
 	}
 
 	private void loadSectionBuilders(CBuilder builder) {
