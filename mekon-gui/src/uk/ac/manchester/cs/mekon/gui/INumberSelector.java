@@ -257,14 +257,14 @@ class INumberSelector extends GDialog {
 		}
 	}
 
-	INumberSelector(JComponent parent, CNumber type, boolean abstractInstance) {
+	INumberSelector(JComponent parent, CNumber type, boolean queryInstance) {
 
 		super(parent, type.getDisplayLabel(), true);
 
 		this.type = type;
 
-		setPreferredSize(getPreferredSize(abstractInstance));
-		display(getDisplay(abstractInstance));
+		setPreferredSize(getPreferredSize(queryInstance));
+		display(getDisplay(queryInstance));
 	}
 
 	INumber getSelectionOrNull() {
@@ -272,14 +272,14 @@ class INumberSelector extends GDialog {
 		return selection;
 	}
 
-	private Dimension getPreferredSize(boolean abstractInstance) {
+	private Dimension getPreferredSize(boolean queryInstance) {
 
-		return abstractInstance ? RANGE_VALUE_WINDOW_SIZE : EXACT_VALUE_WINDOW_SIZE;
+		return queryInstance ? RANGE_VALUE_WINDOW_SIZE : EXACT_VALUE_WINDOW_SIZE;
 	}
 
-	private JComponent getDisplay(boolean abstractInstance) {
+	private JComponent getDisplay(boolean queryInstance) {
 
-		return abstractInstance ? new RangeDisplay() : new InputField();
+		return queryInstance ? new RangeDisplay() : new InputField();
 	}
 
 	private INumber parseValue(String value) {

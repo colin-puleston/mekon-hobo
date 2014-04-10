@@ -39,49 +39,55 @@ class InstantiationFrame extends GFrame {
 	static private final int WIDTH = 800;
 	static private final int HEIGHT = 600;
 
-	static private final String MAIN_TITLE_FORMAT = "\"%s\" Instantiation";
+	static private final String MAIN_TITLE_FORMAT = "\"%s\" %s";
+	static private final String CONCRETE_LABEL = "Instance";
+	static private final String QUERY_LABEL = "Query";
+	static private final String INFERRED_TYPES_TITLE = "Inferred Types";
 
-	static private final String INSTANCE_TAB_TITLE = "Instance";
-	static private final String INFERRED_TYPES_TAB_TITLE = "Inferred Types";
+	static private String getTitle(IFrame frame) {
 
-	static private String getTitle(CFrame frameType) {
+		String frameLabel = frame.getDisplayLabel();
+		String typeLabel = instanceTypeLabel(frame);
+		String mainTitle = String.format(MAIN_TITLE_FORMAT, frameLabel, typeLabel);
 
-		String label = frameType.getIdentity().getLabel();
-		String localTitle = String.format(MAIN_TITLE_FORMAT, label);
-
-		return MekonModelExplorer.getSystemTitle(localTitle);
+		return MekonModelExplorer.getSystemTitle(mainTitle);
 	}
 
-	private CFrame frameType;
+	static private String instanceTypeLabel(IFrame frame) {
 
-	InstantiationFrame(CFrame frameType) {
+		return frame.queryInstance() ? QUERY_LABEL : CONCRETE_LABEL;
+	}
 
-		super(getTitle(frameType), WIDTH, HEIGHT);
+	private IFrame frame;
 
-		this.frameType = frameType;
+	InstantiationFrame(IFrame frame) {
+
+		super(getTitle(frame), WIDTH, HEIGHT);
+
+		this.frame = frame;
 	}
 
 	void display() {
 
-		display(createMainComponent(frameType.instantiate()));
+		display(createMainComponent());
 	}
 
-	private JComponent createMainComponent(IFrame frame) {
+	private JComponent createMainComponent() {
 
 		JTabbedPane panel = new JTabbedPane();
 
-		panel.addTab(INSTANCE_TAB_TITLE, createInstanceComponent(frame));
-		panel.addTab(INFERRED_TYPES_TAB_TITLE, createInferredTypesComponent(frame));
+		panel.addTab(instanceTypeLabel(frame), createInstanceComponent());
+		panel.addTab(INFERRED_TYPES_TITLE, createInferredTypesComponent());
 
 		return panel;
 	}
 
-	private JComponent createInstanceComponent(IFrame frame) {
+	private JComponent createInstanceComponent() {
 
 		return new JScrollPane(new ITree(frame));
 	}
 
-	private JComponent createInferredTypesComponent(IFrame frame) {
+	private JComponent createInferredTypesComponent() {
 
 		return new JScrollPane(new InferredTypesList(frame));
 	}

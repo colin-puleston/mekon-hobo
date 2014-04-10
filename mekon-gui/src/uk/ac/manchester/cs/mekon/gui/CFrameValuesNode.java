@@ -63,7 +63,7 @@ class CFrameValuesNode extends IValuesNode {
 
 		protected GNodeAction getPositiveAction() {
 
-			return slot.abstractInstance()
+			return slot.queryInstance()
 					? new AddDisjunctAction()
 					: GNodeAction.INERT_ACTION;
 		}
