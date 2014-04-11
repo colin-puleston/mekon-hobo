@@ -35,6 +35,18 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 abstract class AddCFrameDisjunctAction extends GNodeAction {
 
+	static boolean actionRequired(ISlot slot, CFrame rootCFrame) {
+
+		return slot.editable()
+				&& slot.queryInstance()
+				&& selectableOptions(rootCFrame);
+	}
+
+	static private boolean selectableOptions(CFrame rootCFrame) {
+
+		return !rootCFrame.getSubs(CFrameVisibility.EXPOSED).isEmpty();
+	}
+
 	private CFrame frame;
 
 	protected void perform() {

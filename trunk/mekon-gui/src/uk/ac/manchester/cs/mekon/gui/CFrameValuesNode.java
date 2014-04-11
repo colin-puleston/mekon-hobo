@@ -63,7 +63,7 @@ class CFrameValuesNode extends IValuesNode {
 
 		protected GNodeAction getPositiveAction() {
 
-			return slot.queryInstance()
+			return addActionRequired()
 					? new AddDisjunctAction()
 					: GNodeAction.INERT_ACTION;
 		}
@@ -83,6 +83,11 @@ class CFrameValuesNode extends IValuesNode {
 			super(tree);
 
 			this.frame = frame;
+		}
+
+		private boolean addActionRequired() {
+
+			return AddDisjunctAction.actionRequired(slot, getRootCFrame());
 		}
 	}
 
@@ -111,19 +116,17 @@ class CFrameValuesNode extends IValuesNode {
 
 	private CFrame checkObtainFrameValue() {
 
-		CFrame rootValue = getValueType().getRootCFrame();
-
-		if (rootValue.getSubs(CFrameVisibility.EXPOSED).isEmpty()) {
-
-			return slot.getValues().isEmpty() ? rootValue : null;
-		}
-
-		return new CFrameSelector(tree, rootValue).getSelectionOrNull();
+		return CFrameSelector.checkSelect(tree, getRootCFrame());
 	}
 
 	private CFrame getCFrameValue(IValue value) {
 
 		return getValueType().castValue(value);
+	}
+
+	private CFrame getRootCFrame() {
+
+		return getValueType().getRootCFrame();
 	}
 
 	private MFrame getValueType() {

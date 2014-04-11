@@ -33,11 +33,18 @@ import uk.ac.manchester.cs.mekon.gui.util.icon.*;
  */
 class SlotIcons extends EntityIconsBySource {
 
-	private boolean derivedValuesSlots;
+	static private final int EDIT_BLOCK_MARKER_OFFSET
+								= ENTITY_SIZE - SLOT_CURB_MARKER_WIDTH;
+	static private final int INACTIVE_MARKER_OFFSET =
+								(ENTITY_SIZE - SLOT_CURB_MARKER_WIDTH) / 2;
 
-	SlotIcons(boolean derivedValuesSlots) {
+	private boolean inactiveSlots;
+	private boolean editBlockedSlots;
 
-		this.derivedValuesSlots = derivedValuesSlots;
+	SlotIcons(boolean inactiveSlots, boolean editBlockedSlots) {
+
+		this.inactiveSlots = inactiveSlots;
+		this.editBlockedSlots = editBlockedSlots;
 
 		initialise();
 	}
@@ -46,9 +53,17 @@ class SlotIcons extends EntityIconsBySource {
 
 		GIcon icon = super.create(mainClr, innerClr);
 
-		if (derivedValuesSlots) {
+		if (inactiveSlots) {
 
-			icon.addRenderer(createDerivedValuesIndicatorRenderer());
+			icon.addRenderer(
+				createCurbMarkerRenderer(
+					INACTIVE_MARKER_OFFSET));
+		}
+		else if (editBlockedSlots) {
+
+			icon.addRenderer(
+				createCurbMarkerRenderer(
+					EDIT_BLOCK_MARKER_OFFSET));
 		}
 
 		return icon;
@@ -63,14 +78,14 @@ class SlotIcons extends EntityIconsBySource {
 						size);
 	}
 
-	private GIconRenderer createDerivedValuesIndicatorRenderer() {
+	private GIconRenderer createCurbMarkerRenderer(int offset) {
 
 		GIconRenderer r = new GRectangleRenderer(
-									DERIVED_VALUES_INDICATOR_CLR,
-									DERIVED_VALUES_INDICATOR_WIDTH,
-									DERIVED_VALUES_INDICATOR_HEIGHT);
+								SLOT_CURB_MARKER_CLR,
+								SLOT_CURB_MARKER_WIDTH,
+								SLOT_CURB_MARKER_HEIGHT);
 
-		r.setXOffset(ENTITY_SIZE);
+		r.setXOffset(offset);
 
 		return r;
 	}

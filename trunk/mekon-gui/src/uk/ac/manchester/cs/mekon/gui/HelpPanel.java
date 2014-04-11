@@ -52,8 +52,9 @@ class HelpPanel extends JTabbedPane {
 	static final Icon iValueShape = getValueShape(EntityLevel.INSTANCE);
 	static final Icon hiddenMFrameShape = getHiddenFrameShape(EntityLevel.META);
 	static final Icon hiddenCFrameShape = getHiddenFrameShape(EntityLevel.CONCEPT);
-	static final Icon slotShape = getSlotShape();
-	static final Icon derivedValuesSlotShape = getDerivedValuesSlotShape();
+	static final Icon defaultSlotShape = getDefaultSlotShape();
+	static final Icon inactiveSlotShape = getInactiveSlotShape();
+	static final Icon editBlockedSlotShape = getEditBlockedSlotShape();
 
 	static final Icon directColour = getColour(CSource.DIRECT);
 	static final Icon indirectColour = getColour(CSource.INDIRECT);
@@ -65,19 +66,24 @@ class HelpPanel extends JTabbedPane {
 		return getIcons().exposedFrames.get(DEFAULT_SOURCE, level);
 	}
 
-	static private Icon getSlotShape() {
-
-		return getIcons().assertedValuesSlots.get(DEFAULT_SOURCE);
-	}
-
 	static private Icon getHiddenFrameShape(EntityLevel level) {
 
 		return getIcons().hiddenFrames.get(DEFAULT_SOURCE, level);
 	}
 
-	static private Icon getDerivedValuesSlotShape() {
+	static private Icon getDefaultSlotShape() {
 
-		return getIcons().derivedValuesSlots.get(DEFAULT_SOURCE);
+		return getIcons().defaultSlots.get(DEFAULT_SOURCE);
+	}
+
+	static private Icon getInactiveSlotShape() {
+
+		return getIcons().inactiveSlots.get(DEFAULT_SOURCE);
+	}
+
+	static private Icon getEditBlockedSlotShape() {
+
+		return getIcons().editBlockedSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getColour(CSource source) {
@@ -156,7 +162,7 @@ class HelpPanel extends JTabbedPane {
 					"Instance-level entity",
 					"IFrame, INumber");
 				addRow(
-					slotShape,
+					defaultSlotShape,
 					"Slot (concept-level or instance-level)",
 					"CSlot, ISlot");
 			}
@@ -214,11 +220,15 @@ class HelpPanel extends JTabbedPane {
 					"Frame is hidden",
 					"CFrame");
 				addRow(
-					derivedValuesSlotShape,
+					inactiveSlotShape,
+					"Slot is inactive",
+					"CSlot");
+				addRow(
+					editBlockedSlotShape,
 					"Slot-values are automatically derived",
 					"CSlot");
 				addRow(
-					derivedValuesSlotShape,
+					editBlockedSlotShape,
 					"Slot is non-editable "
 					+ "(i.e. automatically-derived-values slot on concrete instance)",
 					"ISlot");
@@ -255,18 +265,18 @@ class HelpPanel extends JTabbedPane {
 
 				checkAddRow(
 					cValueShape,
-					slotShape,
+					defaultSlotShape,
 					"frame-has-slot",
 					"CFrame ==> CSlot",
 					false);
 				checkAddRow(
-					slotShape,
+					defaultSlotShape,
 					mValueShape,
 					"slot-has-value-type",
 					"CSlot ==> MFrame",
 					false);
 				checkAddRow(
-					slotShape,
+					defaultSlotShape,
 					cValueShape,
 					"slot-has-value-type",
 					"CSlot ==> CFrame / CNumber",
@@ -324,30 +334,30 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					iValueShape,
-					slotShape,
+					defaultSlotShape,
 					NOT_APPLICABLE_STRING,
 					"frame-has-slot",
 					"IFrame ==> ISlot");
 				addRow(
-					slotShape,
+					defaultSlotShape,
 					mValueShape,
 					NOT_APPLICABLE_STRING,
 					"slot-has-value-type",
 					"ISlot ==> MFrame");
 				addRow(
-					slotShape,
+					defaultSlotShape,
 					cValueShape,
 					NOT_APPLICABLE_STRING,
 					"slot-has-value-type",
 					"ISlot ==> CFrame");
 				addRow(
-					slotShape,
+					defaultSlotShape,
 					mValueShape,
 					cValueShape,
 					"slot-with-value-type-has-value",
 					"ISlot ==> MFrame ==> CFrame");
 				addRow(
-					slotShape,
+					defaultSlotShape,
 					cValueShape,
 					iValueShape,
 					"slot-with-value-type-has-value",
@@ -373,6 +383,14 @@ class HelpPanel extends JTabbedPane {
 					"SLOT-VALUE-TYPE",
 					RIGHT_CLICK_STRING,
 					"Clear slot value(s)");
+				addRow(
+					"SLOT-VALUE (CFrame only)",
+					LEFT_CLICK_STRING,
+					"Add disjunct to value");
+				addRow(
+					"SLOT-VALUE (IFrame only)",
+					LEFT_CLICK_STRING,
+					"Add disjunct to value-type");
 				addRow(
 					"SLOT-VALUE",
 					RIGHT_CLICK_STRING,
