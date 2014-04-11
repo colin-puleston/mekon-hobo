@@ -43,8 +43,9 @@ class EntityIcons implements EntityIconConstants {
 	FrameIcons exposedFrames = new FrameIcons(false);
 	FrameIcons hiddenFrames = new FrameIcons(true);
 	EntityIconsByLevel numbers = new EntityIconsByLevel(NUMBER_CLR, ENTITY_SIZE);
-	SlotIcons derivedValuesSlots = new SlotIcons(true);
-	SlotIcons assertedValuesSlots = new SlotIcons(false);
+	SlotIcons defaultSlots = new SlotIcons(false, false);
+	SlotIcons editBlockedSlots = new SlotIcons(false, true);
+	SlotIcons inactiveSlots = new SlotIcons(true, false);
 
 	Icon get(IFrame frame) {
 
@@ -73,17 +74,17 @@ class EntityIcons implements EntityIconConstants {
 
 	Icon get(CSlot slot) {
 
-		return getSlotIcons(slot.derivedValues()).get(slot.getSource());
+		return getCSlotIcons(slot).get(slot.getSource());
 	}
 
 	Icon get(ISlot slot) {
 
-		return getSlotIcons(!slot.editable()).get(slot.getType().getSource());
+		return getISlotIcons(slot).get(slot.getType().getSource());
 	}
 
 	Icon forCSlotValues() {
 
-		return getSlotIcons(true).get(CSource.INDIRECT);
+		return defaultSlots.get(CSource.INDIRECT);
 	}
 
 	private Icon get(CFrame frame, EntityLevel level) {
@@ -96,9 +97,19 @@ class EntityIcons implements EntityIconConstants {
 		return frame.hidden() ? hiddenFrames : exposedFrames;
 	}
 
-	private SlotIcons getSlotIcons(boolean derivedValues) {
+	private SlotIcons getCSlotIcons(CSlot slot) {
 
-		return derivedValues ? derivedValuesSlots : assertedValuesSlots;
+		if (slot.active()) {
+
+			return slot.derivedValues() ? editBlockedSlots : defaultSlots;
+		}
+
+		return inactiveSlots;
+	}
+
+	private SlotIcons getISlotIcons(ISlot slot) {
+
+		return slot.editable() ? defaultSlots : editBlockedSlots;
 	}
 }
 

@@ -71,11 +71,11 @@ class FrameIcons {
 		private GIconRenderer createHiddenRenderer() {
 
 			GIconRenderer r = new GRectangleRenderer(
-										HIDDEN_FRAME_INDICATOR_CLR,
-										HIDDEN_FRAME_INDICATOR_WIDTH,
-										HIDDEN_FRAME_INDICATOR_HEIGHT);
+										HIDDEN_FRAME_MARKER_CLR,
+										HIDDEN_FRAME_MARKER_WIDTH,
+										HIDDEN_FRAME_MARKER_HEIGHT);
 
-			r.setYOffset((ENTITY_SIZE - HIDDEN_FRAME_INDICATOR_HEIGHT) / 2);
+			r.setYOffset((ENTITY_SIZE - HIDDEN_FRAME_MARKER_HEIGHT) / 2);
 
 			return r;
 		}
