@@ -107,7 +107,7 @@ public class MekonTest extends FramesTestUtils {
 
 	public IFrame createIFrame(String typeName) {
 
-		return new IFrame(createCFrame(typeName));
+		return new IFrame(createCFrame(typeName), false);
 	}
 
 	public ISlot createISlot(CCardinality cardinality) {
