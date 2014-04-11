@@ -73,7 +73,7 @@ class INumberValuesNode extends IValuesNode {
 
 	GNode createValueNode(IValue value) {
 
-		return new ValueNode(getNumberValue(value));
+		return new ValueNode(asINumber(value));
 	}
 
 	IValue checkObtainValue() {
@@ -88,7 +88,7 @@ class INumberValuesNode extends IValuesNode {
 		return new INumberSelector(tree, getValueType(), abtractInst);
 	}
 
-	private INumber getNumberValue(IValue value) {
+	private INumber asINumber(IValue value) {
 
 		return getValueType().castValue(value);
 	}

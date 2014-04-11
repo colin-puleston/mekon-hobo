@@ -31,63 +31,35 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class CFrameValuesNode extends IValuesNode {
+class CFrameValuesNode extends FFrameValuesNode<CFrame> {
 
 	private ITree tree;
 	private ISlot slot;
 
 	private class ValueNode extends GNode {
 
-		private CFrame frame;
-
-		private class AddDisjunctAction extends AddCFrameDisjunctAction {
-
-			AddDisjunctAction() {
-
-				super(frame);
-			}
-
-			CFrame checkObtainNewDisjunct() {
-
-				return checkObtainFrameValue();
-			}
-
-			void onDisjunctAdded(CFrame updatedFrame) {
-
-				removeValue(frame);
-				addValue(updatedFrame);
-
-				frame = updatedFrame;
-			}
-		}
+		private CFrame value;
 
 		protected GNodeAction getPositiveAction() {
 
-			return addActionRequired()
-					? new AddDisjunctAction()
-					: GNodeAction.INERT_ACTION;
+			return getAddDisjunctOrInertAction(value);
 		}
 
 		protected GNodeAction getNegativeAction() {
 
-			return getRemoveValueAction(frame);
+			return getRemoveValueAction(value);
 		}
 
 		protected GCellDisplay getDisplay() {
 
-			return EntityDisplays.get().get(frame, false);
+			return EntityDisplays.get().get(value, false);
 		}
 
-		ValueNode(CFrame frame) {
+		ValueNode(CFrame value) {
 
 			super(tree);
 
-			this.frame = frame;
-		}
-
-		private boolean addActionRequired() {
-
-			return AddDisjunctAction.actionRequired(slot, getRootCFrame());
+			this.value = value;
 		}
 	}
 
@@ -106,27 +78,32 @@ class CFrameValuesNode extends IValuesNode {
 
 	GNode createValueNode(IValue value) {
 
-		return new ValueNode(getCFrameValue(value));
+		return new ValueNode(asCFrame(value));
 	}
 
 	IValue checkObtainValue() {
 
-		return checkObtainFrameValue();
+		return checkObtainCFrame();
 	}
 
-	private CFrame checkObtainFrameValue() {
-
-		return CFrameSelector.checkSelect(tree, getRootCFrame());
-	}
-
-	private CFrame getCFrameValue(IValue value) {
-
-		return getValueType().castValue(value);
-	}
-
-	private CFrame getRootCFrame() {
+	CFrame getRootCFrame() {
 
 		return getValueType().getRootCFrame();
+	}
+
+	CFrame valueToCFrame(CFrame value) {
+
+		return value;
+	}
+
+	CFrame checkUpdateValue(CFrame value, CFrame updatedCFrame) {
+
+		return updatedCFrame;
+	}
+
+	private CFrame asCFrame(IValue value) {
+
+		return getValueType().castValue(value);
 	}
 
 	private MFrame getValueType() {

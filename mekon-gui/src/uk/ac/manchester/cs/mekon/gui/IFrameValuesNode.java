@@ -34,63 +34,30 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class IFrameValuesNode extends IValuesNode {
+class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 	private ITree tree;
 	private ISlot slot;
 
 	private class ValueNode extends IFrameNode {
 
-		private IFrame frame;
-
-		private class AddDisjunctAction extends AddCFrameDisjunctAction {
-
-			AddDisjunctAction() {
-
-				super(frame.getType());
-			}
-
-			CFrame checkObtainNewDisjunct() {
-
-				return checkObtainValueType();
-			}
-
-			void onDisjunctAdded(CFrame updatedType) {
-
-				IFrame updatedFrame = checkUpdateValueType(frame, updatedType);
-
-				if (updatedFrame != null) {
-
-					removeValue(frame);
-					addValue(updatedFrame);
-
-					frame = updatedFrame;
-				}
-			}
-		}
+		private IFrame value;
 
 		protected GNodeAction getPositiveAction() {
 
-			return addActionRequired()
-					? new AddDisjunctAction()
-					: GNodeAction.INERT_ACTION;
+			return getAddDisjunctOrInertAction(value);
 		}
 
 		protected GNodeAction getNegativeAction() {
 
-			return getRemoveValueAction(frame);
+			return getRemoveValueAction(value);
 		}
 
-		ValueNode(IFrame frame) {
+		ValueNode(IFrame value) {
 
-			super(tree, frame);
+			super(tree, value);
 
-			this.frame = frame;
-		}
-
-		private boolean addActionRequired() {
-
-			return AddDisjunctAction.actionRequired(slot, getValueType());
+			this.value = value;
 		}
 	}
 
@@ -109,21 +76,31 @@ class IFrameValuesNode extends IValuesNode {
 
 	GNode createValueNode(IValue value) {
 
-		return new ValueNode(getIFrameValue(value));
+		return new ValueNode(asIFrame(value));
 	}
 
 	IValue checkObtainValue() {
 
-		CFrame type = checkObtainValueType();
+		CFrame type = checkObtainCFrame();
 
 		return type != null ? type.instantiate() : null;
 	}
 
-	private IFrame checkUpdateValueType(IFrame value, CFrame newType) {
+	CFrame getRootCFrame() {
 
-		if (newType.instantiable()) {
+		return getValueType();
+	}
 
-			IFrame newValue = newType.instantiate();
+	CFrame valueToCFrame(IFrame value) {
+
+		return value.getType();
+	}
+
+	IFrame checkUpdateValue(IFrame value, CFrame updatedCFrame) {
+
+		if (updatedCFrame.instantiable()) {
+
+			IFrame newValue = updatedCFrame.instantiate();
 
 			copySlotValues(value, newValue);
 
@@ -132,9 +109,9 @@ class IFrameValuesNode extends IValuesNode {
 
 		JOptionPane.showMessageDialog(
 			null,
-			"Cannot instantiate: " + newType.getDisplayLabel());
+			"Cannot instantiate: " + updatedCFrame.getDisplayLabel());
 
-		return null;
+		return value;
 	}
 
 	private void copySlotValues(IFrame from, IFrame to) {
@@ -157,12 +134,7 @@ class IFrameValuesNode extends IValuesNode {
 		}
 	}
 
-	private CFrame checkObtainValueType() {
-
-		return CFrameSelector.checkSelect(tree, getValueType());
-	}
-
-	private IFrame getIFrameValue(IValue value) {
+	private IFrame asIFrame(IValue value) {
 
 		return getValueType().castValue(value);
 	}

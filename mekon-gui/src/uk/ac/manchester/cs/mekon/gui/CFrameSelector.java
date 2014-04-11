@@ -41,16 +41,6 @@ class CFrameSelector extends GDialog {
 	static private final Dimension WINDOW_SIZE = new Dimension(450, 300);
 	static private final String MAIN_TITLE = "Value-Type Selector";
 
-	static CFrame checkSelect(JComponent parent, CFrame rootFrame) {
-
-		if (rootFrame.getSubs(CFrameVisibility.EXPOSED).isEmpty()) {
-
-			return rootFrame;
-		}
-
-		return new CFrameSelector(parent, rootFrame).getSelectionOrNull();
-	}
-
 	private CFrame selection = null;
 
 	private class SelectorListener extends CFrameSelectionListener {
@@ -61,7 +51,7 @@ class CFrameSelector extends GDialog {
 		}
 	}
 
-	private CFrameSelector(JComponent parent, CFrame rootFrame) {
+	CFrameSelector(JComponent parent, CFrame rootFrame) {
 
 		super(parent, MAIN_TITLE, true);
 
@@ -69,7 +59,7 @@ class CFrameSelector extends GDialog {
 		display(createMainPanel(rootFrame));
 	}
 
-	private CFrame getSelectionOrNull() {
+	CFrame getSelectionOrNull() {
 
 		return selection;
 	}
