@@ -38,7 +38,6 @@ public class GTree extends JTree {
 
 	private DefaultTreeModel treeModel = null;
 	private GNode rootNode = null;
-	private boolean orderedChildNodes = true;
 
 	private ActionInvoker positiveActionInvoker = new PositiveActionInvoker();
 	private ActionInvoker negativeActionInvoker = new NegativeActionInvoker();
@@ -178,11 +177,6 @@ public class GTree extends JTree {
 		new DeselectionClickMonitor();
 	}
 
-	public void setOrderedChildNodes(boolean ordered) {
-
-		orderedChildNodes = ordered;
-	}
-
 	public void initialise(GNode rootNode) {
 
 		this.rootNode = rootNode;
@@ -214,11 +208,6 @@ public class GTree extends JTree {
 	protected String decorateNodeLabel(GNode node, String defaultLabel) {
 
 		return defaultLabel;
-	}
-
-	boolean orderedChildNodes() {
-
-		return orderedChildNodes;
 	}
 
 	DefaultTreeModel getTreeModel() {

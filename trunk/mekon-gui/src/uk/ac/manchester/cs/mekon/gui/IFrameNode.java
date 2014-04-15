@@ -61,6 +61,11 @@ class IFrameNode extends GNode {
 		valueNodes.addInitialChildNodes();
 	}
 
+	protected boolean orderedChildren() {
+
+		return true;
+	}
+
 	protected GCellDisplay getDisplay() {
 
 		return EntityDisplays.get().get(iFrame);
