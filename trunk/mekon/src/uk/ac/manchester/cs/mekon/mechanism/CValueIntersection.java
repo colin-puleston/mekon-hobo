@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.mekon.mechanism;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -77,7 +76,7 @@ class CValueIntersection {
 
 		if (operands.isEmpty()) {
 
-			throw new KModelException("Cannot create intersection for empty value-set");
+			return null;
 		}
 
 		CValue<?> firstOp = operands.iterator().next();

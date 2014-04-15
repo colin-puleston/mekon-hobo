@@ -280,19 +280,14 @@ class CExtensionDescriber {
 
 		String describeTail(CValue<?> value) {
 
-			return value instanceof CIdentified
-					? getLabel((CIdentified)value)
+			return value instanceof FEntity
+					? ((FEntity)value).getDisplayLabel()
 					: value.toString();
 		}
 
 		String describeProperty(CProperty property) {
 
-			return getLabel(property);
-		}
-
-		private String getLabel(CIdentified identified) {
-
-			return identified.getIdentity().getLabel();
+			return property.getDisplayLabel();
 		}
 	}
 
