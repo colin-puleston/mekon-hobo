@@ -109,11 +109,6 @@ class CFrameAnnotationsTree extends CTree {
 
 	private class CValueListNode extends CValuesNode {
 
-		protected int compareChildrenPriorToLabelCompare(GNode first, GNode second) {
-
-			return 1;
-		}
-
 		CValueListNode(List<CValue<?>> cValues) {
 
 			super(List.class, cValues);

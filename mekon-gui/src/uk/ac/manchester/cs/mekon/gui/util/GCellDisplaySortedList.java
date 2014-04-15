@@ -39,7 +39,9 @@ abstract class GCellDisplaySortedList<E>  {
 
 		public int compare(E first, E second) {
 
-			return compareElements(first, second);
+			return first.equals(second)
+					? 0
+					: compareDistinctElements(first, second);
 		}
 	}
 
@@ -50,23 +52,32 @@ abstract class GCellDisplaySortedList<E>  {
 
 	void add(E element) {
 
-		checkEditable();
+		if (!set.contains(element)) {
 
-		set.add(element);
+			checkEditable();
+
+			set.add(element);
+		}
 	}
 
 	void remove(E element) {
 
-		checkEditable();
+		if (set.contains(element)) {
 
-		set.remove(element);
+			checkEditable();
+
+			set.remove(element);
+		}
 	}
 
 	void clear() {
 
-		checkEditable();
+		if (!set.isEmpty()) {
 
-		set.clear();
+			checkEditable();
+
+			set.clear();
+		}
 	}
 
 	List<E> asList() {
@@ -76,7 +87,7 @@ abstract class GCellDisplaySortedList<E>  {
 		return list;
 	}
 
-	int compareElements(E first, E second) {
+	int compareDistinctElements(E first, E second) {
 
 		int c = compareLabels(getLabel(first), getLabel(second));
 

@@ -43,11 +43,9 @@ public abstract class GNode extends GMutableTreeNode {
 
 	private class ChildList extends GCellDisplaySortedList<GNode> {
 
-		int compareElements(GNode first, GNode second) {
+		int compareDistinctElements(GNode first, GNode second) {
 
-			return tree.orderedChildNodes()
-						? compareOrdered(first, second)
-						: -1;
+			return orderedChildren() ? compareOrdered(first, second) : 1;
 		}
 
 		GCellDisplay getDisplay(GNode node) {
@@ -59,7 +57,7 @@ public abstract class GNode extends GMutableTreeNode {
 
 			int c = compareChildrenPriorToLabelCompare(first, second);
 
-			return c != 0 ? c : super.compareElements(first, second);
+			return c != 0 ? c : super.compareDistinctElements(first, second);
 		}
 	}
 
@@ -93,7 +91,6 @@ public abstract class GNode extends GMutableTreeNode {
 		if (parent != null) {
 
 			parent.removeChild(this);
-			parent = null;
 		}
 	}
 
@@ -183,6 +180,11 @@ public abstract class GNode extends GMutableTreeNode {
 	}
 
 	protected void addInitialChildren() {
+	}
+
+	protected boolean orderedChildren() {
+
+		return false;
 	}
 
 	protected int compareChildrenPriorToLabelCompare(GNode first, GNode second) {

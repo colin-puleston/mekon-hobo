@@ -56,6 +56,11 @@ class MFrameNode extends GNode {
 		return false;
 	}
 
+	protected boolean orderedChildren() {
+
+		return true;
+	}
+
 	protected GCellDisplay getDisplay() {
 
 		return EntityDisplays.get().get(frame, false);

@@ -58,6 +58,11 @@ class CFrameNode extends GNode {
 		tree.addCFrameChildren(this);
 	}
 
+	protected boolean orderedChildren() {
+
+		return true;
+	}
+
 	protected int compareChildrenPriorToLabelCompare(GNode first, GNode second) {
 
 		Class<?> c1 = first.getClass();
