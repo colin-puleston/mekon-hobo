@@ -238,14 +238,14 @@ public class IFrame implements IEntity, IValue {
 
 	/**
 	 * Stipulates that this frame is abstract if and only if the
-	 * concept-level frame representing it's type is anything but
-	 * a {@link CFrame#modelFrame} frame.
+	 * concept-level frame representing it's type is a {@link
+	 * CFrame#disjunction} frame.
 	 *
-	 * @return True if type-frame is not a model-frame
+	 * @return True if type-frame is a disjunction
 	 */
 	public boolean abstractValue() {
 
-		return type.abstractValue();
+		return type.disjunction();
 	}
 
 	/**
