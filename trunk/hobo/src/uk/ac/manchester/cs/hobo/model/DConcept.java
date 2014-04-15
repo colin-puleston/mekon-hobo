@@ -82,6 +82,16 @@ public class DConcept<D extends DObject> {
 	}
 
 	/**
+	 * Provides the model with which the concept is associated.
+	 *
+	 * @return Model with which concept is associated
+	 */
+	public DModel getModel() {
+
+		return model;
+	}
+
+	/**
 	 * Provides the OM class that defines the general type for the
 	 * represented concept.
 	 *
