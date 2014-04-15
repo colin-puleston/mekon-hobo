@@ -218,13 +218,13 @@ public abstract class CFrame
 
 	/**
 	 * Stipulates that this frame is abstract if and only if it is
-	 * anything but a model-frame.
+	 * a disjunction-frame.
 	 *
-	 * @return True if not a model-frame
+	 * @return True if a disjunction-frame
 	 */
 	public boolean abstractValue() {
 
-		return !modelFrame();
+		return disjunction();
 	}
 
 	/**
