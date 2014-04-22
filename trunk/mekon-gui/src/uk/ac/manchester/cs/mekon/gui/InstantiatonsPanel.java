@@ -54,6 +54,13 @@ class InstantiatonsPanel extends JPanel {
 		InstantiateButton(String label) {
 
 			super(label + "...");
+
+			setEnabled(instantiable());
+		}
+
+		boolean instantiable() {
+
+			return frame.instantiable();
 		}
 
 		abstract IFrame instantiate();
@@ -81,8 +88,11 @@ class InstantiatonsPanel extends JPanel {
 		InstantiateQueryButton() {
 
 			super(QUERY_BUTTON_LABEL);
+		}
 
-			setEnabled(frame.getModel().queriesEnabled());
+		boolean instantiable() {
+
+			return queriesEnabled() && super.instantiable();
 		}
 
 		IFrame instantiate() {
@@ -99,5 +109,10 @@ class InstantiatonsPanel extends JPanel {
 
 		add(new InstantiateConcreteButton());
 		add(new InstantiateQueryButton());
+	}
+
+	private boolean queriesEnabled() {
+
+		return frame.getModel().queriesEnabled();
 	}
 }
