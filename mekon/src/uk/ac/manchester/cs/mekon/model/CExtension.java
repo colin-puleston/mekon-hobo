@@ -187,10 +187,10 @@ class CExtension extends CExpression {
 
 	String getExpressionDescriptionForId() {
 
-		return new CExtensionDescriber(this).describeForIdentifier();
+		return new CExtensionDescriber(this).describeForId();
 	}
 
-	String getDefaultDisplayLabel() {
+	String getExpressionDescriptionForLabel() {
 
 		return new CExtensionDescriber(this).describeForLabel();
 	}

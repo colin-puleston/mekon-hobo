@@ -32,6 +32,7 @@ import uk.ac.manchester.cs.mekon.*;
 abstract class CExpression extends CFrame {
 
 	static private final String ID_FORMAT = "@%s(%s)";
+	static private final String FULL_LABEL_FORMAT = "%s(%s)";
 
 	private String label;
 
@@ -42,7 +43,11 @@ abstract class CExpression extends CFrame {
 
 	public String getDisplayLabel() {
 
-		return label != null ? label : getDefaultDisplayLabel();
+		String desc = getExpressionDescriptionForLabel();
+
+		return label != null
+					? String.format(FULL_LABEL_FORMAT, label, desc)
+					: desc;
 	}
 
 	public CSource getSource() {
@@ -85,13 +90,13 @@ abstract class CExpression extends CFrame {
 
 	abstract String getExpressionDescriptionForId();
 
-	abstract String getDefaultDisplayLabel();
+	abstract String getExpressionDescriptionForLabel();
 
 	private String getIdentifier() {
 
 		String typeName = getExpressionTypeName().toUpperCase();
-		String description = getExpressionDescriptionForId();
+		String desc = getExpressionDescriptionForId();
 
-		return String.format(ID_FORMAT, typeName, description);
+		return String.format(ID_FORMAT, typeName, desc);
 	}
 }

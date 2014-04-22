@@ -251,7 +251,7 @@ class CExtensionDescriber {
 		abstract String describeProperty(CProperty property);
 	}
 
-	private class IdentifierDescriber extends ComponentDescriber {
+	private class IdDescriber extends ComponentDescriber {
 
 		String describeHead(CExtension extension) {
 
@@ -296,9 +296,9 @@ class CExtensionDescriber {
 		this.extension = extension;
 	}
 
-	String describeForIdentifier() {
+	String describeForId() {
 
-		return new SingleLineDescriber(new IdentifierDescriber()).describe();
+		return new SingleLineDescriber(new IdDescriber()).describe();
 	}
 
 	String describeForLabel() {
@@ -308,7 +308,7 @@ class CExtensionDescriber {
 
 	String describeForToString() {
 
-		return new MultiLineDescriber(new IdentifierDescriber()).describe();
+		return new MultiLineDescriber(new IdDescriber()).describe();
 	}
 
 	private CIdentity getExtendedIdentity(CExtension extension) {
