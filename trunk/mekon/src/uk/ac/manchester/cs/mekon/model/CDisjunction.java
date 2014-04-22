@@ -246,7 +246,7 @@ class CDisjunction extends CExpression {
 		return disjuncts.toString();
 	}
 
-	String getDefaultDisplayLabel() {
+	String getExpressionDescriptionForLabel() {
 
 		StringBuilder bldr = new StringBuilder();
 
