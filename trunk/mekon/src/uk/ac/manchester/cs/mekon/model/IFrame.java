@@ -42,8 +42,8 @@ import uk.ac.manchester.cs.mekon.util.*;
  * Concrete-instances differ from query-instances in the following
  * ways:
  * <ul>
- *   <li>Concrete-instances can only be instantiations of
- *   model-frames (see {@link CFrame#modelFrame})
+ *   <li>Concrete-instances cannot be instantiations of
+ *   disjunction-frames (see {@link CFrame#disjunction})
  *   <li>Slots on concrete-instances cannot have abstract values
  *   (see {@link IValue#abstractValue})
  *   <li>Derived-values slots on query-instances (see {@link
@@ -350,41 +350,41 @@ public class IFrame implements IEntity, IValue {
 					+ "for both concrete and query-instances");
 			}
 
-			ensureQueryInstancesFromThis();
+			ensureOnlyQueryInstancesReferenced();
 		}
 	}
 
-	private void ensureQueryInstancesFromThis() {
+	private void ensureOnlyQueryInstancesReferenced() {
 
 		if (!queryInstance) {
 
 			queryInstance = true;
 
-			ensureQueryInstancesFromSlotValues();
+			for (ISlot slot : slots.asList()) {
+
+				ensureOnlyQueryInstancesReferencedFrom(slot);
+			}
 		}
 	}
 
-	private void ensureQueryInstancesFromSlotValues() {
+	private void ensureOnlyQueryInstancesReferencedFrom(ISlot slot) {
 
-		for (ISlot slot : slots.asList()) {
+		if (slot.getValueType() instanceof CFrame) {
 
-			if (slot.getValueType() instanceof CFrame) {
+			for (IValue value : slot.getValues().asList()) {
 
-				for (IValue value : slot.getValues().asList()) {
-
-					((IFrame)value).ensureQueryInstancesFromThis();
-				}
+				((IFrame)value).ensureOnlyQueryInstancesReferenced();
 			}
 		}
 	}
 
 	private void validateAsReferencingFrame() {
 
-		if (!queryInstance && !type.modelFrame()) {
+		if (!queryInstance && !type.disjunction()) {
 
 			throw new KAccessException(
 						"Cannot add slot-values to "
-						+ "concrete-instance of expression-frame: "
+						+ "concrete-instance of disjunction-frame: "
 						+ this);
 		}
 	}
