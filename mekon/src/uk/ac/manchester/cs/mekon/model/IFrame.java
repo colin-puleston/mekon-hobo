@@ -380,7 +380,7 @@ public class IFrame implements IEntity, IValue {
 
 	private void validateAsReferencingFrame() {
 
-		if (!queryInstance && !type.disjunction()) {
+		if (!queryInstance && type.disjunction()) {
 
 			throw new KAccessException(
 						"Cannot add slot-values to "
