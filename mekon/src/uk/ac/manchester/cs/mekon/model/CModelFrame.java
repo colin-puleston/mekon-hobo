@@ -106,6 +106,11 @@ class CModelFrame extends CFrame {
 			CModelFrame.this.addSuper(sup.asModelFrame());
 		}
 
+		public void removeSuper(CFrame sup) {
+
+			ensureNoLinksToSuper(sup.asModelFrame());
+		}
+
 		public CSlot addSlot(
 						CProperty property,
 						CCardinality cardinality,
