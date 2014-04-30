@@ -373,11 +373,6 @@ class CModelFrame extends CFrame {
 		return !hidden && !getModel().mappedToNonInstantiableObject(this);
 	}
 
-	CExtension createExtension(String label, CSlotValues slotValues) {
-
-		return new CExtension(label, this, slotValues);
-	}
-
 	IReasoner getIReasoner() {
 
 		return iReasoner;

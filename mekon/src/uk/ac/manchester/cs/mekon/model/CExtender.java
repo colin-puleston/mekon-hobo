@@ -25,30 +25,67 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Represents an ordered set of "fixed" concept-level slot-values
- * (see {@link CSlotValues}) for a particular extension-frame
- * (see {@link CFrame}).
+ * Responsible for the definition of and subsequent creation of for
+ * defining an extension-frame (see {@link CFrame#extension}) that
+ * extends a particular model-frame (see {@link CFrame#modelFrame}).
  *
  * @author Colin Puleston
  */
-public class CExtensionSlotValues {
+public class CExtender {
 
+	private CModelFrame baseFrame;
+	private String label;
 	private CSlotValues slotValues = new CSlotValues();
 
 	/**
-	 * Allows the specification of a fixed slot-value for the
-	 * extension-frame when created.
+	 * Constructor for defining an extension-frame with a default
+	 * label that provides a description of the extension.
+	 *
+	 * @param baseFrame Model-frame to be extended
+	 * @return throws KAccessException if specified base-frame is not
+	 * a model-frame
+	 */
+	public CExtender(CFrame baseFrame) {
+
+		this(baseFrame, null);
+	}
+
+	/**
+	 * Constructor for defining an extension-frame with the specified
+	 * label.
+	 *
+	 * @param baseFrame Model-frame to be extended
+	 * @param label Label for extension-frame
+	 * @return throws KAccessException if specified base-frame is not
+	 * a model-frame
+	 */
+	public CExtender(CFrame baseFrame, String label) {
+
+		this.baseFrame = baseFrame.asModelFrame();
+		this.label = label;
+	}
+
+	/**
+	 * Adds a fixed slot-value for the extension-frame.
 	 *
 	 * @param property Property associated with relevant slot
 	 * @param value Relevant value
 	 */
-	public void add(CProperty property, CValue<?> value) {
+	public void addSlotValue(CProperty property, CValue<?> value) {
 
 		slotValues.add(property, value);
 	}
 
-	CSlotValues getSlotValues() {
+	/**
+	 * Creates the required extension-frame.
+	 *
+	 * @return Created extension-frame, or just the base-frame if no
+	 * slot-values have been specified
+	 */
+	public CFrame extend() {
 
-		return slotValues;
+		return slotValues.valuesDefined()
+				? baseFrame.extend(label, slotValues)
+				: baseFrame;
 	}
 }

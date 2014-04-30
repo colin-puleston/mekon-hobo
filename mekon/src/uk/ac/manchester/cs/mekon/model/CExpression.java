@@ -70,14 +70,6 @@ abstract class CExpression extends CFrame {
 		this.label = label;
 	}
 
-	CExtension createExtension(String label, CSlotValues slotValues) {
-
-		throw new KAccessException(
-					"Cannot create extension-frame "
-					+ "for expression-frame: "
-					+ this);
-	}
-
 	CModelFrame asModelFrame() {
 
 		throw new KAccessException(

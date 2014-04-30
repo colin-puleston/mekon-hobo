@@ -540,49 +540,6 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Creates an extension-frame that extends this frame. Only
-	 * applicable to model-frames.
-	 *
-	 * @param slotValues Default slot-values to be associated with
-	 * extension-frame
-	 * @return Created extension-frame, or this frame if no slot-values
-	 * defined
-	 * @return throws KAccessException if this is not a model-frame
-	 */
-	public CFrame extend(CExtensionSlotValues slotValues) {
-
-		return extend(null, slotValues);
-	}
-
-	/**
-	 * Creates an extension-frame that extends this frame. Only
-	 * applicable to model-frames. The created frame will be given a
-	 * default label, providing a description of the extension.
-	 *
-	 * @param label Label for extension-frame
-	 * @param slotValues Default slot-values to be associated with
-	 * extension-frame
-	 * @return Created extension-frame, or this frame if no slot-values
-	 * defined
-	 * @return throws KAccessException if this is not a model-frame
-	 */
-	public CFrame extend(String label, CExtensionSlotValues slotValues) {
-
-		CSlotValues wrappedValues = slotValues.getSlotValues();
-
-		if (!wrappedValues.valuesDefined()) {
-
-			return this;
-		}
-
-		CExtension extension = createExtension(label, wrappedValues);
-
-		pollListenersForExtended(extension);
-
-		return extension;
-	}
-
-	/**
 	 * Instantiates the frame as a concrete-instance (see {@link
 	 * IFrame}).
 	 *
@@ -620,8 +577,6 @@ public abstract class CFrame
 		visitor.visit(this);
 	}
 
-	abstract CExtension createExtension(String label, CSlotValues slotValues);
-
 	abstract IReasoner getIReasoner();
 
 	abstract CModelFrame asModelFrame();
@@ -633,6 +588,15 @@ public abstract class CFrame
 	boolean structured() {
 
 		return !getSlots().isEmpty() || getSlotValues().valuesDefined();
+	}
+
+	CExtension extend(String label, CSlotValues slotValues) {
+
+		CExtension extn = new CExtension(label, asModelFrame(), slotValues);
+
+		pollListenersForExtended(extn);
+
+		return extn;
 	}
 
 	boolean checkUpdateInstance(IFrame instance, boolean autoUpdate) {
