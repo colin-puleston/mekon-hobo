@@ -109,26 +109,26 @@ public class CExtensionTest extends CValueTest<CFrame> {
 
 	private CExtension createAExtension(CFrame fcValue) {
 
-		CExtensionSlotValues slotValues = new CExtensionSlotValues();
+		CExtender extender = new CExtender(a);
 
-		slotValues.add(pac, c);
+		extender.addSlotValue(pac, c);
 
 		if (fcValue != null) {
 
-			slotValues.add(pab, createBExtension(fcValue));
+			extender.addSlotValue(pab, createBExtension(fcValue));
 		}
 
-		return (CExtension)a.extend(slotValues);
+		return (CExtension)extender.extend();
 	}
 
 	private CExtension createBExtension(CFrame fcValue) {
 
-		CExtensionSlotValues slotValues = new CExtensionSlotValues();
+		CExtender extender = new CExtender(b);
 
-		slotValues.add(pbb, b);
-		slotValues.add(pbc, fcValue);
+		extender.addSlotValue(pbb, b);
+		extender.addSlotValue(pbc, fcValue);
 
-		return (CExtension)b.extend(slotValues);
+		return (CExtension)extender.extend();
 	}
 
 	private CDisjunction createDisjunction(CFrame... disjuncts) {
