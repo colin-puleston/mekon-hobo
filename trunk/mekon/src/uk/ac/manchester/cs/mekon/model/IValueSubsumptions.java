@@ -54,12 +54,12 @@ class IValueSubsumptions {
 	}
 
 	static List<IValue> getMostSpecifics(
-							Collection<IValue> values,
+							Collection<? extends IValue> values,
 							CValue<?> valueType) {
 
 		if (valueType.getValueType().isAssignableFrom(CValue.class)) {
 
-			return asIValues(getMostSpecificCValues(asCValues(values)));
+			return getMostSpecifics(values, asCValues(values));
 		}
 
 		return removeDuplicates(values);
@@ -80,12 +80,30 @@ class IValueSubsumptions {
 		return false;
 	}
 
-	static private Set<CValue<?>> getMostSpecificCValues(List<CValue<?>> cValues) {
+	static private List<IValue> getMostSpecifics(
+									Collection<? extends IValue> values,
+									Set<CValue<?>> valuesAsCValues) {
+
+		List<IValue> mostSpecifics = new ArrayList<IValue>();
+		Set<CValue<?>> mostSpecificCs = getMostSpecificCValues(valuesAsCValues);
+
+		for (IValue value : values) {
+
+			if (mostSpecificCs.contains(value)) {
+
+				mostSpecifics.add(value);
+			}
+		}
+
+		return mostSpecifics;
+	}
+
+	static private Set<CValue<?>> getMostSpecificCValues(Set<CValue<?>> cValues) {
 
 		return new MostSpecificCValues(cValues).getMostSpecific();
 	}
 
-	static private List<IValue> removeDuplicates(Collection<IValue> values) {
+	static private List<IValue> removeDuplicates(Collection<? extends IValue> values) {
 
 		List<IValue> uniqueValues = new ArrayList<IValue>();
 
@@ -100,9 +118,9 @@ class IValueSubsumptions {
 		return uniqueValues;
 	}
 
-	static private List<CValue<?>> asCValues(Collection<IValue> values) {
+	static private Set<CValue<?>> asCValues(Collection<? extends IValue> values) {
 
-		List<CValue<?>> cValues = new ArrayList<CValue<?>>();
+		Set<CValue<?>> cValues = new HashSet<CValue<?>>();
 
 		for (IValue value : values) {
 
@@ -110,17 +128,5 @@ class IValueSubsumptions {
 		}
 
 		return cValues;
-	}
-
-	static private List<IValue> asIValues(Collection<CValue<?>> values) {
-
-		List<IValue> iValues = new ArrayList<IValue>();
-
-		for (CValue<?> value : values) {
-
-			iValues.add((IValue)value);
-		}
-
-		return iValues;
 	}
 }
