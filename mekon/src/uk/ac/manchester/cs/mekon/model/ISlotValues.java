@@ -160,7 +160,7 @@ public abstract class ISlotValues extends KList<IValue> {
 
 	List<IValue> addAll(Collection<? extends IValue> values) {
 
-		List<IValue> additions = addAllAsserteds(values);
+		List<IValue> additions = addAllAsserteds(getMostSpecifics(values));
 
 		if (!additions.isEmpty()) {
 
@@ -215,6 +215,8 @@ public abstract class ISlotValues extends KList<IValue> {
 
 	boolean update(Collection<? extends IValue> values) {
 
+		values = getMostSpecifics(values);
+
 		if (!valuesAsSet(values).equals(valuesAsSet(assertedValues))) {
 
 			assertedValues.clear();
@@ -228,17 +230,17 @@ public abstract class ISlotValues extends KList<IValue> {
 		return false;
 	}
 
-	boolean updateFixedValues(Collection<IValue> newFixedValues) {
+	boolean updateFixedValues(Collection<? extends IValue> values) {
 
-		retainOnlyMostSpecificValues(newFixedValues);
+		values = getMostSpecifics(values);
 
-		if (!fixedValues.equals(newFixedValues)) {
+		if (!fixedValues.equals(values)) {
 
-			validateValues(newFixedValues);
-			validateFixedValueCombination(newFixedValues);
+			validateValues(values);
+			validateFixedValueCombination(values);
 
 			fixedValues.clear();
-			fixedValues.addAll(newFixedValues);
+			fixedValues.addAll(values);
 
 			removeRedundantAsserteds();
 			updateSlotValues();
@@ -379,11 +381,6 @@ public abstract class ISlotValues extends KList<IValue> {
 		updateValues(values);
 	}
 
-	private void retainOnlyMostSpecificValues(Collection<IValue> values) {
-
-		values.retainAll(getMostSpecificValues(values));
-	}
-
 	private boolean subsumesFixed(IValue asserted) {
 
 		for (IValue fixed : fixedValues) {
@@ -420,7 +417,7 @@ public abstract class ISlotValues extends KList<IValue> {
 		return getValueType().validValue(value);
 	}
 
-	private void validateValues(Collection<IValue> values) {
+	private void validateValues(Collection<? extends IValue> values) {
 
 		for (IValue value : values) {
 
@@ -445,7 +442,7 @@ public abstract class ISlotValues extends KList<IValue> {
 		}
 	}
 
-	private void validateFixedValueCombination(Collection<IValue> fixedValues) {
+	private void validateFixedValueCombination(Collection<? extends IValue> fixedValues) {
 
 		if (singleValued() && fixedValues.size() > 1) {
 
@@ -469,7 +466,7 @@ public abstract class ISlotValues extends KList<IValue> {
 		return new HashSet<IValue>(values);
 	}
 
-	private List<IValue> getMostSpecificValues(Collection<IValue> values) {
+	private List<IValue> getMostSpecifics(Collection<? extends IValue> values) {
 
 		return IValueSubsumptions.getMostSpecifics(values, getValueType());
 	}

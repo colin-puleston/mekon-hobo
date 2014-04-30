@@ -58,7 +58,7 @@ public class ISlotValuesEditor {
 	 * @return All values that were added (i.e. those not already
 	 * asserted)
 	 */
-	public List<IValue> addAll(Collection<IValue> values) {
+	public List<IValue> addAll(Collection<? extends IValue> values) {
 
 		return slotValues.addAll(values);
 	}
@@ -99,7 +99,7 @@ public class ISlotValuesEditor {
 	 * @return All values that were removed (i.e. those that were
 	 * previously asserted)
 	 */
-	public List<IValue> removeAll(Collection<IValue> values) {
+	public List<IValue> removeAll(Collection<? extends IValue> values) {
 
 		return slotValues.removeAll(values);
 	}
