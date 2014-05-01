@@ -38,7 +38,7 @@ public class CFloatDef extends CNumberDef {
 	static public final CFloatDef UNCONSTRAINED = new CFloatDef();
 
 	/**
-	 * Creates an float-type definition with the specified limits.
+	 * Creates a float-type definition with the specified limits.
 	 *
 	 * @param min Minimnum value for float-type
 	 * @param max Maximnum value for float-type
@@ -49,7 +49,7 @@ public class CFloatDef extends CNumberDef {
 	}
 
 	/**
-	 * Creates an float-type definition with the specified minimum
+	 * Creates a float-type definition with the specified minimum
 	 * value.
 	 *
 	 * @param min Minimnum value for float-type
@@ -60,7 +60,7 @@ public class CFloatDef extends CNumberDef {
 	}
 
 	/**
-	 * Creates an float-type definition with the specified maximum
+	 * Creates a float-type definition with the specified maximum
 	 * value.
 	 *
 	 * @param max Maximnum value for float-type
@@ -68,6 +68,17 @@ public class CFloatDef extends CNumberDef {
 	static public CFloatDef max(Float max) {
 
 		return range(null, max);
+	}
+
+	/**
+	 * Creates a float-type definition with the specified exact
+	 * value.
+	 *
+	 * @param exact Exact value for float-type
+	 */
+	static public CFloatDef exact(Float exact) {
+
+		return range(exact, exact);
 	}
 
 	static private INumber resolveMin(Float min) {

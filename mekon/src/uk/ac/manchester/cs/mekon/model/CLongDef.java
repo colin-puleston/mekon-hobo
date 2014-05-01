@@ -38,7 +38,7 @@ public class CLongDef extends CNumberDef {
 	static public final CLongDef UNCONSTRAINED = new CLongDef();
 
 	/**
-	 * Creates an long-type definition with the specified limits.
+	 * Creates a long-type definition with the specified limits.
 	 *
 	 * @param min Minimnum value for long-type
 	 * @param max Maximnum value for long-type
@@ -49,7 +49,7 @@ public class CLongDef extends CNumberDef {
 	}
 
 	/**
-	 * Creates an long-type definition with the specified minimum
+	 * Creates a long-type definition with the specified minimum
 	 * value.
 	 *
 	 * @param min Minimnum value for long-type
@@ -60,7 +60,7 @@ public class CLongDef extends CNumberDef {
 	}
 
 	/**
-	 * Creates an long-type definition with the specified maximum
+	 * Creates a long-type definition with the specified maximum
 	 * value.
 	 *
 	 * @param max Maximnum value for long-type
@@ -68,6 +68,17 @@ public class CLongDef extends CNumberDef {
 	static public CLongDef max(Long max) {
 
 		return range(null, max);
+	}
+
+	/**
+	 * Creates a long-type definition with the specified exact
+	 * value.
+	 *
+	 * @param exact Exact value for long-type
+	 */
+	static public CLongDef exact(Long exact) {
+
+		return range(exact, exact);
 	}
 
 	static private INumber resolveMin(Long min) {
