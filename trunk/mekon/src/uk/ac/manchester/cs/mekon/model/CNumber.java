@@ -341,7 +341,14 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 	String getLimitsString() {
 
-		return "[" + minToString() + "-" + maxToString() + "]";
+		String limits = minToString();
+
+		if (!exactValue()) {
+
+			limits += ("-" + maxToString());
+		}
+
+		return "[" + limits + "]";
 	}
 
 	private CNumber createCNumber(INumber min, INumber max) {

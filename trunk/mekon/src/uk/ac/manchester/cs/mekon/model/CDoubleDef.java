@@ -38,7 +38,7 @@ public class CDoubleDef extends CNumberDef {
 	static public final CDoubleDef UNCONSTRAINED = new CDoubleDef();
 
 	/**
-	 * Creates an double-type definition with the specified limits.
+	 * Creates a double-type definition with the specified limits.
 	 *
 	 * @param min Minimnum value for double-type
 	 * @param max Maximnum value for double-type
@@ -49,7 +49,7 @@ public class CDoubleDef extends CNumberDef {
 	}
 
 	/**
-	 * Creates an double-type definition with the specified minimum
+	 * Creates a double-type definition with the specified minimum
 	 * value.
 	 *
 	 * @param min Minimnum value for double-type
@@ -60,7 +60,7 @@ public class CDoubleDef extends CNumberDef {
 	}
 
 	/**
-	 * Creates an double-type definition with the specified maximum
+	 * Creates a double-type definition with the specified maximum
 	 * value.
 	 *
 	 * @param max Maximnum value for double-type
@@ -68,6 +68,17 @@ public class CDoubleDef extends CNumberDef {
 	static public CDoubleDef max(Double max) {
 
 		return range(null, max);
+	}
+
+	/**
+	 * Creates a double-type definition with the specified exact
+	 * value.
+	 *
+	 * @param exact Exact value for double-type
+	 */
+	static public CDoubleDef exact(Double exact) {
+
+		return range(exact, exact);
 	}
 
 	static private INumber resolveMin(Double min) {

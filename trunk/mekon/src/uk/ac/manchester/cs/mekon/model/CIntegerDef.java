@@ -70,6 +70,17 @@ public class CIntegerDef extends CNumberDef {
 		return range(null, max);
 	}
 
+	/**
+	 * Creates an integer-type definition with the specified exact
+	 * value.
+	 *
+	 * @param exact Exact value for integer-type
+	 */
+	static public CIntegerDef exact(Integer exact) {
+
+		return range(exact, exact);
+	}
+
 	static private INumber resolveMin(Integer min) {
 
 		return min != null ? new INumber(min) : INumber.MINUS_INFINITY;
