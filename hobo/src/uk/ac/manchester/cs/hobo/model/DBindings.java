@@ -50,7 +50,7 @@ class DBindings {
 
 	void initialise(DModel model) {
 
-		add(DObject.class, model.getCModel().getRootFrame());
+		addRootBinding(model);
 
 		for (DBinding binding : byClass.values()) {
 
@@ -103,5 +103,10 @@ class DBindings {
 	boolean isBound(CFrame frame) {
 
 		return byFrame.containsKey(frame);
+	}
+
+	private void addRootBinding(DModel model) {
+
+		add(DObject.class, model.getCModel().getRootFrame());
 	}
 }
