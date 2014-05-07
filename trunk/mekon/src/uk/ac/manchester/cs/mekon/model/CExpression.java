@@ -31,8 +31,8 @@ import uk.ac.manchester.cs.mekon.*;
  */
 abstract class CExpression extends CFrame {
 
-	static private final String ID_FORMAT = "@%s(%s)";
-	static private final String FULL_LABEL_FORMAT = "%s(%s)";
+	static private final String ID_FORMAT = "@%s__(%s)";
+	static private final String FULL_LABEL_FORMAT = "%s  (%s)";
 
 	private String label;
 
