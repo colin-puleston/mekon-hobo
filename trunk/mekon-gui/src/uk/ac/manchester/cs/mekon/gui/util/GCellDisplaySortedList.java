@@ -57,7 +57,9 @@ abstract class GCellDisplaySortedList<E>  {
 
 	void add(E element) {
 
-		if (elements.add(element)) {
+		if (!elements.contains(element)) {
+
+			elements.add(element);
 
 			onEdited();
 		}
