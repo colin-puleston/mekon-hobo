@@ -45,7 +45,9 @@ public abstract class GNode extends GMutableTreeNode {
 
 		int compareDistinctElements(GNode first, GNode second) {
 
-			return orderedChildren() ? compareOrdered(first, second) : 1;
+			return orderedChildren()
+					? compareOrdered(first, second)
+					: super.compareDistinctElements(first, second);
 		}
 
 		GCellDisplay getDisplay(GNode node) {

@@ -52,21 +52,17 @@ abstract class GCellDisplaySortedList<E>  {
 
 	void add(E element) {
 
-		if (!set.contains(element)) {
+		if (set.add(element)) {
 
-			checkEditable();
-
-			set.add(element);
+			onEdited();
 		}
 	}
 
 	void remove(E element) {
 
-		if (set.contains(element)) {
+		if (set.remove(element)) {
 
-			checkEditable();
-
-			set.remove(element);
+			onEdited();
 		}
 	}
 
@@ -74,9 +70,8 @@ abstract class GCellDisplaySortedList<E>  {
 
 		if (!set.isEmpty()) {
 
-			checkEditable();
-
 			set.clear();
+			onEdited();
 		}
 	}
 
@@ -91,12 +86,17 @@ abstract class GCellDisplaySortedList<E>  {
 
 		int c = compareLabels(getLabel(first), getLabel(second));
 
-		return c != 0 ? c : (first.hashCode() - second.hashCode());
+		if (c == 0) {
+
+			c = first.hashCode() > second.hashCode() ? 1 : -1;
+		}
+
+		return c;
 	}
 
 	abstract GCellDisplay getDisplay(E element);
 
-	private void checkEditable() {
+	private void onEdited() {
 
 		if (list != null) {
 
