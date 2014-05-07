@@ -31,28 +31,33 @@ import java.util.*;
  */
 abstract class GCellDisplaySortedList<E>  {
 
-	private SortedSet<E> set;
+	private Collection<E> elements;
 	private List<E> list = null;
 	private Map<E, Integer> indices = null;
 
-	private class ElementComparator implements Comparator<E> {
+	private class SortedElementsComparator implements Comparator<E> {
 
 		public int compare(E first, E second) {
 
-			return first.equals(second)
-					? 0
-					: compareDistinctElements(first, second);
+			if (first.equals(second)) {
+
+				return 0;
+			}
+
+			int c = compareOrdered(first, second);
+
+			return c != 0 ? c : compareHashCodes(first, second);
 		}
 	}
 
-	GCellDisplaySortedList() {
+	GCellDisplaySortedList(boolean ordered) {
 
-		set = new TreeSet<E>(new ElementComparator());
+		elements = ordered ? createSortedSet() : new ArrayList<E>();
 	}
 
 	void add(E element) {
 
-		if (set.add(element)) {
+		if (elements.add(element)) {
 
 			onEdited();
 		}
@@ -60,7 +65,7 @@ abstract class GCellDisplaySortedList<E>  {
 
 	void remove(E element) {
 
-		if (set.remove(element)) {
+		if (elements.remove(element)) {
 
 			onEdited();
 		}
@@ -68,9 +73,9 @@ abstract class GCellDisplaySortedList<E>  {
 
 	void clear() {
 
-		if (!set.isEmpty()) {
+		if (!elements.isEmpty()) {
 
-			set.clear();
+			elements.clear();
 			onEdited();
 		}
 	}
@@ -82,19 +87,17 @@ abstract class GCellDisplaySortedList<E>  {
 		return list;
 	}
 
-	int compareDistinctElements(E first, E second) {
+	int compareOrdered(E first, E second) {
 
-		int c = compareLabels(getLabel(first), getLabel(second));
-
-		if (c == 0) {
-
-			c = first.hashCode() > second.hashCode() ? 1 : -1;
-		}
-
-		return c;
+		return compareLabels(getLabel(first), getLabel(second));
 	}
 
 	abstract GCellDisplay getDisplay(E element);
+
+	private SortedSet<E> createSortedSet() {
+
+		return new TreeSet<E>(new SortedElementsComparator());
+	}
 
 	private void onEdited() {
 
@@ -114,7 +117,7 @@ abstract class GCellDisplaySortedList<E>  {
 
 			int i = 0;
 
-			for (E element : set) {
+			for (E element : elements) {
 
 				list.add(element);
 				indices.put(element, i++);
@@ -127,6 +130,11 @@ abstract class GCellDisplaySortedList<E>  {
 		int c = first.compareToIgnoreCase(second);
 
 		return c != 0 ? c : first.compareTo(second);
+	}
+
+	private int compareHashCodes(E first, E second) {
+
+		return first.hashCode() > second.hashCode() ? 1 : -1;
 	}
 
 	private String getLabel(E element) {

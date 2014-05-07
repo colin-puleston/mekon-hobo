@@ -67,6 +67,11 @@ public class GList<E> extends JList {
 
 	private class DisplayList extends GCellDisplaySortedList<DisplayElement> {
 
+		DisplayList() {
+
+			super(true);
+		}
+
 		GCellDisplay getDisplay(DisplayElement element) {
 
 			return element;
