@@ -27,10 +27,12 @@ import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
+import uk.ac.manchester.cs.mekon.gui.util.*;
+
 /**
  * @author Colin Puleston
  */
-class CFrameUsagePanel extends JPanel {
+class CFrameUsagePanel extends GVerticalPanel {
 
 	static private final long serialVersionUID = -1;
 
@@ -43,7 +45,7 @@ class CFrameUsagePanel extends JPanel {
 
 		UsageTree(CFrame rootFrame) {
 
-			CFrameUsagePanel.this.add(wrapInInertScroller());
+			addUsageTree(this);
 			addSelectionListener(reselectionListener);
 
 			initialise(rootFrame);
@@ -64,18 +66,6 @@ class CFrameUsagePanel extends JPanel {
 		int autoExpandCFrameNodesToLevel() {
 
 			return 2;
-		}
-
-		private JScrollPane wrapInInertScroller() {
-
-			JScrollPane scroller = new JScrollPane(
-										this,
-										JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-										JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-			scroller.setPreferredSize(getPreferredSize());
-
-			return scroller;
 		}
 	}
 
@@ -126,10 +116,10 @@ class CFrameUsagePanel extends JPanel {
 
 	CFrameUsagePanel(CFrame frame, CFrameSelectionListener reselectionListener) {
 
+		super(true);
+
 		this.frame = frame;
 		this.reselectionListener = reselectionListener;
-
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		addSubFrameUsage();
 		addSlotValueTypeUsage(frame);
@@ -163,5 +153,27 @@ class CFrameUsagePanel extends JPanel {
 
 			new SlotValuesUsageTree(frame);
 		}
+	}
+
+	private void addUsageTree(UsageTree tree) {
+
+		addComponent(wrapInInertScroller(wrapInVerticalPanel(tree)));
+	}
+
+	private GVerticalPanel wrapInVerticalPanel(JComponent component) {
+
+		GVerticalPanel panel = new GVerticalPanel(true);
+
+		panel.addComponent(component);
+
+		return panel;
+	}
+
+	private JScrollPane wrapInInertScroller(JComponent component) {
+
+		return new JScrollPane(
+						component,
+						JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+						JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	}
 }
