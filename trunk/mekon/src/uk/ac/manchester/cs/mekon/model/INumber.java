@@ -99,6 +99,26 @@ public class INumber implements IEntity, IValue {
 
 		abstract BigDecimal asBigDecimal();
 
+		Integer asInteger() {
+
+			return asBigDecimal().intValue();
+		}
+
+		Long asLong() {
+
+			return asBigDecimal().longValue();
+		}
+
+		Float asFloat() {
+
+			return asBigDecimal().floatValue();
+		}
+
+		Double asDouble() {
+
+			return asBigDecimal().doubleValue();
+		}
+
 		abstract boolean equalTo(Value other);
 
 		abstract boolean lessThan(Value other);
@@ -285,6 +305,26 @@ public class INumber implements IEntity, IValue {
 
 		static private final String NAME_PREFIX = "PLUS";
 
+		Integer asInteger() {
+
+			return Integer.MAX_VALUE;
+		}
+
+		Long asLong() {
+
+			return Long.MAX_VALUE;
+		}
+
+		Float asFloat() {
+
+			return Float.MAX_VALUE;
+		}
+
+		Double asDouble() {
+
+			return Double.MAX_VALUE;
+		}
+
 		boolean lessThan(Value other) {
 
 			return false;
@@ -304,6 +344,26 @@ public class INumber implements IEntity, IValue {
 	private class NegativeInfiniteValue extends InfiniteValue {
 
 		static private final String NAME_PREFIX = "MINUS";
+
+		Integer asInteger() {
+
+			return Integer.MIN_VALUE;
+		}
+
+		Long asLong() {
+
+			return Long.MIN_VALUE;
+		}
+
+		Float asFloat() {
+
+			return Float.MIN_VALUE;
+		}
+
+		Double asDouble() {
+
+			return Double.MIN_VALUE;
+		}
 
 		boolean lessThan(Value other) {
 
@@ -756,7 +816,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Integer asInteger() {
 
-		return asBigDecimal().intValue();
+		return value.asInteger();
 	}
 
 	/**
@@ -767,7 +827,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Long asLong() {
 
-		return asBigDecimal().longValue();
+		return value.asLong();
 	}
 
 	/**
@@ -778,7 +838,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Float asFloat() {
 
-		return asBigDecimal().floatValue();
+		return value.asFloat();
 	}
 
 	/**
@@ -789,7 +849,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Double asDouble() {
 
-		return asBigDecimal().doubleValue();
+		return value.asDouble();
 	}
 
 	INumber(CNumber valueType) {

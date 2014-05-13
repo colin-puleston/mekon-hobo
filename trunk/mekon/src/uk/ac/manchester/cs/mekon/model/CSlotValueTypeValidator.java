@@ -93,6 +93,7 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 
 			throw new KModelException(
 						"Invalid value-type for slot: " + slot
+						+ ": on frame: " + slot.getContainer()
 						+ ": expected type: " + slot.getValueType()
 						+ ": invalid type: " + valueType);
 		}
