@@ -370,7 +370,7 @@ class CModelFrame extends CFrame {
 
 	boolean instantiableModelFrame() {
 
-		return !hidden && !getModel().mappedToNonInstantiableObject(this);
+		return !getModel().mappedToNonInstantiableObject(this);
 	}
 
 	IReasoner getIReasoner() {
