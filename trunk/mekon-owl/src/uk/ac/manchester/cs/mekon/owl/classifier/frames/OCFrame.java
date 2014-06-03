@@ -131,6 +131,15 @@ public class OCFrame extends OCFramesEntity {
 	}
 
 	/**
+	 * Removes all slots from the frame.
+	 */
+	public void clearSlots() {
+
+		conceptSlots.clear();
+		numberSlots.clear();
+	}
+
+	/**
 	 * Specifies whether the type of the frame is a disjunction
 	 * of concepts, rather than a single concept.
 	 *
@@ -152,6 +161,17 @@ public class OCFrame extends OCFramesEntity {
 	public Set<IRI> getTypeDisjunctIRIs() {
 
 		return new HashSet<IRI>(typeDisjunctIRIs);
+	}
+
+	/**
+	 * Checks whether the frame has any slots, either concept-valued
+	 * of number-valued.
+	 *
+	 * @return True if frame has slots
+	 */
+	public boolean hasSlots() {
+
+		return !conceptSlots.isEmpty() || !numberSlots.isEmpty();
 	}
 
 	/**
