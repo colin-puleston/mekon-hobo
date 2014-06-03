@@ -85,6 +85,14 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	}
 
 	/**
+	 * Removes all values from the slot.
+	 */
+	public void clearValues() {
+
+		values.clear();
+	}
+
+	/**
 	 * Sets the value of the "closed-world-semantics" attribute for
 	 * the slot.
 	 *
@@ -133,6 +141,16 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	public OCNumberSlot asNumberSlot() {
 
 		throw new KAccessException("Not a number-slot");
+	}
+
+	/**
+	 * Checks whether the slot has any values.
+	 *
+	 * @return True if slot has values
+	 */
+	public boolean hasValues() {
+
+		return !values.isEmpty();
 	}
 
 	/**
