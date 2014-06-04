@@ -36,6 +36,7 @@ public class CExtender {
 	private CModelFrame baseFrame;
 	private String label;
 	private CSlotValues slotValues = new CSlotValues();
+	private boolean concrete = false;
 
 	/**
 	 * Constructor for defining an extension-frame with a default
@@ -66,6 +67,18 @@ public class CExtender {
 	}
 
 	/**
+	 * Used to specify whether the extension should be "concrete".
+	 * A concrete extension is one that will never be equal to, or
+	 * subsumed by, another extension.
+	 *
+	 * @param concrete True if extension is to be concrete
+	 */
+	public void setConcreteExtension(boolean concrete) {
+
+		this.concrete = concrete;
+	}
+
+	/**
 	 * Adds a fixed slot-value for the extension-frame.
 	 *
 	 * @param property Property associated with relevant slot
@@ -85,7 +98,7 @@ public class CExtender {
 	public CFrame extend() {
 
 		return slotValues.valuesDefined()
-				? baseFrame.extend(label, slotValues)
+				? baseFrame.extend(label, slotValues, concrete)
 				: baseFrame;
 	}
 }

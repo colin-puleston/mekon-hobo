@@ -39,6 +39,7 @@ class CExtension extends CExpression {
 	private CModelFrame extendedFrame;
 	private Set<CFrame> structuredAncestors;
 	private CSlotValues slotValues;
+	private boolean concrete;
 
 	private int hashCode;
 
@@ -136,16 +137,20 @@ class CExtension extends CExpression {
 	public boolean subsumes(CFrame testSubsumed) {
 
 		return testSubsumed instanceof CExtension
-				&& super.subsumes(testSubsumed)
-				&& slotValues.subsumes(testSubsumed.getSlotValues());
+				&& subsumesExtension((CExtension)testSubsumed);
 	}
 
-	CExtension(String label, CModelFrame extendedFrame, CSlotValues slotValues) {
+	CExtension(
+		String label,
+		CModelFrame extendedFrame,
+		CSlotValues slotValues,
+		boolean concrete) {
 
 		super(label);
 
 		this.extendedFrame = extendedFrame;
 		this.slotValues = slotValues;
+		this.concrete = concrete;
 
 		structuredAncestors = resolveStructuredAncestors();
 		hashCode = createHashCode();
@@ -210,6 +215,11 @@ class CExtension extends CExpression {
 
 	private int createHashCode() {
 
+		if (concrete) {
+
+			return super.hashCode();
+		}
+
 		return extendedFrame.hashCode() + slotValues.createHashCode();
 	}
 
@@ -226,7 +236,23 @@ class CExtension extends CExpression {
 
 	private boolean equalsExtension(CExtension other) {
 
+		if (concrete || other.concrete) {
+
+			return false;
+		}
+
 		return extendedFrame.equals(other.extendedFrame)
 				&& slotValues.equalSlotValues(other.slotValues);
+	}
+
+	private boolean subsumesExtension(CExtension testSubsumed) {
+
+		if (concrete || testSubsumed.concrete) {
+
+			return false;
+		}
+
+		return super.subsumes(testSubsumed)
+				&& slotValues.subsumes(testSubsumed.getSlotValues());
 	}
 }
