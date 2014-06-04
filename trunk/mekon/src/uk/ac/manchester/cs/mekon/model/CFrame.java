@@ -589,9 +589,9 @@ public abstract class CFrame
 		return !getSlots().isEmpty() || getSlotValues().valuesDefined();
 	}
 
-	CExtension extend(String label, CSlotValues slotValues) {
+	CExtension extend(String label, CSlotValues slotValues, boolean concrete) {
 
-		CExtension extn = new CExtension(label, asModelFrame(), slotValues);
+		CExtension extn = new CExtension(label, asModelFrame(), slotValues, concrete);
 
 		pollListenersForExtended(extn);
 
