@@ -84,7 +84,9 @@ class CExtension extends CExpression {
 
 	public CFrameCategory getCategory() {
 
-		return CFrameCategory.EXTENSION;
+		return concrete
+				? CFrameCategory.CONCRETE_EXTENSION
+				: CFrameCategory.ABSTRACT_EXTENSION;
 	}
 
 	public CModel getModel() {

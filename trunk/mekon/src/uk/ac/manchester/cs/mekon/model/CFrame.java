@@ -43,7 +43,12 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  * and zero or more sub-frames. Model-frames may also provide sets
  * of slots or default slot-values.
  * <p>
- * There are two sub-categories of expression-frame:
+ * Expression-frames are not part of the model-frame hierarchy.
+ * Hierarcical links between expression-frames and model-frames are
+ * one-way only. Model-frames never contain hierarcical links to
+ * expression-frames.
+ * <p>
+ * There are two main sub-categories of expression-frame:
  * <ul>
  *   <li><i>Disjunction-frame</i> Represents a disjunction of
  *   model-concepts, with the (model-frame) disjuncts represented
@@ -52,11 +57,15 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  *   of a particular model-frame, which provides a set of additional
  *   default slot-values
  * </ul>
- * Expression-frames are not part of the model-frame hierarchy.
- * Hierarcical links between expression-frames and model-frames are
- * one-way only. Model-frames never contain hierarcical links to
- * expression-frames.
  * <p>
+ * Extension-frames are further sub-divided into:
+ * <ul>
+ *   <li><i>Abstract-extension-frame</i> Can be deemed to be equal-to,
+ *   subsumed-by, or subsuming-of another abstract extension-frame,
+ *   based on the respective definitions
+ *   <li><i>Concrete-extension-frame</i> Can never be equal-to,
+ *   subsumed-by, or subsuming-of another abstract extension-frame
+ * </ul>
  * Each frame has a "visibility" status of "exposed" or "hidden".
  * Hidden frames are those that are not relevant to an end-user.
  * Model-frames can be either exposed or hidden. Expression-frames
@@ -178,30 +187,6 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Specifies whether this is an extension-frame. This is
-	 * equivalent to {@link #getCategory} returning a value of
-	 * {@link CFrameCategory#EXTENSION}.
-	 *
-	 * @return True if extension-frame.
-	 */
-	public boolean extension() {
-
-		return getCategory() == CFrameCategory.EXTENSION;
-	}
-
-	/**
-	 * Specifies whether this is a disjunction-frame. This is
-	 * equivalent to {@link #getCategory} returning a value of
-	 * {@link CFrameCategory#DISJUNCTION}.
-	 *
-	 * @return True if disjunction-frame.
-	 */
-	public boolean disjunction() {
-
-		return getCategory() == CFrameCategory.DISJUNCTION;
-	}
-
-	/**
 	 * Provides the frame-category.
 	 *
 	 * @return Frame-category.
@@ -224,7 +209,7 @@ public abstract class CFrame
 	 */
 	public boolean abstractValue() {
 
-		return disjunction();
+		return getCategory().disjunction();
 	}
 
 	/**
