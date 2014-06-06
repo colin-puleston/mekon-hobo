@@ -91,16 +91,22 @@ class OCClassifierConfig implements OCClassifierConfigVocab {
 
 	private void checkEnableLogging() {
 
-		if (loggingEnabled()) {
+		OCLoggingMode mode = getLoggingMode();
+
+		if (mode != OCLoggingMode.DISABLED) {
 
 			OCLogger.start();
-			OCLogger.setShowRequests(true);
-			OCLogger.setShowResults(true);
+
+			if (mode != OCLoggingMode.TIMES_ONLY) {
+
+				OCLogger.setShowRequests(true);
+				OCLogger.setShowResults(true);
+			}
 		}
 	}
 
-	private boolean loggingEnabled() {
+	private OCLoggingMode getLoggingMode() {
 
-		return configNode.getBoolean(LOGGING_ENABLED_ATTR, false);
+		return configNode.getEnum(LOGGING_MODE_ATTR, OCLoggingMode.class);
 	}
 }

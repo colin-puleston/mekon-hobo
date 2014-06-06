@@ -25,18 +25,25 @@
 package uk.ac.manchester.cs.mekon.owl.classifier;
 
 /**
- * Vocabulary used in the {@link OCClassifier}-definition
- * section of the MEKON configuration file.
+ * Specifies the type of classification-logging to be provided by
+ * {@link OCLogger}.
  *
  * @author Colin Puleston
  */
-public interface OCClassifierConfigVocab {
+public enum OCLoggingMode {
 
-	static public final String ROOT_ID = "OWLClassifier";
-	static public final String SEMANTICS_ID = "SlotSemantics";
-	static public final String EXCEPTION_PROP_ID = "ExceptionProperty";
+	/**
+	 * Specifies that requests, results and reasoning times are required.
+	 */
+	FULL,
 
-	static public final String LOGGING_MODE_ATTR = "loggingMode";
-	static public final String DEFAULT_SEMANTICS_ATTR = "default";
-	static public final String EXCEPTION_PROP_URI_ATTR = "uri";
+	/**
+	 * Specifies that only reasoning times are required.
+	 */
+	TIMES_ONLY,
+
+	/**
+	 * Specifies that no logging is required.
+	 */
+	DISABLED;
 }

@@ -236,7 +236,7 @@ public class OCFramesInstance {
 
 	private OCFrame createFrame(CFrame cFrame) {
 
-		return cFrame.disjunction()
+		return cFrame.getCategory().disjunction()
 				? createDisjunctionFrame(cFrame)
 				: createModelFrame(cFrame);
 	}
