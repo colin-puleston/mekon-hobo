@@ -131,7 +131,7 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 
 		List<CFrame> disjuncts = new ArrayList<CFrame>();
 
-		if (cFrame.disjunction()) {
+		if (cFrame.getCategory().disjunction()) {
 
 			disjuncts.addAll(cFrame.getSubs());
 		}
