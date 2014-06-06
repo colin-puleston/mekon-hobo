@@ -67,9 +67,9 @@ public class CExtender {
 	}
 
 	/**
-	 * Used to specify whether the extension should be "concrete".
-	 * A concrete extension is one that will never be equal to, or
-	 * subsumed by, another extension.
+	 * Used to specify whether the extension should be "concrete",
+	 * rather than abstract (see {@link CFrame}). By default the
+	 * extension will be abstract.
 	 *
 	 * @param concrete True if extension is to be concrete
 	 */

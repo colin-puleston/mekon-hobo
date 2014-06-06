@@ -37,12 +37,84 @@ public enum CFrameCategory {
 	MODEL,
 
 	/**
-	 * Frame is a extension-frame.
+	 * Frame is an abstract-extension-frame.
 	 */
-	EXTENSION,
+	ABSTRACT_EXTENSION,
+
+	/**
+	 * Frame is a concrete-extension-frame.
+	 */
+	CONCRETE_EXTENSION,
 
 	/**
 	 * Frame is a disjunction-frame.
 	 */
 	DISJUNCTION;
+
+	/**
+	 * States whether frame is a model-frame, which is true if and
+	 * only if it is equal to {@link #MODEL}.
+	 *
+	 * @return True if model-frame.
+	 */
+	public boolean modelFrame() {
+
+		return this == MODEL;
+	}
+
+	/**
+	 * States whether frame is an expression-frame, which is true if
+	 * and only if it is not equal to {@link #MODEL}.
+	 *
+	 * @return True if extension-frame.
+	 */
+	public boolean expression() {
+
+		return !modelFrame();
+	}
+
+	/**
+	 * States whether frame is a model-frame, which is true if and
+	 * only if it is equal to {@link #ABSTRACT_EXTENSION} or
+	 * {@link #CONCRETE_EXTENSION}.
+	 *
+	 * @return True if extension-frame.
+	 */
+	public boolean extension() {
+
+		return abstractExtension() || concreteExtension();
+	}
+
+	/**
+	 * States whether frame is an abstract-extension-frame, which is
+	 * true if and only if it is equal to {@link #ABSTRACT_EXTENSION}.
+	 *
+	 * @return True if extension-frame.
+	 */
+	public boolean abstractExtension() {
+
+		return this == ABSTRACT_EXTENSION;
+	}
+
+	/**
+	 * States whether frame is an concrete-extension-frame, which is
+	 * true if and only if it is equal to {@link #CONCRETE_EXTENSION}.
+	 *
+	 * @return True if extension-frame.
+	 */
+	public boolean concreteExtension() {
+
+		return this == CONCRETE_EXTENSION;
+	}
+
+	/**
+	 * States whether frame is an expression-frame, which is true if
+	 * and only if it is not equal to {@link #DISJUNCTION}.
+	 *
+	 * @return True if disjunction-frame.
+	 */
+	public boolean disjunction() {
+
+		return this == DISJUNCTION;
+	}
 }

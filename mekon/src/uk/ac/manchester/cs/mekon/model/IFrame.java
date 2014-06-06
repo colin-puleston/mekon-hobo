@@ -245,7 +245,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean abstractValue() {
 
-		return type.disjunction();
+		return disjunctionType();
 	}
 
 	/**
@@ -380,7 +380,7 @@ public class IFrame implements IEntity, IValue {
 
 	private void validateAsReferencingFrame() {
 
-		if (!queryInstance && type.disjunction()) {
+		if (!queryInstance && disjunctionType()) {
 
 			throw new KAccessException(
 						"Cannot add slot-values to "
@@ -466,6 +466,11 @@ public class IFrame implements IEntity, IValue {
 	private boolean checkUpdate(boolean autoUpdate) {
 
 		return type.checkUpdateInstance(this, autoUpdate);
+	}
+
+	private boolean disjunctionType() {
+
+		return type.getCategory().disjunction();
 	}
 
 	private void pollListenersForUpdatedInferredTypes() {
