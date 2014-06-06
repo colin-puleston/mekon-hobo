@@ -45,9 +45,14 @@
 			The semantics embodied by the classifiable expressions
 			can be either OPEN_WORLD or CLOSED_WORLD, with exceptions
 			specied for specific properties.
+
+			LoggingMode specifies what logging information regarding
+			OWL classification will be written to standard out.
+			Options expressed via appropriate OCLoggingMode enum values
+			(i.e. DISABLED, TIMES_ONLY or FULL)
 		-->
 		<OWLClassifier
-			loggingEnabled="FALSE">
+			loggingMode="DISABLED">
 			<SlotSemantics
 				default="OPEN_WORLD">
 				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
