@@ -300,9 +300,9 @@ class HelpPanel extends JTabbedPane {
 							Icon child,
 							String semantics,
 							String entities,
-							boolean conceptTreeTree) {
+							boolean conceptTree) {
 
-				if (conceptTreeTree || !conceptTreeOnly) {
+				if (conceptTree || !conceptTreeOnly) {
 
 					addRow(parent, child, semantics, entities);
 				}
