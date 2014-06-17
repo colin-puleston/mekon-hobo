@@ -82,9 +82,12 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 	 */
 	static public String createDefaultLabel(OWLNamedObject object) {
 
-		String fragment = object.getIRI().getFragment().toString();
+		IRI iri = object.getIRI();
+		String frag = iri.getFragment();
 
-		return KLabel.create(fragment, object instanceof OWLClass);
+		return frag != null
+				? KLabel.create(frag, object instanceof OWLClass)
+				: iri.toString();
 	}
 
 	static private String[] getIdentifierComponents(OWLNamedObject object) {
