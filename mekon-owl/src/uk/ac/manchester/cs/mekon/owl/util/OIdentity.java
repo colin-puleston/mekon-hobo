@@ -89,27 +89,35 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 
 	static private String[] getIdentifierComponents(OWLNamedObject object) {
 
-		IRI iri = object.getIRI();
+		IRI iriObj = object.getIRI();
 
-		String i = iri.toString();
-		String frag = iri.getFragment();
-		String nspace = i.substring(0, i.length() - frag.length());
+		String iri = iriObj.toString();
+		String frag = iriObj.getFragment();
 
-		return new String[]{resolveNamespace(nspace), frag};
+		return frag != null
+				? new String[]{getNamespace(iri, frag), frag}
+				: new String[]{iri};
+	}
+
+	static private String getNamespace(String iri, String fragment) {
+
+		int length = iri.length() - fragment.length();
+
+		return resolveNamespace(iri.substring(0, length));
 	}
 
 	static private String resolveNamespace(String namespace) {
 
-		String existingNamespace = namespaces.get(namespace);
+		String found = namespaces.get(namespace);
 
-		if (existingNamespace == null) {
+		if (found == null) {
 
 			namespaces.put(namespace, namespace);
 
 			return namespace;
 		}
 
-		return existingNamespace;
+		return found;
 	}
 
 	/**

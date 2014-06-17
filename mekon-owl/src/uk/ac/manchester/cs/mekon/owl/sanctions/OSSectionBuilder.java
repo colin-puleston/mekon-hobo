@@ -96,7 +96,6 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 * @param model Model over which sanctioning is to operate
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
-	 *
 	 * @throws KConfigException if required child-node does not exist
 	 * or does not contain correctly specified configuration
 	 * information
