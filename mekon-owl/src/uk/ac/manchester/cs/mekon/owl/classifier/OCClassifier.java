@@ -39,6 +39,14 @@ import uk.ac.manchester.cs.mekon.owl.classifier.semantics.*;
 /**
  * Provides OWL-classification-based versions of the reasoning
  * mechanisms defined by {@link IReasoner}.
+ * <p>
+ * The classification process can be customised in three distinct
+ * ways:
+ * <ul>
+ *   <li>Overriding top-level {@link #classify} method
+ *   <li>Overriding lower-level {@link #classifyPreProcessed} method
+ *   <li>Adding one or more pre-processors, via {@link addPreProcessor}
+ * </ul>
  *
  * @author Colin Puleston
  */
@@ -175,8 +183,11 @@ public class OCClassifier extends IClassifier {
 	}
 
 	/**
-	 * Invokes OWL reasoner to classify the specified instance-level
-	 * frame.
+	 * Converts the specified instance-level frame to the
+	 * pre-processable version, runs any registered pre-processors
+	 * over it, then invokes {@link #classifyPreProcessed} to handle
+	 * the classification of the result via invocation of the OWL
+	 * reasoner.
 	 *
 	 * @param frame Instance-level frame to classify
 	 * @return Identities of all concept-level frames of which
@@ -184,22 +195,37 @@ public class OCClassifier extends IClassifier {
 	 */
 	protected List<CIdentity> classify(IFrame frame) {
 
-		return toIdentityList(createInstance(frame).classify());
-	}
-
-	private OCInstance createInstance(IFrame frame) {
-
-		OCFrame ocFrame = createFramesInstance(frame).getRootFrame();
+		OCFrame ocFrame = toOCFrame(frame);
 
 		for (OCPreProcessor p : preProcessors) {
 
 			p.process(model, ocFrame);
 		}
 
-		return new OCInstance(model, ocFrame);
+		return classifyPreProcessed(ocFrame);
 	}
 
-	private OCFramesInstance createFramesInstance(IFrame frame) {
+	/**
+	 * Takes the pre-processed version of the instance-level frame
+	 * that is to be classified, builds the corresponding OWL
+	 * expression, and invokes the OWL reasoner to perform the
+	 * classification.
+	 *
+	 * @param frame Instance-level frame to classify
+	 * @return Identities of all concept-level frames of which
+	 * specified instance-level frame is an instance
+	 */
+	protected List<CIdentity> classifyPreProcessed(OCFrame frame) {
+
+		return toIdentityList(new OCInstance(model, frame).classify());
+	}
+
+	private OCFrame toOCFrame(IFrame frame) {
+
+		return createOCFramesInstance(frame).getRootFrame();
+	}
+
+	private OCFramesInstance createOCFramesInstance(IFrame frame) {
 
 		return new OCFramesInstance(model, slotSemantics, frame);
 	}

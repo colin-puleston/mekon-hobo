@@ -114,4 +114,9 @@ public abstract class OCFramesEntity {
 
 		this(identified.getIdentity().getIdentifier(), iri);
 	}
+
+	boolean equalIdentifiers(OCFramesEntity other) {
+
+		return identifier.equals(other.identifier);
+	}
 }

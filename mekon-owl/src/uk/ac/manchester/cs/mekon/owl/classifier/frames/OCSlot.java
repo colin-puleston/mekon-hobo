@@ -44,6 +44,8 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	private Set<V> values = new HashSet<V>();
 	private boolean closedWorldSemantics = false;
 
+	private int hashCode = 0;
+
 	/**
 	 * Adds a value to the slot.
 	 *
@@ -52,6 +54,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	public void addValue(V value) {
 
 		values.add(value);
+		hashCode = 0;
 	}
 
 	/**
@@ -62,6 +65,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	public void addValues(Collection<V> values) {
 
 		this.values.addAll(values);
+		hashCode = 0;
 	}
 
 	/**
@@ -72,6 +76,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	public void removeValue(V value) {
 
 		values.remove(value);
+		hashCode = 0;
 	}
 
 	/**
@@ -82,6 +87,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	public void removeValues(Collection<V> values) {
 
 		this.values.removeAll(values);
+		hashCode = 0;
 	}
 
 	/**
@@ -90,6 +96,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	public void clearValues() {
 
 		values.clear();
+		hashCode = 0;
 	}
 
 	/**
@@ -102,6 +109,42 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	public void setClosedWorldSemantics(boolean closedWorldSemantics) {
 
 		this.closedWorldSemantics = closedWorldSemantics;
+	}
+
+	/**
+	 * Tests for equality between this and other specified object.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if other object is another <code>OCSlot</code>
+	 * of the same type, with the same identifier and identical
+	 * values.
+	 */
+	public boolean equals(Object other) {
+
+		if (getClass() == other.getClass()) {
+
+			OCSlot otherSlot = (OCSlot)other;
+
+			return equalIdentifiers(otherSlot)
+					&& values.equals(otherSlot.values);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Provides hash-code for this object.
+	 *
+	 * @return Relelevant hash-code
+	 */
+	public int hashCode() {
+
+		if (hashCode == 0) {
+
+			hashCode = calcHashCode();
+		}
+
+		return hashCode;
 	}
 
 	/**
@@ -213,5 +256,10 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 		super(iSlot.getType().getProperty(), iri);
 
 		this.iSlot = iSlot;
+	}
+
+	private int calcHashCode() {
+
+		return getIdentifier().hashCode() + values.hashCode();
 	}
 }
