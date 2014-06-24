@@ -46,6 +46,8 @@ public class OCFrame extends OCFramesEntity {
 	private Set<OCConceptSlot> conceptSlots = new HashSet<OCConceptSlot>();
 	private Set<OCNumberSlot> numberSlots = new HashSet<OCNumberSlot>();
 
+	private int hashCode = 0;
+
 	/**
 	 * Constructor that takes the string representation of the IRI as
 	 * the frame-identifier.
@@ -78,6 +80,7 @@ public class OCFrame extends OCFramesEntity {
 	public void addTypeDisjunctIRI(IRI typeDisjunctIRI) {
 
 		typeDisjunctIRIs.add(typeDisjunctIRI);
+		hashCode = 0;
 	}
 
 	/**
@@ -88,6 +91,7 @@ public class OCFrame extends OCFramesEntity {
 	public void removeTypeDisjunctIRI(IRI typeDisjunctIRI) {
 
 		typeDisjunctIRIs.remove(typeDisjunctIRI);
+		hashCode = 0;
 	}
 
 	/**
@@ -98,6 +102,7 @@ public class OCFrame extends OCFramesEntity {
 	public void addSlot(OCConceptSlot slot) {
 
 		conceptSlots.add(slot);
+		hashCode = 0;
 	}
 
 	/**
@@ -108,6 +113,7 @@ public class OCFrame extends OCFramesEntity {
 	public void addSlot(OCNumberSlot slot) {
 
 		numberSlots.add(slot);
+		hashCode = 0;
 	}
 
 	/**
@@ -118,6 +124,7 @@ public class OCFrame extends OCFramesEntity {
 	public void removeSlot(OCConceptSlot slot) {
 
 		conceptSlots.remove(slot);
+		hashCode = 0;
 	}
 
 	/**
@@ -128,6 +135,7 @@ public class OCFrame extends OCFramesEntity {
 	public void removeSlot(OCNumberSlot slot) {
 
 		numberSlots.remove(slot);
+		hashCode = 0;
 	}
 
 	/**
@@ -137,6 +145,45 @@ public class OCFrame extends OCFramesEntity {
 
 		conceptSlots.clear();
 		numberSlots.clear();
+		hashCode = 0;
+	}
+
+	/**
+	 * Tests for equality between this and other specified object.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if other object is another <code>OCFrame</code>
+	 * with the same identifier, identical type-disjuncts (if any),
+	 * and identical slots with identical values.
+	 */
+	public boolean equals(Object other) {
+
+		if (other instanceof OCFrame) {
+
+			OCFrame otherFrame = (OCFrame)other;
+
+			return equalIdentifiers(otherFrame)
+					&& typeDisjunctIRIs.equals(otherFrame.typeDisjunctIRIs)
+					&& conceptSlots.equals(otherFrame.conceptSlots)
+					&& numberSlots.equals(otherFrame.numberSlots);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Provides hash-code for this object.
+	 *
+	 * @return Relelevant hash-code
+	 */
+	public int hashCode() {
+
+		if (hashCode == 0) {
+
+			hashCode = calcHashCode();
+		}
+
+		return hashCode;
 	}
 
 	/**
@@ -229,5 +276,13 @@ public class OCFrame extends OCFramesEntity {
 	void setIFrame(IFrame iFrame) {
 
 		this.iFrame = iFrame;
+	}
+
+	private int calcHashCode() {
+
+		return getIdentifier().hashCode()
+				+ typeDisjunctIRIs.hashCode()
+				+ conceptSlots.hashCode()
+				+ numberSlots.hashCode();
 	}
 }
