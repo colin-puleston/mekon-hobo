@@ -90,14 +90,13 @@ public abstract class CFrame
 						implements CIdentified, CSourced, IValue {
 
 	/**
-	 * Creates a disjunction-frame. Any of the specified disjuncts
-	 * that are themselves disjunctions will be split up into their
-	 * constituent disjuncts. The disjuncts cannot be extension-frames.
-	 * The created frame will be given a default label, providing a
-	 * description of the disjunction.
+	 * Invokes {@link createDisjunction(String, List<CFrame>)}} to
+	 * create a disjunction-frame, with a generated label providing
+	 * a description of the disjunction.
 	 *
 	 * @param disjuncts Relevant disjuncts
-	 * @return Created disjunction-frame
+	 * @return Created disjunction-frame, or single provided disjunct
+	 * if applicable
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
@@ -110,14 +109,22 @@ public abstract class CFrame
 	 * Creates a disjunction-frame. Any of the specified disjuncts
 	 * that are themselves disjunctions will be split up into their
 	 * constituent disjuncts. The disjuncts cannot be extension-frames.
+	 * If there is only a single disjunct then will just return that
+	 * disjunct.
 	 *
 	 * @param label Label for disjunction-frame
 	 * @param disjuncts Relevant disjuncts
-	 * @return Created disjunction-frame
+	 * @return Created disjunction-frame, or single provided disjunct
+	 * if applicable
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
 	public static CFrame createDisjunction(String label, List<CFrame> disjuncts) {
+
+		if (disjuncts.size() == 1) {
+
+			return disjuncts.get(0);
+		}
 
 		return new CDisjunction(label, disjuncts);
 	}
