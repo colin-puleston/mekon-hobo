@@ -37,7 +37,7 @@ class CExtension extends CExpression {
 	static private final String EXPRESSION_TYPE_NAME = "expression";
 
 	private CModelFrame extendedFrame;
-	private Set<CFrame> structuredAncestors;
+	private List<CFrame> structuredAncestors;
 	private CSlotValues slotValues;
 	private boolean concrete;
 
@@ -109,9 +109,9 @@ class CExtension extends CExpression {
 		return Collections.emptyList();
 	}
 
-	public Set<CFrame> getAncestors(CFrameVisibility visibility) {
+	public List<CFrame> getAncestors(CFrameVisibility visibility) {
 
-		Set<CFrame> ancestors = extendedFrame.getAncestors(visibility);
+		List<CFrame> ancestors = extendedFrame.getAncestors(visibility);
 
 		if (visibility.coversHiddenStatus(hidden())) {
 
@@ -121,14 +121,14 @@ class CExtension extends CExpression {
 		return ancestors;
 	}
 
-	public Set<CFrame> getStructuredAncestors() {
+	public List<CFrame> getStructuredAncestors() {
 
 		return structuredAncestors;
 	}
 
-	public Set<CFrame> getDescendants(CFrameVisibility visibility) {
+	public List<CFrame> getDescendants(CFrameVisibility visibility) {
 
-		return Collections.emptySet();
+		return Collections.emptyList();
 	}
 
 	public CSlotValues getSlotValues() {
@@ -202,13 +202,13 @@ class CExtension extends CExpression {
 		return new CExtensionDescriber(this).describeForLabel();
 	}
 
-	private Set<CFrame> resolveStructuredAncestors() {
+	private List<CFrame> resolveStructuredAncestors() {
 
-		Set<CFrame> resolved = extendedFrame.getStructuredAncestors();
+		List<CFrame> resolved = extendedFrame.getStructuredAncestors();
 
 		if (extendedFrame.structured()) {
 
-			resolved = new HashSet<CFrame>(resolved);
+			resolved = new ArrayList<CFrame>(resolved);
 			resolved.add(extendedFrame);
 		}
 

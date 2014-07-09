@@ -61,24 +61,24 @@ class CFramesInitialiser {
 
 		private abstract class Subsumptions {
 
-			private Map<Set<CModelFrame>, Set<CModelFrame>> directToAll
-						= new HashMap<Set<CModelFrame>, Set<CModelFrame>>();
+			private Map<List<CModelFrame>, List<CModelFrame>> directToAll
+						= new HashMap<List<CModelFrame>, List<CModelFrame>>();
 
 			void process(CModelFrame frame) {
 
 				setAll(frame.getSubsumptions(), getAll(frame));
 			}
 
-			abstract List<CModelFrame> getDirectList(CModelFrame frame);
+			abstract List<CModelFrame> getDirect(CModelFrame frame);
 
-			abstract Set<CModelFrame> findAll(CFrameSubsumptions subsumptions);
+			abstract List<CModelFrame> findAll(CFrameSubsumptions subsumptions);
 
-			abstract void setAll(CFrameSubsumptions subsumptions, Set<CModelFrame> all);
+			abstract void setAll(CFrameSubsumptions subsumptions, List<CModelFrame> all);
 
-			private Set<CModelFrame> getAll(CModelFrame frame) {
+			private List<CModelFrame> getAll(CModelFrame frame) {
 
-				Set<CModelFrame> direct = getDirect(frame);
-				Set<CModelFrame> all = directToAll.get(direct);
+				List<CModelFrame> direct = getDirect(frame);
+				List<CModelFrame> all = directToAll.get(direct);
 
 				if (all == null) {
 
@@ -88,26 +88,21 @@ class CFramesInitialiser {
 
 				return all;
 			}
-
-			private Set<CModelFrame> getDirect(CModelFrame frame) {
-
-				return new HashSet<CModelFrame>(getDirectList(frame));
-			}
 		}
 
 		private class Ancestors extends Subsumptions {
 
-			List<CModelFrame> getDirectList(CModelFrame frame) {
+			List<CModelFrame> getDirect(CModelFrame frame) {
 
 				return frame.getModelSupers().getAll();
 			}
 
-			Set<CModelFrame> findAll(CFrameSubsumptions subsumptions) {
+			List<CModelFrame> findAll(CFrameSubsumptions subsumptions) {
 
 				return subsumptions.getAncestors(CFrameVisibility.ALL);
 			}
 
-			void setAll(CFrameSubsumptions subsumptions, Set<CModelFrame> all) {
+			void setAll(CFrameSubsumptions subsumptions, List<CModelFrame> all) {
 
 				subsumptions.setAncestors(all);
 			}
@@ -115,17 +110,17 @@ class CFramesInitialiser {
 
 		private class StructuredAncestors extends Subsumptions {
 
-			List<CModelFrame> getDirectList(CModelFrame frame) {
+			List<CModelFrame> getDirect(CModelFrame frame) {
 
 				return frame.getModelSupers().getAll();
 			}
 
-			Set<CModelFrame> findAll(CFrameSubsumptions subsumptions) {
+			List<CModelFrame> findAll(CFrameSubsumptions subsumptions) {
 
 				return subsumptions.getStructuredAncestors();
 			}
 
-			void setAll(CFrameSubsumptions subsumptions, Set<CModelFrame> all) {
+			void setAll(CFrameSubsumptions subsumptions, List<CModelFrame> all) {
 
 				subsumptions.setStructuredAncestors(all);
 			}

@@ -38,7 +38,7 @@ class ISlotSpec {
 	private CProperty property;
 	private CSource source = CSource.UNSPECIFIED;
 	private CCardinality cardinality = CCardinality.FREE;
-	private Set<CValue<?>> valueTypes = new HashSet<CValue<?>>();
+	private List<CValue<?>> valueTypes = new ArrayList<CValue<?>>();
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private boolean active = false;
 	private boolean derivedValues = false;
@@ -53,9 +53,10 @@ class ISlotSpec {
 
 		source = source.combineWith(slotType.getSource());
 		cardinality = cardinality.getMoreRestrictive(slotType.getCardinality());
-		valueTypes.add(slotType.getValueType());
 		active |= slotType.active();
 		derivedValues |= slotType.derivedValues();
+
+		absorbValueType(slotType.getValueType());
 	}
 
 	void absorbFixedValues(List<IValue> newFixedValues) {
@@ -117,6 +118,14 @@ class ISlotSpec {
 		getFrameEditor(slot.getContainer()).removeSlot(slot);
 
 		return !slot.getValues().isEmpty();
+	}
+
+	private void absorbValueType(CValue<?> valueType) {
+
+		if (!valueTypes.contains(valueType)) {
+
+			valueTypes.add(valueType);
+		}
 	}
 
 	private void setAttributesAndFixedValues(ISlot slot) {

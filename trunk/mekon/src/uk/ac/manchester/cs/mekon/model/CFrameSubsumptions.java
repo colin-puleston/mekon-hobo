@@ -33,8 +33,8 @@ class CFrameSubsumptions {
 
 	private CModelFrame frame;
 
-	private Set<CModelFrame> ancestors = null;
-	private Set<CModelFrame> structuredAncestors = null;
+	private List<CModelFrame> ancestors = null;
+	private List<CModelFrame> structuredAncestors = null;
 
 	private class SubsumptionTester extends CHierarchyCrawler {
 
@@ -67,9 +67,9 @@ class CFrameSubsumptions {
 
 		private class Collector extends CHierarchyCrawler {
 
-			private Set<CModelFrame> collected = new HashSet<CModelFrame>();
+			private List<CModelFrame> collected = new ArrayList<CModelFrame>();
 
-			Set<CModelFrame> collect() {
+			List<CModelFrame> collect() {
 
 				processLinked(frame);
 
@@ -97,7 +97,7 @@ class CFrameSubsumptions {
 			this.visibility = visibility;
 		}
 
-		Set<CModelFrame> getAll() {
+		List<CModelFrame> getAll() {
 
 			return new Collector().collect();
 		}
@@ -123,14 +123,14 @@ class CFrameSubsumptions {
 			this.visibility = visibility;
 		}
 
-		Set<CModelFrame> getAll() {
+		List<CModelFrame> getAll() {
 
 			return getCached() != null ? selectFromCached() : super.getAll();
 		}
 
-		abstract Set<CModelFrame> getCached();
+		abstract List<CModelFrame> getCached();
 
-		private Set<CModelFrame> selectFromCached() {
+		private List<CModelFrame> selectFromCached() {
 
 			if (visibility == CFrameVisibility.ALL) {
 
@@ -140,9 +140,9 @@ class CFrameSubsumptions {
 			return selectFromCached(visibility.coversHiddenStatus(true));
 		}
 
-		private Set<CModelFrame> selectFromCached(boolean hidden) {
+		private List<CModelFrame> selectFromCached(boolean hidden) {
 
-			Set<CModelFrame> selected = new HashSet<CModelFrame>();
+			List<CModelFrame> selected = new ArrayList<CModelFrame>();
 
 			for (CModelFrame frame : getCached()) {
 
@@ -163,7 +163,7 @@ class CFrameSubsumptions {
 			super(visibility);
 		}
 
-		Set<CModelFrame> getCached() {
+		List<CModelFrame> getCached() {
 
 			return ancestors;
 		}
@@ -183,7 +183,7 @@ class CFrameSubsumptions {
 			super(CFrameVisibility.ALL);
 		}
 
-		Set<CModelFrame> getCached() {
+		List<CModelFrame> getCached() {
 
 			return structuredAncestors;
 		}
@@ -220,12 +220,12 @@ class CFrameSubsumptions {
 		structuredAncestors = null;
 	}
 
-	void setAncestors(Set<CModelFrame> ancestors) {
+	void setAncestors(List<CModelFrame> ancestors) {
 
 		this.ancestors = ancestors;
 	}
 
-	void setStructuredAncestors(Set<CModelFrame> structuredAncestors) {
+	void setStructuredAncestors(List<CModelFrame> structuredAncestors) {
 
 		this.structuredAncestors = structuredAncestors;
 	}
@@ -245,17 +245,17 @@ class CFrameSubsumptions {
 		return new SubsumptionTester(testSubsumer).isSubsumption();
 	}
 
-	Set<CModelFrame> getAncestors(CFrameVisibility visibility) {
+	List<CModelFrame> getAncestors(CFrameVisibility visibility) {
 
 		return new AncestorsFinder(visibility).getAll();
 	}
 
-	Set<CModelFrame> getStructuredAncestors() {
+	List<CModelFrame> getStructuredAncestors() {
 
 		return new StructuredAncestorsFinder().getAll();
 	}
 
-	Set<CModelFrame> getDescendants(CFrameVisibility visibility) {
+	List<CModelFrame> getDescendants(CFrameVisibility visibility) {
 
 		return new DescendantsFinder(visibility).getAll();
 	}

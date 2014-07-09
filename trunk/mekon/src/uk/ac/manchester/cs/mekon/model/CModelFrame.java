@@ -202,19 +202,19 @@ class CModelFrame extends CFrame {
 		return subs.asFrames(visibility);
 	}
 
-	public Set<CFrame> getAncestors(CFrameVisibility visibility) {
+	public List<CFrame> getAncestors(CFrameVisibility visibility) {
 
-		return new HashSet<CFrame>(subsumptions.getAncestors(visibility));
+		return new ArrayList<CFrame>(subsumptions.getAncestors(visibility));
 	}
 
-	public Set<CFrame> getDescendants(CFrameVisibility visibility) {
+	public List<CFrame> getDescendants(CFrameVisibility visibility) {
 
-		return new HashSet<CFrame>(subsumptions.getDescendants(visibility));
+		return new ArrayList<CFrame>(subsumptions.getDescendants(visibility));
 	}
 
-	public Set<CFrame> getStructuredAncestors() {
+	public List<CFrame> getStructuredAncestors() {
 
-		return new HashSet<CFrame>(subsumptions.getStructuredAncestors());
+		return new ArrayList<CFrame>(subsumptions.getStructuredAncestors());
 	}
 
 	public CSlots getSlots() {

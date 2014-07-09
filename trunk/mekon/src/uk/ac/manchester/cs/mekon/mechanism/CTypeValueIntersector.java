@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 abstract class CTypeValueIntersector<V extends CValue<?>> {
 
-	void addOperands(Set<CValue<?>> operands) {
+	void addOperands(List<CValue<?>> operands) {
 
 		for (CValue<?> operand : operands) {
 
