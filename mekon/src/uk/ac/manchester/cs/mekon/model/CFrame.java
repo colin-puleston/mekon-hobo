@@ -321,95 +321,108 @@ public abstract class CFrame
 	public abstract List<CFrame> getSubs(CFrameVisibility visibility);
 
 	/**
-	 * Provides all ancestor-frames.
+	 * Invokes {@link getAncestors(CFrameVisibility)} with visibility
+	 * status of {@link CFrameVisibility#ALL}.
 	 *
-	 * @return All ancestor-frames
+	 * @return All ancestor-frames in standard order
 	 */
-	public Set<CFrame> getAncestors() {
+	public List<CFrame> getAncestors() {
 
 		return getAncestors(CFrameVisibility.ALL);
 	}
 
 	/**
-	 * Provides all ancestor-frames with the specified visibility
-	 * status.
+	 * Provides ordered list of ancestor-frames, obtained via a recusive
+	 * depth-first crawl upwards through the hierarchy, visiting the
+	 * super-frames at each step in their standard order (as provided by
+	 * {@link getSupers}).
 	 *
 	 * @param visibility Visibility status of required ancestor-frames
 	 * @return Relevant ancestor-frames
 	 */
-	public abstract Set<CFrame> getAncestors(CFrameVisibility visibility);
+	public abstract List<CFrame> getAncestors(CFrameVisibility visibility);
 
 	/**
 	 * Provides all ancestor-frames that either have attached
-	 * concept-level slots or provide default slots-values.
+	 * concept-level slots or provide default slot-values. Ordering is
+	 * as for {@link getAncestors}.
 	 *
-	 * @return All structured ancestors
+	 * @return All structured ancestors in standard order
 	 */
-	public abstract Set<CFrame> getStructuredAncestors();
+	public abstract List<CFrame> getStructuredAncestors();
 
 	/**
-	 * Provides all subsumer-frames, including this frame itself plus
-	 * all ancestor-frames.
+	 * Invokes {@link getSubsumers(CFrameVisibility)} with visibility
+	 * status of {@link CFrameVisibility#ALL}.
 	 *
-	 * @return All subsumer-frames
+	 * @return All subsumer-frames in standard order
 	 */
-	public Set<CFrame> getSubsumers() {
+	public List<CFrame> getSubsumers() {
 
 		return getSubsumers(CFrameVisibility.ALL);
 	}
 
 	/**
-	 * Provides all subsumer-frames with the specified visibility
-	 * status (see {@link #getSubsumers()}).
+	 * Provides all subsumer-frames of this one with the specified
+	 * visibility status, including this frame itself, if applicable,
+	 * plus all relevant ancestor-frames. Ordering is this frame first,
+	 * if applicable, followed by relevant ancestors, ordered as for
+	 * {@link getAncestors}.
 	 *
 	 * @param visibility Visibility status of required subsumer-frames
-	 * @return Relevant subsumer-frames
+	 * @return Relevant subsumer-frames in standard order
 	 */
-	public Set<CFrame> getSubsumers(CFrameVisibility visibility) {
+	public List<CFrame> getSubsumers(CFrameVisibility visibility) {
 
-		return checkAddToSet(getAncestors(visibility), visibility);
+		return checkStartListWithThis(getAncestors(visibility), visibility);
 	}
 
 	/**
-	 * Provides all descendant-frames.
+	 * Invokes {@link getDescendants(CFrameVisibility)} with visibility
+	 * status of {@link CFrameVisibility#ALL}.
 	 *
-	 * @return All descendant-frames
+	 * @return All descendant-frames in standard order
 	 */
-	public Set<CFrame> getDescendants() {
+	public List<CFrame> getDescendants() {
 
 		return getDescendants(CFrameVisibility.ALL);
 	}
 
 	/**
-	 * Provides all descendant-frames with the specified visibility
-	 * status.
+	 * Provides all descendant-frames, obtained via a recusive
+	 * depth-first crawl downwards through the hierarchy, visiting
+	 * the sub-frames at each step in their standard order (as provided
+	 * by {@link getSubs}).
 	 *
 	 * @param visibility Visibility status of required descendant-frames
-	 * @return Relevant descendant-frames
+	 * @return Relevant descendant-frames in standard order
 	 */
-	public abstract Set<CFrame> getDescendants(CFrameVisibility visibility);
+	public abstract List<CFrame> getDescendants(CFrameVisibility visibility);
 
 	/**
-	 * Provides all subsumed-frames, including this frame itself plus
-	 * all descendant-frames.
+	 * Invokes {@link getSubsumeds(CFrameVisibility)} with visibility
+	 * status of {@link CFrameVisibility#ALL}.
 	 *
-	 * @return All subsumed-frames
+	 * @return All subsumed-frames in standard order
 	 */
-	public Set<CFrame> getSubsumeds() {
+	public List<CFrame> getSubsumeds() {
 
 		return getSubsumeds(CFrameVisibility.ALL);
 	}
 
 	/**
-	 * Provides all subsumed-frames with the specified visibility
-	 * status (see {@link #getSubsumeds()}).
+	 * Provides all subsumed-frames of this one with the specified
+	 * visibility status, including this frame itself, if applicable,
+	 * plus all relevant descendant-frames. Ordering is this frame first,
+	 * if applicable, followed by relevant ancestors, ordered as for
+	 * {@link getDescendants}.
 	 *
 	 * @param visibility Visibility status of required subsumed-frames
-	 * @return Relevant subsumed-frames
+	 * @return Relevant subsumed-frames in standard order
 	 */
-	public Set<CFrame> getSubsumeds(CFrameVisibility visibility) {
+	public List<CFrame> getSubsumeds(CFrameVisibility visibility) {
 
-		return checkAddToSet(getDescendants(visibility), visibility);
+		return checkStartListWithThis(getDescendants(visibility), visibility);
 	}
 
 	/**
@@ -421,42 +434,6 @@ public abstract class CFrame
 	public abstract CSlots getSlots();
 
 	/**
-	 * Provides all concept-level slots attached to either the frame
-	 * itself or to ancestor-frames.
-	 *
-	 * @return All slots for frame
-	 */
-	public Set<CSlot> getAllSlots() {
-
-		Set<CSlot> allSlots = new HashSet<CSlot>(getSlots().asSet());
-
-		for (CFrame anc : getAncestors()) {
-
-			allSlots.addAll(anc.getSlots().asSet());
-		}
-
-		return allSlots;
-	}
-
-	/**
-	 * Provides all properties associated with concept-level slots
-	 * attached to either the frame itself or to ancestor-frames.
-	 *
-	 * @return All properties associated with slots for frame
-	 */
-	public Set<CProperty> getAllSlotProperties() {
-
-		Set<CProperty> properties = new HashSet<CProperty>();
-
-		for (CSlot slot : getAllSlots()) {
-
-			properties.add(slot.getProperty());
-		}
-
-		return properties;
-	}
-
-	/**
 	 * Provides specifications of all default slots-values for the frame
 	 * (which will be automatically assigned to the relevant slots on all
 	 * instantiations of the frame).
@@ -466,10 +443,10 @@ public abstract class CFrame
 	public abstract CSlotValues getSlotValues();
 
 	/**
-	 * Stipulates that this numeric-type can provide a
-	 * default-value-entity if and only if it is instantiable (see
-	 * {@link #instantiable}). If so then the default-value will be
-	 * an instantiation with no slot-values.
+	 * Stipulates that this numeric-type can provide a default
+	 * value-entity if and only if it is instantiable (see
+	 * {@link #instantiable}). If so then the default-value will be an
+	 * instantiation with no slot-values.
 	 *
 	 * @return True if frame is instantiable
 	 */
@@ -661,14 +638,16 @@ public abstract class CFrame
 		return getIReasoner().updateFrame(getModel().getIEditor(), instance);
 	}
 
-	private Set<CFrame> checkAddToSet(Set<CFrame> set, CFrameVisibility visibility) {
+	private List<CFrame> checkStartListWithThis(
+							List<CFrame> list,
+							CFrameVisibility visibility) {
 
 		if (visibility.coversHiddenStatus(hidden())) {
 
-			set.add(this);
+			list.add(0, this);
 		}
 
-		return set;
+		return list;
 	}
 
 	private void pollListenersForExtended(CExpression expr) {

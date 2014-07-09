@@ -40,18 +40,18 @@ class CommonSubsumersFinder {
 
 	CFrame getClosestSingle(Collection<? extends CFrame> frames) {
 
-		Set<CFrame> closests = getAllClosest(frames);
+		List<CFrame> closests = getAllClosest(frames);
 
 		return closests.size() == 1
 					? closests.iterator().next()
 					: getClosestSingle(closests);
 	}
 
-	Set<CFrame> getAllClosest(Collection<? extends CFrame> frames) {
+	List<CFrame> getAllClosest(Collection<? extends CFrame> frames) {
 
-		Set<CFrame> commons = getAllCommon(frames);
+		List<CFrame> commons = getAllCommon(frames);
 
-		for (CFrame common : new HashSet<CFrame>(commons)) {
+		for (CFrame common : new ArrayList<CFrame>(commons)) {
 
 			commons.removeAll(common.getSupers(visibility));
 		}
@@ -59,13 +59,13 @@ class CommonSubsumersFinder {
 		return commons;
 	}
 
-	private Set<CFrame> getAllCommon(Collection<? extends CFrame> frames) {
+	private List<CFrame> getAllCommon(Collection<? extends CFrame> frames) {
 
-		Set<CFrame> commons = new HashSet<CFrame>();
+		List<CFrame> commons = new ArrayList<CFrame>();
 
 		for (CFrame frame : frames) {
 
-			Set<CFrame> subs = getSubsumers(frame);
+			List<CFrame> subs = frame.getSubsumers(visibility);
 
 			if (commons.isEmpty()) {
 
@@ -78,10 +78,5 @@ class CommonSubsumersFinder {
 		}
 
 		return commons;
-	}
-
-	private Set<CFrame> getSubsumers(CFrame frame) {
-
-		return frame.getSubsumers(visibility);
 	}
 }

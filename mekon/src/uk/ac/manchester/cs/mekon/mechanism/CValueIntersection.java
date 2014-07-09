@@ -62,7 +62,7 @@ class CValueIntersection {
 		}
 	}
 
-	CValueIntersection(Set<CValue<?>> operands) {
+	CValueIntersection(List<CValue<?>> operands) {
 
 		intersection = getIntersectionOrNull(operands);
 	}
@@ -72,30 +72,28 @@ class CValueIntersection {
 		return intersection;
 	}
 
-	private CValue<?> getIntersectionOrNull(Set<CValue<?>> operands) {
+	private CValue<?> getIntersectionOrNull(List<CValue<?>> operands) {
 
 		if (operands.isEmpty()) {
 
 			return null;
 		}
 
-		CValue<?> firstOp = operands.iterator().next();
-
 		if (operands.size() == 1) {
 
-			return firstOp;
+			return operands.get(0);
 		}
 
-		CTypeValueIntersector<?> intersector = createIntersector(firstOp);
+		CTypeValueIntersector<?> intersector = createIntersector(operands);
 
 		intersector.addOperands(operands);
 
 		return intersector.getIntersectionOrNull();
 	}
 
-	private CTypeValueIntersector<?> createIntersector(CValue<?> firstOp) {
+	private CTypeValueIntersector<?> createIntersector(List<CValue<?>> operands) {
 
-		return new IntersectorCreator().create(firstOp);
+		return new IntersectorCreator().create(operands.get(0));
 	}
 }
 

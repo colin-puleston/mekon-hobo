@@ -77,9 +77,8 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
-	 * Stipulates that this meta-leval frame does define a
-	 * default-value-entity (which will be the root concept-level
-	 * frame).
+	 * Stipulates that this meta-leval frame does define a default
+	 * value-entity, which will be the root concept-level frame.
 	 *
 	 * @return True always.
 	 */
