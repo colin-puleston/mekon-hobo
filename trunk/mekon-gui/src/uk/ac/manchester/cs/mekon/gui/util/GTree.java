@@ -59,22 +59,6 @@ public class GTree extends JTree {
 		abstract GNodeAction getNodeAction(GNode node);
 	}
 
-	private class PositiveActionInvoker extends ActionInvoker {
-
-		GNodeAction getNodeAction(GNode node) {
-
-			return node.getPositiveAction();
-		}
-	}
-
-	private class NegativeActionInvoker extends ActionInvoker {
-
-		GNodeAction getNodeAction(GNode node) {
-
-			return node.getNegativeAction();
-		}
-	}
-
 	private class ExpansionManager implements TreeExpansionListener {
 
 		public void treeExpanded(TreeExpansionEvent event) {
@@ -100,6 +84,22 @@ public class GTree extends JTree {
 		private GNode getNode(TreeExpansionEvent event) {
 
 			return (GNode)event.getPath().getLastPathComponent();
+		}
+	}
+
+	private class PositiveActionInvoker extends ActionInvoker {
+
+		GNodeAction getNodeAction(GNode node) {
+
+			return node.getPositiveAction();
+		}
+	}
+
+	private class NegativeActionInvoker extends ActionInvoker {
+
+		GNodeAction getNodeAction(GNode node) {
+
+			return node.getNegativeAction();
 		}
 	}
 
