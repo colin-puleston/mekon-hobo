@@ -43,7 +43,7 @@ class CommonSubsumersFinder {
 		List<CFrame> closests = getAllClosest(frames);
 
 		return closests.size() == 1
-					? closests.iterator().next()
+					? closests.get(0)
 					: getClosestSingle(closests);
 	}
 

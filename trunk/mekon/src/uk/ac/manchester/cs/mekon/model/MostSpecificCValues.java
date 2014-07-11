@@ -52,9 +52,9 @@ class MostSpecificCValues {
 			handler = new MFrameTypeHandler();
 		}
 
-		TypeHandler create(CValue<?> value) {
+		TypeHandler create() {
 
-			visit(value);
+			visit(values.iterator().next());
 
 			return handler;
 		}
@@ -62,14 +62,14 @@ class MostSpecificCValues {
 
 	private abstract class TypeHandler {
 
-		abstract Set<CValue<?>> getMostSpecific();
+		abstract List<CValue<?>> getMostSpecific();
 	}
 
 	private class DefaultTypeHandler extends TypeHandler {
 
-		Set<CValue<?>> getMostSpecific() {
+		List<CValue<?>> getMostSpecific() {
 
-			Set<CValue<?>> mostSpecific = new HashSet<CValue<?>>();
+			List<CValue<?>> mostSpecific = new ArrayList<CValue<?>>();
 
 			for (CValue<?> value : values) {
 
@@ -79,9 +79,9 @@ class MostSpecificCValues {
 			return mostSpecific;
 		}
 
-		private void updateForValue(Set<CValue<?>> mostSpecific, CValue<?> newValue) {
+		private void updateForValue(List<CValue<?>> mostSpecific, CValue<?> newValue) {
 
-			for (CValue<?> value : new HashSet<CValue<?>>(mostSpecific)) {
+			for (CValue<?> value : new ArrayList<CValue<?>>(mostSpecific)) {
 
 				if (newValue.subsumes(value)) {
 
@@ -100,9 +100,9 @@ class MostSpecificCValues {
 
 	private abstract class FrameTypeHandler extends TypeHandler {
 
-		Set<CValue<?>> getMostSpecific() {
+		List<CValue<?>> getMostSpecific() {
 
-			Set<CValue<?>> values = new HashSet<CValue<?>>();
+			List<CValue<?>> values = new ArrayList<CValue<?>>();
 
 			for (CFrame frame : getMostSpecificCFrames()) {
 
@@ -116,14 +116,14 @@ class MostSpecificCValues {
 
 		abstract CValue<?> toValue(CFrame frame);
 
-		private Set<CFrame> getMostSpecificCFrames() {
+		private List<CFrame> getMostSpecificCFrames() {
 
 			return new MostSpecificCFrames(toCFrames(values)).getMostSpecific();
 		}
 
-		private Set<CFrame> toCFrames(Collection<CValue<?>> values) {
+		private List<CFrame> toCFrames(Collection<CValue<?>> values) {
 
-			Set<CFrame> frames = new HashSet<CFrame>();
+			List<CFrame> frames = new ArrayList<CFrame>();
 
 			for (CValue<?> value : values) {
 
@@ -165,18 +165,15 @@ class MostSpecificCValues {
 		this.values = values;
 	}
 
-	Set<CValue<?>> getMostSpecific() {
+	List<CValue<?>> getMostSpecific() {
 
-		if (values.isEmpty()) {
-
-			return Collections.emptySet();
-		}
-
-		return getMostSpecific(values.iterator().next());
+		return values.isEmpty()
+				? Collections.<CValue<?>>emptyList()
+				: getTypeMostSpecific();
 	}
 
-	private Set<CValue<?>> getMostSpecific(CValue<?> firstValue) {
+	private List<CValue<?>> getTypeMostSpecific() {
 
-		return new TypeHandlerCreator().create(firstValue).getMostSpecific();
+		return new TypeHandlerCreator().create().getMostSpecific();
 	}
 }

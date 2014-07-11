@@ -141,6 +141,6 @@ public class MostSpecificCFramesTest extends MekonTest {
 
 	private void test(CFrame... expected) {
 
-		testSet(mostSpecifics.getMostSpecific(), set(expected));
+		testListContents(mostSpecifics.getMostSpecific(), list(expected));
 	}
 }

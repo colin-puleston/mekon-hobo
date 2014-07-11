@@ -34,8 +34,10 @@ import java.util.*;
  */
 public class MostSpecificCFrames {
 
-	private Set<CFrame> leafFrames = new HashSet<CFrame>();
-	private Set<CFrame> nonLeafFrames = new HashSet<CFrame>();
+	private List<CFrame> mostSpecifics = new ArrayList<CFrame>();
+
+	private Set<CFrame> leafs = new HashSet<CFrame>();
+	private Set<CFrame> mostSpecificNonLeafs = new HashSet<CFrame>();
 
 	/**
 	 * Constructor.
@@ -78,14 +80,15 @@ public class MostSpecificCFrames {
 
 		if (newFrame.getSubs().isEmpty()) {
 
-			if (leafFrames.add(newFrame)) {
+			if (leafs.add(newFrame)) {
 
+				mostSpecifics.add(newFrame);
 				removeNonLeafSubsumers(newFrame);
 			}
 		}
 		else {
 
-			if (!nonLeafFrames.contains(newFrame)
+			if (!mostSpecificNonLeafs.contains(newFrame)
 				&& !subsumesLeafFrame(newFrame)) {
 
 				updateNonLeafFrames(newFrame);
@@ -98,55 +101,62 @@ public class MostSpecificCFrames {
 	 *
 	 * @return Current set of most-specific-frames
 	 */
-	public Set<CFrame> getMostSpecific() {
+	public List<CFrame> getMostSpecific() {
 
-		Set<CFrame> mostSpecifics = new HashSet<CFrame>();
-
-		mostSpecifics.addAll(leafFrames);
-		mostSpecifics.addAll(nonLeafFrames);
-
-		return mostSpecifics;
+		return new ArrayList<CFrame>(mostSpecifics);
 	}
 
 	private void updateNonLeafFrames(CFrame newFrame) {
 
-		for (CFrame nonLeafFrame : new HashSet<CFrame>(nonLeafFrames)) {
+		for (CFrame nonLeaf : new HashSet<CFrame>(mostSpecificNonLeafs)) {
 
-			if (newFrame.subsumes(nonLeafFrame)) {
+			if (newFrame.subsumes(nonLeaf)) {
 
 				return;
 			}
 
-			if (nonLeafFrame.subsumes(newFrame)) {
+			if (nonLeaf.subsumes(newFrame)) {
 
-				nonLeafFrames.remove(nonLeafFrame);
+				removeMostSpecificNonLeaf(nonLeaf);
 			}
 		}
 
-		nonLeafFrames.add(newFrame);
+		addMostSpecificNonLeaf(newFrame);
 	}
 
 	private void removeNonLeafSubsumers(CFrame newFrame) {
 
-		for (CFrame nonLeafFrame : new HashSet<CFrame>(nonLeafFrames)) {
+		for (CFrame nonLeaf : new HashSet<CFrame>(mostSpecificNonLeafs)) {
 
-			if (nonLeafFrame.subsumes(newFrame)) {
+			if (nonLeaf.subsumes(newFrame)) {
 
-				nonLeafFrames.remove(nonLeafFrame);
+				removeMostSpecificNonLeaf(nonLeaf);
 			}
 		}
 	}
 
 	private boolean subsumesLeafFrame(CFrame newFrame) {
 
-		for (CFrame leafFrame : leafFrames) {
+		for (CFrame leaf : leafs) {
 
-			if (newFrame.subsumes(leafFrame)) {
+			if (newFrame.subsumes(leaf)) {
 
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	private void addMostSpecificNonLeaf(CFrame nonLeaf) {
+
+		mostSpecifics.add(nonLeaf);
+		mostSpecificNonLeafs.add(nonLeaf);
+	}
+
+	private void removeMostSpecificNonLeaf(CFrame nonLeaf) {
+
+		mostSpecifics.remove(nonLeaf);
+		mostSpecificNonLeafs.remove(nonLeaf);
 	}
 }

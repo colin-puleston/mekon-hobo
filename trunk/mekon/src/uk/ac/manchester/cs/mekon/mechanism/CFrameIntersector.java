@@ -33,28 +33,71 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CFrameIntersector extends CTypeValueIntersector<CFrame> {
 
-	private List<CFrame> intersection = new ArrayList<CFrame>();
+	private List<CFrame> operands = new ArrayList<CFrame>();
+
+	private class Intersection {
+
+		private List<CFrame> disjuncts = new ArrayList<CFrame>();
+
+		Intersection() {
+
+			if (findDisjuncts()) {
+
+				purgeDisjuncts();
+			}
+		}
+
+		CFrame get() {
+
+			if (disjuncts.isEmpty()) {
+
+				return null;
+			}
+
+			if (disjuncts.size() == 1) {
+
+				return disjuncts.get(0);
+			}
+
+			return CFrame.createDisjunction(disjuncts);
+		}
+
+		private boolean findDisjuncts() {
+
+			for (CFrame operand : getMostSpecificOperands()) {
+
+				List<CFrame> subsumeds = operand.getSubsumeds();
+
+				if (disjuncts.isEmpty()) {
+
+					disjuncts.addAll(subsumeds);
+				}
+				else {
+
+					disjuncts.retainAll(subsumeds);
+
+					if (disjuncts.isEmpty()) {
+
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		private void purgeDisjuncts() {
+
+			for (CFrame disjunct : new ArrayList<CFrame>(disjuncts)) {
+
+				disjuncts.removeAll(disjunct.getSubs());
+			}
+		}
+	}
 
 	void addOperand(CFrame operand) {
 
-		if (intersection != null) {
-
-			List<CFrame> expandedOp = expandOperand(operand);
-
-			if (intersection.isEmpty()) {
-
-				intersection.addAll(expandedOp);
-			}
-			else {
-
-				intersection.retainAll(expandedOp);
-
-				if (intersection.isEmpty()) {
-
-					intersection = null;
-				}
-			}
-		}
+		operands.add(operand);
 	}
 
 	Class<CFrame> getOperandType() {
@@ -64,36 +107,11 @@ class CFrameIntersector extends CTypeValueIntersector<CFrame> {
 
 	CFrame getIntersectionOrNull() {
 
-		if (intersection == null) {
-
-			return null;
-		}
-
-		purgeIntersection();
-
-		if (intersection.size() == 1) {
-
-			return intersection.get(0);
-		}
-
-		return CFrame.createDisjunction(intersection);
+		return new Intersection().get();
 	}
 
-	private List<CFrame> expandOperand(CFrame operand) {
+	private List<CFrame> getMostSpecificOperands() {
 
-		List<CFrame> expanded = new ArrayList<CFrame>();
-
-		expanded.add(operand);
-		expanded.addAll(operand.getDescendants());
-
-		return expanded;
-	}
-
-	private void purgeIntersection() {
-
-		for (CFrame intOp : new ArrayList<CFrame>(intersection)) {
-
-			intersection.removeAll(intOp.getSubs());
-		}
+		return new MostSpecificCFrames(operands).getMostSpecific();
 	}
 }
