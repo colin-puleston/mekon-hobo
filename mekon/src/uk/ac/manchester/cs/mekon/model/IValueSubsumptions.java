@@ -59,7 +59,7 @@ class IValueSubsumptions {
 
 		if (valueType.getValueType().isAssignableFrom(CValue.class)) {
 
-			return getMostSpecifics(values, asCValues(values));
+			return getMostSpecificCValueValues(asCValues(values));
 		}
 
 		return removeDuplicates(values);
@@ -80,25 +80,19 @@ class IValueSubsumptions {
 		return false;
 	}
 
-	static private List<IValue> getMostSpecifics(
-									Collection<? extends IValue> values,
-									Set<CValue<?>> valuesAsCValues) {
+	static private List<IValue> getMostSpecificCValueValues(List<CValue<?>> valuesAsCValues) {
 
 		List<IValue> mostSpecifics = new ArrayList<IValue>();
-		Set<CValue<?>> mostSpecificCs = getMostSpecificCValues(valuesAsCValues);
 
-		for (IValue value : values) {
+		for (CValue<?> valueAsC : getMostSpecificCValues(valuesAsCValues)) {
 
-			if (mostSpecificCs.contains(value)) {
-
-				mostSpecifics.add(value);
-			}
+			mostSpecifics.add((IValue)valueAsC);
 		}
 
 		return mostSpecifics;
 	}
 
-	static private Set<CValue<?>> getMostSpecificCValues(Set<CValue<?>> cValues) {
+	static private List<CValue<?>> getMostSpecificCValues(List<CValue<?>> cValues) {
 
 		return new MostSpecificCValues(cValues).getMostSpecific();
 	}
@@ -118,9 +112,9 @@ class IValueSubsumptions {
 		return uniqueValues;
 	}
 
-	static private Set<CValue<?>> asCValues(Collection<? extends IValue> values) {
+	static private List<CValue<?>> asCValues(Collection<? extends IValue> values) {
 
-		Set<CValue<?>> cValues = new HashSet<CValue<?>>();
+		List<CValue<?>> cValues = new ArrayList<CValue<?>>();
 
 		for (IValue value : values) {
 

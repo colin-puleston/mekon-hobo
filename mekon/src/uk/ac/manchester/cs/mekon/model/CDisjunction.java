@@ -40,6 +40,8 @@ class CDisjunction extends CExpression {
 	private List<CFrame> commonSupers = new ArrayList<CFrame>();
 	private List<CModelFrame> disjuncts = new ArrayList<CModelFrame>();
 
+	private int hashCode;
+
 	private abstract class LinkedFramesFinder {
 
 		List<CFrame> getDirectlyLinked(CFrameVisibility visibility) {
@@ -145,7 +147,7 @@ class CDisjunction extends CExpression {
 
 	public int hashCode() {
 
-		return disjuncts.hashCode();
+		return hashCode;
 	}
 
 	public String toString() {
@@ -211,6 +213,8 @@ class CDisjunction extends CExpression {
 		addDisjuncts(disjuncts);
 
 		commonSupers.addAll(findCommonSupers());
+
+		hashCode = disjunctsAsSet().hashCode();
 	}
 
 	void registerReferencingSlot(CSlot slot) {
