@@ -225,9 +225,7 @@ public class ISlotSpecs {
 			return checkUpdateSlot(slots.getSlotFor(property), spec);
 		}
 
-		spec.chekAddSlot(frame);
-
-		return true;
+		return spec.chekAddSlot(frame);
 	}
 
 	private boolean checkUpdateSlot(ISlot slot, ISlotSpec spec) {

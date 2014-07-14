@@ -70,14 +70,18 @@ class ISlotSpec {
 		}
 	}
 
-	void chekAddSlot(IFrame container) {
+	boolean chekAddSlot(IFrame container) {
 
 		CValue<?> valueType = getValueTypeOrNull();
 
-		if (valueType != null) {
+		if (valueType == null) {
 
-			addSlot(container, valueType);
+			return false;
 		}
+
+		addSlot(container, valueType);
+
+		return true;
 	}
 
 	boolean checkUpdateSlot(ISlot slot) {

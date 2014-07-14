@@ -40,8 +40,9 @@ public interface IFrameEditor {
 	 * currently inferred types for the frame.
 	 *
 	 * @param inferredTypes Latest inferred types for frame
+	 * @return True if inferred types were updated
 	 */
-	public void updateInferredTypes(List<CFrame> inferredTypes);
+	public boolean updateInferredTypes(List<CFrame> inferredTypes);
 
 	/**
 	 * Adds a new slot to the frame, where the slot is created by

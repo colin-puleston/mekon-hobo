@@ -52,24 +52,34 @@ public abstract class IClassifier implements IReasoner {
 
 			List<CFrame> inferredTypes = getInferredTypes();
 
-			updateInferredTypes(inferredTypes);
+			if (updateInferredTypes(inferredTypes)) {
 
-			return updateSlots(inferredTypes);
+				updateSlots(inferredTypes);
+
+				return true;
+			}
+
+			return false;
 		}
 
-		private void updateInferredTypes(List<CFrame> inferredTypes) {
+		private boolean updateInferredTypes(List<CFrame> inferredTypes) {
 
-			iEditor.getFrameEditor(frame).updateInferredTypes(inferredTypes);
+			return getFrameEditor().updateInferredTypes(inferredTypes);
 		}
 
-		private boolean updateSlots(List<CFrame> inferredTypes) {
+		private void updateSlots(List<CFrame> inferredTypes) {
 
 			ISlotSpecs specs = new ISlotSpecs(iEditor);
 
 			specs.absorb(frame.getType(), true);
 			specs.absorbAll(inferredTypes, true);
 
-			return specs.updateSlots(frame);
+			specs.updateSlots(frame);
+		}
+
+		private IFrameEditor getFrameEditor() {
+
+			return iEditor.getFrameEditor(frame);
 		}
 
 		private List<CFrame> getInferredTypes() {
