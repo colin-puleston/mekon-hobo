@@ -75,12 +75,19 @@ public class IFrame implements IEntity, IValue {
 
 	private class Editor implements IFrameEditor {
 
-		public void updateInferredTypes(List<CFrame> inferredTypes) {
+		public boolean updateInferredTypes(List<CFrame> updatedInferredTypes) {
 
-			removeOldInferredTypes(inferredTypes);
-			addNewInferredTypes(inferredTypes);
+			if (inferredTypesMatch(updatedInferredTypes)) {
+
+				return false;
+			}
+
+			removeOldInferredTypes(updatedInferredTypes);
+			addNewInferredTypes(updatedInferredTypes);
 
 			pollListenersForUpdatedInferredTypes();
+
+			return true;
 		}
 
 		public ISlot addSlot(CSlot slotType) {
@@ -399,6 +406,16 @@ public class IFrame implements IEntity, IValue {
 					+ ": " + extraMsg);
 	}
 
+	private boolean inferredTypesMatch(List<CFrame> testInferredTypes) {
+
+		return inferredTypesMatch(new HashSet<CFrame>(testInferredTypes));
+	}
+
+	private boolean inferredTypesMatch(Set<CFrame> testInferredTypes) {
+
+		return inferredTypes.asSet().equals(testInferredTypes);
+	}
+
 	private void performDynamicUpdate() {
 
 		while (updateAllBackwardsFromThis(new ArrayList<IFrame>()));
@@ -408,9 +425,7 @@ public class IFrame implements IEntity, IValue {
 
 		boolean anyValueUpdates = false;
 
-		if (!visited.contains(this)) {
-
-			visited.add(this);
+		if (visited.add(this)) {
 
 			if (checkUpdate(true)) {
 
