@@ -171,13 +171,13 @@ class OCInstance {
 
 			if (value.disjunctionType()) {
 
-				return describeFrame(value, createIntersection(value));
+				return describeFrame(value, createUnion(value));
 			}
 
 			return null;
 		}
 
-		private OWLObjectIntersectionOf createIntersection(OCFrame disjunction) {
+		private OWLObjectUnionOf createUnion(OCFrame disjunction) {
 
 			Set<OWLClass> ops = new HashSet<OWLClass>();
 
@@ -186,7 +186,7 @@ class OCInstance {
 				ops.add(getConcept(iri));
 			}
 
-			return dataFactory.getOWLObjectIntersectionOf(ops);
+			return dataFactory.getOWLObjectUnionOf(ops);
 		}
 	}
 
