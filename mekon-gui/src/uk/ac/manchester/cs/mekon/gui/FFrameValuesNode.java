@@ -115,7 +115,7 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 
 			if (disjuncts.add(newDisjunct)) {
 
-				cFrame = CFrame.createDisjunction(disjuncts);
+				cFrame = CFrame.resolveDisjunction(disjuncts);
 			}
 		}
 
