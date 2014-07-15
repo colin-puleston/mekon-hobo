@@ -163,7 +163,7 @@ class CFramesComboPanel extends JTabbedPane {
 
 	private CFramesList addList(String title, CFrame rootFrame, boolean showRoot) {
 
-		CFramesList list = new CFramesList(rootFrame, visibility, false);
+		CFramesList list = new CFramesList(rootFrame, visibility, showRoot);
 		GListPanel<CFrame> panel = new GListPanel<CFrame>(list);
 
 		addTab(title, panel);
