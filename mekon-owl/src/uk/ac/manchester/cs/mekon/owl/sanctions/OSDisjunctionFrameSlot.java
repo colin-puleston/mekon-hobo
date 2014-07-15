@@ -63,7 +63,7 @@ class OSDisjunctionFrameSlot extends OSFrameSlot {
 			cDisjuncts.add(disjunct.ensureCFrame(builder, annotations));
 		}
 
-		return CFrame.createDisjunction(valueTypeLabel, cDisjuncts);
+		return CFrame.resolveDisjunction(valueTypeLabel, cDisjuncts);
 	}
 
 	Set<OSFrame> getRootValueTypeFrames() {
