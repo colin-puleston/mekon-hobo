@@ -47,11 +47,11 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 			CFrame cFrame = valueToCFrame(value);
 			CFrame updatedCFrame = checkAddCFrameDisjunct(cFrame);
 
-			if (updatedCFrame != cFrame) {
+			if (!updatedCFrame.equals(cFrame)) {
 
 				F updatedValue = checkUpdateValue(value, updatedCFrame);
 
-				if (updatedValue != value) {
+				if (!updatedValue.equals(value)) {
 
 					removeValue(value);
 					addValue(updatedValue);
