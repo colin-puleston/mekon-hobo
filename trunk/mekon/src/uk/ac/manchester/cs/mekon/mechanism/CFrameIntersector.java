@@ -112,6 +112,6 @@ class CFrameIntersector extends CTypeValueIntersector<CFrame> {
 
 	private List<CFrame> getMostSpecificOperands() {
 
-		return new MostSpecificCFrames(operands).getMostSpecifics();
+		return new MostSpecificCFrames(operands).getCurrents();
 	}
 }

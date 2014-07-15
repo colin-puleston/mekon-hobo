@@ -61,17 +61,17 @@ class CDisjunction extends CExpression {
 
 	static private List<CModelFrame> resolveDisjuncts(List<CFrame> disjuncts) {
 
-		MostSpecificCFrames mostSpecifics = new MostSpecificCFrames();
+		MostGeneralCFrames mostGenerals = new MostGeneralCFrames();
 
 		for (CFrame disjunct : disjuncts) {
 
 			for (CModelFrame modelDisjunct : disjunct.asDisjuncts()) {
 
-				mostSpecifics.update(modelDisjunct);
+				mostGenerals.update(modelDisjunct);
 			}
 		}
 
-		return CModelFrame.asModelFrames(mostSpecifics.getMostSpecifics());
+		return CModelFrame.asModelFrames(mostGenerals.getCurrents());
 	}
 
 	private List<CFrame> commonSupers;

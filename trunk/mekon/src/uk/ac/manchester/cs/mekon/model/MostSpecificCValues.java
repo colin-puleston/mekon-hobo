@@ -118,7 +118,7 @@ class MostSpecificCValues {
 
 		private List<CFrame> getMostSpecificCFrames() {
 
-			return new MostSpecificCFrames(toCFrames(values)).getMostSpecifics();
+			return new MostSpecificCFrames(toCFrames(values)).getCurrents();
 		}
 
 		private List<CFrame> toCFrames(Collection<CValue<?>> values) {
