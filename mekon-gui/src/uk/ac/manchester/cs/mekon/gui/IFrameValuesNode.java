@@ -102,7 +102,7 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 			IFrame newValue = updatedCFrame.instantiate();
 
-			copySlotValues(value, newValue);
+			copyAssertedSlotValues(value, newValue);
 
 			return newValue;
 		}
@@ -114,13 +114,13 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 		return value;
 	}
 
-	private void copySlotValues(IFrame from, IFrame to) {
+	private void copyAssertedSlotValues(IFrame from, IFrame to) {
 
 		ISlots toSlots = to.getSlots();
 
 		for (ISlot slot : from.getSlots().asList()) {
 
-			List<IValue> values = slot.getValues().asList();
+			List<IValue> values = slot.getValues().getAssertedValues();
 
 			if (!values.isEmpty()) {
 
