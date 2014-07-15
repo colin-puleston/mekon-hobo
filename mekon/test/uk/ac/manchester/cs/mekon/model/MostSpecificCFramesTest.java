@@ -40,10 +40,10 @@ public class MostSpecificCFramesTest extends MekonTest {
 	private CFrame fc = createCFrame("FC");
 	private CFrame fd = createCFrame("FD");
 
-	private CDisjunction dab = new CDisjunction(list(fa, fb));
-	private CDisjunction dbc = new CDisjunction(list(fb, fc));
-	private CDisjunction dcd = new CDisjunction(list(fc, fd));
-	private CDisjunction dabcd = new CDisjunction(list(fa, fb, fc, fd));
+	private CDisjunction dab = createDisjunction(fa, fb);
+	private CDisjunction dbc = createDisjunction(fb, fc);
+	private CDisjunction dcd = createDisjunction(fc, fd);
+	private CDisjunction dabcd = createDisjunction(fa, fb, fc, fd);
 
 	private MostSpecificCFrames mostSpecifics = new MostSpecificCFrames();
 
@@ -134,6 +134,11 @@ public class MostSpecificCFramesTest extends MekonTest {
 		test(fa, fb, fc);
 	}
 
+	private CDisjunction createDisjunction(CFrame... disjuncts) {
+
+		return (CDisjunction)CFrame.resolveDisjunction(list(disjuncts));
+	}
+
 	private void update(CFrame frame) {
 
 		mostSpecifics.update(frame);
@@ -141,6 +146,6 @@ public class MostSpecificCFramesTest extends MekonTest {
 
 	private void test(CFrame... expected) {
 
-		testListContents(mostSpecifics.getMostSpecific(), list(expected));
+		testListContents(mostSpecifics.getMostSpecifics(), list(expected));
 	}
 }

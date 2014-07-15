@@ -94,7 +94,7 @@ class IValueSubsumptions {
 
 	static private List<CValue<?>> getMostSpecificCValues(List<CValue<?>> cValues) {
 
-		return new MostSpecificCValues(cValues).getMostSpecific();
+		return new MostSpecificCValues(cValues).getMostSpecifics();
 	}
 
 	static private List<IValue> removeDuplicates(Collection<? extends IValue> values) {

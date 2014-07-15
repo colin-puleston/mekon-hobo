@@ -90,43 +90,37 @@ public abstract class CFrame
 						implements CIdentified, CSourced, IValue {
 
 	/**
-	 * Invokes {@link createDisjunction(String, List<CFrame>)}} to
-	 * create a disjunction-frame, with a generated label providing
-	 * a description of the disjunction.
+	 * Invokes {@link resolveDisjunction(String, List<CFrame>)}} with
+	 * a generated label providing a description of the disjunction.
 	 *
 	 * @param disjuncts Relevant disjuncts
-	 * @return Created disjunction-frame, or single provided disjunct
-	 * if applicable
+	 * @return Created disjunction-frame, or single model-frame if
+	 * disjuncts resolve to one
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
-	public static CFrame createDisjunction(List<CFrame> disjuncts) {
+	public static CFrame resolveDisjunction(List<CFrame> disjuncts) {
 
-		return createDisjunction(null, disjuncts);
+		return CDisjunction.resolve(null, disjuncts);
 	}
 
 	/**
-	 * Creates a disjunction-frame. Any of the specified disjuncts
-	 * that are themselves disjunctions will be split up into their
-	 * constituent disjuncts. The disjuncts cannot be extension-frames.
-	 * If there is only a single disjunct then will just return that
-	 * disjunct.
+	 * Creates a disjunction-frame, or if the required disjunction
+	 * resolves to a single model-frame then returns that model-frame.
+	 * Any of the specified disjuncts that are themselves disjunctions
+	 * will be split up into their constituent disjuncts. The disjuncts
+	 * cannot be extension-frames.
 	 *
 	 * @param label Label for disjunction-frame
 	 * @param disjuncts Relevant disjuncts
-	 * @return Created disjunction-frame, or single provided disjunct
-	 * if applicable
+	 * @return Created disjunction-frame, or single model-frame if
+	 * disjuncts resolve to one
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
-	public static CFrame createDisjunction(String label, List<CFrame> disjuncts) {
+	public static CFrame resolveDisjunction(String label, List<CFrame> disjuncts) {
 
-		if (disjuncts.size() == 1) {
-
-			return disjuncts.get(0);
-		}
-
-		return new CDisjunction(label, disjuncts);
+		return CDisjunction.resolve(null, disjuncts);
 	}
 
 	private MFrame type;

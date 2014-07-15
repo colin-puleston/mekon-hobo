@@ -37,8 +37,45 @@ class CDisjunction extends CExpression {
 	static private final String EXPRESSION_TYPE_NAME = "disjunction";
 	static private final String DISPLAY_LABEL_DISJUNCT_SEPARATOR = " OR ";
 
-	private List<CFrame> commonSupers = new ArrayList<CFrame>();
-	private List<CModelFrame> disjuncts = new ArrayList<CModelFrame>();
+	static CFrame resolve(List<CFrame> disjuncts) {
+
+		return resolve(null, disjuncts);
+	}
+
+	static CFrame resolve(String label, List<CFrame> disjuncts) {
+
+		if (disjuncts.isEmpty()) {
+
+			throw new KAccessException("Disjunct-list is empty");
+		}
+
+		List<CModelFrame> resolvedDisjuncts = resolveDisjuncts(disjuncts);
+
+		if (disjuncts.size() == 1) {
+
+			return disjuncts.get(0);
+		}
+
+		return new CDisjunction(label, resolvedDisjuncts);
+	}
+
+	static private List<CModelFrame> resolveDisjuncts(List<CFrame> disjuncts) {
+
+		MostSpecificCFrames mostSpecifics = new MostSpecificCFrames();
+
+		for (CFrame disjunct : disjuncts) {
+
+			for (CModelFrame modelDisjunct : disjunct.asDisjuncts()) {
+
+				mostSpecifics.update(modelDisjunct);
+			}
+		}
+
+		return CModelFrame.asModelFrames(mostSpecifics.getMostSpecifics());
+	}
+
+	private List<CFrame> commonSupers;
+	private List<CModelFrame> disjuncts;
 
 	private int hashCode;
 
@@ -200,23 +237,6 @@ class CDisjunction extends CExpression {
 		return CSlotValues.INERT_INSTANCE;
 	}
 
-	CDisjunction(List<CFrame> disjuncts) {
-
-		this(null, disjuncts);
-	}
-
-	CDisjunction(String label, List<CFrame> disjuncts) {
-
-		super(label);
-
-		checkNonEmptyDisjunctList(disjuncts);
-		addDisjuncts(disjuncts);
-
-		commonSupers.addAll(findCommonSupers());
-
-		hashCode = disjunctsAsSet().hashCode();
-	}
-
 	void registerReferencingSlot(CSlot slot) {
 
 		for (CFrame disjunct : disjuncts) {
@@ -267,31 +287,20 @@ class CDisjunction extends CExpression {
 		return bldr.toString();
 	}
 
-	private void checkNonEmptyDisjunctList(List<CFrame> disjuncts) {
+	private CDisjunction(String label, List<CModelFrame> disjuncts) {
 
-		if (disjuncts.isEmpty()) {
+		super(label);
 
-			throw new KAccessException("Disjunct-list is empty");
-		}
+		this.disjuncts = disjuncts;
+
+		commonSupers = findCommonSupers();
+
+		hashCode = disjunctsAsSet().hashCode();
 	}
 
 	private void addDisjuncts(List<CFrame> disjuncts) {
 
-		for (CFrame disjunct : disjuncts) {
-
-			addDisjuncts(disjunct);
-		}
-	}
-
-	private void addDisjuncts(CFrame disjunct) {
-
-		for (CModelFrame sub : disjunct.asDisjuncts()) {
-
-			if (!disjuncts.contains(sub)) {
-
-				disjuncts.add(sub);
-			}
-		}
+		this.disjuncts.addAll(resolveDisjuncts(disjuncts));
 	}
 
 	private List<CFrame> findCommonSupers() {

@@ -142,7 +142,7 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 
 	private CDisjunction createDisjunction(CFrame... disjuncts) {
 
-		return new CDisjunction(list(disjuncts));
+		return (CDisjunction)CFrame.resolveDisjunction(list(disjuncts));
 	}
 
 	private void testSupers(
