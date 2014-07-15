@@ -27,37 +27,37 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 /**
- * Responsible for finding the most-specific members of a specified
+ * Responsible for finding the most-general members of a specified
  * set of concept-level frames.
  *
  * @author Colin Puleston
  */
-public class MostSpecificCFrames extends MostExtremeCFrames {
+public class MostGeneralCFrames extends MostExtremeCFrames {
 
 	/**
 	 * Constructor.
 	 */
-	public MostSpecificCFrames() {
+	public MostGeneralCFrames() {
 	}
 
 	/**
 	 * Constructor.
 	 *
 	 * @param frames Frames with which to initialise the set of
-	 * most-specific frames.
+	 * most-general frames.
 	 */
-	public MostSpecificCFrames(Collection<CFrame> frames) {
+	public MostGeneralCFrames(Collection<CFrame> frames) {
 
 		update(frames);
 	}
 
 	boolean firstIsMoreExtreme(CFrame first, CFrame second) {
 
-		return first.subsumedBy(second);
+		return first.subsumes(second);
 	}
 
 	List<CFrame> getNextMoreExtremes(CFrame current) {
 
-		return current.getSubs();
+		return current.getSupers();
 	}
 }
