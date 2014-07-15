@@ -282,10 +282,10 @@ public abstract class CValue<V extends IValue> implements FEntity {
 
 	CValue<?> mergeWith(CValue<?> other) {
 
-		return getMostSpecific(other);
+		return getMostSpecifics(other);
 	}
 
-	CValue<?> getMostSpecific(CValue<?> other) {
+	CValue<?> getMostSpecifics(CValue<?> other) {
 
 		if (subsumes(other)) {
 

@@ -101,7 +101,7 @@ public class MostSpecificCFrames {
 	 *
 	 * @return Current set of most-specific-frames
 	 */
-	public List<CFrame> getMostSpecific() {
+	public List<CFrame> getMostSpecifics() {
 
 		return new ArrayList<CFrame>(mostSpecifics);
 	}

@@ -34,6 +34,18 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 class CModelFrame extends CFrame {
 
+	static List<CModelFrame> asModelFrames(List<CFrame> frames) {
+
+		List<CModelFrame> modelFrames = new ArrayList<CModelFrame>();
+
+		for (CFrame frame : frames) {
+
+			modelFrames.add(frame.asModelFrame());
+		}
+
+		return modelFrames;
+	}
+
 	private CModel model;
 	private CIdentity identity;
 	private CSource source = CSource.INDIRECT;

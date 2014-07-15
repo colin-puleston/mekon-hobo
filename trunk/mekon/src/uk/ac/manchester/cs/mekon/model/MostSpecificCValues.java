@@ -62,12 +62,12 @@ class MostSpecificCValues {
 
 	private abstract class TypeHandler {
 
-		abstract List<CValue<?>> getMostSpecific();
+		abstract List<CValue<?>> getMostSpecifics();
 	}
 
 	private class DefaultTypeHandler extends TypeHandler {
 
-		List<CValue<?>> getMostSpecific() {
+		List<CValue<?>> getMostSpecifics() {
 
 			List<CValue<?>> mostSpecific = new ArrayList<CValue<?>>();
 
@@ -100,7 +100,7 @@ class MostSpecificCValues {
 
 	private abstract class FrameTypeHandler extends TypeHandler {
 
-		List<CValue<?>> getMostSpecific() {
+		List<CValue<?>> getMostSpecifics() {
 
 			List<CValue<?>> values = new ArrayList<CValue<?>>();
 
@@ -118,7 +118,7 @@ class MostSpecificCValues {
 
 		private List<CFrame> getMostSpecificCFrames() {
 
-			return new MostSpecificCFrames(toCFrames(values)).getMostSpecific();
+			return new MostSpecificCFrames(toCFrames(values)).getMostSpecifics();
 		}
 
 		private List<CFrame> toCFrames(Collection<CValue<?>> values) {
@@ -165,7 +165,7 @@ class MostSpecificCValues {
 		this.values = values;
 	}
 
-	List<CValue<?>> getMostSpecific() {
+	List<CValue<?>> getMostSpecifics() {
 
 		return values.isEmpty()
 				? Collections.<CValue<?>>emptyList()
@@ -174,6 +174,6 @@ class MostSpecificCValues {
 
 	private List<CValue<?>> getTypeMostSpecific() {
 
-		return new TypeHandlerCreator().create().getMostSpecific();
+		return new TypeHandlerCreator().create().getMostSpecifics();
 	}
 }

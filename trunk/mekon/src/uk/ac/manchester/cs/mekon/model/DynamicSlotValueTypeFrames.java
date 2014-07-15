@@ -125,7 +125,7 @@ class DynamicSlotValueTypeFrames {
 
 	synchronized CFrame get(CFrame sup, List<CFrame> subs) {
 
-		return get(sup.asModelFrame(), asModelFrames(subs));
+		return get(sup.asModelFrame(), CModelFrame.asModelFrames(subs));
 	}
 
 	private CModelFrame get(CModelFrame sup, List<CModelFrame> subs) {
@@ -145,17 +145,5 @@ class DynamicSlotValueTypeFrames {
 		ValueTypeSet set = valueTypeSetsBySupers.get(sup);
 
 		return set != null ? set : new ValueTypeSet(sup);
-	}
-
-	private List<CModelFrame> asModelFrames(List<CFrame> frames) {
-
-		List<CModelFrame> modelFrames = new ArrayList<CModelFrame>();
-
-		for (CFrame frame : frames) {
-
-			modelFrames.add(frame.asModelFrame());
-		}
-
-		return modelFrames;
 	}
 }

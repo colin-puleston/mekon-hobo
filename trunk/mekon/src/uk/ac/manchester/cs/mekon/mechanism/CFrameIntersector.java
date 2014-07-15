@@ -59,7 +59,7 @@ class CFrameIntersector extends CTypeValueIntersector<CFrame> {
 				return disjuncts.get(0);
 			}
 
-			return CFrame.createDisjunction(disjuncts);
+			return CFrame.resolveDisjunction(disjuncts);
 		}
 
 		private boolean findDisjuncts() {
@@ -112,6 +112,6 @@ class CFrameIntersector extends CTypeValueIntersector<CFrame> {
 
 	private List<CFrame> getMostSpecificOperands() {
 
-		return new MostSpecificCFrames(operands).getMostSpecific();
+		return new MostSpecificCFrames(operands).getMostSpecifics();
 	}
 }
