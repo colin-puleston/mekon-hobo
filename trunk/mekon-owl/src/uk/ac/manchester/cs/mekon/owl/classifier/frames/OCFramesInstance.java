@@ -302,12 +302,12 @@ public class OCFramesInstance {
 
 	private Set<IRI> getAllConceptIRIs(OModel model) {
 
-		return model.getAllConcepts().getAllIRIs();
+		return model.getConcepts().getAllIRIs();
 	}
 
 	private Set<IRI> getAllObjectPropertyIRIs(OModel model) {
 
-		return model.getAllObjectProperties().getAllIRIs();
+		return model.getObjectProperties().getAllIRIs();
 	}
 
 	private boolean closedWorldSemantics(IRI propertyIRI) {

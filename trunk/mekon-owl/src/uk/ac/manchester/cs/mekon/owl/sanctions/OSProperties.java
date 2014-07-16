@@ -105,12 +105,12 @@ public class OSProperties
 
 	Set<OWLObjectProperty> getAllInModel() {
 
-		return getModel().getAllObjectProperties().getAll();
+		return getModel().getObjectProperties().getAll();
 	}
 
 	Set<OWLObjectProperty> getDescendants(OWLObjectProperty property) {
 
-		return getModel().getInferredSubs(property, false);
+		return getModel().getAssertedSubs(property, false);
 	}
 
 	Set<OWLObjectProperty> extractAll(OWLClassExpression expression) {

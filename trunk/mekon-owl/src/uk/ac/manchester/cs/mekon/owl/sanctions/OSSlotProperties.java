@@ -94,7 +94,7 @@ class OSSlotProperties {
 					OWLObjectProperty property,
 					OSSlotProperty slotProperty) {
 
-		for (OWLObjectProperty sub : model.getInferredSubs(property, true)) {
+		for (OWLObjectProperty sub : model.getAssertedSubs(property, true)) {
 
 			slotProperty.addSubProperty(slotProperties.get(sub));
 		}

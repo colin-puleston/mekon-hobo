@@ -103,7 +103,7 @@ public class OSConcepts extends OSEntities<OWLClass, OSConceptGroup> {
 
 	Set<OWLClass> getAllInModel() {
 
-		return getModel().getAllConcepts().getAll();
+		return getModel().getConcepts().getAll();
 	}
 
 	Set<OWLClass> getDescendants(OWLClass entity) {

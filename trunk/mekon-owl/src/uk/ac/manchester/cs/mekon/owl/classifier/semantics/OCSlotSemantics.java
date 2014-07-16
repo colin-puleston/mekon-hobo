@@ -136,7 +136,7 @@ public class OCSlotSemantics {
 
 	private Set<OWLObjectProperty> getSuperProperties(IRI propertyIRI) {
 
-		return model.getInferredSupers(getProperty(propertyIRI), false);
+		return model.getAssertedSupers(getProperty(propertyIRI), false);
 	}
 
 	private OWLObjectProperty getProperty(IRI iri) {

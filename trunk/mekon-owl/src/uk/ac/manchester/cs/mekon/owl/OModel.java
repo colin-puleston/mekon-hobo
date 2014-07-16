@@ -54,236 +54,14 @@ public class OModel {
 	private OWLReasoner reasoner;
 	private OWLDataProperty numericProperty;
 
-	private OEntities<OWLClass> allConcepts;
-	private OEntities<OWLObjectProperty> allObjectProperties;
-	private OEntities<OWLDataProperty> allDataProperties;
+	private OEntities<OWLClass> concepts;
+	private OEntities<OWLObjectProperty> objectProperties;
+	private OEntities<OWLDataProperty> dataProperties;
 
-	private SuperPropertiesFinder superPropertiesFinder = new SuperPropertiesFinder();
-	private SubPropertiesFinder subPropertiesFinder = new SubPropertiesFinder();
+	private OConceptLinks conceptLinks;
+	private OObjectPropertyLinks objectPropertyLinks;
 
-	private abstract class DeclarationAxiomProcessor {
-
-		void process(OWLAxiom axiom) {
-
-			if (axiom instanceof OWLDeclarationAxiom) {
-
-				process(((OWLDeclarationAxiom)axiom).getEntity());
-			}
-		}
-
-		abstract <E extends OWLEntity>void process(OEntities<E> all, E entity);
-
-		private void process(OWLEntity entity) {
-
-			if (entity instanceof OWLClass) {
-
-				process(allConcepts, (OWLClass)entity);
-			}
-			else if (entity instanceof OWLObjectProperty) {
-
-				process(allObjectProperties, (OWLObjectProperty)entity);
-			}
-			else if (entity instanceof OWLDataProperty) {
-
-				process(allDataProperties, (OWLDataProperty)entity);
-			}
-		}
-	}
-
-	private class AddedDeclarationAxiomProcessor extends DeclarationAxiomProcessor {
-
-		<E extends OWLEntity>void process(OEntities<E> all, E entity) {
-
-			all.add(entity);
-		}
-	}
-
-	private class RemovedDeclarationAxiomProcessor extends DeclarationAxiomProcessor {
-
-		<E extends OWLEntity>void process(OEntities<E> all, E entity) {
-
-			all.remove(entity);
-		}
-	}
-
-	private abstract class LinkedEntitiesFinder<S extends OWLObject, T extends S> {
-
-		Set<T> getAll(S source, boolean directOnly) {
-
-			try {
-
-				return getInferreds(source, directOnly);
-			}
-			catch (UnsupportedOperationException e) {
-
-				return getAsserteds(source, directOnly);
-			}
-		}
-
-		abstract Set<T> getInferreds(
-							S source,
-							boolean directOnly)
-							throws UnsupportedOperationException;
-
-		abstract Set<T> getAsserteds(T target);
-
-		abstract T sourceToTarget(S source);
-
-		<R extends OWLObject>NodeSet<R> checkNullFromUnsupportedInference(NodeSet<R> results) {
-
-			if (results == null) {
-
-				throw new UnsupportedOperationException();
-			}
-
-			return results;
-		}
-
-		private Set<T> getAsserteds(S source, boolean directOnly) {
-
-			T sourceAsTarget = sourceToTarget(source);
-
-			if (sourceAsTarget == null) {
-
-				return Collections.emptySet();
-			}
-
-			return directOnly
-						? getAsserteds(sourceAsTarget)
-						: getAllAsserteds(sourceAsTarget);
-		}
-
-		private Set<T> getAllAsserteds(T source) {
-
-			Set<T> all = new HashSet<T>();
-
-			for (T target : getAsserteds(source)) {
-
-				all.add(target);
-				all.addAll(getAllAsserteds(target));
-			}
-
-			return all;
-		}
-	}
-
-	private abstract class LinkedConceptsFinder
-								extends
-									LinkedEntitiesFinder
-										<OWLClassExpression,
-										OWLClass> {
-
-		Set<OWLClass> getInferreds(
-							OWLClassExpression expr,
-							boolean directOnly)
-							throws UnsupportedOperationException {
-
-			NodeSet<OWLClass> exprs = getInferredConcepts(expr, directOnly);
-
-			return normaliseConcepts(checkNullFromUnsupportedInference(exprs));
-		}
-
-		abstract NodeSet<OWLClass> getInferredConcepts(
-										OWLClassExpression expr,
-										boolean directOnly)
-										throws UnsupportedOperationException;
-
-		OWLClass sourceToTarget(OWLClassExpression expr) {
-
-			return expr instanceof OWLClass ? (OWLClass)expr : null;
-		}
-	}
-
-	private class SuperConceptsFinder extends LinkedConceptsFinder {
-
-		NodeSet<OWLClass> getInferredConcepts(
-								OWLClassExpression expr,
-								boolean directOnly)
-								throws UnsupportedOperationException {
-
-			return reasoner.getSuperClasses(expr, directOnly);
-		}
-
-		Set<OWLClass> getAsserteds(OWLClass concept) {
-
-			return extract(getAssertedSupers(concept), OWLClass.class);
-		}
-	}
-
-	private class SubConceptsFinder extends LinkedConceptsFinder {
-
-		NodeSet<OWLClass> getInferredConcepts(
-								OWLClassExpression expr,
-								boolean directOnly)
-								throws UnsupportedOperationException {
-
-			return reasoner.getSubClasses(expr, directOnly);
-		}
-
-		Set<OWLClass> getAsserteds(OWLClass concept) {
-
-			return extract(getAssertedSubs(concept), OWLClass.class);
-		}
-	}
-
-	private abstract class LinkedPropertiesFinder
-								extends
-									LinkedEntitiesFinder
-										<OWLObjectProperty,
-										OWLObjectProperty> {
-
-		Set<OWLObjectProperty> getInferreds(
-									OWLObjectProperty property,
-									boolean directOnly)
-									throws UnsupportedOperationException {
-
-			NodeSet<OWLObjectPropertyExpression> exprs = getInferredProperties(property, directOnly);
-
-			return normaliseProperties(checkNullFromUnsupportedInference(exprs));
-		}
-
-		abstract NodeSet<OWLObjectPropertyExpression> getInferredProperties(
-															OWLObjectProperty property,
-															boolean directOnly)
-															throws UnsupportedOperationException;
-
-		OWLObjectProperty sourceToTarget(OWLObjectProperty property) {
-
-			return property;
-		}
-	}
-
-	private class SuperPropertiesFinder extends LinkedPropertiesFinder {
-
-		NodeSet<OWLObjectPropertyExpression> getInferredProperties(
-												OWLObjectProperty property,
-												boolean directOnly)
-												throws UnsupportedOperationException {
-
-			return reasoner.getSuperObjectProperties(property, directOnly);
-		}
-
-		Set<OWLObjectProperty> getAsserteds(OWLObjectProperty property) {
-
-			return getAssertedSupers(property);
-		}
-	}
-
-	private class SubPropertiesFinder extends LinkedPropertiesFinder {
-
-		NodeSet<OWLObjectPropertyExpression> getInferredProperties(
-												OWLObjectProperty property,
-												boolean directOnly)
-												throws UnsupportedOperationException {
-
-			return reasoner.getSubObjectProperties(property, directOnly);
-		}
-
-		Set<OWLObjectProperty> getAsserteds(OWLObjectProperty property) {
-
-			return getAssertedSubs(property);
-		}
-	}
+	private OAxioms axioms;
 
 	/**
 	 * Adds an axiom to the main-ontology.
@@ -292,22 +70,17 @@ public class OModel {
 	 */
 	public void addAxiom(OWLAxiom axiom) {
 
-		manager.addAxiom(mainOntology, axiom);
-		new AddedDeclarationAxiomProcessor().process(axiom);
-		reasoner.flush();
+		axioms.add(axiom);
 	}
 
 	/**
 	 * Adds a set of axioms to the main-ontology.
 	 *
-	 * @param axioms Axioms to be added
+	 * @param axiomsSet Axioms to be added
 	 */
-	public void addAxioms(Set<? extends OWLAxiom> axioms) {
+	public void addAxioms(Set<? extends OWLAxiom> axiomsSet) {
 
-		for (OWLAxiom axiom : axioms) {
-
-			addAxiom(axiom);
-		}
+		axioms.addAll(axiomsSet);
 	}
 
 	/**
@@ -317,22 +90,17 @@ public class OModel {
 	 */
 	public void removeAxiom(OWLAxiom axiom) {
 
-		manager.removeAxiom(findAxiomOntology(axiom), axiom);
-		new RemovedDeclarationAxiomProcessor().process(axiom);
-		reasoner.flush();
+		axioms.remove(axiom);
 	}
 
 	/**
 	 * Removes a set of axioms from the main-ontology.
 	 *
-	 * @param axioms Axioms to be removed
+	 * @param axiomsSet Axioms to be removed
 	 */
-	public void removeAxioms(Set<? extends OWLAxiom> axioms) {
+	public void removeAxioms(Set<? extends OWLAxiom> axiomsSet) {
 
-		for (OWLAxiom axiom : axioms) {
-
-			removeAxiom(axiom);
-		}
+		axioms.removeAll(axiomsSet);
 	}
 
 	/**
@@ -340,16 +108,7 @@ public class OModel {
 	 */
 	public void retainOnlyDeclarationAxioms() {
 
-		for (OWLOntology ont : getAllOntologies()) {
-
-			for (OWLAxiom axiom : ont.getAxioms()) {
-
-				if (!(axiom instanceof OWLDeclarationAxiom)) {
-
-					manager.removeAxiom(ont, axiom);
-				}
-			}
-		}
+		axioms.retainOnlyDeclarations();
 	}
 
 	/**
@@ -416,9 +175,9 @@ public class OModel {
 	 *
 	 * @return All concepts referenced within ontologies
 	 */
-	public OEntities<OWLClass> getAllConcepts() {
+	public OEntities<OWLClass> getConcepts() {
 
-		return allConcepts;
+		return concepts;
 	}
 
 	/**
@@ -427,9 +186,9 @@ public class OModel {
 	 *
 	 * @return All object-properties referenced within ontologies
 	 */
-	public OEntities<OWLObjectProperty> getAllObjectProperties() {
+	public OEntities<OWLObjectProperty> getObjectProperties() {
 
-		return allObjectProperties;
+		return objectProperties;
 	}
 
 	/**
@@ -438,9 +197,9 @@ public class OModel {
 	 *
 	 * @return All data-properties referenced within ontologies
 	 */
-	public OEntities<OWLDataProperty> getAllDataProperties() {
+	public OEntities<OWLDataProperty> getDataProperties() {
 
-		return allDataProperties;
+		return dataProperties;
 	}
 
 	/**
@@ -468,7 +227,7 @@ public class OModel {
 	 */
 	public Set<OWLClassExpression> getAssertedSupers(OWLClass concept) {
 
-		return concept.getSuperClasses(getAllOntologies());
+		return conceptLinks.getAssertedSupers(concept);
 	}
 
 	/**
@@ -479,7 +238,7 @@ public class OModel {
 	 */
 	public Set<OWLClassExpression> getAssertedSubs(OWLClass concept) {
 
-		return concept.getSubClasses(getAllOntologies());
+		return conceptLinks.getAssertedSubs(concept);
 	}
 
 	/**
@@ -493,7 +252,7 @@ public class OModel {
 							OWLClassExpression expression,
 							boolean directOnly) {
 
-		return normaliseConcepts(reasoner.getSuperClasses(expression, directOnly));
+		return conceptLinks.getInferredSupers(expression, directOnly);
 	}
 
 	/**
@@ -507,7 +266,7 @@ public class OModel {
 							OWLClassExpression expression,
 							boolean directOnly) {
 
-		return normaliseConcepts(reasoner.getSubClasses(expression, directOnly));
+		return conceptLinks.getInferredSubs(expression, directOnly);
 	}
 
 	/**
@@ -517,29 +276,35 @@ public class OModel {
 	 */
 	public Set<OWLClass> getInferredEquivalents(OWLClassExpression expression) {
 
-		return normaliseConcepts(reasoner.getEquivalentClasses(expression).getEntities());
+		return conceptLinks.getInferredEquivalents(expression);
 	}
 
 	/**
 	 * Retrieves the inferred super-properties of the specified property.
 	 *
 	 * @param property Class whose super-properties are required
+	 * @param directOnly True if only direct super-properties are required
 	 * @return Required set of super-properties
 	 */
-	public Set<OWLObjectProperty> getAssertedSupers(OWLObjectProperty property) {
+	public Set<OWLObjectProperty> getAssertedSupers(
+									OWLObjectProperty property,
+									boolean directOnly) {
 
-		return normaliseProperties(property.getSuperProperties(getAllOntologies()));
+		return objectPropertyLinks.getAssertedSupers(property, directOnly);
 	}
 
 	/**
 	 * Retrieves the asserted sub-properties of the specified property.
 	 *
 	 * @param property Class whose sub-properties are required
+	 * @param directOnly True if only direct sub-properties are required
 	 * @return Required set of sub-properties
 	 */
-	public Set<OWLObjectProperty> getAssertedSubs(OWLObjectProperty property) {
+	public Set<OWLObjectProperty> getAssertedSubs(
+									OWLObjectProperty property,
+									boolean directOnly) {
 
-		return normaliseProperties(property.getSubProperties(getAllOntologies()));
+		return objectPropertyLinks.getAssertedSubs(property, directOnly);
 	}
 
 	/**
@@ -553,7 +318,7 @@ public class OModel {
 									OWLObjectProperty property,
 									boolean directOnly) {
 
-		return superPropertiesFinder.getAll(property, directOnly);
+		return objectPropertyLinks.getInferredSupers(property, directOnly);
 	}
 
 	/**
@@ -567,7 +332,7 @@ public class OModel {
 									OWLObjectProperty property,
 									boolean directOnly) {
 
-		return subPropertiesFinder.getAll(property, directOnly);
+		return objectPropertyLinks.getInferredSubs(property, directOnly);
 	}
 
 	/**
@@ -622,49 +387,17 @@ public class OModel {
 
 		classify();
 
-		allConcepts = findAllConcepts();
-		allObjectProperties = findAllObjectProperties();
-		allDataProperties = findAllDataProperties();
+		concepts = findConcepts();
+		objectProperties = findObjectProperties();
+		dataProperties = findDataProperties();
+
+		conceptLinks = new OConceptLinks(this, concepts);
+		objectPropertyLinks = new OObjectPropertyLinks(this, objectProperties);
+
+		axioms = new OAxioms(this);
 	}
 
-	private void classify() {
-
-		OMonitor.pollForPreReasonerLoad(reasoner.getClass());
-		reasoner.precomputeInferences(InferenceType.values());
-		OMonitor.pollForReasonerLoaded();
-	}
-
-	private OEntities<OWLClass> findAllConcepts() {
-
-		return new OEntities<OWLClass>(
-						"class",
-						normaliseConcepts(
-							mainOntology
-								.getClassesInSignature(true)));
-	}
-
-	private OEntities<OWLObjectProperty> findAllObjectProperties() {
-
-		return new OEntities<OWLObjectProperty>(
-						"object-property",
-						mainOntology
-							.getObjectPropertiesInSignature(true));
-	}
-
-	private OEntities<OWLDataProperty> findAllDataProperties() {
-
-		return new OEntities<OWLDataProperty>(
-						"data-property",
-						mainOntology
-							.getDataPropertiesInSignature(true));
-	}
-
-	private Set<OWLClass> normaliseConcepts(NodeSet<OWLClass> concepts) {
-
-		return normaliseConcepts(concepts.getFlattened());
-	}
-
-	private Set<OWLClass> normaliseConcepts(Set<OWLClass> concepts) {
+	Set<OWLClass> normaliseConcepts(Set<OWLClass> concepts) {
 
 		Set<OWLClass> normalised = new HashSet<OWLClass>(concepts);
 
@@ -674,16 +407,7 @@ public class OModel {
 		return normalised;
 	}
 
-	private Set<OWLObjectProperty> normaliseProperties(
-										NodeSet<OWLObjectPropertyExpression> exprs) {
-
-		return normaliseProperties(exprs.getFlattened());
-	}
-
-	private Set<OWLObjectProperty> normaliseProperties(
-										Set<OWLObjectPropertyExpression> exprs) {
-
-		Set<OWLObjectProperty> properties = extract(exprs, OWLObjectProperty.class);
+	Set<OWLObjectProperty> normaliseObjectProperties(Set<OWLObjectProperty> properties) {
 
 		properties.remove(getDataFactory().getOWLTopObjectProperty());
 		properties.remove(getDataFactory().getOWLBottomObjectProperty());
@@ -691,31 +415,35 @@ public class OModel {
 		return properties;
 	}
 
-	private <I, O extends I>Set<O> extract(Set<I> inputs, Class<O> outputClass) {
+	private void classify() {
 
-		Set<O> outputs = new HashSet<O>();
-
-		for (I input : inputs) {
-
-			if (outputClass.isAssignableFrom(input.getClass())) {
-
-				outputs.add(outputClass.cast(input));
-			}
-		}
-
-		return outputs;
+		OMonitor.pollForPreReasonerLoad(reasoner.getClass());
+		reasoner.precomputeInferences(InferenceType.values());
+		OMonitor.pollForReasonerLoaded();
 	}
 
-	private OWLOntology findAxiomOntology(OWLAxiom axiom) {
+	private OEntities<OWLClass> findConcepts() {
 
-		for (OWLOntology ont : getAllOntologies()) {
+		return new OEntities<OWLClass>(
+						"class",
+						normaliseConcepts(
+							mainOntology
+								.getClassesInSignature(true)));
+	}
 
-			if (ont.containsAxiom(axiom)) {
+	private OEntities<OWLObjectProperty> findObjectProperties() {
 
-				return ont;
-			}
-		}
+		return new OEntities<OWLObjectProperty>(
+						"object-property",
+						mainOntology
+							.getObjectPropertiesInSignature(true));
+	}
 
-		throw new Error("Cannot find axiom: " + axiom);
+	private OEntities<OWLDataProperty> findDataProperties() {
+
+		return new OEntities<OWLDataProperty>(
+						"data-property",
+						mainOntology
+							.getDataPropertiesInSignature(true));
 	}
 }
