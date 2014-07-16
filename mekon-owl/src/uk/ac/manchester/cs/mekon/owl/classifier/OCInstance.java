@@ -132,7 +132,7 @@ class OCInstance {
 
 		private OWLObjectProperty getProperty() {
 
-			return model.getAllObjectProperties().get(slot.getIRI());
+			return model.getObjectProperties().get(slot.getIRI());
 		}
 
 		private Set<OWLClassExpression> getFillers() {
@@ -298,6 +298,6 @@ class OCInstance {
 
 	private OWLClass getConcept(IRI iri) {
 
-		return model.getAllConcepts().get(iri);
+		return model.getConcepts().get(iri);
 	}
 }
