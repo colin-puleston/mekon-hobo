@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 class OConceptLinks {
 
@@ -104,8 +105,8 @@ class OConceptLinks {
 		if (concepts.contains(getDataFactory().getOWLNothing())) {
 
 			throw new KModelException(
-						"Inconsistent class or class-expression: "
-						+ expression);
+						"Inconsistent class-expression: "
+						+ render(expression));
 		}
 
 		return normalise(concepts);
@@ -114,6 +115,11 @@ class OConceptLinks {
 	private Set<OWLClass> normalise(Set<OWLClass> concepts) {
 
 		return model.normaliseConcepts(concepts);
+	}
+
+	private String render(OWLClassExpression expression) {
+
+		return new OLabelRenderer(model).render(expression);
 	}
 
 	private Set<OWLOntology> getAllOntologies() {
