@@ -29,6 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 class OConceptLinks {
 
 	private OModel model;
@@ -59,24 +61,54 @@ class OConceptLinks {
 						OWLClassExpression expression,
 						boolean directOnly) {
 
-		return normalise(getReasoner().getSuperClasses(expression, directOnly));
+		return normaliseNonSubs(
+					expression,
+					getReasoner()
+						.getSuperClasses(
+							expression,
+							directOnly));
 	}
 
 	Set<OWLClass> getInferredSubs(
 						OWLClassExpression expression,
 						boolean directOnly) {
 
-		return normalise(getReasoner().getSubClasses(expression, directOnly));
+		return normaliseSubs(getReasoner().getSubClasses(expression, directOnly));
 	}
 
 	Set<OWLClass> getInferredEquivalents(OWLClassExpression expression) {
 
-		return normalise(getReasoner().getEquivalentClasses(expression).getEntities());
+		return normaliseNonSubs(
+					expression,
+					getReasoner()
+						.getEquivalentClasses(expression)
+							.getEntities());
 	}
 
-	private Set<OWLClass> normalise(NodeSet<OWLClass> concepts) {
+	private Set<OWLClass> normaliseSubs(NodeSet<OWLClass> concepts) {
 
 		return normalise(concepts.getFlattened());
+	}
+
+	private Set<OWLClass> normaliseNonSubs(
+							OWLClassExpression expression,
+							NodeSet<OWLClass> concepts) {
+
+		return normaliseNonSubs(expression, concepts.getFlattened());
+	}
+
+	private Set<OWLClass> normaliseNonSubs(
+							OWLClassExpression expression,
+							Set<OWLClass> concepts) {
+
+		if (concepts.contains(getDataFactory().getOWLNothing())) {
+
+			throw new KModelException(
+						"Inconsistent class or class-expression: "
+						+ expression);
+		}
+
+		return normalise(concepts);
 	}
 
 	private Set<OWLClass> normalise(Set<OWLClass> concepts) {
@@ -87,6 +119,11 @@ class OConceptLinks {
 	private Set<OWLOntology> getAllOntologies() {
 
 		return model.getAllOntologies();
+	}
+
+	private OWLDataFactory getDataFactory() {
+
+		return model.getDataFactory();
 	}
 
 	private OWLReasoner getReasoner() {

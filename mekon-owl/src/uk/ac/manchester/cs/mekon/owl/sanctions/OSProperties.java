@@ -110,7 +110,7 @@ public class OSProperties
 
 	Set<OWLObjectProperty> getDescendants(OWLObjectProperty property) {
 
-		return getModel().getAssertedSubs(property, false);
+		return getModel().getInferredSubs(property, false);
 	}
 
 	Set<OWLObjectProperty> extractAll(OWLClassExpression expression) {

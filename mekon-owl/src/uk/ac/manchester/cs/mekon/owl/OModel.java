@@ -283,28 +283,22 @@ public class OModel {
 	 * Retrieves the inferred super-properties of the specified property.
 	 *
 	 * @param property Class whose super-properties are required
-	 * @param directOnly True if only direct super-properties are required
 	 * @return Required set of super-properties
 	 */
-	public Set<OWLObjectProperty> getAssertedSupers(
-									OWLObjectProperty property,
-									boolean directOnly) {
+	public Set<OWLObjectProperty> getAssertedSupers(OWLObjectProperty property) {
 
-		return objectPropertyLinks.getAssertedSupers(property, directOnly);
+		return objectPropertyLinks.getAssertedSupers(property);
 	}
 
 	/**
 	 * Retrieves the asserted sub-properties of the specified property.
 	 *
 	 * @param property Class whose sub-properties are required
-	 * @param directOnly True if only direct sub-properties are required
 	 * @return Required set of sub-properties
 	 */
-	public Set<OWLObjectProperty> getAssertedSubs(
-									OWLObjectProperty property,
-									boolean directOnly) {
+	public Set<OWLObjectProperty> getAssertedSubs(OWLObjectProperty property) {
 
-		return objectPropertyLinks.getAssertedSubs(property, directOnly);
+		return objectPropertyLinks.getAssertedSubs(property);
 	}
 
 	/**
@@ -435,15 +429,25 @@ public class OModel {
 
 		return new OEntities<OWLObjectProperty>(
 						"object-property",
-						mainOntology
-							.getObjectPropertiesInSignature(true));
+						normaliseObjectProperties(
+							mainOntology
+								.getObjectPropertiesInSignature(true)));
 	}
 
 	private OEntities<OWLDataProperty> findDataProperties() {
 
 		return new OEntities<OWLDataProperty>(
 						"data-property",
-						mainOntology
-							.getDataPropertiesInSignature(true));
+						normaliseDataProperties(
+							mainOntology
+								.getDataPropertiesInSignature(true)));
+	}
+
+	private Set<OWLDataProperty> normaliseDataProperties(Set<OWLDataProperty> properties) {
+
+		properties.remove(getDataFactory().getOWLTopDataProperty());
+		properties.remove(getDataFactory().getOWLBottomDataProperty());
+
+		return properties;
 	}
 }
