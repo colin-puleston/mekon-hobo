@@ -43,6 +43,7 @@ class InstantiationFrame extends GFrame {
 	static private final String CONCRETE_LABEL = "Instance";
 	static private final String QUERY_LABEL = "Query";
 	static private final String INFERRED_TYPES_TITLE = "Inferred Types";
+	static private final String SUGGESTED_TYPES_TITLE = "Suggested Types";
 
 	static private String getTitle(IFrame frame) {
 
@@ -79,7 +80,8 @@ class InstantiationFrame extends GFrame {
 		JTabbedPane panel = new JTabbedPane();
 
 		panel.addTab(instanceTypeLabel(frame), createInstanceComponent());
-		panel.addTab(INFERRED_TYPES_TITLE, createInferredTypesComponent());
+		panel.addTab(INFERRED_TYPES_TITLE, createTypesComponent(true));
+		panel.addTab(SUGGESTED_TYPES_TITLE, createTypesComponent(false));
 
 		return panel;
 	}
@@ -89,8 +91,8 @@ class InstantiationFrame extends GFrame {
 		return new JScrollPane(new ITree(frame));
 	}
 
-	private JComponent createInferredTypesComponent() {
+	private JComponent createTypesComponent(boolean inferreds) {
 
-		return new JScrollPane(new InferredTypesPanel(modelTree, frame));
+		return new JScrollPane(new InstanceTypesPanel(modelTree, frame, inferreds));
 	}
 }
