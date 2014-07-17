@@ -64,7 +64,8 @@ import uk.ac.manchester.cs.mekon.util.*;
 public class IFrame implements IEntity, IValue {
 
 	private CFrame type;
-	private CIdentifiedsLocal<CFrame> inferredTypes = new CIdentifiedsLocal<CFrame>();
+	private DynamicTypes inferredTypes = new DynamicTypes();
+	private DynamicTypes suggestedTypes = new DynamicTypes();
 	private boolean queryInstance;
 
 	private ISlots slots = new ISlots();
@@ -73,21 +74,80 @@ public class IFrame implements IEntity, IValue {
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
-	private class Editor implements IFrameEditor {
+	private class DynamicTypes {
 
-		public boolean updateInferredTypes(List<CFrame> updatedInferredTypes) {
+		private CIdentifiedsLocal<CFrame> types = new CIdentifiedsLocal<CFrame>();
 
-			if (inferredTypesMatch(updatedInferredTypes)) {
+		boolean update(List<CFrame> updates) {
+
+			if (typesMatch(updates)) {
 
 				return false;
 			}
 
-			removeOldInferredTypes(updatedInferredTypes);
-			addNewInferredTypes(updatedInferredTypes);
-
-			pollListenersForUpdatedInferredTypes();
+			removeOldTypes(updates);
+			addNewTypes(updates);
 
 			return true;
+		}
+
+		CIdentifieds<CFrame> getTypes() {
+
+			return types;
+		}
+
+		private void removeOldTypes(List<CFrame> updates) {
+
+			for (CFrame type : types.asList()) {
+
+				if (!updates.contains(type)) {
+
+					types.remove(type);
+				}
+			}
+		}
+
+		private void addNewTypes(List<CFrame> updates) {
+
+			for (CFrame type : updates) {
+
+				if (!types.contains(type)) {
+
+					types.add(type);
+				}
+			}
+		}
+
+		private boolean typesMatch(List<CFrame> testTypes) {
+
+			return types.asSet().equals(new HashSet<CFrame>(testTypes));
+		}
+	}
+
+	private class Editor implements IFrameEditor {
+
+		public boolean updateInferredTypes(List<CFrame> updatedInferredTypes) {
+
+			if (inferredTypes.update(updatedInferredTypes)) {
+
+				pollListenersForUpdatedInferredTypes();
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public boolean updateSuggestedTypes(List<CFrame> updatedSuggestedTypes) {
+
+			if (suggestedTypes.update(updatedSuggestedTypes)) {
+
+				pollListenersForUpdatedSuggestedTypes();
+
+				return true;
+			}
+
+			return false;
 		}
 
 		public ISlot addSlot(CSlot slotType) {
@@ -263,7 +323,18 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public CIdentifieds<CFrame> getInferredTypes() {
 
-		return inferredTypes;
+		return inferredTypes.getTypes();
+	}
+
+	/**
+	 * Provides the set of concept-level frames representing the
+	 * currently suggested types for the frame.
+	 *
+	 * @return Relevant set of concept-level frames
+	 */
+	public CIdentifieds<CFrame> getSuggestedTypes() {
+
+		return suggestedTypes.getTypes();
 	}
 
 	/**
@@ -406,16 +477,6 @@ public class IFrame implements IEntity, IValue {
 					+ ": " + extraMsg);
 	}
 
-	private boolean inferredTypesMatch(List<CFrame> testInferredTypes) {
-
-		return inferredTypesMatch(new HashSet<CFrame>(testInferredTypes));
-	}
-
-	private boolean inferredTypesMatch(Set<CFrame> testInferredTypes) {
-
-		return inferredTypes.asSet().equals(testInferredTypes);
-	}
-
 	private void performDynamicUpdate() {
 
 		while (updateAllBackwardsFromThis(new ArrayList<IFrame>()));
@@ -456,28 +517,6 @@ public class IFrame implements IEntity, IValue {
 		return anyValueUpdates;
 	}
 
-	private void removeOldInferredTypes(List<CFrame> updatedInferredTypes) {
-
-		for (CFrame inferredType : inferredTypes.asList()) {
-
-			if (!updatedInferredTypes.contains(inferredType)) {
-
-				inferredTypes.remove(inferredType);
-			}
-		}
-	}
-
-	private void addNewInferredTypes(List<CFrame> updatedInferredTypes) {
-
-		for (CFrame inferredType : updatedInferredTypes) {
-
-			if (!inferredTypes.contains(inferredType)) {
-
-				inferredTypes.add(inferredType);
-			}
-		}
-	}
-
 	private boolean checkUpdate(boolean autoUpdate) {
 
 		return type.checkUpdateInstance(this, autoUpdate);
@@ -492,7 +531,15 @@ public class IFrame implements IEntity, IValue {
 
 		for (IFrameListener listener : copyListeners()) {
 
-			listener.onUpdatedInferredTypes(inferredTypes);
+			listener.onUpdatedInferredTypes(inferredTypes.getTypes());
+		}
+	}
+
+	private void pollListenersForUpdatedSuggestedTypes() {
+
+		for (IFrameListener listener : copyListeners()) {
+
+			listener.onUpdatedSuggestedTypes(suggestedTypes.getTypes());
 		}
 	}
 

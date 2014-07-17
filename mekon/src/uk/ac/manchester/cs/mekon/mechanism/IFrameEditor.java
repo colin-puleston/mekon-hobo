@@ -39,10 +39,19 @@ public interface IFrameEditor {
 	 * Updates the set of concept-level frames representing the
 	 * currently inferred types for the frame.
 	 *
-	 * @param inferredTypes Latest inferred types for frame
+	 * @param updates Latest inferred types for frame
 	 * @return True if inferred types were updated
 	 */
-	public boolean updateInferredTypes(List<CFrame> inferredTypes);
+	public boolean updateInferredTypes(List<CFrame> updates);
+
+	/**
+	 * Updates the set of concept-level frames representing the
+	 * currently suggested types for the frame.
+	 *
+	 * @param updates Latest suggested types for frame
+	 * @return True if suggested types were updated
+	 */
+	public boolean updateSuggestedTypes(List<CFrame> updates);
 
 	/**
 	 * Adds a new slot to the frame, where the slot is created by

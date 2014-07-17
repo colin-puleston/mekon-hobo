@@ -35,7 +35,15 @@ public interface IFrameListener {
 	 * Method invoked after the set of inferred-types for the
 	 * frame has been updated.
 	 *
-	 * @param inferredTypes New inferred-types for frame
+	 * @param updates New inferred-types for frame
 	 */
-	public void onUpdatedInferredTypes(CIdentifieds<CFrame> inferredTypes);
+	public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates);
+
+	/**
+	 * Method invoked after the set of suggested-types for the
+	 * frame has been updated.
+	 *
+	 * @param updates New suggested-types for frame
+	 */
+	public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates);
 }

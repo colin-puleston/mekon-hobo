@@ -50,41 +50,39 @@ public abstract class IClassifier implements IReasoner {
 
 		boolean update() {
 
-			List<CFrame> inferredTypes = getInferredTypes();
+			CModel model = frame.getType().getModel();
+			IClassification classification = classify(frame);
 
-			if (updateInferredTypes(inferredTypes)) {
+			updateSuggesteds(classification.getSuggestedTypes(model));
 
-				updateSlots(inferredTypes);
+			List<CFrame> inferreds = classification.getInferredTypes(model);
 
-				return true;
-			}
-
-			return false;
+			return updateInferreds(inferreds) && updateSlots(inferreds);
 		}
 
-		private boolean updateInferredTypes(List<CFrame> inferredTypes) {
+		private boolean updateInferreds(List<CFrame> updates) {
 
-			return getFrameEditor().updateInferredTypes(inferredTypes);
+			return getFrameEditor().updateInferredTypes(updates);
 		}
 
-		private void updateSlots(List<CFrame> inferredTypes) {
+		private boolean updateSuggesteds(List<CFrame> updates) {
+
+			return getFrameEditor().updateSuggestedTypes(updates);
+		}
+
+		private boolean updateSlots(List<CFrame> inferredTypes) {
 
 			ISlotSpecs specs = new ISlotSpecs(iEditor);
 
 			specs.absorb(frame.getType(), true);
 			specs.absorbAll(inferredTypes, true);
 
-			specs.updateSlots(frame);
+			return specs.updateSlots(frame);
 		}
 
 		private IFrameEditor getFrameEditor() {
 
 			return iEditor.getFrameEditor(frame);
-		}
-
-		private List<CFrame> getInferredTypes() {
-
-			return toCFrames(frame.getType().getModel(), classify(frame));
 		}
 	}
 
@@ -112,24 +110,7 @@ public abstract class IClassifier implements IReasoner {
 	 * instance-level frame.
 	 *
 	 * @param frame Instance-level frame to classify
-	 * @return Identities of all concept-level frames of which
-	 * specified instance-level frame is an instance
+	 * @return Results of classification operation
 	 */
-	protected abstract List<CIdentity> classify(IFrame frame);
-
-	private List<CFrame> toCFrames(CModel model, List<CIdentity> ids) {
-
-		List<CFrame> cFrames = new ArrayList<CFrame>();
-		CIdentifieds<CFrame> modelFrames = model.getFrames();
-
-		for (CIdentity id : ids) {
-
-			if (modelFrames.containsValueFor(id)) {
-
-				cFrames.add(modelFrames.get(id));
-			}
-		}
-
-		return cFrames;
-	}
+	protected abstract IClassification classify(IFrame frame);
 }
