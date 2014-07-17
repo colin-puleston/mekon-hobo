@@ -31,17 +31,23 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class InferredTypesPanel extends JPanel {
+class InstanceTypesPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
 	private CFramesTree modelTree;
+	private boolean inferreds;
 
 	private class PanelUpdater implements IFrameListener {
 
-		public void onUpdatedInferredTypes(CIdentifieds<CFrame> inferredTypes) {
+		public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates) {
 
-			update(inferredTypes);
+			checkUpdate(updates, true);
+		}
+
+		public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates) {
+
+			checkUpdate(updates, false);
 		}
 	}
 
@@ -53,22 +59,29 @@ class InferredTypesPanel extends JPanel {
 		}
 	}
 
-	InferredTypesPanel(CFramesTree modelTree, IFrame frame) {
+	InstanceTypesPanel(
+		CFramesTree modelTree,
+		IFrame frame,
+		boolean inferreds) {
 
 		super(new BorderLayout());
 
 		this.modelTree = modelTree;
+		this.inferreds = inferreds;
 
 		frame.addListener(new PanelUpdater());
 	}
 
-	private void update(CIdentifieds<CFrame> inferredTypes) {
+	private void checkUpdate(CIdentifieds<CFrame> types, boolean inferreds) {
 
-		CFramesTree tree = createTree(inferredTypes);
+		if (inferreds == this.inferreds) {
 
-		tree.addSelectionListener(new ModelTreeUpdater());
+			CFramesTree tree = createTree(types);
 
-		updateDisplay(tree);
+			tree.addSelectionListener(new ModelTreeUpdater());
+
+			updateDisplay(tree);
+		}
 	}
 
 	private void updateDisplay(CFramesTree tree) {
@@ -78,8 +91,8 @@ class InferredTypesPanel extends JPanel {
 		add(new JScrollPane(tree), BorderLayout.CENTER);
 	}
 
-	private CFramesTree createTree(CIdentifieds<CFrame> inferredTypes) {
+	private CFramesTree createTree(CIdentifieds<CFrame> types) {
 
-		return new CFramesTree(inferredTypes.asList(), CFrameVisibility.ALL);
+		return new CFramesTree(types.asList(), CFrameVisibility.ALL);
 	}
 }
