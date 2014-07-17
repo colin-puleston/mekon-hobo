@@ -29,7 +29,9 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
 
 /**
@@ -216,13 +218,21 @@ class OCInstance {
 		description = describeFrame(rootFrame);
 	}
 
-	Set<OWLClass> classify() {
+	IClassification classify() {
 
-		OCMonitor.pollForPreClassify(model, description);
-		Set<OWLClass> allConcepts = getEquivalentsOrSupers();
-		OCMonitor.pollForClassified(model, description, allConcepts);
+		OCMonitor.pollForRequestReceived(model, description);
 
-		return allConcepts;
+		Set<OWLClass> inferreds = getInferredTypes();
+		OCMonitor.pollForTypesInferred(model, inferreds);
+
+		Set<OWLClass> suggesteds = getSuggestedTypes();
+		OCMonitor.pollForTypesSuggested(model, suggesteds);
+
+		OCMonitor.pollForRequestCompleted(model, description);
+
+		return new IClassification(
+						toIdentityList(inferreds),
+						toIdentityList(suggesteds));
 	}
 
 	private OWLClassExpression describeFrame(OCFrame frame) {
@@ -251,7 +261,7 @@ class OCInstance {
 		return dataFactory.getOWLObjectAllValuesFrom(property, getUnion(fillers));
 	}
 
-	private Set<OWLClass> getEquivalentsOrSupers() {
+	private Set<OWLClass> getInferredTypes() {
 
 		if (description instanceof OWLClass) {
 
@@ -259,6 +269,11 @@ class OCInstance {
 		}
 
 		return checkRemoveRootFrameConcept(inferEquivalentsOrSupers());
+	}
+
+	private Set<OWLClass> getSuggestedTypes() {
+
+		return model.getInferredSubs(description, true);
 	}
 
 	private Set<OWLClass> inferEquivalentsOrSupers() {
@@ -299,5 +314,10 @@ class OCInstance {
 	private OWLClass getConcept(IRI iri) {
 
 		return model.getConcepts().get(iri);
+	}
+
+	private List<CIdentity> toIdentityList(Set<OWLClass> classes) {
+
+		return new ArrayList<CIdentity>(OIdentity.createSortedSet(classes));
 	}
 }
