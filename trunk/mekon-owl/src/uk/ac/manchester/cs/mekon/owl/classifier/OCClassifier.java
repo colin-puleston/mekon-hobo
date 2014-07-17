@@ -32,7 +32,6 @@ import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.semantics.*;
 
@@ -190,10 +189,9 @@ public class OCClassifier extends IClassifier {
 	 * reasoner.
 	 *
 	 * @param frame Instance-level frame to classify
-	 * @return Identities of all concept-level frames of which
-	 * specified instance-level frame is an instance
+	 * @return Results of classification operation
 	 */
-	protected List<CIdentity> classify(IFrame frame) {
+	protected IClassification classify(IFrame frame) {
 
 		OCFrame ocFrame = toOCFrame(frame);
 
@@ -212,12 +210,11 @@ public class OCClassifier extends IClassifier {
 	 * classification.
 	 *
 	 * @param frame Instance-level frame to classify
-	 * @return Identities of all concept-level frames of which
-	 * specified instance-level frame is an instance
+	 * @return Results of classification operation
 	 */
-	protected List<CIdentity> classifyPreProcessed(OCFrame frame) {
+	protected IClassification classifyPreProcessed(OCFrame frame) {
 
-		return toIdentityList(new OCInstance(model, frame).classify());
+		return new OCInstance(model, frame).classify();
 	}
 
 	private OCFrame toOCFrame(IFrame frame) {
@@ -228,10 +225,5 @@ public class OCClassifier extends IClassifier {
 	private OCFramesInstance createOCFramesInstance(IFrame frame) {
 
 		return new OCFramesInstance(model, slotSemantics, frame);
-	}
-
-	private List<CIdentity> toIdentityList(Set<OWLClass> classes) {
-
-		return new ArrayList<CIdentity>(OIdentity.createSortedSet(classes));
 	}
 }

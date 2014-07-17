@@ -98,7 +98,7 @@ public class OCLogger extends OCMonitor {
  	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onPreClassify(OModel model, OWLObject request) {
+ 	protected void onRequestReceived(OModel model, OWLObject request) {
 
 		if (showRequests) {
 
@@ -112,19 +112,25 @@ public class OCLogger extends OCMonitor {
  	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onClassified(OModel model, OWLObject request, Set<OWLClass> results) {
+ 	protected void onTypesInferred(OModel model, Set<OWLClass> types) {
+
+		onReasoned(model, types, "Inferred");
+	}
+
+ 	/**
+	 * {@inheritDoc}
+	 */
+ 	protected void onTypesSuggested(OModel model, Set<OWLClass> types) {
+
+		onReasoned(model, types, "Suggested");
+	}
+
+ 	/**
+	 * {@inheritDoc}
+	 */
+ 	protected void onRequestCompleted(OModel model, OWLObject request) {
 
 		actions.stopAction();
-
-		if (showResults) {
-
-			actions.printTitle("Results");
-			actions.printOWLObjects(model, results);
-		}
-
-		printClassificationTimesTitle();
-		actions.printLastActionTime("Sub-Operation");
-		actions.printTotalTime("Running Total");
 	}
 
  	/**
@@ -132,11 +138,24 @@ public class OCLogger extends OCMonitor {
 	 */
  	protected void onStop() {
 
-		printClassificationTimesTitle();
+		printReasoniningTimesTitle();
 		actions.printTotalTime("Operation Total");
 	}
 
- 	private void printClassificationTimesTitle() {
+ 	private void onReasoned(OModel model, Set<OWLClass> types, String typesType) {
+
+		if (showResults) {
+
+			actions.printTitle(typesType + "-Types");
+			actions.printOWLObjects(model, types);
+		}
+
+		printReasoniningTimesTitle();
+		actions.printLastActionTime("Sub-Operation");
+		actions.printTotalTime("Running Total");
+	}
+
+ 	private void printReasoniningTimesTitle() {
 
 		actions.printTitle("Reasoning Time(s)");
 	}

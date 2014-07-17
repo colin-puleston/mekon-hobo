@@ -62,40 +62,69 @@ public abstract class OCMonitor {
 		monitors.remove(monitor);
 	}
 
- 	static void pollForPreClassify(OModel model, OWLObject request) {
+ 	static void pollForRequestReceived(OModel model, OWLObject request) {
 
 		for (OCMonitor monitor : monitors) {
 
-			monitor.onPreClassify(model, request);
+			monitor.onRequestReceived(model, request);
 		}
 	}
 
- 	static void pollForClassified(OModel model, OWLObject request, Set<OWLClass> results) {
+ 	static void pollForTypesInferred(OModel model, Set<OWLClass> types) {
 
 		for (OCMonitor monitor : monitors) {
 
-			monitor.onClassified(model, request, results);
+			monitor.onTypesInferred(model, types);
+		}
+	}
+
+ 	static void pollForTypesSuggested(OModel model, Set<OWLClass> types) {
+
+		for (OCMonitor monitor : monitors) {
+
+			monitor.onTypesSuggested(model, types);
+		}
+	}
+
+ 	static void pollForRequestCompleted(OModel model, OWLObject request) {
+
+		for (OCMonitor monitor : monitors) {
+
+			monitor.onRequestCompleted(model, request);
 		}
 	}
 
  	/**
-	 * Method invoked immediately before classification of specific
-	 * request.
+	 * Method invoked when a classification request has been received.
 	 *
 	 * @param model Relevant model
 	 * @param request Request about to be classified
 	 */
- 	protected abstract void onPreClassify(OModel model, OWLObject request);
+ 	protected abstract void onRequestReceived(OModel model, OWLObject request);
 
  	/**
-	 * Method invoked immediately after classification of specific
-	 * request.
+	 * Method invoked immediately after operation to obtain inferred-types
+	 *
+	 * @param model Relevant model
+	 * @param types Inferred-types
+	 */
+ 	protected abstract void onTypesInferred(OModel model, Set<OWLClass> types);
+
+ 	/**
+	 * Method invoked immediately after operation to obtain suggested-types
+	 *
+	 * @param model Relevant model
+	 * @param types Suggested-types
+	 */
+ 	protected abstract void onTypesSuggested(OModel model, Set<OWLClass> types);
+
+ 	/**
+	 * Method invoked immediately after specific request has been dealt with.
 	 *
 	 * @param model Relevant model
 	 * @param request Request that was classified
-	 * @param results Results of classification
 	 */
- 	protected abstract void onClassified(OModel model, OWLObject request, Set<OWLClass> results);
+ 	protected abstract void onRequestCompleted(OModel model, OWLObject request);
 
  	/**
 	 * Method invoked when monitoring is stopped.
