@@ -30,6 +30,8 @@ import javax.swing.tree.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
+import uk.ac.manchester.cs.mekon.gui.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -42,6 +44,37 @@ class CFramesTree extends CTree {
 						= new KListMap<CFrame, CFrameNode>();
 
 	private SelectionRelay selectionRelay = new SelectionRelay();
+
+	private class DummyRootNode extends GNode {
+
+		private List<CFrame> rootFrames;
+
+		protected void addInitialChildren() {
+
+			for (CFrame rootFrame : rootFrames) {
+
+				addSubRootNode(new CFrameNode(CFramesTree.this, rootFrame));
+			}
+		}
+
+		protected GCellDisplay getDisplay() {
+
+			return GCellDisplay.NO_DISPLAY;
+		}
+
+		DummyRootNode(List<CFrame> rootFrames) {
+
+			super(CFramesTree.this);
+
+			this.rootFrames = rootFrames;
+		}
+
+		private void addSubRootNode(CFrameNode subRootNode) {
+
+			addChild(subRootNode);
+			addFrameNode(subRootNode);
+		}
+	}
 
 	private class SelectionRelay extends CFrameSelectionRelay {
 
@@ -58,15 +91,16 @@ class CFramesTree extends CTree {
 
 	CFramesTree(CFrame rootFrame, CFrameVisibility visibility, boolean showRoot) {
 
-		this.visibility = visibility;
-
-		if (!showRoot) {
-
-			setRootVisible(false);
-			setShowsRootHandles(true);
-		}
+		this(visibility, showRoot);
 
 		addFrameNode(initialise(rootFrame));
+	}
+
+	CFramesTree(List<CFrame> rootFrames, CFrameVisibility visibility) {
+
+		this(visibility, false);
+
+		initialise(new DummyRootNode(rootFrames));
 	}
 
 	Boolean leafCFrameNodeFastCheck(CFrameNode node) {
@@ -95,6 +129,17 @@ class CFramesTree extends CTree {
 	CFrameSelectionRelay getSelectionRelay() {
 
 		return selectionRelay;
+	}
+
+	private CFramesTree(CFrameVisibility visibility, boolean showRoot) {
+
+		this.visibility = visibility;
+
+		if (!showRoot) {
+
+			setRootVisible(false);
+			setShowsRootHandles(true);
+		}
 	}
 
 	private void addFrameNode(CFrameNode node) {

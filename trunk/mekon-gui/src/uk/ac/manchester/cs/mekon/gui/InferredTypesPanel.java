@@ -23,18 +23,21 @@
  */
 package uk.ac.manchester.cs.mekon.gui;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import java.awt.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class InferredTypesList extends GList<CFrame> {
+class InferredTypesPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	private class Updater implements IFrameListener {
+	private CFramesTree modelTree;
+
+	private class PanelUpdater implements IFrameListener {
 
 		public void onUpdatedInferredTypes(CIdentifieds<CFrame> inferredTypes) {
 
@@ -42,28 +45,41 @@ class InferredTypesList extends GList<CFrame> {
 		}
 	}
 
-	InferredTypesList(IFrame frame) {
+	private class ModelTreeUpdater extends CFrameSelectionListener {
 
-		frame.addListener(new Updater());
+		protected void onSelected(CFrame frame) {
+
+			modelTree.select(frame);
+		}
+	}
+
+	InferredTypesPanel(CFramesTree modelTree, IFrame frame) {
+
+		super(new BorderLayout());
+
+		this.modelTree = modelTree;
+
+		frame.addListener(new PanelUpdater());
 	}
 
 	private void update(CIdentifieds<CFrame> inferredTypes) {
 
-		clearList();
+		CFramesTree tree = createTree(inferredTypes);
 
-		for (CFrame inferredType : inferredTypes.asList()) {
+		tree.addSelectionListener(new ModelTreeUpdater());
 
-			add(inferredType);
-		}
+		updateDisplay(tree);
 	}
 
-	private void add(CFrame inferredType) {
+	private void updateDisplay(CFramesTree tree) {
 
-		addEntity(inferredType, getTypeDisplay(inferredType));
+		removeAll();
+
+		add(new JScrollPane(tree), BorderLayout.CENTER);
 	}
 
-	private GCellDisplay getTypeDisplay(CFrame inferredType) {
+	private CFramesTree createTree(CIdentifieds<CFrame> inferredTypes) {
 
-		return EntityDisplays.get().get(inferredType, false);
+		return new CFramesTree(inferredTypes.asList(), CFrameVisibility.ALL);
 	}
 }
