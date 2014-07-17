@@ -58,12 +58,14 @@ class InstantiationFrame extends GFrame {
 		return frame.queryInstance() ? QUERY_LABEL : CONCRETE_LABEL;
 	}
 
+	private CFramesTree modelTree;
 	private IFrame frame;
 
-	InstantiationFrame(IFrame frame) {
+	InstantiationFrame(CFramesTree modelTree, IFrame frame) {
 
 		super(getTitle(frame), WIDTH, HEIGHT);
 
+		this.modelTree = modelTree;
 		this.frame = frame;
 	}
 
@@ -89,6 +91,6 @@ class InstantiationFrame extends GFrame {
 
 	private JComponent createInferredTypesComponent() {
 
-		return new JScrollPane(new InferredTypesList(frame));
+		return new JScrollPane(new InferredTypesPanel(modelTree, frame));
 	}
 }

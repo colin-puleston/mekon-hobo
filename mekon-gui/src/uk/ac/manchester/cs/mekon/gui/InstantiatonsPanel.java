@@ -40,6 +40,7 @@ class InstantiatonsPanel extends JPanel {
 	static private final String CONCRETE_BUTTON_LABEL = "Instantiate";
 	static private final String QUERY_BUTTON_LABEL = "Create Query";
 
+	private CFramesTree modelTree;
 	private CFrame frame;
 
 	private abstract class InstantiateButton extends GButton {
@@ -48,7 +49,7 @@ class InstantiatonsPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			new InstantiationFrame(instantiate()).display();
+			new InstantiationFrame(modelTree, instantiate()).display();
 		}
 
 		InstantiateButton(String label) {
@@ -101,10 +102,11 @@ class InstantiatonsPanel extends JPanel {
 		}
 	}
 
-	InstantiatonsPanel(CFrame frame) {
+	InstantiatonsPanel(CFramesTree modelTree, CFrame frame) {
 
 		super(new FlowLayout());
 
+		this.modelTree = modelTree;
 		this.frame = frame;
 
 		add(new InstantiateConcreteButton());

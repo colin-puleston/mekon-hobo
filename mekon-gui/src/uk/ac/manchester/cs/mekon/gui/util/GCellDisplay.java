@@ -32,6 +32,8 @@ import javax.swing.*;
  */
 public class GCellDisplay implements Comparable<GCellDisplay> {
 
+	static public final GCellDisplay NO_DISPLAY = new GCellDisplay("");
+
 	private String label;
 	private Icon icon;
 	private int fontStyleId;
@@ -39,6 +41,11 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 	public GCellDisplay(GCellDisplay template) {
 
 		this(template.label, template.icon, template.fontStyleId);
+	}
+
+	public GCellDisplay(String label) {
+
+		this(label, null);
 	}
 
 	public GCellDisplay(String label, Icon icon) {
