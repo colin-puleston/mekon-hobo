@@ -101,7 +101,7 @@ class EntityIcons implements EntityIconConstants {
 
 		if (slot.active()) {
 
-			return slot.derivedValues() ? editBlockedSlots : defaultSlots;
+			return slot.dependent() ? editBlockedSlots : defaultSlots;
 		}
 
 		return inactiveSlots;
