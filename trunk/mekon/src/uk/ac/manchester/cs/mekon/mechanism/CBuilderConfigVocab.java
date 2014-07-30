@@ -33,7 +33,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 public interface CBuilderConfigVocab {
 
 	static public final String MODEL_SECTION_ID = "ModelSection";
-	static public final String INSTANCE_OPTIONS_ID = "InstanceUpdateOptions";
+	static public final String UPDATE_OPS_ID = "InstanceUpdateOperations";
 
 	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
 	static public final String SECTION_BLDER_CLASS_ATTR = "builder";

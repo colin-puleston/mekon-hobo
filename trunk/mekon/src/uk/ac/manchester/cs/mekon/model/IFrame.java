@@ -126,9 +126,9 @@ public class IFrame implements IEntity, IValue {
 
 	private class Editor implements IFrameEditor {
 
-		public boolean updateInferredTypes(List<CFrame> updatedInferredTypes) {
+		public boolean updateInferredTypes(List<CFrame> updateds) {
 
-			if (inferredTypes.update(updatedInferredTypes)) {
+			if (inferredTypes.update(updateds)) {
 
 				pollListenersForUpdatedInferredTypes();
 
@@ -138,9 +138,9 @@ public class IFrame implements IEntity, IValue {
 			return false;
 		}
 
-		public boolean updateSuggestedTypes(List<CFrame> updatedSuggestedTypes) {
+		public boolean updateSuggestedTypes(List<CFrame> updateds) {
 
-			if (suggestedTypes.update(updatedSuggestedTypes)) {
+			if (suggestedTypes.update(updateds)) {
 
 				pollListenersForUpdatedSuggestedTypes();
 

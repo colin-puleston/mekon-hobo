@@ -63,17 +63,16 @@ public abstract class IClassifier implements IReasoner {
 
 		void update() {
 
-			CModel model = frame.getType().getModel();
 			IClassification classification = classify(frame, classifierOps);
 
 			if (classifierOps.inferreds()) {
 
-				updateInferredsAndSlots(classification.getInferredTypes(model));
+				updateFromInferreds(toCFrames(classification.getInferredTypes()));
 			}
 
 			if (classifierOps.suggesteds()) {
 
-				updateSuggesteds(classification.getSuggestedTypes(model));
+				updateSuggesteds(toCFrames(classification.getSuggestedTypes()));
 			}
 		}
 
@@ -85,11 +84,11 @@ public abstract class IClassifier implements IReasoner {
 			return new IClassifierOps(inferreds, suggesteds);
 		}
 
-		private void updateInferredsAndSlots(List<CFrame> inferredsUpdates) {
+		private void updateFromInferreds(List<CFrame> inferreds) {
 
-			if (!doInferreds || updateInferreds(inferredsUpdates)) {
+			if (!doInferreds || updateInferreds(inferreds)) {
 
-				updateSlotsAndValues(inferredsUpdates);
+				updateSlotsAndValues(inferreds);
 			}
 		}
 
@@ -135,6 +134,16 @@ public abstract class IClassifier implements IReasoner {
 
 			return iEditor.getFrameEditor(frame);
 		}
+
+		private List<CFrame> toCFrames(List<CIdentity> ids) {
+
+			return getCModel().getFrames().getForIdentities(ids);
+		}
+
+		private CModel getCModel() {
+
+			return frame.getType().getModel();
+		}
 	}
 
 	/**
@@ -146,6 +155,7 @@ public abstract class IClassifier implements IReasoner {
 
 		specs.absorb(frame.getType(), true);
 		specs.initialiseSlots(frame);
+		specs.updateSlotValues(frame);
 	}
 
 	/**

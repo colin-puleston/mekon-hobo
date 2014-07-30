@@ -76,7 +76,7 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	private void setUpdateOpEnabling(CBuilder builder) {
 
-		KConfigNode optsNode = rootNode.getChild(INSTANCE_OPTIONS_ID);
+		KConfigNode optsNode = rootNode.getChild(UPDATE_OPS_ID);
 
 		for (String attrName : updateOpsByAttr.keySet()) {
 

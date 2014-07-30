@@ -41,6 +41,7 @@ class DefaultIReasoner implements IReasoner {
 
 		specs.absorb(frame.getType(), true);
 		specs.initialiseSlots(frame);
+		specs.updateSlotValues(frame);
 	}
 
 	public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {

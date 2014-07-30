@@ -85,6 +85,26 @@ public abstract class FIdentifiables<V> extends KKeyedList<String, V> {
 	}
 
 	/**
+	 * Retrieves all values with the specified identities.
+	 *
+	 * @param identities Keys for which values are required
+	 * @return Required values
+	 * @throws KAccessException If list does not contain value for
+	 * any of the specified identities
+	 */
+	public List<V> getForIdentities(List<CIdentity> identities) {
+
+		List<V> values = new ArrayList<V>();
+
+		for (CIdentity identity : identities) {
+
+			values.add(get(identity));
+		}
+
+		return values;
+	}
+
+	/**
 	 * Constructor.
 	 *
 	 */
