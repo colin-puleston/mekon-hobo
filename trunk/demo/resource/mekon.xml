@@ -3,6 +3,16 @@
 <HOBOModel queriesEnabled="TRUE">
 
 	<!--
+		Specification of required types of reasoning-related
+		updates to instance-level frames
+	-->
+	<InstanceUpdateOptions
+		inferredTypes="TRUE"
+		suggestedTypes="TRUE"
+		slots="TRUE"
+		slotValues="TRUE"/>
+
+	<!--
 		Specification of Object Model - will load all classes
 		that implement the DObject interface from specified
 		package and any sub-packages.
