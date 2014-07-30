@@ -218,21 +218,32 @@ class OCInstance {
 		description = describeFrame(rootFrame);
 	}
 
-	IClassification classify() {
+	IClassification classify(IClassifierOps ops) {
+
+		List<CIdentity> inferredIds = new ArrayList<CIdentity>();
+		List<CIdentity> suggestedIds = new ArrayList<CIdentity>();
 
 		OCMonitor.pollForRequestReceived(model, description);
 
-		Set<OWLClass> inferreds = getInferredTypes();
-		OCMonitor.pollForTypesInferred(model, inferreds);
+		if (ops.inferreds()) {
 
-		Set<OWLClass> suggesteds = getSuggestedTypes();
-		OCMonitor.pollForTypesSuggested(model, suggesteds);
+			Set<OWLClass> inferreds = getInferredTypes();
+
+			OCMonitor.pollForTypesInferred(model, inferreds);
+			inferredIds.addAll(toIdentityList(inferreds));
+		}
+
+		if (ops.suggesteds()) {
+
+			Set<OWLClass> suggesteds = getSuggestedTypes();
+
+			OCMonitor.pollForTypesSuggested(model, suggesteds);
+			suggestedIds.addAll(toIdentityList(suggesteds));
+		}
 
 		OCMonitor.pollForRequestCompleted(model, description);
 
-		return new IClassification(
-						toIdentityList(inferreds),
-						toIdentityList(suggesteds));
+		return new IClassification(inferredIds, suggestedIds);
 	}
 
 	private OWLClassExpression describeFrame(OCFrame frame) {

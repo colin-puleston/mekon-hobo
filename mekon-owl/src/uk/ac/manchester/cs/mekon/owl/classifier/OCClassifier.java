@@ -189,9 +189,10 @@ public class OCClassifier extends IClassifier {
 	 * reasoner.
 	 *
 	 * @param frame Instance-level frame to classify
-	 * @return Results of classification operation
+	 * @param ops Types of classification operations to be performed
+	 * @return Results of classification operations
 	 */
-	protected IClassification classify(IFrame frame) {
+	protected IClassification classify(IFrame frame, IClassifierOps ops) {
 
 		OCFrame ocFrame = toOCFrame(frame);
 
@@ -200,7 +201,7 @@ public class OCClassifier extends IClassifier {
 			p.process(model, ocFrame);
 		}
 
-		return classifyPreProcessed(ocFrame);
+		return classifyPreProcessed(ocFrame, ops);
 	}
 
 	/**
@@ -210,11 +211,12 @@ public class OCClassifier extends IClassifier {
 	 * classification.
 	 *
 	 * @param frame Instance-level frame to classify
-	 * @return Results of classification operation
+	 * @param ops Types of classification operations to be performed
+	 * @return Results of classification operations
 	 */
-	protected IClassification classifyPreProcessed(OCFrame frame) {
+	protected IClassification classifyPreProcessed(OCFrame frame, IClassifierOps ops) {
 
-		return new OCInstance(model, frame).classify();
+		return new OCInstance(model, frame).classify(ops);
 	}
 
 	private OCFrame toOCFrame(IFrame frame) {
