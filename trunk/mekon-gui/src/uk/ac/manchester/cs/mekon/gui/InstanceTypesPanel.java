@@ -49,6 +49,12 @@ class InstanceTypesPanel extends JPanel {
 
 			checkUpdate(updates, false);
 		}
+
+		public void onSlotAdded(ISlot slot) {
+		}
+
+		public void onSlotRemoved(ISlot slot) {
+		}
 	}
 
 	private class ModelTreeUpdater extends CFrameSelectionListener {
