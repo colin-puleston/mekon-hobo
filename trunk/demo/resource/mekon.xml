@@ -3,10 +3,10 @@
 <HOBOModel queriesEnabled="TRUE">
 
 	<!--
-		Specification of required types of reasoning-related
-		updates to instance-level frames
+		Specification of types of reasoning-related update
+		operations to be performed on instance-level frames
 	-->
-	<InstanceUpdateOptions
+	<InstanceUpdateOperations
 		inferredTypes="TRUE"
 		suggestedTypes="TRUE"
 		slots="TRUE"
