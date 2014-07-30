@@ -70,58 +70,41 @@ class ISlotSpec {
 		}
 	}
 
-	boolean chekAddSlot(IFrame container) {
+	void checkAddSlot(IFrame container) {
 
 		CValue<?> valueType = getValueTypeOrNull();
 
-		if (valueType == null) {
+		if (valueType != null) {
 
-			return false;
+			addSlot(container, valueType);
 		}
-
-		addSlot(container, valueType);
-
-		return true;
 	}
 
-	boolean checkUpdateSlot(ISlot slot) {
+	void updateOrRemoveSlot(ISlot slot) {
 
 		CValue<?> valueType = getValueTypeOrNull();
 
-		return valueType != null
-					? updateSlot(slot, valueType)
-					: removeSlot(slot);
+		if (valueType != null) {
+
+			updateSlot(slot, valueType);
+		}
+		else {
+
+			removeSlot(slot);
+		}
+	}
+
+	void checkUpdateSlotValues(ISlot slot) {
+
+		if (!slot.queryInstance()) {
+
+			getSlotEditor(slot).setFixedValues(fixedValues);
+		}
 	}
 
 	CProperty getProperty() {
 
 		return property;
-	}
-
-	private void addSlot(IFrame container, CValue<?> valueType) {
-
-		IFrameEditor contEd = getFrameEditor(container);
-		ISlot slot = contEd.addSlot(property, source, cardinality, valueType);
-
-		setAttributesAndFixedValues(slot);
-	}
-
-	private boolean updateSlot(ISlot slot, CValue<?> valueType) {
-
-		ISlotValues slotValues = slot.getValues();
-		List<IValue> oldValues = slotValues.asList();
-
-		getSlotEditor(slot).setValueType(valueType);
-		setAttributesAndFixedValues(slot);
-
-		return !slotValues.asList().equals(oldValues);
-	}
-
-	private boolean removeSlot(ISlot slot) {
-
-		getFrameEditor(slot.getContainer()).removeSlot(slot);
-
-		return !slot.getValues().isEmpty();
 	}
 
 	private void absorbValueType(CValue<?> valueType) {
@@ -132,17 +115,40 @@ class ISlotSpec {
 		}
 	}
 
-	private void setAttributesAndFixedValues(ISlot slot) {
+	private void addSlot(IFrame container,CValue<?> valueType) {
+
+		ISlot slot = addRawSlot(container, valueType);
+
+		updateSlotAttributes(getSlotEditor(slot));
+	}
+
+	private void updateSlot(ISlot slot, CValue<?> valueType) {
 
 		ISlotEditor slotEd = getSlotEditor(slot);
 
+		slotEd.setValueType(valueType);
+		updateSlotAttributes(slotEd);
+	}
+
+	private void updateSlotAttributes(ISlotEditor slotEd) {
+
 		slotEd.setActive(active);
 		slotEd.setDerivedValues(derivedValues);
+	}
 
-		if (!slot.queryInstance()) {
+	private ISlot addRawSlot(IFrame container, CValue<?> valueType) {
 
-			slotEd.setFixedValues(fixedValues);
-		}
+		return getFrameEditor(container)
+					.addSlot(
+						property,
+						source,
+						cardinality,
+						valueType);
+	}
+
+	private void removeSlot(ISlot slot) {
+
+		getFrameEditor(slot.getContainer()).removeSlot(slot);
 	}
 
 	private CValue<?> getValueTypeOrNull() {

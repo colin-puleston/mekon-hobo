@@ -213,6 +213,12 @@ public abstract class ISlotValues extends KList<IValue> {
 		}
 	}
 
+	void clearAllFixedAndAsserteds() {
+
+		fixedValues.clear();
+		clear();
+	}
+
 	boolean update(Collection<? extends IValue> values) {
 
 		values = getMostSpecifics(values);
@@ -316,20 +322,9 @@ public abstract class ISlotValues extends KList<IValue> {
 
 		for (IValue value : new ArrayList<IValue>(values)) {
 
-			if (invalidatedValue(value)) {
+			if (!validTypeValue(value)) {
 
 				values.remove(value);
-			}
-		}
-	}
-
-	private void removeInvalidFixeds() {
-
-		for (IValue fixed : getFixedValues()) {
-
-			if (invalidatedValue(fixed)) {
-
-				fixedValues.remove(fixed);
 			}
 		}
 	}
@@ -405,11 +400,6 @@ public abstract class ISlotValues extends KList<IValue> {
 		}
 
 		return false;
-	}
-
-	private boolean invalidatedValue(IValue value) {
-
-		return !validTypeValue(value);
 	}
 
 	private boolean validTypeValue(IValue value) {

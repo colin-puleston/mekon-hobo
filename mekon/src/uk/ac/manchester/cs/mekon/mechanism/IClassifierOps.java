@@ -22,42 +22,43 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.mechanism;
 
 /**
- * Listener for dynamic operations on a {@link IFrame} object.
+ * Specifies the type(s) of classification operations required.
  *
  * @author Colin Puleston
  */
-public interface IFrameListener {
+public class IClassifierOps {
+
+	private boolean inferreds;
+	private boolean suggesteds;
 
 	/**
-	 * Method invoked after the set of inferred-types for the
-	 * frame has been updated.
+	 * True if a classification operation to retrieve the
+	 * inferred-types is required.
 	 *
-	 * @param updates New inferred-types for frame
+	 * @return True if inferred-typres required
 	 */
-	public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates);
+	public boolean inferreds() {
+
+		return inferreds;
+	}
 
 	/**
-	 * Method invoked after the set of suggested-types for the
-	 * frame has been updated.
+	 * True if a classification operation to retrieve the
+	 * suggested-types is required.
 	 *
-	 * @param updates New suggested-types for frame
+	 * @return True if suggested-typres required
 	 */
-	public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates);
+	public boolean suggesteds() {
 
-	/**
-	 * Method invoked after a slot has been added to the frame.
-	 *
-	 * @param slot Added slot
-	 */
-	public void onSlotAdded(ISlot slot);
+		return suggesteds;
+	}
 
-	/**
-	 * Method invoked after a slot has been removed from the frame.
-	 *
-	 * @param slot Removed slot
-	 */
-	public void onSlotRemoved(ISlot slot);
+	IClassifierOps(boolean inferreds, boolean suggesteds) {
+
+		this.inferreds = inferreds;
+		this.suggesteds = suggesteds;
+	}
 }

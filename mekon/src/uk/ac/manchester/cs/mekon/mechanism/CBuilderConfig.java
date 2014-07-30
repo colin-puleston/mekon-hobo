@@ -24,12 +24,36 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
  */
 class CBuilderConfig implements CBuilderConfigVocab {
+
+	static private final Map<String, IUpdateType> updateTypesByAttr
+									= new HashMap<String, IUpdateType>();
+
+	static {
+
+		updateTypesByAttr.put(
+			UPDATE_INFERREDS_ATTR,
+			IUpdateType.INFERRED_TYPES);
+
+		updateTypesByAttr.put(
+			UPDATE_SUGGESTEDS_ATTR,
+			IUpdateType.SUGGESTED_TYPES);
+
+		updateTypesByAttr.put(
+			UPDATE_SLOTS_ATTR,
+			IUpdateType.SLOTS);
+
+		updateTypesByAttr.put(
+			UPDATE_SLOT_VALUES_ATTR,
+			IUpdateType.SLOT_VALUES);
+	}
 
 	private KConfigNode rootNode;
 
@@ -41,12 +65,26 @@ class CBuilderConfig implements CBuilderConfigVocab {
 	void configure(CBuilder builder) {
 
 		setQueriesEnabled(builder);
+		setUpdateStatuses(builder);
 		loadSectionBuilders(builder);
 	}
 
 	private void setQueriesEnabled(CBuilder builder) {
 
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
+	}
+
+	private void setUpdateStatuses(CBuilder builder) {
+
+		KConfigNode optsNode = rootNode.getChild(INSTANCE_OPTIONS_ID);
+
+		for (String attrName : updateTypesByAttr.keySet()) {
+
+			IUpdateType updateType = updateTypesByAttr.get(attrName);
+			Boolean on = optsNode.getBoolean(attrName, true);
+
+			builder.setUpdateStatus(updateType, on);
+		}
 	}
 
 	private void loadSectionBuilders(CBuilder builder) {

@@ -42,22 +42,55 @@ public abstract class IClassifier implements IReasoner {
 		private IEditor iEditor;
 		private IFrame frame;
 
-		Updater(IEditor iEditor, IFrame frame) {
+		private boolean doInferreds;
+		private boolean doSuggesteds;
+		private boolean doSlots;
+		private boolean doSlotValues;
+
+		private IClassifierOps classifierOps;
+
+		Updater(IEditor iEditor, IFrame frame, Set<IUpdateType> updateTypes) {
 
 			this.iEditor = iEditor;
 			this.frame = frame;
+
+			doInferreds = updateTypes.contains(IUpdateType.INFERRED_TYPES);
+			doSlots = updateTypes.contains(IUpdateType.SLOTS);
+			doSlotValues = updateTypes.contains(IUpdateType.SLOT_VALUES);
+
+			classifierOps = getClassifierOps(updateTypes);
 		}
 
-		boolean update() {
+		void update() {
 
 			CModel model = frame.getType().getModel();
-			IClassification classification = classify(frame);
+			IClassification classification = classify(frame, classifierOps);
 
-			updateSuggesteds(classification.getSuggestedTypes(model));
+			if (classifierOps.inferreds()) {
 
-			List<CFrame> inferreds = classification.getInferredTypes(model);
+				updateInferredsAndSlots(classification.getInferredTypes(model));
+			}
 
-			return updateInferreds(inferreds) && updateSlots(inferreds);
+			if (classifierOps.suggesteds()) {
+
+				updateSuggesteds(classification.getSuggestedTypes(model));
+			}
+		}
+
+		private IClassifierOps getClassifierOps(Set<IUpdateType> updateTypes) {
+
+			boolean inferreds = doInferreds || doSlots || doSlotValues;
+			boolean suggesteds = updateTypes.contains(IUpdateType.SUGGESTED_TYPES);
+
+			return new IClassifierOps(inferreds, suggesteds);
+		}
+
+		private void updateInferredsAndSlots(List<CFrame> inferredsUpdates) {
+
+			if (!doInferreds || updateInferreds(inferredsUpdates)) {
+
+				updateSlotsAndValues(inferredsUpdates);
+			}
 		}
 
 		private boolean updateInferreds(List<CFrame> updates) {
@@ -65,19 +98,37 @@ public abstract class IClassifier implements IReasoner {
 			return getFrameEditor().updateInferredTypes(updates);
 		}
 
-		private boolean updateSuggesteds(List<CFrame> updates) {
+		private void updateSuggesteds(List<CFrame> updates) {
 
-			return getFrameEditor().updateSuggestedTypes(updates);
+			getFrameEditor().updateSuggestedTypes(updates);
 		}
 
-		private boolean updateSlots(List<CFrame> inferredTypes) {
+		private void updateSlotsAndValues(List<CFrame> inferredsUpdates) {
+
+			if (doSlots || doSlotValues) {
+
+				ISlotSpecs specs = createSlotSpecs(inferredsUpdates);
+
+				if (doSlots) {
+
+					specs.updateSlots(frame);
+				}
+
+				if (doSlotValues) {
+
+					specs.updateSlotValues(frame);
+				}
+			}
+		}
+
+		private ISlotSpecs createSlotSpecs(List<CFrame> inferredsUpdates) {
 
 			ISlotSpecs specs = new ISlotSpecs(iEditor);
 
 			specs.absorb(frame.getType(), true);
-			specs.absorbAll(inferredTypes, true);
+			specs.absorbAll(inferredsUpdates, true);
 
-			return specs.updateSlots(frame);
+			return specs;
 		}
 
 		private IFrameEditor getFrameEditor() {
@@ -100,9 +151,12 @@ public abstract class IClassifier implements IReasoner {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean updateFrame(IEditor iEditor, IFrame frame) {
+	public void updateFrame(
+					IEditor iEditor,
+					IFrame frame,
+					Set<IUpdateType> updateTypes) {
 
-		return new Updater(iEditor, frame).update();
+		new Updater(iEditor, frame, updateTypes).update();
 	}
 
 	/**
@@ -110,7 +164,8 @@ public abstract class IClassifier implements IReasoner {
 	 * instance-level frame.
 	 *
 	 * @param frame Instance-level frame to classify
-	 * @return Results of classification operation
+	 * @param ops Types of classification operations to be performed
+	 * @return Results of classification operations
 	 */
-	protected abstract IClassification classify(IFrame frame);
+	protected abstract IClassification classify(IFrame frame, IClassifierOps ops);
 }

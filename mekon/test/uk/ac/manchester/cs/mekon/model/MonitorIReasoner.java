@@ -41,11 +41,12 @@ class MonitorIReasoner implements IReasoner {
 		initialiseds.add(frame);
 	}
 
-	public boolean updateFrame(IEditor iEditor, IFrame frame) {
+	public void updateFrame(
+					IEditor iEditor,
+					IFrame frame,
+					Set<IUpdateType> updateTypes) {
 
 		updateds.add(frame);
-
-		return false;
 	}
 
 	void resetRegisters() {
