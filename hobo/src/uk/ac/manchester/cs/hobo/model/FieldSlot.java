@@ -41,7 +41,7 @@ class FieldSlot {
 	private Class<? extends DObject> containerClass = null;
 	private String fieldName = null;
 	private String slotLabel = null;
-	private Boolean derivedValues = null;
+	private Boolean dependent = null;
 
 	private class AttributeResolver {
 
@@ -54,7 +54,7 @@ class FieldSlot {
 
 		void resolve() {
 
-			if (fieldName == null || derivedValues == null) {
+			if (fieldName == null || dependent == null) {
 
 				checkClassVariables();
 				checkInitialised();
@@ -65,9 +65,9 @@ class FieldSlot {
 				slotLabel = DIdentity.createLabel(fieldName);
 			}
 
-			if (derivedValues == null) {
+			if (dependent == null) {
 
-				derivedValues = true;
+				dependent = true;
 			}
 		}
 
@@ -148,9 +148,9 @@ class FieldSlot {
 					fieldName = variable.getName();
 				}
 
-				if (derivedValues == null) {
+				if (dependent == null) {
 
-					derivedValues = varIsViewer;
+					dependent = varIsViewer;
 				}
 
 				return true;
@@ -220,9 +220,9 @@ class FieldSlot {
 		this.slotLabel = slotLabel;
 	}
 
-	void setDerivedValues(boolean derivedValues) {
+	void setDependent(boolean dependent) {
 
-		this.derivedValues = derivedValues;
+		this.dependent = dependent;
 	}
 
 	DField<?> getField() {
@@ -240,9 +240,9 @@ class FieldSlot {
 		return slotLabel;
 	}
 
-	Boolean derivedValues() {
+	Boolean dependent() {
 
-		return derivedValues;
+		return dependent;
 	}
 
 	DBinding getBinding() {
