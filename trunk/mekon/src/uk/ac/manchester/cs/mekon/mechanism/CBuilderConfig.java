@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.config.*;
 class CBuilderConfig implements CBuilderConfigVocab {
 
 	static private final Map<String, IUpdateOp> updateOpsByAttr
-									= new HashMap<String, IUpdateOp>();
+								= new HashMap<String, IUpdateOp>();
 
 	static {
 
@@ -64,26 +64,26 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	void configure(CBuilder builder) {
 
-		setQueriesEnabled(builder);
-		setUpdateStatuses(builder);
+		setQueriesEnabling(builder);
+		setUpdateOpEnabling(builder);
 		loadSectionBuilders(builder);
 	}
 
-	private void setQueriesEnabled(CBuilder builder) {
+	private void setQueriesEnabling(CBuilder builder) {
 
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
 	}
 
-	private void setUpdateStatuses(CBuilder builder) {
+	private void setUpdateOpEnabling(CBuilder builder) {
 
 		KConfigNode optsNode = rootNode.getChild(INSTANCE_OPTIONS_ID);
 
 		for (String attrName : updateOpsByAttr.keySet()) {
 
-			IUpdateOp updateOp = updateOpsByAttr.get(attrName);
-			Boolean on = optsNode.getBoolean(attrName, true);
+			IUpdateOp op = updateOpsByAttr.get(attrName);
+			Boolean enabled = optsNode.getBoolean(attrName, true);
 
-			builder.setUpdateStatus(updateOp, on);
+			builder.setUpdateOpEnabled(op, enabled);
 		}
 	}
 
