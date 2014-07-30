@@ -42,11 +42,10 @@ public class IClassification {
 	/**
 	 * Constructor.
 	 *
-	 * @param inferredTypes Identities of all concept-level frames
-	 * of which the instance-level frame is a direct instance
-	 * @param suggestedTypes Identities of all concept-level frames
-	 * that are direct children of a concept-level version of the
-	 * instance-level frame
+	 * @param inferredTypes Identities of all relevant frames (see
+	 * {@link #getInferredTypes}
+	 * @param suggestedTypes Identities of all relevant frames (see
+	 * {@link #getSuggestedTypes}
 	 */
 	public IClassification(
 			List<CIdentity> inferredTypes,
@@ -56,29 +55,26 @@ public class IClassification {
 		this.suggestedTypes = suggestedTypes;
 	}
 
-	List<CFrame> getInferredTypes(CModel model) {
+	/**
+	 * Provides the identities of all concept-level frames of which
+	 * the instance-level frame is a direct instance.
+	 *
+	 * @return Identities of all relevant frames
+	 */
+	public List<CIdentity> getInferredTypes() {
 
-		return toCFrames(model, inferredTypes);
+		return inferredTypes;
 	}
 
-	List<CFrame> getSuggestedTypes(CModel model) {
+	/**
+	 * Provides the identities of all concept-level frames that are
+	 * direct children of a concept-level version of the instance-level
+	 * frame.
+	 *
+	 * @return Identities of all relevant frames
+	 */
+	public List<CIdentity> getSuggestedTypes() {
 
-		return toCFrames(model, suggestedTypes);
-	}
-
-	private List<CFrame> toCFrames(CModel model, List<CIdentity> ids) {
-
-		List<CFrame> cFrames = new ArrayList<CFrame>();
-		CIdentifieds<CFrame> modelFrames = model.getFrames();
-
-		for (CIdentity id : ids) {
-
-			if (modelFrames.containsValueFor(id)) {
-
-				cFrames.add(modelFrames.get(id));
-			}
-		}
-
-		return cFrames;
+		return suggestedTypes;
 	}
 }

@@ -143,6 +143,26 @@ public abstract class KKeyedList<K, V> extends KList<V> {
 	}
 
 	/**
+	 * Retrieves all values with the specified keys.
+	 *
+	 * @param keys Keys for which values are required
+	 * @return Required values
+	 * @throws KAccessException If list does not contain value for
+	 * any of the specified keys
+	 */
+	public List<V> getAll(List<K> keys) {
+
+		List<V> values = new ArrayList<V>();
+
+		for (K key : keys) {
+
+			values.add(get(key));
+		}
+
+		return values;
+	}
+
+	/**
 	 * Constructor.
 	 */
 	protected KKeyedList() {
