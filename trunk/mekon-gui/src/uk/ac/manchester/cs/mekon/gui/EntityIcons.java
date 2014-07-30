@@ -44,7 +44,7 @@ class EntityIcons implements EntityIconConstants {
 	FrameIcons hiddenFrames = new FrameIcons(true);
 	EntityIconsByLevel numbers = new EntityIconsByLevel(NUMBER_CLR, ENTITY_SIZE);
 	SlotIcons defaultSlots = new SlotIcons(false, false);
-	SlotIcons editBlockedSlots = new SlotIcons(false, true);
+	SlotIcons blockedSlots = new SlotIcons(false, true);
 	SlotIcons inactiveSlots = new SlotIcons(true, false);
 
 	Icon get(IFrame frame) {
@@ -101,7 +101,7 @@ class EntityIcons implements EntityIconConstants {
 
 		if (slot.active()) {
 
-			return slot.dependent() ? editBlockedSlots : defaultSlots;
+			return slot.dependent() ? blockedSlots : defaultSlots;
 		}
 
 		return inactiveSlots;
@@ -109,7 +109,7 @@ class EntityIcons implements EntityIconConstants {
 
 	private SlotIcons getISlotIcons(ISlot slot) {
 
-		return slot.editable() ? defaultSlots : editBlockedSlots;
+		return slot.editable() ? defaultSlots : blockedSlots;
 	}
 }
 

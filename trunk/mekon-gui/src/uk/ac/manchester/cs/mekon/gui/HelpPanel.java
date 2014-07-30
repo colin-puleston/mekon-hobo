@@ -54,7 +54,7 @@ class HelpPanel extends JTabbedPane {
 	static final Icon hiddenCFrameShape = getHiddenFrameShape(EntityLevel.CONCEPT);
 	static final Icon defaultSlotShape = getDefaultSlotShape();
 	static final Icon inactiveSlotShape = getInactiveSlotShape();
-	static final Icon editBlockedSlotShape = getEditBlockedSlotShape();
+	static final Icon blockedSlotShape = getEditBlockedSlotShape();
 
 	static final Icon directColour = getColour(CSource.DIRECT);
 	static final Icon indirectColour = getColour(CSource.INDIRECT);
@@ -83,7 +83,7 @@ class HelpPanel extends JTabbedPane {
 
 	static private Icon getEditBlockedSlotShape() {
 
-		return getIcons().editBlockedSlots.get(DEFAULT_SOURCE);
+		return getIcons().blockedSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getColour(CSource source) {
@@ -224,12 +224,12 @@ class HelpPanel extends JTabbedPane {
 					"Slot is inactive",
 					"CSlot");
 				addRow(
-					editBlockedSlotShape,
+					blockedSlotShape,
 					"Slot is dependent "
 					+ "(i.e. values are automatically derived)",
 					"CSlot");
 				addRow(
-					editBlockedSlotShape,
+					blockedSlotShape,
 					"Slot is non-editable "
 					+ "(i.e. dependent slot on concrete instance)",
 					"ISlot");
