@@ -48,10 +48,10 @@ public interface CBuilder {
 	 * Sets the on/off status of a specific instance-update type.
 	 * By default all types will be turned on.
 	 *
-	 * @param updateType Relevant instance-update type
+	 * @param updateOp Relevant instance-update type
 	 * @param on True if required to be turned on
 	 */
-	public void setUpdateStatus(IUpdateType updateType, boolean on);
+	public void setUpdateStatus(IUpdateOp updateOp, boolean on);
 
 	/**
 	 * Enables the specification of some mechanism that will build

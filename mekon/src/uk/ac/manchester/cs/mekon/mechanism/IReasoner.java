@@ -61,10 +61,10 @@ public interface IReasoner {
 	 *
 	 * @param iEditor Model-instantiation editor
 	 * @param frame Frame to be updated
-	 * @param updateTypes Types of updates to be made
+	 * @param updateOps Types of of update operations to be performed
 	 */
 	public void updateFrame(
 					IEditor iEditor,
 					IFrame frame,
-					Set<IUpdateType> updateTypes);
+					Set<IUpdateOp> updateOps);
 }

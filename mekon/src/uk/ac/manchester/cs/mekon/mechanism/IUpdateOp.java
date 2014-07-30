@@ -27,12 +27,12 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents the types of updates that will be performed on
- * {@link IFrame} objects as the result of reasoning.
+ * Represents the types of update operation that can be performed
+ * on {@link IFrame} objects as the result of reasoning.
  *
  * @author Colin Puleston
  */
-public enum IUpdateType {
+public enum IUpdateOp {
 
 	/**
 	 * Update inferred-types for relevant frames.

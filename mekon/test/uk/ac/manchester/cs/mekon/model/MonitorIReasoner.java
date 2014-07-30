@@ -44,7 +44,7 @@ class MonitorIReasoner implements IReasoner {
 	public void updateFrame(
 					IEditor iEditor,
 					IFrame frame,
-					Set<IUpdateType> updateTypes) {
+					Set<IUpdateOp> updateOps) {
 
 		updateds.add(frame);
 	}

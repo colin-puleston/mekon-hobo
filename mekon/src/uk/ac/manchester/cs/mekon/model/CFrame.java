@@ -633,9 +633,9 @@ public abstract class CFrame
 	private void updateInstance(IFrame instance) {
 
 		IEditor iEditor = getModel().getIEditor();
-		Set<IUpdateType> updateTypes = getModel().getUpdateTypes();
+		Set<IUpdateOp> updateOps = getModel().getUpdateOps();
 
-		getIReasoner().updateFrame(iEditor, instance, updateTypes);
+		getIReasoner().updateFrame(iEditor, instance, updateOps);
 	}
 
 	private List<CFrame> checkStartListWithThis(
