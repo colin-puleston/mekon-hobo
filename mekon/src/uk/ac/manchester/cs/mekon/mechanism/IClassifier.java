@@ -151,12 +151,9 @@ public abstract class IClassifier implements IReasoner {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void updateFrame(
-					IEditor iEditor,
-					IFrame frame,
-					Set<IUpdateOp> updateOps) {
+	public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
 
-		new Updater(iEditor, frame, updateOps).update();
+		new Updater(iEditor, frame, ops).update();
 	}
 
 	/**

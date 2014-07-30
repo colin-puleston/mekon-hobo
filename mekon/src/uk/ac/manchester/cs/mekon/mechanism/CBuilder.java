@@ -39,19 +39,18 @@ public interface CBuilder {
 	/**
 	 * Sets the {@link CModel#queriesEnabled} flag.
 	 *
-	 * @param queriesEnabled True if query-instances are to be
-	 * allowed
+	 * @param enabled True if query-instances are to be allowed
 	 */
-	public void setQueriesEnabled(boolean queriesEnabled);
+	public void setQueriesEnabled(boolean enabled);
 
 	/**
-	 * Sets the on/off status of a specific instance-update type.
-	 * By default all types will be turned on.
+	 * Sets enabled-status for a specific type of instance-update
+	 * operation. By default all types will be turned on.
 	 *
-	 * @param updateOp Relevant instance-update type
-	 * @param on True if required to be turned on
+	 * @param op Relevant instance-update operation type
+	 * @param enabled True if required to be enabled
 	 */
-	public void setUpdateStatus(IUpdateOp updateOp, boolean on);
+	public void setUpdateOpEnabled(IUpdateOp op, boolean enabled);
 
 	/**
 	 * Enables the specification of some mechanism that will build

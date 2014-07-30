@@ -183,20 +183,20 @@ public class CModel implements CAnnotatable {
 		initialisationListeners.remove(listener);
 	}
 
-	void setQueriesEnabled(boolean queriesEnabled) {
+	void setQueriesEnabled(boolean enabled) {
 
-		this.queriesEnabled = queriesEnabled;
+		queriesEnabled = enabled;
 	}
 
-	void setUpdateStatus(IUpdateOp updateOp, boolean on) {
+	void setUpdateOpEnabled(IUpdateOp op, boolean enabled) {
 
-		if (on) {
+		if (enabled) {
 
-			updateOps.add(updateOp);
+			updateOps.add(op);
 		}
 		else {
 
-			updateOps.remove(updateOp);
+			updateOps.remove(op);
 		}
 	}
 

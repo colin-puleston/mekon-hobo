@@ -43,10 +43,7 @@ class DefaultIReasoner implements IReasoner {
 		specs.initialiseSlots(frame);
 	}
 
-	public void updateFrame(
-					IEditor iEditor,
-					IFrame frame,
-					Set<IUpdateOp> updateOps) {
+	public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
 	}
 
 	private DefaultIReasoner() {
