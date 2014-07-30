@@ -53,7 +53,7 @@ public class CModel implements CAnnotatable {
 
 	private boolean autoUpdate = true;
 	private boolean queriesEnabled = false;
-	private Set<IUpdateType> updateTypes = getAllUpdateTypesAsSet();
+	private Set<IUpdateOp> updateOps = getAllUpdateOpsAsSet();
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
@@ -188,15 +188,15 @@ public class CModel implements CAnnotatable {
 		this.queriesEnabled = queriesEnabled;
 	}
 
-	void setUpdateStatus(IUpdateType updateType, boolean on) {
+	void setUpdateStatus(IUpdateOp updateOp, boolean on) {
 
 		if (on) {
 
-			updateTypes.add(updateType);
+			updateOps.add(updateOp);
 		}
 		else {
 
-			updateTypes.remove(updateType);
+			updateOps.remove(updateOp);
 		}
 	}
 
@@ -269,9 +269,9 @@ public class CModel implements CAnnotatable {
 		return iEditor;
 	}
 
-	Set<IUpdateType> getUpdateTypes() {
+	Set<IUpdateOp> getUpdateOps() {
 
-		return new HashSet<IUpdateType>(updateTypes);
+		return new HashSet<IUpdateOp>(updateOps);
 	}
 
 	boolean mappedToNonInstantiableObject(CFrame frame) {
@@ -279,9 +279,9 @@ public class CModel implements CAnnotatable {
 		return customiser.mappedToNonInstantiableObject(frame);
 	}
 
-	private Set<IUpdateType> getAllUpdateTypesAsSet() {
+	private Set<IUpdateOp> getAllUpdateOpsAsSet() {
 
-		return new HashSet<IUpdateType>(Arrays.asList(IUpdateType.values()));
+		return new HashSet<IUpdateOp>(Arrays.asList(IUpdateOp.values()));
 	}
 
 	private void removeFrameTraces(CModelFrame frame) {

@@ -42,9 +42,9 @@ class CBuilderImpl implements CBuilder {
 		model.setQueriesEnabled(queriesEnabled);
 	}
 
-	public void setUpdateStatus(IUpdateType updateType, boolean on) {
+	public void setUpdateStatus(IUpdateOp updateOp, boolean on) {
 
-		model.setUpdateStatus(updateType, on);
+		model.setUpdateStatus(updateOp, on);
 	}
 
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {

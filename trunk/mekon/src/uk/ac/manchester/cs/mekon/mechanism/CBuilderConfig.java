@@ -33,26 +33,26 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 class CBuilderConfig implements CBuilderConfigVocab {
 
-	static private final Map<String, IUpdateType> updateTypesByAttr
-									= new HashMap<String, IUpdateType>();
+	static private final Map<String, IUpdateOp> updateOpsByAttr
+									= new HashMap<String, IUpdateOp>();
 
 	static {
 
-		updateTypesByAttr.put(
+		updateOpsByAttr.put(
 			UPDATE_INFERREDS_ATTR,
-			IUpdateType.INFERRED_TYPES);
+			IUpdateOp.INFERRED_TYPES);
 
-		updateTypesByAttr.put(
+		updateOpsByAttr.put(
 			UPDATE_SUGGESTEDS_ATTR,
-			IUpdateType.SUGGESTED_TYPES);
+			IUpdateOp.SUGGESTED_TYPES);
 
-		updateTypesByAttr.put(
+		updateOpsByAttr.put(
 			UPDATE_SLOTS_ATTR,
-			IUpdateType.SLOTS);
+			IUpdateOp.SLOTS);
 
-		updateTypesByAttr.put(
+		updateOpsByAttr.put(
 			UPDATE_SLOT_VALUES_ATTR,
-			IUpdateType.SLOT_VALUES);
+			IUpdateOp.SLOT_VALUES);
 	}
 
 	private KConfigNode rootNode;
@@ -78,12 +78,12 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 		KConfigNode optsNode = rootNode.getChild(INSTANCE_OPTIONS_ID);
 
-		for (String attrName : updateTypesByAttr.keySet()) {
+		for (String attrName : updateOpsByAttr.keySet()) {
 
-			IUpdateType updateType = updateTypesByAttr.get(attrName);
+			IUpdateOp updateOp = updateOpsByAttr.get(attrName);
 			Boolean on = optsNode.getBoolean(attrName, true);
 
-			builder.setUpdateStatus(updateType, on);
+			builder.setUpdateStatus(updateOp, on);
 		}
 	}
 

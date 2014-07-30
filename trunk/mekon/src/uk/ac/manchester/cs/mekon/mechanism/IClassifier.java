@@ -49,16 +49,16 @@ public abstract class IClassifier implements IReasoner {
 
 		private IClassifierOps classifierOps;
 
-		Updater(IEditor iEditor, IFrame frame, Set<IUpdateType> updateTypes) {
+		Updater(IEditor iEditor, IFrame frame, Set<IUpdateOp> updateOps) {
 
 			this.iEditor = iEditor;
 			this.frame = frame;
 
-			doInferreds = updateTypes.contains(IUpdateType.INFERRED_TYPES);
-			doSlots = updateTypes.contains(IUpdateType.SLOTS);
-			doSlotValues = updateTypes.contains(IUpdateType.SLOT_VALUES);
+			doInferreds = updateOps.contains(IUpdateOp.INFERRED_TYPES);
+			doSlots = updateOps.contains(IUpdateOp.SLOTS);
+			doSlotValues = updateOps.contains(IUpdateOp.SLOT_VALUES);
 
-			classifierOps = getClassifierOps(updateTypes);
+			classifierOps = getClassifierOps(updateOps);
 		}
 
 		void update() {
@@ -77,10 +77,10 @@ public abstract class IClassifier implements IReasoner {
 			}
 		}
 
-		private IClassifierOps getClassifierOps(Set<IUpdateType> updateTypes) {
+		private IClassifierOps getClassifierOps(Set<IUpdateOp> updateOps) {
 
 			boolean inferreds = doInferreds || doSlots || doSlotValues;
-			boolean suggesteds = updateTypes.contains(IUpdateType.SUGGESTED_TYPES);
+			boolean suggesteds = updateOps.contains(IUpdateOp.SUGGESTED_TYPES);
 
 			return new IClassifierOps(inferreds, suggesteds);
 		}
@@ -154,9 +154,9 @@ public abstract class IClassifier implements IReasoner {
 	public void updateFrame(
 					IEditor iEditor,
 					IFrame frame,
-					Set<IUpdateType> updateTypes) {
+					Set<IUpdateOp> updateOps) {
 
-		new Updater(iEditor, frame, updateTypes).update();
+		new Updater(iEditor, frame, updateOps).update();
 	}
 
 	/**
