@@ -100,7 +100,7 @@ public class ISlotSpecs {
 	/**
 	 * Absorbs all slot-related definitions associated with the
 	 * specified concept-level frames, and optionally their
-	 * ancestors into the current set of slot-specifications,
+	 * ancestors, into the current set of slot-specifications,
 	 * creating new specifications where necessary. See
 	 * {@link #absorb(CFrame, boolean)} for description of the
 	 * absorption process.
