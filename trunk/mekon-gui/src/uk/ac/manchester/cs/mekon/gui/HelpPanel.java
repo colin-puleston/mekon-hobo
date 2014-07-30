@@ -225,12 +225,13 @@ class HelpPanel extends JTabbedPane {
 					"CSlot");
 				addRow(
 					editBlockedSlotShape,
-					"Slot-values are automatically derived",
+					"Slot is dependent "
+					+ "(i.e. values are automatically derived)",
 					"CSlot");
 				addRow(
 					editBlockedSlotShape,
 					"Slot is non-editable "
-					+ "(i.e. automatically-derived-values slot on concrete instance)",
+					+ "(i.e. dependent slot on concrete instance)",
 					"ISlot");
 			}
 		}
