@@ -237,13 +237,13 @@ public class DModelTest extends HoboTest {
 					String fieldName,
 					CCardinality expectedCardinality,
 					CValue<?> expectedValueType,
-					boolean expectedDerivedValues) {
+					boolean expectedDependent) {
 
 		CSlot slot = getCSlot(model, containerId, fieldName);
 
 		assertEquals(expectedCardinality, slot.getCardinality());
 		assertEquals(expectedValueType, slot.getValueType());
-		assertEquals(expectedDerivedValues, slot.derivedValues());
+		assertEquals(expectedDependent, slot.dependent());
 	}
 
 	private void testLabels(
