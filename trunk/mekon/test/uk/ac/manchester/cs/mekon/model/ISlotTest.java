@@ -43,11 +43,11 @@ public class ISlotTest extends MekonTest {
 	}
 
 	@Test(expected = KAccessException.class)
-	public void test_getValuesEditor_failsForDerivedValuesSlot() {
+	public void test_getValuesEditor_failsForDependentSlot() {
 
 		ISlot s = createISlot(CCardinality.FREE);
 
-		s.createEditor().setDerivedValues(true);
+		s.createEditor().setDependent(true);
 		s.getValuesEditor();
 	}
 }

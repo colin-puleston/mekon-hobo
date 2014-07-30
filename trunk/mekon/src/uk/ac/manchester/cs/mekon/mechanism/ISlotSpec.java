@@ -41,7 +41,7 @@ class ISlotSpec {
 	private List<CValue<?>> valueTypes = new ArrayList<CValue<?>>();
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private boolean active = false;
-	private boolean derivedValues = false;
+	private boolean dependent = false;
 
 	ISlotSpec(IEditor iEditor, CProperty property) {
 
@@ -54,7 +54,7 @@ class ISlotSpec {
 		source = source.combineWith(slotType.getSource());
 		cardinality = cardinality.getMoreRestrictive(slotType.getCardinality());
 		active |= slotType.active();
-		derivedValues |= slotType.derivedValues();
+		dependent |= slotType.dependent();
 
 		absorbValueType(slotType.getValueType());
 	}
@@ -133,7 +133,7 @@ class ISlotSpec {
 	private void updateSlotAttributes(ISlotEditor slotEd) {
 
 		slotEd.setActive(active);
-		slotEd.setDerivedValues(derivedValues);
+		slotEd.setDependent(dependent);
 	}
 
 	private ISlot addRawSlot(IFrame container, CValue<?> valueType) {

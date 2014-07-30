@@ -139,16 +139,16 @@ public class ISlotSpecsTest extends MekonTest {
 	}
 
 	@Test
-	public void test_derivedValuesStatusUpdates() {
+	public void test_dependentStatusUpdates() {
 
-		sc.getAttributes().setDerivedValues(true);
+		sc.getAttributes().setDependent(true);
 
 		updateContainerSlots(ta);
-		testDerivedValuesSlot(false);
+		testDependentSlot(false);
 		updateContainerSlots(tc, td);
-		testDerivedValuesSlot(true);
+		testDependentSlot(true);
 		updateContainerSlots(ta, tc);
-		testDerivedValuesSlot(true);
+		testDependentSlot(true);
 	}
 
 	private void updateContainerSlots(CFrame... containerTypes) {
@@ -189,11 +189,11 @@ public class ISlotSpecsTest extends MekonTest {
 		assertTrue("Unexpected slot active-status: " + got, got == expected);
 	}
 
-	private void testDerivedValuesSlot(boolean expected) {
+	private void testDependentSlot(boolean expected) {
 
-		boolean got = testSingleSlot().derivedValues();
+		boolean got = testSingleSlot().dependent();
 
-		assertTrue("Unexpected slot derived-values-status: " + got, got == expected);
+		assertTrue("Unexpected slot dependent-status: " + got, got == expected);
 	}
 
 	private ISlot testSingleSlot() {

@@ -62,9 +62,9 @@ public class CSlot implements CSourced {
 			attributes.absorbActive(otherActive);
 		}
 
-		public void absorbDerivedValues(boolean otherDerivedValues) {
+		public void absorbDependent(boolean otherDependent) {
 
-			attributes.absorbDerivedValues(otherDerivedValues);
+			attributes.absorbDependent(otherDependent);
 		}
 	}
 
@@ -139,10 +139,10 @@ public class CSlot implements CSourced {
 	}
 
 	/**
-	 * Specifies the default "active" status any instantiations of
-	 * this slot (see {@link ISlot#active}).
+	 * Specifies the default "active" status for any instantiations
+	 * of this slot (see {@link ISlot#active}).
 	 *
-	 * @return True instantiations of slot will by default by active
+	 * @return True if instantiations of slot will by default by active
 	 */
 	public boolean active() {
 
@@ -150,15 +150,14 @@ public class CSlot implements CSourced {
 	}
 
 	/**
-	 * Specifies the default "derived-values" status any instantiations
-	 * of this slot (see {@link ISlot#derivedValues}).
+	 * Specifies the default "dependent" status for any instantiations
+	 * of this slot (see {@link ISlot#active}).
 	 *
-	 * @return True instantiations of slot will by default be for
-	 * derived-values
+	 * @return True if instantiations of slot will by default be dependent
 	 */
-	public boolean derivedValues() {
+	public boolean dependent() {
 
-		return attributes.derivedValues();
+		return attributes.dependent();
 	}
 
 	CSlot(

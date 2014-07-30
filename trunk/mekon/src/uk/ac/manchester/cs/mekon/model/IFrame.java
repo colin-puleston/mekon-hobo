@@ -47,9 +47,9 @@ import uk.ac.manchester.cs.mekon.util.*;
  *   <li>Slots on concrete-instances cannot have abstract values
  *   (see {@link IValue#abstractValue})
  *   <li>Derived-values slots on query-instances (see {@link
- *   ISlot#derivedValues}) are editable by the client (see {@link
- *   ISlot#editable}), which is not the case for derived-values
- *   slots on concrete-instances
+ *   ISlot#dependent}) are editable by the client (see {@link
+ *   ISlot#editable}), which is not the case for dependent slots
+ *   on concrete-instances
  * </ul>
  * Query-instances and concrete-instances cannot be mixed within a
  * single model-instantiation. Attempting to add a query-instance

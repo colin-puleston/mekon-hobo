@@ -33,7 +33,7 @@ class FSlotAttributes {
 
 	private CValue<?> valueType;
 	private boolean active;
-	private boolean derivedValues;
+	private boolean dependent;
 
 	FSlotAttributes(CValue<?> valueType) {
 
@@ -42,7 +42,7 @@ class FSlotAttributes {
 
 	FSlotAttributes copy() {
 
-		return new FSlotAttributes(valueType, active, derivedValues);
+		return new FSlotAttributes(valueType, active, dependent);
 	}
 
 	CValue<?> getValueType() {
@@ -55,9 +55,9 @@ class FSlotAttributes {
 		return active;
 	}
 
-	boolean derivedValues() {
+	boolean dependent() {
 
-		return derivedValues;
+		return dependent;
 	}
 
 	void setValueType(CValue<?> valueType) {
@@ -70,9 +70,9 @@ class FSlotAttributes {
 		this.active = active;
 	}
 
-	void setDerivedValues(boolean derivedValues) {
+	void setDependent(boolean dependent) {
 
-		this.derivedValues = derivedValues;
+		this.dependent = dependent;
 	}
 
 	void absorbValueType(CSlot slotType, CValue<?> otherValueType) {
@@ -95,18 +95,18 @@ class FSlotAttributes {
 		active &= otherActive;
 	}
 
-	void absorbDerivedValues(boolean otherDerivedValues) {
+	void absorbDependent(boolean otherDependent) {
 
-		derivedValues |= otherDerivedValues;
+		dependent |= otherDependent;
 	}
 
 	private FSlotAttributes(
 				CValue<?> valueType,
 				boolean active,
-				boolean derivedValues) {
+				boolean dependent) {
 
 		this.valueType = valueType;
 		this.active = active;
-		this.derivedValues = derivedValues;
+		this.dependent = dependent;
 	}
 }
