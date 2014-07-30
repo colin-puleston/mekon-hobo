@@ -40,6 +40,8 @@ class InstantiatonsPanel extends JPanel {
 	static private final String CONCRETE_BUTTON_LABEL = "Concrete Instance";
 	static private final String QUERY_BUTTON_LABEL = "Query Instance";
 
+	static private final int BUTTON_SEPARATOR_WIDTH = 20;
+
 	private CFramesTree modelTree;
 	private CFrame frame;
 
@@ -104,13 +106,22 @@ class InstantiatonsPanel extends JPanel {
 
 	InstantiatonsPanel(CFramesTree modelTree, CFrame frame) {
 
-		super(new FlowLayout());
+		super(new BorderLayout());
 
 		this.modelTree = modelTree;
 		this.frame = frame;
 
-		add(new InstantiateConcreteButton());
-		add(new InstantiateQueryButton());
+		add(createButtonsPanel(), BorderLayout.EAST);
+	}
+
+	private JComponent createButtonsPanel() {
+
+		JPanel panel = new JPanel();
+
+		panel.add(new InstantiateConcreteButton());
+		panel.add(new InstantiateQueryButton());
+
+		return panel;
 	}
 
 	private boolean queriesEnabled() {

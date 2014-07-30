@@ -33,18 +33,18 @@ import uk.ac.manchester.cs.mekon.gui.util.icon.*;
  */
 class SlotIcons extends EntityIconsBySource {
 
-	static private final int EDIT_BLOCK_MARKER_OFFSET
+	static private final int BLOCKED_MARKER_OFFSET
 								= ENTITY_SIZE - SLOT_CURB_MARKER_WIDTH;
 	static private final int INACTIVE_MARKER_OFFSET =
 								(ENTITY_SIZE - SLOT_CURB_MARKER_WIDTH) / 2;
 
 	private boolean inactiveSlots;
-	private boolean editBlockedSlots;
+	private boolean blockedSlots;
 
-	SlotIcons(boolean inactiveSlots, boolean editBlockedSlots) {
+	SlotIcons(boolean inactiveSlots, boolean blockedSlots) {
 
 		this.inactiveSlots = inactiveSlots;
-		this.editBlockedSlots = editBlockedSlots;
+		this.blockedSlots = blockedSlots;
 
 		initialise();
 	}
@@ -59,11 +59,11 @@ class SlotIcons extends EntityIconsBySource {
 				createCurbMarkerRenderer(
 					INACTIVE_MARKER_OFFSET));
 		}
-		else if (editBlockedSlots) {
+		else if (blockedSlots) {
 
 			icon.addRenderer(
 				createCurbMarkerRenderer(
-					EDIT_BLOCK_MARKER_OFFSET));
+					BLOCKED_MARKER_OFFSET));
 		}
 
 		return icon;
