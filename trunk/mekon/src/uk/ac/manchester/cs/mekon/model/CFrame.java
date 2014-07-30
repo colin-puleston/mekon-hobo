@@ -561,9 +561,12 @@ public abstract class CFrame
 		return extn;
 	}
 
-	boolean checkUpdateInstance(IFrame instance, boolean autoUpdate) {
+	void checkUpdateInstance(IFrame instance, boolean autoUpdate) {
 
-		return autoUpdate == getModel().autoUpdate() && updateInstance(instance);
+		if (autoUpdate == getModel().autoUpdate()) {
+
+			updateInstance(instance);
+		}
 	}
 
 	IFrame getDefaultValueOrNull() {
@@ -627,9 +630,12 @@ public abstract class CFrame
 		}
 	}
 
-	private boolean updateInstance(IFrame instance) {
+	private void updateInstance(IFrame instance) {
 
-		return getIReasoner().updateFrame(getModel().getIEditor(), instance);
+		IEditor iEditor = getModel().getIEditor();
+		Set<IUpdateType> updateTypes = getModel().getUpdateTypes();
+
+		getIReasoner().updateFrame(iEditor, instance, updateTypes);
 	}
 
 	private List<CFrame> checkStartListWithThis(

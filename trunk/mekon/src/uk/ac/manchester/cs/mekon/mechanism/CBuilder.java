@@ -45,6 +45,15 @@ public interface CBuilder {
 	public void setQueriesEnabled(boolean queriesEnabled);
 
 	/**
+	 * Sets the on/off status of a specific instance-update type.
+	 * By default all types will be turned on.
+	 *
+	 * @param updateType Relevant instance-update type
+	 * @param on True if required to be turned on
+	 */
+	public void setUpdateStatus(IUpdateType updateType, boolean on);
+
+	/**
 	 * Enables the specification of some mechanism that will build
 	 * a section of the model.
 	 *
@@ -86,7 +95,7 @@ public interface CBuilder {
 	public void removeFrame(CIdentity identity);
 
 	/**
-	 * Set's the instance-reasoner object for an existing model-frame.
+	 * Sets the instance-reasoner object for an existing model-frame.
 	 *
 	 * @param frame Frame whose instance-reasoner is to be set
 	 * @param iReasoner Instance-reasoner for frame
@@ -197,7 +206,7 @@ public interface CBuilder {
 	/**
 	 * Performs subsumption-check optimisations on partially built
 	 * model. Should be invoked at strategic points in the build
-	 * process, after which subsequent model-building will be
+	 * process after which subsequent model-building will be
 	 * heavily dependent on subsumption-checks within the currently
 	 * built sections.
 	 */

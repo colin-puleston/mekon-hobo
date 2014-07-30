@@ -22,42 +22,38 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.mechanism;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Listener for dynamic operations on a {@link IFrame} object.
+ * Represents the types of updates that will be performed on
+ * {@link IFrame} objects as the result of reasoning.
  *
  * @author Colin Puleston
  */
-public interface IFrameListener {
+public enum IUpdateType {
 
 	/**
-	 * Method invoked after the set of inferred-types for the
-	 * frame has been updated.
-	 *
-	 * @param updates New inferred-types for frame
+	 * Update inferred-types for relevant frames.
 	 */
-	public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates);
+	INFERRED_TYPES,
 
 	/**
-	 * Method invoked after the set of suggested-types for the
-	 * frame has been updated.
-	 *
-	 * @param updates New suggested-types for frame
+	 * Update suggested-types for relevant frames.
 	 */
-	public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates);
+	SUGGESTED_TYPES,
 
 	/**
-	 * Method invoked after a slot has been added to the frame.
-	 *
-	 * @param slot Added slot
+	 * Update slot-sets on relevant frames, plus value-types
+	 * and "active" and "derived-values" statuses for specific
+	 * slots.
 	 */
-	public void onSlotAdded(ISlot slot);
+	SLOTS,
 
 	/**
-	 * Method invoked after a slot has been removed from the frame.
-	 *
-	 * @param slot Removed slot
+	 * Update fixed values for relevant slots.
 	 */
-	public void onSlotRemoved(ISlot slot);
+	SLOT_VALUES;
 }
+

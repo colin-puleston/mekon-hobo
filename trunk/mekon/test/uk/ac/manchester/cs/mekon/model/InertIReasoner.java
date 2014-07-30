@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
@@ -34,8 +36,9 @@ class InertIReasoner implements IReasoner {
 	public void initialiseFrame(IEditor iEditor, IFrame frame) {
 	}
 
-	public boolean updateFrame(IEditor iEditor, IFrame frame) {
-
-		return false;
+	public void updateFrame(
+					IEditor iEditor,
+					IFrame frame,
+					Set<IUpdateType> updateTypes) {
 	}
 }

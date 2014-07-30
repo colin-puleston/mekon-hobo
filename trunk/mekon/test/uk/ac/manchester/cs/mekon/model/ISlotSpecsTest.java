@@ -157,6 +157,7 @@ public class ISlotSpecsTest extends MekonTest {
 
 		specs.absorbAll(list(containerTypes), true);
 		specs.updateSlots(iContainer);
+		specs.updateSlotValues(iContainer);
 	}
 
 	private void testSlotValueType(CFrame rootValue) {

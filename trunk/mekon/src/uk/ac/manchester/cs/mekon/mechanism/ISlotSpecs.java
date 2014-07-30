@@ -29,14 +29,13 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Utility class that enables implementations of
- * {@link IReasoner} to maintain a set of specifications
- * defining the set of slots required for a specific
- * instance-level frame. Existing slot-specifications can be
- * modified as further information is aquired. Once the full
- * set of specifications has been created, they can be used
- * for either initialising or updating the slot-set for the
- * relevant frame.
+ * Utility class that enables implementations of {@link IReasoner}
+ * to maintain a set of specifications defining the set of slots
+ * required for a specific instance-level frame. Existing
+ * slot-specifications can be modified as further information is
+ * aquired. Once the full set of specifications has been created,
+ * they can be used for either initialising or updating the
+ * slot-set for the relevant frame.
  *
  * @author Colin Puleston
  */
@@ -129,23 +128,43 @@ public class ISlotSpecs {
 
 		for (ISlotSpec spec : specs) {
 
-			spec.chekAddSlot(frame);
+			spec.checkAddSlot(frame);
 		}
 	}
 
 	/**
-	 * Updates the specified instance-level frame using the current
-	 * set of slot-specifications.
+	 * Updates the slot-sets, including value-types and "active"
+	 * and "derived-values" statuses, on the specified instance-level
+	 * frame using the current set of slot-specifications.
 	 *
-	 * @param frame Instance-level frame to be updated
-	 * @return True is any slot-value updates occured
+	 * @param frame Instance-level frame whose slots are to be updated
 	 */
-	public boolean updateSlots(IFrame frame) {
+	public void updateSlots(IFrame frame) {
 
-		boolean valueUpdatesViaRemovals = removeRedundantSlots(frame);
-		boolean valueUpdatesViaUpdates = updateRemainingSlots(frame);
+		for (ISlot slot : frame.getSlots().asList()) {
 
-		return valueUpdatesViaRemovals || valueUpdatesViaUpdates;
+			removeIfRedundant(frame, slot);
+		}
+
+		for (ISlotSpec spec : specs) {
+
+			updateSlotsFor(frame, spec);
+		}
+	}
+
+	/**
+	 * Updates the fixed slot-values on the specified instance-level
+	 * frame using the current set of slot-specifications.
+	 *
+	 * @param frame Instance-level frame whose fixed slot-values are
+	 * to be updated
+	 */
+	public void updateSlotValues(IFrame frame) {
+
+		for (ISlotSpec spec : specs) {
+
+			updateSlotValuesFor(frame, spec);
+		}
 	}
 
 	private void absorbAncestors(CFrame frameType) {
@@ -185,69 +204,46 @@ public class ISlotSpecs {
 		}
 	}
 
-	private boolean removeRedundantSlots(IFrame frame) {
+	private void removeIfRedundant(IFrame frame, ISlot slot) {
 
-		boolean removed = false;
+		if (!specsByProperty.containsKey(slot.getType().getProperty())) {
 
-		for (ISlot slot : frame.getSlots().asList()) {
-
-			if (removeIfRedundant(frame, slot) && !removed) {
-
-				removed = true;
-			}
+			getFrameEditor(frame).removeSlot(slot);
 		}
-
-		return removed;
 	}
 
-	private boolean updateRemainingSlots(IFrame frame) {
+	private void updateSlotsFor(IFrame frame, ISlotSpec spec) {
 
-		boolean anyValueUpdates = false;
+		ISlot slot = getSlotOrNull(frame, spec);
 
-		for (ISlotSpec spec : specs) {
+		if (slot != null) {
 
-			if (updateSlotsFor(frame, spec)) {
-
-				anyValueUpdates = true;
-			}
+			spec.updateOrRemoveSlot(slot);
 		}
+		else {
 
-		return anyValueUpdates;
+			spec.checkAddSlot(frame);
+		}
 	}
 
-	private boolean updateSlotsFor(IFrame frame, ISlotSpec spec) {
+	private void updateSlotValuesFor(IFrame frame, ISlotSpec spec) {
+
+		ISlot slot = getSlotOrNull(frame, spec);
+
+		if (slot != null) {
+
+			spec.checkUpdateSlotValues(slot);
+		}
+	}
+
+	private ISlot getSlotOrNull(IFrame frame, ISlotSpec spec) {
 
 		ISlots slots = frame.getSlots();
 		CProperty property = spec.getProperty();
 
-		if (slots.containsSlotFor(property)) {
-
-			return checkUpdateSlot(slots.getSlotFor(property), spec);
-		}
-
-		return spec.chekAddSlot(frame);
-	}
-
-	private boolean checkUpdateSlot(ISlot slot, ISlotSpec spec) {
-
-		ISlotValues slotValues = slot.getValues();
-		List<IValue> oldValues = slotValues.asList();
-
-		spec.checkUpdateSlot(slot);
-
-		return !slotValues.asList().equals(oldValues);
-	}
-
-	private boolean removeIfRedundant(IFrame container, ISlot slot) {
-
-		if (!specsByProperty.containsKey(slot.getType().getProperty())) {
-
-			getFrameEditor(container).removeSlot(slot);
-
-			return !slot.getValues().isEmpty();
-		}
-
-		return false;
+		return slots.containsSlotFor(property)
+					? slots.getSlotFor(property)
+					: null;
 	}
 
 	private ISlotSpec getSpec(CProperty property) {

@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -53,12 +55,16 @@ public interface IReasoner {
 	public void initialiseFrame(IEditor iEditor, IFrame frame);
 
 	/**
-	 * Updates current set of slots, and current set of infered-types,
-	 * for specified instance-level frame.
+	 * Performs selected types of updates on specified instance-level
+	 * frame. Updates can be to any of inferred-types, suggested-types,
+	 * slots or slot-values.
 	 *
 	 * @param iEditor Model-instantiation editor
 	 * @param frame Frame to be updated
-	 * @return True is any updates to slot-value updates occured
+	 * @param updateTypes Types of updates to be made
 	 */
-	public boolean updateFrame(IEditor iEditor, IFrame frame);
+	public void updateFrame(
+					IEditor iEditor,
+					IFrame frame,
+					Set<IUpdateType> updateTypes);
 }

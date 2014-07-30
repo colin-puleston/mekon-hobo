@@ -158,6 +158,7 @@ public class IFrame implements IEntity, IValue {
 			IFrameSlotValueUpdateProcessor.checkAddTo(slot);
 
 			slots.add(slot);
+			pollListenersForSlotAdded(slot);
 
 			return slot;
 		}
@@ -177,7 +178,9 @@ public class IFrame implements IEntity, IValue {
 
 		public void removeSlot(ISlot slot) {
 
+			slot.getValues().clearAllFixedAndAsserteds();
 			slots.remove(slot);
+			pollListenersForSlotRemoved(slot);
 		}
 	}
 
@@ -192,7 +195,7 @@ public class IFrame implements IEntity, IValue {
 
 			if (!latestAsserteds.equals(assertedValues)) {
 
-				performDynamicUpdate();
+				performDynamicUpdates();
 
 				assertedValues = latestAsserteds;
 			}
@@ -477,49 +480,27 @@ public class IFrame implements IEntity, IValue {
 					+ ": " + extraMsg);
 	}
 
-	private void performDynamicUpdate() {
+	private void performDynamicUpdates() {
 
-		while (updateAllBackwardsFromThis(new ArrayList<IFrame>()));
+		performDynamicUpdates(new ArrayList<IFrame>());
 	}
 
-	private boolean updateAllBackwardsFromThis(List<IFrame> visited) {
-
-		boolean anyValueUpdates = false;
+	private void performDynamicUpdates(List<IFrame> visited) {
 
 		if (visited.add(this)) {
 
-			if (checkUpdate(true)) {
+			checkUpdate(true);
 
-				anyValueUpdates = true;
-			}
+			for (ISlot slot : referencingSlots.asList()) {
 
-			if (updateAllBackwardsFromReferencers(visited)) {
-
-				anyValueUpdates = true;
+				slot.getContainer().performDynamicUpdates(visited);
 			}
 		}
-
-		return anyValueUpdates;
 	}
 
-	private boolean updateAllBackwardsFromReferencers(List<IFrame> visited) {
+	private void checkUpdate(boolean autoUpdate) {
 
-		boolean anyValueUpdates = false;
-
-		for (ISlot slot : referencingSlots.asList()) {
-
-			if (slot.getContainer().updateAllBackwardsFromThis(visited)) {
-
-				anyValueUpdates = true;
-			}
-		}
-
-		return anyValueUpdates;
-	}
-
-	private boolean checkUpdate(boolean autoUpdate) {
-
-		return type.checkUpdateInstance(this, autoUpdate);
+		type.checkUpdateInstance(this, autoUpdate);
 	}
 
 	private boolean disjunctionType() {
@@ -540,6 +521,22 @@ public class IFrame implements IEntity, IValue {
 		for (IFrameListener listener : copyListeners()) {
 
 			listener.onUpdatedSuggestedTypes(suggestedTypes.getTypes());
+		}
+	}
+
+	private void pollListenersForSlotAdded(ISlot slot) {
+
+		for (IFrameListener listener : copyListeners()) {
+
+			listener.onSlotAdded(slot);
+		}
+	}
+
+	private void pollListenersForSlotRemoved(ISlot slot) {
+
+		for (IFrameListener listener : copyListeners()) {
+
+			listener.onSlotRemoved(slot);
 		}
 	}
 
