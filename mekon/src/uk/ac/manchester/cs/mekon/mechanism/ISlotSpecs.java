@@ -78,7 +78,7 @@ public class ISlotSpecs {
 	 *   {@link CCardinality#moreRestrictiveThan(CCardinality)})
 	 *   <li>The "active" status will be true if and only if the both
 	 *   the existing status and the new status are true
-	 *   <li>The "derived-values" status will be true if either the
+	 *   <li>The "dependent" status will be true if either the
 	 *   existing or the new status is true
 	 * </ul>
 	 *
@@ -134,7 +134,7 @@ public class ISlotSpecs {
 
 	/**
 	 * Updates the slot-sets, including value-types and "active"
-	 * and "derived-values" statuses, on the specified instance-level
+	 * and "dependent" statuses, on the specified instance-level
 	 * frame using the current set of slot-specifications.
 	 *
 	 * @param frame Instance-level frame whose slots are to be updated

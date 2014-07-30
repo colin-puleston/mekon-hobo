@@ -50,9 +50,9 @@ public class ISlot implements IEntity {
 			attributes.setActive(active);
 		}
 
-		public void setDerivedValues(boolean editable) {
+		public void setDependent(boolean editable) {
 
-			attributes.setDerivedValues(editable);
+			attributes.setDependent(editable);
 		}
 
 		public boolean setValueType(CValue<?> valueType) {
@@ -154,22 +154,22 @@ public class ISlot implements IEntity {
 	 * @return True if all slot-values can be entirely determined by
 	 * the model
 	 */
-	public boolean derivedValues() {
+	public boolean dependent() {
 
-		return attributes.derivedValues();
+		return attributes.dependent();
 	}
 
 	/**
 	 * Specifies whether the slot-values can be edited by the client.
 	 * This will always be the case if the container-frame of the slot
 	 * is a query-instance (see {@link #queryInstance}). Otherwise it
-	 * will only be the case for non-{@link #derivedValues} slots.
+	 * will only be the case for non-{@link #dependent} slots.
 	 *
 	 * @return True if slot is currently editable by client
 	 */
 	public boolean editable() {
 
-		return queryInstance() || !derivedValues();
+		return queryInstance() || !dependent();
 	}
 
 	/**

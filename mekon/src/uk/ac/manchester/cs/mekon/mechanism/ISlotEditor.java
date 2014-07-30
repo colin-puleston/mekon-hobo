@@ -43,11 +43,11 @@ public interface ISlotEditor {
 	public void setActive(boolean active);
 
 	/**
-	 * Re-sets the "derived-values" status of the slot.
+	 * Re-sets the "dependent" status of the slot.
 	 *
-	 * @param derivedValues Status to set
+	 * @param dependent Status to set
 	 */
-	public void setDerivedValues(boolean derivedValues);
+	public void setDependent(boolean dependent);
 
 	/**
 	 * Re-sets the value-type for the slot.
