@@ -37,8 +37,8 @@ class InstantiatonsPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String CONCRETE_BUTTON_LABEL = "Instantiate";
-	static private final String QUERY_BUTTON_LABEL = "Create Query";
+	static private final String CONCRETE_BUTTON_LABEL = "Concrete Instance";
+	static private final String QUERY_BUTTON_LABEL = "Query Instance";
 
 	private CFramesTree modelTree;
 	private CFrame frame;
