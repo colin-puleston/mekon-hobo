@@ -25,9 +25,10 @@ class NumberConstructs {
 
 	NumberConstructs(OModel model) {
 
+		dataFactory = model.getDataFactory();
+
 		if (model.numericPropertyDefined()) {
 
-			dataFactory = model.getDataFactory();
 			numericProperty = model.getNumericProperty();
 		}
 	}
