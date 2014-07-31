@@ -28,7 +28,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Represents the types of update operation that can be performed
- * on {@link IFrame} objects as the result of reasoning.
+ * on instance-level frames as the result of reasoning.
  *
  * @author Colin Puleston
  */
