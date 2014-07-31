@@ -97,6 +97,17 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
+	 * Specifies the types of update operation that can be performed
+	 * on instance-level frames as the result of reasoning.
+	 *
+	 * @return Relevant set of update operation types
+	 */
+	public Set<IUpdateOp> getUpdateOps() {
+
+		return new HashSet<IUpdateOp>(updateOps);
+	}
+
+	/**
 	 * Provides the unique root-frame for the model.
 	 *
 	 * @return Root-frame for model
@@ -267,11 +278,6 @@ public class CModel implements CAnnotatable {
 	IEditor getIEditor() {
 
 		return iEditor;
-	}
-
-	Set<IUpdateOp> getUpdateOps() {
-
-		return new HashSet<IUpdateOp>(updateOps);
 	}
 
 	boolean mappedToNonInstantiableObject(CFrame frame) {
