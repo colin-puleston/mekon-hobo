@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.gui;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
@@ -80,10 +81,19 @@ class InstantiationFrame extends GFrame {
 		JTabbedPane panel = new JTabbedPane();
 
 		panel.addTab(instanceTypeLabel(frame), createInstanceComponent());
-		panel.addTab(INFERRED_TYPES_TITLE, createTypesComponent(true));
-		panel.addTab(SUGGESTED_TYPES_TITLE, createTypesComponent(false));
+
+		addTypesTab(panel, INFERRED_TYPES_TITLE, true);
+		addTypesTab(panel, SUGGESTED_TYPES_TITLE, false);
 
 		return panel;
+	}
+
+	private void addTypesTab(JTabbedPane panel, String title, boolean inferreds) {
+
+		int tabIndex = panel.getTabCount();
+
+		panel.addTab(title, createTypesComponent(inferreds));
+		panel.setEnabledAt(tabIndex, enableTypesTab(inferreds));
 	}
 
 	private JComponent createInstanceComponent() {
@@ -94,5 +104,23 @@ class InstantiationFrame extends GFrame {
 	private JComponent createTypesComponent(boolean inferreds) {
 
 		return new JScrollPane(new InstanceTypesPanel(modelTree, frame, inferreds));
+	}
+
+	private boolean enableTypesTab(boolean inferreds) {
+
+		return enabledUpdateOp(
+					inferreds
+					? IUpdateOp.INFERRED_TYPES
+					: IUpdateOp.SUGGESTED_TYPES);
+	}
+
+	private boolean enabledUpdateOp(IUpdateOp updateOp) {
+
+		return getModel().getUpdateOps().contains(updateOp);
+	}
+
+	private CModel getModel() {
+
+		return frame.getType().getModel();
 	}
 }
