@@ -58,12 +58,7 @@ class DObjectInstantiator<D extends DObject> {
 
 		if (binding != null) {
 
-			return buildDObject(binding.getDClass(), frame);
-		}
-
-		if (dBaseClass == DObject.class) {
-
-			return new DObjectDefault(model, frame);
+			return createDObject(binding.getDClass(), frame);
 		}
 
 		throw new HAccessException(
@@ -74,6 +69,16 @@ class DObjectInstantiator<D extends DObject> {
 	private DBinding getInstantiableDClassOrNull(IFrame frame) {
 
 		return instantiableDClassFinder.getOneOrZeroFor(frame.getType());
+	}
+
+	private DObject createDObject(Class<? extends DObject> dClass, IFrame frame) {
+
+		if (dClass == DObject.class) {
+
+			return new DObjectDefault(model, frame);
+		}
+
+		return buildDObject(dClass, frame);
 	}
 
 	private DObject buildDObject(Class<? extends DObject> dClass, IFrame frame) {

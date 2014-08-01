@@ -37,6 +37,11 @@ class InstantiableDClassFinder extends DClassFinder {
 
 	static boolean instantiable(Class<? extends DObject> dClass) {
 
+		if (dClass == DObject.class) {
+
+			return true;
+		}
+
 		return !dClass.isInterface() && !abstractClass(dClass);
 	}
 
@@ -59,9 +64,9 @@ class InstantiableDClassFinder extends DClassFinder {
 		this.dBaseClass = dBaseClass;
 	}
 
-	boolean anyFor(CFrame type) {
+	boolean exactlyOneFor(CFrame type) {
 
-		return !searchFrom(type).isEmpty();
+		return searchFrom(type).size() == 1;
 	}
 
 	DBinding getOneOrZeroFor(CFrame type) {

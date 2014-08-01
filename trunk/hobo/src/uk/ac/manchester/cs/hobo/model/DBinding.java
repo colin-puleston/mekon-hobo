@@ -49,6 +49,14 @@ class DBinding {
 		fieldNamesToSlotIds.put(fieldName, slotId);
 	}
 
+	void initialiseBinding(DModel model) {
+
+		if (instantiateToInitialise()) {
+
+			model.instantiate(dClass, frame);
+		}
+	}
+
 	Class<? extends DObject> getDClass() {
 
 		return dClass;
@@ -57,11 +65,6 @@ class DBinding {
 	CFrame getFrame() {
 
 		return frame;
-	}
-
-	boolean instantiableDClass() {
-
-		return InstantiableDClassFinder.instantiable(dClass);
 	}
 
 	boolean isBoundField(String fieldName) {
@@ -74,5 +77,15 @@ class DBinding {
 		String slotId = fieldNamesToSlotIds.get(fieldName);
 
 		return slotId != null ? slotId : fieldName;
+	}
+
+	private boolean instantiateToInitialise() {
+
+		if (dClass == DObject.class) {
+
+			return false;
+		}
+
+		return InstantiableDClassFinder.instantiable(dClass);
 	}
 }

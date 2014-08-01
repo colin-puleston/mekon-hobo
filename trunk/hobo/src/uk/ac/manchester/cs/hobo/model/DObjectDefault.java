@@ -36,8 +36,7 @@ class DObjectDefault implements DObject {
 
 	public boolean equals(Object other) {
 
-		return other instanceof DObject
-				&& ((DObject)other).getFrame().equals(frame);
+		return other instanceof DObject && equalsDObject((DObject)other);
 	}
 
 	public String toString() {
@@ -59,5 +58,10 @@ class DObjectDefault implements DObject {
 
 		this.model = model;
 		this.frame = frame;
+	}
+
+	private boolean equalsDObject(DObject other) {
+
+		return other.getFrame().equals(frame);
 	}
 }
