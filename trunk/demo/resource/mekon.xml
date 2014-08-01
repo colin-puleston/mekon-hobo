@@ -2,6 +2,12 @@
 
 <HOBOModel queriesEnabled="TRUE">
 
+	<InstanceUpdateOperations
+		inferredTypes="TRUE"
+		suggestedTypes="TRUE"
+		slots="TRUE"
+		slotValues="TRUE"/>
+
 	<!--
 		Specification of types of reasoning-related update
 		operations to be performed on instance-level frames
