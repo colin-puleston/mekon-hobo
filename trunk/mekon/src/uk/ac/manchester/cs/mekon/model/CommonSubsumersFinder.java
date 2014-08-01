@@ -65,15 +65,15 @@ class CommonSubsumersFinder {
 
 		for (CFrame frame : frames) {
 
-			List<CFrame> subs = frame.getSubsumers(visibility);
+			List<CFrame> subsumers = frame.getSubsumers(visibility);
 
 			if (commons.isEmpty()) {
 
-				commons.addAll(subs);
+				commons.addAll(subsumers);
 			}
 			else {
 
-				commons.retainAll(subs);
+				commons.retainAll(subsumers);
 			}
 		}
 
