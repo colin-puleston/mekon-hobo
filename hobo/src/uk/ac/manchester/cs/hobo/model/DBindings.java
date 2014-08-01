@@ -54,10 +54,7 @@ class DBindings {
 
 		for (DBinding binding : byClass.values()) {
 
-			if (binding.instantiableDClass()) {
-
-				model.instantiate(binding.getDClass(), binding.getFrame());
-			}
+			binding.initialiseBinding(model);
 		}
 	}
 
