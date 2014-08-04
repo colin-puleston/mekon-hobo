@@ -221,14 +221,26 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * If the {@link CModel#autoUpdate} facility is not enabled, then
-	 * invokes the mechanism for dynamically updating the set of
-	 * slots associated with this frame, based on the current state of
-	 * the frame. Otherwise does nothing.
+	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
+	 * then performs the default set of update operations on this frame.
+	 * Otherwise does nothing.
 	 */
 	public void checkManualUpdate() {
 
-		checkUpdate(false);
+		getIUpdating().checkManualUpdate(this);
+	}
+
+	/**
+	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
+	 * then performs all of the specified update operations on this frame.
+	 * Otherwise, performs only those specified operations that are not
+	 * default operations (see {@link IUpdating#getDefaultOps}).
+	 *
+	 * @param ops Update operations to be performed (where relevant)
+	 */
+	public void checkManualUpdate(Set<IUpdateOp> ops) {
+
+		getIUpdating().checkManualUpdate(this, ops);
 	}
 
 	/**
@@ -489,18 +501,13 @@ public class IFrame implements IEntity, IValue {
 
 		if (visited.add(this)) {
 
-			checkUpdate(true);
+			getIUpdating().checkAutoUpdate(this);
 
 			for (ISlot slot : referencingSlots.asList()) {
 
 				slot.getContainer().performDynamicUpdates(visited);
 			}
 		}
-	}
-
-	private void checkUpdate(boolean autoUpdate) {
-
-		type.checkUpdateInstance(this, autoUpdate);
 	}
 
 	private boolean disjunctionType() {
@@ -543,5 +550,10 @@ public class IFrame implements IEntity, IValue {
 	private List<IFrameListener> copyListeners() {
 
 		return new ArrayList<IFrameListener>(listeners);
+	}
+
+	private IUpdating getIUpdating() {
+
+		return type.getModel().getIUpdating();
 	}
 }

@@ -44,17 +44,26 @@ public interface CBuilder {
 	public void setQueriesEnabled(boolean enabled);
 
 	/**
-	 * Sets enabled-status for a specific type of instance-update
-	 * operation. By default all types will be turned on.
+	 * Enables or disables the {@link IUpdating#autoUpdate} facility
+	 * for the model. By default auto-update will be enabled.
 	 *
-	 * @param op Relevant instance-update operation type
-	 * @param enabled True if required to be enabled
+	 * @param autoUpdate True if auto-update is to be enabled
 	 */
-	public void setUpdateOpEnabled(IUpdateOp op, boolean enabled);
+	public void setAutoUpdate(boolean autoUpdate);
 
 	/**
-	 * Enables the specification of some mechanism that will build
-	 * a section of the model.
+	 * Resets default enabled-status for a specific instance-update
+	 * operation, as represented via the {@link IUpdating} object
+	 * for the model. If not reset the default enabled-status for each
+	 * operation will be true.
+	 *
+	 * @param op Relevant instance-update operation
+	 * @param enabled Default enabled-status of operation
+	 */
+	public void setDefaultUpdateOp(IUpdateOp op, boolean enabled);
+
+	/**
+	 * Adds a builder for a section of the model.
 	 *
 	 * @param sectionBuilder Builder to build section of model
 	 */

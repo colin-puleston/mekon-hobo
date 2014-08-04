@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
@@ -65,7 +66,7 @@ class CBuilderConfig implements CBuilderConfigVocab {
 	void configure(CBuilder builder) {
 
 		setQueriesEnabling(builder);
-		setUpdateOpEnabling(builder);
+		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
 	}
 
@@ -74,16 +75,22 @@ class CBuilderConfig implements CBuilderConfigVocab {
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
 	}
 
-	private void setUpdateOpEnabling(CBuilder builder) {
+	private void setInstanceUpdating(CBuilder builder) {
 
-		KConfigNode optsNode = rootNode.getChild(UPDATE_OPS_ID);
+		KConfigNode node = rootNode.getChild(INSTANCE_UPDATING_ID);
+
+		builder.setAutoUpdate(node.getBoolean(AUTO_UPDATE_ATTR));
+		setUpdateOpEnabling(builder, node.getChild(DEFAULT_UPDATE_OPS_ID));
+	}
+
+	private void setUpdateOpEnabling(CBuilder builder, KConfigNode opsNode) {
 
 		for (String attrName : updateOpsByAttr.keySet()) {
 
 			IUpdateOp op = updateOpsByAttr.get(attrName);
-			Boolean enabled = optsNode.getBoolean(attrName, true);
+			Boolean enabled = opsNode.getBoolean(attrName, true);
 
-			builder.setUpdateOpEnabled(op, enabled);
+			builder.setDefaultUpdateOp(op, enabled);
 		}
 	}
 

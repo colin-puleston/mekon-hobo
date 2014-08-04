@@ -49,39 +49,14 @@ public class CModel implements CAnnotatable {
 
 	private CAnnotations annotations = new CAnnotations(this);
 
-	private IEditor iEditor = new IEditorImpl(this);
-
-	private boolean autoUpdate = true;
 	private boolean queriesEnabled = false;
-	private Set<IUpdateOp> updateOps = getAllUpdateOpsAsSet();
+	private IEditor iEditor = new IEditorImpl(this);
+	private IUpdating iUpdating = new IUpdating(iEditor);
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
 
 	private boolean initialised = false;
-
-	/**
-	 * Enables or disables the {@link #autoUpdate} facility.
-	 *
-	 * @param autoUpdate True if auto-update is to be enabled
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-
-		this.autoUpdate = autoUpdate;
-	}
-
-	/**
-	 * Specifies whether the sets of slots for specific
-	 * instance-level frames will be dynamically updated based on
-	 * the current states of the frames. By default auto-update
-	 * will be enabled.
-	 *
-	 * @return True if auto-update is enabled
-	 */
-	public boolean autoUpdate() {
-
-		return autoUpdate;
-	}
 
 	/**
 	 * Specifies whether query-instances are allowed (see {@link
@@ -97,14 +72,15 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Specifies the types of update operation that can be performed
-	 * on instance-level frames as the result of reasoning.
+	 * Provides configuration information concerning the nature
+	 * of the updates to be performed on instance-level frames as
+	 * the result of reasoning.
 	 *
-	 * @return Relevant set of update operation types
+	 * @return Instance-level frame update configuration
 	 */
-	public Set<IUpdateOp> getUpdateOps() {
+	public IUpdating getIUpdating() {
 
-		return new HashSet<IUpdateOp>(updateOps);
+		return iUpdating;
 	}
 
 	/**
@@ -199,16 +175,14 @@ public class CModel implements CAnnotatable {
 		queriesEnabled = enabled;
 	}
 
-	void setUpdateOpEnabled(IUpdateOp op, boolean enabled) {
+	void setAutoUpdate(boolean autoUpdate) {
 
-		if (enabled) {
+		iUpdating.setAutoUpdate(autoUpdate);
+	}
 
-			updateOps.add(op);
-		}
-		else {
+	void setDefaultUpdateOp(IUpdateOp op, boolean enabled) {
 
-			updateOps.remove(op);
-		}
+		iUpdating.setDefaultOp(op, enabled);
 	}
 
 	CModelFrame addFrame(CIdentity identity, boolean hidden, IReasoner iReasoner) {
@@ -283,11 +257,6 @@ public class CModel implements CAnnotatable {
 	boolean mappedToNonInstantiableObject(CFrame frame) {
 
 		return customiser.mappedToNonInstantiableObject(frame);
-	}
-
-	private Set<IUpdateOp> getAllUpdateOpsAsSet() {
-
-		return new HashSet<IUpdateOp>(Arrays.asList(IUpdateOp.values()));
 	}
 
 	private void removeFrameTraces(CModelFrame frame) {

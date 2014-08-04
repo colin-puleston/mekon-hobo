@@ -55,9 +55,8 @@ public interface IReasoner {
 	public void initialiseFrame(IEditor iEditor, IFrame frame);
 
 	/**
-	 * Performs selected types of updates on specified instance-level
-	 * frame. Updates can be to any of inferred-types, suggested-types,
-	 * slots or slot-values.
+	 * Performs selected update operations on specified instance-level
+	 * frame.
 	 *
 	 * @param iEditor Model-instantiation editor
 	 * @param frame Frame to be updated
