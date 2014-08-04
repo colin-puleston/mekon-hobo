@@ -108,15 +108,15 @@ class InstantiationFrame extends GFrame {
 
 	private boolean enableTypesTab(boolean inferreds) {
 
-		return enabledUpdateOp(
+		return defaultUpdateOp(
 					inferreds
 					? IUpdateOp.INFERRED_TYPES
 					: IUpdateOp.SUGGESTED_TYPES);
 	}
 
-	private boolean enabledUpdateOp(IUpdateOp updateOp) {
+	private boolean defaultUpdateOp(IUpdateOp updateOp) {
 
-		return getModel().getUpdateOps().contains(updateOp);
+		return getModel().getIUpdating().defaultOp(updateOp);
 	}
 
 	private CModel getModel() {
