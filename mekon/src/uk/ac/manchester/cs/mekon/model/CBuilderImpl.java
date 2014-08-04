@@ -42,9 +42,14 @@ class CBuilderImpl implements CBuilder {
 		model.setQueriesEnabled(enabled);
 	}
 
-	public void setUpdateOpEnabled(IUpdateOp op, boolean enabled) {
+	public void setAutoUpdate(boolean autoUpdate) {
 
-		model.setUpdateOpEnabled(op, enabled);
+		model.setAutoUpdate(autoUpdate);
+	}
+
+	public void setDefaultUpdateOp(IUpdateOp op, boolean enabled) {
+
+		model.setDefaultUpdateOp(op, enabled);
 	}
 
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {

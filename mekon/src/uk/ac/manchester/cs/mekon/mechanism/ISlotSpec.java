@@ -96,10 +96,7 @@ class ISlotSpec {
 
 	void checkUpdateSlotValues(ISlot slot) {
 
-		if (!slot.queryInstance()) {
-
-			getSlotEditor(slot).setFixedValues(fixedValues);
-		}
+		getSlotEditor(slot).setFixedValues(fixedValues);
 	}
 
 	CProperty getProperty() {

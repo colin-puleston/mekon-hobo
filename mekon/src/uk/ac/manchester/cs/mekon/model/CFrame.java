@@ -458,7 +458,7 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Specifies whether this frame subsumes another specified frame.
+	 * Checks whether this frame subsumes another specified frame.
 	 * This means either that the frames are equal or that this one is
 	 * an ancestor of the other.
 	 *
@@ -479,7 +479,7 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Specifies whether this frame is subsumed by another specified
+	 * Checks whether this frame is subsumed by another specified
 	 * frame This means either that the frames are equal or that this
 	 * one is a descendant of the other.
 	 *
@@ -561,14 +561,6 @@ public abstract class CFrame
 		return extn;
 	}
 
-	void checkUpdateInstance(IFrame instance, boolean autoUpdate) {
-
-		if (autoUpdate == getModel().autoUpdate()) {
-
-			updateInstance(instance);
-		}
-	}
-
 	IFrame getDefaultValueOrNull() {
 
 		return instantiable() ? instantiate() : null;
@@ -628,14 +620,6 @@ public abstract class CFrame
 
 			throw new KAccessException("Query-instances not enabled for model");
 		}
-	}
-
-	private void updateInstance(IFrame instance) {
-
-		IEditor iEditor = getModel().getIEditor();
-		Set<IUpdateOp> updateOps = getModel().getUpdateOps();
-
-		getIReasoner().updateFrame(iEditor, instance, updateOps);
 	}
 
 	private List<CFrame> checkStartListWithThis(

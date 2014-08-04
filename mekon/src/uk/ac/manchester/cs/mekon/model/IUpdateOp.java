@@ -22,9 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
-
-import uk.ac.manchester.cs.mekon.model.*;
+package uk.ac.manchester.cs.mekon.model;
 
 /**
  * Represents the types of update operation that can be performed
