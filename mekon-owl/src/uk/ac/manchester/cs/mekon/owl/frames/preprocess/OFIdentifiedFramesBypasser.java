@@ -28,9 +28,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
- * Pre-processer that modifies the representations of instances
- * that are about to be classified, in order to bypass any
- * frames that have a particular pre-specified identifier.
+ * Pre-processer that modifies intermediate instance
+ * representations, in order to bypass any frames that have
+ * a particular pre-specified identifier.
  *
  * @author Colin Puleston
  */

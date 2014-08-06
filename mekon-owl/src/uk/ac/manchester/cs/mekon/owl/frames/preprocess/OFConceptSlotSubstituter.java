@@ -34,18 +34,18 @@ import uk.ac.manchester.cs.mekon.owl.classifier.*;
 import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
- * Pre-processer that modifies the representations of instances
- * that are about to be classified, by substituting any
- * concept-valued "source" slot with a particular identifier
- * with one or moew "target" slots. Each target-slot is specified
- * via a IRI and a value-type, as represented by the relevant
- * {@link CFrame} object. If a target-slot does not already
- * exist on the parent frame then it will be created. All values
- * from the original source-slot whose value-type is subsumed by
- * the value-type specified for one of the target-slots, will be
- * moved to the relevant target-slot. If this process results
- * in the source-slot being left with no values then it will
- * be removed from the parent frame.
+ * Pre-processer that modifies intermediate instance
+ * representations, by substituting any concept-valued "source"
+ * slot that has a particular identifier, with one or more
+ * "target" slots. Each target-slot is specified via a IRI and
+ * a value-type, as represented by the relevant {@link CFrame}
+ * object. If a target-slot does not already exist on the parent
+ * frame then it will be created. All values from the original
+ * source-slot whose value-type is subsumed by the value-type
+ * specified for one of the target-slots, will be moved to the
+ * relevant target-slot. If this process results in the
+ * source-slot being left with no values then it will be removed
+ * from the parent frame.
  *
  * @author Colin Puleston
  */

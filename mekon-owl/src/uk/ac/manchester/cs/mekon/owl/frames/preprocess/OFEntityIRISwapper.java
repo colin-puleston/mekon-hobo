@@ -32,9 +32,9 @@ import uk.ac.manchester.cs.mekon.owl.classifier.*;
 import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
- * Pre-processer that modifies the representations of instances
- * that are about to be classified, by setting a specific IRI value
- * for any entities with a particular identifier.
+ * Pre-processer that modifies intermediate instance
+ * representations, by setting a specific IRI value for any
+ * entities with a particular identifier.
  *
  * @author Colin Puleston
  */

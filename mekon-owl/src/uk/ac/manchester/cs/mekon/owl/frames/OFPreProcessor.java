@@ -27,11 +27,9 @@ package uk.ac.manchester.cs.mekon.owl.frames;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Interface whose implementations will perform certain
- * required modifications to a representation of an instance that
- * is about to be classified. Operates over the intermediate
- * {@link OFFrame}/{@link OFSlot}-based instance representation,
- * which is provided specifically for this purpose.
+ * Interface whose implementations will perform certain required
+ * modifications to {@link OFFrame}/{@link OFSlot}-based
+ * intermediate instance representations.
  *
  * @author Colin Puleston
  */
