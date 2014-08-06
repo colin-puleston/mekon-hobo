@@ -57,6 +57,7 @@ public class OFConceptSlotSubstituter implements OFPreProcessor {
 	private class Substituter {
 
 		private OModel model;
+		private Set<OFFrame> visited = new HashSet<OFFrame>();
 
 		Substituter(OModel model) {
 
@@ -65,16 +66,19 @@ public class OFConceptSlotSubstituter implements OFPreProcessor {
 
 		void process(OFFrame frame) {
 
-			Set<OFConceptSlot> postSubstitutionSlots = new HashSet<OFConceptSlot>();
+			if (visited.add(frame)) {
 
-			for (OFConceptSlot slot : frame.getConceptSlots()) {
+				Set<OFConceptSlot> newSlots = new HashSet<OFConceptSlot>();
 
-				postSubstitutionSlots.addAll(checkSubstitute(frame, slot));
-			}
+				for (OFConceptSlot slot : frame.getConceptSlots()) {
 
-			for (OFConceptSlot slot : postSubstitutionSlots) {
+					newSlots.addAll(checkSubstitute(frame, slot));
+				}
 
-				process(slot);
+				for (OFConceptSlot slot : newSlots) {
+
+					process(slot);
+				}
 			}
 		}
 
@@ -95,14 +99,14 @@ public class OFConceptSlotSubstituter implements OFPreProcessor {
 
 		private Set<OFConceptSlot> substitute(OFFrame container, OFConceptSlot sourceSlot) {
 
-			Set<OFConceptSlot> postSubstitutionSlots = new HashSet<OFConceptSlot>();
+			Set<OFConceptSlot> newSlots = new HashSet<OFConceptSlot>();
 
 			for (CFrame valueType : targetSlotsByValueType.keySet()) {
 
 				OFConceptSlot targetSlot = resolveTargetSlot(container, valueType);
 
 				moveSlotValues(sourceSlot, targetSlot, valueType);
-				postSubstitutionSlots.add(targetSlot);
+				newSlots.add(targetSlot);
 			}
 
 			if (sourceSlot.getValues().isEmpty()) {
@@ -111,10 +115,10 @@ public class OFConceptSlotSubstituter implements OFPreProcessor {
 			}
 			else {
 
-				postSubstitutionSlots.add(sourceSlot);
+				newSlots.add(sourceSlot);
 			}
 
-			return postSubstitutionSlots;
+			return newSlots;
 		}
 
 		private void moveSlotValues(

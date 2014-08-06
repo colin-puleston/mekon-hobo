@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.*;
 import uk.ac.manchester.cs.mekon.owl.frames.*;
@@ -44,7 +46,7 @@ public abstract class OFFramesBypasser implements OFPreProcessor {
 	 */
 	public void process(OModel model, OFFrame rootFrame) {
 
-		process(rootFrame);
+		process(rootFrame, new HashSet<OFFrame>());
 	}
 
 	/**
@@ -55,21 +57,24 @@ public abstract class OFFramesBypasser implements OFPreProcessor {
 	 */
 	protected abstract boolean bypass(OFFrame frame);
 
-	private void process(OFFrame frame) {
+	private void process(OFFrame frame, Set<OFFrame> visited) {
 
-		for (OFConceptSlot slot : frame.getConceptSlots()) {
+		if (visited.add(frame)) {
 
-			process(slot);
+			for (OFConceptSlot slot : frame.getConceptSlots()) {
+
+				process(slot, visited);
+			}
 		}
 	}
 
-	private void process(OFConceptSlot slot) {
+	private void process(OFConceptSlot slot, Set<OFFrame> visited) {
 
 		checkBypassFrames(slot);
 
 		for (OFFrame value : slot.getValues()) {
 
-			process(value);
+			process(value, visited);
 		}
 	}
 

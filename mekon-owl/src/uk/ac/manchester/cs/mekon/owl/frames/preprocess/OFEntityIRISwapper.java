@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 
+import java.util.*;
+
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -60,26 +62,29 @@ public class OFEntityIRISwapper implements OFPreProcessor {
 	 */
 	public void process(OModel model, OFFrame rootFrame) {
 
-		process(rootFrame);
+		process(rootFrame, new HashSet<OFFrame>());
 	}
 
-	private void process(OFFrame frame) {
+	private void process(OFFrame frame, Set<OFFrame> visited) {
 
-		checkSwapIRI(frame);
+		if (visited.add(frame)) {
 
-		for (OFConceptSlot slot : frame.getConceptSlots()) {
+			checkSwapIRI(frame);
 
-			process(slot);
+			for (OFConceptSlot slot : frame.getConceptSlots()) {
+
+				process(slot, visited);
+			}
 		}
 	}
 
-	private void process(OFConceptSlot slot) {
+	private void process(OFConceptSlot slot, Set<OFFrame> visited) {
 
 		checkSwapIRI(slot);
 
 		for (OFFrame value : slot.getValues()) {
 
-			process(value);
+			process(value, visited);
 		}
 	}
 
