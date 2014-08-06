@@ -22,48 +22,60 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.frames;
+package uk.ac.manchester.cs.mekon.owl.classifier;
+
+import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+
+import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * @author Colin Puleston
  */
-class IndividualIRIGenerator {
+class IndividualBasedInstance extends OCInstance {
 
-	static private final String DEFAULT_NAMESPACE = "urn:mekon:owl:individuals";
-	static private final String DEFAULT_ROOT_NAME = "TEMP";
-	static private final String NAME_REF_SECTION_PREFIX = "-REF-";
+	private OModel model;
 
-	private String namespace = DEFAULT_NAMESPACE;
-	private String rootName = DEFAULT_ROOT_NAME;
+	private OFFrameToIndividualsRenderer renderer;
+	private OWLNamedIndividual rootIndividual;
 
-	private int refCount = -1;
+	IndividualBasedInstance(OModel model, OFFrame frame) {
 
-	void setNamespace(String namespace) {
+		super(model);
 
-		this.namespace = namespace;
+		this.model = model;
+
+		renderer = new OFFrameToIndividualsRenderer(model);
+		rootIndividual = renderer.render(frame);
 	}
 
-	void reset(String rootName) {
+	void cleanUp() {
 
-		this.rootName = rootName;
-
-		reset();
+		renderer.removeAllRendered();
 	}
 
-	void reset() {
+	boolean suggestsTypes() {
 
-		refCount = -1;
+		return false;
 	}
 
-	IRI generate() {
+	OWLObject getFrameRendering() {
 
-		return IRI.create(namespace + '#' + rootName + getNameRefSection());
+		return rootIndividual;
 	}
 
-	private String getNameRefSection() {
+	Set<OWLClass> getInferredTypes() {
 
-		return ++refCount == 0 ? "" : (NAME_REF_SECTION_PREFIX + refCount);
+		return model
+				.getReasoner()
+				.getTypes(rootIndividual, true)
+				.getFlattened();
+	}
+
+	Set<OWLClass> getSuggestedTypes() {
+
+		throw new Error("Should never be invoked!");
 	}
 }

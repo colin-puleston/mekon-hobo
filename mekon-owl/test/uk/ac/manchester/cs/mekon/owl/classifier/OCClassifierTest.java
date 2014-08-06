@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.semantics.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * @author Colin Puleston
@@ -130,24 +130,24 @@ public class OCClassifierTest extends OTest {
 
 	private void setClosedWorldSemanticsByMinimalInclusion() {
 
-		setSemantics(OCSemantics.OPEN_WORLD, JOBS_PROPERTY);
+		setSemantics(OFSemantics.OPEN_WORLD, JOBS_PROPERTY);
 	}
 
 	private void setClosedWorldSemanticsByMinimalExclusion() {
 
 		// Exclude only those properties whose closure would cause inconsistencies
 		setSemantics(
-			OCSemantics.CLOSED_WORLD,
+			OFSemantics.CLOSED_WORLD,
 			TAX_PAID_PROPERTY,
 			BENEFIT_RECEIVED_PROPERTY,
 			TEACHES_PROPERTY);
 	}
 
 	private void setSemantics(
-					OCSemantics defaultSemantics,
+					OFSemantics defaultSemantics,
 					String... exceptionPropertyNames) {
 
-		OCSlotSemantics ss = classifier.getSlotSemantics();
+		OFSlotSemantics ss = classifier.getSlotSemantics();
 
 		ss.setDefaultSemantics(defaultSemantics);
 		ss.clearExceptionProperties();

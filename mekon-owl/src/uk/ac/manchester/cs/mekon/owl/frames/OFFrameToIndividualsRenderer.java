@@ -33,8 +33,12 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Renders the {@link OFFrame}/{@link OSSlot} networks, emanating
+ * Renders the {@link OFFrame}/{@link OSSlot} networks emanating
  * from specified frames, as networks of OWL individuals.
+ * <p>
+ * The rendering of the main frame in the network will be assigned
+ * a "root-name". The other frames will be assigned a name
+ * automatically derived from the root-name.
  *
  * @author Colin Puleston
  */
@@ -133,20 +137,33 @@ public class OFFrameToIndividualsRenderer
 	}
 
 	/**
-	 * Sets the root-name for the individuals that will be generated
-	 * as frame-renderings. The root-name will be assigned to the
-	 * rendering of the main frame in the network. Renderings for any
-	 * other frames in the network will be assigned a name automatically
-	 * derived from the root-name. If this method has not been invoked
-	 * then a default root-name will be used. If a specific instance of
-	 * this class is used to render multiple frame-networks, then the
-	 * root-name should be reset between invocations.
+	 * Provides the OWL rendering of the frame/slot network emanating
+	 * from the specified frame, using the default root-name that
+	 * will determine the names of all individuals created (see
+	 * {link #OFFrameToIndividualsRenderer})
 	 *
-	 * @param rootName Required root-name
+	 * @param frame Main frame in the network to be rendered
 	 */
-	public void setRootName(String rootName) {
+	public OWLNamedIndividual render(OFFrame frame) {
 
-		iriGenerator.setRootName(rootName);
+		iriGenerator.reset();
+
+		return renderFrame(frame);
+	}
+
+	/**
+	 * Provides the OWL rendering of the frame/slot network emanating
+	 * from the specified frame.
+	 *
+	 * @param frame Main frame in the network to be rendered
+	 * @param rootName Root-name that will determine the names of all
+	 * individuals created (see {link #OFFrameToIndividualsRenderer})
+	 */
+	public OWLNamedIndividual render(OFFrame frame, String rootName) {
+
+		iriGenerator.reset(rootName);
+
+		return renderFrame(frame);
 	}
 
 	/**
