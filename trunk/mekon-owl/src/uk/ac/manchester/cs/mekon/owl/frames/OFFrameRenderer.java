@@ -32,14 +32,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Renders the {@link OFFrame}/{@link OSSlot} networks, emanating
- * from specified frames, as a collections of OWL entities. The
- * types of entities involved in the rendering are dependent on
- * the particular extension of this abstract base-class.
- *
  * @author Colin Puleston
  */
-public abstract class OFFrameRenderer<FR extends OWLObject> {
+abstract class OFFrameRenderer<FR extends OWLObject> {
 
 	private OModel model;
 	private OWLDataFactory dataFactory;
@@ -240,12 +235,12 @@ public abstract class OFFrameRenderer<FR extends OWLObject> {
 
 			if (value.mapsToOWLEntity()) {
 
-				return render(value);
+				return renderFrame(value);
 			}
 
 			if (value.disjunctionType()) {
 
-				return render(value, createUnion(value));
+				return renderFrame(value, createUnion(value));
 			}
 
 			return null;
@@ -305,18 +300,6 @@ public abstract class OFFrameRenderer<FR extends OWLObject> {
 		}
 	}
 
-	/**
-	 * Provides the OWL rendering of the frame/slot network emanating
-	 * from the specified frame.
-	 *
-	 * @param frame Frame to be rendered, along with associated
-	 * network
-	 */
-	public FR render(OFFrame frame) {
-
-		return render(frame, getConcept(frame));
-	}
-
 	OFFrameRenderer(OModel model) {
 
 		this.model = model;
@@ -325,9 +308,14 @@ public abstract class OFFrameRenderer<FR extends OWLObject> {
 		numberRenderer = new OFNumberRenderer(model);
 	}
 
+	FR renderFrame(OFFrame frame) {
+
+		return renderFrame(frame, getConcept(frame));
+	}
+
 	abstract FrameRenderer createFrameRenderer(OFFrame frame);
 
-	private FR render(OFFrame frame, OWLClassExpression type) {
+	private FR renderFrame(OFFrame frame, OWLClassExpression type) {
 
 		return createFrameRenderer(frame).render(type);
 	}

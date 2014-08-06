@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Renders the {@link OFFrame}/{@link OSSlot} networks, emanating
+ * Renders the {@link OFFrame}/{@link OSSlot} networks emanating
  * from specified frames, as OWL class-expressions.
  *
  * @author Colin Puleston
@@ -99,6 +99,18 @@ public class OFFrameToExpressionRenderer
 		super(model);
 
 		dataFactory = model.getDataFactory();
+	}
+
+	/**
+	 * Provides the OWL rendering of the frame/slot network emanating
+	 * from the specified frame.
+	 *
+	 * @param frame Frame to be rendered, along with associated
+	 * network
+	 */
+	public OWLClassExpression render(OFFrame frame) {
+
+		return renderFrame(frame);
 	}
 
 	FrameRenderer createFrameRenderer(OFFrame frame) {

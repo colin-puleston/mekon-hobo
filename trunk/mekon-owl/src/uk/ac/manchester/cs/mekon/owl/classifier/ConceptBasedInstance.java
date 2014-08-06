@@ -28,65 +28,81 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OCInstance {
+class ConceptBasedInstance extends OCInstance {
 
 	private OModel model;
 
-	OCInstance(OModel model) {
+	private OFFrame frame;
+	private OWLClassExpression frameExpr;
+
+	ConceptBasedInstance(OModel model, OFFrame frame) {
+
+		super(model);
 
 		this.model = model;
+		this.frame = frame;
+
+		frameExpr = frameToExpression();
 	}
 
-	IClassification classify(IClassifierOps ops) {
+	boolean suggestsTypes() {
 
-		OWLObject frameRendering = getFrameRendering();
-
-		List<CIdentity> inferredIds = new ArrayList<CIdentity>();
-		List<CIdentity> suggestedIds = new ArrayList<CIdentity>();
-
-		OCMonitor.pollForRequestReceived(model, frameRendering);
-
-		if (ops.inferreds()) {
-
-			Set<OWLClass> inferreds = getInferredTypes();
-
-			OCMonitor.pollForTypesInferred(model, inferreds);
-			inferredIds.addAll(toIdentityList(inferreds));
-		}
-
-		if (suggestsTypes() && ops.suggesteds()) {
-
-			Set<OWLClass> suggesteds = getSuggestedTypes();
-
-			OCMonitor.pollForTypesSuggested(model, suggesteds);
-			suggestedIds.addAll(toIdentityList(suggesteds));
-		}
-
-		OCMonitor.pollForRequestCompleted(model, frameRendering);
-
-		return new IClassification(inferredIds, suggestedIds);
+		return true;
 	}
 
-	abstract void cleanUp();
+	OWLObject getFrameRendering() {
 
-	abstract boolean suggestsTypes();
+		return frameExpr;
+	}
 
-	abstract OWLObject getFrameRendering();
+	Set<OWLClass> getInferredTypes() {
 
-	abstract Set<OWLClass> getInferredTypes();
+		if (frameExpr instanceof OWLClass) {
 
-	abstract Set<OWLClass> getSuggestedTypes();
+			return Collections.singleton((OWLClass)frameExpr);
+		}
 
-	private List<CIdentity> toIdentityList(Set<OWLClass> classes) {
+		return checkRemoveRootFrameConcept(inferEquivalentsOrSupers());
+	}
 
-		return new ArrayList<CIdentity>(OIdentity.createSortedSet(classes));
+	Set<OWLClass> getSuggestedTypes() {
+
+		return model.getInferredSubs(frameExpr, true);
+	}
+
+	private OWLClassExpression frameToExpression() {
+
+		return new OFFrameToExpressionRenderer(model).render(frame);
+	}
+
+	private Set<OWLClass> inferEquivalentsOrSupers() {
+
+		Set<OWLClass> types = model.getInferredEquivalents(frameExpr);
+
+		return types.isEmpty() ? model.getInferredSupers(frameExpr, true) : types;
+	}
+
+	private Set<OWLClass> checkRemoveRootFrameConcept(Set<OWLClass> allConcepts) {
+
+		OWLClass concept = getFrameConcept();
+
+		if (allConcepts.contains(concept)) {
+
+			allConcepts = new HashSet<OWLClass>(allConcepts);
+			allConcepts.remove(concept);
+		}
+
+		return allConcepts;
+	}
+
+	private OWLClass getFrameConcept() {
+
+		return model.getConcepts().get(frame.getIRI());
 	}
 }

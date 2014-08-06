@@ -215,7 +215,7 @@ public class OCClassifier extends IClassifier {
 	 */
 	protected IClassification classifyPreProcessed(OFFrame frame, IClassifierOps ops) {
 
-		return new OCInstance(model, frame).classify(ops);
+		return new ConceptBasedInstance(model, frame).classify(ops);
 	}
 
 	private OFFrame toOFFrame(IFrame frame) {
