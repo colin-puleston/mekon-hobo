@@ -22,33 +22,62 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.semantics;
+package uk.ac.manchester.cs.mekon.owl.frames;
+
+import org.semanticweb.owlapi.model.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Specifies the type of semantics to be embodied by the OWL expressions
- * that will represent the incoming frames-based instances.
+ * Represents a number-valued slot in the pre-processable frames-based
+ * instance representation.
  *
  * @author Colin Puleston
  */
-public enum OCSemantics {
+public class OFNumberSlot extends OFSlot<INumber> {
 
 	/**
-	 * Specifies open-world semantics, meaning that the set of values
-	 * for each slot will give rise to a set of existential restrictions
-	 * only.
+	 * Constructor that takes the string representation of the IRI as
+	 * the slot-identifier.
+	 *
+	 * @param iri IRI to be used in generating the classifiable
+	 * OWL expression.
 	 */
-	OPEN_WORLD,
+	public OFNumberSlot(IRI iri) {
+
+		super(iri);
+	}
 
 	/**
-	 * Specifies closed-world semantics, meaning that the set of values
-	 * for each slot will give rise to a set of existential restrictions,
-	 * plus a universal restriction whose filler is a disjunction of all
-	 * values for the slot.
+	 * Constructor.
+	 *
+	 * @param identifier Identifier for represented slot
+	 * @param iri IRI to be used in generating the classifiable
+	 * OWL expression.
 	 */
-	CLOSED_WORLD;
+	public OFNumberSlot(String identifier, IRI iri) {
 
-	OCSemantics getOpposite() {
+		super(identifier, iri);
+	}
 
-		return this == OPEN_WORLD ? CLOSED_WORLD : OPEN_WORLD;
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean conceptSlot() {
+
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public OFNumberSlot asNumberSlot() {
+
+		return this;
+	}
+
+	OFNumberSlot(ISlot iSlot, IRI iri) {
+
+		super(iSlot, iri);
 	}
 }

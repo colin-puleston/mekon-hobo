@@ -22,36 +22,33 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.preprocess;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 /**
- * Pre-processer that modifies the representations of instances
- * that are about to be classified, in order to bypass any
- * frames that have a particular pre-specified identifier.
+ * Specifies the type of semantics to be embodied by the OWL expressions
+ * that will represent the incoming frames-based instances.
  *
  * @author Colin Puleston
  */
-public class OCIdentifiedFramesBypasser extends OCFramesBypasser {
-
-	private CIdentity identity;
+public enum OFSemantics {
 
 	/**
-	 * Constructor.
-	 *
-	 * @param identity Identity of frames to be bypassed
+	 * Specifies open-world semantics, meaning that the set of values
+	 * for each slot will give rise to a set of existential restrictions
+	 * only.
 	 */
-	public OCIdentifiedFramesBypasser(CIdentity identity) {
-
-		this.identity = identity;
-	}
+	OPEN_WORLD,
 
 	/**
+	 * Specifies closed-world semantics, meaning that the set of values
+	 * for each slot will give rise to a set of existential restrictions,
+	 * plus a universal restriction whose filler is a disjunction of all
+	 * values for the slot.
 	 */
-	protected boolean bypass(OCFrame frame) {
+	CLOSED_WORLD;
 
-		return frame.getIdentifier().equals(identity.getIdentifier());
+	OFSemantics getOpposite() {
+
+		return this == OPEN_WORLD ? CLOSED_WORLD : OPEN_WORLD;
 	}
 }

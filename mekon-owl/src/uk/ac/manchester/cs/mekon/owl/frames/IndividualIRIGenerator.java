@@ -22,62 +22,41 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.frames;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
- * Represents a number-valued slot in the pre-processable frames-based
- * instance representation.
- *
  * @author Colin Puleston
  */
-public class OCNumberSlot extends OCSlot<INumber> {
+class IndividualIRIGenerator {
 
-	/**
-	 * Constructor that takes the string representation of the IRI as
-	 * the slot-identifier.
-	 *
-	 * @param iri IRI to be used in generating the classifiable
-	 * OWL expression.
-	 */
-	public OCNumberSlot(IRI iri) {
+	static private final String DEFAULT_NAMESPACE = "urn:mekon:owl:individuals";
+	static private final String DEFAULT_ROOT_NAME = "TEMP";
+	static private final String NAME_REF_SECTION_PREFIX = "-REF-";
 
-		super(iri);
+	private String namespace = DEFAULT_NAMESPACE;
+	private String rootName = DEFAULT_ROOT_NAME;
+
+	private int refCount = -1;
+
+	void setNamespace(String namespace) {
+
+		this.namespace = namespace;
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @param identifier Identifier for represented slot
-	 * @param iri IRI to be used in generating the classifiable
-	 * OWL expression.
-	 */
-	public OCNumberSlot(String identifier, IRI iri) {
+	void setRootName(String rootName) {
 
-		super(identifier, iri);
+		this.rootName = rootName;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean conceptSlot() {
+	IRI generate() {
 
-		return false;
+		return IRI.create(namespace + '#' + rootName + getNameRefSection());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public OCNumberSlot asNumberSlot() {
+	private String getNameRefSection() {
 
-		return this;
-	}
-
-	OCNumberSlot(ISlot iSlot, IRI iri) {
-
-		super(iSlot, iri);
+		return ++refCount == 0 ? "" : (NAME_REF_SECTION_PREFIX + refCount);
 	}
 }

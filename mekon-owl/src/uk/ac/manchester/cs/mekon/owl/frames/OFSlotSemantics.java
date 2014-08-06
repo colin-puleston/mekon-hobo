@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.semantics;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 import java.util.*;
 
@@ -32,8 +32,8 @@ import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * Defines the semantics for all slots that the classifier will
- * handle. Options for a specific slot are {@link OCSemantics#OPEN_WORLD}
- * and {@link OCSemantics#CLOSED_WORLD}. The semantics are specified
+ * handle. Options for a specific slot are {@link OFSemantics#OPEN_WORLD}
+ * and {@link OFSemantics#CLOSED_WORLD}. The semantics are specified
  * via a general default value plus a set of exception properties.
  * The default semantics will apply to all slots other than those
  * whose associated property, or any of it's super-properties, is
@@ -42,10 +42,10 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OCSlotSemantics {
+public class OFSlotSemantics {
 
 	private OModel model;
-	private OCSemantics defaultSemantics = OCSemantics.OPEN_WORLD;
+	private OFSemantics defaultSemantics = OFSemantics.OPEN_WORLD;
 	private Set<String> exceptionPropertyURIs = new HashSet<String>();
 
 	/**
@@ -53,18 +53,18 @@ public class OCSlotSemantics {
 	 *
 	 * @param model Model to which semantics are to apply
 	 */
-	public OCSlotSemantics(OModel model) {
+	public OFSlotSemantics(OModel model) {
 
 		this.model = model;
 	}
 
 	/**
 	 * Sets the default semantics. If not set will default to
-	 * {@link OCSemantics#OPEN_WORLD}.
+	 * {@link OFSemantics#OPEN_WORLD}.
 	 *
 	 * @param defaultSemantics Value of default semantics
 	 */
-	public void setDefaultSemantics(OCSemantics defaultSemantics) {
+	public void setDefaultSemantics(OFSemantics defaultSemantics) {
 
 		this.defaultSemantics = defaultSemantics;
 	}
@@ -103,7 +103,7 @@ public class OCSlotSemantics {
 	 * @param propertyIRI URI of property for which semantics are
 	 * required
 	 */
-	public OCSemantics getSemantics(IRI propertyIRI) {
+	public OFSemantics getSemantics(IRI propertyIRI) {
 
 		return hasNonDefaultSemantics(propertyIRI)
 					? defaultSemantics.getOpposite()

@@ -22,84 +22,84 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.preprocess;
+package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * Abstract pre-processer that modifies the representations of
  * instances that are about to be classified, in order to bypass
- * particular intermediate slots, with the slots to be bypassed
- * being identified by the extending classes. When a slot is
- * bypassed, it is replaced on the frame to which it is attached,
- * by all slots that are attached the frames that are values
- * for the bypassed frame.
+ * particular intermediate frames, with the frames to be bypassed
+ * being identified by the extending classes. When a frame is
+ * bypassed, it is replaced in the slot for which it is a value,
+ * by all frames that are values for any slots attached to the
+ * bypassed frame.
  *
  * @author Colin Puleston
  */
-public abstract class OCSlotsBypasser implements OCPreProcessor {
+public abstract class OFFramesBypasser implements OFPreProcessor {
 
 	/**
 	 */
-	public void process(OModel model, OCFrame rootFrame) {
+	public void process(OModel model, OFFrame rootFrame) {
 
 		process(rootFrame);
 	}
 
 	/**
-	 * Determines whether or not a slot is to be bypassed
+	 * Determines whether or not a frame is to be bypassed
 	 *
-	 * @param slot Slot to test
-	 * @return True if slot is to be bypassed
+	 * @param frame Frame to test
+	 * @return True if frame is to be bypassed
 	 */
-	protected abstract boolean bypass(OCConceptSlot slot);
+	protected abstract boolean bypass(OFFrame frame);
 
-	private void process(OCFrame frame) {
+	private void process(OFFrame frame) {
 
-		checkBypassSlots(frame);
-
-		for (OCConceptSlot slot : frame.getConceptSlots()) {
+		for (OFConceptSlot slot : frame.getConceptSlots()) {
 
 			process(slot);
 		}
 	}
 
-	private void process(OCConceptSlot slot) {
+	private void process(OFConceptSlot slot) {
 
-		for (OCFrame value : slot.getValues()) {
+		checkBypassFrames(slot);
+
+		for (OFFrame value : slot.getValues()) {
 
 			process(value);
 		}
 	}
 
-	private void checkBypassSlots(OCFrame parentFrame) {
+	private void checkBypassFrames(OFConceptSlot parentSlot) {
 
-		for (OCConceptSlot slot : parentFrame.getConceptSlots()) {
+		for (OFFrame frame : parentSlot.getValues()) {
 
-			if (bypass(slot)) {
+			if (bypass(frame)) {
 
-				bypassSlot(parentFrame, slot);
+				bypassFrame(parentSlot, frame);
 			}
 		}
 	}
 
-	private void bypassSlot(OCFrame parentFrame, OCConceptSlot slot) {
+	private void bypassFrame(OFConceptSlot parentSlot, OFFrame frame) {
 
-		parentFrame.removeSlot(slot);
+		parentSlot.removeValue(frame);
 
-		for (OCFrame frame : slot.getValues()) {
+		for (OFConceptSlot nestedSlot : frame.getConceptSlots()) {
 
-			for (OCConceptSlot nestedSlot : frame.getConceptSlots()) {
+			for (OFFrame nestedFrame : nestedSlot.getValues()) {
 
-				if (bypass(nestedSlot)) {
+				if (bypass(nestedFrame)) {
 
-					bypassSlot(parentFrame, nestedSlot);
+					bypassFrame(parentSlot, nestedFrame);
 				}
 				else {
 
-					parentFrame.addSlot(nestedSlot);
+					parentSlot.addValue(nestedFrame);
 				}
 			}
 		}

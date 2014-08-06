@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.frames;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 import java.util.*;
 
@@ -32,7 +32,6 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.semantics.*;
 
 /**
  * Main class in the pre-processable frames-based instance
@@ -40,12 +39,12 @@ import uk.ac.manchester.cs.mekon.owl.classifier.semantics.*;
  *
  * @author Colin Puleston
  */
-public class OCFramesInstance {
+public class OFFramesInstance {
 
 	private Set<IRI> conceptIRIs;
 	private Set<IRI> objectPropertyIRIs;
-	private OCSlotSemantics slotSemantics;
-	private OCFrame rootFrame;
+	private OFSlotSemantics slotSemantics;
+	private OFFrame rootFrame;
 
 	private IFrameSlotBuilder iFrameSlotBuilder = new IFrameSlotBuilder();
 	private CFrameSlotBuilder cFrameSlotBuilder = new CFrameSlotBuilder();
@@ -53,9 +52,9 @@ public class OCFramesInstance {
 
 	private Stack<IFrame> iFrameStack = new Stack<IFrame>();
 
-	private abstract class TypeSlotBuilder<V, S extends OCSlot<V>, IV> {
+	private abstract class TypeSlotBuilder<V, S extends OFSlot<V>, IV> {
 
-		void build(OCFrame oFrame, ISlot iSlot, List<IV> iValues) {
+		void build(OFFrame oFrame, ISlot iSlot, List<IV> iValues) {
 
 			S oSlot = createSlot(iSlot);
 
@@ -71,7 +70,7 @@ public class OCFramesInstance {
 
 		abstract S createSlot(ISlot iSlot, IRI iri);
 
-		abstract void addSlot(OCFrame oFrame, S oSlot);
+		abstract void addSlot(OFFrame oFrame, S oSlot);
 
 		private S createSlot(ISlot iSlot) {
 
@@ -94,14 +93,14 @@ public class OCFramesInstance {
 
 	private abstract class ConceptSlotBuilder<IV>
 								extends
-									TypeSlotBuilder<OCFrame, OCConceptSlot, IV> {
+									TypeSlotBuilder<OFFrame, OFConceptSlot, IV> {
 
-		OCConceptSlot createSlot(ISlot iSlot, IRI iri) {
+		OFConceptSlot createSlot(ISlot iSlot, IRI iri) {
 
-			return new OCConceptSlot(iSlot, iri);
+			return new OFConceptSlot(iSlot, iri);
 		}
 
-		void addSlot(OCFrame oFrame, OCConceptSlot oSlot) {
+		void addSlot(OFFrame oFrame, OFConceptSlot oSlot) {
 
 			oFrame.addSlot(oSlot);
 		}
@@ -109,7 +108,7 @@ public class OCFramesInstance {
 
 	private class IFrameSlotBuilder extends ConceptSlotBuilder<IFrame> {
 
-		OCFrame getValue(IFrame iValue) {
+		OFFrame getValue(IFrame iValue) {
 
 			return buildFrame(iValue);
 		}
@@ -117,7 +116,7 @@ public class OCFramesInstance {
 
 	private class CFrameSlotBuilder extends ConceptSlotBuilder<CFrame> {
 
-		OCFrame getValue(CFrame iValue) {
+		OFFrame getValue(CFrame iValue) {
 
 			return createFrame(iValue);
 		}
@@ -125,19 +124,19 @@ public class OCFramesInstance {
 
 	private class NumberSlotBuilder
 						extends
-							TypeSlotBuilder<INumber, OCNumberSlot, INumber> {
+							TypeSlotBuilder<INumber, OFNumberSlot, INumber> {
 
 		INumber getValue(INumber iValue) {
 
 			return iValue;
 		}
 
-		OCNumberSlot createSlot(ISlot iSlot, IRI iri) {
+		OFNumberSlot createSlot(ISlot iSlot, IRI iri) {
 
-			return new OCNumberSlot(iSlot, iri);
+			return new OFNumberSlot(iSlot, iri);
 		}
 
-		void addSlot(OCFrame oFrame, OCNumberSlot oSlot) {
+		void addSlot(OFFrame oFrame, OFNumberSlot oSlot) {
 
 			oFrame.addSlot(oSlot);
 		}
@@ -146,7 +145,7 @@ public class OCFramesInstance {
 	private class SlotBuilder extends ISlotValuesVisitor {
 
 		private ISlot iSlot;
-		private OCFrame oFrame;
+		private OFFrame oFrame;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
@@ -163,7 +162,7 @@ public class OCFramesInstance {
 			cFrameSlotBuilder.build(oFrame, iSlot, values);
 		}
 
-		SlotBuilder(ISlot iSlot, OCFrame oFrame) {
+		SlotBuilder(ISlot iSlot, OFFrame oFrame) {
 
 			this.iSlot = iSlot;
 			this.oFrame = oFrame;
@@ -181,9 +180,9 @@ public class OCFramesInstance {
 	 * @param iFrame Instance-level frame from which instance is to be
 	 * derived
 	 */
-	public OCFramesInstance(
+	public OFFramesInstance(
 				OModel model,
-				OCSlotSemantics slotSemantics,
+				OFSlotSemantics slotSemantics,
 				IFrame iFrame) {
 
 		this.slotSemantics = slotSemantics;
@@ -200,17 +199,17 @@ public class OCFramesInstance {
 	 *
 	 * @return Root-frame in instance representation
 	 */
-	public OCFrame getRootFrame() {
+	public OFFrame getRootFrame() {
 
 		return rootFrame;
 	}
 
-	private OCFrame buildFrame(IFrame iFrame) {
+	private OFFrame buildFrame(IFrame iFrame) {
 
 		checkForCycle(iFrame);
 		iFrameStack.push(iFrame);
 
-		OCFrame oFrame = createFrame(iFrame.getType());
+		OFFrame oFrame = createFrame(iFrame.getType());
 
 		oFrame.setIFrame(iFrame);
 
@@ -234,16 +233,16 @@ public class OCFramesInstance {
 		}
 	}
 
-	private OCFrame createFrame(CFrame cFrame) {
+	private OFFrame createFrame(CFrame cFrame) {
 
 		return cFrame.getCategory().disjunction()
 				? createDisjunctionFrame(cFrame)
 				: createModelFrame(cFrame);
 	}
 
-	private OCFrame createDisjunctionFrame(CFrame cFrame) {
+	private OFFrame createDisjunctionFrame(CFrame cFrame) {
 
-		OCFrame oFrame = new OCFrame(cFrame, null);
+		OFFrame oFrame = new OFFrame(cFrame, null);
 
 		for (CFrame disjunct : cFrame.getSubs()) {
 
@@ -258,9 +257,9 @@ public class OCFramesInstance {
 		return oFrame;
 	}
 
-	private OCFrame createModelFrame(CFrame cFrame) {
+	private OFFrame createModelFrame(CFrame cFrame) {
 
-		return new OCFrame(cFrame, getNearestConceptIRIOrNull(cFrame));
+		return new OFFrame(cFrame, getNearestConceptIRIOrNull(cFrame));
 	}
 
 	private IRI getNearestConceptIRIOrNull(CFrame cFrame) {
@@ -312,6 +311,6 @@ public class OCFramesInstance {
 
 	private boolean closedWorldSemantics(IRI propertyIRI) {
 
-		return slotSemantics.getSemantics(propertyIRI) == OCSemantics.CLOSED_WORLD;
+		return slotSemantics.getSemantics(propertyIRI) == OFSemantics.CLOSED_WORLD;
 	}
 }

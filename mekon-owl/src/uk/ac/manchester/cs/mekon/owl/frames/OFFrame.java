@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.frames;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 import java.util.*;
 
@@ -36,15 +36,15 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public class OCFrame extends OCFramesEntity {
+public class OFFrame extends OFFramesEntity {
 
 	private CFrame cFrame = null;
 	private IFrame iFrame = null;
 
 	private Set<IRI> typeDisjunctIRIs = new HashSet<IRI>();
 
-	private Set<OCConceptSlot> conceptSlots = new HashSet<OCConceptSlot>();
-	private Set<OCNumberSlot> numberSlots = new HashSet<OCNumberSlot>();
+	private Set<OFConceptSlot> conceptSlots = new HashSet<OFConceptSlot>();
+	private Set<OFNumberSlot> numberSlots = new HashSet<OFNumberSlot>();
 
 	private int hashCode = 0;
 
@@ -55,7 +55,7 @@ public class OCFrame extends OCFramesEntity {
 	 * @param iri IRI to be used in generating the classifiable
 	 * OWL expression.
 	 */
-	public OCFrame(IRI iri) {
+	public OFFrame(IRI iri) {
 
 		super(iri);
 	}
@@ -67,7 +67,7 @@ public class OCFrame extends OCFramesEntity {
 	 * @param iri IRI to be used in generating the classifiable
 	 * OWL expression.
 	 */
-	public OCFrame(String identifier, IRI iri) {
+	public OFFrame(String identifier, IRI iri) {
 
 		super(identifier, iri);
 	}
@@ -99,7 +99,7 @@ public class OCFrame extends OCFramesEntity {
 	 *
 	 * @param slot Slot to add
 	 */
-	public void addSlot(OCConceptSlot slot) {
+	public void addSlot(OFConceptSlot slot) {
 
 		conceptSlots.add(slot);
 		hashCode = 0;
@@ -110,7 +110,7 @@ public class OCFrame extends OCFramesEntity {
 	 *
 	 * @param slot Slot to add
 	 */
-	public void addSlot(OCNumberSlot slot) {
+	public void addSlot(OFNumberSlot slot) {
 
 		numberSlots.add(slot);
 		hashCode = 0;
@@ -121,7 +121,7 @@ public class OCFrame extends OCFramesEntity {
 	 *
 	 * @param slot Slot to remove
 	 */
-	public void removeSlot(OCConceptSlot slot) {
+	public void removeSlot(OFConceptSlot slot) {
 
 		conceptSlots.remove(slot);
 		hashCode = 0;
@@ -132,7 +132,7 @@ public class OCFrame extends OCFramesEntity {
 	 *
 	 * @param slot Slot to remove
 	 */
-	public void removeSlot(OCNumberSlot slot) {
+	public void removeSlot(OFNumberSlot slot) {
 
 		numberSlots.remove(slot);
 		hashCode = 0;
@@ -152,15 +152,15 @@ public class OCFrame extends OCFramesEntity {
 	 * Tests for equality between this and other specified object.
 	 *
 	 * @param other Object to test for equality with this one
-	 * @return true if other object is another <code>OCFrame</code>
+	 * @return true if other object is another <code>OFFrame</code>
 	 * with the same identifier, identical type-disjuncts (if any),
 	 * and identical slots with identical values.
 	 */
 	public boolean equals(Object other) {
 
-		if (other instanceof OCFrame) {
+		if (other instanceof OFFrame) {
 
-			OCFrame otherFrame = (OCFrame)other;
+			OFFrame otherFrame = (OFFrame)other;
 
 			return equalIdentifiers(otherFrame)
 					&& typeDisjunctIRIs.equals(otherFrame.typeDisjunctIRIs)
@@ -226,9 +226,9 @@ public class OCFrame extends OCFramesEntity {
 	 *
 	 * @return Concept-valued slots
 	 */
-	public Set<OCConceptSlot> getConceptSlots() {
+	public Set<OFConceptSlot> getConceptSlots() {
 
-		return new HashSet<OCConceptSlot>(conceptSlots);
+		return new HashSet<OFConceptSlot>(conceptSlots);
 	}
 
 	/**
@@ -236,9 +236,9 @@ public class OCFrame extends OCFramesEntity {
 	 *
 	 * @return Literal-valued slots
 	 */
-	public Set<OCNumberSlot> getNumberSlots() {
+	public Set<OFNumberSlot> getNumberSlots() {
 
-		return new HashSet<OCNumberSlot>(numberSlots);
+		return new HashSet<OFNumberSlot>(numberSlots);
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class OCFrame extends OCFramesEntity {
 		return iFrame;
 	}
 
-	OCFrame(CFrame cFrame, IRI iri) {
+	OFFrame(CFrame cFrame, IRI iri) {
 
 		super(cFrame, iri);
 

@@ -22,21 +22,20 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
 
 /**
  * Interface whose implementations will perform certain
  * required modifications to a representation of an instance that
  * is about to be classified. Operates over the intermediate
- * {@link OCFrame}/{@link OCSlot}-based instance representation,
+ * {@link OFFrame}/{@link OFSlot}-based instance representation,
  * which is provided specifically for this purpose.
  *
  * @author Colin Puleston
  */
-public interface OCPreProcessor {
+public interface OFPreProcessor {
 
 	/**
 	 * Performs required modifications to instance representation.
@@ -44,5 +43,5 @@ public interface OCPreProcessor {
 	 * @param model Model over which classifier is operating
 	 * @param rootFrame Root-frame in instance representation
 	 */
-	public void process(OModel model, OCFrame rootFrame);
+	public void process(OModel model, OFFrame rootFrame);
 }
