@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.classifier;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.semantics.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * @author Colin Puleston
@@ -51,7 +51,7 @@ class OCClassifierConfig implements OCClassifierConfigVocab {
 		checkEnableLogging();
 	}
 
-	private void checkSetSlotSemantics(OCSlotSemantics slotSemantics) {
+	private void checkSetSlotSemantics(OFSlotSemantics slotSemantics) {
 
 		KConfigNode slotSemsNode = configNode.getChildOrNull(SEMANTICS_ID);
 
@@ -64,14 +64,14 @@ class OCClassifierConfig implements OCClassifierConfigVocab {
 
 	private void setSlotSemanticsDefault(
 					KConfigNode slotSemsNode,
-					OCSlotSemantics slotSemantics) {
+					OFSlotSemantics slotSemantics) {
 
 		slotSemantics.setDefaultSemantics(getDefaultSemantics(slotSemsNode));
 	}
 
 	private void setSlotSemanticsOverrides(
 					KConfigNode slotSemsNode,
-					OCSlotSemantics slotSemantics) {
+					OFSlotSemantics slotSemantics) {
 
 		for (KConfigNode expPropNode : slotSemsNode.getChildren(EXCEPTION_PROP_ID)) {
 
@@ -79,9 +79,9 @@ class OCClassifierConfig implements OCClassifierConfigVocab {
 		}
 	}
 
-	private OCSemantics getDefaultSemantics(KConfigNode semanticsNode) {
+	private OFSemantics getDefaultSemantics(KConfigNode semanticsNode) {
 
-		return semanticsNode.getEnum(DEFAULT_SEMANTICS_ATTR, OCSemantics.class);
+		return semanticsNode.getEnum(DEFAULT_SEMANTICS_ATTR, OFSemantics.class);
 	}
 
 	private String getExceptionPropertyURI(KConfigNode expPropNode) {

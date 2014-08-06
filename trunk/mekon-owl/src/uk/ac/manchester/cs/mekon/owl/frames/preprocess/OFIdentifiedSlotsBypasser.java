@@ -22,62 +22,35 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.frames;
+package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 
-import org.semanticweb.owlapi.model.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
- * Represents a concept-valued slot in the pre-processable frames-based
- * instance representation.
+ * Pre-processer that modifies the representations of instances
+ * that are about to be classified, in order to bypass any
+ * slots that have a particular pre-specified identifier.
  *
  * @author Colin Puleston
  */
-public class OCConceptSlot extends OCSlot<OCFrame> {
+public class OFIdentifiedSlotsBypasser extends OFSlotsBypasser {
 
-	/**
-	 * Constructor that takes the string representation of the IRI as
-	 * the slot-identifier.
-	 *
-	 * @param iri IRI to be used in generating the classifiable
-	 * OWL expression.
-	 */
-	public OCConceptSlot(IRI iri) {
-
-		super(iri);
-	}
+	private String identifier;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param identifier Identifier for represented slot
-	 * @param iri IRI to be used in generating the classifiable
-	 * OWL expression.
+	 * @param identifier Identifier of slots to be bypassed
 	 */
-	public OCConceptSlot(String identifier, IRI iri) {
+	public OFIdentifiedSlotsBypasser(String identifier) {
 
-		super(identifier, iri);
+		this.identifier = identifier;
 	}
 
 	/**
-	 * {@inheritDoc}
 	 */
-	public boolean conceptSlot() {
+	protected boolean bypass(OFConceptSlot slot) {
 
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public OCConceptSlot asConceptSlot() {
-
-		return this;
-	}
-
-	OCConceptSlot(ISlot iSlot, IRI iri) {
-
-		super(iSlot, iri);
+		return slot.getIdentifier().equals(identifier);
 	}
 }

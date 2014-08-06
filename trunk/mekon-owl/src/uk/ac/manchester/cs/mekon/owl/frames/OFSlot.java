@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.frames;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 import java.util.*;
 
@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class OCSlot<V> extends OCFramesEntity {
+public abstract class OFSlot<V> extends OFFramesEntity {
 
 	private ISlot iSlot = null;
 
@@ -115,7 +115,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	 * Tests for equality between this and other specified object.
 	 *
 	 * @param other Object to test for equality with this one
-	 * @return true if other object is another <code>OCSlot</code>
+	 * @return true if other object is another <code>OFSlot</code>
 	 * of the same type, with the same identifier and identical
 	 * values.
 	 */
@@ -123,7 +123,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 
 		if (getClass() == other.getClass()) {
 
-			OCSlot otherSlot = (OCSlot)other;
+			OFSlot otherSlot = (OFSlot)other;
 
 			return equalIdentifiers(otherSlot)
 					&& values.equals(otherSlot.values);
@@ -170,7 +170,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	 * @return Slot cast as concept-valued slot
 	 * @throws KAccessException if not a concept-valued slot
 	 */
-	public OCConceptSlot asConceptSlot() {
+	public OFConceptSlot asConceptSlot() {
 
 		throw new KAccessException("Not a concept-slot");
 	}
@@ -181,7 +181,7 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 	 * @return Slot cast as number-valued slot
 	 * @throws KAccessException if not a number-valued slot
 	 */
-	public OCNumberSlot asNumberSlot() {
+	public OFNumberSlot asNumberSlot() {
 
 		throw new KAccessException("Not a number-slot");
 	}
@@ -241,17 +241,17 @@ public abstract class OCSlot<V> extends OCFramesEntity {
 		return iSlot;
 	}
 
-	OCSlot(IRI iri) {
+	OFSlot(IRI iri) {
 
 		super(iri);
 	}
 
-	OCSlot(String identifier, IRI iri) {
+	OFSlot(String identifier, IRI iri) {
 
 		super(identifier, iri);
 	}
 
-	OCSlot(ISlot iSlot, IRI iri) {
+	OFSlot(ISlot iSlot, IRI iri) {
 
 		super(iSlot.getType().getProperty(), iri);
 

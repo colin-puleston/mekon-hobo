@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.frames;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
 import org.semanticweb.owlapi.model.*;
 
@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class OCFramesEntity {
+public abstract class OFFramesEntity {
 
 	private String identifier;
 	private IRI iri;
@@ -99,23 +99,23 @@ public abstract class OCFramesEntity {
 		return iri != null;
 	}
 
-	OCFramesEntity(IRI iri) {
+	OFFramesEntity(IRI iri) {
 
 		this(iri.toString(), iri);
 	}
 
-	OCFramesEntity(String identifier, IRI iri) {
+	OFFramesEntity(String identifier, IRI iri) {
 
 		this.identifier = identifier;
 		this.iri = iri;
 	}
 
-	OCFramesEntity(CIdentified identified, IRI iri) {
+	OFFramesEntity(CIdentified identified, IRI iri) {
 
 		this(identified.getIdentity().getIdentifier(), iri);
 	}
 
-	boolean equalIdentifiers(OCFramesEntity other) {
+	boolean equalIdentifiers(OFFramesEntity other) {
 
 		return identifier.equals(other.identifier);
 	}

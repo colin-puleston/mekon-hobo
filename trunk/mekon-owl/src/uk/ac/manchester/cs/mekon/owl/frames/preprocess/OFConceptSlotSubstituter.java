@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.preprocess;
+package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 
 import java.util.*;
 
@@ -31,7 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.classifier.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * Pre-processer that modifies the representations of instances
@@ -49,7 +49,7 @@ import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
  *
  * @author Colin Puleston
  */
-public class OCConceptSlotSubstituter implements OCPreProcessor {
+public class OFConceptSlotSubstituter implements OFPreProcessor {
 
 	private CIdentity sourceSlotId;
 	private Map<CFrame, IRI> targetSlotsByValueType = new HashMap<CFrame, IRI>();
@@ -63,43 +63,43 @@ public class OCConceptSlotSubstituter implements OCPreProcessor {
 			this.model = model;
 		}
 
-		void process(OCFrame frame) {
+		void process(OFFrame frame) {
 
-			Set<OCConceptSlot> postSubstitutionSlots = new HashSet<OCConceptSlot>();
+			Set<OFConceptSlot> postSubstitutionSlots = new HashSet<OFConceptSlot>();
 
-			for (OCConceptSlot slot : frame.getConceptSlots()) {
+			for (OFConceptSlot slot : frame.getConceptSlots()) {
 
 				postSubstitutionSlots.addAll(checkSubstitute(frame, slot));
 			}
 
-			for (OCConceptSlot slot : postSubstitutionSlots) {
+			for (OFConceptSlot slot : postSubstitutionSlots) {
 
 				process(slot);
 			}
 		}
 
-		private void process(OCConceptSlot slot) {
+		private void process(OFConceptSlot slot) {
 
-			for (OCFrame value : slot.getValues()) {
+			for (OFFrame value : slot.getValues()) {
 
 				process(value);
 			}
 		}
 
-		private Set<OCConceptSlot> checkSubstitute(OCFrame container, OCConceptSlot slot) {
+		private Set<OFConceptSlot> checkSubstitute(OFFrame container, OFConceptSlot slot) {
 
 			return isSourceSlot(slot)
 					? substitute(container, slot)
-					: Collections.<OCConceptSlot>singleton(slot);
+					: Collections.<OFConceptSlot>singleton(slot);
 		}
 
-		private Set<OCConceptSlot> substitute(OCFrame container, OCConceptSlot sourceSlot) {
+		private Set<OFConceptSlot> substitute(OFFrame container, OFConceptSlot sourceSlot) {
 
-			Set<OCConceptSlot> postSubstitutionSlots = new HashSet<OCConceptSlot>();
+			Set<OFConceptSlot> postSubstitutionSlots = new HashSet<OFConceptSlot>();
 
 			for (CFrame valueType : targetSlotsByValueType.keySet()) {
 
-				OCConceptSlot targetSlot = resolveTargetSlot(container, valueType);
+				OFConceptSlot targetSlot = resolveTargetSlot(container, valueType);
 
 				moveSlotValues(sourceSlot, targetSlot, valueType);
 				postSubstitutionSlots.add(targetSlot);
@@ -118,11 +118,11 @@ public class OCConceptSlotSubstituter implements OCPreProcessor {
 		}
 
 		private void moveSlotValues(
-						OCConceptSlot sourceSlot,
-						OCConceptSlot targetSlot,
+						OFConceptSlot sourceSlot,
+						OFConceptSlot targetSlot,
 						CFrame moveValueType) {
 
-			for (OCFrame value : sourceSlot.getValues()) {
+			for (OFFrame value : sourceSlot.getValues()) {
 
 				if (value.mapsToOWLEntity()) {
 
@@ -137,14 +137,14 @@ public class OCConceptSlotSubstituter implements OCPreProcessor {
 			}
 		}
 
-		private OCConceptSlot resolveTargetSlot(OCFrame container, CFrame valueType) {
+		private OFConceptSlot resolveTargetSlot(OFFrame container, CFrame valueType) {
 
 			IRI iri = targetSlotsByValueType.get(valueType);
-			OCConceptSlot targetSlot = getTargetSlotOrNull(container, iri);
+			OFConceptSlot targetSlot = getTargetSlotOrNull(container, iri);
 
 			if (targetSlot == null) {
 
-				targetSlot = new OCConceptSlot(iri);
+				targetSlot = new OFConceptSlot(iri);
 
 				container.addSlot(targetSlot);
 			}
@@ -152,9 +152,9 @@ public class OCConceptSlotSubstituter implements OCPreProcessor {
 			return targetSlot;
 		}
 
-		private OCConceptSlot getTargetSlotOrNull(OCFrame container, IRI iri) {
+		private OFConceptSlot getTargetSlotOrNull(OFFrame container, IRI iri) {
 
-			for (OCConceptSlot slot : container.getConceptSlots()) {
+			for (OFConceptSlot slot : container.getConceptSlots()) {
 
 				if (slot.mapsToOWLEntity() && slot.getIRI().equals(iri)) {
 
@@ -165,7 +165,7 @@ public class OCConceptSlotSubstituter implements OCPreProcessor {
 			return null;
 		}
 
-		private boolean isSourceSlot(OCConceptSlot slot) {
+		private boolean isSourceSlot(OFConceptSlot slot) {
 
 			return slot.getIdentifier().equals(sourceSlotId.getIdentifier());
 		}
@@ -176,7 +176,7 @@ public class OCConceptSlotSubstituter implements OCPreProcessor {
 	 *
 	 * @param sourceSlotId Identifier for source-slots
 	 */
-	public OCConceptSlotSubstituter(CIdentity sourceSlotId) {
+	public OFConceptSlotSubstituter(CIdentity sourceSlotId) {
 
 		this.sourceSlotId = sourceSlotId;
 	}
@@ -196,7 +196,7 @@ public class OCConceptSlotSubstituter implements OCPreProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void process(OModel model, OCFrame rootFrame) {
+	public void process(OModel model, OFFrame rootFrame) {
 
 		new Substituter(model).process(rootFrame);
 	}

@@ -22,35 +22,24 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.preprocess;
+package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 
-import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * Pre-processer that modifies the representations of instances
  * that are about to be classified, in order to bypass any
- * slots that have a particular pre-specified identifier.
+ * "unrecognised" intermediate slots (i.e. slots whose IRIs
+ * do not specify entities in the OWL model).
  *
  * @author Colin Puleston
  */
-public class OCIdentifiedSlotsBypasser extends OCSlotsBypasser {
-
-	private String identifier;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param identifier Identifier of slots to be bypassed
-	 */
-	public OCIdentifiedSlotsBypasser(String identifier) {
-
-		this.identifier = identifier;
-	}
+public class OFNonOWLSlotsBypasser extends OFSlotsBypasser {
 
 	/**
 	 */
-	protected boolean bypass(OCConceptSlot slot) {
+	protected boolean bypass(OFConceptSlot slot) {
 
-		return slot.getIdentifier().equals(identifier);
+		return !slot.mapsToOWLEntity();
 	}
 }

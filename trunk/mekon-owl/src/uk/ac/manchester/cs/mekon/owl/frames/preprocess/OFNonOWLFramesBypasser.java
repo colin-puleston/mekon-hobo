@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.classifier.preprocess;
+package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 
-import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * Pre-processer that modifies the representations of instances
@@ -34,11 +34,11 @@ import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
  *
  * @author Colin Puleston
  */
-public class OCNonOWLFramesBypasser extends OCFramesBypasser {
+public class OFNonOWLFramesBypasser extends OFFramesBypasser {
 
 	/**
 	 */
-	protected boolean bypass(OCFrame frame) {
+	protected boolean bypass(OFFrame frame) {
 
 		return !frame.mapsToOWLEntity();
 	}

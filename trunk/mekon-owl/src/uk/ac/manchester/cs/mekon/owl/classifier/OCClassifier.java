@@ -32,8 +32,7 @@ import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.frames.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.semantics.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
  * Provides OWL-classification-based versions of the reasoning
@@ -76,7 +75,7 @@ public class OCClassifier extends IClassifier {
 	 * classifier defined via the appropriately-tagged child of the
 	 * specified parent-configuration-node, if such a child exists.
 	 *
-	 * @param model Model over which sanctioning is to operate
+	 * @param model Model over which classifier is to operate
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
 	 * @return Created object, or null if required child node does
@@ -94,8 +93,8 @@ public class OCClassifier extends IClassifier {
 	}
 
 	private OModel model;
-	private OCSlotSemantics slotSemantics;
-	private List<OCPreProcessor> preProcessors = new ArrayList<OCPreProcessor>();
+	private OFSlotSemantics slotSemantics;
+	private List<OFPreProcessor> preProcessors = new ArrayList<OFPreProcessor>();
 
 	/**
 	 * Constructs classifier with the configuration for both the
@@ -142,7 +141,7 @@ public class OCClassifier extends IClassifier {
 
 		this.model = model;
 
-		slotSemantics = new OCSlotSemantics(model);
+		slotSemantics = new OFSlotSemantics(model);
 	}
 
 	/**
@@ -153,7 +152,7 @@ public class OCClassifier extends IClassifier {
 	 * @param preProcessor Pre-processor for instances about to be
 	 * classified
 	 */
-	public void addPreProcessor(OCPreProcessor preProcessor) {
+	public void addPreProcessor(OFPreProcessor preProcessor) {
 
 		preProcessors.add(preProcessor);
 	}
@@ -176,7 +175,7 @@ public class OCClassifier extends IClassifier {
 	 * @return Object for specifying slot-semantics to be applied
 	 * by classifier
 	 */
-	public OCSlotSemantics getSlotSemantics() {
+	public OFSlotSemantics getSlotSemantics() {
 
 		return slotSemantics;
 	}
@@ -194,9 +193,9 @@ public class OCClassifier extends IClassifier {
 	 */
 	protected IClassification classify(IFrame frame, IClassifierOps ops) {
 
-		OCFrame ocFrame = toOCFrame(frame);
+		OFFrame ocFrame = toOFFrame(frame);
 
-		for (OCPreProcessor p : preProcessors) {
+		for (OFPreProcessor p : preProcessors) {
 
 			p.process(model, ocFrame);
 		}
@@ -214,18 +213,18 @@ public class OCClassifier extends IClassifier {
 	 * @param ops Types of classification operations to be performed
 	 * @return Results of classification operations
 	 */
-	protected IClassification classifyPreProcessed(OCFrame frame, IClassifierOps ops) {
+	protected IClassification classifyPreProcessed(OFFrame frame, IClassifierOps ops) {
 
 		return new OCInstance(model, frame).classify(ops);
 	}
 
-	private OCFrame toOCFrame(IFrame frame) {
+	private OFFrame toOFFrame(IFrame frame) {
 
-		return createOCFramesInstance(frame).getRootFrame();
+		return createOFFramesInstance(frame).getRootFrame();
 	}
 
-	private OCFramesInstance createOCFramesInstance(IFrame frame) {
+	private OFFramesInstance createOFFramesInstance(IFrame frame) {
 
-		return new OCFramesInstance(model, slotSemantics, frame);
+		return new OFFramesInstance(model, slotSemantics, frame);
 	}
 }
