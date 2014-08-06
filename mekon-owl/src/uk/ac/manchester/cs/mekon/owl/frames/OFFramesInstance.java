@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
@@ -50,7 +49,7 @@ public class OFFramesInstance {
 	private CFrameSlotBuilder cFrameSlotBuilder = new CFrameSlotBuilder();
 	private NumberSlotBuilder numberSlotBuilder = new NumberSlotBuilder();
 
-	private Stack<IFrame> iFrameStack = new Stack<IFrame>();
+	private Map<IFrame, OFFrame> framesByIFrame = new HashMap<IFrame, OFFrame>();
 
 	private abstract class TypeSlotBuilder<V, S extends OFSlot<V>, IV> {
 
@@ -110,7 +109,7 @@ public class OFFramesInstance {
 
 		OFFrame getValue(IFrame iValue) {
 
-			return buildFrame(iValue);
+			return getFrame(iValue);
 		}
 	}
 
@@ -190,7 +189,7 @@ public class OFFramesInstance {
 		conceptIRIs = getAllConceptIRIs(model);
 		objectPropertyIRIs = getAllObjectPropertyIRIs(model);
 
-		rootFrame = buildFrame(iFrame);
+		rootFrame = getFrame(iFrame);
 	}
 
 	/**
@@ -204,10 +203,20 @@ public class OFFramesInstance {
 		return rootFrame;
 	}
 
-	private OFFrame buildFrame(IFrame iFrame) {
+	private OFFrame getFrame(IFrame iFrame) {
 
-		checkForCycle(iFrame);
-		iFrameStack.push(iFrame);
+		OFFrame frame = framesByIFrame.get(iFrame);
+
+		if (frame == null) {
+
+			frame = buildFrame(iFrame);
+			framesByIFrame.put(iFrame, frame);
+		}
+
+		return frame;
+	}
+
+	private OFFrame buildFrame(IFrame iFrame) {
 
 		OFFrame oFrame = createFrame(iFrame.getType());
 
@@ -218,19 +227,7 @@ public class OFFramesInstance {
 			new SlotBuilder(iSlot, oFrame);
 		}
 
-		iFrameStack.pop();
-
 		return oFrame;
-	}
-
-	private void checkForCycle(IFrame iFrame) {
-
-		if (iFrameStack.contains(iFrame)) {
-
-			throw new KModelException(
-						"Cannot handle cyclic description involving: "
-						+ iFrame);
-		}
 	}
 
 	private OFFrame createFrame(CFrame cFrame) {
