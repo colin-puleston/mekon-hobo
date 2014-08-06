@@ -29,13 +29,12 @@ import uk.ac.manchester.cs.mekon.owl.classifier.*;
 import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
- * Abstract pre-processer that modifies the representations of
- * instances that are about to be classified, in order to bypass
- * particular intermediate slots, with the slots to be bypassed
- * being identified by the extending classes. When a slot is
- * bypassed, it is replaced on the frame to which it is attached,
- * by all slots that are attached the frames that are values
- * for the bypassed frame.
+ * Abstract pre-processer that modifies intermediate instance
+ * representations, in order to bypass particular intermediate
+ * slots, with the slots to be bypassed being identified by the
+ * extending classes. When a slot is bypassed, it is replaced
+ * on the frame to which it is attached, by all slots that are
+ * attached the frames that are values for the bypassed frame.
  *
  * @author Colin Puleston
  */

@@ -27,10 +27,10 @@ package uk.ac.manchester.cs.mekon.owl.frames.preprocess;
 import uk.ac.manchester.cs.mekon.owl.frames.*;
 
 /**
- * Pre-processer that modifies the representations of instances
- * that are about to be classified, in order to bypass any
- * "unrecognised" intermediate slots (i.e. slots whose IRIs
- * do not specify entities in the OWL model).
+ * Pre-processer that modifies intermediate instance
+ * representations, in order to bypass any "unrecognised" slots
+ * (i.e. slots whose IRIs do not specify entities in the OWL
+ * model).
  *
  * @author Colin Puleston
  */
