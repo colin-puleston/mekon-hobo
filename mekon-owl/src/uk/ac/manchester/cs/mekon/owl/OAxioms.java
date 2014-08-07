@@ -38,48 +38,50 @@ class OAxioms {
 
 	private OModel model;
 
-	private abstract class DeclarationProcessor {
+	private abstract class AxiomProcessor {
 
 		void process(OWLAxiom axiom) {
 
 			if (axiom instanceof OWLDeclarationAxiom) {
 
-				process(((OWLDeclarationAxiom)axiom).getEntity());
-
-				getReasoner().flush();
+				processDeclaration((OWLDeclarationAxiom)axiom);
 			}
+
+			model.getReasoner().flush();
 		}
 
-		abstract <E extends OWLEntity>void process(OEntities<E> all, E entity);
+		abstract <E extends OWLEntity>void updateEntities(OEntities<E> all, E entity);
 
-		private void process(OWLEntity entity) {
+		private void processDeclaration(OWLDeclarationAxiom axiom) {
+
+			OWLEntity entity = axiom.getEntity();
 
 			if (entity instanceof OWLClass) {
 
-				process(model.getConcepts(), (OWLClass)entity);
+				updateEntities(model.getConcepts(), (OWLClass)entity);
 			}
 			else if (entity instanceof OWLObjectProperty) {
 
-				process(model.getObjectProperties(), (OWLObjectProperty)entity);
+				updateEntities(model.getObjectProperties(), (OWLObjectProperty)entity);
 			}
 			else if (entity instanceof OWLDataProperty) {
 
-				process(model.getDataProperties(), (OWLDataProperty)entity);
+				updateEntities(model.getDataProperties(), (OWLDataProperty)entity);
 			}
 		}
 	}
 
-	private class AddedDeclarationProcessor extends DeclarationProcessor {
+	private class AddedAxiomProcessor extends AxiomProcessor {
 
-		<E extends OWLEntity>void process(OEntities<E> all, E entity) {
+		<E extends OWLEntity>void updateEntities(OEntities<E> all, E entity) {
 
 			all.add(entity);
 		}
 	}
 
-	private class RemovedDeclarationProcessor extends DeclarationProcessor {
+	private class RemovedAxiomProcessor extends AxiomProcessor {
 
-		<E extends OWLEntity>void process(OEntities<E> all, E entity) {
+		<E extends OWLEntity>void updateEntities(OEntities<E> all, E entity) {
 
 			all.remove(entity);
 		}
@@ -94,7 +96,7 @@ class OAxioms {
 
 		getManager().addAxiom(getMainOntology(), axiom);
 
-		new AddedDeclarationProcessor().process(axiom);
+		new AddedAxiomProcessor().process(axiom);
 	}
 
 	void addAll(Set<? extends OWLAxiom> axioms) {
@@ -109,7 +111,7 @@ class OAxioms {
 
 		getManager().removeAxiom(findOntology(axiom), axiom);
 
-		new RemovedDeclarationProcessor().process(axiom);
+		new RemovedAxiomProcessor().process(axiom);
 	}
 
 	void removeAll(Set<? extends OWLAxiom> axioms) {
@@ -160,10 +162,5 @@ class OAxioms {
 	private Set<OWLOntology> getAllOntologies() {
 
 		return model.getAllOntologies();
-	}
-
-	private OWLReasoner getReasoner() {
-
-		return model.getReasoner();
 	}
 }

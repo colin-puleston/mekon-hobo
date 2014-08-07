@@ -80,25 +80,60 @@ public class OCClassifierTest extends OTest {
 	@Test
 	public void test_openWorldSemantics() {
 
-		setOpenWorldSemantics();
-		testClassifications();
+		testOpenWorldSemantics(false);
 	}
 
 	@Test
 	public void test_closedWorldSemanticsByMinimalInclusion() {
 
-		setClosedWorldSemanticsByMinimalInclusion();
-		testClassifications();
+		testClosedWorldSemanticsByMinimalInclusion(false);
 	}
 
 	@Test
 	public void test_closedWorldSemanticsByMinimalExclusion() {
 
-		setClosedWorldSemanticsByMinimalExclusion();
-		testClassifications();
+		testClosedWorldSemanticsByMinimalExclusion(false);
 	}
 
-	private void testClassifications() {
+	@Test
+	public void test_openWorldSemantics_forceIndividuals() {
+
+		testOpenWorldSemantics(true);
+	}
+
+	@Test
+	public void test_closedWorldSemanticsByMinimalInclusion_forceIndividuals() {
+
+		testClosedWorldSemanticsByMinimalInclusion(true);
+	}
+
+	@Test
+	public void test_closedWorldSemanticsByMinimalExclusion_forceIndividuals() {
+
+		testClosedWorldSemanticsByMinimalExclusion(true);
+	}
+
+	private void testOpenWorldSemantics(boolean individuals) {
+
+		setOpenWorldSemantics();
+		testClassifications(individuals);
+	}
+
+	private void testClosedWorldSemanticsByMinimalInclusion(boolean individuals) {
+
+		setClosedWorldSemanticsByMinimalInclusion();
+		testClassifications(individuals);
+	}
+
+	private void testClosedWorldSemanticsByMinimalExclusion(boolean individuals) {
+
+		setClosedWorldSemanticsByMinimalExclusion();
+		testClassifications(individuals);
+	}
+
+	private void testClassifications(boolean individuals) {
+
+		classifier.setForceIndividualBasedClassification(individuals);
 
 		IFrame citizen = createIFrame(CITIZEN_CONCEPT);
 		IFrame employ = createIFrame(EMPLOYMENT_CONCEPT);

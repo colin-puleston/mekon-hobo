@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  *
  * @author Colin Puleston
  */
-public class OFFramesInstance {
+public class OFInstance {
 
 	private Set<IRI> conceptIRIs;
 	private Set<IRI> objectPropertyIRIs;
@@ -179,7 +179,7 @@ public class OFFramesInstance {
 	 * @param iFrame Instance-level frame from which instance is to be
 	 * derived
 	 */
-	public OFFramesInstance(
+	public OFInstance(
 				OModel model,
 				OFSlotSemantics slotSemantics,
 				IFrame iFrame) {
@@ -194,7 +194,7 @@ public class OFFramesInstance {
 
 	/**
 	 * Provides the root-frame in the pre-processable instance
-	 * representation
+	 * representation.
 	 *
 	 * @return Root-frame in instance representation
 	 */

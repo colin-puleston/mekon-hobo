@@ -44,7 +44,7 @@ public class OFFrameToExpressionRenderer
 
 	private OWLDataFactory dataFactory;
 
-	private Stack<OFFrame> frameStack = new Stack<OFFrame>();
+	private ArrayDeque<OFFrame> frameStack = new ArrayDeque<OFFrame>();
 
 	private class FrameToExpressionRenderer extends FrameRenderer {
 

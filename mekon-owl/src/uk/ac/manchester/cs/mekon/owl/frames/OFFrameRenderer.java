@@ -55,12 +55,18 @@ abstract class OFFrameRenderer<FR extends OWLObject> {
 
 			for (OFConceptSlot slot : frame.getConceptSlots()) {
 
-				renderConceptSlotValues(slot);
+				if (slot.mapsToOWLEntity()) {
+
+					renderConceptSlotValues(slot);
+				}
 			}
 
 			for (OFNumberSlot slot : frame.getNumberSlots()) {
 
-				renderNumberSlotValues(slot);
+				if (slot.mapsToOWLEntity()) {
+
+					renderNumberSlotValues(slot);
+				}
 			}
 		}
 
@@ -100,12 +106,12 @@ abstract class OFFrameRenderer<FR extends OWLObject> {
 
 		private void renderConceptSlotValues(OFConceptSlot slot) {
 
-			new ConceptSlotValuesRenderer(this, slot).checkRenderToFrame();
+			new ConceptSlotValuesRenderer(this, slot).renderToFrame();
 		}
 
 		private void renderNumberSlotValues(OFNumberSlot slot) {
 
-			new NumberSlotValuesRenderer(this, slot).checkRenderToFrame();
+			new NumberSlotValuesRenderer(this, slot).renderToFrame();
 		}
 
 		private OWLClassExpression toExpression(Set<FR> valueRenderings) {
@@ -138,11 +144,18 @@ abstract class OFFrameRenderer<FR extends OWLObject> {
 			property = getProperty();
 		}
 
-		void checkRenderToFrame() {
+		void renderToFrame() {
 
-			if (slot.mapsToOWLEntity()) {
+			Set<VR> valueRenderings = renderValues(slot);
 
-				renderToFrame(slot);
+			for (VR valueRendering : valueRenderings) {
+
+				addHasValue(valueRendering);
+			}
+
+			if (slot.closedWorldSemantics()) {
+
+				addOnlyValues(valueRenderings);
 			}
 		}
 
@@ -170,21 +183,6 @@ abstract class OFFrameRenderer<FR extends OWLObject> {
 		void addOnlyValuesForExpr(OWLClassExpression expr) {
 
 			frameRenderer.addOnlyValuesForExpr(property, expr);
-		}
-
-		private void renderToFrame(OFSlot<V> slot) {
-
-			Set<VR> valueRenderings = renderValues(slot);
-
-			for (VR valueRendering : valueRenderings) {
-
-				addHasValue(valueRendering);
-			}
-
-			if (slot.closedWorldSemantics()) {
-
-				addOnlyValues(valueRenderings);
-			}
 		}
 
 		private OWLObjectProperty getProperty() {

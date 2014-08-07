@@ -123,10 +123,7 @@ public abstract class OFSlot<V> extends OFFramesEntity {
 
 		if (getClass() == other.getClass()) {
 
-			OFSlot otherSlot = (OFSlot)other;
-
-			return equalIdentifiers(otherSlot)
-					&& values.equals(otherSlot.values);
+			return equalsSlot((OFSlot)other);
 		}
 
 		return false;
@@ -256,6 +253,11 @@ public abstract class OFSlot<V> extends OFFramesEntity {
 		super(iSlot.getType().getProperty(), iri);
 
 		this.iSlot = iSlot;
+	}
+
+	private boolean equalsSlot(OFSlot other) {
+
+		return equalIdentifiers(other) && values.equals(other.values);
 	}
 
 	private int calcHashCode() {

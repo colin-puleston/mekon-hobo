@@ -160,12 +160,7 @@ public class OFFrame extends OFFramesEntity {
 
 		if (other instanceof OFFrame) {
 
-			OFFrame otherFrame = (OFFrame)other;
-
-			return equalIdentifiers(otherFrame)
-					&& typeDisjunctIRIs.equals(otherFrame.typeDisjunctIRIs)
-					&& conceptSlots.equals(otherFrame.conceptSlots)
-					&& numberSlots.equals(otherFrame.numberSlots);
+			return equalsFrame((OFFrame)other);
 		}
 
 		return false;
@@ -266,6 +261,17 @@ public class OFFrame extends OFFramesEntity {
 		return iFrame;
 	}
 
+	/**
+	 * Tests whether the frame/slot network emanating from this
+	 * frame contains any cycles.
+	 *
+	 * @return True if any cycles detected
+	 */
+	public boolean leadsToCycle() {
+
+		return new OFFrameCycleTester(this).leadsToCycle();
+	}
+
 	OFFrame(CFrame cFrame, IRI iri) {
 
 		super(cFrame, iri);
@@ -276,6 +282,14 @@ public class OFFrame extends OFFramesEntity {
 	void setIFrame(IFrame iFrame) {
 
 		this.iFrame = iFrame;
+	}
+
+	private boolean equalsFrame(OFFrame other) {
+
+		return equalIdentifiers(other)
+				&& typeDisjunctIRIs.equals(other.typeDisjunctIRIs)
+				&& conceptSlots.equals(other.conceptSlots)
+				&& numberSlots.equals(other.numberSlots);
 	}
 
 	private int calcHashCode() {

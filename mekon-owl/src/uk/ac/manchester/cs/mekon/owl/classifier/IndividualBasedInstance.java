@@ -43,7 +43,7 @@ class IndividualBasedInstance extends OCInstance {
 
 	IndividualBasedInstance(OModel model, OFFrame frame) {
 
-		super(model);
+		super(model, frame);
 
 		this.model = model;
 
@@ -68,10 +68,11 @@ class IndividualBasedInstance extends OCInstance {
 
 	Set<OWLClass> getInferredTypes() {
 
-		return model
-				.getReasoner()
-				.getTypes(rootIndividual, true)
-				.getFlattened();
+		return checkRemoveRootFrameConcept(
+					model
+						.getReasoner()
+						.getTypes(rootIndividual, true)
+						.getFlattened());
 	}
 
 	Set<OWLClass> getSuggestedTypes() {
