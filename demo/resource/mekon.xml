@@ -46,9 +46,16 @@
 		-->
 		<OWLModel
 			owlFile="demo.owl"
-			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
+			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			numericProperty="http://mekon/demo.owl#numericValue">
 		</OWLModel>
+
+		<!-- Reasoner options...
+			reasonerFactory="org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory"
+			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
+			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
+			reasonerFactory="org.semanticweb.elk.owlapi.ElkReasonerFactory"
+		-->
 
 		<!--
 			Configuration information for OCClassifier plug-in
