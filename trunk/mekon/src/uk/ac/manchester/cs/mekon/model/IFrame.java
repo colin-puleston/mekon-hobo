@@ -374,6 +374,17 @@ public class IFrame implements IEntity, IValue {
 		return referencingSlots;
 	}
 
+	/**
+	 * Tests whether the frame/slot network emanating from this
+	 * frame contains any cycles.
+	 *
+	 * @return True if any cycles detected
+	 */
+	public boolean leadsToCycle() {
+
+		return new IFrameCycleTester(this).leadsToCycle();
+	}
+
 	IFrame(CFrame type, boolean queryInstance) {
 
 		this.type = type;
