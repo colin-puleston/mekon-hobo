@@ -31,39 +31,52 @@ import org.semanticweb.owlapi.model.*;
  */
 class IndividualIRIGenerator {
 
-	static private final String DEFAULT_NAMESPACE = "urn:mekon:owl:individuals";
+	static private final String DEFAULT_NAMESPACE = "http://mekon.owl.individuals";
 	static private final String DEFAULT_ROOT_NAME = "TEMP";
 	static private final String NAME_REF_SECTION_PREFIX = "-REF-";
 
 	private String namespace = DEFAULT_NAMESPACE;
 	private String rootName = DEFAULT_ROOT_NAME;
 
-	private int refCount = -1;
+	private OFFrame rootFrame = null;
+	private int refCount = 0;
 
 	void setNamespace(String namespace) {
 
 		this.namespace = namespace;
 	}
 
-	void reset(String rootName) {
+	void start(OFFrame rootFrame, String rootName) {
 
 		this.rootName = rootName;
 
-		reset();
+		start(rootFrame);
 	}
 
-	void reset() {
+	void start(OFFrame rootFrame) {
 
-		refCount = -1;
+		this.rootFrame = rootFrame;
+
+		refCount = 0;
 	}
 
-	IRI generate() {
+	IRI generateFor(OFFrame frame) {
 
-		return IRI.create(namespace + '#' + rootName + getNameRefSection());
+		if (rootFrame == null) {
+
+			throw new Error("Root-frame has not been set!");
+		}
+
+		return IRI.create(namespace + '#' + rootName + getNameRefSection(frame));
 	}
 
-	private String getNameRefSection() {
+	private String getNameRefSection(OFFrame frame) {
 
-		return ++refCount == 0 ? "" : (NAME_REF_SECTION_PREFIX + refCount);
+		return frame == rootFrame ? "" : getNextNameRefSection();
+	}
+
+	private String getNextNameRefSection() {
+
+		return NAME_REF_SECTION_PREFIX + refCount++;
 	}
 }

@@ -73,7 +73,12 @@ public class OFFrameToIndividualsRenderer
 
 			if (individual == null) {
 
-				renderNew(type);
+				individual = addIndividual();
+
+				individuals.put(frame, individual);
+
+				addTypeAssignment(type);
+				renderSlots();
 			}
 
 			return individual;
@@ -94,19 +99,28 @@ public class OFFrameToIndividualsRenderer
 			return dataFactory.getOWLObjectOneOf(renderings);
 		}
 
-		private void renderNew(OWLClassExpression type) {
+		private OWLNamedIndividual addIndividual() {
 
-			individual = addIndividual();
+			OWLNamedIndividual ind = createIndividual();
 
-			addTypeAssignment(type);
-			individuals.put(frame, individual);
+			addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
 
-			renderSlots();
+			return ind;
+		}
+
+		private OWLNamedIndividual createIndividual() {
+
+			return dataFactory.getOWLNamedIndividual(generateIRI());
 		}
 
 		private void addTypeAssignment(OWLClassExpression type) {
 
 			addAxiom(dataFactory.getOWLClassAssertionAxiom(type, individual));
+		}
+
+		private IRI generateIRI() {
+
+			return iriGenerator.generateFor(frame);
 		}
 	}
 
@@ -146,7 +160,7 @@ public class OFFrameToIndividualsRenderer
 	 */
 	public OWLNamedIndividual render(OFFrame frame) {
 
-		iriGenerator.reset();
+		iriGenerator.start(frame);
 
 		return renderFrame(frame);
 	}
@@ -161,7 +175,7 @@ public class OFFrameToIndividualsRenderer
 	 */
 	public OWLNamedIndividual render(OFFrame frame, String rootName) {
 
-		iriGenerator.reset(rootName);
+		iriGenerator.start(frame, rootName);
 
 		return renderFrame(frame);
 	}
@@ -180,25 +194,6 @@ public class OFFrameToIndividualsRenderer
 	FrameRenderer createFrameRenderer(OFFrame frame) {
 
 		return new FrameToIndividualsRenderer(frame);
-	}
-
-	private IRI createNextIRI() {
-
-		return iriGenerator.generate();
-	}
-
-	private OWLNamedIndividual addIndividual() {
-
-		OWLNamedIndividual ind = createIndividual();
-
-		addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
-
-		return ind;
-	}
-
-	private OWLNamedIndividual createIndividual() {
-
-		return dataFactory.getOWLNamedIndividual(createNextIRI());
 	}
 
 	private void addAxiom(OWLAxiom axiom) {

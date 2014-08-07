@@ -22,50 +22,75 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.frames;
 
-import java.io.File;
-import java.net.URL;
-
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-
-import uk.ac.manchester.cs.jfact.JFactFactory;
-import uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory;
+import java.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class TestOModel {
+class OFFrameCycleTester {
 
-	static private final String OWL_FILE = "demo.owl";
-	static private final String NUMERIC_PROPERTY = "numericValue";
+	private OFFrame startFrame;
 
-	static private final Class<JFactFactory> JFACT_FACTORY = JFactFactory.class;
-	static private final Class<FaCTPlusPlusReasonerFactory> FACTPP_FACTORY = FaCTPlusPlusReasonerFactory.class;
+	private Set<OFFrame> visited = new HashSet<OFFrame>();
+	private Deque<OFFrame> stack = new ArrayDeque<OFFrame>();
 
-	static public OModel create() {
+	OFFrameCycleTester(OFFrame startFrame) {
 
-		OModelBuilder builder = createBuilder();
-
-		builder.setNumericProperty(new OTest().nameToIRI(NUMERIC_PROPERTY));
-
-		return builder.create();
+		this.startFrame = startFrame;
 	}
 
-	static private OModelBuilder createBuilder() {
+	boolean leadsToCycle() {
 
-		return new OModelBuilder(getOWLFile(), FACTPP_FACTORY);
+		return leadsToCycle(startFrame);
 	}
 
-	static private File getOWLFile() {
+	private boolean leadsToCycle(OFFrame frame) {
 
-		URL url = TestOModel.class.getClassLoader().getResource(OWL_FILE);
+		if (stack.contains(frame)) {
 
-		if (url == null) {
-
-			throw new RuntimeException("Cannot access OWL file: " + OWL_FILE);
+			return true;
 		}
 
-		return new File(url.getFile());
+		if (visited.add(frame)) {
+
+			stack.push(frame);
+
+			if (slotsLeadToCycle(frame)) {
+
+				return true;
+			}
+
+			stack.pop();
+		}
+
+		return false;
+	}
+
+	private boolean slotsLeadToCycle(OFFrame frame) {
+
+		for (OFConceptSlot slot : frame.getConceptSlots()) {
+
+			if (slotLeadsToCycle(slot)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean slotLeadsToCycle(OFConceptSlot slot) {
+
+		for (OFFrame value : slot.getValues()) {
+
+			if (leadsToCycle(value)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

@@ -53,6 +53,13 @@ public abstract class OFFramesEntity {
 	}
 
 	/**
+	 */
+	public String toString() {
+
+		return getClass().getSimpleName() + ":" + identifier;
+	}
+
+	/**
 	 * Provides the identifier for the represented frames-based
 	 * entity.
 	 *

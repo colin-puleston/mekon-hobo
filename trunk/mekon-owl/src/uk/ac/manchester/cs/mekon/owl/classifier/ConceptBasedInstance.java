@@ -38,17 +38,18 @@ class ConceptBasedInstance extends OCInstance {
 
 	private OModel model;
 
-	private OFFrame frame;
 	private OWLClassExpression frameExpr;
 
 	ConceptBasedInstance(OModel model, OFFrame frame) {
 
-		super(model);
+		super(model, frame);
 
 		this.model = model;
-		this.frame = frame;
 
-		frameExpr = frameToExpression();
+		frameExpr = frameToExpression(frame);
+	}
+
+	void cleanUp() {
 	}
 
 	boolean suggestsTypes() {
@@ -76,7 +77,7 @@ class ConceptBasedInstance extends OCInstance {
 		return model.getInferredSubs(frameExpr, true);
 	}
 
-	private OWLClassExpression frameToExpression() {
+	private OWLClassExpression frameToExpression(OFFrame frame) {
 
 		return new OFFrameToExpressionRenderer(model).render(frame);
 	}
@@ -86,23 +87,5 @@ class ConceptBasedInstance extends OCInstance {
 		Set<OWLClass> types = model.getInferredEquivalents(frameExpr);
 
 		return types.isEmpty() ? model.getInferredSupers(frameExpr, true) : types;
-	}
-
-	private Set<OWLClass> checkRemoveRootFrameConcept(Set<OWLClass> allConcepts) {
-
-		OWLClass concept = getFrameConcept();
-
-		if (allConcepts.contains(concept)) {
-
-			allConcepts = new HashSet<OWLClass>(allConcepts);
-			allConcepts.remove(concept);
-		}
-
-		return allConcepts;
-	}
-
-	private OWLClass getFrameConcept() {
-
-		return model.getConcepts().get(frame.getIRI());
 	}
 }

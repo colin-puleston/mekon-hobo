@@ -96,6 +96,8 @@ public class OCClassifier extends IClassifier {
 	private OFSlotSemantics slotSemantics;
 	private List<OFPreProcessor> preProcessors = new ArrayList<OFPreProcessor>();
 
+	private boolean forceIndividualBasedClassification = false;
+
 	/**
 	 * Constructs classifier with the configuration for both the
 	 * classifier itself and the model over which it is to operate
@@ -193,14 +195,14 @@ public class OCClassifier extends IClassifier {
 	 */
 	protected IClassification classify(IFrame frame, IClassifierOps ops) {
 
-		OFFrame ocFrame = toOFFrame(frame);
+		OFFrame ofFrame = createOFInstance(frame).getRootFrame();
 
 		for (OFPreProcessor p : preProcessors) {
 
-			p.process(model, ocFrame);
+			p.process(model, ofFrame);
 		}
 
-		return classifyPreProcessed(ocFrame, ops);
+		return classifyPreProcessed(ofFrame, ops);
 	}
 
 	/**
@@ -209,22 +211,34 @@ public class OCClassifier extends IClassifier {
 	 * expression, and invokes the OWL reasoner to perform the
 	 * classification.
 	 *
-	 * @param frame Instance-level frame to classify
+	 * @param frame Frame to be classified
 	 * @param ops Types of classification operations to be performed
 	 * @return Results of classification operations
 	 */
-	protected IClassification classifyPreProcessed(OFFrame frame, IClassifierOps ops) {
+	protected IClassification classifyPreProcessed(
+									OFFrame frame,
+									IClassifierOps ops) {
 
-		return new ConceptBasedInstance(model, frame).classify(ops);
+		return createOCInstance(frame).classify(ops);
 	}
 
-	private OFFrame toOFFrame(IFrame frame) {
+	void setForceIndividualBasedClassification(boolean value) {
 
-		return createOFFramesInstance(frame).getRootFrame();
+		forceIndividualBasedClassification = value;
 	}
 
-	private OFFramesInstance createOFFramesInstance(IFrame frame) {
+	private OFInstance createOFInstance(IFrame frame) {
 
-		return new OFFramesInstance(model, slotSemantics, frame);
+		return new OFInstance(model, slotSemantics, frame);
+	}
+
+	private OCInstance createOCInstance(OFFrame frame) {
+
+		if (forceIndividualBasedClassification || frame.leadsToCycle()) {
+
+			return new IndividualBasedInstance(model, frame);
+		}
+
+		return new ConceptBasedInstance(model, frame);
 	}
 }

@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.frames.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
@@ -39,10 +40,12 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 abstract class OCInstance {
 
 	private OModel model;
+	private OFFrame frame;
 
-	OCInstance(OModel model) {
+	OCInstance(OModel model, OFFrame frame) {
 
 		this.model = model;
+		this.frame = frame;
 	}
 
 	IClassification classify(IClassifierOps ops) {
@@ -72,6 +75,8 @@ abstract class OCInstance {
 
 		OCMonitor.pollForRequestCompleted(model, frameRendering);
 
+		cleanUp();
+
 		return new IClassification(inferredIds, suggestedIds);
 	}
 
@@ -84,6 +89,24 @@ abstract class OCInstance {
 	abstract Set<OWLClass> getInferredTypes();
 
 	abstract Set<OWLClass> getSuggestedTypes();
+
+	Set<OWLClass> checkRemoveRootFrameConcept(Set<OWLClass> allConcepts) {
+
+		OWLClass concept = getFrameConcept();
+
+		if (allConcepts.contains(concept)) {
+
+			allConcepts = new HashSet<OWLClass>(allConcepts);
+			allConcepts.remove(concept);
+		}
+
+		return allConcepts;
+	}
+
+	private OWLClass getFrameConcept() {
+
+		return model.getConcepts().get(frame.getIRI());
+	}
 
 	private List<CIdentity> toIdentityList(Set<OWLClass> classes) {
 
