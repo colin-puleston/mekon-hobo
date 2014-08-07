@@ -61,7 +61,7 @@
 	<property name="build.test.classes" location="${build}/${build.test.classes.rel}" />
 
 	<!-- java options -->
-	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC"/>
+	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC -Djava.library.path=${build.lib.rel}"/>
 
 	<!-- test invocation -->
 	<property name="build.test.run.sh" location="${build}/test.sh"/>
@@ -125,7 +125,7 @@
 		<mkdir dir="${build.lib}"/>
 		<copy todir="${build.lib}">
 			<fileset dir="${src.lib}/">
-				<include name="*.jar"/>
+				<include name="*.*"/>
 			</fileset>
 		</copy>
 	</target>
