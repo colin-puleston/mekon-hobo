@@ -91,7 +91,7 @@ public abstract class ISlotListenerPropagator<L>
 	}
 
 	/**
-	 * Specifies whether a particular slot is to a target for
+	 * Specifies whether a particular slot is to be a target for
 	 * the listener.
 	 *
 	 * @param slot Slot to test
