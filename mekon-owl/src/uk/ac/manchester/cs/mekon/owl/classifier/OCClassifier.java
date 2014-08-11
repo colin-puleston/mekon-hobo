@@ -51,10 +51,10 @@ import uk.ac.manchester.cs.mekon.owl.frames.*;
 public class OCClassifier extends IClassifier {
 
 	/**
-	 * Constructs classifier with the configuration for both the
-	 * classifier itself and the model over which it is to operate
+	 * Constructs classifier, with the configuration for both the
+	 * classifier itself, and the model over which it is to operate,
 	 * defined via the appropriately-tagged child of the specified
-	 * parent-configuration-node, if such a child exists.
+	 * parent configuration-node, if such a child exists.
 	 *
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
@@ -71,9 +71,9 @@ public class OCClassifier extends IClassifier {
 	}
 
 	/**
-	 * Constructs classifier with the configuration for both the
-	 * classifier defined via the appropriately-tagged child of the
-	 * specified parent-configuration-node, if such a child exists.
+	 * Constructs classifier, with the configuration defined via the
+	 * appropriately-tagged child of the specified parent
+	 8 configuration-node, if such a child exists.
 	 *
 	 * @param model Model over which classifier is to operate
 	 * @param parentConfigNode Parent of configuration node defining
@@ -99,10 +99,10 @@ public class OCClassifier extends IClassifier {
 	private boolean forceIndividualBasedClassification = false;
 
 	/**
-	 * Constructs classifier with the configuration for both the
-	 * classifier itself and the model over which it is to operate
+	 * Constructs classifier, with the configuration for both the
+	 * classifier itself, and the model over which it is to operate,
 	 * defined via the appropriately-tagged child of the specified
-	 * parent-configuration-node.
+	 * parent configuration-node.
 	 *
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
@@ -118,7 +118,7 @@ public class OCClassifier extends IClassifier {
 	/**
 	 * Constructs classifier for specified model, with the classifier
 	 * configuration defined via the appropriately-tagged child of
-	 * the specified parent-configuration-node.
+	 * the specified parent configuration-node.
 	 *
 	 * @param model Model over which classifier is to operate
 	 * @param parentConfigNode Parent of configuration node defining
