@@ -73,7 +73,7 @@ public class OCClassifier extends IClassifier {
 	/**
 	 * Constructs classifier, with the configuration defined via the
 	 * appropriately-tagged child of the specified parent
-	 8 configuration-node, if such a child exists.
+	 * configuration-node, if such a child exists.
 	 *
 	 * @param model Model over which classifier is to operate
 	 * @param parentConfigNode Parent of configuration node defining
