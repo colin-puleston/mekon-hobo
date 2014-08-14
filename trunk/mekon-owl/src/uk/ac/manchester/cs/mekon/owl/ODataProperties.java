@@ -28,47 +28,30 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-class ODataProperties {
-
-	private OModel model;
-	private OEntities<OWLDataProperty> properties;
+class ODataProperties extends OEntities<OWLDataProperty> {
 
 	ODataProperties(OModel model) {
 
-		this.model = model;
-
-		properties = findAll();
+		super(model);
 	}
 
-	OEntities<OWLDataProperty> getAll() {
+	String getEntityTypeName() {
 
-		return properties;
+		return "data-property";
 	}
 
-	private OEntities<OWLDataProperty> findAll() {
+	Set<OWLDataProperty> findAll() {
 
-		return new OEntities<OWLDataProperty>(
-						"data-property",
-						normalise(
-							getMainOntology()
-								.getDataPropertiesInSignature(true)));
+		return getMainOntology().getDataPropertiesInSignature(true);
 	}
 
-	private Set<OWLDataProperty> normalise(Set<OWLDataProperty> properties) {
+	OWLDataProperty getTop() {
 
-		properties.remove(getDataFactory().getOWLTopDataProperty());
-		properties.remove(getDataFactory().getOWLBottomDataProperty());
-
-		return properties;
+		return getDataFactory().getOWLTopDataProperty();
 	}
 
-	private OWLOntology getMainOntology() {
+	OWLDataProperty getBottom() {
 
-		return model.getMainOntology();
-	}
-
-	private OWLDataFactory getDataFactory() {
-
-		return model.getDataFactory();
+		return getDataFactory().getOWLBottomDataProperty();
 	}
 }
