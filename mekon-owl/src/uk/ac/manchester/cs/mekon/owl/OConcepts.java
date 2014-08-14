@@ -32,21 +32,11 @@ import org.semanticweb.owlapi.reasoner.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
-class OConcepts {
-
-	private OModel model;
-	private OEntities<OWLClass> concepts;
+class OConcepts extends OEntities<OWLClass> {
 
 	OConcepts(OModel model) {
 
-		this.model = model;
-
-		concepts = findAll();
-	}
-
-	OEntities<OWLClass> getAll() {
-
-		return concepts;
+		super(model);
 	}
 
 	Set<OWLClassExpression> getAssertedSupers(OWLClass concept) {
@@ -99,13 +89,24 @@ class OConcepts {
 		return getReasoner().getInstances(expression, directOnly).getFlattened();
 	}
 
-	private OEntities<OWLClass> findAll() {
+	String getEntityTypeName() {
 
-		return new OEntities<OWLClass>(
-						"class",
-						normalise(
-							getMainOntology()
-								.getClassesInSignature(true)));
+		return "class";
+	}
+
+	Set<OWLClass> findAll() {
+
+		return getMainOntology().getClassesInSignature(true);
+	}
+
+	OWLClass getTop() {
+
+		return getDataFactory().getOWLThing();
+	}
+
+	OWLClass getBottom() {
+
+		return getDataFactory().getOWLNothing();
 	}
 
 	private Set<OWLClass> normaliseSubs(NodeSet<OWLClass> concepts) {
@@ -134,36 +135,8 @@ class OConcepts {
 		return normalise(concepts);
 	}
 
-	private Set<OWLClass> normalise(Set<OWLClass> concepts) {
-
-		concepts.remove(getDataFactory().getOWLThing());
-		concepts.remove(getDataFactory().getOWLNothing());
-
-		return concepts;
-	}
-
 	private String render(OWLClassExpression expression) {
 
-		return new OLabelRenderer(model).render(expression);
-	}
-
-	private OWLOntology getMainOntology() {
-
-		return model.getMainOntology();
-	}
-
-	private Set<OWLOntology> getAllOntologies() {
-
-		return model.getAllOntologies();
-	}
-
-	private OWLDataFactory getDataFactory() {
-
-		return model.getDataFactory();
-	}
-
-	private OWLReasoner getReasoner() {
-
-		return model.getReasoner();
+		return new OLabelRenderer(getModel()).render(expression);
 	}
 }

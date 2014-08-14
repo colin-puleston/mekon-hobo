@@ -29,10 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
-class OObjectProperties {
-
-	private OModel model;
-	private OEntities<OWLObjectProperty> properties;
+class OObjectProperties extends OEntities<OWLObjectProperty> {
 
 	private AssertedLinks assertedSupers = new AssertedSupers();
 	private AssertedLinks assertedSubs = new AssertedSubs();
@@ -120,7 +117,7 @@ class OObjectProperties {
 
 		private Object tryTestInference() throws UnsupportedOperationException {
 
-			return get(getDataFactory().getOWLTopObjectProperty(), true);
+			return get(getTop(), true);
 		}
 	}
 
@@ -160,16 +157,10 @@ class OObjectProperties {
 
 	OObjectProperties(OModel model) {
 
-		this.model = model;
+		super(model);
 
-		properties = findAll();
 		inferredSupers = new InferredSupers().resolve();
 		inferredSubs = new InferredSubs().resolve();
-	}
-
-	OEntities<OWLObjectProperty> getAll() {
-
-		return properties;
 	}
 
 	Set<OWLObjectProperty> getAssertedSupers(OWLObjectProperty property) {
@@ -196,13 +187,24 @@ class OObjectProperties {
 		return inferredSubs.get(property, directOnly);
 	}
 
-	private OEntities<OWLObjectProperty> findAll() {
+	String getEntityTypeName() {
 
-		return new OEntities<OWLObjectProperty>(
-						"object-property",
-						normalise(
-							getMainOntology()
-								.getObjectPropertiesInSignature(true)));
+		return "object-property";
+	}
+
+	Set<OWLObjectProperty> findAll() {
+
+		return getMainOntology().getObjectPropertiesInSignature(true);
+	}
+
+	OWLObjectProperty getTop() {
+
+		return getDataFactory().getOWLTopObjectProperty();
+	}
+
+	OWLObjectProperty getBottom() {
+
+		return getDataFactory().getOWLBottomObjectProperty();
 	}
 
 	private Set<OWLObjectProperty> normaliseExprs(NodeSet<OWLObjectPropertyExpression> exprs) {
@@ -213,14 +215,6 @@ class OObjectProperties {
 	private Set<OWLObjectProperty> normaliseExprs(Set<OWLObjectPropertyExpression> exprs) {
 
 		return normalise(extractProperties(exprs));
-	}
-
-	private Set<OWLObjectProperty> normalise(Set<OWLObjectProperty> properties) {
-
-		properties.remove(getDataFactory().getOWLTopObjectProperty());
-		properties.remove(getDataFactory().getOWLBottomObjectProperty());
-
-		return properties;
 	}
 
 	private Set<OWLObjectProperty> extractProperties(Set<OWLObjectPropertyExpression> exprs) {
@@ -236,25 +230,5 @@ class OObjectProperties {
 		}
 
 		return properties;
-	}
-
-	private OWLOntology getMainOntology() {
-
-		return model.getMainOntology();
-	}
-
-	private Set<OWLOntology> getAllOntologies() {
-
-		return model.getAllOntologies();
-	}
-
-	private OWLDataFactory getDataFactory() {
-
-		return model.getDataFactory();
-	}
-
-	private OWLReasoner getReasoner() {
-
-		return model.getReasoner();
 	}
 }

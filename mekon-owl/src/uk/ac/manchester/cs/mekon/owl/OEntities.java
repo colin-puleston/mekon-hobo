@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.owl;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.*;
 
@@ -35,9 +36,9 @@ import uk.ac.manchester.cs.mekon.*;
  *
  * @author Colin Puleston
  */
-public class OEntities<E extends OWLEntity> {
+public abstract class OEntities<E extends OWLEntity> {
 
-	private String entityTypeName;
+	private OModel model;
 
 	private Map<IRI, E> entitiesByIRI = new HashMap<IRI, E>();
 
@@ -66,7 +67,7 @@ public class OEntities<E extends OWLEntity> {
 		if (entity == null) {
 
 			throw new KModelException(
-						"Cannot find OWL " + entityTypeName + ": "
+						"Cannot find OWL " + getEntityTypeName() + ": "
 						+ iri);
 		}
 
@@ -93,11 +94,11 @@ public class OEntities<E extends OWLEntity> {
 		return entitiesByIRI.keySet();
 	}
 
-	OEntities(String entityTypeName, Set<E> entities) {
+	OEntities(OModel model) {
 
-		this.entityTypeName = entityTypeName;
+		this.model = model;
 
-		for (E entity : entities) {
+		for (E entity : normalise(findAll())) {
 
 			add(entity);
 		}
@@ -111,5 +112,46 @@ public class OEntities<E extends OWLEntity> {
 	void remove(E entity) {
 
 		entitiesByIRI.remove(entity.getIRI());
+	}
+
+	abstract String getEntityTypeName();
+
+	abstract Set<E> findAll();
+
+	abstract E getTop();
+
+	abstract E getBottom();
+
+	OModel getModel() {
+
+		return model;
+	}
+
+	OWLOntology getMainOntology() {
+
+		return model.getMainOntology();
+	}
+
+	Set<OWLOntology> getAllOntologies() {
+
+		return model.getAllOntologies();
+	}
+
+	OWLDataFactory getDataFactory() {
+
+		return model.getDataFactory();
+	}
+
+	OWLReasoner getReasoner() {
+
+		return model.getReasoner();
+	}
+
+	Set<E> normalise(Set<E> entities) {
+
+		entities.remove(getTop());
+		entities.remove(getBottom());
+
+		return entities;
 	}
 }

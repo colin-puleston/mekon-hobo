@@ -174,7 +174,7 @@ public class OModel {
 	 */
 	public OEntities<OWLClass> getConcepts() {
 
-		return concepts.getAll();
+		return concepts;
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class OModel {
 	 */
 	public OEntities<OWLObjectProperty> getObjectProperties() {
 
-		return objectProperties.getAll();
+		return objectProperties;
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class OModel {
 	 */
 	public OEntities<OWLDataProperty> getDataProperties() {
 
-		return dataProperties.getAll();
+		return dataProperties;
 	}
 
 	/**
