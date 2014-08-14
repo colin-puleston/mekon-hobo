@@ -22,21 +22,63 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.*;
 
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+class FramesManager {
+
+	private OModel model;
+	private ORSlotSemantics slotSemantics;
+	private List<ORPreProcessor> preProcessors = new ArrayList<ORPreProcessor>();
+
+	FramesManager(OModel model) {
+
+		this.model = model;
+
+		slotSemantics = new ORSlotSemantics(model);
+	}
+
+	void addPreProcessor(ORPreProcessor preProcessor) {
+
+		preProcessors.add(preProcessor);
+	}
+
+	ORSlotSemantics getSlotSemantics() {
+
+		return slotSemantics;
+	}
+
+	ORFrame toPreProcessed(IFrame frame) {
+
+		return toPreProcessed(toORFrame(frame));
+	}
+
+	private ORFrame toPreProcessed(ORFrame ofFrame) {
+
+		for (ORPreProcessor p : preProcessors) {
+
+			p.process(model, ofFrame);
+		}
+
+		return ofFrame;
+	}
+
+	private ORFrame toORFrame(IFrame frame) {
+
+		return createORFramesInstance(frame).getRootFrame();
+	}
+
+	private ORFramesInstance createORFramesInstance(IFrame frame) {
+
+		return new ORFramesInstance(model, slotSemantics, frame);
+	}
 }

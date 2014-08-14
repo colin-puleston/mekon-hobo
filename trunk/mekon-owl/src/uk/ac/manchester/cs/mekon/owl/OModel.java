@@ -54,12 +54,10 @@ public class OModel {
 	private OWLReasoner reasoner;
 	private OWLDataProperty numericProperty;
 
-	private OEntities<OWLClass> concepts;
-	private OEntities<OWLObjectProperty> objectProperties;
+	private OConcepts concepts;
+	private OEntities<OWLNamedIndividual> individuals;
+	private OObjectProperties objectProperties;
 	private OEntities<OWLDataProperty> dataProperties;
-
-	private OConceptLinks conceptLinks;
-	private OObjectPropertyLinks objectPropertyLinks;
 
 	private OAxioms axioms;
 
@@ -177,7 +175,18 @@ public class OModel {
 	 */
 	public OEntities<OWLClass> getConcepts() {
 
-		return concepts;
+		return concepts.getAll();
+	}
+
+	/**
+	 * Provides all named-individuals referenced within the set of
+	 * ontologies.
+	 *
+	 * @return All named-individuals referenced within ontologies
+	 */
+	public OEntities<OWLNamedIndividual> getIndividuals() {
+
+		return individuals;
 	}
 
 	/**
@@ -188,7 +197,7 @@ public class OModel {
 	 */
 	public OEntities<OWLObjectProperty> getObjectProperties() {
 
-		return objectProperties;
+		return objectProperties.getAll();
 	}
 
 	/**
@@ -227,7 +236,7 @@ public class OModel {
 	 */
 	public Set<OWLClassExpression> getAssertedSupers(OWLClass concept) {
 
-		return conceptLinks.getAssertedSupers(concept);
+		return concepts.getAssertedSupers(concept);
 	}
 
 	/**
@@ -238,7 +247,18 @@ public class OModel {
 	 */
 	public Set<OWLClassExpression> getAssertedSubs(OWLClass concept) {
 
-		return conceptLinks.getAssertedSubs(concept);
+		return concepts.getAssertedSubs(concept);
+	}
+
+	/**
+	 * Retrieves the asserted individuals of the specified class.
+	 *
+	 * @param concept Class whose individuals are required
+	 * @return Required set of individuals
+	 */
+	public Set<OWLIndividual> getAssertedIndividuals(OWLClass concept) {
+
+		return concepts.getAssertedIndividuals(concept);
 	}
 
 	/**
@@ -252,7 +272,7 @@ public class OModel {
 							OWLClassExpression expression,
 							boolean directOnly) {
 
-		return conceptLinks.getInferredSupers(expression, directOnly);
+		return concepts.getInferredSupers(expression, directOnly);
 	}
 
 	/**
@@ -266,7 +286,7 @@ public class OModel {
 							OWLClassExpression expression,
 							boolean directOnly) {
 
-		return conceptLinks.getInferredSubs(expression, directOnly);
+		return concepts.getInferredSubs(expression, directOnly);
 	}
 
 	/**
@@ -276,7 +296,21 @@ public class OModel {
 	 */
 	public Set<OWLClass> getInferredEquivalents(OWLClassExpression expression) {
 
-		return conceptLinks.getInferredEquivalents(expression);
+		return concepts.getInferredEquivalents(expression);
+	}
+
+	/**
+	 * Retrieves the inferred individuals of the specified expression.
+	 *
+	 * @param expression Expression whose individuals are required
+	 * @param directOnly True if only direct individuals are required
+	 * @return Required set of individuals
+	 */
+	public Set<OWLNamedIndividual> getInferredIndividuals(
+										OWLClassExpression expression,
+										boolean directOnly) {
+
+		return concepts.getInferredIndividuals(expression, directOnly);
 	}
 
 	/**
@@ -287,7 +321,7 @@ public class OModel {
 	 */
 	public Set<OWLObjectProperty> getAssertedSupers(OWLObjectProperty property) {
 
-		return objectPropertyLinks.getAssertedSupers(property);
+		return objectProperties.getAssertedSupers(property);
 	}
 
 	/**
@@ -298,7 +332,7 @@ public class OModel {
 	 */
 	public Set<OWLObjectProperty> getAssertedSubs(OWLObjectProperty property) {
 
-		return objectPropertyLinks.getAssertedSubs(property);
+		return objectProperties.getAssertedSubs(property);
 	}
 
 	/**
@@ -312,7 +346,7 @@ public class OModel {
 									OWLObjectProperty property,
 									boolean directOnly) {
 
-		return objectPropertyLinks.getInferredSupers(property, directOnly);
+		return objectProperties.getInferredSupers(property, directOnly);
 	}
 
 	/**
@@ -326,7 +360,7 @@ public class OModel {
 									OWLObjectProperty property,
 									boolean directOnly) {
 
-		return objectPropertyLinks.getInferredSubs(property, directOnly);
+		return objectProperties.getInferredSubs(property, directOnly);
 	}
 
 	/**
@@ -381,32 +415,12 @@ public class OModel {
 
 		classify();
 
-		concepts = findConcepts();
-		objectProperties = findObjectProperties();
+		concepts = new OConcepts(this);
+		individuals = findIndividuals();
+		objectProperties = new OObjectProperties(this);
 		dataProperties = findDataProperties();
 
-		conceptLinks = new OConceptLinks(this, concepts);
-		objectPropertyLinks = new OObjectPropertyLinks(this, objectProperties);
-
 		axioms = new OAxioms(this);
-	}
-
-	Set<OWLClass> normaliseConcepts(Set<OWLClass> concepts) {
-
-		Set<OWLClass> normalised = new HashSet<OWLClass>(concepts);
-
-		normalised.remove(getDataFactory().getOWLThing());
-		normalised.remove(getDataFactory().getOWLNothing());
-
-		return normalised;
-	}
-
-	Set<OWLObjectProperty> normaliseObjectProperties(Set<OWLObjectProperty> properties) {
-
-		properties.remove(getDataFactory().getOWLTopObjectProperty());
-		properties.remove(getDataFactory().getOWLBottomObjectProperty());
-
-		return properties;
 	}
 
 	private void classify() {
@@ -416,22 +430,12 @@ public class OModel {
 		OMonitor.pollForReasonerLoaded();
 	}
 
-	private OEntities<OWLClass> findConcepts() {
+	private OEntities<OWLNamedIndividual> findIndividuals() {
 
-		return new OEntities<OWLClass>(
-						"class",
-						normaliseConcepts(
+		return new OEntities<OWLNamedIndividual>(
+						"individual",
 							mainOntology
-								.getClassesInSignature(true)));
-	}
-
-	private OEntities<OWLObjectProperty> findObjectProperties() {
-
-		return new OEntities<OWLObjectProperty>(
-						"object-property",
-						normaliseObjectProperties(
-							mainOntology
-								.getObjectPropertiesInSignature(true)));
+								.getIndividualsInSignature(true));
 	}
 
 	private OEntities<OWLDataProperty> findDataProperties() {

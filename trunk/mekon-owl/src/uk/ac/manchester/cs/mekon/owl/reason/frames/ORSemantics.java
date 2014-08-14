@@ -22,21 +22,33 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+package uk.ac.manchester.cs.mekon.owl.reason.frames;
 
 /**
+ * Specifies the type of semantics to be embodied by the OWL expressions
+ * that will represent the incoming frames-based instances.
+ *
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+public enum ORSemantics {
+
+	/**
+	 * Specifies open-world semantics, meaning that the set of values
+	 * for each slot will give rise to a set of existential restrictions
+	 * only.
+	 */
+	OPEN_WORLD,
+
+	/**
+	 * Specifies closed-world semantics, meaning that the set of values
+	 * for each slot will give rise to a set of existential restrictions,
+	 * plus a universal restriction whose filler is a disjunction of all
+	 * values for the slot.
+	 */
+	CLOSED_WORLD;
+
+	ORSemantics getOpposite() {
+
+		return this == OPEN_WORLD ? CLOSED_WORLD : OPEN_WORLD;
+	}
 }

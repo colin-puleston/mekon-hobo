@@ -22,21 +22,23 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 /**
+ * Vocabulary used in the {@link ORClassifier} and
+ * {@link ORMatcher}-definition sections of the MEKON
+ * configuration file.
+ *
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+public interface ORConfigVocab {
+
+	static public final String CLASSIFIER_ROOT_ID = "OWLClassifier";
+	static public final String MATCHER_ROOT_ID = "OWLMatcher";
+	static public final String SEMANTICS_ID = "SlotSemantics";
+	static public final String EXCEPTION_PROP_ID = "ExceptionProperty";
+
+	static public final String DEFAULT_SEMANTICS_ATTR = "default";
+	static public final String EXCEPTION_PROP_URI_ATTR = "uri";
+	static public final String LOGGING_MODE_ATTR = "loggingMode";
 }

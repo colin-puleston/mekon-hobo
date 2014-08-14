@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.classifier.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * Responsible for building an indirect section of the frames-based
@@ -45,7 +45,7 @@ import uk.ac.manchester.cs.mekon.owl.classifier.*;
  * The configuration for the sanctioning mechanism can be provided
  * via the general MEKON configuration system, as can the configuration
  * for the {@link OModel} over which the sanctioning will operate,
- * and for a {@link OCClassifier} object (which is the default
+ * and for a {@link ORClassifier} object (which is the default
  * OWL-classification-based implementation of {@link IReasoner}) to
  * be attached to all generated frames.
  *
@@ -71,7 +71,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 * appropriately-tagged child of the specified
 	 * parent-configuration-node, which must also include configuration
 	 * for the {@link OModel} over which the sanctioning is to operate,
-	 * and optionally an {@link OCClassifier} object to be attached to
+	 * and optionally an {@link ORClassifier} object to be attached to
 	 * all generated frames.
 	 *
 	 * @param parentConfigNode Parent of configuration node defining
@@ -89,7 +89,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 * Constructs section-builder with configuration defined via the
 	 * appropriately-tagged child of the specified
 	 * parent-configuration-node, which may optonally also include
-	 * configuration for an {@link OCClassifier} object to be attached
+	 * configuration for an {@link ORClassifier} object to be attached
 	 * to all generated frames, and with specified model over which the
 	 * sanctioning is to operate.
 	 *
@@ -106,7 +106,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 
 		new OSSectionBuilderConfig(parentConfigNode).configure(this);
 
-		setIReasoner(OCClassifier.createOrNull(model, parentConfigNode));
+		setIReasoner(ORClassifier.createOrNull(model, parentConfigNode));
 	}
 
 	/**

@@ -22,21 +22,28 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 /**
+ * Specifies the type of reasoner-logging to be provided by instances
+ * of {@link ORLogger}.
+ *
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+public enum ORLoggingMode {
+
+	/**
+	 * Specifies that requests, results and reasoning times are required.
+	 */
+	FULL,
+
+	/**
+	 * Specifies that only reasoning times are required.
+	 */
+	TIMES_ONLY,
+
+	/**
+	 * Specifies that no logging is required.
+	 */
+	DISABLED;
 }

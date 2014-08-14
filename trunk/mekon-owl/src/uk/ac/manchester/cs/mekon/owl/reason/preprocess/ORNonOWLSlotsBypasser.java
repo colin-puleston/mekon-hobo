@@ -22,21 +22,24 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason.preprocess;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
+ * Pre-processer that modifies intermediate instance
+ * representations, in order to bypass any "unrecognised" slots
+ * (i.e. slots whose IRIs do not specify entities in the OWL
+ * model).
+ *
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+public class ORNonOWLSlotsBypasser extends ORSlotsBypasser {
+
+	/**
+	 */
+	protected boolean bypass(ORConceptSlot slot) {
+
+		return !slot.mapsToOWLEntity();
+	}
 }

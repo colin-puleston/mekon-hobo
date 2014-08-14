@@ -37,8 +37,20 @@ import uk.ac.manchester.cs.mekon.*;
  */
 public class OEntities<E extends OWLEntity> {
 
-	private String entityName;
+	private String entityTypeName;
+
 	private Map<IRI, E> entitiesByIRI = new HashMap<IRI, E>();
+
+	/**
+	 * Tests for the presence of the entity with the specified IRI.
+	 *
+	 * @param iri IRI of required entity
+	 * @return True if entity found
+	 */
+	public boolean contains(IRI iri) {
+
+		return entitiesByIRI.containsKey(iri);
+	}
 
 	/**
 	 * Retrieves the entity with the specified IRI.
@@ -54,7 +66,7 @@ public class OEntities<E extends OWLEntity> {
 		if (entity == null) {
 
 			throw new KModelException(
-						"Cannot find OWL " + entityName + ": "
+						"Cannot find OWL " + entityTypeName + ": "
 						+ iri);
 		}
 
@@ -81,9 +93,9 @@ public class OEntities<E extends OWLEntity> {
 		return entitiesByIRI.keySet();
 	}
 
-	OEntities(String entityName, Set<E> entities) {
+	OEntities(String entityTypeName, Set<E> entities) {
 
-		this.entityName = entityName;
+		this.entityTypeName = entityTypeName;
 
 		for (E entity : entities) {
 

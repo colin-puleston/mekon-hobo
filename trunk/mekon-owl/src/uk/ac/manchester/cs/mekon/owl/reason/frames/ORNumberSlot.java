@@ -22,21 +22,62 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason.frames;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Represents a number-valued slot in the pre-processable frames-based
+ * instance representation.
+ *
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+public class ORNumberSlot extends ORSlot<INumber> {
+
+	/**
+	 * Constructor that takes the string representation of the IRI as
+	 * the slot-identifier.
+	 *
+	 * @param iri IRI to be used in generating the classifiable
+	 * OWL expression.
+	 */
+	public ORNumberSlot(IRI iri) {
+
+		super(iri);
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param identifier Identifier for represented slot
+	 * @param iri IRI to be used in generating the classifiable
+	 * OWL expression.
+	 */
+	public ORNumberSlot(String identifier, IRI iri) {
+
+		super(identifier, iri);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean conceptSlot() {
+
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public ORNumberSlot asNumberSlot() {
+
+		return this;
+	}
+
+	ORNumberSlot(ISlot iSlot, IRI iri) {
+
+		super(iSlot, iri);
+	}
 }
