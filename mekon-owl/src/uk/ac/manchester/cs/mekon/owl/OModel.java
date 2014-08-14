@@ -55,9 +55,8 @@ public class OModel {
 	private OWLDataProperty numericProperty;
 
 	private OConcepts concepts;
-	private OEntities<OWLNamedIndividual> individuals;
 	private OObjectProperties objectProperties;
-	private OEntities<OWLDataProperty> dataProperties;
+	private ODataProperties dataProperties;
 
 	private OAxioms axioms;
 
@@ -179,17 +178,6 @@ public class OModel {
 	}
 
 	/**
-	 * Provides all named-individuals referenced within the set of
-	 * ontologies.
-	 *
-	 * @return All named-individuals referenced within ontologies
-	 */
-	public OEntities<OWLNamedIndividual> getIndividuals() {
-
-		return individuals;
-	}
-
-	/**
 	 * Provides all object-properties referenced within the set of
 	 * ontologies.
 	 *
@@ -208,7 +196,7 @@ public class OModel {
 	 */
 	public OEntities<OWLDataProperty> getDataProperties() {
 
-		return dataProperties;
+		return dataProperties.getAll();
 	}
 
 	/**
@@ -416,9 +404,8 @@ public class OModel {
 		classify();
 
 		concepts = new OConcepts(this);
-		individuals = findIndividuals();
 		objectProperties = new OObjectProperties(this);
-		dataProperties = findDataProperties();
+		dataProperties = new ODataProperties(this);
 
 		axioms = new OAxioms(this);
 	}
@@ -428,30 +415,5 @@ public class OModel {
 		OMonitor.pollForPreReasonerLoad(reasoner.getClass());
 		reasoner.precomputeInferences(InferenceType.values());
 		OMonitor.pollForReasonerLoaded();
-	}
-
-	private OEntities<OWLNamedIndividual> findIndividuals() {
-
-		return new OEntities<OWLNamedIndividual>(
-						"individual",
-							mainOntology
-								.getIndividualsInSignature(true));
-	}
-
-	private OEntities<OWLDataProperty> findDataProperties() {
-
-		return new OEntities<OWLDataProperty>(
-						"data-property",
-						normaliseDataProperties(
-							mainOntology
-								.getDataPropertiesInSignature(true)));
-	}
-
-	private Set<OWLDataProperty> normaliseDataProperties(Set<OWLDataProperty> properties) {
-
-		properties.remove(getDataFactory().getOWLTopDataProperty());
-		properties.remove(getDataFactory().getOWLBottomDataProperty());
-
-		return properties;
 	}
 }
