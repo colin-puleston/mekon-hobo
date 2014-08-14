@@ -22,21 +22,25 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
+ * Interface whose implementations will perform certain required
+ * modifications to {@link ORFrame}/{@link ORSlot}-based
+ * intermediate instance representations.
+ *
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+public interface ORPreProcessor {
+
+	/**
+	 * Performs required modifications to instance representation.
+	 *
+	 * @param model Model over which classifier is operating
+	 * @param rootFrame Root-frame in instance representation
+	 */
+	public void process(OModel model, ORFrame rootFrame);
 }

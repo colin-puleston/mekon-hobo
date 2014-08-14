@@ -22,21 +22,75 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason.frames;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import java.util.*;
 
 /**
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+class ORFrameCycleTester {
+
+	private ORFrame startFrame;
+
+	private Set<ORFrame> visited = new HashSet<ORFrame>();
+	private Deque<ORFrame> stack = new ArrayDeque<ORFrame>();
+
+	ORFrameCycleTester(ORFrame startFrame) {
+
+		this.startFrame = startFrame;
+	}
+
+	boolean leadsToCycle() {
+
+		return leadsToCycle(startFrame);
+	}
+
+	private boolean leadsToCycle(ORFrame frame) {
+
+		if (stack.contains(frame)) {
+
+			return true;
+		}
+
+		if (visited.add(frame)) {
+
+			stack.push(frame);
+
+			if (slotsLeadToCycle(frame)) {
+
+				return true;
+			}
+
+			stack.pop();
+		}
+
+		return false;
+	}
+
+	private boolean slotsLeadToCycle(ORFrame frame) {
+
+		for (ORConceptSlot slot : frame.getConceptSlots()) {
+
+			if (slotLeadsToCycle(slot)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean slotLeadsToCycle(ORConceptSlot slot) {
+
+		for (ORFrame value : slot.getValues()) {
+
+			if (leadsToCycle(value)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

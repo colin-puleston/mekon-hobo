@@ -22,21 +22,27 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+class ORMatcherConfig extends ORConfig {
+
+	static boolean configNodeExists(KConfigNode parentConfigNode) {
+
+		return parentConfigNode.getChildOrNull(MATCHER_ROOT_ID) != null;
+	}
+
+	ORMatcherConfig(KConfigNode parentConfigNode) {
+
+		super(parentConfigNode, MATCHER_ROOT_ID);
+	}
+
+	void configure(ORMatcher matcher) {
+
+		configure(matcher.getSlotSemantics(), ORMatcherLogger.get());
+	}
 }

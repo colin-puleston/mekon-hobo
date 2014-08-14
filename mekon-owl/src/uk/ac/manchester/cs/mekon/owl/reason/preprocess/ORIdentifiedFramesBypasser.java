@@ -22,21 +22,36 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason.preprocess;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
+ * Pre-processer that modifies intermediate instance
+ * representations, in order to bypass any frames that have
+ * a particular pre-specified identifier.
+ *
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+public class ORIdentifiedFramesBypasser extends ORFramesBypasser {
+
+	private CIdentity identity;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param identity Identity of frames to be bypassed
+	 */
+	public ORIdentifiedFramesBypasser(CIdentity identity) {
+
+		this.identity = identity;
+	}
+
+	/**
+	 */
+	protected boolean bypass(ORFrame frame) {
+
+		return frame.getIdentifier().equals(identity.getIdentifier());
+	}
 }

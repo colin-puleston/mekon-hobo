@@ -60,6 +60,10 @@ class OAxioms {
 
 				updateEntities(model.getConcepts(), (OWLClass)entity);
 			}
+			else if (entity instanceof OWLNamedIndividual) {
+
+				updateEntities(model.getIndividuals(), (OWLNamedIndividual)entity);
+			}
 			else if (entity instanceof OWLObjectProperty) {
 
 				updateEntities(model.getObjectProperties(), (OWLObjectProperty)entity);

@@ -22,21 +22,71 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.*;
 
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import org.semanticweb.owlapi.model.*;
+
+import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-	OSSectionBuilderTest.class,
-	ORClassifierTest.class})
-public class MekonOWLTestSuite {
+class IndividualBasedInstance extends ORInstance {
+
+	private OModel model;
+
+	private IndividualsRenderer renderer;
+	private OWLNamedIndividual rootIndividual;
+
+	IndividualBasedInstance(OModel model, ORFrame frame) {
+
+		super(model, frame);
+
+		this.model = model;
+
+		renderer = new IndividualsRenderer(model);
+		rootIndividual = renderer.render(frame);
+	}
+
+	void cleanUp() {
+
+		renderer.removeAllDefault();
+	}
+
+	boolean suggestsTypes() {
+
+		return false;
+	}
+
+	boolean infersMatchingIndividuals() {
+
+		return false;
+	}
+
+	OWLObject getFrameRendering() {
+
+		return rootIndividual;
+	}
+
+	Set<OWLClass> getInferredTypes() {
+
+		return checkRemoveRootFrameConcept(
+					model
+						.getReasoner()
+						.getTypes(rootIndividual, true)
+						.getFlattened());
+	}
+
+	Set<OWLClass> getSuggestedTypes() {
+
+		throw new Error("Method should never be invoked!");
+	}
+
+	Set<OWLNamedIndividual> getMatchingIndividuals() {
+
+		throw new Error("Method should never be invoked!");
+	}
 }
