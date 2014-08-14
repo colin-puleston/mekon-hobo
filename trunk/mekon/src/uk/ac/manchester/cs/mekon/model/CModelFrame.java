@@ -56,7 +56,7 @@ class CModelFrame extends CFrame {
 	private CSlots slots = CSlots.INERT_INSTANCE;
 	private CSlotValues slotValues = CSlotValues.INERT_INSTANCE;
 
-	private IReasoner iReasoner;
+	private IReasoner iReasoner = DefaultIReasoner.singleton;
 	private CFrameSubsumptions subsumptions = new CFrameSubsumptions(this);
 
 	private abstract class DownwardsCrawler extends CHierarchyCrawler {
@@ -239,16 +239,11 @@ class CModelFrame extends CFrame {
 		return slotValues;
 	}
 
-	CModelFrame(
-		CModel model,
-		CIdentity identity,
-		boolean hidden,
-		IReasoner iReasoner) {
+	CModelFrame(CModel model, CIdentity identity, boolean hidden) {
 
 		this.model = model;
 		this.identity = identity;
 		this.hidden = hidden;
-		this.iReasoner = iReasoner;
 
 		if (!isRoot()) {
 

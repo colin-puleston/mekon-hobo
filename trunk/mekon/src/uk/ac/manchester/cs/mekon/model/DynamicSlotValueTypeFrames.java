@@ -88,7 +88,7 @@ class DynamicSlotValueTypeFrames {
 
 		private CModelFrame create() {
 
-			return model.addFrame(getNewIdentity(), true, DefaultIReasoner.singleton);
+			return model.addFrame(getNewIdentity(), true);
 		}
 
 		private CIdentity getNewIdentity() {

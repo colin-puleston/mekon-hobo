@@ -52,6 +52,11 @@ class CBuilderImpl implements CBuilder {
 		model.setDefaultUpdateOp(op, enabled);
 	}
 
+	public void addIMatcher(IMatcher iMatcher) {
+
+		model.addIMatcher(iMatcher);
+	}
+
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {
 
 		sectionBuilders.add(sectionBuilder);
@@ -64,14 +69,14 @@ class CBuilderImpl implements CBuilder {
 			throw new KModelException("Frame already defined: " + identity);
 		}
 
-		return addNewFrame(identity, hidden);
+		return model.addFrame(identity, hidden);
 	}
 
 	public CFrame resolveFrame(CIdentity identity, boolean hidden) {
 
 		CFrame frame = getFrames().getOrNull(identity);
 
-		return frame != null ? frame : addNewFrame(identity, hidden);
+		return frame != null ? frame : model.addFrame(identity, hidden);
 	}
 
 	public void removeFrame(CIdentity identity) {
@@ -196,11 +201,6 @@ class CBuilderImpl implements CBuilder {
 				sectionBuilder.build(this);
 			}
 		}
-	}
-
-	private CFrame addNewFrame(CIdentity identity, boolean hidden) {
-
-		return model.addFrame(identity, hidden, DefaultIReasoner.singleton);
 	}
 
 	private boolean initialBuild() {

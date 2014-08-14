@@ -63,6 +63,13 @@ public interface CBuilder {
 	public void setDefaultUpdateOp(IUpdateOp op, boolean enabled);
 
 	/**
+	 * Adds an instance-matcher object for the model.
+	 *
+	 * @param iMatcher Instance-matcher for model
+	 */
+	public void addIMatcher(IMatcher iMatcher);
+
+	/**
 	 * Adds a builder for a section of the model.
 	 *
 	 * @param sectionBuilder Builder to build section of model

@@ -43,7 +43,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  * ways:
  * <ul>
  *   <li>Concrete-instances cannot be instantiations of
- *   disjunction-frames (see {@link CFrame#disjunction})
+ *   disjunction-frames (see {@link CFrameCategory#disjunction})
  *   <li>Slots on concrete-instances cannot have abstract values
  *   (see {@link IValue#abstractValue})
  *   <li>Derived-values slots on query-instances (see {@link
@@ -321,7 +321,7 @@ public class IFrame implements IEntity, IValue {
 	/**
 	 * Stipulates that this frame is abstract if and only if the
 	 * concept-level frame representing it's type is a {@link
-	 * CFrame#disjunction} frame.
+	 * CFrameCategory#disjunction} frame.
 	 *
 	 * @return True if type-frame is a disjunction
 	 */
