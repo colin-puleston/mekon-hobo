@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<HOBOModel queriesEnabled="TRUE">
+<HOBOModel
+	queriesEnabled="TRUE">
 
 	<!--
 		Specification of types of reasoning-related update
@@ -77,7 +78,27 @@
 				default="OPEN_WORLD">
 				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
 			</SlotSemantics>
+			<ApplicableConcepts>
+				<Group
+					rootURI="http://mekon/demo.owl#Citizen"/>
+				<Group
+					rootURI="http://mekon/demo.owl#Employment"/>
+				<Group
+					rootURI="http://mekon/demo.owl#Job"/>
+			</ApplicableConcepts>
 		</OWLClassifier>
+
+		<OWLMatcher
+			loggingMode="DISABLED">
+			<SlotSemantics
+				default="OPEN_WORLD">
+				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
+			</SlotSemantics>
+			<ApplicableConcepts>
+				<Group
+					rootURI="http://mekon/demo.owl#Citizen"/>
+			</ApplicableConcepts>
+		</OWLMatcher>
 
 		<!--
 			Configuration information for the actual "sanctioning"
