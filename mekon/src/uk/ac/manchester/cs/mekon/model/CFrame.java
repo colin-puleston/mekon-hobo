@@ -90,8 +90,8 @@ public abstract class CFrame
 						implements CIdentified, CSourced, IValue {
 
 	/**
-	 * Invokes {@link resolveDisjunction(String, List<CFrame>)}} with
-	 * a generated label providing a description of the disjunction.
+	 * Invokes {@link #resolveDisjunction(String, List)}} with a
+	 * generated label providing a description of the disjunction.
 	 *
 	 * @param disjuncts Relevant disjuncts
 	 * @return Created disjunction-frame, or single model-frame if
@@ -315,7 +315,7 @@ public abstract class CFrame
 	public abstract List<CFrame> getSubs(CFrameVisibility visibility);
 
 	/**
-	 * Invokes {@link getAncestors(CFrameVisibility)} with visibility
+	 * Invokes {@link #getAncestors(CFrameVisibility)} with visibility
 	 * status of {@link CFrameVisibility#ALL}.
 	 *
 	 * @return All ancestor-frames in standard order
@@ -329,7 +329,7 @@ public abstract class CFrame
 	 * Provides ordered list of ancestor-frames, obtained via a recusive
 	 * depth-first crawl upwards through the hierarchy, visiting the
 	 * super-frames at each step in their standard order (as provided by
-	 * {@link getSupers}).
+	 * {@link #getSupers}).
 	 *
 	 * @param visibility Visibility status of required ancestor-frames
 	 * @return Relevant ancestor-frames
@@ -339,14 +339,14 @@ public abstract class CFrame
 	/**
 	 * Provides all ancestor-frames that either have attached
 	 * concept-level slots or provide default slot-values. Ordering is
-	 * as for {@link getAncestors}.
+	 * as for {@link #getAncestors}.
 	 *
 	 * @return All structured ancestors in standard order
 	 */
 	public abstract List<CFrame> getStructuredAncestors();
 
 	/**
-	 * Invokes {@link getSubsumers(CFrameVisibility)} with visibility
+	 * Invokes {@link #getSubsumers(CFrameVisibility)} with visibility
 	 * status of {@link CFrameVisibility#ALL}.
 	 *
 	 * @return All subsumer-frames in standard order
@@ -361,7 +361,7 @@ public abstract class CFrame
 	 * visibility status, including this frame itself, if applicable,
 	 * plus all relevant ancestor-frames. Ordering is this frame first,
 	 * if applicable, followed by relevant ancestors, ordered as for
-	 * {@link getAncestors}.
+	 * {@link #getAncestors}.
 	 *
 	 * @param visibility Visibility status of required subsumer-frames
 	 * @return Relevant subsumer-frames in standard order
@@ -372,7 +372,7 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Invokes {@link getDescendants(CFrameVisibility)} with visibility
+	 * Invokes {@link #getDescendants(CFrameVisibility)} with visibility
 	 * status of {@link CFrameVisibility#ALL}.
 	 *
 	 * @return All descendant-frames in standard order
@@ -386,7 +386,7 @@ public abstract class CFrame
 	 * Provides all descendant-frames, obtained via a recusive
 	 * depth-first crawl downwards through the hierarchy, visiting
 	 * the sub-frames at each step in their standard order (as provided
-	 * by {@link getSubs}).
+	 * by {@link #getSubs}).
 	 *
 	 * @param visibility Visibility status of required descendant-frames
 	 * @return Relevant descendant-frames in standard order
@@ -394,7 +394,7 @@ public abstract class CFrame
 	public abstract List<CFrame> getDescendants(CFrameVisibility visibility);
 
 	/**
-	 * Invokes {@link getSubsumeds(CFrameVisibility)} with visibility
+	 * Invokes {@link #getSubsumeds(CFrameVisibility)} with visibility
 	 * status of {@link CFrameVisibility#ALL}.
 	 *
 	 * @return All subsumed-frames in standard order
@@ -409,7 +409,7 @@ public abstract class CFrame
 	 * visibility status, including this frame itself, if applicable,
 	 * plus all relevant descendant-frames. Ordering is this frame first,
 	 * if applicable, followed by relevant ancestors, ordered as for
-	 * {@link getDescendants}.
+	 * {@link #getDescendants}.
 	 *
 	 * @param visibility Visibility status of required subsumed-frames
 	 * @return Relevant subsumed-frames in standard order
@@ -505,8 +505,7 @@ public abstract class CFrame
 	 * Instantiates the frame as a concrete-instance (see {@link
 	 * IFrame}).
 	 *
-	 * @param identity Identity of frame to be instantiated
-	 * @return Instantiation of specified frame
+	 * @return Instantiation of this frame
 	 */
 	public IFrame instantiate() {
 
@@ -517,8 +516,7 @@ public abstract class CFrame
 	 * Instantiates the frame as a concrete-instance (see {@link
 	 * IFrame}).
 	 *
-	 * @param identity Identity of frame to be instantiated
-	 * @return Instantiation of specified frame
+	 * @return Instantiation of this frame
 	 */
 	public IFrame instantiateQuery() {
 

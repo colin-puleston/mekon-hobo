@@ -25,9 +25,10 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Responsible for the definition of and subsequent creation of for
- * defining an extension-frame (see {@link CFrame#extension}) that
- * extends a particular model-frame (see {@link CFrame#modelFrame}).
+ * Responsible for the definition of and subsequent creation of
+ * an extension-frame (see {@link CFrameCategory#extension}) that
+ * extends a particular model-frame (see {@link
+ * CFrameCategory#modelFrame}).
  *
  * @author Colin Puleston
  */
@@ -43,8 +44,8 @@ public class CExtender {
 	 * label that provides a description of the extension.
 	 *
 	 * @param baseFrame Model-frame to be extended
-	 * @return throws KAccessException if specified base-frame is not
-	 * a model-frame
+	 * @throws KAccessException if specified base-frame is not a
+	 * model-frame
 	 */
 	public CExtender(CFrame baseFrame) {
 
@@ -57,8 +58,8 @@ public class CExtender {
 	 *
 	 * @param baseFrame Model-frame to be extended
 	 * @param label Label for extension-frame
-	 * @return throws KAccessException if specified base-frame is not
-	 * a model-frame
+	 * @throws KAccessException if specified base-frame is not a
+	 * model-frame
 	 */
 	public CExtender(CFrame baseFrame, String label) {
 

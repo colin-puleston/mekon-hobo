@@ -170,7 +170,11 @@ public class MekonTest extends FramesTestUtils {
 
 	private CModelFrame createCFrame(String name, boolean hidden) {
 
-		return model.addFrame(createIdentity(name), hidden, iReasoner);
+		CModelFrame frame = model.addFrame(createIdentity(name), hidden);
+
+		frame.setIReasoner(iReasoner);
+
+		return frame;
 	}
 
 	private CIdentity createIdentity(String name) {

@@ -57,7 +57,7 @@ public class IUpdating {
 	 * Checks whether the specified update operation is one of
 	 * the default operations.
 	 *
-	 * @param Relevant update operation
+	 * @param updateOp Relevant update operation
 	 * @return True if update operation is a default operation
 	 */
 	public boolean defaultOp(IUpdateOp updateOp) {

@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
-
 /**
  * @author Colin Puleston
  */
@@ -40,9 +38,9 @@ class CRootFrame extends CModelFrame {
 		return true;
 	}
 
-	CRootFrame(CModel model, IReasoner iReasoner) {
+	CRootFrame(CModel model) {
 
-		super(model, IDENTITY, false, iReasoner);
+		super(model, IDENTITY, false);
 
 		setSource(CSource.DIRECT);
 	}

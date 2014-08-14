@@ -30,10 +30,10 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
- * Represents the generic MEKON Frames Model (FM), within
- * which domain concepts are represented by {@link CFrame}
- * objects, and inter-concept relationships and
- * concept-attributes by {@link CSlot} objects.
+ * Represents a generic MEKON Frames Model (FM), within which
+ * domain concepts are represented by {@link CFrame} objects,
+ * and inter-concept relationships and concept-attributes by
+ * {@link CSlot} objects.
  *
  * @author Colin Puleston
  */
@@ -52,6 +52,7 @@ public class CModel implements CAnnotatable {
 	private boolean queriesEnabled = false;
 	private IEditor iEditor = new IEditorImpl(this);
 	private IUpdating iUpdating = new IUpdating(iEditor);
+	private IStore iStore = new IStore();
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
@@ -81,6 +82,16 @@ public class CModel implements CAnnotatable {
 	public IUpdating getIUpdating() {
 
 		return iUpdating;
+	}
+
+	/**
+	 * Provides the instance-store for the model.
+	 *
+	 * @return Instance-store for model
+	 */
+	public IStore getIStore() {
+
+		return iStore;
 	}
 
 	/**
@@ -157,7 +168,7 @@ public class CModel implements CAnnotatable {
 
 		this.customiser = customiser;
 
-		rootFrame = new CRootFrame(this, DefaultIReasoner.singleton);
+		rootFrame = new CRootFrame(this);
 	}
 
 	void addInitialisationListener(InitialisationListener listener) {
@@ -185,9 +196,14 @@ public class CModel implements CAnnotatable {
 		iUpdating.setDefaultOp(op, enabled);
 	}
 
-	CModelFrame addFrame(CIdentity identity, boolean hidden, IReasoner iReasoner) {
+	void addIMatcher(IMatcher iMatcher) {
 
-		CModelFrame frame = new CModelFrame(this, identity, hidden, iReasoner);
+		iStore.addMatcher(iMatcher);
+	}
+
+	CModelFrame addFrame(CIdentity identity, boolean hidden) {
+
+		CModelFrame frame = new CModelFrame(this, identity, hidden);
 
 		frames.add(frame);
 		customiser.onFrameAdded(frame);
