@@ -111,10 +111,10 @@ class InstantiatonsPanel extends JPanel {
 		this.modelTree = modelTree;
 		this.frame = frame;
 
-		add(createButtonsPanel(), BorderLayout.EAST);
+		add(createButtonsComponent(), BorderLayout.EAST);
 	}
 
-	private JComponent createButtonsPanel() {
+	private JComponent createButtonsComponent() {
 
 		JPanel panel = new JPanel();
 

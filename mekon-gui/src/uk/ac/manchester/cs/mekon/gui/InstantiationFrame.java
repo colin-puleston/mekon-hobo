@@ -23,6 +23,7 @@
  */
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -73,7 +74,17 @@ class InstantiationFrame extends GFrame {
 
 	void display() {
 
-		display(createMainComponent());
+		display(createTopLevelComponent());
+	}
+
+	private JComponent createTopLevelComponent() {
+
+		JPanel panel = new JPanel(new BorderLayout());
+
+		panel.add(createMainComponent(), BorderLayout.CENTER);
+		panel.add(new InstantiationOptionsPanel(frame), BorderLayout.SOUTH);
+
+		return panel;
 	}
 
 	private JComponent createMainComponent() {

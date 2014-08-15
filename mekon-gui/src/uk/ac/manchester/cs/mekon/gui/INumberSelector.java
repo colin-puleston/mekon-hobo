@@ -51,32 +51,40 @@ class INumberSelector extends GDialog {
 	private CNumber type;
 	private INumber selection = null;
 
-	private class InputField extends JTextField {
+	private class InputField extends GTextField {
 
 		static private final long serialVersionUID = -1;
 
 		private Set<InputField> conflictingFields = new HashSet<InputField>();
 
-		private class ValueEntryListener extends KeyAdapter {
+		protected void onTextEntered(String text) {
 
-			public void keyPressed(KeyEvent event) {
+			INumber value = parseValue(text);
 
-				onKeyPressed(event);
+			if (value != null) {
+
+				selection = getSelection(value);
+
+				dispose();
 			}
 		}
 
-		private class FieldExitListener extends FocusAdapter {
+		protected void onFieldExited(String text) {
 
-			public void focusLost(FocusEvent e) {
+			INumber value = parseValue(text);
 
-				checkValueEntered();
+			if (value != null) {
+
+				onValueEntered(value);
 			}
 		}
 
-		InputField() {
+		protected void onKeyPressed(KeyEvent event) {
 
-			addKeyListener(new ValueEntryListener());
-			addFocusListener(new FieldExitListener());
+			for (InputField field : conflictingFields) {
+
+				field.clear();
+			}
 		}
 
 		void addConflictingField(InputField conflictingField) {
@@ -95,51 +103,6 @@ class INumberSelector extends GDialog {
 		INumber getSelection(INumber value) {
 
 			return value;
-		}
-
-		private void onKeyPressed(KeyEvent event) {
-
-			clearConflictingFields();
-
-			if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-
-				checkSelect();
-			}
-		}
-
-		private void clearConflictingFields() {
-
-			for (InputField field : conflictingFields) {
-
-				field.clear();
-			}
-		}
-
-		private void checkSelect() {
-
-			INumber value = getValue();
-
-			if (value != null) {
-
-				selection = getSelection(value);
-
-				dispose();
-			}
-		}
-
-		private void checkValueEntered() {
-
-			INumber value = getValue();
-
-			if (value != null) {
-
-				onValueEntered(value);
-			}
-		}
-
-		private INumber getValue() {
-
-			return parseValue(getText());
 		}
 	}
 
@@ -274,7 +237,9 @@ class INumberSelector extends GDialog {
 
 	private Dimension getPreferredSize(boolean queryInstance) {
 
-		return queryInstance ? RANGE_VALUE_WINDOW_SIZE : EXACT_VALUE_WINDOW_SIZE;
+		return queryInstance
+					? RANGE_VALUE_WINDOW_SIZE
+					: EXACT_VALUE_WINDOW_SIZE;
 	}
 
 	private JComponent getDisplay(boolean queryInstance) {

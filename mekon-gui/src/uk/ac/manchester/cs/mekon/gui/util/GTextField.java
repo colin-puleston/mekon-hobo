@@ -22,65 +22,50 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.gui;
+package uk.ac.manchester.cs.mekon.gui.util;
 
-import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-
-import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
  * @author Colin Puleston
  */
-class CFrameSelector extends GDialog {
+public abstract class GTextField extends JTextField {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension WINDOW_SIZE = new Dimension(450, 300);
-	static private final String MAIN_TITLE = "Value-Type Selector";
+	private class ValueEntryListener extends KeyAdapter {
 
-	private CFrame selection = null;
+		public void keyPressed(KeyEvent event) {
 
-	private class SelectorListener extends CFrameSelectionListener {
+			onKeyPressed(event);
 
-		protected void onSelected(CFrame frame) {
+			if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 
-			select(frame);
+				onTextEntered(getText());
+			}
 		}
 	}
 
-	CFrameSelector(JComponent parent, CFrame rootFrame) {
+	private class FieldExitListener extends FocusAdapter {
 
-		super(parent, MAIN_TITLE, true);
+		public void focusLost(FocusEvent e) {
 
-		setPreferredSize(WINDOW_SIZE);
-		display(createMainComponent(rootFrame));
+			onFieldExited(getText());
+		}
 	}
 
-	CFrame getSelectionOrNull() {
+	public GTextField() {
 
-		return selection;
+		addKeyListener(new ValueEntryListener());
+		addFocusListener(new FieldExitListener());
 	}
 
-	private JComponent createMainComponent(CFrame rootFrame) {
+	protected abstract void onTextEntered(String text);
 
-		boolean showRoot = rootFrame.instantiable();
-		CFramesComboPanel combo = new CFramesComboPanel(
-										rootFrame,
-										CFrameVisibility.EXPOSED,
-										showRoot);
-
-		combo.addSelectionListener(new SelectorListener());
-
-		return combo;
+	protected void onFieldExited(String text) {
 	}
 
-	private void select(CFrame frame) {
-
-		selection = frame;
-
-		dispose();
+	protected void onKeyPressed(KeyEvent event) {
 	}
 }

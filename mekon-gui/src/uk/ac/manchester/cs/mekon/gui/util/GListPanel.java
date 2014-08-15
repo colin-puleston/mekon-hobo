@@ -65,7 +65,7 @@ public class GListPanel<E> extends JPanel {
 		this.list = list;
 
 		add(new JScrollPane(list), BorderLayout.CENTER);
-		add(createFilterPanel(), BorderLayout.SOUTH);
+		add(createFilterComponent(), BorderLayout.SOUTH);
 
 		filterField.addKeyListener(new FilterListener());
 		startOnlySelector.addActionListener(new StartOnlyListener());
@@ -77,7 +77,7 @@ public class GListPanel<E> extends JPanel {
 		filterField.requestFocusInWindow();
 	}
 
-	private JPanel createFilterPanel() {
+	private JComponent createFilterComponent() {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
