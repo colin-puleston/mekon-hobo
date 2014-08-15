@@ -76,30 +76,18 @@ abstract class Renderer<FR extends OWLObject> {
 			addHasValueForExpr(property, toExpression(rendering));
 		}
 
-		void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
-
-			addValueExpression(
-				dataFactory
-					.getOWLObjectSomeValuesFrom(
-						property,
-						expr));
-		}
-
 		void addOnlyValuesForFrames(OWLObjectProperty property, Set<FR> renderings) {
 
 			addOnlyValuesForExpr(property, toExpression(renderings));
 		}
 
-		void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+		abstract void addHasValueForExpr(
+							OWLObjectProperty property,
+							OWLClassExpression expr);
 
-			addValueExpression(
-				dataFactory
-					.getOWLObjectAllValuesFrom(
-						property,
-						expr));
-		}
-
-		abstract void addValueExpression(OWLClassExpression expr);
+		abstract void addOnlyValuesForExpr(
+							OWLObjectProperty property,
+							OWLClassExpression expr);
 
 		abstract OWLClassExpression toExpression(FR rendering);
 

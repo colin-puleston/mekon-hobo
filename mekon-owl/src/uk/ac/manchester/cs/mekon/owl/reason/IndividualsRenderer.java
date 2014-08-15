@@ -36,9 +36,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * @author Colin Puleston
  */
-class IndividualsRenderer
-			extends
-				Renderer<OWLNamedIndividual> {
+class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 
 	private OModel model;
 	private OWLDataFactory dataFactory;
@@ -51,12 +49,12 @@ class IndividualsRenderer
 
 	private IndividualIRIGenerator iriGenerator = new IndividualIRIGenerator();
 
-	private class FrameToIndividualsRenderer extends FrameRenderer {
+	private class FrameToIndividualRenderer extends FrameRenderer {
 
 		private ORFrame frame;
 		private OWLNamedIndividual individual;
 
-		FrameToIndividualsRenderer(ORFrame frame) {
+		FrameToIndividualRenderer(ORFrame frame) {
 
 			super(frame);
 
@@ -80,9 +78,25 @@ class IndividualsRenderer
 			return individual;
 		}
 
-		void addValueExpression(OWLClassExpression expr) {
+		void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
 
-			addTypeAssignment(expr);
+			OWLIndividual value = extractSingleValue((OWLObjectOneOf)expr);
+
+			addAxiom(
+				dataFactory
+					.getOWLObjectPropertyAssertionAxiom(
+						property,
+						individual,
+						value));
+		}
+
+		void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+
+			addTypeAssignment(
+				dataFactory
+					.getOWLObjectAllValuesFrom(
+						property,
+						expr));
 		}
 
 		OWLClassExpression toExpression(OWLNamedIndividual rendering) {
@@ -112,6 +126,11 @@ class IndividualsRenderer
 		private void addTypeAssignment(OWLClassExpression type) {
 
 			addAxiom(dataFactory.getOWLClassAssertionAxiom(type, individual));
+		}
+
+		private OWLIndividual extractSingleValue(OWLObjectOneOf oneOf) {
+
+			return oneOf.getIndividuals().iterator().next();
 		}
 
 		private IRI generateIRI() {
@@ -177,7 +196,7 @@ class IndividualsRenderer
 
 	FrameRenderer createFrameRenderer(ORFrame frame) {
 
-		return new FrameToIndividualsRenderer(frame);
+		return new FrameToIndividualRenderer(frame);
 	}
 
 	private void addAxiom(OWLAxiom axiom) {
