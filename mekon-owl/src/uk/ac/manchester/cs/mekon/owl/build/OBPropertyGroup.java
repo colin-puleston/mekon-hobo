@@ -22,54 +22,47 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
-
-import java.util.*;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
-
 /**
- * Responsible for providing the labels for the frames-based
- * entities that will be generated from named OWL entities.
+ * Represents a set of OWL properties defined via a single
+ * root-property. The set will include all descendant properties
+ * of the root-property, and optionally the root-property itself.
  *
  * @author Colin Puleston
  */
-public class OSEntityLabels {
+public class OBPropertyGroup extends OBEntityGroup {
 
-	private OModel model;
-	private OAnnotationReader annotationReader;
-
-	/**
-	 */
-	public void addAnnotationProperty(IRI annotationPropIRI) {
-
-		annotationReader.addProperty(model.getAnnotationProperty(annotationPropIRI));
-	}
+	private boolean mirrorAsFrames = true;
 
 	/**
+	 * Constructor.
+	 *
+	 * @param rootPropertyIRI IRI of root-property
 	 */
-	public void addAnnotationProperties(List<IRI> annotationPropIRIs) {
+	public OBPropertyGroup(IRI rootPropertyIRI) {
 
-		for (IRI iri : annotationPropIRIs) {
-
-			addAnnotationProperty(iri);
-		}
+		super(rootPropertyIRI);
 	}
 
-	OSEntityLabels(OModel model) {
+	/**
+	 * Sets the flag that specifies whether for every property
+	 * in this group there will be created, in addition to the
+	 * frames-model property, a corresponding frame with the same
+	 * IRI-derived identifier.
+	 *
+	 * @param mirrorAsFrames True if each created frames-model
+	 * property should be mirrrored by a corresponding frame
+	 */
+	public void setMirrorAsFrames(boolean mirrorAsFrames) {
 
-		this.model = model;
-
-		annotationReader = new OAnnotationReader(model);
+		this.mirrorAsFrames = mirrorAsFrames;
 	}
 
-	String getLabel(OWLEntity entity) {
+	boolean mirrorAsFrames() {
 
-		String label = annotationReader.getValueOrNull(entity);
-
-		return label != null ? label : OIdentity.createDefaultLabel(entity);
+		return mirrorAsFrames;
 	}
 }

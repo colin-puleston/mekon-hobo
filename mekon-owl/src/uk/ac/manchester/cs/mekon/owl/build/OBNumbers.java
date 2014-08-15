@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -36,34 +36,34 @@ import uk.ac.manchester.cs.mekon.owl.*;
 /**
  * @author Colin Puleston
  */
-class OSNumbers {
+class OBNumbers {
 
 	private OModel model;
 
 	private Set<TypeNumberCreator<?>> creators = new HashSet<TypeNumberCreator<?>>();
 
-	private class SupersProcessor extends OWLObjectVisitorExAdapter<OSNumber> {
+	private class SupersProcessor extends OWLObjectVisitorExAdapter<OBNumber> {
 
 		private Set<OWLClass> concepts = new HashSet<OWLClass>();
 
-		public OSNumber visit(OWLClass e) {
+		public OBNumber visit(OWLClass e) {
 
 			concepts.add(e);
 
 			return null;
 		}
 
-		public OSNumber visit(OWLDataSomeValuesFrom e) {
+		public OBNumber visit(OWLDataSomeValuesFrom e) {
 
 			return checkCreateNumber(e.getProperty(), e.getFiller());
 		}
 
-		public OSNumber visit(OWLDataExactCardinality e) {
+		public OBNumber visit(OWLDataExactCardinality e) {
 
 			return checkCreateNumber(e.getProperty(), e.getFiller());
 		}
 
-		protected OSNumber getDefaultReturnValue(OWLObject e) {
+		protected OBNumber getDefaultReturnValue(OWLObject e) {
 
 			return null;
 		}
@@ -83,14 +83,14 @@ class OSNumbers {
 
 		abstract boolean createsFor(OWLDatatype datatype);
 
-		OSNumber create(OWLDatatypeRestriction restriction) {
+		OBNumber create(OWLDatatypeRestriction restriction) {
 
-			return new OSNumber(createDef(restriction));
+			return new OBNumber(createDef(restriction));
 		}
 
-		OSNumber createUnconstrained() {
+		OBNumber createUnconstrained() {
 
-			return new OSNumber(getUnconstrainedDef());
+			return new OBNumber(getUnconstrainedDef());
 		}
 
 		abstract N parseValue(String value);
@@ -167,7 +167,7 @@ class OSNumbers {
 		}
 	}
 
-	OSNumbers(OModel model) {
+	OBNumbers(OModel model) {
 
 		this.model = model;
 
@@ -175,13 +175,13 @@ class OSNumbers {
 		new FloatCreator();
 	}
 
-	OSNumber checkExtractNumber(OWLClass concept) {
+	OBNumber checkExtractNumber(OWLClass concept) {
 
 		SupersProcessor supersProcessor = new SupersProcessor();
 
 		for (OWLClassExpression sup : model.getAssertedSupers(concept)) {
 
-			OSNumber num = sup.accept(supersProcessor);
+			OBNumber num = sup.accept(supersProcessor);
 
 			if (num != null) {
 
@@ -192,11 +192,11 @@ class OSNumbers {
 		return checkExtractNumber(supersProcessor.getConcepts());
 	}
 
-	private OSNumber checkExtractNumber(Set<OWLClass> concepts) {
+	private OBNumber checkExtractNumber(Set<OWLClass> concepts) {
 
 		for (OWLClass concept : concepts) {
 
-			OSNumber num = checkExtractNumber(concept);
+			OBNumber num = checkExtractNumber(concept);
 
 			if (num != null) {
 
@@ -207,14 +207,14 @@ class OSNumbers {
 		return null;
 	}
 
-	private OSNumber checkCreateNumber(
+	private OBNumber checkCreateNumber(
 						OWLDataPropertyExpression property,
 						OWLDataRange range) {
 
 		return model.isNumericProperty(property) ? checkCreateNumber(range) : null;
 	}
 
-	private OSNumber checkCreateNumber(OWLDataRange range) {
+	private OBNumber checkCreateNumber(OWLDataRange range) {
 
 		if (range.isDatatype()) {
 
@@ -229,14 +229,14 @@ class OSNumbers {
 		return null;
 	}
 
-	private OSNumber checkCreateNumber(OWLDatatype datatype) {
+	private OBNumber checkCreateNumber(OWLDatatype datatype) {
 
 		TypeNumberCreator<?> creator = lookForCreator(datatype);
 
 		return creator != null ? creator.createUnconstrained() : null;
 	}
 
-	private OSNumber checkCreateNumber(OWLDatatypeRestriction restriction) {
+	private OBNumber checkCreateNumber(OWLDatatypeRestriction restriction) {
 
 		OWLDatatype datatype = restriction.getDatatype();
 		TypeNumberCreator<?> creator = lookForCreator(datatype);

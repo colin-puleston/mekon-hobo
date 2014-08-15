@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
@@ -31,11 +31,11 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class OSSlot extends OIdentified {
+abstract class OBSlot extends OIdentified {
 
 	private boolean singleValued;
 
-	OSSlot(OSSlotSpec spec) {
+	OBSlot(OBSlotSpec spec) {
 
 		super(spec.getProperty(), spec.getLabel());
 
@@ -45,8 +45,8 @@ abstract class OSSlot extends OIdentified {
 	void checkAddCSlotAndValues(
 			CBuilder builder,
 			CFrame container,
-			OSSlot topLevelSlot,
-			OSEntityAnnotations annotations) {
+			OBSlot topLevelSlot,
+			OBEntityAnnotations annotations) {
 
 		if (!validSlotValueType()) {
 
@@ -79,8 +79,8 @@ abstract class OSSlot extends OIdentified {
 
 	abstract CValue<?> ensureCValue(
 							CBuilder builder,
-							OSSlot topLevelSlot,
-							OSEntityAnnotations annotations);
+							OBSlot topLevelSlot,
+							OBEntityAnnotations annotations);
 
 	boolean canBeFixedValue(CValue<?> cValue) {
 

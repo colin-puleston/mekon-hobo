@@ -22,64 +22,49 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
-
-import java.util.*;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.owl.*;
-
 /**
+ * Represents a set of OWL entities defined via a single root-entity.
+ * The set will include all descendant entities of the root-entity,
+ * and optionally the root-entity itself.
+ *
  * @author Colin Puleston
  */
-class OSSubConceptAxioms {
+public class OBEntityGroup {
 
-	private OModel model;
-	private OSConcepts concepts;
-	private OSProperties properties;
+	private IRI rootEntityIRI;
+	private boolean includesRoot = true;
 
-	OSSubConceptAxioms(OModel model, OSConcepts concepts, OSProperties properties) {
+	/**
+	 * Constructor.
+	 *
+	 * @param rootEntityIRI IRI of root-entity
+	 */
+	public OBEntityGroup(IRI rootEntityIRI) {
 
-		this.model = model;
-		this.concepts = concepts;
-		this.properties = properties;
+		this.rootEntityIRI = rootEntityIRI;
 	}
 
-	Set<OWLSubClassOfAxiom> getAll() {
+	/**
+	 * Sets the root-entity inclusion flag.
+	 *
+	 * @param includesRoot True if group includes root-entity
+	 */
+	public void setIncludesRoot(boolean includesRoot) {
 
-		Set<OWLSubClassOfAxiom> slotSources = new HashSet<OWLSubClassOfAxiom>();
-
-		for (OWLSubClassOfAxiom subConceptOf : getgetAxioms()) {
-
-			if (isModelAxiom(subConceptOf)) {
-
-				slotSources.add(subConceptOf);
-			}
-		}
-
-		return slotSources;
+		this.includesRoot = includesRoot;
 	}
 
-	private Set<OWLSubClassOfAxiom> getgetAxioms() {
+	IRI getRootEntityIRI() {
 
-		return getMainOntology().getAxioms(AxiomType.SUBCLASS_OF, true);
+		return rootEntityIRI;
 	}
 
-	private boolean isModelAxiom(OWLSubClassOfAxiom subConceptOf) {
+	boolean includesRoot() {
 
-		return isModelExpression(subConceptOf.getSuperClass())
-				&& isModelExpression(subConceptOf.getSubClass());
-	}
-
-	private boolean isModelExpression(OWLClassExpression expression) {
-
-		return concepts.containsAllInSignature(expression)
-				&& properties.containsAllInSignature(expression);
-	}
-
-	private OWLOntology getMainOntology() {
-
-		return model.getMainOntology();
+		return includesRoot;
 	}
 }

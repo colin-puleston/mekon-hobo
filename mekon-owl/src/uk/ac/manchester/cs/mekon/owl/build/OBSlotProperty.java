@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -35,14 +35,14 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 /**
  * @author Colin Puleston
  */
-class OSSlotProperty extends OIdentified {
+class OBSlotProperty extends OIdentified {
 
 	private OWLProperty property;
 	private boolean mirrorAsFrame;
-	private SortedSet<OSSlotProperty> subProperties = new TreeSet<OSSlotProperty>();
+	private SortedSet<OBSlotProperty> subProperties = new TreeSet<OBSlotProperty>();
 	private CFrame mirroredCFrame = null;
 
-	OSSlotProperty(
+	OBSlotProperty(
 		OWLProperty property,
 		String label,
 		boolean mirrorAsFrame) {
@@ -53,7 +53,7 @@ class OSSlotProperty extends OIdentified {
 		this.mirrorAsFrame = mirrorAsFrame;
 	}
 
-	void addSubProperty(OSSlotProperty subProperty) {
+	void addSubProperty(OBSlotProperty subProperty) {
 
 		subProperties.add(subProperty);
 	}
@@ -63,7 +63,7 @@ class OSSlotProperty extends OIdentified {
 		return mirrorAsFrame;
 	}
 
-	void createCProperty(CBuilder builder, OSEntityAnnotations annotations) {
+	void createCProperty(CBuilder builder, OBEntityAnnotations annotations) {
 
 		CProperty cProperty = builder.resolveProperty(getIdentity());
 
@@ -82,7 +82,7 @@ class OSSlotProperty extends OIdentified {
 
 		CFrame cFrame = ensureMirrorCFrame(builder);
 
-		for (OSSlotProperty subProp : subProperties) {
+		for (OBSlotProperty subProp : subProperties) {
 
 			CFrame subCFrame = subProp.ensureMirrorCFrame(builder);
 

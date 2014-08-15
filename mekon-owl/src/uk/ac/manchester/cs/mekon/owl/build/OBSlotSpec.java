@@ -22,52 +22,22 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import org.semanticweb.owlapi.model.*;
 
 /**
  * @author Colin Puleston
  */
-class OSDisjunctionFrameSlot extends OSFrameSlot {
+abstract class OBSlotSpec {
 
-	private String valueTypeLabel;
-	private SortedSet<OSFrame> valueTypeDisjuncts = new TreeSet<OSFrame>();
+	abstract OWLObjectProperty getProperty();
 
-	OSDisjunctionFrameSlot(OSSlotSpec spec, String valueTypeLabel) {
+	abstract String getLabel();
 
-		super(spec);
+	abstract boolean singleValued();
 
-		this.valueTypeLabel = valueTypeLabel;
-	}
+	abstract boolean valuedRequired();
 
-	void addValueTypeDisjunct(OSFrame valueTypeDisjunct) {
-
-		valueTypeDisjuncts.add(valueTypeDisjunct);
-	}
-
-	boolean validSlotValueType() {
-
-		return true;
-	}
-
-	CFrame ensureCFrame(CBuilder builder, OSEntityAnnotations annotations) {
-
-		List<CFrame> cDisjuncts = new ArrayList<CFrame>();
-
-		for (OSFrame disjunct : valueTypeDisjuncts) {
-
-			cDisjuncts.add(disjunct.ensureCFrame(builder, annotations));
-		}
-
-		return CFrame.resolveDisjunction(valueTypeLabel, cDisjuncts);
-	}
-
-	Set<OSFrame> getRootValueTypeFrames() {
-
-		return valueTypeDisjuncts;
-	}
+	abstract boolean metaFrameSlotsEnabled();
 }

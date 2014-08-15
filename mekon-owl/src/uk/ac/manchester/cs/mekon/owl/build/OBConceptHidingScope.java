@@ -22,49 +22,51 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
-
-import org.semanticweb.owlapi.model.*;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 /**
- * Represents a set of OWL entities defined via a single root-entity.
- * The set will include all descendant entities of the root-entity,
- * and optionally the root-entity itself.
+ * Represents the scope within the relevant section of concept-hierarchy
+ * of a concept-hiding specification.
  *
  * @author Colin Puleston
  */
-public class OSEntityGroup {
-
-	private IRI rootEntityIRI;
-	private boolean includesRoot = true;
+public enum OBConceptHidingScope {
 
 	/**
-	 * Constructor.
-	 *
-	 * @param rootEntityIRI IRI of root-entity
+	 * Represents a scope covering none of the relevant section of
+	 * concept-hierarchy.
 	 */
-	public OSEntityGroup(IRI rootEntityIRI) {
-
-		this.rootEntityIRI = rootEntityIRI;
-	}
+	NONE(false, false),
 
 	/**
-	 * Sets the root-entity inclusion flag.
-	 *
-	 * @param includesRoot True if group includes root-entity
+	 * Represents a scope covering the entire relevant section of
+	 * concept-hierarchy.
 	 */
-	public void setIncludesRoot(boolean includesRoot) {
+	ALL(true, true),
 
-		this.includesRoot = includesRoot;
+	/**
+	 * Represents a scope covering only the root-concept in the
+	 * relevant section of concept-hierarchy.
+	 */
+	ROOTS_ONLY(true, false),
+
+	/**
+	 * Represents a scope covering only the non-root-concepts in the
+	 * relevant section of concept-hierarchy.
+	 */
+	NON_ROOTS_ONLY(false, true);
+
+	private boolean includesRoots;
+	private boolean includesNonRoots;
+
+	boolean inScope(boolean isRoot) {
+
+		return isRoot ? includesRoots : includesNonRoots;
 	}
 
-	IRI getRootEntityIRI() {
+	private OBConceptHidingScope(boolean includesRoots, boolean includesNonRoots) {
 
-		return rootEntityIRI;
-	}
-
-	boolean includesRoot() {
-
-		return includesRoot;
+		this.includesRoots = includesRoots;
+		this.includesNonRoots = includesNonRoots;
 	}
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -34,19 +34,19 @@ import uk.ac.manchester.cs.mekon.owl.*;
 /**
  * @author Colin Puleston
  */
-class OSSlotProperties {
+class OBSlotProperties {
 
 	private OModel model;
-	private OSProperties properties;
-	private OSEntityLabels labels;
+	private OBProperties properties;
+	private OBEntityLabels labels;
 
-	private Map<OWLObjectProperty, OSSlotProperty> slotProperties
-					= new HashMap<OWLObjectProperty, OSSlotProperty>();
+	private Map<OWLObjectProperty, OBSlotProperty> slotProperties
+					= new HashMap<OWLObjectProperty, OBSlotProperty>();
 
-	OSSlotProperties(
+	OBSlotProperties(
 		OModel model,
-		OSProperties properties,
-		OSEntityLabels labels) {
+		OBProperties properties,
+		OBEntityLabels labels) {
 
 		this.model = model;
 		this.properties = properties;
@@ -66,7 +66,7 @@ class OSSlotProperties {
 		}
 	}
 
-	Collection<OSSlotProperty> getAll() {
+	Collection<OBSlotProperty> getAll() {
 
 		return slotProperties.values();
 	}
@@ -75,14 +75,14 @@ class OSSlotProperties {
 
 		String label = labels.getLabel(property);
 		boolean mirror = properties.mirrorAsFrame(property);
-		OSSlotProperty slotProperty = new OSSlotProperty(property, label, mirror);
+		OBSlotProperty slotProperty = new OBSlotProperty(property, label, mirror);
 
 		slotProperties.put(property, slotProperty);
 	}
 
 	private void addSubsIfMirroredProperty(OWLObjectProperty property) {
 
-		OSSlotProperty slotProperty = slotProperties.get(property);
+		OBSlotProperty slotProperty = slotProperties.get(property);
 
 		if (slotProperty.mirrorAsFrame()) {
 
@@ -92,7 +92,7 @@ class OSSlotProperties {
 
 	private void addSubs(
 					OWLObjectProperty property,
-					OSSlotProperty slotProperty) {
+					OBSlotProperty slotProperty) {
 
 		for (OWLObjectProperty sub : model.getInferredSubs(property, true)) {
 

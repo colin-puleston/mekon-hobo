@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -32,39 +32,42 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class OSModelFrameSlot extends OSFrameSlot {
+class OSDisjunctionFrameSlot extends OBFrameSlot {
 
-	private OSFrame valueType;
-	private boolean valuedRequired;
+	private String valueTypeLabel;
+	private SortedSet<OBFrame> valueTypeDisjuncts = new TreeSet<OBFrame>();
 
-	OSModelFrameSlot(OSSlotSpec spec, OSFrame valueType) {
+	OSDisjunctionFrameSlot(OBSlotSpec spec, String valueTypeLabel) {
 
 		super(spec);
 
-		this.valueType = valueType;
+		this.valueTypeLabel = valueTypeLabel;
+	}
 
-		valuedRequired = spec.valuedRequired();
+	void addValueTypeDisjunct(OBFrame valueTypeDisjunct) {
+
+		valueTypeDisjuncts.add(valueTypeDisjunct);
 	}
 
 	boolean validSlotValueType() {
 
-		return !valueType.hidden() || !valueType.leafFrame();
+		return true;
 	}
 
-	CFrame ensureCFrame(CBuilder builder, OSEntityAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBEntityAnnotations annotations) {
 
-		return valueType.ensureCFrame(builder, annotations);
+		List<CFrame> cDisjuncts = new ArrayList<CFrame>();
+
+		for (OBFrame disjunct : valueTypeDisjuncts) {
+
+			cDisjuncts.add(disjunct.ensureCFrame(builder, annotations));
+		}
+
+		return CFrame.resolveDisjunction(valueTypeLabel, cDisjuncts);
 	}
 
-	boolean canBeFixedValue(CValue<?> cValue) {
+	Set<OBFrame> getRootValueTypeFrames() {
 
-		return valuedRequired
-				&& valueType.leafFrame()
-				&& cValue instanceof MFrame;
-	}
-
-	Set<OSFrame> getRootValueTypeFrames() {
-
-		return Collections.<OSFrame>singleton(valueType);
+		return valueTypeDisjuncts;
 	}
 }

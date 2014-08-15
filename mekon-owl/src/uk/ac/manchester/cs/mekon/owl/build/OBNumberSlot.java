@@ -22,24 +22,35 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-class OSNumber {
+class OBNumberSlot extends OBSlot {
 
-	private CNumberDef definition;
+	private OBNumber valueType;
 
-	OSNumber(CNumberDef definition) {
+	OBNumberSlot(OBSlotSpec spec, OBNumber valueType) {
 
-		this.definition = definition;
+		super(spec);
+
+		this.valueType = valueType;
 	}
 
-	CNumber createCNumber() {
+	boolean validSlotValueType() {
 
-		return definition.createNumber();
+		return true;
+	}
+
+	CValue<?> ensureCValue(
+				CBuilder builder,
+				OBSlot topLevelSlot,
+				OBEntityAnnotations annotations) {
+
+		return valueType.createCNumber();
 	}
 }

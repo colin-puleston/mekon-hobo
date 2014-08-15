@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import org.semanticweb.owlapi.model.*;
 
@@ -33,16 +33,16 @@ import org.semanticweb.owlapi.model.*;
  *
  * @author Colin Puleston
  */
-public class OSConceptGroup extends OSEntityGroup {
+public class OBConceptGroup extends OBEntityGroup {
 
-	private OSConceptHiding hiding = new OSConceptHiding();
+	private OBConceptHiding hiding = new OBConceptHiding();
 
 	/**
 	 * Constructor.
 	 *
 	 * @param rootConceptIRI IRI of root-class
 	 */
-	public OSConceptGroup(IRI rootConceptIRI) {
+	public OBConceptGroup(IRI rootConceptIRI) {
 
 		super(rootConceptIRI);
 	}
@@ -53,7 +53,7 @@ public class OSConceptGroup extends OSEntityGroup {
 	 *
 	 * @return Object specifying concept-hiding for group
 	 */
-	public OSConceptHiding getConceptHiding() {
+	public OBConceptHiding getConceptHiding() {
 
 		return hiding;
 	}

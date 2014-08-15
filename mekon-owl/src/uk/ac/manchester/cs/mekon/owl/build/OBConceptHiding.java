@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import org.semanticweb.owlapi.model.*;
 
@@ -35,19 +35,19 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OSConceptHiding {
+public class OBConceptHiding {
 
-	private OSConceptHidingScope scope = OSConceptHidingScope.NONE;
-	private OSConceptHidingFilter filter = OSConceptHidingFilter.ANY;
+	private OBConceptHidingScope scope = OBConceptHidingScope.NONE;
+	private OBConceptHidingFilter filter = OBConceptHidingFilter.ANY;
 
 	/**
 	 * Sets the scope within the relevant section of concept-hierarchy
 	 * of the concept-hiding specification. If not set will default to
-	 * {@link OSConceptHidingScope#NONE}.
+	 * {@link OBConceptHidingScope#NONE}.
 	 *
 	 * @param scope Scope of concept-hiding specification
 	 */
-	public void setScope(OSConceptHidingScope scope) {
+	public void setScope(OBConceptHidingScope scope) {
 
 		this.scope = scope;
 	}
@@ -55,16 +55,16 @@ public class OSConceptHiding {
 	/**
 	 * Sets the filter that will be applied to the concepts specified
 	 * by the scope of the concept-hiding specification. If not set
-	 * will default to {@link OSConceptHidingFilter#ANY}.
+	 * will default to {@link OBConceptHidingFilter#ANY}.
 	 *
 	 * @param filter Filter to apply to concepts specified by scope
 	 */
-	public void setFilter(OSConceptHidingFilter filter) {
+	public void setFilter(OBConceptHidingFilter filter) {
 
 		this.filter = filter;
 	}
 
-	OSConceptHiding() {
+	OBConceptHiding() {
 	}
 
 	boolean isHidden(OModel model, OWLClass concept, boolean isRoot) {

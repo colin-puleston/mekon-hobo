@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -33,13 +33,13 @@ import uk.ac.manchester.cs.mekon.config.*;
 /**
  * @author Colin Puleston
  */
-class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
+class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 
 	private KConfigNode configNode;
 
 	private abstract class EntityGroupReader
-							<G extends OSEntityGroup,
-							E extends OSEntities<?, G>> {
+							<G extends OBEntityGroup,
+							E extends OBEntities<?, G>> {
 
 		EntityGroupReader(E entities) {
 
@@ -89,9 +89,9 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 
 	private class ConceptGroupReader
 					extends
-						EntityGroupReader<OSConceptGroup, OSConcepts> {
+						EntityGroupReader<OBConceptGroup, OBConcepts> {
 
-		ConceptGroupReader(OSConcepts entities) {
+		ConceptGroupReader(OBConcepts entities) {
 
 			super(entities);
 		}
@@ -101,10 +101,10 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 			return CONCEPT_INCLUSION_ID;
 		}
 
-		OSConceptGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
+		OBConceptGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
 
-			OSConceptGroup group = new OSConceptGroup(rootIRI);
-			OSConceptHiding hiding = group.getConceptHiding();
+			OBConceptGroup group = new OBConceptGroup(rootIRI);
+			OBConceptHiding hiding = group.getConceptHiding();
 
 			hiding.setScope(getHidingScope(groupNode));
 			hiding.setFilter(getHidingFilter(groupNode));
@@ -112,28 +112,28 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 			return group;
 		}
 
-		private OSConceptHidingScope getHidingScope(KConfigNode groupNode) {
+		private OBConceptHidingScope getHidingScope(KConfigNode groupNode) {
 
 			return groupNode.getEnum(
 						CONCEPT_HIDING_SCOPE_ATTR,
-						OSConceptHidingScope.class,
-						OSConceptHidingScope.NONE);
+						OBConceptHidingScope.class,
+						OBConceptHidingScope.NONE);
 		}
 
-		private OSConceptHidingFilter getHidingFilter(KConfigNode groupNode) {
+		private OBConceptHidingFilter getHidingFilter(KConfigNode groupNode) {
 
 			return groupNode.getEnum(
 						CONCEPT_HIDING_FILTER_ATTR,
-						OSConceptHidingFilter.class,
-						OSConceptHidingFilter.ANY);
+						OBConceptHidingFilter.class,
+						OBConceptHidingFilter.ANY);
 		}
 	}
 
 	private class PropertyGroupReader
 					extends
-						EntityGroupReader<OSPropertyGroup, OSProperties> {
+						EntityGroupReader<OBPropertyGroup, OBProperties> {
 
-		PropertyGroupReader(OSProperties entities) {
+		PropertyGroupReader(OBProperties entities) {
 
 			super(entities);
 		}
@@ -143,9 +143,9 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 			return PROPERTY_INCLUSION_ID;
 		}
 
-		OSPropertyGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
+		OBPropertyGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
 
-			OSPropertyGroup group = new OSPropertyGroup(rootIRI);
+			OBPropertyGroup group = new OBPropertyGroup(rootIRI);
 
 			group.setMirrorAsFrames(getMirrorAsFrames(groupNode));
 
@@ -158,12 +158,12 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 		}
 	}
 
-	OSSectionBuilderConfig(KConfigNode parentConfigNode) {
+	OBSectionBuilderConfig(KConfigNode parentConfigNode) {
 
 		configNode = parentConfigNode.getChild(ROOT_ID);
 	}
 
-	void configure(OSSectionBuilder builder) {
+	void configure(OBSectionBuilder builder) {
 
 		addConcepts(builder);
 		addProperties(builder);
@@ -173,17 +173,17 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 		setRetainOnlyDeclarationAxioms(builder);
 	}
 
-	private void addConcepts(OSSectionBuilder builder) {
+	private void addConcepts(OBSectionBuilder builder) {
 
 		new ConceptGroupReader(builder.getConcepts());
 	}
 
-	private void addProperties(OSSectionBuilder builder) {
+	private void addProperties(OBSectionBuilder builder) {
 
 		new PropertyGroupReader(builder.getProperties());
 	}
 
-	private void addLabelAnnotationProperties(OSSectionBuilder builder) {
+	private void addLabelAnnotationProperties(OBSectionBuilder builder) {
 
 		KConfigNode propsNode = configNode.getChildOrNull(LABEL_ANNO_PROPERTIES_ID);
 
@@ -192,7 +192,7 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 			return;
 		}
 
-		OSEntityLabels labels = builder.getEntityLabels();
+		OBEntityLabels labels = builder.getEntityLabels();
 
 		for (KConfigNode propNode : propsNode.getChildren(LABEL_ANNO_PROPERTY_ID)) {
 
@@ -200,7 +200,7 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 		}
 	}
 
-	private void addEntityAnnotationTypes(OSSectionBuilder builder) {
+	private void addEntityAnnotationTypes(OBSectionBuilder builder) {
 
 		KConfigNode annoTypesNode = configNode.getChildOrNull(ENTITY_ANNO_TYPES_ID);
 
@@ -209,7 +209,7 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 			return;
 		}
 
-		OSEntityAnnotations annos = builder.getEntityAnnotations();
+		OBEntityAnnotations annos = builder.getEntityAnnotations();
 
 		for (KConfigNode annoTypeNode : annoTypesNode.getChildren(ENTITY_ANNO_TYPE_ID)) {
 
@@ -217,21 +217,21 @@ class OSSectionBuilderConfig implements OSSectionBuilderConfigVocab {
 		}
 	}
 
-	private void setMetaFrameSlotsEnabled(OSSectionBuilder builder) {
+	private void setMetaFrameSlotsEnabled(OBSectionBuilder builder) {
 
 		builder.setMetaFrameSlotsEnabled(metaFrameSlotsEnabled());
 	}
 
-	private void setRetainOnlyDeclarationAxioms(OSSectionBuilder builder) {
+	private void setRetainOnlyDeclarationAxioms(OBSectionBuilder builder) {
 
 		builder.setRetainOnlyDeclarationAxioms(retainOnlyDeclarationAxioms());
 	}
 
-	private OSEntityAnnotationType getEntityAnnotationType(KConfigNode annoTypeNode) {
+	private OBEntityAnnotationType getEntityAnnotationType(KConfigNode annoTypeNode) {
 
 		IRI iri = getAnnotationPropertyIRI(annoTypeNode);
 		String id = annoTypeNode.getString(ENTITY_ANNO_ID_ATTR);
-		OSEntityAnnotationType annoType = new OSEntityAnnotationType(iri, id);
+		OBEntityAnnotationType annoType = new OBEntityAnnotationType(iri, id);
 
 		String valueSeps = annoTypeNode.getString(ENTITY_ANNO_VALUE_SEPARATORS_ATTR, null);
 

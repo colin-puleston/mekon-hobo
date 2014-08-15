@@ -22,47 +22,56 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
+
+import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Represents a set of OWL properties defined via a single
- * root-property. The set will include all descendant properties
- * of the root-property, and optionally the root-property itself.
- *
  * @author Colin Puleston
  */
-public class OSPropertyGroup extends OSEntityGroup {
+class OBFrameHierarchy {
 
-	private boolean mirrorAsFrames = true;
+	private OModel model;
+	private OWLReasoner reasoner;
+	private OBFrames frames;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param rootPropertyIRI IRI of root-property
-	 */
-	public OSPropertyGroup(IRI rootPropertyIRI) {
+	OBFrameHierarchy(OModel model, OBFrames frames) {
 
-		super(rootPropertyIRI);
+		this.model = model;
+		this.frames = frames;
+
+		reasoner = model.getReasoner();
 	}
 
-	/**
-	 * Sets the flag that specifies whether for every property
-	 * in this group there will be created, in addition to the
-	 * frames-model property, a corresponding frame with the same
-	 * IRI-derived identifier.
-	 *
-	 * @param mirrorAsFrames True if each created frames-model
-	 * property should be mirrrored by a corresponding frame
-	 */
-	public void setMirrorAsFrames(boolean mirrorAsFrames) {
+	void createLinks() {
 
-		this.mirrorAsFrames = mirrorAsFrames;
+		for (OBFrame frame : frames.getAll()) {
+
+			createFrameLinks(frame);
+		}
 	}
 
-	boolean mirrorAsFrames() {
+	private void createFrameLinks(OBFrame frame) {
 
-		return mirrorAsFrames;
+		for (OWLClass subConcept : getSubFrameConcepts(frame)) {
+
+			frame.addSubFrame(frames.get(subConcept));
+		}
+	}
+
+	private Set<OWLClass> getSubFrameConcepts(OBFrame frame) {
+
+		return getAllDescendants(frame.getConcept());
+	}
+
+	private Set<OWLClass> getAllDescendants(OWLClass concept) {
+
+		return model.getInferredSubs(concept, true);
 	}
 }

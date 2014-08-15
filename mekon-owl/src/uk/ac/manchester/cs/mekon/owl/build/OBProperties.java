@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -37,9 +37,9 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OSProperties
+public class OBProperties
 				extends
-					OSEntities<OWLObjectProperty, OSPropertyGroup> {
+					OBEntities<OWLObjectProperty, OBPropertyGroup> {
 
 	private Set<OWLObjectProperty> mirrorAsFrames = new HashSet<OWLObjectProperty>();
 
@@ -70,13 +70,13 @@ public class OSProperties
 		super.addAll(properties);
 	}
 
-	OSProperties(OModel model) {
+	OBProperties(OModel model) {
 
 		super(model);
 	}
 
 	void addGroupEntity(
-			OSPropertyGroup group,
+			OBPropertyGroup group,
 			OWLObjectProperty property,
 			boolean isRoot) {
 

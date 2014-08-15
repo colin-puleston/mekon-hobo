@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OSConcepts extends OSEntities<OWLClass, OSConceptGroup> {
+public class OBConcepts extends OBEntities<OWLClass, OBConceptGroup> {
 
 	private Set<OWLClass> hiddenConcepts = new HashSet<OWLClass>();
 
@@ -71,12 +71,12 @@ public class OSConcepts extends OSEntities<OWLClass, OSConceptGroup> {
 		}
 	}
 
-	OSConcepts(OModel model) {
+	OBConcepts(OModel model) {
 
 		super(model);
 	}
 
-	void addGroupEntity(OSConceptGroup group, OWLClass concept, boolean isRoot) {
+	void addGroupEntity(OBConceptGroup group, OWLClass concept, boolean isRoot) {
 
 		add(concept, isHidden(group, concept, isRoot));
 	}
@@ -116,7 +116,7 @@ public class OSConcepts extends OSEntities<OWLClass, OSConceptGroup> {
 		return expression.getClassesInSignature();
 	}
 
-	private boolean isHidden(OSConceptGroup group, OWLClass concept, boolean isRoot) {
+	private boolean isHidden(OBConceptGroup group, OWLClass concept, boolean isRoot) {
 
 		return group.getConceptHiding().isHidden(getModel(), concept, isRoot);
 	}

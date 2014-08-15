@@ -22,51 +22,54 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
+
+import java.util.*;
+
+import org.semanticweb.owlapi.model.*;
+
+import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
- * Represents the scope within the relevant section of concept-hierarchy
- * of a concept-hiding specification.
+ * Responsible for providing the labels for the frames-based
+ * entities that will be generated from named OWL entities.
  *
  * @author Colin Puleston
  */
-public enum OSConceptHidingScope {
+public class OBEntityLabels {
+
+	private OModel model;
+	private OAnnotationReader annotationReader;
 
 	/**
-	 * Represents a scope covering none of the relevant section of
-	 * concept-hierarchy.
 	 */
-	NONE(false, false),
+	public void addAnnotationProperty(IRI annotationPropIRI) {
 
-	/**
-	 * Represents a scope covering the entire relevant section of
-	 * concept-hierarchy.
-	 */
-	ALL(true, true),
-
-	/**
-	 * Represents a scope covering only the root-concept in the
-	 * relevant section of concept-hierarchy.
-	 */
-	ROOTS_ONLY(true, false),
-
-	/**
-	 * Represents a scope covering only the non-root-concepts in the
-	 * relevant section of concept-hierarchy.
-	 */
-	NON_ROOTS_ONLY(false, true);
-
-	private boolean includesRoots;
-	private boolean includesNonRoots;
-
-	boolean inScope(boolean isRoot) {
-
-		return isRoot ? includesRoots : includesNonRoots;
+		annotationReader.addProperty(model.getAnnotationProperty(annotationPropIRI));
 	}
 
-	private OSConceptHidingScope(boolean includesRoots, boolean includesNonRoots) {
+	/**
+	 */
+	public void addAnnotationProperties(List<IRI> annotationPropIRIs) {
 
-		this.includesRoots = includesRoots;
-		this.includesNonRoots = includesNonRoots;
+		for (IRI iri : annotationPropIRIs) {
+
+			addAnnotationProperty(iri);
+		}
+	}
+
+	OBEntityLabels(OModel model) {
+
+		this.model = model;
+
+		annotationReader = new OAnnotationReader(model);
+	}
+
+	String getLabel(OWLEntity entity) {
+
+		String label = annotationReader.getValueOrNull(entity);
+
+		return label != null ? label : OIdentity.createDefaultLabel(entity);
 	}
 }

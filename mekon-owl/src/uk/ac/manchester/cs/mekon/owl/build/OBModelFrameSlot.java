@@ -22,22 +22,49 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
-import org.semanticweb.owlapi.model.*;
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OSSlotSpec {
+class OBModelFrameSlot extends OBFrameSlot {
 
-	abstract OWLObjectProperty getProperty();
+	private OBFrame valueType;
+	private boolean valuedRequired;
 
-	abstract String getLabel();
+	OBModelFrameSlot(OBSlotSpec spec, OBFrame valueType) {
 
-	abstract boolean singleValued();
+		super(spec);
 
-	abstract boolean valuedRequired();
+		this.valueType = valueType;
 
-	abstract boolean metaFrameSlotsEnabled();
+		valuedRequired = spec.valuedRequired();
+	}
+
+	boolean validSlotValueType() {
+
+		return !valueType.hidden() || !valueType.leafFrame();
+	}
+
+	CFrame ensureCFrame(CBuilder builder, OBEntityAnnotations annotations) {
+
+		return valueType.ensureCFrame(builder, annotations);
+	}
+
+	boolean canBeFixedValue(CValue<?> cValue) {
+
+		return valuedRequired
+				&& valueType.leafFrame()
+				&& cValue instanceof MFrame;
+	}
+
+	Set<OBFrame> getRootValueTypeFrames() {
+
+		return Collections.<OBFrame>singleton(valueType);
+	}
 }
