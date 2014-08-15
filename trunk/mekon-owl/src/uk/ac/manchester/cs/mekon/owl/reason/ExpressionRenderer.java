@@ -36,9 +36,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * @author Colin Puleston
  */
-class ExpressionRenderer
-			extends
-				Renderer<OWLClassExpression> {
+class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 	private OWLDataFactory dataFactory;
 
@@ -71,9 +69,22 @@ class ExpressionRenderer
 			return dataFactory.getOWLObjectIntersectionOf(conjuncts);
 		}
 
-		void addValueExpression(OWLClassExpression expr) {
+		void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
 
-			conjuncts.add(expr);
+			conjuncts.add(
+				dataFactory.
+					getOWLObjectSomeValuesFrom(
+						property,
+						expr));
+		}
+
+		void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+
+			conjuncts.add(
+				dataFactory.
+					getOWLObjectAllValuesFrom(
+						property,
+						expr));
 		}
 
 		OWLClassExpression toExpression(OWLClassExpression rendering) {

@@ -54,6 +54,8 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 public class OBSectionBuilder implements CSectionBuilder {
 
 	private OModel model;
+	private IMatcher iMatcher = null;
+
 	private OBEntityLabels labels;
 	private OBEntityAnnotations annotations;
 
@@ -107,6 +109,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 		new OBSectionBuilderConfig(parentConfigNode).configure(this);
 
 		setIReasoner(ORClassifier.createOrNull(model, parentConfigNode));
+		iMatcher = ORMatcher.createOrNull(model, parentConfigNode);
 	}
 
 	/**
@@ -238,6 +241,11 @@ public class OBSectionBuilder implements CSectionBuilder {
 		if (retainOnlyDeclarationAxioms) {
 
 			model.retainOnlyDeclarationAxioms();
+		}
+
+		if (iMatcher != null) {
+
+			builder.addIMatcher(iMatcher);
 		}
 	}
 

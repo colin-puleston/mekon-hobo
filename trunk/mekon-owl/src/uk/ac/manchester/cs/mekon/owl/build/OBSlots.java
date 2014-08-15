@@ -111,7 +111,7 @@ class OBSlots {
 		private OBSlot createDisjunctionFrameSlot(OBFrame container) {
 
 			String valueTypeLabel = createDisjunctionValueTypeLabel(container);
-			OSDisjunctionFrameSlot slot = new OSDisjunctionFrameSlot(
+			OBDisjunctionFrameSlot slot = new OBDisjunctionFrameSlot(
 													this,
 													valueTypeLabel);
 

@@ -32,12 +32,12 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class OSDisjunctionFrameSlot extends OBFrameSlot {
+class OBDisjunctionFrameSlot extends OBFrameSlot {
 
 	private String valueTypeLabel;
 	private SortedSet<OBFrame> valueTypeDisjuncts = new TreeSet<OBFrame>();
 
-	OSDisjunctionFrameSlot(OBSlotSpec spec, String valueTypeLabel) {
+	OBDisjunctionFrameSlot(OBSlotSpec spec, String valueTypeLabel) {
 
 		super(spec);
 

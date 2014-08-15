@@ -35,7 +35,7 @@ class IndividualIRIGenerator {
 
 	static final String DEFAULT_ROOT_NAME = "TEMP";
 
-	static private final String DEFAULT_NAMESPACE = "http://mekon.owl.classifier";
+	static private final String DEFAULT_NAMESPACE = "http://mekon.owl";
 	static private final String NAME_REF_SECTION_PREFIX = "-REF-";
 
 	private String namespace = DEFAULT_NAMESPACE;
