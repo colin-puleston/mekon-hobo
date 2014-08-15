@@ -45,32 +45,35 @@ public class IStore {
 	private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
 
 	/**
-	 * Adds an instance to the store.
+	 * Checks whether store contains a particular instance.
+	 *
+	 * @param identity Unique identity of instance to check for
+	 * @return True if store contains required instance
+	 */
+	public boolean contains(CIdentity identity) {
+
+		return instances.containsKey(identity);
+	}
+
+	/**
+	 * Adds an instance to the store, possibly replacing an
+	 * existing instance with the same identity.
 	 *
 	 * @param instance Representation of instance to be stored
 	 * @param identity Unique identity for instance
-	 * @return True if instance added, false if instance with
-	 * specified identity already present
+	 * @return Existing instance that was replaced, or null if
+	 * if not applicable
 	 * @throws KAccessException if instance frame represents a
 	 * query-instance
 	 */
-	public boolean add(IFrame instance, CIdentity identity) {
+	public IFrame add(IFrame instance, CIdentity identity) {
 
-		if (instances.containsKey(identity)) {
-
-			return false;
-		}
+		IFrame previous = instances.get(identity);
 
 		instances.put(identity, instance);
+		checkAddToMatcher(instance, identity);
 
-		IMatcher matcher = lookForMatcher(instance);
-
-		if (matcher != null) {
-
-			matcher.add(instance, identity);
-		}
-
-		return true;
+		return previous;
 	}
 
 	/**
@@ -83,19 +86,14 @@ public class IStore {
 	 */
 	public boolean remove(CFrame type, CIdentity identity) {
 
-		if (instances.remove(identity) == null) {
+		if (instances.remove(identity) != null) {
 
-			return false;
+			checkRemoveFromMatcher(type, identity);
+
+			return true;
 		}
 
-		IMatcher matcher = lookForMatcher(type);
-
-		if (matcher != null) {
-
-			matcher.remove(identity);
-		}
-
-		return true;
+		return false;
 	}
 
 	/**
@@ -135,6 +133,26 @@ public class IStore {
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
+	}
+
+	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
+
+		IMatcher matcher = lookForMatcher(instance);
+
+		if (matcher != null) {
+
+			matcher.add(instance, identity);
+		}
+	}
+
+	private void checkRemoveFromMatcher(CFrame type, CIdentity identity) {
+
+		IMatcher matcher = lookForMatcher(type);
+
+		if (matcher != null) {
+
+			matcher.remove(identity);
+		}
 	}
 
 	private IMatcher lookForMatcher(IFrame iFrame) {
