@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ import org.semanticweb.owlapi.model.*;
  *
  * @author Colin Puleston
  */
-public class OSEntityAnnotationType {
+public class OBEntityAnnotationType {
 
 	private IRI annotationPropertyIRI;
 	private String framesAnnotationId;
@@ -48,7 +48,7 @@ public class OSEntityAnnotationType {
 	 * @param framesAnnotationId Identifier for annotation-type in
 	 * Frames Model (FM)
 	 */
-	public OSEntityAnnotationType(
+	public OBEntityAnnotationType(
 				IRI annotationPropertyIRI,
 				String framesAnnotationId) {
 

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -39,10 +39,10 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  *
  * @author Colin Puleston
  */
-public class OSEntityAnnotations {
+public class OBEntityAnnotations {
 
 	private OModel model;
-	private Set<OSEntityAnnotationType> types = new HashSet<OSEntityAnnotationType>();
+	private Set<OBEntityAnnotationType> types = new HashSet<OBEntityAnnotationType>();
 	private Map<IRI, OAnnotationReader> readers = new HashMap<IRI, OAnnotationReader>();
 
 	/**
@@ -50,7 +50,7 @@ public class OSEntityAnnotations {
 	 *
 	 * @param type Type of annotation to be copied
 	 */
-	public void addType(OSEntityAnnotationType type) {
+	public void addType(OBEntityAnnotationType type) {
 
 		types.add(type);
 	}
@@ -60,12 +60,12 @@ public class OSEntityAnnotations {
 	 *
 	 * @param types Types of annotations to be copied
 	 */
-	public void addTypes(Set<OSEntityAnnotationType> types) {
+	public void addTypes(Set<OBEntityAnnotationType> types) {
 
 		this.types.addAll(types);
 	}
 
-	OSEntityAnnotations(OModel model) {
+	OBEntityAnnotations(OModel model) {
 
 		this.model = model;
 	}
@@ -74,7 +74,7 @@ public class OSEntityAnnotations {
 
 		CAnnotationsEditor annoEd = builder.getAnnotationsEditor(cEntity.getAnnotations());
 
-		for (OSEntityAnnotationType type : types) {
+		for (OBEntityAnnotationType type : types) {
 
 			OAnnotationReader reader = getReader(type.getAnnotationPropertyIRI());
 			String value = reader.getValueOrNull(owlEntity);

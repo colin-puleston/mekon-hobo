@@ -22,15 +22,15 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 /**
- * Vocabulary used in the {@link OSSectionBuilder}-definition
+ * Vocabulary used in the {@link OBSectionBuilder}-definition
  * section of the MEKON configuration file.
  *
  * @author Colin Puleston
  */
-public interface OSSectionBuilderConfigVocab {
+public interface OBSectionBuilderConfigVocab {
 
 	static public final String ROOT_ID = "OWLSanctionedModel";
 	static public final String CONCEPT_INCLUSION_ID = "ConceptInclusion";

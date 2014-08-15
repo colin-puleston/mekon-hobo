@@ -22,56 +22,78 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-class OSFrameHierarchy {
+class OBFrames {
 
-	private OModel model;
-	private OWLReasoner reasoner;
-	private OSFrames frames;
+	private IReasoner iReasoner = null;
+	private OBConcepts concepts;
+	private OBEntityLabels labels;
 
-	OSFrameHierarchy(OModel model, OSFrames frames) {
+	private Map<OWLClass, OBFrame> frames = new HashMap<OWLClass, OBFrame>();
 
-		this.model = model;
-		this.frames = frames;
+	OBFrames(OBConcepts concepts, OBEntityLabels labels) {
 
-		reasoner = model.getReasoner();
+		this.concepts = concepts;
+		this.labels = labels;
 	}
 
-	void createLinks() {
+	void setIReasoner(IReasoner iReasoner) {
 
-		for (OSFrame frame : frames.getAll()) {
+		this.iReasoner = iReasoner;
+	}
 
-			createFrameLinks(frame);
+	void createAll() {
+
+		for (OWLClass concept : concepts.getAll()) {
+
+			createFrame(concept);
 		}
 	}
 
-	private void createFrameLinks(OSFrame frame) {
+	Collection<OBFrame> getAll() {
 
-		for (OWLClass subConcept : getSubFrameConcepts(frame)) {
+		return frames.values();
+	}
 
-			frame.addSubFrame(frames.get(subConcept));
+	OBFrame get(OWLClass concept) {
+
+		OBFrame frame = frames.get(concept);
+
+		if (frame == null) {
+
+			throw new Error("Cannot find frame for: " + concept);
 		}
+
+		return frame;
 	}
 
-	private Set<OWLClass> getSubFrameConcepts(OSFrame frame) {
+	private OBFrame createFrame(OWLClass concept) {
 
-		return getAllDescendants(frame.getConcept());
+		String label = labels.getLabel(concept);
+		boolean hidden = concepts.isHidden(concept);
+
+		return createFrame(concept, label, hidden);
 	}
 
-	private Set<OWLClass> getAllDescendants(OWLClass concept) {
+	private OBFrame createFrame(OWLClass concept, String label, boolean hidden) {
 
-		return model.getInferredSubs(concept, true);
+		return addFrame(new OBFrame(concept, label, hidden, iReasoner));
+	}
+
+	private OBFrame addFrame(OBFrame frame) {
+
+		frames.put(frame.getConcept(), frame);
+
+		return frame;
 	}
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -35,17 +35,17 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 /**
  * @author Colin Puleston
  */
-class OSFrame extends OIdentified {
+class OBFrame extends OIdentified {
 
 	private OWLClass concept;
 	private boolean hidden;
 	private IReasoner iReasoner;
-	private SortedSet<OSFrame> superFrames = new TreeSet<OSFrame>();
-	private SortedSet<OSFrame> subFrames = new TreeSet<OSFrame>();
-	private SortedSet<OSSlot> slots = new TreeSet<OSSlot>();
+	private SortedSet<OBFrame> superFrames = new TreeSet<OBFrame>();
+	private SortedSet<OBFrame> subFrames = new TreeSet<OBFrame>();
+	private SortedSet<OBSlot> slots = new TreeSet<OBSlot>();
 	private CFrame cFrame = null;
 
-	OSFrame(
+	OBFrame(
 		OWLClass concept,
 		String label,
 		boolean hidden,
@@ -58,13 +58,13 @@ class OSFrame extends OIdentified {
 		this.hidden = hidden;
 	}
 
-	void addSubFrame(OSFrame subFrame) {
+	void addSubFrame(OBFrame subFrame) {
 
 		subFrame.superFrames.add(this);
 		subFrames.add(subFrame);
 	}
 
-	void addSlot(OSSlot slot) {
+	void addSlot(OBSlot slot) {
 
 		slots.add(slot);
 	}
@@ -79,7 +79,7 @@ class OSFrame extends OIdentified {
 		return hidden;
 	}
 
-	CFrame ensureCFrame(CBuilder builder, OSEntityAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBEntityAnnotations annotations) {
 
 		if (cFrame == null) {
 
@@ -101,7 +101,7 @@ class OSFrame extends OIdentified {
 
 	boolean slotsInHierarchy() {
 
-		return slotsInHierarchy(new HashSet<OSFrame>());
+		return slotsInHierarchy(new HashSet<OBFrame>());
 	}
 
 	private CFrame createCFrame(CBuilder builder) {
@@ -118,9 +118,9 @@ class OSFrame extends OIdentified {
 
 	private void addCSubFrames(
 					CBuilder builder,
-					OSEntityAnnotations annotations) {
+					OBEntityAnnotations annotations) {
 
-		for (OSFrame subFrame : subFrames) {
+		for (OBFrame subFrame : subFrames) {
 
 			CFrame cSubFrame = subFrame.ensureCFrame(builder, annotations);
 
@@ -130,24 +130,24 @@ class OSFrame extends OIdentified {
 
 	private void addCSlotsAndValues(
 					CBuilder builder,
-					OSEntityAnnotations annotations) {
+					OBEntityAnnotations annotations) {
 
-		for (OSSlot slot : slots) {
+		for (OBSlot slot : slots) {
 
-			OSSlot topSlot = findTopLevelSlot(slot);
+			OBSlot topSlot = findTopLevelSlot(slot);
 
 			slot.checkAddCSlotAndValues(builder, cFrame, topSlot, annotations);
 		}
 	}
 
-	private boolean slotsInHierarchy(Set<OSFrame> visited) {
+	private boolean slotsInHierarchy(Set<OBFrame> visited) {
 
 		return !slots.isEmpty() || slotsInSubHierarchies(visited);
 	}
 
-	private boolean slotsInSubHierarchies(Set<OSFrame> visited) {
+	private boolean slotsInSubHierarchies(Set<OBFrame> visited) {
 
-		for (OSFrame sub : subFrames) {
+		for (OBFrame sub : subFrames) {
 
 			if (!visited.contains(sub)) {
 
@@ -163,9 +163,9 @@ class OSFrame extends OIdentified {
 		return false;
 	}
 
-	private OSSlot findTopLevelSlot(OSSlot current) {
+	private OBSlot findTopLevelSlot(OBSlot current) {
 
-		for (OSFrame sup : superFrames) {
+		for (OBFrame sup : superFrames) {
 
 			return sup.findTopLevelSlotViaSuper(current);
 		}
@@ -173,16 +173,16 @@ class OSFrame extends OIdentified {
 		return current;
 	}
 
-	private OSSlot findTopLevelSlotViaSuper(OSSlot current) {
+	private OBSlot findTopLevelSlotViaSuper(OBSlot current) {
 
 		return findTopLevelSlot(checkUpdateTopLevelSlot(current));
 	}
 
-	private OSSlot checkUpdateTopLevelSlot(OSSlot current) {
+	private OBSlot checkUpdateTopLevelSlot(OBSlot current) {
 
 		CIdentity id = current.getIdentity();
 
-		for (OSSlot slot : slots) {
+		for (OBSlot slot : slots) {
 
 			if (slot.getIdentity().equals(id)) {
 

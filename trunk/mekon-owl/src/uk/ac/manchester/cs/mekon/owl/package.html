@@ -8,7 +8,7 @@ MEKON-OWL consists of a set of <b>OWL-specific plug-ins</b> for MEKON (and hence
 <p>
 The plug-ins are:
 <ul>
-  <li><b>Model-Section Builder:</b> {@link uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.CSectionBuilder} which builds an indirect section of the frames model (FM) based on a set of OWL ontologies loaded via a standard "sanctioning" mechanism.
+  <li><b>Model-Section Builder:</b> {@link uk.ac.manchester.cs.mekon.owl.build.OBSectionBuilder} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.CSectionBuilder} which builds an indirect section of the frames model (FM) based on a set of OWL ontologies loaded via a standard "sanctioning" mechanism.
   <li><b>Instance Reasoner:</b> {@link uk.ac.manchester.cs.mekon.owl.reason.ORClassifier} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.IReasoner} based on a DL reasoner operating over a set of OWL ontologies.
   <li><b>Instance Matcher:</b> {@link uk.ac.manchester.cs.mekon.owl.reason.ORMatcher} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.IMatcher} based on a DL reasoner operating over a set of OWL ontologies, and the creation of ad-hoc networks of OWL individuals within those ontologies to represent specific instances.
 </ul>
@@ -17,7 +17,7 @@ These plug-ins are compatible with each other, and can be used either together o
 <p>
 All plug-ins are configurable in various ways, either programatically, via methods on the relevant classes, or else via the general MEKON configuration system.
 <p>
-{@link uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder} can be configured to determine which collections of entities will be loaded from the relevant ontologies, and exactly how they will be used in creating the MEKON FM entities.
+{@link uk.ac.manchester.cs.mekon.owl.build.OBSectionBuilder} can be configured to determine which collections of entities will be loaded from the relevant ontologies, and exactly how they will be used in creating the MEKON FM entities.
 <p>
 Both {@link uk.ac.manchester.cs.mekon.owl.reason.ORClassifier} and {@link uk.ac.manchester.cs.mekon.owl.reason.ORMatcher} can be configured to determine how the FM instantiations will be interpreted semantically when composing the OWL expressions and networks of OWL individuals to be classified and queried over. In both cases, it is also possible to provide implementations of {@link uk.ac.manchester.cs.mekon.owl.reason.ORPreProcessor} to reshape the FM instantiations prior to conversion into OWL constructs.
 <p>

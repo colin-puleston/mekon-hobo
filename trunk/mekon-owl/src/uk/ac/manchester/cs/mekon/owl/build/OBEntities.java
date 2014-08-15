@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public abstract class OSEntities<E extends OWLEntity, G extends OSEntityGroup> {
+public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
 
 	private OModel model;
 	private Set<E> entities = new HashSet<E>();
@@ -75,7 +75,7 @@ public abstract class OSEntities<E extends OWLEntity, G extends OSEntityGroup> {
 		}
 	}
 
-	OSEntities(OModel model) {
+	OBEntities(OModel model) {
 
 		this.model = model;
 	}

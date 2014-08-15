@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -34,17 +34,17 @@ import uk.ac.manchester.cs.mekon.owl.*;
 /**
  * @author Colin Puleston
  */
-class OSSlots {
+class OBSlots {
 
 	private OModel model;
-	private OSFrames frames;
-	private OSNumbers numbers;
-	private OSEntityLabels labels;
+	private OBFrames frames;
+	private OBNumbers numbers;
+	private OBEntityLabels labels;
 	private boolean metaFrameSlotsEnabled = false;
 
 	private SpecCreator specCreator = new SpecCreator();
 
-	private abstract class SlotSpec extends OSSlotSpec {
+	private abstract class SlotSpec extends OBSlotSpec {
 
 		private OWLObjectProperty property;
 		private OWLClassExpression filler;
@@ -84,7 +84,7 @@ class OSSlots {
 			return metaFrameSlotsEnabled;
 		}
 
-		OSSlot create(OSFrame container) {
+		OBSlot create(OBFrame container) {
 
 			if (filler instanceof OWLClass) {
 
@@ -94,21 +94,21 @@ class OSSlots {
 			return createDisjunctionFrameSlot(container);
 		}
 
-		private OSSlot createSimpleSlot(OWLClass filler) {
+		private OBSlot createSimpleSlot(OWLClass filler) {
 
-			OSNumber number = numbers.checkExtractNumber(filler);
+			OBNumber number = numbers.checkExtractNumber(filler);
 
 			return number != null
 					? createNumberSlot(number)
 					: createModelFrameSlot(filler);
 		}
 
-		private OSSlot createModelFrameSlot(OWLClass filler) {
+		private OBSlot createModelFrameSlot(OWLClass filler) {
 
-			return new OSModelFrameSlot(this, frames.get(filler));
+			return new OBModelFrameSlot(this, frames.get(filler));
 		}
 
-		private OSSlot createDisjunctionFrameSlot(OSFrame container) {
+		private OBSlot createDisjunctionFrameSlot(OBFrame container) {
 
 			String valueTypeLabel = createDisjunctionValueTypeLabel(container);
 			OSDisjunctionFrameSlot slot = new OSDisjunctionFrameSlot(
@@ -123,12 +123,12 @@ class OSSlots {
 			return slot;
 		}
 
-		private OSSlot createNumberSlot(OSNumber valueType) {
+		private OBSlot createNumberSlot(OBNumber valueType) {
 
-			return new OSNumberSlot(this, valueType);
+			return new OBNumberSlot(this, valueType);
 		}
 
-		private String createDisjunctionValueTypeLabel(OSFrame container) {
+		private String createDisjunctionValueTypeLabel(OBFrame container) {
 
 			return container.getIdentity().getLabel() + ":" + getLabel();
 		}
@@ -283,13 +283,13 @@ class OSSlots {
 		}
 	}
 
-	OSSlots(OModel model, OSFrames frames, OSEntityLabels labels) {
+	OBSlots(OModel model, OBFrames frames, OBEntityLabels labels) {
 
 		this.model = model;
 		this.frames = frames;
 		this.labels = labels;
 
-		numbers = new OSNumbers(model);
+		numbers = new OBNumbers(model);
 	}
 
 	void setMetaFrameSlotsEnabled(boolean value) {
@@ -297,7 +297,7 @@ class OSSlots {
 		metaFrameSlotsEnabled = value;
 	}
 
-	void createAll(OSSubConceptAxioms subConceptOfs) {
+	void createAll(OBSubConceptAxioms subConceptOfs) {
 
 		for (OWLSubClassOfAxiom subConceptOf : subConceptOfs.getAll()) {
 
@@ -347,7 +347,7 @@ class OSSlots {
 
 		if (spec != null && spec.initialised()) {
 
-			OSFrame container = frames.get(sub);
+			OBFrame container = frames.get(sub);
 
 			container.addSlot(spec.create(container));
 		}

@@ -22,78 +22,60 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
-import org.semanticweb.owlapi.model.*;
-
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-class OSFrames {
+abstract class OBFrameSlot extends OBSlot {
 
-	private IReasoner iReasoner = null;
-	private OSConcepts concepts;
-	private OSEntityLabels labels;
+	private boolean metaFrameSlotsEnabled;
 
-	private Map<OWLClass, OSFrame> frames = new HashMap<OWLClass, OSFrame>();
+	OBFrameSlot(OBSlotSpec spec) {
 
-	OSFrames(OSConcepts concepts, OSEntityLabels labels) {
+		super(spec);
 
-		this.concepts = concepts;
-		this.labels = labels;
+		metaFrameSlotsEnabled = spec.metaFrameSlotsEnabled();
 	}
 
-	void setIReasoner(IReasoner iReasoner) {
+	CValue<?> ensureCValue(
+				CBuilder builder,
+				OBSlot topLevelSlot,
+				OBEntityAnnotations annotations) {
 
-		this.iReasoner = iReasoner;
+		CFrame cFrame = ensureCFrame(builder, annotations);
+
+		return isMetaFrameSlot(topLevelSlot) ? cFrame.getType() : cFrame;
 	}
 
-	void createAll() {
+	abstract CFrame ensureCFrame(
+						CBuilder builder,
+						OBEntityAnnotations annotations);
 
-		for (OWLClass concept : concepts.getAll()) {
+	abstract Set<OBFrame> getRootValueTypeFrames();
 
-			createFrame(concept);
+	private boolean isMetaFrameSlot(OBSlot topLevelSlot) {
+
+		return metaFrameSlotsEnabled && !slotsInValueTypeHierarchy(topLevelSlot);
+	}
+
+	private boolean slotsInValueTypeHierarchy(OBSlot topLevelSlot) {
+
+		OBFrameSlot topLevelFrameSlot = (OBFrameSlot)topLevelSlot;
+
+		for (OBFrame valueType : topLevelFrameSlot.getRootValueTypeFrames()) {
+
+			if (valueType.slotsInHierarchy()) {
+
+				return true;
+			}
 		}
-	}
 
-	Collection<OSFrame> getAll() {
-
-		return frames.values();
-	}
-
-	OSFrame get(OWLClass concept) {
-
-		OSFrame frame = frames.get(concept);
-
-		if (frame == null) {
-
-			throw new Error("Cannot find frame for: " + concept);
-		}
-
-		return frame;
-	}
-
-	private OSFrame createFrame(OWLClass concept) {
-
-		String label = labels.getLabel(concept);
-		boolean hidden = concepts.isHidden(concept);
-
-		return createFrame(concept, label, hidden);
-	}
-
-	private OSFrame createFrame(OWLClass concept, String label, boolean hidden) {
-
-		return addFrame(new OSFrame(concept, label, hidden, iReasoner));
-	}
-
-	private OSFrame addFrame(OSFrame frame) {
-
-		frames.put(frame.getConcept(), frame);
-
-		return frame;
+		return false;
 	}
 }

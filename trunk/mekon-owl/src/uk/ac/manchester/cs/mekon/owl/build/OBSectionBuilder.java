@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -51,18 +51,18 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
  *
  * @author Colin Puleston
  */
-public class OSSectionBuilder implements CSectionBuilder {
+public class OBSectionBuilder implements CSectionBuilder {
 
 	private OModel model;
-	private OSEntityLabels labels;
-	private OSEntityAnnotations annotations;
+	private OBEntityLabels labels;
+	private OBEntityAnnotations annotations;
 
-	private OSConcepts concepts;
-	private OSProperties properties;
+	private OBConcepts concepts;
+	private OBProperties properties;
 
-	private OSFrames frames;
-	private OSSlotProperties slotProperties;
-	private OSSlots slots;
+	private OBFrames frames;
+	private OBSlotProperties slotProperties;
+	private OBSlots slots;
 
 	private boolean retainOnlyDeclarationAxioms = false;
 
@@ -80,7 +80,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 * or does not contain correctly specified configuration
 	 * information
 	 */
-	public OSSectionBuilder(KConfigNode parentConfigNode) {
+	public OBSectionBuilder(KConfigNode parentConfigNode) {
 
 		this(new OModelBuilder(parentConfigNode).create(), parentConfigNode);
 	}
@@ -100,11 +100,11 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 * or does not contain correctly specified configuration
 	 * information
 	 */
-	public OSSectionBuilder(OModel model, KConfigNode parentConfigNode) {
+	public OBSectionBuilder(OModel model, KConfigNode parentConfigNode) {
 
 		this(model);
 
-		new OSSectionBuilderConfig(parentConfigNode).configure(this);
+		new OBSectionBuilderConfig(parentConfigNode).configure(this);
 
 		setIReasoner(ORClassifier.createOrNull(model, parentConfigNode));
 	}
@@ -115,19 +115,19 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 *
 	 * @param model Model over which sanctioning is to operate
 	 */
-	public OSSectionBuilder(OModel model) {
+	public OBSectionBuilder(OModel model) {
 
 		this.model = model;
 
-		labels = new OSEntityLabels(model);
-		annotations = new OSEntityAnnotations(model);
+		labels = new OBEntityLabels(model);
+		annotations = new OBEntityAnnotations(model);
 
-		concepts = new OSConcepts(model);
-		properties = new OSProperties(model);
+		concepts = new OBConcepts(model);
+		properties = new OBProperties(model);
 
-		frames = new OSFrames(concepts, labels);
-		slotProperties = new OSSlotProperties(model, properties, labels);
-		slots = new OSSlots(model, frames, labels);
+		frames = new OBFrames(concepts, labels);
+		slotProperties = new OBSlotProperties(model, properties, labels);
+		slots = new OBSlots(model, frames, labels);
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 *
 	 * @return Object for specifying required OWL classes
 	 */
-	public OSConcepts getConcepts() {
+	public OBConcepts getConcepts() {
 
 		return concepts;
 	}
@@ -189,7 +189,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 *
 	 * @return Object for specifying required OWL properties
 	 */
-	public OSProperties getProperties() {
+	public OBProperties getProperties() {
 
 		return properties;
 	}
@@ -201,7 +201,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 *
 	 * @return Object for specifying label sources
 	 */
-	public OSEntityLabels getEntityLabels() {
+	public OBEntityLabels getEntityLabels() {
 
 		return labels;
 	}
@@ -212,7 +212,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 	 *
 	 * @return Object for copying required annotations
 	 */
-	public OSEntityAnnotations getEntityAnnotations() {
+	public OBEntityAnnotations getEntityAnnotations() {
 
 		return annotations;
 	}
@@ -247,7 +247,7 @@ public class OSSectionBuilder implements CSectionBuilder {
 		slotProperties.createAll();
 		slots.createAll(getSubConceptAxioms());
 
-		new OSFrameHierarchy(model, frames).createLinks();
+		new OBFrameHierarchy(model, frames).createLinks();
 	}
 
 	private void buildFinal(CBuilder builder) {
@@ -258,12 +258,12 @@ public class OSSectionBuilder implements CSectionBuilder {
 
 	private void buildFinalPropertyStructure(CBuilder builder) {
 
-		for (OSSlotProperty property : slotProperties.getAll()) {
+		for (OBSlotProperty property : slotProperties.getAll()) {
 
 			property.createCProperty(builder, annotations);
 		}
 
-		for (OSSlotProperty property : slotProperties.getAll()) {
+		for (OBSlotProperty property : slotProperties.getAll()) {
 
 			property.ensureMirrorCFrameStructure(builder);
 		}
@@ -271,14 +271,14 @@ public class OSSectionBuilder implements CSectionBuilder {
 
 	private void buildFinalFrameStructure(CBuilder builder) {
 
-		for (OSFrame frame : frames.getAll()) {
+		for (OBFrame frame : frames.getAll()) {
 
 			frame.ensureCFrame(builder, annotations);
 		}
 	}
 
-	private OSSubConceptAxioms getSubConceptAxioms() {
+	private OBSubConceptAxioms getSubConceptAxioms() {
 
-		return new OSSubConceptAxioms(model, concepts, properties);
+		return new OBSubConceptAxioms(model, concepts, properties);
 	}
 }

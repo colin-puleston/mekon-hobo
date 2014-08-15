@@ -22,60 +22,24 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
-
-import java.util.*;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OSFrameSlot extends OSSlot {
+class OBNumber {
 
-	private boolean metaFrameSlotsEnabled;
+	private CNumberDef definition;
 
-	OSFrameSlot(OSSlotSpec spec) {
+	OBNumber(CNumberDef definition) {
 
-		super(spec);
-
-		metaFrameSlotsEnabled = spec.metaFrameSlotsEnabled();
+		this.definition = definition;
 	}
 
-	CValue<?> ensureCValue(
-				CBuilder builder,
-				OSSlot topLevelSlot,
-				OSEntityAnnotations annotations) {
+	CNumber createCNumber() {
 
-		CFrame cFrame = ensureCFrame(builder, annotations);
-
-		return isMetaFrameSlot(topLevelSlot) ? cFrame.getType() : cFrame;
-	}
-
-	abstract CFrame ensureCFrame(
-						CBuilder builder,
-						OSEntityAnnotations annotations);
-
-	abstract Set<OSFrame> getRootValueTypeFrames();
-
-	private boolean isMetaFrameSlot(OSSlot topLevelSlot) {
-
-		return metaFrameSlotsEnabled && !slotsInValueTypeHierarchy(topLevelSlot);
-	}
-
-	private boolean slotsInValueTypeHierarchy(OSSlot topLevelSlot) {
-
-		OSFrameSlot topLevelFrameSlot = (OSFrameSlot)topLevelSlot;
-
-		for (OSFrame valueType : topLevelFrameSlot.getRootValueTypeFrames()) {
-
-			if (valueType.slotsInHierarchy()) {
-
-				return true;
-			}
-		}
-
-		return false;
+		return definition.createNumber();
 	}
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public enum OSConceptHidingFilter {
+public enum OBConceptHidingFilter {
 
 	/**
 	 * Represents a filter that allows any concept to be hidden.
