@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.sanctions;
+package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
 /**
  * @author Colin Puleston
  */
-public class OSSectionBuilderTest extends OTest {
+public class OBSectionBuilderTest extends OTest {
 
 	static private final String DOMAIN_CONCEPT_CLASS = "DomainConcept";
 	static private final String DATA_TYPE_CONCEPT_CLASS = "DataTypeConcept";
@@ -70,7 +70,7 @@ public class OSSectionBuilderTest extends OTest {
 
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
-	private OSSectionBuilder sectionBuilder;
+	private OBSectionBuilder sectionBuilder;
 	private boolean metaFrameSlotsEnabled = false;
 
 	private enum CFrameStatus {
@@ -86,7 +86,7 @@ public class OSSectionBuilderTest extends OTest {
 	@Before
 	public void setUp() {
 
-		sectionBuilder = new OSSectionBuilder(TestOModel.create());
+		sectionBuilder = new OBSectionBuilder(TestOModel.create());
 	}
 
 	@Test
@@ -133,7 +133,7 @@ public class OSSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingScope_ALL() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OSConceptHidingScope.ALL);
+		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBConceptHidingScope.ALL);
 
 		buildModel();
 
@@ -145,7 +145,7 @@ public class OSSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingScope_ROOTS_ONLY() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OSConceptHidingScope.ROOTS_ONLY);
+		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBConceptHidingScope.ROOTS_ONLY);
 
 		buildModel();
 
@@ -157,7 +157,7 @@ public class OSSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingScope_NON_ROOTS_ONLY() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OSConceptHidingScope.NON_ROOTS_ONLY);
+		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBConceptHidingScope.NON_ROOTS_ONLY);
 
 		buildModel();
 
@@ -169,8 +169,8 @@ public class OSSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingFilter_ANY() {
 
-		addConceptGroup(JOB_CLASS, OSConceptHidingFilter.ANY);
-		addConceptGroup(JOB_TYPE_CLASS, OSConceptHidingFilter.ANY);
+		addConceptGroup(JOB_CLASS, OBConceptHidingFilter.ANY);
+		addConceptGroup(JOB_TYPE_CLASS, OBConceptHidingFilter.ANY);
 
 		buildModel();
 
@@ -185,8 +185,8 @@ public class OSSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingFilter_DEFINIED_CONCEPTS_ONLY() {
 
-		addConceptGroup(JOB_CLASS, OSConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
-		addConceptGroup(JOB_TYPE_CLASS, OSConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
+		addConceptGroup(JOB_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
+		addConceptGroup(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
 
 		buildModel();
 
@@ -201,8 +201,8 @@ public class OSSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingFilter_DEFINIED_SUB_TREES_ONLY() {
 
-		addConceptGroup(JOB_CLASS, OSConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
-		addConceptGroup(JOB_TYPE_CLASS, OSConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
+		addConceptGroup(JOB_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
+		addConceptGroup(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
 
 		buildModel();
 
@@ -342,76 +342,76 @@ public class OSSectionBuilderTest extends OTest {
 		buildModel(sectionBuilder);
 	}
 
-	private OSConceptGroup addConceptGroup(String rootName) {
+	private OBConceptGroup addConceptGroup(String rootName) {
 
 		return addConceptGroup(createConceptGroup(rootName));
 	}
 
-	private OSConceptGroup addConceptGroupExcludeRoot(String rootName) {
+	private OBConceptGroup addConceptGroupExcludeRoot(String rootName) {
 
-		OSConceptGroup group = createConceptGroup(rootName);
+		OBConceptGroup group = createConceptGroup(rootName);
 
 		group.setIncludesRoot(false);
 
 		return addConceptGroup(group);
 	}
 
-	private OSConceptGroup addConceptGroup(
+	private OBConceptGroup addConceptGroup(
 								String rootName,
-								OSConceptHidingScope hidingScope) {
+								OBConceptHidingScope hidingScope) {
 
-		OSConceptGroup group = createConceptGroup(rootName);
+		OBConceptGroup group = createConceptGroup(rootName);
 
 		group.getConceptHiding().setScope(hidingScope);
 
 		return addConceptGroup(group);
 	}
 
-	private OSConceptGroup addConceptGroup(
+	private OBConceptGroup addConceptGroup(
 								String rootName,
-								OSConceptHidingFilter hidingFilter) {
+								OBConceptHidingFilter hidingFilter) {
 
-		OSConceptGroup group = createConceptGroup(rootName);
-		OSConceptHiding hiding = group.getConceptHiding();
+		OBConceptGroup group = createConceptGroup(rootName);
+		OBConceptHiding hiding = group.getConceptHiding();
 
-		hiding.setScope(OSConceptHidingScope.ALL);
+		hiding.setScope(OBConceptHidingScope.ALL);
 		hiding.setFilter(hidingFilter);
 
 		return addConceptGroup(group);
 	}
 
-	private OSConceptGroup createConceptGroup(String rootName) {
+	private OBConceptGroup createConceptGroup(String rootName) {
 
-		return new OSConceptGroup(nameToIRI(rootName));
+		return new OBConceptGroup(nameToIRI(rootName));
 	}
 
-	private OSConceptGroup addConceptGroup(OSConceptGroup group) {
+	private OBConceptGroup addConceptGroup(OBConceptGroup group) {
 
 		sectionBuilder.getConcepts().addGroup(group);
 
 		return group;
 	}
 
-	private OSPropertyGroup addPropertyGroup(String rootName) {
+	private OBPropertyGroup addPropertyGroup(String rootName) {
 
 		return addPropertyGroup(createPropertyGroup(rootName));
 	}
 
-	private OSPropertyGroup addPropertyGroupExcludeRoot(String rootName) {
+	private OBPropertyGroup addPropertyGroupExcludeRoot(String rootName) {
 
-		OSPropertyGroup group = createPropertyGroup(rootName);
+		OBPropertyGroup group = createPropertyGroup(rootName);
 
 		group.setIncludesRoot(false);
 
 		return addPropertyGroup(group);
 	}
 
-	private OSPropertyGroup createPropertyGroup(String rootName) {
+	private OBPropertyGroup createPropertyGroup(String rootName) {
 
-		return new OSPropertyGroup(nameToIRI(rootName));
+		return new OBPropertyGroup(nameToIRI(rootName));
 	}
 
-	private OSPropertyGroup addPropertyGroup(OSPropertyGroup group) {
+	private OBPropertyGroup addPropertyGroup(OBPropertyGroup group) {
 
 		sectionBuilder.getProperties().addGroup(group);
 

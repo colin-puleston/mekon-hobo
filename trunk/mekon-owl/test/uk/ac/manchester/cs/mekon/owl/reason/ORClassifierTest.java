@@ -32,7 +32,7 @@ import org.junit.Before;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
+import uk.ac.manchester.cs.mekon.owl.build.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
@@ -69,7 +69,7 @@ public class ORClassifierTest extends OTest {
 	public void setUp() {
 
 		OModel model = TestOModel.create();
-		OSSectionBuilder sectionBuilder = new OSSectionBuilder(model);
+		OBSectionBuilder sectionBuilder = new OBSectionBuilder(model);
 
 		classifier = new ORClassifier(model);
 
