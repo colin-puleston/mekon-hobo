@@ -30,7 +30,7 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
+import uk.ac.manchester.cs.mekon.owl.build.*;
 
 /**
  * @author Colin Puleston
@@ -41,7 +41,7 @@ public class OTest extends FramesTestUtils {
 
 	private CModel model;
 
-	public void buildModel(OSSectionBuilder sectionBuilder) {
+	public void buildModel(OBSectionBuilder sectionBuilder) {
 
 		CBuilder cBuilder = CManager.createEmptyBuilder();
 

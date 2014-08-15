@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import uk.ac.manchester.cs.mekon.owl.sanctions.*;
+import uk.ac.manchester.cs.mekon.owl.build.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	OSSectionBuilderTest.class,
+	OBSectionBuilderTest.class,
 	ORClassifierTest.class})
 public class MekonOWLTestSuite {
 }
