@@ -37,7 +37,7 @@
 		ontologies via a "sanctioning" mechanism.
 	-->
 	<ModelSection
-		builder="uk.ac.manchester.cs.mekon.owl.sanctions.OSSectionBuilder">
+		builder="uk.ac.manchester.cs.mekon.owl.build.OBSectionBuilder">
 
 		<!--
 			Information concerning location of OWL ontology, type
