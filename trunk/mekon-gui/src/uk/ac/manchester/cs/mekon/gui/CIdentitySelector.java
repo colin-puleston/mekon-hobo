@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
+import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -34,53 +35,90 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class CFrameSelector extends GDialog {
+class CIdentitySelector extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension WINDOW_SIZE = new Dimension(450, 300);
-	static private final String MAIN_TITLE = "Value-Type Selector";
+	static private final Dimension WINDOW_SIZE = new Dimension(200, 70);
 
-	private CFrame selection = null;
+	private CIdentity selection = null;
 
-	private class SelectorListener extends CFrameSelectionListener {
+	private class InputField extends GTextField {
 
-		protected void onSelected(CFrame frame) {
+		static private final long serialVersionUID = -1;
 
-			select(frame);
+		protected void onTextEntered(String text) {
+
+			checkSelect(text);
 		}
 	}
 
-	CFrameSelector(JComponent parent, CFrame rootFrame) {
+	CIdentitySelector(JComponent parent, String label) {
 
-		super(parent, MAIN_TITLE, true);
+		super(parent, label, true);
 
 		setPreferredSize(WINDOW_SIZE);
-		display(createMainComponent(rootFrame));
+		display(new InputField());
 	}
 
-	CFrame getSelectionOrNull() {
+	CIdentity getSelectionOrNull() {
 
 		return selection;
 	}
 
-	private JComponent createMainComponent(CFrame rootFrame) {
+	private void checkSelect(String text) {
 
-		boolean showRoot = rootFrame.instantiable();
-		CFramesComboPanel combo = new CFramesComboPanel(
-										rootFrame,
-										CFrameVisibility.EXPOSED,
-										showRoot);
+		selection = toIdentityOrNull(text);
 
-		combo.addSelectionListener(new SelectorListener());
+		if (selection != null) {
 
-		return combo;
+			dispose();
+		}
 	}
 
-	private void select(CFrame frame) {
+	private CIdentity toIdentityOrNull(String value) {
 
-		selection = frame;
+		if (value.length() != 0) {
 
-		dispose();
+			if (validLabel(value)) {
+
+				return new CIdentity(labelToIdentifier(value), value);
+			}
+
+			JOptionPane.showMessageDialog(null, "Invalid Input!");
+		}
+
+		return null;
+	}
+
+	private boolean validLabel(String label) {
+
+		return validLabelStart(label) && validLabelBody(label);
+	}
+
+	private boolean validLabelStart(String label) {
+
+		return Character.isLetter(label.charAt(0));
+	}
+
+	private boolean validLabelBody(String label) {
+
+		for (int i = 1 ; i < label.length() ; i++) {
+
+			char c = label.charAt(i);
+
+			if (!Character.isLetterOrDigit(c) && !Character.isSpaceChar(c)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private String labelToIdentifier(String label) {
+
+		return label.replace(' ', '-');
 	}
 }
+

@@ -72,17 +72,17 @@ public class MekonModelExplorer extends GFrame {
 			selections.addSelectionRelay(selectionsPanel.getSelectionRelay());
 		}
 
-		JComponent createMainPanel() {
+		JComponent createMainComponent() {
 
 			JPanel panel = new JPanel(new BorderLayout());
 
-			panel.add(createControlPanel(), BorderLayout.NORTH);
-			panel.add(createModelPanel(), BorderLayout.CENTER);
+			panel.add(createControlComponent(), BorderLayout.NORTH);
+			panel.add(createModelComponent(), BorderLayout.CENTER);
 
 			return panel;
 		}
 
-		private JComponent createModelPanel() {
+		private JComponent createModelComponent() {
 
 			GSplitPane panel = new GSplitPane();
 
@@ -92,7 +92,7 @@ public class MekonModelExplorer extends GFrame {
 			return panel;
 		}
 
-		private JComponent createControlPanel() {
+		private JComponent createControlComponent() {
 
 			JPanel panel = new JPanel(new BorderLayout());
 
@@ -108,6 +108,6 @@ public class MekonModelExplorer extends GFrame {
 		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		display(new Initialiser(model).createMainPanel());
+		display(new Initialiser(model).createMainComponent());
 	}
 }
