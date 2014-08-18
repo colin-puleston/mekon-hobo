@@ -103,6 +103,18 @@ class InstantiationOptionsPanel extends JPanel {
 		}
 	}
 
+	private void executeQuery() {
+
+		List<CIdentity> matches = getIStore().match(frame);
+
+		if (matches.isEmpty()) {
+		}
+		else {
+
+			new QueryMatchesDialog(this, matches);
+		}
+	}
+
 	private CIdentity checkObtainConcreteIdentity() {
 
 		return createIdentitySelector().getSelectionOrNull();
@@ -125,54 +137,38 @@ class InstantiationOptionsPanel extends JPanel {
 
 	private boolean confirmReplaceStoredConcrete(CIdentity identity) {
 
-		int opt = obtainReplaceStoredConcreteOption(identity);
-
-		return opt == JOptionPane.OK_OPTION;
-	}
-
-	private int obtainReplaceStoredConcreteOption(CIdentity identity) {
-
-		String msg = "Replacing instance: \"" + identity.getLabel() + "\"";
-
-		return JOptionPane.showConfirmDialog(
-					null,
-					msg,
-					"Confirm Instance Replacement",
-					JOptionPane.OK_CANCEL_OPTION);
+		return obtainConfirmation(
+					"Replacing instance: "
+					+ "\"" + identity.getLabel() + "\"");
 	}
 
 	private void showConcreteStoredMessage(CIdentity identity) {
 
-		String msg = "Instance stored: \"" + identity.getLabel() + "\"";
+		showMessage("Instance stored: \"" + identity.getLabel() + "\"");
+	}
+
+	private void showNoQueryMatchesMessage(CIdentity identity) {
+
+		showMessage("No matches for supplied query");
+	}
+
+	private boolean obtainConfirmation(String msg) {
+
+		return obtainConfirmationOption(msg) == JOptionPane.OK_OPTION;
+	}
+
+	private int obtainConfirmationOption(String msg) {
+
+		return JOptionPane.showConfirmDialog(
+					null,
+					msg,
+					"Confirm?",
+					JOptionPane.OK_CANCEL_OPTION);
+	}
+
+	private void showMessage(String msg) {
 
 		JOptionPane.showMessageDialog(null, msg);
-	}
-
-	private void executeQuery() {
-
-		displayQueryMatches(getIStore().match(frame));
-	}
-
-	private void displayQueryMatches(List<CIdentity> matches) {
-
-		displayQueryMatches(createQueryMatchGList(matches));
-	}
-
-	private void displayQueryMatches(GList<CIdentity> list) {
-
-		new GDialog(this, QUERY_MATCHES_DIALOG_TITLE, true).display(list);
-	}
-
-	private GList<CIdentity> createQueryMatchGList(List<CIdentity> matches) {
-
-		GList<CIdentity> list = new GList<CIdentity>();
-
-		for (CIdentity match : matches) {
-
-			list.addEntity(match, new GCellDisplay(match.getLabel()));
-		}
-
-		return list;
 	}
 
 	private IStore getIStore() {
