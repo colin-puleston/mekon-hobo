@@ -83,7 +83,7 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 		CFrame type = checkObtainCFrame();
 
-		return type != null ? type.instantiate() : null;
+		return type != null ? instantiate(type) : null;
 	}
 
 	CFrame getRootCFrame() {
@@ -100,7 +100,7 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 		if (updatedCFrame.instantiable()) {
 
-			IFrame newValue = updatedCFrame.instantiate();
+			IFrame newValue = instantiate(updatedCFrame);
 
 			copyAssertedSlotValues(value, newValue);
 
@@ -109,7 +109,8 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 		JOptionPane.showMessageDialog(
 			null,
-			"Cannot instantiate: " + updatedCFrame.getDisplayLabel());
+			"Cannot instantiate: "
+				+ updatedCFrame.getDisplayLabel());
 
 		return value;
 	}
@@ -132,6 +133,15 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 				}
 			}
 		}
+	}
+
+	private IFrame instantiate(CFrame type) {
+
+		IFrame value = type.instantiate();
+
+		value.alignCategory(slot.getContainer());
+
+		return value;
 	}
 
 	private IFrame asIFrame(IValue value) {
