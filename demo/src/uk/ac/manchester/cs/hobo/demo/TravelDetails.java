@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.hobo.demo;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
@@ -71,7 +72,16 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 
 		private TravelMode instantiateMode() {
 
-			return getModel().instantiate(TravelMode.class, modeValue.getFrame());
+			TravelMode mode = instantiateMode(modeValue.getFrame());
+
+			mode.getFrame().alignCategory(getFrame());
+
+			return mode;
+		}
+
+		private TravelMode instantiateMode(CFrame frame) {
+
+			return getModel().instantiate(TravelMode.class, frame);
 		}
 	}
 
@@ -79,12 +89,10 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 
 		super(builder);
 
-		DArray<ValueSummary> summariesField = builder.addObjectArray(ValueSummary.class);
-
 		trips = builder.addObjectArray(Trip.class);
-		summaries = builder.getViewer(summariesField);
+		summaries = builder.getViewer(builder.addObjectArray(ValueSummary.class));
 
-		summariser = new Summariser(getModel(), summariesField);
+		summariser = createSummariser(builder);
 	}
 
 	void initialise(DConcept<TravelMode> modeValue) {
@@ -92,5 +100,13 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 		summariser.initialise(modeValue.getFrame());
 
 		new TripInitialiser(modeValue);
+	}
+
+	private Summariser createSummariser(DObjectBuilder builder) {
+
+		DEditor dEditor = builder.getEditor();
+		DArray<ValueSummary> summariesField = dEditor.getField(summaries);
+
+		return new Summariser(this, summariesField);
 	}
 }

@@ -92,6 +92,7 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		TravelDetails details = getModel().instantiate(TravelDetails.class);
 
+		details.getFrame().alignCategory(getFrame());
 		details.initialise(modeValue);
 
 		return details;

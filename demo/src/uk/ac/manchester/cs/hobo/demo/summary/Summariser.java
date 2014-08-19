@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public class Summariser {
 
-	private DModel model;
+	private DObject summariesContainer;
 	private DArray<ValueSummary> summaries;
 
 	private class SummaryAdder extends CValueVisitor {
@@ -68,16 +68,20 @@ public class Summariser {
 
 		private void addSummary(Class<? extends ValueSummary<?>> type) {
 
-			ValueSummary<?> summary = model.instantiate(type);
+			ValueSummary<?> summary = getModel().instantiate(type);
+
+			summary.getFrame().alignCategory(summariesContainer.getFrame());
 
 			summaries.add(summary);
 			summary.initialise(property);
 		}
 	}
 
-	public Summariser(DModel model, DArray<ValueSummary> summaries) {
+	public Summariser(
+				DObject summariesContainer,
+				DArray<ValueSummary> summaries) {
 
-		this.model = model;
+		this.summariesContainer = summariesContainer;
 		this.summaries = summaries;
 	}
 
@@ -120,5 +124,10 @@ public class Summariser {
 
 			summary.clearSlots();
 		}
+	}
+
+	private DModel getModel() {
+
+		return summariesContainer.getModel();
 	}
 }

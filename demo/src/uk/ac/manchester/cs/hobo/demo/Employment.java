@@ -48,69 +48,36 @@ public class Employment extends DObjectShell {
 
 			public void onUpdated() {
 
-				update();
+				checkUpdate();
 			}
 
 			UpdaterForJobWeeklyPay(Job job) {
 
-				job.weeklyPay.addConcreteOnlyUpdateListener(this);
+				job.weeklyPay.addUpdateListener(this);
 			}
 		}
 
 		public void onAdded(Job value) {
 
-			update();
+			value.initialise();
+			checkUpdate();
 
 			new UpdaterForJobWeeklyPay(value);
 		}
 
 		public void onRemoved(Job value) {
 
-			update();
+			checkUpdate();
 		}
 
 		public void onCleared(List<Job> values) {
 
-			update();
+			checkUpdate();
 		}
 
 		JobConsequenceUpdater() {
 
-			setJobCount(0);
-			setTotalWeeklyPay(0);
-
-			jobs.addConcreteOnlyValuesListener(this);
-		}
-
-		private void update() {
-
-			setJobCount(jobs.getAll().size());
-			setTotalWeeklyPay(calculateTotalWeeklyPay());
-		}
-
-		private void setJobCount(int count) {
-
-			dEditor.getField(jobCount).set(count);
-		}
-
-		private void setTotalWeeklyPay(int value) {
-
-			dEditor.getField(totalWeeklyPay).set(value);
-		}
-
-		private int calculateTotalWeeklyPay() {
-
-			int pay = 0;
-
-			for (Job job : jobs.getAll()) {
-
-				if (job.weeklyPay.isSet()) {
-
-					pay += job.weeklyPay.get();
-				}
-			}
-
-			return pay;
+			jobs.addValuesListener(this);
 		}
 	}
 
@@ -133,5 +100,49 @@ public class Employment extends DObjectShell {
 		dEditor = builder.getEditor();
 
 		builder.addInitialiser(new Initialiser());
+	}
+
+	void initialise() {
+
+		checkUpdate();
+	}
+
+	private void checkUpdate() {
+
+		if (getFrame().getCategory().concrete()) {
+
+			update();
+		}
+	}
+
+	private void update() {
+
+		setJobCount(jobs.getAll().size());
+		setTotalWeeklyPay(calculateTotalWeeklyPay());
+	}
+
+	private void setJobCount(int count) {
+
+		dEditor.getField(jobCount).set(count);
+	}
+
+	private void setTotalWeeklyPay(int value) {
+
+		dEditor.getField(totalWeeklyPay).set(value);
+	}
+
+	private int calculateTotalWeeklyPay() {
+
+		int pay = 0;
+
+		for (Job job : jobs.getAll()) {
+
+			if (job.weeklyPay.isSet()) {
+
+				pay += job.weeklyPay.get();
+			}
+		}
+
+		return pay;
 	}
 }

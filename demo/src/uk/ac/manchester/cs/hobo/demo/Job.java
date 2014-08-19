@@ -45,25 +45,13 @@ public class Job extends DObjectShell {
 
 		public void onUpdated() {
 
-			if (hourlyPay.isSet() && hoursPerWeek.isSet()) {
-
-				getWeeklyPay().set(hourlyPay.get() * hoursPerWeek.get());
-			}
-			else {
-
-				getWeeklyPay().clear();
-			}
+			checkUpdate();
 		}
 
 		WeeklyPayUpdater() {
 
-			hourlyPay.addConcreteOnlyUpdateListener(this);
-			hoursPerWeek.addConcreteOnlyUpdateListener(this);
-		}
-
-		private DCell<Integer> getWeeklyPay() {
-
-			return dEditor.getField(weeklyPay);
+			hourlyPay.addUpdateListener(this);
+			hoursPerWeek.addUpdateListener(this);
 		}
 	}
 
@@ -86,5 +74,35 @@ public class Job extends DObjectShell {
 		dEditor = builder.getEditor();
 
 		builder.addInitialiser(new Initialiser());
+	}
+
+	void initialise() {
+
+		checkUpdate();
+	}
+
+	private void checkUpdate() {
+
+		if (getFrame().getCategory().concrete()) {
+
+			update();
+		}
+	}
+
+	private void update() {
+
+		if (hourlyPay.isSet() && hoursPerWeek.isSet()) {
+
+			getWeeklyPay().set(hourlyPay.get() * hoursPerWeek.get());
+		}
+		else {
+
+			getWeeklyPay().clear();
+		}
+	}
+
+	private DCell<Integer> getWeeklyPay() {
+
+		return dEditor.getField(weeklyPay);
 	}
 }

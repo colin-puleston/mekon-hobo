@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.hobo.demo;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
@@ -39,6 +40,33 @@ public class Citizen extends DObjectShell {
 	public final DArrayViewer<DConcept<Benefit>> benefits;
 	public final DCell<Travel> travel;
 
+	private class EmploymentInitialiser implements KValuesListener<Employment> {
+
+		public void onAdded(Employment value) {
+
+			value.initialise();
+		}
+
+		public void onRemoved(Employment value) {
+		}
+
+		public void onCleared(List<Employment> values) {
+		}
+
+		EmploymentInitialiser() {
+
+			employment.addValuesListener(this);
+		}
+	}
+
+	private class Initialiser implements DObjectInitialiser {
+
+		public void initialise() {
+
+			new EmploymentInitialiser();
+		}
+	}
+
 	public Citizen(DObjectBuilder builder) {
 
 		super(builder);
@@ -47,5 +75,7 @@ public class Citizen extends DObjectShell {
 		tax = builder.addConceptCell(Tax.class);
 		benefits = builder.getViewer(builder.addConceptArray(Benefit.class));
 		travel = builder.addObjectCell(Travel.class);
+
+		builder.addInitialiser(new Initialiser());
 	}
 }
