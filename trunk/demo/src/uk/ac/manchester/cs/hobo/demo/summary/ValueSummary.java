@@ -46,17 +46,17 @@ public abstract class ValueSummary<V> extends DObjectShell {
 
 		public void onAdded(IValue value) {
 
-			update();
+			checkUpdate();
 		}
 
 		public void onRemoved(IValue value) {
 
-			update();
+			checkUpdate();
 		}
 
 		public void onCleared(List<IValue> values) {
 
-			clear();
+			checkClear();
 		}
 	}
 
@@ -77,26 +77,48 @@ public abstract class ValueSummary<V> extends DObjectShell {
 	void addSlot(ISlot slot) {
 
 		slots.add(slot);
-		slot.getValues().addConcreteOnlyValuesListener(updater);
+		slot.getValues().addValuesListener(updater);
 
-		update();
+		checkUpdate();
 	}
 
 	void removeSlot(ISlot slot) {
 
 		slots.remove(slot);
 
-		update();
+		checkUpdate();
 	}
 
 	void clearSlots() {
 
 		slots.clear();
 
-		clear();
+		checkClear();
 	}
 
-	void update() {
+	abstract void set(List<V> values);
+
+	abstract void clear();
+
+	abstract V extractValue(IValue value);
+
+	private void checkUpdate() {
+
+		if (concreteFrame()) {
+
+			update();
+		}
+	}
+
+	private void checkClear() {
+
+		if (concreteFrame()) {
+
+			clear();
+		}
+	}
+
+	private void update() {
 
 		clear();
 
@@ -107,12 +129,6 @@ public abstract class ValueSummary<V> extends DObjectShell {
 			set(values);
 		}
 	}
-
-	abstract void set(List<V> values);
-
-	abstract void clear();
-
-	abstract V extractValue(IValue value);
 
 	private DConcept<PropertyRef> getPropertyRef(CProperty propertyValue) {
 
@@ -134,5 +150,10 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		}
 
 		return values;
+	}
+
+	private boolean concreteFrame() {
+
+		return getFrame().getCategory().concrete();
 	}
 }
