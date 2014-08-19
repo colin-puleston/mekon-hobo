@@ -162,25 +162,14 @@ public class ISlot implements IEntity {
 	/**
 	 * Specifies whether the slot-values can be edited by the client.
 	 * This will always be the case if the container-frame of the slot
-	 * is a query-instance (see {@link #queryInstance}). Otherwise it
-	 * will only be the case for non-{@link #dependent} slots.
+	 * is of category {@link IFrameCategory#QUERY}. Otherwise it will
+	 * only be the case for non-{@link #dependent} slots.
 	 *
 	 * @return True if slot is currently editable by client
 	 */
 	public boolean editable() {
 
-		return queryInstance() || !dependent();
-	}
-
-	/**
-	 * Specifies whether the container-frame of the slot is a
-	 * query-instance.
-	 *
-	 * @return True slot is on a query-instance
-	 */
-	public boolean queryInstance() {
-
-		return container.queryInstance();
+		return container.getCategory().query() || !dependent();
 	}
 
 	/**

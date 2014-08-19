@@ -32,10 +32,10 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  * Represents an instance-store associated with a MEKON Frames
  * Model (FM). Both instances and queries are represented via
  * instance-level frames. The frames representing instances must
- * be of concrete-instance rather than query-instance type (see
- * {@link IFrame#queryInstance}), whereas those representing
- * queries can be of either type, since concrete-instances can
- * also be interpreted as queries.
+ * be of category {@link IFrameCategory#CONCRETE} rather than
+ * {@link IFrameCategory#QUERY}, whereas those representing
+ * queries can be either, since concrete frames can also be
+ * interpreted as queries.
  *
  * @author Colin Puleston
  */
@@ -63,8 +63,8 @@ public class IStore {
 	 * @param identity Unique identity for instance
 	 * @return Existing instance that was replaced, or null if
 	 * if not applicable
-	 * @throws KAccessException if instance frame represents a
-	 * query-instance
+	 * @throws KAccessException if instance frame is not of
+	 * category {@link IFrameCategory#CONCRETE}
 	 */
 	public IFrame add(IFrame instance, CIdentity identity) {
 

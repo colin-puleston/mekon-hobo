@@ -29,13 +29,14 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Responsible for execting queries over sets of instantiations
- * of a MEKON Frames Model (FM). Both instances and queries are
- * represented via instance-level frames. The frames representing
- * instances will be of concrete-instance rather than
- * query-instance type (see {@link IFrame#queryInstance}),
- * whereas those representing queries can be of either type,
- * since concrete-instances can also be interpreted as queries.
+ * Responsible for execting queries over sets of
+ * instantiations of a MEKON Frames Model (FM). Both instances
+ * and queries are represented via instance-level frames. The
+ * frames representing instances will always be of category
+ * {@link IFrameCategory#CONCRETE} rather than {@link
+ * IFrameCategory#QUERY}, whereas those representing queries
+ * can be either, since concrete frames can also be interpreted
+ 8 as queries.
  *
  * @author Colin Puleston
  */
@@ -53,7 +54,7 @@ public interface IMatcher {
 	/**
 	 * Adds an instance to the matcher. The supplied frame will
 	 * be of an appropriate frame-type (see {@link #handlesType}),
-	 * and will be of concrete-instance type.
+	 * and will be of category {@link IFrameCategory#CONCRETE}.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance

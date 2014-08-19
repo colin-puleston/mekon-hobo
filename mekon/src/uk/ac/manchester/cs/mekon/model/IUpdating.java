@@ -141,7 +141,7 @@ public class IUpdating {
 
 	private void purgeOpsForQuery(IFrame instance, Set<IUpdateOp> ops) {
 
-		if (instance.queryInstance()) {
+		if (instance.getCategory().query()) {
 
 			ops.remove(IUpdateOp.SLOT_VALUES);
 		}
