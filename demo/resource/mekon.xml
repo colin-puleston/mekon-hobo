@@ -59,18 +59,21 @@
 		-->
 
 		<!--
-			Configuration information for OCClassifier plug-in
-			class that will create and classify OWL expressions
-			representing the current states of the HOBO IFrames.
+			Configuration information for OCClassifier and OCMatcher
+			plug-in classes that will create OWL expressions
+			corresponding to the current states of the instance-level
+			frames, which will then be classified in order to update
+			the frames, or used to find sets of matching individuals.
 
-			The semantics embodied by the classifiable expressions
-			can be either OPEN_WORLD or CLOSED_WORLD, with exceptions
-			specied for specific properties.
+			The semantics embodied by the generated expressions can be
+			either OPEN_WORLD or CLOSED_WORLD, with exceptions provided
+			for specific properties.
 
 			LoggingMode specifies what logging information regarding
-			OWL classification will be written to standard out.
-			Options expressed via appropriate OCLoggingMode enum values
-			(i.e. DISABLED, TIMES_ONLY or FULL)
+			OWL classification or matching operations will be written
+			to standard out. Options are expressed via appropriate
+			OCLoggingMode enum values (i.e. DISABLED, TIMES_ONLY or
+			FULL)
 		-->
 		<OWLClassifier
 			loggingMode="DISABLED">
