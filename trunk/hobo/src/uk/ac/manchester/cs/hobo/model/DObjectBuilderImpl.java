@@ -54,6 +54,11 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 			return viewer.getField();
 		}
+
+		private IFrameEditor getFrameEditor(DObject dObject) {
+
+			return getIEditor().getFrameEditor(dObject.getFrame());
+		}
 	}
 
 	public <D extends DObject>DCell<D> addObjectCell(Class<D> valueClass) {

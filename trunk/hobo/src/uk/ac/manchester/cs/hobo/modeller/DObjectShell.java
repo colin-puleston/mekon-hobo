@@ -120,4 +120,20 @@ public abstract class DObjectShell implements DObject {
 		model = builder.getModel();
 		frame = builder.getFrame();
 	}
+
+	/**
+	 * Convenience method that re-sets the category of the
+	 * associated frame, to that of the frame associated with the
+	 * specified template-object.
+	 *
+	 * @param template Object whose associated frame-category is
+	 * to be copied
+	 * @throws KAccessException if the frame associated with this
+	 * object is currently being referenced via the slots of
+	 * another frame
+	 */
+	protected void alignCategory(DObject template) {
+
+		getFrame().alignCategory(template.getFrame());
+	}
 }

@@ -90,14 +90,6 @@ public abstract class DField<V> implements DFieldView<V> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void addConcreteOnlyUpdateListener(KUpdateListener listener) {
-
-		getSlotValues().addConcreteOnlyUpdateListener(listener);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public void removeUpdateListener(KUpdateListener listener) {
 
 		getSlotValues().removeUpdateListener(listener);
@@ -114,14 +106,6 @@ public abstract class DField<V> implements DFieldView<V> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void addConcreteOnlyValuesListener(KValuesListener<V> listener) {
-
-		getSlotValues().addConcreteOnlyValuesListener(new SlotValuesListener(listener));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public void removeValuesListener(KValuesListener<V> listener) {
 
 		SlotValuesListener slotListener = slotValuesListeners.get(listener);
@@ -130,6 +114,16 @@ public abstract class DField<V> implements DFieldView<V> {
 
 			getSlotValues().removeValuesListener(slotListener);
 		}
+	}
+
+	/**
+	 * Provides the model with which the field is associated.
+	 *
+	 * @return Model with which field is associated
+	 */
+	public DModel getModel() {
+
+		return model;
 	}
 
 	/**
