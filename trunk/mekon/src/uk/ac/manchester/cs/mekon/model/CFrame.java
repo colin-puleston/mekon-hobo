@@ -502,27 +502,45 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Instantiates the frame as a concrete-instance (see {@link
-	 * IFrame}).
+	 * Creates instantiation of the frame, setting the category
+	 * of the instantiation to {@link IFrameCategory#CONCRETE}.
 	 *
-	 * @return Instantiation of this frame
+	 * @return Instantiation of this frame, as concrete-instance
 	 */
 	public IFrame instantiate() {
 
-		return instantiate(false);
+		return instantiate(IFrameCategory.CONCRETE);
 	}
 
 	/**
-	 * Instantiates the frame as a concrete-instance (see {@link
-	 * IFrame}).
+	 * Creates instantiation of the frame, setting the
+	 * frame-category of the instantiation as specified.
 	 *
-	 * @return Instantiation of this frame
+	 * @param category Required frame-category
+	 * @return Instantiation of this frame, with required
+	 * frame-category
+	 */
+	public IFrame instantiate(IFrameCategory category) {
+
+		checkInstantiable(category);
+
+		IFrame instance = new IFrame(this, category);
+
+		getIReasoner().initialiseFrame(getModel().getIEditor(), instance);
+		pollListenersForInstantiated(instance);
+
+		return instance;
+	}
+
+	/**
+	 * Creates instantiation of the frame, setting the category
+	 * of the instantiation to {@link IFrameCategory#QUERY}.
+	 *
+	 * @return Instantiation of this frame as query
 	 */
 	public IFrame instantiateQuery() {
 
-		checkQueryInstantiable();
-
-		return instantiate(true);
+		return instantiate(IFrameCategory.QUERY);
 	}
 
 	CFrame() {
@@ -592,29 +610,14 @@ public abstract class CFrame
 		return false;
 	}
 
-	private IFrame instantiate(boolean asQuery) {
-
-		checkInstantiable();
-
-		IFrame instance = new IFrame(this, asQuery);
-
-		getIReasoner().initialiseFrame(getModel().getIEditor(), instance);
-		pollListenersForInstantiated(instance);
-
-		return instance;
-	}
-
-	private void checkInstantiable() {
+	private void checkInstantiable(IFrameCategory category) {
 
 		if (!instantiable()) {
 
 			throw new KAccessException("Cannot instantiate frame: " + this);
 		}
-	}
 
-	private void checkQueryInstantiable() {
-
-		if (!getModel().queriesEnabled()) {
+		if (category.query() && !getModel().queriesEnabled()) {
 
 			throw new KAccessException("Query-instances not enabled for model");
 		}

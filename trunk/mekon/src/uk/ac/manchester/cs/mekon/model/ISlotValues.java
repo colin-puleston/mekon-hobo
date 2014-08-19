@@ -47,80 +47,6 @@ public abstract class ISlotValues extends KList<IValue> {
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private List<IValue> assertedValues = new ArrayList<IValue>();
 
-	private class ConcreteOnlyUpdateListener implements KUpdateListener {
-
-		private KUpdateListener clientListener;
-
-		public void onUpdated() {
-
-			if (!slot.queryInstance()) {
-
-				clientListener.onUpdated();
-			}
-		}
-
-		ConcreteOnlyUpdateListener(KUpdateListener clientListener) {
-
-			this.clientListener = clientListener;
-		}
-	}
-
-	private class ConcreteOnlyValuesListener implements KValuesListener<IValue> {
-
-		private KValuesListener<IValue> clientListener;
-
-		public void onAdded(IValue value) {
-
-			if (!slot.queryInstance()) {
-
-				clientListener.onAdded(value);
-			}
-		}
-
-		public void onRemoved(IValue value) {
-
-			if (!slot.queryInstance()) {
-
-				clientListener.onRemoved(value);
-			}
-		}
-
-		public void onCleared(List<IValue> values) {
-
-			if (!slot.queryInstance()) {
-
-				clientListener.onCleared(values);
-			}
-		}
-
-		ConcreteOnlyValuesListener(KValuesListener<IValue> clientListener) {
-
-			this.clientListener = clientListener;
-		}
-	}
-
-	/**
-	 * Adds a general-update listener that will only fire if the
-	 * slot's container-frame is a concrete-instance.
-	 *
-	 * @param listener Listener to add
-	 */
-	public void addConcreteOnlyUpdateListener(KUpdateListener listener) {
-
-		addUpdateListener(new ConcreteOnlyUpdateListener(listener));
-	}
-
-	/**
-	 * Adds a listener for specific types of value-updates that will
-	 * only fire if the slot's container-frame is a concrete-instance.
-	 *
-	 * @param listener Listener to add
-	 */
-	public void addConcreteOnlyValuesListener(KValuesListener<IValue> listener) {
-
-		addValuesListener(new ConcreteOnlyValuesListener(listener));
-	}
-
 	/**
 	 * Provides the current set of fixed values.
 	 *
@@ -424,7 +350,7 @@ public abstract class ISlotValues extends KList<IValue> {
 				"expected value of type: " + getValueType());
 		}
 
-		if (!slot.queryInstance() && value.abstractValue()) {
+		if (concreteSlot() && value.abstractValue()) {
 
 			throwInvalidValueException(
 				value,
@@ -466,9 +392,19 @@ public abstract class ISlotValues extends KList<IValue> {
 		return IValueSubsumptions.subsumption(testSubsumer, testSubsumed);
 	}
 
+	private boolean concreteSlot() {
+
+		return getContainer().getCategory().concrete();
+	}
+
 	private CModel getModel() {
 
-		return slot.getContainer().getType().getModel();
+		return getContainer().getType().getModel();
+	}
+
+	private IFrame getContainer() {
+
+		return slot.getContainer();
 	}
 
 	private CValue<?> getValueType() {

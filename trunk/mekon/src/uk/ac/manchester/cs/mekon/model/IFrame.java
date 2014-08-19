@@ -31,33 +31,23 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * Represents an instance-level model-frame. The frame is defined
- * as either:
+ * Represents an instance-level model-frame. The frame can be
+ * either of category {@link IFrameCategory#CONCRETE} or
+ * category {@link IFrameCategory#QUERY}. Concrete-frames differ
+ * from query-frames in the following ways:
  * <ul>
- *   <li><i>Concrete-instance:</i> Represents a specific concrete
- *   instantiation
- *   <li><i>Query-instance:</i> Represents a set of possible
- *   instantiations
- * </ul>
- * Concrete-instances differ from query-instances in the following
- * ways:
- * <ul>
- *   <li>Concrete-instances cannot be instantiations of
+ *   <li>Concrete-frames cannot be instantiations of
  *   disjunction-frames (see {@link CFrameCategory#disjunction})
- *   <li>Slots on concrete-instances cannot have abstract values
- *   (see {@link IValue#abstractValue})
- *   <li>Derived-values slots on query-instances (see {@link
+ *   <li>Slots on concrete-frames cannot have abstract values (see
+ *   {@link IValue#abstractValue})
+ *   <li>Derived-values slots on query-frames (see {@link
  *   ISlot#dependent}) are editable by the client (see {@link
  *   ISlot#editable}), which is not the case for dependent slots
- *   on concrete-instances
+ *   on concrete-frames
  * </ul>
- * Query-instances and concrete-instances cannot be mixed within a
- * single model-instantiation. Attempting to add a query-instance
- * as a slot-value on a concrete-instance will result in an
- * exception. However, a concrete-instance can be added as a
- * slot-value on a query-instance, since it will then automatically
- * become a query-instance (unless it is already a slot-value on a
- * concrete-instance, in which case an exception will result).
+ * Query-frames and concrete-frames cannot be mixed within a single
+ * model-instantiation. Attempting to do so will result in an
+ * exception.
  *
  * @author Colin Puleston
  */
@@ -66,7 +56,7 @@ public class IFrame implements IEntity, IValue {
 	private CFrame type;
 	private DynamicTypes inferredTypes = new DynamicTypes();
 	private DynamicTypes suggestedTypes = new DynamicTypes();
-	private boolean queryInstance;
+	private IFrameCategory category;
 
 	private ISlots slots = new ISlots();
 	private ISlots referencingSlots = new ISlots();
@@ -211,6 +201,38 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Re-sets the frame-category.
+	 *
+	 * @param category New category for frame
+	 * @throws KAccessException if the frame is currently being
+	 * referenced via the slots of another frame
+	 */
+	public void resetCategory(IFrameCategory category) {
+
+		if (!referencingSlots.isEmpty()) {
+
+			throw new KAccessException(
+						"Attempting to change category "
+						+ "of referenced frame " + this);
+		}
+
+		this.category = category;
+	}
+
+	/**
+	 * Re-sets the frame-category to that of the specified
+	 * template-frame.
+	 *
+	 * @param template Frame whose category is to be copied
+	 * @throws KAccessException if the frame is currently being
+	 * referenced via the slots of another frame
+	 */
+	public void alignCategory(IFrame template) {
+
+		resetCategory(template.category);
+	}
+
+	/**
 	 * Adds a frame-listener.
 	 *
 	 * @param listener Listener to add
@@ -309,13 +331,13 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Specifies whether this frame is a query-instance.
+	 * Provides the frame-category.
 	 *
-	 * @return True if query-instance
+	 * @return Frame-category.
 	 */
-	public boolean queryInstance() {
+	public IFrameCategory getCategory() {
 
-		return queryInstance;
+		return category;
 	}
 
 	/**
@@ -385,10 +407,10 @@ public class IFrame implements IEntity, IValue {
 		return new IFrameCycleTester(this).leadsToCycle();
 	}
 
-	IFrame(CFrame type, boolean queryInstance) {
+	IFrame(CFrame type, IFrameCategory category) {
 
 		this.type = type;
-		this.queryInstance = queryInstance;
+		this.category = category;
 	}
 
 	IFrameEditor createEditor() {
@@ -398,7 +420,7 @@ public class IFrame implements IEntity, IValue {
 
 	void addReferencingSlot(ISlot slot) {
 
-		checkReferencingFrame(slot.getContainer());
+		validateAsReferencedFrame(slot.getContainer());
 		referencingSlots.add(slot);
 	}
 
@@ -432,75 +454,31 @@ public class IFrame implements IEntity, IValue {
 					+ " , found type: " + mappedType);
 	}
 
-	private void checkReferencingFrame(IFrame referencingFrame) {
+	private void validateAsReferencedFrame(IFrame referencingFrame) {
 
 		referencingFrame.validateAsReferencingFrame();
 
-		if (queryInstance != referencingFrame.queryInstance) {
+		if (category != referencingFrame.category) {
 
-			if (queryInstance) {
+			String thisCat = category.toString();
+			String refCat = referencingFrame.category.toString();
 
-				throwReferencingFrameException(
-					referencingFrame,
-					"Cannot add query-instance frame "
-					+ "as slot-value for concrete-instance");
-			}
-
-			if (!referencingSlots.isEmpty()) {
-
-				throwReferencingFrameException(
-					referencingFrame,
-					"Cannot use frame as slot-value "
-					+ "for both concrete and query-instances");
-			}
-
-			ensureOnlyQueryInstancesReferenced();
-		}
-	}
-
-	private void ensureOnlyQueryInstancesReferenced() {
-
-		if (!queryInstance) {
-
-			queryInstance = true;
-
-			for (ISlot slot : slots.asList()) {
-
-				ensureOnlyQueryInstancesReferencedFrom(slot);
-			}
-		}
-	}
-
-	private void ensureOnlyQueryInstancesReferencedFrom(ISlot slot) {
-
-		if (slot.getValueType() instanceof CFrame) {
-
-			for (IValue value : slot.getValues().asList()) {
-
-				((IFrame)value).ensureOnlyQueryInstancesReferenced();
-			}
+			throw new KAccessException(
+						"Cannot add frame: " + this
+						+ " as slot-value on frame: " + referencingFrame
+						+ " (attempting to mix concrete and query frames)");
 		}
 	}
 
 	private void validateAsReferencingFrame() {
 
-		if (!queryInstance && disjunctionType()) {
+		if (disjunctionType() && category.concrete()) {
 
 			throw new KAccessException(
-						"Cannot add slot-values to "
-						+ "concrete-instance of disjunction-frame: "
+						"Cannot add slot-values to concrete "
+						+ "instantiation of disjunction-frame: "
 						+ this);
 		}
-	}
-
-	private void throwReferencingFrameException(
-					IFrame referencingFrame,
-					String extraMsg) {
-
-		throw new KAccessException(
-					"Cannot add frame: " + this
-					+ " as slot-value on frame: " + referencingFrame
-					+ ": " + extraMsg);
 	}
 
 	private void performDynamicUpdates() {
@@ -565,6 +543,11 @@ public class IFrame implements IEntity, IValue {
 
 	private IUpdating getIUpdating() {
 
-		return type.getModel().getIUpdating();
+		return getModel().getIUpdating();
+	}
+
+	private CModel getModel() {
+
+		return type.getModel();
 	}
 }

@@ -61,7 +61,7 @@ public class CModel implements CAnnotatable {
 
 	/**
 	 * Specifies whether query-instances are allowed (see {@link
-	 * IFrame}.
+	 * IFrameCategory}.
 	 * <p>
 	 * By default query-instances will not be allowed.
 	 *
@@ -136,27 +136,41 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Instantiates a frame as a concrete-instance (see {@link
-	 * IFrame}).
+	 * Creates instantiation of the frame, setting the category
+	 * of the instantiation to {@link IFrameCategory#CONCRETE}.
 	 *
 	 * @param identity Identity of frame to be instantiated
-	 * @return Instantiation of specified frame
+	 * @return Instantiation of specified frame, as
+	 * concrete-instance
 	 */
 	public IFrame instantiate(CIdentity identity) {
 
-		return getFrames().get(identity).instantiate();
+		return getFrame(identity).instantiate();
 	}
 
 	/**
-	 * Instantiates a frame as a query-instance (see {@link
-	 * IFrame}).
+	 * Creates instantiation of a frame, setting the
+	 * frame-category of the instantiation as specified.
+	 *
+	 * @param category Required frame-category
+	 * @return Instantiation of specified frame, with required
+	 * frame-category
+	 */
+	public IFrame instantiate(CIdentity identity, IFrameCategory category) {
+
+		return getFrame(identity).instantiate(category);
+	}
+
+	/**
+	 * Creates instantiation of a frame with frame-category
+	 * {@link IFrameCategory#QUERY}.
 	 *
 	 * @param identity Identity of frame to be instantiated
-	 * @return Instantiation of specified frame
+	 * @return Instantiation of specified frame, as query
 	 */
 	public IFrame instantiateQuery(CIdentity identity) {
 
-		return getFrames().get(identity).instantiateQuery();
+		return getFrame(identity).instantiateQuery();
 	}
 
 	CModel() {
@@ -303,6 +317,11 @@ public class CModel implements CAnnotatable {
 
 			refFrame.getSlotValues().removeAll(value);
 		}
+	}
+
+	private CFrame getFrame(CIdentity identity) {
+
+		return getFrames().get(identity);
 	}
 
 	private void pollInitialisationListeners() {
