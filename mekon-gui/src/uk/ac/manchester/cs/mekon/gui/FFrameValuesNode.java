@@ -100,9 +100,7 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 
 	private boolean addDisjunctActionRequired() {
 
-		return slot.editable()
-				&& slot.queryInstance()
-				&& selectableCFrameOptions();
+		return slot.editable() && querySlot() && selectableCFrameOptions();
 	}
 
 	private CFrame checkAddCFrameDisjunct(CFrame cFrame) {
@@ -146,5 +144,10 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 	private boolean selectableCFrameOptions() {
 
 		return !getRootCFrame().getSubs(CFrameVisibility.EXPOSED).isEmpty();
+	}
+
+	private boolean querySlot() {
+
+		return slot.getContainer().getCategory().query();
 	}
 }

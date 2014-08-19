@@ -58,7 +58,7 @@ class InstantiationFrame extends GFrame {
 
 	static private String instanceTypeLabel(IFrame frame) {
 
-		return frame.queryInstance() ? QUERY_LABEL : CONCRETE_LABEL;
+		return frame.getCategory().query() ? QUERY_LABEL : CONCRETE_LABEL;
 	}
 
 	private CFramesTree modelTree;

@@ -83,7 +83,9 @@ class INumberValuesNode extends IValuesNode {
 
 	private INumberSelector createSelector() {
 
-		return new INumberSelector(tree, getValueType(), slot.queryInstance());
+		boolean query = slot.getContainer().getCategory().query();
+
+		return new INumberSelector(tree, getValueType(), query);
 	}
 
 	private INumber asINumber(IValue value) {

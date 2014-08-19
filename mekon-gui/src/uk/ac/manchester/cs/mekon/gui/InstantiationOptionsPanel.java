@@ -86,7 +86,7 @@ class InstantiationOptionsPanel extends JPanel {
 
 	private JButton createButton() {
 
-		return frame.queryInstance()
+		return frame.getCategory().query()
 				? new ExecuteQueryButton()
 				: new StoreConcreteButton();
 	}
