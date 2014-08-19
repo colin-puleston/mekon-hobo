@@ -42,15 +42,6 @@ public interface DFieldView<V> {
 	public void addUpdateListener(KUpdateListener listener);
 
 	/**
-	 * Adds a general-update listener to the field that will only fire
-	 * if the object that contains the field is bound to a
-	 * concrete-instance frame.
-	 *
-	 * @param listener Listener to add
-	 */
-	public void addConcreteOnlyUpdateListener(KUpdateListener listener);
-
-	/**
 	 * Removes a general-update listener from the field. If specified
 	 * listener is not a currenly registered listener then does
 	 * nothing.
@@ -65,15 +56,6 @@ public interface DFieldView<V> {
 	 * @param listener Listener to add
 	 */
 	public void addValuesListener(KValuesListener<V> listener);
-
-	/**
-	 * Adds a values-update listener to the field that will only fire
-	 * if the object that contains the field is bound to a
-	 * concrete-instance frame.
-	 *
-	 * @param listener Listener to add
-	 */
-	public void addConcreteOnlyValuesListener(KValuesListener<V> listener);
 
 	/**
 	 * Removes a values-update listener from the field. If specified
