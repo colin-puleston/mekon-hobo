@@ -26,7 +26,8 @@ package uk.ac.manchester.cs.mekon.config;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.w3c.dom.*;
+
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Represents a node in a MEKON configuration file (see
@@ -37,8 +38,7 @@ import org.w3c.dom.*;
 public class KConfigNode {
 
 	private KConfigFile configFile;
-	private Element element;
-	private List<KConfigNode> children = new ArrayList<KConfigNode>();
+	private XNode xNode;
 
 	/**
 	 * Provides the configuration file from which the node was
@@ -58,7 +58,7 @@ public class KConfigNode {
 	 */
 	public String getId() {
 
-		return element.getTagName();
+		return xNode.getId();
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class KConfigNode {
 	 */
 	public KConfigNode getChild(String id) {
 
-		return checkNonNull(getChildOrNull(id), id, "child-node");
+		return createConfigNode(xNode.getChild(id));
 	}
 
 	/**
@@ -85,21 +85,9 @@ public class KConfigNode {
 	 */
 	public KConfigNode getChildOrNull(String id) {
 
-		List<KConfigNode> found = getChildren(id);
+		XNode xChild = xNode.getChildOrNull(id);
 
-		if (found.isEmpty()) {
-
-			return null;
-		}
-
-		if (found.size() == 1) {
-
-			return found.get(0);
-		}
-
-		throw createAccessException(
-				"Found multiple instances of "
-				+ "\"" + id + "\"");
+		return xChild != null ? createConfigNode(xChild) : null;
 	}
 
 	/**
@@ -111,17 +99,14 @@ public class KConfigNode {
 	 */
 	public List<KConfigNode> getChildren(String id) {
 
-		List<KConfigNode> found = new ArrayList<KConfigNode>();
+		List<KConfigNode> children = new ArrayList<KConfigNode>();
 
-		for (KConfigNode child : children) {
+		for (XNode xChild : xNode.getChildren(id)) {
 
-			if (child.getId().equals(id)) {
-
-				found.add(child);
-			}
+			children.add(createConfigNode(xChild));
 		}
 
-		return found;
+		return children;
 	}
 
 	/**
@@ -133,7 +118,7 @@ public class KConfigNode {
 	 */
 	public String getString(String id) {
 
-		return checkNonNull(getStringOrNull(id), id, "value");
+		return xNode.getString(id);
 	}
 
 	/**
@@ -145,9 +130,7 @@ public class KConfigNode {
 	 */
 	public String getString(String id, String defaultValue) {
 
-		String value = getStringOrNull(id);
-
-		return value != null ? value : defaultValue;
+		return xNode.getString(id, defaultValue);
 	}
 
 	/**
@@ -161,7 +144,7 @@ public class KConfigNode {
 	 */
 	public Boolean getBoolean(String id) {
 
-		return toBoolean(getString(id));
+		return xNode.getBoolean(id);
 	}
 
 	/**
@@ -176,9 +159,7 @@ public class KConfigNode {
 	 */
 	public Boolean getBoolean(String id, boolean defaultValue) {
 
-		String value = getStringOrNull(id);
-
-		return value != null ? toBoolean(value) : defaultValue;
+		return xNode.getBoolean(id, defaultValue);
 	}
 
 	/**
@@ -192,7 +173,7 @@ public class KConfigNode {
 	 */
 	public int getInteger(String id) {
 
-		return toInteger(getString(id));
+		return xNode.getInteger(id);
 	}
 
 	/**
@@ -207,9 +188,36 @@ public class KConfigNode {
 	 */
 	public int getInteger(String id, int defaultValue) {
 
-		String value = getStringOrNull(id);
+		return xNode.getInteger(id, defaultValue);
+	}
 
-		return value != null ? toInteger(value) : defaultValue;
+	/**
+	 * Provides a <code>URI</code> object derived from the value
+	 * of the specified attribute.
+	 *
+	 * @param id Identifier of relevant attribute
+	 * @return Relevant <code>URI</code> object
+	 * @throws KConfigFileException if no value for attribute,
+	 * or if value does not represent a valid URI
+	 */
+	public URI getURI(String id) {
+
+		return xNode.getURI(id);
+	}
+
+	/**
+	 * Provides a <code>URI</code> object derived from the value
+	 * of the specified attribute.
+	 *
+	 * @param id Identifier of relevant attribute
+	 * @param defaultValue Value to return if no value for attribute
+	 * @return Relevant <code>URI</code> object
+	 * @throws KConfigFileException if value does not represent a
+	 * valid URI
+	 */
+	public URI getURI(String id, URI defaultValue) {
+
+		return xNode.getURI(id, defaultValue);
 	}
 
 	/**
@@ -225,7 +233,7 @@ public class KConfigNode {
 	 */
 	public <E extends Enum<E>>E getEnum(String id, Class<E> type) {
 
-		return toEnum(getString(id), type);
+		return xNode.getEnum(id, type);
 	}
 
 	/**
@@ -244,9 +252,7 @@ public class KConfigNode {
 									Class<E> type,
 									E defaultValue) {
 
-		String value = getStringOrNull(id);
-
-		return value != null ? toEnum(value, type) : defaultValue;
+		return xNode.getEnum(id, type, defaultValue);
 	}
 
 	/**
@@ -282,40 +288,9 @@ public class KConfigNode {
 									Class<T> type,
 									Class<? extends T> defaultValue) {
 
-		String value = getStringOrNull(id);
+		String value = getNonEmptyStringOrNull(id);
 
 		return value != null ? loadClass(value, type) : defaultValue;
-	}
-
-	/**
-	 * Provides a <code>URI</code> object derived from the value
-	 * of the specified attribute.
-	 *
-	 * @param id Identifier of relevant attribute
-	 * @return Relevant <code>URI</code> object
-	 * @throws KConfigFileException if no value for attribute,
-	 * or if value does not represent a valid URI
-	 */
-	public URI getURI(String id) {
-
-		return toURI(getString(id));
-	}
-
-	/**
-	 * Provides a <code>URI</code> object derived from the value
-	 * of the specified attribute.
-	 *
-	 * @param id Identifier of relevant attribute
-	 * @param defaultValue Value to return if no value for attribute
-	 * @return Relevant <code>URI</code> object
-	 * @throws KConfigFileException if value does not represent a
-	 * valid URI
-	 */
-	public URI getURI(String id, URI defaultValue) {
-
-		String value = getStringOrNull(id);
-
-		return value != null ? toURI(value) : defaultValue;
 	}
 
 	/**
@@ -355,114 +330,31 @@ public class KConfigNode {
 					KConfigResourceFinder finder,
 					File defaultValue) {
 
-		String path = getStringOrNull(id);
+		String path = getNonEmptyStringOrNull(id);
 
 		return path != null ? finder.getResource(path) : defaultValue;
 	}
 
-	KConfigNode(KConfigFile configFile, Element element) {
+	KConfigNode(KConfigFile configFile, XNode xNode) {
 
 		this.configFile = configFile;
-		this.element = element;
-
-		setChildren();
+		this.xNode = xNode;
 	}
 
-	private void setChildren() {
+	private KConfigNode createConfigNode(XNode xNode) {
 
-		NodeList childNodes = element.getChildNodes();
-
-		for (int i = 0 ; i < childNodes.getLength() ; i++) {
-
-			Node node = childNodes.item(i);
-
-			if (node instanceof Element) {
-
-				children.add(new KConfigNode(configFile, (Element)node));
-			}
-		}
+		return new KConfigNode(configFile, xNode);
 	}
 
-	private String getStringOrNull(String id) {
+	private String getNonEmptyStringOrNull(String id) {
 
-		String value = element.getAttribute(id);
+		String value = getString(id, null);
 
-		return value.length() == 0 ? null : value;
-	}
-
-	private <T>T checkNonNull(T thing, String id, String desc) {
-
-		if (thing == null) {
-
-			throw createAccessException(
-					"Cannot find " + desc + " "
-					+ "\"" + id + "\"");
-		}
-
-		return thing;
-	}
-
-	private URI toURI(String value) {
-
-		try {
-
-			return new URI(value);
-		}
-		catch (URISyntaxException e) {
-
-			throw createValueTypeException(value, "URI");
-		}
-	}
-
-	private Boolean toBoolean(String value) {
-
-		return Boolean.parseBoolean(value);
-	}
-
-	private int toInteger(String value) {
-
-		try {
-
-			return Integer.parseInt(value);
-		}
-		catch (NumberFormatException e) {
-
-			throw createValueTypeException(value, "integer");
-		}
-	}
-
-	private <E extends Enum<E>>E toEnum(String value, Class<E> type) {
-
-		try {
-
-			return Enum.valueOf(type, value);
-		}
-		catch (IllegalArgumentException e) {
-
-			throw createValueTypeException(value, type.getName());
-		}
+		return value != null && value.length() != 0 ? value : null;
 	}
 
 	private <T>Class<? extends T> loadClass(String className, Class<T> type) {
 
 		return new KConfigClassLoader(className).load(type);
-	}
-
-	private KConfigFileException createValueTypeException(
-										String value,
-										String typeDesc) {
-
-		return createAccessException(
-					"Value \"" + value + "\""
-					+ " does not represent a valid "
-					+ typeDesc);
-	}
-
-	private KConfigFileException createAccessException(String subMessage) {
-
-		return new KConfigFileException(
-						"Error accessing node: "
-						+ "\"" + getId() + "\""
-						+ ": " + subMessage);
 	}
 }
