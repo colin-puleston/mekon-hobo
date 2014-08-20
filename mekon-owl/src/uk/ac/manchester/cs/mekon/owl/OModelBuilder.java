@@ -91,8 +91,8 @@ public class OModelBuilder {
 	 * @param reasonerFactory Factory for creating required reasoner
 	 */
 	public OModelBuilder(
-		File mainOWLFile,
-		Class<? extends OWLReasonerFactory> reasonerFactory) {
+			File mainOWLFile,
+			Class<? extends OWLReasonerFactory> reasonerFactory) {
 
 		initialise(mainOWLFile, reasonerFactory);
 	}
