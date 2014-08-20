@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -42,6 +43,8 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 public class IStore {
 
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
+
+	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
 
 	/**
@@ -70,8 +73,16 @@ public class IStore {
 
 		IFrame previous = instances.get(identity);
 
+		if (previous != null) {
+
+			checkRemoveFromMatcher(previous, identity);
+		}
+
+		identities.add(identity);
 		instances.put(identity, instance);
 		checkAddToMatcher(instance, identity);
+
+		renderFile();
 
 		return previous;
 	}
@@ -79,16 +90,20 @@ public class IStore {
 	/**
 	 * Removes an instance from the store.
 	 *
-	 * @param type Type of instance to be removed
 	 * @param identity Unique identity of instance
 	 * @return True if instance removed, false if instance with
 	 * specified identity not present
 	 */
-	public boolean remove(CFrame type, CIdentity identity) {
+	public boolean remove(CIdentity identity) {
 
-		if (instances.remove(identity) != null) {
+		IFrame instance = instances.remove(identity);
 
-			checkRemoveFromMatcher(type, identity);
+		if (instance != null) {
+
+			identities.remove(identity);
+			checkRemoveFromMatcher(instance, identity);
+
+			renderFile();
 
 			return true;
 		}
@@ -99,14 +114,25 @@ public class IStore {
 	/**
 	 * Retrieves an instance from the store.
 	 *
-	 * @param type Type of instance to be retreived
 	 * @param identity Unique identity of instance
 	 * @return Instance-level frame representing required instance,
 	 * or null if instance with specified identity not present
 	 */
-	public IFrame get(CFrame type, CIdentity identity) {
+	public IFrame get(CIdentity identity) {
 
 		return instances.get(identity);
+	}
+
+	/**
+	 * Provides unique identities of all instances in store,
+	 * ordered by the time/date they were added.
+	 *
+	 * @return Unique identities of all instances, oldest entries
+	 * first
+	 */
+	public List<CIdentity> getAllIdentities() {
+
+		return new ArrayList<CIdentity>(identities);
 	}
 
 	/**
@@ -135,6 +161,11 @@ public class IStore {
 		matchers.add(matcher);
 	}
 
+	private void renderFile() {
+
+		new IStoreRenderer().render(this);
+	}
+
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
 
 		IMatcher matcher = lookForMatcher(instance);
@@ -145,9 +176,9 @@ public class IStore {
 		}
 	}
 
-	private void checkRemoveFromMatcher(CFrame type, CIdentity identity) {
+	private void checkRemoveFromMatcher(IFrame instance, CIdentity identity) {
 
-		IMatcher matcher = lookForMatcher(type);
+		IMatcher matcher = lookForMatcher(instance);
 
 		if (matcher != null) {
 

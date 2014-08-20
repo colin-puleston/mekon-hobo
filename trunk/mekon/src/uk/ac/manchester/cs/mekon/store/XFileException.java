@@ -22,27 +22,27 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.config;
+package uk.ac.manchester.cs.mekon.store;
 
 import uk.ac.manchester.cs.mekon.*;
 
 /**
- * Exception thrown when some problem with the configuation
- * file is detected.
+ * Exception thrown when some problem with the XML file is
+ * detected.
  *
  * @author Colin Puleston
  */
-public class KConfigFileException extends KConfigException {
+public class XFileException extends KRuntimeException {
 
 	static private final long serialVersionUID = -1;
 
-	KConfigFileException(Exception e) {
+	XFileException(Exception e) {
 
-		super(e);
+		this(e.getMessage());
 	}
 
-	KConfigFileException(String message) {
+	XFileException(String message) {
 
-		super(message);
+		super("Error accessing XML file: " + message);
 	}
 }
