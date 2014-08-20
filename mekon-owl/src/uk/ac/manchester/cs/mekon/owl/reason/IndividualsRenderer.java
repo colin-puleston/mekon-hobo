@@ -80,14 +80,12 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 
 		void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
 
-			OWLIndividual value = extractSingleValue((OWLObjectOneOf)expr);
-
 			addAxiom(
 				dataFactory
 					.getOWLObjectPropertyAssertionAxiom(
 						property,
 						individual,
-						value));
+						toIndividualValue(expr)));
 		}
 
 		void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
@@ -128,9 +126,40 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 			addAxiom(dataFactory.getOWLClassAssertionAxiom(type, individual));
 		}
 
-		private OWLIndividual extractSingleValue(OWLObjectOneOf oneOf) {
+		private OWLIndividual toIndividualValue(OWLClassExpression expr) {
+
+			if (expr instanceof OWLObjectOneOf) {
+
+				return toIndividualValue((OWLObjectOneOf)expr);
+			}
+
+			if (expr instanceof OWLDataHasValue) {
+
+				return toIndividualValue((OWLDataHasValue)expr);
+			}
+
+			throw new Error("Unexpected expression-type: " + expr.getClass());
+		}
+
+		private OWLIndividual toIndividualValue(OWLObjectOneOf oneOf) {
 
 			return oneOf.getIndividuals().iterator().next();
+		}
+
+		private OWLIndividual toIndividualValue(OWLDataHasValue hasValue) {
+
+			OWLNamedIndividual indValue = addIndividual();
+			OWLDataPropertyExpression numericProp = hasValue.getProperty();
+			OWLLiteral number = hasValue.getValue();
+
+			addAxiom(
+				dataFactory
+					.getOWLDataPropertyAssertionAxiom(
+						numericProp,
+						indValue,
+						number));
+
+			return indValue;
 		}
 
 		private IRI generateIRI() {
