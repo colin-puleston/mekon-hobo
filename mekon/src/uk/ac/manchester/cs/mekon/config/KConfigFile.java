@@ -104,7 +104,7 @@ public class KConfigFile {
 		return rootNode;
 	}
 
-	KConfigFile(XFile file) {
+	private KConfigFile(XFile file) {
 
 		this.xFile = xFile;
 
