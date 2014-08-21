@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
+import java.lang.reflect.*;
 
 import uk.ac.manchester.cs.mekon.store.*;
 
@@ -37,32 +38,32 @@ class IStoreRenderer implements IStoreSerialiser {
 
 	private class SlotValuesRenderer extends ISlotValuesVisitor {
 
-		private XNode node;
+		private XNode slotNode;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
 			for (IFrame value : values) {
 
-				renderFrame(value, node);
+				renderIFrame(value, slotNode);
 			}
 		}
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			renderNumber(values.get(0), node);
+			renderNumber(values.get(0), slotNode);
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
 			for (CFrame value : values) {
 
-				renderFrame(value, node);
+				renderCFrame(value, slotNode);
 			}
 		}
 
-		SlotValuesRenderer(ISlot slot, XNode node) {
+		SlotValuesRenderer(ISlot slot, XNode slotNode) {
 
-			this.node = node;
+			this.slotNode = slotNode;
 
 			visit(slot);
 		}
@@ -91,45 +92,50 @@ class IStoreRenderer implements IStoreSerialiser {
 	private void renderInstance(CIdentity id, IFrame frame) {
 
 		XNode rootNode = file.getRootNode();
-		XNode node = rootNode.addChild(INSTANCE_ID);
+		XNode instNode = rootNode.addChild(INSTANCE_ID);
 
-		renderIdentity(id, node);
-		renderFrame(frame, node);
+		renderIdentity(id, instNode);
+		renderIFrame(frame, instNode);
 	}
 
-	private void renderFrame(IFrame frame, XNode parent) {
+	private void renderIFrame(IFrame frame, XNode parentNode) {
 
-		XNode node = renderFrame(frame.getType(), parent);
+		XNode frameNode = renderCFrame(frame.getType(), parentNode);
 
 		for (ISlot slot : frame.getSlots().asList()) {
 
-			if (!slot.getValues().isEmpty()) {
+			if (slotToBeRendered(slot)) {
 
-				renderSlot(slot, node);
+				renderSlot(slot, frameNode);
 			}
 		}
 	}
 
-	private XNode renderFrame(CFrame frameType, XNode parent) {
+	private XNode renderCFrame(CFrame frameType, XNode parentNode) {
 
-		XNode node = parent.addChild(FRAME_ID);
+		XNode frameNode = parentNode.addChild(FRAME_ID);
 
-		renderIdentity(frameType, node);
+		renderIdentity(frameType, frameNode);
 
-		return node;
+		return frameNode;
 	}
 
-	private void renderSlot(ISlot slot, XNode parent) {
+	private void renderSlot(ISlot slot, XNode parentNode) {
 
-		XNode node = parent.addChild(SLOT_ID);
+		XNode slotNode = parentNode.addChild(SLOT_ID);
 
-		renderIdentity(slot.getType().getProperty(), node);
-		new SlotValuesRenderer(slot, node);
+		renderIdentity(slot.getType().getProperty(), slotNode);
+		renderClassName(slot.getValueType(), slotNode, VALUE_TYPE_ATTR);
+
+		new SlotValuesRenderer(slot, slotNode);
 	}
 
-	protected void renderNumber(INumber number, XNode node) {
+	private void renderNumber(INumber number, XNode node) {
 
-		node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
+		Number value = number.asTypeNumber();
+
+		renderClassName(value, node, NUMBER_TYPE_ATTR);
+		node.addValue(NUMBER_VALUE_ATTR, value);
 	}
 
 	private void renderIdentity(CIdentified id, XNode node) {
@@ -140,5 +146,30 @@ class IStoreRenderer implements IStoreSerialiser {
 	private void renderIdentity(CIdentity id, XNode node) {
 
 		node.addValue(IDENTITY_ATTR, id.getIdentifier());
+		node.addValue(LABEL_ATTR, id.getLabel());
+	}
+
+	private void renderClassName(Object value, XNode node, String attr) {
+
+		Class<?> publicClass = findPublicClass(value.getClass());
+
+		node.addValue(attr, publicClass.getSimpleName());
+	}
+
+	private boolean slotToBeRendered(ISlot slot) {
+
+		return !slot.dependent() && !slot.getValues().isEmpty();
+	}
+
+	private Class<?> findPublicClass(Class<?> testClass) {
+
+		return isPublicClass(testClass)
+					? testClass
+					: findPublicClass(testClass.getSuperclass());
+	}
+
+	private boolean isPublicClass(Class<?> testClass) {
+
+		return Modifier.isPublic(testClass.getModifiers());
 	}
 }

@@ -263,6 +263,7 @@ public class CModel implements CAnnotatable {
 
 		new CHierarchyNormaliser(this);
 		new CFramesInitialiser(frames).completeInitialisation();
+		new IStoreParser(this).parse(iStore);
 
 		pollInitialisationListeners();
 
