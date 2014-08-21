@@ -41,7 +41,6 @@ class InstantiationOptionsPanel extends JPanel {
 	static private final String STORE_CONCRETE_BUTTON_LABEL = "Store...";
 	static private final String EXECUTE_QUERY_BUTTON_LABEL = "Execute";
 	static private final String CONCRETE_SELECTOR_TITLE = "Instance Name";
-	static private final String QUERY_MATCHES_DIALOG_TITLE = "Query Matches";
 
 	private IFrame frame;
 
@@ -108,6 +107,8 @@ class InstantiationOptionsPanel extends JPanel {
 		List<CIdentity> matches = getIStore().match(frame);
 
 		if (matches.isEmpty()) {
+
+			showNoQueryMatchesMessage();
 		}
 		else {
 
@@ -147,7 +148,7 @@ class InstantiationOptionsPanel extends JPanel {
 		showMessage("Instance stored: \"" + identity.getLabel() + "\"");
 	}
 
-	private void showNoQueryMatchesMessage(CIdentity identity) {
+	private void showNoQueryMatchesMessage() {
 
 		showMessage("No matches for supplied query");
 	}
