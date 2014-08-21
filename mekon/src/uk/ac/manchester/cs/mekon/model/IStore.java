@@ -71,14 +71,17 @@ public class IStore {
 	 */
 	public IFrame add(IFrame instance, CIdentity identity) {
 
-		IFrame previous = instances.get(identity);
+		IFrame previous = instances.remove(identity);
 
-		if (previous != null) {
+		if (previous == null) {
+
+			identities.add(identity);
+		}
+		else {
 
 			checkRemoveFromMatcher(previous, identity);
 		}
 
-		identities.add(identity);
 		instances.put(identity, instance);
 		checkAddToMatcher(instance, identity);
 
@@ -151,9 +154,6 @@ public class IStore {
 		}
 
 		return matcher.match(query);
-	}
-
-	IStore() {
 	}
 
 	void addMatcher(IMatcher matcher) {

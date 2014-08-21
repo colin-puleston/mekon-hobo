@@ -37,30 +37,43 @@ interface IStoreSerialiser {
 	static final String SLOT_ID = "Slot";
 
 	static final String IDENTITY_ATTR = "id";
-	static final String NUMBER_VALUE_ATTR = "numericValue";
+	static final String LABEL_ATTR = "label";
+	static final String VALUE_TYPE_ATTR = "valueType";
+	static final String NUMBER_TYPE_ATTR = "numberType";
+	static final String NUMBER_VALUE_ATTR = "numberValue";
 }
 
 /*
 	<Store>
 		<Instance
 			id="http://mekon/demo.owl#Bob-Bell">
-			<Frame
+			<Value
 				id="http://mekon/demo.owl#ContractorProfile">
 				<Slot
 					id="http://mekon/demo.owl#salary"
-					numericValue="3.1"/>
+					valueType="INumber"
+					numberType="Float"
+					numberValue="3.1"/>
 				<Slot
-					id="http://mekon/demo.owl#jobs">
-					<Frame
+					id="http://mekon/demo.owl#jobs"
+					valueType="IFrame">
+					<Value
 						id="http://mekon/demo.owl#Job">
 						<Slot
 							id="http://mekon/demo.owl#location">
-							<Frame
+							<Value
 								id="http://mekon/demo.owl#North"/>
 						</Slot>
-					</Frame>
+					</Value>
 				</Slot>
-			</Frame>
+				<Slot
+					id="http://mekon/demo.owl#jobs"
+					valueType="CFrame">
+					<Value
+						id="http://mekon/demo.owl#Job">
+					</Value>
+				</Slot>
+			</Value>
 		</Instance>
 	</Store>
 

@@ -36,12 +36,22 @@ public class XFileException extends KRuntimeException {
 
 	static private final long serialVersionUID = -1;
 
-	XFileException(Exception e) {
+	/**
+	 * Constructor.
+	 *
+	 * @param exception Wrapped exception
+	 */
+	public XFileException(Exception e) {
 
 		this(e.getMessage());
 	}
 
-	XFileException(String message) {
+	/**
+	 * Constructor.
+	 *
+	 * @param message Error message
+	 */
+	public XFileException(String message) {
 
 		super("Error accessing XML file: " + message);
 	}
