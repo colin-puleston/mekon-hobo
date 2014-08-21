@@ -39,7 +39,7 @@ class CIdentitySelector extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension WINDOW_SIZE = new Dimension(200, 70);
+	static private final Dimension WINDOW_SIZE = new Dimension(250, 70);
 
 	private CIdentity selection = null;
 

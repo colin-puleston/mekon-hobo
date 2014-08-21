@@ -39,7 +39,7 @@ class QueryMatchesDialog extends GDialog {
 	static private final long serialVersionUID = -1;
 
 	static private final String TITLE = "Query Matches";
-	static private final Dimension WINDOW_SIZE = new Dimension(150, 300);
+	static private final Dimension WINDOW_SIZE = new Dimension(250, 300);
 
 	QueryMatchesDialog(JComponent parent, List<CIdentity> matches) {
 
