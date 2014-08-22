@@ -24,7 +24,6 @@
 package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.Dimension;
-import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -41,7 +40,7 @@ class QueryMatchesDialog extends GDialog {
 	static private final String TITLE = "Query Matches";
 	static private final Dimension WINDOW_SIZE = new Dimension(250, 300);
 
-	QueryMatchesDialog(JComponent parent, List<CIdentity> matches) {
+	QueryMatchesDialog(JComponent parent, IMatches matches) {
 
 		super(parent, TITLE, true);
 
@@ -49,11 +48,11 @@ class QueryMatchesDialog extends GDialog {
 		display(new JScrollPane(createGList(matches)));
 	}
 
-	private GList<CIdentity> createGList(List<CIdentity> matches) {
+	private GList<CIdentity> createGList(IMatches matches) {
 
-		GList<CIdentity> list = new GList<CIdentity>();
+		GList<CIdentity> list = new GList<CIdentity>(!matches.ranked());
 
-		for (CIdentity match : matches) {
+		for (CIdentity match : matches.getMatches()) {
 
 			list.addEntity(match, new GCellDisplay(match.getLabel()));
 		}
