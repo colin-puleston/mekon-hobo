@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -77,7 +75,7 @@ public interface IMatcher {
 	 * will be of an appropriate type (see {@link #handlesType}).
 	 *
 	 * @param query Representation of query
-	 * @return Unique identities of all matching instances
+	 * @return Results of query execution
 	 */
-	public List<CIdentity> match(IFrame query);
+	public IMatches match(IFrame query);
 }

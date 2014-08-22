@@ -22,59 +22,74 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
+package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
- * Represents the results of an (@link IFrame}-classification as
- * enacted via an {@link IClassifier} object.
+ * Represents the results of an instance-matching query
+ * executed via an {@link IStore} object.
  *
  * @author Colin Puleston
  */
-public class IClassification {
+public class IMatches {
 
-	private List<CIdentity> inferredTypes;
-	private List<CIdentity> suggestedTypes;
+	/**
+	 * Object representing no matches.
+	 */
+	static public final IMatches NO_MATCHES = new IMatches();
+
+	private List<CIdentity> matches;
+	private boolean ranked;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param inferredTypes Identities of all relevant frames (see
-	 * {@link #getInferredTypes}
-	 * @param suggestedTypes Identities of all relevant frames (see
-	 * {@link #getSuggestedTypes}
+	 * @param matches Identities of all matching instances (see
+	 * {@link #getMatches}
+	 * @param ranked True if matches-list is ranked (see
+	 * {@link #ranked}
 	 */
-	public IClassification(
-			List<CIdentity> inferredTypes,
-			List<CIdentity> suggestedTypes) {
+	public IMatches(List<CIdentity> matches, boolean ranked) {
 
-		this.inferredTypes = inferredTypes;
-		this.suggestedTypes = suggestedTypes;
+		this.matches = matches;
+		this.ranked = ranked;
 	}
 
 	/**
-	 * Provides the identities of all concept-level frames of which
-	 * the instance-level frame is a direct instance.
+	 * Specifies whether any matches have been found.
 	 *
-	 * @return Identities of all relevant frames
+	 * @return True if matches found
 	 */
-	public List<CIdentity> getInferredTypes() {
+	public boolean anyMatches() {
 
-		return inferredTypes;
+		return !matches.isEmpty();
 	}
 
 	/**
-	 * Provides the identities of all concept-level frames that are
-	 * direct children of a concept-level version of the instance-level
-	 * frame.
+	 * Provides the identities of all instances that match the
+	 * relevant query.
 	 *
-	 * @return Identities of all relevant frames
+	 * @return Identities of all relevant instances
 	 */
-	public List<CIdentity> getSuggestedTypes() {
+	public List<CIdentity> getMatches() {
 
-		return suggestedTypes;
+		return matches;
+	}
+
+	/**
+	 * Specifies whether order of matches-list represents some
+	 * form of relevance ranking (most-relevant first).
+	 *
+	 * @return True if matches-list is ranked
+	 */
+	public boolean ranked() {
+
+		return ranked;
+	}
+
+	private IMatches() {
+
+		this(Collections.<CIdentity>emptyList(), false);
 	}
 }
