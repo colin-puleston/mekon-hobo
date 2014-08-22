@@ -91,7 +91,7 @@ class IStoreParser implements IStoreSerialiser {
 
 			XNode frameNode = instNode.getChild(FRAME_ID);
 
-			store.add(parseIFrame(frameNode), parseIdentity(instNode));
+			store.addInternal(parseIFrame(frameNode), parseIdentity(instNode));
 		}
 	}
 
