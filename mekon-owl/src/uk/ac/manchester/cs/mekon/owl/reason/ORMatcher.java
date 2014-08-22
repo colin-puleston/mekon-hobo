@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -234,13 +232,11 @@ public class ORMatcher implements IMatcher {
 	 * @param query Representation of query
 	 * @return Unique identities of all matching instances
 	 */
-	public List<CIdentity> match(IFrame query) {
+	public IMatches match(IFrame query) {
 
-		return match(framesManager.toPreProcessed(query));
-	}
+		ORFrame orQuery = framesManager.toPreProcessed(query);
+		ORInstance orInstance = new ConceptBasedInstance(model, orQuery);
 
-	private List<CIdentity> match(ORFrame query) {
-
-		return new ConceptBasedInstance(model, query).getMatchingInstances();
+		return new IMatches(orInstance.getMatchingInstances(), false);
 	}
 }
