@@ -92,7 +92,7 @@
 		</OWLClassifier>
 
 		<OWLMatcher
-			loggingMode="FULL">
+			loggingMode="DISABLED">
 			<SlotSemantics default="OPEN_WORLD"/>
 			<ApplicableConcepts>
 				<Group
