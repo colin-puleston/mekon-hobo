@@ -72,21 +72,9 @@ public class IStore {
 	 */
 	public IFrame add(IFrame instance, CIdentity identity) {
 
-		IFrame previous = instances.remove(identity);
+		IFrame previous = checkRemoveInternal(identity);
 
-		if (previous == null) {
-
-			identities.add(identity);
-		}
-		else {
-
-			checkRemoveFromMatcher(previous, identity);
-		}
-
-		instances.put(identity, instance);
-		checkAddLabel(identity);
-		checkAddToMatcher(instance, identity);
-
+		addInternal(instance.copy(), identity);
 		writeToFile();
 
 		return previous;
@@ -101,13 +89,7 @@ public class IStore {
 	 */
 	public boolean remove(CIdentity identity) {
 
-		IFrame instance = instances.remove(identity);
-
-		if (instance != null) {
-
-			identities.remove(identity);
-			labels.remove(identity);
-			checkRemoveFromMatcher(instance, identity);
+		if (checkRemoveInternal(identity) != null) {
 
 			writeToFile();
 
@@ -164,9 +146,28 @@ public class IStore {
 		matchers.add(matcher);
 	}
 
-	private void writeToFile() {
+	void addInternal(IFrame instance, CIdentity identity) {
 
-		new IStoreRenderer().render(this);
+		identities.add(identity);
+		instances.put(identity, instance);
+
+		checkAddLabel(identity);
+		checkAddToMatcher(instance, identity);
+	}
+
+	private IFrame checkRemoveInternal(CIdentity identity) {
+
+		IFrame removed = instances.remove(identity);
+
+		if (removed != null) {
+
+			identities.remove(identity);
+			labels.remove(identity);
+
+			checkRemoveFromMatcher(removed, identity);
+		}
+
+		return removed;
 	}
 
 	private void checkAddLabel(CIdentity identity) {
@@ -195,9 +196,6 @@ public class IStore {
 
 		String label = labels.get(identity);
 
-		System.out.println("FIX: " + identity);
-		System.out.println("  LABEL: " + label);
-		System.out.println("  ALL-LABELS: " + labels);
 		if (label == null) {
 
 			return identity;
@@ -242,5 +240,10 @@ public class IStore {
 		}
 
 		return null;
+	}
+
+	private void writeToFile() {
+
+		new IStoreRenderer().render(this);
 	}
 }

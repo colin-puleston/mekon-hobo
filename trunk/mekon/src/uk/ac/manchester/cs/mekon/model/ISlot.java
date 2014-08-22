@@ -198,12 +198,12 @@ public class ISlot implements IEntity {
 
 	ISlot(IFrame container, CSlot type) {
 
-		this.type = type;
-		this.container = container;
+		this(container, type, type.getAttributes());
+	}
 
-		attributes = type.getAttributes().copy();
-		values = type.getCardinality().createSlotValues(this);
-		valuesEditor = new ISlotValuesEditor(values);
+	ISlot(IFrame container, ISlot template) {
+
+		this(container, template.type, template.attributes);
 	}
 
 	ISlotEditor createEditor() {
@@ -214,6 +214,16 @@ public class ISlot implements IEntity {
 	ISlotValuesEditor getValuesEditorInternal() {
 
 		return valuesEditor;
+	}
+
+	private ISlot(IFrame container, CSlot type, FSlotAttributes attributes) {
+
+		this.type = type;
+		this.container = container;
+		this.attributes = attributes.copy();
+
+		values = type.getCardinality().createSlotValues(this);
+		valuesEditor = new ISlotValuesEditor(values);
 	}
 
 	private CModel getModel() {

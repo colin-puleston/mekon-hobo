@@ -243,6 +243,17 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Creates a deep copy of this frame and all recursively
+	 * referenced frames.
+	 *
+	 * @return Copy of this frame
+	 */
+	public IFrame copy() {
+
+		return new IFrameCopier().getCopy(this);
+	}
+
+	/**
 	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
 	 * then performs the default set of update operations on this frame.
 	 * Otherwise does nothing.
@@ -405,6 +416,11 @@ public class IFrame implements IEntity, IValue {
 	public boolean leadsToCycle() {
 
 		return new IFrameCycleTester(this).leadsToCycle();
+	}
+
+	IFrame(IFrame template) {
+
+		this(template.type, template.category);
 	}
 
 	IFrame(CFrame type, IFrameCategory category) {
