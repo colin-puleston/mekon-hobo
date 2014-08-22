@@ -30,8 +30,7 @@ import java.util.*;
 import org.w3c.dom.*;
 
 /**
- * Represents a node in a MEKON configuration file (see
- * {@link XFileParser}).
+ * Represents an element-node in an XML file.
  *
  * @author Colin Puleston
  */
