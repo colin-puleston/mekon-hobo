@@ -24,7 +24,6 @@
 package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.BorderLayout;
-import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -104,15 +103,15 @@ class InstantiationOptionsPanel extends JPanel {
 
 	private void executeQuery() {
 
-		List<CIdentity> matches = getIStore().match(frame);
+		IMatches matches = getIStore().match(frame);
 
-		if (matches.isEmpty()) {
+		if (matches.anyMatches()) {
 
-			showNoQueryMatchesMessage();
+			new QueryMatchesDialog(this, matches);
 		}
 		else {
 
-			new QueryMatchesDialog(this, matches);
+			showNoQueryMatchesMessage();
 		}
 	}
 

@@ -37,7 +37,7 @@ public class GList<E> extends JList {
 
 	static private final long serialVersionUID = -1;
 
-	private LocalListModel model = new LocalListModel();
+	private LocalListModel model;
 	private E selectedEntity = null;
 
 	private GSelectionListeners<E> selectionListeners = new GSelectionListeners<E>();
@@ -69,9 +69,9 @@ public class GList<E> extends JList {
 
 	private class DisplayList extends GCellDisplaySortedList<DisplayElement> {
 
-		DisplayList() {
+		DisplayList(boolean orderAlphabetically) {
 
-			super(true);
+			super(orderAlphabetically);
 		}
 
 		GCellDisplay getDisplay(DisplayElement element) {
@@ -84,7 +84,7 @@ public class GList<E> extends JList {
 
 		static private final long serialVersionUID = -1;
 
-		private DisplayList displayList = new DisplayList();
+		private DisplayList displayList;
 		private boolean upToDate = false;
 
 		public void clear() {
@@ -105,6 +105,11 @@ public class GList<E> extends JList {
 			checkUpToDate();
 
 			return super.getSize();
+		}
+
+		LocalListModel(boolean orderAlphabetically) {
+
+			displayList = new DisplayList(orderAlphabetically);
 		}
 
 		void add(E entity, GCellDisplay display) {
@@ -198,7 +203,9 @@ public class GList<E> extends JList {
 		}
 	}
 
-	public GList() {
+	public GList(boolean orderAlphabetically) {
+
+		model = new LocalListModel(orderAlphabetically);
 
 		setModel(model);
 

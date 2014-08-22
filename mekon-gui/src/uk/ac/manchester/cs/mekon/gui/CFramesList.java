@@ -55,6 +55,8 @@ class CFramesList extends GList<CFrame> {
 		CFrameVisibility visibility,
 		boolean includeRoot) {
 
+		super(true);
+
 		if (includeRoot) {
 
 			addFrame(rootFrame);
