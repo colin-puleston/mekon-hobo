@@ -127,18 +127,18 @@ public class IStore {
 	 * Finds all instances that match the supplied query.
 	 *
 	 * @param query Representation of query
-	 * @return Unique identities of all matching instances
+	 * @return Results of query execution
 	 */
-	public List<CIdentity> match(IFrame query) {
+	public IMatches match(IFrame query) {
 
 		IMatcher matcher = lookForMatcher(query);
 
 		if (matcher == null) {
 
-			return Collections.<CIdentity>emptyList();
+			return IMatches.NO_MATCHES;
 		}
 
-		return fixLabels(matcher.match(query));
+		return resolveLabels(matcher.match(query));
 	}
 
 	void addMatcher(IMatcher matcher) {
@@ -150,8 +150,8 @@ public class IStore {
 
 		identities.add(identity);
 		instances.put(identity, instance);
+		labels.put(identity, identity.getLabel());
 
-		checkAddLabel(identity);
 		checkAddToMatcher(instance, identity);
 	}
 
@@ -168,40 +168,6 @@ public class IStore {
 		}
 
 		return removed;
-	}
-
-	private void checkAddLabel(CIdentity identity) {
-
-		String label = identity.getLabel();
-
-		if (!label.equals(identity.getIdentifier())) {
-
-			labels.put(identity, label);
-		}
-	}
-
-	private List<CIdentity> fixLabels(List<CIdentity> identities) {
-
-		List<CIdentity> fixed = new ArrayList<CIdentity>();
-
-		for (CIdentity identity : identities) {
-
-			fixed.add(fixLabel(identity));
-		}
-
-		return fixed;
-	}
-
-	private CIdentity fixLabel(CIdentity identity) {
-
-		String label = labels.get(identity);
-
-		if (label == null) {
-
-			return identity;
-		}
-
-		return new CIdentity(identity.getIdentifier(), label);
 	}
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
@@ -240,6 +206,30 @@ public class IStore {
 		}
 
 		return null;
+	}
+
+	private IMatches resolveLabels(IMatches matches) {
+
+		List<CIdentity> resolvedIds = new ArrayList<CIdentity>();
+
+		for (CIdentity identity : matches.getMatches()) {
+
+			resolvedIds.add(resolveLabel(identity));
+		}
+
+		return new IMatches(resolvedIds, matches.ranked());
+	}
+
+	private CIdentity resolveLabel(CIdentity identity) {
+
+		String label = labels.get(identity);
+
+		if (label == null) {
+
+			return identity;
+		}
+
+		return new CIdentity(identity.getIdentifier(), label);
 	}
 
 	private void writeToFile() {
