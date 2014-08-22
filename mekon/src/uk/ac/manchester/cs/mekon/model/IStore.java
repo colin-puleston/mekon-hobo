@@ -46,6 +46,7 @@ public class IStore {
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
+	private Map<CIdentity, String> labels = new HashMap<CIdentity, String>();
 
 	/**
 	 * Checks whether store contains a particular instance.
@@ -83,9 +84,10 @@ public class IStore {
 		}
 
 		instances.put(identity, instance);
+		checkAddLabel(identity);
 		checkAddToMatcher(instance, identity);
 
-		renderFile();
+		writeToFile();
 
 		return previous;
 	}
@@ -104,9 +106,10 @@ public class IStore {
 		if (instance != null) {
 
 			identities.remove(identity);
+			labels.remove(identity);
 			checkRemoveFromMatcher(instance, identity);
 
-			renderFile();
+			writeToFile();
 
 			return true;
 		}
@@ -153,7 +156,7 @@ public class IStore {
 			return Collections.<CIdentity>emptyList();
 		}
 
-		return matcher.match(query);
+		return fixLabels(matcher.match(query));
 	}
 
 	void addMatcher(IMatcher matcher) {
@@ -161,9 +164,46 @@ public class IStore {
 		matchers.add(matcher);
 	}
 
-	private void renderFile() {
+	private void writeToFile() {
 
 		new IStoreRenderer().render(this);
+	}
+
+	private void checkAddLabel(CIdentity identity) {
+
+		String label = identity.getLabel();
+
+		if (!label.equals(identity.getIdentifier())) {
+
+			labels.put(identity, label);
+		}
+	}
+
+	private List<CIdentity> fixLabels(List<CIdentity> identities) {
+
+		List<CIdentity> fixed = new ArrayList<CIdentity>();
+
+		for (CIdentity identity : identities) {
+
+			fixed.add(fixLabel(identity));
+		}
+
+		return fixed;
+	}
+
+	private CIdentity fixLabel(CIdentity identity) {
+
+		String label = labels.get(identity);
+
+		System.out.println("FIX: " + identity);
+		System.out.println("  LABEL: " + label);
+		System.out.println("  ALL-LABELS: " + labels);
+		if (label == null) {
+
+			return identity;
+		}
+
+		return new CIdentity(identity.getIdentifier(), label);
 	}
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {

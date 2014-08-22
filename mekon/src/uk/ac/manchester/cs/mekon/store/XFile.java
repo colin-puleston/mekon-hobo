@@ -33,10 +33,9 @@ import org.w3c.dom.ls.*;
 import org.xml.sax.*;
 
 /**
- * Represents a MEKON configuration file, which is an XML format
- * file containing configuration information both for the core
- * MEKON system, or for any "indirect" model-section plugins that
- * wish to make use of it.
+ * Represents an XML format file, providing a set of higher-level
+ * methods for serialising XML documents to and from file, and
+ * for reading from, and writing to, a loaded XML document.
  *
  * @author Colin Puleston
  */
@@ -104,13 +103,13 @@ public class XFile {
 	private XNode rootNode;
 
 	/**
-	 * Constructs object for accessing a configuration file with
-	 * the specified file-name, located somewhere on the classpath.
+	 * Constructor that loads document from a file with the specified
+	 * name, located somewhere on the classpath.
 	 *
-	 * @param fileName Name of relevant configuration file
-	 * @throws XFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @param fileName Name of relevant file
+	 * @throws XFileException if file does not exist or if it contains
+	 * incorrectly specified information, either syntactically
+	 * or semantically
 	 */
 	public XFile(String fileName) {
 
@@ -118,12 +117,12 @@ public class XFile {
 	}
 
 	/**
-	 * Constructs object for accessing a configuration file.
+	 * Constructor that loads document from a file.
 	 *
-	 * @param file Path of relevant configuration file
-	 * @throws XFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @param file Path of relevant file
+	 * @throws XFileException if file does not exist or if it contains
+	 * incorrectly specified information, either syntactically
+	 * or semantically
 	 */
 	public XFile(File file) {
 
@@ -131,13 +130,12 @@ public class XFile {
 	}
 
 	/**
-	 * Constructs object for creating a configuration file with
-	 * the specified file-name, located somewhere on the classpath.
+	 * Constructor that creates a new document, which will upon request
+	 * be written to the file with the specified name, located somewhere
+	 * on the classpath.
 	 *
-	 * @param fileName Name of configuration file to be created
-	 * @param rootNodeId Identifier for root configuration node
-	 * @throws XFileException if configuration file cannot be
-	 * created
+	 * @param fileName Name of file to be created, when required
+	 * @param rootNodeId Identifier for root node
 	 */
 	public XFile(String fileName, String rootNodeId) {
 
@@ -145,12 +143,10 @@ public class XFile {
 	}
 
 	/**
-	 * Constructs object for creating a configuration file.
+	 * Constructs object for creating a file.
 	 *
-	 * @param file Path of configuration file to be created
-	 * @param rootNodeId Identifier for root configuration node
-	 * @throws XFileException if configuration file cannot be
-	 * created
+	 * @param file Path of file to be created, when required
+	 * @param rootNodeId Identifier for root node
 	 */
 	public XFile(File file, String rootNodeId) {
 
@@ -158,10 +154,9 @@ public class XFile {
 	}
 
 	/**
-	 * Provides the object representing the location of the
-	 * configuration file.
+	 * Provides the location of the file.
 	 *
-	 * @return location of configuration file
+	 * @return location of file
 	 */
 	public File getFile() {
 
@@ -169,9 +164,9 @@ public class XFile {
 	}
 
 	/**
-	 * Provides the root-node of the configuration file.
+	 * Provides the root-node of the document.
 	 *
-	 * @return Root-node of configuration file
+	 * @return Root-node of document
 	 */
 	public XNode getRootNode() {
 
@@ -179,8 +174,9 @@ public class XFile {
 	}
 
 	/**
-	 * Creates the configuration file containing the currently
-	 * specified contents.
+	 * Writes the current document to file.
+	 *
+	 * @throws XFileException if file cannot be created
 	 */
 	public void writeToFile() {
 
