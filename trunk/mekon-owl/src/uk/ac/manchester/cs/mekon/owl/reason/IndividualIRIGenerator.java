@@ -38,6 +38,11 @@ class IndividualIRIGenerator {
 	static private final String DEFAULT_NAMESPACE = "http://mekon.owl";
 	static private final String NAME_REF_SECTION_PREFIX = "-REF-";
 
+	static String extractName(IRI iri) {
+
+		return iri.getFragment();
+	}
+
 	private String namespace = DEFAULT_NAMESPACE;
 	private String rootName = DEFAULT_ROOT_NAME;
 

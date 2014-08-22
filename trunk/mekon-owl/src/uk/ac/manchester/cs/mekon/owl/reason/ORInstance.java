@@ -93,7 +93,7 @@ abstract class ORInstance {
 			Set<OWLNamedIndividual> matches = getMatchingIndividuals();
 
 			ORMonitor.pollForMatchesFound(model, matches);
-			matchIds.addAll(toIdentityList(matches));
+			matchIds.addAll(toResolvedIdentityList(matches));
 		}
 
 		ORMonitor.pollForMatcherDone(model, frameRendering);
@@ -133,8 +133,27 @@ abstract class ORInstance {
 		return model.getConcepts().get(frame.getIRI());
 	}
 
-	private List<CIdentity> toIdentityList(Set<? extends OWLEntity> entities) {
+	private List<CIdentity> toIdentityList(Set<OWLClass> entities) {
 
 		return new ArrayList<CIdentity>(OIdentity.createSortedSet(entities));
+	}
+
+	private List<CIdentity> toResolvedIdentityList(Set<OWLNamedIndividual> individuals) {
+
+		List<CIdentity> identities = new ArrayList<CIdentity>();
+
+		for (CIdentity identity : OIdentity.createSortedSet(individuals)) {
+
+			identities.add(resolveIndividualIdentity(identity));
+		}
+
+		return identities;
+	}
+
+	private CIdentity resolveIndividualIdentity(CIdentity identity) {
+
+		IRI iri = IRI.create(identity.getIdentifier());
+
+		return new CIdentity(IndividualIRIGenerator.extractName(iri));
 	}
 }
