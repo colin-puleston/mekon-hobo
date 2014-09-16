@@ -109,7 +109,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 		new OBSectionBuilderConfig(parentConfigNode).configure(this);
 
 		setIReasoner(ORClassifier.createOrNull(model, parentConfigNode));
-		iMatcher = ORMatcher.createOrNull(model, parentConfigNode);
+		setIMatcher(ORMatcher.createOrNull(model, parentConfigNode));
 	}
 
 	/**
@@ -145,6 +145,17 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
+	 * Enables the specification of an {@link IMatcher} to be
+	 * added to the generated model.
+	 *
+	 * @param iMatcher Matcher for generated frames
+	 */
+	public void setIMatcher(IMatcher iMatcher) {
+
+		this.iMatcher = iMatcher;
+	}
+
+	/**
 	 * Sets the attribute that determines whether or not any of the
 	 * slots that are generated in the Frames Model (FM) can have
 	 * a value-type defined via an {@link MFrame} object. If this
@@ -173,6 +184,16 @@ public class OBSectionBuilder implements CSectionBuilder {
 	public void setRetainOnlyDeclarationAxioms(boolean value) {
 
 		retainOnlyDeclarationAxioms = value;
+	}
+
+	/**
+	 * Provides the model over which the sanctioning is operating.
+	 *
+	 * @return Model over which sanctioning is operating
+	 */
+	public OModel getModel() {
+
+		return model;
 	}
 
 	/**
