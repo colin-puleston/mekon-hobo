@@ -40,10 +40,9 @@ import uk.ac.manchester.cs.mekon.util.*;
  *   disjunction-frames (see {@link CFrameCategory#disjunction})
  *   <li>Slots on concrete-frames cannot have abstract values (see
  *   {@link IValue#abstractValue})
- *   <li>Derived-values slots on query-frames (see {@link
- *   ISlot#dependent}) are editable by the client (see {@link
- *   ISlot#editable}), which is not the case for dependent slots
- *   on concrete-frames
+ *   <li>Dependent slots on query-frames (see {@link ISlot#dependent})
+ *   are editable by the client (see {@link ISlot#editable}), which
+ *   is not the case for dependent slots on concrete-frames
  * </ul>
  * Query-frames and concrete-frames cannot be mixed within a single
  * model-instantiation. Attempting to do so will result in an
