@@ -52,7 +52,7 @@ public class IMatches {
 	 */
 	public IMatches(List<CIdentity> matches, boolean ranked) {
 
-		this.matches = matches;
+		this.matches = new ArrayList<CIdentity>(matches);
 		this.ranked = ranked;
 	}
 
@@ -74,7 +74,7 @@ public class IMatches {
 	 */
 	public List<CIdentity> getMatches() {
 
-		return matches;
+		return new ArrayList<CIdentity>(matches);
 	}
 
 	/**
