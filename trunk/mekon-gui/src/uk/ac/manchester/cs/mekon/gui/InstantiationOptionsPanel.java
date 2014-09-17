@@ -41,6 +41,7 @@ class InstantiationOptionsPanel extends JPanel {
 	static private final String EXECUTE_QUERY_BUTTON_LABEL = "Execute";
 	static private final String CONCRETE_SELECTOR_TITLE = "Instance Name";
 
+	private CFramesTree modelTree;
 	private IFrame frame;
 
 	private class StoreConcreteButton extends GButton {
@@ -73,10 +74,11 @@ class InstantiationOptionsPanel extends JPanel {
 		}
 	}
 
-	InstantiationOptionsPanel(IFrame frame) {
+	InstantiationOptionsPanel(CFramesTree modelTree, IFrame frame) {
 
 		super(new BorderLayout());
 
+		this.modelTree = modelTree;
 		this.frame = frame;
 
 		add(createButton(), BorderLayout.EAST);
@@ -107,7 +109,7 @@ class InstantiationOptionsPanel extends JPanel {
 
 		if (matches.anyMatches()) {
 
-			new QueryMatchesDialog(this, matches);
+			new QueryMatchesDialog(modelTree, getIStore(), matches);
 		}
 		else {
 
