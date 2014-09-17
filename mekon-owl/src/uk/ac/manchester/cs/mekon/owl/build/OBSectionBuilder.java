@@ -259,14 +259,16 @@ public class OBSectionBuilder implements CSectionBuilder {
 		buildIntermediate();
 		buildFinal(builder);
 
-		if (retainOnlyDeclarationAxioms) {
-
-			model.retainOnlyDeclarationAxioms();
-		}
-
 		if (iMatcher != null) {
 
 			builder.addIMatcher(iMatcher);
+		}
+		else {
+
+			if (retainOnlyDeclarationAxioms) {
+
+				model.retainOnlyDeclarationAxioms();
+			}
 		}
 	}
 

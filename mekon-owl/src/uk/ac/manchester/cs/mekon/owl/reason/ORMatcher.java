@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -200,7 +202,7 @@ public class ORMatcher implements IMatcher {
 
 		String name = identity.getIdentifier();
 
-		if (renderer.anyCurrentFor(name)) {
+		if (renderer.rendered(name)) {
 
 			return false;
 		}
@@ -234,9 +236,29 @@ public class ORMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
+		return new IMatches(getMatches(query), false);
+	}
+
+	private List<CIdentity> getMatches(IFrame query) {
+
 		ORFrame orQuery = framesManager.toPreProcessed(query);
 		ORInstance orInstance = new ConceptBasedInstance(model, orQuery);
 
-		return new IMatches(orInstance.getMatchingInstances(), false);
+		return purgeMatches(orInstance.getMatchingInstances());
+	}
+
+	private List<CIdentity> purgeMatches(List<CIdentity> all) {
+
+		List<CIdentity> purged = new ArrayList<CIdentity>();
+
+		for (CIdentity match : all) {
+
+			if (renderer.rendered(match.getIdentifier())) {
+
+				purged.add(match);
+			}
+		}
+
+		return purged;
 	}
 }

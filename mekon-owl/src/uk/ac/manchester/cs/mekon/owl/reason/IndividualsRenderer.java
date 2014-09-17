@@ -182,7 +182,7 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 		iriGenerator.setNamespace(namespace);
 	}
 
-	boolean anyCurrentFor(String rootName) {
+	boolean rendered(String rootName) {
 
 		return axiomsByRootName.get(rootName) != null;
 	}
