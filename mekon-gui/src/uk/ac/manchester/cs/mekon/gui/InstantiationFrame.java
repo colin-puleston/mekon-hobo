@@ -82,7 +82,7 @@ class InstantiationFrame extends GFrame {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		panel.add(createMainComponent(), BorderLayout.CENTER);
-		panel.add(new InstantiationOptionsPanel(frame), BorderLayout.SOUTH);
+		panel.add(createOptionsPanel(), BorderLayout.SOUTH);
 
 		return panel;
 	}
@@ -97,6 +97,11 @@ class InstantiationFrame extends GFrame {
 		addTypesTab(panel, SUGGESTED_TYPES_TITLE, false);
 
 		return panel;
+	}
+
+	private JComponent createOptionsPanel() {
+
+		return new InstantiationOptionsPanel(modelTree, frame);
 	}
 
 	private void addTypesTab(JTabbedPane panel, String title, boolean inferreds) {

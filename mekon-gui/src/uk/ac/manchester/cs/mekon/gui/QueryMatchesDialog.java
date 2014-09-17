@@ -40,9 +40,23 @@ class QueryMatchesDialog extends GDialog {
 	static private final String TITLE = "Query Matches";
 	static private final Dimension WINDOW_SIZE = new Dimension(250, 300);
 
-	QueryMatchesDialog(JComponent parent, IMatches matches) {
+	private CFramesTree modelTree;
+	private IStore iStore;
 
-		super(parent, TITLE, true);
+	private class MatchViewer extends GSelectionListener<CIdentity> {
+
+		protected void onSelected(CIdentity entity) {
+
+			showInstance(entity);
+		}
+	}
+
+	QueryMatchesDialog(CFramesTree modelTree, IStore iStore, IMatches matches) {
+
+		super(modelTree, TITLE, true);
+
+		this.modelTree = modelTree;
+		this.iStore = iStore;
 
 		setPreferredSize(WINDOW_SIZE);
 		display(new JScrollPane(createGList(matches)));
@@ -52,11 +66,18 @@ class QueryMatchesDialog extends GDialog {
 
 		GList<CIdentity> list = new GList<CIdentity>(!matches.ranked());
 
+		list.addSelectionListener(new MatchViewer());
+
 		for (CIdentity match : matches.getMatches()) {
 
 			list.addEntity(match, new GCellDisplay(match.getLabel()));
 		}
 
 		return list;
+	}
+
+	private void showInstance(CIdentity id) {
+
+		new InstantiationFrame(modelTree, iStore.get(id)).display();
 	}
 }
