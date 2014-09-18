@@ -107,6 +107,8 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 	OWLClassExpression render(ORFrame frame) {
 
+		frameStack.clear();
+
 		return renderFrame(frame);
 	}
 
