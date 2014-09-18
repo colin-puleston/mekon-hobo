@@ -41,11 +41,11 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 	private OModel model;
 	private OWLDataFactory dataFactory;
 
-	private Map<ORFrame, OWLNamedIndividual> individuals
-					= new HashMap<ORFrame, OWLNamedIndividual>();
-
 	private Map<String, Set<OWLAxiom>> axiomsByRootName
 					= new HashMap<String, Set<OWLAxiom>>();
+
+	private Map<ORFrame, OWLNamedIndividual> individuals
+					= new HashMap<ORFrame, OWLNamedIndividual>();
 
 	private IndividualIRIGenerator iriGenerator = new IndividualIRIGenerator();
 
@@ -190,6 +190,7 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 	OWLNamedIndividual render(ORFrame frame) {
 
 		iriGenerator.start(frame);
+		individuals.clear();
 
 		return renderFrame(frame);
 	}
@@ -197,6 +198,7 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 	OWLNamedIndividual render(ORFrame frame, String rootName) {
 
 		iriGenerator.start(frame, rootName);
+		individuals.clear();
 
 		return renderFrame(frame);
 	}
