@@ -33,14 +33,11 @@ public abstract class GButton extends JButton implements ActionListener {
 
 	static private final long serialVersionUID = -1;
 
-	static private final float STANDARD_FONT_SIZE = 16;
-	static private final float SMALL_FONT_SIZE = 12;
-
 	public GButton(String label) {
 
 		super(label);
 
-		setFontSize(STANDARD_FONT_SIZE);
+		GFonts.setMedium(this);
 		addActionListener(this);
 	}
 
@@ -51,12 +48,12 @@ public abstract class GButton extends JButton implements ActionListener {
 
 	public void setSmallFont() {
 
-		setFontSize(SMALL_FONT_SIZE);
+		GFonts.setSmall(this);
 	}
 
-	public void setFontSize(float size) {
+	public void setLargeFont() {
 
-		setFont(getFont().deriveFont(size));
+		GFonts.setLarge(this);
 	}
 
 	protected abstract void doButtonThing();

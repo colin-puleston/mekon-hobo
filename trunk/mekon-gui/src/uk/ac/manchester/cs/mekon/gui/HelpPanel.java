@@ -38,9 +38,6 @@ class HelpPanel extends JTabbedPane {
 
 	static final long serialVersionUID = -1;
 
-	static private final float CATEGORY_TITLE_FONT_SIZE = 16;
-	static private final float SECTION_TITLE_FONT_SIZE = 14;
-
 	static private final EntityLevel DEFAULT_LEVEL = EntityLevel.CONCEPT;
 	static private final CSource DEFAULT_SOURCE = CSource.UNSPECIFIED;
 	static private final String NOT_APPLICABLE_STRING = "N/A";
@@ -119,8 +116,7 @@ class HelpPanel extends JTabbedPane {
 
 			super(JTabbedPane.BOTTOM);
 
-			setFont(getFont().deriveFont(SECTION_TITLE_FONT_SIZE));
-
+			GFonts.setMedium(this);
 			addCategory(title, this);
 		}
 
@@ -431,7 +427,7 @@ class HelpPanel extends JTabbedPane {
 
 		super(JTabbedPane.TOP);
 
-		setFont(getFont().deriveFont(CATEGORY_TITLE_FONT_SIZE));
+		GFonts.setLarge(this);
 
 		new EntitiesPanel();
 		new ModelTreesPanel();

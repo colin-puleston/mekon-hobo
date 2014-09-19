@@ -41,7 +41,6 @@ public class GTable extends JPanel {
 	static private final Color TITLE_COLOUR = Color.lightGray;
 	static private final Color CELL_COLOUR = Color.white;
 
-	static private final float TITLE_FONT_SIZE = 14;
 	static private final int CELL_MARGIN = 10;
 
 	private List<Column> columns = new ArrayList<Column>();
@@ -80,7 +79,7 @@ public class GTable extends JPanel {
 
 			JLabel label = new JLabel(title);
 
-			label.setFont(label.getFont().deriveFont(TITLE_FONT_SIZE));
+			GFonts.setLarge(label);
 
 			return label;
 		}

@@ -57,36 +57,39 @@ public class MekonModelExplorer extends GFrame {
 	private class Initialiser {
 
 		private ModelFrameSelections selections;
-		private ModelFramesPanel framesPanel;
+		private ModelFramesPanel modelFramesPanel;
 		private ModelFrameSelectionPanel selectionsPanel;
+		private InstanceStorePanel instanceStorePanel;
 
 		Initialiser(CModel model) {
 
 			selections = new ModelFrameSelections();
-			framesPanel = new ModelFramesPanel(model);
-			selectionsPanel = new ModelFrameSelectionPanel(
-									model,
-									framesPanel.getTree());
+			modelFramesPanel = new ModelFramesPanel(model);
 
-			selections.addSelectionRelay(framesPanel.getSelectionRelay());
+			CFramesTree modelTree = modelFramesPanel.getTree();
+
+			selectionsPanel = new ModelFrameSelectionPanel(model, modelTree);
+			instanceStorePanel = new InstanceStorePanel(model, modelTree);
+
+			selections.addSelectionRelay(modelFramesPanel.getSelectionRelay());
 			selections.addSelectionRelay(selectionsPanel.getSelectionRelay());
 		}
 
-		JComponent createMainComponent() {
+		JComponent createTopLevelComponent() {
 
 			JPanel panel = new JPanel(new BorderLayout());
 
 			panel.add(createControlComponent(), BorderLayout.NORTH);
-			panel.add(createModelComponent(), BorderLayout.CENTER);
+			panel.add(createMainComponent(), BorderLayout.CENTER);
 
 			return panel;
 		}
 
-		private JComponent createModelComponent() {
+		private JComponent createMainComponent() {
 
 			GSplitPane panel = new GSplitPane();
 
-			panel.setLeftComponent(framesPanel);
+			panel.setLeftComponent(createModelAndInstancesPanel());
 			panel.setRightComponent(selectionsPanel);
 
 			return panel;
@@ -101,6 +104,16 @@ public class MekonModelExplorer extends GFrame {
 
 			return panel;
 		}
+
+		private JPanel createModelAndInstancesPanel() {
+
+			JPanel panel = new JPanel(new BorderLayout());
+
+			panel.add(modelFramesPanel, BorderLayout.CENTER);
+			panel.add(instanceStorePanel, BorderLayout.SOUTH);
+
+			return panel;
+		}
 	}
 
 	public MekonModelExplorer(CModel model) {
@@ -108,6 +121,6 @@ public class MekonModelExplorer extends GFrame {
 		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		display(new Initialiser(model).createMainComponent());
+		display(new Initialiser(model).createTopLevelComponent());
 	}
 }

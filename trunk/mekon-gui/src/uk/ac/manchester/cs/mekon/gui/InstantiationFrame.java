@@ -28,48 +28,48 @@ import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
  * @author Colin Puleston
  */
-class InstantiationFrame extends GFrame {
+abstract class InstantiationFrame extends GFrame {
 
 	static private final long serialVersionUID = -1;
 
 	static private final int WIDTH = 800;
 	static private final int HEIGHT = 600;
 
-	static private final String MAIN_TITLE_FORMAT = "\"%s\" %s";
-	static private final String CONCRETE_LABEL = "Instance";
-	static private final String QUERY_LABEL = "Query";
+	static private final String MAIN_TITLE_FORMAT = "\"%s\" %s Instance";
 	static private final String INFERRED_TYPES_TITLE = "Inferred Types";
 	static private final String SUGGESTED_TYPES_TITLE = "Suggested Types";
-
-	static private String getTitle(IFrame frame) {
-
-		String frameLabel = frame.getDisplayLabel();
-		String typeLabel = instanceTypeLabel(frame);
-		String mainTitle = String.format(MAIN_TITLE_FORMAT, frameLabel, typeLabel);
-
-		return MekonModelExplorer.getSystemTitle(mainTitle);
-	}
-
-	static private String instanceTypeLabel(IFrame frame) {
-
-		return frame.getCategory().query() ? QUERY_LABEL : CONCRETE_LABEL;
-	}
 
 	private CFramesTree modelTree;
 	private IFrame frame;
 
+	private JTabbedPane aspectTabs = new JTabbedPane();
+
 	InstantiationFrame(CFramesTree modelTree, IFrame frame) {
 
-		super(getTitle(frame), WIDTH, HEIGHT);
+		super("", WIDTH, HEIGHT);
 
 		this.modelTree = modelTree;
 		this.frame = frame;
+
+		setTitle(getCategoryTitle());
+
+		addInstanceTab();
+		addTypesTab(INFERRED_TYPES_TITLE, true);
+		addTypesTab(SUGGESTED_TYPES_TITLE, false);
+	}
+
+	int addAspectTab(String title, JComponent component) {
+
+		int index = aspectTabs.getTabCount();
+
+		aspectTabs.addTab(title, component);
+
+		return index;
 	}
 
 	void display() {
@@ -77,39 +77,50 @@ class InstantiationFrame extends GFrame {
 		display(createTopLevelComponent());
 	}
 
+	abstract String getCategoryLabel();
+
+	abstract JComponent createControlsPanel();
+
+	CFramesTree getModelTree() {
+
+		return modelTree;
+	}
+
+	IStore getIStore() {
+
+		return getModel().getIStore();
+	}
+
+	IFrame getFrame() {
+
+		return frame;
+	}
+
+	JTabbedPane getAspectTabs() {
+
+		return aspectTabs;
+	}
+
 	private JComponent createTopLevelComponent() {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(createMainComponent(), BorderLayout.CENTER);
-		panel.add(createOptionsPanel(), BorderLayout.SOUTH);
+		panel.add(aspectTabs, BorderLayout.CENTER);
+		panel.add(createControlsPanel(), BorderLayout.SOUTH);
 
 		return panel;
 	}
 
-	private JComponent createMainComponent() {
+	private void addInstanceTab() {
 
-		JTabbedPane panel = new JTabbedPane();
-
-		panel.addTab(instanceTypeLabel(frame), createInstanceComponent());
-
-		addTypesTab(panel, INFERRED_TYPES_TITLE, true);
-		addTypesTab(panel, SUGGESTED_TYPES_TITLE, false);
-
-		return panel;
+		addAspectTab(getCategoryLabel(), createInstanceComponent());
 	}
 
-	private JComponent createOptionsPanel() {
+	private void addTypesTab(String title, boolean inferreds) {
 
-		return new InstantiationOptionsPanel(modelTree, frame);
-	}
+		int index = addAspectTab(title, createTypesComponent(inferreds));
 
-	private void addTypesTab(JTabbedPane panel, String title, boolean inferreds) {
-
-		int tabIndex = panel.getTabCount();
-
-		panel.addTab(title, createTypesComponent(inferreds));
-		panel.setEnabledAt(tabIndex, enableTypesTab(inferreds));
+		aspectTabs.setEnabledAt(index, enableTypesTab(inferreds));
 	}
 
 	private JComponent createInstanceComponent() {
@@ -133,6 +144,15 @@ class InstantiationFrame extends GFrame {
 	private boolean defaultUpdateOp(IUpdateOp updateOp) {
 
 		return getModel().getIUpdating().defaultOp(updateOp);
+	}
+
+	private String getCategoryTitle() {
+
+		String label = frame.getDisplayLabel();
+		String catLabel = getCategoryLabel();
+		String mainTitle = String.format(MAIN_TITLE_FORMAT, label, catLabel);
+
+		return MekonModelExplorer.getSystemTitle(mainTitle);
 	}
 
 	private CModel getModel() {
