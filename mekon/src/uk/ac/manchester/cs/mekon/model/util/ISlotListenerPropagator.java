@@ -80,6 +80,17 @@ public abstract class ISlotListenerPropagator<L>
 	}
 
 	/**
+	 * Enables the provision of a seed-frame from which the
+	 * listener will be propagated.
+	 *
+	 * @param seedFrame Relevant seed-frame
+	 */
+	public void propagateFrom(IFrame seedFrame) {
+
+		checkPropagate(seedFrame);
+	}
+
+	/**
 	 * Enables the provision of a seed-slot from which the
 	 * listener will be propagated.
 	 *
