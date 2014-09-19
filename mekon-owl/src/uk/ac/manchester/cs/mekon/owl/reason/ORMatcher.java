@@ -30,6 +30,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
@@ -90,6 +91,7 @@ public class ORMatcher implements IMatcher {
 	}
 
 	private OModel model;
+	private OConceptFinder concepts;
 	private FramesManager framesManager;
 
 	private IndividualsRenderer renderer;
@@ -139,6 +141,7 @@ public class ORMatcher implements IMatcher {
 
 		this.model = model;
 
+		concepts = new OConceptFinder(model);
 		framesManager = new FramesManager(model);
 		renderer = new IndividualsRenderer(model);
 	}
@@ -184,7 +187,7 @@ public class ORMatcher implements IMatcher {
 	 */
 	public boolean handlesType(CFrame type) {
 
-		return true;
+		return concepts.getOrAncestorOrNull(type) != null;
 	}
 
 	/**

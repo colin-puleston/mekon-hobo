@@ -40,8 +40,8 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 public class ORFramesInstance {
 
-	private Set<IRI> conceptIRIs;
-	private Set<IRI> objectPropertyIRIs;
+	private OConceptFinder concepts;
+	private OObjectPropertyFinder objectProperties;
 	private ORSlotSemantics slotSemantics;
 	private ORFrame rootFrame;
 
@@ -86,7 +86,7 @@ public class ORFramesInstance {
 
 		private IRI getIRIOrNull(ISlot iSlot) {
 
-			return getObjectPropertyIRIOrNull(iSlot.getType().getProperty());
+			return objectProperties.getOrNull(iSlot.getType().getProperty());
 		}
 	}
 
@@ -186,8 +186,8 @@ public class ORFramesInstance {
 
 		this.slotSemantics = slotSemantics;
 
-		conceptIRIs = getAllConceptIRIs(model);
-		objectPropertyIRIs = getAllObjectPropertyIRIs(model);
+		concepts = new OConceptFinder(model);
+		objectProperties = new OObjectPropertyFinder(model);
 
 		rootFrame = getFrame(iFrame);
 	}
@@ -243,7 +243,7 @@ public class ORFramesInstance {
 
 		for (CFrame disjunct : cFrame.getSubs()) {
 
-			IRI iri = getNearestConceptIRIOrNull(disjunct);
+			IRI iri = concepts.getOrAncestorOrNull(disjunct);
 
 			if (iri != null) {
 
@@ -256,54 +256,7 @@ public class ORFramesInstance {
 
 	private ORFrame createModelFrame(CFrame cFrame) {
 
-		return new ORFrame(cFrame, getNearestConceptIRIOrNull(cFrame));
-	}
-
-	private IRI getNearestConceptIRIOrNull(CFrame cFrame) {
-
-		IRI iri = getConceptIRIOrNull(cFrame);
-
-		if (iri == null) {
-
-			for (CFrame sup : cFrame.getSupers()) {
-
-				iri = getNearestConceptIRIOrNull(sup);
-
-				if (iri != null) {
-
-					break;
-				}
-			}
-		}
-
-		return iri;
-	}
-
-	private IRI getConceptIRIOrNull(CFrame frame) {
-
-		return getIRIOrNull(frame, conceptIRIs);
-	}
-
-	private IRI getObjectPropertyIRIOrNull(CProperty property) {
-
-		return getIRIOrNull(property, objectPropertyIRIs);
-	}
-
-	private IRI getIRIOrNull(CIdentified entity, Set<IRI> validIRIs) {
-
-		IRI iri = O_IRIExtractor.extractIRI(entity);
-
-		return iri != null && validIRIs.contains(iri) ? iri : null;
-	}
-
-	private Set<IRI> getAllConceptIRIs(OModel model) {
-
-		return model.getConcepts().getAllIRIs();
-	}
-
-	private Set<IRI> getAllObjectPropertyIRIs(OModel model) {
-
-		return model.getObjectProperties().getAllIRIs();
+		return new ORFrame(cFrame, concepts.getOrAncestorOrNull(cFrame));
 	}
 
 	private boolean closedWorldSemantics(IRI propertyIRI) {
