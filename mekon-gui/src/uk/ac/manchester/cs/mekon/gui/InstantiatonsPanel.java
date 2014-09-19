@@ -25,6 +25,7 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -37,70 +38,44 @@ class InstantiatonsPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String CONCRETE_BUTTON_LABEL = "Concrete Instance";
-	static private final String QUERY_BUTTON_LABEL = "Query Instance";
-
-	static private final int BUTTON_SEPARATOR_WIDTH = 20;
+	static private final String TITLE_FORMAT = "Instantiate \"%s\"";
+	static private final String CONCRETE_BUTTON_LABEL = "Concrete...";
+	static private final String QUERY_BUTTON_LABEL = "Query...";
 
 	private CFramesTree modelTree;
 	private CFrame frame;
 
-	private abstract class InstantiateButton extends GButton {
+	private class InstantiateConcreteButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			new InstantiationFrame(modelTree, instantiate()).display();
+			instantiateConcrete();
 		}
-
-		InstantiateButton(String label) {
-
-			super(label + "...");
-
-			setEnabled(instantiable());
-		}
-
-		boolean instantiable() {
-
-			return frame.instantiable();
-		}
-
-		abstract IFrame instantiate();
-	}
-
-	private class InstantiateConcreteButton extends InstantiateButton {
-
-		static private final long serialVersionUID = -1;
 
 		InstantiateConcreteButton() {
 
 			super(CONCRETE_BUTTON_LABEL);
-		}
 
-		IFrame instantiate() {
-
-			return frame.instantiate();
+			setEnabled(instantiable());
 		}
 	}
 
-	private class InstantiateQueryButton extends InstantiateButton {
+	private class InstantiateQueryButton extends GButton {
 
 		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			instantiateQuery();
+		}
 
 		InstantiateQueryButton() {
 
 			super(QUERY_BUTTON_LABEL);
-		}
 
-		boolean instantiable() {
-
-			return queriesEnabled() && super.instantiable();
-		}
-
-		IFrame instantiate() {
-
-			return frame.instantiateQuery();
+			setEnabled(queriesEnabled() && instantiable());
 		}
 	}
 
@@ -111,7 +86,22 @@ class InstantiatonsPanel extends JPanel {
 		this.modelTree = modelTree;
 		this.frame = frame;
 
+		setBorder(createBorder());
 		add(createButtonsComponent(), BorderLayout.EAST);
+	}
+
+	private TitledBorder createBorder() {
+
+		TitledBorder border = new TitledBorder(createTitle());
+
+		border.setTitleFont(GFonts.toMedium(border.getTitleFont()));
+
+		return border;
+	}
+
+	private String createTitle() {
+
+		return String.format(TITLE_FORMAT, frame.getIdentity().getLabel());
 	}
 
 	private JComponent createButtonsComponent() {
@@ -122,6 +112,21 @@ class InstantiatonsPanel extends JPanel {
 		panel.add(new InstantiateQueryButton());
 
 		return panel;
+	}
+
+	private void instantiateConcrete() {
+
+		new ConcreteInstanceFrame(modelTree, frame.instantiate()).display();
+	}
+
+	private void instantiateQuery() {
+
+		new QueryInstanceFrame(modelTree, frame.instantiateQuery()).display();
+	}
+
+	private boolean instantiable() {
+
+		return frame.instantiable();
 	}
 
 	private boolean queriesEnabled() {

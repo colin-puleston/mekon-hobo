@@ -33,8 +33,6 @@ import javax.swing.tree.*;
  */
 class GCellRenderers {
 
-	static private final float FONT_SIZE = 16;
-
 	static private final GCellRenderers singleton = new GCellRenderers();
 
 	static GCellRenderers get() {
@@ -107,6 +105,6 @@ class GCellRenderers {
 
 	private Font customiseDisplayFont(Font font, GCellDisplay display) {
 
-		return display.customiseFont(font.deriveFont(FONT_SIZE));
+		return display.customiseFont(GFonts.toLarge(font));
 	}
 }

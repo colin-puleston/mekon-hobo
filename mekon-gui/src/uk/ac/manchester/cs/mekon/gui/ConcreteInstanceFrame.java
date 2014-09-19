@@ -23,135 +23,135 @@
  */
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
  * @author Colin Puleston
  */
-class InstantiationOptionsPanel extends JPanel {
+class ConcreteInstanceFrame extends InstantiationFrame {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String STORE_CONCRETE_BUTTON_LABEL = "Store...";
-	static private final String EXECUTE_QUERY_BUTTON_LABEL = "Execute";
-	static private final String CONCRETE_SELECTOR_TITLE = "Instance Name";
+	static private final String CONCRETE_LABEL = "Concrete";
+	static private final String STORE_ACTION_LABEL = "Store";
+	static private final String NAME_FIELD_TITLE = "Name:";
 
-	private CFramesTree modelTree;
-	private IFrame frame;
+	static private final Dimension NAME_FIELD_SIZE = new Dimension(250, 25);
 
-	private class StoreConcreteButton extends GButton {
+	static void display(CFramesTree modelTree, IStore iStore, CIdentity identity) {
+
+		IFrame instance = iStore.get(identity);
+		ConcreteInstanceFrame frame = new ConcreteInstanceFrame(modelTree, instance);
+
+		frame.setInstanceName(identity.getLabel());
+		frame.display();
+	}
+
+	private JTextField nameField = new JTextField();
+
+	private class StoreButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			storeConcrete();
+			store();
 		}
 
-		StoreConcreteButton() {
+		StoreButton() {
 
-			super(STORE_CONCRETE_BUTTON_LABEL);
-		}
-	}
-
-	private class ExecuteQueryButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			executeQuery();
-		}
-
-		ExecuteQueryButton() {
-
-			super(EXECUTE_QUERY_BUTTON_LABEL);
+			super(STORE_ACTION_LABEL);
 		}
 	}
 
-	InstantiationOptionsPanel(CFramesTree modelTree, IFrame frame) {
+	ConcreteInstanceFrame(CFramesTree modelTree, IFrame frame) {
 
-		super(new BorderLayout());
+		super(modelTree, frame);
 
-		this.modelTree = modelTree;
-		this.frame = frame;
-
-		add(createButton(), BorderLayout.EAST);
+		GFonts.setMedium(nameField);
+		nameField.setPreferredSize(NAME_FIELD_SIZE);
 	}
 
-	private JButton createButton() {
+	void setInstanceName(String name) {
 
-		return frame.getCategory().query()
-				? new ExecuteQueryButton()
-				: new StoreConcreteButton();
+		nameField.setText(name);
 	}
 
-	private void storeConcrete() {
+	String getCategoryLabel() {
 
-		CIdentity identity = checkObtainConcreteIdentity();
+		return CONCRETE_LABEL;
+	}
 
-		if (identity != null && checkConcreteToBeStored(identity)) {
+	JComponent createControlsPanel() {
 
-			getIStore().add(frame, identity);
+		JPanel panel = new JPanel(new BorderLayout());
 
-			showConcreteStoredMessage(identity);
+		panel.add(createNameComponent(), BorderLayout.WEST);
+		panel.add(new StoreButton(), BorderLayout.EAST);
+
+		return panel;
+	}
+
+	private JComponent createNameComponent() {
+
+		JPanel panel = new JPanel();
+
+		panel.add(createNameFieldLabel());
+		panel.add(nameField);
+
+		return panel;
+	}
+
+	private JLabel createNameFieldLabel() {
+
+		JLabel label = new JLabel(NAME_FIELD_TITLE);
+
+		GFonts.setLarge(nameField);
+
+		return label;
+	}
+
+	private void store() {
+
+		CIdentity identity = getIdentityOrNull();
+
+		if (identity != null && checkStorageRequired(identity)) {
+
+			getIStore().add(getFrame(), identity);
+
+			showStoredMessage(identity);
 		}
 	}
 
-	private void executeQuery() {
+	private CIdentity getIdentityOrNull() {
 
-		IMatches matches = getIStore().match(frame);
-
-		if (matches.anyMatches()) {
-
-			new QueryMatchesDialog(modelTree, getIStore(), matches);
-		}
-		else {
-
-			showNoQueryMatchesMessage();
-		}
+		return CIdentityCreator.createOrNull(nameField.getText());
 	}
 
-	private CIdentity checkObtainConcreteIdentity() {
-
-		return createIdentitySelector().getSelectionOrNull();
-	}
-
-	private CIdentitySelector createIdentitySelector() {
-
-		return new CIdentitySelector(this, CONCRETE_SELECTOR_TITLE);
-	}
-
-	private boolean checkConcreteToBeStored(CIdentity identity) {
+	private boolean checkStorageRequired(CIdentity identity) {
 
 		if (getIStore().contains(identity)) {
 
-			return confirmReplaceStoredConcrete(identity);
+			return confirmReplaceStored(identity);
 		}
 
 		return true;
 	}
 
-	private boolean confirmReplaceStoredConcrete(CIdentity identity) {
+	private boolean confirmReplaceStored(CIdentity identity) {
 
 		return obtainConfirmation(
 					"Replacing instance: "
 					+ "\"" + identity.getLabel() + "\"");
 	}
 
-	private void showConcreteStoredMessage(CIdentity identity) {
+	private void showStoredMessage(CIdentity identity) {
 
 		showMessage("Instance stored: \"" + identity.getLabel() + "\"");
-	}
-
-	private void showNoQueryMatchesMessage() {
-
-		showMessage("No matches for supplied query");
 	}
 
 	private boolean obtainConfirmation(String msg) {
@@ -171,10 +171,5 @@ class InstantiationOptionsPanel extends JPanel {
 	private void showMessage(String msg) {
 
 		JOptionPane.showMessageDialog(null, msg);
-	}
-
-	private IStore getIStore() {
-
-		return frame.getType().getModel().getIStore();
 	}
 }

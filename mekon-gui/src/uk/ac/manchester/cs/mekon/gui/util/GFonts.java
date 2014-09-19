@@ -21,63 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.ac.manchester.cs.mekon.gui;
+package uk.ac.manchester.cs.mekon.gui.util;
 
-import java.awt.Dimension;
+import java.awt.*;
 import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-
-import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryMatchesDialog extends GDialog {
+public class GFonts {
 
-	static private final long serialVersionUID = -1;
+	static private final float SMALL_SIZE = 12;
+	static private final float MEDIUM_SIZE = 14;
+	static private final float LARGE_SIZE = 16;
 
-	static private final String TITLE = "Query Matches";
-	static private final Dimension WINDOW_SIZE = new Dimension(250, 300);
+	static public void setSmall(JComponent component) {
 
-	private CFramesTree modelTree;
-	private IStore iStore;
-
-	private class MatchViewer extends GSelectionListener<CIdentity> {
-
-		protected void onSelected(CIdentity entity) {
-
-			showInstance(entity);
-		}
+		set(component, SMALL_SIZE);
 	}
 
-	QueryMatchesDialog(CFramesTree modelTree, IStore iStore, IMatches matches) {
+	static public void setMedium(JComponent component) {
 
-		super(modelTree, TITLE, true);
-
-		this.modelTree = modelTree;
-		this.iStore = iStore;
-
-		setPreferredSize(WINDOW_SIZE);
-		display(new JScrollPane(createGList(matches)));
+		set(component, MEDIUM_SIZE);
 	}
 
-	private GList<CIdentity> createGList(IMatches matches) {
+	static public void setLarge(JComponent component) {
 
-		GList<CIdentity> list = new GList<CIdentity>(!matches.ranked());
-
-		list.addSelectionListener(new MatchViewer());
-
-		for (CIdentity match : matches.getMatches()) {
-
-			list.addEntity(match, new GCellDisplay(match.getLabel()));
-		}
-
-		return list;
+		set(component, LARGE_SIZE);
 	}
 
-	private void showInstance(CIdentity id) {
+	static public Font toSmall(Font font) {
 
-		new InstantiationFrame(modelTree, iStore.get(id)).display();
+		return font.deriveFont(SMALL_SIZE);
+	}
+
+	static public Font toMedium(Font font) {
+
+		return font.deriveFont(MEDIUM_SIZE);
+	}
+
+	static public Font toLarge(Font font) {
+
+		return font.deriveFont(LARGE_SIZE);
+	}
+
+	static private void set(JComponent component, float size) {
+
+		component.setFont(component.getFont().deriveFont(size));
 	}
 }
