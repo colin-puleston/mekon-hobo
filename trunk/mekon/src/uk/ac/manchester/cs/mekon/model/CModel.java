@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
@@ -52,7 +53,7 @@ public class CModel implements CAnnotatable {
 	private boolean queriesEnabled = false;
 	private IEditor iEditor = new IEditorImpl(this);
 	private IUpdating iUpdating = new IUpdating(iEditor);
-	private IStore iStore = new IStore();
+	private IStore iStore = new IStore(this);
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
@@ -210,6 +211,11 @@ public class CModel implements CAnnotatable {
 		iUpdating.setDefaultOp(op, enabled);
 	}
 
+	void setIStoreDirectory(File storeDirectory) {
+
+		iStore.setStoreDirectory(storeDirectory);
+	}
+
 	void addIMatcher(IMatcher iMatcher) {
 
 		iStore.addMatcher(iMatcher);
@@ -263,7 +269,7 @@ public class CModel implements CAnnotatable {
 
 		new CHierarchyNormaliser(this);
 		new CFramesInitialiser(frames).completeInitialisation();
-		new IStoreParser(this).parse(iStore);
+		iStore.checkLoad();
 
 		pollInitialisationListeners();
 

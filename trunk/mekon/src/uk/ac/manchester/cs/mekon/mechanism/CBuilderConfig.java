@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
+import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -66,6 +67,7 @@ class CBuilderConfig implements CBuilderConfigVocab {
 	void configure(CBuilder builder) {
 
 		setQueriesEnabling(builder);
+		setIStoreDirectory(builder);
 		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
 	}
@@ -73,6 +75,11 @@ class CBuilderConfig implements CBuilderConfigVocab {
 	private void setQueriesEnabling(CBuilder builder) {
 
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
+	}
+
+	private void setIStoreDirectory(CBuilder builder) {
+
+		builder.setIStoreDirectory(getIStoreDirectory());
 	}
 
 	private void setInstanceUpdating(CBuilder builder) {
@@ -105,6 +112,24 @@ class CBuilderConfig implements CBuilderConfigVocab {
 	private void loadSectionBuilder(CBuilder builder, KConfigNode sectionNode) {
 
 		builder.addSectionBuilder(createSectionBuilder(sectionNode));
+	}
+
+	private File getIStoreDirectory() {
+
+		return rootNode.getResource(
+					ISTORE_DIRECTORY_ATTR,
+					KConfigResourceFinder.DIRS,
+					getDefaultIStoreDirectory());
+	}
+
+	private File getDefaultIStoreDirectory() {
+
+		return rootNode.getConfigFile().getFile().getParentFile();
+	}
+
+	private KConfigResourceFinder getOWLFileFinder(File baseDir) {
+
+		return new KConfigResourceFinder(baseDir, false);
 	}
 
 	private CSectionBuilder createSectionBuilder(KConfigNode sectionNode) {

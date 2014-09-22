@@ -36,8 +36,9 @@ public interface CBuilderConfigVocab {
 	static public final String INSTANCE_UPDATING_ID = "InstanceUpdating";
 	static public final String DEFAULT_UPDATE_OPS_ID = "DefaultOperations";
 
-	static public final String SECTION_BLDER_CLASS_ATTR = "builder";
 	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
+	static public final String ISTORE_DIRECTORY_ATTR = "instanceStoreDirectory";
+	static public final String SECTION_BLDER_CLASS_ATTR = "builder";
 	static public final String AUTO_UPDATE_ATTR = "autoUpdate";
 	static public final String UPDATE_INFERREDS_ATTR = "inferredTypes";
 	static public final String UPDATE_SUGGESTEDS_ATTR = "suggestedTypes";
