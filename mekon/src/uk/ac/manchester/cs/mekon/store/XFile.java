@@ -43,18 +43,6 @@ public class XFile {
 
 	static private final String PRETTY_PRINT_ID = "format-pretty-print";
 
-	static private File getFile(String fileName) {
-
-		URL url = XFile.class.getClassLoader().getResource(fileName);
-
-		if (url == null) {
-
-			throw new XFileException("Cannot access file: " + fileName);
-		}
-
-		return new File(url.getFile());
-	}
-
 	static private Document readDocument(File file) {
 
 		try {
@@ -181,22 +169,17 @@ public class XFile {
 		}
 	}
 
-	XFile(String fileName, Document document) {
+	Element createElement(String id) {
 
-		this(getFile(fileName));
+		return document.createElement(id);
 	}
 
-	XFile(File file, Document document) {
+	private XFile(File file, Document document) {
 
 		this.file = file;
 		this.document = document;
 
 		rootNode = new XNode(this, getRootElement());
-	}
-
-	Element createElement(String id) {
-
-		return document.createElement(id);
 	}
 
 	private Element getRootElement() {
