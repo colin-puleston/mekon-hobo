@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
@@ -50,6 +51,11 @@ class CBuilderImpl implements CBuilder {
 	public void setDefaultUpdateOp(IUpdateOp op, boolean enabled) {
 
 		model.setDefaultUpdateOp(op, enabled);
+	}
+
+	public void setIStoreDirectory(File storeDirectory) {
+
+		model.setIStoreDirectory(storeDirectory);
 	}
 
 	public void addIMatcher(IMatcher iMatcher) {

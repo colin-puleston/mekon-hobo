@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
 
@@ -69,14 +70,9 @@ class IStoreRenderer implements IStoreSerialiser {
 		}
 	}
 
-	IStoreRenderer() {
+	IStoreRenderer(File storeFile) {
 
-		this(DEFAULT_FILE_NAME);
-	}
-
-	IStoreRenderer(String fileName) {
-
-		file = new XFile(fileName, ROOT_ID);
+		file = new XFile(storeFile, ROOT_ID);
 	}
 
  	void render(IStore store) {

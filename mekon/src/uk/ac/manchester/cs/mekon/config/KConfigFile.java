@@ -39,6 +39,11 @@ public class KConfigFile {
 
 	static private final String DEFAULT_FILE_NAME = "mekon.xml";
 
+	static private File getFileFromClasspath(String fileName) {
+
+		return KConfigResourceFinder.FILES.getResource(fileName);
+	}
+
 	private XFile xFile;
 	private KConfigNode rootNode;
 
@@ -67,7 +72,7 @@ public class KConfigFile {
 	 */
 	public KConfigFile(String fileName) {
 
-		this(new XFile(fileName));
+		this(getFileFromClasspath(fileName));
 	}
 
 	/**

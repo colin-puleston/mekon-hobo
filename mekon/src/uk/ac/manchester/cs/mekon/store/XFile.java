@@ -103,20 +103,6 @@ public class XFile {
 	private XNode rootNode;
 
 	/**
-	 * Constructor that loads document from a file with the specified
-	 * name, located somewhere on the classpath.
-	 *
-	 * @param fileName Name of relevant file
-	 * @throws XFileException if file does not exist or if it contains
-	 * incorrectly specified information, either syntactically
-	 * or semantically
-	 */
-	public XFile(String fileName) {
-
-		this(getFile(fileName));
-	}
-
-	/**
 	 * Constructor that loads document from a file.
 	 *
 	 * @param file Path of relevant file
@@ -127,19 +113,6 @@ public class XFile {
 	public XFile(File file) {
 
 		this(file, readDocument(file));
-	}
-
-	/**
-	 * Constructor that creates a new document, which will upon request
-	 * be written to the file with the specified name, located somewhere
-	 * on the classpath.
-	 *
-	 * @param fileName Name of file to be created, when required
-	 * @param rootNodeId Identifier for root node
-	 */
-	public XFile(String fileName, String rootNodeId) {
-
-		this(getFile(fileName), rootNodeId);
 	}
 
 	/**

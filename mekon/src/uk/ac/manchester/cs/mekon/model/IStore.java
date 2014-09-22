@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
@@ -41,6 +42,11 @@ import uk.ac.manchester.cs.mekon.store.*;
  * @author Colin Puleston
  */
 public class IStore {
+
+	static private final String STORE_FILE_NAME = "mekon-istore.xml";
+
+	private CModel model;
+	private File storeDirectory = null;
 
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
 
@@ -141,6 +147,26 @@ public class IStore {
 		return resolveLabels(matcher.match(query));
 	}
 
+	IStore(CModel model) {
+
+		this.model = model;
+	}
+
+	void setStoreDirectory(File storeDirectory) {
+
+		this.storeDirectory = storeDirectory;
+	}
+
+	void checkLoad() {
+
+		File file = getStoreFile();
+
+		if (file.exists()) {
+
+			new IStoreParser(model, file).parse(this);
+		}
+	}
+
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
@@ -234,6 +260,16 @@ public class IStore {
 
 	private void writeToFile() {
 
-		new IStoreRenderer().render(this);
+		new IStoreRenderer(getStoreFile()).render(this);
+	}
+
+	private File getStoreFile() {
+
+		if (storeDirectory == null) {
+
+			return new File(STORE_FILE_NAME);
+		}
+
+		return new File(storeDirectory, STORE_FILE_NAME);
 	}
 }

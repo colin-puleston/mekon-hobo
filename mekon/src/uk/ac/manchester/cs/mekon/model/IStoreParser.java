@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.io.*;
+
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
@@ -71,16 +73,11 @@ class IStoreParser implements IStoreSerialiser {
 		}
 	}
 
- 	IStoreParser(CModel model) {
-
-		this(model, DEFAULT_FILE_NAME);
-	}
-
- 	IStoreParser(CModel model, String fileName) {
+ 	IStoreParser(CModel model, File storeFile) {
 
 		this.model = model;
 
-		file = new XFile(fileName);
+		file = new XFile(storeFile);
 	}
 
  	void parse(IStore store) {
