@@ -143,18 +143,18 @@ public class ORClassifierTest extends OTest {
 
 		testInferredTypes(citizen);
 
-		addFrameSlotValue(citizen, EMPLOYMENT_PROPERTY, employ);
+		addISlotValue(citizen, EMPLOYMENT_PROPERTY, employ);
 		testInferredTypes(citizen, unemployedCitizenConcepts);
 
-		addFrameSlotValue(employ, JOBS_PROPERTY, job);
+		addISlotValue(employ, JOBS_PROPERTY, job);
 		testInferredTypes(citizen, employedCitizenConcepts);
 
 		testInferredTypes(job);
 
-		addFrameSlotValue(job, INDUSTRY_PROPERTY, academia);
+		addISlotValue(job, INDUSTRY_PROPERTY, academia);
 		testInferredTypes(job, academicJobConcepts);
 
-		addFrameSlotValue(job, JOB_TYPE_PROPERTY, teacher);
+		addISlotValue(job, JOB_TYPE_PROPERTY, teacher);
 		testInferredTypes(job, academicTeachingJobConcepts);
 	}
 
@@ -191,11 +191,6 @@ public class ORClassifierTest extends OTest {
 
 			ss.addExceptionProperty(nameToIdentifier(exPropName));
 		}
-	}
-
-	private void addFrameSlotValue(IFrame container, String slotName, IFrame value) {
-
-		getISlot(container, slotName).getValuesEditor().add(value);
 	}
 
 	private void testInferredTypes(IFrame iFrame, String... typeNames) {

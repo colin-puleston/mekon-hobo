@@ -45,6 +45,7 @@ public class OTest extends FramesTestUtils {
 
 		CBuilder cBuilder = CManager.createEmptyBuilder();
 
+		cBuilder.setQueriesEnabled(true);
 		cBuilder.addSectionBuilder(sectionBuilder);
 
 		model = cBuilder.build();
@@ -97,9 +98,19 @@ public class OTest extends FramesTestUtils {
 		return model.instantiate(nameToIdentity(name));
 	}
 
+	public IFrame createQueryIFrame(String name) {
+
+		return model.instantiateQuery(nameToIdentity(name));
+	}
+
 	public ISlot getISlot(IFrame container, String name) {
 
 		return container.getSlots().get(nameToIdentity(name));
+	}
+
+	public void addISlotValue(IFrame container, String slotName, IValue value) {
+
+		getISlot(container, slotName).getValuesEditor().add(value);
 	}
 
 	public IRI nameToIRI(String name) {
