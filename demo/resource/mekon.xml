@@ -81,23 +81,11 @@
 				default="OPEN_WORLD">
 				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
 			</SlotSemantics>
-			<ApplicableConcepts>
-				<Group
-					rootURI="http://mekon/demo.owl#Citizen"/>
-				<Group
-					rootURI="http://mekon/demo.owl#Employment"/>
-				<Group
-					rootURI="http://mekon/demo.owl#Job"/>
-			</ApplicableConcepts>
 		</OWLClassifier>
 
 		<OWLMatcher
 			loggingMode="DISABLED">
 			<SlotSemantics default="OPEN_WORLD"/>
-			<ApplicableConcepts>
-				<Group
-					rootURI="http://mekon/demo.owl#Citizen"/>
-			</ApplicableConcepts>
 		</OWLMatcher>
 
 		<!--
