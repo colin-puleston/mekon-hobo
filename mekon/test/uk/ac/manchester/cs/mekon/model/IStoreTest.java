@@ -24,10 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.*;
+
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
@@ -41,6 +45,76 @@ public class IStoreTest extends MekonTest {
 
 	private IFrame first = null;
 	private IFrame second = null;
+
+	private class TestMatcher implements IMatcher {
+
+		final IFrame instance;
+		final IFrame query;
+
+		private CFrame type;
+
+		public boolean handlesType(CFrame type) {
+
+			return type == this.type;
+		}
+
+		public boolean add(IFrame instance, CIdentity identity) {
+
+			assertTrue(instance.matches(this.instance));
+
+			return true;
+		}
+
+		public boolean remove(CIdentity identity) {
+
+			assertTrue(identity.equals(type.getIdentity()));
+
+			return true;
+		}
+
+		public IMatches match(IFrame query) {
+
+			assertTrue(query == this.query);
+
+			return new IMatches(getInstanceIdentityAsList(), false);
+		}
+
+		TestMatcher(String typeName) {
+
+			type = createCFrame(typeName);
+			instance = type.instantiate();
+			query = type.instantiateQuery();
+
+			store.addMatcher(this);
+		}
+
+		void addMatcherInstanceToStore() {
+
+			store.add(instance, getInstanceIdentity());
+		}
+
+		void removeMatcherInstanceFromStore() {
+
+			store.remove(getInstanceIdentity());
+		}
+
+		void checkQueryToStoreDirectedToMatcher() {
+
+			List<CIdentity> matches = store.match(query).getMatches();
+
+			assertTrue(matches.equals(getInstanceIdentityAsList()));
+		}
+
+		private List<CIdentity> getInstanceIdentityAsList() {
+
+			return Collections.singletonList(getInstanceIdentity());
+		}
+
+		private CIdentity getInstanceIdentity() {
+
+			return type.getIdentity();
+		}
+	}
 
 	@Before
 	public void setUp() {
@@ -75,6 +149,24 @@ public class IStoreTest extends MekonTest {
 		createStore();
 		store.checkLoad();
 		testRetrieve();
+	}
+
+	@Test
+	public void test_matching() {
+
+		getModel().setQueriesEnabled(true);
+
+		TestMatcher matcherA = new TestMatcher("A");
+		TestMatcher matcherB = new TestMatcher("B");
+
+		matcherA.addMatcherInstanceToStore();
+		matcherB.addMatcherInstanceToStore();
+
+		matcherA.checkQueryToStoreDirectedToMatcher();
+		matcherB.checkQueryToStoreDirectedToMatcher();
+
+		matcherA.removeMatcherInstanceFromStore();
+		matcherB.removeMatcherInstanceFromStore();
 	}
 
 	private void createStore() {
