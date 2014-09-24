@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 /**
  * Identifies a concept-level entity from the frames-based
  * model via a unique identifier, and a label. The identifier
@@ -36,6 +38,44 @@ package uk.ac.manchester.cs.mekon.model;
 public class CIdentity {
 
 	static private final String UNSPECIFIED_LABEL = "<NO-LABEL>";
+
+	/**
+	 * Provides the unique identifiers from all of the specified
+	 * identities.
+	 *
+	 * @param identities Identities whose identifiers are required
+	 * @return All relevant identifiers (in relevant order, if
+	 * applicable)
+	 */
+	static public List<String> getAllIdentifiers(Collection<CIdentity> identities) {
+
+		List<String> ids = new ArrayList<String>();
+
+		for (CIdentity identity : identities) {
+
+			ids.add(identity.getIdentifier());
+		}
+
+		return ids;
+	}
+
+	/**
+	 * Provides the labels from all of the specified identities.
+	 *
+	 * @param identities Identities whose labels are required
+	 * @return All relevant labels (in relevant order, if applicable)
+	 */
+	static public List<String> getAllLabels(Collection<CIdentity> identities) {
+
+		List<String> labels = new ArrayList<String>();
+
+		for (CIdentity identity : identities) {
+
+			labels.add(identity.getLabel());
+		}
+
+		return labels;
+	}
 
 	private String[] identifierComponents;
 	private String label;

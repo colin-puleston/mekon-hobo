@@ -281,7 +281,7 @@ public class IFrame implements IEntity, IValue {
 	 * @param other Object to test for equality with this one
 	 * @return true if other object is the same object as this one,
 	 * or is another <code>IFrame</code> with the same type as this
-	 * one, and the type being such that there are no attached slots.
+	 * one, and the type being such that there are no attached slots
 	 */
 	public boolean equals(Object other) {
 
@@ -301,6 +301,22 @@ public class IFrame implements IEntity, IValue {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Tests whether this frame and another one have identical types,
+	 * identical inferred-types and matching slot-values (in matching
+	 * order. For <code>IFrame</code>-valued slots, value-matching
+	 * involves a recusive invocation of the same frame-matching
+	 * operation. Otherwise value-matching is determinied via the
+	 * standard <code>equals</code> methods on the value objects.
+	 *
+	 * @param other Frame to test for matching with this one
+	 * @return true if frames match
+	 */
+	public boolean matches(IFrame other) {
+
+		return equals(other) || new IFrameMatcher().match(this, other);
 	}
 
 	/**

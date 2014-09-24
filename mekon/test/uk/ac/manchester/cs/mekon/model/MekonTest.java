@@ -40,6 +40,36 @@ public class MekonTest extends FramesTestUtils {
 		this(model, new InertIReasoner());
 	}
 
+	public IFrame createComplexInstance() {
+
+		return createComplexInstance("");
+	}
+
+	public IFrame createComplexInstance(String typesPrefix) {
+
+		IFrame fa = createIFrame(typesPrefix + "A");
+		IFrame fb = createIFrame(typesPrefix + "B");
+		IFrame fc = createIFrame(typesPrefix + "C");
+		IFrame fd = createIFrame(typesPrefix + "D");
+
+		CFrame te = createCFrame(typesPrefix + "E");
+		CFrame tex = createCFrame(typesPrefix + "EX");
+		CFrame tey = createCFrame(typesPrefix + "EY");
+
+		addSuperFrame(tex, te);
+		addSuperFrame(tey, te);
+
+		CNumber n = CIntegerDef.range(1, 10).createNumber();
+
+		createISlotWithValue(fa, "sab", fb);
+		createISlotWithValue(fa, "sac", fc);
+		createISlotWithValue(fb, "sbd", fd);
+		createISlotWithValues(fb, "sbe", te.getType(), tex, tey);
+		createISlotWithValues(fb, "sbn", n, n.getMax());
+
+		return fa;
+	}
+
 	public CModelFrame createCFrame(String name) {
 
 		return createCFrame(name, false);
@@ -80,18 +110,18 @@ public class MekonTest extends FramesTestUtils {
 					CCardinality cardinality,
 					CValue<?> valueType) {
 
-		String name = container.getIdentity().getLabel() + "-slot";
+		String propName = createDefaultSlotPropertyName(container);
 
-		return createCSlot(container, name, cardinality, valueType);
+		return createCSlot(container, propName, cardinality, valueType);
 	}
 
 	public CSlot createCSlot(
 					CFrame container,
-					String propertyName,
+					String propName,
 					CCardinality cardinality,
 					CValue<?> valueType) {
 
-		CProperty prop = createCProperty(propertyName);
+		CProperty prop = createCProperty(propName);
 
 		return createCSlot(container, prop, cardinality, valueType);
 	}
@@ -120,11 +150,44 @@ public class MekonTest extends FramesTestUtils {
 		return createISlot(createISlotContainer(), cardinality, valueType);
 	}
 
-	public ISlot createISlot(IFrame container, CCardinality cardinality, CValue<?> valueType) {
+	public ISlot createISlot(
+					IFrame container,
+					CCardinality cardinality,
+					CValue<?> valueType) {
 
-		CSlot type = createCSlot(container.getType(), cardinality, valueType);
+		String propName = createDefaultSlotPropertyName(container.getType());
+
+		return createISlot(container, propName, cardinality, valueType);
+	}
+
+	public ISlot createISlot(
+					IFrame container,
+					String propName,
+					CCardinality cardinality,
+					CValue<?> valueType) {
+
+		CSlot type = createCSlot(container.getType(), propName, cardinality, valueType);
 
 		return container.createEditor().addSlot(type);
+	}
+
+	public void createISlotWithValue(IFrame container, String propName, IFrame value) {
+
+		createISlotWithValues(container, propName, value.getType(), value);
+	}
+
+	public void createISlotWithValues(
+					IFrame container,
+					String propName,
+					CValue valueType,
+					IValue... values) {
+
+		ISlot slot = createISlot(container, propName, CCardinality.FREE, valueType);
+
+		for (IValue value : values) {
+
+			slot.getValuesEditor().add(value);
+		}
 	}
 
 	public void normaliseCFramesHierarchy() {
@@ -175,6 +238,11 @@ public class MekonTest extends FramesTestUtils {
 		frame.setIReasoner(iReasoner);
 
 		return frame;
+	}
+
+	private String createDefaultSlotPropertyName(CFrame container) {
+
+		return container.getIdentity().getLabel() + "-slot";
 	}
 
 	private CIdentity createIdentity(String name) {
