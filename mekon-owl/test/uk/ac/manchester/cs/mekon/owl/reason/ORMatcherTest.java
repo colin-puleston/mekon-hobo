@@ -31,10 +31,8 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
@@ -297,14 +295,7 @@ public class ORMatcherTest extends OTest {
 
 	private void addInstance(IFrame instance, String name) {
 
-		assertTrue(
-			"Instance already added to matcher: " + name,
-			addToMatcher(instance, name));
-	}
-
-	private boolean addToMatcher(IFrame instance, String name) {
-
-		return matcher.add(instance, new CIdentity(name));
+		assertTrue(matcher.add(instance, new CIdentity(name)));
 	}
 
 	private void executeQuery(IFrame query, String... expectedMatches) {
@@ -314,15 +305,8 @@ public class ORMatcherTest extends OTest {
 		testListContents(instanceIdsToNames(matches), list(expectedMatches));
 	}
 
-	public List<String> instanceIdsToNames(List<CIdentity> ids) {
+	private List<String> instanceIdsToNames(List<CIdentity> ids) {
 
-		List<String> names = new ArrayList<String>();
-
-		for (CIdentity id : ids) {
-
-			names.add(id.getIdentifier());
-		}
-
-		return names;
+		return CIdentity.getAllIdentifiers(ids);
 	}
 }
