@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 @RunWith(Suite.class)
 @SuiteClasses({
 	OBSectionBuilderTest.class,
-	ORClassifierTest.class})
+	ORClassifierTest.class,
+	ORMatcherTest.class})
 public class MekonOWLTestSuite {
 }
