@@ -167,6 +167,16 @@ public class IStore {
 		}
 	}
 
+	void checkRemoveStoreFile() {
+
+		File file = getStoreFile();
+
+		if (file.exists()) {
+
+			file.delete();
+		}
+	}
+
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);

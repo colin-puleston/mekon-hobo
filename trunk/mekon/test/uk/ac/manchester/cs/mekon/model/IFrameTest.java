@@ -64,7 +64,7 @@ public class IFrameTest extends MekonTest {
 		this(new MonitorIReasoner());
 	}
 
-	@Test
+//	@Test
 	public void test_updateInferredTypes() {
 
 		IFrame f = createIFrame("F");
@@ -81,23 +81,32 @@ public class IFrameTest extends MekonTest {
 		testUpdateInferredTypes(f, NO_IFRAMES, NO_IFRAMES, list(ta));
 	}
 
-	@Test
+//	@Test
 	public void test_updateSlotValue() {
 
 		IFrame fa = createIFrame("A");
 		IFrame fb = createIFrame("B");
 		IFrame fc = createIFrame("C");
 
-		ISlot sa = createISlot(fa, CCardinality.FREE, fb.getType());
-		ISlot sb = createISlot(fb, CCardinality.FREE, fc.getType());
-
 		monitorIReasoner.resetRegisters();
-		sa.getValuesEditor().add(fb);
+		createISlotWithValue(fa, "sab", fb);
 		testList(monitorIReasoner.updateds, list(fa));
 
 		monitorIReasoner.resetRegisters();
-		sb.getValuesEditor().add(fc);
+		createISlotWithValue(fb, "sbc", fc);
 		testList(monitorIReasoner.updateds, list(fb, fa));
+	}
+
+	@Test
+	public void test_copyAndMatch() {
+
+		IFrame i = createComplexInstance();
+		IFrame iCopy = i.copy();
+
+		assertFalse(i == iCopy);
+		assertTrue(iCopy.matches(i));
+		assertTrue(i.matches(iCopy));
+		assertTrue(i.matches(i));
 	}
 
 	private IFrameTest(MonitorIReasoner monitorIReasoner) {

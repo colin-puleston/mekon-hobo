@@ -48,6 +48,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 	IFrameTest.class,
 	ISlotTest.class,
 	ISlotValuesTest.class,
-	ISlotSpecsTest.class})
+	ISlotSpecsTest.class,
+	IStoreTest.class})
 public class MekonTestSuite {
 }
