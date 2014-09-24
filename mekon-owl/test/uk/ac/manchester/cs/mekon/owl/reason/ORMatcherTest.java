@@ -53,10 +53,10 @@ public class ORMatcherTest extends OTest {
 	static private final String HOURLY_PAY_PROPERTY = "hourlyPay";
 	static private final String TEACHES_PROPERTY = "teaches";
 
-	static private final String UNDERGRAD_TEACHING_JOB_NAME = "UndergradTeacher";
-	static private final String POSTGRAD_TEACHING_JOB_NAME = "PostgradTeacher";
-	static private final String ACADEMIC_RESEARCH_JOB_NAME = "AcademicResearchInstance";
-	static private final String DOCTOR_JOB_NAME = "DoctorInstance";
+	static private final CIdentity UNDERGRAD_TEACHING_JOB_ID = new CIdentity("UndergradTeaching");
+	static private final CIdentity POSTGRAD_TEACHING_JOB_ID = new CIdentity("PostgradTeaching");
+	static private final CIdentity ACADEMIC_RESEARCH_JOB_ID = new CIdentity("AcademicResearch");
+	static private final CIdentity DOCTORING_JOB_ID = new CIdentity("Doctoring");
 
 	static private final int MIN_HOURLY_RATE = 10;
 	static private final int LOW_HOURLY_RATE = 14;
@@ -93,10 +93,10 @@ public class ORMatcherTest extends OTest {
 
 		executeQuery(
 			createJobQuery(),
-			UNDERGRAD_TEACHING_JOB_NAME,
-			POSTGRAD_TEACHING_JOB_NAME,
-			ACADEMIC_RESEARCH_JOB_NAME,
-			DOCTOR_JOB_NAME);
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID,
+			ACADEMIC_RESEARCH_JOB_ID,
+			DOCTORING_JOB_ID);
 	}
 
 	@Test
@@ -106,23 +106,23 @@ public class ORMatcherTest extends OTest {
 
 		executeQuery(
 			createAcademiaQuery(),
-			UNDERGRAD_TEACHING_JOB_NAME,
-			POSTGRAD_TEACHING_JOB_NAME,
-			ACADEMIC_RESEARCH_JOB_NAME);
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID,
+			ACADEMIC_RESEARCH_JOB_ID);
 
 		executeQuery(
 			createAcademicTeachingQuery(),
-			UNDERGRAD_TEACHING_JOB_NAME,
-			POSTGRAD_TEACHING_JOB_NAME);
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID);
 
 		executeQuery(
 			createPostgraduateTeachingQuery(),
-			POSTGRAD_TEACHING_JOB_NAME);
+			POSTGRAD_TEACHING_JOB_ID);
 
 		executeQuery(
 			createPostOrUndergradTeachingQuery(),
-			UNDERGRAD_TEACHING_JOB_NAME,
-			POSTGRAD_TEACHING_JOB_NAME);
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID);
 	}
 
 	@Test
@@ -132,10 +132,10 @@ public class ORMatcherTest extends OTest {
 
 		executeQuery(
 			createNumericJobQuery(MIN_HOURLY_RATE, MAX_HOURLY_RATE),
-			UNDERGRAD_TEACHING_JOB_NAME,
-			POSTGRAD_TEACHING_JOB_NAME,
-			ACADEMIC_RESEARCH_JOB_NAME,
-			DOCTOR_JOB_NAME);
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID,
+			ACADEMIC_RESEARCH_JOB_ID,
+			DOCTORING_JOB_ID);
 
 
 		executeQuery(
@@ -143,14 +143,14 @@ public class ORMatcherTest extends OTest {
 
 		executeQuery(
 			createNumericJobQuery(MIN_HOURLY_RATE, MID_HOURLY_RATE - 1),
-			UNDERGRAD_TEACHING_JOB_NAME,
-			POSTGRAD_TEACHING_JOB_NAME);
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID);
 
 		executeQuery(
 			createNumericJobQuery(MIN_HOURLY_RATE, HIGH_HOURLY_RATE - 1),
-			UNDERGRAD_TEACHING_JOB_NAME,
-			POSTGRAD_TEACHING_JOB_NAME,
-			ACADEMIC_RESEARCH_JOB_NAME);
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID,
+			ACADEMIC_RESEARCH_JOB_ID);
 
 
 		executeQuery(
@@ -158,12 +158,12 @@ public class ORMatcherTest extends OTest {
 
 		executeQuery(
 			createNumericJobQuery(MID_HOURLY_RATE + 1, MAX_HOURLY_RATE),
-			DOCTOR_JOB_NAME);
+			DOCTORING_JOB_ID);
 
 		executeQuery(
 			createNumericJobQuery(LOW_HOURLY_RATE + 1, MAX_HOURLY_RATE),
-			ACADEMIC_RESEARCH_JOB_NAME,
-			DOCTOR_JOB_NAME);
+			ACADEMIC_RESEARCH_JOB_ID,
+			DOCTORING_JOB_ID);
 	}
 
 	private void populate() {
@@ -176,36 +176,36 @@ public class ORMatcherTest extends OTest {
 
 	private void addUndergraduateTeachingJob() {
 
-		addAcademicTeachingJob(UNDERGRAD_TEACHING_JOB_NAME, UNDERGRAD_CONCEPT);
+		addAcademicTeachingJob(UNDERGRAD_TEACHING_JOB_ID, UNDERGRAD_CONCEPT);
 	}
 
 	private void addPostgraduateTeachingJob() {
 
-		addAcademicTeachingJob(POSTGRAD_TEACHING_JOB_NAME, POSTGRAD_CONCEPT);
+		addAcademicTeachingJob(POSTGRAD_TEACHING_JOB_ID, POSTGRAD_CONCEPT);
 	}
 
-	private void addAcademicTeachingJob(String jobName, String studentTypeConcept) {
+	private void addAcademicTeachingJob(CIdentity jobId, String studentTypeConcept) {
 
 		IFrame job = createJob(ACADEMIA_CONCEPT, TEACHER_CONCEPT, LOW_HOURLY_RATE);
 		IFrame studentType = createIFrame(studentTypeConcept);
 
 		addISlotValue(job, TEACHES_PROPERTY, studentType);
 
-		addInstance(job, jobName);
+		addInstance(job, jobId);
 	}
 
 	private void addAcademicResearchJob() {
 
 		IFrame job = createJob(ACADEMIA_CONCEPT, RESEARCHER_CONCEPT, MID_HOURLY_RATE);
 
-		addInstance(job, ACADEMIC_RESEARCH_JOB_NAME);
+		addInstance(job, ACADEMIC_RESEARCH_JOB_ID);
 	}
 
 	private void addDoctorJob() {
 
 		IFrame job = createJob(HEALTH_CONCEPT, DOCTOR_CONCEPT, HIGH_HOURLY_RATE);
 
-		addInstance(job, DOCTOR_JOB_NAME);
+		addInstance(job, DOCTORING_JOB_ID);
 	}
 
 	private IFrame createJob(
@@ -293,20 +293,15 @@ public class ORMatcherTest extends OTest {
 		return CIntegerDef.range(min, max).createNumber().asINumber();
 	}
 
-	private void addInstance(IFrame instance, String name) {
+	private void addInstance(IFrame instance, CIdentity id) {
 
-		assertTrue(matcher.add(instance, new CIdentity(name)));
+		assertTrue(matcher.add(instance, id));
 	}
 
-	private void executeQuery(IFrame query, String... expectedMatches) {
+	private void executeQuery(IFrame query, CIdentity... expectedMatches) {
 
 		List<CIdentity> matches = matcher.match(query).getMatches();
 
-		testListContents(instanceIdsToNames(matches), list(expectedMatches));
-	}
-
-	private List<String> instanceIdsToNames(List<CIdentity> ids) {
-
-		return CIdentity.getAllIdentifiers(ids);
+		testListContents(matches, list(expectedMatches));
 	}
 }
