@@ -104,6 +104,19 @@ class CFramesComboPanel extends JTabbedPane {
 		}
 	}
 
+	private class TreeTabReselector extends CFrameSelectionListener {
+
+		protected void onSelected(CFrame frame) {
+
+			setSelectedIndex(0);
+		}
+
+		TreeTabReselector() {
+
+			tree.addSelectionListener(this);
+		}
+	}
+
 	private class ListPanelFocuser implements ChangeListener {
 
 		private GListPanel<CFrame> panel;
@@ -135,6 +148,8 @@ class CFramesComboPanel extends JTabbedPane {
 
 		synchroniser.add(tree.getSelectionRelay());
 		synchroniser.add(fullList.getSelectionRelay());
+
+		new TreeTabReselector();
 	}
 
 	void enableSubTreeList() {
