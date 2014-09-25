@@ -147,20 +147,20 @@ class HelpPanel extends JTabbedPane {
 
 				super("Shapes");
 
-				addColumns("Shape", "Represents", "Entity Types");
+				addColumns("Shape", "Represents");
 
 				addRow(
+					mValueShape,
+					"Meta-level frame");
+				addRow(
 					cValueShape,
-					"Concept-level entity",
-					"CFrame, CNumber, CProperty");
+					"Concept-level frame/number");
 				addRow(
 					iValueShape,
-					"Instance-level entity",
-					"IFrame, INumber");
+					"Instance-level frame/number");
 				addRow(
 					defaultSlotShape,
-					"Slot (concept-level or instance-level)",
-					"CSlot, ISlot");
+					"Slot (concept-level or instance-level)");
 			}
 		}
 
@@ -172,28 +172,20 @@ class HelpPanel extends JTabbedPane {
 
 				super("Colours");
 
-				addColumns("Colour", "Represents", "Source", "Entity Types");
+				addColumns("Colour", "Represents");
 
 				addRow(
 					directColour,
-					"Frame / Slot",
-					"Object Model",
-					"MFrame, CFrame, CSlot, IFrame, ISlot");
+					"Frame/Slot (any level) with internal source (i.e. Object Model)");
 				addRow(
 					indirectColour,
-					"Frame / Slot",
-					"Ontology",
-					"MFrame, CFrame, CSlot, IFrame, ISlot");
+					"Frame/Slot (any level) with external source (e.g. Ontology)");
 				addRow(
 					dualColour,
-					"Frame / Slot",
-					"Object Model + Ontology",
-					"MFrame, CFrame, CSlot, IFrame, ISlot");
+					"Frame/Slot (any level) with dual sources (internal + external)");
 				addRow(
 					numberColour,
-					"Number",
-					"Context Dependent",
-					"CNumber, INumber");
+					"Number (concept-level or instance-level)");
 			}
 		}
 
@@ -205,30 +197,25 @@ class HelpPanel extends JTabbedPane {
 
 				super("Modifiers");
 
-				addColumns("Modifier", "Represents", "Entity Types");
+				addColumns("Modifier", "Represents");
 
 				addRow(
 					hiddenMFrameShape,
-					"Frame is hidden",
-					"MFrame");
+					"MFrame is hidden");
 				addRow(
 					hiddenCFrameShape,
-					"Frame is hidden",
-					"CFrame");
+					"CFrame is hidden");
 				addRow(
 					inactiveSlotShape,
-					"Slot is inactive",
-					"CSlot");
+					"CSlot is inactive");
 				addRow(
 					blockedSlotShape,
-					"Slot is dependent "
-					+ "(i.e. values are automatically derived)",
-					"CSlot");
+					"CSlot is dependent "
+					+ "(i.e. values are automatically derived)");
 				addRow(
 					blockedSlotShape,
-					"Slot is non-editable "
-					+ "(i.e. dependent slot on concrete instance)",
-					"ISlot");
+					"ISlot is non-editable "
+					+ "(i.e. dependent slot on concrete instance)");
 			}
 		}
 
@@ -258,37 +245,32 @@ class HelpPanel extends JTabbedPane {
 
 				this.conceptTreeOnly = conceptTreeOnly;
 
-				addColumns("Parent", "Child", "Semantics", "Entity Types");
+				addColumns("Parent", "Child", "Represents");
 
 				checkAddRow(
 					cValueShape,
 					defaultSlotShape,
-					"frame-has-slot",
-					"CFrame ==> CSlot",
+					"CFrame-has-slot",
 					false);
 				checkAddRow(
 					defaultSlotShape,
 					mValueShape,
-					"slot-has-value-type",
-					"CSlot ==> MFrame",
+					"CSlot-has-MFrame-value-type",
 					false);
 				checkAddRow(
 					defaultSlotShape,
 					cValueShape,
-					"slot-has-value-type",
-					"CSlot ==> CFrame / CNumber",
+					"CSlot-has-CFrame/CNumber-value-type",
 					false);
 				checkAddRow(
 					mValueShape,
 					mValueShape,
-					"frame-has-sub-frame",
-					"MFrame ==> MFrame",
+					"MFrame-has-sub-frame",
 					false);
 				checkAddRow(
 					cValueShape,
 					cValueShape,
-					"frame-has-sub-frame ",
-					"CFrame ==> CFrame",
+					"CFrame-has-sub-frame ",
 					true);
 			}
 
@@ -296,12 +278,11 @@ class HelpPanel extends JTabbedPane {
 							Icon parent,
 							Icon child,
 							String semantics,
-							String entities,
 							boolean conceptTree) {
 
 				if (conceptTree || !conceptTreeOnly) {
 
-					addRow(parent, child, semantics, entities);
+					addRow(parent, child, semantics);
 				}
 			}
 		}
@@ -327,38 +308,33 @@ class HelpPanel extends JTabbedPane {
 
 				super("Tree Semantics");
 
-				addColumns("Parent", "Child", "Grandchild", "Semantics", "Entity Types");
+				addColumns("Parent", "Child", "Grandchild", "Represents");
 
 				addRow(
 					iValueShape,
 					defaultSlotShape,
 					NOT_APPLICABLE_STRING,
-					"frame-has-slot",
-					"IFrame ==> ISlot");
+					"IFrame-has-slot");
 				addRow(
 					defaultSlotShape,
 					mValueShape,
 					NOT_APPLICABLE_STRING,
-					"slot-has-value-type",
-					"ISlot ==> MFrame");
+					"ISlot-has-MFrame-value-type");
 				addRow(
 					defaultSlotShape,
 					cValueShape,
 					NOT_APPLICABLE_STRING,
-					"slot-has-value-type",
-					"ISlot ==> CFrame");
+					"ISlot-has-CFrame-value-type");
 				addRow(
 					defaultSlotShape,
 					mValueShape,
 					cValueShape,
-					"slot-with-value-type-has-value",
-					"ISlot ==> MFrame ==> CFrame");
+					"ISlot-with-MFrame-value-type-has-CFrame-value");
 				addRow(
 					defaultSlotShape,
 					cValueShape,
 					iValueShape,
-					"slot-with-value-type-has-value",
-					"ISlot ==> CFrame ==> IFrame");
+					"ISlot-with-CFrame-value-type-has-IFrame-value");
 			}
 		}
 
