@@ -52,7 +52,7 @@ public class OConceptFinder extends OEntityFinder<CFrame> {
 	 * @return Relevant IRI, or null if no OWL concept corresponding
 	 * to specified frame or any of it's ancestors
 	 */
-	public IRI getOrAncestorOrNull(CFrame cFrame) {
+	public IRI getSubsumerOrNull(CFrame cFrame) {
 
 		IRI iri = getOrNull(cFrame);
 
@@ -60,7 +60,7 @@ public class OConceptFinder extends OEntityFinder<CFrame> {
 
 			for (CFrame sup : cFrame.getSupers()) {
 
-				iri = getOrAncestorOrNull(sup);
+				iri = getSubsumerOrNull(sup);
 
 				if (iri != null) {
 

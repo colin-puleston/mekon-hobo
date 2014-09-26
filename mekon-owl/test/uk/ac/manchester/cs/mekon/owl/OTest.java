@@ -51,6 +51,11 @@ public class OTest extends FramesTestUtils {
 		model = cBuilder.build();
 	}
 
+	public CModel getModel() {
+
+		return model;
+	}
+
 	public Set<CFrame> getCFrames(String... names) {
 
 		Set<CFrame> frames = new HashSet<CFrame>();

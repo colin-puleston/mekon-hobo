@@ -187,7 +187,7 @@ public class ORMatcher implements IMatcher {
 	 */
 	public boolean handlesType(CFrame type) {
 
-		return concepts.getOrAncestorOrNull(type) != null;
+		return concepts.getSubsumerOrNull(type) != null;
 	}
 
 	/**
