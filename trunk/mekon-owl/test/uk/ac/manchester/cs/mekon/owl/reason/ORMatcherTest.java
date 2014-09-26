@@ -31,6 +31,7 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
 
@@ -58,6 +59,9 @@ public class ORMatcherTest extends OTest {
 	static private final CIdentity ACADEMIC_RESEARCH_JOB_ID = new CIdentity("AcademicResearch");
 	static private final CIdentity DOCTORING_JOB_ID = new CIdentity("Doctoring");
 
+	static private final String NON_OWL_TYPE = "NON-OWL-TYPE";
+	static private final String NON_OWL_BUT_OWL_SUBSUMED_TYPE = "NON-OWL-BUT-OWL-SUBSUMED-TYPE";
+
 	static private final int MIN_HOURLY_RATE = 10;
 	static private final int LOW_HOURLY_RATE = 14;
 	static private final int MID_HOURLY_RATE = 15;
@@ -66,11 +70,46 @@ public class ORMatcherTest extends OTest {
 
 	private ORMatcher matcher;
 
+	private class LocalSectionBuilder extends OBSectionBuilder {
+
+		public void build(CBuilder builder) {
+
+			super.build(builder);
+
+			addFrame(builder, NON_OWL_TYPE);
+			addFrame(builder, NON_OWL_BUT_OWL_SUBSUMED_TYPE);
+			addSuperFrame(builder, NON_OWL_BUT_OWL_SUBSUMED_TYPE, JOB_CONCEPT);
+		}
+
+		LocalSectionBuilder(OModel model) {
+
+			super(model);
+		}
+
+		private CFrame addFrame(CBuilder builder, String name) {
+
+			return builder.addFrame(nameToIdentity(name), false);
+		}
+
+		private void addSuperFrame(CBuilder builder, String subName, String supName) {
+
+			CFrame sub = getFrame(builder, subName);
+			CFrame sup = getFrame(builder, supName);
+
+			builder.getFrameEditor(sub).addSuper(sup);
+		}
+
+		private CFrame getFrame(CBuilder builder, String name) {
+
+			return builder.getFrames().get(nameToIdentity(name));
+		}
+	}
+
 	@Before
 	public void setUp() {
 
 		OModel model = TestOModel.create();
-		OBSectionBuilder sectionBuilder = new OBSectionBuilder(model);
+		OBSectionBuilder sectionBuilder = new LocalSectionBuilder(model);
 
 		matcher = new ORMatcher(model);
 
@@ -78,6 +117,14 @@ public class ORMatcherTest extends OTest {
 		sectionBuilder.setIReasoner(new ORClassifier(model));
 
 		buildModel(sectionBuilder);
+	}
+
+	@Test
+	public void test_handlesType() {
+
+		testHandlesType(JOB_CONCEPT, true);
+		testHandlesType(NON_OWL_TYPE, false);
+		testHandlesType(NON_OWL_BUT_OWL_SUBSUMED_TYPE, true);
 	}
 
 	@Test
@@ -137,7 +184,6 @@ public class ORMatcherTest extends OTest {
 			ACADEMIC_RESEARCH_JOB_ID,
 			DOCTORING_JOB_ID);
 
-
 		executeQuery(
 			createNumericJobQuery(MIN_HOURLY_RATE, LOW_HOURLY_RATE - 1));
 
@@ -152,7 +198,6 @@ public class ORMatcherTest extends OTest {
 			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCH_JOB_ID);
 
-
 		executeQuery(
 			createNumericJobQuery(HIGH_HOURLY_RATE + 1, MAX_HOURLY_RATE));
 
@@ -164,6 +209,11 @@ public class ORMatcherTest extends OTest {
 			createNumericJobQuery(LOW_HOURLY_RATE + 1, MAX_HOURLY_RATE),
 			ACADEMIC_RESEARCH_JOB_ID,
 			DOCTORING_JOB_ID);
+	}
+
+	private void testHandlesType(String typeId, boolean shouldHandle) {
+
+		assertTrue(matcher.handlesType(getCFrame(typeId)) == shouldHandle);
 	}
 
 	private void populate() {

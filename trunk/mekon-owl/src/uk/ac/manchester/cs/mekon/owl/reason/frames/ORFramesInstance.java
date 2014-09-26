@@ -243,7 +243,7 @@ public class ORFramesInstance {
 
 		for (CFrame disjunct : cFrame.getSubs()) {
 
-			IRI iri = concepts.getOrAncestorOrNull(disjunct);
+			IRI iri = concepts.getSubsumerOrNull(disjunct);
 
 			if (iri != null) {
 
@@ -256,7 +256,7 @@ public class ORFramesInstance {
 
 	private ORFrame createModelFrame(CFrame cFrame) {
 
-		return new ORFrame(cFrame, concepts.getOrAncestorOrNull(cFrame));
+		return new ORFrame(cFrame, concepts.getSubsumerOrNull(cFrame));
 	}
 
 	private boolean closedWorldSemantics(IRI propertyIRI) {
