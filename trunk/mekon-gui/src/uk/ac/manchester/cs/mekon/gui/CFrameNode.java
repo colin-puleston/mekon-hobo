@@ -41,7 +41,7 @@ class CFrameNode extends GNode {
 	static {
 
 		childTypePriority.add(CSlotNode.class);
-		childTypePriority.add(CFrameSlotValuesNode.class);
+		childTypePriority.add(CFrameFixedValuesNode.class);
 		childTypePriority.add(CFrameNode.class);
 	}
 
@@ -136,13 +136,13 @@ class CFrameNode extends GNode {
 		}
 	}
 
-	void checkAddSlotValuesNode() {
+	void checkAddFixedValuesNode() {
 
 		List<CProperty> props = getRequiredSlotValueProperties();
 
 		if (!props.isEmpty()) {
 
-			addChild(new CFrameSlotValuesNode(tree, frame, props));
+			addChild(new CFrameFixedValuesNode(tree, frame, props));
 		}
 	}
 

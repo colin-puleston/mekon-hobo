@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class CSlotValuesNode extends GNode {
+class CFixedValuesNode extends GNode {
 
 	private CTree tree;
 	private CProperty property;
@@ -81,7 +81,7 @@ class CSlotValuesNode extends GNode {
 		return EntityDisplays.get().forCSlotValues(property);
 	}
 
-	CSlotValuesNode(CTree tree, CProperty property, List<CValue<?>> fixedValues) {
+	CFixedValuesNode(CTree tree, CProperty property, List<CValue<?>> fixedValues) {
 
 		super(tree);
 

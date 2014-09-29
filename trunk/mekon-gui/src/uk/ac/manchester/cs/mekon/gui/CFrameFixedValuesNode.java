@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class CFrameSlotValuesNode extends GNode {
+class CFrameFixedValuesNode extends GNode {
 
 	private CTree tree;
 	private CFrame frame;
@@ -45,7 +45,7 @@ class CFrameSlotValuesNode extends GNode {
 
 		for (CProperty prop : properties) {
 
-			addChild(new CSlotValuesNode(tree, prop, values.getValues(prop)));
+			addChild(new CFixedValuesNode(tree, prop, values.getValues(prop)));
 		}
 	}
 
@@ -54,7 +54,7 @@ class CFrameSlotValuesNode extends GNode {
 		return EntityDisplays.get().fixedValuesDisplay;
 	}
 
-	CFrameSlotValuesNode(CTree tree, CFrame frame, List<CProperty> properties) {
+	CFrameFixedValuesNode(CTree tree, CFrame frame, List<CProperty> properties) {
 
 		super(tree);
 

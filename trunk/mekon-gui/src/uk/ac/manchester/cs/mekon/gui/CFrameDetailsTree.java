@@ -41,7 +41,7 @@ class CFrameDetailsTree extends CTree {
 	void addCFrameChildren(CFrameNode parent) {
 
 		parent.addSlotNodes();
-		parent.checkAddSlotValuesNode();
+		parent.checkAddFixedValuesNode();
 
 		if (parent != getRootNode()) {
 
