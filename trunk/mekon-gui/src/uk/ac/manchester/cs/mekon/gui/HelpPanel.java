@@ -147,20 +147,32 @@ class HelpPanel extends JTabbedPane {
 
 				super("Shapes");
 
-				addColumns("Shape", "Represents");
+				addColumns(
+					"Shape",
+					"Entity-Category",
+					"Entity-Level",
+					"Entity-Types");
 
 				addRow(
 					mValueShape,
-					"Meta-level frame");
+					"Value-entity",
+					"Meta",
+					"MFrame");
 				addRow(
 					cValueShape,
-					"Concept-level frame/number");
+					"Value-entity",
+					"Concept",
+					"CFrame, CNumber");
 				addRow(
 					iValueShape,
-					"Instance-level frame/number");
+					"Value-entity",
+					"Instance",
+					"IFrame, INumber");
 				addRow(
 					defaultSlotShape,
-					"Slot (concept-level or instance-level)");
+					"Slot",
+					"Concept OR Instance",
+					"CSlot, ISlot");
 			}
 		}
 
@@ -172,20 +184,32 @@ class HelpPanel extends JTabbedPane {
 
 				super("Colours");
 
-				addColumns("Colour", "Represents");
+				addColumns(
+					"Colour",
+					"Entity-Types",
+					"Entity-Level",
+					"Entity-Source");
 
 				addRow(
 					directColour,
-					"Frame/Slot (any level) with internal source (i.e. Object Model)");
+					"Frame, Slot",
+					"Any",
+					"Internal (i.e. Object Model)");
 				addRow(
 					indirectColour,
-					"Frame/Slot (any level) with external source (e.g. Ontology)");
+					"Frame, Slot",
+					"Any",
+					"External (e.g. Ontology)");
 				addRow(
 					dualColour,
-					"Frame/Slot (any level) with dual sources (internal + external)");
+					"Frame, Slot",
+					"Any",
+					"Dual (Internal AND External)");
 				addRow(
 					numberColour,
-					"Number (concept-level or instance-level)");
+					"Number",
+					"Any",
+					"Any (determined by context)");
 			}
 		}
 
@@ -197,25 +221,31 @@ class HelpPanel extends JTabbedPane {
 
 				super("Modifiers");
 
-				addColumns("Modifier", "Represents");
+				addColumns(
+					"Modifier",
+					"Entity-Type",
+					"Entity-State");
 
 				addRow(
 					hiddenMFrameShape,
-					"MFrame is hidden");
+					"MFrame",
+					"Hidden");
 				addRow(
 					hiddenCFrameShape,
-					"CFrame is hidden");
+					"CFrame",
+					"Hidden");
 				addRow(
 					inactiveSlotShape,
-					"CSlot is inactive");
+					"CSlot",
+					"Inactive");
 				addRow(
 					blockedSlotShape,
-					"CSlot is dependent "
-					+ "(i.e. values are automatically derived)");
+					"CSlot",
+					"Dependent (automatically derived values)");
 				addRow(
 					blockedSlotShape,
-					"ISlot is non-editable "
-					+ "(i.e. dependent slot on concrete instance)");
+					"ISlot",
+					"Non-Editable (dependent slot on concrete instance)");
 			}
 		}
 
