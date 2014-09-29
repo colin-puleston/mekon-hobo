@@ -50,27 +50,27 @@ class EntityDisplays {
 
 	GCellDisplay get(IFrame frame) {
 
-		return getNodeDisplay(frame, icons.get(frame), false);
+		return getValueDisplay(frame, icons.get(frame), false);
 	}
 
 	GCellDisplay get(INumber number) {
 
-		return getNodeDisplay(number, icons.get(number), false);
+		return getValueDisplay(number, icons.get(number), false);
 	}
 
 	GCellDisplay get(CFrame frame, boolean isValueType) {
 
-		return getNodeDisplay(frame, icons.get(frame), isValueType);
+		return getValueDisplay(frame, icons.get(frame), isValueType);
 	}
 
 	GCellDisplay get(CNumber number, boolean isValueType) {
 
-		return getNodeDisplay(number, icons.get(number), isValueType);
+		return getValueDisplay(number, icons.get(number), isValueType);
 	}
 
 	GCellDisplay get(MFrame frame, boolean isValueType) {
 
-		return getNodeDisplay(frame, icons.get(frame), isValueType);
+		return getValueDisplay(frame, icons.get(frame), isValueType);
 	}
 
 	GCellDisplay get(CSlot slot) {
@@ -90,10 +90,10 @@ class EntityDisplays {
 
 	GCellDisplay forCSlotValues(CProperty property) {
 
-		return getNodeDisplay(property, icons.forCSlotValues(), false);
+		return get(property.getDisplayLabel(), icons.forCSlotValues(), FontStyle.LINK);
 	}
 
-	private GCellDisplay getNodeDisplay(FEntity value, Icon icon, boolean isValueType) {
+	private GCellDisplay getValueDisplay(FEntity value, Icon icon, boolean isValueType) {
 
 		FontStyle fontStyle = isValueType ? FontStyle.LINK_INFO : FontStyle.NODE;
 
