@@ -46,7 +46,10 @@ public class GList<E> extends JList {
 
 		public void valueChanged(ListSelectionEvent event) {
 
-			checkUpdateSelection();
+			if (!event.getValueIsAdjusting()) {
+
+				checkUpdateSelection();
+			}
 		}
 	}
 
