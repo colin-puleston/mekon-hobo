@@ -226,6 +226,7 @@ public class GList<E> extends JList {
 	public void addEntity(E entity, GCellDisplay display) {
 
 		model.add(entity, display);
+		revalidate();
 	}
 
 	public void removeEntity(E entity) {
@@ -236,21 +237,25 @@ public class GList<E> extends JList {
 		}
 
 		model.remove(entity);
+		revalidate();
 	}
 
 	public void applyFilter(GLexicalFilter filter) {
 
 		model.applyFilter(filter);
+		revalidate();
 	}
 
 	public void clearFilter() {
 
 		model.applyFilter(null);
+		revalidate();
 	}
 
 	public void clearList() {
 
 		model.clear();
+		revalidate();
 
 		selectedEntity = null;
 	}
