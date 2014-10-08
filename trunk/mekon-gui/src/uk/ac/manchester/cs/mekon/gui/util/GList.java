@@ -280,6 +280,11 @@ public class GList<E> extends JList {
 		return getEntityList().contains(entity);
 	}
 
+	public E getSelectedEntity() {
+
+		return selectedEntity;
+	}
+
 	private void checkUpdateSelection() {
 
 		DisplayElement selection = (DisplayElement)getSelectedValue();
