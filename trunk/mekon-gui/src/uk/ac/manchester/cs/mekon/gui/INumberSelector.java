@@ -79,7 +79,7 @@ class INumberSelector extends GDialog {
 			}
 		}
 
-		protected void onKeyPressed(KeyEvent event) {
+		protected void onKeyEntered(KeyEvent event) {
 
 			for (InputField field : conflictingFields) {
 

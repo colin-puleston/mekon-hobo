@@ -36,9 +36,9 @@ public abstract class GTextField extends JTextField {
 
 	private class ValueEntryListener extends KeyAdapter {
 
-		public void keyPressed(KeyEvent event) {
+		public void keyReleased(KeyEvent event) {
 
-			onKeyPressed(event);
+			onKeyEntered(event);
 
 			if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 
@@ -66,6 +66,6 @@ public abstract class GTextField extends JTextField {
 	protected void onFieldExited(String text) {
 	}
 
-	protected void onKeyPressed(KeyEvent event) {
+	protected void onKeyEntered(KeyEvent event) {
 	}
 }
