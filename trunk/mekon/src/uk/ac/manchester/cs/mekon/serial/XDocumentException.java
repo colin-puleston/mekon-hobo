@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.serial;
 
 import uk.ac.manchester.cs.mekon.*;
 
@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.*;
  *
  * @author Colin Puleston
  */
-public class XFileException extends KRuntimeException {
+public class XDocumentException extends KRuntimeException {
 
 	static private final long serialVersionUID = -1;
 
@@ -41,7 +41,7 @@ public class XFileException extends KRuntimeException {
 	 *
 	 * @param exception Wrapped exception
 	 */
-	public XFileException(Exception e) {
+	public XDocumentException(Exception e) {
 
 		this(e.getMessage());
 	}
@@ -51,7 +51,7 @@ public class XFileException extends KRuntimeException {
 	 *
 	 * @param message Error message
 	 */
-	public XFileException(String message) {
+	public XDocumentException(String message) {
 
 		super("Error accessing XML file: " + message);
 	}

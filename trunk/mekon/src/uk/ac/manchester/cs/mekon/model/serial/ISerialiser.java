@@ -22,14 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.model.serial;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
  * @author Colin Puleston
  */
-interface IStoreSerialiser {
+abstract class ISerialiser {
 
-	static final String ROOT_ID = "Store";
+	static final String STORE_ID = "Store";
 	static final String INSTANCE_ID = "Instance";
 	static final String FRAME_ID = "Value";
 	static final String SLOT_ID = "Slot";
@@ -39,4 +42,18 @@ interface IStoreSerialiser {
 	static final String VALUE_TYPE_ATTR = "valueType";
 	static final String NUMBER_TYPE_ATTR = "numberType";
 	static final String NUMBER_VALUE_ATTR = "numberValue";
+
+	void renderIdentity(CIdentity id, XNode node) {
+
+		node.addValue(IDENTITY_ATTR, id.getIdentifier());
+		node.addValue(LABEL_ATTR, id.getLabel());
+	}
+
+	CIdentity parseIdentity(XNode node) {
+
+		String id = node.getString(IDENTITY_ATTR);
+		String label = node.getString(LABEL_ATTR);
+
+		return new CIdentity(id, label);
+	}
 }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.serial;
 
 import java.io.*;
 import java.net.*;
@@ -30,13 +30,13 @@ import java.util.*;
 import org.w3c.dom.*;
 
 /**
- * Represents an element-node in an XML file.
+ * Represents an element-node in an XML document.
  *
  * @author Colin Puleston
  */
 public class XNode {
 
-	private XFile file;
+	private XDocument document;
 	private Element element;
 	private List<XNode> children = new ArrayList<XNode>();
 
@@ -45,16 +45,16 @@ public class XNode {
 	 *
 	 * @param id Identifier for required child-node
 	 * @return Required child-node
-	 * @throws XFileException if child-node cannot be found,
+	 * @throws XDocumentException if child-node cannot be found,
 	 * or if multiple child-nodes with specified identifier
 	 */
 	public XNode addChild(String id) {
 
-		Element childEl = file.createElement(id);
+		Element childEl = document.createElement(id);
 
 		element.appendChild(childEl);
 
-		return new XNode(file, childEl);
+		return new XNode(document, childEl);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class XNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Attribute value
-	 * @throws XFileException if no value for attribute
+	 * @throws XDocumentException if no value for attribute
 	 */
 	public void addValue(String id, Object value) {
 
@@ -84,7 +84,7 @@ public class XNode {
 	 *
 	 * @param id Identifier for required child-node
 	 * @return Required child-node
-	 * @throws XFileException if child-node cannot be found,
+	 * @throws XDocumentException if child-node cannot be found,
 	 * or if multiple child-nodes with specified identifier
 	 */
 	public XNode getChild(String id) {
@@ -98,7 +98,7 @@ public class XNode {
 	 *
 	 * @param id Identifier for required child-node
 	 * @return Required child-node, or null if it cannot be found
-	 * @throws XFileException if multiple child-nodes with
+	 * @throws XDocumentException if multiple child-nodes with
 	 * specified identifier
 	 */
 	public XNode getChildOrNull(String id) {
@@ -147,7 +147,7 @@ public class XNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Attribute value
-	 * @throws XFileException if no value for attribute
+	 * @throws XDocumentException if no value for attribute
 	 */
 	public String getString(String id) {
 
@@ -174,7 +174,7 @@ public class XNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Relevant boolean value
-	 * @throws XFileException if no value for attribute,
+	 * @throws XDocumentException if no value for attribute,
 	 * or if value does not represent a valid boolean
 	 */
 	public Boolean getBoolean(String id) {
@@ -189,7 +189,7 @@ public class XNode {
 	 * @param id Identifier of relevant attribute
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant boolean value
-	 * @throws XFileException if value does not represent a
+	 * @throws XDocumentException if value does not represent a
 	 * valid boolean
 	 */
 	public Boolean getBoolean(String id, boolean defaultValue) {
@@ -205,8 +205,8 @@ public class XNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Relevant integer value
-	 * @throws XFileException if no value for attribute,
-	 * or if value does not represent a valid integer
+	 * @throws XDocumentException if no value for attribute, or if
+	 * value does not represent a valid integer
 	 */
 	public int getInteger(String id) {
 
@@ -220,8 +220,8 @@ public class XNode {
 	 * @param id Identifier of relevant attribute
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant integer value
-	 * @throws XFileException if value does not represent a
-	 * valid integer
+	 * @throws XDocumentException if value does not represent a valid
+	 * integer
 	 */
 	public int getInteger(String id, int defaultValue) {
 
@@ -237,9 +237,9 @@ public class XNode {
 	 * @param id Identifier of relevant attribute
 	 * @param type Type of <code>Enum</code> to create
 	 * @return Relevant <code>Enum</code> object
-	 * @throws XFileException if no value for attribute,
-	 * or if value does not represent a valid <code>Enum</code>
-	 * value of the required type
+	 * @throws XDocumentException if no value for attribute, or if
+	 * value does not represent a valid <code>Enum</code> value of the
+	 * required type
 	 */
 	public <E extends Enum<E>>E getEnum(String id, Class<E> type) {
 
@@ -254,8 +254,8 @@ public class XNode {
 	 * @param type Type of <code>Enum</code> to create
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant <code>Enum</code> object
-	 * @throws XFileException if value does not represent a
-	 * valid Enum value of the required type
+	 * @throws XDocumentException if value does not represent a valid
+	 * Enum value of the required type
 	 */
 	public <E extends Enum<E>>E getEnum(
 									String id,
@@ -273,8 +273,8 @@ public class XNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Relevant <code>URI</code> object
-	 * @throws XFileException if no value for attribute,
-	 * or if value does not represent a valid URI
+	 * @throws XDocumentException if no value for attribute, or if
+	 * value does not represent a valid URI
 	 */
 	public URI getURI(String id) {
 
@@ -288,8 +288,8 @@ public class XNode {
 	 * @param id Identifier of relevant attribute
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant <code>URI</code> object
-	 * @throws XFileException if value does not represent a
-	 * valid URI
+	 * @throws XDocumentException if value does not represent a valid
+	 * URI
 	 */
 	public URI getURI(String id, URI defaultValue) {
 
@@ -298,9 +298,9 @@ public class XNode {
 		return value != null ? toURI(value) : defaultValue;
 	}
 
-	XNode(XFile file, Element element) {
+	XNode(XDocument document, Element element) {
 
-		this.file = file;
+		this.document = document;
 		this.element = element;
 
 		setChildren();
@@ -316,7 +316,7 @@ public class XNode {
 
 			if (node instanceof Element) {
 
-				children.add(new XNode(file, (Element)node));
+				children.add(new XNode(document, (Element)node));
 			}
 		}
 	}
@@ -381,9 +381,9 @@ public class XNode {
 		}
 	}
 
-	private XFileException createValueTypeException(
-								String value,
-								String typeDescription) {
+	private XDocumentException createValueTypeException(
+									String value,
+									String typeDescription) {
 
 		return createAccessException(
 					"Value \"" + value + "\""
@@ -391,9 +391,9 @@ public class XNode {
 					+ typeDescription);
 	}
 
-	private XFileException createAccessException(String subMessage) {
+	private XDocumentException createAccessException(String subMessage) {
 
-		return new XFileException(
+		return new XDocumentException(
 						"Error accessing node: "
 						+ "\"" + getId() + "\""
 						+ ": " + subMessage);

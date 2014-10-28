@@ -22,50 +22,49 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.model.serial;
 
-import java.io.*;
-
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
  * @author Colin Puleston
  */
-class IStoreParser implements IStoreSerialiser {
+public class IFrameParser extends ISerialiser {
 
 	private CModel model;
-	private XFile file;
+	private IEditor iEditor;
 
 	private class SlotValuesParser extends CValueVisitor {
 
-		private ISlotValues values;
+		private ISlotValuesEditor valuesEditor;
 		private XNode slotNode;
 
 		protected void visit(CFrame value) {
 
 			for (XNode valueNode : slotNode.getChildren(FRAME_ID)) {
 
-				values.add(parseIFrame(valueNode));
+				valuesEditor.add(parseIFrame(valueNode));
 			}
 		}
 
 		protected void visit(CNumber value) {
 
-			values.add(parseNumber(value, slotNode));
+			valuesEditor.add(parseNumber(value, slotNode));
 		}
 
 		protected void visit(MFrame value) {
 
 			for (XNode valueNode : slotNode.getChildren(FRAME_ID)) {
 
-				values.add(parseCFrame(valueNode));
+				valuesEditor.add(parseCFrame(valueNode));
 			}
 		}
 
 		SlotValuesParser(ISlot slot, XNode slotNode) {
 
-			values = slot.getValues();
+			valuesEditor = slot.getValuesEditor();
 
 			this.slotNode = slotNode;
 
@@ -73,23 +72,26 @@ class IStoreParser implements IStoreSerialiser {
 		}
 	}
 
- 	IStoreParser(CModel model, File storeFile) {
+ 	/**
+	 */
+ 	public IFrameParser(CModel model, IEditor iEditor) {
 
 		this.model = model;
-
-		file = new XFile(storeFile);
+		this.iEditor = iEditor;
 	}
 
- 	void parse(IStore store) {
+	/**
+	 */
+ 	public IFrame parse(XDocument document) {
 
-		XNode rootNode = file.getRootNode();
+		return parseIFrame(document.getRootNode());
+	}
 
-		for (XNode instNode : rootNode.getChildren(INSTANCE_ID)) {
+	/**
+	 */
+ 	public IFrame parse(XNode frameNode) {
 
-			XNode frameNode = instNode.getChild(FRAME_ID);
-
-			store.addInternal(parseIFrame(frameNode), parseIdentity(instNode));
-		}
+		return parseIFrame(frameNode);
 	}
 
 	private IFrame parseIFrame(XNode frameNode) {
@@ -126,11 +128,11 @@ class IStoreParser implements IStoreSerialiser {
 
 	private ISlot parseNewSlot(IFrame frame, CIdentity id, XNode slotNode) {
 
-		IFrameEditor frameEd = frame.createEditor();
 		CProperty property = getProperty(id);
 		CValue<?> valueType = parseValueType(slotNode);
 
-		return frameEd.addSlot(
+		return getIFrameEditor(frame)
+				.addSlot(
 					property,
 					CSource.UNSPECIFIED,
 					CCardinality.FREE,
@@ -156,7 +158,7 @@ class IStoreParser implements IStoreSerialiser {
 			return parseNumberValueType(slotNode).createNumber();
 		}
 
-		throw new XFileException("Unrecognised class: " + name);
+		throw new XDocumentException("Unrecognised class: " + name);
 	}
 
 	private CNumberDef parseNumberValueType(XNode slotNode) {
@@ -183,7 +185,7 @@ class IStoreParser implements IStoreSerialiser {
 			return CDoubleDef.UNCONSTRAINED;
 		}
 
-		throw new XFileException("Unrecognised class: " + name);
+		throw new XDocumentException("Unrecognised class: " + name);
 	}
 
 	private INumber parseNumber(CNumber valueType, XNode node) {
@@ -191,14 +193,6 @@ class IStoreParser implements IStoreSerialiser {
 		String value = node.getString(NUMBER_VALUE_ATTR);
 
 		return INumber.create(valueType.getNumberType(), value);
-	}
-
-	private CIdentity parseIdentity(XNode node) {
-
-		String id = node.getString(IDENTITY_ATTR);
-		String label = node.getString(LABEL_ATTR);
-
-		return new CIdentity(id, label);
 	}
 
 	private CFrame getCFrame(CIdentity id) {
@@ -219,6 +213,11 @@ class IStoreParser implements IStoreSerialiser {
 	private CFrame getRootCFrame() {
 
 		return model.getRootFrame();
+	}
+
+	private IFrameEditor getIFrameEditor(IFrame frame) {
+
+		return iEditor.getFrameEditor(frame);
 	}
 
 	private boolean isClassName(Class<?> testClass, String testName) {

@@ -25,7 +25,7 @@ package uk.ac.manchester.cs.mekon.config;
 
 import java.io.*;
 
-import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
  * Represents a MEKON configuration file, which is an XML format
@@ -44,7 +44,7 @@ public class KConfigFile {
 		return KConfigResourceFinder.FILES.getResource(fileName);
 	}
 
-	private XFile xFile;
+	private File file;
 	private KConfigNode rootNode;
 
 	/**
@@ -85,7 +85,9 @@ public class KConfigFile {
 	 */
 	public KConfigFile(File file) {
 
-		this(new XFile(file));
+		this.file = file;
+
+		rootNode = new KConfigNode(this, readDocument());
 	}
 
 	/**
@@ -96,7 +98,7 @@ public class KConfigFile {
 	 */
 	public File getFile() {
 
-		return xFile.getFile();
+		return file;
 	}
 
 	/**
@@ -109,10 +111,8 @@ public class KConfigFile {
 		return rootNode;
 	}
 
-	private KConfigFile(XFile xFile) {
+	private XNode readDocument() {
 
-		this.xFile = xFile;
-
-		rootNode = new KConfigNode(this, xFile.getRootNode());
+		return new XDocument(file).getRootNode();
 	}
 }

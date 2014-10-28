@@ -22,20 +22,18 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.model.serial;
 
-import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
 
-import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
  * @author Colin Puleston
  */
-class IStoreRenderer implements IStoreSerialiser {
-
-	private XFile file;
+public class IFrameRenderer extends ISerialiser {
 
 	private class SlotValuesRenderer extends ISlotValuesVisitor {
 
@@ -70,33 +68,32 @@ class IStoreRenderer implements IStoreSerialiser {
 		}
 	}
 
-	IStoreRenderer(File storeFile) {
+	/**
+	 */
+ 	public XDocument render(IFrame frame) {
 
-		file = new XFile(storeFile, ROOT_ID);
+		XDocument document = new XDocument(FRAME_ID);
+
+		renderIFrameDetails(frame, document.getRootNode());
+
+		return document;
 	}
 
- 	void render(IStore store) {
+	/**
+	 */
+ 	public void render(IFrame frame, XNode parentNode) {
 
-		for (CIdentity id : store.getAllIdentities()) {
-
-			renderInstance(id, store.get(id));
-		}
-
-		file.writeToFile();
+		renderIFrame(frame, parentNode);
 	}
 
-	private void renderInstance(CIdentity id, IFrame frame) {
+ 	private void renderIFrame(IFrame frame, XNode parentNode) {
 
-		XNode rootNode = file.getRootNode();
-		XNode instNode = rootNode.addChild(INSTANCE_ID);
-
-		renderIdentity(id, instNode);
-		renderIFrame(frame, instNode);
+		renderIFrameDetails(frame, parentNode.addChild(FRAME_ID));
 	}
 
-	private void renderIFrame(IFrame frame, XNode parentNode) {
+ 	private void renderIFrameDetails(IFrame frame, XNode frameNode) {
 
-		XNode frameNode = renderCFrame(frame.getType(), parentNode);
+		renderIdentity(frame.getType(), frameNode);
 
 		for (ISlot slot : frame.getSlots().asList()) {
 
@@ -137,12 +134,6 @@ class IStoreRenderer implements IStoreSerialiser {
 	private void renderIdentity(CIdentified id, XNode node) {
 
 		renderIdentity(id.getIdentity(), node);
-	}
-
-	private void renderIdentity(CIdentity id, XNode node) {
-
-		node.addValue(IDENTITY_ATTR, id.getIdentifier());
-		node.addValue(LABEL_ATTR, id.getLabel());
 	}
 
 	private void renderClassName(Object value, XNode node, String attr) {
