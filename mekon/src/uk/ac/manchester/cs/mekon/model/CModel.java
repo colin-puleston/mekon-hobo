@@ -28,6 +28,8 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
@@ -93,6 +95,28 @@ public class CModel implements CAnnotatable {
 	public IStore getIStore() {
 
 		return iStore;
+	}
+
+	/**
+	 * Renders a standard XML version of an instance-level frame.
+	 *
+	 * @param iFrame Instance-level frame to be rendered
+	 * @return Document containing XML rendering of frame
+	 */
+	public XDocument renderIFrame(IFrame iFrame) {
+
+		return new IFrameRenderer().render(iFrame);
+	}
+
+	/**
+	 * parses a standard XML version of an instance-level frame.
+	 *
+	 * @param document Document containing XML rendering of frame
+	 * @return Parsed instance-level frame
+	 */
+	public IFrame parseIFrame(XDocument document) {
+
+		return new IFrameParser(this, iEditor).parse(document);
 	}
 
 	/**

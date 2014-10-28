@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.mekon.model;
 import java.io.*;
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -53,6 +53,19 @@ public class IStore {
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
 	private Map<CIdentity, String> labels = new HashMap<CIdentity, String>();
+
+	private class IStoreParserLocal extends IStoreParser {
+
+		protected void addInstance(IFrame instance, CIdentity identity) {
+
+			addInternal(instance, identity);
+		}
+
+		IStoreParserLocal(File file) {
+
+			super(model, model.getIEditor(), file);
+		}
+	}
 
 	/**
 	 * Checks whether store contains a particular instance.
@@ -163,7 +176,7 @@ public class IStore {
 
 		if (file.exists()) {
 
-			new IStoreParser(model, file).parse(this);
+			new IStoreParserLocal(file).parse(this);
 		}
 	}
 
