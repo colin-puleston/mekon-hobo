@@ -77,37 +77,49 @@ public interface CFrameEditor {
 					CValue<?> valueType);
 
 	/**
-	 * Removes specified slot from the frame. Does nothing if slot
-	 * is not attached to the frame.
+	 * Removes specified slot from the frame, if possible. Does
+	 * nothing if slot has a {@link CSource#direct} source, or is
+	 * not attached to the frame.
 	 *
 	 * @param slot Slot to be removed
+	 * @return True if slot was removed
 	 */
-	public void removeSlot(CSlot slot);
+	public boolean removeSlot(CSlot slot);
 
 	/**
-	 * Removes all slots for specified property from the frame.
+	 * Removes all slots for specified property from the frame,
+	 * except for any such slots with {@link CSource#direct} sources.
 	 *
 	 * @param property Property for which slots are to be removed
+	 * @return True if all relevant slots were removed
 	 */
-	public void removeSlots(CProperty property);
+	public boolean removeSlots(CProperty property);
 
 	/**
 	 * Removes all slots for specified property from all descendant
-	 * frames.
+	 * frames, except for any such slots with {@link CSource#direct}
+	 * sources.
 	 *
 	 * @param property Property for which slots are to be removed
+	 * @return True if all relevant slots were removed
 	 */
-	public void removeSlotsFromDescendants(CProperty property);
+	public boolean removeSlotsFromDescendants(CProperty property);
 
 	/**
-	 * Removes all slots from the frame.
+	 * Removes all slots from the frame, except for any slots with
+	 * {@link CSource#direct} sources.
+	 *
+	 * @return True if all relevant slots were removed
 	 */
-	public void clearSlots();
+	public boolean clearSlots();
 
 	/**
-	 * Removes all slots from all descendant frames.
+	 * Removes all slots from all descendant frames, except for any
+	 * slots with {@link CSource#direct} sources.
+	 *
+	 * @return True if all relevant slots were removed
 	 */
-	public void clearSlotsFromDescendants();
+	public boolean clearSlotsFromDescendants();
 
 	/**
 	 * Adds a default slot-value for the frame, to be automatically

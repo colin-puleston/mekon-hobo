@@ -70,6 +70,7 @@ class CModelFrame extends CFrame {
 	private class DescendantSlotsRemover extends DownwardsCrawler {
 
 		private CProperty propertyOrNull;
+		private boolean allRemoved = true;
 
 		DescendantSlotsRemover(CProperty propertyOrNull) {
 
@@ -78,9 +79,14 @@ class CModelFrame extends CFrame {
 			processLinked(CModelFrame.this);
 		}
 
+		boolean allRemoved() {
+
+			return allRemoved;
+		}
+
 		CrawlMode process(CModelFrame current) {
 
-			current.removeSlots(propertyOrNull);
+			allRemoved &= current.removeSlots(propertyOrNull);
 
 			return CrawlMode.CRAWL;
 		}
@@ -135,29 +141,29 @@ class CModelFrame extends CFrame {
 			return slot;
 		}
 
-		public void removeSlot(CSlot slot) {
+		public boolean removeSlot(CSlot slot) {
 
-			CModelFrame.this.removeSlot(slot);
+			return CModelFrame.this.removeSlot(slot);
 		}
 
-		public void removeSlots(CProperty property) {
+		public boolean removeSlots(CProperty property) {
 
-			CModelFrame.this.removeSlots(property);
+			return CModelFrame.this.removeSlots(property);
 		}
 
-		public void removeSlotsFromDescendants(CProperty property) {
+		public boolean removeSlotsFromDescendants(CProperty property) {
 
-			new DescendantSlotsRemover(property);
+			return new DescendantSlotsRemover(property).allRemoved();
 		}
 
-		public void clearSlots() {
+		public boolean clearSlots() {
 
-			CModelFrame.this.removeSlots(null);
+			return CModelFrame.this.removeSlots(null);
 		}
 
-		public void clearSlotsFromDescendants() {
+		public boolean clearSlotsFromDescendants() {
 
-			new DescendantSlotsRemover(null);
+			return removeSlotsFromDescendants(null);
 		}
 
 		public void addSlotValue(CProperty property, CValue<?> value) {
@@ -336,7 +342,12 @@ class CModelFrame extends CFrame {
 		slot.getValueType().registerReferencingSlot(slot);
 	}
 
-	void removeSlot(CSlot slot) {
+	boolean removeSlot(CSlot slot) {
+
+		if (slot.getSource().direct() || !slots.contains(slot)) {
+
+			return false;
+		}
 
 		slots.remove(slot);
 
@@ -346,6 +357,8 @@ class CModelFrame extends CFrame {
 		}
 
 		model.registerRemovedSlot(slot);
+
+		return true;
 	}
 
 	void addSlotValue(CProperty property, CValue<?> value) {
@@ -452,16 +465,19 @@ class CModelFrame extends CFrame {
 		}
 	}
 
-	private void removeSlots(CProperty propertyOrNull) {
+	private boolean removeSlots(CProperty propertyOrNull) {
+
+		boolean allRemoved = true;
 
 		for (CSlot slot : slots.asList()) {
 
-			if (propertyOrNull == null
-				|| slot.getProperty().equals(propertyOrNull)) {
+			if (slot.getProperty().equals(propertyOrNull)) {
 
-				removeSlot(slot);
+				allRemoved &= removeSlot(slot);
 			}
 		}
+
+		return allRemoved;
 	}
 
 	private void validateSuper(CModelFrame sup) {
