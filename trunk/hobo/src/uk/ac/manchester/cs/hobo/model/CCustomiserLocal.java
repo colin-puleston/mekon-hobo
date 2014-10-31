@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.hobo.*;
 
 /**
  * @author Colin Puleston
@@ -55,13 +54,9 @@ class CCustomiserLocal implements CCustomiser {
 	}
 
 	public void onFrameRemoved(CFrame frame) {
-
-		checkRemovableFrame(frame);
 	}
 
 	public void onSlotRemoved(CSlot slot) {
-
-		checkRemovableSlot(slot);
 	}
 
 	public boolean mappedToNonInstantiableObject(CFrame frame) {
@@ -72,26 +67,6 @@ class CCustomiserLocal implements CCustomiser {
 	CCustomiserLocal(DModel dModel) {
 
 		this.dModel = dModel;
-	}
-
-	private void checkRemovableFrame(CFrame frame) {
-
-		if (frame.getSource().direct()) {
-
-			throw new HModelException("Cannot remove frame with direct source: " + frame);
-		}
-	}
-
-	private void checkRemovableSlot(CSlot slot) {
-
-		if (slot.getSource().direct()) {
-
-			throw new HModelException(
-						"Cannot remove slot with direct source: "
-						+ slot
-						+ ", frame: "
-						+ slot.getContainer());
-		}
 	}
 
 	private boolean instantiableDClassFor(CFrame frame) {
