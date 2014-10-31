@@ -109,14 +109,16 @@ public interface CBuilder {
 	public CFrame resolveFrame(CIdentity identity, boolean hidden);
 
 	/**
-	 * Removes the specified model-frame from the model. Direct
-	 * hierarchical links will be created from each sub-frame to
-	 * each super-frame. Does nothing if frame is not part of the
-	 * current model.
+	 * Removes the specified model-frame from the model, if possible.
+	 * Does nothing if frame is not part of the current model, or if
+	 * it has a {@link CSource#direct} source. If removed then direct
+	 * hierarchical links will be created from each sub-frame to each
+	 * super-frame.
 	 *
 	 * @param identity Identify of frame to be removed
+	 * @return True if frame was removed
 	 */
-	public void removeFrame(CIdentity identity);
+	public boolean removeFrame(CIdentity identity);
 
 	/**
 	 * Sets the instance-reasoner object for an existing model-frame.

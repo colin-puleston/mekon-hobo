@@ -255,12 +255,19 @@ public class CModel implements CAnnotatable {
 		return frame;
 	}
 
-	void removeFrame(CModelFrame frame) {
+	boolean removeFrame(CModelFrame frame) {
+
+		if (frame.getSource().direct() || !frames.contains(frame)) {
+
+			return false;
+		}
 
 		frames.remove(frame);
 
 		removeFrameTraces(frame);
 		customiser.onFrameRemoved(frame);
+
+		return true;
 	}
 
 	CProperty addProperty(CIdentity identity) {
