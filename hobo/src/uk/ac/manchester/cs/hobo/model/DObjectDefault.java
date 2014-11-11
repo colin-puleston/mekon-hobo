@@ -24,44 +24,16 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import uk.ac.manchester.cs.hobo.modeller.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class DObjectDefault implements DObject {
-
-	private DModel model;
-	private IFrame frame;
-
-	public boolean equals(Object other) {
-
-		return other instanceof DObject && equalsDObject((DObject)other);
-	}
-
-	public String toString() {
-
-		return "DObject(" + frame + ")";
-	}
-
-	public DModel getModel() {
-
-		return model;
-	}
-
-	public IFrame getFrame() {
-
-		return frame;
-	}
+class DObjectDefault extends DObjectShell {
 
 	DObjectDefault(DModel model, IFrame frame) {
 
-		this.model = model;
-		this.frame = frame;
-	}
-
-	private boolean equalsDObject(DObject other) {
-
-		return other.getFrame().equals(frame);
+		super(new DObjectBuilderImpl(model, frame));
 	}
 }

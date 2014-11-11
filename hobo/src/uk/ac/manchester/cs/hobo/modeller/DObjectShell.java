@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.modeller;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
@@ -67,8 +68,7 @@ public abstract class DObjectShell implements DObject {
 	 */
 	public boolean equals(Object other) {
 
-		return other instanceof DObject
-				&& ((DObject)other).getFrame().equals(frame);
+		return other instanceof DObject && equalsDObject((DObject)other);
 	}
 
 	/**
@@ -105,6 +105,22 @@ public abstract class DObjectShell implements DObject {
 	/**
 	 * {@inheritDoc}
 	 */
+	public DConcept<DObject> getConcept() {
+
+		return getConcept(DObject.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <D extends DObject>DConcept<D> getConcept(Class<D> dClass) {
+
+		return model.getConcept(dClass, frame.getType());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public IFrame getFrame() {
 
 		return frame;
@@ -113,7 +129,7 @@ public abstract class DObjectShell implements DObject {
 	/**
 	 * Constructor.
 	 *
-	 * @param builder Initialiser for this object
+	 * @param builder Builder for this object
 	 */
 	protected DObjectShell(DObjectBuilder builder) {
 
@@ -135,5 +151,10 @@ public abstract class DObjectShell implements DObject {
 	protected void alignCategory(DObject template) {
 
 		getFrame().alignCategory(template.getFrame());
+	}
+
+	private boolean equalsDObject(DObject other) {
+
+		return other.getFrame().equals(frame);
 	}
 }
