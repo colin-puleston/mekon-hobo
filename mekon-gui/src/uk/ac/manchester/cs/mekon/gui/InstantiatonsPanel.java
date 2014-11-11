@@ -93,8 +93,12 @@ class InstantiatonsPanel extends JPanel {
 	private TitledBorder createBorder() {
 
 		TitledBorder border = new TitledBorder(createTitle());
+		Font font = border.getTitleFont();
 
-		border.setTitleFont(GFonts.toMedium(border.getTitleFont()));
+		if (font != null) {
+
+			border.setTitleFont(GFonts.toMedium(font));
+		}
 
 		return border;
 	}
