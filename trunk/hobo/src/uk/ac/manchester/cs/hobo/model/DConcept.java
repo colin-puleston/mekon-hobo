@@ -123,7 +123,7 @@ public class DConcept<D extends DObject> {
 	 */
 	public boolean subsumedBy(Class<? extends D> subConceptClass) {
 
-		return model.hasSubsumingDType(subConceptClass, frame);
+		return model.getFrame(subConceptClass).subsumes(frame);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class DConcept<D extends DObject> {
 	 */
 	public <N extends DObject>DConcept<N> asType(Class<N> dClass) {
 
-		return model.getConcept(dClass, frame);
+		return new DConcept<N>(model, dClass, frame);
 	}
 
 	DConcept(DModel model, Class<D> dClass, CFrame frame) {

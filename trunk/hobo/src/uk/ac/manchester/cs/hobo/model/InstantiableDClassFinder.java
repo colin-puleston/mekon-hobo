@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.hobo.*;
 /**
  * @author Colin Puleston
  */
-class InstantiableDClassFinder extends DClassFinder {
+class InstantiableDClassFinder {
 
 	static boolean instantiable(Class<? extends DObject> dClass) {
 
@@ -50,7 +50,115 @@ class InstantiableDClassFinder extends DClassFinder {
 		return Modifier.isAbstract(dClass.getModifiers());
 	}
 
+	private DModel model;
 	private Class<? extends DObject> dBaseClass;
+
+	private class Searcher {
+
+		private Set<CFrame> visited = new HashSet<CFrame>();
+		private Set<DBinding> found = new HashSet<DBinding>();
+
+		Set<DBinding> findAll(CFrame frame) {
+
+			searchFrom(frame);
+
+			return found;
+		}
+
+		private void searchFrom(CFrame frame) {
+
+			DBinding binding = model.getBindings().getOrNull(frame);
+
+			if (binding != null && instantiableDClass(binding)) {
+
+				found.add(binding);
+			}
+			else {
+
+				searchFromSupers(frame);
+			}
+		}
+
+		private void searchFromSupers(CFrame frame) {
+
+			for (CFrame sup : frame.getSupers()) {
+
+				if (visited.add(sup)) {
+
+					searchFrom(sup);
+				}
+			}
+		}
+	}
+
+	private class Finder {
+
+		private CFrame type;
+		private Set<DBinding> mostSpecifics = new HashSet<DBinding>();
+
+		Finder(CFrame type) {
+
+			this.type = type;
+
+			for (DBinding instantiable : findAll(type)) {
+
+				updateMostSpecifics(instantiable);
+			}
+		}
+
+		DBinding getOneOrZero() {
+
+			if (mostSpecifics.isEmpty()) {
+
+				return null;
+			}
+
+			if (mostSpecifics.size() == 1) {
+
+				return mostSpecifics.iterator().next();
+			}
+
+			throw new HAccessException(
+						"Multiple instantiable DObject classes found for: "
+						+ type
+						+ " (" + getMostSpecificDClasses() + ")");
+		}
+
+		private void updateMostSpecifics(DBinding candidate) {
+
+			Class<? extends DObject> candidateClass = candidate.getDClass();
+
+			for (DBinding current : new HashSet<DBinding>(mostSpecifics)) {
+
+				Class<? extends DObject> currentClass = current.getDClass();
+
+				if (candidateClass.isAssignableFrom(currentClass)) {
+
+					return;
+				}
+
+				if (currentClass.isAssignableFrom(candidateClass)) {
+
+					mostSpecifics.remove(current);
+				}
+			}
+
+			mostSpecifics.add(candidate);
+		}
+
+		private Set<Class<? extends DObject>> getMostSpecificDClasses() {
+
+			Set<Class<? extends DObject>> dClasses
+				= new HashSet<Class<? extends DObject>>();
+
+			for (DBinding mostSpecific : mostSpecifics) {
+
+				dClasses.add(mostSpecific.getDClass());
+			}
+
+			return dClasses;
+		}
+	}
 
 	InstantiableDClassFinder(DModel model) {
 
@@ -59,89 +167,29 @@ class InstantiableDClassFinder extends DClassFinder {
 
 	InstantiableDClassFinder(DModel model, Class<? extends DObject> dBaseClass) {
 
-		super(model);
-
+		this.model = model;
 		this.dBaseClass = dBaseClass;
 	}
 
 	boolean exactlyOneFor(CFrame type) {
 
-		return searchFrom(type).size() == 1;
+		return findAll(type).size() == 1;
 	}
 
 	DBinding getOneOrZeroFor(CFrame type) {
 
-		Set<DBinding> mostSpecifics = new HashSet<DBinding>();
-
-		for (DBinding instantiable : searchFrom(type)) {
-
-			updateMostSpecifics(mostSpecifics, instantiable);
-		}
-
-		return extractOneOrZero(mostSpecifics, type);
+		return new Finder(type).getOneOrZero();
 	}
 
-	CheckResult check(DBinding binding) {
+	private Set<DBinding> findAll(CFrame type) {
+
+		return new Searcher().findAll(type);
+	}
+
+	private boolean instantiableDClass(DBinding binding) {
 
 		Class<? extends DObject> dClass = binding.getDClass();
 
-		if (instantiable(dClass) && dBaseClass.isAssignableFrom(dClass)) {
-
-			return new CheckResult(SaveAction.SAVE, SearchState.STOP_BRANCH);
-		}
-
-		return new CheckResult(SaveAction.DONT_SAVE, SearchState.CONTINUE);
-	}
-
-	private void updateMostSpecifics(Set<DBinding> mostSpecifics, DBinding test) {
-
-		Class<? extends DObject> testClass = test.getDClass();
-
-		for (DBinding mostSpecific : new HashSet<DBinding>(mostSpecifics)) {
-
-			Class<? extends DObject> mostSpecificClass = mostSpecific.getDClass();
-
-			if (testClass.isAssignableFrom(mostSpecificClass)) {
-
-				return;
-			}
-
-			if (mostSpecificClass.isAssignableFrom(testClass)) {
-
-				mostSpecifics.remove(mostSpecific);
-			}
-		}
-
-		mostSpecifics.add(test);
-	}
-
-	private DBinding extractOneOrZero(Set<DBinding> mostSpecifics, CFrame type) {
-
-		if (mostSpecifics.isEmpty()) {
-
-			return null;
-		}
-
-		if (mostSpecifics.size() == 1) {
-
-			return mostSpecifics.iterator().next();
-		}
-
-		throw new HAccessException(
-					"Multiple instantiable DObject classes found for: "
-					+ type
-					+ " (" + getDClasses(mostSpecifics) + ")");
-	}
-
-	private Set<Class<? extends DObject>> getDClasses(Set<DBinding> bindings) {
-
-		Set<Class<? extends DObject>> dClasses = new HashSet<Class<? extends DObject>>();
-
-		for (DBinding binding : bindings) {
-
-			dClasses.add(binding.getDClass());
-		}
-
-		return dClasses;
+		return instantiable(dClass) && dBaseClass.isAssignableFrom(dClass);
 	}
 }

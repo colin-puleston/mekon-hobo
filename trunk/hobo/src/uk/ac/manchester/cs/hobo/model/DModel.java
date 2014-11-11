@@ -77,21 +77,6 @@ public class DModel {
 	}
 
 	/**
-	 * Tests whether the specified concept-level frame, or any of
-	 * it's ancestors, are mapped to the specified OM class.
-	 *
-	 * @param dClass OM class for which mapping is required
-	 * @param frame Frame from which to search
-	 * @return True if required mapping exists
-	 */
-	public boolean hasSubsumingDType(
-						Class<? extends DObject> dClass,
-						CFrame frame) {
-
-		return new SubsumedDClassFinder(this, dClass).isSubsumed(frame);
-	}
-
-	/**
 	 * Provides the OM class to which the specified concept-level
 	 * frame is bound.
 	 *

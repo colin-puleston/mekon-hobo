@@ -52,6 +52,25 @@ public interface DObject {
 	public DModel getModel();
 
 	/**
+	 * Provides the concept of which the object represents an
+	 * instance.
+	 *
+	 * @return Concept of which object represents instance
+	 */
+	public DConcept<DObject> getConcept();
+
+	/**
+	 * Provides the concept of the specified type, of which the object
+	 * represents an instance.
+	 *
+	 * @param dClass OM class that object implements
+	 * @return Concept of which object represents instance
+	 * @throws KAccessException if object does not implement provided
+	 * OM class
+	 */
+	public <D extends DObject>DConcept<D> getConcept(Class<D> dClass);
+
+	/**
 	 * Provides the instance-level frame to which the object is bound.
 	 *
 	 * @return Frame to which object is bound
