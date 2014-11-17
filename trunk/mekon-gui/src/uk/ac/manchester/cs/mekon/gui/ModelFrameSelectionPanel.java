@@ -51,7 +51,7 @@ class ModelFrameSelectionPanel extends JPanel {
 
 		protected void onSelected(CFrame frame) {
 
-			if (frame.modelFrame()) {
+			if (frame.getCategory().modelFrame()) {
 
 				reselectors.poll(frame);
 				showSelected(frame);
