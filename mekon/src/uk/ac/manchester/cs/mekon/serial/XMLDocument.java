@@ -60,27 +60,27 @@ class XMLDocument {
 
 		try {
 
-			output = new FileOutputStream(file);
-
-			write(document, output);
+			write(document, new FileOutputStream(file));
 		}
-		catch (IOException e) {
+		catch (FileNotFoundException e) {
+
+			closeStream(output);
 
 			throw new XDocumentException(e);
 		}
-		finally {
+	}
 
-			if (output != null) {
+	static void write(Document document, OutputStream output) {
 
-				try {
+		try {
 
-					output.close();
-				}
-				catch (IOException e) {
+			writeToStream(document, output);
+		}
+		catch (IOException e) {
 
-					throw new XDocumentException(e);
-				}
-			}
+			closeStream(output);
+
+			throw new XDocumentException(e);
 		}
 	}
 
@@ -110,9 +110,9 @@ class XMLDocument {
 		}
 	}
 
-	static private void write(
+	static private void writeToStream(
 							Document document,
-							FileOutputStream output)
+							OutputStream output)
 							throws IOException {
 
 		DOMImplementationLS impl = getImplementation(document);
@@ -122,6 +122,18 @@ class XMLDocument {
 		setPrettyPrint(serializer);
 		lsOutput.setByteStream(output);
 		serializer.write(document, lsOutput);
+	}
+
+	static private void closeStream(OutputStream output) {
+
+		try {
+
+			output.close();
+		}
+		catch (IOException e) {
+
+			throw new XDocumentException(e);
+		}
 	}
 
 	static private void setPrettyPrint(LSSerializer serializer) {

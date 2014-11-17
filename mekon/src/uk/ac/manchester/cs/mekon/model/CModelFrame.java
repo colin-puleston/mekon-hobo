@@ -210,6 +210,11 @@ class CModelFrame extends CFrame {
 		return this;
 	}
 
+	public List<CFrame> asDisjuncts() {
+
+		return Collections.<CFrame>singletonList(this);
+	}
+
 	public List<CFrame> getSupers(CFrameVisibility visibility) {
 
 		return supers.asFrames(visibility);
@@ -403,7 +408,7 @@ class CModelFrame extends CFrame {
 		return this;
 	}
 
-	List<CModelFrame> asDisjuncts() {
+	List<CModelFrame> asModelDisjuncts() {
 
 		return asSingletonList();
 	}

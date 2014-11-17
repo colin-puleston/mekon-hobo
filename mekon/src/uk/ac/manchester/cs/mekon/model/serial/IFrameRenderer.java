@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.model.serial;
 
 import java.util.*;
-import java.lang.reflect.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.serial.*;
@@ -35,11 +34,13 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 public class IFrameRenderer extends ISerialiser {
 
-	private class SlotValuesRenderer extends ISlotValuesVisitor {
+	private class ISlotDetailsRenderer extends ISlotValuesVisitor {
 
 		private XNode slotNode;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
+
+			renderCFrame(valueType, slotNode);
 
 			for (IFrame value : values) {
 
@@ -49,10 +50,13 @@ public class IFrameRenderer extends ISerialiser {
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			renderNumber(values.get(0), slotNode);
+			renderCNumber(valueType, slotNode);
+			renderINumber(values.get(0), slotNode);
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
+
+			renderMFrame(valueType, slotNode);
 
 			for (CFrame value : values) {
 
@@ -60,10 +64,11 @@ public class IFrameRenderer extends ISerialiser {
 			}
 		}
 
-		SlotValuesRenderer(ISlot slot, XNode slotNode) {
+		ISlotDetailsRenderer(ISlot slot, XNode slotNode) {
 
 			this.slotNode = slotNode;
 
+			renderCSlot(slot.getType(), slotNode);
 			visit(slot);
 		}
 	}
@@ -72,7 +77,7 @@ public class IFrameRenderer extends ISerialiser {
 	 */
  	public XDocument render(IFrame frame) {
 
-		XDocument document = new XDocument(FRAME_ID);
+		XDocument document = new XDocument(IFRAME_ID);
 
 		renderIFrameDetails(frame, document.getRootNode());
 
@@ -88,75 +93,100 @@ public class IFrameRenderer extends ISerialiser {
 
  	private void renderIFrame(IFrame frame, XNode parentNode) {
 
-		renderIFrameDetails(frame, parentNode.addChild(FRAME_ID));
+		renderIFrameDetails(frame, parentNode.addChild(IFRAME_ID));
 	}
 
- 	private void renderIFrameDetails(IFrame frame, XNode frameNode) {
+ 	private void renderIFrameDetails(IFrame frame, XNode node) {
 
-		renderIdentity(frame.getType(), frameNode);
+		renderCFrame(frame.getType(), node);
 
 		for (ISlot slot : frame.getSlots().asList()) {
 
 			if (slotToBeRendered(slot)) {
 
-				renderSlot(slot, frameNode);
+				renderISlot(slot, node);
 			}
 		}
 	}
 
-	private XNode renderCFrame(CFrame frameType, XNode parentNode) {
+	private void renderCFrame(CFrame frame, XNode parentNode) {
 
-		XNode frameNode = parentNode.addChild(FRAME_ID);
-
-		renderIdentity(frameType, frameNode);
-
-		return frameNode;
+		renderCFrame(frame, parentNode, CFRAME_ID);
 	}
 
-	private void renderSlot(ISlot slot, XNode parentNode) {
+	private void renderCFrame(CFrame frame, XNode parentNode, String tag) {
 
-		XNode slotNode = parentNode.addChild(SLOT_ID);
+		if (frame.getCategory().disjunction()) {
 
-		renderIdentity(slot.getType().getProperty(), slotNode);
-		renderClassName(slot.getValueType(), slotNode, VALUE_TYPE_ATTR);
+			XNode disjunctsNode = parentNode.addChild(tag);
 
-		new SlotValuesRenderer(slot, slotNode);
+			for (CFrame disjunct : frame.getSubs()) {
+
+				renderIdentity(disjunct, disjunctsNode.addChild(tag));
+			}
+		}
+		else {
+
+			renderIdentity(frame, parentNode.addChild(tag));
+		}
 	}
 
-	private void renderNumber(INumber number, XNode node) {
+	private void renderMFrame(MFrame frame, XNode parentNode) {
 
-		Number value = number.asTypeNumber();
-
-		renderClassName(value, node, NUMBER_TYPE_ATTR);
-		node.addValue(NUMBER_VALUE_ATTR, value);
+		renderCFrame(frame.getRootCFrame(), parentNode, MFRAME_ID);
 	}
 
-	private void renderIdentity(CIdentified id, XNode node) {
+	private void renderINumber(INumber number, XNode parentNode) {
 
-		renderIdentity(id.getIdentity(), node);
+		XNode node = parentNode.addChild(INUMBER_ID);
+
+		if (number.indefinite()) {
+
+			node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
+		}
+		else {
+
+			renderCNumberRange(number.getType(), node);
+		}
 	}
 
-	private void renderClassName(Object value, XNode node, String attr) {
+	private void renderCNumber(CNumber number, XNode parentNode) {
 
-		Class<?> publicClass = findPublicClass(value.getClass());
+		XNode node = parentNode.addChild(CNUMBER_ID);
 
-		node.addValue(attr, publicClass.getSimpleName());
+		renderClassId(number.getNumberType(), node, NUMBER_TYPE_ATTR);
+		renderCNumberRange(number, node);
+	}
+
+	private void renderCNumberRange(CNumber number, XNode node) {
+
+		if (number.hasMin()) {
+
+			node.addValue(NUMBER_MIN_ATTR, number.getMin().asTypeNumber());
+		}
+
+		if (number.hasMax()) {
+
+			node.addValue(NUMBER_MAX_ATTR, number.getMax().asTypeNumber());
+		}
+	}
+
+	private void renderISlot(ISlot slot, XNode parentNode) {
+
+		XNode node = parentNode.addChild(ISLOT_ID);
+
+		new ISlotDetailsRenderer(slot, node);
+	}
+
+	private void renderCSlot(CSlot slot, XNode parentNode) {
+
+		XNode node = parentNode.addChild(CSLOT_ID);
+
+		renderIdentity(slot.getProperty(), node);
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {
 
 		return !slot.dependent() && !slot.getValues().isEmpty();
-	}
-
-	private Class<?> findPublicClass(Class<?> testClass) {
-
-		return isPublicClass(testClass)
-					? testClass
-					: findPublicClass(testClass.getSuperclass());
-	}
-
-	private boolean isPublicClass(Class<?> testClass) {
-
-		return Modifier.isPublic(testClass.getModifiers());
 	}
 }

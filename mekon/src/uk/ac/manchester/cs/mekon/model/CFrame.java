@@ -176,18 +176,6 @@ public abstract class CFrame
 	public abstract CSource getSource();
 
 	/**
-	 * Specifies whether this is a model-frame. This is
-	 * equivalent to {@link #getCategory} returning a value of
-	 * {@link CFrameCategory#MODEL}.
-	 *
-	 * @return True if model-frame.
-	 */
-	public boolean modelFrame() {
-
-		return getCategory() == CFrameCategory.MODEL;
-	}
-
-	/**
 	 * Provides the frame-category.
 	 *
 	 * @return Frame-category.
@@ -275,6 +263,16 @@ public abstract class CFrame
 	 * @return Closest unambiguosly defined model-frame subsumer
 	 */
 	public abstract CFrame getModelFrame();
+
+	/**
+	 * Provides a decomposition of the frame into a set disjuncts. If the
+	 * frame has category of {@link CFrameCategory#DISJUNCTION} then this
+	 * set will contain all direct sub-frames. Otherwise is will contain
+	 * just the frame itself.
+	 *
+	 * @return Decomposition of frame into set of disjuncts
+	 */
+	public abstract List<CFrame> asDisjuncts();
 
 	/**
 	 * Provides all super-frames.
@@ -559,7 +557,7 @@ public abstract class CFrame
 
 	abstract CModelFrame asModelFrame();
 
-	abstract List<CModelFrame> asDisjuncts();
+	abstract List<CModelFrame> asModelDisjuncts();
 
 	abstract List<CModelFrame> getSubsumptionTestDisjuncts();
 

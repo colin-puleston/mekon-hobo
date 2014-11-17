@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.serial.*;
@@ -43,7 +45,7 @@ public class IFrameParser extends ISerialiser {
 
 		protected void visit(CFrame value) {
 
-			for (XNode valueNode : slotNode.getChildren(FRAME_ID)) {
+			for (XNode valueNode : slotNode.getChildren(IFRAME_ID)) {
 
 				valuesEditor.add(parseIFrame(valueNode));
 			}
@@ -51,12 +53,12 @@ public class IFrameParser extends ISerialiser {
 
 		protected void visit(CNumber value) {
 
-			valuesEditor.add(parseNumber(value, slotNode));
+			valuesEditor.add(parseINumber(value, slotNode.getChild(INUMBER_ID)));
 		}
 
 		protected void visit(MFrame value) {
 
-			for (XNode valueNode : slotNode.getChildren(FRAME_ID)) {
+			for (XNode valueNode : slotNode.getChildren(CFRAME_ID)) {
 
 				valuesEditor.add(parseCFrame(valueNode));
 			}
@@ -89,18 +91,19 @@ public class IFrameParser extends ISerialiser {
 
 	/**
 	 */
- 	public IFrame parse(XNode frameNode) {
+ 	public IFrame parse(XNode node) {
 
-		return parseIFrame(frameNode);
+		return parseIFrame(node);
 	}
 
-	private IFrame parseIFrame(XNode frameNode) {
+	private IFrame parseIFrame(XNode node) {
 
-		IFrame frame = parseCFrame(frameNode).instantiate();
+		CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
+		IFrame frame = frameType.instantiate();
 
-		for (XNode slotNode : frameNode.getChildren(SLOT_ID)) {
+		for (XNode slotNode : node.getChildren(ISLOT_ID)) {
 
-			ISlot slot = parseSlot(frame, slotNode);
+			ISlot slot = parseISlot(frame, slotNode);
 
 			new SlotValuesParser(slot, slotNode);
 		}
@@ -108,14 +111,95 @@ public class IFrameParser extends ISerialiser {
 		return frame;
 	}
 
-	private CFrame parseCFrame(XNode frameNode) {
+	private CFrame parseCFrame(XNode node) {
 
-		return getCFrame(parseIdentity(frameNode));
+		return node.hasAttribute(IDENTITY_ATTR)
+				? parseModelCFrame(node)
+				: parseDisjunctionCFrame(node);
 	}
 
-	private ISlot parseSlot(IFrame frame, XNode slotNode) {
+	private CFrame parseDisjunctionCFrame(XNode node) {
 
-		CIdentity id = parseIdentity(slotNode);
+		List<CFrame> disjuncts = new ArrayList<CFrame>();
+
+		for (XNode disjunctNode : node.getChildren(CFRAME_ID)) {
+
+			disjuncts.add(parseModelCFrame(disjunctNode));
+		}
+
+		return CFrame.resolveDisjunction(disjuncts);
+	}
+
+	private CFrame parseModelCFrame(XNode node) {
+
+		return getCFrame(parseIdentity(node));
+	}
+
+	private INumber parseINumber(CNumber valueType, XNode node) {
+
+		return node.hasAttribute(NUMBER_VALUE_ATTR)
+				? parseDefiniteINumber(valueType, node, NUMBER_VALUE_ATTR)
+				: parseIndefiniteINumber(valueType, node);
+	}
+
+	private INumber parseIndefiniteINumber(CNumber valueType, XNode node) {
+
+		INumber min = INumber.MINUS_INFINITY;
+		INumber max = INumber.PLUS_INFINITY;
+
+		if (node.hasAttribute(NUMBER_MIN_ATTR)) {
+
+			min = parseDefiniteINumber(valueType, node, NUMBER_MIN_ATTR);
+		}
+
+		if (node.hasAttribute(NUMBER_MAX_ATTR)) {
+
+			max = parseDefiniteINumber(valueType, node, NUMBER_MAX_ATTR);
+		}
+
+		return CNumberDef.range(min, max).createNumber().asINumber();
+	}
+
+	private INumber parseDefiniteINumber(CNumber valueType, XNode node, String attrName) {
+
+		return INumber.create(valueType.getNumberType(), node.getString(attrName));
+	}
+
+	private CNumber parseCNumber(XNode node) {
+
+		return parseCNumberDef(node).createNumber();
+	}
+
+	private CNumberDef parseCNumberDef(XNode node) {
+
+		String className = node.getString(NUMBER_TYPE_ATTR);
+
+		if (isClassName(Integer.class, className)) {
+
+			return CIntegerDef.UNCONSTRAINED;
+		}
+
+		if (isClassName(Long.class, className)) {
+
+			return CLongDef.UNCONSTRAINED;
+		}
+
+		if (isClassName(Float.class, className)) {
+
+			return CFloatDef.UNCONSTRAINED;
+		}
+
+		if (isClassName(Double.class, className)) {
+
+			return CDoubleDef.UNCONSTRAINED;
+		}
+
+		throw new XDocumentException("Unrecognised class: " + className);
+	}
+
+	private ISlot parseISlot(IFrame frame, XNode node) {
+
+		CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
 		ISlots slots = frame.getSlots();
 
 		if (slots.containsValueFor(id)) {
@@ -123,76 +207,39 @@ public class IFrameParser extends ISerialiser {
 			return slots.get(id);
 		}
 
-		return parseNewSlot(frame, id, slotNode);
+		return parseNewISlot(frame, id, node);
 	}
 
-	private ISlot parseNewSlot(IFrame frame, CIdentity id, XNode slotNode) {
-
-		CProperty property = getProperty(id);
-		CValue<?> valueType = parseValueType(slotNode);
+	private ISlot parseNewISlot(IFrame frame, CIdentity id, XNode node) {
 
 		return getIFrameEditor(frame)
 				.addSlot(
-					property,
+					getProperty(id),
 					CSource.UNSPECIFIED,
 					CCardinality.FREE,
-					valueType);
+					parseISlotValueType(id, node));
 	}
 
-	private CValue<?> parseValueType(XNode slotNode) {
+	private CValue<?> parseISlotValueType(CIdentity id, XNode slotNode) {
 
-		String name = slotNode.getString(VALUE_TYPE_ATTR);
-
-		if (isClassName(MFrame.class, name)) {
-
-			return getRootMFrame();
-		}
-
-		if (isClassName(CFrame.class, name)) {
+		if (slotNode.hasChild(CFRAME_ID)) {
 
 			return getRootCFrame();
 		}
 
-		if (isClassName(CNumber.class, name)) {
+		if (slotNode.hasChild(CNUMBER_ID)) {
 
-			return parseNumberValueType(slotNode).createNumber();
+			return parseCNumber(slotNode.getChild(CNUMBER_ID));
 		}
 
-		throw new XDocumentException("Unrecognised class: " + name);
-	}
+		if (slotNode.hasChild(MFRAME_ID)) {
 
-	private CNumberDef parseNumberValueType(XNode slotNode) {
-
-		String name = slotNode.getString(NUMBER_TYPE_ATTR);
-
-		if (isClassName(Integer.class, name)) {
-
-			return CIntegerDef.UNCONSTRAINED;
+			return getRootMFrame();
 		}
 
-		if (isClassName(Long.class, name)) {
-
-			return CLongDef.UNCONSTRAINED;
-		}
-
-		if (isClassName(Float.class, name)) {
-
-			return CFloatDef.UNCONSTRAINED;
-		}
-
-		if (isClassName(Double.class, name)) {
-
-			return CDoubleDef.UNCONSTRAINED;
-		}
-
-		throw new XDocumentException("Unrecognised class: " + name);
-	}
-
-	private INumber parseNumber(CNumber valueType, XNode node) {
-
-		String value = node.getString(NUMBER_VALUE_ATTR);
-
-		return INumber.create(valueType.getNumberType(), value);
+		throw new XDocumentException(
+					"Cannot find value-type element for slot: "
+					+ id.getIdentifier());
 	}
 
 	private CFrame getCFrame(CIdentity id) {

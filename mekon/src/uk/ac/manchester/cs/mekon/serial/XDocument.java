@@ -66,11 +66,24 @@ public class XDocument {
 	 * Writes the current document to file.
 	 *
 	 * @param file Path of relevant file
-	 * @throws XDocumentException if file cannot be created
+	 * @throws XDocumentException if file cannot be created, or if
+	 * document cannot be written to output-stream for some reason
 	 */
 	public void writeToFile(File file) {
 
 		XMLDocument.write(xmlDocument, file);
+	}
+
+	/**
+	 * Writes the current document to an output-stream.
+	 *
+	 * @param output Relevant output-stream
+	 * @throws XDocumentException if document cannot be written to
+	 * output-stream for some reason
+	 */
+	public void writeToOutput(OutputStream output) {
+
+		XMLDocument.write(xmlDocument, output);
 	}
 
 	/**

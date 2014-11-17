@@ -93,6 +93,18 @@ public class XNode {
 	}
 
 	/**
+	 * Tests whether there are one or more child-nodes with the
+	 * specified identifier.
+	 *
+	 * @param id Identifier for required child-node
+	 * @return True if required child-node found
+	 */
+	public boolean hasChild(String id) {
+
+		return !getChildren(id).isEmpty();
+	}
+
+	/**
 	 * Retrieves the child-node with the specified identifier, if
 	 * such a child-node exists.
 	 *
@@ -140,6 +152,18 @@ public class XNode {
 		}
 
 		return found;
+	}
+
+	/**
+	 * Tests whether there is an attribute with the specified
+	 * identifier.
+	 *
+	 * @param id Identifier for required attribute
+	 * @return True if required attribute found
+	 */
+	public boolean hasAttribute(String id) {
+
+		return getStringOrNull(id) != null;
 	}
 
 	/**

@@ -99,6 +99,11 @@ class CExtension extends CExpression {
 		return extendedFrame;
 	}
 
+	public List<CFrame> asDisjuncts() {
+
+		return Collections.<CFrame>singletonList(this);
+	}
+
 	public List<CFrame> getSupers(CFrameVisibility visibility) {
 
 		return Collections.<CFrame>singletonList(extendedFrame);
@@ -169,7 +174,7 @@ class CExtension extends CExpression {
 		registerAsReferencerOfSlotValues();
 	}
 
-	List<CModelFrame> asDisjuncts() {
+	List<CModelFrame> asModelDisjuncts() {
 
 		throw new KAccessException(
 					"Cannot create disjunction with "

@@ -65,7 +65,7 @@ class CDisjunction extends CExpression {
 
 		for (CFrame disjunct : disjuncts) {
 
-			for (CModelFrame modelDisjunct : disjunct.asDisjuncts()) {
+			for (CModelFrame modelDisjunct : disjunct.asModelDisjuncts()) {
 
 				mostGenerals.update(modelDisjunct);
 			}
@@ -207,6 +207,11 @@ class CDisjunction extends CExpression {
 		return getCommonSubsumersFinder().getClosestSingle(commonSupers);
 	}
 
+	public List<CFrame> asDisjuncts() {
+
+		return new ArrayList<CFrame>(disjuncts);
+	}
+
 	public List<CFrame> getSupers(CFrameVisibility visibility) {
 
 		return new UpwardFramesFinder().getDirectlyLinked(visibility);
@@ -245,7 +250,7 @@ class CDisjunction extends CExpression {
 		}
 	}
 
-	List<CModelFrame> asDisjuncts() {
+	List<CModelFrame> asModelDisjuncts() {
 
 		return disjuncts;
 	}
