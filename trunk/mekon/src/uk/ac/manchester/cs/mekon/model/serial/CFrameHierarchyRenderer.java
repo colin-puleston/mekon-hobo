@@ -24,16 +24,39 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.serial.*;
+
 /**
  * @author Colin Puleston
  */
-abstract class ISerialiser extends FSerialiser {
+public class CFrameHierarchyRenderer extends FSerialiser {
 
-	static final String STORE_ID = "Store";
-	static final String INSTANCE_ID = "Instance";
+	/**
+	 */
+ 	public XDocument render(CFrame frame) {
 
-	static final String NUMBER_TYPE_ATTR = "numberType";
-	static final String NUMBER_MIN_ATTR = "min";
-	static final String NUMBER_MAX_ATTR = "max";
-	static final String NUMBER_VALUE_ATTR = "value";
+		XDocument document = new XDocument(CFRAME_ID);
+
+		renderDetails(frame, document.getRootNode());
+
+		return document;
+	}
+
+	/**
+	 */
+ 	public void render(CFrame frame, XNode parentNode) {
+
+		renderDetails(frame, parentNode.addChild(CFRAME_ID));
+	}
+
+ 	private void renderDetails(CFrame frame, XNode node) {
+
+		renderIdentity(frame, node);
+
+		for (CFrame sub : frame.getSubs()) {
+
+			render(sub, node);
+		}
+	}
 }

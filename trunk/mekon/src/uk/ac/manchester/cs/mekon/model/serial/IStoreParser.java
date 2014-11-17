@@ -62,6 +62,6 @@ public abstract class IStoreParser extends ISerialiser {
 
 	private IFrame parseIFrame(XNode instanceNode) {
 
-		return iFrameParser.parse(instanceNode.getChild(FRAME_ID));
+		return iFrameParser.parse(instanceNode.getChild(IFRAME_ID));
 	}
 }
