@@ -24,13 +24,34 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
  * @author Colin Puleston
  */
-public class CFrameHierarchyRenderer extends FSerialiser {
+public class CFrameHierarchyRenderer extends CSerialiser {
+
+	private Set<Object> annotationKeys = new HashSet<Object>();
+
+	/**
+	 */
+ 	public void setRenderAllAnnotations() {
+
+		annotationKeys = null;
+	}
+
+	/**
+	 */
+ 	public void setRenderAnnotations(Object key) {
+
+		if (annotationKeys != null) {
+
+			annotationKeys.add(key);
+		}
+	}
 
 	/**
 	 */
@@ -53,10 +74,38 @@ public class CFrameHierarchyRenderer extends FSerialiser {
  	private void renderDetails(CFrame frame, XNode node) {
 
 		renderIdentity(frame, node);
+		renderAnnotations(frame.getAnnotations(), node);
 
 		for (CFrame sub : frame.getSubs()) {
 
 			render(sub, node);
 		}
+	}
+
+ 	private void renderAnnotations(CAnnotations annos, XNode node) {
+
+		for (Object key : annos.getKeys()) {
+
+			if (requireAnnotations(key)) {
+
+				renderAnnotations(key, annos.getAll(key), node);
+			}
+		}
+	}
+
+ 	private void renderAnnotations(Object key, List<Object> values, XNode parentNode) {
+
+		for (Object value : values) {
+
+			XNode node = parentNode.addChild(ANNOTATION_ID);
+
+			node.addValue(ANNOTATION_KEY_ATTR, key);
+			node.addValue(ANNOTATION_VALUE_ATTR, value);
+		}
+	}
+
+	private boolean requireAnnotations(Object key) {
+
+		return annotationKeys == null || annotationKeys.contains(key);
 	}
 }
