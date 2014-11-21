@@ -84,7 +84,12 @@ public class KConfigResourceFinder {
 
 		private URL getURLOrNull(String path) {
 
-			return getClass().getClassLoader().getSystemResource(path);
+			return getClassLoader().getResource(path);
+		}
+
+		private ClassLoader getClassLoader() {
+
+			return Thread.currentThread().getContextClassLoader();
 		}
 	}
 
