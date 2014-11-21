@@ -71,7 +71,7 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 
 			G group = createGroup(groupNode, getRootEntityIRI(groupNode));
 
-			group.setIncludesRoot(getIncludesRoot(groupNode));
+			group.setInclusion(getInclusion(groupNode));
 
 			return group;
 		}
@@ -81,9 +81,12 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 			return IRI.create(groupNode.getURI(ROOT_ENTITY_URI_ATTR));
 		}
 
-		private boolean getIncludesRoot(KConfigNode groupNode) {
+		private OBEntitySelection getInclusion(KConfigNode groupNode) {
 
-			return groupNode.getBoolean(INCLUDE_ROOT_ENTITY_ATTR);
+			return groupNode.getEnum(
+						ENTITY_INCLUSION_ATTR,
+						OBEntitySelection.class,
+						OBEntitySelection.ALL);
 		}
 	}
 
@@ -106,18 +109,18 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 			OBConceptGroup group = new OBConceptGroup(rootIRI);
 			OBConceptHiding hiding = group.getConceptHiding();
 
-			hiding.setScope(getHidingScope(groupNode));
+			hiding.setCandidates(getHidingCandidates(groupNode));
 			hiding.setFilter(getHidingFilter(groupNode));
 
 			return group;
 		}
 
-		private OBConceptHidingScope getHidingScope(KConfigNode groupNode) {
+		private OBEntitySelection getHidingCandidates(KConfigNode groupNode) {
 
 			return groupNode.getEnum(
-						CONCEPT_HIDING_SCOPE_ATTR,
-						OBConceptHidingScope.class,
-						OBConceptHidingScope.NONE);
+						CONCEPT_HIDING_CANDIDATES_ATTR,
+						OBEntitySelection.class,
+						OBEntitySelection.NONE);
 		}
 
 		private OBConceptHidingFilter getHidingFilter(KConfigNode groupNode) {

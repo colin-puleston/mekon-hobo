@@ -45,8 +45,8 @@ public interface OBSectionBuilderConfigVocab {
 	static public final String METAFRAME_SLOTS_ENABLED_ATTR = "metaFrameSlotsEnabled";
 	static public final String RETAIN_ONLY_DECLARATIONS_ATTR = "retainOnlyDeclarationAxioms";
 	static public final String ROOT_ENTITY_URI_ATTR = "rootURI";
-	static public final String INCLUDE_ROOT_ENTITY_ATTR = "includeRoot";
-	static public final String CONCEPT_HIDING_SCOPE_ATTR = "conceptHidingScope";
+	static public final String ENTITY_INCLUSION_ATTR = "inclusion";
+	static public final String CONCEPT_HIDING_CANDIDATES_ATTR = "conceptHidingCandidates";
 	static public final String CONCEPT_HIDING_FILTER_ATTR = "conceptHidingFilter";
 	static public final String MIRROR_PROPERTIES_AS_FRAMES_ATTR = "mirrorAsFrames";
 	static public final String ANNO_PROPERTY_URI_ATTR = "uri";

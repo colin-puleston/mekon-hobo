@@ -131,9 +131,9 @@ public class OBSectionBuilderTest extends OTest {
 	}
 
 	@Test
-	public void test_frames_hidingScope_ALL() {
+	public void test_frames_hidingCandidates_ALL() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBConceptHidingScope.ALL);
+		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ALL);
 
 		buildModel();
 
@@ -143,9 +143,9 @@ public class OBSectionBuilderTest extends OTest {
 	}
 
 	@Test
-	public void test_frames_hidingScope_ROOTS_ONLY() {
+	public void test_frames_hidingCandidates_ROOTS_ONLY() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBConceptHidingScope.ROOTS_ONLY);
+		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ROOTS_ONLY);
 
 		buildModel();
 
@@ -155,9 +155,9 @@ public class OBSectionBuilderTest extends OTest {
 	}
 
 	@Test
-	public void test_frames_hidingScope_NON_ROOTS_ONLY() {
+	public void test_frames_hidingCandidates_NON_ROOTS_ONLY() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBConceptHidingScope.NON_ROOTS_ONLY);
+		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBEntitySelection.NON_ROOTS_ONLY);
 
 		buildModel();
 
@@ -358,11 +358,11 @@ public class OBSectionBuilderTest extends OTest {
 
 	private OBConceptGroup addConceptGroup(
 								String rootName,
-								OBConceptHidingScope hidingScope) {
+								OBEntitySelection hidingCandidates) {
 
 		OBConceptGroup group = createConceptGroup(rootName);
 
-		group.getConceptHiding().setScope(hidingScope);
+		group.getConceptHiding().setCandidates(hidingCandidates);
 
 		return addConceptGroup(group);
 	}
@@ -374,7 +374,7 @@ public class OBSectionBuilderTest extends OTest {
 		OBConceptGroup group = createConceptGroup(rootName);
 		OBConceptHiding hiding = group.getConceptHiding();
 
-		hiding.setScope(OBConceptHidingScope.ALL);
+		hiding.setCandidates(OBEntitySelection.ALL);
 		hiding.setFilter(hidingFilter);
 
 		return addConceptGroup(group);

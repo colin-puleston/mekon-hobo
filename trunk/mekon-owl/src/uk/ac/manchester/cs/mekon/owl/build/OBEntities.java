@@ -51,14 +51,17 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
 
 		E root = getRoot(group.getRootEntityIRI());
 
-		if (group.includesRoot()) {
+		if (group.getInclusion().includesRoot()) {
 
 			addGroupEntity(group, root, true);
 		}
 
-		for (E nonRoot : getDescendants(root)) {
+		if (group.getInclusion().includesNonRoots()) {
 
-			addGroupEntity(group, nonRoot, false);
+			for (E nonRoot : getDescendants(root)) {
+
+				addGroupEntity(group, nonRoot, false);
+			}
 		}
 	}
 
