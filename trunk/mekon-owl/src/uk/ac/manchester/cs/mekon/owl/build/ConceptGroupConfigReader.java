@@ -24,56 +24,52 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import java.util.*;
+import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OBFrameSlot extends OBSlot {
+class ConceptGroupConfigReader
+			extends
+				EntityGroupConfigReader<OBConceptGroup, OBConcepts>
+				implements OBSectionBuilderConfigVocab {
 
-	private boolean metaFrameSlotsEnabled;
+	ConceptGroupConfigReader(KConfigNode configNode) {
 
-	OBFrameSlot(OBSlotSpec spec) {
-
-		super(spec);
-
-		metaFrameSlotsEnabled = spec.metaFrameSlotsEnabled();
+		super(configNode);
 	}
 
-	CValue<?> ensureCValue(
-				CBuilder builder,
-				OBSlot topLevelSlot,
-				OBAnnotations annotations) {
+	String getInclusionId() {
 
-		CFrame cFrame = ensureCFrame(builder, annotations);
-
-		return isMetaFrameSlot(topLevelSlot) ? cFrame.getType() : cFrame;
+		return CONCEPT_INCLUSION_ID;
 	}
 
-	abstract CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations);
+	OBConceptGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
 
-	abstract Set<OBFrame> getRootValueTypeFrames();
+		OBConceptGroup group = new OBConceptGroup(rootIRI);
+		OBConceptHiding hiding = group.getConceptHiding();
 
-	private boolean isMetaFrameSlot(OBSlot topLevelSlot) {
+		hiding.setCandidates(getHidingCandidates(groupNode));
+		hiding.setFilter(getHidingFilter(groupNode));
 
-		return metaFrameSlotsEnabled && !slotsInValueTypeHierarchy(topLevelSlot);
+		return group;
 	}
 
-	private boolean slotsInValueTypeHierarchy(OBSlot topLevelSlot) {
+	private OBEntitySelection getHidingCandidates(KConfigNode groupNode) {
 
-		OBFrameSlot topLevelFrameSlot = (OBFrameSlot)topLevelSlot;
+		return groupNode.getEnum(
+					CONCEPT_HIDING_CANDIDATES_ATTR,
+					OBEntitySelection.class,
+					OBEntitySelection.NONE);
+	}
 
-		for (OBFrame valueType : topLevelFrameSlot.getRootValueTypeFrames()) {
+	private OBConceptHidingFilter getHidingFilter(KConfigNode groupNode) {
 
-			if (valueType.slotsInHierarchy()) {
-
-				return true;
-			}
-		}
-
-		return false;
+		return groupNode.getEnum(
+					CONCEPT_HIDING_FILTER_ATTR,
+					OBConceptHidingFilter.class,
+					OBConceptHidingFilter.ANY);
 	}
 }

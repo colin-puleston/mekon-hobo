@@ -79,7 +79,7 @@ class OBFrame extends OIdentified {
 		return hidden;
 	}
 
-	CFrame ensureCFrame(CBuilder builder, OBEntityAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
 		if (cFrame == null) {
 
@@ -88,7 +88,7 @@ class OBFrame extends OIdentified {
 			addCSubFrames(builder, annotations);
 			addCSlotsAndValues(builder, annotations);
 
-			annotations.addAnnotations(builder, cFrame, concept);
+			annotations.checkAdd(builder, cFrame, concept);
 		}
 
 		return cFrame;
@@ -116,9 +116,7 @@ class OBFrame extends OIdentified {
 		return frame;
 	}
 
-	private void addCSubFrames(
-					CBuilder builder,
-					OBEntityAnnotations annotations) {
+	private void addCSubFrames(CBuilder builder, OBAnnotations annotations) {
 
 		for (OBFrame subFrame : subFrames) {
 
@@ -130,7 +128,7 @@ class OBFrame extends OIdentified {
 
 	private void addCSlotsAndValues(
 					CBuilder builder,
-					OBEntityAnnotations annotations) {
+					OBAnnotations annotations) {
 
 		for (OBSlot slot : slots) {
 

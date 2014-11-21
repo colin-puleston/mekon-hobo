@@ -31,76 +31,59 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
- * Responsible for copying annotations from OWL entities to
- * the relevant generated frames-based entities.
+ * Responsible for copying annotations from OWL entities to the
+ * relevant generated frames-based entities.
  *
  * @author Colin Puleston
  */
-public class OBEntityAnnotations {
+public class OBAnnotations {
 
 	private OModel model;
-	private Set<OBEntityAnnotationType> types = new HashSet<OBEntityAnnotationType>();
-	private Map<IRI, OAnnotationReader> readers = new HashMap<IRI, OAnnotationReader>();
+
+	private Set<OBAnnotationInclusion> inclusions
+				= new HashSet<OBAnnotationInclusion>();
 
 	/**
-	 * Adds a specification of a type of annotation to be copied.
+	 * Adds a specification of a set of annotations to be included.
 	 *
-	 * @param type Type of annotation to be copied
+	 * @param inclusion Specification of set of annotations to be
+	 * included
 	 */
-	public void addType(OBEntityAnnotationType type) {
+	public void addInclusion(OBAnnotationInclusion inclusion) {
 
-		types.add(type);
+		inclusions.add(inclusion);
 	}
 
 	/**
-	 * Adds a set of specifications of types of annotation to be copied.
+	 * Adds a specifications of sets of annotations to be included.
 	 *
-	 * @param types Types of annotations to be copied
+	 * @param inclusions Specifications of sets of annotations to be
+	 * included
 	 */
-	public void addTypes(Set<OBEntityAnnotationType> types) {
+	public void addInclusions(Set<OBAnnotationInclusion> inclusions) {
 
-		this.types.addAll(types);
+		this.inclusions.addAll(inclusions);
 	}
 
-	OBEntityAnnotations(OModel model) {
+	OBAnnotations(OModel model) {
 
 		this.model = model;
 	}
 
-	void addAnnotations(CBuilder builder, CEntity cEntity, OWLEntity owlEntity) {
+	void checkAdd(CBuilder builder, CEntity cEntity, OWLEntity owlEntity) {
 
-		CAnnotationsEditor annoEd = builder.getAnnotationsEditor(cEntity.getAnnotations());
+		CAnnotationsEditor editor = getEditor(builder, cEntity);
 
-		for (OBEntityAnnotationType type : types) {
+		for (OBAnnotationInclusion inclusion : inclusions) {
 
-			OAnnotationReader reader = getReader(type.getAnnotationPropertyIRI());
-			String value = reader.getValueOrNull(owlEntity);
-
-			if (value != null) {
-
-				annoEd.addAll(type.getFramesAnnotationId(), type.getValues(value));
-			}
+			inclusion.checkAdd(model, owlEntity, editor);
 		}
 	}
 
-	private OAnnotationReader getReader(IRI iri) {
+	private CAnnotationsEditor getEditor(CBuilder builder, CEntity cEntity) {
 
-		OAnnotationReader reader = readers.get(iri);
-
-		if (reader == null) {
-
-			reader = createReader(iri);
-			readers.put(iri, reader);
-		}
-
-		return reader;
-	}
-
-	private OAnnotationReader createReader(IRI iri) {
-
-		return new OAnnotationReader(model, model.getAnnotationProperty(iri));
+		return builder.getAnnotationsEditor(cEntity.getAnnotations());
 	}
 }

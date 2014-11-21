@@ -54,7 +54,7 @@ class OBDisjunctionFrameSlot extends OBFrameSlot {
 		return true;
 	}
 
-	CFrame ensureCFrame(CBuilder builder, OBEntityAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
 		List<CFrame> cDisjuncts = new ArrayList<CFrame>();
 

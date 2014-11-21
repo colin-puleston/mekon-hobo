@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import java.util.*;
-
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
@@ -37,130 +35,6 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 
 	private KConfigNode configNode;
 
-	private abstract class EntityGroupReader
-							<G extends OBEntityGroup,
-							E extends OBEntities<?, G>> {
-
-		EntityGroupReader(E entities) {
-
-			KConfigNode groupsNode = configNode.getChildOrNull(getInclusionId());
-
-			if (groupsNode != null) {
-
-				entities.addGroups(getGroups(groupsNode));
-			}
-		}
-
-		abstract String getInclusionId();
-
-		abstract G createGroup(KConfigNode groupNode, IRI rootIRI);
-
-		private Set<G> getGroups(KConfigNode groupsNode) {
-
-			Set<G> groups = new HashSet<G>();
-
-			for (KConfigNode groupNode : groupsNode.getChildren(ENTITY_GROUP_ID)) {
-
-				groups.add(getGroup(groupNode));
-			}
-
-			return groups;
-		}
-
-		private G getGroup(KConfigNode groupNode) {
-
-			G group = createGroup(groupNode, getRootEntityIRI(groupNode));
-
-			group.setInclusion(getInclusion(groupNode));
-
-			return group;
-		}
-
-		private IRI getRootEntityIRI(KConfigNode groupNode) {
-
-			return IRI.create(groupNode.getURI(ROOT_ENTITY_URI_ATTR));
-		}
-
-		private OBEntitySelection getInclusion(KConfigNode groupNode) {
-
-			return groupNode.getEnum(
-						ENTITY_INCLUSION_ATTR,
-						OBEntitySelection.class,
-						OBEntitySelection.ALL);
-		}
-	}
-
-	private class ConceptGroupReader
-					extends
-						EntityGroupReader<OBConceptGroup, OBConcepts> {
-
-		ConceptGroupReader(OBConcepts entities) {
-
-			super(entities);
-		}
-
-		String getInclusionId() {
-
-			return CONCEPT_INCLUSION_ID;
-		}
-
-		OBConceptGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
-
-			OBConceptGroup group = new OBConceptGroup(rootIRI);
-			OBConceptHiding hiding = group.getConceptHiding();
-
-			hiding.setCandidates(getHidingCandidates(groupNode));
-			hiding.setFilter(getHidingFilter(groupNode));
-
-			return group;
-		}
-
-		private OBEntitySelection getHidingCandidates(KConfigNode groupNode) {
-
-			return groupNode.getEnum(
-						CONCEPT_HIDING_CANDIDATES_ATTR,
-						OBEntitySelection.class,
-						OBEntitySelection.NONE);
-		}
-
-		private OBConceptHidingFilter getHidingFilter(KConfigNode groupNode) {
-
-			return groupNode.getEnum(
-						CONCEPT_HIDING_FILTER_ATTR,
-						OBConceptHidingFilter.class,
-						OBConceptHidingFilter.ANY);
-		}
-	}
-
-	private class PropertyGroupReader
-					extends
-						EntityGroupReader<OBPropertyGroup, OBProperties> {
-
-		PropertyGroupReader(OBProperties entities) {
-
-			super(entities);
-		}
-
-		String getInclusionId() {
-
-			return PROPERTY_INCLUSION_ID;
-		}
-
-		OBPropertyGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
-
-			OBPropertyGroup group = new OBPropertyGroup(rootIRI);
-
-			group.setMirrorAsFrames(getMirrorAsFrames(groupNode));
-
-			return group;
-		}
-
-		private boolean getMirrorAsFrames(KConfigNode groupNode) {
-
-			return groupNode.getBoolean(MIRROR_PROPERTIES_AS_FRAMES_ATTR, false);
-		}
-	}
-
 	OBSectionBuilderConfig(KConfigNode parentConfigNode) {
 
 		configNode = parentConfigNode.getChild(ROOT_ID);
@@ -170,20 +44,41 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 
 		addConcepts(builder);
 		addProperties(builder);
+		addAnnotationInclusion(builder);
 		addLabelAnnotationProperties(builder);
-		addEntityAnnotationTypes(builder);
 		setMetaFrameSlotsEnabled(builder);
 		setRetainOnlyDeclarationAxioms(builder);
 	}
 
 	private void addConcepts(OBSectionBuilder builder) {
 
-		new ConceptGroupReader(builder.getConcepts());
+		OBConcepts concepts = builder.getConcepts();
+
+		new ConceptGroupConfigReader(configNode).createGroups(concepts);
 	}
 
 	private void addProperties(OBSectionBuilder builder) {
 
-		new PropertyGroupReader(builder.getProperties());
+		OBProperties properties = builder.getProperties();
+
+		new PropertyGroupConfigReader(configNode).createGroups(properties);
+	}
+
+	private void addAnnotationInclusion(OBSectionBuilder builder) {
+
+		KConfigNode incsNode = configNode.getChildOrNull(ANNO_INCLUSIONS_ID);
+
+		if (incsNode == null) {
+
+			return;
+		}
+
+		OBAnnotations annos = builder.getAnnotations();
+
+		for (KConfigNode incNode : incsNode.getChildren(ANNO_INCLUSION_ID)) {
+
+			annos.addInclusion(getAnnotationInclusion(incNode));
+		}
 	}
 
 	private void addLabelAnnotationProperties(OBSectionBuilder builder) {
@@ -203,23 +98,6 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 		}
 	}
 
-	private void addEntityAnnotationTypes(OBSectionBuilder builder) {
-
-		KConfigNode annoTypesNode = configNode.getChildOrNull(ENTITY_ANNO_TYPES_ID);
-
-		if (annoTypesNode == null) {
-
-			return;
-		}
-
-		OBEntityAnnotations annos = builder.getEntityAnnotations();
-
-		for (KConfigNode annoTypeNode : annoTypesNode.getChildren(ENTITY_ANNO_TYPE_ID)) {
-
-			annos.addType(getEntityAnnotationType(annoTypeNode));
-		}
-	}
-
 	private void setMetaFrameSlotsEnabled(OBSectionBuilder builder) {
 
 		builder.setMetaFrameSlotsEnabled(metaFrameSlotsEnabled());
@@ -230,28 +108,28 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 		builder.setRetainOnlyDeclarationAxioms(retainOnlyDeclarationAxioms());
 	}
 
-	private OBEntityAnnotationType getEntityAnnotationType(KConfigNode annoTypeNode) {
+	private OBAnnotationInclusion getAnnotationInclusion(KConfigNode incNode) {
 
-		IRI iri = getAnnotationPropertyIRI(annoTypeNode);
-		String id = annoTypeNode.getString(ENTITY_ANNO_ID_ATTR);
-		OBEntityAnnotationType annoType = new OBEntityAnnotationType(iri, id);
+		IRI iri = getAnnotationPropertyIRI(incNode);
+		String id = incNode.getString(ANNO_ID_ATTR, iri.toString());
+		OBAnnotationInclusion inclusion = new OBAnnotationInclusion(iri, id);
 
-		String valueSeps = annoTypeNode.getString(ENTITY_ANNO_VALUE_SEPARATORS_ATTR, null);
+		String valueSeps = incNode.getString(ANNO_VALUE_SEPARATORS_ATTR, null);
 
 		if (valueSeps != null) {
 
-			annoType.setValueSeparators(valueSeps);
+			inclusion.setValueSeparators(valueSeps);
 		}
 
-		for (KConfigNode substNode : annoTypeNode.getChildren(ENTITY_ANNO_SUBSTITUTION_ID)) {
+		for (KConfigNode substNode : incNode.getChildren(ANNO_SUBSTITUTION_ID)) {
 
-			String owlVal = substNode.getString(ENTITY_ANNO_SUB_OWL_VALUE_ATTR);
-			String framesVal = substNode.getString(ENTITY_ANNO_SUB_FRAMES_VALUE_ATTR);
+			String owlVal = substNode.getString(ANNO_OWL_VALUE_ATTR);
+			String mekonValue = substNode.getString(ANNO_MEKON_VALUE_ATTR);
 
-			annoType.addValueSubstitution(owlVal, framesVal);
+			inclusion.addValueSubstitution(owlVal, mekonValue);
 		}
 
-		return annoType;
+		return inclusion;
 	}
 
 	private IRI getAnnotationPropertyIRI(KConfigNode propNode) {

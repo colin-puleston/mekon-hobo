@@ -36,11 +36,11 @@ public interface OBSectionBuilderConfigVocab {
 	static public final String CONCEPT_INCLUSION_ID = "ConceptInclusion";
 	static public final String PROPERTY_INCLUSION_ID = "PropertyInclusion";
 	static public final String ENTITY_GROUP_ID = "Group";
+	static public final String ANNO_INCLUSIONS_ID = "AnnotationInclusion";
+	static public final String ANNO_INCLUSION_ID = "Include";
+	static public final String ANNO_SUBSTITUTION_ID = "ValueSubstitution";
 	static public final String LABEL_ANNO_PROPERTIES_ID = "LabelAnnotations";
 	static public final String LABEL_ANNO_PROPERTY_ID = "AnnotationProperty";
-	static public final String ENTITY_ANNO_TYPES_ID = "EntityAnnotationTypes";
-	static public final String ENTITY_ANNO_TYPE_ID = "AnnotationType";
-	static public final String ENTITY_ANNO_SUBSTITUTION_ID = "ValueSubstitution";
 
 	static public final String METAFRAME_SLOTS_ENABLED_ATTR = "metaFrameSlotsEnabled";
 	static public final String RETAIN_ONLY_DECLARATIONS_ATTR = "retainOnlyDeclarationAxioms";
@@ -50,8 +50,8 @@ public interface OBSectionBuilderConfigVocab {
 	static public final String CONCEPT_HIDING_FILTER_ATTR = "conceptHidingFilter";
 	static public final String MIRROR_PROPERTIES_AS_FRAMES_ATTR = "mirrorAsFrames";
 	static public final String ANNO_PROPERTY_URI_ATTR = "uri";
-	static public final String ENTITY_ANNO_ID_ATTR = "id";
-	static public final String ENTITY_ANNO_VALUE_SEPARATORS_ATTR = "valueSeparators";
-	static public final String ENTITY_ANNO_SUB_OWL_VALUE_ATTR = "owlValue";
-	static public final String ENTITY_ANNO_SUB_FRAMES_VALUE_ATTR = "framesValue";
+	static public final String ANNO_ID_ATTR = "id";
+	static public final String ANNO_VALUE_SEPARATORS_ATTR = "valueSeparators";
+	static public final String ANNO_OWL_VALUE_ATTR = "owlValue";
+	static public final String ANNO_MEKON_VALUE_ATTR = "mekonValue";
 }

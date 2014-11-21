@@ -49,7 +49,7 @@ class OBNumberSlot extends OBSlot {
 	CValue<?> ensureCValue(
 				CBuilder builder,
 				OBSlot topLevelSlot,
-				OBEntityAnnotations annotations) {
+				OBAnnotations annotations) {
 
 		return valueType.createCNumber();
 	}

@@ -57,7 +57,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	private IMatcher iMatcher = null;
 
 	private OBEntityLabels labels;
-	private OBEntityAnnotations annotations;
+	private OBAnnotations annotations;
 
 	private OBConcepts concepts;
 	private OBProperties properties;
@@ -123,7 +123,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 		this.model = model;
 
 		labels = new OBEntityLabels(model);
-		annotations = new OBEntityAnnotations(model);
+		annotations = new OBAnnotations(model);
 
 		concepts = new OBConcepts(model);
 		properties = new OBProperties(model);
@@ -236,7 +236,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	 *
 	 * @return Object for copying required annotations
 	 */
-	public OBEntityAnnotations getEntityAnnotations() {
+	public OBAnnotations getAnnotations() {
 
 		return annotations;
 	}

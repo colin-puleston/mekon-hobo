@@ -351,7 +351,7 @@ public class OBSectionBuilderTest extends OTest {
 
 		OBConceptGroup group = createConceptGroup(rootName);
 
-		group.setIncludesRoot(false);
+		group.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
 		return addConceptGroup(group);
 	}
@@ -401,7 +401,7 @@ public class OBSectionBuilderTest extends OTest {
 
 		OBPropertyGroup group = createPropertyGroup(rootName);
 
-		group.setIncludesRoot(false);
+		group.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
 		return addPropertyGroup(group);
 	}

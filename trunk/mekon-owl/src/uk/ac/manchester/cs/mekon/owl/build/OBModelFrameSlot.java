@@ -51,7 +51,7 @@ class OBModelFrameSlot extends OBFrameSlot {
 		return !valueType.hidden() || !valueType.leafFrame();
 	}
 
-	CFrame ensureCFrame(CBuilder builder, OBEntityAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
 		return valueType.ensureCFrame(builder, annotations);
 	}

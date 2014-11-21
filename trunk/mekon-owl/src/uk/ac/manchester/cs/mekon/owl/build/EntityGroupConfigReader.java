@@ -26,54 +26,68 @@ package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import org.semanticweb.owlapi.model.*;
+
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OBFrameSlot extends OBSlot {
+abstract class EntityGroupConfigReader
+					<G extends OBEntityGroup,
+					E extends OBEntities<?, G>>
+					implements OBSectionBuilderConfigVocab {
 
-	private boolean metaFrameSlotsEnabled;
+	private KConfigNode groupsNode;
 
-	OBFrameSlot(OBSlotSpec spec) {
+	EntityGroupConfigReader(KConfigNode configNode) {
 
-		super(spec);
-
-		metaFrameSlotsEnabled = spec.metaFrameSlotsEnabled();
+		groupsNode = configNode.getChildOrNull(getInclusionId());
 	}
 
-	CValue<?> ensureCValue(
-				CBuilder builder,
-				OBSlot topLevelSlot,
-				OBAnnotations annotations) {
+	void createGroups(E entities) {
 
-		CFrame cFrame = ensureCFrame(builder, annotations);
+		if (groupsNode != null) {
 
-		return isMetaFrameSlot(topLevelSlot) ? cFrame.getType() : cFrame;
+			entities.addGroups(getGroups());
+		}
 	}
 
-	abstract CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations);
+	abstract String getInclusionId();
 
-	abstract Set<OBFrame> getRootValueTypeFrames();
+	abstract G createGroup(KConfigNode groupNode, IRI rootIRI);
 
-	private boolean isMetaFrameSlot(OBSlot topLevelSlot) {
+	private Set<G> getGroups() {
 
-		return metaFrameSlotsEnabled && !slotsInValueTypeHierarchy(topLevelSlot);
-	}
+		Set<G> groups = new HashSet<G>();
 
-	private boolean slotsInValueTypeHierarchy(OBSlot topLevelSlot) {
+		for (KConfigNode groupNode : groupsNode.getChildren(ENTITY_GROUP_ID)) {
 
-		OBFrameSlot topLevelFrameSlot = (OBFrameSlot)topLevelSlot;
-
-		for (OBFrame valueType : topLevelFrameSlot.getRootValueTypeFrames()) {
-
-			if (valueType.slotsInHierarchy()) {
-
-				return true;
-			}
+			groups.add(getGroup(groupNode));
 		}
 
-		return false;
+		return groups;
+	}
+
+	private G getGroup(KConfigNode groupNode) {
+
+		G group = createGroup(groupNode, getRootEntityIRI(groupNode));
+
+		group.setInclusion(getInclusion(groupNode));
+
+		return group;
+	}
+
+	private IRI getRootEntityIRI(KConfigNode groupNode) {
+
+		return IRI.create(groupNode.getURI(ROOT_ENTITY_URI_ATTR));
+	}
+
+	private OBEntitySelection getInclusion(KConfigNode groupNode) {
+
+		return groupNode.getEnum(
+					ENTITY_INCLUSION_ATTR,
+					OBEntitySelection.class,
+					OBEntitySelection.ALL);
 	}
 }
