@@ -46,7 +46,7 @@ public class OBConceptHiding {
 	 * to passing the filtering conditions. If not set will default
 	 * to {@link OBEntitySelection#NONE}.
 	 *
-	 * @param candidates Selection of potentially hidden concepts
+	 * @param candidates Specification of potentially hidden concepts
 	 */
 	public void setCandidates(OBEntitySelection candidates) {
 
