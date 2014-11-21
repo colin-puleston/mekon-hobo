@@ -37,30 +37,35 @@ public class IFrameRenderer extends ISerialiser {
 	private class ISlotDetailsRenderer extends ISlotValuesVisitor {
 
 		private XNode slotNode;
+		private XNode valuesNode;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
 			renderCFrame(valueType, slotNode);
 
+			valuesNode = addValuesNode();
+
 			for (IFrame value : values) {
 
-				renderIFrame(value, slotNode);
+				renderIFrame(value, valuesNode);
 			}
 		}
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
 			renderCNumber(valueType, slotNode);
-			renderINumber(values.get(0), slotNode);
+			renderINumber(values.get(0), addValuesNode());
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
 			renderMFrame(valueType, slotNode);
 
+			valuesNode = addValuesNode();
+
 			for (CFrame value : values) {
 
-				renderCFrame(value, slotNode);
+				renderCFrame(value, valuesNode);
 			}
 		}
 
@@ -68,8 +73,12 @@ public class IFrameRenderer extends ISerialiser {
 
 			this.slotNode = slotNode;
 
-			renderCSlot(slot.getType(), slotNode);
 			visit(slot);
+		}
+
+		private XNode addValuesNode() {
+
+			return slotNode.addChild(ISLOT_VALUES_ID);
 		}
 	}
 
@@ -175,6 +184,7 @@ public class IFrameRenderer extends ISerialiser {
 
 		XNode node = parentNode.addChild(ISLOT_ID);
 
+		renderCSlot(slot.getType(), node);
 		new ISlotDetailsRenderer(slot, node);
 	}
 
