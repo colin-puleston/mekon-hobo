@@ -93,8 +93,10 @@
 			mechanism responsible for loading the OWL ontology into
 			the HOBO frames structures.
 
-			Concept hierarchies can be explicitly included, either
-			including or excluding the root-concept of the hierarchy.
+			Concept hierarchies can be explicitly included, with the
+			option to include the root-concept and/or descendant
+			concepts of the hierarchy being specified via a an
+			appropriate OBEntitySelection enum (see relevant Javadoc).
 			If no explicit concept-inclusions are specified then
 			all concepts in the ontology will be included.
 
