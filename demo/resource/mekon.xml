@@ -132,10 +132,11 @@
 				<Group
 					rootURI="http://mekon/demo.owl#simpleObjectProperty"
 					inclusion="NON_ROOTS_ONLY"/>
-				<Group
+				<Group>
 					rootURI="http://mekon/demo.owl#referencableObjectProperty"
 					inclusion="ALL"
 					mirrorAsFrames="TRUE"/>
+				<Group/>
 			</PropertyInclusion>
 		</OWLSanctionedModel>
 
