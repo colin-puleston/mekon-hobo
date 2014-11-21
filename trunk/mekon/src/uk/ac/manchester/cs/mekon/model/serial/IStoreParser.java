@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.model.serial;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
@@ -50,10 +49,10 @@ public abstract class IStoreParser extends ISerialiser {
 
  	/**
 	 */
- 	protected IStoreParser(CModel model, IEditor iEditor, File storeFile) {
+ 	protected IStoreParser(CModel model, File storeFile) {
 
 		rootNode = new XDocument(storeFile).getRootNode();
-		iFrameParser = new IFrameParser(model, iEditor);
+		iFrameParser = new IFrameParser(model);
 	}
 
 	/**

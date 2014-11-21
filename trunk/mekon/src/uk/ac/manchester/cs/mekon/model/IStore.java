@@ -63,7 +63,7 @@ public class IStore {
 
 		IStoreParserLocal(File file) {
 
-			super(model, model.getIEditor(), file);
+			super(model, file);
 		}
 	}
 

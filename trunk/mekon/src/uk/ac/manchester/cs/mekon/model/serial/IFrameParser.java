@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.model.serial;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
@@ -36,50 +35,97 @@ import uk.ac.manchester.cs.mekon.serial.*;
 public class IFrameParser extends ISerialiser {
 
 	private CModel model;
-	private IEditor iEditor;
 
-	private class SlotValuesParser extends CValueVisitor {
+	private List<SlotValueSpec> slotValueSpecs = new ArrayList<SlotValueSpec>();
 
-		private XNode valuesNode;
-		private ISlotValuesEditor valuesEditor;
+	private abstract class SlotValueSpec {
 
-		protected void visit(CFrame value) {
+		private ISlots slots;
+		private CIdentity slotId;
 
-			for (XNode valueNode : valuesNode.getChildren(IFRAME_ID)) {
+		SlotValueSpec(IFrame frame, CIdentity slotId) {
 
-				valuesEditor.add(parseIFrame(valueNode));
+			slots = frame.getSlots();
+			this.slotId = slotId;
+
+			slotValueSpecs.add(this);
+		}
+
+		boolean process() {
+
+			if (slots.containsValueFor(slotId)) {
+
+				ISlot slot = slots.get(slotId);
+
+				if (slot.editable()) {
+
+					slot.getValuesEditor().add(getValue(slot));
+					slotValueSpecs.remove(this);
+				}
+
+				return true;
 			}
+
+			return false;
 		}
 
-		protected void visit(CNumber value) {
+		abstract IValue getValue(ISlot slot);
+	}
 
-			valuesEditor.add(parseINumber(value, valuesNode.getChild(INUMBER_ID)));
+	private class FrameSlotValueSpec extends SlotValueSpec {
+
+		private IValue value;
+
+		FrameSlotValueSpec(IFrame frame, CIdentity slotId, IValue value) {
+
+			super(frame, slotId);
+
+			this.value = value;
 		}
 
-		protected void visit(MFrame value) {
+		IValue getValue(ISlot slot) {
 
-			for (XNode valueNode : valuesNode.getChildren(CFRAME_ID)) {
+			return value;
+		}
+	}
 
-				valuesEditor.add(parseCFrame(valueNode));
+	private class INumberSlotValueSpec extends SlotValueSpec {
+
+		private XNode valueNode;
+
+		INumberSlotValueSpec(IFrame frame, CIdentity slotId, XNode valueNode) {
+
+			super(frame, slotId);
+
+			this.valueNode = valueNode;
+		}
+
+		IValue getValue(ISlot slot) {
+
+			return parseINumber(getCNumberValueType(slot), valueNode);
+		}
+
+		private CNumber getCNumberValueType(ISlot slot) {
+
+			CValue<?> valueType = slot.getValueType();
+
+			if (valueType instanceof CNumber) {
+
+				return (CNumber)valueType;
 			}
-		}
 
-		SlotValuesParser(ISlot slot, XNode valuesNode) {
-
-			this.valuesNode = valuesNode;
-
-			valuesEditor = slot.getValuesEditor();
-
-			visit(slot.getValueType());
+			throw new XDocumentException(
+						"Unexpected value-type for slot: " + slot
+						+ ": Expected: " + CNumber.class
+						+ ", Found: " + valueType.getClass());
 		}
 	}
 
  	/**
 	 */
- 	public IFrameParser(CModel model, IEditor iEditor) {
+ 	public IFrameParser(CModel model) {
 
 		this.model = model;
-		this.iEditor = iEditor;
 	}
 
 	/**
@@ -93,7 +139,11 @@ public class IFrameParser extends ISerialiser {
 	 */
  	public IFrame parse(XNode node) {
 
-		return parseIFrame(node);
+		IFrame frame = parseIFrame(node);
+
+		addAllSlotValues();
+
+		return frame;
 	}
 
 	private IFrame parseIFrame(XNode node) {
@@ -195,72 +245,43 @@ public class IFrameParser extends ISerialiser {
 		throw new XDocumentException("Unrecognised class: " + className);
 	}
 
-	private ISlot parseISlot(IFrame frame, XNode node) {
-
-		ISlot slot = resolveISlot(frame, node);
-		XNode valuesNode = node.getChildOrNull(ISLOT_VALUES_ID);
-
-		if (valuesNode != null) {
-
-			new SlotValuesParser(slot, valuesNode);
-		}
-
-		return slot;
-	}
-
-	private ISlot resolveISlot(IFrame frame, XNode node) {
+	private void parseISlot(IFrame frame, XNode node) {
 
 		CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
-		ISlots slots = frame.getSlots();
+		XNode valuesNode = node.getChildOrNull(ISLOT_VALUES_ID);
 
-		if (slots.containsValueFor(id)) {
+		for (XNode valueNode : valuesNode.getChildren(IFRAME_ID)) {
 
-			return slots.get(id);
+			new FrameSlotValueSpec(frame, id, parseIFrame(valueNode));
 		}
 
-		return getNewISlot(frame, id, node);
-	}
+		for (XNode valueNode : valuesNode.getChildren(INUMBER_ID)) {
 
-	private ISlot getNewISlot(IFrame frame, CIdentity id, XNode node) {
-
-		return getIFrameEditor(frame)
-				.addSlot(
-					getProperty(id),
-					CSource.UNSPECIFIED,
-					CCardinality.FREE,
-					parseISlotValueType(id, node));
-	}
-
-	private CValue<?> parseISlotValueType(CIdentity id, XNode slotNode) {
-
-		if (slotNode.hasChild(MFRAME_ID)) {
-
-			return getRootMFrame();
+			new INumberSlotValueSpec(frame, id, valueNode);
 		}
 
-		if (slotNode.hasChild(CFRAME_ID)) {
+		for (XNode valueNode : valuesNode.getChildren(CFRAME_ID)) {
 
-			return getRootCFrame();
+			new FrameSlotValueSpec(frame, id, parseCFrame(valueNode));
 		}
-
-		if (slotNode.hasChild(CNUMBER_ID)) {
-
-			return parseCNumber(slotNode.getChild(CNUMBER_ID));
-		}
-
-		throw new XDocumentException(
-					"Cannot find value-type element for slot: "
-					+ id.getIdentifier());
 	}
 
-	private MFrame getRootMFrame() {
+	private void addAllSlotValues() {
 
-		return getRootCFrame().getType();
-	}
+		while (true) {
 
-	private CFrame getRootCFrame() {
+			boolean anyProcessed = false;
 
-		return model.getRootFrame();
+			for (SlotValueSpec spec : new ArrayList<SlotValueSpec>(slotValueSpecs)) {
+
+				anyProcessed |= spec.process();
+			}
+
+			if (!anyProcessed) {
+
+				break;
+			}
+		}
 	}
 
 	private CFrame getCFrame(CIdentity id) {
@@ -271,11 +292,6 @@ public class IFrameParser extends ISerialiser {
 	private CProperty getProperty(CIdentity id) {
 
 		return model.getProperties().get(id);
-	}
-
-	private IFrameEditor getIFrameEditor(IFrame frame) {
-
-		return iEditor.getFrameEditor(frame);
 	}
 
 	private boolean isClassName(Class<?> testClass, String testName) {

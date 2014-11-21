@@ -116,7 +116,7 @@ public class CModel implements CAnnotatable {
 	 */
 	public IFrame parseIFrame(XDocument document) {
 
-		return new IFrameParser(this, iEditor).parse(document);
+		return new IFrameParser(this).parse(document);
 	}
 
 	/**
