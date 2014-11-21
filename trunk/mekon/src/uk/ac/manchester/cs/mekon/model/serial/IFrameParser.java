@@ -103,9 +103,7 @@ public class IFrameParser extends ISerialiser {
 
 		for (XNode slotNode : node.getChildren(ISLOT_ID)) {
 
-			ISlot slot = parseISlot(frame, slotNode);
-
-			new SlotValuesParser(slot, slotNode);
+			new SlotValuesParser(parseISlot(frame, slotNode), slotNode);
 		}
 
 		return frame;
@@ -222,6 +220,11 @@ public class IFrameParser extends ISerialiser {
 
 	private CValue<?> parseISlotValueType(CIdentity id, XNode slotNode) {
 
+		if (slotNode.hasChild(MFRAME_ID)) {
+
+			return getRootMFrame();
+		}
+
 		if (slotNode.hasChild(CFRAME_ID)) {
 
 			return getRootCFrame();
@@ -232,24 +235,9 @@ public class IFrameParser extends ISerialiser {
 			return parseCNumber(slotNode.getChild(CNUMBER_ID));
 		}
 
-		if (slotNode.hasChild(MFRAME_ID)) {
-
-			return getRootMFrame();
-		}
-
 		throw new XDocumentException(
 					"Cannot find value-type element for slot: "
 					+ id.getIdentifier());
-	}
-
-	private CFrame getCFrame(CIdentity id) {
-
-		return model.getFrames().get(id);
-	}
-
-	private CProperty getProperty(CIdentity id) {
-
-		return model.getProperties().get(id);
 	}
 
 	private MFrame getRootMFrame() {
@@ -260,6 +248,16 @@ public class IFrameParser extends ISerialiser {
 	private CFrame getRootCFrame() {
 
 		return model.getRootFrame();
+	}
+
+	private CFrame getCFrame(CIdentity id) {
+
+		return model.getFrames().get(id);
+	}
+
+	private CProperty getProperty(CIdentity id) {
+
+		return model.getProperties().get(id);
 	}
 
 	private IFrameEditor getIFrameEditor(IFrame frame) {
