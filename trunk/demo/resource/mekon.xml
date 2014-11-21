@@ -103,10 +103,10 @@
 			Specifications of concept hierarchies can include
 			specifications of which concepts are to be defined as
 			"hidden". Definitions are expressed via appropriate
-			OBEntitySelection and OBConceptHidingFilter enum
-			values (see relevant Javadoc). If no explicit
-			concept-inclusions are specified then all concepts
-			in the ontology will be included.
+			OBEntitySelection and OBConceptHidingFilter enum values
+			(see relevant Javadoc). If no explicit concept-inclusions
+			are specified then all concepts in the ontology will be
+			included.
 
 			Property hierarchies can be explicitly included via
 			"PropertyInclusion" constructs, similar to the
