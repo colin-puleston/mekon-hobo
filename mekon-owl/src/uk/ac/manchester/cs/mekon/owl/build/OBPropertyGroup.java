@@ -54,7 +54,7 @@ public class OBPropertyGroup extends OBEntityGroup {
 	 * IRI-derived identifier.
 	 *
 	 * @param mirrorAsFrames True if each created frames-model
-	 * property should be mirrrored by a corresponding frame
+	 * property should be mirrored by a corresponding frame
 	 */
 	public void setMirrorAsFrames(boolean mirrorAsFrames) {
 

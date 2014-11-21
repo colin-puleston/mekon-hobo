@@ -29,35 +29,35 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Specifies, for a particular section of concept-hierarchy,
- * the set of concepts within that section for which the
- * generated frames will be defined as "hidden".
+ * Specifies, for a particular section of concept-hierarchy, the
+ * set of concepts within that section for which the generated
+ * frames will be defined as "hidden".
  *
  * @author Colin Puleston
  */
 public class OBConceptHiding {
 
-	private OBConceptHidingScope scope = OBConceptHidingScope.NONE;
+	private OBEntitySelection candidates = OBEntitySelection.NONE;
 	private OBConceptHidingFilter filter = OBConceptHidingFilter.ANY;
 
 	/**
-	 * Sets the scope within the relevant section of concept-hierarchy
-	 * of the concept-hiding specification. If not set will default to
-	 * {@link OBConceptHidingScope#NONE}.
+	 * Allows the specification of which concepts from within the
+	 * relevant section of hierarchy can possibly be hidden, subject
+	 * to passing the filtering conditions. If not set will default
+	 * to {@link OBEntitySelection#NONE}.
 	 *
-	 * @param scope Scope of concept-hiding specification
+	 * @param candidates Selection of potentially hidden concepts
 	 */
-	public void setScope(OBConceptHidingScope scope) {
+	public void setCandidates(OBEntitySelection candidates) {
 
-		this.scope = scope;
+		this.candidates = candidates;
 	}
 
 	/**
-	 * Sets the filter that will be applied to the concepts specified
-	 * by the scope of the concept-hiding specification. If not set
-	 * will default to {@link OBConceptHidingFilter#ANY}.
+	 * Sets the filter that will be applied to the candidate concepts.
+	 * If not set will default to {@link OBConceptHidingFilter#ANY}.
 	 *
-	 * @param filter Filter to apply to concepts specified by scope
+	 * @param filter Filter to apply to candidates concepts
 	 */
 	public void setFilter(OBConceptHidingFilter filter) {
 
@@ -69,6 +69,6 @@ public class OBConceptHiding {
 
 	boolean isHidden(OModel model, OWLClass concept, boolean isRoot) {
 
-		return scope.inScope(isRoot) && filter.passesFilter(model, concept);
+		return candidates.includes(isRoot) && filter.passesFilter(model, concept);
 	}
 }

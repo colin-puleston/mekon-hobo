@@ -48,7 +48,7 @@ public class OBProperties
 	 *
 	 * @param property Property to add
 	 * @param mirrorAsFrame True if created frames-model property
-	 * should be mirrrored by a corresponding frame
+	 * should be mirrored by a corresponding frame
 	 */
 	public void add(OWLObjectProperty property, boolean mirrorAsFrame) {
 

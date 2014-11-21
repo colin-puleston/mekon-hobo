@@ -28,15 +28,15 @@ import org.semanticweb.owlapi.model.*;
 
 /**
  * Represents a set of OWL entities defined via a single root-entity.
- * The set will include all descendant entities of the root-entity,
- * and optionally the root-entity itself.
+ * The set will include the root-entity and/or all descendant entities,
+ * subject to setting of the "inclusion" option.
  *
  * @author Colin Puleston
  */
 public class OBEntityGroup {
 
 	private IRI rootEntityIRI;
-	private boolean includesRoot = true;
+	private OBEntitySelection inclusion = OBEntitySelection.ALL;
 
 	/**
 	 * Constructor.
@@ -49,13 +49,14 @@ public class OBEntityGroup {
 	}
 
 	/**
-	 * Sets the root-entity inclusion flag.
+	 * Sets the entity-inclusion option. If not set will default to
+	 * {@link OBEntitySelection#NONE}.
 	 *
-	 * @param includesRoot True if group includes root-entity
+	 * @param inclusion Entity-inclusion option
 	 */
-	public void setIncludesRoot(boolean includesRoot) {
+	public void setInclusion(OBEntitySelection inclusion) {
 
-		this.includesRoot = includesRoot;
+		this.inclusion = inclusion;
 	}
 
 	IRI getRootEntityIRI() {
@@ -63,8 +64,8 @@ public class OBEntityGroup {
 		return rootEntityIRI;
 	}
 
-	boolean includesRoot() {
+	OBEntitySelection getInclusion() {
 
-		return includesRoot;
+		return inclusion;
 	}
 }

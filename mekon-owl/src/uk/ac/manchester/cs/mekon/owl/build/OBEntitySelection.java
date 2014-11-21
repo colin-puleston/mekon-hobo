@@ -25,48 +25,58 @@
 package uk.ac.manchester.cs.mekon.owl.build;
 
 /**
- * Represents the scope within the relevant section of concept-hierarchy
- * of a concept-hiding specification.
+ * Specifies which concepts or properties are to be selected from
+ * of within a particular section of hierarchy.
  *
  * @author Colin Puleston
  */
-public enum OBConceptHidingScope {
+public enum OBEntitySelection {
 
 	/**
-	 * Represents a scope covering none of the relevant section of
-	 * concept-hierarchy.
+	 * Represents the selection of no entities from the relevant
+	 * section of hierarchy.
 	 */
 	NONE(false, false),
 
 	/**
-	 * Represents a scope covering the entire relevant section of
-	 * concept-hierarchy.
+	 * Represents the selection of all entities from the relevant
+	 * section of hierarchy.
 	 */
 	ALL(true, true),
 
 	/**
-	 * Represents a scope covering only the root-concept in the
-	 * relevant section of concept-hierarchy.
+	 * Represents the selection of only the root-entity from the
+	 * relevant section of hierarchy.
 	 */
 	ROOTS_ONLY(true, false),
 
 	/**
-	 * Represents a scope covering only the non-root-concepts in the
-	 * relevant section of concept-hierarchy.
+	 * Represents the selection of only the non-root-entities from
+	 * the relevant section of hierarchy.
 	 */
 	NON_ROOTS_ONLY(false, true);
 
-	private boolean includesRoots;
+	private boolean includesRoot;
 	private boolean includesNonRoots;
 
-	boolean inScope(boolean isRoot) {
+	boolean includesRoot() {
 
-		return isRoot ? includesRoots : includesNonRoots;
+		return includesRoot;
 	}
 
-	private OBConceptHidingScope(boolean includesRoots, boolean includesNonRoots) {
+	boolean includesNonRoots() {
 
-		this.includesRoots = includesRoots;
+		return includesNonRoots;
+	}
+
+	boolean includes(boolean isRoot) {
+
+		return isRoot ? includesRoot : includesNonRoots;
+	}
+
+	private OBEntitySelection(boolean includesRoot, boolean includesNonRoots) {
+
+		this.includesRoot = includesRoot;
 		this.includesNonRoots = includesNonRoots;
 	}
 }
