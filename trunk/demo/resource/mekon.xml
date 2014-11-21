@@ -33,7 +33,7 @@
 		class responsible for loading the ontology, plus "custom"
 		configuration specific to the particular plug-in.
 
-		Specified plug-in class is OSSectionBuilder which loads OWL
+		Specified plug-in class is OBSectionBuilder which loads OWL
 		ontologies via a "sanctioning" mechanism.
 	-->
 	<ModelSection
@@ -43,7 +43,7 @@
 			Information concerning location of OWL ontology, type
 			of DL reasoner to be used, and special property for
 			representing numeric-values (as required by
-			OSSectionBuilder and OCClassifier plug-in classes).
+			OBSectionBuilder and OCClassifier plug-in classes).
 		-->
 		<OWLModel
 			owlFile="demo.owl"
@@ -101,7 +101,7 @@
 			Specifications of concept hierarchies can include
 			specifications of which concepts are to be defined as
 			"hidden". Definitions are expressed via appropriate
-			OSConceptHidingScope and OSConceptHidingFilter enum
+			OBEntitySelection and OBConceptHidingFilter enum
 			values (see relevant Javadoc). If no explicit
 			concept-inclusions are specified then all concepts
 			in the ontology will be included.
@@ -119,20 +119,20 @@
 			<ConceptInclusion>
 				<Group
 					rootURI="http://mekon/demo.owl#DataTypeConcept"
-					includeRoot="TRUE"/>
+					inclusion="ALL"/>
 				<Group
 					rootURI="http://mekon/demo.owl#DomainConcept"
-					includeRoot="TRUE"
-					conceptHidingScope="ALL"
+					inclusion="ALL"
+					conceptHidingCandidates="ALL"
 					conceptHidingFilter="DEFINIED_SUB_TREES_ONLY"/>
 			</ConceptInclusion>
 			<PropertyInclusion>
 				<Group
 					rootURI="http://mekon/demo.owl#simpleObjectProperty"
-					includeRoot="FALSE"/>
+					inclusion="NON_ROOTS_ONLY"/>
 				<Group
 					rootURI="http://mekon/demo.owl#referencableObjectProperty"
-					includeRoot="TRUE"
+					inclusion="ALL"
 					mirrorAsFrames="TRUE"/>
 			</PropertyInclusion>
 		</OWLSanctionedModel>
