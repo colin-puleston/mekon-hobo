@@ -24,56 +24,40 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import java.util.*;
+import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OBFrameSlot extends OBSlot {
 
-	private boolean metaFrameSlotsEnabled;
+class PropertyGroupConfigReader
+			extends
+				EntityGroupConfigReader<OBPropertyGroup, OBProperties>
+				implements OBSectionBuilderConfigVocab {
 
-	OBFrameSlot(OBSlotSpec spec) {
+	PropertyGroupConfigReader(KConfigNode configNode) {
 
-		super(spec);
-
-		metaFrameSlotsEnabled = spec.metaFrameSlotsEnabled();
+		super(configNode);
 	}
 
-	CValue<?> ensureCValue(
-				CBuilder builder,
-				OBSlot topLevelSlot,
-				OBAnnotations annotations) {
+	String getInclusionId() {
 
-		CFrame cFrame = ensureCFrame(builder, annotations);
-
-		return isMetaFrameSlot(topLevelSlot) ? cFrame.getType() : cFrame;
+		return PROPERTY_INCLUSION_ID;
 	}
 
-	abstract CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations);
+	OBPropertyGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
 
-	abstract Set<OBFrame> getRootValueTypeFrames();
+		OBPropertyGroup group = new OBPropertyGroup(rootIRI);
 
-	private boolean isMetaFrameSlot(OBSlot topLevelSlot) {
+		group.setMirrorAsFrames(getMirrorAsFrames(groupNode));
 
-		return metaFrameSlotsEnabled && !slotsInValueTypeHierarchy(topLevelSlot);
+		return group;
 	}
 
-	private boolean slotsInValueTypeHierarchy(OBSlot topLevelSlot) {
+	private boolean getMirrorAsFrames(KConfigNode groupNode) {
 
-		OBFrameSlot topLevelFrameSlot = (OBFrameSlot)topLevelSlot;
-
-		for (OBFrame valueType : topLevelFrameSlot.getRootValueTypeFrames()) {
-
-			if (valueType.slotsInHierarchy()) {
-
-				return true;
-			}
-		}
-
-		return false;
+		return groupNode.getBoolean(MIRROR_PROPERTIES_AS_FRAMES_ATTR, false);
 	}
 }

@@ -46,7 +46,7 @@ abstract class OBSlot extends OIdentified {
 			CBuilder builder,
 			CFrame container,
 			OBSlot topLevelSlot,
-			OBEntityAnnotations annotations) {
+			OBAnnotations annotations) {
 
 		if (!validSlotValueType()) {
 
@@ -80,7 +80,7 @@ abstract class OBSlot extends OIdentified {
 	abstract CValue<?> ensureCValue(
 							CBuilder builder,
 							OBSlot topLevelSlot,
-							OBEntityAnnotations annotations);
+							OBAnnotations annotations);
 
 	boolean canBeFixedValue(CValue<?> cValue) {
 

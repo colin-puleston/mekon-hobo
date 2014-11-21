@@ -28,27 +28,36 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
+
 /**
- * Represents a type of annotation to be copied from OWL entities to
- * the relevant generated frames-based entities.
+ * Represents a specification of a set of annotations to be copied
+ * from any relevant OWL entities to the corresponding frames-based
+ * entities that have been generated.
  *
  * @author Colin Puleston
  */
-public class OBEntityAnnotationType {
+public class OBAnnotationInclusion {
 
 	private IRI annotationPropertyIRI;
 	private String framesAnnotationId;
+
 	private String valueSeparators = null;
 	private Map<String, String> valueSubstitutions = new HashMap<String, String>();
+
+	private OAnnotationReader reader = null;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param annotationPropertyIRI IRI of OWL annotation property
-	 * @param framesAnnotationId Identifier for annotation-type in
+	 * @param framesAnnotationId Identifier for annotations in
 	 * Frames Model (FM)
 	 */
-	public OBEntityAnnotationType(
+	public OBAnnotationInclusion(
 				IRI annotationPropertyIRI,
 				String framesAnnotationId) {
 
@@ -72,7 +81,7 @@ public class OBEntityAnnotationType {
 	}
 
 	/**
-	 * Defines a potential value for the OWL annotation-type that if
+	 * Defines a potential value for the OWL annotations that if
 	 * found will be replaced by another specified value when the
 	 * annotation on the frames-based entity is created.
 	 *
@@ -85,39 +94,64 @@ public class OBEntityAnnotationType {
 		valueSubstitutions.put(owlValue, framesValue);
 	}
 
-	IRI getAnnotationPropertyIRI() {
+	void checkAdd(OModel model, OWLEntity owlEntity, CAnnotationsEditor editor) {
 
-		return annotationPropertyIRI;
+		String owlValue = getOWLValueOrNull(model, owlEntity);
+
+		if (owlValue != null) {
+
+			editor.addAll(framesAnnotationId, toFramesValues(owlValue));
+		}
 	}
 
-	String getFramesAnnotationId() {
+	private String getOWLValueOrNull(OModel model, OWLEntity owlEntity) {
 
-		return framesAnnotationId;
+		return getAnnotationReader(model).getValueOrNull(owlEntity);
 	}
 
-	Set<String> getValues(String valueString) {
+	private Set<String> toFramesValues(String owlValue) {
 
 		Set<String> values = new HashSet<String>();
 
-		for (String value : toValueList(valueString)) {
+		for (String owlValueComponent : owlValueToList(owlValue)) {
 
-			values.add(resolveValue(value));
+			values.add(toFramesValue(owlValueComponent));
 		}
 
 		return values;
 	}
 
-	private List<String> toValueList(String valueString) {
+	private String toFramesValue(String owlValue) {
 
-		return valueSeparators != null
-				? Arrays.asList(valueString.split(valueSeparators))
-				: Collections.singletonList(valueString);
+		String substitute = valueSubstitutions.get(owlValue);
+
+		return substitute != null ? substitute : owlValue;
 	}
 
-	private String resolveValue(String value) {
+	private List<String> owlValueToList(String owlValue) {
 
-		String substitute = valueSubstitutions.get(value);
+		return valueSeparators != null
+				? Arrays.asList(owlValue.split(valueSeparators))
+				: Collections.singletonList(owlValue);
+	}
 
-		return substitute != null ? substitute : value;
+	private OAnnotationReader getAnnotationReader(OModel model) {
+
+		if (reader == null) {
+
+			reader = createAnnotationReader(model);
+		}
+
+		return reader;
+	}
+
+	private OAnnotationReader createAnnotationReader(OModel model) {
+
+		return new OAnnotationReader(model, getAnnotationProperty(model));
+	}
+
+	private OWLAnnotationProperty getAnnotationProperty(OModel model) {
+
+		return model.getAnnotationProperty(annotationPropertyIRI);
 	}
 }

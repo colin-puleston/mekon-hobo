@@ -63,11 +63,11 @@ class OBSlotProperty extends OIdentified {
 		return mirrorAsFrame;
 	}
 
-	void createCProperty(CBuilder builder, OBEntityAnnotations annotations) {
+	void createCProperty(CBuilder builder, OBAnnotations annotations) {
 
 		CProperty cProperty = builder.resolveProperty(getIdentity());
 
-		annotations.addAnnotations(builder, cProperty, property);
+		annotations.checkAdd(builder, cProperty, property);
 	}
 
 	void ensureMirrorCFrameStructure(CBuilder builder) {
