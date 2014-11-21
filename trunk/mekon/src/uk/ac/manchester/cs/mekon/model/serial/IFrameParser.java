@@ -40,12 +40,12 @@ public class IFrameParser extends ISerialiser {
 
 	private class SlotValuesParser extends CValueVisitor {
 
+		private XNode valuesNode;
 		private ISlotValuesEditor valuesEditor;
-		private XNode slotNode;
 
 		protected void visit(CFrame value) {
 
-			for (XNode valueNode : slotNode.getChildren(IFRAME_ID)) {
+			for (XNode valueNode : valuesNode.getChildren(IFRAME_ID)) {
 
 				valuesEditor.add(parseIFrame(valueNode));
 			}
@@ -53,22 +53,22 @@ public class IFrameParser extends ISerialiser {
 
 		protected void visit(CNumber value) {
 
-			valuesEditor.add(parseINumber(value, slotNode.getChild(INUMBER_ID)));
+			valuesEditor.add(parseINumber(value, valuesNode.getChild(INUMBER_ID)));
 		}
 
 		protected void visit(MFrame value) {
 
-			for (XNode valueNode : slotNode.getChildren(CFRAME_ID)) {
+			for (XNode valueNode : valuesNode.getChildren(CFRAME_ID)) {
 
 				valuesEditor.add(parseCFrame(valueNode));
 			}
 		}
 
-		SlotValuesParser(ISlot slot, XNode slotNode) {
+		SlotValuesParser(ISlot slot, XNode valuesNode) {
+
+			this.valuesNode = valuesNode;
 
 			valuesEditor = slot.getValuesEditor();
-
-			this.slotNode = slotNode;
 
 			visit(slot.getValueType());
 		}
@@ -103,7 +103,7 @@ public class IFrameParser extends ISerialiser {
 
 		for (XNode slotNode : node.getChildren(ISLOT_ID)) {
 
-			new SlotValuesParser(parseISlot(frame, slotNode), slotNode);
+			parseISlot(frame, slotNode);
 		}
 
 		return frame;
@@ -197,6 +197,19 @@ public class IFrameParser extends ISerialiser {
 
 	private ISlot parseISlot(IFrame frame, XNode node) {
 
+		ISlot slot = resolveISlot(frame, node);
+		XNode valuesNode = node.getChildOrNull(ISLOT_VALUES_ID);
+
+		if (valuesNode != null) {
+
+			new SlotValuesParser(slot, valuesNode);
+		}
+
+		return slot;
+	}
+
+	private ISlot resolveISlot(IFrame frame, XNode node) {
+
 		CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
 		ISlots slots = frame.getSlots();
 
@@ -205,10 +218,10 @@ public class IFrameParser extends ISerialiser {
 			return slots.get(id);
 		}
 
-		return parseNewISlot(frame, id, node);
+		return getNewISlot(frame, id, node);
 	}
 
-	private ISlot parseNewISlot(IFrame frame, CIdentity id, XNode node) {
+	private ISlot getNewISlot(IFrame frame, CIdentity id, XNode node) {
 
 		return getIFrameEditor(frame)
 				.addSlot(

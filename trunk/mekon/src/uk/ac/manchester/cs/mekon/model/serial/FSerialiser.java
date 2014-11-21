@@ -34,13 +34,7 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 abstract class FSerialiser {
 
-	static final String MFRAME_ID = getClassId(MFrame.class);
-	static final String CFRAME_ID = getClassId(CFrame.class);
-	static final String CNUMBER_ID = getClassId(CNumber.class);
-	static final String CSLOT_ID = getClassId(CSlot.class);
-	static final String IFRAME_ID = getClassId(IFrame.class);
-	static final String INUMBER_ID = getClassId(INumber.class);
-	static final String ISLOT_ID = getClassId(ISlot.class);
+	static final String CFRAME_ID = "CFrame";
 
 	static final String IDENTITY_ATTR = "id";
 	static final String LABEL_ATTR = "label";
