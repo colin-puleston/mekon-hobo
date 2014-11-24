@@ -60,8 +60,9 @@ public class IFrameParser extends ISerialiser {
 				if (slot.editable()) {
 
 					slot.getValuesEditor().add(getValue(slot));
-					slotValueSpecs.remove(this);
 				}
+
+				slotValueSpecs.remove(this);
 
 				return true;
 			}
@@ -132,7 +133,7 @@ public class IFrameParser extends ISerialiser {
 	 */
  	public IFrame parse(XDocument document) {
 
-		return parseIFrame(document.getRootNode());
+		return parse(document.getRootNode());
 	}
 
 	/**

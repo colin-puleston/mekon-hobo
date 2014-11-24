@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
@@ -35,17 +37,97 @@ public class MekonTest extends FramesTestUtils {
 	private CModel model;
 	private IReasoner iReasoner;
 
+	private class DynamicSlotInsertionReasoner extends DefaultIReasoner {
+
+		private CSlot slotType;
+		private CFrame valueType;
+
+		private boolean firstInsert = true;
+
+		public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+
+			ISlots slots = frame.getSlots();
+
+			if (!slots.isEmpty() && allValuesSet(slots) && !isDynamicSlot(slots)) {
+
+				List<ISlot> startSlots = slots.asList();
+
+				slots.clear();
+				addInsertSlot(frame);
+				slots.addAll(startSlots);
+			}
+		}
+
+		DynamicSlotInsertionReasoner(CFrame frameType, String typesPrefix) {
+
+			valueType = createValueType(typesPrefix);
+			slotType = createSlotType();
+
+			frameType.asModelFrame().setIReasoner(this);
+		}
+
+		private CFrame createValueType(String typesPrefix) {
+
+			return createCFrame(typesPrefix + "InsertSlotValue");
+		}
+
+		private CSlot createSlotType() {
+
+			return createCSlot("insertSlot", CCardinality.FREE, valueType);
+		}
+
+		private boolean isDynamicSlot(ISlots slots) {
+
+			for (ISlot slot : slots.asList()) {
+
+				if (slot.getType().equals(slotType)) {
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private boolean allValuesSet(ISlots slots) {
+
+			for (ISlot slot : slots.asList()) {
+
+				if (slot.getValues().isEmpty()) {
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private void addInsertSlot(IFrame frame) {
+
+			ISlot slot = frame.createEditor().addSlot(slotType);
+
+			if (firstInsert) {
+
+				firstInsert = false;
+
+				slot.getValuesEditor().add(valueType.instantiate());
+			}
+		}
+	}
+
 	public MekonTest(CModel model) {
 
-		this(model, new InertIReasoner());
+		this(model, null);
 	}
 
 	public IFrame createComplexInstance() {
 
-		return createComplexInstance("");
+		return createComplexInstance("", false);
 	}
 
-	public IFrame createComplexInstance(String typesPrefix) {
+	public IFrame createComplexInstance(
+						String typesPrefix,
+						boolean dynamicSlotInsertion) {
 
 		IFrame fa = createIFrame(typesPrefix + "A");
 		IFrame fb = createIFrame(typesPrefix + "B");
@@ -56,10 +138,15 @@ public class MekonTest extends FramesTestUtils {
 		CFrame tex = createCFrame(typesPrefix + "EX");
 		CFrame tey = createCFrame(typesPrefix + "EY");
 
+		CNumber n = CIntegerDef.range(1, 10).createNumber();
+
 		addSuperFrame(tex, te);
 		addSuperFrame(tey, te);
 
-		CNumber n = CIntegerDef.range(1, 10).createNumber();
+		if (dynamicSlotInsertion) {
+
+			new DynamicSlotInsertionReasoner(fa.getType(), typesPrefix);
+		}
 
 		createISlotWithValue(fa, "sab", fb);
 		createISlotWithValue(fa, "sac", fc);
@@ -97,7 +184,15 @@ public class MekonTest extends FramesTestUtils {
 
 	public CSlot createCSlot(CCardinality cardinality, CValue<?> valueType) {
 
-		return createCSlot(createCSlotContainer(), "Slot", cardinality, valueType);
+		return createCSlot("Slot", cardinality, valueType);
+	}
+
+	public CSlot createCSlot(
+					String propName,
+					CCardinality cardinality,
+					CValue<?> valueType) {
+
+		return createCSlot(createCSlotContainer(), propName, cardinality, valueType);
 	}
 
 	public CSlot createCSlot(CFrame container, CCardinality cardinality) {
@@ -132,7 +227,13 @@ public class MekonTest extends FramesTestUtils {
 					CCardinality cardinality,
 					CValue<?> valueType) {
 
-		return container.asModelFrame().createEditor().addSlot(property, cardinality, valueType);
+		return container
+					.asModelFrame()
+					.createEditor()
+					.addSlot(
+						property,
+						cardinality,
+						valueType);
 	}
 
 	public IFrame createIFrame(String typeName) {
@@ -202,7 +303,7 @@ public class MekonTest extends FramesTestUtils {
 
 	MekonTest() {
 
-		this(new InertIReasoner());
+		this(new CModel(), null);
 	}
 
 	MekonTest(IReasoner iReasoner) {
@@ -235,7 +336,10 @@ public class MekonTest extends FramesTestUtils {
 
 		CModelFrame frame = model.addFrame(createIdentity(name), hidden);
 
-		frame.setIReasoner(iReasoner);
+		if (iReasoner != null) {
+
+			frame.setIReasoner(iReasoner);
+		}
 
 		return frame;
 	}

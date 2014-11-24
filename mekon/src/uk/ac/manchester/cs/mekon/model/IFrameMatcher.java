@@ -42,7 +42,7 @@ class IFrameMatcher {
 
 		return typesMatch(frame1, frame2)
 				&& inferredTypesMatch(frame1, frame2)
-				&& slotValuesMatch(frame1, frame2);
+				&& slotValuesMatch(frame1.getSlots(), frame2.getSlots());
 	}
 
 	private boolean typesMatch(IFrame frame1, IFrame frame2) {
@@ -55,14 +55,21 @@ class IFrameMatcher {
 		return frame1.getInferredTypes().equals(frame2.getInferredTypes());
 	}
 
-	private boolean slotValuesMatch(IFrame frame1, IFrame frame2) {
+	private boolean slotValuesMatch(ISlots slots1, ISlots slots2) {
 
-		Iterator<ISlot> slots1 = frame1.getSlots().asList().iterator();
-		Iterator<ISlot> slots2 = frame2.getSlots().asList().iterator();
+		if (slots1.size() != slots2.size()) {
 
-		while (slots1.hasNext()) {
+			return false;
+		}
 
-			if (!slotValuesMatch(slots1.next(), slots2.next())) {
+		Iterator<ISlot> s1 = slots1.asList().iterator();
+		Iterator<ISlot> s2 = slots2.asList().iterator();
+
+		while (s1.hasNext()) {
+
+			if (!slotValuesMatch(
+					s1.next().getValues(),
+					s2.next().getValues())) {
 
 				return false;
 			}
@@ -71,22 +78,19 @@ class IFrameMatcher {
 		return true;
 	}
 
-	private boolean slotValuesMatch(ISlot slot1, ISlot slot2) {
-
-		List<IValue> values1 = slot1.getValues().asList();
-		List<IValue> values2 = slot2.getValues().asList();
+	private boolean slotValuesMatch(ISlotValues values1, ISlotValues values2) {
 
 		if (values1.size() != values2.size()) {
 
 			return false;
 		}
 
-		Iterator<IValue> vs1 = values1.iterator();
-		Iterator<IValue> vs2 = values2.iterator();
+		Iterator<IValue> v1 = values1.asList().iterator();
+		Iterator<IValue> v2 = values2.asList().iterator();
 
-		while (vs1.hasNext()) {
+		while (v1.hasNext()) {
 
-			if (!valuesMatch(vs1.next(), vs2.next())) {
+			if (!valuesMatch(v1.next(), v2.next())) {
 
 				return false;
 			}
