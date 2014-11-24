@@ -51,4 +51,14 @@ class MonitorIReasoner implements IReasoner {
 		initialiseds.clear();
 		updateds.clear();
 	}
+
+	List<IFrame> getInitialiseds() {
+
+		return initialiseds;
+	}
+
+	List<IFrame> getUpdateds() {
+
+		return updateds;
+	}
 }

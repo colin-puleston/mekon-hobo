@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class IClassifier implements IReasoner {
+public abstract class IClassifier extends DefaultIReasoner {
 
 	private class Updater {
 
@@ -144,18 +144,6 @@ public abstract class IClassifier implements IReasoner {
 
 			return frame.getType().getModel();
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void initialiseFrame(IEditor iEditor, IFrame frame) {
-
-		ISlotSpecs specs = new ISlotSpecs(iEditor);
-
-		specs.absorb(frame.getType(), true);
-		specs.initialiseSlots(frame);
-		specs.updateSlotValues(frame);
 	}
 
 	/**

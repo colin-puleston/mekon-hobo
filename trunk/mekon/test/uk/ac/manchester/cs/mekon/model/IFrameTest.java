@@ -64,7 +64,7 @@ public class IFrameTest extends MekonTest {
 		this(new MonitorIReasoner());
 	}
 
-//	@Test
+	@Test
 	public void test_updateInferredTypes() {
 
 		IFrame f = createIFrame("F");
@@ -81,7 +81,7 @@ public class IFrameTest extends MekonTest {
 		testUpdateInferredTypes(f, NO_IFRAMES, NO_IFRAMES, list(ta));
 	}
 
-//	@Test
+	@Test
 	public void test_updateSlotValue() {
 
 		IFrame fa = createIFrame("A");
@@ -90,11 +90,11 @@ public class IFrameTest extends MekonTest {
 
 		monitorIReasoner.resetRegisters();
 		createISlotWithValue(fa, "sab", fb);
-		testList(monitorIReasoner.updateds, list(fa));
+		testList(monitorIReasoner.getUpdateds(), list(fa));
 
 		monitorIReasoner.resetRegisters();
 		createISlotWithValue(fb, "sbc", fc);
-		testList(monitorIReasoner.updateds, list(fb, fa));
+		testList(monitorIReasoner.getUpdateds(), list(fb, fa));
 	}
 
 	@Test

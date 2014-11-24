@@ -22,19 +22,31 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.mechanism;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Provides the default version of the reasoning mechanisms
+ * defined by {@link IReasoner}. Initialises each instance-level
+ * frame with a set of slots derived from the relevant
+ * concept-level frame and it's ancestors. Performs no dynamic
+ * updating of the slot-sets.
+ *
  * @author Colin Puleston
  */
-class DefaultIReasoner implements IReasoner {
+public class DefaultIReasoner implements IReasoner {
 
-	static IReasoner singleton = new DefaultIReasoner();
+	/**
+	 * Singleton instance of {@link DefaultIReasoner}
+	 */
+	static public final IReasoner singleton = new DefaultIReasoner();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void initialiseFrame(IEditor iEditor, IFrame frame) {
 
 		ISlotSpecs specs = new ISlotSpecs(iEditor);
@@ -44,9 +56,16 @@ class DefaultIReasoner implements IReasoner {
 		specs.updateSlotValues(frame);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
 	}
 
-	private DefaultIReasoner() {
+	/**
+	 * Constructor for extension classes.
+	 */
+	protected DefaultIReasoner() {
+
 	}
 }

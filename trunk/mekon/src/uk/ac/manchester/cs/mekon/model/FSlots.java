@@ -89,5 +89,10 @@ public abstract class FSlots<S> extends FIdentifiables<S> {
 		removeValue(slot);
 	}
 
+	void clear() {
+
+		clearValues();
+	}
+
 	abstract CSlot getCSlot(S slot);
 }

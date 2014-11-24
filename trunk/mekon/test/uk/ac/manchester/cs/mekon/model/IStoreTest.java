@@ -46,6 +46,8 @@ public class IStoreTest extends MekonTest {
 	private IFrame first = null;
 	private IFrame second = null;
 
+	private boolean dynamicSlotInsertion = false;
+
 	private class TestMatcher implements IMatcher {
 
 		final IFrame instance;
@@ -145,10 +147,15 @@ public class IStoreTest extends MekonTest {
 	@Test
 	public void test_storeReloadAndRetrieve() {
 
-		testStore();
-		createStore();
-		store.checkLoad();
-		testRetrieve();
+		testStoreReloadAndRetrieve();
+	}
+
+	@Test
+	public void test_storeReloadAndRetrieveWithDynamicSlotInsertion() {
+
+		dynamicSlotInsertion = true;
+
+		testStoreReloadAndRetrieve();
 	}
 
 	@Test
@@ -172,6 +179,14 @@ public class IStoreTest extends MekonTest {
 	private void createStore() {
 
 		store = new IStore(getModel());
+	}
+
+	private void testStoreReloadAndRetrieve() {
+
+		testStore();
+		createStore();
+		store.checkLoad();
+		testRetrieve();
 	}
 
 	private void testStore() {
@@ -206,7 +221,7 @@ public class IStoreTest extends MekonTest {
 	private IFrame createAndStoreInstance(CIdentity id) {
 
 		String typePrefix = id.getIdentifier() + "Type";
-		IFrame instance = createComplexInstance(typePrefix);
+		IFrame instance = createComplexInstance(typePrefix, dynamicSlotInsertion);
 
 		store.add(instance, id);
 
