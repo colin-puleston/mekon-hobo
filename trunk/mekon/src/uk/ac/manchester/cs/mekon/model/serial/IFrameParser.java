@@ -249,19 +249,18 @@ public class IFrameParser extends ISerialiser {
 	private void parseISlot(IFrame frame, XNode node) {
 
 		CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
-		XNode valuesNode = node.getChildOrNull(ISLOT_VALUES_ID);
 
-		for (XNode valueNode : valuesNode.getChildren(IFRAME_ID)) {
+		for (XNode valueNode : node.getChildren(IFRAME_ID)) {
 
 			new FrameSlotValueSpec(frame, id, parseIFrame(valueNode));
 		}
 
-		for (XNode valueNode : valuesNode.getChildren(INUMBER_ID)) {
+		for (XNode valueNode : node.getChildren(INUMBER_ID)) {
 
 			new INumberSlotValueSpec(frame, id, valueNode);
 		}
 
-		for (XNode valueNode : valuesNode.getChildren(CFRAME_ID)) {
+		for (XNode valueNode : node.getChildren(CFRAME_ID)) {
 
 			new FrameSlotValueSpec(frame, id, parseCFrame(valueNode));
 		}
