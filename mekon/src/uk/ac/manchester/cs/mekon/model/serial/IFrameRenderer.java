@@ -34,38 +34,36 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 public class IFrameRenderer extends ISerialiser {
 
+	private boolean renderNonEditableSlots = false;
+
 	private class ISlotDetailsRenderer extends ISlotValuesVisitor {
 
 		private XNode slotNode;
-		private XNode valuesNode;
+		private XNode slotTypeNode;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
-			renderCFrame(valueType, slotNode);
-
-			valuesNode = addValuesNode();
+			renderCFrame(valueType, slotTypeNode);
 
 			for (IFrame value : values) {
 
-				renderIFrame(value, valuesNode);
+				renderIFrame(value, slotNode);
 			}
 		}
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			renderCNumber(valueType, slotNode);
-			renderINumber(values.get(0), addValuesNode());
+			renderCNumber(valueType, slotTypeNode);
+			renderINumber(values.get(0), slotNode);
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
-			renderMFrame(valueType, slotNode);
-
-			valuesNode = addValuesNode();
+			renderMFrame(valueType, slotTypeNode);
 
 			for (CFrame value : values) {
 
-				renderCFrame(value, valuesNode);
+				renderCFrame(value, slotNode);
 			}
 		}
 
@@ -73,13 +71,26 @@ public class IFrameRenderer extends ISerialiser {
 
 			this.slotNode = slotNode;
 
+			slotTypeNode = renderSlotType(slot.getType());
+
 			visit(slot);
 		}
 
-		private XNode addValuesNode() {
+		private XNode renderSlotType(CSlot slotType) {
 
-			return slotNode.addChild(ISLOT_VALUES_ID);
+			XNode node = slotNode.addChild(CSLOT_ID);
+
+			renderIdentity(slotType.getProperty(), node);
+
+			return node;
 		}
+	}
+
+	/**
+	 */
+ 	public void setRenderNonEditableSlots(boolean value) {
+
+		renderNonEditableSlots = value;
 	}
 
 	/**
@@ -184,19 +195,18 @@ public class IFrameRenderer extends ISerialiser {
 
 		XNode node = parentNode.addChild(ISLOT_ID);
 
-		renderCSlot(slot.getType(), node);
+		node.addValue(EDITABLE_SLOT_ATTR, slot.editable());
+
 		new ISlotDetailsRenderer(slot, node);
-	}
-
-	private void renderCSlot(CSlot slot, XNode parentNode) {
-
-		XNode node = parentNode.addChild(CSLOT_ID);
-
-		renderIdentity(slot.getProperty(), node);
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {
 
-		return !slot.dependent() && !slot.getValues().isEmpty();
+		if (slot.getValues().isEmpty()) {
+
+			return false;
+		}
+
+		return renderNonEditableSlots || slot.editable();
 	}
 }
