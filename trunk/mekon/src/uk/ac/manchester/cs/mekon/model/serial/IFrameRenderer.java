@@ -183,10 +183,9 @@ public class IFrameRenderer extends ISerialiser {
 
 		XNode node = parentNode.addChild(ISLOT_ID);
 
-		node.addValue(EDITABLE_SLOT_ATTR, slot.editable());
+		node.addValue(EDITABLE_ATTR, slot.editable());
 
 		renderCSlot(slot.getType(), node);
-
 		new ISlotDetailsRenderer(slot, node);
 	}
 
@@ -195,6 +194,7 @@ public class IFrameRenderer extends ISerialiser {
 		XNode node = parentNode.addChild(CSLOT_ID);
 
 		renderIdentity(slot.getProperty(), node);
+		node.addValue(CARDINALITY_ATTR, slot.getCardinality());
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {
