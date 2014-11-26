@@ -39,11 +39,10 @@ public class IFrameRenderer extends ISerialiser {
 	private class ISlotDetailsRenderer extends ISlotValuesVisitor {
 
 		private XNode slotNode;
-		private XNode slotTypeNode;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
-			renderCFrame(valueType, slotTypeNode);
+			renderCFrame(valueType, slotNode);
 
 			for (IFrame value : values) {
 
@@ -53,13 +52,13 @@ public class IFrameRenderer extends ISerialiser {
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			renderCNumber(valueType, slotTypeNode);
+			renderCNumber(valueType, slotNode);
 			renderINumber(values.get(0), slotNode);
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
-			renderMFrame(valueType, slotTypeNode);
+			renderMFrame(valueType, slotNode);
 
 			for (CFrame value : values) {
 
@@ -71,18 +70,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			this.slotNode = slotNode;
 
-			slotTypeNode = renderSlotType(slot.getType());
-
 			visit(slot);
-		}
-
-		private XNode renderSlotType(CSlot slotType) {
-
-			XNode node = slotNode.addChild(CSLOT_ID);
-
-			renderIdentity(slotType.getProperty(), node);
-
-			return node;
 		}
 	}
 
@@ -197,7 +185,16 @@ public class IFrameRenderer extends ISerialiser {
 
 		node.addValue(EDITABLE_SLOT_ATTR, slot.editable());
 
+		renderCSlot(slot.getType(), node);
+
 		new ISlotDetailsRenderer(slot, node);
+	}
+
+	private void renderCSlot(CSlot slot, XNode parentNode) {
+
+		XNode node = parentNode.addChild(CSLOT_ID);
+
+		renderIdentity(slot.getProperty(), node);
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {
