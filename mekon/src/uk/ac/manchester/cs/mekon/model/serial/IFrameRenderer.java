@@ -150,11 +150,11 @@ public class IFrameRenderer extends ISerialiser {
 
 		if (number.indefinite()) {
 
-			node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
+			renderCNumberRange(number.getType(), node);
 		}
 		else {
 
-			renderCNumberRange(number.getType(), node);
+			node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
 		}
 	}
 
