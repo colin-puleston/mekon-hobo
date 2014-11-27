@@ -320,20 +320,25 @@ public class IFrameParser extends ISerialiser {
 
 		CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
 
-		if (node.hasChild(CFRAME_ID)) {
+		if (node.hasChild(IVALUES_ID)) {
 
-			if (node.hasChild(MFRAME_ID)) {
+			parseISlotValues(frame, id, node.getChild(IVALUES_ID));
+		}
+	}
 
-				new CFrameSlotValuesSpec(frame, id, node);
-			}
-			else if (node.hasChild(IFRAME_ID)) {
+	private void parseISlotValues(IFrame frame, CIdentity id, XNode node) {
 
-				new IFrameSlotValuesSpec(frame, id, node);
-			}
+		if (node.hasChild(IFRAME_ID)) {
+
+			new IFrameSlotValuesSpec(frame, id, node);
 		}
 		else if (node.hasChild(INUMBER_ID)) {
 
 			new INumberSlotValuesSpec(frame, id, node);
+		}
+		else if (node.hasChild(CFRAME_ID)) {
+
+			new CFrameSlotValuesSpec(frame, id, node);
 		}
 	}
 
