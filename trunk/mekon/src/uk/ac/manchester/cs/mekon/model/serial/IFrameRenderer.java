@@ -34,6 +34,7 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 public class IFrameRenderer extends ISerialiser {
 
+	private boolean renderSchema = false;
 	private boolean renderNonEditableSlots = false;
 
 	private class ISlotDetailsRenderer extends ISlotValuesVisitor {
@@ -53,7 +54,11 @@ public class IFrameRenderer extends ISerialiser {
 		protected void visit(CNumber valueType, List<INumber> values) {
 
 			renderCNumber(valueType, slotNode);
-			renderINumber(values.get(0), slotNode);
+
+			for (INumber value : values) {
+
+				renderINumber(value, slotNode);
+			}
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
@@ -72,6 +77,13 @@ public class IFrameRenderer extends ISerialiser {
 
 			visit(slot);
 		}
+	}
+
+	/**
+	 */
+ 	public void setRenderSchema(boolean value) {
+
+		renderSchema = value;
 	}
 
 	/**
@@ -183,9 +195,13 @@ public class IFrameRenderer extends ISerialiser {
 
 		XNode node = parentNode.addChild(ISLOT_ID);
 
-		node.addValue(EDITABLE_ATTR, slot.editable());
-
 		renderCSlot(slot.getType(), node);
+
+		if (renderSchema) {
+
+			node.addValue(EDITABLE_ATTR, slot.editable());
+		}
+
 		new ISlotDetailsRenderer(slot, node);
 	}
 
@@ -194,12 +210,16 @@ public class IFrameRenderer extends ISerialiser {
 		XNode node = parentNode.addChild(CSLOT_ID);
 
 		renderIdentity(slot.getProperty(), node);
-		node.addValue(CARDINALITY_ATTR, slot.getCardinality());
+
+		if (renderSchema) {
+
+			node.addValue(CARDINALITY_ATTR, slot.getCardinality());
+		}
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {
 
-		if (slot.getValues().isEmpty()) {
+		if (!renderSchema && slot.getValues().isEmpty()) {
 
 			return false;
 		}
