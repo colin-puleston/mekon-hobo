@@ -37,43 +37,64 @@ public class IFrameRenderer extends ISerialiser {
 	private boolean renderSchema = false;
 	private boolean renderNonEditableSlots = false;
 
-	private class ISlotDetailsRenderer extends ISlotValuesVisitor {
+	private class ISlotValueTypeRenderer extends CValueVisitor {
 
 		private XNode slotNode;
 
-		protected void visit(CFrame valueType, List<IFrame> values) {
+		protected void visit(CFrame value) {
 
-			renderCFrame(valueType, slotNode);
+			renderCFrame(value, slotNode);
+		}
+
+		protected void visit(CNumber value) {
+
+			renderCNumber(value, slotNode);
+		}
+
+		protected void visit(MFrame value) {
+
+			renderMFrame(value, slotNode);
+		}
+
+		ISlotValueTypeRenderer(ISlot slot, XNode slotNode) {
+
+			this.slotNode = slotNode;
+
+			visit(slot.getValueType());
+		}
+	}
+
+	private class ISlotValuesRenderer extends ISlotValuesVisitor {
+
+		private XNode valuesNode;
+
+		protected void visit(CFrame valueType, List<IFrame> values) {
 
 			for (IFrame value : values) {
 
-				renderIFrame(value, slotNode);
+				renderIFrame(value, valuesNode);
 			}
 		}
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			renderCNumber(valueType, slotNode);
-
 			for (INumber value : values) {
 
-				renderINumber(value, slotNode);
+				renderINumber(value, valuesNode);
 			}
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
-			renderMFrame(valueType, slotNode);
-
 			for (CFrame value : values) {
 
-				renderCFrame(value, slotNode);
+				renderCFrame(value, valuesNode);
 			}
 		}
 
-		ISlotDetailsRenderer(ISlot slot, XNode slotNode) {
+		ISlotValuesRenderer(ISlot slot, XNode slotNode) {
 
-			this.slotNode = slotNode;
+			valuesNode = slotNode.addChild(IVALUES_ID);
 
 			visit(slot);
 		}
@@ -200,9 +221,14 @@ public class IFrameRenderer extends ISerialiser {
 		if (renderSchema) {
 
 			node.addValue(EDITABLE_ATTR, slot.editable());
+
+			new ISlotValueTypeRenderer(slot, node);
 		}
 
-		new ISlotDetailsRenderer(slot, node);
+		if (!slot.getValues().isEmpty()) {
+
+			new ISlotValuesRenderer(slot, node);
+		}
 	}
 
 	private void renderCSlot(CSlot slot, XNode parentNode) {
