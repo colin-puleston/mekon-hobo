@@ -162,11 +162,11 @@ public class CModel implements CAnnotatable {
 
 	/**
 	 * Creates instantiation of the frame, setting the category
-	 * of the instantiation to {@link IFrameCategory#CONCRETE}.
+	 * of the instantiation to {@link IFrameCategory#ASSERTION}.
 	 *
 	 * @param identity Identity of frame to be instantiated
 	 * @return Instantiation of specified frame, as
-	 * concrete-instance
+	 * assertion-instance
 	 */
 	public IFrame instantiate(CIdentity identity) {
 

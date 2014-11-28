@@ -32,19 +32,19 @@ import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Represents an instance-level model-frame. The frame can be
- * either of category {@link IFrameCategory#CONCRETE} or
- * category {@link IFrameCategory#QUERY}. Concrete-frames differ
+ * either of category {@link IFrameCategory#ASSERTION} or
+ * category {@link IFrameCategory#QUERY}. Assertion-frames differ
  * from query-frames in the following ways:
  * <ul>
- *   <li>Concrete-frames cannot be instantiations of
+ *   <li>Assertion-frames cannot be instantiations of
  *   disjunction-frames (see {@link CFrameCategory#disjunction})
- *   <li>Slots on concrete-frames cannot have abstract values (see
+ *   <li>Slots on assertion-frames cannot have abstract values (see
  *   {@link IValue#abstractValue})
  *   <li>Dependent slots on query-frames (see {@link ISlot#dependent})
  *   are editable by the client (see {@link ISlot#editable}), which
- *   is not the case for dependent slots on concrete-frames
+ *   is not the case for dependent slots on assertion-frames
  * </ul>
- * Query-frames and concrete-frames cannot be mixed within a single
+ * Query-frames and assertion-frames cannot be mixed within a single
  * model-instantiation. Attempting to do so will result in an
  * exception.
  *
@@ -497,17 +497,17 @@ public class IFrame implements IEntity, IValue {
 			throw new KAccessException(
 						"Cannot add frame: " + this
 						+ " as slot-value on frame: " + referencingFrame
-						+ " (attempting to mix concrete and query frames)");
+						+ " (attempting to mix assertion and query frames)");
 		}
 	}
 
 	private void validateAsReferencingFrame() {
 
-		if (disjunctionType() && category.concrete()) {
+		if (disjunctionType() && category.assertion()) {
 
 			throw new KAccessException(
-						"Cannot add slot-values to concrete "
-						+ "instantiation of disjunction-frame: "
+						"Cannot add slot-values to assertion-frame "
+						+ "with disjunction type: "
 						+ this);
 		}
 	}

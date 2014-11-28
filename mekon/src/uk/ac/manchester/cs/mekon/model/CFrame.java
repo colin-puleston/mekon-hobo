@@ -64,7 +64,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  *   subsumed-by, or subsuming-of another abstract extension-frame,
  *   based on the respective definitions
  *   <li><i>Concrete-extension-frame</i> Can never be equal-to,
- *   subsumed-by, or subsuming-of another abstract extension-frame
+ *   subsumed-by, or subsuming-of another extension-frame
  * </ul>
  * Each frame has a "visibility" status of "exposed" or "hidden".
  * Hidden frames are those that are not relevant to an end-user.
@@ -501,13 +501,13 @@ public abstract class CFrame
 
 	/**
 	 * Creates instantiation of the frame, setting the category
-	 * of the instantiation to {@link IFrameCategory#CONCRETE}.
+	 * of the instantiation to {@link IFrameCategory#ASSERTION}.
 	 *
-	 * @return Instantiation of this frame, as concrete-instance
+	 * @return Instantiation of this frame, as assertion-instance
 	 */
 	public IFrame instantiate() {
 
-		return instantiate(IFrameCategory.CONCRETE);
+		return instantiate(IFrameCategory.ASSERTION);
 	}
 
 	/**
