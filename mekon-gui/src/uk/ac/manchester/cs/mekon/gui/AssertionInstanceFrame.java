@@ -32,11 +32,11 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class ConcreteInstanceFrame extends InstantiationFrame {
+class AssertionInstanceFrame extends InstantiationFrame {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String CONCRETE_LABEL = "Concrete";
+	static private final String ASSERTION_LABEL = "Assertion";
 	static private final String STORE_ACTION_LABEL = "Store";
 	static private final String NAME_FIELD_TITLE = "Name:";
 
@@ -45,7 +45,7 @@ class ConcreteInstanceFrame extends InstantiationFrame {
 	static void display(CFramesTree modelTree, IStore iStore, CIdentity identity) {
 
 		IFrame instance = iStore.get(identity);
-		ConcreteInstanceFrame frame = new ConcreteInstanceFrame(modelTree, instance);
+		AssertionInstanceFrame frame = new AssertionInstanceFrame(modelTree, instance);
 
 		frame.setInstanceName(identity.getLabel());
 		frame.display();
@@ -68,7 +68,7 @@ class ConcreteInstanceFrame extends InstantiationFrame {
 		}
 	}
 
-	ConcreteInstanceFrame(CFramesTree modelTree, IFrame frame) {
+	AssertionInstanceFrame(CFramesTree modelTree, IFrame frame) {
 
 		super(modelTree, frame);
 
@@ -83,7 +83,7 @@ class ConcreteInstanceFrame extends InstantiationFrame {
 
 	String getCategoryLabel() {
 
-		return CONCRETE_LABEL;
+		return ASSERTION_LABEL;
 	}
 
 	JComponent createControlsPanel() {

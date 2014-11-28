@@ -76,7 +76,7 @@ class InstanceStorePanel extends JPanel {
 
 			if (getIStore().contains(id)) {
 
-				ConcreteInstanceFrame.display(modelTree, getIStore(), id);
+				AssertionInstanceFrame.display(modelTree, getIStore(), id);
 			}
 			else {
 

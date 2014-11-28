@@ -168,7 +168,7 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 	private void showMatch(CIdentity id) {
 
-		ConcreteInstanceFrame.display(getModelTree(), getIStore(), id);
+		AssertionInstanceFrame.display(getModelTree(), getIStore(), id);
 	}
 
 	private void showMessage(String msg) {
