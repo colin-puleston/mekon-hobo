@@ -31,10 +31,10 @@ import uk.ac.manchester.cs.mekon.model.*;
  * instantiations of a MEKON Frames Model (FM). Both instances
  * and queries are represented via instance-level frames. The
  * frames representing instances will always be of category
- * {@link IFrameCategory#CONCRETE} rather than {@link
+ * {@link IFrameCategory#ASSERTION} rather than {@link
  * IFrameCategory#QUERY}, whereas those representing queries
- * can be either, since concrete frames can also be interpreted
- 8 as queries.
+ * can be either, since assertion frames can also be interpreted
+ * as queries.
  *
  * @author Colin Puleston
  */
@@ -52,7 +52,7 @@ public interface IMatcher {
 	/**
 	 * Adds an instance to the matcher. The supplied frame will
 	 * be of an appropriate frame-type (see {@link #handlesType}),
-	 * and will be of category {@link IFrameCategory#CONCRETE}.
+	 * and will be of category {@link IFrameCategory#ASSERTION}.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance

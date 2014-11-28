@@ -32,24 +32,24 @@ package uk.ac.manchester.cs.mekon.model;
 public enum IFrameCategory {
 
 	/**
-	 * Frame represents a specific concrete instantiation.
+	 * Frame represents an assertion.
 	 */
-	CONCRETE,
+	ASSERTION,
 
 
 	/**
-	 * Frame represents a set of possible instantiations.
+	 * Frame represents a query.
 	 */
 	QUERY;
 
 	/**
-	 * States whether frame is of type {@link #CONCRETE}.
+	 * States whether frame is of type {@link #ASSERTION}.
 	 *
-	 * @return True if concrete.
+	 * @return True if assertion.
 	 */
-	public boolean concrete() {
+	public boolean assertion() {
 
-		return this == CONCRETE;
+		return this == ASSERTION;
 	}
 
 	/**
