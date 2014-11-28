@@ -39,24 +39,24 @@ class InstantiatonsPanel extends JPanel {
 	static private final long serialVersionUID = -1;
 
 	static private final String TITLE_FORMAT = "Instantiate \"%s\"";
-	static private final String CONCRETE_BUTTON_LABEL = "Concrete...";
+	static private final String ASSERTION_BUTTON_LABEL = "Assertion...";
 	static private final String QUERY_BUTTON_LABEL = "Query...";
 
 	private CFramesTree modelTree;
 	private CFrame frame;
 
-	private class InstantiateConcreteButton extends GButton {
+	private class InstantiateAssertionButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			instantiateConcrete();
+			instantiateAssertion();
 		}
 
-		InstantiateConcreteButton() {
+		InstantiateAssertionButton() {
 
-			super(CONCRETE_BUTTON_LABEL);
+			super(ASSERTION_BUTTON_LABEL);
 
 			setEnabled(instantiable());
 		}
@@ -112,15 +112,15 @@ class InstantiatonsPanel extends JPanel {
 
 		JPanel panel = new JPanel();
 
-		panel.add(new InstantiateConcreteButton());
+		panel.add(new InstantiateAssertionButton());
 		panel.add(new InstantiateQueryButton());
 
 		return panel;
 	}
 
-	private void instantiateConcrete() {
+	private void instantiateAssertion() {
 
-		new ConcreteInstanceFrame(modelTree, frame.instantiate()).display();
+		new AssertionInstanceFrame(modelTree, frame.instantiate()).display();
 	}
 
 	private void instantiateQuery() {

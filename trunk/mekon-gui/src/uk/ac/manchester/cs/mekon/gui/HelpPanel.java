@@ -245,7 +245,7 @@ class HelpPanel extends JTabbedPane {
 				addRow(
 					blockedSlotShape,
 					"ISlot",
-					"Non-Editable (dependent slot on concrete instance)");
+					"Non-Editable (dependent slot on assertion instance)");
 			}
 		}
 
