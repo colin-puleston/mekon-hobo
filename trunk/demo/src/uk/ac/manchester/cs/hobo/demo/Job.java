@@ -83,7 +83,7 @@ public class Job extends DObjectShell {
 
 	private void checkUpdate() {
 
-		if (getFrame().getCategory().concrete()) {
+		if (getFrame().getCategory().assertion()) {
 
 			update();
 		}

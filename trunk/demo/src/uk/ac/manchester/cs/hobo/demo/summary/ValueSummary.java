@@ -104,7 +104,7 @@ public abstract class ValueSummary<V> extends DObjectShell {
 
 	private void checkUpdate() {
 
-		if (concreteFrame()) {
+		if (assertionFrame()) {
 
 			update();
 		}
@@ -112,7 +112,7 @@ public abstract class ValueSummary<V> extends DObjectShell {
 
 	private void checkClear() {
 
-		if (concreteFrame()) {
+		if (assertionFrame()) {
 
 			clear();
 		}
@@ -152,8 +152,8 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		return values;
 	}
 
-	private boolean concreteFrame() {
+	private boolean assertionFrame() {
 
-		return getFrame().getCategory().concrete();
+		return getFrame().getCategory().assertion();
 	}
 }
