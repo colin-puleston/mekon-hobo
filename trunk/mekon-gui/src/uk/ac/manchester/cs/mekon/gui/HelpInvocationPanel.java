@@ -23,6 +23,8 @@
  */
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -35,17 +37,31 @@ class HelpInvocationPanel extends JPanel {
 	static private final long serialVersionUID = -1;
 
 	static private final String BUTTON_LABEL = "Help...";
-	static private final String DIALOG_LABEL = MekonModelExplorer.getSystemTitle("Help");
+	static private final String FRAME_TITLE = MekonModelExplorer.getSystemTitle("Help");
+	static private final int FRAME_WIDTH = 900;
+	static private final int FRAME_HEIGHT = 300;
 
 	private HelpPanel helpPanel = new HelpPanel();
+	private HelpButton helpButton = new HelpButton();
 
 	private class HelpButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
+		private ButtonEnabler buttonEnabler = new ButtonEnabler();
+
+		private class ButtonEnabler extends WindowAdapter {
+
+			public void windowClosing(WindowEvent e) {
+
+				setEnabled(true);
+			}
+		}
+
 		protected void doButtonThing() {
 
-			showHelpDialog();
+			setEnabled(false);
+			new HelpFrame(buttonEnabler);
 		}
 
 		HelpButton() {
@@ -54,13 +70,21 @@ class HelpInvocationPanel extends JPanel {
 		}
 	}
 
-	HelpInvocationPanel() {
+	private class HelpFrame extends GFrame {
 
-		add(new HelpButton());
+		static private final long serialVersionUID = -1;
+
+		public HelpFrame(WindowListener buttonEnabler) {
+
+			super(FRAME_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
+
+			addWindowListener(buttonEnabler);
+			display(helpPanel);
+		}
 	}
 
-	private void showHelpDialog() {
+	HelpInvocationPanel() {
 
-		new GDialog(this, DIALOG_LABEL, false).display(new JScrollPane(helpPanel));
+		add(helpButton);
 	}
 }
