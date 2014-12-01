@@ -92,7 +92,6 @@ public class GTable extends JTable {
 	public GTable() {
 
 		setModel(model);
-
 		setHeaderAttributes();
 		setRowHeight(CELL_HEIGHT);
 		setDefaultRenderer(Object.class, new CellRenderer());
@@ -114,6 +113,8 @@ public class GTable extends JTable {
 	public void addRow(Object... cells) {
 
 		model.addRow(cells);
+
+		setPreferredScrollableViewportSize(getPreferredSize());
 	}
 
 	private void setHeaderAttributes() {
