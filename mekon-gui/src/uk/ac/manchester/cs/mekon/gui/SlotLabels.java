@@ -33,13 +33,24 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class SlotLabels {
 
-	static private Map<CCardinality, String> SUFFIXES = new HashMap<CCardinality, String>();
+	static private List<String> CARDINALITY_MODIFIER_LIST
+									= new ArrayList<String>();
+
+	static private Map<CCardinality, String> CARDINALITY_MODIFIER_MAP
+									= new HashMap<CCardinality, String>();
 
 	static {
 
-		SUFFIXES.put(CCardinality.SINGLETON, "");
-		SUFFIXES.put(CCardinality.UNIQUE_TYPES, " { }");
-		SUFFIXES.put(CCardinality.FREE, " [ ]");
+		addCardinalityModifier(CCardinality.FREE, "[ ]");
+		addCardinalityModifier(CCardinality.UNIQUE_TYPES, "{ }");
+	}
+
+	static private void addCardinalityModifier(
+							CCardinality cardinality,
+							String modifier) {
+
+		CARDINALITY_MODIFIER_LIST.add(modifier);
+		CARDINALITY_MODIFIER_MAP.put(cardinality, modifier);
 	}
 
 	static String get(CSlot slot) {
@@ -47,8 +58,51 @@ class SlotLabels {
 		return slot.getProperty().getDisplayLabel() + getSuffix(slot);
 	}
 
+	static String getCardinalityModifierHelp(CCardinality cardinality) {
+
+		String modifier = getCardinalityModifier(cardinality);
+
+		return modifier != null
+					? getCardinalityModifierHelp(modifier)
+					: getNoCardinalityModifierHelp();
+	}
+
 	static private String getSuffix(CSlot slot) {
 
-		 return SUFFIXES.get(slot.getCardinality());
+		String modifier = getCardinalityModifier(slot.getCardinality());
+
+		return modifier != null ? (" " + modifier) : "";
+	}
+
+	static String getCardinalityModifierHelp(String modifier) {
+
+		return "\"" + modifier + "\"";
+	}
+
+	static String getNoCardinalityModifierHelp() {
+
+		return "NOT " + getCardinalityModifierOptionsHelp() + "" ;
+	}
+
+	static String getCardinalityModifierOptionsHelp() {
+
+		String modifierList = "";
+
+		for (String modifier : CARDINALITY_MODIFIER_LIST) {
+
+			if (!modifierList.isEmpty()) {
+
+				modifierList += " OR ";
+			}
+
+			modifierList += getCardinalityModifierHelp(modifier);
+		}
+
+		return modifierList;
+	}
+
+	static String getCardinalityModifier(CCardinality cardinality) {
+
+		return CARDINALITY_MODIFIER_MAP.get(cardinality);
 	}
 }

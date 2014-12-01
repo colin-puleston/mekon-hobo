@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -108,7 +107,7 @@ class HelpPanel extends JTabbedPane {
 
 			SectionPanel(String title) {
 
-				addSection(title, this);
+				addTab(title, new JScrollPane(this));
 			}
 		}
 
@@ -118,20 +117,6 @@ class HelpPanel extends JTabbedPane {
 
 			GFonts.setMedium(this);
 			addCategory(title, this);
-		}
-
-		private void addSection(String title, JComponent section) {
-
-			addTab(title, createSectionBox(section));
-		}
-
-		private JComponent createSectionBox(JComponent section) {
-
-			JPanel box = new JPanel(new GridBagLayout());
-
-			box.add(section);
-
-			return box;
 		}
 	}
 
@@ -149,9 +134,9 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns(
 					"Shape",
-					"Entity-Category",
-					"Entity-Level",
-					"Entity-Types");
+					"Entity Category",
+					"Entity Level",
+					"Entity Types");
 
 				addRow(
 					mValueShape,
@@ -186,9 +171,9 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns(
 					"Colour",
-					"Entity-Types",
-					"Entity-Level",
-					"Entity-Source");
+					"Entity Types",
+					"Entity Level",
+					"Entity Source");
 
 				addRow(
 					directColour,
@@ -213,18 +198,18 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		private class ModifiersPanel extends SectionPanel {
+		private class ShapeModifiersPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
 
-			ModifiersPanel() {
+			ShapeModifiersPanel() {
 
-				super("Modifiers");
+				super("Shape Modifiers");
 
 				addColumns(
-					"Modifier",
-					"Entity-Type",
-					"Entity-State");
+					"Shape with Modifier",
+					"Entity Types",
+					"Entity State");
 
 				addRow(
 					hiddenMFrameShape,
@@ -249,13 +234,38 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
+		private class LabelModifiersPanel extends SectionPanel {
+
+			static final long serialVersionUID = -1;
+
+			LabelModifiersPanel() {
+
+				super("Label Modifiers");
+
+				addColumns("Entity Types", "Label Modifier", "Denotes");
+
+				addSlotCardinalityModifier(CCardinality.FREE);
+				addSlotCardinalityModifier(CCardinality.UNIQUE_TYPES);
+				addSlotCardinalityModifier(CCardinality.SINGLETON);
+			}
+
+			private void addSlotCardinalityModifier(CCardinality cardinality) {
+
+				addRow(
+					"CSlot, ISlot",
+					SlotLabels.getCardinalityModifierHelp(cardinality),
+					"Cardinality = " + cardinality);
+			}
+		}
+
 		EntitiesPanel() {
 
-			super("Model Entities");
+			super("Entities");
 
 			new ShapesPanel();
 			new ColoursPanel();
-			new ModifiersPanel();
+			new ShapeModifiersPanel();
+			new LabelModifiersPanel();
 		}
 	}
 
@@ -401,31 +411,31 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		private class LabelModifiersPanel extends SectionPanel {
+		private class DynamicLabelModifiersPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
 
-			LabelModifiersPanel() {
+			DynamicLabelModifiersPanel() {
 
-				super("Label Modifiers");
+				super("Dynamic Label Modifiers");
 
-				addColumns("Entity Type", "Node State", "Label Modifier", "Denotes");
+				addColumns("Entity Types", "Node State", "Label Modifier", "Denotes");
 
 				addRow(
-					"All Types",
+					"ALL",
 					"Collapsed",
-					ITree.UPDATED_COLLAPSED_NODE_MARKER,
+					"\"" + ITree.UPDATED_COLLAPSED_NODE_MARKER + "\"",
 					"Latest action caused updates to descendant entities");
 			}
 		}
 
 		InstantiationTreesPanel() {
 
-			super("Instantiation Tree");
+			super("Instantiation Trees");
 
 			new TreeSemanticsPanel();
 			new ActionsPanel();
-			new LabelModifiersPanel();
+			new DynamicLabelModifiersPanel();
 		}
 	}
 

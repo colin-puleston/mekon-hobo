@@ -24,102 +24,78 @@
 
 package uk.ac.manchester.cs.mekon.gui.util;
 
+import java.awt.*;
 import java.util.*;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.table.*;
 
 /**
  * @author Colin Puleston
  */
-public class GTable extends JPanel {
+public class GTable extends JTable {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Color TITLE_COLOUR = Color.lightGray;
-	static private final Color CELL_COLOUR = Color.white;
+	static final int HDR_HEIGHT = 40;
+	static final Color HDR_BACKGROUND = Color.LIGHT_GRAY;
+	static final float HDR_FONT_SIZE = 16;
+	static final int HDR_FONT_STYLE = Font.BOLD;
 
-	static private final int CELL_MARGIN = 10;
+	static final int CELL_HEIGHT = 30;
+	static final Color CELL_BACKGROUND = Color.WHITE;
+	static final float CELL_FONT_SIZE = 14;
+	static final int CELL_FONT_STYLE = Font.PLAIN;
 
-	private List<Column> columns = new ArrayList<Column>();
+	private CustomTableModel model = new CustomTableModel();
 
-	private class Column extends JPanel {
+	private class CustomTableModel extends DefaultTableModel {
 
 		static private final long serialVersionUID = -1;
 
-		Column(String title) {
+		public boolean isCellEditable(int row, int column) {
 
-			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-			addLabelBox(createTitleLabel(title), TITLE_COLOUR);
-
-			GTable.this.add(this);
-			columns.add(this);
+			return false;
 		}
+	}
 
-		void addRowCell(Object cell) {
+	private class CellRenderer extends DefaultTableCellRenderer {
 
-			addLabelBox(createCellLabel(cell), CELL_COLOUR);
-		}
+		static private final long serialVersionUID = -1;
 
-		private void addLabelBox(JLabel label, Color colour) {
+		public Component getTableCellRendererComponent(
+								JTable table,
+								Object value,
+								boolean isSelected,
+								boolean hasFocus,
+								int row,
+								int column) {
 
-			JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JLabel label = (JLabel)super.getTableCellRendererComponent(
+									table, value, isSelected, hasFocus, row, column);
 
-			setLabelSize(label);
+			setCellAttributes(label);
 
-			panel.add(label);
-			panel.setBackground(colour);
+			if (value instanceof Icon) {
 
-			add(createLabelBox(panel));
-		}
+				label.setIcon((Icon)value);
+				label.setText("");
+			}
+			else {
 
-		private JLabel createTitleLabel(String title) {
-
-			JLabel label = new JLabel(title);
-
-			GFonts.setLarge(label);
+				label.setIcon(null);
+			}
 
 			return label;
-		}
-
-		private JLabel createCellLabel(Object cell) {
-
-			if (cell instanceof String) {
-
-				return new JLabel((String)cell);
-			}
-
-			if (cell instanceof Icon) {
-
-				return createLabelForIcon((Icon)cell);
-			}
-
-			throw new Error("Cannot create cell for type: " + cell.getClass());
-		}
-
-		private JComponent createLabelBox(JComponent comp) {
-
-			return new JScrollPane(
-						comp,
-						JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-						JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		}
-
-		private void setLabelSize(JLabel label) {
-
-			Dimension s = label.getPreferredSize();
-			int w = (int)s.getWidth() + CELL_MARGIN;
-			int h = (int)s.getHeight() + CELL_MARGIN;
-
-			label.setPreferredSize(new Dimension(w, h));
 		}
 	}
 
 	public GTable() {
 
-		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		setModel(model);
+
+		setHeaderAttributes();
+		setRowHeight(CELL_HEIGHT);
+		setDefaultRenderer(Object.class, new CellRenderer());
 	}
 
 	public void addColumns(String... titles) {
@@ -132,38 +108,47 @@ public class GTable extends JPanel {
 
 	public void addColumn(String title) {
 
-		new Column(title);
+		model.addColumn(title);
 	}
 
 	public void addRow(Object... cells) {
 
-		checkRowLength(cells.length);
-
-		Iterator<Column> i = columns.iterator();
-
-		for (Object cell : cells) {
-
-			i.next().addRowCell(cell);
-		}
+		model.addRow(cells);
 	}
 
-	private JLabel createLabelForIcon(Icon icon) {
+	private void setHeaderAttributes() {
 
-		JLabel label = new JLabel();
+		JTableHeader header = getTableHeader();
 
-		label.setIcon(icon);
-
-		return label;
+		setHeaderHeight(header);
+		setAttributes(header, HDR_BACKGROUND, HDR_FONT_SIZE, HDR_FONT_STYLE);
 	}
 
-	private void checkRowLength(int length) {
+	private void setCellAttributes(JLabel cellLabel) {
 
-		if (length != columns.size()) {
+		setAttributes(cellLabel, CELL_BACKGROUND, CELL_FONT_SIZE, CELL_FONT_STYLE);
+	}
 
-			throw new Error(
-						"Incorrect number of columns: "
-						+ "expected: " + columns.size()
-						+ "got: " + length);
-		}
+	private void setHeaderHeight(JTableHeader header) {
+
+		int width = (int)header.getPreferredSize().getWidth();
+
+		header.setPreferredSize(new Dimension(width, HDR_HEIGHT));
+	}
+
+	private void setAttributes(
+					JComponent component,
+					Color colour,
+					float fontSize,
+					int fontStyle) {
+
+		component.setBackground(colour);
+
+		Font font = component.getFont();
+
+		font = font.deriveFont(fontSize);
+		font = font.deriveFont(fontStyle);
+
+		component.setFont(font);
 	}
 }
