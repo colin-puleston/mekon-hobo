@@ -91,7 +91,7 @@ public class ISlot implements IEntity {
 	 */
 	public String toString() {
 
-		return FEntityDescriber.entityToString(this, type.getProperty());
+		return FEntityDescriber.entityToString(this, getProperty());
 	}
 
 	/**
@@ -169,7 +169,21 @@ public class ISlot implements IEntity {
 	 */
 	public boolean editable() {
 
-		return container.getCategory().query() || !dependent();
+		return querySlot() || !dependent();
+	}
+
+	/**
+	 * Specifies whether the slot can be given abstract values. This
+	 * will always be the case if the container-frame of the slot is
+	 * of category {@link IFrameCategory#QUERY}. Otherwise it will
+	 * only be the case when the associated property is {@link
+	 * CProperty#abstractAssertable}.
+	 *
+	 * @return True if abstract values allowed
+	 */
+	public boolean abstractValuesAllowed() {
+
+		return querySlot() || getProperty().abstractAssertable();
 	}
 
 	/**
@@ -229,6 +243,16 @@ public class ISlot implements IEntity {
 	private CModel getModel() {
 
 		return container.getType().getModel();
+	}
+
+	private boolean querySlot() {
+
+		return container.getCategory().query();
+	}
+
+	private CProperty getProperty() {
+
+		return type.getProperty();
 	}
 
 	private void checkExternalValuesEditorAccess(

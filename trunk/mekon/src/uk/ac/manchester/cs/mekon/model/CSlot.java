@@ -57,14 +57,14 @@ public class CSlot implements CSourced {
 			attributes.absorbValueType(CSlot.this, otherValueType);
 		}
 
-		public void absorbActive(boolean otherActive) {
+		public void absorbActive(boolean value) {
 
-			attributes.absorbActive(otherActive);
+			attributes.absorbActive(value);
 		}
 
-		public void absorbDependent(boolean otherDependent) {
+		public void absorbDependent(boolean value) {
 
-			attributes.absorbDependent(otherDependent);
+			attributes.absorbDependent(value);
 		}
 	}
 

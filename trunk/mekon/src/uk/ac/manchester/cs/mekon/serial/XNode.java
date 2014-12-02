@@ -41,12 +41,10 @@ public class XNode {
 	private List<XNode> children = new ArrayList<XNode>();
 
 	/**
-	 * Retrieves the child-node with the specified identifier.
+	 * Adds a child-node with the specified identifier.
 	 *
-	 * @param id Identifier for required child-node
-	 * @return Required child-node
-	 * @throws XDocumentException if child-node cannot be found,
-	 * or if multiple child-nodes with specified identifier
+	 * @param id Identifier for child-node to be added
+	 * @return Added child-node
 	 */
 	public XNode addChild(String id) {
 
@@ -58,11 +56,10 @@ public class XNode {
 	}
 
 	/**
-	 * Provides the value of the specified attribute.
+	 * Adds a value for the specified attribute.
 	 *
 	 * @param id Identifier of relevant attribute
-	 * @return Attribute value
-	 * @throws XDocumentException if no value for attribute
+	 * @param value Value to be added
 	 */
 	public void addValue(String id, Object value) {
 
@@ -167,7 +164,7 @@ public class XNode {
 	}
 
 	/**
-	 * Provides the value of the specified attribute.
+	 * Retrieves the value of the specified attribute.
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Attribute value
@@ -179,7 +176,7 @@ public class XNode {
 	}
 
 	/**
-	 * Provides the value of the specified attribute.
+	 * Retrieves the value of the specified attribute.
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @param defaultValue Value to return if no value for attribute

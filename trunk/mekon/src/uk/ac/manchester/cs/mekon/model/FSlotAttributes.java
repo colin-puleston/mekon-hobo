@@ -90,14 +90,14 @@ class FSlotAttributes {
 		valueType = mergedType;
 	}
 
-	void absorbActive(boolean otherActive) {
+	void absorbActive(boolean value) {
 
-		active &= otherActive;
+		active &= value;
 	}
 
-	void absorbDependent(boolean otherDependent) {
+	void absorbDependent(boolean value) {
 
-		dependent |= otherDependent;
+		dependent |= value;
 	}
 
 	private FSlotAttributes(

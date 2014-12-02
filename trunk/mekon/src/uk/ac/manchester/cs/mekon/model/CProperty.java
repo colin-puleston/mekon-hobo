@@ -35,6 +35,7 @@ public class CProperty implements CIdentified {
 
 	private CModel model;
 	private CIdentity identity;
+	private boolean abstractAssertable = false;
 
 	private CAnnotations annotations = new CAnnotations(this);
 
@@ -43,6 +44,11 @@ public class CProperty implements CIdentified {
 		public void resetLabel(String newLabel) {
 
 			identity = identity.deriveIdentity(newLabel);
+		}
+
+		public void setAbstractAssertable(boolean value) {
+
+			abstractAssertable = value;
 		}
 	}
 
@@ -81,6 +87,20 @@ public class CProperty implements CIdentified {
 	public CModel getModel() {
 
 		return model;
+	}
+
+	/**
+	 * Specifies whether instance-level slots associated with
+	 * this property that are on asserted instance-level frames
+	 * can be given abstract values (see {@link
+	 * IValue#abstractValue}).
+	 *
+	 * @return True if abstract values allowed for instance-level
+	 * slots on asserted frames
+	 */
+	public boolean abstractAssertable() {
+
+		return abstractAssertable;
 	}
 
 	/**
