@@ -27,42 +27,32 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Represents a set of OWL properties defined via a single
- * root-property. The set will include all descendant properties
- * of the root-property, and optionally the root-property itself.
+ * Represents a set of OWL classes to be included in the model.
  *
  * @author Colin Puleston
  */
-public class OBPropertyGroup extends OBEntityGroup {
+public class OBConceptInclusions extends OBEntityGroup {
 
-	private boolean mirrorAsFrames = true;
+	private OBConceptHiding hiding = new OBConceptHiding();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param rootPropertyIRI IRI of root-property
+	 * @param rootConceptIRI IRI of root-class
 	 */
-	public OBPropertyGroup(IRI rootPropertyIRI) {
+	public OBConceptInclusions(IRI rootConceptIRI) {
 
-		super(rootPropertyIRI);
+		super(rootConceptIRI);
 	}
 
 	/**
-	 * Sets the flag that specifies whether for every property
-	 * in this group there will be created, in addition to the
-	 * frames-model property, a corresponding frame with the same
-	 * IRI-derived identifier.
+	 * Provides the object that specifies for which concepts in the
+	 * group the generated frames will be "hidden" frames.
 	 *
-	 * @param mirrorAsFrames True if each created frames-model
-	 * property should be mirrored by a corresponding frame
+	 * @return Object specifying concept-hiding for group
 	 */
-	public void setMirrorAsFrames(boolean mirrorAsFrames) {
+	public OBConceptHiding getConceptHiding() {
 
-		this.mirrorAsFrames = mirrorAsFrames;
-	}
-
-	boolean mirrorAsFrames() {
-
-		return mirrorAsFrames;
+		return hiding;
 	}
 }

@@ -27,45 +27,60 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Represents a set of OWL entities defined via a single root-entity.
- * The set will include the root-entity and/or all descendant entities,
- * subject to setting of the "inclusion" option.
+ * Represents a set of OWL properties to be included in the model.
  *
  * @author Colin Puleston
  */
-public class OBEntityGroup {
+public class OBPropertyInclusions extends OBEntityGroup {
 
-	private IRI rootEntityIRI;
-	private OBEntitySelection inclusion = OBEntitySelection.ALL;
+	private boolean mirrorAsFrames = false;
+	private boolean abstractAssertables = false;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param rootEntityIRI IRI of root-entity
+	 * @param rootPropertyIRI IRI of root-property
 	 */
-	public OBEntityGroup(IRI rootEntityIRI) {
+	public OBPropertyInclusions(IRI rootPropertyIRI) {
 
-		this.rootEntityIRI = rootEntityIRI;
+		super(rootPropertyIRI);
 	}
 
 	/**
-	 * Sets the entity-inclusion option. If not set will default to
-	 * {@link OBEntitySelection#ALL}.
+	 * Sets the flag that specifies whether for every property
+	 * in this group there will be created, in addition to the
+	 * frames-model property, a corresponding frame with the same
+	 * IRI-derived identifier. By default will be set to false.
 	 *
-	 * @param inclusion Entity-inclusion option
+	 * @param mirrorAsFrames True if each created frames-model
+	 * property should be mirrored by a corresponding frame
 	 */
-	public void setInclusion(OBEntitySelection inclusion) {
+	public void setMirrorAsFrames(boolean mirrorAsFrames) {
 
-		this.inclusion = inclusion;
+		this.mirrorAsFrames = mirrorAsFrames;
 	}
 
-	IRI getRootEntityIRI() {
+	/**
+	 * Sets the flag that specifies whether the frames-model
+	 * property that will be created for each property in this
+	 * group will be {@link CProperty#abstractAssertable}. By
+	 * default will be set to false.
+	 *
+	 * @param abstractAssertables True if each created property
+	 * should be abstract-assertable
+	 */
+	public void setAbstractAssertables(boolean abstractAssertables) {
 
-		return rootEntityIRI;
+		this.abstractAssertables = abstractAssertables;
 	}
 
-	OBEntitySelection getInclusion() {
+	boolean mirrorAsFrames() {
 
-		return inclusion;
+		return mirrorAsFrames;
+	}
+
+	boolean abstractAssertables() {
+
+		return abstractAssertables;
 	}
 }

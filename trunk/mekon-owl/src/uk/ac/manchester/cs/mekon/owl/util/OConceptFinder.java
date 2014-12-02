@@ -48,7 +48,7 @@ public class OConceptFinder extends OEntityFinder<CFrame> {
 	 * to the closest ancestor frame for which a corresponding OWL
 	 * entity does exist.
 	 *
-	 * @param cEntity Frame for which IRI is required
+	 * @param cFrame Frame for which IRI is required
 	 * @return Relevant IRI, or null if no OWL concept corresponding
 	 * to specified frame or any of it's ancestors
 	 */

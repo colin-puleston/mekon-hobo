@@ -38,19 +38,27 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 class OBSlotProperty extends OIdentified {
 
 	private OWLProperty property;
-	private boolean mirrorAsFrame;
+	private boolean mirrorAsFrame = false;
+	private boolean abstractAssertable = false;
+
 	private SortedSet<OBSlotProperty> subProperties = new TreeSet<OBSlotProperty>();
 	private CFrame mirroredCFrame = null;
 
-	OBSlotProperty(
-		OWLProperty property,
-		String label,
-		boolean mirrorAsFrame) {
+	OBSlotProperty(OWLProperty property, String label) {
 
 		super(property, label);
 
 		this.property = property;
-		this.mirrorAsFrame = mirrorAsFrame;
+	}
+
+	void setMirrorAsFrame() {
+
+		mirrorAsFrame = true;
+	}
+
+	void setAbstractAssertable() {
+
+		abstractAssertable = true;
 	}
 
 	void addSubProperty(OBSlotProperty subProperty) {
@@ -66,6 +74,11 @@ class OBSlotProperty extends OIdentified {
 	void createCProperty(CBuilder builder, OBAnnotations annotations) {
 
 		CProperty cProperty = builder.resolveProperty(getIdentity());
+
+		if (abstractAssertable) {
+
+			builder.getPropertyEditor(cProperty).setAbstractAssertable(true);
+		}
 
 		annotations.checkAdd(builder, cProperty, property);
 	}

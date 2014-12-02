@@ -39,25 +39,35 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class OBProperties
 				extends
-					OBEntities<OWLObjectProperty, OBPropertyGroup> {
+					OBEntities<OWLObjectProperty, OBPropertyInclusions> {
 
 	private Set<OWLObjectProperty> mirrorAsFrames = new HashSet<OWLObjectProperty>();
+	private Set<OWLObjectProperty> abstractAssertables = new HashSet<OWLObjectProperty>();
 
 	/**
-	 * Adds a property to the set.
+	 * Registers a property as one for which the generated frames-model
+	 * property should be mirrored by a corresponding frame. If the
+	 * property is not also registered via the {@link OBEntities#add}
+	 * method then this method will have no effect.
 	 *
-	 * @param property Property to add
-	 * @param mirrorAsFrame True if created frames-model property
-	 * should be mirrored by a corresponding frame
+	 * @param property Relevant property
 	 */
-	public void add(OWLObjectProperty property, boolean mirrorAsFrame) {
+	public void setMirrorAsFrame(OWLObjectProperty property) {
 
-		super.add(property);
+		mirrorAsFrames.add(property);
+	}
 
-		if (mirrorAsFrame) {
+	/**
+	 * Registers a property as one that will be used to generate a
+	 * frames-model property that is {@link CProperty#abstractAssertable}.
+	 * If the property is not also registered via the {@link
+	 * OBEntities#add} method then this method will have no effect.
+	 *
+	 * @param property Relevant property
+	 */
+	public void setAbstractAssertable(OWLObjectProperty property) {
 
-			mirrorAsFrames.add(property);
-		}
+		abstractAssertables.add(property);
 	}
 
 	/**
@@ -76,16 +86,31 @@ public class OBProperties
 	}
 
 	void addGroupEntity(
-			OBPropertyGroup group,
+			OBPropertyInclusions group,
 			OWLObjectProperty property,
 			boolean isRoot) {
 
-		add(property, group.mirrorAsFrames());
+		add(property);
+
+		if (group.mirrorAsFrames()) {
+
+			setMirrorAsFrame(property);
+		}
+
+		if (group.abstractAssertables()) {
+
+			setAbstractAssertable(property);
+		}
 	}
 
 	boolean mirrorAsFrame(OWLObjectProperty property) {
 
 		return mirrorAsFrames.contains(property);
+	}
+
+	boolean abstractAssertable(OWLObjectProperty property) {
+
+		return abstractAssertables.contains(property);
 	}
 
 	String getTypeName() {

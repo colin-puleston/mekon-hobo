@@ -32,42 +32,38 @@ import org.semanticweb.owlapi.reasoner.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Represents the set of OWL classes that will be used in
- * generating frames in the Frames Model (FM).
+ * Represents the set of OWL classes that will be used in generating
+ * frames in the Frames Model (FM).
  *
  * @author Colin Puleston
  */
-public class OBConcepts extends OBEntities<OWLClass, OBConceptGroup> {
+public class OBConcepts extends OBEntities<OWLClass, OBConceptInclusions> {
 
 	private Set<OWLClass> hiddenConcepts = new HashSet<OWLClass>();
 
 	/**
-	 * Adds a concept to the set.
+	 * Registers a concept as one that will be used to generate a
+	 * "hidden" frame. If the concept is not also registered via
+	 * the {@link OBEntities#add} method then this method will have
+	 * no effect.
 	 *
-	 * @param concept Concept to add
-	 * @param hidden True if concept is to generate a "hidden" frame
+	 * @param concept Relevant concept
 	 */
-	public void add(OWLClass concept, boolean hidden) {
+	public void setHidden(OWLClass concept) {
 
-		super.add(concept);
-
-		if (hidden) {
-
-			hiddenConcepts.add(concept);
-		}
+		hiddenConcepts.add(concept);
 	}
 
 	/**
 	 * Adds a collection of concepts to the set.
 	 *
 	 * @param concepts Concepts to add
-	 * @param hidden True if concepts are to generate "hidden" frames
 	 */
-	public void addAll(Collection<OWLClass> concepts, boolean hidden) {
+	public void addAll(Collection<OWLClass> concepts) {
 
 		for (OWLClass concept : concepts) {
 
-			add(concept, hidden);
+			add(concept);
 		}
 	}
 
@@ -76,9 +72,17 @@ public class OBConcepts extends OBEntities<OWLClass, OBConceptGroup> {
 		super(model);
 	}
 
-	void addGroupEntity(OBConceptGroup group, OWLClass concept, boolean isRoot) {
+	void addGroupEntity(
+			OBConceptInclusions group,
+			OWLClass concept,
+			boolean isRoot) {
 
-		add(concept, isHidden(group, concept, isRoot));
+		add(concept);
+
+		if (isHidden(group, concept, isRoot)) {
+
+			setHidden(concept);
+		}
 	}
 
 	boolean isHidden(OWLClass concept) {
@@ -116,7 +120,10 @@ public class OBConcepts extends OBEntities<OWLClass, OBConceptGroup> {
 		return expression.getClassesInSignature();
 	}
 
-	private boolean isHidden(OBConceptGroup group, OWLClass concept, boolean isRoot) {
+	private boolean isHidden(
+						OBConceptInclusions group,
+						OWLClass concept,
+						boolean isRoot) {
 
 		return group.getConceptHiding().isHidden(getModel(), concept, isRoot);
 	}

@@ -43,6 +43,26 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
 	private Set<E> entities = new HashSet<E>();
 
 	/**
+	 * Adds an entity to the set.
+	 *
+	 * @param entity Entity to add
+	 */
+	public void add(E entity) {
+
+		entities.add(entity);
+	}
+
+	/**
+	 * Adds a collection of entities to the set.
+	 *
+	 * @param entities Entities to add
+	 */
+	public void addAll(Collection<E> entities) {
+
+		this.entities.addAll(entities);
+	}
+
+	/**
 	 * Adds a group of entities to the set.
 	 *
 	 * @param group Group of entities to add
@@ -81,16 +101,6 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
 	OBEntities(OModel model) {
 
 		this.model = model;
-	}
-
-	void add(E entity) {
-
-		entities.add(entity);
-	}
-
-	void addAll(Collection<E> entities) {
-
-		this.entities.addAll(entities);
 	}
 
 	void addGroupEntity(G group, E entity, boolean isRoot) {

@@ -107,7 +107,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_byGroupIncludingRoot() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS);
+		addConcepts(DOMAIN_CONCEPT_CLASS);
 
 		buildModel();
 
@@ -120,7 +120,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_byGroupExcludingRoot() {
 
-		addConceptGroupExcludeRoot(DOMAIN_CONCEPT_CLASS);
+		addConceptsExcludingRoot(DOMAIN_CONCEPT_CLASS);
 
 		buildModel();
 
@@ -133,7 +133,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingCandidates_ALL() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ALL);
+		addConcepts(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ALL);
 
 		buildModel();
 
@@ -145,7 +145,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingCandidates_ROOTS_ONLY() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ROOTS_ONLY);
+		addConcepts(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ROOTS_ONLY);
 
 		buildModel();
 
@@ -157,7 +157,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingCandidates_NON_ROOTS_ONLY() {
 
-		addConceptGroup(DOMAIN_CONCEPT_CLASS, OBEntitySelection.NON_ROOTS_ONLY);
+		addConcepts(DOMAIN_CONCEPT_CLASS, OBEntitySelection.NON_ROOTS_ONLY);
 
 		buildModel();
 
@@ -169,8 +169,8 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingFilter_ANY() {
 
-		addConceptGroup(JOB_CLASS, OBConceptHidingFilter.ANY);
-		addConceptGroup(JOB_TYPE_CLASS, OBConceptHidingFilter.ANY);
+		addConcepts(JOB_CLASS, OBConceptHidingFilter.ANY);
+		addConcepts(JOB_TYPE_CLASS, OBConceptHidingFilter.ANY);
 
 		buildModel();
 
@@ -185,8 +185,8 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingFilter_DEFINIED_CONCEPTS_ONLY() {
 
-		addConceptGroup(JOB_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
-		addConceptGroup(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
+		addConcepts(JOB_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
+		addConcepts(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
 
 		buildModel();
 
@@ -201,8 +201,8 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_frames_hidingFilter_DEFINIED_SUB_TREES_ONLY() {
 
-		addConceptGroup(JOB_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
-		addConceptGroup(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
+		addConcepts(JOB_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
+		addConcepts(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
 
 		buildModel();
 
@@ -230,7 +230,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_properties_ByGroupIncludingRoot() {
 
-		addPropertyGroup(PERSONAL_ASPECT_PROPERTY);
+		addProperties(PERSONAL_ASPECT_PROPERTY);
 
 		buildModel();
 
@@ -244,7 +244,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Test
 	public void test_properties_ByGroupExcludingRoot() {
 
-		addPropertyGroupExcludeRoot(PERSONAL_ASPECT_PROPERTY);
+		addPropertiesExcludingRoot(PERSONAL_ASPECT_PROPERTY);
 
 		buildModel();
 
@@ -342,80 +342,80 @@ public class OBSectionBuilderTest extends OTest {
 		buildModel(sectionBuilder);
 	}
 
-	private OBConceptGroup addConceptGroup(String rootName) {
+	private OBConceptInclusions addConcepts(String rootName) {
 
-		return addConceptGroup(createConceptGroup(rootName));
+		return addConcepts(createConceptInclusions(rootName));
 	}
 
-	private OBConceptGroup addConceptGroupExcludeRoot(String rootName) {
+	private OBConceptInclusions addConceptsExcludingRoot(String rootName) {
 
-		OBConceptGroup group = createConceptGroup(rootName);
+		OBConceptInclusions inclusions = createConceptInclusions(rootName);
 
-		group.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
+		inclusions.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
-		return addConceptGroup(group);
+		return addConcepts(inclusions);
 	}
 
-	private OBConceptGroup addConceptGroup(
-								String rootName,
-								OBEntitySelection hidingCandidates) {
+	private OBConceptInclusions addConcepts(
+									String rootName,
+									OBEntitySelection hidingCandidates) {
 
-		OBConceptGroup group = createConceptGroup(rootName);
+		OBConceptInclusions inclusions = createConceptInclusions(rootName);
 
-		group.getConceptHiding().setCandidates(hidingCandidates);
+		inclusions.getConceptHiding().setCandidates(hidingCandidates);
 
-		return addConceptGroup(group);
+		return addConcepts(inclusions);
 	}
 
-	private OBConceptGroup addConceptGroup(
-								String rootName,
-								OBConceptHidingFilter hidingFilter) {
+	private OBConceptInclusions addConcepts(
+									String rootName,
+									OBConceptHidingFilter hidingFilter) {
 
-		OBConceptGroup group = createConceptGroup(rootName);
-		OBConceptHiding hiding = group.getConceptHiding();
+		OBConceptInclusions inclusions = createConceptInclusions(rootName);
+		OBConceptHiding hiding = inclusions.getConceptHiding();
 
 		hiding.setCandidates(OBEntitySelection.ALL);
 		hiding.setFilter(hidingFilter);
 
-		return addConceptGroup(group);
+		return addConcepts(inclusions);
 	}
 
-	private OBConceptGroup createConceptGroup(String rootName) {
+	private OBConceptInclusions createConceptInclusions(String rootName) {
 
-		return new OBConceptGroup(nameToIRI(rootName));
+		return new OBConceptInclusions(nameToIRI(rootName));
 	}
 
-	private OBConceptGroup addConceptGroup(OBConceptGroup group) {
+	private OBConceptInclusions addConcepts(OBConceptInclusions inclusions) {
 
-		sectionBuilder.getConcepts().addGroup(group);
+		sectionBuilder.getConcepts().addGroup(inclusions);
 
-		return group;
+		return inclusions;
 	}
 
-	private OBPropertyGroup addPropertyGroup(String rootName) {
+	private OBPropertyInclusions addProperties(String rootName) {
 
-		return addPropertyGroup(createPropertyGroup(rootName));
+		return addProperties(createPropertyInclusions(rootName));
 	}
 
-	private OBPropertyGroup addPropertyGroupExcludeRoot(String rootName) {
+	private OBPropertyInclusions addPropertiesExcludingRoot(String rootName) {
 
-		OBPropertyGroup group = createPropertyGroup(rootName);
+		OBPropertyInclusions inclusions = createPropertyInclusions(rootName);
 
-		group.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
+		inclusions.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
-		return addPropertyGroup(group);
+		return addProperties(inclusions);
 	}
 
-	private OBPropertyGroup createPropertyGroup(String rootName) {
+	private OBPropertyInclusions createPropertyInclusions(String rootName) {
 
-		return new OBPropertyGroup(nameToIRI(rootName));
+		return new OBPropertyInclusions(nameToIRI(rootName));
 	}
 
-	private OBPropertyGroup addPropertyGroup(OBPropertyGroup group) {
+	private OBPropertyInclusions addProperties(OBPropertyInclusions inclusions) {
 
-		sectionBuilder.getProperties().addGroup(group);
+		sectionBuilder.getProperties().addGroup(inclusions);
 
-		return group;
+		return inclusions;
 	}
 
 	private void testFrame(String name, CFrameStatus expectedStatus) {
