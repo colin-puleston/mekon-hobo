@@ -49,6 +49,7 @@ public interface OBSectionBuilderConfigVocab {
 	static public final String CONCEPT_HIDING_CANDIDATES_ATTR = "conceptHidingCandidates";
 	static public final String CONCEPT_HIDING_FILTER_ATTR = "conceptHidingFilter";
 	static public final String MIRROR_PROPERTIES_AS_FRAMES_ATTR = "mirrorAsFrames";
+	static public final String ABSTRACT_ASSERTABLES_PROPERTIES_ATTR = "abstractAssertables";
 	static public final String ANNO_PROPERTY_URI_ATTR = "uri";
 	static public final String ANNO_ID_ATTR = "id";
 	static public final String ANNO_VALUE_SEPARATORS_ATTR = "valueSeparators";

@@ -31,45 +31,38 @@ import uk.ac.manchester.cs.mekon.config.*;
 /**
  * @author Colin Puleston
  */
-class ConceptGroupConfigReader
-			extends
-				EntityGroupConfigReader<OBConceptGroup, OBConcepts>
-				implements OBSectionBuilderConfigVocab {
 
-	ConceptGroupConfigReader(KConfigNode configNode) {
+class PropertyInclusionsConfigReader
+			extends EntityGroupConfigReader<OBPropertyInclusions, OBProperties>
+			implements OBSectionBuilderConfigVocab {
+
+	PropertyInclusionsConfigReader(KConfigNode configNode) {
 
 		super(configNode);
 	}
 
 	String getInclusionId() {
 
-		return CONCEPT_INCLUSION_ID;
+		return PROPERTY_INCLUSION_ID;
 	}
 
-	OBConceptGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
+	OBPropertyInclusions createGroup(KConfigNode groupNode, IRI rootIRI) {
 
-		OBConceptGroup group = new OBConceptGroup(rootIRI);
-		OBConceptHiding hiding = group.getConceptHiding();
+		OBPropertyInclusions group = new OBPropertyInclusions(rootIRI);
 
-		hiding.setCandidates(getHidingCandidates(groupNode));
-		hiding.setFilter(getHidingFilter(groupNode));
+		group.setMirrorAsFrames(getMirrorAsFrames(groupNode));
+		group.setAbstractAssertables(getAbstractAssertables(groupNode));
 
 		return group;
 	}
 
-	private OBEntitySelection getHidingCandidates(KConfigNode groupNode) {
+	private boolean getMirrorAsFrames(KConfigNode groupNode) {
 
-		return groupNode.getEnum(
-					CONCEPT_HIDING_CANDIDATES_ATTR,
-					OBEntitySelection.class,
-					OBEntitySelection.NONE);
+		return groupNode.getBoolean(MIRROR_PROPERTIES_AS_FRAMES_ATTR, false);
 	}
 
-	private OBConceptHidingFilter getHidingFilter(KConfigNode groupNode) {
+	private boolean getAbstractAssertables(KConfigNode groupNode) {
 
-		return groupNode.getEnum(
-					CONCEPT_HIDING_FILTER_ATTR,
-					OBConceptHidingFilter.class,
-					OBConceptHidingFilter.ANY);
+		return groupNode.getBoolean(ABSTRACT_ASSERTABLES_PROPERTIES_ATTR, false);
 	}
 }

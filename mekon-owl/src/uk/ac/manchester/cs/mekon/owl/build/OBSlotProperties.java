@@ -75,7 +75,17 @@ class OBSlotProperties {
 
 		String label = labels.getLabel(property);
 		boolean mirror = properties.mirrorAsFrame(property);
-		OBSlotProperty slotProperty = new OBSlotProperty(property, label, mirror);
+		OBSlotProperty slotProperty = new OBSlotProperty(property, label);
+
+		if (properties.mirrorAsFrame(property)) {
+
+			slotProperty.setMirrorAsFrame();
+		}
+
+		if (properties.abstractAssertable(property)) {
+
+			slotProperty.setAbstractAssertable();
+		}
 
 		slotProperties.put(property, slotProperty);
 	}

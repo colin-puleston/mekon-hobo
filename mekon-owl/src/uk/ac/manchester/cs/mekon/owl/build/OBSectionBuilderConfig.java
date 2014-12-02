@@ -54,14 +54,14 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 
 		OBConcepts concepts = builder.getConcepts();
 
-		new ConceptGroupConfigReader(configNode).createGroups(concepts);
+		new ConceptInclusionsConfigReader(configNode).createGroups(concepts);
 	}
 
 	private void addProperties(OBSectionBuilder builder) {
 
 		OBProperties properties = builder.getProperties();
 
-		new PropertyGroupConfigReader(configNode).createGroups(properties);
+		new PropertyInclusionsConfigReader(configNode).createGroups(properties);
 	}
 
 	private void addAnnotationInclusion(OBSectionBuilder builder) {

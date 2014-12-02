@@ -80,12 +80,25 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 
 		void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
 
-			addAxiom(
-				dataFactory
-					.getOWLObjectPropertyAssertionAxiom(
-						property,
-						individual,
-						toIndividualValue(expr)));
+			OWLIndividual indValue = toIndividualValue(expr);
+
+			if (indValue != null) {
+
+				addAxiom(
+					dataFactory
+						.getOWLObjectPropertyAssertionAxiom(
+							property,
+							individual,
+							indValue));
+			}
+			else {
+
+				addTypeAssignment(
+					dataFactory
+						.getOWLObjectSomeValuesFrom(
+							property,
+							expr));
+			}
 		}
 
 		void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
@@ -138,7 +151,7 @@ class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
 				return toIndividualValue((OWLDataHasValue)expr);
 			}
 
-			throw new Error("Unexpected expression-type: " + expr.getClass());
+			return null;
 		}
 
 		private OWLIndividual toIndividualValue(OWLObjectOneOf oneOf) {
