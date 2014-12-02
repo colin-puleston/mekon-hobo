@@ -218,10 +218,12 @@ public abstract class CFrame
 	 * Specifies whether the frame is instantiable. This will be the
 	 * case if and only if it is either:
 	 * <ul>
-	 *   <li>A {@link #modelFrame} that is not mapped to some
-	 *   non-instantiable entity in an extension of the Frames Model (FM)
+	 *   <li>A {@link CFrameCategory#modelFrame} that is not mapped to
+	 *	 some non-instantiable entity in an extension of the Frames Model
+	 *	 (FM)
 	 *   <li>An extension-frame or a disjunction-frame whose model-frame
 	 *   is instantiable (see {@link #getModelFrame})
+	 * </ul>
 	 *
 	 * @return True if frame is instantiable
 	 */

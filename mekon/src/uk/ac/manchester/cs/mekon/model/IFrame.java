@@ -38,8 +38,10 @@ import uk.ac.manchester.cs.mekon.util.*;
  * <ul>
  *   <li>Assertion-frames cannot be instantiations of
  *   disjunction-frames (see {@link CFrameCategory#disjunction})
- *   <li>Slots on assertion-frames cannot have abstract values (see
- *   {@link IValue#abstractValue})
+ *   <li>All slots on query-frames can be given abstract values (see
+ *   {@link IValue#abstractValue}), whereas only those slots on
+ *   assertion-frames whose associated properties are defined to be
+ *   {@link CProperty#abstractAssertable} can.
  *   <li>Dependent slots on query-frames (see {@link ISlot#dependent})
  *   are editable by the client (see {@link ISlot#editable}), which
  *   is not the case for dependent slots on assertion-frames

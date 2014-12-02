@@ -66,16 +66,16 @@ public interface CSlotEditor {
 	 * specified additional status (combined status will be true if
 	 * and only if both current status and specified status are true).
 	 *
-	 * @param otherActive Additional status to incorporate
+	 * @param value Additional status to incorporate
 	 */
-	public void absorbActive(boolean otherActive);
+	public void absorbActive(boolean value);
 
 	/**
 	 * Updates the "dependent" status of the slot to incorporate the
 	 * specified additional status (combined status will be true if
 	 * and only if both current status and specified status are true).
 	 *
-	 * @param otherDependent Additional status to incorporate
+	 * @param value Additional status to incorporate
 	 */
-	public void absorbDependent(boolean otherDependent);
+	public void absorbDependent(boolean value);
 }

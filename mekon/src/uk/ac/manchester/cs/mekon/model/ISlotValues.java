@@ -350,11 +350,12 @@ public abstract class ISlotValues extends KList<IValue> {
 				"expected value of type: " + getValueType());
 		}
 
-		if (assertionSlot() && value.abstractValue()) {
+		if (value.abstractValue() && !slot.abstractValuesAllowed()) {
 
 			throwInvalidValueException(
 				value,
-				"cannot set abstract slot-value for assertion-instance");
+				"cannot set abstract values for slots "
+				+ "of this type on assertion-instances");
 		}
 	}
 
@@ -392,19 +393,9 @@ public abstract class ISlotValues extends KList<IValue> {
 		return IValueSubsumptions.subsumption(testSubsumer, testSubsumed);
 	}
 
-	private boolean assertionSlot() {
-
-		return getContainer().getCategory().assertion();
-	}
-
 	private CModel getModel() {
 
-		return getContainer().getType().getModel();
-	}
-
-	private IFrame getContainer() {
-
-		return slot.getContainer();
+		return slot.getContainer().getType().getModel();
 	}
 
 	private CValue<?> getValueType() {

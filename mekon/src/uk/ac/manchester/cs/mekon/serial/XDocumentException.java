@@ -41,9 +41,9 @@ public class XDocumentException extends KRuntimeException {
 	 *
 	 * @param exception Wrapped exception
 	 */
-	public XDocumentException(Exception e) {
+	public XDocumentException(Exception exception) {
 
-		this(e.getMessage());
+		this(exception.getMessage());
 	}
 
 	/**
