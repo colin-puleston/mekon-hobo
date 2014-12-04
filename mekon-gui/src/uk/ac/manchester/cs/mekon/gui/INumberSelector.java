@@ -220,14 +220,14 @@ class INumberSelector extends GDialog {
 		}
 	}
 
-	INumberSelector(JComponent parent, CNumber type, boolean query) {
+	INumberSelector(JComponent parent, CNumber type, boolean rangeEnabled) {
 
 		super(parent, type.getDisplayLabel(), true);
 
 		this.type = type;
 
-		setPreferredSize(getPreferredSize(query));
-		display(getDisplay(query));
+		setPreferredSize(getPreferredSize(rangeEnabled));
+		display(getDisplay(rangeEnabled));
 	}
 
 	INumber getSelectionOrNull() {
@@ -235,14 +235,14 @@ class INumberSelector extends GDialog {
 		return selection;
 	}
 
-	private Dimension getPreferredSize(boolean query) {
+	private Dimension getPreferredSize(boolean rangeEnabled) {
 
-		return query ? RANGE_VALUE_WINDOW_SIZE : EXACT_VALUE_WINDOW_SIZE;
+		return rangeEnabled ? RANGE_VALUE_WINDOW_SIZE : EXACT_VALUE_WINDOW_SIZE;
 	}
 
-	private JComponent getDisplay(boolean query) {
+	private JComponent getDisplay(boolean rangeEnabled) {
 
-		return query ? new RangeDisplay() : new InputField();
+		return rangeEnabled ? new RangeDisplay() : new InputField();
 	}
 
 	private INumber parseValue(String value) {
