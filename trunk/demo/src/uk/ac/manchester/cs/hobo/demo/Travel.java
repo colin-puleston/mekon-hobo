@@ -35,31 +35,31 @@ import uk.ac.manchester.cs.hobo.modeller.*;
  */
 public class Travel extends DObjectShell implements CitizenAspect {
 
-	public final DCell<DConcept<TravelMode>> mode;
-	public final DCellViewer<TravelDetails> details;
+	public final DArray<DConcept<TravelMode>> modes;
+	public final DArrayViewer<TravelDetails> details;
 
 	private DEditor dEditor;
 
-	private class ModeListener implements KValuesListener<DConcept<TravelMode>> {
+	private class ModesListener implements KValuesListener<DConcept<TravelMode>> {
 
 		public void onAdded(DConcept<TravelMode> value) {
 
-			getDetails().set(instantiateDetails(value));
+			getDetailsField().add(instantiateDetails(value));
 		}
 
 		public void onRemoved(DConcept<TravelMode> value) {
 
-			getDetails().clear();
+			getDetailsField().remove(getDetailsValue(value));
 		}
 
 		public void onCleared(List<DConcept<TravelMode>> values) {
 
-			getDetails().clear();
+			getDetailsField().clear();
 		}
 
-		ModeListener() {
+		ModesListener() {
 
-			mode.addValuesListener(this);
+			modes.addValuesListener(this);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		public void initialise() {
 
-			new ModeListener();
+			new ModesListener();
 		}
 	}
 
@@ -75,26 +75,39 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		super(builder);
 
-		mode = builder.addConceptCell(TravelMode.class);
-		details = builder.getViewer(builder.addObjectCell(TravelDetails.class));
+		modes = builder.addConceptArray(TravelMode.class);
+		details = builder.getViewer(builder.addObjectArray(TravelDetails.class));
 
 		dEditor = builder.getEditor();
 
 		builder.addInitialiser(new Initialiser());
 	}
 
-	private DCell<TravelDetails> getDetails() {
-
-		return dEditor.getField(details);
-	}
-
 	private TravelDetails instantiateDetails(DConcept<TravelMode> modeValue) {
 
-		TravelDetails details = getModel().instantiate(TravelDetails.class);
+		TravelDetails detailsValue = getModel().instantiate(TravelDetails.class);
 
-		details.getFrame().alignCategory(getFrame());
-		details.initialise(modeValue);
+		detailsValue.getFrame().alignCategory(getFrame());
+		detailsValue.initialise(modeValue);
 
-		return details;
+		return detailsValue;
+	}
+
+	private TravelDetails getDetailsValue(DConcept<TravelMode> mode) {
+
+		for (TravelDetails value : getDetailsField().getAll()) {
+
+			if (value.mode.get().equals(mode)) {
+
+				return value;
+			}
+		}
+
+		throw new Error("Details is not a value");
+	}
+
+	private DArray<TravelDetails> getDetailsField() {
+
+		return dEditor.getField(details);
 	}
 }
