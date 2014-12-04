@@ -115,14 +115,34 @@ public class MekonTest extends FramesTestUtils {
 		}
 	}
 
+	public MekonTest() {
+
+		this(new CModel(), null);
+	}
+
 	public MekonTest(CModel model) {
 
 		this(model, null);
 	}
 
+	public MekonTest(IReasoner iReasoner) {
+
+		this(new CModel(), iReasoner);
+	}
+
 	public IFrame createComplexInstance() {
 
-		return createComplexInstance("", false);
+		return createComplexInstance(false);
+	}
+
+	public IFrame createComplexInstance(String typesPrefix) {
+
+		return createComplexInstance(typesPrefix, false);
+	}
+
+	public IFrame createComplexInstance(boolean dynamicSlotInsertion) {
+
+		return createComplexInstance("", dynamicSlotInsertion);
 	}
 
 	public IFrame createComplexInstance(
@@ -299,16 +319,6 @@ public class MekonTest extends FramesTestUtils {
 	public CModel getModel() {
 
 		return model;
-	}
-
-	MekonTest() {
-
-		this(new CModel(), null);
-	}
-
-	MekonTest(IReasoner iReasoner) {
-
-		this(new CModel(), iReasoner);
 	}
 
 	private MekonTest(CModel model, IReasoner iReasoner) {
