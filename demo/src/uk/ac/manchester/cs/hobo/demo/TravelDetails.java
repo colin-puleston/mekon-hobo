@@ -38,9 +38,11 @@ import uk.ac.manchester.cs.hobo.demo.summary.*;
  */
 public class TravelDetails extends DObjectShell implements TravelAspect {
 
+	public final DCellViewer<DConcept<TravelMode>> mode;
 	public final DArray<Trip> trips;
 	public final DArrayViewer<ValueSummary> summaries;
 
+	private DEditor dEditor;
 	private Summariser summariser;
 
 	private class TripInitialiser implements KValuesListener<Trip> {
@@ -89,24 +91,24 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 
 		super(builder);
 
+		mode = builder.getViewer(builder.addConceptCell(TravelMode.class));
 		trips = builder.addObjectArray(Trip.class);
 		summaries = builder.getViewer(builder.addObjectArray(ValueSummary.class));
 
-		summariser = createSummariser(builder);
+		dEditor = builder.getEditor();
+		summariser = createSummariser(builder.getEditor());
 	}
 
 	void initialise(DConcept<TravelMode> modeValue) {
 
+		dEditor.getField(mode).set(modeValue);
 		summariser.initialise(modeValue.getFrame());
 
 		new TripInitialiser(modeValue);
 	}
 
-	private Summariser createSummariser(DObjectBuilder builder) {
+	private Summariser createSummariser(DEditor dEditor) {
 
-		DEditor dEditor = builder.getEditor();
-		DArray<ValueSummary> summariesField = dEditor.getField(summaries);
-
-		return new Summariser(this, summariesField);
+		return new Summariser(this, dEditor.getField(summaries));
 	}
 }
