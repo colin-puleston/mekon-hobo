@@ -49,10 +49,12 @@ public class XNode {
 	public XNode addChild(String id) {
 
 		Element childEl = document.createElement(id);
+		XNode child = new XNode(document, childEl);
 
 		element.appendChild(childEl);
+		children.add(child);
 
-		return new XNode(document, childEl);
+		return child;
 	}
 
 	/**

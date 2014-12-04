@@ -47,8 +47,6 @@ public class IStoreTest extends MekonTest {
 	private IFrame first = null;
 	private IFrame second = null;
 
-	private boolean dynamicSlotInsertion = false;
-
 	private class TestMatcher implements IMatcher {
 
 		final IFrame instance;
@@ -148,26 +146,10 @@ public class IStoreTest extends MekonTest {
 	@Test
 	public void test_storeReloadAndRetrieve() {
 
-		testStoreReloadAndRetrieve();
-	}
-
-
-	@Test
-	public void test_storeReloadAndRetrieveWithNonDefaultRendering() {
-
-		IFrameRenderer.setRenderAsTreeDefault(true);
-		IFrameRenderer.setRenderSchemaDefault(true);
-		IFrameRenderer.setRenderNonEditableSlotsDefault(true);
-
-		testStoreReloadAndRetrieve();
-	}
-
-	@Test
-	public void test_storeReloadAndRetrieveWithDynamicSlotInsertion() {
-
-		dynamicSlotInsertion = true;
-
-		testStoreReloadAndRetrieve();
+		testStore();
+		createStore();
+		store.checkLoad();
+		testRetrieve();
 	}
 
 	@Test
@@ -191,14 +173,6 @@ public class IStoreTest extends MekonTest {
 	private void createStore() {
 
 		store = new IStore(getModel());
-	}
-
-	private void testStoreReloadAndRetrieve() {
-
-		testStore();
-		createStore();
-		store.checkLoad();
-		testRetrieve();
 	}
 
 	private void testStore() {
@@ -232,12 +206,16 @@ public class IStoreTest extends MekonTest {
 
 	private IFrame createAndStoreInstance(CIdentity id) {
 
-		String typePrefix = id.getIdentifier() + "Type";
-		IFrame instance = createComplexInstance(typePrefix, dynamicSlotInsertion);
+		IFrame instance = createInstance(id);
 
 		store.add(instance, id);
 
 		return instance;
+	}
+
+	private IFrame createInstance(CIdentity id) {
+
+		return createComplexInstance(id.getIdentifier() + "Type");
 	}
 
 	private void testStoredIds(CIdentity... expectedIds) {

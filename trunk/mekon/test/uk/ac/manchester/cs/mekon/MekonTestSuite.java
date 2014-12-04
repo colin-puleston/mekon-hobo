@@ -29,6 +29,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 
 /**
  * @author Colin Puleston
@@ -49,6 +50,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 	ISlotTest.class,
 	ISlotValuesTest.class,
 	ISlotSpecsTest.class,
-	IStoreTest.class})
+	IStoreTest.class,
+	IFrameSerialiseTest.class})
 public class MekonTestSuite {
 }

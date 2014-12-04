@@ -22,37 +22,61 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.serial;
+package uk.ac.manchester.cs.mekon.model.serial;
 
-import uk.ac.manchester.cs.mekon.*;
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Exception thrown when some problem with the XML file is
- * detected.
- *
  * @author Colin Puleston
  */
-public class XDocumentException extends KRuntimeException {
+public class IFrameSerialiseTest extends MekonTest {
 
-	static private final long serialVersionUID = -1;
+	private IFrameRenderer renderer = null;
+	private IFrameParser parser = null;;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param exception Wrapped exception
-	 */
-	public XDocumentException(Exception exception) {
+	@Before
+	public void setUp() {
 
-		this(exception.getMessage());
+		renderer = new IFrameRenderer();
+		parser = new IFrameParser(getModel());
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @param message Error message
-	 */
-	public XDocumentException(String message) {
+	@Test
+	public void test_renderAndParse() {
 
-		super("Error accessing XML document: " + message);
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderAndParseWithNonDefaultSettings() {
+
+		renderer.setRenderAsTree(true);
+		renderer.setRenderSchema(true);
+		renderer.setRenderNonEditableSlots(true);
+
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderAndParseWithDynamicSlotInsertion() {
+
+		testRenderAndParse(true);
+	}
+
+	private void testRenderAndParse(boolean dynamicSlotInsertion) {
+
+		IFrame original = createInstance(dynamicSlotInsertion);
+		IFrame reconstituted = parser.parse(renderer.render(original));
+
+		assertTrue(reconstituted.matches(original));
+	}
+
+	private IFrame createInstance(boolean dynamicSlotInsertion) {
+
+		return createComplexInstance(dynamicSlotInsertion);
 	}
 }

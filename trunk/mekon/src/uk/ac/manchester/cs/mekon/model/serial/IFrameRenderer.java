@@ -35,34 +35,9 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 public class IFrameRenderer extends ISerialiser {
 
-	static private boolean renderAsTreeDefault = false;
-	static private boolean renderSchemaDefault = false;
-	static private boolean renderNonEditableSlotsDefault = false;
-
-	/**
-	 */
- 	static public void setRenderAsTreeDefault(boolean value) {
-
-		renderAsTreeDefault = value;
-	}
-
-	/**
-	 */
- 	static public void setRenderSchemaDefault(boolean value) {
-
-		renderSchemaDefault = value;
-	}
-
-	/**
-	 */
- 	static public void setRenderNonEditableSlotsDefault(boolean value) {
-
-		renderNonEditableSlotsDefault = value;
-	}
-
-	private boolean renderAsTree = renderAsTreeDefault;
-	private boolean renderSchema = renderSchemaDefault;
-	private boolean renderNonEditableSlots = renderNonEditableSlotsDefault;
+	private boolean renderAsTree = false;
+	private boolean renderSchema = false;
+	private boolean renderNonEditableSlots = false;
 
 	private XNode containerNode = null;
 	private Map<IFrame, Integer> iFrameRefs = new HashMap<IFrame, Integer>();

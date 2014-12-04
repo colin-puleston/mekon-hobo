@@ -205,7 +205,9 @@ public class IFrameParser extends ISerialiser {
 	 */
  	public IFrame parse(XDocument document) {
 
-		return parse(document.getRootNode());
+		containerNode = document.getRootNode();
+
+		return parse();
 	}
 
 	/**
@@ -213,6 +215,11 @@ public class IFrameParser extends ISerialiser {
  	public IFrame parse(XNode parentNode) {
 
 		containerNode = getContainerNode(parentNode);
+
+		return parse();
+	}
+
+	private IFrame parse() {
 
 		IFrame frame = parseIFrame(getTopLevelFrameNode());
 
@@ -411,12 +418,7 @@ public class IFrameParser extends ISerialiser {
 			return node;
 		}
 
-		throw new XDocumentException(
-					"Cannot find either "
-					+ "\"" + IGRAPH_ID + "\""
-					+ " or "
-					+ "\"" + ITREE_ID + "\""
-					+ " node");
+		throw createContainerNodeException();
 	}
 
 	private XNode getTopLevelFrameNode() {
@@ -425,6 +427,16 @@ public class IFrameParser extends ISerialiser {
 
 			return containerNode.getChild(IFRAME_ID);
 		}
+
+		if (containerNode.getId().equals(IGRAPH_ID)) {
+
+			return getTopLevelGraphFrameNode();
+		}
+
+		throw createContainerNodeException();
+	}
+
+	private XNode getTopLevelGraphFrameNode() {
 
 		List<XNode> frameNodes = containerNode.getChildren(IFRAME_ID);
 
@@ -456,6 +468,16 @@ public class IFrameParser extends ISerialiser {
 					+ " node on "
 					+ "\"" + IGRAPH_ID + "\""
 					+ " node: " + refIndex);
+	}
+
+	private XDocumentException createContainerNodeException() {
+
+		throw new XDocumentException(
+					"Cannot find either "
+					+ "\"" + IGRAPH_ID + "\""
+					+ " or "
+					+ "\"" + ITREE_ID + "\""
+					+ " node at top-level");
 	}
 
 	private CFrame getCFrame(CIdentity id) {
