@@ -36,6 +36,8 @@ public class IFrameParser extends ISerialiser {
 
 	private CModel model;
 
+	private XNode containerNode = null;
+	private Map<Integer, IFrame> iFrameRefs = new HashMap<Integer, IFrame>();
 	private List<SlotValuesSpec> slotValuesSpecs = new ArrayList<SlotValuesSpec>();
 
 	private abstract class SlotValuesSpec<V> {
@@ -208,16 +210,30 @@ public class IFrameParser extends ISerialiser {
 
 	/**
 	 */
- 	public IFrame parse(XNode node) {
+ 	public IFrame parse(XNode parentNode) {
 
-		IFrame frame = parseIFrame(node);
+		containerNode = getContainerNode(parentNode);
+
+		IFrame frame = parseIFrame(getTopLevelFrameNode());
 
 		addAllSlotValues();
+
+		iFrameRefs.clear();
+		slotValuesSpecs.clear();
 
 		return frame;
 	}
 
 	private IFrame parseIFrame(XNode node) {
+
+		int refIndex = node.getInteger(IFRAME_REF_INDEX_ATTR, 0);
+
+		return refIndex == 0
+				? parseIFrameDirect(node)
+				: resolveIFrameIndirect(refIndex);
+	}
+
+	private IFrame parseIFrameDirect(XNode node) {
 
 		CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
 		IFrame frame = frameType.instantiate();
@@ -228,6 +244,25 @@ public class IFrameParser extends ISerialiser {
 		}
 
 		return frame;
+	}
+
+	private IFrame resolveIFrameIndirect(Integer refIndex) {
+
+		IFrame frame = iFrameRefs.get(refIndex);
+
+		if (frame == null) {
+
+			frame = parseIFrameIndirect(refIndex);
+
+			iFrameRefs.put(refIndex, frame);
+		}
+
+		return frame;
+	}
+
+	private IFrame parseIFrameIndirect(int refIndex) {
+
+		return parseIFrameDirect(getReferencedFrame(refIndex));
 	}
 
 	private CFrame parseCFrame(XNode node) {
@@ -358,6 +393,69 @@ public class IFrameParser extends ISerialiser {
 				break;
 			}
 		}
+	}
+
+	private XNode getContainerNode(XNode parentNode) {
+
+		XNode node = parentNode.getChildOrNull(IGRAPH_ID);
+
+		if (node != null) {
+
+			return node;
+		}
+
+		node = parentNode.getChildOrNull(ITREE_ID);
+
+		if (node != null) {
+
+			return node;
+		}
+
+		throw new XDocumentException(
+					"Cannot find either "
+					+ "\"" + IGRAPH_ID + "\""
+					+ " or "
+					+ "\"" + ITREE_ID + "\""
+					+ " node");
+	}
+
+	private XNode getTopLevelFrameNode() {
+
+		if (containerNode.getId().equals(ITREE_ID)) {
+
+			return containerNode.getChild(IFRAME_ID);
+		}
+
+		List<XNode> frameNodes = containerNode.getChildren(IFRAME_ID);
+
+		if (!frameNodes.isEmpty()) {
+
+			return frameNodes.get(0);
+		}
+
+		throw new XDocumentException(
+					"Cannot find any "
+					+ "\"" + IFRAME_ID + "\""
+					+ " nodes on "
+					+ "\"" + IGRAPH_ID + "\""
+					+ " node");
+	}
+
+	private XNode getReferencedFrame(int refIndex) {
+
+		List<XNode> frames = containerNode.getChildren(IFRAME_ID);
+
+		if (frames.size() >= refIndex) {
+
+			return frames.get(refIndex);
+		}
+
+		throw new XDocumentException(
+					"Invalid index for "
+					+ "\"" + IFRAME_ID + "\""
+					+ " node on "
+					+ "\"" + IGRAPH_ID + "\""
+					+ " node: " + refIndex);
 	}
 
 	private CFrame getCFrame(CIdentity id) {

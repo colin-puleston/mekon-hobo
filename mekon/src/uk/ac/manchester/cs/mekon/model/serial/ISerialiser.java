@@ -32,6 +32,9 @@ abstract class ISerialiser extends FSerialiser {
 	static final String STORE_ID = "Store";
 	static final String INSTANCE_ID = "Instance";
 
+	static final String ITREE_ID = "ITree";
+	static final String IGRAPH_ID = "IGraph";
+
 	static final String MFRAME_ID = "MFrame";
 	static final String CNUMBER_ID = "CNumber";
 	static final String CSLOT_ID = "CSlot";
@@ -40,6 +43,7 @@ abstract class ISerialiser extends FSerialiser {
 	static final String ISLOT_ID = "ISlot";
 	static final String IVALUES_ID = "IValues";
 
+	static final String IFRAME_REF_INDEX_ATTR = "refIndex";
 	static final String NUMBER_TYPE_ATTR = "numberType";
 	static final String NUMBER_MIN_ATTR = "min";
 	static final String NUMBER_MAX_ATTR = "max";

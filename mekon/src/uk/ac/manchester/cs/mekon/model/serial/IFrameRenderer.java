@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.model.serial;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
@@ -34,8 +35,37 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 public class IFrameRenderer extends ISerialiser {
 
-	private boolean renderSchema = false;
-	private boolean renderNonEditableSlots = false;
+	static private boolean renderAsTreeDefault = false;
+	static private boolean renderSchemaDefault = false;
+	static private boolean renderNonEditableSlotsDefault = false;
+
+	/**
+	 */
+ 	static public void setRenderAsTreeDefault(boolean value) {
+
+		renderAsTreeDefault = value;
+	}
+
+	/**
+	 */
+ 	static public void setRenderSchemaDefault(boolean value) {
+
+		renderSchemaDefault = value;
+	}
+
+	/**
+	 */
+ 	static public void setRenderNonEditableSlotsDefault(boolean value) {
+
+		renderNonEditableSlotsDefault = value;
+	}
+
+	private boolean renderAsTree = renderAsTreeDefault;
+	private boolean renderSchema = renderSchemaDefault;
+	private boolean renderNonEditableSlots = renderNonEditableSlotsDefault;
+
+	private XNode containerNode = null;
+	private Map<IFrame, Integer> iFrameRefs = new HashMap<IFrame, Integer>();
 
 	private class ISlotValueTypeRenderer extends CValueVisitor {
 
@@ -102,6 +132,13 @@ public class IFrameRenderer extends ISerialiser {
 
 	/**
 	 */
+ 	public void setRenderAsTree(boolean value) {
+
+		renderAsTree = value;
+	}
+
+	/**
+	 */
  	public void setRenderSchema(boolean value) {
 
 		renderSchema = value;
@@ -118,26 +155,45 @@ public class IFrameRenderer extends ISerialiser {
 	 */
  	public XDocument render(IFrame frame) {
 
-		XDocument document = new XDocument(IFRAME_ID);
+		XDocument document = new XDocument(getTopLevelId());
 
-		renderIFrameDetails(frame, document.getRootNode());
+		renderTopLevelIFrame(frame, document.getRootNode());
 
 		return document;
 	}
 
 	/**
 	 */
- 	public void render(IFrame frame, XNode parentNode) {
+	public void render(IFrame frame, XNode parentNode) {
 
-		renderIFrame(frame, parentNode);
+		renderTopLevelIFrame(frame, parentNode.addChild(getTopLevelId()));
+	}
+
+ 	private void renderTopLevelIFrame(IFrame frame, XNode containerNode) {
+
+		this.containerNode = containerNode;
+
+		checkRenderable(frame);
+		renderIFrameDirect(frame, containerNode);
+
+		iFrameRefs.clear();
 	}
 
  	private void renderIFrame(IFrame frame, XNode parentNode) {
 
-		renderIFrameDetails(frame, parentNode.addChild(IFRAME_ID));
+		if (renderAsTree) {
+
+			renderIFrameDirect(frame, parentNode);
+		}
+		else {
+
+			renderIFrameIndirect(frame, parentNode);
+		}
 	}
 
- 	private void renderIFrameDetails(IFrame frame, XNode node) {
+ 	private void renderIFrameDirect(IFrame frame, XNode parentNode) {
+
+		XNode node = parentNode.addChild(IFRAME_ID);
 
 		renderCFrame(frame.getType(), node);
 
@@ -148,6 +204,28 @@ public class IFrameRenderer extends ISerialiser {
 				renderISlot(slot, node);
 			}
 		}
+	}
+
+ 	private void renderIFrameIndirect(IFrame frame, XNode parentNode) {
+
+		XNode node = parentNode.addChild(IFRAME_ID);
+
+		node.addValue(IFRAME_REF_INDEX_ATTR, resolveIFrameRef(frame));
+	}
+
+ 	private int resolveIFrameRef(IFrame frame) {
+
+		Integer refIndex = iFrameRefs.get(frame);
+
+		if (refIndex == null) {
+
+			refIndex = iFrameRefs.size() + 1;
+
+			iFrameRefs.put(frame, refIndex);
+			renderIFrameDirect(frame, containerNode);
+		}
+
+		return refIndex;
 	}
 
 	private void renderCFrame(CFrame frame, XNode parentNode) {
@@ -251,5 +329,25 @@ public class IFrameRenderer extends ISerialiser {
 		}
 
 		return renderNonEditableSlots || slot.editable();
+	}
+
+	private void checkRenderable(IFrame frame) {
+
+		if (renderAsTree && frame.leadsToCycle()) {
+
+			throw new KAccessException(
+						"Cannot render cyclic instance as tree: "
+						+ "Top-level frame: " + frame);
+		}
+	}
+
+	private XNode getTopLevelGraphNode() {
+
+		return null;
+	}
+
+	private String getTopLevelId() {
+
+		return renderAsTree ? ITREE_ID : IGRAPH_ID;
 	}
 }
