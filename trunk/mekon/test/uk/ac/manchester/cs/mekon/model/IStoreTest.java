@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
@@ -146,6 +147,17 @@ public class IStoreTest extends MekonTest {
 
 	@Test
 	public void test_storeReloadAndRetrieve() {
+
+		testStoreReloadAndRetrieve();
+	}
+
+
+	@Test
+	public void test_storeReloadAndRetrieveWithNonDefaultRendering() {
+
+		IFrameRenderer.setRenderAsTreeDefault(true);
+		IFrameRenderer.setRenderSchemaDefault(true);
+		IFrameRenderer.setRenderNonEditableSlotsDefault(true);
 
 		testStoreReloadAndRetrieve();
 	}
