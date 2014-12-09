@@ -71,41 +71,52 @@ public class KLabel {
 	private String create(String name) {
 
 		String label = "";
-		Character lastChar = null;
 
 		for (int i = 0 ; i < name.length() ; i++) {
 
-			char c = name.charAt(i);
-
-			label += toLabelChars(c, lastChar);
-			lastChar = c;
+			label += toLabelChars(name, i);
 		}
 
 		return label;
 	}
 
-	private String toLabelChars(char nameChar, Character lastNameChar) {
+	private String toLabelChars(String name, int index) {
 
-		String prefix = "";
-		char labelChar = nameChar;
+		String insert = "";
+		char c = name.charAt(index);
 
-		if (lastNameChar == null) {
+		if (index == 0) {
 
 			if (conceptFormat) {
 
-				labelChar = Character.toUpperCase(nameChar);
+				c = Character.toUpperCase(c);
 			}
 		}
 		else {
 
-			if (Character.isUpperCase(nameChar)
-				&& Character.isLowerCase(lastNameChar)) {
+			if (Character.isUpperCase(c)) {
 
-				prefix = "-";
-				labelChar = Character.toLowerCase(nameChar);
+				insert = "-";
+
+				if (nonFirstCharUpperToLower(name, index)) {
+
+					c = Character.toLowerCase(c);
+				}
 			}
 		}
 
-		return prefix + labelChar;
+		return insert + c;
+	}
+
+	private boolean nonFirstCharUpperToLower(String name, int index) {
+
+		int nextIndex = index + 1;
+
+		if (nextIndex == name.length()) {
+
+			return true;
+		}
+
+		return Character.isLowerCase(name.charAt(nextIndex));
 	}
 }
