@@ -63,6 +63,18 @@ public class XDocument {
 	}
 
 	/**
+	 * Constructor.
+	 *
+	 * @param xmlDocument DOM representation of XML document
+	 */
+	public XDocument(Document xmlDocument) {
+
+		this.xmlDocument = xmlDocument;
+
+		rootNode = new XNode(this, getRootElement());
+	}
+
+	/**
 	 * Writes the current document to file.
 	 *
 	 * @param file Path of relevant file
@@ -110,13 +122,6 @@ public class XDocument {
 	Element createElement(String id) {
 
 		return xmlDocument.createElement(id);
-	}
-
-	private XDocument(Document xmlDocument) {
-
-		this.xmlDocument = xmlDocument;
-
-		rootNode = new XNode(this, getRootElement());
 	}
 
 	private Element getRootElement() {
