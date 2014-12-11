@@ -48,6 +48,7 @@ class OBSlots {
 
 		private OWLObjectProperty property;
 		private OWLClassExpression filler;
+		private boolean singleValued;
 
 		SlotSpec(
 			OWLQuantifiedRestriction
@@ -57,6 +58,7 @@ class OBSlots {
 
 			property = toPropertyOrNull(restriction.getProperty());
 			filler = restriction.getFiller();
+			singleValued = functional() || cardinalityNoMoreThanOne(restriction);
 		}
 
 		boolean initialised() {
@@ -71,7 +73,7 @@ class OBSlots {
 
 		boolean singleValued() {
 
-			return property.isFunctional(model.getAllOntologies());
+			return singleValued;
 		}
 
 		String getLabel() {
@@ -141,6 +143,28 @@ class OBSlots {
 			}
 
 			return null;
+		}
+
+		private boolean functional() {
+
+			return property.isFunctional(model.getAllOntologies());
+		}
+
+		private boolean cardinalityNoMoreThanOne(
+							OWLQuantifiedRestriction
+								<?,
+								OWLObjectPropertyExpression,
+								OWLClassExpression> restriction) {
+
+			if (restriction instanceof OWLCardinalityRestriction) {
+
+				OWLCardinalityRestriction<?, ?, ?> cardinality
+					= (OWLCardinalityRestriction<?, ?, ?>)restriction;
+
+				return cardinality.getCardinality() == 1;
+			}
+
+			return false;
 		}
 	}
 
