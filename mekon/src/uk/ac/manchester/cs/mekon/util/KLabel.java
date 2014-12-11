@@ -94,11 +94,11 @@ public class KLabel {
 		}
 		else {
 
-			if (Character.isUpperCase(c)) {
+			if (nextWordStartChar(c, name.charAt(index - 1))) {
 
 				insert = "-";
 
-				if (nonFirstCharUpperToLower(name, index)) {
+				if (nextWordStartCharToLower(name, index)) {
 
 					c = Character.toLowerCase(c);
 				}
@@ -108,15 +108,15 @@ public class KLabel {
 		return insert + c;
 	}
 
-	private boolean nonFirstCharUpperToLower(String name, int index) {
+	private boolean nextWordStartChar(char current, int last) {
 
-		int nextIndex = index + 1;
+		return Character.isUpperCase(current) && Character.isLowerCase(last);
+	}
 
-		if (nextIndex == name.length()) {
+	private boolean nextWordStartCharToLower(String name, int index) {
 
-			return true;
-		}
+		int ni = index + 1;
 
-		return Character.isLowerCase(name.charAt(nextIndex));
+		return ni < name.length() && Character.isLowerCase(name.charAt(ni));
 	}
 }
