@@ -106,7 +106,11 @@ class FieldSlotInitialiser {
 			getPropertyEditor(property).resetLabel(slotLabel);
 		}
 
-		slotTypeEd.setSource(CSource.DUAL);
+		if (boundField) {
+
+			slotTypeEd.setSource(CSource.DUAL);
+		}
+
 		slotTypeEd.absorbCardinality(cardinality);
 		slotTypeEd.absorbValueType(valueType);
 		slotTypeEd.absorbDependent(dependent);
