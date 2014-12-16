@@ -59,7 +59,7 @@ public class OBProperties
 
 	/**
 	 * Registers a property as one that will be used to generate a
-	 * frames-model property that is {@link CProperty#abstractAssertable}.
+	 * frames-model property that is {@link CSlot#abstractAssertable}.
 	 * If the property is not also registered via the {@link
 	 * OBEntities#add} method then this method will have no effect.
 	 *

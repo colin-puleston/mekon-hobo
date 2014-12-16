@@ -34,12 +34,65 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 abstract class OBSlot extends OIdentified {
 
 	private boolean singleValued;
+	private boolean abstractAssertable;
+
+	private class CAdder {
+
+		private CBuilder builder;
+		private CProperty property;
+		private CValue<?> value;
+		private CFrameEditor containerEd;
+
+		CAdder(
+			CBuilder builder,
+			CFrame container,
+			OBSlot topLevelSlot,
+			OBAnnotations annotations) {
+
+			this.builder = builder;
+
+			property = builder.getProperties().get(getIdentity());
+			value = ensureCValue(builder, topLevelSlot, annotations);
+			containerEd = builder.getFrameEditor(container);
+
+			if (OBSlot.this == topLevelSlot) {
+
+				addSlot(getTopLevelCardinality());
+			}
+			else {
+
+				if (topLevelSlot.singleValued) {
+
+					addSlot(CCardinality.SINGLETON);
+				}
+
+				if (canBeFixedValue(value)) {
+
+					addSlotValue();
+				}
+			}
+		}
+
+		private void addSlot(CCardinality cardinality) {
+
+			CSlot slot = containerEd.addSlot(property, cardinality, value);
+			CSlotEditor slotEd = builder.getSlotEditor(slot);
+
+			slotEd.absorbAbstractAssertable(abstractAssertable);
+		}
+
+		private void addSlotValue() {
+
+			containerEd.addSlotValue(property, value);
+		}
+	}
 
 	OBSlot(OBSlotSpec spec) {
 
 		super(spec.getProperty(), spec.getLabel());
 
 		singleValued = spec.singleValued();
+		abstractAssertable = spec.abstractAssertable();
 	}
 
 	void checkAddCSlotAndValues(
@@ -48,30 +101,9 @@ abstract class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		if (!validSlotValueType()) {
+		if (validSlotValueType()) {
 
-			return;
-		}
-
-		CProperty cProperty = builder.getProperties().get(getIdentity());
-		CValue<?> cValue = ensureCValue(builder, topLevelSlot, annotations);
-		CFrameEditor containerEd = builder.getFrameEditor(container);
-
-		if (this == topLevelSlot) {
-
-			containerEd.addSlot(cProperty, getCardinality(), cValue);
-		}
-		else {
-
-			if (topLevelSlot.singleValued) {
-
-				containerEd.addSlot(cProperty, CCardinality.SINGLETON, cValue);
-			}
-
-			if (canBeFixedValue(cValue)) {
-
-				containerEd.addSlotValue(cProperty, cValue);
-			}
+			new CAdder(builder, container, topLevelSlot, annotations);
 		}
 	}
 
@@ -87,7 +119,7 @@ abstract class OBSlot extends OIdentified {
 		return false;
 	}
 
-	private CCardinality getCardinality() {
+	private CCardinality getTopLevelCardinality() {
 
 		return singleValued ? CCardinality.SINGLETON : CCardinality.FREE;
 	}

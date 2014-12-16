@@ -66,6 +66,11 @@ class OBSlotProperties {
 		}
 	}
 
+	OBSlotProperty get(OWLObjectProperty property) {
+
+		return slotProperties.get(property);
+	}
+
 	Collection<OBSlotProperty> getAll() {
 
 		return slotProperties.values();

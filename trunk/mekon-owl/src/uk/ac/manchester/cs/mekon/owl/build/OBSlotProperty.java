@@ -71,14 +71,14 @@ class OBSlotProperty extends OIdentified {
 		return mirrorAsFrame;
 	}
 
+	boolean abstractAssertable() {
+
+		return abstractAssertable;
+	}
+
 	void createCProperty(CBuilder builder, OBAnnotations annotations) {
 
 		CProperty cProperty = builder.resolveProperty(getIdentity());
-
-		if (abstractAssertable) {
-
-			builder.getPropertyEditor(cProperty).setAbstractAssertable(true);
-		}
 
 		annotations.checkAdd(builder, cProperty, property);
 	}

@@ -456,9 +456,7 @@ public class OBSectionBuilderTest extends OTest {
 		assertTrue(
 			"Unexpected CSlot cardinality: " + cardinality,
 			cardinality == expectedCardinality);
-		assertTrue(
-			"Unexpected CSlot value-type: " + valueType,
-			valueType.equals(expectedValueType));
+		assertEquals(expectedValueType, valueType);
 	}
 
 	private void testSlotValues(

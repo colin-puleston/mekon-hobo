@@ -63,8 +63,8 @@ public class OBPropertyInclusions extends OBEntityGroup {
 	/**
 	 * Sets the flag that specifies whether the frames-model
 	 * property that will be created for each property in this
-	 * group will be {@link CProperty#abstractAssertable}. By
-	 * default will be set to false.
+	 * group will be {@link CSlot#abstractAssertable}. By default
+	 * will be set to false.
 	 *
 	 * @param abstractAssertables True if each created property
 	 * should be abstract-assertable
