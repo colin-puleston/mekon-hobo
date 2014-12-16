@@ -274,6 +274,7 @@ public class IFrameRenderer extends ISerialiser {
 		if (renderSchema) {
 
 			node.addValue(EDITABLE_ATTR, slot.editable());
+			node.addValue(ABSTRACT_VALUES_ATTR, slot.abstractValuesAllowed());
 
 			new ISlotValueTypeRenderer(slot, node);
 		}
