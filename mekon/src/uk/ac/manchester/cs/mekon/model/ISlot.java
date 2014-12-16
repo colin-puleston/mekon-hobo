@@ -39,6 +39,7 @@ public class ISlot implements IEntity {
 	private CSlot type;
 	private IFrame container;
 	private FSlotAttributes attributes;
+	private boolean abstractValuesAllowed;
 	private ISlotValues values;
 	private ISlotValuesEditor valuesEditor;
 	private List<ISlotListener> listeners = new ArrayList<ISlotListener>();
@@ -173,17 +174,17 @@ public class ISlot implements IEntity {
 	}
 
 	/**
-	 * Specifies whether the slot can be given abstract values. This
-	 * will always be the case if the container-frame of the slot is
-	 * of category {@link IFrameCategory#QUERY}. Otherwise it will
-	 * only be the case when the associated property is {@link
-	 * CProperty#abstractAssertable}.
+	 * Specifies whether the slot can be given abstract values. By
+	 * default this will be the case if and only if the container-frame
+	 * of the slot is of category {@link IFrameCategory#QUERY}, or
+	 * the associated concept-level slot of which this slot is an
+	 * instance is {@link CSlot#abstractAssertable}.
 	 *
 	 * @return True if abstract values allowed
 	 */
 	public boolean abstractValuesAllowed() {
 
-		return querySlot() || getProperty().abstractAssertable();
+		return abstractValuesAllowed;
 	}
 
 	/**
@@ -236,6 +237,8 @@ public class ISlot implements IEntity {
 		this.container = container;
 		this.attributes = attributes.copy();
 
+		abstractValuesAllowed = abstractValuesAllowedDefault();
+
 		values = type.getCardinality().createSlotValues(this);
 		valuesEditor = new ISlotValuesEditor(values);
 	}
@@ -253,6 +256,11 @@ public class ISlot implements IEntity {
 	private CProperty getProperty() {
 
 		return type.getProperty();
+	}
+
+	private boolean abstractValuesAllowedDefault() {
+
+		return querySlot() || type.abstractAssertable();
 	}
 
 	private void checkExternalValuesEditorAccess(

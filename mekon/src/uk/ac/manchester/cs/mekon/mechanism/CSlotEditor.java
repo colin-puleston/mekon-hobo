@@ -62,20 +62,32 @@ public interface CSlotEditor {
 	public void absorbValueType(CValue<?> otherValueType);
 
 	/**
-	 * Updates the "active" status of the slot to incorporate the
-	 * specified additional status (combined status will be true if
-	 * and only if both current status and specified status are true).
+	 * Updates the {@link CSlot#active} status of the slot to
+	 * incorporate the specified additional status. Combined status
+	 * will be true if and only if both current status and specified
+	 * status are true.
 	 *
 	 * @param value Additional status to incorporate
 	 */
 	public void absorbActive(boolean value);
 
 	/**
-	 * Updates the "dependent" status of the slot to incorporate the
-	 * specified additional status (combined status will be true if
-	 * and only if both current status and specified status are true).
+	 * Updates the {@link CSlot#dependent} status of the slot to
+	 * incorporate the specified additional status. Combined status
+	 * will be true if either current status or specified status is
+	 * true.
 	 *
 	 * @param value Additional status to incorporate
 	 */
 	public void absorbDependent(boolean value);
+
+	/**
+	 * Updates the {@link CSlot#abstractAssertable} status of the
+	 * slot to incorporate the specified additional status. Combined
+	 * status will be true if either current status or specified status
+	 * is true.
+	 *
+	 * @param value Additional status to incorporate
+	 */
+	public void absorbAbstractAssertable(boolean value);
 }

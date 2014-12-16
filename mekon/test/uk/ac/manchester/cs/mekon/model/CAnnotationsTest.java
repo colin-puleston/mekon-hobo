@@ -136,6 +136,6 @@ public class CAnnotationsTest implements CAnnotatable {
 		expected.add("B1");
 		expected.add("B2");
 
-		assertTrue("Unexpected value-set: " + got, got.equals(expected));
+		assertEquals(expected, got);
 	}
 }

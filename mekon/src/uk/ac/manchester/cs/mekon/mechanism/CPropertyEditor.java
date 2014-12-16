@@ -41,12 +41,4 @@ public interface CPropertyEditor {
 	 * @param newLabel New-label for property
 	 */
 	public void resetLabel(String newLabel);
-
-	/**
-	 * Sets the value of the {@link CProperty#abstractAssertable}
-	 * attribute for this property.
-	 *
-	 * @param value Value to set for attribute
-	 */
-	public void setAbstractAssertable(boolean value);
 }

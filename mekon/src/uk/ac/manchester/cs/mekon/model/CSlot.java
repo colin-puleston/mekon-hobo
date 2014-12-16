@@ -37,8 +37,9 @@ public class CSlot implements CSourced {
 	private CProperty property;
 	private CSource source = CSource.INDIRECT;
 	private CCardinality cardinality;
-	private CAnnotations annotations = new CAnnotations(this);
+	private boolean abstractAssertable = false;
 	private FSlotAttributes attributes;
+	private CAnnotations annotations = new CAnnotations(this);
 
 	private class Editor implements CSlotEditor {
 
@@ -65,6 +66,11 @@ public class CSlot implements CSourced {
 		public void absorbDependent(boolean value) {
 
 			attributes.absorbDependent(value);
+		}
+
+		public void absorbAbstractAssertable(boolean value) {
+
+			abstractAssertable |= value;
 		}
 	}
 
@@ -153,11 +159,25 @@ public class CSlot implements CSourced {
 	 * Specifies the default "dependent" status for any instantiations
 	 * of this slot (see {@link ISlot#active}).
 	 *
-	 * @return True if instantiations of slot will by default be dependent
+	 * @return True if instantiations of slot will by default be
+	 * dependent
 	 */
 	public boolean dependent() {
 
 		return attributes.dependent();
+	}
+
+	/**
+	 * Specifies whether instantiations of this slot on asserted
+	 * instance-level frames can, by default, be given abstract values
+	 * (see {@link IValue#abstractValue}).
+	 *
+	 * @return True if instantiations of slot will by default be
+	 * allowed to have abstract values
+	 */
+	public boolean abstractAssertable() {
+
+		return abstractAssertable;
 	}
 
 	CSlot(
