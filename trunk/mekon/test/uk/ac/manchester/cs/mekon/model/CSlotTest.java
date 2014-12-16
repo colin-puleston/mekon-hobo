@@ -144,8 +144,6 @@ public class CSlotTest extends MekonTest {
 
 		slot.createEditor().absorbValueType(absorb);
 
-		CValue<?> result = slot.getValueType();
-
-		assertTrue("Unexpected value-type: " + result, result.equals(expect));
+		assertEquals(expect, slot.getValueType());
 	}
 }
