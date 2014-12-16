@@ -130,7 +130,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 		frames = new OBFrames(concepts, labels);
 		slotProperties = new OBSlotProperties(model, properties, labels);
-		slots = new OBSlots(model, frames, labels);
+		slots = new OBSlots(model, frames, slotProperties, labels);
 	}
 
 	/**

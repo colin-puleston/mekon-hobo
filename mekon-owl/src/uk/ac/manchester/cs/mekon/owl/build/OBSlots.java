@@ -39,6 +39,7 @@ class OBSlots {
 	private OModel model;
 	private OBFrames frames;
 	private OBNumbers numbers;
+	private OBSlotProperties properties;
 	private OBEntityLabels labels;
 	private boolean metaFrameSlotsEnabled = false;
 
@@ -72,6 +73,11 @@ class OBSlots {
 		boolean singleValued() {
 
 			return property.isFunctional(model.getAllOntologies());
+		}
+
+		boolean abstractAssertable() {
+
+			return properties.get(property).abstractAssertable();
 		}
 
 		String getLabel() {
@@ -283,10 +289,15 @@ class OBSlots {
 		}
 	}
 
-	OBSlots(OModel model, OBFrames frames, OBEntityLabels labels) {
+	OBSlots(
+		OModel model,
+		OBFrames frames,
+		OBSlotProperties properties,
+		OBEntityLabels labels) {
 
 		this.model = model;
 		this.frames = frames;
+		this.properties = properties;
 		this.labels = labels;
 
 		numbers = new OBNumbers(model);

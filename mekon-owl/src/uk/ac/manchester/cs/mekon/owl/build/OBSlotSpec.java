@@ -39,5 +39,7 @@ abstract class OBSlotSpec {
 
 	abstract boolean valuedRequired();
 
+	abstract boolean abstractAssertable();
+
 	abstract boolean metaFrameSlotsEnabled();
 }
