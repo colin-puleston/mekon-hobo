@@ -137,7 +137,7 @@
 				<Group
 					rootURI="http://mekon/demo.owl#referencableObjectProperty"
 					inclusion="ALL"
-					mirrorAsFrames="TRUE"/>
+					frameSources="TRUE"/>
 			</PropertyInclusion>
 		</OWLSanctionedModel>
 

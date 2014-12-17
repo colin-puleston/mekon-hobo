@@ -69,9 +69,9 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		dEditor = builder.getEditor();
 	}
 
-	void initialise(CProperty propertyValue) {
+	void initialise(CSlot slotTypeValue) {
 
-		dEditor.getField(property).set(getPropertyRef(propertyValue));
+		dEditor.getField(property).set(getPropertyRef(slotTypeValue));
 	}
 
 	void addSlot(ISlot slot) {
@@ -130,9 +130,9 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		}
 	}
 
-	private DConcept<PropertyRef> getPropertyRef(CProperty propertyValue) {
+	private DConcept<PropertyRef> getPropertyRef(CSlot slotTypeValue) {
 
-		CIdentity id = propertyValue.getIdentity();
+		CIdentity id = slotTypeValue.getIdentity();
 
 		return getModel().getConcept(PropertyRef.class, id);
 	}

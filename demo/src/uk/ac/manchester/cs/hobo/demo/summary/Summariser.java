@@ -39,7 +39,7 @@ public class Summariser {
 
 	private class SummaryAdder extends CValueVisitor {
 
-		private CProperty property;
+		private CSlot slotType;
 
 		protected void visit(CFrame value) {
 		}
@@ -61,9 +61,9 @@ public class Summariser {
 			addSummary(ConceptSummary.class);
 		}
 
-		SummaryAdder(CProperty property) {
+		SummaryAdder(CSlot slotType) {
 
-			this.property = property;
+			this.slotType = slotType;
 		}
 
 		private void addSummary(Class<? extends ValueSummary<?>> type) {
@@ -73,7 +73,7 @@ public class Summariser {
 			summary.getFrame().alignCategory(summariesContainer.getFrame());
 
 			summaries.add(summary);
-			summary.initialise(property);
+			summary.initialise(slotType);
 		}
 	}
 
@@ -91,10 +91,10 @@ public class Summariser {
 
 		for (ISlot templateISlot : templateIFrame.getSlots().asList()) {
 
-			CProperty property = templateISlot.getType().getProperty();
+			CSlot slotType = templateISlot.getType();
 			CValue<?> valueType = templateISlot.getValueType();
 
-			new SummaryAdder(property).visit(valueType);
+			new SummaryAdder(slotType).visit(valueType);
 		}
 	}
 
