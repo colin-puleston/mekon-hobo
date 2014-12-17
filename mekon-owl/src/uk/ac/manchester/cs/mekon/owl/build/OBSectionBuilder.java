@@ -63,7 +63,6 @@ public class OBSectionBuilder implements CSectionBuilder {
 	private OBProperties properties;
 
 	private OBFrames frames;
-	private OBSlotProperties slotProperties;
 	private OBSlots slots;
 
 	private boolean retainOnlyDeclarationAxioms = false;
@@ -128,9 +127,8 @@ public class OBSectionBuilder implements CSectionBuilder {
 		concepts = new OBConcepts(model);
 		properties = new OBProperties(model);
 
-		frames = new OBFrames(concepts, labels);
-		slotProperties = new OBSlotProperties(model, properties, labels);
-		slots = new OBSlots(model, frames, slotProperties, labels);
+		frames = new OBFrames(concepts, properties, labels);
+		slots = new OBSlots(model, frames, properties, labels);
 	}
 
 	/**
@@ -275,7 +273,6 @@ public class OBSectionBuilder implements CSectionBuilder {
 	private void buildIntermediate() {
 
 		frames.createAll();
-		slotProperties.createAll();
 		slots.createAll(getSubConceptAxioms());
 
 		new OBFrameHierarchy(model, frames).createLinks();
@@ -283,28 +280,9 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 	private void buildFinal(CBuilder builder) {
 
-		buildFinalPropertyStructure(builder);
-		buildFinalFrameStructure(builder);
-	}
-
-	private void buildFinalPropertyStructure(CBuilder builder) {
-
-		for (OBSlotProperty property : slotProperties.getAll()) {
-
-			property.createCProperty(builder, annotations);
-		}
-
-		for (OBSlotProperty property : slotProperties.getAll()) {
-
-			property.ensureMirrorCFrameStructure(builder);
-		}
-	}
-
-	private void buildFinalFrameStructure(CBuilder builder) {
-
 		for (OBFrame frame : frames.getAll()) {
 
-			frame.ensureCFrame(builder, annotations);
+			frame.ensureCStructure(builder, annotations);
 		}
 	}
 

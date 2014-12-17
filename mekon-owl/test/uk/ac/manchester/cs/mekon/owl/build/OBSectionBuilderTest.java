@@ -60,25 +60,24 @@ public class OBSectionBuilderTest extends OTest {
 	static private final String SPECIALIST_CLASS = "Specialist";
 	static private final String TEACHER_CLASS = "Teacher";
 
-	static private final String CITIZEN_ASPECT_PROPERTY = "citizenAspect";
 	static private final String JOB_PROPERTY = "job";
 	static private final String TAX_PAID_PROPERTY = "taxPaid";
 	static private final String BENEFIT_RECIEVED_PROPERTY = "benefitReceived";
-	static private final String PERSONAL_ASPECT_PROPERTY = "personalAspect";
 	static private final String AGE_PROPERTY = "age";
 	static private final String TRAVEL_CLASS_PROPERTY = "travelClass";
+	static private final String CITIZEN_ASPECT_PROPERTY = "citizenAspect";
 
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
 	private OBSectionBuilder sectionBuilder;
 	private boolean metaFrameSlotsEnabled = false;
 
-	private enum CFrameStatus {
+	private enum FrameStatus {
 
 		EXPOSED, HIDDEN, ABSENT;
 	}
 
-	private enum CPropertyStatus {
+	private enum SlotStatus {
 
 		PRESENT, ABSENT;
 	}
@@ -94,11 +93,11 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(DOMAIN_CONCEPT_CLASS, CFrameStatus.EXPOSED);
-		testFrame(CITIZEN_CLASS, CFrameStatus.EXPOSED);
-		testFrame(JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(DATA_TYPE_CONCEPT_CLASS, CFrameStatus.EXPOSED);
+		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(CITIZEN_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(DATA_TYPE_CONCEPT_CLASS, FrameStatus.EXPOSED);
 
 		testFrameSupers(CITIZEN_CLASS, DOMAIN_CONCEPT_CLASS);
 		testFrameSupers(ACADEMIC_JOB_CLASS, JOB_CLASS);
@@ -111,10 +110,10 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(DOMAIN_CONCEPT_CLASS, CFrameStatus.EXPOSED);
-		testFrame(JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(DATA_TYPE_CONCEPT_CLASS, CFrameStatus.ABSENT);
+		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(DATA_TYPE_CONCEPT_CLASS, FrameStatus.ABSENT);
 	}
 
 	@Test
@@ -124,10 +123,10 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(DOMAIN_CONCEPT_CLASS, CFrameStatus.ABSENT);
-		testFrame(JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(DATA_TYPE_CONCEPT_CLASS, CFrameStatus.ABSENT);
+		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.ABSENT);
+		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(DATA_TYPE_CONCEPT_CLASS, FrameStatus.ABSENT);
 	}
 
 	@Test
@@ -137,9 +136,9 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(DOMAIN_CONCEPT_CLASS, CFrameStatus.HIDDEN);
-		testFrame(JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.HIDDEN);
+		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
 	}
 
 	@Test
@@ -149,9 +148,9 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(DOMAIN_CONCEPT_CLASS, CFrameStatus.HIDDEN);
-		testFrame(JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.EXPOSED);
+		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
 	}
 
 	@Test
@@ -161,9 +160,9 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(DOMAIN_CONCEPT_CLASS, CFrameStatus.EXPOSED);
-		testFrame(JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.HIDDEN);
+		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
 	}
 
 	@Test
@@ -174,12 +173,12 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(ACADEMIC_TEACHING_JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(JOB_TYPE_CLASS, CFrameStatus.HIDDEN);
-		testFrame(SPECIALIST_CLASS, CFrameStatus.HIDDEN);
-		testFrame(TEACHER_CLASS, CFrameStatus.HIDDEN);
+		testFrameStatus(JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_TYPE_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(SPECIALIST_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(TEACHER_CLASS, FrameStatus.HIDDEN);
 	}
 
 	@Test
@@ -190,12 +189,12 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(ACADEMIC_TEACHING_JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(JOB_TYPE_CLASS, CFrameStatus.EXPOSED);
-		testFrame(SPECIALIST_CLASS, CFrameStatus.HIDDEN);
-		testFrame(TEACHER_CLASS, CFrameStatus.EXPOSED);
+		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_TYPE_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(SPECIALIST_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(TEACHER_CLASS, FrameStatus.EXPOSED);
 	}
 
 	@Test
@@ -206,12 +205,12 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrame(JOB_CLASS, CFrameStatus.EXPOSED);
-		testFrame(ACADEMIC_JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(ACADEMIC_TEACHING_JOB_CLASS, CFrameStatus.HIDDEN);
-		testFrame(JOB_TYPE_CLASS, CFrameStatus.EXPOSED);
-		testFrame(SPECIALIST_CLASS, CFrameStatus.EXPOSED);
-		testFrame(TEACHER_CLASS, CFrameStatus.EXPOSED);
+		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_TYPE_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(SPECIALIST_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(TEACHER_CLASS, FrameStatus.EXPOSED);
 	}
 
 	@Test
@@ -219,40 +218,35 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testProperty(CITIZEN_ASPECT_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(JOB_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(TAX_PAID_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(BENEFIT_RECIEVED_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(PERSONAL_ASPECT_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(AGE_PROPERTY, CPropertyStatus.PRESENT);
+		testSlotStatus(CITIZEN_CLASS, TAX_PAID_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(EMPLOYMENT_CLASS, JOB_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(PERSONAL_CLASS, AGE_PROPERTY, SlotStatus.PRESENT);
 	}
 
 	@Test
-	public void test_properties_ByGroupIncludingRoot() {
+	public void test_properties_byGroupIncludingRoot() {
 
-		addProperties(PERSONAL_ASPECT_PROPERTY);
+		addProperties(CITIZEN_ASPECT_PROPERTY);
+		addProperties(JOB_PROPERTY);
 
 		buildModel();
 
-		testProperty(PERSONAL_ASPECT_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(AGE_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(JOB_PROPERTY, CPropertyStatus.ABSENT);
-		testProperty(TAX_PAID_PROPERTY, CPropertyStatus.ABSENT);
-		testProperty(BENEFIT_RECIEVED_PROPERTY, CPropertyStatus.ABSENT);
+		testSlotStatus(CITIZEN_CLASS, TAX_PAID_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(EMPLOYMENT_CLASS, JOB_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(PERSONAL_CLASS, AGE_PROPERTY, SlotStatus.ABSENT);
 	}
 
 	@Test
-	public void test_properties_ByGroupExcludingRoot() {
+	public void test_properties_byGroupExcludingRoot() {
 
-		addPropertiesExcludingRoot(PERSONAL_ASPECT_PROPERTY);
+		addPropertiesExcludingRoot(CITIZEN_ASPECT_PROPERTY);
+		addPropertiesExcludingRoot(JOB_PROPERTY);
 
 		buildModel();
 
-		testProperty(PERSONAL_ASPECT_PROPERTY, CPropertyStatus.ABSENT);
-		testProperty(AGE_PROPERTY, CPropertyStatus.PRESENT);
-		testProperty(JOB_PROPERTY, CPropertyStatus.ABSENT);
-		testProperty(TAX_PAID_PROPERTY, CPropertyStatus.ABSENT);
-		testProperty(BENEFIT_RECIEVED_PROPERTY, CPropertyStatus.ABSENT);
+		testSlotStatus(CITIZEN_CLASS, TAX_PAID_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(EMPLOYMENT_CLASS, JOB_PROPERTY, SlotStatus.ABSENT);
+		testSlotStatus(PERSONAL_CLASS, AGE_PROPERTY, SlotStatus.ABSENT);
 	}
 
 	@Test
@@ -418,11 +412,9 @@ public class OBSectionBuilderTest extends OTest {
 		return inclusions;
 	}
 
-	private void testFrame(String name, CFrameStatus expectedStatus) {
+	private void testFrameStatus(String name, FrameStatus expectedStatus) {
 
-		CFrameStatus status = getCFrameStatus(name);
-
-		assertTrue("Unexpected CFrame status: " + status, status == expectedStatus);
+		assertEquals(expectedStatus, getFrameStatus(name));
 	}
 
 	private void testFrameSupers(String subName, String... expectedSupersNames) {
@@ -433,68 +425,84 @@ public class OBSectionBuilderTest extends OTest {
 		testSet(supers, getCFrames(expectedSupersNames));
 	}
 
-	private void testProperty(String name, CPropertyStatus expectedStatus) {
+	private void testSlotStatus(
+					String containerName,
+					String slotName,
+					SlotStatus expectedStatus) {
 
-		CPropertyStatus status = getCPropertyStatus(name);
-
-		assertTrue("Unexpected CProperty status: " + status, status == expectedStatus);
+		assertEquals(expectedStatus, getSlotStatus(containerName, slotName));
 	}
 
 	private void testSlot(
 					String containerName,
-					String propertyName,
+					String slotName,
 					CCardinality expectedCardinality,
 					CValue<?> expectedValueType) {
 
-		CFrame container = getCFrame(containerName);
-		CProperty property = getCProperty(propertyName);
-		CSlot slot = container.getSlots().getSlotFor(property);
-
+		CSlot slot = getSlot(containerName, slotName);
 		CCardinality cardinality = slot.getCardinality();
-		CValue<?> valueType = slot.getValueType();
 
 		assertTrue(
 			"Unexpected CSlot cardinality: " + cardinality,
 			cardinality == expectedCardinality);
-		assertEquals(expectedValueType, valueType);
+		assertEquals(expectedValueType, slot.getValueType());
 	}
 
 	private void testSlotValues(
 					String containerName,
-					String propertyName,
+					String slotName,
 					List<IValue> expectedValues) {
 
-		List<IValue> values = getSlotValues(containerName, propertyName);
+		List<IValue> values = getSlotValues(containerName, slotName);
 
 		testListContents(values, expectedValues);
 	}
 
-	private List<IValue> getSlotValues(String containerName, String propertyName) {
-
-		CFrame container = getCFrame(containerName);
-		CProperty property = getCProperty(propertyName);
-
-		return container.getSlotValues().getIValues(property);
-	}
-
-	private CFrameStatus getCFrameStatus(String name) {
+	private FrameStatus getFrameStatus(String name) {
 
 		if (!isCFrame(name)) {
 
-			return CFrameStatus.ABSENT;
+			return FrameStatus.ABSENT;
 		}
 
 		if (getCFrame(name).hidden()) {
 
-			return CFrameStatus.HIDDEN;
+			return FrameStatus.HIDDEN;
 		}
 
-		return CFrameStatus.EXPOSED;
+		return FrameStatus.EXPOSED;
 	}
 
-	private CPropertyStatus getCPropertyStatus(String name) {
+	private SlotStatus getSlotStatus(String containerName, String slotName) {
 
-		return isCProperty(name) ? CPropertyStatus.PRESENT : CPropertyStatus.ABSENT;
+		return isSlot(containerName, slotName)
+					? SlotStatus.PRESENT
+					: SlotStatus.ABSENT;
+	}
+
+	private boolean isSlot(String containerName, String slotName) {
+
+		return getSlots(containerName).containsValueFor(nameToIdentity(slotName));
+	}
+
+	private CSlot getSlot(String containerName, String slotName) {
+
+		return getSlots(containerName).get(nameToIdentity(slotName));
+	}
+
+	private CSlots getSlots(String containerName) {
+
+		return getCFrame(containerName).getSlots();
+	}
+
+	private List<IValue> getSlotValues(String containerName, String slotName) {
+
+		return getSlotValues(containerName).getIValues(nameToIdentity(slotName));
+	}
+
+	private CSlotValues getSlotValues(String containerName) {
+
+		return getCFrame(containerName).getSlotValues();
 	}
 
 	private CValue<?> getNoStructureFrameSlotValueType(String frameName) {

@@ -39,7 +39,7 @@ class OBSlots {
 	private OModel model;
 	private OBFrames frames;
 	private OBNumbers numbers;
-	private OBSlotProperties properties;
+	private OBProperties properties;
 	private OBEntityLabels labels;
 	private boolean metaFrameSlotsEnabled = false;
 
@@ -77,7 +77,7 @@ class OBSlots {
 
 		boolean abstractAssertable() {
 
-			return properties.get(property).abstractAssertable();
+			return properties.abstractAssertable(property);
 		}
 
 		String getLabel() {
@@ -292,7 +292,7 @@ class OBSlots {
 	OBSlots(
 		OModel model,
 		OBFrames frames,
-		OBSlotProperties properties,
+		OBProperties properties,
 		OBEntityLabels labels) {
 
 		this.model = model;

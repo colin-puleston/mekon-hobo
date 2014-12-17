@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class OEntityFinder<CE extends CIdentified> {
+public abstract class OEntityFinder<CE> {
 
 	private Set<IRI> entityIRIs;
 
@@ -51,7 +51,7 @@ public abstract class OEntityFinder<CE extends CIdentified> {
 	 */
 	public IRI getOrNull(CE cEntity) {
 
-		IRI iri = O_IRIExtractor.extractIRI(cEntity);
+		IRI iri = extractIRI(cEntity);
 
 		return iri != null && entityIRIs.contains(iri) ? iri : null;
 	}
@@ -60,4 +60,6 @@ public abstract class OEntityFinder<CE extends CIdentified> {
 
 		this.entityIRIs = entityIRIs;
 	}
+
+	abstract IRI extractIRI(CE cEntity);
 }

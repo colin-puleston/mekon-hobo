@@ -41,25 +41,26 @@ public class OBProperties
 				extends
 					OBEntities<OWLObjectProperty, OBPropertyInclusions> {
 
-	private Set<OWLObjectProperty> mirrorAsFrames = new HashSet<OWLObjectProperty>();
+	private Set<OWLObjectProperty> frameSources = new HashSet<OWLObjectProperty>();
 	private Set<OWLObjectProperty> abstractAssertables = new HashSet<OWLObjectProperty>();
 
 	/**
-	 * Registers a property as one for which the generated frames-model
-	 * property should be mirrored by a corresponding frame. If the
-	 * property is not also registered via the {@link OBEntities#add}
-	 * method then this method will have no effect.
+	 * Registers a property as one that,in addition to any slots
+	 * that it will be used to generate, will also be used to
+	 * generate a frame in the frames-model. If the property is not
+	 * also registered via the {@link OBEntities#add} method then
+	 * this method will have no effect.
 	 *
 	 * @param property Relevant property
 	 */
-	public void setMirrorAsFrame(OWLObjectProperty property) {
+	public void setFrameSource(OWLObjectProperty property) {
 
-		mirrorAsFrames.add(property);
+		frameSources.add(property);
 	}
 
 	/**
-	 * Registers a property as one that will be used to generate a
-	 * frames-model property that is {@link CSlot#abstractAssertable}.
+	 * Registers a property as one that will be used to generate
+	 * frames-model slots that isare{@link CSlot#abstractAssertable}.
 	 * If the property is not also registered via the {@link
 	 * OBEntities#add} method then this method will have no effect.
 	 *
@@ -92,9 +93,9 @@ public class OBProperties
 
 		add(property);
 
-		if (group.mirrorAsFrames()) {
+		if (group.frameSources()) {
 
-			setMirrorAsFrame(property);
+			setFrameSource(property);
 		}
 
 		if (group.abstractAssertables()) {
@@ -103,9 +104,9 @@ public class OBProperties
 		}
 	}
 
-	boolean mirrorAsFrame(OWLObjectProperty property) {
+	boolean frameSource(OWLObjectProperty property) {
 
-		return mirrorAsFrames.contains(property);
+		return frameSources.contains(property);
 	}
 
 	boolean abstractAssertable(OWLObjectProperty property) {

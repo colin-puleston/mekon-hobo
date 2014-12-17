@@ -59,19 +59,29 @@ class OBFrameHierarchy {
 
 	private void createFrameLinks(OBFrame frame) {
 
-		for (OWLClass subConcept : getSubFrameConcepts(frame)) {
+		for (OWLEntity source : getSubFrameSources(frame)) {
 
-			frame.addSubFrame(frames.get(subConcept));
+			frame.addSubFrame(frames.get(source));
 		}
 	}
 
-	private Set<OWLClass> getSubFrameConcepts(OBFrame frame) {
+	private Set<? extends OWLEntity> getSubFrameSources(OBFrame frame) {
 
-		return getAllDescendants(frame.getConcept());
+		return getAllDescendants(frame.getSourceEntity());
 	}
 
-	private Set<OWLClass> getAllDescendants(OWLClass concept) {
+	private Set<? extends OWLEntity> getAllDescendants(OWLEntity entity) {
 
-		return model.getInferredSubs(concept, true);
+		if (entity instanceof OWLClass) {
+
+			return model.getInferredSubs((OWLClass)entity, true);
+		}
+
+		if (entity instanceof OWLObjectProperty) {
+
+			return model.getInferredSubs((OWLObjectProperty)entity, true);
+		}
+
+		throw new Error("Entity of unexpected type: " + entity);
 	}
 }

@@ -250,7 +250,7 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 
 	ORSlot(ISlot iSlot, IRI iri) {
 
-		super(iSlot.getType().getProperty(), iri);
+		super(iSlot.getType(), iri);
 
 		this.iSlot = iSlot;
 	}

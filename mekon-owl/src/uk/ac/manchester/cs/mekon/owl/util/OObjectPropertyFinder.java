@@ -24,19 +24,26 @@
 
 package uk.ac.manchester.cs.mekon.owl.util;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * Responsible for finding IRIs of OWL properties that correspond
- * to particular Frames Model (FM) properties.
+ * to Frames Model (FM) slots.
  *
  * @author Colin Puleston
  */
-public class OObjectPropertyFinder extends OEntityFinder<CProperty> {
+public class OObjectPropertyFinder extends OEntityFinder<CIdentity> {
 
 	public OObjectPropertyFinder(OModel model) {
 
 		super(model.getObjectProperties().getAllIRIs());
+	}
+
+	IRI extractIRI(CIdentity cEntity) {
+
+		return O_IRIExtractor.extractIRI(cEntity);
 	}
 }

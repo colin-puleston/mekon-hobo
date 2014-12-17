@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
@@ -33,15 +35,16 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 abstract class OBSlot extends OIdentified {
 
+	private OWLProperty property;
 	private boolean singleValued;
 	private boolean abstractAssertable;
 
 	private class CAdder {
 
 		private CBuilder builder;
-		private CProperty property;
-		private CValue<?> value;
+		private OBAnnotations annotations;
 		private CFrameEditor containerEd;
+		private CValue<?> value;
 
 		CAdder(
 			CBuilder builder,
@@ -50,10 +53,10 @@ abstract class OBSlot extends OIdentified {
 			OBAnnotations annotations) {
 
 			this.builder = builder;
+			this.annotations = annotations;
 
-			property = builder.getProperties().get(getIdentity());
-			value = ensureCValue(builder, topLevelSlot, annotations);
 			containerEd = builder.getFrameEditor(container);
+			value = ensureCValue(builder, topLevelSlot, annotations);
 
 			if (OBSlot.this == topLevelSlot) {
 
@@ -75,15 +78,16 @@ abstract class OBSlot extends OIdentified {
 
 		private void addSlot(CCardinality cardinality) {
 
-			CSlot slot = containerEd.addSlot(property, cardinality, value);
+			CSlot slot = containerEd.addSlot(getIdentity(), cardinality, value);
 			CSlotEditor slotEd = builder.getSlotEditor(slot);
 
 			slotEd.absorbAbstractAssertable(abstractAssertable);
+			annotations.checkAdd(builder, slot, property);
 		}
 
 		private void addSlotValue() {
 
-			containerEd.addSlotValue(property, value);
+			containerEd.addSlotValue(getIdentity(), value);
 		}
 	}
 
@@ -91,11 +95,12 @@ abstract class OBSlot extends OIdentified {
 
 		super(spec.getProperty(), spec.getLabel());
 
+		property = spec.getProperty();
 		singleValued = spec.singleValued();
 		abstractAssertable = spec.abstractAssertable();
 	}
 
-	void checkAddCSlotAndValues(
+	void ensureCStructure(
 			CBuilder builder,
 			CFrame container,
 			OBSlot topLevelSlot,
