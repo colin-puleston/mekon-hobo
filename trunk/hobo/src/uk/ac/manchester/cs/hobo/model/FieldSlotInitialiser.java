@@ -85,9 +85,7 @@ class FieldSlotInitialiser {
 
 	private CSlot createSlotType() {
 
-		CProperty property = resolveProperty();
-		CFrameEditor frameTypeEd = getFrameTypeEditor();
-		CSlot slotType = frameTypeEd.addSlot(property, cardinality, valueType);
+		CSlot slotType = addSlotType();
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
 		slotTypeEd.setSource(CSource.DIRECT);
@@ -96,14 +94,20 @@ class FieldSlotInitialiser {
 		return slotType;
 	}
 
+	private CSlot addSlotType() {
+
+		CIdentity id = new CIdentity(slotId, slotLabel);
+
+		return getFrameTypeEditor().addSlot(id, cardinality, valueType);
+	}
+
 	private void updateSlotType(CSlot slotType) {
 
-		CProperty property = slotType.getProperty();
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
 		if (getModelMap().labelsFromDirectFields()) {
 
-			getPropertyEditor(property).resetLabel(slotLabel);
+			slotTypeEd.resetLabel(slotLabel);
 		}
 
 		if (boundField) {
@@ -121,19 +125,9 @@ class FieldSlotInitialiser {
 		return getFrameEditor(frame).addSlot(slotType);
 	}
 
-	private CProperty resolveProperty() {
-
-		return getCBuilder().resolveProperty(new CIdentity(slotId, slotLabel));
-	}
-
 	private CFrameEditor getFrameTypeEditor() {
 
 		return getCBuilder().getFrameEditor(frameType);
-	}
-
-	private CPropertyEditor getPropertyEditor(CProperty property) {
-
-		return getCBuilder().getPropertyEditor(property);
 	}
 
 	private CSlotEditor getSlotTypeEditor(CSlot slotType) {
