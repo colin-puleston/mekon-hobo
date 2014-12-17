@@ -37,15 +37,15 @@ class CFrameFixedValuesNode extends GNode {
 
 	private CTree tree;
 	private CFrame frame;
-	private List<CProperty> properties;
+	private List<CIdentity> slotIds;
 
 	protected void addInitialChildren() {
 
 		CSlotValues values = frame.getSlotValues();
 
-		for (CProperty prop : properties) {
+		for (CIdentity id : slotIds) {
 
-			addChild(new CFixedValuesNode(tree, prop, values.getValues(prop)));
+			addChild(new CFixedValuesNode(tree, id, values.getValues(id)));
 		}
 	}
 
@@ -54,12 +54,12 @@ class CFrameFixedValuesNode extends GNode {
 		return EntityDisplays.get().fixedValuesDisplay;
 	}
 
-	CFrameFixedValuesNode(CTree tree, CFrame frame, List<CProperty> properties) {
+	CFrameFixedValuesNode(CTree tree, CFrame frame, List<CIdentity> slotIds) {
 
 		super(tree);
 
 		this.tree = tree;
 		this.frame = frame;
-		this.properties = properties;
+		this.slotIds = slotIds;
 	}
 }
