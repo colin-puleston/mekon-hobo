@@ -39,19 +39,19 @@ public class CExtensionTest extends CValueTest<CFrame> {
 	private CModelFrame c = createCFrame("C");
 	private CModelFrame cx = createCFrame("CX");
 
-	private CProperty pab = createCProperty("PAB");
-	private CProperty pac = createCProperty("PAC");
-	private CProperty pbb = createCProperty("PBB");
-	private CProperty pbc = createCProperty("PBC");
+	private CIdentity sab = createIdentity("SAB");
+	private CIdentity sac = createIdentity("SAC");
+	private CIdentity sbb = createIdentity("SBB");
+	private CIdentity sbc = createIdentity("SBC");
 
 	public CExtensionTest() {
 
 		addSuperFrame(cx, c);
 
-		createCSlot(a, pab, CCardinality.FREE, b);
-		createCSlot(a, pac, CCardinality.FREE, c);
-		createCSlot(b, pbb, CCardinality.FREE, b);
-		createCSlot(b, pbc, CCardinality.FREE, c);
+		createCSlot(a, sab, CCardinality.FREE, b);
+		createCSlot(a, sac, CCardinality.FREE, c);
+		createCSlot(b, sbb, CCardinality.FREE, b);
+		createCSlot(b, sbc, CCardinality.FREE, c);
 	}
 
 	@Test
@@ -111,11 +111,11 @@ public class CExtensionTest extends CValueTest<CFrame> {
 
 		CExtender extender = new CExtender(a);
 
-		extender.addSlotValue(pac, c);
+		extender.addSlotValue(sac, c);
 
 		if (fcValue != null) {
 
-			extender.addSlotValue(pab, createBExtension(fcValue));
+			extender.addSlotValue(sab, createBExtension(fcValue));
 		}
 
 		return (CExtension)extender.extend();
@@ -125,8 +125,8 @@ public class CExtensionTest extends CValueTest<CFrame> {
 
 		CExtender extender = new CExtender(b);
 
-		extender.addSlotValue(pbb, b);
-		extender.addSlotValue(pbc, fcValue);
+		extender.addSlotValue(sbb, b);
+		extender.addSlotValue(sbc, fcValue);
 
 		return (CExtension)extender.extend();
 	}

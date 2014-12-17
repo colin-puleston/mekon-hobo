@@ -47,7 +47,7 @@ public class ISlotSpecsTest extends MekonTest {
 	private CModelFrame ty2 = createCFrame("Y2");
 	private CModelFrame tz = createCFrame("Z");
 
-	private CProperty p = createCProperty("P");
+	private CIdentity slotId = createIdentity("SLOT");
 
 	private CSlot sa = createCSlot(ta, CCardinality.FREE, tx);
 	private CSlot sb = createCSlot(tb, CCardinality.UNIQUE_TYPES, ty1);
@@ -96,8 +96,8 @@ public class ISlotSpecsTest extends MekonTest {
 	@Test
 	public void test_valueUpdates() {
 
-		tb.addSlotValue(p, tz.getType());
-		td.addSlotValue(p, tz.getType());
+		tb.addSlotValue(slotId, tz.getType());
+		td.addSlotValue(slotId, tz.getType());
 
 		updateContainerSlots(ta);
 		testSlotValues();
@@ -215,6 +215,6 @@ public class ISlotSpecsTest extends MekonTest {
 					CCardinality cardinality,
 					CModelFrame rootValue) {
 
-		return createCSlot(container, p, cardinality, rootValue.getType());
+		return createCSlot(container, slotId, cardinality, rootValue.getType());
 	}
 }

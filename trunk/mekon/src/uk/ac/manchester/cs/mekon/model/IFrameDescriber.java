@@ -81,7 +81,7 @@ class IFrameDescriber {
 
 	private void describeStructured(ISlot slot) {
 
-		addLine(slot.getType().getProperty().toString());
+		addLine(slot.getType().toString());
 		changeIndent(1);
 
 		for (IValue value : slot.getValues().asList()) {

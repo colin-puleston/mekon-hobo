@@ -289,7 +289,7 @@ public class IFrameRenderer extends ISerialiser {
 
 		XNode node = parentNode.addChild(CSLOT_ID);
 
-		renderIdentity(slot.getProperty(), node);
+		renderIdentity(slot, node);
 
 		if (renderSchema) {
 

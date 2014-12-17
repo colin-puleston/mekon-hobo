@@ -46,9 +46,7 @@ public class CModel implements CAnnotatable {
 	private CCustomiser customiser;
 
 	private CFrame rootFrame;
-
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
-	private CIdentifiedsLocal<CProperty> properties = new CIdentifiedsLocal<CProperty>();
 
 	private CAnnotations annotations = new CAnnotations(this);
 
@@ -137,16 +135,6 @@ public class CModel implements CAnnotatable {
 	public CIdentifieds<CFrame> getFrames() {
 
 		return frames;
-	}
-
-	/**
-	 * Provides all properties in the model.
-	 *
-	 * @return All properties in model
-	 */
-	public CIdentifieds<CProperty> getProperties() {
-
-		return properties;
 	}
 
 	/**
@@ -268,15 +256,6 @@ public class CModel implements CAnnotatable {
 		customiser.onFrameRemoved(frame);
 
 		return true;
-	}
-
-	CProperty addProperty(CIdentity identity) {
-
-		CProperty property = new CProperty(this, identity);
-
-		properties.add(property);
-
-		return property;
 	}
 
 	void registerRemovedSlot(CSlot slot) {

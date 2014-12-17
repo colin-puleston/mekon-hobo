@@ -58,16 +58,16 @@ class CExtensionDescriber {
 
 		void build(CSlotValues slotValues) {
 
-			for (CProperty property : slotValues.getSlotProperties()) {
+			for (CIdentity slotId : slotValues.getSlotIdentities()) {
 
-				buildForLayout(slotValues, property);
+				buildForLayout(slotValues, slotId);
 			}
 		}
 
-		void build(CSlotValues slotValues, CProperty property) {
+		void build(CSlotValues slotValues, CIdentity slotId) {
 
-			addForLayout(describeProperty(property));
-			buildForLayout(slotValues.getValues(property));
+			addForLayout(describeSlot(slotId));
+			buildForLayout(slotValues.getValues(slotId));
 		}
 
 		void build(List<CValue<?>> values) {
@@ -98,7 +98,7 @@ class CExtensionDescriber {
 
 		abstract void buildForLayout(CSlotValues slotValues);
 
-		abstract void buildForLayout(CSlotValues slotValues, CProperty property);
+		abstract void buildForLayout(CSlotValues slotValues, CIdentity slotId);
 
 		abstract void buildForLayout(List<CValue<?>> values);
 
@@ -121,9 +121,9 @@ class CExtensionDescriber {
 			return componentDescriber.describeTail(value);
 		}
 
-		private String describeProperty(CProperty property) {
+		private String describeSlot(CIdentity slotId) {
 
-			return componentDescriber.describeProperty(property);
+			return componentDescriber.describeSlot(slotId);
 		}
 	}
 
@@ -151,11 +151,11 @@ class CExtensionDescriber {
 			build(slotValues);
 		}
 
-		void buildForLayout(CSlotValues slotValues, CProperty property) {
+		void buildForLayout(CSlotValues slotValues, CIdentity slotId) {
 
 			add(AND);
 			add(SECTION_START);
-			build(slotValues, property);
+			build(slotValues, slotId);
 			add(SECTION_END);
 		}
 
@@ -204,9 +204,9 @@ class CExtensionDescriber {
 			switchLevel(-1);
 		}
 
-		void buildForLayout(CSlotValues slotValues, CProperty property) {
+		void buildForLayout(CSlotValues slotValues, CIdentity slotId) {
 
-			build(slotValues, property);
+			build(slotValues, slotId);
 		}
 
 		void buildForLayout(List<CValue<?>> values) {
@@ -248,7 +248,7 @@ class CExtensionDescriber {
 
 		abstract String describeTail(CValue<?> value);
 
-		abstract String describeProperty(CProperty property);
+		abstract String describeSlot(CIdentity slotId);
 	}
 
 	private class IdDescriber extends ComponentDescriber {
@@ -265,9 +265,9 @@ class CExtensionDescriber {
 			return value.toString();
 		}
 
-		String describeProperty(CProperty property) {
+		String describeSlot(CIdentity slotId) {
 
-			return property.toString();
+			return slotId.toString();
 		}
 	}
 
@@ -285,9 +285,9 @@ class CExtensionDescriber {
 					: value.toString();
 		}
 
-		String describeProperty(CProperty property) {
+		String describeSlot(CIdentity slotId) {
 
-			return property.getDisplayLabel();
+			return slotId.getLabel();
 		}
 	}
 

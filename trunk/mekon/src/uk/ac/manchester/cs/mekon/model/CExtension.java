@@ -232,9 +232,9 @@ class CExtension extends CExpression {
 
 	private void registerAsReferencerOfSlotValues() {
 
-		for (CProperty property : slotValues.getSlotProperties()) {
+		for (CIdentity slotId : slotValues.getSlotIdentities()) {
 
-			for (CValue<?> value : slotValues.getValues(property)) {
+			for (CValue<?> value : slotValues.getValues(slotId)) {
 
 				value.registerSlotValueReferencingFrame(this);
 			}

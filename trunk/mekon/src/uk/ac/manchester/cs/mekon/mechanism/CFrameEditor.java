@@ -66,44 +66,35 @@ public interface CFrameEditor {
 	/**
 	 * Creates a slot and adds it to the frame.
 	 *
-	 * @param property Property for slot
+	 * @param identity Identity for slot
 	 * @param cardinality Cardinality for slot
 	 * @param valueType Value-type for slot
 	 * @return Created and added slot
 	 */
 	public CSlot addSlot(
-					CProperty property,
+					CIdentity identity,
 					CCardinality cardinality,
 					CValue<?> valueType);
 
 	/**
 	 * Removes specified slot from the frame, if possible. Does
-	 * nothing if slot has a {@link CSource#direct} source, or is
-	 * not attached to the frame.
+	 * nothing if slot has a {@link CSource#direct} source, or if no
+	 * such slot is attached to the frame.
 	 *
-	 * @param slot Slot to be removed
+	 * @param identity Identity of slot to be removed
 	 * @return True if slot was removed
 	 */
-	public boolean removeSlot(CSlot slot);
+	public boolean removeSlot(CIdentity identity);
 
 	/**
-	 * Removes all slots for specified property from the frame,
-	 * except for any such slots with {@link CSource#direct} sources.
-	 *
-	 * @param property Property for which slots are to be removed
-	 * @return True if all relevant slots were removed
-	 */
-	public boolean removeSlots(CProperty property);
-
-	/**
-	 * Removes all slots for specified property from all descendant
+	 * Removes all slots with specified identity from all descendant
 	 * frames, except for any such slots with {@link CSource#direct}
 	 * sources.
 	 *
-	 * @param property Property for which slots are to be removed
+	 * @param identity Identity of slots are to be removed
 	 * @return True if all relevant slots were removed
 	 */
-	public boolean removeSlotsFromDescendants(CProperty property);
+	public boolean removeSlotsFromDescendants(CIdentity identity);
 
 	/**
 	 * Removes all slots from the frame, except for any slots with
@@ -122,14 +113,14 @@ public interface CFrameEditor {
 	public boolean clearSlotsFromDescendants();
 
 	/**
-	 * Adds a default slot-value for the frame, to be automatically
+	 * Adds a fixed slot-value for the frame, to be automatically
 	 * assigned to the relevant slots on all instantiations of the
 	 * frame.
 	 *
-	 * @param property Property of relevant slot
+	 * @param identity Identity of relevant slot
 	 * @param value Fixed value for slot
 	 */
-	public void addSlotValue(CProperty property, CValue<?> value);
+	public void addSlotValue(CIdentity identity, CValue<?> value);
 
 	/**
 	 * Removes all default slot-value specifications for the frame.

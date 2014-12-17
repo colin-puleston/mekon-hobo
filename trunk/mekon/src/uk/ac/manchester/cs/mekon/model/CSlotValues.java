@@ -39,7 +39,7 @@ public class CSlotValues {
 
 	static final CSlotValues INERT_INSTANCE = new CSlotValues() {
 
-		void add(CProperty property, CValue<?> value) {
+		void add(CIdentity identity, CValue<?> value) {
 
 			onAttemptedUpdate();
 		}
@@ -60,9 +60,9 @@ public class CSlotValues {
 		}
 	};
 
-	private List<CProperty> properties = new ArrayList<CProperty>();
-	private KListMap<CProperty, CValue<?>> valuesByProperty
-							= new KListMap<CProperty, CValue<?>>();
+	private List<CIdentity> identities = new ArrayList<CIdentity>();
+	private KListMap<CIdentity, CValue<?>> valuesByIdentity
+							= new KListMap<CIdentity, CValue<?>>();
 
 	/**
 	 * Specifies whether any fixed slot-values have been defined
@@ -72,61 +72,59 @@ public class CSlotValues {
 	 */
 	public boolean valuesDefined() {
 
-		return !properties.isEmpty();
+		return !identities.isEmpty();
 	}
 
 	/**
 	 * Checks whether there are fixed slot-values defined for the
-	 * slot with the specified property.
+	 * specified slot.
 	 *
-	 * @param property Property for which the existance of values
-	 * is to be tested for
-	 * @return True if fixed slot-values are defined for property
+	 * @param identity Identity of slot for which the existance of
+	 * values is to be tested for
+	 * @return True if fixed slot-values are defined for relevant slot
 	 */
-	public boolean valueFor(CProperty property) {
+	public boolean valueFor(CIdentity identity) {
 
-		return properties.contains(property);
+		return identities.contains(identity);
 	}
 
 	/**
-	 * Provides the set of properties for which fixed slot-values
+	 * Provides the set of identities for which fixed slot-values
 	 * have been defined for slots attached to the frame.
 	 *
-	 * @return Relevant set of properties
+	 * @return Relevant set of identities
 	 */
-	public List<CProperty> getSlotProperties() {
+	public List<CIdentity> getSlotIdentities() {
 
-		return properties;
+		return identities;
 	}
 
 	/**
-	 * Provides the set of fixed values for the slot associated with
-	 * the specified property.
+	 * Provides the set of fixed values for the specified slot.
 	 *
-	 * @param property Property for which values are required
+	 * @param identity Identity of slot for which values are required
 	 * @return Relevant set of values
 	 */
-	public List<CValue<?>> getValues(CProperty property) {
+	public List<CValue<?>> getValues(CIdentity identity) {
 
-		return valuesByProperty.getList(property);
+		return valuesByIdentity.getList(identity);
 	}
 
 	/**
-	 * Provides the set of fixed values for the slot associated with
-	 * the specified property, with the returned set being cast to the
-	 * known type.
+	 * Provides the set of fixed values for the specified slot, with
+	 * the returned set being cast to a known type.
 	 *
-	 * @param property Property for which values are required
+	 * @param identity Identity of slot for which values are required
 	 * @param valueClass Known class of values
 	 * @return Relevant set of values
 	 */
 	public <V extends CValue<?>>List<V> getValues(
-											CProperty property,
+											CIdentity identity,
 											Class<V> valueClass) {
 
 		List<V> values = new ArrayList<V>();
 
-		for (CValue<?> value : getValues(property)) {
+		for (CValue<?> value : getValues(identity)) {
 
 			values.add(valueClass.cast(value));
 		}
@@ -136,19 +134,19 @@ public class CSlotValues {
 
 	/**
 	 * Provides a set of default instantiations of the fixed values
-	 * for the slot associated with the specified property.
+	 * for the specified slot.
 	 *
-	 * @param property Property for which default value-instantiations
-	 * are required
+	 * @param identity Identity of slot for which default
+	 * value-instantiations are required
 	 * @return Relevant set of default value-instantiations
 	 * @throws KAccessException if it is not possible to obtain default
 	 * value-instantiations for any of the relevent fixed values
 	 */
-	public List<IValue> getIValues(CProperty property) {
+	public List<IValue> getIValues(CIdentity identity) {
 
 		List<IValue> iValues = new ArrayList<IValue>();
 
-		for (CValue<?> value : getValues(property)) {
+		for (CValue<?> value : getValues(identity)) {
 
 			iValues.add(value.getDefaultValue());
 		}
@@ -159,43 +157,43 @@ public class CSlotValues {
 	CSlotValues() {
 	}
 
-	void add(CProperty property, CValue<?> value) {
+	void add(CIdentity identity, CValue<?> value) {
 
-		if (valuesByProperty.containsKey(property)) {
+		if (valuesByIdentity.containsKey(identity)) {
 
-			absorb(property, value);
+			absorb(identity, value);
 		}
 		else {
 
-			properties.add(property);
-			valuesByProperty.add(property, value);
+			identities.add(identity);
+			valuesByIdentity.add(identity, value);
 		}
 	}
 
 	void clear() {
 
-		properties.clear();
-		valuesByProperty.clear();
+		identities.clear();
+		valuesByIdentity.clear();
 	}
 
 	void removeAll(CValue<?> value) {
 
-		for (CProperty property : properties) {
+		for (CIdentity identity : identities) {
 
-			valuesByProperty.remove(property, value);
+			valuesByIdentity.remove(identity, value);
 		}
 	}
 
 	boolean equalSlotValues(CSlotValues other) {
 
-		if (!properties.equals(other.properties)) {
+		if (!identities.equals(other.identities)) {
 
 			return false;
 		}
 
-		for (CProperty property : properties) {
+		for (CIdentity identity : identities) {
 
-			if (!getValues(property).equals(other.getValues(property))) {
+			if (!getValues(identity).equals(other.getValues(identity))) {
 
 				return false;
 			}
@@ -206,9 +204,9 @@ public class CSlotValues {
 
 	boolean subsumes(CSlotValues testSubsumed) {
 
-		for (CProperty property : properties) {
+		for (CIdentity identity : identities) {
 
-			if (!subsumedValuesFor(property, testSubsumed)) {
+			if (!subsumedValuesFor(identity, testSubsumed)) {
 
 				return false;
 			}
@@ -219,35 +217,35 @@ public class CSlotValues {
 
 	void validateAll(CFrame container) {
 
-		for (CProperty property : properties) {
+		for (CIdentity identity : identities) {
 
-			for (CValue<?> value : getValues(property)) {
+			for (CValue<?> value : getValues(identity)) {
 
-				validate(container, property, value);
+				validate(container, identity, value);
 			}
 		}
 	}
 
-	void validate(CFrame container, CProperty property, CValue<?> value) {
+	void validate(CFrame container, CIdentity identity, CValue<?> value) {
 
-		new CSlotValueTypeValidator(property, value).checkValidFor(container);
+		new CSlotValueTypeValidator(identity, value).checkValidFor(container);
 	}
 
 	int createHashCode() {
 
-		int hashCode = properties.hashCode();
+		int hashCode = identities.hashCode();
 
-		for (CProperty property : properties) {
+		for (CIdentity identity : identities) {
 
-			hashCode += getValues(property).hashCode();
+			hashCode += getValues(identity).hashCode();
 		}
 
 		return hashCode;
 	}
 
-	private void absorb(CProperty property, CValue<?> newValue) {
+	private void absorb(CIdentity identity, CValue<?> newValue) {
 
-		for (CValue<?> value : getValues(property)) {
+		for (CValue<?> value : getValues(identity)) {
 
 			if (newValue.subsumes(value)) {
 
@@ -256,24 +254,24 @@ public class CSlotValues {
 
 			if (newValue.subsumedBy(value)) {
 
-				valuesByProperty.remove(property, value);
+				valuesByIdentity.remove(identity, value);
 			}
 		}
 
-		valuesByProperty.add(property, newValue);
+		valuesByIdentity.add(identity, newValue);
 	}
 
 	private boolean subsumedValuesFor(
-						CProperty property,
+						CIdentity identity,
 						CSlotValues testSubsumed) {
 
-		if (!testSubsumed.valueFor(property)) {
+		if (!testSubsumed.valueFor(identity)) {
 
 			return false;
 		}
 
-		List<CValue<?>> values = getValues(property);
-		List<CValue<?>> testSubValues = testSubsumed.getValues(property);
+		List<CValue<?>> values = getValues(identity);
+		List<CValue<?>> testSubValues = testSubsumed.getValues(identity);
 
 		return CValue.allSubsumptions(values, testSubValues);
 	}

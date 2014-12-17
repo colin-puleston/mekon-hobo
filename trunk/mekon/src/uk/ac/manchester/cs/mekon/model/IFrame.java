@@ -157,12 +157,12 @@ public class IFrame implements IEntity, IValue {
 		}
 
 		public ISlot addSlot(
-						CProperty property,
+						CIdentity identity,
 						CSource source,
 						CCardinality cardinality,
 						CValue<?> valueType) {
 
-			CSlot slotType = new CSlot(type, property, cardinality, valueType);
+			CSlot slotType = new CSlot(type, identity, cardinality, valueType);
 
 			slotType.setSource(source);
 

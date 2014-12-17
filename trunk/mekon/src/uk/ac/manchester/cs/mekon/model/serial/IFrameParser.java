@@ -485,11 +485,6 @@ public class IFrameParser extends ISerialiser {
 		return model.getFrames().get(id);
 	}
 
-	private CProperty getProperty(CIdentity id) {
-
-		return model.getProperties().get(id);
-	}
-
 	private boolean isClassName(Class<?> testClass, String testName) {
 
 		return testClass.getSimpleName().equals(testName);

@@ -35,7 +35,7 @@ class ISlotSpec {
 
 	private IEditor iEditor;
 
-	private CProperty property;
+	private CIdentity identity;
 	private CSource source = CSource.UNSPECIFIED;
 	private CCardinality cardinality = CCardinality.FREE;
 	private List<CValue<?>> valueTypes = new ArrayList<CValue<?>>();
@@ -43,9 +43,9 @@ class ISlotSpec {
 	private boolean active = false;
 	private boolean dependent = false;
 
-	ISlotSpec(IEditor iEditor, CProperty property) {
+	ISlotSpec(IEditor iEditor, CIdentity identity) {
 
-		this.property = property;
+		this.identity = identity;
 		this.iEditor = iEditor;
 	}
 
@@ -99,9 +99,9 @@ class ISlotSpec {
 		getSlotEditor(slot).setFixedValues(fixedValues);
 	}
 
-	CProperty getProperty() {
+	CIdentity getIdentity() {
 
-		return property;
+		return identity;
 	}
 
 	private void absorbValueType(CValue<?> valueType) {
@@ -137,7 +137,7 @@ class ISlotSpec {
 
 		return getFrameEditor(container)
 					.addSlot(
-						property,
+						identity,
 						source,
 						cardinality,
 						valueType);

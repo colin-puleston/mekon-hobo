@@ -67,14 +67,14 @@ public interface IFrameEditor {
 	 * directly instantiating the specified concept-level slot,
 	 * which is to be dynamically created.
 	 *
-	 * @param property Property for concept-level slot
+	 * @param identity Identity for concept-level slot
 	 * @param source Source-type for concept-level slot
 	 * @param cardinality Cardinality for concept-level slot
 	 * @param valueType Value-type for concept-level slot
 	 * @return Created and added instance-level slot
 	 */
 	public ISlot addSlot(
-					CProperty property,
+					CIdentity identity,
 					CSource source,
 					CCardinality cardinality,
 					CValue<?> valueType);

@@ -41,6 +41,14 @@ public interface CSlotEditor {
 	public void setSource(CSource source);
 
 	/**
+	 * Resets the label for the slot (as represented within the
+	 * associated {@link CIdentity} object).
+	 *
+	 * @param newLabel New-label for slot
+	 */
+	public void resetLabel(String newLabel);
+
+	/**
 	 * Sets the slot cardinality to be whichever is the more
 	 * restrictive between the current cardinality and the other
 	 * specified cardinality (as defined by
