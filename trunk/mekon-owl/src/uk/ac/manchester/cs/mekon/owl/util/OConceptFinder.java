@@ -71,4 +71,9 @@ public class OConceptFinder extends OEntityFinder<CFrame> {
 
 		return iri;
 	}
+
+	IRI extractIRI(CFrame cEntity) {
+
+		return O_IRIExtractor.extractIRI(cEntity);
+	}
 }

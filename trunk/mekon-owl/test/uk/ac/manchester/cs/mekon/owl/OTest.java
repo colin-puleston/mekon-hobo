@@ -78,16 +78,6 @@ public class OTest extends FramesTestUtils {
 		return model.getFrames().get(nameToIdentifier(name));
 	}
 
-	public boolean isCProperty(String name) {
-
-		return model.getProperties().containsKey(nameToIdentifier(name));
-	}
-
-	public CProperty getCProperty(String name) {
-
-		return model.getProperties().get(nameToIdentifier(name));
-	}
-
 	public CNumber getCInteger(Integer min, Integer max) {
 
 		return getCNumber(CIntegerDef.range(min, max));

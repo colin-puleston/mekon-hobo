@@ -50,19 +50,19 @@ class PropertyInclusionsConfigReader
 
 		OBPropertyInclusions group = new OBPropertyInclusions(rootIRI);
 
-		group.setMirrorAsFrames(getMirrorAsFrames(groupNode));
+		group.setFrameSources(getFrameSources(groupNode));
 		group.setAbstractAssertables(getAbstractAssertables(groupNode));
 
 		return group;
 	}
 
-	private boolean getMirrorAsFrames(KConfigNode groupNode) {
+	private boolean getFrameSources(KConfigNode groupNode) {
 
-		return groupNode.getBoolean(MIRROR_PROPERTIES_AS_FRAMES_ATTR, false);
+		return groupNode.getBoolean(FRAME_SOURCE_PROPERTIES_ATTR, false);
 	}
 
 	private boolean getAbstractAssertables(KConfigNode groupNode) {
 
-		return groupNode.getBoolean(ABSTRACT_ASSERTABLES_PROPERTIES_ATTR, false);
+		return groupNode.getBoolean(ABSTRACT_ASSERTABLE_PROPERTIES_ATTR, false);
 	}
 }

@@ -37,13 +37,15 @@ class OBFrames {
 
 	private IReasoner iReasoner = null;
 	private OBConcepts concepts;
+	private OBProperties properties;
 	private OBEntityLabels labels;
 
-	private Map<OWLClass, OBFrame> frames = new HashMap<OWLClass, OBFrame>();
+	private Map<OWLEntity, OBFrame> frames = new HashMap<OWLEntity, OBFrame>();
 
-	OBFrames(OBConcepts concepts, OBEntityLabels labels) {
+	OBFrames(OBConcepts concepts, OBProperties properties, OBEntityLabels labels) {
 
 		this.concepts = concepts;
+		this.properties = properties;
 		this.labels = labels;
 	}
 
@@ -54,10 +56,8 @@ class OBFrames {
 
 	void createAll() {
 
-		for (OWLClass concept : concepts.getAll()) {
-
-			createFrame(concept);
-		}
+		createAllForConcepts();
+		createAllForProperties();
 	}
 
 	Collection<OBFrame> getAll() {
@@ -65,34 +65,46 @@ class OBFrames {
 		return frames.values();
 	}
 
-	OBFrame get(OWLClass concept) {
+	OBFrame get(OWLEntity sourceEntity) {
 
-		OBFrame frame = frames.get(concept);
+		OBFrame frame = frames.get(sourceEntity);
 
 		if (frame == null) {
 
-			throw new Error("Cannot find frame for: " + concept);
+			throw new Error("Cannot find frame for: " + sourceEntity);
 		}
 
 		return frame;
 	}
 
-	private OBFrame createFrame(OWLClass concept) {
+	private void createAllForConcepts() {
 
-		String label = labels.getLabel(concept);
-		boolean hidden = concepts.isHidden(concept);
+		for (OWLClass concept : concepts.getAll()) {
 
-		return createFrame(concept, label, hidden);
+			createFrame(concept, iReasoner, concepts.isHidden(concept));
+		}
 	}
 
-	private OBFrame createFrame(OWLClass concept, String label, boolean hidden) {
+	private void createAllForProperties() {
 
-		return addFrame(new OBFrame(concept, label, hidden, iReasoner));
+		for (OWLObjectProperty property : properties.getAll()) {
+
+			if (properties.frameSource(property)) {
+
+				createFrame(property, null, false);
+			}
+		}
 	}
 
-	private OBFrame addFrame(OBFrame frame) {
+	private OBFrame createFrame(
+						OWLEntity sourceEntity,
+						IReasoner iReasoner,
+						boolean hidden) {
 
-		frames.put(frame.getConcept(), frame);
+		String label = labels.getLabel(sourceEntity);
+		OBFrame frame = new OBFrame(sourceEntity, label, hidden, iReasoner);
+
+		frames.put(frame.getSourceEntity(), frame);
 
 		return frame;
 	}

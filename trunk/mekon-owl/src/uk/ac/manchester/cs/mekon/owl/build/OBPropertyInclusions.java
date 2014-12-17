@@ -27,13 +27,14 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Represents a set of OWL properties to be included in the model.
+ * Represents a set of OWL properties to be included in the model
+ * building process.
  *
  * @author Colin Puleston
  */
 public class OBPropertyInclusions extends OBEntityGroup {
 
-	private boolean mirrorAsFrames = false;
+	private boolean frameSources = false;
 	private boolean abstractAssertables = false;
 
 	/**
@@ -48,25 +49,25 @@ public class OBPropertyInclusions extends OBEntityGroup {
 
 	/**
 	 * Sets the flag that specifies whether for every property
-	 * in this group there will be created, in addition to the
-	 * frames-model property, a corresponding frame with the same
+	 * in this group there will be generated, in addition to the
+	 * relevant frames-model slots, a frame with the same
 	 * IRI-derived identifier. By default will be set to false.
 	 *
-	 * @param mirrorAsFrames True if each created frames-model
-	 * property should be mirrored by a corresponding frame
+	 * @param frameSources True if property should be used to
+	 * generate a frame in the frames-model
 	 */
-	public void setMirrorAsFrames(boolean mirrorAsFrames) {
+	public void setFrameSources(boolean frameSources) {
 
-		this.mirrorAsFrames = mirrorAsFrames;
+		this.frameSources = frameSources;
 	}
 
 	/**
 	 * Sets the flag that specifies whether the frames-model
-	 * property that will be created for each property in this
-	 * group will be {@link CSlot#abstractAssertable}. By default
-	 * will be set to false.
+	 * slots that will be generated for the properties in this group
+	 * will be {@link CSlot#abstractAssertable}. By default will
+	 * be set to false.
 	 *
-	 * @param abstractAssertables True if each created property
+	 * @param abstractAssertables True if each generated slot
 	 * should be abstract-assertable
 	 */
 	public void setAbstractAssertables(boolean abstractAssertables) {
@@ -74,9 +75,9 @@ public class OBPropertyInclusions extends OBEntityGroup {
 		this.abstractAssertables = abstractAssertables;
 	}
 
-	boolean mirrorAsFrames() {
+	boolean frameSources() {
 
-		return mirrorAsFrames;
+		return frameSources;
 	}
 
 	boolean abstractAssertables() {

@@ -27,7 +27,8 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Represents a set of OWL classes to be included in the model.
+ * Represents a set of OWL classes to be included in the model
+ * building process.
  *
  * @author Colin Puleston
  */

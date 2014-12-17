@@ -60,7 +60,7 @@ class OBDisjunctionFrameSlot extends OBFrameSlot {
 
 		for (OBFrame disjunct : valueTypeDisjuncts) {
 
-			cDisjuncts.add(disjunct.ensureCFrame(builder, annotations));
+			cDisjuncts.add(disjunct.ensureCStructure(builder, annotations));
 		}
 
 		return CFrame.resolveDisjunction(valueTypeLabel, cDisjuncts);

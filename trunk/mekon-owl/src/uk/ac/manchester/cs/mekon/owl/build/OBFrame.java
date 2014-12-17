@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 class OBFrame extends OIdentified {
 
-	private OWLClass concept;
+	private OWLEntity sourceEntity;
 	private boolean hidden;
 	private IReasoner iReasoner;
 	private SortedSet<OBFrame> superFrames = new TreeSet<OBFrame>();
@@ -46,14 +46,14 @@ class OBFrame extends OIdentified {
 	private CFrame cFrame = null;
 
 	OBFrame(
-		OWLClass concept,
+		OWLEntity sourceEntity,
 		String label,
 		boolean hidden,
 		IReasoner iReasoner) {
 
-		super(concept, label);
+		super(sourceEntity, label);
 
-		this.concept = concept;
+		this.sourceEntity = sourceEntity;
 		this.iReasoner = iReasoner;
 		this.hidden = hidden;
 	}
@@ -69,9 +69,9 @@ class OBFrame extends OIdentified {
 		slots.add(slot);
 	}
 
-	OWLClass getConcept() {
+	OWLEntity getSourceEntity() {
 
-		return concept;
+		return sourceEntity;
 	}
 
 	boolean hidden() {
@@ -79,16 +79,16 @@ class OBFrame extends OIdentified {
 		return hidden;
 	}
 
-	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
+	CFrame ensureCStructure(CBuilder builder, OBAnnotations annotations) {
 
 		if (cFrame == null) {
 
 			cFrame = createCFrame(builder);
 
-			addCSubFrames(builder, annotations);
-			addCSlotsAndValues(builder, annotations);
+			ensureCSubStructure(builder, annotations);
+			ensureCSlotStructure(builder, annotations);
 
-			annotations.checkAdd(builder, cFrame, concept);
+			annotations.checkAdd(builder, cFrame, sourceEntity);
 		}
 
 		return cFrame;
@@ -116,17 +116,17 @@ class OBFrame extends OIdentified {
 		return frame;
 	}
 
-	private void addCSubFrames(CBuilder builder, OBAnnotations annotations) {
+	private void ensureCSubStructure(CBuilder builder, OBAnnotations annotations) {
 
 		for (OBFrame subFrame : subFrames) {
 
-			CFrame cSubFrame = subFrame.ensureCFrame(builder, annotations);
+			CFrame cSubFrame = subFrame.ensureCStructure(builder, annotations);
 
 			builder.getFrameEditor(cSubFrame).addSuper(cFrame);
 		}
 	}
 
-	private void addCSlotsAndValues(
+	private void ensureCSlotStructure(
 					CBuilder builder,
 					OBAnnotations annotations) {
 
@@ -134,7 +134,7 @@ class OBFrame extends OIdentified {
 
 			OBSlot topSlot = findTopLevelSlot(slot);
 
-			slot.checkAddCSlotAndValues(builder, cFrame, topSlot, annotations);
+			slot.ensureCStructure(builder, cFrame, topSlot, annotations);
 		}
 	}
 

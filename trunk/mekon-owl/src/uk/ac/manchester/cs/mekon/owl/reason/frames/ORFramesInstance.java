@@ -86,7 +86,7 @@ public class ORFramesInstance {
 
 		private IRI getIRIOrNull(ISlot iSlot) {
 
-			return objectProperties.getOrNull(iSlot.getType().getProperty());
+			return objectProperties.getOrNull(iSlot.getType().getIdentity());
 		}
 	}
 

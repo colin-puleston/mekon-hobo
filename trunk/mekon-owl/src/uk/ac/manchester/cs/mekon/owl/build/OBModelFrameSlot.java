@@ -53,7 +53,7 @@ class OBModelFrameSlot extends OBFrameSlot {
 
 	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
-		return valueType.ensureCFrame(builder, annotations);
+		return valueType.ensureCStructure(builder, annotations);
 	}
 
 	boolean canBeFixedValue(CValue<?> cValue) {
