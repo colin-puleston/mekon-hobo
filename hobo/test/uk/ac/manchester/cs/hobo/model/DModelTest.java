@@ -77,13 +77,12 @@ public class DModelTest extends HoboTest {
 		public void build(CBuilder builder) {
 
 			CIdentity frameAId = new CIdentity(A_EXTERNAL_ID, A_EXTERNAL_LABEL);
-			CIdentity intPropId = new CIdentity(INT_EXTERNAL_ID, INT_EXTERNAL_LABEL);
+			CIdentity intSlotId = new CIdentity(INT_EXTERNAL_ID, INT_EXTERNAL_LABEL);
 
 			CFrame frameA = builder.addFrame(frameAId, false);
 			CFrameEditor frameAEd = builder.getFrameEditor(frameA);
-			CProperty intProp = builder.addProperty(intPropId);
 
-			frameAEd.addSlot(intProp, CCardinality.FREE, getIntegerValueType());
+			frameAEd.addSlot(intSlotId, CCardinality.FREE, getIntegerValueType());
 		}
 	}
 
@@ -256,7 +255,7 @@ public class DModelTest extends HoboTest {
 		CSlot intSlot = getCSlot(model, FRAME_A_ID, INT_SLOT_ID);
 
 		testLabel(frameA, expectedFrameALabel);
-		testLabel(intSlot.getProperty(), expectedIntSlotLabel);
+		testLabel(intSlot, expectedIntSlotLabel);
 	}
 
 	private void testLabel(CIdentified identified, String expected) {
