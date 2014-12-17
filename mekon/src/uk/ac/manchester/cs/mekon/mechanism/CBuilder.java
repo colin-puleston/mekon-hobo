@@ -129,26 +129,6 @@ public interface CBuilder {
 	public void setIReasoner(CFrame frame, IReasoner iReasoner);
 
 	/**
-	 * Creates a new model-property and adds it to the model.
-	 *
-	 * @param identity Identify of property to create
-	 * @return Created property
-	 * @throws new KAccessException if property with specified identity
-	 * already exists
-	 */
-	public CProperty addProperty(CIdentity identity);
-
-	/**
-	 * Either retrieves an existing model-property with the specified
-	 * identity or, if no such property currently exists, creates a new
-	 * model-property and adds it to the model.
-	 *
-	 * @param identity Identify of property to retrieve or create
-	 * @return Retrieved or created property
-	 */
-	public CProperty resolveProperty(CIdentity identity);
-
-	/**
 	 * Retrieves all section-building mechanisms that will be used
 	 * in creating the model.
 	 *
@@ -180,27 +160,12 @@ public interface CBuilder {
 	public CIdentifieds<CFrame> getFrames();
 
 	/**
-	 * Retrieves all properties in the model.
-	 *
-	 * @return All properties in model
-	 */
-	public CIdentifieds<CProperty> getProperties();
-
-	/**
 	 * Provides an editor for the specified frame.
 	 *
 	 * @param frame Frame for which editor is required
 	 * @return Editor for specified frame
 	 */
 	public CFrameEditor getFrameEditor(CFrame frame);
-
-	/**
-	 * Provides an editor for the specified property.
-	 *
-	 * @param property Property for which editor is required
-	 * @return Editor for specified property
-	 */
-	public CPropertyEditor getPropertyEditor(CProperty property);
 
 	/**
 	 * Provides an editor for the specified slot.

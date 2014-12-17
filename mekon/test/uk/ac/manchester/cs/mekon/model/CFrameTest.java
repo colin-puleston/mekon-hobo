@@ -365,10 +365,8 @@ public class CFrameTest extends CValueTest<CFrame> {
 			addSuperFrame(vb, va);
 		}
 
-		CProperty p = createCProperty("P");
-
-		createCSlot(a, p, CCardinality.FREE, va);
-		createCSlot(b, p, CCardinality.FREE, vb);
+		createCSlot(a, "S", CCardinality.FREE, va);
+		createCSlot(b, "S", CCardinality.FREE, vb);
 
 		b.getSlots().validateAll(b);
 	}

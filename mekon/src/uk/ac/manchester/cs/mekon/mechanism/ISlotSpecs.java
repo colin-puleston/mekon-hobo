@@ -44,8 +44,8 @@ public class ISlotSpecs {
 	private IEditor iEditor;
 
 	private List<ISlotSpec> specs = new ArrayList<ISlotSpec>();
-	private Map<CProperty, ISlotSpec> specsByProperty
-					= new HashMap<CProperty, ISlotSpec>();
+	private Map<CIdentity, ISlotSpec> specsByIdentity
+					= new HashMap<CIdentity, ISlotSpec>();
 
 	private Set<CFrame> absorbedFrameTypes = new HashSet<CFrame>();
 
@@ -188,7 +188,7 @@ public class ISlotSpecs {
 
 		for (CSlot slotType : frameType.getSlots().asList()) {
 
-			getSpec(slotType.getProperty()).absorbType(slotType);
+			getSpec(slotType.getIdentity()).absorbType(slotType);
 		}
 	}
 
@@ -196,17 +196,17 @@ public class ISlotSpecs {
 
 		CSlotValues slotValues = frameType.getSlotValues();
 
-		for (CProperty property : slotValues.getSlotProperties()) {
+		for (CIdentity slotId : slotValues.getSlotIdentities()) {
 
-			List<IValue> fixedValues = slotValues.getIValues(property);
+			List<IValue> fixedValues = slotValues.getIValues(slotId);
 
-			getSpec(property).absorbFixedValues(fixedValues);
+			getSpec(slotId).absorbFixedValues(fixedValues);
 		}
 	}
 
 	private void removeIfRedundant(IFrame frame, ISlot slot) {
 
-		if (!specsByProperty.containsKey(slot.getType().getProperty())) {
+		if (!specsByIdentity.containsKey(slot.getType().getIdentity())) {
 
 			getFrameEditor(frame).removeSlot(slot);
 		}
@@ -238,24 +238,19 @@ public class ISlotSpecs {
 
 	private ISlot getSlotOrNull(IFrame frame, ISlotSpec spec) {
 
-		ISlots slots = frame.getSlots();
-		CProperty property = spec.getProperty();
-
-		return slots.containsSlotFor(property)
-					? slots.getSlotFor(property)
-					: null;
+		return frame.getSlots().getOrNull(spec.getIdentity());
 	}
 
-	private ISlotSpec getSpec(CProperty property) {
+	private ISlotSpec getSpec(CIdentity slotId) {
 
-		ISlotSpec spec = specsByProperty.get(property);
+		ISlotSpec spec = specsByIdentity.get(slotId);
 
 		if (spec == null) {
 
-			spec = new ISlotSpec(iEditor, property);
+			spec = new ISlotSpec(iEditor, slotId);
 
 			specs.add(spec);
-			specsByProperty.put(property, spec);
+			specsByIdentity.put(slotId, spec);
 		}
 
 		return spec;

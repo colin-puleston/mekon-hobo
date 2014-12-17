@@ -33,19 +33,19 @@ import uk.ac.manchester.cs.mekon.*;
  */
 class CSlotValueTypeValidator extends CHierarchyCrawler {
 
-	private CProperty property;
+	private CIdentity slotId;
 	private CValue<?> valueType;
 
 	private boolean valid = false;
 
 	CSlotValueTypeValidator(CSlot slot) {
 
-		this(slot.getProperty(), slot.getValueType());
+		this(slot.getIdentity(), slot.getValueType());
 	}
 
-	CSlotValueTypeValidator(CProperty property, CValue<?> valueType) {
+	CSlotValueTypeValidator(CIdentity slotId, CValue<?> valueType) {
 
-		this.property = property;
+		this.slotId = slotId;
 		this.valueType = valueType;
 	}
 
@@ -61,7 +61,7 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 		if (!valid) {
 
 			throw new KModelException(
-						"No slot found for property: " + property
+						"No slot found for slotId: " + slotId
 						+ " on frame: " + container);
 		}
 	}
@@ -75,9 +75,9 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 
 		CSlots slots = current.getSlots();
 
-		if (slots.containsSlotFor(property)) {
+		if (slots.containsValueFor(slotId)) {
 
-			checkValidForSlot(slots.getSlotFor(property));
+			checkValidForSlot(slots.get(slotId));
 
 			valid = true;
 

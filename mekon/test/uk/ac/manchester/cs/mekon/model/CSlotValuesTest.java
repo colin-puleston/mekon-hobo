@@ -36,110 +36,110 @@ public class CSlotValuesTest extends MekonTest {
 
 	private CModelFrame container = createCFrame("CONTAINER");
 
-	private CProperty p1 = createCProperty("P1");
-	private CProperty p2 = createCProperty("P2");
+	private CIdentity slot1Name = createIdentity("SLOT-1");
+	private CIdentity slot2Name = createIdentity("SLOT-2");
 
-	private CModelFrame rootValueP1 = createCFrame("ROOT-VALUE-P1");
-	private CModelFrame rootValueP2 = createCFrame("ROOT-VALUE-P2");
+	private CModelFrame rootValueSlot1 = createCFrame("ROOT-VALUE-SLOT-1");
+	private CModelFrame rootValueSlot2 = createCFrame("ROOT-VALUE-SLOT-2");
 
-	private CModelFrame value1P1 = createCFrame("VALUE-1-P1");
-	private CModelFrame value2P1 = createCFrame("VALUE-2-P1");
-	private CModelFrame value2XP1 = createCFrame("VALUE-2X-P1");
-	private CModelFrame value1P2 = createCFrame("VALUE-1-P2");
-	private CModelFrame value2P2 = createCFrame("VALUE-2-P2");
+	private CModelFrame value1Slot1 = createCFrame("VALUE-1-SLOT-1");
+	private CModelFrame value2Slot1 = createCFrame("VALUE-2-SLOT-1");
+	private CModelFrame value2XSlot1 = createCFrame("VALUE-2X-SLOT-1");
+	private CModelFrame value1Slot2 = createCFrame("VALUE-1-SLOT-2");
+	private CModelFrame value2Slot2 = createCFrame("VALUE-2-SLOT-2");
 
-	private CProperty badProperty = createCProperty("BAD-PROPERTY");
+	private CIdentity badSlotId = createIdentity("BAD-SLOT-NAME");
 	private CModelFrame badValue = createCFrame("BAD-VALUE");
 
 	public CSlotValuesTest() {
 
-		addSuperFrame(value1P1, rootValueP1);
-		addSuperFrame(value2P1, rootValueP1);
-		addSuperFrame(value2XP1, value2P1);
+		addSuperFrame(value1Slot1, rootValueSlot1);
+		addSuperFrame(value2Slot1, rootValueSlot1);
+		addSuperFrame(value2XSlot1, value2Slot1);
 
-		addSuperFrame(value1P2, rootValueP2);
-		addSuperFrame(value2P2, rootValueP2);
+		addSuperFrame(value1Slot2, rootValueSlot2);
+		addSuperFrame(value2Slot2, rootValueSlot2);
 
-		createCSlot(container, p1, CCardinality.FREE, rootValueP1);
-		createCSlot(container, p2, CCardinality.FREE, rootValueP2);
+		createCSlot(container, slot1Name, CCardinality.FREE, rootValueSlot1);
+		createCSlot(container, slot2Name, CCardinality.FREE, rootValueSlot2);
 	}
 
 	@Test
 	public void test_addAndClearValues() {
 
-		addAndValidate(p1, value1P1);
-		addAndValidate(p2, value1P2);
-		addAndValidate(p1, value2P1);
-		addAndValidate(p2, value2P2);
+		addAndValidate(slot1Name, value1Slot1);
+		addAndValidate(slot2Name, value1Slot2);
+		addAndValidate(slot1Name, value2Slot1);
+		addAndValidate(slot2Name, value2Slot2);
 
-		testCurrentValues(p1, value1P1, value2P1);
-		testCurrentValues(p2, value1P2, value2P2);
+		testCurrentValues(slot1Name, value1Slot1, value2Slot1);
+		testCurrentValues(slot2Name, value1Slot2, value2Slot2);
 
 		container.clearSlotValues();
 
-		assertTrue(getSlotValues().getSlotProperties().isEmpty());
+		assertTrue(getSlotValues().getSlotIdentities().isEmpty());
 	}
 
 	@Test
 	public void test_valuesDefined() {
 
 		assertFalse(getSlotValues().valuesDefined());
-		addAndValidate(p1, value1P1);
+		addAndValidate(slot1Name, value1Slot1);
 		assertTrue(getSlotValues().valuesDefined());
 	}
 
 	@Test
 	public void test_removeSubsumedValues() {
 
-		addAndValidate(p1, value1P1);
-		addAndValidate(p1, value2P1);
-		addAndValidate(p1, value2XP1);
+		addAndValidate(slot1Name, value1Slot1);
+		addAndValidate(slot1Name, value2Slot1);
+		addAndValidate(slot1Name, value2XSlot1);
 
-		testCurrentValues(p1, value1P1, value2XP1);
+		testCurrentValues(slot1Name, value1Slot1, value2XSlot1);
 	}
 
 	@Test
 	public void test_dontAddSubsumingValues() {
 
-		addAndValidate(p1, value1P1);
-		addAndValidate(p1, value2XP1);
-		addAndValidate(p1, value2P1);
+		addAndValidate(slot1Name, value1Slot1);
+		addAndValidate(slot1Name, value2XSlot1);
+		addAndValidate(slot1Name, value2Slot1);
 
-		testCurrentValues(p1, value1P1, value2XP1);
+		testCurrentValues(slot1Name, value1Slot1, value2XSlot1);
 	}
 
 	@Test
 	public void test_dontAddDuplicateValues() {
 
-		addAndValidate(p1, value1P1);
-		addAndValidate(p1, value2P1);
-		addAndValidate(p1, value1P1);
+		addAndValidate(slot1Name, value1Slot1);
+		addAndValidate(slot1Name, value2Slot1);
+		addAndValidate(slot1Name, value1Slot1);
 
-		testCurrentValues(p1, value1P1, value2P1);
+		testCurrentValues(slot1Name, value1Slot1, value2Slot1);
 	}
 
 	@Test(expected = KModelException.class)
-	public void test_addValueForInvalidProperty() {
+	public void test_addValueForInvalidSlotId() {
 
-		addAndValidate(badProperty, createCFrame("VALUE-FOR-BAD-PROPERTY"));
+		addAndValidate(badSlotId, createCFrame("VALUE-FOR-BAD-SLOT-NAME"));
 	}
 
 	@Test(expected = KModelException.class)
-	public void test_addInvalidValueForProperty() {
+	public void test_addInvalidValueForSlotId() {
 
-		addAndValidate(p1, badValue);
+		addAndValidate(slot1Name, badValue);
 	}
 
-	private void addAndValidate(CProperty p, CValue<?> value) {
+	private void addAndValidate(CIdentity slotId, CValue<?> value) {
 
-		container.addSlotValue(p, value);
+		container.addSlotValue(slotId, value);
 		getSlotValues().validateAll(container);
 	}
 
-	private void testCurrentValues(CProperty p, CValue<?>... values) {
+	private void testCurrentValues(CIdentity slotId, CValue<?>... values) {
 
-		assertTrue(getSlotValues().valueFor(p));
-		testList(getSlotValues().getValues(p), list(values));
+		assertTrue(getSlotValues().valueFor(slotId));
+		testList(getSlotValues().getValues(slotId), list(values));
 	}
 
 	private CSlotValues getSlotValues() {

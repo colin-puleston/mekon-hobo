@@ -97,28 +97,6 @@ class CBuilderImpl implements CBuilder {
 		frame.asModelFrame().setIReasoner(iReasoner);
 	}
 
-	public CProperty addProperty(CIdentity identity) {
-
-		if (getProperties().containsValueFor(identity)) {
-
-			throw new KModelException("Property already defined: " + identity);
-		}
-
-		return model.addProperty(identity);
-	}
-
-	public CProperty resolveProperty(CIdentity identity) {
-
-		CProperty property = getProperties().getOrNull(identity);
-
-		if (property != null) {
-
-			return property;
-		}
-
-		return model.addProperty(identity);
-	}
-
 	public List<CSectionBuilder> getAllSectionBuilders() {
 
 		return sectionBuilders;
@@ -149,19 +127,9 @@ class CBuilderImpl implements CBuilder {
 		return model.getFrames();
 	}
 
-	public CIdentifieds<CProperty> getProperties() {
-
-		return model.getProperties();
-	}
-
 	public CFrameEditor getFrameEditor(CFrame frame) {
 
 		return frame.asModelFrame().createEditor();
-	}
-
-	public CPropertyEditor getPropertyEditor(CProperty property) {
-
-		return property.createEditor();
 	}
 
 	public CSlotEditor getSlotEditor(CSlot slot) {

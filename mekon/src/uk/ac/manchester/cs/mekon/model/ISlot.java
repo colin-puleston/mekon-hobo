@@ -92,7 +92,7 @@ public class ISlot implements IEntity {
 	 */
 	public String toString() {
 
-		return FEntityDescriber.entityToString(this, getProperty());
+		return FEntityDescriber.entityToString(this, type);
 	}
 
 	/**
@@ -251,11 +251,6 @@ public class ISlot implements IEntity {
 	private boolean querySlot() {
 
 		return container.getCategory().query();
-	}
-
-	private CProperty getProperty() {
-
-		return type.getProperty();
 	}
 
 	private boolean abstractValuesAllowedDefault() {

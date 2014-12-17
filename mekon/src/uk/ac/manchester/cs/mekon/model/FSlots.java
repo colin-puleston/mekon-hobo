@@ -38,31 +38,6 @@ import java.util.*;
 public abstract class FSlots<S> extends FIdentifiables<S> {
 
 	/**
-	 * Tests whether list contains slot for the specified
-	 * property.
-	 *
-	 * @param property Property to look for
-	 * @return True if list contains slot for specified property
-	 */
-	public boolean containsSlotFor(CProperty property) {
-
-		return containsValueFor(property.getIdentity());
-	}
-
-	/**
-	 * Retrieves the slot for the specified property.
-	 *
-	 * @param property Property for which slot is required
-	 * @return Required slot
-	 * @throws KAccessException If list does not contain slot for
-	 * specified property
-	 */
-	public S getSlotFor(CProperty property) {
-
-		return get(property.getIdentity());
-	}
-
-	/**
 	 * Provides the identity for the property associated with the
 	 * specified slot.
 	 *
@@ -71,7 +46,7 @@ public abstract class FSlots<S> extends FIdentifiables<S> {
 	 */
 	protected CIdentity getIdentity(S slot) {
 
-		return getCSlot(slot).getProperty().getIdentity();
+		return getCSlot(slot).getIdentity();
 	}
 
 	void add(S slot) {

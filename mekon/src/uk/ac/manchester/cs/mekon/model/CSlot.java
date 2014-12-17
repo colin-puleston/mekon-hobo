@@ -31,14 +31,16 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  *
  * @author Colin Puleston
  */
-public class CSlot implements CSourced {
+public class CSlot implements CIdentified, CSourced {
 
+	private CIdentity identity;
 	private CFrame container;
-	private CProperty property;
+
 	private CSource source = CSource.INDIRECT;
 	private CCardinality cardinality;
-	private boolean abstractAssertable = false;
 	private FSlotAttributes attributes;
+	private boolean abstractAssertable = false;
+
 	private CAnnotations annotations = new CAnnotations(this);
 
 	private class Editor implements CSlotEditor {
@@ -46,6 +48,11 @@ public class CSlot implements CSourced {
 		public void setSource(CSource source) {
 
 			CSlot.this.source = source;
+		}
+
+		public void resetLabel(String newLabel) {
+
+			identity = identity.deriveIdentity(newLabel);
 		}
 
 		public void absorbCardinality(CCardinality otherCardinality) {
@@ -79,7 +86,7 @@ public class CSlot implements CSourced {
 	 */
 	public String toString() {
 
-		return FEntityDescriber.entityToString(this, property);
+		return FEntityDescriber.entityToString(this, this);
 	}
 
 	/**
@@ -87,7 +94,18 @@ public class CSlot implements CSourced {
 	 */
 	public String getDisplayLabel() {
 
-		return property.getDisplayLabel();
+		return identity.getLabel();
+	}
+
+	/**
+	 * Provides the model with which the slot is associated.
+	 *
+	 * @return Model with which slot is associated
+	 * @throws KAccessException if this is the root-slot
+	 */
+	public CModel getModel() {
+
+		return container.getModel();
 	}
 
 	/**
@@ -101,10 +119,13 @@ public class CSlot implements CSourced {
 	}
 
 	/**
+	 * Provides the identity of the slot.
+	 *
+	 * @return Identity of slot
 	 */
-	public CProperty getProperty() {
+	public CIdentity getIdentity() {
 
-		return property;
+		return identity;
 	}
 
 	/**
@@ -182,12 +203,12 @@ public class CSlot implements CSourced {
 
 	CSlot(
 		CFrame container,
-		CProperty property,
+		CIdentity identity,
 		CCardinality cardinality,
 		CValue<?> valueType) {
 
 		this.container = container;
-		this.property = property;
+		this.identity = identity;
 		this.cardinality = cardinality;
 
 		attributes = new FSlotAttributes(valueType);
