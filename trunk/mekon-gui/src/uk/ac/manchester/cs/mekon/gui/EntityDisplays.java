@@ -88,9 +88,9 @@ class EntityDisplays {
 		return new GCellDisplay(label, icon, fontStyle.getStyleId());
 	}
 
-	GCellDisplay forCSlotValues(CProperty property) {
+	GCellDisplay forCSlotValues(CIdentity slotId) {
 
-		return get(property.getDisplayLabel(), icons.forCSlotValues(), FontStyle.LINK);
+		return get(slotId.getLabel(), icons.forCSlotValues(), FontStyle.LINK);
 	}
 
 	private GCellDisplay getValueDisplay(FEntity value, Icon icon, boolean isValueType) {

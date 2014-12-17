@@ -55,7 +55,7 @@ class SlotLabels {
 
 	static String get(CSlot slot) {
 
-		return slot.getProperty().getDisplayLabel() + getSuffix(slot);
+		return slot.getDisplayLabel() + getSuffix(slot);
 	}
 
 	static String getCardinalityModifierHelp(CCardinality cardinality) {

@@ -138,11 +138,11 @@ class CFrameNode extends GNode {
 
 	void checkAddFixedValuesNode() {
 
-		List<CProperty> props = getRequiredSlotValueProperties();
+		List<CIdentity> slotIds = getRequiredSlotValueIds();
 
-		if (!props.isEmpty()) {
+		if (!slotIds.isEmpty()) {
 
-			addChild(new CFrameFixedValuesNode(tree, frame, props));
+			addChild(new CFrameFixedValuesNode(tree, frame, slotIds));
 		}
 	}
 
@@ -165,20 +165,20 @@ class CFrameNode extends GNode {
 		}
 	}
 
-	private List<CProperty> getRequiredSlotValueProperties() {
+	private List<CIdentity> getRequiredSlotValueIds() {
 
 		CSlotValues values = frame.getSlotValues();
-		List<CProperty> requiredProps = new ArrayList<CProperty>();
+		List<CIdentity> requiredIds = new ArrayList<CIdentity>();
 
-		for (CProperty prop : values.getSlotProperties()) {
+		for (CIdentity id : values.getSlotIdentities()) {
 
-			if (containsRequiredCValue(values.getValues(prop))) {
+			if (containsRequiredCValue(values.getValues(id))) {
 
-				requiredProps.add(prop);
+				requiredIds.add(id);
 			}
 		}
 
-		return requiredProps;
+		return requiredIds;
 	}
 
 	private boolean containsRequiredCValue(List<CValue<?>> values) {

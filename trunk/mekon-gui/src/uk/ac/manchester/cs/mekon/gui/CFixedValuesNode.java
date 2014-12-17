@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 class CFixedValuesNode extends GNode {
 
 	private CTree tree;
-	private CProperty property;
+	private CIdentity slotId;
 	private List<CValue<?>> fixedValues;
 
 	private class ValueNodeCreator extends CValueVisitor {
@@ -78,15 +78,15 @@ class CFixedValuesNode extends GNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return EntityDisplays.get().forCSlotValues(property);
+		return EntityDisplays.get().forCSlotValues(slotId);
 	}
 
-	CFixedValuesNode(CTree tree, CProperty property, List<CValue<?>> fixedValues) {
+	CFixedValuesNode(CTree tree, CIdentity slotId, List<CValue<?>> fixedValues) {
 
 		super(tree);
 
 		this.tree = tree;
-		this.property = property;
+		this.slotId = slotId;
 		this.fixedValues = fixedValues;
 	}
 }

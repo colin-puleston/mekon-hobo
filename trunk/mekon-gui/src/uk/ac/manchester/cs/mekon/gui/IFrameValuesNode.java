@@ -125,11 +125,11 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 			if (!values.isEmpty()) {
 
-				CProperty p = slot.getType().getProperty();
+				CIdentity id = slot.getType().getIdentity();
 
-				if (toSlots.containsSlotFor(p)) {
+				if (toSlots.containsValueFor(id)) {
 
-					toSlots.getSlotFor(p).getValuesEditor().addAll(values);
+					toSlots.get(id).getValuesEditor().addAll(values);
 				}
 			}
 		}
