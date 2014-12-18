@@ -60,9 +60,9 @@ public class CSlotValues {
 		}
 	};
 
-	private List<CIdentity> identities = new ArrayList<CIdentity>();
-	private KListMap<CIdentity, CValue<?>> valuesByIdentity
-							= new KListMap<CIdentity, CValue<?>>();
+	private List<CIdentity> slotIds = new ArrayList<CIdentity>();
+	private KListMap<CIdentity, CValue<?>> valuesBySlotId
+						= new KListMap<CIdentity, CValue<?>>();
 
 	/**
 	 * Specifies whether any fixed slot-values have been defined
@@ -72,20 +72,20 @@ public class CSlotValues {
 	 */
 	public boolean valuesDefined() {
 
-		return !identities.isEmpty();
+		return !slotIds.isEmpty();
 	}
 
 	/**
 	 * Checks whether there are fixed slot-values defined for the
 	 * specified slot.
 	 *
-	 * @param identity Identity of slot for which the existance of
+	 * @param slotId Identity of slot for which the existance of
 	 * values is to be tested for
 	 * @return True if fixed slot-values are defined for relevant slot
 	 */
-	public boolean valueFor(CIdentity identity) {
+	public boolean valueFor(CIdentity slotId) {
 
-		return identities.contains(identity);
+		return slotIds.contains(slotId);
 	}
 
 	/**
@@ -96,35 +96,35 @@ public class CSlotValues {
 	 */
 	public List<CIdentity> getSlotIdentities() {
 
-		return identities;
+		return slotIds;
 	}
 
 	/**
 	 * Provides the set of fixed values for the specified slot.
 	 *
-	 * @param identity Identity of slot for which values are required
+	 * @param slotId Identity of slot for which values are required
 	 * @return Relevant set of values
 	 */
-	public List<CValue<?>> getValues(CIdentity identity) {
+	public List<CValue<?>> getValues(CIdentity slotId) {
 
-		return valuesByIdentity.getList(identity);
+		return valuesBySlotId.getList(slotId);
 	}
 
 	/**
 	 * Provides the set of fixed values for the specified slot, with
 	 * the returned set being cast to a known type.
 	 *
-	 * @param identity Identity of slot for which values are required
+	 * @param slotId Identity of slot for which values are required
 	 * @param valueClass Known class of values
 	 * @return Relevant set of values
 	 */
 	public <V extends CValue<?>>List<V> getValues(
-											CIdentity identity,
+											CIdentity slotId,
 											Class<V> valueClass) {
 
 		List<V> values = new ArrayList<V>();
 
-		for (CValue<?> value : getValues(identity)) {
+		for (CValue<?> value : getValues(slotId)) {
 
 			values.add(valueClass.cast(value));
 		}
@@ -136,17 +136,17 @@ public class CSlotValues {
 	 * Provides a set of default instantiations of the fixed values
 	 * for the specified slot.
 	 *
-	 * @param identity Identity of slot for which default
+	 * @param slotId Identity of slot for which default
 	 * value-instantiations are required
 	 * @return Relevant set of default value-instantiations
 	 * @throws KAccessException if it is not possible to obtain default
 	 * value-instantiations for any of the relevent fixed values
 	 */
-	public List<IValue> getIValues(CIdentity identity) {
+	public List<IValue> getIValues(CIdentity slotId) {
 
 		List<IValue> iValues = new ArrayList<IValue>();
 
-		for (CValue<?> value : getValues(identity)) {
+		for (CValue<?> value : getValues(slotId)) {
 
 			iValues.add(value.getDefaultValue());
 		}
@@ -157,43 +157,43 @@ public class CSlotValues {
 	CSlotValues() {
 	}
 
-	void add(CIdentity identity, CValue<?> value) {
+	void add(CIdentity slotId, CValue<?> value) {
 
-		if (valuesByIdentity.containsKey(identity)) {
+		if (valuesBySlotId.containsKey(slotId)) {
 
-			absorb(identity, value);
+			absorb(slotId, value);
 		}
 		else {
 
-			identities.add(identity);
-			valuesByIdentity.add(identity, value);
+			slotIds.add(slotId);
+			valuesBySlotId.add(slotId, value);
 		}
 	}
 
 	void clear() {
 
-		identities.clear();
-		valuesByIdentity.clear();
+		slotIds.clear();
+		valuesBySlotId.clear();
 	}
 
 	void removeAll(CValue<?> value) {
 
-		for (CIdentity identity : identities) {
+		for (CIdentity slotId : slotIds) {
 
-			valuesByIdentity.remove(identity, value);
+			valuesBySlotId.remove(slotId, value);
 		}
 	}
 
 	boolean equalSlotValues(CSlotValues other) {
 
-		if (!identities.equals(other.identities)) {
+		if (!slotIds.equals(other.slotIds)) {
 
 			return false;
 		}
 
-		for (CIdentity identity : identities) {
+		for (CIdentity slotId : slotIds) {
 
-			if (!getValues(identity).equals(other.getValues(identity))) {
+			if (!getValues(slotId).equals(other.getValues(slotId))) {
 
 				return false;
 			}
@@ -204,9 +204,9 @@ public class CSlotValues {
 
 	boolean subsumes(CSlotValues testSubsumed) {
 
-		for (CIdentity identity : identities) {
+		for (CIdentity slotId : slotIds) {
 
-			if (!subsumedValuesFor(identity, testSubsumed)) {
+			if (!subsumedValuesFor(slotId, testSubsumed)) {
 
 				return false;
 			}
@@ -217,35 +217,35 @@ public class CSlotValues {
 
 	void validateAll(CFrame container) {
 
-		for (CIdentity identity : identities) {
+		for (CIdentity slotId : slotIds) {
 
-			for (CValue<?> value : getValues(identity)) {
+			for (CValue<?> value : getValues(slotId)) {
 
-				validate(container, identity, value);
+				validate(container, slotId, value);
 			}
 		}
 	}
 
-	void validate(CFrame container, CIdentity identity, CValue<?> value) {
+	void validate(CFrame container, CIdentity slotId, CValue<?> value) {
 
-		new CSlotValueTypeValidator(identity, value).checkValidFor(container);
+		new CSlotValueTypeValidator(slotId, value).checkValidFor(container);
 	}
 
 	int createHashCode() {
 
-		int hashCode = identities.hashCode();
+		int hashCode = slotIds.hashCode();
 
-		for (CIdentity identity : identities) {
+		for (CIdentity slotId : slotIds) {
 
-			hashCode += getValues(identity).hashCode();
+			hashCode += getValues(slotId).hashCode();
 		}
 
 		return hashCode;
 	}
 
-	private void absorb(CIdentity identity, CValue<?> newValue) {
+	private void absorb(CIdentity slotId, CValue<?> newValue) {
 
-		for (CValue<?> value : getValues(identity)) {
+		for (CValue<?> value : getValues(slotId)) {
 
 			if (newValue.subsumes(value)) {
 
@@ -254,24 +254,22 @@ public class CSlotValues {
 
 			if (newValue.subsumedBy(value)) {
 
-				valuesByIdentity.remove(identity, value);
+				valuesBySlotId.remove(slotId, value);
 			}
 		}
 
-		valuesByIdentity.add(identity, newValue);
+		valuesBySlotId.add(slotId, newValue);
 	}
 
-	private boolean subsumedValuesFor(
-						CIdentity identity,
-						CSlotValues testSubsumed) {
+	private boolean subsumedValuesFor(CIdentity slotId, CSlotValues testSubsumed) {
 
-		if (!testSubsumed.valueFor(identity)) {
+		if (!testSubsumed.valueFor(slotId)) {
 
 			return false;
 		}
 
-		List<CValue<?>> values = getValues(identity);
-		List<CValue<?>> testSubValues = testSubsumed.getValues(identity);
+		List<CValue<?>> values = getValues(slotId);
+		List<CValue<?>> testSubValues = testSubsumed.getValues(slotId);
 
 		return CValue.allSubsumptions(values, testSubValues);
 	}
