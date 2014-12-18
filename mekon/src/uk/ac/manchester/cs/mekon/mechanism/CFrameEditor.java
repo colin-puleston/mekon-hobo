@@ -66,13 +66,13 @@ public interface CFrameEditor {
 	/**
 	 * Creates a slot and adds it to the frame.
 	 *
-	 * @param identity Identity for slot
+	 * @param slotId Identity for slot
 	 * @param cardinality Cardinality for slot
 	 * @param valueType Value-type for slot
 	 * @return Created and added slot
 	 */
 	public CSlot addSlot(
-					CIdentity identity,
+					CIdentity slotId,
 					CCardinality cardinality,
 					CValue<?> valueType);
 
@@ -81,20 +81,20 @@ public interface CFrameEditor {
 	 * nothing if slot has a {@link CSource#direct} source, or if no
 	 * such slot is attached to the frame.
 	 *
-	 * @param identity Identity of slot to be removed
+	 * @param slotId Identity of slot to be removed
 	 * @return True if slot was removed
 	 */
-	public boolean removeSlot(CIdentity identity);
+	public boolean removeSlot(CIdentity slotId);
 
 	/**
 	 * Removes all slots with specified identity from all descendant
 	 * frames, except for any such slots with {@link CSource#direct}
 	 * sources.
 	 *
-	 * @param identity Identity of slots are to be removed
+	 * @param slotId Identity of slots are to be removed
 	 * @return True if all relevant slots were removed
 	 */
-	public boolean removeSlotsFromDescendants(CIdentity identity);
+	public boolean removeSlotsFromDescendants(CIdentity slotId);
 
 	/**
 	 * Removes all slots from the frame, except for any slots with
@@ -117,10 +117,10 @@ public interface CFrameEditor {
 	 * assigned to the relevant slots on all instantiations of the
 	 * frame.
 	 *
-	 * @param identity Identity of relevant slot
+	 * @param slotId Identity of relevant slot
 	 * @param value Fixed value for slot
 	 */
-	public void addSlotValue(CIdentity identity, CValue<?> value);
+	public void addSlotValue(CIdentity slotId, CValue<?> value);
 
 	/**
 	 * Removes all default slot-value specifications for the frame.

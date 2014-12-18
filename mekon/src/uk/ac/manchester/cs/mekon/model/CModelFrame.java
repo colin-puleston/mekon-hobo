@@ -137,25 +137,25 @@ class CModelFrame extends CFrame {
 		}
 
 		public CSlot addSlot(
-						CIdentity identity,
+						CIdentity slotId,
 						CCardinality cardinality,
 						CValue<?> valueType) {
 
-			CSlot slot = new CSlot(CModelFrame.this, identity, cardinality, valueType);
+			CSlot slot = new CSlot(CModelFrame.this, slotId, cardinality, valueType);
 
 			CModelFrame.this.addSlot(slot);
 
 			return slot;
 		}
 
-		public boolean removeSlot(CIdentity identity) {
+		public boolean removeSlot(CIdentity slotId) {
 
-			return CModelFrame.this.removeSlot(identity);
+			return CModelFrame.this.removeSlot(slotId);
 		}
 
-		public boolean removeSlotsFromDescendants(CIdentity identity) {
+		public boolean removeSlotsFromDescendants(CIdentity slotId) {
 
-			return new DescendantSlotsRemover(identity).allRemoved();
+			return new DescendantSlotsRemover(slotId).allRemoved();
 		}
 
 		public boolean clearSlots() {
@@ -168,9 +168,9 @@ class CModelFrame extends CFrame {
 			return removeSlotsFromDescendants(null);
 		}
 
-		public void addSlotValue(CIdentity identity, CValue<?> value) {
+		public void addSlotValue(CIdentity slotId, CValue<?> value) {
 
-			CModelFrame.this.addSlotValue(identity, value);
+			CModelFrame.this.addSlotValue(slotId, value);
 		}
 
 		public void clearSlotValues() {
@@ -368,14 +368,14 @@ class CModelFrame extends CFrame {
 		return true;
 	}
 
-	void addSlotValue(CIdentity identity, CValue<?> value) {
+	void addSlotValue(CIdentity slotId, CValue<?> value) {
 
 		if (slotValues == CSlotValues.INERT_INSTANCE) {
 
 			slotValues = new CSlotValues();
 		}
 
-		slotValues.add(identity, value);
+		slotValues.add(slotId, value);
 		value.registerSlotValueReferencingFrame(this);
 	}
 
@@ -472,9 +472,9 @@ class CModelFrame extends CFrame {
 		}
 	}
 
-	private boolean removeSlot(CIdentity identity) {
+	private boolean removeSlot(CIdentity slotId) {
 
-		CSlot slot = slots.getOrNull(identity);
+		CSlot slot = slots.getOrNull(slotId);
 
 		return slot != null && removeSlot(slot);
 	}
