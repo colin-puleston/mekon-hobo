@@ -39,7 +39,7 @@ public class CSlotValues {
 
 	static final CSlotValues INERT_INSTANCE = new CSlotValues() {
 
-		void add(CIdentity identity, CValue<?> value) {
+		void add(CIdentity slotId, CValue<?> value) {
 
 			onAttemptedUpdate();
 		}

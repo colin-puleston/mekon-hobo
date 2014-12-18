@@ -82,12 +82,12 @@ public class CExtender {
 	/**
 	 * Adds a fixed slot-value for the extension-frame.
 	 *
-	 * @param identity Identity of relevant slot
+	 * @param slotId Identity of relevant slot
 	 * @param value Relevant value
 	 */
-	public void addSlotValue(CIdentity identity, CValue<?> value) {
+	public void addSlotValue(CIdentity slotId, CValue<?> value) {
 
-		slotValues.add(identity, value);
+		slotValues.add(slotId, value);
 	}
 
 	/**
