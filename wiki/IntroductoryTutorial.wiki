@@ -2,4 +2,6 @@
 
 = Directions for Introductory Tutorial =
 
+This tutorial provides a general overview of the MEKON and HOBO frameworks.
+
 The top-level folder in the MEKON project SVN contains a "docs" folder, which contains the file "MEKON-HOBO Introductory Tutorial.pptx".
