@@ -2,7 +2,7 @@
 
 = MEKON =
 
-MEKON is a framework for the creation of ontology-driven applications, within which a set of externally represented ontologies, or ontology-like *knowledge sources*, together with associated *reasoning mechanisms*, are accessed via a generic in-memory *frames model (FM)*, and automatically mutating instantiations of that model.
+MEKON is a framework for the creation of ontology-driven applications, within which a set of *external knowledge sources (EKS)*, typically ontologies of some kind, together with associated *reasoning mechanisms*, are accessed via a generic in-memory *frames model (FM)*, and automatically mutating instantiations of that model.
 
 The [HOBO] framework is built on top of MEKON.
 
@@ -27,13 +27,13 @@ The FM provides a *domain-neutral API*, in which all domain concepts are represe
 ----
 == MEKON Applicability ==
 
-MEKON is particularly suitable for models and applications for which the following constraints hold:
+MEKON by itself is particularly suitable for models and applications for which the following holds:
 
  * *Externally-derived model:* The model can be derived entirely from a set of external knowledge sources
  * *No domain-specific mechanisms:* There is no requirement for any domain-specific procedural processing mechanisms to be attached to the model
  * *Totally generic applications:* The model will not be driving applications that need to embody any domain-specific knowledge
 
-If the any of the above constraints do not hold then it may well be that a [HOBO] model will better meet your requirements.
+If any of the above do not hold then it may well be that a [HOBO] model will better meet your requirements.
 
 ----
 == MEKON APIs ==
@@ -44,7 +44,7 @@ The MEKON framework provides the following APIs:
 
 *Mechanism API:* Provides the mechanisms for building and configuring the MEKON models. Incorporates the MEKON plug-ins API (or SPI - Service Provider Interface) that is used by providers of the following types of plug-in:
 
- * *Model section-builders:* Responsible for building sections of the FM derived from external knowledge sources of specific types
- * *Reasoners:* Responsible for dynamic updating of model-instantiations based on reasoning mechanisms associated with external knowledge sources of specific types
+ * *Model section-builders:* Responsible for building sections of the FM derived from specific EKS formats
+ * *Reasoners:* Responsible for dynamic updating of model-instantiations based on reasoning mechanisms associated with specific EKS formats
 
 For detailed descriptions of these APIs see the MEKON [javadoc].
