@@ -17,7 +17,7 @@ HOBO models are hybrid in two distinct senses:
 *Hybrid access:* HOBO models are accessible via complimentary model-access APIs:
 
  * The OM provides a *domain-specific API*
- * The FM provides a *Domain-neutral API*
+ * The FM provides a *domain-neutral API*
 
 In general the OM will cover a relatively small *core section* of the model, providing the *central structure* but representing only the most general domain concepts, whilst one or more EKS (possibly of varying types) will provide the, generally vastly larger, body of *detailed domain knowledge*.
 
@@ -39,7 +39,7 @@ Use of a HOBO OM can offer the following advantages over use of a raw MEKON FM:
 
  * *Domain-specific API:* Provides a more natural way of accessing the model when the application itself needs to embody domain-specific knowledge
  * *Domain-specific processing:* Can be provided via the OM, meaning that an OM can sometimes be useful even when the application will only be using the domain-neutral FM API
- * *Model extensibility:* Allows the inclusion of additional application-specific entities that are not appropriate for being represented in the EKS
+ * *Model extensibility:* Allows the inclusion of additional application-specific entities, not appropriate for representation in the EKS
 
 If none of the above features are required then it is likely that a raw [MEKON] model will better meet your requirements.
 
