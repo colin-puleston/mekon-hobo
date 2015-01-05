@@ -1,0 +1,5 @@
+#Directions for Introductory Tutorial.
+
+= Directions for Introductory Tutorial =
+
+The top-level folder in the MEKON project SVN contains a "docs" folder, which contains the file "MEKON-HOBO Introductory Tutorial.pptx".
