@@ -1,5 +1,3 @@
-#Introductory Tutorial.
-
 = Introductory Tutorial =
 
 The tutorial provides an introduction to the MEKON and HOBO frameworks at the level of general principles and concepts. It does not provide code-level examples, though it does introduce the main classes in both frameworks.
