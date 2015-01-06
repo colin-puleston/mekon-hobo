@@ -110,11 +110,12 @@ public class CModel implements CAnnotatable {
 	 * parses a standard XML version of an instance-level frame.
 	 *
 	 * @param document Document containing XML rendering of frame
-	 * @return Parsed instance-level frame
+	 * @param category Category of frame being parsed
+	 * @return Parsed frame
 	 */
-	public IFrame parseIFrame(XDocument document) {
+	public IFrame parseIFrame(XDocument document, IFrameCategory category) {
 
-		return new IFrameParser(this).parse(document);
+		return new IFrameParser(this, category).parse(document);
 	}
 
 	/**

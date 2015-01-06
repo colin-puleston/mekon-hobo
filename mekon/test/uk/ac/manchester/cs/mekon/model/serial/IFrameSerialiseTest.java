@@ -42,7 +42,7 @@ public class IFrameSerialiseTest extends MekonTest {
 	public void setUp() {
 
 		renderer = new IFrameRenderer();
-		parser = new IFrameParser(getModel());
+		parser = new IFrameParser(getModel(), IFrameCategory.ASSERTION);
 	}
 
 	@Test
