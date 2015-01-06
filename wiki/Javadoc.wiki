@@ -4,7 +4,7 @@ All [MEKON], [MEKON-OWL] and [HOBO] API code comes with *comprehensive Javadoc* 
 
 == Javadoc Generation Folder ==
 
-The top-level folder in the MEKON project SVN contains a javadoc generation folder, "javadoc". This folder contains scripts for building:
+The top-level folder in the Mekon project SVN contains a javadoc generation folder, "javadoc". This folder contains scripts for building:
 
  * *MEKON javadoc:* Javadoc for MEKON and MEKON-OWL
  * *HOBO javadoc:* Javadoc for HOBO, MEKON and MEKON-OWL
