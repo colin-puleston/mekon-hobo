@@ -52,7 +52,7 @@ public abstract class IStoreParser extends ISerialiser {
  	protected IStoreParser(CModel model, File storeFile) {
 
 		rootNode = new XDocument(storeFile).getRootNode();
-		iFrameParser = new IFrameParser(model);
+		iFrameParser = new IFrameParser(model, IFrameCategory.ASSERTION);
 	}
 
 	/**

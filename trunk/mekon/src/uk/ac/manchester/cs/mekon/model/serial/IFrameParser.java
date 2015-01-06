@@ -35,6 +35,7 @@ import uk.ac.manchester.cs.mekon.serial.*;
 public class IFrameParser extends ISerialiser {
 
 	private CModel model;
+	private IFrameCategory frameCategory;
 
 	private XNode containerNode = null;
 	private Map<Integer, IFrame> iFrameRefs = new HashMap<Integer, IFrame>();
@@ -196,9 +197,10 @@ public class IFrameParser extends ISerialiser {
 
  	/**
 	 */
- 	public IFrameParser(CModel model) {
+ 	public IFrameParser(CModel model, IFrameCategory frameCategory) {
 
 		this.model = model;
+		this.frameCategory = frameCategory;
 	}
 
 	/**
@@ -243,7 +245,7 @@ public class IFrameParser extends ISerialiser {
 	private IFrame parseIFrameDirect(XNode node) {
 
 		CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
-		IFrame frame = frameType.instantiate();
+		IFrame frame = frameType.instantiate(frameCategory);
 
 		for (XNode slotNode : node.getChildren(ISLOT_ID)) {
 
