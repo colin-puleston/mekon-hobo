@@ -2,7 +2,7 @@
 
 = Introductory Tutorial =
 
-The tutorial provides an introduction to the MEKON and HOBO frameworks at the level of general principles. It does not provide code-level examples, though it does introduce the main classes in both frameworks.
+The tutorial provides an introduction to the MEKON and HOBO frameworks at the level of general principles and concepts. It does not provide code-level examples, though it does introduce the main classes in both frameworks.
 
 The tutorial is based on the MEKON/HOBO Model Explorer, providing as a secondary goal, an introduction to the use of this tool. It uses the [Demo MEKON/HOBO demo model] for it's examples.
 
