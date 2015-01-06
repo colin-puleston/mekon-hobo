@@ -8,7 +8,7 @@ The MEKON/HOBO source code is divided up by sub-project, with each sub-project b
  * *hobo*
  * *hobo-gui*
 
-("gui" == "model-explorer")
+("gui" == Model Explorer)
 
 Each top-level sub-project folder is split into:
 
