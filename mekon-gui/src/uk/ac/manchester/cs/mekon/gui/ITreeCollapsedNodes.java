@@ -34,33 +34,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 class ITreeCollapsedNodes {
 
 	private GNode rootNode;
-	private Map<GNode, Set<GNodeState>> collapsedsToDescendants
-							= new HashMap<GNode, Set<GNodeState>>();
-
-	private class GNodeState {
-
-		private GNode node;
-		private String label;
-
-		public boolean equals(Object other) {
-
-			GNodeState o = (GNodeState)other;
-
-			return node.equals(o.node) && label.equals(o.label);
-		}
-
-		public int hashCode() {
-
-			return node.hashCode() + label.hashCode();
-		}
-
-		GNodeState(GNode node) {
-
-			this.node = node;
-
-			label = node.getLabel();
-		}
-	}
+	private Set<GNode> collapseds = new HashSet<GNode>();
 
 	ITreeCollapsedNodes(GNode rootNode) {
 
@@ -69,9 +43,8 @@ class ITreeCollapsedNodes {
 
 	void update(GNode updated) {
 
-		collapsedsToDescendants.clear();
-
-		findAll(rootNode, updated);
+		collapseds.clear();
+		addAll(rootNode, updated);
 	}
 
 	void restore() {
@@ -79,25 +52,18 @@ class ITreeCollapsedNodes {
 		restore(rootNode);
 	}
 
-	boolean updatedDescendants(GNode node) {
-
-		Set<GNodeState> start = getDescendants(node);
-
-		return start != null && !start.equals(findDescendants(node));
-	}
-
-	private void findAll(GNode current, GNode updated) {
+	private void addAll(GNode current, GNode updated) {
 
 		if (current.collapsed()) {
 
-			add(current);
+			collapseds.add(current);
 		}
 
 		for (GNode child : current.getChildren()) {
 
 			if (!child.equals(updated)) {
 
-				findAll(child, updated);
+				addAll(child, updated);
 			}
 		}
 	}
@@ -106,7 +72,7 @@ class ITreeCollapsedNodes {
 
 		if (current.expanded()) {
 
-			if (collapsed(current)) {
+			if (collapseds.contains(current)) {
 
 				collapseDescendantsLowestFirst(current);
 				current.collapse();
@@ -128,33 +94,5 @@ class ITreeCollapsedNodes {
 			collapseDescendantsLowestFirst(child);
 			node.collapse();
 		}
-	}
-
-	private void add(GNode node) {
-
-		collapsedsToDescendants.put(node, findDescendants(node));
-	}
-
-	private boolean collapsed(GNode node) {
-
-		return collapsedsToDescendants.containsKey(node);
-	}
-
-	private Set<GNodeState> getDescendants(GNode node) {
-
-		return collapsedsToDescendants.get(node);
-	}
-
-	private Set<GNodeState> findDescendants(GNode node) {
-
-		Set<GNodeState> descendants = new HashSet<GNodeState>();
-
-		for (GNode child : node.getChildren()) {
-
-			descendants.add(new GNodeState(child));
-			descendants.addAll(findDescendants(child));
-		}
-
-		return descendants;
 	}
 }

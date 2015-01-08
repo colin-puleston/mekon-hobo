@@ -23,7 +23,6 @@
  */
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.BorderLayout;
 import java.util.*;
 import javax.swing.*;
 
@@ -32,40 +31,23 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceTypesPanel extends JPanel {
+class InferredTypesPanel extends InstanceTypesPanel {
 
 	static private final long serialVersionUID = -1;
 
-	private CFramesTree modelTree;
-	private ModelTreeUpdater modelTreeUpdater = new ModelTreeUpdater();
+	InferredTypesPanel(CFramesTree modelTree) {
 
-	private class ModelTreeUpdater extends CFrameSelectionListener {
-
-		protected void onSelected(CFrame frame) {
-
-			modelTree.select(frame);
-		}
+		super(modelTree);
 	}
 
-	InstanceTypesPanel(CFramesTree modelTree) {
+	JComponent createFramesComponent(
+					List<CFrame> types,
+					CFrameSelectionListener listener) {
 
-		super(new BorderLayout());
+		CFramesList list = new CFramesList(types);
 
-		this.modelTree = modelTree;
-	}
+		list.addSelectionListener(listener);
 
-	void update(CIdentifieds<CFrame> types) {
-
-		removeAll();
-		add(createDisplayComponent(types.asList()), BorderLayout.CENTER);
-	}
-
-	abstract JComponent createFramesComponent(
-							List<CFrame> types,
-							CFrameSelectionListener listener);
-
-	private JComponent createDisplayComponent(List<CFrame> types) {
-
-		return new JScrollPane(createFramesComponent(types, modelTreeUpdater));
+		return list;
 	}
 }

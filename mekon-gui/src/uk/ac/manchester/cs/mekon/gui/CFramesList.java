@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -50,6 +52,13 @@ class CFramesList extends GList<CFrame> {
 		}
 	}
 
+	CFramesList(List<CFrame> frames) {
+
+		super(true);
+
+		addFrames(frames);
+	}
+
 	CFramesList(
 		CFrame rootFrame,
 		CFrameVisibility visibility,
@@ -62,15 +71,20 @@ class CFramesList extends GList<CFrame> {
 			addFrame(rootFrame);
 		}
 
-		for (CFrame frame : rootFrame.getDescendants(visibility)) {
-
-			addFrame(frame);
-		}
+		addFrames(rootFrame.getDescendants(visibility));
 	}
 
 	CFrameSelectionRelay getSelectionRelay() {
 
 		return selectionRelay;
+	}
+
+	private void addFrames(List<CFrame> frames) {
+
+		for (CFrame frame : frames) {
+
+			addFrame(frame);
+		}
 	}
 
 	private void addFrame(CFrame frame) {

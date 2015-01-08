@@ -33,24 +33,13 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class SlotLabels {
 
-	static private List<String> CARDINALITY_MODIFIER_LIST
-									= new ArrayList<String>();
-
-	static private Map<CCardinality, String> CARDINALITY_MODIFIER_MAP
+	static private Map<CCardinality, String> CARDINALITY_MODIFIERS
 									= new HashMap<CCardinality, String>();
 
 	static {
 
-		addCardinalityModifier(CCardinality.FREE, "[ ]");
-		addCardinalityModifier(CCardinality.UNIQUE_TYPES, "{ }");
-	}
-
-	static private void addCardinalityModifier(
-							CCardinality cardinality,
-							String modifier) {
-
-		CARDINALITY_MODIFIER_LIST.add(modifier);
-		CARDINALITY_MODIFIER_MAP.put(cardinality, modifier);
+		CARDINALITY_MODIFIERS.put(CCardinality.FREE, "[ ]");
+		CARDINALITY_MODIFIERS.put(CCardinality.UNIQUE_TYPES, "{ }");
 	}
 
 	static String get(CSlot slot) {
@@ -62,9 +51,7 @@ class SlotLabels {
 
 		String modifier = getCardinalityModifier(cardinality);
 
-		return modifier != null
-					? getCardinalityModifierHelp(modifier)
-					: getNoCardinalityModifierHelp();
+		return modifier != null ? "\"" + modifier + "\"" : "<NONE>";
 	}
 
 	static private String getSuffix(CSlot slot) {
@@ -74,35 +61,8 @@ class SlotLabels {
 		return modifier != null ? (" " + modifier) : "";
 	}
 
-	static String getCardinalityModifierHelp(String modifier) {
+	static private String getCardinalityModifier(CCardinality cardinality) {
 
-		return "\"" + modifier + "\"";
-	}
-
-	static String getNoCardinalityModifierHelp() {
-
-		return "NOT " + getCardinalityModifierOptionsHelp() + "" ;
-	}
-
-	static String getCardinalityModifierOptionsHelp() {
-
-		String modifierList = "";
-
-		for (String modifier : CARDINALITY_MODIFIER_LIST) {
-
-			if (!modifierList.isEmpty()) {
-
-				modifierList += " OR ";
-			}
-
-			modifierList += getCardinalityModifierHelp(modifier);
-		}
-
-		return modifierList;
-	}
-
-	static String getCardinalityModifier(CCardinality cardinality) {
-
-		return CARDINALITY_MODIFIER_MAP.get(cardinality);
+		return CARDINALITY_MODIFIERS.get(cardinality);
 	}
 }

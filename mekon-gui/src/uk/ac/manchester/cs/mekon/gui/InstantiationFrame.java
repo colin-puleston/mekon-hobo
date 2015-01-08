@@ -40,7 +40,7 @@ abstract class InstantiationFrame extends GFrame {
 	static private final int WIDTH = 800;
 	static private final int HEIGHT = 600;
 
-	static private final String MAIN_TITLE_FORMAT = "\"%s\" %s Instance";
+	static private final String MAIN_TITLE_FORMAT = "\"%s\" %s";
 	static private final String INFERRED_TYPES_TITLE = "Inferred Types";
 	static private final String SUGGESTED_TYPES_TITLE = "Suggested Types";
 
@@ -49,6 +49,28 @@ abstract class InstantiationFrame extends GFrame {
 
 	private JTabbedPane aspectTabs = new JTabbedPane();
 
+	private InferredTypesPanel inferredTypesPanel;
+	private SuggestedTypesPanel suggestedTypesPanel;
+
+	private class TypesPanelsUpdater implements IFrameListener {
+
+		public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates) {
+
+			inferredTypesPanel.update(updates);
+		}
+
+		public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates) {
+
+			suggestedTypesPanel.update(updates);
+		}
+
+		public void onSlotAdded(ISlot slot) {
+		}
+
+		public void onSlotRemoved(ISlot slot) {
+		}
+	}
+
 	InstantiationFrame(CFramesTree modelTree, IFrame frame) {
 
 		super("", WIDTH, HEIGHT);
@@ -56,11 +78,16 @@ abstract class InstantiationFrame extends GFrame {
 		this.modelTree = modelTree;
 		this.frame = frame;
 
+		inferredTypesPanel = new InferredTypesPanel(modelTree);
+		suggestedTypesPanel = new SuggestedTypesPanel(modelTree);
+
 		setTitle(getCategoryTitle());
 
 		addInstanceTab();
-		addTypesTab(INFERRED_TYPES_TITLE, true);
-		addTypesTab(SUGGESTED_TYPES_TITLE, false);
+		addInferredTypesTab();
+		addSuggestedTypesTab();
+
+		frame.addListener(new TypesPanelsUpdater());
 	}
 
 	int addAspectTab(String title, JComponent component) {
@@ -116,11 +143,30 @@ abstract class InstantiationFrame extends GFrame {
 		addAspectTab(getCategoryLabel(), createInstanceComponent());
 	}
 
-	private void addTypesTab(String title, boolean inferreds) {
+	private void addInferredTypesTab() {
 
-		int index = addAspectTab(title, createTypesComponent(inferreds));
+		addTypesTab(
+			INFERRED_TYPES_TITLE,
+			inferredTypesPanel,
+			IUpdateOp.INFERRED_TYPES);
+	}
 
-		aspectTabs.setEnabledAt(index, enableTypesTab(inferreds));
+	private void addSuggestedTypesTab() {
+
+		addTypesTab(
+			SUGGESTED_TYPES_TITLE,
+			suggestedTypesPanel,
+			IUpdateOp.SUGGESTED_TYPES);
+	}
+
+	private void addTypesTab(
+					String title,
+					InstanceTypesPanel panel,
+					IUpdateOp updateOp) {
+
+		int index = addAspectTab(title, new JScrollPane(panel));
+
+		aspectTabs.setEnabledAt(index, enableTypesTab(updateOp));
 	}
 
 	private JComponent createInstanceComponent() {
@@ -128,20 +174,7 @@ abstract class InstantiationFrame extends GFrame {
 		return new JScrollPane(new ITree(frame));
 	}
 
-	private JComponent createTypesComponent(boolean inferreds) {
-
-		return new JScrollPane(new InstanceTypesPanel(modelTree, frame, inferreds));
-	}
-
-	private boolean enableTypesTab(boolean inferreds) {
-
-		return defaultUpdateOp(
-					inferreds
-					? IUpdateOp.INFERRED_TYPES
-					: IUpdateOp.SUGGESTED_TYPES);
-	}
-
-	private boolean defaultUpdateOp(IUpdateOp updateOp) {
+	private boolean enableTypesTab(IUpdateOp updateOp) {
 
 		return getModel().getIUpdating().defaultOp(updateOp);
 	}
