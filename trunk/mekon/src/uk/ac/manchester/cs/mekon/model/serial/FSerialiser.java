@@ -58,9 +58,9 @@ abstract class FSerialiser {
 	static CIdentity parseIdentity(XNode node) {
 
 		String id = node.getString(IDENTITY_ATTR);
-		String label = node.getString(LABEL_ATTR);
+		String label = node.getString(LABEL_ATTR, null);
 
-		return new CIdentity(id, label);
+		return label != null ? new CIdentity(id, label) : new CIdentity(id);
 	}
 
 	static private String getClassId(Class<?> leafClass) {
