@@ -33,29 +33,31 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 class ITree extends GTree {
 
-	static final String UPDATED_COLLAPSED_NODE_MARKER = "@";
+	static final String UPDATED_NODE_MARKER = "@";
 
 	static private final long serialVersionUID = -1;
 
-	private ITreeCollapsedNodes actionStartCollapseds = null;
+	private ITreeCollapsedNodes collapseds = null;
+	private ITreeUpdateMarking updateMarking = null;
 
 	protected void onNodeActionStart(GNode node) {
 
-		actionStartCollapseds.update(node);
+		collapseds.update(node);
+		updateMarking.update();
 	}
 
 	protected void onNodeActionEnd(GNode node) {
 
-		actionStartCollapseds.restore();
+		collapseds.restore();
 	}
 
 	protected String decorateNodeLabel(GNode node, String defaultLabel) {
 
 		String label = defaultLabel;
 
-		if (node.collapsed() && descendantsUpdatedByLastAction(node)) {
+		if (requiresUpdateMarker(node)) {
 
-			label += (" " + UPDATED_COLLAPSED_NODE_MARKER);
+			label += (" " + UPDATED_NODE_MARKER);
 		}
 
 		return label;
@@ -66,12 +68,12 @@ class ITree extends GTree {
 		initialise(new IFrameNode(this, rootFrame));
 		setActiveTree();
 
-		actionStartCollapseds = new ITreeCollapsedNodes(getRootNode());
+		collapseds = new ITreeCollapsedNodes(getRootNode());
+		updateMarking = new ITreeUpdateMarking(getRootNode());
 	}
 
-	private boolean descendantsUpdatedByLastAction(GNode node) {
+	private boolean requiresUpdateMarker(GNode node) {
 
-		return actionStartCollapseds != null
-				&& actionStartCollapseds.updatedDescendants(node);
+		return updateMarking != null && updateMarking.requiresUpdateMarker(node);
 	}
 }

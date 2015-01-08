@@ -424,8 +424,8 @@ class HelpPanel extends JTabbedPane {
 				addRow(
 					"ALL",
 					"Collapsed",
-					"\"" + ITree.UPDATED_COLLAPSED_NODE_MARKER + "\"",
-					"Latest action caused updates to descendant entities");
+					"\"" + ITree.UPDATED_NODE_MARKER + "\"",
+					"Latest action caused update to entity or to non-visible descendant(s)");
 			}
 		}
 
