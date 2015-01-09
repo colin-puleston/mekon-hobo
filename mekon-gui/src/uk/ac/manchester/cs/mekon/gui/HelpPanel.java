@@ -419,13 +419,12 @@ class HelpPanel extends JTabbedPane {
 
 				super("Dynamic Label Modifiers");
 
-				addColumns("Entity Types", "Node State", "Label Modifier", "Denotes");
+				addColumns("Entity Types", "Label Modifier", "Denotes");
 
 				addRow(
 					"ALL",
-					"Collapsed",
 					"\"" + ITree.UPDATED_NODE_MARKER + "\"",
-					"Latest action caused update to entity or to non-visible descendant(s)");
+					"Entity, or non-visible descendant(s), affected by latest action");
 			}
 		}
 
