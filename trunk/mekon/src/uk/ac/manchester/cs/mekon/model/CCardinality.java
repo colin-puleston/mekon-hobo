@@ -44,8 +44,8 @@ public enum CCardinality {
 	},
 
 	/**
-	 * Slot is multi-valued, but cannot have any values with value-types
-	 * that subsume the value-types of any of it's other values.
+	 * Slot is multi-valued, but cannot have any values whose
+	 * value-types duplicate or subsume one another.
 	 */
 	UNIQUE_TYPES(false, true) {
 
@@ -56,8 +56,8 @@ public enum CCardinality {
 	},
 
 	/**
-	 * Slot is multi-valued, with any number of values of any permitted
-	 * type.
+	 * Slot is multi-valued, with any combination of leagal values
+	 * permitted.
 	 */
 	FREE(false, false) {
 

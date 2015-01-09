@@ -45,7 +45,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  *	 values (see {@link IValue#abstractValue}), whereas only those
  *	 slots on assertion-frames whose associated properties are defined
  *	 to be {@link CSlot#abstractAssertable} can. However, in either
- *	 case, this default behaviour can be overriden for individual
+ *	 case, this default behaviour can be overridden for individual
  *	 instance-level slots.
  * </ul>
  * Query-frames and assertion-frames cannot be mixed within a single
