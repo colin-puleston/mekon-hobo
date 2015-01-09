@@ -89,14 +89,22 @@ class ITreeUpdateMarking {
 
 	boolean requiresUpdateMarker(GNode node) {
 
-		GNode parent = node.getParent();
-
-		if (parent != null && isNew(parent)) {
+		if (nodeStates == null) {
 
 			return false;
 		}
 
-		return updated(node) || (node.collapsed() && updatedChildren(node));
+		if (newParent(node)) {
+
+			return false;
+		}
+
+		if (newOrUpdated(node)) {
+
+			return true;
+		}
+
+		return node.collapsed() && newOrUpdatedDescendants(node);
 	}
 
 	private void addNodeStates(GNode node) {
@@ -109,11 +117,18 @@ class ITreeUpdateMarking {
 		}
 	}
 
-	private boolean updatedChildren(GNode node) {
+	private boolean newParent(GNode node) {
+
+		GNode parent = node.getParent();
+
+		return parent != null && nodeStates.get(parent) == null;
+	}
+
+	private boolean newOrUpdatedDescendants(GNode node) {
 
 		for (GNode child : node.getChildren()) {
 
-			if (updated(child)) {
+			if (newOrUpdated(child) || newOrUpdatedDescendants(child)) {
 
 				return true;
 			}
@@ -122,25 +137,10 @@ class ITreeUpdateMarking {
 		return false;
 	}
 
-	private boolean updated(GNode node) {
-
-		if (nodeStates == null) {
-
-			return false;
-		}
+	private boolean newOrUpdated(GNode node) {
 
 		GNodeState state = nodeStates.get(node);
 
 		return state == null || state.updated(node);
-	}
-
-	private boolean isNew(GNode node) {
-
-		if (nodeStates == null) {
-
-			return false;
-		}
-
-		return nodeStates.get(node) == null;
 	}
 }
