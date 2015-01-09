@@ -36,15 +36,19 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 public class Citizen extends DObjectShell {
 
 	public final DCell<Employment> employment;
-	public final DCell<DConcept<Tax>> tax;
+	public final DCellViewer<DConcept<Tax>> tax;
 	public final DArrayViewer<DConcept<Benefit>> benefits;
 	public final DCell<Travel> travel;
+
+	private DEditor dEditor;
 
 	private class EmploymentInitialiser implements KValuesListener<Employment> {
 
 		public void onAdded(Employment value) {
 
 			value.initialise();
+
+			new TaxUpdater(value.totalWeeklyPay);
 		}
 
 		public void onRemoved(Employment value) {
@@ -56,6 +60,45 @@ public class Citizen extends DObjectShell {
 		EmploymentInitialiser() {
 
 			employment.addValuesListener(this);
+		}
+	}
+
+	private class TaxUpdater implements KUpdateListener {
+
+		private DCellViewer<Integer> totalWeeklyPay;
+
+		public void onUpdated() {
+
+			if (totalWeeklyPay.isSet()) {
+
+				getTax().set(getTaxConcept(totalWeeklyPay.get()));
+			}
+			else {
+
+				getTax().clear();
+			}
+		}
+
+		TaxUpdater(DCellViewer<Integer> totalWeeklyPay) {
+
+			this.totalWeeklyPay = totalWeeklyPay;
+
+			totalWeeklyPay.addUpdateListener(this);
+		}
+
+		private DCell<DConcept<Tax>> getTax() {
+
+			return dEditor.getField(tax);
+		}
+
+		private DConcept<Tax> getTaxConcept(int pay) {
+
+			return getModel().getConcept(getTaxClass(pay)).asType(Tax.class);
+		}
+
+		private Class<? extends Tax> getTaxClass(int pay) {
+
+			return pay < 1000 ? StandardTax.class : SuperTax.class;
 		}
 	}
 
@@ -72,9 +115,11 @@ public class Citizen extends DObjectShell {
 		super(builder);
 
 		employment = builder.addObjectCell(Employment.class);
-		tax = builder.addConceptCell(Tax.class);
+		tax = builder.getViewer(builder.addConceptCell(Tax.class));
 		benefits = builder.getViewer(builder.addConceptArray(Benefit.class));
 		travel = builder.addObjectCell(Travel.class);
+
+		dEditor = builder.getEditor();
 
 		builder.addInitialiser(new Initialiser());
 	}
