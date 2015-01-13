@@ -83,7 +83,7 @@ public enum CCardinality {
 
 	/**
 	 * Specifes whether slot values must be of unique-types - equal
-	 * to {@link #UNIQUE_TYPES} or (trivially) to {@link #SINGLETON}.
+	 * to {@link #UNIQUE_TYPES} or, trivially, to {@link #SINGLETON}.
 	 *
 	 * @return True if unique-types
 	 */
