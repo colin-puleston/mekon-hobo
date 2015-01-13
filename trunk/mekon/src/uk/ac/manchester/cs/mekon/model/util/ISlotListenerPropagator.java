@@ -66,10 +66,7 @@ public abstract class ISlotListenerPropagator<L>
 	 */
 	public void onRemoved(IValue value) {
 
-		if (value instanceof IFrame) {
-
-			removeAll((IFrame)value);
-		}
+		removeAll(value);
 	}
 
 	/**
@@ -155,17 +152,23 @@ public abstract class ISlotListenerPropagator<L>
 
 	private void removeAll(ISlot slot) {
 
-		removeListener(slot.getValues(), listener);
+		ISlotValues values = slot.getValues();
 
-		if (slot.getValueType() instanceof CFrame) {
-
-			removeAll(slot.getValues().asList());
-		}
+		removeListener(values, listener);
+		removeAll(values.asList());
 	}
 
 	private void removeAll(List<IValue> values) {
 
 		for (IValue value : values) {
+
+			removeAll(value);
+		}
+	}
+
+	private void removeAll(IValue value) {
+
+		if (value instanceof IFrame) {
 
 			removeAll((IFrame)value);
 		}
