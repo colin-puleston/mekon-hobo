@@ -69,9 +69,11 @@ public class Citizen extends DObjectShell {
 
 		public void onUpdated() {
 
-			if (totalWeeklyPay.isSet()) {
+			int pay = getTotalWeeklyPay();
 
-				getTax().set(getTaxConcept(totalWeeklyPay.get()));
+			if (pay != 0) {
+
+				getTax().set(getTaxConcept(pay));
 			}
 			else {
 
@@ -84,6 +86,11 @@ public class Citizen extends DObjectShell {
 			this.totalWeeklyPay = totalWeeklyPay;
 
 			totalWeeklyPay.addUpdateListener(this);
+		}
+
+		private int getTotalWeeklyPay() {
+
+			return totalWeeklyPay.isSet() ? totalWeeklyPay.get() : 0;
 		}
 
 		private DCell<DConcept<Tax>> getTax() {
