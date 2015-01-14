@@ -49,13 +49,32 @@ class ISlotSpec {
 		this.iEditor = iEditor;
 	}
 
+	void intersectWith(ISlotSpec other) {
+
+		absorbSource(other.source);
+		intersectWithCardinality(other.cardinality);
+		intersectWithActive(other.active);
+		intersectWithDependent(other.dependent);
+		absorbValueTypes(other.valueTypes);
+		intersectWithFixedValues(other.fixedValues);
+	}
+
+	void absorbSpec(ISlotSpec other) {
+
+		absorbSource(other.source);
+		absorbCardinality(other.cardinality);
+		absorbActive(other.active);
+		absorbDependent(other.dependent);
+		absorbValueTypes(other.valueTypes);
+		absorbFixedValues(other.fixedValues);
+	}
+
 	void absorbType(CSlot slotType) {
 
-		source = source.combineWith(slotType.getSource());
-		cardinality = cardinality.getMoreRestrictive(slotType.getCardinality());
-		active |= slotType.active();
-		dependent |= slotType.dependent();
-
+		absorbSource(slotType.getSource());
+		absorbCardinality(slotType.getCardinality());
+		absorbActive(slotType.active());
+		absorbDependent(slotType.dependent());
 		absorbValueType(slotType.getValueType());
 	}
 
@@ -102,6 +121,54 @@ class ISlotSpec {
 	CIdentity getIdentity() {
 
 		return identity;
+	}
+
+	private void intersectWithCardinality(CCardinality value) {
+
+		cardinality = cardinality.getLessRestrictive(value);
+	}
+
+	private void intersectWithActive(boolean value) {
+
+		active &= value;
+	}
+
+	private void intersectWithDependent(boolean value) {
+
+		dependent &= value;
+	}
+
+	private void intersectWithFixedValues(List<IValue> newFixedValues) {
+
+		fixedValues.retainAll(newFixedValues);
+	}
+
+	private void absorbSource(CSource value) {
+
+		source = source.combineWith(value);
+	}
+
+	private void absorbCardinality(CCardinality value) {
+
+		cardinality = cardinality.getMoreRestrictive(value);
+	}
+
+	private void absorbActive(boolean value) {
+
+		active |= value;
+	}
+
+	private void absorbDependent(boolean value) {
+
+		dependent |= value;
+	}
+
+	private void absorbValueTypes(List<CValue<?>> newValueTypes) {
+
+		for (CValue<?> valueType : newValueTypes) {
+
+			absorbValueType(valueType);
+		}
 	}
 
 	private void absorbValueType(CValue<?> valueType) {

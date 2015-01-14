@@ -122,10 +122,9 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 		private ISlotSpecs createSlotSpecs(List<CFrame> inferredsUpdates) {
 
-			ISlotSpecs specs = new ISlotSpecs(iEditor);
+			ISlotSpecs specs = new ISlotSpecs(iEditor, frame.getType());
 
-			specs.absorb(frame.getType(), true);
-			specs.absorbAll(inferredsUpdates, true);
+			specs.absorbAll(inferredsUpdates);
 
 			return specs;
 		}
