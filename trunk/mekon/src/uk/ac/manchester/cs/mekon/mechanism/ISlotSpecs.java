@@ -177,7 +177,7 @@ public class ISlotSpecs {
 
 	private void absorb(CFrame frameType) {
 
-		if (!absorbedFrameTypes.contains(frameType)) {
+		if (absorbedFrameTypes.add(frameType)) {
 
 			absorbSlotTypes(frameType);
 			absorbFixedValues(frameType);
