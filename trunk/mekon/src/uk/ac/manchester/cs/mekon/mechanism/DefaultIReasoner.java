@@ -49,9 +49,8 @@ public class DefaultIReasoner implements IReasoner {
 	 */
 	public void initialiseFrame(IEditor iEditor, IFrame frame) {
 
-		ISlotSpecs specs = new ISlotSpecs(iEditor);
+		ISlotSpecs specs = new ISlotSpecs(iEditor, frame.getType());
 
-		specs.absorb(frame.getType(), true);
 		specs.initialiseSlots(frame);
 		specs.updateSlotValues(frame);
 	}

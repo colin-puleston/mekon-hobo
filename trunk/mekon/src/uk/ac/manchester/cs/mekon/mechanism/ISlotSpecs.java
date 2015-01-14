@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  * to maintain a set of specifications defining the set of slots
  * required for a specific instance-level frame. Existing
  * slot-specifications can be modified as further information is
- * aquired. Once the full set of specifications has been created,
+ * acquired. Once the full set of specifications has been created,
  * they can be used for either initialising or updating the
  * slot-set for the relevant frame.
  *
@@ -44,8 +44,7 @@ public class ISlotSpecs {
 	private IEditor iEditor;
 
 	private List<ISlotSpec> specs = new ArrayList<ISlotSpec>();
-	private Map<CIdentity, ISlotSpec> specsByIdentity
-					= new HashMap<CIdentity, ISlotSpec>();
+	private Map<CIdentity, ISlotSpec> specsBySlotId = new HashMap<CIdentity, ISlotSpec>();
 
 	private Set<CFrame> absorbedFrameTypes = new HashSet<CFrame>();
 
@@ -60,10 +59,27 @@ public class ISlotSpecs {
 	}
 
 	/**
+	 * Constructor that absorbs all slot-related definitions
+	 * associated with the specified concept-level frame or any of
+	 * it's ancestors. See {@link #absorb(CFrame)} for description of
+	 * the absorption process.
+	 *
+	 * @param iEditor Model-instantiation editor
+	 * @param frameType Concept-level frame whose slot-related
+	 * definitions are to be absorbed
+	 */
+	public ISlotSpecs(IEditor iEditor, CFrame frameType) {
+
+		this.iEditor = iEditor;
+
+		absorb(frameType);
+	}
+
+	/**
 	 * Absorbs all slot-related definitions associated with the
-	 * specified concept-level frame, and optionally it's
-	 * ancestors, into the current set of slot-specifications,
-	 * creating new specifications where necessary.
+	 * specified concept-level frame or any of it's ancestors, into the
+	 * current set of slot-specifications, creating new specifications
+	 * where necessary.
 	 * <ul>
 	 *   <li>Concept-level slot definitions
 	 *   <li>Instance-level slot default-values
@@ -84,37 +100,32 @@ public class ISlotSpecs {
 	 *
 	 * @param frameType Concept-level frame whose slot-related
 	 * definitions are to be absorbed
-	 * @param includeAncestors True if slot-related definitions
-	 * of ancestors are also to be absorbed
 	 */
-	public void absorb(CFrame frameType, boolean includeAncestors) {
+	public void absorb(CFrame frameType) {
 
-		if (includeAncestors) {
+		for (CFrame ancType : frameType.getStructuredAncestors()) {
 
-			absorbAncestors(frameType);
+			absorbType(ancType);
 		}
 
-		absorb(frameType);
+		absorbType(frameType);
 	}
 
 	/**
 	 * Absorbs all slot-related definitions associated with the
-	 * specified concept-level frames, and optionally their
-	 * ancestors, into the current set of slot-specifications,
-	 * creating new specifications where necessary. See
-	 * {@link #absorb(CFrame, boolean)} for description of the
-	 * absorption process.
+	 * specified concept-level frames or any of it's ancestors, into
+	 * the current set of slot-specifications, creating new
+	 * specifications where necessary. See {@link #absorb(CFrame)} for
+	 * description of the absorption process.
 	 *
 	 * @param frameTypes Concept-level frames whose slot-related
 	 * definitions are to be absorbed
-	 * @param includeAncestors True if slot-related definitions
-	 * of ancestors are also to be absorbed
 	 */
-	public void absorbAll(List<CFrame> frameTypes, boolean includeAncestors) {
+	public void absorbAll(List<CFrame> frameTypes) {
 
 		for (CFrame frameType : frameTypes) {
 
-			absorb(frameType, includeAncestors);
+			absorb(frameType);
 		}
 	}
 
@@ -167,28 +178,67 @@ public class ISlotSpecs {
 		}
 	}
 
-	private void absorbAncestors(CFrame frameType) {
+	private ISlotSpecs(IEditor iEditor, List<CFrame> disjunctTypes) {
 
-		for (CFrame ancType : frameType.getStructuredAncestors()) {
+		this(iEditor, disjunctTypes.get(0));
 
-			absorb(ancType);
+		for (int i = 1 ; i < disjunctTypes.size() ; i++) {
+
+			intersectWith(new ISlotSpecs(iEditor, disjunctTypes.get(i)));
 		}
 	}
 
-	private void absorb(CFrame frameType) {
+	private void intersectWith(ISlotSpecs intersectee) {
+
+		for (CIdentity slotId : new HashSet<CIdentity>(specsBySlotId.keySet())) {
+
+			if (intersectee.specsBySlotId.containsKey(slotId)) {
+
+				getSpec(slotId).intersectWith(intersectee.getSpec(slotId));
+			}
+			else {
+
+				removeSpec(slotId);
+			}
+		}
+	}
+
+	private void absorbType(CFrame frameType) {
 
 		if (absorbedFrameTypes.add(frameType)) {
 
-			absorbSlotTypes(frameType);
-			absorbFixedValues(frameType);
+			if (frameType.getCategory().disjunction()) {
+
+				absorbDisjunctionType(frameType);
+			}
+			else {
+
+				absorbSimpleType(frameType);
+			}
 		}
+	}
+
+	private void absorbDisjunctionType(CFrame frameType) {
+
+		ISlotSpecs intersection = createIntersectionSpecs(frameType);
+
+		for (CIdentity slotId : intersection.specsBySlotId.keySet()) {
+
+			resolveSpec(slotId).absorbSpec(intersection.getSpec(slotId));
+		}
+	}
+
+	private void absorbSimpleType(CFrame frameType) {
+
+		absorbSlotTypes(frameType);
+		absorbFixedValues(frameType);
 	}
 
 	private void absorbSlotTypes(CFrame frameType) {
 
 		for (CSlot slotType : frameType.getSlots().asList()) {
 
-			getSpec(slotType.getIdentity()).absorbType(slotType);
+			resolveSpec(slotType.getIdentity()).absorbType(slotType);
 		}
 	}
 
@@ -200,13 +250,18 @@ public class ISlotSpecs {
 
 			List<IValue> fixedValues = slotValues.getIValues(slotId);
 
-			getSpec(slotId).absorbFixedValues(fixedValues);
+			resolveSpec(slotId).absorbFixedValues(fixedValues);
 		}
+	}
+
+	private ISlotSpecs createIntersectionSpecs(CFrame frameType) {
+
+		return new ISlotSpecs(iEditor, frameType.asDisjuncts());
 	}
 
 	private void removeIfRedundant(IFrame frame, ISlot slot) {
 
-		if (!specsByIdentity.containsKey(slot.getType().getIdentity())) {
+		if (!specsBySlotId.containsKey(slot.getType().getIdentity())) {
 
 			getFrameEditor(frame).removeSlot(slot);
 		}
@@ -241,19 +296,31 @@ public class ISlotSpecs {
 		return frame.getSlots().getOrNull(spec.getIdentity());
 	}
 
-	private ISlotSpec getSpec(CIdentity slotId) {
+	private ISlotSpec resolveSpec(CIdentity slotId) {
 
-		ISlotSpec spec = specsByIdentity.get(slotId);
+		ISlotSpec spec = getSpec(slotId);
 
-		if (spec == null) {
+		return spec != null ? spec : addSpec(slotId);
+	}
 
-			spec = new ISlotSpec(iEditor, slotId);
+	private ISlotSpec addSpec(CIdentity slotId) {
 
-			specs.add(spec);
-			specsByIdentity.put(slotId, spec);
-		}
+		ISlotSpec spec = new ISlotSpec(iEditor, slotId);
+
+		specs.add(spec);
+		specsBySlotId.put(slotId, spec);
 
 		return spec;
+	}
+
+	private void removeSpec(CIdentity slotId) {
+
+		specs.remove(specsBySlotId.remove(slotId));
+	}
+
+	private ISlotSpec getSpec(CIdentity slotId) {
+
+		return specsBySlotId.get(slotId);
 	}
 
 	private IFrameEditor getFrameEditor(IFrame frame) {

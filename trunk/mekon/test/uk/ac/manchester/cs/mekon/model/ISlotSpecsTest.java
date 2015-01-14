@@ -54,7 +54,7 @@ public class ISlotSpecsTest extends MekonTest {
 	private CSlot sc = createCSlot(tc, CCardinality.FREE, tz);
 	private CSlot sd = createCSlot(td, CCardinality.SINGLETON, ty2);
 
-	private IFrame iContainer = createIFrame("Container");
+	private IFrame iContainer = createIFrame("CONTAINER");
 
 	public ISlotSpecsTest() {
 
@@ -155,7 +155,7 @@ public class ISlotSpecsTest extends MekonTest {
 
 		ISlotSpecs specs = new ISlotSpecs(getModel().getIEditor());
 
-		specs.absorbAll(list(containerTypes), true);
+		specs.absorbAll(list(containerTypes));
 		specs.updateSlots(iContainer);
 		specs.updateSlotValues(iContainer);
 	}
@@ -165,7 +165,7 @@ public class ISlotSpecsTest extends MekonTest {
 		MFrame expected = rootValue.getType();
 		CValue<?> got = testSingleSlot().getValueType();
 
-		assertTrue("Unexpected slot value-type: " + got, got == expected);
+		assertEquals(expected, got);
 	}
 
 	private void testSlotValues(IValue... expected) {
@@ -177,23 +177,17 @@ public class ISlotSpecsTest extends MekonTest {
 
 	private void testCardinality(CCardinality expected) {
 
-		CCardinality got = testSingleSlot().getType().getCardinality();
-
-		assertTrue("Unexpected slot cardinality: " + got, got == expected);
+		assertEquals(expected, testSingleSlot().getType().getCardinality());
 	}
 
 	private void testSlotActive(boolean expected) {
 
-		boolean got = testSingleSlot().active();
-
-		assertTrue("Unexpected slot active-status: " + got, got == expected);
+		assertEquals(expected, testSingleSlot().active());
 	}
 
 	private void testDependentSlot(boolean expected) {
 
-		boolean got = testSingleSlot().dependent();
-
-		assertTrue("Unexpected slot dependent-status: " + got, got == expected);
+		assertEquals(expected, testSingleSlot().dependent());
 	}
 
 	private ISlot testSingleSlot() {
@@ -205,9 +199,7 @@ public class ISlotSpecsTest extends MekonTest {
 
 	private void testSlotCount(int expected) {
 
-		int got = iContainer.getSlots().size();
-
-		assertTrue("Unexpected number of slots: " + got, got == expected);
+		assertEquals(expected, iContainer.getSlots().size());
 	}
 
 	private CSlot createCSlot(

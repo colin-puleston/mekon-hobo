@@ -50,6 +50,7 @@ import uk.ac.manchester.cs.mekon.model.serial.*;
 	ISlotTest.class,
 	ISlotValuesTest.class,
 	ISlotSpecsTest.class,
+	ISlotSpecsViaDisjunctionsTest.class,
 	IStoreTest.class,
 	IFrameSerialiseTest.class})
 public class MekonTestSuite {

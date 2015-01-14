@@ -267,10 +267,10 @@ public abstract class CFrame
 	public abstract CFrame getModelFrame();
 
 	/**
-	 * Provides a decomposition of the frame into a set disjuncts. If the
-	 * frame has category of {@link CFrameCategory#DISJUNCTION} then this
-	 * set will contain all direct sub-frames. Otherwise is will contain
-	 * just the frame itself.
+	 * Provides a decomposition of the frame into a set of disjuncts. If
+	 * the frame has category of {@link CFrameCategory#DISJUNCTION} then
+	 * this set will contain all direct sub-frames. Otherwise is will
+	 * contain just the frame itself.
 	 *
 	 * @return Decomposition of frame into set of disjuncts
 	 */

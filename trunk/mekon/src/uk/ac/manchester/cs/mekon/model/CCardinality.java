@@ -105,6 +105,18 @@ public enum CCardinality {
 	}
 
 	/**
+	 * Specifes whether this cardinality is less restrictive than
+	 * the other specified cardinality (Note that the ordering of
+	 * the cardinalities progresses from more to less restrictive).
+	 *
+	 * @return True if this is the less restrctive of the two
+	 */
+	public boolean lessRestrictiveThan(CCardinality other) {
+
+		return ordinal() > other.ordinal();
+	}
+
+	/**
 	 * Provides the more restrictive cardinality between this
 	 * and the other specified cardinality.
 	 *
@@ -114,6 +126,18 @@ public enum CCardinality {
 	public CCardinality getMoreRestrictive(CCardinality other) {
 
 		return moreRestrictiveThan(other) ? this : other;
+	}
+
+	/**
+	 * Provides the less restrictive cardinality between this
+	 * and the other specified cardinality.
+	 *
+	 * @return True if this is the less restrctive of the two
+	 * @see #lessRestrictiveThan
+	 */
+	public CCardinality getLessRestrictive(CCardinality other) {
+
+		return lessRestrictiveThan(other) ? this : other;
 	}
 
 	abstract ISlotValues createSlotValues(ISlot slot);
