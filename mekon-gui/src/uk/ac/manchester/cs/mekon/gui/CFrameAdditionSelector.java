@@ -24,58 +24,39 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
-
 /**
  * @author Colin Puleston
  */
-abstract class CFrameSelector extends GDialog {
+class CFrameAdditionSelector extends CFrameSelector {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension WINDOW_SIZE = new Dimension(450, 300);
-	static private final String MAIN_TITLE = "%s Selector";
+	private CFrame rootFrame;
 
-	static String createMainTitle(String cFrameRole) {
+	CFrameAdditionSelector(
+		JComponent parent,
+		String cFrameRole,
+		CFrame rootFrame) {
 
-		return String.format(MAIN_TITLE, cFrameRole);
+		super(parent, cFrameRole);
+
+		this.rootFrame = rootFrame;
 	}
 
-	private CFrame selection = null;
+	JComponent createSelectorComponent(CFrameSelectionListener selectorListener) {
 
-	private class SelectorListener extends CFrameSelectionListener {
+		boolean showRoot = rootFrame.instantiable();
+		CFramesComboPanel combo = new CFramesComboPanel(
+										rootFrame,
+										CFrameVisibility.EXPOSED,
+										showRoot);
 
-		protected void onSelected(CFrame frame) {
+		combo.addSelectionListener(selectorListener);
 
-			select(frame);
-		}
-	}
-
-	CFrameSelector(JComponent parent, String cFrameRole) {
-
-		super(parent, createMainTitle(cFrameRole), true);
-
-		setPreferredSize(WINDOW_SIZE);
-	}
-
-	CFrame getSelectionOrNull() {
-
-		display(createSelectorComponent(new SelectorListener()));
-
-		return selection;
-	}
-
-	abstract JComponent createSelectorComponent(CFrameSelectionListener selectionListener);
-
-	private void select(CFrame frame) {
-
-		selection = frame;
-
-		dispose();
+		return combo;
 	}
 }

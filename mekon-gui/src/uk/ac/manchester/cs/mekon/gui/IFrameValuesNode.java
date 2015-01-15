@@ -45,12 +45,12 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 		protected GNodeAction getPositiveAction() {
 
-			return getAddDisjunctOrInertAction(value);
+			return getAdditionAction(value);
 		}
 
 		protected GNodeAction getNegativeAction() {
 
-			return getRemoveValueAction(value);
+			return getRemovalAction(value);
 		}
 
 		ValueNode(IFrame value) {
@@ -81,9 +81,14 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 	IValue checkObtainValue() {
 
-		CFrame type = checkObtainCFrame();
+		CFrame type = checkObtainCFrameAddition();
 
 		return type != null ? instantiate(type) : null;
+	}
+
+	String getCFrameRole() {
+
+		return "Value-Type";
 	}
 
 	CFrame getRootCFrame() {
@@ -100,11 +105,7 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 		if (updatedCFrame.instantiable()) {
 
-			IFrame newValue = instantiate(updatedCFrame);
-
-			copyAssertedSlotValues(value, newValue);
-
-			return newValue;
+			return updateValue(value, updatedCFrame);
 		}
 
 		JOptionPane.showMessageDialog(
@@ -113,6 +114,15 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 				+ updatedCFrame.getDisplayLabel());
 
 		return value;
+	}
+
+	private IFrame updateValue(IFrame value, CFrame updatedCFrame) {
+
+		IFrame newValue = instantiate(updatedCFrame);
+
+		copyAssertedSlotValues(value, newValue);
+
+		return newValue;
 	}
 
 	private void copyAssertedSlotValues(IFrame from, IFrame to) {
