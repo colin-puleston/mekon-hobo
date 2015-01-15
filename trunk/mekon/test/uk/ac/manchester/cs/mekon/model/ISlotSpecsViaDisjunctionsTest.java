@@ -52,10 +52,10 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 	private CIdentity slot2Id = createIdentity("SLOT-2");
 	private CIdentity slot3Id = createIdentity("SLOT-3");
 
-	private CSlot sa1 = createCSlot(ta, slot1Id, tx);
-	private CSlot sa2 = createCSlot(ta, slot2Id, ty1);
-	private CSlot sb = createCSlot(tb, slot3Id, tz);
-	private CSlot sc = createCSlot(tc, slot2Id, ty2);
+	private CSlot ta_slot1 = createCSlot(ta, slot1Id, CCardinality.FREE, tx);
+	private CSlot ta_slot2 = createCSlot(ta, slot2Id, CCardinality.FREE, ty1);
+	private CSlot tc_slot2 = createCSlot(tc, slot2Id, CCardinality.SINGLETON, ty2);
+	private CSlot tb_slot3 = createCSlot(tb, slot3Id, CCardinality.FREE, tz);
 
 	private IFrame iContainer = createIFrame("CONTAINER");
 
@@ -80,7 +80,7 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 	}
 
 	@Test
-	public void test_valueUpdates() {
+	public void test_slotValueUpdates() {
 
 		CModelFrame ty3a = createCFrame("Y3A");
 		CModelFrame ty3b = createCFrame("Y3B");
@@ -96,6 +96,18 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 		testSlotValues(slot2Id, ty3a);
 	}
 
+	@Test
+	public void test_slotAttributesUpdates() {
+
+		ta_slot2.getAttributes().setActive(false);
+		ta_slot2.getAttributes().setDependent(false);
+
+		updateContainerSlots();
+		testCardinality(slot2Id, CCardinality.FREE);
+		testActiveSlot(slot2Id, false);
+		testDependentSlot(slot2Id, false);
+	}
+
 	private void updateContainerSlots() {
 
 		ISlotSpecs specs = new ISlotSpecs(getModel().getIEditor());
@@ -103,6 +115,11 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 		specs.absorb(createDisjunction(td, te));
 		specs.updateSlots(iContainer);
 		specs.updateSlotValues(iContainer);
+	}
+
+	private void testSlotCount(int expected) {
+
+		assertEquals(expected, iContainer.getSlots().size());
 	}
 
 	private void testSlotValueType(CIdentity slotId, CFrame rootValue) {
@@ -120,9 +137,19 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 		testListContents(got, list(expected));
 	}
 
-	private void testSlotCount(int expected) {
+	private void testCardinality(CIdentity slotId, CCardinality expected) {
 
-		assertEquals(expected, iContainer.getSlots().size());
+		assertEquals(expected, testFindSlot(slotId).getType().getCardinality());
+	}
+
+	private void testActiveSlot(CIdentity slotId, boolean expected) {
+
+		assertEquals(expected, testFindSlot(slotId).active());
+	}
+
+	private void testDependentSlot(CIdentity slotId, boolean expected) {
+
+		assertEquals(expected, testFindSlot(slotId).dependent());
 	}
 
 	private ISlot testFindSlot(CIdentity slotId) {
@@ -137,9 +164,10 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 	private CSlot createCSlot(
 					CModelFrame container,
 					CIdentity slotId,
+					CCardinality cardinality,
 					CModelFrame rootValue) {
 
-		return createCSlot(container, slotId, CCardinality.FREE, rootValue.getType());
+		return createCSlot(container, slotId, cardinality, rootValue.getType());
 	}
 
 	private CFrame createDisjunction(CFrame... disjuncts) {
