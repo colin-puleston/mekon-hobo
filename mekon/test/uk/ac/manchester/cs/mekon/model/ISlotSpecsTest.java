@@ -131,11 +131,11 @@ public class ISlotSpecsTest extends MekonTest {
 		sa.getAttributes().setActive(false);
 
 		updateContainerSlots(ta);
-		testSlotActive(false);
+		testActiveSlot(false);
 		updateContainerSlots(tc, td);
-		testSlotActive(true);
+		testActiveSlot(true);
 		updateContainerSlots(ta, tc);
-		testSlotActive(true);
+		testActiveSlot(true);
 	}
 
 	@Test
@@ -180,7 +180,7 @@ public class ISlotSpecsTest extends MekonTest {
 		assertEquals(expected, testSingleSlot().getType().getCardinality());
 	}
 
-	private void testSlotActive(boolean expected) {
+	private void testActiveSlot(boolean expected) {
 
 		assertEquals(expected, testSingleSlot().active());
 	}
