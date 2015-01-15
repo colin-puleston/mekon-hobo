@@ -78,7 +78,7 @@
 			FULL)
 		-->
 		<OWLClassifier
-			loggingMode="FULL">
+			loggingMode="DISABLED">
 			<SlotSemantics
 				default="OPEN_WORLD">
 				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
