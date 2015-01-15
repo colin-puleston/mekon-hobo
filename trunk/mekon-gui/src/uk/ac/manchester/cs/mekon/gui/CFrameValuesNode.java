@@ -42,12 +42,12 @@ class CFrameValuesNode extends FFrameValuesNode<CFrame> {
 
 		protected GNodeAction getPositiveAction() {
 
-			return getAddDisjunctOrInertAction(value);
+			return getAdditionAction(value);
 		}
 
 		protected GNodeAction getNegativeAction() {
 
-			return getRemoveValueAction(value);
+			return getRemovalAction(value);
 		}
 
 		protected GCellDisplay getDisplay() {
@@ -83,7 +83,12 @@ class CFrameValuesNode extends FFrameValuesNode<CFrame> {
 
 	IValue checkObtainValue() {
 
-		return checkObtainCFrame();
+		return checkObtainCFrameAddition();
+	}
+
+	String getCFrameRole() {
+
+		return "Value";
 	}
 
 	CFrame getRootCFrame() {

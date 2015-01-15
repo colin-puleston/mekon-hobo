@@ -24,7 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -34,48 +35,72 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class CFrameSelector extends GDialog {
+class CFrameRemovalsSelector extends CFrameSelector {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension WINDOW_SIZE = new Dimension(450, 300);
-	static private final String MAIN_TITLE = "%s Selector";
+	static private final String SELECT_ALL_LABEL = "Select All";
 
-	static String createMainTitle(String cFrameRole) {
+	private List<CFrame> options;
+	private boolean allSelected = false;
 
-		return String.format(MAIN_TITLE, cFrameRole);
-	}
+	private class SelectAllButton extends GButton {
 
-	private CFrame selection = null;
+		static private final long serialVersionUID = -1;
 
-	private class SelectorListener extends CFrameSelectionListener {
+		protected void doButtonThing() {
 
-		protected void onSelected(CFrame frame) {
+			allSelected = true;
+			System.out.println("SET-ALL-SELECTED: " + allSelected);
 
-			select(frame);
+			dispose();
+			System.out.println("DISPOSED: " + allSelected);
+		}
+
+		SelectAllButton() {
+
+			super(SELECT_ALL_LABEL);
 		}
 	}
 
-	CFrameSelector(JComponent parent, String cFrameRole) {
+	CFrameRemovalsSelector(
+		JComponent parent,
+		String cFrameRole,
+		List<CFrame> options) {
 
-		super(parent, createMainTitle(cFrameRole), true);
+		super(parent, cFrameRole);
 
-		setPreferredSize(WINDOW_SIZE);
+		this.options = options;
 	}
 
-	CFrame getSelectionOrNull() {
+	JComponent createSelectorComponent(CFrameSelectionListener selectorListener) {
 
-		display(createSelectorComponent(new SelectorListener()));
+		JPanel panel = new JPanel(new BorderLayout());
 
-		return selection;
+		panel.add(createList(selectorListener), BorderLayout.CENTER);
+		panel.add(new SelectAllButton(), BorderLayout.SOUTH);
+
+		return panel;
 	}
 
-	abstract JComponent createSelectorComponent(CFrameSelectionListener selectionListener);
+	List<CFrame> getSelections() {
 
-	private void select(CFrame frame) {
+		CFrame selection = getSelectionOrNull();
 
-		selection = frame;
+		if (selection != null) {
 
-		dispose();
+			return Collections.<CFrame>singletonList(selection);
+		}
+
+		return allSelected ? options : Collections.<CFrame>emptyList();
+	}
+
+	private CFramesList createList(CFrameSelectionListener selectorListener) {
+
+		CFramesList list = new CFramesList(options);
+
+		list.addSelectionListener(selectorListener);
+
+		return list;
 	}
 }

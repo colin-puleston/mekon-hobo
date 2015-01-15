@@ -39,7 +39,7 @@ class HelpInvocationPanel extends JPanel {
 	static private final String BUTTON_LABEL = "Help...";
 	static private final String FRAME_TITLE = MekonModelExplorer.getSystemTitle("Help");
 	static private final int FRAME_WIDTH = 900;
-	static private final int FRAME_HEIGHT = 300;
+	static private final int FRAME_HEIGHT = 400;
 
 	private HelpPanel helpPanel = new HelpPanel();
 	private HelpButton helpButton = new HelpButton();

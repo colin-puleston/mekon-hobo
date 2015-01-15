@@ -38,32 +38,74 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 	private ITree tree;
 	private ISlot slot;
 
-	private class AddDisjunctAction extends GNodeAction {
+	private abstract class UpdateDisjunctsAction extends GNodeAction {
 
 		private F value;
 
 		protected void perform() {
 
-			CFrame cFrame = valueToCFrame(value);
-			CFrame updatedCFrame = checkAddCFrameDisjunct(cFrame);
+			F updatedValue = getUpdatedValue();
 
-			if (!updatedCFrame.equals(cFrame)) {
+			if (updatedValue != value) {
 
-				F updatedValue = checkUpdateValue(value, updatedCFrame);
+				removeValue(value);
 
-				if (!updatedValue.equals(value)) {
+				if (updatedValue != null) {
 
-					removeValue(value);
 					addValue(updatedValue);
-
-					value = updatedValue;
 				}
 			}
 		}
 
-		AddDisjunctAction(F value) {
+		UpdateDisjunctsAction(F value) {
 
 			this.value = value;
+		}
+
+		abstract CFrame checkUpdateCFrameDisjuncts(CFrame cFrame);
+
+		private F getUpdatedValue() {
+
+			CFrame cFrame = valueToCFrame(value);
+			CFrame updatedCFrame = checkUpdateCFrameDisjuncts(cFrame);
+
+			if (updatedCFrame == null) {
+
+				return null;
+			}
+
+			if (updatedCFrame.equals(cFrame)) {
+
+				return value;
+			}
+
+			return checkUpdateValue(value, updatedCFrame);
+		}
+	}
+
+	private class AddDisjunctAction extends UpdateDisjunctsAction {
+
+		AddDisjunctAction(F value) {
+
+			super(value);
+		}
+
+		CFrame checkUpdateCFrameDisjuncts(CFrame cFrame) {
+
+			return checkAddCFrameDisjunct(cFrame);
+		}
+	}
+
+	private class RemoveDisjunctAction extends UpdateDisjunctsAction {
+
+		RemoveDisjunctAction(F value) {
+
+			super(value);
+		}
+
+		CFrame checkUpdateCFrameDisjuncts(CFrame cFrame) {
+
+			return checkRemoveCFrameDisjunct(cFrame);
 		}
 	}
 
@@ -75,22 +117,28 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 		this.slot = slot;
 	}
 
-	GNodeAction getAddDisjunctOrInertAction(F value) {
+	GNodeAction getAdditionAction(F value) {
 
 		return addDisjunctActionRequired()
 				? new AddDisjunctAction(value)
 				: GNodeAction.INERT_ACTION;
 	}
 
-	CFrame checkObtainCFrame() {
+	GNodeAction getRemovalAction(F value) {
 
-		return selectableCFrameOptions() ? obtainCFrame() : getRootCFrame();
+		return removeDisjunctActionRequired(value)
+				? new RemoveDisjunctAction(value)
+				: getRemoveValueAction(value);
 	}
 
-	CFrame obtainCFrame() {
+	CFrame checkObtainCFrameAddition() {
 
-		return new CFrameSelector(tree, getRootCFrame()).getSelectionOrNull();
+		return selectableCFrameOptions()
+					? getCFrameAdditionSelectionOrNull()
+					: getRootCFrame();
 	}
+
+	abstract String getCFrameRole();
 
 	abstract CFrame getRootCFrame();
 
@@ -105,26 +153,86 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 				&& selectableCFrameOptions();
 	}
 
+	private boolean removeDisjunctActionRequired(F value) {
+
+		return slot.editable() && valueToCFrame(value).getCategory().disjunction();
+	}
+
 	private CFrame checkAddCFrameDisjunct(CFrame cFrame) {
 
-		CFrame newDisjunct = checkObtainCFrame();
+		CFrame newDisjunct = getCFrameAdditionSelectionOrNull();
 
 		if (newDisjunct != null) {
 
 			List<CFrame> disjuncts = cFrameAsDisjuncts(cFrame);
 
-			if (disjuncts.add(newDisjunct)) {
+			if (updateCFrameDisjuncts(disjuncts, newDisjunct)) {
 
-				cFrame = CFrame.resolveDisjunction(disjuncts);
+				return CFrame.resolveDisjunction(disjuncts);
 			}
 		}
 
 		return cFrame;
 	}
 
-	private CFrame obtainNewCFrameDisjunct() {
+	private boolean updateCFrameDisjuncts(
+						List<CFrame> disjuncts,
+						CFrame newDisjunct) {
 
-		return new CFrameSelector(tree, getRootCFrame()).getSelectionOrNull();
+		if (disjuncts.contains(newDisjunct)) {
+
+			return false;
+		}
+
+		for (CFrame disjunct : new ArrayList<CFrame>(disjuncts)) {
+
+			if (disjunct.subsumes(newDisjunct)) {
+
+				disjuncts.remove(disjunct);
+			}
+		}
+
+		disjuncts.add(newDisjunct);
+
+		return true;
+	}
+
+	private CFrame checkRemoveCFrameDisjunct(CFrame cFrame) {
+
+		List<CFrame> disjuncts = cFrameAsDisjuncts(cFrame);
+		List<CFrame> oldDisjuncts = getCFrameRemovalSelections(disjuncts);
+
+		if (!oldDisjuncts.isEmpty()) {
+
+			disjuncts.removeAll(oldDisjuncts);
+
+			if (disjuncts.isEmpty()) {
+
+				return null;
+			}
+
+			return CFrame.resolveDisjunction(disjuncts);
+		}
+
+		return cFrame;
+	}
+
+	private CFrame getCFrameAdditionSelectionOrNull() {
+
+		return new CFrameAdditionSelector(
+						tree,
+						getCFrameRole(),
+						getRootCFrame())
+							.getSelectionOrNull();
+	}
+
+	private List<CFrame> getCFrameRemovalSelections(List<CFrame> options) {
+
+		return new CFrameRemovalsSelector(
+						tree,
+						getCFrameRole(),
+						options)
+							.getSelections();
 	}
 
 	private List<CFrame> cFrameAsDisjuncts(CFrame cFrame) {

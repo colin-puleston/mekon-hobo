@@ -36,9 +36,9 @@ public class GTable extends JTable {
 
 	static private final long serialVersionUID = -1;
 
-	static final int HDR_HEIGHT = 40;
+	static final int HDR_HEIGHT = 30;
 	static final Color HDR_BACKGROUND = Color.LIGHT_GRAY;
-	static final float HDR_FONT_SIZE = 16;
+	static final float HDR_FONT_SIZE = 14;
 	static final int HDR_FONT_STYLE = Font.BOLD;
 
 	static final int CELL_HEIGHT = 30;

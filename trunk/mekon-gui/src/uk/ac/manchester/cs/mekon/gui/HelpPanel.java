@@ -408,6 +408,14 @@ class HelpPanel extends JTabbedPane {
 					"SLOT-VALUE",
 					RIGHT_CLICK_STRING,
 					"Remove slot value");
+				addRow(
+					"SLOT-VALUE (CFrame only)",
+					RIGHT_CLICK_STRING,
+					"Remove disjunct from value (alternative action, where applicable)");
+				addRow(
+					"SLOT-VALUE (IFrame only)",
+					RIGHT_CLICK_STRING,
+					"Remove disjunct from value-type (alternative action, where applicable)");
 			}
 		}
 

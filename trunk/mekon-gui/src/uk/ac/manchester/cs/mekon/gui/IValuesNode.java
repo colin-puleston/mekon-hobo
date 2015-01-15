@@ -74,10 +74,7 @@ abstract class IValuesNode extends GNode {
 
 		protected void perform() {
 
-			if (slot.editable()) {
-
-				removeValue(value);
-			}
+			removeValue(value);
 		}
 
 		RemoveValueAction(IValue value) {
@@ -139,7 +136,9 @@ abstract class IValuesNode extends GNode {
 
 	GNodeAction getRemoveValueAction(IValue value) {
 
-		return new RemoveValueAction(value);
+		return slot.editable()
+					? new RemoveValueAction(value)
+					: GNodeAction.INERT_ACTION;
 	}
 
 	void addValue(IValue value) {
