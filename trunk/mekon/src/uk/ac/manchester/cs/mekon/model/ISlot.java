@@ -39,7 +39,6 @@ public class ISlot implements IEntity {
 	private CSlot type;
 	private IFrame container;
 	private FSlotAttributes attributes;
-	private boolean abstractValuesAllowed;
 	private ISlotValues values;
 	private ISlotValuesEditor valuesEditor;
 	private List<ISlotListener> listeners = new ArrayList<ISlotListener>();
@@ -174,17 +173,17 @@ public class ISlot implements IEntity {
 	}
 
 	/**
-	 * Specifies whether the slot can be given abstract values. By
-	 * default this will be the case if and only if the container-frame
-	 * of the slot is of category {@link IFrameCategory#QUERY}, or
-	 * the associated concept-level slot of which this slot is an
-	 * instance is {@link CSlot#abstractAssertable}.
+	 * Specifies whether the slot can be given abstract values. This
+	 * will be the case if and only if the container-frame of the slot
+	 * is of category {@link IFrameCategory#QUERY}, or the associated
+	 * concept-level slot of which this slot is an instance is
+	 * {@link CSlot#abstractAssertable}.
 	 *
 	 * @return True if abstract values allowed
 	 */
 	public boolean abstractValuesAllowed() {
 
-		return abstractValuesAllowed;
+		return querySlot() || type.abstractAssertable();
 	}
 
 	/**
@@ -237,8 +236,6 @@ public class ISlot implements IEntity {
 		this.container = container;
 		this.attributes = attributes.copy();
 
-		abstractValuesAllowed = abstractValuesAllowedDefault();
-
 		values = type.getCardinality().createSlotValues(this);
 		valuesEditor = new ISlotValuesEditor(values);
 	}
@@ -253,11 +250,6 @@ public class ISlot implements IEntity {
 		return container.getCategory().query();
 	}
 
-	private boolean abstractValuesAllowedDefault() {
-
-		return querySlot() || type.abstractAssertable();
-	}
-
 	private void checkExternalValuesEditorAccess(
 						boolean legalAccess,
 						String accessProblem) {
@@ -265,7 +257,9 @@ public class ISlot implements IEntity {
 		if (!legalAccess) {
 
 			throw new KAccessException(
-						"Cannot edit values for " + accessProblem + " slot: "
+						"Cannot edit values for "
+						+ accessProblem
+						+ " slot: "
 						+ this);
 		}
 	}
