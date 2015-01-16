@@ -25,6 +25,7 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -37,7 +38,9 @@ class InstanceStorePanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String RETRIEVE_BUTTON_LABEL = "Retrieve Instance...";
+	static private final String TITLE = "Instance Store";
+	static private final String RETRIEVE_BUTTON_LABEL = "Retrieve...";
+	static private final String REMOVE_BUTTON_LABEL = "Remove...";
 	static private final String SELECTOR_TITLE = "Instance Name";
 
 	private CModel model;
@@ -49,12 +52,27 @@ class InstanceStorePanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			retrieve();
+			retrieveInstance();
 		}
 
 		RetrieveButton() {
 
 			super(RETRIEVE_BUTTON_LABEL);
+		}
+	}
+
+	private class RemoveButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			removeInstance();
+		}
+
+		RemoveButton() {
+
+			super(REMOVE_BUTTON_LABEL);
 		}
 	}
 
@@ -65,27 +83,72 @@ class InstanceStorePanel extends JPanel {
 		this.model = model;
 		this.modelTree = modelTree;
 
-		add(new RetrieveButton(), BorderLayout.EAST);
+		setBorder(createBorder());
+		add(createButtonsComponent(), BorderLayout.EAST);
 	}
 
-	private void retrieve() {
+	private TitledBorder createBorder() {
+
+		TitledBorder border = new TitledBorder(TITLE);
+		Font font = border.getTitleFont();
+
+		if (font != null) {
+
+			border.setTitleFont(GFonts.toMedium(font));
+		}
+
+		return border;
+	}
+
+	private JComponent createButtonsComponent() {
+
+		JPanel panel = new JPanel();
+
+		panel.add(new RetrieveButton());
+		panel.add(new RemoveButton());
+
+		return panel;
+	}
+
+	private void retrieveInstance() {
 
 		CIdentity id = getIdentityOrNull();
 
 		if (id != null) {
 
-			if (getIStore().contains(id)) {
+			AssertionInstanceFrame.display(modelTree, getIStore(), id);
+		}
+	}
 
-				AssertionInstanceFrame.display(modelTree, getIStore(), id);
-			}
-			else {
+	private void removeInstance() {
 
-				showMessage("Not a stored instance: " + id.getLabel());
-			}
+		CIdentity id = getIdentityOrNull();
+
+		if (id != null && confirmRemove(id)) {
+
+			getIStore().remove(id);
+			showRemovedMessage(id);
 		}
 	}
 
 	private CIdentity getIdentityOrNull() {
+
+		CIdentity id = getIdentitySelectionOrNull();
+
+		if (id != null) {
+
+			if (getIStore().contains(id)) {
+
+				return id;
+			}
+
+			showNotStoredMessage(id);
+		}
+
+		return null;
+	}
+
+	private CIdentity getIdentitySelectionOrNull() {
 
 		return new CIdentitySelector(this, SELECTOR_TITLE).getSelectionOrNull();
 	}
@@ -93,6 +156,37 @@ class InstanceStorePanel extends JPanel {
 	private IStore getIStore() {
 
 		return model.getIStore();
+	}
+
+	private boolean confirmRemove(CIdentity identity) {
+
+		return obtainConfirmation(
+					"Remove stored instance: "
+					+ "\"" + identity.getLabel() + "\"");
+	}
+
+	private void showNotStoredMessage(CIdentity identity) {
+
+		showMessage("Not a stored instance: \"" + identity.getLabel() + "\"");
+	}
+
+	private void showRemovedMessage(CIdentity identity) {
+
+		showMessage("Instance removed from store: \"" + identity.getLabel() + "\"");
+	}
+
+	private boolean obtainConfirmation(String msg) {
+
+		return obtainConfirmationOption(msg) == JOptionPane.OK_OPTION;
+	}
+
+	private int obtainConfirmationOption(String msg) {
+
+		return JOptionPane.showConfirmDialog(
+					null,
+					msg,
+					"Confirm?",
+					JOptionPane.OK_CANCEL_OPTION);
 	}
 
 	private void showMessage(String msg) {

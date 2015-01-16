@@ -145,7 +145,7 @@ class AssertionInstanceFrame extends InstantiationFrame {
 	private boolean confirmReplaceStored(CIdentity identity) {
 
 		return obtainConfirmation(
-					"Replacing instance: "
+					"Replace stored instance: "
 					+ "\"" + identity.getLabel() + "\"");
 	}
 
