@@ -50,7 +50,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  * </ul>
  * Query-frames and assertion-frames cannot be mixed within a single
  * model-instantiation. Attempting to do so will result in an
- * exception.
+ * exception being thrown.
  *
  * @author Colin Puleston
  */
@@ -494,9 +494,6 @@ public class IFrame implements IEntity, IValue {
 		referencingFrame.validateAsReferencingFrame();
 
 		if (category != referencingFrame.category) {
-
-			String thisCat = category.toString();
-			String refCat = referencingFrame.category.toString();
 
 			throw new KAccessException(
 						"Cannot add frame: " + this
