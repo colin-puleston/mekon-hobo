@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * Interface whose implementations will perform certain required
  * modifications to {@link ORFrame}/{@link ORSlot}-based
- * intermediate instance representations.
+ * intermediate instance representations prior to reasoning.
  *
  * @author Colin Puleston
  */
@@ -39,7 +39,7 @@ public interface ORPreProcessor {
 	/**
 	 * Performs required modifications to instance representation.
 	 *
-	 * @param model Model over which classifier is operating
+	 * @param model Relevant model
 	 * @param rootFrame Root-frame in instance representation
 	 */
 	public void process(OModel model, ORFrame rootFrame);

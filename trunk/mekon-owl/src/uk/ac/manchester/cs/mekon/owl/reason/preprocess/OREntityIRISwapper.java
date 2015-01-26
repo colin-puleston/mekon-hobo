@@ -24,13 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason.preprocess;
 
-import java.util.*;
-
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
@@ -40,7 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  *
  * @author Colin Puleston
  */
-public class OREntityIRISwapper implements ORPreProcessor {
+public class OREntityIRISwapper extends ORVisitingPreProcessor {
 
 	private CIdentity identity;
 	private IRI iri;
@@ -60,32 +57,23 @@ public class OREntityIRISwapper implements ORPreProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void process(OModel model, ORFrame rootFrame) {
+	protected void visit(OModel model, ORFrame frame) {
 
-		process(rootFrame, new HashSet<ORFrame>());
+		checkSwapIRI(frame);
 	}
 
-	private void process(ORFrame frame, Set<ORFrame> visited) {
-
-		if (visited.add(frame)) {
-
-			checkSwapIRI(frame);
-
-			for (ORConceptSlot slot : frame.getConceptSlots()) {
-
-				process(slot, visited);
-			}
-		}
-	}
-
-	private void process(ORConceptSlot slot, Set<ORFrame> visited) {
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(OModel model, ORConceptSlot slot) {
 
 		checkSwapIRI(slot);
+	}
 
-		for (ORFrame value : slot.getValues()) {
-
-			process(value, visited);
-		}
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(OModel model, ORNumberSlot slot) {
 	}
 
 	private void checkSwapIRI(ORFramesEntity entity) {

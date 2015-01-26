@@ -24,71 +24,74 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason.preprocess;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
- * Abstract pre-processer that modifies intermediate instance
- * representations, in order to bypass particular intermediate
- * slots, with the slots to be bypassed being identified by the
- * extending classes. When a slot is bypassed, it is replaced
- * on the frame to which it is attached, by all slots that are
- * attached the frames that are values for the bypassed frame.
+ * Abstract base-class for pre-processers that visit each frame
+ * and slot in an intermediate instance representation in turn,
+ * via a depth-first traversal starting from the root-frame.
  *
  * @author Colin Puleston
  */
-public abstract class ORSlotsBypasser extends ORVisitingPreProcessor {
+public abstract class ORVisitingPreProcessor implements ORPreProcessor {
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void visit(OModel model, ORFrame frame) {
+	public void process(OModel model, ORFrame rootFrame) {
 
-		for (ORConceptSlot slot : frame.getConceptSlots()) {
-
-			if (bypass(slot)) {
-
-				bypassSlot(frame, slot);
-			}
-		}
+		visitAll(model, rootFrame, new HashSet<ORFrame>());
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	protected void visit(OModel model, ORConceptSlot slot) {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void visit(OModel model, ORNumberSlot slot) {
-	}
-
-	/**
-	 * Determines whether or not a slot is to be bypassed
+	 * Visitor for frames in intermediate instance representation.
 	 *
-	 * @param slot Slot to test
-	 * @return True if slot is to be bypassed
+	 * @param model Relevant model
+	 * @param frame Visited frame
 	 */
-	protected abstract boolean bypass(ORConceptSlot slot);
+	protected abstract void visit(OModel model, ORFrame frame);
 
-	private void bypassSlot(ORFrame frame, ORConceptSlot slot) {
+	/**
+	 * Visitor for concept-valued slots in intermediate instance
+	 * representation.
+	 *
+	 * @param model Relevant model
+	 * @param slot Visited slot
+	 */
+	protected abstract void visit(OModel model, ORConceptSlot slot);
 
-		frame.removeSlot(slot);
+	/**
+	 * Visitor for number-valued slots in intermediate instance
+	 * representation.
+	 *
+	 * @param model Relevant model
+	 * @param slot Visited slot
+	 */
+	protected abstract void visit(OModel model, ORNumberSlot slot);
 
-		for (ORFrame valueFrame : slot.getValues()) {
+	private void visitAll(OModel model, ORFrame frame, Set<ORFrame> visited) {
 
-			for (ORConceptSlot nestedSlot : valueFrame.getConceptSlots()) {
+		if (visited.add(frame)) {
 
-				if (bypass(nestedSlot)) {
+			visit(model, frame);
 
-					bypassSlot(frame, nestedSlot);
+			for (ORConceptSlot slot : frame.getConceptSlots()) {
+
+				visit(model, slot);
+
+				for (ORFrame value : slot.getValues()) {
+
+					visitAll(model, value, visited);
 				}
-				else {
+			}
 
-					frame.addSlot(nestedSlot);
-				}
+			for (ORNumberSlot slot : frame.getNumberSlots()) {
+
+				visit(model, slot);
 			}
 		}
 	}
