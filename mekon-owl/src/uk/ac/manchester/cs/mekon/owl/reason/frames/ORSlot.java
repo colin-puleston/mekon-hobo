@@ -169,7 +169,7 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 	 */
 	public ORConceptSlot asConceptSlot() {
 
-		throw new KAccessException("Not a concept-slot");
+		throw new KAccessException("Not a concept-slot: " + getIdentifier());
 	}
 
 	/**
@@ -180,7 +180,7 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 	 */
 	public ORNumberSlot asNumberSlot() {
 
-		throw new KAccessException("Not a number-slot");
+		throw new KAccessException("Not a number-slot: " + getIdentifier());
 	}
 
 	/**

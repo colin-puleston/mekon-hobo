@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.reason.frames;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -74,6 +75,24 @@ public class ORNumberSlot extends ORSlot<INumber> {
 	public ORNumberSlot asNumberSlot() {
 
 		return this;
+	}
+
+	/**
+	 * Provides current number-value for the slot.
+	 *
+	 * @return Current number-value
+	 * @throws KAccessException if no current value
+	 */
+	public INumber getValue() {
+
+		if (hasValues()) {
+
+			return getValues().iterator().next();
+		}
+
+		throw new KAccessException(
+					"No current value for number-slot: "
+					+ getIdentifier());
 	}
 
 	ORNumberSlot(ISlot iSlot, IRI iri) {
