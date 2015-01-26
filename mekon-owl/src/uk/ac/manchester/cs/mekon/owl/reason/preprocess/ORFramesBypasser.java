@@ -24,10 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason.preprocess;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
@@ -40,13 +37,32 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  *
  * @author Colin Puleston
  */
-public abstract class ORFramesBypasser implements ORPreProcessor {
+public abstract class ORFramesBypasser extends ORVisitingPreProcessor {
 
 	/**
+	 * {@inheritDoc}
 	 */
-	public void process(OModel model, ORFrame rootFrame) {
+	protected void visit(OModel model, ORFrame frame) {
+	}
 
-		process(rootFrame, new HashSet<ORFrame>());
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(OModel model, ORConceptSlot slot) {
+
+		for (ORFrame valueFrame : slot.getValues()) {
+
+			if (bypass(valueFrame)) {
+
+				bypassFrame(slot, valueFrame);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(OModel model, ORNumberSlot slot) {
 	}
 
 	/**
@@ -56,38 +72,6 @@ public abstract class ORFramesBypasser implements ORPreProcessor {
 	 * @return True if frame is to be bypassed
 	 */
 	protected abstract boolean bypass(ORFrame frame);
-
-	private void process(ORFrame frame, Set<ORFrame> visited) {
-
-		if (visited.add(frame)) {
-
-			for (ORConceptSlot slot : frame.getConceptSlots()) {
-
-				process(slot, visited);
-			}
-		}
-	}
-
-	private void process(ORConceptSlot slot, Set<ORFrame> visited) {
-
-		checkBypassFrames(slot);
-
-		for (ORFrame value : slot.getValues()) {
-
-			process(value, visited);
-		}
-	}
-
-	private void checkBypassFrames(ORConceptSlot parentSlot) {
-
-		for (ORFrame frame : parentSlot.getValues()) {
-
-			if (bypass(frame)) {
-
-				bypassFrame(parentSlot, frame);
-			}
-		}
-	}
 
 	private void bypassFrame(ORConceptSlot parentSlot, ORFrame frame) {
 

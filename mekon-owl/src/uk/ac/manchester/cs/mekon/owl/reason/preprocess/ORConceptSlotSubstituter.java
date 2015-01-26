@@ -30,7 +30,6 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
@@ -49,131 +48,10 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  *
  * @author Colin Puleston
  */
-public class ORConceptSlotSubstituter implements ORPreProcessor {
+public class ORConceptSlotSubstituter extends ORVisitingPreProcessor {
 
 	private CIdentity sourceSlotId;
 	private Map<CFrame, IRI> targetSlotsByValueType = new HashMap<CFrame, IRI>();
-
-	private class Substituter {
-
-		private OModel model;
-		private Set<ORFrame> visited = new HashSet<ORFrame>();
-
-		Substituter(OModel model) {
-
-			this.model = model;
-		}
-
-		void process(ORFrame frame) {
-
-			if (visited.add(frame)) {
-
-				Set<ORConceptSlot> newSlots = new HashSet<ORConceptSlot>();
-
-				for (ORConceptSlot slot : frame.getConceptSlots()) {
-
-					newSlots.addAll(checkSubstitute(frame, slot));
-				}
-
-				for (ORConceptSlot slot : newSlots) {
-
-					process(slot);
-				}
-			}
-		}
-
-		private void process(ORConceptSlot slot) {
-
-			for (ORFrame value : slot.getValues()) {
-
-				process(value);
-			}
-		}
-
-		private Set<ORConceptSlot> checkSubstitute(ORFrame container, ORConceptSlot slot) {
-
-			return isSourceSlot(slot)
-					? substitute(container, slot)
-					: Collections.<ORConceptSlot>singleton(slot);
-		}
-
-		private Set<ORConceptSlot> substitute(ORFrame container, ORConceptSlot sourceSlot) {
-
-			Set<ORConceptSlot> newSlots = new HashSet<ORConceptSlot>();
-
-			for (CFrame valueType : targetSlotsByValueType.keySet()) {
-
-				ORConceptSlot targetSlot = resolveTargetSlot(container, valueType);
-
-				moveSlotValues(sourceSlot, targetSlot, valueType);
-				newSlots.add(targetSlot);
-			}
-
-			if (sourceSlot.getValues().isEmpty()) {
-
-				container.removeSlot(sourceSlot);
-			}
-			else {
-
-				newSlots.add(sourceSlot);
-			}
-
-			return newSlots;
-		}
-
-		private void moveSlotValues(
-						ORConceptSlot sourceSlot,
-						ORConceptSlot targetSlot,
-						CFrame moveValueType) {
-
-			for (ORFrame value : sourceSlot.getValues()) {
-
-				if (value.mapsToOWLEntity()) {
-
-					CFrame valueType = value.getCFrame();
-
-					if (valueType != null && moveValueType.subsumes(valueType)) {
-
-						sourceSlot.removeValue(value);
-						targetSlot.addValue(value);
-					}
-				}
-			}
-		}
-
-		private ORConceptSlot resolveTargetSlot(ORFrame container, CFrame valueType) {
-
-			IRI iri = targetSlotsByValueType.get(valueType);
-			ORConceptSlot targetSlot = getTargetSlotOrNull(container, iri);
-
-			if (targetSlot == null) {
-
-				targetSlot = new ORConceptSlot(iri);
-
-				container.addSlot(targetSlot);
-			}
-
-			return targetSlot;
-		}
-
-		private ORConceptSlot getTargetSlotOrNull(ORFrame container, IRI iri) {
-
-			for (ORConceptSlot slot : container.getConceptSlots()) {
-
-				if (slot.mapsToOWLEntity() && slot.getIRI().equals(iri)) {
-
-					return slot;
-				}
-			}
-
-			return null;
-		}
-
-		private boolean isSourceSlot(ORConceptSlot slot) {
-
-			return slot.getIdentifier().equals(sourceSlotId.getIdentifier());
-		}
-	}
 
 	/**
 	 * Constructor.
@@ -200,8 +78,94 @@ public class ORConceptSlotSubstituter implements ORPreProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void process(OModel model, ORFrame rootFrame) {
+	protected void visit(OModel model, ORFrame frame) {
 
-		new Substituter(model).process(rootFrame);
+		for (ORConceptSlot slot : frame.getConceptSlots()) {
+
+			if (isSourceSlot(slot)) {
+
+				substitute(frame, slot);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(OModel model, ORConceptSlot slot) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(OModel model, ORNumberSlot slot) {
+	}
+
+	private void substitute(ORFrame container, ORConceptSlot sourceSlot) {
+
+		for (CFrame valueType : targetSlotsByValueType.keySet()) {
+
+			ORConceptSlot targetSlot = resolveTargetSlot(container, valueType);
+
+			moveSlotValues(sourceSlot, targetSlot, valueType);
+		}
+
+		if (sourceSlot.getValues().isEmpty()) {
+
+			container.removeSlot(sourceSlot);
+		}
+	}
+
+	private boolean isSourceSlot(ORConceptSlot slot) {
+
+		return slot.getIdentifier().equals(sourceSlotId.getIdentifier());
+	}
+
+	private ORConceptSlot resolveTargetSlot(ORFrame container, CFrame valueType) {
+
+		IRI iri = targetSlotsByValueType.get(valueType);
+		ORConceptSlot targetSlot = getTargetSlotOrNull(container, iri);
+
+		if (targetSlot == null) {
+
+			targetSlot = new ORConceptSlot(iri);
+
+			container.addSlot(targetSlot);
+		}
+
+		return targetSlot;
+	}
+
+	private ORConceptSlot getTargetSlotOrNull(ORFrame container, IRI iri) {
+
+		for (ORConceptSlot slot : container.getConceptSlots()) {
+
+			if (slot.mapsToOWLEntity() && slot.getIRI().equals(iri)) {
+
+				return slot;
+			}
+		}
+
+		return null;
+	}
+
+	private void moveSlotValues(
+					ORConceptSlot sourceSlot,
+					ORConceptSlot targetSlot,
+					CFrame moveValueType) {
+
+		for (ORFrame value : sourceSlot.getValues()) {
+
+			if (value.mapsToOWLEntity()) {
+
+				CFrame valueType = value.getCFrame();
+
+				if (valueType != null && moveValueType.subsumes(valueType)) {
+
+					sourceSlot.removeValue(value);
+					targetSlot.addValue(value);
+				}
+			}
+		}
 	}
 }

@@ -31,14 +31,14 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Defines the semantics for all slots that the classifier will
- * handle. Options for a specific slot are {@link ORSemantics#OPEN_WORLD}
- * and {@link ORSemantics#CLOSED_WORLD}. The semantics are specified
- * via a general default value plus a set of exception properties.
- * The default semantics will apply to all slots other than those
- * whose associated property, or any of it's super-properties, is
- * specified as an exception property. For slots in this latter
- * category the alternative option will apply.
+ * Defines the semantics for all slots that the reasoning operations
+ * will handle. Options for a specific slot are {@link
+ * ORSemantics#OPEN_WORLD} and {@link ORSemantics#CLOSED_WORLD}. The
+ * semantics are specified via a general default value plus a set of
+ * exception properties. The default semantics will apply to all slots
+ * other than those whose associated property, or any of its
+ * super-properties, is specified as an exception property. For slots
+ * in this latter category the alternative option will apply.
  *
  * @author Colin Puleston
  */

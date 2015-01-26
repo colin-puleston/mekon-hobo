@@ -160,40 +160,9 @@ public class ORMatcher implements IMatcher {
 	}
 
 	/**
-	 * Provides the model over which the matcher is operating.
-	 *
-	 * @return Model over which matcher is operating
-	 */
-	public OModel getModel() {
-
-		return model;
-	}
-
-	/**
-	 * Provides the object used to specify the semantics that will
-	 * apply to specific slots from the incoming frames-based
-	 * instances.
-	 *
-	 * @return Object for specifying slot-semantics to be applied
-	 * by matcher
-	 */
-	public ORSlotSemantics getSlotSemantics() {
-
-		return framesManager.getSlotSemantics();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean handlesType(CFrame type) {
-
-		return concepts.getSubsumerOrNull(type) != null;
-	}
-
-	/**
-	 * Converts the specified instance-level query frame to the
+	 * Converts the specified instance-level frame to the
 	 * pre-processable version, runs any registered pre-processors
-	 * over it, then adds it as an network of individuals to the
+	 * over it, then adds it as a network of individuals to the
 	 * in-memory ontology.
 	 *
 	 * @param instance Representation of instance to be added
@@ -240,6 +209,37 @@ public class ORMatcher implements IMatcher {
 	public IMatches match(IFrame query) {
 
 		return new IMatches(getMatches(query), false);
+	}
+
+	/**
+	 * Provides the model over which the matcher is operating.
+	 *
+	 * @return Model over which matcher is operating
+	 */
+	public OModel getModel() {
+
+		return model;
+	}
+
+	/**
+	 * Provides the object used to specify the semantics that will
+	 * apply to specific slots from the incoming frames-based
+	 * instances.
+	 *
+	 * @return Object for specifying slot-semantics to be applied
+	 * by matcher
+	 */
+	public ORSlotSemantics getSlotSemantics() {
+
+		return framesManager.getSlotSemantics();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean handlesType(CFrame type) {
+
+		return concepts.getSubsumerOrNull(type) != null;
 	}
 
 	private List<CIdentity> getMatches(IFrame query) {
