@@ -71,13 +71,17 @@ public interface IFrameEditor {
 	 * @param source Source-type for concept-level slot
 	 * @param cardinality Cardinality for concept-level slot
 	 * @param valueType Value-type for concept-level slot
+	 * @param abstractAssertable True if concept-level slot
+	 * should be abstract-assertable (see {@link
+	 * CSlot#abstractAssertable})
 	 * @return Created and added instance-level slot
 	 */
 	public ISlot addSlot(
 					CIdentity identity,
 					CSource source,
 					CCardinality cardinality,
-					CValue<?> valueType);
+					CValue<?> valueType,
+					boolean abstractAssertable);
 
 	/**
 	 * Removes the specified slot from the frame.

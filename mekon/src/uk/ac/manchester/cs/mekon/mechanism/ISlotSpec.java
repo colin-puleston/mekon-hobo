@@ -42,6 +42,7 @@ class ISlotSpec {
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private boolean active = false;
 	private boolean dependent = false;
+	private boolean abstractAssertable = false;
 
 	ISlotSpec(IEditor iEditor, CIdentity identity) {
 
@@ -55,6 +56,7 @@ class ISlotSpec {
 		intersectWithCardinality(other.cardinality);
 		intersectWithActive(other.active);
 		intersectWithDependent(other.dependent);
+		intersectWithAbstractAssertable(other.abstractAssertable);
 		absorbValueTypes(other.valueTypes);
 		intersectWithFixedValues(other.fixedValues);
 	}
@@ -65,6 +67,7 @@ class ISlotSpec {
 		absorbCardinality(other.cardinality);
 		absorbActive(other.active);
 		absorbDependent(other.dependent);
+		absorbAbstractAssertable(other.abstractAssertable);
 		absorbValueTypes(other.valueTypes);
 		absorbFixedValues(other.fixedValues);
 	}
@@ -75,6 +78,7 @@ class ISlotSpec {
 		absorbCardinality(slotType.getCardinality());
 		absorbActive(slotType.active());
 		absorbDependent(slotType.dependent());
+		absorbAbstractAssertable(slotType.abstractAssertable());
 		absorbValueType(slotType.getValueType());
 	}
 
@@ -138,6 +142,11 @@ class ISlotSpec {
 		dependent &= value;
 	}
 
+	private void intersectWithAbstractAssertable(boolean value) {
+
+		abstractAssertable &= value;
+	}
+
 	private void intersectWithFixedValues(List<IValue> newFixedValues) {
 
 		fixedValues.retainAll(newFixedValues);
@@ -163,6 +172,11 @@ class ISlotSpec {
 		dependent |= value;
 	}
 
+	private void absorbAbstractAssertable(boolean value) {
+
+		abstractAssertable |= value;
+	}
+
 	private void absorbValueTypes(List<CValue<?>> newValueTypes) {
 
 		for (CValue<?> valueType : newValueTypes) {
@@ -179,7 +193,7 @@ class ISlotSpec {
 		}
 	}
 
-	private void addSlot(IFrame container,CValue<?> valueType) {
+	private void addSlot(IFrame container, CValue<?> valueType) {
 
 		ISlot slot = addRawSlot(container, valueType);
 
@@ -207,7 +221,8 @@ class ISlotSpec {
 						identity,
 						source,
 						cardinality,
-						valueType);
+						valueType,
+						abstractAssertable);
 	}
 
 	private void removeSlot(ISlot slot) {

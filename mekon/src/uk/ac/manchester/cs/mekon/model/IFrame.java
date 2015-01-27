@@ -160,11 +160,13 @@ public class IFrame implements IEntity, IValue {
 						CIdentity identity,
 						CSource source,
 						CCardinality cardinality,
-						CValue<?> valueType) {
+						CValue<?> valueType,
+						boolean abstractAssertable) {
 
 			CSlot slotType = new CSlot(type, identity, cardinality, valueType);
 
 			slotType.setSource(source);
+			slotType.setAbstractAssertable(abstractAssertable);
 
 			return addSlot(slotType);
 		}
