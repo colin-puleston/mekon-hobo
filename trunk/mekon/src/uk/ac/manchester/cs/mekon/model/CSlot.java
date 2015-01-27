@@ -224,6 +224,11 @@ public class CSlot implements CIdentified, CSourced {
 		this.source = source;
 	}
 
+	void setAbstractAssertable(boolean abstractAssertable) {
+
+		this.abstractAssertable = abstractAssertable;
+	}
+
 	void remove() {
 
 		container.getSlots().remove(this);
