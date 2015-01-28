@@ -36,17 +36,18 @@ import uk.ac.manchester.cs.mekon.util.*;
  * category {@link IFrameCategory#QUERY}. Assertion-frames differ
  * from query-frames in the following ways:
  * <ul>
- *   <li>Assertion-frames cannot be instantiations of
- *   disjunction-frames (see {@link CFrameCategory#disjunction})
- *   <li>Dependent slots on query-frames (see {@link ISlot#dependent})
- *   are editable by the client (see {@link ISlot#editable}), which
- *   is not the case for dependent slots on assertion-frames
+ *   <li>Query-frames can be instantiations of disjunction-frames
+ *   (see {@link CFrameCategory#disjunction}), whereas assertion-frames
+ *   cannot.
  *   <li>By default, all slots on query-frames can be given abstract
  *	 values (see {@link IValue#abstractValue}), whereas only those
  *	 slots on assertion-frames whose associated properties are defined
  *	 to be {@link CSlot#abstractAssertable} can. However, in either
  *	 case, this default behaviour can be overridden for individual
  *	 instance-level slots.
+ *   <li>Dependent slots on query-frames (see {@link ISlot#dependent})
+ *   are editable by the client (see {@link ISlot#editable}), which
+ *   is not the case for dependent slots on assertion-frames
  * </ul>
  * Query-frames and assertion-frames cannot be mixed within a single
  * model-instantiation. Attempting to do so will result in an
