@@ -59,7 +59,6 @@ public class Employment extends DObjectShell {
 
 		public void onAdded(Job value) {
 
-			value.initialise();
 			checkUpdate();
 
 			new UpdaterForJobWeeklyPay(value);
@@ -85,6 +84,8 @@ public class Employment extends DObjectShell {
 
 		public void initialise() {
 
+			checkUpdate();
+
 			new JobConsequenceUpdater();
 		}
 	}
@@ -100,11 +101,6 @@ public class Employment extends DObjectShell {
 		dEditor = builder.getEditor();
 
 		builder.addInitialiser(new Initialiser());
-	}
-
-	void initialise() {
-
-		checkUpdate();
 	}
 
 	private void checkUpdate() {

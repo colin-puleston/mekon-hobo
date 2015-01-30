@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.hobo.demo;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
@@ -45,7 +47,7 @@ public class Job extends DObjectShell {
 
 		public void onUpdated() {
 
-			checkUpdate();
+			update();
 		}
 
 		WeeklyPayUpdater() {
@@ -58,6 +60,8 @@ public class Job extends DObjectShell {
 	private class Initialiser implements DObjectInitialiser {
 
 		public void initialise() {
+
+			updateWeeklyPayValueType();
 
 			new WeeklyPayUpdater();
 		}
@@ -76,20 +80,19 @@ public class Job extends DObjectShell {
 		builder.addInitialiser(new Initialiser());
 	}
 
-	void initialise() {
-
-		checkUpdate();
-	}
-
-	private void checkUpdate() {
+	private void update() {
 
 		if (getFrame().getCategory().assertion()) {
 
-			update();
+			updateWeeklyPayValue();
+		}
+		else {
+
+			updateWeeklyPayValueType();
 		}
 	}
 
-	private void update() {
+	private void updateWeeklyPayValue() {
 
 		if (hourlyPay.isSet() && hoursPerWeek.isSet()) {
 
@@ -101,8 +104,42 @@ public class Job extends DObjectShell {
 		}
 	}
 
+	private void updateWeeklyPayValueType() {
+
+		getWeeklyPaySlotEditor().setValueType(getWeeklyPayRange());
+	}
+
+	private CNumber getWeeklyPayRange() {
+
+		CNumber pay = getRangeValue(hourlyPay);
+		CNumber hours = getRangeValue(hoursPerWeek);
+
+		INumber min = pay.getMin().multiplyBy(hours.getMin());
+		INumber max = pay.getMax().multiplyBy(hours.getMax());
+
+		return CIntegerDef.range(min, max).createNumber();
+	}
+
+	private CNumber getRangeValue(DCell<Integer> cell) {
+
+		ISlot slot = cell.getSlot();
+		ISlotValues values = slot.getValues();
+
+		if (values.isEmpty()) {
+
+			return (CNumber)slot.getValueType();
+		}
+
+		return (CNumber)values.asList().get(0).getType();
+	}
+
 	private DCell<Integer> getWeeklyPay() {
 
 		return dEditor.getField(weeklyPay);
+	}
+
+	private ISlotEditor getWeeklyPaySlotEditor() {
+
+		return dEditor.getIEditor().getSlotEditor(weeklyPay.getSlot());
 	}
 }
