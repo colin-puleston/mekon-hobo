@@ -46,8 +46,6 @@ public class Citizen extends DObjectShell {
 
 		public void onAdded(Employment value) {
 
-			value.initialise();
-
 			new TaxUpdater(value.totalWeeklyPay);
 		}
 
