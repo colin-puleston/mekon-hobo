@@ -47,7 +47,7 @@ public class CSlot implements CIdentified, CSourced {
 
 		public void setSource(CSource source) {
 
-			CSlot.this.source = source;
+			CSlot.this.setSource(source);
 		}
 
 		public void resetLabel(String newLabel) {
