@@ -37,10 +37,12 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
+public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup, A> {
 
 	private OModel model;
+
 	private Set<E> entities = new HashSet<E>();
+	private Map<E, A> attributes = new HashMap<E, A>();
 
 	/**
 	 * Adds an entity to the set.
@@ -49,7 +51,7 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
 	 */
 	public void add(E entity) {
 
-		entities.add(entity);
+		add(entity, createAttributes());
 	}
 
 	/**
@@ -59,7 +61,10 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
 	 */
 	public void addAll(Collection<E> entities) {
 
-		this.entities.addAll(entities);
+		for (E entity : entities) {
+
+			add(entity);
+		}
 	}
 
 	/**
@@ -98,21 +103,50 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup> {
 		}
 	}
 
+	/**
+	 * Provides the FM entity-generation attributes associated with
+	 * the specified OWL entity (which should have previously been
+	 * registered via the {@link #add} method).
+	 *
+	 * @param entity Relevant entity
+	 * @return Attributes for specified entity
+	 * @throws KModelException if entity has not been registered
+	 */
+	public A getAttributes(E entity) {
+
+		A attrs = attributes.get(entity);
+
+		if (attrs == null) {
+
+			throw new KModelException(
+						"Entity has not been registered: "
+						+ entity);
+		}
+
+		return attrs;
+	}
+
 	OBEntities(OModel model) {
 
 		this.model = model;
 	}
 
-	void addGroupEntity(G group, E entity, boolean isRoot) {
+	void add(E entity, A attributes) {
 
 		entities.add(entity);
+
+		this.attributes.put(entity, attributes);
 	}
+
+	abstract void addGroupEntity(G group, E entity, boolean isRoot);
+
+	abstract A createAttributes();
 
 	Set<E> getAll() {
 
 		if (entities.isEmpty()) {
 
-			entities.addAll(getAllInModel());
+			addAll(getAllInModel());
 		}
 
 		return entities;

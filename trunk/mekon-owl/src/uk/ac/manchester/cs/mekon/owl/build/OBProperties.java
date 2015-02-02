@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
 
@@ -39,47 +38,10 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class OBProperties
 				extends
-					OBEntities<OWLObjectProperty, OBPropertyInclusions> {
-
-	private Set<OWLObjectProperty> frameSources = new HashSet<OWLObjectProperty>();
-	private Set<OWLObjectProperty> abstractAssertables = new HashSet<OWLObjectProperty>();
-
-	/**
-	 * Registers a property as one that,in addition to any slots
-	 * that it will be used to generate, will also be used to
-	 * generate a frame in the frames-model. If the property is not
-	 * also registered via the {@link OBEntities#add} method then
-	 * this method will have no effect.
-	 *
-	 * @param property Relevant property
-	 */
-	public void setFrameSource(OWLObjectProperty property) {
-
-		frameSources.add(property);
-	}
-
-	/**
-	 * Registers a property as one that will be used to generate
-	 * frames-model slots that isare{@link CSlot#abstractAssertable}.
-	 * If the property is not also registered via the {@link
-	 * OBEntities#add} method then this method will have no effect.
-	 *
-	 * @param property Relevant property
-	 */
-	public void setAbstractAssertable(OWLObjectProperty property) {
-
-		abstractAssertables.add(property);
-	}
-
-	/**
-	 * Adds a collection of properties to the set.
-	 *
-	 * @param properties Properties to add
-	 */
-	public void addAll(Collection<OWLObjectProperty> properties) {
-
-		super.addAll(properties);
-	}
+					OBEntities
+						<OWLObjectProperty,
+						OBPropertyInclusions,
+						OBPropertyAttributes> {
 
 	OBProperties(OModel model) {
 
@@ -91,27 +53,12 @@ public class OBProperties
 			OWLObjectProperty property,
 			boolean isRoot) {
 
-		add(property);
-
-		if (group.frameSources()) {
-
-			setFrameSource(property);
-		}
-
-		if (group.abstractAssertables()) {
-
-			setAbstractAssertable(property);
-		}
+		add(property, group.getAttributes());
 	}
 
-	boolean frameSource(OWLObjectProperty property) {
+	OBPropertyAttributes createAttributes()  {
 
-		return frameSources.contains(property);
-	}
-
-	boolean abstractAssertable(OWLObjectProperty property) {
-
-		return abstractAssertables.contains(property);
+		return new OBPropertyAttributes();
 	}
 
 	String getTypeName() {

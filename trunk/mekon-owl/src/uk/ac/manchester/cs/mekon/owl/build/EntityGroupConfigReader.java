@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 abstract class EntityGroupConfigReader
 					<G extends OBEntityGroup,
-					E extends OBEntities<?, G>>
+					E extends OBEntities<?, G, ?>>
 					implements OBSectionBuilderConfigVocab {
 
 	private KConfigNode groupsNode;

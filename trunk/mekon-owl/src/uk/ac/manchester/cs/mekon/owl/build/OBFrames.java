@@ -81,7 +81,9 @@ class OBFrames {
 
 		for (OWLClass concept : concepts.getAll()) {
 
-			createFrame(concept, iReasoner, concepts.isHidden(concept));
+			boolean hidden = concepts.getAttributes(concept).hidden();
+
+			createFrame(concept, iReasoner, hidden);
 		}
 	}
 
@@ -89,7 +91,7 @@ class OBFrames {
 
 		for (OWLObjectProperty property : properties.getAll()) {
 
-			if (properties.frameSource(property)) {
+			if (properties.getAttributes(property).frameSource()) {
 
 				createFrame(property, null, false);
 			}
