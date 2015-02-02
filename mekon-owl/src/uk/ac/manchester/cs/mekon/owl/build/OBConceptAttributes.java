@@ -24,22 +24,30 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import org.semanticweb.owlapi.model.*;
-
 /**
+ * Represents a set of attributes that will determine the details
+ * of the entities generated in the Frames Model (FM) for a
+ * particular OWL class.
+ *
  * @author Colin Puleston
  */
-abstract class OBSlotSpec {
+public class OBConceptAttributes {
 
-	abstract OWLObjectProperty getProperty();
+	private boolean hidden = false;
 
-	abstract String getLabel();
+	/**
+	 * Sets a value for the attribute that determines whether the
+	 * concept will be used to generate a "hidden" frame.
+	 *
+	 * @param value Value for attribute
+	 */
+	public void setHidden(boolean value) {
 
-	abstract boolean singleValued();
+		hidden = value;
+	}
 
-	abstract boolean valuedRequired();
+	boolean hidden() {
 
-	abstract boolean metaFrameSlotsEnabled();
-
-	abstract OBPropertyAttributes getPropertyAttributes();
+		return hidden;
+	}
 }

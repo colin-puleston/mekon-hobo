@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
 
@@ -37,35 +36,12 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OBConcepts extends OBEntities<OWLClass, OBConceptInclusions> {
-
-	private Set<OWLClass> hiddenConcepts = new HashSet<OWLClass>();
-
-	/**
-	 * Registers a concept as one that will be used to generate a
-	 * "hidden" frame. If the concept is not also registered via
-	 * the {@link OBEntities#add} method then this method will have
-	 * no effect.
-	 *
-	 * @param concept Relevant concept
-	 */
-	public void setHidden(OWLClass concept) {
-
-		hiddenConcepts.add(concept);
-	}
-
-	/**
-	 * Adds a collection of concepts to the set.
-	 *
-	 * @param concepts Concepts to add
-	 */
-	public void addAll(Collection<OWLClass> concepts) {
-
-		for (OWLClass concept : concepts) {
-
-			add(concept);
-		}
-	}
+public class OBConcepts
+				extends
+					OBEntities
+						<OWLClass,
+						OBConceptInclusions,
+						OBConceptAttributes> {
 
 	OBConcepts(OModel model) {
 
@@ -77,17 +53,12 @@ public class OBConcepts extends OBEntities<OWLClass, OBConceptInclusions> {
 			OWLClass concept,
 			boolean isRoot) {
 
-		add(concept);
-
-		if (isHidden(group, concept, isRoot)) {
-
-			setHidden(concept);
-		}
+		add(concept, createAttributes(hidden(group, concept, isRoot)));
 	}
 
-	boolean isHidden(OWLClass concept) {
+	OBConceptAttributes createAttributes()  {
 
-		return hiddenConcepts.contains(concept);
+		return new OBConceptAttributes();
 	}
 
 	String getTypeName() {
@@ -120,7 +91,16 @@ public class OBConcepts extends OBEntities<OWLClass, OBConceptInclusions> {
 		return expression.getClassesInSignature();
 	}
 
-	private boolean isHidden(
+	private OBConceptAttributes createAttributes(boolean hidden)  {
+
+		OBConceptAttributes attributes = new OBConceptAttributes();
+
+		attributes.setHidden(hidden);
+
+		return attributes;
+	}
+
+	private boolean hidden(
 						OBConceptInclusions group,
 						OWLClass concept,
 						boolean isRoot) {

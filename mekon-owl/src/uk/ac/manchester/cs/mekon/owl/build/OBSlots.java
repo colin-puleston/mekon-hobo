@@ -49,6 +49,7 @@ class OBSlots {
 
 		private OWLObjectProperty property;
 		private OWLClassExpression filler;
+		private OBPropertyAttributes propertyAttributes;
 
 		SlotSpec(
 			OWLQuantifiedRestriction
@@ -58,6 +59,7 @@ class OBSlots {
 
 			property = toPropertyOrNull(restriction.getProperty());
 			filler = restriction.getFiller();
+			propertyAttributes = properties.getAttributes(property);
 		}
 
 		boolean initialised() {
@@ -75,11 +77,6 @@ class OBSlots {
 			return property.isFunctional(model.getAllOntologies());
 		}
 
-		boolean abstractAssertable() {
-
-			return properties.abstractAssertable(property);
-		}
-
 		String getLabel() {
 
 			return labels.getLabel(property);
@@ -88,6 +85,11 @@ class OBSlots {
 		boolean metaFrameSlotsEnabled() {
 
 			return metaFrameSlotsEnabled;
+		}
+
+		OBPropertyAttributes getPropertyAttributes() {
+
+			return propertyAttributes;
 		}
 
 		OBSlot create(OBFrame container) {

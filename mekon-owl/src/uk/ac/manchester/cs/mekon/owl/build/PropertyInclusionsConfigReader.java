@@ -49,9 +49,11 @@ class PropertyInclusionsConfigReader
 	OBPropertyInclusions createGroup(KConfigNode groupNode, IRI rootIRI) {
 
 		OBPropertyInclusions group = new OBPropertyInclusions(rootIRI);
+		OBPropertyAttributes attributes = group.getAttributes();
 
-		group.setFrameSources(getFrameSources(groupNode));
-		group.setAbstractAssertables(getAbstractAssertables(groupNode));
+		attributes.setFrameSource(getFrameSources(groupNode));
+		attributes.setDependent(getDependents(groupNode));
+		attributes.setAbstractAssertable(getAbstractAssertables(groupNode));
 
 		return group;
 	}
@@ -59,6 +61,11 @@ class PropertyInclusionsConfigReader
 	private boolean getFrameSources(KConfigNode groupNode) {
 
 		return groupNode.getBoolean(FRAME_SOURCE_PROPERTIES_ATTR, false);
+	}
+
+	private boolean getDependents(KConfigNode groupNode) {
+
+		return groupNode.getBoolean(DEPENDENT_SLOT_PROPERTIES_ATTR, false);
 	}
 
 	private boolean getAbstractAssertables(KConfigNode groupNode) {

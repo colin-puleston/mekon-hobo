@@ -37,6 +37,7 @@ abstract class OBSlot extends OIdentified {
 
 	private OWLProperty property;
 	private boolean singleValued;
+	private boolean dependent;
 	private boolean abstractAssertable;
 
 	private class CAdder {
@@ -81,7 +82,9 @@ abstract class OBSlot extends OIdentified {
 			CSlot slot = containerEd.addSlot(getIdentity(), cardinality, value);
 			CSlotEditor slotEd = builder.getSlotEditor(slot);
 
+			slotEd.absorbDependent(dependent);
 			slotEd.absorbAbstractAssertable(abstractAssertable);
+
 			annotations.checkAdd(builder, slot, property);
 		}
 
@@ -97,7 +100,11 @@ abstract class OBSlot extends OIdentified {
 
 		property = spec.getProperty();
 		singleValued = spec.singleValued();
-		abstractAssertable = spec.abstractAssertable();
+
+		OBPropertyAttributes attrs = spec.getPropertyAttributes();
+
+		dependent = attrs.dependent();
+		abstractAssertable = attrs.abstractAssertable();
 	}
 
 	void ensureCStructure(

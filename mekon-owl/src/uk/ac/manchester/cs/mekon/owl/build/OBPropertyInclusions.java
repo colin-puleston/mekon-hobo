@@ -34,8 +34,7 @@ import org.semanticweb.owlapi.model.*;
  */
 public class OBPropertyInclusions extends OBEntityGroup {
 
-	private boolean frameSources = false;
-	private boolean abstractAssertables = false;
+	private OBPropertyAttributes attributes = new OBPropertyAttributes();
 
 	/**
 	 * Constructor.
@@ -48,40 +47,12 @@ public class OBPropertyInclusions extends OBEntityGroup {
 	}
 
 	/**
-	 * Sets the flag that specifies whether for every property
-	 * in this group there will be generated, in addition to the
-	 * relevant frames-model slots, a frame with the same
-	 * IRI-derived identifier. By default will be set to false.
+	 * Provides the entity-generation attributes for the group.
 	 *
-	 * @param frameSources True if property should be used to
-	 * generate a frame in the frames-model
+	 * @return Attributes for group
 	 */
-	public void setFrameSources(boolean frameSources) {
+	public OBPropertyAttributes getAttributes() {
 
-		this.frameSources = frameSources;
-	}
-
-	/**
-	 * Sets the flag that specifies whether the frames-model
-	 * slots that will be generated for the properties in this group
-	 * will be {@link CSlot#abstractAssertable}. By default will
-	 * be set to false.
-	 *
-	 * @param abstractAssertables True if each generated slot
-	 * should be abstract-assertable
-	 */
-	public void setAbstractAssertables(boolean abstractAssertables) {
-
-		this.abstractAssertables = abstractAssertables;
-	}
-
-	boolean frameSources() {
-
-		return frameSources;
-	}
-
-	boolean abstractAssertables() {
-
-		return abstractAssertables;
+		return attributes;
 	}
 }
