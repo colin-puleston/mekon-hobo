@@ -33,18 +33,18 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 interface EntityIconConstants {
 
-	static final Color DIRECT_ENTITY_CLR = Color.blue;
-	static final Color INDIRECT_ENTITY_CLR = Color.red;
-	static final Color UNSPECIFIED_ENTITY_SOURCE_CLR = Color.gray;
+	static final Color INTERNAL_SOURCE_CLR = Color.blue;
+	static final Color EXTERNAL_SOURCE_CLR = Color.red;
+	static final Color UNSPECIFIED_SOURCE_CLR = Color.gray;
 	static final Color NUMBER_CLR = Color.green.darker().darker();
 	static final Color HIDDEN_FRAME_MARKER_CLR = Color.darkGray.darker();
-	static final Color SLOT_CURB_MARKER_CLR = Color.darkGray.darker();
+	static final Color CURBED_SLOT_MARKER_CLR = Color.darkGray.darker();
 
 	static final int ENTITY_INNER_SIZE = 8;
 	static final int ENTITY_RIM_SIZE = 3;
 	static final int ENTITY_SIZE = ENTITY_INNER_SIZE + (ENTITY_RIM_SIZE * 2);
 	static final int HIDDEN_FRAME_MARKER_WIDTH = ENTITY_SIZE;
 	static final int HIDDEN_FRAME_MARKER_HEIGHT = 4;
-	static final int SLOT_CURB_MARKER_WIDTH = 4;
-	static final int SLOT_CURB_MARKER_HEIGHT = ENTITY_SIZE;
+	static final int CURBED_SLOT_MARKER_WIDTH = 4;
+	static final int CURBED_SLOT_MARKER_HEIGHT = ENTITY_SIZE;
 }

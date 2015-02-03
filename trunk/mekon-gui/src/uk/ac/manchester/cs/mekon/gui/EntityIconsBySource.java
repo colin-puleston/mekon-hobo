@@ -41,10 +41,10 @@ abstract class EntityIconsBySource implements EntityIconConstants {
 
 	void initialise() {
 
-		add(CSource.DIRECT, DIRECT_ENTITY_CLR, null);
-		add(CSource.INDIRECT, INDIRECT_ENTITY_CLR, null);
-		add(CSource.DUAL, DIRECT_ENTITY_CLR, INDIRECT_ENTITY_CLR);
-		add(CSource.UNSPECIFIED, UNSPECIFIED_ENTITY_SOURCE_CLR, null);
+		add(CSource.INTERNAL, INTERNAL_SOURCE_CLR, null);
+		add(CSource.EXTERNAL, EXTERNAL_SOURCE_CLR, null);
+		add(CSource.DUAL, INTERNAL_SOURCE_CLR, EXTERNAL_SOURCE_CLR);
+		add(CSource.UNSPECIFIED, UNSPECIFIED_SOURCE_CLR, null);
 	}
 
 	Icon get(CSource source) {

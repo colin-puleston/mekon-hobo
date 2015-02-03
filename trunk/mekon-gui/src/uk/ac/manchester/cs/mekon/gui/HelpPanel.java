@@ -52,8 +52,8 @@ class HelpPanel extends JTabbedPane {
 	static final Icon inactiveSlotShape = getInactiveSlotShape();
 	static final Icon blockedSlotShape = getEditBlockedSlotShape();
 
-	static final Icon directColour = getColour(CSource.DIRECT);
-	static final Icon indirectColour = getColour(CSource.INDIRECT);
+	static final Icon internalColour = getColour(CSource.INTERNAL);
+	static final Icon externalColour = getColour(CSource.EXTERNAL);
 	static final Icon dualColour = getColour(CSource.DUAL);
 	static final Icon numberColour = getNumberColour();
 
@@ -176,12 +176,12 @@ class HelpPanel extends JTabbedPane {
 					"Entity Source");
 
 				addRow(
-					directColour,
+					internalColour,
 					"Frame, Slot",
 					"Any",
 					"Internal (i.e. Object Model)");
 				addRow(
-					indirectColour,
+					externalColour,
 					"Frame, Slot",
 					"Any",
 					"External (e.g. Ontology)");
