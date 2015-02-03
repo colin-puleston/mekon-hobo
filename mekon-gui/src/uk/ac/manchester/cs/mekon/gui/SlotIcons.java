@@ -33,10 +33,9 @@ import uk.ac.manchester.cs.mekon.gui.util.icon.*;
  */
 class SlotIcons extends EntityIconsBySource {
 
-	static private final int BLOCKED_MARKER_OFFSET
-								= ENTITY_SIZE - SLOT_CURB_MARKER_WIDTH;
-	static private final int INACTIVE_MARKER_OFFSET =
-								(ENTITY_SIZE - SLOT_CURB_MARKER_WIDTH) / 2;
+	static private final int CURBED_WIDTH = ENTITY_SIZE - CURBED_SLOT_MARKER_WIDTH;
+	static private final int BLOCKED_MARKER_OFFSET = CURBED_WIDTH;
+	static private final int INACTIVE_MARKER_OFFSET = CURBED_WIDTH / 2;
 
 	private boolean inactiveSlots;
 	private boolean blockedSlots;
@@ -81,9 +80,9 @@ class SlotIcons extends EntityIconsBySource {
 	private GIconRenderer createCurbMarkerRenderer(int offset) {
 
 		GIconRenderer r = new GRectangleRenderer(
-								SLOT_CURB_MARKER_CLR,
-								SLOT_CURB_MARKER_WIDTH,
-								SLOT_CURB_MARKER_HEIGHT);
+								CURBED_SLOT_MARKER_CLR,
+								CURBED_SLOT_MARKER_WIDTH,
+								CURBED_SLOT_MARKER_HEIGHT);
 
 		r.setXOffset(offset);
 

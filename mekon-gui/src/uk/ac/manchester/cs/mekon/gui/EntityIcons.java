@@ -84,7 +84,7 @@ class EntityIcons implements EntityIconConstants {
 
 	Icon forCSlotValues() {
 
-		return defaultSlots.get(CSource.INDIRECT);
+		return defaultSlots.get(CSource.EXTERNAL);
 	}
 
 	private Icon get(CFrame frame, EntityLevel level) {
