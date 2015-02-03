@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * Represents a set of attributes that will determine the details
  * of the entities generated in the Frames Model (FM) for a
