@@ -30,9 +30,10 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
 /**
- * Represents the mappings between specific entites in the
- * Object Model (OM) and correponding entities in one or more
- * indirect models.
+ * Represents all required mappings between specific entities
+ * in the Object Model (OM) and correponding entities in any
+ * external sources that will also be contributing towards the
+ * Frames Model (FM).
  *
  * @author Colin Puleston
  */
@@ -72,7 +73,7 @@ public class DModelMap {
 
 	/**
 	 * Provides an object for defining mappings between the fields of
-	 * an OM class and correponding entities from an indirect model.
+	 * an OM class and correponding entities from external sources.
 	 *
 	 * @param dClass OM class
 	 * @return Resulting class-map object
@@ -84,13 +85,12 @@ public class DModelMap {
 
 	/**
 	 * Adds a mapping between an OM class and a correponding entity
-	 * from an indirect model, and provides an object for defining
+	 * from an external source, and provides an object for defining
 	 * mappings between the fields of that OM class and correponding
-	 * entities from the indirect model.
+	 * from external sources.
 	 *
 	 * @param dClass OM class
-	 * @param externalId Identifier for entity in indirect model that
-	 * maps to OM class
+	 * @param externalId Identifier for mapped entity in external source
 	 * @return Resulting class-map object
 	 */
 	public DClassMap addClassMap(
@@ -106,11 +106,11 @@ public class DModelMap {
 
 	/**
 	 * Specifies whether, for those OM classes that are mapped to
-	 * entities in indirect models, the bound {@link CFrame} objects
-	 * will obtain their labels from the relevant OM class-names,
-	 * rather than from the mapped entities. A label taken from an
-	 * OM class-name will be a heuristically-modified version of the
-	 * leaf class-name.
+	 * entities from external sources, the bound {@link CFrame}
+	 * objects will obtain their labels from the relevant OM
+	 * class-names, rather than from the mapped entities. A label taken
+	 * from an OM class-name will be a heuristically-modified version
+	 * of the leaf class-name.
 	 *
 	 * @return True if frame-labels will come from the OM classes
 	 */
@@ -121,7 +121,7 @@ public class DModelMap {
 
 	/**
 	 * Specifies whether, for those OM fields that are mapped to
-	 * entities in indirect models, the bound {@link CSlot} objects
+	 * entities from external sources, the bound {@link CSlot} objects
 	 * will obtain their labels from the relevant OM field-names,
 	 * rather than from the mapped entities. A label taken from an
 	 * OM field-name will be a heuristically-modified version of the
@@ -136,7 +136,7 @@ public class DModelMap {
 
 	/**
 	 * Retrieves a set of mappings between a specified OM class and
-	 * correponding entities from an indirect model, if such mappings
+	 * correponding entities from external sources, if such mappings
 	 * exist.
 	 *
 	 * @param dClass OM class for which mapping is required

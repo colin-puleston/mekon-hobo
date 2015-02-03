@@ -88,7 +88,7 @@ class FieldSlotInitialiser {
 		CSlot slotType = addSlotType();
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
-		slotTypeEd.setSource(CSource.DIRECT);
+		slotTypeEd.setSource(CSource.INTERNAL);
 		slotTypeEd.absorbDependent(dependent);
 
 		return slotType;

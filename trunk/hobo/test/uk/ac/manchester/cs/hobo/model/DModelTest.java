@@ -67,7 +67,7 @@ public class DModelTest extends HoboTest {
 	static private IValue[] INITIAL_B_SLOT_VALUES = new IValue[0];
 	static private IValue[] INITIAL_INT_SLOT_VALUES = new IValue[]{INumber.create(5)};
 
-	private class IndirectSectionBuilder implements CSectionBuilder {
+	private class ExternalSectionBuilder implements CSectionBuilder {
 
 		public boolean supportsIncrementalBuild() {
 
@@ -86,7 +86,7 @@ public class DModelTest extends HoboTest {
 		}
 	}
 
-	//@Test
+	@Test
 	public void test_framesBuiltForDObjects() {
 
 		DModel model = createModel(true);
@@ -102,7 +102,7 @@ public class DModelTest extends HoboTest {
 		testCFrameSuperAdded(model, FRAME_AX_ID, FRAME_A_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_slotsBuiltForDFields() {
 
 		DModel model = createModel(true);
@@ -143,13 +143,13 @@ public class DModelTest extends HoboTest {
 		testLabels(true, CLASS_A_DERIVED_LABEL, INT_CELL_DERIVED_LABEL);
 	}
 
-	//@Test
-	public void test_labelsFromIndirectModel() {
+	@Test
+	public void test_labelsFromExternalModel() {
 
 		testLabels(false, A_EXTERNAL_LABEL, INT_EXTERNAL_LABEL);
 	}
 
-	//@Test
+	@Test
 	public void test_instantiateDObjects() {
 
 		DModel model = createModel(true);
@@ -173,7 +173,7 @@ public class DModelTest extends HoboTest {
 
 		populateModelMap(dBuilder, labelsFromDirectModel);
 		dBuilder.addDClasses(getTestModelPackageName());
-		dBuilder.getCBuilder().addSectionBuilder(new IndirectSectionBuilder());
+		dBuilder.getCBuilder().addSectionBuilder(new ExternalSectionBuilder());
 
 		return dBuilder.build();
 	}

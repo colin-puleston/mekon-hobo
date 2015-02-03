@@ -37,9 +37,8 @@ import uk.ac.manchester.cs.hobo.model.*;
  * Provides methods for registering the {@link DObject}-derived
  * classes that will represent the concepts in the Object Model
  * (OM). Also enables the specification of required mappings
- * between entities in the OM and corresponding entities in the
- * indirect model(s) that will also contribute towards the
- * specification of the FM.
+ * between entities in the OM and corresponding entities in any
+ * external sources for the FM.
  *
  * @author Colin Puleston
  */
@@ -70,12 +69,11 @@ public interface DBuilder {
 
 	/**
 	 * Builds the FM, which will incorporate entities (frames and
-	 * slots) derived from both direct and indirect models, with each
-	 * entity-specification coming from one or the other or both, and
-	 * with bindings to the relevant OM entities where applicable.
+	 * slots) derived from both direct model (OM) and external sources,
+	 * with ome entity-specifications coming from both. Bindings to the
+	 * relevant OM entities will be created where applicable.
 	 *
-	 * @return Built direct model (from which FM can
-	 * be retrieved)
+	 * @return Built direct model (from which FM can be retrieved)
 	 */
 	public DModel build();
 
@@ -87,9 +85,9 @@ public interface DBuilder {
 	public CBuilder getCBuilder();
 
 	/**
-	 * Provides the mappings between direct and indirect model sections.
+	 * Provides the mappings between direct model and external sources.
 	 *
-	 * @return Mappings between direct and indirect model sections
+	 * @return Mappings between direct and external sources
 	 */
 	public DModelMap getModelMap();
 }
