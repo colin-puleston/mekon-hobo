@@ -36,7 +36,6 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 abstract class IValuesNode extends GNode {
 
 	private ISlot slot;
-
 	private ValueNodes valueNodes;
 
 	private class DisplayUpdater implements ISlotListener {
