@@ -33,8 +33,8 @@ import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
- * Responsible for building an indirect section of the frames-based
- * model based on a set of OWL ontologies loaded via a standard
+ * Responsible for building a section of the Frames Model (FM)
+ * derived from a set of OWL ontologies loaded via a standard
  * "sanctioning" mechanism.
  * <p>
  * The section-builder has an associated {@link OModel} over which
