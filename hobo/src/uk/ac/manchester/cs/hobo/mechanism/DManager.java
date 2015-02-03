@@ -33,9 +33,9 @@ import uk.ac.manchester.cs.mekon.config.*;
  * which it is bound.
  * <p>
  * Optionally, both the configuration information for the
- * indirect model section(s), and the mappings between entities
- * in the direct and indirect model sections, can be provided via
- * the general HOBO/MEKON configuration system.
+ * externally-sourced model section(s), and the mappings between
+ * entities in the direct model and those in the external sources,
+ * can be provided via the general HOBO/MEKON configuration system.
  *
  * @author Colin Puleston
  */
@@ -43,9 +43,9 @@ public class DManager {
 
 	/**
 	 * Creates model-builder to build model for which the
-	 * specification of both the indirect model section(s) and the
-	 * mappings between direct and indirect sections must be
-	 * provided via the relevant methods.
+	 * specification of both the externally-sourced model section(s)
+	 * and the mappings between direct and externally-sourced sections
+	 * must be provided via the relevant methods.
 	 *
 	 * @return Resulting model-builder
 	 */
@@ -56,10 +56,10 @@ public class DManager {
 
 	/**
 	 * Creates model-builder to build model for which the
-	 * specification of both the indirect model section(s) and the
-	 * mappings between direct and indirect sections will come from
-	 * a configuration file with the standard MEKON configuration
-	 * file-name located somewhere on the classpath.
+	 * specification of both the externally-sourced model section(s)
+	 * and the mappings between direct and externally-sourced sections
+	 * will come from a configuration file with the standard MEKON
+	 * configuration file-name located somewhere on the classpath.
 	 *
 	 * @return Resulting model-builder
 	 * @throws KConfigFileException if configuration file does not
@@ -72,10 +72,10 @@ public class DManager {
 	}
 
 	/**
-	 * Creates model-builder to build model for which the
-	 * specification of both the indirect model section(s) and the
-	 * mappings between direct and indirect sections will come from
-	 * the specified configuration file.
+	 * Creates model-builder to build model for which the specification
+	 * of both the externally-sourced model section(s) and the mappings
+	 * between direct and externally-sourced sections will come from the
+	 * specified configuration file.
 	 *
 	 * @param configFile Relevant configuration file
 	 * @return Resulting model-builder

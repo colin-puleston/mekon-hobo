@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.hobo.model.*;
 /**
  * Represents a mapping between an Object Model (OM) field (a
  * {@link DField}-derived class) and a correponding entity in
- * an indirect model.
+ * an external source.
  *
  * @author Colin Puleston
  */
@@ -50,9 +50,9 @@ public class DFieldMap {
 
 	/**
 	 * Provides the identifier for the mapped entity in the
-	 * indirect model.
+	 * external source.
 	 *
-	 * @return Identifier for mapped entity in indirect model
+	 * @return Identifier for mapped entity in external source
 	 */
 	public String getExternalId() {
 

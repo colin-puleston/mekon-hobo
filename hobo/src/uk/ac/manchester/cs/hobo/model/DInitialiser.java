@@ -96,7 +96,7 @@ class DInitialiser {
 		if (frame == null) {
 
 			frame = cBuilder.addFrame(id, false);
-			source = CSource.DIRECT;
+			source = CSource.INTERNAL;
 		}
 
 		getFrameEditor(frame).setSource(source);
