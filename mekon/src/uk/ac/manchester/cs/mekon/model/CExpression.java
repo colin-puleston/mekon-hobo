@@ -52,7 +52,7 @@ abstract class CExpression extends CFrame {
 
 	public CSource getSource() {
 
-		return CSource.INDIRECT;
+		return CSource.EXTERNAL;
 	}
 
 	public boolean hidden() {

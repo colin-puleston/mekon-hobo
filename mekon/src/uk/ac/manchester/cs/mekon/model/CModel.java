@@ -246,7 +246,7 @@ public class CModel implements CAnnotatable {
 
 	boolean removeFrame(CModelFrame frame) {
 
-		if (frame.getSource().direct() || !frames.contains(frame)) {
+		if (frame.getSource().internal() || !frames.contains(frame)) {
 
 			return false;
 		}

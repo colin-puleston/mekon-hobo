@@ -39,54 +39,54 @@ public enum CSource {
 	UNSPECIFIED(false, false),
 
 	/**
-	 * Represents an entity definition derived only from the direct
-	 * section of the model
+	 * Represents an entity definition derived only from the internal
+	 * (i.e. direct) section of the model
 	 */
-	DIRECT(true, false),
+	INTERNAL(true, false),
 
 	/**
-	 * Represents an entity definition derived only from the indirect
+	 * Represents an entity definition derived only from the external
 	 * sections of the model
 	 */
-	INDIRECT(false, true),
+	EXTERNAL(false, true),
 
 	/**
-	 * Represents an entity definition derived from both the direct
-	 * and indirect sections of the model.
+	 * Represents an entity definition derived from both the internal
+	 * and external sections of the model.
 	 */
 	DUAL(true, true);
 
-	private boolean direct;
-	private boolean indirect;
+	private boolean internal;
+	private boolean external;
 
 	/**
-	 * Specifies whether there is a direct source for all or part
+	 * Specifies whether there is a internal source for all or part
 	 * of the entity definition (i.e. if this is either {@link
-	 * #DIRECT} or {@link #DUAL}).
+	 * #INTERNAL} or {@link #DUAL}).
 	 *
-	 * @return True if definition has a direct source
+	 * @return True if definition has a internal source
 	 */
-	public boolean direct() {
+	public boolean internal() {
 
-		return direct;
+		return internal;
 	}
 
 	/**
-	 * Specifies whether there is a direct source for all or part
+	 * Specifies whether there is a external source for all or part
 	 * of the entity definition (i.e. if this is either {@link
-	 * #INDIRECT} or {@link #DUAL}).
+	 * #EXTERNAL} or {@link #DUAL}).
 	 *
-	 * @return True if definition has an indirect source
+	 * @return True if definition has an external source
 	 */
-	public boolean indirect() {
+	public boolean external() {
 
-		return indirect;
+		return external;
 	}
 
 	/**
 	 * Combines this with another specified source-type. If one of
-	 * the source-types is {@link #DIRECT} and the other is
-	 * {@link #INDIRECT} then returns {@link #DUAL}, otherwise
+	 * the source-types is {@link #INTERNAL} and the other is
+	 * {@link #EXTERNAL} then returns {@link #DUAL}, otherwise
 	 * returns the one with the greatest ordinal value.
 	 *
 	 * @param other Source-type with which to combine this one
@@ -99,14 +99,14 @@ public enum CSource {
 				: combineOrdered(other, this);
 	}
 
-	private CSource(boolean direct, boolean indirect) {
+	private CSource(boolean internal, boolean external) {
 
-		this.direct = direct;
-		this.indirect = indirect;
+		this.internal = internal;
+		this.external = external;
 	}
 
 	private CSource combineOrdered(CSource first, CSource second) {
 
-		return first == DIRECT && second == INDIRECT ? DUAL : second;
+		return first == INTERNAL && second == EXTERNAL ? DUAL : second;
 	}
 }

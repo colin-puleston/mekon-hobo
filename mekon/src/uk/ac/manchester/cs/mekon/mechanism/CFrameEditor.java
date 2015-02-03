@@ -78,7 +78,7 @@ public interface CFrameEditor {
 
 	/**
 	 * Removes specified slot from the frame, if possible. Does
-	 * nothing if slot has a {@link CSource#direct} source, or if no
+	 * nothing if slot has a {@link CSource#internal} source, or if no
 	 * such slot is attached to the frame.
 	 *
 	 * @param slotId Identity of slot to be removed
@@ -88,7 +88,7 @@ public interface CFrameEditor {
 
 	/**
 	 * Removes all slots with specified identity from all descendant
-	 * frames, except for any such slots with {@link CSource#direct}
+	 * frames, except for any such slots with {@link CSource#internal}
 	 * sources.
 	 *
 	 * @param slotId Identity of slots are to be removed
@@ -98,7 +98,7 @@ public interface CFrameEditor {
 
 	/**
 	 * Removes all slots from the frame, except for any slots with
-	 * {@link CSource#direct} sources.
+	 * {@link CSource#internal} sources.
 	 *
 	 * @return True if all relevant slots were removed
 	 */
@@ -106,7 +106,7 @@ public interface CFrameEditor {
 
 	/**
 	 * Removes all slots from all descendant frames, except for any
-	 * slots with {@link CSource#direct} sources.
+	 * slots with {@link CSource#internal} sources.
 	 *
 	 * @return True if all relevant slots were removed
 	 */

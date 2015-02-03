@@ -48,7 +48,7 @@ class CModelFrame extends CFrame {
 
 	private CModel model;
 	private CIdentity identity;
-	private CSource source = CSource.INDIRECT;
+	private CSource source = CSource.EXTERNAL;
 	private boolean hidden;
 
 	private CModelFrames supers = new CModelFrames();
@@ -351,7 +351,7 @@ class CModelFrame extends CFrame {
 
 	boolean removeSlot(CSlot slot) {
 
-		if (slot.getSource().direct() || !slots.contains(slot)) {
+		if (slot.getSource().internal() || !slots.contains(slot)) {
 
 			return false;
 		}

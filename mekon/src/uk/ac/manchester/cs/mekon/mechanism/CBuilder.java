@@ -111,7 +111,7 @@ public interface CBuilder {
 	/**
 	 * Removes the specified model-frame from the model, if possible.
 	 * Does nothing if frame is not part of the current model, or if
-	 * it has a {@link CSource#direct} source. If removed then direct
+	 * it has a {@link CSource#internal} source. If removed then direct
 	 * hierarchical links will be created from each sub-frame to each
 	 * super-frame.
 	 *
