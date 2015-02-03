@@ -36,7 +36,7 @@ public class CSlot implements CIdentified, CSourced {
 	private CIdentity identity;
 	private CFrame container;
 
-	private CSource source = CSource.INDIRECT;
+	private CSource source = CSource.EXTERNAL;
 	private CCardinality cardinality;
 	private FSlotAttributes attributes;
 	private boolean abstractAssertable = false;

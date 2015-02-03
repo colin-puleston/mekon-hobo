@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.serial.*;
 /**
  * Represents a MEKON configuration file, which is an XML format
  * file containing configuration information both for the core
- * MEKON system, or for any "indirect" model-section plugins that
+ * MEKON system, or for any model section-builder plugins that
  * wish to make use of it.
  *
  * @author Colin Puleston

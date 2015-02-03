@@ -35,19 +35,19 @@ public class CSourceTest {
 	@Test
 	public void test_combineWith() {
 
-		testCombine(CSource.DIRECT, CSource.DIRECT, CSource.DIRECT);
-		testCombine(CSource.INDIRECT, CSource.INDIRECT, CSource.INDIRECT);
+		testCombine(CSource.INTERNAL, CSource.INTERNAL, CSource.INTERNAL);
+		testCombine(CSource.EXTERNAL, CSource.EXTERNAL, CSource.EXTERNAL);
 		testCombine(CSource.DUAL, CSource.DUAL, CSource.DUAL);
 		testCombine(CSource.UNSPECIFIED, CSource.UNSPECIFIED, CSource.UNSPECIFIED);
 
-		testCombine(CSource.DIRECT, CSource.INDIRECT, CSource.DUAL);
+		testCombine(CSource.INTERNAL, CSource.EXTERNAL, CSource.DUAL);
 
-		testCombine(CSource.DIRECT, CSource.UNSPECIFIED, CSource.DIRECT);
-		testCombine(CSource.INDIRECT, CSource.UNSPECIFIED, CSource.INDIRECT);
+		testCombine(CSource.INTERNAL, CSource.UNSPECIFIED, CSource.INTERNAL);
+		testCombine(CSource.EXTERNAL, CSource.UNSPECIFIED, CSource.EXTERNAL);
 		testCombine(CSource.DUAL, CSource.UNSPECIFIED, CSource.DUAL);
 
-		testCombine(CSource.DIRECT, CSource.DUAL, CSource.DUAL);
-		testCombine(CSource.INDIRECT, CSource.DUAL, CSource.DUAL);
+		testCombine(CSource.INTERNAL, CSource.DUAL, CSource.DUAL);
+		testCombine(CSource.EXTERNAL, CSource.DUAL, CSource.DUAL);
 		testCombine(CSource.UNSPECIFIED, CSource.DUAL, CSource.DUAL);
 	}
 

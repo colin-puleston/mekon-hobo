@@ -42,6 +42,6 @@ class CRootFrame extends CModelFrame {
 
 		super(model, IDENTITY, false);
 
-		setSource(CSource.DIRECT);
+		setSource(CSource.INTERNAL);
 	}
 }
