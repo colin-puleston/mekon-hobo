@@ -118,7 +118,7 @@ public class DModelTest extends HoboTest {
 			BS_SLOT_ID,
 			CCardinality.UNIQUE_TYPES,
 			getCFrame(model, FRAME_B_ID),
-			false);
+			CEditability.DEFAULT);
 
 		testCSlotBuilt(
 			model,
@@ -126,7 +126,7 @@ public class DModelTest extends HoboTest {
 			INT_SLOT_ID,
 			CCardinality.SINGLETON,
 			getIntegerValueType(),
-			true);
+			CEditability.QUERY_ONLY);
 
 		testCSlotBuilt(
 			model,
@@ -134,7 +134,7 @@ public class DModelTest extends HoboTest {
 			B_SLOT_ID,
 			CCardinality.SINGLETON,
 			getCFrame(model, FRAME_B_ID),
-			false);
+			CEditability.DEFAULT);
 	}
 
 	@Test
@@ -236,13 +236,13 @@ public class DModelTest extends HoboTest {
 					String fieldName,
 					CCardinality expectedCardinality,
 					CValue<?> expectedValueType,
-					boolean expectedDependent) {
+					CEditability expectedEditability) {
 
 		CSlot slot = getCSlot(model, containerId, fieldName);
 
 		assertEquals(expectedCardinality, slot.getCardinality());
 		assertEquals(expectedValueType, slot.getValueType());
-		assertEquals(expectedDependent, slot.dependent());
+		assertEquals(expectedEditability, slot.getEditability());
 	}
 
 	private void testLabels(
