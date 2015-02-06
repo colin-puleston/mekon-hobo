@@ -135,7 +135,7 @@ public abstract class DField<V> implements DFieldView<V> {
 	 */
 	public boolean editable() {
 
-		return getSlot().editable();
+		return getSlot().getEditability().editable();
 	}
 
 	/**

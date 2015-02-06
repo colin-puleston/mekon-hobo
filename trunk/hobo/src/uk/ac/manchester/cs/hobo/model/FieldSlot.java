@@ -41,7 +41,7 @@ class FieldSlot {
 	private Class<? extends DObject> containerClass = null;
 	private String fieldName = null;
 	private String slotLabel = null;
-	private Boolean dependent = null;
+	private CEditability editability = null;
 
 	private class AttributeResolver {
 
@@ -54,7 +54,7 @@ class FieldSlot {
 
 		void resolve() {
 
-			if (fieldName == null || dependent == null) {
+			if (fieldName == null || editability == null) {
 
 				checkClassVariables();
 				checkInitialised();
@@ -65,9 +65,9 @@ class FieldSlot {
 				slotLabel = DIdentity.createLabel(fieldName);
 			}
 
-			if (dependent == null) {
+			if (editability == null) {
 
-				dependent = true;
+				editability = CEditability.DEFAULT;
 			}
 		}
 
@@ -148,9 +148,9 @@ class FieldSlot {
 					fieldName = variable.getName();
 				}
 
-				if (dependent == null) {
+				if (editability == null) {
 
-					dependent = varIsViewer;
+					editability = getEditability(varIsViewer);
 				}
 
 				return true;
@@ -182,6 +182,11 @@ class FieldSlot {
 
 				throw new Error("Should never happen!");
 			}
+		}
+
+		private CEditability getEditability(boolean viewer) {
+
+			return viewer ? CEditability.QUERY_ONLY : CEditability.DEFAULT;
 		}
 
 		private Class<? extends DObject> getDeclaringClass() {
@@ -220,9 +225,9 @@ class FieldSlot {
 		this.slotLabel = slotLabel;
 	}
 
-	void setDependent(boolean dependent) {
+	void setEditability(CEditability editability) {
 
-		this.dependent = dependent;
+		this.editability = editability;
 	}
 
 	DField<?> getField() {
@@ -240,9 +245,9 @@ class FieldSlot {
 		return slotLabel;
 	}
 
-	Boolean dependent() {
+	CEditability getEditability() {
 
-		return dependent;
+		return editability;
 	}
 
 	DBinding getBinding() {

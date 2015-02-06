@@ -40,7 +40,7 @@ class FieldSlotInitialiser {
 	private String slotLabel;
 	private CCardinality cardinality;
 	private CValue<?> valueType;
-	private boolean dependent;
+	private CEditability editability;
 	private boolean boundField;
 
 	FieldSlotInitialiser(DModel model, IFrame frame, FieldSlot fieldSlot) {
@@ -57,7 +57,7 @@ class FieldSlotInitialiser {
 		slotLabel = fieldSlot.getSlotLabel();
 		cardinality = field.getCardinality();
 		valueType = field.getSlotValueType();
-		dependent = fieldSlot.dependent();
+		editability = fieldSlot.getEditability();
 		boundField = binding.isBoundField(fieldName);
 	}
 
@@ -89,7 +89,7 @@ class FieldSlotInitialiser {
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
 		slotTypeEd.setSource(CSource.INTERNAL);
-		slotTypeEd.absorbDependent(dependent);
+		slotTypeEd.absorbEditability(editability);
 
 		return slotType;
 	}
@@ -117,7 +117,7 @@ class FieldSlotInitialiser {
 
 		slotTypeEd.absorbCardinality(cardinality);
 		slotTypeEd.absorbValueType(valueType);
-		slotTypeEd.absorbDependent(dependent);
+		slotTypeEd.absorbEditability(editability);
 	}
 
 	private ISlot addSlot(CSlot slotType) {
