@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.hobo.demo;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
@@ -79,6 +80,8 @@ public class Travel extends DObjectShell implements CitizenAspect {
 		details = builder.getViewer(builder.addObjectArray(TravelDetails.class));
 
 		dEditor = builder.getEditor();
+
+		builder.setEditability(dEditor.getField(details), CEditability.NONE);
 
 		builder.addInitialiser(new Initialiser());
 	}

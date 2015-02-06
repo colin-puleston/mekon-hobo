@@ -97,6 +97,9 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 
 		dEditor = builder.getEditor();
 		summariser = createSummariser(builder.getEditor());
+
+		builder.setEditability(dEditor.getField(mode), CEditability.NONE);
+		builder.setEditability(dEditor.getField(summaries), CEditability.NONE);
 	}
 
 	void initialise(DConcept<TravelMode> modeValue) {

@@ -67,6 +67,8 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		property = builder.getViewer(builder.addConceptCell(PropertyRef.class));
 
 		dEditor = builder.getEditor();
+
+		builder.setEditability(dEditor.getField(property), CEditability.NONE);
 	}
 
 	void initialise(CSlot slotTypeValue) {
