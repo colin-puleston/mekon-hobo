@@ -273,8 +273,7 @@ public class IFrameRenderer extends ISerialiser {
 
 		if (renderSchema) {
 
-			node.addValue(EDITABLE_ATTR, slot.editable());
-			node.addValue(ABSTRACT_VALUES_ATTR, slot.abstractValuesAllowed());
+			node.addValue(EDITABILITY_ATTR, slot.getEditability());
 
 			new ISlotValueTypeRenderer(slot, node);
 		}
@@ -304,7 +303,7 @@ public class IFrameRenderer extends ISerialiser {
 			return false;
 		}
 
-		return renderNonEditableSlots || slot.editable();
+		return renderNonEditableSlots || slot.getEditability().editable();
 	}
 
 	private void checkRenderable(IFrame frame) {

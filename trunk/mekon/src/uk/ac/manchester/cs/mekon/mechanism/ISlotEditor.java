@@ -36,26 +36,20 @@ import uk.ac.manchester.cs.mekon.model.*;
 public interface ISlotEditor {
 
 	/**
-	 * Re-sets the "active" status of the slot.
-	 *
-	 * @param active Status to set
-	 */
-	public void setActive(boolean active);
-
-	/**
-	 * Re-sets the "dependent" status of the slot.
-	 *
-	 * @param dependent Status to set
-	 */
-	public void setDependent(boolean dependent);
-
-	/**
 	 * Re-sets the value-type for the slot.
 	 *
 	 * @param valueType New value-type for slot
 	 * @return True if value-type has been updated.
 	 */
 	public boolean setValueType(CValue<?> valueType);
+
+	/**
+	 * Re-sets the "active" status of the slot.
+	 *
+	 * @param active Status to set
+	 * @return True if status has been updated.
+	 */
+	public boolean setActive(boolean active);
 
 	/**
 	 * Re-sets the fixed values for the slot.

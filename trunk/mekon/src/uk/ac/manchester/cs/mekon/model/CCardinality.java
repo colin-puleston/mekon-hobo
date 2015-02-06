@@ -35,7 +35,7 @@ public enum CCardinality {
 	/**
 	 * Slot is single-valued.
 	 */
-	SINGLETON(true, true) {
+	SINGLETON {
 
 		ISlotValues createSlotValues(ISlot slot) {
 
@@ -47,7 +47,7 @@ public enum CCardinality {
 	 * Slot is multi-valued, but cannot have any values whose
 	 * value-types duplicate or subsume one another.
 	 */
-	UNIQUE_TYPES(false, true) {
+	UNIQUE_TYPES {
 
 		ISlotValues createSlotValues(ISlot slot) {
 
@@ -59,16 +59,13 @@ public enum CCardinality {
 	 * Slot is multi-valued, with any combination of leagal values
 	 * permitted.
 	 */
-	FREE(false, false) {
+	FREE {
 
 		ISlotValues createSlotValues(ISlot slot) {
 
 			return new FreeISlotValues(slot);
 		}
 	};
-
-	private boolean singleValue;
-	private boolean uniqueTypes;
 
 	/**
 	 * Specifes whether slot is single-valued - equal to
@@ -78,7 +75,7 @@ public enum CCardinality {
 	 */
 	public boolean singleValue() {
 
-		return singleValue;
+		return this == SINGLETON;
 	}
 
 	/**
@@ -89,7 +86,7 @@ public enum CCardinality {
 	 */
 	public boolean uniqueTypes() {
 
-		return uniqueTypes;
+		return this != FREE;
 	}
 
 	/**
@@ -141,10 +138,4 @@ public enum CCardinality {
 	}
 
 	abstract ISlotValues createSlotValues(ISlot slot);
-
-	private CCardinality(boolean singleValue, boolean uniqueTypes) {
-
-		this.singleValue = singleValue;
-		this.uniqueTypes = uniqueTypes;
-	}
 }

@@ -34,30 +34,27 @@ package uk.ac.manchester.cs.mekon.model;
 public enum CSource {
 
 	/**
-	 * Represents an unspecified source for an entity definition.
+	 * Unspecified source for an entity definition.
 	 */
-	UNSPECIFIED(false, false),
+	UNSPECIFIED,
 
 	/**
-	 * Represents an entity definition derived only from the internal
-	 * (i.e. direct) section of the model
+	 * Entity definition derived only from the internal (i.e. direct)
+	 * section of the model
 	 */
-	INTERNAL(true, false),
+	INTERNAL,
 
 	/**
-	 * Represents an entity definition derived only from the external
-	 * sections of the model
+	 * Entity definition derived only from the external sections of the
+	 * model
 	 */
-	EXTERNAL(false, true),
+	EXTERNAL,
 
 	/**
-	 * Represents an entity definition derived from both the internal
-	 * and external sections of the model.
+	 * Entity definition derived from both internal and external sections
+	 * of the model.
 	 */
-	DUAL(true, true);
-
-	private boolean internal;
-	private boolean external;
+	DUAL;
 
 	/**
 	 * Specifies whether there is a internal source for all or part
@@ -68,7 +65,7 @@ public enum CSource {
 	 */
 	public boolean internal() {
 
-		return internal;
+		return this == INTERNAL || this == DUAL;
 	}
 
 	/**
@@ -80,7 +77,7 @@ public enum CSource {
 	 */
 	public boolean external() {
 
-		return external;
+		return this == EXTERNAL || this == DUAL;
 	}
 
 	/**
@@ -97,12 +94,6 @@ public enum CSource {
 		return ordinal() < other.ordinal()
 				? combineOrdered(this, other)
 				: combineOrdered(other, this);
-	}
-
-	private CSource(boolean internal, boolean external) {
-
-		this.internal = internal;
-		this.external = external;
 	}
 
 	private CSource combineOrdered(CSource first, CSource second) {

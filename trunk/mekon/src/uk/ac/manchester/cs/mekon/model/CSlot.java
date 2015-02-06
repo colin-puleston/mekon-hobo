@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
@@ -38,8 +39,9 @@ public class CSlot implements CIdentified, CSourced {
 
 	private CSource source = CSource.EXTERNAL;
 	private CCardinality cardinality;
-	private FSlotAttributes attributes;
-	private boolean abstractAssertable = false;
+	private CValue<?> valueType;
+	private boolean active = true;
+	private CEditability editability = CEditability.DEFAULT;
 
 	private CAnnotations annotations = new CAnnotations(this);
 
@@ -62,22 +64,27 @@ public class CSlot implements CIdentified, CSourced {
 
 		public void absorbValueType(CValue<?> otherValueType) {
 
-			attributes.absorbValueType(CSlot.this, otherValueType);
+			CValue<?> mergedType = valueType.mergeWith(otherValueType);
+
+			if (mergedType == null) {
+
+				throw new KModelException(
+							"Incompatible value-types for: " + this
+							+ " (current type = " + valueType
+							+ ", supplied type = " + otherValueType + ")");
+			}
+
+			valueType = mergedType;
 		}
 
-		public void absorbActive(boolean value) {
+		public void absorbActive(boolean otherActive) {
 
-			attributes.absorbActive(value);
+			active &= otherActive;
 		}
 
-		public void absorbDependent(boolean value) {
+		public void absorbEditability(CEditability otherEditability) {
 
-			attributes.absorbDependent(value);
-		}
-
-		public void absorbAbstractAssertable(boolean value) {
-
-			abstractAssertable |= value;
+			editability = editability.getStrongest(otherEditability);
 		}
 	}
 
@@ -162,43 +169,29 @@ public class CSlot implements CIdentified, CSourced {
 	 */
 	public CValue<?> getValueType() {
 
-		return attributes.getValueType();
+		return valueType;
 	}
 
 	/**
-	 * Specifies the default "active" status for any instantiations
-	 * of this slot (see {@link ISlot#active}).
+	 * Specifies whether instantiations of this slot will be "active"
+	 * on the particular frames to which they are attached. If a slot
+	 * is inactive then it will never have any current values.
 	 *
-	 * @return True if instantiations of slot will by default by active
+	 * @return True if instantiations of slot will be active
 	 */
 	public boolean active() {
 
-		return attributes.active();
+		return active;
 	}
 
 	/**
-	 * Specifies the default "dependent" status for any instantiations
-	 * of this slot (see {@link ISlot#active}).
+	 * Specifies the editability status for instantiations of this slot.
 	 *
-	 * @return True if instantiations of slot will by default be
-	 * dependent
+	 * @return Editability status for instantiations
 	 */
-	public boolean dependent() {
+	public CEditability getEditability() {
 
-		return attributes.dependent();
-	}
-
-	/**
-	 * Specifies whether instantiations of this slot on asserted
-	 * instance-level frames can, by default, be given abstract values
-	 * (see {@link IValue#abstractValue}).
-	 *
-	 * @return True if instantiations of slot will by default be
-	 * allowed to have abstract values
-	 */
-	public boolean abstractAssertable() {
-
-		return abstractAssertable;
+		return editability;
 	}
 
 	CSlot(
@@ -210,8 +203,7 @@ public class CSlot implements CIdentified, CSourced {
 		this.container = container;
 		this.identity = identity;
 		this.cardinality = cardinality;
-
-		attributes = new FSlotAttributes(valueType);
+		this.valueType = valueType;
 	}
 
 	CSlotEditor createEditor() {
@@ -224,18 +216,44 @@ public class CSlot implements CIdentified, CSourced {
 		this.source = source;
 	}
 
-	void setAbstractAssertable(boolean abstractAssertable) {
+	boolean setValueType(CValue<?> valueType) {
 
-		this.abstractAssertable = abstractAssertable;
+		if (!valueType.equals(this.valueType)) {
+
+			this.valueType = valueType;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setActive(boolean active) {
+
+		if (active != this.active) {
+
+			this.active = active;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setEditability(CEditability editability) {
+
+		if (editability != this.editability) {
+
+			this.editability = editability;
+
+			return true;
+		}
+
+		return false;
 	}
 
 	void remove() {
 
 		container.getSlots().remove(this);
-	}
-
-	FSlotAttributes getAttributes() {
-
-		return attributes;
 	}
 }

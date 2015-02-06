@@ -38,31 +38,31 @@ public class ISlot implements IEntity {
 
 	private CSlot type;
 	private IFrame container;
-	private FSlotAttributes attributes;
 	private ISlotValues values;
 	private ISlotValuesEditor valuesEditor;
 	private List<ISlotListener> listeners = new ArrayList<ISlotListener>();
 
 	private class Editor implements ISlotEditor {
 
-		public void setActive(boolean active) {
-
-			attributes.setActive(active);
-		}
-
-		public void setDependent(boolean editable) {
-
-			attributes.setDependent(editable);
-		}
-
 		public boolean setValueType(CValue<?> valueType) {
 
-			if (!valueType.equals(getValueType())) {
-
-				attributes.setValueType(valueType);
+			if (type.setValueType(valueType)) {
 
 				values.removeInvalidValues();
 				pollListenersForUpdatedValueType();
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public boolean setActive(boolean active) {
+
+			if (type.setActive(active)) {
+
+				values.removeInvalidValues();
+				pollListenersForUpdatedActiveStatus();
 
 				return true;
 			}
@@ -130,60 +130,17 @@ public class ISlot implements IEntity {
 	 */
 	public CValue<?> getValueType() {
 
-		return attributes.getValueType();
+		return type.getValueType();
 	}
 
 	/**
-	 * Specifies whether the slot is "active" on the particular frame
-	 * to which it is attached. If a slot is inactive then it will
-	 * never have any current values. A slot that is inactive on a
-	 * particular frame may be active on one or more descendant frames.
+	 * Specifies the editability status for the slot.
 	 *
-	 * @return True if slot is active
+	 * @return Editability status for slot
 	 */
-	public boolean active() {
+	public IEditability getEditability() {
 
-		return attributes.active();
-	}
-
-	/**
-	 * Specifies whether the values for the slot can be entirely
-	 * determined by the model, based on the current values of other
-	 * slots in the model-instantiation.
-	 *
-	 * @return True if all slot-values can be entirely determined by
-	 * the model
-	 */
-	public boolean dependent() {
-
-		return attributes.dependent();
-	}
-
-	/**
-	 * Specifies whether the slot-values can be edited by the client.
-	 * This will always be the case if the container-frame of the slot
-	 * is of category {@link IFrameCategory#QUERY}. Otherwise it will
-	 * only be the case for non-{@link #dependent} slots.
-	 *
-	 * @return True if slot is currently editable by client
-	 */
-	public boolean editable() {
-
-		return querySlot() || !dependent();
-	}
-
-	/**
-	 * Specifies whether the slot can be given abstract values. This
-	 * will be the case if and only if the container-frame of the slot
-	 * is of category {@link IFrameCategory#QUERY}, or the associated
-	 * concept-level slot of which this slot is an instance is
-	 * {@link CSlot#abstractAssertable}.
-	 *
-	 * @return True if abstract values allowed
-	 */
-	public boolean abstractValuesAllowed() {
-
-		return querySlot() || type.abstractAssertable();
+		return type.getEditability().forInstances(querySlot());
 	}
 
 	/**
@@ -204,20 +161,24 @@ public class ISlot implements IEntity {
 	 */
 	public ISlotValuesEditor getValuesEditor() {
 
-		checkExternalValuesEditorAccess(active(), "inactive");
-		checkExternalValuesEditorAccess(editable(), "non-editable");
+		checkExternalValuesEditorAccess(
+			type.active(),
+			"inactive");
+
+		checkExternalValuesEditorAccess(
+			getEditability().editable(),
+			"non-editable");
 
 		return getValuesEditorInternal();
 	}
 
-	ISlot(IFrame container, CSlot type) {
+	ISlot(CSlot type, IFrame container) {
 
-		this(container, type, type.getAttributes());
-	}
+		this.type = type;
+		this.container = container;
 
-	ISlot(IFrame container, ISlot template) {
-
-		this(container, template.type, template.attributes);
+		values = type.getCardinality().createSlotValues(this);
+		valuesEditor = new ISlotValuesEditor(values);
 	}
 
 	ISlotEditor createEditor() {
@@ -228,16 +189,6 @@ public class ISlot implements IEntity {
 	ISlotValuesEditor getValuesEditorInternal() {
 
 		return valuesEditor;
-	}
-
-	private ISlot(IFrame container, CSlot type, FSlotAttributes attributes) {
-
-		this.type = type;
-		this.container = container;
-		this.attributes = attributes.copy();
-
-		values = type.getCardinality().createSlotValues(this);
-		valuesEditor = new ISlotValuesEditor(values);
 	}
 
 	private CModel getModel() {
@@ -269,6 +220,14 @@ public class ISlot implements IEntity {
 		for (ISlotListener listener : copyListeners()) {
 
 			listener.onUpdatedValueType(getValueType());
+		}
+	}
+
+	private void pollListenersForUpdatedActiveStatus() {
+
+		for (ISlotListener listener : copyListeners()) {
+
+			listener.onUpdatedActiveStatus(type.active());
 		}
 	}
 

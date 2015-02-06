@@ -24,30 +24,53 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import org.junit.Test;
-
-import uk.ac.manchester.cs.mekon.*;
-
 /**
+ * Represents the editability from the client perspective of a
+ * particular {@link ISlot}. Covers slot editability status for
+ * both concrete and abstract values (see {@link
+ * IValue#abstractValue})
+ *
  * @author Colin Puleston
  */
-public class ISlotTest extends MekonTest {
+public enum IEditability {
 
-	@Test(expected = KAccessException.class)
-	public void test_getValuesEditor_failsForInactiveSlot() {
+	/**
+	 * Slot is not editable by the client.
+	 */
+	NONE,
 
-		ISlot s = createISlot(CCardinality.FREE);
+	/**
+	 * Slot can be given concrete values only by the client.
+	 */
+	CONCRETE_ONLY,
 
-		s.createEditor().setActive(false);
-		s.getValuesEditor();
+	/**
+	 * Slot can be given both concrete and abstract values by the
+	 * client.
+	 */
+	FULL;
+
+	/**
+	 * Specifies whether slot is editable in any way by the client,
+	 * which will be the case if and only if value is either {@link
+	 * #CONCRETE_ONLY} or {@link #FULL}.
+	 *
+	 * @return True is slot is editable
+	 */
+	public boolean editable() {
+
+		return this != NONE;
 	}
 
-	@Test(expected = KAccessException.class)
-	public void test_getValuesEditor_failsForNonEditable() {
+	/**
+	 * Specifies whether the slot can be given abstract values by the
+	 * client, which will be the case if and only if value is {@link
+	 * #FULL}.
+	 *
+	 * @return True is slot is abstract-editable
+	 */
+	public boolean abstractEditable() {
 
-		ISlot s = createISlot(CCardinality.FREE);
-
-		s.getType().setEditability(CEditability.NONE);
-		s.getValuesEditor();
+		return this == FULL;
 	}
 }

@@ -350,7 +350,7 @@ public abstract class ISlotValues extends KList<IValue> {
 				"expected value of type: " + getValueType());
 		}
 
-		if (value.abstractValue() && !slot.abstractValuesAllowed()) {
+		if (value.abstractValue() && !slot.getEditability().abstractEditable()) {
 
 			throwInvalidValueException(
 				value,

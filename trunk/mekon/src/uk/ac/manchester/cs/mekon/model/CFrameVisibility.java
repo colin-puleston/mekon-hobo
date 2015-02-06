@@ -33,22 +33,39 @@ package uk.ac.manchester.cs.mekon.model;
 public enum CFrameVisibility {
 
 	/**
-	 * Specifies all frames of whatever visibility status.
+	 * All frames of whatever visibility status.
 	 */
-	ALL(true, true),
+	ALL,
 
 	/**
-	 * Specifies only frames with "exposed" visibility status.
+	 * Only frames with "exposed" visibility status.
 	 */
-	EXPOSED(true, false),
+	EXPOSED,
 
 	/**
-	 * Specifies only frames with "hidden" visibility status.
+	 * Only frames with "hidden" visibility status.
 	 */
-	HIDDEN(false, true);
+	HIDDEN;
 
-	private boolean coversExposed;
-	private boolean coversHidden;
+	/**
+	 * Specifies whether this visibility status covers "exposed".
+	 *
+	 * @return true if visibility status covers "exposed"
+	 */
+	public boolean coversExposed() {
+
+		return coversVisibility(EXPOSED);
+	}
+
+	/**
+	 * Specifies whether this visibility status covers "hidden".
+	 *
+	 * @return true if visibility status covers "hidden"
+	 */
+	public boolean coversHidden() {
+
+		return coversVisibility(HIDDEN);
+	}
 
 	/**
 	 * Specifies whether this visibility status covers the specified
@@ -73,12 +90,6 @@ public enum CFrameVisibility {
 	 */
 	public boolean coversHiddenStatus(boolean hidden) {
 
-		return hidden ? coversHidden : coversExposed;
-	}
-
-	private CFrameVisibility(boolean coversExposed, boolean coversHidden) {
-
-		this.coversExposed = coversExposed;
-		this.coversHidden = coversHidden;
+		return hidden ? coversHidden() : coversExposed();
 	}
 }

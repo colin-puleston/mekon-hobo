@@ -94,8 +94,8 @@ public class ISlotSpecs {
 	 *   {@link CCardinality#moreRestrictiveThan(CCardinality)})
 	 *   <li>The "active" status will be true if and only if the both
 	 *   the existing status and the new status are true
-	 *   <li>The "dependent" status will be true if either the
-	 *   existing or the new status is true
+	 *   <li>The "editability" status will be the "strongest" of the
+	 *   existing and new statuses (see {@link CEditability#getStrongest})
 	 * </ul>
 	 *
 	 * @param frameType Concept-level frame whose slot-related
@@ -144,9 +144,10 @@ public class ISlotSpecs {
 	}
 
 	/**
-	 * Updates the slot-sets, including value-types and "active"
-	 * and "dependent" statuses, on the specified instance-level
-	 * frame using the current set of slot-specifications.
+	 * Updates the slot-sets on the specified instance-level frame using
+	 * the current set of slot-specifications. , including value-types
+	 * Also initialises and updates value-types and "active" statuses,
+	 * and initialises, but doesn't update, "editability" statuses.
 	 *
 	 * @param frame Instance-level frame whose slots are to be updated
 	 */

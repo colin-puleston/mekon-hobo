@@ -75,27 +75,16 @@ public interface CSlotEditor {
 	 * will be true if and only if both current status and specified
 	 * status are true.
 	 *
-	 * @param value Additional status to incorporate
+	 * @param otherActive Additional status to incorporate
 	 */
-	public void absorbActive(boolean value);
+	public void absorbActive(boolean otherActive);
 
 	/**
-	 * Updates the {@link CSlot#dependent} status of the slot to
+	 * Updates the {@link CSlot#editability} status of the slot to
 	 * incorporate the specified additional status. Combined status
-	 * will be true if either current status or specified status is
-	 * true.
+	 * determined via the {@link CEditability#absorb} method.
 	 *
-	 * @param value Additional status to incorporate
+	 * @param otherEditability Additional status to incorporate
 	 */
-	public void absorbDependent(boolean value);
-
-	/**
-	 * Updates the {@link CSlot#abstractAssertable} status of the
-	 * slot to incorporate the specified additional status. Combined
-	 * status will be true if either current status or specified status
-	 * is true.
-	 *
-	 * @param value Additional status to incorporate
-	 */
-	public void absorbAbstractAssertable(boolean value);
+	public void absorbEditability(CEditability otherEditability);
 }

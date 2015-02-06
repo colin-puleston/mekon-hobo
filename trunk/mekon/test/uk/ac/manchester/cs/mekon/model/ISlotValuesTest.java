@@ -133,6 +133,12 @@ public class ISlotValuesTest extends MekonTest {
 		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"));
 	}
 
+	@Test(expected = KAccessException.class)
+	public void test_abstractUpdateFailsForAssertion() {
+
+		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"));
+	}
+
 	private void testAddRemoveValues_multiValued(CCardinality cardinality) {
 
 		ISlotValues values = createSlotValues(cardinality);
