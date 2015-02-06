@@ -36,47 +36,38 @@ public enum OBEntitySelection {
 	 * Represents the selection of no entities from the relevant
 	 * section of hierarchy.
 	 */
-	NONE(false, false),
+	NONE,
 
 	/**
 	 * Represents the selection of all entities from the relevant
 	 * section of hierarchy.
 	 */
-	ALL(true, true),
+	ALL,
 
 	/**
 	 * Represents the selection of only the root-entity from the
 	 * relevant section of hierarchy.
 	 */
-	ROOTS_ONLY(true, false),
+	ROOTS_ONLY,
 
 	/**
 	 * Represents the selection of only the non-root-entities from
 	 * the relevant section of hierarchy.
 	 */
-	NON_ROOTS_ONLY(false, true);
-
-	private boolean includesRoot;
-	private boolean includesNonRoots;
+	NON_ROOTS_ONLY;
 
 	boolean includesRoot() {
 
-		return includesRoot;
+		return this == ALL || this == ROOTS_ONLY;
 	}
 
 	boolean includesNonRoots() {
 
-		return includesNonRoots;
+		return this == ALL || this == NON_ROOTS_ONLY;
 	}
 
 	boolean includes(boolean isRoot) {
 
-		return isRoot ? includesRoot : includesNonRoots;
-	}
-
-	private OBEntitySelection(boolean includesRoot, boolean includesNonRoots) {
-
-		this.includesRoot = includesRoot;
-		this.includesNonRoots = includesNonRoots;
+		return isRoot ? includesRoot() : includesNonRoots();
 	}
 }

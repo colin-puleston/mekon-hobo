@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.build;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
@@ -52,8 +53,7 @@ class PropertyInclusionsConfigReader
 		OBPropertyAttributes attributes = group.getAttributes();
 
 		attributes.setFrameSource(getFrameSources(groupNode));
-		attributes.setDependent(getDependents(groupNode));
-		attributes.setAbstractAssertable(getAbstractAssertables(groupNode));
+		attributes.setSlotEditability(getSlotEditability(groupNode));
 
 		return group;
 	}
@@ -63,13 +63,11 @@ class PropertyInclusionsConfigReader
 		return groupNode.getBoolean(FRAME_SOURCE_PROPERTIES_ATTR, false);
 	}
 
-	private boolean getDependents(KConfigNode groupNode) {
+	private CEditability getSlotEditability(KConfigNode groupNode) {
 
-		return groupNode.getBoolean(DEPENDENT_SLOT_PROPERTIES_ATTR, false);
-	}
-
-	private boolean getAbstractAssertables(KConfigNode groupNode) {
-
-		return groupNode.getBoolean(ABSTRACT_ASSERTABLE_PROPERTIES_ATTR, false);
+		return groupNode.getEnum(
+					SLOT_EDITABILITY_ATTR,
+					CEditability.class,
+					CEditability.DEFAULT);
 	}
 }
