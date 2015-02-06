@@ -39,7 +39,6 @@ public class ISlot implements IEntity {
 	private CSlot type;
 	private IFrame container;
 	private ISlotValues values;
-	private ISlotValuesEditor valuesEditor;
 	private List<ISlotListener> listeners = new ArrayList<ISlotListener>();
 
 	private class Editor implements ISlotEditor {
@@ -169,7 +168,7 @@ public class ISlot implements IEntity {
 			getEditability().editable(),
 			"non-editable");
 
-		return getValuesEditorInternal();
+		return new ISlotValuesEditor(values, false);
 	}
 
 	ISlot(CSlot type, IFrame container) {
@@ -178,7 +177,6 @@ public class ISlot implements IEntity {
 		this.container = container;
 
 		values = type.getCardinality().createSlotValues(this);
-		valuesEditor = new ISlotValuesEditor(values);
 	}
 
 	ISlotEditor createEditor() {
@@ -188,7 +186,7 @@ public class ISlot implements IEntity {
 
 	ISlotValuesEditor getValuesEditorInternal() {
 
-		return valuesEditor;
+		return new ISlotValuesEditor(values, true);
 	}
 
 	private CModel getModel() {
