@@ -67,7 +67,7 @@ public class IFrameParser extends ISerialiser {
 
 				ISlot slot = slots.get(slotId);
 
-				if (slot.editable()) {
+				if (slot.getEditability().editable()) {
 
 					slot.getValuesEditor().addAll(getValues(slot));
 				}

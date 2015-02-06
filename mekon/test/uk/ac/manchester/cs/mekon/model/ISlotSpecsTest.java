@@ -54,7 +54,7 @@ public class ISlotSpecsTest extends MekonTest {
 	private CSlot sc = createCSlot(tc, CCardinality.FREE, tz);
 	private CSlot sd = createCSlot(td, CCardinality.SINGLETON, ty2);
 
-	private IFrame iContainer = createIFrame("CONTAINER");
+	private IFrame iContainer;
 
 	public ISlotSpecsTest() {
 
@@ -65,6 +65,8 @@ public class ISlotSpecsTest extends MekonTest {
 		addSuperFrame(ty2, tx);
 		addSuperFrame(tz, ty1);
 		addSuperFrame(tz, ty2);
+
+		initialiseContainer();
 	}
 
 	@Test
@@ -128,27 +130,68 @@ public class ISlotSpecsTest extends MekonTest {
 	@Test
 	public void test_activeStatusUpdates() {
 
-		sa.getAttributes().setActive(false);
+		sa.setActive(false);
 
 		updateContainerSlots(ta);
 		testActiveSlot(false);
-		updateContainerSlots(tc, td);
+		updateContainerSlots(ta, tb);
 		testActiveSlot(true);
-		updateContainerSlots(ta, tc);
-		testActiveSlot(true);
+		updateContainerSlots(ta);
+		testActiveSlot(false);
 	}
 
 	@Test
-	public void test_dependentStatusUpdates() {
+	public void test_editabilityInitialisation() {
 
-		sc.getAttributes().setDependent(true);
+		sa.setEditability(CEditability.DEFAULT);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.DEFAULT);
 
-		updateContainerSlots(ta);
-		testDependentSlot(false);
-		updateContainerSlots(tc, td);
-		testDependentSlot(true);
-		updateContainerSlots(ta, tc);
-		testDependentSlot(true);
+		sb.setEditability(CEditability.FULL);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.FULL);
+
+		sc.setEditability(CEditability.NONE);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.NONE);
+
+		sd.setEditability(CEditability.QUERY_ONLY);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.QUERY_ONLY);
+
+		sd.setEditability(CEditability.DEFAULT);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.NONE);
+
+		sc.setEditability(CEditability.DEFAULT);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.FULL);
+
+		sb.setEditability(CEditability.DEFAULT);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.DEFAULT);
+	}
+
+	@Test
+	public void test_editabilityNonUpdating() {
+
+		updateContainerSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.DEFAULT);
+
+		sa.setEditability(CEditability.FULL);
+		updateContainerSlots(ta, tb, tc, td);
+		testSlotEditability(CEditability.DEFAULT);
+	}
+
+	private void initialiseContainer() {
+
+		iContainer = createIFrame("CONTAINER");
+	}
+
+	private void initialiseContainerAndSlots(CFrame... containerTypes) {
+
+		initialiseContainer();
+		updateContainerSlots(containerTypes);
 	}
 
 	private void updateContainerSlots(CFrame... containerTypes) {
@@ -182,12 +225,12 @@ public class ISlotSpecsTest extends MekonTest {
 
 	private void testActiveSlot(boolean expected) {
 
-		assertEquals(expected, testSingleSlot().active());
+		assertEquals(expected, testSingleSlot().getType().active());
 	}
 
-	private void testDependentSlot(boolean expected) {
+	private void testSlotEditability(CEditability expected) {
 
-		assertEquals(expected, testSingleSlot().dependent());
+		assertEquals(expected, testSingleSlot().getType().getEditability());
 	}
 
 	private ISlot testSingleSlot() {

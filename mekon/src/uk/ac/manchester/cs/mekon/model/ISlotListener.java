@@ -37,4 +37,11 @@ public interface ISlotListener {
 	 * @param valueType New value-type for slot
 	 */
 	public void onUpdatedValueType(CValue<?> valueType);
+
+	/**
+	 * Method invoked after the slots "active" status has been updated.
+	 *
+	 * @param active New active status
+	 */
+	public void onUpdatedActiveStatus(boolean active);
 }

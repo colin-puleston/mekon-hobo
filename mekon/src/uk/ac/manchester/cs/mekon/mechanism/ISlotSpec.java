@@ -41,8 +41,7 @@ class ISlotSpec {
 	private List<CValue<?>> valueTypes = new ArrayList<CValue<?>>();
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private boolean active = false;
-	private boolean dependent = false;
-	private boolean abstractAssertable = false;
+	private CEditability editability = CEditability.DEFAULT;
 
 	ISlotSpec(IEditor iEditor, CIdentity identity) {
 
@@ -53,12 +52,11 @@ class ISlotSpec {
 	void intersectWith(ISlotSpec other) {
 
 		absorbSource(other.source);
-		intersectWithCardinality(other.cardinality);
-		intersectWithActive(other.active);
-		intersectWithDependent(other.dependent);
-		intersectWithAbstractAssertable(other.abstractAssertable);
+		intersectCardinality(other.cardinality);
+		intersectActive(other.active);
+		absorbEditability(other.editability);
 		absorbValueTypes(other.valueTypes);
-		intersectWithFixedValues(other.fixedValues);
+		intersectFixedValues(other.fixedValues);
 	}
 
 	void absorbSpec(ISlotSpec other) {
@@ -66,8 +64,7 @@ class ISlotSpec {
 		absorbSource(other.source);
 		absorbCardinality(other.cardinality);
 		absorbActive(other.active);
-		absorbDependent(other.dependent);
-		absorbAbstractAssertable(other.abstractAssertable);
+		absorbEditability(other.editability);
 		absorbValueTypes(other.valueTypes);
 		absorbFixedValues(other.fixedValues);
 	}
@@ -77,8 +74,7 @@ class ISlotSpec {
 		absorbSource(slotType.getSource());
 		absorbCardinality(slotType.getCardinality());
 		absorbActive(slotType.active());
-		absorbDependent(slotType.dependent());
-		absorbAbstractAssertable(slotType.abstractAssertable());
+		absorbEditability(slotType.getEditability());
 		absorbValueType(slotType.getValueType());
 	}
 
@@ -127,54 +123,24 @@ class ISlotSpec {
 		return identity;
 	}
 
-	private void intersectWithCardinality(CCardinality value) {
+	private void absorbSource(CSource newSource) {
 
-		cardinality = cardinality.getLessRestrictive(value);
+		source = source.combineWith(newSource);
 	}
 
-	private void intersectWithActive(boolean value) {
+	private void absorbCardinality(CCardinality newCardinality) {
 
-		active &= value;
+		cardinality = cardinality.getMoreRestrictive(newCardinality);
 	}
 
-	private void intersectWithDependent(boolean value) {
+	private void absorbActive(boolean newActive) {
 
-		dependent &= value;
+		active |= newActive;
 	}
 
-	private void intersectWithAbstractAssertable(boolean value) {
+	private void absorbEditability(CEditability newEditability) {
 
-		abstractAssertable &= value;
-	}
-
-	private void intersectWithFixedValues(List<IValue> newFixedValues) {
-
-		fixedValues.retainAll(newFixedValues);
-	}
-
-	private void absorbSource(CSource value) {
-
-		source = source.combineWith(value);
-	}
-
-	private void absorbCardinality(CCardinality value) {
-
-		cardinality = cardinality.getMoreRestrictive(value);
-	}
-
-	private void absorbActive(boolean value) {
-
-		active |= value;
-	}
-
-	private void absorbDependent(boolean value) {
-
-		dependent |= value;
-	}
-
-	private void absorbAbstractAssertable(boolean value) {
-
-		abstractAssertable |= value;
+		editability = editability.getStrongest(newEditability);
 	}
 
 	private void absorbValueTypes(List<CValue<?>> newValueTypes) {
@@ -185,19 +151,39 @@ class ISlotSpec {
 		}
 	}
 
-	private void absorbValueType(CValue<?> valueType) {
+	private void absorbValueType(CValue<?> newValueType) {
 
-		if (!valueTypes.contains(valueType)) {
+		if (!valueTypes.contains(newValueType)) {
 
-			valueTypes.add(valueType);
+			valueTypes.add(newValueType);
 		}
+	}
+
+	private void intersectCardinality(CCardinality newCardinality) {
+
+		cardinality = cardinality.getLessRestrictive(newCardinality);
+	}
+
+	private void intersectActive(boolean newActive) {
+
+		active &= newActive;
+	}
+
+	private void intersectFixedValues(List<IValue> newFixedValues) {
+
+		fixedValues.retainAll(newFixedValues);
 	}
 
 	private void addSlot(IFrame container, CValue<?> valueType) {
 
-		ISlot slot = addRawSlot(container, valueType);
-
-		updateSlotAttributes(getSlotEditor(slot));
+		getFrameEditor(container)
+			.addSlot(
+				identity,
+				source,
+				cardinality,
+				valueType,
+				active,
+				editability);
 	}
 
 	private void updateSlot(ISlot slot, CValue<?> valueType) {
@@ -205,24 +191,7 @@ class ISlotSpec {
 		ISlotEditor slotEd = getSlotEditor(slot);
 
 		slotEd.setValueType(valueType);
-		updateSlotAttributes(slotEd);
-	}
-
-	private void updateSlotAttributes(ISlotEditor slotEd) {
-
 		slotEd.setActive(active);
-		slotEd.setDependent(dependent);
-	}
-
-	private ISlot addRawSlot(IFrame container, CValue<?> valueType) {
-
-		return getFrameEditor(container)
-					.addSlot(
-						identity,
-						source,
-						cardinality,
-						valueType,
-						abstractAssertable);
 	}
 
 	private void removeSlot(ISlot slot) {

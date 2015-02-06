@@ -45,9 +45,9 @@ import uk.ac.manchester.cs.mekon.util.*;
  *	 to be {@link CSlot#abstractAssertable} can. However, in either
  *	 case, this default behaviour can be overridden for individual
  *	 instance-level slots.
- *   <li>Dependent slots on query-frames (see {@link ISlot#dependent})
- *   are editable by the client (see {@link ISlot#editable}), which
- *   is not the case for dependent slots on assertion-frames
+ *   <li>Slots on query-frames and assertion-frames may (and by default
+ *	 will) have different editabilty criteria (see {@link
+ *	 CSlot#getEditability})
  * </ul>
  * Query-frames and assertion-frames cannot be mixed within a single
  * model-instantiation. Attempting to do so will result in an
@@ -146,7 +146,7 @@ public class IFrame implements IEntity, IValue {
 
 		public ISlot addSlot(CSlot slotType) {
 
-			ISlot slot = new ISlot(IFrame.this, slotType);
+			ISlot slot = new ISlot(slotType, IFrame.this);
 
 			new DynamicUpdater(slot);
 			IFrameSlotValueUpdateProcessor.checkAddTo(slot);
@@ -162,12 +162,14 @@ public class IFrame implements IEntity, IValue {
 						CSource source,
 						CCardinality cardinality,
 						CValue<?> valueType,
-						boolean abstractAssertable) {
+						boolean active,
+						CEditability editability) {
 
 			CSlot slotType = new CSlot(type, identity, cardinality, valueType);
 
 			slotType.setSource(source);
-			slotType.setAbstractAssertable(abstractAssertable);
+			slotType.setActive(active);
+			slotType.setEditability(editability);
 
 			return addSlot(slotType);
 		}

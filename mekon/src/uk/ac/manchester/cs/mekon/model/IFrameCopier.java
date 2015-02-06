@@ -88,7 +88,7 @@ class IFrameCopier {
 
 	private ISlot copySlot(IFrame template, ISlot templateSlot) {
 
-		ISlot copySlot = new ISlot(template, templateSlot);
+		ISlot copySlot = new ISlot(templateSlot.getType(), template);
 		ISlotValues copyValues = copySlot.getValues();
 
 		for (IValue value : templateSlot.getValues().asList()) {

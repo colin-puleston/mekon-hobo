@@ -44,7 +44,7 @@ public enum IUpdateOp {
 
 	/**
 	 * Update slot-sets on relevant frames, plus value-types
-	 * and "active" and "dependent" statuses for specific slots.
+	 * and other attributes for specific slots.
 	 */
 	SLOTS,
 

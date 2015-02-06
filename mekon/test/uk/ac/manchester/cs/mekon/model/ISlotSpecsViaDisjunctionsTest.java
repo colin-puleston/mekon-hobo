@@ -99,13 +99,13 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 	@Test
 	public void test_slotAttributesUpdates() {
 
-		ta_slot2.getAttributes().setActive(false);
-		ta_slot2.getAttributes().setDependent(false);
+		ta_slot2.setActive(false);
+		ta_slot2.setEditability(CEditability.FULL);
 
 		updateContainerSlots();
 		testCardinality(slot2Id, CCardinality.FREE);
 		testActiveSlot(slot2Id, false);
-		testDependentSlot(slot2Id, false);
+		testSlotEditability(slot2Id, CEditability.FULL);
 	}
 
 	private void updateContainerSlots() {
@@ -144,12 +144,12 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 
 	private void testActiveSlot(CIdentity slotId, boolean expected) {
 
-		assertEquals(expected, testFindSlot(slotId).active());
+		assertEquals(expected, testFindSlot(slotId).getType().active());
 	}
 
-	private void testDependentSlot(CIdentity slotId, boolean expected) {
+	private void testSlotEditability(CIdentity slotId, CEditability expected) {
 
-		assertEquals(expected, testFindSlot(slotId).dependent());
+		assertEquals(expected, testFindSlot(slotId).getType().getEditability());
 	}
 
 	private ISlot testFindSlot(CIdentity slotId) {
