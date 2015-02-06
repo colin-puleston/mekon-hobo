@@ -39,6 +39,8 @@ interface EntityIconConstants {
 	static final Color NUMBER_CLR = Color.green.darker().darker();
 	static final Color HIDDEN_FRAME_MARKER_CLR = Color.darkGray.darker();
 	static final Color CURBED_SLOT_MARKER_CLR = Color.darkGray.darker();
+	static final Color SEMI_CURBED_SLOT_MARKER_CLR = Color.gray;
+	static final Color FREED_SLOT_MARKER_CLR = Color.white;
 
 	static final int ENTITY_INNER_SIZE = 8;
 	static final int ENTITY_RIM_SIZE = 3;
@@ -47,4 +49,5 @@ interface EntityIconConstants {
 	static final int HIDDEN_FRAME_MARKER_HEIGHT = 4;
 	static final int CURBED_SLOT_MARKER_WIDTH = 4;
 	static final int CURBED_SLOT_MARKER_HEIGHT = ENTITY_SIZE;
+	static final int FREED_SLOT_MARKER_SIZE = 6;
 }

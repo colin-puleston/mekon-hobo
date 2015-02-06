@@ -24,52 +24,29 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.*;
-
 import uk.ac.manchester.cs.mekon.gui.util.icon.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class SlotIcons extends EntityIconsBySource {
+class QueryOnlyEditSlotIcons extends SlotIcons {
 
-	static final int BLOCK_MARKER_OFFSET = getNonCurbMarkerSize();
-	static final int CHOP_MARKER_OFFSET = getNonCurbMarkerSize() / 2;
+	static GIconRenderer createMarkerRenderer() {
 
-	static private int getNonCurbMarkerSize() {
-
-		return ENTITY_SIZE - CURBED_SLOT_MARKER_WIDTH;
+		return createCurbMarkerRenderer(
+					SEMI_CURBED_SLOT_MARKER_CLR,
+					BLOCK_MARKER_OFFSET);
 	}
 
-	static GIconRenderer createCurbMarkerRenderer(Color colour, int offset) {
+	private GIconRenderer markerRenderer = createMarkerRenderer();
 
-		GIconRenderer r = new GRectangleRenderer(
-								colour,
-								CURBED_SLOT_MARKER_WIDTH,
-								CURBED_SLOT_MARKER_HEIGHT);
+	QueryOnlyEditSlotIcons() {
 
-		r.setXOffset(offset);
-
-		return r;
+		initialise();
 	}
 
-	GIcon create(Color mainClr, Color innerClr) {
+	void addExtraRenderers(GIcon icon) {
 
-		GIcon icon = super.create(mainClr, innerClr);
-
-		addExtraRenderers(icon);
-
-		return icon;
+		icon.addRenderer(markerRenderer);
 	}
-
-	GIconRenderer createRenderer(Color clr, int size) {
-
-		return new GTriangleRenderer(
-						GTriangleRenderer.Type.RIGHTWARD,
-						clr,
-						size,
-						size);
-	}
-
-	abstract void addExtraRenderers(GIcon icon);
 }

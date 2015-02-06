@@ -51,10 +51,8 @@ class CFrameRemovalsSelector extends CFrameSelector {
 		protected void doButtonThing() {
 
 			allSelected = true;
-			System.out.println("SET-ALL-SELECTED: " + allSelected);
 
 			dispose();
-			System.out.println("DISPOSED: " + allSelected);
 		}
 
 		SelectAllButton() {

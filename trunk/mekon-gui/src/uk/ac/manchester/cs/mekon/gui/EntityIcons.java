@@ -40,12 +40,16 @@ class EntityIcons implements EntityIconConstants {
 		return singleton;
 	}
 
-	FrameIcons exposedFrames = new FrameIcons(false);
-	FrameIcons hiddenFrames = new FrameIcons(true);
-	EntityIconsByLevel numbers = new EntityIconsByLevel(NUMBER_CLR, ENTITY_SIZE);
-	SlotIcons defaultSlots = new SlotIcons(false, false);
-	SlotIcons blockedSlots = new SlotIcons(false, true);
-	SlotIcons inactiveSlots = new SlotIcons(true, false);
+	final FrameIcons exposedFrames = new FrameIcons(false);
+	final FrameIcons hiddenFrames = new FrameIcons(true);
+
+	final EntityIconsByLevel numbers = new EntityIconsByLevel(NUMBER_CLR, ENTITY_SIZE);
+
+	final SlotIcons defaultSlots = new DefaultSlotIcons();
+	final SlotIcons nonEditSlots = new NonEditSlotIcons();
+	final SlotIcons queryOnlyEditSlots = new QueryOnlyEditSlotIcons();
+	final SlotIcons fullEditSlots = new FullEditSlotIcons();
+	final SlotIcons inactiveSlots = new InactiveSlotIcons();
 
 	Icon get(IFrame frame) {
 
@@ -99,17 +103,48 @@ class EntityIcons implements EntityIconConstants {
 
 	private SlotIcons getCSlotIcons(CSlot slot) {
 
-		if (slot.active()) {
+		if (!slot.active()) {
 
-			return slot.dependent() ? blockedSlots : defaultSlots;
+			return inactiveSlots;
 		}
 
-		return inactiveSlots;
+		switch (slot.getEditability()) {
+
+			case DEFAULT:
+				return defaultSlots;
+
+			case NONE:
+				return nonEditSlots;
+
+			case QUERY_ONLY:
+				return queryOnlyEditSlots;
+
+			case FULL:
+				return fullEditSlots;
+		}
+
+		throw new Error(
+					"Unrecognised CEditability value: "
+					+ slot.getEditability());
 	}
 
 	private SlotIcons getISlotIcons(ISlot slot) {
 
-		return slot.editable() ? defaultSlots : blockedSlots;
+		switch (slot.getEditability()) {
+
+			case NONE:
+				return nonEditSlots;
+
+			case CONCRETE_ONLY:
+				return defaultSlots;
+
+			case FULL:
+				return fullEditSlots;
+		}
+
+		throw new Error(
+					"Unrecognised IEditability value: "
+					+ slot.getEditability());
 	}
 }
 

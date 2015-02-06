@@ -44,13 +44,18 @@ abstract class IValuesNode extends GNode {
 
 			notifyUpdatedDisplay();
 		}
+
+		public void onUpdatedActiveStatus(boolean active) {
+
+			notifyUpdatedDisplay();
+		}
 	}
 
 	private abstract class IValuesNodeAction extends GNodeAction {
 
 		protected boolean active() {
 
-			return slot.editable();
+			return editableSlot();
 		}
 	}
 
@@ -135,7 +140,7 @@ abstract class IValuesNode extends GNode {
 
 	GNodeAction getRemoveValueAction(IValue value) {
 
-		return slot.editable()
+		return editableSlot()
 					? new RemoveValueAction(value)
 					: GNodeAction.INERT_ACTION;
 	}
@@ -148,5 +153,10 @@ abstract class IValuesNode extends GNode {
 	void removeValue(IValue value) {
 
 		slot.getValuesEditor().remove(value);
+	}
+
+	private boolean editableSlot() {
+
+		return slot.getEditability().editable();
 	}
 }

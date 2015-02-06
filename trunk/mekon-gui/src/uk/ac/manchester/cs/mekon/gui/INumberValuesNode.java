@@ -83,7 +83,7 @@ class INumberValuesNode extends IValuesNode {
 
 	private INumberSelector createSelector() {
 
-		boolean rangeEnabled = slot.abstractValuesAllowed();
+		boolean rangeEnabled = abstractEditableSlot();
 
 		return new INumberSelector(tree, getValueType(), rangeEnabled);
 	}
@@ -96,5 +96,10 @@ class INumberValuesNode extends IValuesNode {
 	private CNumber getValueType() {
 
 		return slot.getValueType().castAs(CNumber.class);
+	}
+
+	private boolean abstractEditableSlot() {
+
+		return slot.getEditability().abstractEditable();
 	}
 }
