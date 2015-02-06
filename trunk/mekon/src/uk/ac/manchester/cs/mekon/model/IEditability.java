@@ -40,7 +40,7 @@ public enum IEditability {
 	NONE,
 
 	/**
-	 * Slot can be given concrete values only by the client.
+	 * Slot can only be given concrete values by the client.
 	 */
 	CONCRETE_ONLY,
 
@@ -52,7 +52,7 @@ public enum IEditability {
 
 	/**
 	 * Specifies whether slot is editable in any way by the client,
-	 * which will be the case if and only if value is either {@link
+	 * which will be the case if and only if this is either {@link
 	 * #CONCRETE_ONLY} or {@link #FULL}.
 	 *
 	 * @return True is slot is editable
@@ -64,7 +64,7 @@ public enum IEditability {
 
 	/**
 	 * Specifies whether the slot can be given abstract values by the
-	 * client, which will be the case if and only if value is {@link
+	 * client, which will be the case if and only if this is {@link
 	 * #FULL}.
 	 *
 	 * @return True is slot is abstract-editable

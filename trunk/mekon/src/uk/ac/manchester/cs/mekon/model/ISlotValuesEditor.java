@@ -35,6 +35,7 @@ import java.util.*;
 public class ISlotValuesEditor {
 
 	private ISlotValues slotValues;
+	private boolean internalEditor;
 
 	/**
 	 * Adds the specified value to the "asserted" value-list, if
@@ -46,7 +47,7 @@ public class ISlotValuesEditor {
 	 */
 	public boolean add(IValue value) {
 
-		return slotValues.add(value);
+		return slotValues.add(value, internalEditor);
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class ISlotValuesEditor {
 	 */
 	public List<IValue> addAll(Collection<? extends IValue> values) {
 
-		return slotValues.addAll(values);
+		return slotValues.addAll(values, internalEditor);
 	}
 
 	/**
@@ -127,11 +128,12 @@ public class ISlotValuesEditor {
 	 */
 	public void update(Collection<? extends IValue> latestValues) {
 
-		slotValues.update(latestValues);
+		slotValues.update(latestValues, internalEditor);
 	}
 
-	ISlotValuesEditor(ISlotValues slotValues) {
+	ISlotValuesEditor(ISlotValues slotValues, boolean internalEditor) {
 
 		this.slotValues = slotValues;
+		this.internalEditor = internalEditor;
 	}
 }
