@@ -37,17 +37,17 @@ abstract class OBSlot extends OIdentified {
 
 	private OWLProperty property;
 	private boolean singleValued;
-	private boolean dependent;
-	private boolean abstractAssertable;
+	private CEditability editability;
 
-	private class CAdder {
+	private class CStructureCreator {
 
 		private CBuilder builder;
 		private OBAnnotations annotations;
+		private CFrame container;
 		private CFrameEditor containerEd;
 		private CValue<?> value;
 
-		CAdder(
+		CStructureCreator(
 			CBuilder builder,
 			CFrame container,
 			OBSlot topLevelSlot,
@@ -55,40 +55,45 @@ abstract class OBSlot extends OIdentified {
 
 			this.builder = builder;
 			this.annotations = annotations;
+			this.container = container;
 
 			containerEd = builder.getFrameEditor(container);
 			value = ensureCValue(builder, topLevelSlot, annotations);
 
 			if (OBSlot.this == topLevelSlot) {
 
-				addSlot(getTopLevelCardinality());
+				addOrUpdateSlot(getTopLevelCardinality());
 			}
 			else {
 
 				if (topLevelSlot.singleValued) {
 
-					addSlot(CCardinality.SINGLETON);
+					addOrUpdateSlot(CCardinality.SINGLETON);
 				}
 
 				if (canBeFixedValue(value)) {
 
-					addSlotValue();
+					checkAddSlotValue();
 				}
 			}
 		}
 
-		private void addSlot(CCardinality cardinality) {
+		private void addOrUpdateSlot(CCardinality cardinality) {
 
-			CSlot slot = containerEd.addSlot(getIdentity(), cardinality, value);
-			CSlotEditor slotEd = builder.getSlotEditor(slot);
+			CIdentity id = getIdentity();
+			CSlot slot = container.getSlots().getOrNull(id);
 
-			slotEd.absorbDependent(dependent);
-			slotEd.absorbAbstractAssertable(abstractAssertable);
+			if (slot == null) {
 
-			annotations.checkAdd(builder, slot, property);
+				slot = containerEd.addSlot(id, cardinality, value);
+
+				annotations.checkAdd(builder, slot, property);
+			}
+
+			builder.getSlotEditor(slot).absorbEditability(editability);
 		}
 
-		private void addSlotValue() {
+		private void checkAddSlotValue() {
 
 			containerEd.addSlotValue(getIdentity(), value);
 		}
@@ -100,11 +105,7 @@ abstract class OBSlot extends OIdentified {
 
 		property = spec.getProperty();
 		singleValued = spec.singleValued();
-
-		OBPropertyAttributes attrs = spec.getPropertyAttributes();
-
-		dependent = attrs.dependent();
-		abstractAssertable = attrs.abstractAssertable();
+		editability = spec.getPropertyAttributes().getSlotEditability();
 	}
 
 	void ensureCStructure(
@@ -115,7 +116,7 @@ abstract class OBSlot extends OIdentified {
 
 		if (validSlotValueType()) {
 
-			new CAdder(builder, container, topLevelSlot, annotations);
+			new CStructureCreator(builder, container, topLevelSlot, annotations);
 		}
 	}
 

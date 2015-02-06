@@ -36,44 +36,32 @@ import uk.ac.manchester.cs.mekon.model.*;
 public class OBPropertyAttributes {
 
 	private boolean frameSource = false;
-	private boolean dependent = false;
-	private boolean abstractAssertable = false;
+	private CEditability slotEditability = CEditability.DEFAULT;
 
 	/**
-	 * Sets a value for the attribute that determines whether the
-	 * property, in addition to any slots that it will be used to
-	 * generate, will also be used to generate a frame in the
-	 * frames-model.
+	 * Used to specifiy whether the property, in addition to any
+	 * slots that it will be used to generate, will also be used to
+	 * generate a frame in the frames-model. Defaults to false if
+	 * method is never invoked.
 	 *
-	 * @param value Value for attribute
+	 * @param frameSource True if frames are to be generated for
+	 * property
 	 */
-	public void setFrameSource(boolean value) {
+	public void setFrameSource(boolean frameSource) {
 
-		frameSource = value;
+		this.frameSource = frameSource;
 	}
 
 	/**
-	 * Sets a value for the attribute that determines whether the
-	 * property will be used to generate frames-model slots that
-	 * are {@link CSlot#dependent}.
+	 * Sets the editability status for the frames-model slots that
+	 * will be generated for the property. Defaults to
+	 * {@link CEditability#DEFAULT} if method is never invoked.
 	 *
-	 * @param value Value for attribute
+	 * @param value Editability status for generated slots
 	 */
-	public void setDependent(boolean value) {
+	public void setSlotEditability(CEditability slotEditability) {
 
-		dependent = value;
-	}
-
-	/**
-	 * Sets a value for the attribute that determines whether the
-	 * property will be used to generate frames-model slots that
-	 * are {@link CSlot#abstractAssertable}.
-	 *
-	 * @param value Value for attribute
-	 */
-	public void setAbstractAssertable(boolean value) {
-
-		abstractAssertable = value;
+		this.slotEditability = slotEditability;
 	}
 
 	boolean frameSource() {
@@ -81,13 +69,8 @@ public class OBPropertyAttributes {
 		return frameSource;
 	}
 
-	boolean dependent() {
+	CEditability getSlotEditability() {
 
-		return dependent;
-	}
-
-	boolean abstractAssertable() {
-
-		return abstractAssertable;
+		return slotEditability;
 	}
 }
