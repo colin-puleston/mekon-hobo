@@ -47,7 +47,7 @@ class IFrameNode extends GNode {
 
 		boolean childNodeRequiredFor(ISlot slot) {
 
-			return slot.active();
+			return slot.getType().active();
 		}
 
 		GNode createChildNode(ISlot slot) {

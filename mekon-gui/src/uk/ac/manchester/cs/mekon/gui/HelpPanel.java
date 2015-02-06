@@ -49,8 +49,10 @@ class HelpPanel extends JTabbedPane {
 	static final Icon hiddenMFrameShape = getHiddenFrameShape(EntityLevel.META);
 	static final Icon hiddenCFrameShape = getHiddenFrameShape(EntityLevel.CONCEPT);
 	static final Icon defaultSlotShape = getDefaultSlotShape();
+	static final Icon nonEditSlotShape = getNonEditSlotShape();
+	static final Icon queryOnlyEditSlotShape = getQueryOnlyEditSlotShape();
+	static final Icon fullEditSlotShape = getFullEditSlotShape();
 	static final Icon inactiveSlotShape = getInactiveSlotShape();
-	static final Icon blockedSlotShape = getEditBlockedSlotShape();
 
 	static final Icon internalColour = getColour(CSource.INTERNAL);
 	static final Icon externalColour = getColour(CSource.EXTERNAL);
@@ -72,14 +74,24 @@ class HelpPanel extends JTabbedPane {
 		return getIcons().defaultSlots.get(DEFAULT_SOURCE);
 	}
 
+	static private Icon getNonEditSlotShape() {
+
+		return getIcons().nonEditSlots.get(DEFAULT_SOURCE);
+	}
+
+	static private Icon getQueryOnlyEditSlotShape() {
+
+		return getIcons().queryOnlyEditSlots.get(DEFAULT_SOURCE);
+	}
+
+	static private Icon getFullEditSlotShape() {
+
+		return getIcons().fullEditSlots.get(DEFAULT_SOURCE);
+	}
+
 	static private Icon getInactiveSlotShape() {
 
 		return getIcons().inactiveSlots.get(DEFAULT_SOURCE);
-	}
-
-	static private Icon getEditBlockedSlotShape() {
-
-		return getIcons().blockedSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getColour(CSource source) {
@@ -207,30 +219,61 @@ class HelpPanel extends JTabbedPane {
 				super("Shape Modifiers");
 
 				addColumns(
-					"Shape with Modifier",
+					"Shape With/Without Modifier",
 					"Entity Types",
 					"Entity State");
 
+				addRow(
+					mValueShape,
+					"MFrame",
+					"Exposed");
 				addRow(
 					hiddenMFrameShape,
 					"MFrame",
 					"Hidden");
 				addRow(
+					cValueShape,
+					"CFrame",
+					"Exposed");
+				addRow(
 					hiddenCFrameShape,
 					"CFrame",
 					"Hidden");
+				addRow(
+					defaultSlotShape,
+					"CSlot",
+					"Default editable "
+					+ "(concrete-only on assertions / fully editable on queries)");
+				addRow(
+					fullEditSlotShape,
+					"CSlot",
+					"Fully editable "
+					+ "(fully editable on assertions and queries)");
+				addRow(
+					queryOnlyEditSlotShape,
+					"CSlot",
+					"Query-only editable "
+					+ "(non-editable on assertions / fully editable on queries)");
+				addRow(
+					nonEditSlotShape,
+					"CSlot",
+					"Non-editable (non-editable on assertions or queries)");
 				addRow(
 					inactiveSlotShape,
 					"CSlot",
 					"Inactive");
 				addRow(
-					blockedSlotShape,
-					"CSlot",
-					"Dependent (automatically derived values)");
-				addRow(
-					blockedSlotShape,
+					defaultSlotShape,
 					"ISlot",
-					"Non-Editable (dependent slot on assertion instance)");
+					"Concrete-only editable");
+				addRow(
+					fullEditSlotShape,
+					"ISlot",
+					"Fully-editable");
+				addRow(
+					nonEditSlotShape,
+					"ISlot",
+					"Non-editable");
 			}
 		}
 
