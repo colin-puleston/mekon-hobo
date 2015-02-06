@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.hobo.demo.summary;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
@@ -48,6 +49,14 @@ public class ConceptSummary extends ValueSummary<CFrame> {
 
 		model = builder.getModel();
 		dEditor = builder.getEditor();
+
+	}
+
+	void initialise(CSlot slotTypeValue) {
+
+		super.initialise(slotTypeValue);
+
+		setAllValuesValueType(slotTypeValue.getValueType());
 	}
 
 	void set(List<CFrame> values) {
@@ -73,8 +82,18 @@ public class ConceptSummary extends ValueSummary<CFrame> {
 		return (CFrame)value;
 	}
 
+	private void setAllValuesValueType(CValue<?> valueType) {
+
+		getSlotEditor(allValues.getSlot()).setValueType(valueType);
+	}
+
 	private DConcept<DObject> getConcept(CFrame value) {
 
 		return model.getConcept(DObject.class, value);
+	}
+
+	private ISlotEditor getSlotEditor(ISlot slot) {
+
+		return dEditor.getIEditor().getSlotEditor(slot);
 	}
 }
