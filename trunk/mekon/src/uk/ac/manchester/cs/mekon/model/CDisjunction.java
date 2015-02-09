@@ -81,7 +81,7 @@ class CDisjunction extends CExpression {
 
 	private abstract class LinkedFramesFinder {
 
-		List<CFrame> getDirectlyLinked(CFrameVisibility visibility) {
+		List<CFrame> getDirectlyLinked(CVisibility visibility) {
 
 			List<CFrame> linked = new ArrayList<CFrame>();
 
@@ -90,7 +90,7 @@ class CDisjunction extends CExpression {
 			return linked;
 		}
 
-		List<CFrame> getAllLinked(CFrameVisibility visibility) {
+		List<CFrame> getAllLinked(CVisibility visibility) {
 
 			List<CFrame> linked = new ArrayList<CFrame>();
 
@@ -101,16 +101,16 @@ class CDisjunction extends CExpression {
 
 		abstract List<? extends CFrame> getAllDirectlyLinked();
 
-		abstract List<CFrame> getAllLinkedTo(CFrame frame, CFrameVisibility visibility);
+		abstract List<CFrame> getAllLinkedTo(CFrame frame, CVisibility visibility);
 
-		boolean requiredDirectlyLinked(CFrame frame, CFrameVisibility visibility) {
+		boolean requiredDirectlyLinked(CFrame frame, CVisibility visibility) {
 
 			return visibility.coversHiddenStatus(frame.hidden());
 		}
 
 		private void collectLinked(
 						Collection<CFrame> linked,
-						CFrameVisibility visibility,
+						CVisibility visibility,
 						boolean directOnly) {
 
 			for (CFrame direct : getAllDirectlyLinked()) {
@@ -135,7 +135,7 @@ class CDisjunction extends CExpression {
 			return commonSupers;
 		}
 
-		List<CFrame> getAllLinkedTo(CFrame frame, CFrameVisibility visibility) {
+		List<CFrame> getAllLinkedTo(CFrame frame, CVisibility visibility) {
 
 			return frame.getAncestors(visibility);
 		}
@@ -143,12 +143,12 @@ class CDisjunction extends CExpression {
 
 	private class StructuredAncestorFinder extends UpwardFramesFinder {
 
-		List<CFrame> getAllLinkedTo(CFrame frame, CFrameVisibility visibility) {
+		List<CFrame> getAllLinkedTo(CFrame frame, CVisibility visibility) {
 
 			return frame.getStructuredAncestors();
 		}
 
-		boolean requiredDirectlyLinked(CFrame frame, CFrameVisibility visibility) {
+		boolean requiredDirectlyLinked(CFrame frame, CVisibility visibility) {
 
 			return super.requiredDirectlyLinked(frame, visibility) && frame.structured();
 		}
@@ -161,7 +161,7 @@ class CDisjunction extends CExpression {
 			return disjuncts;
 		}
 
-		List<CFrame> getAllLinkedTo(CFrame frame, CFrameVisibility visibility) {
+		List<CFrame> getAllLinkedTo(CFrame frame, CVisibility visibility) {
 
 			return frame.getDescendants(visibility);
 		}
@@ -212,29 +212,29 @@ class CDisjunction extends CExpression {
 		return new ArrayList<CFrame>(disjuncts);
 	}
 
-	public List<CFrame> getSupers(CFrameVisibility visibility) {
+	public List<CFrame> getSupers(CVisibility visibility) {
 
 		return new UpwardFramesFinder().getDirectlyLinked(visibility);
 	}
 
-	public List<CFrame> getSubs(CFrameVisibility visibility) {
+	public List<CFrame> getSubs(CVisibility visibility) {
 
 		return new DownwardFramesFinder().getDirectlyLinked(visibility);
 	}
 
-	public List<CFrame> getAncestors(CFrameVisibility visibility) {
+	public List<CFrame> getAncestors(CVisibility visibility) {
 
 		return new UpwardFramesFinder().getAllLinked(visibility);
 	}
 
-	public List<CFrame> getDescendants(CFrameVisibility visibility) {
+	public List<CFrame> getDescendants(CVisibility visibility) {
 
 		return new DownwardFramesFinder().getAllLinked(visibility);
 	}
 
 	public List<CFrame> getStructuredAncestors() {
 
-		return new StructuredAncestorFinder().getAllLinked(CFrameVisibility.ALL);
+		return new StructuredAncestorFinder().getAllLinked(CVisibility.ALL);
 	}
 
 	public CSlotValues getSlotValues() {
@@ -315,7 +315,7 @@ class CDisjunction extends CExpression {
 
 	private CommonSubsumersFinder getCommonSubsumersFinder() {
 
-		return new CommonSubsumersFinder(CFrameVisibility.EXPOSED);
+		return new CommonSubsumersFinder(CVisibility.EXPOSED);
 	}
 
 	private Set<CModelFrame> disjunctsAsSet() {

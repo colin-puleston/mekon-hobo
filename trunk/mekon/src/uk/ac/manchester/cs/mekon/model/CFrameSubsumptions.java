@@ -63,7 +63,7 @@ class CFrameSubsumptions {
 
 	private abstract class LinkedFramesFinder {
 
-		private CFrameVisibility visibility;
+		private CVisibility visibility;
 
 		private class Collector extends CHierarchyCrawler {
 
@@ -92,7 +92,7 @@ class CFrameSubsumptions {
 			}
 		}
 
-		LinkedFramesFinder(CFrameVisibility visibility) {
+		LinkedFramesFinder(CVisibility visibility) {
 
 			this.visibility = visibility;
 		}
@@ -104,7 +104,7 @@ class CFrameSubsumptions {
 
 		abstract List<CModelFrame> getDirectlyLinkedForCollection(
 										CModelFrame current,
-										CFrameVisibility visibility);
+										CVisibility visibility);
 
 		boolean required(CModelFrame current) {
 
@@ -114,9 +114,9 @@ class CFrameSubsumptions {
 
 	private abstract class CachingLinkedFramesFinder extends LinkedFramesFinder {
 
-		private CFrameVisibility visibility;
+		private CVisibility visibility;
 
-		CachingLinkedFramesFinder(CFrameVisibility visibility) {
+		CachingLinkedFramesFinder(CVisibility visibility) {
 
 			super(visibility);
 
@@ -132,7 +132,7 @@ class CFrameSubsumptions {
 
 		private List<CModelFrame> selectFromCached() {
 
-			if (visibility == CFrameVisibility.ALL) {
+			if (visibility == CVisibility.ALL) {
 
 				return getCached();
 			}
@@ -158,7 +158,7 @@ class CFrameSubsumptions {
 
 	private class AncestorsFinder extends CachingLinkedFramesFinder {
 
-		AncestorsFinder(CFrameVisibility visibility) {
+		AncestorsFinder(CVisibility visibility) {
 
 			super(visibility);
 		}
@@ -170,7 +170,7 @@ class CFrameSubsumptions {
 
 		List<CModelFrame> getDirectlyLinkedForCollection(
 								CModelFrame current,
-								CFrameVisibility visibility) {
+								CVisibility visibility) {
 
 			return current.getModelSupers().getAll(visibility);
 		}
@@ -180,7 +180,7 @@ class CFrameSubsumptions {
 
 		StructuredAncestorsFinder() {
 
-			super(CFrameVisibility.ALL);
+			super(CVisibility.ALL);
 		}
 
 		List<CModelFrame> getCached() {
@@ -196,14 +196,14 @@ class CFrameSubsumptions {
 
 	private class DescendantsFinder extends LinkedFramesFinder {
 
-		DescendantsFinder(CFrameVisibility visibility) {
+		DescendantsFinder(CVisibility visibility) {
 
 			super(visibility);
 		}
 
 		List<CModelFrame> getDirectlyLinkedForCollection(
 								CModelFrame current,
-								CFrameVisibility visibility) {
+								CVisibility visibility) {
 
 			return current.getModelSubs().getAll(visibility);
 		}
@@ -245,7 +245,7 @@ class CFrameSubsumptions {
 		return new SubsumptionTester(testSubsumer).isSubsumption();
 	}
 
-	List<CModelFrame> getAncestors(CFrameVisibility visibility) {
+	List<CModelFrame> getAncestors(CVisibility visibility) {
 
 		return new AncestorsFinder(visibility).getAll();
 	}
@@ -255,7 +255,7 @@ class CFrameSubsumptions {
 		return new StructuredAncestorsFinder().getAll();
 	}
 
-	List<CModelFrame> getDescendants(CFrameVisibility visibility) {
+	List<CModelFrame> getDescendants(CVisibility visibility) {
 
 		return new DescendantsFinder(visibility).getAll();
 	}

@@ -130,13 +130,13 @@ public class ISlotValuesTest extends MekonTest {
 	@Test(expected = KAccessException.class)
 	public void test_illegalUpdateFails() {
 
-		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"));
+		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"), false);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_abstractUpdateFailsForAssertion() {
 
-		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"));
+		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"), false);
 	}
 
 	private void testAddRemoveValues_multiValued(CCardinality cardinality) {
@@ -185,7 +185,7 @@ public class ISlotValuesTest extends MekonTest {
 					IValue value,
 					List<IValue> expectedValues) {
 
-		slotValues.add(value);
+		slotValues.add(value, false);
 		testValues(slotValues, expectedValues);
 	}
 
@@ -203,7 +203,7 @@ public class ISlotValuesTest extends MekonTest {
 					List<IValue> values,
 					List<IValue> expectedValues) {
 
-		slotValues.update(values);
+		slotValues.update(values, false);
 		testTypes(slotValues, expectedValues);
 	}
 

@@ -30,7 +30,7 @@ package uk.ac.manchester.cs.mekon.model;
  *
  * @author Colin Puleston
  */
-public enum CFrameVisibility {
+public enum CVisibility {
 
 	/**
 	 * All frames of whatever visibility status.
@@ -75,7 +75,7 @@ public enum CFrameVisibility {
 	 * @return true if visibility status covers specified visibility
 	 * status
 	 */
-	public boolean coversVisibility(CFrameVisibility visibility) {
+	public boolean coversVisibility(CVisibility visibility) {
 
 		return this == ALL || this == visibility;
 	}

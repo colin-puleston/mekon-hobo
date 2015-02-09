@@ -217,22 +217,22 @@ class CModelFrame extends CFrame {
 		return Collections.<CFrame>singletonList(this);
 	}
 
-	public List<CFrame> getSupers(CFrameVisibility visibility) {
+	public List<CFrame> getSupers(CVisibility visibility) {
 
 		return supers.asFrames(visibility);
 	}
 
-	public List<CFrame> getSubs(CFrameVisibility visibility) {
+	public List<CFrame> getSubs(CVisibility visibility) {
 
 		return subs.asFrames(visibility);
 	}
 
-	public List<CFrame> getAncestors(CFrameVisibility visibility) {
+	public List<CFrame> getAncestors(CVisibility visibility) {
 
 		return new ArrayList<CFrame>(subsumptions.getAncestors(visibility));
 	}
 
-	public List<CFrame> getDescendants(CFrameVisibility visibility) {
+	public List<CFrame> getDescendants(CVisibility visibility) {
 
 		return new ArrayList<CFrame>(subsumptions.getDescendants(visibility));
 	}
