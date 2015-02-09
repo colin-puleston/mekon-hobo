@@ -256,7 +256,7 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 
 	private boolean selectableCFrameOptions() {
 
-		return !getRootCFrame().getSubs(CFrameVisibility.EXPOSED).isEmpty();
+		return !getRootCFrame().getSubs(CVisibility.EXPOSED).isEmpty();
 	}
 
 	private boolean abstractEditableSlot() {

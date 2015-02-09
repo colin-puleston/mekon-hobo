@@ -39,7 +39,7 @@ class CFramesTree extends CTree {
 
 	static private final long serialVersionUID = -1;
 
-	private CFrameVisibility visibility;
+	private CVisibility visibility;
 	private KListMap<CFrame, CFrameNode> frameNodeLists
 						= new KListMap<CFrame, CFrameNode>();
 
@@ -89,14 +89,14 @@ class CFramesTree extends CTree {
 		}
 	}
 
-	CFramesTree(CFrame rootFrame, CFrameVisibility visibility, boolean showRoot) {
+	CFramesTree(CFrame rootFrame, CVisibility visibility, boolean showRoot) {
 
 		this(visibility, showRoot);
 
 		addFrameNode(initialise(rootFrame));
 	}
 
-	CFramesTree(List<CFrame> rootFrames, CFrameVisibility visibility) {
+	CFramesTree(List<CFrame> rootFrames, CVisibility visibility) {
 
 		this(visibility, false);
 
@@ -131,7 +131,7 @@ class CFramesTree extends CTree {
 		return selectionRelay;
 	}
 
-	private CFramesTree(CFrameVisibility visibility, boolean showRoot) {
+	private CFramesTree(CVisibility visibility, boolean showRoot) {
 
 		this.visibility = visibility;
 

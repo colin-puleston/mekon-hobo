@@ -45,7 +45,7 @@ class CFrameDetailsTree extends CTree {
 
 		if (parent != getRootNode()) {
 
-			parent.addSubFrameNodes(CFrameVisibility.EXPOSED);
+			parent.addSubFrameNodes(CVisibility.EXPOSED);
 		}
 	}
 

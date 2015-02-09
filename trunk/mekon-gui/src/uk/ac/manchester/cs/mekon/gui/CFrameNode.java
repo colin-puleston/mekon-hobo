@@ -108,14 +108,14 @@ class CFrameNode extends GNode {
 		this.frame = frame;
 	}
 
-	List<CFrameNode> addSubFrameNodes(CFrameVisibility visibility) {
+	List<CFrameNode> addSubFrameNodes(CVisibility visibility) {
 
 		List<CFrameNode> nodes = new ArrayList<CFrameNode>();
 
-		if (visibility == CFrameVisibility.ALL) {
+		if (visibility == CVisibility.ALL) {
 
-			addSubFrameNodes(nodes, CFrameVisibility.EXPOSED);
-			addSubFrameNodes(nodes, CFrameVisibility.HIDDEN);
+			addSubFrameNodes(nodes, CVisibility.EXPOSED);
+			addSubFrameNodes(nodes, CVisibility.HIDDEN);
 		}
 		else {
 
@@ -151,7 +151,7 @@ class CFrameNode extends GNode {
 		return frame;
 	}
 
-	private void addSubFrameNodes(List<CFrameNode> nodes, CFrameVisibility visibility) {
+	private void addSubFrameNodes(List<CFrameNode> nodes, CVisibility visibility) {
 
 		for (CFrame subFrame : frame.getSubs(visibility)) {
 

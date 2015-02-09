@@ -52,7 +52,7 @@ class CFrameAdditionSelector extends CFrameSelector {
 		boolean showRoot = rootFrame.instantiable();
 		CFramesComboPanel combo = new CFramesComboPanel(
 										rootFrame,
-										CFrameVisibility.EXPOSED,
+										CVisibility.EXPOSED,
 										showRoot);
 
 		combo.addSelectionListener(selectorListener);

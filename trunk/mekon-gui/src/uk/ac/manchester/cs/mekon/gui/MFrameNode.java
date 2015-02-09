@@ -40,7 +40,7 @@ class MFrameNode extends GNode {
 
 		CFrame cFrame = frame.getRootCFrame();
 
-		for (CFrame cFrameSub : cFrame.getSubs(CFrameVisibility.EXPOSED)) {
+		for (CFrame cFrameSub : cFrame.getSubs(CVisibility.EXPOSED)) {
 
 			MFrame sub = cFrameSub.getType();
 
