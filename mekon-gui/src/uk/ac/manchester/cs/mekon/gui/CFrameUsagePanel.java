@@ -55,7 +55,7 @@ class CFrameUsagePanel extends GVerticalPanel {
 
 			parent.addSlotNodes();
 			parent.checkAddFixedValuesNode();
-			parent.addSubFrameNodes(CFrameVisibility.ALL);
+			parent.addSubFrameNodes(CVisibility.ALL);
 		}
 
 		boolean requiredCValue(CValue<?> value) {
@@ -80,7 +80,7 @@ class CFrameUsagePanel extends GVerticalPanel {
 
 		void addCFrameChildren(CFrameNode parent) {
 
-			parent.addSubFrameNodes(CFrameVisibility.ALL);
+			parent.addSubFrameNodes(CVisibility.ALL);
 		}
 	}
 

@@ -44,7 +44,7 @@ class CFramesComboPanel extends JTabbedPane {
 
 	static private final int SUB_TREE_LIST_TAB_INDEX = 2;
 
-	private CFrameVisibility visibility;
+	private CVisibility visibility;
 	private CFramesTree tree;
 
 	private class SubTreeListManager {
@@ -137,7 +137,7 @@ class CFramesComboPanel extends JTabbedPane {
 		}
 	}
 
-	CFramesComboPanel(CFrame rootFrame, CFrameVisibility visibility, boolean showRoot) {
+	CFramesComboPanel(CFrame rootFrame, CVisibility visibility, boolean showRoot) {
 
 		this.visibility = visibility;
 

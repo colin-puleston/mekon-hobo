@@ -35,7 +35,7 @@ class ModelFramesPanel extends CFramesComboPanel {
 
 	ModelFramesPanel(CModel model) {
 
-		super(model.getRootFrame(), CFrameVisibility.ALL, false);
+		super(model.getRootFrame(), CVisibility.ALL, false);
 
 		enableSubTreeList();
 	}

@@ -44,7 +44,7 @@ class SuggestedTypesPanel extends InstanceTypesPanel {
 					List<CFrame> types,
 					CFrameSelectionListener listener) {
 
-		CFramesTree tree = new CFramesTree(types, CFrameVisibility.ALL);
+		CFramesTree tree = new CFramesTree(types, CVisibility.ALL);
 
 		tree.addSelectionListener(listener);
 
