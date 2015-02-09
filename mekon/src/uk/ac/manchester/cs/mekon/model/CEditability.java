@@ -68,7 +68,7 @@ public enum CEditability {
 	 *
 	 * @return Editability status for slots on assertions
 	 */
-	public IEditability forAssertion() {
+	public IEditability forAssertions() {
 
 		return assertionsStatus;
 	}

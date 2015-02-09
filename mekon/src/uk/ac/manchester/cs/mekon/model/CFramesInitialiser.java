@@ -99,7 +99,7 @@ class CFramesInitialiser {
 
 			List<CModelFrame> findAll(CFrameSubsumptions subsumptions) {
 
-				return subsumptions.getAncestors(CFrameVisibility.ALL);
+				return subsumptions.getAncestors(CVisibility.ALL);
 			}
 
 			void setAll(CFrameSubsumptions subsumptions, List<CModelFrame> all) {

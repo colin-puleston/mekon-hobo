@@ -75,9 +75,9 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 
 		CDisjunction abc = createDisjunction(a, b, c);
 
-		testSupers(abc, CFrameVisibility.ALL, expectSups);
-		testSupers(abc, CFrameVisibility.EXPOSED, expectSups);
-		testSupers(abc, CFrameVisibility.HIDDEN, NO_CFRAMES);
+		testSupers(abc, CVisibility.ALL, expectSups);
+		testSupers(abc, CVisibility.EXPOSED, expectSups);
+		testSupers(abc, CVisibility.HIDDEN, NO_CFRAMES);
 
 		assertEquals(abc.getModelFrame(), singleCommonAnc);
 	}
@@ -87,9 +87,9 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 
 		CDisjunction abc = createDisjunction(a, b, c);
 
-		testSubs(abc, CFrameVisibility.ALL, list(a, b, c));
-		testSubs(abc, CFrameVisibility.EXPOSED, list(a, b, c));
-		testSubs(abc, CFrameVisibility.HIDDEN, NO_CFRAMES);
+		testSubs(abc, CVisibility.ALL, list(a, b, c));
+		testSubs(abc, CVisibility.EXPOSED, list(a, b, c));
+		testSubs(abc, CVisibility.HIDDEN, NO_CFRAMES);
 	}
 
 	@Test
@@ -145,18 +145,12 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 		return (CDisjunction)CFrame.resolveDisjunction(list(disjuncts));
 	}
 
-	private void testSupers(
-					CFrame frame,
-					CFrameVisibility visibility,
-					List<CFrame> expected) {
+	private void testSupers(CFrame frame, CVisibility visibility, List<CFrame> expected) {
 
 		testListContents(frame.getSupers(visibility), expected);
 	}
 
-	private void testSubs(
-					CFrame frame,
-					CFrameVisibility visibility,
-					List<CFrame> expected) {
+	private void testSubs(CFrame frame, CVisibility visibility, List<CFrame> expected) {
 
 		testListContents(frame.getSubs(visibility), expected);
 	}

@@ -163,17 +163,17 @@ public class CFrameTest extends CValueTest<CFrame> {
 		testSupers(e2, list(er));
 		testSupers(h1, list(er, hr));
 
-		testSubs(er, CFrameVisibility.EXPOSED, list(e1, e2));
-		testSubs(hr, CFrameVisibility.EXPOSED, NO_CFRAMES);
-		testSupers(e1, CFrameVisibility.EXPOSED, list(er));
-		testSupers(e2, CFrameVisibility.EXPOSED, list(er));
-		testSupers(h1, CFrameVisibility.EXPOSED, list(er));
+		testSubs(er, CVisibility.EXPOSED, list(e1, e2));
+		testSubs(hr, CVisibility.EXPOSED, NO_CFRAMES);
+		testSupers(e1, CVisibility.EXPOSED, list(er));
+		testSupers(e2, CVisibility.EXPOSED, list(er));
+		testSupers(h1, CVisibility.EXPOSED, list(er));
 
-		testSubs(er, CFrameVisibility.HIDDEN, list(h1));
-		testSubs(hr, CFrameVisibility.HIDDEN, list(h1));
-		testSupers(e1, CFrameVisibility.HIDDEN, NO_CFRAMES);
-		testSupers(e2, CFrameVisibility.HIDDEN, NO_CFRAMES);
-		testSupers(h1, CFrameVisibility.HIDDEN, list(hr));
+		testSubs(er, CVisibility.HIDDEN, list(h1));
+		testSubs(hr, CVisibility.HIDDEN, list(h1));
+		testSupers(e1, CVisibility.HIDDEN, NO_CFRAMES);
+		testSupers(e2, CVisibility.HIDDEN, NO_CFRAMES);
+		testSupers(h1, CVisibility.HIDDEN, list(hr));
 	}
 
 	@Test
@@ -327,17 +327,17 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private void testSupers(CFrame frame, List<CFrame> expected) {
 
-		testSupers(frame, CFrameVisibility.ALL, expected);
+		testSupers(frame, CVisibility.ALL, expected);
 	}
 
 	private void testSubs(CFrame frame, List<CFrame> expected) {
 
-		testSubs(frame, CFrameVisibility.ALL, expected);
+		testSubs(frame, CVisibility.ALL, expected);
 	}
 
 	private void testSupers(
 					CFrame frame,
-					CFrameVisibility visibility,
+					CVisibility visibility,
 					List<CFrame> expected) {
 
 		testListContents(frame.getSupers(visibility), expected);
@@ -345,7 +345,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private void testSubs(
 					CFrame frame,
-					CFrameVisibility visibility,
+					CVisibility visibility,
 					List<CFrame> expected) {
 
 		testListContents(frame.getSubs(visibility), expected);

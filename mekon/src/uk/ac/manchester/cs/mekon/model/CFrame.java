@@ -283,17 +283,16 @@ public abstract class CFrame
 	 */
 	public List<CFrame> getSupers() {
 
-		return getSupers(CFrameVisibility.ALL);
+		return getSupers(CVisibility.ALL);
 	}
 
 	/**
-	 * Provides all super-frames with the specified visibility
-	 * status.
+	 * Provides all super-frames with the specified visibility status.
 	 *
 	 * @param visibility Visibility status of required super-frames
 	 * @return Relevant super-frames
 	 */
-	public abstract List<CFrame> getSupers(CFrameVisibility visibility);
+	public abstract List<CFrame> getSupers(CVisibility visibility);
 
 	/**
 	 * Provides all sub-frames.
@@ -302,27 +301,26 @@ public abstract class CFrame
 	 */
 	public List<CFrame> getSubs() {
 
-		return getSubs(CFrameVisibility.ALL);
+		return getSubs(CVisibility.ALL);
 	}
 
 	/**
-	 * Provides all sub-frames with the specified visibility
-	 * status.
+	 * Provides all sub-frames with the specified visibility status.
 	 *
 	 * @param visibility Visibility status of required sub-frames
 	 * @return Relevant sub-frames
 	 */
-	public abstract List<CFrame> getSubs(CFrameVisibility visibility);
+	public abstract List<CFrame> getSubs(CVisibility visibility);
 
 	/**
-	 * Invokes {@link #getAncestors(CFrameVisibility)} with visibility
-	 * status of {@link CFrameVisibility#ALL}.
+	 * Invokes {@link #getAncestors(CVisibility)} with visibility status
+	 * of {@link CVisibility#ALL}.
 	 *
 	 * @return All ancestor-frames in standard order
 	 */
 	public List<CFrame> getAncestors() {
 
-		return getAncestors(CFrameVisibility.ALL);
+		return getAncestors(CVisibility.ALL);
 	}
 
 	/**
@@ -334,7 +332,7 @@ public abstract class CFrame
 	 * @param visibility Visibility status of required ancestor-frames
 	 * @return Relevant ancestor-frames
 	 */
-	public abstract List<CFrame> getAncestors(CFrameVisibility visibility);
+	public abstract List<CFrame> getAncestors(CVisibility visibility);
 
 	/**
 	 * Provides all ancestor-frames that either have attached
@@ -346,14 +344,14 @@ public abstract class CFrame
 	public abstract List<CFrame> getStructuredAncestors();
 
 	/**
-	 * Invokes {@link #getSubsumers(CFrameVisibility)} with visibility
-	 * status of {@link CFrameVisibility#ALL}.
+	 * Invokes {@link #getSubsumers(CVisibility)} with visibility status
+	 * of {@link CVisibility#ALL}.
 	 *
 	 * @return All subsumer-frames in standard order
 	 */
 	public List<CFrame> getSubsumers() {
 
-		return getSubsumers(CFrameVisibility.ALL);
+		return getSubsumers(CVisibility.ALL);
 	}
 
 	/**
@@ -366,20 +364,20 @@ public abstract class CFrame
 	 * @param visibility Visibility status of required subsumer-frames
 	 * @return Relevant subsumer-frames in standard order
 	 */
-	public List<CFrame> getSubsumers(CFrameVisibility visibility) {
+	public List<CFrame> getSubsumers(CVisibility visibility) {
 
 		return checkStartListWithThis(getAncestors(visibility), visibility);
 	}
 
 	/**
-	 * Invokes {@link #getDescendants(CFrameVisibility)} with visibility
-	 * status of {@link CFrameVisibility#ALL}.
+	 * Invokes {@link #getDescendants(CVisibility)} with visibility status
+	 * of {@link CVisibility#ALL}.
 	 *
 	 * @return All descendant-frames in standard order
 	 */
 	public List<CFrame> getDescendants() {
 
-		return getDescendants(CFrameVisibility.ALL);
+		return getDescendants(CVisibility.ALL);
 	}
 
 	/**
@@ -391,17 +389,17 @@ public abstract class CFrame
 	 * @param visibility Visibility status of required descendant-frames
 	 * @return Relevant descendant-frames in standard order
 	 */
-	public abstract List<CFrame> getDescendants(CFrameVisibility visibility);
+	public abstract List<CFrame> getDescendants(CVisibility visibility);
 
 	/**
-	 * Invokes {@link #getSubsumeds(CFrameVisibility)} with visibility
-	 * status of {@link CFrameVisibility#ALL}.
+	 * Invokes {@link #getSubsumeds(CVisibility)} with visibility status
+	 * of {@link CVisibility#ALL}.
 	 *
 	 * @return All subsumed-frames in standard order
 	 */
 	public List<CFrame> getSubsumeds() {
 
-		return getSubsumeds(CFrameVisibility.ALL);
+		return getSubsumeds(CVisibility.ALL);
 	}
 
 	/**
@@ -414,7 +412,7 @@ public abstract class CFrame
 	 * @param visibility Visibility status of required subsumed-frames
 	 * @return Relevant subsumed-frames in standard order
 	 */
-	public List<CFrame> getSubsumeds(CFrameVisibility visibility) {
+	public List<CFrame> getSubsumeds(CVisibility visibility) {
 
 		return checkStartListWithThis(getDescendants(visibility), visibility);
 	}
@@ -623,9 +621,7 @@ public abstract class CFrame
 		}
 	}
 
-	private List<CFrame> checkStartListWithThis(
-							List<CFrame> list,
-							CFrameVisibility visibility) {
+	private List<CFrame> checkStartListWithThis(List<CFrame> list, CVisibility visibility) {
 
 		if (visibility.coversHiddenStatus(hidden())) {
 

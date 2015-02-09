@@ -53,18 +53,16 @@ class CModelFrames {
 
 	private abstract class Getter<F extends CFrame> {
 
-		List<F> getAll(CFrameVisibility visibility) {
+		List<F> getAll(CVisibility visibility) {
 
-			return visibility == CFrameVisibility.ALL
-						? getAll()
-						: select(visibility);
+			return visibility == CVisibility.ALL ? getAll() : select(visibility);
 		}
 
 		abstract List<F> getAll();
 
 		abstract void addSelection(List<F> selected, CModelFrame frame);
 
-		private List<F> select(CFrameVisibility visibility) {
+		private List<F> select(CVisibility visibility) {
 
 			List<F> selected = new ArrayList<F>();
 
@@ -131,12 +129,12 @@ class CModelFrames {
 		return new ModelFrameGetter().getAll();
 	}
 
-	List<CModelFrame> getAll(CFrameVisibility visibility) {
+	List<CModelFrame> getAll(CVisibility visibility) {
 
 		return new ModelFrameGetter().getAll(visibility);
 	}
 
-	List<CFrame> asFrames(CFrameVisibility visibility) {
+	List<CFrame> asFrames(CVisibility visibility) {
 
 		return new FrameGetter().getAll(visibility);
 	}

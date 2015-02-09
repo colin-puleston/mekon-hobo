@@ -104,17 +104,17 @@ class CExtension extends CExpression {
 		return Collections.<CFrame>singletonList(this);
 	}
 
-	public List<CFrame> getSupers(CFrameVisibility visibility) {
+	public List<CFrame> getSupers(CVisibility visibility) {
 
 		return Collections.<CFrame>singletonList(extendedFrame);
 	}
 
-	public List<CFrame> getSubs(CFrameVisibility visibility) {
+	public List<CFrame> getSubs(CVisibility visibility) {
 
 		return Collections.emptyList();
 	}
 
-	public List<CFrame> getAncestors(CFrameVisibility visibility) {
+	public List<CFrame> getAncestors(CVisibility visibility) {
 
 		List<CFrame> ancestors = extendedFrame.getAncestors(visibility);
 
@@ -131,7 +131,7 @@ class CExtension extends CExpression {
 		return structuredAncestors;
 	}
 
-	public List<CFrame> getDescendants(CFrameVisibility visibility) {
+	public List<CFrame> getDescendants(CVisibility visibility) {
 
 		return Collections.emptyList();
 	}

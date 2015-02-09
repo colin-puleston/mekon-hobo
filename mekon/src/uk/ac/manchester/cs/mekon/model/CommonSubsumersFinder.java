@@ -31,9 +31,9 @@ import java.util.*;
  */
 class CommonSubsumersFinder {
 
-	private CFrameVisibility visibility;
+	private CVisibility visibility;
 
-	CommonSubsumersFinder(CFrameVisibility visibility) {
+	CommonSubsumersFinder(CVisibility visibility) {
 
 		this.visibility = visibility;
 	}

@@ -93,7 +93,7 @@ class IFrameCopier {
 
 		for (IValue value : templateSlot.getValues().asList()) {
 
-			copyValues.add(copyValuesSupplier.getCopyValue(value));
+			copyValues.add(copyValuesSupplier.getCopyValue(value), true);
 		}
 
 		return copySlot;

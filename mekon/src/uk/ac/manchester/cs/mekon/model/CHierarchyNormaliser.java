@@ -35,9 +35,9 @@ class CHierarchyNormaliser {
 
 		private CModelFrame frame;
 		private List<CModelFrame> supers;
-		private CFrameVisibility visibility;
+		private CVisibility visibility;
 
-		RedundantSupersRemover(CModelFrame frame, CFrameVisibility visibility) {
+		RedundantSupersRemover(CModelFrame frame, CVisibility visibility) {
 
 			this.frame = frame;
 			this.visibility = visibility;
@@ -76,12 +76,12 @@ class CHierarchyNormaliser {
 
 		List<CModelFrame> getDirectlyLinked(CModelFrame current) {
 
-			return current.getModelSupers().getAll(CFrameVisibility.HIDDEN);
+			return current.getModelSupers().getAll(CVisibility.HIDDEN);
 		}
 
 		CrawlMode process(CModelFrame current) {
 
-			for (CModelFrame sup : current.getModelSupers().getAll(CFrameVisibility.EXPOSED)) {
+			for (CModelFrame sup : current.getModelSupers().getAll(CVisibility.EXPOSED)) {
 
 				exposed.ensureLinksToSuper(sup);
 			}
@@ -94,9 +94,9 @@ class CHierarchyNormaliser {
 
 		Set<CFrame> frames = model.getFrames().asSet();
 
-		removeRedundantSupers(frames, CFrameVisibility.ALL);
+		removeRedundantSupers(frames, CVisibility.ALL);
 		ensureConnectedExposedsGraph(frames);
-		removeRedundantSupers(frames, CFrameVisibility.EXPOSED);
+		removeRedundantSupers(frames, CVisibility.EXPOSED);
 	}
 
 	private void ensureConnectedExposedsGraph(Set<CFrame> frames) {
@@ -110,7 +110,7 @@ class CHierarchyNormaliser {
 		}
 	}
 
-	private void removeRedundantSupers(Set<CFrame> frames, CFrameVisibility visibility) {
+	private void removeRedundantSupers(Set<CFrame> frames, CVisibility visibility) {
 
 		for (CFrame frame : frames) {
 
