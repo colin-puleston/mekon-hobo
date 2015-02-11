@@ -69,7 +69,7 @@ public class CSlot implements CIdentified, CSourced {
 			if (mergedType == null) {
 
 				throw new KModelException(
-							"Incompatible value-types for: " + this
+							"Incompatible value-types for: " + CSlot.this
 							+ " (current type = " + valueType
 							+ ", supplied type = " + otherValueType + ")");
 			}

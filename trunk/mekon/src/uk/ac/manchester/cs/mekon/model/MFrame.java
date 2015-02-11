@@ -112,6 +112,16 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 		visitor.visit(this);
 	}
 
+	CValue<?> mergeWith(CValue<?> other) {
+
+		if (other instanceof CFrame) {
+
+			other = ((CFrame)other).getType();
+		}
+
+		return super.mergeWith(other);
+	}
+
 	CFrame getDefaultValueOrNull() {
 
 		return rootCFrame;
