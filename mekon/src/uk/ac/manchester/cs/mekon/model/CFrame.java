@@ -575,6 +575,11 @@ public abstract class CFrame
 		return extn;
 	}
 
+	CValue<?> mergeWith(CValue<?> other) {
+
+		return other instanceof MFrame ? other.mergeWith(type) : super.mergeWith(other);
+	}
+
 	IFrame getDefaultValueOrNull() {
 
 		return instantiable() ? instantiate() : null;
