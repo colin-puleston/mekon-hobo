@@ -161,7 +161,9 @@ public abstract class DField<V> implements DFieldView<V> {
 
 		if (slot == null) {
 
-			throw new Error("Slot has not been set");
+			throw new KAccessException(
+						"Attempting to access slot associated with "
+						+ "field on un-initialised DObject: " + slot);
 		}
 
 		return slot;

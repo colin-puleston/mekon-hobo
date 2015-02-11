@@ -76,9 +76,9 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 
 			throw new Error(
 						"Incompatible number-types: "
-						+ " Specfied type = "
+						+ " Specfied type: "
 						+ numberType
-						+ ", Type for specified CNumberDef = "
+						+ ", Type for specified CNumberDef: "
 						+ defNumberType);
 		}
 	}
