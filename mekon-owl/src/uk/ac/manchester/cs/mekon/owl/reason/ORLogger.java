@@ -59,7 +59,7 @@ public abstract class ORLogger extends ORMonitor {
 	 *
 	 * @param show True if requests should be printed out
 	 */
- 	public void setShowRequests(boolean show) {
+	public void setShowRequests(boolean show) {
 
 		showRequests = show;
 	}
@@ -70,7 +70,7 @@ public abstract class ORLogger extends ORMonitor {
 	 *
 	 * @param show True if results should be printed out
 	 */
- 	public void setShowResults(boolean show) {
+	public void setShowResults(boolean show) {
 
 		showResults = show;
 	}
@@ -98,16 +98,16 @@ public abstract class ORLogger extends ORMonitor {
 		}
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onStop() {
+	protected void onStop() {
 
 		printReasoniningTimesTitle();
 		actions.printTotalTime("Operation Total");
 	}
 
- 	void onRequest(OModel model, OWLObject request, String requestType) {
+	void onRequest(OModel model, OWLObject request, String requestType) {
 
 		if (showRequests) {
 
@@ -118,7 +118,7 @@ public abstract class ORLogger extends ORMonitor {
 		actions.startAction();
 	}
 
- 	void onReasoned(
+	void onReasoned(
 			OModel model,
 			Set<? extends OWLObject> results,
 			String resultsType) {
@@ -134,12 +134,12 @@ public abstract class ORLogger extends ORMonitor {
 		actions.printTotalTime("Running Total");
 	}
 
- 	void onRequestComplete() {
+	void onRequestComplete() {
 
 		actions.stopAction();
 	}
 
- 	private void printReasoniningTimesTitle() {
+	private void printReasoniningTimesTitle() {
 
 		actions.printTitle("Reasoning Time(s)");
 	}

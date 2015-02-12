@@ -66,7 +66,7 @@ public class OLogger extends OMonitor {
 	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onPreOntologyLoad(File owlFile) {
+	protected void onPreOntologyLoad(File owlFile) {
 
 		onPreLoad("Ontology", "OWL-File", owlFile.getPath());
 	}
@@ -74,7 +74,7 @@ public class OLogger extends OMonitor {
 	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onOntologyLoaded() {
+	protected void onOntologyLoaded() {
 
 		onLoaded("Ontology");
 	}
@@ -82,7 +82,7 @@ public class OLogger extends OMonitor {
 	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass) {
+	protected void onPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass) {
 
 		onPreLoad("Reasoner", "Reasoner-Factory", reasonerClass.getName());
 	}
@@ -90,19 +90,19 @@ public class OLogger extends OMonitor {
 	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onReasonerLoaded() {
+	protected void onReasonerLoaded() {
 
 		onLoaded("Reasoner");
 	}
 
- 	void onPreLoad(String thingName, String sourceName, String source) {
+	void onPreLoad(String thingName, String sourceName, String source) {
 
 		actions.printTitle("Loading " + thingName);
 		actions.printAttribute(sourceName, source);
 		actions.startAction();
 	}
 
- 	void onLoaded(String thingName) {
+	void onLoaded(String thingName) {
 
 		actions.stopAction();
 		actions.printTitle("Loaded " + thingName);
