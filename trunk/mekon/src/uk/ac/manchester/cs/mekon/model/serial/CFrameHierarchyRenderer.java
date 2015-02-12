@@ -38,14 +38,14 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 
 	/**
 	 */
- 	public void setRenderAllAnnotations() {
+	public void setRenderAllAnnotations() {
 
 		annotationKeys = null;
 	}
 
 	/**
 	 */
- 	public void setRenderAnnotations(Object key) {
+	public void setRenderAnnotations(Object key) {
 
 		if (annotationKeys != null) {
 
@@ -55,7 +55,7 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 
 	/**
 	 */
- 	public XDocument render(CFrame frame) {
+	public XDocument render(CFrame frame) {
 
 		XDocument document = new XDocument(CFRAME_ID);
 
@@ -66,12 +66,12 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 
 	/**
 	 */
- 	public void render(CFrame frame, XNode parentNode) {
+	public void render(CFrame frame, XNode parentNode) {
 
 		renderDetails(frame, parentNode.addChild(CFRAME_ID));
 	}
 
- 	private void renderDetails(CFrame frame, XNode node) {
+	private void renderDetails(CFrame frame, XNode node) {
 
 		renderIdentity(frame, node);
 		renderAnnotations(frame.getAnnotations(), node);
@@ -82,7 +82,7 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 		}
 	}
 
- 	private void renderAnnotations(CAnnotations annos, XNode node) {
+	private void renderAnnotations(CAnnotations annos, XNode node) {
 
 		for (Object key : annos.getKeys()) {
 
@@ -93,7 +93,7 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 		}
 	}
 
- 	private void renderAnnotations(Object key, List<Object> values, XNode parentNode) {
+	private void renderAnnotations(Object key, List<Object> values, XNode parentNode) {
 
 		for (Object value : values) {
 

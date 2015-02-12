@@ -99,29 +99,7 @@ public class IFrameParser extends ISerialiser {
 		}
 	}
 
-	private abstract class FrameSlotValuesSpec extends SlotValuesSpec<IValue> {
-
-		private List<IValue> values = new ArrayList<IValue>();
-
-		FrameSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
-
-			super(frame, slotId, parentNode);
-		}
-
-		IValue getValueSpec(XNode valueNode) {
-
-			return parseValue(valueNode);
-		}
-
-		IValue getValue(ISlot slot, IValue valueSpec) {
-
-			return valueSpec;
-		}
-
-		abstract IValue parseValue(XNode valueNode);
-	}
-
-	private class IFrameSlotValuesSpec extends FrameSlotValuesSpec {
+	private class IFrameSlotValuesSpec extends SlotValuesSpec<IValue> {
 
 		IFrameSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
 
@@ -133,13 +111,23 @@ public class IFrameParser extends ISerialiser {
 			return IFRAME_ID;
 		}
 
-		IValue parseValue(XNode valueNode) {
+		IValue getValueSpec(XNode valueNode) {
 
 			return parseIFrame(valueNode);
 		}
+
+		IValue getValue(ISlot slot, IValue valueSpec) {
+
+			if (slot.getValueType() instanceof MFrame) {
+
+				return ((IFrame)valueSpec).getType();
+			}
+
+			return valueSpec;
+		}
 	}
 
-	private class CFrameSlotValuesSpec extends FrameSlotValuesSpec {
+	private class CFrameSlotValuesSpec extends SlotValuesSpec<IValue> {
 
 		CFrameSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
 
@@ -151,9 +139,14 @@ public class IFrameParser extends ISerialiser {
 			return CFRAME_ID;
 		}
 
-		IValue parseValue(XNode valueNode) {
+		IValue getValueSpec(XNode valueNode) {
 
 			return parseCFrame(valueNode);
+		}
+
+		IValue getValue(ISlot slot, IValue valueSpec) {
+
+			return valueSpec;
 		}
 	}
 
@@ -195,9 +188,9 @@ public class IFrameParser extends ISerialiser {
 		}
 	}
 
- 	/**
+	/**
 	 */
- 	public IFrameParser(CModel model, IFrameCategory frameCategory) {
+	public IFrameParser(CModel model, IFrameCategory frameCategory) {
 
 		this.model = model;
 		this.frameCategory = frameCategory;
@@ -205,7 +198,7 @@ public class IFrameParser extends ISerialiser {
 
 	/**
 	 */
- 	public IFrame parse(XDocument document) {
+	public IFrame parse(XDocument document) {
 
 		containerNode = document.getRootNode();
 
@@ -214,7 +207,7 @@ public class IFrameParser extends ISerialiser {
 
 	/**
 	 */
- 	public IFrame parse(XNode parentNode) {
+	public IFrame parse(XNode parentNode) {
 
 		containerNode = getContainerNode(parentNode);
 

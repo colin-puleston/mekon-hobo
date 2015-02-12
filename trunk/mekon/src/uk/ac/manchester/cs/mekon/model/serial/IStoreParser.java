@@ -30,16 +30,25 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
+ * Parses an XML document representing the serialised contents
+ * of an instance-store, and populates the current instance-store
+ * with the reconstitued set of instances.
+ *
  * @author Colin Puleston
  */
 public abstract class IStoreParser extends ISerialiser {
 
-	private XNode rootNode;
 	private IFrameParser iFrameParser;
 
- 	/**
+	/**
+	 * Parses the serialised version of the instance-store to
+	 * populate the current instance-store.
+	 *
+	 * @param storeFile Serialisation file
 	 */
- 	public void parse(IStore store) {
+	public void parse(File storeFile) {
+
+		XNode rootNode = new XDocument(storeFile).getRootNode();
 
 		for (XNode instNode : rootNode.getChildren(INSTANCE_ID)) {
 
@@ -47,17 +56,24 @@ public abstract class IStoreParser extends ISerialiser {
 		}
 	}
 
- 	/**
+	/**
+	 * Constructor.
+	 *
+	 * @param model Model to which instance-store is attached
 	 */
- 	protected IStoreParser(CModel model, File storeFile) {
+	protected IStoreParser(CModel model) {
 
-		rootNode = new XDocument(storeFile).getRootNode();
 		iFrameParser = new IFrameParser(model, IFrameCategory.ASSERTION);
 	}
 
 	/**
+	 * Method whose implementation adds instances to the
+	 * instance-store.
+	 *
+	 * @param instance Instance to be added to instance-store
+	 * @param identity Identity with which instance is to be stored
 	 */
- 	protected abstract void addInstance(IFrame instance, CIdentity identity);
+	protected abstract void addInstance(IFrame instance, CIdentity identity);
 
 	private IFrame parseIFrame(XNode instanceNode) {
 

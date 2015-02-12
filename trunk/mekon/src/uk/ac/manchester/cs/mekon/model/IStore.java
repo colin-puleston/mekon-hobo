@@ -61,9 +61,9 @@ public class IStore {
 			addInternal(instance, identity);
 		}
 
-		IStoreParserLocal(File file) {
+		IStoreParserLocal() {
 
-			super(model, file);
+			super(model);
 		}
 	}
 
@@ -176,7 +176,7 @@ public class IStore {
 
 		if (file.exists()) {
 
-			new IStoreParserLocal(file).parse(this);
+			new IStoreParserLocal().parse(file);
 		}
 	}
 
