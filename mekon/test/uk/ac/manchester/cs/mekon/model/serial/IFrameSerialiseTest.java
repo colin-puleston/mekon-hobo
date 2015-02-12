@@ -52,11 +52,33 @@ public class IFrameSerialiseTest extends MekonTest {
 	}
 
 	@Test
-	public void test_renderAndParseWithNonDefaultSettings() {
+	public void test_renderAsTreeAndParse() {
 
 		renderer.setRenderAsTree(true);
+
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderWithSchemaAndParse() {
+
 		renderer.setRenderSchema(true);
+
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderIncludingNonEditableSlotsAndParse() {
+
 		renderer.setRenderNonEditableSlots(true);
+
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderWithFlattenedMetaLevelAndParse() {
+
+		renderer.setFlattenMetaLevel(true);
 
 		testRenderAndParse(false);
 	}
@@ -69,14 +91,9 @@ public class IFrameSerialiseTest extends MekonTest {
 
 	private void testRenderAndParse(boolean dynamicSlotInsertion) {
 
-		IFrame original = createInstance(dynamicSlotInsertion);
+		IFrame original = createComplexInstance(dynamicSlotInsertion);
 		IFrame reconstituted = parser.parse(renderer.render(original));
 
 		assertTrue(reconstituted.matches(original));
-	}
-
-	private IFrame createInstance(boolean dynamicSlotInsertion) {
-
-		return createComplexInstance(dynamicSlotInsertion);
 	}
 }

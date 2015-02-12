@@ -30,6 +30,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
+ * Renders an XML document to represent the serialised contents
+ * of an instance-store.
+ *
  * @author Colin Puleston
  */
 public class IStoreRenderer extends ISerialiser {
@@ -40,15 +43,21 @@ public class IStoreRenderer extends ISerialiser {
 	private IFrameRenderer iFrameRenderer = new IFrameRenderer();
 
 	/**
+	 * Constructor.
+	 *
+	 * @param storeFile Serialisation file
 	 */
- 	public IStoreRenderer(File file) {
+	public IStoreRenderer(File file) {
 
 		this.file = file;
 	}
 
- 	/**
+	/**
+	 * Renders the serialised version of the instance-store.
+	 *
+	 * @param store Instance-store for serialisation
 	 */
- 	public void render(IStore store) {
+	public void render(IStore store) {
 
 		for (CIdentity id : store.getAllIdentities()) {
 

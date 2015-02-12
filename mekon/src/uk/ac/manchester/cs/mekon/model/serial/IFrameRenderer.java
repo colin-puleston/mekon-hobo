@@ -38,6 +38,7 @@ public class IFrameRenderer extends ISerialiser {
 	private boolean renderAsTree = false;
 	private boolean renderSchema = false;
 	private boolean renderNonEditableSlots = false;
+	private boolean flattenMetaLevel = false;
 
 	private XNode containerNode = null;
 	private Map<IFrame, Integer> iFrameRefs = new HashMap<IFrame, Integer>();
@@ -58,7 +59,14 @@ public class IFrameRenderer extends ISerialiser {
 
 		protected void visit(MFrame value) {
 
-			renderMFrame(value, slotNode);
+			if (flattenMetaLevel) {
+
+				renderCFrame(value.getRootCFrame(), slotNode);
+			}
+			else {
+
+				renderMFrame(value, slotNode);
+			}
 		}
 
 		ISlotValueTypeRenderer(ISlot slot, XNode slotNode) {
@@ -93,7 +101,14 @@ public class IFrameRenderer extends ISerialiser {
 
 			for (CFrame value : values) {
 
-				renderCFrame(value, valuesNode);
+				if (flattenMetaLevel) {
+
+					renderIFrame(value.instantiate(), valuesNode);
+				}
+				else {
+
+					renderCFrame(value, valuesNode);
+				}
 			}
 		}
 
@@ -107,28 +122,35 @@ public class IFrameRenderer extends ISerialiser {
 
 	/**
 	 */
- 	public void setRenderAsTree(boolean value) {
+	public void setRenderAsTree(boolean value) {
 
 		renderAsTree = value;
 	}
 
 	/**
 	 */
- 	public void setRenderSchema(boolean value) {
+	public void setRenderSchema(boolean value) {
 
 		renderSchema = value;
 	}
 
 	/**
 	 */
- 	public void setRenderNonEditableSlots(boolean value) {
+	public void setRenderNonEditableSlots(boolean value) {
 
 		renderNonEditableSlots = value;
 	}
 
 	/**
 	 */
- 	public XDocument render(IFrame frame) {
+	public void setFlattenMetaLevel(boolean value) {
+
+		flattenMetaLevel = value;
+	}
+
+	/**
+	 */
+	public XDocument render(IFrame frame) {
 
 		XDocument document = new XDocument(getTopLevelId());
 
@@ -144,7 +166,7 @@ public class IFrameRenderer extends ISerialiser {
 		renderTopLevelIFrame(frame, parentNode.addChild(getTopLevelId()));
 	}
 
- 	private void renderTopLevelIFrame(IFrame frame, XNode containerNode) {
+	private void renderTopLevelIFrame(IFrame frame, XNode containerNode) {
 
 		this.containerNode = containerNode;
 
@@ -154,7 +176,7 @@ public class IFrameRenderer extends ISerialiser {
 		iFrameRefs.clear();
 	}
 
- 	private void renderIFrame(IFrame frame, XNode parentNode) {
+	private void renderIFrame(IFrame frame, XNode parentNode) {
 
 		if (renderAsTree) {
 
@@ -166,7 +188,7 @@ public class IFrameRenderer extends ISerialiser {
 		}
 	}
 
- 	private void renderIFrameDirect(IFrame frame, XNode parentNode) {
+	private void renderIFrameDirect(IFrame frame, XNode parentNode) {
 
 		XNode node = parentNode.addChild(IFRAME_ID);
 
@@ -181,14 +203,14 @@ public class IFrameRenderer extends ISerialiser {
 		}
 	}
 
- 	private void renderIFrameIndirect(IFrame frame, XNode parentNode) {
+	private void renderIFrameIndirect(IFrame frame, XNode parentNode) {
 
 		XNode node = parentNode.addChild(IFRAME_ID);
 
 		node.addValue(IFRAME_REF_INDEX_ATTR, resolveIFrameRef(frame));
 	}
 
- 	private int resolveIFrameRef(IFrame frame) {
+	private int resolveIFrameRef(IFrame frame) {
 
 		Integer refIndex = iFrameRefs.get(frame);
 
