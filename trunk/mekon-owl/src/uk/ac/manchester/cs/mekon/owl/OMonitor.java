@@ -61,7 +61,7 @@ public abstract class OMonitor {
 		monitors.remove(monitor);
 	}
 
- 	static void pollForPreOntologyLoad(File owlFile) {
+	static void pollForPreOntologyLoad(File owlFile) {
 
 		for (OMonitor monitor : monitors) {
 
@@ -69,7 +69,7 @@ public abstract class OMonitor {
 		}
 	}
 
- 	static void pollForOntologyLoaded() {
+	static void pollForOntologyLoaded() {
 
 		for (OMonitor monitor : monitors) {
 
@@ -77,7 +77,7 @@ public abstract class OMonitor {
 		}
 	}
 
- 	static void pollForPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass) {
+	static void pollForPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass) {
 
 		for (OMonitor monitor : monitors) {
 
@@ -85,7 +85,7 @@ public abstract class OMonitor {
 		}
 	}
 
- 	static void pollForReasonerLoaded() {
+	static void pollForReasonerLoaded() {
 
 		for (OMonitor monitor : monitors) {
 
@@ -98,12 +98,12 @@ public abstract class OMonitor {
 	 *
 	 * @param owlFile File from which ontology is to be loaded
 	 */
- 	protected abstract void onPreOntologyLoad(File owlFile);
+	protected abstract void onPreOntologyLoad(File owlFile);
 
 	/**
 	 * Method invoked immediately after loading of ontolgy.
 	 */
- 	protected abstract void onOntologyLoaded();
+	protected abstract void onOntologyLoaded();
 
 	/**
 	 * Method invoked immediately before creation and intitialisation
@@ -111,11 +111,11 @@ public abstract class OMonitor {
 	 *
 	 * @param reasonerClass Type of reasoner to be loaded
 	 */
- 	protected abstract void onPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass);
+	protected abstract void onPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass);
 
 	/**
 	 * Method invoked immediately after creation and intitialisation
 	 * of reasoner.
 	 */
- 	protected abstract void onReasonerLoaded();
+	protected abstract void onReasonerLoaded();
 }

@@ -46,55 +46,55 @@ public class ORMatcherLogger extends ORLogger {
 	 *
 	 * @return Singleton instance of logger
 	 */
- 	static public ORLogger get() {
+	static public ORLogger get() {
 
 		return logger;
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onClassifierRequest(OModel model, OWLObject request) {
+	protected void onClassifierRequest(OModel model, OWLObject request) {
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onTypesInferred(OModel model, Set<OWLClass> types) {
+	protected void onTypesInferred(OModel model, Set<OWLClass> types) {
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onTypesSuggested(OModel model, Set<OWLClass> types) {
+	protected void onTypesSuggested(OModel model, Set<OWLClass> types) {
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onClassifierDone(OModel model, OWLObject request) {
+	protected void onClassifierDone(OModel model, OWLObject request) {
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onMatcherRequest(OModel model, OWLObject request) {
+	protected void onMatcherRequest(OModel model, OWLObject request) {
 
 		onRequest(model, request, "Matching-Individuals");
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onMatchesFound(OModel model, Set<OWLNamedIndividual> matches) {
+	protected void onMatchesFound(OModel model, Set<OWLNamedIndividual> matches) {
 
 		onReasoned(model, matches, "Matches");
 	}
 
- 	/**
+	/**
 	 * {@inheritDoc}
 	 */
- 	protected void onMatcherDone(OModel model, OWLObject request) {
+	protected void onMatcherDone(OModel model, OWLObject request) {
 
 		onRequestComplete();
 	}

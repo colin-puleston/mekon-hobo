@@ -63,7 +63,7 @@ public abstract class ORMonitor {
 		monitors.remove(monitor);
 	}
 
- 	static void pollForClassifierRequest(OModel model, OWLObject request) {
+	static void pollForClassifierRequest(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -71,7 +71,7 @@ public abstract class ORMonitor {
 		}
 	}
 
- 	static void pollForTypesInferred(OModel model, Set<OWLClass> types) {
+	static void pollForTypesInferred(OModel model, Set<OWLClass> types) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -79,7 +79,7 @@ public abstract class ORMonitor {
 		}
 	}
 
- 	static void pollForTypesSuggested(OModel model, Set<OWLClass> types) {
+	static void pollForTypesSuggested(OModel model, Set<OWLClass> types) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -87,7 +87,7 @@ public abstract class ORMonitor {
 		}
 	}
 
- 	static void pollForClassifierDone(OModel model, OWLObject request) {
+	static void pollForClassifierDone(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -95,7 +95,7 @@ public abstract class ORMonitor {
 		}
 	}
 
- 	static void pollForMatcherRequest(OModel model, OWLObject request) {
+	static void pollForMatcherRequest(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -103,7 +103,7 @@ public abstract class ORMonitor {
 		}
 	}
 
- 	static void pollForMatchesFound(OModel model, Set<OWLNamedIndividual> matches) {
+	static void pollForMatchesFound(OModel model, Set<OWLNamedIndividual> matches) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -111,7 +111,7 @@ public abstract class ORMonitor {
 		}
 	}
 
- 	static void pollForMatcherDone(OModel model, OWLObject request) {
+	static void pollForMatcherDone(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -119,68 +119,68 @@ public abstract class ORMonitor {
 		}
 	}
 
- 	/**
+	/**
 	 * Method invoked immediately after a classification request has been
 	 * received.
 	 *
 	 * @param model Relevant model
 	 * @param request Received request
 	 */
- 	protected abstract void onClassifierRequest(OModel model, OWLObject request);
+	protected abstract void onClassifierRequest(OModel model, OWLObject request);
 
- 	/**
+	/**
 	 * Method invoked immediately after operation to obtain inferred-types
 	 *
 	 * @param model Relevant model
 	 * @param types Inferred types
 	 */
- 	protected abstract void onTypesInferred(OModel model, Set<OWLClass> types);
+	protected abstract void onTypesInferred(OModel model, Set<OWLClass> types);
 
- 	/**
+	/**
 	 * Method invoked immediately after operation to obtain suggested-types
 	 *
 	 * @param model Relevant model
 	 * @param types Suggested types
 	 */
- 	protected abstract void onTypesSuggested(OModel model, Set<OWLClass> types);
+	protected abstract void onTypesSuggested(OModel model, Set<OWLClass> types);
 
- 	/**
+	/**
 	 * Method invoked immediately after classification request has been
 	 * processed.
 	 *
 	 * @param model Relevant model
 	 * @param request Processed request
 	 */
- 	protected abstract void onClassifierDone(OModel model, OWLObject request);
+	protected abstract void onClassifierDone(OModel model, OWLObject request);
 
- 	/**
+	/**
 	 * Method invoked immediately after an instance-match request has
 	 * been received.
 	 *
 	 * @param model Relevant model
 	 * @param request Received request
 	 */
- 	protected abstract void onMatcherRequest(OModel model, OWLObject request);
+	protected abstract void onMatcherRequest(OModel model, OWLObject request);
 
- 	/**
+	/**
 	 * Method invoked immediately after instance-match operation
 	 *
 	 * @param model Relevant model
 	 * @param matches Matching instances
 	 */
- 	protected abstract void onMatchesFound(OModel model, Set<OWLNamedIndividual> matches);
+	protected abstract void onMatchesFound(OModel model, Set<OWLNamedIndividual> matches);
 
- 	/**
+	/**
 	 * Method invoked immediately after instance-match request has
 	 * been processed.
 	 *
 	 * @param model Relevant model
 	 * @param request Processed request
 	 */
- 	protected abstract void onMatcherDone(OModel model, OWLObject request);
+	protected abstract void onMatcherDone(OModel model, OWLObject request);
 
- 	/**
+	/**
 	 * Method invoked immediately after monitoring has stopped.
 	 */
- 	protected abstract void onStop();
+	protected abstract void onStop();
 }
