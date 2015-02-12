@@ -140,7 +140,7 @@ public class DModelMap {
 	 * exist.
 	 *
 	 * @param dClass OM class for which mapping is required
- 	 * @return Required class-map object, or null if not found
+	 * @return Required class-map object, or null if not found
 	 */
 	public DClassMap getClassMap(Class<? extends DObject> dClass) {
 
