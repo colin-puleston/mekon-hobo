@@ -28,8 +28,8 @@ import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Type-safe representation of a concept-level frame within the
- * Object Model (OM). Combines a reference to a specific OM class
- * that defines a general type for the represented concept, with a
+ * Object Model (OM). Combines a reference to an OM class that
+ * defines a general type for the represented concept, with a
  * concept-level frame representing the actual concept. The frame
  * must be subsumed by the frame to which the OM class is bound.
  * <p>
