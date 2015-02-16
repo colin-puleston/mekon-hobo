@@ -82,8 +82,8 @@ public class ORMatcher implements IMatcher {
 	 * does not contain correctly specified configuration information
 	 */
 	static public ORMatcher createOrNull(
-										OModel model,
-										KConfigNode parentConfigNode) {
+								OModel model,
+								KConfigNode parentConfigNode) {
 
 		return ORMatcherConfig.configNodeExists(parentConfigNode)
 					? new ORMatcher(model, parentConfigNode)
