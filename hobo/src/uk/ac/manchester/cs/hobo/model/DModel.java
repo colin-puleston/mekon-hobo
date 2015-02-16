@@ -119,34 +119,35 @@ public class DModel {
 	/**
 	 * Provides a representation of the specified concept.
 	 *
-	 * @param conceptClass OM class that defines both the general type of
+	 * @param dClass OM class that defines both a general type for
 	 * the represented concept, and the represented concept itself
 	 * @return Representation of relevant concept
 	 */
-	public <D extends DObject>DConcept<D> getConcept(Class<D> conceptClass) {
+	public <D extends DObject>DConcept<D> getConcept(Class<D> dClass) {
 
-		return getConcept(conceptClass, conceptClass);
+		return getConcept(dClass, dClass);
 	}
 
 	/**
 	 * Provides a representation of the specified concept.
 	 *
-	 * @param rootConceptClass OM class that defines the general type of
+	 * @param generalDClass OM class that defines a general type for
 	 * the represented concept
-	 * @param conceptClass OM class that defines the represented concept
+	 * @param specificDClass OM class that defines the specific type
+	 * of the represented concept
 	 * @return Representation of relevant concept
 	 */
 	public <D extends DObject>DConcept<D> getConcept(
-											Class<D> rootConceptClass,
-											Class<? extends D> conceptClass) {
+											Class<D> generalDClass,
+											Class<? extends D> specificDClass) {
 
-		return new DConcept<D>(this, rootConceptClass, getFrame(conceptClass));
+		return new DConcept<D>(this, generalDClass, getFrame(specificDClass));
 	}
 
 	/**
 	 * Provides a representation of the specified concept.
 	 *
-	 * @param rootConceptClass OM class that defines the general type of
+	 * @param generalDClass OM class that defines the general type of
 	 * the represented concept
 	 * @param frame Frame representation of concept
 	 * @return Representation of relevant concept
@@ -154,25 +155,25 @@ public class DModel {
 	 * specified root-concept-class
 	 */
 	public <D extends DObject>DConcept<D> getConcept(
-											Class<D> rootConceptClass,
+											Class<D> generalDClass,
 											CFrame frame) {
 
-		if (!getFrame(rootConceptClass).subsumes(frame)) {
+		if (!getFrame(generalDClass).subsumes(frame)) {
 
 			throw new HAccessException(
 						"Cannot instantiate DConcept for root-concept-class: "
-						+ rootConceptClass
+						+ generalDClass
 						+ ", attempting to instantiate for invalid CFrame: "
 						+ frame);
 		}
 
-		return new DConcept<D>(this, rootConceptClass, frame);
+		return new DConcept<D>(this, generalDClass, frame);
 	}
 
 	/**
 	 * Provides a representation of the specified concept.
 	 *
-	 * @param rootConceptClass OM class that defines the general type of
+	 * @param generalDClass OM class that defines the general type of
 	 * the represented concept
 	 * @param identity Identity of frame representation of concept
 	 * @return Representation of relevant concept
@@ -180,10 +181,10 @@ public class DModel {
 	 * specified root-concept-class
 	 */
 	public <D extends DObject>DConcept<D> getConcept(
-											Class<D> rootConceptClass,
+											Class<D> generalDClass,
 											CIdentity identity) {
 
-		return getConcept(rootConceptClass, getFrame(identity));
+		return getConcept(generalDClass, getFrame(identity));
 	}
 
 	/**
