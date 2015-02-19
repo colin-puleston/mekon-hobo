@@ -33,63 +33,49 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  */
 class IndividualIRIGenerator {
 
-	static final String DEFAULT_ROOT_NAME = "TEMP";
-
-	static private final String DEFAULT_NAMESPACE = "http://mekon.owl";
-	static private final String NAME_REF_SECTION_PREFIX = "-REF-";
+	static private final String REF_SECTION_PREFIX = "-REF-";
 
 	static String extractName(IRI iri) {
 
 		return iri.getFragment();
 	}
 
-	private String namespace = DEFAULT_NAMESPACE;
-	private String rootName = DEFAULT_ROOT_NAME;
+	private String namespace;
+	private ORFrame rootFrame;
+	private String rootName;
 
-	private ORFrame rootFrame = null;
 	private int refCount = 0;
 
-	void setNamespace(String namespace) {
-
-		this.namespace = namespace;
-	}
-
-	void start(ORFrame rootFrame, String rootName) {
-
-		this.rootName = rootName;
-
-		start(rootFrame);
-	}
-
-	void start(ORFrame rootFrame) {
+	IndividualIRIGenerator(
+		ORFrame rootFrame,
+		String rootName,
+		IndividualCategory category) {
 
 		this.rootFrame = rootFrame;
+		this.rootName = rootName;
 
-		refCount = 0;
+		namespace = category.getNamespace();
 	}
 
 	IRI generateFor(ORFrame frame) {
 
-		if (rootFrame == null) {
+		return IRI.create(namespace + '#' + getFragmentFor(frame));
+	}
 
-			throw new Error("Root-frame has not been set!");
+	private String getFragmentFor(ORFrame frame) {
+
+		String fragment = rootName;
+
+		if (frame != rootFrame) {
+
+			fragment += getNextRefFragmentSection();
 		}
 
-		return generate(frame == rootFrame ? "" : getNextNameRefSection());
+		return fragment;
 	}
 
-	String getRootName() {
+	private String getNextRefFragmentSection() {
 
-		return rootName;
-	}
-
-	private IRI generate(String nameRefSection) {
-
-		return IRI.create(namespace + '#' + rootName + nameRefSection);
-	}
-
-	private String getNextNameRefSection() {
-
-		return NAME_REF_SECTION_PREFIX + refCount++;
+		return REF_SECTION_PREFIX + refCount++;
 	}
 }

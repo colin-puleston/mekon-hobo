@@ -36,230 +36,272 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * @author Colin Puleston
  */
-class IndividualsRenderer extends Renderer<OWLNamedIndividual> {
+class IndividualsRenderer {
+
+	static private final String ANON_NAME_PREFIX = "ANON-";
 
 	private OModel model;
 	private OWLDataFactory dataFactory;
+	private IndividualCategory individualCategory;
 
-	private Map<String, Set<OWLAxiom>> axiomsByRootName
-					= new HashMap<String, Set<OWLAxiom>>();
+	private Map<String, OWLNamedIndividual> rootIndividualsByName
+							= new HashMap<String, OWLNamedIndividual>();
 
-	private Map<ORFrame, OWLNamedIndividual> individuals
-					= new HashMap<ORFrame, OWLNamedIndividual>();
+	private Map<OWLNamedIndividual, String> rootNamesByIndividual
+							= new HashMap<OWLNamedIndividual, String>();
 
-	private IndividualIRIGenerator iriGenerator = new IndividualIRIGenerator();
+	private Map<OWLNamedIndividual, Set<OWLAxiom>> axiomsByRootIndividual
+							= new HashMap<OWLNamedIndividual, Set<OWLAxiom>>();
 
-	private class FrameToIndividualRenderer extends FrameRenderer {
+	private long anonGroupCount = 0;
 
-		private ORFrame frame;
-		private OWLNamedIndividual individual;
+	private class GroupRenderer extends Renderer<OWLNamedIndividual> {
 
-		FrameToIndividualRenderer(ORFrame frame) {
+		private ORFrame rootFrame;
+		private String rootName;
 
-			super(frame);
+		private IndividualIRIGenerator iriGenerator;
 
-			this.frame = frame;
-		}
+		private Map<ORFrame, OWLNamedIndividual> individuals
+						= new HashMap<ORFrame, OWLNamedIndividual>();
+		private Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
 
-		OWLNamedIndividual render(OWLClassExpression type) {
+		private class FrameToIndividualRenderer extends FrameRenderer {
 
-			individual = individuals.get(frame);
+			private ORFrame frame;
+			private OWLNamedIndividual individual;
 
-			if (individual == null) {
+			FrameToIndividualRenderer(ORFrame frame) {
 
-				individual = addIndividual();
+				super(frame);
 
-				individuals.put(frame, individual);
-
-				addTypeAssignment(type);
-				renderSlots();
+				this.frame = frame;
 			}
 
-			return individual;
-		}
+			OWLNamedIndividual render(OWLClassExpression type) {
 
-		void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+				individual = individuals.get(frame);
 
-			OWLIndividual indValue = toIndividualValue(expr);
+				if (individual == null) {
 
-			if (indValue != null) {
+					individual = addIndividual();
 
-				addAxiom(
-					dataFactory
-						.getOWLObjectPropertyAssertionAxiom(
-							property,
-							individual,
-							indValue));
+					individuals.put(frame, individual);
+
+					addTypeAssignment(type);
+					renderSlots();
+				}
+
+				return individual;
 			}
-			else {
+
+			void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+
+				OWLIndividual indValue = toIndividualValue(expr);
+
+				if (indValue != null) {
+
+					addAxiom(
+						dataFactory
+							.getOWLObjectPropertyAssertionAxiom(
+								property,
+								individual,
+								indValue));
+				}
+				else {
+
+					addTypeAssignment(
+						dataFactory
+							.getOWLObjectSomeValuesFrom(
+								property,
+								expr));
+				}
+			}
+
+			void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
 
 				addTypeAssignment(
 					dataFactory
-						.getOWLObjectSomeValuesFrom(
+						.getOWLObjectAllValuesFrom(
 							property,
 							expr));
 			}
-		}
 
-		void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+			OWLClassExpression toExpression(OWLNamedIndividual rendering) {
 
-			addTypeAssignment(
-				dataFactory
-					.getOWLObjectAllValuesFrom(
-						property,
-						expr));
-		}
-
-		OWLClassExpression toExpression(OWLNamedIndividual rendering) {
-
-			return dataFactory.getOWLObjectOneOf(rendering);
-		}
-
-		OWLClassExpression createUnion(Set<OWLNamedIndividual> renderings) {
-
-			return dataFactory.getOWLObjectOneOf(renderings);
-		}
-
-		private OWLNamedIndividual addIndividual() {
-
-			OWLNamedIndividual ind = createIndividual();
-
-			addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
-
-			return ind;
-		}
-
-		private OWLNamedIndividual createIndividual() {
-
-			return dataFactory.getOWLNamedIndividual(generateIRI());
-		}
-
-		private void addTypeAssignment(OWLClassExpression type) {
-
-			addAxiom(dataFactory.getOWLClassAssertionAxiom(type, individual));
-		}
-
-		private OWLIndividual toIndividualValue(OWLClassExpression expr) {
-
-			if (expr instanceof OWLObjectOneOf) {
-
-				return toIndividualValue((OWLObjectOneOf)expr);
+				return dataFactory.getOWLObjectOneOf(rendering);
 			}
 
-			if (expr instanceof OWLDataHasValue) {
+			OWLClassExpression createUnion(Set<OWLNamedIndividual> renderings) {
 
-				return toIndividualValue((OWLDataHasValue)expr);
+				return dataFactory.getOWLObjectOneOf(renderings);
 			}
 
-			return null;
+			private OWLNamedIndividual addIndividual() {
+
+				OWLNamedIndividual ind = createIndividual();
+
+				addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
+
+				return ind;
+			}
+
+			private OWLNamedIndividual createIndividual() {
+
+				return dataFactory.getOWLNamedIndividual(generateIRI());
+			}
+
+			private void addTypeAssignment(OWLClassExpression type) {
+
+				addAxiom(dataFactory.getOWLClassAssertionAxiom(type, individual));
+			}
+
+			private OWLIndividual toIndividualValue(OWLClassExpression expr) {
+
+				if (expr instanceof OWLObjectOneOf) {
+
+					return toIndividualValue((OWLObjectOneOf)expr);
+				}
+
+				if (expr instanceof OWLDataHasValue) {
+
+					return toIndividualValue((OWLDataHasValue)expr);
+				}
+
+				return null;
+			}
+
+			private OWLIndividual toIndividualValue(OWLObjectOneOf oneOf) {
+
+				return oneOf.getIndividuals().iterator().next();
+			}
+
+			private OWLIndividual toIndividualValue(OWLDataHasValue hasValue) {
+
+				OWLNamedIndividual indValue = addIndividual();
+				OWLDataPropertyExpression numericProp = hasValue.getProperty();
+				OWLLiteral number = hasValue.getValue();
+
+				addAxiom(
+					dataFactory
+						.getOWLDataPropertyAssertionAxiom(
+							numericProp,
+							indValue,
+							number));
+
+				return indValue;
+			}
+
+			private void addAxiom(OWLAxiom axiom) {
+
+				model.addAxiom(axiom);
+				axioms.add(axiom);
+			}
+
+			private IRI generateIRI() {
+
+				return iriGenerator.generateFor(frame);
+			}
 		}
 
-		private OWLIndividual toIndividualValue(OWLObjectOneOf oneOf) {
+		GroupRenderer(ORFrame rootFrame, String rootName) {
 
-			return oneOf.getIndividuals().iterator().next();
+			super(model);
+
+			this.rootFrame = rootFrame;
+			this.rootName = rootName;
+
+			iriGenerator = createIRIGenerator();
 		}
 
-		private OWLIndividual toIndividualValue(OWLDataHasValue hasValue) {
+		OWLNamedIndividual render() {
 
-			OWLNamedIndividual indValue = addIndividual();
-			OWLDataPropertyExpression numericProp = hasValue.getProperty();
-			OWLLiteral number = hasValue.getValue();
+			OWLNamedIndividual rootIndividual = renderFrame(rootFrame);
 
-			addAxiom(
-				dataFactory
-					.getOWLDataPropertyAssertionAxiom(
-						numericProp,
-						indValue,
-						number));
+			rootIndividualsByName.put(rootName, rootIndividual);
+			rootNamesByIndividual.put(rootIndividual, rootName);
+			axiomsByRootIndividual.put(rootIndividual, axioms);
 
-			return indValue;
+			return rootIndividual;
 		}
 
-		private IRI generateIRI() {
+		FrameRenderer createFrameRenderer(ORFrame frame) {
 
-			return iriGenerator.generateFor(frame);
+			return new FrameToIndividualRenderer(frame);
+		}
+
+		private IndividualIRIGenerator createIRIGenerator() {
+
+			return new IndividualIRIGenerator(
+							rootFrame,
+							rootName,
+							individualCategory);
 		}
 	}
 
-	IndividualsRenderer(OModel model) {
-
-		super(model);
+	IndividualsRenderer(OModel model, IndividualCategory individualCategory) {
 
 		this.model = model;
+		this.individualCategory = individualCategory;
 
 		dataFactory = model.getDataFactory();
 	}
 
-	void setNamespace(String namespace) {
-
-		iriGenerator.setNamespace(namespace);
-	}
-
 	boolean rendered(String rootName) {
 
-		return axiomsByRootName.get(rootName) != null;
+		return rootIndividualsByName.containsKey(rootName);
 	}
 
 	OWLNamedIndividual render(ORFrame frame) {
 
-		iriGenerator.start(frame);
-		individuals.clear();
-
-		return renderFrame(frame);
+		return render(frame, getNextAnnonGroupName());
 	}
 
 	OWLNamedIndividual render(ORFrame frame, String rootName) {
 
-		iriGenerator.start(frame, rootName);
-		individuals.clear();
-
-		return renderFrame(frame);
+		return new GroupRenderer(frame, rootName).render();
 	}
 
-	boolean removeAll(String rootName) {
+	boolean removeGroup(String rootName) {
 
-		Set<OWLAxiom> axioms = axiomsByRootName.remove(rootName);
+		OWLNamedIndividual rootIndividual = rootIndividualsByName.remove(rootName);
 
-		if (axioms == null) {
+		if (rootIndividual != null) {
 
-			return false;
+			rootNamesByIndividual.remove(rootIndividual);
+			removeAxioms(rootIndividual);
+
+			return true;
 		}
 
-		for (OWLAxiom axiom : axioms) {
+		return false;
+	}
+
+	boolean removeGroup(OWLNamedIndividual rootIndividual) {
+
+		String rootName = rootNamesByIndividual.remove(rootIndividual);
+
+		if (rootName != null) {
+
+			rootIndividualsByName.remove(rootName);
+			removeAxioms(rootIndividual);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private void removeAxioms(OWLNamedIndividual rootIndividual) {
+
+		for (OWLAxiom axiom : axiomsByRootIndividual.remove(rootIndividual)) {
 
 			model.removeAxiom(axiom);
 		}
-
-		return true;
 	}
 
-	boolean removeAllDefault() {
+	private synchronized String getNextAnnonGroupName() {
 
-		return removeAll(IndividualIRIGenerator.DEFAULT_ROOT_NAME);
-	}
-
-	FrameRenderer createFrameRenderer(ORFrame frame) {
-
-		return new FrameToIndividualRenderer(frame);
-	}
-
-	private void addAxiom(OWLAxiom axiom) {
-
-		model.addAxiom(axiom);
-		getCurrentAxiomSet().add(axiom);
-	}
-
-	private Set<OWLAxiom> getCurrentAxiomSet() {
-
-		String rootName = iriGenerator.getRootName();
-		Set<OWLAxiom> axioms = axiomsByRootName.get(rootName);
-
-		if (axioms == null) {
-
-			axioms = new HashSet<OWLAxiom>();
-			axiomsByRootName.put(rootName, axioms);
-		}
-
-		return axioms;
+		return ANON_NAME_PREFIX + anonGroupCount++;
 	}
 }

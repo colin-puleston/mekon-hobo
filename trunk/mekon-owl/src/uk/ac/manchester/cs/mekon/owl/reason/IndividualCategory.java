@@ -24,69 +24,26 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import java.util.*;
-
-import org.semanticweb.owlapi.model.*;
-
-import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
-
 /**
  * @author Colin Puleston
  */
-class IndividualBasedInstance extends ORInstance {
+enum IndividualCategory {
 
-	private OModel model;
+	CLASSIFIER("classifier"),
+	MATCHER_NAMED("matcher.named"),
+	MATCHER_ANON("matcher.anon");
 
-	private IndividualsRenderer renderer;
-	private OWLNamedIndividual rootIndividual;
+	static private final String NAMESPACE_PREFIX = "http://mekon.owl.individuals.";
 
-	IndividualBasedInstance(OModel model, ORFrame frame) {
+	private String namespaceId;
 
-		super(model, frame);
+	String getNamespace() {
 
-		this.model = model;
-
-		renderer = new IndividualsRenderer(model);
-		rootIndividual = renderer.render(frame);
+		return NAMESPACE_PREFIX + namespaceId;
 	}
 
-	void cleanUp() {
+	private IndividualCategory(String namespaceId) {
 
-		renderer.removeAllDefault();
-	}
-
-	boolean suggestsTypes() {
-
-		return false;
-	}
-
-	boolean infersMatchingIndividuals() {
-
-		return false;
-	}
-
-	OWLObject getFrameRendering() {
-
-		return rootIndividual;
-	}
-
-	Set<OWLClass> getInferredTypes() {
-
-		return checkRemoveRootFrameConcept(
-					model
-						.getReasoner()
-						.getTypes(rootIndividual, true)
-						.getFlattened());
-	}
-
-	Set<OWLClass> getSuggestedTypes() {
-
-		throw new Error("Method should never be invoked!");
-	}
-
-	Set<OWLNamedIndividual> getMatchingIndividuals() {
-
-		throw new Error("Method should never be invoked!");
+		this.namespaceId = namespaceId;
 	}
 }

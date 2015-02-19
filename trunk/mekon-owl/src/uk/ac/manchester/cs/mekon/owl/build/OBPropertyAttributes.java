@@ -57,7 +57,7 @@ public class OBPropertyAttributes {
 	 * will be generated for the property. Defaults to
 	 * {@link CEditability#DEFAULT} if method is never invoked.
 	 *
-	 * @param value Editability status for generated slots
+	 * @param slotEditability Editability status for generated slots
 	 */
 	public void setSlotEditability(CEditability slotEditability) {
 
