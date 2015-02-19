@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
@@ -34,68 +35,75 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * @author Colin Puleston
  */
-class ConceptBasedInstance extends ORInstance {
+class IndividualNetwork extends InstanceConstruct {
 
 	private OModel model;
 
-	private OWLClassExpression frameExpr;
+	private IndividualsRenderer renderer;
+	private OWLNamedIndividual rootIndividual;
 
-	ConceptBasedInstance(OModel model, ORFrame frame) {
+	IndividualNetwork(
+		OModel model,
+		ORFrame frame,
+		IndividualsRenderer renderer) {
 
 		super(model, frame);
 
 		this.model = model;
+		this.renderer = renderer;
 
-		frameExpr = frameToExpression(frame);
+		rootIndividual = renderer.render(frame);
+	}
+
+	boolean matches(ConceptExpression queryExpression) {
+
+		return hasType(queryExpression.getConstruct());
 	}
 
 	void cleanUp() {
+
+		renderer.removeGroup(rootIndividual);
 	}
 
 	boolean suggestsTypes() {
 
-		return true;
+		return false;
 	}
 
-	boolean infersMatchingIndividuals() {
+	OWLNamedIndividual getConstruct() {
 
-		return true;
-	}
-
-	OWLObject getFrameRendering() {
-
-		return frameExpr;
+		return rootIndividual;
 	}
 
 	Set<OWLClass> getInferredTypes() {
 
-		if (frameExpr instanceof OWLClass) {
-
-			return Collections.singleton((OWLClass)frameExpr);
-		}
-
-		return checkRemoveRootFrameConcept(inferEquivalentsOrSupers());
+		return getReasoner()
+				.getTypes(rootIndividual, true)
+				.getFlattened();
 	}
 
 	Set<OWLClass> getSuggestedTypes() {
 
-		return model.getInferredSubs(frameExpr, true);
+		throw new Error("Method should never be invoked!");
 	}
 
-	Set<OWLNamedIndividual> getMatchingIndividuals() {
+	private boolean hasType(OWLClassExpression type) {
 
-		return model.getInferredIndividuals(frameExpr, false);
+		return getReasoner().isEntailed(getHasTypeAssertion(type));
 	}
 
-	private OWLClassExpression frameToExpression(ORFrame frame) {
+	private OWLAxiom getHasTypeAssertion(OWLClassExpression type) {
 
-		return new ExpressionRenderer(model).render(frame);
+		return getDataFactory().getOWLClassAssertionAxiom(type, rootIndividual);
 	}
 
-	private Set<OWLClass> inferEquivalentsOrSupers() {
+	private OWLDataFactory getDataFactory() {
 
-		Set<OWLClass> types = model.getInferredEquivalents(frameExpr);
+		return model.getDataFactory();
+	}
 
-		return types.isEmpty() ? model.getInferredSupers(frameExpr, true) : types;
+	private OWLReasoner getReasoner() {
+
+		return model.getReasoner();
 	}
 }

@@ -69,6 +69,7 @@ public class ORMatcherTest extends OTest {
 	static private final int MAX_HOURLY_RATE = 20;
 
 	private ORMatcher matcher;
+	private Map<CIdentity, IFrame> storedInstancesById = new HashMap<CIdentity, IFrame>();
 
 	private class LocalSectionBuilder extends OBSectionBuilder {
 
@@ -128,17 +129,11 @@ public class ORMatcherTest extends OTest {
 	}
 
 	@Test
-	public void test_populate() {
-
-		populate();
-	}
-
-	@Test
-	public void test_retrieveAll() {
+	public void test_addAndQuery() {
 
 		populate();
 
-		executeQuery(
+		testMatching(
 			createJobQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID,
@@ -147,26 +142,40 @@ public class ORMatcherTest extends OTest {
 	}
 
 	@Test
+	public void test_addRemoveAndQuery() {
+
+		populate();
+
+		removeInstance(POSTGRAD_TEACHING_JOB_ID);
+		removeInstance(ACADEMIC_RESEARCH_JOB_ID);
+
+		testMatching(
+			createJobQuery(),
+			UNDERGRAD_TEACHING_JOB_ID,
+			DOCTORING_JOB_ID);
+	}
+
+	@Test
 	public void test_conceptBasedQueries() {
 
 		populate();
 
-		executeQuery(
+		testMatching(
 			createAcademiaQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCH_JOB_ID);
 
-		executeQuery(
+		testMatching(
 			createAcademicTeachingQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID);
 
-		executeQuery(
+		testMatching(
 			createPostgraduateTeachingQuery(),
 			POSTGRAD_TEACHING_JOB_ID);
 
-		executeQuery(
+		testMatching(
 			createPostOrUndergradTeachingQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID);
@@ -177,35 +186,35 @@ public class ORMatcherTest extends OTest {
 
 		populate();
 
-		executeQuery(
+		testMatching(
 			createNumericJobQuery(MIN_HOURLY_RATE, MAX_HOURLY_RATE),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCH_JOB_ID,
 			DOCTORING_JOB_ID);
 
-		executeQuery(
+		testMatching(
 			createNumericJobQuery(MIN_HOURLY_RATE, LOW_HOURLY_RATE - 1));
 
-		executeQuery(
+		testMatching(
 			createNumericJobQuery(MIN_HOURLY_RATE, MID_HOURLY_RATE - 1),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID);
 
-		executeQuery(
+		testMatching(
 			createNumericJobQuery(MIN_HOURLY_RATE, HIGH_HOURLY_RATE - 1),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCH_JOB_ID);
 
-		executeQuery(
+		testMatching(
 			createNumericJobQuery(HIGH_HOURLY_RATE + 1, MAX_HOURLY_RATE));
 
-		executeQuery(
+		testMatching(
 			createNumericJobQuery(MID_HOURLY_RATE + 1, MAX_HOURLY_RATE),
 			DOCTORING_JOB_ID);
 
-		executeQuery(
+		testMatching(
 			createNumericJobQuery(LOW_HOURLY_RATE + 1, MAX_HOURLY_RATE),
 			ACADEMIC_RESEARCH_JOB_ID,
 			DOCTORING_JOB_ID);
@@ -346,12 +355,27 @@ public class ORMatcherTest extends OTest {
 	private void addInstance(IFrame instance, CIdentity id) {
 
 		assertTrue(matcher.add(instance, id));
+		storedInstancesById.put(id, instance);
 	}
 
-	private void executeQuery(IFrame query, CIdentity... expectedMatches) {
+	private void removeInstance(CIdentity id) {
 
-		List<CIdentity> matches = matcher.match(query).getMatches();
+		assertTrue(matcher.remove(id));
+		storedInstancesById.remove(id);
+	}
 
-		testListContents(matches, list(expectedMatches));
+	private void testMatching(IFrame query, CIdentity... expectedMatchIds) {
+
+		List<CIdentity> matchIds = matcher.match(query).getMatches();
+
+		testListContents(matchIds, list(expectedMatchIds));
+
+		for (CIdentity id : storedInstancesById.keySet()) {
+
+			IFrame instance = storedInstancesById.get(id);
+			boolean isMatch = matcher.matches(query, instance);
+
+			assertTrue(isMatch == matchIds.contains(id));
+		}
 	}
 }

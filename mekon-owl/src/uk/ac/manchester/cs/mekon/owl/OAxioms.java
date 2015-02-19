@@ -92,7 +92,7 @@ class OAxioms {
 		this.model = model;
 	}
 
-	void add(OWLAxiom axiom) {
+	synchronized void add(OWLAxiom axiom) {
 
 		getManager().addAxiom(getMainOntology(), axiom);
 
@@ -107,7 +107,7 @@ class OAxioms {
 		}
 	}
 
-	void remove(OWLAxiom axiom) {
+	synchronized void remove(OWLAxiom axiom) {
 
 		getManager().removeAxiom(findOntology(axiom), axiom);
 

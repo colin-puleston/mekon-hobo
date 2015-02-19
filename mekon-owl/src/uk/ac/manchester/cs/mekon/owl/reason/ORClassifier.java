@@ -92,6 +92,7 @@ public class ORClassifier extends IClassifier {
 
 	private OModel model;
 	private FramesManager framesManager;
+	private IndividualsRenderer individualsRenderer;
 
 	private boolean forceIndividualBasedClassification = false;
 
@@ -141,6 +142,9 @@ public class ORClassifier extends IClassifier {
 		this.model = model;
 
 		framesManager = new FramesManager(model);
+		individualsRenderer = new IndividualsRenderer(
+									model,
+									IndividualCategory.CLASSIFIER);
 	}
 
 	/**
@@ -191,7 +195,7 @@ public class ORClassifier extends IClassifier {
 	 */
 	protected IClassification classify(IFrame frame, IClassifierOps ops) {
 
-		return createORInstance(frame).classify(ops);
+		return createInstanceConstruct(frame).classify(ops);
 	}
 
 	void setForceIndividualBasedClassification(boolean value) {
@@ -199,18 +203,18 @@ public class ORClassifier extends IClassifier {
 		forceIndividualBasedClassification = value;
 	}
 
-	private ORInstance createORInstance(IFrame frame) {
+	private InstanceConstruct createInstanceConstruct(IFrame frame) {
 
-		return createORInstance(framesManager.toPreProcessed(frame));
+		return createInstanceConstruct(framesManager.toPreProcessed(frame));
 	}
 
-	private ORInstance createORInstance(ORFrame frame) {
+	private InstanceConstruct createInstanceConstruct(ORFrame frame) {
 
 		if (forceIndividualBasedClassification || frame.leadsToCycle()) {
 
-			return new IndividualBasedInstance(model, frame);
+			return new IndividualNetwork(model, frame, individualsRenderer);
 		}
 
-		return new ConceptBasedInstance(model, frame);
+		return new ConceptExpression(model, frame);
 	}
 }

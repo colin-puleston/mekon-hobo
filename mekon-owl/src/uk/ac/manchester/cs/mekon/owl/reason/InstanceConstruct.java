@@ -37,12 +37,12 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class ORInstance {
+abstract class InstanceConstruct {
 
 	private OModel model;
 	private ORFrame frame;
 
-	ORInstance(OModel model, ORFrame frame) {
+	InstanceConstruct(OModel model, ORFrame frame) {
 
 		this.model = model;
 		this.frame = frame;
@@ -50,9 +50,9 @@ abstract class ORInstance {
 
 	IClassification classify(IClassifierOps ops) {
 
-		OWLObject frameRendering = getFrameRendering();
+		OWLObject construct = getConstruct();
 
-		ORMonitor.pollForClassifierRequest(model, frameRendering);
+		ORMonitor.pollForClassifierRequest(model, construct);
 
 		List<CIdentity> inferredIds = new ArrayList<CIdentity>();
 		List<CIdentity> suggestedIds = new ArrayList<CIdentity>();
@@ -60,6 +60,8 @@ abstract class ORInstance {
 		if (ops.inferreds()) {
 
 			Set<OWLClass> inferreds = getInferredTypes();
+
+			purgeInferredTypes(inferreds);
 
 			ORMonitor.pollForTypesInferred(model, inferreds);
 			inferredIds.addAll(toIdentityList(inferreds));
@@ -73,59 +75,26 @@ abstract class ORInstance {
 			suggestedIds.addAll(toIdentityList(suggesteds));
 		}
 
-		ORMonitor.pollForClassifierDone(model, frameRendering);
+		ORMonitor.pollForClassifierDone(model, construct);
 
 		cleanUp();
 
 		return new IClassification(inferredIds, suggestedIds);
 	}
 
-	List<CIdentity> getMatchingInstances() {
-
-		OWLObject frameRendering = getFrameRendering();
-
-		ORMonitor.pollForMatcherRequest(model, frameRendering);
-
-		List<CIdentity> matchIds = new ArrayList<CIdentity>();
-
-		if (infersMatchingIndividuals()) {
-
-			Set<OWLNamedIndividual> matches = getMatchingIndividuals();
-
-			ORMonitor.pollForMatchesFound(model, matches);
-			matchIds.addAll(toResolvedIdentityList(matches));
-		}
-
-		ORMonitor.pollForMatcherDone(model, frameRendering);
-
-		return matchIds;
-	}
-
 	abstract void cleanUp();
 
 	abstract boolean suggestsTypes();
 
-	abstract boolean infersMatchingIndividuals();
-
-	abstract OWLObject getFrameRendering();
+	abstract OWLObject getConstruct();
 
 	abstract Set<OWLClass> getInferredTypes();
 
 	abstract Set<OWLClass> getSuggestedTypes();
 
-	abstract Set<OWLNamedIndividual> getMatchingIndividuals();
+	private void purgeInferredTypes(Set<OWLClass> types) {
 
-	Set<OWLClass> checkRemoveRootFrameConcept(Set<OWLClass> allConcepts) {
-
-		OWLClass concept = getFrameConcept();
-
-		if (allConcepts.contains(concept)) {
-
-			allConcepts = new HashSet<OWLClass>(allConcepts);
-			allConcepts.remove(concept);
-		}
-
-		return allConcepts;
+		types.remove(getFrameConcept());
 	}
 
 	private OWLClass getFrameConcept() {
@@ -136,24 +105,5 @@ abstract class ORInstance {
 	private List<CIdentity> toIdentityList(Set<OWLClass> entities) {
 
 		return new ArrayList<CIdentity>(OIdentity.createSortedSet(entities));
-	}
-
-	private List<CIdentity> toResolvedIdentityList(Set<OWLNamedIndividual> individuals) {
-
-		List<CIdentity> identities = new ArrayList<CIdentity>();
-
-		for (CIdentity identity : OIdentity.createSortedSet(individuals)) {
-
-			identities.add(resolveIndividualIdentity(identity));
-		}
-
-		return identities;
-	}
-
-	private CIdentity resolveIndividualIdentity(CIdentity identity) {
-
-		IRI iri = IRI.create(identity.getIdentifier());
-
-		return new CIdentity(IndividualIRIGenerator.extractName(iri));
 	}
 }

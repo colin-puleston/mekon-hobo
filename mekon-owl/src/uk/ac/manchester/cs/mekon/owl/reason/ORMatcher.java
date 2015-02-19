@@ -94,7 +94,8 @@ public class ORMatcher implements IMatcher {
 	private OConceptFinder concepts;
 	private FramesManager framesManager;
 
-	private IndividualsRenderer renderer;
+	private IndividualsRenderer storeRenderer;
+	private IndividualsRenderer dynamicRenderer;
 
 	/**
 	 * Constructs matcher, with the configuration for both the
@@ -143,7 +144,8 @@ public class ORMatcher implements IMatcher {
 
 		concepts = new OConceptFinder(model);
 		framesManager = new FramesManager(model);
-		renderer = new IndividualsRenderer(model);
+		storeRenderer = createRenderer(IndividualCategory.MATCHER_NAMED);
+		dynamicRenderer = createRenderer(IndividualCategory.MATCHER_ANON);
 	}
 
 	/**
@@ -170,16 +172,16 @@ public class ORMatcher implements IMatcher {
 	 * @return True if instance added, false if instance with
 	 * specified identity already present
 	 */
-	public boolean add(IFrame instance, CIdentity identity) {
+	public synchronized boolean add(IFrame instance, CIdentity identity) {
 
 		String name = identity.getIdentifier();
 
-		if (renderer.rendered(name)) {
+		if (storeRenderer.rendered(name)) {
 
 			return false;
 		}
 
-		renderer.render(framesManager.toPreProcessed(instance), name);
+		storeRenderer.render(toPreProcessed(instance), name);
 
 		return true;
 	}
@@ -192,9 +194,9 @@ public class ORMatcher implements IMatcher {
 	 * @return True if instance removed, false if instance with
 	 * specified identity not present
 	 */
-	public boolean remove(CIdentity identity) {
+	public synchronized boolean remove(CIdentity identity) {
 
-		return renderer.removeAll(identity.getIdentifier());
+		return storeRenderer.removeGroup(identity.getIdentifier());
 	}
 
 	/**
@@ -208,7 +210,28 @@ public class ORMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return new IMatches(getMatches(query), false);
+		ConceptExpression queryExpr = createConceptExpression(query);
+		List<CIdentity> matches = queryExpr.getMatchingInstances();
+
+		return new IMatches(purgeMatches(matches), false);
+	}
+
+	/**
+	 * Converts the specified instance-level query and instance frames
+	 * to the pre-processable versions, runs any registered
+	 * pre-processors over them, then performs the matching test via
+	 * invocation of the OWL reasoner.
+	 *
+	 * @param query Representation of query
+	 * @param instance Representation of instance
+	 * @return True if instance matched by query
+	 */
+	public boolean matches(IFrame query, IFrame instance) {
+
+		ConceptExpression queryExpr = createConceptExpression(query);
+		IndividualNetwork instanceNet = createIndividualNetwork(instance);
+
+		return instanceNet.matches(queryExpr);
 	}
 
 	/**
@@ -242,12 +265,9 @@ public class ORMatcher implements IMatcher {
 		return concepts.getSubsumerOrNull(type) != null;
 	}
 
-	private List<CIdentity> getMatches(IFrame query) {
+	private IndividualsRenderer createRenderer(IndividualCategory category) {
 
-		ORFrame orQuery = framesManager.toPreProcessed(query);
-		ORInstance orInstance = new ConceptBasedInstance(model, orQuery);
-
-		return purgeMatches(orInstance.getMatchingInstances());
+		return new IndividualsRenderer(model, category);
 	}
 
 	private List<CIdentity> purgeMatches(List<CIdentity> all) {
@@ -256,12 +276,30 @@ public class ORMatcher implements IMatcher {
 
 		for (CIdentity match : all) {
 
-			if (renderer.rendered(match.getIdentifier())) {
+			if (storeRenderer.rendered(match.getIdentifier())) {
 
 				purged.add(match);
 			}
 		}
 
 		return purged;
+	}
+
+	private ConceptExpression createConceptExpression(IFrame frame) {
+
+		return new ConceptExpression(model, toPreProcessed(frame));
+	}
+
+	private IndividualNetwork createIndividualNetwork(IFrame frame) {
+
+		return new IndividualNetwork(
+						model,
+						toPreProcessed(frame),
+						dynamicRenderer);
+	}
+
+	private ORFrame toPreProcessed(IFrame frame) {
+
+		return framesManager.toPreProcessed(frame);
 	}
 }
