@@ -71,11 +71,22 @@ public interface IMatcher {
 	public boolean remove(CIdentity identity);
 
 	/**
-	 * Finds all instances that match the supplied query, which
-	 * will be of an appropriate type (see {@link #handlesType}).
+	 * Finds all instances that are matched by the supplied query,
+	 * which will be of an appropriate type (see {@link #handlesType}).
 	 *
 	 * @param query Representation of query
 	 * @return Results of query execution
 	 */
 	public IMatches match(IFrame query);
+
+	/**
+	 * Tests whether the supplied instance is matched by the supplied
+	 * query, both of which will be of an appropriate type (see {@link
+	 * #handlesType}).
+	 *
+	 * @param query Representation of query
+	 * @param instance Representation of instance
+	 * @return True if instance matched by query
+	 */
+	public boolean matches(IFrame query, IFrame instance);
 }

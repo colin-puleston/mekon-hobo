@@ -81,8 +81,8 @@ public interface CSlotEditor {
 
 	/**
 	 * Updates the {@link CSlot#editability} status of the slot to
-	 * incorporate the specified additional status. Combined status
-	 * determined via the {@link CEditability#absorb} method.
+	 * incorporate the specified additional status. Resulting status
+	 * determined via the {@link CEditability#getStrongest} method.
 	 *
 	 * @param otherEditability Additional status to incorporate
 	 */
