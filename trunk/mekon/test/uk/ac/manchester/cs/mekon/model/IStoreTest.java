@@ -80,6 +80,14 @@ public class IStoreTest extends MekonTest {
 			return new IMatches(getInstanceIdentityAsList(), false);
 		}
 
+		public boolean matches(IFrame query, IFrame instance) {
+
+			assertTrue(query == this.query);
+			assertTrue(instance == this.instance);
+
+			return true;
+		}
+
 		TestMatcher(String typeName) {
 
 			type = createCFrame(typeName);
@@ -99,11 +107,12 @@ public class IStoreTest extends MekonTest {
 			store.remove(getInstanceIdentity());
 		}
 
-		void checkQueryToStoreDirectedToMatcher() {
+		void checkQueriesToStoreDirectedToMatcher() {
 
-			List<CIdentity> matches = store.match(query).getMatches();
+			List<CIdentity> matchIds = getInstanceIdentityAsList();
 
-			assertTrue(matches.equals(getInstanceIdentityAsList()));
+			assertTrue(store.match(query).getMatches().equals(matchIds));
+			assertTrue(store.matches(query, instance));
 		}
 
 		private List<CIdentity> getInstanceIdentityAsList() {
@@ -163,8 +172,8 @@ public class IStoreTest extends MekonTest {
 		matcherA.addMatcherInstanceToStore();
 		matcherB.addMatcherInstanceToStore();
 
-		matcherA.checkQueryToStoreDirectedToMatcher();
-		matcherB.checkQueryToStoreDirectedToMatcher();
+		matcherA.checkQueriesToStoreDirectedToMatcher();
+		matcherB.checkQueriesToStoreDirectedToMatcher();
 
 		matcherA.removeMatcherInstanceFromStore();
 		matcherB.removeMatcherInstanceFromStore();

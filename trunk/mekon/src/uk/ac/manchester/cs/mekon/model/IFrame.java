@@ -39,15 +39,14 @@ import uk.ac.manchester.cs.mekon.util.*;
  *   <li>Query-frames can be instantiations of disjunction-frames
  *   (see {@link CFrameCategory#disjunction}), whereas assertion-frames
  *   cannot.
- *   <li>By default, all slots on query-frames can be given abstract
- *	 values (see {@link IValue#abstractValue}), whereas only those
- *	 slots on assertion-frames whose associated properties are defined
- *	 to be {@link CSlot#abstractAssertable} can. However, in either
- *	 case, this default behaviour can be overridden for individual
- *	 instance-level slots.
- *   <li>Slots on query-frames and assertion-frames may (and by default
- *	 will) have different editabilty criteria (see {@link
- *	 CSlot#getEditability})
+ *   <li>Slots on query-frames and assertion-frames may, and generally
+ *	 will, have different editabilty criteria (see {@link
+ *	 CSlot#getEditability}), specifying whether or not the slot is
+ *	 editable by the client and whether it can be given abstract values
+ *	 (see {@link IValue#abstractValue}). In general slots on query-frames
+ *	 are likely to be allowed abstract values, whereas those on
+ *	 assertion-frames are not, and slots on query-frames are more likely
+ *	 to be editable by the client than on assertion-frames.
  * </ul>
  * Query-frames and assertion-frames cannot be mixed within a single
  * model-instantiation. Attempting to do so will result in an

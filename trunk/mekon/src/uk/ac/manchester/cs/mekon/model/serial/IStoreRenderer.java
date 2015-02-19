@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 public class IStoreRenderer extends ISerialiser {
 
-	private File file;
+	private File storeFile;
 
 	private XDocument document = new XDocument(STORE_ID);
 	private IFrameRenderer iFrameRenderer = new IFrameRenderer();
@@ -47,9 +47,9 @@ public class IStoreRenderer extends ISerialiser {
 	 *
 	 * @param storeFile Serialisation file
 	 */
-	public IStoreRenderer(File file) {
+	public IStoreRenderer(File storeFile) {
 
-		this.file = file;
+		this.storeFile = storeFile;
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class IStoreRenderer extends ISerialiser {
 			renderInstance(id, store.get(id));
 		}
 
-		document.writeToFile(file);
+		document.writeToFile(storeFile);
 	}
 
 	private void renderInstance(CIdentity id, IFrame frame) {

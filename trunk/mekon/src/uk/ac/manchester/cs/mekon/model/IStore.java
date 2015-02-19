@@ -143,21 +143,30 @@ public class IStore {
 	}
 
 	/**
-	 * Finds all instances that match the supplied query.
+	 * Finds all instances that are matched by the supplied query.
 	 *
 	 * @param query Representation of query
 	 * @return Results of query execution
 	 */
 	public IMatches match(IFrame query) {
 
-		IMatcher matcher = lookForMatcher(query);
+		return resolveLabels(getMatcher(query).match(query));
+	}
 
-		if (matcher == null) {
+	/**
+	 * Tests whether the supplied instance is matched by the supplied
+	 * query.
+	 *
+	 * @param query Representation of query
+	 * @param instance Representation of instance
+	 * @return True if instance matched by query
+	 */
+	public boolean matches(IFrame query, IFrame instance) {
 
-			return IMatches.NO_MATCHES;
-		}
+		IMatcher matcher = getMatcher(query);
 
-		return resolveLabels(matcher.match(query));
+		return matcher == getMatcher(instance)
+				&& matcher.matches(query, instance);
 	}
 
 	IStore(CModel model) {
@@ -221,30 +230,20 @@ public class IStore {
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
 
-		IMatcher matcher = lookForMatcher(instance);
-
-		if (matcher != null) {
-
-			matcher.add(instance, identity);
-		}
+		getMatcher(instance).add(instance, identity);
 	}
 
 	private void checkRemoveFromMatcher(IFrame instance, CIdentity identity) {
 
-		IMatcher matcher = lookForMatcher(instance);
-
-		if (matcher != null) {
-
-			matcher.remove(identity);
-		}
+		getMatcher(instance).remove(identity);
 	}
 
-	private IMatcher lookForMatcher(IFrame iFrame) {
+	private IMatcher getMatcher(IFrame iFrame) {
 
-		return lookForMatcher(iFrame.getType());
+		return getMatcher(iFrame.getType());
 	}
 
-	private IMatcher lookForMatcher(CFrame type) {
+	private IMatcher getMatcher(CFrame type) {
 
 		for (IMatcher matcher : matchers) {
 
@@ -254,7 +253,7 @@ public class IStore {
 			}
 		}
 
-		return null;
+		return InertIMatcher.get();
 	}
 
 	private IMatches resolveLabels(IMatches matches) {

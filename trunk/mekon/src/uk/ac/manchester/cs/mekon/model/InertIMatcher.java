@@ -22,56 +22,44 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
+package uk.ac.manchester.cs.mekon.model;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
- * Provides the default version of the reasoning mechanisms
- * defined by {@link IReasoner}. Initialises each instance-level
- * frame with a set of slots derived from the relevant
- * concept-level frame and it's ancestors. Performs no dynamic
- * updating of the slot-sets.
- *
  * @author Colin Puleston
  */
-public class DefaultIReasoner implements IReasoner {
+class InertIMatcher implements IMatcher {
 
-	static private final IReasoner singleton = new DefaultIReasoner();
+	static private final IMatcher singleton = new InertIMatcher();
 
-	/**
-	 * Provides singleton instance of {@link DefaultIReasoner}
-	 *
-	 * @return Singleton instance
-	 */
-	static public IReasoner get() {
+	static IMatcher get() {
 
 		return singleton;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void initialiseFrame(IEditor iEditor, IFrame frame) {
+	public boolean handlesType(CFrame type) {
 
-		ISlotSpecs specs = new ISlotSpecs(iEditor, frame.getType());
-
-		specs.initialiseSlots(frame);
-		specs.updateSlotValues(frame);
+		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+	public boolean add(IFrame instance, CIdentity identity) {
+
+		return false;
 	}
 
-	/**
-	 * Constructor for extension classes.
-	 */
-	protected DefaultIReasoner() {
+	public boolean remove(CIdentity identity) {
 
+		return false;
+	}
+
+	public IMatches match(IFrame query) {
+
+		return IMatches.NO_MATCHES;
+	}
+
+	public boolean matches(IFrame query, IFrame instance) {
+
+		return false;
 	}
 }
