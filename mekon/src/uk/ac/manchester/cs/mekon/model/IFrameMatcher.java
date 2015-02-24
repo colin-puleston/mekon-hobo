@@ -40,9 +40,7 @@ class IFrameMatcher {
 
 	private boolean framesMatch(IFrame frame1, IFrame frame2) {
 
-		return typesMatch(frame1, frame2)
-				&& inferredTypesMatch(frame1, frame2)
-				&& slotValuesMatch(frame1.getSlots(), frame2.getSlots());
+		return typesMatch(frame1, frame2) && slotsMatch(frame1, frame2);
 	}
 
 	private boolean typesMatch(IFrame frame1, IFrame frame2) {
@@ -50,12 +48,10 @@ class IFrameMatcher {
 		return frame1.getType().equals(frame2.getType());
 	}
 
-	private boolean inferredTypesMatch(IFrame frame1, IFrame frame2) {
+	private boolean slotsMatch(IFrame frame1, IFrame frame2) {
 
-		return frame1.getInferredTypes().equals(frame2.getInferredTypes());
-	}
-
-	private boolean slotValuesMatch(ISlots slots1, ISlots slots2) {
+		ISlots slots1 = frame1.getSlots();
+		ISlots slots2 = frame2.getSlots();
 
 		if (slots1.size() != slots2.size()) {
 

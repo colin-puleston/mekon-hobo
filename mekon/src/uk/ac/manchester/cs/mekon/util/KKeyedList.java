@@ -62,6 +62,33 @@ public abstract class KKeyedList<K, V> extends KList<V> {
 	}
 
 	/**
+	 * Tests for equality between this and other specified object.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if other object is another <code>KList</code>
+	 * containing the same ordered set of values
+	 */
+	public boolean equals(Object other) {
+
+		if (other instanceof KKeyedList && super.equals(other)) {
+
+			return finder.equals(((KKeyedList)other).finder);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Provides hash-code based on ordered set of values.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return super.hashCode() + finder.hashCode();
+	}
+
+	/**
 	 * Tests whether list contains value with the specified key.
 	 *
 	 * @param key Key to look for

@@ -67,7 +67,7 @@ class IFrameCopier {
 
 		if (copy == null) {
 
-			copy = new IFrame(template);
+			copy = template.instantiateCopy();
 
 			copies.put(template, copy);
 			copySlots(template, copy);
@@ -82,20 +82,37 @@ class IFrameCopier {
 
 		for (ISlot templateSlot : template.getSlots().asList()) {
 
-			copySlots.add(copySlot(template, templateSlot));
+			ISlot copySlot = resolveCopySlot(template, templateSlot, copySlots);
+
+			copySlotValues(templateSlot, copySlot);
 		}
 	}
 
-	private ISlot copySlot(IFrame template, ISlot templateSlot) {
+	private void copySlotValues(ISlot templateSlot, ISlot copySlot) {
 
-		ISlot copySlot = new ISlot(templateSlot.getType(), template);
 		ISlotValues copyValues = copySlot.getValues();
 
 		for (IValue value : templateSlot.getValues().asList()) {
 
 			copyValues.add(copyValuesSupplier.getCopyValue(value), true);
 		}
+	}
 
-		return copySlot;
+	private ISlot resolveCopySlot(
+						IFrame template,
+						ISlot templateSlot,
+						ISlots copySlots) {
+
+		CSlot type = templateSlot.getType();
+		ISlot slot = copySlots.getOrNull(type.getIdentity());
+
+		if (slot == null) {
+
+			slot = new ISlot(type, template);
+
+			copySlots.add(slot);
+		}
+
+		return slot;
 	}
 }

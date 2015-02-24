@@ -98,7 +98,7 @@ public abstract class KList<V> {
 
 		if (other instanceof KList) {
 
-			return ((KList)other).values.equals(values);
+			return values.equals(((KList)other).values);
 		}
 
 		return false;
