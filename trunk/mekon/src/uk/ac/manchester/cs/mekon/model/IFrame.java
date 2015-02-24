@@ -441,15 +441,15 @@ public class IFrame implements IEntity, IValue {
 		return new IFrameCycleTester(this).leadsToCycle();
 	}
 
-	IFrame(IFrame template) {
-
-		this(template.type, template.category);
-	}
-
 	IFrame(CFrame type, IFrameCategory category) {
 
 		this.type = type;
 		this.category = category;
+	}
+
+	IFrame instantiateCopy() {
+
+		return type.instantiate(category);
 	}
 
 	IFrameEditor createEditor() {
