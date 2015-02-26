@@ -24,9 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.util.*;
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -34,14 +31,14 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class IFrameValuesNode extends FFrameValuesNode<IFrame> {
+class CFrameSlotNode extends FFrameSlotNode<CFrame> {
 
 	private ITree tree;
 	private ISlot slot;
 
-	private class ValueNode extends IFrameNode {
+	private class ValueNode extends GNode {
 
-		private IFrame value;
+		private CFrame value;
 
 		protected GNodeAction getPositiveAction() {
 
@@ -53,20 +50,20 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 			return getRemovalAction(value);
 		}
 
-		ValueNode(IFrame value) {
+		protected GCellDisplay getDisplay() {
 
-			super(tree, value);
+			return EntityDisplays.get().get(value);
+		}
+
+		ValueNode(CFrame value) {
+
+			super(tree);
 
 			this.value = value;
 		}
 	}
 
-	protected GCellDisplay getDisplay() {
-
-		return EntityDisplays.get().get(getValueType(), true);
-	}
-
-	IFrameValuesNode(ITree tree, ISlot slot) {
+	CFrameSlotNode(ITree tree, ISlot slot) {
 
 		super(tree, slot);
 
@@ -76,91 +73,41 @@ class IFrameValuesNode extends FFrameValuesNode<IFrame> {
 
 	GNode createValueNode(IValue value) {
 
-		return new ValueNode(asIFrame(value));
+		return new ValueNode(asCFrame(value));
 	}
 
 	IValue checkObtainValue() {
 
-		CFrame type = checkObtainCFrameAddition();
-
-		return type != null ? instantiate(type) : null;
+		return checkObtainCFrameAddition();
 	}
 
 	String getCFrameRole() {
 
-		return "Value-Type";
+		return "Value";
 	}
 
 	CFrame getRootCFrame() {
 
-		return getValueType();
+		return getValueType().getRootCFrame();
 	}
 
-	CFrame valueToCFrame(IFrame value) {
-
-		return value.getType();
-	}
-
-	IFrame checkUpdateValue(IFrame value, CFrame updatedCFrame) {
-
-		if (updatedCFrame.instantiable()) {
-
-			return updateValue(value, updatedCFrame);
-		}
-
-		JOptionPane.showMessageDialog(
-			null,
-			"Cannot instantiate: "
-				+ updatedCFrame.getDisplayLabel());
+	CFrame valueToCFrame(CFrame value) {
 
 		return value;
 	}
 
-	private IFrame updateValue(IFrame value, CFrame updatedCFrame) {
+	CFrame checkUpdateValue(CFrame value, CFrame updatedCFrame) {
 
-		IFrame newValue = instantiate(updatedCFrame);
-
-		copyAssertedSlotValues(value, newValue);
-
-		return newValue;
+		return updatedCFrame;
 	}
 
-	private void copyAssertedSlotValues(IFrame from, IFrame to) {
-
-		ISlots toSlots = to.getSlots();
-
-		for (ISlot slot : from.getSlots().asList()) {
-
-			List<IValue> values = slot.getValues().getAssertedValues();
-
-			if (!values.isEmpty()) {
-
-				CIdentity id = slot.getType().getIdentity();
-
-				if (toSlots.containsValueFor(id)) {
-
-					toSlots.get(id).getValuesEditor().addAll(values);
-				}
-			}
-		}
-	}
-
-	private IFrame instantiate(CFrame type) {
-
-		IFrame value = type.instantiate();
-
-		value.alignCategory(slot.getContainer());
-
-		return value;
-	}
-
-	private IFrame asIFrame(IValue value) {
+	private CFrame asCFrame(IValue value) {
 
 		return getValueType().castValue(value);
 	}
 
-	private CFrame getValueType() {
+	private MFrame getValueType() {
 
-		return slot.getValueType().castAs(CFrame.class);
+		return slot.getValueType().castAs(MFrame.class);
 	}
 }

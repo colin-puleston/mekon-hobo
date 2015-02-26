@@ -97,7 +97,7 @@ class CFrameNode extends GNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return EntityDisplays.get().get(frame, false);
+		return EntityDisplays.get().get(frame);
 	}
 
 	CFrameNode(CTree tree, CFrame frame) {

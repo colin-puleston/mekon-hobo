@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -31,46 +33,94 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class ISlotNode extends GNode {
+abstract class ISlotNode extends GNode {
 
-	private ITree tree;
 	private ISlot slot;
+	private ValueNodes valueNodes;
 
-	private class ValuesNodeCreator extends CValueVisitor {
+	private class DisplayUpdater implements ISlotListener {
 
-		private IValuesNode created = null;
+		public void onUpdatedValueType(CValue<?> valueType) {
 
-		protected void visit(CFrame type) {
-
-			created = new IFrameValuesNode(tree, slot);
+			notifyUpdatedDisplay();
 		}
 
-		protected void visit(CNumber type) {
+		public void onUpdatedActiveStatus(boolean active) {
 
-			created = new INumberValuesNode(tree, slot);
+			notifyUpdatedDisplay();
+		}
+	}
+
+	private abstract class ISlotNodeAction extends GNodeAction {
+
+		protected boolean active() {
+
+			return editableSlot();
+		}
+	}
+
+	private class AddValueAction extends ISlotNodeAction {
+
+		protected void perform() {
+
+			IValue value = checkObtainValue();
+
+			if (value != null) {
+
+				addValue(value);
+			}
+		}
+	}
+
+	private class RemoveValueAction extends GNodeAction {
+
+		private IValue value;
+
+		protected void perform() {
+
+			removeValue(value);
 		}
 
-		protected void visit(MFrame type) {
+		RemoveValueAction(IValue value) {
 
-			created = new CFrameValuesNode(tree, slot);
+			this.value = value;
+		}
+	}
+
+	private class ClearValuesAction extends ISlotNodeAction {
+
+		protected void perform() {
+
+			slot.getValuesEditor().clear();
+		}
+	}
+
+	private class ValueNodes extends KListDerivedChildNodes<IValue> {
+
+		ValueNodes() {
+
+			super(ISlotNode.this, slot.getValues());
 		}
 
-		IValuesNode create() {
+		GNode createChildNode(IValue value) {
 
-			visit(slot.getValueType());
-
-			return created;
+			return createValueNode(value);
 		}
 	}
 
 	protected void addInitialChildren() {
 
-		addChild(new ValuesNodeCreator().create());
+		valueNodes.addInitialChildNodes();
 	}
 
-	protected boolean autoExpand() {
+	protected GNodeAction getPositiveAction() {
 
-		return false;
+		return new AddValueAction();
+	}
+
+	protected GNodeAction getNegativeAction() {
+
+		return new ClearValuesAction();
 	}
 
 	protected GCellDisplay getDisplay() {
@@ -82,7 +132,36 @@ class ISlotNode extends GNode {
 
 		super(tree);
 
-		this.tree = tree;
 		this.slot = slot;
+
+		valueNodes = new ValueNodes();
+
+		slot.addListener(new DisplayUpdater());
+	}
+
+	abstract IValue checkObtainValue();
+
+	abstract GNode createValueNode(IValue value);
+
+	GNodeAction getRemoveValueAction(IValue value) {
+
+		return editableSlot()
+					? new RemoveValueAction(value)
+					: GNodeAction.INERT_ACTION;
+	}
+
+	void addValue(IValue value) {
+
+		slot.getValuesEditor().add(value);
+	}
+
+	void removeValue(IValue value) {
+
+		slot.getValuesEditor().remove(value);
+	}
+
+	private boolean editableSlot() {
+
+		return slot.getEditability().editable();
 	}
 }

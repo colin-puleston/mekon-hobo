@@ -26,80 +26,77 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
-
 /**
  * @author Colin Puleston
  */
-class INumberValuesNode extends IValuesNode {
+class SlotLabeller {
 
-	private ITree tree;
-	private ISlot slot;
+	static String getCardinalityModifier(CCardinality cardinality) {
 
-	private class ValueNode extends GNode {
+		switch (cardinality) {
 
-		private INumber number;
+			case SINGLETON:
+				return "(?)";
 
-		protected GNodeAction getNegativeAction() {
+			case UNIQUE_TYPES:
+				return "{...}";
 
-			return getRemoveValueAction(number);
+			case FREE:
+				return "[...]";
 		}
 
-		protected GCellDisplay getDisplay() {
-
-			return EntityDisplays.get().get(number);
-		}
-
-		ValueNode(INumber number) {
-
-			super(tree);
-
-			this.number = number;
-		}
+		throw new Error("Unrecognised cardinality value: " + cardinality);
 	}
 
-	protected GCellDisplay getDisplay() {
+	static String modifyForValueLevel(String label, boolean conceptLevel) {
 
-		return EntityDisplays.get().get(getValueType(), true);
+		return conceptLevel ? "(" + label + ")" : "<" + label + ">";
 	}
 
-	INumberValuesNode(ITree tree, ISlot slot) {
+	private CSlot slot;
 
-		super(tree, slot);
+	SlotLabeller(CSlot slot) {
 
-		this.tree = tree;
 		this.slot = slot;
 	}
 
-	GNode createValueNode(IValue value) {
+	String get(boolean forISlot) {
 
-		return new ValueNode(asINumber(value));
+		return slot.getDisplayLabel() + " " + getSuffix(forISlot);
 	}
 
-	IValue checkObtainValue() {
+	private String getSuffix(boolean forISlot) {
 
-		return createSelector().getSelectionOrNull();
+		return forISlot ? getISlotSuffix() : getCardinalityModifier();
 	}
 
-	private INumberSelector createSelector() {
+	private String getISlotSuffix() {
 
-		boolean rangeEnabled = abstractEditableSlot();
+		String label = slot.getValueType().getDisplayLabel();
 
-		return new INumberSelector(tree, getValueType(), rangeEnabled);
+		label = modifyForValueLevel(label);
+		label = modifyForCardinality(label);
+
+		return label;
 	}
 
-	private INumber asINumber(IValue value) {
+	private String modifyForValueLevel(String label) {
 
-		return getValueType().castValue(value);
+		return modifyForValueLevel(label, conceptLevelValue());
 	}
 
-	private CNumber getValueType() {
+	private String modifyForCardinality(String label) {
 
-		return slot.getValueType().castAs(CNumber.class);
+		return label + " " + getCardinalityModifier();
 	}
 
-	private boolean abstractEditableSlot() {
+	private String getCardinalityModifier() {
 
-		return slot.getEditability().abstractEditable();
+		return getCardinalityModifier(slot.getCardinality());
+	}
+
+	private boolean conceptLevelValue() {
+
+		return slot.getValueType() instanceof MFrame;
 	}
 }
