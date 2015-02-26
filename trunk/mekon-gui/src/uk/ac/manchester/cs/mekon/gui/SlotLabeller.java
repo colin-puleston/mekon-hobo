@@ -36,13 +36,13 @@ class SlotLabeller {
 		switch (cardinality) {
 
 			case SINGLETON:
-				return "(?)";
+				return "{x}";
 
 			case UNIQUE_TYPES:
-				return "{...}";
+				return "{x,y,z}";
 
 			case FREE:
-				return "[...]";
+				return "[x,y,z]";
 		}
 
 		throw new Error("Unrecognised cardinality value: " + cardinality);
