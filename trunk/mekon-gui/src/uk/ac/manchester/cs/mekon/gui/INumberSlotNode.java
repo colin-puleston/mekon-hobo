@@ -24,45 +24,77 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
  * @author Colin Puleston
  */
-class SlotLabels {
+class INumberSlotNode extends ISlotNode {
 
-	static private Map<CCardinality, String> CARDINALITY_MODIFIERS
-									= new HashMap<CCardinality, String>();
+	private ITree tree;
+	private ISlot slot;
 
-	static {
+	private class ValueNode extends GNode {
 
-		CARDINALITY_MODIFIERS.put(CCardinality.FREE, "[ ]");
-		CARDINALITY_MODIFIERS.put(CCardinality.UNIQUE_TYPES, "{ }");
+		private INumber number;
+
+		protected GNodeAction getNegativeAction() {
+
+			return getRemoveValueAction(number);
+		}
+
+		protected GCellDisplay getDisplay() {
+
+			return EntityDisplays.get().get(number);
+		}
+
+		ValueNode(INumber number) {
+
+			super(tree);
+
+			this.number = number;
+		}
 	}
 
-	static String get(CSlot slot) {
+	INumberSlotNode(ITree tree, ISlot slot) {
 
-		return slot.getDisplayLabel() + getSuffix(slot);
+		super(tree, slot);
+
+		this.tree = tree;
+		this.slot = slot;
 	}
 
-	static String getCardinalityModifierHelp(CCardinality cardinality) {
+	GNode createValueNode(IValue value) {
 
-		String modifier = getCardinalityModifier(cardinality);
-
-		return modifier != null ? "\"" + modifier + "\"" : "<NONE>";
+		return new ValueNode(asINumber(value));
 	}
 
-	static private String getSuffix(CSlot slot) {
+	IValue checkObtainValue() {
 
-		String modifier = getCardinalityModifier(slot.getCardinality());
-
-		return modifier != null ? (" " + modifier) : "";
+		return createSelector().getSelectionOrNull();
 	}
 
-	static private String getCardinalityModifier(CCardinality cardinality) {
+	private INumberSelector createSelector() {
 
-		return CARDINALITY_MODIFIERS.get(cardinality);
+		boolean rangeEnabled = abstractEditableSlot();
+
+		return new INumberSelector(tree, getValueType(), rangeEnabled);
+	}
+
+	private INumber asINumber(IValue value) {
+
+		return getValueType().castValue(value);
+	}
+
+	private CNumber getValueType() {
+
+		return slot.getValueType().castAs(CNumber.class);
+	}
+
+	private boolean abstractEditableSlot() {
+
+		return slot.getEditability().abstractEditable();
 	}
 }

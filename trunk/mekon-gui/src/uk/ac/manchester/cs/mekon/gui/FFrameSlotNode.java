@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
+abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 	private ITree tree;
 	private ISlot slot;
@@ -109,7 +109,7 @@ abstract class FFrameValuesNode<F extends IValue> extends IValuesNode {
 		}
 	}
 
-	FFrameValuesNode(ITree tree, ISlot slot) {
+	FFrameSlotNode(ITree tree, ISlot slot) {
 
 		super(tree, slot);
 

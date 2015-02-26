@@ -39,7 +39,6 @@ class HelpPanel extends JTabbedPane {
 
 	static private final EntityLevel DEFAULT_LEVEL = EntityLevel.CONCEPT;
 	static private final CSource DEFAULT_SOURCE = CSource.UNSPECIFIED;
-	static private final String NOT_APPLICABLE_STRING = "N/A";
 	static private final String LEFT_CLICK_STRING = "LEFT-CLICK";
 	static private final String RIGHT_CLICK_STRING = "RIGHT-CLICK";
 
@@ -290,14 +289,24 @@ class HelpPanel extends JTabbedPane {
 				addSlotCardinalityModifier(CCardinality.FREE);
 				addSlotCardinalityModifier(CCardinality.UNIQUE_TYPES);
 				addSlotCardinalityModifier(CCardinality.SINGLETON);
+				addSlotValueTypeModifier("concept", true);
+				addSlotValueTypeModifier("instance-or-number", false);
 			}
 
 			private void addSlotCardinalityModifier(CCardinality cardinality) {
 
 				addRow(
 					"CSlot, ISlot",
-					SlotLabels.getCardinalityModifierHelp(cardinality),
+					SlotLabeller.getCardinalityModifier(cardinality),
 					"Cardinality = " + cardinality);
+			}
+
+			private void addSlotValueTypeModifier(String valueType, boolean conceptLevel) {
+
+				addRow(
+					"ISlot",
+					SlotLabeller.modifyForValueLevel("VALUE-TYPE", conceptLevel),
+					"Slot is " + valueType + "-valued with specified value-type");
 			}
 		}
 
@@ -333,27 +342,27 @@ class HelpPanel extends JTabbedPane {
 				checkAddRow(
 					cValueShape,
 					defaultSlotShape,
-					"CFrame-has-slot",
+					"CFrame has slot",
 					false);
 				checkAddRow(
 					defaultSlotShape,
 					mValueShape,
-					"CSlot-has-MFrame-value-type",
+					"CSlot has MFrame-value-type",
 					false);
 				checkAddRow(
 					defaultSlotShape,
 					cValueShape,
-					"CSlot-has-CFrame/CNumber-value-type",
+					"CSlot has CFrame/CNumber-value-type",
 					false);
 				checkAddRow(
 					mValueShape,
 					mValueShape,
-					"MFrame-has-sub-frame",
+					"MFrame has sub-frame",
 					false);
 				checkAddRow(
 					cValueShape,
 					cValueShape,
-					"CFrame-has-sub-frame ",
+					"CFrame has sub-frame ",
 					true);
 			}
 
@@ -391,33 +400,20 @@ class HelpPanel extends JTabbedPane {
 
 				super("Tree Semantics");
 
-				addColumns("Parent", "Child", "Grandchild", "Represents");
+				addColumns("Parent", "Child", "Represents");
 
 				addRow(
 					iValueShape,
 					defaultSlotShape,
-					NOT_APPLICABLE_STRING,
-					"IFrame-has-slot");
-				addRow(
-					defaultSlotShape,
-					mValueShape,
-					NOT_APPLICABLE_STRING,
-					"ISlot-has-MFrame-value-type");
+					"IFrame has slot");
 				addRow(
 					defaultSlotShape,
 					cValueShape,
-					NOT_APPLICABLE_STRING,
-					"ISlot-has-CFrame-value-type");
+					"ISlot has CFrame-value");
 				addRow(
 					defaultSlotShape,
-					mValueShape,
-					cValueShape,
-					"ISlot-with-MFrame-value-type-has-CFrame-value");
-				addRow(
-					defaultSlotShape,
-					cValueShape,
 					iValueShape,
-					"ISlot-with-CFrame-value-type-has-IFrame-value");
+					"ISlot has IFrame/INumber-value");
 			}
 		}
 
@@ -474,7 +470,7 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					"ALL",
-					"\"" + ITree.UPDATED_NODE_MARKER + "\"",
+					ITree.UPDATED_NODE_MARKER,
 					"Entity, or non-visible descendant(s), affected by latest action");
 			}
 		}

@@ -38,6 +38,39 @@ class IFrameNode extends GNode {
 
 	private ValueNodes valueNodes;
 
+	private class SlotNodeCreator extends CValueVisitor {
+
+		private ISlot slot;
+		private ISlotNode created = null;
+
+		protected void visit(CFrame type) {
+
+			created = new IFrameSlotNode(tree, slot);
+		}
+
+		protected void visit(CNumber type) {
+
+			created = new INumberSlotNode(tree, slot);
+		}
+
+		protected void visit(MFrame type) {
+
+			created = new CFrameSlotNode(tree, slot);
+		}
+
+		SlotNodeCreator(ISlot slot) {
+
+			this.slot = slot;
+		}
+
+		ISlotNode create() {
+
+			visit(slot.getValueType());
+
+			return created;
+		}
+	}
+
 	private class ValueNodes extends KListDerivedChildNodes<ISlot> {
 
 		ValueNodes() {
@@ -52,7 +85,7 @@ class IFrameNode extends GNode {
 
 		GNode createChildNode(ISlot slot) {
 
-			return new ISlotNode(tree, slot);
+			return new SlotNodeCreator(slot).create();
 		}
 	}
 

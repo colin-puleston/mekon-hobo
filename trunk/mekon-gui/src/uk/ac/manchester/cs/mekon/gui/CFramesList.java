@@ -86,6 +86,6 @@ class CFramesList extends GList<CFrame> {
 
 	private void addFrame(CFrame frame) {
 
-		addEntity(frame, EntityDisplays.get().get(frame, false));
+		addEntity(frame, EntityDisplays.get().get(frame));
 	}
 }

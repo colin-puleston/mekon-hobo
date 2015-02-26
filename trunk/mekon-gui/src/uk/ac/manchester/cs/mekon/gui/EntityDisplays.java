@@ -50,37 +50,37 @@ class EntityDisplays {
 
 	GCellDisplay get(IFrame frame) {
 
-		return getValueDisplay(frame, icons.get(frame), false);
+		return getValueDisplay(frame, icons.get(frame));
 	}
 
 	GCellDisplay get(INumber number) {
 
-		return getValueDisplay(number, icons.get(number), false);
+		return getValueDisplay(number, icons.get(number));
 	}
 
-	GCellDisplay get(CFrame frame, boolean isValueType) {
+	GCellDisplay get(CFrame frame) {
 
-		return getValueDisplay(frame, icons.get(frame), isValueType);
+		return getValueDisplay(frame, icons.get(frame));
 	}
 
-	GCellDisplay get(CNumber number, boolean isValueType) {
+	GCellDisplay get(CNumber number) {
 
-		return getValueDisplay(number, icons.get(number), isValueType);
+		return getValueDisplay(number, icons.get(number));
 	}
 
-	GCellDisplay get(MFrame frame, boolean isValueType) {
+	GCellDisplay get(MFrame frame) {
 
-		return getValueDisplay(frame, icons.get(frame), isValueType);
+		return getValueDisplay(frame, icons.get(frame));
 	}
 
 	GCellDisplay get(CSlot slot) {
 
-		return getSlotDisplay(slot, icons.get(slot));
+		return getSlotDisplay(slot, icons.get(slot), false);
 	}
 
 	GCellDisplay get(ISlot slot) {
 
-		return getSlotDisplay(slot.getType(), icons.get(slot));
+		return getSlotDisplay(slot.getType(), icons.get(slot), true);
 	}
 
 	GCellDisplay get(String label, Icon icon, FontStyle fontStyle) {
@@ -93,16 +93,19 @@ class EntityDisplays {
 		return get(slotId.getLabel(), icons.forCSlotValues(), FontStyle.LINK);
 	}
 
-	private GCellDisplay getValueDisplay(FEntity value, Icon icon, boolean isValueType) {
+	private GCellDisplay getValueDisplay(FEntity value, Icon icon) {
 
-		FontStyle fontStyle = isValueType ? FontStyle.LINK_INFO : FontStyle.NODE;
-
-		return get(value.getDisplayLabel(), icon, fontStyle);
+		return get(value.getDisplayLabel(), icon, FontStyle.NODE);
 	}
 
-	private GCellDisplay getSlotDisplay(CSlot slot, Icon icon) {
+	private GCellDisplay getSlotDisplay(CSlot slot, Icon icon, boolean forISlot) {
 
-		return get(SlotLabels.get(slot), icon, FontStyle.LINK);
+		return get(getSlotLabel(slot, forISlot), icon, FontStyle.LINK);
+	}
+
+	private String getSlotLabel(CSlot slot, boolean forISlot) {
+
+		return new SlotLabeller(slot).get(forISlot);
 	}
 
 	private GCellDisplay createFixedValuesDisplay() {

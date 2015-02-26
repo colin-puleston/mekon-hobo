@@ -39,7 +39,7 @@ class CNumberNode extends GNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return EntityDisplays.get().get(cNumber, false);
+		return EntityDisplays.get().get(cNumber);
 	}
 
 	CNumberNode(CTree tree, CNumber cNumber) {
