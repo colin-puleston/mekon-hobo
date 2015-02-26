@@ -25,34 +25,9 @@
 package uk.ac.manchester.cs.mekon.owl.build;
 
 /**
- * Represents a set of attributes that will determine the details
- * of the entities generated in the Frames Model (FM) for a
- * particular OWL class.
- *
  * @author Colin Puleston
  */
-public class OBConceptAttributes extends OBAttributes<OBConceptAttributes> {
+abstract class OBAttributes<A extends OBAttributes<A>> {
 
-	private boolean hidden = false;
-
-	/**
-	 * Sets a value for the attribute that determines whether the
-	 * concept will be used to generate a "hidden" frame.
-	 *
-	 * @param value Value for attribute
-	 */
-	public void setHidden(boolean value) {
-
-		hidden = value;
-	}
-
-	void absorb(OBConceptAttributes attributes) {
-
-		hidden |= attributes.hidden;
-	}
-
-	boolean hidden() {
-
-		return hidden;
-	}
+	abstract void absorb(A attributes);
 }

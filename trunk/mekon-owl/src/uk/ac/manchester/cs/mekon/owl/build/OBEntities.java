@@ -37,12 +37,15 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup, A> {
+public abstract class OBEntities
+						<E extends OWLEntity,
+						G extends OBEntityGroup,
+						A extends OBAttributes<A>> {
 
 	private OModel model;
 
 	private Set<E> entities = new HashSet<E>();
-	private Map<E, A> attributes = new HashMap<E, A>();
+	private Map<E, A> entitiesToAttributes = new HashMap<E, A>();
 
 	/**
 	 * Adds an entity to the set.
@@ -61,7 +64,7 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup, A
 	 */
 	public void addAll(Collection<E> entities) {
 
-		for (E entity : entities) {
+		for (E entity : entitiesToAttributes.keySet()) {
 
 			add(entity);
 		}
@@ -114,7 +117,7 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup, A
 	 */
 	public A getAttributes(E entity) {
 
-		A attrs = attributes.get(entity);
+		A attrs = entitiesToAttributes.get(entity);
 
 		if (attrs == null) {
 
@@ -133,9 +136,14 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup, A
 
 	void add(E entity, A attributes) {
 
-		entities.add(entity);
+		if (entitiesToAttributes.containsKey(entity)) {
 
-		this.attributes.put(entity, attributes);
+			entitiesToAttributes.get(entity).absorb(attributes);
+		}
+		else {
+
+			entitiesToAttributes.put(entity, attributes);
+		}
 	}
 
 	abstract void addGroupEntity(G group, E entity, boolean isRoot);
@@ -144,12 +152,12 @@ public abstract class OBEntities<E extends OWLEntity, G extends OBEntityGroup, A
 
 	Set<E> getAll() {
 
-		if (entities.isEmpty()) {
+		if (entitiesToAttributes.isEmpty()) {
 
 			addAll(getAllInModel());
 		}
 
-		return entities;
+		return entitiesToAttributes.keySet();
 	}
 
 	boolean containsAllInSignature(OWLClassExpression expression) {
