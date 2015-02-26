@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public class OBPropertyAttributes {
+public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
 	private boolean frameSource = false;
 	private CEditability slotEditability = CEditability.DEFAULT;
@@ -62,6 +62,12 @@ public class OBPropertyAttributes {
 	public void setSlotEditability(CEditability slotEditability) {
 
 		this.slotEditability = slotEditability;
+	}
+
+	void absorb(OBPropertyAttributes attributes) {
+
+		frameSource |= attributes.frameSource;
+		slotEditability = slotEditability.getStrongest(attributes.slotEditability);
 	}
 
 	boolean frameSource() {
