@@ -348,7 +348,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 			limits += ("-" + maxToString());
 		}
 
-		return "[" + limits + "]";
+		return limits;
 	}
 
 	private CNumber createCNumber(INumber min, INumber max) {
@@ -368,7 +368,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 	private String getDescription() {
 
-		return numberType.getSimpleName() + getLimitsString();
+		return numberType.getSimpleName() + " " + getLimitsString();
 	}
 
 	private String minToString() {
