@@ -69,9 +69,12 @@ class InstantiableDClassFinder {
 
 			DBinding binding = model.getBindings().getOrNull(frame);
 
-			if (binding != null && instantiableDClass(binding)) {
+			if (binding != null) {
 
-				found.add(binding);
+				if (instantiableDescendantOfBase(binding.getDClass())) {
+
+					found.add(binding);
+				}
 			}
 			else {
 
@@ -88,6 +91,11 @@ class InstantiableDClassFinder {
 					searchFrom(sup);
 				}
 			}
+		}
+
+		private boolean instantiableDescendantOfBase(Class<? extends DObject> dClass) {
+
+			return dBaseClass.isAssignableFrom(dClass) && instantiable(dClass);
 		}
 	}
 
@@ -184,12 +192,5 @@ class InstantiableDClassFinder {
 	private Set<DBinding> findAll(CFrame type) {
 
 		return new Searcher().findAll(type);
-	}
-
-	private boolean instantiableDClass(DBinding binding) {
-
-		Class<? extends DObject> dClass = binding.getDClass();
-
-		return instantiable(dClass) && dBaseClass.isAssignableFrom(dClass);
 	}
 }
