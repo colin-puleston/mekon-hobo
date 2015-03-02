@@ -213,7 +213,7 @@ public class ORMatcher implements IMatcher {
 		ConceptExpression queryExpr = createConceptExpression(query);
 		List<CIdentity> matches = queryExpr.getMatchingInstances();
 
-		return new IMatches(purgeMatches(matches), false);
+		return new IMatches(purgeMatches(matches));
 	}
 
 	/**

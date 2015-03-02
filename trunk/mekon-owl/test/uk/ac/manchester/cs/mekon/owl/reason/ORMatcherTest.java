@@ -366,7 +366,7 @@ public class ORMatcherTest extends OTest {
 
 	private void testMatching(IFrame query, CIdentity... expectedMatchIds) {
 
-		List<CIdentity> matchIds = matcher.match(query).getMatches();
+		List<CIdentity> matchIds = matcher.match(query).getAllMatches();
 
 		testListContents(matchIds, list(expectedMatchIds));
 
