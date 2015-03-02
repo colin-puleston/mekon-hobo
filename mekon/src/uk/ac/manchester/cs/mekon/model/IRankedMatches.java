@@ -22,48 +22,56 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
+package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.*;
 
 /**
- * Provides mechanisms for editing a specific {@link ISlot} object.
+ * Represents the ranked results of an instance-matching query
+ * executed via an {@link IStore} object.
  *
  * @author Colin Puleston
  */
-public interface ISlotEditor {
+public class IRankedMatches extends IMatches {
 
 	/**
-	 * Re-sets the value-type for the slot.
-	 *
-	 * @param valueType New value-type for slot
-	 * @return True if value-type has been updated.
+	 * Constructs object to represent a set of un-ranked matches.
 	 */
-	public boolean setValueType(CValue<?> valueType);
+	public IRankedMatches() {
+
+		super(true);
+	}
 
 	/**
-	 * Re-sets the "active" status of the slot.
+	 * Constructs object to represent a set of ranked matches.
 	 *
-	 * @param active Status to set
-	 * @return True if status has been updated.
+	 * @param ranks Ranks of matches ordered by ranking-value,
+	 * highest first
+	 * @throws KModelException If ranks are not strictly ordered
+	 * by ranking-value
 	 */
-	public boolean setActive(boolean active);
+	public IRankedMatches(List<IMatchesRank> ranks) {
+
+		super(true);
+
+		for (IMatchesRank rank : ranks) {
+
+			addRank(rank);
+		}
+	}
 
 	/**
-	 * Re-sets the editability of the slot.
+	 * Adds an additional rank of matches, with a lower ranking-value
+	 * than previously added rank.
 	 *
-	 * @param editability Editability to set
-	 * @return True if editability has been updated.
+	 * @param rank Next rank of matches
+	 * @throws KModelException If rank does not have a strictly lower
+	 * ranking-value than previous rank
 	 */
-	public boolean setEditability(CEditability editability);
+	public void addNextRank(IMatchesRank rank) {
 
-	/**
-	 * Re-sets the fixed values for the slot.
-	 *
-	 * @param fixedValues New fixed values for slot
-	 * @return True if fixed values set has been updated
-	 */
-	public boolean setFixedValues(List<IValue> fixedValues);
+		addRank(rank);
+	}
 }

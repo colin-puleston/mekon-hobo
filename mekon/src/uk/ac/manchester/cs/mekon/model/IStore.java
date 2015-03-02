@@ -150,7 +150,11 @@ public class IStore {
 	 */
 	public IMatches match(IFrame query) {
 
-		return resolveLabels(getMatcher(query).match(query));
+		IMatches matches = getMatcher(query).match(query);
+
+		matches.resolveLabels(labels);
+
+		return matches;
 	}
 
 	/**
@@ -254,30 +258,6 @@ public class IStore {
 		}
 
 		return InertIMatcher.get();
-	}
-
-	private IMatches resolveLabels(IMatches matches) {
-
-		List<CIdentity> resolvedIds = new ArrayList<CIdentity>();
-
-		for (CIdentity identity : matches.getMatches()) {
-
-			resolvedIds.add(resolveLabel(identity));
-		}
-
-		return new IMatches(resolvedIds, matches.ranked());
-	}
-
-	private CIdentity resolveLabel(CIdentity identity) {
-
-		String label = labels.get(identity);
-
-		if (label == null) {
-
-			return identity;
-		}
-
-		return new CIdentity(identity.getIdentifier(), label);
 	}
 
 	private void writeToFile() {
