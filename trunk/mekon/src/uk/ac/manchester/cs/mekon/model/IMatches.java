@@ -26,9 +26,14 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
- * Represents the results of an instance-matching query
- * executed via an {@link IStore} object.
+ * Represents the results of an instance-matching query executed
+ * via an {@link IStore} object. The set of results can optionally
+ * be ranked to reflect some measure of the degree to which each
+ * result matches the query (such a set can be specified via the
+ * {@link IRankedMatches} class, which extends this one).
  *
  * @author Colin Puleston
  */
@@ -39,21 +44,29 @@ public class IMatches {
 	 */
 	static public final IMatches NO_MATCHES = new IMatches();
 
-	private List<CIdentity> matches;
+	private List<IMatchesRank> ranks = new ArrayList<IMatchesRank>();
 	private boolean ranked;
 
 	/**
-	 * Constructor.
+	 * Constructs object to represent a set of un-ranked matches.
 	 *
-	 * @param matches Identities of all matching instances (see
-	 * {@link #getMatches}
-	 * @param ranked True if matches-list is ranked (see
-	 * {@link #ranked}
+	 * @param matches Identities of all matching instances
 	 */
-	public IMatches(List<CIdentity> matches, boolean ranked) {
+	public IMatches(List<CIdentity> matches) {
 
-		this.matches = new ArrayList<CIdentity>(matches);
-		this.ranked = ranked;
+		this(true);
+
+		addRank(new IMatchesRank(matches, 0));
+	}
+
+	/**
+	 * Specifies whether matches are ranked.
+	 *
+	 * @return True if matches are ranked
+	 */
+	public boolean ranked() {
+
+		return ranked;
 	}
 
 	/**
@@ -63,33 +76,74 @@ public class IMatches {
 	 */
 	public boolean anyMatches() {
 
-		return !matches.isEmpty();
+		return !ranks.isEmpty();
 	}
 
 	/**
-	 * Provides the identities of all instances that match the
-	 * relevant query.
+	 * Provides a list of all instances that match the relevant
+	 * query. If the matches have been ranked then those with a
+	 * greater ranking-value will appear earlier in the list.
 	 *
 	 * @return Identities of all relevant instances
 	 */
-	public List<CIdentity> getMatches() {
+	public List<CIdentity> getAllMatches() {
 
-		return new ArrayList<CIdentity>(matches);
+		List<CIdentity> matches = new ArrayList<CIdentity>();
+
+		for (IMatchesRank rank : ranks) {
+
+			matches.addAll(rank.getMatches());
+		}
+
+		return matches;
 	}
 
 	/**
-	 * Specifies whether order of matches-list represents some
-	 * form of relevance ranking (most-relevant first).
+	 * Provides a list of the ranks of matches ordered by
+	 * ranking-value, highest first. If the matches are not ranked
+	 * then they will be provided as a single rank with a
+	 * ranking-value of zero.
 	 *
-	 * @return True if matches-list is ranked
+	 * @return Ranks of matches ordered by ranking-value, highest
+	 * first
 	 */
-	public boolean ranked() {
+	public List<IMatchesRank> getRanks() {
 
-		return ranked;
+		return new ArrayList<IMatchesRank>(ranks);
+	}
+
+	IMatches(boolean ranked) {
+
+		this.ranked = ranked;
+	}
+
+	void addRank(IMatchesRank rank) {
+
+		if (!ranks.isEmpty()) {
+
+			IMatchesRank previousRank = ranks.get(ranks.size() - 1);
+
+			if (rank.getRankingValue() >= previousRank.getRankingValue()) {
+
+				throw new KModelException(
+							"Attempting to add rank whose ranking-value "
+							+ "is not greater than that of last added rank");
+			}
+		}
+
+		ranks.add(rank);
+	}
+
+	void resolveLabels(Map<CIdentity, String> labels) {
+
+		for (IMatchesRank rank : ranks) {
+
+			rank.resolveLabels(labels);
+		}
 	}
 
 	private IMatches() {
 
-		this(Collections.<CIdentity>emptyList(), false);
+		this(Collections.<CIdentity>emptyList());
 	}
 }

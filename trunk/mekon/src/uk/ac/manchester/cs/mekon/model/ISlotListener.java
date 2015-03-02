@@ -32,16 +32,23 @@ package uk.ac.manchester.cs.mekon.model;
 public interface ISlotListener {
 
 	/**
-	 * Method invoked after the slots value-type has been updated.
+	 * Method invoked after the slot's value-type has been updated.
 	 *
 	 * @param valueType New value-type for slot
 	 */
 	public void onUpdatedValueType(CValue<?> valueType);
 
 	/**
-	 * Method invoked after the slots "active" status has been updated.
+	 * Method invoked after the slot's "active" status has been updated.
 	 *
 	 * @param active New active status
 	 */
 	public void onUpdatedActiveStatus(boolean active);
+
+	/**
+	 * Method invoked after the slot's editability has been updated.
+	 *
+	 * @param editability New editability
+	 */
+	public void onUpdatedEditability(CEditability editability);
 }

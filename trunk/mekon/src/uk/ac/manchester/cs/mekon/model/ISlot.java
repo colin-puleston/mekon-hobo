@@ -69,6 +69,18 @@ public class ISlot implements IEntity {
 			return false;
 		}
 
+		public boolean setEditability(CEditability editability) {
+
+			if (type.setEditability(editability)) {
+
+				pollListenersForUpdatedEditability();
+
+				return true;
+			}
+
+			return false;
+		}
+
 		public boolean setFixedValues(List<IValue> fixedValues) {
 
 			return values.updateFixedValues(fixedValues);
@@ -226,6 +238,14 @@ public class ISlot implements IEntity {
 		for (ISlotListener listener : copyListeners()) {
 
 			listener.onUpdatedActiveStatus(type.active());
+		}
+	}
+
+	private void pollListenersForUpdatedEditability() {
+
+		for (ISlotListener listener : copyListeners()) {
+
+			listener.onUpdatedEditability(type.getEditability());
 		}
 	}
 

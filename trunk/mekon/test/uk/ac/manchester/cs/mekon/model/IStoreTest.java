@@ -77,7 +77,7 @@ public class IStoreTest extends MekonTest {
 
 			assertTrue(query == this.query);
 
-			return new IMatches(getInstanceIdentityAsList(), false);
+			return new IMatches(getInstanceIdentityAsList());
 		}
 
 		public boolean matches(IFrame query, IFrame instance) {
@@ -111,7 +111,7 @@ public class IStoreTest extends MekonTest {
 
 			List<CIdentity> matchIds = getInstanceIdentityAsList();
 
-			assertTrue(store.match(query).getMatches().equals(matchIds));
+			assertTrue(store.match(query).getAllMatches().equals(matchIds));
 			assertTrue(store.matches(query, instance));
 		}
 
