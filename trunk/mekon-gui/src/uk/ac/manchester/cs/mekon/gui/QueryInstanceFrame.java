@@ -158,7 +158,7 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 		list.addSelectionListener(new MatchDisplayer());
 
-		for (CIdentity match : matches.getMatches()) {
+		for (CIdentity match : matches.getAllMatches()) {
 
 			list.addEntity(match, new GCellDisplay(match.getLabel()));
 		}
