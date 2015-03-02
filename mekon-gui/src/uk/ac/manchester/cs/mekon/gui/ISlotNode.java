@@ -49,6 +49,11 @@ abstract class ISlotNode extends GNode {
 
 			notifyUpdatedDisplay();
 		}
+
+		public void onUpdatedEditability(CEditability editability) {
+
+			notifyUpdatedDisplay();
+		}
 	}
 
 	private abstract class ISlotNodeAction extends GNodeAction {
