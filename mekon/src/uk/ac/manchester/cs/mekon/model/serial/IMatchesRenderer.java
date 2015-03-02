@@ -24,37 +24,52 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.serial.*;
+
 /**
+ * Renders an XML document to represent the serialised contents
+ * of an {@link IMatches} object.
+ *
  * @author Colin Puleston
  */
-abstract class ISerialiser extends FSerialiser {
+public class IMatchesRenderer extends ISerialiser {
 
-	static final String STORE_ID = "Store";
-	static final String INSTANCE_ID = "Instance";
+	/**
+	 */
+	public XDocument render(IMatches matches) {
 
-	static final String ITREE_ID = "ITree";
-	static final String IGRAPH_ID = "IGraph";
+		XDocument document = new XDocument(MATCHES_ID);
 
-	static final String MFRAME_ID = "MFrame";
-	static final String CNUMBER_ID = "CNumber";
-	static final String CSLOT_ID = "CSlot";
-	static final String IFRAME_ID = "IFrame";
-	static final String INUMBER_ID = "INumber";
-	static final String ISLOT_ID = "ISlot";
-	static final String IVALUES_ID = "IValues";
+		renderMatches(matches, document.getRootNode());
 
-	static final String MATCHES_ID = "Matches";
-	static final String MATCHES_RANK_ID = "Rank";
-	static final String MATCH_ID = "Match";
+		return document;
+	}
 
-	static final String IFRAME_REF_INDEX_ATTR = "refIndex";
-	static final String NUMBER_TYPE_ATTR = "numberType";
-	static final String NUMBER_MIN_ATTR = "min";
-	static final String NUMBER_MAX_ATTR = "max";
-	static final String NUMBER_VALUE_ATTR = "value";
-	static final String CARDINALITY_ATTR = "cardinality";
-	static final String EDITABILITY_ATTR = "editability";
+	/**
+	 */
+	public void render(IMatches matches, XNode parentNode) {
 
-	static final String RANKED_ATTR = "ranked";
-	static final String RANK_VALUE_ATTR = "rankValue";
+		renderMatches(matches, parentNode.addChild(MATCHES_ID));
+	}
+
+	private void renderMatches(IMatches matches, XNode node) {
+
+		node.addValue(RANKED_ATTR, matches.ranked());
+
+		for (IMatchesRank rank : matches.getRanks()) {
+
+			renderRank(rank, node.addChild(MATCHES_RANK_ID));
+		}
+	}
+
+	private void renderRank(IMatchesRank rank, XNode node) {
+
+		node.addValue(RANK_VALUE_ATTR, rank.getRankingValue());
+
+		for (CIdentity match : rank.getMatches()) {
+
+			renderIdentity(match, node.addChild(MATCH_ID));
+		}
+	}
 }
