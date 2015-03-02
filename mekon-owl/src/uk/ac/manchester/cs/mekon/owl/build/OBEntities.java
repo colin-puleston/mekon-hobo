@@ -44,7 +44,6 @@ public abstract class OBEntities
 
 	private OModel model;
 
-	private Set<E> entities = new HashSet<E>();
 	private Map<E, A> entitiesToAttributes = new HashMap<E, A>();
 
 	/**
@@ -64,7 +63,7 @@ public abstract class OBEntities
 	 */
 	public void addAll(Collection<E> entities) {
 
-		for (E entity : entitiesToAttributes.keySet()) {
+		for (E entity : entities) {
 
 			add(entity);
 		}
