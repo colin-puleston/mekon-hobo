@@ -234,24 +234,14 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return createArray(createConceptValueType(valueClass));
 	}
 
-	private <D extends IValue>DCell<D> createCell(CValue<D> slotValueType) {
+	private <D>DCell<D> createCell(DValueType<D> valueType) {
 
-		return createCell(new DDefaultValueType<D>(slotValueType));
+		return new DCell<D>(model, valueType);
 	}
 
-	private <D extends IValue>DArray<D> createArray(CValue<D> slotValueType) {
+	private <D>DArray<D> createArray(DValueType<D> valueType) {
 
-		return createArray(new DDefaultValueType<D>(slotValueType));
-	}
-
-	private <D>DCell<D> createCell(DValueType<D> slotValueType) {
-
-		return new DCell<D>(model, slotValueType);
-	}
-
-	private <D>DArray<D> createArray(DValueType<D> slotValueType) {
-
-		return new DArray<D>(model, slotValueType);
+		return new DArray<D>(model, valueType);
 	}
 
 	private <D extends DObject>DValueType<D> createObjectValueType(Class<D> valueClass) {

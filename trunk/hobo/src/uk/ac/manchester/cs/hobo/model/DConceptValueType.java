@@ -57,4 +57,9 @@ class DConceptValueType<D extends DObject> extends DValueType<DConcept<D>> {
 
 		return new DConcept<D>(model, valueClass, slotValueType.castValue(value));
 	}
+
+	CCardinality getDefaultCardinalityForArrays() {
+
+		return CCardinality.UNIQUE_TYPES;
+	}
 }

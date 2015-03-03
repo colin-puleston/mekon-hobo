@@ -41,13 +41,22 @@ class HoboTest extends MekonTest {
 		this(new DModel(){});
 	}
 
-	DArray<CFrame> createConceptArray(CCardinality cardinality, CFrame rootFrame) {
+	DObject createDObject(String frameTypeName) {
 
-		MFrame rootMetaFrame = rootFrame.getType();
-		DValueType<CFrame> valueType = new DDefaultValueType<CFrame>(rootMetaFrame);
-		DArray<CFrame> array = new DArray<CFrame>(model, valueType);
+		IFrame frame = createIFrame(frameTypeName);
+		DObject dObject = new DObjectDefault(model, frame);
 
-		array.setSlot(createISlot(cardinality, rootMetaFrame));
+		setIFrameMappedObject(frame, dObject);
+
+		return dObject;
+	}
+
+	DArray<DObject> createDObjectArray(CCardinality cardinality, CFrame rootFrame) {
+
+		DValueType<DObject> valueType = createDObjectValueType(rootFrame);
+		DArray<DObject> array = new DArray<DObject>(model, valueType);
+
+		array.setSlot(createISlot(cardinality, rootFrame));
 
 		return array;
 	}
@@ -73,6 +82,11 @@ class HoboTest extends MekonTest {
 		super(model.getCModel());
 
 		this.model = model;
+	}
+
+	private DValueType<DObject> createDObjectValueType(CFrame rootFrame) {
+
+		return new DObjectValueType<DObject>(model, DObject.class, rootFrame);
 	}
 
 	private DValueType<Integer> createIntegerValueType(CNumberDef definition) {

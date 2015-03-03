@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class DArray<V> extends DField<V> implements DArrayView<V> {
 
-	private boolean uniqueTypes = false;
+	private CCardinality cardinality;
 
 	/**
 	 * Adds specified value to the field (if not already present).
@@ -137,11 +137,13 @@ public class DArray<V> extends DField<V> implements DArrayView<V> {
 	DArray(DModel model, DValueType<V> valueType) {
 
 		super(model, valueType);
+
+		cardinality = valueType.getDefaultCardinalityForArrays();
 	}
 
 	void setUniqueTypes(boolean uniqueTypes) {
 
-		this.uniqueTypes = uniqueTypes;
+		cardinality = uniqueTypes ? CCardinality.UNIQUE_TYPES : CCardinality.FREE;
 	}
 
 	DArrayViewer<V> createViewer() {
@@ -151,6 +153,6 @@ public class DArray<V> extends DField<V> implements DArrayView<V> {
 
 	CCardinality getCardinality() {
 
-		return uniqueTypes ? CCardinality.UNIQUE_TYPES : CCardinality.FREE;
+		return cardinality;
 	}
 }
