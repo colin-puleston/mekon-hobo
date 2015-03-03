@@ -41,4 +41,6 @@ abstract class DValueType<V> {
 
 		return true;
 	}
+
+	abstract CCardinality getDefaultCardinalityForArrays();
 }

@@ -61,6 +61,11 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 		return !slotValueType.castValue(value).indefinite();
 	}
 
+	CCardinality getDefaultCardinalityForArrays() {
+
+		throw new Error("Method should never be invoked!");
+	}
+
 	private CNumber createNumber(CNumberDef definition) {
 
 		checkNumberDef(definition);

@@ -35,37 +35,48 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class DArrayTest extends DFieldTest {
 
-	private CFrame r = createCFrame("ROOT");
-	private CFrame a = createCFrame("A");
-	private CFrame b = createCFrame("B");
-	private CFrame c = createCFrame("C");
-	private CFrame d = createCFrame("D");
+	private DObject dr = createDObject("ROOT");
+	private DObject da = createDObject("A");
+	private DObject db = createDObject("B");
+	private DObject dc = createDObject("C");
+	private DObject dd = createDObject("D");
+
+	private IFrame r = dr.getFrame();
+	private IFrame a = da.getFrame();
+	private IFrame b = db.getFrame();
+	private IFrame c = dc.getFrame();
+	private IFrame d = dd.getFrame();
 
 	public DArrayTest() {
 
-		addSuperFrame(a, r);
-		addSuperFrame(b, r);
-		addSuperFrame(c, r);
+		addSuperFrame(a.getType(), r.getType());
+		addSuperFrame(b.getType(), r.getType());
+		addSuperFrame(c.getType(), r.getType());
 	}
 
 	@Test
 	public void test_directUpdates() {
 
-		DArray<CFrame> array = createConceptArray(CCardinality.FREE, r);
+		DArray<DObject> array = createDObjectArray(CCardinality.FREE, r.getType());
 
-		array.add(a);
-		testArrayValues(array, a);
+		array.add(da);
+		testSlotValues(array, a);
+		testArrayValues(array, da);
 
-		array.addAll(list(b, c));
-		testArrayValues(array, a, b, c);
+		array.addAll(list(db, dc));
+		testSlotValues(array, a, b, c);
+		testArrayValues(array, da, db, dc);
 
-		array.remove(b);
-		testArrayValues(array, a, c);
+		array.remove(db);
+		testSlotValues(array, a, c);
+		testArrayValues(array, da, dc);
 
-		array.update(list(a, b));
-		testArrayValues(array, a, b);
+		array.update(list(da, db));
+		testSlotValues(array, a, b);
+		testArrayValues(array, da, db);
 
 		array.clear();
+		testSlotValues(array);
 		testArrayValues(array);
 
 	}
@@ -73,39 +84,45 @@ public class DArrayTest extends DFieldTest {
 	@Test
 	public void test_backDoorUpdates() {
 
-		DArray<CFrame> array = createConceptArray(CCardinality.FREE, r);
+		DArray<DObject> array = createDObjectArray(CCardinality.FREE, r.getType());
 
 		addSlotValues(array, a);
-		testArrayValues(array, a);
+		testSlotValues(array, a);
+		testArrayValues(array, da);
 
 		addSlotValues(array, b, c);
-		testArrayValues(array, a, b, c);
+		testSlotValues(array, a, b, c);
+		testArrayValues(array, da, db, dc);
 
 		removeSlotValue(array, b);
-		testArrayValues(array, a, c);
+		testSlotValues(array, a, c);
+		testArrayValues(array, da, dc);
 
 		updateSlotValues(array, a, b);
-		testArrayValues(array, a, b);
+		testSlotValues(array, a, b);
+		testArrayValues(array, da, db);
 
 		clearSlotValues(array);
+		testSlotValues(array);
 		testArrayValues(array);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_illegalDirectUpdateFails() {
 
-		createConceptArray(CCardinality.FREE, r).add(d);
+		createDObjectArray(CCardinality.FREE, r.getType()).add(dd);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_illegalBackDoorUpdateFails() {
 
-		addSlotValues(createConceptArray(CCardinality.FREE, r), d);
+		addSlotValues(createDObjectArray(CCardinality.FREE, r.getType()), d);
 	}
 
-	private void testArrayValues(DArray<CFrame> array, CFrame... expectValues) {
+	private void testArrayValues(
+					DArray<DObject> array,
+					DObject... expectValues) {
 
 		testList(array.getAll(), list(expectValues));
-		testSlotValues(array, expectValues);
 	}
 }

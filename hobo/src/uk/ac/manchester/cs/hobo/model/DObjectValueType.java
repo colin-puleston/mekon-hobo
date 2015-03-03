@@ -56,4 +56,9 @@ class DObjectValueType<V extends DObject> extends DValueType<V> {
 
 		return model.getDObject(slotValueType.castValue(value), valueClass);
 	}
+
+	CCardinality getDefaultCardinalityForArrays() {
+
+		return CCardinality.FREE;
+	}
 }
