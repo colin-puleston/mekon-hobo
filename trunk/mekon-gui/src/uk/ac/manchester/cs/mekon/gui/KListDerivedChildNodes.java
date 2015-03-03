@@ -66,23 +66,10 @@ abstract class KListDerivedChildNodes<V> {
 		}
 	}
 
-	protected void addInitialChildren() {
-
-		for (V value : values.asList()) {
-
-			if (childNodeRequiredFor(value)) {
-
-				addChildNode(value);
-			}
-		}
-	}
-
 	KListDerivedChildNodes(GNode parentNode, KList<V> values) {
 
 		this.parentNode = parentNode;
 		this.values = values;
-
-		values.addValuesListener(new ModelValuesListener());
 	}
 
 	void addInitialChildNodes() {
@@ -94,6 +81,8 @@ abstract class KListDerivedChildNodes<V> {
 				addChildNode(value);
 			}
 		}
+
+		values.addValuesListener(new ModelValuesListener());
 	}
 
 	boolean childNodeRequiredFor(V value) {
