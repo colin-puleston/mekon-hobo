@@ -62,7 +62,7 @@ abstract class OBSlot extends OIdentified {
 
 			if (OBSlot.this == topLevelSlot) {
 
-				addOrUpdateSlot(getTopLevelCardinality());
+				addOrUpdateSlot(getCardinalityForTopLevelSlot());
 			}
 			else {
 
@@ -122,6 +122,8 @@ abstract class OBSlot extends OIdentified {
 
 	abstract boolean validSlotValueType();
 
+	abstract CCardinality getCardinalityForMultiValuedTopLevelSlot();
+
 	abstract CValue<?> ensureCValue(
 							CBuilder builder,
 							OBSlot topLevelSlot,
@@ -132,8 +134,10 @@ abstract class OBSlot extends OIdentified {
 		return false;
 	}
 
-	private CCardinality getTopLevelCardinality() {
+	private CCardinality getCardinalityForTopLevelSlot() {
 
-		return singleValued ? CCardinality.SINGLETON : CCardinality.FREE;
+		return singleValued
+				? CCardinality.SINGLETON
+				: getCardinalityForMultiValuedTopLevelSlot();
 	}
 }

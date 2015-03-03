@@ -46,6 +46,11 @@ class OBNumberSlot extends OBSlot {
 		return true;
 	}
 
+	CCardinality getCardinalityForMultiValuedTopLevelSlot() {
+
+		throw new Error("Method should never be invoked!");
+	}
+
 	CValue<?> ensureCValue(
 				CBuilder builder,
 				OBSlot topLevelSlot,

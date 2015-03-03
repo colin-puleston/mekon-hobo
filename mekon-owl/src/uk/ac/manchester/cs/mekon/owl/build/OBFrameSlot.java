@@ -43,6 +43,11 @@ abstract class OBFrameSlot extends OBSlot {
 		metaFrameSlotsEnabled = spec.metaFrameSlotsEnabled();
 	}
 
+	CCardinality getCardinalityForMultiValuedTopLevelSlot() {
+
+		return isMetaFrameSlot(this) ? CCardinality.UNIQUE_TYPES : CCardinality.FREE;
+	}
+
 	CValue<?> ensureCValue(
 				CBuilder builder,
 				OBSlot topLevelSlot,
