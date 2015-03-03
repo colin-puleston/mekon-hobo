@@ -101,7 +101,8 @@ class OBFrame extends OIdentified {
 
 	boolean slotsInHierarchy() {
 
-		return slotsInHierarchy(new HashSet<OBFrame>());
+		return anySlots(new HashSet<OBFrame>(), false)
+				|| anySlotsViaLinks(new HashSet<OBFrame>(), true);
 	}
 
 	private CFrame createCFrame(CBuilder builder) {
@@ -138,23 +139,18 @@ class OBFrame extends OIdentified {
 		}
 	}
 
-	private boolean slotsInHierarchy(Set<OBFrame> visited) {
+	private boolean anySlots(Set<OBFrame> visited, boolean lookUp) {
 
-		return !slots.isEmpty() || slotsInSubHierarchies(visited);
+		return !slots.isEmpty() || anySlotsViaLinks(visited, lookUp);
 	}
 
-	private boolean slotsInSubHierarchies(Set<OBFrame> visited) {
+	private boolean anySlotsViaLinks(Set<OBFrame> visited, boolean lookUp) {
 
-		for (OBFrame sub : subFrames) {
+		for (OBFrame linked : lookUp ? superFrames : subFrames) {
 
-			if (!visited.contains(sub)) {
+			if (visited.add(linked) && linked.anySlots(visited, lookUp)) {
 
-				if (sub.slotsInHierarchy(visited)) {
-
-					return true;
-				}
-
-				visited.add(sub);
+				return true;
 			}
 		}
 
