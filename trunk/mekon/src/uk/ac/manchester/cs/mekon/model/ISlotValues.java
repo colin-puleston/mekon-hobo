@@ -197,10 +197,7 @@ public abstract class ISlotValues extends KList<IValue> {
 		updateSlotValues();
 	}
 
-	boolean singleValued() {
-
-		return false;
-	}
+	abstract boolean singleValued();
 
 	abstract boolean conflictingAsserteds(IValue value1, IValue value2);
 

@@ -147,7 +147,17 @@ public class ISlotValuesTest extends MekonTest {
 		testAdd(values, b, iValues(a, b));
 		testRemove(values, a, iValues(b));
 		testAdd(values, c, iValues(b, c));
-		testAdd(values, cx, iValues(b, cx));
+
+		if (cardinality == CCardinality.UNIQUE_TYPES) {
+
+			testAdd(values, cx, iValues(b, cx));
+		}
+		else {
+
+			testAdd(values, cx, iValues(b, c, cx));
+			testRemove(values, c, iValues(b, cx));
+		}
+
 		testRemove(values, cx, iValues(b));
 		testRemove(values, b, NO_IVALUES);
 	}
@@ -158,7 +168,17 @@ public class ISlotValuesTest extends MekonTest {
 
 		testUpdate(values, iValues(a, b), iValues(a, b));
 		testUpdate(values, iValues(b, c), iValues(b, c));
-		testUpdate(values, iValues(b, c, cx), iValues(b, cx));
+
+		if (cardinality == CCardinality.UNIQUE_TYPES) {
+
+			testUpdate(values, iValues(b, c, cx), iValues(b, cx));
+		}
+		else {
+
+			testUpdate(values, iValues(b, c, cx), iValues(b, c, cx));
+			testUpdate(values, iValues(b, cx), iValues(b, cx));
+		}
+
 		testUpdate(values, iValues(b, c), iValues(b, c));
 		testUpdate(values, NO_IVALUES, NO_IVALUES);
 	}

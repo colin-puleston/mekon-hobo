@@ -54,7 +54,7 @@ public class IMatches {
 	 */
 	public IMatches(List<CIdentity> matches) {
 
-		this(true);
+		this(false);
 
 		addRank(new IMatchesRank(matches, 0));
 	}
