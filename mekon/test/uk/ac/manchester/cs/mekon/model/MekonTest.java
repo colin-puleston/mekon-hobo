@@ -254,6 +254,11 @@ public class MekonTest extends FramesTestUtils {
 		return new IFrame(createCFrame(typeName), IFrameCategory.ASSERTION);
 	}
 
+	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
+
+		frame.setMappedObject(mappedObject);
+	}
+
 	public ISlot createISlot(CCardinality cardinality) {
 
 		return createISlot(cardinality, createSlotValueType());

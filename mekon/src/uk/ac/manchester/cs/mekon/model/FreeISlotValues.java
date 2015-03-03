@@ -29,22 +29,18 @@ package uk.ac.manchester.cs.mekon.model;
  */
 class FreeISlotValues extends ISlotValues {
 
-	private CValue<?> valueType;
-
 	FreeISlotValues(ISlot slot) {
 
 		super(slot);
+	}
 
-		valueType = slot.getValueType();
+	boolean singleValued() {
+
+		return false;
 	}
 
 	boolean conflictingAsserteds(IValue value1, IValue value2) {
 
-		return valueSubsumption(value1, value2) || valueSubsumption(value2, value1);
-	}
-
-	private boolean valueSubsumption(IValue testSubsumer, IValue testSubsumed) {
-
-		return valueType.valueSubsumption(testSubsumer, testSubsumed);
+		return false;
 	}
 }

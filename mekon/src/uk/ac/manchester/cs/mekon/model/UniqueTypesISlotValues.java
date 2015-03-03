@@ -34,6 +34,11 @@ class UniqueTypesISlotValues extends ISlotValues {
 		super(slot);
 	}
 
+	boolean singleValued() {
+
+		return false;
+	}
+
 	boolean conflictingAsserteds(IValue value1, IValue value2) {
 
 		return typeSubsumption(value1, value2) || typeSubsumption(value2, value1);
