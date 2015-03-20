@@ -64,10 +64,14 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		this.slotEditability = slotEditability;
 	}
 
-	void absorb(OBPropertyAttributes attributes) {
+	OBPropertyAttributes combineWith(OBPropertyAttributes other) {
 
-		frameSource |= attributes.frameSource;
-		slotEditability = slotEditability.getStrongest(attributes.slotEditability);
+		OBPropertyAttributes combined = new OBPropertyAttributes();
+
+		combined.setFrameSource(frameSource || other.frameSource());
+		combined.setSlotEditability(combineSlotEditabilities(other));
+
+		return combined;
 	}
 
 	boolean frameSource() {
@@ -78,5 +82,10 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 	CEditability getSlotEditability() {
 
 		return slotEditability;
+	}
+
+	private CEditability combineSlotEditabilities(OBPropertyAttributes other) {
+
+		return slotEditability.getStrongest(other.getSlotEditability());
 	}
 }

@@ -46,9 +46,13 @@ public class OBConceptAttributes extends OBAttributes<OBConceptAttributes> {
 		hidden = value;
 	}
 
-	void absorb(OBConceptAttributes attributes) {
+	OBConceptAttributes combineWith(OBConceptAttributes other) {
 
-		hidden |= attributes.hidden;
+		OBConceptAttributes combined = new OBConceptAttributes();
+
+		combined.setHidden(hidden || other.hidden());
+
+		return combined;
 	}
 
 	boolean hidden() {

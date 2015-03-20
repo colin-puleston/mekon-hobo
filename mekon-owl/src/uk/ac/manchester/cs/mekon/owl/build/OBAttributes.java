@@ -29,5 +29,5 @@ package uk.ac.manchester.cs.mekon.owl.build;
  */
 abstract class OBAttributes<A extends OBAttributes<A>> {
 
-	abstract void absorb(A attributes);
+	abstract A combineWith(A other);
 }

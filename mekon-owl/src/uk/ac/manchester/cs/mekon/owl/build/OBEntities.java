@@ -135,14 +135,14 @@ public abstract class OBEntities
 
 	void add(E entity, A attributes) {
 
-		if (entitiesToAttributes.containsKey(entity)) {
+		A currentAttrs = entitiesToAttributes.get(entity);
 
-			entitiesToAttributes.get(entity).absorb(attributes);
-		}
-		else {
+		if (currentAttrs != null) {
 
-			entitiesToAttributes.put(entity, attributes);
+			attributes = currentAttrs.combineWith(attributes);
 		}
+
+		entitiesToAttributes.put(entity, attributes);
 	}
 
 	abstract void addGroupEntity(G group, E entity, boolean isRoot);
