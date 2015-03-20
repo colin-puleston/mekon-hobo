@@ -119,6 +119,17 @@ public class IStore {
 	}
 
 	/**
+	 * Removes all instances from the store.
+	 */
+	public void clear() {
+
+		for (CIdentity identity : identities) {
+
+			remove(identity);
+		}
+	}
+
+	/**
 	 * Retrieves an instance from the store.
 	 *
 	 * @param identity Unique identity of instance
