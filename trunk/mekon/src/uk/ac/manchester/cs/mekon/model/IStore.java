@@ -123,7 +123,7 @@ public class IStore {
 	 */
 	public void clear() {
 
-		for (CIdentity identity : identities) {
+		for (CIdentity identity : getAllIdentities()) {
 
 			remove(identity);
 		}
