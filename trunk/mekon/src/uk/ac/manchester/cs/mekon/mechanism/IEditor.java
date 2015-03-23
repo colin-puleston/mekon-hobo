@@ -29,7 +29,8 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Provides mechanisms for editing {@link CModel} instantiations.
+ * Provides mechanisms for "under-the-hood" editing of
+ * {@link CModel} instantiations.
  *
  * @author Colin Puleston
  */
