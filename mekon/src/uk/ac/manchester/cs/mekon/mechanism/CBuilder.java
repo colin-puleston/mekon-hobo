@@ -184,6 +184,14 @@ public interface CBuilder {
 	public CAnnotationsEditor getAnnotationsEditor(CAnnotations annotations);
 
 	/**
+	 * Provides the editor that allows "under-the-hood" editing of
+	 * model instantiations.
+	 *
+	 * @return Under-the-hood editor for model instantiations
+	 */
+	public IEditor getIEditor();
+
+	/**
 	 * Builds the model, which will incorporate all entities
 	 * provided by the various section-building mechanisms.
 	 * Subsequent invocations will cause any section-builders

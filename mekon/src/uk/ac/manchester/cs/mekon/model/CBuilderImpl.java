@@ -142,6 +142,11 @@ class CBuilderImpl implements CBuilder {
 		return annotations.createEditor();
 	}
 
+	public IEditor getIEditor() {
+
+		return model.getIEditor();
+	}
+
 	public CModel build() {
 
 		model.startInitialisation();
