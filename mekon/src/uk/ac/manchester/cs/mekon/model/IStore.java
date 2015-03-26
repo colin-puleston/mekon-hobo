@@ -48,6 +48,8 @@ public class IStore {
 	private CModel model;
 	private File storeDirectory = null;
 
+	private List<IFrameProcessor> instancePreProcessors = new ArrayList<IFrameProcessor>();
+	private List<IFrameProcessor> queryPreProcessors = new ArrayList<IFrameProcessor>();
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
@@ -93,7 +95,7 @@ public class IStore {
 
 		IFrame previous = checkRemoveInternal(identity);
 
-		addInternal(instance.copy(), identity);
+		addInternal(preProcessInstance(instance), identity);
 		writeToFile();
 
 		return previous;
@@ -161,7 +163,7 @@ public class IStore {
 	 */
 	public IMatches match(IFrame query) {
 
-		IMatches matches = getMatcher(query).match(query);
+		IMatches matches = getMatcher(query).match(preProcessQuery(query));
 
 		matches.resolveLabels(labels);
 
@@ -180,8 +182,12 @@ public class IStore {
 
 		IMatcher matcher = getMatcher(query);
 
-		return matcher == getMatcher(instance)
-				&& matcher.matches(query, instance);
+		if (matcher != getMatcher(instance)) {
+
+			return false;
+		}
+
+		return matcher.matches(preProcessQuery(query), instance);
 	}
 
 	IStore(CModel model) {
@@ -214,12 +220,32 @@ public class IStore {
 		}
 	}
 
+	void addInstancePreProcessor(IFrameProcessor preProcessor) {
+
+		instancePreProcessors.add(preProcessor);
+	}
+
+	void addQueryPreProcessor(IFrameProcessor preProcessor) {
+
+		queryPreProcessors.add(preProcessor);
+	}
+
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
 	}
 
-	void addInternal(IFrame instance, CIdentity identity) {
+	private void addReloaded(IFrame instance, CIdentity identity) {
+
+		if (!queryPreProcessors.isEmpty()) {
+
+			instance = instance.copy();
+		}
+
+		addInternal(instance, identity);
+	}
+
+	private void addInternal(IFrame instance, CIdentity identity) {
 
 		identities.add(identity);
 		instances.put(identity, instance);
@@ -241,6 +267,33 @@ public class IStore {
 		}
 
 		return removed;
+	}
+
+	private IFrame preProcessInstance(IFrame instance) {
+
+		instance = instance.copy();
+
+		for (IFrameProcessor preProcessor : instancePreProcessors) {
+
+			preProcessor.process(instance);
+		}
+
+		return instance;
+	}
+
+	private IFrame preProcessQuery(IFrame query) {
+
+		if (!queryPreProcessors.isEmpty()) {
+
+			query = query.copy();
+
+			for (IFrameProcessor preProcessor : queryPreProcessors) {
+
+				preProcessor.process(query);
+			}
+		}
+
+		return query;
 	}
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
