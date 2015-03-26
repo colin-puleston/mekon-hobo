@@ -45,22 +45,32 @@ class CBuilderImpl implements CBuilder {
 
 	public void setAutoUpdate(boolean autoUpdate) {
 
-		model.setAutoUpdate(autoUpdate);
+		model.getIUpdating().setAutoUpdate(autoUpdate);
 	}
 
 	public void setDefaultUpdateOp(IUpdateOp op, boolean enabled) {
 
-		model.setDefaultUpdateOp(op, enabled);
+		model.getIUpdating().setDefaultOp(op, enabled);
 	}
 
 	public void setIStoreDirectory(File storeDirectory) {
 
-		model.setIStoreDirectory(storeDirectory);
+		model.getIStore().setStoreDirectory(storeDirectory);
+	}
+
+	public void addIStoreInstancePreProcessor(IFrameProcessor preProcessor) {
+
+		model.getIStore().addInstancePreProcessor(preProcessor);
+	}
+
+	public void addIStoreQueryPreProcessor(IFrameProcessor preProcessor) {
+
+		model.getIStore().addQueryPreProcessor(preProcessor);
 	}
 
 	public void addIMatcher(IMatcher iMatcher) {
 
-		model.addIMatcher(iMatcher);
+		model.getIStore().addMatcher(iMatcher);
 	}
 
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {

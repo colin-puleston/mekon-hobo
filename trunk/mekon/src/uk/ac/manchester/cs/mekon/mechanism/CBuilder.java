@@ -72,6 +72,22 @@ public interface CBuilder {
 	public void setIStoreDirectory(File storeDirectory);
 
 	/**
+	 * Adds a pre-processor for instances that are to be added to the
+	 * {@link IStore}.
+	 *
+	 * @param preProcessor Pre-processor for instances to be stored
+	 */
+	public void addIStoreInstancePreProcessor(IFrameProcessor preProcessor);
+
+	/**
+	 * Adds a pre-processor for queries that are to be executed over
+	 * the {@link IStore}.
+	 *
+	 * @param preProcessor Pre-processor for queries to be executed
+	 */
+	public void addIStoreQueryPreProcessor(IFrameProcessor preProcessor);
+
+	/**
 	 * Adds an instance-matcher object for the model.
 	 *
 	 * @param iMatcher Instance-matcher for model

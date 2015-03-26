@@ -214,26 +214,6 @@ public class CModel implements CAnnotatable {
 		queriesEnabled = enabled;
 	}
 
-	void setAutoUpdate(boolean autoUpdate) {
-
-		iUpdating.setAutoUpdate(autoUpdate);
-	}
-
-	void setDefaultUpdateOp(IUpdateOp op, boolean enabled) {
-
-		iUpdating.setDefaultOp(op, enabled);
-	}
-
-	void setIStoreDirectory(File storeDirectory) {
-
-		iStore.setStoreDirectory(storeDirectory);
-	}
-
-	void addIMatcher(IMatcher iMatcher) {
-
-		iStore.addMatcher(iMatcher);
-	}
-
 	CModelFrame addFrame(CIdentity identity, boolean hidden) {
 
 		CModelFrame frame = new CModelFrame(this, identity, hidden);
