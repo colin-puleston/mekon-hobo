@@ -395,11 +395,6 @@ class CModelFrame extends CFrame {
 		visitor.visit(this);
 	}
 
-	boolean instantiableModelFrame() {
-
-		return !getModel().mappedToNonInstantiableObject(this);
-	}
-
 	IReasoner getIReasoner() {
 
 		return iReasoner;

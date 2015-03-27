@@ -473,24 +473,9 @@ public class IFrame implements IEntity, IValue {
 		this.mappedObject = mappedObject;
 	}
 
-	<T>T getMappedObject(Class<T> expectedType) {
+	Object getMappedObject() {
 
-		if (mappedObject == null) {
-
-			return null;
-		}
-
-		Class<?> mappedType = mappedObject.getClass();
-
-		if (expectedType.isAssignableFrom(mappedType)) {
-
-			return expectedType.cast(mappedObject);
-		}
-
-		throw new KAccessException(
-					"Mapped-object not of expected type for: " + this
-					+ ", expected type: " + expectedType
-					+ " , found type: " + mappedType);
+		return mappedObject;
 	}
 
 	private void validateAsReferencedFrame(IFrame referencingFrame) {

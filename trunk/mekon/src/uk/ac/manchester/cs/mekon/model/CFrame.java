@@ -215,24 +215,6 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Specifies whether the frame is instantiable. This will be the
-	 * case if and only if it is either:
-	 * <ul>
-	 *   <li>A {@link CFrameCategory#modelFrame} that is not mapped to
-	 *	 some non-instantiable entity in an extension of the Frames Model
-	 *	 (FM)
-	 *   <li>An extension-frame or a disjunction-frame whose model-frame
-	 *   is instantiable (see {@link #getModelFrame})
-	 * </ul>
-	 *
-	 * @return True if frame is instantiable
-	 */
-	public boolean instantiable() {
-
-		return getModelFrame().asModelFrame().instantiableModelFrame();
-	}
-
-	/**
 	 * Specifies whether the frame is hidden (see {@link CFrame}).
 	 *
 	 * @return True if frame is hidden
@@ -435,16 +417,15 @@ public abstract class CFrame
 	public abstract CSlotValues getSlotValues();
 
 	/**
-	 * Stipulates that this numeric-type can provide a default
-	 * value-entity if and only if it is instantiable (see
-	 * {@link #instantiable}). If so then the default-value will be an
-	 * instantiation with no slot-values.
+	 * Stipulates that this concept-leval frame does define a default
+	 * value-entity, which will be a direct instantiation of the
+	 * frame with no slot-values being set.
 	 *
-	 * @return True if frame is instantiable
+	 * @return True always.
 	 */
 	public boolean hasDefaultValue() {
 
-		return instantiable();
+		return true;
 	}
 
 	/**
@@ -520,7 +501,7 @@ public abstract class CFrame
 	 */
 	public IFrame instantiate(IFrameCategory category) {
 
-		checkInstantiable(category);
+		checkInstantiableAsCategory(category);
 
 		IFrame instance = new IFrame(this, category);
 
@@ -582,7 +563,7 @@ public abstract class CFrame
 
 	IFrame getDefaultValueOrNull() {
 
-		return instantiable() ? instantiate() : null;
+		return instantiate();
 	}
 
 	boolean validTypeValue(IFrame value) {
@@ -613,12 +594,7 @@ public abstract class CFrame
 		return false;
 	}
 
-	private void checkInstantiable(IFrameCategory category) {
-
-		if (!instantiable()) {
-
-			throw new KAccessException("Cannot instantiate frame: " + this);
-		}
+	private void checkInstantiableAsCategory(IFrameCategory category) {
 
 		if (category.query() && !getModel().queriesEnabled()) {
 

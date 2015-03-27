@@ -282,11 +282,6 @@ public class CModel implements CAnnotatable {
 		return iEditor;
 	}
 
-	boolean mappedToNonInstantiableObject(CFrame frame) {
-
-		return customiser.mappedToNonInstantiableObject(frame);
-	}
-
 	private void removeFrameTraces(CModelFrame frame) {
 
 		frame.removeFromHierarchy();
