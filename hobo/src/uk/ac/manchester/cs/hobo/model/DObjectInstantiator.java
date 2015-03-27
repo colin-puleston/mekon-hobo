@@ -53,19 +53,14 @@ class DObjectInstantiator<D extends DObject> {
 
 	private DObject instantiateDObject(IFrame frame) {
 
-		DBinding binding = getInstantiableDClassOrNull(frame);
+		DBinding binding = instantiableDClassFinder.getOrNull(frame.getType());
 
-		if (binding == null) {
+		if (binding == null || binding.getDClass() == DObject.class) {
 
 			return new DObjectDefault(model, frame);
 		}
 
 		return buildDObject(binding.getDClass(), frame);
-	}
-
-	private DBinding getInstantiableDClassOrNull(IFrame frame) {
-
-		return instantiableDClassFinder.getOneOrZeroFor(frame.getType());
 	}
 
 	private DObject buildDObject(Class<? extends DObject> dClass, IFrame frame) {

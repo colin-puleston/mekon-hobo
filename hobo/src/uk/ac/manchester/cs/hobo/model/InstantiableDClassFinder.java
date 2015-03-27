@@ -66,12 +66,7 @@ class InstantiableDClassFinder {
 			searchFrom(type);
 		}
 
-		boolean oneOrZeroFor() {
-
-			return mostSpecifics.size() <= 1;
-		}
-
-		DBinding getOneOrZero() {
+		DBinding getOrNull() {
 
 			if (mostSpecifics.isEmpty()) {
 
@@ -169,13 +164,8 @@ class InstantiableDClassFinder {
 		this.dBaseClass = dBaseClass;
 	}
 
-	boolean oneOrZeroFor(CFrame type) {
+	DBinding getOrNull(CFrame type) {
 
-		return new Finder(type).oneOrZeroFor();
-	}
-
-	DBinding getOneOrZeroFor(CFrame type) {
-
-		return new Finder(type).getOneOrZero();
+		return new Finder(type).getOrNull();
 	}
 }

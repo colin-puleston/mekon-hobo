@@ -197,7 +197,6 @@ public class DModel {
 	 *
 	 * @param dClass OM class to be instantiated
 	 * @return Required OM class instantiation
-	 * @throws HModelException if specified OM class is not instantiable
 	 */
 	public <D extends DObject>D instantiate(Class<D> dClass) {
 
@@ -214,8 +213,6 @@ public class DModel {
 	 * @param dClass OM class to be instantiated
 	 * @param identity Identity of frame representing relevant concept
 	 * @return Resulting OM object
-	 * @throws HModelException if specified OM class or frame is not
-	 * instantiable
 	 */
 	public <D extends DObject>D instantiate(Class<D> dClass, CIdentity identity) {
 
@@ -232,8 +229,6 @@ public class DModel {
 	 * @param dClass OM class to be instantiated
 	 * @param frame Frame representing relevant concept
 	 * @return Resulting OM object
-	 * @throws HModelException if specified OM class or frame is not
-	 * instantiable
 	 */
 	public <D extends DObject>D instantiate(Class<D> dClass, CFrame frame) {
 
@@ -265,14 +260,22 @@ public class DModel {
 	 */
 	public <D extends DObject>D getDObject(IFrame frame, Class<D> dClass) {
 
-		D dObject = cAccessor.getIFrameMappedObject(frame, dClass);
+		Object mappedObj = getMappedObject(frame);
 
-		if (dObject == null) {
+		if (mappedObj == null) {
 
 			throw new HAccessException("Mapped-object not set for: " + frame);
 		}
 
-		return dObject;
+		if (dClass.isAssignableFrom(mappedObj.getClass())) {
+
+			return dClass.cast(mappedObj);
+		}
+
+		throw new HAccessException(
+					"Mapped-object not of expected type for: " + frame
+					+ ", expected type: " + dClass
+					+ " , found type: " + mappedObj.getClass());
 	}
 
 	DModel() {
@@ -320,7 +323,7 @@ public class DModel {
 
 	void ensureMappedDObject(IFrame frame) {
 
-		if (cAccessor.getIFrameMappedObject(frame, DObject.class) == null) {
+		if (getMappedObject(frame) == null) {
 
 			instantiate(DObject.class, frame);
 		}
@@ -338,6 +341,11 @@ public class DModel {
 		cAccessor.setIFrameMappedObject(frame, dObject);
 
 		return dObject;
+	}
+
+	private Object getMappedObject(IFrame frame) {
+
+		return cAccessor.getIFrameMappedObject(frame);
 	}
 
 	private CFrame getFrame(CIdentity identity) {
