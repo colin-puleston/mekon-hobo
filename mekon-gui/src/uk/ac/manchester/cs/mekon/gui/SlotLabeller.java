@@ -31,7 +31,9 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class SlotLabeller {
 
-	static String getCardinalityModifier(CCardinality cardinality) {
+	static String getCardinalityModifier(
+					CCardinality cardinality,
+					boolean singleType) {
 
 		switch (cardinality) {
 
@@ -42,7 +44,7 @@ class SlotLabeller {
 				return "[x,y,z]";
 
 			case FREE:
-				return "[x,y,y]";
+				return singleType ? "[x,x,x]" : "[x,y,y,z]";
 		}
 
 		throw new Error("Unrecognised cardinality value: " + cardinality);
@@ -92,11 +94,23 @@ class SlotLabeller {
 
 	private String getCardinalityModifier() {
 
-		return getCardinalityModifier(slot.getCardinality());
+		return getCardinalityModifier(slot.getCardinality(), singleType());
 	}
 
 	private boolean conceptLevelValue() {
 
 		return slot.getValueType() instanceof MFrame;
+	}
+
+	private boolean singleType() {
+
+		CValue<?> type = slot.getValueType();
+
+		if (type instanceof CFrame) {
+
+			return ((CFrame)type).getSubs(CVisibility.EXPOSED).isEmpty();
+		}
+
+		return true;
 	}
 }

@@ -286,19 +286,24 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns("Entity Types", "Label Modifier", "Denotes");
 
-				addSlotCardinalityModifier(CCardinality.FREE);
-				addSlotCardinalityModifier(CCardinality.UNIQUE_TYPES);
-				addSlotCardinalityModifier(CCardinality.SINGLETON);
+				addSlotCardinalityModifier(CCardinality.SINGLETON, "", false);
+				addSlotCardinalityModifier(CCardinality.UNIQUE_TYPES, "", false);
+				addSlotCardinalityModifier(CCardinality.FREE, " (Single value-type)", true);
+				addSlotCardinalityModifier(CCardinality.FREE, " (Multiple value-types)", false);
 				addSlotValueTypeModifier("concept", true);
 				addSlotValueTypeModifier("instance-or-number", false);
 			}
 
-			private void addSlotCardinalityModifier(CCardinality cardinality) {
+			private void addSlotCardinalityModifier(
+							CCardinality card,
+							String extraModifier,
+							boolean singleType) {
 
 				addRow(
 					"CSlot, ISlot",
-					SlotLabeller.getCardinalityModifier(cardinality),
-					"Cardinality = " + cardinality);
+					SlotLabeller.getCardinalityModifier(card, singleType),
+					"Cardinality = " + card
+					+ extraModifier);
 			}
 
 			private void addSlotValueTypeModifier(String valueType, boolean conceptLevel) {
