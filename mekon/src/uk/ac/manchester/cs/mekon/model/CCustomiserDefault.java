@@ -39,9 +39,4 @@ class CCustomiserDefault implements CCustomiser {
 
 	public void onSlotRemoved(CSlot slot) {
 	}
-
-	public boolean mappedToNonInstantiableObject(CFrame frame) {
-
-		return false;
-	}
 }

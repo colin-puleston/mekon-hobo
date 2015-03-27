@@ -54,14 +54,4 @@ public interface CCustomiser {
 	 * @param slot Removed slot
 	 */
 	public void onSlotRemoved(CSlot slot);
-
-	/**
-	 * Checks whether a frame is mapped to some object that cannot
-	 * be instantiated, which will mean that the frame itself
-	 * cannot be instantiated.
-	 *
-	 * @param frame Frame to check
-	 * @return True if frame is mapped to a non-instantiable object
-	 */
-	public boolean mappedToNonInstantiableObject(CFrame frame);
 }

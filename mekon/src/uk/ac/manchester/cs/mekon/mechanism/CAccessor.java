@@ -45,12 +45,10 @@ public interface CAccessor {
 	/**
 	 * Retrieves a mapped object from an instance-level frame.
 	 *
-	 * @param frame Frame from which mapped object is to be retrieved.
-	 * @param expectedType Expected type of mapped object
+	 * @param frame Frame from which mapped object is to be retrieved
 	 * @return Mapped object, or null if no mapped object
-	 * @throws KAccessException if mapped object is not of expected type
 	 */
-	public <T>T getIFrameMappedObject(IFrame frame, Class<T> expectedType);
+	public Object getIFrameMappedObject(IFrame frame);
 
 	/**
 	 * Provides the instantiation editor for the model.

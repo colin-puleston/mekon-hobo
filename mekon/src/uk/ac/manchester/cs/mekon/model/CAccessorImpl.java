@@ -38,9 +38,9 @@ class CAccessorImpl implements CAccessor {
 		frame.setMappedObject(mappedObject);
 	}
 
-	public <T>T getIFrameMappedObject(IFrame frame, Class<T> expectedType) {
+	public Object getIFrameMappedObject(IFrame frame) {
 
-		return frame.getMappedObject(expectedType);
+		return frame.getMappedObject();
 	}
 
 	public IEditor getIEditor() {
