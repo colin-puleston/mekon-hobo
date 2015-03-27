@@ -71,6 +71,6 @@ class CCustomiserLocal implements CCustomiser {
 
 	private boolean instantiableDClassFor(CFrame frame) {
 
-		return new InstantiableDClassFinder(dModel).exactlyOneFor(frame);
+		return new InstantiableDClassFinder(dModel).oneOrZeroFor(frame);
 	}
 }

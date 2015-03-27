@@ -53,65 +53,22 @@ class InstantiableDClassFinder {
 	private DModel model;
 	private Class<? extends DObject> dBaseClass;
 
-	private class Searcher {
-
-		private Set<CFrame> visited = new HashSet<CFrame>();
-		private Set<DBinding> found = new HashSet<DBinding>();
-
-		Set<DBinding> findAll(CFrame frame) {
-
-			searchFrom(frame);
-
-			return found;
-		}
-
-		private void searchFrom(CFrame frame) {
-
-			DBinding binding = model.getBindings().getOrNull(frame);
-
-			if (binding != null) {
-
-				if (instantiableDescendantOfBase(binding.getDClass())) {
-
-					found.add(binding);
-				}
-			}
-			else {
-
-				searchFromSupers(frame);
-			}
-		}
-
-		private void searchFromSupers(CFrame frame) {
-
-			for (CFrame sup : frame.getSupers()) {
-
-				if (visited.add(sup)) {
-
-					searchFrom(sup);
-				}
-			}
-		}
-
-		private boolean instantiableDescendantOfBase(Class<? extends DObject> dClass) {
-
-			return dBaseClass.isAssignableFrom(dClass) && instantiable(dClass);
-		}
-	}
-
 	private class Finder {
 
 		private CFrame type;
+		private Set<CFrame> visited = new HashSet<CFrame>();
 		private Set<DBinding> mostSpecifics = new HashSet<DBinding>();
 
 		Finder(CFrame type) {
 
 			this.type = type;
 
-			for (DBinding instantiable : findAll(type)) {
+			searchFrom(type);
+		}
 
-				updateMostSpecifics(instantiable);
-			}
+		boolean oneOrZeroFor() {
+
+			return mostSpecifics.size() <= 1;
 		}
 
 		DBinding getOneOrZero() {
@@ -130,6 +87,34 @@ class InstantiableDClassFinder {
 						"Multiple instantiable DObject classes found for: "
 						+ type
 						+ " (" + getMostSpecificDClasses() + ")");
+		}
+
+		private void searchFrom(CFrame frame) {
+
+			DBinding binding = model.getBindings().getOrNull(frame);
+
+			if (binding != null) {
+
+				if (instantiableDescendantOfBase(binding.getDClass())) {
+
+					updateMostSpecifics(binding);
+				}
+			}
+			else {
+
+				searchFromSupers(frame);
+			}
+		}
+
+		private void searchFromSupers(CFrame frame) {
+
+			for (CFrame sup : frame.getSupers()) {
+
+				if (visited.add(sup)) {
+
+					searchFrom(sup);
+				}
+			}
 		}
 
 		private void updateMostSpecifics(DBinding candidate) {
@@ -166,6 +151,11 @@ class InstantiableDClassFinder {
 
 			return dClasses;
 		}
+
+		private boolean instantiableDescendantOfBase(Class<? extends DObject> dClass) {
+
+			return dBaseClass.isAssignableFrom(dClass) && instantiable(dClass);
+		}
 	}
 
 	InstantiableDClassFinder(DModel model) {
@@ -179,18 +169,13 @@ class InstantiableDClassFinder {
 		this.dBaseClass = dBaseClass;
 	}
 
-	boolean exactlyOneFor(CFrame type) {
+	boolean oneOrZeroFor(CFrame type) {
 
-		return findAll(type).size() == 1;
+		return new Finder(type).oneOrZeroFor();
 	}
 
 	DBinding getOneOrZeroFor(CFrame type) {
 
 		return new Finder(type).getOneOrZero();
-	}
-
-	private Set<DBinding> findAll(CFrame type) {
-
-		return new Searcher().findAll(type);
 	}
 }
