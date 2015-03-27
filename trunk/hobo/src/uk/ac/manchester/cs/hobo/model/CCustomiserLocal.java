@@ -59,18 +59,8 @@ class CCustomiserLocal implements CCustomiser {
 	public void onSlotRemoved(CSlot slot) {
 	}
 
-	public boolean mappedToNonInstantiableObject(CFrame frame) {
-
-		return !instantiableDClassFor(frame);
-	}
-
 	CCustomiserLocal(DModel dModel) {
 
 		this.dModel = dModel;
-	}
-
-	private boolean instantiableDClassFor(CFrame frame) {
-
-		return new InstantiableDClassFinder(dModel).oneOrZeroFor(frame);
 	}
 }

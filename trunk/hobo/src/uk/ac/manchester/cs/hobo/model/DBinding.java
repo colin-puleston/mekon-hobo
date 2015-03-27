@@ -51,9 +51,9 @@ class DBinding {
 
 	void initialiseBinding(DModel model) {
 
-		if (instantiateToInitialise()) {
+		if (dClass != DObject.class) {
 
-			model.instantiate(dClass, frame);
+			frame.instantiate();
 		}
 	}
 
@@ -77,15 +77,5 @@ class DBinding {
 		String slotId = fieldNamesToSlotIds.get(fieldName);
 
 		return slotId != null ? slotId : fieldName;
-	}
-
-	private boolean instantiateToInitialise() {
-
-		if (dClass == DObject.class) {
-
-			return false;
-		}
-
-		return InstantiableDClassFinder.instantiable(dClass);
 	}
 }
