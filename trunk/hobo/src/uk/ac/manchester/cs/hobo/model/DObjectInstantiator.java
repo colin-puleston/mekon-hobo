@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
@@ -56,29 +55,17 @@ class DObjectInstantiator<D extends DObject> {
 
 		DBinding binding = getInstantiableDClassOrNull(frame);
 
-		if (binding != null) {
+		if (binding == null) {
 
-			return createDObject(binding.getDClass(), frame);
+			return new DObjectDefault(model, frame);
 		}
 
-		throw new HAccessException(
-					"Cannot instantiate DObject of type: " + dBaseClass
-					+ " for frame: " + frame);
+		return buildDObject(binding.getDClass(), frame);
 	}
 
 	private DBinding getInstantiableDClassOrNull(IFrame frame) {
 
 		return instantiableDClassFinder.getOneOrZeroFor(frame.getType());
-	}
-
-	private DObject createDObject(Class<? extends DObject> dClass, IFrame frame) {
-
-		if (dClass == DObject.class) {
-
-			return new DObjectDefault(model, frame);
-		}
-
-		return buildDObject(dClass, frame);
 	}
 
 	private DObject buildDObject(Class<? extends DObject> dClass, IFrame frame) {
