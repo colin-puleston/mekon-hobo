@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class InstantiatonsPanel extends JPanel {
+class InstantiationsPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
@@ -58,7 +58,7 @@ class InstantiatonsPanel extends JPanel {
 
 			super(ASSERTION_BUTTON_LABEL);
 
-			setEnabled(instantiable());
+			setEnabled(frameHasSlots());
 		}
 	}
 
@@ -75,11 +75,11 @@ class InstantiatonsPanel extends JPanel {
 
 			super(QUERY_BUTTON_LABEL);
 
-			setEnabled(queriesEnabled() && instantiable());
+			setEnabled(queriesEnabled() && frameHasSlots());
 		}
 	}
 
-	InstantiatonsPanel(CFramesTree modelTree, CFrame frame) {
+	InstantiationsPanel(CFramesTree modelTree, CFrame frame) {
 
 		super(new BorderLayout());
 
@@ -128,9 +128,9 @@ class InstantiatonsPanel extends JPanel {
 		new QueryInstanceFrame(modelTree, frame.instantiateQuery()).display();
 	}
 
-	private boolean instantiable() {
+	private boolean frameHasSlots() {
 
-		return frame.instantiable();
+		return !frame.instantiate().getSlots().isEmpty();
 	}
 
 	private boolean queriesEnabled() {

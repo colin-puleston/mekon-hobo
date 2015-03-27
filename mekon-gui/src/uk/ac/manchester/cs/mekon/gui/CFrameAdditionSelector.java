@@ -49,14 +49,17 @@ class CFrameAdditionSelector extends CFrameSelector {
 
 	JComponent createSelectorComponent(CFrameSelectionListener selectorListener) {
 
-		boolean showRoot = rootFrame.instantiable();
-		CFramesComboPanel combo = new CFramesComboPanel(
-										rootFrame,
-										CVisibility.EXPOSED,
-										showRoot);
+		CFramesComboPanel combo = createComboPanel();
 
 		combo.addSelectionListener(selectorListener);
 
 		return combo;
+	}
+
+	private CFramesComboPanel createComboPanel() {
+
+		boolean showRoot = rootFrame.getCategory().modelFrame();
+
+		return new CFramesComboPanel(rootFrame, CVisibility.EXPOSED, showRoot);
 	}
 }
