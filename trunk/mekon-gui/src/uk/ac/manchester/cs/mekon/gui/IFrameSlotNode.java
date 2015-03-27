@@ -98,21 +98,6 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	IFrame checkUpdateValue(IFrame value, CFrame updatedCFrame) {
 
-		if (updatedCFrame.instantiable()) {
-
-			return updateValue(value, updatedCFrame);
-		}
-
-		JOptionPane.showMessageDialog(
-			null,
-			"Cannot instantiate: "
-			+ updatedCFrame.getDisplayLabel());
-
-		return value;
-	}
-
-	private IFrame updateValue(IFrame value, CFrame updatedCFrame) {
-
 		IFrame newValue = instantiate(updatedCFrame);
 
 		copyAssertedSlotValues(value, newValue);

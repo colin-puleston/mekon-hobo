@@ -106,7 +106,7 @@ class ModelFrameSelectionPanel extends JPanel {
 		removeAll();
 
 		add(createAspectsPanel(selected), BorderLayout.CENTER);
-		add(new InstantiatonsPanel(modelTree, selected), BorderLayout.SOUTH);
+		add(new InstantiationsPanel(modelTree, selected), BorderLayout.SOUTH);
 
 		revalidate();
 	}
