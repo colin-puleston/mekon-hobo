@@ -53,6 +53,7 @@ class PropertyInclusionsConfigReader
 		OBPropertyAttributes attributes = group.getAttributes();
 
 		attributes.setFrameSource(getFrameSources(groupNode));
+		attributes.setSlotCardinality(getSlotCardinality(groupNode));
 		attributes.setSlotEditability(getSlotEditability(groupNode));
 
 		return group;
@@ -61,6 +62,14 @@ class PropertyInclusionsConfigReader
 	private boolean getFrameSources(KConfigNode groupNode) {
 
 		return groupNode.getBoolean(FRAME_SOURCE_PROPERTIES_ATTR, false);
+	}
+
+	private CCardinality getSlotCardinality(KConfigNode groupNode) {
+
+		return groupNode.getEnum(
+					SLOT_CARDINALITY_ATTR,
+					CCardinality.class,
+					CCardinality.FREE);
 	}
 
 	private CEditability getSlotEditability(KConfigNode groupNode) {

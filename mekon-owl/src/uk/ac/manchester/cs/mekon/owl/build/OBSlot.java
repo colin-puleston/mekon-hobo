@@ -35,9 +35,8 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 abstract class OBSlot extends OIdentified {
 
-	private OWLProperty property;
+	private OBSlotSpec spec;
 	private boolean singleValued;
-	private CEditability editability;
 
 	private class CStructureCreator {
 
@@ -62,7 +61,7 @@ abstract class OBSlot extends OIdentified {
 
 			if (OBSlot.this == topLevelSlot) {
 
-				addOrUpdateSlot(getCardinalityForTopLevelSlot());
+				addOrUpdateSlot(getDefaultCardinalityForTopLevelSlot());
 			}
 			else {
 
@@ -78,19 +77,32 @@ abstract class OBSlot extends OIdentified {
 			}
 		}
 
-		private void addOrUpdateSlot(CCardinality cardinality) {
+		private void addOrUpdateSlot(CCardinality defaultCardinality) {
 
 			CIdentity id = getIdentity();
 			CSlot slot = container.getSlots().getOrNull(id);
 
 			if (slot == null) {
 
-				slot = containerEd.addSlot(id, cardinality, value);
+				slot = containerEd.addSlot(id, defaultCardinality, value);
 
-				annotations.checkAdd(builder, slot, property);
+				annotations.checkAdd(builder, slot, spec.getProperty());
 			}
 
-			builder.getSlotEditor(slot).absorbEditability(editability);
+			absorbSlotOverrides(slot);
+		}
+
+		private void absorbSlotOverrides(CSlot slot) {
+
+			OBPropertyAttributes propAttrs = spec.getPropertyAttributes();
+
+			CCardinality cardOverride = propAttrs.getSlotCardinality();
+			CEditability editOverride = propAttrs.getSlotEditability();
+
+			CSlotEditor slotEd = builder.getSlotEditor(slot);
+
+			slotEd.absorbCardinality(cardOverride);
+			slotEd.absorbEditability(editOverride);
 		}
 
 		private void checkAddSlotValue() {
@@ -101,11 +113,15 @@ abstract class OBSlot extends OIdentified {
 
 	OBSlot(OBSlotSpec spec) {
 
+		this(spec, spec.singleValued());
+	}
+
+	OBSlot(OBSlotSpec spec, boolean singleValued) {
+
 		super(spec.getProperty(), spec.getLabel());
 
-		property = spec.getProperty();
-		singleValued = spec.singleValued();
-		editability = spec.getPropertyAttributes().getSlotEditability();
+		this.spec = spec;
+		this.singleValued = singleValued;
 	}
 
 	void ensureCStructure(
@@ -122,7 +138,7 @@ abstract class OBSlot extends OIdentified {
 
 	abstract boolean validSlotValueType();
 
-	abstract CCardinality getCardinalityForMultiValuedTopLevelSlot();
+	abstract CCardinality getDefaultCardinalityForMultiValuedTopLevelSlot();
 
 	abstract CValue<?> ensureCValue(
 							CBuilder builder,
@@ -134,10 +150,10 @@ abstract class OBSlot extends OIdentified {
 		return false;
 	}
 
-	private CCardinality getCardinalityForTopLevelSlot() {
+	private CCardinality getDefaultCardinalityForTopLevelSlot() {
 
 		return singleValued
 				? CCardinality.SINGLETON
-				: getCardinalityForMultiValuedTopLevelSlot();
+				: getDefaultCardinalityForMultiValuedTopLevelSlot();
 	}
 }

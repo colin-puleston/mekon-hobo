@@ -36,7 +36,7 @@ class OBNumberSlot extends OBSlot {
 
 	OBNumberSlot(OBSlotSpec spec, OBNumber valueType) {
 
-		super(spec);
+		super(spec, true);
 
 		this.valueType = valueType;
 	}
@@ -46,7 +46,7 @@ class OBNumberSlot extends OBSlot {
 		return true;
 	}
 
-	CCardinality getCardinalityForMultiValuedTopLevelSlot() {
+	CCardinality getDefaultCardinalityForMultiValuedTopLevelSlot() {
 
 		throw new Error("Method should never be invoked!");
 	}
