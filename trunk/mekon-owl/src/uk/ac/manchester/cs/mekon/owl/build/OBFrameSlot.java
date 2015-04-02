@@ -43,7 +43,7 @@ abstract class OBFrameSlot extends OBSlot {
 		metaFrameSlotsEnabled = spec.metaFrameSlotsEnabled();
 	}
 
-	CCardinality getCardinalityForMultiValuedTopLevelSlot() {
+	CCardinality getDefaultCardinalityForMultiValuedTopLevelSlot() {
 
 		return isMetaFrameSlot(this) ? CCardinality.UNIQUE_TYPES : CCardinality.FREE;
 	}

@@ -36,6 +36,8 @@ import uk.ac.manchester.cs.mekon.model.*;
 public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
 	private boolean frameSource = false;
+
+	private CCardinality slotCardinality = CCardinality.FREE;
 	private CEditability slotEditability = CEditability.DEFAULT;
 
 	/**
@@ -50,6 +52,18 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 	public void setFrameSource(boolean frameSource) {
 
 		this.frameSource = frameSource;
+	}
+
+	/**
+	 * Sets the cardinality status for the frames-model slots that
+	 * will be generated for the property. Defaults to
+	 * {@link CCardinality#FREE} if method is never invoked.
+	 *
+	 * @param slotCardinality Cardinality status for generated slots
+	 */
+	public void setSlotCardinality(CCardinality slotCardinality) {
+
+		this.slotCardinality = slotCardinality;
 	}
 
 	/**
@@ -69,6 +83,7 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		OBPropertyAttributes combined = new OBPropertyAttributes();
 
 		combined.setFrameSource(frameSource || other.frameSource());
+		combined.setSlotCardinality(combineSlotCardinalities(other));
 		combined.setSlotEditability(combineSlotEditabilities(other));
 
 		return combined;
@@ -79,9 +94,19 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		return frameSource;
 	}
 
+	CCardinality getSlotCardinality() {
+
+		return slotCardinality;
+	}
+
 	CEditability getSlotEditability() {
 
 		return slotEditability;
+	}
+
+	private CCardinality combineSlotCardinalities(OBPropertyAttributes other) {
+
+		return slotCardinality.getMoreRestrictive(other.getSlotCardinality());
 	}
 
 	private CEditability combineSlotEditabilities(OBPropertyAttributes other) {
