@@ -36,9 +36,6 @@ public abstract class MostExtremeCFrames {
 
 	private List<CFrame> mostExtremes = new ArrayList<CFrame>();
 
-	private Set<CFrame> totalExtremes = new HashSet<CFrame>();
-	private Set<CFrame> intermediates = new HashSet<CFrame>();
-
 	/**
 	 * Uses the supplied set of frames to update the current set of
 	 * most-general/specific frames.
@@ -61,22 +58,20 @@ public abstract class MostExtremeCFrames {
 	 */
 	public void update(CFrame newFrame) {
 
-		if (getNextMoreExtremes(newFrame).isEmpty()) {
+		for (CFrame extreme : new HashSet<CFrame>(mostExtremes)) {
 
-			if (totalExtremes.add(newFrame)) {
+			if (firstIsMoreExtreme(extreme, newFrame)) {
 
-				mostExtremes.add(newFrame);
-				removeLessExtremeIntermediates(newFrame);
+				return;
+			}
+
+			if (firstIsMoreExtreme(newFrame, extreme)) {
+
+				mostExtremes.remove(extreme);
 			}
 		}
-		else {
 
-			if (!intermediates.contains(newFrame)
-				&& !excludedByTotalExtreme(newFrame)) {
-
-				updateIntermediates(newFrame);
-			}
-		}
+		mostExtremes.add(newFrame);
 	}
 
 	/**
@@ -95,58 +90,4 @@ public abstract class MostExtremeCFrames {
 	abstract boolean firstIsMoreExtreme(CFrame first, CFrame second);
 
 	abstract List<CFrame> getNextMoreExtremes(CFrame current);
-
-	private void updateIntermediates(CFrame newFrame) {
-
-		for (CFrame intermediate : new HashSet<CFrame>(intermediates)) {
-
-			if (firstIsMoreExtreme(intermediate, newFrame)) {
-
-				return;
-			}
-
-			if (firstIsMoreExtreme(newFrame, intermediate)) {
-
-				removeIntermediate(intermediate);
-			}
-		}
-
-		addIntermediate(newFrame);
-	}
-
-	private void removeLessExtremeIntermediates(CFrame newFrame) {
-
-		for (CFrame intermediate : new HashSet<CFrame>(intermediates)) {
-
-			if (firstIsMoreExtreme(newFrame, intermediate)) {
-
-				removeIntermediate(intermediate);
-			}
-		}
-	}
-
-	private boolean excludedByTotalExtreme(CFrame newFrame) {
-
-		for (CFrame totalExtreme : totalExtremes) {
-
-			if (firstIsMoreExtreme(totalExtreme, newFrame)) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private void addIntermediate(CFrame intermediate) {
-
-		mostExtremes.add(intermediate);
-		intermediates.add(intermediate);
-	}
-
-	private void removeIntermediate(CFrame intermediate) {
-
-		mostExtremes.remove(intermediate);
-		intermediates.remove(intermediate);
-	}
 }
