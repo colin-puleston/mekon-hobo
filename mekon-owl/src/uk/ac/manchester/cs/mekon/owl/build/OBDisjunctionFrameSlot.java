@@ -34,14 +34,11 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 class OBDisjunctionFrameSlot extends OBFrameSlot {
 
-	private String valueTypeLabel;
 	private SortedSet<OBFrame> valueTypeDisjuncts = new TreeSet<OBFrame>();
 
-	OBDisjunctionFrameSlot(OBSlotSpec spec, String valueTypeLabel) {
+	OBDisjunctionFrameSlot(OBSlotSpec spec) {
 
 		super(spec);
-
-		this.valueTypeLabel = valueTypeLabel;
 	}
 
 	void addValueTypeDisjunct(OBFrame valueTypeDisjunct) {
@@ -49,9 +46,17 @@ class OBDisjunctionFrameSlot extends OBFrameSlot {
 		valueTypeDisjuncts.add(valueTypeDisjunct);
 	}
 
-	boolean validSlotValueType() {
+	boolean anyStructuredValues() {
 
-		return true;
+		for (OBFrame valueType : valueTypeDisjuncts) {
+
+			if (valueType.slotsInHierarchy()) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
@@ -63,11 +68,6 @@ class OBDisjunctionFrameSlot extends OBFrameSlot {
 			cDisjuncts.add(disjunct.ensureCStructure(builder, annotations));
 		}
 
-		return CFrame.resolveDisjunction(valueTypeLabel, cDisjuncts);
-	}
-
-	Set<OBFrame> getRootValueTypeFrames() {
-
-		return valueTypeDisjuncts;
+		return CFrame.resolveDisjunction(cDisjuncts);
 	}
 }

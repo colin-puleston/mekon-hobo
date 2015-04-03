@@ -24,39 +24,35 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
- * Represents a set of attributes that will determine the details
- * of the entities generated in the Frames Model (FM) for a
- * particular OWL class.
+ * Specifies the policy for frame-valued slot creation.
  *
  * @author Colin Puleston
  */
-public class OBConceptAttributes extends OBAttributes<OBConceptAttributes> {
-
-	private boolean hidden = false;
+public enum OBFrameSlotsPolicy {
 
 	/**
-	 * Sets a value for the attribute that determines whether the
-	 * concept will be used to generate a "hidden" frame.
-	 *
-	 * @param value Value for attribute
+	 * No policy has been defined.
 	 */
-	public void setHidden(boolean value) {
+	NONE,
 
-		hidden = value;
-	}
+	/**
+	 * All frame-valued slots are to {@link IFrame}-valued.
+	 */
+	IFRAME_VALUED_ONLY,
 
-	OBConceptAttributes update(OBConceptAttributes updates) {
+	/**
+	 * All frame-valued slots are to {@link CFrame}-valued.
+	 */
+	CFRAME_VALUED_ONLY,
 
-		OBConceptAttributes updated = new OBConceptAttributes();
-
-		updated.setHidden(hidden || updates.hidden());
-
-		return updated;
-	}
-
-	boolean hidden() {
-
-		return hidden;
-	}
+	/**
+	 * Frame-valued slots are to {@link CFrame}-valued when
+	 * there are no slots attached any of the frames within the
+	 * section of hierarchy that defines the possible slot
+	 * values. Otherwise they are to be {@link IFrame}-valued.
+	 */
+	CFRAME_VALUED_IF_NO_STRUCTURE;
 }
