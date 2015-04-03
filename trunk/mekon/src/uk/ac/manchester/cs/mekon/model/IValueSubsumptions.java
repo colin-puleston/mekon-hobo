@@ -57,7 +57,7 @@ class IValueSubsumptions {
 							Collection<? extends IValue> values,
 							CValue<?> valueType) {
 
-		if (valueType.getValueType().isAssignableFrom(CValue.class)) {
+		if (CValue.class.isAssignableFrom(valueType.getValueType())) {
 
 			return getMostSpecificCValueValues(asCValues(values));
 		}
