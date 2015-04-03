@@ -118,7 +118,7 @@
 			included.
 		-->
 		<OWLSanctionedModel
-			metaFrameSlotsEnabled="TRUE"
+			defaultFrameSlotsPolicy="CFRAME_VALUED_IF_NO_STRUCTURE"
 			retainOnlyDeclarationAxioms="FALSE">
 			<ConceptInclusion>
 				<Group
