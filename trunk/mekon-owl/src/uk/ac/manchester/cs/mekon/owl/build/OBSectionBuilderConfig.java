@@ -46,7 +46,7 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 		addProperties(builder);
 		addAnnotationInclusion(builder);
 		addLabelAnnotationProperties(builder);
-		setMetaFrameSlotsEnabled(builder);
+		setDefaultFrameSlotsPolicy(builder);
 		setRetainOnlyDeclarationAxioms(builder);
 	}
 
@@ -98,9 +98,9 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 		}
 	}
 
-	private void setMetaFrameSlotsEnabled(OBSectionBuilder builder) {
+	private void setDefaultFrameSlotsPolicy(OBSectionBuilder builder) {
 
-		builder.setMetaFrameSlotsEnabled(metaFrameSlotsEnabled());
+		builder.setDefaultFrameSlotsPolicy(getDefaultFrameSlotsPolicy());
 	}
 
 	private void setRetainOnlyDeclarationAxioms(OBSectionBuilder builder) {
@@ -137,9 +137,12 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 		return IRI.create(propNode.getURI(ANNO_PROPERTY_URI_ATTR));
 	}
 
-	private boolean metaFrameSlotsEnabled() {
+	private OBFrameSlotsPolicy getDefaultFrameSlotsPolicy() {
 
-		return configNode.getBoolean(METAFRAME_SLOTS_ENABLED_ATTR);
+		return configNode.getEnum(
+					DEFAULT_FRAME_SLOTS_POLICY_ATTR,
+					OBFrameSlotsPolicy.class,
+					OBFrameSlotsPolicy.IFRAME_VALUED_ONLY);
 	}
 
 	private boolean retainOnlyDeclarationAxioms() {

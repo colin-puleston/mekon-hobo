@@ -154,21 +154,16 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
-	 * Sets the attribute that determines whether or not any of the
-	 * slots that are generated in the Frames Model (FM) can have
-	 * a value-type defined via an {@link MFrame} object. If this
-	 * attribute is set to "true" then any slot derived from an
-	 * OWL object-restriction for which none of the potential named
-	 * filler-classes provide any further sanctioned structure, will
-	 * be used to generated a {@link MFrame}-valued slot, rather
-	 * than the {@link CFrame}-valued slot which would otherwise be
-	 * generated.
+	 * Sets the attribute that defines the default value for the
+	 * policy to be used when creating frame-valued slots. Defaults
+	 * to {@link OBFrameSlotsPolicy#IFRAME_VALUED_ONLY} if method is
+	 * never invoked.
 	 *
 	 * @param value Required value of attribute
 	 */
-	public void setMetaFrameSlotsEnabled(boolean value) {
+	public void setDefaultFrameSlotsPolicy(OBFrameSlotsPolicy value) {
 
-		slots.setMetaFrameSlotsEnabled(value);
+		slots.setDefaultFrameSlotsPolicy(value);
 	}
 
 	/**

@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
@@ -35,36 +33,36 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 class OBModelFrameSlot extends OBFrameSlot {
 
 	private OBFrame valueType;
-	private boolean valuedRequired;
 
 	OBModelFrameSlot(OBSlotSpec spec, OBFrame valueType) {
 
 		super(spec);
 
 		this.valueType = valueType;
-
-		valuedRequired = spec.valuedRequired();
 	}
 
-	boolean validSlotValueType() {
+	boolean canBeSlot() {
 
 		return !valueType.hidden() || !valueType.leafFrame();
+	}
+
+	boolean canPotentiallyBeFixedValue(OBSlot topLevelSlot) {
+
+		return !valueType.hidden() && valueType.leafFrame();
+	}
+
+	boolean canBeFixedValue(CValue<?> cValue) {
+
+		return cValue instanceof MFrame;
+	}
+
+	boolean anyStructuredValues() {
+
+		return valueType.slotsInHierarchy();
 	}
 
 	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
 		return valueType.ensureCStructure(builder, annotations);
-	}
-
-	boolean canBeFixedValue(CValue<?> cValue) {
-
-		return valuedRequired
-				&& valueType.leafFrame()
-				&& cValue instanceof MFrame;
-	}
-
-	Set<OBFrame> getRootValueTypeFrames() {
-
-		return Collections.<OBFrame>singleton(valueType);
 	}
 }

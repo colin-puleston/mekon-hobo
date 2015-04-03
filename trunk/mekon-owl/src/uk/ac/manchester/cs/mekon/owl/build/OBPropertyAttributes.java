@@ -39,6 +39,7 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
 	private CCardinality slotCardinality = CCardinality.FREE;
 	private CEditability slotEditability = CEditability.DEFAULT;
+	private OBFrameSlotsPolicy frameSlotsPolicy = OBFrameSlotsPolicy.NONE;
 
 	/**
 	 * Used to specifiy whether the property, in addition to any
@@ -78,15 +79,29 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		this.slotEditability = slotEditability;
 	}
 
-	OBPropertyAttributes combineWith(OBPropertyAttributes other) {
+	/**
+	 * Sets the policy for the frame-valued frames-model slots that
+	 * will be generated for the property. Defaults to the general
+	 * default-value for the section-builder if method is never invoked
+	 * (see {@link OBSectionBuilder#setDefaultFrameSlotsPolicy}).
+	 *
+	 * @param frameSlotsPolicy Policy for generating frame-valued slots
+	 */
+	public void setFrameSlotsPolicy(OBFrameSlotsPolicy frameSlotsPolicy) {
 
-		OBPropertyAttributes combined = new OBPropertyAttributes();
+		this.frameSlotsPolicy = frameSlotsPolicy;
+	}
 
-		combined.setFrameSource(frameSource || other.frameSource());
-		combined.setSlotCardinality(combineSlotCardinalities(other));
-		combined.setSlotEditability(combineSlotEditabilities(other));
+	OBPropertyAttributes update(OBPropertyAttributes updates) {
 
-		return combined;
+		OBPropertyAttributes updated = new OBPropertyAttributes();
+
+		updated.setFrameSource(frameSource || updates.frameSource());
+		updated.setSlotCardinality(updateSlotCardinalities(updates));
+		updated.setSlotEditability(updateSlotEditabilities(updates));
+		updated.setFrameSlotsPolicy(updates.getFrameSlotsPolicy());
+
+		return updated;
 	}
 
 	boolean frameSource() {
@@ -104,13 +119,18 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		return slotEditability;
 	}
 
-	private CCardinality combineSlotCardinalities(OBPropertyAttributes other) {
+	OBFrameSlotsPolicy getFrameSlotsPolicy() {
 
-		return slotCardinality.getMoreRestrictive(other.getSlotCardinality());
+		return frameSlotsPolicy;
 	}
 
-	private CEditability combineSlotEditabilities(OBPropertyAttributes other) {
+	private CCardinality updateSlotCardinalities(OBPropertyAttributes updates) {
 
-		return slotEditability.getStrongest(other.getSlotEditability());
+		return slotCardinality.getMoreRestrictive(updates.getSlotCardinality());
+	}
+
+	private CEditability updateSlotEditabilities(OBPropertyAttributes updates) {
+
+		return slotEditability.getStrongest(updates.getSlotEditability());
 	}
 }

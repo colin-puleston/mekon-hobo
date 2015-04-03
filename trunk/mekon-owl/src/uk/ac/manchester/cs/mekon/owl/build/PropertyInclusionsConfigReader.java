@@ -55,6 +55,7 @@ class PropertyInclusionsConfigReader
 		attributes.setFrameSource(getFrameSources(groupNode));
 		attributes.setSlotCardinality(getSlotCardinality(groupNode));
 		attributes.setSlotEditability(getSlotEditability(groupNode));
+		attributes.setFrameSlotsPolicy(getFrameSlotsPolicy(groupNode));
 
 		return group;
 	}
@@ -78,5 +79,13 @@ class PropertyInclusionsConfigReader
 					SLOT_EDITABILITY_ATTR,
 					CEditability.class,
 					CEditability.DEFAULT);
+	}
+
+	private OBFrameSlotsPolicy getFrameSlotsPolicy(KConfigNode groupNode) {
+
+		return groupNode.getEnum(
+					FRAME_SLOTS_POLICY_ATTR,
+					OBFrameSlotsPolicy.class,
+					OBFrameSlotsPolicy.NONE);
 	}
 }

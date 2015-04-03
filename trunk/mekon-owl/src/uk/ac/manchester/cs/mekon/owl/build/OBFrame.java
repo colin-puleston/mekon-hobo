@@ -105,6 +105,16 @@ class OBFrame extends OIdentified {
 				|| anySlotsViaLinks(new HashSet<OBFrame>(), true);
 	}
 
+	OBSlot findTopLevelSlot(OBSlot current) {
+
+		for (OBFrame sup : superFrames) {
+
+			return sup.findTopLevelSlotViaSuper(current);
+		}
+
+		return current;
+	}
+
 	private CFrame createCFrame(CBuilder builder) {
 
 		CFrame frame = builder.resolveFrame(getIdentity(), hidden);
@@ -155,16 +165,6 @@ class OBFrame extends OIdentified {
 		}
 
 		return false;
-	}
-
-	private OBSlot findTopLevelSlot(OBSlot current) {
-
-		for (OBFrame sup : superFrames) {
-
-			return sup.findTopLevelSlotViaSuper(current);
-		}
-
-		return current;
 	}
 
 	private OBSlot findTopLevelSlotViaSuper(OBSlot current) {

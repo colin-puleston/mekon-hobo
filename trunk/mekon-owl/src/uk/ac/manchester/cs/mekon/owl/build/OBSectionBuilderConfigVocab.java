@@ -42,7 +42,7 @@ public interface OBSectionBuilderConfigVocab {
 	static public final String LABEL_ANNO_PROPERTIES_ID = "LabelAnnotations";
 	static public final String LABEL_ANNO_PROPERTY_ID = "AnnotationProperty";
 
-	static public final String METAFRAME_SLOTS_ENABLED_ATTR = "metaFrameSlotsEnabled";
+	static public final String DEFAULT_FRAME_SLOTS_POLICY_ATTR = "defaultFrameSlotsPolicy";
 	static public final String RETAIN_ONLY_DECLARATIONS_ATTR = "retainOnlyDeclarationAxioms";
 	static public final String ROOT_ENTITY_URI_ATTR = "rootURI";
 	static public final String ENTITY_INCLUSION_ATTR = "inclusion";
@@ -51,6 +51,7 @@ public interface OBSectionBuilderConfigVocab {
 	static public final String FRAME_SOURCE_PROPERTIES_ATTR = "frameSources";
 	static public final String SLOT_CARDINALITY_ATTR = "cardinality";
 	static public final String SLOT_EDITABILITY_ATTR = "editability";
+	static public final String FRAME_SLOTS_POLICY_ATTR = "frameSlotsPolicy";
 	static public final String ANNO_PROPERTY_URI_ATTR = "uri";
 	static public final String ANNO_ID_ATTR = "id";
 	static public final String ANNO_VALUE_SEPARATORS_ATTR = "valueSeparators";

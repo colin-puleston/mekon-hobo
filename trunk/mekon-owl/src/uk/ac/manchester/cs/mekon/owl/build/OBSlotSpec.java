@@ -39,7 +39,7 @@ abstract class OBSlotSpec {
 
 	abstract boolean valuedRequired();
 
-	abstract boolean metaFrameSlotsEnabled();
+	abstract OBFrameSlotsPolicy getFrameSlotsPolicy();
 
 	abstract OBPropertyAttributes getPropertyAttributes();
 }

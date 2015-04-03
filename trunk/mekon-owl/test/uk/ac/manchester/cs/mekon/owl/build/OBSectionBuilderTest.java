@@ -70,7 +70,7 @@ public class OBSectionBuilderTest extends OTest {
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
 	private OBSectionBuilder sectionBuilder;
-	private boolean metaFrameSlotsEnabled = false;
+	private boolean cFrameValuedSlotsEnabled = false;
 
 	private enum FrameStatus {
 
@@ -250,47 +250,49 @@ public class OBSectionBuilderTest extends OTest {
 	}
 
 	@Test
-	public void test_slots_metaFrameSlotsEnabled() {
+	public void test_slots_cFrameValuedSlotsEnabled() {
 
-		enableMetaFrameSlots();
+		enableCFrameValuedSlots();
 		buildModel();
 
-		test_slots();
+		testSlots();
 	}
 
 	@Test
-	public void test_slots_metaFrameSlotsDisabled() {
+	public void test_slots_cFrameValuedSlotsDisabled() {
 
 		buildModel();
 
-		test_slots();
+		testSlots();
 	}
 
 	@Test
-	public void test_slotValues_metaFrameSlotsEnabled() {
+	public void test_slotValues_cFrameValuedSlotsEnabled() {
 
-		enableMetaFrameSlots();
+		enableCFrameValuedSlots();
 		buildModel();
 
-		test_slotValues();
+		testSlotValues();
 	}
 
 	@Test
-	public void test_slotValues_metaFrameSlotsDisabled() {
+	public void test_slotValues_cFrameValuedSlotsDisabled() {
 
 		buildModel();
 
-		test_slotValues();
+		testSlotValues();
 	}
 
-	private void enableMetaFrameSlots() {
+	private void enableCFrameValuedSlots() {
 
-		sectionBuilder.setMetaFrameSlotsEnabled(true);
+		sectionBuilder
+			.setDefaultFrameSlotsPolicy(
+				OBFrameSlotsPolicy.CFRAME_VALUED_IF_NO_STRUCTURE);
 
-		metaFrameSlotsEnabled = true;
+		cFrameValuedSlotsEnabled = true;
 	}
 
-	private void test_slots() {
+	private void testSlots() {
 
 		testSlot(
 			CITIZEN_CLASS,
@@ -319,7 +321,7 @@ public class OBSectionBuilderTest extends OTest {
 			getCInteger(0, null));
 	}
 
-	private void test_slotValues() {
+	private void testSlotValues() {
 
 		testSlotValues(
 			UNEMPLOYED_CITIZEN_CLASS,
@@ -509,14 +511,14 @@ public class OBSectionBuilderTest extends OTest {
 
 		CFrame frame = getCFrame(frameName);
 
-		return metaFrameSlotsEnabled ? frame.getType() : frame;
+		return cFrameValuedSlotsEnabled ? frame.getType() : frame;
 	}
 
 	private List<IValue> getNoStructureFrameSlotFixedValues(String frameName) {
 
 		List<IValue> values = new ArrayList<IValue>();
 
-		if (metaFrameSlotsEnabled) {
+		if (cFrameValuedSlotsEnabled) {
 
 			values.add(getCFrame(frameName));
 		}

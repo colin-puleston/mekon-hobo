@@ -36,7 +36,6 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 abstract class OBSlot extends OIdentified {
 
 	private OBSlotSpec spec;
-	private boolean singleValued;
 
 	private class CStructureCreator {
 
@@ -61,18 +60,21 @@ abstract class OBSlot extends OIdentified {
 
 			if (OBSlot.this == topLevelSlot) {
 
-				addOrUpdateSlot(getDefaultCardinalityForTopLevelSlot());
+				if (canBeSlot()) {
+
+					addOrUpdateSlot(getDefaultCardinalityForTopLevelSlot());
+				}
 			}
 			else {
 
-				if (topLevelSlot.singleValued) {
+				if (topLevelSlot.spec.singleValued() && canBeSlot()) {
 
 					addOrUpdateSlot(CCardinality.SINGLETON);
 				}
 
-				if (canBeFixedValue(value)) {
+				if (spec.valuedRequired() && canBeFixedValue(value)) {
 
-					checkAddSlotValue();
+					addSlotValue();
 				}
 			}
 		}
@@ -105,7 +107,7 @@ abstract class OBSlot extends OIdentified {
 			slotEd.absorbEditability(editOverride);
 		}
 
-		private void checkAddSlotValue() {
+		private void addSlotValue() {
 
 			containerEd.addSlotValue(getIdentity(), value);
 		}
@@ -121,7 +123,6 @@ abstract class OBSlot extends OIdentified {
 		super(spec.getProperty(), spec.getLabel());
 
 		this.spec = spec;
-		this.singleValued = singleValued;
 	}
 
 	void ensureCStructure(
@@ -130,30 +131,50 @@ abstract class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		if (validSlotValueType()) {
+		if (canBeSlotOrFixedValue(topLevelSlot)) {
 
 			new CStructureCreator(builder, container, topLevelSlot, annotations);
 		}
 	}
 
-	abstract boolean validSlotValueType();
+	void ensureCStructure(
+			CBuilder builder,
+			CExtender container,
+			OBSlot topLevelSlot,
+			OBAnnotations annotations) {
 
-	abstract CCardinality getDefaultCardinalityForMultiValuedTopLevelSlot();
+		if (canBeSlotOrFixedValue(topLevelSlot)) {
 
-	abstract CValue<?> ensureCValue(
-							CBuilder builder,
-							OBSlot topLevelSlot,
-							OBAnnotations annotations);
+			CValue<?> valueType = ensureCValue(builder, topLevelSlot, annotations);
+
+			container.addSlotValue(getIdentity(), valueType);
+		}
+	}
+
+	boolean canBeSlot() {
+
+		return true;
+	}
+
+	boolean canPotentiallyBeFixedValue(OBSlot topLevelSlot) {
+
+		return false;
+	}
 
 	boolean canBeFixedValue(CValue<?> cValue) {
 
 		return false;
 	}
 
-	private CCardinality getDefaultCardinalityForTopLevelSlot() {
+	abstract CCardinality getDefaultCardinalityForTopLevelSlot();
 
-		return singleValued
-				? CCardinality.SINGLETON
-				: getDefaultCardinalityForMultiValuedTopLevelSlot();
+	abstract CValue<?> ensureCValue(
+							CBuilder builder,
+							OBSlot topLevelSlot,
+							OBAnnotations annotations);
+
+	private boolean canBeSlotOrFixedValue(OBSlot topLevelSlot) {
+
+		return canBeSlot() || canPotentiallyBeFixedValue(topLevelSlot);
 	}
 }

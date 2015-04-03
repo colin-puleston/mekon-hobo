@@ -139,7 +139,7 @@ public abstract class OBEntities
 
 		if (currentAttrs != null) {
 
-			attributes = currentAttrs.combineWith(attributes);
+			attributes = currentAttrs.update(attributes);
 		}
 
 		entitiesToAttributes.put(entity, attributes);

@@ -32,62 +32,61 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-abstract class OBFrameSlot extends OBSlot {
+class OBExtensionFrameSlot extends OBFrameSlot {
 
-	private OBSlotSpec spec;
+	private OBFrame valueTypeBase;
 
-	OBFrameSlot(OBSlotSpec spec) {
+	private Set<OBSlot> valueTypeSlots = new HashSet<OBSlot>();
+
+	OBExtensionFrameSlot(OBSlotSpec spec, OBFrame valueTypeBase) {
 
 		super(spec);
 
-		this.spec = spec;
+		this.valueTypeBase = valueTypeBase;
 	}
 
-	CCardinality getDefaultCardinalityForTopLevelSlot() {
+	void addValueTypeSlot(OBSlot valueTypeSlot) {
 
-		if (spec.singleValued()) {
-
-			return CCardinality.SINGLETON;
-		}
-
-		if (cFrameValuedTopLevelSlot()) {
-
-			return CCardinality.UNIQUE_TYPES;
-		}
-
-		return CCardinality.FREE;
+		valueTypeSlots.add(valueTypeSlot);
 	}
 
-	abstract boolean anyStructuredValues();
-
-	abstract CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations);
-
-	CValue<?> ensureCValue(
-				CBuilder builder,
-				OBSlot topLevelSlot,
-				OBAnnotations annotations) {
-
-		CFrame cFrame = ensureCFrame(builder, annotations);
-
-		return cFrameValuedTopLevelSlot(topLevelSlot) ? cFrame.getType() : cFrame;
-	}
-
-	boolean cFrameValuedTopLevelSlot(OBSlot topLevelSlot) {
-
-		return ((OBFrameSlot)topLevelSlot).cFrameValuedTopLevelSlot();
-	}
-
-	private boolean cFrameValuedTopLevelSlot() {
-
-		switch (spec.getFrameSlotsPolicy()) {
-
-			case CFRAME_VALUED_ONLY:
-				return true;
-
-			case CFRAME_VALUED_IF_NO_STRUCTURE:
-				return !anyStructuredValues();
-		}
+	boolean canBeSlot() {
 
 		return false;
+	}
+
+	boolean canPotentiallyBeFixedValue(OBSlot topLevelSlot) {
+
+		return cFrameValuedTopLevelSlot(topLevelSlot);
+	}
+
+	boolean canBeFixedValue(CValue<?> cValue) {
+
+		return true;
+	}
+
+	boolean anyStructuredValues() {
+
+		throw new Error("Method should never be invoked!");
+	}
+
+	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
+
+		CFrame baseCFrame = ensureBaseCFrame(builder, annotations);
+		CExtender extender = new CExtender(baseCFrame);
+
+		for (OBSlot slot : valueTypeSlots) {
+
+			OBSlot topLevelSlot = valueTypeBase.findTopLevelSlot(slot);
+
+			slot.ensureCStructure(builder, extender, topLevelSlot, annotations);
+		}
+
+		return extender.extend();
+	}
+
+	CFrame ensureBaseCFrame(CBuilder builder, OBAnnotations annotations) {
+
+		return valueTypeBase.ensureCStructure(builder, annotations);
 	}
 }
