@@ -36,6 +36,9 @@ public abstract class MostExtremeCFrames {
 
 	private List<CFrame> mostExtremes = new ArrayList<CFrame>();
 
+	private Set<CFrame> endExtremes = new HashSet<CFrame>();
+	private Set<CFrame> midExtremes = new HashSet<CFrame>();
+
 	/**
 	 * Uses the supplied set of frames to update the current set of
 	 * most-general/specific frames.
@@ -58,20 +61,14 @@ public abstract class MostExtremeCFrames {
 	 */
 	public void update(CFrame newFrame) {
 
-		for (CFrame extreme : new HashSet<CFrame>(mostExtremes)) {
+		if (getNextMoreExtremes(newFrame).isEmpty()) {
 
-			if (firstIsMoreExtreme(extreme, newFrame)) {
-
-				return;
-			}
-
-			if (firstIsMoreExtreme(newFrame, extreme)) {
-
-				mostExtremes.remove(extreme);
-			}
+			updateForEndExtreme(newFrame);
 		}
+		else {
 
-		mostExtremes.add(newFrame);
+			checkUpdateMidExtremes(newFrame);
+		}
 	}
 
 	/**
@@ -90,4 +87,77 @@ public abstract class MostExtremeCFrames {
 	abstract boolean firstIsMoreExtreme(CFrame first, CFrame second);
 
 	abstract List<CFrame> getNextMoreExtremes(CFrame current);
+
+	Set<CFrame> getEndExtremes() {
+
+		return endExtremes;
+	}
+
+	private void updateForEndExtreme(CFrame endExtreme) {
+
+		if (endExtremes.add(endExtreme)) {
+
+			mostExtremes.add(endExtreme);
+			purgeMidExtremes(endExtreme);
+		}
+	}
+
+	private void checkUpdateMidExtremes(CFrame newFrame) {
+
+		if (midExtremes.contains(newFrame) || excludedByEndExtreme(newFrame)) {
+
+			return;
+		}
+
+		for (CFrame midExtreme : new HashSet<CFrame>(midExtremes)) {
+
+			if (firstIsMoreExtreme(midExtreme, newFrame)) {
+
+				return;
+			}
+
+			if (firstIsMoreExtreme(newFrame, midExtreme)) {
+
+				removeMidExtreme(midExtreme);
+			}
+		}
+
+		addMidExtreme(newFrame);
+	}
+
+	private void purgeMidExtremes(CFrame endExtreme) {
+
+		for (CFrame extreme : new HashSet<CFrame>(midExtremes)) {
+
+			if (firstIsMoreExtreme(endExtreme, extreme)) {
+
+				removeMidExtreme(extreme);
+			}
+		}
+	}
+
+	private boolean excludedByEndExtreme(CFrame midExtreme) {
+
+		for (CFrame endExtreme : endExtremes) {
+
+			if (firstIsMoreExtreme(endExtreme, midExtreme)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void addMidExtreme(CFrame extreme) {
+
+		mostExtremes.add(extreme);
+		midExtremes.add(extreme);
+	}
+
+	private void removeMidExtreme(CFrame extreme) {
+
+		mostExtremes.remove(extreme);
+		midExtremes.remove(extreme);
+	}
 }

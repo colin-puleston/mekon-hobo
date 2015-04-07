@@ -34,6 +34,8 @@ import java.util.*;
  */
 public class MostSpecificCFrames extends MostExtremeCFrames {
 
+	private Set<CFrame> extensions = new HashSet<CFrame>();
+
 	/**
 	 * Constructor.
 	 */
@@ -51,6 +53,45 @@ public class MostSpecificCFrames extends MostExtremeCFrames {
 		update(frames);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void update(CFrame newFrame) {
+
+		if (newFrame.getCategory().extension()) {
+
+			if (extensions.contains(newFrame)) {
+
+				return;
+			}
+
+			if (!updateExtensions(newFrame)) {
+
+				return;
+			}
+		}
+
+		super.update(newFrame);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<CFrame> getCurrents() {
+
+		List<CFrame> currents = super.getCurrents();
+
+		for (CFrame leaf : getEndExtremes()) {
+
+			if (subsumedLeaf(leaf)) {
+
+				currents.remove(leaf);
+			}
+		}
+
+		return currents;
+	}
+
 	boolean firstIsMoreExtreme(CFrame first, CFrame second) {
 
 		return first.subsumedBy(second);
@@ -59,5 +100,48 @@ public class MostSpecificCFrames extends MostExtremeCFrames {
 	List<CFrame> getNextMoreExtremes(CFrame current) {
 
 		return current.getSubs();
+	}
+
+	private boolean updateExtensions(CFrame newExtension) {
+
+		for (CFrame extension : new HashSet<CFrame>(extensions)) {
+
+			if (newExtension.subsumes(extension)) {
+
+				return false;
+			}
+
+			if (extension.subsumes(newExtension)) {
+
+				extensions.remove(extension);
+			}
+		}
+
+		extensions.add(newExtension);
+
+		return true;
+	}
+
+	private boolean subsumedLeaf(CFrame leaf) {
+
+		if (leaf.getCategory().extension()) {
+
+			return !extensions.contains(leaf);
+		}
+
+		return subsumesExtension(leaf);
+	}
+
+	private boolean subsumesExtension(CFrame frame) {
+
+		for (CFrame extension : extensions) {
+
+			if (frame.subsumes(extension)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
