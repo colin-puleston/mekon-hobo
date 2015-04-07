@@ -38,44 +38,56 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 class NumberRenderer {
 
-	private OWLDataFactory dataFactory = null;
-	private OWLDataProperty indirectNumericProperty = null;
+	static private OWLDataProperty getIndirectPropertyOrNull(OModel model) {
+
+		return model.indirectNumericPropertyDefined()
+					? model.getIndirectNumericProperty()
+					: null;
+	}
+
+	private OWLDataFactory dataFactory;
+	private OWLDataProperty property = null;
 
 	NumberRenderer(OModel model) {
 
-		dataFactory = model.getDataFactory();
-
-		if (model.indirectNumericPropertyDefined()) {
-
-			indirectNumericProperty = model.getIndirectNumericProperty();
-		}
+		this(model, getIndirectPropertyOrNull(model));
 	}
 
-	OWLClassExpression render(INumber number) {
+	NumberRenderer(OModel model, OWLDataProperty property) {
 
-		if (indirectNumericProperty == null) {
+		dataFactory = model.getDataFactory();
+
+		this.property = property;
+	}
+
+	OWLClassExpression render(INumber number, boolean onlyValues) {
+
+		if (property == null) {
 
 			return dataFactory.getOWLThing();
 		}
 
-		return render(indirectNumericProperty, number);
+		if (onlyValues || number.indefinite()) {
+
+			renderRange(number, onlyValues);
+		}
+
+		return renderExact(number);
 	}
 
-	OWLClassExpression render(OWLDataProperty property, INumber number) {
-
-		return number.indefinite()
-				? renderRange(property, number)
-				: renderExact(property, number);
-	}
-
-	private OWLClassExpression renderExact(OWLDataProperty property, INumber number) {
+	private OWLClassExpression renderExact(INumber number) {
 
 		return dataFactory.getOWLDataHasValue(property, renderLiteral(number));
 	}
 
-	private OWLClassExpression renderRange(OWLDataProperty property, INumber number) {
+	private OWLClassExpression renderRange(INumber number, boolean onlyValues) {
 
 		OWLDatatypeRestriction res = renderRangeRestriction(number.getType());
+
+		if (onlyValues) {
+
+			return dataFactory.getOWLDataAllValuesFrom(property, res);
+		}
 
 		return dataFactory.getOWLDataSomeValuesFrom(property, res);
 	}
