@@ -127,7 +127,7 @@ class IndividualsRenderer {
 							expr));
 			}
 
-			void addExpr(OWLClassExpression expr) {
+			void addValueAssertion(OWLClassExpression expr) {
 
 				addTypeAssignment(expr);
 			}

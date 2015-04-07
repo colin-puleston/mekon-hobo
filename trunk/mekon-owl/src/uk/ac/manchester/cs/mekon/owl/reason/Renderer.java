@@ -39,7 +39,7 @@ abstract class Renderer<FR extends OWLObject> {
 
 	private OModel model;
 	private OWLDataFactory dataFactory;
-	private NumberRenderer numberRenderer;
+	private NumberRenderer defaultNumberRenderer;
 
 	abstract class FrameRenderer {
 
@@ -89,7 +89,7 @@ abstract class Renderer<FR extends OWLObject> {
 							OWLObjectProperty property,
 							OWLClassExpression expr);
 
-		abstract void addExpr(OWLClassExpression expr);
+		abstract void addValueAssertion(OWLClassExpression expr);
 
 		abstract OWLClassExpression toExpression(FR rendering);
 
@@ -114,12 +114,17 @@ abstract class Renderer<FR extends OWLObject> {
 
 		private void renderDirectNumberSlotValues(ORNumberSlot slot) {
 
-			if (slot.hasValues()) {
+			OWLDataProperty property = getDataProperty(slot);
+			NumberRenderer renderer = new NumberRenderer(model, property);
 
-				OWLDataProperty property = getDataProperty(slot);
-				INumber value = slot.getValues().iterator().next();
+			for (INumber value : slot.getValues()) {
 
-				addExpr(numberRenderer.render(property, value));
+				addValueAssertion(renderer.render(value, false));
+
+				if (slot.closedWorldSemantics()) {
+
+					addValueAssertion(renderer.render(value, true));
+				}
 			}
 		}
 
@@ -282,11 +287,9 @@ abstract class Renderer<FR extends OWLObject> {
 
 			Set<OWLClassExpression> renderings = new HashSet<OWLClassExpression>();
 
-			if (slot.hasValues()) {
+			for (INumber value : slot.getValues()) {
 
-				INumber value = slot.getValues().iterator().next();
-
-				renderings.add(numberRenderer.render(value));
+				renderings.add(defaultNumberRenderer.render(value, false));
 			}
 
 			return renderings;
@@ -313,7 +316,7 @@ abstract class Renderer<FR extends OWLObject> {
 		this.model = model;
 
 		dataFactory = model.getDataFactory();
-		numberRenderer = new NumberRenderer(model);
+		defaultNumberRenderer = new NumberRenderer(model);
 	}
 
 	FR renderFrame(ORFrame frame) {

@@ -87,7 +87,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 						expr));
 		}
 
-		void addExpr(OWLClassExpression expr) {
+		void addValueAssertion(OWLClassExpression expr) {
 
 			conjuncts.add(expr);
 		}
