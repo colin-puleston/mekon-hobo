@@ -49,7 +49,7 @@ class OModelConfig implements OModelConfigVocab {
 		File mainOWLFile = getMainOWLFile(baseDirectory);
 
 		modelBuilder.initialise(mainOWLFile, getReasonerFactoryClass());
-		modelBuilder.setNumericProperty(getNumericPropertyIRI());
+		modelBuilder.setIndirectNumericProperty(getIndirectNumericPropertyIRI());
 	}
 
 	private File getMainOWLFile(File baseDir) {
@@ -62,9 +62,9 @@ class OModelConfig implements OModelConfigVocab {
 		return configNode.getClass(REASONER_FACTORY_CLASS_ATTR, OWLReasonerFactory.class);
 	}
 
-	private IRI getNumericPropertyIRI() {
+	private IRI getIndirectNumericPropertyIRI() {
 
-		URI uri = configNode.getURI(NUMERIC_PROPERTY_URI_ATTR, null);
+		URI uri = configNode.getURI(INDIRECT_NUMERIC_PROPERTY_URI_ATTR, null);
 
 		return uri != null ? IRI.create(uri) : null;
 	}

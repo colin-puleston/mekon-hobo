@@ -31,7 +31,7 @@ import org.semanticweb.owlapi.model.*;
  */
 abstract class OBSlotSpec {
 
-	abstract OWLObjectProperty getProperty();
+	abstract OWLProperty<?, ?> getProperty();
 
 	abstract String getLabel();
 

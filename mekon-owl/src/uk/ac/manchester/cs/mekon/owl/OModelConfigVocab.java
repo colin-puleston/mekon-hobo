@@ -42,5 +42,5 @@ public interface OModelConfigVocab {
 
 	static public final String OWL_FILE_ATTR = "owlFile";
 	static public final String REASONER_FACTORY_CLASS_ATTR = "reasonerFactory";
-	static public final String NUMERIC_PROPERTY_URI_ATTR = "numericProperty";
+	static public final String INDIRECT_NUMERIC_PROPERTY_URI_ATTR = "indirectNumericProperty";
 }

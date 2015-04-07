@@ -41,7 +41,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 public class ORFramesInstance {
 
 	private OConceptFinder concepts;
-	private OObjectPropertyFinder objectProperties;
+	private OPropertyFinder properties;
 	private ORSlotSemantics slotSemantics;
 	private ORFrame rootFrame;
 
@@ -86,7 +86,7 @@ public class ORFramesInstance {
 
 		private IRI getIRIOrNull(ISlot iSlot) {
 
-			return objectProperties.getOrNull(iSlot.getType().getIdentity());
+			return properties.getOrNull(iSlot.getType().getIdentity());
 		}
 	}
 
@@ -187,7 +187,7 @@ public class ORFramesInstance {
 		this.slotSemantics = slotSemantics;
 
 		concepts = new OConceptFinder(model);
-		objectProperties = new OObjectPropertyFinder(model);
+		properties = new OPropertyFinder(model);
 
 		rootFrame = getFrame(iFrame);
 	}

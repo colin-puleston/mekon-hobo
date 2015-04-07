@@ -52,7 +52,7 @@ public class OModel {
 	private OWLOntologyManager manager;
 	private OWLOntology mainOntology;
 	private OWLReasoner reasoner;
-	private OWLDataProperty numericProperty;
+	private OWLDataProperty indirectNumericProperty;
 
 	private OConcepts concepts;
 	private OObjectProperties objectProperties;
@@ -352,54 +352,84 @@ public class OModel {
 	}
 
 	/**
-	 * Specifies whether there is a "numeric-property" defined for the
-	 * model.
+	 * Retrieves the inferred super-properties of the specified property.
 	 *
-	 * @return True if numeric-property defined
+	 * @param property Class whose super-properties are required
+	 * @param directOnly True if only direct super-properties are required
+	 * @return Required set of super-properties
 	 */
-	public boolean numericPropertyDefined() {
+	public Set<OWLDataProperty> getInferredSupers(
+									OWLDataProperty property,
+									boolean directOnly) {
 
-		return numericProperty != null;
+		return dataProperties.getInferredSupers(property, directOnly);
 	}
 
 	/**
-	 * Tests whether there is a "numeric-property" defined for the
-	 * model, and that it is equal to the specified property.
+	 * Retrieves the inferred sub-properties of the specified property.
+	 *
+	 * @param property Class whose sub-properties are required
+	 * @param directOnly True if only direct sub-properties are required
+	 * @return Required set of sub-properties
+	 */
+	public Set<OWLDataProperty> getInferredSubs(
+									OWLDataProperty property,
+									boolean directOnly) {
+
+		return dataProperties.getInferredSubs(property, directOnly);
+	}
+
+	/**
+	 * Specifies whether there is an "indirect-numeric-property" defined
+	 * for the model.
+	 *
+	 * @return True if indirect-numeric-property defined
+	 */
+	public boolean indirectNumericPropertyDefined() {
+
+		return indirectNumericProperty != null;
+	}
+
+	/**
+	 * Tests whether there is an "indirect-numeric-property" defined for
+	 * the model, and that it is equal to the specified property.
 	 *
 	 * @param property Property to test
-	 * @return True if specified property is numeric-property for model
+	 * @return True if specified property is indirect-numeric-property for
+	 * model
 	 */
-	public boolean isNumericProperty(OWLDataPropertyExpression property) {
+	public boolean isIndirectNumericProperty(OWLDataPropertyExpression property) {
 
-		return property.equals(numericProperty);
+		return property.equals(indirectNumericProperty);
 	}
 
 	/**
-	 * Provides the "numeric-property" that is defined for the model.
+	 * Provides the "indirect-numeric-property" that is defined for the
+	 * model.
 	 *
 	 * @return Numeric-property for model
-	 * @throws KModelException if numeric-property not defined
+	 * @throws KModelException if indirect-numeric-property not defined
 	 */
-	public OWLDataProperty getNumericProperty() {
+	public OWLDataProperty getIndirectNumericProperty() {
 
-		if (numericProperty == null) {
+		if (indirectNumericProperty == null) {
 
 			throw new KModelException("Numeric-property has not been specified");
 		}
 
-		return numericProperty;
+		return indirectNumericProperty;
 	}
 
 	OModel(
 		OWLOntologyManager manager,
 		OWLOntology mainOntology,
 		OWLReasoner reasoner,
-		OWLDataProperty numericProperty) {
+		OWLDataProperty indirectNumericProperty) {
 
 		this.manager = manager;
 		this.mainOntology = mainOntology;
 		this.reasoner = reasoner;
-		this.numericProperty = numericProperty;
+		this.indirectNumericProperty = indirectNumericProperty;
 
 		classify();
 

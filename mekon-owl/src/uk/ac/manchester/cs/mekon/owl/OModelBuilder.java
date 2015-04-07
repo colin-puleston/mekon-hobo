@@ -44,7 +44,7 @@ public class OModelBuilder {
 	private OWLOntologyManager manager;
 	private OWLOntology mainOntology;
 	private OWLReasoner reasoner;
-	private OWLDataProperty numericProperty = null;
+	private OWLDataProperty indirectNumericProperty = null;
 
 	/**
 	 * Creates builder for model defined via the appropriately-tagged
@@ -116,14 +116,14 @@ public class OModelBuilder {
 	}
 
 	/**
-	 * Sets the "numeric-property" for the model.
+	 * Sets the "indirect-numeric-property" for the model.
 	 *
-	 * @param numericPropertyIRI IRI of numeric-property for model, or
-	 * null if no numeric-property
+	 * @param indirectNumericPropertyIRI IRI of indirect-numeric-property
+	 * for model, or null if not defined
 	 */
-	public void setNumericProperty(IRI numericPropertyIRI) {
+	public void setIndirectNumericProperty(IRI indirectNumericPropertyIRI) {
 
-		numericProperty = getNumericProperty(numericPropertyIRI);
+		indirectNumericProperty = getIndirectNumericProperty(indirectNumericPropertyIRI);
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class OModelBuilder {
 	 */
 	public OModel create() {
 
-		return new OModel(manager, mainOntology, reasoner, numericProperty);
+		return new OModel(manager, mainOntology, reasoner, indirectNumericProperty);
 	}
 
 	void initialise(File mainOWLFile, Class<? extends OWLReasonerFactory> reasonerFactory) {
@@ -211,7 +211,7 @@ public class OModelBuilder {
 						.createReasoner(mainOntology);
 	}
 
-	private OWLDataProperty getNumericProperty(IRI iri) {
+	private OWLDataProperty getIndirectNumericProperty(IRI iri) {
 
 		if (iri == null) {
 
@@ -223,6 +223,6 @@ public class OModelBuilder {
 			return manager.getOWLDataFactory().getOWLDataProperty(iri);
 		}
 
-		throw new KModelException("Cannot find numeric-property: " + iri);
+		throw new KModelException("Cannot find indirect-numeric-property: " + iri);
 	}
 }

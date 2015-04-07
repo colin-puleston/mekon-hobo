@@ -39,18 +39,97 @@ import uk.ac.manchester.cs.mekon.owl.*;
 public class OBProperties
 				extends
 					OBEntities
-						<OWLObjectProperty,
+						<OWLProperty<?, ?>,
 						OBPropertyInclusions,
 						OBPropertyAttributes> {
+
+	private Set<Handler> handlers = new HashSet<Handler>();
+
+	private abstract class Handler {
+
+		Handler() {
+
+			handlers.add(this);
+		}
+
+		abstract boolean handles(IRI iri);
+
+		abstract OWLProperty<?, ?> get(IRI iri);
+
+		abstract Set<? extends OWLProperty<?, ?>> getAllInModel();
+
+		abstract Set<? extends OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property);
+
+		abstract Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression);
+	}
+
+	private class ObjectPropertyHandler extends Handler {
+
+		boolean handles(IRI iri) {
+
+			return getMainOntology().containsObjectPropertyInSignature(iri, true);
+		}
+
+		OWLProperty<?, ?> get(IRI iri) {
+
+			return getDataFactory().getOWLObjectProperty(iri);
+		}
+
+		Set<? extends OWLProperty<?, ?>> getAllInModel() {
+
+			return getModel().getObjectProperties().getAll();
+		}
+
+		Set<? extends OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property) {
+
+			return getModel().getInferredSubs((OWLObjectProperty)property, false);
+		}
+
+		Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
+
+			return expression.getObjectPropertiesInSignature();
+		}
+	}
+
+	private class DataPropertyHandler extends Handler {
+
+		boolean handles(IRI iri) {
+
+			return getMainOntology().containsDataPropertyInSignature(iri, true);
+		}
+
+		OWLProperty<?, ?> get(IRI iri) {
+
+			return getDataFactory().getOWLDataProperty(iri);
+		}
+
+		Set<? extends OWLProperty<?, ?>> getAllInModel() {
+
+			return getModel().getDataProperties().getAll();
+		}
+
+		Set<? extends OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property) {
+
+			return getModel().getInferredSubs((OWLDataProperty)property, false);
+		}
+
+		Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
+
+			return expression.getDataPropertiesInSignature();
+		}
+	}
 
 	OBProperties(OModel model) {
 
 		super(model);
+
+		new ObjectPropertyHandler();
+		new DataPropertyHandler();
 	}
 
 	void addGroupEntity(
 			OBPropertyInclusions group,
-			OWLObjectProperty property,
+			OWLProperty<?, ?> property,
 			boolean isRoot) {
 
 		add(property, group.getAttributes());
@@ -68,26 +147,67 @@ public class OBProperties
 
 	boolean isValidEntity(IRI iri) {
 
-		return getMainOntology().containsObjectPropertyInSignature(iri, true);
+		return getHandlerOrNull(iri) != null;
 	}
 
-	OWLObjectProperty get(IRI iri) {
+	OWLProperty<?, ?> get(IRI iri) {
 
-		return getDataFactory().getOWLObjectProperty(iri);
+		return getHandler(iri).get(iri);
 	}
 
-	Set<OWLObjectProperty> getAllInModel() {
+	Set<OWLProperty<?, ?>> getAllInModel() {
 
-		return getModel().getObjectProperties().getAll();
+		Set<OWLProperty<?, ?>> all = new HashSet<OWLProperty<?, ?>>();
+
+		for (Handler handler : handlers) {
+
+			all.addAll(handler.getAllInModel());
+		}
+
+		return all;
 	}
 
-	Set<OWLObjectProperty> getDescendants(OWLObjectProperty property) {
+	Set<OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property) {
 
-		return getModel().getInferredSubs(property, false);
+		Handler handler = getHandler(property.getIRI());
+
+		return new HashSet<OWLProperty<?, ?>>(handler.getDescendants(property));
 	}
 
-	Set<OWLObjectProperty> extractAll(OWLClassExpression expression) {
+	Set<OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
 
-		return expression.getObjectPropertiesInSignature();
+		Set<OWLProperty<?, ?>> all = new HashSet<OWLProperty<?, ?>>();
+
+		for (Handler handler : handlers) {
+
+			all.addAll(handler.extractAll(expression));
+		}
+
+		return all;
+	}
+
+	private Handler getHandler(IRI iri) {
+
+		Handler handler = getHandlerOrNull(iri);
+
+		if (handler != null) {
+
+			return handler;
+		}
+
+		throw new Error("IRI does not correspond to a property: " + iri);
+	}
+
+	private Handler getHandlerOrNull(IRI iri) {
+
+		for (Handler handler : handlers) {
+
+			if (handler.handles(iri)) {
+
+				return handler;
+			}
+		}
+
+		return null;
 	}
 }

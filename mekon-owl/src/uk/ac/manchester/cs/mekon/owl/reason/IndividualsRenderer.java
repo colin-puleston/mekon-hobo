@@ -127,6 +127,11 @@ class IndividualsRenderer {
 							expr));
 			}
 
+			void addExpr(OWLClassExpression expr) {
+
+				addTypeAssignment(expr);
+			}
+
 			OWLClassExpression toExpression(OWLNamedIndividual rendering) {
 
 				return dataFactory.getOWLObjectOneOf(rendering);
