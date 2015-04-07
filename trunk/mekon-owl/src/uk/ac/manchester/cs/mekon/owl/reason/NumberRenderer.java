@@ -39,46 +39,45 @@ import uk.ac.manchester.cs.mekon.owl.*;
 class NumberRenderer {
 
 	private OWLDataFactory dataFactory = null;
-	private OWLDataProperty numericProperty = null;
+	private OWLDataProperty indirectNumericProperty = null;
 
 	NumberRenderer(OModel model) {
 
 		dataFactory = model.getDataFactory();
 
-		if (model.numericPropertyDefined()) {
+		if (model.indirectNumericPropertyDefined()) {
 
-			numericProperty = model.getNumericProperty();
+			indirectNumericProperty = model.getIndirectNumericProperty();
 		}
 	}
 
 	OWLClassExpression render(INumber number) {
 
-		if (numericProperty == null) {
+		if (indirectNumericProperty == null) {
 
 			return dataFactory.getOWLThing();
 		}
 
-		if (number.indefinite()) {
-
-			return renderRange(number);
-		}
-
-		return renderExact(number);
+		return render(indirectNumericProperty, number);
 	}
 
-	private OWLClassExpression renderExact(INumber number) {
+	OWLClassExpression render(OWLDataProperty property, INumber number) {
 
-		return dataFactory
-					.getOWLDataHasValue(
-						numericProperty,
-						renderLiteral(number));
+		return number.indefinite()
+				? renderRange(property, number)
+				: renderExact(property, number);
 	}
 
-	private OWLClassExpression renderRange(INumber number) {
+	private OWLClassExpression renderExact(OWLDataProperty property, INumber number) {
+
+		return dataFactory.getOWLDataHasValue(property, renderLiteral(number));
+	}
+
+	private OWLClassExpression renderRange(OWLDataProperty property, INumber number) {
 
 		OWLDatatypeRestriction res = renderRangeRestriction(number.getType());
 
-		return dataFactory.getOWLDataSomeValuesFrom(numericProperty, res);
+		return dataFactory.getOWLDataSomeValuesFrom(property, res);
 	}
 
 	private OWLDatatypeRestriction renderRangeRestriction(CNumber range) {

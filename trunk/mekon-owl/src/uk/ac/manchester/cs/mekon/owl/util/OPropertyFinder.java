@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.util;
 
+import java.util.*;
+
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -35,11 +37,21 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OObjectPropertyFinder extends OEntityFinder<CIdentity> {
+public class OPropertyFinder extends OEntityFinder<CIdentity> {
 
-	public OObjectPropertyFinder(OModel model) {
+	static private Set<IRI> getAllIRIs(OModel model) {
 
-		super(model.getObjectProperties().getAllIRIs());
+		Set<IRI> iris = new HashSet<IRI>();
+
+		iris.addAll(model.getObjectProperties().getAllIRIs());
+		iris.addAll(model.getDataProperties().getAllIRIs());
+
+		return iris;
+	}
+
+	public OPropertyFinder(OModel model) {
+
+		super(getAllIRIs(model));
 	}
 
 	IRI extractIRI(CIdentity cEntity) {

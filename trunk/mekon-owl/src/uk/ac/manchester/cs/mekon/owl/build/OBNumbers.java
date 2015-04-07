@@ -192,6 +192,21 @@ class OBNumbers {
 		return checkExtractNumber(supersProcessor.getConcepts());
 	}
 
+	OBNumber checkCreateNumber(OWLDataRange range) {
+
+		if (range.isDatatype()) {
+
+			return checkCreateNumber(range.asOWLDatatype());
+		}
+
+		if (range instanceof OWLDatatypeRestriction) {
+
+			return checkCreateNumber((OWLDatatypeRestriction)range);
+		}
+
+		return null;
+	}
+
 	private OBNumber checkExtractNumber(Set<OWLClass> concepts) {
 
 		for (OWLClass concept : concepts) {
@@ -211,22 +226,9 @@ class OBNumbers {
 						OWLDataPropertyExpression property,
 						OWLDataRange range) {
 
-		return model.isNumericProperty(property) ? checkCreateNumber(range) : null;
-	}
-
-	private OBNumber checkCreateNumber(OWLDataRange range) {
-
-		if (range.isDatatype()) {
-
-			return checkCreateNumber(range.asOWLDatatype());
-		}
-
-		if (range instanceof OWLDatatypeRestriction) {
-
-			return checkCreateNumber((OWLDatatypeRestriction)range);
-		}
-
-		return null;
+		return model.isIndirectNumericProperty(property)
+				? checkCreateNumber(range)
+				: null;
 	}
 
 	private OBNumber checkCreateNumber(OWLDatatype datatype) {

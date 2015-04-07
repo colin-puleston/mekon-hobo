@@ -27,8 +27,11 @@ package uk.ac.manchester.cs.mekon.owl;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 
-class ODataProperties extends OEntities<OWLDataProperty> {
+class ODataProperties
+			extends
+				OProperties<OWLDataPropertyExpression, OWLDataProperty> {
 
 	ODataProperties(OModel model) {
 
@@ -53,5 +56,34 @@ class ODataProperties extends OEntities<OWLDataProperty> {
 	OWLDataProperty getBottom() {
 
 		return getDataFactory().getOWLBottomDataProperty();
+	}
+
+	Class<OWLDataProperty> getPropertyClass() {
+
+		return OWLDataProperty.class;
+	}
+
+	Set<OWLDataProperty> getAssertedSuperProperties(OWLDataProperty property) {
+
+		return normaliseExprs(property.getSuperProperties(getAllOntologies()));
+	}
+
+	Set<OWLDataProperty> getAssertedSubProperties(OWLDataProperty property) {
+
+		return normaliseExprs(property.getSubProperties(getAllOntologies()));
+	}
+
+	Set<OWLDataProperty> getInferredSuperProperties(
+							OWLDataProperty property,
+							boolean directOnly) {
+
+		return getReasoner().getSuperDataProperties(property, directOnly).getFlattened();
+	}
+
+	Set<OWLDataProperty> getInferredSubProperties(
+							OWLDataProperty property,
+							boolean directOnly) {
+
+		return getReasoner().getSubDataProperties(property, directOnly).getFlattened();
 	}
 }

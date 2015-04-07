@@ -47,7 +47,7 @@ public class TestOModel {
 
 		OModelBuilder builder = createBuilder();
 
-		builder.setNumericProperty(new OTest().nameToIRI(NUMERIC_PROPERTY));
+		builder.setIndirectNumericProperty(new OTest().nameToIRI(NUMERIC_PROPERTY));
 
 		return builder.create();
 	}

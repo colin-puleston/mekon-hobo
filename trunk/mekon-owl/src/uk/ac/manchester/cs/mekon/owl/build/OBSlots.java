@@ -48,27 +48,23 @@ class OBSlots {
 
 	private abstract class SlotSpec extends OBSlotSpec {
 
-		private OWLObjectProperty property;
-		private OWLClassExpression filler;
+		private OWLProperty<?, ?> property;
+		private Object filler;
 		private OBPropertyAttributes propertyAttributes;
 
-		SlotSpec(
-			OWLQuantifiedRestriction
-				<?,
-				OWLObjectPropertyExpression,
-				OWLClassExpression> restriction) {
+		SlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
 
-			property = toPropertyOrNull(restriction.getProperty());
-			filler = restriction.getFiller();
+			property = getPropertyOrNull(restriction.getProperty());
+			filler = getValidFillerOrNull(restriction.getFiller());
 			propertyAttributes = properties.getAttributes(property);
 		}
 
 		boolean initialised() {
 
-			return property != null;
+			return property != null && filler != null;
 		}
 
-		OWLObjectProperty getProperty() {
+		OWLProperty<?, ?> getProperty() {
 
 			return property;
 		}
@@ -97,10 +93,35 @@ class OBSlots {
 
 		OBSlot create() {
 
-			if (filler instanceof OWLClass) {
+			if (filler instanceof OWLClassExpression) {
 
-				return createSimpleSlot((OWLClass)filler);
+				if (filler instanceof OWLClass) {
+
+					return createClassFillerSlot();
+				}
+
+				return createComplexClassExpressionFillerSlot();
 			}
+
+			if (filler instanceof OWLDataRange) {
+
+				return createNumberSlot();
+			}
+
+			throw new Error("Unrecognised filler type: " + filler.getClass());
+		}
+
+		private OBSlot createClassFillerSlot() {
+
+			OWLClass classFiller = (OWLClass)filler;
+			OBNumber number = numbers.checkExtractNumber(classFiller);
+
+			return number != null
+					? createNumberSlot(number)
+					: createModelFrameSlot(classFiller);
+		}
+
+		private OBSlot createComplexClassExpressionFillerSlot() {
 
 			if (filler instanceof OWLObjectIntersectionOf) {
 
@@ -115,15 +136,6 @@ class OBSlots {
 			return createDisjunctionFrameSlot();
 		}
 
-		private OBSlot createSimpleSlot(OWLClass filler) {
-
-			OBNumber number = numbers.checkExtractNumber(filler);
-
-			return number != null
-					? createNumberSlot(number)
-					: createModelFrameSlot(filler);
-		}
-
 		private OBSlot createModelFrameSlot(OWLClass filler) {
 
 			return new OBModelFrameSlot(this, frames.get(filler));
@@ -133,8 +145,8 @@ class OBSlots {
 
 			if (filler instanceof OWLObjectIntersectionOf) {
 
-				OWLObjectIntersectionOf inter = (OWLObjectIntersectionOf)filler;
-				Set<OWLClassExpression> ops = inter.getOperands();
+				OWLObjectIntersectionOf intFiller = (OWLObjectIntersectionOf)filler;
+				Set<OWLClassExpression> ops = intFiller.getOperands();
 				OWLClass named = getSoleNamedClassOrNull(ops);
 
 				if (named != null) {
@@ -170,14 +182,27 @@ class OBSlots {
 
 		private OBSlot createDisjunctionFrameSlot() {
 
+			OWLClassExpression exprFiller = (OWLClassExpression)filler;
 			OBDisjunctionFrameSlot slot = new OBDisjunctionFrameSlot(this);
 
-			for (OWLClass subConcept : getSubConcepts(filler)) {
+			for (OWLClass subConcept : getSubConcepts(exprFiller)) {
 
 				slot.addValueTypeDisjunct(frames.get(subConcept));
 			}
 
 			return slot;
+		}
+
+		private OBSlot createNumberSlot() {
+
+			OBNumber valueType = numbers.checkCreateNumber((OWLDataRange)filler);
+
+			if (valueType != null) {
+
+				return createNumberSlot(valueType);
+			}
+
+			throw new Error("Unrecognised filler type: " + filler.getClass());
 		}
 
 		private OBSlot createNumberSlot(OBNumber valueType) {
@@ -205,11 +230,22 @@ class OBSlots {
 			return named;
 		}
 
-		private OWLObjectProperty toPropertyOrNull(OWLObjectPropertyExpression expr) {
+		private OWLProperty<?, ?> getPropertyOrNull(OWLPropertyExpression<?, ?> expr) {
 
-			if (expr instanceof OWLObjectProperty) {
+			if (expr instanceof OWLProperty) {
 
-				return (OWLObjectProperty)expr;
+				return (OWLProperty<?, ?>)expr;
+			}
+
+			return null;
+		}
+
+		private Object getValidFillerOrNull(Object filler) {
+
+			if (filler instanceof OWLClassExpression
+				|| filler instanceof OWLDataRange) {
+
+				return filler;
 			}
 
 			return null;
@@ -218,7 +254,7 @@ class OBSlots {
 
 	private class AllValuesFromSlotSpec extends SlotSpec {
 
-		AllValuesFromSlotSpec(OWLObjectAllValuesFrom restriction) {
+		AllValuesFromSlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
 
 			super(restriction);
 		}
@@ -231,7 +267,7 @@ class OBSlots {
 
 	private class SomeValuesFromSlotSpec extends SlotSpec {
 
-		SomeValuesFromSlotSpec(OWLObjectSomeValuesFrom restriction) {
+		SomeValuesFromSlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
 
 			super(restriction);
 		}
@@ -246,7 +282,7 @@ class OBSlots {
 
 		private int cardinality;
 
-		CardinalitySlotSpec(OWLObjectCardinalityRestriction restriction) {
+		CardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
 
 			super(restriction);
 
@@ -270,7 +306,7 @@ class OBSlots {
 
 	private class ExactCardinalitySlotSpec extends CardinalitySlotSpec {
 
-		ExactCardinalitySlotSpec(OWLObjectExactCardinality restriction) {
+		ExactCardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
 
 			super(restriction);
 		}
@@ -288,7 +324,7 @@ class OBSlots {
 
 	private class MinCardinalitySlotSpec extends CardinalitySlotSpec {
 
-		MinCardinalitySlotSpec(OWLObjectMinCardinality restriction) {
+		MinCardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
 
 			super(restriction);
 		}
@@ -306,7 +342,7 @@ class OBSlots {
 
 	private class MaxCardinalitySlotSpec extends CardinalitySlotSpec {
 
-		MaxCardinalitySlotSpec(OWLObjectMaxCardinality restriction) {
+		MaxCardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
 
 			super(restriction);
 		}
@@ -345,6 +381,31 @@ class OBSlots {
 		}
 
 		public SlotSpec visit(OWLObjectMaxCardinality e) {
+
+			return new MaxCardinalitySlotSpec(e);
+		}
+
+		public SlotSpec visit(OWLDataSomeValuesFrom e) {
+
+			return new SomeValuesFromSlotSpec(e);
+		}
+
+		public SlotSpec visit(OWLDataAllValuesFrom e) {
+
+			return new AllValuesFromSlotSpec(e);
+		}
+
+		public SlotSpec visit(OWLDataExactCardinality e) {
+
+			return new ExactCardinalitySlotSpec(e);
+		}
+
+		public SlotSpec visit(OWLDataMinCardinality e) {
+
+			return new MinCardinalitySlotSpec(e);
+		}
+
+		public SlotSpec visit(OWLDataMaxCardinality e) {
 
 			return new MaxCardinalitySlotSpec(e);
 		}

@@ -29,162 +29,13 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
-class OObjectProperties extends OEntities<OWLObjectProperty> {
-
-	private AssertedLinks assertedSupers = new AssertedSupers();
-	private AssertedLinks assertedSubs = new AssertedSubs();
-	private Links inferredSupers;
-	private Links inferredSubs;
-
-	private abstract class Links {
-
-		abstract Set<OWLObjectProperty> get(
-										OWLObjectProperty property,
-										boolean directOnly);
-	}
-
-	private abstract class AssertedLinks extends Links{
-
-		Set<OWLObjectProperty> get(
-								OWLObjectProperty property,
-								boolean directOnly) {
-
-			return directOnly ? getDirect(property) : getAll(property);
-		}
-
-		Set<OWLObjectProperty> getAll(OWLObjectProperty property) {
-
-			Set<OWLObjectProperty> all = new HashSet<OWLObjectProperty>();
-
-			collectAll(all, property);
-
-			return all;
-		}
-
-		abstract Set<OWLObjectProperty> getDirect(OWLObjectProperty property);
-
-		private void collectAll(Set<OWLObjectProperty> all, OWLObjectProperty current) {
-
-			for (OWLObjectProperty next : getDirect(current)) {
-
-				if (all.add(next)) {
-
-					collectAll(all, next);
-				}
-			}
-		}
-	}
-
-	private class AssertedSupers extends AssertedLinks {
-
-		Set<OWLObjectProperty> getDirect(OWLObjectProperty property) {
-
-			return normaliseExprs(property.getSuperProperties(getAllOntologies()));
-		}
-	}
-
-	private class AssertedSubs extends AssertedLinks {
-
-		Set<OWLObjectProperty> getDirect(OWLObjectProperty property) {
-
-			return normaliseExprs(property.getSubProperties(getAllOntologies()));
-		}
-	}
-
-	private abstract class InferredLinks extends Links {
-
-		Links resolve() {
-
-			return inferenceSupported() ? this : getSubstitute();
-		}
-
-		abstract Links getSubstitute();
-
-		private boolean inferenceSupported() {
-
-			try {
-
-				if (tryTestInference() != null) {
-
-					return true;
-				}
-			}
-			catch (UnsupportedOperationException e) {
-			}
-
-			return false;
-		}
-
-		private Object tryTestInference() throws UnsupportedOperationException {
-
-			return get(getTop(), true);
-		}
-	}
-
-	private class InferredSupers extends InferredLinks {
-
-		Links getSubstitute() {
-
-			return assertedSupers;
-		}
-
-		Set<OWLObjectProperty> get(OWLObjectProperty property, boolean directOnly) {
-
-			return normaliseExprs(
-						getReasoner()
-							.getSuperObjectProperties(
-								property,
-								directOnly));
-		}
-	}
-
-	private class InferredSubs extends InferredLinks {
-
-		Links getSubstitute() {
-
-			return assertedSubs;
-		}
-
-		Set<OWLObjectProperty> get(OWLObjectProperty property, boolean directOnly) {
-
-			return normaliseExprs(
-						getReasoner()
-							.getSubObjectProperties(
-								property,
-								directOnly));
-		}
-	}
+class OObjectProperties
+			extends
+				OProperties<OWLObjectPropertyExpression, OWLObjectProperty> {
 
 	OObjectProperties(OModel model) {
 
 		super(model);
-
-		inferredSupers = new InferredSupers().resolve();
-		inferredSubs = new InferredSubs().resolve();
-	}
-
-	Set<OWLObjectProperty> getAssertedSupers(OWLObjectProperty property) {
-
-		return assertedSupers.getDirect(property);
-	}
-
-	Set<OWLObjectProperty> getAssertedSubs(OWLObjectProperty property) {
-
-		return assertedSubs.getDirect(property);
-	}
-
-	Set<OWLObjectProperty> getInferredSupers(
-								OWLObjectProperty property,
-								boolean directOnly) {
-
-		return inferredSupers.get(property, directOnly);
-	}
-
-	Set<OWLObjectProperty> getInferredSubs(
-								OWLObjectProperty property,
-								boolean directOnly) {
-
-		return inferredSubs.get(property, directOnly);
 	}
 
 	String getEntityTypeName() {
@@ -207,28 +58,32 @@ class OObjectProperties extends OEntities<OWLObjectProperty> {
 		return getDataFactory().getOWLBottomObjectProperty();
 	}
 
-	private Set<OWLObjectProperty> normaliseExprs(NodeSet<OWLObjectPropertyExpression> exprs) {
+	Class<OWLObjectProperty> getPropertyClass() {
 
-		return normaliseExprs(exprs.getFlattened());
+		return OWLObjectProperty.class;
 	}
 
-	private Set<OWLObjectProperty> normaliseExprs(Set<OWLObjectPropertyExpression> exprs) {
+	Set<OWLObjectProperty> getAssertedSuperProperties(OWLObjectProperty property) {
 
-		return normalise(extractProperties(exprs));
+		return normaliseExprs(property.getSuperProperties(getAllOntologies()));
 	}
 
-	private Set<OWLObjectProperty> extractProperties(Set<OWLObjectPropertyExpression> exprs) {
+	Set<OWLObjectProperty> getAssertedSubProperties(OWLObjectProperty property) {
 
-		Set<OWLObjectProperty> properties = new HashSet<OWLObjectProperty>();
+		return normaliseExprs(property.getSubProperties(getAllOntologies()));
+	}
 
-		for (OWLObjectPropertyExpression expr : exprs) {
+	Set<OWLObjectProperty> getInferredSuperProperties(
+								OWLObjectProperty property,
+								boolean directOnly) {
 
-			if (expr instanceof OWLObjectProperty) {
+		return normaliseExprs(getReasoner().getSuperObjectProperties(property, directOnly));
+	}
 
-				properties.add((OWLObjectProperty)expr);
-			}
-		}
+	Set<OWLObjectProperty> getInferredSubProperties(
+								OWLObjectProperty property,
+								boolean directOnly) {
 
-		return properties;
+		return normaliseExprs(getReasoner().getSubObjectProperties(property, directOnly));
 	}
 }

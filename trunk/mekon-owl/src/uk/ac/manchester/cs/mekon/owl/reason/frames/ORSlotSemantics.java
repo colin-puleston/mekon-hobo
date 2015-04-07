@@ -118,7 +118,7 @@ public class ORSlotSemantics {
 
 	private boolean hasExceptionSuperProperty(IRI propertyIRI) {
 
-		for (OWLObjectProperty superProp : getSuperProperties(propertyIRI)) {
+		for (OWLProperty superProp : getSuperProperties(propertyIRI)) {
 
 			if (isExceptionPropertyIRI(superProp.getIRI())) {
 
@@ -134,13 +134,35 @@ public class ORSlotSemantics {
 		return exceptionPropertyURIs.contains(propertyIRI.toURI().toASCIIString());
 	}
 
-	private Set<OWLObjectProperty> getSuperProperties(IRI propertyIRI) {
+	private Set<? extends OWLProperty> getSuperProperties(IRI propertyIRI) {
 
-		return model.getInferredSupers(getProperty(propertyIRI), false);
+		return dataProperty(propertyIRI)
+				? getSuperDataProperties(propertyIRI)
+				: getSuperObjectProperties(propertyIRI);
 	}
 
-	private OWLObjectProperty getProperty(IRI iri) {
+	private boolean dataProperty(IRI iri) {
 
-		return model.getDataFactory().getOWLObjectProperty(iri);
+		return model.getDataProperties().contains(iri);
+	}
+
+	private Set<OWLObjectProperty> getSuperObjectProperties(IRI propertyIRI) {
+
+		return model.getInferredSupers(getObjectProperty(propertyIRI), false);
+	}
+
+	private Set<OWLDataProperty> getSuperDataProperties(IRI propertyIRI) {
+
+		return model.getInferredSupers(getDataProperty(propertyIRI), false);
+	}
+
+	private OWLObjectProperty getObjectProperty(IRI iri) {
+
+		return model.getObjectProperties().get(iri);
+	}
+
+	private OWLDataProperty getDataProperty(IRI iri) {
+
+		return model.getDataProperties().get(iri);
 	}
 }
