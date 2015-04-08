@@ -82,7 +82,7 @@ public class DModelTest extends HoboTest {
 			CFrame frameA = builder.addFrame(frameAId, false);
 			CFrameEditor frameAEd = builder.getFrameEditor(frameA);
 
-			frameAEd.addSlot(intSlotId, CCardinality.FREE, getIntegerValueType());
+			frameAEd.addSlot(intSlotId, CCardinality.REPEATABLE_TYPES, getIntegerValueType());
 		}
 	}
 
@@ -124,7 +124,7 @@ public class DModelTest extends HoboTest {
 			model,
 			FRAME_A_ID,
 			INT_SLOT_ID,
-			CCardinality.SINGLETON,
+			CCardinality.SINGLE_VALUE,
 			getIntegerValueType(),
 			CEditability.QUERY_ONLY);
 
@@ -132,7 +132,7 @@ public class DModelTest extends HoboTest {
 			model,
 			FRAME_AX_ID,
 			B_SLOT_ID,
-			CCardinality.SINGLETON,
+			CCardinality.SINGLE_VALUE,
 			getCFrame(model, FRAME_B_ID),
 			CEditability.DEFAULT);
 	}

@@ -59,6 +59,6 @@ class DObjectValueType<V extends DObject> extends DValueType<V> {
 
 	CCardinality getDefaultCardinalityForArrays() {
 
-		return CCardinality.FREE;
+		return CCardinality.REPEATABLE_TYPES;
 	}
 }
