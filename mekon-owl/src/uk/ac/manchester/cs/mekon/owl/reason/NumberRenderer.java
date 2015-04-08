@@ -60,44 +60,93 @@ class NumberRenderer {
 		this.property = property;
 	}
 
-	OWLClassExpression render(INumber number, boolean onlyValues) {
+	OWLClassExpression renderHasValue(INumber value) {
 
 		if (property == null) {
 
 			return dataFactory.getOWLThing();
 		}
 
-		if (onlyValues || number.indefinite()) {
+		if (value.indefinite()) {
 
-			renderRange(number, onlyValues);
+			renderHasRange(value);
 		}
 
-		return renderExact(number);
+		return renderHasExactValue(value);
 	}
 
-	private OWLClassExpression renderExact(INumber number) {
+	OWLClassExpression renderOnlyValues(Set<INumber> values) {
 
-		return dataFactory.getOWLDataHasValue(property, renderLiteral(number));
-	}
+		if (property == null) {
 
-	private OWLClassExpression renderRange(INumber number, boolean onlyValues) {
-
-		OWLDatatypeRestriction res = renderRangeRestriction(number.getType());
-
-		if (onlyValues) {
-
-			return dataFactory.getOWLDataAllValuesFrom(property, res);
+			return dataFactory.getOWLThing();
 		}
 
-		return dataFactory.getOWLDataSomeValuesFrom(property, res);
+		if (anyIndefiniteValues(values)) {
+
+			renderOnlyRanges(values);
+		}
+
+		return renderOnlyExactValues(values);
 	}
 
-	private OWLDatatypeRestriction renderRangeRestriction(CNumber range) {
+	private OWLClassExpression renderHasExactValue(INumber value) {
 
+		return dataFactory.getOWLDataHasValue(property, renderLiteral(value));
+	}
+
+	private OWLClassExpression renderOnlyExactValues(Set<INumber> values) {
+
+		OWLDataOneOf valuesRendering = renderOneOfValues(values);
+
+		return dataFactory.getOWLDataAllValuesFrom(property, valuesRendering);
+	}
+
+	private OWLDataOneOf renderOneOfValues(Set<INumber> values) {
+
+		Set<OWLLiteral> literals = new HashSet<OWLLiteral>();
+
+		for (INumber value : values) {
+
+			literals.add(renderLiteral(value));
+		}
+
+		return dataFactory.getOWLDataOneOf(literals);
+	}
+
+	private OWLClassExpression renderHasRange(INumber value) {
+
+		OWLDataRange range = renderRange(value);
+
+		return dataFactory.getOWLDataSomeValuesFrom(property, range);
+	}
+
+	private OWLClassExpression renderOnlyRanges(Set<INumber> values) {
+
+		OWLDataRange rangeUnion = renderRangeUnion(values);
+
+		return dataFactory.getOWLDataSomeValuesFrom(property, rangeUnion);
+	}
+
+	private OWLDataRange renderRangeUnion(Set<INumber> values) {
+
+		Set<OWLDataRange> ranges = new HashSet<OWLDataRange>();
+
+		for (INumber value : values) {
+
+			ranges.add(renderRange(value));
+		}
+
+		return dataFactory.getOWLDataUnionOf(ranges);
+	}
+
+	private OWLDataRange renderRange(INumber value) {
+
+		CNumber range = value.getType();
 		OWLDatatype datatype = renderDatatype(range);
-		Set<OWLFacetRestriction> facetRests = renderFacetRestrictions(range);
+		Set<OWLFacetRestriction> rangeFacets = renderRangeFacets(range);
 
-		return dataFactory.getOWLDatatypeRestriction(datatype, facetRests);
+		return dataFactory.getOWLDatatypeRestriction(datatype, rangeFacets);
 	}
 
 	private OWLDatatype renderDatatype(CNumber range) {
@@ -127,21 +176,21 @@ class NumberRenderer {
 		throw new KModelException("Cannot handle number-type: " + type);
 	}
 
-	private Set<OWLFacetRestriction> renderFacetRestrictions(CNumber range) {
+	private Set<OWLFacetRestriction> renderRangeFacets(CNumber range) {
 
-		Set<OWLFacetRestriction> frs = new HashSet<OWLFacetRestriction>();
+		Set<OWLFacetRestriction> facets = new HashSet<OWLFacetRestriction>();
 
 		if (range.hasMin()) {
 
-			frs.add(renderFacetRestriction(OWLFacet.MIN_INCLUSIVE, range.getMin()));
+			facets.add(renderRangeFacet(OWLFacet.MIN_INCLUSIVE, range.getMin()));
 		}
 
 		if (range.hasMax()) {
 
-			frs.add(renderFacetRestriction(OWLFacet.MAX_INCLUSIVE, range.getMax()));
+			facets.add(renderRangeFacet(OWLFacet.MAX_INCLUSIVE, range.getMax()));
 		}
 
-		return frs;
+		return facets;
 	}
 
 	private OWLDatatype renderDatatype(OWL2Datatype owl2Datatype) {
@@ -149,35 +198,48 @@ class NumberRenderer {
 		return dataFactory.getOWLDatatype(owl2Datatype.getIRI());
 	}
 
-	private OWLFacetRestriction renderFacetRestriction(OWLFacet facet, INumber number) {
+	private OWLFacetRestriction renderRangeFacet(OWLFacet facet, INumber value) {
 
-		return dataFactory.getOWLFacetRestriction(facet, renderLiteral(number));
+		return dataFactory.getOWLFacetRestriction(facet, renderLiteral(value));
 	}
 
-	private OWLLiteral renderLiteral(INumber number) {
+	private OWLLiteral renderLiteral(INumber value) {
 
-		Class<? extends Number> type = number.getNumberType();
+		Class<? extends Number> type = value.getNumberType();
 
 		if (type == Integer.class) {
 
-			return dataFactory.getOWLLiteral(number.asInteger());
+			return dataFactory.getOWLLiteral(value.asInteger());
 		}
 
 		if (type == Long.class) {
 
-			return dataFactory.getOWLLiteral(number.asLong());
+			return dataFactory.getOWLLiteral(value.asLong());
 		}
 
 		if (type == Float.class) {
 
-			return dataFactory.getOWLLiteral(number.asFloat());
+			return dataFactory.getOWLLiteral(value.asFloat());
 		}
 
 		if (type == Double.class) {
 
-			return dataFactory.getOWLLiteral(number.asDouble());
+			return dataFactory.getOWLLiteral(value.asDouble());
 		}
 
 		throw new KModelException("Cannot handle number-type: " + type);
+	}
+
+	private boolean anyIndefiniteValues(Set<INumber> values) {
+
+		for (INumber value : values) {
+
+			if (value.indefinite()) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
