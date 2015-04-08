@@ -69,7 +69,7 @@ class NumberRenderer {
 
 		if (value.indefinite()) {
 
-			renderHasRange(value);
+			return renderHasRange(value);
 		}
 
 		return renderHasExactValue(value);
@@ -84,7 +84,7 @@ class NumberRenderer {
 
 		if (anyIndefiniteValues(values)) {
 
-			renderOnlyRanges(values);
+			return renderOnlyRanges(values);
 		}
 
 		return renderOnlyExactValues(values);
