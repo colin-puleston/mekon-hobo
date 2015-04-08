@@ -95,9 +95,9 @@ class IndividualsRenderer {
 				return individual;
 			}
 
-			void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+			void addHasValueConstruct(OWLObjectProperty property, OWLClassExpression value) {
 
-				OWLIndividual indValue = toIndividualValue(expr);
+				OWLIndividual indValue = toIndividualValue(value);
 
 				if (indValue != null) {
 
@@ -114,22 +114,22 @@ class IndividualsRenderer {
 						dataFactory
 							.getOWLObjectSomeValuesFrom(
 								property,
-								expr));
+								value));
 				}
 			}
 
-			void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+			void addOnlyValuesConstruct(OWLObjectProperty property, OWLClassExpression values) {
 
 				addTypeAssignment(
 					dataFactory
 						.getOWLObjectAllValuesFrom(
 							property,
-							expr));
+							values));
 			}
 
-			void addValueAssertion(OWLClassExpression expr) {
+			void addValueConstruct(OWLClassExpression construct) {
 
-				addTypeAssignment(expr);
+				addTypeAssignment(construct);
 			}
 
 			OWLClassExpression toExpression(OWLNamedIndividual rendering) {
@@ -161,16 +161,16 @@ class IndividualsRenderer {
 				addAxiom(dataFactory.getOWLClassAssertionAxiom(type, individual));
 			}
 
-			private OWLIndividual toIndividualValue(OWLClassExpression expr) {
+			private OWLIndividual toIndividualValue(OWLClassExpression value) {
 
-				if (expr instanceof OWLObjectOneOf) {
+				if (value instanceof OWLObjectOneOf) {
 
-					return toIndividualValue((OWLObjectOneOf)expr);
+					return toIndividualValue((OWLObjectOneOf)value);
 				}
 
-				if (expr instanceof OWLDataHasValue) {
+				if (value instanceof OWLDataHasValue) {
 
-					return toIndividualValue((OWLDataHasValue)expr);
+					return toIndividualValue((OWLDataHasValue)value);
 				}
 
 				return null;

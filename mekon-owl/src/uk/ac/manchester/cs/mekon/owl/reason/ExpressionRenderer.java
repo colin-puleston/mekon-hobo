@@ -69,27 +69,27 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 			return dataFactory.getOWLObjectIntersectionOf(conjuncts);
 		}
 
-		void addHasValueForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+		void addHasValueConstruct(OWLObjectProperty property, OWLClassExpression value) {
 
 			conjuncts.add(
 				dataFactory.
 					getOWLObjectSomeValuesFrom(
 						property,
-						expr));
+						value));
 		}
 
-		void addOnlyValuesForExpr(OWLObjectProperty property, OWLClassExpression expr) {
+		void addOnlyValuesConstruct(OWLObjectProperty property, OWLClassExpression values) {
 
 			conjuncts.add(
 				dataFactory.
 					getOWLObjectAllValuesFrom(
 						property,
-						expr));
+						values));
 		}
 
-		void addValueAssertion(OWLClassExpression expr) {
+		void addValueConstruct(OWLClassExpression construct) {
 
-			conjuncts.add(expr);
+			conjuncts.add(construct);
 		}
 
 		OWLClassExpression toExpression(OWLClassExpression rendering) {

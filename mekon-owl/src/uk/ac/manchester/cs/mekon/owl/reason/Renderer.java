@@ -71,25 +71,25 @@ abstract class Renderer<FR extends OWLObject> {
 			}
 		}
 
-		void addHasValueForFrame(OWLObjectProperty property, FR rendering) {
+		void addHasValueConstructForFrame(OWLObjectProperty property, FR rendering) {
 
-			addHasValueForExpr(property, toExpression(rendering));
+			addHasValueConstruct(property, toExpression(rendering));
 		}
 
-		void addOnlyValuesForFrames(OWLObjectProperty property, Set<FR> renderings) {
+		void addOnlyValuesConstructForFrames(OWLObjectProperty property, Set<FR> renderings) {
 
-			addOnlyValuesForExpr(property, toExpression(renderings));
+			addOnlyValuesConstruct(property, toExpression(renderings));
 		}
 
-		abstract void addHasValueForExpr(
+		abstract void addHasValueConstruct(
 							OWLObjectProperty property,
-							OWLClassExpression expr);
+							OWLClassExpression value);
 
-		abstract void addOnlyValuesForExpr(
+		abstract void addOnlyValuesConstruct(
 							OWLObjectProperty property,
-							OWLClassExpression expr);
+							OWLClassExpression value);
 
-		abstract void addValueAssertion(OWLClassExpression expr);
+		abstract void addValueConstruct(OWLClassExpression construct);
 
 		abstract OWLClassExpression toExpression(FR rendering);
 
@@ -148,20 +148,20 @@ abstract class Renderer<FR extends OWLObject> {
 
 			for (IV intermediate : intermediates) {
 
-				addHasValue(intermediate);
+				addHasValueConstruct(intermediate);
 			}
 
 			if (slot.closedWorldSemantics()) {
 
-				addOnlyValues(intermediates);
+				addOnlyValuesConstruct(intermediates);
 			}
 		}
 
 		abstract IV getIntermediateValueOrNull(V value);
 
-		abstract void addHasValue(IV intermediate);
+		abstract void addHasValueConstruct(IV intermediate);
 
-		abstract void addOnlyValues(Set<IV> intermediates);
+		abstract void addOnlyValuesConstruct(Set<IV> intermediates);
 
 		OWLObjectProperty getObjectProperty() {
 
@@ -224,14 +224,14 @@ abstract class Renderer<FR extends OWLObject> {
 			return null;
 		}
 
-		void addHasValue(FR intermediate) {
+		void addHasValueConstruct(FR intermediate) {
 
-			frameRenderer.addHasValueForFrame(property, intermediate);
+			frameRenderer.addHasValueConstructForFrame(property, intermediate);
 		}
 
-		void addOnlyValues(Set<FR> intermediates) {
+		void addOnlyValuesConstruct(Set<FR> intermediates) {
 
-			frameRenderer.addOnlyValuesForFrames(property, intermediates);
+			frameRenderer.addOnlyValuesConstructForFrames(property, intermediates);
 		}
 
 		private OWLObjectUnionOf createUnion(ORFrame disjunction) {
@@ -270,14 +270,14 @@ abstract class Renderer<FR extends OWLObject> {
 			return defaultNumberRenderer.renderHasValue(value);
 		}
 
-		void addHasValue(OWLClassExpression intermediate) {
+		void addHasValueConstruct(OWLClassExpression intermediate) {
 
-			frameRenderer.addHasValueForExpr(property, intermediate);
+			frameRenderer.addHasValueConstruct(property, intermediate);
 		}
 
-		void addOnlyValues(Set<OWLClassExpression> intermediates) {
+		void addOnlyValuesConstruct(Set<OWLClassExpression> intermediates) {
 
-			frameRenderer.addOnlyValuesForExpr(property, createUnion(intermediates));
+			frameRenderer.addOnlyValuesConstruct(property, createUnion(intermediates));
 		}
 
 		private OWLClassExpression createUnion(Set<OWLClassExpression> exprs) {
@@ -309,14 +309,14 @@ abstract class Renderer<FR extends OWLObject> {
 			return value;
 		}
 
-		void addHasValue(INumber intermediate) {
+		void addHasValueConstruct(INumber intermediate) {
 
-			frameRenderer.addValueAssertion(numberRenderer.renderHasValue(intermediate));
+			frameRenderer.addValueConstruct(numberRenderer.renderHasValue(intermediate));
 		}
 
-		void addOnlyValues(Set<INumber> intermediates) {
+		void addOnlyValuesConstruct(Set<INumber> intermediates) {
 
-			frameRenderer.addValueAssertion(numberRenderer.renderOnlyValues(intermediates));
+			frameRenderer.addValueConstruct(numberRenderer.renderOnlyValues(intermediates));
 		}
 	}
 
