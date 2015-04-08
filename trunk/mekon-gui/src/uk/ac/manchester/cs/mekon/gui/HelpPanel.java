@@ -286,10 +286,10 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns("Entity Types", "Label Modifier", "Denotes");
 
-				addSlotCardinalityModifier(CCardinality.SINGLETON, "", false);
+				addSlotCardinalityModifier(CCardinality.SINGLE_VALUE, "", false);
 				addSlotCardinalityModifier(CCardinality.UNIQUE_TYPES, "", false);
-				addSlotCardinalityModifier(CCardinality.FREE, " (Single value-type)", true);
-				addSlotCardinalityModifier(CCardinality.FREE, " (Multiple value-types)", false);
+				addSlotCardinalityModifier(CCardinality.REPEATABLE_TYPES, " (Single value-type)", true);
+				addSlotCardinalityModifier(CCardinality.REPEATABLE_TYPES, " (Multiple value-types)", false);
 				addSlotValueTypeModifier("concept", true);
 				addSlotValueTypeModifier("instance-or-number", false);
 			}
