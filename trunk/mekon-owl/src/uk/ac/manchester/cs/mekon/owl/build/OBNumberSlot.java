@@ -41,9 +41,9 @@ class OBNumberSlot extends OBSlot {
 		this.valueType = valueType;
 	}
 
-	CCardinality getDefaultCardinalityForTopLevelSlot() {
+	boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot() {
 
-		return CCardinality.SINGLETON;
+		return false;
 	}
 
 	CValue<?> ensureCValue(

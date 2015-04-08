@@ -70,7 +70,7 @@ class PropertyInclusionsConfigReader
 		return groupNode.getEnum(
 					SLOT_CARDINALITY_ATTR,
 					CCardinality.class,
-					CCardinality.FREE);
+					CCardinality.REPEATABLE_TYPES);
 	}
 
 	private CEditability getSlotEditability(KConfigNode groupNode) {

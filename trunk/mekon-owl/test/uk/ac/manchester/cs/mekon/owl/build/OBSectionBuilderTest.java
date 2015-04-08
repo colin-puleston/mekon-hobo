@@ -297,27 +297,27 @@ public class OBSectionBuilderTest extends OTest {
 		testSlot(
 			CITIZEN_CLASS,
 			TAX_PAID_PROPERTY,
-			CCardinality.SINGLETON,
+			CCardinality.SINGLE_VALUE,
 			getNoStructureFrameSlotValueType(TAX_CLASS));
 		testSlot(
 			UNEMPLOYED_CITIZEN_CLASS,
 			TAX_PAID_PROPERTY,
-			CCardinality.SINGLETON,
+			CCardinality.SINGLE_VALUE,
 			getNoStructureFrameSlotValueType(ZERO_TAX_CLASS));
 		testSlot(
 			EMPLOYMENT_CLASS,
 			JOB_PROPERTY,
-			CCardinality.FREE,
+			CCardinality.REPEATABLE_TYPES,
 			getCFrame(JOB_CLASS));
 		testSlot(
 			TRAIN_CLASS,
 			TRAVEL_CLASS_PROPERTY,
-			CCardinality.SINGLETON,
+			CCardinality.SINGLE_VALUE,
 			getNoStructureFrameSlotValueType(TRAVEL_CLASS_CLASS));
 		testSlot(
 			PERSONAL_CLASS,
 			AGE_PROPERTY,
-			CCardinality.SINGLETON,
+			CCardinality.SINGLE_VALUE,
 			getCInteger(0, null));
 	}
 

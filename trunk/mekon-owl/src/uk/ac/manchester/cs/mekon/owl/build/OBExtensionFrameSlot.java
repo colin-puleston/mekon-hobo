@@ -57,7 +57,7 @@ class OBExtensionFrameSlot extends OBFrameSlot {
 
 	boolean canPotentiallyBeFixedValue(OBSlot topLevelSlot) {
 
-		return cFrameValuedTopLevelSlot(topLevelSlot);
+		return topLevelSlotIsCFrameValued(topLevelSlot);
 	}
 
 	boolean canBeFixedValue(CValue<?> cValue) {
