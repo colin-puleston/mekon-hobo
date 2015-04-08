@@ -60,8 +60,8 @@ public class CSlotValuesTest extends MekonTest {
 		addSuperFrame(value1Slot2, rootValueSlot2);
 		addSuperFrame(value2Slot2, rootValueSlot2);
 
-		createCSlot(container, slot1Name, CCardinality.FREE, rootValueSlot1);
-		createCSlot(container, slot2Name, CCardinality.FREE, rootValueSlot2);
+		createCSlot(container, slot1Name, CCardinality.REPEATABLE_TYPES, rootValueSlot1);
+		createCSlot(container, slot2Name, CCardinality.REPEATABLE_TYPES, rootValueSlot2);
 	}
 
 	@Test

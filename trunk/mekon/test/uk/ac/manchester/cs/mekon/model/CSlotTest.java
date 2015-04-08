@@ -47,10 +47,10 @@ public class CSlotTest extends MekonTest {
 		CModelFrame v3 = createCFrame("V3");
 		CModelFrame v4 = createCFrame("V4");
 
-		CSlot s1 = createCSlot(a, CCardinality.FREE, v1);
-		CSlot s2 = createCSlot(a, CCardinality.FREE, v2);
-		CSlot s3 = createCSlot(a, CCardinality.FREE, v3);
-		CSlot s4 = createCSlot(a, CCardinality.FREE, v4);
+		CSlot s1 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v1);
+		CSlot s2 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v2);
+		CSlot s3 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v3);
+		CSlot s4 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v4);
 
 		testList(a.getSlots().asList(), list(s1, s2, s3, s4));
 
@@ -64,43 +64,43 @@ public class CSlotTest extends MekonTest {
 	public void test_absorbCardinality() {
 
 		testAbsorbCardinality(
-			CCardinality.SINGLETON,
-			CCardinality.SINGLETON,
-			CCardinality.SINGLETON);
+			CCardinality.SINGLE_VALUE,
+			CCardinality.SINGLE_VALUE,
+			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
-			CCardinality.SINGLETON,
+			CCardinality.SINGLE_VALUE,
 			CCardinality.UNIQUE_TYPES,
-			CCardinality.SINGLETON);
+			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
-			CCardinality.SINGLETON,
-			CCardinality.FREE,
-			CCardinality.SINGLETON);
+			CCardinality.SINGLE_VALUE,
+			CCardinality.REPEATABLE_TYPES,
+			CCardinality.SINGLE_VALUE);
 
 		testAbsorbCardinality(
 			CCardinality.UNIQUE_TYPES,
-			CCardinality.SINGLETON,
-			CCardinality.SINGLETON);
+			CCardinality.SINGLE_VALUE,
+			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
 			CCardinality.UNIQUE_TYPES,
 			CCardinality.UNIQUE_TYPES,
 			CCardinality.UNIQUE_TYPES);
 		testAbsorbCardinality(
 			CCardinality.UNIQUE_TYPES,
-			CCardinality.FREE,
+			CCardinality.REPEATABLE_TYPES,
 			CCardinality.UNIQUE_TYPES);
 
 		testAbsorbCardinality(
-			CCardinality.FREE,
-			CCardinality.SINGLETON,
-			CCardinality.SINGLETON);
+			CCardinality.REPEATABLE_TYPES,
+			CCardinality.SINGLE_VALUE,
+			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
-			CCardinality.FREE,
+			CCardinality.REPEATABLE_TYPES,
 			CCardinality.UNIQUE_TYPES,
 			CCardinality.UNIQUE_TYPES);
 		testAbsorbCardinality(
-			CCardinality.FREE,
-			CCardinality.FREE,
-			CCardinality.FREE);
+			CCardinality.REPEATABLE_TYPES,
+			CCardinality.REPEATABLE_TYPES,
+			CCardinality.REPEATABLE_TYPES);
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class CSlotTest extends MekonTest {
 
 		CFrame a = createCFrame("A");
 		CFrame b = createCFrame("B");
-		CSlot s = createCSlot(CCardinality.FREE, a);
+		CSlot s = createCSlot(CCardinality.REPEATABLE_TYPES, a);
 
 		addSuperFrame(b, a);
 
@@ -121,7 +121,7 @@ public class CSlotTest extends MekonTest {
 
 		CFrame a = createCFrame("A");
 		CFrame b = createCFrame("B");
-		CSlot s = createCSlot(CCardinality.FREE, a);
+		CSlot s = createCSlot(CCardinality.REPEATABLE_TYPES, a);
 
 		s.createEditor().absorbValueType(b);
 	}

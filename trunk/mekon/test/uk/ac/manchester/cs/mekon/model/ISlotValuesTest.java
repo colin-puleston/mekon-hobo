@@ -55,7 +55,7 @@ public class ISlotValuesTest extends MekonTest {
 	@Test
 	public void test_addRemoveValues_singletonCardinality() {
 
-		ISlotValues values = createSlotValues(CCardinality.SINGLETON);
+		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
 
 		testAdd(values, a, iValues(a));
 		testAdd(values, b, iValues(b));
@@ -71,13 +71,13 @@ public class ISlotValuesTest extends MekonTest {
 	@Test
 	public void test_addRemoveValues_freeCardinality() {
 
-		testAddRemoveValues_multiValued(CCardinality.FREE);
+		testAddRemoveValues_multiValued(CCardinality.REPEATABLE_TYPES);
 	}
 
 	@Test
 	public void test_updateValues_singletonCardinality() {
 
-		ISlotValues values = createSlotValues(CCardinality.SINGLETON);
+		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
 
 		testUpdate(values, iValues(a), iValues(a));
 		testUpdate(values, iValues(b), iValues(b));
@@ -93,13 +93,13 @@ public class ISlotValuesTest extends MekonTest {
 	@Test
 	public void test_updateValues_freeCardinality() {
 
-		testUpdateValues_multiValued(CCardinality.FREE);
+		testUpdateValues_multiValued(CCardinality.REPEATABLE_TYPES);
 	}
 
 	@Test
 	public void test_updateFixeds_singletonCardinality() {
 
-		ISlotValues values = createSlotValues(CCardinality.SINGLETON);
+		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
 
 		testUpdate(values, iValues(c), iValues(c));
 
@@ -112,7 +112,7 @@ public class ISlotValuesTest extends MekonTest {
 	@Test(expected = KModelException.class)
 	public void test_updateFixedsFails_singletonCardinality() {
 
-		createSlotValues(CCardinality.SINGLETON).updateFixedValues(iValues(a, b));
+		createSlotValues(CCardinality.SINGLE_VALUE).updateFixedValues(iValues(a, b));
 	}
 
 	@Test
@@ -124,19 +124,19 @@ public class ISlotValuesTest extends MekonTest {
 	@Test
 	public void test_updateFixeds_freeCardinality() {
 
-		testUpdateFixeds_multiValued(CCardinality.FREE);
+		testUpdateFixeds_multiValued(CCardinality.REPEATABLE_TYPES);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_illegalUpdateFails() {
 
-		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"), false);
+		createSlotValues(CCardinality.REPEATABLE_TYPES).add(createIFrame("IllegalValue"), false);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_abstractUpdateFailsForAssertion() {
 
-		createSlotValues(CCardinality.FREE).add(createIFrame("IllegalValue"), false);
+		createSlotValues(CCardinality.REPEATABLE_TYPES).add(createIFrame("IllegalValue"), false);
 	}
 
 	private void testAddRemoveValues_multiValued(CCardinality cardinality) {

@@ -49,10 +49,10 @@ public class ISlotSpecsTest extends MekonTest {
 
 	private CIdentity slotId = createIdentity("SLOT");
 
-	private CSlot sa = createCSlot(ta, CCardinality.FREE, tx);
+	private CSlot sa = createCSlot(ta, CCardinality.REPEATABLE_TYPES, tx);
 	private CSlot sb = createCSlot(tb, CCardinality.UNIQUE_TYPES, ty1);
-	private CSlot sc = createCSlot(tc, CCardinality.FREE, tz);
-	private CSlot sd = createCSlot(td, CCardinality.SINGLETON, ty2);
+	private CSlot sc = createCSlot(tc, CCardinality.REPEATABLE_TYPES, tz);
+	private CSlot sd = createCSlot(td, CCardinality.SINGLE_VALUE, ty2);
 
 	private IFrame iContainer;
 
@@ -115,16 +115,16 @@ public class ISlotSpecsTest extends MekonTest {
 	public void test_cardinalityInitialUpdate() {
 
 		updateContainerSlots(tc, td);
-		testCardinality(CCardinality.SINGLETON);
+		testCardinality(CCardinality.SINGLE_VALUE);
 	}
 
 	@Test
 	public void test_cardinalitySubsequentNonUpdate() {
 
 		updateContainerSlots(ta);
-		testCardinality(CCardinality.FREE);
+		testCardinality(CCardinality.REPEATABLE_TYPES);
 		updateContainerSlots(tc, td);
-		testCardinality(CCardinality.FREE);
+		testCardinality(CCardinality.REPEATABLE_TYPES);
 	}
 
 	@Test

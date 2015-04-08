@@ -48,10 +48,10 @@ public class CExtensionTest extends CValueTest<CFrame> {
 
 		addSuperFrame(cx, c);
 
-		createCSlot(a, sab, CCardinality.FREE, b);
-		createCSlot(a, sac, CCardinality.FREE, c);
-		createCSlot(b, sbb, CCardinality.FREE, b);
-		createCSlot(b, sbc, CCardinality.FREE, c);
+		createCSlot(a, sab, CCardinality.REPEATABLE_TYPES, b);
+		createCSlot(a, sac, CCardinality.REPEATABLE_TYPES, c);
+		createCSlot(b, sbb, CCardinality.REPEATABLE_TYPES, b);
+		createCSlot(b, sbc, CCardinality.REPEATABLE_TYPES, c);
 	}
 
 	@Test
