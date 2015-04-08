@@ -121,7 +121,7 @@ public class DArrayTest extends DFieldTest {
 
 	private DArray<DObject> createArray() {
 
-		return createDObjectArray(CCardinality.FREE, fr.getType());
+		return createDObjectArray(CCardinality.REPEATABLE_TYPES, fr.getType());
 	}
 
 	private void addSlotValues(IValue... values) {

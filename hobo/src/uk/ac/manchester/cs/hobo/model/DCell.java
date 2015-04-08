@@ -77,6 +77,6 @@ public class DCell<V> extends DField<V> implements DCellView<V> {
 
 	CCardinality getCardinality() {
 
-		return CCardinality.SINGLETON;
+		return CCardinality.SINGLE_VALUE;
 	}
 }

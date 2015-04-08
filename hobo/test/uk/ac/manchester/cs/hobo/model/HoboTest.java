@@ -96,6 +96,6 @@ class HoboTest extends MekonTest {
 
 	private ISlot createNumberSlot(CNumberDef def) {
 
-		return createISlot(CCardinality.SINGLETON, getCNumber(def));
+		return createISlot(CCardinality.SINGLE_VALUE, getCNumber(def));
 	}
 }

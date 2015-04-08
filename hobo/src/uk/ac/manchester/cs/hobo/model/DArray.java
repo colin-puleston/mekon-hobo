@@ -143,7 +143,7 @@ public class DArray<V> extends DField<V> implements DArrayView<V> {
 
 	void setUniqueTypes(boolean uniqueTypes) {
 
-		cardinality = uniqueTypes ? CCardinality.UNIQUE_TYPES : CCardinality.FREE;
+		cardinality = uniqueTypes ? CCardinality.UNIQUE_TYPES : CCardinality.REPEATABLE_TYPES;
 	}
 
 	DArrayViewer<V> createViewer() {

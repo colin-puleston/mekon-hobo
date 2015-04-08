@@ -61,14 +61,19 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		}
 	}
 
+	public DCell<DConcept<DObject>> addConceptCell() {
+
+		return addConceptCell(DObject.class);
+	}
+
+	public <D extends DObject>DCell<DConcept<D>> addConceptCell(Class<D> valueClass) {
+
+		return addField(createConceptCell(valueClass));
+	}
+
 	public <D extends DObject>DCell<D> addObjectCell(Class<D> valueClass) {
 
 		return addField(createObjectCell(valueClass));
-	}
-
-	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass) {
-
-		return addField(createObjectArray(valueClass));
 	}
 
 	public DCell<Integer> addIntegerCell() {
@@ -111,16 +116,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return addNumberCell(definition, Double.class);
 	}
 
-	public DCell<DConcept<DObject>> addConceptCell() {
-
-		return addConceptCell(DObject.class);
-	}
-
-	public <D extends DObject>DCell<DConcept<D>> addConceptCell(Class<D> valueClass) {
-
-		return addField(createConceptCell(valueClass));
-	}
-
 	public DArray<DConcept<DObject>> addConceptArray() {
 
 		return addConceptArray(DObject.class);
@@ -129,6 +124,51 @@ class DObjectBuilderImpl implements DObjectBuilder {
 	public <D extends DObject>DArray<DConcept<D>> addConceptArray(Class<D> valueClass) {
 
 		return addField(createConceptArray(valueClass));
+	}
+
+	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass) {
+
+		return addField(createObjectArray(valueClass));
+	}
+
+	public DArray<Integer> addIntegerArray() {
+
+		return addNumberArray(CIntegerDef.UNCONSTRAINED, Integer.class);
+	}
+
+	public DArray<Integer> addIntegerArray(CIntegerDef definition) {
+
+		return addNumberArray(definition, Integer.class);
+	}
+
+	public DArray<Long> addLongArray() {
+
+		return addNumberArray(CLongDef.UNCONSTRAINED, Long.class);
+	}
+
+	public DArray<Long> addLongArray(CLongDef definition) {
+
+		return addNumberArray(definition, Long.class);
+	}
+
+	public DArray<Float> addFloatArray() {
+
+		return addNumberArray(CFloatDef.UNCONSTRAINED, Float.class);
+	}
+
+	public DArray<Float> addFloatArray(CFloatDef definition) {
+
+		return addNumberArray(definition, Float.class);
+	}
+
+	public DArray<Double> addDoubleArray() {
+
+		return addNumberArray(CDoubleDef.UNCONSTRAINED, Double.class);
+	}
+
+	public DArray<Double> addDoubleArray(CDoubleDef definition) {
+
+		return addNumberArray(definition, Double.class);
 	}
 
 	public void setContainerClass(
@@ -207,21 +247,11 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return addField(createNumberCell(definition, numberType));
 	}
 
-	private <D extends DObject>DCell<D> createObjectCell(Class<D> valueClass) {
+	private <N extends Number>DArray<N> addNumberArray(
+											CNumberDef definition,
+											Class<N> numberType) {
 
-		return createCell(createObjectValueType(valueClass));
-	}
-
-	private <D extends DObject>DArray<D> createObjectArray(Class<D> valueClass) {
-
-		return createArray(createObjectValueType(valueClass));
-	}
-
-	private <N extends Number>DCell<N> createNumberCell(
-										CNumberDef definition,
-										Class<N> numberType) {
-
-		return createCell(createNumberValueType(definition, numberType));
+		return addField(createNumberArray(definition, numberType));
 	}
 
 	private <D extends DObject>DCell<DConcept<D>> createConceptCell(Class<D> valueClass) {
@@ -229,9 +259,33 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return createCell(createConceptValueType(valueClass));
 	}
 
+	private <D extends DObject>DCell<D> createObjectCell(Class<D> valueClass) {
+
+		return createCell(createObjectValueType(valueClass));
+	}
+
+	private <N extends Number>DCell<N> createNumberCell(
+											CNumberDef definition,
+											Class<N> numberType) {
+
+		return createCell(createNumberValueType(definition, numberType));
+	}
+
 	private <D extends DObject>DArray<DConcept<D>> createConceptArray(Class<D> valueClass) {
 
 		return createArray(createConceptValueType(valueClass));
+	}
+
+	private <D extends DObject>DArray<D> createObjectArray(Class<D> valueClass) {
+
+		return createArray(createObjectValueType(valueClass));
+	}
+
+	private <N extends Number>DArray<N> createNumberArray(
+											CNumberDef definition,
+											Class<N> numberType) {
+
+		return createArray(createNumberValueType(definition, numberType));
 	}
 
 	private <D>DCell<D> createCell(DValueType<D> valueType) {

@@ -70,6 +70,25 @@ import uk.ac.manchester.cs.hobo.model.*;
 public interface DObjectBuilder {
 
 	/**
+	 * Creates a single-valued OM field with concept-level-frame
+	 * values of any type.
+	 *
+	 * @return Created field
+	 */
+	public DCell<DConcept<DObject>> addConceptCell();
+
+	/**
+	 * Creates a single-valued OM field with concept-level-frame
+	 * values, where valid values are defined via a specific
+	 * root-frame.
+	 *
+	 * @param valueClass OM class that is bound to root-frame
+	 * defining valid field values
+	 * @return Created field
+	 */
+	public <D extends DObject>DCell<DConcept<D>> addConceptCell(Class<D> valueClass);
+
+	/**
 	 * Creates a single-valued OM field with OM-object values of the
 	 * specified type.
 	 *
@@ -78,14 +97,6 @@ public interface DObjectBuilder {
 	 */
 
 	public <D extends DObject>DCell<D> addObjectCell(Class<D> valueClass);
-	/**
-	 * Creates a multi-valued OM field with OM-object values of the
-	 * specified type.
-	 *
-	 * @param valueClass OM class of field values
-	 * @return Created field
-	 */
-	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass);
 
 	/**
 	 * Creates a single-valued OM field with integer-type values,
@@ -156,25 +167,6 @@ public interface DObjectBuilder {
 	public DCell<Double> addDoubleCell(CDoubleDef definition);
 
 	/**
-	 * Creates a single-valued OM field with concept-level-frame
-	 * values of any type.
-	 *
-	 * @return Created field
-	 */
-	public DCell<DConcept<DObject>> addConceptCell();
-
-	/**
-	 * Creates a single-valued OM field with concept-level-frame
-	 * values, where valid values are defined via a specific
-	 * root-frame.
-	 *
-	 * @param valueClass OM class that is bound to root-frame
-	 * defining valid field values
-	 * @return Created field
-	 */
-	public <D extends DObject>DCell<DConcept<D>> addConceptCell(Class<D> valueClass);
-
-	/**
 	 * Creates a multi-valued OM field with concept-level-frame
 	 * values, with no constraints on valid values.
 	 *
@@ -192,6 +184,83 @@ public interface DObjectBuilder {
 	 * @return Created field
 	 */
 	public <D extends DObject>DArray<DConcept<D>> addConceptArray(Class<D> valueClass);
+
+	/**
+	 * Creates a multi-valued OM field with OM-object values of the
+	 * specified type.
+	 *
+	 * @param valueClass OM class of field values
+	 * @return Created field
+	 */
+	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass);
+
+	/**
+	 * Creates a multi-valued OM field with integer-type values,
+	 * with no additional value-constraints.
+	 *
+	 * @return Created field
+	 */
+	public DArray<Integer> addIntegerArray();
+
+	/**
+	 * Creates a multi-valued OM field with integer-type values,
+	 * with specified value-constraints.
+	 *
+	 * @param definition Provides specific value-constraints
+	 * @return Created field
+	 */
+	public DArray<Integer> addIntegerArray(CIntegerDef definition);
+
+	/**
+	 * Creates a multi-valued OM field with long-type values,
+	 * with no additional value-constraints.
+	 *
+	 * @return Created field
+	 */
+	public DArray<Long> addLongArray();
+
+	/**
+	 * Creates a multi-valued OM field with long-type values,
+	 * with specified value-constraints.
+	 *
+	 * @param definition Provides specific value-constraints
+	 * @return Created field
+	 */
+	public DArray<Long> addLongArray(CLongDef definition);
+
+	/**
+	 * Creates a multi-valued OM field with float-type values,
+	 * with no additional value-constraints.
+	 *
+	 * @return Created field
+	 */
+	public DArray<Float> addFloatArray();
+
+	/**
+	 * Creates a multi-valued OM field with float-type values,
+	 * with specified value-constraints.
+	 *
+	 * @param definition Provides specific value-constraints
+	 * @return Created field
+	 */
+	public DArray<Float> addFloatArray(CFloatDef definition);
+
+	/**
+	 * Creates a multi-valued OM field with double-type values,
+	 * with no additional value-constraints.
+	 *
+	 * @return Created field
+	 */
+	public DArray<Double> addDoubleArray();
+
+	/**
+	 * Creates a multi-valued OM field with double-type values,
+	 * with specified value-constraints.
+	 *
+	 * @param definition Provides specific value-constraints
+	 * @return Created field
+	 */
+	public DArray<Double> addDoubleArray(CDoubleDef definition);
 
 	/**
 	 * Enables the explicit specification of the "container-class"
