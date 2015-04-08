@@ -73,7 +73,7 @@ public class MekonTest extends FramesTestUtils {
 
 		private CSlot createSlotType() {
 
-			return createCSlot("insertSlot", CCardinality.FREE, valueType);
+			return createCSlot("insertSlot", CCardinality.REPEATABLE_TYPES, valueType);
 		}
 
 		private boolean isDynamicSlot(ISlots slots) {
@@ -301,7 +301,7 @@ public class MekonTest extends FramesTestUtils {
 					CValue valueType,
 					IValue... values) {
 
-		ISlot slot = createISlot(container, name, CCardinality.FREE, valueType);
+		ISlot slot = createISlot(container, name, CCardinality.REPEATABLE_TYPES, valueType);
 
 		for (IValue value : values) {
 

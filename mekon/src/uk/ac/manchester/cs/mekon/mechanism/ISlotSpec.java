@@ -37,7 +37,7 @@ class ISlotSpec {
 
 	private CIdentity identity;
 	private CSource source = CSource.UNSPECIFIED;
-	private CCardinality cardinality = CCardinality.FREE;
+	private CCardinality cardinality = CCardinality.REPEATABLE_TYPES;
 	private List<CValue<?>> valueTypes = new ArrayList<CValue<?>>();
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 	private boolean active = false;

@@ -52,10 +52,10 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 	private CIdentity slot2Id = createIdentity("SLOT-2");
 	private CIdentity slot3Id = createIdentity("SLOT-3");
 
-	private CSlot ta_slot1 = createCSlot(ta, slot1Id, CCardinality.FREE, tx);
-	private CSlot ta_slot2 = createCSlot(ta, slot2Id, CCardinality.FREE, ty1);
-	private CSlot tc_slot2 = createCSlot(tc, slot2Id, CCardinality.SINGLETON, ty2);
-	private CSlot tb_slot3 = createCSlot(tb, slot3Id, CCardinality.FREE, tz);
+	private CSlot ta_slot1 = createCSlot(ta, slot1Id, CCardinality.REPEATABLE_TYPES, tx);
+	private CSlot ta_slot2 = createCSlot(ta, slot2Id, CCardinality.REPEATABLE_TYPES, ty1);
+	private CSlot tc_slot2 = createCSlot(tc, slot2Id, CCardinality.SINGLE_VALUE, ty2);
+	private CSlot tb_slot3 = createCSlot(tb, slot3Id, CCardinality.REPEATABLE_TYPES, tz);
 
 	private IFrame iContainer = createIFrame("CONTAINER");
 
@@ -103,7 +103,7 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 		ta_slot2.setEditability(CEditability.FULL);
 
 		updateContainerSlots();
-		testCardinality(slot2Id, CCardinality.FREE);
+		testCardinality(slot2Id, CCardinality.REPEATABLE_TYPES);
 		testActiveSlot(slot2Id, false);
 		testSlotEditability(slot2Id, CEditability.FULL);
 	}

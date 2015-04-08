@@ -36,7 +36,7 @@ public class ISlotTest extends MekonTest {
 	@Test(expected = KAccessException.class)
 	public void test_getValuesEditor_failsForInactiveSlot() {
 
-		ISlot s = createISlot(CCardinality.FREE);
+		ISlot s = createISlot(CCardinality.REPEATABLE_TYPES);
 
 		s.createEditor().setActive(false);
 		s.getValuesEditor();
@@ -45,7 +45,7 @@ public class ISlotTest extends MekonTest {
 	@Test(expected = KAccessException.class)
 	public void test_getValuesEditor_failsForNonEditable() {
 
-		ISlot s = createISlot(CCardinality.FREE);
+		ISlot s = createISlot(CCardinality.REPEATABLE_TYPES);
 
 		s.getType().setEditability(CEditability.NONE);
 		s.getValuesEditor();
