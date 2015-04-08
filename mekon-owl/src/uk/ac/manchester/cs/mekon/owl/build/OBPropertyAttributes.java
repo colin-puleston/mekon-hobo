@@ -37,7 +37,7 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
 	private boolean frameSource = false;
 
-	private CCardinality slotCardinality = CCardinality.FREE;
+	private CCardinality slotCardinality = CCardinality.REPEATABLE_TYPES;
 	private CEditability slotEditability = CEditability.DEFAULT;
 	private OBFrameSlotsPolicy frameSlotsPolicy = OBFrameSlotsPolicy.NONE;
 

@@ -43,19 +43,9 @@ abstract class OBFrameSlot extends OBSlot {
 		this.spec = spec;
 	}
 
-	CCardinality getDefaultCardinalityForTopLevelSlot() {
+	boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot() {
 
-		if (spec.singleValued()) {
-
-			return CCardinality.SINGLETON;
-		}
-
-		if (cFrameValuedTopLevelSlot()) {
-
-			return CCardinality.UNIQUE_TYPES;
-		}
-
-		return CCardinality.FREE;
+		return cFrameValuedIfTopLevelSlot();
 	}
 
 	abstract boolean anyStructuredValues();
@@ -69,15 +59,15 @@ abstract class OBFrameSlot extends OBSlot {
 
 		CFrame cFrame = ensureCFrame(builder, annotations);
 
-		return cFrameValuedTopLevelSlot(topLevelSlot) ? cFrame.getType() : cFrame;
+		return topLevelSlotIsCFrameValued(topLevelSlot) ? cFrame.getType() : cFrame;
 	}
 
-	boolean cFrameValuedTopLevelSlot(OBSlot topLevelSlot) {
+	boolean topLevelSlotIsCFrameValued(OBSlot topLevelSlot) {
 
-		return ((OBFrameSlot)topLevelSlot).cFrameValuedTopLevelSlot();
+		return ((OBFrameSlot)topLevelSlot).cFrameValuedIfTopLevelSlot();
 	}
 
-	private boolean cFrameValuedTopLevelSlot() {
+	private boolean cFrameValuedIfTopLevelSlot() {
 
 		switch (spec.getFrameSlotsPolicy()) {
 

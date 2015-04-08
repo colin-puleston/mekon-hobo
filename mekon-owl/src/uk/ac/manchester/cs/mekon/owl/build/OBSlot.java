@@ -62,14 +62,14 @@ abstract class OBSlot extends OIdentified {
 
 				if (canBeSlot()) {
 
-					addOrUpdateSlot(getDefaultCardinalityForTopLevelSlot());
+					addOrUpdateSlot(getDefaultCardinalityIfTopLevelSlot());
 				}
 			}
 			else {
 
 				if (topLevelSlot.spec.singleValued() && canBeSlot()) {
 
-					addOrUpdateSlot(CCardinality.SINGLETON);
+					addOrUpdateSlot(CCardinality.SINGLE_VALUE);
 				}
 
 				if (spec.valuedRequired() && canBeFixedValue(value)) {
@@ -166,7 +166,7 @@ abstract class OBSlot extends OIdentified {
 		return false;
 	}
 
-	abstract CCardinality getDefaultCardinalityForTopLevelSlot();
+	abstract boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot();
 
 	abstract CValue<?> ensureCValue(
 							CBuilder builder,
@@ -176,5 +176,20 @@ abstract class OBSlot extends OIdentified {
 	private boolean canBeSlotOrFixedValue(OBSlot topLevelSlot) {
 
 		return canBeSlot() || canPotentiallyBeFixedValue(topLevelSlot);
+	}
+
+	private CCardinality getDefaultCardinalityIfTopLevelSlot() {
+
+		if (spec.singleValued()) {
+
+			return CCardinality.SINGLE_VALUE;
+		}
+
+		if (defaultToUniqueTypesIfMultiValuedTopLevelSlot()) {
+
+			return CCardinality.UNIQUE_TYPES;
+		}
+
+		return CCardinality.REPEATABLE_TYPES;
 	}
 }
