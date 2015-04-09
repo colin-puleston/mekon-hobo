@@ -50,7 +50,7 @@
 		<OWLModel
 			owlFile="demo.owl"
 			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
-			numericProperty="http://mekon/demo.owl#numericValue">
+			indirectNumericProperty="http://mekon/demo.owl#numericValue">
 		</OWLModel>
 
 		<!-- Reasoner options...
