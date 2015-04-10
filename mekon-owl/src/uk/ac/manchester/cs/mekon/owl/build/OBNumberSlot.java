@@ -43,7 +43,7 @@ class OBNumberSlot extends OBSlot {
 
 	boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot() {
 
-		return false;
+		return true;
 	}
 
 	CValue<?> ensureCValue(
