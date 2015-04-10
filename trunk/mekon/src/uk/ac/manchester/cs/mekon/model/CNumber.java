@@ -109,12 +109,25 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	/**
 	 * Stipulates that this numeric-type can provide a default
 	 * value-entity if and only if it represents an exact value (see
-	 * {@link #exactValue}). If so then that value will be the
+	 * {@link #exactValue}). If so then that exact value will be the
 	 * default-value.
 	 *
 	 * @return True if numeric-type represents an exact value
 	 */
 	public boolean hasDefaultValue() {
+
+		return exactValue();
+	}
+
+	/**
+	 * Stipulates that this numeric-type defines only a single
+	 * possible value if and only if it represents an exact value
+	 * (see {@link #exactValue}). If so then that exact value will
+	 * be the single possible value.
+	 *
+	 * @return True if numeric-type represents an exact value
+	 */
+	public boolean onePossibleValue() {
 
 		return exactValue();
 	}
