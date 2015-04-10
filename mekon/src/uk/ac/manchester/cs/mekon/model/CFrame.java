@@ -421,11 +421,23 @@ public abstract class CFrame
 	 * value-entity, which will be a direct instantiation of the
 	 * frame with no slot-values being set.
 	 *
-	 * @return True always.
+	 * @return True always
 	 */
 	public boolean hasDefaultValue() {
 
 		return true;
+	}
+
+	/**
+	 * Stipulates that this concept-leval frame defines only a single
+	 * possible value if and only if it has no sub-frames with
+	 * visibility status of {@link CVisibility#EXPOSED}.
+	 *
+	 * @return True if frame has no exposed sub-frames
+	 */
+	public boolean onePossibleValue() {
+
+		return getSubs(CVisibility.EXPOSED).isEmpty();
 	}
 
 	/**

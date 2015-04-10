@@ -131,6 +131,14 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	public abstract boolean hasDefaultValue();
 
 	/**
+	 * Specifies whether this value-type-entity defines only a single
+	 * possible value.
+	 *
+	 * @return True if only single possible value
+	 */
+	public abstract boolean onePossibleValue();
+
+	/**
 	 * Tests whether this value-type-entity subsumes another
 	 * specified value-type-entity (which will be the case if and only
 	 * if the set of values-entities defined by this value-type-entity
