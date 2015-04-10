@@ -133,9 +133,9 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 	CFrame checkObtainCFrameAddition() {
 
-		return selectableCFrameOptions()
-					? getCFrameAdditionSelectionOrNull()
-					: getRootCFrame();
+		return singleOption()
+					? getRootCFrame()
+					: getCFrameAdditionSelectionOrNull();
 	}
 
 	abstract String getCFrameRole();
@@ -148,7 +148,7 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 	private boolean addDisjunctActionRequired() {
 
-		return abstractEditableSlot() && selectableCFrameOptions();
+		return abstractEditableSlot() && !singleOption();
 	}
 
 	private boolean removeDisjunctActionRequired(F value) {
@@ -254,9 +254,9 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 		return valueToCFrame(value).getCategory().disjunction();
 	}
 
-	private boolean selectableCFrameOptions() {
+	private boolean singleOption() {
 
-		return !getRootCFrame().getSubs(CVisibility.EXPOSED).isEmpty();
+		return getRootCFrame().onePossibleValue();
 	}
 
 	private boolean abstractEditableSlot() {

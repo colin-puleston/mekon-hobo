@@ -50,16 +50,26 @@ class INumberSelector extends GDialog {
 
 	private CNumber type;
 	private INumber selection = null;
+	private boolean windowClosing = false;
+
+	private class WindowCloseListener extends WindowAdapter {
+
+		public void windowClosing(WindowEvent e) {
+
+			windowClosing = true;
+		}
+	}
 
 	private class InputField extends GTextField {
 
 		static private final long serialVersionUID = -1;
 
 		private Set<InputField> conflictingFields = new HashSet<InputField>();
+		private boolean processingValue = false;
 
 		protected void onTextEntered(String text) {
 
-			INumber value = parseValue(text);
+			INumber value = processValue(text);
 
 			if (value != null) {
 
@@ -71,11 +81,14 @@ class INumberSelector extends GDialog {
 
 		protected void onFieldExited(String text) {
 
-			INumber value = parseValue(text);
+			if (!windowClosing && !processingValue) {
 
-			if (value != null) {
+				INumber value = processValue(text);
 
-				onValueEntered(value);
+				if (value != null) {
+
+					onValueEntered(value);
+				}
 			}
 		}
 
@@ -101,6 +114,22 @@ class INumberSelector extends GDialog {
 		}
 
 		INumber getSelection(INumber value) {
+
+			return value;
+		}
+
+		private INumber processValue(String text) {
+
+			processingValue = true;
+
+			INumber value = parseValue(text);
+
+			if (value == null) {
+
+				setText("");
+			}
+
+			processingValue = false;
 
 			return value;
 		}
@@ -227,6 +256,7 @@ class INumberSelector extends GDialog {
 		this.type = type;
 
 		setPreferredSize(getPreferredSize(rangeEnabled));
+		addWindowListener(new WindowCloseListener());
 		display(getDisplay(rangeEnabled));
 	}
 
