@@ -76,13 +76,16 @@ public abstract class ORLogger extends ORMonitor {
 	}
 
 	/**
-	 * Starts classification logging.
+	 * Starts classification logging, if not already started.
 	 */
-	public void start() {
+	public void checkStart() {
 
-		active = true;
+		if (!active) {
 
-		ORMonitor.start(this);
+			active = true;
+
+			ORMonitor.start(this);
+		}
 	}
 
 	/**
@@ -128,15 +131,15 @@ public abstract class ORLogger extends ORMonitor {
 			actions.printTitle(resultsType);
 			actions.printOWLObjects(model, results);
 		}
-
-		printReasoniningTimesTitle();
-		actions.printLastActionTime("Sub-Operation");
-		actions.printTotalTime("Running Total");
 	}
 
 	void onRequestComplete() {
 
 		actions.stopAction();
+
+		printReasoniningTimesTitle();
+		actions.printLastActionTime("Sub-Operation");
+		actions.printTotalTime("Running Total");
 	}
 
 	private void printReasoniningTimesTitle() {

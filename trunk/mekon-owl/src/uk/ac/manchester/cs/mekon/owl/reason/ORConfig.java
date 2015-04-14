@@ -89,7 +89,7 @@ abstract class ORConfig implements ORConfigVocab {
 
 		if (mode != ORLoggingMode.DISABLED) {
 
-			logger.start();
+			logger.checkStart();
 
 			if (mode != ORLoggingMode.TIMES_ONLY) {
 

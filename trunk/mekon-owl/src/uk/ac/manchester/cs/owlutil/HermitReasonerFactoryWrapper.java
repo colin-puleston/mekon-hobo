@@ -28,30 +28,49 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.HermiT.*;
 
+/**
+ * Wrapper for the HermiT implementation of {@link OWLReasonerFactory},
+ * which is provided as an inner class within the main HermiT
+ * {@link Reasoner} class. Allows construction via reflection of the
+ * inner class (which cannot be done directly), enabling the HermiT
+ * reasoner to be specified in a MEKON configuration file.
+ *
+ * @author Colin Puleston
+ */
 public class HermitReasonerFactoryWrapper implements OWLReasonerFactory {
 
 	private OWLReasonerFactory factory = new Reasoner.ReasonerFactory();
 
+	/**
+	 */
 	public String getReasonerName() {
 
 		return factory.getReasonerName();
 	}
 
+	/**
+	 */
 	public OWLReasoner createReasoner(OWLOntology ontology) {
 
 		return factory.createReasoner(ontology);
 	}
 
+	/**
+	 */
 	public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) {
 
 		return factory.createReasoner(ontology, config);
 	}
 
+	/**
+	 */
 	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology) {
 
 		return factory.createNonBufferingReasoner(ontology);
 	}
 
+	/**
+	 */
 	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration config) {
 
 		return factory.createNonBufferingReasoner(ontology, config);

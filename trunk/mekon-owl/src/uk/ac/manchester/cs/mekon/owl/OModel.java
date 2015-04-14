@@ -423,13 +423,14 @@ public class OModel {
 	OModel(
 		OWLOntologyManager manager,
 		OWLOntology mainOntology,
-		OWLReasoner reasoner,
+		OWLReasonerFactory reasonerFactory,
 		OWLDataProperty indirectNumericProperty) {
 
 		this.manager = manager;
 		this.mainOntology = mainOntology;
-		this.reasoner = reasoner;
 		this.indirectNumericProperty = indirectNumericProperty;
+
+		reasoner = reasonerFactory.createReasoner(mainOntology);
 
 		classify();
 

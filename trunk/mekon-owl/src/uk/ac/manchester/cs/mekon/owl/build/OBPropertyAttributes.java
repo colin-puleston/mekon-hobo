@@ -58,7 +58,7 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 	/**
 	 * Sets the cardinality status for the frames-model slots that
 	 * will be generated for the property. Defaults to
-	 * {@link CCardinality#FREE} if method is never invoked.
+	 * {@link CCardinality#REPEATABLE_TYPES} if method is never invoked.
 	 *
 	 * @param slotCardinality Cardinality status for generated slots
 	 */

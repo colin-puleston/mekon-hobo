@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Specifies the policy for frame-valued slot creation.

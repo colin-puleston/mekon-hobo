@@ -95,8 +95,8 @@ public class ORNumberSlot extends ORSlot<INumber> {
 					+ getIdentifier());
 	}
 
-	ORNumberSlot(ISlot iSlot, IRI iri) {
+	ORNumberSlot(CIdentity id, ISlot iSlot, IRI iri) {
 
-		super(iSlot, iri);
+		super(id, iSlot, iri);
 	}
 }

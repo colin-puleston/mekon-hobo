@@ -45,17 +45,37 @@ public class ORFramesInstance {
 	private ORSlotSemantics slotSemantics;
 	private ORFrame rootFrame;
 
-	private IFrameSlotBuilder iFrameSlotBuilder = new IFrameSlotBuilder();
-	private CFrameSlotBuilder cFrameSlotBuilder = new CFrameSlotBuilder();
-	private NumberSlotBuilder numberSlotBuilder = new NumberSlotBuilder();
+	private IFrameSlotConverter iFrameSlotConverter = new IFrameSlotConverter();
+	private CFrameSlotConverter cFrameSlotConverter = new CFrameSlotConverter();
+	private NumberSlotConverter numberSlotConverter = new NumberSlotConverter();
 
 	private Map<IFrame, ORFrame> framesByIFrame = new HashMap<IFrame, ORFrame>();
 
-	private abstract class TypeSlotBuilder<V, S extends ORSlot<V>, IV> {
+	private abstract class TypeSlotConverter<V, S extends ORSlot<V>, IV> {
 
 		void build(ORFrame oFrame, ISlot iSlot, List<IV> iValues) {
 
-			S oSlot = createSlot(iSlot);
+			build(oFrame, iSlot.getType().getIdentity(), iSlot, iValues);
+		}
+
+		void build(ORFrame oFrame, CIdentity slotId, List<IV> iValues) {
+
+			build(oFrame, slotId, null, iValues);
+		}
+
+		abstract V getValue(IV iValue);
+
+		abstract S createSlot(CIdentity id, ISlot iSlot, IRI iri);
+
+		abstract void addSlot(ORFrame oFrame, S oSlot);
+
+		private void build(
+						ORFrame oFrame,
+						CIdentity id,
+						ISlot iSlot,
+						List<IV> iValues) {
+
+			S oSlot = createSlot(id, iSlot);
 
 			for (IV iValue : iValues) {
 
@@ -65,16 +85,10 @@ public class ORFramesInstance {
 			addSlot(oFrame, oSlot);
 		}
 
-		abstract V getValue(IV iValue);
+		private S createSlot(CIdentity id, ISlot iSlot) {
 
-		abstract S createSlot(ISlot iSlot, IRI iri);
-
-		abstract void addSlot(ORFrame oFrame, S oSlot);
-
-		private S createSlot(ISlot iSlot) {
-
-			IRI iri = getIRIOrNull(iSlot);
-			S slot = createSlot(iSlot, iri);
+			IRI iri = properties.getOrNull(id);
+			S slot = createSlot(id, iSlot, iri);
 
 			if (iri != null) {
 
@@ -83,20 +97,15 @@ public class ORFramesInstance {
 
 			return slot;
 		}
-
-		private IRI getIRIOrNull(ISlot iSlot) {
-
-			return properties.getOrNull(iSlot.getType().getIdentity());
-		}
 	}
 
-	private abstract class ConceptSlotBuilder<IV>
+	private abstract class ConceptSlotConverter<IV>
 								extends
-									TypeSlotBuilder<ORFrame, ORConceptSlot, IV> {
+									TypeSlotConverter<ORFrame, ORConceptSlot, IV> {
 
-		ORConceptSlot createSlot(ISlot iSlot, IRI iri) {
+		ORConceptSlot createSlot(CIdentity id, ISlot iSlot, IRI iri) {
 
-			return new ORConceptSlot(iSlot, iri);
+			return new ORConceptSlot(id, iSlot, iri);
 		}
 
 		void addSlot(ORFrame oFrame, ORConceptSlot oSlot) {
@@ -105,7 +114,7 @@ public class ORFramesInstance {
 		}
 	}
 
-	private class IFrameSlotBuilder extends ConceptSlotBuilder<IFrame> {
+	private class IFrameSlotConverter extends ConceptSlotConverter<IFrame> {
 
 		ORFrame getValue(IFrame iValue) {
 
@@ -113,7 +122,7 @@ public class ORFramesInstance {
 		}
 	}
 
-	private class CFrameSlotBuilder extends ConceptSlotBuilder<CFrame> {
+	private class CFrameSlotConverter extends ConceptSlotConverter<CFrame> {
 
 		ORFrame getValue(CFrame iValue) {
 
@@ -121,18 +130,18 @@ public class ORFramesInstance {
 		}
 	}
 
-	private class NumberSlotBuilder
+	private class NumberSlotConverter
 						extends
-							TypeSlotBuilder<INumber, ORNumberSlot, INumber> {
+							TypeSlotConverter<INumber, ORNumberSlot, INumber> {
 
 		INumber getValue(INumber iValue) {
 
 			return iValue;
 		}
 
-		ORNumberSlot createSlot(ISlot iSlot, IRI iri) {
+		ORNumberSlot createSlot(CIdentity id, ISlot iSlot, IRI iri) {
 
-			return new ORNumberSlot(iSlot, iri);
+			return new ORNumberSlot(id, iSlot, iri);
 		}
 
 		void addSlot(ORFrame oFrame, ORNumberSlot oSlot) {
@@ -141,32 +150,92 @@ public class ORFramesInstance {
 		}
 	}
 
-	private class SlotBuilder extends ISlotValuesVisitor {
+	private class ISlotConverter extends ISlotValuesVisitor {
 
 		private ISlot iSlot;
 		private ORFrame oFrame;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
-			iFrameSlotBuilder.build(oFrame, iSlot, values);
+			iFrameSlotConverter.build(oFrame, iSlot, values);
 		}
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			numberSlotBuilder.build(oFrame, iSlot, values);
+			numberSlotConverter.build(oFrame, iSlot, values);
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
-			cFrameSlotBuilder.build(oFrame, iSlot, values);
+			cFrameSlotConverter.build(oFrame, iSlot, values);
 		}
 
-		SlotBuilder(ISlot iSlot, ORFrame oFrame) {
+		ISlotConverter(ISlot iSlot, ORFrame oFrame) {
 
 			this.iSlot = iSlot;
 			this.oFrame = oFrame;
 
 			visit(iSlot);
+		}
+	}
+
+	private class CSlotValuesConverter extends CValueVisitor {
+
+		private CSlotValues cSlotValues;
+		private CIdentity slotId;
+		private ORFrame oFrame;
+
+		protected void visit(CFrame value) {
+
+			cFrameSlotConverter.build(oFrame, slotId, getValues(CFrame.class));
+		}
+
+		protected void visit(CNumber value) {
+
+			numberSlotConverter.build(oFrame, slotId, getCNumberValuesAsINumbers());
+		}
+
+		protected void visit(MFrame value) {
+
+			cFrameSlotConverter.build(oFrame, slotId, getMFrameValuesAsCFrames());
+		}
+
+		CSlotValuesConverter(CSlotValues cSlotValues, CIdentity slotId, ORFrame oFrame) {
+
+			this.cSlotValues = cSlotValues;
+			this.slotId = slotId;
+			this.oFrame = oFrame;
+
+			visit(cSlotValues.getValues(slotId).get(0));
+		}
+
+		private List<CFrame> getMFrameValuesAsCFrames() {
+
+			List<CFrame> cFrames = new ArrayList<CFrame>();
+
+			for (MFrame mFrame : getValues(MFrame.class)) {
+
+				cFrames.add(mFrame.getRootCFrame());
+			}
+
+			return cFrames;
+		}
+
+		private List<INumber> getCNumberValuesAsINumbers() {
+
+			List<INumber> iNumbers = new ArrayList<INumber>();
+
+			for (CNumber cNumber : getValues(CNumber.class)) {
+
+				iNumbers.add(cNumber.asINumber());
+			}
+
+			return iNumbers;
+		}
+
+		private <V extends CValue<?>>List<V> getValues(Class<V> valueClass) {
+
+			return cSlotValues.getValues(slotId, valueClass);
 		}
 	}
 
@@ -224,7 +293,7 @@ public class ORFramesInstance {
 
 		for (ISlot iSlot : iFrame.getSlots().asList()) {
 
-			new SlotBuilder(iSlot, oFrame);
+			new ISlotConverter(iSlot, oFrame);
 		}
 
 		return oFrame;
@@ -232,9 +301,19 @@ public class ORFramesInstance {
 
 	private ORFrame createFrame(CFrame cFrame) {
 
-		return cFrame.getCategory().disjunction()
-				? createDisjunctionFrame(cFrame)
-				: createModelFrame(cFrame);
+		CFrameCategory category = cFrame.getCategory();
+
+		if (category.disjunction()) {
+
+			return createDisjunctionFrame(cFrame);
+		}
+
+		if (category.extension()) {
+
+			return createExtensionFrame(cFrame);
+		}
+
+		return createSimpleFrame(cFrame);
 	}
 
 	private ORFrame createDisjunctionFrame(CFrame cFrame) {
@@ -254,7 +333,20 @@ public class ORFramesInstance {
 		return oFrame;
 	}
 
-	private ORFrame createModelFrame(CFrame cFrame) {
+	private ORFrame createExtensionFrame(CFrame cFrame) {
+
+		ORFrame oFrame = createSimpleFrame(cFrame);
+		CSlotValues slotValues = cFrame.getSlotValues();
+
+		for (CIdentity slotId : slotValues.getSlotIdentities()) {
+
+			new CSlotValuesConverter(slotValues, slotId, oFrame);
+		}
+
+		return oFrame;
+	}
+
+	private ORFrame createSimpleFrame(CFrame cFrame) {
 
 		return new ORFrame(cFrame, concepts.getSubsumerOrNull(cFrame));
 	}

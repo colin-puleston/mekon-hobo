@@ -70,10 +70,13 @@ public class OBSectionBuilder implements CSectionBuilder {
 	/**
 	 * Constructs section-builder with configuration defined via the
 	 * appropriately-tagged child of the specified
-	 * parent-configuration-node, which must also include configuration
-	 * for the {@link OModel} over which the sanctioning is to operate,
-	 * and optionally an {@link ORClassifier} object to be attached to
-	 * all generated frames.
+	 * parent-configuration-node, which should also include:
+	 * <ul>
+	 *   <li>Configuration for the {@link OModel} object over which
+	 *   the sanctioning is to operate
+	 *   <li>Optionally, a {@link ORClassifier} object to be attached
+	 *   to all generated frames
+	 * </ul>
 	 *
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
@@ -87,12 +90,14 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
-	 * Constructs section-builder with configuration defined via the
-	 * appropriately-tagged child of the specified
-	 * parent-configuration-node, which may optonally also include
-	 * configuration for an {@link ORClassifier} object to be attached
-	 * to all generated frames, and with specified model over which the
-	 * sanctioning is to operate.
+	 * Constructs section-builder with specified model over which the
+	 * sanctioning is to operate, and with configuration defined via
+	 * the appropriately-tagged child of the specified
+	 * parent-configuration-node, which should also include:
+	 * <ul>
+	 *   <li>Optionally, a {@link ORClassifier} object to be attached
+	 *   to all generated frames
+	 * </ul>
 	 *
 	 * @param model Model over which sanctioning is to operate
 	 * @param parentConfigNode Parent of configuration node defining
@@ -103,37 +108,23 @@ public class OBSectionBuilder implements CSectionBuilder {
 	 */
 	public OBSectionBuilder(OModel model, KConfigNode parentConfigNode) {
 
-		this(model);
-
-		new OBSectionBuilderConfig(parentConfigNode).configure(this);
-
-		setIReasoner(ORClassifier.createOrNull(model, parentConfigNode));
-		setIMatcher(ORMatcher.createOrNull(model, parentConfigNode));
+		initialise(model, parentConfigNode);
 	}
 
 	/**
-	 * Constructs section-builder with default configuration,
-	 * and with no {@link IReasoner} specified.
+	 * Constructs section-builder with default configuration, and with
+	 * no {@link IReasoner} specified.
 	 *
 	 * @param model Model over which sanctioning is to operate
 	 */
 	public OBSectionBuilder(OModel model) {
 
-		this.model = model;
-
-		labels = new OBEntityLabels(model);
-		annotations = new OBAnnotations(model);
-
-		concepts = new OBConcepts(model);
-		properties = new OBProperties(model);
-
-		frames = new OBFrames(concepts, properties, labels);
-		slots = new OBSlots(model, frames, properties, labels);
+		initialise(model);
 	}
 
 	/**
-	 * Enables the specification of an {@link IReasoner} to be
-	 * attached to all generated frames.
+	 * Enables the specification of an {@link IReasoner} to be attached
+	 * to all generated frames.
 	 *
 	 * @param iReasoner Reasoner for generated frames
 	 */
@@ -143,8 +134,8 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
-	 * Enables the specification of an {@link IMatcher} to be
-	 * added to the generated model.
+	 * Enables the specification of an {@link IMatcher} to be added
+	 * to the generated model.
 	 *
 	 * @param iMatcher Matcher for generated frames
 	 */
@@ -263,6 +254,33 @@ public class OBSectionBuilder implements CSectionBuilder {
 				model.retainOnlyDeclarationAxioms();
 			}
 		}
+	}
+
+	OBSectionBuilder() {
+	}
+
+	void initialise(OModel model) {
+
+		this.model = model;
+
+		labels = new OBEntityLabels(model);
+		annotations = new OBAnnotations(model);
+
+		concepts = new OBConcepts(model);
+		properties = new OBProperties(model);
+
+		frames = new OBFrames(concepts, properties, labels);
+		slots = new OBSlots(model, frames, properties, labels);
+	}
+
+	void initialise(OModel model, KConfigNode parentConfigNode) {
+
+		initialise(model);
+
+		new OBSectionBuilderConfig(parentConfigNode).configure(this);
+
+		setIReasoner(ORClassifier.createOrNull(model, parentConfigNode));
+		setIMatcher(ORMatcher.createOrNull(model, parentConfigNode));
 	}
 
 	private void buildIntermediate() {
