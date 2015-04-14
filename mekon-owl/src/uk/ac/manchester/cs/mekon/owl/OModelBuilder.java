@@ -43,7 +43,7 @@ public class OModelBuilder {
 
 	private OWLOntologyManager manager;
 	private OWLOntology mainOntology;
-	private OWLReasoner reasoner;
+	private OWLReasonerFactory reasonerFactory;
 	private OWLDataProperty indirectNumericProperty = null;
 
 	/**
@@ -88,31 +88,32 @@ public class OModelBuilder {
 	 * that one.
 	 *
 	 * @param mainOWLFile OWL file containing main ontology
-	 * @param reasonerFactory Factory for creating required reasoner
+	 * @param reasonerFactoryType Type of factory for creating required
+	 * reasoner
 	 */
 	public OModelBuilder(
 			File mainOWLFile,
-			Class<? extends OWLReasonerFactory> reasonerFactory) {
+			Class<? extends OWLReasonerFactory> reasonerFactoryType) {
 
-		initialise(mainOWLFile, reasonerFactory);
+		initialise(mainOWLFile, reasonerFactoryType);
 	}
 
 	/**
 	 * Creates builder for model with specified manager, main ontology
-	 * and reasoner.
+	 * and reasoner created by specified factory.
 	 *
 	 * @param manager Manager for set of ontologies
 	 * @param mainOntology Main ontology
-	 * @param reasoner Reasoner for ontologies
+	 * @param reasonerFactory Factory for creating required reasoner
 	 */
 	public OModelBuilder(
 			OWLOntologyManager manager,
 			OWLOntology mainOntology,
-			OWLReasoner reasoner) {
+			OWLReasonerFactory reasonerFactory) {
 
 		this.manager = manager;
 		this.mainOntology = mainOntology;
-		this.reasoner = reasoner;
+		this.reasonerFactory = reasonerFactory;
 	}
 
 	/**
@@ -147,13 +148,24 @@ public class OModelBuilder {
 	}
 
 	/**
-	 * Provides the reasoner for reasoning over the set of ontologies.
+	 * Provides the complete set of ontologies.
 	 *
-	 * @return Reasoner for ontologies
+	 * @return Complete set of ontologies
 	 */
-	public OWLReasoner getReasoner() {
+	public Set<OWLOntology> getAllOntologies() {
 
-		return reasoner;
+		return manager.getOntologies();
+	}
+
+	/**
+	 * Provides the factory that will be used to create the required
+	 * reasoner.
+	 *
+	 * @return Factory for required reasoner
+	 */
+	public OWLReasonerFactory getReasonerFactory() {
+
+		return reasonerFactory;
 	}
 
 	/**
@@ -164,14 +176,14 @@ public class OModelBuilder {
 	 */
 	public OModel create() {
 
-		return new OModel(manager, mainOntology, reasoner, indirectNumericProperty);
+		return new OModel(manager, mainOntology, reasonerFactory, indirectNumericProperty);
 	}
 
-	void initialise(File mainOWLFile, Class<? extends OWLReasonerFactory> reasonerFactory) {
+	void initialise(File mainOWLFile, Class<? extends OWLReasonerFactory> reasonerFactoryType) {
 
 		manager = createOntologyManager(mainOWLFile);
 		mainOntology = loadOntology(mainOWLFile);
-		reasoner = createReasoner(reasonerFactory);
+		reasonerFactory = createReasonerFactory(reasonerFactoryType);
 	}
 
 	private OWLOntology loadOntology(File owlFile) {
@@ -204,11 +216,9 @@ public class OModelBuilder {
 		return new PathSearchOntologyIRIMapper(owlFile.getParentFile());
 	}
 
-	private OWLReasoner createReasoner(Class<? extends OWLReasonerFactory> factory) {
+	private OWLReasonerFactory createReasonerFactory(Class<? extends OWLReasonerFactory> type) {
 
-		return new KConfigObjectConstructor<OWLReasonerFactory>(factory)
-						.construct()
-						.createReasoner(mainOntology);
+		return new KConfigObjectConstructor<OWLReasonerFactory>(type).construct();
 	}
 
 	private OWLDataProperty getIndirectNumericProperty(IRI iri) {

@@ -50,7 +50,7 @@ class OBSubConceptAxioms {
 
 		Set<OWLSubClassOfAxiom> slotSources = new HashSet<OWLSubClassOfAxiom>();
 
-		for (OWLSubClassOfAxiom subConceptOf : getgetAxioms()) {
+		for (OWLSubClassOfAxiom subConceptOf : getAxioms()) {
 
 			if (isModelAxiom(subConceptOf)) {
 
@@ -61,7 +61,7 @@ class OBSubConceptAxioms {
 		return slotSources;
 	}
 
-	private Set<OWLSubClassOfAxiom> getgetAxioms() {
+	private Set<OWLSubClassOfAxiom> getAxioms() {
 
 		return getMainOntology().getAxioms(AxiomType.SUBCLASS_OF, true);
 	}

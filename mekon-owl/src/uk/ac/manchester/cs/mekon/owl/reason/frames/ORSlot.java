@@ -248,9 +248,9 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 		super(identifier, iri);
 	}
 
-	ORSlot(ISlot iSlot, IRI iri) {
+	ORSlot(CIdentity id, ISlot iSlot, IRI iri) {
 
-		super(iSlot.getType(), iri);
+		super(id.getIdentifier(), iri);
 
 		this.iSlot = iSlot;
 	}

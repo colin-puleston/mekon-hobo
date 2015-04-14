@@ -76,8 +76,8 @@ public class ORConceptSlot extends ORSlot<ORFrame> {
 		return this;
 	}
 
-	ORConceptSlot(ISlot iSlot, IRI iri) {
+	ORConceptSlot(CIdentity id, ISlot iSlot, IRI iri) {
 
-		super(iSlot, iri);
+		super(id, iSlot, iri);
 	}
 }
