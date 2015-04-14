@@ -42,21 +42,30 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
  * Specialisation of {@link OBSectionBuilder} that builds the
  * OWL-derived section of the frames-based model in a manner that
  * optimises both the initial classification and all subsequent
- * reasoning. Specifically, loads two versions of the OWL model: a
- * main version, with the specified reasoner attached, and from which
- * all "payload" constructs have been removed prior to creation of the
- * reasoner, and a "payload loading" version, with all original
- * constructs present, but with only a basic structural reasoner
- * attached. These two versions of the model are then used to build
- * overlapping sections of the frames-based model, whilst only the
- * main version is attached to the {@link ORClassifier} object that is
- * created as part of the section-building process. The result of all
- * this is that the required frames-model will be built, and should
- * behave in the required fashion as regards to resoning, whilst the
- * lack of payload constructs in the ontology against which the real
- * reasoning is done greatly improves the efficiency both of the initial
- * classification and of all subsequent reasoning via the
- * {@link ORClassifier}.
+ * reasoning. Specifically, loads two versions of the OWL model:
+ * <ul>
+ *   <li>"Main" version, with the specified reasoner attached, and
+ *   from which all "payload" constructs will be removed prior to
+ *   creation of the reasoner
+ *   <li>"Payload Loading" version, with all original constructs
+ *   present, but with only a basic structural reasoner attached
+ * </ul>
+ * ("Payload" constructs refers to those sub-class axioms in which the
+ * LHS is a named class, and the RHS a restriction. The assumption
+ * being that any inferences involving such axioms will all be handled
+ * by the frames-model, and hence the axioms do not need to be handled
+ * by the reasoner. Such axioms are also known to cause massive
+ * increases in typical reasoning times.)
+ * <p>
+ * These two versions of the model are then used to build overlapping
+ * sections of the frames-based model, whilst only the main version is
+ * attached to the {@link ORClassifier} object that is created as part
+ * of the section-building process. The result of all this is that the
+ * required frames-model will be built, and should behave in the required
+ * fashion as regards to reasoning, whilst the lack of payload constructs
+ * in the ontology against which the actual reasoning is done, greatly
+ * improves the efficiency both of the initial classification and of all
+ * subsequent reasoning via the {@link ORClassifier}.
  *
  * @author Colin Puleston
  */
