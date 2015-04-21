@@ -170,7 +170,7 @@ public class OModelBuilder {
 
 	/**
 	 * Creates and then initialises the {@link OModel}, which includes
-	 * classifying the ontology.
+	 * creating the reasoner and classifying the ontology.
 	 *
 	 * @return Created model
 	 */
