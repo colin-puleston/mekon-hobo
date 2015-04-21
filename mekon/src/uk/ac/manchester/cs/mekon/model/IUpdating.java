@@ -98,45 +98,38 @@ public class IUpdating {
 		}
 	}
 
-	void checkAutoUpdate(IFrame instance) {
+	boolean checkAutoUpdate(IFrame instance) {
 
-		if (autoUpdate) {
-
-			checkUpdateDefault(instance);
-		}
+		return autoUpdate && checkUpdateDefault(instance);
 	}
 
-	void checkManualUpdate(IFrame instance) {
+	boolean checkManualUpdate(IFrame instance) {
 
-		if (!autoUpdate) {
-
-			checkUpdateDefault(instance);
-		}
+		return !autoUpdate && checkUpdateDefault(instance);
 	}
 
-	void checkManualUpdate(IFrame instance, Set<IUpdateOp> ops) {
+	boolean checkManualUpdate(IFrame instance, Set<IUpdateOp> ops) {
 
-		if (!autoUpdate) {
-
-			checkUpdate(instance, getNonDefaultOps(ops));
-		}
+		return !autoUpdate && checkUpdate(instance, getNonDefaultOps(ops));
 	}
 
-	private void checkUpdateDefault(IFrame instance) {
+	private boolean checkUpdateDefault(IFrame instance) {
 
-		checkUpdate(instance, getDefaultOps());
+		return checkUpdate(instance, getDefaultOps());
 	}
 
-	private void checkUpdate(IFrame instance, Set<IUpdateOp> ops) {
+	private boolean checkUpdate(IFrame instance, Set<IUpdateOp> ops) {
 
 		purgeOpsForQuery(instance, ops);
 
-		if (!ops.isEmpty()) {
+		if (ops.isEmpty()) {
 
-			IReasoner reasoner = instance.getType().getIReasoner();
-
-			reasoner.updateFrame(iEditor, instance, ops);
+			return false;
 		}
+
+		IReasoner reasoner = instance.getType().getIReasoner();
+
+		return reasoner.updateFrame(iEditor, instance, ops);
 	}
 
 	private void purgeOpsForQuery(IFrame instance, Set<IUpdateOp> ops) {

@@ -170,13 +170,18 @@ public class ISlotSpecs {
 	 *
 	 * @param frame Instance-level frame whose fixed slot-values are
 	 * to be updated
+	 * @return True if fixed values set has been updated
 	 */
-	public void updateSlotValues(IFrame frame) {
+	public boolean updateSlotValues(IFrame frame) {
+
+		boolean anyUpdates = false;
 
 		for (ISlotSpec spec : specs) {
 
-			updateSlotValuesFor(frame, spec);
+			anyUpdates |= updateSlotValuesFor(frame, spec);
 		}
+
+		return anyUpdates;
 	}
 
 	private ISlotSpecs(IEditor iEditor, List<CFrame> disjunctTypes) {
@@ -282,14 +287,11 @@ public class ISlotSpecs {
 		}
 	}
 
-	private void updateSlotValuesFor(IFrame frame, ISlotSpec spec) {
+	private boolean updateSlotValuesFor(IFrame frame, ISlotSpec spec) {
 
 		ISlot slot = getSlotOrNull(frame, spec);
 
-		if (slot != null) {
-
-			spec.checkUpdateSlotValues(slot);
-		}
+		return slot != null && spec.checkUpdateSlotValues(slot);
 	}
 
 	private ISlot getSlotOrNull(IFrame frame, ISlotSpec spec) {
