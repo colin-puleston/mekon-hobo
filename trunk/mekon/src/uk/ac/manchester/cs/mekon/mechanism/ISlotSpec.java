@@ -113,9 +113,9 @@ class ISlotSpec {
 		}
 	}
 
-	void checkUpdateSlotValues(ISlot slot) {
+	boolean checkUpdateSlotValues(ISlot slot) {
 
-		getSlotEditor(slot).setFixedValues(fixedValues);
+		return getSlotEditor(slot).setFixedValues(fixedValues);
 	}
 
 	CIdentity getIdentity() {

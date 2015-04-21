@@ -48,6 +48,7 @@ public abstract class IClassifier extends DefaultIReasoner {
 		private boolean doSlotValues;
 
 		private IClassifierOps classifierOps;
+		private boolean anyUpdatedSlotValues = false;
 
 		Updater(IEditor iEditor, IFrame frame, Set<IUpdateOp> updateOps) {
 
@@ -74,6 +75,11 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 				updateSuggesteds(toCFrames(classification.getSuggestedTypes()));
 			}
+		}
+
+		boolean anyUpdatedSlotValues() {
+
+			return anyUpdatedSlotValues;
 		}
 
 		private IClassifierOps getClassifierOps(Set<IUpdateOp> updateOps) {
@@ -115,7 +121,7 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 				if (doSlotValues) {
 
-					specs.updateSlotValues(frame);
+					anyUpdatedSlotValues |= specs.updateSlotValues(frame);
 				}
 			}
 		}
@@ -148,9 +154,13 @@ public abstract class IClassifier extends DefaultIReasoner {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+	public boolean updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
 
-		new Updater(iEditor, frame, ops).update();
+		Updater updater = new Updater(iEditor, frame, ops);
+
+		updater.update();
+
+		return updater.anyUpdatedSlotValues();
 	}
 
 	/**

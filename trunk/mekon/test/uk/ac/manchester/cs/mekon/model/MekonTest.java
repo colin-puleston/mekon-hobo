@@ -44,7 +44,7 @@ public class MekonTest extends FramesTestUtils {
 
 		private boolean firstInsert = true;
 
-		public void updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+		public boolean updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
 
 			ISlots slots = frame.getSlots();
 
@@ -56,6 +56,8 @@ public class MekonTest extends FramesTestUtils {
 				addInsertSlot(frame);
 				slots.addAll(startSlots);
 			}
+
+			return false;
 		}
 
 		DynamicSlotInsertionReasoner(CFrame frameType, String typesPrefix) {

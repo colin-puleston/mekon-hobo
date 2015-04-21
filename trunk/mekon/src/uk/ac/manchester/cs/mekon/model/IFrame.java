@@ -511,7 +511,7 @@ public class IFrame implements IEntity, IValue {
 
 		if (visited.add(this)) {
 
-			getIUpdating().checkAutoUpdate(this);
+			while (getIUpdating().checkAutoUpdate(this));
 
 			for (ISlot slot : referencingSlots.asList()) {
 
