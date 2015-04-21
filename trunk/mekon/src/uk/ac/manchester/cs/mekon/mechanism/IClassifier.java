@@ -48,7 +48,7 @@ public abstract class IClassifier extends DefaultIReasoner {
 		private boolean doSlotValues;
 
 		private IClassifierOps classifierOps;
-		private boolean anyUpdatedSlotValues = false;
+		private Set<IUpdateOp> enactedUpdateOps = new HashSet<IUpdateOp>();
 
 		Updater(IEditor iEditor, IFrame frame, Set<IUpdateOp> updateOps) {
 
@@ -62,24 +62,21 @@ public abstract class IClassifier extends DefaultIReasoner {
 			classifierOps = getClassifierOps(updateOps);
 		}
 
-		void update() {
+		Set<IUpdateOp> update() {
 
 			IClassification classification = classify(frame, classifierOps);
 
 			if (classifierOps.inferreds()) {
 
-				updateFromInferreds(toCFrames(classification.getInferredTypes()));
+				updateForInferreds(toCFrames(classification.getInferredTypes()));
 			}
 
 			if (classifierOps.suggesteds()) {
 
-				updateSuggesteds(toCFrames(classification.getSuggestedTypes()));
+				updateForSuggesteds(toCFrames(classification.getSuggestedTypes()));
 			}
-		}
 
-		boolean anyUpdatedSlotValues() {
-
-			return anyUpdatedSlotValues;
+			return enactedUpdateOps;
 		}
 
 		private IClassifierOps getClassifierOps(Set<IUpdateOp> updateOps) {
@@ -90,11 +87,24 @@ public abstract class IClassifier extends DefaultIReasoner {
 			return new IClassifierOps(inferreds, suggesteds);
 		}
 
-		private void updateFromInferreds(List<CFrame> inferreds) {
+		private void updateForInferreds(List<CFrame> inferreds) {
 
 			if (!doInferreds || updateInferreds(inferreds)) {
 
+				if (doInferreds) {
+
+					enactedUpdateOps.add(IUpdateOp.INFERRED_TYPES);
+				}
+
 				updateSlotsAndValues(inferreds);
+			}
+		}
+
+		private void updateForSuggesteds(List<CFrame> suggesteds) {
+
+			if (updateSuggesteds(suggesteds)) {
+
+				enactedUpdateOps.add(IUpdateOp.INFERRED_TYPES);
 			}
 		}
 
@@ -103,9 +113,9 @@ public abstract class IClassifier extends DefaultIReasoner {
 			return getFrameEditor().updateInferredTypes(updates);
 		}
 
-		private void updateSuggesteds(List<CFrame> updates) {
+		private boolean updateSuggesteds(List<CFrame> updates) {
 
-			getFrameEditor().updateSuggestedTypes(updates);
+			return getFrameEditor().updateSuggestedTypes(updates);
 		}
 
 		private void updateSlotsAndValues(List<CFrame> inferredsUpdates) {
@@ -114,14 +124,14 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 				ISlotSpecs specs = createSlotSpecs(inferredsUpdates);
 
-				if (doSlots) {
+				if (doSlots && specs.updateSlots(frame)) {
 
-					specs.updateSlots(frame);
+					enactedUpdateOps.add(IUpdateOp.SLOTS);
 				}
 
-				if (doSlotValues) {
+				if (doSlotValues && specs.updateSlotValues(frame)) {
 
-					anyUpdatedSlotValues |= specs.updateSlotValues(frame);
+					enactedUpdateOps.add(IUpdateOp.SLOT_VALUES);
 				}
 			}
 		}
@@ -154,13 +164,9 @@ public abstract class IClassifier extends DefaultIReasoner {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+	public Set<IUpdateOp> updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
 
-		Updater updater = new Updater(iEditor, frame, ops);
-
-		updater.update();
-
-		return updater.anyUpdatedSlotValues();
+		return new Updater(iEditor, frame, ops).update();
 	}
 
 	/**

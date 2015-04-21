@@ -144,24 +144,29 @@ public class ISlotSpecs {
 	}
 
 	/**
-	 * Updates the slot-sets on the specified instance-level frame using
-	 * the current set of slot-specifications. , including value-types
-	 * Also initialises and updates value-types and "active" statuses,
-	 * and initialises, but doesn't update, "editability" statuses.
+	 * Updates the slot-set on the specified instance-level frame using
+	 * the current set of slot-specifications. Also initialises and
+	 * updates value-types and "active" statuses, and initialises, but
+	 * doesn't update, "editability" statuses.
 	 *
-	 * @param frame Instance-level frame whose slots are to be updated
+	 * @param frame Instance-level frame whose slot-set is to be updated
+	 * @return True if slot-set has been updated
 	 */
-	public void updateSlots(IFrame frame) {
+	public boolean updateSlots(IFrame frame) {
+
+		boolean anyUpdates = false;
 
 		for (ISlot slot : frame.getSlots().asList()) {
 
-			removeIfRedundant(frame, slot);
+			anyUpdates |= removeIfRedundant(frame, slot);
 		}
 
 		for (ISlotSpec spec : specs) {
 
-			updateSlotsFor(frame, spec);
+			anyUpdates |= updateSlotsFor(frame, spec);
 		}
+
+		return anyUpdates;
 	}
 
 	/**
@@ -265,26 +270,25 @@ public class ISlotSpecs {
 		return new ISlotSpecs(iEditor, frameType.asDisjuncts());
 	}
 
-	private void removeIfRedundant(IFrame frame, ISlot slot) {
+	private boolean removeIfRedundant(IFrame frame, ISlot slot) {
 
-		if (!specsBySlotId.containsKey(slot.getType().getIdentity())) {
+		if (specsBySlotId.containsKey(slot.getType().getIdentity())) {
 
-			getFrameEditor(frame).removeSlot(slot);
+			return false;
 		}
+
+		getFrameEditor(frame).removeSlot(slot);
+
+		return true;
 	}
 
-	private void updateSlotsFor(IFrame frame, ISlotSpec spec) {
+	private boolean updateSlotsFor(IFrame frame, ISlotSpec spec) {
 
 		ISlot slot = getSlotOrNull(frame, spec);
 
-		if (slot != null) {
-
-			spec.updateOrRemoveSlot(slot);
-		}
-		else {
-
-			spec.checkAddSlot(frame);
-		}
+		return slot != null
+				? spec.checkUpdateOrRemoveSlot(slot)
+				: spec.checkAddSlot(frame);
 	}
 
 	private boolean updateSlotValuesFor(IFrame frame, ISlotSpec spec) {

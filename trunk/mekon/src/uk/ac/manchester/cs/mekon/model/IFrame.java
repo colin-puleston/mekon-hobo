@@ -264,10 +264,13 @@ public class IFrame implements IEntity, IValue {
 	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
 	 * then performs the default set of update operations on this frame.
 	 * Otherwise does nothing.
+	 *
+	 * @return Subset of default update operations that actually produced
+	 * updates
 	 */
-	public void checkManualUpdate() {
+	public Set<IUpdateOp> checkManualUpdate() {
 
-		getIUpdating().checkManualUpdate(this);
+		return getIUpdating().checkManualUpdate(this);
 	}
 
 	/**
@@ -277,10 +280,12 @@ public class IFrame implements IEntity, IValue {
 	 * default operations (see {@link IUpdating#getDefaultOps}).
 	 *
 	 * @param ops Update operations to be performed (where relevant)
+	 * @return Subset of specified update operations that actually
+	 * produced updates
 	 */
-	public void checkManualUpdate(Set<IUpdateOp> ops) {
+	public Set<IUpdateOp> checkManualUpdate(Set<IUpdateOp> ops) {
 
-		getIUpdating().checkManualUpdate(this, ops);
+		return getIUpdating().checkManualUpdate(this, ops);
 	}
 
 	/**
@@ -511,13 +516,20 @@ public class IFrame implements IEntity, IValue {
 
 		if (visited.add(this)) {
 
-			while (getIUpdating().checkAutoUpdate(this));
+			exhaustivelyAutoUpdateThis();
 
 			for (ISlot slot : referencingSlots.asList()) {
 
 				slot.getContainer().performDynamicUpdates(visited);
 			}
 		}
+	}
+
+	private void exhaustivelyAutoUpdateThis() {
+
+		IUpdating updating = getIUpdating();
+
+		while (updating.checkAutoUpdate(this).contains(IUpdateOp.SLOT_VALUES));
 	}
 
 	private boolean disjunctionType() {

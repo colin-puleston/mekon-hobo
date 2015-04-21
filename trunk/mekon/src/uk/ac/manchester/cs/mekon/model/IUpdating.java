@@ -98,33 +98,48 @@ public class IUpdating {
 		}
 	}
 
-	boolean checkAutoUpdate(IFrame instance) {
+	Set<IUpdateOp> checkAutoUpdate(IFrame instance) {
 
-		return autoUpdate && checkUpdateDefault(instance);
+		if (!autoUpdate) {
+
+			return Collections.<IUpdateOp>emptySet();
+		}
+
+		return checkUpdateDefault(instance);
 	}
 
-	boolean checkManualUpdate(IFrame instance) {
+	Set<IUpdateOp> checkManualUpdate(IFrame instance) {
 
-		return !autoUpdate && checkUpdateDefault(instance);
+		if (autoUpdate) {
+
+			return Collections.<IUpdateOp>emptySet();
+		}
+
+		return checkUpdateDefault(instance);
 	}
 
-	boolean checkManualUpdate(IFrame instance, Set<IUpdateOp> ops) {
+	Set<IUpdateOp> checkManualUpdate(IFrame instance, Set<IUpdateOp> ops) {
 
-		return !autoUpdate && checkUpdate(instance, getNonDefaultOps(ops));
+		if (autoUpdate) {
+
+			return Collections.<IUpdateOp>emptySet();
+		}
+
+		return checkUpdate(instance, getNonDefaultOps(ops));
 	}
 
-	private boolean checkUpdateDefault(IFrame instance) {
+	private Set<IUpdateOp> checkUpdateDefault(IFrame instance) {
 
 		return checkUpdate(instance, getDefaultOps());
 	}
 
-	private boolean checkUpdate(IFrame instance, Set<IUpdateOp> ops) {
+	private Set<IUpdateOp> checkUpdate(IFrame instance, Set<IUpdateOp> ops) {
 
-		purgeOpsForQuery(instance, ops);
+		ops = purgeOpsForQuery(instance, ops);
 
 		if (ops.isEmpty()) {
 
-			return false;
+			return ops;
 		}
 
 		IReasoner reasoner = instance.getType().getIReasoner();
@@ -132,12 +147,16 @@ public class IUpdating {
 		return reasoner.updateFrame(iEditor, instance, ops);
 	}
 
-	private void purgeOpsForQuery(IFrame instance, Set<IUpdateOp> ops) {
+	private Set<IUpdateOp> purgeOpsForQuery(IFrame instance, Set<IUpdateOp> ops) {
+
+		Set<IUpdateOp> purgedOps = new HashSet<IUpdateOp>(ops);
 
 		if (instance.getCategory().query()) {
 
-			ops.remove(IUpdateOp.SLOT_VALUES);
+			purgedOps.remove(IUpdateOp.SLOT_VALUES);
 		}
+
+		return purgedOps;
 	}
 
 	private Set<IUpdateOp> getNonDefaultOps(Set<IUpdateOp> ops) {
