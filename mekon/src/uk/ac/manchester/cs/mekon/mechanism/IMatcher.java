@@ -27,14 +27,14 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Responsible for execting queries over sets of
- * instantiations of a MEKON Frames Model (FM). Both instances
- * and queries are represented via instance-level frames. The
- * frames representing instances will always be of category
- * {@link IFrameCategory#ASSERTION} rather than {@link
- * IFrameCategory#QUERY}, whereas those representing queries
- * can be either, since assertion frames can also be interpreted
- * as queries.
+ * Responsible for executing queries over sets of instantiations
+ * of a MEKON Frames Model (FM). Both instances and queries are
+ * represented via instance-level frames. The frames representing
+ * instances will always be of category {@link
+ * IFrameCategory#ASSERTION} rather than {@link
+ * IFrameCategory#QUERY}, whereas those representing queries can
+ * be either, since assertion frames can also be interpreted as
+ * queries.
  *
  * @author Colin Puleston
  */

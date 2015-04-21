@@ -70,17 +70,6 @@ public class IStore {
 	}
 
 	/**
-	 * Checks whether store contains a particular instance.
-	 *
-	 * @param identity Unique identity of instance to check for
-	 * @return True if store contains required instance
-	 */
-	public boolean contains(CIdentity identity) {
-
-		return instances.containsKey(identity);
-	}
-
-	/**
 	 * Adds an instance to the store, possibly replacing an
 	 * existing instance with the same identity.
 	 *
@@ -129,6 +118,17 @@ public class IStore {
 
 			remove(identity);
 		}
+	}
+
+	/**
+	 * Checks whether store contains a particular instance.
+	 *
+	 * @param identity Unique identity of instance to check for
+	 * @return True if store contains required instance
+	 */
+	public boolean contains(CIdentity identity) {
+
+		return instances.containsKey(identity);
 	}
 
 	/**
