@@ -34,9 +34,9 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
- * Provides an OWL-based version of the reasoning mechanisms defined
- * by {@link IMatcher}, with the instances being represented as
- * networks of individuals, and the queries as class-expressions.
+ * Provides an OWL-based implementation of the reasoning mechanisms
+ * defined by {@link IMatcher}, with the instances being represented
+ * as networks of individuals, and the queries as class-expressions.
  * <p>
  * The matching process can be customised in two distinct ways:
  * <ul>
