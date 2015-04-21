@@ -65,9 +65,9 @@ public class DefaultIReasoner implements IReasoner {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+	public Set<IUpdateOp> updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
 
-		return false;
+		return Collections.<IUpdateOp>emptySet();
 	}
 
 	/**

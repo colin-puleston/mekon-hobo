@@ -61,7 +61,8 @@ public interface IReasoner {
 	 * @param iEditor Model-instantiation editor
 	 * @param frame Frame to be updated
 	 * @param ops Types of update operations to be performed
-	 * @return True if fixed values set has been updated
+	 * @return Subset of specified update operations that actually
+	 * produced updates
 	 */
-	public boolean updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops);
+	public Set<IUpdateOp> updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops);
 }

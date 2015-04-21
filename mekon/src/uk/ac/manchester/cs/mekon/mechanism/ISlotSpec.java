@@ -89,28 +89,32 @@ class ISlotSpec {
 		}
 	}
 
-	void checkAddSlot(IFrame container) {
+	boolean checkAddSlot(IFrame container) {
 
 		CValue<?> valueType = getValueTypeOrNull();
 
-		if (valueType != null) {
+		if (valueType == null) {
 
-			addSlot(container, valueType);
+			return false;
 		}
+
+		addSlot(container, valueType);
+
+		return true;
 	}
 
-	void updateOrRemoveSlot(ISlot slot) {
+	boolean checkUpdateOrRemoveSlot(ISlot slot) {
 
 		CValue<?> valueType = getValueTypeOrNull();
 
-		if (valueType != null) {
-
-			updateSlot(slot, valueType);
-		}
-		else {
+		if (valueType == null) {
 
 			removeSlot(slot);
+
+			return true;
 		}
+
+		return checkUpdateSlot(slot, valueType);
 	}
 
 	boolean checkUpdateSlotValues(ISlot slot) {
@@ -186,12 +190,33 @@ class ISlotSpec {
 				editability);
 	}
 
-	private void updateSlot(ISlot slot, CValue<?> valueType) {
+	private boolean checkUpdateSlot(ISlot slot, CValue<?> valueType) {
 
-		ISlotEditor slotEd = getSlotEditor(slot);
+		return checkUpdateValueType(slot, valueType) || checkUpdateActive(slot);
+	}
 
-		slotEd.setValueType(valueType);
-		slotEd.setActive(active);
+	private boolean checkUpdateValueType(ISlot slot, CValue<?> valueType) {
+
+		if (valueType.equals(slot.getType().getValueType())) {
+
+			return false;
+		}
+
+		getSlotEditor(slot).setValueType(valueType);
+
+		return true;
+	}
+
+	private boolean checkUpdateActive(ISlot slot) {
+
+		if (active == slot.getType().active()) {
+
+			return false;
+		}
+
+		getSlotEditor(slot).setActive(active);
+
+		return true;
 	}
 
 	private void removeSlot(ISlot slot) {
