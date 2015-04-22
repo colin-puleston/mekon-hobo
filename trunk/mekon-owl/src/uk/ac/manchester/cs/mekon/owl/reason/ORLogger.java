@@ -28,6 +28,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
@@ -110,12 +111,12 @@ public abstract class ORLogger extends ORMonitor {
 		actions.printTotalTime("Operation Total");
 	}
 
-	void onRequest(OModel model, OWLObject request, String requestType) {
+	void onRequest(OModel model, InstanceConstruct request, String requestType) {
 
 		if (showRequests) {
 
 			actions.printTitle(requestType + "-Request");
-			actions.printOWLObject(model, request);
+			actions.printOWLObject(model, request.getConstruct());
 		}
 
 		actions.startAction();
@@ -130,6 +131,18 @@ public abstract class ORLogger extends ORMonitor {
 
 			actions.printTitle(resultsType);
 			actions.printOWLObjects(model, results);
+		}
+	}
+
+	void onReasoned(
+			OModel model,
+			List<CIdentity> results,
+			String resultsType) {
+
+		if (showResults) {
+
+			actions.printTitle(resultsType);
+			actions.printIdentities(model, results);
 		}
 	}
 

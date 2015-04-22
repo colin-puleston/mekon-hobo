@@ -28,6 +28,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -88,6 +89,11 @@ public class OActionLogger {
 		print(new OLabelRenderer(model).renderAll(objects), 0);
 	}
 
+	public void printIdentities(OModel model, List<CIdentity> identities) {
+
+		print(extractIdentifiers(identities), 0);
+	}
+
 	public void print(Object toPrint, int indentDepth) {
 
 		String prefix = PREFIX;
@@ -103,5 +109,17 @@ public class OActionLogger {
 	private void printTime(String name, Long valueInMillies) {
 
 		printAttribute(name, valueInMillies.toString() + "ms");
+	}
+
+	private List<String> extractIdentifiers(List<CIdentity> identities) {
+
+		List<String> ids = new ArrayList<String>();
+
+		for (CIdentity identity : identities) {
+
+			ids.add(identity.getIdentifier());
+		}
+
+		return ids;
 	}
 }

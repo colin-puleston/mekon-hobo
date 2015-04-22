@@ -24,22 +24,37 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import java.util.*;
-
-import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
+ * Represents the type of an {@link ORMatcher} object that is to
+ * be created.
+ *
  * @author Colin Puleston
  */
-abstract class InstanceConstruct {
+public enum ORMatcherType {
 
-	abstract void cleanUp();
+	/**
+	 * Specifies a matcher of type {@link ORExpressionsMatcher}.
+	 */
+	EXPRESSIONS_BASED {
 
-	abstract boolean suggestsTypes();
+		ORMatcher createMatcher(OModel model) {
 
-	abstract OWLObject getConstruct();
+			return new ORExpressionsMatcher(model);
+		}
+	},
 
-	abstract Set<OWLClass> getInferredTypes();
+	/**
+	 * Specifies a matcher of type {@link ORIndividualsMatcher}.
+	 */
+	INDIVIDUALS_BASED {
 
-	abstract Set<OWLClass> getSuggestedTypes();
+		ORMatcher createMatcher(OModel model) {
+
+			return new ORIndividualsMatcher(model);
+		}
+	};
+
+	abstract ORMatcher createMatcher(OModel model);
 }

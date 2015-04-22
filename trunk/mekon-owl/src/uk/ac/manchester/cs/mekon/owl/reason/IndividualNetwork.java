@@ -47,8 +47,6 @@ class IndividualNetwork extends InstanceConstruct {
 		ORFrame frame,
 		IndividualsRenderer renderer) {
 
-		super(model, frame);
-
 		this.model = model;
 		this.renderer = renderer;
 

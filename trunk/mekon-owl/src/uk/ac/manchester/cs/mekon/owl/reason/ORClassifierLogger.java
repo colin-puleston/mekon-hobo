@@ -28,6 +28,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
@@ -54,7 +55,7 @@ public class ORClassifierLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onClassifierRequest(OModel model, OWLObject request) {
+	protected void onClassifierRequest(OModel model, InstanceConstruct request) {
 
 		onRequest(model, request, "Classification");
 	}
@@ -78,7 +79,7 @@ public class ORClassifierLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onClassifierDone(OModel model, OWLObject request) {
+	protected void onClassifierDone(OModel model, InstanceConstruct request) {
 
 		onRequestComplete();
 	}
@@ -86,18 +87,18 @@ public class ORClassifierLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onMatcherRequest(OModel model, OWLObject request) {
+	protected void onMatcherRequest(OModel model, InstanceConstruct request) {
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onMatchesFound(OModel model, Set<OWLNamedIndividual> matches) {
+	protected void onMatchesFound(OModel model, List<CIdentity> matches) {
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onMatcherDone(OModel model, OWLObject request) {
+	protected void onMatcherDone(OModel model, InstanceConstruct request) {
 	}
 }

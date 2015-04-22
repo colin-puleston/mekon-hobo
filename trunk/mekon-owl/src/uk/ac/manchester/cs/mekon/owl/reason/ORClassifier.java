@@ -26,11 +26,14 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Provides OWL-classification-based versions of the reasoning
@@ -49,45 +52,16 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 public class ORClassifier extends IClassifier {
 
 	/**
-	 * Constructs classifier, with the configuration for both the
-	 * classifier itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node, if such a child exists.
+	 * Test whether an appropriately-tagged child of the specified
+	 * parent configuration-node exists, defining the configuration
+	 * for an {@link IClassifier} to be created.
 	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @return Created object, or null if required child node does
-	 * not exist
-	 * @throws KConfigException if required child-node exists but
-	 * does not contain correctly specified configuration information
+	 * @param parentConfigNode Parent configuration-node
+	 * @return True if required child node exists
 	 */
-	static public ORClassifier createOrNull(KConfigNode parentConfigNode) {
+	static public boolean configExists(KConfigNode parentConfigNode) {
 
-		return ORClassifierConfig.configNodeExists(parentConfigNode)
-					? new ORClassifier(parentConfigNode)
-					: null;
-	}
-
-	/**
-	 * Constructs classifier, with the configuration defined via the
-	 * appropriately-tagged child of the specified parent
-	 * configuration-node, if such a child exists.
-	 *
-	 * @param model Model over which classifier is to operate
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @return Created object, or null if required child node does
-	 * not exist
-	 * @throws KConfigException if required child-node exists but
-	 * does not contain correctly specified configuration information
-	 */
-	static public ORClassifier createOrNull(
-									OModel model,
-									KConfigNode parentConfigNode) {
-
-		return ORClassifierConfig.configNodeExists(parentConfigNode)
-					? new ORClassifier(model, parentConfigNode)
-					: null;
+		return ORClassifierConfig.configNodeExists(parentConfigNode);
 	}
 
 	private OModel model;
@@ -195,7 +169,7 @@ public class ORClassifier extends IClassifier {
 	 */
 	protected IClassification classify(IFrame frame, IClassifierOps ops) {
 
-		return createInstanceConstruct(frame).classify(ops);
+		return classify(framesManager.toPreProcessed(frame), ops);
 	}
 
 	void setForceIndividualBasedClassification(boolean value) {
@@ -203,9 +177,53 @@ public class ORClassifier extends IClassifier {
 		forceIndividualBasedClassification = value;
 	}
 
-	private InstanceConstruct createInstanceConstruct(IFrame frame) {
+	private IClassification classify(ORFrame frame, IClassifierOps ops) {
 
-		return createInstanceConstruct(framesManager.toPreProcessed(frame));
+		InstanceConstruct construct = createInstanceConstruct(frame);
+
+		ORMonitor.pollForClassifierRequest(model, construct);
+
+		List<CIdentity> inferredIds = new ArrayList<CIdentity>();
+		List<CIdentity> suggestedIds = new ArrayList<CIdentity>();
+
+		if (ops.inferreds()) {
+
+			inferredIds.addAll(getInferredTypes(construct, frame));
+		}
+
+		if (construct.suggestsTypes() && ops.suggesteds()) {
+
+			suggestedIds.addAll(getSuggestedTypes(construct, frame));
+		}
+
+		construct.cleanUp();
+
+		ORMonitor.pollForClassifierDone(model, construct);
+
+		return new IClassification(inferredIds, suggestedIds);
+	}
+
+	private List<CIdentity> getInferredTypes(
+								InstanceConstruct construct,
+								ORFrame frame) {
+
+		Set<OWLClass> inferreds = construct.getInferredTypes();
+
+		purgeInferredTypes(frame, inferreds);
+		ORMonitor.pollForTypesInferred(model, inferreds);
+
+		return toIdentityList(inferreds);
+	}
+
+	private List<CIdentity> getSuggestedTypes(
+								InstanceConstruct construct,
+								ORFrame frame) {
+
+		Set<OWLClass> suggesteds = construct.getSuggestedTypes();
+
+		ORMonitor.pollForTypesSuggested(model, suggesteds);
+
+		return toIdentityList(suggesteds);
 	}
 
 	private InstanceConstruct createInstanceConstruct(ORFrame frame) {
@@ -216,5 +234,20 @@ public class ORClassifier extends IClassifier {
 		}
 
 		return new ConceptExpression(model, frame);
+	}
+
+	private void purgeInferredTypes(ORFrame frame, Set<OWLClass> types) {
+
+		types.remove(getConcept(frame.getIRI()));
+	}
+
+	private OWLClass getConcept(IRI iri) {
+
+		return model.getConcepts().get(iri);
+	}
+
+	private List<CIdentity> toIdentityList(Set<OWLClass> entities) {
+
+		return new ArrayList<CIdentity>(OIdentity.createSortedSet(entities));
 	}
 }
