@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -34,9 +36,8 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
- * Provides an OWL-based implementation of the reasoning mechanisms
- * defined by {@link IMatcher}, with the instances being represented
- * as networks of individuals, and the queries as class-expressions.
+ * Abstract base-class for OWL-based implementations of the reasoning
+ * mechanisms defined by {@link IMatcher}.
  * <p>
  * The matching process can be customised in two distinct ways:
  * <ul>
@@ -46,56 +47,20 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  *
  * @author Colin Puleston
  */
-public class ORMatcher implements IMatcher {
+public abstract class ORMatcher implements IMatcher {
 
 	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node, if such a child exists.
+	 * Test whether an appropriately-tagged child of the specified
+	 * parent configuration-node exists, defining the configuration
+	 * for an {@link ORMatcher} to be created.
 	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @return Created object, or null if required child node does
-	 * not exist
-	 * @throws KConfigException if required child-node exists but
-	 * does not contain correctly specified configuration information
+	 * @param parentConfigNode Parent configuration-node
+	 * @return True if required child node exists
 	 */
-	static public ORMatcher createOrNull(KConfigNode parentConfigNode) {
+	static public boolean configExists(KConfigNode parentConfigNode) {
 
-		return ORMatcherConfig.configNodeExists(parentConfigNode)
-					? new ORMatcher(parentConfigNode)
-					: null;
+		return ORMatcherConfig.configNodeExists(parentConfigNode);
 	}
-
-	/**
-	 * Constructs matcher, with the configuration defined via the
-	 * appropriately-tagged child of the specified parent
-	 * configuration-node, if such a child exists.
-	 *
-	 * @param model Model over which matcher is to operate
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @return Created object, or null if required child node does
-	 * not exist
-	 * @throws KConfigException if required child-node exists but
-	 * does not contain correctly specified configuration information
-	 */
-	static public ORMatcher createOrNull(
-								OModel model,
-								KConfigNode parentConfigNode) {
-
-		return ORMatcherConfig.configNodeExists(parentConfigNode)
-					? new ORMatcher(model, parentConfigNode)
-					: null;
-	}
-
-	private OModel model;
-	private OConceptFinder concepts;
-	private FramesManager framesManager;
-
-	private IndividualsRenderer storeRenderer;
-	private IndividualsRenderer dynamicRenderer;
 
 	/**
 	 * Constructs matcher, with the configuration for both the
@@ -105,48 +70,42 @@ public class ORMatcher implements IMatcher {
 	 *
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist
-	 * or does not contain correctly specified configuration
+	 * @return Created object
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
 	 * information
 	 */
-	public ORMatcher(KConfigNode parentConfigNode) {
+	static public ORMatcher create(KConfigNode parentConfigNode) {
 
-		this(new OModelBuilder(parentConfigNode).create(), parentConfigNode);
+		return create(createModel(parentConfigNode), parentConfigNode);
 	}
 
 	/**
-	 * Constructs matcher for specified model, with the matcher
-	 * configuration defined via the appropriately-tagged child of
-	 * the specified parent configuration-node.
+	 * Constructs matcher, with the configuration defined via the
+	 * appropriately-tagged child of the specified parent
+	 * configuration-node.
 	 *
 	 * @param model Model over which matcher is to operate
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist
-	 * or does not contain correctly specified configuration
+	 * @return Created object
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
 	 * information
 	 */
-	public ORMatcher(OModel model, KConfigNode parentConfigNode) {
+	static public ORMatcher create(OModel model, KConfigNode parentConfigNode) {
 
-		this(model);
-
-		new ORMatcherConfig(parentConfigNode).configure(this);
+		return new ORMatcherConfig(parentConfigNode).create(model);
 	}
 
-	/**
-	 * Constructs matcher for specified model.
-	 *
-	 * @param model Model over which matcher is to operate
-	 */
-	public ORMatcher(OModel model) {
+	static private OModel createModel(KConfigNode parentConfigNode) {
 
-		this.model = model;
-
-		concepts = new OConceptFinder(model);
-		framesManager = new FramesManager(model);
-		storeRenderer = createRenderer(IndividualCategory.MATCHER_NAMED);
-		dynamicRenderer = createRenderer(IndividualCategory.MATCHER_ANON);
+		return new OModelBuilder(parentConfigNode).create();
 	}
+
+	private OModel model;
+	private OConceptFinder concepts;
+	private FramesManager framesManager;
 
 	/**
 	 * Registers a pre-processor to perform certain required
@@ -169,19 +128,17 @@ public class ORMatcher implements IMatcher {
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
-	 * @return True if instance added, false if instance with
-	 * specified identity already present
+	 * @return True if instance added, false if instance with specified
+	 * identity already present
 	 */
 	public synchronized boolean add(IFrame instance, CIdentity identity) {
 
-		String name = identity.getIdentifier();
-
-		if (storeRenderer.rendered(name)) {
+		if (contains(identity)) {
 
 			return false;
 		}
 
-		storeRenderer.render(toPreProcessed(instance), name);
+		add(toPreProcessed(instance), identity);
 
 		return true;
 	}
@@ -191,13 +148,10 @@ public class ORMatcher implements IMatcher {
 	 * instance from the in-memory ontology.
 	 *
 	 * @param identity Unique identity of instance
-	 * @return True if instance removed, false if instance with
-	 * specified identity not present
+	 * @return True if instance removed, false if instance with specified
+	 * identity not present
 	 */
-	public synchronized boolean remove(CIdentity identity) {
-
-		return storeRenderer.removeGroup(identity.getIdentifier());
-	}
+	public abstract boolean remove(CIdentity identity);
 
 	/**
 	 * Converts the specified instance-level query frame to the
@@ -211,9 +165,15 @@ public class ORMatcher implements IMatcher {
 	public IMatches match(IFrame query) {
 
 		ConceptExpression queryExpr = createConceptExpression(query);
-		List<CIdentity> matches = queryExpr.getMatchingInstances();
 
-		return new IMatches(purgeMatches(matches));
+		ORMonitor.pollForMatcherRequest(model, queryExpr);
+
+		List<CIdentity> matches = match(queryExpr);
+
+		ORMonitor.pollForMatchesFound(model, matches);
+		ORMonitor.pollForMatcherDone(model, queryExpr);
+
+		return new IMatches(matches);
 	}
 
 	/**
@@ -228,10 +188,9 @@ public class ORMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		ConceptExpression queryExpr = createConceptExpression(query);
-		IndividualNetwork instanceNet = createIndividualNetwork(instance);
-
-		return instanceNet.matches(queryExpr);
+		return matches(
+					createConceptExpression(query),
+					toPreProcessed(instance));
 	}
 
 	/**
@@ -265,37 +224,30 @@ public class ORMatcher implements IMatcher {
 		return concepts.getSubsumerOrNull(type) != null;
 	}
 
-	private IndividualsRenderer createRenderer(IndividualCategory category) {
+	ORMatcher(OModel model) {
 
-		return new IndividualsRenderer(model, category);
+		this.model = model;
+
+		concepts = new OConceptFinder(model);
+		framesManager = new FramesManager(model);
 	}
 
-	private List<CIdentity> purgeMatches(List<CIdentity> all) {
+	void configure(KConfigNode parentConfigNode) {
 
-		List<CIdentity> purged = new ArrayList<CIdentity>();
-
-		for (CIdentity match : all) {
-
-			if (storeRenderer.rendered(match.getIdentifier())) {
-
-				purged.add(match);
-			}
-		}
-
-		return purged;
+		new ORMatcherConfig(parentConfigNode).configure(this);
 	}
+
+	abstract void add(ORFrame instance, CIdentity identity);
+
+	abstract boolean contains(CIdentity identity);
+
+	abstract List<CIdentity> match(ConceptExpression queryExpr);
+
+	abstract boolean matches(ConceptExpression queryExpr, ORFrame instance);
 
 	private ConceptExpression createConceptExpression(IFrame frame) {
 
 		return new ConceptExpression(model, toPreProcessed(frame));
-	}
-
-	private IndividualNetwork createIndividualNetwork(IFrame frame) {
-
-		return new IndividualNetwork(
-						model,
-						toPreProcessed(frame),
-						dynamicRenderer);
 	}
 
 	private ORFrame toPreProcessed(IFrame frame) {

@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
@@ -43,24 +44,22 @@ class ConceptExpression extends InstanceConstruct {
 
 	ConceptExpression(OModel model, ORFrame frame) {
 
-		super(model, frame);
-
 		this.model = model;
 
 		expression = frameToExpression(frame);
 	}
 
-	List<CIdentity> getMatchingInstances() {
+	boolean subsumes(ConceptExpression testSubsumed) {
 
-		ORMonitor.pollForMatcherRequest(model, expression);
+		OWLClassExpression testSubsExpr = testSubsumed.getConstruct();
 
-		Set<OWLNamedIndividual> matches = getMatchingIndividuals();
-		ORMonitor.pollForMatchesFound(model, matches);
+		return isEntailed(getSubClassOfThisAxiom(testSubsExpr))
+				|| isEntailed(getEquivalentToThisAxiom(testSubsExpr));
+	}
 
-		List<CIdentity> matchIds = toResolvedIdentityList(matches);
-		ORMonitor.pollForMatcherDone(model, expression);
+	List<CIdentity> getMatchingIndividuals() {
 
-		return matchIds;
+		return toResolvedIdentityList(inferIndividuals());
 	}
 
 	void cleanUp() {
@@ -100,9 +99,24 @@ class ConceptExpression extends InstanceConstruct {
 		return types.isEmpty() ? model.getInferredSupers(expression, true) : types;
 	}
 
-	private Set<OWLNamedIndividual> getMatchingIndividuals() {
+	private Set<OWLNamedIndividual> inferIndividuals() {
 
 		return model.getInferredIndividuals(expression, false);
+	}
+
+	private OWLAxiom getSubClassOfThisAxiom(OWLClassExpression subClass) {
+
+		return getDataFactory().getOWLSubClassOfAxiom(subClass, expression);
+	}
+
+	private OWLAxiom getEquivalentToThisAxiom(OWLClassExpression equiv) {
+
+		return getDataFactory().getOWLEquivalentClassesAxiom(equiv, expression);
+	}
+
+	private boolean isEntailed(OWLAxiom axiom) {
+
+		return getReasoner().isEntailed(axiom);
 	}
 
 	private List<CIdentity> toResolvedIdentityList(Set<OWLNamedIndividual> individuals) {
@@ -122,5 +136,15 @@ class ConceptExpression extends InstanceConstruct {
 		IRI iri = IRI.create(identity.getIdentifier());
 
 		return new CIdentity(IndividualIRIGenerator.extractName(iri));
+	}
+
+	private OWLDataFactory getDataFactory() {
+
+		return model.getDataFactory();
+	}
+
+	private OWLReasoner getReasoner() {
+
+		return model.getReasoner();
 	}
 }

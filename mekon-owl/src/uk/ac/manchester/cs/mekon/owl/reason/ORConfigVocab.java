@@ -41,4 +41,5 @@ public interface ORConfigVocab {
 	static public final String DEFAULT_SEMANTICS_ATTR = "default";
 	static public final String EXCEPTION_PROP_URI_ATTR = "uri";
 	static public final String LOGGING_MODE_ATTR = "loggingMode";
+	static public final String MATCHER_TYPE_ATTR = "matcherType";
 }

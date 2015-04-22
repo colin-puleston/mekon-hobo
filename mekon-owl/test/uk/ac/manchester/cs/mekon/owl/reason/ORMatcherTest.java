@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.owl.build.*;
 /**
  * @author Colin Puleston
  */
-public class ORMatcherTest extends OTest {
+public abstract class ORMatcherTest extends OTest {
 
 	static private final String JOB_CONCEPT = "Job";
 	static private final String ACADEMIA_CONCEPT = "Academia";
@@ -112,7 +112,7 @@ public class ORMatcherTest extends OTest {
 		OModel model = TestOModel.create();
 		OBSectionBuilder sectionBuilder = new LocalSectionBuilder(model);
 
-		matcher = new ORMatcher(model);
+		matcher = createMatcher(model);
 
 		sectionBuilder.setIMatcher(matcher);
 		sectionBuilder.setIReasoner(new ORClassifier(model));
@@ -219,6 +219,8 @@ public class ORMatcherTest extends OTest {
 			ACADEMIC_RESEARCH_JOB_ID,
 			DOCTORING_JOB_ID);
 	}
+
+	abstract ORMatcher createMatcher(OModel model);
 
 	private void testHandlesType(String typeId, boolean shouldHandle) {
 

@@ -26,77 +26,72 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
-import org.semanticweb.owlapi.model.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
- * Logger for {@link ORMatcher}. See {@link ORLogger} for usage
- * details.
+ * Extension of {@link ORMatcher} that represents the instances
+ * as a set of class-expressions, and the queries also as
+ * class-expressions.
  *
  * @author Colin Puleston
  */
-public class ORMatcherLogger extends ORLogger {
+public class ORExpressionsMatcher extends ORMatcher {
 
-	static private final ORLogger logger = new ORMatcherLogger();
+	private Map<CIdentity, ConceptExpression> instanceExprs
+					= new HashMap<CIdentity, ConceptExpression>();
 
 	/**
-	 * Provides the singleton instance of the logger.
+	 * Constructs matcher for specified model.
 	 *
-	 * @return Singleton instance of logger
+	 * @param model Model over which matcher is to operate
 	 */
-	static public ORLogger get() {
+	public ORExpressionsMatcher(OModel model) {
 
-		return logger;
+		super(model);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onClassifierRequest(OModel model, InstanceConstruct request) {
+	public synchronized boolean remove(CIdentity identity) {
+
+		return instanceExprs.remove(identity) != null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void onTypesInferred(OModel model, Set<OWLClass> types) {
+	void add(ORFrame instance, CIdentity identity) {
+
+		instanceExprs.put(identity, createConceptExpression(instance));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void onTypesSuggested(OModel model, Set<OWLClass> types) {
+	boolean contains(CIdentity identity) {
+
+		return instanceExprs.containsKey(identity);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void onClassifierDone(OModel model, InstanceConstruct request) {
+	List<CIdentity> match(ConceptExpression queryExpr) {
+
+		List<CIdentity> matches = new ArrayList<CIdentity>();
+
+		for (CIdentity id : instanceExprs.keySet()) {
+
+			if (queryExpr.subsumes(instanceExprs.get(id))) {
+
+				matches.add(id);
+			}
+		}
+
+		return matches;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void onMatcherRequest(OModel model, InstanceConstruct request) {
+	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
 
-		onRequest(model, request, "Matching-Individuals");
+		return queryExpr.subsumes(createConceptExpression(instance));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void onMatchesFound(OModel model, List<CIdentity> matches) {
+	private ConceptExpression createConceptExpression(ORFrame frame) {
 
-		onReasoned(model, matches, "Matches");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void onMatcherDone(OModel model, InstanceConstruct request) {
-
-		onRequestComplete();
+		return new ConceptExpression(getModel(), frame);
 	}
 }

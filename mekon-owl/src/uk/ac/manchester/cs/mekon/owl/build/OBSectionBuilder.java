@@ -279,8 +279,15 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 		new OBSectionBuilderConfig(parentConfigNode).configure(this);
 
-		setIReasoner(ORClassifier.createOrNull(model, parentConfigNode));
-		setIMatcher(ORMatcher.createOrNull(model, parentConfigNode));
+		if (ORClassifier.configExists(parentConfigNode)) {
+
+			setIReasoner(new ORClassifier(model, parentConfigNode));
+		}
+
+		if (ORMatcher.configExists(parentConfigNode)) {
+
+			setIMatcher(ORMatcher.create(model, parentConfigNode));
+		}
 	}
 
 	private void buildIntermediate() {

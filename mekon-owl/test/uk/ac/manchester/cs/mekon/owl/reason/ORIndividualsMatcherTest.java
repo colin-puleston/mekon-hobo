@@ -24,22 +24,16 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import java.util.*;
-
-import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class InstanceConstruct {
+public class ORIndividualsMatcherTest extends ORMatcherTest {
 
-	abstract void cleanUp();
+	ORMatcher createMatcher(OModel model) {
 
-	abstract boolean suggestsTypes();
-
-	abstract OWLObject getConstruct();
-
-	abstract Set<OWLClass> getInferredTypes();
-
-	abstract Set<OWLClass> getSuggestedTypes();
+		return new ORIndividualsMatcher(model);
+	}
 }
