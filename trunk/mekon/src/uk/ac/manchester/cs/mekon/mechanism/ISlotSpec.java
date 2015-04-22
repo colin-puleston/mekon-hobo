@@ -192,7 +192,12 @@ class ISlotSpec {
 
 	private boolean checkUpdateSlot(ISlot slot, CValue<?> valueType) {
 
-		return checkUpdateValueType(slot, valueType) || checkUpdateActive(slot);
+		boolean anyUpdates = false;
+
+		anyUpdates |= checkUpdateValueType(slot, valueType);
+		anyUpdates |= checkUpdateActive(slot);
+
+		return anyUpdates;
 	}
 
 	private boolean checkUpdateValueType(ISlot slot, CValue<?> valueType) {
