@@ -39,8 +39,51 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  */
 public class ORExpressionsMatcher extends ORMatcher {
 
-	private Map<CIdentity, ConceptExpression> instanceExprs
-					= new HashMap<CIdentity, ConceptExpression>();
+	private Map<CFrame, InstanceGroup> instanceGroups
+					= new HashMap<CFrame, InstanceGroup>();
+
+	private class InstanceGroup {
+
+		private CFrame frameType;
+		private Map<CIdentity, ConceptExpression> instanceExprs
+						= new HashMap<CIdentity, ConceptExpression>();
+
+		InstanceGroup(CFrame frameType) {
+
+			this.frameType = frameType;
+		}
+
+		void add(ORFrame instance, CIdentity identity) {
+
+			instanceExprs.put(identity, createConceptExpression(instance));
+		}
+
+		boolean checkRemove(CIdentity identity) {
+
+			return instanceExprs.remove(identity) != null;
+		}
+
+		boolean contains(CIdentity identity) {
+
+			return instanceExprs.containsKey(identity);
+		}
+
+		void collectMatches(ConceptExpression queryExpr, List<CIdentity> matches) {
+
+			CFrame queryFrameType = queryExpr.getFrame().getCFrame();
+
+			if (queryFrameType.subsumes(frameType)) {
+
+				for (CIdentity id : instanceExprs.keySet()) {
+
+					if (queryExpr.subsumes(instanceExprs.get(id))) {
+
+						matches.add(id);
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * Constructs matcher for specified model.
@@ -57,29 +100,51 @@ public class ORExpressionsMatcher extends ORMatcher {
 	 */
 	public synchronized boolean remove(CIdentity identity) {
 
-		return instanceExprs.remove(identity) != null;
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.checkRemove(identity)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	void add(ORFrame instance, CIdentity identity) {
 
-		instanceExprs.put(identity, createConceptExpression(instance));
+		CFrame frameType = instance.getCFrame();
+		InstanceGroup group = instanceGroups.get(frameType);
+
+		if (group == null) {
+
+			group = new InstanceGroup(frameType);
+			instanceGroups.put(frameType, group);
+		}
+
+		group.add(instance, identity);
 	}
 
 	boolean contains(CIdentity identity) {
 
-		return instanceExprs.containsKey(identity);
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.contains(identity)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	List<CIdentity> match(ConceptExpression queryExpr) {
 
 		List<CIdentity> matches = new ArrayList<CIdentity>();
 
-		for (CIdentity id : instanceExprs.keySet()) {
+		for (InstanceGroup group : instanceGroups.values()) {
 
-			if (queryExpr.subsumes(instanceExprs.get(id))) {
-
-				matches.add(id);
-			}
+			group.collectMatches(queryExpr, matches);
 		}
 
 		return matches;

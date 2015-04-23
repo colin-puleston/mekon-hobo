@@ -40,13 +40,20 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 class ConceptExpression extends InstanceConstruct {
 
 	private OModel model;
+	private ORFrame frame;
 	private OWLClassExpression expression;
 
 	ConceptExpression(OModel model, ORFrame frame) {
 
 		this.model = model;
+		this.frame = frame;
 
 		expression = frameToExpression(frame);
+	}
+
+	ORFrame getFrame() {
+
+		return frame;
 	}
 
 	boolean subsumes(ConceptExpression testSubsumed) {
