@@ -95,23 +95,7 @@ public class ORExpressionsMatcher extends ORMatcher {
 		super(model);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized boolean remove(CIdentity identity) {
-
-		for (InstanceGroup group : instanceGroups.values()) {
-
-			if (group.checkRemove(identity)) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	void add(ORFrame instance, CIdentity identity) {
+	void addInstance(ORFrame instance, CIdentity identity) {
 
 		CFrame frameType = instance.getCFrame();
 		InstanceGroup group = instanceGroups.get(frameType);
@@ -125,7 +109,20 @@ public class ORExpressionsMatcher extends ORMatcher {
 		group.add(instance, identity);
 	}
 
-	boolean contains(CIdentity identity) {
+	boolean removeInstance(CIdentity identity) {
+
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.checkRemove(identity)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	boolean containsInstance(CIdentity identity) {
 
 		for (InstanceGroup group : instanceGroups.values()) {
 

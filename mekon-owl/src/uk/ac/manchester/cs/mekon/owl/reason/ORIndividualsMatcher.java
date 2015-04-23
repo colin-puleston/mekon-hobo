@@ -56,20 +56,17 @@ public class ORIndividualsMatcher extends ORMatcher {
 		dynamicRenderer = createRenderer(IndividualCategory.MATCHER_ANON);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized boolean remove(CIdentity identity) {
-
-		return storeRenderer.removeGroup(identity.getIdentifier());
-	}
-
-	void add(ORFrame instance, CIdentity identity) {
+	void addInstance(ORFrame instance, CIdentity identity) {
 
 		storeRenderer.render(instance, identity.getIdentifier());
 	}
 
-	boolean contains(CIdentity identity) {
+	boolean removeInstance(CIdentity identity) {
+
+		return storeRenderer.removeGroup(identity.getIdentifier());
+	}
+
+	boolean containsInstance(CIdentity identity) {
 
 		return storeRenderer.rendered(identity.getIdentifier());
 	}
