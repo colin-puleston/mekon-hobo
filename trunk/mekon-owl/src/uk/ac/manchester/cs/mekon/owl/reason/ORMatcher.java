@@ -133,12 +133,12 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	public synchronized boolean add(IFrame instance, CIdentity identity) {
 
-		if (contains(identity)) {
+		if (containsInstance(identity)) {
 
 			return false;
 		}
 
-		add(toPreProcessed(instance), identity);
+		addInstance(toPreProcessed(instance), identity);
 
 		return true;
 	}
@@ -151,7 +151,10 @@ public abstract class ORMatcher implements IMatcher {
 	 * @return True if instance removed, false if instance with specified
 	 * identity not present
 	 */
-	public abstract boolean remove(CIdentity identity);
+	public synchronized boolean remove(CIdentity identity) {
+
+		return removeInstance(identity);
+	}
 
 	/**
 	 * Converts the specified instance-level query frame to the
@@ -237,9 +240,11 @@ public abstract class ORMatcher implements IMatcher {
 		new ORMatcherConfig(parentConfigNode).configure(this);
 	}
 
-	abstract void add(ORFrame instance, CIdentity identity);
+	abstract void addInstance(ORFrame instance, CIdentity identity);
 
-	abstract boolean contains(CIdentity identity);
+	abstract boolean removeInstance(CIdentity identity);
+
+	abstract boolean containsInstance(CIdentity identity);
 
 	abstract List<CIdentity> match(ConceptExpression queryExpr);
 
