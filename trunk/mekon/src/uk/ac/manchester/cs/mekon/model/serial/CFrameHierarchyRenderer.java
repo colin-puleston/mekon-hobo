@@ -34,7 +34,15 @@ import uk.ac.manchester.cs.mekon.serial.*;
  */
 public class CFrameHierarchyRenderer extends CSerialiser {
 
+	private CVisibility visibilityFilter = CVisibility.ALL;
 	private Set<Object> annotationKeys = new HashSet<Object>();
+
+	/**
+	 */
+	public void setVisibilityFilter(CVisibility visibilityFilter) {
+
+		this.visibilityFilter = visibilityFilter;
+	}
 
 	/**
 	 */
@@ -76,7 +84,7 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 		renderIdentity(frame, node);
 		renderAnnotations(frame.getAnnotations(), node);
 
-		for (CFrame sub : frame.getSubs()) {
+		for (CFrame sub : frame.getSubs(visibilityFilter)) {
 
 			render(sub, node);
 		}
