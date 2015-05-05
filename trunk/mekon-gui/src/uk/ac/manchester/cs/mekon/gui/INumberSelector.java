@@ -41,15 +41,23 @@ class INumberSelector extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension EXACT_VALUE_WINDOW_SIZE = new Dimension(200, 70);
-	static private final Dimension RANGE_VALUE_WINDOW_SIZE = new Dimension(200, 200);
+	static private final Dimension DEFINITE_VALUE_WINDOW_SIZE = new Dimension(200, 70);
+	static private final Dimension INDEFINITE_VALUE_WINDOW_SIZE = new Dimension(200, 200);
 
 	static private final String EXACT_VALUE_LABEL = "Exact";
 	static private final String MIN_VALUE_LABEL = "Minimum";
 	static private final String MAX_VALUE_LABEL = "Maximum";
 
+	static private final String OK_BUTTON_LABEL = "Ok";
+	static private final String CANCEL_BUTTON_LABEL = "Cancel";
+
+	static private final INumber NO_VALUE = INumber.PLUS_INFINITY;
+	static private final INumber INVALID_VALUE = INumber.MINUS_INFINITY;
+
 	private CNumber type;
-	private INumber selection = null;
+
+	private ValueSelector valueSelector;
+	private OkButton okButton = new OkButton();
 	private boolean windowClosing = false;
 
 	private class WindowCloseListener extends WindowAdapter {
@@ -64,31 +72,23 @@ class INumberSelector extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
+		private boolean processingInput = false;
+
 		private Set<InputField> conflictingFields = new HashSet<InputField>();
-		private boolean processingValue = false;
 
 		protected void onTextEntered(String text) {
 
-			INumber value = processValue(text);
+			if (checkProcessInput(text)) {
 
-			if (value != null) {
-
-				selection = getSelection(value);
-
-				dispose();
+				valueSelector.checkSelect();
 			}
 		}
 
 		protected void onFieldExited(String text) {
 
-			if (!windowClosing && !processingValue) {
+			if (!windowClosing) {
 
-				INumber value = processValue(text);
-
-				if (value != null) {
-
-					onValueEntered(value);
-				}
+				checkProcessInput(text);
 			}
 		}
 
@@ -98,6 +98,8 @@ class INumberSelector extends GDialog {
 
 				field.clear();
 			}
+
+			okButton.updateEnabling();
 		}
 
 		void addConflictingField(InputField conflictingField) {
@@ -105,37 +107,49 @@ class INumberSelector extends GDialog {
 			conflictingFields.add(conflictingField);
 		}
 
+		INumber getValue() {
+
+			return parseValue(getText(), false);
+		}
+
 		void clear() {
 
 			setText("");
 		}
 
-		void onValueEntered(INumber value) {
+		boolean checkCompatibleSelection() {
+
+			return true;
 		}
 
-		INumber getSelection(INumber value) {
+		private boolean checkProcessInput(String text) {
 
-			return value;
-		}
+			boolean processed = false;
 
-		private INumber processValue(String text) {
+			if (!processingInput) {
 
-			processingValue = true;
-
-			INumber value = parseValue(text);
-
-			if (value == null) {
-
-				setText("");
+				processingInput = true;
+				processed = processInput(text);
+				processingInput = false;
 			}
 
-			processingValue = false;
+			return processed;
+		}
 
-			return value;
+		private boolean processInput(String text) {
+
+			if (!validValue(parseValue(text, true))) {
+
+				setText("");
+
+				return false;
+			}
+
+			return checkCompatibleSelection();
 		}
 	}
 
-	private class RangeDisplay extends JPanel {
+	private class IndefiniteValueDisplay extends JPanel {
 
 		static private final long serialVersionUID = -1;
 
@@ -148,7 +162,6 @@ class INumberSelector extends GDialog {
 
 			static private final long serialVersionUID = -1;
 
-			private INumber limit = null;
 			private LimitField otherLimitField = null;
 
 			void setOtherLimitField(LimitField otherLimitField) {
@@ -156,37 +169,21 @@ class INumberSelector extends GDialog {
 				this.otherLimitField = otherLimitField;
 			}
 
-			void clear() {
+			boolean checkCompatibleSelection() {
 
-				super.clear();
-
-				limit = null;
-			}
-
-			void onValueEntered(INumber value) {
-
-				setLimit(value);
-			}
-
-			INumber getSelection(INumber value) {
-
-				setLimit(value);
-
-				return createRangeValue();
-			}
-
-			private void setLimit(INumber value) {
-
-				limit = value;
-
-				if (illegalRange()) {
+				if (invalidRange()) {
 
 					otherLimitField.clear();
+					okButton.updateEnabling();
+
+					return false;
 				}
+
+				return true;
 			}
 		}
 
-		RangeDisplay() {
+		IndefiniteValueDisplay() {
 
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -204,6 +201,20 @@ class INumberSelector extends GDialog {
 			addField(MAX_VALUE_LABEL, maxField);
 		}
 
+		INumber getValue() {
+
+			INumber exact = exactField.getValue();
+
+			return validValue(exact) ? exact : getRangeValue();
+		}
+
+		void clear() {
+
+			exactField.clear();
+			minField.clear();
+			maxField.clear();
+		}
+
 		private void addField(String label, InputField field) {
 
 			JPanel panel = new JPanel(new GridLayout(1, 1));
@@ -214,38 +225,191 @@ class INumberSelector extends GDialog {
 			add(panel);
 		}
 
-		private boolean illegalRange() {
+		private INumber getRangeValue() {
 
-			INumber min = minField.limit;
-			INumber max = maxField.limit;
+			INumber min = getMin();
+			INumber max = getMax();
 
-			return min != null && max != null && min.moreThan(max);
+			if (min == NO_VALUE && max == NO_VALUE) {
+
+				return NO_VALUE;
+			}
+
+			return invalidRange(min, max) ? INVALID_VALUE : getRangeValue(min, max);
 		}
 
-		private INumber createRangeValue() {
+		private INumber getRangeValue(INumber min, INumber max) {
 
-			return createRangeDef().createNumber().asINumber();
+			return createRangeDef(min, max).createNumber().asINumber();
 		}
 
-		private CNumberDef createRangeDef() {
+		private boolean invalidRange() {
 
-			return CNumberDef.range(resolveMin(), resolveMax());
+			return invalidRange(getMin(), getMax());
 		}
 
-		private INumber resolveMin() {
+		private boolean invalidRange(INumber min, INumber max) {
 
-			INumber min = minField.limit;
-			INumber typeMin = type.getMin();
+			if (min == INVALID_VALUE || max == INVALID_VALUE) {
 
-			return min != null ? min.max(typeMin) : typeMin;
+				return true;
+			}
+
+			return min != NO_VALUE && max != NO_VALUE && min.moreThan(max);
 		}
 
-		private INumber resolveMax() {
+		private CNumberDef createRangeDef(INumber min, INumber max) {
 
-			INumber max = maxField.limit;
-			INumber typeMax = type.getMax();
+			if (min == NO_VALUE) {
 
-			return max != null ? max.min(typeMax) : typeMax;
+				min = type.getMin();
+			}
+			else if (max == NO_VALUE) {
+
+				max = type.getMax();
+			}
+
+			return CNumberDef.range(min, max);
+		}
+
+		private INumber getMin() {
+
+			return minField.getValue();
+		}
+
+		private INumber getMax() {
+
+			return maxField.getValue();
+		}
+	}
+
+	private abstract class ValueSelector {
+
+		void checkSelect() {
+
+			if (currentValidValue()) {
+
+				dispose();
+			}
+		}
+
+		void cancel() {
+
+			clear();
+			dispose();
+		}
+
+		boolean currentValidValue() {
+
+			return validValue(getValue());
+		}
+
+		abstract JComponent getDisplay();
+
+		abstract Dimension getDisplaySize();
+
+		abstract INumber getValue();
+
+		abstract void clear();
+	}
+
+	private class DefiniteValueSelector extends ValueSelector {
+
+		private InputField inputField;
+
+		DefiniteValueSelector() {
+
+			inputField = new InputField();
+		}
+
+		JComponent getDisplay() {
+
+			return inputField;
+		}
+
+		Dimension getDisplaySize() {
+
+			return DEFINITE_VALUE_WINDOW_SIZE;
+		}
+
+		INumber getValue() {
+
+			return inputField.getValue();
+		}
+
+		void clear() {
+
+			inputField.clear();
+		}
+	}
+
+	private class IndefiniteValueSelector extends ValueSelector {
+
+		private IndefiniteValueDisplay display;
+
+		IndefiniteValueSelector() {
+
+			display = new IndefiniteValueDisplay();
+		}
+
+		JComponent getDisplay() {
+
+			return display;
+		}
+
+		Dimension getDisplaySize() {
+
+			return INDEFINITE_VALUE_WINDOW_SIZE;
+		}
+
+		INumber getValue() {
+
+			return display.getValue();
+		}
+
+		void clear() {
+
+			display.clear();
+		}
+	}
+
+	private class OkButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			valueSelector.checkSelect();
+		}
+
+		OkButton() {
+
+			super(OK_BUTTON_LABEL);
+
+			setEnabled(false);
+			setSmallFont();
+		}
+
+		void updateEnabling() {
+
+			setEnabled(valueSelector.currentValidValue());
+		}
+	}
+
+	private class CancelButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			valueSelector.cancel();
+		}
+
+		CancelButton() {
+
+			super(CANCEL_BUTTON_LABEL);
+
+			setSmallFont();
 		}
 	}
 
@@ -255,39 +419,71 @@ class INumberSelector extends GDialog {
 
 		this.type = type;
 
-		setPreferredSize(getPreferredSize(rangeEnabled));
+		valueSelector = createValueSelector(rangeEnabled);
+
 		addWindowListener(new WindowCloseListener());
-		display(getDisplay(rangeEnabled));
+		display(createDisplay());
 	}
 
 	INumber getSelectionOrNull() {
 
-		return selection;
+		INumber value = valueSelector.getValue();
+
+		return validValue(value) ? value : null;
 	}
 
-	private Dimension getPreferredSize(boolean rangeEnabled) {
+	private ValueSelector createValueSelector(boolean rangeEnabled) {
 
-		return rangeEnabled ? RANGE_VALUE_WINDOW_SIZE : EXACT_VALUE_WINDOW_SIZE;
+		return rangeEnabled
+					? new IndefiniteValueSelector()
+					: new DefiniteValueSelector();
 	}
 
-	private JComponent getDisplay(boolean rangeEnabled) {
+	private JComponent createDisplay() {
 
-		return rangeEnabled ? new RangeDisplay() : new InputField();
+		JPanel panel = new JPanel();
+
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(valueSelector.getDisplay());
+		panel.add(createButtonsComponent());
+		panel.setPreferredSize(valueSelector.getDisplaySize());
+
+		return panel;
 	}
 
-	private INumber parseValue(String value) {
+	private JComponent createButtonsComponent() {
 
-		if (value.length() != 0) {
+		JPanel panel = new JPanel();
 
-			if (type.validNumberValue(value)) {
+		panel.add(okButton);
+		panel.add(new CancelButton());
 
-				return INumber.create(type.getNumberType(), value);
-			}
+		return panel;
+	}
+
+	private INumber parseValue(String value, boolean showErrorIfInvalid) {
+
+		if (value.length() == 0) {
+
+			return NO_VALUE;
+		}
+
+		if (type.validNumberValue(value)) {
+
+			return INumber.create(type.getNumberType(), value);
+		}
+
+		if (showErrorIfInvalid) {
 
 			JOptionPane.showMessageDialog(null, "Invalid Input!");
 		}
 
-		return null;
+		return INVALID_VALUE;
+	}
+
+	private boolean validValue(INumber value) {
+
+		return value != NO_VALUE && value != INVALID_VALUE;
 	}
 }
 
