@@ -87,6 +87,7 @@
 		</OWLClassifier>
 
 		<OWLMatcher
+			matcherType="EXPRESSIONS_BASED"
 			loggingMode="DISABLED">
 			<SlotSemantics default="OPEN_WORLD"/>
 		</OWLMatcher>
