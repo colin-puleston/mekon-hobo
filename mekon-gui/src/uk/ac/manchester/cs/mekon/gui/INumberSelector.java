@@ -51,8 +51,8 @@ class INumberSelector extends GDialog {
 	static private final String OK_BUTTON_LABEL = "Ok";
 	static private final String CANCEL_BUTTON_LABEL = "Cancel";
 
-	static private final INumber NO_VALUE = INumber.PLUS_INFINITY;
-	static private final INumber INVALID_VALUE = INumber.MINUS_INFINITY;
+	static private final INumber NO_VALUE = new INumber(0);
+	static private final INumber INVALID_VALUE = new INumber(0);
 
 	private CNumber type;
 
@@ -72,15 +72,13 @@ class INumberSelector extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
-		private boolean processingInput = false;
-
-		private Set<InputField> conflictingFields = new HashSet<InputField>();
+		private boolean checkingInput = false;
 
 		protected void onTextEntered(String text) {
 
-			if (checkProcessInput(text)) {
+			if (checkInput(text)) {
 
-				valueSelector.checkSelect();
+				dispose();
 			}
 		}
 
@@ -88,23 +86,13 @@ class INumberSelector extends GDialog {
 
 			if (!windowClosing) {
 
-				checkProcessInput(text);
+				checkInput(text);
 			}
 		}
 
 		protected void onKeyEntered(KeyEvent event) {
 
-			for (InputField field : conflictingFields) {
-
-				field.clear();
-			}
-
 			okButton.updateEnabling();
-		}
-
-		void addConflictingField(InputField conflictingField) {
-
-			conflictingFields.add(conflictingField);
 		}
 
 		INumber getValue() {
@@ -122,30 +110,27 @@ class INumberSelector extends GDialog {
 			return true;
 		}
 
-		private boolean checkProcessInput(String text) {
+		private boolean checkInput(String text) {
 
-			boolean processed = false;
+			boolean ok = false;
 
-			if (!processingInput) {
+			if (!checkingInput) {
 
-				processingInput = true;
-				processed = processInput(text);
-				processingInput = false;
+				checkingInput = true;
+
+				if (validValue(parseValue(text, true))) {
+
+					ok = checkCompatibleSelection();
+				}
+				else {
+
+					clear();
+				}
+
+				checkingInput = false;
 			}
 
-			return processed;
-		}
-
-		private boolean processInput(String text) {
-
-			if (!validValue(parseValue(text, true))) {
-
-				setText("");
-
-				return false;
-			}
-
-			return checkCompatibleSelection();
+			return ok;
 		}
 	}
 
@@ -153,20 +138,53 @@ class INumberSelector extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
-		private InputField exactField = new InputField();
+		private ComponentField exactField;
+		private LimitField minField;
+		private LimitField maxField;
 
-		private LimitField minField = new LimitField();
-		private LimitField maxField = new LimitField();
+		private class ComponentField extends InputField {
 
-		private class LimitField extends InputField {
+			static private final long serialVersionUID = -1;
+
+			private Set<InputField> conflictingFields = new HashSet<InputField>();
+
+			protected void onKeyEntered(KeyEvent event) {
+
+				for (InputField field : conflictingFields) {
+
+					field.clear();
+				}
+
+				super.onKeyEntered(event);
+			}
+
+			ComponentField(String label) {
+
+				addField(label, this);
+			}
+
+			void setConflict(ComponentField conflictingField) {
+
+				conflictingFields.add(conflictingField);
+				conflictingField.conflictingFields.add(this);
+			}
+		}
+
+		private class LimitField extends ComponentField {
 
 			static private final long serialVersionUID = -1;
 
 			private LimitField otherLimitField = null;
 
-			void setOtherLimitField(LimitField otherLimitField) {
+			LimitField(String label) {
+
+				super(label);
+			}
+
+			void setOtherLimit(LimitField otherLimitField) {
 
 				this.otherLimitField = otherLimitField;
+				otherLimitField.otherLimitField = this;
 			}
 
 			boolean checkCompatibleSelection() {
@@ -187,18 +205,13 @@ class INumberSelector extends GDialog {
 
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-			exactField.addConflictingField(minField);
-			exactField.addConflictingField(maxField);
+			exactField = new ComponentField(EXACT_VALUE_LABEL);
+			minField = new LimitField(MIN_VALUE_LABEL);
+			maxField = new LimitField(MAX_VALUE_LABEL);
 
-			minField.addConflictingField(exactField);
-			maxField.addConflictingField(exactField);
-
-			minField.setOtherLimitField(maxField);
-			maxField.setOtherLimitField(minField);
-
-			addField(EXACT_VALUE_LABEL, exactField);
-			addField(MIN_VALUE_LABEL, minField);
-			addField(MAX_VALUE_LABEL, maxField);
+			exactField.setConflict(minField);
+			exactField.setConflict(maxField);
+			minField.setOtherLimit(maxField);
 		}
 
 		INumber getValue() {
@@ -285,20 +298,6 @@ class INumberSelector extends GDialog {
 
 	private abstract class ValueSelector {
 
-		void checkSelect() {
-
-			if (currentValidValue()) {
-
-				dispose();
-			}
-		}
-
-		void cancel() {
-
-			clear();
-			dispose();
-		}
-
 		boolean currentValidValue() {
 
 			return validValue(getValue());
@@ -379,7 +378,10 @@ class INumberSelector extends GDialog {
 
 		protected void doButtonThing() {
 
-			valueSelector.checkSelect();
+			if (valueSelector.currentValidValue()) {
+
+				dispose();
+			}
 		}
 
 		OkButton() {
@@ -402,7 +404,8 @@ class INumberSelector extends GDialog {
 
 		protected void doButtonThing() {
 
-			valueSelector.cancel();
+			valueSelector.clear();
+			dispose();
 		}
 
 		CancelButton() {
