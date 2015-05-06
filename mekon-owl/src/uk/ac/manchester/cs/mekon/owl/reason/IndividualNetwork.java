@@ -55,7 +55,7 @@ class IndividualNetwork extends InstanceConstruct {
 
 	boolean matches(ConceptExpression queryExpression) {
 
-		return hasType(queryExpression.getConstruct());
+		return model.hasType(rootIndividual, queryExpression.getConstruct());
 	}
 
 	void cleanUp() {
@@ -83,16 +83,6 @@ class IndividualNetwork extends InstanceConstruct {
 	Set<OWLClass> getSuggestedTypes() {
 
 		throw new Error("Method should never be invoked!");
-	}
-
-	private boolean hasType(OWLClassExpression type) {
-
-		return getReasoner().isEntailed(getHasTypeAssertion(type));
-	}
-
-	private OWLAxiom getHasTypeAssertion(OWLClassExpression type) {
-
-		return getDataFactory().getOWLClassAssertionAxiom(type, rootIndividual);
 	}
 
 	private OWLDataFactory getDataFactory() {

@@ -346,7 +346,7 @@ public abstract class ORMatcherTest extends OTest {
 		CFrame postgrad = getCFrame(POSTGRAD_CONCEPT);
 		CFrame undergrad = getCFrame(UNDERGRAD_CONCEPT);
 
-		return CFrame.resolveDisjunction(list(postgrad, undergrad));
+		return CFrame.resolveDisjunction(Arrays.asList(postgrad, undergrad));
 	}
 
 	private INumber createRangeAsINumber(int min, int max) {
@@ -370,7 +370,7 @@ public abstract class ORMatcherTest extends OTest {
 
 		List<CIdentity> matchIds = matcher.match(query).getAllMatches();
 
-		testListContents(matchIds, list(expectedMatchIds));
+		testListContents(matchIds, Arrays.asList(expectedMatchIds));
 
 		for (CIdentity id : storedInstancesById.keySet()) {
 

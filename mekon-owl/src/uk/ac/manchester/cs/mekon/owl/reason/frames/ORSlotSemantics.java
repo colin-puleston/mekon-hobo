@@ -118,7 +118,7 @@ public class ORSlotSemantics {
 
 	private boolean hasExceptionSuperProperty(IRI propertyIRI) {
 
-		for (OWLProperty superProp : getSuperProperties(propertyIRI)) {
+		for (OWLProperty<?, ?> superProp : getSuperProperties(propertyIRI)) {
 
 			if (isExceptionPropertyIRI(superProp.getIRI())) {
 
@@ -134,7 +134,7 @@ public class ORSlotSemantics {
 		return exceptionPropertyURIs.contains(propertyIRI.toURI().toASCIIString());
 	}
 
-	private Set<? extends OWLProperty> getSuperProperties(IRI propertyIRI) {
+	private Set<? extends OWLProperty<?, ?>> getSuperProperties(IRI propertyIRI) {
 
 		return dataProperty(propertyIRI)
 				? getSuperDataProperties(propertyIRI)

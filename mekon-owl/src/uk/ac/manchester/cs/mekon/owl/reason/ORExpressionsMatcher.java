@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
@@ -39,18 +41,18 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  */
 public class ORExpressionsMatcher extends ORMatcher {
 
-	private Map<CFrame, InstanceGroup> instanceGroups
-					= new HashMap<CFrame, InstanceGroup>();
+	private Map<OWLClass, InstanceGroup> instanceGroups
+					= new HashMap<OWLClass, InstanceGroup>();
 
 	private class InstanceGroup {
 
-		private CFrame frameType;
+		private OWLClass frameConcept;
 		private Map<CIdentity, ConceptExpression> instanceExprs
 						= new HashMap<CIdentity, ConceptExpression>();
 
-		InstanceGroup(CFrame frameType) {
+		InstanceGroup(OWLClass frameConcept) {
 
-			this.frameType = frameType;
+			this.frameConcept = frameConcept;
 		}
 
 		void add(ORFrame instance, CIdentity identity) {
@@ -70,9 +72,9 @@ public class ORExpressionsMatcher extends ORMatcher {
 
 		void collectMatches(ConceptExpression queryExpr, List<CIdentity> matches) {
 
-			CFrame queryFrameType = queryExpr.getFrame().getCFrame();
+			OWLClass queryFrameConcept = getConcept(queryExpr.getFrame());
 
-			if (queryFrameType.subsumes(frameType)) {
+			if (isSubsumption(queryFrameConcept, frameConcept)) {
 
 				for (CIdentity id : instanceExprs.keySet()) {
 
@@ -97,13 +99,13 @@ public class ORExpressionsMatcher extends ORMatcher {
 
 	void addInstance(ORFrame instance, CIdentity identity) {
 
-		CFrame frameType = instance.getCFrame();
-		InstanceGroup group = instanceGroups.get(frameType);
+		OWLClass frameConcept = getConcept(instance);
+		InstanceGroup group = instanceGroups.get(frameConcept);
 
 		if (group == null) {
 
-			group = new InstanceGroup(frameType);
-			instanceGroups.put(frameType, group);
+			group = new InstanceGroup(frameConcept);
+			instanceGroups.put(frameConcept, group);
 		}
 
 		group.add(instance, identity);
@@ -155,5 +157,15 @@ public class ORExpressionsMatcher extends ORMatcher {
 	private ConceptExpression createConceptExpression(ORFrame frame) {
 
 		return new ConceptExpression(getModel(), frame);
+	}
+
+	private OWLClass getConcept(ORFrame frame) {
+
+		return getModel().getConcepts().get(frame.getIRI());
+	}
+
+	private boolean isSubsumption(OWLClass subsumer, OWLClass subsumed) {
+
+		return getModel().isSubsumption(subsumer, subsumed);
 	}
 }
