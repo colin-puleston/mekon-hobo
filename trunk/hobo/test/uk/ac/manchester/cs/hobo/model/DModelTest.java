@@ -274,7 +274,7 @@ public class DModelTest extends HoboTest {
 
 	private void testDFieldISlotValues(DFieldView<?> dFieldView, IValue[] expected) {
 
-		testList(dFieldView.getSlot().getValues().asList(), list(expected));
+		testList(dFieldView.getSlot().getValues().asList(), Arrays.asList(expected));
 	}
 
 	private CFrame getCFrame(DModel model, String id) {

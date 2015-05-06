@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -63,7 +65,7 @@ public class DArrayTest extends DFieldTest {
 		testSlotValues(fa);
 		testArrayValues(da);
 
-		array.addAll(list(db, dc));
+		array.addAll(Arrays.asList(db, dc));
 		testSlotValues(fa, fb, fc);
 		testArrayValues(da, db, dc);
 
@@ -71,7 +73,7 @@ public class DArrayTest extends DFieldTest {
 		testSlotValues(fa, fc);
 		testArrayValues(da, dc);
 
-		array.update(list(da, db));
+		array.update(Arrays.asList(da, db));
 		testSlotValues(fa, fb);
 		testArrayValues(da, db);
 
@@ -151,6 +153,6 @@ public class DArrayTest extends DFieldTest {
 
 	private void testArrayValues(DObject... expectValues) {
 
-		testList(array.getAll(), list(expectValues));
+		testList(array.getAll(), Arrays.asList(expectValues));
 	}
 }
