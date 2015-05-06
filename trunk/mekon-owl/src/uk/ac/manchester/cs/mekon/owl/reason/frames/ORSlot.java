@@ -255,7 +255,7 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 		this.iSlot = iSlot;
 	}
 
-	private boolean equalsSlot(ORSlot other) {
+	private boolean equalsSlot(ORSlot<?> other) {
 
 		return equalIdentifiers(other) && values.equals(other.values);
 	}

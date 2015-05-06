@@ -302,6 +302,36 @@ public class OModel {
 	}
 
 	/**
+	 * Tests whether a subsumption relationship holds between two
+	 * specified expressions, which will be the case if the two are
+	 * equivalent, or if the second is a sub-class of the first.
+	 *
+	 * @param subsumer Potential subsuming expression
+	 * @param subsumed Potential subsumed expression
+	 * @return True if required subsumption relationship holds
+	 */
+	public boolean isSubsumption(
+						OWLClassExpression subsumer,
+						OWLClassExpression subsumed) {
+
+		return entailed(getSubClassAxiom(subsumer, subsumed))
+				|| entailed(getEquivalentsAxiom(subsumer, subsumed));
+	}
+
+	/**
+	 * Tests whether the the specified individual has the required
+	 * type.
+	 *
+	 * @param individual Individual to be tested
+	 * @param type Type to test for
+	 * @return True if required has-type relationship holds
+	 */
+	public boolean hasType(OWLIndividual individual, OWLClassExpression type) {
+
+		return entailed(getClassAssertionAxiom(type, individual));
+	}
+
+	/**
 	 * Retrieves the inferred super-properties of the specified property.
 	 *
 	 * @param property Class whose super-properties are required
@@ -446,5 +476,31 @@ public class OModel {
 		OMonitor.pollForPreReasonerLoad(reasoner.getClass());
 		reasoner.precomputeInferences(InferenceType.values());
 		OMonitor.pollForReasonerLoaded();
+	}
+
+	private OWLAxiom getSubClassAxiom(
+						OWLClassExpression superClass,
+						OWLClassExpression subClass) {
+
+		return getDataFactory().getOWLSubClassOfAxiom(subClass, superClass);
+	}
+
+	private OWLAxiom getEquivalentsAxiom(
+						OWLClassExpression expr1,
+						OWLClassExpression expr2) {
+
+		return getDataFactory().getOWLEquivalentClassesAxiom(expr1, expr2);
+	}
+
+	private OWLAxiom getClassAssertionAxiom(
+						OWLClassExpression type,
+						OWLIndividual individual) {
+
+		return getDataFactory().getOWLClassAssertionAxiom(type, individual);
+	}
+
+	private boolean entailed(OWLAxiom axiom) {
+
+		return reasoner.isEntailed(axiom);
 	}
 }

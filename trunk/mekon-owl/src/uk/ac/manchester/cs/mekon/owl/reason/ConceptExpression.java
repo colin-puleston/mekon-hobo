@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
@@ -58,10 +57,7 @@ class ConceptExpression extends InstanceConstruct {
 
 	boolean subsumes(ConceptExpression testSubsumed) {
 
-		OWLClassExpression testSubsExpr = testSubsumed.getConstruct();
-
-		return isEntailed(getSubClassOfThisAxiom(testSubsExpr))
-				|| isEntailed(getEquivalentToThisAxiom(testSubsExpr));
+		return model.isSubsumption(expression, testSubsumed.getConstruct());
 	}
 
 	List<CIdentity> getMatchingIndividuals() {
@@ -111,21 +107,6 @@ class ConceptExpression extends InstanceConstruct {
 		return model.getInferredIndividuals(expression, false);
 	}
 
-	private OWLAxiom getSubClassOfThisAxiom(OWLClassExpression subClass) {
-
-		return getDataFactory().getOWLSubClassOfAxiom(subClass, expression);
-	}
-
-	private OWLAxiom getEquivalentToThisAxiom(OWLClassExpression equiv) {
-
-		return getDataFactory().getOWLEquivalentClassesAxiom(equiv, expression);
-	}
-
-	private boolean isEntailed(OWLAxiom axiom) {
-
-		return getReasoner().isEntailed(axiom);
-	}
-
 	private List<CIdentity> toResolvedIdentityList(Set<OWLNamedIndividual> individuals) {
 
 		List<CIdentity> identities = new ArrayList<CIdentity>();
@@ -148,10 +129,5 @@ class ConceptExpression extends InstanceConstruct {
 	private OWLDataFactory getDataFactory() {
 
 		return model.getDataFactory();
-	}
-
-	private OWLReasoner getReasoner() {
-
-		return model.getReasoner();
 	}
 }
