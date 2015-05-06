@@ -33,11 +33,25 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public abstract class NumberSummary<N extends Number> extends ValueSummary<N> {
+public abstract class NumberSummary<N extends Number> extends ValueSummary {
 
 	public final DCellViewer<Float> average;
 
 	private DEditor dEditor;
+
+	class NumberSummaryPopulator extends Populator<N> {
+
+		void set(List<N> values) {
+
+			getTotalCell().set(getTotal(values));
+			getAverageCell().set(getAverage(values));
+		}
+
+		N extractValue(IValue value) {
+
+			return asTypeNumber((INumber)value);
+		}
+	}
 
 	public NumberSummary(DObjectBuilder builder) {
 
@@ -46,23 +60,14 @@ public abstract class NumberSummary<N extends Number> extends ValueSummary<N> {
 		average = builder.getViewer(builder.addFloatCell());
 
 		dEditor = builder.getEditor();
-	}
 
-	void set(List<N> values) {
-
-		getTotalCell().set(getTotal(values));
-		getAverageCell().set(getAverage(values));
+		setPopulator(new NumberSummaryPopulator());
 	}
 
 	void clear() {
 
 		getTotalCell().clear();
 		getAverageCell().clear();
-	}
-
-	N extractValue(IValue value) {
-
-		return asTypeNumber((INumber)value);
 	}
 
 	abstract DCellViewer<N> getTotalCellViewer();

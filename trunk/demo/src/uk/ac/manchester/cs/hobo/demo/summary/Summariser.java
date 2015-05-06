@@ -66,9 +66,9 @@ public class Summariser {
 			this.slotType = slotType;
 		}
 
-		private void addSummary(Class<? extends ValueSummary<?>> type) {
+		private void addSummary(Class<? extends ValueSummary> type) {
 
-			ValueSummary<?> summary = getModel().instantiate(type);
+			ValueSummary summary = getModel().instantiate(type);
 
 			summary.getFrame().alignCategory(summariesContainer.getFrame());
 
@@ -102,7 +102,7 @@ public class Summariser {
 
 		Iterator<ISlot> slots = summarised.getSlots().asList().iterator();
 
-		for (ValueSummary<?> summary : summaries.getAll()) {
+		for (ValueSummary summary : summaries.getAll()) {
 
 			summary.addSlot(slots.next());
 		}
@@ -112,7 +112,7 @@ public class Summariser {
 
 		Iterator<ISlot> slots = summarised.getSlots().asList().iterator();
 
-		for (ValueSummary<?> summary : summaries.getAll()) {
+		for (ValueSummary summary : summaries.getAll()) {
 
 			summary.removeSlot(slots.next());
 		}
@@ -120,7 +120,7 @@ public class Summariser {
 
 	public void clearSummariseds() {
 
-		for (ValueSummary<?> summary : summaries.getAll()) {
+		for (ValueSummary summary : summaries.getAll()) {
 
 			summary.clearSlots();
 		}
