@@ -34,12 +34,33 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class ConceptSummary extends ValueSummary<CFrame> {
+public class ConceptSummary extends ValueSummary {
 
 	public final DArrayViewer<DConcept<DObject>> allValues;
 
 	private DModel model;
 	private DEditor dEditor;
+
+	class ConceptSummaryPopulator extends Populator<CFrame> {
+
+		void set(List<CFrame> values) {
+
+			Set<CFrame> added = new HashSet<CFrame>();
+
+			for (CFrame value : values) {
+
+				if (added.add(value)) {
+
+					dEditor.getField(allValues).add(getConcept(value));
+				}
+			}
+		}
+
+		CFrame extractValue(IValue value) {
+
+			return (CFrame)value;
+		}
+	}
 
 	public ConceptSummary(DObjectBuilder builder) {
 
@@ -50,6 +71,7 @@ public class ConceptSummary extends ValueSummary<CFrame> {
 		model = builder.getModel();
 		dEditor = builder.getEditor();
 
+		setPopulator(new ConceptSummaryPopulator());
 	}
 
 	void initialise(CSlot slotTypeValue) {
@@ -59,27 +81,9 @@ public class ConceptSummary extends ValueSummary<CFrame> {
 		setAllValuesValueType(slotTypeValue.getValueType());
 	}
 
-	void set(List<CFrame> values) {
-
-		Set<CFrame> added = new HashSet<CFrame>();
-
-		for (CFrame value : values) {
-
-			if (added.add(value)) {
-
-				dEditor.getField(allValues).add(getConcept(value));
-			}
-		}
-	}
-
 	void clear() {
 
 		dEditor.getField(allValues).clear();
-	}
-
-	CFrame extractValue(IValue value) {
-
-		return (CFrame)value;
 	}
 
 	private void setAllValuesValueType(CValue<?> valueType) {

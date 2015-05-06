@@ -34,15 +34,48 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public abstract class ValueSummary<V> extends DObjectShell {
+public abstract class ValueSummary extends DObjectShell {
 
 	public final DCellViewer<DConcept<PropertyRef>> property;
 
 	private DEditor dEditor;
 	private List<ISlot> slots = new ArrayList<ISlot>();
-	private Updater updater = new Updater();
+	private AutoUpdater autoUpdater = new AutoUpdater();
+	private Populator<?> populator;
 
-	private class Updater implements KValuesListener<IValue> {
+	abstract class Populator<V> {
+
+		void populate() {
+
+			List<V> values = getAllValues();
+
+			if (!values.isEmpty()) {
+
+				set(values);
+			}
+		}
+
+		abstract void set(List<V> values);
+
+		abstract V extractValue(IValue value);
+
+		private List<V> getAllValues() {
+
+			List<V> values = new ArrayList<V>();
+
+			for (ISlot slot : slots) {
+
+				for (IValue value : slot.getValues().asList()) {
+
+					values.add(extractValue(value));
+				}
+			}
+
+			return values;
+		}
+	}
+
+	private class AutoUpdater implements KValuesListener<IValue> {
 
 		public void onAdded(IValue value) {
 
@@ -71,6 +104,11 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		builder.setEditability(dEditor.getField(property), CEditability.NONE);
 	}
 
+	void setPopulator(Populator<?> populator) {
+
+		this.populator = populator;
+	}
+
 	void initialise(CSlot slotTypeValue) {
 
 		dEditor.getField(property).set(getPropertyRef(slotTypeValue));
@@ -79,7 +117,7 @@ public abstract class ValueSummary<V> extends DObjectShell {
 	void addSlot(ISlot slot) {
 
 		slots.add(slot);
-		slot.getValues().addValuesListener(updater);
+		slot.getValues().addValuesListener(autoUpdater);
 
 		checkUpdate();
 	}
@@ -98,11 +136,7 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		checkClear();
 	}
 
-	abstract void set(List<V> values);
-
 	abstract void clear();
-
-	abstract V extractValue(IValue value);
 
 	private void checkUpdate() {
 
@@ -123,13 +157,7 @@ public abstract class ValueSummary<V> extends DObjectShell {
 	private void update() {
 
 		clear();
-
-		List<V> values = getAllValues();
-
-		if (!values.isEmpty()) {
-
-			set(values);
-		}
+		populator.populate();
 	}
 
 	private DConcept<PropertyRef> getPropertyRef(CSlot slotTypeValue) {
@@ -137,21 +165,6 @@ public abstract class ValueSummary<V> extends DObjectShell {
 		CIdentity id = slotTypeValue.getIdentity();
 
 		return getModel().getConcept(PropertyRef.class, id);
-	}
-
-	private List<V> getAllValues() {
-
-		List<V> values = new ArrayList<V>();
-
-		for (ISlot slot : slots) {
-
-			for (IValue value : slot.getValues().asList()) {
-
-				values.add(extractValue(value));
-			}
-		}
-
-		return values;
 	}
 
 	private boolean assertionFrame() {
