@@ -133,6 +133,6 @@ public class CExtensionTest extends CValueTest<CFrame> {
 
 	private CDisjunction createDisjunction(CFrame... disjuncts) {
 
-		return (CDisjunction)CFrame.resolveDisjunction(list(disjuncts));
+		return (CDisjunction)CFrame.resolveDisjunction(Arrays.asList(disjuncts));
 	}
 }

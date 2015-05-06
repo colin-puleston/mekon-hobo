@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -52,12 +54,12 @@ public class CSlotTest extends MekonTest {
 		CSlot s3 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v3);
 		CSlot s4 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v4);
 
-		testList(a.getSlots().asList(), list(s1, s2, s3, s4));
+		testList(a.getSlots().asList(), Arrays.asList(s1, s2, s3, s4));
 
 		model.removeFrame(v1);
 		a.removeSlot(s3);
 
-		testList(a.getSlots().asList(), list(s2, s4));
+		testList(a.getSlots().asList(), Arrays.asList(s2, s4));
 	}
 
 	@Test

@@ -52,19 +52,4 @@ public class FramesTestUtils extends MekonTestUtils {
 
 		return types;
 	}
-
-	public <V extends IValue>List<IValue> iValues(V... elements) {
-
-		return new ArrayList<IValue>(list(elements));
-	}
-
-	public <V extends CValue<?>>List<CValue<?>> cValues(V... elements) {
-
-		return new ArrayList<CValue<?>>(set(elements));
-	}
-
-	public <V extends CValue<?>>List<CValue<?>> cValueList(V... elements) {
-
-		return new ArrayList<CValue<?>>(list(elements));
-	}
 }

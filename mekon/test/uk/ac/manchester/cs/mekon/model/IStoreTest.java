@@ -229,7 +229,7 @@ public class IStoreTest extends MekonTest {
 
 	private void testStoredIds(CIdentity... expectedIds) {
 
-		testListContents(store.getAllIdentities(), list(expectedIds));
+		testListContents(store.getAllIdentities(), Arrays.asList(expectedIds));
 	}
 
 	private void testRetrieve(IFrame original, CIdentity id) {

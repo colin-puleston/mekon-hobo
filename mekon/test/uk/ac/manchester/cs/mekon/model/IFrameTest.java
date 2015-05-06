@@ -74,11 +74,11 @@ public class IFrameTest extends MekonTest {
 		CFrame tc = createCFrame("C");
 		CFrame td = createCFrame("D");
 
-		testUpdateInferredTypes(f, list(ta, tb), list(ta, tb), NO_IFRAMES);
-		testUpdateInferredTypes(f, list(tb, tc, td), list(tc, td), list(ta));
-		testUpdateInferredTypes(f, list(tc), NO_IFRAMES, list(tb, td));
-		testUpdateInferredTypes(f, list(ta), list(ta), list(tc));
-		testUpdateInferredTypes(f, NO_IFRAMES, NO_IFRAMES, list(ta));
+		testUpdateInferredTypes(f, Arrays.asList(ta, tb), Arrays.asList(ta, tb), NO_IFRAMES);
+		testUpdateInferredTypes(f, Arrays.asList(tb, tc, td), Arrays.asList(tc, td), Arrays.asList(ta));
+		testUpdateInferredTypes(f, Arrays.asList(tc), NO_IFRAMES, Arrays.asList(tb, td));
+		testUpdateInferredTypes(f, Arrays.asList(ta), Arrays.asList(ta), Arrays.asList(tc));
+		testUpdateInferredTypes(f, NO_IFRAMES, NO_IFRAMES, Arrays.asList(ta));
 	}
 
 	@Test
@@ -90,11 +90,11 @@ public class IFrameTest extends MekonTest {
 
 		monitorIReasoner.resetRegisters();
 		createISlotWithValue(fa, "sab", fb);
-		testList(monitorIReasoner.getUpdateds(), list(fa));
+		testList(monitorIReasoner.getUpdateds(), Arrays.asList(fa));
 
 		monitorIReasoner.resetRegisters();
 		createISlotWithValue(fb, "sbc", fc);
-		testList(monitorIReasoner.getUpdateds(), list(fb, fa));
+		testList(monitorIReasoner.getUpdateds(), Arrays.asList(fb, fa));
 	}
 
 	@Test

@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -139,7 +141,7 @@ public class CSlotValuesTest extends MekonTest {
 	private void testCurrentValues(CIdentity slotId, CValue<?>... values) {
 
 		assertTrue(getSlotValues().valueFor(slotId));
-		testList(getSlotValues().getValues(slotId), list(values));
+		testList(getSlotValues().getValues(slotId), Arrays.asList(values));
 	}
 
 	private CSlotValues getSlotValues() {

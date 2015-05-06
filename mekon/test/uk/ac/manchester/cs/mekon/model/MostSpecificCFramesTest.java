@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -136,7 +138,7 @@ public class MostSpecificCFramesTest extends MekonTest {
 
 	private CDisjunction createDisjunction(CFrame... disjuncts) {
 
-		return (CDisjunction)CFrame.resolveDisjunction(list(disjuncts));
+		return (CDisjunction)CFrame.resolveDisjunction(Arrays.asList(disjuncts));
 	}
 
 	private void update(CFrame frame) {
@@ -146,6 +148,6 @@ public class MostSpecificCFramesTest extends MekonTest {
 
 	private void test(CFrame... expected) {
 
-		testListContents(mostSpecifics.getCurrents(), list(expected));
+		testListContents(mostSpecifics.getCurrents(), Arrays.asList(expected));
 	}
 }

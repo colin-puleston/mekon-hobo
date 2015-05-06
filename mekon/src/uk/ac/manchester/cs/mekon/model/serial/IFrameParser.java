@@ -39,7 +39,7 @@ public class IFrameParser extends ISerialiser {
 
 	private XNode containerNode = null;
 	private Map<Integer, IFrame> iFrameRefs = new HashMap<Integer, IFrame>();
-	private List<SlotValuesSpec> slotValuesSpecs = new ArrayList<SlotValuesSpec>();
+	private List<SlotValuesSpec<?>> slotValuesSpecs = new ArrayList<SlotValuesSpec<?>>();
 
 	private abstract class SlotValuesSpec<V> {
 
@@ -385,7 +385,7 @@ public class IFrameParser extends ISerialiser {
 
 			boolean anyProcessed = false;
 
-			for (SlotValuesSpec spec : new ArrayList<SlotValuesSpec>(slotValuesSpecs)) {
+			for (SlotValuesSpec<?> spec : new ArrayList<SlotValuesSpec<?>>(slotValuesSpecs)) {
 
 				anyProcessed |= spec.process();
 			}

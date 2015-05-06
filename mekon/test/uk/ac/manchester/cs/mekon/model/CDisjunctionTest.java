@@ -59,7 +59,7 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 		CFrame abc_sup_2 = createCFrame("ABC_SUP_2");
 		CFrame singleCommonAnc = createCFrame("SINGLE_COMMON_ANC");
 
-		List<CFrame> expectSups = list(abc_sup_1, abc_sup_2);
+		List<CFrame> expectSups = Arrays.asList(abc_sup_1, abc_sup_2);
 
 		addSuperFrame(a, ab_sup);
 		addSuperFrame(b, ab_sup);
@@ -87,8 +87,8 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 
 		CDisjunction abc = createDisjunction(a, b, c);
 
-		testSubs(abc, CVisibility.ALL, list(a, b, c));
-		testSubs(abc, CVisibility.EXPOSED, list(a, b, c));
+		testSubs(abc, CVisibility.ALL, Arrays.asList(a, b, c));
+		testSubs(abc, CVisibility.EXPOSED, Arrays.asList(a, b, c));
 		testSubs(abc, CVisibility.HIDDEN, NO_CFRAMES);
 	}
 
@@ -142,7 +142,7 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 
 	private CDisjunction createDisjunction(CFrame... disjuncts) {
 
-		return (CDisjunction)CFrame.resolveDisjunction(list(disjuncts));
+		return (CDisjunction)CFrame.resolveDisjunction(Arrays.asList(disjuncts));
 	}
 
 	private void testSupers(CFrame frame, CVisibility visibility, List<CFrame> expected) {

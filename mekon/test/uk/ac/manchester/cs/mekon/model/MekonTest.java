@@ -300,7 +300,7 @@ public class MekonTest extends FramesTestUtils {
 	public void createISlotWithValues(
 					IFrame container,
 					String name,
-					CValue valueType,
+					CValue<?> valueType,
 					IValue... values) {
 
 		ISlot slot = createISlot(container, name, CCardinality.REPEATABLE_TYPES, valueType);

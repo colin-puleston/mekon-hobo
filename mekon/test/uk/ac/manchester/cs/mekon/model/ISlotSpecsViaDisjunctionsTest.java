@@ -134,7 +134,7 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 
 		List<IValue> got = testFindSlot(slotId).getValues().asList();
 
-		testListContents(got, list(expected));
+		testListContents(got, Arrays.asList(expected));
 	}
 
 	private void testCardinality(CIdentity slotId, CCardinality expected) {
@@ -172,6 +172,6 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 
 	private CFrame createDisjunction(CFrame... disjuncts) {
 
-		return CFrame.resolveDisjunction(list(disjuncts));
+		return CFrame.resolveDisjunction(Arrays.asList(disjuncts));
 	}
 }

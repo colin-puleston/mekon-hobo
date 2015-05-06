@@ -51,20 +51,20 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);
 
-		testList(model.getFrames().asList(), list(a, b, c));
+		testList(model.getFrames().asList(), Arrays.asList(a, b, c));
 		testList(a.getSupers(), getRootFrameAsList());
-		testList(a.getSubs(), list(b));
-		testList(b.getSupers(), list(a));
-		testList(b.getSubs(), list(c));
-		testList(c.getSupers(), list(b));
+		testList(a.getSubs(), Arrays.asList(b));
+		testList(b.getSupers(), Arrays.asList(a));
+		testList(b.getSubs(), Arrays.asList(c));
+		testList(c.getSupers(), Arrays.asList(b));
 		testList(c.getSubs(), NO_CFRAMES);
 
 		model.removeFrame(b.asModelFrame());
 
-		testList(model.getFrames().asList(), list(a, c));
+		testList(model.getFrames().asList(), Arrays.asList(a, c));
 		testList(a.getSupers(), getRootFrameAsList());
-		testList(a.getSubs(), list(c));
-		testList(c.getSupers(), list(a));
+		testList(a.getSubs(), Arrays.asList(c));
+		testList(c.getSupers(), Arrays.asList(a));
 		testList(c.getSubs(), NO_CFRAMES);
 	}
 
@@ -157,23 +157,23 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(h1, er);
 		addSuperFrame(h1, hr);
 
-		testSubs(er, list(e1, e2, h1));
-		testSubs(hr, list(h1));
-		testSupers(e1, list(er));
-		testSupers(e2, list(er));
-		testSupers(h1, list(er, hr));
+		testSubs(er, Arrays.asList(e1, e2, h1));
+		testSubs(hr, Arrays.asList(h1));
+		testSupers(e1, Arrays.asList(er));
+		testSupers(e2, Arrays.asList(er));
+		testSupers(h1, Arrays.asList(er, hr));
 
-		testSubs(er, CVisibility.EXPOSED, list(e1, e2));
+		testSubs(er, CVisibility.EXPOSED, Arrays.asList(e1, e2));
 		testSubs(hr, CVisibility.EXPOSED, NO_CFRAMES);
-		testSupers(e1, CVisibility.EXPOSED, list(er));
-		testSupers(e2, CVisibility.EXPOSED, list(er));
-		testSupers(h1, CVisibility.EXPOSED, list(er));
+		testSupers(e1, CVisibility.EXPOSED, Arrays.asList(er));
+		testSupers(e2, CVisibility.EXPOSED, Arrays.asList(er));
+		testSupers(h1, CVisibility.EXPOSED, Arrays.asList(er));
 
-		testSubs(er, CVisibility.HIDDEN, list(h1));
-		testSubs(hr, CVisibility.HIDDEN, list(h1));
+		testSubs(er, CVisibility.HIDDEN, Arrays.asList(h1));
+		testSubs(hr, CVisibility.HIDDEN, Arrays.asList(h1));
 		testSupers(e1, CVisibility.HIDDEN, NO_CFRAMES);
 		testSupers(e2, CVisibility.HIDDEN, NO_CFRAMES);
-		testSupers(h1, CVisibility.HIDDEN, list(hr));
+		testSupers(h1, CVisibility.HIDDEN, Arrays.asList(hr));
 	}
 
 	@Test
@@ -193,8 +193,8 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 		normaliseCFramesHierarchy();
 
-		testSupers(e2, list(e1));
-		testSupers(e3, list(e2));
+		testSupers(e2, Arrays.asList(e1));
+		testSupers(e3, Arrays.asList(e2));
 	}
 
 	@Test
@@ -214,8 +214,8 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 		normaliseCFramesHierarchy();
 
-		testSupers(h2, list(h1));
-		testSupers(h3, list(h2));
+		testSupers(h2, Arrays.asList(h1));
+		testSupers(h3, Arrays.asList(h2));
 	}
 
 	@Test
@@ -248,13 +248,13 @@ public class CFrameTest extends CValueTest<CFrame> {
 		normaliseCFramesHierarchy();
 
 		testSupers(er, getRootFrameAsList());
-		testSupers(ea1, list(er));
-		testSupers(ea2, list(ea1));
-		testSupers(h1, list(ea2));
-		testSupers(h2, list(h1));
-		testSupers(h3, list(h2));
-		testSupers(eb1, list(h3, ea2));
-		testSupers(eb2, list(eb1));
+		testSupers(ea1, Arrays.asList(er));
+		testSupers(ea2, Arrays.asList(ea1));
+		testSupers(h1, Arrays.asList(ea2));
+		testSupers(h2, Arrays.asList(h1));
+		testSupers(h3, Arrays.asList(h2));
+		testSupers(eb1, Arrays.asList(h3, ea2));
+		testSupers(eb2, Arrays.asList(eb1));
 	}
 
 	@Test
@@ -278,12 +278,12 @@ public class CFrameTest extends CValueTest<CFrame> {
 		normaliseCFramesHierarchy();
 
 		testSupers(er, getRootFrameAsList());
-		testSupers(ea1, list(er));
-		testSupers(ea2, list(er));
-		testSupers(h1, list(ea1));
-		testSupers(h2, list(ea2));
-		testSupers(eb1, list(h1, ea1));
-		testSupers(eb2, list(h2, ea2));
+		testSupers(ea1, Arrays.asList(er));
+		testSupers(ea2, Arrays.asList(er));
+		testSupers(h1, Arrays.asList(ea1));
+		testSupers(h2, Arrays.asList(ea2));
+		testSupers(eb1, Arrays.asList(h1, ea1));
+		testSupers(eb2, Arrays.asList(h2, ea2));
 	}
 
 	@Test
@@ -306,11 +306,11 @@ public class CFrameTest extends CValueTest<CFrame> {
 		normaliseCFramesHierarchy();
 
 		testSupers(er, getRootFrameAsList());
-		testSupers(ea1, list(er));
-		testSupers(ea2, list(ea1));
-		testSupers(h1, list(ea1));
-		testSupers(h2, list(ea2));
-		testSupers(eb1, list(h1, h2, ea2));
+		testSupers(ea1, Arrays.asList(er));
+		testSupers(ea2, Arrays.asList(ea1));
+		testSupers(h1, Arrays.asList(ea1));
+		testSupers(h2, Arrays.asList(ea2));
+		testSupers(eb1, Arrays.asList(h1, h2, ea2));
 	}
 
 	@Test
@@ -373,6 +373,6 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private List<CFrame> getRootFrameAsList() {
 
-		return list(getModel().getRootFrame());
+		return Arrays.asList(getModel().getRootFrame());
 	}
 }

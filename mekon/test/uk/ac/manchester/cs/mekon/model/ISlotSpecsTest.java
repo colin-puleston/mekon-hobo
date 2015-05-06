@@ -198,7 +198,7 @@ public class ISlotSpecsTest extends MekonTest {
 
 		ISlotSpecs specs = new ISlotSpecs(getModel().getIEditor());
 
-		specs.absorbAll(list(containerTypes));
+		specs.absorbAll(Arrays.asList(containerTypes));
 		specs.updateSlots(iContainer);
 		specs.updateSlotValues(iContainer);
 	}
@@ -215,7 +215,7 @@ public class ISlotSpecsTest extends MekonTest {
 
 		List<IValue> got = testSingleSlot().getValues().asList();
 
-		testListContents(got, list(expected));
+		testListContents(got, Arrays.asList(expected));
 	}
 
 	private void testCardinality(CCardinality expected) {

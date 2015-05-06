@@ -68,14 +68,14 @@ abstract class FSerialiser {
 		return findPublicClass(leafClass).getSimpleName();
 	}
 
-	static private Class<?> findPublicClass(Class leafClass) {
+	static private Class<?> findPublicClass(Class<?> leafClass) {
 
 		return isPublicClass(leafClass)
 					? leafClass
 					: findPublicClass(leafClass.getSuperclass());
 	}
 
-	static private boolean isPublicClass(Class testClass) {
+	static private boolean isPublicClass(Class<?> testClass) {
 
 		return Modifier.isPublic(testClass.getModifiers());
 	}
