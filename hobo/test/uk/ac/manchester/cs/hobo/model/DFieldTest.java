@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -33,12 +35,12 @@ abstract class DFieldTest extends HoboTest {
 
 	void addSlotValues(DField<?> field, IValue... values) {
 
-		field.getSlot().getValuesEditor().addAll(iValues(values));
+		field.getSlot().getValuesEditor().addAll(Arrays.asList(values));
 	}
 
 	void updateSlotValues(DField<?> field, IValue... values) {
 
-		field.getSlot().getValuesEditor().update(iValues(values));
+		field.getSlot().getValuesEditor().update(Arrays.asList(values));
 	}
 
 	void removeSlotValue(DField<?> field, IValue value) {
@@ -53,6 +55,6 @@ abstract class DFieldTest extends HoboTest {
 
 	void testSlotValues(DField<?> field, IValue... expectedValues) {
 
-		testList(field.getSlot().getValues().asList(), list(expectedValues));
+		testList(field.getSlot().getValues().asList(), Arrays.asList(expectedValues));
 	}
 }
