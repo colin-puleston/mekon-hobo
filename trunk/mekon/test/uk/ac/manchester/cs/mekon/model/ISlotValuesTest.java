@@ -57,8 +57,8 @@ public class ISlotValuesTest extends MekonTest {
 
 		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
 
-		testAdd(values, a, iValues(a));
-		testAdd(values, b, iValues(b));
+		testAdd(values, a, Arrays.asList(a));
+		testAdd(values, b, Arrays.asList(b));
 		testRemove(values, b, NO_IVALUES);
 	}
 
@@ -79,8 +79,8 @@ public class ISlotValuesTest extends MekonTest {
 
 		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
 
-		testUpdate(values, iValues(a), iValues(a));
-		testUpdate(values, iValues(b), iValues(b));
+		testUpdate(values, Arrays.asList(a), Arrays.asList(a));
+		testUpdate(values, Arrays.asList(b), Arrays.asList(b));
 		testUpdate(values, NO_IVALUES, NO_IVALUES);
 	}
 
@@ -101,18 +101,18 @@ public class ISlotValuesTest extends MekonTest {
 
 		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
 
-		testUpdate(values, iValues(c), iValues(c));
+		testUpdate(values, Arrays.asList(c), Arrays.asList(c));
 
-		testUpdateFixeds(values, iValues(a), iValues(a));
-		testUpdateFixeds(values, iValues(b), iValues(b));
-		testUpdate(values, iValues(cx), iValues(b));
+		testUpdateFixeds(values, Arrays.asList(a), Arrays.asList(a));
+		testUpdateFixeds(values, Arrays.asList(b), Arrays.asList(b));
+		testUpdate(values, Arrays.asList(cx), Arrays.asList(b));
 		testUpdateFixeds(values, NO_IVALUES, NO_IVALUES);
 	}
 
 	@Test(expected = KModelException.class)
 	public void test_updateFixedsFails_singletonCardinality() {
 
-		createSlotValues(CCardinality.SINGLE_VALUE).updateFixedValues(iValues(a, b));
+		createSlotValues(CCardinality.SINGLE_VALUE).updateFixedValues(Arrays.asList(a, b));
 	}
 
 	@Test
@@ -143,22 +143,22 @@ public class ISlotValuesTest extends MekonTest {
 
 		ISlotValues values = createSlotValues(cardinality);
 
-		testAdd(values, a, iValues(a));
-		testAdd(values, b, iValues(a, b));
-		testRemove(values, a, iValues(b));
-		testAdd(values, c, iValues(b, c));
+		testAdd(values, a, Arrays.asList(a));
+		testAdd(values, b, Arrays.asList(a, b));
+		testRemove(values, a, Arrays.asList(b));
+		testAdd(values, c, Arrays.asList(b, c));
 
 		if (cardinality == CCardinality.UNIQUE_TYPES) {
 
-			testAdd(values, cx, iValues(b, cx));
+			testAdd(values, cx, Arrays.asList(b, cx));
 		}
 		else {
 
-			testAdd(values, cx, iValues(b, c, cx));
-			testRemove(values, c, iValues(b, cx));
+			testAdd(values, cx, Arrays.asList(b, c, cx));
+			testRemove(values, c, Arrays.asList(b, cx));
 		}
 
-		testRemove(values, cx, iValues(b));
+		testRemove(values, cx, Arrays.asList(b));
 		testRemove(values, b, NO_IVALUES);
 	}
 
@@ -166,10 +166,10 @@ public class ISlotValuesTest extends MekonTest {
 
 		ISlotValues values = createSlotValues(cardinality);
 
-		testUpdate(values, iValues(a, b), iValues(a, b));
-		testUpdate(values, iValues(b, c), iValues(b, c));
-		testUpdate(values, iValues(b, c, cx), iValues(b, cx));
-		testUpdate(values, iValues(b, c), iValues(b, c));
+		testUpdate(values, Arrays.asList(a, b), Arrays.asList(a, b));
+		testUpdate(values, Arrays.asList(b, c), Arrays.asList(b, c));
+		testUpdate(values, Arrays.asList(b, c, cx), Arrays.asList(b, cx));
+		testUpdate(values, Arrays.asList(b, c), Arrays.asList(b, c));
 		testUpdate(values, NO_IVALUES, NO_IVALUES);
 	}
 
@@ -177,11 +177,11 @@ public class ISlotValuesTest extends MekonTest {
 
 		ISlotValues values = createSlotValues(cardinality);
 
-		testUpdate(values, iValues(c), iValues(c));
-		testUpdateFixeds(values, iValues(a, b), iValues(a, b, c));
-		testUpdateFixeds(values, iValues(a, b, cx), iValues(a, b, cx));
-		testUpdateFixeds(values, iValues(a, b), iValues(a, b));
-		testUpdate(values, NO_IVALUES, iValues(a, b));
+		testUpdate(values, Arrays.asList(c), Arrays.asList(c));
+		testUpdateFixeds(values, Arrays.asList(a, b), Arrays.asList(a, b, c));
+		testUpdateFixeds(values, Arrays.asList(a, b, cx), Arrays.asList(a, b, cx));
+		testUpdateFixeds(values, Arrays.asList(a, b), Arrays.asList(a, b));
+		testUpdate(values, NO_IVALUES, Arrays.asList(a, b));
 		testUpdateFixeds(values, NO_IVALUES, NO_IVALUES);
 	}
 
