@@ -89,9 +89,7 @@ class CFrameAnnotationsTree extends CTree {
 			}
 		}
 
-		CValuesNode(
-			Class<? extends Collection> type,
-			Collection<CValue<?>> cValues) {
+		CValuesNode(Class<?> type, Collection<CValue<?>> cValues) {
 
 			super(type.getSimpleName());
 

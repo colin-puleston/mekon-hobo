@@ -40,15 +40,15 @@ class GCellRenderers {
 		return singleton;
 	}
 
-	private TreeCellRenderer treeCellRenderer = new GTreeCellRenderer();
-	private ListCellRenderer listCellRenderer = new GListCellRenderer();
+	private GTreeCellRenderer treeCellRenderer = new GTreeCellRenderer();
+	private GListCellRenderer listCellRenderer = new GListCellRenderer();
 
 	void set(GTree tree) {
 
 		tree.setCellRenderer(treeCellRenderer);
 	}
 
-	void set(GList list) {
+	void set(GList<?> list) {
 
 		list.setCellRenderer(listCellRenderer);
 	}
@@ -80,7 +80,7 @@ class GCellRenderers {
 		static private final long serialVersionUID = -1;
 
 		public Component getListCellRendererComponent(
-							JList list,
+							JList<?> list,
 							Object value,
 							int index,
 							boolean isSelected,

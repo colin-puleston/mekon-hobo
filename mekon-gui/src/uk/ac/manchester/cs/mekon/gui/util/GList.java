@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class GList<E> extends JList {
+public class GList<E> extends JList<GListElement<E>> {
 
 	static private final long serialVersionUID = -1;
 
@@ -53,37 +53,20 @@ public class GList<E> extends JList {
 		}
 	}
 
-	private class DisplayElement extends GCellDisplay {
-
-		private E entity;
-
-		DisplayElement(E entity, GCellDisplay display) {
-
-			super(display);
-
-			this.entity = entity;
-		}
-
-		E getEntity() {
-
-			return entity;
-		}
-	}
-
-	private class DisplayList extends GCellDisplaySortedList<DisplayElement> {
+	private class DisplayList extends GCellDisplaySortedList<GListElement<E>> {
 
 		DisplayList(boolean orderAlphabetically) {
 
 			super(orderAlphabetically);
 		}
 
-		GCellDisplay getDisplay(DisplayElement element) {
+		GCellDisplay getDisplay(GListElement<E> element) {
 
 			return element;
 		}
 	}
 
-	private class LocalListModel extends DefaultListModel {
+	private class LocalListModel extends DefaultListModel<GListElement<E>> {
 
 		static private final long serialVersionUID = -1;
 
@@ -96,7 +79,7 @@ public class GList<E> extends JList {
 			displayList.clear();
 		}
 
-		public Object getElementAt(int index) {
+		public GListElement<E> getElementAt(int index) {
 
 			checkUpToDate();
 
@@ -117,14 +100,14 @@ public class GList<E> extends JList {
 
 		void add(E entity, GCellDisplay display) {
 
-			displayList.add(new DisplayElement(entity, display));
+			displayList.add(new GListElement<E>(entity, display));
 
 			upToDate = false;
 		}
 
 		void remove(E entity) {
 
-			DisplayElement element = getDisplayElementOrNull(entity);
+			GListElement<E> element = getElementOrNull(entity);
 
 			if (element != null) {
 
@@ -151,7 +134,7 @@ public class GList<E> extends JList {
 
 			List<E> entities = new ArrayList<E>();
 
-			for (DisplayElement element : displayList.asList()) {
+			for (GListElement<E> element : displayList.asList()) {
 
 				entities.add(element.getEntity());
 			}
@@ -159,9 +142,9 @@ public class GList<E> extends JList {
 			return entities;
 		}
 
-		DisplayElement getDisplayElement(E entity) {
+		GListElement<E> getElement(E entity) {
 
-			DisplayElement element = getDisplayElementOrNull(entity);
+			GListElement<E> element = getElementOrNull(entity);
 
 			if (element == null) {
 
@@ -171,9 +154,9 @@ public class GList<E> extends JList {
 			return element;
 		}
 
-		private DisplayElement getDisplayElementOrNull(E entity) {
+		private GListElement<E> getElementOrNull(E entity) {
 
-			for (DisplayElement element : displayList.asList()) {
+			for (GListElement<E> element : displayList.asList()) {
 
 				if (element.getEntity().equals(entity)) {
 
@@ -196,7 +179,7 @@ public class GList<E> extends JList {
 
 		private void addElements(GLexicalFilter filter) {
 
-			for (DisplayElement element : displayList.asList()) {
+			for (GListElement<E> element : displayList.asList()) {
 
 				if (filter == null || filter.pass(element.getLabel())) {
 
@@ -262,7 +245,7 @@ public class GList<E> extends JList {
 
 	public void select(E entity) {
 
-		setSelectedValue(model.getDisplayElement(entity), true);
+		setSelectedValue(model.getElement(entity), true);
 	}
 
 	public List<E> getEntityList() {
@@ -287,7 +270,7 @@ public class GList<E> extends JList {
 
 	private void checkUpdateSelection() {
 
-		DisplayElement selection = (DisplayElement)getSelectedValue();
+		GListElement<E> selection = getSelectedValue();
 
 		if (selection != null) {
 
