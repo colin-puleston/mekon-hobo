@@ -80,7 +80,7 @@ class GCellRenderers {
 		static private final long serialVersionUID = -1;
 
 		public Component getListCellRendererComponent(
-							JList<?> list,
+							JList list,
 							Object value,
 							int index,
 							boolean isSelected,
