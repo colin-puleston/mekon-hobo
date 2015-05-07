@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class GList<E> extends JList<GListElement<E>> {
+public class GList<E> extends JList {
 
 	static private final long serialVersionUID = -1;
 
@@ -66,7 +66,7 @@ public class GList<E> extends JList<GListElement<E>> {
 		}
 	}
 
-	private class LocalListModel extends DefaultListModel<GListElement<E>> {
+	private class LocalListModel extends DefaultListModel {
 
 		static private final long serialVersionUID = -1;
 
@@ -83,7 +83,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			checkUpToDate();
 
-			return super.getElementAt(index);
+			return asListElement(super.getElementAt(index));
 		}
 
 		public int getSize() {
@@ -154,19 +154,6 @@ public class GList<E> extends JList<GListElement<E>> {
 			return element;
 		}
 
-		private GListElement<E> getElementOrNull(E entity) {
-
-			for (GListElement<E> element : displayList.asList()) {
-
-				if (element.getEntity().equals(entity)) {
-
-					return element;
-				}
-			}
-
-			return null;
-		}
-
 		private void checkUpToDate() {
 
 			if (!upToDate) {
@@ -186,6 +173,26 @@ public class GList<E> extends JList<GListElement<E>> {
 					addElement(element);
 				}
 			}
+		}
+
+		private GListElement<E> getElementOrNull(E entity) {
+
+			for (GListElement<E> element : displayList.asList()) {
+
+				if (element.getEntity().equals(entity)) {
+
+					return element;
+				}
+			}
+
+			return null;
+		}
+
+		private GListElement<E> asListElement(Object elementObj) {
+
+			List<GListElement<E>> listEls = displayList.asList();
+
+			return listEls.get(listEls.indexOf(elementObj));
 		}
 	}
 
@@ -270,11 +277,11 @@ public class GList<E> extends JList<GListElement<E>> {
 
 	private void checkUpdateSelection() {
 
-		GListElement<E> selection = getSelectedValue();
+		int index = getSelectedIndex();
 
-		if (selection != null) {
+		if (index != -1) {
 
-			E entity = selection.getEntity();
+			E entity = model.getElementAt(index).getEntity();
 
 			if (entity != selectedEntity) {
 
