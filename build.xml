@@ -76,7 +76,7 @@
 
 	<property name="build.test.classpath.sh" value="${build.lib.rel}/*:${build.test.classes.rel}:${build.resource.rel}"/>
 	<property name="build.test.classpath.win" value="${build.lib.rel}/*;${build.test.classes.rel};${build.resource.rel}"/>
-	<property name="build.test.java.args" value="${java.opts} ${junit.mainclass} ${test.testsuites}"/>
+	<property name="build.test.java.run" value="${java.opts} ${junit.mainclass} ${test.testsuites}"/>
 
 	<!-- mekon demo invocation -->
 	<property name="build.demo.mekon.run.sh" location="${build}/mekon-demo.sh"/>
@@ -85,7 +85,7 @@
 	<property name="mekongui.mainclass" value="uk.ac.manchester.cs.mekon.gui.MekonModelExplorer"/>
 	<property name="build.demo.mekon.classpath.sh" value="${build.lib.rel}/*:${build.resource.rel}"/>
 	<property name="build.demo.mekon.classpath.win" value="${build.lib.rel}/*;${build.resource.rel}"/>
-	<property name="build.demo.mekon.java.args" value="${java.opts} ${mekongui.mainclass}"/>
+	<property name="build.demo.mekon.java.run" value="${java.opts} ${mekongui.mainclass}"/>
 
 	<!-- hobo demo invocation -->
 	<property name="build.demo.hobo.run.sh" location="${build}/hobo-demo.sh"/>
@@ -94,7 +94,7 @@
 	<property name="hobogui.mainclass" value="uk.ac.manchester.cs.hobo.gui.HoboModelExplorer"/>
 	<property name="build.demo.hobo.classpath.sh" value="${build.lib.rel}/*:${build.demo.classes.rel}:${build.resource.rel}"/>
 	<property name="build.demo.hobo.classpath.win" value="${build.lib.rel}/*;${build.demo.classes.rel};${build.resource.rel}"/>
-	<property name="build.demo.hobo.java.args" value="${java.opts} ${hobogui.mainclass}"/>
+	<property name="build.demo.hobo.java.run" value="${java.opts} ${hobogui.mainclass}"/>
 
 	<!-- debug property -->
 
@@ -220,8 +220,8 @@
 	<!-- mekon demo targets -->
 
 	<target name="mekon-demo" depends="mekon-gui-jar, mekon-owl-jar, resource-base">
-		<echo file="${build.demo.mekon.run.sh}">java -cp ${build.demo.mekon.classpath.sh} ${build.demo.mekon.java.args}</echo>
-		<echo file="${build.demo.mekon.run.win}">java -cp ${build.demo.mekon.classpath.win} ${build.demo.mekon.java.args}</echo>
+		<echo file="${build.demo.mekon.run.sh}">java -cp ${build.demo.mekon.classpath.sh} ${build.demo.mekon.java.run}</echo>
+		<echo file="${build.demo.mekon.run.win}">java -cp ${build.demo.mekon.classpath.win} ${build.demo.mekon.java.run}</echo>
 		<chmod dir="${build}" includes="mekondemo.*" perm="+x"/>
 	</target>
 
@@ -234,8 +234,8 @@
 	</target>
 
 	<target name="hobo-demo" depends="hobo-demo-classes, hobo-gui-jar, mekon-owl-jar">
-		<echo file="${build.demo.hobo.run.sh}">java -cp ${build.demo.hobo.classpath.sh} ${build.demo.hobo.java.args}</echo>
-		<echo file="${build.demo.hobo.run.win}">java -cp ${build.demo.hobo.classpath.win} ${build.demo.hobo.java.args}</echo>
+		<echo file="${build.demo.hobo.run.sh}">java -cp ${build.demo.hobo.classpath.sh} ${build.demo.hobo.java.run}</echo>
+		<echo file="${build.demo.hobo.run.win}">java -cp ${build.demo.hobo.classpath.win} ${build.demo.hobo.java.run}</echo>
 		<chmod dir="${build}" includes="hobodemo.*" perm="+x"/>
 	</target>
 
@@ -260,8 +260,8 @@
 	</target>
 
 	<target name="test" depends="hobo-test, mekon-owl-test, hobo-jar, mekon-owl-jar, mekon-demo">
-		<echo file="${build.test.run.sh}">java -cp ${build.test.classpath.sh} ${build.test.java.args}</echo>
-		<echo file="${build.test.run.win}">java -cp ${build.test.classpath.win} ${build.test.java.args}</echo>
+		<echo file="${build.test.run.sh}">java -cp ${build.test.classpath.sh} ${build.test.java.run}</echo>
+		<echo file="${build.test.run.win}">java -cp ${build.test.classpath.win} ${build.test.java.run}</echo>
 		<chmod dir="${build}" includes="test.*" perm="+x"/>
 	</target>
 
