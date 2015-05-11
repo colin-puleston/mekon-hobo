@@ -33,8 +33,9 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class ISlotNode extends GNode {
+abstract class ISlotNode extends INode {
 
+	private ITree tree;
 	private ISlot slot;
 	private ValueNodes valueNodes;
 
@@ -96,7 +97,7 @@ abstract class ISlotNode extends GNode {
 
 		protected void perform() {
 
-			slot.getValuesEditor().clear();
+			clearValues();
 		}
 	}
 
@@ -128,20 +129,28 @@ abstract class ISlotNode extends GNode {
 		return new ClearValuesAction();
 	}
 
-	protected GCellDisplay getDisplay() {
-
-		return EntityDisplays.get().get(slot);
-	}
-
 	ISlotNode(ITree tree, ISlot slot) {
 
 		super(tree);
 
+		this.tree = tree;
 		this.slot = slot;
 
 		valueNodes = new ValueNodes();
 
 		slot.addListener(new DisplayUpdater());
+	}
+
+	void addValue(IValue value) {
+
+		slot.getValuesEditor().add(value);
+		registerAction(value);
+	}
+
+	void removeValue(IValue value) {
+
+		slot.getValuesEditor().remove(value);
+		registerAction(null);
 	}
 
 	abstract IValue checkObtainValue();
@@ -155,14 +164,20 @@ abstract class ISlotNode extends GNode {
 					: GNodeAction.INERT_ACTION;
 	}
 
-	void addValue(IValue value) {
+	GCellDisplay getDefaultDisplay() {
 
-		slot.getValuesEditor().add(value);
+		return EntityDisplays.get().get(slot);
 	}
 
-	void removeValue(IValue value) {
+	private void clearValues() {
 
-		slot.getValuesEditor().remove(value);
+		slot.getValuesEditor().clear();
+		registerAction(null);
+	}
+
+	private void registerAction(IValue addedValue) {
+
+		tree.getUpdateMarker().registerAction(this, addedValue);
 	}
 
 	private boolean editableSlot() {

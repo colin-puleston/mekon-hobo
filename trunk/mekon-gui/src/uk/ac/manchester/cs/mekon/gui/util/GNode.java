@@ -129,7 +129,7 @@ public abstract class GNode extends GMutableTreeNode {
 
 	public String getLabel() {
 
-		return getDisplay().getLabel();
+		return getDisplay().getText();
 	}
 
 	public GNode getParent() {

@@ -41,23 +41,19 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	private class ValueNode extends IFrameNode {
 
-		private IFrame value;
-
 		protected GNodeAction getPositiveAction() {
 
-			return getAdditionAction(value);
+			return getAdditionAction(getValue());
 		}
 
 		protected GNodeAction getNegativeAction() {
 
-			return getRemovalAction(value);
+			return getRemovalAction(getValue());
 		}
 
 		ValueNode(IFrame value) {
 
 			super(tree, value);
-
-			this.value = value;
 		}
 	}
 

@@ -475,7 +475,7 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					"ALL",
-					ITree.UPDATED_NODE_MARKER,
+					"", //ITree.UPDATED_NODE_MARKER,
 					"Entity, or non-visible descendant(s), affected by latest action");
 			}
 		}

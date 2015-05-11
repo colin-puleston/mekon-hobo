@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class GList<E> extends JList {
+public class GList<E> extends JList<GListElement<E>> {
 
 	static private final long serialVersionUID = -1;
 
@@ -66,7 +66,7 @@ public class GList<E> extends JList {
 		}
 	}
 
-	private class LocalListModel extends DefaultListModel {
+	private class LocalListModel extends DefaultListModel<GListElement<E>> {
 
 		static private final long serialVersionUID = -1;
 
@@ -83,7 +83,7 @@ public class GList<E> extends JList {
 
 			checkUpToDate();
 
-			return asListElement(super.getElementAt(index));
+			return super.getElementAt(index);
 		}
 
 		public int getSize() {
@@ -154,6 +154,19 @@ public class GList<E> extends JList {
 			return element;
 		}
 
+		private GListElement<E> getElementOrNull(E entity) {
+
+			for (GListElement<E> element : displayList.asList()) {
+
+				if (element.getEntity().equals(entity)) {
+
+					return element;
+				}
+			}
+
+			return null;
+		}
+
 		private void checkUpToDate() {
 
 			if (!upToDate) {
@@ -168,31 +181,11 @@ public class GList<E> extends JList {
 
 			for (GListElement<E> element : displayList.asList()) {
 
-				if (filter == null || filter.pass(element.getLabel())) {
+				if (filter == null || filter.pass(element.getText())) {
 
 					addElement(element);
 				}
 			}
-		}
-
-		private GListElement<E> getElementOrNull(E entity) {
-
-			for (GListElement<E> element : displayList.asList()) {
-
-				if (element.getEntity().equals(entity)) {
-
-					return element;
-				}
-			}
-
-			return null;
-		}
-
-		private GListElement<E> asListElement(Object elementObj) {
-
-			List<GListElement<E>> listEls = displayList.asList();
-
-			return listEls.get(listEls.indexOf(elementObj));
 		}
 	}
 
@@ -277,11 +270,11 @@ public class GList<E> extends JList {
 
 	private void checkUpdateSelection() {
 
-		int index = getSelectedIndex();
+		GListElement<E> selection = getSelectedValue();
 
-		if (index != -1) {
+		if (selection != null) {
 
-			E entity = model.getElementAt(index).getEntity();
+			E entity = selection.getEntity();
 
 			if (entity != selectedEntity) {
 

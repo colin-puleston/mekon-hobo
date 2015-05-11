@@ -33,34 +33,20 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 class ITree extends GTree {
 
-	static final String UPDATED_NODE_MARKER = "@";
-
 	static private final long serialVersionUID = -1;
 
 	private ITreeCollapsedNodes collapseds = null;
-	private ITreeUpdateMarking updateMarking = null;
+	private ITreeUpdateMarker updateMarker = new ITreeUpdateMarker();
 
 	protected void onNodeActionStart(GNode node) {
 
 		collapseds.update(node);
-		updateMarking.update();
+		updateMarker.update();
 	}
 
 	protected void onNodeActionEnd(GNode node) {
 
 		collapseds.restore();
-	}
-
-	protected String decorateNodeLabel(GNode node, String defaultLabel) {
-
-		String label = defaultLabel;
-
-		if (requiresUpdateMarker(node)) {
-
-			label += (" " + UPDATED_NODE_MARKER);
-		}
-
-		return label;
 	}
 
 	ITree(IFrame rootFrame) {
@@ -69,11 +55,12 @@ class ITree extends GTree {
 		setActiveTree();
 
 		collapseds = new ITreeCollapsedNodes(getRootNode());
-		updateMarking = new ITreeUpdateMarking(getRootNode());
+
+		updateMarker.initialise((INode)getRootNode());
 	}
 
-	private boolean requiresUpdateMarker(GNode node) {
+	ITreeUpdateMarker getUpdateMarker() {
 
-		return updateMarking != null && updateMarking.requiresUpdateMarker(node);
+		return updateMarker;
 	}
 }

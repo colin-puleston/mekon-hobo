@@ -36,30 +36,26 @@ class CFrameSlotNode extends FFrameSlotNode<CFrame> {
 	private ITree tree;
 	private ISlot slot;
 
-	private class ValueNode extends GNode {
-
-		private CFrame value;
+	private class ValueNode extends IValueNode<CFrame> {
 
 		protected GNodeAction getPositiveAction() {
 
-			return getAdditionAction(value);
+			return getAdditionAction(getValue());
 		}
 
 		protected GNodeAction getNegativeAction() {
 
-			return getRemovalAction(value);
-		}
-
-		protected GCellDisplay getDisplay() {
-
-			return EntityDisplays.get().get(value);
+			return getRemovalAction(getValue());
 		}
 
 		ValueNode(CFrame value) {
 
-			super(tree);
+			super(tree, value);
+		}
 
-			this.value = value;
+		GCellDisplay getDefaultDisplay() {
+
+			return EntityDisplays.get().get(getValue());
 		}
 	}
 

@@ -141,6 +141,6 @@ abstract class GCellDisplaySortedList<E>  {
 
 	private String getLabel(E element) {
 
-		return getDisplay(element).getLabel();
+		return getDisplay(element).getText();
 	}
 }
