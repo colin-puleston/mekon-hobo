@@ -24,90 +24,32 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import java.awt.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
  * @author Colin Puleston
  */
-class IFrameNode extends IValueNode<IFrame> {
+abstract class INode extends GNode {
 
 	private ITree tree;
-	private ValueNodes valueNodes;
 
-	private class SlotNodeCreator extends CValueVisitor {
+	protected GCellDisplay getDisplay() {
 
-		private ISlot slot;
-		private ISlotNode created = null;
+		GCellDisplay display = getDefaultDisplay();
 
-		protected void visit(CFrame type) {
+		tree.getUpdateMarker().checkMark(this, display);
 
-			created = new IFrameSlotNode(tree, slot);
-		}
-
-		protected void visit(CNumber type) {
-
-			created = new INumberSlotNode(tree, slot);
-		}
-
-		protected void visit(MFrame type) {
-
-			created = new CFrameSlotNode(tree, slot);
-		}
-
-		SlotNodeCreator(ISlot slot) {
-
-			this.slot = slot;
-		}
-
-		ISlotNode create() {
-
-			visit(slot.getValueType());
-
-			return created;
-		}
+		return display;
 	}
 
-	private class ValueNodes extends KListDerivedChildNodes<ISlot> {
+	INode(ITree tree) {
 
-		ValueNodes() {
-
-			super(IFrameNode.this, getValue().getSlots());
-		}
-
-		boolean childNodeRequiredFor(ISlot slot) {
-
-			return slot.getType().active();
-		}
-
-		GNode createChildNode(ISlot slot) {
-
-			return new SlotNodeCreator(slot).create();
-		}
-	}
-
-	protected void addInitialChildren() {
-
-		valueNodes.addInitialChildNodes();
-	}
-
-	protected boolean orderedChildren() {
-
-		return true;
-	}
-
-	IFrameNode(ITree tree, IFrame iFrame) {
-
-		super(tree, iFrame);
+		super(tree);
 
 		this.tree = tree;
-
-		valueNodes = new ValueNodes();
 	}
 
-	GCellDisplay getDefaultDisplay() {
-
-		return EntityDisplays.get().get(getValue());
-	}
+	abstract GCellDisplay getDefaultDisplay();
 }

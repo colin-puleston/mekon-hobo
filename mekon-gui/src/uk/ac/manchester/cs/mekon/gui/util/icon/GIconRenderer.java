@@ -31,7 +31,7 @@ import java.awt.*;
  */
 public abstract class GIconRenderer {
 
-	static private final Color LINE_COLOR = Color.BLACK;
+	static private final Color LINE_CLR = Color.BLACK;
 
 	private Color fillColour;
 	private int width;
@@ -105,7 +105,7 @@ public abstract class GIconRenderer {
 
 		if (drawEnabled) {
 
-			g.setColor(LINE_COLOR);
+			g.setColor(LINE_CLR);
 			draw(g, x, y, width, height);
 		}
 

@@ -85,7 +85,12 @@ class EntityDisplays {
 
 	GCellDisplay get(String label, Icon icon, FontStyle fontStyle) {
 
-		return new GCellDisplay(label, icon, fontStyle.getStyleId());
+		GCellDisplay display = new GCellDisplay(label);
+
+		display.setIcon(icon);
+		display.setFontStyleId(fontStyle.getStyleId());
+
+		return display;
 	}
 
 	GCellDisplay forCSlotValues(CIdentity slotId) {

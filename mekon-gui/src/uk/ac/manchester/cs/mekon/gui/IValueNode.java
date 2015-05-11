@@ -26,71 +26,22 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
-
 /**
  * @author Colin Puleston
  */
-class INumberSlotNode extends ISlotNode {
+abstract class IValueNode<V extends IValue> extends INode {
 
-	private ITree tree;
-	private ISlot slot;
+	private V value;
 
-	private class ValueNode extends IValueNode<INumber> {
+	IValueNode(ITree tree, V value) {
 
-		protected GNodeAction getNegativeAction() {
+		super(tree);
 
-			return getRemoveValueAction(getValue());
-		}
-
-		ValueNode(INumber number) {
-
-			super(tree, number);
-		}
-
-		GCellDisplay getDefaultDisplay() {
-
-			return EntityDisplays.get().get(getValue());
-		}
+		this.value = value;
 	}
 
-	INumberSlotNode(ITree tree, ISlot slot) {
+	V getValue() {
 
-		super(tree, slot);
-
-		this.tree = tree;
-		this.slot = slot;
-	}
-
-	GNode createValueNode(IValue value) {
-
-		return new ValueNode(asINumber(value));
-	}
-
-	IValue checkObtainValue() {
-
-		return createSelector().getSelectionOrNull();
-	}
-
-	private INumberSelector createSelector() {
-
-		boolean rangeEnabled = abstractEditableSlot();
-
-		return new INumberSelector(tree, getValueType(), rangeEnabled);
-	}
-
-	private INumber asINumber(IValue value) {
-
-		return getValueType().castValue(value);
-	}
-
-	private CNumber getValueType() {
-
-		return slot.getValueType().castAs(CNumber.class);
-	}
-
-	private boolean abstractEditableSlot() {
-
-		return slot.getEditability().abstractEditable();
+		return value;
 	}
 }

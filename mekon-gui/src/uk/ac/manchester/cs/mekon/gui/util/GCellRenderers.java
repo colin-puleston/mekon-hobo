@@ -69,7 +69,9 @@ class GCellRenderers {
 			super.getTreeCellRendererComponent(
 					tree, value, sel, expanded, leaf, row, hasFocus);
 
-			customiseDisplayLabel(this, ((GNode)value).getDisplay());
+			GCellDisplay display = ((GNode)value).getDisplay();
+
+			display.configureLabel(this);
 
 			return this;
 		}
@@ -80,7 +82,7 @@ class GCellRenderers {
 		static private final long serialVersionUID = -1;
 
 		public Component getListCellRendererComponent(
-							JList list,
+							JList<?> list,
 							Object value,
 							int index,
 							boolean isSelected,
@@ -90,21 +92,9 @@ class GCellRenderers {
 			JLabel label = (JLabel)super.getListCellRendererComponent(
 									list, value, index, isSelected, cellHasFocus);
 
-			customiseDisplayLabel(label, display);
-			label.setText(display.getLabel());
+			display.configureLabel(label);
 
 			return label;
 		}
-	}
-
-	private void customiseDisplayLabel(JLabel label, GCellDisplay display) {
-
-		label.setFont(customiseDisplayFont(label.getFont(), display));
-		label.setIcon(display.getIcon());
-	}
-
-	private Font customiseDisplayFont(Font font, GCellDisplay display) {
-
-		return display.customiseFont(GFonts.toLarge(font));
 	}
 }

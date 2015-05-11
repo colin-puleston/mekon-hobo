@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.gui.util;
 
-import java.awt.Font;
+import java.awt.*;
 import javax.swing.*;
 
 /**
@@ -34,40 +34,63 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	static public final GCellDisplay NO_DISPLAY = new GCellDisplay("");
 
-	private String label;
-	private Icon icon;
-	private int fontStyleId;
+	private String text;
+	private Color textColour;
+	private int fontStyleId = Font.PLAIN;
+	private Icon icon = null;
 
 	public GCellDisplay(GCellDisplay template) {
 
-		this(template.label, template.icon, template.fontStyleId);
+		this(template.text);
+
+		textColour = template.textColour;
+		fontStyleId = template.fontStyleId;
+		icon = template.icon;
 	}
 
-	public GCellDisplay(String label) {
+	public GCellDisplay(String text) {
 
-		this(label, null);
-	}
-
-	public GCellDisplay(String label, Icon icon) {
-
-		this(label, icon, Font.PLAIN);
-	}
-
-	public GCellDisplay(String label, Icon icon, int fontStyleId) {
-
-		this.label = label;
-		this.icon = icon;
-		this.fontStyleId = fontStyleId;
+		this.text = text;
 	}
 
 	public int compareTo(GCellDisplay other) {
 
-		return label.toLowerCase().compareTo(other.label.toLowerCase());
+		return text.toLowerCase().compareTo(other.text.toLowerCase());
 	}
 
-	public String getLabel() {
+	public void setText(String text) {
 
-		return label;
+		this.text = text;
+	}
+
+	public void setTextColour(Color textColour) {
+
+		this.textColour = textColour;
+	}
+
+	public void setFontStyleId(int fontStyleId) {
+
+		this.fontStyleId = fontStyleId;
+	}
+
+	public void setIcon(Icon icon) {
+
+		this.icon = icon;
+	}
+
+	public String getText() {
+
+		return text;
+	}
+
+	public Color getTextColour() {
+
+		return textColour;
+	}
+
+	public int getFontStyleId() {
+
+		return fontStyleId;
 	}
 
 	public Icon getIcon() {
@@ -75,8 +98,16 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		return icon;
 	}
 
-	public Font customiseFont(Font font) {
+	void configureLabel(JLabel label) {
 
-		return font.deriveFont(fontStyleId);
+		label.setText(text);
+		label.setFont(configureFont(label.getFont()));
+		label.setIcon(icon);
+		label.setForeground(textColour);
+	}
+
+	private Font configureFont(Font font) {
+
+		return GFonts.toLarge(font).deriveFont(fontStyleId);
 	}
 }
