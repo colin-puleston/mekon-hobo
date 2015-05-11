@@ -44,7 +44,7 @@ public class GTriangleRenderer extends GIconRenderer {
 
 			int[] getYs(int y, int height) {
 
-				return new int[]{y, y + height, y};
+				return new int[]{y + height, y, y + height};
 			}
 		},
 
@@ -57,7 +57,7 @@ public class GTriangleRenderer extends GIconRenderer {
 
 			int[] getYs(int y, int height) {
 
-				return new int[]{y + height, y, y + height};
+				return new int[]{y, y + height, y};
 			}
 		},
 

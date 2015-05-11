@@ -49,5 +49,5 @@ interface EntityIconConstants {
 	static final int HIDDEN_FRAME_MARKER_HEIGHT = 4;
 	static final int CURBED_SLOT_MARKER_WIDTH = 4;
 	static final int CURBED_SLOT_MARKER_HEIGHT = ENTITY_SIZE;
-	static final int FREED_SLOT_MARKER_SIZE = 6;
+	static final int FREED_SLOT_MARKER_SIZE = 8;
 }

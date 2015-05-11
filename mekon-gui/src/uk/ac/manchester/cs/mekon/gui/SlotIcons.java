@@ -33,13 +33,8 @@ import uk.ac.manchester.cs.mekon.gui.util.icon.*;
  */
 abstract class SlotIcons extends EntityIconsBySource {
 
-	static final int BLOCK_MARKER_OFFSET = getNonCurbMarkerSize();
-	static final int CHOP_MARKER_OFFSET = getNonCurbMarkerSize() / 2;
-
-	static private int getNonCurbMarkerSize() {
-
-		return ENTITY_SIZE - CURBED_SLOT_MARKER_WIDTH;
-	}
+	static final int BLOCK_MARKER_OFFSET = ENTITY_SIZE;
+	static final int CHOP_MARKER_OFFSET = (ENTITY_SIZE - CURBED_SLOT_MARKER_WIDTH) / 2;
 
 	static GIconRenderer createCurbMarkerRenderer(Color colour, int offset) {
 
