@@ -36,8 +36,8 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 class ITreeUpdateMarker {
 
-	static final Color PRIMARY_UPDATE_CLR = Color.blue;
-	static final Color SECONDARY_UPDATE_CLR = Color.green.darker().darker();
+	static final Color DIRECT_UPDATES_CLR = Color.blue;
+	static final Color INDIRECT_UPDATES_CLR = Color.green.darker().darker();
 
 	private INode rootNode = null;
 	private Map<INode, GNodeState> nodeStates = null;
@@ -109,9 +109,9 @@ class ITreeUpdateMarker {
 
 	void checkMark(INode node, GCellDisplay display) {
 
-		if (requiresMarker(node)) {
+		if (requiresMark(node)) {
 
-			display.setTextColour(getMarkerColour(node));
+			display.setTextColour(getMarkColour(node));
 		}
 	}
 
@@ -125,7 +125,7 @@ class ITreeUpdateMarker {
 		}
 	}
 
-	private boolean requiresMarker(INode node) {
+	private boolean requiresMark(INode node) {
 
 		if (nodeStates == null) {
 
@@ -145,11 +145,9 @@ class ITreeUpdateMarker {
 		return node.collapsed() && newOrUpdatedDescendants(node);
 	}
 
-	private Color getMarkerColour(INode node) {
+	private Color getMarkColour(INode node) {
 
-		return directlyUpdated(node)
-				? PRIMARY_UPDATE_CLR
-				: SECONDARY_UPDATE_CLR;
+		return directlyUpdated(node) ? DIRECT_UPDATES_CLR : INDIRECT_UPDATES_CLR;
 	}
 
 	private boolean directlyUpdated(INode node) {
