@@ -57,6 +57,30 @@ public class Job extends DObjectShell {
 		}
 	}
 
+	private class WeeklyPayValueTypeRestorer implements ISlotListener {
+
+		public void onUpdatedValueType(CValue<?> valueType) {
+
+			CNumber payRange = getWeeklyPayRange();
+
+			if (!valueType.equals(payRange)) {
+
+				setWeeklyPayValueType(payRange);
+			}
+		}
+
+		public void onUpdatedActiveStatus(boolean active) {
+		}
+
+		public void onUpdatedEditability(CEditability editability) {
+		}
+
+		WeeklyPayValueTypeRestorer() {
+
+			weeklyPay.getSlot().addListener(this);
+		}
+	}
+
 	private class Initialiser implements DObjectInitialiser {
 
 		public void initialise() {
@@ -64,6 +88,7 @@ public class Job extends DObjectShell {
 			updateWeeklyPayValueType();
 
 			new WeeklyPayUpdater();
+			new WeeklyPayValueTypeRestorer();
 		}
 	}
 
@@ -106,7 +131,12 @@ public class Job extends DObjectShell {
 
 	private void updateWeeklyPayValueType() {
 
-		getWeeklyPaySlotEditor().setValueType(getWeeklyPayRange());
+		setWeeklyPayValueType(getWeeklyPayRange());
+	}
+
+	private void setWeeklyPayValueType(CNumber valueType) {
+
+		getWeeklyPaySlotEditor().setValueType(valueType);
 	}
 
 	private CNumber getWeeklyPayRange() {
