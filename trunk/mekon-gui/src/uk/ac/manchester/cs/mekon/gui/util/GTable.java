@@ -58,7 +58,7 @@ public class GTable extends JTable {
 		}
 	}
 
-	private class CellRenderer extends DefaultTableCellRenderer {
+	private class CellRenderer implements TableCellRenderer {
 
 		static private final long serialVersionUID = -1;
 
@@ -70,19 +70,26 @@ public class GTable extends JTable {
 								int row,
 								int column) {
 
-			JLabel label = (JLabel)super.getTableCellRendererComponent(
-									table, value, isSelected, hasFocus, row, column);
+			JLabel label = new JLabel();
 
 			setCellAttributes(label);
 
-			if (value instanceof Icon) {
+			if (value instanceof JLabel) {
 
-				label.setIcon((Icon)value);
+				JLabel sourceLabel = (JLabel)value;
+
+				label.setText(sourceLabel.getText());
+				label.setIcon(sourceLabel.getIcon());
+				label.setForeground(sourceLabel.getForeground());
+			}
+			else if (value instanceof Icon) {
+
 				label.setText("");
+				label.setIcon((Icon)value);
 			}
 			else {
 
-				label.setIcon(null);
+				label.setText(value.toString());
 			}
 
 			return label;

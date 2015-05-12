@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.awt.Color;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -218,7 +219,7 @@ class HelpPanel extends JTabbedPane {
 				super("Shape Modifiers");
 
 				addColumns(
-					"Shape With/Without Modifier",
+					"Shape + or - Modifier",
 					"Entity Types",
 					"Entity State");
 
@@ -463,20 +464,40 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		private class DynamicLabelModifiersPanel extends SectionPanel {
+		private class LabelColoursPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
 
-			DynamicLabelModifiersPanel() {
+			LabelColoursPanel() {
 
-				super("Dynamic Label Modifiers");
+				super("Label Colours");
 
-				addColumns("Entity Types", "Label Modifier", "Denotes");
+				addColumns("Entity Types", "Colour", "Denotes");
 
 				addRow(
 					"ALL",
-					"", //ITree.UPDATED_NODE_MARKER,
-					"Entity, or non-visible descendant(s), affected by latest action");
+					getColouredLabel(ITreeUpdateMarker.DIRECT_UPDATES_CLR),
+					"Entity, or non-visible descendant(s), "
+						+ " directly affected by latest action");
+				addRow(
+					"ALL",
+					getColouredLabel(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
+					"Entity, or non-visible descendant(s), "
+						+ " indirectly affected by latest action");
+				addRow(
+					"ALL",
+					getColouredLabel(null),
+					"Entity, and non-visible descendant(s), "
+						+ " unaffected by latest action");
+			}
+
+			private JLabel getColouredLabel(Color colour) {
+
+				JLabel label = new JLabel("LABEL");
+
+				label.setForeground(colour);
+
+				return label;
 			}
 		}
 
@@ -486,7 +507,7 @@ class HelpPanel extends JTabbedPane {
 
 			new TreeSemanticsPanel();
 			new ActionsPanel();
-			new DynamicLabelModifiersPanel();
+			new LabelColoursPanel();
 		}
 	}
 
