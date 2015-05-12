@@ -70,21 +70,24 @@ public class GTable extends JTable {
 								int row,
 								int column) {
 
-			JLabel label = new JLabel();
+			JLabel label = getLabel(value);
 
 			setCellAttributes(label);
 
+			return label;
+		}
+
+		private JLabel getLabel(Object value) {
+
 			if (value instanceof JLabel) {
 
-				JLabel sourceLabel = (JLabel)value;
-
-				label.setText(sourceLabel.getText());
-				label.setIcon(sourceLabel.getIcon());
-				label.setForeground(sourceLabel.getForeground());
+				return (JLabel)value;
 			}
-			else if (value instanceof Icon) {
 
-				label.setText("");
+			JLabel label = new JLabel();
+
+			if (value instanceof Icon) {
+
 				label.setIcon((Icon)value);
 			}
 			else {
