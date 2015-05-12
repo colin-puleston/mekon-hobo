@@ -53,7 +53,7 @@ class GCellRenderers {
 		list.setCellRenderer(listCellRenderer);
 	}
 
-	private class GTreeCellRenderer extends DefaultTreeCellRenderer {
+	private class GTreeCellRenderer implements TreeCellRenderer {
 
 		static private final long serialVersionUID = -1;
 
@@ -66,35 +66,42 @@ class GCellRenderers {
 							int row,
 							boolean hasFocus) {
 
-			super.getTreeCellRendererComponent(
-					tree, value, sel, expanded, leaf, row, hasFocus);
-
-			GCellDisplay display = ((GNode)value).getDisplay();
-
-			display.configureLabel(this);
-
-			return this;
+			return createCellLabel(((GNode)value).getDisplay(), sel);
 		}
 	}
 
-	private class GListCellRenderer extends DefaultListCellRenderer {
+	private class GListCellRenderer implements ListCellRenderer<GCellDisplay> {
 
 		static private final long serialVersionUID = -1;
 
 		public Component getListCellRendererComponent(
-							JList<?> list,
-							Object value,
+							JList<? extends GCellDisplay> list,
+							GCellDisplay value,
 							int index,
-							boolean isSelected,
-							boolean cellHasFocus) {
+							boolean sel,
+							boolean hasFocus) {
 
-			GCellDisplay display = (GCellDisplay)value;
-			JLabel label = (JLabel)super.getListCellRendererComponent(
-									list, value, index, isSelected, cellHasFocus);
-
-			display.configureLabel(label);
-
-			return label;
+			return createCellLabel(value, sel);
 		}
+	}
+
+	private JLabel createCellLabel(GCellDisplay display, boolean selected) {
+
+		JLabel label = new JLabel();
+
+		display.configureLabel(label);
+
+		if (selected) {
+
+			label.setOpaque(true);
+			label.setBackground(getSelectionBackground());
+		}
+
+		return label;
+	}
+
+	private Color getSelectionBackground() {
+
+		return UIManager.getColor("Tree.selectionBackground");
 	}
 }
