@@ -47,7 +47,14 @@ public class Job extends DObjectShell {
 
 		public void onUpdated() {
 
-			update();
+			if (assertionFrame()) {
+
+				updateWeeklyPayValue();
+			}
+			else {
+
+				updateWeeklyPayValueType();
+			}
 		}
 
 		WeeklyPayUpdater() {
@@ -59,13 +66,15 @@ public class Job extends DObjectShell {
 
 	private class WeeklyPayValueTypeRestorer implements ISlotListener {
 
+		private CNumber defaultPayRange = getDynamicWeeklyPayRange();
+
 		public void onUpdatedValueType(CValue<?> valueType) {
 
-			CNumber payRange = getWeeklyPayRange();
+			CNumber reqValueType = getRequiredValueType();
 
-			if (!valueType.equals(payRange)) {
+			if (!valueType.equals(reqValueType)) {
 
-				setWeeklyPayValueType(payRange);
+				setWeeklyPayValueType(reqValueType);
 			}
 		}
 
@@ -78,6 +87,11 @@ public class Job extends DObjectShell {
 		WeeklyPayValueTypeRestorer() {
 
 			weeklyPay.getSlot().addListener(this);
+		}
+
+		private CNumber getRequiredValueType() {
+
+			return assertionFrame() ? defaultPayRange : getDynamicWeeklyPayRange();
 		}
 	}
 
@@ -105,18 +119,6 @@ public class Job extends DObjectShell {
 		builder.addInitialiser(new Initialiser());
 	}
 
-	private void update() {
-
-		if (getFrame().getCategory().assertion()) {
-
-			updateWeeklyPayValue();
-		}
-		else {
-
-			updateWeeklyPayValueType();
-		}
-	}
-
 	private void updateWeeklyPayValue() {
 
 		if (hourlyPay.isSet() && hoursPerWeek.isSet()) {
@@ -131,7 +133,7 @@ public class Job extends DObjectShell {
 
 	private void updateWeeklyPayValueType() {
 
-		setWeeklyPayValueType(getWeeklyPayRange());
+		setWeeklyPayValueType(getDynamicWeeklyPayRange());
 	}
 
 	private void setWeeklyPayValueType(CNumber valueType) {
@@ -139,7 +141,7 @@ public class Job extends DObjectShell {
 		getWeeklyPaySlotEditor().setValueType(valueType);
 	}
 
-	private CNumber getWeeklyPayRange() {
+	private CNumber getDynamicWeeklyPayRange() {
 
 		CNumber pay = getRangeValue(hourlyPay);
 		CNumber hours = getRangeValue(hoursPerWeek);
@@ -171,5 +173,10 @@ public class Job extends DObjectShell {
 	private ISlotEditor getWeeklyPaySlotEditor() {
 
 		return dEditor.getIEditor().getSlotEditor(weeklyPay.getSlot());
+	}
+
+	private boolean assertionFrame() {
+
+		return getFrame().getCategory().assertion();
 	}
 }
