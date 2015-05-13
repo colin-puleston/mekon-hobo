@@ -26,30 +26,34 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
-
 /**
  * @author Colin Puleston
  */
-abstract class INode extends GNode {
+enum NodeTextDisplay {
 
-	private ITree tree;
+	VALUE(Color.darkGray.darker(), Font.BOLD),
+	SLOT(Color.darkGray.darker(), Font.PLAIN),
+	SLOT_VALUE_TYPE_MODIFIER(Color.orange.darker(), Font.PLAIN),
+	SLOT_CARDINALITY_MODIFIER(Color.orange.darker().darker(), Font.PLAIN),
+	SLOT_VALUES(Color.darkGray.darker(), Font.ITALIC),
+	INFO(Color.darkGray.darker(), Font.ITALIC);
 
-	protected GCellDisplay getDisplay() {
+	private Color colour;
+	private int style;
 
-		GCellDisplay display = getDefaultDisplay();
+	Color getColour() {
 
-		tree.getUpdateMarker().checkMark(this, display);
-
-		return display;
+		return colour;
 	}
 
-	INode(ITree tree) {
+	int getStyle() {
 
-		super(tree);
-
-		this.tree = tree;
+		return style;
 	}
 
-	abstract GCellDisplay getDefaultDisplay();
+	private NodeTextDisplay(Color colour, int style) {
+
+		this.colour = colour;
+		this.style = style;
+	}
 }

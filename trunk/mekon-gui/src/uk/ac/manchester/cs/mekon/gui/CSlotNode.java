@@ -43,7 +43,12 @@ class CSlotNode extends GNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return EntityDisplays.get().get(slot);
+		GCellDisplay main = EntityDisplays.get().get(slot);
+		GCellDisplay card = EntityDisplays.get().forSlotCardinalityModifier(slot);
+
+		main.setModifier(card);
+
+		return main;
 	}
 
 	CSlotNode(CTree tree, CSlot slot) {

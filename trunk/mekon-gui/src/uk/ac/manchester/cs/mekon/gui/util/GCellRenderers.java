@@ -66,7 +66,9 @@ class GCellRenderers {
 							int row,
 							boolean hasFocus) {
 
-			return createCellLabel(((GNode)value).getDisplay(), sel);
+			GNode node = (GNode)value;
+
+			return node.getDisplay().createComponent(sel);
 		}
 	}
 
@@ -81,27 +83,7 @@ class GCellRenderers {
 							boolean sel,
 							boolean hasFocus) {
 
-			return createCellLabel(value, sel);
+			return value.createComponent(sel);
 		}
-	}
-
-	private JLabel createCellLabel(GCellDisplay display, boolean selected) {
-
-		JLabel label = new JLabel();
-
-		display.configureLabel(label);
-
-		if (selected) {
-
-			label.setOpaque(true);
-			label.setBackground(getSelectionBackground());
-		}
-
-		return label;
-	}
-
-	private Color getSelectionBackground() {
-
-		return UIManager.getColor("Tree.selectionBackground");
 	}
 }

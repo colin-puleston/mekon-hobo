@@ -26,17 +26,30 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
+import uk.ac.manchester.cs.mekon.gui.util.*;
+
 /**
  * @author Colin Puleston
  */
-abstract class IValueNode<V extends IValue> extends INode {
+abstract class IValueNode<V extends IValue> extends GNode {
 
+	private ITree tree;
 	private V value;
+
+	protected GCellDisplay getDisplay() {
+
+		GCellDisplay display = getDefaultDisplay();
+
+		tree.getUpdateMarker().checkMarkForGeneralUpdate(this, display);
+
+		return display;
+	}
 
 	IValueNode(ITree tree, V value) {
 
 		super(tree);
 
+		this.tree = tree;
 		this.value = value;
 	}
 
@@ -44,4 +57,6 @@ abstract class IValueNode<V extends IValue> extends INode {
 
 		return value;
 	}
+
+	abstract GCellDisplay getDefaultDisplay();
 }

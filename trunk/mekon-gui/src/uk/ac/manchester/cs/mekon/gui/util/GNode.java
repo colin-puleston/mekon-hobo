@@ -122,16 +122,6 @@ public abstract class GNode extends GMutableTreeNode {
 		getTreeModel().nodeChanged(this);
 	}
 
-	public String toString() {
-
-		return tree.decorateNodeLabel(this, getLabel());
-	}
-
-	public String getLabel() {
-
-		return getDisplay().getText();
-	}
-
 	public GNode getParent() {
 
 		return parent;

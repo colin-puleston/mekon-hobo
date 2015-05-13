@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class ISlotNode extends INode {
+abstract class ISlotNode extends GNode {
 
 	private ITree tree;
 	private ISlot slot;
@@ -129,6 +129,23 @@ abstract class ISlotNode extends INode {
 		return new ClearValuesAction();
 	}
 
+	protected GCellDisplay getDisplay() {
+
+		GCellDisplay main = EntityDisplays.get().get(slot);
+		GCellDisplay valType = EntityDisplays.get().forSlotValueTypeModifier(slot);
+		GCellDisplay card = EntityDisplays.get().forSlotCardinalityModifier(slot);
+
+		main.setModifier(valType);
+		valType.setModifier(card);
+
+		ITreeUpdateMarker updateMarker = tree.getUpdateMarker();
+
+		updateMarker.checkMarkForGeneralUpdate(this, main);
+		updateMarker.checkMarkForSlotValueTypeUpdate(this, valType);
+
+		return main;
+	}
+
 	ISlotNode(ITree tree, ISlot slot) {
 
 		super(tree);
@@ -164,9 +181,9 @@ abstract class ISlotNode extends INode {
 					: GNodeAction.INERT_ACTION;
 	}
 
-	GCellDisplay getDefaultDisplay() {
+	ISlot getISlot() {
 
-		return EntityDisplays.get().get(slot);
+		return slot;
 	}
 
 	private void clearValues() {

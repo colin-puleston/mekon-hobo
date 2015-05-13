@@ -44,77 +44,97 @@ class EntityDisplays {
 		return singleton;
 	}
 
-	final GCellDisplay fixedValuesDisplay = createFixedValuesDisplay();
+	final GCellDisplay fixedValuesDisplay = forFixedValues();
 
 	private EntityIcons icons = EntityIcons.get();
 
 	GCellDisplay get(IFrame frame) {
 
-		return getValueDisplay(frame, icons.get(frame));
+		return forValue(frame, icons.get(frame));
 	}
 
 	GCellDisplay get(INumber number) {
 
-		return getValueDisplay(number, icons.get(number));
+		return forValue(number, icons.get(number));
 	}
 
 	GCellDisplay get(CFrame frame) {
 
-		return getValueDisplay(frame, icons.get(frame));
+		return forValue(frame, icons.get(frame));
 	}
 
 	GCellDisplay get(CNumber number) {
 
-		return getValueDisplay(number, icons.get(number));
+		return forValue(number, icons.get(number));
 	}
 
 	GCellDisplay get(MFrame frame) {
 
-		return getValueDisplay(frame, icons.get(frame));
+		return forValue(frame, icons.get(frame));
 	}
 
 	GCellDisplay get(CSlot slot) {
 
-		return getSlotDisplay(slot, icons.get(slot), false);
+		return forSlot(slot, icons.get(slot));
 	}
 
 	GCellDisplay get(ISlot slot) {
 
-		return getSlotDisplay(slot.getType(), icons.get(slot), true);
+		return forSlot(slot.getType(), icons.get(slot));
 	}
 
-	GCellDisplay get(String label, Icon icon, FontStyle fontStyle) {
+	GCellDisplay get(String label, Icon icon, NodeTextDisplay textDisplay) {
 
 		GCellDisplay display = new GCellDisplay(label);
 
 		display.setIcon(icon);
-		display.setFontStyleId(fontStyle.getStyleId());
+		display.setTextColour(textDisplay.getColour());
+		display.setFontStyle(textDisplay.getStyle());
 
 		return display;
 	}
 
 	GCellDisplay forCSlotValues(CIdentity slotId) {
 
-		return get(slotId.getLabel(), icons.forCSlotValues(), FontStyle.LINK);
+		return get(slotId.getLabel(), icons.forCSlotValues(), NodeTextDisplay.SLOT);
 	}
 
-	private GCellDisplay getValueDisplay(FEntity value, Icon icon) {
+	GCellDisplay forSlotValueTypeModifier(CSlot slot) {
 
-		return get(value.getDisplayLabel(), icon, FontStyle.NODE);
+		String label = SlotLabelModifiers.forValueType(slot);
+
+		return get(label, null, NodeTextDisplay.SLOT_VALUE_TYPE_MODIFIER);
 	}
 
-	private GCellDisplay getSlotDisplay(CSlot slot, Icon icon, boolean forISlot) {
+	GCellDisplay forSlotCardinalityModifier(CSlot slot) {
 
-		return get(getSlotLabel(slot, forISlot), icon, FontStyle.LINK);
+		String label = SlotLabelModifiers.forCardinality(slot);
+
+		return get(label, null, NodeTextDisplay.SLOT_CARDINALITY_MODIFIER);
 	}
 
-	private String getSlotLabel(CSlot slot, boolean forISlot) {
+	GCellDisplay forSlotValueTypeModifier(ISlot slot) {
 
-		return new SlotLabeller(slot).get(forISlot);
+		return forSlotValueTypeModifier(slot.getType());
 	}
 
-	private GCellDisplay createFixedValuesDisplay() {
+	GCellDisplay forSlotCardinalityModifier(ISlot slot) {
 
-		return get(FIXED_VALUES_LABEL, null, FontStyle.LINK_INFO);
+		return forSlotCardinalityModifier(slot.getType());
+	}
+
+	private GCellDisplay forValue(FEntity value, Icon icon) {
+
+		return get(value.getDisplayLabel(), icon, NodeTextDisplay.VALUE);
+	}
+
+	private GCellDisplay forSlot(CSlot slot, Icon icon) {
+
+		return get(slot.getDisplayLabel(), icon, NodeTextDisplay.SLOT);
+	}
+
+	private GCellDisplay forFixedValues() {
+
+		return get(FIXED_VALUES_LABEL, null, NodeTextDisplay.SLOT_VALUES);
 	}
 }

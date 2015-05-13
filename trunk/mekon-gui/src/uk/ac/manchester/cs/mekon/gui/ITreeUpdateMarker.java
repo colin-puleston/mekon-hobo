@@ -39,33 +39,31 @@ class ITreeUpdateMarker {
 	static final Color DIRECT_UPDATES_CLR = Color.blue;
 	static final Color INDIRECT_UPDATES_CLR = Color.green.darker().darker();
 
-	private INode rootNode = null;
-	private Map<INode, GNodeState> nodeStates = null;
+	private GNode rootNode = null;
+	private Map<GNode, GNodeState> nodeStates = null;
 
 	private ISlotNode updatedSlotNode = null;
 	private IValue addedValue = null;
 
 	private class GNodeState {
 
-		private String label;
-		private List<INode> children;
+		private List<GNode> children;
 
-		GNodeState(INode node) {
+		GNodeState(GNode node) {
 
-			label = getLabel(node);
-			children = getChildren(node);
+			children = node.getChildren();
 		}
 
-		boolean updated(INode node) {
+		boolean updated(GNode node) {
 
-			return !label.equals(getLabel(node)) || missingChildren(node);
+			return missingChildren(node);
 		}
 
-		private boolean missingChildren(INode node) {
+		boolean missingChildren(GNode node) {
 
-			List<INode> currentChildren = getChildren(node);
+			List<GNode> currentChildren = node.getChildren();
 
-			for (INode child : children) {
+			for (GNode child : children) {
 
 				if (!currentChildren.contains(child)) {
 
@@ -77,7 +75,34 @@ class ITreeUpdateMarker {
 		}
 	}
 
-	void initialise(INode rootNode) {
+	private class ISlotNodeState extends GNodeState {
+
+		private CValue<?> valueType;
+
+		ISlotNodeState(ISlotNode node) {
+
+			super(node);
+
+			valueType = getValueType(node);
+		}
+
+		boolean updated(GNode node) {
+
+			return super.updated(node) || updatedValueType((ISlotNode)node);
+		}
+
+		boolean updatedValueType(ISlotNode node) {
+
+			return !getValueType(node).equals(valueType);
+		}
+
+		private CValue<?> getValueType(ISlotNode node) {
+
+			return node.getISlot().getType().getValueType();
+		}
+	}
+
+	void initialise(GNode rootNode) {
 
 		this.rootNode = rootNode;
 	}
@@ -97,7 +122,7 @@ class ITreeUpdateMarker {
 
 		if (nodeStates == null) {
 
-			nodeStates = new HashMap<INode, GNodeState>();
+			nodeStates = new HashMap<GNode, GNodeState>();
 		}
 		else {
 
@@ -107,25 +132,43 @@ class ITreeUpdateMarker {
 		addNodeStates(rootNode);
 	}
 
-	void checkMark(INode node, GCellDisplay display) {
+	void checkMarkForGeneralUpdate(GNode node, GCellDisplay display) {
 
-		if (requiresMark(node)) {
+		if (requiresGeneralUpdateMark(node)) {
 
-			display.setTextColour(getMarkColour(node));
+			markForUpdate(node, display);
 		}
 	}
 
-	private void addNodeStates(INode node) {
+	void checkMarkForSlotValueTypeUpdate(ISlotNode node, GCellDisplay display) {
 
-		nodeStates.put(node, new GNodeState(node));
+		if (requiresSlotValueTypeUpdateMark(node)) {
 
-		for (INode child : getChildren(node)) {
+			markForUpdate(node, display);
+		}
+	}
+
+	private void addNodeStates(GNode node) {
+
+		nodeStates.put(node, createNodeState(node));
+
+		for (GNode child : node.getChildren()) {
 
 			addNodeStates(child);
 		}
 	}
 
-	private boolean requiresMark(INode node) {
+	private GNodeState createNodeState(GNode node) {
+
+		if (node instanceof ISlotNode) {
+
+			return new ISlotNodeState((ISlotNode)node);
+		}
+
+		return new GNodeState(node);
+	}
+
+	private boolean requiresGeneralUpdateMark(GNode node) {
 
 		if (nodeStates == null) {
 
@@ -137,7 +180,7 @@ class ITreeUpdateMarker {
 			return false;
 		}
 
-		if (newOrUpdated(node)) {
+		if (newOrMissingChildren(node)) {
 
 			return true;
 		}
@@ -145,21 +188,38 @@ class ITreeUpdateMarker {
 		return node.collapsed() && newOrUpdatedDescendants(node);
 	}
 
-	private Color getMarkColour(INode node) {
+	private boolean requiresSlotValueTypeUpdateMark(ISlotNode node) {
+
+		if (nodeStates == null) {
+
+			return false;
+		}
+
+		ISlotNodeState state = (ISlotNodeState)nodeStates.get(node);
+
+		return state != null && state.updatedValueType(node);
+	}
+
+	private void markForUpdate(GNode node, GCellDisplay display) {
+
+		display.setTextColour(getMarkColour(node));
+	}
+
+	private Color getMarkColour(GNode node) {
 
 		return directlyUpdated(node) ? DIRECT_UPDATES_CLR : INDIRECT_UPDATES_CLR;
 	}
 
-	private boolean directlyUpdated(INode node) {
+	private boolean directlyUpdated(GNode node) {
 
 		if (node.equals(updatedSlotNode)) {
 
 			return true;
 		}
 
-		if (node instanceof IValueNode) {
+		if (node instanceof IValueNode<?>) {
 
-			IValueNode<?> valueNode = (IValueNode)node;
+			IValueNode<?> valueNode = (IValueNode<?>)node;
 
 			return valueNode.getValue().equals(addedValue);
 		}
@@ -167,16 +227,16 @@ class ITreeUpdateMarker {
 		return false;
 	}
 
-	private boolean newParent(INode node) {
+	private boolean newParent(GNode node) {
 
-		INode parent = (INode)node.getParent();
+		GNode parent = node.getParent();
 
 		return parent != null && nodeStates.get(parent) == null;
 	}
 
-	private boolean newOrUpdatedDescendants(INode node) {
+	private boolean newOrUpdatedDescendants(GNode node) {
 
-		for (INode child : getChildren(node)) {
+		for (GNode child : node.getChildren()) {
 
 			if (newOrUpdated(child) || newOrUpdatedDescendants(child)) {
 
@@ -187,27 +247,17 @@ class ITreeUpdateMarker {
 		return false;
 	}
 
-	private boolean newOrUpdated(INode node) {
+	private boolean newOrUpdated(GNode node) {
 
 		GNodeState state = nodeStates.get(node);
 
 		return state == null || state.updated(node);
 	}
 
-	private String getLabel(INode node) {
+	private boolean newOrMissingChildren(GNode node) {
 
-		return node.getDefaultDisplay().getText();
-	}
+		GNodeState state = nodeStates.get(node);
 
-	private List<INode> getChildren(INode node) {
-
-		List<INode> children = new ArrayList<INode>();
-
-		for (GNode child : node.getChildren()) {
-
-			children.add((INode)child);
-		}
-
-		return children;
+		return state == null || state.missingChildren(node);
 	}
 }

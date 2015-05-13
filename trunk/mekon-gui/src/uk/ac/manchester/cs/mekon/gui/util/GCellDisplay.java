@@ -34,17 +34,21 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	static public final GCellDisplay NO_DISPLAY = new GCellDisplay("");
 
+	static private final int SEPARATOR_WIDTH = 5;
+
 	private String text;
-	private Color textColour;
-	private int fontStyleId = Font.PLAIN;
+	private Color textColour = null;
+	private int fontStyle = Font.PLAIN;
 	private Icon icon = null;
+
+	private GCellDisplay modifier = null;
 
 	public GCellDisplay(GCellDisplay template) {
 
 		this(template.text);
 
 		textColour = template.textColour;
-		fontStyleId = template.fontStyleId;
+		fontStyle = template.fontStyle;
 		icon = template.icon;
 	}
 
@@ -58,6 +62,11 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		return text.toLowerCase().compareTo(other.text.toLowerCase());
 	}
 
+	public void setModifier(GCellDisplay modifier) {
+
+		this.modifier = modifier;
+	}
+
 	public void setText(String text) {
 
 		this.text = text;
@@ -68,9 +77,9 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		this.textColour = textColour;
 	}
 
-	public void setFontStyleId(int fontStyleId) {
+	public void setFontStyle(int fontStyle) {
 
-		this.fontStyleId = fontStyleId;
+		this.fontStyle = fontStyle;
 	}
 
 	public void setIcon(Icon icon) {
@@ -88,9 +97,9 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		return textColour;
 	}
 
-	public int getFontStyleId() {
+	public int getFontStyle() {
 
-		return fontStyleId;
+		return fontStyle;
 	}
 
 	public Icon getIcon() {
@@ -98,16 +107,79 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		return icon;
 	}
 
-	void configureLabel(JLabel label) {
+	JComponent createComponent(boolean selected) {
 
-		label.setText(text);
-		label.setFont(configureFont(label.getFont()));
-		label.setIcon(icon);
-		label.setForeground(textColour);
+		return modifier == null
+				? createLabel(selected)
+				: createCompoundComponent(selected);
 	}
 
-	private Font configureFont(Font font) {
+	private JComponent createCompoundComponent(boolean selected) {
 
-		return GFonts.toLarge(font).deriveFont(fontStyleId);
+		Box comp = Box.createHorizontalBox();
+
+		comp.add(createLabel(selected));
+		modifier.addModifierLabels(comp, selected);
+
+		return comp;
+	}
+
+	private JLabel createLabel(boolean selected) {
+
+		JLabel label = new JLabel();
+
+		label.setText(text);
+		label.setFont(deriveFont(label.getFont()));
+		label.setIcon(icon);
+		label.setForeground(textColour);
+
+		if (checkSetBackground(label, selected)) {
+
+			label.setOpaque(true);
+		}
+
+		return label;
+	}
+
+	private void addModifierLabels(Box comp, boolean selected) {
+
+		comp.add(createSeparator(selected));
+		comp.add(createLabel(selected));
+
+		if (modifier != null) {
+
+			modifier.addModifierLabels(comp, selected);
+		}
+	}
+
+	private Component createSeparator(boolean selected) {
+
+		Component sep = Box.createHorizontalStrut(SEPARATOR_WIDTH);
+
+		checkSetBackground(sep, selected);
+
+		return sep;
+	}
+
+	private boolean checkSetBackground(Component comp, boolean selected) {
+
+		if (selected) {
+
+			comp.setBackground(getSelectionBackground());
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private Font deriveFont(Font font) {
+
+		return GFonts.toLarge(font).deriveFont(fontStyle);
+	}
+
+	private Color getSelectionBackground() {
+
+		return UIManager.getColor("Tree.selectionBackground");
 	}
 }

@@ -302,7 +302,7 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					"CSlot, ISlot",
-					SlotLabeller.getCardinalityModifier(card, singleType),
+					SlotLabelModifiers.forCardinality(card, singleType),
 					"Cardinality = " + card
 					+ extraModifier);
 			}
@@ -311,7 +311,7 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					"ISlot",
-					SlotLabeller.modifyForValueLevel("VALUE-TYPE", conceptLevel),
+					SlotLabelModifiers.forValueType("VALUE-TYPE", conceptLevel),
 					"Slot is " + valueType + "-valued with specified value-type");
 			}
 		}
@@ -477,8 +477,7 @@ class HelpPanel extends JTabbedPane {
 				addRow(
 					"ALL",
 					getColouredLabel(ITreeUpdateMarker.DIRECT_UPDATES_CLR),
-					"Entity, or non-visible descendant(s), "
-						+ " directly affected by latest action");
+					"Entity directly affected by latest action");
 				addRow(
 					"ALL",
 					getColouredLabel(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),

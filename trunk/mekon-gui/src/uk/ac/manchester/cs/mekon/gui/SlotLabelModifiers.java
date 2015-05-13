@@ -24,27 +24,50 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.Font;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-enum FontStyle {
+class SlotLabelModifiers {
 
-	NODE(Font.BOLD),
-	LINK(Font.PLAIN),
-	LINK_INFO(Font.ITALIC),
-	GENERAL_INFO(Font.PLAIN);
+	static String forCardinality(CSlot cSlot) {
 
-	private int styleId;
+		CCardinality cardinality = cSlot.getCardinality();
+		boolean onePossibleValue = cSlot.getValueType().onePossibleValue();
 
-	int getStyleId() {
-
-		return styleId;
+		return forCardinality(cardinality, onePossibleValue);
 	}
 
-	private FontStyle(int styleId) {
+	static String forCardinality(
+					CCardinality cardinality,
+					boolean onePossibleValue) {
 
-		this.styleId = styleId;
+		switch (cardinality) {
+
+			case SINGLE_VALUE:
+				return "[x]";
+
+			case UNIQUE_TYPES:
+				return "[x,y,z]";
+
+			case REPEATABLE_TYPES:
+				return onePossibleValue ? "[x,x,x]" : "[x,x,y]";
+		}
+
+		throw new Error("Unrecognised cardinality value: " + cardinality);
+	}
+
+	static String forValueType(CSlot cSlot) {
+
+		CValue<?> valueType = cSlot.getValueType();
+		boolean conceptValued = valueType instanceof MFrame;
+
+		return forValueType(valueType.getDisplayLabel(), conceptValued);
+	}
+
+	static String forValueType(String valueType, boolean conceptValued) {
+
+		return conceptValued ? "(" + valueType + ")" : "<" + valueType + ">";
 	}
 }

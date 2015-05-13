@@ -43,7 +43,7 @@ class CFrameAnnotationsTree extends CTree {
 
 		protected GCellDisplay getDisplay() {
 
-			return EntityDisplays.get().get(label, null, FontStyle.GENERAL_INFO);
+			return EntityDisplays.get().get(label, null, NodeTextDisplay.INFO);
 		}
 
 		AnnotationsTreeNode() {

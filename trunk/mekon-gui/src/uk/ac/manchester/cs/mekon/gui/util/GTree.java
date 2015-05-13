@@ -205,11 +205,6 @@ public class GTree extends JTree {
 	protected void onNodeActionEnd(GNode node) {
 	}
 
-	protected String decorateNodeLabel(GNode node, String defaultLabel) {
-
-		return defaultLabel;
-	}
-
 	DefaultTreeModel getTreeModel() {
 
 		return treeModel;

@@ -56,7 +56,7 @@ class ITree extends GTree {
 
 		collapseds = new ITreeCollapsedNodes(getRootNode());
 
-		updateMarker.initialise((INode)getRootNode());
+		updateMarker.initialise(getRootNode());
 	}
 
 	ITreeUpdateMarker getUpdateMarker() {
