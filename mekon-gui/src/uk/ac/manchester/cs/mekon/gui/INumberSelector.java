@@ -459,6 +459,7 @@ class INumberSelector extends GDialog {
 		JPanel panel = new JPanel();
 
 		panel.add(okButton);
+		panel.add(Box.createHorizontalStrut(10));
 		panel.add(new CancelButton());
 
 		return panel;
