@@ -472,29 +472,66 @@ class HelpPanel extends JTabbedPane {
 
 				super("Label Colours");
 
-				addColumns("Entity Types", "Colour", "Denotes");
+				addColumns(
+					"Entity Types",
+					"Entity Label/Label-Section Colours",
+					"Denotes Update(s) Resulting From Latest User Action");
 
 				addRow(
-					"ALL",
-					getColouredLabel(ITreeUpdateMarker.DIRECT_UPDATES_CLR),
-					"Entity directly affected by latest action");
+					"IFrame, CFrame, INumber",
+					getValueLabelComponent(ITreeUpdateMarker.DIRECT_UPDATES_CLR),
+					"Value added by user");
 				addRow(
-					"ALL",
-					getColouredLabel(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
-					"Entity, or non-visible descendant(s), "
-						+ " indirectly affected by latest action");
+					"ISlot",
+					getSlotLabelComponent(ITreeUpdateMarker.DIRECT_UPDATES_CLR, null),
+					"Value(s) removed by user");
+
 				addRow(
-					"ALL",
-					getColouredLabel(null),
-					"Entity, and non-visible descendant(s), "
-						+ " unaffected by latest action");
+					"CFrame, INumber",
+					getValueLabelComponent(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
+					"Value added by model");
+				addRow(
+					"IFrame",
+					getValueLabelComponent(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
+					"Value added, or non-visible descendant(s) updated, by model");
+				addRow(
+					"ISlot",
+					getSlotLabelComponent(ITreeUpdateMarker.INDIRECT_UPDATES_CLR, null),
+					"Value(s) removed, or non-visible descendant(s) updated, by model");
+				addRow(
+					"ISlot",
+					getSlotLabelComponent(null, ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
+					"Value-type updated by model");
 			}
 
-			private JLabel getColouredLabel(Color colour) {
+			private JComponent getValueLabelComponent(Color colour) {
 
-				JLabel label = new JLabel("LABEL");
+				return getLabel("VALUE-LABEL", colour);
+			}
 
-				label.setForeground(colour);
+			private JComponent getSlotLabelComponent(
+									Color nameColour,
+									Color valueTypeColour) {
+
+				Box comp = Box.createHorizontalBox();
+
+				comp.add(getLabel("SLOT-NAME", nameColour));
+				comp.add(Box.createHorizontalStrut(10));
+				comp.add(getLabel("VALUE-TYPE", valueTypeColour));
+				comp.add(Box.createHorizontalStrut(10));
+				comp.add(new JLabel("CARDINALITY"));
+
+				return comp;
+			}
+
+			private JLabel getLabel(String text, Color colour) {
+
+				JLabel label = new JLabel(text);
+
+				if (colour != null) {
+
+					label.setForeground(colour);
+				}
 
 				return label;
 			}

@@ -70,18 +70,18 @@ public class GTable extends JTable {
 								int row,
 								int column) {
 
-			JLabel label = getLabel(value);
+			JComponent component = getCellComponent(value);
 
-			setCellAttributes(label);
+			setCellAttributes(component);
 
-			return label;
+			return component;
 		}
 
-		private JLabel getLabel(Object value) {
+		private JComponent getCellComponent(Object value) {
 
-			if (value instanceof JLabel) {
+			if (value instanceof JComponent) {
 
-				return (JLabel)value;
+				return (JComponent)value;
 			}
 
 			JLabel label = new JLabel();
@@ -132,12 +132,14 @@ public class GTable extends JTable {
 		JTableHeader header = getTableHeader();
 
 		setHeaderHeight(header);
-		setAttributes(header, HDR_BACKGROUND, HDR_FONT_SIZE, HDR_FONT_STYLE);
+		header.setBackground(HDR_BACKGROUND);
+		setFont(header, HDR_FONT_SIZE, HDR_FONT_STYLE);
 	}
 
-	private void setCellAttributes(JLabel cellLabel) {
+	private void setCellAttributes(JComponent component) {
 
-		setAttributes(cellLabel, CELL_BACKGROUND, CELL_FONT_SIZE, CELL_FONT_STYLE);
+		component.setBackground(CELL_BACKGROUND);
+		setFont(component, CELL_FONT_SIZE, CELL_FONT_STYLE);
 	}
 
 	private void setHeaderHeight(JTableHeader header) {
@@ -147,19 +149,29 @@ public class GTable extends JTable {
 		header.setPreferredSize(new Dimension(width, HDR_HEIGHT));
 	}
 
-	private void setAttributes(
+	private void setFont(
 					JComponent component,
-					Color colour,
 					float fontSize,
 					int fontStyle) {
 
-		component.setBackground(colour);
-
 		Font font = component.getFont();
 
-		font = font.deriveFont(fontSize);
-		font = font.deriveFont(fontStyle);
+		if (font != null) {
 
-		component.setFont(font);
+			font = font.deriveFont(fontSize);
+			font = font.deriveFont(fontStyle);
+
+			component.setFont(font);
+		}
+		else {
+
+			for (Component childComp : component.getComponents()) {
+
+				if (component instanceof JComponent) {
+
+					setFont((JComponent)childComp, fontSize, fontStyle);
+				}
+			}
+		}
 	}
 }
