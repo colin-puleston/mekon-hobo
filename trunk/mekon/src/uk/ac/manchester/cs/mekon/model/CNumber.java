@@ -381,7 +381,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 	private String getDescription() {
 
-		return numberType.getSimpleName() + " " + getLimitsString();
+		return numberType.getSimpleName() + "[" + getLimitsString() +"]";
 	}
 
 	private String minToString() {
