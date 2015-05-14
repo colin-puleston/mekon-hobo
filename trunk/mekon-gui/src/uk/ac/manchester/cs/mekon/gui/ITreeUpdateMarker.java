@@ -130,7 +130,6 @@ class ITreeUpdateMarker {
 		}
 
 		addNodeStates(rootNode);
-		System.out.println("\n\nUPDATED!!!!");
 	}
 
 	void checkMarkForGeneralUpdate(GNode node, GCellDisplay display) {
@@ -252,7 +251,6 @@ class ITreeUpdateMarker {
 
 		GNodeState state = nodeStates.get(node);
 
-		System.out.println("STATE: " + state);
 		return state == null || state.missingChildren(node);
 	}
 
