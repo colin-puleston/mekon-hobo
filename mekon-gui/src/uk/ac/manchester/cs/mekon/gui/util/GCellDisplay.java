@@ -24,7 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.gui.util;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Component;
+import java.util.*;
 import javax.swing.*;
 
 /**
@@ -38,6 +41,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	private String text;
 	private Color textColour = null;
+	private Color backgroundColour = null;
 	private int fontStyle = Font.PLAIN;
 	private Icon icon = null;
 
@@ -77,6 +81,11 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		this.textColour = textColour;
 	}
 
+	public void setBackgroundColour(Color backgroundColour) {
+
+		this.backgroundColour = backgroundColour;
+	}
+
 	public void setFontStyle(int fontStyle) {
 
 		this.fontStyle = fontStyle;
@@ -109,68 +118,102 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	JComponent createComponent(boolean selected) {
 
-		return modifier == null
-				? createLabel(selected)
-				: createCompoundComponent(selected);
+		List<Component> components = new ArrayList<Component>();
+
+		collectComponents(components, selected);
+
+		if (components.size() == 1) {
+
+			return (JLabel)components.get(0);
+		}
+
+		return createCompoundComponent(components);
 	}
 
-	private JComponent createCompoundComponent(boolean selected) {
+	private JComponent createCompoundComponent(List<Component> components) {
 
-		Box comp = Box.createHorizontalBox();
+		Box compound = Box.createHorizontalBox();
 
-		comp.add(createLabel(selected));
-		modifier.addModifierLabels(comp, selected);
+		for (Component component : components) {
 
-		return comp;
+			compound.add(component);
+		}
+
+		return compound;
+	}
+
+	private void collectComponents(List<Component> components, boolean selected) {
+
+		if (icon != null && backgroundColour != null) {
+
+			components.add(new JLabel(icon));
+			components.add(createBasicLabel(false));
+		}
+		else {
+
+			components.add(createLabel(selected));
+		}
+
+		if (modifier != null) {
+
+			components.add(createSeparator(selected));
+			modifier.collectComponents(components, selected);
+		}
 	}
 
 	private JLabel createLabel(boolean selected) {
+
+		JLabel label = createBasicLabel(selected);
+
+		label.setIcon(icon);
+
+		return label;
+	}
+
+	private JLabel createBasicLabel(boolean selected) {
 
 		JLabel label = new JLabel();
 
 		label.setText(text);
 		label.setFont(deriveFont(label.getFont()));
-		label.setIcon(icon);
 		label.setForeground(textColour);
 
-		if (checkSetBackground(label, selected)) {
+		Color background = getLabelBackground(selected);
+
+		if (background != null) {
 
 			label.setOpaque(true);
+			label.setBackground(background);
 		}
 
 		return label;
 	}
 
-	private void addModifierLabels(Box comp, boolean selected) {
+	private Color getLabelBackground(boolean selected) {
 
-		comp.add(createSeparator(selected));
-		comp.add(createLabel(selected));
+		if (backgroundColour != null) {
 
-		if (modifier != null) {
-
-			modifier.addModifierLabels(comp, selected);
+			return backgroundColour;
 		}
+
+		if (selected) {
+
+			return getSelectionBackground();
+		}
+
+		return null;
 	}
 
 	private Component createSeparator(boolean selected) {
 
 		Component sep = Box.createHorizontalStrut(SEPARATOR_WIDTH);
 
-		checkSetBackground(sep, selected);
-
-		return sep;
-	}
-
-	private boolean checkSetBackground(Component comp, boolean selected) {
-
 		if (selected) {
 
-			comp.setBackground(getSelectionBackground());
-
-			return true;
+			sep.setBackground(getSelectionBackground());
 		}
 
-		return false;
+		return sep;
 	}
 
 	private Font deriveFont(Font font) {

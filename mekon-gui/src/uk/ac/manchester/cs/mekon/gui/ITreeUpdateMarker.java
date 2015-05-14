@@ -36,8 +36,8 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 class ITreeUpdateMarker {
 
-	static final Color DIRECT_UPDATES_CLR = Color.blue;
-	static final Color INDIRECT_UPDATES_CLR = Color.green.darker().darker();
+	static final Color DIRECT_UPDATES_CLR = Color.yellow;
+	static final Color INDIRECT_UPDATES_CLR = Color.cyan;
 
 	private GNode rootNode = null;
 	private Map<GNode, GNodeState> nodeStates = null;
@@ -130,6 +130,7 @@ class ITreeUpdateMarker {
 		}
 
 		addNodeStates(rootNode);
+		System.out.println("\n\nUPDATED!!!!");
 	}
 
 	void checkMarkForGeneralUpdate(GNode node, GCellDisplay display) {
@@ -175,34 +176,27 @@ class ITreeUpdateMarker {
 			return false;
 		}
 
-		if (newParent(node)) {
+		if (hasNewParent(node)) {
 
 			return false;
 		}
 
-		if (newOrMissingChildren(node)) {
+		if (newOrHasMissingChildren(node)) {
 
 			return true;
 		}
 
-		return node.collapsed() && newOrUpdatedDescendants(node);
+		return node.collapsed() && hasNewOrUpdatedDescendants(node);
 	}
 
 	private boolean requiresSlotValueTypeUpdateMark(ISlotNode node) {
 
-		if (nodeStates == null) {
-
-			return false;
-		}
-
-		ISlotNodeState state = (ISlotNodeState)nodeStates.get(node);
-
-		return state != null && state.updatedValueType(node);
+		return nodeStates != null && updatedSlotValueType(node);
 	}
 
 	private void markForUpdate(GNode node, GCellDisplay display) {
 
-		display.setTextColour(getMarkColour(node));
+		display.setBackgroundColour(getMarkColour(node));
 	}
 
 	private Color getMarkColour(GNode node) {
@@ -227,18 +221,18 @@ class ITreeUpdateMarker {
 		return false;
 	}
 
-	private boolean newParent(GNode node) {
+	private boolean hasNewParent(GNode node) {
 
 		GNode parent = node.getParent();
 
 		return parent != null && nodeStates.get(parent) == null;
 	}
 
-	private boolean newOrUpdatedDescendants(GNode node) {
+	private boolean hasNewOrUpdatedDescendants(GNode node) {
 
 		for (GNode child : node.getChildren()) {
 
-			if (newOrUpdated(child) || newOrUpdatedDescendants(child)) {
+			if (newOrUpdated(child) || hasNewOrUpdatedDescendants(child)) {
 
 				return true;
 			}
@@ -254,10 +248,18 @@ class ITreeUpdateMarker {
 		return state == null || state.updated(node);
 	}
 
-	private boolean newOrMissingChildren(GNode node) {
+	private boolean newOrHasMissingChildren(GNode node) {
 
 		GNodeState state = nodeStates.get(node);
 
+		System.out.println("STATE: " + state);
 		return state == null || state.missingChildren(node);
+	}
+
+	private boolean updatedSlotValueType(ISlotNode node) {
+
+		ISlotNodeState state = (ISlotNodeState)nodeStates.get(node);
+
+		return state != null && state.updatedValueType(node);
 	}
 }
