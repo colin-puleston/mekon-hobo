@@ -37,7 +37,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	static public final GCellDisplay NO_DISPLAY = new GCellDisplay("");
 
-	static private final int SEPARATOR_WIDTH = 3;
+	static private final int SEPARATOR_WIDTH = 5;
 
 	private String text;
 	private Color textColour = null;
