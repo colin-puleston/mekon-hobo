@@ -38,17 +38,6 @@ class ITree extends GTree {
 	private ITreeCollapsedNodes collapseds = null;
 	private ITreeUpdateMarker updateMarker = new ITreeUpdateMarker();
 
-	protected void onNodeActionStart(GNode node) {
-
-		collapseds.update(node);
-		updateMarker.update();
-	}
-
-	protected void onNodeActionEnd(GNode node) {
-
-		collapseds.restore();
-	}
-
 	ITree(IFrame rootFrame) {
 
 		initialise(new IFrameNode(this, rootFrame));
@@ -57,6 +46,18 @@ class ITree extends GTree {
 		collapseds = new ITreeCollapsedNodes(getRootNode());
 
 		updateMarker.initialise(getRootNode());
+	}
+
+	void onSlotValuesUpdateStart(ISlotNode node) {
+
+		collapseds.update(node);
+		updateMarker.update();
+	}
+
+	void onSlotValuesUpdateEnd(ISlotNode node, IValue addedValue) {
+
+		collapseds.restore();
+		updateMarker.registerAction(node, addedValue);
 	}
 
 	ITreeUpdateMarker getUpdateMarker() {

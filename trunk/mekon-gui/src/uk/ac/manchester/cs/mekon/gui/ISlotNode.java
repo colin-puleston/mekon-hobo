@@ -43,17 +43,17 @@ abstract class ISlotNode extends GNode {
 
 		public void onUpdatedValueType(CValue<?> valueType) {
 
-			notifyUpdatedDisplay();
+			updateNodeDisplay();
 		}
 
 		public void onUpdatedActiveStatus(boolean active) {
 
-			notifyUpdatedDisplay();
+			updateNodeDisplay();
 		}
 
 		public void onUpdatedEditability(CEditability editability) {
 
-			notifyUpdatedDisplay();
+			updateNodeDisplay();
 		}
 	}
 
@@ -160,14 +160,16 @@ abstract class ISlotNode extends GNode {
 
 	void addValue(IValue value) {
 
-		slot.getValuesEditor().add(value);
-		registerAction(value);
+		onUpdateStart();
+		getValuesEditor().add(value);
+		onUpdateEnd(value);
 	}
 
 	void removeValue(IValue value) {
 
-		slot.getValuesEditor().remove(value);
-		registerAction(null);
+		onUpdateStart();
+		getValuesEditor().remove(value);
+		onUpdateEnd(null);
 	}
 
 	abstract IValue checkObtainValue();
@@ -188,17 +190,28 @@ abstract class ISlotNode extends GNode {
 
 	private void clearValues() {
 
-		slot.getValuesEditor().clear();
-		registerAction(null);
+		onUpdateStart();
+		getValuesEditor().clear();
+		onUpdateEnd(null);
 	}
 
-	private void registerAction(IValue addedValue) {
+	private void onUpdateStart() {
 
-		tree.getUpdateMarker().registerAction(this, addedValue);
+		tree.onSlotValuesUpdateStart(this);
+	}
+
+	private void onUpdateEnd(IValue addedValue) {
+
+		tree.onSlotValuesUpdateEnd(this, addedValue);
 	}
 
 	private boolean editableSlot() {
 
 		return slot.getEditability().editable();
+	}
+
+	private ISlotValuesEditor getValuesEditor() {
+
+		return slot.getValuesEditor();
 	}
 }

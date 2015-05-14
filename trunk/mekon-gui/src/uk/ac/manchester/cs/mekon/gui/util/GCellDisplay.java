@@ -37,7 +37,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	static public final GCellDisplay NO_DISPLAY = new GCellDisplay("");
 
-	static private final int SEPARATOR_WIDTH = 5;
+	static private final int SEPARATOR_WIDTH = 3;
 
 	private String text;
 	private Color textColour = null;
@@ -147,6 +147,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		if (icon != null && backgroundColour != null) {
 
 			components.add(new JLabel(icon));
+			components.add(createSeparator(false));
 			components.add(createBasicLabel(false));
 		}
 		else {
