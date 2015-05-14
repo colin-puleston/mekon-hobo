@@ -50,9 +50,7 @@ public class GTree extends JTree {
 
 			if (action.active()) {
 
-				onNodeActionStart(node);
 				action.perform();
-				onNodeActionEnd(node);
 			}
 		}
 
@@ -199,10 +197,9 @@ public class GTree extends JTree {
 		return rootNode == null || rootNode.getChildCount() == 0;
 	}
 
-	protected void onNodeActionStart(GNode node) {
-	}
+	void updateAllNodeDisplays() {
 
-	protected void onNodeActionEnd(GNode node) {
+		rootNode.updateSubTreeNodeDisplays();
 	}
 
 	DefaultTreeModel getTreeModel() {

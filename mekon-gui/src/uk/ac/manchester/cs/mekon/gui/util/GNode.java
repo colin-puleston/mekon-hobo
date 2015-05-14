@@ -75,6 +75,7 @@ public abstract class GNode extends GMutableTreeNode {
 		if (initialised) {
 
 			getTreeModel().nodesWereInserted(this, getIndexAsArray(child));
+			tree.updateAllNodeDisplays();
 		}
 	}
 
@@ -117,7 +118,7 @@ public abstract class GNode extends GMutableTreeNode {
 		tree.collapsePath(getTreePath());
 	}
 
-	public void notifyUpdatedDisplay() {
+	public void updateNodeDisplay() {
 
 		getTreeModel().nodeChanged(this);
 	}
@@ -214,6 +215,16 @@ public abstract class GNode extends GMutableTreeNode {
 		}
 	}
 
+	void updateSubTreeNodeDisplays() {
+
+		updateNodeDisplay();
+
+		for (GNode child : getChildren()) {
+
+			child.updateSubTreeNodeDisplays();
+		}
+	}
+
 	void setLocalExpansion(boolean locallyExpanded) {
 
 		this.locallyExpanded = locallyExpanded;
@@ -227,7 +238,9 @@ public abstract class GNode extends GMutableTreeNode {
 		child.collapse();
 		child.parent = null;
 		getChildList().remove(child);
+
 		getTreeModel().nodesWereRemoved(this, oldIndex, oldChild);
+		tree.updateAllNodeDisplays();
 	}
 
 	private ChildList getChildList() {
