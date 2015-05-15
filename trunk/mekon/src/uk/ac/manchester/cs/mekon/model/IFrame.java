@@ -67,6 +67,8 @@ public class IFrame implements IEntity, IValue {
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
+	private boolean autoUpdating = false;
+
 	private class DynamicTypes {
 
 		private CIdentifiedsLocal<CFrame> types = new CIdentifiedsLocal<CFrame>();
@@ -147,7 +149,7 @@ public class IFrame implements IEntity, IValue {
 
 			ISlot slot = new ISlot(slotType, IFrame.this);
 
-			new DynamicUpdater(slot);
+			new AutoUpdater(slot);
 			IFrameSlotValueUpdateProcessor.checkAddTo(slot);
 
 			slots.add(slot);
@@ -181,7 +183,7 @@ public class IFrame implements IEntity, IValue {
 		}
 	}
 
-	private class DynamicUpdater implements KUpdateListener {
+	private class AutoUpdater implements KUpdateListener {
 
 		private ISlotValues slotValues;
 		private List<IValue> assertedValues;
@@ -192,13 +194,18 @@ public class IFrame implements IEntity, IValue {
 
 			if (!latestAsserteds.equals(assertedValues)) {
 
-				performDynamicUpdates();
-
 				assertedValues = latestAsserteds;
+
+				if (!autoUpdating) {
+
+					autoUpdating = true;
+					performAutoUpdates();
+					autoUpdating = false;
+				}
 			}
 		}
 
-		DynamicUpdater(ISlot slot) {
+		AutoUpdater(ISlot slot) {
 
 			slotValues = slot.getValues();
 			assertedValues = slotValues.getAssertedValues();
@@ -264,9 +271,12 @@ public class IFrame implements IEntity, IValue {
 	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
 	 * then performs the default set of update operations on this frame.
 	 * Otherwise does nothing.
+	 * <p>
+	 * NOTE: Even if the default update operations do not include
+	 * slot-value updates, removals of (asserted) slot-values may still
+	 * occur as a result of either slot removals or value-type updates.
 	 *
-	 * @return Subset of default update operations that actually produced
-	 * updates
+	 * @return Types of update produced
 	 */
 	public Set<IUpdateOp> checkManualUpdate() {
 
@@ -278,10 +288,13 @@ public class IFrame implements IEntity, IValue {
 	 * then performs all of the specified update operations on this frame.
 	 * Otherwise, performs only those specified operations that are not
 	 * default operations (see {@link IUpdating#getDefaultOps}).
+	 * <p>
+	 * NOTE: Even if the specified update operations do not include
+	 * slot-value updates, removals of (asserted) slot-values may still
+	 * occur as a result of either slot removals or value-type updates.
 	 *
 	 * @param ops Update operations to be performed (where relevant)
-	 * @return Subset of specified update operations that actually
-	 * produced updates
+	 * @return Types of update produced
 	 */
 	public Set<IUpdateOp> checkManualUpdate(Set<IUpdateOp> ops) {
 
@@ -507,25 +520,25 @@ public class IFrame implements IEntity, IValue {
 		}
 	}
 
-	private void performDynamicUpdates() {
+	private void performAutoUpdates() {
 
-		performDynamicUpdates(new ArrayList<IFrame>());
+		performAutoUpdates(new ArrayList<IFrame>());
 	}
 
-	private void performDynamicUpdates(List<IFrame> visited) {
+	private void performAutoUpdates(List<IFrame> visited) {
 
 		if (visited.add(this)) {
 
-			exhaustivelyAutoUpdateThis();
+			autoUpdateThis();
 
 			for (ISlot slot : referencingSlots.asList()) {
 
-				slot.getContainer().performDynamicUpdates(visited);
+				slot.getContainer().performAutoUpdates(visited);
 			}
 		}
 	}
 
-	private void exhaustivelyAutoUpdateThis() {
+	private void autoUpdateThis() {
 
 		IUpdating updating = getIUpdating();
 

@@ -89,37 +89,32 @@ class ISlotSpec {
 		}
 	}
 
-	boolean checkAddSlot(IFrame container) {
+	ISlotOps checkAddSlot(IFrame container) {
 
 		CValue<?> valueType = getValueTypeOrNull();
 
 		if (valueType == null) {
 
-			return false;
+			return ISlotOps.NONE;
 		}
 
 		addSlot(container, valueType);
 
-		return true;
+		return ISlotOps.SLOTS;
 	}
 
-	boolean checkUpdateOrRemoveSlot(ISlot slot) {
+	ISlotOps checkUpdateOrRemoveSlot(ISlot slot) {
 
 		CValue<?> valueType = getValueTypeOrNull();
 
-		if (valueType == null) {
-
-			removeSlot(slot);
-
-			return true;
-		}
-
-		return checkUpdateSlot(slot, valueType);
+		return valueType == null
+				? removeSlot(slot)
+				: checkUpdateSlot(slot, valueType);
 	}
 
-	boolean checkUpdateSlotValues(ISlot slot) {
+	ISlotOps checkUpdateSlotValues(ISlot slot) {
 
-		return getSlotEditor(slot).setFixedValues(fixedValues);
+		return setFixedValues(slot) ? ISlotOps.VALUES : ISlotOps.NONE;
 	}
 
 	CIdentity getIdentity() {
@@ -190,14 +185,31 @@ class ISlotSpec {
 				editability);
 	}
 
-	private boolean checkUpdateSlot(ISlot slot, CValue<?> valueType) {
+	private ISlotOps checkUpdateSlot(ISlot slot, CValue<?> valueType) {
 
-		boolean anyUpdates = false;
+		List<IValue> preValues = slot.getValues().asList();
 
-		anyUpdates |= checkUpdateValueType(slot, valueType);
-		anyUpdates |= checkUpdateActive(slot);
+		if (checkUpdateSlotAttributes(slot, valueType)) {
 
-		return anyUpdates;
+			if (valueUpdates(slot, preValues)) {
+
+				return ISlotOps.SLOTS_AND_VALUES;
+			}
+
+			return ISlotOps.SLOTS;
+		}
+
+		return ISlotOps.NONE;
+	}
+
+	private boolean checkUpdateSlotAttributes(ISlot slot, CValue<?> valueType) {
+
+		boolean updates = false;
+
+		updates |= checkUpdateValueType(slot, valueType);
+		updates |= checkUpdateActive(slot);
+
+		return updates;
 	}
 
 	private boolean checkUpdateValueType(ISlot slot, CValue<?> valueType) {
@@ -224,9 +236,23 @@ class ISlotSpec {
 		return true;
 	}
 
-	private void removeSlot(ISlot slot) {
+	private ISlotOps removeSlot(ISlot slot) {
 
 		getFrameEditor(slot.getContainer()).removeSlot(slot);
+
+		return slot.getValues().isEmpty()
+					? ISlotOps.SLOTS
+					: ISlotOps.SLOTS_AND_VALUES;
+	}
+
+	private boolean setFixedValues(ISlot slot) {
+
+		return getSlotEditor(slot).setFixedValues(fixedValues);
+	}
+
+	private boolean valueUpdates(ISlot slot, List<IValue> preValues) {
+
+		return !slot.getValues().asList().equals(preValues);
 	}
 
 	private CValue<?> getValueTypeOrNull() {

@@ -123,16 +123,10 @@ public abstract class IClassifier extends DefaultIReasoner {
 			if (doSlots || doSlotValues) {
 
 				ISlotSpecs specs = createSlotSpecs(inferredsUpdates);
+				ISlotOps ops = ISlotOps.get(doSlots, doSlotValues);
+				ISlotOps enactedOps = specs.update(frame, ops);
 
-				if (doSlots && specs.updateSlots(frame)) {
-
-					enactedUpdateOps.add(IUpdateOp.SLOTS);
-				}
-
-				if (doSlotValues && specs.updateSlotValues(frame)) {
-
-					enactedUpdateOps.add(IUpdateOp.SLOT_VALUES);
-				}
+				enactedUpdateOps.addAll(enactedOps.asUpdateOps());
 			}
 		}
 

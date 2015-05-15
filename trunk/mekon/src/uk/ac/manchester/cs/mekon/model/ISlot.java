@@ -60,7 +60,6 @@ public class ISlot implements IEntity {
 
 			if (type.setActive(active)) {
 
-				values.removeInvalidValues();
 				pollListenersForUpdatedActiveStatus();
 
 				return true;
