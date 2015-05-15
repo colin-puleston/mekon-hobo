@@ -199,8 +199,7 @@ public class ISlotSpecsTest extends MekonTest {
 		ISlotSpecs specs = new ISlotSpecs(getModel().getIEditor());
 
 		specs.absorbAll(Arrays.asList(containerTypes));
-		specs.updateSlots(iContainer);
-		specs.updateSlotValues(iContainer);
+		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);
 	}
 
 	private void testSlotValueType(CFrame rootValue) {

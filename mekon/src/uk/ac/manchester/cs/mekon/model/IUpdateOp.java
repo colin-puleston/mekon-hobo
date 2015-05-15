@@ -33,23 +33,23 @@ package uk.ac.manchester.cs.mekon.model;
 public enum IUpdateOp {
 
 	/**
-	 * Update inferred-types for relevant frames.
+	 * Updates of inferred-types for relevant frames.
 	 */
 	INFERRED_TYPES,
 
 	/**
-	 * Update suggested-types for relevant frames.
+	 * Updates of suggested-types for relevant frames.
 	 */
 	SUGGESTED_TYPES,
 
 	/**
-	 * Update slot-sets on relevant frames, plus value-types
+	 * Updates of slot-sets on relevant frames, and/or value-types
 	 * and other attributes for specific slots.
 	 */
 	SLOTS,
 
 	/**
-	 * Update fixed values for relevant slots.
+	 * Updates of fixed values for relevant slots.
 	 */
 	SLOT_VALUES;
 }

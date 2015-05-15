@@ -113,8 +113,7 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 		ISlotSpecs specs = new ISlotSpecs(getModel().getIEditor());
 
 		specs.absorb(createDisjunction(td, te));
-		specs.updateSlots(iContainer);
-		specs.updateSlotValues(iContainer);
+		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);
 	}
 
 	private void testSlotCount(int expected) {

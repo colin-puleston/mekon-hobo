@@ -130,63 +130,62 @@ public class ISlotSpecs {
 	}
 
 	/**
-	 * Initialises the specified instance-level frame using the
-	 * current set of slot-specifications.
+	 * Initialises the slot-set, including value-types and "active" and
+	 * "editability" statuses, and the fixed slot-values, on the specified
+	 * instance-level frame, using the current set of slot-specifications.
 	 *
 	 * @param frame Instance-level frame to be initialised
 	 */
-	public void initialiseSlots(IFrame frame) {
+	public void initialise(IFrame frame) {
 
 		for (ISlotSpec spec : specs) {
 
 			spec.checkAddSlot(frame);
 		}
+
+		update(frame, ISlotOps.VALUES);
 	}
 
 	/**
-	 * Updates the slot-set on the specified instance-level frame using
-	 * the current set of slot-specifications. Also initialises and
-	 * updates value-types and "active" statuses, and initialises, but
-	 * doesn't update, "editability" statuses.
+	 * Updates the slot-set, including value-types and "active" statuses,
+	 * and/or the fixed slot-values, on the specified instance-level frame,
+	 * using the current set of slot-specifications.
+	 * <p>
+	 * NOTE: Even if the required update operations (as specified via the
+	 * relevant parameter) do not include slot-value updates, removals of
+	 * (asserted) slot-values may still occur as a result of either slot
+	 * removals or value-type updates.
 	 *
-	 * @param frame Instance-level frame whose slot-set is to be updated
-	 * @return True if slot-set has been updated
+	 * @param frame Instance-level frame to be updated
+	 * @param ops Required update operations
+	 * @return Types of update produced
 	 */
-	public boolean updateSlots(IFrame frame) {
+	public ISlotOps update(IFrame frame, ISlotOps ops) {
 
-		boolean anyUpdates = false;
+		ISlotOps enactedOps = ISlotOps.NONE;
 
-		for (ISlot slot : frame.getSlots().asList()) {
+		if (ops.includesSlots()) {
 
-			anyUpdates |= removeIfRedundant(frame, slot);
+			for (ISlot slot : frame.getSlots().asList()) {
+
+				enactedOps = enactedOps.and(removeIfRedundant(frame, slot));
+			}
+
+			for (ISlotSpec spec : specs) {
+
+				enactedOps = enactedOps.and(updateSlotsFor(frame, spec));
+			}
 		}
 
-		for (ISlotSpec spec : specs) {
+		if (ops.includesValues()) {
 
-			anyUpdates |= updateSlotsFor(frame, spec);
+			for (ISlotSpec spec : specs) {
+
+				enactedOps = enactedOps.and(updateSlotValuesFor(frame, spec));
+			}
 		}
 
-		return anyUpdates;
-	}
-
-	/**
-	 * Updates the fixed slot-values on the specified instance-level
-	 * frame using the current set of slot-specifications.
-	 *
-	 * @param frame Instance-level frame whose fixed slot-values are
-	 * to be updated
-	 * @return True if fixed values set has been updated
-	 */
-	public boolean updateSlotValues(IFrame frame) {
-
-		boolean anyUpdates = false;
-
-		for (ISlotSpec spec : specs) {
-
-			anyUpdates |= updateSlotValuesFor(frame, spec);
-		}
-
-		return anyUpdates;
+		return enactedOps;
 	}
 
 	private ISlotSpecs(IEditor iEditor, List<CFrame> disjunctTypes) {
@@ -270,32 +269,42 @@ public class ISlotSpecs {
 		return new ISlotSpecs(iEditor, frameType.asDisjuncts());
 	}
 
-	private boolean removeIfRedundant(IFrame frame, ISlot slot) {
+	private ISlotOps removeIfRedundant(IFrame frame, ISlot slot) {
 
-		if (specsBySlotId.containsKey(slot.getType().getIdentity())) {
+		if (!redundantSlot(slot)) {
 
-			return false;
+			return ISlotOps.NONE;
 		}
 
 		getFrameEditor(frame).removeSlot(slot);
 
-		return true;
+		if (slot.getValues().isEmpty()) {
+
+			return ISlotOps.SLOTS;
+		}
+
+		return ISlotOps.SLOTS_AND_VALUES;
 	}
 
-	private boolean updateSlotsFor(IFrame frame, ISlotSpec spec) {
+	private boolean redundantSlot(ISlot slot) {
+
+		return !specsBySlotId.containsKey(slot.getType().getIdentity());
+	}
+
+	private ISlotOps updateSlotsFor(IFrame frame, ISlotSpec spec) {
 
 		ISlot slot = getSlotOrNull(frame, spec);
 
-		return slot != null
-				? spec.checkUpdateOrRemoveSlot(slot)
-				: spec.checkAddSlot(frame);
+		return slot == null
+				? spec.checkAddSlot(frame)
+				: spec.checkUpdateOrRemoveSlot(slot);
 	}
 
-	private boolean updateSlotValuesFor(IFrame frame, ISlotSpec spec) {
+	private ISlotOps updateSlotValuesFor(IFrame frame, ISlotSpec spec) {
 
 		ISlot slot = getSlotOrNull(frame, spec);
 
-		return slot != null && spec.checkUpdateSlotValues(slot);
+		return slot != null ? spec.checkUpdateSlotValues(slot) : ISlotOps.NONE;
 	}
 
 	private ISlot getSlotOrNull(IFrame frame, ISlotSpec spec) {
