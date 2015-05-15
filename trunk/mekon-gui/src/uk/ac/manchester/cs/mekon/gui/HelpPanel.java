@@ -506,7 +506,11 @@ class HelpPanel extends JTabbedPane {
 
 			private JComponent getValueLabelComponent(Color colour) {
 
-				return getLabel("VALUE-LABEL", colour);
+				Box comp = Box.createHorizontalBox();
+
+				comp.add(getLabel("VALUE-LABEL", colour));
+
+				return comp;
 			}
 
 			private JComponent getSlotLabelComponent(
@@ -530,7 +534,8 @@ class HelpPanel extends JTabbedPane {
 
 				if (colour != null) {
 
-					label.setForeground(colour);
+					label.setOpaque(true);
+					label.setBackground(colour);
 				}
 
 				return label;
