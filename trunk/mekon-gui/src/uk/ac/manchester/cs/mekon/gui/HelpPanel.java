@@ -132,17 +132,17 @@ class HelpPanel extends JTabbedPane {
 		}
 	}
 
-	private class EntitiesPanel extends CategoryPanel {
+	private class GeneralPanel extends CategoryPanel {
 
 		static final long serialVersionUID = -1;
 
-		private class ShapesPanel extends SectionPanel {
+		private class NodeShapesPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
 
-			ShapesPanel() {
+			NodeShapesPanel() {
 
-				super("Shapes");
+				super("Node Shapes");
 
 				addColumns(
 					"Shape",
@@ -173,13 +173,13 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		private class ColoursPanel extends SectionPanel {
+		private class NodeColoursPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
 
-			ColoursPanel() {
+			NodeColoursPanel() {
 
-				super("Colours");
+				super("Node Colours");
 
 				addColumns(
 					"Colour",
@@ -210,73 +210,6 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		private class ShapeModifiersPanel extends SectionPanel {
-
-			static final long serialVersionUID = -1;
-
-			ShapeModifiersPanel() {
-
-				super("Shape Modifiers");
-
-				addColumns(
-					"Shape + or - Modifier",
-					"Entity Types",
-					"Entity State");
-
-				addRow(
-					mValueShape,
-					"MFrame",
-					"Exposed");
-				addRow(
-					hiddenMFrameShape,
-					"MFrame",
-					"Hidden");
-				addRow(
-					cValueShape,
-					"CFrame",
-					"Exposed");
-				addRow(
-					hiddenCFrameShape,
-					"CFrame",
-					"Hidden");
-				addRow(
-					defaultSlotShape,
-					"CSlot",
-					"Default editable "
-					+ "(concrete-only on assertions / fully editable on queries)");
-				addRow(
-					fullEditSlotShape,
-					"CSlot",
-					"Fully editable "
-					+ "(fully editable on assertions and queries)");
-				addRow(
-					queryOnlyEditSlotShape,
-					"CSlot",
-					"Query-only editable "
-					+ "(non-editable on assertions / fully editable on queries)");
-				addRow(
-					nonEditSlotShape,
-					"CSlot",
-					"Non-editable (non-editable on assertions or queries)");
-				addRow(
-					inactiveSlotShape,
-					"CSlot",
-					"Inactive");
-				addRow(
-					defaultSlotShape,
-					"ISlot",
-					"Concrete-only editable");
-				addRow(
-					fullEditSlotShape,
-					"ISlot",
-					"Fully-editable");
-				addRow(
-					nonEditSlotShape,
-					"ISlot",
-					"Non-editable");
-			}
-		}
-
 		private class LabelModifiersPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
@@ -285,49 +218,64 @@ class HelpPanel extends JTabbedPane {
 
 				super("Label Modifiers");
 
-				addColumns("Entity Types", "Label Modifier", "Denotes");
+				addColumns("Entity Types", "Label Modifier", "Represents");
 
-				addSlotCardinalityModifier(CCardinality.SINGLE_VALUE, "", false);
-				addSlotCardinalityModifier(CCardinality.UNIQUE_TYPES, "", false);
-				addSlotCardinalityModifier(CCardinality.REPEATABLE_TYPES, " (Single value-type)", true);
-				addSlotCardinalityModifier(CCardinality.REPEATABLE_TYPES, " (Multiple value-types)", false);
-				addSlotValueTypeModifier("concept", true);
-				addSlotValueTypeModifier("instance-or-number", false);
+				addCardinalityModifier(CCardinality.SINGLE_VALUE);
+				addCardinalityModifier(CCardinality.UNIQUE_TYPES);
+				addRepeatableModifier("Single value-type", true);
+				addRepeatableModifier("Multiple value-types", false);
 			}
 
-			private void addSlotCardinalityModifier(
-							CCardinality card,
-							String extraModifier,
+			private void addRepeatableModifier(
+							String valueTypesDesc,
 							boolean singleType) {
 
-				addRow(
-					"CSlot, ISlot",
-					SlotLabelModifiers.forCardinality(card, singleType),
-					"Cardinality = " + card
-					+ extraModifier);
+				String desc = "";
+
+				desc += "(" + describe(CCardinality.REPEATABLE_TYPES) + ")";
+				desc += " AND ";
+				desc += "(" + valueTypesDesc + ")";
+
+				addCardinalityModifier(CCardinality.REPEATABLE_TYPES, singleType, desc);
 			}
 
-			private void addSlotValueTypeModifier(String valueType, boolean conceptLevel) {
+			private void addCardinalityModifier(CCardinality cardinality) {
 
-				addRow(
-					"ISlot",
-					SlotLabelModifiers.forValueType("VALUE-TYPE", conceptLevel),
-					"Slot is " + valueType + "-valued with specified value-type");
+				addCardinalityModifier(cardinality, false, describe(cardinality));
+			}
+
+			private void addCardinalityModifier(
+							CCardinality cardinality,
+							boolean singleType,
+							String description) {
+
+				String modifier = getModifier(cardinality, singleType);
+
+				addRow("CSlot, ISlot", modifier, description);
+			}
+
+			private String getModifier(CCardinality cardinality, boolean singleType) {
+
+				return SlotLabelModifiers.forCardinality(cardinality, singleType);
+			}
+
+			private String describe(CCardinality cardinality) {
+
+				return "" + cardinality + " cardinality";
 			}
 		}
 
-		EntitiesPanel() {
+		GeneralPanel() {
 
-			super("Entities");
+			super("General");
 
-			new ShapesPanel();
-			new ColoursPanel();
-			new ShapeModifiersPanel();
+			new NodeShapesPanel();
+			new NodeColoursPanel();
 			new LabelModifiersPanel();
 		}
 	}
 
-	private class ModelTreesPanel extends CategoryPanel {
+	private class ModelPanel extends CategoryPanel {
 
 		static final long serialVersionUID = -1;
 
@@ -385,16 +333,72 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		ModelTreesPanel() {
+		private class NodeShapeModifiersPanel extends SectionPanel {
 
-			super("Model Trees");
+			static final long serialVersionUID = -1;
+
+			NodeShapeModifiersPanel() {
+
+				super("Node-Shape Modifiers");
+
+				addColumns(
+					"Shape + or - Modifier",
+					"Entity Types",
+					"Represents Attribute");
+
+				addRow(
+					mValueShape,
+					"MFrame",
+					"Exposed");
+				addRow(
+					hiddenMFrameShape,
+					"MFrame",
+					"Hidden");
+				addRow(
+					cValueShape,
+					"CFrame",
+					"Exposed");
+				addRow(
+					hiddenCFrameShape,
+					"CFrame",
+					"Hidden");
+				addRow(
+					defaultSlotShape,
+					"CSlot",
+					"Default editable "
+					+ "(concrete-only on assertions / fully editable on queries)");
+				addRow(
+					fullEditSlotShape,
+					"CSlot",
+					"Fully editable "
+					+ "(fully editable on assertions and queries)");
+				addRow(
+					queryOnlyEditSlotShape,
+					"CSlot",
+					"Query-only editable "
+					+ "(non-editable on assertions / fully editable on queries)");
+				addRow(
+					nonEditSlotShape,
+					"CSlot",
+					"Non-editable (non-editable on assertions or queries)");
+				addRow(
+					inactiveSlotShape,
+					"CSlot",
+					"Inactive");
+			}
+		}
+
+		ModelPanel() {
+
+			super("Model");
 
 			new TreeSemanticsPanel("Left", true);
 			new TreeSemanticsPanel("Right", false);
+			new NodeShapeModifiersPanel();
 		}
 	}
 
-	private class InstantiationTreesPanel extends CategoryPanel {
+	private class InstantiationsPanel extends CategoryPanel {
 
 		static final long serialVersionUID = -1;
 
@@ -423,44 +427,54 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		private class ActionsPanel extends SectionPanel {
+		private class NodeShapeModifiersPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
 
-			ActionsPanel() {
+			NodeShapeModifiersPanel() {
 
-				super("Actions");
+				super("Node-Shape Modifiers");
 
-				addColumns("Target Type", "Mouse Action", "Model Action");
+				addColumns(
+					"Shape + or - Modifier",
+					"Entity Types",
+					"Represents Attribute");
 
 				addRow(
-					"SLOT-VALUE-TYPE",
-					LEFT_CLICK_STRING,
-					"Add slot value");
+					defaultSlotShape,
+					"ISlot",
+					"Concrete-only editable");
 				addRow(
-					"SLOT-VALUE-TYPE",
-					RIGHT_CLICK_STRING,
-					"Clear slot value(s)");
+					fullEditSlotShape,
+					"ISlot",
+					"Fully-editable");
 				addRow(
-					"SLOT-VALUE (CFrame only)",
-					LEFT_CLICK_STRING,
-					"Add disjunct to value");
+					nonEditSlotShape,
+					"ISlot",
+					"Non-editable");
+			}
+		}
+
+		private class ExtraLabelModifiersPanel extends SectionPanel {
+
+			static final long serialVersionUID = -1;
+
+			ExtraLabelModifiersPanel() {
+
+				super("Extra Label Modifiers");
+
+				addColumns("Entity Types", "Label Modifier", "Represents");
+
+				addSlotValueTypeModifier("concept", true);
+				addSlotValueTypeModifier("instance-or-number", false);
+			}
+
+			private void addSlotValueTypeModifier(String valueType, boolean conceptLevel) {
+
 				addRow(
-					"SLOT-VALUE (IFrame only)",
-					LEFT_CLICK_STRING,
-					"Add disjunct to value-type");
-				addRow(
-					"SLOT-VALUE",
-					RIGHT_CLICK_STRING,
-					"Remove slot value");
-				addRow(
-					"SLOT-VALUE (CFrame only)",
-					RIGHT_CLICK_STRING,
-					"Remove disjunct from value (alternative action, where applicable)");
-				addRow(
-					"SLOT-VALUE (IFrame only)",
-					RIGHT_CLICK_STRING,
-					"Remove disjunct from value-type (alternative action, where applicable)");
+					"ISlot",
+					SlotLabelModifiers.forValueType("VALUE-TYPE", conceptLevel),
+					"Slot is " + valueType + "-valued with specified value-type");
 			}
 		}
 
@@ -475,7 +489,7 @@ class HelpPanel extends JTabbedPane {
 				addColumns(
 					"Entity Types",
 					"Entity Label/Label-Section Colours",
-					"Denotes Update(s) Resulting From Latest User Action");
+					"Represnts Update(s) Resulting rom Latest User Action");
 
 				addRow(
 					"IFrame, CFrame, INumber",
@@ -542,13 +556,56 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		InstantiationTreesPanel() {
+		private class ActionsPanel extends SectionPanel {
 
-			super("Instantiation Trees");
+			static final long serialVersionUID = -1;
+
+			ActionsPanel() {
+
+				super("Actions");
+
+				addColumns("Target Type", "Mouse Action", "Model Action");
+
+				addRow(
+					"SLOT-VALUE-TYPE",
+					LEFT_CLICK_STRING,
+					"Add slot value");
+				addRow(
+					"SLOT-VALUE-TYPE",
+					RIGHT_CLICK_STRING,
+					"Clear slot value(s)");
+				addRow(
+					"SLOT-VALUE (CFrame only)",
+					LEFT_CLICK_STRING,
+					"Add disjunct to value");
+				addRow(
+					"SLOT-VALUE (IFrame only)",
+					LEFT_CLICK_STRING,
+					"Add disjunct to value-type");
+				addRow(
+					"SLOT-VALUE",
+					RIGHT_CLICK_STRING,
+					"Remove slot value");
+				addRow(
+					"SLOT-VALUE (CFrame only)",
+					RIGHT_CLICK_STRING,
+					"Remove disjunct from value (alternative action, where applicable)");
+				addRow(
+					"SLOT-VALUE (IFrame only)",
+					RIGHT_CLICK_STRING,
+					"Remove disjunct from value-type (alternative action, where applicable)");
+			}
+		}
+
+		InstantiationsPanel() {
+
+			super("Instantiations");
 
 			new TreeSemanticsPanel();
-			new ActionsPanel();
+			new NodeShapeModifiersPanel();
+			new ExtraLabelModifiersPanel();
 			new LabelColoursPanel();
+			new ActionsPanel();
 		}
 	}
 
@@ -558,9 +615,9 @@ class HelpPanel extends JTabbedPane {
 
 		GFonts.setLarge(this);
 
-		new EntitiesPanel();
-		new ModelTreesPanel();
-		new InstantiationTreesPanel();
+		new GeneralPanel();
+		new ModelPanel();
+		new InstantiationsPanel();
 	}
 
 	private void addCategory(String title, CategoryPanel category) {
