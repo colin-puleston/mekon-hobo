@@ -42,7 +42,6 @@ public class GTable extends JTable {
 	static final int HDR_FONT_STYLE = Font.BOLD;
 
 	static final int CELL_HEIGHT = 30;
-	static final Color CELL_BACKGROUND = Color.WHITE;
 	static final float CELL_FONT_SIZE = 14;
 	static final int CELL_FONT_STYLE = Font.PLAIN;
 
@@ -138,7 +137,6 @@ public class GTable extends JTable {
 
 	private void setCellAttributes(JComponent component) {
 
-		component.setBackground(CELL_BACKGROUND);
 		setFont(component, CELL_FONT_SIZE, CELL_FONT_STYLE);
 	}
 
