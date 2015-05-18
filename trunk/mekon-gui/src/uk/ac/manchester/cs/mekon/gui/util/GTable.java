@@ -117,13 +117,13 @@ public class GTable extends JTable {
 	public void addColumn(String title) {
 
 		model.addColumn(title);
+		initialiseNewColumnSize();
 	}
 
 	public void addRow(Object... cells) {
 
 		model.addRow(cells);
-
-		setPreferredScrollableViewportSize(getPreferredSize());
+		resizeForNewRow();
 	}
 
 	private void setHeaderAttributes() {
@@ -163,13 +163,84 @@ public class GTable extends JTable {
 		}
 		else {
 
-			for (Component childComp : component.getComponents()) {
+			setChildFonts(component, fontSize, fontStyle);
+		}
+	}
 
-				if (component instanceof JComponent) {
+	private void setChildFonts(
+					JComponent component,
+					float fontSize,
+					int fontStyle) {
 
-					setFont((JComponent)childComp, fontSize, fontStyle);
-				}
+		for (Component childComp : component.getComponents()) {
+
+			if (component instanceof JComponent) {
+
+				setFont((JComponent)childComp, fontSize, fontStyle);
 			}
 		}
+	}
+
+	private void initialiseNewColumnSize() {
+
+		resizeColumnForRow(getColumnCount() - 1, -1);
+	}
+
+	private void resizeForNewRow() {
+
+		resizeColumnsForNewRow();
+		setPreferredScrollableViewportSize(getPreferredSize());
+	}
+
+	private void resizeColumnsForNewRow() {
+
+		int row = getRowCount() - 1;
+
+		for (int col = 0 ; col < getColumnCount() ; col++) {
+
+			resizeColumnForRow(col, row);
+		}
+	}
+
+	private void resizeColumnForRow(int col, int row) {
+
+		TableColumn c = getColumnModel().getColumn(col);
+		int cellWidth = getPreferredCellWidth(col, row);
+
+		if (cellWidth > c.getPreferredWidth()) {
+
+			c.setPreferredWidth(cellWidth);
+		}
+	}
+
+	private int getPreferredCellWidth(int col, int row) {
+
+		Component comp = getCellRendererComponent(col, row);
+
+		return (int)comp.getPreferredSize().getWidth();
+	}
+
+	private Component getCellRendererComponent(int col, int row) {
+
+		if (row == -1) {
+
+			return getHeaderCellRendererComponent(col);
+		}
+
+		return prepareRenderer(getCellRenderer(row, col), row, col);
+	}
+
+	private Component getHeaderCellRendererComponent(int col) {
+
+		TableColumn c = columnModel.getColumn(col);
+		TableCellRenderer r = c.getHeaderRenderer();
+		Object v = c.getHeaderValue();
+
+		if (r == null) {
+
+			r = getTableHeader().getDefaultRenderer();
+		}
+
+		return r.getTableCellRendererComponent(this, v, false, false, -1, col);
 	}
 }
