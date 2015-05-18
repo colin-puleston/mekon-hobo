@@ -168,7 +168,7 @@ class HelpPanel extends JTabbedPane {
 				addRow(
 					defaultSlotShape,
 					"Slot",
-					"Concept OR Instance",
+					"Concept OR Instance (context dependent)",
 					"CSlot, ISlot");
 			}
 		}
@@ -190,23 +190,23 @@ class HelpPanel extends JTabbedPane {
 				addRow(
 					internalColour,
 					"Frame, Slot",
-					"Any",
+					"All",
 					"Internal (i.e. Object Model)");
 				addRow(
 					externalColour,
 					"Frame, Slot",
-					"Any",
+					"All",
 					"External (e.g. Ontology)");
 				addRow(
 					dualColour,
 					"Frame, Slot",
-					"Any",
-					"Dual (Internal AND External)");
+					"All",
+					"Internal AND External");
 				addRow(
 					numberColour,
 					"Number",
-					"Any",
-					"Any (determined by context)");
+					"All",
+					"Internal AND/OR External (context dependent)");
 			}
 		}
 
@@ -220,48 +220,36 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns("Entity Types", "Label Modifier", "Represents");
 
-				addCardinalityModifier(CCardinality.SINGLE_VALUE);
-				addCardinalityModifier(CCardinality.UNIQUE_TYPES);
-				addRepeatableModifier("Single value-type", true);
-				addRepeatableModifier("Multiple value-types", false);
+				addCardinalityRow(
+					CCardinality.SINGLE_VALUE,
+					false,
+					"Single-valued");
+				addCardinalityRow(
+					CCardinality.UNIQUE_TYPES,
+					false,
+					"Multi-valued / Unique value-types");
+				addCardinalityRow(
+					CCardinality.REPEATABLE_TYPES,
+					false,
+					"Multi-valued / Multiple repeatable value-types");
+				addCardinalityRow(
+					CCardinality.REPEATABLE_TYPES,
+					true,
+					"Multi-valued / Single repeatable value-type");
 			}
 
-			private void addRepeatableModifier(
-							String valueTypesDesc,
-							boolean singleType) {
-
-				String desc = "";
-
-				desc += "(" + describe(CCardinality.REPEATABLE_TYPES) + ")";
-				desc += " AND ";
-				desc += "(" + valueTypesDesc + ")";
-
-				addCardinalityModifier(CCardinality.REPEATABLE_TYPES, singleType, desc);
-			}
-
-			private void addCardinalityModifier(CCardinality cardinality) {
-
-				addCardinalityModifier(cardinality, false, describe(cardinality));
-			}
-
-			private void addCardinalityModifier(
+			private void addCardinalityRow(
 							CCardinality cardinality,
 							boolean singleType,
 							String description) {
 
-				String modifier = getModifier(cardinality, singleType);
-
-				addRow("CSlot, ISlot", modifier, description);
-			}
-
-			private String getModifier(CCardinality cardinality, boolean singleType) {
-
-				return SlotLabelModifiers.forCardinality(cardinality, singleType);
-			}
-
-			private String describe(CCardinality cardinality) {
-
-				return "" + cardinality + " cardinality";
+				addRow(
+					"CSlot, ISlot",
+					SlotLabelModifiers
+						.forCardinality(
+							cardinality,
+							singleType),
+					description);
 			}
 		}
 
@@ -342,7 +330,7 @@ class HelpPanel extends JTabbedPane {
 				super("Node-Shape Modifiers");
 
 				addColumns(
-					"Shape + or - Modifier",
+					"Shape +/- Modifier",
 					"Entity Types",
 					"Represents Attribute");
 
@@ -436,7 +424,7 @@ class HelpPanel extends JTabbedPane {
 				super("Node-Shape Modifiers");
 
 				addColumns(
-					"Shape + or - Modifier",
+					"Shape +/- Modifier",
 					"Entity Types",
 					"Represents Attribute");
 
@@ -465,16 +453,16 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns("Entity Types", "Label Modifier", "Represents");
 
-				addSlotValueTypeModifier("concept", true);
-				addSlotValueTypeModifier("instance-or-number", false);
+				addSlotValueTypeRow("CFrame", true);
+				addSlotValueTypeRow("IFrame/INumber", false);
 			}
 
-			private void addSlotValueTypeModifier(String valueType, boolean conceptLevel) {
+			private void addSlotValueTypeRow(String valueType, boolean conceptLevel) {
 
 				addRow(
 					"ISlot",
 					SlotLabelModifiers.forValueType("VALUE-TYPE", conceptLevel),
-					"Slot is " + valueType + "-valued with specified value-type");
+					"" + valueType + "-valued with specified value-type");
 			}
 		}
 
@@ -488,8 +476,8 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns(
 					"Entity Types",
-					"Entity Label/Label-Section Colours",
-					"Represnts Update(s) Resulting rom Latest User Action");
+					"Entity Label / Label-Section Colours",
+					"Effect(s) of Latest User Action on Entity");
 
 				addRow(
 					"IFrame, CFrame, INumber",
@@ -564,36 +552,47 @@ class HelpPanel extends JTabbedPane {
 
 				super("Actions");
 
-				addColumns("Target Type", "Mouse Action", "Model Action");
+				addColumns(
+					"Target Type",
+					"Applicability",
+					"Mouse Action",
+					"Model Action");
 
 				addRow(
-					"SLOT-VALUE-TYPE",
+					"SLOT",
+					"Editable slots only",
 					LEFT_CLICK_STRING,
-					"Add slot value");
+					"Add value");
 				addRow(
-					"SLOT-VALUE-TYPE",
+					"SLOT",
+					"Editable slots only",
 					RIGHT_CLICK_STRING,
-					"Clear slot value(s)");
+					"Clear value(s)");
 				addRow(
-					"SLOT-VALUE (CFrame only)",
+					"SLOT-VALUE",
+					"Editable slots only",
+					RIGHT_CLICK_STRING,
+					"Remove value");
+				addRow(
+					"SLOT-VALUE",
+					"Abstract-editable CFrame-valued slots only",
 					LEFT_CLICK_STRING,
 					"Add disjunct to value");
 				addRow(
-					"SLOT-VALUE (IFrame only)",
-					LEFT_CLICK_STRING,
-					"Add disjunct to value-type");
+					"SLOT-VALUE",
+					"Abstract-editable CFrame-valued slots only",
+					RIGHT_CLICK_STRING,
+					"Remove disjunct(s) from value");
 				addRow(
 					"SLOT-VALUE",
-					RIGHT_CLICK_STRING,
-					"Remove slot value");
+					"Abstract-editable IFrame-valued slots only",
+					LEFT_CLICK_STRING,
+					"Add disjunct to value-type of value");
 				addRow(
-					"SLOT-VALUE (CFrame only)",
+					"SLOT-VALUE",
+					"Abstract-editable IFrame-valued slots only",
 					RIGHT_CLICK_STRING,
-					"Remove disjunct from value (alternative action, where applicable)");
-				addRow(
-					"SLOT-VALUE (IFrame only)",
-					RIGHT_CLICK_STRING,
-					"Remove disjunct from value-type (alternative action, where applicable)");
+					"Remove disjunct(s) from value-type of value");
 			}
 		}
 
