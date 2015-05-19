@@ -52,7 +52,7 @@ class SlotLabelModifiers {
 				return "[x,y,z]";
 
 			case REPEATABLE_TYPES:
-				return onePossibleValue ? "[x,x,x]" : "[x,x,y]";
+				return onePossibleValue ? "[x,x,x]" : "[x,y,y]";
 		}
 
 		throw new Error("Unrecognised cardinality value: " + cardinality);
