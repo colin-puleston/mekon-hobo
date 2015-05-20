@@ -313,6 +313,6 @@ class CExtensionDescriber {
 
 	private CIdentity getExtendedIdentity(CExtension extension) {
 
-		return extension.getModelFrame().getIdentity();
+		return extension.getAtomicFrame().getIdentity();
 	}
 }

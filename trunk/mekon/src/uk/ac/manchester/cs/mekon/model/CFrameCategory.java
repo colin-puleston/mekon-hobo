@@ -32,9 +32,9 @@ package uk.ac.manchester.cs.mekon.model;
 public enum CFrameCategory {
 
 	/**
-	 * Frame is a model-frame.
+	 * Frame is an atomic-frame.
 	 */
-	MODEL,
+	ATOMIC,
 
 	/**
 	 * Frame is an abstract-extension-frame.
@@ -52,29 +52,29 @@ public enum CFrameCategory {
 	DISJUNCTION;
 
 	/**
-	 * States whether frame is a model-frame, which is true if and
-	 * only if it is equal to {@link #MODEL}.
+	 * States whether frame is an atomic-frame, which is true if and
+	 * only if it is equal to {@link #ATOMIC}.
 	 *
-	 * @return True if model-frame.
+	 * @return True if atomic-frame.
 	 */
-	public boolean modelFrame() {
+	public boolean atomic() {
 
-		return this == MODEL;
+		return this == ATOMIC;
 	}
 
 	/**
 	 * States whether frame is an expression-frame, which is true if
-	 * and only if it is not equal to {@link #MODEL}.
+	 * and only if it is not equal to {@link #ATOMIC}.
 	 *
 	 * @return True if extension-frame.
 	 */
 	public boolean expression() {
 
-		return !modelFrame();
+		return !atomic();
 	}
 
 	/**
-	 * States whether frame is a model-frame, which is true if and
+	 * States whether frame is an atomic-frame, which is true if and
 	 * only if it is equal to {@link #ABSTRACT_EXTENSION} or
 	 * {@link #CONCRETE_EXTENSION}.
 	 *

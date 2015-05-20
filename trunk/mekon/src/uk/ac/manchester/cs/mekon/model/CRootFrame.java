@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 /**
  * @author Colin Puleston
  */
-class CRootFrame extends CModelFrame {
+class CRootFrame extends CAtomicFrame {
 
 	static private final String IDENTIFIER = CRootFrame.class.getName();
 	static private final String LABEL = "<CONCEPT>";

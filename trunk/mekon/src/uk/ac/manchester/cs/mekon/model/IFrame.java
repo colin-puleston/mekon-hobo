@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * Represents an instance-level model-frame. The frame can be
+ * Represents an instance-level atomic-frame. The frame can be
  * either of category {@link IFrameCategory#ASSERTION} or
  * category {@link IFrameCategory#QUERY}. Assertion-frames differ
  * from query-frames in the following ways:

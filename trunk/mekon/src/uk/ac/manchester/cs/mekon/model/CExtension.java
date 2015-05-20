@@ -36,7 +36,7 @@ class CExtension extends CExpression {
 
 	static private final String EXPRESSION_TYPE_NAME = "expression";
 
-	private CModelFrame extendedFrame;
+	private CAtomicFrame extendedFrame;
 	private List<CFrame> structuredAncestors;
 	private CSlotValues slotValues;
 	private boolean concrete;
@@ -94,7 +94,7 @@ class CExtension extends CExpression {
 		return extendedFrame.getModel();
 	}
 
-	public CFrame getModelFrame() {
+	public CFrame getAtomicFrame() {
 
 		return extendedFrame;
 	}
@@ -149,7 +149,7 @@ class CExtension extends CExpression {
 
 	CExtension(
 		String label,
-		CModelFrame extendedFrame,
+		CAtomicFrame extendedFrame,
 		CSlotValues slotValues,
 		boolean concrete) {
 
@@ -174,7 +174,7 @@ class CExtension extends CExpression {
 		registerAsReferencerOfSlotValues();
 	}
 
-	List<CModelFrame> asModelDisjuncts() {
+	List<CAtomicFrame> asModelDisjuncts() {
 
 		throw new KAccessException(
 					"Cannot create disjunction with "
@@ -182,7 +182,7 @@ class CExtension extends CExpression {
 					+ this);
 	}
 
-	List<CModelFrame> getSubsumptionTestDisjuncts() {
+	List<CAtomicFrame> getSubsumptionTestDisjuncts() {
 
 		return extendedFrame.getSubsumptionTestDisjuncts();
 	}

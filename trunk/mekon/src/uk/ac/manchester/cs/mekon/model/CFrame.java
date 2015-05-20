@@ -33,28 +33,28 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  * Represents a concept-level frame. There are two general
  * categories of frame:
  * <ul>
- *   <li><i>Model-frame</i> Represents a specific model-concept
+ *   <li><i>Atomic-frame</i> Represents a specific model-concept
  *   <li><i>Expression-frame</i> Represents a concept-level
  *   expression
  * </ul>
- * The set of all model-frames forms a hierarchy with multiple
- * inheritance. Each model-frame, other than a special "root"
+ * The set of all atomic-frames forms a hierarchy with multiple
+ * inheritance. Each atomic-frame, other than a special "root"
  * frame, will have hierarchical links to one of more super-frames,
- * and zero or more sub-frames. Model-frames may also provide sets
+ * and zero or more sub-frames. Atomic-frames may also provide sets
  * of slots or default slot-values.
  * <p>
- * Expression-frames are not part of the model-frame hierarchy.
- * Hierarcical links between expression-frames and model-frames are
- * one-way only. Model-frames never contain hierarcical links to
+ * Expression-frames are not part of the atomic-frame hierarchy.
+ * Hierarcical links between expression-frames and atomic-frames are
+ * one-way only. Atomic-frames never contain hierarcical links to
  * expression-frames.
  * <p>
  * There are two main sub-categories of expression-frame:
  * <ul>
  *   <li><i>Disjunction-frame</i> Represents a disjunction of
- *   model-concepts, with the (model-frame) disjuncts represented
+ *   model-concepts, with the (atomic-frame) disjuncts represented
  *   as sub-frames
  *   <li><i>Extension-frame</i> Represents an anonymous extension
- *   of a particular model-frame, which provides a set of additional
+ *   of a particular atomic-frame, which provides a set of additional
  *   default slot-values
  * </ul>
  * <p>
@@ -68,7 +68,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  * </ul>
  * Each frame has a "visibility" status of "exposed" or "hidden".
  * Hidden frames are those that are not relevant to an end-user.
- * Model-frames can be either exposed or hidden. Expression-frames
+ * Atomic-frames can be either exposed or hidden. Expression-frames
  * are always exposed. The hierarchy-traversal methods allow
  * hierarchical links involving exposed and/or hidden frames to be
  * followed.
@@ -94,7 +94,7 @@ public abstract class CFrame
 	 * generated label providing a description of the disjunction.
 	 *
 	 * @param disjuncts Relevant disjuncts
-	 * @return Created disjunction-frame, or single model-frame if
+	 * @return Created disjunction-frame, or single atomic-frame if
 	 * disjuncts resolve to one
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
@@ -106,14 +106,14 @@ public abstract class CFrame
 
 	/**
 	 * Creates a disjunction-frame, or if the required disjunction
-	 * resolves to a single model-frame then returns that model-frame.
+	 * resolves to a single atomic-frame then returns that atomic-frame.
 	 * Any of the specified disjuncts that are themselves disjunctions
 	 * will be split up into their constituent disjuncts. The disjuncts
 	 * cannot be extension-frames.
 	 *
 	 * @param label Label for disjunction-frame
 	 * @param disjuncts Relevant disjuncts
-	 * @return Created disjunction-frame, or single model-frame if
+	 * @return Created disjunction-frame, or single atomic-frame if
 	 * disjuncts resolve to one
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
@@ -233,20 +233,20 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Provides the closest model-frame subsumer of this frame that
+	 * Provides the closest atomic-frame subsumer of this frame that
 	 * can be unambiguosly defined. This will depend on the type of
 	 * this frame as follows:
 	 * <ul>
-	 *   <li><i>Model-frames:</i> The frame itself
-	 *   <li><i>Extension-frame:</i> The model-frame that it extends
-	 *   <li><i>Disjunction-frame:</i> The closest model-frame that
+	 *   <li><i>Atomic-frames:</i> The frame itself
+	 *   <li><i>Extension-frame:</i> The atomic-frame that it extends
+	 *   <li><i>Disjunction-frame:</i> The closest atomic-frame that
 	 *   (a) subsumes all disjuncts and (b) is either an ancestor or a
-	 *   descendant of any other model-frame that subsumes all disjuncts
+	 *   descendant of any other atomic-frame that subsumes all disjuncts
 	 * </ul>
 	 *
-	 * @return Closest unambiguosly defined model-frame subsumer
+	 * @return Closest unambiguosly defined atomic-frame subsumer
 	 */
-	public abstract CFrame getModelFrame();
+	public abstract CFrame getAtomicFrame();
 
 	/**
 	 * Provides a decomposition of the frame into a set of disjuncts. If
@@ -458,9 +458,9 @@ public abstract class CFrame
 	 */
 	public boolean subsumes(CFrame testSubsumed) {
 
-		for (CModelFrame disjunct : testSubsumed.getSubsumptionTestDisjuncts()) {
+		for (CAtomicFrame disjunct : testSubsumed.getSubsumptionTestDisjuncts()) {
 
-			if (!subsumesModelFrame(disjunct)) {
+			if (!subsumesAtomicFrame(disjunct)) {
 
 				return false;
 			}
@@ -548,11 +548,11 @@ public abstract class CFrame
 
 	abstract IReasoner getIReasoner();
 
-	abstract CModelFrame asModelFrame();
+	abstract CAtomicFrame asAtomicFrame();
 
-	abstract List<CModelFrame> asModelDisjuncts();
+	abstract List<CAtomicFrame> asModelDisjuncts();
 
-	abstract List<CModelFrame> getSubsumptionTestDisjuncts();
+	abstract List<CAtomicFrame> getSubsumptionTestDisjuncts();
 
 	boolean structured() {
 
@@ -561,7 +561,7 @@ public abstract class CFrame
 
 	CExtension extend(String label, CSlotValues slotValues, boolean concrete) {
 
-		CExtension extn = new CExtension(label, asModelFrame(), slotValues, concrete);
+		CExtension extn = new CExtension(label, asAtomicFrame(), slotValues, concrete);
 
 		pollListenersForExtended(extn);
 
@@ -593,11 +593,11 @@ public abstract class CFrame
 		return testSubsumer.equals(testSubsumed);
 	}
 
-	private boolean subsumesModelFrame(CModelFrame testSubsumed) {
+	private boolean subsumesAtomicFrame(CAtomicFrame testSubsumed) {
 
-		for (CModelFrame disjunct : getSubsumptionTestDisjuncts()) {
+		for (CAtomicFrame disjunct : getSubsumptionTestDisjuncts()) {
 
-			if (disjunct.modelFrameSubsumption(testSubsumed)) {
+			if (disjunct.atomicFrameSubsumption(testSubsumed)) {
 
 				return true;
 			}

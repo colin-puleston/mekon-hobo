@@ -70,10 +70,10 @@ abstract class CExpression extends CFrame {
 		this.label = label;
 	}
 
-	CModelFrame asModelFrame() {
+	CAtomicFrame asAtomicFrame() {
 
 		throw new KAccessException(
-					"Required a model-frame: "
+					"Required an atomic-frame: "
 					+ "Found expression-frame: "
 					+ this);
 	}

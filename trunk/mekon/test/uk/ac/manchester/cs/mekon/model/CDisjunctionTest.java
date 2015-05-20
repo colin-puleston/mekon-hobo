@@ -79,7 +79,7 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 		testSupers(abc, CVisibility.EXPOSED, expectSups);
 		testSupers(abc, CVisibility.HIDDEN, NO_CFRAMES);
 
-		assertEquals(abc.getModelFrame(), singleCommonAnc);
+		assertEquals(abc.getAtomicFrame(), singleCommonAnc);
 	}
 
 	@Test

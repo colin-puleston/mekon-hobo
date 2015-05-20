@@ -65,7 +65,7 @@ public class MekonTest extends FramesTestUtils {
 			valueType = createValueType(typesPrefix);
 			slotType = createSlotType();
 
-			frameType.asModelFrame().setIReasoner(this);
+			frameType.asAtomicFrame().setIReasoner(this);
 		}
 
 		private CFrame createValueType(String typesPrefix) {
@@ -179,19 +179,19 @@ public class MekonTest extends FramesTestUtils {
 		return fa;
 	}
 
-	public CModelFrame createCFrame(String name) {
+	public CAtomicFrame createCFrame(String name) {
 
 		return createCFrame(name, false);
 	}
 
-	public CModelFrame createHiddenCFrame(String name) {
+	public CAtomicFrame createHiddenCFrame(String name) {
 
 		return createCFrame(name, true);
 	}
 
 	public void addSuperFrame(CFrame sub, CFrame sup) {
 
-		sub.asModelFrame().addSuper(sup.asModelFrame());
+		sub.asAtomicFrame().addSuper(sup.asAtomicFrame());
 	}
 
 	public CSlot createCSlot(CCardinality cardinality) {
@@ -243,7 +243,7 @@ public class MekonTest extends FramesTestUtils {
 					CValue<?> valueType) {
 
 		return container
-					.asModelFrame()
+					.asAtomicFrame()
 					.createEditor()
 					.addSlot(
 						identity,
@@ -347,9 +347,9 @@ public class MekonTest extends FramesTestUtils {
 		return createCFrame("Slot-value-type");
 	}
 
-	private CModelFrame createCFrame(String name, boolean hidden) {
+	private CAtomicFrame createCFrame(String name, boolean hidden) {
 
-		CModelFrame frame = model.addFrame(createIdentity(name), hidden);
+		CAtomicFrame frame = model.addFrame(createIdentity(name), hidden);
 
 		if (iReasoner != null) {
 

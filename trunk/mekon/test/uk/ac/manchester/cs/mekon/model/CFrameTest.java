@@ -59,7 +59,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		testList(c.getSupers(), Arrays.asList(b));
 		testList(c.getSubs(), NO_CFRAMES);
 
-		model.removeFrame(b.asModelFrame());
+		model.removeFrame(b.asAtomicFrame());
 
 		testList(model.getFrames().asList(), Arrays.asList(a, c));
 		testList(a.getSupers(), getRootFrameAsList());
@@ -353,8 +353,8 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private void testAddSlots(boolean addValidatingLink) {
 
-		CModelFrame a = createCFrame("A");
-		CModelFrame b = createCFrame("B");
+		CAtomicFrame a = createCFrame("A");
+		CAtomicFrame b = createCFrame("B");
 		CFrame va = createCFrame("VA");
 		CFrame vb = createCFrame("VB");
 

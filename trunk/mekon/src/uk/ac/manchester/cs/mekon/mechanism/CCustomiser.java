@@ -49,7 +49,7 @@ public interface CCustomiser {
 	public void onFrameRemoved(CFrame frame);
 
 	/**
-	 * Method invoked when a slot is removed from a model-frame.
+	 * Method invoked when a slot is removed from an atomic-frame.
 	 *
 	 * @param slot Removed slot
 	 */

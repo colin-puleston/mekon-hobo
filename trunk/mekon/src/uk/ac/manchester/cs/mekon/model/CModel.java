@@ -214,9 +214,9 @@ public class CModel implements CAnnotatable {
 		queriesEnabled = enabled;
 	}
 
-	CModelFrame addFrame(CIdentity identity, boolean hidden) {
+	CAtomicFrame addFrame(CIdentity identity, boolean hidden) {
 
-		CModelFrame frame = new CModelFrame(this, identity, hidden);
+		CAtomicFrame frame = new CAtomicFrame(this, identity, hidden);
 
 		frames.add(frame);
 		customiser.onFrameAdded(frame);
@@ -224,7 +224,7 @@ public class CModel implements CAnnotatable {
 		return frame;
 	}
 
-	boolean removeFrame(CModelFrame frame) {
+	boolean removeFrame(CAtomicFrame frame) {
 
 		if (frame.getSource().internal() || !frames.contains(frame)) {
 
@@ -282,7 +282,7 @@ public class CModel implements CAnnotatable {
 		return iEditor;
 	}
 
-	private void removeFrameTraces(CModelFrame frame) {
+	private void removeFrameTraces(CAtomicFrame frame) {
 
 		frame.removeFromHierarchy();
 

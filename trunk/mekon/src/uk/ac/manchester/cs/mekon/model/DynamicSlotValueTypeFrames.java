@@ -36,32 +36,32 @@ class DynamicSlotValueTypeFrames {
 	private CModel model;
 
 	private int valueTypeFrameCount = 0;
-	private Map<CModelFrame, ValueTypeSet> valueTypeSetsBySupers
-							= new HashMap<CModelFrame, ValueTypeSet>();
+	private Map<CAtomicFrame, ValueTypeSet> valueTypeSetsBySupers
+							= new HashMap<CAtomicFrame, ValueTypeSet>();
 
 	private class ValueTypeSet {
 
-		private CModelFrame sup;
-		private Map<List<CModelFrame>, CModelFrame> valueTypesBySubs
-						= new HashMap<List<CModelFrame>, CModelFrame>();
+		private CAtomicFrame sup;
+		private Map<List<CAtomicFrame>, CAtomicFrame> valueTypesBySubs
+						= new HashMap<List<CAtomicFrame>, CAtomicFrame>();
 
-		ValueTypeSet(CModelFrame sup) {
+		ValueTypeSet(CAtomicFrame sup) {
 
 			this.sup = sup;
 
 			valueTypeSetsBySupers.put(sup, this);
 		}
 
-		CModelFrame getForSubs(List<CModelFrame> subs) {
+		CAtomicFrame getForSubs(List<CAtomicFrame> subs) {
 
-			CModelFrame valueTypeFrame = valueTypesBySubs.get(subs);
+			CAtomicFrame valueTypeFrame = valueTypesBySubs.get(subs);
 
 			return valueTypeFrame != null ? valueTypeFrame : ensureForSubs(subs);
 		}
 
-		private synchronized CModelFrame ensureForSubs(List<CModelFrame> subs) {
+		private synchronized CAtomicFrame ensureForSubs(List<CAtomicFrame> subs) {
 
-			CModelFrame valueTypeFrame = valueTypesBySubs.get(subs);
+			CAtomicFrame valueTypeFrame = valueTypesBySubs.get(subs);
 
 			if (valueTypeFrame == null) {
 
@@ -72,13 +72,13 @@ class DynamicSlotValueTypeFrames {
 			return valueTypeFrame;
 		}
 
-		private CModelFrame createForSubs(List<CModelFrame> subs) {
+		private CAtomicFrame createForSubs(List<CAtomicFrame> subs) {
 
-			CModelFrame valueTypeFrame = create();
+			CAtomicFrame valueTypeFrame = create();
 
 			valueTypeFrame.addSuper(sup);
 
-			for (CModelFrame sub : subs) {
+			for (CAtomicFrame sub : subs) {
 
 				sub.addSuper(valueTypeFrame);
 			}
@@ -86,7 +86,7 @@ class DynamicSlotValueTypeFrames {
 			return valueTypeFrame;
 		}
 
-		private CModelFrame create() {
+		private CAtomicFrame create() {
 
 			return model.addFrame(getNewIdentity(), true);
 		}
@@ -125,10 +125,10 @@ class DynamicSlotValueTypeFrames {
 
 	synchronized CFrame get(CFrame sup, List<CFrame> subs) {
 
-		return get(sup.asModelFrame(), CModelFrame.asModelFrames(subs));
+		return get(sup.asAtomicFrame(), CAtomicFrame.asAtomicFrames(subs));
 	}
 
-	private CModelFrame get(CModelFrame sup, List<CModelFrame> subs) {
+	private CAtomicFrame get(CAtomicFrame sup, List<CAtomicFrame> subs) {
 
 		ValueTypeSet set = valueTypeSetsBySupers.get(sup);
 
@@ -140,7 +140,7 @@ class DynamicSlotValueTypeFrames {
 		return set.getForSubs(subs);
 	}
 
-	private synchronized ValueTypeSet ensureValueTypeSet(CModelFrame sup) {
+	private synchronized ValueTypeSet ensureValueTypeSet(CAtomicFrame sup) {
 
 		ValueTypeSet set = valueTypeSetsBySupers.get(sup);
 

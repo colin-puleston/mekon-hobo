@@ -37,16 +37,16 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 
-	private CModelFrame ta = createCFrame("A");
-	private CModelFrame tb = createCFrame("B");
-	private CModelFrame tc = createCFrame("C");
-	private CModelFrame td = createCFrame("D");
-	private CModelFrame te = createCFrame("E");
+	private CAtomicFrame ta = createCFrame("A");
+	private CAtomicFrame tb = createCFrame("B");
+	private CAtomicFrame tc = createCFrame("C");
+	private CAtomicFrame td = createCFrame("D");
+	private CAtomicFrame te = createCFrame("E");
 
-	private CModelFrame tx = createCFrame("X");
-	private CModelFrame ty1 = createCFrame("Y1");
-	private CModelFrame ty2 = createCFrame("Y2");
-	private CModelFrame tz = createCFrame("Z");
+	private CAtomicFrame tx = createCFrame("X");
+	private CAtomicFrame ty1 = createCFrame("Y1");
+	private CAtomicFrame ty2 = createCFrame("Y2");
+	private CAtomicFrame tz = createCFrame("Z");
 
 	private CIdentity slot1Id = createIdentity("SLOT-1");
 	private CIdentity slot2Id = createIdentity("SLOT-2");
@@ -82,8 +82,8 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 	@Test
 	public void test_slotValueUpdates() {
 
-		CModelFrame ty3a = createCFrame("Y3A");
-		CModelFrame ty3b = createCFrame("Y3B");
+		CAtomicFrame ty3a = createCFrame("Y3A");
+		CAtomicFrame ty3b = createCFrame("Y3B");
 
 		addSuperFrame(ty3a, ty2);
 		addSuperFrame(ty3b, ty2);
@@ -161,10 +161,10 @@ public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
 	}
 
 	private CSlot createCSlot(
-					CModelFrame container,
+					CAtomicFrame container,
 					CIdentity slotId,
 					CCardinality cardinality,
-					CModelFrame rootValue) {
+					CAtomicFrame rootValue) {
 
 		return createCSlot(container, slotId, cardinality, rootValue.getType());
 	}
