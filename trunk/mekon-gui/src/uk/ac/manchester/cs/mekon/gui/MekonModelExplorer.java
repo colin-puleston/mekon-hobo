@@ -56,23 +56,23 @@ public class MekonModelExplorer extends GFrame {
 
 	private class Initialiser {
 
-		private ModelFrameSelections selections;
-		private ModelFramesPanel modelFramesPanel;
-		private ModelFrameSelectionPanel selectionsPanel;
+		private ModelFramesPanel modelPanel;
+		private ModelFrameSelectionPanel selectionPanel;
 		private InstanceStorePanel instanceStorePanel;
+
+		private ModelFrameSelections selections = new ModelFrameSelections();
 
 		Initialiser(CModel model) {
 
-			selections = new ModelFrameSelections();
-			modelFramesPanel = new ModelFramesPanel(model);
+			modelPanel = new ModelFramesPanel(model);
 
-			CFramesTree modelTree = modelFramesPanel.getTree();
+			CFramesTree modelTree = modelPanel.getTree();
 
-			selectionsPanel = new ModelFrameSelectionPanel(model, modelTree);
+			selectionPanel = new ModelFrameSelectionPanel(model, modelTree);
 			instanceStorePanel = new InstanceStorePanel(model, modelTree);
 
-			selections.addSelectionRelay(modelFramesPanel.getSelectionRelay());
-			selections.addSelectionRelay(selectionsPanel.getSelectionRelay());
+			selections.addSelectionRelay(modelPanel.getSelectionRelay());
+			selections.addSelectionRelay(selectionPanel.getSelectionRelay());
 		}
 
 		JComponent createTopLevelComponent() {
@@ -90,7 +90,7 @@ public class MekonModelExplorer extends GFrame {
 			GSplitPane panel = new GSplitPane();
 
 			panel.setLeftComponent(createModelAndInstancesPanel());
-			panel.setRightComponent(selectionsPanel);
+			panel.setRightComponent(selectionPanel);
 
 			return panel;
 		}
@@ -109,7 +109,7 @@ public class MekonModelExplorer extends GFrame {
 
 			JPanel panel = new JPanel(new BorderLayout());
 
-			panel.add(modelFramesPanel, BorderLayout.CENTER);
+			panel.add(modelPanel, BorderLayout.CENTER);
 			panel.add(instanceStorePanel, BorderLayout.SOUTH);
 
 			return panel;
