@@ -58,7 +58,7 @@ class CFrameAdditionSelector extends CFrameSelector {
 
 	private CFramesComboPanel createComboPanel() {
 
-		boolean showRoot = rootFrame.getCategory().modelFrame();
+		boolean showRoot = rootFrame.getCategory().atomic();
 
 		return new CFramesComboPanel(rootFrame, CVisibility.EXPOSED, showRoot);
 	}
