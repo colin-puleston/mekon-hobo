@@ -25,16 +25,15 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Responsible for the definition of and subsequent creation of
- * an extension-frame (see {@link CFrameCategory#extension}) that
- * extends a particular model-frame (see {@link
- * CFrameCategory#modelFrame}).
+ * Responsible for the definition of and subsequent creation of an
+ * extension-frame (see {@link CFrameCategory#extension}) that extends
+ * a particular atomic-frame (see {@link CFrameCategory#atomic}).
  *
  * @author Colin Puleston
  */
 public class CExtender {
 
-	private CModelFrame baseFrame;
+	private CAtomicFrame baseFrame;
 	private String label;
 	private CSlotValues slotValues = new CSlotValues();
 	private boolean concrete = false;
@@ -43,9 +42,9 @@ public class CExtender {
 	 * Constructor for defining an extension-frame with a default
 	 * label that provides a description of the extension.
 	 *
-	 * @param baseFrame Model-frame to be extended
-	 * @throws KAccessException if specified base-frame is not a
-	 * model-frame
+	 * @param baseFrame Atomic-frame to be extended
+	 * @throws KAccessException if specified base-frame is not an
+	 * atomic-frame
 	 */
 	public CExtender(CFrame baseFrame) {
 
@@ -56,14 +55,14 @@ public class CExtender {
 	 * Constructor for defining an extension-frame with the specified
 	 * label.
 	 *
-	 * @param baseFrame Model-frame to be extended
+	 * @param baseFrame Atomic-frame to be extended
 	 * @param label Label for extension-frame
-	 * @throws KAccessException if specified base-frame is not a
-	 * model-frame
+	 * @throws KAccessException if specified base-frame is not an
+	 * atomic-frame
 	 */
 	public CExtender(CFrame baseFrame, String label) {
 
-		this.baseFrame = baseFrame.asModelFrame();
+		this.baseFrame = baseFrame.asAtomicFrame();
 		this.label = label;
 	}
 

@@ -99,12 +99,12 @@ class CBuilderImpl implements CBuilder {
 
 		CFrame frame = getFrames().getOrNull(identity);
 
-		return frame != null && model.removeFrame(frame.asModelFrame());
+		return frame != null && model.removeFrame(frame.asAtomicFrame());
 	}
 
 	public void setIReasoner(CFrame frame, IReasoner iReasoner) {
 
-		frame.asModelFrame().setIReasoner(iReasoner);
+		frame.asAtomicFrame().setIReasoner(iReasoner);
 	}
 
 	public List<CSectionBuilder> getAllSectionBuilders() {
@@ -139,7 +139,7 @@ class CBuilderImpl implements CBuilder {
 
 	public CFrameEditor getFrameEditor(CFrame frame) {
 
-		return frame.asModelFrame().createEditor();
+		return frame.asAtomicFrame().createEditor();
 	}
 
 	public CSlotEditor getSlotEditor(CSlot slot) {

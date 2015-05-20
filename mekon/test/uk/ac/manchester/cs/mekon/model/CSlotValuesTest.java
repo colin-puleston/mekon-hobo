@@ -36,22 +36,22 @@ import uk.ac.manchester.cs.mekon.*;
  */
 public class CSlotValuesTest extends MekonTest {
 
-	private CModelFrame container = createCFrame("CONTAINER");
+	private CAtomicFrame container = createCFrame("CONTAINER");
 
 	private CIdentity slot1Name = createIdentity("SLOT-1");
 	private CIdentity slot2Name = createIdentity("SLOT-2");
 
-	private CModelFrame rootValueSlot1 = createCFrame("ROOT-VALUE-SLOT-1");
-	private CModelFrame rootValueSlot2 = createCFrame("ROOT-VALUE-SLOT-2");
+	private CAtomicFrame rootValueSlot1 = createCFrame("ROOT-VALUE-SLOT-1");
+	private CAtomicFrame rootValueSlot2 = createCFrame("ROOT-VALUE-SLOT-2");
 
-	private CModelFrame value1Slot1 = createCFrame("VALUE-1-SLOT-1");
-	private CModelFrame value2Slot1 = createCFrame("VALUE-2-SLOT-1");
-	private CModelFrame value2XSlot1 = createCFrame("VALUE-2X-SLOT-1");
-	private CModelFrame value1Slot2 = createCFrame("VALUE-1-SLOT-2");
-	private CModelFrame value2Slot2 = createCFrame("VALUE-2-SLOT-2");
+	private CAtomicFrame value1Slot1 = createCFrame("VALUE-1-SLOT-1");
+	private CAtomicFrame value2Slot1 = createCFrame("VALUE-2-SLOT-1");
+	private CAtomicFrame value2XSlot1 = createCFrame("VALUE-2X-SLOT-1");
+	private CAtomicFrame value1Slot2 = createCFrame("VALUE-1-SLOT-2");
+	private CAtomicFrame value2Slot2 = createCFrame("VALUE-2-SLOT-2");
 
 	private CIdentity badSlotId = createIdentity("BAD-SLOT-NAME");
-	private CModelFrame badValue = createCFrame("BAD-VALUE");
+	private CAtomicFrame badValue = createCFrame("BAD-VALUE");
 
 	public CSlotValuesTest() {
 

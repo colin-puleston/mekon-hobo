@@ -32,18 +32,18 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class CModelFrame extends CFrame {
+class CAtomicFrame extends CFrame {
 
-	static List<CModelFrame> asModelFrames(List<CFrame> frames) {
+	static List<CAtomicFrame> asAtomicFrames(List<CFrame> frames) {
 
-		List<CModelFrame> modelFrames = new ArrayList<CModelFrame>();
+		List<CAtomicFrame> atomicFrames = new ArrayList<CAtomicFrame>();
 
 		for (CFrame frame : frames) {
 
-			modelFrames.add(frame.asModelFrame());
+			atomicFrames.add(frame.asAtomicFrame());
 		}
 
-		return modelFrames;
+		return atomicFrames;
 	}
 
 	private CModel model;
@@ -51,8 +51,8 @@ class CModelFrame extends CFrame {
 	private CSource source = CSource.EXTERNAL;
 	private boolean hidden;
 
-	private CModelFrames supers = new CModelFrames();
-	private CModelFrames subs = CModelFrames.INERT_INSTANCE;
+	private CAtomicFrames supers = new CAtomicFrames();
+	private CAtomicFrames subs = CAtomicFrames.INERT_INSTANCE;
 	private CSlots slots = CSlots.INERT_INSTANCE;
 	private CSlotValues slotValues = CSlotValues.INERT_INSTANCE;
 
@@ -61,7 +61,7 @@ class CModelFrame extends CFrame {
 
 	private abstract class DownwardsCrawler extends CHierarchyCrawler {
 
-		List<CModelFrame> getDirectlyLinked(CModelFrame current) {
+		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
 			return current.subs.getAll();
 		}
@@ -76,7 +76,7 @@ class CModelFrame extends CFrame {
 
 			this.identityOrNull = identityOrNull;
 
-			processLinked(CModelFrame.this);
+			processLinked(CAtomicFrame.this);
 		}
 
 		boolean allRemoved() {
@@ -84,14 +84,14 @@ class CModelFrame extends CFrame {
 			return allRemoved;
 		}
 
-		CrawlMode process(CModelFrame current) {
+		CrawlMode process(CAtomicFrame current) {
 
 			allRemoved &= removeOrClear(current);
 
 			return CrawlMode.CRAWL;
 		}
 
-		private boolean removeOrClear(CModelFrame current) {
+		private boolean removeOrClear(CAtomicFrame current) {
 
 			return identityOrNull != null
 					? current.removeSlot(identityOrNull)
@@ -103,10 +103,10 @@ class CModelFrame extends CFrame {
 
 		DescendantSlotValuesClearer() {
 
-			processLinked(CModelFrame.this);
+			processLinked(CAtomicFrame.this);
 		}
 
-		CrawlMode process(CModelFrame current) {
+		CrawlMode process(CAtomicFrame current) {
 
 			current.clearSlotValues();
 
@@ -118,7 +118,7 @@ class CModelFrame extends CFrame {
 
 		public void setSource(CSource source) {
 
-			CModelFrame.this.source = source;
+			CAtomicFrame.this.source = source;
 		}
 
 		public void resetLabel(String newLabel) {
@@ -128,12 +128,12 @@ class CModelFrame extends CFrame {
 
 		public void addSuper(CFrame sup) {
 
-			CModelFrame.this.addSuper(sup.asModelFrame());
+			CAtomicFrame.this.addSuper(sup.asAtomicFrame());
 		}
 
 		public void removeSuper(CFrame sup) {
 
-			ensureNoLinksToSuper(sup.asModelFrame());
+			ensureNoLinksToSuper(sup.asAtomicFrame());
 		}
 
 		public CSlot addSlot(
@@ -141,16 +141,16 @@ class CModelFrame extends CFrame {
 						CCardinality cardinality,
 						CValue<?> valueType) {
 
-			CSlot slot = new CSlot(CModelFrame.this, slotId, cardinality, valueType);
+			CSlot slot = new CSlot(CAtomicFrame.this, slotId, cardinality, valueType);
 
-			CModelFrame.this.addSlot(slot);
+			CAtomicFrame.this.addSlot(slot);
 
 			return slot;
 		}
 
 		public boolean removeSlot(CIdentity slotId) {
 
-			return CModelFrame.this.removeSlot(slotId);
+			return CAtomicFrame.this.removeSlot(slotId);
 		}
 
 		public boolean removeSlotsFromDescendants(CIdentity slotId) {
@@ -160,7 +160,7 @@ class CModelFrame extends CFrame {
 
 		public boolean clearSlots() {
 
-			return CModelFrame.this.clearSlots();
+			return CAtomicFrame.this.clearSlots();
 		}
 
 		public boolean clearSlotsFromDescendants() {
@@ -170,7 +170,7 @@ class CModelFrame extends CFrame {
 
 		public void addSlotValue(CIdentity slotId, CValue<?> value) {
 
-			CModelFrame.this.addSlotValue(slotId, value);
+			CAtomicFrame.this.addSlotValue(slotId, value);
 		}
 
 		public void clearSlotValues() {
@@ -194,7 +194,7 @@ class CModelFrame extends CFrame {
 
 	public CFrameCategory getCategory() {
 
-		return CFrameCategory.MODEL;
+		return CFrameCategory.ATOMIC;
 	}
 
 	public boolean hidden() {
@@ -207,7 +207,7 @@ class CModelFrame extends CFrame {
 		return model;
 	}
 
-	public CFrame getModelFrame() {
+	public CFrame getAtomicFrame() {
 
 		return this;
 	}
@@ -252,7 +252,7 @@ class CModelFrame extends CFrame {
 		return slotValues;
 	}
 
-	CModelFrame(CModel model, CIdentity identity, boolean hidden) {
+	CAtomicFrame(CModel model, CIdentity identity, boolean hidden) {
 
 		this.model = model;
 		this.identity = identity;
@@ -271,22 +271,22 @@ class CModelFrame extends CFrame {
 
 	void removeFromHierarchy() {
 
-		List<CModelFrame> oldSupers = supers.getAll();
-		List<CModelFrame> oldSubs = subs.getAll();
+		List<CAtomicFrame> oldSupers = supers.getAll();
+		List<CAtomicFrame> oldSubs = subs.getAll();
 
-		for (CModelFrame sup : oldSupers) {
+		for (CAtomicFrame sup : oldSupers) {
 
 			removeLinksToSuper(sup);
 		}
 
-		for (CModelFrame sub : oldSubs) {
+		for (CAtomicFrame sub : oldSubs) {
 
 			sub.removeLinksToSuper(this);
 		}
 
-		for (CModelFrame sup : oldSupers) {
+		for (CAtomicFrame sup : oldSupers) {
 
-			for (CModelFrame sub : oldSubs) {
+			for (CAtomicFrame sub : oldSubs) {
 
 				sub.ensureLinksToSuper(sup);
 			}
@@ -303,7 +303,7 @@ class CModelFrame extends CFrame {
 		this.iReasoner = iReasoner;
 	}
 
-	void addSuper(CModelFrame sup) {
+	void addSuper(CAtomicFrame sup) {
 
 		if (!subsumedBy(sup)) {
 
@@ -312,7 +312,7 @@ class CModelFrame extends CFrame {
 		}
 	}
 
-	void ensureLinksToSuper(CModelFrame sup) {
+	void ensureLinksToSuper(CAtomicFrame sup) {
 
 		if (!supers.contains(sup)) {
 
@@ -325,7 +325,7 @@ class CModelFrame extends CFrame {
 		}
 	}
 
-	void ensureNoLinksToSuper(CModelFrame sup) {
+	void ensureNoLinksToSuper(CAtomicFrame sup) {
 
 		if (supers.contains(sup)) {
 
@@ -400,27 +400,27 @@ class CModelFrame extends CFrame {
 		return iReasoner;
 	}
 
-	CModelFrame asModelFrame() {
+	CAtomicFrame asAtomicFrame() {
 
 		return this;
 	}
 
-	List<CModelFrame> asModelDisjuncts() {
+	List<CAtomicFrame> asModelDisjuncts() {
 
 		return asSingletonList();
 	}
 
-	List<CModelFrame> getSubsumptionTestDisjuncts() {
+	List<CAtomicFrame> getSubsumptionTestDisjuncts() {
 
 		return asSingletonList();
 	}
 
-	CModelFrames getModelSupers() {
+	CAtomicFrames getModelSupers() {
 
 		return supers;
 	}
 
-	CModelFrames getModelSubs() {
+	CAtomicFrames getModelSubs() {
 
 		return subs;
 	}
@@ -430,40 +430,40 @@ class CModelFrame extends CFrame {
 		return subsumptions;
 	}
 
-	boolean modelFrameSubsumption(CModelFrame testSubsumed) {
+	boolean atomicFrameSubsumption(CAtomicFrame testSubsumed) {
 
 		return testSubsumed.subsumptions.isSubsumer(this);
 	}
 
-	private void addLinksToSuper(CModelFrame sup) {
+	private void addLinksToSuper(CAtomicFrame sup) {
 
 		supers.add(sup);
 		sup.addSub(this);
 	}
 
-	private void removeLinksToSuper(CModelFrame sup) {
+	private void removeLinksToSuper(CAtomicFrame sup) {
 
 		supers.remove(sup);
 		sup.removeSub(this);
 	}
 
-	private void addSub(CModelFrame sub) {
+	private void addSub(CAtomicFrame sub) {
 
-		if (subs == CModelFrames.INERT_INSTANCE) {
+		if (subs == CAtomicFrames.INERT_INSTANCE) {
 
-			subs = new CModelFrames();
+			subs = new CAtomicFrames();
 		}
 
 		subs.add(sub);
 	}
 
-	private void removeSub(CModelFrame sub) {
+	private void removeSub(CAtomicFrame sub) {
 
 		subs.remove(sub);
 
 		if (subs.isEmpty()) {
 
-			subs = CModelFrames.INERT_INSTANCE;
+			subs = CAtomicFrames.INERT_INSTANCE;
 		}
 	}
 
@@ -486,7 +486,7 @@ class CModelFrame extends CFrame {
 		return allRemoved;
 	}
 
-	private void validateSuper(CModelFrame sup) {
+	private void validateSuper(CAtomicFrame sup) {
 
 		if (subsumes(sup)) {
 
@@ -498,13 +498,13 @@ class CModelFrame extends CFrame {
 		}
 	}
 
-	private List<CModelFrame> asSingletonList() {
+	private List<CAtomicFrame> asSingletonList() {
 
-		return Collections.<CModelFrame>singletonList(this);
+		return Collections.<CAtomicFrame>singletonList(this);
 	}
 
-	private CModelFrame getRootFrame() {
+	private CAtomicFrame getRootFrame() {
 
-		return model.getRootFrame().asModelFrame();
+		return model.getRootFrame().asAtomicFrame();
 	}
 }

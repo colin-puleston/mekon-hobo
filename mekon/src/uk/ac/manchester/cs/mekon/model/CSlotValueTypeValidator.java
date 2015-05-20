@@ -51,12 +51,12 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 
 	void checkNotInvalidFor(CFrame container) {
 
-		processLinked(getModelFrame(container));
+		processLinked(getAtomicFrame(container));
 	}
 
 	void checkValidFor(CFrame container) {
 
-		processAll(getModelFrame(container));
+		processAll(getAtomicFrame(container));
 
 		if (!valid) {
 
@@ -66,12 +66,12 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 		}
 	}
 
-	List<CModelFrame> getDirectlyLinked(CModelFrame current) {
+	List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
 		return current.getModelSupers().getAll();
 	}
 
-	CrawlMode process(CModelFrame current) {
+	CrawlMode process(CAtomicFrame current) {
 
 		CSlots slots = current.getSlots();
 
@@ -99,8 +99,8 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 		}
 	}
 
-	private CModelFrame getModelFrame(CFrame container) {
+	private CAtomicFrame getAtomicFrame(CFrame container) {
 
-		return container.getModelFrame().asModelFrame();
+		return container.getAtomicFrame().asAtomicFrame();
 	}
 }

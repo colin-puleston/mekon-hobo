@@ -37,15 +37,15 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class ISlotSpecsTest extends MekonTest {
 
-	private CModelFrame ta = createCFrame("A");
-	private CModelFrame tb = createCFrame("B");
-	private CModelFrame tc = createCFrame("C");
-	private CModelFrame td = createCFrame("D");
+	private CAtomicFrame ta = createCFrame("A");
+	private CAtomicFrame tb = createCFrame("B");
+	private CAtomicFrame tc = createCFrame("C");
+	private CAtomicFrame td = createCFrame("D");
 
-	private CModelFrame tx = createCFrame("X");
-	private CModelFrame ty1 = createCFrame("Y1");
-	private CModelFrame ty2 = createCFrame("Y2");
-	private CModelFrame tz = createCFrame("Z");
+	private CAtomicFrame tx = createCFrame("X");
+	private CAtomicFrame ty1 = createCFrame("Y1");
+	private CAtomicFrame ty2 = createCFrame("Y2");
+	private CAtomicFrame tz = createCFrame("Z");
 
 	private CIdentity slotId = createIdentity("SLOT");
 
@@ -245,9 +245,9 @@ public class ISlotSpecsTest extends MekonTest {
 	}
 
 	private CSlot createCSlot(
-					CModelFrame container,
+					CAtomicFrame container,
 					CCardinality cardinality,
-					CModelFrame rootValue) {
+					CAtomicFrame rootValue) {
 
 		return createCSlot(container, slotId, cardinality, rootValue.getType());
 	}

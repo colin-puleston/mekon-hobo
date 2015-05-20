@@ -33,26 +33,26 @@ class CHierarchyNormaliser {
 
 	private class RedundantSupersRemover extends CHierarchyCrawler {
 
-		private CModelFrame frame;
-		private List<CModelFrame> supers;
+		private CAtomicFrame frame;
+		private List<CAtomicFrame> supers;
 		private CVisibility visibility;
 
-		RedundantSupersRemover(CModelFrame frame, CVisibility visibility) {
+		RedundantSupersRemover(CAtomicFrame frame, CVisibility visibility) {
 
 			this.frame = frame;
 			this.visibility = visibility;
 
 			supers = frame.getModelSupers().getAll(visibility);
 
-			processLinked(new ArrayList<CModelFrame>(supers));
+			processLinked(new ArrayList<CAtomicFrame>(supers));
 		}
 
-		List<CModelFrame> getDirectlyLinked(CModelFrame current) {
+		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
 			return current.getModelSupers().getAll(visibility);
 		}
 
-		CrawlMode process(CModelFrame current) {
+		CrawlMode process(CAtomicFrame current) {
 
 			if (supers.remove(current)) {
 
@@ -65,23 +65,23 @@ class CHierarchyNormaliser {
 
 	private class ExposedSupersEnsurer extends CHierarchyCrawler {
 
-		private CModelFrame exposed;
+		private CAtomicFrame exposed;
 
-		ExposedSupersEnsurer(CModelFrame exposed) {
+		ExposedSupersEnsurer(CAtomicFrame exposed) {
 
 			this.exposed = exposed;
 
 			processLinked(exposed);
 		}
 
-		List<CModelFrame> getDirectlyLinked(CModelFrame current) {
+		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
 			return current.getModelSupers().getAll(CVisibility.HIDDEN);
 		}
 
-		CrawlMode process(CModelFrame current) {
+		CrawlMode process(CAtomicFrame current) {
 
-			for (CModelFrame sup : current.getModelSupers().getAll(CVisibility.EXPOSED)) {
+			for (CAtomicFrame sup : current.getModelSupers().getAll(CVisibility.EXPOSED)) {
 
 				exposed.ensureLinksToSuper(sup);
 			}
@@ -105,7 +105,7 @@ class CHierarchyNormaliser {
 
 			if (!frame.hidden()) {
 
-				new ExposedSupersEnsurer(frame.asModelFrame());
+				new ExposedSupersEnsurer(frame.asAtomicFrame());
 			}
 		}
 	}
@@ -116,7 +116,7 @@ class CHierarchyNormaliser {
 
 			if (visibility.coversHiddenStatus(frame.hidden())) {
 
-				new RedundantSupersRemover(frame.asModelFrame(), visibility);
+				new RedundantSupersRemover(frame.asAtomicFrame(), visibility);
 			}
 		}
 	}

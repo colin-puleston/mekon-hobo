@@ -39,16 +39,16 @@ class CFramesInitialiser {
 
 			for (CFrame frame : frames) {
 
-				process(frame.asModelFrame());
+				process(frame.asAtomicFrame());
 			}
 		}
 
-		abstract void process(CModelFrame frame);
+		abstract void process(CAtomicFrame frame);
 	}
 
 	private class SubsumptionStarter extends Processor {
 
-		void process(CModelFrame frame) {
+		void process(CAtomicFrame frame) {
 
 			frame.getSubsumptions().startInitialisation();
 		}
@@ -61,24 +61,24 @@ class CFramesInitialiser {
 
 		private abstract class Subsumptions {
 
-			private Map<List<CModelFrame>, List<CModelFrame>> directToAll
-						= new HashMap<List<CModelFrame>, List<CModelFrame>>();
+			private Map<List<CAtomicFrame>, List<CAtomicFrame>> directToAll
+						= new HashMap<List<CAtomicFrame>, List<CAtomicFrame>>();
 
-			void process(CModelFrame frame) {
+			void process(CAtomicFrame frame) {
 
 				setAll(frame.getSubsumptions(), getAll(frame));
 			}
 
-			abstract List<CModelFrame> getDirect(CModelFrame frame);
+			abstract List<CAtomicFrame> getDirect(CAtomicFrame frame);
 
-			abstract List<CModelFrame> findAll(CFrameSubsumptions subsumptions);
+			abstract List<CAtomicFrame> findAll(CFrameSubsumptions subsumptions);
 
-			abstract void setAll(CFrameSubsumptions subsumptions, List<CModelFrame> all);
+			abstract void setAll(CFrameSubsumptions subsumptions, List<CAtomicFrame> all);
 
-			private List<CModelFrame> getAll(CModelFrame frame) {
+			private List<CAtomicFrame> getAll(CAtomicFrame frame) {
 
-				List<CModelFrame> direct = getDirect(frame);
-				List<CModelFrame> all = directToAll.get(direct);
+				List<CAtomicFrame> direct = getDirect(frame);
+				List<CAtomicFrame> all = directToAll.get(direct);
 
 				if (all == null) {
 
@@ -92,17 +92,17 @@ class CFramesInitialiser {
 
 		private class Ancestors extends Subsumptions {
 
-			List<CModelFrame> getDirect(CModelFrame frame) {
+			List<CAtomicFrame> getDirect(CAtomicFrame frame) {
 
 				return frame.getModelSupers().getAll();
 			}
 
-			List<CModelFrame> findAll(CFrameSubsumptions subsumptions) {
+			List<CAtomicFrame> findAll(CFrameSubsumptions subsumptions) {
 
 				return subsumptions.getAncestors(CVisibility.ALL);
 			}
 
-			void setAll(CFrameSubsumptions subsumptions, List<CModelFrame> all) {
+			void setAll(CFrameSubsumptions subsumptions, List<CAtomicFrame> all) {
 
 				subsumptions.setAncestors(all);
 			}
@@ -110,23 +110,23 @@ class CFramesInitialiser {
 
 		private class StructuredAncestors extends Subsumptions {
 
-			List<CModelFrame> getDirect(CModelFrame frame) {
+			List<CAtomicFrame> getDirect(CAtomicFrame frame) {
 
 				return frame.getModelSupers().getAll();
 			}
 
-			List<CModelFrame> findAll(CFrameSubsumptions subsumptions) {
+			List<CAtomicFrame> findAll(CFrameSubsumptions subsumptions) {
 
 				return subsumptions.getStructuredAncestors();
 			}
 
-			void setAll(CFrameSubsumptions subsumptions, List<CModelFrame> all) {
+			void setAll(CFrameSubsumptions subsumptions, List<CAtomicFrame> all) {
 
 				subsumptions.setStructuredAncestors(all);
 			}
 		}
 
-		void process(CModelFrame frame) {
+		void process(CAtomicFrame frame) {
 
 			ancestors.process(frame);
 			structuredAncestors.process(frame);
@@ -135,7 +135,7 @@ class CFramesInitialiser {
 
 	private class SlotStructureValidater extends Processor {
 
-		void process(CModelFrame frame) {
+		void process(CAtomicFrame frame) {
 
 			frame.validateSlotStructure();
 		}

@@ -102,7 +102,7 @@ public interface CBuilder {
 	public void addSectionBuilder(CSectionBuilder sectionBuilder);
 
 	/**
-	 * Creates a new model-frame and adds it to the model.
+	 * Creates a new atomic-frame and adds it to the model.
 	 *
 	 * @param identity Identify of frame to create
 	 * @param hidden True if created frame is to be a "hidden" frame
@@ -113,9 +113,9 @@ public interface CBuilder {
 	public CFrame addFrame(CIdentity identity, boolean hidden);
 
 	/**
-	 * Either retrieves an existing model-frame with the specified
+	 * Either retrieves an existing atomic-frame with the specified
 	 * identity or, if no such frame currently exists, creates a new
-	 * model-frame and adds it to the model.
+	 * atomic-frame and adds it to the model.
 	 *
 	 * @param identity Identify of frame to retrieve or create
 	 * @param hidden True if created frame is to be a "hidden" frame
@@ -125,7 +125,7 @@ public interface CBuilder {
 	public CFrame resolveFrame(CIdentity identity, boolean hidden);
 
 	/**
-	 * Removes the specified model-frame from the model, if possible.
+	 * Removes the specified atomic-frame from the model, if possible.
 	 * Does nothing if frame is not part of the current model, or if
 	 * it has a {@link CSource#internal} source. If removed then direct
 	 * hierarchical links will be created from each sub-frame to each
@@ -137,7 +137,7 @@ public interface CBuilder {
 	public boolean removeFrame(CIdentity identity);
 
 	/**
-	 * Sets the instance-reasoner object for an existing model-frame.
+	 * Sets the instance-reasoner object for an existing atomic-frame.
 	 *
 	 * @param frame Frame whose instance-reasoner is to be set
 	 * @param iReasoner Instance-reasoner for frame

@@ -31,11 +31,11 @@ import java.util.*;
  */
 abstract class CHierarchyCrawler {
 
-	private Set<CModelFrame> visiteds = new HashSet<CModelFrame>();
+	private Set<CAtomicFrame> visiteds = new HashSet<CAtomicFrame>();
 
 	enum CrawlMode {CRAWL, DONE_BRANCH, DONE_ALL}
 
-	CrawlMode processAll(CModelFrame current) {
+	CrawlMode processAll(CAtomicFrame current) {
 
 		CrawlMode mode = process(current);
 
@@ -52,9 +52,9 @@ abstract class CHierarchyCrawler {
 		return mode;
 	}
 
-	CrawlMode processLinked(List<CModelFrame> currents) {
+	CrawlMode processLinked(List<CAtomicFrame> currents) {
 
-		for (CModelFrame current : currents) {
+		for (CAtomicFrame current : currents) {
 
 			if (processLinked(current) == CrawlMode.DONE_ALL) {
 
@@ -65,9 +65,9 @@ abstract class CHierarchyCrawler {
 		return CrawlMode.CRAWL;
 	}
 
-	CrawlMode processLinked(CModelFrame current) {
+	CrawlMode processLinked(CAtomicFrame current) {
 
-		for (CModelFrame linked : getDirectlyLinked(current)) {
+		for (CAtomicFrame linked : getDirectlyLinked(current)) {
 
 			if (visiteds.add(linked)) {
 
@@ -81,7 +81,7 @@ abstract class CHierarchyCrawler {
 		return CrawlMode.CRAWL;
 	}
 
-	abstract List<CModelFrame> getDirectlyLinked(CModelFrame current);
+	abstract List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current);
 
-	abstract CrawlMode process(CModelFrame current);
+	abstract CrawlMode process(CAtomicFrame current);
 }

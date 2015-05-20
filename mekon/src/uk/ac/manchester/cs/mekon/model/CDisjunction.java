@@ -49,7 +49,7 @@ class CDisjunction extends CExpression {
 			throw new KAccessException("Disjunct-list is empty");
 		}
 
-		List<CModelFrame> resolvedDisjuncts = resolveDisjuncts(disjuncts);
+		List<CAtomicFrame> resolvedDisjuncts = resolveDisjuncts(disjuncts);
 
 		if (disjuncts.size() == 1) {
 
@@ -59,23 +59,23 @@ class CDisjunction extends CExpression {
 		return new CDisjunction(label, resolvedDisjuncts);
 	}
 
-	static private List<CModelFrame> resolveDisjuncts(List<CFrame> disjuncts) {
+	static private List<CAtomicFrame> resolveDisjuncts(List<CFrame> disjuncts) {
 
 		MostGeneralCFrames mostGenerals = new MostGeneralCFrames();
 
 		for (CFrame disjunct : disjuncts) {
 
-			for (CModelFrame modelDisjunct : disjunct.asModelDisjuncts()) {
+			for (CAtomicFrame modelDisjunct : disjunct.asModelDisjuncts()) {
 
 				mostGenerals.update(modelDisjunct);
 			}
 		}
 
-		return CModelFrame.asModelFrames(mostGenerals.getCurrents());
+		return CAtomicFrame.asAtomicFrames(mostGenerals.getCurrents());
 	}
 
 	private List<CFrame> commonSupers;
-	private List<CModelFrame> disjuncts;
+	private List<CAtomicFrame> disjuncts;
 
 	private int hashCode;
 
@@ -202,7 +202,7 @@ class CDisjunction extends CExpression {
 		return disjuncts.get(0).getModel();
 	}
 
-	public CFrame getModelFrame() {
+	public CFrame getAtomicFrame() {
 
 		return getCommonSubsumersFinder().getClosestSingle(commonSupers);
 	}
@@ -250,12 +250,12 @@ class CDisjunction extends CExpression {
 		}
 	}
 
-	List<CModelFrame> asModelDisjuncts() {
+	List<CAtomicFrame> asModelDisjuncts() {
 
 		return disjuncts;
 	}
 
-	List<CModelFrame> getSubsumptionTestDisjuncts() {
+	List<CAtomicFrame> getSubsumptionTestDisjuncts() {
 
 		return disjuncts;
 	}
@@ -292,7 +292,7 @@ class CDisjunction extends CExpression {
 		return bldr.toString();
 	}
 
-	private CDisjunction(String label, List<CModelFrame> disjuncts) {
+	private CDisjunction(String label, List<CAtomicFrame> disjuncts) {
 
 		super(label);
 
@@ -318,8 +318,8 @@ class CDisjunction extends CExpression {
 		return new CommonSubsumersFinder(CVisibility.EXPOSED);
 	}
 
-	private Set<CModelFrame> disjunctsAsSet() {
+	private Set<CAtomicFrame> disjunctsAsSet() {
 
-		return new HashSet<CModelFrame>(disjuncts);
+		return new HashSet<CAtomicFrame>(disjuncts);
 	}
 }

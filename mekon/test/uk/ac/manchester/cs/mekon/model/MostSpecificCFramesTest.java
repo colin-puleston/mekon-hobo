@@ -57,7 +57,7 @@ public class MostSpecificCFramesTest extends MekonTest {
 	}
 
 	@Test
-	public void test_modelFrames_addingMostSpecificLast() {
+	public void test_atomicFrames_addingMostSpecificLast() {
 
 		update(fa);
 		test(fa);
@@ -76,7 +76,7 @@ public class MostSpecificCFramesTest extends MekonTest {
 	}
 
 	@Test
-	public void test_modelFrames_addingMostSpecificFirst() {
+	public void test_atomicFrames_addingMostSpecificFirst() {
 
 		update(faxx);
 		test(faxx);

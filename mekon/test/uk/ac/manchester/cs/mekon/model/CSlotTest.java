@@ -42,12 +42,12 @@ public class CSlotTest extends MekonTest {
 
 		CModel model = getModel();
 
-		CModelFrame a = createCFrame("A");
+		CAtomicFrame a = createCFrame("A");
 
-		CModelFrame v1 = createCFrame("V1");
-		CModelFrame v2 = createCFrame("V2");
-		CModelFrame v3 = createCFrame("V3");
-		CModelFrame v4 = createCFrame("V4");
+		CAtomicFrame v1 = createCFrame("V1");
+		CAtomicFrame v2 = createCFrame("V2");
+		CAtomicFrame v3 = createCFrame("V3");
+		CAtomicFrame v4 = createCFrame("V4");
 
 		CSlot s1 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v1);
 		CSlot s2 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v2);

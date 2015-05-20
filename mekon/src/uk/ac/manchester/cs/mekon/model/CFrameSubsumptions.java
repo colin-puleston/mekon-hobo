@@ -31,16 +31,16 @@ import java.util.*;
  */
 class CFrameSubsumptions {
 
-	private CModelFrame frame;
+	private CAtomicFrame frame;
 
-	private List<CModelFrame> ancestors = null;
-	private List<CModelFrame> structuredAncestors = null;
+	private List<CAtomicFrame> ancestors = null;
+	private List<CAtomicFrame> structuredAncestors = null;
 
 	private class SubsumptionTester extends CHierarchyCrawler {
 
-		private CModelFrame testSubsumer;
+		private CAtomicFrame testSubsumer;
 
-		SubsumptionTester(CModelFrame testSubsumer) {
+		SubsumptionTester(CAtomicFrame testSubsumer) {
 
 			this.testSubsumer = testSubsumer;
 		}
@@ -50,12 +50,12 @@ class CFrameSubsumptions {
 			return processAll(frame) == CrawlMode.DONE_ALL;
 		}
 
-		List<CModelFrame> getDirectlyLinked(CModelFrame current) {
+		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
 			return current.getModelSupers().getAll();
 		}
 
-		CrawlMode process(CModelFrame current) {
+		CrawlMode process(CAtomicFrame current) {
 
 			return testSubsumer.equals(current) ? CrawlMode.DONE_ALL : CrawlMode.CRAWL;
 		}
@@ -67,21 +67,21 @@ class CFrameSubsumptions {
 
 		private class Collector extends CHierarchyCrawler {
 
-			private List<CModelFrame> collected = new ArrayList<CModelFrame>();
+			private List<CAtomicFrame> collected = new ArrayList<CAtomicFrame>();
 
-			List<CModelFrame> collect() {
+			List<CAtomicFrame> collect() {
 
 				processLinked(frame);
 
 				return collected;
 			}
 
-			List<CModelFrame> getDirectlyLinked(CModelFrame current) {
+			List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
 				return getDirectlyLinkedForCollection(current, visibility);
 			}
 
-			CrawlMode process(CModelFrame current) {
+			CrawlMode process(CAtomicFrame current) {
 
 				if (required(current)) {
 
@@ -97,16 +97,16 @@ class CFrameSubsumptions {
 			this.visibility = visibility;
 		}
 
-		List<CModelFrame> getAll() {
+		List<CAtomicFrame> getAll() {
 
 			return new Collector().collect();
 		}
 
-		abstract List<CModelFrame> getDirectlyLinkedForCollection(
-										CModelFrame current,
+		abstract List<CAtomicFrame> getDirectlyLinkedForCollection(
+										CAtomicFrame current,
 										CVisibility visibility);
 
-		boolean required(CModelFrame current) {
+		boolean required(CAtomicFrame current) {
 
 			return true;
 		}
@@ -123,14 +123,14 @@ class CFrameSubsumptions {
 			this.visibility = visibility;
 		}
 
-		List<CModelFrame> getAll() {
+		List<CAtomicFrame> getAll() {
 
 			return getCached() != null ? selectFromCached() : super.getAll();
 		}
 
-		abstract List<CModelFrame> getCached();
+		abstract List<CAtomicFrame> getCached();
 
-		private List<CModelFrame> selectFromCached() {
+		private List<CAtomicFrame> selectFromCached() {
 
 			if (visibility == CVisibility.ALL) {
 
@@ -140,11 +140,11 @@ class CFrameSubsumptions {
 			return selectFromCached(visibility.coversHiddenStatus(true));
 		}
 
-		private List<CModelFrame> selectFromCached(boolean hidden) {
+		private List<CAtomicFrame> selectFromCached(boolean hidden) {
 
-			List<CModelFrame> selected = new ArrayList<CModelFrame>();
+			List<CAtomicFrame> selected = new ArrayList<CAtomicFrame>();
 
-			for (CModelFrame frame : getCached()) {
+			for (CAtomicFrame frame : getCached()) {
 
 				if (frame.hidden() == hidden) {
 
@@ -163,13 +163,13 @@ class CFrameSubsumptions {
 			super(visibility);
 		}
 
-		List<CModelFrame> getCached() {
+		List<CAtomicFrame> getCached() {
 
 			return ancestors;
 		}
 
-		List<CModelFrame> getDirectlyLinkedForCollection(
-								CModelFrame current,
+		List<CAtomicFrame> getDirectlyLinkedForCollection(
+								CAtomicFrame current,
 								CVisibility visibility) {
 
 			return current.getModelSupers().getAll(visibility);
@@ -183,12 +183,12 @@ class CFrameSubsumptions {
 			super(CVisibility.ALL);
 		}
 
-		List<CModelFrame> getCached() {
+		List<CAtomicFrame> getCached() {
 
 			return structuredAncestors;
 		}
 
-		boolean required(CModelFrame current) {
+		boolean required(CAtomicFrame current) {
 
 			return current.structured();
 		}
@@ -201,15 +201,15 @@ class CFrameSubsumptions {
 			super(visibility);
 		}
 
-		List<CModelFrame> getDirectlyLinkedForCollection(
-								CModelFrame current,
+		List<CAtomicFrame> getDirectlyLinkedForCollection(
+								CAtomicFrame current,
 								CVisibility visibility) {
 
 			return current.getModelSubs().getAll(visibility);
 		}
 	}
 
-	CFrameSubsumptions(CModelFrame frame) {
+	CFrameSubsumptions(CAtomicFrame frame) {
 
 		this.frame = frame;
 	}
@@ -220,17 +220,17 @@ class CFrameSubsumptions {
 		structuredAncestors = null;
 	}
 
-	void setAncestors(List<CModelFrame> ancestors) {
+	void setAncestors(List<CAtomicFrame> ancestors) {
 
 		this.ancestors = ancestors;
 	}
 
-	void setStructuredAncestors(List<CModelFrame> structuredAncestors) {
+	void setStructuredAncestors(List<CAtomicFrame> structuredAncestors) {
 
 		this.structuredAncestors = structuredAncestors;
 	}
 
-	boolean isSubsumer(CModelFrame testSubsumer) {
+	boolean isSubsumer(CAtomicFrame testSubsumer) {
 
 		if (testSubsumer == frame) {
 
@@ -245,17 +245,17 @@ class CFrameSubsumptions {
 		return new SubsumptionTester(testSubsumer).isSubsumption();
 	}
 
-	List<CModelFrame> getAncestors(CVisibility visibility) {
+	List<CAtomicFrame> getAncestors(CVisibility visibility) {
 
 		return new AncestorsFinder(visibility).getAll();
 	}
 
-	List<CModelFrame> getStructuredAncestors() {
+	List<CAtomicFrame> getStructuredAncestors() {
 
 		return new StructuredAncestorsFinder().getAll();
 	}
 
-	List<CModelFrame> getDescendants(CVisibility visibility) {
+	List<CAtomicFrame> getDescendants(CVisibility visibility) {
 
 		return new DescendantsFinder(visibility).getAll();
 	}

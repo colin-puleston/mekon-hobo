@@ -29,16 +29,16 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-class CModelFrames {
+class CAtomicFrames {
 
-	static final CModelFrames INERT_INSTANCE = new CModelFrames() {
+	static final CAtomicFrames INERT_INSTANCE = new CAtomicFrames() {
 
-		void add(CModelFrame frame) {
+		void add(CAtomicFrame frame) {
 
 			onAttemptedUpdate();
 		}
 
-		void remove(CModelFrame frame) {
+		void remove(CAtomicFrame frame) {
 
 			onAttemptedUpdate();
 		}
@@ -49,7 +49,7 @@ class CModelFrames {
 		}
 	};
 
-	private List<CModelFrame> frames = new ArrayList<CModelFrame>();
+	private List<CAtomicFrame> frames = new ArrayList<CAtomicFrame>();
 
 	private abstract class Getter<F extends CFrame> {
 
@@ -60,13 +60,13 @@ class CModelFrames {
 
 		abstract List<F> getAll();
 
-		abstract void addSelection(List<F> selected, CModelFrame frame);
+		abstract void addSelection(List<F> selected, CAtomicFrame frame);
 
 		private List<F> select(CVisibility visibility) {
 
 			List<F> selected = new ArrayList<F>();
 
-			for (CModelFrame frame : frames) {
+			for (CAtomicFrame frame : frames) {
 
 				if (visibility.coversHiddenStatus(frame.hidden())) {
 
@@ -85,31 +85,31 @@ class CModelFrames {
 			return new ArrayList<CFrame>(frames);
 		}
 
-		void addSelection(List<CFrame> selected, CModelFrame frame) {
+		void addSelection(List<CFrame> selected, CAtomicFrame frame) {
 
 			selected.add(frame);
 		}
 	}
 
-	private class ModelFrameGetter extends Getter<CModelFrame> {
+	private class AtomicFrameGetter extends Getter<CAtomicFrame> {
 
-		List<CModelFrame> getAll() {
+		List<CAtomicFrame> getAll() {
 
-			return new ArrayList<CModelFrame>(frames);
+			return new ArrayList<CAtomicFrame>(frames);
 		}
 
-		void addSelection(List<CModelFrame> selected, CModelFrame frame) {
+		void addSelection(List<CAtomicFrame> selected, CAtomicFrame frame) {
 
 			selected.add(frame);
 		}
 	}
 
-	void add(CModelFrame frame) {
+	void add(CAtomicFrame frame) {
 
 		frames.add(frame);
 	}
 
-	void remove(CModelFrame frame) {
+	void remove(CAtomicFrame frame) {
 
 		frames.remove(frame);
 	}
@@ -119,19 +119,19 @@ class CModelFrames {
 		return frames.isEmpty();
 	}
 
-	boolean contains(CModelFrame frame) {
+	boolean contains(CAtomicFrame frame) {
 
 		return frames.contains(frame);
 	}
 
-	List<CModelFrame> getAll() {
+	List<CAtomicFrame> getAll() {
 
-		return new ModelFrameGetter().getAll();
+		return new AtomicFrameGetter().getAll();
 	}
 
-	List<CModelFrame> getAll(CVisibility visibility) {
+	List<CAtomicFrame> getAll(CVisibility visibility) {
 
-		return new ModelFrameGetter().getAll(visibility);
+		return new AtomicFrameGetter().getAll(visibility);
 	}
 
 	List<CFrame> asFrames(CVisibility visibility) {

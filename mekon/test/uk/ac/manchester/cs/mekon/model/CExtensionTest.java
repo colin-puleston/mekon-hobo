@@ -34,10 +34,10 @@ import static org.junit.Assert.*;
  */
 public class CExtensionTest extends CValueTest<CFrame> {
 
-	private CModelFrame a = createCFrame("A");
-	private CModelFrame b = createCFrame("B");
-	private CModelFrame c = createCFrame("C");
-	private CModelFrame cx = createCFrame("CX");
+	private CAtomicFrame a = createCFrame("A");
+	private CAtomicFrame b = createCFrame("B");
+	private CAtomicFrame c = createCFrame("C");
+	private CAtomicFrame cx = createCFrame("CX");
 
 	private CIdentity sab = createIdentity("SAB");
 	private CIdentity sac = createIdentity("SAC");
