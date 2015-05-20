@@ -118,7 +118,7 @@ class OBSlots {
 
 			return number != null
 					? createNumberSlot(number)
-					: createModelFrameSlot(classFiller);
+					: createAtomicFrameSlot(classFiller);
 		}
 
 		private OBSlot createComplexClassExpressionFillerSlot() {
@@ -136,9 +136,9 @@ class OBSlots {
 			return createDisjunctionFrameSlot();
 		}
 
-		private OBSlot createModelFrameSlot(OWLClass filler) {
+		private OBSlot createAtomicFrameSlot(OWLClass filler) {
 
-			return new OBModelFrameSlot(this, frames.get(filler));
+			return new OBAtomicFrameSlot(this, frames.get(filler));
 		}
 
 		private OBSlot createExtensionFrameSlotOrNull() {

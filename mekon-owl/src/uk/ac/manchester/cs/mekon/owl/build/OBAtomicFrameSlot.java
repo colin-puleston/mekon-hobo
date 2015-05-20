@@ -30,11 +30,11 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class OBModelFrameSlot extends OBFrameSlot {
+class OBAtomicFrameSlot extends OBFrameSlot {
 
 	private OBFrame valueType;
 
-	OBModelFrameSlot(OBSlotSpec spec, OBFrame valueType) {
+	OBAtomicFrameSlot(OBSlotSpec spec, OBFrame valueType) {
 
 		super(spec);
 
