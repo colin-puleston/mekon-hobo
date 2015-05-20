@@ -117,7 +117,7 @@ public class GTable extends JTable {
 	public void addColumn(String title) {
 
 		model.addColumn(title);
-		resizeForNewColumn();
+		initialiseColumnSizes();
 	}
 
 	public void addRow(Object... cells) {
@@ -181,18 +181,28 @@ public class GTable extends JTable {
 		}
 	}
 
-	private void resizeForNewColumn() {
+	private void initialiseColumnSizes() {
 
-		resizeColumnsForNewRow(-1);
+		for (int col = 0 ; col < getColumnCount() ; col++) {
+
+			initialiseColumnSize(col);
+		}
+	}
+
+	private void initialiseColumnSize(int col) {
+
+		getColumn(col).setPreferredWidth(getPreferredHeaderWidth(col));
 	}
 
 	private void resizeForNewRow() {
 
-		resizeColumnsForNewRow(getRowCount() - 1);
+		resizeColumnsForNewRow();
 		setPreferredScrollableViewportSize(getPreferredSize());
 	}
 
-	private void resizeColumnsForNewRow(int row) {
+	private void resizeColumnsForNewRow() {
+
+		int row = getRowCount() - 1;
 
 		for (int col = 0 ; col < getColumnCount() ; col++) {
 
@@ -202,43 +212,45 @@ public class GTable extends JTable {
 
 	private void resizeColumnForRow(int col, int row) {
 
-		TableColumn c = getColumnModel().getColumn(col);
+		TableColumn column = getColumn(col);
 		int cellWidth = getPreferredCellWidth(col, row);
 
-		if (cellWidth > c.getPreferredWidth()) {
+		if (cellWidth > column.getPreferredWidth()) {
 
-			c.setPreferredWidth(cellWidth);
+			column.setPreferredWidth(cellWidth);
 		}
+	}
+
+	private int getPreferredHeaderWidth(int col) {
+
+		return getPreferredWidth(getHeaderRendererComponent(col));
 	}
 
 	private int getPreferredCellWidth(int col, int row) {
 
-		Component comp = getCellRendererComponent(col, row);
+		return getPreferredWidth(getCellRendererComponent(col, row));
+	}
 
-		return (int)comp.getPreferredSize().getWidth();
+	private int getPreferredWidth(Component component) {
+
+		return (int)component.getPreferredSize().getWidth();
+	}
+
+	private Component getHeaderRendererComponent(int col) {
+
+		TableCellRenderer r = getTableHeader().getDefaultRenderer();
+		Object v = getColumn(col).getHeaderValue();
+
+		return r.getTableCellRendererComponent(this, v, false, false, -1, col);
 	}
 
 	private Component getCellRendererComponent(int col, int row) {
 
-		if (row == -1) {
-
-			return getHeaderCellRendererComponent(col);
-		}
-
 		return prepareRenderer(getCellRenderer(row, col), row, col);
 	}
 
-	private Component getHeaderCellRendererComponent(int col) {
+	private TableColumn getColumn(int index) {
 
-		TableColumn c = columnModel.getColumn(col);
-		TableCellRenderer r = c.getHeaderRenderer();
-		Object v = c.getHeaderValue();
-
-		if (r == null) {
-
-			r = getTableHeader().getDefaultRenderer();
-		}
-
-		return r.getTableCellRendererComponent(this, v, false, false, -1, col);
+		return getColumnModel().getColumn(index);
 	}
 }
