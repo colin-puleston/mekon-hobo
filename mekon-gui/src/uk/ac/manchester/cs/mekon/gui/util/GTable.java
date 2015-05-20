@@ -117,7 +117,7 @@ public class GTable extends JTable {
 	public void addColumn(String title) {
 
 		model.addColumn(title);
-		initialiseNewColumnSize();
+		resizeForNewColumn();
 	}
 
 	public void addRow(Object... cells) {
@@ -181,20 +181,18 @@ public class GTable extends JTable {
 		}
 	}
 
-	private void initialiseNewColumnSize() {
+	private void resizeForNewColumn() {
 
-		resizeColumnForRow(getColumnCount() - 1, -1);
+		resizeColumnsForNewRow(-1);
 	}
 
 	private void resizeForNewRow() {
 
-		resizeColumnsForNewRow();
+		resizeColumnsForNewRow(getRowCount() - 1);
 		setPreferredScrollableViewportSize(getPreferredSize());
 	}
 
-	private void resizeColumnsForNewRow() {
-
-		int row = getRowCount() - 1;
+	private void resizeColumnsForNewRow(int row) {
 
 		for (int col = 0 ; col < getColumnCount() ; col++) {
 
