@@ -525,7 +525,7 @@ class HelpPanel extends JTabbedPane {
 				comp.add(Box.createHorizontalStrut(10));
 				comp.add(getLabel("VALUE-TYPE", valueTypeColour));
 				comp.add(Box.createHorizontalStrut(10));
-				comp.add(new JLabel("CARDINALITY"));
+				comp.add(new JLabel("[...]"));
 
 				return comp;
 			}
