@@ -127,7 +127,7 @@ public enum ISlotOps {
 	 */
 	public boolean includesValues() {
 
-		return this == SLOTS || this == SLOTS_AND_VALUES;
+		return this == VALUES || this == SLOTS_AND_VALUES;
 	}
 
 	/**

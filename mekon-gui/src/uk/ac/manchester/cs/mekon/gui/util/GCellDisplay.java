@@ -61,6 +61,12 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		this.text = text;
 	}
 
+	public GCellDisplay(String text, Icon icon) {
+
+		this.text = text;
+		this.icon = icon;
+	}
+
 	public int compareTo(GCellDisplay other) {
 
 		return text.toLowerCase().compareTo(other.text.toLowerCase());

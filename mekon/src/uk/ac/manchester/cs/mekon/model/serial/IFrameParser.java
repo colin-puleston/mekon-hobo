@@ -69,7 +69,7 @@ public class IFrameParser extends ISerialiser {
 
 				if (slot.getEditability().editable()) {
 
-					slot.getValuesEditor().addAll(getValues(slot));
+					slot.getValuesEditor().addAll(getValidValues(slot));
 				}
 
 				slotValuesSpecs.remove(this);
@@ -86,13 +86,19 @@ public class IFrameParser extends ISerialiser {
 
 		abstract IValue getValue(ISlot slot, V valueSpec);
 
-		private List<IValue> getValues(ISlot slot) {
+		private List<IValue> getValidValues(ISlot slot) {
 
 			List<IValue> values = new ArrayList<IValue>();
+			CValue<?> valueType = slot.getValueType();
 
 			for (V valueSpec : valueSpecs) {
 
-				values.add(getValue(slot, valueSpec));
+				IValue value = getValue(slot, valueSpec);
+
+				if (valueType.validValue(value)) {
+
+					values.add(value);
+				}
 			}
 
 			return values;
