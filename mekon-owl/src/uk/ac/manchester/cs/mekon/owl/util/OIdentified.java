@@ -27,8 +27,9 @@ package uk.ac.manchester.cs.mekon.owl.util;
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Represents an entity derived from an <code>OWLNamedObject</code>
- * that will be used to generate a Frames Model (FM) entity.
+ * Represents an entity derived from an object derived from an OWL
+ * construct of some type that will be used to generate a Frames
+ * Model (FM) entity.
  *
  * @author Colin Puleston
  */
@@ -47,6 +48,18 @@ public class OIdentified implements Comparable<OIdentified> {
 	public OIdentified(OWLNamedObject object, String label) {
 
 		identity = new OIdentity(object, label);
+	}
+
+	/**
+	 * Constructs object with an identity with the specified identifier
+	 * and label.
+	 *
+	 * @param identifier Identifier for identity of constructed object
+	 * @param label Label for identity of constructed object
+	 */
+	public OIdentified(String identifier, String label) {
+
+		identity = new OIdentity(identifier, label);
 	}
 
 	/**

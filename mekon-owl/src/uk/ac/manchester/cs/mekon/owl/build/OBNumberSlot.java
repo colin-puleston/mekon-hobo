@@ -41,6 +41,21 @@ class OBNumberSlot extends OBSlot {
 		this.valueType = valueType;
 	}
 
+	boolean canProvideSlot() {
+
+		return true;
+	}
+
+	boolean couldProvideFixedValue(OBSlot topLevelSlot) {
+
+		return false;
+	}
+
+	boolean canBeFixedValue(CValue<?> cValue) {
+
+		return false;
+	}
+
 	boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot() {
 
 		return true;

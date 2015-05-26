@@ -40,7 +40,8 @@ class OBFrames {
 	private OBProperties properties;
 	private OBEntityLabels labels;
 
-	private Map<OWLEntity, OBFrame> frames = new HashMap<OWLEntity, OBFrame>();
+	private Map<OWLEntity, OBAtomicFrame> frames
+				= new HashMap<OWLEntity, OBAtomicFrame>();
 
 	OBFrames(OBConcepts concepts, OBProperties properties, OBEntityLabels labels) {
 
@@ -60,14 +61,14 @@ class OBFrames {
 		createAllForProperties();
 	}
 
-	Collection<OBFrame> getAll() {
+	Collection<OBAtomicFrame> getAll() {
 
 		return frames.values();
 	}
 
-	OBFrame get(OWLEntity sourceEntity) {
+	OBAtomicFrame get(OWLEntity sourceEntity) {
 
-		OBFrame frame = frames.get(sourceEntity);
+		OBAtomicFrame frame = frames.get(sourceEntity);
 
 		if (frame == null) {
 
@@ -98,15 +99,15 @@ class OBFrames {
 		}
 	}
 
-	private OBFrame createFrame(
-						OWLEntity sourceEntity,
-						IReasoner iReasoner,
-						boolean hidden) {
+	private OBAtomicFrame createFrame(
+							OWLEntity source,
+							IReasoner iReasoner,
+							boolean hidden) {
 
-		String label = labels.getLabel(sourceEntity);
-		OBFrame frame = new OBFrame(sourceEntity, label, hidden, iReasoner);
+		String label = labels.getLabel(source);
+		OBAtomicFrame frame = new OBAtomicFrame(source, label, hidden, iReasoner);
 
-		frames.put(frame.getSourceEntity(), frame);
+		frames.put(source, frame);
 
 		return frame;
 	}

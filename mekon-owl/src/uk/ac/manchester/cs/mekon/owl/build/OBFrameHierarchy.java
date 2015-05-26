@@ -51,13 +51,13 @@ class OBFrameHierarchy {
 
 	void createLinks() {
 
-		for (OBFrame frame : frames.getAll()) {
+		for (OBAtomicFrame frame : frames.getAll()) {
 
 			createFrameLinks(frame);
 		}
 	}
 
-	private void createFrameLinks(OBFrame frame) {
+	private void createFrameLinks(OBAtomicFrame frame) {
 
 		for (OWLEntity source : getSubFrameSources(frame)) {
 
@@ -65,7 +65,7 @@ class OBFrameHierarchy {
 		}
 	}
 
-	private Set<? extends OWLEntity> getSubFrameSources(OBFrame frame) {
+	private Set<? extends OWLEntity> getSubFrameSources(OBAtomicFrame frame) {
 
 		return getAllDescendants(frame.getSourceEntity());
 	}

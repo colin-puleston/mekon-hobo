@@ -33,10 +33,12 @@ import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Represents the identity for a frames-based object derived
- * from an <code>OWLNamedObject</code> of some kind, with the
- * identifier coming directly from the IRI, the label being
- * either manually specified or heuristically-generated from
- * the IRI fragment (via the {@link KLabel}-mechanism).
+ * from an OWL construct of some type. When the source is a
+ * <code>OWLNamedObject</code> of some kind then the IRI can be
+ * taken as the identifier, with the label being either manually
+ * specified or heuristically-generated from the IRI fragment,
+ * via the {@link KLabel}-mechanism. Otherwise both identifier
+ * and label must be provided.
  * <p>
  * Provides a {@link #compareTo} method based on the lexical
  * values of the labels or, if the labels are identical, on
@@ -146,6 +148,17 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 	public OIdentity(OWLNamedObject object, String label) {
 
 		super(getIdentifierComponents(object), label);
+	}
+
+	/**
+	 * Constructs identity with the specified identifier and label.
+	 *
+	 * @param identifier Identifier for identity of constructed object
+	 * @param label Label for identity of constructed object
+	 */
+	public OIdentity(String identifier, String label) {
+
+		super(identifier, label);
 	}
 
 	/**

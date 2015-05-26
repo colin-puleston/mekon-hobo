@@ -38,7 +38,7 @@ class OBSlots {
 
 	private OModel model;
 	private OBFrames frames;
-	private OBNumbers numbers;
+	private OBValues values;
 	private OBProperties properties;
 	private OBEntityLabels labels;
 	private OBFrameSlotsPolicy defaultFrameSlotsPolicy
@@ -49,19 +49,14 @@ class OBSlots {
 	private abstract class SlotSpec extends OBSlotSpec {
 
 		private OWLProperty<?, ?> property;
-		private Object filler;
 		private OBPropertyAttributes propertyAttributes;
+		private OWLObject filler;
 
 		SlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
 
 			property = getPropertyOrNull(restriction.getProperty());
-			filler = getValidFillerOrNull(restriction.getFiller());
 			propertyAttributes = properties.getAttributes(property);
-		}
-
-		boolean initialised() {
-
-			return property != null && filler != null;
+			filler = restriction.getFiller();
 		}
 
 		OWLProperty<?, ?> getProperty() {
@@ -81,9 +76,11 @@ class OBSlots {
 
 		OBFrameSlotsPolicy getFrameSlotsPolicy() {
 
-			OBFrameSlotsPolicy p = propertyAttributes.getFrameSlotsPolicy();
+			OBFrameSlotsPolicy policy = propertyAttributes.getFrameSlotsPolicy();
 
-			return p != OBFrameSlotsPolicy.NONE ? p : defaultFrameSlotsPolicy;
+			return policy != OBFrameSlotsPolicy.NONE
+						? policy
+						: defaultFrameSlotsPolicy;
 		}
 
 		OBPropertyAttributes getPropertyAttributes() {
@@ -91,171 +88,29 @@ class OBSlots {
 			return propertyAttributes;
 		}
 
-		OBSlot create() {
+		OBSlot checkCreate() {
 
-			if (filler instanceof OWLClass) {
+			if (property != null) {
 
-				return createClassFillerSlot();
-			}
+				OBValue valueType = values.checkCreateValue(filler);
 
-			if (filler instanceof OWLClassExpression) {
+				if (valueType instanceof OBFrame) {
 
-				return createExpressionFrameSlotOrNull();
-			}
-
-			if (filler instanceof OWLDataRange) {
-
-				return createNumberSlot();
-			}
-
-			throw new Error("Unrecognised filler type: " + filler.getClass());
-		}
-
-		private OBSlot createClassFillerSlot() {
-
-			OWLClass classFiller = (OWLClass)filler;
-			OBNumber number = numbers.checkExtractNumber(classFiller);
-
-			return number != null
-					? createNumberSlot(number)
-					: createAtomicFrameSlot(classFiller);
-		}
-
-		private OBSlot createExpressionFrameSlotOrNull() {
-
-			if (filler instanceof OWLObjectIntersectionOf) {
-
-				OBSlot slot = createExtensionFrameSlotOrNull();
-
-				if (slot != null) {
-
-					return slot;
+					return new OBFrameSlot(this, (OBFrame)valueType);
 				}
-			}
 
-			return createDisjunctionFrameSlotOrNull();
-		}
+				if (valueType instanceof OBNumber) {
 
-		private OBSlot createAtomicFrameSlot(OWLClass filler) {
-
-			return new OBAtomicFrameSlot(this, frames.get(filler));
-		}
-
-		private OBSlot createExtensionFrameSlotOrNull() {
-
-			if (filler instanceof OWLObjectIntersectionOf) {
-
-				OWLObjectIntersectionOf intFiller = (OWLObjectIntersectionOf)filler;
-				Set<OWLClassExpression> ops = intFiller.getOperands();
-				OWLClass named = getSoleNamedClassOrNull(ops);
-
-				if (named != null) {
-
-					ops.remove(named);
-
-					return createExtensionFrameSlot(named, ops);
+					return new OBNumberSlot(this, (OBNumber)valueType);
 				}
 			}
 
 			return null;
-		}
-
-		private OBSlot createExtensionFrameSlot(
-							OWLClass named,
-							Set<OWLClassExpression> ops) {
-
-			OBFrame valueTypeBase = frames.get(named);
-			OBExtensionFrameSlot slot = new OBExtensionFrameSlot(this, valueTypeBase);
-
-			for (OWLClassExpression op : ops) {
-
-				OBSlot valueTypeSlot = checkCreateSlot(op);
-
-				if (valueTypeSlot != null) {
-
-					slot.addValueTypeSlot(valueTypeSlot);
-				}
-			}
-
-			return slot;
-		}
-
-		private OBSlot createDisjunctionFrameSlotOrNull() {
-
-			OWLClassExpression exprFiller = (OWLClassExpression)filler;
-			Set<OWLClass> concepts = getSubConcepts(exprFiller);
-
-			return concepts.isEmpty() ? null : createDisjunctionFrameSlot(concepts);
-		}
-
-		private OBSlot createDisjunctionFrameSlot(Set<OWLClass> concepts) {
-
-			OBDisjunctionFrameSlot slot = new OBDisjunctionFrameSlot(this);
-
-			for (OWLClass concept : concepts) {
-
-				slot.addValueTypeDisjunct(frames.get(concept));
-			}
-
-			return slot;
-		}
-
-		private OBSlot createNumberSlot() {
-
-			OBNumber valueType = numbers.checkCreateNumber((OWLDataRange)filler);
-
-			if (valueType != null) {
-
-				return createNumberSlot(valueType);
-			}
-
-			throw new Error("Unrecognised filler type: " + filler.getClass());
-		}
-
-		private OBSlot createNumberSlot(OBNumber valueType) {
-
-			return new OBNumberSlot(this, valueType);
-		}
-
-		private OWLClass getSoleNamedClassOrNull(Set<OWLClassExpression> ops) {
-
-			OWLClass named = null;
-
-			for (OWLClassExpression op : ops) {
-
-				if (op instanceof OWLClass) {
-
-					if (named != null) {
-
-						return null;
-					}
-
-					named = (OWLClass)op;
-				}
-			}
-
-			return named;
 		}
 
 		private OWLProperty<?, ?> getPropertyOrNull(OWLPropertyExpression<?, ?> expr) {
 
-			if (expr instanceof OWLProperty) {
-
-				return (OWLProperty<?, ?>)expr;
-			}
-
-			return null;
-		}
-
-		private Object getValidFillerOrNull(Object filler) {
-
-			if (filler instanceof OWLClassExpression
-				|| filler instanceof OWLDataRange) {
-
-				return filler;
-			}
-
-			return null;
+			return expr instanceof OWLProperty ? (OWLProperty<?, ?>)expr : null;
 		}
 	}
 
@@ -434,7 +289,7 @@ class OBSlots {
 		this.properties = properties;
 		this.labels = labels;
 
-		numbers = new OBNumbers(model);
+		values = new OBValues(model, frames, this);
 	}
 
 	void setDefaultFrameSlotsPolicy(OBFrameSlotsPolicy value) {
@@ -448,6 +303,13 @@ class OBSlots {
 
 			createSlots(subConceptOf);
 		}
+	}
+
+	OBSlot checkCreateSlot(OWLClassExpression sup) {
+
+		SlotSpec spec = sup.accept(specCreator);
+
+		return spec != null ? spec.checkCreate() : null;
 	}
 
 	private void createSlots(OWLSubClassOfAxiom subConceptOf) {
@@ -494,13 +356,6 @@ class OBSlots {
 
 			frames.get(sub).addSlot(slot);
 		}
-	}
-
-	private OBSlot checkCreateSlot(OWLClassExpression sup) {
-
-		SlotSpec spec = sup.accept(specCreator);
-
-		return spec != null && spec.initialised() ? spec.create() : null;
 	}
 
 	private Set<OWLClass> getSubConcepts(OWLClassExpression expression) {

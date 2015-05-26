@@ -24,50 +24,46 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OBFrameSlot extends OBSlot {
+class OBFrameSlot extends OBSlot {
 
 	private OBSlotSpec spec;
+	private OBFrame valueType;
 
-	OBFrameSlot(OBSlotSpec spec) {
+	OBFrameSlot(OBSlotSpec spec, OBFrame valueType) {
 
 		super(spec);
 
 		this.spec = spec;
+		this.valueType = valueType;
+	}
+
+	boolean canProvideSlot() {
+
+		return valueType.canBeSlotValueType();
+	}
+
+	boolean couldProvideFixedValue(OBSlot topLevelSlot) {
+
+		return valueType.couldBeFixedValueForSlot(topLevelSlot);
+	}
+
+	boolean canBeFixedValue(CValue<?> cValue) {
+
+		return valueType.canBeFixedValueForSlot(cValue);
 	}
 
 	boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot() {
 
-		return cFrameValuedIfTopLevelSlot();
+		return isCFrameValuedIfTopLevelSlot();
 	}
 
-	abstract boolean anyStructuredValues();
-
-	abstract CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations);
-
-	CValue<?> ensureCValue(
-				CBuilder builder,
-				OBSlot topLevelSlot,
-				OBAnnotations annotations) {
-
-		CFrame cFrame = ensureCFrame(builder, annotations);
-
-		return topLevelSlotIsCFrameValued(topLevelSlot) ? cFrame.getType() : cFrame;
-	}
-
-	boolean topLevelSlotIsCFrameValued(OBSlot topLevelSlot) {
-
-		return ((OBFrameSlot)topLevelSlot).cFrameValuedIfTopLevelSlot();
-	}
-
-	private boolean cFrameValuedIfTopLevelSlot() {
+	boolean isCFrameValuedIfTopLevelSlot() {
 
 		switch (spec.getFrameSlotsPolicy()) {
 
@@ -75,9 +71,24 @@ abstract class OBFrameSlot extends OBSlot {
 				return true;
 
 			case CFRAME_VALUED_IF_NO_STRUCTURE:
-				return !anyStructuredValues();
+				return !valueType.slotsInHierarchy();
 		}
 
 		return false;
+	}
+
+	CValue<?> ensureCValue(
+				CBuilder builder,
+				OBSlot topLevelSlot,
+				OBAnnotations annotations) {
+
+		CFrame cFrame = valueType.ensureCStructure(builder, annotations);
+
+		return topLevelSlotIsCFrameValued(topLevelSlot) ? cFrame.getType() : cFrame;
+	}
+
+	private boolean topLevelSlotIsCFrameValued(OBSlot topLevelSlot) {
+
+		return ((OBFrameSlot)topLevelSlot).isCFrameValuedIfTopLevelSlot();
 	}
 }

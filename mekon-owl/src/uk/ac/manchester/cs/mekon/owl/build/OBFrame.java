@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
-import java.util.*;
-
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -35,155 +33,25 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 /**
  * @author Colin Puleston
  */
-class OBFrame extends OIdentified {
+abstract class OBFrame extends OIdentified implements OBValue {
 
-	private OWLEntity sourceEntity;
-	private boolean hidden;
-	private IReasoner iReasoner;
-	private SortedSet<OBFrame> superFrames = new TreeSet<OBFrame>();
-	private SortedSet<OBFrame> subFrames = new TreeSet<OBFrame>();
-	private SortedSet<OBSlot> slots = new TreeSet<OBSlot>();
-	private CFrame cFrame = null;
-
-	OBFrame(
-		OWLEntity sourceEntity,
-		String label,
-		boolean hidden,
-		IReasoner iReasoner) {
+	OBFrame(OWLEntity sourceEntity, String label) {
 
 		super(sourceEntity, label);
-
-		this.sourceEntity = sourceEntity;
-		this.iReasoner = iReasoner;
-		this.hidden = hidden;
 	}
 
-	void addSubFrame(OBFrame subFrame) {
+	OBFrame(String identifier) {
 
-		subFrame.superFrames.add(this);
-		subFrames.add(subFrame);
+		super(identifier, identifier);
 	}
 
-	void addSlot(OBSlot slot) {
+	abstract boolean canBeSlotValueType();
 
-		slots.add(slot);
-	}
+	abstract boolean couldBeFixedValueForSlot(OBSlot topLevelSlot);
 
-	OWLEntity getSourceEntity() {
+	abstract boolean canBeFixedValueForSlot(CValue<?> cValue);
 
-		return sourceEntity;
-	}
+	abstract boolean slotsInHierarchy();
 
-	boolean hidden() {
-
-		return hidden;
-	}
-
-	CFrame ensureCStructure(CBuilder builder, OBAnnotations annotations) {
-
-		if (cFrame == null) {
-
-			cFrame = createCFrame(builder);
-
-			ensureCSubStructure(builder, annotations);
-			ensureCSlotStructure(builder, annotations);
-
-			annotations.checkAdd(builder, cFrame, sourceEntity);
-		}
-
-		return cFrame;
-	}
-
-	boolean leafFrame() {
-
-		return subFrames.isEmpty();
-	}
-
-	boolean slotsInHierarchy() {
-
-		return anySlots(new HashSet<OBFrame>(), false)
-				|| anySlotsViaLinks(new HashSet<OBFrame>(), true);
-	}
-
-	OBSlot findTopLevelSlot(OBSlot current) {
-
-		for (OBFrame sup : superFrames) {
-
-			return sup.findTopLevelSlotViaSuper(current);
-		}
-
-		return current;
-	}
-
-	private CFrame createCFrame(CBuilder builder) {
-
-		CFrame frame = builder.resolveFrame(getIdentity(), hidden);
-
-		if (iReasoner != null) {
-
-			builder.setIReasoner(frame, iReasoner);
-		}
-
-		return frame;
-	}
-
-	private void ensureCSubStructure(CBuilder builder, OBAnnotations annotations) {
-
-		for (OBFrame subFrame : subFrames) {
-
-			CFrame cSubFrame = subFrame.ensureCStructure(builder, annotations);
-
-			builder.getFrameEditor(cSubFrame).addSuper(cFrame);
-		}
-	}
-
-	private void ensureCSlotStructure(
-					CBuilder builder,
-					OBAnnotations annotations) {
-
-		for (OBSlot slot : slots) {
-
-			OBSlot topSlot = findTopLevelSlot(slot);
-
-			slot.ensureCStructure(builder, cFrame, topSlot, annotations);
-		}
-	}
-
-	private boolean anySlots(Set<OBFrame> visited, boolean lookUp) {
-
-		return !slots.isEmpty() || anySlotsViaLinks(visited, lookUp);
-	}
-
-	private boolean anySlotsViaLinks(Set<OBFrame> visited, boolean lookUp) {
-
-		for (OBFrame linked : lookUp ? superFrames : subFrames) {
-
-			if (visited.add(linked) && linked.anySlots(visited, lookUp)) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private OBSlot findTopLevelSlotViaSuper(OBSlot current) {
-
-		return findTopLevelSlot(checkUpdateTopLevelSlot(current));
-	}
-
-	private OBSlot checkUpdateTopLevelSlot(OBSlot current) {
-
-		CIdentity id = current.getIdentity();
-
-		for (OBSlot slot : slots) {
-
-			if (slot.getIdentity().equals(id)) {
-
-				return slot;
-			}
-		}
-
-		return current;
-	}
+	abstract CFrame ensureCStructure(CBuilder builder, OBAnnotations annotations);
 }

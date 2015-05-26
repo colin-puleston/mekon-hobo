@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class OBNumber {
+class OBNumber implements OBValue {
 
 	private CNumberDef definition;
 

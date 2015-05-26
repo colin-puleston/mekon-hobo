@@ -60,14 +60,14 @@ abstract class OBSlot extends OIdentified {
 
 			if (OBSlot.this == topLevelSlot) {
 
-				if (canBeSlot()) {
+				if (canProvideSlot()) {
 
 					addOrUpdateSlot(getDefaultCardinalityIfTopLevelSlot());
 				}
 			}
 			else {
 
-				if (topLevelSlot.spec.singleValued() && canBeSlot()) {
+				if (topLevelSlot.spec.singleValued() && canProvideSlot()) {
 
 					addOrUpdateSlot(CCardinality.SINGLE_VALUE);
 				}
@@ -131,7 +131,7 @@ abstract class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		if (canBeSlotOrFixedValue(topLevelSlot)) {
+		if (canProvideSlotOrFixedValue(topLevelSlot)) {
 
 			new CStructureCreator(builder, container, topLevelSlot, annotations);
 		}
@@ -143,7 +143,7 @@ abstract class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		if (canBeSlotOrFixedValue(topLevelSlot)) {
+		if (canProvideSlotOrFixedValue(topLevelSlot)) {
 
 			CValue<?> valueType = ensureCValue(builder, topLevelSlot, annotations);
 
@@ -151,20 +151,11 @@ abstract class OBSlot extends OIdentified {
 		}
 	}
 
-	boolean canBeSlot() {
+	abstract boolean canProvideSlot();
 
-		return true;
-	}
+	abstract boolean couldProvideFixedValue(OBSlot topLevelSlot);
 
-	boolean canPotentiallyBeFixedValue(OBSlot topLevelSlot) {
-
-		return false;
-	}
-
-	boolean canBeFixedValue(CValue<?> cValue) {
-
-		return false;
-	}
+	abstract boolean canBeFixedValue(CValue<?> cValue);
 
 	abstract boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot();
 
@@ -173,9 +164,9 @@ abstract class OBSlot extends OIdentified {
 							OBSlot topLevelSlot,
 							OBAnnotations annotations);
 
-	private boolean canBeSlotOrFixedValue(OBSlot topLevelSlot) {
+	private boolean canProvideSlotOrFixedValue(OBSlot topLevelSlot) {
 
-		return canBeSlot() || canPotentiallyBeFixedValue(topLevelSlot);
+		return canProvideSlot() || couldProvideFixedValue(topLevelSlot);
 	}
 
 	private CCardinality getDefaultCardinalityIfTopLevelSlot() {
