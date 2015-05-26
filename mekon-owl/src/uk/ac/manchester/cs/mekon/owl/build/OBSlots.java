@@ -93,14 +93,14 @@ class OBSlots {
 
 		OBSlot create() {
 
+			if (filler instanceof OWLClass) {
+
+				return createClassFillerSlot();
+			}
+
 			if (filler instanceof OWLClassExpression) {
 
-				if (filler instanceof OWLClass) {
-
-					return createClassFillerSlot();
-				}
-
-				return createComplexClassExpressionFillerSlot();
+				return createExpressionFrameSlotOrNull();
 			}
 
 			if (filler instanceof OWLDataRange) {
@@ -121,7 +121,7 @@ class OBSlots {
 					: createAtomicFrameSlot(classFiller);
 		}
 
-		private OBSlot createComplexClassExpressionFillerSlot() {
+		private OBSlot createExpressionFrameSlotOrNull() {
 
 			if (filler instanceof OWLObjectIntersectionOf) {
 
@@ -133,7 +133,7 @@ class OBSlots {
 				}
 			}
 
-			return createDisjunctionFrameSlot();
+			return createDisjunctionFrameSlotOrNull();
 		}
 
 		private OBSlot createAtomicFrameSlot(OWLClass filler) {
@@ -180,14 +180,21 @@ class OBSlots {
 			return slot;
 		}
 
-		private OBSlot createDisjunctionFrameSlot() {
+		private OBSlot createDisjunctionFrameSlotOrNull() {
 
 			OWLClassExpression exprFiller = (OWLClassExpression)filler;
+			Set<OWLClass> concepts = getSubConcepts(exprFiller);
+
+			return concepts.isEmpty() ? null : createDisjunctionFrameSlot(concepts);
+		}
+
+		private OBSlot createDisjunctionFrameSlot(Set<OWLClass> concepts) {
+
 			OBDisjunctionFrameSlot slot = new OBDisjunctionFrameSlot(this);
 
-			for (OWLClass subConcept : getSubConcepts(exprFiller)) {
+			for (OWLClass concept : concepts) {
 
-				slot.addValueTypeDisjunct(frames.get(subConcept));
+				slot.addValueTypeDisjunct(frames.get(concept));
 			}
 
 			return slot;
