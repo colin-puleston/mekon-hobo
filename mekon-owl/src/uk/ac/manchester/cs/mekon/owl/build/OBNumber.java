@@ -25,11 +25,12 @@
 package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-class OBNumber implements OBValue {
+class OBNumber extends OBValue<CNumber> {
 
 	private CNumberDef definition;
 
@@ -38,8 +39,30 @@ class OBNumber implements OBValue {
 		this.definition = definition;
 	}
 
-	CNumber createCNumber() {
+	boolean canBeSlotValueType() {
+
+		return true;
+	}
+
+	boolean canBeFixedSlotValue(CValue<?> cValue, boolean structuredSlotValues) {
+
+		return false;
+	}
+
+	boolean structuredValuesIfSlotValueType() {
+
+		return false;
+	}
+
+	CNumber ensureCStructure(CBuilder builder, OBAnnotations annotations) {
 
 		return definition.createNumber();
+	}
+
+	CValue<?> resolveToCSlotValueType(
+					CNumber cValue,
+					boolean structuredSlotValues) {
+
+		return cValue;
 	}
 }

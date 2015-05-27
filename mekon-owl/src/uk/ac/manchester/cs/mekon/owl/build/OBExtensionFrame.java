@@ -37,9 +37,7 @@ class OBExtensionFrame extends OBFrame {
 	private OBAtomicFrame baseFrame;
 	private Set<OBSlot> slots = new HashSet<OBSlot>();
 
-	OBExtensionFrame(OBAtomicFrame baseFrame, String identifier) {
-
-		super(identifier);
+	OBExtensionFrame(OBAtomicFrame baseFrame) {
 
 		this.baseFrame = baseFrame;
 	}
@@ -54,17 +52,12 @@ class OBExtensionFrame extends OBFrame {
 		return false;
 	}
 
-	boolean couldBeFixedValueForSlot(OBSlot topLevelSlot) {
+	boolean canBeFixedSlotValue(CValue<?> cValue, boolean structuredSlotValues) {
 
-		return ((OBFrameSlot)topLevelSlot).isCFrameValuedIfTopLevelSlot();
+		return !structuredSlotValues;
 	}
 
-	boolean canBeFixedValueForSlot(CValue<?> cValue) {
-
-		return true;
-	}
-
-	boolean slotsInHierarchy() {
+	boolean structuredValuesIfSlotValueType() {
 
 		return true;
 	}
@@ -76,9 +69,9 @@ class OBExtensionFrame extends OBFrame {
 
 		for (OBSlot slot : slots) {
 
-			OBSlot topLevelSlot = baseFrame.findTopLevelSlot(slot);
+			OBSlot topSlot = baseFrame.findTopLevelSlot(slot);
 
-			slot.ensureCStructure(builder, extender, topLevelSlot, annotations);
+			slot.ensureCStructure(builder, extender, topSlot, annotations);
 		}
 
 		return extender.extend();

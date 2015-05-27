@@ -28,30 +28,24 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OBFrame extends OIdentified implements OBValue {
+abstract class OBFrame extends OBValue<CFrame> {
+
+	OBFrame() {
+	}
 
 	OBFrame(OWLEntity sourceEntity, String label) {
 
 		super(sourceEntity, label);
 	}
 
-	OBFrame(String identifier) {
+	CValue<?> resolveToCSlotValueType(
+					CFrame cValue,
+					boolean structuredSlotValues) {
 
-		super(identifier, identifier);
+		return structuredSlotValues ? cValue : cValue.getType();
 	}
-
-	abstract boolean canBeSlotValueType();
-
-	abstract boolean couldBeFixedValueForSlot(OBSlot topLevelSlot);
-
-	abstract boolean canBeFixedValueForSlot(CValue<?> cValue);
-
-	abstract boolean slotsInHierarchy();
-
-	abstract CFrame ensureCStructure(CBuilder builder, OBAnnotations annotations);
 }

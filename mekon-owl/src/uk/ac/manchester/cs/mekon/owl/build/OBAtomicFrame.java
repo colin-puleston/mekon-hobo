@@ -73,17 +73,12 @@ class OBAtomicFrame extends OBFrame {
 		return !hidden || !leafFrame();
 	}
 
-	boolean couldBeFixedValueForSlot(OBSlot topLevelSlot) {
+	boolean canBeFixedSlotValue(CValue<?> cValue, boolean structuredSlotValues) {
 
-		return !hidden && leafFrame();
+		return !hidden && leafFrame() && cValue instanceof MFrame;
 	}
 
-	boolean canBeFixedValueForSlot(CValue<?> cValue) {
-
-		return cValue instanceof MFrame;
-	}
-
-	boolean slotsInHierarchy() {
+	boolean structuredValuesIfSlotValueType() {
 
 		return anySlots(new HashSet<OBAtomicFrame>(), false)
 				|| anySlotsViaLinks(new HashSet<OBAtomicFrame>(), true);

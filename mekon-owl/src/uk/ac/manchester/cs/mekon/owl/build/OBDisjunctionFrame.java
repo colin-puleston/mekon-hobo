@@ -36,11 +36,6 @@ class OBDisjunctionFrame extends OBFrame {
 
 	private SortedSet<OBAtomicFrame> disjuncts = new TreeSet<OBAtomicFrame>();
 
-	OBDisjunctionFrame(String identifier) {
-
-		super(identifier);
-	}
-
 	void addDisjunct(OBAtomicFrame disjunct) {
 
 		disjuncts.add(disjunct);
@@ -51,21 +46,16 @@ class OBDisjunctionFrame extends OBFrame {
 		return true;
 	}
 
-	boolean couldBeFixedValueForSlot(OBSlot topLevelSlot) {
+	boolean canBeFixedSlotValue(CValue<?> cValue, boolean structuredSlotValues) {
 
 		return false;
 	}
 
-	boolean canBeFixedValueForSlot(CValue<?> cValue) {
-
-		return false;
-	}
-
-	boolean slotsInHierarchy() {
+	boolean structuredValuesIfSlotValueType() {
 
 		for (OBAtomicFrame disjunct : disjuncts) {
 
-			if (disjunct.slotsInHierarchy()) {
+			if (disjunct.structuredValuesIfSlotValueType()) {
 
 				return true;
 			}

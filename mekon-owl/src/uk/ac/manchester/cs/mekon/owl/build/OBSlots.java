@@ -92,16 +92,11 @@ class OBSlots {
 
 			if (property != null) {
 
-				OBValue valueType = values.checkCreateValue(filler);
+				OBValue<?> valueType = values.checkCreateValue(filler);
 
-				if (valueType instanceof OBFrame) {
+				if (valueType != null) {
 
-					return new OBFrameSlot(this, (OBFrame)valueType);
-				}
-
-				if (valueType instanceof OBNumber) {
-
-					return new OBNumberSlot(this, (OBNumber)valueType);
+					return new OBSlot(this, valueType);
 				}
 			}
 

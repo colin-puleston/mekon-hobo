@@ -35,8 +35,6 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 class OBValues {
 
-	static private final String LOCAL_EXPRESSION_ID_FORMAT = "EXPR(%s)";
-
 	private OModel model;
 	private OBFrames frames;
 	private OBSlots slots;
@@ -51,7 +49,7 @@ class OBValues {
 			this.source = validSource(source) ? source : null;
 		}
 
-		OBValue checkCreate() {
+		OBValue<?> checkCreate() {
 
 			if (source instanceof OWLClass) {
 
@@ -71,7 +69,7 @@ class OBValues {
 			return null;
 		}
 
-		private OBValue createFromClassSource() {
+		private OBValue<?> createFromClassSource() {
 
 			OWLClass classSource = (OWLClass)source;
 			OBNumber number = numbers.checkExtractNumber(classSource);
@@ -108,7 +106,7 @@ class OBValues {
 		private OBFrame createExtensionFrame(OWLClass named, Set<OWLClassExpression> ops) {
 
 			OBAtomicFrame base = frames.get(named);
-			OBExtensionFrame frame = new OBExtensionFrame(base, createExpressionId());
+			OBExtensionFrame frame = new OBExtensionFrame(base);
 
 			for (OWLClassExpression op : ops) {
 
@@ -133,7 +131,7 @@ class OBValues {
 
 		private OBFrame createDisjunctionFrame(Set<OWLClass> concepts) {
 
-			OBDisjunctionFrame frame = new OBDisjunctionFrame(createExpressionId());
+			OBDisjunctionFrame frame = new OBDisjunctionFrame();
 
 			for (OWLClass concept : concepts) {
 
@@ -173,11 +171,6 @@ class OBValues {
 			return source instanceof OWLClassExpression
 					|| source instanceof OWLDataRange;
 		}
-
-		private String createExpressionId() {
-
-			return String.format(LOCAL_EXPRESSION_ID_FORMAT, source);
-		}
 	}
 
 	OBValues(OModel model, OBFrames frames, OBSlots slots) {
@@ -189,7 +182,7 @@ class OBValues {
 		numbers = new OBNumbers(model);
 	}
 
-	OBValue checkCreateValue(OWLObject source) {
+	OBValue<?> checkCreateValue(OWLObject source) {
 
 		return new ValueSpec(source).checkCreate();
 	}

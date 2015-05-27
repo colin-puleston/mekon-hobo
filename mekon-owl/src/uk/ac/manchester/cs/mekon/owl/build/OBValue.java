@@ -24,8 +24,50 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
+import org.semanticweb.owlapi.model.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
+
 /**
  * @author Colin Puleston
  */
-interface OBValue {
+abstract class OBValue<CV extends CValue<?>> extends OIdentified {
+
+	static private final String DUMMY_ID = "OB_DUMMY_ID";
+
+	OBValue() {
+
+		super(DUMMY_ID, DUMMY_ID);
+	}
+
+	OBValue(OWLEntity sourceEntity, String label) {
+
+		super(sourceEntity, label);
+	}
+
+	CValue<?> ensureCSlotValueType(
+				CBuilder builder,
+				OBAnnotations annotations,
+				boolean structuredSlotValues) {
+
+		CV cValue = ensureCStructure(builder, annotations);
+
+		return resolveToCSlotValueType(cValue, structuredSlotValues);
+	}
+
+	abstract boolean canBeSlotValueType();
+
+	abstract boolean canBeFixedSlotValue(
+						CValue<?> cValue,
+						boolean structuredSlotValues);
+
+	abstract boolean structuredValuesIfSlotValueType();
+
+	abstract CV ensureCStructure(CBuilder builder, OBAnnotations annotations);
+
+	abstract CValue<?> resolveToCSlotValueType(
+							CV cValue,
+							boolean structuredSlotValues);
 }

@@ -33,65 +33,76 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class OBSlot extends OIdentified {
+class OBSlot extends OIdentified {
 
 	private OBSlotSpec spec;
+	private OBValue<?> valueType;
 
 	private class CStructureCreator {
 
 		private CBuilder builder;
+		private OBSlot topLevelSlot;
 		private OBAnnotations annotations;
-		private CFrame container;
-		private CFrameEditor containerEd;
-		private CValue<?> value;
+		private CValue<?> cValue = null;
 
 		CStructureCreator(
 			CBuilder builder,
-			CFrame container,
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
 			this.builder = builder;
+			this.topLevelSlot = topLevelSlot;
 			this.annotations = annotations;
-			this.container = container;
+		}
 
-			containerEd = builder.getFrameEditor(container);
-			value = ensureCValue(builder, topLevelSlot, annotations);
+		void checkCreate(CFrame container) {
 
 			if (OBSlot.this == topLevelSlot) {
 
 				if (canProvideSlot()) {
 
-					addOrUpdateSlot(getDefaultCardinalityIfTopLevelSlot());
+					addOrUpdateSlot(container, getCardinalityIfTopLevelSlot());
 				}
 			}
 			else {
 
 				if (topLevelSlot.spec.singleValued() && canProvideSlot()) {
 
-					addOrUpdateSlot(CCardinality.SINGLE_VALUE);
+					addOrUpdateSlot(container, CCardinality.SINGLE_VALUE);
 				}
 
-				if (spec.valuedRequired() && canBeFixedValue(value)) {
+				if (spec.valuedRequired() && canProvideFixedValue()) {
 
-					addSlotValue();
+					getEditor(container).addSlotValue(getIdentity(), getCValue());
 				}
 			}
 		}
 
-		private void addOrUpdateSlot(CCardinality defaultCardinality) {
+		void checkCreate(CExtender container) {
 
-			CIdentity id = getIdentity();
-			CSlot slot = container.getSlots().getOrNull(id);
+			if (canProvideFixedValue()) {
+
+				container.addSlotValue(getIdentity(), getCValue());
+			}
+		}
+
+		private void addOrUpdateSlot(CFrame container, CCardinality cardinality) {
+
+			CSlot slot = container.getSlots().getOrNull(getIdentity());
 
 			if (slot == null) {
 
-				slot = containerEd.addSlot(id, defaultCardinality, value);
+				slot = addSlot(container, cardinality);
 
 				annotations.checkAdd(builder, slot, spec.getProperty());
 			}
 
 			absorbSlotOverrides(slot);
+		}
+
+		private CSlot addSlot(CFrame container, CCardinality cardinality) {
+
+			return getEditor(container).addSlot(getIdentity(), cardinality, getCValue());
 		}
 
 		private void absorbSlotOverrides(CSlot slot) {
@@ -107,22 +118,52 @@ abstract class OBSlot extends OIdentified {
 			slotEd.absorbEditability(editOverride);
 		}
 
-		private void addSlotValue() {
+		private boolean canProvideSlot() {
 
-			containerEd.addSlotValue(getIdentity(), value);
+			return valueType.canBeSlotValueType();
+		}
+
+		private boolean canProvideFixedValue() {
+
+			return valueType.canBeFixedSlotValue(getCValue(), structuredValues());
+		}
+
+		private boolean structuredValues() {
+
+			return topLevelSlot.structuredValuesIfTopLevelSlot();
+		}
+
+		private CValue<?> getCValue() {
+
+			if (cValue == null) {
+
+				cValue = ensureCValue();
+			}
+
+			return cValue;
+		}
+
+		private CValue<?> ensureCValue() {
+
+			return valueType
+						.ensureCSlotValueType(
+							builder,
+							annotations,
+							structuredValues());
+		}
+
+		private CFrameEditor getEditor(CFrame container) {
+
+			return builder.getFrameEditor(container);
 		}
 	}
 
-	OBSlot(OBSlotSpec spec) {
-
-		this(spec, spec.singleValued());
-	}
-
-	OBSlot(OBSlotSpec spec, boolean singleValued) {
+	OBSlot(OBSlotSpec spec, OBValue<?> valueType) {
 
 		super(spec.getProperty(), spec.getLabel());
 
 		this.spec = spec;
+		this.valueType = valueType;
 	}
 
 	void ensureCStructure(
@@ -131,10 +172,11 @@ abstract class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		if (canProvideSlotOrFixedValue(topLevelSlot)) {
-
-			new CStructureCreator(builder, container, topLevelSlot, annotations);
-		}
+		new CStructureCreator(
+				builder,
+				topLevelSlot,
+				annotations)
+					.checkCreate(container);
 	}
 
 	void ensureCStructure(
@@ -143,44 +185,39 @@ abstract class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		if (canProvideSlotOrFixedValue(topLevelSlot)) {
-
-			CValue<?> valueType = ensureCValue(builder, topLevelSlot, annotations);
-
-			container.addSlotValue(getIdentity(), valueType);
-		}
+		new CStructureCreator(
+				builder,
+				topLevelSlot,
+				annotations)
+					.checkCreate(container);
 	}
 
-	abstract boolean canProvideSlot();
-
-	abstract boolean couldProvideFixedValue(OBSlot topLevelSlot);
-
-	abstract boolean canBeFixedValue(CValue<?> cValue);
-
-	abstract boolean defaultToUniqueTypesIfMultiValuedTopLevelSlot();
-
-	abstract CValue<?> ensureCValue(
-							CBuilder builder,
-							OBSlot topLevelSlot,
-							OBAnnotations annotations);
-
-	private boolean canProvideSlotOrFixedValue(OBSlot topLevelSlot) {
-
-		return canProvideSlot() || couldProvideFixedValue(topLevelSlot);
-	}
-
-	private CCardinality getDefaultCardinalityIfTopLevelSlot() {
+	private CCardinality getCardinalityIfTopLevelSlot() {
 
 		if (spec.singleValued()) {
 
 			return CCardinality.SINGLE_VALUE;
 		}
 
-		if (defaultToUniqueTypesIfMultiValuedTopLevelSlot()) {
+		if (structuredValuesIfTopLevelSlot()) {
 
-			return CCardinality.UNIQUE_TYPES;
+			return CCardinality.REPEATABLE_TYPES;
 		}
 
-		return CCardinality.REPEATABLE_TYPES;
+		return CCardinality.UNIQUE_TYPES;
+	}
+
+	private boolean structuredValuesIfTopLevelSlot() {
+
+		switch (spec.getFrameSlotsPolicy()) {
+
+			case CFRAME_VALUED_ONLY:
+				return false;
+
+			case CFRAME_VALUED_IF_NO_STRUCTURE:
+				return valueType.structuredValuesIfSlotValueType();
+		}
+
+		return true;
 	}
 }
