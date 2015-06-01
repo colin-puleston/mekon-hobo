@@ -50,24 +50,25 @@ abstract class OBValue<CV extends CValue<?>> extends OIdentified {
 	CValue<?> ensureCSlotValueType(
 				CBuilder builder,
 				OBAnnotations annotations,
-				boolean structuredSlotValues) {
+				boolean valueStructureAllowed) {
 
 		CV cValue = ensureCStructure(builder, annotations);
 
-		return resolveToCSlotValueType(cValue, structuredSlotValues);
+		return resolveToCSlotValueType(cValue, valueStructureAllowed);
 	}
 
 	abstract boolean canBeSlotValueType();
 
 	abstract boolean canBeFixedSlotValue(
 						CValue<?> cValue,
-						boolean structuredSlotValues);
+						boolean slotOnExtension,
+						boolean valueStructureAllowed);
 
-	abstract boolean structuredValuesIfSlotValueType();
+	abstract boolean valueStructureAllowedIfSlotValueType();
 
 	abstract CV ensureCStructure(CBuilder builder, OBAnnotations annotations);
 
 	abstract CValue<?> resolveToCSlotValueType(
 							CV cValue,
-							boolean structuredSlotValues);
+							boolean valueStructureAllowed);
 }

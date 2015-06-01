@@ -44,12 +44,15 @@ class OBNumber extends OBValue<CNumber> {
 		return true;
 	}
 
-	boolean canBeFixedSlotValue(CValue<?> cValue, boolean structuredSlotValues) {
+	boolean canBeFixedSlotValue(
+				CValue<?> cValue,
+				boolean slotOnExtension,
+				boolean valueStructureAllowed) {
 
 		return false;
 	}
 
-	boolean structuredValuesIfSlotValueType() {
+	boolean valueStructureAllowedIfSlotValueType() {
 
 		return false;
 	}
@@ -61,7 +64,7 @@ class OBNumber extends OBValue<CNumber> {
 
 	CValue<?> resolveToCSlotValueType(
 					CNumber cValue,
-					boolean structuredSlotValues) {
+					boolean valueStructureAllowed) {
 
 		return cValue;
 	}

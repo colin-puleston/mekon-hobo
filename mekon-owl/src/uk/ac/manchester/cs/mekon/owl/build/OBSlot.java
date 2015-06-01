@@ -71,7 +71,7 @@ class OBSlot extends OIdentified {
 					addOrUpdateSlot(container, CCardinality.SINGLE_VALUE);
 				}
 
-				if (spec.valuedRequired() && canProvideFixedValue()) {
+				if (spec.valuedRequired() && canProvideFixedValue(false)) {
 
 					getEditor(container).addSlotValue(getIdentity(), getCValue());
 				}
@@ -80,7 +80,7 @@ class OBSlot extends OIdentified {
 
 		void checkCreate(CExtender container) {
 
-			if (canProvideFixedValue()) {
+			if (canProvideFixedValue(true)) {
 
 				container.addSlotValue(getIdentity(), getCValue());
 			}
@@ -123,14 +123,18 @@ class OBSlot extends OIdentified {
 			return valueType.canBeSlotValueType();
 		}
 
-		private boolean canProvideFixedValue() {
+		private boolean canProvideFixedValue(boolean onExtension) {
 
-			return valueType.canBeFixedSlotValue(getCValue(), structuredValues());
+			return valueType
+					.canBeFixedSlotValue(
+						getCValue(),
+						onExtension,
+						valueStructureAllowed());
 		}
 
-		private boolean structuredValues() {
+		private boolean valueStructureAllowed() {
 
-			return topLevelSlot.structuredValuesIfTopLevelSlot();
+			return topLevelSlot.valueStructureAllowedIfTopLevelSlot();
 		}
 
 		private CValue<?> getCValue() {
@@ -149,7 +153,7 @@ class OBSlot extends OIdentified {
 						.ensureCSlotValueType(
 							builder,
 							annotations,
-							structuredValues());
+							valueStructureAllowed());
 		}
 
 		private CFrameEditor getEditor(CFrame container) {
@@ -199,7 +203,7 @@ class OBSlot extends OIdentified {
 			return CCardinality.SINGLE_VALUE;
 		}
 
-		if (structuredValuesIfTopLevelSlot()) {
+		if (valueStructureAllowedIfTopLevelSlot()) {
 
 			return CCardinality.REPEATABLE_TYPES;
 		}
@@ -207,7 +211,7 @@ class OBSlot extends OIdentified {
 		return CCardinality.UNIQUE_TYPES;
 	}
 
-	private boolean structuredValuesIfTopLevelSlot() {
+	private boolean valueStructureAllowedIfTopLevelSlot() {
 
 		switch (spec.getFrameSlotsPolicy()) {
 
@@ -215,7 +219,7 @@ class OBSlot extends OIdentified {
 				return false;
 
 			case CFRAME_VALUED_IF_NO_STRUCTURE:
-				return valueType.structuredValuesIfSlotValueType();
+				return valueType.valueStructureAllowedIfSlotValueType();
 		}
 
 		return true;

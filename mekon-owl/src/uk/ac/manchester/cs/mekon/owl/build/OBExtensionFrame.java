@@ -52,12 +52,15 @@ class OBExtensionFrame extends OBFrame {
 		return false;
 	}
 
-	boolean canBeFixedSlotValue(CValue<?> cValue, boolean structuredSlotValues) {
+	boolean canBeFixedSlotValue(
+				CValue<?> cValue,
+				boolean slotOnExtension,
+				boolean valueStructureAllowed) {
 
-		return !structuredSlotValues;
+		return slotOnExtension || !valueStructureAllowed;
 	}
 
-	boolean structuredValuesIfSlotValueType() {
+	boolean valueStructureAllowedIfSlotValueType() {
 
 		return true;
 	}

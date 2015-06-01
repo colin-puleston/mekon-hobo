@@ -46,16 +46,19 @@ class OBDisjunctionFrame extends OBFrame {
 		return true;
 	}
 
-	boolean canBeFixedSlotValue(CValue<?> cValue, boolean structuredSlotValues) {
+	boolean canBeFixedSlotValue(
+				CValue<?> cValue,
+				boolean slotOnExtension,
+				boolean valueStructureAllowed) {
 
 		return false;
 	}
 
-	boolean structuredValuesIfSlotValueType() {
+	boolean valueStructureAllowedIfSlotValueType() {
 
 		for (OBAtomicFrame disjunct : disjuncts) {
 
-			if (disjunct.structuredValuesIfSlotValueType()) {
+			if (disjunct.valueStructureAllowedIfSlotValueType()) {
 
 				return true;
 			}
