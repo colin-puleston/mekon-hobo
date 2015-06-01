@@ -63,7 +63,7 @@ public enum CCardinality {
 
 		ISlotValues createSlotValues(ISlot slot) {
 
-			return new FreeISlotValues(slot);
+			return new RepeatableTypesISlotValues(slot);
 		}
 	};
 
