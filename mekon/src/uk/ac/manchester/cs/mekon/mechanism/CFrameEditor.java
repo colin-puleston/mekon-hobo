@@ -49,6 +49,13 @@ public interface CFrameEditor {
 	public void resetLabel(String newLabel);
 
 	/**
+	 * Adds a meta-data definition for the frame.
+	 *
+	 * @param definition Meta-data definition to add
+	 */
+	public void addDefinition(CFrame definition);
+
+	/**
 	 * Adds a direct super-frame for the frame.
 	 *
 	 * @param sup Direct super-frame to add

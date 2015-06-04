@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.*;
 
 /**
@@ -58,6 +60,11 @@ abstract class CExpression extends CFrame {
 	public boolean hidden() {
 
 		return false;
+	}
+
+	public List<CFrame> getDefinitions() {
+
+		return Collections.<CFrame>emptyList();
 	}
 
 	public CSlots getSlots() {

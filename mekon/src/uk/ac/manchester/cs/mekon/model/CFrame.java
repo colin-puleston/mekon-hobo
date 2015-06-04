@@ -259,6 +259,23 @@ public abstract class CFrame
 	public abstract List<CFrame> asDisjuncts();
 
 	/**
+	 * Provides any meta-data definitions of the frame, each of which will
+	 * be in the form of a <code>CFrame</code> object. Such definitions may
+	 * be relevant to, for example, the classification by an appropriate
+	 * reasoner of an external entity to which the frame is mapped, which
+	 * may be required in order to obtain dynamic updates to instantiations
+	 * of the frame.
+	 * <p>
+	 * NOTE: It is only frames of category {@link CFrameCategory#ATOMIC}
+	 * that may provide any such definitions, and the definitions will
+	 * generally be frames from one of the {@link CFrameCategory#expression}
+	 * categories.
+	 *
+	 * @return Any meta-data definitions of frame
+	 */
+	public abstract List<CFrame> getDefinitions();
+
+	/**
 	 * Provides all super-frames.
 	 *
 	 * @return All super-frames
