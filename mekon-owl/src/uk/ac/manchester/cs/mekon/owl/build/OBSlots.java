@@ -38,7 +38,7 @@ class OBSlots {
 
 	private OModel model;
 	private OBFrames frames;
-	private OBValues values;
+	private OBValues values = null;
 	private OBProperties properties;
 	private OBEntityLabels labels;
 	private OBFrameSlotsPolicy defaultFrameSlotsPolicy
@@ -283,8 +283,11 @@ class OBSlots {
 		this.frames = frames;
 		this.properties = properties;
 		this.labels = labels;
+	}
 
-		values = new OBValues(model, frames, this);
+	void setValues(OBValues values) {
+
+		this.values = values;
 	}
 
 	void setDefaultFrameSlotsPolicy(OBFrameSlotsPolicy value) {

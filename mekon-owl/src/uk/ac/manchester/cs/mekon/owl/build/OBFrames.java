@@ -29,25 +29,39 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
 class OBFrames {
 
+	private OModel model;
 	private IReasoner iReasoner = null;
+
 	private OBConcepts concepts;
 	private OBProperties properties;
 	private OBEntityLabels labels;
+	private OBValues values = null;
 
 	private Map<OWLEntity, OBAtomicFrame> frames
 				= new HashMap<OWLEntity, OBAtomicFrame>();
 
-	OBFrames(OBConcepts concepts, OBProperties properties, OBEntityLabels labels) {
+	OBFrames(
+		OModel model,
+		OBConcepts concepts,
+		OBProperties properties,
+		OBEntityLabels labels) {
 
+		this.model = model;
 		this.concepts = concepts;
 		this.properties = properties;
 		this.labels = labels;
+	}
+
+	void setValues(OBValues values) {
+
+		this.values = values;
 	}
 
 	void setIReasoner(IReasoner iReasoner) {
@@ -82,9 +96,7 @@ class OBFrames {
 
 		for (OWLClass concept : concepts.getAll()) {
 
-			boolean hidden = concepts.getAttributes(concept).hidden();
-
-			createFrame(concept, iReasoner, hidden);
+			createConceptFrame(concept, iReasoner, hidden(concept));
 		}
 	}
 
@@ -94,12 +106,32 @@ class OBFrames {
 
 			if (properties.getAttributes(property).frameSource()) {
 
-				createFrame(property, null, false);
+				createEntityFrame(property, null, false);
 			}
 		}
 	}
 
-	private OBAtomicFrame createFrame(
+	private OBAtomicFrame createConceptFrame(
+							OWLClass concept,
+							IReasoner iReasoner,
+							boolean hidden) {
+
+		OBAtomicFrame frame = createEntityFrame(concept, iReasoner, hidden);
+
+		for (OWLClassExpression equiv : getEquivalents(concept)) {
+
+			OBExpressionFrame definition = getDefinitionFrameOrNull(concept);
+
+			if (definition != null) {
+
+				frame.addDefinition(definition);
+			}
+		}
+
+		return frame;
+	}
+
+	private OBAtomicFrame createEntityFrame(
 							OWLEntity source,
 							IReasoner iReasoner,
 							boolean hidden) {
@@ -110,5 +142,43 @@ class OBFrames {
 		frames.put(source, frame);
 
 		return frame;
+	}
+
+	private OBExpressionFrame getDefinitionFrameOrNull(OWLClassExpression equiv) {
+
+		OBValue<?> definition = values.checkCreateValue(equiv);
+
+		if (definition instanceof OBExpressionFrame) {
+
+			return (OBExpressionFrame)definition;
+		}
+
+		return null;
+	}
+
+	private boolean hidden(OWLClass concept) {
+
+		return concepts.getAttributes(concept).hidden();
+	}
+
+	private Set<OWLClassExpression> getEquivalents(OWLClass concept) {
+
+		Set<OWLClassExpression> equivs = new HashSet<OWLClassExpression>();
+
+		for (OWLOntology ontology : model.getAllOntologies()) {
+
+			for (OWLClassAxiom axiom : ontology.getAxioms(concept)) {
+
+				if (axiom instanceof OWLEquivalentClassesAxiom) {
+
+					OWLEquivalentClassesAxiom eqAxiom
+						= (OWLEquivalentClassesAxiom)axiom;
+
+					equivs.addAll(eqAxiom.getClassExpressionsMinus(concept));
+				}
+			}
+		}
+
+		return equivs;
 	}
 }

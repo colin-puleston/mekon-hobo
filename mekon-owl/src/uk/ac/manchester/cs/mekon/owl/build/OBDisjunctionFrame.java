@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class OBDisjunctionFrame extends OBFrame {
+class OBDisjunctionFrame extends OBExpressionFrame {
 
 	private SortedSet<OBAtomicFrame> disjuncts = new TreeSet<OBAtomicFrame>();
 

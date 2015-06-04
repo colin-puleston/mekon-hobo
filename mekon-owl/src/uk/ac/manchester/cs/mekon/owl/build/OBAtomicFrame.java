@@ -39,10 +39,80 @@ class OBAtomicFrame extends OBFrame {
 	private OWLEntity sourceEntity;
 	private boolean hidden;
 	private IReasoner iReasoner;
+	private SortedSet<OBExpressionFrame> definitions = new TreeSet<OBExpressionFrame>();
 	private SortedSet<OBAtomicFrame> superFrames = new TreeSet<OBAtomicFrame>();
 	private SortedSet<OBAtomicFrame> subFrames = new TreeSet<OBAtomicFrame>();
 	private SortedSet<OBSlot> slots = new TreeSet<OBSlot>();
 	private CFrame cFrame = null;
+
+	private class CStructureBuilder {
+
+		private CBuilder builder;
+		private OBAnnotations annotations;
+
+		CStructureBuilder(CBuilder builder, OBAnnotations annotations) {
+
+			this.builder = builder;
+			this.annotations = annotations;
+
+			cFrame = createCFrame();
+
+			ensureCDefinitionsStructure();
+			ensureCSubFrameStructure();
+			ensureCSlotStructure();
+
+			annotations.checkAdd(builder, cFrame, sourceEntity);
+		}
+
+		private CFrame createCFrame() {
+
+			CFrame frame = builder.resolveFrame(getIdentity(), hidden);
+
+			if (iReasoner != null) {
+
+				builder.setIReasoner(frame, iReasoner);
+			}
+
+			return frame;
+		}
+
+		private void ensureCDefinitionsStructure() {
+
+			CFrameEditor cFrameEd = getCFrameEditor(cFrame);
+
+			for (OBExpressionFrame definition : definitions) {
+
+				CFrame cDef = definition.ensureCStructure(builder, annotations);
+
+				cFrameEd.addDefinition(cDef);
+			}
+		}
+
+		private void ensureCSubFrameStructure() {
+
+			for (OBAtomicFrame subFrame : subFrames) {
+
+				CFrame cSubFrame = subFrame.ensureCStructure(builder, annotations);
+
+				getCFrameEditor(cSubFrame).addSuper(cFrame);
+			}
+		}
+
+		private void ensureCSlotStructure() {
+
+			for (OBSlot slot : slots) {
+
+				OBSlot topSlot = findTopLevelSlot(slot);
+
+				slot.ensureCStructure(builder, cFrame, topSlot, annotations);
+			}
+		}
+
+		private CFrameEditor getCFrameEditor(CFrame cFrame) {
+
+			return builder.getFrameEditor(cFrame);
+		}
+	}
 
 	OBAtomicFrame(
 		OWLEntity sourceEntity,
@@ -55,6 +125,11 @@ class OBAtomicFrame extends OBFrame {
 		this.sourceEntity = sourceEntity;
 		this.iReasoner = iReasoner;
 		this.hidden = hidden;
+	}
+
+	void addDefinition(OBExpressionFrame definition) {
+
+		definitions.add(definition);
 	}
 
 	void addSubFrame(OBAtomicFrame subFrame) {
@@ -98,12 +173,7 @@ class OBAtomicFrame extends OBFrame {
 
 		if (cFrame == null) {
 
-			cFrame = createCFrame(builder);
-
-			ensureCSubStructure(builder, annotations);
-			ensureCSlotStructure(builder, annotations);
-
-			annotations.checkAdd(builder, cFrame, sourceEntity);
+			new CStructureBuilder(builder, annotations);
 		}
 
 		return cFrame;
@@ -117,40 +187,6 @@ class OBAtomicFrame extends OBFrame {
 		}
 
 		return current;
-	}
-
-	private CFrame createCFrame(CBuilder builder) {
-
-		CFrame frame = builder.resolveFrame(getIdentity(), hidden);
-
-		if (iReasoner != null) {
-
-			builder.setIReasoner(frame, iReasoner);
-		}
-
-		return frame;
-	}
-
-	private void ensureCSubStructure(CBuilder builder, OBAnnotations annotations) {
-
-		for (OBAtomicFrame subFrame : subFrames) {
-
-			CFrame cSubFrame = subFrame.ensureCStructure(builder, annotations);
-
-			builder.getFrameEditor(cSubFrame).addSuper(cFrame);
-		}
-	}
-
-	private void ensureCSlotStructure(
-					CBuilder builder,
-					OBAnnotations annotations) {
-
-		for (OBSlot slot : slots) {
-
-			OBSlot topSlot = findTopLevelSlot(slot);
-
-			slot.ensureCStructure(builder, cFrame, topSlot, annotations);
-		}
 	}
 
 	private boolean anySlots(Set<OBAtomicFrame> visited, boolean lookUp) {

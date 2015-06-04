@@ -269,8 +269,13 @@ public class OBSectionBuilder implements CSectionBuilder {
 		concepts = new OBConcepts(model);
 		properties = new OBProperties(model);
 
-		frames = new OBFrames(concepts, properties, labels);
+		frames = new OBFrames(model, concepts, properties, labels);
 		slots = new OBSlots(model, frames, properties, labels);
+
+		OBValues values = new OBValues(model, frames, slots);
+
+		frames.setValues(values);
+		slots.setValues(values);
 	}
 
 	void initialise(OModel model, KConfigNode parentConfigNode) {

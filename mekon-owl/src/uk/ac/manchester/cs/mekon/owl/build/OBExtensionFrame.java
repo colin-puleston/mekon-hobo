@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class OBExtensionFrame extends OBFrame {
+class OBExtensionFrame extends OBExpressionFrame {
 
 	private OBAtomicFrame baseFrame;
 	private Set<OBSlot> slots = new HashSet<OBSlot>();
