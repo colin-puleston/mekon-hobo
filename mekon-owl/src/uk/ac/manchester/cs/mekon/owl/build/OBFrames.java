@@ -73,6 +73,7 @@ class OBFrames {
 
 		createAllForConcepts();
 		createAllForProperties();
+		addAllDefinitions();
 	}
 
 	Collection<OBAtomicFrame> getAll() {
@@ -96,7 +97,7 @@ class OBFrames {
 
 		for (OWLClass concept : concepts.getAll()) {
 
-			createConceptFrame(concept, iReasoner, hidden(concept));
+			createFrame(concept, iReasoner, hidden(concept));
 		}
 	}
 
@@ -106,32 +107,35 @@ class OBFrames {
 
 			if (properties.getAttributes(property).frameSource()) {
 
-				createEntityFrame(property, null, false);
+				createFrame(property, null, false);
 			}
 		}
 	}
 
-	private OBAtomicFrame createConceptFrame(
-							OWLClass concept,
-							IReasoner iReasoner,
-							boolean hidden) {
+	private void addAllDefinitions() {
 
-		OBAtomicFrame frame = createEntityFrame(concept, iReasoner, hidden);
+		for (OWLClass concept : concepts.getAll()) {
+
+			addDefinitions(concept);
+		}
+	}
+
+	private void addDefinitions(OWLClass concept) {
+
+		OBAtomicFrame frame = get(concept);
 
 		for (OWLClassExpression equiv : getEquivalents(concept)) {
 
-			OBExpressionFrame definition = getDefinitionFrameOrNull(concept);
+			OBExpressionFrame definition = getDefinitionFrameOrNull(equiv);
 
 			if (definition != null) {
 
 				frame.addDefinition(definition);
 			}
 		}
-
-		return frame;
 	}
 
-	private OBAtomicFrame createEntityFrame(
+	private OBAtomicFrame createFrame(
 							OWLEntity source,
 							IReasoner iReasoner,
 							boolean hidden) {

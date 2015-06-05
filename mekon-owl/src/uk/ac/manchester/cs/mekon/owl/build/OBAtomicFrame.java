@@ -57,23 +57,23 @@ class OBAtomicFrame extends OBFrame {
 
 			cFrame = createCFrame();
 
-			ensureCDefinitionsStructure();
 			ensureCSubFrameStructure();
 			ensureCSlotStructure();
+			ensureCDefinitionsStructure();
 
 			annotations.checkAdd(builder, cFrame, sourceEntity);
 		}
 
 		private CFrame createCFrame() {
 
-			CFrame frame = builder.resolveFrame(getIdentity(), hidden);
+			CFrame cFrame = builder.resolveFrame(getIdentity(), hidden);
 
 			if (iReasoner != null) {
 
-				builder.setIReasoner(frame, iReasoner);
+				builder.setIReasoner(cFrame, iReasoner);
 			}
 
-			return frame;
+			return cFrame;
 		}
 
 		private void ensureCDefinitionsStructure() {
@@ -102,7 +102,7 @@ class OBAtomicFrame extends OBFrame {
 
 			for (OBSlot slot : slots) {
 
-				OBSlot topSlot = findTopLevelSlot(slot);
+				OBSlot topSlot = findTopLevelSlotViaSupers(slot);
 
 				slot.ensureCStructure(builder, cFrame, topSlot, annotations);
 			}
@@ -181,12 +181,9 @@ class OBAtomicFrame extends OBFrame {
 
 	OBSlot findTopLevelSlot(OBSlot current) {
 
-		for (OBAtomicFrame sup : superFrames) {
+		current = checkFindTopLevelSlotOnThis(current);
 
-			return sup.findTopLevelSlotViaSuper(current);
-		}
-
-		return current;
+		return findTopLevelSlotViaSupers(current);
 	}
 
 	private boolean anySlots(Set<OBAtomicFrame> visited, boolean lookUp) {
@@ -207,12 +204,17 @@ class OBAtomicFrame extends OBFrame {
 		return false;
 	}
 
-	private OBSlot findTopLevelSlotViaSuper(OBSlot current) {
+	private OBSlot findTopLevelSlotViaSupers(OBSlot current) {
 
-		return findTopLevelSlot(checkUpdateTopLevelSlot(current));
+		for (OBAtomicFrame sup : superFrames) {
+
+			return sup.findTopLevelSlot(current);
+		}
+
+		return current;
 	}
 
-	private OBSlot checkUpdateTopLevelSlot(OBSlot current) {
+	private OBSlot checkFindTopLevelSlotOnThis(OBSlot current) {
 
 		CIdentity id = current.getIdentity();
 
