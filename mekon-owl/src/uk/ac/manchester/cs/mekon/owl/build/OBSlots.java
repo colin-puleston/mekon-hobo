@@ -55,8 +55,12 @@ class OBSlots {
 		SlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
 
 			property = getPropertyOrNull(restriction.getProperty());
-			propertyAttributes = properties.getAttributes(property);
-			filler = restriction.getFiller();
+
+			if (property != null) {
+
+				propertyAttributes = properties.getAttributes(property);
+				filler = restriction.getFiller();
+			}
 		}
 
 		OWLProperty<?, ?> getProperty() {
@@ -78,9 +82,12 @@ class OBSlots {
 
 			OBFrameSlotsPolicy policy = propertyAttributes.getFrameSlotsPolicy();
 
-			return policy != OBFrameSlotsPolicy.NONE
-						? policy
-						: defaultFrameSlotsPolicy;
+			if (policy == OBFrameSlotsPolicy.NONE) {
+
+				return defaultFrameSlotsPolicy;
+			}
+
+			return policy;
 		}
 
 		OBPropertyAttributes getPropertyAttributes() {
@@ -88,11 +95,11 @@ class OBSlots {
 			return propertyAttributes;
 		}
 
-		OBSlot checkCreate() {
+		OBSlot checkCreate(boolean forDefinition) {
 
 			if (property != null) {
 
-				OBValue<?> valueType = values.checkCreateValue(filler);
+				OBValue<?> valueType = checkCreateValueType(forDefinition);
 
 				if (valueType != null) {
 
@@ -103,9 +110,24 @@ class OBSlots {
 			return null;
 		}
 
+		private OBValue<?> checkCreateValueType(boolean forDefinition) {
+
+			return values.checkCreateValue(filler, forDefinition);
+		}
+
 		private OWLProperty<?, ?> getPropertyOrNull(OWLPropertyExpression<?, ?> expr) {
 
-			return expr instanceof OWLProperty ? (OWLProperty<?, ?>)expr : null;
+			if (expr instanceof OWLProperty) {
+
+				OWLProperty<?, ?> property = (OWLProperty<?, ?>)expr;
+
+				if (properties.contains(property)) {
+
+					return property;
+				}
+			}
+
+			return null;
 		}
 	}
 
@@ -303,11 +325,11 @@ class OBSlots {
 		}
 	}
 
-	OBSlot checkCreateSlot(OWLClassExpression sup) {
+	OBSlot checkCreateSlot(OWLClassExpression sup, boolean forDefinition) {
 
 		SlotSpec spec = sup.accept(specCreator);
 
-		return spec != null ? spec.checkCreate() : null;
+		return spec != null ? spec.checkCreate(forDefinition) : null;
 	}
 
 	private void createSlots(OWLSubClassOfAxiom subConceptOf) {
@@ -348,7 +370,7 @@ class OBSlots {
 
 	private void checkCreateSlot(OWLClass sub, OWLClassExpression sup) {
 
-		OBSlot slot = checkCreateSlot(sup);
+		OBSlot slot = checkCreateSlot(sup, false);
 
 		if (slot != null) {
 

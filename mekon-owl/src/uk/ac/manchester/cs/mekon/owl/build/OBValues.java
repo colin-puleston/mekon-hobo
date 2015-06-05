@@ -35,7 +35,6 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 class OBValues {
 
-	private OModel model;
 	private OBFrames frames;
 	private OBSlots slots;
 	private OBNumbers numbers;
@@ -43,74 +42,101 @@ class OBValues {
 	private class ValueSpec {
 
 		private OWLObject source;
+		private boolean forDefinition;
 
-		ValueSpec(OWLObject source) {
+		ValueSpec(OWLObject source, boolean forDefinition) {
 
 			this.source = validSource(source) ? source : null;
+			this.forDefinition = forDefinition;
 		}
 
 		OBValue<?> checkCreate() {
 
 			if (source instanceof OWLClass) {
 
-				return createFromClassSource();
+				return checkCreate((OWLClass)source);
 			}
 
-			if (source instanceof OWLClassExpression) {
+			if (source instanceof OWLObjectIntersectionOf) {
 
-				return checkCreateExpressionFrame();
+				return checkCreate((OWLObjectIntersectionOf)source);
+			}
+
+			if (source instanceof OWLObjectUnionOf) {
+
+				return checkCreate((OWLObjectUnionOf)source);
 			}
 
 			if (source instanceof OWLDataRange) {
 
-				return checkCreateNumber();
+				return checkCreate((OWLDataRange)source);
 			}
 
 			return null;
 		}
 
-		private OBValue<?> createFromClassSource() {
+		private OBValue<?> checkCreate(OWLClass source) {
 
-			OWLClass classSource = (OWLClass)source;
-			OBNumber number = numbers.checkExtractNumber(classSource);
+			OBNumber number = numbers.checkExtractNumber(source);
 
-			return number != null ? number : frames.get(classSource);
+			return number != null ? number : frames.get(source);
 		}
 
-		private OBFrame checkCreateExpressionFrame() {
+		private OBFrame checkCreate(OWLObjectIntersectionOf source) {
 
-			OBFrame frame = checkCreateExtensionFrame();
+			Set<OWLClassExpression> ops = source.getOperands();
+			Set<OWLClass> namedOps = extractNamedConcepts(ops);
 
-			return frame != null ? frame : checkCreateDisjunctionFrame();
-		}
+			if (namedOps.size() != 1) {
 
-		private OBFrame checkCreateExtensionFrame() {
-
-			if (source instanceof OWLObjectIntersectionOf) {
-
-				OWLObjectIntersectionOf intSource = (OWLObjectIntersectionOf)source;
-				Set<OWLClassExpression> ops = intSource.getOperands();
-				OWLClass named = getSoleNamedClassOrNull(ops);
-
-				if (named != null) {
-
-					ops.remove(named);
-
-					return createExtensionFrame(named, ops);
-				}
+				return null;
 			}
 
-			return null;
+			OWLClass named = namedOps.iterator().next();
+
+			if (ops.size() == 1) {
+
+				return frames.get(named);
+			}
+
+			ops.remove(named);
+
+			return createExtensionFrame(named, ops);
 		}
 
-		private OBFrame createExtensionFrame(OWLClass named, Set<OWLClassExpression> ops) {
+		private OBFrame checkCreate(OWLObjectUnionOf source) {
+
+			Set<OWLClassExpression> ops = source.getOperands();
+			Set<OWLClass> namedOps = extractNamedConcepts(ops);
+
+			if (namedOps.isEmpty()) {
+
+				return null;
+			}
+
+			if (namedOps.size() == 1) {
+
+				return frames.get(namedOps.iterator().next());
+			}
+
+			return createDisjunctionFrame(namedOps);
+		}
+
+		private OBNumber checkCreate(OWLDataRange source) {
+
+			return numbers.checkCreateNumber(source);
+		}
+
+		private OBFrame createExtensionFrame(
+							OWLClass named,
+							Set<OWLClassExpression> slotSources) {
 
 			OBAtomicFrame base = frames.get(named);
-			OBExtensionFrame frame = new OBExtensionFrame(base);
+			OBExtensionFrame frame = new OBExtensionFrame(base, forDefinition);
 
-			for (OWLClassExpression op : ops) {
+			for (OWLClassExpression slotSource : slotSources) {
 
-				OBSlot slot = slots.checkCreateSlot(op);
+				OBSlot slot = slots.checkCreateSlot(slotSource, forDefinition);
 
 				if (slot != null) {
 
@@ -119,14 +145,6 @@ class OBValues {
 			}
 
 			return frame;
-		}
-
-		private OBFrame checkCreateDisjunctionFrame() {
-
-			OWLClassExpression exprSource = (OWLClassExpression)source;
-			Set<OWLClass> concepts = getSubConcepts(exprSource);
-
-			return concepts.isEmpty() ? null : createDisjunctionFrame(concepts);
 		}
 
 		private OBFrame createDisjunctionFrame(Set<OWLClass> concepts) {
@@ -141,29 +159,19 @@ class OBValues {
 			return frame;
 		}
 
-		private OBNumber checkCreateNumber() {
+		private Set<OWLClass> extractNamedConcepts(Set<OWLClassExpression> ops) {
 
-			return numbers.checkCreateNumber((OWLDataRange)source);
-		}
-
-		private OWLClass getSoleNamedClassOrNull(Set<OWLClassExpression> ops) {
-
-			OWLClass named = null;
+			Set<OWLClass> namedOps = new HashSet<OWLClass>();
 
 			for (OWLClassExpression op : ops) {
 
 				if (op instanceof OWLClass) {
 
-					if (named != null) {
-
-						return null;
-					}
-
-					named = (OWLClass)op;
+					namedOps.add((OWLClass)op);
 				}
 			}
 
-			return named;
+			return namedOps;
 		}
 
 		private boolean validSource(OWLObject source) {
@@ -175,20 +183,14 @@ class OBValues {
 
 	OBValues(OModel model, OBFrames frames, OBSlots slots) {
 
-		this.model = model;
 		this.frames = frames;
 		this.slots = slots;
 
 		numbers = new OBNumbers(model);
 	}
 
-	OBValue<?> checkCreateValue(OWLObject source) {
+	OBValue<?> checkCreateValue(OWLObject source, boolean forDefinition) {
 
-		return new ValueSpec(source).checkCreate();
-	}
-
-	private Set<OWLClass> getSubConcepts(OWLClassExpression expression) {
-
-		return model.getInferredSubs(expression, true);
+		return new ValueSpec(source, forDefinition).checkCreate();
 	}
 }

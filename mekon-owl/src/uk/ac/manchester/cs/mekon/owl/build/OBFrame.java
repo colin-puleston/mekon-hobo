@@ -43,8 +43,9 @@ abstract class OBFrame extends OBValue<CFrame> {
 	}
 
 	CValue<?> resolveToCSlotValueType(
-				CFrame cValue,
-				boolean valueStructureAllowed) {
+					CFrame cValue,
+					OBValue<?> topLevelValueType,
+					boolean valueStructureAllowed) {
 
 		return valueStructureAllowed ? cValue : cValue.getType();
 	}

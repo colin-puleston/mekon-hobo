@@ -71,16 +71,16 @@ class OBSlot extends OIdentified {
 					addOrUpdateSlot(container, CCardinality.SINGLE_VALUE);
 				}
 
-				if (spec.valuedRequired() && canProvideFixedValue(false)) {
+				if (spec.valuedRequired() && canProvideFixedValue()) {
 
 					getEditor(container).addSlotValue(getIdentity(), getCValue());
 				}
 			}
 		}
 
-		void checkCreate(CExtender container) {
+		void checkCreate(CExtender container, boolean forDefinition) {
 
-			if (canProvideFixedValue(true)) {
+			if (forDefinition || canProvideFixedValue()) {
 
 				container.addSlotValue(getIdentity(), getCValue());
 			}
@@ -123,12 +123,11 @@ class OBSlot extends OIdentified {
 			return valueType.canBeSlotValueType();
 		}
 
-		private boolean canProvideFixedValue(boolean onExtension) {
+		private boolean canProvideFixedValue() {
 
 			return valueType
 					.canBeFixedSlotValue(
 						getCValue(),
-						onExtension,
 						valueStructureAllowed());
 		}
 
@@ -153,6 +152,7 @@ class OBSlot extends OIdentified {
 						.ensureCSlotValueType(
 							builder,
 							annotations,
+							topLevelSlot.valueType,
 							valueStructureAllowed());
 		}
 
@@ -187,13 +187,16 @@ class OBSlot extends OIdentified {
 			CBuilder builder,
 			CExtender container,
 			OBSlot topLevelSlot,
-			OBAnnotations annotations) {
+			OBAnnotations annotations,
+			boolean forDefinition) {
 
 		new CStructureCreator(
 				builder,
 				topLevelSlot,
 				annotations)
-					.checkCreate(container);
+					.checkCreate(
+						container,
+						forDefinition);
 	}
 
 	private CCardinality getCardinalityIfTopLevelSlot() {

@@ -106,6 +106,17 @@ public abstract class OBEntities
 	}
 
 	/**
+	 * Tests whether the specified OWL entity has  been registered.
+	 *
+	 * @param entity Required entity
+	 * @return True if entity has been registered
+	 */
+	public boolean contains(E entity) {
+
+		return entitiesToAttributes.containsKey(entity);
+	}
+
+	/**
 	 * Provides the FM entity-generation attributes associated with
 	 * the specified OWL entity (which should have previously been
 	 * registered via the {@link #add} method).

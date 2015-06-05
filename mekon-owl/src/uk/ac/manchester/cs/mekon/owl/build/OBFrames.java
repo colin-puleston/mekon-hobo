@@ -124,13 +124,14 @@ class OBFrames {
 
 		OBAtomicFrame frame = get(concept);
 
+		System.out.println("\nZZZ: " + concept);
 		for (OWLClassExpression equiv : getEquivalents(concept)) {
 
-			OBExpressionFrame definition = getDefinitionFrameOrNull(equiv);
+			OBValue<?> definition = values.checkCreateValue(equiv, true);
 
-			if (definition != null) {
+			if (definition instanceof OBExpressionFrame) {
 
-				frame.addDefinition(definition);
+				frame.addDefinition((OBExpressionFrame)definition);
 			}
 		}
 	}
@@ -146,18 +147,6 @@ class OBFrames {
 		frames.put(source, frame);
 
 		return frame;
-	}
-
-	private OBExpressionFrame getDefinitionFrameOrNull(OWLClassExpression equiv) {
-
-		OBValue<?> definition = values.checkCreateValue(equiv);
-
-		if (definition instanceof OBExpressionFrame) {
-
-			return (OBExpressionFrame)definition;
-		}
-
-		return null;
 	}
 
 	private boolean hidden(OWLClass concept) {

@@ -32,11 +32,11 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 class OBNumber extends OBValue<CNumber> {
 
-	private CNumberDef definition;
+	private CNumber cNumber;
 
-	OBNumber(CNumberDef definition) {
+	OBNumber(CNumberDef cDefinition) {
 
-		this.definition = definition;
+		cNumber = cDefinition.createNumber();
 	}
 
 	boolean canBeSlotValueType() {
@@ -46,7 +46,6 @@ class OBNumber extends OBValue<CNumber> {
 
 	boolean canBeFixedSlotValue(
 				CValue<?> cValue,
-				boolean slotOnExtension,
 				boolean valueStructureAllowed) {
 
 		return false;
@@ -57,15 +56,20 @@ class OBNumber extends OBValue<CNumber> {
 		return false;
 	}
 
-	CNumber ensureCStructure(CBuilder builder, OBAnnotations annotations) {
+	CNumber ensureCStructure(
+				CBuilder builder,
+				OBAnnotations annotations) {
 
-		return definition.createNumber();
+		return cNumber;
 	}
 
 	CValue<?> resolveToCSlotValueType(
 					CNumber cValue,
+					OBValue<?> topLevelValueType,
 					boolean valueStructureAllowed) {
 
-		return cValue;
+		OBNumber topLevelNumber = (OBNumber)topLevelValueType;
+
+		return cValue.getIntersection(topLevelNumber.cNumber);
 	}
 }

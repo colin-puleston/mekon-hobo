@@ -150,12 +150,9 @@ class OBAtomicFrame extends OBFrame {
 
 	boolean canBeFixedSlotValue(
 				CValue<?> cValue,
-				boolean slotOnExtension,
 				boolean valueStructureAllowed) {
 
-		return !hidden
-				&& (slotOnExtension || leafFrame())
-				&& cValue instanceof MFrame;
+		return !hidden && leafFrame() && cValue instanceof MFrame;
 	}
 
 	boolean valueStructureAllowedIfSlotValueType() {

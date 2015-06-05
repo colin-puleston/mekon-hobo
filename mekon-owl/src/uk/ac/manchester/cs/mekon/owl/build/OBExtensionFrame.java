@@ -36,10 +36,12 @@ class OBExtensionFrame extends OBExpressionFrame {
 
 	private OBAtomicFrame baseFrame;
 	private Set<OBSlot> slots = new HashSet<OBSlot>();
+	private boolean forDefinition;
 
-	OBExtensionFrame(OBAtomicFrame baseFrame) {
+	OBExtensionFrame(OBAtomicFrame baseFrame, boolean forDefinition) {
 
 		this.baseFrame = baseFrame;
+		this.forDefinition = forDefinition;
 	}
 
 	void addSlot(OBSlot slot) {
@@ -54,10 +56,9 @@ class OBExtensionFrame extends OBExpressionFrame {
 
 	boolean canBeFixedSlotValue(
 				CValue<?> cValue,
-				boolean slotOnExtension,
 				boolean valueStructureAllowed) {
 
-		return slotOnExtension || !valueStructureAllowed;
+		return !valueStructureAllowed;
 	}
 
 	boolean valueStructureAllowedIfSlotValueType() {
@@ -74,7 +75,12 @@ class OBExtensionFrame extends OBExpressionFrame {
 
 			OBSlot topSlot = baseFrame.findTopLevelSlot(slot);
 
-			slot.ensureCStructure(builder, extender, topSlot, annotations);
+			slot.ensureCStructure(
+				builder,
+				extender,
+				topSlot,
+				annotations,
+				forDefinition);
 		}
 
 		return extender.extend();

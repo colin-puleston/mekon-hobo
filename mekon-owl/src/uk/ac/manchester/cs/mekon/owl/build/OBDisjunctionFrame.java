@@ -38,6 +38,7 @@ class OBDisjunctionFrame extends OBExpressionFrame {
 
 	void addDisjunct(OBAtomicFrame disjunct) {
 
+		System.out.println("  DISJUNCT: " + disjunct.getIdentity());
 		disjuncts.add(disjunct);
 	}
 
@@ -48,7 +49,6 @@ class OBDisjunctionFrame extends OBExpressionFrame {
 
 	boolean canBeFixedSlotValue(
 				CValue<?> cValue,
-				boolean slotOnExtension,
 				boolean valueStructureAllowed) {
 
 		return false;
