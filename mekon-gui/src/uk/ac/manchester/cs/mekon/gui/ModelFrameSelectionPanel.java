@@ -37,6 +37,7 @@ class ModelFrameSelectionPanel extends JPanel {
 	static private final long serialVersionUID = -1;
 
 	static private final String DETAILS_TITLE = "Details";
+	static private final String DEFINITIONS_TITLE = "Definitions";
 	static private final String USAGE_TITLE = "Usage";
 	static private final String ANNOTATIONS_TITLE = "Annotations";
 
@@ -116,6 +117,7 @@ class ModelFrameSelectionPanel extends JPanel {
 		JTabbedPane panel = new JTabbedPane();
 
 		panel.addTab(DETAILS_TITLE, createDetailsPanel(selected));
+		panel.addTab(DEFINITIONS_TITLE, createDefinitionsPanel(selected));
 		panel.addTab(USAGE_TITLE, createUsagePanel(selected));
 		panel.addTab(ANNOTATIONS_TITLE, createAnnotationsPanel(selected));
 
@@ -133,6 +135,11 @@ class ModelFrameSelectionPanel extends JPanel {
 		tree.addSelectionListener(reselectionListener);
 
 		return new JScrollPane(tree);
+	}
+
+	private JComponent createDefinitionsPanel(CFrame selected) {
+
+		return new JScrollPane(new CFramesList(selected.getDefinitions()));
 	}
 
 	private JComponent createUsagePanel(CFrame selected) {
