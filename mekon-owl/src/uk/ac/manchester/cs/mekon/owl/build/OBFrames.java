@@ -124,7 +124,6 @@ class OBFrames {
 
 		OBAtomicFrame frame = get(concept);
 
-		System.out.println("\nZZZ: " + concept);
 		for (OWLClassExpression equiv : getEquivalents(concept)) {
 
 			OBValue<?> definition = values.checkCreateValue(equiv, true);

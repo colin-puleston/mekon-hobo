@@ -38,7 +38,6 @@ class OBDisjunctionFrame extends OBExpressionFrame {
 
 	void addDisjunct(OBAtomicFrame disjunct) {
 
-		System.out.println("  DISJUNCT: " + disjunct.getIdentity());
 		disjuncts.add(disjunct);
 	}
 
