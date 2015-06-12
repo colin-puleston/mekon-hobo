@@ -200,15 +200,32 @@ class ITreeUpdateMarker {
 
 	private Color getMarkColour(GNode node) {
 
-		return directlyUpdated(node) ? DIRECT_UPDATES_CLR : INDIRECT_UPDATES_CLR;
+		return directUpdateInTree(node)
+				? DIRECT_UPDATES_CLR
+				: INDIRECT_UPDATES_CLR;
 	}
 
-	private boolean directlyUpdated(GNode node) {
+	private boolean directUpdateInTree(GNode node) {
 
-		if (node.equals(updatedSlotNode)) {
+		return node.equals(updatedSlotNode)
+				|| addedValueNode(node)
+				|| directUpdateInSubTree(node);
+	}
 
-			return true;
+	private boolean directUpdateInSubTree(GNode node) {
+
+		for (GNode child : node.getChildren()) {
+
+			if (directUpdateInTree(child)) {
+
+				return true;
+			}
 		}
+
+		return false;
+	}
+
+	private boolean addedValueNode(GNode node) {
 
 		if (node instanceof IValueNode<?>) {
 
