@@ -121,6 +121,7 @@
 		-->
 		<OWLSanctionedModel
 			defaultFrameSlotsPolicy="CFRAME_VALUED_IF_NO_STRUCTURE"
+			annotateFramesWithDefinitions="TRUE"
 			retainOnlyDeclarationAxioms="FALSE">
 			<ConceptInclusion>
 				<Group
