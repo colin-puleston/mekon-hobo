@@ -51,7 +51,6 @@ class CAtomicFrame extends CFrame {
 	private CSource source = CSource.EXTERNAL;
 	private boolean hidden;
 
-	private List<CFrame> definitions = new ArrayList<CFrame>();
 	private CAtomicFrames supers = new CAtomicFrames();
 	private CAtomicFrames subs = CAtomicFrames.INERT_INSTANCE;
 	private CSlots slots = CSlots.INERT_INSTANCE;
@@ -125,11 +124,6 @@ class CAtomicFrame extends CFrame {
 		public void resetLabel(String newLabel) {
 
 			identity = identity.deriveIdentity(newLabel);
-		}
-
-		public void addDefinition(CFrame definition) {
-
-			definitions.add(definition);
 		}
 
 		public void addSuper(CFrame sup) {
@@ -221,11 +215,6 @@ class CAtomicFrame extends CFrame {
 	public List<CFrame> asDisjuncts() {
 
 		return Collections.<CFrame>singletonList(this);
-	}
-
-	public List<CFrame> getDefinitions() {
-
-		return new ArrayList<CFrame>(definitions);
 	}
 
 	public List<CFrame> getSupers(CVisibility visibility) {

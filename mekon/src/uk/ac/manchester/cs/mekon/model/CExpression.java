@@ -62,11 +62,6 @@ abstract class CExpression extends CFrame {
 		return false;
 	}
 
-	public List<CFrame> getDefinitions() {
-
-		return Collections.<CFrame>emptyList();
-	}
-
 	public CSlots getSlots() {
 
 		return CSlots.INERT_INSTANCE;
