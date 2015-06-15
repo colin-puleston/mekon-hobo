@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Responsible for copying annotations from OWL entities to the
@@ -40,7 +41,10 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class OBAnnotations {
 
+	static private final String FRAME_DEFINITION_ID = "OWL-Definition";
+
 	private OModel model;
+	private boolean annotateFramesWithDefinitions = false;
 
 	private Set<OBAnnotationInclusion> inclusions
 				= new HashSet<OBAnnotationInclusion>();
@@ -72,17 +76,66 @@ public class OBAnnotations {
 		this.model = model;
 	}
 
-	void checkAdd(CBuilder builder, CEntity cEntity, OWLEntity owlEntity) {
+	void setAnnotateFramesWithDefinitions(boolean value) {
 
-		CAnnotationsEditor editor = getEditor(builder, cEntity);
+		annotateFramesWithDefinitions = value;
+	}
 
-		for (OBAnnotationInclusion inclusion : inclusions) {
+	void checkAnnotate(CBuilder builder, CEntity cEntity, OWLEntity owlEntity) {
 
-			inclusion.checkAdd(model, owlEntity, editor);
+		CAnnotationsEditor cEditor = getCEditor(builder, cEntity);
+
+		addInclusions(cEditor, owlEntity);
+
+		if (annotateFramesWithDefinitions
+			&& owlEntity instanceof OWLClass) {
+
+			addCFrameDefinitions(cEditor, (OWLClass)owlEntity);
 		}
 	}
 
-	private CAnnotationsEditor getEditor(CBuilder builder, CEntity cEntity) {
+	private void addInclusions(CAnnotationsEditor cEditor, OWLEntity owlEntity) {
+
+		for (OBAnnotationInclusion inclusion : inclusions) {
+
+			inclusion.checkAdd(model, owlEntity, cEditor);
+		}
+	}
+
+	private void addCFrameDefinitions(CAnnotationsEditor cEditor, OWLClass owlConcept) {
+
+		OLabelRenderer labels = new OLabelRenderer(model);
+
+		labels.setAllowCarriageReturns(false);
+
+		for (OWLClassExpression equiv : getEquivalents(owlConcept)) {
+
+			cEditor.add(FRAME_DEFINITION_ID, labels.render(equiv));
+		}
+	}
+
+	private Set<OWLClassExpression> getEquivalents(OWLClass owlConcept) {
+
+		Set<OWLClassExpression> equivs = new HashSet<OWLClassExpression>();
+
+		for (OWLOntology ontology : model.getAllOntologies()) {
+
+			for (OWLClassAxiom axiom : ontology.getAxioms(owlConcept)) {
+
+				if (axiom instanceof OWLEquivalentClassesAxiom) {
+
+					OWLEquivalentClassesAxiom eqAxiom
+						= (OWLEquivalentClassesAxiom)axiom;
+
+					equivs.addAll(eqAxiom.getClassExpressionsMinus(owlConcept));
+				}
+			}
+		}
+
+		return equivs;
+	}
+
+	private CAnnotationsEditor getCEditor(CBuilder builder, CEntity cEntity) {
 
 		return builder.getAnnotationsEditor(cEntity.getAnnotations());
 	}

@@ -29,14 +29,12 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
 class OBFrames {
 
-	private OModel model;
 	private IReasoner iReasoner = null;
 
 	private OBConcepts concepts;
@@ -47,12 +45,10 @@ class OBFrames {
 				= new HashMap<OWLEntity, OBAtomicFrame>();
 
 	OBFrames(
-		OModel model,
 		OBConcepts concepts,
 		OBProperties properties,
 		OBEntityLabels labels) {
 
-		this.model = model;
 		this.concepts = concepts;
 		this.properties = properties;
 		this.labels = labels;
@@ -105,17 +101,12 @@ class OBFrames {
 		}
 	}
 
-	private OBAtomicFrame createFrame(
-							OWLEntity source,
-							IReasoner iReasoner,
-							boolean hidden) {
+	private void createFrame(OWLEntity source, IReasoner iReasoner, boolean hidden) {
 
 		String label = labels.getLabel(source);
 		OBAtomicFrame frame = new OBAtomicFrame(source, label, hidden, iReasoner);
 
 		frames.put(source, frame);
-
-		return frame;
 	}
 
 	private boolean hidden(OWLClass concept) {

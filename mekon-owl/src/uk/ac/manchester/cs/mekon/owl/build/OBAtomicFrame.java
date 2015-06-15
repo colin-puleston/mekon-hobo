@@ -39,9 +39,11 @@ class OBAtomicFrame extends OBFrame {
 	private OWLEntity sourceEntity;
 	private boolean hidden;
 	private IReasoner iReasoner;
+
 	private SortedSet<OBAtomicFrame> superFrames = new TreeSet<OBAtomicFrame>();
 	private SortedSet<OBAtomicFrame> subFrames = new TreeSet<OBAtomicFrame>();
 	private SortedSet<OBSlot> slots = new TreeSet<OBSlot>();
+
 	private CFrame cFrame = null;
 
 	private class CStructureBuilder {
@@ -59,7 +61,7 @@ class OBAtomicFrame extends OBFrame {
 			ensureCSubFrameStructure();
 			ensureCSlotStructure();
 
-			annotations.checkAdd(builder, cFrame, sourceEntity);
+			annotations.checkAnnotate(builder, cFrame, sourceEntity);
 		}
 
 		private CFrame createCFrame() {

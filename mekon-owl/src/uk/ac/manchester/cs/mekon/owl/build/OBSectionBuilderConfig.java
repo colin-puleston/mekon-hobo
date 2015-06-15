@@ -47,6 +47,7 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 		addAnnotationInclusion(builder);
 		addLabelAnnotationProperties(builder);
 		setDefaultFrameSlotsPolicy(builder);
+		setAnnotateFramesWithDefinitions(builder);
 		setRetainOnlyDeclarationAxioms(builder);
 	}
 
@@ -103,6 +104,11 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 		builder.setDefaultFrameSlotsPolicy(getDefaultFrameSlotsPolicy());
 	}
 
+	private void setAnnotateFramesWithDefinitions(OBSectionBuilder builder) {
+
+		builder.setAnnotateFramesWithDefinitions(annotateFramesWithDefinitions());
+	}
+
 	private void setRetainOnlyDeclarationAxioms(OBSectionBuilder builder) {
 
 		builder.setRetainOnlyDeclarationAxioms(retainOnlyDeclarationAxioms());
@@ -143,6 +149,11 @@ class OBSectionBuilderConfig implements OBSectionBuilderConfigVocab {
 					DEFAULT_FRAME_SLOTS_POLICY_ATTR,
 					OBFrameSlotsPolicy.class,
 					OBFrameSlotsPolicy.IFRAME_VALUED_ONLY);
+	}
+
+	private boolean annotateFramesWithDefinitions() {
+
+		return configNode.getBoolean(ANNOTATE_FRAMES_WITH_DEFNS_ATTR);
 	}
 
 	private boolean retainOnlyDeclarationAxioms() {

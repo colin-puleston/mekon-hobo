@@ -94,7 +94,7 @@ class OBSlot extends OIdentified {
 
 				slot = addSlot(container, cardinality);
 
-				annotations.checkAdd(builder, slot, spec.getProperty());
+				annotations.checkAnnotate(builder, slot, spec.getProperty());
 			}
 
 			absorbSlotOverrides(slot);

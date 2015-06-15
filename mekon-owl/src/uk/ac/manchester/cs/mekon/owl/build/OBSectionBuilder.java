@@ -158,6 +158,18 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
+	 * Sets the attribute that determines whether or not all frames
+	 * that are built will be annotated with any equivalent-classes
+	 * that have been asserted.
+	 *
+	 * @param value Required value of attribute
+	 */
+	public void setAnnotateFramesWithDefinitions(boolean value) {
+
+		annotations.setAnnotateFramesWithDefinitions(value);
+	}
+
+	/**
 	 * Sets the attribute that determines whether or not all axioms
 	 * other than class-declarations will be removed from OWL model
 	 * after the section has been built. This enables the minimisation
@@ -269,7 +281,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 		concepts = new OBConcepts(model);
 		properties = new OBProperties(model);
 
-		frames = new OBFrames(model, concepts, properties, labels);
+		frames = new OBFrames(concepts, properties, labels);
 		slots = new OBSlots(model, frames, properties, labels);
 	}
 

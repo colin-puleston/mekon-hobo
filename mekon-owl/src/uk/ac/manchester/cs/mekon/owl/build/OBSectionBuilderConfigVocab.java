@@ -43,6 +43,7 @@ public interface OBSectionBuilderConfigVocab {
 	static public final String LABEL_ANNO_PROPERTY_ID = "AnnotationProperty";
 
 	static public final String DEFAULT_FRAME_SLOTS_POLICY_ATTR = "defaultFrameSlotsPolicy";
+	static public final String ANNOTATE_FRAMES_WITH_DEFNS_ATTR = "annotateFramesWithDefinitions";
 	static public final String RETAIN_ONLY_DECLARATIONS_ATTR = "retainOnlyDeclarationAxioms";
 	static public final String ROOT_ENTITY_URI_ATTR = "rootURI";
 	static public final String ENTITY_INCLUSION_ATTR = "inclusion";

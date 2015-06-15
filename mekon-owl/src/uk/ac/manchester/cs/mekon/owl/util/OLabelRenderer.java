@@ -79,12 +79,9 @@ public class OLabelRenderer {
 
 		String rendering = renderer.render(object);
 
-		if (!allowCarriageReturns) {
-
-			rendering = rendering.replaceAll("\n", " ");
-		}
-
-		return rendering;
+		return allowCarriageReturns
+				? rendering
+				: reduceRenderingToSingleLine(rendering);
 	}
 
 	/**
@@ -119,6 +116,25 @@ public class OLabelRenderer {
 		}
 
 		return renderings;
+	}
+
+	private String reduceRenderingToSingleLine(String rendering) {
+
+		return removeExcessSpaces(rendering.replaceAll("\n", " "));
+	}
+
+	private String removeExcessSpaces(String s) {
+
+		String last = null;
+
+		do {
+
+			last = s;
+			s = s.replaceAll("  ", " ");
+		}
+		while(!s.equals(last));
+
+		return s;
 	}
 
 	private ShortFormProvider getShortFormProvider(OModel model) {
