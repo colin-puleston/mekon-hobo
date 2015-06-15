@@ -271,11 +271,6 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 		frames = new OBFrames(model, concepts, properties, labels);
 		slots = new OBSlots(model, frames, properties, labels);
-
-		OBValues values = new OBValues(model, frames, slots);
-
-		frames.setValues(values);
-		slots.setValues(values);
 	}
 
 	void initialise(OModel model, KConfigNode parentConfigNode) {

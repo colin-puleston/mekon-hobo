@@ -42,7 +42,6 @@ class OBFrames {
 	private OBConcepts concepts;
 	private OBProperties properties;
 	private OBEntityLabels labels;
-	private OBValues values = null;
 
 	private Map<OWLEntity, OBAtomicFrame> frames
 				= new HashMap<OWLEntity, OBAtomicFrame>();
@@ -57,11 +56,6 @@ class OBFrames {
 		this.concepts = concepts;
 		this.properties = properties;
 		this.labels = labels;
-	}
-
-	void setValues(OBValues values) {
-
-		this.values = values;
 	}
 
 	void setIReasoner(IReasoner iReasoner) {
