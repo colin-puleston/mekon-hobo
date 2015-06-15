@@ -39,7 +39,6 @@ class OBAtomicFrame extends OBFrame {
 	private OWLEntity sourceEntity;
 	private boolean hidden;
 	private IReasoner iReasoner;
-	private SortedSet<OBExpressionFrame> definitions = new TreeSet<OBExpressionFrame>();
 	private SortedSet<OBAtomicFrame> superFrames = new TreeSet<OBAtomicFrame>();
 	private SortedSet<OBAtomicFrame> subFrames = new TreeSet<OBAtomicFrame>();
 	private SortedSet<OBSlot> slots = new TreeSet<OBSlot>();
@@ -59,7 +58,6 @@ class OBAtomicFrame extends OBFrame {
 
 			ensureCSubFrameStructure();
 			ensureCSlotStructure();
-			ensureCDefinitionsStructure();
 
 			annotations.checkAdd(builder, cFrame, sourceEntity);
 		}
@@ -74,18 +72,6 @@ class OBAtomicFrame extends OBFrame {
 			}
 
 			return cFrame;
-		}
-
-		private void ensureCDefinitionsStructure() {
-
-			CFrameEditor cFrameEd = getCFrameEditor(cFrame);
-
-			for (OBExpressionFrame definition : definitions) {
-
-				CFrame cDef = definition.ensureCStructure(builder, annotations);
-
-				cFrameEd.addDefinition(cDef);
-			}
 		}
 
 		private void ensureCSubFrameStructure() {
@@ -125,11 +111,6 @@ class OBAtomicFrame extends OBFrame {
 		this.sourceEntity = sourceEntity;
 		this.iReasoner = iReasoner;
 		this.hidden = hidden;
-	}
-
-	void addDefinition(OBExpressionFrame definition) {
-
-		definitions.add(definition);
 	}
 
 	void addSubFrame(OBAtomicFrame subFrame) {

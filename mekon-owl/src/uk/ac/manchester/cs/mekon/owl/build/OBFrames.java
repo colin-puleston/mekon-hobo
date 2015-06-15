@@ -73,7 +73,6 @@ class OBFrames {
 
 		createAllForConcepts();
 		createAllForProperties();
-		addAllDefinitions();
 	}
 
 	Collection<OBAtomicFrame> getAll() {
@@ -112,29 +111,6 @@ class OBFrames {
 		}
 	}
 
-	private void addAllDefinitions() {
-
-		for (OWLClass concept : concepts.getAll()) {
-
-			addDefinitions(concept);
-		}
-	}
-
-	private void addDefinitions(OWLClass concept) {
-
-		OBAtomicFrame frame = get(concept);
-
-		for (OWLClassExpression equiv : getEquivalents(concept)) {
-
-			OBValue<?> definition = values.checkCreateValue(equiv, true);
-
-			if (definition instanceof OBExpressionFrame) {
-
-				frame.addDefinition((OBExpressionFrame)definition);
-			}
-		}
-	}
-
 	private OBAtomicFrame createFrame(
 							OWLEntity source,
 							IReasoner iReasoner,
@@ -151,26 +127,5 @@ class OBFrames {
 	private boolean hidden(OWLClass concept) {
 
 		return concepts.getAttributes(concept).hidden();
-	}
-
-	private Set<OWLClassExpression> getEquivalents(OWLClass concept) {
-
-		Set<OWLClassExpression> equivs = new HashSet<OWLClassExpression>();
-
-		for (OWLOntology ontology : model.getAllOntologies()) {
-
-			for (OWLClassAxiom axiom : ontology.getAxioms(concept)) {
-
-				if (axiom instanceof OWLEquivalentClassesAxiom) {
-
-					OWLEquivalentClassesAxiom eqAxiom
-						= (OWLEquivalentClassesAxiom)axiom;
-
-					equivs.addAll(eqAxiom.getClassExpressionsMinus(concept));
-				}
-			}
-		}
-
-		return equivs;
 	}
 }

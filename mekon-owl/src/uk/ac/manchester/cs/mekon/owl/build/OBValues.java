@@ -42,12 +42,10 @@ class OBValues {
 	private class ValueSpec {
 
 		private OWLObject source;
-		private boolean forDefinition;
 
-		ValueSpec(OWLObject source, boolean forDefinition) {
+		ValueSpec(OWLObject source) {
 
 			this.source = validSource(source) ? source : null;
-			this.forDefinition = forDefinition;
 		}
 
 		OBValue<?> checkCreate() {
@@ -132,11 +130,11 @@ class OBValues {
 							Set<OWLClassExpression> slotSources) {
 
 			OBAtomicFrame base = frames.get(named);
-			OBExtensionFrame frame = new OBExtensionFrame(base, forDefinition);
+			OBExtensionFrame frame = new OBExtensionFrame(base);
 
 			for (OWLClassExpression slotSource : slotSources) {
 
-				OBSlot slot = slots.checkCreateSlot(slotSource, forDefinition);
+				OBSlot slot = slots.checkCreateSlot(slotSource);
 
 				if (slot != null) {
 
@@ -189,8 +187,8 @@ class OBValues {
 		numbers = new OBNumbers(model);
 	}
 
-	OBValue<?> checkCreateValue(OWLObject source, boolean forDefinition) {
+	OBValue<?> checkCreateValue(OWLObject source) {
 
-		return new ValueSpec(source, forDefinition).checkCreate();
+		return new ValueSpec(source).checkCreate();
 	}
 }

@@ -95,11 +95,11 @@ class OBSlots {
 			return propertyAttributes;
 		}
 
-		OBSlot checkCreate(boolean forDefinition) {
+		OBSlot checkCreate() {
 
 			if (property != null) {
 
-				OBValue<?> valueType = checkCreateValueType(forDefinition);
+				OBValue<?> valueType = checkCreateValueType();
 
 				if (valueType != null) {
 
@@ -110,9 +110,9 @@ class OBSlots {
 			return null;
 		}
 
-		private OBValue<?> checkCreateValueType(boolean forDefinition) {
+		private OBValue<?> checkCreateValueType() {
 
-			return values.checkCreateValue(filler, forDefinition);
+			return values.checkCreateValue(filler);
 		}
 
 		private OWLProperty<?, ?> getPropertyOrNull(OWLPropertyExpression<?, ?> expr) {
@@ -325,11 +325,11 @@ class OBSlots {
 		}
 	}
 
-	OBSlot checkCreateSlot(OWLClassExpression sup, boolean forDefinition) {
+	OBSlot checkCreateSlot(OWLClassExpression sup) {
 
 		SlotSpec spec = sup.accept(specCreator);
 
-		return spec != null ? spec.checkCreate(forDefinition) : null;
+		return spec != null ? spec.checkCreate() : null;
 	}
 
 	private void createSlots(OWLSubClassOfAxiom subConceptOf) {
@@ -370,7 +370,7 @@ class OBSlots {
 
 	private void checkCreateSlot(OWLClass sub, OWLClassExpression sup) {
 
-		OBSlot slot = checkCreateSlot(sup, false);
+		OBSlot slot = checkCreateSlot(sup);
 
 		if (slot != null) {
 

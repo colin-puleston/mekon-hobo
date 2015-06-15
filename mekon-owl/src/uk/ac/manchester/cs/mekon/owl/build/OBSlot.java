@@ -78,9 +78,9 @@ class OBSlot extends OIdentified {
 			}
 		}
 
-		void checkCreate(CExtender container, boolean forDefinition) {
+		void checkCreate(CExtender container) {
 
-			if (forDefinition || canProvideFixedValue()) {
+			if (canProvideFixedValue()) {
 
 				container.addSlotValue(getIdentity(), getCValue());
 			}
@@ -187,16 +187,13 @@ class OBSlot extends OIdentified {
 			CBuilder builder,
 			CExtender container,
 			OBSlot topLevelSlot,
-			OBAnnotations annotations,
-			boolean forDefinition) {
+			OBAnnotations annotations) {
 
 		new CStructureCreator(
 				builder,
 				topLevelSlot,
 				annotations)
-					.checkCreate(
-						container,
-						forDefinition);
+					.checkCreate(container);
 	}
 
 	private CCardinality getCardinalityIfTopLevelSlot() {
