@@ -37,13 +37,13 @@ class CFrameAnnotationsTree extends CTree {
 
 	static private final long serialVersionUID = -1;
 
-	private class AnnotationsTreeNode extends GNode {
+	private abstract class AnnotationsTreeNode extends GNode {
 
 		private String label;
 
 		protected GCellDisplay getDisplay() {
 
-			return EntityDisplays.get().get(label, null, NodeTextDisplay.INFO);
+			return EntityDisplays.get().get(label, null, getTextDisplay());
 		}
 
 		AnnotationsTreeNode() {
@@ -56,6 +56,11 @@ class CFrameAnnotationsTree extends CTree {
 			super(CFrameAnnotationsTree.this);
 
 			this.label = label;
+		}
+
+		NodeTextDisplay getTextDisplay() {
+
+			return NodeTextDisplay.ANNOTATION_KEY;
 		}
 	}
 
@@ -77,7 +82,40 @@ class CFrameAnnotationsTree extends CTree {
 		}
 	}
 
-	private abstract class CValuesNode extends AnnotationsTreeNode {
+	private class AnnotationNode extends AnnotationsTreeNode {
+
+		private List<Object> values;
+
+		protected void addInitialChildren() {
+
+			for (Object value : values) {
+
+				addChild(createAnnotationValueNode(value));
+			}
+		}
+
+		AnnotationNode(Object key, List<Object> values) {
+
+			super(key.toString());
+
+			this.values = values;
+		}
+	}
+
+	private class ValuesNode extends AnnotationsTreeNode {
+
+		ValuesNode(String label) {
+
+			super(label);
+		}
+
+		NodeTextDisplay getTextDisplay() {
+
+			return NodeTextDisplay.ANNOTATION_VALUE;
+		}
+	}
+
+	private abstract class CValuesNode extends ValuesNode {
 
 		private Collection<CValue<?>> cValues;
 
@@ -110,26 +148,6 @@ class CFrameAnnotationsTree extends CTree {
 		CValueListNode(List<CValue<?>> cValues) {
 
 			super(List.class, cValues);
-		}
-	}
-
-	private class AnnotationNode extends AnnotationsTreeNode {
-
-		private List<Object> values;
-
-		protected void addInitialChildren() {
-
-			for (Object value : values) {
-
-				addChild(createAnnotationValueNode(value));
-			}
-		}
-
-		AnnotationNode(Object key, List<Object> values) {
-
-			super(key.toString());
-
-			this.values = values;
 		}
 	}
 
@@ -173,7 +191,7 @@ class CFrameAnnotationsTree extends CTree {
 			}
 		}
 
-		return new AnnotationsTreeNode(value.toString());
+		return new ValuesNode(value.toString());
 	}
 
 	private Set<CValue<?>> toCValueSetOrNull(Collection<?> elements) {

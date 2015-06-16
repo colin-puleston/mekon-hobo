@@ -31,12 +31,13 @@ import java.awt.*;
  */
 enum NodeTextDisplay {
 
-	VALUE(Color.darkGray.darker(), Font.BOLD),
-	SLOT(Color.darkGray.darker(), Font.PLAIN),
+	VALUE(Font.BOLD),
+	SLOT(Font.PLAIN),
 	SLOT_VALUE_TYPE_MODIFIER(Color.orange.darker(), Font.PLAIN),
 	SLOT_CARDINALITY_MODIFIER(Color.orange.darker().darker(), Font.PLAIN),
-	SLOT_VALUES(Color.darkGray.darker(), Font.ITALIC),
-	INFO(Color.darkGray.darker(), Font.ITALIC);
+	SLOT_VALUES(Font.ITALIC),
+	ANNOTATION_KEY(Font.BOLD | Font.ITALIC),
+	ANNOTATION_VALUE(Font.ITALIC);
 
 	private Color colour;
 	private int style;
@@ -49,6 +50,11 @@ enum NodeTextDisplay {
 	int getStyle() {
 
 		return style;
+	}
+
+	private NodeTextDisplay(int style) {
+
+		this(Color.darkGray.darker(), style);
 	}
 
 	private NodeTextDisplay(Color colour, int style) {
