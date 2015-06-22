@@ -85,11 +85,7 @@ class FieldSlotInitialiser {
 			}
 		}
 
-		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
-
-		slotTypeEd.absorbCardinality(cardinality);
-		slotTypeEd.absorbValueType(valueType);
-		slotTypeEd.absorbEditability(editability);
+		updateSlotType(slotType);
 
 		return slotType;
 	}
@@ -104,6 +100,15 @@ class FieldSlotInitialiser {
 
 			slotTypeEd.resetLabel(slotLabel);
 		}
+	}
+
+	private void updateSlotType(CSlot slotType) {
+
+		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
+
+		slotTypeEd.absorbCardinality(cardinality);
+		slotTypeEd.absorbValueType(valueType);
+		slotTypeEd.absorbEditability(editability);
 	}
 
 	private CSlot addSlotType() {
