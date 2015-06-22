@@ -67,11 +67,6 @@ class DBinding {
 		return frame;
 	}
 
-	boolean isBoundField(String fieldName) {
-
-		return fieldNamesToSlotIds.get(fieldName) != null;
-	}
-
 	String getSlotId(String fieldName) {
 
 		String slotId = fieldNamesToSlotIds.get(fieldName);

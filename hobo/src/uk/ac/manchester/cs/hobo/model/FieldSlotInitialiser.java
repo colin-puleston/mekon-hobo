@@ -41,7 +41,6 @@ class FieldSlotInitialiser {
 	private CCardinality cardinality;
 	private CValue<?> valueType;
 	private CEditability editability;
-	private boolean boundField;
 
 	FieldSlotInitialiser(DModel model, IFrame frame, FieldSlot fieldSlot) {
 
@@ -58,7 +57,6 @@ class FieldSlotInitialiser {
 		cardinality = field.getCardinality();
 		valueType = field.getSlotValueType();
 		editability = fieldSlot.getEditability();
-		boundField = binding.isBoundField(fieldName);
 	}
 
 	ISlot initialiseSlot() {
@@ -66,32 +64,46 @@ class FieldSlotInitialiser {
 		CSlot slotType = resolveSlotType();
 		ISlot slot = frame.getSlots().getOrNull(slotId);
 
-		updateSlotType(slotType);
-
 		return slot != null ? slot : addSlot(slotType);
 	}
 
 	private CSlot resolveSlotType() {
 
-		if (boundField) {
-
-			return frameType.getSlots().get(slotId);
-		}
-
 		CSlot slotType = frameType.getSlots().getOrNull(slotId);
 
-		return slotType != null ? slotType : createSlotType();
-	}
+		if (slotType == null) {
 
-	private CSlot createSlotType() {
+			slotType = addSlotType();
 
-		CSlot slotType = addSlotType();
+			initAsDirectSlotType(slotType, CSource.INTERNAL);
+		}
+		else {
+
+			if (slotType.getSource() == CSource.EXTERNAL) {
+
+				initAsDirectSlotType(slotType, CSource.DUAL);
+			}
+		}
+
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
-		slotTypeEd.setSource(CSource.INTERNAL);
+		slotTypeEd.absorbCardinality(cardinality);
+		slotTypeEd.absorbValueType(valueType);
 		slotTypeEd.absorbEditability(editability);
 
 		return slotType;
+	}
+
+	private void initAsDirectSlotType(CSlot slotType, CSource source) {
+
+		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
+
+		slotTypeEd.setSource(source);
+
+		if (getModelMap().labelsFromDirectFields()) {
+
+			slotTypeEd.resetLabel(slotLabel);
+		}
 	}
 
 	private CSlot addSlotType() {
@@ -99,25 +111,6 @@ class FieldSlotInitialiser {
 		CIdentity id = new CIdentity(slotId, slotLabel);
 
 		return getFrameTypeEditor().addSlot(id, cardinality, valueType);
-	}
-
-	private void updateSlotType(CSlot slotType) {
-
-		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
-
-		if (getModelMap().labelsFromDirectFields()) {
-
-			slotTypeEd.resetLabel(slotLabel);
-		}
-
-		if (boundField) {
-
-			slotTypeEd.setSource(CSource.DUAL);
-		}
-
-		slotTypeEd.absorbCardinality(cardinality);
-		slotTypeEd.absorbValueType(valueType);
-		slotTypeEd.absorbEditability(editability);
 	}
 
 	private ISlot addSlot(CSlot slotType) {
