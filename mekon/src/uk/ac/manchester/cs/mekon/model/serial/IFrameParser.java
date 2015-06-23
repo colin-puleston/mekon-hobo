@@ -37,160 +37,400 @@ public class IFrameParser extends ISerialiser {
 	private CModel model;
 	private IFrameCategory frameCategory;
 
-	private XNode containerNode = null;
-	private Map<Integer, IFrame> iFrameRefs = new HashMap<Integer, IFrame>();
-	private List<SlotValuesSpec<?>> slotValuesSpecs = new ArrayList<SlotValuesSpec<?>>();
+	private class OneTimeParser {
 
-	private abstract class SlotValuesSpec<V> {
+		private XNode containerNode;
 
-		private ISlots slots;
-		private CIdentity slotId;
+		private Map<Integer, IFrame> iFrameRefs
+						= new HashMap<Integer, IFrame>();
+		private List<SlotValuesSpec<?>> slotValuesSpecs
+						= new ArrayList<SlotValuesSpec<?>>();
 
-		private List<V> valueSpecs = new ArrayList<V>();
+		private abstract class SlotValuesSpec<V> {
 
-		SlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
+			private ISlots slots;
+			private CIdentity slotId;
 
-			slots = frame.getSlots();
-			this.slotId = slotId;
+			private List<V> valueSpecs = new ArrayList<V>();
 
-			for (XNode valueNode : parentNode.getChildren(getValueId())) {
+			SlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
 
-				valueSpecs.add(getValueSpec(valueNode));
-			}
+				slots = frame.getSlots();
+				this.slotId = slotId;
 
-			slotValuesSpecs.add(this);
-		}
+				for (XNode valueNode : parentNode.getChildren(getValueId())) {
 
-		boolean process() {
-
-			if (slots.containsValueFor(slotId)) {
-
-				ISlot slot = slots.get(slotId);
-
-				if (slot.getEditability().editable()) {
-
-					slot.getValuesEditor().addAll(getValidValues(slot));
+					valueSpecs.add(getValueSpec(valueNode));
 				}
 
-				slotValuesSpecs.remove(this);
-
-				return true;
+				slotValuesSpecs.add(this);
 			}
 
-			return false;
+			boolean process() {
+
+				if (slots.containsValueFor(slotId)) {
+
+					ISlot slot = slots.get(slotId);
+
+					if (slot.getEditability().editable()) {
+
+						slot.getValuesEditor().addAll(getValidValues(slot));
+					}
+
+					slotValuesSpecs.remove(this);
+
+					return true;
+				}
+
+				return false;
+			}
+
+			abstract String getValueId();
+
+			abstract V getValueSpec(XNode valueNode);
+
+			abstract IValue getValue(ISlot slot, V valueSpec);
+
+			private List<IValue> getValidValues(ISlot slot) {
+
+				List<IValue> values = new ArrayList<IValue>();
+				CValue<?> valueType = slot.getValueType();
+
+				for (V valueSpec : valueSpecs) {
+
+					IValue value = getValue(slot, valueSpec);
+
+					if (valueType.validValue(value)) {
+
+						values.add(value);
+					}
+				}
+
+				return values;
+			}
 		}
 
-		abstract String getValueId();
+		private class IFrameSlotValuesSpec extends SlotValuesSpec<IValue> {
 
-		abstract V getValueSpec(XNode valueNode);
+			IFrameSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
 
-		abstract IValue getValue(ISlot slot, V valueSpec);
+				super(frame, slotId, parentNode);
+			}
 
-		private List<IValue> getValidValues(ISlot slot) {
+			String getValueId() {
 
-			List<IValue> values = new ArrayList<IValue>();
-			CValue<?> valueType = slot.getValueType();
+				return IFRAME_ID;
+			}
 
-			for (V valueSpec : valueSpecs) {
+			IValue getValueSpec(XNode valueNode) {
 
-				IValue value = getValue(slot, valueSpec);
+				return parseIFrame(valueNode);
+			}
 
-				if (valueType.validValue(value)) {
+			IValue getValue(ISlot slot, IValue valueSpec) {
 
-					values.add(value);
+				if (slot.getValueType() instanceof MFrame) {
+
+					return ((IFrame)valueSpec).getType();
+				}
+
+				return valueSpec;
+			}
+		}
+
+		private class CFrameSlotValuesSpec extends SlotValuesSpec<IValue> {
+
+			CFrameSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
+
+				super(frame, slotId, parentNode);
+			}
+
+			String getValueId() {
+
+				return CFRAME_ID;
+			}
+
+			IValue getValueSpec(XNode valueNode) {
+
+				return parseCFrame(valueNode);
+			}
+
+			IValue getValue(ISlot slot, IValue valueSpec) {
+
+				return valueSpec;
+			}
+		}
+
+		private class INumberSlotValuesSpec extends SlotValuesSpec<XNode> {
+
+			INumberSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
+
+				super(frame, slotId, parentNode);
+			}
+
+			String getValueId() {
+
+				return INUMBER_ID;
+			}
+
+			XNode getValueSpec(XNode valueNode) {
+
+				return valueNode;
+			}
+
+			IValue getValue(ISlot slot, XNode valueSpec) {
+
+				return parseINumber(getValueType(slot), valueSpec);
+			}
+
+			private CNumber getValueType(ISlot slot) {
+
+				CValue<?> valueType = slot.getValueType();
+
+				if (valueType instanceof CNumber) {
+
+					return (CNumber)valueType;
+				}
+
+				throw new XDocumentException(
+							"Unexpected value-type for slot: " + slot
+							+ ": Expected: " + CNumber.class
+							+ ", Found: " + valueType.getClass());
+			}
+		}
+
+		OneTimeParser(XNode containerNode) {
+
+			this.containerNode = containerNode;
+		}
+
+		IFrame parse() {
+
+			IFrame frame = parseIFrame(getTopLevelFrameNode());
+
+			addAllSlotValues();
+
+			return frame;
+		}
+
+		private IFrame parseIFrame(XNode node) {
+
+			int refIndex = node.getInteger(IFRAME_REF_INDEX_ATTR, 0);
+
+			return refIndex == 0
+					? parseIFrameDirect(node)
+					: resolveIFrameIndirect(refIndex);
+		}
+
+		private IFrame parseIFrameDirect(XNode node) {
+
+			CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
+			IFrame frame = frameType.instantiate(frameCategory);
+
+			for (XNode slotNode : node.getChildren(ISLOT_ID)) {
+
+				parseISlot(frame, slotNode);
+			}
+
+			return frame;
+		}
+
+		private IFrame resolveIFrameIndirect(Integer refIndex) {
+
+			IFrame frame = iFrameRefs.get(refIndex);
+
+			if (frame == null) {
+
+				frame = parseIFrameIndirect(refIndex);
+
+				iFrameRefs.put(refIndex, frame);
+			}
+
+			return frame;
+		}
+
+		private IFrame parseIFrameIndirect(int refIndex) {
+
+			return parseIFrameDirect(getReferencedFrame(refIndex));
+		}
+
+		private CFrame parseCFrame(XNode node) {
+
+			return node.hasAttribute(IDENTITY_ATTR)
+					? parseModelCFrame(node)
+					: parseDisjunctionCFrame(node);
+		}
+
+		private CFrame parseDisjunctionCFrame(XNode node) {
+
+			List<CFrame> disjuncts = new ArrayList<CFrame>();
+
+			for (XNode disjunctNode : node.getChildren(CFRAME_ID)) {
+
+				disjuncts.add(parseModelCFrame(disjunctNode));
+			}
+
+			return CFrame.resolveDisjunction(disjuncts);
+		}
+
+		private CFrame parseModelCFrame(XNode node) {
+
+			return getCFrame(parseIdentity(node));
+		}
+
+		private INumber parseINumber(CNumber valueType, XNode node) {
+
+			return node.hasAttribute(NUMBER_VALUE_ATTR)
+					? parseDefiniteINumber(valueType, node, NUMBER_VALUE_ATTR)
+					: parseIndefiniteINumber(valueType, node);
+		}
+
+		private INumber parseIndefiniteINumber(CNumber valueType, XNode node) {
+
+			INumber min = INumber.MINUS_INFINITY;
+			INumber max = INumber.PLUS_INFINITY;
+
+			if (node.hasAttribute(NUMBER_MIN_ATTR)) {
+
+				min = parseDefiniteINumber(valueType, node, NUMBER_MIN_ATTR);
+			}
+
+			if (node.hasAttribute(NUMBER_MAX_ATTR)) {
+
+				max = parseDefiniteINumber(valueType, node, NUMBER_MAX_ATTR);
+			}
+
+			return CNumberDef.range(min, max).createNumber().asINumber();
+		}
+
+		private INumber parseDefiniteINumber(CNumber valueType, XNode node, String attrName) {
+
+			return INumber.create(valueType.getNumberType(), node.getString(attrName));
+		}
+
+		private CNumber parseCNumber(XNode node) {
+
+			return parseCNumberDef(node).createNumber();
+		}
+
+		private CNumberDef parseCNumberDef(XNode node) {
+
+			String className = node.getString(NUMBER_TYPE_ATTR);
+
+			if (isClassName(Integer.class, className)) {
+
+				return CIntegerDef.UNCONSTRAINED;
+			}
+
+			if (isClassName(Long.class, className)) {
+
+				return CLongDef.UNCONSTRAINED;
+			}
+
+			if (isClassName(Float.class, className)) {
+
+				return CFloatDef.UNCONSTRAINED;
+			}
+
+			if (isClassName(Double.class, className)) {
+
+				return CDoubleDef.UNCONSTRAINED;
+			}
+
+			throw new XDocumentException("Unrecognised class: " + className);
+		}
+
+		private void parseISlot(IFrame frame, XNode node) {
+
+			CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
+
+			if (node.hasChild(IVALUES_ID)) {
+
+				parseISlotValues(frame, id, node.getChild(IVALUES_ID));
+			}
+		}
+
+		private void parseISlotValues(IFrame frame, CIdentity id, XNode node) {
+
+			if (node.hasChild(IFRAME_ID)) {
+
+				new IFrameSlotValuesSpec(frame, id, node);
+			}
+			else if (node.hasChild(INUMBER_ID)) {
+
+				new INumberSlotValuesSpec(frame, id, node);
+			}
+			else if (node.hasChild(CFRAME_ID)) {
+
+				new CFrameSlotValuesSpec(frame, id, node);
+			}
+		}
+
+		private void addAllSlotValues() {
+
+			while (true) {
+
+				boolean anyProcessed = false;
+
+				for (SlotValuesSpec<?> spec : new ArrayList<SlotValuesSpec<?>>(slotValuesSpecs)) {
+
+					anyProcessed |= spec.process();
+				}
+
+				if (!anyProcessed) {
+
+					break;
 				}
 			}
-
-			return values;
-		}
-	}
-
-	private class IFrameSlotValuesSpec extends SlotValuesSpec<IValue> {
-
-		IFrameSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
-
-			super(frame, slotId, parentNode);
 		}
 
-		String getValueId() {
+		private XNode getTopLevelFrameNode() {
 
-			return IFRAME_ID;
-		}
+			if (containerNode.getId().equals(ITREE_ID)) {
 
-		IValue getValueSpec(XNode valueNode) {
-
-			return parseIFrame(valueNode);
-		}
-
-		IValue getValue(ISlot slot, IValue valueSpec) {
-
-			if (slot.getValueType() instanceof MFrame) {
-
-				return ((IFrame)valueSpec).getType();
+				return containerNode.getChild(IFRAME_ID);
 			}
 
-			return valueSpec;
-		}
-	}
+			if (containerNode.getId().equals(IGRAPH_ID)) {
 
-	private class CFrameSlotValuesSpec extends SlotValuesSpec<IValue> {
+				return getTopLevelGraphFrameNode();
+			}
 
-		CFrameSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
-
-			super(frame, slotId, parentNode);
+			throw createContainerNodeException();
 		}
 
-		String getValueId() {
+		private XNode getTopLevelGraphFrameNode() {
 
-			return CFRAME_ID;
-		}
+			List<XNode> frameNodes = containerNode.getChildren(IFRAME_ID);
 
-		IValue getValueSpec(XNode valueNode) {
+			if (!frameNodes.isEmpty()) {
 
-			return parseCFrame(valueNode);
-		}
-
-		IValue getValue(ISlot slot, IValue valueSpec) {
-
-			return valueSpec;
-		}
-	}
-
-	private class INumberSlotValuesSpec extends SlotValuesSpec<XNode> {
-
-		INumberSlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
-
-			super(frame, slotId, parentNode);
-		}
-
-		String getValueId() {
-
-			return INUMBER_ID;
-		}
-
-		XNode getValueSpec(XNode valueNode) {
-
-			return valueNode;
-		}
-
-		IValue getValue(ISlot slot, XNode valueSpec) {
-
-			return parseINumber(getValueType(slot), valueSpec);
-		}
-
-		private CNumber getValueType(ISlot slot) {
-
-			CValue<?> valueType = slot.getValueType();
-
-			if (valueType instanceof CNumber) {
-
-				return (CNumber)valueType;
+				return frameNodes.get(0);
 			}
 
 			throw new XDocumentException(
-						"Unexpected value-type for slot: " + slot
-						+ ": Expected: " + CNumber.class
-						+ ", Found: " + valueType.getClass());
+						"Cannot find any "
+						+ "\"" + IFRAME_ID + "\""
+						+ " nodes on "
+						+ "\"" + IGRAPH_ID + "\""
+						+ " node");
+		}
+
+		private XNode getReferencedFrame(int refIndex) {
+
+			List<XNode> frames = containerNode.getChildren(IFRAME_ID);
+
+			if (frames.size() >= refIndex) {
+
+				return frames.get(refIndex);
+			}
+
+			throw new XDocumentException(
+						"Invalid index for "
+						+ "\"" + IFRAME_ID + "\""
+						+ " node on "
+						+ "\"" + IGRAPH_ID + "\""
+						+ " node: " + refIndex);
 		}
 	}
 
@@ -206,201 +446,19 @@ public class IFrameParser extends ISerialiser {
 	 */
 	public IFrame parse(XDocument document) {
 
-		containerNode = document.getRootNode();
-
-		return parse();
+		return doParse(document.getRootNode());
 	}
 
 	/**
 	 */
 	public IFrame parse(XNode parentNode) {
 
-		containerNode = getContainerNode(parentNode);
-
-		return parse();
+		return doParse(getContainerNode(parentNode));
 	}
 
-	private IFrame parse() {
+	private IFrame doParse(XNode containerNode) {
 
-		IFrame frame = parseIFrame(getTopLevelFrameNode());
-
-		addAllSlotValues();
-
-		iFrameRefs.clear();
-		slotValuesSpecs.clear();
-
-		return frame;
-	}
-
-	private IFrame parseIFrame(XNode node) {
-
-		int refIndex = node.getInteger(IFRAME_REF_INDEX_ATTR, 0);
-
-		return refIndex == 0
-				? parseIFrameDirect(node)
-				: resolveIFrameIndirect(refIndex);
-	}
-
-	private IFrame parseIFrameDirect(XNode node) {
-
-		CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
-		IFrame frame = frameType.instantiate(frameCategory);
-
-		for (XNode slotNode : node.getChildren(ISLOT_ID)) {
-
-			parseISlot(frame, slotNode);
-		}
-
-		return frame;
-	}
-
-	private IFrame resolveIFrameIndirect(Integer refIndex) {
-
-		IFrame frame = iFrameRefs.get(refIndex);
-
-		if (frame == null) {
-
-			frame = parseIFrameIndirect(refIndex);
-
-			iFrameRefs.put(refIndex, frame);
-		}
-
-		return frame;
-	}
-
-	private IFrame parseIFrameIndirect(int refIndex) {
-
-		return parseIFrameDirect(getReferencedFrame(refIndex));
-	}
-
-	private CFrame parseCFrame(XNode node) {
-
-		return node.hasAttribute(IDENTITY_ATTR)
-				? parseModelCFrame(node)
-				: parseDisjunctionCFrame(node);
-	}
-
-	private CFrame parseDisjunctionCFrame(XNode node) {
-
-		List<CFrame> disjuncts = new ArrayList<CFrame>();
-
-		for (XNode disjunctNode : node.getChildren(CFRAME_ID)) {
-
-			disjuncts.add(parseModelCFrame(disjunctNode));
-		}
-
-		return CFrame.resolveDisjunction(disjuncts);
-	}
-
-	private CFrame parseModelCFrame(XNode node) {
-
-		return getCFrame(parseIdentity(node));
-	}
-
-	private INumber parseINumber(CNumber valueType, XNode node) {
-
-		return node.hasAttribute(NUMBER_VALUE_ATTR)
-				? parseDefiniteINumber(valueType, node, NUMBER_VALUE_ATTR)
-				: parseIndefiniteINumber(valueType, node);
-	}
-
-	private INumber parseIndefiniteINumber(CNumber valueType, XNode node) {
-
-		INumber min = INumber.MINUS_INFINITY;
-		INumber max = INumber.PLUS_INFINITY;
-
-		if (node.hasAttribute(NUMBER_MIN_ATTR)) {
-
-			min = parseDefiniteINumber(valueType, node, NUMBER_MIN_ATTR);
-		}
-
-		if (node.hasAttribute(NUMBER_MAX_ATTR)) {
-
-			max = parseDefiniteINumber(valueType, node, NUMBER_MAX_ATTR);
-		}
-
-		return CNumberDef.range(min, max).createNumber().asINumber();
-	}
-
-	private INumber parseDefiniteINumber(CNumber valueType, XNode node, String attrName) {
-
-		return INumber.create(valueType.getNumberType(), node.getString(attrName));
-	}
-
-	private CNumber parseCNumber(XNode node) {
-
-		return parseCNumberDef(node).createNumber();
-	}
-
-	private CNumberDef parseCNumberDef(XNode node) {
-
-		String className = node.getString(NUMBER_TYPE_ATTR);
-
-		if (isClassName(Integer.class, className)) {
-
-			return CIntegerDef.UNCONSTRAINED;
-		}
-
-		if (isClassName(Long.class, className)) {
-
-			return CLongDef.UNCONSTRAINED;
-		}
-
-		if (isClassName(Float.class, className)) {
-
-			return CFloatDef.UNCONSTRAINED;
-		}
-
-		if (isClassName(Double.class, className)) {
-
-			return CDoubleDef.UNCONSTRAINED;
-		}
-
-		throw new XDocumentException("Unrecognised class: " + className);
-	}
-
-	private void parseISlot(IFrame frame, XNode node) {
-
-		CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
-
-		if (node.hasChild(IVALUES_ID)) {
-
-			parseISlotValues(frame, id, node.getChild(IVALUES_ID));
-		}
-	}
-
-	private void parseISlotValues(IFrame frame, CIdentity id, XNode node) {
-
-		if (node.hasChild(IFRAME_ID)) {
-
-			new IFrameSlotValuesSpec(frame, id, node);
-		}
-		else if (node.hasChild(INUMBER_ID)) {
-
-			new INumberSlotValuesSpec(frame, id, node);
-		}
-		else if (node.hasChild(CFRAME_ID)) {
-
-			new CFrameSlotValuesSpec(frame, id, node);
-		}
-	}
-
-	private void addAllSlotValues() {
-
-		while (true) {
-
-			boolean anyProcessed = false;
-
-			for (SlotValuesSpec<?> spec : new ArrayList<SlotValuesSpec<?>>(slotValuesSpecs)) {
-
-				anyProcessed |= spec.process();
-			}
-
-			if (!anyProcessed) {
-
-				break;
-			}
-		}
+		return new OneTimeParser(containerNode).parse();
 	}
 
 	private XNode getContainerNode(XNode parentNode) {
@@ -420,55 +478,6 @@ public class IFrameParser extends ISerialiser {
 		}
 
 		throw createContainerNodeException();
-	}
-
-	private XNode getTopLevelFrameNode() {
-
-		if (containerNode.getId().equals(ITREE_ID)) {
-
-			return containerNode.getChild(IFRAME_ID);
-		}
-
-		if (containerNode.getId().equals(IGRAPH_ID)) {
-
-			return getTopLevelGraphFrameNode();
-		}
-
-		throw createContainerNodeException();
-	}
-
-	private XNode getTopLevelGraphFrameNode() {
-
-		List<XNode> frameNodes = containerNode.getChildren(IFRAME_ID);
-
-		if (!frameNodes.isEmpty()) {
-
-			return frameNodes.get(0);
-		}
-
-		throw new XDocumentException(
-					"Cannot find any "
-					+ "\"" + IFRAME_ID + "\""
-					+ " nodes on "
-					+ "\"" + IGRAPH_ID + "\""
-					+ " node");
-	}
-
-	private XNode getReferencedFrame(int refIndex) {
-
-		List<XNode> frames = containerNode.getChildren(IFRAME_ID);
-
-		if (frames.size() >= refIndex) {
-
-			return frames.get(refIndex);
-		}
-
-		throw new XDocumentException(
-					"Invalid index for "
-					+ "\"" + IFRAME_ID + "\""
-					+ " node on "
-					+ "\"" + IGRAPH_ID + "\""
-					+ " node: " + refIndex);
 	}
 
 	private XDocumentException createContainerNodeException() {

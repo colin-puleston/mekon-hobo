@@ -40,83 +40,238 @@ public class IFrameRenderer extends ISerialiser {
 	private boolean renderNonEditableSlots = false;
 	private boolean flattenMetaLevel = false;
 
-	private XNode containerNode = null;
-	private Map<IFrame, Integer> iFrameRefs = new HashMap<IFrame, Integer>();
+	private class OneTimeRenderer {
 
-	private class ISlotValueTypeRenderer extends CValueVisitor {
+		private XNode containerNode;
+		private Map<IFrame, Integer> iFrameRefs = new HashMap<IFrame, Integer>();
 
-		private XNode slotNode;
+		private class ISlotValueTypeRenderer extends CValueVisitor {
 
-		protected void visit(CFrame value) {
+			private XNode slotNode;
 
-			renderCFrame(value, slotNode);
-		}
+			protected void visit(CFrame value) {
 
-		protected void visit(CNumber value) {
-
-			renderCNumber(value, slotNode);
-		}
-
-		protected void visit(MFrame value) {
-
-			if (flattenMetaLevel) {
-
-				renderCFrame(value.getRootCFrame(), slotNode);
+				renderCFrame(value, slotNode);
 			}
-			else {
 
-				renderMFrame(value, slotNode);
+			protected void visit(CNumber value) {
+
+				renderCNumber(value, slotNode);
 			}
-		}
 
-		ISlotValueTypeRenderer(ISlot slot, XNode slotNode) {
-
-			this.slotNode = slotNode;
-
-			visit(slot.getValueType());
-		}
-	}
-
-	private class ISlotValuesRenderer extends ISlotValuesVisitor {
-
-		private XNode valuesNode;
-
-		protected void visit(CFrame valueType, List<IFrame> values) {
-
-			for (IFrame value : values) {
-
-				renderIFrame(value, valuesNode);
-			}
-		}
-
-		protected void visit(CNumber valueType, List<INumber> values) {
-
-			for (INumber value : values) {
-
-				renderINumber(value, valuesNode);
-			}
-		}
-
-		protected void visit(MFrame valueType, List<CFrame> values) {
-
-			for (CFrame value : values) {
+			protected void visit(MFrame value) {
 
 				if (flattenMetaLevel) {
 
-					renderIFrame(value.instantiate(), valuesNode);
+					renderCFrame(value.getRootCFrame(), slotNode);
 				}
 				else {
 
-					renderCFrame(value, valuesNode);
+					renderMFrame(value, slotNode);
+				}
+			}
+
+			ISlotValueTypeRenderer(ISlot slot, XNode slotNode) {
+
+				this.slotNode = slotNode;
+
+				visit(slot.getValueType());
+			}
+		}
+
+		private class ISlotValuesRenderer extends ISlotValuesVisitor {
+
+			private XNode valuesNode;
+
+			protected void visit(CFrame valueType, List<IFrame> values) {
+
+				for (IFrame value : values) {
+
+					renderIFrame(value, valuesNode);
+				}
+			}
+
+			protected void visit(CNumber valueType, List<INumber> values) {
+
+				for (INumber value : values) {
+
+					renderINumber(value, valuesNode);
+				}
+			}
+
+			protected void visit(MFrame valueType, List<CFrame> values) {
+
+				for (CFrame value : values) {
+
+					if (flattenMetaLevel) {
+
+						renderIFrame(value.instantiate(), valuesNode);
+					}
+					else {
+
+						renderCFrame(value, valuesNode);
+					}
+				}
+			}
+
+			ISlotValuesRenderer(ISlot slot, XNode slotNode) {
+
+				valuesNode = slotNode.addChild(IVALUES_ID);
+
+				visit(slot);
+			}
+		}
+
+		OneTimeRenderer(XNode containerNode) {
+
+			this.containerNode = containerNode;
+		}
+
+		void render(IFrame frame) {
+
+			renderIFrameDirect(frame, containerNode);
+		}
+
+		private void renderIFrame(IFrame frame, XNode parentNode) {
+
+			if (renderAsTree) {
+
+				renderIFrameDirect(frame, parentNode);
+			}
+			else {
+
+				renderIFrameIndirect(frame, parentNode);
+			}
+		}
+
+		private void renderIFrameDirect(IFrame frame, XNode parentNode) {
+
+			XNode node = parentNode.addChild(IFRAME_ID);
+
+			renderCFrame(frame.getType(), node);
+
+			for (ISlot slot : frame.getSlots().asList()) {
+
+				if (slotToBeRendered(slot)) {
+
+					renderISlot(slot, node);
 				}
 			}
 		}
 
-		ISlotValuesRenderer(ISlot slot, XNode slotNode) {
+		private void renderIFrameIndirect(IFrame frame, XNode parentNode) {
 
-			valuesNode = slotNode.addChild(IVALUES_ID);
+			XNode node = parentNode.addChild(IFRAME_ID);
 
-			visit(slot);
+			node.addValue(IFRAME_REF_INDEX_ATTR, resolveIFrameRef(frame));
+		}
+
+		private int resolveIFrameRef(IFrame frame) {
+
+			Integer refIndex = iFrameRefs.get(frame);
+
+			if (refIndex == null) {
+
+				refIndex = iFrameRefs.size() + 1;
+
+				iFrameRefs.put(frame, refIndex);
+				renderIFrameDirect(frame, containerNode);
+			}
+
+			return refIndex;
+		}
+
+		private void renderCFrame(CFrame frame, XNode parentNode) {
+
+			renderCFrame(frame, parentNode, CFRAME_ID);
+		}
+
+		private void renderCFrame(CFrame frame, XNode parentNode, String tag) {
+
+			if (frame.getCategory().disjunction()) {
+
+				XNode disjunctsNode = parentNode.addChild(tag);
+
+				for (CFrame disjunct : frame.getSubs()) {
+
+					renderIdentity(disjunct, disjunctsNode.addChild(tag));
+				}
+			}
+			else {
+
+				renderIdentity(frame, parentNode.addChild(tag));
+			}
+		}
+
+		private void renderMFrame(MFrame frame, XNode parentNode) {
+
+			renderCFrame(frame.getRootCFrame(), parentNode, MFRAME_ID);
+		}
+
+		private void renderINumber(INumber number, XNode parentNode) {
+
+			XNode node = parentNode.addChild(INUMBER_ID);
+
+			if (number.indefinite()) {
+
+				renderCNumberRange(number.getType(), node);
+			}
+			else {
+
+				node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
+			}
+		}
+
+		private void renderCNumber(CNumber number, XNode parentNode) {
+
+			XNode node = parentNode.addChild(CNUMBER_ID);
+
+			renderClassId(number.getNumberType(), node, NUMBER_TYPE_ATTR);
+			renderCNumberRange(number, node);
+		}
+
+		private void renderCNumberRange(CNumber number, XNode node) {
+
+			if (number.hasMin()) {
+
+				node.addValue(NUMBER_MIN_ATTR, number.getMin().asTypeNumber());
+			}
+
+			if (number.hasMax()) {
+
+				node.addValue(NUMBER_MAX_ATTR, number.getMax().asTypeNumber());
+			}
+		}
+
+		private void renderISlot(ISlot slot, XNode parentNode) {
+
+			XNode node = parentNode.addChild(ISLOT_ID);
+
+			renderCSlot(slot.getType(), node);
+
+			if (renderSchema) {
+
+				node.addValue(EDITABILITY_ATTR, slot.getEditability());
+
+				new ISlotValueTypeRenderer(slot, node);
+			}
+
+			if (!slot.getValues().isEmpty()) {
+
+				new ISlotValuesRenderer(slot, node);
+			}
+		}
+
+		private void renderCSlot(CSlot slot, XNode parentNode) {
+
+			XNode node = parentNode.addChild(CSLOT_ID);
+
+			renderIdentity(slot, node);
+
+			if (renderSchema) {
+
+				node.addValue(CARDINALITY_ATTR, slot.getCardinality());
+			}
 		}
 	}
 
@@ -154,7 +309,7 @@ public class IFrameRenderer extends ISerialiser {
 
 		XDocument document = new XDocument(getTopLevelId());
 
-		renderTopLevelIFrame(frame, document.getRootNode());
+		doRender(frame, document.getRootNode());
 
 		return document;
 	}
@@ -163,159 +318,14 @@ public class IFrameRenderer extends ISerialiser {
 	 */
 	public void render(IFrame frame, XNode parentNode) {
 
-		renderTopLevelIFrame(frame, parentNode.addChild(getTopLevelId()));
+		doRender(frame, parentNode.addChild(getTopLevelId()));
 	}
 
-	private void renderTopLevelIFrame(IFrame frame, XNode containerNode) {
-
-		this.containerNode = containerNode;
+	private void doRender(IFrame frame, XNode containerNode) {
 
 		checkRenderable(frame);
-		renderIFrameDirect(frame, containerNode);
 
-		iFrameRefs.clear();
-	}
-
-	private void renderIFrame(IFrame frame, XNode parentNode) {
-
-		if (renderAsTree) {
-
-			renderIFrameDirect(frame, parentNode);
-		}
-		else {
-
-			renderIFrameIndirect(frame, parentNode);
-		}
-	}
-
-	private void renderIFrameDirect(IFrame frame, XNode parentNode) {
-
-		XNode node = parentNode.addChild(IFRAME_ID);
-
-		renderCFrame(frame.getType(), node);
-
-		for (ISlot slot : frame.getSlots().asList()) {
-
-			if (slotToBeRendered(slot)) {
-
-				renderISlot(slot, node);
-			}
-		}
-	}
-
-	private void renderIFrameIndirect(IFrame frame, XNode parentNode) {
-
-		XNode node = parentNode.addChild(IFRAME_ID);
-
-		node.addValue(IFRAME_REF_INDEX_ATTR, resolveIFrameRef(frame));
-	}
-
-	private int resolveIFrameRef(IFrame frame) {
-
-		Integer refIndex = iFrameRefs.get(frame);
-
-		if (refIndex == null) {
-
-			refIndex = iFrameRefs.size() + 1;
-
-			iFrameRefs.put(frame, refIndex);
-			renderIFrameDirect(frame, containerNode);
-		}
-
-		return refIndex;
-	}
-
-	private void renderCFrame(CFrame frame, XNode parentNode) {
-
-		renderCFrame(frame, parentNode, CFRAME_ID);
-	}
-
-	private void renderCFrame(CFrame frame, XNode parentNode, String tag) {
-
-		if (frame.getCategory().disjunction()) {
-
-			XNode disjunctsNode = parentNode.addChild(tag);
-
-			for (CFrame disjunct : frame.getSubs()) {
-
-				renderIdentity(disjunct, disjunctsNode.addChild(tag));
-			}
-		}
-		else {
-
-			renderIdentity(frame, parentNode.addChild(tag));
-		}
-	}
-
-	private void renderMFrame(MFrame frame, XNode parentNode) {
-
-		renderCFrame(frame.getRootCFrame(), parentNode, MFRAME_ID);
-	}
-
-	private void renderINumber(INumber number, XNode parentNode) {
-
-		XNode node = parentNode.addChild(INUMBER_ID);
-
-		if (number.indefinite()) {
-
-			renderCNumberRange(number.getType(), node);
-		}
-		else {
-
-			node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
-		}
-	}
-
-	private void renderCNumber(CNumber number, XNode parentNode) {
-
-		XNode node = parentNode.addChild(CNUMBER_ID);
-
-		renderClassId(number.getNumberType(), node, NUMBER_TYPE_ATTR);
-		renderCNumberRange(number, node);
-	}
-
-	private void renderCNumberRange(CNumber number, XNode node) {
-
-		if (number.hasMin()) {
-
-			node.addValue(NUMBER_MIN_ATTR, number.getMin().asTypeNumber());
-		}
-
-		if (number.hasMax()) {
-
-			node.addValue(NUMBER_MAX_ATTR, number.getMax().asTypeNumber());
-		}
-	}
-
-	private void renderISlot(ISlot slot, XNode parentNode) {
-
-		XNode node = parentNode.addChild(ISLOT_ID);
-
-		renderCSlot(slot.getType(), node);
-
-		if (renderSchema) {
-
-			node.addValue(EDITABILITY_ATTR, slot.getEditability());
-
-			new ISlotValueTypeRenderer(slot, node);
-		}
-
-		if (!slot.getValues().isEmpty()) {
-
-			new ISlotValuesRenderer(slot, node);
-		}
-	}
-
-	private void renderCSlot(CSlot slot, XNode parentNode) {
-
-		XNode node = parentNode.addChild(CSLOT_ID);
-
-		renderIdentity(slot, node);
-
-		if (renderSchema) {
-
-			node.addValue(CARDINALITY_ATTR, slot.getCardinality());
-		}
+		new OneTimeRenderer(containerNode).render(frame);
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {
