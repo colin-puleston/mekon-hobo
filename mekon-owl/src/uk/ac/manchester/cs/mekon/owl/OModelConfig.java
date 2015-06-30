@@ -44,12 +44,11 @@ class OModelConfig implements OModelConfigVocab {
 		configNode = parentConfigNode.getChild(ROOT_ID);
 	}
 
-	void configure(OModelBuilder modelBuilder, File baseDirectory) {
+	void configure(OModelBuilder builder, File baseDirectory) {
 
-		File mainOWLFile = getMainOWLFile(baseDirectory);
-
-		modelBuilder.initialise(mainOWLFile, getReasonerFactoryClass());
-		modelBuilder.setIndirectNumericProperty(getIndirectNumericPropertyIRI());
+		builder.setMainOWLFile(getMainOWLFile(baseDirectory));
+		builder.setReasonerFactory(getReasonerFactoryClass());
+		builder.setIndirectNumericProperty(getIndirectNumericPropertyIRI());
 	}
 
 	private File getMainOWLFile(File baseDir) {

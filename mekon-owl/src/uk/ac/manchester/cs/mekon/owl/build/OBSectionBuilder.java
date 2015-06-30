@@ -86,7 +86,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	 */
 	public OBSectionBuilder(KConfigNode parentConfigNode) {
 
-		this(new OModelBuilder(parentConfigNode).create(), parentConfigNode);
+		this(new OModelBuilder(parentConfigNode).create(true), parentConfigNode);
 	}
 
 	/**

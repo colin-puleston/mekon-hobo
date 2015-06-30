@@ -120,10 +120,14 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 				OModelBuilder modelBldr,
 				KConfigNode parentConfigNode) {
 
-		payloadsBuilder = createPayloadsBuilder(modelBldr, parentConfigNode);
+		OModel mainModel = modelBldr.create(false);
 
-		removePayloadAxioms(modelBldr.getManager());
-		initialise(modelBldr.create(), parentConfigNode);
+		payloadsBuilder = createPayloadsBuilder(mainModel, parentConfigNode);
+
+		removePayloadAxioms(mainModel.getManager());
+		mainModel.startReasoner();
+
+		initialise(mainModel, parentConfigNode);
 	}
 
 	/**
@@ -136,10 +140,10 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 	}
 
 	private OBSectionBuilder createPayloadsBuilder(
-								OModelBuilder mainModelBldr,
+								OModel mainModel,
 								KConfigNode parentConfigNode) {
 
-		OModel payloadsModel = createPayloadsModel(mainModelBldr);
+		OModel payloadsModel = createPayloadsModel(mainModel);
 
 		if (parentConfigNode == null) {
 
@@ -149,30 +153,13 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 		return new OBSectionBuilder(payloadsModel, parentConfigNode);
 	}
 
-	private OModel createPayloadsModel(OModelBuilder mainModelBldr) {
+	private OModel createPayloadsModel(OModel mainModel) {
 
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-		OWLOntology ontology = createPayloadsOntology(mainModelBldr, manager);
+		OWLOntology ontology = copyMainOntology(mainModel, manager);
 		OWLReasonerFactory reasonerFactory = new StructuralReasonerFactory();
 
-		return new OModelBuilder(manager, ontology, reasonerFactory).create();
-	}
-
-	private OWLOntology createPayloadsOntology(
-							OModelBuilder mainModelBldr,
-							OWLOntologyManager manager) {
-
-		IRI iri = mainModelBldr.getMainOntology().getOntologyID().getOntologyIRI();
-		Set<OWLOntology> sourceOnts = mainModelBldr.getAllOntologies();
-
-		try {
-
-			return manager.createOntology(iri, sourceOnts, true);
-		}
-		catch (OWLOntologyCreationException e) {
-
-			throw new KModelException(e);
-		}
+		return new OModel(manager, ontology, reasonerFactory, true);
 	}
 
 	private void removePayloadAxioms(OWLOntologyManager manager) {
@@ -186,6 +173,21 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 					manager.removeAxiom(ont, subConceptOf);
 				}
 			}
+		}
+	}
+
+	private OWLOntology copyMainOntology(OModel model, OWLOntologyManager newManager) {
+
+		IRI mainIRI = model.getMainOntology().getOntologyID().getOntologyIRI();
+		Set<OWLOntology> allOnts = model.getAllOntologies();
+
+		try {
+
+			return newManager.createOntology(mainIRI, allOnts, true);
+		}
+		catch (OWLOntologyCreationException e) {
+
+			throw new KModelException(e);
 		}
 	}
 

@@ -100,7 +100,7 @@ public abstract class ORMatcher implements IMatcher {
 
 	static private OModel createModel(KConfigNode parentConfigNode) {
 
-		return new OModelBuilder(parentConfigNode).create();
+		return new OModelBuilder(parentConfigNode).create(true);
 	}
 
 	private OModel model;

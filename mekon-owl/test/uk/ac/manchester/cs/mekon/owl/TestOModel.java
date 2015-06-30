@@ -45,16 +45,11 @@ public class TestOModel {
 
 	static public OModel create() {
 
-		OModelBuilder builder = createBuilder();
+		OModel model = new OModel(getOWLFile(), FACTPP_FACTORY, true);
 
-		builder.setIndirectNumericProperty(new OTest().nameToIRI(NUMERIC_PROPERTY));
+		model.setIndirectNumericProperty(new OTest().nameToIRI(NUMERIC_PROPERTY));
 
-		return builder.create();
-	}
-
-	static private OModelBuilder createBuilder() {
-
-		return new OModelBuilder(getOWLFile(), FACTPP_FACTORY);
+		return model;
 	}
 
 	static private File getOWLFile() {

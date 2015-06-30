@@ -24,12 +24,15 @@
 
 package uk.ac.manchester.cs.mekon.owl;
 
+import java.io.*;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
+import org.semanticweb.owlapi.apibinding.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * Provides access to an OWL model and associated reasoner, via
@@ -59,6 +62,77 @@ public class OModel {
 	private ODataProperties dataProperties;
 
 	private OAxioms axioms;
+
+	/**
+	 * Creates model with specified manager, main ontology and reasoner
+	 * created by specified factory.
+	 *
+	 * @param manager Manager for set of ontologies
+	 * @param mainOntology Main ontology
+	 * @param reasonerFactory Factory for creating required reasoner
+	 * @param startReasoner True if initial classification of the ontology
+	 * and subsequent initialisation of cached-data are to be invoked
+	 * (otherwise {@link #startReasoner} method should be invoked
+	 * prior to use)
+	 */
+	public OModel(
+			OWLOntologyManager manager,
+			OWLOntology mainOntology,
+			OWLReasonerFactory reasonerFactory,
+			boolean startReasoner) {
+
+		this.manager = manager;
+		this.mainOntology = mainOntology;
+
+		reasoner = createReasoner(reasonerFactory);
+
+		if (startReasoner) {
+
+			startReasoner();
+		}
+	}
+
+	/**
+	 * Creates model with main ontology loaded from specified OWL file
+	 * manager created for that ontology and it's imports-closure,
+	 * and reasoner created by a factory of the specified type. The OWL
+	 * files containing the imports should all be located in the same
+	 * directory as the main OWL file, or a descendant directory of
+	 * that one.
+	 *
+	 * @param mainOWLFile OWL file containing main ontology
+	 * @param reasonerFactory Type of factory for creating required
+	 * reasoner
+	 * @param startReasoner True if initial classification of the ontology
+	 * and subsequent initialisation of cached-data are to be invoked
+	 * (otherwise {@link #startReasoner} method should be invoked
+	 * prior to use)
+	 */
+	public OModel(
+			File mainOWLFile,
+			Class<? extends OWLReasonerFactory> reasonerFactory,
+			boolean startReasoner) {
+
+		manager = createManager(mainOWLFile);
+		mainOntology = loadOntology(mainOWLFile);
+		reasoner = createReasoner(createReasonerFactory(reasonerFactory));
+
+		if (startReasoner) {
+
+			startReasoner();
+		}
+	}
+
+	/**
+	 * Sets the "indirect-numeric-property" for the model.
+	 *
+	 * @param iri IRI of indirect-numeric-property for model, or null
+	 * if not defined
+	 */
+	public void setIndirectNumericProperty(IRI iri) {
+
+		indirectNumericProperty = getIndirectNumericProperty(iri);
+	}
 
 	/**
 	 * Adds an axiom to the main-ontology.
@@ -106,6 +180,21 @@ public class OModel {
 	public void retainOnlyDeclarationAxioms() {
 
 		axioms.retainOnlyDeclarations();
+	}
+
+	/**
+	 * Performs initial classification of the ontology and subsequent
+	 * initialisation of cached-data, when not performed via constructor.
+	 */
+	public void startReasoner() {
+
+		classify();
+
+		concepts = new OConcepts(this);
+		objectProperties = new OObjectProperties(this);
+		dataProperties = new ODataProperties(this);
+
+		axioms = new OAxioms(this);
 	}
 
 	/**
@@ -450,25 +539,45 @@ public class OModel {
 		return indirectNumericProperty;
 	}
 
-	OModel(
-		OWLOntologyManager manager,
-		OWLOntology mainOntology,
-		OWLReasonerFactory reasonerFactory,
-		OWLDataProperty indirectNumericProperty) {
+	private OWLOntologyManager createManager(File owlFile) {
 
-		this.manager = manager;
-		this.mainOntology = mainOntology;
-		this.indirectNumericProperty = indirectNumericProperty;
+		OWLOntologyManager om = OWLManager.createOWLOntologyManager();
 
-		reasoner = reasonerFactory.createReasoner(mainOntology);
+		om.addIRIMapper(createIRIMapper(owlFile));
 
-		classify();
+		return om;
+	}
 
-		concepts = new OConcepts(this);
-		objectProperties = new OObjectProperties(this);
-		dataProperties = new ODataProperties(this);
+	private OWLOntology loadOntology(File owlFile) {
 
-		axioms = new OAxioms(this);
+		try {
+
+			OMonitor.pollForPreOntologyLoad(owlFile);
+			OWLOntology ontology = manager.loadOntologyFromOntologyDocument(owlFile);
+			OMonitor.pollForOntologyLoaded();
+
+			return ontology;
+		}
+		catch (OWLOntologyCreationException e) {
+
+			throw new KModelException(e);
+		}
+	}
+
+	private OWLReasoner createReasoner(OWLReasonerFactory factory) {
+
+		return factory.createReasoner(mainOntology);
+	}
+
+	private OWLOntologyIRIMapper createIRIMapper(File owlFile) {
+
+		return new PathSearchOntologyIRIMapper(owlFile.getParentFile());
+	}
+
+	private OWLReasonerFactory createReasonerFactory(
+									Class<? extends OWLReasonerFactory> type) {
+
+		return new KConfigObjectConstructor<OWLReasonerFactory>(type).construct();
 	}
 
 	private void classify() {
@@ -476,6 +585,21 @@ public class OModel {
 		OMonitor.pollForPreReasonerLoad(reasoner.getClass());
 		reasoner.precomputeInferences(InferenceType.values());
 		OMonitor.pollForReasonerLoaded();
+	}
+
+	private OWLDataProperty getIndirectNumericProperty(IRI iri) {
+
+		if (iri == null) {
+
+			return null;
+		}
+
+		if (mainOntology.containsDataPropertyInSignature(iri, true)) {
+
+			return manager.getOWLDataFactory().getOWLDataProperty(iri);
+		}
+
+		throw new KModelException("Cannot find indirect-numeric-property: " + iri);
 	}
 
 	private OWLAxiom getSubClassAxiom(

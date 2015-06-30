@@ -29,9 +29,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
-import org.semanticweb.owlapi.apibinding.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
@@ -41,10 +39,9 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 public class OModelBuilder {
 
-	private OWLOntologyManager manager;
-	private OWLOntology mainOntology;
-	private OWLReasonerFactory reasonerFactory;
-	private OWLDataProperty indirectNumericProperty = null;
+	private File mainOWLFile;
+	private Class<? extends OWLReasonerFactory> reasonerFactory;
+	private IRI indirectNumericProperty = null;
 
 	/**
 	 * Creates builder for model defined via the appropriately-tagged
@@ -53,8 +50,7 @@ public class OModelBuilder {
 	 * @param parentConfigNode Parent of configuration node defining
 	 * model
 	 * @throws KConfigException if required child-node does not exist
-	 * or does not contain correctly specified configuration
-	 * information
+	 * or does not contain correctly specified configuration information
 	 */
 	public OModelBuilder(KConfigNode parentConfigNode) {
 
@@ -71,8 +67,7 @@ public class OModelBuilder {
 	 * model
 	 * @param baseDirectory Base-directory for main ontology file
 	 * @throws KConfigException if required child-node does not exist
-	 * or does not contain correctly specified configuration
-	 * information
+	 * or does not contain correctly specified configuration information
 	 */
 	public OModelBuilder(KConfigNode parentConfigNode, File baseDirectory) {
 
@@ -80,159 +75,57 @@ public class OModelBuilder {
 	}
 
 	/**
-	 * Creates builder for model with main ontology loaded from specified
-	 * OWL file, manager created for that ontology and it's imports-closure,
-	 * and reasoner created by a factory of the specified type. The OWL
-	 * files containing the imports should all be located in the same
-	 * directory as the main OWL file, or a descendant directory of
-	 * that one.
+	 * Sets the OWL file containing the main ontology, overriding the
+	 * value obtained via the configuration node.
 	 *
-	 * @param mainOWLFile OWL file containing main ontology
-	 * @param reasonerFactoryType Type of factory for creating required
-	 * reasoner
+	 * @param file OWL file containing main ontology
 	 */
-	public OModelBuilder(
-			File mainOWLFile,
-			Class<? extends OWLReasonerFactory> reasonerFactoryType) {
+	public void setMainOWLFile(File file) {
 
-		initialise(mainOWLFile, reasonerFactoryType);
+		mainOWLFile = file;
 	}
 
 	/**
-	 * Creates builder for model with specified manager, main ontology
-	 * and reasoner created by specified factory.
+	 * Sets the class of factory that is to be used for creating required
+	 * reasoner, overriding the value obtained via the configuration node.
 	 *
-	 * @param manager Manager for set of ontologies
-	 * @param mainOntology Main ontology
-	 * @param reasonerFactory Factory for creating required reasoner
+	 * @param type Class of factory to be used for creating required reasoner
 	 */
-	public OModelBuilder(
-			OWLOntologyManager manager,
-			OWLOntology mainOntology,
-			OWLReasonerFactory reasonerFactory) {
+	public void setReasonerFactory(Class<? extends OWLReasonerFactory> type) {
 
-		this.manager = manager;
-		this.mainOntology = mainOntology;
-		this.reasonerFactory = reasonerFactory;
+		reasonerFactory = type;
 	}
 
 	/**
-	 * Sets the "indirect-numeric-property" for the model.
+	 * Sets the "indirect-numeric-property" for the model, overriding the
+	 * value obtained via the configuration node, if applicable.
 	 *
-	 * @param indirectNumericPropertyIRI IRI of indirect-numeric-property
-	 * for model, or null if not defined
+	 * @param iri IRI of indirect-numeric-property for model, or null
+	 * if not defined
 	 */
-	public void setIndirectNumericProperty(IRI indirectNumericPropertyIRI) {
+	public void setIndirectNumericProperty(IRI iri) {
 
-		indirectNumericProperty = getIndirectNumericProperty(indirectNumericPropertyIRI);
+		indirectNumericProperty = iri;
 	}
 
 	/**
-	 * Provides the manager for the set of ontologies.
+	 * Creates and then initialises the {@link OModel}.
 	 *
-	 * @return Manager for set of ontologies
-	 */
-	public OWLOntologyManager getManager() {
-
-		return manager;
-	}
-
-	/**
-	 * Provides the main ontology.
-	 *
-	 * @return Main ontology
-	 */
-	public OWLOntology getMainOntology() {
-
-		return mainOntology;
-	}
-
-	/**
-	 * Provides the complete set of ontologies.
-	 *
-	 * @return Complete set of ontologies
-	 */
-	public Set<OWLOntology> getAllOntologies() {
-
-		return manager.getOntologies();
-	}
-
-	/**
-	 * Provides the factory that will be used to create the required
-	 * reasoner.
-	 *
-	 * @return Factory for required reasoner
-	 */
-	public OWLReasonerFactory getReasonerFactory() {
-
-		return reasonerFactory;
-	}
-
-	/**
-	 * Creates and then initialises the {@link OModel}, which includes
-	 * creating the reasoner and classifying the ontology.
-	 *
+	 * @param startReasoner True if initial classification of the ontology
+	 * and subsequent initialisation of cached-data are to be invoked
+	 * (otherwise {@link OModel#startReasoner} method should be invoked
+	 * prior to use)
 	 * @return Created model
 	 */
-	public OModel create() {
+	public OModel create(boolean startReasoner) {
 
-		return new OModel(manager, mainOntology, reasonerFactory, indirectNumericProperty);
-	}
+		OModel model = new OModel(mainOWLFile, reasonerFactory, startReasoner);
 
-	void initialise(File mainOWLFile, Class<? extends OWLReasonerFactory> reasonerFactoryType) {
+		if (indirectNumericProperty != null) {
 
-		manager = createOntologyManager(mainOWLFile);
-		mainOntology = loadOntology(mainOWLFile);
-		reasonerFactory = createReasonerFactory(reasonerFactoryType);
-	}
-
-	private OWLOntology loadOntology(File owlFile) {
-
-		try {
-
-			OMonitor.pollForPreOntologyLoad(owlFile);
-			OWLOntology ontology = manager.loadOntologyFromOntologyDocument(owlFile);
-			OMonitor.pollForOntologyLoaded();
-
-			return ontology;
-		}
-		catch (OWLOntologyCreationException e) {
-
-			throw new KModelException(e);
-		}
-	}
-
-	private OWLOntologyManager createOntologyManager(File owlFile) {
-
-		OWLOntologyManager om = OWLManager.createOWLOntologyManager();
-
-		om.addIRIMapper(createOntologyIRIMapper(owlFile));
-
-		return om;
-	}
-
-	private OWLOntologyIRIMapper createOntologyIRIMapper(File owlFile) {
-
-		return new PathSearchOntologyIRIMapper(owlFile.getParentFile());
-	}
-
-	private OWLReasonerFactory createReasonerFactory(Class<? extends OWLReasonerFactory> type) {
-
-		return new KConfigObjectConstructor<OWLReasonerFactory>(type).construct();
-	}
-
-	private OWLDataProperty getIndirectNumericProperty(IRI iri) {
-
-		if (iri == null) {
-
-			return null;
+			model.setIndirectNumericProperty(indirectNumericProperty);
 		}
 
-		if (mainOntology.containsDataPropertyInSignature(iri, true)) {
-
-			return manager.getOWLDataFactory().getOWLDataProperty(iri);
-		}
-
-		throw new KModelException("Cannot find indirect-numeric-property: " + iri);
+		return model;
 	}
 }
