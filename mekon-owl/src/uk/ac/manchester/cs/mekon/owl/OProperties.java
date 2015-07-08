@@ -36,8 +36,8 @@ abstract class OProperties
 
 	private AssertedLinks assertedSupers = new AssertedSupers();
 	private AssertedLinks assertedSubs = new AssertedSubs();
-	private Links inferredSupers;
-	private Links inferredSubs;
+	private Links inferredSupers = assertedSupers;
+	private Links inferredSubs = assertedSubs;
 
 	private abstract class Links {
 
@@ -149,6 +149,9 @@ abstract class OProperties
 	OProperties(OModel model) {
 
 		super(model);
+	}
+
+	void initialiseForSupportedInferenceTypes() {
 
 		inferredSupers = new InferredSupers().resolve();
 		inferredSubs = new InferredSubs().resolve();

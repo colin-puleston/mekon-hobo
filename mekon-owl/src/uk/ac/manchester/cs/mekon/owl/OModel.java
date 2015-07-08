@@ -224,6 +224,9 @@ public class OModel {
 	public void startReasoner() {
 
 		classify();
+
+		objectProperties.initialiseForSupportedInferenceTypes();
+		dataProperties.initialiseForSupportedInferenceTypes();
 	}
 
 	/**
