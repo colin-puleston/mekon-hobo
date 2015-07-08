@@ -54,7 +54,7 @@ public class OModel {
 
 	private OWLOntologyManager manager;
 	private OWLOntology mainOntology;
-	private OWLReasoner reasoner;
+	private ReasonerAccessor reasonerAccessor;
 	private OWLDataProperty indirectNumericProperty;
 
 	private OConcepts concepts;
@@ -62,6 +62,50 @@ public class OModel {
 	private ODataProperties dataProperties;
 
 	private OAxioms axioms;
+
+	private abstract class ReasonerAccessor {
+
+		abstract OWLReasoner get();
+	}
+
+	private class ReasonerStarter extends ReasonerAccessor {
+
+		private OWLReasonerFactory factory;
+
+		ReasonerStarter(OWLReasonerFactory factory) {
+
+			this.factory = factory;
+		}
+
+		OWLReasoner get() {
+
+			OWLReasoner reasoner = create();
+
+			reasonerAccessor = new ReasonerHolder(reasoner);
+
+			return reasoner;
+		}
+
+		private OWLReasoner create() {
+
+			return factory.createReasoner(mainOntology);
+		}
+	}
+
+	private class ReasonerHolder extends ReasonerAccessor {
+
+		private OWLReasoner reasoner;
+
+		ReasonerHolder(OWLReasoner reasoner) {
+
+			this.reasoner = reasoner;
+		}
+
+		OWLReasoner get() {
+
+			return reasoner;
+		}
+	}
 
 	/**
 	 * Creates model with specified manager, main ontology and reasoner
@@ -84,12 +128,7 @@ public class OModel {
 		this.manager = manager;
 		this.mainOntology = mainOntology;
 
-		reasoner = createReasoner(reasonerFactory);
-
-		if (startReasoner) {
-
-			startReasoner();
-		}
+		initialise(reasonerFactory, startReasoner);
 	}
 
 	/**
@@ -115,12 +154,8 @@ public class OModel {
 
 		manager = createManager(mainOWLFile);
 		mainOntology = loadOntology(mainOWLFile);
-		reasoner = createReasoner(createReasonerFactory(reasonerFactory));
 
-		if (startReasoner) {
-
-			startReasoner();
-		}
+		initialise(createReasonerFactory(reasonerFactory), startReasoner);
 	}
 
 	/**
@@ -189,12 +224,6 @@ public class OModel {
 	public void startReasoner() {
 
 		classify();
-
-		concepts = new OConcepts(this);
-		objectProperties = new OObjectProperties(this);
-		dataProperties = new ODataProperties(this);
-
-		axioms = new OAxioms(this);
 	}
 
 	/**
@@ -202,7 +231,7 @@ public class OModel {
 	 */
 	public void reclassify() {
 
-		reasoner.flush();
+		getReasoner().flush();
 		classify();
 	}
 
@@ -253,7 +282,7 @@ public class OModel {
 	 */
 	public OWLReasoner getReasoner() {
 
-		return reasoner;
+		return reasonerAccessor.get();
 	}
 
 	/**
@@ -564,14 +593,20 @@ public class OModel {
 		}
 	}
 
-	private OWLReasoner createReasoner(OWLReasonerFactory factory) {
+	private void initialise(OWLReasonerFactory reasonerFactory, boolean startReasoner) {
 
-		return factory.createReasoner(mainOntology);
-	}
+		reasonerAccessor = new ReasonerStarter(reasonerFactory);
 
-	private OWLOntologyIRIMapper createIRIMapper(File owlFile) {
+		concepts = new OConcepts(this);
+		objectProperties = new OObjectProperties(this);
+		dataProperties = new ODataProperties(this);
 
-		return new PathSearchOntologyIRIMapper(owlFile.getParentFile());
+		axioms = new OAxioms(this);
+
+		if (startReasoner) {
+
+			startReasoner();
+		}
 	}
 
 	private OWLReasonerFactory createReasonerFactory(
@@ -580,10 +615,15 @@ public class OModel {
 		return new KConfigObjectConstructor<OWLReasonerFactory>(type).construct();
 	}
 
+	private OWLOntologyIRIMapper createIRIMapper(File owlFile) {
+
+		return new PathSearchOntologyIRIMapper(owlFile.getParentFile());
+	}
+
 	private void classify() {
 
-		OMonitor.pollForPreReasonerLoad(reasoner.getClass());
-		reasoner.precomputeInferences(InferenceType.values());
+		OMonitor.pollForPreReasonerLoad(getReasoner().getClass());
+		getReasoner().precomputeInferences(InferenceType.values());
 		OMonitor.pollForReasonerLoaded();
 	}
 
@@ -625,6 +665,6 @@ public class OModel {
 
 	private boolean entailed(OWLAxiom axiom) {
 
-		return reasoner.isEntailed(axiom);
+		return getReasoner().isEntailed(axiom);
 	}
 }
