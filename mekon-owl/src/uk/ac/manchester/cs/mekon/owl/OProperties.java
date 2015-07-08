@@ -92,12 +92,15 @@ abstract class OProperties
 
 	private abstract class InferredLinks extends Links {
 
-		Links resolve() {
+		void checkActivate() {
 
-			return inferenceSupported() ? this : getSubstitute();
+			if (inferenceSupported()) {
+
+				activate();
+			}
 		}
 
-		abstract Links getSubstitute();
+		abstract void activate();
 
 		private boolean inferenceSupported() {
 
@@ -122,9 +125,9 @@ abstract class OProperties
 
 	private class InferredSupers extends InferredLinks {
 
-		Links getSubstitute() {
+		void activate() {
 
-			return assertedSupers;
+			inferredSupers = this;
 		}
 
 		Set<P> get(P property, boolean directOnly) {
@@ -135,9 +138,9 @@ abstract class OProperties
 
 	private class InferredSubs extends InferredLinks {
 
-		Links getSubstitute() {
+		void activate() {
 
-			return assertedSubs;
+			inferredSubs = this;
 		}
 
 		Set<P> get(P property, boolean directOnly) {
@@ -153,8 +156,8 @@ abstract class OProperties
 
 	void initialiseForSupportedInferenceTypes() {
 
-		inferredSupers = new InferredSupers().resolve();
-		inferredSubs = new InferredSubs().resolve();
+		new InferredSupers().checkActivate();
+		new InferredSubs().checkActivate();
 	}
 
 	Set<P> getAssertedSupers(P property) {
