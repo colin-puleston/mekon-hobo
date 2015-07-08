@@ -80,10 +80,7 @@ class OBSlot extends OIdentified {
 
 		void checkCreate(CExtender container) {
 
-			if (canProvideFixedValue()) {
-
-				container.addSlotValue(getIdentity(), getCValue());
-			}
+			container.addSlotValue(getIdentity(), getCValue());
 		}
 
 		private void addOrUpdateSlot(CFrame container, CCardinality cardinality) {
