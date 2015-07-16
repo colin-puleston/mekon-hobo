@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
@@ -38,35 +39,62 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  *
  * @author Colin Puleston
  */
-public class ORIndividualsMatcher extends ORMatcher {
+public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private IndividualsRenderer storeRenderer;
 	private IndividualsRenderer dynamicRenderer;
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Constructs matcher, with the configuration for both the
+	 * matcher itself, and the model over which it is to operate,
+	 * defined via the appropriately-tagged child of the specified
+	 * parent configuration-node.
 	 *
-	 * @param model Model over which matcher is to operate
+	 * @param parentConfigNode Parent of configuration node defining
+	 * appropriate configuration information
+	 * @return Created object
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
+	 * information
 	 */
-	public ORIndividualsMatcher(OModel model) {
+	public ORIndividualsMatcher(KConfigNode parentConfigNode) {
 
-		super(model);
-
-		storeRenderer = createRenderer(IndividualCategory.MATCHER_NAMED);
-		dynamicRenderer = createRenderer(IndividualCategory.MATCHER_ANON);
+		super(parentConfigNode);
 	}
 
-	void addInstance(ORFrame instance, CIdentity identity) {
+	/**
+	 * Constructs matcher for specified model, with the configuration
+	 * defined via the appropriately-tagged child of the specified parent
+	 * configuration-node.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param parentConfigNode Parent configuration-node
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
+	 * information
+	 */
+	public ORIndividualsMatcher(OModel model, KConfigNode parentConfigNode) {
+
+		super(model, parentConfigNode);
+	}
+
+	/**
+	 */
+	protected void addInstance(ORFrame instance, CIdentity identity) {
 
 		storeRenderer.render(instance, identity.getIdentifier());
 	}
 
-	boolean removeInstance(CIdentity identity) {
+	/**
+	 */
+	protected boolean removeInstance(CIdentity identity) {
 
 		return storeRenderer.removeGroup(identity.getIdentifier());
 	}
 
-	boolean containsInstance(CIdentity identity) {
+	/**
+	 */
+	protected boolean containsInstance(CIdentity identity) {
 
 		return storeRenderer.rendered(identity.getIdentifier());
 	}

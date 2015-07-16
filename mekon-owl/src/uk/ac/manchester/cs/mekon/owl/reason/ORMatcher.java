@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
-import org.semanticweb.owlapi.model.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -77,7 +75,7 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	static public ORMatcher create(KConfigNode parentConfigNode) {
 
-		return create(createModel(parentConfigNode), parentConfigNode);
+		return new ORMatcherCreator(parentConfigNode).create();
 	}
 
 	/**
@@ -95,7 +93,7 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	static public ORMatcher create(OModel model, KConfigNode parentConfigNode) {
 
-		return new ORMatcherConfig(parentConfigNode).create(model);
+		return new ORMatcherCreator(parentConfigNode).create(model);
 	}
 
 	static private OModel createModel(KConfigNode parentConfigNode) {
@@ -131,8 +129,9 @@ public abstract class ORMatcher implements IMatcher {
 	/**
 	 * Converts the specified instance-level frame to the
 	 * pre-processable version, runs any registered pre-processors
-	 * over it, then adds it as a network of individuals to the
-	 * in-memory ontology.
+	 * over it, then adds it to the matcher via the {@link #addInstance}
+	 * method, whose specific implementations are provided by the
+	 * extending classes.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
@@ -152,10 +151,11 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
-	 * Removes the individual-network based version of the supplied
-	 * instance from the in-memory ontology.
+	 * Removes the specified instance from the matcher via the
+	 * {@link #removeInstance} method, whose specific implementations
+	 * are provided by the extending classes.
 	 *
-	 * @param identity Unique identity of instance
+	 * @param identity Unique identity of instance to be removed
 	 * @return True if instance removed, false if instance with specified
 	 * identity not present
 	 */
@@ -167,32 +167,24 @@ public abstract class ORMatcher implements IMatcher {
 	/**
 	 * Converts the specified instance-level query frame to the
 	 * pre-processable version, runs any registered pre-processors
-	 * over it, then performs the matching via invocation of the OWL
-	 * reasoner.
+	 * over it, then performs the query-matching operation via the
+	 * {@link #match(ORFrame)} method, whose specific implementations
+	 * are provided by the extending classes.
 	 *
 	 * @param query Representation of query
 	 * @return Unique identities of all matching instances
 	 */
 	public IMatches match(IFrame query) {
 
-		ConceptExpression queryExpr = createConceptExpression(query);
-		OWLObject owlQueryExpr = queryExpr.getConstruct();
-
-		ORMonitor.pollForMatcherRequest(model, owlQueryExpr);
-
-		List<CIdentity> matches = match(queryExpr);
-
-		ORMonitor.pollForMatchesFound(model, matches);
-		ORMonitor.pollForMatcherDone(model, owlQueryExpr);
-
-		return new IMatches(matches);
+		return new IMatches(match(toPreProcessed(query)));
 	}
 
 	/**
 	 * Converts the specified instance-level query and instance frames
 	 * to the pre-processable versions, runs any registered
-	 * pre-processors over them, then performs the matching test via
-	 * invocation of the OWL reasoner.
+	 * pre-processors over them, then performs a single query-matching
+	 * test via the {@link #matches(ORFrame, ORFrame)} method, whose
+	 * specific implementations are provided by the extending classes.
 	 *
 	 * @param query Representation of query
 	 * @param instance Representation of instance
@@ -200,9 +192,7 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return matches(
-					createConceptExpression(query),
-					toPreProcessed(instance));
+		return matches(toPreProcessed(query), toPreProcessed(instance));
 	}
 
 	/**
@@ -228,33 +218,86 @@ public abstract class ORMatcher implements IMatcher {
 		return framesManager.getSlotSemantics();
 	}
 
-	ORMatcher(OModel model) {
+	/**
+	 * Constructs matcher, with the configuration for both the
+	 * matcher itself, and the model over which it is to operate,
+	 * defined via the appropriately-tagged child of the specified
+	 * parent configuration-node.
+	 *
+	 * @param parentConfigNode Parent of configuration node defining
+	 * appropriate configuration information
+	 * @return Created object
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
+	 * information
+	 */
+	protected ORMatcher(KConfigNode parentConfigNode) {
+
+		this(createModel(parentConfigNode), parentConfigNode);
+	}
+
+	/**
+	 * Constructs matcher for specified model, with the configuration
+	 * defined via the appropriately-tagged child of the specified parent
+	 * configuration-node.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param parentConfigNode Parent configuration-node
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
+	 * information
+	 */
+	protected ORMatcher(OModel model, KConfigNode parentConfigNode) {
 
 		this.model = model;
 
 		concepts = new OConceptFinder(model);
 		framesManager = new FramesManager(model);
-	}
-
-	void configure(KConfigNode parentConfigNode) {
 
 		new ORMatcherConfig(parentConfigNode).configure(this);
 	}
 
-	abstract void addInstance(ORFrame instance, CIdentity identity);
+	/**
+	 * Adds the specified instance-level frame to the matcher.
+	 *
+	 * @param instance Representation of instance to be added
+	 * @param identity Unique identity for instance
+	 */
+	protected abstract void addInstance(ORFrame instance, CIdentity identity);
 
-	abstract boolean removeInstance(CIdentity identity);
+	/**
+	 * Removes the specified instance from the matcher.
+	 *
+	 * @param identity Unique identity of instance to be removed
+	 * @return True if instance removed, false if instance with specified
+	 * identity not present
+	 */
+	protected abstract boolean removeInstance(CIdentity identity);
 
-	abstract boolean containsInstance(CIdentity identity);
+	/**
+	 * Tests whether an instance with the specified identity is currently
+	 * present in the matcher.
+	 *
+	 * @return True if specified instance present
+	 */
+	protected abstract boolean containsInstance(CIdentity identity);
 
-	abstract List<CIdentity> match(ConceptExpression queryExpr);
+	/**
+	 * Performs the query-matching operation.
+	 *
+	 * @param query Representation of query
+	 * @return Unique identities of all matching instances
+	 */
+	protected abstract List<CIdentity> match(ORFrame query);
 
-	abstract boolean matches(ConceptExpression queryExpr, ORFrame instance);
-
-	private ConceptExpression createConceptExpression(IFrame frame) {
-
-		return new ConceptExpression(model, toPreProcessed(frame));
-	}
+	/**
+	 * Performs a single query-matching test.
+	 *
+	 * @param query Representation of query
+	 * @param instance Representation of instance
+	 * @return True if instance matched by query
+	 */
+	protected abstract boolean matches(ORFrame query, ORFrame instance);
 
 	private ORFrame toPreProcessed(IFrame frame) {
 

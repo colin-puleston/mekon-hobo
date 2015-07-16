@@ -57,7 +57,7 @@ class ConceptExpression extends InstanceConstruct {
 
 	boolean subsumes(ConceptExpression testSubsumed) {
 
-		return model.isSubsumption(expression, testSubsumed.getConstruct());
+		return model.isSubsumption(expression, testSubsumed.getOWLConstruct());
 	}
 
 	List<CIdentity> getMatchingIndividuals() {
@@ -73,7 +73,7 @@ class ConceptExpression extends InstanceConstruct {
 		return true;
 	}
 
-	OWLClassExpression getConstruct() {
+	OWLClassExpression getOWLConstruct() {
 
 		return expression;
 	}

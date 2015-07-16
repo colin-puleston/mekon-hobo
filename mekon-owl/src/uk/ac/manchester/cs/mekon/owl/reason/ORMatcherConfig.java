@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.owl.reason;
 
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
@@ -42,22 +41,8 @@ class ORMatcherConfig extends ORConfig {
 		super(parentConfigNode, MATCHER_ROOT_ID);
 	}
 
-	ORMatcher create(OModel model) {
-
-		ORMatcher matcher = getMatcherType().createMatcher(model);
-
-		configure(matcher);
-
-		return matcher;
-	}
-
 	void configure(ORMatcher matcher) {
 
 		configure(matcher.getSlotSemantics(), ORMatcherLogger.get());
-	}
-
-	private ORMatcherType getMatcherType() {
-
-		return getConfigNode().getEnum(MATCHER_TYPE_ATTR, ORMatcherType.class);
 	}
 }

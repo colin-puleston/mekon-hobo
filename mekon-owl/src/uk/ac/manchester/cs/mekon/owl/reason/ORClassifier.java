@@ -180,7 +180,7 @@ public class ORClassifier extends IClassifier {
 	private IClassification classify(ORFrame frame, IClassifierOps ops) {
 
 		InstanceConstruct construct = createInstanceConstruct(frame);
-		OWLObject owlConstruct = construct.getConstruct();
+		OWLObject owlConstruct = construct.getOWLConstruct();
 
 		ORMonitor.pollForClassifierRequest(model, owlConstruct);
 

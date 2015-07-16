@@ -55,7 +55,7 @@ class IndividualNetwork extends InstanceConstruct {
 
 	boolean matches(ConceptExpression queryExpression) {
 
-		return model.hasType(rootIndividual, queryExpression.getConstruct());
+		return model.hasType(rootIndividual, queryExpression.getOWLConstruct());
 	}
 
 	void cleanUp() {
@@ -68,7 +68,7 @@ class IndividualNetwork extends InstanceConstruct {
 		return false;
 	}
 
-	OWLNamedIndividual getConstruct() {
+	OWLNamedIndividual getOWLConstruct() {
 
 		return rootIndividual;
 	}

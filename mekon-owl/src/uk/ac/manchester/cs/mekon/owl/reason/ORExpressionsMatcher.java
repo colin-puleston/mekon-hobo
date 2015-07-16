@@ -29,6 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
@@ -39,7 +40,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  *
  * @author Colin Puleston
  */
-public class ORExpressionsMatcher extends ORMatcher {
+public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 
 	private Map<OWLClass, InstanceGroup> instanceGroups
 					= new HashMap<OWLClass, InstanceGroup>();
@@ -88,16 +89,42 @@ public class ORExpressionsMatcher extends ORMatcher {
 	}
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Constructs matcher, with the configuration for both the
+	 * matcher itself, and the model over which it is to operate,
+	 * defined via the appropriately-tagged child of the specified
+	 * parent configuration-node.
 	 *
-	 * @param model Model over which matcher is to operate
+	 * @param parentConfigNode Parent of configuration node defining
+	 * appropriate configuration information
+	 * @return Created object
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
+	 * information
 	 */
-	public ORExpressionsMatcher(OModel model) {
+	public ORExpressionsMatcher(KConfigNode parentConfigNode) {
 
-		super(model);
+		super(parentConfigNode);
 	}
 
-	void addInstance(ORFrame instance, CIdentity identity) {
+	/**
+	 * Constructs matcher for specified model, with the configuration
+	 * defined via the appropriately-tagged child of the specified parent
+	 * configuration-node.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param parentConfigNode Parent configuration-node
+	 * @throws KConfigException if required child-node does not exist,
+	 * or exists but does not contain correctly specified configuration
+	 * information
+	 */
+	public ORExpressionsMatcher(OModel model, KConfigNode parentConfigNode) {
+
+		super(model, parentConfigNode);
+	}
+
+	/**
+	 */
+	protected void addInstance(ORFrame instance, CIdentity identity) {
 
 		OWLClass frameConcept = getConcept(instance);
 		InstanceGroup group = instanceGroups.get(frameConcept);
@@ -111,7 +138,9 @@ public class ORExpressionsMatcher extends ORMatcher {
 		group.add(instance, identity);
 	}
 
-	boolean removeInstance(CIdentity identity) {
+	/**
+	 */
+	protected boolean removeInstance(CIdentity identity) {
 
 		for (InstanceGroup group : instanceGroups.values()) {
 
@@ -124,7 +153,9 @@ public class ORExpressionsMatcher extends ORMatcher {
 		return false;
 	}
 
-	boolean containsInstance(CIdentity identity) {
+	/**
+	 */
+	protected boolean containsInstance(CIdentity identity) {
 
 		for (InstanceGroup group : instanceGroups.values()) {
 

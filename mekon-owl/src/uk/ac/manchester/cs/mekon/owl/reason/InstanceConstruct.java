@@ -37,7 +37,7 @@ abstract class InstanceConstruct {
 
 	abstract boolean suggestsTypes();
 
-	abstract OWLObject getConstruct();
+	abstract OWLObject getOWLConstruct();
 
 	abstract Set<OWLClass> getInferredTypes();
 
