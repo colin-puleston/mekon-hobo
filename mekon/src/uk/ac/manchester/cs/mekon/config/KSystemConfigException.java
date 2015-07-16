@@ -36,12 +36,22 @@ public class KSystemConfigException extends KConfigException {
 
 	static private final long serialVersionUID = -1;
 
-	KSystemConfigException(Exception e) {
+	/**
+	 * Constructor.
+	 *
+	 * @param exception Wrapped exception
+	 */
+	public KSystemConfigException(Exception exception) {
 
-		super(e);
+		super(exception);
 	}
 
-	KSystemConfigException(String message) {
+	/**
+	 * Constructor.
+	 *
+	 * @param message Error message
+	 */
+	public KSystemConfigException(String message) {
 
 		super(message);
 	}
