@@ -45,11 +45,11 @@
 			Information concerning location of OWL ontology, type
 			of DL reasoner to be used, and special property for
 			representing numeric-values (as required by
-			OBSectionBuilder and OCClassifier plug-in classes).
+			OBSectionBuilder and ORClassifier plug-in classes).
 		-->
 		<OWLModel
 			owlFile="demo.owl"
-			reasonerFactory="uk.ac.manchester.cs.owlutil.HermitReasonerFactoryWrapper"
+			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			indirectNumericProperty="http://mekon/demo.owl#numericValue">
 		</OWLModel>
 
@@ -62,7 +62,7 @@
 		-->
 
 		<!--
-			Configuration information for OCClassifier and OCMatcher
+			Configuration information for ORClassifier and ORMatcher
 			plug-in classes that will create OWL expressions
 			corresponding to the current states of the instance-level
 			frames, which will then be classified in order to update
@@ -75,7 +75,7 @@
 			LoggingMode specifies what logging information regarding
 			OWL classification or matching operations will be written
 			to standard out. Options are expressed via appropriate
-			OCLoggingMode enum values (i.e. DISABLED, TIMES_ONLY or
+			ORLoggingMode enum values (i.e. DISABLED, TIMES_ONLY or
 			FULL)
 		-->
 		<OWLClassifier
@@ -87,7 +87,7 @@
 		</OWLClassifier>
 
 		<OWLMatcher
-			matcherType="EXPRESSIONS_BASED"
+			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORExpressionsMatcher"
 			loggingMode="DISABLED">
 			<SlotSemantics default="OPEN_WORLD"/>
 		</OWLMatcher>
