@@ -121,6 +121,14 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public boolean handlesType(CFrame type) {
+
+		return concepts.getSubsumerOrNull(type) != null;
+	}
+
+	/**
 	 * Converts the specified instance-level frame to the
 	 * pre-processable version, runs any registered pre-processors
 	 * over it, then adds it as a network of individuals to the
@@ -168,13 +176,14 @@ public abstract class ORMatcher implements IMatcher {
 	public IMatches match(IFrame query) {
 
 		ConceptExpression queryExpr = createConceptExpression(query);
+		OWLObject owlQueryExpr = queryExpr.getConstruct();
 
-		ORMonitor.pollForMatcherRequest(model, queryExpr);
+		ORMonitor.pollForMatcherRequest(model, owlQueryExpr);
 
 		List<CIdentity> matches = match(queryExpr);
 
 		ORMonitor.pollForMatchesFound(model, matches);
-		ORMonitor.pollForMatcherDone(model, queryExpr);
+		ORMonitor.pollForMatcherDone(model, owlQueryExpr);
 
 		return new IMatches(matches);
 	}
@@ -217,14 +226,6 @@ public abstract class ORMatcher implements IMatcher {
 	public ORSlotSemantics getSlotSemantics() {
 
 		return framesManager.getSlotSemantics();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean handlesType(CFrame type) {
-
-		return concepts.getSubsumerOrNull(type) != null;
 	}
 
 	ORMatcher(OModel model) {

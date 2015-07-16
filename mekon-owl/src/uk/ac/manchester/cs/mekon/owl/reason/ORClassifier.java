@@ -180,8 +180,9 @@ public class ORClassifier extends IClassifier {
 	private IClassification classify(ORFrame frame, IClassifierOps ops) {
 
 		InstanceConstruct construct = createInstanceConstruct(frame);
+		OWLObject owlConstruct = construct.getConstruct();
 
-		ORMonitor.pollForClassifierRequest(model, construct);
+		ORMonitor.pollForClassifierRequest(model, owlConstruct);
 
 		List<CIdentity> inferredIds = new ArrayList<CIdentity>();
 		List<CIdentity> suggestedIds = new ArrayList<CIdentity>();
@@ -198,7 +199,7 @@ public class ORClassifier extends IClassifier {
 
 		construct.cleanUp();
 
-		ORMonitor.pollForClassifierDone(model, construct);
+		ORMonitor.pollForClassifierDone(model, owlConstruct);
 
 		return new IClassification(inferredIds, suggestedIds);
 	}

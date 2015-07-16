@@ -30,7 +30,6 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Logger for {@link ORMatcher}. See {@link ORLogger} for usage
@@ -55,7 +54,7 @@ public class ORMatcherLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onClassifierRequest(OModel model, InstanceConstruct request) {
+	protected void onClassifierRequest(OModel model, OWLObject request) {
 	}
 
 	/**
@@ -73,13 +72,13 @@ public class ORMatcherLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onClassifierDone(OModel model, InstanceConstruct request) {
+	protected void onClassifierDone(OModel model, OWLObject request) {
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onMatcherRequest(OModel model, InstanceConstruct request) {
+	protected void onMatcherRequest(OModel model, OWLObject request) {
 
 		onRequest(model, request, "Matching-Individuals");
 	}
@@ -95,7 +94,7 @@ public class ORMatcherLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onMatcherDone(OModel model, InstanceConstruct request) {
+	protected void onMatcherDone(OModel model, OWLObject request) {
 
 		onRequestComplete();
 	}

@@ -111,12 +111,12 @@ public abstract class ORLogger extends ORMonitor {
 		actions.printTotalTime("Operation Total");
 	}
 
-	void onRequest(OModel model, InstanceConstruct request, String requestType) {
+	void onRequest(OModel model, OWLObject request, String requestType) {
 
 		if (showRequests) {
 
 			actions.printTitle(requestType + "-Request");
-			actions.printOWLObject(model, request.getConstruct());
+			actions.printOWLObject(model, request);
 		}
 
 		actions.startAction();

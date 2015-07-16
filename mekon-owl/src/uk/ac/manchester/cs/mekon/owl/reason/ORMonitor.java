@@ -64,7 +64,7 @@ public abstract class ORMonitor {
 		monitors.remove(monitor);
 	}
 
-	static void pollForClassifierRequest(OModel model, InstanceConstruct request) {
+	static void pollForClassifierRequest(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -88,7 +88,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForClassifierDone(OModel model, InstanceConstruct request) {
+	static void pollForClassifierDone(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -96,7 +96,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForMatcherRequest(OModel model, InstanceConstruct request) {
+	static void pollForMatcherRequest(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -112,7 +112,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForMatcherDone(OModel model, InstanceConstruct request) {
+	static void pollForMatcherDone(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -127,7 +127,7 @@ public abstract class ORMonitor {
 	 * @param model Relevant model
 	 * @param request Received request
 	 */
-	protected abstract void onClassifierRequest(OModel model, InstanceConstruct request);
+	protected abstract void onClassifierRequest(OModel model, OWLObject request);
 
 	/**
 	 * Method invoked immediately after operation to obtain inferred-types
@@ -152,7 +152,7 @@ public abstract class ORMonitor {
 	 * @param model Relevant model
 	 * @param request Processed request
 	 */
-	protected abstract void onClassifierDone(OModel model, InstanceConstruct request);
+	protected abstract void onClassifierDone(OModel model, OWLObject request);
 
 	/**
 	 * Method invoked immediately after an instance-match request has
@@ -161,7 +161,7 @@ public abstract class ORMonitor {
 	 * @param model Relevant model
 	 * @param request Received request
 	 */
-	protected abstract void onMatcherRequest(OModel model, InstanceConstruct request);
+	protected abstract void onMatcherRequest(OModel model, OWLObject request);
 
 	/**
 	 * Method invoked immediately after instance-match operation
@@ -178,7 +178,7 @@ public abstract class ORMonitor {
 	 * @param model Relevant model
 	 * @param request Processed request
 	 */
-	protected abstract void onMatcherDone(OModel model, InstanceConstruct request);
+	protected abstract void onMatcherDone(OModel model, OWLObject request);
 
 	/**
 	 * Method invoked immediately after monitoring has stopped.

@@ -24,12 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl;
 
-import java.io.*;
-import java.net.*;
-
-import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
-
 /**
  * Vocabulary used in the {@link OModel}-definition section
  * of the MEKON configuration file.
