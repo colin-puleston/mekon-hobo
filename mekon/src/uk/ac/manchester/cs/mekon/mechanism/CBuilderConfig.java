@@ -134,12 +134,12 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	private CSectionBuilder createSectionBuilder(KConfigNode sectionNode) {
 
-		Class<? extends CSectionBuilder> type = loadSectionBuilderClass(sectionNode);
+		Class<? extends CSectionBuilder> type = getSectionBuilderClass(sectionNode);
 
 		return new KConfigObjectConstructor<CSectionBuilder>(type).construct(sectionNode);
 	}
 
-	private Class<? extends CSectionBuilder> loadSectionBuilderClass(KConfigNode sectionNode) {
+	private Class<? extends CSectionBuilder> getSectionBuilderClass(KConfigNode sectionNode) {
 
 		return sectionNode.getClass(SECTION_BLDER_CLASS_ATTR, CSectionBuilder.class);
 	}

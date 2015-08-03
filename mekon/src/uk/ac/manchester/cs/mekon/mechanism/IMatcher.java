@@ -64,7 +64,7 @@ public interface IMatcher {
 	/**
 	 * Removes an instance from the matcher.
 	 *
-	 * @param identity Unique identity of instance
+	 * @param identity Unique identity of instance to be removed
 	 * @return True if instance removed, false if instance with
 	 * specified identity not present
 	 */
