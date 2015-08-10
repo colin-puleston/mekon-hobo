@@ -56,18 +56,10 @@ class XMLDocument {
 
 	static void write(Document document, File file) {
 
-		FileOutputStream output = null;
+		FileOutputStream output = openStream(file);
 
-		try {
-
-			write(document, new FileOutputStream(file));
-		}
-		catch (FileNotFoundException e) {
-
-			closeStream(output);
-
-			throw new XDocumentException(e);
-		}
+		write(document, output);
+		closeStream(output);
 	}
 
 	static void write(Document document, OutputStream output) {
@@ -122,6 +114,18 @@ class XMLDocument {
 		setPrettyPrint(serializer);
 		lsOutput.setByteStream(output);
 		serializer.write(document, lsOutput);
+	}
+
+	static private FileOutputStream openStream(File file) {
+
+		try {
+
+			return new FileOutputStream(file);
+		}
+		catch (FileNotFoundException e) {
+
+			throw new XDocumentException(e);
+		}
 	}
 
 	static private void closeStream(OutputStream output) {
