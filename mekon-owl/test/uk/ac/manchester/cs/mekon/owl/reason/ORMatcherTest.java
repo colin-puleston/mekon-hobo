@@ -377,7 +377,7 @@ public abstract class ORMatcherTest extends OTest {
 			IFrame instance = storedInstancesById.get(id);
 			boolean isMatch = matcher.matches(query, instance);
 
-//			assertTrue(isMatch == matchIds.contains(id));
+			assertTrue(isMatch == matchIds.contains(id));
 		}
 	}
 }
