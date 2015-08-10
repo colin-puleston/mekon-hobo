@@ -267,7 +267,7 @@ class IndividualsRenderer {
 		return new GroupRenderer(frame, rootName).render();
 	}
 
-	boolean removeGroup(String rootName) {
+	void removeGroup(String rootName) {
 
 		OWLNamedIndividual rootIndividual = rootIndividualsByName.remove(rootName);
 
@@ -275,14 +275,10 @@ class IndividualsRenderer {
 
 			rootNamesByIndividual.remove(rootIndividual);
 			removeAxioms(rootIndividual);
-
-			return true;
 		}
-
-		return false;
 	}
 
-	boolean removeGroup(OWLNamedIndividual rootIndividual) {
+	void removeGroup(OWLNamedIndividual rootIndividual) {
 
 		String rootName = rootNamesByIndividual.remove(rootIndividual);
 
@@ -290,11 +286,7 @@ class IndividualsRenderer {
 
 			rootIndividualsByName.remove(rootName);
 			removeAxioms(rootIndividual);
-
-			return true;
 		}
-
-		return false;
 	}
 
 	private void removeAxioms(OWLNamedIndividual rootIndividual) {

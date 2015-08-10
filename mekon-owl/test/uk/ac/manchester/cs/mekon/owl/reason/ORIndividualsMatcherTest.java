@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -32,7 +31,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class ORIndividualsMatcherTest extends ORMatcherTest {
 
-	ORMatcher createMatcher(OModel model) {
+	protected ORMatcher createMatcher(OModel model) {
 
 		return new ORIndividualsMatcher(model);
 	}

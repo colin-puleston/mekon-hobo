@@ -89,6 +89,16 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
+	 * Constructs matcher for specified model.
+	 *
+	 * @param model Model over which matcher is to operate
+	 */
+	public ORExpressionsMatcher(OModel model) {
+
+		super(model);
+	}
+
+	/**
 	 * Constructs matcher, with the configuration for both the
 	 * matcher itself, and the model over which it is to operate,
 	 * defined via the appropriately-tagged child of the specified
@@ -140,17 +150,15 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected boolean removeInstance(CIdentity identity) {
+	protected void removeInstance(CIdentity identity) {
 
 		for (InstanceGroup group : instanceGroups.values()) {
 
 			if (group.checkRemove(identity)) {
 
-				return true;
+				break;
 			}
 		}
-
-		return false;
 	}
 
 	/**

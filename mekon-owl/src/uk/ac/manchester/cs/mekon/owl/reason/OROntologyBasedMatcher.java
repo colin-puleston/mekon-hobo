@@ -58,6 +58,11 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 		return matches(createConceptExpression(query), instance);
 	}
 
+	OROntologyBasedMatcher(OModel model) {
+
+		super(model);
+	}
+
 	OROntologyBasedMatcher(KConfigNode parentConfigNode) {
 
 		super(parentConfigNode);

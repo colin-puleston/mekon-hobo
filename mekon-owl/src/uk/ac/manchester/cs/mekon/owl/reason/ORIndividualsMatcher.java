@@ -45,6 +45,16 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	private IndividualsRenderer dynamicRenderer;
 
 	/**
+	 * Constructs matcher for specified model.
+	 *
+	 * @param model Model over which matcher is to operate
+	 */
+	public ORIndividualsMatcher(OModel model) {
+
+		super(model);
+	}
+
+	/**
 	 * Constructs matcher, with the configuration for both the
 	 * matcher itself, and the model over which it is to operate,
 	 * defined via the appropriately-tagged child of the specified
@@ -87,9 +97,9 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected boolean removeInstance(CIdentity identity) {
+	protected void removeInstance(CIdentity identity) {
 
-		return storeRenderer.removeGroup(identity.getIdentifier());
+		storeRenderer.removeGroup(identity.getIdentifier());
 	}
 
 	/**

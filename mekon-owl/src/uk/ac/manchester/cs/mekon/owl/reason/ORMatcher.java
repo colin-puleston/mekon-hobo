@@ -161,7 +161,14 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	public synchronized boolean remove(CIdentity identity) {
 
-		return removeInstance(identity);
+		if (containsInstance(identity)) {
+
+			removeInstance(identity);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -219,6 +226,19 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
+	 * Constructs matcher for specified model.
+	 *
+	 * @param model Model over which matcher is to operate
+	 */
+	protected ORMatcher(OModel model) {
+
+		this.model = model;
+
+		concepts = new OConceptFinder(model);
+		framesManager = new FramesManager(model);
+	}
+
+	/**
 	 * Constructs matcher, with the configuration for both the
 	 * matcher itself, and the model over which it is to operate,
 	 * defined via the appropriately-tagged child of the specified
@@ -249,16 +269,14 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	protected ORMatcher(OModel model, KConfigNode parentConfigNode) {
 
-		this.model = model;
-
-		concepts = new OConceptFinder(model);
-		framesManager = new FramesManager(model);
+		this(model);
 
 		new ORMatcherConfig(parentConfigNode).configure(this);
 	}
 
 	/**
-	 * Adds the specified instance-level frame to the matcher.
+	 * Adds the specified instance-level frame, which is assumed to be
+	 * not currently present, to the matcher.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
@@ -266,13 +284,12 @@ public abstract class ORMatcher implements IMatcher {
 	protected abstract void addInstance(ORFrame instance, CIdentity identity);
 
 	/**
-	 * Removes the specified instance from the matcher.
+	 * Removes the specified instance, which is assumed to be present,
+	 * from the matcher.
 	 *
 	 * @param identity Unique identity of instance to be removed
-	 * @return True if instance removed, false if instance with specified
-	 * identity not present
 	 */
-	protected abstract boolean removeInstance(CIdentity identity);
+	protected abstract void removeInstance(CIdentity identity);
 
 	/**
 	 * Tests whether an instance with the specified identity is currently
