@@ -52,6 +52,8 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	public ORIndividualsMatcher(OModel model) {
 
 		super(model);
+
+		initialise();
 	}
 
 	/**
@@ -70,6 +72,8 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	public ORIndividualsMatcher(KConfigNode parentConfigNode) {
 
 		super(parentConfigNode);
+
+		initialise();
 	}
 
 	/**
@@ -86,6 +90,8 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	public ORIndividualsMatcher(OModel model, KConfigNode parentConfigNode) {
 
 		super(model, parentConfigNode);
+
+		initialise();
 	}
 
 	/**
@@ -117,6 +123,12 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
 
 		return createIndividualNetwork(instance).matches(queryExpr);
+	}
+
+	private void initialise() {
+
+		storeRenderer = createRenderer(IndividualCategory.MATCHER_NAMED);
+		dynamicRenderer = createRenderer(IndividualCategory.MATCHER_ANON);
 	}
 
 	private IndividualsRenderer createRenderer(IndividualCategory category) {
