@@ -46,11 +46,11 @@ public class Summariser {
 
 		protected void visit(CNumber value) {
 
-			if (value.getNumberType() == Integer.class) {
+			if (value.hasNumberType(Integer.class)) {
 
 				addSummary(IntegerSummary.class);
 			}
-			else if (value.getNumberType() == Float.class) {
+			else if (value.hasNumberType(Float.class)) {
 
 				addSummary(FloatSummary.class);
 			}
