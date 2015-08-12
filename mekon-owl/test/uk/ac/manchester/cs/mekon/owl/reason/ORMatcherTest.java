@@ -120,7 +120,7 @@ public abstract class ORMatcherTest extends OTest {
 		buildModel(sectionBuilder);
 	}
 
-	//@Test
+	@Test
 	public void test_handlesType() {
 
 		testHandlesType(JOB_CONCEPT, true);
@@ -141,7 +141,7 @@ public abstract class ORMatcherTest extends OTest {
 			DOCTORING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_addRemoveAndQuery() {
 
 		populate();
@@ -155,7 +155,7 @@ public abstract class ORMatcherTest extends OTest {
 			DOCTORING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_conceptBasedQueries() {
 
 		populate();
@@ -181,7 +181,7 @@ public abstract class ORMatcherTest extends OTest {
 			POSTGRAD_TEACHING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_numberBasedQueries() {
 
 		populate();
