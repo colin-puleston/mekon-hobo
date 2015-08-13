@@ -30,10 +30,10 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 enum IndividualCategory {
 
 	CLASSIFIER("classifier"),
-	MATCHER_NAMED("matcher.named"),
-	MATCHER_ANON("matcher.anon");
+	MATCHER_NAMED("matcher:named"),
+	MATCHER_ANON("matcher:anon");
 
-	static private final String NAMESPACE_PREFIX = "http://mekon.owl.individuals.";
+	static private final String NAMESPACE_PREFIX = "urn:mekon-owl:individual:";
 
 	private String namespaceId;
 
