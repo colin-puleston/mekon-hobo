@@ -145,11 +145,11 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 	}
 
 	/**
-	 * Specifies whether this is a concept-valued slot.
+	 * Specifies whether this is a frame--valued slot.
 	 *
-	 * @return True if concept-valued slot
+	 * @return True if frame--valued slot
 	 */
-	public abstract boolean conceptSlot();
+	public abstract boolean frameSlot();
 
 	/**
 	 * Specifies whether this is a number-valued slot.
@@ -158,16 +158,16 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 	 */
 	public boolean numberSlot() {
 
-		return !conceptSlot();
+		return !frameSlot();
 	}
 
 	/**
-	 * Casts slot as a concept-valued slot.
+	 * Casts slot as a frame--valued slot.
 	 *
-	 * @return Slot cast as concept-valued slot
-	 * @throws KAccessException if not a concept-valued slot
+	 * @return Slot cast as frame--valued slot
+	 * @throws KAccessException if not a frame--valued slot
 	 */
-	public ORConceptSlot asConceptSlot() {
+	public ORFrameSlot asFrameSlot() {
 
 		throw new KAccessException("Not a concept-slot: " + getIdentifier());
 	}

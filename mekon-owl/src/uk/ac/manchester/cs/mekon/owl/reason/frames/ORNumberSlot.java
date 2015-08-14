@@ -64,7 +64,7 @@ public class ORNumberSlot extends ORSlot<INumber> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean conceptSlot() {
+	public boolean frameSlot() {
 
 		return false;
 	}

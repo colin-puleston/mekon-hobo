@@ -43,7 +43,7 @@ public class ORFrame extends ORFramesEntity {
 
 	private Set<IRI> typeDisjunctIRIs = new HashSet<IRI>();
 
-	private Set<ORConceptSlot> conceptSlots = new HashSet<ORConceptSlot>();
+	private Set<ORFrameSlot> frameSlots = new HashSet<ORFrameSlot>();
 	private Set<ORNumberSlot> numberSlots = new HashSet<ORNumberSlot>();
 
 	private int hashCode = 0;
@@ -95,13 +95,13 @@ public class ORFrame extends ORFramesEntity {
 	}
 
 	/**
-	 * Adds a concept-valued slot to the frame.
+	 * Adds a frame--valued slot to the frame.
 	 *
 	 * @param slot Slot to add
 	 */
-	public void addSlot(ORConceptSlot slot) {
+	public void addSlot(ORFrameSlot slot) {
 
-		conceptSlots.add(slot);
+		frameSlots.add(slot);
 		hashCode = 0;
 	}
 
@@ -117,13 +117,13 @@ public class ORFrame extends ORFramesEntity {
 	}
 
 	/**
-	 * Removes a concept-valued slot from the frame.
+	 * Removes a frame--valued slot from the frame.
 	 *
 	 * @param slot Slot to remove
 	 */
-	public void removeSlot(ORConceptSlot slot) {
+	public void removeSlot(ORFrameSlot slot) {
 
-		conceptSlots.remove(slot);
+		frameSlots.remove(slot);
 		hashCode = 0;
 	}
 
@@ -143,7 +143,7 @@ public class ORFrame extends ORFramesEntity {
 	 */
 	public void clearSlots() {
 
-		conceptSlots.clear();
+		frameSlots.clear();
 		numberSlots.clear();
 		hashCode = 0;
 	}
@@ -206,24 +206,24 @@ public class ORFrame extends ORFramesEntity {
 	}
 
 	/**
-	 * Checks whether the frame has any slots, either concept-valued
+	 * Checks whether the frame has any slots, either frame--valued
 	 * of number-valued.
 	 *
 	 * @return True if frame has slots
 	 */
 	public boolean hasSlots() {
 
-		return !conceptSlots.isEmpty() || !numberSlots.isEmpty();
+		return !frameSlots.isEmpty() || !numberSlots.isEmpty();
 	}
 
 	/**
-	 * Provides all concept-valued slots for the frame.
+	 * Provides all frame--valued slots for the frame.
 	 *
 	 * @return Concept-valued slots
 	 */
-	public Set<ORConceptSlot> getConceptSlots() {
+	public Set<ORFrameSlot> getFrameSlots() {
 
-		return new HashSet<ORConceptSlot>(conceptSlots);
+		return new HashSet<ORFrameSlot>(frameSlots);
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class ORFrame extends ORFramesEntity {
 
 		return equalIdentifiers(other)
 				&& typeDisjunctIRIs.equals(other.typeDisjunctIRIs)
-				&& conceptSlots.equals(other.conceptSlots)
+				&& frameSlots.equals(other.frameSlots)
 				&& numberSlots.equals(other.numberSlots);
 	}
 
@@ -296,7 +296,7 @@ public class ORFrame extends ORFramesEntity {
 
 		return getIdentifier().hashCode()
 				+ typeDisjunctIRIs.hashCode()
-				+ conceptSlots.hashCode()
+				+ frameSlots.hashCode()
 				+ numberSlots.hashCode();
 	}
 }

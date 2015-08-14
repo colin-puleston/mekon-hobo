@@ -54,11 +54,11 @@ abstract class Renderer<FR extends OWLObject> {
 
 		void renderSlots() {
 
-			for (ORConceptSlot slot : frame.getConceptSlots()) {
+			for (ORFrameSlot slot : frame.getFrameSlots()) {
 
 				if (slot.mapsToOWLEntity()) {
 
-					renderConceptSlotValues(slot);
+					renderFrameSlotValues(slot);
 				}
 			}
 
@@ -95,9 +95,9 @@ abstract class Renderer<FR extends OWLObject> {
 
 		abstract OWLClassExpression createUnion(Set<FR> renderings);
 
-		private void renderConceptSlotValues(ORConceptSlot slot) {
+		private void renderFrameSlotValues(ORFrameSlot slot) {
 
-			new ConceptSlotValuesRenderer(this, slot).renderToFrame();
+			new FrameSlotValuesRenderer(this, slot).renderToFrame();
 		}
 
 		private void renderNumberSlotValues(ORNumberSlot slot) {
@@ -191,14 +191,14 @@ abstract class Renderer<FR extends OWLObject> {
 		}
 	}
 
-	private class ConceptSlotValuesRenderer
+	private class FrameSlotValuesRenderer
 					extends
 						SlotValuesRenderer<ORFrame, FR> {
 
 		private FrameRenderer frameRenderer;
 		private OWLObjectProperty property;
 
-		ConceptSlotValuesRenderer(
+		FrameSlotValuesRenderer(
 			FrameRenderer frameRenderer,
 			ORSlot<ORFrame> slot) {
 

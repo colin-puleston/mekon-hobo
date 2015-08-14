@@ -49,7 +49,7 @@ public class ORIdentifiedSlotsBypasser extends ORSlotsBypasser {
 
 	/**
 	 */
-	protected boolean bypass(ORConceptSlot slot) {
+	protected boolean bypass(ORFrameSlot slot) {
 
 		return slot.getIdentifier().equals(identifier);
 	}

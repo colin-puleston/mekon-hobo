@@ -48,7 +48,7 @@ public abstract class ORFramesBypasser extends ORVisitingPreProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void visit(OModel model, ORConceptSlot slot) {
+	protected void visit(OModel model, ORFrameSlot slot) {
 
 		for (ORFrame valueFrame : slot.getValues()) {
 
@@ -73,11 +73,11 @@ public abstract class ORFramesBypasser extends ORVisitingPreProcessor {
 	 */
 	protected abstract boolean bypass(ORFrame frame);
 
-	private void bypassFrame(ORConceptSlot parentSlot, ORFrame frame) {
+	private void bypassFrame(ORFrameSlot parentSlot, ORFrame frame) {
 
 		parentSlot.removeValue(frame);
 
-		for (ORConceptSlot nestedSlot : frame.getConceptSlots()) {
+		for (ORFrameSlot nestedSlot : frame.getFrameSlots()) {
 
 			for (ORFrame nestedFrame : nestedSlot.getValues()) {
 

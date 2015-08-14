@@ -38,7 +38,7 @@ public class ORNonOWLSlotsBypasser extends ORSlotsBypasser {
 
 	/**
 	 */
-	protected boolean bypass(ORConceptSlot slot) {
+	protected boolean bypass(ORFrameSlot slot) {
 
 		return !slot.mapsToOWLEntity();
 	}

@@ -70,7 +70,7 @@ class ORFrameCycleTester {
 
 	private boolean slotsLeadToCycle(ORFrame frame) {
 
-		for (ORConceptSlot slot : frame.getConceptSlots()) {
+		for (ORFrameSlot slot : frame.getFrameSlots()) {
 
 			if (slotLeadsToCycle(slot)) {
 
@@ -81,7 +81,7 @@ class ORFrameCycleTester {
 		return false;
 	}
 
-	private boolean slotLeadsToCycle(ORConceptSlot slot) {
+	private boolean slotLeadsToCycle(ORFrameSlot slot) {
 
 		for (ORFrame value : slot.getValues()) {
 

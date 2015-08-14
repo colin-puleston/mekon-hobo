@@ -56,13 +56,13 @@ public abstract class ORVisitingPreProcessor implements ORPreProcessor {
 	protected abstract void visit(OModel model, ORFrame frame);
 
 	/**
-	 * Visitor for concept-valued slots in intermediate instance
+	 * Visitor for frame--valued slots in intermediate instance
 	 * representation.
 	 *
 	 * @param model Relevant model
 	 * @param slot Visited slot
 	 */
-	protected abstract void visit(OModel model, ORConceptSlot slot);
+	protected abstract void visit(OModel model, ORFrameSlot slot);
 
 	/**
 	 * Visitor for number-valued slots in intermediate instance
@@ -79,7 +79,7 @@ public abstract class ORVisitingPreProcessor implements ORPreProcessor {
 
 			visit(model, frame);
 
-			for (ORConceptSlot slot : frame.getConceptSlots()) {
+			for (ORFrameSlot slot : frame.getFrameSlots()) {
 
 				visit(model, slot);
 

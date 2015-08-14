@@ -65,7 +65,7 @@ public class OREntityIRISwapper extends ORVisitingPreProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void visit(OModel model, ORConceptSlot slot) {
+	protected void visit(OModel model, ORFrameSlot slot) {
 
 		checkSwapIRI(slot);
 	}

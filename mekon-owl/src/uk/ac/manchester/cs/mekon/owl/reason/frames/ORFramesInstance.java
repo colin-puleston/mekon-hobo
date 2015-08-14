@@ -99,22 +99,22 @@ public class ORFramesInstance {
 		}
 	}
 
-	private abstract class ConceptSlotConverter<IV>
+	private abstract class FrameSlotConverter<IV>
 								extends
-									TypeSlotConverter<ORFrame, ORConceptSlot, IV> {
+									TypeSlotConverter<ORFrame, ORFrameSlot, IV> {
 
-		ORConceptSlot createSlot(CIdentity id, ISlot iSlot, IRI iri) {
+		ORFrameSlot createSlot(CIdentity id, ISlot iSlot, IRI iri) {
 
-			return new ORConceptSlot(id, iSlot, iri);
+			return new ORFrameSlot(id, iSlot, iri);
 		}
 
-		void addSlot(ORFrame oFrame, ORConceptSlot oSlot) {
+		void addSlot(ORFrame oFrame, ORFrameSlot oSlot) {
 
 			oFrame.addSlot(oSlot);
 		}
 	}
 
-	private class IFrameSlotConverter extends ConceptSlotConverter<IFrame> {
+	private class IFrameSlotConverter extends FrameSlotConverter<IFrame> {
 
 		ORFrame getValue(IFrame iValue) {
 
@@ -122,7 +122,7 @@ public class ORFramesInstance {
 		}
 	}
 
-	private class CFrameSlotConverter extends ConceptSlotConverter<CFrame> {
+	private class CFrameSlotConverter extends FrameSlotConverter<CFrame> {
 
 		ORFrame getValue(CFrame iValue) {
 
