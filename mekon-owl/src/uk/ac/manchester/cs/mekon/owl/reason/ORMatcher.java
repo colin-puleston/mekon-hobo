@@ -246,7 +246,6 @@ public abstract class ORMatcher implements IMatcher {
 	 *
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
-	 * @return Created object
 	 * @throws KConfigException if required child-node does not exist,
 	 * or exists but does not contain correctly specified configuration
 	 * information
