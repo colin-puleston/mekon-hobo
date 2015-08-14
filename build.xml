@@ -56,7 +56,6 @@
 
 	<!-- output test -->
 	<property name="build.test.rel" value="test" />
-	<property name="build.test" location="${build}/${build.test.rel}" />
 	<property name="build.test.classes.rel" value="${build.test.rel}/classes" />
 	<property name="build.test.classes" location="${build}/${build.test.classes.rel}" />
 
@@ -97,17 +96,14 @@
 	<property name="build.demo.hobo.java.run" value="${java.opts} ${hobogui.mainclass}"/>
 
 	<!-- debug property -->
-
 	<property name="debug" value="true"/>
 
 	<!-- clean -->
-
 	<target name="clean">
 		<delete dir="${build}"/>
 	</target>
 
 	<!-- class-path -->
-
 	<path id="classpath">
 		<fileset dir="${build.lib}">
 			<include name="*.jar"/>
@@ -115,7 +111,6 @@
 	</path>
 
 	<!-- output dir structure -->
-
 	<target name="base">
 		<mkdir dir="${build.classes.mekon}"/>
 		<mkdir dir="${build.classes.mekon-owl}"/>
@@ -148,7 +143,6 @@
 	</target>
 
 	<!-- targets -->
-
 	<target name="mekon" depends="base">
 		<javac srcdir="${mekon.src}" classpathref="classpath" destdir="${build.classes.mekon}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -218,7 +212,6 @@
 	</target>
 
 	<!-- mekon demo targets -->
-
 	<target name="mekon-demo" depends="mekon-gui-jar, mekon-owl-jar, resource-base">
 		<echo file="${build.demo.mekon.run.sh}">java -cp ${build.demo.mekon.classpath.sh} ${build.demo.mekon.java.run}</echo>
 		<echo file="${build.demo.mekon.run.win}">java -cp ${build.demo.mekon.classpath.win} ${build.demo.mekon.java.run}</echo>
@@ -226,7 +219,6 @@
 	</target>
 
 	<!-- hobo demo targets -->
-
 	<target name="hobo-demo-classes" depends="hobo-jar, hobo-demo-base">
 		<javac srcdir="${demo.src}" classpathref="classpath" destdir="${build.demo.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -240,7 +232,6 @@
 	</target>
 
 	<!-- test targets -->
-
 	<target name="mekon-test" depends="mekon-jar, test-base">
 		<javac srcdir="${mekon.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
