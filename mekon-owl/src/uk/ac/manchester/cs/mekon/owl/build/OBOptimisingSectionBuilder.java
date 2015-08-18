@@ -159,7 +159,16 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 		OWLOntology ontology = copyMainOntology(mainModel, manager);
 		OWLReasonerFactory reasonerFactory = new StructuralReasonerFactory();
 
-		return new OModel(manager, ontology, reasonerFactory, true);
+		OModel paysModel = new OModel(manager, ontology, reasonerFactory, true);
+
+		if (mainModel.indirectNumericPropertyDefined()) {
+
+			IRI numPropIRI = mainModel.getIndirectNumericProperty().getIRI();
+
+			paysModel.setIndirectNumericProperty(numPropIRI);
+		}
+
+		return paysModel;
 	}
 
 	private void removePayloadAxioms(OWLOntologyManager manager) {
@@ -183,7 +192,7 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 
 		try {
 
-			return newManager.createOntology(mainIRI, allOnts, true);
+			return newManager.createOntology(mainIRI, allOnts, false);
 		}
 		catch (OWLOntologyCreationException e) {
 

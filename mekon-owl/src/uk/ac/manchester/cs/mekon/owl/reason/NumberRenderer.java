@@ -38,19 +38,12 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 class NumberRenderer {
 
-	static private OWLDataProperty getIndirectPropertyOrNull(OModel model) {
-
-		return model.indirectNumericPropertyDefined()
-					? model.getIndirectNumericProperty()
-					: null;
-	}
-
 	private OWLDataFactory dataFactory;
 	private OWLDataProperty property = null;
 
 	NumberRenderer(OModel model) {
 
-		this(model, getIndirectPropertyOrNull(model));
+		this(model, model.getIndirectNumericProperty());
 	}
 
 	NumberRenderer(OModel model, OWLDataProperty property) {

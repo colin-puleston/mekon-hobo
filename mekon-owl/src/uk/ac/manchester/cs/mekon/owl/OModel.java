@@ -558,15 +558,9 @@ public class OModel {
 	 * Provides the "indirect-numeric-property" that is defined for the
 	 * model.
 	 *
-	 * @return Numeric-property for model
-	 * @throws KModelException if indirect-numeric-property not defined
+	 * @return Numeric-property for model, or null if not defined
 	 */
 	public OWLDataProperty getIndirectNumericProperty() {
-
-		if (indirectNumericProperty == null) {
-
-			throw new KModelException("Numeric-property has not been specified");
-		}
 
 		return indirectNumericProperty;
 	}
