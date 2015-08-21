@@ -264,7 +264,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public IFrame copy() {
 
-		return new IFrameCopier().getCopy(this);
+		return new IFrameCopier().copy(this);
 	}
 
 	/**

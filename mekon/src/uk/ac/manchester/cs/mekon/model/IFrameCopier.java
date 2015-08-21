@@ -40,7 +40,7 @@ class IFrameCopier {
 
 		protected void visit(IFrame value) {
 
-			copyValue = getCopy(value);
+			copyValue = getFrameCopy(value);
 		}
 
 		protected void visit(INumber value) {
@@ -61,17 +61,12 @@ class IFrameCopier {
 		}
 	}
 
-	IFrame getCopy(IFrame template) {
+	IFrame copy(IFrame template) {
 
-		IFrame copy = copies.get(template);
+		IFrame copy = template.instantiateCopy();
 
-		if (copy == null) {
-
-			copy = template.instantiateCopy();
-
-			copies.put(template, copy);
-			copySlots(template, copy);
-		}
+		copies.put(template, copy);
+		copySlots(template, copy);
 
 		return copy;
 	}
@@ -120,5 +115,12 @@ class IFrameCopier {
 		}
 
 		return slot;
+	}
+
+	private IFrame getFrameCopy(IFrame template) {
+
+		IFrame copy = copies.get(template);
+
+		return copy != null ? copy : copy(template);
 	}
 }
