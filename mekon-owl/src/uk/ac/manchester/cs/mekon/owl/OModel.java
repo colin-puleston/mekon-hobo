@@ -159,6 +159,35 @@ public class OModel {
 	}
 
 	/**
+	 * Creates new model with all ontologies from this one copied into
+	 * a single ontology. Also copies the "indirect-numeric-property" from
+	 * this model, if set.
+	 *
+	 * @param mainOWLFile OWL file containing main ontology
+	 * @param reasonerFactory Factory for creating required reasoner
+	 * @param startReasoner True if initial classification of the ontology
+	 * and subsequent initialisation of cached-data are to be invoked on
+	 * copy (otherwise {@link #startReasoner} method should be invoked
+	 * prior to use)
+	 */
+	public OModel copy(
+					OWLReasonerFactory reasonerFactory,
+					boolean startReasoner) {
+
+		OWLOntologyManager om = OWLManager.createOWLOntologyManager();
+		OWLOntology ontology = copyOntologies(om);
+
+		OModel copy = new OModel(om, ontology, reasonerFactory, startReasoner);
+
+		if (indirectNumericProperty != null) {
+
+			copy.setIndirectNumericProperty(indirectNumericProperty.getIRI());
+		}
+
+		return copy;
+	}
+
+	/**
 	 * Sets the "indirect-numeric-property" for the model.
 	 *
 	 * @param iri IRI of indirect-numeric-property for model, or null
@@ -615,6 +644,20 @@ public class OModel {
 	private OWLOntologyIRIMapper createIRIMapper(File owlFile) {
 
 		return new PathSearchOntologyIRIMapper(owlFile.getParentFile());
+	}
+
+	private OWLOntology copyOntologies(OWLOntologyManager newManager) {
+
+		IRI iri = mainOntology.getOntologyID().getOntologyIRI();
+
+		try {
+
+			return newManager.createOntology(iri, getAllOntologies(), false);
+		}
+		catch (OWLOntologyCreationException e) {
+
+			throw new KModelException(e);
+		}
 	}
 
 	private void classify() {

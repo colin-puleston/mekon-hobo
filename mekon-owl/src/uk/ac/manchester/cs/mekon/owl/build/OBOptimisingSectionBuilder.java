@@ -27,9 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.*;
-import org.semanticweb.owlapi.apibinding.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -155,20 +153,7 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 
 	private OModel createPayloadsModel(OModel mainModel) {
 
-		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-		OWLOntology ontology = copyMainOntology(mainModel, manager);
-		OWLReasonerFactory reasonerFactory = new StructuralReasonerFactory();
-
-		OModel paysModel = new OModel(manager, ontology, reasonerFactory, true);
-
-		if (mainModel.indirectNumericPropertyDefined()) {
-
-			IRI numPropIRI = mainModel.getIndirectNumericProperty().getIRI();
-
-			paysModel.setIndirectNumericProperty(numPropIRI);
-		}
-
-		return paysModel;
+		return mainModel.copy(new StructuralReasonerFactory(), true);
 	}
 
 	private void removePayloadAxioms(OWLOntologyManager manager) {
@@ -182,21 +167,6 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 					manager.removeAxiom(ont, subConceptOf);
 				}
 			}
-		}
-	}
-
-	private OWLOntology copyMainOntology(OModel model, OWLOntologyManager newManager) {
-
-		IRI mainIRI = model.getMainOntology().getOntologyID().getOntologyIRI();
-		Set<OWLOntology> allOnts = model.getAllOntologies();
-
-		try {
-
-			return newManager.createOntology(mainIRI, allOnts, false);
-		}
-		catch (OWLOntologyCreationException e) {
-
-			throw new KModelException(e);
 		}
 	}
 
