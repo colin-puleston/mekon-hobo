@@ -83,7 +83,6 @@ public abstract class TMatcher extends ORMatcher {
 	 * Constructs matcher for specified model.
 	 *
 	 * @param model Model over which matcher is to operate
-	 * @param dbConfig Configuration for connection to be used
 	 */
 	protected TMatcher(OModel model) {
 

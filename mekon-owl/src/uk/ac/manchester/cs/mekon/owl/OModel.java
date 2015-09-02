@@ -163,7 +163,6 @@ public class OModel {
 	 * a single ontology. Also copies the "indirect-numeric-property" from
 	 * this model, if set.
 	 *
-	 * @param mainOWLFile OWL file containing main ontology
 	 * @param reasonerFactory Factory for creating required reasoner
 	 * @param startReasoner True if initial classification of the ontology
 	 * and subsequent initialisation of cached-data are to be invoked on
