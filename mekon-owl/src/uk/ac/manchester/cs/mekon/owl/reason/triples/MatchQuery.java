@@ -30,14 +30,11 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
- * Responsible for executing "match" queries, finding all
- * assertions that are matches for specified queries.
- *
  * @author Colin Puleston
  */
-public abstract class TMatch {
+class MatchQuery {
 
-	private TQueryConstants constants;
+	private OTQuery selectQuery;
 
 	private class Renderer extends MatchingQueryRenderer {
 
@@ -46,10 +43,10 @@ public abstract class TMatch {
 
 		Renderer() {
 
-			super(constants);
+			super(selectQuery.getConstants());
 		}
 
-		TURI getRootFrameNode() {
+		OT_URI getRootFrameNode() {
 
 			return new QueryValue(ROOT_FRAME_VARIABLE);
 		}
@@ -60,36 +57,18 @@ public abstract class TMatch {
 		}
 	}
 
-	/**
-	 * Constructor
-	 *
-	 * @param constants Object for representing of the constants for
-	 * the query
-	 */
-	protected TMatch(TQueryConstants constants) {
+	MatchQuery(OTFactory factory) {
 
-		this.constants = constants;
+		selectQuery = factory.createQuery();
 	}
-
-	/**
-	 * Abstract method whose implementations should execute the
-	 * specified SPARQL "select" query, and return the required set
-	 * of matches as a set of URIs retrieved from the resulting
-	 * collection of binding-sets, each of which will contain a
-	 * single binding representing the base-URI for a particular
-	 * assertion.
-	 *
-	 * @param query SPARQL select-query to execute
-	 * @return Set of base-URIs of all assertions from store that
-	 * match the relevant query
-	 */
-	protected abstract List<TURI> execute(String query);
 
 	List<CIdentity> execute(Store store, ORFrame query) {
 
 		List<CIdentity> ids = new ArrayList<CIdentity>();
 
-		for (TURI baseURI : execute(query)) {
+		for (List<OTValue> bindings : execute(query)) {
+
+			OT_URI baseURI = (OT_URI)bindings.get(0);
 
 			ids.add(store.baseURIToId(baseURI.getURI()));
 		}
@@ -97,8 +76,8 @@ public abstract class TMatch {
 		return ids;
 	}
 
-	private List<TURI> execute(ORFrame query) {
+	private List<List<OTValue>> execute(ORFrame query) {
 
-		return execute(new Renderer().render(query));
+		return selectQuery.executeSelect(new Renderer().render(query));
 	}
 }

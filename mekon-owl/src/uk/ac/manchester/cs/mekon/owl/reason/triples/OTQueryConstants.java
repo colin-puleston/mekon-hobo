@@ -25,35 +25,55 @@
 package uk.ac.manchester.cs.mekon.owl.reason.triples;
 
 /**
- * REpresents a triples graphs
+ * Responsible for managing the constants for a particular
+ * SPARQL query that is being constructed. For each constant,
+ * provides a rendering that will appear in the query-string,
+ * which may be a direct rendering of the constant, or else a
+ * rendering of a variable that will represent the constant in
+ * the initial version of the query-string prior to being
+ * replaced via a pre-execution substitution operation.
  *
  * @author Colin Puleston
  */
-public interface TGraph {
+public interface OTQueryConstants {
 
 	/**
-	 * Adds a triple to the graph.
+	 * Provides rendering for specified URI.
 	 *
-	 * @param subject Subject of triple
-	 * @param predicate Predicate of triple
-	 * @param object Object of triple
+	 * @param uri URI to be rendered
+	 * @return Rendering for URI
 	 */
-	public void add(TURI subject, TURI predicate, TValue object);
+	public String renderURI(String uri);
 
 	/**
-	 * Adds each triple in the graph to the triple store.
-	 */
-	public void addToStore();
-
-	/**
-	 * Removes each triple in the graph from the triple store.
-	 */
-	public void removeFromStore();
-
-	/**
-	 * Tests whether the graph is empty.
+	 * Provides rendering for specified integer number.
 	 *
-	 * @return True if empty
+	 * @param number Number to be rendered
+	 * @return Rendering for number
 	 */
-	public boolean isEmpty();
+	public String renderNumber(Integer number);
+
+	/**
+	 * Provides rendering for specified long number.
+	 *
+	 * @param number Number to be rendered
+	 * @return Rendering for number
+	 */
+	public String renderNumber(Long number);
+
+	/**
+	 * Provides rendering for specified float number.
+	 *
+	 * @param number Number to be rendered
+	 * @return Rendering for number
+	 */
+	public String renderNumber(Float number);
+
+	/**
+	 * Provides rendering for specified double number.
+	 *
+	 * @param number Number to be rendered
+	 * @return Rendering for number
+	 */
+	public String renderNumber(Double number);
 }

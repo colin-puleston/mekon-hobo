@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  */
 class Store {
 
-	private TFactory factory;
+	private OTFactory factory;
 
 	private int maxIndex = 0;
 	private List<Integer> freeIndexes = new ArrayList<Integer>();
@@ -43,7 +43,7 @@ class Store {
 	private Map<String, Integer> idsToIndexes = new HashMap<String, Integer>();
 	private Map<Integer, String> indexesToIds = new HashMap<Integer, String>();
 
-	Store(TFactory factory) {
+	Store(OTFactory factory) {
 
 		this.factory = factory;
 	}
@@ -86,7 +86,7 @@ class Store {
 
 	List<CIdentity> match(ORFrame query) {
 
-		return factory.createMatch().execute(this, query);
+		return new MatchQuery(factory).execute(this, query);
 	}
 
 	boolean matches(ORFrame query, ORFrame instance) {
@@ -117,7 +117,7 @@ class Store {
 
 		String baseURI = getBaseURI(assertionIndex);
 
-		return factory.createMatches().execute(query, baseURI);
+		return new MatchesQuery(factory).execute(query, baseURI);
 	}
 
 	private int getIndex() {

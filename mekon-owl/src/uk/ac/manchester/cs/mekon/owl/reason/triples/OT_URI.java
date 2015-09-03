@@ -24,64 +24,17 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason.triples;
 
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
-
 /**
- * Responsible for executing "matches" queries, testing whether
- * particular assertions are matches for specified queries.
+ * Represents a URI used in a triple.
  *
  * @author Colin Puleston
  */
-public abstract class TMatches {
-
-	private TQueryConstants constants;
-
-	private class Renderer extends MatchingQueryRenderer {
-
-		static private final String QUERY_FORMAT = "ASK %s";
-
-		private TURI rootFrameNode;
-
-		Renderer(String baseURI) {
-
-			super(constants);
-
-			rootFrameNode = renderURI(baseURI);
-		}
-
-		TURI getRootFrameNode() {
-
-			return rootFrameNode;
-		}
-
-		String createQuery(String queryBody) {
-
-			return String.format(QUERY_FORMAT, queryBody);
-		}
-	}
+public interface OT_URI extends OTValue {
 
 	/**
-	 * Constructor
+	 * Provides string representation of the URI.
 	 *
-	 * @param constants Object for representing of the constants for
-	 * the query
+	 * @return String representation of URI
 	 */
-	protected TMatches(TQueryConstants constants) {
-
-		this.constants = constants;
-	}
-
-	/**
-	 * Abstract method whose implementations should execute the
-	 * specified SPARQL "ask" query and directly return the result.
-	 *
-	 * @param query SPARQL ask-query to execute
-	 * @return Result of executing ask-query
-	 */
-	protected abstract boolean execute(String query);
-
-	boolean execute(ORFrame query, String baseURI) {
-
-		return execute(new Renderer(baseURI).render(query));
-	}
+	public String getURI();
 }

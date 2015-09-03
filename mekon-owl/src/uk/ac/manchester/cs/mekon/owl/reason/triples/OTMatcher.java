@@ -44,9 +44,9 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  *
  * @author Colin Puleston
  */
-public abstract class TMatcher extends ORMatcher {
+public abstract class OTMatcher extends ORMatcher {
 
-	static private Set<TMatcher> matchers = new HashSet<TMatcher>();
+	static private Set<OTMatcher> matchers = new HashSet<OTMatcher>();
 
 	/**
 	 * Invokes the {@link #stop} methods on any currently active
@@ -54,7 +54,7 @@ public abstract class TMatcher extends ORMatcher {
 	 */
 	static public void stopAll() {
 
-		for (TMatcher matcher : new HashSet<TMatcher>(matchers)) {
+		for (OTMatcher matcher : new HashSet<OTMatcher>(matchers)) {
 
 			matcher.stop();
 		}
@@ -84,7 +84,7 @@ public abstract class TMatcher extends ORMatcher {
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
-	protected TMatcher(OModel model) {
+	protected OTMatcher(OModel model) {
 
 		super(model);
 	}
@@ -101,7 +101,7 @@ public abstract class TMatcher extends ORMatcher {
 	 * or exists but does not contain correctly specified configuration
 	 * information
 	 */
-	protected TMatcher(KConfigNode parentConfigNode) {
+	protected OTMatcher(KConfigNode parentConfigNode) {
 
 		super(parentConfigNode);
 	}
@@ -117,7 +117,7 @@ public abstract class TMatcher extends ORMatcher {
 	 * or exists but does not contain correctly specified configuration
 	 * information
 	 */
-	protected TMatcher(OModel model, KConfigNode parentConfigNode) {
+	protected OTMatcher(OModel model, KConfigNode parentConfigNode) {
 
 		super(model, parentConfigNode);
 	}
@@ -164,7 +164,7 @@ public abstract class TMatcher extends ORMatcher {
 	 *
 	 * @param factory Implementation-specific data-factory
 	 */
-	protected void initialise(TFactory factory) {
+	protected void initialise(OTFactory factory) {
 
 		store = new Store(factory);
 

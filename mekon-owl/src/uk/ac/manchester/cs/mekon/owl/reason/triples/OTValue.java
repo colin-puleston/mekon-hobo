@@ -29,5 +29,5 @@ package uk.ac.manchester.cs.mekon.owl.reason.triples;
  *
  * @author Colin Puleston
  */
-public interface TValue {
+public interface OTValue {
 }

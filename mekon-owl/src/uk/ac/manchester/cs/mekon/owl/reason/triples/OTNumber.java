@@ -25,25 +25,9 @@
 package uk.ac.manchester.cs.mekon.owl.reason.triples;
 
 /**
+ * Represents a number used as an object in a triple.
+ *
  * @author Colin Puleston
  */
-class QueryValue implements OT_URI, OTNumber {
-
-	private String valueAsString;
-
-	public String getURI() {
-
-		return valueAsString;
-	}
-
-	QueryValue(String valueAsString) {
-
-		this.valueAsString = valueAsString;
-	}
-
-	String render() {
-
-		return valueAsString;
-	}
+public interface OTNumber extends OTValue {
 }
-

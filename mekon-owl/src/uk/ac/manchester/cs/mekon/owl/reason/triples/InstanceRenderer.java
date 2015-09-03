@@ -41,10 +41,10 @@ abstract class InstanceRenderer {
 
 	private class NumberSlotValuesRenderer {
 
-		private TURI frameNode;
-		private TURI slotPredicate;
+		private OT_URI frameNode;
+		private OT_URI slotPredicate;
 
-		NumberSlotValuesRenderer(TURI frameNode, ORNumberSlot slot) {
+		NumberSlotValuesRenderer(OT_URI frameNode, ORNumberSlot slot) {
 
 			this.frameNode = frameNode;
 
@@ -72,28 +72,28 @@ abstract class InstanceRenderer {
 
 			if (range.hasMin()) {
 
-				TNumber min = renderDefiniteNumber(range.getMin());
+				OTNumber min = renderDefiniteNumber(range.getMin());
 
 				renderTriple(renderNumberMin(min));
 			}
 
 			if (range.hasMax()) {
 
-				TNumber max = renderDefiniteNumber(range.getMax());
+				OTNumber max = renderDefiniteNumber(range.getMax());
 
 				renderTriple(renderNumberMax(max));
 			}
 		}
 
-		private void renderTriple(TValue value) {
+		private void renderTriple(OTValue value) {
 
 			InstanceRenderer.this.renderTriple(frameNode, slotPredicate, value);
 		}
 	}
 
-	TURI renderFrame(ORFrame frame) {
+	OT_URI renderFrame(ORFrame frame) {
 
-		TURI frameNode = renderFrame(frameCount++);
+		OT_URI frameNode = renderFrame(frameCount++);
 
 		checkRenderType(frame, frameNode);
 		renderSlotValues(frame, frameNode);
@@ -101,29 +101,29 @@ abstract class InstanceRenderer {
 		return frameNode;
 	}
 
-	abstract TURI renderFrame(int index);
+	abstract OT_URI renderFrame(int index);
 
-	abstract TURI renderURI(String uri);
+	abstract OT_URI renderURI(String uri);
 
-	abstract TNumber renderNumber(Integer number);
+	abstract OTNumber renderNumber(Integer number);
 
-	abstract TNumber renderNumber(Long number);
+	abstract OTNumber renderNumber(Long number);
 
-	abstract TNumber renderNumber(Float number);
+	abstract OTNumber renderNumber(Float number);
 
-	abstract TNumber renderNumber(Double number);
+	abstract OTNumber renderNumber(Double number);
 
-	abstract TValue renderNumberMin(TNumber value);
+	abstract OTValue renderNumberMin(OTNumber value);
 
-	abstract TValue renderNumberMax(TNumber value);
+	abstract OTValue renderNumberMax(OTNumber value);
 
-	abstract void renderTriple(TURI subject, TURI predicate, TValue object);
+	abstract void renderTriple(OT_URI subject, OT_URI predicate, OTValue object);
 
-	abstract void renderUnion(TURI subject, TURI predicate, Set<TValue> objects);
+	abstract void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects);
 
-	private void checkRenderType(ORFrame frame, TURI frameNode) {
+	private void checkRenderType(ORFrame frame, OT_URI frameNode) {
 
-		TURI typePredicate = renderURI(RDFConstants.RDF_TYPE);
+		OT_URI typePredicate = renderURI(RDFConstants.RDF_TYPE);
 
 		if (frame.disjunctionType()) {
 
@@ -135,7 +135,7 @@ abstract class InstanceRenderer {
 		}
 	}
 
-	private void renderSlotValues(ORFrame frame, TURI frameNode) {
+	private void renderSlotValues(ORFrame frame, OT_URI frameNode) {
 
 		for (ORFrameSlot slot : frame.getFrameSlots()) {
 
@@ -154,9 +154,9 @@ abstract class InstanceRenderer {
 		}
 	}
 
-	private void renderFrameSlotValues(TURI frameNode, ORFrameSlot slot) {
+	private void renderFrameSlotValues(OT_URI frameNode, ORFrameSlot slot) {
 
-		TURI slotPredicate = renderEntityType(slot);
+		OT_URI slotPredicate = renderEntityType(slot);
 
 		for (ORFrame value : slot.getValues()) {
 
@@ -164,9 +164,9 @@ abstract class InstanceRenderer {
 		}
 	}
 
-	private Set<TValue> renderFrameTypeDisjuncts(ORFrame frame) {
+	private Set<OTValue> renderFrameTypeDisjuncts(ORFrame frame) {
 
-		Set<TValue> objects = new HashSet<TValue>();
+		Set<OTValue> objects = new HashSet<OTValue>();
 
 		for (IRI iri : frame.getTypeDisjunctIRIs()) {
 
@@ -176,12 +176,12 @@ abstract class InstanceRenderer {
 		return objects;
 	}
 
-	private TURI renderEntityType(ORFramesEntity entity) {
+	private OT_URI renderEntityType(ORFramesEntity entity) {
 
 		return renderURI(entity.getIRI());
 	}
 
-	private TNumber renderDefiniteNumber(INumber number) {
+	private OTNumber renderDefiniteNumber(INumber number) {
 
 		if (number.hasNumberType(Integer.class)) {
 
@@ -206,7 +206,7 @@ abstract class InstanceRenderer {
 		throw new Error("Unexpected number-type: " + number.getNumberType());
 	}
 
-	private TURI renderURI(IRI iri) {
+	private OT_URI renderURI(IRI iri) {
 
 		return renderURI(iri.toString());
 	}

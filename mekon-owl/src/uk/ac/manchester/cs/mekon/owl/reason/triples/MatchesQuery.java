@@ -24,10 +24,46 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason.triples;
 
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+
 /**
- * Represents a number used as an object in a triple.
- *
  * @author Colin Puleston
  */
-public interface TNumber extends TValue {
+class MatchesQuery {
+
+	private OTQuery askQuery;
+
+	private class Renderer extends MatchingQueryRenderer {
+
+		static private final String QUERY_FORMAT = "ASK %s";
+
+		private OT_URI rootFrameNode;
+
+		Renderer(String baseURI) {
+
+			super(askQuery.getConstants());
+
+			rootFrameNode = renderURI(baseURI);
+		}
+
+		OT_URI getRootFrameNode() {
+
+			return rootFrameNode;
+		}
+
+		String createQuery(String queryBody) {
+
+			return String.format(QUERY_FORMAT, queryBody);
+		}
+	}
+
+	MatchesQuery(OTFactory factory) {
+
+		askQuery = factory.createQuery();
+	}
+
+	boolean execute(ORFrame query, String baseURI) {
+
+		return askQuery.executeAsk(new Renderer(baseURI).render(query));
+	}
 }

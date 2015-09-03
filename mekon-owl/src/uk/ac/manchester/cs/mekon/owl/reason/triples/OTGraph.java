@@ -25,55 +25,35 @@
 package uk.ac.manchester.cs.mekon.owl.reason.triples;
 
 /**
- * Responsible for managing the constants for a particular
- * SPARQL query that is being constructed. For each constant,
- * provides a rendering that will appear in the query-string,
- * which may be a direct rendering of the constant, or else a
- * rendering of a variable that will represent the constant in
- * the initial version of the query-string prior to being
- * replaced via a pre-execution substitution operation.
+ * REpresents a triples graphs
  *
  * @author Colin Puleston
  */
-public interface TQueryConstants {
+public interface OTGraph {
 
 	/**
-	 * Provides rendering for specified URI.
+	 * Adds a triple to the graph.
 	 *
-	 * @param uri URI to be rendered
-	 * @return Rendering for URI
+	 * @param subject Subject of triple
+	 * @param predicate Predicate of triple
+	 * @param object Object of triple
 	 */
-	public String renderURI(String uri);
+	public void add(OT_URI subject, OT_URI predicate, OTValue object);
 
 	/**
-	 * Provides rendering for specified integer number.
-	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
+	 * Adds each triple in the graph to the triple store.
 	 */
-	public String renderNumber(Integer number);
+	public void addToStore();
 
 	/**
-	 * Provides rendering for specified long number.
-	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
+	 * Removes each triple in the graph from the triple store.
 	 */
-	public String renderNumber(Long number);
+	public void removeFromStore();
 
 	/**
-	 * Provides rendering for specified float number.
+	 * Tests whether the graph is empty.
 	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
+	 * @return True if empty
 	 */
-	public String renderNumber(Float number);
-
-	/**
-	 * Provides rendering for specified double number.
-	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
-	 */
-	public String renderNumber(Double number);
+	public boolean isEmpty();
 }

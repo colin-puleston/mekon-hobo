@@ -36,66 +36,66 @@ class Assertion {
 
 	static private final String FRAME_NODE_NAME_FORMAT = "%s-F%d";
 
-	private TFactory factory;
+	private OTFactory factory;
 	private String baseURI;
 
 	private class GraphRenderer extends InstanceRenderer {
 
-		private TGraph graph = factory.createGraph();
+		private OTGraph graph = factory.createGraph();
 
-		TGraph render(ORFrame instance) {
+		OTGraph render(ORFrame instance) {
 
 			renderFrame(instance);
 
 			return graph;
 		}
 
-		TURI renderFrame(int index) {
+		OT_URI renderFrame(int index) {
 
 			return getFrameNode(index);
 		}
 
-		TURI renderURI(String uri) {
+		OT_URI renderURI(String uri) {
 
 			return factory.getURI(uri);
 		}
 
-		TNumber renderNumber(Integer number) {
+		OTNumber renderNumber(Integer number) {
 
 			return factory.getNumber(number);
 		}
 
-		TNumber renderNumber(Long number) {
+		OTNumber renderNumber(Long number) {
 
 			return factory.getNumber(number);
 		}
 
-		TNumber renderNumber(Float number) {
+		OTNumber renderNumber(Float number) {
 
 			return factory.getNumber(number);
 		}
 
-		TNumber renderNumber(Double number) {
+		OTNumber renderNumber(Double number) {
 
 			return factory.getNumber(number);
 		}
 
-		TValue renderNumberMin(TNumber value) {
+		OTValue renderNumberMin(OTNumber value) {
 
 			throw createIndefiniteNumberException();
 		}
 
-		TValue renderNumberMax(TNumber value) {
+		OTValue renderNumberMax(OTNumber value) {
 
 			throw createIndefiniteNumberException();
 		}
 
-		void renderTriple(TURI subject, TURI predicate, TValue object) {
+		void renderTriple(OT_URI subject, OT_URI predicate, OTValue object) {
 
 			graph.add(subject, predicate, object);
 		}
 
-		void renderUnion(TURI subject, TURI predicate, Set<TValue> objects) {
+		void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects) {
 
 			throw createBadConstructException("frames with disjunction types");
 		}
@@ -113,7 +113,7 @@ class Assertion {
 		}
 	}
 
-	Assertion(TFactory factory, String baseURI) {
+	Assertion(OTFactory factory, String baseURI) {
 
 		this.factory = factory;
 		this.baseURI = baseURI;
@@ -129,9 +129,9 @@ class Assertion {
 		for (int i = 0 ; removeSubGraph(getFrameNode(i)) ; i++);
 	}
 
-	private boolean removeSubGraph(TURI subject) {
+	private boolean removeSubGraph(OT_URI subject) {
 
-		TGraph graph = factory.createFind().execute(subject);
+		OTGraph graph = new FindQuery(factory).execute(subject);
 
 		if (graph.isEmpty()) {
 
@@ -143,7 +143,7 @@ class Assertion {
 		return true;
 	}
 
-	private TURI getFrameNode(int index) {
+	private OT_URI getFrameNode(int index) {
 
 		return factory.getURI(getFrameNodeURI(index));
 	}

@@ -30,35 +30,21 @@ package uk.ac.manchester.cs.mekon.owl.reason.triples;
  *
  * @author Colin Puleston
  */
-public interface TFactory {
+public interface OTFactory {
 
 	/**
-	 * Creates empty graph object
+	 * Creates empty graph object.
 	 *
 	 * @return Created graph
 	 */
-	public TGraph createGraph();
+	public OTGraph createGraph();
 
 	/**
-	 * Creates object for executing match query.
+	 * Creates object for executing SPARQL query.
 	 *
-	 * @return Created match query
+	 * @return Created query
 	 */
-	public TMatch createMatch();
-
-	/**
-	 * Creates object for executing matches query.
-	 *
-	 * @return Created matches query
-	 */
-	public TMatches createMatches();
-
-	/**
-	 * Creates object for executing find query.
-	 *
-	 * @return Created find query
-	 */
-	public TFind createFind();
+	public OTQuery createQuery();
 
 	/**
 	 * Provides representation of the specified URI.
@@ -66,7 +52,7 @@ public interface TFactory {
 	 * @param uri URI to be represented
 	 * @return Representation of specified URI
 	 */
-	public TURI getURI(String uri);
+	public OT_URI getURI(String uri);
 
 	/**
 	 * Provides representation of the specified integer number.
@@ -74,7 +60,7 @@ public interface TFactory {
 	 * @param number Number to be represented
 	 * @return Representation of specified number
 	 */
-	public TNumber getNumber(Integer number);
+	public OTNumber getNumber(Integer number);
 
 	/**
 	 * Provides representation of the specified float number.
@@ -82,7 +68,7 @@ public interface TFactory {
 	 * @param number Number to be represented
 	 * @return Representation of specified number
 	 */
-	public TNumber getNumber(Float number);
+	public OTNumber getNumber(Float number);
 
 	/**
 	 * Provides representation of the specified long number.
@@ -90,7 +76,7 @@ public interface TFactory {
 	 * @param number Number to be represented
 	 * @return Representation of specified number
 	 */
-	public TNumber getNumber(Long number);
+	public OTNumber getNumber(Long number);
 
 	/**
 	 * Provides representation of the specified double number.
@@ -98,5 +84,5 @@ public interface TFactory {
 	 * @param number Number to be represented
 	 * @return Representation of specified number
 	 */
-	public TNumber getNumber(Double number);
+	public OTNumber getNumber(Double number);
 }

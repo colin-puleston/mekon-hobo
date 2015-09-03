@@ -24,17 +24,39 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason.triples;
 
+import java.util.*;
+
 /**
- * Represents a URI used in a triple.
+ * Represents a particular SPARQL query.
  *
  * @author Colin Puleston
  */
-public interface TURI extends TValue {
+public interface OTQuery {
 
 	/**
-	 * Provides string representation of the URI.
+	 * Provides the object that is responsible for managing the
+	 * constants for the query.
 	 *
-	 * @return String representation of URI
+	 * @return Manager for queries constants
 	 */
-	public String getURI();
+	public OTQueryConstants getConstants();
+
+	/**
+	 * Executes an "ask" query.
+	 *
+	 * @param query String representation of SPARQL query to execute
+	 * @return Result of query execution
+	 */
+	public boolean executeAsk(String query);
+
+	/**
+	 * Executes a "select" query and returns a list containing each
+	 * resulting set of bindings, with each set being represented via
+	 * a list of bound values, ordered according to the position of
+	 * the corresponding variables in the query-string.
+	 *
+	 * @param query String representation of SPARQL query to execute
+	 * @return Result of query execution
+	 */
+	public List<List<OTValue>> executeSelect(String query);
 }

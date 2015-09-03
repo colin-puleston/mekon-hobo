@@ -47,10 +47,10 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 	private StringBuilder statements = new StringBuilder();
 	private StringBuilder filters = new StringBuilder();
 
-	private TQueryConstants constants;
+	private OTQueryConstants constants;
 	private int limitCount = 0;
 
-	MatchingQueryRenderer(TQueryConstants constants) {
+	MatchingQueryRenderer(OTQueryConstants constants) {
 
 		this.constants = constants;
 	}
@@ -62,63 +62,63 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 		return createQuery(getQueryBody());
 	}
 
-	TURI renderFrame(int index) {
+	OT_URI renderFrame(int index) {
 
 		return index == 0
 				? getRootFrameNode()
 				: new QueryValue(getFrameVariable(index));
 	}
 
-	TURI renderURI(String uri) {
+	OT_URI renderURI(String uri) {
 
 		return new QueryValue(constants.renderURI(uri));
 	}
 
-	TNumber renderNumber(Integer number) {
+	OTNumber renderNumber(Integer number) {
 
 		return new QueryValue(constants.renderNumber(number));
 	}
 
-	TNumber renderNumber(Long number) {
+	OTNumber renderNumber(Long number) {
 
 		return new QueryValue(constants.renderNumber(number));
 	}
 
-	TNumber renderNumber(Float number) {
+	OTNumber renderNumber(Float number) {
 
 		return new QueryValue(constants.renderNumber(number));
 	}
 
-	TNumber renderNumber(Double number) {
+	OTNumber renderNumber(Double number) {
 
 		return new QueryValue(constants.renderNumber(number));
 	}
 
-	TValue renderNumberMin(TNumber value) {
+	OTValue renderNumberMin(OTNumber value) {
 
 		return renderNumberLimit(MIN_OPERATOR, value);
 	}
 
-	TValue renderNumberMax(TNumber value) {
+	OTValue renderNumberMax(OTNumber value) {
 
 		return renderNumberLimit(MAX_OPERATOR, value);
 	}
 
-	void renderTriple(TURI subject, TURI predicate, TValue object) {
+	void renderTriple(OT_URI subject, OT_URI predicate, OTValue object) {
 
 		statements.append(getSimpleTripleString(subject, predicate, object));
 	}
 
-	void renderUnion(TURI subject, TURI predicate, Set<TValue> objects) {
+	void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects) {
 
 		statements.append(getUnionString(subject, predicate, objects));
 	}
 
-	abstract TURI getRootFrameNode();
+	abstract OT_URI getRootFrameNode();
 
 	abstract String createQuery(String queryBody);
 
-	private TValue renderNumberLimit(String op, TNumber value) {
+	private OTValue renderNumberLimit(String op, OTNumber value) {
 
 		String var = getNextLimitVariable();
 
@@ -128,13 +128,13 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 	}
 
 	private String getUnionString(
-						TURI subject,
-						TURI predicate,
-						Set<TValue> objects) {
+						OT_URI subject,
+						OT_URI predicate,
+						Set<OTValue> objects) {
 
 		StringBuilder union = new StringBuilder();
 
-		for (TValue object : objects) {
+		for (OTValue object : objects) {
 
 			if (union.length() != 0) {
 
@@ -150,26 +150,26 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 	}
 
 	private String getUnionTripleString(
-						TURI subject,
-						TURI predicate,
-						TValue object) {
+						OT_URI subject,
+						OT_URI predicate,
+						OTValue object) {
 
 		return getTripleString(UNION_TRIPLE_FORMAT, subject, predicate, object);
 	}
 
 	private String getSimpleTripleString(
-						TURI subject,
-						TURI predicate,
-						TValue object) {
+						OT_URI subject,
+						OT_URI predicate,
+						OTValue object) {
 
 		return getTripleString(SIMPLE_TRIPLE_FORMAT, subject, predicate, object);
 	}
 
 	private String getTripleString(
 						String format,
-						TURI subject,
-						TURI predicate,
-						TValue object) {
+						OT_URI subject,
+						OT_URI predicate,
+						OTValue object) {
 
 		return String.format(
 						format,
@@ -198,7 +198,7 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 		return String.format(LIMIT_VARIABLE_FORMAT, limitCount++);
 	}
 
-	private String renderValue(TValue value) {
+	private String renderValue(OTValue value) {
 
 		return ((QueryValue)value).render();
 	}

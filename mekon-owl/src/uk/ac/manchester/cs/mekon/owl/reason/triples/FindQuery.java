@@ -24,56 +24,58 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason.triples;
 
+import java.util.*;
+
+import org.semanticweb.owlapi.vocab.*;
+
 /**
- * Responsible for executing "find" queries, retrieving all
- * triples from the database that have a specified subject.
- *
  * @author Colin Puleston
  */
-public abstract class TFind {
+class FindQuery {
 
 	static private final String QUERY_FORMAT = "SELECT ?p ?o WHERE {%s ?p ?o}";
 
-	private TQueryConstants constants;
+	private OTFactory factory;
+	private OTQuery selectQuery;
 
-	/**
-	 * Constructor
-	 *
-	 * @param constants Object for representing of the constants for
-	 * the query
-	 */
-	protected TFind(TQueryConstants constants) {
+	FindQuery(OTFactory factory) {
 
-		this.constants = constants;
+		this.factory = factory;
+
+		selectQuery = factory.createQuery();
 	}
 
-	/**
-	 * Abstract method whose implementations should execute the
-	 * specified SPARQL "select" query, and return a graph composed
-	 * of a set of triples composed from the specified subject,
-	 * together with each of a set of predicate/object pairs as
-	 * retrieved from the resulting collection of binding-sets,
-	 * each of which will contain a pair of bindings, representing
-	 * a predicate followed by an object.
-	 *
-	 * @param query SPARQL select-query to execute
-	 * @return Graph composed of all triples from database with
-	 * specified subject
-	 */
-	protected abstract TGraph execute(String query, TURI subject);
-
-	TGraph execute(TURI subject) {
+	OTGraph execute(OT_URI subject) {
 
 		return execute(renderQuery(subject), subject);
 	}
 
-	private String renderQuery(TURI subject) {
+	private OTGraph execute(String query, OT_URI subject) {
+
+		OTGraph graph = factory.createGraph();
+
+		for (List<OTValue> bindings : selectQuery.executeSelect(query)) {
+
+			OTValue object = bindings.get(1);
+
+			if (!object.equals(OWLRDFVocabulary.OWL_THING)) {
+
+				OT_URI predicate = (OT_URI)bindings.get(0);
+
+				graph.add(subject, predicate, object);
+			}
+		}
+
+		return graph;
+	}
+
+	private String renderQuery(OT_URI subject) {
 
 		return String.format(QUERY_FORMAT, renderSubject(subject));
 	}
 
-	private String renderSubject(TURI subject) {
+	private String renderSubject(OT_URI subject) {
 
-		return constants.renderURI(subject.getURI());
+		return selectQuery.getConstants().renderURI(subject.getURI());
 	}
 }
