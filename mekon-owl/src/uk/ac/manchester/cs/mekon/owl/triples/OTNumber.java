@@ -22,41 +22,12 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
+ * Represents a number used as an object in a triple.
+ *
  * @author Colin Puleston
  */
-class AssertionURIs {
-
-	static private final String NAMESPACE = "urn:mekon-stardog";
-
-	static private final String BASE_FRAGMENT_PREFIX = "G";
-	static private final String BASE_FRAGMENT_FORMAT = BASE_FRAGMENT_PREFIX + "%d";
-	static private final int BASE_COMMON_LENGTH = getBaseURICommonLength();
-
-	static String getBaseURI(int assertionIndex) {
-
-		return getURI(getBaseURIFragment(assertionIndex));
-	}
-
-	static int extractAssertionIndex(String baseURI) {
-
-		return Integer.parseInt(baseURI.substring(BASE_COMMON_LENGTH));
-	}
-
-	static private String getBaseURIFragment(int assertionIndex) {
-
-		return String.format(BASE_FRAGMENT_FORMAT, assertionIndex);
-	}
-
-	static private int getBaseURICommonLength() {
-
-		return getURI(BASE_FRAGMENT_PREFIX).length();
-	}
-
-	static private String getURI(String fragment) {
-
-		return NAMESPACE + "#" + fragment;
-	}
+public interface OTNumber extends OTValue {
 }

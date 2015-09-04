@@ -22,28 +22,48 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
+package uk.ac.manchester.cs.mekon.owl.triples;
+
+import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryValue implements OT_URI, OTNumber {
+class MatchesQuery {
 
-	private String valueAsString;
+	private OTQuery askQuery;
 
-	public String getURI() {
+	private class Renderer extends MatchingQueryRenderer {
 
-		return valueAsString;
+		static private final String QUERY_FORMAT = "ASK %s";
+
+		private OT_URI rootFrameNode;
+
+		Renderer(String baseURI) {
+
+			super(askQuery.getConstants());
+
+			rootFrameNode = renderURI(baseURI);
+		}
+
+		OT_URI getRootFrameNode() {
+
+			return rootFrameNode;
+		}
+
+		String createQuery(String queryBody) {
+
+			return String.format(QUERY_FORMAT, queryBody);
+		}
 	}
 
-	QueryValue(String valueAsString) {
+	MatchesQuery(OTFactory factory) {
 
-		this.valueAsString = valueAsString;
+		askQuery = factory.createQuery();
 	}
 
-	String render() {
+	boolean execute(ORFrame query, String baseURI) {
 
-		return valueAsString;
+		return askQuery.executeAsk(new Renderer(baseURI).render(query));
 	}
 }
-

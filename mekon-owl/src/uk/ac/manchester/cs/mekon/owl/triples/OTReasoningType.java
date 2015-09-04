@@ -22,41 +22,49 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
-import java.util.*;
+import org.semanticweb.owlapi.model.*;
 
 /**
- * Represents a particular SPARQL query.
+ * XXX
  *
  * @author Colin Puleston
  */
-public interface OTQuery {
+public enum OTReasoningType {
 
 	/**
-	 * Provides the object that is responsible for managing the
-	 * constants for the query.
-	 *
-	 * @return Manager for queries constants
+	 * XXX
 	 */
-	public OTQueryConstants getConstants();
+	RDFS {
+
+		boolean requiredAxiom(OWLAxiom axiom) {
+
+			return RDFSChecker.get().valid(axiom);
+		}
+	},
 
 	/**
-	 * Executes an "ask" query.
-	 *
-	 * @param query String representation of SPARQL query to execute
-	 * @return Result of query execution
+	 * XXX
 	 */
-	public boolean executeAsk(String query);
+	EL {
+
+		boolean requiredAxiom(OWLAxiom axiom) {
+
+			return ELChecker.get().valid(axiom);
+		}
+	},
 
 	/**
-	 * Executes a "select" query and returns a list containing each
-	 * resulting set of bindings, with each set being represented via
-	 * a list of bound values, ordered according to the position of
-	 * the corresponding variables in the query-string.
-	 *
-	 * @param query String representation of SPARQL query to execute
-	 * @return Result of query execution
+	 * XXX
 	 */
-	public List<List<OTValue>> executeSelect(String query);
+	DL {
+
+		boolean requiredAxiom(OWLAxiom axiom) {
+
+			return true;
+		}
+	};
+
+	abstract boolean requiredAxiom(OWLAxiom axiom);
 }

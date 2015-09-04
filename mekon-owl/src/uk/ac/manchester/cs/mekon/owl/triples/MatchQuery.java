@@ -22,48 +22,62 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
  */
-class MatchesQuery {
+class MatchQuery {
 
-	private OTQuery askQuery;
+	private OTQuery selectQuery;
 
 	private class Renderer extends MatchingQueryRenderer {
 
-		static private final String QUERY_FORMAT = "ASK %s";
+		static private final String ROOT_FRAME_VARIABLE = "?f";
+		static private final String QUERY_FORMAT = "SELECT %s\nWHERE %s";
 
-		private OT_URI rootFrameNode;
+		Renderer() {
 
-		Renderer(String baseURI) {
-
-			super(askQuery.getConstants());
-
-			rootFrameNode = renderURI(baseURI);
+			super(selectQuery.getConstants());
 		}
 
 		OT_URI getRootFrameNode() {
 
-			return rootFrameNode;
+			return new QueryValue(ROOT_FRAME_VARIABLE);
 		}
 
 		String createQuery(String queryBody) {
 
-			return String.format(QUERY_FORMAT, queryBody);
+			return String.format(QUERY_FORMAT, ROOT_FRAME_VARIABLE, queryBody);
 		}
 	}
 
-	MatchesQuery(OTFactory factory) {
+	MatchQuery(OTFactory factory) {
 
-		askQuery = factory.createQuery();
+		selectQuery = factory.createQuery();
 	}
 
-	boolean execute(ORFrame query, String baseURI) {
+	List<CIdentity> execute(Store store, ORFrame query) {
 
-		return askQuery.executeAsk(new Renderer(baseURI).render(query));
+		List<CIdentity> ids = new ArrayList<CIdentity>();
+
+		for (List<OTValue> bindings : execute(query)) {
+
+			OT_URI baseURI = (OT_URI)bindings.get(0);
+
+			ids.add(store.baseURIToId(baseURI.getURI()));
+		}
+
+		return ids;
+	}
+
+	private List<List<OTValue>> execute(ORFrame query) {
+
+		return selectQuery.executeSelect(new Renderer().render(query));
 	}
 }

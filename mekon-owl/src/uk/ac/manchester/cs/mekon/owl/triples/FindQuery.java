@@ -22,12 +22,60 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
+package uk.ac.manchester.cs.mekon.owl.triples;
+
+import java.util.*;
+
+import org.semanticweb.owlapi.vocab.*;
 
 /**
- * Represents a value used in a triple, either a URI or a number.
- *
  * @author Colin Puleston
  */
-public interface OTValue {
+class FindQuery {
+
+	static private final String QUERY_FORMAT = "SELECT ?p ?o WHERE {%s ?p ?o}";
+
+	private OTFactory factory;
+	private OTQuery selectQuery;
+
+	FindQuery(OTFactory factory) {
+
+		this.factory = factory;
+
+		selectQuery = factory.createQuery();
+	}
+
+	OTGraph execute(OT_URI subject) {
+
+		return execute(renderQuery(subject), subject);
+	}
+
+	private OTGraph execute(String query, OT_URI subject) {
+
+		OTGraph graph = factory.createGraph();
+
+		for (List<OTValue> bindings : selectQuery.executeSelect(query)) {
+
+			OTValue object = bindings.get(1);
+
+			if (!object.equals(OWLRDFVocabulary.OWL_THING)) {
+
+				OT_URI predicate = (OT_URI)bindings.get(0);
+
+				graph.add(subject, predicate, object);
+			}
+		}
+
+		return graph;
+	}
+
+	private String renderQuery(OT_URI subject) {
+
+		return String.format(QUERY_FORMAT, renderSubject(subject));
+	}
+
+	private String renderSubject(OT_URI subject) {
+
+		return selectQuery.getConstants().renderURI(subject.getURI());
+	}
 }

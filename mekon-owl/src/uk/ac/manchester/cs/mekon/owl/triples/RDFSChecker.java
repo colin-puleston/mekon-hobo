@@ -22,12 +22,48 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
+package uk.ac.manchester.cs.mekon.owl.triples;
+
+import org.semanticweb.owlapi.model.*;
 
 /**
- * Represents a number used as an object in a triple.
- *
  * @author Colin Puleston
  */
-public interface OTNumber extends OTValue {
+class RDFSChecker {
+
+	static private final RDFSChecker singleton = new RDFSChecker();
+
+	static RDFSChecker get() {
+
+		return singleton;
+	}
+
+	boolean valid(OWLAxiom axiom) {
+
+		if (axiom instanceof OWLDeclarationAxiom) {
+
+			return true;
+		}
+
+		if (axiom instanceof OWLSubClassOfAxiom) {
+
+			return valid((OWLSubClassOfAxiom)axiom);
+		}
+
+		return false;
+	}
+
+	private RDFSChecker() {
+	}
+
+	private boolean valid(OWLSubClassOfAxiom axiom) {
+
+		return namedClass(axiom.getSubClass())
+				&& namedClass(axiom.getSuperClass());
+	}
+
+	private boolean namedClass(OWLClassExpression expr) {
+
+		return expr instanceof OWLClass;
+	}
 }

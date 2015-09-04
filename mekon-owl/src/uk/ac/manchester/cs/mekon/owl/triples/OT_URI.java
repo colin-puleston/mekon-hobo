@@ -22,38 +22,19 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
- * REpresents a triples graphs
+ * Represents a URI used in a triple.
  *
  * @author Colin Puleston
  */
-public interface OTGraph {
+public interface OT_URI extends OTValue {
 
 	/**
-	 * Adds a triple to the graph.
+	 * Provides string representation of the URI.
 	 *
-	 * @param subject Subject of triple
-	 * @param predicate Predicate of triple
-	 * @param object Object of triple
+	 * @return String representation of URI
 	 */
-	public void add(OT_URI subject, OT_URI predicate, OTValue object);
-
-	/**
-	 * Adds each triple in the graph to the triple store.
-	 */
-	public void addToStore();
-
-	/**
-	 * Removes each triple in the graph from the triple store.
-	 */
-	public void removeFromStore();
-
-	/**
-	 * Tests whether the graph is empty.
-	 *
-	 * @return True if empty
-	 */
-	public boolean isEmpty();
+	public String getURI();
 }

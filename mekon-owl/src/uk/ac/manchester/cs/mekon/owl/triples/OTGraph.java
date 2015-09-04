@@ -22,60 +22,38 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
-
-import java.util.*;
-
-import org.semanticweb.owlapi.vocab.*;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
+ * REpresents a triples graphs
+ *
  * @author Colin Puleston
  */
-class FindQuery {
+public interface OTGraph {
 
-	static private final String QUERY_FORMAT = "SELECT ?p ?o WHERE {%s ?p ?o}";
+	/**
+	 * Adds a triple to the graph.
+	 *
+	 * @param subject Subject of triple
+	 * @param predicate Predicate of triple
+	 * @param object Object of triple
+	 */
+	public void add(OT_URI subject, OT_URI predicate, OTValue object);
 
-	private OTFactory factory;
-	private OTQuery selectQuery;
+	/**
+	 * Adds each triple in the graph to the triple store.
+	 */
+	public void addToStore();
 
-	FindQuery(OTFactory factory) {
+	/**
+	 * Removes each triple in the graph from the triple store.
+	 */
+	public void removeFromStore();
 
-		this.factory = factory;
-
-		selectQuery = factory.createQuery();
-	}
-
-	OTGraph execute(OT_URI subject) {
-
-		return execute(renderQuery(subject), subject);
-	}
-
-	private OTGraph execute(String query, OT_URI subject) {
-
-		OTGraph graph = factory.createGraph();
-
-		for (List<OTValue> bindings : selectQuery.executeSelect(query)) {
-
-			OTValue object = bindings.get(1);
-
-			if (!object.equals(OWLRDFVocabulary.OWL_THING)) {
-
-				OT_URI predicate = (OT_URI)bindings.get(0);
-
-				graph.add(subject, predicate, object);
-			}
-		}
-
-		return graph;
-	}
-
-	private String renderQuery(OT_URI subject) {
-
-		return String.format(QUERY_FORMAT, renderSubject(subject));
-	}
-
-	private String renderSubject(OT_URI subject) {
-
-		return selectQuery.getConstants().renderURI(subject.getURI());
-	}
+	/**
+	 * Tests whether the graph is empty.
+	 *
+	 * @return True if empty
+	 */
+	public boolean isEmpty();
 }

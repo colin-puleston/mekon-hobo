@@ -22,62 +22,28 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.triples;
-
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
  * @author Colin Puleston
  */
-class MatchQuery {
+class QueryValue implements OT_URI, OTNumber {
 
-	private OTQuery selectQuery;
+	private String valueAsString;
 
-	private class Renderer extends MatchingQueryRenderer {
+	public String getURI() {
 
-		static private final String ROOT_FRAME_VARIABLE = "?f";
-		static private final String QUERY_FORMAT = "SELECT %s\nWHERE %s";
-
-		Renderer() {
-
-			super(selectQuery.getConstants());
-		}
-
-		OT_URI getRootFrameNode() {
-
-			return new QueryValue(ROOT_FRAME_VARIABLE);
-		}
-
-		String createQuery(String queryBody) {
-
-			return String.format(QUERY_FORMAT, ROOT_FRAME_VARIABLE, queryBody);
-		}
+		return valueAsString;
 	}
 
-	MatchQuery(OTFactory factory) {
+	QueryValue(String valueAsString) {
 
-		selectQuery = factory.createQuery();
+		this.valueAsString = valueAsString;
 	}
 
-	List<CIdentity> execute(Store store, ORFrame query) {
+	String render() {
 
-		List<CIdentity> ids = new ArrayList<CIdentity>();
-
-		for (List<OTValue> bindings : execute(query)) {
-
-			OT_URI baseURI = (OT_URI)bindings.get(0);
-
-			ids.add(store.baseURIToId(baseURI.getURI()));
-		}
-
-		return ids;
-	}
-
-	private List<List<OTValue>> execute(ORFrame query) {
-
-		return selectQuery.executeSelect(new Renderer().render(query));
+		return valueAsString;
 	}
 }
+
