@@ -37,7 +37,11 @@ import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * XXX
+ * Responsible for consolidating into a single ontology all
+ * constructs from the relevant source ontologies that are
+ * relevant to the type of reasoning that the matcher is required
+ * to perform. The available reasoning-type options are specified
+ * via the {@link OTReasoningType} enum.
  *
  * @author Colin Puleston
  */
@@ -51,7 +55,11 @@ public class OTOntology {
 	private OWLOntology ontology;
 
 	/**
-	 * XXX
+	 * Constructor.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param reasoningType Type of reasoning that the matcher
+	 * is to perform
 	 */
 	public OTOntology(OModel model, OTReasoningType reasoningType) {
 
@@ -63,7 +71,9 @@ public class OTOntology {
 	}
 
 	/**
-	 * XXX
+	 * Provides the ontology that is to be used by the matcher.
+	 *
+	 * @return Ontology for matcher
 	 */
 	public OWLOntology get() {
 
@@ -71,7 +81,11 @@ public class OTOntology {
 	}
 
 	/**
-	 * XXX
+	 * Renders the ontology that is to be used by the matcher to
+	 * file in OWL-RDF format.
+	 *
+	 * @return File containing OWL-RDF rendering of ontology for
+	 * matcher
 	 */
 	public File renderToTempFile() {
 

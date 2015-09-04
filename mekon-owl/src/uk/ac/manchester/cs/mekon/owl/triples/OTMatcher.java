@@ -40,7 +40,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  * emptied or removed on termination.
  * <p>
  * This is an abstract class each of whose extensions will provide
- * an implementation specific to a particular type of triple store.
+ * an implementation for a particular type of triple store.
  *
  * @author Colin Puleston
  */

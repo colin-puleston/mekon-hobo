@@ -24,47 +24,15 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
-import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
- * Specifies the type of reasoning that a matcher is to perform.
+ * Vocabulary used in the MEKON configuration file in the
+ * definition sections for extensions of {@link OTMatcher}.
  *
  * @author Colin Puleston
  */
-public enum OTReasoningType {
+public interface OTConfigVocab extends ORConfigVocab {
 
-	/**
-	 * RDFS type reasoning.
-	 */
-	RDFS {
-
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return RDFSChecker.get().valid(axiom);
-		}
-	},
-
-	/**
-	 * OWL-EL type reasoning.
-	 */
-	EL {
-
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return ELChecker.get().valid(axiom);
-		}
-	},
-
-	/**
-	 * OWL-DL type reasoning.
-	 */
-	DL {
-
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return true;
-		}
-	};
-
-	abstract boolean requiredAxiom(OWLAxiom axiom);
+	static public final String REASONING_TYPE_ATTR = "reasoningType";
 }
