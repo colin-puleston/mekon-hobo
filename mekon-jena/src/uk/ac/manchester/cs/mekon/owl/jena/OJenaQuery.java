@@ -22,63 +22,75 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.jena;
+package uk.ac.manchester.cs.mekon.owl.jena;
 
-import java.net.*;
 import java.util.*;
 
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.query.*;
 
-import uk.ac.manchester.cs.mekon.owl.reason.triples.*;
+import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
-class OTJenaGraph implements OTGraph {
+class OJenaQuery implements OTQuery {
 
 	private Model model;
-	private List<Statement> statements = new ArrayList<Statement>();
+	private OJenaQueryConstants constants;
 
-	public void add(OT_URI subject, OT_URI predicate, OTValue object) {
+	public OTQueryConstants getConstants() {
 
-		OTJenaValue s = (OTJenaValue)subject;
-		OTJenaValue p = (OTJenaValue)predicate;
-		OTJenaValue o = (OTJenaValue)object;
-
-		add(s.extractResource(), p.extractResource(), o.extractNode());
+		return constants;
 	}
 
-	public void addToStore() {
+	public boolean executeAsk(String query) {
 
-		model.add(statements);
+		return createExecution(query).execAsk();
 	}
 
-	public void removeFromStore() {
+	public List<List<OTValue>> executeSelect(String query) {
 
-		model.remove(statements);
+		List<List<OTValue>> bindingSets = new ArrayList<List<OTValue>>();
+		ResultSet resultSet = createExecution(query).execSelect();
+
+		while (resultSet.hasNext()) {
+
+			bindingSets.add(getBindingSet(resultSet.next()));
+		}
+
+		return bindingSets;
 	}
 
-	public boolean isEmpty() {
-
-		return statements.isEmpty();
-	}
-
-	OTJenaGraph(Model model) {
+	OJenaQuery(Model model) {
 
 		this.model = model;
+
+		constants = new OJenaQueryConstants(model);
 	}
 
-	private void add(Resource subject, Resource predicate, RDFNode object) {
+	private QueryExecution createExecution(String query) {
 
-		statements.add(model.createStatement(subject, asProperty(predicate), object));
+		return createExecution(QueryFactory.create(query));
 	}
 
-	private Property asProperty(Resource resource) {
+	private QueryExecution createExecution(Query query) {
 
-		String uri = resource.getURI();
-		String fragment = URI.create(uri).getFragment();
-		String namespace = uri.substring(0, uri.length() - fragment.length());
+		return QueryExecutionFactory.create(query, model, constants.getMap());
+	}
 
-		return model.createProperty(namespace, fragment);
+	private List<OTValue> getBindingSet(QuerySolution solution) {
+
+		List<OTValue> bindingSet = new ArrayList<OTValue>();
+		Iterator<String> vars = solution.varNames();
+
+		while (vars.hasNext()) {
+
+			RDFNode binding = solution.get(vars.next());
+
+			bindingSet.add(new OJenaValue(binding));
+		}
+
+		return bindingSet;
 	}
 }

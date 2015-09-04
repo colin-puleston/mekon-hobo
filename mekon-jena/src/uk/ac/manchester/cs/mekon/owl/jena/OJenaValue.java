@@ -22,59 +22,42 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.jena;
+package uk.ac.manchester.cs.mekon.owl.jena;
 
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.query.*;
 
-import uk.ac.manchester.cs.mekon.owl.reason.triples.*;
+import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
-class OTJenaQueryConstants extends OTQueryParameters<RDFNode> {
+class OJenaValue implements OT_URI, OTNumber {
 
-	private Model model;
+	private RDFNode value;
 
-	protected RDFNode uriToConstant(String uri) {
+	public String getURI() {
 
-		return model.createResource(uri);
+		return extractResource().getURI();
 	}
 
-	protected RDFNode numberToConstant(Integer number) {
+	OJenaValue(RDFNode value) {
 
-		return model.createTypedLiteral(number);
+		this.value = value;
 	}
 
-	protected RDFNode numberToConstant(Long number) {
+	RDFNode extractNode() {
 
-		return model.createTypedLiteral(number);
+		return get(RDFNode.class);
 	}
 
-	protected RDFNode numberToConstant(Float number) {
+	Resource extractResource() {
 
-		return model.createTypedLiteral(number);
+		return get(Resource.class);
 	}
 
-	protected RDFNode numberToConstant(Double number) {
+	private <V extends RDFNode>V get(Class<V> type) {
 
-		return model.createTypedLiteral(number);
-	}
-
-	OTJenaQueryConstants(Model model) {
-
-		this.model = model;
-	}
-
-	QuerySolutionMap getMap() {
-
-		QuerySolutionMap map = new QuerySolutionMap();
-
-		for (RDFNode constant : getConstants()) {
-
-			map.add(getVariableName(constant), constant);
-		}
-
-		return map;
+		return type.cast(value);
 	}
 }
+

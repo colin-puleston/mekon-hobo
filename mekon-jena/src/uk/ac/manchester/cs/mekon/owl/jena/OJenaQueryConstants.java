@@ -22,75 +22,59 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.jena;
-
-import java.util.*;
+package uk.ac.manchester.cs.mekon.owl.jena;
 
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.query.*;
 
-import uk.ac.manchester.cs.mekon.owl.reason.triples.*;
+import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
-class OTJenaQuery implements OTQuery {
+class OJenaQueryConstants extends OTQueryParameters<RDFNode> {
 
 	private Model model;
-	private OTJenaQueryConstants constants;
 
-	public OTQueryConstants getConstants() {
+	protected RDFNode uriToConstant(String uri) {
 
-		return constants;
+		return model.createResource(uri);
 	}
 
-	public boolean executeAsk(String query) {
+	protected RDFNode numberToConstant(Integer number) {
 
-		return createExecution(query).execAsk();
+		return model.createTypedLiteral(number);
 	}
 
-	public List<List<OTValue>> executeSelect(String query) {
+	protected RDFNode numberToConstant(Long number) {
 
-		List<List<OTValue>> bindingSets = new ArrayList<List<OTValue>>();
-		ResultSet resultSet = createExecution(query).execSelect();
-
-		while (resultSet.hasNext()) {
-
-			bindingSets.add(getBindingSet(resultSet.next()));
-		}
-
-		return bindingSets;
+		return model.createTypedLiteral(number);
 	}
 
-	OTJenaQuery(Model model) {
+	protected RDFNode numberToConstant(Float number) {
+
+		return model.createTypedLiteral(number);
+	}
+
+	protected RDFNode numberToConstant(Double number) {
+
+		return model.createTypedLiteral(number);
+	}
+
+	OJenaQueryConstants(Model model) {
 
 		this.model = model;
-
-		constants = new OTJenaQueryConstants(model);
 	}
 
-	private QueryExecution createExecution(String query) {
+	QuerySolutionMap getMap() {
 
-		return createExecution(QueryFactory.create(query));
-	}
+		QuerySolutionMap map = new QuerySolutionMap();
 
-	private QueryExecution createExecution(Query query) {
+		for (RDFNode constant : getConstants()) {
 
-		return QueryExecutionFactory.create(query, model, constants.getMap());
-	}
-
-	private List<OTValue> getBindingSet(QuerySolution solution) {
-
-		List<OTValue> bindingSet = new ArrayList<OTValue>();
-		Iterator<String> vars = solution.varNames();
-
-		while (vars.hasNext()) {
-
-			RDFNode binding = solution.get(vars.next());
-
-			bindingSet.add(new OTJenaValue(binding));
+			map.add(getVariableName(constant), constant);
 		}
 
-		return bindingSet;
+		return map;
 	}
 }

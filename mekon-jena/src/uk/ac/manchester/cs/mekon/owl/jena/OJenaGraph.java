@@ -22,56 +22,63 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.jena;
+package uk.ac.manchester.cs.mekon.owl.jena;
+
+import java.net.*;
+import java.util.*;
 
 import org.apache.jena.rdf.model.*;
 
-import uk.ac.manchester.cs.mekon.owl.reason.triples.*;
+import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
-class OTJenaFactory implements OTFactory {
+class OJenaGraph implements OTGraph {
 
 	private Model model;
+	private List<Statement> statements = new ArrayList<Statement>();
 
-	public OTGraph createGraph() {
+	public void add(OT_URI subject, OT_URI predicate, OTValue object) {
 
-		return new OTJenaGraph(model);
+		OJenaValue s = (OJenaValue)subject;
+		OJenaValue p = (OJenaValue)predicate;
+		OJenaValue o = (OJenaValue)object;
+
+		add(s.extractResource(), p.extractResource(), o.extractNode());
 	}
 
-	public OTQuery createQuery() {
+	public void addToStore() {
 
-		return new OTJenaQuery(model);
+		model.add(statements);
 	}
 
-	public OT_URI getURI(String uri) {
+	public void removeFromStore() {
 
-		return new OTJenaValue(model.createResource(uri));
+		model.remove(statements);
 	}
 
-	public OTNumber getNumber(Integer number) {
+	public boolean isEmpty() {
 
-		return new OTJenaValue(model.createTypedLiteral(number));
+		return statements.isEmpty();
 	}
 
-	public OTNumber getNumber(Long number) {
-
-		return new OTJenaValue(model.createTypedLiteral(number));
-	}
-
-	public OTNumber getNumber(Float number) {
-
-		return new OTJenaValue(model.createTypedLiteral(number));
-	}
-
-	public OTNumber getNumber(Double number) {
-
-		return new OTJenaValue(model.createTypedLiteral(number));
-	}
-
-	OTJenaFactory(Model model) {
+	OJenaGraph(Model model) {
 
 		this.model = model;
+	}
+
+	private void add(Resource subject, Resource predicate, RDFNode object) {
+
+		statements.add(model.createStatement(subject, asProperty(predicate), object));
+	}
+
+	private Property asProperty(Resource resource) {
+
+		String uri = resource.getURI();
+		String fragment = URI.create(uri).getFragment();
+		String namespace = uri.substring(0, uri.length() - fragment.length());
+
+		return model.createProperty(namespace, fragment);
 	}
 }

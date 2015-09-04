@@ -22,42 +22,56 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.jena;
+package uk.ac.manchester.cs.mekon.owl.jena;
 
 import org.apache.jena.rdf.model.*;
 
-import uk.ac.manchester.cs.mekon.owl.reason.triples.*;
+import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
-class OTJenaValue implements OT_URI, OTNumber {
+class OJenaFactory implements OTFactory {
 
-	private RDFNode value;
+	private Model model;
 
-	public String getURI() {
+	public OTGraph createGraph() {
 
-		return extractResource().getURI();
+		return new OJenaGraph(model);
 	}
 
-	OTJenaValue(RDFNode value) {
+	public OTQuery createQuery() {
 
-		this.value = value;
+		return new OJenaQuery(model);
 	}
 
-	RDFNode extractNode() {
+	public OT_URI getURI(String uri) {
 
-		return get(RDFNode.class);
+		return new OJenaValue(model.createResource(uri));
 	}
 
-	Resource extractResource() {
+	public OTNumber getNumber(Integer number) {
 
-		return get(Resource.class);
+		return new OJenaValue(model.createTypedLiteral(number));
 	}
 
-	private <V extends RDFNode>V get(Class<V> type) {
+	public OTNumber getNumber(Long number) {
 
-		return type.cast(value);
+		return new OJenaValue(model.createTypedLiteral(number));
+	}
+
+	public OTNumber getNumber(Float number) {
+
+		return new OJenaValue(model.createTypedLiteral(number));
+	}
+
+	public OTNumber getNumber(Double number) {
+
+		return new OJenaValue(model.createTypedLiteral(number));
+	}
+
+	OJenaFactory(Model model) {
+
+		this.model = model;
 	}
 }
-
