@@ -27,55 +27,20 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Specifies the type of reasoning that a matcher is to perform.
- *
  * @author Colin Puleston
  */
-public enum OTReasoningType {
+class TransitiveChecker extends ReasoningTypeChecker {
 
-	/**
-	 * Simple transitive type reasoning.
-	 */
-	TRANSITIVE {
+	static private final TransitiveChecker singleton = new TransitiveChecker();
 
-		boolean requiredAxiom(OWLAxiom axiom) {
+	static TransitiveChecker get() {
 
-			return TransitiveChecker.get().valid(axiom);
-		}
-	},
+		return singleton;
+	}
 
-	/**
-	 * RDFS type reasoning.
-	 */
-	RDFS {
+	TransitiveChecker() {
 
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return RDFSChecker.get().valid(axiom);
-		}
-	},
-
-	/**
-	 * OWL-EL type reasoning.
-	 */
-	EL {
-
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return ELChecker.get().valid(axiom);
-		}
-	},
-
-	/**
-	 * OWL-DL type reasoning.
-	 */
-	DL {
-
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return true;
-		}
-	};
-
-	abstract boolean requiredAxiom(OWLAxiom axiom);
+		addValidAxiomType(OWLSubObjectPropertyOfAxiom.class);
+		addValidAxiomType(OWLSubDataPropertyOfAxiom.class);
+	}
 }

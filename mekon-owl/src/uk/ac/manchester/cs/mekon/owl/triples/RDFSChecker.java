@@ -29,7 +29,7 @@ import org.semanticweb.owlapi.model.*;
 /**
  * @author Colin Puleston
  */
-class RDFSChecker {
+class RDFSChecker extends TransitiveChecker {
 
 	static private final RDFSChecker singleton = new RDFSChecker();
 
@@ -38,32 +38,11 @@ class RDFSChecker {
 		return singleton;
 	}
 
-	boolean valid(OWLAxiom axiom) {
-
-		if (axiom instanceof OWLDeclarationAxiom) {
-
-			return true;
-		}
-
-		if (axiom instanceof OWLSubClassOfAxiom) {
-
-			return valid((OWLSubClassOfAxiom)axiom);
-		}
-
-		return false;
-	}
-
 	private RDFSChecker() {
-	}
 
-	private boolean valid(OWLSubClassOfAxiom axiom) {
-
-		return namedClass(axiom.getSubClass())
-				&& namedClass(axiom.getSuperClass());
-	}
-
-	private boolean namedClass(OWLClassExpression expr) {
-
-		return expr instanceof OWLClass;
+		addValidAxiomType(OWLObjectPropertyDomainAxiom.class);
+		addValidAxiomType(OWLObjectPropertyRangeAxiom.class);
+		addValidAxiomType(OWLDataPropertyDomainAxiom.class);
+		addValidAxiomType(OWLDataPropertyRangeAxiom.class);
 	}
 }

@@ -58,7 +58,7 @@ class FindQuery {
 
 			OTValue object = bindings.get(1);
 
-			if (!object.equals(OWLRDFVocabulary.OWL_THING)) {
+			if (!isOWLThing(object)) {
 
 				OT_URI predicate = (OT_URI)bindings.get(0);
 
@@ -77,5 +77,17 @@ class FindQuery {
 	private String renderSubject(OT_URI subject) {
 
 		return selectQuery.getConstants().renderURI(subject.getURI());
+	}
+
+	private boolean isOWLThing(OTValue value) {
+
+		if (value instanceof OT_URI) {
+
+			OT_URI uri = (OT_URI)value;
+
+			return uri.getURI().equals(OWLRDFVocabulary.OWL_THING);
+		}
+
+		return false;
 	}
 }

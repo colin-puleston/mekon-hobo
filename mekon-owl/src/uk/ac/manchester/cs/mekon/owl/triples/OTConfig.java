@@ -38,20 +38,10 @@ public class OTConfig implements OTConfigVocab {
 	private OTReasoningType reasoningType;
 
 	/**
-	 * Specifies the type of reasoning required from the matcher.
-	 *
-	 * @param reasoningType Type of reasoning required from matcher
-	 */
-	public OTReasoningType getReasoningType() {
-
-		return reasoningType;
-	}
-
-	/**
 	 * Constructs configuration for matcher with default
 	 * reasoning-type.
 	 */
-	protected OTConfig() {
+	public OTConfig() {
 
 		this(DEFAULT_REASONING_TYPE);
 	}
@@ -62,7 +52,7 @@ public class OTConfig implements OTConfigVocab {
 	 *
 	 * @param reasoningType Type of reasoning required from matcher
 	 */
-	protected OTConfig(OTReasoningType reasoningType) {
+	public OTConfig(OTReasoningType reasoningType) {
 
 		this.reasoningType = reasoningType;
 	}
@@ -75,9 +65,19 @@ public class OTConfig implements OTConfigVocab {
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
 	 */
-	protected OTConfig(KConfigNode parentConfigNode) {
+	public OTConfig(KConfigNode parentConfigNode) {
 
 		reasoningType = getReasoningType(parentConfigNode);
+	}
+
+	/**
+	 * Specifies the type of reasoning required from the matcher.
+	 *
+	 * @param reasoningType Type of reasoning required from matcher
+	 */
+	public OTReasoningType getReasoningType() {
+
+		return reasoningType;
 	}
 
 	private OTReasoningType getReasoningType(KConfigNode parentConfigNode) {

@@ -24,14 +24,12 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
-import java.util.*;
-
 import org.semanticweb.owlapi.model.*;
 
 /**
  * @author Colin Puleston
  */
-class ELChecker {
+class ELChecker extends ReasoningTypeChecker {
 
 	static private final ELChecker singleton = new ELChecker();
 
@@ -40,171 +38,26 @@ class ELChecker {
 		return singleton;
 	}
 
-	private Set<Class<? extends OWLAxiom>> axiomTypes
-					= new HashSet<Class<? extends OWLAxiom>>();
-
-	private Set<AxiomFilter<?>> axiomFilters = new HashSet<AxiomFilter<?>>();
-
-	private Set<Class<? extends OWLClassExpression>> classExprTypes
-					= new HashSet<Class<? extends OWLClassExpression>>();
-
-
-	private abstract class AxiomFilter<A extends OWLAxiom> {
-
-		boolean filterFor(OWLAxiom axiom) {
-
-			return getAxiomType().isAssignableFrom(axiom.getClass());
-		}
-
-		boolean pass(OWLAxiom axiom) {
-
-			return !filterOut(getAxiomType().cast(axiom));
-		}
-
-		abstract Class<A> getAxiomType();
-
-		abstract boolean filterOut(A axiom);
-	}
-
-	private class SubClassAxiomFilter
-					extends
-						AxiomFilter<OWLSubClassOfAxiom> {
-
-		Class<OWLSubClassOfAxiom> getAxiomType() {
-
-			return OWLSubClassOfAxiom.class;
-		}
-
-		boolean filterOut(OWLSubClassOfAxiom axiom) {
-
-			return axiom.getSubClass().isBottomEntity()
-					|| axiom.getSuperClass().isTopEntity();
-		}
-	}
-
-	private abstract class SubPropertyAxiomFilter
-								<A extends OWLSubPropertyAxiom<?>>
-								extends AxiomFilter<A> {
-
-		boolean filterOut(A axiom) {
-
-			return axiom.getSubProperty().isBottomEntity()
-					|| axiom.getSuperProperty().isTopEntity();
-		}
-	}
-
-	private class SubObjectPropertyAxiomFilter
-					extends
-						SubPropertyAxiomFilter<OWLSubObjectPropertyOfAxiom> {
-
-		Class<OWLSubObjectPropertyOfAxiom> getAxiomType() {
-
-			return OWLSubObjectPropertyOfAxiom.class;
-		}
-	}
-
-	private class SubDataPropertyAxiomFilter
-					extends
-						SubPropertyAxiomFilter<OWLSubDataPropertyOfAxiom> {
-
-		Class<OWLSubDataPropertyOfAxiom> getAxiomType() {
-
-			return OWLSubDataPropertyOfAxiom.class;
-		}
-	}
-
-	boolean valid(OWLAxiom axiom) {
-
-		return validAxiomType(axiom)
-				&& passesAxiomFilters(axiom)
-				&& validClassExprTypes(axiom);
-	}
-
 	private ELChecker() {
 
-		axiomTypes.add(OWLDeclarationAxiom.class);
-		axiomTypes.add(OWLSubClassOfAxiom.class);
-		axiomTypes.add(OWLEquivalentClassesAxiom.class);
-		axiomTypes.add(OWLDisjointClassesAxiom.class);
-		axiomTypes.add(OWLSubObjectPropertyOfAxiom.class);
-		axiomTypes.add(OWLSubDataPropertyOfAxiom.class);
-		axiomTypes.add(OWLEquivalentObjectPropertiesAxiom.class);
-		axiomTypes.add(OWLEquivalentDataPropertiesAxiom.class);
-		axiomTypes.add(OWLTransitiveObjectPropertyAxiom.class);
-		axiomTypes.add(OWLReflexiveObjectPropertyAxiom.class);
-		axiomTypes.add(OWLObjectPropertyDomainAxiom.class);
-		axiomTypes.add(OWLDataPropertyDomainAxiom.class);
-		axiomTypes.add(OWLObjectPropertyRangeAxiom.class);
-		axiomTypes.add(OWLDataPropertyRangeAxiom.class);
-		axiomTypes.add(OWLSameIndividualAxiom.class);
-		axiomTypes.add(OWLDifferentIndividualsAxiom.class);
-		axiomTypes.add(OWLClassAssertionAxiom.class);
-		axiomTypes.add(OWLObjectPropertyAssertionAxiom.class);
-		axiomTypes.add(OWLDataPropertyAssertionAxiom.class);
-		axiomTypes.add(OWLNegativeObjectPropertyAssertionAxiom.class);
-		axiomTypes.add(OWLNegativeDataPropertyAssertionAxiom.class);
-		axiomTypes.add(OWLFunctionalDataPropertyAxiom.class);
+		addValidAxiomType(OWLEquivalentClassesAxiom.class);
+		addValidAxiomType(OWLDisjointClassesAxiom.class);
+		addValidAxiomType(OWLEquivalentObjectPropertiesAxiom.class);
+		addValidAxiomType(OWLEquivalentDataPropertiesAxiom.class);
+		addValidAxiomType(OWLTransitiveObjectPropertyAxiom.class);
+		addValidAxiomType(OWLReflexiveObjectPropertyAxiom.class);
+		addValidAxiomType(OWLSameIndividualAxiom.class);
+		addValidAxiomType(OWLDifferentIndividualsAxiom.class);
+		addValidAxiomType(OWLNegativeObjectPropertyAssertionAxiom.class);
+		addValidAxiomType(OWLNegativeDataPropertyAssertionAxiom.class);
+		addValidAxiomType(OWLFunctionalDataPropertyAxiom.class);
 
-		axiomFilters.add(new SubClassAxiomFilter());
-		axiomFilters.add(new SubObjectPropertyAxiomFilter());
-		axiomFilters.add(new SubDataPropertyAxiomFilter());
-
-		classExprTypes.add(OWLClass.class);
-		classExprTypes.add(OWLObjectSomeValuesFrom.class);
-		classExprTypes.add(OWLDataSomeValuesFrom.class);
-		classExprTypes.add(OWLObjectHasValue.class);
-		classExprTypes.add(OWLDataHasValue.class);
-		classExprTypes.add(OWLObjectHasSelf.class);
-		classExprTypes.add(OWLObjectOneOf.class);
-		classExprTypes.add(OWLObjectIntersectionOf.class);
-	}
-
-	private boolean validAxiomType(OWLAxiom axiom) {
-
-		return validType(axiomTypes, axiom);
-	}
-
-	private boolean passesAxiomFilters(OWLAxiom axiom) {
-
-		for (AxiomFilter<?> filter : axiomFilters) {
-
-			if (filter.filterFor(axiom)) {
-
-				return filter.pass(axiom);
-			}
-		}
-
-		return true;
-	}
-
-	private boolean validClassExprTypes(OWLAxiom axiom) {
-
-		return validTypes(classExprTypes, axiom.getNestedClassExpressions());
-	}
-
-	private <T>boolean validTypes(Set<Class<? extends T>> valids, Set<T> tests) {
-
-		for (T test : tests) {
-
-			if (!validType(valids, test)) {
-
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private <T>boolean validType(Set<Class<? extends T>> valids, T test) {
-
-		for (Class<? extends T> valid : valids) {
-
-			if (valid.isAssignableFrom(test.getClass())) {
-
-				return true;
-			}
-		}
-
-		return false;
+		addValidClassExprType(OWLObjectSomeValuesFrom.class);
+		addValidClassExprType(OWLDataSomeValuesFrom.class);
+		addValidClassExprType(OWLObjectHasValue.class);
+		addValidClassExprType(OWLDataHasValue.class);
+		addValidClassExprType(OWLObjectHasSelf.class);
+		addValidClassExprType(OWLObjectOneOf.class);
+		addValidClassExprType(OWLObjectIntersectionOf.class);
 	}
 }
