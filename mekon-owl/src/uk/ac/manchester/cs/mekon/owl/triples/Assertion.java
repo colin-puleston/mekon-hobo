@@ -39,7 +39,7 @@ class Assertion {
 	private OTFactory factory;
 	private String baseURI;
 
-	private class GraphRenderer extends InstanceRenderer {
+	private class GraphRenderer extends InstanceRenderer<OT_URI> {
 
 		private OTGraph graph = factory.createGraph();
 
@@ -53,31 +53,6 @@ class Assertion {
 		OT_URI renderFrame(int index) {
 
 			return getFrameNode(index);
-		}
-
-		OT_URI renderURI(String uri) {
-
-			return factory.getURI(uri);
-		}
-
-		OTNumber renderNumber(Integer number) {
-
-			return factory.getNumber(number);
-		}
-
-		OTNumber renderNumber(Long number) {
-
-			return factory.getNumber(number);
-		}
-
-		OTNumber renderNumber(Float number) {
-
-			return factory.getNumber(number);
-		}
-
-		OTNumber renderNumber(Double number) {
-
-			return factory.getNumber(number);
 		}
 
 		OTValue renderNumberMin(OTNumber value) {
@@ -145,7 +120,7 @@ class Assertion {
 
 	private OT_URI getFrameNode(int index) {
 
-		return factory.getURI(getFrameNodeURI(index));
+		return new OT_URI(getFrameNodeURI(index));
 	}
 
 	private String getFrameNodeURI(int index) {

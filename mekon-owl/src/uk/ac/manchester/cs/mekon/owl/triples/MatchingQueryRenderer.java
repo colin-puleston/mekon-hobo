@@ -26,12 +26,13 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class MatchingQueryRenderer extends InstanceRenderer {
+abstract class MatchingQueryRenderer extends InstanceRenderer<QueryVariable> {
 
 	static private final String FRAME_VARIABLE_FORMAT = "?f%d";
 	static private final String UNION_TRIPLE_FORMAT = "{%s %s %s}";
@@ -62,36 +63,11 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 		return createQuery(getQueryBody());
 	}
 
-	OT_URI renderFrame(int index) {
+	QueryVariable renderFrame(int index) {
 
 		return index == 0
 				? getRootFrameNode()
-				: new QueryValue(getFrameVariable(index));
-	}
-
-	OT_URI renderURI(String uri) {
-
-		return new QueryValue(constants.renderURI(uri));
-	}
-
-	OTNumber renderNumber(Integer number) {
-
-		return new QueryValue(constants.renderNumber(number));
-	}
-
-	OTNumber renderNumber(Long number) {
-
-		return new QueryValue(constants.renderNumber(number));
-	}
-
-	OTNumber renderNumber(Float number) {
-
-		return new QueryValue(constants.renderNumber(number));
-	}
-
-	OTNumber renderNumber(Double number) {
-
-		return new QueryValue(constants.renderNumber(number));
+				: new QueryVariable(getFrameVariable(index));
 	}
 
 	OTValue renderNumberMin(OTNumber value) {
@@ -104,17 +80,27 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 		return renderNumberLimit(MAX_OPERATOR, value);
 	}
 
-	void renderTriple(OT_URI subject, OT_URI predicate, OTValue object) {
+	void renderTriple(QueryVariable subject, OT_URI predicate, OTValue object) {
 
 		statements.append(getSimpleTripleString(subject, predicate, object));
 	}
 
-	void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects) {
+	void renderUnion(QueryVariable subject, OT_URI predicate, Set<OTValue> objects) {
 
 		statements.append(getUnionString(subject, predicate, objects));
 	}
 
-	abstract OT_URI getRootFrameNode();
+	OT_URI renderURI(String uri) {
+
+		return registerConstant(super.renderURI(uri));
+	}
+
+	OTNumber renderDefiniteNumber(INumber number) {
+
+		return registerConstant(super.renderDefiniteNumber(number));
+	}
+
+	abstract QueryVariable getRootFrameNode();
 
 	abstract String createQuery(String queryBody);
 
@@ -124,11 +110,18 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 
 		filters.append(getLimitFilterString(var, op, renderValue(value)));
 
-		return new QueryValue(var);
+		return new QueryVariable(var);
+	}
+
+	private <V extends OTValue>V registerConstant(V value) {
+
+		constants.register(value);
+
+		return value;
 	}
 
 	private String getUnionString(
-						OT_URI subject,
+						QueryVariable subject,
 						OT_URI predicate,
 						Set<OTValue> objects) {
 
@@ -150,7 +143,7 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 	}
 
 	private String getUnionTripleString(
-						OT_URI subject,
+						QueryVariable subject,
 						OT_URI predicate,
 						OTValue object) {
 
@@ -158,7 +151,7 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 	}
 
 	private String getSimpleTripleString(
-						OT_URI subject,
+						QueryVariable subject,
 						OT_URI predicate,
 						OTValue object) {
 
@@ -167,7 +160,7 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 
 	private String getTripleString(
 						String format,
-						OT_URI subject,
+						QueryVariable subject,
 						OT_URI predicate,
 						OTValue object) {
 
@@ -200,6 +193,6 @@ abstract class MatchingQueryRenderer extends InstanceRenderer {
 
 	private String renderValue(OTValue value) {
 
-		return ((QueryValue)value).render();
+		return value.getQueryRendering(constants);
 	}
 }

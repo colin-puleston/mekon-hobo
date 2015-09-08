@@ -35,65 +35,88 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceRenderer {
+abstract class InstanceRenderer<FN extends OTValue> {
+
+	private FrameSlotValuesRenderer frameValuesRenderer = new FrameSlotValuesRenderer();
+	private NumberSlotValuesRenderer numberValuesRenderer = new NumberSlotValuesRenderer();
 
 	private int frameCount = 0;
 
-	private class NumberSlotValuesRenderer {
+	private abstract class SlotValuesRenderer<V> {
 
-		private OT_URI frameNode;
-		private OT_URI slotPredicate;
+		void render(FN frameNode, Set<? extends ORSlot<V>> slots) {
 
-		NumberSlotValuesRenderer(OT_URI frameNode, ORNumberSlot slot) {
+			for (ORSlot<V> slot : slots) {
 
-			this.frameNode = frameNode;
+				if (slot.mapsToOWLEntity() && !slot.getValues().isEmpty()) {
 
-			slotPredicate = renderEntityType(slot);
-
-			for (INumber value : slot.getValues()) {
-
-				renderValue(value);
+					renderValues(frameNode, slot);
+				}
 			}
 		}
 
-		private void renderValue(INumber value) {
+		abstract void renderValue(FN frameNode, OT_URI predicate, V value);
+
+		private void renderValues(FN frameNode, ORSlot<V> slot) {
+
+			OT_URI predicate = renderEntityType(slot);
+
+			for (V value : slot.getValues()) {
+
+				renderValue(frameNode, predicate, value);
+			}
+		}
+	}
+
+	private class FrameSlotValuesRenderer extends SlotValuesRenderer<ORFrame> {
+
+		void renderValue(FN frameNode, OT_URI predicate, ORFrame value) {
+
+			renderTriple(frameNode, predicate, renderFrame(value));
+		}
+	}
+
+	private class NumberSlotValuesRenderer extends SlotValuesRenderer<INumber> {
+
+		void renderValue(FN frameNode, OT_URI predicate, INumber value) {
 
 			if (value.indefinite()) {
 
-				renderRange(value.getType());
+				renderRange(frameNode, predicate, value.getType());
 			}
 			else {
 
-				renderTriple(renderDefiniteNumber(value));
+				renderTriple(frameNode, predicate, renderDefiniteNumber(value));
 			}
 		}
 
-		private void renderRange(CNumber range) {
+		private void renderRange(FN frameNode, OT_URI predicate, CNumber range) {
 
 			if (range.hasMin()) {
 
-				OTNumber min = renderDefiniteNumber(range.getMin());
-
-				renderTriple(renderNumberMin(min));
+				renderTriple(frameNode, predicate, renderMin(range.getMin()));
 			}
 
 			if (range.hasMax()) {
 
-				OTNumber max = renderDefiniteNumber(range.getMax());
-
-				renderTriple(renderNumberMax(max));
+				renderTriple(frameNode, predicate, renderMax(range.getMax()));
 			}
 		}
 
-		private void renderTriple(OTValue value) {
+		private OTValue renderMin(INumber min) {
 
-			InstanceRenderer.this.renderTriple(frameNode, slotPredicate, value);
+			return renderNumberMin(renderDefiniteNumber(min));
+		}
+
+		private OTValue renderMax(INumber max) {
+
+			return renderNumberMax(renderDefiniteNumber(max));
 		}
 	}
 
-	OT_URI renderFrame(ORFrame frame) {
+	FN renderFrame(ORFrame frame) {
 
-		OT_URI frameNode = renderFrame(frameCount++);
+		FN frameNode = renderFrame(frameCount++);
 
 		checkRenderType(frame, frameNode);
 		renderSlotValues(frame, frameNode);
@@ -101,27 +124,27 @@ abstract class InstanceRenderer {
 		return frameNode;
 	}
 
-	abstract OT_URI renderFrame(int index);
-
-	abstract OT_URI renderURI(String uri);
-
-	abstract OTNumber renderNumber(Integer number);
-
-	abstract OTNumber renderNumber(Long number);
-
-	abstract OTNumber renderNumber(Float number);
-
-	abstract OTNumber renderNumber(Double number);
+	abstract FN renderFrame(int index);
 
 	abstract OTValue renderNumberMin(OTNumber value);
 
 	abstract OTValue renderNumberMax(OTNumber value);
 
-	abstract void renderTriple(OT_URI subject, OT_URI predicate, OTValue object);
+	abstract void renderTriple(FN subject, OT_URI predicate, OTValue object);
 
-	abstract void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects);
+	abstract void renderUnion(FN subject, OT_URI predicate, Set<OTValue> objects);
 
-	private void checkRenderType(ORFrame frame, OT_URI frameNode) {
+	OT_URI renderURI(String uri) {
+
+		return new OT_URI(uri);
+	}
+
+	OTNumber renderDefiniteNumber(INumber number) {
+
+		return new OTNumber(number.asTypeNumber());
+	}
+
+	private void checkRenderType(ORFrame frame, FN frameNode) {
 
 		OT_URI typePredicate = renderURI(RDFConstants.RDF_TYPE);
 
@@ -135,33 +158,10 @@ abstract class InstanceRenderer {
 		}
 	}
 
-	private void renderSlotValues(ORFrame frame, OT_URI frameNode) {
+	private void renderSlotValues(ORFrame frame, FN frameNode) {
 
-		for (ORFrameSlot slot : frame.getFrameSlots()) {
-
-			if (slot.mapsToOWLEntity()) {
-
-				renderFrameSlotValues(frameNode, slot);
-			}
-		}
-
-		for (ORNumberSlot slot : frame.getNumberSlots()) {
-
-			if (slot.mapsToOWLEntity()) {
-
-				new NumberSlotValuesRenderer(frameNode, slot);
-			}
-		}
-	}
-
-	private void renderFrameSlotValues(OT_URI frameNode, ORFrameSlot slot) {
-
-		OT_URI slotPredicate = renderEntityType(slot);
-
-		for (ORFrame value : slot.getValues()) {
-
-			renderTriple(frameNode, slotPredicate, renderFrame(value));
-		}
+		frameValuesRenderer.render(frameNode, frame.getFrameSlots());
+		numberValuesRenderer.render(frameNode, frame.getNumberSlots());
 	}
 
 	private Set<OTValue> renderFrameTypeDisjuncts(ORFrame frame) {
@@ -179,31 +179,6 @@ abstract class InstanceRenderer {
 	private OT_URI renderEntityType(ORFramesEntity entity) {
 
 		return renderURI(entity.getIRI());
-	}
-
-	private OTNumber renderDefiniteNumber(INumber number) {
-
-		if (number.hasNumberType(Integer.class)) {
-
-			return renderNumber(number.asInteger());
-		}
-
-		if (number.hasNumberType(Long.class)) {
-
-			return renderNumber(number.asLong());
-		}
-
-		if (number.hasNumberType(Float.class)) {
-
-			return renderNumber(number.asFloat());
-		}
-
-		if (number.hasNumberType(Double.class)) {
-
-			return renderNumber(number.asDouble());
-		}
-
-		throw new Error("Unexpected number-type: " + number.getNumberType());
 	}
 
 	private OT_URI renderURI(IRI iri) {

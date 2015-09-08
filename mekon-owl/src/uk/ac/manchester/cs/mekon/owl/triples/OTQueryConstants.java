@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
+import java.util.*;
+
 /**
  * Responsible for managing the constants for a particular
  * SPARQL query that is being constructed. For each constant,
@@ -32,48 +34,69 @@ package uk.ac.manchester.cs.mekon.owl.triples;
  * rendering of a variable that will represent the constant in
  * the initial version of the query-string prior to being
  * replaced via a pre-execution substitution operation.
+ * XXX
+ * Abstract implementation of {@link OTQueryConstants} that
+ * provides renderings of variables to represent the constants
+ * in the initial version of the query-string, with extension
+ * classes being responsible for implementing the required
+ * pre-execution substitution operations.
  *
  * @author Colin Puleston
  */
-public interface OTQueryConstants {
+public class OTQueryConstants {
+
+	static private final String VARIABLE_NAME_FORMAT = "c%d";
+	static private final String VARIABLE_RENDER_FORMAT = "?%s";
+
+	private Map<OTValue, String> toVarNames = new HashMap<OTValue, String>();
+	private int count = 0;
 
 	/**
-	 * Provides rendering for specified URI.
+	 * Provides the complete set of constants.
 	 *
-	 * @param uri URI to be rendered
-	 * @return Rendering for URI
+	 * @return Set of constants
 	 */
-	public String renderURI(String uri);
+	public Set<OTValue> getConstants() {
+
+		return toVarNames.keySet();
+	}
 
 	/**
-	 * Provides rendering for specified integer number.
+	 * Gets the name of the variable that was generated to represent the
+	 * specified constant in the query string.
 	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
+	 * @param constant Constant for which variable was generated
+	 * @return Name of generated variable
 	 */
-	public String renderNumber(Integer number);
+	public String getVariableName(OTValue constant) {
 
-	/**
-	 * Provides rendering for specified long number.
-	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
-	 */
-	public String renderNumber(Long number);
+		return toVarNames.get(constant);
+	}
 
-	/**
-	 * Provides rendering for specified float number.
-	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
-	 */
-	public String renderNumber(Float number);
+	String getVariableRendering(OTValue constant) {
 
-	/**
-	 * Provides rendering for specified double number.
-	 *
-	 * @param number Number to be rendered
-	 * @return Rendering for number
-	 */
-	public String renderNumber(Double number);
+		return getVariableRendering(toVarNames.get(constant));
+	}
+
+	void register(OTValue constant) {
+
+		String varName = toVarNames.get(constant);
+
+		if (varName == null) {
+
+			varName = getNextVariableName();
+
+			toVarNames.put(constant, varName);
+		}
+	}
+
+	private String getNextVariableName() {
+
+		return String.format(VARIABLE_NAME_FORMAT, count++);
+	}
+
+	private String getVariableRendering(String varName) {
+
+		return String.format(VARIABLE_RENDER_FORMAT, varName);
+	}
 }

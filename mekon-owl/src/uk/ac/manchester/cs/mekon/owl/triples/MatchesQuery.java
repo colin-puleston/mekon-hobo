@@ -32,28 +32,34 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 class MatchesQuery {
 
 	private OTQuery askQuery;
+	private OTQueryConstants constants = new OTQueryConstants();
 
 	private class Renderer extends MatchingQueryRenderer {
 
 		static private final String QUERY_FORMAT = "ASK %s";
 
-		private OT_URI rootFrameNode;
+		private String baseURI;
 
 		Renderer(String baseURI) {
 
-			super(askQuery.getConstants());
+			super(constants);
 
-			rootFrameNode = renderURI(baseURI);
+			this.baseURI = baseURI;
 		}
 
-		OT_URI getRootFrameNode() {
+		QueryVariable getRootFrameNode() {
 
-			return rootFrameNode;
+			return new QueryVariable(getRootFrameNodeRendering());
 		}
 
 		String createQuery(String queryBody) {
 
 			return String.format(QUERY_FORMAT, queryBody);
+		}
+
+		private String getRootFrameNodeRendering() {
+
+			return constants.getVariableRendering(renderURI(baseURI));
 		}
 	}
 
@@ -64,6 +70,11 @@ class MatchesQuery {
 
 	boolean execute(ORFrame query, String baseURI) {
 
-		return askQuery.executeAsk(new Renderer(baseURI).render(query));
+		return askQuery.executeAsk(renderQuery(query, baseURI), constants);
+	}
+
+	private String renderQuery(ORFrame query, String baseURI) {
+
+		return new Renderer(baseURI).render(query);
 	}
 }

@@ -34,20 +34,13 @@ import java.util.*;
 public interface OTQuery {
 
 	/**
-	 * Provides the object that is responsible for managing the
-	 * constants for the query.
-	 *
-	 * @return Manager for queries constants
-	 */
-	public OTQueryConstants getConstants();
-
-	/**
 	 * Executes an "ask" query.
 	 *
 	 * @param query String representation of SPARQL query to execute
+	 * @param constants Constants for query.
 	 * @return Result of query execution
 	 */
-	public boolean executeAsk(String query);
+	public boolean executeAsk(String query, OTQueryConstants constants);
 
 	/**
 	 * Executes a "select" query and returns a list containing each
@@ -56,7 +49,8 @@ public interface OTQuery {
 	 * the corresponding variables in the query-string.
 	 *
 	 * @param query String representation of SPARQL query to execute
+	 * @param constants Constants for query.
 	 * @return Result of query execution
 	 */
-	public List<List<OTValue>> executeSelect(String query);
+	public List<List<OTValue>> executeSelect(String query, OTQueryConstants constants);
 }

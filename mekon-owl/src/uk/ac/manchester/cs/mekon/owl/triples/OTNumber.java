@@ -29,5 +29,15 @@ package uk.ac.manchester.cs.mekon.owl.triples;
  *
  * @author Colin Puleston
  */
-public interface OTNumber extends OTValue {
+public class OTNumber extends OTValue {
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Number value
+	 */
+	public OTNumber(Number number) {
+
+		super(number);
+	}
 }

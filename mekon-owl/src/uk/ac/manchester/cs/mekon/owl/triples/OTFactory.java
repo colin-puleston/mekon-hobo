@@ -45,44 +45,4 @@ public interface OTFactory {
 	 * @return Created query
 	 */
 	public OTQuery createQuery();
-
-	/**
-	 * Provides representation of the specified URI.
-	 *
-	 * @param uri URI to be represented
-	 * @return Representation of specified URI
-	 */
-	public OT_URI getURI(String uri);
-
-	/**
-	 * Provides representation of the specified integer number.
-	 *
-	 * @param number Number to be represented
-	 * @return Representation of specified number
-	 */
-	public OTNumber getNumber(Integer number);
-
-	/**
-	 * Provides representation of the specified float number.
-	 *
-	 * @param number Number to be represented
-	 * @return Representation of specified number
-	 */
-	public OTNumber getNumber(Float number);
-
-	/**
-	 * Provides representation of the specified long number.
-	 *
-	 * @param number Number to be represented
-	 * @return Representation of specified number
-	 */
-	public OTNumber getNumber(Long number);
-
-	/**
-	 * Provides representation of the specified double number.
-	 *
-	 * @param number Number to be represented
-	 * @return Representation of specified number
-	 */
-	public OTNumber getNumber(Double number);
 }

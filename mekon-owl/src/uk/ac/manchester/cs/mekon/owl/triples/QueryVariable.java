@@ -27,23 +27,19 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 /**
  * @author Colin Puleston
  */
-class QueryValue implements OT_URI, OTNumber {
+class QueryVariable extends OTValue {
 
-	private String valueAsString;
+	private String rendering;
 
-	public String getURI() {
+	QueryVariable(String rendering) {
 
-		return valueAsString;
+		super(null);
+
+		this.rendering = rendering;
 	}
 
-	QueryValue(String valueAsString) {
+	String getQueryRendering(OTQueryConstants constants) {
 
-		this.valueAsString = valueAsString;
-	}
-
-	String render() {
-
-		return valueAsString;
+		return rendering;
 	}
 }
-

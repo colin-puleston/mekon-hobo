@@ -29,5 +29,161 @@ package uk.ac.manchester.cs.mekon.owl.triples;
  *
  * @author Colin Puleston
  */
-public interface OTValue {
+public abstract class OTValue {
+
+	private Object value;
+
+	/**
+	 * Objects are equal if other object is of same type and represents
+	 * the same value.
+	 *
+	 * @param other Other object to test against
+	 * @return True if objects are equal
+	 */
+	public boolean equals(Object other) {
+
+		if (other instanceof OTValue) {
+
+			return value.equals(((OTValue)other).value);
+		}
+
+		return false;
+	}
+
+	/**
+	 */
+	public int hashCode() {
+
+		return value.hashCode();
+	}
+
+	/**
+	 * Tests whether value is a URI.
+	 *
+	 * @return True if value is URI
+	 */
+	public boolean isURI() {
+
+		return isValueType(String.class);
+	}
+
+	/**
+	 * Tests whether value is a integer.
+	 *
+	 * @return True if value is integer
+	 */
+	public boolean isInteger() {
+
+		return isValueType(Integer.class);
+	}
+
+	/**
+	 * Tests whether value is a long.
+	 *
+	 * @return True if value is long
+	 */
+	public boolean isLong() {
+
+		return isValueType(Long.class);
+	}
+
+	/**
+	 * Tests whether value is a float.
+	 *
+	 * @return True if value is float
+	 */
+	public boolean isFloat() {
+
+		return isValueType(Float.class);
+	}
+
+	/**
+	 * Tests whether value is a double.
+	 *
+	 * @return True if value is double
+	 */
+	public boolean isDouble() {
+
+		return isValueType(Double.class);
+	}
+
+	/**
+	 * Provides a rendering of the value as a string.
+	 *
+	 * @return String rendering of value
+	 */
+	public String asString() {
+
+		return value.toString();
+	}
+
+	/**
+	 * Provides string representation of URI value.
+	 *
+	 * @return String representation of URI value
+	 * @throws ClassCastException if not a URI value
+	 */
+	public String asURI() {
+
+		return (String)value;
+	}
+
+	/**
+	 * Provides integer value.
+	 *
+	 * @return Integer value
+	 * @throws ClassCastException if not a integer value
+	 */
+	public Integer asInteger() {
+
+		return (Integer)value;
+	}
+
+	/**
+	 * Provides long value.
+	 *
+	 * @return Long value
+	 * @throws ClassCastException if not a long value
+	 */
+	public Long asLong() {
+
+		return (Long)value;
+	}
+
+	/**
+	 * Provides float value.
+	 *
+	 * @return Float value
+	 * @throws ClassCastException if not a float value
+	 */
+	public Float asFloat() {
+
+		return (Float)value;
+	}
+
+	/**
+	 * Provides double value.
+	 *
+	 * @return Double value
+	 * @throws ClassCastException if not a double value
+	 */
+	public Double asDouble() {
+
+		return (Double)value;
+	}
+
+	OTValue(Object value) {
+
+		this.value = value;
+	}
+
+	String getQueryRendering(OTQueryConstants constants) {
+
+		return constants.getVariableRendering(this);
+	}
+
+	private boolean isValueType(Class<?> type) {
+
+		return value.getClass().equals(type);
+	}
 }

@@ -33,10 +33,13 @@ import org.semanticweb.owlapi.vocab.*;
  */
 class FindQuery {
 
+	static private final String OWL_THING_URI = OWLRDFVocabulary.OWL_THING.toString();
+
 	static private final String QUERY_FORMAT = "SELECT ?p ?o WHERE {%s ?p ?o}";
 
 	private OTFactory factory;
 	private OTQuery selectQuery;
+	private OTQueryConstants constants = new OTQueryConstants();
 
 	FindQuery(OTFactory factory) {
 
@@ -47,14 +50,9 @@ class FindQuery {
 
 	OTGraph execute(OT_URI subject) {
 
-		return execute(renderQuery(subject), subject);
-	}
-
-	private OTGraph execute(String query, OT_URI subject) {
-
 		OTGraph graph = factory.createGraph();
 
-		for (List<OTValue> bindings : selectQuery.executeSelect(query)) {
+		for (List<OTValue> bindings : executeSelect(subject)) {
 
 			OTValue object = bindings.get(1);
 
@@ -69,25 +67,20 @@ class FindQuery {
 		return graph;
 	}
 
-	private String renderQuery(OT_URI subject) {
+	private List<List<OTValue>> executeSelect(OT_URI subject) {
 
-		return String.format(QUERY_FORMAT, renderSubject(subject));
+		constants.register(subject);
+
+		return selectQuery.executeSelect(renderQuery(subject), constants);
 	}
 
-	private String renderSubject(OT_URI subject) {
+	private String renderQuery(OT_URI subject) {
 
-		return selectQuery.getConstants().renderURI(subject.getURI());
+		return String.format(QUERY_FORMAT, subject.getQueryRendering(constants));
 	}
 
 	private boolean isOWLThing(OTValue value) {
 
-		if (value instanceof OT_URI) {
-
-			OT_URI uri = (OT_URI)value;
-
-			return uri.getURI().equals(OWLRDFVocabulary.OWL_THING);
-		}
-
-		return false;
+		return value.isURI() && value.asURI().equals(OWL_THING_URI);
 	}
 }

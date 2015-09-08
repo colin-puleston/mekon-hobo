@@ -29,12 +29,15 @@ package uk.ac.manchester.cs.mekon.owl.triples;
  *
  * @author Colin Puleston
  */
-public interface OT_URI extends OTValue {
+public class OT_URI extends OTValue {
 
 	/**
-	 * Provides string representation of the URI.
+	 * Constructor.
 	 *
-	 * @return String representation of URI
+	 * @param String representation of URI value
 	 */
-	public String getURI();
+	public OT_URI(String uri) {
+
+		super(uri);
+	}
 }
