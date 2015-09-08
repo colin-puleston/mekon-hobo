@@ -45,31 +45,6 @@ class OJenaFactory implements OTFactory {
 		return new OJenaQuery(model);
 	}
 
-	public OT_URI getURI(String uri) {
-
-		return new OJenaValue(model.createResource(uri));
-	}
-
-	public OTNumber getNumber(Integer number) {
-
-		return new OJenaValue(model.createTypedLiteral(number));
-	}
-
-	public OTNumber getNumber(Long number) {
-
-		return new OJenaValue(model.createTypedLiteral(number));
-	}
-
-	public OTNumber getNumber(Float number) {
-
-		return new OJenaValue(model.createTypedLiteral(number));
-	}
-
-	public OTNumber getNumber(Double number) {
-
-		return new OJenaValue(model.createTypedLiteral(number));
-	}
-
 	OJenaFactory(Model model) {
 
 		this.model = model;

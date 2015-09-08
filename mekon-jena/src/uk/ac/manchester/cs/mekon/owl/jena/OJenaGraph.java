@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.jena;
 
-import java.net.*;
 import java.util.*;
 
 import org.apache.jena.rdf.model.*;
@@ -39,13 +38,11 @@ class OJenaGraph implements OTGraph {
 	private Model model;
 	private List<Statement> statements = new ArrayList<Statement>();
 
+	private ValueConverter valueConverter;
+
 	public void add(OT_URI subject, OT_URI predicate, OTValue object) {
 
-		OJenaValue s = (OJenaValue)subject;
-		OJenaValue p = (OJenaValue)predicate;
-		OJenaValue o = (OJenaValue)object;
-
-		add(s.extractResource(), p.extractResource(), o.extractNode());
+		statements.add(valueConverter.toStatement(subject, predicate, object));
 	}
 
 	public void addToStore() {
@@ -66,19 +63,7 @@ class OJenaGraph implements OTGraph {
 	OJenaGraph(Model model) {
 
 		this.model = model;
-	}
 
-	private void add(Resource subject, Resource predicate, RDFNode object) {
-
-		statements.add(model.createStatement(subject, asProperty(predicate), object));
-	}
-
-	private Property asProperty(Resource resource) {
-
-		String uri = resource.getURI();
-		String fragment = URI.create(uri).getFragment();
-		String namespace = uri.substring(0, uri.length() - fragment.length());
-
-		return model.createProperty(namespace, fragment);
+		valueConverter = new ValueConverter(model);
 	}
 }

@@ -37,26 +37,27 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
 class OJenaQuery implements OTQuery {
 
 	private Model model;
-	private OJenaQueryConstants constants;
 
-	public OTQueryConstants getConstants() {
+	private ValueConverter valueConverter;
 
-		return constants;
+	public boolean executeAsk(String query, OTQueryConstants constants) {
+
+		return createExecution(query, constants).execAsk();
 	}
 
-	public boolean executeAsk(String query) {
-
-		return createExecution(query).execAsk();
-	}
-
-	public List<List<OTValue>> executeSelect(String query) {
+	public List<List<OTValue>> executeSelect(String query, OTQueryConstants constants) {
 
 		List<List<OTValue>> bindingSets = new ArrayList<List<OTValue>>();
-		ResultSet resultSet = createExecution(query).execSelect();
+		ResultSet resultSet = createExecution(query, constants).execSelect();
 
 		while (resultSet.hasNext()) {
 
-			bindingSets.add(getBindingSet(resultSet.next()));
+			List<OTValue> set = getBindingSet(resultSet.next());
+
+			if (set != null) {
+
+				bindingSets.add(set);
+			}
 		}
 
 		return bindingSets;
@@ -66,17 +67,33 @@ class OJenaQuery implements OTQuery {
 
 		this.model = model;
 
-		constants = new OJenaQueryConstants(model);
+		valueConverter = new ValueConverter(model);
 	}
 
-	private QueryExecution createExecution(String query) {
+	private QueryExecution createExecution(String query, OTQueryConstants constants) {
 
-		return createExecution(QueryFactory.create(query));
+		return createExecution(QueryFactory.create(query), constants);
 	}
 
-	private QueryExecution createExecution(Query query) {
+	private QueryExecution createExecution(Query query, OTQueryConstants constants) {
 
-		return QueryExecutionFactory.create(query, model, constants.getMap());
+		QuerySolutionMap constantsMap = createConstantsMap(constants);
+
+		return QueryExecutionFactory.create(query, model, constantsMap);
+	}
+
+	private QuerySolutionMap createConstantsMap(OTQueryConstants constants) {
+
+		QuerySolutionMap map = new QuerySolutionMap();
+
+		for (OTValue constant : constants.getConstants()) {
+
+			String varName = constants.getVariableName(constant);
+
+			map.add(varName, valueConverter.convert(constant));
+		}
+
+		return map;
 	}
 
 	private List<OTValue> getBindingSet(QuerySolution solution) {
@@ -86,9 +103,15 @@ class OJenaQuery implements OTQuery {
 
 		while (vars.hasNext()) {
 
-			RDFNode binding = solution.get(vars.next());
+			RDFNode rawBinding = solution.get(vars.next());
+			OTValue binding = valueConverter.convertOrNull(rawBinding);
 
-			bindingSet.add(new OJenaValue(binding));
+			if (binding == null) {
+
+				return null;
+			}
+
+			bindingSet.add(binding);
 		}
 
 		return bindingSet;

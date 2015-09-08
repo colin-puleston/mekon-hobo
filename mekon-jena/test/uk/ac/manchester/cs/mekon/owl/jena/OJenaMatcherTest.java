@@ -24,57 +24,30 @@
 
 package uk.ac.manchester.cs.mekon.owl.jena;
 
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.query.*;
+import org.junit.After;
 
+import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
-class OJenaQueryConstants extends OTQueryParameters<RDFNode> {
+public class OJenaMatcherTest extends ORMatcherTest {
 
-	private Model model;
+	@After
+	public void clearUp() {
 
-	protected RDFNode uriToConstant(String uri) {
-
-		return model.createResource(uri);
+		OTMatcher.stopAll();
 	}
 
-	protected RDFNode numberToConstant(Integer number) {
+	protected ORMatcher createMatcher(OModel model) {
 
-		return model.createTypedLiteral(number);
+		return new OJenaMatcher(model, createConfig());
 	}
 
-	protected RDFNode numberToConstant(Long number) {
+	private OTConfig createConfig() {
 
-		return model.createTypedLiteral(number);
-	}
-
-	protected RDFNode numberToConstant(Float number) {
-
-		return model.createTypedLiteral(number);
-	}
-
-	protected RDFNode numberToConstant(Double number) {
-
-		return model.createTypedLiteral(number);
-	}
-
-	OJenaQueryConstants(Model model) {
-
-		this.model = model;
-	}
-
-	QuerySolutionMap getMap() {
-
-		QuerySolutionMap map = new QuerySolutionMap();
-
-		for (RDFNode constant : getConstants()) {
-
-			map.add(getVariableName(constant), constant);
-		}
-
-		return map;
+		return new OTConfig(OTReasoningType.TRANSITIVE);
 	}
 }
