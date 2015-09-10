@@ -79,20 +79,24 @@ class Store {
 		return idsToIndexes.containsKey(identity.getIdentifier());
 	}
 
-	CIdentity baseURIToId(String baseURI) {
-
-		return new CIdentity(indexesToIds.get(extractAssertionIndex(baseURI)));
-	}
-
 	List<CIdentity> match(ORFrame query) {
 
-		return new MatchQuery(factory).execute(this, query);
+		List<CIdentity> ids = new ArrayList<CIdentity>();
+
+		for (OT_URI uri : executeMatch(query)) {
+
+			ids.add(baseURIToId(extractBaseURI(uri.asURI())));
+		}
+
+		return ids;
 	}
 
 	boolean matches(ORFrame query, ORFrame instance) {
 
 		int assertionIndex = add(instance);
-		boolean result = matches(query, assertionIndex);
+		String baseURI = getBaseURI(assertionIndex);
+
+		boolean result = executeMatches(query, baseURI);
 
 		remove(assertionIndex);
 
@@ -113,9 +117,12 @@ class Store {
 		getAssertion(index).remove();
 	}
 
-	private boolean matches(ORFrame query, int assertionIndex) {
+	private List<OT_URI> executeMatch(ORFrame query) {
 
-		String baseURI = getBaseURI(assertionIndex);
+		return new MatchQuery(factory).execute(query);
+	}
+
+	private boolean executeMatches(ORFrame query, String baseURI) {
 
 		return new MatchesQuery(factory).execute(query, baseURI);
 	}
@@ -146,9 +153,19 @@ class Store {
 		}
 	}
 
+	private CIdentity baseURIToId(String baseURI) {
+
+		return new CIdentity(indexesToIds.get(extractAssertionIndex(baseURI)));
+	}
+
 	private String getBaseURI(int assertionIndex) {
 
 		return AssertionURIs.getBaseURI(assertionIndex);
+	}
+
+	private String extractBaseURI(String uri) {
+
+		return AssertionURIs.extractBaseURI(uri);
 	}
 
 	private int extractAssertionIndex(String baseURI) {

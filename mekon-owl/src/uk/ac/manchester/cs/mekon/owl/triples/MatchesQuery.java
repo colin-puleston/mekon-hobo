@@ -29,22 +29,17 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * @author Colin Puleston
  */
-class MatchesQuery {
+class MatchesQuery extends SpecificQuery {
 
-	private OTQuery askQuery;
-	private OTQueryConstants constants = new OTQueryConstants();
+	private class QueryBodyRenderer extends MatchingQueryBodyRenderer {
 
-	private class Renderer extends MatchingQueryRenderer {
+		private String rootFrameNodeURI;
 
-		static private final String QUERY_FORMAT = "ASK %s";
+		QueryBodyRenderer(String baseURI) {
 
-		private String baseURI;
+			super(getConstants());
 
-		Renderer(String baseURI) {
-
-			super(constants);
-
-			this.baseURI = baseURI;
+			rootFrameNodeURI = AssertionURIs.getRootFrameNodeURI(baseURI);
 		}
 
 		QueryVariable getRootFrameNode() {
@@ -52,29 +47,24 @@ class MatchesQuery {
 			return new QueryVariable(getRootFrameNodeRendering());
 		}
 
-		String createQuery(String queryBody) {
-
-			return String.format(QUERY_FORMAT, queryBody);
-		}
-
 		private String getRootFrameNodeRendering() {
 
-			return constants.getVariableRendering(renderURI(baseURI));
+			return getConstants().getVariableRendering(renderURI(rootFrameNodeURI));
 		}
 	}
 
 	MatchesQuery(OTFactory factory) {
 
-		askQuery = factory.createQuery();
+		super(factory);
 	}
 
 	boolean execute(ORFrame query, String baseURI) {
 
-		return askQuery.executeAsk(renderQuery(query, baseURI), constants);
+		return executeAsk(renderQueryBody(query, baseURI));
 	}
 
-	private String renderQuery(ORFrame query, String baseURI) {
+	private String renderQueryBody(ORFrame query, String baseURI) {
 
-		return new Renderer(baseURI).render(query);
+		return new QueryBodyRenderer(baseURI).render(query);
 	}
 }

@@ -34,7 +34,16 @@ import java.util.*;
 public interface OTQuery {
 
 	/**
-	 * Executes an "ask" query.
+	 * Stipulates whether the triple-store uses named-graphs, and hence
+	 * that the query-strings should be constructed to include a construct
+	 * specifying that queries should operate over all named graphs.
+	 *
+	 * @return True if triple-store uses named-graphs
+	 */
+	public boolean namedGraphs();
+
+	/**
+	 * Executes an ASK query.
 	 *
 	 * @param query String representation of SPARQL query to execute
 	 * @param constants Constants for query.
@@ -43,14 +52,12 @@ public interface OTQuery {
 	public boolean executeAsk(String query, OTQueryConstants constants);
 
 	/**
-	 * Executes a "select" query and returns a list containing each
-	 * resulting set of bindings, with each set being represented via
-	 * a list of bound values, ordered according to the position of
-	 * the corresponding variables in the query-string.
+	 * Executes a SELECT query whose result will be a list of bindings
+	 * for a single URI-valued variable.
 	 *
 	 * @param query String representation of SPARQL query to execute
 	 * @param constants Constants for query.
 	 * @return Result of query execution
 	 */
-	public List<List<OTValue>> executeSelect(String query, OTQueryConstants constants);
+	public List<OT_URI> executeSelect(String query, OTQueryConstants constants);
 }

@@ -35,9 +35,10 @@ public interface OTFactory {
 	/**
 	 * Creates empty graph object.
 	 *
+	 * @param contextURI Graph-context URI
 	 * @return Created graph
 	 */
-	public OTGraph createGraph();
+	public OTGraph createGraph(String contextURI);
 
 	/**
 	 * Creates object for executing SPARQL query.

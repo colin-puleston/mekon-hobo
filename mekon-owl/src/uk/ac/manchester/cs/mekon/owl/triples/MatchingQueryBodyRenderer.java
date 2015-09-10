@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 /**
  * @author Colin Puleston
  */
-abstract class MatchingQueryRenderer extends InstanceRenderer<QueryVariable> {
+abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable> {
 
 	static private final String FRAME_VARIABLE_FORMAT = "?f%d";
 	static private final String UNION_TRIPLE_FORMAT = "{%s %s %s}";
@@ -51,7 +51,7 @@ abstract class MatchingQueryRenderer extends InstanceRenderer<QueryVariable> {
 	private OTQueryConstants constants;
 	private int limitCount = 0;
 
-	MatchingQueryRenderer(OTQueryConstants constants) {
+	MatchingQueryBodyRenderer(OTQueryConstants constants) {
 
 		this.constants = constants;
 	}
@@ -60,7 +60,7 @@ abstract class MatchingQueryRenderer extends InstanceRenderer<QueryVariable> {
 
 		renderFrame(instance);
 
-		return createQuery(getQueryBody());
+		return getQueryBody();
 	}
 
 	QueryVariable renderFrame(int index) {
@@ -101,8 +101,6 @@ abstract class MatchingQueryRenderer extends InstanceRenderer<QueryVariable> {
 	}
 
 	abstract QueryVariable getRootFrameNode();
-
-	abstract String createQuery(String queryBody);
 
 	private OTValue renderNumberLimit(String op, OTNumber value) {
 

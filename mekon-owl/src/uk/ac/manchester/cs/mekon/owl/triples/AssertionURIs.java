@@ -29,25 +29,58 @@ package uk.ac.manchester.cs.mekon.owl.triples;
  */
 class AssertionURIs {
 
-	static private final String NAMESPACE = "urn:mekon-stardog";
+	static private final String NAMESPACE = "urn:mekon-owl";
 
 	static private final String BASE_FRAGMENT_PREFIX = "G";
 	static private final String BASE_FRAGMENT_FORMAT = BASE_FRAGMENT_PREFIX + "%d";
-	static private final int BASE_COMMON_LENGTH = getBaseURICommonLength();
+
+	static private final String FRAME_SUFFIX_PREFIX = "-F";
+	static private final String FRAME_SUFFIX_FORMAT = FRAME_SUFFIX_PREFIX + "%d";
+
+	static private final int BASE_URI_COMMON_LENGTH = getBaseURICommonLength();
 
 	static String getBaseURI(int assertionIndex) {
 
 		return getURI(getBaseURIFragment(assertionIndex));
 	}
 
+	static String getRootFrameNodeURI(String baseURI) {
+
+		return getFrameNodeURI(baseURI, 0);
+	}
+
+	static String getFrameNodeURI(String baseURI, int index) {
+
+		return baseURI + getFrameNodeURISuffix(index);
+	}
+
+	static String extractBaseURI(String uri) {
+
+		String uriSlice = removeFinalDigits(uri);
+
+		if (uriSlice.endsWith(FRAME_SUFFIX_PREFIX)) {
+
+			int l = uriSlice.length() - FRAME_SUFFIX_PREFIX.length();
+
+			return uriSlice.substring(0, l);
+		}
+
+		return uri;
+	}
+
 	static int extractAssertionIndex(String baseURI) {
 
-		return Integer.parseInt(baseURI.substring(BASE_COMMON_LENGTH));
+		return Integer.parseInt(baseURI.substring(BASE_URI_COMMON_LENGTH));
 	}
 
 	static private String getBaseURIFragment(int assertionIndex) {
 
 		return String.format(BASE_FRAGMENT_FORMAT, assertionIndex);
+	}
+
+	static private String getFrameNodeURISuffix(int index) {
+
+		return String.format(FRAME_SUFFIX_FORMAT, index);
 	}
 
 	static private int getBaseURICommonLength() {
@@ -58,5 +91,14 @@ class AssertionURIs {
 	static private String getURI(String fragment) {
 
 		return NAMESPACE + "#" + fragment;
+	}
+
+	static private String removeFinalDigits(String uri) {
+
+		int i = uri.length();
+
+		for ( ; i > 0 && Character.isDigit(uri.charAt(i - 1)) ; i--);
+
+		return uri.substring(0, i);
 	}
 }

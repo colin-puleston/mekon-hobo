@@ -26,61 +26,56 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 
 import java.util.*;
 
-import org.semanticweb.owlapi.vocab.*;
-
 /**
  * @author Colin Puleston
  */
-class FindQuery {
+abstract class SpecificQuery {
 
-	static private final String OWL_THING_URI = OWLRDFVocabulary.OWL_THING.toString();
+	static private final String ASK_FORMAT = "ASK {%s}";
+	static private final String SELECT_FORMAT = "SELECT %s {%s}";
 
-	static private final String QUERY_FORMAT = "SELECT ?p ?o WHERE {%s ?p ?o}";
+	static private final String NAMED_GRAPH_WRAPPER_FORMAT = "GRAPH ?g {%s}";
 
-	private OTFactory factory;
-	private OTQuery selectQuery;
+	private OTQuery query;
 	private OTQueryConstants constants = new OTQueryConstants();
 
-	FindQuery(OTFactory factory) {
+	SpecificQuery(OTFactory factory) {
 
-		this.factory = factory;
-
-		selectQuery = factory.createQuery();
+		query = factory.createQuery();
 	}
 
-	OTGraph execute(OT_URI subject) {
+	OTQueryConstants getConstants() {
 
-		OTGraph graph = factory.createGraph();
-
-		for (List<OTValue> bindings : executeSelect(subject)) {
-
-			OTValue object = bindings.get(1);
-
-			if (!isOWLThing(object)) {
-
-				OT_URI predicate = (OT_URI)bindings.get(0);
-
-				graph.add(subject, predicate, object);
-			}
-		}
-
-		return graph;
+		return constants;
 	}
 
-	private List<List<OTValue>> executeSelect(OT_URI subject) {
+	boolean executeAsk(String queryBody) {
 
-		constants.register(subject);
-
-		return selectQuery.executeSelect(renderQuery(subject), constants);
+		return query.executeAsk(renderAsk(queryBody), constants);
 	}
 
-	private String renderQuery(OT_URI subject) {
+	List<OT_URI> executeSelect(String variable, String queryBody) {
 
-		return String.format(QUERY_FORMAT, subject.getQueryRendering(constants));
+		return query.executeSelect(renderSelect(variable, queryBody), constants);
 	}
 
-	private boolean isOWLThing(OTValue value) {
+	private String renderAsk(String queryBody) {
 
-		return value.isURI() && value.asURI().equals(OWL_THING_URI);
+		return String.format(ASK_FORMAT, resolveBody(queryBody));
+	}
+
+	private String renderSelect(String variable, String queryBody) {
+
+		return String.format(SELECT_FORMAT, variable, resolveBody(queryBody));
+	}
+
+	private String resolveBody(String queryBody) {
+
+		return query.namedGraphs() ? wrapForNamedGraphs(queryBody) : queryBody;
+	}
+
+	private String wrapForNamedGraphs(String queryBody) {
+
+		return String.format(NAMED_GRAPH_WRAPPER_FORMAT, queryBody);
 	}
 }

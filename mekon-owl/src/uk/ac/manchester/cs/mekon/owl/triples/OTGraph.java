@@ -25,14 +25,14 @@
 package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
- * REpresents a triples graphs
+ * Represents a named graph in the triple store.
  *
  * @author Colin Puleston
  */
 public interface OTGraph {
 
 	/**
-	 * Adds a triple to the graph.
+	 * Adds a triple to the graph in the triple store.
 	 *
 	 * @param subject Subject of triple
 	 * @param predicate Predicate of triple
@@ -40,20 +40,10 @@ public interface OTGraph {
 	 */
 	public void add(OT_URI subject, OT_URI predicate, OTValue object);
 
-	/**
-	 * Adds each triple in the graph to the triple store.
-	 */
-	public void addToStore();
 
 	/**
-	 * Removes each triple in the graph from the triple store.
+	 * Removes the graph from triple store.
 	 */
-	public void removeFromStore();
+	public void removeGraph();
 
-	/**
-	 * Tests whether the graph is empty.
-	 *
-	 * @return True if empty
-	 */
-	public boolean isEmpty();
 }

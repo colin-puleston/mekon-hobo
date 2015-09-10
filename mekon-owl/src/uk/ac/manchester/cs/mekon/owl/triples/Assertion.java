@@ -34,20 +34,16 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  */
 class Assertion {
 
-	static private final String FRAME_NODE_NAME_FORMAT = "%s-F%d";
-
 	private OTFactory factory;
 	private String baseURI;
 
 	private class GraphRenderer extends InstanceRenderer<OT_URI> {
 
-		private OTGraph graph = factory.createGraph();
+		private OTGraph graph = createGraph();
 
-		OTGraph render(ORFrame instance) {
+		void render(ORFrame instance) {
 
 			renderFrame(instance);
-
-			return graph;
 		}
 
 		OT_URI renderFrame(int index) {
@@ -96,40 +92,21 @@ class Assertion {
 
 	void add(ORFrame instance) {
 
-		new GraphRenderer().render(instance).addToStore();
+		new GraphRenderer().render(instance);
 	}
 
 	void remove() {
 
-		for (int i = 0 ; removeSubGraph(getFrameNode(i)) ; i++);
+		createGraph().removeGraph();
 	}
 
-	private boolean removeSubGraph(OT_URI subject) {
+	private OTGraph createGraph() {
 
-		OTGraph graph = new FindQuery(factory).execute(subject);
-
-		if (graph.isEmpty()) {
-
-			return false;
-		}
-
-		graph.removeFromStore();
-
-		return true;
+		return factory.createGraph(baseURI);
 	}
 
 	private OT_URI getFrameNode(int index) {
 
-		return new OT_URI(getFrameNodeURI(index));
-	}
-
-	private String getFrameNodeURI(int index) {
-
-		if (index == 0) {
-
-			return baseURI;
-		}
-
-		return String.format(FRAME_NODE_NAME_FORMAT, baseURI, index);
+		return new OT_URI(AssertionURIs.getFrameNodeURI(baseURI, index));
 	}
 }

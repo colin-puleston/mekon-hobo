@@ -27,19 +27,11 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import java.util.*;
 
 /**
- * Responsible for managing the constants for a particular
- * SPARQL query that is being constructed. For each constant,
- * provides a rendering that will appear in the query-string,
- * which may be a direct rendering of the constant, or else a
- * rendering of a variable that will represent the constant in
- * the initial version of the query-string prior to being
- * replaced via a pre-execution substitution operation.
- * XXX
- * Abstract implementation of {@link OTQueryConstants} that
- * provides renderings of variables to represent the constants
- * in the initial version of the query-string, with extension
- * classes being responsible for implementing the required
- * pre-execution substitution operations.
+ * Represents the constants for a particular SPARQL query, mapping
+ * each constant to a variable-name that appears in the initial
+ * version of the query-string, with implementation classes being
+ * responsible for performing the necessary pre-execution
+ * substitution  operations.
  *
  * @author Colin Puleston
  */
@@ -62,11 +54,11 @@ public class OTQueryConstants {
 	}
 
 	/**
-	 * Gets the name of the variable that was generated to represent the
-	 * specified constant in the query string.
+	 * Gets the name of the variable representing the specified constant
+	 * in the initial version of the query-string.
 	 *
-	 * @param constant Constant for which variable was generated
-	 * @return Name of generated variable
+	 * @param constant Constant for which variable-name is required
+	 * @return Relevant variable-name
 	 */
 	public String getVariableName(OTValue constant) {
 
