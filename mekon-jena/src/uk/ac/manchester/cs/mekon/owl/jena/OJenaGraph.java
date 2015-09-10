@@ -35,35 +35,82 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  */
 class OJenaGraph implements OTGraph {
 
+	static private final String GRAPH_STATEMENT_URI = "urn:mekon-jena#graph-statement";
+
 	private Model model;
-	private List<Statement> statements = new ArrayList<Statement>();
+
+	private Resource context;
+	private Property hasStatement;
 
 	private ValueConverter valueConverter;
 
 	public void add(OT_URI subject, OT_URI predicate, OTValue object) {
 
-		statements.add(valueConverter.toStatement(subject, predicate, object));
+		Statement statement = toStatement(subject, predicate, object);
+
+		model.add(statement);
+		model.add(createContextStatement(statement));
 	}
 
-	public void addToStore() {
+	public void removeGraph() {
 
-		model.add(statements);
+		for (Statement statement : findStatements()) {
+
+			removeStatement(statement);
+		}
 	}
 
-	public void removeFromStore() {
-
-		model.remove(statements);
-	}
-
-	public boolean isEmpty() {
-
-		return statements.isEmpty();
-	}
-
-	OJenaGraph(Model model) {
+	OJenaGraph(Model model, String contextURI) {
 
 		this.model = model;
 
+		context = model.createResource(contextURI);
+		hasStatement = model.createProperty(GRAPH_STATEMENT_URI);
+
 		valueConverter = new ValueConverter(model);
+	}
+
+	private Statement toStatement(OT_URI subject, OT_URI predicate, OTValue object) {
+
+		Resource s = convertURI(subject);
+		Property p = convertPredicateURI(predicate);
+		RDFNode o = valueConverter.convert(object);
+
+		return model.createStatement(s, p, o);
+	}
+
+	private Statement createContextStatement(Statement statement) {
+
+		ReifiedStatement ref = model.createReifiedStatement(statement);
+
+		return model.createStatement(context, hasStatement, ref);
+	}
+
+	private Resource convertURI(OT_URI uri) {
+
+		return model.createResource(uri.asURI());
+	}
+
+	private Property convertPredicateURI(OT_URI uri) {
+
+		return model.createProperty(uri.asURI());
+	}
+
+	private List<Statement> findStatements() {
+
+		StmtIterator i = model.listStatements(context, null, (RDFNode)null);
+		List<Statement> statements = i.toList();
+
+		i.close();
+
+		return statements;
+	}
+
+	private void removeStatement(Statement cxtStatement) {
+
+		ReifiedStatement ref = cxtStatement.getObject().as(ReifiedStatement.class);
+
+		model.remove(cxtStatement);
+		model.remove(ref.getStatement());
 	}
 }

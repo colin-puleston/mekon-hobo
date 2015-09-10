@@ -40,27 +40,35 @@ class OJenaQuery implements OTQuery {
 
 	private ValueConverter valueConverter;
 
-	public boolean executeAsk(String query, OTQueryConstants constants) {
+	public boolean namedGraphs() {
 
-		return createExecution(query, constants).execAsk();
+		return false;
 	}
 
-	public List<List<OTValue>> executeSelect(String query, OTQueryConstants constants) {
+	public boolean executeAsk(String query, OTQueryConstants constants) {
 
-		List<List<OTValue>> bindingSets = new ArrayList<List<OTValue>>();
-		ResultSet resultSet = createExecution(query, constants).execSelect();
+		QueryExecution exec = createExecution(query, constants);
+		boolean result = exec.execAsk();
 
-		while (resultSet.hasNext()) {
+		exec.close();
 
-			List<OTValue> set = getBindingSet(resultSet.next());
+		return result;
+	}
 
-			if (set != null) {
+	public List<OT_URI> executeSelect(String query, OTQueryConstants constants) {
 
-				bindingSets.add(set);
-			}
+		List<OT_URI> bindings = new ArrayList<OT_URI>();
+		QueryExecution exec = createExecution(query, constants);
+		ResultSet results = exec.execSelect();
+
+		while (results.hasNext()) {
+
+			bindings.add(getSingleBoundURI(results.next()));
 		}
 
-		return bindingSets;
+		exec.close();
+
+		return bindings;
 	}
 
 	OJenaQuery(Model model) {
@@ -96,24 +104,10 @@ class OJenaQuery implements OTQuery {
 		return map;
 	}
 
-	private List<OTValue> getBindingSet(QuerySolution solution) {
+	private OT_URI getSingleBoundURI(QuerySolution solution) {
 
-		List<OTValue> bindingSet = new ArrayList<OTValue>();
-		Iterator<String> vars = solution.varNames();
+		String varName = solution.varNames().next();
 
-		while (vars.hasNext()) {
-
-			RDFNode rawBinding = solution.get(vars.next());
-			OTValue binding = valueConverter.convertOrNull(rawBinding);
-
-			if (binding == null) {
-
-				return null;
-			}
-
-			bindingSet.add(binding);
-		}
-
-		return bindingSet;
+		return new OT_URI(solution.getResource(varName).toString());
 	}
 }

@@ -35,9 +35,9 @@ class OJenaFactory implements OTFactory {
 
 	private Model model;
 
-	public OTGraph createGraph() {
+	public OTGraph createGraph(String contextURI) {
 
-		return new OJenaGraph(model);
+		return new OJenaGraph(model, contextURI);
 	}
 
 	public OTQuery createQuery() {

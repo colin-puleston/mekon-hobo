@@ -24,10 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.jena;
 
-import java.net.*;
-
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.vocabulary.*;
 
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
@@ -43,15 +40,6 @@ class ValueConverter {
 		this.model = model;
 	}
 
-	Statement toStatement(OT_URI subject, OT_URI predicate, OTValue object) {
-
-		return model
-				.createStatement(
-					convertURI(subject),
-					convertPredicateURI(predicate),
-					convert(object));
-	}
-
 	RDFNode convert(OTValue value) {
 
 		return value.isURI()
@@ -59,34 +47,9 @@ class ValueConverter {
 				: convertNumber((OTNumber)value);
 	}
 
-	OTValue convertOrNull(RDFNode value) {
-
-		if (value instanceof Resource) {
-
-			return new OT_URI(value.toString());
-		}
-
-		if (value instanceof Literal) {
-
-			Number number = extractNumberValue((Literal)value);
-
-			if (number != null) {
-
-				return new OTNumber(number);
-			}
-		}
-
-		return null;
-	}
-
 	private Resource convertURI(OT_URI uri) {
 
 		return model.createResource(uri.asURI());
-	}
-
-	private Property convertPredicateURI(OT_URI uri) {
-
-		return createProperty(uri.asURI());
 	}
 
 	private Literal convertNumber(OTNumber number) {
@@ -109,41 +72,6 @@ class ValueConverter {
 		if (number.isDouble()) {
 
 			return model.createTypedLiteral(number.asDouble());
-		}
-
-		return null;
-	}
-
-	private Property createProperty(String uri) {
-
-		String fragment = URI.create(uri).getFragment();
-		String namespace = uri.substring(0, uri.length() - fragment.length());
-
-		return model.createProperty(namespace, fragment);
-	}
-
-	private Number extractNumberValue(Literal literal) {
-
-		String datatype = literal.getDatatypeURI();
-
-		if (datatype.equals(XSD.xint.toString())) {
-
-			return literal.getInt();
-		}
-
-		if (datatype.equals(XSD.xlong.toString())) {
-
-			return literal.getLong();
-		}
-
-		if (datatype.equals(XSD.xfloat.toString())) {
-
-			return literal.getFloat();
-		}
-
-		if (datatype.equals(XSD.xdouble.toString())) {
-
-			return literal.getDouble();
 		}
 
 		return null;
