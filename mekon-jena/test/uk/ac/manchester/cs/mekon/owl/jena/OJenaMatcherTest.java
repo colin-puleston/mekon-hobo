@@ -48,6 +48,6 @@ public class OJenaMatcherTest extends ORMatcherTest {
 
 	private OTConfig createConfig() {
 
-		return new OTConfig(OTReasoningType.TRANSITIVE);
+		return new OTConfig(OTReasoningType.RDFS);
 	}
 }
