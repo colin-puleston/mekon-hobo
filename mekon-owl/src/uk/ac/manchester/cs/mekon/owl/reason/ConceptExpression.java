@@ -39,20 +39,20 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 class ConceptExpression extends InstanceConstruct {
 
 	private OModel model;
-	private ORFrame frame;
+	private OWLClass frameConcept;
 	private OWLClassExpression expression;
 
 	ConceptExpression(OModel model, ORFrame frame) {
 
 		this.model = model;
-		this.frame = frame;
 
+		frameConcept = getFrameConcept(frame);
 		expression = frameToExpression(frame);
 	}
 
-	ORFrame getFrame() {
+	OWLClass getFrameConcept() {
 
-		return frame;
+		return frameConcept;
 	}
 
 	boolean subsumes(ConceptExpression testSubsumed) {
@@ -88,6 +88,11 @@ class ConceptExpression extends InstanceConstruct {
 	Set<OWLClass> getSuggestedTypes() {
 
 		return model.getInferredSubs(expression, true);
+	}
+
+	private OWLClass getFrameConcept(ORFrame frame) {
+
+		return model.getConcepts().get(frame.getIRI());
 	}
 
 	private OWLClassExpression frameToExpression(ORFrame frame) {

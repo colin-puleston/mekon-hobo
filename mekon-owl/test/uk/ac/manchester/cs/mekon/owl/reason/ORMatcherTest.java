@@ -46,6 +46,7 @@ public abstract class ORMatcherTest extends OTest {
 	static private final String TEACHER_CONCEPT = "Teacher";
 	static private final String RESEARCHER_CONCEPT = "Researcher";
 	static private final String DOCTOR_CONCEPT = "Doctor";
+	static private final String UNI_STUDENT_CONCEPT = "UniversityStudent";
 	static private final String POSTGRAD_CONCEPT = "Postgraduate";
 	static private final String UNDERGRAD_CONCEPT = "Undergraduate";
 
@@ -179,6 +180,11 @@ public abstract class ORMatcherTest extends OTest {
 			createPostOrUndergradTeachingQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID);
+
+		testMatching(
+			createUniStudentTeachingQuery(),
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID);
 	}
 
 	@Test
@@ -305,21 +311,32 @@ public abstract class ORMatcherTest extends OTest {
 		return job;
 	}
 
+	private IFrame createUniStudentTeachingQuery() {
+
+		return createStudentTeachingQuery(UNI_STUDENT_CONCEPT);
+	}
+
 	private IFrame createPostgraduateTeachingQuery() {
 
-		IFrame job = createAcademicTeachingQuery();
-		IFrame studentType = createQueryIFrame(POSTGRAD_CONCEPT);
-
-		addISlotValue(job, TEACHES_PROPERTY, studentType);
-
-		return job;
+		return createStudentTeachingQuery(POSTGRAD_CONCEPT);
 	}
 
 	private IFrame createPostOrUndergradTeachingQuery() {
 
-		IFrame job = createAcademicTeachingQuery();
 		CFrame studentTypeConcept = createPostOrUndergradDisjunction();
 		IFrame studentType = studentTypeConcept.instantiateQuery();
+
+		return createStudentTeachingQuery(studentType);
+	}
+
+	private IFrame createStudentTeachingQuery(String studentTypeConcept) {
+
+		return createStudentTeachingQuery(createQueryIFrame(studentTypeConcept));
+	}
+
+	private IFrame createStudentTeachingQuery(IFrame studentType) {
+
+		IFrame job = createAcademicTeachingQuery();
 
 		addISlotValue(job, TEACHES_PROPERTY, studentType);
 

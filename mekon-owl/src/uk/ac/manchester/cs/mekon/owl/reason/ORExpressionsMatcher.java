@@ -73,9 +73,7 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 
 		void collectMatches(ConceptExpression queryExpr, List<CIdentity> matches) {
 
-			OWLClass queryFrameConcept = getConcept(queryExpr.getFrame());
-
-			if (isSubsumption(queryFrameConcept, frameConcept)) {
+			if (isSubsumption(queryExpr.getFrameConcept(), frameConcept)) {
 
 				for (CIdentity id : instanceExprs.keySet()) {
 

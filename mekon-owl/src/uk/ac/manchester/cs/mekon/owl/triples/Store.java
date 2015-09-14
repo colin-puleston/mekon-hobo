@@ -26,8 +26,10 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
@@ -37,46 +39,34 @@ class Store {
 
 	private OTFactory factory;
 
-	private int maxIndex = 0;
-	private List<Integer> freeIndexes = new ArrayList<Integer>();
+	private AssertionIndexes assertionIndexes = new AssertionIndexes();
 
-	private Map<String, Integer> idsToIndexes = new HashMap<String, Integer>();
-	private Map<Integer, String> indexesToIds = new HashMap<Integer, String>();
+	private class AssertionIndexes extends KIndexes<String> {
+
+		protected KRuntimeException createException(String message) {
+
+			return new KSystemConfigException(message);
+		}
+	}
 
 	Store(OTFactory factory) {
 
 		this.factory = factory;
 	}
 
-	void add(ORFrame instance, CIdentity identity) {
+	synchronized void add(ORFrame instance, CIdentity identity) {
 
-		String id = identity.getIdentifier();
-
-		checkNotPresent(id);
-
-		Integer index = add(instance);
-
-		idsToIndexes.put(id, index);
-		indexesToIds.put(index, id);
+		add(instance, assertionIndexes.assignIndex(identity.getIdentifier()));
 	}
 
-	void remove(CIdentity identity) {
+	synchronized void remove(CIdentity identity) {
 
-		String id = identity.getIdentifier();
-
-		checkPresent(id);
-
-		Integer index = idsToIndexes.get(id);
-
-		remove(index);
-
-		idsToIndexes.remove(id);
-		indexesToIds.remove(index);
+		remove(assertionIndexes.getIndex(identity.getIdentifier()));
 	}
 
 	boolean present(CIdentity identity) {
 
-		return idsToIndexes.containsKey(identity.getIdentifier());
+		return assertionIndexes.hasIndex(identity.getIdentifier());
 	}
 
 	List<CIdentity> match(ORFrame query) {
@@ -93,26 +83,38 @@ class Store {
 
 	boolean matches(ORFrame query, ORFrame instance) {
 
-		int assertionIndex = add(instance);
+		int assertionIndex = addTemp(instance);
 		String baseURI = getBaseURI(assertionIndex);
 
 		boolean result = executeMatches(query, baseURI);
 
-		remove(assertionIndex);
+		removeTemp(assertionIndex);
 
 		return result;
 	}
 
-	private synchronized int add(ORFrame instance) {
+	private synchronized int addTemp(ORFrame instance) {
 
-		Integer index = getIndex();
+		int index = assertionIndexes.assignIndex();
 
-		getAssertion(index).add(instance);
+		add(instance, index);
 
 		return index;
 	}
 
-	private synchronized void remove(int index) {
+	private synchronized void removeTemp(int index) {
+
+		assertionIndexes.freeIndex(index);
+
+		remove(index);
+	}
+
+	private void add(ORFrame instance, int index) {
+
+		getAssertion(index).add(instance);
+	}
+
+	private void remove(int index) {
 
 		getAssertion(index).remove();
 	}
@@ -127,35 +129,16 @@ class Store {
 		return new MatchesQuery(factory).execute(query, baseURI);
 	}
 
-	private int getIndex() {
-
-		return freeIndexes.isEmpty() ? maxIndex++ : freeIndexes.remove(0);
-	}
-
 	private Assertion getAssertion(int index) {
 
 		return new Assertion(factory, getBaseURI(index));
 	}
 
-	private void checkNotPresent(String id) {
-
-		if (idsToIndexes.containsKey(id)) {
-
-			throw new KSystemConfigException("Instance already present: " + id);
-		}
-	}
-
-	private void checkPresent(String id) {
-
-		if (!idsToIndexes.containsKey(id)) {
-
-			throw new KSystemConfigException("Instance not present: " + id);
-		}
-	}
-
 	private CIdentity baseURIToId(String baseURI) {
 
-		return new CIdentity(indexesToIds.get(extractAssertionIndex(baseURI)));
+		int assertionIndex = extractAssertionIndex(baseURI);
+
+		return new CIdentity(assertionIndexes.getElement(assertionIndex));
 	}
 
 	private String getBaseURI(int assertionIndex) {
