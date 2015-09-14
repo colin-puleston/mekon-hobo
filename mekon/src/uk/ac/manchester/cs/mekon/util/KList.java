@@ -29,7 +29,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 
 /**
- * Base-class for classes that represent ordered lists, whose
+ * Base-class for classes that represent ordered lists whose
  * update-operations can be listened to. Provides standard and
  * some non-standard list-operations, plus methods for attaching
  * listeners to listen for the results of those operations.

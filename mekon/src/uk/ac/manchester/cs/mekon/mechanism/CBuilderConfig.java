@@ -35,6 +35,8 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 class CBuilderConfig implements CBuilderConfigVocab {
 
+	static private final String DEFAULT_ISTORE_DIR_NAME = "istore";
+
 	static private final Map<String, IUpdateOp> updateOpsByAttr
 								= new HashMap<String, IUpdateOp>();
 
@@ -124,7 +126,12 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	private File getDefaultIStoreDirectory() {
 
-		return rootNode.getConfigFile().getFile().getParentFile();
+		return new File(getConfigFileDirPath(), DEFAULT_ISTORE_DIR_NAME);
+	}
+
+	private String getConfigFileDirPath() {
+
+		return rootNode.getConfigFile().getFile().getParent();
 	}
 
 	private KConfigResourceFinder getOWLFileFinder(File baseDir) {
