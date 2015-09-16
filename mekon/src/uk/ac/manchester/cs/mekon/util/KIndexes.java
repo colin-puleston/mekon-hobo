@@ -61,17 +61,24 @@ public abstract class KIndexes<E> {
 	 */
 	public int assignIndex(E element) {
 
-		if (elementsToIndexes.containsKey(element)) {
+		return addToMaps(element, assignIndex());
+	}
 
-			throw createException("Index already exists for element: " + element);
+	/**
+	 * Assigns a specified index to an element. The specified index
+	 * must not be currently assigned.
+	 *
+	 * @param element Element for which index is to be assigned
+	 * @param index Index to be assigned
+	 */
+	public void assignIndex(E element, int index) {
+
+		if (indexesToElements.containsKey(index)) {
+
+			throw createException("Index already assigned: " + index);
 		}
 
-		Integer index = assignIndex();
-
-		elementsToIndexes.put(element, index);
-		indexesToElements.put(index, element);
-
-		return index;
+		addToMaps(element, index);
 	}
 
 	/**
@@ -158,4 +165,17 @@ public abstract class KIndexes<E> {
 	 * @return Created exception of relevant type
 	 */
 	protected abstract KRuntimeException createException(String message);
+
+	private int addToMaps(E element, int index) {
+
+		if (elementsToIndexes.containsKey(element)) {
+
+			throw createException("Index already exists for element: " + element);
+		}
+
+		elementsToIndexes.put(element, index);
+		indexesToElements.put(index, element);
+
+		return index;
+	}
 }

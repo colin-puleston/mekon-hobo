@@ -37,6 +37,8 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class IUpdating {
 
+	static private final Set<IUpdateOp> NO_OPS = Collections.<IUpdateOp>emptySet();
+
 	private IEditor iEditor;
 
 	private boolean autoUpdate = true;
@@ -54,8 +56,8 @@ public class IUpdating {
 	}
 
 	/**
-	 * Checks whether the specified update operation is one of
-	 * the default operations.
+	 * Checks whether the specified update operation is one of the
+	 * default operations.
 	 *
 	 * @param updateOp Relevant update operation
 	 * @return True if update operation is a default operation
@@ -66,8 +68,8 @@ public class IUpdating {
 	}
 
 	/**
-	 * Specifies the default of update operations that will be
-	 * performed on instance-level frames.
+	 * Specifies the default update operations that will be performed
+	 * on instance-level frames.
 	 *
 	 * @return Relevant set of update operations
 	 */
@@ -100,51 +102,50 @@ public class IUpdating {
 
 	Set<IUpdateOp> checkAutoUpdate(IFrame instance) {
 
-		if (!autoUpdate) {
-
-			return Collections.<IUpdateOp>emptySet();
-		}
-
-		return checkUpdateDefault(instance);
+		return autoUpdate ? update(instance) : NO_OPS;
 	}
 
 	Set<IUpdateOp> checkManualUpdate(IFrame instance) {
 
-		if (autoUpdate) {
-
-			return Collections.<IUpdateOp>emptySet();
-		}
-
-		return checkUpdateDefault(instance);
+		return autoUpdate ? NO_OPS : update(instance);
 	}
 
 	Set<IUpdateOp> checkManualUpdate(IFrame instance, Set<IUpdateOp> ops) {
 
 		if (autoUpdate) {
 
-			return Collections.<IUpdateOp>emptySet();
+			ops = removeDefaultOps(ops);
 		}
 
-		return checkUpdate(instance, getNonDefaultOps(ops));
+		return update(instance, ops);
 	}
 
-	private Set<IUpdateOp> checkUpdateDefault(IFrame instance) {
+	Set<IUpdateOp> update(IFrame instance) {
 
-		return checkUpdate(instance, getDefaultOps());
+		return update(instance, getDefaultOps());
 	}
 
-	private Set<IUpdateOp> checkUpdate(IFrame instance, Set<IUpdateOp> ops) {
+	Set<IUpdateOp> update(IFrame instance, Set<IUpdateOp> ops) {
 
 		ops = purgeOpsForQuery(instance, ops);
 
 		if (ops.isEmpty()) {
 
-			return ops;
+			return NO_OPS;
 		}
 
 		IReasoner reasoner = instance.getType().getIReasoner();
 
 		return reasoner.updateFrame(iEditor, instance, ops);
+	}
+
+	private Set<IUpdateOp> removeDefaultOps(Set<IUpdateOp> ops) {
+
+		Set<IUpdateOp> nonDefaultOps = new HashSet<IUpdateOp>(ops);
+
+		nonDefaultOps.removeAll(defaultOps);
+
+		return nonDefaultOps;
 	}
 
 	private Set<IUpdateOp> purgeOpsForQuery(IFrame instance, Set<IUpdateOp> ops) {
@@ -157,15 +158,6 @@ public class IUpdating {
 		}
 
 		return purgedOps;
-	}
-
-	private Set<IUpdateOp> getNonDefaultOps(Set<IUpdateOp> ops) {
-
-		Set<IUpdateOp> nonDefaultOps = new HashSet<IUpdateOp>(ops);
-
-		nonDefaultOps.removeAll(defaultOps);
-
-		return nonDefaultOps;
 	}
 
 	private Set<IUpdateOp> getAllUpdateOpsAsSet() {

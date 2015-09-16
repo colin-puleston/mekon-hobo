@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.model.serial;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
@@ -35,27 +36,31 @@ import uk.ac.manchester.cs.mekon.serial.*;
 public class IFrameParser extends ISerialiser {
 
 	private CModel model;
+	private IEditor iEditor;
 	private IFrameCategory frameCategory;
 
 	private class OneTimeParser {
 
 		private XNode containerNode;
 
+		private Set<IFrame> iFrames = new HashSet<IFrame>();
+
 		private Map<Integer, IFrame> iFrameRefs
 						= new HashMap<Integer, IFrame>();
+
 		private List<SlotValuesSpec<?>> slotValuesSpecs
 						= new ArrayList<SlotValuesSpec<?>>();
 
 		private abstract class SlotValuesSpec<V> {
 
-			private ISlots slots;
+			private IFrame frame;
 			private CIdentity slotId;
 
 			private List<V> valueSpecs = new ArrayList<V>();
 
 			SlotValuesSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
 
-				slots = frame.getSlots();
+				this.frame = frame;
 				this.slotId = slotId;
 
 				for (XNode valueNode : parentNode.getChildren(getValueId())) {
@@ -68,13 +73,15 @@ public class IFrameParser extends ISerialiser {
 
 			boolean process() {
 
+				ISlots slots = frame.getSlots();
+
 				if (slots.containsValueFor(slotId)) {
 
 					ISlot slot = slots.get(slotId);
 
 					if (slot.getEditability().editable()) {
 
-						slot.getValuesEditor().addAll(getValidValues(slot));
+						setValues(slot);
 					}
 
 					slotValuesSpecs.remove(this);
@@ -90,6 +97,16 @@ public class IFrameParser extends ISerialiser {
 			abstract V getValueSpec(XNode valueNode);
 
 			abstract IValue getValue(ISlot slot, V valueSpec);
+
+			private void setValues(ISlot slot) {
+
+				IFrameEditor frameEd = iEditor.getFrameEditor(frame);
+				ISlotValuesEditor valuesEd = slot.getValuesEditor();
+
+				frameEd.setAutoUpdateEnabled(false);
+				valuesEd.addAll(getValidValues(slot));
+				frameEd.setAutoUpdateEnabled(true);
+			}
 
 			private List<IValue> getValidValues(ISlot slot) {
 
@@ -225,7 +242,7 @@ public class IFrameParser extends ISerialiser {
 		private IFrame parseIFrameDirect(XNode node) {
 
 			CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
-			IFrame frame = frameType.instantiate(frameCategory);
+			IFrame frame = createFrame(frameType);
 
 			for (XNode slotNode : node.getChildren(ISLOT_ID)) {
 
@@ -366,21 +383,40 @@ public class IFrameParser extends ISerialiser {
 			}
 		}
 
+		private IFrame createFrame(CFrame frameType) {
+
+			IFrame frame = frameType.instantiate(frameCategory);
+
+			iFrames.add(frame);
+
+			return frame;
+		}
+
 		private void addAllSlotValues() {
 
 			while (true) {
 
 				boolean anyProcessed = false;
 
-				for (SlotValuesSpec<?> spec : new ArrayList<SlotValuesSpec<?>>(slotValuesSpecs)) {
+				for (SlotValuesSpec<?> spec : copySlotValueSpecs()) {
 
 					anyProcessed |= spec.process();
 				}
 
-				if (!anyProcessed) {
+				if (!anyProcessed || slotValuesSpecs.isEmpty()) {
 
 					break;
 				}
+
+				checkUpdateSlotsOnFrames();
+			}
+		}
+
+		private void checkUpdateSlotsOnFrames() {
+
+			for (IFrame iFrame : iFrames) {
+
+				iFrame.update();
 			}
 		}
 
@@ -432,13 +468,22 @@ public class IFrameParser extends ISerialiser {
 						+ "\"" + IGRAPH_ID + "\""
 						+ " node: " + refIndex);
 		}
+
+		private List<SlotValuesSpec<?>> copySlotValueSpecs() {
+
+			return new ArrayList<SlotValuesSpec<?>>(slotValuesSpecs);
+		}
 	}
 
 	/**
 	 */
-	public IFrameParser(CModel model, IFrameCategory frameCategory) {
+	public IFrameParser(
+				CModel model,
+				IEditor iEditor,
+				IFrameCategory frameCategory) {
 
 		this.model = model;
+		this.iEditor = iEditor;
 		this.frameCategory = frameCategory;
 	}
 

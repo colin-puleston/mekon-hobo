@@ -67,7 +67,7 @@ public class IFrame implements IEntity, IValue {
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
-	private boolean autoUpdating = false;
+	private boolean autoUpdateEnabled = true;
 
 	private class DynamicTypes {
 
@@ -181,6 +181,11 @@ public class IFrame implements IEntity, IValue {
 			slots.remove(slot);
 			pollListenersForSlotRemoved(slot);
 		}
+
+		public void setAutoUpdateEnabled(boolean enabled) {
+
+			autoUpdateEnabled = enabled;
+		}
 	}
 
 	private class AutoUpdater implements KUpdateListener {
@@ -190,17 +195,17 @@ public class IFrame implements IEntity, IValue {
 
 		public void onUpdated() {
 
-			List<IValue> latestAsserteds = slotValues.getAssertedValues();
+			if (autoUpdateEnabled) {
 
-			if (!latestAsserteds.equals(assertedValues)) {
+				List<IValue> latestAsserteds = slotValues.getAssertedValues();
 
-				assertedValues = latestAsserteds;
+				if (!latestAsserteds.equals(assertedValues)) {
 
-				if (!autoUpdating) {
+					assertedValues = latestAsserteds;
 
-					autoUpdating = true;
+					autoUpdateEnabled = false;
 					performAutoUpdates();
-					autoUpdating = false;
+					autoUpdateEnabled = true;
 				}
 			}
 		}
@@ -271,6 +276,39 @@ public class IFrame implements IEntity, IValue {
 	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
 	 * then performs the default set of update operations on this frame.
 	 * Otherwise does nothing.
+	 * <p>
+	 * NOTE: Even if the default update operations do not include
+	 * slot-value updates, removals of (asserted) slot-values may still
+	 * occur as a result of either slot removals or value-type updates.
+	 *
+	 * @return Types of update produced
+	 */
+	public Set<IUpdateOp> update() {
+
+		return getIUpdating().update(this);
+	}
+
+	/**
+	 * Performs all of the specified update operations on this frame,
+	 * whether or not auto-update is enabled (see {@link
+	 * IUpdating#autoUpdate}).
+	 * <p>
+	 * NOTE: Even if the specified update operations do not include
+	 * slot-value updates, removals of (asserted) slot-values may still
+	 * occur as a result of either slot removals or value-type updates.
+	 *
+	 * @param ops Update operations to be performed
+	 * @return Types of update produced
+	 */
+	public Set<IUpdateOp> update(Set<IUpdateOp> ops) {
+
+		return getIUpdating().update(this, ops);
+	}
+
+	/**
+	 * Performs the default set of update operations on this frame,
+	 * whether or not auto-update is enabled (see {@link
+	 * IUpdating#autoUpdate}).
 	 * <p>
 	 * NOTE: Even if the default update operations do not include
 	 * slot-value updates, removals of (asserted) slot-values may still
@@ -465,11 +503,6 @@ public class IFrame implements IEntity, IValue {
 		this.category = category;
 	}
 
-	IFrame instantiateCopy() {
-
-		return type.instantiate(category);
-	}
-
 	IFrameEditor createEditor() {
 
 		return new Editor();
@@ -489,6 +522,11 @@ public class IFrame implements IEntity, IValue {
 	void setMappedObject(Object mappedObject) {
 
 		this.mappedObject = mappedObject;
+	}
+
+	void setAutoUpdateEnabled(boolean enabled) {
+
+		autoUpdateEnabled = enabled;
 	}
 
 	Object getMappedObject() {

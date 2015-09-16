@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 class CBuilderConfig implements CBuilderConfigVocab {
 
-	static private final String DEFAULT_ISTORE_DIR_NAME = "istore";
+	static private final String DEFAULT_ISTORE_DIR_NAME = "mekon-istore";
 
 	static private final Map<String, IUpdateOp> updateOpsByAttr
 								= new HashMap<String, IUpdateOp>();

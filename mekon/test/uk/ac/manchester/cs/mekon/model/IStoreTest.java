@@ -130,12 +130,14 @@ public class IStoreTest extends MekonTest {
 	public void setUp() {
 
 		createStore();
+
+		store.clearFileStore();
 	}
 
 	@After
 	public void clearUp() {
 
-		store.checkRemoveStoreFile();
+		store.clearFileStore();
 	}
 
 	@Test

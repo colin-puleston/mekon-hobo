@@ -27,7 +27,9 @@ package uk.ac.manchester.cs.mekon.model;
 import java.io.*;
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
@@ -43,29 +45,30 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class IStore {
 
-	static private final String STORE_FILE_NAME = "mekon-istore.xml";
-
-	private CModel model;
-	private File storeDirectory = null;
+	private InstanceFileStore fileStore;
 
 	private List<IFrameProcessor> instancePreProcessors = new ArrayList<IFrameProcessor>();
 	private List<IFrameProcessor> queryPreProcessors = new ArrayList<IFrameProcessor>();
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
 
+	private InstanceIndexes indexes = new InstanceIndexes();
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
-	private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
 	private Map<CIdentity, String> labels = new HashMap<CIdentity, String>();
 
-	private class IStoreParserLocal extends IStoreParser {
+	private class InstanceIndexes extends KIndexes<CIdentity> {
 
-		protected void addInstance(IFrame instance, CIdentity identity) {
+		protected KRuntimeException createException(String message) {
 
-			addInternal(instance, identity);
+			return new KSystemConfigException(message);
 		}
+	}
 
-		IStoreParserLocal() {
+	private class FileStoreInstanceLoader extends InstanceLoader {
 
-			super(model);
+		void load(IFrame instance, CIdentity identity, int index) {
+
+			indexes.assignIndex(identity, index);
+			addStoredAndIndexed(instance, identity);
 		}
 	}
 
@@ -82,10 +85,11 @@ public class IStore {
 	 */
 	public IFrame add(IFrame instance, CIdentity identity) {
 
-		IFrame previous = checkRemoveInternal(identity);
+		IFrame previous = checkRemove(identity);
+		int index = indexes.assignIndex(identity);
 
-		addInternal(preProcessInstance(instance), identity);
-		writeToFile();
+		fileStore.write(instance, identity, index);
+		addStoredAndIndexed(preProcessInstance(instance), identity);
 
 		return previous;
 	}
@@ -99,14 +103,7 @@ public class IStore {
 	 */
 	public boolean remove(CIdentity identity) {
 
-		if (checkRemoveInternal(identity) != null) {
-
-			writeToFile();
-
-			return true;
-		}
-
-		return false;
+		return checkRemove(identity) != null;
 	}
 
 	/**
@@ -128,7 +125,7 @@ public class IStore {
 	 */
 	public boolean contains(CIdentity identity) {
 
-		return instances.containsKey(identity);
+		return indexes.hasIndex(identity);
 	}
 
 	/**
@@ -140,7 +137,7 @@ public class IStore {
 	 */
 	public IFrame get(CIdentity identity) {
 
-		return instances.get(identity);
+		return fileStore.read(indexes.getIndex(identity));
 	}
 
 	/**
@@ -192,32 +189,22 @@ public class IStore {
 
 	IStore(CModel model) {
 
-		this.model = model;
+		fileStore = new InstanceFileStore(model);
 	}
 
 	void setStoreDirectory(File storeDirectory) {
 
-		this.storeDirectory = storeDirectory;
+		fileStore.setDirectory(storeDirectory);
 	}
 
 	void checkLoad() {
 
-		File file = getStoreFile();
-
-		if (file.exists()) {
-
-			new IStoreParserLocal().parse(file);
-		}
+		fileStore.loadAll(new FileStoreInstanceLoader());
 	}
 
-	void checkRemoveStoreFile() {
+	void clearFileStore() {
 
-		File file = getStoreFile();
-
-		if (file.exists()) {
-
-			file.delete();
-		}
+		fileStore.clear();
 	}
 
 	void addInstancePreProcessor(IFrameProcessor preProcessor) {
@@ -235,35 +222,27 @@ public class IStore {
 		matchers.add(matcher);
 	}
 
-	private void addReloaded(IFrame instance, CIdentity identity) {
-
-		if (!queryPreProcessors.isEmpty()) {
-
-			instance = instance.copy();
-		}
-
-		addInternal(instance, identity);
-	}
-
-	private void addInternal(IFrame instance, CIdentity identity) {
+	private void addStoredAndIndexed(IFrame instance, CIdentity identity) {
 
 		identities.add(identity);
-		instances.put(identity, instance);
 		labels.put(identity, identity.getLabel());
 
 		checkAddToMatcher(instance, identity);
 	}
 
-	private IFrame checkRemoveInternal(CIdentity identity) {
+	private IFrame checkRemove(CIdentity identity) {
 
-		IFrame removed = instances.remove(identity);
+		IFrame removed = null;
 
-		if (removed != null) {
+		if (indexes.hasIndex(identity)) {
+
+			int index = indexes.freeIndex(identity);
 
 			identities.remove(identity);
 			labels.remove(identity);
 
-			checkRemoveFromMatcher(removed, identity);
+			checkRemoveFromMatcher(fileStore.read(index), identity);
+			fileStore.remove(index);
 		}
 
 		return removed;
@@ -322,20 +301,5 @@ public class IStore {
 		}
 
 		return InertIMatcher.get();
-	}
-
-	private void writeToFile() {
-
-		new IStoreRenderer(getStoreFile()).render(this);
-	}
-
-	private File getStoreFile() {
-
-		if (storeDirectory == null) {
-
-			return new File(STORE_FILE_NAME);
-		}
-
-		return new File(storeDirectory, STORE_FILE_NAME);
 	}
 }

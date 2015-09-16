@@ -96,17 +96,6 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Renders a standard XML version of an instance-level frame.
-	 *
-	 * @param iFrame Instance-level frame to be rendered
-	 * @return Document containing XML rendering of frame
-	 */
-	public XDocument renderIFrame(IFrame iFrame) {
-
-		return new IFrameRenderer().render(iFrame);
-	}
-
-	/**
 	 * parses a standard XML version of an instance-level frame.
 	 *
 	 * @param document Document containing XML rendering of frame
@@ -115,7 +104,7 @@ public class CModel implements CAnnotatable {
 	 */
 	public IFrame parseIFrame(XDocument document, IFrameCategory category) {
 
-		return new IFrameParser(this, category).parse(document);
+		return new IFrameParser(this, iEditor, category).parse(document);
 	}
 
 	/**

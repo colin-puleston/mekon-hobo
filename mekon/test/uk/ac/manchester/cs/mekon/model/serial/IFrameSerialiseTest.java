@@ -29,6 +29,7 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
  * @author Colin Puleston
@@ -36,13 +37,11 @@ import uk.ac.manchester.cs.mekon.model.*;
 public class IFrameSerialiseTest extends MekonTest {
 
 	private IFrameRenderer renderer = null;
-	private IFrameParser parser = null;;
 
 	@Before
 	public void setUp() {
 
 		renderer = new IFrameRenderer();
-		parser = new IFrameParser(getModel(), IFrameCategory.ASSERTION);
 	}
 
 	@Test
@@ -92,8 +91,13 @@ public class IFrameSerialiseTest extends MekonTest {
 	private void testRenderAndParse(boolean dynamicSlotInsertion) {
 
 		IFrame original = createComplexInstance(dynamicSlotInsertion);
-		IFrame reconstituted = parser.parse(renderer.render(original));
+		IFrame reconstituted = parseInstance(renderer.render(original));
 
 		assertTrue(reconstituted.matches(original));
+	}
+
+	private IFrame parseInstance(XDocument rendering) {
+
+		return getModel().parseIFrame(rendering, IFrameCategory.ASSERTION);
 	}
 }
