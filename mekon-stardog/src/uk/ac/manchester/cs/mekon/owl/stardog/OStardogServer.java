@@ -38,7 +38,7 @@ import com.complexible.stardog.protocols.snarl.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.triples.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * @author Colin Puleston
@@ -151,7 +151,7 @@ class OStardogServer {
 				.connect();
 	}
 
-	private void loadModel(OModel model, OTReasoningType reasoningType) {
+	private void loadModel(OModel model, ORReasoningType reasoningType) {
 
 		File file = createTempOWLFile(model, reasoningType);
 
@@ -173,8 +173,8 @@ class OStardogServer {
 
 	private File createTempOWLFile(
 					OModel model,
-					OTReasoningType reasoningType) {
+					ORReasoningType reasoningType) {
 
-		return new OTOntology(model, reasoningType).renderToTempFile();
+		return new ORMatcherModel(model, reasoningType).createTempOWLFile();
 	}
 }

@@ -25,23 +25,33 @@
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.owl.triples.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * Represents the configuration for a {@link OStardogMatcher}.
  *
  * @author Colin Puleston
  */
-public class OStardogConfig extends OTConfig implements OStardogConfigVocab {
+public class OStardogConfig implements OStardogConfigVocab {
 
 	/**
 	 * Default configuration.
 	 */
-	static public final OStardogConfig DEFAULT = new OStardogConfig();
+	static public final OStardogConfig DEFAULT_CONFIG = new OStardogConfig();
+
+	static final ORReasoningType DEFAULT_REASONING_TYPE = ORReasoningType.RDFS;
 
 	static private final String DEFAULT_DB_NAME = "MEKON";
 
+	static private String getDatabaseName(KConfigNode parentConfigNode) {
+
+		KConfigNode configNode = parentConfigNode.getChild(MATCHER_ROOT_ID);
+
+		return configNode.getString(DATABASE_NAME_ATTR, DEFAULT_DB_NAME);
+	}
+
 	private String databaseName;
+	private ORReasoningType reasoningType;
 
 	/**
 	 * Constructs configuration for matcher with the specified
@@ -51,7 +61,18 @@ public class OStardogConfig extends OTConfig implements OStardogConfigVocab {
 	 */
 	public OStardogConfig(String databaseName) {
 
-		this.databaseName = databaseName;
+		this(databaseName, DEFAULT_REASONING_TYPE);
+	}
+
+	/**
+	 * Constructs configuration for matcher with the default
+	 * <i>Stardog</i> database and specified reasoning-type.
+	 *
+	 * @param reasoningType Type of reasoning required from matcher
+	 */
+	public OStardogConfig(ORReasoningType reasoningType) {
+
+		this(DEFAULT_DB_NAME, reasoningType);
 	}
 
 	/**
@@ -61,18 +82,15 @@ public class OStardogConfig extends OTConfig implements OStardogConfigVocab {
 	 * @param databaseName Name of database to create
 	 * @param reasoningType Type of reasoning required from matcher
 	 */
-	public OStardogConfig(String databaseName, OTReasoningType reasoningType) {
-
-		super(reasoningType);
+	public OStardogConfig(String databaseName, ORReasoningType reasoningType) {
 
 		this.databaseName = databaseName;
+		this.reasoningType = reasoningType;
 	}
 
 	OStardogConfig(KConfigNode parentConfigNode) {
 
-		super(parentConfigNode);
-
-		databaseName = getDatabaseName(parentConfigNode);
+		this(getDatabaseName(parentConfigNode));
 	}
 
 	String getDatabaseName() {
@@ -80,15 +98,13 @@ public class OStardogConfig extends OTConfig implements OStardogConfigVocab {
 		return databaseName;
 	}
 
+	ORReasoningType getReasoningType() {
+
+		return reasoningType;
+	}
+
 	private OStardogConfig() {
 
 		this(DEFAULT_DB_NAME);
-	}
-
-	private String getDatabaseName(KConfigNode parentConfigNode) {
-
-		KConfigNode configNode = parentConfigNode.getChild(MATCHER_ROOT_ID);
-
-		return configNode.getString(DATABASE_NAME_ATTR, DEFAULT_DB_NAME);
 	}
 }

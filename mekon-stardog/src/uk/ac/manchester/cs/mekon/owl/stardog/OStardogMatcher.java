@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
@@ -39,6 +39,19 @@ public class OStardogMatcher extends OTMatcher {
 	private OStardogServer server = null;
 
 	/**
+	 * Constructs matcher for specified model with the default
+	 * reasoning-type, which is {@link ORReasoningType#RDFS}.
+	 *
+	 * @param model Model over which matcher is to operate
+	 */
+	public OStardogMatcher(OModel model) {
+
+		super(model, OStardogConfig.DEFAULT_REASONING_TYPE);
+
+		initialise(OStardogConfig.DEFAULT_CONFIG);
+	}
+
+	/**
 	 * Constructs matcher for specified model.
 	 *
 	 * @param model Model over which matcher is to operate
@@ -46,7 +59,7 @@ public class OStardogMatcher extends OTMatcher {
 	 */
 	public OStardogMatcher(OModel model, OStardogConfig config) {
 
-		super(model);
+		super(model, config.getReasoningType());
 
 		initialise(config);
 	}
