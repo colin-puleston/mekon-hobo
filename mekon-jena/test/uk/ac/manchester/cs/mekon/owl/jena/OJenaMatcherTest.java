@@ -24,30 +24,16 @@
 
 package uk.ac.manchester.cs.mekon.owl.jena;
 
-import org.junit.After;
-
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
-import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
 public class OJenaMatcherTest extends ORMatcherTest {
 
-	@After
-	public void clearUp() {
-
-		OTMatcher.stopAll();
-	}
-
 	protected ORMatcher createMatcher(OModel model) {
 
-		return new OJenaMatcher(model, createConfig());
-	}
-
-	private OTConfig createConfig() {
-
-		return new OTConfig(OTReasoningType.RDFS);
+		return new OJenaMatcher(model);
 	}
 }

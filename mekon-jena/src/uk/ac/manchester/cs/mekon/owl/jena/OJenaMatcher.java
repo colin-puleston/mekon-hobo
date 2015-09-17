@@ -31,7 +31,7 @@ import org.apache.jena.ontology.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
@@ -41,61 +41,28 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  */
 public class OJenaMatcher extends OTMatcher {
 
-	private class JenaModelCreator {
+	/**
+	 * Constructs matcher for specified model with the default
+	 * reasoning-type, which is {@link ORReasoningType#RDFS}.
+	 *
+	 * @param model Model over which matcher is to operate
+	 */
+	public OJenaMatcher(OModel model) {
 
-		private OTReasoningType reasoningType;
-
-		JenaModelCreator(OTConfig config) {
-
-			reasoningType = config.getReasoningType();
-		}
-
-		OntModel create() {
-
-			OntModel jenaModel = createEmpty();
-
-			loadOntology(jenaModel);
-
-			return jenaModel;
-		}
-
-		private OntModel createEmpty() {
-
-			return ModelFactory.createOntologyModel(getSpec());
-		}
-
-		private void loadOntology(OntModel jenaModel) {
-
-			File owlFile = createTempOWLFile();
-
-			jenaModel.read(owlFile.toURI().toString(), null);
-			owlFile.delete();
-		}
-
-		private OntModelSpec getSpec() {
-
-			return reasoningType == OTReasoningType.TRANSITIVE
-					? OntModelSpec.OWL_DL_MEM_TRANS_INF
-					: OntModelSpec.OWL_DL_MEM_RDFS_INF;
-		}
-
-		private File createTempOWLFile() {
-
-			return new OTOntology(getModel(), reasoningType).renderToTempFile();
-		}
+		this(model, ORReasoningType.RDFS);
 	}
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Constructs matcher for specified model and reasoning-type.
 	 *
 	 * @param model Model over which matcher is to operate
-	 * @param config Configuration for matcher
+	 * @param reasoningType Required reasoning-type for matching
 	 */
-	public OJenaMatcher(OModel model, OTConfig config) {
+	public OJenaMatcher(OModel model, ORReasoningType reasoningType) {
 
-		super(model);
+		super(model, reasoningType);
 
-		initialise(config);
+		initialise();
 	}
 
 	/**
@@ -114,7 +81,7 @@ public class OJenaMatcher extends OTMatcher {
 
 		super(parentConfigNode);
 
-		initialise(parentConfigNode);
+		initialise();
 	}
 
 	/**
@@ -132,7 +99,7 @@ public class OJenaMatcher extends OTMatcher {
 
 		super(model, parentConfigNode);
 
-		initialise(parentConfigNode);
+		initialise();
 	}
 
 	/**
@@ -140,18 +107,35 @@ public class OJenaMatcher extends OTMatcher {
 	protected void stopType() {
 	}
 
-	private void initialise(KConfigNode parentConfigNode) {
+	private void initialise() {
 
-		initialise(new OTConfig(parentConfigNode));
+		initialise(new OJenaFactory(createJenaModel()));
 	}
 
-	private void initialise(OTConfig config) {
+	private OntModel createJenaModel() {
 
-		initialise(new OJenaFactory(createJenaModel(config)));
+		OntModel jenaModel = createEmptyJenaModel();
+
+		loadMatchingOntology(jenaModel);
+
+		return jenaModel;
 	}
 
-	private OntModel createJenaModel(OTConfig config) {
+	private OntModel createEmptyJenaModel() {
 
-		return new JenaModelCreator(config).create();
+		return ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RDFS_INF);
+	}
+
+	private void loadMatchingOntology(OntModel jenaModel) {
+
+		File owlFile = createTempOWLFile();
+
+		jenaModel.read(owlFile.toURI().toString(), null);
+		owlFile.delete();
+	}
+
+	private File createTempOWLFile() {
+
+		return new ORMatcherModel(getModel(), getReasoningType()).createTempOWLFile();
 	}
 }
