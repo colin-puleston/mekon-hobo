@@ -104,6 +104,7 @@ public abstract class ORMatcher implements IMatcher {
 	private OModel model;
 	private OConceptFinder concepts;
 	private FramesManager framesManager;
+	private ORReasoningType reasoningType;
 
 	/**
 	 * Registers a pre-processor to perform certain required
@@ -226,13 +227,26 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Specifies the type of reasoning that the matcher is required
+	 * to perform.
+	 *
+	 * @return Required reasoning-type
+	 */
+	public ORReasoningType getReasoningType() {
+
+		return reasoningType;
+	}
+
+	/**
+	 * Constructs matcher for specified model and reasoning-type.
 	 *
 	 * @param model Model over which matcher is to operate
+	 * @param reasoningType Required reasoning-type for matching
 	 */
-	protected ORMatcher(OModel model) {
+	protected ORMatcher(OModel model, ORReasoningType reasoningType) {
 
 		this.model = model;
+		this.reasoningType = reasoningType;
 
 		concepts = new OConceptFinder(model);
 		framesManager = new FramesManager(model);
@@ -268,7 +282,7 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	protected ORMatcher(OModel model, KConfigNode parentConfigNode) {
 
-		this(model);
+		this(model, ORReasoningType.DL);
 
 		new ORMatcherConfig(parentConfigNode).configure(this);
 	}
@@ -314,6 +328,11 @@ public abstract class ORMatcher implements IMatcher {
 	 * @return True if instance matched by query
 	 */
 	protected abstract boolean matches(ORFrame query, ORFrame instance);
+
+	void setReasoningType(ORReasoningType reasoningType) {
+
+		this.reasoningType = reasoningType;
+	}
 
 	private ORFrame toPreProcessed(IFrame frame) {
 

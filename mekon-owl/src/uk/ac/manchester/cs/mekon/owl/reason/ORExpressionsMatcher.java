@@ -87,13 +87,25 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Constructs matcher for specified model with the default
+	 * reasoning-type, which is {@link ORReasoningType#DL}.
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
 	public ORExpressionsMatcher(OModel model) {
 
 		super(model);
+	}
+
+	/**
+	 * Constructs matcher for specified model and reasoning-type.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param reasoningType Required reasoning-type for matching
+	 */
+	public ORExpressionsMatcher(OModel model, ORReasoningType reasoningType) {
+
+		super(model, reasoningType);
 	}
 
 	/**
@@ -192,16 +204,16 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 
 	private ConceptExpression createConceptExpression(ORFrame frame) {
 
-		return new ConceptExpression(getModel(), frame);
+		return new ConceptExpression(getMatcherModel(), frame);
 	}
 
 	private OWLClass getConcept(ORFrame frame) {
 
-		return getModel().getConcepts().get(frame.getIRI());
+		return getMatcherModel().getConcepts().get(frame.getIRI());
 	}
 
 	private boolean isSubsumption(OWLClass subsumer, OWLClass subsumed) {
 
-		return getModel().isSubsumption(subsumer, subsumed);
+		return getMatcherModel().isSubsumption(subsumer, subsumed);
 	}
 }

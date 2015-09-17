@@ -80,13 +80,14 @@ public abstract class OTMatcher extends ORMatcher {
 	}
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Constructs matcher for specified model and reasoning-type.
 	 *
 	 * @param model Model over which matcher is to operate
+	 * @param reasoningType Required reasoning-type for matching
 	 */
-	protected OTMatcher(OModel model) {
+	protected OTMatcher(OModel model, ORReasoningType reasoningType) {
 
-		super(model);
+		super(model, reasoningType);
 	}
 
 	/**

@@ -44,5 +44,22 @@ class ORMatcherConfig extends ORConfig {
 	void configure(ORMatcher matcher) {
 
 		configure(matcher.getSlotSemantics(), ORMatcherLogger.get());
+
+		checkSetReasoningType(matcher);
+	}
+
+	private void checkSetReasoningType(ORMatcher matcher) {
+
+		ORReasoningType type = getReasoningTypeOrNull();
+
+		if (type != null) {
+
+			matcher.setReasoningType(type);
+		}
+	}
+
+	private ORReasoningType getReasoningTypeOrNull() {
+
+		 return getConfigNode().getEnum(REASONING_TYPE_ATTR, ORReasoningType.class, null);
 	}
 }

@@ -22,16 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Specifies the type of reasoning that a matcher is to perform.
+ * Specifies the type of reasoning that a matcher is required to
+ * perform.
  *
  * @author Colin Puleston
  */
-public enum OTReasoningType {
+public enum ORReasoningType {
 
 	/**
 	 * Simple transitive type reasoning.

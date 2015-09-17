@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.io.*;
 import java.util.*;
@@ -30,6 +30,7 @@ import java.util.*;
 import org.coode.owlapi.rdf.rdfxml.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.apibinding.*;
 
 import uk.ac.manchester.cs.mekon.*;
@@ -39,16 +40,18 @@ import uk.ac.manchester.cs.mekon.owl.*;
 /**
  * Responsible for consolidating into a single ontology all
  * constructs from the relevant source ontologies that are
- * relevant to the type of reasoning that the matcher is required
+ * relevant to the type of reasoning that a matcher is required
  * to perform. The available reasoning-type options are specified
- * via the {@link OTReasoningType} enum.
+ * via the {@link ORReasoningType} enum.
  *
  * @author Colin Puleston
  */
-public class OTOntology {
+public class ORMatcherModel {
 
-	static private final String TEMP_FILE_PREFIX_FORMAT = "MEKON-OTMatcher-%s-";
+	static private final String TEMP_FILE_PREFIX_FORMAT = "ORMatcher-%s-";
 	static private final String TEMP_FILE_SUFFIX = ".owl";
+
+	private OModel sourceModel;
 
 	private OWLOntologyManager manager;
 	private IRI ontologyIRI;
@@ -57,15 +60,17 @@ public class OTOntology {
 	/**
 	 * Constructor.
 	 *
-	 * @param model Model over which matcher is to operate
-	 * @param reasoningType Type of reasoning that the matcher
-	 * is to perform
+	 * @param sourceModel Model from which ontology will be derived
+	 * @param reasoningType Type of reasoning that the matcher is to
+	 * perform
 	 */
-	public OTOntology(OModel model, OTReasoningType reasoningType) {
+	public ORMatcherModel(OModel sourceModel, ORReasoningType reasoningType) {
+
+		this.sourceModel = sourceModel;
 
 		manager = OWLManager.createOWLOntologyManager();
-		ontologyIRI = getOntologyIRI(model.getMainOntology());
-		ontology = create(model.getAllOntologies());
+		ontologyIRI = getOntologyIRI(sourceModel.getMainOntology());
+		ontology = create(sourceModel.getAllOntologies());
 
 		purge(reasoningType);
 	}
@@ -75,9 +80,30 @@ public class OTOntology {
 	 *
 	 * @return Ontology for matcher
 	 */
-	public OWLOntology get() {
+	public OWLOntology getOntology() {
 
 		return ontology;
+	}
+
+	/**
+	 * Provides a MEKON-OWL model representing the ontology that is
+	 * to be used by the matcher.
+	 *
+	 * @return Model representing matcher ontology
+	 */
+	public OModel getModel() {
+
+		OWLReasonerFactory reasonerFactory = sourceModel.getReasonerFactory();
+		OModel model = new OModel(manager, ontology, reasonerFactory, true);
+
+		OWLDataProperty numProp = sourceModel.getIndirectNumericProperty();
+
+		if (numProp != null) {
+
+			model.setIndirectNumericProperty(numProp.getIRI());
+		}
+
+		return model;
 	}
 
 	/**
@@ -87,7 +113,7 @@ public class OTOntology {
 	 * @return File containing OWL-RDF rendering of ontology for
 	 * matcher
 	 */
-	public File renderToTempFile() {
+	public File createTempOWLFile() {
 
 		try {
 
@@ -115,7 +141,7 @@ public class OTOntology {
 		}
 	}
 
-	private void purge(OTReasoningType reasoningType) {
+	private void purge(ORReasoningType reasoningType) {
 
 		for (OWLAxiom axiom : ontology.getAxioms()) {
 

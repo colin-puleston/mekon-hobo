@@ -54,8 +54,10 @@ public class OModel {
 
 	private OWLOntologyManager manager;
 	private OWLOntology mainOntology;
-	private ReasonerAccessor reasonerAccessor;
+	private OWLReasonerFactory reasonerFactory;
 	private OWLDataProperty indirectNumericProperty;
+
+	private ReasonerAccessor reasonerAccessor = new ReasonerStarter();
 
 	private OConcepts concepts;
 	private OObjectProperties objectProperties;
@@ -70,13 +72,6 @@ public class OModel {
 
 	private class ReasonerStarter extends ReasonerAccessor {
 
-		private OWLReasonerFactory factory;
-
-		ReasonerStarter(OWLReasonerFactory factory) {
-
-			this.factory = factory;
-		}
-
 		OWLReasoner get() {
 
 			OWLReasoner reasoner = create();
@@ -88,7 +83,7 @@ public class OModel {
 
 		private OWLReasoner create() {
 
-			return factory.createReasoner(mainOntology);
+			return reasonerFactory.createReasoner(mainOntology);
 		}
 	}
 
@@ -127,8 +122,9 @@ public class OModel {
 
 		this.manager = manager;
 		this.mainOntology = mainOntology;
+		this.reasonerFactory = reasonerFactory;
 
-		initialise(reasonerFactory, startReasoner);
+		initialise(startReasoner);
 	}
 
 	/**
@@ -140,7 +136,7 @@ public class OModel {
 	 * that one.
 	 *
 	 * @param mainOWLFile OWL file containing main ontology
-	 * @param reasonerFactory Type of factory for creating required
+	 * @param reasonerFactoryType Type of factory for creating required
 	 * reasoner
 	 * @param startReasoner True if initial classification of the ontology
 	 * and subsequent initialisation of cached-data are to be invoked
@@ -149,13 +145,14 @@ public class OModel {
 	 */
 	public OModel(
 			File mainOWLFile,
-			Class<? extends OWLReasonerFactory> reasonerFactory,
+			Class<? extends OWLReasonerFactory> reasonerFactoryType,
 			boolean startReasoner) {
 
 		manager = createManager(mainOWLFile);
 		mainOntology = loadOntology(mainOWLFile);
+		reasonerFactory = createReasonerFactory(reasonerFactoryType);
 
-		initialise(createReasonerFactory(reasonerFactory), startReasoner);
+		initialise(startReasoner);
 	}
 
 	/**
@@ -314,6 +311,16 @@ public class OModel {
 	public OWLReasoner getReasoner() {
 
 		return reasonerAccessor.get();
+	}
+
+	/**
+	 * Provides the factory for creating the reasoner.
+	 *
+	 * @return Factory for reasoner
+	 */
+	public OWLReasonerFactory getReasonerFactory() {
+
+		return reasonerFactory;
 	}
 
 	/**
@@ -618,9 +625,7 @@ public class OModel {
 		}
 	}
 
-	private void initialise(OWLReasonerFactory reasonerFactory, boolean startReasoner) {
-
-		reasonerAccessor = new ReasonerStarter(reasonerFactory);
+	private void initialise(boolean startReasoner) {
 
 		concepts = new OConcepts(this);
 		objectProperties = new OObjectProperties(this);

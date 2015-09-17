@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 

@@ -38,17 +38,19 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  */
 abstract class OROntologyBasedMatcher extends ORMatcher {
 
+	private OModel matcherModel = null;
+
 	protected List<CIdentity> match(ORFrame query) {
 
 		ConceptExpression expr = createConceptExpression(query);
 		OWLObject owlConstruct = expr.getOWLConstruct();
 
-		ORMonitor.pollForMatcherRequest(getModel(), owlConstruct);
+		ORMonitor.pollForMatcherRequest(matcherModel, owlConstruct);
 
 		List<CIdentity> matches = match(expr);
 
-		ORMonitor.pollForMatchesFound(getModel(), matches);
-		ORMonitor.pollForMatcherDone(getModel(), owlConstruct);
+		ORMonitor.pollForMatchesFound(matcherModel, matches);
+		ORMonitor.pollForMatcherDone(matcherModel, owlConstruct);
 
 		return matches;
 	}
@@ -60,25 +62,59 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	OROntologyBasedMatcher(OModel model) {
 
-		super(model);
+		this(model, ORReasoningType.DL);
+	}
+
+	OROntologyBasedMatcher(OModel model, ORReasoningType reasoningType) {
+
+		super(model, reasoningType);
+
+		initialise();
 	}
 
 	OROntologyBasedMatcher(KConfigNode parentConfigNode) {
 
 		super(parentConfigNode);
+
+		initialise();
 	}
 
 	OROntologyBasedMatcher(OModel model, KConfigNode parentConfigNode) {
 
 		super(model, parentConfigNode);
+
+		initialise();
 	}
 
 	abstract List<CIdentity> match(ConceptExpression queryExpr);
 
 	abstract boolean matches(ConceptExpression queryExpr, ORFrame instance);
 
+	OModel getMatcherModel() {
+
+		return matcherModel;
+	}
+
+	private void initialise() {
+
+		matcherModel = resolveMatcherModel();
+	}
+
+	private OModel resolveMatcherModel() {
+
+		OModel model = getModel();
+		ORReasoningType reasoningType = getReasoningType();
+
+		if (reasoningType == ORReasoningType.DL) {
+
+			return model;
+		}
+
+		return new ORMatcherModel(model, reasoningType).getModel();
+	}
+
 	private ConceptExpression createConceptExpression(ORFrame frame) {
 
-		return new ConceptExpression(getModel(), frame);
+		return new ConceptExpression(matcherModel, frame);
 	}
 }

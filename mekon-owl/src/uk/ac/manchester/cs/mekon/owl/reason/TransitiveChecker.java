@@ -22,17 +22,25 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import org.semanticweb.owlapi.model.*;
 
 /**
- * Vocabulary used in the MEKON configuration file in the
- * definition sections for extensions of {@link OTMatcher}.
- *
  * @author Colin Puleston
  */
-public interface OTConfigVocab extends ORConfigVocab {
+class TransitiveChecker extends ReasoningTypeChecker {
 
-	static public final String REASONING_TYPE_ATTR = "reasoningType";
+	static private final TransitiveChecker singleton = new TransitiveChecker();
+
+	static TransitiveChecker get() {
+
+		return singleton;
+	}
+
+	TransitiveChecker() {
+
+		addValidAxiomType(OWLSubObjectPropertyOfAxiom.class);
+		addValidAxiomType(OWLSubDataPropertyOfAxiom.class);
+	}
 }

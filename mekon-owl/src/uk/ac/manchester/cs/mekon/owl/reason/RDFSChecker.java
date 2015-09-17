@@ -22,25 +22,27 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 import org.semanticweb.owlapi.model.*;
 
 /**
  * @author Colin Puleston
  */
-class TransitiveChecker extends ReasoningTypeChecker {
+class RDFSChecker extends TransitiveChecker {
 
-	static private final TransitiveChecker singleton = new TransitiveChecker();
+	static private final RDFSChecker singleton = new RDFSChecker();
 
-	static TransitiveChecker get() {
+	static RDFSChecker get() {
 
 		return singleton;
 	}
 
-	TransitiveChecker() {
+	private RDFSChecker() {
 
-		addValidAxiomType(OWLSubObjectPropertyOfAxiom.class);
-		addValidAxiomType(OWLSubDataPropertyOfAxiom.class);
+		addValidAxiomType(OWLObjectPropertyDomainAxiom.class);
+		addValidAxiomType(OWLObjectPropertyRangeAxiom.class);
+		addValidAxiomType(OWLDataPropertyDomainAxiom.class);
+		addValidAxiomType(OWLDataPropertyRangeAxiom.class);
 	}
 }

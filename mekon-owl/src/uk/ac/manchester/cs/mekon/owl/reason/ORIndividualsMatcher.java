@@ -45,13 +45,27 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	private IndividualsRenderer dynamicRenderer;
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Constructs matcher for specified model with the default
+	 * reasoning-type, which is {@link ORReasoningType#DL}.
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
 	public ORIndividualsMatcher(OModel model) {
 
 		super(model);
+
+		initialise();
+	}
+
+	/**
+	 * Constructs matcher for specified model and reasoning-type.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param reasoningType Required reasoning-type for matching
+	 */
+	public ORIndividualsMatcher(OModel model, ORReasoningType reasoningType) {
+
+		super(model, reasoningType);
 
 		initialise();
 	}
@@ -132,7 +146,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private IndividualsRenderer createRenderer(IndividualCategory category) {
 
-		return new IndividualsRenderer(getModel(), category);
+		return new IndividualsRenderer(getMatcherModel(), category);
 	}
 
 	private List<CIdentity> purgeMatches(List<CIdentity> all) {
@@ -152,6 +166,6 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private IndividualNetwork createIndividualNetwork(ORFrame frame) {
 
-		return new IndividualNetwork(getModel(), frame, dynamicRenderer);
+		return new IndividualNetwork(getMatcherModel(), frame, dynamicRenderer);
 	}
 }
