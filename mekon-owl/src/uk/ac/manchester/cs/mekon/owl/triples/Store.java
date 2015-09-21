@@ -26,10 +26,9 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.util.*;
+import org.semanticweb.owlapi.model.*;
+
+import uk.ac.manchester.cs.mekon.owl.util.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
@@ -39,84 +38,59 @@ class Store {
 
 	private OTFactory factory;
 
-	private AssertionIndexes assertionIndexes = new AssertionIndexes();
-
-	private class AssertionIndexes extends KIndexes<String> {
-
-		protected KRuntimeException createException(String message) {
-
-			return new KSystemConfigException(message);
-		}
-	}
+	private OInstanceIRIs dynamicInstanceIRIs = new OInstanceIRIs(true);
 
 	Store(OTFactory factory) {
 
 		this.factory = factory;
 	}
 
-	synchronized void add(ORFrame instance, CIdentity identity) {
+	void add(ORFrame instance, IRI iri) {
 
-		add(instance, assertionIndexes.assignIndex(identity.getIdentifier()));
+		getAssertion(iri).add(instance);
 	}
 
-	synchronized void remove(CIdentity identity) {
+	void remove(IRI iri) {
 
-		remove(assertionIndexes.getIndex(identity.getIdentifier()));
+		getAssertion(iri).remove();
 	}
 
-	boolean present(CIdentity identity) {
+	List<IRI> match(ORFrame query) {
 
-		return assertionIndexes.hasIndex(identity.getIdentifier());
-	}
-
-	List<CIdentity> match(ORFrame query) {
-
-		List<CIdentity> ids = new ArrayList<CIdentity>();
+		List<IRI> matches = new ArrayList<IRI>();
 
 		for (OT_URI uri : executeMatch(query)) {
 
-			ids.add(baseURIToId(extractBaseURI(uri.asURI())));
+			matches.add(IRI.create(extractBaseURI(uri.asURI())));
 		}
 
-		return ids;
+		return matches;
 	}
 
 	boolean matches(ORFrame query, ORFrame instance) {
 
-		int assertionIndex = addTemp(instance);
-		String baseURI = getBaseURI(assertionIndex);
+		IRI dynamicIRI = addDynamic(instance);
+		boolean result = executeMatches(query, dynamicIRI.toString());
 
-		boolean result = executeMatches(query, baseURI);
-
-		removeTemp(assertionIndex);
+		removeDynamic(dynamicIRI);
 
 		return result;
 	}
 
-	private synchronized int addTemp(ORFrame instance) {
+	private IRI addDynamic(ORFrame instance) {
 
-		int index = assertionIndexes.assignIndex();
+		IRI iri = dynamicInstanceIRIs.assign();
 
-		add(instance, index);
+		add(instance, iri);
 
-		return index;
+		return iri;
 	}
 
-	private synchronized void removeTemp(int index) {
+	private void removeDynamic(IRI iri) {
 
-		assertionIndexes.freeIndex(index);
+		dynamicInstanceIRIs.free(iri);
 
-		remove(index);
-	}
-
-	private void add(ORFrame instance, int index) {
-
-		getAssertion(index).add(instance);
-	}
-
-	private void remove(int index) {
-
-		getAssertion(index).remove();
+		remove(iri);
 	}
 
 	private List<OT_URI> executeMatch(ORFrame query) {
@@ -129,30 +103,13 @@ class Store {
 		return new MatchesQuery(factory).execute(query, baseURI);
 	}
 
-	private Assertion getAssertion(int index) {
+	private Assertion getAssertion(IRI iri) {
 
-		return new Assertion(factory, getBaseURI(index));
-	}
-
-	private CIdentity baseURIToId(String baseURI) {
-
-		int assertionIndex = extractAssertionIndex(baseURI);
-
-		return new CIdentity(assertionIndexes.getElement(assertionIndex));
-	}
-
-	private String getBaseURI(int assertionIndex) {
-
-		return AssertionURIs.getBaseURI(assertionIndex);
+		return new Assertion(factory, iri.toString());
 	}
 
 	private String extractBaseURI(String uri) {
 
-		return AssertionURIs.extractBaseURI(uri);
-	}
-
-	private int extractAssertionIndex(String baseURI) {
-
-		return AssertionURIs.extractAssertionIndex(baseURI);
+		return FrameNodeURIs.extractBaseURI(uri);
 	}
 }

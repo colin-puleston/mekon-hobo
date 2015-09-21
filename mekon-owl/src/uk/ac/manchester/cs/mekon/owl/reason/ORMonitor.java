@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -104,7 +103,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForMatchesFound(OModel model, List<CIdentity> matches) {
+	static void pollForMatchesFound(OModel model, List<IRI> matches) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -169,7 +168,7 @@ public abstract class ORMonitor {
 	 * @param model Relevant model
 	 * @param matches Matching instances
 	 */
-	protected abstract void onMatchesFound(OModel model, List<CIdentity> matches);
+	protected abstract void onMatchesFound(OModel model, List<IRI> matches);
 
 	/**
 	 * Method invoked immediately after instance-match request has

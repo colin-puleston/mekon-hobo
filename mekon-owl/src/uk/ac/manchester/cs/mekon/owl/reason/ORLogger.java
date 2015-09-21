@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
@@ -134,15 +133,12 @@ public abstract class ORLogger extends ORMonitor {
 		}
 	}
 
-	void onReasoned(
-			OModel model,
-			List<CIdentity> results,
-			String resultsType) {
+	void onReasoned(OModel model, List<IRI> results, String resultsType) {
 
 		if (showResults) {
 
 			actions.printTitle(resultsType);
-			actions.printIdentities(model, results);
+			actions.printIRIs(model, results);
 		}
 	}
 

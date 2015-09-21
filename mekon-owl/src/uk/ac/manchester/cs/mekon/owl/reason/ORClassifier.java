@@ -67,6 +67,7 @@ public class ORClassifier extends IClassifier {
 	private OModel model;
 	private FramesManager framesManager;
 	private IndividualsRenderer individualsRenderer;
+	private OInstanceIRIs individualRootIRIs = new OInstanceIRIs(true);
 
 	private boolean forceIndividualBasedClassification = false;
 
@@ -116,9 +117,7 @@ public class ORClassifier extends IClassifier {
 		this.model = model;
 
 		framesManager = new FramesManager(model);
-		individualsRenderer = new IndividualsRenderer(
-									model,
-									IndividualCategory.CLASSIFIER);
+		individualsRenderer = new IndividualsRenderer(model);
 	}
 
 	/**
@@ -231,10 +230,17 @@ public class ORClassifier extends IClassifier {
 
 		if (forceIndividualBasedClassification || frame.leadsToCycle()) {
 
-			return new IndividualNetwork(model, frame, individualsRenderer);
+			return createIndividualNetwork(frame);
 		}
 
 		return new ConceptExpression(model, frame);
+	}
+
+	private IndividualNetwork createIndividualNetwork(ORFrame frame) {
+
+		IRI rootIRI = individualRootIRIs.assign();
+
+		return new IndividualNetwork(model, frame, rootIRI, individualsRenderer);
 	}
 
 	private void purgeInferredTypes(ORFrame frame, Set<OWLClass> types) {

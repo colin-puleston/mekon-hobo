@@ -26,16 +26,18 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Extension of {@link ORMatcher} that represents the instances
- * as networks of individuals, which are added to the in-memory
- * version of the ontology, and represents the queries as
- * class-expressions.
+ * as networks of individuals, which are added to an in-memory
+ * version of the ontology, and that represents queries as
+ * anonymous class-expressions.
  *
  * @author Colin Puleston
  */
@@ -43,6 +45,8 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private IndividualsRenderer storeRenderer;
 	private IndividualsRenderer dynamicRenderer;
+
+	private OInstanceIRIs dynamicRootIRIs = new OInstanceIRIs(true);
 
 	/**
 	 * Constructs matcher for specified model with the default
@@ -109,26 +113,24 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected void addInstance(ORFrame instance, CIdentity identity) {
+	protected void add(ORFrame instance, IRI iri) {
 
-		storeRenderer.render(instance, identity.getIdentifier());
+		storeRenderer.render(instance, iri);
 	}
 
 	/**
 	 */
-	protected void removeInstance(CIdentity identity) {
+	protected void remove(IRI iri) {
 
-		storeRenderer.removeGroup(identity.getIdentifier());
+		storeRenderer.removeGroup(iri);
 	}
 
-	/**
-	 */
-	protected boolean containsInstance(CIdentity identity) {
+	boolean matcherModifiesOntology() {
 
-		return storeRenderer.rendered(identity.getIdentifier());
+		return true;
 	}
 
-	List<CIdentity> match(ConceptExpression queryExpr) {
+	List<IRI> match(ConceptExpression queryExpr) {
 
 		return purgeMatches(queryExpr.getMatchingIndividuals());
 	}
@@ -140,22 +142,22 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private void initialise() {
 
-		storeRenderer = createRenderer(IndividualCategory.MATCHER_NAMED);
-		dynamicRenderer = createRenderer(IndividualCategory.MATCHER_ANON);
+		storeRenderer = createRenderer();
+		dynamicRenderer = createRenderer();
 	}
 
-	private IndividualsRenderer createRenderer(IndividualCategory category) {
+	private IndividualsRenderer createRenderer() {
 
-		return new IndividualsRenderer(getMatcherModel(), category);
+		return new IndividualsRenderer(getMatcherModel());
 	}
 
-	private List<CIdentity> purgeMatches(List<CIdentity> all) {
+	private List<IRI> purgeMatches(List<IRI> matches) {
 
-		List<CIdentity> purged = new ArrayList<CIdentity>();
+		List<IRI> purged = new ArrayList<IRI>();
 
-		for (CIdentity match : all) {
+		for (IRI match : matches) {
 
-			if (storeRenderer.rendered(match.getIdentifier())) {
+			if (storeRenderer.rendered(match)) {
 
 				purged.add(match);
 			}
@@ -166,6 +168,12 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private IndividualNetwork createIndividualNetwork(ORFrame frame) {
 
-		return new IndividualNetwork(getMatcherModel(), frame, dynamicRenderer);
+		IRI rootIRI = dynamicRootIRIs.assign();
+
+		return new IndividualNetwork(
+						getMatcherModel(),
+						frame,
+						rootIRI,
+						dynamicRenderer);
 	}
 }

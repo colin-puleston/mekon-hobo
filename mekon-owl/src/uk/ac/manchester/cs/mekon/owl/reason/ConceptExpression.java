@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
@@ -60,9 +59,14 @@ class ConceptExpression extends InstanceConstruct {
 		return model.isSubsumption(expression, testSubsumed.getOWLConstruct());
 	}
 
-	List<CIdentity> getMatchingIndividuals() {
+	List<IRI> getMatchingConcepts() {
 
-		return toResolvedIdentityList(inferIndividuals());
+		return getSortedIRIs(inferEquivalentsAndAllSubs());
+	}
+
+	List<IRI> getMatchingIndividuals() {
+
+		return getSortedIRIs(inferIndividuals());
 	}
 
 	void cleanUp() {
@@ -82,7 +86,7 @@ class ConceptExpression extends InstanceConstruct {
 
 		return expression instanceof OWLClass
 				? Collections.<OWLClass>emptySet()
-				: inferEquivalentsOrSupers();
+				: inferEquivalentsOrDirectSupers();
 	}
 
 	Set<OWLClass> getSuggestedTypes() {
@@ -100,11 +104,21 @@ class ConceptExpression extends InstanceConstruct {
 		return new ExpressionRenderer(model).render(frame);
 	}
 
-	private Set<OWLClass> inferEquivalentsOrSupers() {
+	private Set<OWLClass> inferEquivalentsOrDirectSupers() {
 
-		Set<OWLClass> types = model.getInferredEquivalents(expression);
+		Set<OWLClass> results = model.getInferredEquivalents(expression);
 
-		return types.isEmpty() ? model.getInferredSupers(expression, true) : types;
+		return results.isEmpty() ? model.getInferredSupers(expression, true) : results;
+	}
+
+	private Set<OWLClass> inferEquivalentsAndAllSubs() {
+
+		Set<OWLClass> results = new HashSet<OWLClass>();
+
+		results.addAll(model.getInferredEquivalents(expression));
+		results.addAll(model.getInferredSubs(expression, false));
+
+		return results;
 	}
 
 	private Set<OWLNamedIndividual> inferIndividuals() {
@@ -112,23 +126,16 @@ class ConceptExpression extends InstanceConstruct {
 		return model.getInferredIndividuals(expression, false);
 	}
 
-	private List<CIdentity> toResolvedIdentityList(Set<OWLNamedIndividual> individuals) {
+	private List<IRI> getSortedIRIs(Set<? extends OWLEntity> entities) {
 
-		List<CIdentity> identities = new ArrayList<CIdentity>();
+		SortedSet<IRI> iris = new TreeSet<IRI>();
 
-		for (CIdentity identity : OIdentity.createSortedSet(individuals)) {
+		for (OWLEntity entity : entities) {
 
-			identities.add(resolveIndividualIdentity(identity));
+			iris.add(entity.getIRI());
 		}
 
-		return identities;
-	}
-
-	private CIdentity resolveIndividualIdentity(CIdentity identity) {
-
-		IRI iri = IRI.create(identity.getIdentifier());
-
-		return new CIdentity(IndividualIRIGenerator.extractName(iri));
+		return new ArrayList<IRI>(iris);
 	}
 
 	private OWLDataFactory getDataFactory() {

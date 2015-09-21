@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -103,8 +105,10 @@ public abstract class ORMatcher implements IMatcher {
 
 	private OModel model;
 	private OConceptFinder concepts;
-	private FramesManager framesManager;
 	private ORReasoningType reasoningType;
+
+	private FramesManager framesManager;
+	private OInstanceIRIs instanceIRIs = new OInstanceIRIs(false);
 
 	/**
 	 * Registers a pre-processor to perform certain required
@@ -136,19 +140,10 @@ public abstract class ORMatcher implements IMatcher {
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
-	 * @return True if instance added, false if instance with specified
-	 * identity already present
 	 */
-	public synchronized boolean add(IFrame instance, CIdentity identity) {
+	public void add(IFrame instance, CIdentity identity) {
 
-		if (containsInstance(identity)) {
-
-			return false;
-		}
-
-		addInstance(toPreProcessed(instance), identity);
-
-		return true;
+		add(toPreProcessed(instance), instanceIRIs.assign(identity));
 	}
 
 	/**
@@ -157,19 +152,10 @@ public abstract class ORMatcher implements IMatcher {
 	 * are provided by the extending classes.
 	 *
 	 * @param identity Unique identity of instance to be removed
-	 * @return True if instance removed, false if instance with specified
-	 * identity not present
 	 */
-	public synchronized boolean remove(CIdentity identity) {
+	public void remove(CIdentity identity) {
 
-		if (containsInstance(identity)) {
-
-			removeInstance(identity);
-
-			return true;
-		}
-
-		return false;
+		remove(instanceIRIs.free(identity));
 	}
 
 	/**
@@ -184,7 +170,9 @@ public abstract class ORMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return new IMatches(match(toPreProcessed(query)));
+		List<IRI> matches = match(toPreProcessed(query));
+
+		return new IMatches(instanceIRIs.toIdentities(matches));
 	}
 
 	/**
@@ -288,29 +276,23 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
-	 * Adds the specified instance-level frame, which is assumed to be
-	 * not currently present, to the matcher.
+	 * Adds an instance to the matcher. It can be assumed that this
+	 * method will only be invoked when it is known that an instance
+	 * with the specified IRI is not already present.
 	 *
 	 * @param instance Representation of instance to be added
-	 * @param identity Unique identity for instance
+	 * @param iri IRI of instance to be added
 	 */
-	protected abstract void addInstance(ORFrame instance, CIdentity identity);
+	protected abstract void add(ORFrame instance, IRI iri);
 
 	/**
-	 * Removes the specified instance, which is assumed to be present,
-	 * from the matcher.
+	 * Adds an instance from the matcher. It can be assumed that this
+	 * method will only be invoked when it is known that an instance
+	 * with the specified IRI is currently present.
 	 *
-	 * @param identity Unique identity of instance to be removed
+	 * @param iri IRI of instance to be removed
 	 */
-	protected abstract void removeInstance(CIdentity identity);
-
-	/**
-	 * Tests whether an instance with the specified identity is currently
-	 * present in the matcher.
-	 *
-	 * @return True if specified instance present
-	 */
-	protected abstract boolean containsInstance(CIdentity identity);
+	protected abstract void remove(IRI iri);
 
 	/**
 	 * Performs the query-matching operation.
@@ -318,7 +300,7 @@ public abstract class ORMatcher implements IMatcher {
 	 * @param query Representation of query
 	 * @return Unique identities of all matching instances
 	 */
-	protected abstract List<CIdentity> match(ORFrame query);
+	protected abstract List<IRI> match(ORFrame query);
 
 	/**
 	 * Performs a single query-matching test.

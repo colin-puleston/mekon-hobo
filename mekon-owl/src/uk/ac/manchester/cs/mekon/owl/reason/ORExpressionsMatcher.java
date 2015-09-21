@@ -28,15 +28,14 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * Extension of {@link ORMatcher} that represents the instances
- * as a set of class-expressions, and the queries also as
- * class-expressions.
+ * as a set of anonymous class-expressions, and the queries also
+ * as anonymous class-expressions.
  *
  * @author Colin Puleston
  */
@@ -48,38 +47,33 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 	private class InstanceGroup {
 
 		private OWLClass frameConcept;
-		private Map<CIdentity, ConceptExpression> instanceExprs
-						= new HashMap<CIdentity, ConceptExpression>();
+		private Map<IRI, ConceptExpression> instanceExprs
+						= new HashMap<IRI, ConceptExpression>();
 
 		InstanceGroup(OWLClass frameConcept) {
 
 			this.frameConcept = frameConcept;
 		}
 
-		void add(ORFrame instance, CIdentity identity) {
+		void add(ORFrame instance, IRI iri) {
 
-			instanceExprs.put(identity, createConceptExpression(instance));
+			instanceExprs.put(iri, createConceptExpression(instance));
 		}
 
-		boolean checkRemove(CIdentity identity) {
+		boolean checkRemove(IRI iri) {
 
-			return instanceExprs.remove(identity) != null;
+			return instanceExprs.remove(iri) != null;
 		}
 
-		boolean contains(CIdentity identity) {
-
-			return instanceExprs.containsKey(identity);
-		}
-
-		void collectMatches(ConceptExpression queryExpr, List<CIdentity> matches) {
+		void collectMatches(ConceptExpression queryExpr, List<IRI> matches) {
 
 			if (isSubsumption(queryExpr.getFrameConcept(), frameConcept)) {
 
-				for (CIdentity id : instanceExprs.keySet()) {
+				for (IRI iri : instanceExprs.keySet()) {
 
-					if (queryExpr.subsumes(instanceExprs.get(id))) {
+					if (queryExpr.subsumes(instanceExprs.get(iri))) {
 
-						matches.add(id);
+						matches.add(iri);
 					}
 				}
 			}
@@ -143,7 +137,7 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected void addInstance(ORFrame instance, CIdentity identity) {
+	protected void add(ORFrame instance, IRI iri) {
 
 		OWLClass frameConcept = getConcept(instance);
 		InstanceGroup group = instanceGroups.get(frameConcept);
@@ -154,40 +148,30 @@ public class ORExpressionsMatcher extends OROntologyBasedMatcher {
 			instanceGroups.put(frameConcept, group);
 		}
 
-		group.add(instance, identity);
+		group.add(instance, iri);
 	}
 
 	/**
 	 */
-	protected void removeInstance(CIdentity identity) {
+	protected void remove(IRI iri) {
 
 		for (InstanceGroup group : instanceGroups.values()) {
 
-			if (group.checkRemove(identity)) {
+			if (group.checkRemove(iri)) {
 
 				break;
 			}
 		}
 	}
 
-	/**
-	 */
-	protected boolean containsInstance(CIdentity identity) {
-
-		for (InstanceGroup group : instanceGroups.values()) {
-
-			if (group.contains(identity)) {
-
-				return true;
-			}
-		}
+	boolean matcherModifiesOntology() {
 
 		return false;
 	}
 
-	List<CIdentity> match(ConceptExpression queryExpr) {
+	List<IRI> match(ConceptExpression queryExpr) {
 
-		List<CIdentity> matches = new ArrayList<CIdentity>();
+		List<IRI> matches = new ArrayList<IRI>();
 
 		for (InstanceGroup group : instanceGroups.values()) {
 

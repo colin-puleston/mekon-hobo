@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
@@ -40,14 +39,14 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	private OModel matcherModel = null;
 
-	protected List<CIdentity> match(ORFrame query) {
+	protected List<IRI> match(ORFrame query) {
 
 		ConceptExpression expr = createConceptExpression(query);
 		OWLObject owlConstruct = expr.getOWLConstruct();
 
 		ORMonitor.pollForMatcherRequest(matcherModel, owlConstruct);
 
-		List<CIdentity> matches = match(expr);
+		List<IRI> matches = match(expr);
 
 		ORMonitor.pollForMatchesFound(matcherModel, matches);
 		ORMonitor.pollForMatcherDone(matcherModel, owlConstruct);
@@ -86,7 +85,9 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 		initialise();
 	}
 
-	abstract List<CIdentity> match(ConceptExpression queryExpr);
+	abstract boolean matcherModifiesOntology();
+
+	abstract List<IRI> match(ConceptExpression queryExpr);
 
 	abstract boolean matches(ConceptExpression queryExpr, ORFrame instance);
 
@@ -105,7 +106,7 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 		OModel model = getModel();
 		ORReasoningType reasoningType = getReasoningType();
 
-		if (reasoningType == ORReasoningType.DL) {
+		if (reasoningType == ORReasoningType.DL && !matcherModifiesOntology()) {
 
 			return model;
 		}

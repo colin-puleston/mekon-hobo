@@ -92,7 +92,7 @@ public class ORClassifierLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onMatchesFound(OModel model, List<CIdentity> matches) {
+	protected void onMatchesFound(OModel model, List<IRI> matches) {
 	}
 
 	/**

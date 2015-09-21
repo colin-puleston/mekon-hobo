@@ -107,6 +107,6 @@ class Assertion {
 
 	private OT_URI getFrameNode(int index) {
 
-		return new OT_URI(AssertionURIs.getFrameNodeURI(baseURI, index));
+		return new OT_URI(FrameNodeURIs.getFrameNodeURI(baseURI, index));
 	}
 }

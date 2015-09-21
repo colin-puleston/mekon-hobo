@@ -22,49 +22,42 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
+
+import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
  */
-class MatchesQuery extends SpecificQuery {
+class IndividualIRIs {
 
-	private class QueryBodyRenderer extends MatchingQueryBodyRenderer {
+	static private final String REF_SECTION_PREFIX = "-REF-";
 
-		private String rootFrameNodeURI;
+	private ORFrame rootFrame;
+	private IRI rootIRI;
 
-		QueryBodyRenderer(String baseURI) {
+	private int refCount = 0;
 
-			super(getConstants());
+	IndividualIRIs(ORFrame rootFrame, IRI rootIRI) {
 
-			rootFrameNodeURI = FrameNodeURIs.getRootFrameNodeURI(baseURI);
-		}
-
-		QueryVariable getRootFrameNode() {
-
-			return new QueryVariable(getRootFrameNodeRendering());
-		}
-
-		private String getRootFrameNodeRendering() {
-
-			return getConstants().getVariableRendering(renderURI(rootFrameNodeURI));
-		}
+		this.rootFrame = rootFrame;
+		this.rootIRI = rootIRI;
 	}
 
-	MatchesQuery(OTFactory factory) {
+	IRI getFor(ORFrame frame) {
 
-		super(factory);
+		if (frame == rootFrame) {
+
+			return rootIRI;
+		}
+
+		return IRI.create(rootIRI.toString() + getNextRefFragmentSection());
 	}
 
-	boolean execute(ORFrame query, String baseURI) {
+	private String getNextRefFragmentSection() {
 
-		return executeAsk(renderQueryBody(query, baseURI));
-	}
-
-	private String renderQueryBody(ORFrame query, String baseURI) {
-
-		return new QueryBodyRenderer(baseURI).render(query);
+		return REF_SECTION_PREFIX + refCount++;
 	}
 }

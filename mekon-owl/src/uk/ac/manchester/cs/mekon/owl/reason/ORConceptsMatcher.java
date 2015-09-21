@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 import java.util.*;
 
@@ -30,54 +30,28 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * Extension of {@link ORMatcher} that represents the instances
- * via sets of triples in an RDF triple store, and the queries as
- * <i>SPARQL</i> queries over that store. The store will be
- * dynamically populated, and possibly created, on start-up, and
- * emptied or removed on termination.
- * <p>
- * This is an abstract class each of whose extensions will provide
- * an implementation for a particular type of triple store.
+ * as appropriately-defined OWL classes, which are added to an
+ * in-memory version of the ontology, and that represents queries
+ * as anonymous class-expressions.
  *
  * @author Colin Puleston
  */
-public abstract class OTMatcher extends ORMatcher {
-
-	static private Set<OTMatcher> matchers = new HashSet<OTMatcher>();
+public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	/**
-	 * Invokes the {@link #stop} methods on any currently active
-	 * matchers of this type.
+	 * Constructs matcher for specified model with the default
+	 * reasoning-type, which is {@link ORReasoningType#DL}.
+	 *
+	 * @param model Model over which matcher is to operate
 	 */
-	static public void stopAll() {
+	public ORConceptsMatcher(OModel model) {
 
-		for (OTMatcher matcher : new HashSet<OTMatcher>(matchers)) {
-
-			matcher.stop();
-		}
-	}
-
-	private Store store = null;
-
-	/**
-	 * Empties or removes the store and performs any other clear-ups
-	 * required for the matcher.
-	 * <p>
-	 * This method may be invoked manually, either directly, or via
-	 * the static {@link #stopAll} method, or else automatically via
-	 * the object's {@link #finalize} method. If method has already
-	 * been invoked then does nothing.
-	 */
-	public void stop() {
-
-		if (matchers.remove(this)) {
-
-			stopType();
-		}
+		super(model);
 	}
 
 	/**
@@ -86,7 +60,7 @@ public abstract class OTMatcher extends ORMatcher {
 	 * @param model Model over which matcher is to operate
 	 * @param reasoningType Required reasoning-type for matching
 	 */
-	protected OTMatcher(OModel model, ORReasoningType reasoningType) {
+	public ORConceptsMatcher(OModel model, ORReasoningType reasoningType) {
 
 		super(model, reasoningType);
 	}
@@ -103,7 +77,7 @@ public abstract class OTMatcher extends ORMatcher {
 	 * or exists but does not contain correctly specified configuration
 	 * information
 	 */
-	protected OTMatcher(KConfigNode parentConfigNode) {
+	public ORConceptsMatcher(KConfigNode parentConfigNode) {
 
 		super(parentConfigNode);
 	}
@@ -119,7 +93,7 @@ public abstract class OTMatcher extends ORMatcher {
 	 * or exists but does not contain correctly specified configuration
 	 * information
 	 */
-	protected OTMatcher(OModel model, KConfigNode parentConfigNode) {
+	public ORConceptsMatcher(OModel model, KConfigNode parentConfigNode) {
 
 		super(model, parentConfigNode);
 	}
@@ -128,57 +102,99 @@ public abstract class OTMatcher extends ORMatcher {
 	 */
 	protected void add(ORFrame instance, IRI iri) {
 
-		store.add(instance, iri);
+		addConceptDefinition(addConcept(iri), createConceptDefinition(instance));
 	}
 
 	/**
 	 */
 	protected void remove(IRI iri) {
 
-		store.remove(iri);
+		removeAxioms(getConceptAxioms(iri));
 	}
 
-	/**
-	 */
-	protected List<IRI> match(ORFrame query) {
+	boolean matcherModifiesOntology() {
 
-		return store.match(query);
+		return true;
 	}
 
-	/**
-	 */
-	protected boolean matches(ORFrame query, ORFrame instance) {
+	List<IRI> match(ConceptExpression queryExpr) {
 
-		return store.matches(query, instance);
+		return purgeMatches(queryExpr.getMatchingConcepts());
 	}
 
-	/**
-	 * Method that should be invoked by extension-classes in
-	 * order to perform necessary post-construction initialisations
-	 * of the matcher.
-	 *
-	 * @param factory Implementation-specific data-factory
-	 */
-	protected void initialise(OTFactory factory) {
+	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
 
-		store = new Store(factory);
-
-		matchers.add(this);
+		return queryExpr.subsumes(createConceptExpression(instance));
 	}
 
-	/**
-	 * Abstract method whose implementations will empty or remove the
-	 * store and perform any other clear-ups required for the specific
-	 * store type.
-	 */
-	protected abstract void stopType();
+	private List<IRI> purgeMatches(List<IRI> matches) {
 
-	/**
-	 * Invokes the {@link #stop} method prior to destruction of the
-	 * matcher.
-	 */
-	protected void finalize() {
+		List<IRI> purged = new ArrayList<IRI>();
 
-		stop();
+		for (IRI match : matches) {
+
+			if (OInstanceIRIs.instanceIRI(match)) {
+
+				purged.add(match);
+			}
+		}
+
+		return purged;
+	}
+
+	private OWLClassExpression createConceptDefinition(ORFrame frame) {
+
+		return createConceptExpression(frame).getOWLConstruct();
+	}
+
+	private ConceptExpression createConceptExpression(ORFrame frame) {
+
+		return new ConceptExpression(getMatcherModel(), frame);
+	}
+
+	private OWLClass addConcept(IRI iri) {
+
+		OWLClass concept = getConcept(iri);
+
+		addAxiom(getDataFactory().getOWLDeclarationAxiom(concept));
+
+		return concept;
+	}
+
+	private void addConceptDefinition(
+					OWLClass concept,
+					OWLClassExpression definiton) {
+
+		addAxiom(getDataFactory().getOWLEquivalentClassesAxiom(concept, definiton));
+	}
+
+	private void addAxiom(OWLAxiom axiom) {
+
+		getMatcherModel().addAxiom(axiom);
+	}
+
+	private void removeAxioms(Set<? extends OWLAxiom> axioms) {
+
+		getMatcherModel().removeAxioms(axioms);
+	}
+
+	private OWLClass getConcept(IRI iri) {
+
+		return getDataFactory().getOWLClass(iri);
+	}
+
+	private Set<? extends OWLAxiom> getConceptAxioms(IRI iri) {
+
+		return getOntology().getAxioms(getConcept(iri));
+	}
+
+	private OWLOntology getOntology() {
+
+		return getMatcherModel().getMainOntology();
+	}
+
+	private OWLDataFactory getDataFactory() {
+
+		return getMatcherModel().getDataFactory();
 	}
 }

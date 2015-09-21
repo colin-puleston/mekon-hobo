@@ -28,7 +28,6 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -86,7 +85,7 @@ public class ORMatcherLogger extends ORLogger {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void onMatchesFound(OModel model, List<CIdentity> matches) {
+	protected void onMatchesFound(OModel model, List<IRI> matches) {
 
 		onReasoned(model, matches, "Matches");
 	}

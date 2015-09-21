@@ -22,49 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
-class MatchesQuery extends SpecificQuery {
+public class ORConceptsMatcherTest extends ORMatcherTest {
 
-	private class QueryBodyRenderer extends MatchingQueryBodyRenderer {
+	protected ORMatcher createMatcher(OModel model) {
 
-		private String rootFrameNodeURI;
-
-		QueryBodyRenderer(String baseURI) {
-
-			super(getConstants());
-
-			rootFrameNodeURI = FrameNodeURIs.getRootFrameNodeURI(baseURI);
-		}
-
-		QueryVariable getRootFrameNode() {
-
-			return new QueryVariable(getRootFrameNodeRendering());
-		}
-
-		private String getRootFrameNodeRendering() {
-
-			return getConstants().getVariableRendering(renderURI(rootFrameNodeURI));
-		}
-	}
-
-	MatchesQuery(OTFactory factory) {
-
-		super(factory);
-	}
-
-	boolean execute(ORFrame query, String baseURI) {
-
-		return executeAsk(renderQueryBody(query, baseURI));
-	}
-
-	private String renderQueryBody(ORFrame query, String baseURI) {
-
-		return new QueryBodyRenderer(baseURI).render(query);
+		return new ORConceptsMatcher(model);
 	}
 }

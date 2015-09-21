@@ -373,13 +373,13 @@ public abstract class ORMatcherTest extends OTest {
 
 	private void addInstance(IFrame instance, CIdentity id) {
 
-		assertTrue(matcher.add(instance, id));
+		matcher.add(instance, id);
 		storedInstancesById.put(id, instance);
 	}
 
 	private void removeInstance(CIdentity id) {
 
-		assertTrue(matcher.remove(id));
+		matcher.remove(id);
 		storedInstancesById.remove(id);
 	}
 

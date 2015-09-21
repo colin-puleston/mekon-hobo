@@ -29,7 +29,6 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
@@ -38,29 +37,24 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
  */
 class IndividualsRenderer {
 
-	static private final String ANON_NAME_PREFIX = "ANON-";
-
 	private OModel model;
 	private OWLDataFactory dataFactory;
-	private IndividualCategory individualCategory;
 
-	private Map<String, OWLNamedIndividual> rootIndividualsByName
-							= new HashMap<String, OWLNamedIndividual>();
+	private Map<IRI, OWLNamedIndividual> rootIndividualsByIRI
+							= new HashMap<IRI, OWLNamedIndividual>();
 
-	private Map<OWLNamedIndividual, String> rootNamesByIndividual
-							= new HashMap<OWLNamedIndividual, String>();
+	private Map<OWLNamedIndividual, IRI> rootIRIsByIndividual
+							= new HashMap<OWLNamedIndividual, IRI>();
 
 	private Map<OWLNamedIndividual, Set<OWLAxiom>> axiomsByRootIndividual
 							= new HashMap<OWLNamedIndividual, Set<OWLAxiom>>();
 
-	private long anonGroupCount = 0;
-
 	private class GroupRenderer extends Renderer<OWLNamedIndividual> {
 
 		private ORFrame rootFrame;
-		private String rootName;
+		private IRI rootIRI;
 
-		private IndividualIRIGenerator iriGenerator;
+		private IndividualIRIs individualIRIs;
 
 		private Map<ORFrame, OWLNamedIndividual> individuals
 						= new HashMap<ORFrame, OWLNamedIndividual>();
@@ -153,7 +147,7 @@ class IndividualsRenderer {
 
 			private OWLNamedIndividual createIndividual() {
 
-				return dataFactory.getOWLNamedIndividual(generateIRI());
+				return dataFactory.getOWLNamedIndividual(getIRI());
 			}
 
 			private void addTypeAssignment(OWLClassExpression type) {
@@ -203,28 +197,28 @@ class IndividualsRenderer {
 				axioms.add(axiom);
 			}
 
-			private IRI generateIRI() {
+			private IRI getIRI() {
 
-				return iriGenerator.generateFor(frame);
+				return individualIRIs.getFor(frame);
 			}
 		}
 
-		GroupRenderer(ORFrame rootFrame, String rootName) {
+		GroupRenderer(ORFrame rootFrame, IRI rootIRI) {
 
 			super(model);
 
 			this.rootFrame = rootFrame;
-			this.rootName = rootName;
+			this.rootIRI = rootIRI;
 
-			iriGenerator = createIRIGenerator();
+			individualIRIs = new IndividualIRIs(rootFrame, rootIRI);
 		}
 
 		OWLNamedIndividual render() {
 
 			OWLNamedIndividual rootIndividual = renderFrame(rootFrame);
 
-			rootIndividualsByName.put(rootName, rootIndividual);
-			rootNamesByIndividual.put(rootIndividual, rootName);
+			rootIndividualsByIRI.put(rootIRI, rootIndividual);
+			rootIRIsByIndividual.put(rootIndividual, rootIRI);
 			axiomsByRootIndividual.put(rootIndividual, axioms);
 
 			return rootIndividual;
@@ -234,57 +228,43 @@ class IndividualsRenderer {
 
 			return new FrameToIndividualRenderer(frame);
 		}
-
-		private IndividualIRIGenerator createIRIGenerator() {
-
-			return new IndividualIRIGenerator(
-							rootFrame,
-							rootName,
-							individualCategory);
-		}
 	}
 
-	IndividualsRenderer(OModel model, IndividualCategory individualCategory) {
+	IndividualsRenderer(OModel model) {
 
 		this.model = model;
-		this.individualCategory = individualCategory;
 
 		dataFactory = model.getDataFactory();
 	}
 
-	boolean rendered(String rootName) {
+	boolean rendered(IRI rootIRI) {
 
-		return rootIndividualsByName.containsKey(rootName);
+		return rootIndividualsByIRI.containsKey(rootIRI);
 	}
 
-	OWLNamedIndividual render(ORFrame frame) {
+	OWLNamedIndividual render(ORFrame frame, IRI rootIRI) {
 
-		return render(frame, getNextAnnonGroupName());
+		return new GroupRenderer(frame, rootIRI).render();
 	}
 
-	OWLNamedIndividual render(ORFrame frame, String rootName) {
+	void removeGroup(IRI rootIRI) {
 
-		return new GroupRenderer(frame, rootName).render();
-	}
-
-	void removeGroup(String rootName) {
-
-		OWLNamedIndividual rootIndividual = rootIndividualsByName.remove(rootName);
+		OWLNamedIndividual rootIndividual = rootIndividualsByIRI.remove(rootIRI);
 
 		if (rootIndividual != null) {
 
-			rootNamesByIndividual.remove(rootIndividual);
+			rootIRIsByIndividual.remove(rootIndividual);
 			removeAxioms(rootIndividual);
 		}
 	}
 
 	void removeGroup(OWLNamedIndividual rootIndividual) {
 
-		String rootName = rootNamesByIndividual.remove(rootIndividual);
+		IRI rootIRI = rootIRIsByIndividual.remove(rootIndividual);
 
-		if (rootName != null) {
+		if (rootIRI != null) {
 
-			rootIndividualsByName.remove(rootName);
+			rootIndividualsByIRI.remove(rootIRI);
 			removeAxioms(rootIndividual);
 		}
 	}
@@ -295,10 +275,5 @@ class IndividualsRenderer {
 
 			model.removeAxiom(axiom);
 		}
-	}
-
-	private synchronized String getNextAnnonGroupName() {
-
-		return ANON_NAME_PREFIX + anonGroupCount++;
 	}
 }
