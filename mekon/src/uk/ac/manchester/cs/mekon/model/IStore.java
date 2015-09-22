@@ -51,9 +51,8 @@ public class IStore {
 	private List<IFrameProcessor> queryPreProcessors = new ArrayList<IFrameProcessor>();
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
 
-	private InstanceIndexes indexes = new InstanceIndexes();
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
-	private Map<CIdentity, String> labels = new HashMap<CIdentity, String>();
+	private InstanceIndexes indexes = new InstanceIndexes();
 
 	private class InstanceIndexes extends KIndexes<CIdentity> {
 
@@ -83,7 +82,7 @@ public class IStore {
 	 * @throws KAccessException if instance frame is not of
 	 * category {@link IFrameCategory#ASSERTION}
 	 */
-	public IFrame add(IFrame instance, CIdentity identity) {
+	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
@@ -101,7 +100,7 @@ public class IStore {
 	 * @return True if instance removed, false if instance with
 	 * specified identity not present
 	 */
-	public boolean remove(CIdentity identity) {
+	public synchronized boolean remove(CIdentity identity) {
 
 		return checkRemove(identity) != null;
 	}
@@ -109,7 +108,7 @@ public class IStore {
 	/**
 	 * Removes all instances from the store.
 	 */
-	public void clear() {
+	public synchronized void clear() {
 
 		for (CIdentity identity : getAllIdentities()) {
 
@@ -123,7 +122,7 @@ public class IStore {
 	 * @param identity Unique identity of instance to check for
 	 * @return True if store contains required instance
 	 */
-	public boolean contains(CIdentity identity) {
+	public synchronized boolean contains(CIdentity identity) {
 
 		return indexes.hasIndex(identity);
 	}
@@ -135,7 +134,7 @@ public class IStore {
 	 * @return Instance-level frame representing required instance,
 	 * or null if instance with specified identity not present
 	 */
-	public IFrame get(CIdentity identity) {
+	public synchronized IFrame get(CIdentity identity) {
 
 		return fileStore.read(indexes.getIndex(identity));
 	}
@@ -147,7 +146,7 @@ public class IStore {
 	 * @return Unique identities of all instances, oldest entries
 	 * first
 	 */
-	public List<CIdentity> getAllIdentities() {
+	public synchronized List<CIdentity> getAllIdentities() {
 
 		return new ArrayList<CIdentity>(identities);
 	}
@@ -158,13 +157,9 @@ public class IStore {
 	 * @param query Representation of query
 	 * @return Results of query execution
 	 */
-	public IMatches match(IFrame query) {
+	public synchronized IMatches match(IFrame query) {
 
-		IMatches matches = getMatcher(query).match(preProcessQuery(query));
-
-		matches.resolveLabels(labels);
-
-		return matches;
+		return getMatcher(query).match(preProcessQuery(query));
 	}
 
 	/**
@@ -175,7 +170,7 @@ public class IStore {
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	public boolean matches(IFrame query, IFrame instance) {
+	public synchronized boolean matches(IFrame query, IFrame instance) {
 
 		IMatcher matcher = getMatcher(query);
 
@@ -225,7 +220,6 @@ public class IStore {
 	private void addStoredAndIndexed(IFrame instance, CIdentity identity) {
 
 		identities.add(identity);
-		labels.put(identity, identity.getLabel());
 
 		checkAddToMatcher(instance, identity);
 	}
@@ -239,7 +233,6 @@ public class IStore {
 			int index = indexes.freeIndex(identity);
 
 			identities.remove(identity);
-			labels.remove(identity);
 
 			checkRemoveFromMatcher(fileStore.read(index), identity);
 			fileStore.remove(index);

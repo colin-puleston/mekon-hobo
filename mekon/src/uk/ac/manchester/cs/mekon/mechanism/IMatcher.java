@@ -53,22 +53,25 @@ public interface IMatcher {
 	 * Adds an instance to the matcher. The supplied frame will
 	 * be of an appropriate frame-type (see {@link #handlesType}),
 	 * and will be of category {@link IFrameCategory#ASSERTION}.
+	 * It can be assumed that this method will only be invoked when
+	 * it is known that an instance with the specified identity is
+	 * not already present.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
-	 * @return True if instance added, false if instance with
-	 * specified identity already present
 	 */
-	public boolean add(IFrame instance, CIdentity identity);
+	public void add(IFrame instance, CIdentity identity);
 
 	/**
-	 * Removes an instance from the matcher.
+	 * Removes an instance from the matcher. It can be assumed that
+	 * this method will only be invoked when it is known that an
+	 * instance with the specified identity is currently present.
 	 *
 	 * @param identity Unique identity of instance to be removed
 	 * @return True if instance removed, false if instance with
 	 * specified identity not present
 	 */
-	public boolean remove(CIdentity identity);
+	public void remove(CIdentity identity);
 
 	/**
 	 * Finds all instances that are matched by the supplied query,

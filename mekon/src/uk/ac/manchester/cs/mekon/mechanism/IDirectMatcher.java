@@ -125,24 +125,17 @@ public class IDirectMatcher implements IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean add(IFrame instance, CIdentity identity) {
-
-		if (instances.containsKey(identity)) {
-
-			return false;
-		}
+	public void add(IFrame instance, CIdentity identity) {
 
 		instances.put(identity, instance);
-
-		return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean remove(CIdentity identity) {
+	public void remove(CIdentity identity) {
 
-		return instances.remove(identity) != null;
+		instances.remove(identity);
 	}
 
 	/**

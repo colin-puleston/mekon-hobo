@@ -72,23 +72,4 @@ public class IMatchesRank {
 
 		return rankingValue;
 	}
-
-	void resolveLabels(Map<CIdentity, String> labels) {
-
-		List<CIdentity> resolvedMatches = new ArrayList<CIdentity>();
-
-		for (CIdentity match : matches) {
-
-			resolvedMatches.add(resolveLabel(match, labels.get(match)));
-		}
-
-		matches = resolvedMatches;
-	}
-
-	private CIdentity resolveLabel(CIdentity match, String label) {
-
-		return label != null
-					? new CIdentity(match.getIdentifier(), label)
-					: match;
-	}
 }

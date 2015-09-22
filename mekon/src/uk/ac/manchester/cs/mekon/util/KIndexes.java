@@ -29,8 +29,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 
 /**
- * Manages the assignment of unique indexes to the individual
- * elements of a set of entities.
+ * Manages the assignment of unique indexes to a set of entities.
  *
  * @author Colin Puleston
  */
@@ -82,10 +81,10 @@ public abstract class KIndexes<E> {
 	}
 
 	/**
-	 * Frees up the unique index that was previously assigned to a
+	 * Frees up a unique index that was previously assigned to a
 	 * specific element.
 	 *
-	 * @element Element for which index no longer required
+	 * @element Element for which index is no longer required
 	 * @return Freed index
 	 */
 	public int freeIndex(E element) {
@@ -170,7 +169,7 @@ public abstract class KIndexes<E> {
 
 		if (elementsToIndexes.containsKey(element)) {
 
-			throw createException("Index already exists for element: " + element);
+			throw createException("Index already assigned to element: " + element);
 		}
 
 		elementsToIndexes.put(element, index);

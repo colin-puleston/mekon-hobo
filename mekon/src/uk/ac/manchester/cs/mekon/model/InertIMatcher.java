@@ -43,14 +43,10 @@ class InertIMatcher implements IMatcher {
 		return false;
 	}
 
-	public boolean add(IFrame instance, CIdentity identity) {
-
-		return false;
+	public void add(IFrame instance, CIdentity identity) {
 	}
 
-	public boolean remove(CIdentity identity) {
-
-		return false;
+	public void remove(CIdentity identity) {
 	}
 
 	public IMatches match(IFrame query) {

@@ -134,14 +134,6 @@ public class IMatches {
 		ranks.add(rank);
 	}
 
-	void resolveLabels(Map<CIdentity, String> labels) {
-
-		for (IMatchesRank rank : ranks) {
-
-			rank.resolveLabels(labels);
-		}
-	}
-
 	private IMatches() {
 
 		this(Collections.<CIdentity>emptyList());

@@ -59,18 +59,14 @@ public class IStoreTest extends MekonTest {
 			return type == this.type;
 		}
 
-		public boolean add(IFrame instance, CIdentity identity) {
+		public void add(IFrame instance, CIdentity identity) {
 
 			assertTrue(instance.matches(this.instance));
-
-			return true;
 		}
 
-		public boolean remove(CIdentity identity) {
+		public void remove(CIdentity identity) {
 
 			assertTrue(identity.equals(type.getIdentity()));
-
-			return true;
 		}
 
 		public IMatches match(IFrame query) {
