@@ -72,6 +72,11 @@ public class ORMatcherModel {
 		ontologyIRI = getOntologyIRI(sourceModel.getMainOntology());
 		ontology = create(sourceModel.getAllOntologies());
 
+		if (reasoningType != ORReasoningType.DL) {
+
+			assertInferredHierarchy();
+		}
+
 		purge(reasoningType);
 	}
 
@@ -141,6 +146,32 @@ public class ORMatcherModel {
 		}
 	}
 
+	private void assertInferredHierarchy() {
+
+		for (OWLClass concept : sourceModel.getConcepts().getAll()) {
+
+			assertInferredSubConcepts(concept);
+		}
+	}
+
+	private void assertInferredSubConcepts(OWLClass concept) {
+
+		Set<OWLClassExpression> assSubs = sourceModel.getAssertedSubs(concept);
+
+		for (OWLClass infSub : sourceModel.getInferredSubs(concept, true)) {
+
+			if (!assSubs.contains(infSub)) {
+
+				assertSubConcept(concept, infSub);
+			}
+		}
+	}
+
+	private void assertSubConcept(OWLClass concept, OWLClass subConcept) {
+
+		addAxiom(getSubClassAxiom(concept, subConcept));
+	}
+
 	private void purge(ORReasoningType reasoningType) {
 
 		for (OWLAxiom axiom : ontology.getAxioms()) {
@@ -191,5 +222,15 @@ public class ORMatcherModel {
 		IRI iri = id.getOntologyIRI();
 
 		return iri != null ? iri : id.getDefaultDocumentIRI();
+	}
+
+	private void addAxiom(OWLAxiom axiom) {
+
+		manager.addAxiom(ontology, axiom);
+	}
+
+	private OWLAxiom getSubClassAxiom(OWLClass sup, OWLClass sub) {
+
+		return manager.getOWLDataFactory().getOWLSubClassOfAxiom(sub, sup);
 	}
 }
