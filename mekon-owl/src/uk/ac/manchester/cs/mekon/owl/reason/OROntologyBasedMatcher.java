@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -46,7 +47,7 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 		ORMonitor.pollForMatcherRequest(matcherModel, owlConstruct);
 
-		List<IRI> matches = match(expr);
+		List<IRI> matches = purgeMatches(match(expr));
 
 		ORMonitor.pollForMatchesFound(matcherModel, matches);
 		ORMonitor.pollForMatcherDone(matcherModel, owlConstruct);
@@ -117,5 +118,20 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 	private ConceptExpression createConceptExpression(ORFrame frame) {
 
 		return new ConceptExpression(matcherModel, frame);
+	}
+
+	private List<IRI> purgeMatches(List<IRI> matches) {
+
+		List<IRI> purged = new ArrayList<IRI>();
+
+		for (IRI match : matches) {
+
+			if (OInstanceIRIs.instanceIRI(match)) {
+
+				purged.add(match);
+			}
+		}
+
+		return purged;
 	}
 }

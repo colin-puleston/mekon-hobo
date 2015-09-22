@@ -237,11 +237,6 @@ class IndividualsRenderer {
 		dataFactory = model.getDataFactory();
 	}
 
-	boolean rendered(IRI rootIRI) {
-
-		return rootIndividualsByIRI.containsKey(rootIRI);
-	}
-
 	OWLNamedIndividual render(ORFrame frame, IRI rootIRI) {
 
 		return new GroupRenderer(frame, rootIRI).render();

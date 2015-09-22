@@ -132,7 +132,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	List<IRI> match(ConceptExpression queryExpr) {
 
-		return purgeMatches(queryExpr.getMatchingIndividuals());
+		return queryExpr.getMatchingIndividuals();
 	}
 
 	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
@@ -149,21 +149,6 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	private IndividualsRenderer createRenderer() {
 
 		return new IndividualsRenderer(getMatcherModel());
-	}
-
-	private List<IRI> purgeMatches(List<IRI> matches) {
-
-		List<IRI> purged = new ArrayList<IRI>();
-
-		for (IRI match : matches) {
-
-			if (storeRenderer.rendered(match)) {
-
-				purged.add(match);
-			}
-		}
-
-		return purged;
 	}
 
 	private IndividualNetwork createIndividualNetwork(ORFrame frame) {

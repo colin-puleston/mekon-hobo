@@ -119,27 +119,12 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	List<IRI> match(ConceptExpression queryExpr) {
 
-		return purgeMatches(queryExpr.getMatchingConcepts());
+		return queryExpr.getMatchingConcepts();
 	}
 
 	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
 
 		return queryExpr.subsumes(createConceptExpression(instance));
-	}
-
-	private List<IRI> purgeMatches(List<IRI> matches) {
-
-		List<IRI> purged = new ArrayList<IRI>();
-
-		for (IRI match : matches) {
-
-			if (OInstanceIRIs.instanceIRI(match)) {
-
-				purged.add(match);
-			}
-		}
-
-		return purged;
 	}
 
 	private OWLClassExpression createConceptDefinition(ORFrame frame) {
