@@ -67,14 +67,6 @@ public class IFrameSerialiseTest extends MekonTest {
 	}
 
 	@Test
-	public void test_renderIncludingNonEditableSlotsAndParse() {
-
-		renderer.setRenderNonEditableSlots(true);
-
-		testRenderAndParse(false);
-	}
-
-	@Test
 	public void test_renderWithFlattenedMetaLevelAndParse() {
 
 		renderer.setFlattenMetaLevel(true);

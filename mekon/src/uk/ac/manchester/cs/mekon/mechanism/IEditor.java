@@ -37,6 +37,20 @@ import uk.ac.manchester.cs.mekon.model.*;
 public interface IEditor {
 
 	/**
+	 * Creates an instantiation of the specified frame-type, with
+	 * auto-update, which determines whether or not any automatic
+	 * updates can occur when slot-values are updated, disabled for all
+	 * slots on the frame.
+	 *
+	 * @param frameType Frame-type to be instantiated
+	 * @param category Required frame-category
+	 * @return Instantiation of frame-type with auto-update disabled
+	 */
+	public IFrame instantiateNoAutoUpdate(
+						CFrame frameType,
+						IFrameCategory category);
+
+	/**
 	 * Provides an editor for the specified frame.
 	 *
 	 * @param frame Frame for which editor is required

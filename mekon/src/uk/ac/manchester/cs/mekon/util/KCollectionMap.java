@@ -126,7 +126,7 @@ public abstract class KCollectionMap<K, E> {
 	 */
 	public Set<K> keySet() {
 
-		return map.keySet();
+		return new HashSet<K>(map.keySet());
 	}
 
 	/**
@@ -138,6 +138,16 @@ public abstract class KCollectionMap<K, E> {
 	public boolean containsKey(K key) {
 
 		return map.containsKey(key);
+	}
+
+	/**
+	 * Tests whether map is empty.
+	 *
+	 * @return True if empty
+	 */
+	public boolean isEmpty() {
+
+		return map.isEmpty();
 	}
 
 	boolean equalMaps(KCollectionMap<?, ?> other) {

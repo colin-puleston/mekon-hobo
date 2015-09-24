@@ -37,7 +37,6 @@ public class IFrameRenderer extends ISerialiser {
 
 	private boolean renderAsTree = false;
 	private boolean renderSchema = false;
-	private boolean renderNonEditableSlots = false;
 	private boolean flattenMetaLevel = false;
 
 	private class OneTimeRenderer {
@@ -291,13 +290,6 @@ public class IFrameRenderer extends ISerialiser {
 
 	/**
 	 */
-	public void setRenderNonEditableSlots(boolean value) {
-
-		renderNonEditableSlots = value;
-	}
-
-	/**
-	 */
 	public void setFlattenMetaLevel(boolean value) {
 
 		flattenMetaLevel = value;
@@ -330,12 +322,7 @@ public class IFrameRenderer extends ISerialiser {
 
 	private boolean slotToBeRendered(ISlot slot) {
 
-		if (!renderSchema && slot.getValues().isEmpty()) {
-
-			return false;
-		}
-
-		return renderNonEditableSlots || slot.getEditability().editable();
+		return renderSchema || !slot.getValues().isEmpty();
 	}
 
 	private void checkRenderable(IFrame frame) {

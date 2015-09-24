@@ -66,14 +66,14 @@ class IFrameCopier {
 		IFrame copy = createEmptyFrameCopy(template);
 
 		copies.put(template, copy);
+
 		copySlots(template, copy);
+		copy.setAutoUpdateEnabled(true);
 
 		return copy;
 	}
 
 	private void copySlots(IFrame template, IFrame copy) {
-
-		copy.setAutoUpdateEnabled(false);
 
 		for (ISlot templateSlot : template.getSlots().asList()) {
 
@@ -81,8 +81,6 @@ class IFrameCopier {
 
 			copySlotValues(templateSlot, copySlot);
 		}
-
-		copy.setAutoUpdateEnabled(true);
 	}
 
 	private void copySlotValues(ISlot templateSlot, ISlot copySlot) {
@@ -97,7 +95,10 @@ class IFrameCopier {
 
 	private IFrame createEmptyFrameCopy(IFrame template) {
 
-		return new IFrame(template.getType(), template.getCategory());
+		CFrame type = template.getType();
+		IFrameCategory category = template.getCategory();
+
+		return type.instantiateNoAutoUpdate(category);
 	}
 
 	private ISlot createEmptySlotCopy(IFrame container, ISlot template) {

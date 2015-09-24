@@ -184,7 +184,7 @@ public class IFrame implements IEntity, IValue {
 
 		public void setAutoUpdateEnabled(boolean enabled) {
 
-			autoUpdateEnabled = enabled;
+			IFrame.this.setAutoUpdateEnabled(enabled);
 		}
 	}
 
@@ -193,9 +193,11 @@ public class IFrame implements IEntity, IValue {
 		private ISlotValues slotValues;
 		private List<IValue> assertedValues;
 
+		private boolean updating = false;
+
 		public void onUpdated() {
 
-			if (autoUpdateEnabled) {
+			if (autoUpdateEnabled && !updating) {
 
 				List<IValue> latestAsserteds = slotValues.getAssertedValues();
 
@@ -203,9 +205,9 @@ public class IFrame implements IEntity, IValue {
 
 					assertedValues = latestAsserteds;
 
-					autoUpdateEnabled = false;
+					updating = true;
 					performAutoUpdates();
-					autoUpdateEnabled = true;
+					updating = false;
 				}
 			}
 		}
@@ -384,13 +386,10 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Provides hash-code based on type value.
-	 *
-	 * @return hash-code for this object
 	 */
 	public int hashCode() {
 
-		return type.hashCode();
+		return slots.isEmpty() ? type.hashCode() : super.hashCode();
 	}
 
 	/**
@@ -440,6 +439,18 @@ public class IFrame implements IEntity, IValue {
 	public boolean abstractValue() {
 
 		return disjunctionType();
+	}
+
+	/**
+	 * Provides the auto-update-enabled status for the frame, which
+	 * determines whether or not any automatic updates can occur when
+	 * slot-values are updated.
+	 *
+	 * @param enabled Required auto-update-enabled status
+	 */
+	public boolean autoUpdateEnabled() {
+
+		return autoUpdateEnabled;
 	}
 
 	/**

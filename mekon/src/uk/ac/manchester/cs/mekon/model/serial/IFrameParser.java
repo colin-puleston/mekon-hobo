@@ -29,6 +29,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
@@ -43,13 +44,12 @@ public class IFrameParser extends ISerialiser {
 
 		private XNode containerNode;
 
-		private Set<IFrame> iFrames = new HashSet<IFrame>();
+		private List<IFrame> frames = new ArrayList<IFrame>();
 
-		private Map<Integer, IFrame> iFrameRefs
-						= new HashMap<Integer, IFrame>();
+		private KSetMap<IFrame, SlotValuesSpec<?>> frameSlots
+							= new KSetMap<IFrame, SlotValuesSpec<?>>();
 
-		private List<SlotValuesSpec<?>> slotValuesSpecs
-						= new ArrayList<SlotValuesSpec<?>>();
+		private Map<Integer, IFrame> frameRefs = new HashMap<Integer, IFrame>();
 
 		private abstract class SlotValuesSpec<V> {
 
@@ -68,7 +68,7 @@ public class IFrameParser extends ISerialiser {
 					valueSpecs.add(getValueSpec(valueNode));
 				}
 
-				slotValuesSpecs.add(this);
+				frameSlots.add(frame, this);
 			}
 
 			boolean process() {
@@ -84,7 +84,7 @@ public class IFrameParser extends ISerialiser {
 						setValues(slot);
 					}
 
-					slotValuesSpecs.remove(this);
+					frameSlots.remove(frame, this);
 
 					return true;
 				}
@@ -100,12 +100,10 @@ public class IFrameParser extends ISerialiser {
 
 			private void setValues(ISlot slot) {
 
-				IFrameEditor frameEd = iEditor.getFrameEditor(frame);
-				ISlotValuesEditor valuesEd = slot.getValuesEditor();
+				ISlotValuesEditor valuesEd = iEditor.getSlotValuesEditor(slot);
 
-				frameEd.setAutoUpdateEnabled(false);
+				valuesEd.clear();
 				valuesEd.addAll(getValidValues(slot));
-				frameEd.setAutoUpdateEnabled(true);
 			}
 
 			private List<IValue> getValidValues(ISlot slot) {
@@ -225,7 +223,8 @@ public class IFrameParser extends ISerialiser {
 
 			IFrame frame = parseIFrame(getTopLevelFrameNode());
 
-			addAllSlotValues();
+			addSlotValues();
+			setAutoUpdateEnabledForAllFrames(true);
 
 			return frame;
 		}
@@ -242,7 +241,7 @@ public class IFrameParser extends ISerialiser {
 		private IFrame parseIFrameDirect(XNode node) {
 
 			CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
-			IFrame frame = createFrame(frameType);
+			IFrame frame = createAndRegisterFrame(frameType);
 
 			for (XNode slotNode : node.getChildren(ISLOT_ID)) {
 
@@ -254,13 +253,13 @@ public class IFrameParser extends ISerialiser {
 
 		private IFrame resolveIFrameIndirect(Integer refIndex) {
 
-			IFrame frame = iFrameRefs.get(refIndex);
+			IFrame frame = frameRefs.get(refIndex);
 
 			if (frame == null) {
 
 				frame = parseIFrameIndirect(refIndex);
 
-				iFrameRefs.put(refIndex, frame);
+				frameRefs.put(refIndex, frame);
 			}
 
 			return frame;
@@ -383,41 +382,66 @@ public class IFrameParser extends ISerialiser {
 			}
 		}
 
-		private IFrame createFrame(CFrame frameType) {
+		private IFrame createAndRegisterFrame(CFrame frameType) {
 
-			IFrame frame = frameType.instantiate(frameCategory);
+			IFrame frame = createFrameNoAutoUpdate(frameType);
 
-			iFrames.add(frame);
+			frames.add(frame);
 
 			return frame;
 		}
 
-		private void addAllSlotValues() {
+		private IFrame createFrameNoAutoUpdate(CFrame frameType) {
 
-			while (true) {
+			return iEditor.instantiateNoAutoUpdate(frameType, frameCategory);
+		}
 
-				boolean anyProcessed = false;
+		private void addSlotValues() {
 
-				for (SlotValuesSpec<?> spec : copySlotValueSpecs()) {
+			while (addValuesForAvailableSlots() && !frameSlots.isEmpty()) {
 
-					anyProcessed |= spec.process();
-				}
-
-				if (!anyProcessed || slotValuesSpecs.isEmpty()) {
-
-					break;
-				}
-
-				checkUpdateSlotsOnFrames();
+				checkUpdateFrameSlotSets();
 			}
 		}
 
-		private void checkUpdateSlotsOnFrames() {
+		private boolean addValuesForAvailableSlots() {
 
-			for (IFrame iFrame : iFrames) {
+			boolean anyAdded = false;
 
-				iFrame.update();
+			for (IFrame frame : frameSlots.keySet()) {
+
+				for (SlotValuesSpec<?> spec : frameSlots.getSet(frame)) {
+
+					anyAdded |= spec.process();
+				}
 			}
+
+			return anyAdded;
+		}
+
+		private void checkUpdateFrameSlotSets() {
+
+			setAutoUpdateEnabledForAllFrames(true);
+
+			for (IFrame frame : frames) {
+
+				frame.update();
+			}
+
+			setAutoUpdateEnabledForAllFrames(false);
+		}
+
+		private void setAutoUpdateEnabledForAllFrames(boolean enabled) {
+
+			for (IFrame frame : frames) {
+
+				setAutoUpdateEnabled(frame, enabled);
+			}
+		}
+
+		private void setAutoUpdateEnabled(IFrame frame, boolean enabled) {
+
+			iEditor.getFrameEditor(frame).setAutoUpdateEnabled(enabled);
 		}
 
 		private XNode getTopLevelFrameNode() {
@@ -467,11 +491,6 @@ public class IFrameParser extends ISerialiser {
 						+ " node on "
 						+ "\"" + IGRAPH_ID + "\""
 						+ " node: " + refIndex);
-		}
-
-		private List<SlotValuesSpec<?>> copySlotValueSpecs() {
-
-			return new ArrayList<SlotValuesSpec<?>>(slotValuesSpecs);
 		}
 	}
 
