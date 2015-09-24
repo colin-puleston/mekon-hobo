@@ -126,7 +126,7 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 		for (IRI match : matches) {
 
-			if (OInstanceIRIs.instanceIRI(match)) {
+			if (OInstanceIRIs.staticInstanceIRI(match)) {
 
 				purged.add(match);
 			}

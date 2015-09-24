@@ -137,7 +137,12 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
 
-		return createIndividualNetwork(instance).matches(queryExpr);
+		IndividualNetwork network = createNetwork(instance);
+		boolean result = network.matches(queryExpr);
+
+		network.cleanUp();
+
+		return result;
 	}
 
 	private void initialise() {
@@ -151,7 +156,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 		return new IndividualsRenderer(getMatcherModel());
 	}
 
-	private IndividualNetwork createIndividualNetwork(ORFrame frame) {
+	private IndividualNetwork createNetwork(ORFrame frame) {
 
 		IRI rootIRI = dynamicRootIRIs.assign();
 
