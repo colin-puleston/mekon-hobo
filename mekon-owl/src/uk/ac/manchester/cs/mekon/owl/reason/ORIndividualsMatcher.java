@@ -125,11 +125,6 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 		storeRenderer.removeGroup(iri);
 	}
 
-	boolean matcherModifiesOntology() {
-
-		return true;
-	}
-
 	List<IRI> match(ConceptExpression queryExpr) {
 
 		return queryExpr.getMatchingIndividuals();

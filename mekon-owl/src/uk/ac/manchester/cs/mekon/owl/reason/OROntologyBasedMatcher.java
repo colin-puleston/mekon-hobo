@@ -86,8 +86,6 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 		initialise();
 	}
 
-	abstract boolean matcherModifiesOntology();
-
 	abstract List<IRI> match(ConceptExpression queryExpr);
 
 	abstract boolean matches(ConceptExpression queryExpr, ORFrame instance);
@@ -99,20 +97,12 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	private void initialise() {
 
-		matcherModel = resolveMatcherModel();
+		matcherModel = createMatcherModel();
 	}
 
-	private OModel resolveMatcherModel() {
+	private OModel createMatcherModel() {
 
-		OModel model = getModel();
-		ORReasoningType reasoningType = getReasoningType();
-
-		if (reasoningType == ORReasoningType.DL && !matcherModifiesOntology()) {
-
-			return model;
-		}
-
-		return new ORMatcherModel(model, reasoningType).getModel();
+		return new ORMatcherModel(getModel(), getReasoningType()).getModel();
 	}
 
 	private ConceptExpression createConceptExpression(ORFrame frame) {

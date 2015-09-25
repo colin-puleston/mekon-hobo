@@ -112,11 +112,6 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 		removeAxioms(getConceptAxioms(iri));
 	}
 
-	boolean matcherModifiesOntology() {
-
-		return true;
-	}
-
 	List<IRI> match(ConceptExpression queryExpr) {
 
 		return queryExpr.getMatchingConcepts();
