@@ -183,7 +183,6 @@ public class MekonTest extends FramesTestUtils {
 
 		IFrame fa = complexInstance.copy();
 		ISlots aSlots = fa.getSlots();
-		System.out.println("XXX: " + aSlots.asList());
 		ISlot sab = aSlots.get(new CIdentity("sab"));
 		ISlot sac = aSlots.get(new CIdentity("sac"));
 
