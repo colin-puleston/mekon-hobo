@@ -179,6 +179,27 @@ public class MekonTest extends FramesTestUtils {
 		return fa;
 	}
 
+	public IFrame createComplexInstanceSubsumer(IFrame complexInstance) {
+
+		IFrame fa = complexInstance.copy();
+		ISlots aSlots = fa.getSlots();
+		System.out.println("XXX: " + aSlots.asList());
+		ISlot sab = aSlots.get(new CIdentity("sab"));
+		ISlot sac = aSlots.get(new CIdentity("sac"));
+
+		IFrame fb = (IFrame)sab.getValues().asList().get(0);
+		ISlots bSlots = fb.getSlots();
+		ISlot sbe = bSlots.get(new CIdentity("sbe"));
+
+		CFrame tex = (CFrame)sbe.getValues().asList().get(0);
+		CFrame te = tex.getSupers().get(0);
+
+		sac.getValuesEditor().clear();
+		sbe.getValuesEditor().update(Collections.<CFrame>singleton(te));
+
+		return fa;
+	}
+
 	public CAtomicFrame createCFrame(String name) {
 
 		return createCFrame(name, false);
@@ -313,7 +334,7 @@ public class MekonTest extends FramesTestUtils {
 
 	public CIdentity createIdentity(String name) {
 
-		return new CIdentity("id:" + name, name);
+		return new CIdentity(name, name);
 	}
 
 	public void normaliseCFramesHierarchy() {

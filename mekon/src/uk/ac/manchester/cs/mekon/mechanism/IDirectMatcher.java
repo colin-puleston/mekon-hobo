@@ -39,78 +39,41 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class IDirectMatcher implements IMatcher {
 
-	private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
+	private Map<CFrame, InstanceGroup> instanceGroups
+					= new HashMap<CFrame, InstanceGroup>();
 
-	private class MatchTester {
+	private class InstanceGroup {
 
-		private Set<IFrame> visited = new HashSet<IFrame>();
+		private CFrame rootFrameType;
+		private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
 
-		boolean matches(IFrame query, IFrame instance) {
+		InstanceGroup(CFrame rootFrameType) {
 
-			return !visited.add(query) || frameMatches(query, instance);
+			this.rootFrameType = rootFrameType;
 		}
 
-		private boolean frameMatches(IFrame query, IFrame instance) {
+		void add(IFrame instance, CIdentity identity) {
 
-			return typeMatches(query, instance) && slotsMatch(query, instance);
+			instances.put(identity, instance);
 		}
 
-		private boolean slotsMatch(IFrame query, IFrame instance) {
+		boolean checkRemove(CIdentity identity) {
 
-			ISlots iSlots = instance.getSlots();
+			return instances.remove(identity) != null;
+		}
 
-			for (ISlot qSlot : query.getSlots().asList()) {
+		void collectMatches(IFrame query, List<CIdentity> matches) {
 
-				ISlot iSlot = iSlots.getOrNull(qSlot.getType().getIdentity());
+			if (query.getType().subsumes(rootFrameType)) {
 
-				if (iSlot == null || !slotValuesMatch(qSlot, iSlot)) {
+				for (CIdentity identity : instances.keySet()) {
 
-					return false;
+					if (query.subsumes(instances.get(identity))) {
+
+						matches.add(identity);
+					}
 				}
 			}
-
-			return true;
-		}
-
-		private boolean slotValuesMatch(ISlot qSlot, ISlot iSlot) {
-
-			for (IValue qValue : qSlot.getValues().asList()) {
-
-				if (!matchingSlotValue(qValue, iSlot)) {
-
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		private boolean matchingSlotValue(IValue qValue, ISlot iSlot) {
-
-			for (IValue iValue : iSlot.getValues().asList()) {
-
-				if (valueMatches(qValue, iValue)) {
-
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private boolean valueMatches(IValue qValue, IValue iValue) {
-
-			if (qValue instanceof IFrame) {
-
-				return matches((IFrame)qValue, (IFrame)iValue);
-			}
-
-			return typeMatches(qValue, iValue);
-		}
-
-		private boolean typeMatches(IValue qValue, IValue iValue) {
-
-			return qValue.getType().subsumes(iValue.getType());
 		}
 	}
 
@@ -127,7 +90,16 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
-		instances.put(identity, instance);
+		CFrame rootFrameType = instance.getType();
+		InstanceGroup group = instanceGroups.get(rootFrameType);
+
+		if (group == null) {
+
+			group = new InstanceGroup(rootFrameType);
+			instanceGroups.put(rootFrameType, group);
+		}
+
+		group.add(instance, identity);
 	}
 
 	/**
@@ -135,7 +107,13 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		instances.remove(identity);
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.checkRemove(identity)) {
+
+				break;
+			}
+		}
 	}
 
 	/**
@@ -145,12 +123,9 @@ public class IDirectMatcher implements IMatcher {
 
 		List<CIdentity> matches = new ArrayList<CIdentity>();
 
-		for (CIdentity id : instances.keySet()) {
+		for (InstanceGroup group : instanceGroups.values()) {
 
-			if (matches(query, instances.get(id))) {
-
-				matches.add(id);
-			}
+			group.collectMatches(query, matches);
 		}
 
 		return new IMatches(matches);
@@ -161,6 +136,6 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return new MatchTester().matches(query, instance);
+		return query.subsumes(instance);
 	}
 }

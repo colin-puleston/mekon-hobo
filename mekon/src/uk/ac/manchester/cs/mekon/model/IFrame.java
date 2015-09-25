@@ -370,19 +370,37 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Tests whether this frame and another one have identical types,
-	 * identical inferred-types and matching slot-values (in matching
-	 * order. For <code>IFrame</code>-valued slots, value-matching
-	 * involves a recusive invocation of the same frame-matching
+	 * Tests whether the type and the current slot-values (in matching
+	 * order) of this frame are identical to those of another frame.
+	 * For <code>IFrame</code>-valued slots, value-match testing
+	 * involves a recursive invocation of the same frame-match testing
 	 * operation. Otherwise value-matching is determinied via the
 	 * standard <code>equals</code> methods on the value objects.
+	 *
+	 * @param other Frame to test for subsumption by this one
+	 * @return true if relevant subsumption holds
+	 */
+	public boolean matches(IFrame other) {
+
+		return equals(other) || new IFrameExactMatcher().match(this, other);
+	}
+
+	/**
+	 * Tests whether the type and the current slot-values of this
+	 * frame subsume those of another frame. For
+	 * <code>IFrame</code>-valued slots, value-subsumption testing
+	 * involves a recursive invocation of the same frame-subsumption
+	 * testing operation. Otherwise value-matching is determinied via
+	 * the standard {@link CValue#subsumes} method on the value-type
+	 * objects.
 	 *
 	 * @param other Frame to test for matching with this one
 	 * @return true if frames match
 	 */
-	public boolean matches(IFrame other) {
+	public boolean subsumes(IFrame other) {
 
-		return equals(other) || new IFrameMatcher().match(this, other);
+		return equals(other)
+				|| new IFrameSubsumptionMatcher().match(this, other);
 	}
 
 	/**

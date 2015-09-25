@@ -306,7 +306,7 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Provides ordered list of ancestor-frames, obtained via a recusive
+	 * Provides ordered list of ancestor-frames, obtained via a recursive
 	 * depth-first crawl upwards through the hierarchy, visiting the
 	 * super-frames at each step in their standard order (as provided by
 	 * {@link #getSupers}).
@@ -363,7 +363,7 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Provides all descendant-frames, obtained via a recusive
+	 * Provides all descendant-frames, obtained via a recursive
 	 * depth-first crawl downwards through the hierarchy, visiting
 	 * the sub-frames at each step in their standard order (as provided
 	 * by {@link #getSubs}).

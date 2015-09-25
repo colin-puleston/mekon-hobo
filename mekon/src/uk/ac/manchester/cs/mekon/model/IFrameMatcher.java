@@ -26,10 +26,12 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.util.*;
+
 /**
  * @author Colin Puleston
  */
-class IFrameMatcher {
+abstract class IFrameMatcher {
 
 	private Set<IFrame> visited = new HashSet<IFrame>();
 
@@ -38,70 +40,52 @@ class IFrameMatcher {
 		return !visited.add(frame1) || framesMatch(frame1, frame2);
 	}
 
-	private boolean framesMatch(IFrame frame1, IFrame frame2) {
+	boolean slotValuesMatch(ISlot slot1, ISlot slot2) {
 
-		return typesMatch(frame1, frame2) && slotsMatch(frame1, frame2);
-	}
+		ISlotValues values1 = slot1.getValues();
+		ISlotValues values2 = slot2.getValues();
 
-	private boolean typesMatch(IFrame frame1, IFrame frame2) {
-
-		return frame1.getType().equals(frame2.getType());
-	}
-
-	private boolean slotsMatch(IFrame frame1, IFrame frame2) {
-
-		ISlots slots1 = frame1.getSlots();
-		ISlots slots2 = frame2.getSlots();
-
-		if (slots1.size() != slots2.size()) {
+		if (!listSizesMatch(values1, values2)) {
 
 			return false;
 		}
 
-		Iterator<ISlot> s1 = slots1.asList().iterator();
-		Iterator<ISlot> s2 = slots2.asList().iterator();
-
-		while (s1.hasNext()) {
-
-			if (!slotValuesMatch(
-					s1.next().getValues(),
-					s2.next().getValues())) {
-
-				return false;
-			}
-		}
-
-		return true;
+		return valuesMatch(values1.asList(), values2.asList());
 	}
 
-	private boolean slotValuesMatch(ISlotValues values1, ISlotValues values2) {
-
-		if (values1.size() != values2.size()) {
-
-			return false;
-		}
-
-		Iterator<IValue> v1 = values1.asList().iterator();
-		Iterator<IValue> v2 = values2.asList().iterator();
-
-		while (v1.hasNext()) {
-
-			if (!valuesMatch(v1.next(), v2.next())) {
-
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private boolean valuesMatch(IValue value1, IValue value2) {
+	boolean valuesMatch(IValue value1, IValue value2) {
 
 		if (value1 instanceof IFrame) {
 
 			return match((IFrame)value1, (IFrame)value2);
 		}
 
-		return value1.equals(value2);
+		return typesMatch(value1, value2);
+	}
+
+	abstract boolean typesMatch(CValue<?> type1, CValue<?> type2);
+
+	abstract boolean listSizesMatch(KList<?> list1, KList<?> list2);
+
+	abstract boolean slotsMatch(ISlots slots1, ISlots slots2);
+
+	abstract boolean valuesMatch(List<IValue> values1, List<IValue> values2);
+
+	private boolean framesMatch(IFrame frame1, IFrame frame2) {
+
+		return typesMatch(frame1, frame2) && frameSlotsMatch(frame1, frame2);
+	}
+
+	private boolean frameSlotsMatch(IFrame frame1, IFrame frame2) {
+
+		ISlots slots1 = frame1.getSlots();
+		ISlots slots2 = frame2.getSlots();
+
+		return listSizesMatch(slots1, slots2) && slotsMatch(slots1, slots2);
+	}
+
+	private boolean typesMatch(IValue value1, IValue value2) {
+
+		return typesMatch(value1.getType(), value2.getType());
 	}
 }

@@ -109,6 +109,20 @@ public class IFrameTest extends MekonTest {
 		assertTrue(i.matches(i));
 	}
 
+	@Test
+	public void test_subsumption() {
+
+		IFrame i = createComplexInstance();
+		IFrame is = createComplexInstanceSubsumer(i);
+
+		assertFalse(i == is);
+		assertFalse(i.matches(is));
+
+		assertTrue(is.subsumes(i));
+		assertFalse(i.subsumes(is));
+		assertTrue(i.subsumes(i));
+	}
+
 	private IFrameTest(MonitorIReasoner monitorIReasoner) {
 
 		super(monitorIReasoner);
