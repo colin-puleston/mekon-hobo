@@ -143,6 +143,11 @@ class InstanceFileStore {
 
 	private IInstanceParser createParser(File file) {
 
-		return new IInstanceParser(model, model.getIEditor(), file);
+		return new IInstanceParser(file, createFrameParser());
+	}
+
+	private IFrameParser createFrameParser() {
+
+		return new IFrameParserLocal(model, IFrameCategory.ASSERTION);
 	}
 }

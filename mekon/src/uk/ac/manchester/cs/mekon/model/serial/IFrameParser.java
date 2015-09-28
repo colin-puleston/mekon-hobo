@@ -34,10 +34,9 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-public class IFrameParser extends ISerialiser {
+public abstract class IFrameParser extends ISerialiser {
 
 	private CModel model;
-	private IEditor iEditor;
 	private IFrameCategory frameCategory;
 
 	private class OneTimeParser {
@@ -58,12 +57,13 @@ public class IFrameParser extends ISerialiser {
 
 			private List<V> valueSpecs = new ArrayList<V>();
 
-			SlotSpec(IFrame frame, CIdentity slotId, XNode slotNode) {
+			SlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
 
 				this.frame = frame;
-				this.slotId = slotId;
 
-				resolveValueSpecs(slotNode.getChild(IVALUES_ID));
+				slotId = parseIdentity(slotNode.getChild(CSLOT_ID));
+
+				resolveValueSpecs(valuesNode);
 
 				frameSlots.add(frame, this);
 			}
@@ -99,7 +99,7 @@ public class IFrameParser extends ISerialiser {
 
 			private void setValues(ISlot slot) {
 
-				iEditor.getSlotValuesEditor(slot).update(getValidValues(slot));
+				setSlotValues(slot, getValidValues(slot));
 			}
 
 			private List<IValue> getValidValues(ISlot slot) {
@@ -123,9 +123,9 @@ public class IFrameParser extends ISerialiser {
 
 		private class IFrameSlotSpec extends SlotSpec<IValue> {
 
-			IFrameSlotSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
+			IFrameSlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
 
-				super(frame, slotId, parentNode);
+				super(frame, slotNode, valuesNode);
 			}
 
 			String getValueId() {
@@ -151,9 +151,9 @@ public class IFrameParser extends ISerialiser {
 
 		private class CFrameSlotSpec extends SlotSpec<IValue> {
 
-			CFrameSlotSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
+			CFrameSlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
 
-				super(frame, slotId, parentNode);
+				super(frame, slotNode, valuesNode);
 			}
 
 			String getValueId() {
@@ -174,9 +174,9 @@ public class IFrameParser extends ISerialiser {
 
 		private class INumberSlotSpec extends SlotSpec<XNode> {
 
-			INumberSlotSpec(IFrame frame, CIdentity slotId, XNode parentNode) {
+			INumberSlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
 
-				super(frame, slotId, parentNode);
+				super(frame, slotNode, valuesNode);
 			}
 
 			String getValueId() {
@@ -220,7 +220,7 @@ public class IFrameParser extends ISerialiser {
 			IFrame frame = parseIFrame(getTopLevelFrameNode());
 
 			addSlotValues();
-			setAutoUpdateEnabledForAllFrames(true);
+			checkUpdateFramesOnParseCompletion(frames);
 
 			return frame;
 		}
@@ -330,46 +330,41 @@ public class IFrameParser extends ISerialiser {
 			return INumber.create(valueType.getNumberType(), node.getString(attrName));
 		}
 
-		private void parseISlot(IFrame frame, XNode node) {
+		private void parseISlot(IFrame frame, XNode slotNode) {
 
-			CIdentity id = parseIdentity(node.getChild(CSLOT_ID));
+			XNode valuesNode = slotNode.getChildOrNull(IVALUES_ID);
 
-			if (node.hasChild(IVALUES_ID)) {
+			if (valuesNode != null) {
 
-				if (node.hasChild(IFRAME_ID)) {
+				if (valuesNode.hasChild(IFRAME_ID)) {
 
-					new IFrameSlotSpec(frame, id, node);
+					new IFrameSlotSpec(frame, slotNode, valuesNode);
 				}
-				else if (node.hasChild(INUMBER_ID)) {
+				else if (valuesNode.hasChild(INUMBER_ID)) {
 
-					new INumberSlotSpec(frame, id, node);
+					new INumberSlotSpec(frame, slotNode, valuesNode);
 				}
-				else if (node.hasChild(CFRAME_ID)) {
+				else if (valuesNode.hasChild(CFRAME_ID)) {
 
-					new CFrameSlotSpec(frame, id, node);
+					new CFrameSlotSpec(frame, slotNode, valuesNode);
 				}
 			}
 		}
 
-		private IFrame createAndRegisterFrame(CFrame frameType) {
+		private IFrame createAndRegisterFrame(CFrame type) {
 
-			IFrame frame = createFrameNoAutoUpdate(frameType);
+			IFrame frame = instantiateFrame(type, frameCategory);
 
 			frames.add(frame);
 
 			return frame;
 		}
 
-		private IFrame createFrameNoAutoUpdate(CFrame frameType) {
-
-			return iEditor.instantiateNoAutoUpdate(frameType, frameCategory);
-		}
-
 		private void addSlotValues() {
 
 			while (addValuesForAvailableSlots() && !frameSlots.isEmpty()) {
 
-				checkUpdateFrameSlotSets();
+				checkUpdateFrameSlotSets(frames);
 			}
 		}
 
@@ -386,31 +381,6 @@ public class IFrameParser extends ISerialiser {
 			}
 
 			return anyAdded;
-		}
-
-		private void checkUpdateFrameSlotSets() {
-
-			setAutoUpdateEnabledForAllFrames(true);
-
-			for (IFrame frame : frames) {
-
-				frame.update();
-			}
-
-			setAutoUpdateEnabledForAllFrames(false);
-		}
-
-		private void setAutoUpdateEnabledForAllFrames(boolean enabled) {
-
-			for (IFrame frame : frames) {
-
-				setAutoUpdateEnabled(frame, enabled);
-			}
-		}
-
-		private void setAutoUpdateEnabled(IFrame frame, boolean enabled) {
-
-			iEditor.getFrameEditor(frame).setAutoUpdateEnabled(enabled);
 		}
 
 		private XNode getTopLevelFrameNode() {
@@ -465,14 +435,10 @@ public class IFrameParser extends ISerialiser {
 
 	/**
 	 */
-	public IFrameParser(
-				CModel model,
-				IEditor iEditor,
-				IFrameCategory frameCategory) {
+	public IFrameParser(CModel model, IFrameCategory frameCategory) {
 
 		this.model = model;
-		this.iEditor = iEditor;
-		this.frameCategory = frameCategory;
+ 		this.frameCategory = frameCategory;
 	}
 
 	/**
@@ -488,6 +454,22 @@ public class IFrameParser extends ISerialiser {
 
 		return doParse(getContainerNode(parentNode));
 	}
+
+	/**
+	 */
+	protected abstract IFrame instantiateFrame(CFrame type, IFrameCategory category);
+
+	/**
+	 */
+	protected abstract void setSlotValues(ISlot slot, List<IValue> values);
+
+	/**
+	 */
+	protected abstract void checkUpdateFrameSlotSets(List<IFrame> frames);
+
+	/**
+	 */
+	protected abstract void checkUpdateFramesOnParseCompletion(List<IFrame> frames);
 
 	private IFrame doParse(XNode containerNode) {
 

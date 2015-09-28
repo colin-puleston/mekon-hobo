@@ -181,11 +181,6 @@ public class IFrame implements IEntity, IValue {
 			slots.remove(slot);
 			pollListenersForSlotRemoved(slot);
 		}
-
-		public void setAutoUpdateEnabled(boolean enabled) {
-
-			IFrame.this.setAutoUpdateEnabled(enabled);
-		}
 	}
 
 	private class AutoUpdater implements KUpdateListener {

@@ -35,13 +35,6 @@ class IEditorImpl implements IEditor {
 
 	private DynamicSlotValueTypeFrames dynamicSlotValueTypeFrames;
 
-	public IFrame instantiateNoAutoUpdate(
-						CFrame frameType,
-						IFrameCategory category) {
-
-		return frameType.instantiateNoAutoUpdate(category);
-	}
-
 	public IFrameEditor getFrameEditor(IFrame frame) {
 
 		return frame.createEditor();

@@ -22,54 +22,55 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
+package uk.ac.manchester.cs.mekon.model;
 
-import java.io.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
- * Parses an XML document representing a serialised instance.
- *
  * @author Colin Puleston
  */
-public class IInstanceParser extends ISerialiser {
+class IFrameParserLocal extends IFrameParser {
 
-	private XNode rootNode;
-	private IFrameParser frameParser;
+	protected IFrame instantiateFrame(CFrame type, IFrameCategory category) {
 
-	/**
-	 * Constructor that performs the parse operation.
-	 *
-	 * @param model Relevant model
-	 * @param iEditor Relevant instantiation-editor
-	 * @param instanceFile Serialisation file
-	 */
-	public IInstanceParser(File instanceFile, IFrameParser frameParser) {
-
-		rootNode = new XDocument(instanceFile).getRootNode();
-
-		this.frameParser = frameParser;
+		return type.instantiateNoAutoUpdate(category);
 	}
 
-	/**
-	 * Provides the frame representation of the instance.
-	 *
-	 * @return Frame representation of instance
-	 */
-	public IFrame parseInstance() {
+	protected void setSlotValues(ISlot slot, List<IValue> values) {
 
-		return frameParser.parse(rootNode);
+		slot.getValues().update(values, true);
 	}
 
-	/**
-	 * Provides the identity of the instance.
-	 *
-	 * @return Identity of instance
-	 */
-	public CIdentity parseIdentity() {
+	protected void checkUpdateFrameSlotSets(List<IFrame> frames) {
 
-		return parseIdentity(rootNode);
+		setAutoUpdateEnabled(frames, true);
+
+		for (IFrame frame : frames) {
+
+			frame.update();
+		}
+
+		setAutoUpdateEnabled(frames, false);
+	}
+
+	protected void checkUpdateFramesOnParseCompletion(List<IFrame> frames) {
+
+		setAutoUpdateEnabled(frames, true);
+	}
+
+	IFrameParserLocal(CModel model, IFrameCategory frameCategory) {
+
+		super(model, frameCategory);
+	}
+
+	private void setAutoUpdateEnabled(List<IFrame> frames, boolean enabled) {
+
+		for (IFrame frame : frames) {
+
+			frame.setAutoUpdateEnabled(enabled);
+		}
 	}
 }
