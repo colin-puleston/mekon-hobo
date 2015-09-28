@@ -67,9 +67,13 @@ class InstanceFileStore {
 
 	void loadAll(InstanceLoader loader) {
 
+		long XXX = 0;
 		for (File file : findAllStoreFiles()) {
 
+			long XXXX = System.currentTimeMillis();
 			load(loader, file);
+			XXX += (System.currentTimeMillis() - XXXX);
+			System.out.println("XXX-TIME: " + XXX);
 		}
 	}
 
@@ -83,12 +87,12 @@ class InstanceFileStore {
 
 	void write(IFrame instance, CIdentity identity, int index) {
 
-		createRenderer(index).render(instance, identity);
+		new IInstanceRenderer(getFile(index)).render(instance, identity);
 	}
 
 	IFrame read(int index) {
 
-		return createParser(index).parseInstance();
+		return createParser(getFile(index), true).parseInstance();
 	}
 
 	void remove(int index) {
@@ -98,7 +102,7 @@ class InstanceFileStore {
 
 	private void load(InstanceLoader loader, File file) {
 
-		IInstanceParser parser = createParser(file);
+		IInstanceParser parser = createParser(file, false);
 
 		CIdentity id = parser.parseIdentity();
 		IFrame instance = parser.parseInstance();
@@ -131,22 +135,16 @@ class InstanceFileStore {
 		return Integer.parseInt(name.substring(start, end));
 	}
 
-	private IInstanceRenderer createRenderer(int index) {
+	private IInstanceParser createParser(File file, boolean frameForExternalUse) {
 
-		return new IInstanceRenderer(getFile(index));
+		IFrameParserLocal frameParser = createFrameParser();
+
+		frameParser.setInferredTypesAndSchemaRequired(frameForExternalUse);
+
+		return new IInstanceParser(file, frameParser);
 	}
 
-	private IInstanceParser createParser(int index) {
-
-		return createParser(getFile(index));
-	}
-
-	private IInstanceParser createParser(File file) {
-
-		return new IInstanceParser(file, createFrameParser());
-	}
-
-	private IFrameParser createFrameParser() {
+	private IFrameParserLocal createFrameParser() {
 
 		return new IFrameParserLocal(model, IFrameCategory.ASSERTION);
 	}

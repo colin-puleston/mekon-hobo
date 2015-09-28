@@ -90,4 +90,13 @@ public interface IFrameEditor {
 	 * @param slot Slot to be removed
 	 */
 	public void removeSlot(ISlot slot);
+
+	/**
+	 * Sets the auto-update status of all slots on the the frame,
+	 * which determines whether or not any automatic updates can
+	 * occur when slot-values are updated.
+	 *
+	 * @param enabled Required auto-update status
+	 */
+	public void setAutoUpdateEnabled(boolean enabled);
 }

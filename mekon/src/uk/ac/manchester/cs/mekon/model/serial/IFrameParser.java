@@ -362,9 +362,12 @@ public abstract class IFrameParser extends ISerialiser {
 
 		private void addSlotValues() {
 
-			while (addValuesForAvailableSlots() && !frameSlots.isEmpty()) {
+			while (!frameSlots.isEmpty() && addValuesForAvailableSlots()) {
 
-				checkUpdateFrameSlotSets(frames);
+				if (!frameSlots.isEmpty() || inferredTypesAndSchemaRequired()) {
+
+					checkUpdateFrameSlotSets(frames);
+				}
 			}
 		}
 
@@ -470,6 +473,10 @@ public abstract class IFrameParser extends ISerialiser {
 	/**
 	 */
 	protected abstract void checkUpdateFramesOnParseCompletion(List<IFrame> frames);
+
+	/**
+	 */
+	protected abstract boolean inferredTypesAndSchemaRequired();
 
 	private IFrame doParse(XNode containerNode) {
 

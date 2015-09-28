@@ -34,6 +34,8 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 class IFrameParserLocal extends IFrameParser {
 
+	private boolean inferredTypesAndSchemaRequired = true;
+
 	protected IFrame instantiateFrame(CFrame type, IFrameCategory category) {
 
 		return type.instantiateNoAutoUpdate(category);
@@ -61,9 +63,19 @@ class IFrameParserLocal extends IFrameParser {
 		setAutoUpdateEnabled(frames, true);
 	}
 
+	protected boolean inferredTypesAndSchemaRequired() {
+
+		return inferredTypesAndSchemaRequired;
+	}
+
 	IFrameParserLocal(CModel model, IFrameCategory frameCategory) {
 
 		super(model, frameCategory);
+	}
+
+	void setInferredTypesAndSchemaRequired(boolean value) {
+
+		inferredTypesAndSchemaRequired = value;
 	}
 
 	private void setAutoUpdateEnabled(List<IFrame> frames, boolean enabled) {
