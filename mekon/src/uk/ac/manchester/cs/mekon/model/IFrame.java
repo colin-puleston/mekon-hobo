@@ -147,12 +147,10 @@ public class IFrame implements IEntity, IValue {
 
 		public ISlot addSlot(CSlot slotType) {
 
-			ISlot slot = new ISlot(slotType, IFrame.this);
+			ISlot slot = IFrame.this.addSlot(slotType);
 
 			new AutoUpdater(slot);
 			IFrameSlotValueUpdateProcessor.checkAddTo(slot);
-
-			slots.add(slot);
 			pollListenersForSlotAdded(slot);
 
 			return slot;
@@ -535,6 +533,20 @@ public class IFrame implements IEntity, IValue {
 	IFrameEditor createEditor() {
 
 		return new Editor();
+	}
+
+	boolean updateInferredTypes(List<CFrame> updateds) {
+
+		return inferredTypes.update(updateds);
+	}
+
+	ISlot addSlot(CSlot slotType) {
+
+		ISlot slot = new ISlot(slotType, this);
+
+		slots.add(slot);
+
+		return slot;
 	}
 
 	void addReferencingSlot(ISlot slot) {

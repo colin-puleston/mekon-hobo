@@ -67,13 +67,9 @@ class InstanceFileStore {
 
 	void loadAll(InstanceLoader loader) {
 
-		long XXX = 0;
 		for (File file : findAllStoreFiles()) {
 
-			long XXXX = System.currentTimeMillis();
 			load(loader, file);
-			XXX += (System.currentTimeMillis() - XXXX);
-			System.out.println("XXX-TIME: " + XXX);
 		}
 	}
 
@@ -137,15 +133,16 @@ class InstanceFileStore {
 
 	private IInstanceParser createParser(File file, boolean frameForExternalUse) {
 
-		IFrameParserLocal frameParser = createFrameParser();
-
-		frameParser.setInferredTypesAndSchemaRequired(frameForExternalUse);
-
-		return new IInstanceParser(file, frameParser);
+		return new IInstanceParser(file, createFrameParser(frameForExternalUse));
 	}
 
-	private IFrameParserLocal createFrameParser() {
+	private IFrameParser createFrameParser(boolean frameForExternalUse) {
 
-		return new IFrameParserLocal(model, IFrameCategory.ASSERTION);
+		if (frameForExternalUse) {
+
+			return new IFrameParserReasoning(model, IFrameCategory.ASSERTION);
+		}
+
+		return new IFrameParserNonReasoning(model, IFrameCategory.ASSERTION);
 	}
 }

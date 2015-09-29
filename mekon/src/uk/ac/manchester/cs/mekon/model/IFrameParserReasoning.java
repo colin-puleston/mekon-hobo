@@ -31,15 +31,65 @@ import uk.ac.manchester.cs.mekon.model.serial.*;
 /**
  * @author Colin Puleston
  */
-abstract class IFrameParserLocal extends IFrameParser {
+class IFrameParserReasoning extends IFrameParserLocal {
 
-	protected void setSlotValues(ISlot slot, List<IValue> values) {
+	protected IFrame instantiateFrame(CFrame type, IFrameCategory category) {
 
-		slot.getValues().update(values, true);
+		return type.instantiateNoAutoUpdate(category);
 	}
 
-	IFrameParserLocal(CModel model, IFrameCategory frameCategory) {
+	protected ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
+
+		return lookForSlot(frame, slotId);
+	}
+
+	protected ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId) {
+
+		return lookForSlot(frame, slotId);
+	}
+
+	protected ISlot checkResolveINumberSlot(
+						IFrame frame,
+						CIdentity slotId,
+						Class<? extends Number> numberType) {
+
+		return lookForSlot(frame, slotId);
+	}
+
+	protected void checkUpdateFrameSlotSets(List<IFrame> frames) {
+
+		setAutoUpdateEnabled(frames, true);
+
+		for (IFrame frame : frames) {
+
+			frame.update();
+		}
+
+		setAutoUpdateEnabled(frames, false);
+	}
+
+	protected void checkUpdateFramesOnParseCompletion(List<IFrame> frames) {
+
+		setAutoUpdateEnabled(frames, true);
+	}
+
+	IFrameParserReasoning(CModel model, IFrameCategory frameCategory) {
 
 		super(model, frameCategory);
+	}
+
+	private ISlot lookForSlot(IFrame frame, CIdentity slotId) {
+
+		ISlots slots = frame.getSlots();
+
+		return slots.containsValueFor(slotId) ? slots.get(slotId) : null;
+	}
+
+	private void setAutoUpdateEnabled(List<IFrame> frames, boolean enabled) {
+
+		for (IFrame frame : frames) {
+
+			frame.setAutoUpdateEnabled(enabled);
+		}
 	}
 }

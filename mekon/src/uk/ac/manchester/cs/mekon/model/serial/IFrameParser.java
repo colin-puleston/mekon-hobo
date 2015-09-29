@@ -36,6 +36,17 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public abstract class IFrameParser extends ISerialiser {
 
+	static private Set<Class<? extends Number>> numberTypes
+						= new HashSet<Class<? extends Number>>();
+
+	static {
+
+		numberTypes.add(Integer.class);
+		numberTypes.add(Long.class);
+		numberTypes.add(Float.class);
+		numberTypes.add(Double.class);
+	}
+
 	private CModel model;
 	private IFrameCategory frameCategory;
 
@@ -70,11 +81,11 @@ public abstract class IFrameParser extends ISerialiser {
 
 			boolean process() {
 
-				ISlots slots = frame.getSlots();
+				ISlot slot = checkResolveSlot(frame, slotId);
 
-				if (slots.containsValueFor(slotId)) {
+				if (slot != null) {
 
-					setValues(slots.get(slotId));
+					setValues(slot);
 					frameSlots.remove(frame, this);
 
 					return true;
@@ -84,6 +95,8 @@ public abstract class IFrameParser extends ISerialiser {
 			}
 
 			abstract String getValueId();
+
+			abstract ISlot checkResolveSlot(IFrame frame, CIdentity slotId);
 
 			abstract V resolveValueSpec(XNode valueNode);
 
@@ -133,17 +146,17 @@ public abstract class IFrameParser extends ISerialiser {
 				return IFRAME_ID;
 			}
 
+			ISlot checkResolveSlot(IFrame frame, CIdentity slotId) {
+
+				return checkResolveIFrameSlot(frame, slotId);
+			}
+
 			IValue resolveValueSpec(XNode valueNode) {
 
 				return parseIFrame(valueNode);
 			}
 
 			IValue getValue(ISlot slot, IValue valueSpec) {
-
-				if (slot.getValueType() instanceof MFrame) {
-
-					return ((IFrame)valueSpec).getType();
-				}
 
 				return valueSpec;
 			}
@@ -161,6 +174,11 @@ public abstract class IFrameParser extends ISerialiser {
 				return CFRAME_ID;
 			}
 
+			ISlot checkResolveSlot(IFrame frame, CIdentity slotId) {
+
+				return checkResolveCFrameSlot(frame, slotId);
+			}
+
 			IValue resolveValueSpec(XNode valueNode) {
 
 				return parseCFrame(valueNode);
@@ -174,14 +192,23 @@ public abstract class IFrameParser extends ISerialiser {
 
 		private class INumberSlotSpec extends SlotSpec<XNode> {
 
+			private Class<? extends Number> numberType;
+
 			INumberSlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
 
 				super(frame, slotNode, valuesNode);
+
+				numberType = getNumberTypeOrNull(slotNode);
 			}
 
 			String getValueId() {
 
 				return INUMBER_ID;
+			}
+
+			ISlot checkResolveSlot(IFrame frame, CIdentity slotId) {
+
+				return checkResolveINumberSlot(frame, slotId, numberType);
 			}
 
 			XNode resolveValueSpec(XNode valueNode) {
@@ -192,6 +219,26 @@ public abstract class IFrameParser extends ISerialiser {
 			IValue getValue(ISlot slot, XNode valueSpec) {
 
 				return parseINumber(getValueType(slot), valueSpec);
+			}
+
+			private Class<? extends Number> getNumberTypeOrNull(XNode slotNode) {
+
+				String className = slotNode.getString(NUMBER_TYPE_ATTR, null);
+
+				return className != null ? getNumberType(className) : null;
+			}
+
+			private Class<? extends Number> getNumberType(String className) {
+
+				for (Class<? extends Number> numberType : numberTypes) {
+
+					if (numberType.getSimpleName().equals(className)) {
+
+						return numberType;
+					}
+				}
+
+				throw new XDocumentException("Unrecognised number class: " + className);
 			}
 
 			private CNumber getValueType(ISlot slot) {
@@ -364,10 +411,7 @@ public abstract class IFrameParser extends ISerialiser {
 
 			while (!frameSlots.isEmpty() && addValuesForAvailableSlots()) {
 
-				if (!frameSlots.isEmpty() || inferredTypesAndSchemaRequired()) {
-
-					checkUpdateFrameSlotSets(frames);
-				}
+				checkUpdateFrameSlotSets(frames);
 			}
 		}
 
@@ -464,6 +508,21 @@ public abstract class IFrameParser extends ISerialiser {
 
 	/**
 	 */
+	protected abstract ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId);
+
+	/**
+	 */
+	protected abstract ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId);
+
+	/**
+	 */
+	protected abstract ISlot checkResolveINumberSlot(
+								IFrame frame,
+								CIdentity slotId,
+								Class<? extends Number> numberType);
+
+	/**
+	 */
 	protected abstract void setSlotValues(ISlot slot, List<IValue> values);
 
 	/**
@@ -473,10 +532,6 @@ public abstract class IFrameParser extends ISerialiser {
 	/**
 	 */
 	protected abstract void checkUpdateFramesOnParseCompletion(List<IFrame> frames);
-
-	/**
-	 */
-	protected abstract boolean inferredTypesAndSchemaRequired();
 
 	private IFrame doParse(XNode containerNode) {
 

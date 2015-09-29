@@ -37,7 +37,6 @@ public class IFrameRenderer extends ISerialiser {
 
 	private boolean renderAsTree = false;
 	private boolean renderSchema = false;
-	private boolean flattenMetaLevel = false;
 
 	private class OneTimeRenderer {
 
@@ -60,14 +59,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			protected void visit(MFrame value) {
 
-				if (flattenMetaLevel) {
-
-					renderCFrame(value.getRootCFrame(), slotNode);
-				}
-				else {
-
-					renderMFrame(value, slotNode);
-				}
+				renderMFrame(value, slotNode);
 			}
 
 			ISlotValueTypeRenderer(ISlot slot, XNode slotNode) {
@@ -102,14 +94,7 @@ public class IFrameRenderer extends ISerialiser {
 
 				for (CFrame value : values) {
 
-					if (flattenMetaLevel) {
-
-						renderIFrame(value.instantiate(), valuesNode);
-					}
-					else {
-
-						renderCFrame(value, valuesNode);
-					}
+					renderCFrame(value, valuesNode);
 				}
 			}
 
@@ -213,7 +198,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			if (number.indefinite()) {
 
-				renderCNumberRange(number.getType(), node);
+				renderNumberRange(number.getType(), node);
 			}
 			else {
 
@@ -225,11 +210,16 @@ public class IFrameRenderer extends ISerialiser {
 
 			XNode node = parentNode.addChild(CNUMBER_ID);
 
-			renderClassId(number.getNumberType(), node, NUMBER_TYPE_ATTR);
-			renderCNumberRange(number, node);
+			renderNumberType(number, node);
+			renderNumberRange(number, node);
 		}
 
-		private void renderCNumberRange(CNumber number, XNode node) {
+		private void renderNumberType(CNumber number, XNode node) {
+
+			renderClassId(number.getNumberType(), node, NUMBER_TYPE_ATTR);
+		}
+
+		private void renderNumberRange(CNumber number, XNode node) {
 
 			if (number.hasMin()) {
 
@@ -254,6 +244,10 @@ public class IFrameRenderer extends ISerialiser {
 
 				new ISlotValueTypeRenderer(slot, node);
 			}
+			else {
+
+				checkRenderSlotNumberType(slot, node);
+			}
 
 			if (!slot.getValues().isEmpty()) {
 
@@ -272,6 +266,16 @@ public class IFrameRenderer extends ISerialiser {
 				node.addValue(CARDINALITY_ATTR, slot.getCardinality());
 			}
 		}
+
+		private void checkRenderSlotNumberType(ISlot slot, XNode slotNode) {
+
+			CValue<?> valueType = slot.getValueType();
+
+			if (valueType instanceof CNumber) {
+
+				renderNumberType((CNumber)valueType, slotNode);
+			}
+		}
 	}
 
 	/**
@@ -286,13 +290,6 @@ public class IFrameRenderer extends ISerialiser {
 	public void setRenderSchema(boolean value) {
 
 		renderSchema = value;
-	}
-
-	/**
-	 */
-	public void setFlattenMetaLevel(boolean value) {
-
-		flattenMetaLevel = value;
 	}
 
 	/**

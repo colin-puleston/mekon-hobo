@@ -67,10 +67,16 @@ class IFrameCopier {
 
 		copies.put(template, copy);
 
+		copyInferredTypes(template, copy);
 		copySlots(template, copy);
 		copy.setAutoUpdateEnabled(true);
 
 		return copy;
+	}
+
+	private void copyInferredTypes(IFrame template, IFrame copy) {
+
+		template.updateInferredTypes(copy.getInferredTypes().asList());
 	}
 
 	private void copySlots(IFrame template, IFrame copy) {
@@ -103,7 +109,7 @@ class IFrameCopier {
 
 	private ISlot createEmptySlotCopy(IFrame container, ISlot template) {
 
-		return container.createEditor().addSlot(template.getType());
+		return container.addSlot(template.getType());
 	}
 
 	private IFrame getFrameCopy(IFrame template) {
