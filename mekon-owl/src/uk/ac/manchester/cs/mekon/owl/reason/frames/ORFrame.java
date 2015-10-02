@@ -95,7 +95,7 @@ public class ORFrame extends ORFramesEntity {
 	}
 
 	/**
-	 * Adds a frame--valued slot to the frame.
+	 * Adds a frame-valued slot to the frame.
 	 *
 	 * @param slot Slot to add
 	 */
@@ -117,7 +117,7 @@ public class ORFrame extends ORFramesEntity {
 	}
 
 	/**
-	 * Removes a frame--valued slot from the frame.
+	 * Removes a frame-valued slot from the frame.
 	 *
 	 * @param slot Slot to remove
 	 */
@@ -206,7 +206,7 @@ public class ORFrame extends ORFramesEntity {
 	}
 
 	/**
-	 * Checks whether the frame has any slots, either frame--valued
+	 * Checks whether the frame has any slots, either frame-valued
 	 * of number-valued.
 	 *
 	 * @return True if frame has slots
@@ -217,7 +217,7 @@ public class ORFrame extends ORFramesEntity {
 	}
 
 	/**
-	 * Provides all frame--valued slots for the frame.
+	 * Provides all frame-valued slots for the frame.
 	 *
 	 * @return Concept-valued slots
 	 */

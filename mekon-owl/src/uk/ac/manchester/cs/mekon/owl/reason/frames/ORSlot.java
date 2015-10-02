@@ -145,9 +145,9 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 	}
 
 	/**
-	 * Specifies whether this is a frame--valued slot.
+	 * Specifies whether this is a frame-valued slot.
 	 *
-	 * @return True if frame--valued slot
+	 * @return True if frame-valued slot
 	 */
 	public abstract boolean frameSlot();
 
@@ -162,10 +162,10 @@ public abstract class ORSlot<V> extends ORFramesEntity {
 	}
 
 	/**
-	 * Casts slot as a frame--valued slot.
+	 * Casts slot as a frame-valued slot.
 	 *
-	 * @return Slot cast as frame--valued slot
-	 * @throws KAccessException if not a frame--valued slot
+	 * @return Slot cast as frame-valued slot
+	 * @throws KAccessException if not a frame-valued slot
 	 */
 	public ORFrameSlot asFrameSlot() {
 

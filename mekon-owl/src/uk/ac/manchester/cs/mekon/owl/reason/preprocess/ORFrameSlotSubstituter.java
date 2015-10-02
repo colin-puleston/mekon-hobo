@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * Pre-processer that modifies intermediate instance
- * representations, by substituting any frame--valued "source"
+ * representations, by substituting any frame-valued "source"
  * slot that has a particular identifier, with one or more
  * "target" slots. Each target-slot is specified via a IRI and
  * a value-type, as represented by the relevant {@link CFrame}

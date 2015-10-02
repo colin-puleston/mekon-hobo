@@ -56,7 +56,7 @@ public abstract class ORVisitingPreProcessor implements ORPreProcessor {
 	protected abstract void visit(OModel model, ORFrame frame);
 
 	/**
-	 * Visitor for frame--valued slots in intermediate instance
+	 * Visitor for frame-valued slots in intermediate instance
 	 * representation.
 	 *
 	 * @param model Relevant model

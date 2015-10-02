@@ -29,7 +29,7 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents a frame--valued slot in the pre-processable frames-based
+ * Represents a frame-valued slot in the pre-processable frames-based
  * instance representation.
  *
  * @author Colin Puleston
