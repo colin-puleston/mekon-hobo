@@ -392,8 +392,8 @@ public class IFrame implements IEntity, IValue {
 	 * the standard {@link CValue#subsumes} method on the value-type
 	 * objects.
 	 *
-	 * @param other Frame to test for matching with this one
-	 * @return true if frames match
+	 * @param other Frame to test for subsumption by this one
+	 * @return true if this frame subsumes other
 	 */
 	public boolean subsumes(IFrame other) {
 

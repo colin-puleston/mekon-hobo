@@ -27,15 +27,27 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
- * Provides classification-based versions of the reasoning
- * mechanisms defined by {@link IReasoner}. The actual
- * classification mechanisms are provided by derived classes.
+ * Provides classification-based versions of the reasoning mechanisms
+ * defined by {@link IReasoner}. This is an abstract class that leaves
+ * the implementatation of the actual classification mechanisms to the
+ * derived class.
+ * <p>
+ * The instance-level frames that are used by the top-level methods,
+ * are converted into the intermediate network representations that
+ * the abstract methods implemented by the derived classes operate on.
+ * <p>
+ * The classification process can be customised by adding one or more
+ * pre-processors to modify the networks that will be passed to the
+ * methods on the derived class (see {@link #addPreProcessor}) .
  *
  * @author Colin Puleston
  */
 public abstract class IClassifier extends DefaultIReasoner {
+
+	private NNetworkManager networkManager = new NNetworkManager();
 
 	private class Updater {
 
@@ -156,6 +168,19 @@ public abstract class IClassifier extends DefaultIReasoner {
 	}
 
 	/**
+	 * Registers a pre-processor to perform certain required
+	 * modifications to appropriate representations of instances that
+	 * are about to be classified.
+	 *
+	 * @param preProcessor Pre-processor for instances about to be
+	 * classified
+	 */
+	public void addPreProcessor(NNetworkProcessor preProcessor) {
+
+		networkManager.addPreProcessor(preProcessor);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public Set<IUpdateOp> updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
@@ -165,11 +190,16 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 	/**
 	 * Method whose implementations will classify the specified
-	 * instance-level frame.
+	 * network representation of an instance.
 	 *
-	 * @param frame Instance-level frame to classify
+	 * @param instance Instance to classify
 	 * @param ops Types of classification operations to be performed
 	 * @return Results of classification operations
 	 */
-	protected abstract IClassification classify(IFrame frame, IClassifierOps ops);
+	protected abstract IClassification classify(NNode instance, IClassifierOps ops);
+
+	private IClassification classify(IFrame frame, IClassifierOps ops) {
+
+		return classify(networkManager.createNetwork(frame), ops);
+	}
 }

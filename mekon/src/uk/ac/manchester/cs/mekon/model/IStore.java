@@ -47,8 +47,6 @@ public class IStore {
 
 	private InstanceFileStore fileStore;
 
-	private List<IFrameProcessor> instancePreProcessors = new ArrayList<IFrameProcessor>();
-	private List<IFrameProcessor> queryPreProcessors = new ArrayList<IFrameProcessor>();
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
@@ -88,7 +86,7 @@ public class IStore {
 		int index = indexes.assignIndex(identity);
 
 		fileStore.write(instance, identity, index);
-		addStoredAndIndexed(preProcessInstance(instance), identity);
+		addStoredAndIndexed(instance, identity);
 
 		return previous;
 	}
@@ -159,7 +157,7 @@ public class IStore {
 	 */
 	public synchronized IMatches match(IFrame query) {
 
-		return getMatcher(query).match(preProcessQuery(query));
+		return getMatcher(query).match(query);
 	}
 
 	/**
@@ -179,7 +177,7 @@ public class IStore {
 			return false;
 		}
 
-		return matcher.matches(preProcessQuery(query), instance);
+		return matcher.matches(query, instance);
 	}
 
 	IStore(CModel model) {
@@ -200,16 +198,6 @@ public class IStore {
 	void clearFileStore() {
 
 		fileStore.clear();
-	}
-
-	void addInstancePreProcessor(IFrameProcessor preProcessor) {
-
-		instancePreProcessors.add(preProcessor);
-	}
-
-	void addQueryPreProcessor(IFrameProcessor preProcessor) {
-
-		queryPreProcessors.add(preProcessor);
 	}
 
 	void addMatcher(IMatcher matcher) {
@@ -239,33 +227,6 @@ public class IStore {
 		}
 
 		return removed;
-	}
-
-	private IFrame preProcessInstance(IFrame instance) {
-
-		instance = instance.copy();
-
-		for (IFrameProcessor preProcessor : instancePreProcessors) {
-
-			preProcessor.process(instance);
-		}
-
-		return instance;
-	}
-
-	private IFrame preProcessQuery(IFrame query) {
-
-		if (!queryPreProcessors.isEmpty()) {
-
-			query = query.copy();
-
-			for (IFrameProcessor preProcessor : queryPreProcessors) {
-
-				preProcessor.process(query);
-			}
-		}
-
-		return query;
 	}
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {

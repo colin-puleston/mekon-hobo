@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
  * Provides an implementation of the reasoning mechanisms defined
@@ -37,7 +38,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public class IDirectMatcher implements IMatcher {
+public class IDirectMatcher extends IMatcher {
 
 	private Map<CFrame, InstanceGroup> instanceGroups
 					= new HashMap<CFrame, InstanceGroup>();
@@ -45,14 +46,14 @@ public class IDirectMatcher implements IMatcher {
 	private class InstanceGroup {
 
 		private CFrame rootFrameType;
-		private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
+		private Map<CIdentity, NNode> instances = new HashMap<CIdentity, NNode>();
 
 		InstanceGroup(CFrame rootFrameType) {
 
 			this.rootFrameType = rootFrameType;
 		}
 
-		void add(IFrame instance, CIdentity identity) {
+		void add(NNode instance, CIdentity identity) {
 
 			instances.put(identity, instance);
 		}
@@ -62,9 +63,9 @@ public class IDirectMatcher implements IMatcher {
 			return instances.remove(identity) != null;
 		}
 
-		void collectMatches(IFrame query, List<CIdentity> matches) {
+		void collectMatches(NNode query, List<CIdentity> matches) {
 
-			if (query.getType().subsumes(rootFrameType)) {
+			if (query.getCFrame().subsumes(rootFrameType)) {
 
 				for (CIdentity identity : instances.keySet()) {
 
@@ -88,9 +89,9 @@ public class IDirectMatcher implements IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void add(IFrame instance, CIdentity identity) {
+	public void add(NNode instance, CIdentity identity) {
 
-		CFrame rootFrameType = instance.getType();
+		CFrame rootFrameType = instance.getCFrame();
 		InstanceGroup group = instanceGroups.get(rootFrameType);
 
 		if (group == null) {
@@ -119,7 +120,7 @@ public class IDirectMatcher implements IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public IMatches match(IFrame query) {
+	public IMatches match(NNode query) {
 
 		List<CIdentity> matches = new ArrayList<CIdentity>();
 
@@ -134,7 +135,7 @@ public class IDirectMatcher implements IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean matches(IFrame query, IFrame instance) {
+	public boolean matches(NNode query, NNode instance) {
 
 		return query.subsumes(instance);
 	}

@@ -58,16 +58,6 @@ class CBuilderImpl implements CBuilder {
 		model.getIStore().setStoreDirectory(storeDirectory);
 	}
 
-	public void addIStoreInstancePreProcessor(IFrameProcessor preProcessor) {
-
-		model.getIStore().addInstancePreProcessor(preProcessor);
-	}
-
-	public void addIStoreQueryPreProcessor(IFrameProcessor preProcessor) {
-
-		model.getIStore().addQueryPreProcessor(preProcessor);
-	}
-
 	public void addIMatcher(IMatcher iMatcher) {
 
 		model.getIStore().addMatcher(iMatcher);

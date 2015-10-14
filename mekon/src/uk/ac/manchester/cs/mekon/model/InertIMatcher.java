@@ -25,11 +25,12 @@
 package uk.ac.manchester.cs.mekon.model;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
  * @author Colin Puleston
  */
-class InertIMatcher implements IMatcher {
+class InertIMatcher extends IMatcher {
 
 	static private final IMatcher singleton = new InertIMatcher();
 
@@ -43,18 +44,18 @@ class InertIMatcher implements IMatcher {
 		return false;
 	}
 
-	public void add(IFrame instance, CIdentity identity) {
+	public void add(NNode instance, CIdentity identity) {
 	}
 
 	public void remove(CIdentity identity) {
 	}
 
-	public IMatches match(IFrame query) {
+	public IMatches match(NNode query) {
 
 		return IMatches.NO_MATCHES;
 	}
 
-	public boolean matches(IFrame query, IFrame instance) {
+	public boolean matches(NNode query, NNode instance) {
 
 		return false;
 	}
