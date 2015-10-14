@@ -49,7 +49,7 @@
 		-->
 		<OWLModel
 			owlFile="demo.owl"
-			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
+			reasonerFactory="com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory"
 			indirectNumericProperty="http://mekon/demo.owl#numericValue">
 		</OWLModel>
 
@@ -59,6 +59,7 @@
 			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
 			reasonerFactory="uk.ac.manchester.cs.owlutil.HermitReasonerFactoryWrapper"
 			reasonerFactory="org.semanticweb.elk.owlapi.ElkReasonerFactory"
+			reasonerFactory="com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory"
 		-->
 
 		<!--
@@ -80,17 +81,26 @@
 		-->
 		<OWLClassifier
 			loggingMode="DISABLED">
-			<SlotSemantics
-				default="OPEN_WORLD">
+			<Semantics
+				defaultWorld="OPEN">
 				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
-			</SlotSemantics>
+			</Semantics>
 		</OWLClassifier>
 
 		<OWLMatcher
 			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORExpressionsMatcher"
+			reasoningType="DL"
 			loggingMode="DISABLED">
-			<SlotSemantics default="OPEN_WORLD"/>
+			<Semantics defaultWorld="OPEN"/>
 		</OWLMatcher>
+
+		<!--
+		<OWLMatcher
+			matcher="uk.ac.manchester.cs.mekon.owl.stardog.OStardogMatcher"
+			database="MEKON-DEMO"
+			loggingMode="DISABLED">
+		</OWLMatcher>
+		-->
 
 		<!--
 			Configuration information for the actual "sanctioning"
