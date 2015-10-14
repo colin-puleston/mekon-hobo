@@ -49,7 +49,7 @@
 		-->
 		<OWLModel
 			owlFile="demo.owl"
-			reasonerFactory="com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory"
+			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			indirectNumericProperty="http://mekon/demo.owl#numericValue">
 		</OWLModel>
 
@@ -88,7 +88,7 @@
 		</OWLClassifier>
 
 		<OWLMatcher
-			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORExpressionsMatcher"
+			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORConceptsMatcher"
 			reasoningType="DL"
 			loggingMode="DISABLED">
 			<Semantics defaultWorld="OPEN"/>
