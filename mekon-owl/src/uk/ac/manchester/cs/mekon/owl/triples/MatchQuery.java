@@ -26,14 +26,14 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
  * @author Colin Puleston
  */
 class MatchQuery extends SpecificQuery {
 
-	static private final String ROOT_FRAME_VARIABLE = "?f";
+	static private final String ROOT_NODE_VARIABLE = "?n";
 
 	private class QueryBodyRenderer extends MatchingQueryBodyRenderer {
 
@@ -42,9 +42,9 @@ class MatchQuery extends SpecificQuery {
 			super(getConstants());
 		}
 
-		QueryVariable getRootFrameNode() {
+		QueryVariable getRootTripleNode() {
 
-			return new QueryVariable(ROOT_FRAME_VARIABLE);
+			return new QueryVariable(ROOT_NODE_VARIABLE);
 		}
 	}
 
@@ -53,12 +53,12 @@ class MatchQuery extends SpecificQuery {
 		super(factory);
 	}
 
-	List<OT_URI> execute(ORFrame query) {
+	List<OT_URI> execute(NNode query) {
 
-		return executeSelect(ROOT_FRAME_VARIABLE, renderQueryBody(query));
+		return executeSelect(ROOT_NODE_VARIABLE, renderQueryBody(query));
 	}
 
-	private String renderQueryBody(ORFrame query) {
+	private String renderQueryBody(NNode query) {
 
 		return new QueryBodyRenderer().render(query);
 	}

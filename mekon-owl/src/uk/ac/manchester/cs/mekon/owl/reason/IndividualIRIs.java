@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
  * @author Colin Puleston
@@ -35,20 +35,20 @@ class IndividualIRIs {
 
 	static private final String REF_SECTION_PREFIX = "-REF-";
 
-	private ORFrame rootFrame;
+	private NNode rootNode;
 	private IRI rootIRI;
 
 	private int refCount = 0;
 
-	IndividualIRIs(ORFrame rootFrame, IRI rootIRI) {
+	IndividualIRIs(NNode rootNode, IRI rootIRI) {
 
-		this.rootFrame = rootFrame;
+		this.rootNode = rootNode;
 		this.rootIRI = rootIRI;
 	}
 
-	IRI getFor(ORFrame frame) {
+	IRI getFor(NNode frame) {
 
-		if (frame == rootFrame) {
+		if (frame == rootNode) {
 
 			return rootIRI;
 		}

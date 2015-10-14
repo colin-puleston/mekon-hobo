@@ -22,62 +22,51 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason.frames;
-
-import org.semanticweb.owlapi.model.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
- * Represents a frame-valued slot in the pre-processable frames-based
- * instance representation.
- *
  * @author Colin Puleston
  */
-public class ORFrameSlot extends ORSlot<ORFrame> {
+class TripleNodeURIs {
 
-	/**
-	 * Constructor that takes the string representation of the IRI as
-	 * the slot-identifier.
-	 *
-	 * @param iri IRI to be used in generating the classifiable
-	 * OWL expression.
-	 */
-	public ORFrameSlot(IRI iri) {
+	static private final String SUFFIX_PREFIX = "-N";
+	static private final String SUFFIX_FORMAT = SUFFIX_PREFIX + "%d";
 
-		super(iri);
+	static String getRootNodeURI(String baseURI) {
+
+		return getNodeURI(baseURI, 0);
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @param identifier Identifier for represented slot
-	 * @param iri IRI to be used in generating the classifiable
-	 * OWL expression.
-	 */
-	public ORFrameSlot(String identifier, IRI iri) {
+	static String getNodeURI(String baseURI, int index) {
 
-		super(identifier, iri);
+		return baseURI + getNodeURISuffix(index);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean frameSlot() {
+	static String extractBaseURI(String nodeURI) {
 
-		return true;
+		String uriSlice = removeFinalDigits(nodeURI);
+
+		if (uriSlice.endsWith(SUFFIX_PREFIX)) {
+
+			int l = uriSlice.length() - SUFFIX_PREFIX.length();
+
+			return uriSlice.substring(0, l);
+		}
+
+		return nodeURI;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public ORFrameSlot asFrameSlot() {
+	static private String getNodeURISuffix(int index) {
 
-		return this;
+		return String.format(SUFFIX_FORMAT, index);
 	}
 
-	ORFrameSlot(CIdentity id, ISlot iSlot, IRI iri) {
+	static private String removeFinalDigits(String uri) {
 
-		super(id, iSlot, iri);
+		int i = uri.length();
+
+		for ( ; i > 0 && Character.isDigit(uri.charAt(i - 1)) ; i--);
+
+		return uri.substring(0, i);
 	}
 }

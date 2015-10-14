@@ -29,54 +29,50 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class Renderer<FR extends OWLObject> {
+abstract class Renderer<NR extends OWLObject> {
 
 	private OModel model;
+	private ORSemantics semantics;
+
 	private OWLDataFactory dataFactory;
 	private NumberRenderer defaultNumberRenderer;
 
-	abstract class FrameRenderer {
+	abstract class NodeRenderer {
 
-		private ORFrame frame;
+		private NNode node;
 
-		FrameRenderer(ORFrame frame) {
+		NodeRenderer(NNode node) {
 
-			this.frame = frame;
+			this.node = node;
 		}
 
-		abstract FR render(OWLClassExpression type);
+		abstract NR render(OWLClassExpression type);
 
-		void renderSlots() {
+		void renderAttributes() {
 
-			for (ORFrameSlot slot : frame.getFrameSlots()) {
+			for (NLink link : node.getLinks()) {
 
-				if (slot.mapsToOWLEntity()) {
-
-					renderFrameSlotValues(slot);
-				}
+				renderLinkValues(link);
 			}
 
-			for (ORNumberSlot slot : frame.getNumberSlots()) {
+			for (NNumeric numeric : node.getNumerics()) {
 
-				if (slot.mapsToOWLEntity()) {
-
-					renderNumberSlotValues(slot);
-				}
+				renderNumericValues(numeric);
 			}
 		}
 
-		void addHasValueConstructForFrame(OWLObjectProperty property, FR rendering) {
+		void addHasValueConstructForNode(OWLObjectProperty property, NR rendering) {
 
 			addHasValueConstruct(property, toExpression(rendering));
 		}
 
-		void addOnlyValuesConstructForFrames(OWLObjectProperty property, Set<FR> renderings) {
+		void addOnlyValuesConstructForNodes(OWLObjectProperty property, Set<NR> renderings) {
 
 			addOnlyValuesConstruct(property, toExpression(renderings));
 		}
@@ -91,28 +87,28 @@ abstract class Renderer<FR extends OWLObject> {
 
 		abstract void addValueConstruct(OWLClassExpression construct);
 
-		abstract OWLClassExpression toExpression(FR rendering);
+		abstract OWLClassExpression toExpression(NR rendering);
 
-		abstract OWLClassExpression createUnion(Set<FR> renderings);
+		abstract OWLClassExpression createUnion(Set<NR> renderings);
 
-		private void renderFrameSlotValues(ORFrameSlot slot) {
+		private void renderLinkValues(NLink link) {
 
-			new FrameSlotValuesRenderer(this, slot).renderToFrame();
+			new LinkValuesRenderer(this, link).renderToNode();
 		}
 
-		private void renderNumberSlotValues(ORNumberSlot slot) {
+		private void renderNumericValues(NNumeric numeric) {
 
-			getNumbersRenderer(slot).renderToFrame();
+			getNumericValuesRenderer(numeric).renderToNode();
 		}
 
-		private SlotValuesRenderer<INumber, ?> getNumbersRenderer(ORNumberSlot slot) {
+		private ValuesRenderer<INumber, ?> getNumericValuesRenderer(NNumeric numeric) {
 
-			return directNumberSlot(slot)
-					? new DirectNumberSlotValuesRenderer(this, slot)
-					: new IndirectNumberSlotValuesRenderer(this, slot);
+			return directNumeric(numeric)
+					? new DirectNumericValuesRenderer(this, numeric)
+					: new IndirectNumericValuesRenderer(this, numeric);
 		}
 
-		private OWLClassExpression toExpression(Set<FR> valueRenderings) {
+		private OWLClassExpression toExpression(Set<NR> valueRenderings) {
 
 			if (valueRenderings.isEmpty()) {
 
@@ -127,37 +123,39 @@ abstract class Renderer<FR extends OWLObject> {
 			return createUnion(valueRenderings);
 		}
 
-		private boolean directNumberSlot(ORNumberSlot slot) {
+		private boolean directNumeric(NNumeric numeric) {
 
-			return model.getDataProperties().contains(slot.getIRI());
+			IRI iri = NetworkIRIs.getProperty(numeric);
+
+			return model.getDataProperties().contains(iri);
 		}
 	}
 
-	private abstract class SlotValuesRenderer<V, IV> {
+	private abstract class ValuesRenderer<V, IV> {
 
-		private ORSlot<V> slot;
+		private NAttribute<V> attribute;
 
-		SlotValuesRenderer(ORSlot<V> slot) {
+		ValuesRenderer(NAttribute<V> attribute) {
 
-			this.slot = slot;
+			this.attribute = attribute;
 		}
 
-		void renderToFrame() {
+		void renderToNode() {
 
-			Set<IV> intermediates = getIntermediateValues(slot);
+			Set<IV> intermediates = getIntermediateValues(attribute);
 
 			for (IV intermediate : intermediates) {
 
 				addHasValueConstruct(intermediate);
 			}
 
-			if (slot.closedWorldSemantics()) {
+			if (closedWorldSemantics()) {
 
 				addOnlyValuesConstruct(intermediates);
 			}
 		}
 
-		abstract IV getIntermediateValueOrNull(V value);
+		abstract IV getIntermediateValue(V value);
 
 		abstract void addHasValueConstruct(IV intermediate);
 
@@ -165,119 +163,98 @@ abstract class Renderer<FR extends OWLObject> {
 
 		OWLObjectProperty getObjectProperty() {
 
-			return model.getObjectProperties().get(slot.getIRI());
+			return model.getObjectProperties().get(getAttributeIRI());
 		}
 
 		OWLDataProperty getDataProperty() {
 
-			return model.getDataProperties().get(slot.getIRI());
+			return model.getDataProperties().get(getAttributeIRI());
 		}
 
-		private Set<IV> getIntermediateValues(ORSlot<V> slot) {
+		private boolean closedWorldSemantics() {
+
+			return semantics.getWorld(getAttributeIRI()).closed();
+		}
+
+		private Set<IV> getIntermediateValues(NAttribute<V> attribute) {
 
 			Set<IV> intermediates = new HashSet<IV>();
 
-			for (V value : slot.getValues()) {
+			for (V value : attribute.getValues()) {
 
-				IV intermediate = getIntermediateValueOrNull(value);
-
-				if (intermediate != null) {
-
-					intermediates.add(intermediate);
-				}
+				intermediates.add(getIntermediateValue(value));
 			}
 
 			return intermediates;
 		}
+
+		private IRI getAttributeIRI() {
+
+			return NetworkIRIs.getProperty(attribute);
+		}
 	}
 
-	private class FrameSlotValuesRenderer
-					extends
-						SlotValuesRenderer<ORFrame, FR> {
+	private class LinkValuesRenderer extends ValuesRenderer<NNode, NR> {
 
-		private FrameRenderer frameRenderer;
+		private NodeRenderer nodeRenderer;
 		private OWLObjectProperty property;
 
-		FrameSlotValuesRenderer(
-			FrameRenderer frameRenderer,
-			ORSlot<ORFrame> slot) {
+		LinkValuesRenderer(
+			NodeRenderer nodeRenderer,
+			NAttribute<NNode> attribute) {
 
-			super(slot);
+			super(attribute);
 
-			this.frameRenderer = frameRenderer;
+			this.nodeRenderer = nodeRenderer;
 
 			property = getObjectProperty();
 		}
 
-		FR getIntermediateValueOrNull(ORFrame value) {
+		NR getIntermediateValue(NNode value) {
 
-			if (value.mapsToOWLEntity()) {
-
-				return renderFrame(value);
-			}
-
-			if (value.disjunctionType()) {
-
-				return renderFrame(value, createUnion(value));
-			}
-
-			return null;
+			return renderNode(value);
 		}
 
-		void addHasValueConstruct(FR intermediate) {
+		void addHasValueConstruct(NR intermediate) {
 
-			frameRenderer.addHasValueConstructForFrame(property, intermediate);
+			nodeRenderer.addHasValueConstructForNode(property, intermediate);
 		}
 
-		void addOnlyValuesConstruct(Set<FR> intermediates) {
+		void addOnlyValuesConstruct(Set<NR> intermediates) {
 
-			frameRenderer.addOnlyValuesConstructForFrames(property, intermediates);
-		}
-
-		private OWLObjectUnionOf createUnion(ORFrame disjunction) {
-
-			Set<OWLClass> ops = new HashSet<OWLClass>();
-
-			for (IRI iri : disjunction.getTypeDisjunctIRIs()) {
-
-				ops.add(getConcept(iri));
-			}
-
-			return dataFactory.getOWLObjectUnionOf(ops);
+			nodeRenderer.addOnlyValuesConstructForNodes(property, intermediates);
 		}
 	}
 
-	private class IndirectNumberSlotValuesRenderer
-					extends
-						SlotValuesRenderer<INumber, OWLClassExpression> {
+	private class IndirectNumericValuesRenderer extends ValuesRenderer<INumber, OWLClassExpression> {
 
-		private FrameRenderer frameRenderer;
+		private NodeRenderer nodeRenderer;
 		private OWLObjectProperty property;
 
-		IndirectNumberSlotValuesRenderer(
-			FrameRenderer frameRenderer,
-			ORSlot<INumber> slot) {
+		IndirectNumericValuesRenderer(
+			NodeRenderer nodeRenderer,
+			NAttribute<INumber> attribute) {
 
-			super(slot);
+			super(attribute);
 
-			this.frameRenderer = frameRenderer;
+			this.nodeRenderer = nodeRenderer;
 
 			property = getObjectProperty();
 		}
 
-		OWLClassExpression getIntermediateValueOrNull(INumber value) {
+		OWLClassExpression getIntermediateValue(INumber value) {
 
 			return defaultNumberRenderer.renderHasValue(value);
 		}
 
 		void addHasValueConstruct(OWLClassExpression intermediate) {
 
-			frameRenderer.addHasValueConstruct(property, intermediate);
+			nodeRenderer.addHasValueConstruct(property, intermediate);
 		}
 
 		void addOnlyValuesConstruct(Set<OWLClassExpression> intermediates) {
 
-			frameRenderer.addOnlyValuesConstruct(property, createUnion(intermediates));
+			nodeRenderer.addOnlyValuesConstruct(property, createUnion(intermediates));
 		}
 
 		private OWLClassExpression createUnion(Set<OWLClassExpression> exprs) {
@@ -286,63 +263,86 @@ abstract class Renderer<FR extends OWLObject> {
 		}
 	}
 
-	private class DirectNumberSlotValuesRenderer
-					extends
-						SlotValuesRenderer<INumber, INumber> {
+	private class DirectNumericValuesRenderer extends ValuesRenderer<INumber, INumber> {
 
-		private FrameRenderer frameRenderer;
+		private NodeRenderer nodeRenderer;
 		private NumberRenderer numberRenderer;
 
-		DirectNumberSlotValuesRenderer(
-			FrameRenderer frameRenderer,
-			ORSlot<INumber> slot) {
+		DirectNumericValuesRenderer(
+			NodeRenderer nodeRenderer,
+			NAttribute<INumber> attribute) {
 
-			super(slot);
+			super(attribute);
 
-			this.frameRenderer = frameRenderer;
+			this.nodeRenderer = nodeRenderer;
 
 			numberRenderer = new NumberRenderer(model, getDataProperty());
 		}
 
-		INumber getIntermediateValueOrNull(INumber value) {
+		INumber getIntermediateValue(INumber value) {
 
 			return value;
 		}
 
 		void addHasValueConstruct(INumber intermediate) {
 
-			frameRenderer.addValueConstruct(numberRenderer.renderHasValue(intermediate));
+			nodeRenderer.addValueConstruct(numberRenderer.renderHasValue(intermediate));
 		}
 
 		void addOnlyValuesConstruct(Set<INumber> intermediates) {
 
-			frameRenderer.addValueConstruct(numberRenderer.renderOnlyValues(intermediates));
+			nodeRenderer.addValueConstruct(numberRenderer.renderOnlyValues(intermediates));
 		}
 	}
 
-	Renderer(OModel model) {
+	Renderer(OModel model, ORSemantics semantics) {
 
 		this.model = model;
+		this.semantics = semantics;
 
 		dataFactory = model.getDataFactory();
 		defaultNumberRenderer = new NumberRenderer(model);
 	}
 
-	FR renderFrame(ORFrame frame) {
+	NR renderNode(NNode node) {
 
-		return renderFrame(frame, getConcept(frame));
+		return renderNode(node, getTypeExpression(node));
 	}
 
-	abstract FrameRenderer createFrameRenderer(ORFrame frame);
+	abstract NodeRenderer createNodeRenderer(NNode node);
 
-	private FR renderFrame(ORFrame frame, OWLClassExpression type) {
+	private NR renderNode(NNode node, OWLClassExpression type) {
 
-		return createFrameRenderer(frame).render(type);
+		return createNodeRenderer(node).render(type);
 	}
 
-	private OWLClass getConcept(ORFrame frame) {
+	private OWLClassExpression getTypeExpression(NNode node) {
 
-		return getConcept(frame.getIRI());
+		return node.atomicConcept()
+				? getAtomicTypeExpression(node)
+				: getUnionTypeExpression(node);
+	}
+
+	private OWLClass getAtomicTypeExpression(NNode node) {
+
+		return getConcept(NetworkIRIs.getAtomicConcept(node));
+	}
+
+	private OWLObjectUnionOf getUnionTypeExpression(NNode node) {
+
+		return createUnion(NetworkIRIs.getConceptDisjuncts(node));
+	}
+
+	private OWLObjectUnionOf createUnion(List<IRI> operandIRIs) {
+
+		Set<OWLClass> ops = new HashSet<OWLClass>();
+
+		for (IRI iri : operandIRIs) {
+
+			ops.add(getConcept(iri));
+		}
+
+		return dataFactory.getOWLObjectUnionOf(ops);
 	}
 
 	private OWLClass getConcept(IRI iri) {

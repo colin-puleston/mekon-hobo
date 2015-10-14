@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.owl.reason;
 
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
@@ -39,9 +38,9 @@ abstract class ORConfig implements ORConfigVocab {
 		configNode = parentConfigNode.getChild(rootId);
 	}
 
-	void configure(ORSlotSemantics slotSemantics, ORLogger logger) {
+	void configure(ORSemantics semantics, ORLogger logger) {
 
-		checkSetSlotSemantics(slotSemantics);
+		checkSetSemantics(semantics);
 		checkEnableLogging(logger);
 	}
 
@@ -50,37 +49,37 @@ abstract class ORConfig implements ORConfigVocab {
 		return configNode;
 	}
 
-	private void checkSetSlotSemantics(ORSlotSemantics slotSemantics) {
+	private void checkSetSemantics(ORSemantics semantics) {
 
-		KConfigNode slotSemsNode = configNode.getChildOrNull(SEMANTICS_ID);
+		KConfigNode semanticNode = configNode.getChildOrNull(SEMANTICS_ID);
 
-		if (slotSemsNode != null) {
+		if (semanticNode != null) {
 
-			setSlotSemanticsDefault(slotSemsNode, slotSemantics);
-			setSlotSemanticsOverrides(slotSemsNode, slotSemantics);
+			setDefaultSemantics(semanticNode, semantics);
+			setSemanticsOverrides(semanticNode, semantics);
 		}
 	}
 
-	private void setSlotSemanticsDefault(
-					KConfigNode slotSemsNode,
-					ORSlotSemantics slotSemantics) {
+	private void setDefaultSemantics(
+					KConfigNode semanticNode,
+					ORSemantics semantics) {
 
-		slotSemantics.setDefaultSemantics(getDefaultSemantics(slotSemsNode));
+		semantics.setDefaultWorld(getDefaultSemantics(semanticNode));
 	}
 
-	private void setSlotSemanticsOverrides(
-					KConfigNode node,
-					ORSlotSemantics slotSemantics) {
+	private void setSemanticsOverrides(
+					KConfigNode semanticNode,
+					ORSemantics semantics) {
 
-		for (KConfigNode expPropNode : node.getChildren(EXCEPTION_PROP_ID)) {
+		for (KConfigNode exNode : semanticNode.getChildren(EXCEPTION_PROP_ID)) {
 
-			slotSemantics.addExceptionProperty(getExceptionPropertyURI(expPropNode));
+			semantics.addExceptionProperty(getExceptionPropertyURI(exNode));
 		}
 	}
 
-	private ORSemantics getDefaultSemantics(KConfigNode semanticsNode) {
+	private ORSemanticWorld getDefaultSemantics(KConfigNode semanticsNode) {
 
-		return semanticsNode.getEnum(DEFAULT_SEMANTICS_ATTR, ORSemantics.class);
+		return semanticsNode.getEnum(DEFAULT_SEMANTICS_ATTR, ORSemanticWorld.class);
 	}
 
 	private void checkEnableLogging(ORLogger logger) {

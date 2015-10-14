@@ -29,8 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
@@ -113,24 +113,24 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected void add(ORFrame instance, IRI iri) {
+	protected void addToOWLStore(NNode instance, IRI iri) {
 
 		storeRenderer.render(instance, iri);
 	}
 
 	/**
 	 */
-	protected void remove(IRI iri) {
+	protected void removeFromOWLStore(IRI iri) {
 
 		storeRenderer.removeGroup(iri);
 	}
 
-	List<IRI> match(ConceptExpression queryExpr) {
+	List<IRI> matchInOWLStore(ConceptExpression queryExpr) {
 
 		return queryExpr.getMatchingIndividuals();
 	}
 
-	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
+	boolean matchesInOWL(ConceptExpression queryExpr, NNode instance) {
 
 		IndividualNetwork network = createNetwork(instance);
 		boolean result = network.matches(queryExpr);
@@ -148,16 +148,16 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private IndividualsRenderer createRenderer() {
 
-		return new IndividualsRenderer(getMatcherModel());
+		return new IndividualsRenderer(getMatcherModel(), getSemantics());
 	}
 
-	private IndividualNetwork createNetwork(ORFrame frame) {
+	private IndividualNetwork createNetwork(NNode node) {
 
 		IRI rootIRI = dynamicRootIRIs.assign();
 
 		return new IndividualNetwork(
 						getMatcherModel(),
-						frame,
+						node,
 						rootIRI,
 						dynamicRenderer);
 	}

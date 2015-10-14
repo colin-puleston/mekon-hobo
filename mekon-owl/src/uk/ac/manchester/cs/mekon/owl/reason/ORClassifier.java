@@ -31,8 +31,8 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
@@ -40,12 +40,16 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  * mechanisms defined by {@link IReasoner}, based on classifications
  * involving either class-expressions or networks of individuals.
  * <p>
- * The classification process can be customised in two distinct
- * ways:
- * <ul>
- *   <li>Overriding {@link #classify} method
- *   <li>Adding one or more pre-processors, via {@link #addPreProcessor}
- * </ul>
+ * The network representation the instance to be classified that is
+ * passed in to the methods {@link #classify} method, is processed to
+ * ensure "ontology-compliance". This ensures that it will only contain
+ * entities for which equivalents exist in, or for which substitutions
+ * can be made from, the relevant ontology. Hence, any nodes whose
+ * associated concepts do not have equivalents in the ontology, will
+ * either be modified to reference appropriate ancestor-concepts (as
+ * determined by looking at the frames model), or else removed from the
+ * network. Also, any links whose associated properties do not have
+ * equivalents in the ontology will be removed from the network.
  *
  * @author Colin Puleston
  */
@@ -65,7 +69,9 @@ public class ORClassifier extends IClassifier {
 	}
 
 	private OModel model;
-	private FramesManager framesManager;
+	private ORSemantics semantics;
+	private ModelEntityResolver modelEntityResolver;
+
 	private IndividualsRenderer individualsRenderer;
 	private OInstanceIRIs individualRootIRIs = new OInstanceIRIs(true);
 
@@ -116,21 +122,10 @@ public class ORClassifier extends IClassifier {
 
 		this.model = model;
 
-		framesManager = new FramesManager(model);
-		individualsRenderer = new IndividualsRenderer(model);
-	}
+		semantics = new ORSemantics(model);
 
-	/**
-	 * Registers a pre-processor to perform certain required
-	 * pre-classification modifications to appropriate
-	 * representations of instances that are about to be classified.
-	 *
-	 * @param preProcessor Pre-processor for instances about to be
-	 * classified
-	 */
-	public void addPreProcessor(ORPreProcessor preProcessor) {
-
-		framesManager.addPreProcessor(preProcessor);
+		modelEntityResolver = new ModelEntityResolver(model);
+		individualsRenderer = new IndividualsRenderer(model, semantics);
 	}
 
 	/**
@@ -144,41 +139,31 @@ public class ORClassifier extends IClassifier {
 	}
 
 	/**
-	 * Provides the object used to specify the semantics that will
-	 * apply to specific slots from the incoming frames-based
-	 * instances.
+	 * Provides the object used to specify the open/closed world
+	 * semantics to be embodied by the OWL constructs that will be
+	 * created to represent instances being classified.
 	 *
-	 * @return Object for specifying slot-semantics to be applied
-	 * by classifier
+	 * @return Object for specifying open/closed world semantics
 	 */
-	public ORSlotSemantics getSlotSemantics() {
+	public ORSemantics getSemantics() {
 
-		return framesManager.getSlotSemantics();
+		return semantics;
 	}
 
 	/**
-	 * Converts the specified instance-level frame to the
-	 * pre-processable version, runs any registered pre-processors
-	 * over it, then performs the classification via invocation of
-	 * the OWL reasoner.
+	 * Processes the specified instance representation to ensure
+	 * ontology-compliance (see above), then performs the
+	 * classification operations via invocation of the OWL reasoner.
 	 *
 	 * @param frame Instance-level frame to classify
 	 * @param ops Types of classification operations to be performed
 	 * @return Results of classification operations
 	 */
-	protected IClassification classify(IFrame frame, IClassifierOps ops) {
+	protected IClassification classify(NNode instance, IClassifierOps ops) {
 
-		return classify(framesManager.toPreProcessed(frame), ops);
-	}
+		modelEntityResolver.resolve(instance);
 
-	void setForceIndividualBasedClassification(boolean value) {
-
-		forceIndividualBasedClassification = value;
-	}
-
-	private IClassification classify(ORFrame frame, IClassifierOps ops) {
-
-		InstanceConstruct construct = createInstanceConstruct(frame);
+		InstanceConstruct construct = createInstanceConstruct(instance);
 		OWLObject owlConstruct = construct.getOWLConstruct();
 
 		ORMonitor.pollForClassifierRequest(model, owlConstruct);
@@ -188,12 +173,12 @@ public class ORClassifier extends IClassifier {
 
 		if (ops.inferreds()) {
 
-			inferredIds.addAll(getInferredTypes(construct, frame));
+			inferredIds.addAll(getInferredTypes(construct, instance));
 		}
 
 		if (construct.suggestsTypes() && ops.suggesteds()) {
 
-			suggestedIds.addAll(getSuggestedTypes(construct, frame));
+			suggestedIds.addAll(getSuggestedTypes(construct));
 		}
 
 		construct.cleanUp();
@@ -203,21 +188,24 @@ public class ORClassifier extends IClassifier {
 		return new IClassification(inferredIds, suggestedIds);
 	}
 
+	void setForceIndividualBasedClassification(boolean value) {
+
+		forceIndividualBasedClassification = value;
+	}
+
 	private List<CIdentity> getInferredTypes(
 								InstanceConstruct construct,
-								ORFrame frame) {
+								NNode instance) {
 
 		Set<OWLClass> inferreds = construct.getInferredTypes();
 
-		purgeInferredTypes(frame, inferreds);
+		purgeInferredTypes(instance, inferreds);
 		ORMonitor.pollForTypesInferred(model, inferreds);
 
 		return toIdentityList(inferreds);
 	}
 
-	private List<CIdentity> getSuggestedTypes(
-								InstanceConstruct construct,
-								ORFrame frame) {
+	private List<CIdentity> getSuggestedTypes(InstanceConstruct construct) {
 
 		Set<OWLClass> suggesteds = construct.getSuggestedTypes();
 
@@ -226,26 +214,29 @@ public class ORClassifier extends IClassifier {
 		return toIdentityList(suggesteds);
 	}
 
-	private InstanceConstruct createInstanceConstruct(ORFrame frame) {
+	private InstanceConstruct createInstanceConstruct(NNode instance) {
 
-		if (forceIndividualBasedClassification || frame.leadsToCycle()) {
+		if (forceIndividualBasedClassification || instance.leadsToCycle()) {
 
-			return createIndividualNetwork(frame);
+			return createIndividualNetwork(instance);
 		}
 
-		return new ConceptExpression(model, frame);
+		return new ConceptExpression(model, semantics, instance);
 	}
 
-	private IndividualNetwork createIndividualNetwork(ORFrame frame) {
+	private IndividualNetwork createIndividualNetwork(NNode instance) {
 
 		IRI rootIRI = individualRootIRIs.assign();
 
-		return new IndividualNetwork(model, frame, rootIRI, individualsRenderer);
+		return new IndividualNetwork(model, instance, rootIRI, individualsRenderer);
 	}
 
-	private void purgeInferredTypes(ORFrame frame, Set<OWLClass> types) {
+	private void purgeInferredTypes(NNode instance, Set<OWLClass> types) {
 
-		types.remove(getConcept(frame.getIRI()));
+		for (IRI iri : NetworkIRIs.getConceptDisjuncts(instance)) {
+
+			types.remove(getConcept(iri));
+		}
 	}
 
 	private OWLClass getConcept(IRI iri) {

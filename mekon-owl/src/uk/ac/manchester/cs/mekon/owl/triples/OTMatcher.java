@@ -29,9 +29,9 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * Extension of {@link ORMatcher} that represents the instances
@@ -126,28 +126,28 @@ public abstract class OTMatcher extends ORMatcher {
 
 	/**
 	 */
-	protected void add(ORFrame instance, IRI iri) {
+	protected void addToOWLStore(NNode instance, IRI iri) {
 
 		store.add(instance, iri);
 	}
 
 	/**
 	 */
-	protected void remove(IRI iri) {
+	protected void removeFromOWLStore(IRI iri) {
 
 		store.remove(iri);
 	}
 
 	/**
 	 */
-	protected List<IRI> match(ORFrame query) {
+	protected List<IRI> matchInOWLStore(NNode query) {
 
 		return store.match(query);
 	}
 
 	/**
 	 */
-	protected boolean matches(ORFrame query, ORFrame instance) {
+	protected boolean matchesInOWL(NNode query, NNode instance) {
 
 		return store.matches(query, instance);
 	}

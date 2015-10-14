@@ -27,14 +27,14 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
  * @author Colin Puleston
  */
 abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable> {
 
-	static private final String FRAME_VARIABLE_FORMAT = "?f%d";
+	static private final String NODE_VARIABLE_FORMAT = "?n%d";
 	static private final String UNION_TRIPLE_FORMAT = "{%s %s %s}";
 	static private final String UNION_OPERATOR = " UNION ";
 	static private final String UNION_TERMINATOR = "\n";
@@ -56,18 +56,18 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		this.constants = constants;
 	}
 
-	String render(ORFrame instance) {
+	String render(NNode instance) {
 
-		renderFrame(instance);
+		renderNode(instance);
 
 		return getQueryBody();
 	}
 
-	QueryVariable renderFrame(int index) {
+	QueryVariable renderNode(int index) {
 
 		return index == 0
-				? getRootFrameNode()
-				: new QueryVariable(getFrameVariable(index));
+				? getRootTripleNode()
+				: new QueryVariable(getNodeVariable(index));
 	}
 
 	OTValue renderNumberMin(OTNumber value) {
@@ -100,7 +100,7 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		return registerConstant(super.renderDefiniteNumber(number));
 	}
 
-	abstract QueryVariable getRootFrameNode();
+	abstract QueryVariable getRootTripleNode();
 
 	private OTValue renderNumberLimit(String op, OTNumber value) {
 
@@ -179,9 +179,9 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		return String.format(QUERY_BODY_FORMAT, statements, filters);
 	}
 
-	private String getFrameVariable(int index) {
+	private String getNodeVariable(int index) {
 
-		return String.format(FRAME_VARIABLE_FORMAT, index);
+		return String.format(NODE_VARIABLE_FORMAT, index);
 	}
 
 	private String getNextLimitVariable() {

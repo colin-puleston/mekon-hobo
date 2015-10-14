@@ -43,7 +43,7 @@ class ORMatcherConfig extends ORConfig {
 
 	void configure(ORMatcher matcher) {
 
-		configure(matcher.getSlotSemantics(), ORMatcherLogger.get());
+		configure(matcher.getSemantics(), ORMatcherLogger.get());
 
 		checkSetReasoningType(matcher);
 	}

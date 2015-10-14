@@ -30,24 +30,29 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * Abstract base-class for OWL-based implementations of the reasoning
  * mechanisms defined by {@link IMatcher}.
  * <p>
- * The matching process can be customised in two distinct ways:
- * <ul>
- *   <li>Overriding {@link #match} method
- *   <li>Adding one or more pre-processors, via {@link #addPreProcessor}
- * </ul>
+ * The network representation of instances and queries that are passed
+ * in to the methods implemented on this class, are processed to
+ * ensure "ontology-compliance". This ensures that they will only contain
+ * entities for which equivalents exist in, or for which substitutions
+ * can be made from, the relevant ontology. Hence, any nodes whose
+ * associated concepts do not have equivalents in the ontology, will
+ * either be modified to reference appropriate ancestor-concepts (as
+ * determined by looking at the frames model), or else removed from the
+ * network. Also, any links whose associated properties do not have
+ * equivalents in the ontology will be removed from the network.
  *
  * @author Colin Puleston
  */
-public abstract class ORMatcher implements IMatcher {
+public abstract class ORMatcher extends IMatcher {
 
 	/**
 	 * Test whether an appropriately-tagged child of the specified
@@ -104,24 +109,12 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	private OModel model;
-	private OConceptFinder concepts;
 	private ORReasoningType reasoningType;
+	private ORSemantics semantics;
 
-	private FramesManager framesManager;
+	private OConceptFinder concepts;
+	private ModelEntityResolver modelEntityResolver;
 	private OInstanceIRIs instanceIRIs = new OInstanceIRIs(false);
-
-	/**
-	 * Registers a pre-processor to perform certain required
-	 * pre-classification modifications to appropriate
-	 * representations of instances that are about to be classified.
-	 *
-	 * @param preProcessor Pre-processor for instances about to be
-	 * classified
-	 */
-	public void addPreProcessor(ORPreProcessor preProcessor) {
-
-		framesManager.addPreProcessor(preProcessor);
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -132,63 +125,67 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
-	 * Converts the specified instance-level frame to the
-	 * pre-processable version, runs any registered pre-processors
-	 * over it, then adds it to the matcher via the {@link #addInstance}
-	 * method, whose specific implementations are provided by the
-	 * extending classes.
+	 * Processes the specified instance representation to ensure
+	 * ontology-compliance (see above), then adds it to the matcher
+	 * via the {@link #addToOWLStore} method, whose implementation
+	 * is provided by the derived class.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
 	 */
-	public void add(IFrame instance, CIdentity identity) {
+	public void add(NNode instance, CIdentity identity) {
 
-		add(toPreProcessed(instance), instanceIRIs.assign(identity));
+		modelEntityResolver.resolve(instance);
+
+		addToOWLStore(instance, instanceIRIs.assign(identity));
 	}
 
 	/**
 	 * Removes the specified instance from the matcher via the
-	 * {@link #removeInstance} method, whose specific implementations
-	 * are provided by the extending classes.
+	 * {@link #removeFromOWLStore} method, whose specific
+	 * implementations are provided by the derived class.
 	 *
 	 * @param identity Unique identity of instance to be removed
 	 */
 	public void remove(CIdentity identity) {
 
-		remove(instanceIRIs.free(identity));
+		removeFromOWLStore(instanceIRIs.free(identity));
 	}
 
 	/**
-	 * Converts the specified instance-level query frame to the
-	 * pre-processable version, runs any registered pre-processors
-	 * over it, then performs the query-matching operation via the
-	 * {@link #match(ORFrame)} method, whose specific implementations
-	 * are provided by the extending classes.
+	 * Processes the specified query representation to ensure
+	 * ontology-compliance (see above), then performs the matching
+	 * operation via the {@link #matchInOWLStore} method, whose
+	 * implementation is provided by the derived class.
 	 *
 	 * @param query Representation of query
 	 * @return Unique identities of all matching instances
 	 */
-	public IMatches match(IFrame query) {
+	public IMatches match(NNode query) {
 
-		List<IRI> matches = match(toPreProcessed(query));
+		modelEntityResolver.resolve(query);
 
-		return new IMatches(instanceIRIs.toIdentities(matches));
+		List<IRI> iris = matchInOWLStore(query);
+
+		return new IMatches(instanceIRIs.toIdentities(iris));
 	}
 
 	/**
-	 * Converts the specified instance-level query and instance frames
-	 * to the pre-processable versions, runs any registered
-	 * pre-processors over them, then performs a single query-matching
-	 * test via the {@link #matches(ORFrame, ORFrame)} method, whose
-	 * specific implementations are provided by the extending classes.
+	 * Processes the specified query and instance representations
+	 * to ensure ontology-compliance (see above), then performs the
+	 * single matching test via the {@link #matchesInOWL()} method,
+	 * whose implementation is provided by the derived class.
 	 *
 	 * @param query Representation of query
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	public boolean matches(IFrame query, IFrame instance) {
+	public boolean matches(NNode query, NNode instance) {
 
-		return matches(toPreProcessed(query), toPreProcessed(instance));
+		modelEntityResolver.resolve(query);
+		modelEntityResolver.resolve(instance);
+
+		return matchesInOWL(query, instance);
 	}
 
 	/**
@@ -202,16 +199,17 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
-	 * Provides the object used to specify the semantics that will
-	 * apply to specific slots from the incoming frames-based
-	 * instances.
+	/**
+	 * Provides the object used to specify the open/closed world
+	 * semantics to be embodied by the OWL constructs that will be
+	 * created to represent instances being stored and queries being
+	 * executed.
 	 *
-	 * @return Object for specifying slot-semantics to be applied
-	 * by matcher
+	 * @return Object for specifying open/closed world semantics
 	 */
-	public ORSlotSemantics getSlotSemantics() {
+	public ORSemantics getSemantics() {
 
-		return framesManager.getSlotSemantics();
+		return semantics;
 	}
 
 	/**
@@ -236,8 +234,10 @@ public abstract class ORMatcher implements IMatcher {
 		this.model = model;
 		this.reasoningType = reasoningType;
 
+		semantics = new ORSemantics(model);
+
 		concepts = new OConceptFinder(model);
-		framesManager = new FramesManager(model);
+		modelEntityResolver = new ModelEntityResolver(model, concepts);
 	}
 
 	/**
@@ -276,48 +276,43 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
-	 * Adds an instance to the matcher. It can be assumed that this
+	 * Adds an instance to the OWL store. It can be assumed that this
 	 * method will only be invoked when it is known that an instance
 	 * with the specified IRI is not already present.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param iri IRI of instance to be added
 	 */
-	protected abstract void add(ORFrame instance, IRI iri);
+	protected abstract void addToOWLStore(NNode instance, IRI iri);
 
 	/**
-	 * Adds an instance from the matcher. It can be assumed that this
-	 * method will only be invoked when it is known that an instance
-	 * with the specified IRI is currently present.
+	 * Removes an instance from the OWL store. It can be assumed that
+	 * this method will only be invoked when it is known that an
+	 * instance with the specified IRI is currently present.
 	 *
 	 * @param iri IRI of instance to be removed
 	 */
-	protected abstract void remove(IRI iri);
+	protected abstract void removeFromOWLStore(IRI iri);
 
 	/**
-	 * Performs the query-matching operation.
+	 * Performs the matching operation against the OWL store.
 	 *
 	 * @param query Representation of query
 	 * @return Unique identities of all matching instances
 	 */
-	protected abstract List<IRI> match(ORFrame query);
+	protected abstract List<IRI> matchInOWLStore(NNode query);
 
 	/**
-	 * Performs a single query-matching test.
+	 * Performs the matching test using the OWL reasoner.
 	 *
 	 * @param query Representation of query
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	protected abstract boolean matches(ORFrame query, ORFrame instance);
+	protected abstract boolean matchesInOWL(NNode query, NNode instance);
 
 	void setReasoningType(ORReasoningType reasoningType) {
 
 		this.reasoningType = reasoningType;
-	}
-
-	private ORFrame toPreProcessed(IFrame frame) {
-
-		return framesManager.toPreProcessed(frame);
 	}
 }

@@ -37,21 +37,33 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class OEntityFinder<CE> {
+public abstract class OEntityFinder {
 
 	private Set<IRI> entityIRIs;
 
 	/**
-	 * Provides the IRI of the OWL entity that corresponds to the
-	 * specified concept-level FM entity.
+	 * Tests whether there is an OWL entity that corresponds to the
+	 * concept-level FM entity with the specified identity.
 	 *
-	 * @param cEntity FM entity for which IRI is required
+	 * @param identity Identity for which IRI is required
+	 * @return True if required OWL entity exists
+	 */
+	public boolean exists(CIdentity identity) {
+
+		return getOrNull(identity) != null;
+	}
+
+	/**
+	 * Provides the IRI of the OWL entity that corresponds to the
+	 * concept-level FM entity with the specified identity.
+	 *
+	 * @param identity Identity for which IRI is required
 	 * @return Relevant IRI, or null if no OWL entity corresponding
 	 * to specified FM entity
 	 */
-	public IRI getOrNull(CE cEntity) {
+	public IRI getOrNull(CIdentity identity) {
 
-		IRI iri = extractIRI(cEntity);
+		IRI iri = O_IRIExtractor.extractIRI(identity);
 
 		return iri != null && entityIRIs.contains(iri) ? iri : null;
 	}
@@ -60,6 +72,4 @@ public abstract class OEntityFinder<CE> {
 
 		this.entityIRIs = entityIRIs;
 	}
-
-	abstract IRI extractIRI(CE cEntity);
 }

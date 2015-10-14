@@ -29,8 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
@@ -46,14 +46,14 @@ class IndividualNetwork extends InstanceConstruct {
 
 	IndividualNetwork(
 		OModel model,
-		ORFrame frame,
+		NNode node,
 		IRI rootIRI,
 		IndividualsRenderer renderer) {
 
 		this.model = model;
 		this.renderer = renderer;
 
-		rootIndividual = renderer.render(frame, rootIRI);
+		rootIndividual = renderer.render(node, rootIRI);
 	}
 
 	boolean matches(ConceptExpression queryExpression) {

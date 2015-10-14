@@ -28,8 +28,8 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
@@ -38,20 +38,14 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 class ConceptExpression extends InstanceConstruct {
 
 	private OModel model;
-	private OWLClass frameConcept;
+
 	private OWLClassExpression expression;
 
-	ConceptExpression(OModel model, ORFrame frame) {
+	ConceptExpression(OModel model, ORSemantics semantics, NNode node) {
 
 		this.model = model;
 
-		frameConcept = getFrameConcept(frame);
-		expression = frameToExpression(frame);
-	}
-
-	OWLClass getFrameConcept() {
-
-		return frameConcept;
+		expression = nodeToExpression(node, semantics);
 	}
 
 	boolean subsumes(ConceptExpression testSubsumed) {
@@ -94,14 +88,9 @@ class ConceptExpression extends InstanceConstruct {
 		return model.getInferredSubs(expression, true);
 	}
 
-	private OWLClass getFrameConcept(ORFrame frame) {
+	private OWLClassExpression nodeToExpression(NNode node, ORSemantics semantics) {
 
-		return model.getConcepts().get(frame.getIRI());
-	}
-
-	private OWLClassExpression frameToExpression(ORFrame frame) {
-
-		return new ExpressionRenderer(model).render(frame);
+		return new ExpressionRenderer(model, semantics).render(node);
 	}
 
 	private Set<OWLClass> inferEquivalentsOrDirectSupers() {

@@ -29,8 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
@@ -38,6 +38,8 @@ import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 class IndividualsRenderer {
 
 	private OModel model;
+	private ORSemantics semantics;
+
 	private OWLDataFactory dataFactory;
 
 	private Map<IRI, OWLNamedIndividual> rootIndividualsByIRI
@@ -51,39 +53,39 @@ class IndividualsRenderer {
 
 	private class GroupRenderer extends Renderer<OWLNamedIndividual> {
 
-		private ORFrame rootFrame;
+		private NNode rootNode;
 		private IRI rootIRI;
 
 		private IndividualIRIs individualIRIs;
 
-		private Map<ORFrame, OWLNamedIndividual> individuals
-						= new HashMap<ORFrame, OWLNamedIndividual>();
+		private Map<NNode, OWLNamedIndividual> individuals
+						= new HashMap<NNode, OWLNamedIndividual>();
 		private Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
 
-		private class FrameToIndividualRenderer extends FrameRenderer {
+		private class NodeToIndividualRenderer extends NodeRenderer {
 
-			private ORFrame frame;
+			private NNode node;
 			private OWLNamedIndividual individual;
 
-			FrameToIndividualRenderer(ORFrame frame) {
+			NodeToIndividualRenderer(NNode node) {
 
-				super(frame);
+				super(node);
 
-				this.frame = frame;
+				this.node = node;
 			}
 
 			OWLNamedIndividual render(OWLClassExpression type) {
 
-				individual = individuals.get(frame);
+				individual = individuals.get(node);
 
 				if (individual == null) {
 
 					individual = addIndividual();
 
-					individuals.put(frame, individual);
+					individuals.put(node, individual);
 
 					addTypeAssignment(type);
-					renderSlots();
+					renderAttributes();
 				}
 
 				return individual;
@@ -199,23 +201,23 @@ class IndividualsRenderer {
 
 			private IRI getIRI() {
 
-				return individualIRIs.getFor(frame);
+				return individualIRIs.getFor(node);
 			}
 		}
 
-		GroupRenderer(ORFrame rootFrame, IRI rootIRI) {
+		GroupRenderer(NNode rootNode, IRI rootIRI) {
 
-			super(model);
+			super(model, semantics);
 
-			this.rootFrame = rootFrame;
+			this.rootNode = rootNode;
 			this.rootIRI = rootIRI;
 
-			individualIRIs = new IndividualIRIs(rootFrame, rootIRI);
+			individualIRIs = new IndividualIRIs(rootNode, rootIRI);
 		}
 
 		OWLNamedIndividual render() {
 
-			OWLNamedIndividual rootIndividual = renderFrame(rootFrame);
+			OWLNamedIndividual rootIndividual = renderNode(rootNode);
 
 			rootIndividualsByIRI.put(rootIRI, rootIndividual);
 			rootIRIsByIndividual.put(rootIndividual, rootIRI);
@@ -224,22 +226,23 @@ class IndividualsRenderer {
 			return rootIndividual;
 		}
 
-		FrameRenderer createFrameRenderer(ORFrame frame) {
+		NodeRenderer createNodeRenderer(NNode node) {
 
-			return new FrameToIndividualRenderer(frame);
+			return new NodeToIndividualRenderer(node);
 		}
 	}
 
-	IndividualsRenderer(OModel model) {
+	IndividualsRenderer(OModel model, ORSemantics semantics) {
 
 		this.model = model;
+		this.semantics = semantics;
 
 		dataFactory = model.getDataFactory();
 	}
 
-	OWLNamedIndividual render(ORFrame frame, IRI rootIRI) {
+	OWLNamedIndividual render(NNode node, IRI rootIRI) {
 
-		return new GroupRenderer(frame, rootIRI).render();
+		return new GroupRenderer(node, rootIRI).render();
 	}
 
 	void removeGroup(IRI rootIRI) {

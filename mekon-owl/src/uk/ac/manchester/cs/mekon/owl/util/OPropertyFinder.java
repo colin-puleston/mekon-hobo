@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OPropertyFinder extends OEntityFinder<CIdentity> {
+public class OPropertyFinder extends OEntityFinder {
 
 	static private Set<IRI> getAllIRIs(OModel model) {
 
@@ -49,13 +49,13 @@ public class OPropertyFinder extends OEntityFinder<CIdentity> {
 		return iris;
 	}
 
+	/**
+	 * Constructor.
+	 *
+	 * @param model Relevant model
+	 */
 	public OPropertyFinder(OModel model) {
 
 		super(getAllIRIs(model));
-	}
-
-	IRI extractIRI(CIdentity cEntity) {
-
-		return O_IRIExtractor.extractIRI(cEntity);
 	}
 }

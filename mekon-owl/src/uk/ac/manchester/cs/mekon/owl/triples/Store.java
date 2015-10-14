@@ -28,8 +28,8 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
@@ -45,7 +45,7 @@ class Store {
 		this.factory = factory;
 	}
 
-	void add(ORFrame instance, IRI iri) {
+	void add(NNode instance, IRI iri) {
 
 		getAssertion(iri).add(instance);
 	}
@@ -55,7 +55,7 @@ class Store {
 		getAssertion(iri).remove();
 	}
 
-	List<IRI> match(ORFrame query) {
+	List<IRI> match(NNode query) {
 
 		List<IRI> matches = new ArrayList<IRI>();
 
@@ -67,7 +67,7 @@ class Store {
 		return matches;
 	}
 
-	boolean matches(ORFrame query, ORFrame instance) {
+	boolean matches(NNode query, NNode instance) {
 
 		IRI dynamicIRI = addDynamic(instance);
 		boolean result = executeMatches(query, dynamicIRI.toString());
@@ -77,7 +77,7 @@ class Store {
 		return result;
 	}
 
-	private IRI addDynamic(ORFrame instance) {
+	private IRI addDynamic(NNode instance) {
 
 		IRI iri = dynamicInstanceIRIs.assign();
 
@@ -93,12 +93,12 @@ class Store {
 		remove(iri);
 	}
 
-	private List<OT_URI> executeMatch(ORFrame query) {
+	private List<OT_URI> executeMatch(NNode query) {
 
 		return new MatchQuery(factory).execute(query);
 	}
 
-	private boolean executeMatches(ORFrame query, String baseURI) {
+	private boolean executeMatches(NNode query, String baseURI) {
 
 		return new MatchesQuery(factory).execute(query, baseURI);
 	}
@@ -110,6 +110,6 @@ class Store {
 
 	private String extractBaseURI(String uri) {
 
-		return FrameNodeURIs.extractBaseURI(uri);
+		return TripleNodeURIs.extractBaseURI(uri);
 	}
 }

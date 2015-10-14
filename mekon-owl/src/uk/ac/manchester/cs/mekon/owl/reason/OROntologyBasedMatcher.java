@@ -29,8 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
@@ -40,14 +40,14 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	private OModel matcherModel = null;
 
-	protected List<IRI> match(ORFrame query) {
+	protected List<IRI> matchInOWLStore(NNode query) {
 
 		ConceptExpression expr = createConceptExpression(query);
 		OWLObject owlConstruct = expr.getOWLConstruct();
 
 		ORMonitor.pollForMatcherRequest(matcherModel, owlConstruct);
 
-		List<IRI> matches = purgeMatches(match(expr));
+		List<IRI> matches = purgeMatches(matchInOWLStore(expr));
 
 		ORMonitor.pollForMatchesFound(matcherModel, matches);
 		ORMonitor.pollForMatcherDone(matcherModel, owlConstruct);
@@ -55,9 +55,9 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 		return matches;
 	}
 
-	protected boolean matches(ORFrame query, ORFrame instance) {
+	protected boolean matchesInOWL(NNode query, NNode instance) {
 
-		return matches(createConceptExpression(query), instance);
+		return matchesInOWL(createConceptExpression(query), instance);
 	}
 
 	OROntologyBasedMatcher(OModel model) {
@@ -86,13 +86,18 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 		initialise();
 	}
 
-	abstract List<IRI> match(ConceptExpression queryExpr);
+	abstract List<IRI> matchInOWLStore(ConceptExpression queryExpr);
 
-	abstract boolean matches(ConceptExpression queryExpr, ORFrame instance);
+	abstract boolean matchesInOWL(ConceptExpression queryExpr, NNode instance);
 
 	OModel getMatcherModel() {
 
 		return matcherModel;
+	}
+
+	ConceptExpression createConceptExpression(NNode node) {
+
+		return new ConceptExpression(matcherModel, getSemantics(), node);
 	}
 
 	private void initialise() {
@@ -103,11 +108,6 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 	private OModel createMatcherModel() {
 
 		return new ORMatcherModel(getModel(), getReasoningType()).getModel();
-	}
-
-	private ConceptExpression createConceptExpression(ORFrame frame) {
-
-		return new ConceptExpression(matcherModel, frame);
 	}
 
 	private List<IRI> purgeMatches(List<IRI> matches) {

@@ -22,51 +22,53 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.triples;
+package uk.ac.manchester.cs.mekon.owl.reason;
 
 /**
+ * Specifies the type of semantics to be embodied by the OWL constructs
+ * that will be constructed to represent property value-sets.
+ *
  * @author Colin Puleston
  */
-class FrameNodeURIs {
+public enum ORSemanticWorld {
 
-	static private final String SUFFIX_PREFIX = "-F";
-	static private final String SUFFIX_FORMAT = SUFFIX_PREFIX + "%d";
+	/**
+	 * Specifies open-world semantics, meaning that the set of values
+	 * for each property will give rise to a set of existential
+	 * restrictions only.
+	 */
+	OPEN,
 
-	static String getRootFrameNodeURI(String baseURI) {
+	/**
+	 * Specifies closed-world semantics, meaning that the set of values
+	 * for each property will give rise to a set of existential
+	 * restrictions,  plus a universal restriction whose filler is a
+	 * disjunction of all values for the slot.
+	 */
+	CLOSED;
 
-		return getFrameNodeURI(baseURI, 0);
+	/**
+	 * Specifies whether this value equals {@link #OPEN}.
+	 *
+	 * return true if open-world value
+	 */
+	public boolean open() {
+
+		return this == OPEN;
 	}
 
-	static String getFrameNodeURI(String baseURI, int index) {
+	/**
+	 * Specifies whether this value equals {@link #CLOSED}.
+	 *
+	 * return true if closed-world value
+	 */
+	public boolean closed() {
 
-		return baseURI + getFrameNodeURISuffix(index);
+		return this == CLOSED;
 	}
 
-	static String extractBaseURI(String frameNodeURI) {
+	ORSemanticWorld getOpposite() {
 
-		String uriSlice = removeFinalDigits(frameNodeURI);
-
-		if (uriSlice.endsWith(SUFFIX_PREFIX)) {
-
-			int l = uriSlice.length() - SUFFIX_PREFIX.length();
-
-			return uriSlice.substring(0, l);
-		}
-
-		return frameNodeURI;
-	}
-
-	static private String getFrameNodeURISuffix(int index) {
-
-		return String.format(SUFFIX_FORMAT, index);
-	}
-
-	static private String removeFinalDigits(String uri) {
-
-		int i = uri.length();
-
-		for ( ; i > 0 && Character.isDigit(uri.charAt(i - 1)) ; i--);
-
-		return uri.substring(0, i);
+		return this == OPEN ? CLOSED : OPEN;
 	}
 }

@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
  * @author Colin Puleston
@@ -33,23 +33,23 @@ class MatchesQuery extends SpecificQuery {
 
 	private class QueryBodyRenderer extends MatchingQueryBodyRenderer {
 
-		private String rootFrameNodeURI;
+		private String rootNodeURI;
 
 		QueryBodyRenderer(String baseURI) {
 
 			super(getConstants());
 
-			rootFrameNodeURI = FrameNodeURIs.getRootFrameNodeURI(baseURI);
+			rootNodeURI = TripleNodeURIs.getRootNodeURI(baseURI);
 		}
 
-		QueryVariable getRootFrameNode() {
+		QueryVariable getRootTripleNode() {
 
-			return new QueryVariable(getRootFrameNodeRendering());
+			return new QueryVariable(getRootNodeRendering());
 		}
 
-		private String getRootFrameNodeRendering() {
+		private String getRootNodeRendering() {
 
-			return getConstants().getVariableRendering(renderURI(rootFrameNodeURI));
+			return getConstants().getVariableRendering(renderURI(rootNodeURI));
 		}
 	}
 
@@ -58,12 +58,12 @@ class MatchesQuery extends SpecificQuery {
 		super(factory);
 	}
 
-	boolean execute(ORFrame query, String baseURI) {
+	boolean execute(NNode query, String baseURI) {
 
 		return executeAsk(renderQueryBody(query, baseURI));
 	}
 
-	private String renderQueryBody(ORFrame query, String baseURI) {
+	private String renderQueryBody(NNode query, String baseURI) {
 
 		return new QueryBodyRenderer(baseURI).render(query);
 	}

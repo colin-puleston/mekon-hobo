@@ -30,8 +30,8 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
@@ -40,23 +40,23 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 	private OWLDataFactory dataFactory;
 
-	private ArrayDeque<ORFrame> frameStack = new ArrayDeque<ORFrame>();
+	private ArrayDeque<NNode> nodeStack = new ArrayDeque<NNode>();
 
-	private class FrameToExpressionRenderer extends FrameRenderer {
+	private class NodeToExpressionRenderer extends NodeRenderer {
 
 		private Set<OWLClassExpression> conjuncts
 					= new HashSet<OWLClassExpression>();
 
-		FrameToExpressionRenderer(ORFrame frame) {
+		NodeToExpressionRenderer(NNode node) {
 
-			super(frame);
+			super(node);
 
-			startRecurse(frame);
+			startRecurse(node);
 		}
 
 		OWLClassExpression render(OWLClassExpression type) {
 
-			renderSlots();
+			renderAttributes();
 			endRecurse();
 
 			if (conjuncts.isEmpty()) {
@@ -103,39 +103,39 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 		}
 	}
 
-	ExpressionRenderer(OModel model) {
+	ExpressionRenderer(OModel model, ORSemantics semantics) {
 
-		super(model);
+		super(model, semantics);
 
 		dataFactory = model.getDataFactory();
 	}
 
-	OWLClassExpression render(ORFrame frame) {
+	OWLClassExpression render(NNode node) {
 
-		frameStack.clear();
+		nodeStack.clear();
 
-		return renderFrame(frame);
+		return renderNode(node);
 	}
 
-	FrameRenderer createFrameRenderer(ORFrame frame) {
+	NodeRenderer createNodeRenderer(NNode node) {
 
-		return new FrameToExpressionRenderer(frame);
+		return new NodeToExpressionRenderer(node);
 	}
 
-	private void startRecurse(ORFrame frame) {
+	private void startRecurse(NNode node) {
 
-		if (frameStack.contains(frame)) {
+		if (nodeStack.contains(node)) {
 
 			throw new KModelException(
 						"Cannot handle cyclic description involving: "
-						+ frame);
+						+ node);
 		}
 
-		frameStack.push(frame);
+		nodeStack.push(node);
 	}
 
 	private void endRecurse() {
 
-		frameStack.pop();
+		nodeStack.pop();
 	}
 }

@@ -43,6 +43,6 @@ class ORClassifierConfig extends ORConfig {
 
 	void configure(ORClassifier classifier) {
 
-		configure(classifier.getSlotSemantics(), ORClassifierLogger.get());
+		configure(classifier.getSemantics(), ORClassifierLogger.get());
 	}
 }

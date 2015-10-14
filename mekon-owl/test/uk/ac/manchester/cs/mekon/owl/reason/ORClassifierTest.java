@@ -28,9 +28,9 @@ import org.junit.Test;
 import org.junit.Before;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * @author Colin Puleston
@@ -162,26 +162,26 @@ public class ORClassifierTest extends OTest {
 
 	private void setClosedWorldSemanticsByMinimalInclusion() {
 
-		setSemantics(ORSemantics.OPEN_WORLD, JOBS_PROPERTY);
+		setSemantics(ORSemanticWorld.OPEN, JOBS_PROPERTY);
 	}
 
 	private void setClosedWorldSemanticsByMinimalExclusion() {
 
 		// Exclude only those properties whose closure would cause inconsistencies
 		setSemantics(
-			ORSemantics.CLOSED_WORLD,
+			ORSemanticWorld.CLOSED,
 			TAX_PAID_PROPERTY,
 			BENEFIT_RECEIVED_PROPERTY,
 			TEACHES_PROPERTY);
 	}
 
 	private void setSemantics(
-					ORSemantics defaultSemantics,
+					ORSemanticWorld defaultWorld,
 					String... exceptionPropertyNames) {
 
-		ORSlotSemantics ss = classifier.getSlotSemantics();
+		ORSemantics ss = classifier.getSemantics();
 
-		ss.setDefaultSemantics(defaultSemantics);
+		ss.setDefaultWorld(defaultWorld);
 		ss.clearExceptionProperties();
 
 		for (String exPropName : exceptionPropertyNames) {

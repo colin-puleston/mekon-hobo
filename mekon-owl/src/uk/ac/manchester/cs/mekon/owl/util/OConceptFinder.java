@@ -35,45 +35,81 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OConceptFinder extends OEntityFinder<CFrame> {
+public class OConceptFinder extends OEntityFinder {
 
+	/**
+	 * Constructor.
+	 *
+	 * @param model Relevant model
+	 */
 	public OConceptFinder(OModel model) {
 
 		super(model.getConcepts().getAllIRIs());
 	}
 
 	/**
-	 * Provides the IRI of the OWL entity that corresponds to either
-	 * the specified concept-level frame, or, if no such OWL entity,
-	 * to the closest ancestor frame for which a corresponding OWL
-	 * entity does exist.
+	 * Tests whether there is an OWL frame that corresponds to the
+	 * specified concept-level FM frame.
 	 *
-	 * @param cFrame Frame for which IRI is required
+	 * @param cFrame FM frame for which OWL frame is required
+	 * @return True if required OWL frame exists
+	 */
+	public boolean exists(CFrame cFrame) {
+
+		return exists(cFrame.getIdentity());
+	}
+
+	/**
+	 * Provides the IRI of the OWL frame that corresponds to the
+	 * specified concept-level FM frame.
+	 *
+	 * @param cFrame FM frame for which IRI is required
+	 * @return Relevant IRI, or null if no OWL frame corresponding
+	 * to specified FM frame
+	 */
+	public IRI getOrNull(CFrame cFrame) {
+
+		return getOrNull(cFrame.getIdentity());
+	}
+
+	/**
+	 * Provides the IRI of the OWL concept that corresponds to either
+	 * the specified concept-level frame, or, if no such OWL concept,
+	 * to the closest ancestor frame for which a corresponding OWL
+	 * concept does exist.
+	 *
+	 * @param cFrame Frame for which subsuming concept IRI is required
 	 * @return Relevant IRI, or null if no OWL concept corresponding
 	 * to specified frame or any of it's ancestors
 	 */
 	public IRI getSubsumerOrNull(CFrame cFrame) {
 
-		IRI iri = getOrNull(cFrame);
+		IRI iri = getOrNull(cFrame.getIdentity());
 
-		if (iri == null) {
+		return iri != null ? iri : getAncestorOrNull(cFrame);
+	}
 
-			for (CFrame sup : cFrame.getSupers()) {
+	/**
+	 * Provides the IRI of the OWL concept that corresponds to the
+	 * closest ancestor of the specified concept-level frame for which
+	 * a corresponding OWL concept exists.
+	 *
+	 * @param cFrame Frame for which ancestor concept IRI is required
+	 * @return Relevant IRI, or null if no OWL concept corresponding
+	 * to any ancestor frames
+	 */
+	public IRI getAncestorOrNull(CFrame cFrame) {
 
-				iri = getSubsumerOrNull(sup);
+		for (CFrame sup : cFrame.getSupers()) {
 
-				if (iri != null) {
+			IRI iri = getSubsumerOrNull(sup);
 
-					break;
-				}
+			if (iri != null) {
+
+				return iri;
 			}
 		}
 
-		return iri;
-	}
-
-	IRI extractIRI(CFrame cEntity) {
-
-		return O_IRIExtractor.extractIRI(cEntity);
+		return null;
 	}
 }

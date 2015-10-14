@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 
 /**
  * @author Colin Puleston
@@ -41,14 +41,14 @@ class Assertion {
 
 		private OTGraph graph = createGraph();
 
-		void render(ORFrame instance) {
+		void render(NNode instance) {
 
-			renderFrame(instance);
+			renderNode(instance);
 		}
 
-		OT_URI renderFrame(int index) {
+		OT_URI renderNode(int index) {
 
-			return getFrameNode(index);
+			return getNode(index);
 		}
 
 		OTValue renderNumberMin(OTNumber value) {
@@ -68,7 +68,7 @@ class Assertion {
 
 		void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects) {
 
-			throw createBadConstructException("frames with disjunction types");
+			throw createBadConstructException("nodes with disjunction types");
 		}
 
 		private KAccessException createIndefiniteNumberException() {
@@ -90,7 +90,7 @@ class Assertion {
 		this.baseURI = baseURI;
 	}
 
-	void add(ORFrame instance) {
+	void add(NNode instance) {
 
 		new GraphRenderer().render(instance);
 	}
@@ -105,8 +105,8 @@ class Assertion {
 		return factory.createGraph(baseURI);
 	}
 
-	private OT_URI getFrameNode(int index) {
+	private OT_URI getNode(int index) {
 
-		return new OT_URI(FrameNodeURIs.getFrameNodeURI(baseURI, index));
+		return new OT_URI(TripleNodeURIs.getNodeURI(baseURI, index));
 	}
 }

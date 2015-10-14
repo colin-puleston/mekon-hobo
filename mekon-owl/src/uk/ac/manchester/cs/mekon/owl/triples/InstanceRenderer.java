@@ -30,76 +30,77 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.rdf.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class InstanceRenderer<FN extends OTValue> {
+abstract class InstanceRenderer<TN extends OTValue> {
 
-	private FrameSlotValuesRenderer frameValuesRenderer = new FrameSlotValuesRenderer();
-	private NumberSlotValuesRenderer numberValuesRenderer = new NumberSlotValuesRenderer();
+	private LinksRenderer linksRenderer = new LinksRenderer();
+	private NumericsRenderer numericsRenderer = new NumericsRenderer();
 
-	private int frameCount = 0;
+	private int nodeCount = 0;
 
-	private abstract class SlotValuesRenderer<V> {
+	private abstract class AttributesRenderer<V> {
 
-		void render(FN frameNode, Set<? extends ORSlot<V>> slots) {
+		void render(TN subject, List<? extends NAttribute<V>> attributes) {
 
-			for (ORSlot<V> slot : slots) {
+			for (NAttribute<V> attribute : attributes) {
 
-				if (slot.mapsToOWLEntity() && !slot.getValues().isEmpty()) {
+				if (!attribute.getValues().isEmpty()) {
 
-					renderValues(frameNode, slot);
+					renderValues(subject, attribute);
 				}
 			}
 		}
 
-		abstract void renderValue(FN frameNode, OT_URI predicate, V value);
+		abstract void renderValue(TN subject, OT_URI predicate, V value);
 
-		private void renderValues(FN frameNode, ORSlot<V> slot) {
+		private void renderValues(TN subject, NAttribute<V> attribute) {
 
-			OT_URI predicate = renderEntityType(slot);
+			OT_URI predicate = renderType(attribute);
 
-			for (V value : slot.getValues()) {
+			for (V value : attribute.getValues()) {
 
-				renderValue(frameNode, predicate, value);
+				renderValue(subject, predicate, value);
 			}
 		}
 	}
 
-	private class FrameSlotValuesRenderer extends SlotValuesRenderer<ORFrame> {
+	private class LinksRenderer extends AttributesRenderer<NNode> {
 
-		void renderValue(FN frameNode, OT_URI predicate, ORFrame value) {
+		void renderValue(TN subject, OT_URI predicate, NNode value) {
 
-			renderTriple(frameNode, predicate, renderFrame(value));
+			renderTriple(subject, predicate, renderNode(value));
 		}
 	}
 
-	private class NumberSlotValuesRenderer extends SlotValuesRenderer<INumber> {
+	private class NumericsRenderer extends AttributesRenderer<INumber> {
 
-		void renderValue(FN frameNode, OT_URI predicate, INumber value) {
+		void renderValue(TN subject, OT_URI predicate, INumber value) {
 
 			if (value.indefinite()) {
 
-				renderRange(frameNode, predicate, value.getType());
+				renderRange(subject, predicate, value.getType());
 			}
 			else {
 
-				renderTriple(frameNode, predicate, renderDefiniteNumber(value));
+				renderTriple(subject, predicate, renderDefiniteNumber(value));
 			}
 		}
 
-		private void renderRange(FN frameNode, OT_URI predicate, CNumber range) {
+		private void renderRange(TN subject, OT_URI predicate, CNumber range) {
 
 			if (range.hasMin()) {
 
-				renderTriple(frameNode, predicate, renderMin(range.getMin()));
+				renderTriple(subject, predicate, renderMin(range.getMin()));
 			}
 
 			if (range.hasMax()) {
 
-				renderTriple(frameNode, predicate, renderMax(range.getMax()));
+				renderTriple(subject, predicate, renderMax(range.getMax()));
 			}
 		}
 
@@ -114,25 +115,25 @@ abstract class InstanceRenderer<FN extends OTValue> {
 		}
 	}
 
-	FN renderFrame(ORFrame frame) {
+	TN renderNode(NNode node) {
 
-		FN frameNode = renderFrame(frameCount++);
+		TN tripleNode = renderNode(nodeCount++);
 
-		checkRenderType(frame, frameNode);
-		renderSlotValues(frame, frameNode);
+		checkRenderType(node, tripleNode);
+		renderAttributeValues(node, tripleNode);
 
-		return frameNode;
+		return tripleNode;
 	}
 
-	abstract FN renderFrame(int index);
+	abstract TN renderNode(int index);
 
 	abstract OTValue renderNumberMin(OTNumber value);
 
 	abstract OTValue renderNumberMax(OTNumber value);
 
-	abstract void renderTriple(FN subject, OT_URI predicate, OTValue object);
+	abstract void renderTriple(TN subject, OT_URI predicate, OTValue object);
 
-	abstract void renderUnion(FN subject, OT_URI predicate, Set<OTValue> objects);
+	abstract void renderUnion(TN subject, OT_URI predicate, Set<OTValue> objects);
 
 	OT_URI renderURI(String uri) {
 
@@ -144,31 +145,31 @@ abstract class InstanceRenderer<FN extends OTValue> {
 		return new OTNumber(number.asTypeNumber());
 	}
 
-	private void checkRenderType(ORFrame frame, FN frameNode) {
+	private void checkRenderType(NNode node, TN tripleNode) {
 
 		OT_URI typePredicate = renderURI(RDFConstants.RDF_TYPE);
 
-		if (frame.disjunctionType()) {
+		if (node.atomicConcept()) {
 
-			renderUnion(frameNode, typePredicate, renderFrameTypeDisjuncts(frame));
+			renderTriple(tripleNode, typePredicate, renderAtomicType(node));
 		}
-		else if (frame.mapsToOWLEntity()) {
+		else {
 
-			renderTriple(frameNode, typePredicate, renderEntityType(frame));
+			renderUnion(tripleNode, typePredicate, renderTypeDisjuncts(node));
 		}
 	}
 
-	private void renderSlotValues(ORFrame frame, FN frameNode) {
+	private void renderAttributeValues(NNode node, TN tripleNode) {
 
-		frameValuesRenderer.render(frameNode, frame.getFrameSlots());
-		numberValuesRenderer.render(frameNode, frame.getNumberSlots());
+		linksRenderer.render(tripleNode, node.getLinks());
+		numericsRenderer.render(tripleNode, node.getNumerics());
 	}
 
-	private Set<OTValue> renderFrameTypeDisjuncts(ORFrame frame) {
+	private Set<OTValue> renderTypeDisjuncts(NNode node) {
 
 		Set<OTValue> objects = new HashSet<OTValue>();
 
-		for (IRI iri : frame.getTypeDisjunctIRIs()) {
+		for (IRI iri : NetworkIRIs.getConceptDisjuncts(node)) {
 
 			objects.add(renderURI(iri));
 		}
@@ -176,9 +177,14 @@ abstract class InstanceRenderer<FN extends OTValue> {
 		return objects;
 	}
 
-	private OT_URI renderEntityType(ORFramesEntity entity) {
+	private OT_URI renderAtomicType(NNode node) {
 
-		return renderURI(entity.getIRI());
+		return renderURI(NetworkIRIs.getAtomicConcept(node));
+	}
+
+	private OT_URI renderType(NAttribute<?> attribute) {
+
+		return renderURI(NetworkIRIs.getProperty(attribute));
 	}
 
 	private OT_URI renderURI(IRI iri) {

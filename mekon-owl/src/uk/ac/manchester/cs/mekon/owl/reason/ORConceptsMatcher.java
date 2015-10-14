@@ -29,9 +29,9 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
-import uk.ac.manchester.cs.mekon.owl.reason.frames.*;
 
 /**
  * Extension of {@link ORMatcher} that represents the instances
@@ -100,36 +100,31 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected void add(ORFrame instance, IRI iri) {
+	protected void addToOWLStore(NNode instance, IRI iri) {
 
 		addConceptDefinition(addConcept(iri), createConceptDefinition(instance));
 	}
 
 	/**
 	 */
-	protected void remove(IRI iri) {
+	protected void removeFromOWLStore(IRI iri) {
 
 		removeAxioms(getConceptAxioms(iri));
 	}
 
-	List<IRI> match(ConceptExpression queryExpr) {
+	List<IRI> matchInOWLStore(ConceptExpression queryExpr) {
 
 		return queryExpr.getMatchingConcepts();
 	}
 
-	boolean matches(ConceptExpression queryExpr, ORFrame instance) {
+	boolean matchesInOWL(ConceptExpression queryExpr, NNode instance) {
 
 		return queryExpr.subsumes(createConceptExpression(instance));
 	}
 
-	private OWLClassExpression createConceptDefinition(ORFrame frame) {
+	private OWLClassExpression createConceptDefinition(NNode node) {
 
-		return createConceptExpression(frame).getOWLConstruct();
-	}
-
-	private ConceptExpression createConceptExpression(ORFrame frame) {
-
-		return new ConceptExpression(getMatcherModel(), frame);
+		return createConceptExpression(node).getOWLConstruct();
 	}
 
 	private OWLClass addConcept(IRI iri) {
