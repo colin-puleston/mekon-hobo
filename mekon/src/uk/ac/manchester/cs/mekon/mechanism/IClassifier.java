@@ -35,9 +35,10 @@ import uk.ac.manchester.cs.mekon.mechanism.network.*;
  * the implementatation of the actual classification mechanisms to the
  * derived class.
  * <p>
- * The instance-level frames that are used by the top-level methods,
- * are converted into the intermediate network representations that
- * the abstract methods implemented by the derived classes operate on.
+ * The instance-level frames that are passed into the top-level
+ * classification method, are converted into the intermediate network
+ * representations that the abstract methods implemented by the derived
+ * classes operate on.
  * <p>
  * The classification process can be customised by adding one or more
  * pre-processors to modify the networks that will be passed to the
@@ -189,6 +190,23 @@ public abstract class IClassifier extends DefaultIReasoner {
 	}
 
 	/**
+	 * Handles the required classification by first converting
+	 * the frame-based instance representation into the network-based
+	 * version, then running any registered pre-processors over the
+	 * resulting network, then finally invoking the
+	 * {@link #classify(NNode, IClassifierOps)} method to perform the
+	 * actual classification..
+	 *
+	 * @param instance Instance to classify
+	 * @param ops Types of classification operations to be performed
+	 * @return Results of classification operations
+	 */
+	protected IClassification classify(IFrame instance, IClassifierOps ops) {
+
+		return classify(networkManager.createNetwork(instance), ops);
+	}
+
+	/**
 	 * Method whose implementations will classify the specified
 	 * network representation of an instance.
 	 *
@@ -197,9 +215,4 @@ public abstract class IClassifier extends DefaultIReasoner {
 	 * @return Results of classification operations
 	 */
 	protected abstract IClassification classify(NNode instance, IClassifierOps ops);
-
-	private IClassification classify(IFrame frame, IClassifierOps ops) {
-
-		return classify(networkManager.createNetwork(frame), ops);
-	}
 }

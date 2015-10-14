@@ -33,8 +33,8 @@ import uk.ac.manchester.cs.mekon.mechanism.network.*;
  * leaves the implementatation of the actual matching mechanisms
  * to the derived class.
  * <p>
- * Both instances and queries are represented at the top-level
- * by instance-level frames. The frames representing instances will
+ * Both instances and queries are passed into the top-level methods
+ * as instance-level frames. The frames representing instances will
  * always be of category {@link IFrameCategory#ASSERTION}, rather
  * than {@link IFrameCategory#QUERY}, whereas those representing
  * queries can be either, since assertion frames can also be
@@ -77,7 +77,7 @@ public abstract class IMatcher {
 
 	/**
 	 * Converts the specified instance-level frame to the
-	 * pre-processable version, runs any registered pre-processors
+	 * network-based version, runs any registered pre-processors
 	 * over it, then adds it to the matcher via the
 	 * {@link #add(NNode, CIdentity)} method, whose specific
 	 * implementations are provided by the derived classes.
@@ -103,7 +103,7 @@ public abstract class IMatcher {
 
 	/**
 	 * Converts the specified instance-level query frame to the
-	 * pre-processable version, runs any registered pre-processors
+	 * network-based version, runs any registered pre-processors
 	 * over it, then performs the query-matching operation via the
 	 * {@link #match(NNode)} method, whose specific implementations
 	 * are provided by the derived classes.
@@ -118,7 +118,7 @@ public abstract class IMatcher {
 
 	/**
 	 * Converts the specified instance-level query and instance frames
-	 * to the pre-processable versions, runs any registered
+	 * to the network-based versions, runs any registered
 	 * pre-processors over them, then performs a single query-matching
 	 * test via the {@link #matches(NNode, NNode)} method, whose
 	 * specific implementations are provided by the derived classes.
