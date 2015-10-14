@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.hobo.model.*;
  * Each extension should provide a public constructor that takes
  * a single parameter of type {@link DObjectBuilder}. This parameter
  * should be passed on to the constructor for this class, and will
- * generally also be used by the constructor of the extending class
+ * generally also be used by the constructor of the derived class
  * to perform the following:
  * <ul>
  *   <li>Creating any associated fields and field-viewers
