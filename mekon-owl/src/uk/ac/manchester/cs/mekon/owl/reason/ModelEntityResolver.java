@@ -43,11 +43,13 @@ class ModelEntityResolver {
 	private class Processor extends NNetworkVisitor {
 
 		protected void visit(NNode node) {
+
+			resolveAttributes(node);
 		}
 
 		protected void visit(NLink link) {
 
-			resolveLink(link);
+			resolveValues(link);
 		}
 
 		protected void visit(NNumeric numeric) {
@@ -71,19 +73,18 @@ class ModelEntityResolver {
 		new Processor().process(rootNode);
 	}
 
-	private void resolveLink(NLink link) {
+	private void resolveAttributes(NNode node) {
 
-		if (properties.exists(link.getProperty())) {
+		for (NAttribute<?> attr : node.getAttributes()) {
 
-			resolveLinkValues(link);
-		}
-		else {
+			if (!properties.exists(attr.getProperty())) {
 
-			link.clearValues();
+				node.removeAttribute(attr);
+			}
 		}
 	}
 
-	private void resolveLinkValues(NLink link) {
+	private void resolveValues(NLink link) {
 
 		for (NNode valueNode : link.getValues()) {
 
@@ -113,33 +114,33 @@ class ModelEntityResolver {
 
 	private boolean resolveNodeConceptDisjuncts(NNode node) {
 
-		boolean anyOWLTypes = false;
+		boolean anyOWLConcepts = false;
 
-		for (CIdentity type : node.getConceptDisjuncts()) {
+		for (CIdentity concept : node.getConceptDisjuncts()) {
 
-			if (concepts.exists(type)) {
+			if (concepts.exists(concept)) {
 
-				anyOWLTypes = true;
+				anyOWLConcepts = true;
 			}
 			else {
 
-				node.removeConceptDisjunct(type);
+				node.removeConceptDisjunct(concept);
 			}
 		}
 
-		return anyOWLTypes;
+		return anyOWLConcepts;
 	}
 
 	private boolean resolveDisjunctionNodeConcept(NNode node, CFrame cFrame) {
 
-		boolean anyOWLTypes = false;
+		boolean anyOWLConcepts = false;
 
 		for (CFrame disjunct : cFrame.getSubs()) {
 
-			anyOWLTypes |= resolveNodeConceptDisjunct(node, disjunct);
+			anyOWLConcepts |= resolveNodeConceptDisjunct(node, disjunct);
 		}
 
-		return anyOWLTypes;
+		return anyOWLConcepts;
 	}
 
 	private boolean resolveNodeConceptDisjunct(NNode node, CFrame cFrame) {
