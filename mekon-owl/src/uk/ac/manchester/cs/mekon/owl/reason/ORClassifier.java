@@ -70,7 +70,7 @@ public class ORClassifier extends IClassifier {
 
 	private OModel model;
 	private ORSemantics semantics;
-	private ModelEntityResolver modelEntityResolver;
+	private OntologyEntityResolver ontologyEntityResolver;
 
 	private IndividualsRenderer individualsRenderer;
 	private OInstanceIRIs individualRootIRIs = new OInstanceIRIs(true);
@@ -124,7 +124,7 @@ public class ORClassifier extends IClassifier {
 
 		semantics = new ORSemantics(model);
 
-		modelEntityResolver = new ModelEntityResolver(model);
+		ontologyEntityResolver = new OntologyEntityResolver(model);
 		individualsRenderer = new IndividualsRenderer(model, semantics);
 	}
 
@@ -161,7 +161,7 @@ public class ORClassifier extends IClassifier {
 	 */
 	protected IClassification classify(NNode instance, IClassifierOps ops) {
 
-		modelEntityResolver.resolve(instance);
+		ontologyEntityResolver.resolve(instance);
 
 		InstanceConstruct construct = createInstanceConstruct(instance);
 		OWLObject owlConstruct = construct.getOWLConstruct();

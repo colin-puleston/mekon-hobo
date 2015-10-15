@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.network.*;
 import uk.ac.manchester.cs.mekon.mechanism.network.process.*;
@@ -35,7 +36,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 /**
  * @author Colin Puleston
  */
-class ModelEntityResolver {
+class OntologyEntityResolver {
 
 	private OConceptFinder concepts;
 	private OPropertyFinder properties;
@@ -56,12 +57,12 @@ class ModelEntityResolver {
 		}
 	}
 
-	ModelEntityResolver(OModel model) {
+	OntologyEntityResolver(OModel model) {
 
 		this(model, new OConceptFinder(model));
 	}
 
-	ModelEntityResolver(OModel model, OConceptFinder concepts) {
+	OntologyEntityResolver(OModel model, OConceptFinder concepts) {
 
 		this.concepts = concepts;
 
@@ -70,7 +71,16 @@ class ModelEntityResolver {
 
 	void resolve(NNode rootNode) {
 
-		new Processor().process(rootNode);
+		if (resolveNode(rootNode)) {
+
+			new Processor().process(rootNode);
+		}
+		else {
+
+			throw new KModelException(
+						"No OWL class found for any subsumer of: "
+						+ rootNode.getCFrame());
+		}
 	}
 
 	private void resolveAttributes(NNode node) {

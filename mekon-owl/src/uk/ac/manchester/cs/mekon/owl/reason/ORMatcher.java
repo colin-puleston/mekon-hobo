@@ -113,7 +113,7 @@ public abstract class ORMatcher extends IMatcher {
 	private ORSemantics semantics;
 
 	private OConceptFinder concepts;
-	private ModelEntityResolver modelEntityResolver;
+	private OntologyEntityResolver ontologyEntityResolver;
 	private OInstanceIRIs instanceIRIs = new OInstanceIRIs(false);
 
 	/**
@@ -135,7 +135,7 @@ public abstract class ORMatcher extends IMatcher {
 	 */
 	public void add(NNode instance, CIdentity identity) {
 
-		modelEntityResolver.resolve(instance);
+		ontologyEntityResolver.resolve(instance);
 
 		addToOWLStore(instance, instanceIRIs.assign(identity));
 	}
@@ -163,7 +163,7 @@ public abstract class ORMatcher extends IMatcher {
 	 */
 	public IMatches match(NNode query) {
 
-		modelEntityResolver.resolve(query);
+		ontologyEntityResolver.resolve(query);
 
 		List<IRI> iris = matchInOWLStore(query);
 
@@ -182,8 +182,8 @@ public abstract class ORMatcher extends IMatcher {
 	 */
 	public boolean matches(NNode query, NNode instance) {
 
-		modelEntityResolver.resolve(query);
-		modelEntityResolver.resolve(instance);
+		ontologyEntityResolver.resolve(query);
+		ontologyEntityResolver.resolve(instance);
 
 		return matchesInOWL(query, instance);
 	}
@@ -237,7 +237,7 @@ public abstract class ORMatcher extends IMatcher {
 		semantics = new ORSemantics(model);
 
 		concepts = new OConceptFinder(model);
-		modelEntityResolver = new ModelEntityResolver(model, concepts);
+		ontologyEntityResolver = new OntologyEntityResolver(model, concepts);
 	}
 
 	/**
