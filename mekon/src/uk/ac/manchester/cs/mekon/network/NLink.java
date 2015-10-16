@@ -22,25 +22,23 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network;
+package uk.ac.manchester.cs.mekon.network;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents a numeric attribute in the network-based instance
- * representation
+ * Represents a link in the network-based instance representation
  *
  * @author Colin Puleston
  */
-public class NNumeric extends NAttribute<INumber> {
+public class NLink extends NAttribute<NNode> {
 
 	/**
 	 * Constructor.
 	 *
 	 * @param property Associated property
 	 */
-	public NNumeric(CIdentity property) {
+	public NLink(CIdentity property) {
 
 		super(property, null);
 	}
@@ -50,36 +48,18 @@ public class NNumeric extends NAttribute<INumber> {
 	 */
 	public boolean link() {
 
-		return false;
+		return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public NNumeric asNumber() {
+	public NLink asLink() {
 
 		return this;
 	}
 
-	/**
-	 * Provides current number-value for the slot.
-	 *
-	 * @return Current number-value
-	 * @throws KAccessException if no current value
-	 */
-	public INumber getValue() {
-
-		if (hasValues()) {
-
-			return getValues().iterator().next();
-		}
-
-		throw new KAccessException(
-					"No current value for numeric: "
-					+ getProperty());
-	}
-
-	NNumeric(CIdentity property, ISlot iSlot) {
+	NLink(CIdentity property, ISlot iSlot) {
 
 		super(property, iSlot);
 	}

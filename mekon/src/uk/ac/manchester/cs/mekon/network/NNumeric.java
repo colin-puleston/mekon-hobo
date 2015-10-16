@@ -22,21 +22,65 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network;
+package uk.ac.manchester.cs.mekon.network;
+
+import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Interface whose implementations will perform certain required
- * modifications on network-based instance representations.
+ * Represents a numeric attribute in the network-based instance
+ * representation
  *
  * @author Colin Puleston
  */
-public interface NNetworkProcessor {
+public class NNumeric extends NAttribute<INumber> {
 
 	/**
-	 * Performs required modifications to instance representation.
+	 * Constructor.
 	 *
-	 * @param model Relevant model
-	 * @param rootNode Root-node in instance representation
+	 * @param property Associated property
 	 */
-	public void process(NNode rootNode);
+	public NNumeric(CIdentity property) {
+
+		super(property, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean link() {
+
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public NNumeric asNumber() {
+
+		return this;
+	}
+
+	/**
+	 * Provides current number-value for the slot.
+	 *
+	 * @return Current number-value
+	 * @throws KAccessException if no current value
+	 */
+	public INumber getValue() {
+
+		if (hasValues()) {
+
+			return getValues().iterator().next();
+		}
+
+		throw new KAccessException(
+					"No current value for numeric: "
+					+ getProperty());
+	}
+
+	NNumeric(CIdentity property, ISlot iSlot) {
+
+		super(property, iSlot);
+	}
 }

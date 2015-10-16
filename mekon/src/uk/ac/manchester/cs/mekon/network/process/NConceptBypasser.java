@@ -22,54 +22,35 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network.process;
+package uk.ac.manchester.cs.mekon.network.process;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Processer that modifies the network-based instance representations
- * by swapping the concepts associated with specific nodes.
+ * in order to bypass any nodes with specific associated concepts.
  *
  * @author Colin Puleston
  */
-public class NConceptSwapper extends NNetworkVisitor {
+public class NConceptBypasser extends NNodeBypasser {
 
-	private CIdentity fromConcept;
-	private CIdentity toConcept;
+	private CIdentity concept;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param fromConcept Concept to be reset
-	 * @param toConcept Replacement concept
+	 * @param concept Concept associated with nodes to be bypassed
 	 */
-	public NConceptSwapper(CIdentity fromConcept, CIdentity toConcept) {
+	public NConceptBypasser(CIdentity concept) {
 
-		this.fromConcept = fromConcept;
-		this.toConcept = toConcept;
+		this.concept = concept;
 	}
 
 	/**
-	 * {@inheritDoc}
 	 */
-	protected void visit(NNode node) {
+	protected boolean bypass(NNode node) {
 
-		if (node.hasAtomicConcept(fromConcept)) {
-
-			node.setAtomicConcept(toConcept);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void visit(NLink link) {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void visit(NNumeric numeric) {
+		return node.hasAtomicConcept(concept);
 	}
 }

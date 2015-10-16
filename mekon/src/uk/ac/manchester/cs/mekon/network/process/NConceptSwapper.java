@@ -22,49 +22,49 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network.process;
+package uk.ac.manchester.cs.mekon.network.process;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Processer that modifies the network-based instance representations
- * by swapping the properties associated with specific links.
+ * by swapping the concepts associated with specific nodes.
  *
  * @author Colin Puleston
  */
-public class NPropertySwapper extends NNetworkVisitor {
+public class NConceptSwapper extends NNetworkVisitor {
 
-	private CIdentity fromProperty;
-	private CIdentity toProperty;
+	private CIdentity fromConcept;
+	private CIdentity toConcept;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param fromProperty Property to be reset
-	 * @param toProperty Replacement property
+	 * @param fromConcept Concept to be reset
+	 * @param toConcept Replacement concept
 	 */
-	public NPropertySwapper(CIdentity fromProperty, CIdentity toProperty) {
+	public NConceptSwapper(CIdentity fromConcept, CIdentity toConcept) {
 
-		this.fromProperty = fromProperty;
-		this.toProperty = toProperty;
+		this.fromConcept = fromConcept;
+		this.toConcept = toConcept;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void visit(NNode node) {
+
+		if (node.hasAtomicConcept(fromConcept)) {
+
+			node.setAtomicConcept(toConcept);
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void visit(NLink link) {
-
-		if (link.getProperty().equals(fromProperty)) {
-
-			link.setProperty(toProperty);
-		}
 	}
 
 	/**

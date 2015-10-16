@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.model;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * @author Colin Puleston

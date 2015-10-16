@@ -22,35 +22,21 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network.process;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+package uk.ac.manchester.cs.mekon.network;
 
 /**
- * Processer that modifies the network-based instance representations
- * in order to bypass any links with specific associated properties.
+ * Interface whose implementations will perform certain required
+ * modifications on network-based instance representations.
  *
  * @author Colin Puleston
  */
-public class NPropertyBypasser extends NLinkBypasser {
-
-	private CIdentity property;
+public interface NNetworkProcessor {
 
 	/**
-	 * Constructor.
+	 * Performs required modifications to instance representation.
 	 *
-	 * @param property Property associated with links to be bypassed
+	 * @param model Relevant model
+	 * @param rootNode Root-node in instance representation
 	 */
-	public NPropertyBypasser(CIdentity property) {
-
-		this.property = property;
-	}
-
-	/**
-	 */
-	protected boolean bypass(NLink link) {
-
-		return link.getProperty().equals(property);
-	}
+	public void process(NNode rootNode);
 }

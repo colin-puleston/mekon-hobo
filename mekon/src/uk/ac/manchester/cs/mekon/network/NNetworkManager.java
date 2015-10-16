@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network;
+package uk.ac.manchester.cs.mekon.network;
 
 import java.util.*;
 

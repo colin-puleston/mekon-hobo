@@ -22,21 +22,33 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network.process;
+package uk.ac.manchester.cs.mekon.network.process;
 
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
- * Abstract processer that modifies the network-based instance
- * representations in order to bypass particular nodes. The
- * specification of which nodes to bypass is left to the derived
- * class. When a node is bypassed, it is replaced in the link for
- * which it is a value, by all nodes that are values for any links
- * attached to the bypassed node.
+ * Processer that modifies the network-based instance representations
+ * by swapping the properties associated with specific links.
  *
  * @author Colin Puleston
  */
-public abstract class NNodeBypasser extends NNetworkVisitor {
+public class NPropertySwapper extends NNetworkVisitor {
+
+	private CIdentity fromProperty;
+	private CIdentity toProperty;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param fromProperty Property to be reset
+	 * @param toProperty Replacement property
+	 */
+	public NPropertySwapper(CIdentity fromProperty, CIdentity toProperty) {
+
+		this.fromProperty = fromProperty;
+		this.toProperty = toProperty;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -49,12 +61,9 @@ public abstract class NNodeBypasser extends NNetworkVisitor {
 	 */
 	protected void visit(NLink link) {
 
-		for (NNode valueNode : link.getValues()) {
+		if (link.getProperty().equals(fromProperty)) {
 
-			if (bypass(valueNode)) {
-
-				bypassNode(link, valueNode);
-			}
+			link.setProperty(toProperty);
 		}
 	}
 
@@ -62,33 +71,5 @@ public abstract class NNodeBypasser extends NNetworkVisitor {
 	 * {@inheritDoc}
 	 */
 	protected void visit(NNumeric numeric) {
-	}
-
-	/**
-	 * Determines whether or not a node is to be bypassed
-	 *
-	 * @param node Node to test
-	 * @return True if node is to be bypassed
-	 */
-	protected abstract boolean bypass(NNode node);
-
-	private void bypassNode(NLink parentAttribute, NNode node) {
-
-		parentAttribute.removeValue(node);
-
-		for (NLink nestedAttribute : node.getLinks()) {
-
-			for (NNode nestedNode : nestedAttribute.getValues()) {
-
-				if (bypass(nestedNode)) {
-
-					bypassNode(parentAttribute, nestedNode);
-				}
-				else {
-
-					parentAttribute.addValue(nestedNode);
-				}
-			}
-		}
 	}
 }

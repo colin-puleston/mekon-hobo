@@ -22,45 +22,75 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.network;
+package uk.ac.manchester.cs.mekon.network;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import java.util.*;
 
 /**
- * Represents a link in the network-based instance representation
- *
  * @author Colin Puleston
  */
-public class NLink extends NAttribute<NNode> {
+class CycleTester {
 
-	/**
-	 * Constructor.
-	 *
-	 * @param property Associated property
-	 */
-	public NLink(CIdentity property) {
+	private NNode startNode;
 
-		super(property, null);
+	private Set<NNode> visited = new HashSet<NNode>();
+	private Deque<NNode> stack = new ArrayDeque<NNode>();
+
+	CycleTester(NNode startNode) {
+
+		this.startNode = startNode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean link() {
+	boolean leadsToCycle() {
 
-		return true;
+		return leadsToCycle(startNode);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public NLink asLink() {
+	private boolean leadsToCycle(NNode frame) {
 
-		return this;
+		if (stack.contains(frame)) {
+
+			return true;
+		}
+
+		if (visited.add(frame)) {
+
+			stack.push(frame);
+
+			if (slotsLeadToCycle(frame)) {
+
+				return true;
+			}
+
+			stack.pop();
+		}
+
+		return false;
 	}
 
-	NLink(CIdentity property, ISlot iSlot) {
+	private boolean slotsLeadToCycle(NNode frame) {
 
-		super(property, iSlot);
+		for (NLink slot : frame.getLinks()) {
+
+			if (slotLeadsToCycle(slot)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean slotLeadsToCycle(NLink slot) {
+
+		for (NNode value : slot.getValues()) {
+
+			if (leadsToCycle(value)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

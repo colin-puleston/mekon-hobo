@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Provides classification-based versions of the reasoning mechanisms
