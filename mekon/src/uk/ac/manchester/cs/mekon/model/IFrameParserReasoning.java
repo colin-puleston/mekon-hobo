@@ -35,7 +35,11 @@ class IFrameParserReasoning extends IFrameParserLocal {
 
 	protected IFrame instantiateFrame(CFrame type, IFrameCategory category) {
 
-		return type.instantiateNoAutoUpdate(category);
+		IFrame frame = type.instantiate(category);
+
+		frame.setAutoUpdateEnabled(false);
+
+		return frame;
 	}
 
 	protected ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {

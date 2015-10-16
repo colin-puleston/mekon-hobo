@@ -513,7 +513,14 @@ public abstract class CFrame
 	 */
 	public IFrame instantiate(IFrameCategory category) {
 
-		return instantiate(category, true);
+		checkInstantiableAsCategory(category);
+
+		IFrame instance = new IFrame(this, category);
+
+		initialiseInstance(instance);
+		pollListenersForInstantiated(instance);
+
+		return instance;
 	}
 
 	/**
@@ -566,11 +573,6 @@ public abstract class CFrame
 		return other instanceof MFrame ? other.mergeWith(type) : super.mergeWith(other);
 	}
 
-	IFrame instantiateNoAutoUpdate(IFrameCategory category) {
-
-		return instantiate(category, false);
-	}
-
 	IFrame getDefaultValueOrNull() {
 
 		return instantiate();
@@ -591,6 +593,14 @@ public abstract class CFrame
 		return testSubsumer.equals(testSubsumed);
 	}
 
+	void pollListenersForInstantiated(IFrame instance) {
+
+		for (CFrameListener listener : copyListeners()) {
+
+			listener.onInstantiated(instance);
+		}
+	}
+
 	private boolean subsumesAtomicFrame(CAtomicFrame testSubsumed) {
 
 		for (CAtomicFrame disjunct : getSubsumptionTestDisjuncts()) {
@@ -602,24 +612,6 @@ public abstract class CFrame
 		}
 
 		return false;
-	}
-
-	private IFrame instantiate(IFrameCategory category, boolean autoUpdate) {
-
-		checkInstantiableAsCategory(category);
-
-		IFrame instance = new IFrame(this, category);
-
-		initialiseInstance(instance);
-
-		if (!autoUpdate) {
-
-			instance.setAutoUpdateEnabled(false);
-		}
-
-		pollListenersForInstantiated(instance);
-
-		return instance;
 	}
 
 	private void initialiseInstance(IFrame instance) {
@@ -650,14 +642,6 @@ public abstract class CFrame
 		for (CFrameListener listener : copyListeners()) {
 
 			listener.onExtended(expr);
-		}
-	}
-
-	private void pollListenersForInstantiated(IFrame instance) {
-
-		for (CFrameListener listener : copyListeners()) {
-
-			listener.onInstantiated(instance);
 		}
 	}
 

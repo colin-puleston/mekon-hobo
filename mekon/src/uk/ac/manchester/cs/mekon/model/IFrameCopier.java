@@ -63,13 +63,13 @@ class IFrameCopier {
 
 	IFrame copy(IFrame template) {
 
-		IFrame copy = createEmptyFrameCopy(template);
+		CFrame type = template.getType();
+		IFrame copy = new IFrame(type, template.getCategory());
 
 		copies.put(template, copy);
 
-		copyInferredTypes(template, copy);
-		copySlots(template, copy);
-		copy.setAutoUpdateEnabled(true);
+		initialiseCopy(template, copy);
+		type.pollListenersForInstantiated(copy);
 
 		return copy;
 	}
@@ -99,12 +99,14 @@ class IFrameCopier {
 		}
 	}
 
-	private IFrame createEmptyFrameCopy(IFrame template) {
+	private void initialiseCopy(IFrame template, IFrame copy) {
 
-		CFrame type = template.getType();
-		IFrameCategory category = template.getCategory();
+		copy.setAutoUpdateEnabled(false);
 
-		return type.instantiateNoAutoUpdate(category);
+		copyInferredTypes(template, copy);
+		copySlots(template, copy);
+
+		copy.setAutoUpdateEnabled(true);
 	}
 
 	private ISlot createEmptySlotCopy(IFrame container, ISlot template) {

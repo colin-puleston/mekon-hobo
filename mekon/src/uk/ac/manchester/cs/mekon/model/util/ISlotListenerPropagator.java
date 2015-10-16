@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  * originating from one-or-more specified "seed-slots".
  * Selection of "target-slots" to which the listener is
  * to be added is based on criteria provided by specific
- * implementations of the abstract {@link #isTargetSlot}
+ * implementations of the abstract {@link #targetSlot}
  * method. The listener will be added to all possible
  * target-slots, including both those that already exist
  * when a seed-slot is specified and those that come into
@@ -105,7 +105,7 @@ public abstract class ISlotListenerPropagator<L>
 	 * @param slot Slot to test
 	 * @return True if target slot
 	 */
-	protected abstract boolean isTargetSlot(ISlot slot);
+	protected abstract boolean targetSlot(ISlot slot);
 
 	ISlotListenerPropagator(L listener) {
 
@@ -188,7 +188,7 @@ public abstract class ISlotListenerPropagator<L>
 
 		for (ISlot slot : frame.getSlots().asList()) {
 
-			if (isTargetSlot(slot)) {
+			if (targetSlot(slot)) {
 
 				targetSlots.add(slot);
 			}
