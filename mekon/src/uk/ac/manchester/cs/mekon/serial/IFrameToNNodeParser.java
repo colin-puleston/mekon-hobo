@@ -28,102 +28,65 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * XXX
- *
  * @author Colin Puleston
  */
-public class IFrameParser extends IFrameParserAbstract {
+class IFrameToNNodeParser extends IFrameParserAbstract {
 
-	/**
-	 */
-	public IFrameParser(CModel model, IFrameCategory frameCategory) {
+	private IFreeInstantiator freeInstantiator;
+	private NNetworkManager networkManager = new NNetworkManager();
 
-		super(model, frameCategory);
+	IFrameToNNodeParser(CModel model) {
+
+		super(model, IFrameCategory.ASSERTION);
+
+		freeInstantiator = getAccessor().getFreeInstantiator();
 	}
 
-	/**
-	 */
-	public IFrame parse(XDocument document) {
+	NNode parse(XDocument document) {
 
-		return parseToIFrame(document);
+		return toNetwork(parseToIFrame(document));
 	}
 
-	/**
-	 */
-	public IFrame parse(XNode parentNode) {
+	NNode parse(XNode parentNode) {
 
-		return parseToIFrame(parentNode);
+		return toNetwork(parseToIFrame(parentNode));
 	}
 
 	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
 
-		IFrame frame = type.instantiate(category);
-
-		setAutoUpdateEnabled(frame, false);
-
-		return frame;
+		return freeInstantiator.instantiate(type, category);
 	}
 
 	ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
 
-		return lookForSlot(frame, slotId);
+		return freeInstantiator.addIFrameSlot(frame, slotId);
 	}
 
 	ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId) {
 
-		return lookForSlot(frame, slotId);
+		return freeInstantiator.addCFrameSlot(frame, slotId);
 	}
 
 	ISlot checkResolveINumberSlot(
-						IFrame frame,
-						CIdentity slotId,
-						Class<? extends Number> numberType) {
+				IFrame frame,
+				CIdentity slotId,
+				Class<? extends Number> numberType) {
 
-		return lookForSlot(frame, slotId);
+		return freeInstantiator.addINumberSlot(frame, slotId, numberType);
 	}
 
 	void checkUpdateFrameSlotSets(List<IFrame> frames) {
-
-		setAutoUpdateEnabled(frames, true);
-
-		for (IFrame frame : frames) {
-
-			frame.update();
-		}
-
-		setAutoUpdateEnabled(frames, false);
 	}
 
 	void checkUpdateFramesOnParseCompletion(List<IFrame> frames) {
-
-		setAutoUpdateEnabled(frames, true);
 	}
 
-	private ISlot lookForSlot(IFrame frame, CIdentity slotId) {
+	private NNode toNetwork(IFrame rootFrame) {
 
-		ISlots slots = frame.getSlots();
-
-		return slots.containsValueFor(slotId) ? slots.get(slotId) : null;
-	}
-
-	private void setAutoUpdateEnabled(List<IFrame> frames, boolean enabled) {
-
-		for (IFrame frame : frames) {
-
-			setAutoUpdateEnabled(frame, enabled);
-		}
-	}
-
-	private void setAutoUpdateEnabled(IFrame frame, boolean enabled) {
-
-		getFrameEditor(frame).setAutoUpdateEnabled(enabled);
-	}
-
-	private IFrameEditor getFrameEditor(IFrame frame) {
-
-		return getAccessor().getIEditor().getFrameEditor(frame);
+		return networkManager.createNetwork(rootFrame);
 	}
 }

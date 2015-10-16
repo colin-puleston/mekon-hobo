@@ -143,7 +143,7 @@ public abstract class IMatcher {
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
 	 */
-	protected abstract void add(NNode instance, CIdentity identity);
+	public abstract void add(NNode instance, CIdentity identity);
 
 	/**
 	 * Finds all instances that are matched by the supplied query,
@@ -152,7 +152,7 @@ public abstract class IMatcher {
 	 * @param query Representation of query
 	 * @return Results of query execution
 	 */
-	protected abstract IMatches match(NNode query);
+	public abstract IMatches match(NNode query);
 
 	/**
 	 * Tests whether the supplied instance is matched by the supplied
@@ -163,7 +163,7 @@ public abstract class IMatcher {
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	protected abstract boolean matches(NNode query, NNode instance);
+	public abstract boolean matches(NNode query, NNode instance);
 
 	private NNode createNetwork(IFrame frame) {
 

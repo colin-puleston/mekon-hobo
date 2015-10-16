@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.io.*;
 
+import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
@@ -88,7 +89,7 @@ class InstanceFileStore {
 
 	IFrame read(int index) {
 
-		return createParser(getFile(index), true).parseInstance();
+		return createParser(getFile(index)).parseInstance();
 	}
 
 	void remove(int index) {
@@ -98,10 +99,10 @@ class InstanceFileStore {
 
 	private void load(InstanceLoader loader, File file) {
 
-		IInstanceParser parser = createParser(file, false);
+		IInstanceToNNetworkParser parser = createToNetworkParser(file);
 
 		CIdentity id = parser.parseIdentity();
-		IFrame instance = parser.parseInstance();
+		NNode instance = parser.parseInstance();
 
 		loader.load(instance, id, extractIndex(file));
 	}
@@ -131,18 +132,13 @@ class InstanceFileStore {
 		return Integer.parseInt(name.substring(start, end));
 	}
 
-	private IInstanceParser createParser(File file, boolean frameForExternalUse) {
+	private IInstanceParser createParser(File file) {
 
-		return new IInstanceParser(file, createFrameParser(frameForExternalUse));
+		return new IInstanceParser(model, file);
 	}
 
-	private IFrameParser createFrameParser(boolean frameForExternalUse) {
+	private IInstanceToNNetworkParser createToNetworkParser(File file) {
 
-		if (frameForExternalUse) {
-
-			return new IFrameParserReasoning(model, IFrameCategory.ASSERTION);
-		}
-
-		return new IFrameParserNonReasoning(model, IFrameCategory.ASSERTION);
+		return new IInstanceToNNetworkParser(model, file);
 	}
 }

@@ -35,6 +35,34 @@ import uk.ac.manchester.cs.mekon.model.*;
 public interface CAccessor {
 
 	/**
+	 * Provides the model object.
+	 *
+	 * @return Model object
+	 */
+	public CModel getModel();
+
+	/**
+	 * Creates a builder for the model.
+	 *
+	 * @return Created builder
+	 */
+	public CBuilder createBuilder();
+
+	/**
+	 * Provides the instantiation editor for the model.
+	 *
+	 * @return Instantiation editor
+	 */
+	public IEditor getIEditor();
+
+	/**
+	 * Provides the free-instantiator object for the model.
+	 *
+	 * @return Free-instantiator object
+	 */
+	public IFreeInstantiator getFreeInstantiator();
+
+	/**
 	 * Maps an object to an instance-level frame.
 	 *
 	 * @param frame Frame to which object is to be mapped
@@ -49,11 +77,4 @@ public interface CAccessor {
 	 * @return Mapped object, or null if no mapped object
 	 */
 	public Object getIFrameMappedObject(IFrame frame);
-
-	/**
-	 * Provides the instantiation editor for the model.
-	 *
-	 * @return Instantiation editor
-	 */
-	public IEditor getIEditor();
 }

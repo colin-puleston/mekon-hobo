@@ -26,59 +26,50 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-class IFrameParserNonReasoning extends IFrameParserLocal {
+class IFreeInstantiatorImpl implements IFreeInstantiator {
 
-	static private Map<Class<? extends Number>, CNumberDef> defaultNumberDefs
-							= new HashMap<Class<? extends Number>, CNumberDef>();
+	static private Map<Class<? extends Number>, CNumberDef> numberDefs
+						= new HashMap<Class<? extends Number>, CNumberDef>();
 
 	static {
 
-		defaultNumberDefs.put(Integer.class, CIntegerDef.UNCONSTRAINED);
-		defaultNumberDefs.put(Long.class, CLongDef.UNCONSTRAINED);
-		defaultNumberDefs.put(Float.class, CFloatDef.UNCONSTRAINED);
-		defaultNumberDefs.put(Double.class, CDoubleDef.UNCONSTRAINED);
+		numberDefs.put(Integer.class, CIntegerDef.UNCONSTRAINED);
+		numberDefs.put(Long.class, CLongDef.UNCONSTRAINED);
+		numberDefs.put(Float.class, CFloatDef.UNCONSTRAINED);
+		numberDefs.put(Double.class, CDoubleDef.UNCONSTRAINED);
 	}
 
 	private CFrame rootFrame;
 
-	protected IFrame instantiateFrame(CFrame type, IFrameCategory category) {
+	public IFrame instantiate(CFrame type, IFrameCategory category) {
 
 		return new IFrame(type, category);
 	}
 
-	protected ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
+	public ISlot addIFrameSlot(IFrame frame, CIdentity slotTypeId) {
 
-		return addSlot(frame, slotId, rootFrame);
+		return addSlot(frame, slotTypeId, rootFrame);
 	}
 
-	protected ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId) {
+	public ISlot addCFrameSlot(IFrame frame, CIdentity slotTypeId) {
 
-		return addSlot(frame, slotId, rootFrame.getType());
+		return addSlot(frame, slotTypeId, rootFrame.getType());
 	}
 
-	protected ISlot checkResolveINumberSlot(
-						IFrame frame,
-						CIdentity slotId,
-						Class<? extends Number> numberType) {
+	public ISlot addINumberSlot(
+					IFrame frame,
+					CIdentity slotTypeId,
+					Class<? extends Number> numberType) {
 
-		return addSlot(frame, slotId, getDefaultNumber(numberType));
+		return addSlot(frame, slotTypeId, getNumberValueType(numberType));
 	}
 
-	protected void checkUpdateFrameSlotSets(List<IFrame> frames) {
-	}
-
-	protected void checkUpdateFramesOnParseCompletion(List<IFrame> frames) {
-	}
-
-	IFrameParserNonReasoning(CModel model, IFrameCategory frameCategory) {
-
-		super(model, frameCategory);
+	IFreeInstantiatorImpl(CModel model) {
 
 		rootFrame = model.getRootFrame();
 	}
@@ -93,20 +84,8 @@ class IFrameParserNonReasoning extends IFrameParserLocal {
 		return new CSlot(frameType, id, CCardinality.REPEATABLE_TYPES, valueType);
 	}
 
-	private CNumber getDefaultNumber(Class<? extends Number> numberType) {
+	private CNumber getNumberValueType(Class<? extends Number> numberType) {
 
-		if (numberType == null) {
-
-			throw new KSystemConfigException("Number type not specified");
-		}
-
-		CNumberDef numberDef = defaultNumberDefs.get(numberType);
-
-		if (numberDef == null) {
-
-			throw new Error("Unrecognised number type: " + numberType);
-		}
-
-		return numberDef.createNumber();
+		return numberDefs.get(numberType).createNumber();
 	}
 }

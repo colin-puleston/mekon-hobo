@@ -22,14 +22,25 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.mechanism;
 
-import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * XXX
+ *
  * @author Colin Puleston
  */
-abstract class InstanceLoader {
+public interface IFreeInstantiator {
 
-	abstract void load(NNode instance, CIdentity identity, int index);
+	public IFrame instantiate(CFrame type, IFrameCategory category);
+
+	public ISlot addIFrameSlot(IFrame frame, CIdentity slotTypeId);
+
+	public ISlot addCFrameSlot(IFrame frame, CIdentity slotTypeId);
+
+	public ISlot addINumberSlot(
+					IFrame frame,
+					CIdentity slotTypeId,
+					Class<? extends Number> numberType);;
 }

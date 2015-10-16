@@ -39,7 +39,7 @@ public class IUpdating {
 
 	static private final Set<IUpdateOp> NO_OPS = Collections.<IUpdateOp>emptySet();
 
-	private IEditor iEditor;
+	private CModel model;
 
 	private boolean autoUpdate = true;
 	private Set<IUpdateOp> defaultOps = getAllUpdateOpsAsSet();
@@ -78,9 +78,9 @@ public class IUpdating {
 		return new HashSet<IUpdateOp>(defaultOps);
 	}
 
-	IUpdating(IEditor iEditor) {
+	IUpdating(CModel model) {
 
-		this.iEditor = iEditor;
+		this.model = model;
 	}
 
 	void setAutoUpdate(boolean autoUpdate) {
@@ -136,7 +136,7 @@ public class IUpdating {
 
 		IReasoner reasoner = instance.getType().getIReasoner();
 
-		return reasoner.updateFrame(iEditor, instance, ops);
+		return reasoner.updateFrame(model.getIEditor(), instance, ops);
 	}
 
 	private Set<IUpdateOp> removeDefaultOps(Set<IUpdateOp> ops) {

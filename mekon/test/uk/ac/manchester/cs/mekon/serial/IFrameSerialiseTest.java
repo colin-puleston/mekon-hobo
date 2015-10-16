@@ -24,40 +24,69 @@
 
 package uk.ac.manchester.cs.mekon.serial;
 
-import java.io.*;
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Parses an XML document representing a serialised instance. XXX
- *
  * @author Colin Puleston
  */
-public class IInstanceParser extends IInstanceParserAbstract {
+public class IFrameSerialiseTest extends MekonTest {
 
-	private IFrameParser frameParser;
+	private IFrameRenderer renderer = null;
 
-	/**
-	 * Constructor that performs the parse operation.
-	 *
-	 * @param model Relevant model
-	 * @param iEditor Relevant instantiation-editor
-	 * @param instanceFile Serialisation file
-	 */
-	public IInstanceParser(CModel model, File instanceFile) {
+	@Before
+	public void setUp() {
 
-		super(instanceFile);
-
-		frameParser = new IFrameParser(model, IFrameCategory.ASSERTION);
+		renderer = new IFrameRenderer();
 	}
 
-	/**
-	 * Provides the frame representation of the instance.
-	 *
-	 * @return Frame representation of instance
-	 */
-	public IFrame parseInstance() {
+	@Test
+	public void test_renderAndParse() {
 
-		return frameParser.parse(getRootNode());
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderAsTreeAndParse() {
+
+		renderer.setRenderAsTree(true);
+
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderWithSchemaAndParse() {
+
+		renderer.setRenderSchema(true);
+
+		testRenderAndParse(false);
+	}
+
+	@Test
+	public void test_renderAndParseWithDynamicSlotInsertion() {
+
+		testRenderAndParse(true);
+	}
+
+	private void testRenderAndParse(boolean dynamicSlotInsertion) {
+
+		IFrame original = createComplexInstance(dynamicSlotInsertion);
+		IFrame reconstituted = parse(renderer.render(original));
+
+		assertTrue(reconstituted.matches(original));
+	}
+
+	private IFrame parse(XDocument rendering) {
+
+		return createParser().parse(rendering);
+	}
+
+	private IFrameParser createParser() {
+
+		return new IFrameParser(getModel(), IFrameCategory.ASSERTION);
 	}
 }

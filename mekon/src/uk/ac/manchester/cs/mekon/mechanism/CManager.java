@@ -47,7 +47,7 @@ public class CManager {
 	 */
 	static public CBuilder createEmptyBuilder() {
 
-		return new CBootstrapperLocal().getBuilder();
+		return new CBootstrapperLocal().start().createBuilder();
 	}
 
 	/**

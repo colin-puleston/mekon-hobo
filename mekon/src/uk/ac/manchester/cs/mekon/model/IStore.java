@@ -29,8 +29,9 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -62,10 +63,12 @@ public class IStore {
 
 	private class FileStoreInstanceLoader extends InstanceLoader {
 
-		void load(IFrame instance, CIdentity identity, int index) {
+		void load(NNode instance, CIdentity identity, int index) {
 
+			identities.add(identity);
 			indexes.assignIndex(identity, index);
-			addStoredAndIndexed(instance, identity);
+
+			checkAddToMatcher(instance, identity);
 		}
 	}
 
@@ -85,8 +88,10 @@ public class IStore {
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
 
+		identities.add(identity);
+
 		fileStore.write(instance, identity, index);
-		addStoredAndIndexed(instance, identity);
+		checkAddToMatcher(instance, identity);
 
 		return previous;
 	}
@@ -205,13 +210,6 @@ public class IStore {
 		matchers.add(matcher);
 	}
 
-	private void addStoredAndIndexed(IFrame instance, CIdentity identity) {
-
-		identities.add(identity);
-
-		checkAddToMatcher(instance, identity);
-	}
-
 	private IFrame checkRemove(CIdentity identity) {
 
 		IFrame removed = null;
@@ -232,6 +230,11 @@ public class IStore {
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
 
 		getMatcher(instance).add(instance, identity);
+	}
+
+	private void checkAddToMatcher(NNode instance, CIdentity identity) {
+
+		getMatcher(instance.getCFrame()).add(instance, identity);
 	}
 
 	private void checkRemoveFromMatcher(IFrame instance, CIdentity identity) {

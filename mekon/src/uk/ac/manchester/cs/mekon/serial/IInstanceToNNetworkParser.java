@@ -22,14 +22,43 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.serial;
 
+import java.io.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 
 /**
+ * Parses an XML document representing a serialised instance. XXX
+ *
  * @author Colin Puleston
  */
-abstract class InstanceLoader {
+public class IInstanceToNNetworkParser extends IInstanceParserAbstract {
 
-	abstract void load(NNode instance, CIdentity identity, int index);
+	private IFrameToNNodeParser frameParser;
+
+	/**
+	 * Constructor that performs the parse operation.
+	 *
+	 * @param model Relevant model
+	 * @param iEditor Relevant instantiation-editor
+	 * @param instanceFile Serialisation file
+	 */
+	public IInstanceToNNetworkParser(CModel model, File instanceFile) {
+
+		super(instanceFile);
+
+		frameParser = new IFrameToNNodeParser(model);
+	}
+
+	/**
+	 * Provides the frame representation of the instance.
+	 *
+	 * @return Frame representation of instance
+	 */
+	public NNode parseInstance() {
+
+		return frameParser.parse(getRootNode());
+	}
 }

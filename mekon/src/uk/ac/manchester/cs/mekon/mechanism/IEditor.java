@@ -73,5 +73,7 @@ public interface IEditor {
 	 * @param subTypes sub-types for slot value-type frame
 	 * @return Required slot value-type frame
 	 */
-	public CFrame getDynamicFrameSlotValueType(CFrame superType, List<CFrame> subTypes);
+	public CFrame getDynamicFrameSlotValueType(
+						CFrame superType,
+						List<CFrame> subTypes);
 }

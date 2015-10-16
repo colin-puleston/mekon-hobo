@@ -31,8 +31,8 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CBootstrapperLocal extends CBootstrapper {
 
-	protected CBuilder getBuilder() {
+	protected CAccessor start() {
 
-		return super.getBuilder();
+		return super.start();
 	}
 }

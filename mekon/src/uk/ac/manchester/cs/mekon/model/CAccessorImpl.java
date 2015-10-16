@@ -32,6 +32,27 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 class CAccessorImpl implements CAccessor {
 
 	private CModel model;
+	private IFreeInstantiator freeInstantiator;
+
+	public CModel getModel() {
+
+		return model;
+	}
+
+	public CBuilder createBuilder() {
+
+		return new CBuilderImpl(model);
+	}
+
+	public IEditor getIEditor() {
+
+		return model.getIEditor();
+	}
+
+	public IFreeInstantiator getFreeInstantiator() {
+
+		return freeInstantiator;
+	}
 
 	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
 
@@ -43,13 +64,15 @@ class CAccessorImpl implements CAccessor {
 		return frame.getMappedObject();
 	}
 
-	public IEditor getIEditor() {
+	CAccessorImpl(CCustomiser customiser) {
 
-		return model.getIEditor();
+		this(new CModel(customiser));
 	}
 
 	CAccessorImpl(CModel model) {
 
 		this.model = model;
+
+		freeInstantiator = new IFreeInstantiatorImpl(model);
 	}
 }

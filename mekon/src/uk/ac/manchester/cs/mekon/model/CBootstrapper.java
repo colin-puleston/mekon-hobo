@@ -28,9 +28,8 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * Provides the MEKON mechanisms, and those of any extensions of
- * the MEKON framework, with a means of creating and retrieving a
- * {@link CModel} object together with associated {@link CBuilder}
- * and {@link CAccessor} objects.
+ * the MEKON framework, with a means of creating a {@link CModel}
+ * object, and retrieving the associated {@link CAccessor} object.
  * <p>
  * NOTE: This class is only intended for use by the MEKON and
  * MEKON-extension mechanisms and should not be accessed directly
@@ -40,62 +39,41 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class CBootstrapper {
 
-	private CModel model;
-	private CBuilder builder;
-
 	/**
-	 * Constructor that creates a model with a default customiser.
+	 * Constructor.
 	 */
 	protected CBootstrapper() {
-
-		this(new CCustomiserDefault());
 	}
 
 	/**
-	 * Constructor that creates a model with the specified customiser.
+	 * Creates an empty model with a default customiser.
+	 *
+	 * @return Accessor for model
+	 */
+	protected CAccessor start() {
+
+		return start(new CCustomiserDefault());
+	}
+
+	/**
+	 * Creates an empty model with the specified customiser.
 	 *
 	 * @param customiser Customiser for model
+	 * @return Accessor for model
 	 */
-	protected CBootstrapper(CCustomiser customiser) {
+	protected CAccessor start(CCustomiser customiser) {
 
-		model = new CModel(customiser);
-		builder = new CBuilderImpl(model);
+		return new CAccessorImpl(customiser);
 	}
 
 	/**
-	 * Retrieves the created model object.
+	 * Retrieves the accessor for the model.
 	 *
-	 * @return Created model object
+	 * @param model Model for which accessor is required
+	 * @return Accessor for model
 	 */
-	protected CModel getModel() {
+	protected CAccessor access(CModel model) {
 
-		return model;
-	}
-
-	/**
-	 * Retrieves the builder for the created model object.
-	 *
-	 * @return Builder for created model object
-	 */
-	protected CBuilder getBuilder() {
-
-		return builder;
-	}
-
-	/**
-	 * Retrieves the accessor for the created model.
-	 *
-	 * @return Accessor for created model
-	 */
-	protected CAccessor getAccessor() {
-
-		return model.getAccessor();
-	}
-
-	private CBootstrapper(CModel model) {
-
-		this.model = model;
-
-		builder = new CBuilderImpl(model);
+		return new CAccessorImpl(model);
 	}
 }

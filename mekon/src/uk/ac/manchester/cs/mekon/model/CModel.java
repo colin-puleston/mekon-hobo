@@ -42,22 +42,20 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class CModel implements CAnnotatable {
 
-	private CAccessor accessor = new CAccessorImpl(this);
-	private CCustomiser customiser;
-
 	private CFrame rootFrame;
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
 
+	private CCustomiser customiser;
 	private CAnnotations annotations = new CAnnotations(this);
 
-	private boolean queriesEnabled = false;
 	private IEditor iEditor = new IEditorImpl(this);
-	private IUpdating iUpdating = new IUpdating(iEditor);
+	private IUpdating iUpdating = new IUpdating(this);
 	private IStore iStore = new IStore(this);
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
 
+	private boolean queriesEnabled = false;
 	private boolean initialised = false;
 
 	/**
@@ -93,18 +91,6 @@ public class CModel implements CAnnotatable {
 	public IStore getIStore() {
 
 		return iStore;
-	}
-
-	/**
-	 * parses a standard XML version of an instance-level frame.
-	 *
-	 * @param document Document containing XML rendering of frame
-	 * @param category Category of frame being parsed
-	 * @return Parsed frame
-	 */
-	public IFrame parseIFrame(XDocument document, IFrameCategory category) {
-
-		return new IFrameParserReasoning(this, category).parse(document);
 	}
 
 	/**
@@ -259,11 +245,6 @@ public class CModel implements CAnnotatable {
 	boolean initialised() {
 
 		return initialised;
-	}
-
-	CAccessor getAccessor() {
-
-		return accessor;
 	}
 
 	IEditor getIEditor() {

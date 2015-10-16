@@ -80,6 +80,11 @@ public class ISlot implements IEntity {
 			return false;
 		}
 
+		public boolean setAssertedValues(List<IValue> assertedValues) {
+
+			return values.update(assertedValues, true);
+		}
+
 		public boolean setFixedValues(List<IValue> fixedValues) {
 
 			return values.updateFixedValues(fixedValues);
