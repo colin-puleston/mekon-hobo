@@ -29,13 +29,13 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Utility for extracting IRIs for the concepts and properties
  * associated with entities in the node/link network representation
- * as provided by the {@link uk.ac.manchester.cs.mekon.mechanism.network}
+ * as provided by the {@link uk.ac.manchester.cs.mekon.network}
  * package.
  *
  * @author Colin Puleston

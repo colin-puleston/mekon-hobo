@@ -28,8 +28,8 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
-import uk.ac.manchester.cs.mekon.mechanism.network.process.*;
+import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.network.process.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 

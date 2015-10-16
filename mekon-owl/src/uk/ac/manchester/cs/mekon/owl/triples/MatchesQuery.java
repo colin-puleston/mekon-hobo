@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
-import uk.ac.manchester.cs.mekon.mechanism.network.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * @author Colin Puleston
