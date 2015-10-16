@@ -51,7 +51,7 @@ public class DManager {
 	 */
 	static public DBuilder createEmptyBuilder() {
 
-		return new DBootstrapperLocal().getBuilder();
+		return new DBootstrapperLocal().start().createBuilder();
 	}
 
 	/**

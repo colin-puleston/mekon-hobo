@@ -280,12 +280,10 @@ public class DModel {
 
 	DModel() {
 
-		CBootstrapperLocal cBooter = new CBootstrapperLocal(this);
+		cAccessor = new CBootstrapperLocal().start(this);
+		cModel = cAccessor.getModel();
 
-		cModel = cBooter.getModel();
-		cAccessor = cBooter.getAccessor();
-
-		initialiser = new DInitialiser(cBooter.getBuilder(), bindings);
+		initialiser = new DInitialiser(cAccessor.createBuilder(), bindings);
 	}
 
 	void initialise() {

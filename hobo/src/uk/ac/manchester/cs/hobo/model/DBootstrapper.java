@@ -27,9 +27,9 @@ package uk.ac.manchester.cs.hobo.model;
 import uk.ac.manchester.cs.hobo.mechanism.*;
 
 /**
- * Provides the HOBO mechanisms with a means of creating and
- * retrieving a {@link DModel} object together with an associated
- * {@link DBuilder} object.
+ * Provides the MEKON mechanisms, and those of any extensions of
+ * the MEKON framework, with a means of creating a {@link DModel}
+ * object, and retrieving the associated {@link DAccessor} object.
  * <p>
  * NOTE: This class is only intended for use by the HOBO mechanisms
  * and should not be accessed directly by the client code.
@@ -38,35 +38,19 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  */
 public class DBootstrapper {
 
-	private DModel model;
-	private DBuilder builder;
-
 	/**
 	 * Constructor.
 	 */
 	protected DBootstrapper() {
-
-		model = new DModel();
-		builder = new DBuilderImpl(model);
 	}
 
 	/**
-	 * Retrieves the created model object.
+	 * Creates an empty model.
 	 *
-	 * @return Created model object
+	 * @return Accessor for model
 	 */
-	protected DModel getModel() {
+	protected DAccessor start() {
 
-		return model;
-	}
-
-	/**
-	 * Retrieves the builder for the created model object.
-	 *
-	 * @return Builder for created model object
-	 */
-	protected DBuilder getBuilder() {
-
-		return builder;
+		return new DAccessorImpl();
 	}
 }

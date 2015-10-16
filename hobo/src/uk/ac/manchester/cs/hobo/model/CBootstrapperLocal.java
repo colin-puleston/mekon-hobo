@@ -32,23 +32,8 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 class CBootstrapperLocal extends CBootstrapper {
 
-	protected CModel getModel() {
+	CAccessor start(DModel dModel) {
 
-		return super.getModel();
-	}
-
-	protected CBuilder getBuilder() {
-
-		return super.getBuilder();
-	}
-
-	protected CAccessor getAccessor() {
-
-		return super.getAccessor();
-	}
-
-	CBootstrapperLocal(DModel dModel) {
-
-		super(new CCustomiserLocal(dModel));
+		return start(new CCustomiserLocal(dModel));
 	}
 }

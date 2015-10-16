@@ -31,8 +31,8 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 class DBootstrapperLocal extends DBootstrapper {
 
-	protected DBuilder getBuilder() {
+	protected DAccessor start() {
 
-		return super.getBuilder();
+		return super.start();
 	}
 }
