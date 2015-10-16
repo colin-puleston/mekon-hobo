@@ -65,7 +65,7 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 		private class Propagator extends ISlotUpdateListenerPropagator {
 
-			protected boolean isTargetSlot(ISlot slot) {
+			protected boolean targetSlot(ISlot slot) {
 
 				return true;
 			}
