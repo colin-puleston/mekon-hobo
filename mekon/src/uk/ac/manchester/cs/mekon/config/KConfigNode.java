@@ -27,7 +27,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * Represents a node in a MEKON configuration file (see

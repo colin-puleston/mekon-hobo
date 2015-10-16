@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
+package uk.ac.manchester.cs.mekon.serial;
 
 import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * @author Colin Puleston

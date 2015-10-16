@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.ac.manchester.cs.mekon.serial;
+package uk.ac.manchester.cs.mekon.xdoc;
 
 import java.io.*;
 

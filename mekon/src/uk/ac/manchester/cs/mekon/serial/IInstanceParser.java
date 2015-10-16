@@ -22,24 +22,54 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.serial;
 
-import java.util.*;
+import java.io.*;
 
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
+ * Parses an XML document representing a serialised instance.
+ *
  * @author Colin Puleston
  */
-abstract class IFrameParserLocal extends IFrameParser {
+public class IInstanceParser extends ISerialiser {
 
-	protected void setSlotValues(ISlot slot, List<IValue> values) {
+	private XNode rootNode;
+	private IFrameParser frameParser;
 
-		slot.getValues().update(values, true);
+	/**
+	 * Constructor that performs the parse operation.
+	 *
+	 * @param model Relevant model
+	 * @param iEditor Relevant instantiation-editor
+	 * @param instanceFile Serialisation file
+	 */
+	public IInstanceParser(File instanceFile, IFrameParser frameParser) {
+
+		rootNode = new XDocument(instanceFile).getRootNode();
+
+		this.frameParser = frameParser;
 	}
 
-	IFrameParserLocal(CModel model, IFrameCategory frameCategory) {
+	/**
+	 * Provides the frame representation of the instance.
+	 *
+	 * @return Frame representation of instance
+	 */
+	public IFrame parseInstance() {
 
-		super(model, frameCategory);
+		return frameParser.parse(rootNode);
+	}
+
+	/**
+	 * Provides the identity of the instance.
+	 *
+	 * @return Identity of instance
+	 */
+	public CIdentity parseIdentity() {
+
+		return parseIdentity(rootNode);
 	}
 }

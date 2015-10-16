@@ -28,8 +28,8 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.serial.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**

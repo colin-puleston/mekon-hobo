@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
  * @author Colin Puleston

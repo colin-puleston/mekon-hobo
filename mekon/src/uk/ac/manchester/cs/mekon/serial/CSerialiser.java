@@ -22,54 +22,15 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
-
-import java.io.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.serial.*;
+package uk.ac.manchester.cs.mekon.serial;
 
 /**
- * Parses an XML document representing a serialised instance.
- *
  * @author Colin Puleston
  */
-public class IInstanceParser extends ISerialiser {
+abstract class CSerialiser extends FSerialiser {
 
-	private XNode rootNode;
-	private IFrameParser frameParser;
+	static final String ANNOTATION_ID = "CAnnotation";
 
-	/**
-	 * Constructor that performs the parse operation.
-	 *
-	 * @param model Relevant model
-	 * @param iEditor Relevant instantiation-editor
-	 * @param instanceFile Serialisation file
-	 */
-	public IInstanceParser(File instanceFile, IFrameParser frameParser) {
-
-		rootNode = new XDocument(instanceFile).getRootNode();
-
-		this.frameParser = frameParser;
-	}
-
-	/**
-	 * Provides the frame representation of the instance.
-	 *
-	 * @return Frame representation of instance
-	 */
-	public IFrame parseInstance() {
-
-		return frameParser.parse(rootNode);
-	}
-
-	/**
-	 * Provides the identity of the instance.
-	 *
-	 * @return Identity of instance
-	 */
-	public CIdentity parseIdentity() {
-
-		return parseIdentity(rootNode);
-	}
+	static final String ANNOTATION_KEY_ATTR = "key";
+	static final String ANNOTATION_VALUE_ATTR =  "value";
 }

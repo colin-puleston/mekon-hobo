@@ -22,24 +22,38 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
-
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.serial.*;
+package uk.ac.manchester.cs.mekon.serial;
 
 /**
  * @author Colin Puleston
  */
-abstract class IFrameParserLocal extends IFrameParser {
+abstract class ISerialiser extends FSerialiser {
 
-	protected void setSlotValues(ISlot slot, List<IValue> values) {
+	static final String INSTANCE_ID = "Instance";
 
-		slot.getValues().update(values, true);
-	}
+	static final String ITREE_ID = "ITree";
+	static final String IGRAPH_ID = "IGraph";
 
-	IFrameParserLocal(CModel model, IFrameCategory frameCategory) {
+	static final String MFRAME_ID = "MFrame";
+	static final String CNUMBER_ID = "CNumber";
+	static final String CSLOT_ID = "CSlot";
+	static final String IFRAME_ID = "IFrame";
+	static final String INUMBER_ID = "INumber";
+	static final String ISLOT_ID = "ISlot";
+	static final String IVALUES_ID = "IValues";
 
-		super(model, frameCategory);
-	}
+	static final String MATCHES_ID = "Matches";
+	static final String MATCHES_RANK_ID = "Rank";
+	static final String MATCH_ID = "Match";
+
+	static final String IFRAME_REF_INDEX_ATTR = "refIndex";
+	static final String NUMBER_TYPE_ATTR = "numberType";
+	static final String NUMBER_MIN_ATTR = "min";
+	static final String NUMBER_MAX_ATTR = "max";
+	static final String NUMBER_VALUE_ATTR = "value";
+	static final String CARDINALITY_ATTR = "cardinality";
+	static final String EDITABILITY_ATTR = "editability";
+
+	static final String RANKED_ATTR = "ranked";
+	static final String RANK_VALUE_ATTR = "rankValue";
 }

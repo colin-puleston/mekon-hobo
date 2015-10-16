@@ -22,24 +22,37 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.xdoc;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.*;
 
 /**
+ * Exception thrown when some problem with the XML file is
+ * detected.
+ *
  * @author Colin Puleston
  */
-abstract class IFrameParserLocal extends IFrameParser {
+public class XDocumentException extends KRuntimeException {
 
-	protected void setSlotValues(ISlot slot, List<IValue> values) {
+	static private final long serialVersionUID = -1;
 
-		slot.getValues().update(values, true);
+	/**
+	 * Constructor.
+	 *
+	 * @param exception Wrapped exception
+	 */
+	public XDocumentException(Exception exception) {
+
+		this(exception.getMessage());
 	}
 
-	IFrameParserLocal(CModel model, IFrameCategory frameCategory) {
+	/**
+	 * Constructor.
+	 *
+	 * @param message Error message
+	 */
+	public XDocumentException(String message) {
 
-		super(model, frameCategory);
+		super("Error accessing XML document: " + message);
 	}
 }

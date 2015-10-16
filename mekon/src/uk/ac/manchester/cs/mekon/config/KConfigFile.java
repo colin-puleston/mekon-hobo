@@ -25,7 +25,7 @@ package uk.ac.manchester.cs.mekon.config;
 
 import java.io.*;
 
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * Represents a MEKON configuration file, which is an XML format

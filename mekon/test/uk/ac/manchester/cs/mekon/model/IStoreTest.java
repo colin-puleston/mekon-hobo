@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.*;
 
-import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.network.*;
 

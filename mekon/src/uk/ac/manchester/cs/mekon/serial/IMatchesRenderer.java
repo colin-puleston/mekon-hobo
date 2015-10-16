@@ -22,52 +22,54 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
-
-import java.io.*;
+package uk.ac.manchester.cs.mekon.serial;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renders an XML document to represent a serialised instance.
+ * Renders an XML document to represent the serialised contents
+ * of an {@link IMatches} object.
  *
  * @author Colin Puleston
  */
-public class IInstanceRenderer extends ISerialiser {
-
-	private File instanceFile;
-
-	private XDocument document = new XDocument(INSTANCE_ID);
+public class IMatchesRenderer extends ISerialiser {
 
 	/**
-	 * Constructor.
-	 *
-	 * @param instanceFile Serialisation file
 	 */
-	public IInstanceRenderer(File instanceFile) {
+	public XDocument render(IMatches matches) {
 
-		this.instanceFile = instanceFile;
+		XDocument document = new XDocument(MATCHES_ID);
+
+		renderMatches(matches, document.getRootNode());
+
+		return document;
 	}
 
 	/**
-	 * Renders the instance.
-	 *
-	 * @param identity Identity of instance
-	 * @param instance Frame representation of instance
 	 */
-	public void render(IFrame instance, CIdentity identity) {
+	public void render(IMatches matches, XNode parentNode) {
 
-		XNode rootNode = document.getRootNode();
-
-		renderInstance(instance, rootNode);
-		renderIdentity(identity, rootNode);
-
-		document.writeToFile(instanceFile);
+		renderMatches(matches, parentNode.addChild(MATCHES_ID));
 	}
 
-	private void renderInstance(IFrame instance, XNode rootNode) {
+	private void renderMatches(IMatches matches, XNode node) {
 
-		new IFrameRenderer().render(instance, rootNode);
+		node.addValue(RANKED_ATTR, matches.ranked());
+
+		for (IMatchesRank rank : matches.getRanks()) {
+
+			renderRank(rank, node.addChild(MATCHES_RANK_ID));
+		}
+	}
+
+	private void renderRank(IMatchesRank rank, XNode node) {
+
+		node.addValue(RANK_VALUE_ATTR, rank.getRankingValue());
+
+		for (CIdentity match : rank.getMatches()) {
+
+			renderIdentity(match, node.addChild(MATCH_ID));
+		}
 	}
 }
