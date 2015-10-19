@@ -125,22 +125,6 @@ public abstract class ORMatcher extends IMatcher {
 	}
 
 	/**
-	 * Processes the specified instance representation to ensure
-	 * ontology-compliance (see above), then adds it to the matcher
-	 * via the {@link #addToOWLStore} method, whose implementation
-	 * is provided by the derived class.
-	 *
-	 * @param instance Representation of instance to be added
-	 * @param identity Unique identity for instance
-	 */
-	public void add(NNode instance, CIdentity identity) {
-
-		ontologyEntityResolver.resolve(instance);
-
-		addToOWLStore(instance, instanceIRIs.assign(identity));
-	}
-
-	/**
 	 * Removes the specified instance from the matcher via the
 	 * {@link #removeFromOWLStore} method, whose specific
 	 * implementations are provided by the derived class.
@@ -153,6 +137,22 @@ public abstract class ORMatcher extends IMatcher {
 	}
 
 	/**
+	 * Processes the specified instance representation to ensure
+	 * ontology-compliance (see above), then adds it to the matcher
+	 * via the {@link #addToOWLStore} method, whose implementation
+	 * is provided by the derived class.
+	 *
+	 * @param instance Representation of instance to be added
+	 * @param identity Unique identity for instance
+	 */
+	public void addPreProcessed(NNode instance, CIdentity identity) {
+
+		ontologyEntityResolver.resolve(instance);
+
+		addToOWLStore(instance, instanceIRIs.assign(identity));
+	}
+
+	/**
 	 * Processes the specified query representation to ensure
 	 * ontology-compliance (see above), then performs the matching
 	 * operation via the {@link #matchInOWLStore} method, whose
@@ -161,7 +161,7 @@ public abstract class ORMatcher extends IMatcher {
 	 * @param query Representation of query
 	 * @return Unique identities of all matching instances
 	 */
-	public IMatches match(NNode query) {
+	public IMatches matchPreProcessed(NNode query) {
 
 		ontologyEntityResolver.resolve(query);
 
@@ -180,7 +180,7 @@ public abstract class ORMatcher extends IMatcher {
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	public boolean matches(NNode query, NNode instance) {
+	public boolean matchesPreProcessed(NNode query, NNode instance) {
 
 		ontologyEntityResolver.resolve(query);
 		ontologyEntityResolver.resolve(instance);
