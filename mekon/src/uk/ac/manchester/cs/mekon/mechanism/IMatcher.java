@@ -87,7 +87,23 @@ public abstract class IMatcher {
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
-		add(createNetwork(instance), identity);
+		addPreProcessed(createNetwork(instance), identity);
+	}
+
+	/**
+	 * Adds an instance to the matcher, after first running any
+	 * registered pre-processors over it. It can be assumed that the
+	 * instance is of an appropriate type (see {@link #handlesType}),
+	 * and that an instance with the specified identity is not already
+	 * present.
+	 *
+	 * @param instance Representation of instance to be added
+	 * @param identity Unique identity for instance
+	 */
+	public void add(NNode instance, CIdentity identity) {
+
+		preProcessNetwork(instance);
+		addPreProcessed(instance, identity);
 	}
 
 	/**
@@ -113,7 +129,7 @@ public abstract class IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return match(createNetwork(query));
+		return matchPreProcessed(createNetwork(query));
 	}
 
 	/**
@@ -129,44 +145,48 @@ public abstract class IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return matches(createNetwork(query), createNetwork(instance));
+		return matchesPreProcessed(createNetwork(query), createNetwork(instance));
 	}
 
 	/**
-	 * Adds an instance to the matcher. The supplied frame will
-	 * be of an appropriate frame-type (see {@link #handlesType}),
-	 * and will be of category {@link IFrameCategory#ASSERTION}.
-	 * It can be assumed that this method will only be invoked when
-	 * it is known that an instance with the specified identity is
-	 * not already present.
+	 * Adds an instance to the matcher. It can be assumed that the
+	 * instance is of an appropriate type (see {@link #handlesType}),
+	 * and that an instance with the specified identity is not already
+	 * present.
 	 *
 	 * @param instance Representation of instance to be added
 	 * @param identity Unique identity for instance
 	 */
-	public abstract void add(NNode instance, CIdentity identity);
+	public abstract void addPreProcessed(NNode instance, CIdentity identity);
 
 	/**
-	 * Finds all instances that are matched by the supplied query,
-	 * which will be of an appropriate type (see {@link #handlesType}).
+	 * Finds all instances that are matched by the supplied query.
+	 * It can be assumed that the query is of an appropriate type (see
+	 * {@link #handlesType}).
 	 *
 	 * @param query Representation of query
 	 * @return Results of query execution
 	 */
-	public abstract IMatches match(NNode query);
+	public abstract IMatches matchPreProcessed(NNode query);
 
 	/**
 	 * Tests whether the supplied instance is matched by the supplied
-	 * query, both of which will be of an appropriate type (see {@link
-	 * #handlesType}).
+	 * query. It can be assumed that both instance and query are of an
+	 * appropriate type (see {@link #handlesType}).
 	 *
 	 * @param query Representation of query
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	public abstract boolean matches(NNode query, NNode instance);
+	public abstract boolean matchesPreProcessed(NNode query, NNode instance);
 
-	private NNode createNetwork(IFrame frame) {
+	private NNode createNetwork(IFrame rootFrame) {
 
-		return networkManager.createNetwork(frame);
+		return networkManager.createNetwork(rootFrame);
+	}
+
+	private void preProcessNetwork(NNode rootNode) {
+
+		networkManager.preProcessNetwork(rootNode);
 	}
 }

@@ -89,7 +89,21 @@ public class IDirectMatcher extends IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void add(NNode instance, CIdentity identity) {
+	public void remove(CIdentity identity) {
+
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.checkRemove(identity)) {
+
+				break;
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addPreProcessed(NNode instance, CIdentity identity) {
 
 		CFrame rootFrameType = instance.getCFrame();
 		InstanceGroup group = instanceGroups.get(rootFrameType);
@@ -106,21 +120,7 @@ public class IDirectMatcher extends IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void remove(CIdentity identity) {
-
-		for (InstanceGroup group : instanceGroups.values()) {
-
-			if (group.checkRemove(identity)) {
-
-				break;
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public IMatches match(NNode query) {
+	public IMatches matchPreProcessed(NNode query) {
 
 		List<CIdentity> matches = new ArrayList<CIdentity>();
 
@@ -135,7 +135,7 @@ public class IDirectMatcher extends IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean matches(NNode query, NNode instance) {
+	public boolean matchesPreProcessed(NNode query, NNode instance) {
 
 		return query.subsumes(instance);
 	}

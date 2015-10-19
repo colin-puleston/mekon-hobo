@@ -55,26 +55,29 @@ public class NNetworkManager {
 	 * turn over the resulting network
 	 *
 	 * @param rootFrame Root-frame in the frame/slot network
-	 * @param rootNode Root-node of generated and (if relevant) pre-processed
-	 * node/link network
+	 * @param rootNode Root-node of generated and (if relevant)
+	 * pre-processed node/link network
 	 */
 	public NNode createNetwork(IFrame rootFrame) {
 
-		return preProcess(create(rootFrame));
+		NNode rootNode = new NetworkCreator(rootFrame).getRootNode();
+
+		preProcessNetwork(rootNode);
+
+		return rootNode;
 	}
 
-	private NNode preProcess(NNode node) {
+	/**
+	 * Runs any registered pre-processors over an existing node/link
+	 * network
+	 *
+	 * @param rootNode Root-node of network to be pre-processed
+	 */
+	public void preProcessNetwork(NNode rootNode) {
 
 		for (NNetworkProcessor p : preProcessors) {
 
-			p.process(node);
+			p.process(rootNode);
 		}
-
-		return node;
-	}
-
-	private NNode create(IFrame rootFrame) {
-
-		return new NetworkCreator(rootFrame).getRootNode();
 	}
 }

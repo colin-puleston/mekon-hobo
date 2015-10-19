@@ -44,18 +44,18 @@ class InertIMatcher extends IMatcher {
 		return false;
 	}
 
-	public void add(NNode instance, CIdentity identity) {
-	}
-
 	public void remove(CIdentity identity) {
 	}
 
-	public IMatches match(NNode query) {
+	public void addPreProcessed(NNode instance, CIdentity identity) {
+	}
+
+	public IMatches matchPreProcessed(NNode query) {
 
 		return IMatches.NO_MATCHES;
 	}
 
-	public boolean matches(NNode query, NNode instance) {
+	public boolean matchesPreProcessed(NNode query, NNode instance) {
 
 		return false;
 	}

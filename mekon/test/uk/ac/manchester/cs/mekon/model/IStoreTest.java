@@ -60,24 +60,24 @@ public class IStoreTest extends MekonTest {
 			return type == this.type;
 		}
 
-		public void add(NNode instance, CIdentity identity) {
-
-			assertTrue(instance.getIFrame().matches(this.instance));
-		}
-
 		public void remove(CIdentity identity) {
 
 			assertTrue(identity.equals(type.getIdentity()));
 		}
 
-		public IMatches match(NNode query) {
+		public void addPreProcessed(NNode instance, CIdentity identity) {
+
+			assertTrue(instance.getIFrame().matches(this.instance));
+		}
+
+		public IMatches matchPreProcessed(NNode query) {
 
 			assertTrue(query.getIFrame() == this.query);
 
 			return new IMatches(getInstanceIdentityAsList());
 		}
 
-		public boolean matches(NNode query, NNode instance) {
+		public boolean matchesPreProcessed(NNode query, NNode instance) {
 
 			assertTrue(query.getIFrame() == this.query);
 			assertTrue(instance.getIFrame() == this.instance);
