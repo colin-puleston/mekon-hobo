@@ -42,9 +42,9 @@ class CCustomiserLocal implements CCustomiser {
 			extension.addListener(this);
 		}
 
-		public void onInstantiated(IFrame instance) {
+		public void onInstantiated(IFrame instance, boolean freeInstance) {
 
-			dModel.ensureMappedDObject(instance);
+			dModel.ensureMappedDObject(instance, freeInstance);
 		}
 	}
 

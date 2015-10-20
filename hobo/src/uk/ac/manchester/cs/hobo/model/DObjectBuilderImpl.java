@@ -234,10 +234,20 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		this.frame = frame;
 	}
 
-	void completeBuild(DObject containerObj) {
+	void configureFields(DObject containerObj) {
 
-		configureFields(containerObj);
-		invokeInitialisers();
+		for (DField<?> field : fieldSlots.keySet()) {
+
+			field.setSlot(getFieldSlot(field).resolveSlot(containerObj));
+		}
+	}
+
+	void invokeInitialisers() {
+
+		for (DObjectInitialiser initialiser : initialisers) {
+
+			initialiser.initialise();
+		}
 	}
 
 	private <N extends Number>DCell<N> addNumberCell(
@@ -320,22 +330,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		fieldSlots.put(field, new FieldSlot(model, field));
 
 		return field;
-	}
-
-	private void configureFields(DObject containerObj) {
-
-		for (DField<?> field : fieldSlots.keySet()) {
-
-			field.setSlot(getFieldSlot(field).resolveSlot(containerObj));
-		}
-	}
-
-	private void invokeInitialisers() {
-
-		for (DObjectInitialiser initialiser : initialisers) {
-
-			initialiser.initialise();
-		}
 	}
 
 	private FieldSlot getFieldSlot(DField<?> field) {

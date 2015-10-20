@@ -319,11 +319,11 @@ public class DModel {
 		return cAccessor.getIEditor();
 	}
 
-	void ensureMappedDObject(IFrame frame) {
+	void ensureMappedDObject(IFrame frame, boolean freeInstance) {
 
 		if (getMappedObject(frame) == null) {
 
-			instantiate(DObject.class, frame);
+			instantiate(DObject.class, frame, freeInstance);
 		}
 	}
 
@@ -332,9 +332,16 @@ public class DModel {
 		return getIEditor().getSlotValuesEditor(slot);
 	}
 
-	private <D extends DObject>D instantiate(Class<D> dClass, IFrame frame) {
+	private <D extends DObject>D instantiate(
+									Class<D> dClass,
+									IFrame frame,
+									boolean freeInstance) {
 
-		D dObject = new DObjectInstantiator<D>(this, dClass).instantiate(frame);
+		DObjectInstantiator<D> instantiator = new DObjectInstantiator<D>(
+													this,
+													dClass,
+													freeInstance);
+		D dObject = instantiator.instantiate(frame);
 
 		cAccessor.setIFrameMappedObject(frame, dObject);
 

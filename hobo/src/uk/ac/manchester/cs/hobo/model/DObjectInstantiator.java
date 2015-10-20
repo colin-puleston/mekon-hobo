@@ -35,15 +35,17 @@ class DObjectInstantiator<D extends DObject> {
 
 	private DModel model;
 	private Class<D> dBaseClass;
+	private boolean freeInstance;
 
-	private InstantiableDClassFinder instantiableDClassFinder;
+	private InstantiableDClassFinder dClassFinder;
 
-	DObjectInstantiator(DModel model, Class<D> dBaseClass) {
+	DObjectInstantiator(DModel model, Class<D> dBaseClass, boolean freeInstance) {
 
 		this.model = model;
 		this.dBaseClass = dBaseClass;
+		this.freeInstance = freeInstance;
 
-		instantiableDClassFinder = new InstantiableDClassFinder(model, dBaseClass);
+		dClassFinder = new InstantiableDClassFinder(model, dBaseClass);
 	}
 
 	D instantiate(IFrame frame) {
@@ -53,7 +55,7 @@ class DObjectInstantiator<D extends DObject> {
 
 	private DObject instantiateDObject(IFrame frame) {
 
-		DBinding binding = instantiableDClassFinder.getOrNull(frame.getType());
+		DBinding binding = dClassFinder.getOrNull(frame.getType());
 
 		if (binding == null || binding.getDClass() == DObject.class) {
 
@@ -68,7 +70,12 @@ class DObjectInstantiator<D extends DObject> {
 		DObjectBuilderImpl builder = new DObjectBuilderImpl(model, frame);
 		DObject dObject = constructDObject(dClass, builder);
 
-		builder.completeBuild(dObject);
+		builder.configureFields(dObject);
+
+		if (!freeInstance) {
+
+			builder.invokeInitialisers();
+		}
 
 		return dObject;
 	}
