@@ -39,8 +39,16 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  * Abstract base-class for OWL-based implementations of the reasoning
  * mechanisms defined by {@link IMatcher}.
  * <p>
- * The network representation of instances and queries that are passed
- * in to the methods implemented on this class, are processed to
+ * The instance-level frames that are passed into the implemented
+ * methods, are converted into the intermediate network representation,
+ * which is what the abstract methods implemented by the derived classes
+ * operate on.
+ * <p>
+ * The matching process can be customised by adding one or more
+ * pre-processors to modify the networks that will be passed to the
+ * methods on the derived class (see {@link #addPreProcessor}).
+ * <p>
+ * After any required pre-processing the networks are then processed to
  * ensure "ontology-compliance". This ensures that they will only contain
  * entities for which equivalents exist in, or for which substitutions
  * can be made from, the relevant ontology. Hence, any nodes whose
@@ -52,7 +60,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  *
  * @author Colin Puleston
  */
-public abstract class ORMatcher extends IMatcher {
+public abstract class ORMatcher implements IMatcher {
 
 	/**
 	 * Test whether an appropriately-tagged child of the specified
@@ -114,7 +122,20 @@ public abstract class ORMatcher extends IMatcher {
 
 	private OConceptFinder concepts;
 	private OntologyEntityResolver ontologyEntityResolver;
+	private NNetworkManager networkManager = new NNetworkManager();
 	private OInstanceIRIs instanceIRIs = new OInstanceIRIs(false);
+
+	/**
+	 * Registers a pre-processor to perform certain required
+	 * modifications to appropriate representations of instances that
+	 * are about to be stored, or queries that are about to be matched.
+	 *
+	 * @param preProcessor Pre-processor for instances and queries
+	 */
+	public void addPreProcessor(NNetworkProcessor preProcessor) {
+
+		networkManager.addPreProcessor(preProcessor);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -125,9 +146,25 @@ public abstract class ORMatcher extends IMatcher {
 	}
 
 	/**
+	 * Converts the specified instance-level instance frame to the
+	 * network-based representation, runs any registered pre-processors
+	 * over the resulting network and then processes it to ensure
+	 * ontology-compliance (see above), then finally adds it to the
+	 * matcher via the {@link #addToOWLStore} method, whose
+	 * implementation is provided by the derived class.
+	 *
+	 * @param instance Instance to be added
+	 * @param identity Unique identity for instance
+	 */
+	public void add(IFrame instance, CIdentity identity) {
+
+		addToOWLStore(createNetwork(instance), instanceIRIs.assign(identity));
+	}
+
+	/**
 	 * Removes the specified instance from the matcher via the
-	 * {@link #removeFromOWLStore} method, whose specific
-	 * implementations are provided by the derived class.
+	 * {@link #removeFromOWLStore} method, whose implementation is
+	 * provided by the derived class.
 	 *
 	 * @param identity Unique identity of instance to be removed
 	 */
@@ -137,55 +174,38 @@ public abstract class ORMatcher extends IMatcher {
 	}
 
 	/**
-	 * Processes the specified instance representation to ensure
-	 * ontology-compliance (see above), then adds it to the matcher
-	 * via the {@link #addToOWLStore} method, whose implementation
-	 * is provided by the derived class.
+	 * Converts the specified instance-level query frame to the
+	 * network-based representation, runs any registered pre-processors
+	 * over the resulting network and then processes it to ensure
+	 * ontology-compliance (see above), then finally performs the
+	 * query-matching operation via the {@link #matchInOWLStore} method,
+	 * whose implementation is provided by the derived class.
 	 *
-	 * @param instance Representation of instance to be added
-	 * @param identity Unique identity for instance
-	 */
-	public void addPreProcessed(NNode instance, CIdentity identity) {
-
-		ontologyEntityResolver.resolve(instance);
-
-		addToOWLStore(instance, instanceIRIs.assign(identity));
-	}
-
-	/**
-	 * Processes the specified query representation to ensure
-	 * ontology-compliance (see above), then performs the matching
-	 * operation via the {@link #matchInOWLStore} method, whose
-	 * implementation is provided by the derived class.
-	 *
-	 * @param query Representation of query
+	 * @param query Query to be matched
 	 * @return Unique identities of all matching instances
 	 */
-	public IMatches matchPreProcessed(NNode query) {
+	public IMatches match(IFrame query) {
 
-		ontologyEntityResolver.resolve(query);
-
-		List<IRI> iris = matchInOWLStore(query);
+		List<IRI> iris = matchInOWLStore(createNetwork(query));
 
 		return new IMatches(instanceIRIs.toIdentities(iris));
 	}
 
 	/**
-	 * Processes the specified query and instance representations
-	 * to ensure ontology-compliance (see above), then performs the
-	 * single matching test via the {@link #matchesInOWL()} method,
-	 * whose implementation is provided by the derived class.
+	 * Converts the specified instance-level query and instance frames
+	 * to the network-based representation, runs any registered
+	 * pre-processors over the resulting networks and then processes
+	 * them to ensure ontology-compliance (see above), then finally
+	 * performs a single query-matching test via the {@link #matchesInOWL}
+	 * method, whose implementation is provided by the derived classes.
 	 *
-	 * @param query Representation of query
-	 * @param instance Representation of instance
-	 * @return True if instance matched by query
+	 * @param query Query to be matched
+	 * @param instance Instance to test for matching
+	 * @return True if query matched by query instance
 	 */
-	public boolean matchesPreProcessed(NNode query, NNode instance) {
+	public boolean matches(IFrame query, IFrame instance) {
 
-		ontologyEntityResolver.resolve(query);
-		ontologyEntityResolver.resolve(instance);
-
-		return matchesInOWL(query, instance);
+		return matchesInOWL(createNetwork(query), createNetwork(instance));
 	}
 
 	/**
@@ -314,5 +334,14 @@ public abstract class ORMatcher extends IMatcher {
 	void setReasoningType(ORReasoningType reasoningType) {
 
 		this.reasoningType = reasoningType;
+	}
+
+	private NNode createNetwork(IFrame rootFrame) {
+
+		NNode rootNode = networkManager.createNetwork(rootFrame);
+
+		ontologyEntityResolver.resolve(rootNode);
+
+		return rootNode;
 	}
 }

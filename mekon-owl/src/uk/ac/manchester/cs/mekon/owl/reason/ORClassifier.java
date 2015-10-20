@@ -40,9 +40,17 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  * mechanisms defined by {@link IReasoner}, based on classifications
  * involving either class-expressions or networks of individuals.
  * <p>
- * The network representation the instance to be classified that is
- * passed in to the methods {@link #classify} method, is processed to
- * ensure "ontology-compliance". This ensures that it will only contain
+ * The instance-level frames that are passed into the {@link #classify}
+ * method, are converted into the intermediate network representation,
+ * which is what the abstract methods implemented by the derived classes
+ * will operate on.
+ * <p>
+ * The classification process can be customised by adding one or more
+ * pre-processors to modify the networks that will be passed to the
+ * methods on the derived class (see {@link #addPreProcessor}).
+ * <p>
+ * After any required pre-processing the networks are then processed to
+ * ensure "ontology-compliance". This ensures that they will only contain
  * entities for which equivalents exist in, or for which substitutions
  * can be made from, the relevant ontology. Hence, any nodes whose
  * associated concepts do not have equivalents in the ontology, will
@@ -70,7 +78,9 @@ public class ORClassifier extends IClassifier {
 
 	private OModel model;
 	private ORSemantics semantics;
+
 	private OntologyEntityResolver ontologyEntityResolver;
+	private NNetworkManager networkManager = new NNetworkManager();
 
 	private IndividualsRenderer individualsRenderer;
 	private OInstanceIRIs individualRootIRIs = new OInstanceIRIs(true);
@@ -129,6 +139,19 @@ public class ORClassifier extends IClassifier {
 	}
 
 	/**
+	 * Registers a pre-processor to perform certain required
+	 * modifications to the network-based representations of instances
+	 * that are about to be classified.
+	 *
+	 * @param preProcessor Pre-processor for instances about to be
+	 * classified
+	 */
+	public void addPreProcessor(NNetworkProcessor preProcessor) {
+
+		networkManager.addPreProcessor(preProcessor);
+	}
+
+	/**
 	 * Provides the model over which the classifier is operating.
 	 *
 	 * @return Model over which classifier is operating
@@ -151,17 +174,36 @@ public class ORClassifier extends IClassifier {
 	}
 
 	/**
-	 * Processes the specified instance representation to ensure
-	 * ontology-compliance (see above), then performs the
-	 * classification operations via invocation of the OWL reasoner.
+	 * Converts the specified instance-level frame to the network-based
+	 * representation, runs any registered pre-processors over the
+	 * resulting network, then processes it to ensure ontology-compliance
+	 * (see above), then finally performs classification operation via
+	 * invocation of the OWL reasoner.
 	 *
-	 * @param frame Instance-level frame to classify
+	 * @param instance Instance to classify
 	 * @param ops Types of classification operations to be performed
 	 * @return Results of classification operations
 	 */
-	protected IClassification classify(NNode instance, IClassifierOps ops) {
+	protected IClassification classify(IFrame instance, IClassifierOps ops) {
 
-		ontologyEntityResolver.resolve(instance);
+		return classify(createNetwork(instance), ops);
+	}
+
+	void setForceIndividualBasedClassification(boolean value) {
+
+		forceIndividualBasedClassification = value;
+	}
+
+	private NNode createNetwork(IFrame rootFrame) {
+
+		NNode rootNode = networkManager.createNetwork(rootFrame);
+
+		ontologyEntityResolver.resolve(rootNode);
+
+		return rootNode;
+	}
+
+	private IClassification classify(NNode instance, IClassifierOps ops) {
 
 		InstanceConstruct construct = createInstanceConstruct(instance);
 		OWLObject owlConstruct = construct.getOWLConstruct();
@@ -186,11 +228,6 @@ public class ORClassifier extends IClassifier {
 		ORMonitor.pollForClassifierDone(model, owlConstruct);
 
 		return new IClassification(inferredIds, suggestedIds);
-	}
-
-	void setForceIndividualBasedClassification(boolean value) {
-
-		forceIndividualBasedClassification = value;
 	}
 
 	private List<CIdentity> getInferredTypes(
