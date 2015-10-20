@@ -126,9 +126,9 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		frame.completeInstantiation(true);
 	}
 
-	public IFrame copy(IFrame rootFrame) {
+	public IFrame copy(IFrame frame) {
 
-		return new Copier().copy(rootFrame);
+		return new Copier().copy(frame);
 	}
 
 	IFreeInstantiatorImpl(CModel model) {

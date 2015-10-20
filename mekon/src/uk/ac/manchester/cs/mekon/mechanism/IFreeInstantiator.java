@@ -46,5 +46,5 @@ public interface IFreeInstantiator {
 
 	public void completeInstantiation(IFrame frame);
 
-	public IFrame copy(IFrame rootFrame);
+	public IFrame copy(IFrame frame);
 }

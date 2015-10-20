@@ -42,7 +42,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class CModel implements CAnnotatable {
 
-	private CFrame rootFrame;
+	private CFrame rootFrame = new CRootFrame(this);
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
 
 	private CCustomiser customiser;
@@ -170,8 +170,6 @@ public class CModel implements CAnnotatable {
 	CModel(CCustomiser customiser) {
 
 		this.customiser = customiser;
-
-		rootFrame = new CRootFrame(this);
 	}
 
 	void addInitialisationListener(InitialisationListener listener) {
