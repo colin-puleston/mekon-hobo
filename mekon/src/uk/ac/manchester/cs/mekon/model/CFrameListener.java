@@ -40,10 +40,10 @@ public interface CFrameListener {
 	public void onExtended(CFrame extension);
 
 	/**
-	 * Method invoked after an instantiation of the frame has been
-	 * created.
+	 * Method invoked after the frame has been instantiated.
 	 *
-	 * @param instance Created instantiation
+	 * @param instance Instantiation of frame
+	 * @param freeInstance True if free-instantiation
 	 */
-	public void onInstantiated(IFrame instance);
+	public void onInstantiated(IFrame instance, boolean freeInstance);
 }

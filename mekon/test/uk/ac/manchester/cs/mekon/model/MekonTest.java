@@ -44,7 +44,10 @@ public class MekonTest extends FramesTestUtils {
 
 		private boolean firstInsert = true;
 
-		public Set<IUpdateOp> updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+		public Set<IUpdateOp> updateFrame(
+								IEditor iEditor,
+								IFrame frame,
+								Set<IUpdateOp> ops) {
 
 			ISlots slots = frame.getSlots();
 

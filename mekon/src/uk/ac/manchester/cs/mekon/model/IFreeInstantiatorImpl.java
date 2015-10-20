@@ -46,27 +46,89 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 
 	private CFrame rootFrame;
 
-	public IFrame instantiate(CFrame type, IFrameCategory category) {
+	private class SlotAdder extends CValueVisitor {
+
+		private IFrame container;
+		private CIdentity slotTypeId;
+		private CValue<?> valueType;
+
+		private ISlot slot = null;
+
+		protected void visit(CFrame value) {
+
+			slot = addIFrameSlot(container, slotTypeId);
+		}
+
+		protected void visit(CNumber value) {
+
+			slot = addINumberSlot(container, slotTypeId, value.getNumberType());
+		}
+
+		protected void visit(MFrame value) {
+
+			slot = addCFrameSlot(container, slotTypeId);
+		}
+
+		SlotAdder(IFrame container, CSlot slotType) {
+
+			this.container = container;
+
+			slotTypeId = slotType.getIdentity();
+			valueType = slotType.getValueType();
+		}
+
+		ISlot add() {
+
+			visit(valueType);
+
+			return slot;
+		}
+	}
+
+	private class Copier extends IFrameCopierAbstract {
+
+		ISlot addSlot(IFrame container, CSlot slotType) {
+
+			return new SlotAdder(container, slotType).add();
+		}
+
+		boolean freeInstance() {
+
+			return true;
+		}
+	}
+
+	public IFrame startInstantiation(CFrame type, IFrameCategory category) {
 
 		return new IFrame(type, category);
 	}
 
-	public ISlot addIFrameSlot(IFrame frame, CIdentity slotTypeId) {
+	public ISlot addIFrameSlot(IFrame container, CIdentity slotTypeId) {
 
-		return addSlot(frame, slotTypeId, rootFrame);
+		return addSlot(container, slotTypeId, rootFrame);
 	}
 
-	public ISlot addCFrameSlot(IFrame frame, CIdentity slotTypeId) {
+	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId) {
 
-		return addSlot(frame, slotTypeId, rootFrame.getType());
+		return addSlot(container, slotTypeId, rootFrame.getType());
 	}
 
 	public ISlot addINumberSlot(
-					IFrame frame,
+					IFrame container,
 					CIdentity slotTypeId,
 					Class<? extends Number> numberType) {
 
-		return addSlot(frame, slotTypeId, getNumberValueType(numberType));
+		return addSlot(container, slotTypeId, getNumberValueType(numberType));
+	}
+
+	public void completeInstantiation(IFrame frame) {
+
+		frame.completeInstantiation(true);
+	}
+
+	public IFrame copy(IFrame rootFrame) {
+
+		return new Copier().copy(rootFrame);
 	}
 
 	IFreeInstantiatorImpl(CModel model) {
@@ -74,14 +136,14 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		rootFrame = model.getRootFrame();
 	}
 
-	private ISlot addSlot(IFrame frame, CIdentity id, CValue<?> valueType) {
+	private ISlot addSlot(IFrame container, CIdentity id, CValue<?> valueType) {
 
-		return frame.addSlot(createSlotType(frame.getType(), id, valueType));
+		return container.addSlot(createSlotType(container.getType(), id, valueType));
 	}
 
-	private CSlot createSlotType(CFrame frameType, CIdentity id, CValue<?> valueType) {
+	private CSlot createSlotType(CFrame containerType, CIdentity id, CValue<?> valueType) {
 
-		return new CSlot(frameType, id, CCardinality.REPEATABLE_TYPES, valueType);
+		return new CSlot(containerType, id, CCardinality.REPEATABLE_TYPES, valueType);
 	}
 
 	private CNumber getNumberValueType(Class<? extends Number> numberType) {

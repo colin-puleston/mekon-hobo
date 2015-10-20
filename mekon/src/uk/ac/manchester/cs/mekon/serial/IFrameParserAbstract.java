@@ -32,9 +32,11 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
+ * XXX
+ *
  * @author Colin Puleston
  */
-abstract class IFrameParserAbstract extends ISerialiser {
+public abstract class IFrameParserAbstract extends ISerialiser {
 
 	static private Set<Class<? extends Number>> numberTypes
 						= new HashSet<Class<? extends Number>>();
@@ -53,7 +55,7 @@ abstract class IFrameParserAbstract extends ISerialiser {
 
 	private class AccessorRetriever extends CBootstrapper {
 
-		private CAccessor get() {
+		CAccessor get() {
 
 			return access(model);
 		}
@@ -273,12 +275,12 @@ abstract class IFrameParserAbstract extends ISerialiser {
 
 		IFrame parse() {
 
-			IFrame frame = parseIFrame(getTopLevelFrameNode());
+			IFrame rootFrame = parseIFrame(getTopLevelFrameNode());
 
 			addSlotValues();
-			checkUpdateFramesOnParseCompletion(frames);
+			onParseCompletion(rootFrame, frames);
 
-			return frame;
+			return rootFrame;
 		}
 
 		private IFrame parseIFrame(XNode node) {
@@ -489,22 +491,28 @@ abstract class IFrameParserAbstract extends ISerialiser {
 		}
 	}
 
+	/**
+	 * XXX
+	 */
+	public IFrame parse(XDocument document) {
+
+		return parseFromContainerNode(document.getRootNode());
+	}
+
+	/**
+	 * XXX
+	 */
+	public IFrame parse(XNode parentNode) {
+
+		return parseFromContainerNode(getContainerNode(parentNode));
+	}
+
 	IFrameParserAbstract(CModel model, IFrameCategory frameCategory) {
 
 		this.model = model;
  		this.frameCategory = frameCategory;
 
 		accessor = new AccessorRetriever().get();
-	}
-
-	IFrame parseToIFrame(XDocument document) {
-
-		return parseFromContainerNode(document.getRootNode());
-	}
-
-	IFrame parseToIFrame(XNode parentNode) {
-
-		return parseFromContainerNode(getContainerNode(parentNode));
 	}
 
 	CAccessor getAccessor() {
@@ -525,7 +533,7 @@ abstract class IFrameParserAbstract extends ISerialiser {
 
 	abstract void checkUpdateFrameSlotSets(List<IFrame> frames);
 
-	abstract void checkUpdateFramesOnParseCompletion(List<IFrame> frames);
+	abstract void onParseCompletion(IFrame rootFrame, List<IFrame> frames);
 
 	private IFrame parseFromContainerNode(XNode containerNode) {
 

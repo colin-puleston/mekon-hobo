@@ -518,7 +518,7 @@ public abstract class CFrame
 		IFrame instance = new IFrame(this, category);
 
 		initialiseInstance(instance);
-		pollListenersForInstantiated(instance);
+		instance.completeInstantiation(false);
 
 		return instance;
 	}
@@ -593,11 +593,11 @@ public abstract class CFrame
 		return testSubsumer.equals(testSubsumed);
 	}
 
-	void pollListenersForInstantiated(IFrame instance) {
+	void pollListenersForInstantiated(IFrame instance, boolean freeInstance) {
 
 		for (CFrameListener listener : copyListeners()) {
 
-			listener.onInstantiated(instance);
+			listener.onInstantiated(instance, freeInstance);
 		}
 	}
 

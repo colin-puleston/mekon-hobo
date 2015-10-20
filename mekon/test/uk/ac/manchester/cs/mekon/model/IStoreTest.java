@@ -33,7 +33,6 @@ import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * @author Colin Puleston
@@ -48,7 +47,7 @@ public class IStoreTest extends MekonTest {
 	private IFrame first = null;
 	private IFrame second = null;
 
-	private class TestMatcher extends IMatcher {
+	private class TestMatcher implements IMatcher {
 
 		final IFrame instance;
 		final IFrame query;
@@ -60,27 +59,27 @@ public class IStoreTest extends MekonTest {
 			return type == this.type;
 		}
 
+		public void add(IFrame instance, CIdentity identity) {
+
+			assertTrue(instance.matches(this.instance));
+		}
+
 		public void remove(CIdentity identity) {
 
 			assertTrue(identity.equals(type.getIdentity()));
 		}
 
-		public void addPreProcessed(NNode instance, CIdentity identity) {
+		public IMatches match(IFrame query) {
 
-			assertTrue(instance.getIFrame().matches(this.instance));
-		}
-
-		public IMatches matchPreProcessed(NNode query) {
-
-			assertTrue(query.getIFrame() == this.query);
+			assertTrue(query.matches(this.query));
 
 			return new IMatches(getInstanceIdentityAsList());
 		}
 
-		public boolean matchesPreProcessed(NNode query, NNode instance) {
+		public boolean matches(IFrame query, IFrame instance) {
 
-			assertTrue(query.getIFrame() == this.query);
-			assertTrue(instance.getIFrame() == this.instance);
+			assertTrue(query.matches(this.query));
+			assertTrue(instance.matches(this.instance));
 
 			return true;
 		}

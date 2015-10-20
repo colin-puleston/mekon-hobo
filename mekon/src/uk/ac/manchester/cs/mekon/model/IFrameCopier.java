@@ -24,100 +24,33 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import java.util.*;
-
 /**
  * @author Colin Puleston
  */
-class IFrameCopier {
+class IFrameCopier extends IFrameCopierAbstract {
 
-	private Map<IFrame, IFrame> copies = new HashMap<IFrame, IFrame>();
-	private ValueCopiesSupplier valueCopies = new ValueCopiesSupplier();
+	void initialiseCopy(IFrame template, IFrame copy) {
 
-	private class ValueCopiesSupplier extends IValueVisitor {
+		copy.setAutoUpdateEnabled(false);
 
-		private IValue copyValue = null;
+		super.initialiseCopy(template, copy);
+		copyInferredTypes(template, copy);
 
-		protected void visit(IFrame value) {
-
-			copyValue = getFrameCopy(value);
-		}
-
-		protected void visit(INumber value) {
-
-			copyValue = value;
-		}
-
-		protected void visit(CFrame value) {
-
-			copyValue = value;
-		}
-
-		IValue getCopy(IValue template) {
-
-			visit(template);
-
-			return copyValue;
-		}
+		copy.setAutoUpdateEnabled(true);
 	}
 
-	IFrame copy(IFrame template) {
+	ISlot addSlot(IFrame container, CSlot slotType) {
 
-		CFrame type = template.getType();
-		IFrame copy = new IFrame(type, template.getCategory());
+		return container.addSlot(slotType);
+	}
 
-		copies.put(template, copy);
+	boolean freeInstance() {
 
-		initialiseCopy(template, copy);
-		type.pollListenersForInstantiated(copy);
-
-		return copy;
+		return false;
 	}
 
 	private void copyInferredTypes(IFrame template, IFrame copy) {
 
 		template.updateInferredTypes(copy.getInferredTypes().asList());
-	}
-
-	private void copySlots(IFrame template, IFrame copy) {
-
-		for (ISlot templateSlot : template.getSlots().asList()) {
-
-			ISlot copySlot = createEmptySlotCopy(copy, templateSlot);
-
-			copySlotValues(templateSlot, copySlot);
-		}
-	}
-
-	private void copySlotValues(ISlot templateSlot, ISlot copySlot) {
-
-		ISlotValues copyValues = copySlot.getValues();
-
-		for (IValue value : templateSlot.getValues().asList()) {
-
-			copyValues.add(valueCopies.getCopy(value), true);
-		}
-	}
-
-	private void initialiseCopy(IFrame template, IFrame copy) {
-
-		copy.setAutoUpdateEnabled(false);
-
-		copyInferredTypes(template, copy);
-		copySlots(template, copy);
-
-		copy.setAutoUpdateEnabled(true);
-	}
-
-	private ISlot createEmptySlotCopy(IFrame container, ISlot template) {
-
-		return container.addSlot(template.getType());
-	}
-
-	private IFrame getFrameCopy(IFrame template) {
-
-		IFrame copy = copies.get(template);
-
-		return copy != null ? copy : copy(template);
 	}
 }

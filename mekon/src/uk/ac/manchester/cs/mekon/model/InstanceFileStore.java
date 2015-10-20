@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.io.*;
 
-import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 
 /**
@@ -89,7 +88,7 @@ class InstanceFileStore {
 
 	IFrame read(int index) {
 
-		return createParser(getFile(index)).parseInstance();
+		return createParser(getFile(index), false).parseInstance();
 	}
 
 	void remove(int index) {
@@ -99,10 +98,10 @@ class InstanceFileStore {
 
 	private void load(InstanceLoader loader, File file) {
 
-		IInstanceToNNetworkParser parser = createToNetworkParser(file);
+		IInstanceParser parser = createParser(file, true);
 
 		CIdentity id = parser.parseIdentity();
-		NNode instance = parser.parseInstance();
+		IFrame instance = parser.parseInstance();
 
 		loader.load(instance, id, extractIndex(file));
 	}
@@ -132,13 +131,12 @@ class InstanceFileStore {
 		return Integer.parseInt(name.substring(start, end));
 	}
 
-	private IInstanceParser createParser(File file) {
+	private IInstanceParser createParser(File file, boolean freeInstance) {
 
-		return new IInstanceParser(model, file);
-	}
+		IInstanceParser parser = new IInstanceParser(model, file);
 
-	private IInstanceToNNetworkParser createToNetworkParser(File file) {
+		parser.setFreeInstance(freeInstance);
 
-		return new IInstanceToNNetworkParser(model, file);
+		return parser;
 	}
 }

@@ -27,15 +27,19 @@ package uk.ac.manchester.cs.mekon.serial;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Parses an XML document representing a serialised instance. XXX
+ * Parses an XML document representing a serialised instance.
  *
  * @author Colin Puleston
  */
-public class IInstanceParser extends IInstanceParserAbstract {
+public class IInstanceParser extends ISerialiser {
 
-	private IFrameParser frameParser;
+	private CModel model;
+
+	private XNode rootNode;
+	private boolean freeInstance = false;
 
 	/**
 	 * Constructor that performs the parse operation.
@@ -46,9 +50,27 @@ public class IInstanceParser extends IInstanceParserAbstract {
 	 */
 	public IInstanceParser(CModel model, File instanceFile) {
 
-		super(instanceFile);
+		this.model = model;
 
-		frameParser = new IFrameParser(model, IFrameCategory.ASSERTION);
+		rootNode = new XDocument(instanceFile).getRootNode();
+	}
+
+	/**
+	 * XXX
+	 */
+	public void setFreeInstance(boolean value) {
+
+		freeInstance = value;
+	}
+
+	/**
+	 * Provides the identity of the instance.
+	 *
+	 * @return Identity of instance
+	 */
+	public CIdentity parseIdentity() {
+
+		return parseIdentity(rootNode);
 	}
 
 	/**
@@ -58,6 +80,16 @@ public class IInstanceParser extends IInstanceParserAbstract {
 	 */
 	public IFrame parseInstance() {
 
-		return frameParser.parse(getRootNode());
+		return createFrameParser().parse(rootNode);
+	}
+
+	private IFrameParserAbstract createFrameParser() {
+
+		if (freeInstance) {
+
+			return new IFrameFreeParser(model);
+		}
+
+		return new IFrameParser(model, IFrameCategory.ASSERTION);
 	}
 }

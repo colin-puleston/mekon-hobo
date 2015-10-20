@@ -28,37 +28,24 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.network.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class IFrameToNNodeParser extends IFrameParserAbstract {
+class IFrameFreeParser extends IFrameParserAbstract {
 
 	private IFreeInstantiator freeInstantiator;
-	private NNetworkManager networkManager = new NNetworkManager();
 
-	IFrameToNNodeParser(CModel model) {
+	IFrameFreeParser(CModel model) {
 
 		super(model, IFrameCategory.ASSERTION);
 
 		freeInstantiator = getAccessor().getFreeInstantiator();
 	}
 
-	NNode parse(XDocument document) {
-
-		return toNetwork(parseToIFrame(document));
-	}
-
-	NNode parse(XNode parentNode) {
-
-		return toNetwork(parseToIFrame(parentNode));
-	}
-
 	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
 
-		return freeInstantiator.instantiate(type, category);
+		return freeInstantiator.startInstantiation(type, category);
 	}
 
 	ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
@@ -82,11 +69,8 @@ class IFrameToNNodeParser extends IFrameParserAbstract {
 	void checkUpdateFrameSlotSets(List<IFrame> frames) {
 	}
 
-	void checkUpdateFramesOnParseCompletion(List<IFrame> frames) {
-	}
+	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
 
-	private NNode toNetwork(IFrame rootFrame) {
-
-		return networkManager.createNetwork(rootFrame);
+		freeInstantiator.completeInstantiation(rootFrame);
 	}
 }

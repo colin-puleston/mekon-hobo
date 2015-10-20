@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Provides an implementation of the reasoning mechanisms defined
@@ -38,7 +37,7 @@ import uk.ac.manchester.cs.mekon.network.*;
  *
  * @author Colin Puleston
  */
-public class IDirectMatcher extends IMatcher {
+public class IDirectMatcher implements IMatcher {
 
 	private Map<CFrame, InstanceGroup> instanceGroups
 					= new HashMap<CFrame, InstanceGroup>();
@@ -46,14 +45,14 @@ public class IDirectMatcher extends IMatcher {
 	private class InstanceGroup {
 
 		private CFrame rootFrameType;
-		private Map<CIdentity, NNode> instances = new HashMap<CIdentity, NNode>();
+		private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
 
 		InstanceGroup(CFrame rootFrameType) {
 
 			this.rootFrameType = rootFrameType;
 		}
 
-		void add(NNode instance, CIdentity identity) {
+		void add(IFrame instance, CIdentity identity) {
 
 			instances.put(identity, instance);
 		}
@@ -63,9 +62,9 @@ public class IDirectMatcher extends IMatcher {
 			return instances.remove(identity) != null;
 		}
 
-		void collectMatches(NNode query, List<CIdentity> matches) {
+		void collectMatches(IFrame query, List<CIdentity> matches) {
 
-			if (query.getCFrame().subsumes(rootFrameType)) {
+			if (query.getType().subsumes(rootFrameType)) {
 
 				for (CIdentity identity : instances.keySet()) {
 
@@ -89,23 +88,9 @@ public class IDirectMatcher extends IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void remove(CIdentity identity) {
+	public void add(IFrame instance, CIdentity identity) {
 
-		for (InstanceGroup group : instanceGroups.values()) {
-
-			if (group.checkRemove(identity)) {
-
-				break;
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addPreProcessed(NNode instance, CIdentity identity) {
-
-		CFrame rootFrameType = instance.getCFrame();
+		CFrame rootFrameType = instance.getType();
 		InstanceGroup group = instanceGroups.get(rootFrameType);
 
 		if (group == null) {
@@ -120,7 +105,21 @@ public class IDirectMatcher extends IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public IMatches matchPreProcessed(NNode query) {
+	public void remove(CIdentity identity) {
+
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.checkRemove(identity)) {
+
+				break;
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IMatches match(IFrame query) {
 
 		List<CIdentity> matches = new ArrayList<CIdentity>();
 
@@ -135,7 +134,7 @@ public class IDirectMatcher extends IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean matchesPreProcessed(NNode query, NNode instance) {
+	public boolean matches(IFrame query, IFrame instance) {
 
 		return query.subsumes(instance);
 	}

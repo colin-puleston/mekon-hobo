@@ -24,12 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.network.*;
-
 /**
  * @author Colin Puleston
  */
 abstract class InstanceLoader {
 
-	abstract void load(NNode instance, CIdentity identity, int index);
+	abstract void load(IFrame instance, CIdentity identity, int index);
 }

@@ -33,14 +33,18 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public interface IFreeInstantiator {
 
-	public IFrame instantiate(CFrame type, IFrameCategory category);
+	public IFrame startInstantiation(CFrame type, IFrameCategory category);
 
-	public ISlot addIFrameSlot(IFrame frame, CIdentity slotTypeId);
+	public ISlot addIFrameSlot(IFrame container, CIdentity slotTypeId);
 
-	public ISlot addCFrameSlot(IFrame frame, CIdentity slotTypeId);
+	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId);
 
 	public ISlot addINumberSlot(
-					IFrame frame,
+					IFrame container,
 					CIdentity slotTypeId,
-					Class<? extends Number> numberType);;
+					Class<? extends Number> numberType);
+
+	public void completeInstantiation(IFrame frame);
+
+	public IFrame copy(IFrame rootFrame);
 }

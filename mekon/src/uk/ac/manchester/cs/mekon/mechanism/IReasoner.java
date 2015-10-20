@@ -29,10 +29,9 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Provides mechanisms for initialising the sets of slots
- * for specific instance-level frames, and for dynamically
- * updating those sets based on the current states of the
- * frames.
+ * Provides mechanisms for initialising the sets of slots for
+ * specific instance-level frames, and for dynamically updating
+ * those sets based on the current states of the frames.
  * <p>
  * Updates to the slot-sets can be of the following types:
  * <ul>

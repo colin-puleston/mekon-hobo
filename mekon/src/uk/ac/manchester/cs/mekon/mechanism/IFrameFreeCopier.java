@@ -22,47 +22,40 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.serial;
-
-import java.io.*;
+package uk.ac.manchester.cs.mekon.mechanism;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Parses an XML document representing a serialised instance.
- * XXX
+ * XXX.
  *
  * @author Colin Puleston
  */
-public class IInstanceParserAbstract extends ISerialiser {
+public class IFrameFreeCopier {
 
-	private XNode rootNode;
+	private IFreeInstantiator instantiator;
 
-	/**
-	 * Constructor that performs the parse operation.
-	 *
-	 * @param model Relevant model
-	 * @param iEditor Relevant instantiation-editor
-	 * @param instanceFile Serialisation file
-	 */
-	public IInstanceParserAbstract(File instanceFile) {
+	private class InstantiatorRetriever extends CBootstrapper {
 
-		rootNode = new XDocument(instanceFile).getRootNode();
+		IFreeInstantiator get(CModel model) {
+
+			return access(model).getFreeInstantiator();
+		}
 	}
 
 	/**
-	 * Provides the identity of the instance.
-	 *
-	 * @return Identity of instance
+	 * XXX
 	 */
-	public CIdentity parseIdentity() {
+	public IFrameFreeCopier(CModel model) {
 
-		return parseIdentity(rootNode);
+		instantiator = new InstantiatorRetriever().get(model);
 	}
 
-	XNode getRootNode() {
+	/**
+	 * XXX
+	 */
+	public IFrame copy(IFrame rootFrame) {
 
-		return rootNode;
+		return instantiator.copy(rootFrame);
 	}
 }

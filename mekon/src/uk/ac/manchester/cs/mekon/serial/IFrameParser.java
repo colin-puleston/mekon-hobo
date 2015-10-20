@@ -28,7 +28,6 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * XXX
@@ -42,20 +41,6 @@ public class IFrameParser extends IFrameParserAbstract {
 	public IFrameParser(CModel model, IFrameCategory frameCategory) {
 
 		super(model, frameCategory);
-	}
-
-	/**
-	 */
-	public IFrame parse(XDocument document) {
-
-		return parseToIFrame(document);
-	}
-
-	/**
-	 */
-	public IFrame parse(XNode parentNode) {
-
-		return parseToIFrame(parentNode);
 	}
 
 	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
@@ -97,7 +82,7 @@ public class IFrameParser extends IFrameParserAbstract {
 		setAutoUpdateEnabled(frames, false);
 	}
 
-	void checkUpdateFramesOnParseCompletion(List<IFrame> frames) {
+	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
 
 		setAutoUpdateEnabled(frames, true);
 	}

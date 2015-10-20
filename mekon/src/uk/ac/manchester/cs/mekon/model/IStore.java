@@ -30,7 +30,6 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -47,7 +46,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 public class IStore {
 
 	private InstanceFileStore fileStore;
-
+	private IFreeInstantiator freeInstantiator;
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
@@ -63,7 +62,7 @@ public class IStore {
 
 	private class FileStoreInstanceLoader extends InstanceLoader {
 
-		void load(NNode instance, CIdentity identity, int index) {
+		void load(IFrame instance, CIdentity identity, int index) {
 
 			identities.add(identity);
 			indexes.assignIndex(identity, index);
@@ -84,6 +83,8 @@ public class IStore {
 	 * category {@link IFrameCategory#ASSERTION}
 	 */
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
+
+		instance = copyFree(instance);
 
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
@@ -162,6 +163,8 @@ public class IStore {
 	 */
 	public synchronized IMatches match(IFrame query) {
 
+		query = copyFree(query);
+
 		return getMatcher(query).match(query);
 	}
 
@@ -174,6 +177,9 @@ public class IStore {
 	 * @return True if instance matched by query
 	 */
 	public synchronized boolean matches(IFrame query, IFrame instance) {
+
+		query = copyFree(query);
+		instance = copyFree(instance);
 
 		IMatcher matcher = getMatcher(query);
 
@@ -188,6 +194,7 @@ public class IStore {
 	IStore(CModel model) {
 
 		fileStore = new InstanceFileStore(model);
+		freeInstantiator = new IFreeInstantiatorImpl(model);
 	}
 
 	void setStoreDirectory(File storeDirectory) {
@@ -232,31 +239,26 @@ public class IStore {
 		getMatcher(instance).add(instance, identity);
 	}
 
-	private void checkAddToMatcher(NNode instance, CIdentity identity) {
-
-		getMatcher(instance.getCFrame()).add(instance, identity);
-	}
-
 	private void checkRemoveFromMatcher(IFrame instance, CIdentity identity) {
 
 		getMatcher(instance).remove(identity);
 	}
 
-	private IMatcher getMatcher(IFrame iFrame) {
-
-		return getMatcher(iFrame.getType());
-	}
-
-	private IMatcher getMatcher(CFrame type) {
+	private IMatcher getMatcher(IFrame frame) {
 
 		for (IMatcher matcher : matchers) {
 
-			if (matcher.handlesType(type)) {
+			if (matcher.handlesType(frame.getType())) {
 
 				return matcher;
 			}
 		}
 
 		return InertIMatcher.get();
+	}
+
+	private IFrame copyFree(IFrame rootFrame) {
+
+		return freeInstantiator.copy(rootFrame);
 	}
 }

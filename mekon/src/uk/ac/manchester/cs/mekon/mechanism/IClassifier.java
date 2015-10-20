@@ -27,28 +27,16 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Provides classification-based versions of the reasoning mechanisms
  * defined by {@link IReasoner}. This is an abstract class that leaves
  * the implementatation of the actual classification mechanisms to the
  * derived class.
- * <p>
- * The instance-level frames that are passed into the top-level
- * classification method, are converted into the intermediate network
- * representations that the abstract methods implemented by the derived
- * classes operate on.
- * <p>
- * The classification process can be customised by adding one or more
- * pre-processors to modify the networks that will be passed to the
- * methods on the derived class (see {@link #addPreProcessor}) .
  *
  * @author Colin Puleston
  */
 public abstract class IClassifier extends DefaultIReasoner {
-
-	private NNetworkManager networkManager = new NNetworkManager();
 
 	private class Updater {
 
@@ -77,16 +65,16 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 		Set<IUpdateOp> update() {
 
-			IClassification classification = classify(frame, classifierOps);
+			IClassification results = classify(copyFree(frame), classifierOps);
 
 			if (classifierOps.inferreds()) {
 
-				updateForInferreds(toCFrames(classification.getInferredTypes()));
+				updateForInferreds(toCFrames(results.getInferredTypes()));
 			}
 
 			if (classifierOps.suggesteds()) {
 
-				updateForSuggesteds(toCFrames(classification.getSuggestedTypes()));
+				updateForSuggesteds(toCFrames(results.getSuggestedTypes()));
 			}
 
 			return enactedUpdateOps;
@@ -159,60 +147,40 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 		private List<CFrame> toCFrames(List<CIdentity> ids) {
 
-			return getCModel().getFrames().getForIdentities(ids);
+			return getModel().getFrames().getForIdentities(ids);
 		}
 
-		private CModel getCModel() {
+		private CModel getModel() {
 
 			return frame.getType().getModel();
 		}
 	}
 
 	/**
-	 * Registers a pre-processor to perform certain required
-	 * modifications to appropriate representations of instances that
-	 * are about to be classified.
-	 *
-	 * @param preProcessor Pre-processor for instances about to be
-	 * classified
-	 */
-	public void addPreProcessor(NNetworkProcessor preProcessor) {
-
-		networkManager.addPreProcessor(preProcessor);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
-	public Set<IUpdateOp> updateFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops) {
+	public Set<IUpdateOp> updateFrame(
+							IEditor iEditor,
+							IFrame frame,
+							Set<IUpdateOp> ops) {
 
 		return new Updater(iEditor, frame, ops).update();
 	}
 
 	/**
-	 * Handles the required classification by first converting
-	 * the frame-based instance representation into the network-based
-	 * version, then running any registered pre-processors over the
-	 * resulting network, then finally invoking the
-	 * {@link #classify(NNode, IClassifierOps)} method to perform the
-	 * actual classification..
+	 * Abstract method whose implementations will perform the actual
+	 * classification over the relevant knowledge sources.
 	 *
 	 * @param instance Instance to classify
 	 * @param ops Types of classification operations to be performed
 	 * @return Results of classification operations
 	 */
-	protected IClassification classify(IFrame instance, IClassifierOps ops) {
+	protected abstract IClassification classify(IFrame instance, IClassifierOps ops);
 
-		return classify(networkManager.createNetwork(instance), ops);
+	private IFrame copyFree(IFrame rootFrame) {
+
+		CModel model = rootFrame.getType().getModel();
+
+		return new IFrameFreeCopier(model).copy(rootFrame);
 	}
-
-	/**
-	 * Method whose implementations will classify the specified
-	 * network representation of an instance.
-	 *
-	 * @param instance Instance to classify
-	 * @param ops Types of classification operations to be performed
-	 * @return Results of classification operations
-	 */
-	protected abstract IClassification classify(NNode instance, IClassifierOps ops);
 }

@@ -134,11 +134,6 @@ class CBuilderConfig implements CBuilderConfigVocab {
 		return rootNode.getConfigFile().getFile().getParent();
 	}
 
-	private KConfigResourceFinder getOWLFileFinder(File baseDir) {
-
-		return new KConfigResourceFinder(baseDir, false);
-	}
-
 	private CSectionBuilder createSectionBuilder(KConfigNode sectionNode) {
 
 		Class<? extends CSectionBuilder> type = getSectionBuilderClass(sectionNode);
