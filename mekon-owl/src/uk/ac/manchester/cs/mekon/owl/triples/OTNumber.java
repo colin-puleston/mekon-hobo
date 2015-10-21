@@ -34,7 +34,7 @@ public class OTNumber extends OTValue {
 	/**
 	 * Constructor.
 	 *
-	 * @param Number value
+	 * @param number Number value
 	 */
 	public OTNumber(Number number) {
 

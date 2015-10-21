@@ -55,6 +55,8 @@ public abstract class OMonitor {
 
 	/**
 	 * Stops monitoring with the specified version of the monitor.
+	 *
+	 * @param monitor Relevant version of monitor
 	 */
 	static public void stop(OMonitor monitor) {
 

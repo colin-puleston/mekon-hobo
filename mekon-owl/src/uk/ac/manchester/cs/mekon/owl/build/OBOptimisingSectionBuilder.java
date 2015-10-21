@@ -129,11 +129,18 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 	}
 
 	/**
-	 * @inheritDoc
+	 * Builds or updates the model-section from the set of OWL
+	 * ontologies via the standard sanctioning mechanism, in a manner
+	 * that optimises both the initial classification and all
+	 * subsequent reasoning (see {@link OBOptimisingSectionBuilder}).
+	 *
+	 * @param builder Builder for use in building/updating
+	 * model-section
 	 */
 	public void build(CBuilder builder) {
 
 		payloadsBuilder.build(builder);
+
 		super.build(builder);
 	}
 

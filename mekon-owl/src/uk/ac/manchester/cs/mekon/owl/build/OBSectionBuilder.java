@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
@@ -34,8 +35,8 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * Responsible for building a section of the Frames Model (FM)
- * derived from a set of OWL ontologies loaded via a standard
- * "sanctioning" mechanism.
+ * derived from a set of OWL ontologies via a standard "sanctioning"
+ * mechanism.
  * <p>
  * The section-builder has an associated {@link OModel} over which
  * the sanctioning will operate, and optionally a {@link IReasoner}
@@ -248,7 +249,11 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
-	 * @inheritDoc
+	 * Builds or updates the model-section from the set of OWL
+	 * ontologies via the standard sanctioning mechanism.
+	 *
+	 * @param builder Builder for use in building/updating
+	 * model-section
 	 */
 	public void build(CBuilder builder) {
 

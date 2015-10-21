@@ -103,6 +103,7 @@ public class ORSemantics {
 	 *
 	 * @param propertyIRI URI of property for which semantics are
 	 * required
+	 * @return Relevant open/closed-world semantics
 	 */
 	public ORSemanticWorld getWorld(IRI propertyIRI) {
 

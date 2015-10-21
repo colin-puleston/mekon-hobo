@@ -34,7 +34,7 @@ public class OT_URI extends OTValue {
 	/**
 	 * Constructor.
 	 *
-	 * @param String representation of URI value
+	 * @param uri String representation of URI value
 	 */
 	public OT_URI(String uri) {
 

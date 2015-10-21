@@ -43,6 +43,10 @@ public class OBEntityLabels {
 	private OAnnotationReader annotationReader;
 
 	/**
+	 * Adds an annotation-property that will provide entity
+	 * labels.
+	 *
+	 * @param annotationPropIRI IRI of relevant annotation-property
 	 */
 	public void addAnnotationProperty(IRI annotationPropIRI) {
 
@@ -50,6 +54,10 @@ public class OBEntityLabels {
 	}
 
 	/**
+	 * Adds a set of annotation-properties that will provide entity
+	 * labels.
+	 *
+	 * @param annotationPropIRIs IRIs of relevant annotation-properties
 	 */
 	public void addAnnotationProperties(List<IRI> annotationPropIRIs) {
 

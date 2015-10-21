@@ -165,6 +165,7 @@ public class OModel {
 	 * and subsequent initialisation of cached-data are to be invoked on
 	 * copy (otherwise {@link #startReasoner} method should be invoked
 	 * prior to use)
+	 * @return Created model
 	 */
 	public OModel copy(
 					OWLReasonerFactory reasonerFactory,
@@ -437,6 +438,7 @@ public class OModel {
 	 * Retrieves the inferred equivalent-classes of the specified expression.
 	 *
 	 * @param expression Expression whose equivalent-classes are required
+	 * @return Inferred equivalent-classes
 	 */
 	public Set<OWLClass> getInferredEquivalents(OWLClassExpression expression) {
 

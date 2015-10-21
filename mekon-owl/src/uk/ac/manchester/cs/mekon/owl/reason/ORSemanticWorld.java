@@ -50,7 +50,7 @@ public enum ORSemanticWorld {
 	/**
 	 * Specifies whether this value equals {@link #OPEN}.
 	 *
-	 * return true if open-world value
+	 * @return true if open-world value
 	 */
 	public boolean open() {
 
@@ -60,7 +60,7 @@ public enum ORSemanticWorld {
 	/**
 	 * Specifies whether this value equals {@link #CLOSED}.
 	 *
-	 * return true if closed-world value
+	 * @return true if closed-world value
 	 */
 	public boolean closed() {
 

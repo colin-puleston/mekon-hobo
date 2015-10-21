@@ -113,7 +113,7 @@ public class OInstanceIRIs {
 	/**
 	 * Assigns a unique IRI to an instance.
 	 *
-	 * @param instance Identity of instance for which IRI is required
+	 * @param identity Identity of instance for which IRI is required
 	 * @return Assigned IRI
 	 */
 	public IRI assign(CIdentity identity) {
@@ -125,7 +125,8 @@ public class OInstanceIRIs {
 	 * Frees up a unique IRI that was previously assigned to a specific
 	 * instance.
 	 *
-	 * @element Identity of instance for which IRI is no longer required
+	 * @param identity Identity of instance for which IRI is no longer
+	 * required
 	 * @return Freed IRI
 	 */
 	public IRI free(CIdentity identity) {
