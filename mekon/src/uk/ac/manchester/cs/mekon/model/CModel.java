@@ -141,6 +141,7 @@ public class CModel implements CAnnotatable {
 	 * Creates instantiation of a frame, setting the
 	 * frame-category of the instantiation as specified.
 	 *
+	 * @param identity Identity of frame to be instantiated
 	 * @param category Required frame-category
 	 * @return Instantiation of specified frame, with required
 	 * frame-category

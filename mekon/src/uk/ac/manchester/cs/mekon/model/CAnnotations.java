@@ -128,6 +128,7 @@ public class CAnnotations {
 	 * Retrieves exactly one annotation-value for the specified key,
 	 * casting it to the specified type.
 	 *
+	 * @param <T> Generic version of valueType
 	 * @param key Key for which annotation-value is required
 	 * @param valueType Type to which value should be cast
 	 * @return Relevant annotation-value
@@ -157,6 +158,7 @@ public class CAnnotations {
 	 * Retrieves one or zero annotation-values for the specified key,
 	 * casting any retrieved value to the specified type.
 	 *
+	 * @param <T> Generic version of valueType
 	 * @param key Key for which annotation-value is required
 	 * @param valueType Type to which value should be cast
 	 * @return Relevant annotation-value, or null if none
@@ -186,6 +188,7 @@ public class CAnnotations {
 	 * Retrieves all annotation-values for the specified key, casting
 	 * each retrieved value to the specified type.
 	 *
+	 * @param <T> Generic version of valueType
 	 * @param key Key for which annotation-values are required
 	 * @param valueType Type to which values should be cast
 	 * @return Relevant set of annotation-values

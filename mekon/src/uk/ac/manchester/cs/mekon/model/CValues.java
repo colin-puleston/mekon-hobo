@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * Utility class that takes a {@link Collection} of {@link CValue}
  * objects of a specific known type and produces either a {@link List}

@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -114,6 +115,7 @@ public class CSlotValues {
 	 * Provides the set of fixed values for the specified slot, with
 	 * the returned set being cast to a known type.
 	 *
+	 * @param <V> Generic version of valueClass
 	 * @param slotId Identity of slot for which values are required
 	 * @param valueClass Known class of values
 	 * @return Relevant set of values

@@ -66,7 +66,7 @@ public class KConfigNode {
 	 *
 	 * @param id Identifier for required child-node
 	 * @return Required child-node
-	 * @throws KConfigFileException if child-node cannot be found,
+	 * @throws XDocumentException if child-node cannot be found,
 	 * or if multiple child-nodes with specified identifier
 	 */
 	public KConfigNode getChild(String id) {
@@ -80,7 +80,7 @@ public class KConfigNode {
 	 *
 	 * @param id Identifier for required child-node
 	 * @return Required child-node, or null if it cannot be found
-	 * @throws KConfigFileException if multiple child-nodes with
+	 * @throws XDocumentException if multiple child-nodes with
 	 * specified identifier
 	 */
 	public KConfigNode getChildOrNull(String id) {
@@ -114,7 +114,7 @@ public class KConfigNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Attribute value
-	 * @throws KConfigFileException if no value for attribute
+	 * @throws XDocumentException if no value for attribute
 	 */
 	public String getString(String id) {
 
@@ -139,7 +139,7 @@ public class KConfigNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Relevant boolean value
-	 * @throws KConfigFileException if no value for attribute,
+	 * @throws XDocumentException if no value for attribute,
 	 * or if value does not represent a valid boolean
 	 */
 	public Boolean getBoolean(String id) {
@@ -154,7 +154,7 @@ public class KConfigNode {
 	 * @param id Identifier of relevant attribute
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant boolean value
-	 * @throws KConfigFileException if value does not represent a
+	 * @throws XDocumentException if value does not represent a
 	 * valid boolean
 	 */
 	public Boolean getBoolean(String id, boolean defaultValue) {
@@ -168,7 +168,7 @@ public class KConfigNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Relevant integer value
-	 * @throws KConfigFileException if no value for attribute,
+	 * @throws XDocumentException if no value for attribute,
 	 * or if value does not represent a valid integer
 	 */
 	public int getInteger(String id) {
@@ -183,7 +183,7 @@ public class KConfigNode {
 	 * @param id Identifier of relevant attribute
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant integer value
-	 * @throws KConfigFileException if value does not represent a
+	 * @throws XDocumentException if value does not represent a
 	 * valid integer
 	 */
 	public int getInteger(String id, int defaultValue) {
@@ -197,7 +197,7 @@ public class KConfigNode {
 	 *
 	 * @param id Identifier of relevant attribute
 	 * @return Relevant <code>URI</code> object
-	 * @throws KConfigFileException if no value for attribute,
+	 * @throws XDocumentException if no value for attribute,
 	 * or if value does not represent a valid URI
 	 */
 	public URI getURI(String id) {
@@ -212,7 +212,7 @@ public class KConfigNode {
 	 * @param id Identifier of relevant attribute
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant <code>URI</code> object
-	 * @throws KConfigFileException if value does not represent a
+	 * @throws XDocumentException if value does not represent a
 	 * valid URI
 	 */
 	public URI getURI(String id, URI defaultValue) {
@@ -224,10 +224,11 @@ public class KConfigNode {
 	 * Provides a <code>Enum</code> object of the specified type,
 	 * derived from the value of the specified attribute.
 	 *
+	 * @param <E> Generic version of type
 	 * @param id Identifier of relevant attribute
 	 * @param type Type of <code>Enum</code> to create
 	 * @return Relevant <code>Enum</code> object
-	 * @throws KConfigFileException if no value for attribute,
+	 * @throws XDocumentException if no value for attribute,
 	 * or if value does not represent a valid <code>Enum</code>
 	 * value of the required type
 	 */
@@ -240,11 +241,12 @@ public class KConfigNode {
 	 * Provides a <code>Enum</code> object of the specified type,
 	 * derived from the value of the specified attribute.
 	 *
+	 * @param <E> Generic version of type
 	 * @param id Identifier of relevant attribute
 	 * @param type Type of <code>Enum</code> to create
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant <code>Enum</code> object
-	 * @throws KConfigFileException if value does not represent a
+	 * @throws XDocumentException if value does not represent a
 	 * valid Enum value of the required type
 	 */
 	public <E extends Enum<E>>E getEnum(
@@ -259,10 +261,11 @@ public class KConfigNode {
 	 * Provides a <code>Class</code> object of the specified type,
 	 * derived from the value of the specified attribute.
 	 *
+	 * @param <T> Generic version of type
 	 * @param id Identifier of relevant attribute
 	 * @param type Type of <code>Class</code> to create
 	 * @return Relevant <code>Class</code> object
-	 * @throws KConfigFileException if no value for attribute, or
+	 * @throws XDocumentException if no value for attribute, or
 	 * if value does not represent a valid class-name for a class
 	 * of the specified type on the class-path
 	 */
@@ -275,11 +278,12 @@ public class KConfigNode {
 	 * Provides a <code>Class</code> object of the specified type,
 	 * derived from the value of the specified attribute.
 	 *
+	 * @param <T> Generic version of type
 	 * @param id Identifier of relevant attribute
 	 * @param type Type of <code>Class</code> to create
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant <code>Class</code> object
-	 * @throws KConfigFileException if value does not represent a
+	 * @throws XDocumentException if value does not represent a
 	 * valid class-name for a class of the specified type on the
 	 * class-path
 	 */
@@ -301,7 +305,7 @@ public class KConfigNode {
 	 * @param id Identifier of relevant attribute
 	 * @param finder Finder for locating required resource
 	 * @return Relevant <code>File</code> object
-	 * @throws KConfigFileException if no value for specified,
+	 * @throws XDocumentException if no value for specified,
 	 * if value does not represent a valid resource-path, or if a
 	 * resource of the required type does not exist at the
 	 * specified location
@@ -321,7 +325,7 @@ public class KConfigNode {
 	 * @param defaultValue Value to return if no value for attribute
 	 * @return Relevant <code>File</code> object, or null if no
 	 * value for specified attribute
-	 * @throws KConfigFileException if value does not represent a
+	 * @throws XDocumentException if value does not represent a
 	 * valid resource-path, or if a resource of the required type
 	 * does not exist at the specified location
 	 */

@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * Enables the editing of the current set of values for a specific
  * instance-level model-slot.

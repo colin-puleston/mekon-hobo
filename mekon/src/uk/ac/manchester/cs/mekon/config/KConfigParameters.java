@@ -72,6 +72,7 @@ public class KConfigParameters {
 	/**
 	 * Adds a parameter.
 	 *
+	 * @param <P> Generic version of type
 	 * @param type Expected-type of parameter
 	 * @param value Value of parameter
 	 */

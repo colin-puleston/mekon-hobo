@@ -30,6 +30,8 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
+ * Renderer for the standard XML serialisation of a {@link CFrame}.
+ *
  * @author Colin Puleston
  */
 public class CFrameHierarchyRenderer extends CSerialiser {
@@ -38,6 +40,10 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 	private Set<Object> annotationKeys = new HashSet<Object>();
 
 	/**
+	 * Sets the filter that determines by visibility-status which
+	 * frames will be included in the hierarchy.
+	 *
+	 * @param visibilityFilter Visibility-filter to set
 	 */
 	public void setVisibilityFilter(CVisibility visibilityFilter) {
 
@@ -45,6 +51,7 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 	}
 
 	/**
+	 * Sets rendering of all annotations on frames being rendered.
 	 */
 	public void setRenderAllAnnotations() {
 
@@ -52,6 +59,10 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 	}
 
 	/**
+	 * Sets rendering of specified annotation on frames being
+	 * rendered.
+	 *
+	 * @param key Key for annotations to be rendered
 	 */
 	public void setRenderAnnotations(Object key) {
 
@@ -62,21 +73,31 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 	}
 
 	/**
+	 * Renders the hierarchy under the specified root-frame to
+	 * produce an XML document.
+	 *
+	 * @param rootFrame Root-frame of hierarchy to render
+	 * @return Rendered document
 	 */
-	public XDocument render(CFrame frame) {
+	public XDocument render(CFrame rootFrame) {
 
 		XDocument document = new XDocument(CFRAME_ID);
 
-		renderDetails(frame, document.getRootNode());
+		renderDetails(rootFrame, document.getRootNode());
 
 		return document;
 	}
 
 	/**
+	 * Renders the hierarchy under the specified root-frame to
+	 * the specified parent-node.
+	 *
+	 * @param rootFrame Root-frame of hierarchy to render
+	 * @param parentNode Parent-node for rendering
 	 */
-	public void render(CFrame frame, XNode parentNode) {
+	public void render(CFrame rootFrame, XNode parentNode) {
 
-		renderDetails(frame, parentNode.addChild(CFRAME_ID));
+		renderDetails(rootFrame, parentNode.addChild(CFRAME_ID));
 	}
 
 	private void renderDetails(CFrame frame, XNode node) {

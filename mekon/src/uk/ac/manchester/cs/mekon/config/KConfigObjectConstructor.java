@@ -53,6 +53,7 @@ public class KConfigObjectConstructor<T> {
 	 *
 	 * @param parameters Parameters to be passed to object constructor
 	 * (possibly none)
+	 * @return Constructed object
 	 * @throws KSystemConfigException if required object cannot be constructed
 	 * for any reason
 	 */
@@ -66,6 +67,7 @@ public class KConfigObjectConstructor<T> {
 	 *
 	 * @param parameters Parameters plus parameter-types to be passed to
 	 * object constructor
+	 * @return Constructed object
 	 * @throws KSystemConfigException if required object cannot be constructed
 	 * for any reason
 	 */

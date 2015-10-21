@@ -40,6 +40,7 @@ public class CNumberDef {
 	 *
 	 * @param min Minimnum value for number-type
 	 * @param max Maximnum value for number-type
+	 * @return Created definition
 	 * @throws KModelException if minimnum value is greater than
 	 * maximnum value, or if minimnum and maximnum values have
 	 * incompatible number-types
@@ -54,6 +55,7 @@ public class CNumberDef {
 	 * value.
 	 *
 	 * @param min Minimnum value for number-type
+	 * @return Created definition
 	 */
 	static public CNumberDef min(INumber min) {
 
@@ -65,6 +67,7 @@ public class CNumberDef {
 	 * value.
 	 *
 	 * @param max Maximnum value for number-type
+	 * @return Created definition
 	 */
 	static public CNumberDef max(INumber max) {
 

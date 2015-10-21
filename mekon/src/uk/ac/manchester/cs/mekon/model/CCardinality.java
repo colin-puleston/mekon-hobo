@@ -94,6 +94,7 @@ public enum CCardinality {
 	 * the other specified cardinality (Note that the ordering of
 	 * the cardinalities progresses from more to less restrictive).
 	 *
+	 * @param other Other cardinality to test against
 	 * @return True if this is the more restrctive of the two
 	 */
 	public boolean moreRestrictiveThan(CCardinality other) {
@@ -106,6 +107,7 @@ public enum CCardinality {
 	 * the other specified cardinality (Note that the ordering of
 	 * the cardinalities progresses from more to less restrictive).
 	 *
+	 * @param other Other cardinality to test against
 	 * @return True if this is the less restrctive of the two
 	 */
 	public boolean lessRestrictiveThan(CCardinality other) {
@@ -117,6 +119,7 @@ public enum CCardinality {
 	 * Provides the more restrictive cardinality between this
 	 * and the other specified cardinality.
 	 *
+	 * @param other Other cardinality to test against
 	 * @return True if this is the more restrctive of the two
 	 * @see #moreRestrictiveThan
 	 */
@@ -129,6 +132,7 @@ public enum CCardinality {
 	 * Provides the less restrictive cardinality between this
 	 * and the other specified cardinality.
 	 *
+	 * @param other Other cardinality to test against
 	 * @return True if this is the less restrctive of the two
 	 * @see #lessRestrictiveThan
 	 */

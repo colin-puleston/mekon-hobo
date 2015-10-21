@@ -30,13 +30,18 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
- * XXX
+ * Parser for the standard XML serialisation of {@link IFrame}
+ * objects that produces a default instantiation of the frame.
  *
  * @author Colin Puleston
  */
 public class IFrameParser extends IFrameParserAbstract {
 
 	/**
+	 * Constructor
+	 *
+	 * @param model Relevant model
+	 * @param frameCategory Category of frames to be parsed
 	 */
 	public IFrameParser(CModel model, IFrameCategory frameCategory) {
 

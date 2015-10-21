@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**

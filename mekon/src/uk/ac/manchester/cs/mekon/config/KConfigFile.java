@@ -52,9 +52,10 @@ public class KConfigFile {
 	 * the standard MEKON configuration file-name, located somewhere
 	 * on the classpath.
 	 *
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	public KConfigFile() {
 
@@ -66,9 +67,10 @@ public class KConfigFile {
 	 * the specified file-name, located somewhere on the classpath.
 	 *
 	 * @param fileName Name of relevant configuration file
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	public KConfigFile(String fileName) {
 
@@ -79,9 +81,10 @@ public class KConfigFile {
 	 * Constructs object for accessing a configuration file.
 	 *
 	 * @param file Path of relevant configuration file
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	public KConfigFile(File file) {
 

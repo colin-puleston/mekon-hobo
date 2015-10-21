@@ -39,7 +39,7 @@ public abstract class ISlotValuesListenerPropagator
 	/**
 	 * Constructor.
 	 *
-	 * listener Listener to be propagated
+	 * @param listener Listener to be propagated
 	 */
 	protected ISlotValuesListenerPropagator(KValuesListener<IValue> listener) {
 

@@ -28,14 +28,19 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renders an XML document to represent the serialised contents
- * of an {@link IMatches} object.
+ * Renderer for the standard XML serialisation of a
+ * {@link IMatches} object.
  *
  * @author Colin Puleston
  */
 public class IMatchesRenderer extends ISerialiser {
 
 	/**
+	 * Renders the specified matches-object to produce an XML
+	 * document.
+	 *
+	 * @param matches Matches-object to render
+	 * @return Rendered document
 	 */
 	public XDocument render(IMatches matches) {
 
@@ -47,6 +52,11 @@ public class IMatchesRenderer extends ISerialiser {
 	}
 
 	/**
+	 * Renders the specified matches-object to the specified
+	 * parent-node.
+	 *
+	 * @param matches Matches-object to render
+	 * @param parentNode Parent-node for rendering
 	 */
 	public void render(IMatches matches, XNode parentNode) {
 

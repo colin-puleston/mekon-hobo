@@ -64,6 +64,7 @@ public class KConfigClassLoader {
 	/**
 	 * Loads the relevant class and casts it the specified type.
 	 *
+	 * @param <T> Generic version of type
 	 * @param type Type to which class is to be cast
 	 * @return Loaded and cast class
 	 * @throws KSystemConfigException if class cannot be found

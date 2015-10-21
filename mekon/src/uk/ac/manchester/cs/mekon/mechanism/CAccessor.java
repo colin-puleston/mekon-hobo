@@ -27,8 +27,12 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Provides privileged access to the MEKON model for extensions
- * of the MEKON framework.
+ * Provides privileged access to the MEKON model for the MEKON
+ * mechanisms, and any extensions of the MEKON framework.
+ * <p>
+ * NOTE: This class is only intended for use by the MEKON and
+ * MEKON-extension mechanisms and should not be accessed directly
+ * by the client code.
  *
  * @author Colin Puleston
  */

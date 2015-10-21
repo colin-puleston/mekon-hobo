@@ -35,11 +35,11 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * Represents an instance-store associated with a MEKON Frames
  * Model (FM). Both instances and queries are represented via
- * instance-level frames. The frames representing instances must
- * be of category {@link IFrameCategory#ASSERTION} rather than
- * {@link IFrameCategory#QUERY}, whereas those representing
- * queries can be either, since assertion frames can also be
- * interpreted as queries.
+ * instance-level frames. The frames representing instances must be
+ * of category {@link IFrameCategory#ASSERTION} rather than
+ * {@link IFrameCategory#QUERY}, whereas those representing queries
+ * can be either, since assertion frames can also be interpreted as
+ * queries.
  *
  * @author Colin Puleston
  */
@@ -72,19 +72,19 @@ public class IStore {
 	}
 
 	/**
-	 * Adds an instance to the store, possibly replacing an
-	 * existing instance with the same identity.
+	 * Adds an instance to the store, possibly replacing an existing
+	 * instance with the same identity.
 	 *
 	 * @param instance Representation of instance to be stored
 	 * @param identity Unique identity for instance
-	 * @return Existing instance that was replaced, or null if
-	 * not applicable
-	 * @throws KAccessException if instance frame is not of
-	 * category {@link IFrameCategory#ASSERTION}
+	 * @return Existing instance that was replaced, or null if not
+	 * applicable
+	 * @throws KAccessException if instance frame is not of category
+	 * {@link IFrameCategory#ASSERTION}
 	 */
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
-		instance = copyFree(instance);
+		instance = deriveFreeInstantiation(instance);
 
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
@@ -163,7 +163,7 @@ public class IStore {
 	 */
 	public synchronized IMatches match(IFrame query) {
 
-		query = copyFree(query);
+		query = deriveFreeInstantiation(query);
 
 		return getMatcher(query).match(query);
 	}
@@ -178,8 +178,8 @@ public class IStore {
 	 */
 	public synchronized boolean matches(IFrame query, IFrame instance) {
 
-		query = copyFree(query);
-		instance = copyFree(instance);
+		query = deriveFreeInstantiation(query);
+		instance = deriveFreeInstantiation(instance);
 
 		IMatcher matcher = getMatcher(query);
 
@@ -257,8 +257,8 @@ public class IStore {
 		return InertIMatcher.get();
 	}
 
-	private IFrame copyFree(IFrame rootFrame) {
+	private IFrame deriveFreeInstantiation(IFrame instance) {
 
-		return freeInstantiator.copy(rootFrame);
+		return freeInstantiator.deriveInstantiation(instance);
 	}
 }

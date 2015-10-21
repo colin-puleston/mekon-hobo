@@ -42,6 +42,7 @@ public class CLongDef extends CNumberDef {
 	 *
 	 * @param min Minimnum value for long-type
 	 * @param max Maximnum value for long-type
+	 * @return Created definition
 	 */
 	static public CLongDef range(Long min, Long max) {
 
@@ -53,6 +54,7 @@ public class CLongDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param min Minimnum value for long-type
+	 * @return Created definition
 	 */
 	static public CLongDef min(Long min) {
 
@@ -64,6 +66,7 @@ public class CLongDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param max Maximnum value for long-type
+	 * @return Created definition
 	 */
 	static public CLongDef max(Long max) {
 
@@ -75,6 +78,7 @@ public class CLongDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param exact Exact value for long-type
+	 * @return Created definition
 	 */
 	static public CLongDef exact(Long exact) {
 

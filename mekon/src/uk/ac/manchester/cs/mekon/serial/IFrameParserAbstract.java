@@ -32,7 +32,8 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * XXX
+ * Abstract base-class for parsers for the standard XML
+ * serialisation of {@link IFrame} objects.
  *
  * @author Colin Puleston
  */
@@ -492,7 +493,11 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 	}
 
 	/**
-	 * XXX
+	 * Parses serialised frame from top-level element of specified
+	 * document.
+	 *
+	 * @param document Document containing serialised frame
+	 * @return Generated frame
 	 */
 	public IFrame parse(XDocument document) {
 
@@ -500,7 +505,12 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 	}
 
 	/**
-	 * XXX
+	 * Parses serialised frame from relevant child of specified
+	 * parent. This will be a node with either a "ITree" or "IGraph"
+	 * tag, depending on the format in which the frame is serialised.
+	 *
+	 * @param parentNode Parent of relevant node
+	 * @return Generated frame
 	 */
 	public IFrame parse(XNode parentNode) {
 

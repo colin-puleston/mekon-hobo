@@ -43,7 +43,7 @@ public interface CFrameListener {
 	 * Method invoked after the frame has been instantiated.
 	 *
 	 * @param instance Instantiation of frame
-	 * @param freeInstance True if free-instantiation
+	 * @param freeInstance True if free-instance
 	 */
 	public void onInstantiated(IFrame instance, boolean freeInstance);
 }

@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.io.*;
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -91,7 +92,7 @@ public interface CBuilder {
 	 * @param identity Identify of frame to create
 	 * @param hidden True if created frame is to be a "hidden" frame
 	 * @return Created frame
-	 * @throws new KAccessException if frame with specified identity
+	 * @throws KAccessException if frame with specified identity
 	 * already exists
 	 */
 	public CFrame addFrame(CIdentity identity, boolean hidden);
@@ -140,6 +141,7 @@ public interface CBuilder {
 	 * Retrieves a required section-building mechanism as specified
 	 * via the relevant java class.
 	 *
+	 * @param <B> Generic version of type
 	 * @param type Java class of required section-building mechanism
 	 * @return Required section-building mechanism
 	 */

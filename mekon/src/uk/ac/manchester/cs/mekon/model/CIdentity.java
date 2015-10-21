@@ -30,8 +30,7 @@ import java.util.*;
  * Identifies a concept-level entity from the frames-based
  * model via a unique identifier, and a label. The identifier
  * must always be supplied, whereas the label is optional and
- * will be assigned a default value of "<NO-LABEL>" if not
- * supplied.
+ * will be assigned a default value if not supplied.
  *
  * @author Colin Puleston
  */
@@ -188,10 +187,11 @@ public class CIdentity {
 	}
 
 	/**
-	 * Constructs identity with the same identifierComponents as
+	 * Constructs identity with the same identifier-components as
 	 * this one and with the specified label.
 	 *
 	 * @param newLabel New-label for entity
+	 * @return Derived identity
 	 */
 	public CIdentity deriveIdentity(String newLabel) {
 

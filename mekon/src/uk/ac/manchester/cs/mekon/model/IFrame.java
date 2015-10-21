@@ -462,7 +462,7 @@ public class IFrame implements IEntity, IValue {
 	 * determines whether or not any automatic updates can occur when
 	 * slot-values are updated.
 	 *
-	 * @param enabled Required auto-update-enabled status
+	 * @return True if auto-update is enabled
 	 */
 	public boolean autoUpdateEnabled() {
 

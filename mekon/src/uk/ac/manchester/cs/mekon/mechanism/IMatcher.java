@@ -30,6 +30,11 @@ import uk.ac.manchester.cs.mekon.model.*;
  * Provides mechanisms for storing and executing queries over
  * representations of sets of instantiations of a MEKON Frames
  * Model (FM).
+ * <p>
+ * All of the instance-level frame/slot-network representations of
+ * instances and queries that are passed into the matcher methods
+ * will be "free-instance" copies of the originals (see
+ * {@link IFreeInstanceGenerator}).
  *
  * @author Colin Puleston
  */
@@ -56,8 +61,6 @@ public interface IMatcher {
 	 * Removes the specified instance from the matcher.
 	 *
 	 * @param identity Unique identity of instance to be removed
-	 * @return True if instance removed, false if instance with
-	 * specified identity not present
 	 */
 	public void remove(CIdentity identity);
 

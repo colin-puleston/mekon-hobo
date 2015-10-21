@@ -55,8 +55,8 @@ public class NNetworkManager {
 	 * turn over the resulting network
 	 *
 	 * @param rootFrame Root-frame in the frame/slot network
-	 * @param rootNode Root-node of generated and (if relevant)
-	 * pre-processed node/link network
+	 * @return Root-node of generated and (if relevant) pre-processed
+	 * node/link network
 	 */
 	public NNode createNetwork(IFrame rootFrame) {
 

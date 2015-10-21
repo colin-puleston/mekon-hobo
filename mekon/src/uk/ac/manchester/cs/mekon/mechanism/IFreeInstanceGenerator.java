@@ -27,11 +27,27 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * XXX.
+ * Responsible for generating "free" versions of existing
+ * instance-level frame/slot networks, or "free-instances", in which
+ * the schema has been loosened in the following ways:
+ * <ul>
+ *   <li>No effective constraints on slot-values, other than general
+ *	 value-category (i.e, {@link IFrame}, {@link CFrame}, or
+ *	 {@link INumber})
+ *   <li>No automatic updates to slot-sets or slot-values due to
+ *	 either generic reasoning mechanisms, or custom procedures
+ *	 associated with a mapped object model
+ * </ul>
+ * Such free-instances are intended for use by any implementations of
+ * {@link IReasoner} and {@link IMatcher} that need to manipulate
+ * their instances in a way that (a) is outside the general schema
+ * imposed by the model, and/or (b) does not incur the additional,
+ * and uneccesary overheads of the reasoning mechanisms kicking in as
+ * updates are made.
  *
  * @author Colin Puleston
  */
-public class IFrameFreeCopier {
+public class IFreeInstanceGenerator {
 
 	private IFreeInstantiator instantiator;
 
@@ -44,18 +60,25 @@ public class IFrameFreeCopier {
 	}
 
 	/**
-	 * XXX
+	 * Constructor.
+	 *
+	 * @param model Relevant model
 	 */
-	public IFrameFreeCopier(CModel model) {
+	public IFreeInstanceGenerator(CModel model) {
 
 		instantiator = new InstantiatorRetriever().get(model);
 	}
 
 	/**
-	 * XXX
+	 * Generates a free-instance version of the specified source
+	 * instance.
+	 *
+	 * @param sourceInstance Instance of which free-instance version
+	 * is required
+	 * @return Generated free-instance
 	 */
-	public IFrame copy(IFrame rootFrame) {
+	public IFrame generateFrom(IFrame sourceInstance) {
 
-		return instantiator.copy(rootFrame);
+		return instantiator.deriveInstantiation(sourceInstance);
 	}
 }

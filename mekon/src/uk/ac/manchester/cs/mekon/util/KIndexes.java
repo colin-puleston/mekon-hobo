@@ -84,7 +84,7 @@ public abstract class KIndexes<E> {
 	 * Frees up a unique index that was previously assigned to a
 	 * specific element.
 	 *
-	 * @element Element for which index is no longer required
+	 * @param element Element for which index is no longer required
 	 * @return Freed index
 	 */
 	public int freeIndex(E element) {

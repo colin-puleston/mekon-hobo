@@ -146,6 +146,9 @@ public class CSlot implements CIdentified, CSourced {
 	}
 
 	/**
+	 * Provides the cardinality of the slot.
+	 *
+	 * @return Cardinality of slot
 	 */
 	public CCardinality getCardinality() {
 

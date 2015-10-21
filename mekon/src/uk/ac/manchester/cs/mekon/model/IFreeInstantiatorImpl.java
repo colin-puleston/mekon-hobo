@@ -85,7 +85,7 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		}
 	}
 
-	private class Copier extends IFrameCopierAbstract {
+	private class Deriver extends IFrameCopierAbstract {
 
 		ISlot addSlot(IFrame container, CSlot slotType) {
 
@@ -126,9 +126,9 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		frame.completeInstantiation(true);
 	}
 
-	public IFrame copy(IFrame frame) {
+	public IFrame deriveInstantiation(IFrame sourceInstance) {
 
-		return new Copier().copy(frame);
+		return new Deriver().copy(sourceInstance);
 	}
 
 	IFreeInstantiatorImpl(CModel model) {

@@ -35,7 +35,6 @@ public interface NNetworkProcessor {
 	/**
 	 * Performs required modifications to instance representation.
 	 *
-	 * @param model Relevant model
 	 * @param rootNode Root-node in instance representation
 	 */
 	public void process(NNode rootNode);

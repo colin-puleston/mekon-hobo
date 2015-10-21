@@ -42,6 +42,7 @@ public class CDoubleDef extends CNumberDef {
 	 *
 	 * @param min Minimnum value for double-type
 	 * @param max Maximnum value for double-type
+	 * @return Created definition
 	 */
 	static public CDoubleDef range(Double min, Double max) {
 
@@ -53,6 +54,7 @@ public class CDoubleDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param min Minimnum value for double-type
+	 * @return Created definition
 	 */
 	static public CDoubleDef min(Double min) {
 
@@ -64,6 +66,7 @@ public class CDoubleDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param max Maximnum value for double-type
+	 * @return Created definition
 	 */
 	static public CDoubleDef max(Double max) {
 
@@ -75,6 +78,7 @@ public class CDoubleDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param exact Exact value for double-type
+	 * @return Created definition
 	 */
 	static public CDoubleDef exact(Double exact) {
 

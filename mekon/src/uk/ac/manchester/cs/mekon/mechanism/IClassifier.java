@@ -33,6 +33,11 @@ import uk.ac.manchester.cs.mekon.model.*;
  * defined by {@link IReasoner}. This is an abstract class that leaves
  * the implementatation of the actual classification mechanisms to the
  * derived class.
+ * <p>
+ * The instance-level frame/slot-networks representations of instances
+ * that are passed into the {@link #classify} method will be
+ * "free-instance" copies of the originals (see
+ * {@link IFreeInstanceGenerator}).
  *
  * @author Colin Puleston
  */
@@ -169,7 +174,7 @@ public abstract class IClassifier extends DefaultIReasoner {
 
 	/**
 	 * Abstract method whose implementations will perform the actual
-	 * classification over the relevant knowledge sources.
+	 * classification over the relevant external knowledge sources.
 	 *
 	 * @param instance Instance to classify
 	 * @param ops Types of classification operations to be performed
@@ -177,10 +182,10 @@ public abstract class IClassifier extends DefaultIReasoner {
 	 */
 	protected abstract IClassification classify(IFrame instance, IClassifierOps ops);
 
-	private IFrame copyFree(IFrame rootFrame) {
+	private IFrame copyFree(IFrame instance) {
 
-		CModel model = rootFrame.getType().getModel();
+		CModel model = instance.getType().getModel();
 
-		return new IFrameFreeCopier(model).copy(rootFrame);
+		return new IFreeInstanceGenerator(model).generateFrom(instance);
 	}
 }

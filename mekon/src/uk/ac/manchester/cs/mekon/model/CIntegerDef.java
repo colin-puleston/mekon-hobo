@@ -42,6 +42,7 @@ public class CIntegerDef extends CNumberDef {
 	 *
 	 * @param min Minimnum value for integer-type
 	 * @param max Maximnum value for integer-type
+	 * @return Created definition
 	 */
 	static public CIntegerDef range(Integer min, Integer max) {
 
@@ -53,6 +54,7 @@ public class CIntegerDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param min Minimnum value for integer-type
+	 * @return Created definition
 	 */
 	static public CIntegerDef min(Integer min) {
 
@@ -64,6 +66,7 @@ public class CIntegerDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param max Maximnum value for integer-type
+	 * @return Created definition
 	 */
 	static public CIntegerDef max(Integer max) {
 
@@ -75,6 +78,7 @@ public class CIntegerDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param exact Exact value for integer-type
+	 * @return Created definition
 	 */
 	static public CIntegerDef exact(Integer exact) {
 

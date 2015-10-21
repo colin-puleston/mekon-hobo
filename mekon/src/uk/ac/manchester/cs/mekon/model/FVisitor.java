@@ -39,7 +39,7 @@ public abstract class FVisitor<A> {
 	 * for cases where visit methods are not expected to throw any
 	 * exceptions.
 	 *
-	 * @param acceptor Object that is to accept visitor.
+	 * @param acceptor Object that is to accept visitor
 	 */
 	public void visit(A acceptor) {
 
@@ -60,12 +60,13 @@ public abstract class FVisitor<A> {
 	/**
 	 * Causes relevant sub-class-specific visit method to be invoked,
 	 * for cases where visit methods may throw expections of the
-	 * specified type.
+	 * specified type. Throws any exception that was thrown by the
+	 * sub-class-specific visit method.
 	 *
-	 * @param acceptor Object that is to accept visitor.
-	 * @param exceptionType Type of exception that may be thrown.
-	 * @throws Exception thrown by sub-class-specific visit method, if
-	 * applicable.
+	 * @param <E> Generic version of exceptionType
+	 * @param acceptor Object that is to accept visitor
+	 * @param exceptionType Type of exception that may be thrown
+	 * @throws E if thrown by the sub-class-specific visit method
 	 */
 	public <E extends Exception>void visit(
 										A acceptor,

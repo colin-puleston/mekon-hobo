@@ -48,7 +48,6 @@ public abstract class NNetworkVisitor implements NNetworkProcessor {
 	/**
 	 * Visitor for nodes in network instance representation.
 	 *
-	 * @param model Relevant model
 	 * @param node Visited node
 	 */
 	protected abstract void visit(NNode node);
@@ -57,7 +56,6 @@ public abstract class NNetworkVisitor implements NNetworkProcessor {
 	 * Visitor for node-valued links in network instance
 	 * representation.
 	 *
-	 * @param model Relevant model
 	 * @param link Visited link
 	 */
 	protected abstract void visit(NLink link);
@@ -66,8 +64,7 @@ public abstract class NNetworkVisitor implements NNetworkProcessor {
 	 * Visitor for number-valued links in network instance
 	 * representation.
 	 *
-	 * @param model Relevant model
-	 * @param link Visited link
+	 * @param numeric Visited numeric
 	 */
 	protected abstract void visit(NNumeric numeric);
 

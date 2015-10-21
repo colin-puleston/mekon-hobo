@@ -31,6 +31,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
+ * Renderer for the standard XML serialisation of {@link IFrame}
+ * objects.
+ *
  * @author Colin Puleston
  */
 public class IFrameRenderer extends ISerialiser {
@@ -279,20 +282,35 @@ public class IFrameRenderer extends ISerialiser {
 	}
 
 	/**
+	 * Sets whether the recursive frame description should be rendered
+	 * as a tree, rather than a graph. By default it will be rendered
+	 * as a graph.
+	 *
+	 * @param renderAsTree True if tree rendering required
 	 */
-	public void setRenderAsTree(boolean value) {
+	public void setRenderAsTree(boolean renderAsTree) {
 
-		renderAsTree = value;
+		this.renderAsTree = renderAsTree;
 	}
 
 	/**
+	 * Sets whether the the schema information, including slot
+	 * value-types, cardinalities and editabilities, should be
+	 * rendered. By default this informaton will not be rendered.
+	 *
+	 * @param renderSchema True if schema information should be
+	 * rendered
 	 */
-	public void setRenderSchema(boolean value) {
+	public void setRenderSchema(boolean renderSchema) {
 
-		renderSchema = value;
+		this.renderSchema = renderSchema;
 	}
 
 	/**
+	 * Renders the specified frame to produce an XML document.
+	 *
+	 * @param frame Frame to render
+	 * @return Rendered document
 	 */
 	public XDocument render(IFrame frame) {
 
@@ -304,6 +322,10 @@ public class IFrameRenderer extends ISerialiser {
 	}
 
 	/**
+	 * Renders the specified frame to the specified parent-node.
+	 *
+	 * @param frame Frame to render
+	 * @param parentNode Parent-node for rendering
 	 */
 	public void render(IFrame frame, XNode parentNode) {
 

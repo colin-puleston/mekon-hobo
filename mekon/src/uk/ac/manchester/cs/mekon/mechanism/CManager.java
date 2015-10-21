@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.mechanism;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * Point-of-entry for applications using a pure frames-based
@@ -57,9 +58,10 @@ public class CManager {
 	 * file-name located somewhere on the classpath.
 	 *
 	 * @return Resulting model-builder
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	static public CBuilder createBuilder() {
 
@@ -73,9 +75,10 @@ public class CManager {
 	 *
 	 * @param configFile Relevant configuration file
 	 * @return Resulting model-builder
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	static public CBuilder createBuilder(KConfigFile configFile) {
 
@@ -93,9 +96,10 @@ public class CManager {
 	 *
 	 * @param builder Relevant model-builder
 	 * @param configFile Relevant configuration file
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	static public void configureBuilder(CBuilder builder, KConfigFile configFile) {
 

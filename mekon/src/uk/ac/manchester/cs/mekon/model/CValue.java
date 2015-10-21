@@ -87,6 +87,7 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	/**
 	 * Casts this value-type-entity to the required type.
 	 *
+	 * @param <T> Generic version of type
 	 * @param type Type for casting
 	 * @return This object cast to required type
 	 * @throws KAccessException if this value-type-entity not of required type

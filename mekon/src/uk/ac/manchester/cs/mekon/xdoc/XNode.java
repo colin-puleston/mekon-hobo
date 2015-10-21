@@ -257,6 +257,7 @@ public class XNode {
 	 * Provides a <code>Enum</code> object of the specified type,
 	 * derived from the value of the specified attribute.
 	 *
+	 * @param <E> Generic version of type
 	 * @param id Identifier of relevant attribute
 	 * @param type Type of <code>Enum</code> to create
 	 * @return Relevant <code>Enum</code> object
@@ -273,6 +274,7 @@ public class XNode {
 	 * Provides a <code>Enum</code> object of the specified type,
 	 * derived from the value of the specified attribute.
 	 *
+	 * @param <E> Generic version of type
 	 * @param id Identifier of relevant attribute
 	 * @param type Type of <code>Enum</code> to create
 	 * @param defaultValue Value to return if no value for attribute

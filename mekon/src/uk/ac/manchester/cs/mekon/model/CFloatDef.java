@@ -42,6 +42,7 @@ public class CFloatDef extends CNumberDef {
 	 *
 	 * @param min Minimnum value for float-type
 	 * @param max Maximnum value for float-type
+	 * @return Created definition
 	 */
 	static public CFloatDef range(Float min, Float max) {
 
@@ -53,6 +54,7 @@ public class CFloatDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param min Minimnum value for float-type
+	 * @return Created definition
 	 */
 	static public CFloatDef min(Float min) {
 
@@ -64,6 +66,7 @@ public class CFloatDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param max Maximnum value for float-type
+	 * @return Created definition
 	 */
 	static public CFloatDef max(Float max) {
 
@@ -75,6 +78,7 @@ public class CFloatDef extends CNumberDef {
 	 * value.
 	 *
 	 * @param exact Exact value for float-type
+	 * @return Created definition
 	 */
 	static public CFloatDef exact(Float exact) {
 

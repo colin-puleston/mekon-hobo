@@ -27,10 +27,13 @@ package uk.ac.manchester.cs.mekon.serial;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Parses an XML document representing a serialised instance.
+ * Parser for the standard XML serialisation of an instance,
+ * comprising an instance-identifier, and a frame representation
+ * of the instance.
  *
  * @author Colin Puleston
  */
@@ -45,7 +48,6 @@ public class IInstanceParser extends ISerialiser {
 	 * Constructor that performs the parse operation.
 	 *
 	 * @param model Relevant model
-	 * @param iEditor Relevant instantiation-editor
 	 * @param instanceFile Serialisation file
 	 */
 	public IInstanceParser(CModel model, File instanceFile) {
@@ -56,11 +58,15 @@ public class IInstanceParser extends ISerialiser {
 	}
 
 	/**
-	 * XXX
+	 * Sets whether the parsing of the instance-description should
+	 * produce a "free-instance" (see {@link IFreeInstanceGenerator}).
+	 * By default this will not be the case.
+	 *
+	 * @param freeInstance True if free-instance should be produced
 	 */
-	public void setFreeInstance(boolean value) {
+	public void setFreeInstance(boolean freeInstance) {
 
-		freeInstance = value;
+		this.freeInstance = freeInstance;
 	}
 
 	/**
@@ -85,11 +91,8 @@ public class IInstanceParser extends ISerialiser {
 
 	private IFrameParserAbstract createFrameParser() {
 
-		if (freeInstance) {
-
-			return new IFrameFreeParser(model);
-		}
-
-		return new IFrameParser(model, IFrameCategory.ASSERTION);
+		return freeInstance ?
+				new IFrameFreeParser(model, IFrameCategory.ASSERTION) :
+				new IFrameParser(model, IFrameCategory.ASSERTION);
 	}
 }

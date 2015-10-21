@@ -30,15 +30,25 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
+ * Parser for the standard XML serialisation of {@link IFrame}
+ * objects that produces a "free" instantiation of the frame
+ * (see {@link IFreeInstanceGenerator}).
+ *
  * @author Colin Puleston
  */
-class IFrameFreeParser extends IFrameParserAbstract {
+public class IFrameFreeParser extends IFrameParserAbstract {
 
 	private IFreeInstantiator freeInstantiator;
 
-	IFrameFreeParser(CModel model) {
+	/**
+	 * Constructor
+	 *
+	 * @param model Relevant model
+	 * @param frameCategory Category of frames to be parsed
+	 */
+	public IFrameFreeParser(CModel model, IFrameCategory frameCategory) {
 
-		super(model, IFrameCategory.ASSERTION);
+		super(model, frameCategory);
 
 		freeInstantiator = getAccessor().getFreeInstantiator();
 	}

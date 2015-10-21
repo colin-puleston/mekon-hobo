@@ -39,7 +39,7 @@ public abstract class ISlotUpdateListenerPropagator
 	/**
 	 * Constructor.
 	 *
-	 * listener Listener to be propagated
+	 * @param listener Listener to be propagated
 	 */
 	protected ISlotUpdateListenerPropagator(KUpdateListener listener) {
 

@@ -30,7 +30,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renders an XML document to represent a serialised instance.
+ * Renderer for the standard XML serialisation of an instance,
+ * comprising an instance-identifier, and a frame representation
+ * of the instance.
  *
  * @author Colin Puleston
  */
@@ -51,7 +53,7 @@ public class IInstanceRenderer extends ISerialiser {
 	}
 
 	/**
-	 * Renders the instance.
+	 * Renders the instance to the relevant file.
 	 *
 	 * @param identity Identity of instance
 	 * @param instance Frame representation of instance

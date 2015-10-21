@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * Responsible for the definition of and subsequent creation of an
  * extension-frame (see {@link CFrameCategory#extension}) that extends
