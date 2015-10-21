@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.hobo.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**

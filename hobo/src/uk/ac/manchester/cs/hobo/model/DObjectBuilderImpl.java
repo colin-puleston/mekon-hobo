@@ -50,7 +50,7 @@ class DObjectBuilderImpl implements DObjectBuilder {
 			return model.getIEditor();
 		}
 
-		public <D, F extends DField<D>>F getField(DFieldViewer<D, F> viewer) {
+		public <V, F extends DField<V>>F getField(DFieldViewer<V, F> viewer) {
 
 			return viewer.getField();
 		}
@@ -198,12 +198,12 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		array.setUniqueTypes(uniqueTypes);
 	}
 
-	public <D>DCellViewer<D> getViewer(DCell<D> cell) {
+	public <V>DCellViewer<V> getViewer(DCell<V> cell) {
 
 		return cell.createViewer();
 	}
 
-	public <D>DArrayViewer<D> getViewer(DArray<D> array) {
+	public <V>DArrayViewer<V> getViewer(DArray<V> array) {
 
 		return array.createViewer();
 	}
@@ -298,14 +298,14 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return createArray(createNumberValueType(definition, numberType));
 	}
 
-	private <D>DCell<D> createCell(DValueType<D> valueType) {
+	private <V>DCell<V> createCell(DValueType<V> valueType) {
 
-		return new DCell<D>(model, valueType);
+		return new DCell<V>(model, valueType);
 	}
 
-	private <D>DArray<D> createArray(DValueType<D> valueType) {
+	private <V>DArray<V> createArray(DValueType<V> valueType) {
 
-		return new DArray<D>(model, valueType);
+		return new DArray<V>(model, valueType);
 	}
 
 	private <D extends DObject>DValueType<D> createObjectValueType(Class<D> valueClass) {

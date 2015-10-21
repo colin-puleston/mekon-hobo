@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.modeller;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
@@ -82,6 +83,7 @@ public interface DObjectBuilder {
 	 * values, where valid values are defined via a specific
 	 * root-frame.
 	 *
+	 * @param <D> Generic version of valueClass
 	 * @param valueClass OM class that is bound to root-frame
 	 * defining valid field values
 	 * @return Created field
@@ -92,6 +94,7 @@ public interface DObjectBuilder {
 	 * Creates a single-valued OM field with OM-object values of the
 	 * specified type.
 	 *
+	 * @param <D> Generic version of valueClass
 	 * @param valueClass OM class of field values
 	 * @return Created field
 	 */
@@ -179,6 +182,7 @@ public interface DObjectBuilder {
 	 * values, where valid values are defined via a specific
 	 * root-frame.
 	 *
+	 * @param <D> Generic version of valueClass
 	 * @param valueClass OM class that is bound to root-frame
 	 * defining valid field values
 	 * @return Created field
@@ -189,6 +193,7 @@ public interface DObjectBuilder {
 	 * Creates a multi-valued OM field with OM-object values of the
 	 * specified type.
 	 *
+	 * @param <D> Generic version of valueClass
 	 * @param valueClass OM class of field values
 	 * @return Created field
 	 */
@@ -330,18 +335,20 @@ public interface DObjectBuilder {
 	/**
 	 * Provides a viewer for the specified single-valued OM field.
 	 *
+	 * @param <V> Generic version of-values
 	 * @param cell Field for which field is viewer
 	 * @return Viewer for field
 	 */
-	public <D>DCellViewer<D> getViewer(DCell<D> cell);
+	public <V>DCellViewer<V> getViewer(DCell<V> cell);
 
 	/**
 	 * Provides a viewer for the specified multi-valued OM field.
 	 *
+	 * @param <V> Generic version of-values
 	 * @param array Field for which field is viewer
 	 * @return Viewer for field
 	 */
-	public <D>DArrayViewer<D> getViewer(DArray<D> array);
+	public <V>DArrayViewer<V> getViewer(DArray<V> array);
 
 	/**
 	 * Registers an initialiser to perform any required

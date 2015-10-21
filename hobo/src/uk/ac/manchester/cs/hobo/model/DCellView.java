@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * Common interface for both {@link DCell} and {@link DCellViewer}.
  *

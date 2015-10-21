@@ -44,6 +44,7 @@ public interface DArrayView<V> extends DFieldView<V> {
 	 * Retrieves all current values for the field that are of specified
 	 * type.
 	 *
+	 * @param <S> Generic version of subValueType
 	 * @param subValueType Type of required values
 	 * @return All current values of required values
 	 */

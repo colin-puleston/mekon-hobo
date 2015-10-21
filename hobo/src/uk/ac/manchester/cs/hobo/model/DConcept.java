@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -141,6 +142,7 @@ public class DConcept<D extends DObject> {
 	 * Instantiates this concept as an instance of the specified OM
 	 * class.
 	 *
+	 * @param <N> Generic version of dClass
 	 * @param dClass OM class to be instantiated
 	 * @return Instantiation of concept
 	 * @throws KAccessException if required instantiation is invalid
@@ -155,6 +157,7 @@ public class DConcept<D extends DObject> {
 	 * a different OM class defining the general type for the
 	 * represented concept.
 	 *
+	 * @param <N> Generic version of dClass
 	 * @param dClass New OM class
 	 * @return Derived concept
 	 * @throws KAccessException if new OM class is not applicable

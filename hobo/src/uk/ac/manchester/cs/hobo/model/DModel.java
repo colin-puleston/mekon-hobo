@@ -119,6 +119,7 @@ public class DModel {
 	/**
 	 * Provides a representation of the specified concept.
 	 *
+	 * @param <D> Generic version of dClass
 	 * @param dClass OM class that defines both a general type for
 	 * the represented concept, and the represented concept itself
 	 * @return Representation of relevant concept
@@ -131,6 +132,7 @@ public class DModel {
 	/**
 	 * Provides a representation of the specified concept.
 	 *
+	 * @param <D> Generic version of generalDClass
 	 * @param generalDClass OM class that defines a general type for
 	 * the represented concept
 	 * @param specificDClass OM class that defines the specific type
@@ -147,6 +149,7 @@ public class DModel {
 	/**
 	 * Provides a representation of the specified concept.
 	 *
+	 * @param <D> Generic version of generalDClass
 	 * @param generalDClass OM class that defines the general type of
 	 * the represented concept
 	 * @param frame Frame representation of concept
@@ -173,6 +176,7 @@ public class DModel {
 	/**
 	 * Provides a representation of the specified concept.
 	 *
+	 * @param <D> Generic version of generalDClass
 	 * @param generalDClass OM class that defines the general type of
 	 * the represented concept
 	 * @param identity Identity of frame representation of concept
@@ -195,6 +199,7 @@ public class DModel {
 	 * ({@link IFrame}) that will be associated with the created OM
 	 * object.
 	 *
+	 * @param <D> Generic version of dClass
 	 * @param dClass OM class to be instantiated
 	 * @return Required OM class instantiation
 	 */
@@ -210,6 +215,7 @@ public class DModel {
 	 * frame ({@link IFrame}) object that will be associated with the
 	 * created OM object.
 	 *
+	 * @param <D> Generic version of dClass
 	 * @param dClass OM class to be instantiated
 	 * @param identity Identity of frame representing relevant concept
 	 * @return Resulting OM object
@@ -226,6 +232,7 @@ public class DModel {
 	 * frame ({@link IFrame}) object that will be associated with the
 	 * created OM object.
 	 *
+	 * @param <D> Generic version of dClass
 	 * @param dClass OM class to be instantiated
 	 * @param frame Frame representing relevant concept
 	 * @return Resulting OM object
@@ -252,6 +259,7 @@ public class DModel {
 	 * Retrieves the OM object associated with the specified instance-level
 	 * frame.
 	 *
+	 * @param <D> Generic version of dClass
 	 * @param frame Frame for which OM object is required
 	 * @param dClass Expected type of OM object
 	 * @return Required OM object

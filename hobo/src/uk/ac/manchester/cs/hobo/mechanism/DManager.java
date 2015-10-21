@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.hobo.mechanism;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * Point-of-entry for applications using a direct HOBO model,
@@ -62,9 +63,10 @@ public class DManager {
 	 * configuration file-name located somewhere on the classpath.
 	 *
 	 * @return Resulting model-builder
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	static public DBuilder createBuilder() {
 
@@ -79,9 +81,10 @@ public class DManager {
 	 *
 	 * @param configFile Relevant configuration file
 	 * @return Resulting model-builder
-	 * @throws KConfigFileException if configuration file does not
-	 * exist or does not contain correctly specified configuration
-	 * information
+	 * @throws KSystemConfigException if configuration file does not
+	 * exist
+	 * @throws XDocumentException if configuration file does not
+	 * contain correctly specified configuration information
 	 */
 	static public DBuilder createBuilder(KConfigFile configFile) {
 

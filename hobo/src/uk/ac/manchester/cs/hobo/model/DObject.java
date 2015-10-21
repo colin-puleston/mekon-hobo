@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -63,6 +64,7 @@ public interface DObject {
 	 * Provides the concept of the specified type, of which the object
 	 * represents an instance.
 	 *
+	 * @param <D> Generic version of dClass
 	 * @param dClass OM class that object implements
 	 * @return Concept of which object represents instance
 	 * @throws KAccessException if object does not implement provided
