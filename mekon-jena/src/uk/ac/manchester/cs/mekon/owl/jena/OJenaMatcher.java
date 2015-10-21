@@ -29,6 +29,7 @@ import java.io.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.ontology.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
