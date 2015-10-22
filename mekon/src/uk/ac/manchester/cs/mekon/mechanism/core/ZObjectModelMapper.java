@@ -28,12 +28,12 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
+ * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
+ * OR THE PLUGIN CODE.
+ * <p>
  * Handles the mapping of objects from an external domain-specific
  * Object Model (OM) to the instance-level frames in the MEKON
  * frames-model instantiations.
- * <p>
- * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
- * OR THE PLUGIN CODE.
  *
  * @author Colin Puleston
  */

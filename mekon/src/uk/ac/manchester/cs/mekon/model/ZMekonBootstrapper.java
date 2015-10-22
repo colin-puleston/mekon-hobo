@@ -27,13 +27,13 @@ package uk.ac.manchester.cs.mekon.model;
 import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
+ * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
+ * OR THE PLUGIN CODE.
+ * <p>
  * Provides the MEKON mechanisms, and those of any extensions of
  * the MEKON framework, with a means of creating a {@link CModel}
  * object, and retrieving the associated {@link ZMekonAccessor}
  * object.
- * <p>
- * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
- * OR THE PLUGIN CODE.
  *
  * @author Colin Puleston
  */

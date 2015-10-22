@@ -30,11 +30,11 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
- * Point-of-entry for the MEKON mechanisms, and the mechanisms of
- * any extensions of the MEKON framework.
- * <p>
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
  * OR THE PLUGIN CODE.
+ * <p>
+ * Point-of-entry for the MEKON mechanisms, and the mechanisms of
+ * any extensions of the MEKON framework.
  *
  * @author Colin Puleston
  */

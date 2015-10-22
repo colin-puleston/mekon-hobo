@@ -27,11 +27,11 @@ package uk.ac.manchester.cs.mekon.mechanism.core;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Provides the MEKON mechanisms, and those of any extensions of
- * the MEKON framework, with a means of building "free-instances".
- * <p>
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
  * OR THE PLUGIN CODE.
+ * <p>
+ * Provides the MEKON mechanisms, and those of any extensions of
+ * the MEKON framework, with a means of building "free-instances".
  *
  * @author Colin Puleston
  */

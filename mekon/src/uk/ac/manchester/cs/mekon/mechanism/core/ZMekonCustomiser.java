@@ -27,11 +27,11 @@ package uk.ac.manchester.cs.mekon.mechanism.core;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Allows the mechanisms of extensions of the MEKON system to
- * intervene in, and modify, the default MEKON behaviour.
- * <p>
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
  * OR THE PLUGIN CODE.
+ * <p>
+ * Allows the mechanisms of extensions of the MEKON system to
+ * intervene in, and modify, the default MEKON behaviour.
  *
  * @author Colin Puleston
  */
