@@ -48,6 +48,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
  *   <li>"Payload Loading" version, with all original constructs
  *   present, but with only a basic structural reasoner attached
  * </ul>
+ * <p>
  * ("Payload" constructs refers to those sub-class axioms in which the
  * LHS is a named class, and the RHS a restriction. The assumption
  * being that any inferences involving such axioms will all be handled
@@ -74,7 +75,7 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 	/**
 	 * Constructs section-builder with configuration defined via the
 	 * appropriately-tagged child of the specified
-	 * parent-configuration-node, which should also include:
+	 * parent-configuration-node. The configuration should also include:
 	 * <ul>
 	 *   <li>Configuration applicable to the two versions of the
 	 *   {@link OModel} over which the sanctioning is to operate
@@ -100,7 +101,7 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 	 * will be used in modified form for each of two models over which
 	 * the sanctioning is to operate, and with configuration defined
 	 * via the appropriately-tagged child of the specified
-	 * parent-configuration-node, which should also include:
+	 * parent-configuration-node. The configuration should also include:
 	 * <ul>
 	 *   <li>Configuration for an {@link ORClassifier} object to be
 	 *   attached to all generated frames

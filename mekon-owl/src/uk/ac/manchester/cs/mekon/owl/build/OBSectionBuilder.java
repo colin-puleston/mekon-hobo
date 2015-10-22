@@ -71,7 +71,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	/**
 	 * Constructs section-builder with configuration defined via the
 	 * appropriately-tagged child of the specified
-	 * parent-configuration-node, which should also include:
+	 * parent-configuration-node. The configuration should also include:
 	 * <ul>
 	 *   <li>Configuration for the {@link OModel} object over which
 	 *   the sanctioning is to operate
@@ -94,7 +94,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	 * Constructs section-builder with specified model over which the
 	 * sanctioning is to operate, and with configuration defined via
 	 * the appropriately-tagged child of the specified
-	 * parent-configuration-node, which should also include:
+	 * parent-configuration-node. The configuration should also include:
 	 * <ul>
 	 *   <li>Optionally, a {@link ORClassifier} object to be attached
 	 *   to all generated frames

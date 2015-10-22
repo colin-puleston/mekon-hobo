@@ -41,11 +41,10 @@ import uk.ac.manchester.cs.mekon.config.*;
  * via:
  * <ul>
  *   <li>A main ontology
- *   <li>A complete set of associated ontologies, constituting
- *       the imports-closure for the main ontology
+ *   <li>A complete set of associated ontologies, constituting the
+ *   imports-closure for the main ontology
  *   <li>A manager for the relevant set of ontologies
- *   <li>A reasoner for reasoning over the relevant set of
- *       ontologies
+ *   <li>A reasoner for reasoning over the relevant set of ontologies
  * </ul>
  *
  * @author Colin Puleston
