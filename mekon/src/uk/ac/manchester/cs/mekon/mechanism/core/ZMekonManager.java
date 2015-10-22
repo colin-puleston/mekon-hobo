@@ -40,8 +40,24 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class ZMekonManager {
 
+	static private final String MODEL_CLASS_NAME
+			= "uk.ac.manchester.cs.mekon.model.CModel";
+
+	static private ZMekonBootstrapper bootstrapper = null;
+
 	static private Map<CModel, ZMekonAccessor> accessors
 						= new HashMap<CModel, ZMekonAccessor>();
+
+	/**
+	 * Initialises manager with the bootstrapper, as provided by
+	 * {@link CModel} class upon loading.
+	 *
+	 * @param booter Bootstrapper provided by model class
+	 */
+	static public void initialise(ZMekonBootstrapper booter) {
+
+		bootstrapper = booter;
+	}
 
 	/**
 	 * Creates an empty model with the default customiser.
@@ -61,7 +77,7 @@ public class ZMekonManager {
 	 */
 	static public ZMekonAccessor start(ZMekonCustomiser customiser) {
 
-		ZMekonAccessor accessor = new Bootstrapper().start(customiser);
+		ZMekonAccessor accessor = getBootstrapper().start(customiser);
 
 		register(accessor);
 
@@ -80,10 +96,34 @@ public class ZMekonManager {
 
 		if (accessor == null) {
 
-			throw new Error("Model has not been registered!");
+			throw new Error("MEKON model has not been registered!");
 		}
 
 		return accessor;
+	}
+
+	static private ZMekonBootstrapper getBootstrapper() {
+
+		loadModelClassToInitialiseBootstrapper();
+
+		if (bootstrapper == null) {
+
+			throw new Error("MEKON bootstrapper has not been registered!");
+		}
+
+		return bootstrapper;
+	}
+
+	static private void loadModelClassToInitialiseBootstrapper() {
+
+		try {
+
+			Class.forName(MODEL_CLASS_NAME);
+		}
+		catch (ClassNotFoundException e) {
+
+			throw new Error("MEKON model class not found!");
+		}
 	}
 
 	static private synchronized void register(ZMekonAccessor accessor) {

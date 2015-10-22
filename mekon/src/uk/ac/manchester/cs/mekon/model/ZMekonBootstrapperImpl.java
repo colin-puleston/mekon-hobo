@@ -22,17 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.core;
+package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * @author Colin Puleston
  */
-class Bootstrapper extends ZMekonBootstrapper {
+public class ZMekonBootstrapperImpl implements ZMekonBootstrapper {
 
-	protected ZMekonAccessor start(ZMekonCustomiser customiser) {
+	public ZMekonAccessor start(ZMekonCustomiser customiser) {
 
-		return super.start(customiser);
+		return new ZMekonAccessorImpl(customiser);
 	}
 }

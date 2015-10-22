@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.mechanism.core;
 
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
@@ -37,13 +37,7 @@ import uk.ac.manchester.cs.mekon.mechanism.core.*;
  *
  * @author Colin Puleston
  */
-public class ZMekonBootstrapper {
-
-	/**
-	 * Constructor.
-	 */
-	protected ZMekonBootstrapper() {
-	}
+public interface ZMekonBootstrapper {
 
 	/**
 	 * Creates an empty model with the specified customiser.
@@ -51,8 +45,5 @@ public class ZMekonBootstrapper {
 	 * @param customiser Customiser for model
 	 * @return Accessor for model
 	 */
-	protected ZMekonAccessor start(ZMekonCustomiser customiser) {
-
-		return new ZMekonAccessorImpl(customiser);
-	}
+	public ZMekonAccessor start(ZMekonCustomiser customiser);
 }

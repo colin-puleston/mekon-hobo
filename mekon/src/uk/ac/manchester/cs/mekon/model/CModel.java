@@ -43,6 +43,11 @@ import uk.ac.manchester.cs.mekon.mechanism.core.*;
  */
 public class CModel implements CAnnotatable {
 
+	static {
+
+		ZMekonManager.initialise(new ZMekonBootstrapperImpl());
+	}
+
 	private ZMekonCustomiser customiser;
 
 	private CFrame rootFrame = new CRootFrame(this);
