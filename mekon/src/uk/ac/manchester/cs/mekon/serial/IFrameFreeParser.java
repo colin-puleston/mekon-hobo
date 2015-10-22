@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * Parser for the standard XML serialisation of {@link IFrame}
@@ -38,7 +39,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class IFrameFreeParser extends IFrameParserAbstract {
 
-	private IFreeInstantiator freeInstantiator;
+	private ZFreeInstantiator instantiator;
 
 	/**
 	 * Constructor
@@ -50,22 +51,22 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 
 		super(model, frameCategory);
 
-		freeInstantiator = getAccessor().getFreeInstantiator();
+		instantiator = ZMekonManager.access(model).getFreeInstantiator();
 	}
 
 	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
 
-		return freeInstantiator.startInstantiation(type, category);
+		return instantiator.startInstantiation(type, category);
 	}
 
 	ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
 
-		return freeInstantiator.addIFrameSlot(frame, slotId);
+		return instantiator.addIFrameSlot(frame, slotId);
 	}
 
 	ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId) {
 
-		return freeInstantiator.addCFrameSlot(frame, slotId);
+		return instantiator.addCFrameSlot(frame, slotId);
 	}
 
 	ISlot checkResolveINumberSlot(
@@ -73,7 +74,7 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 				CIdentity slotId,
 				Class<? extends Number> numberType) {
 
-		return freeInstantiator.addINumberSlot(frame, slotId, numberType);
+		return instantiator.addINumberSlot(frame, slotId, numberType);
 	}
 
 	void checkUpdateFrameSlotSets(List<IFrame> frames) {
@@ -81,6 +82,6 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 
 	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
 
-		freeInstantiator.completeInstantiation(rootFrame);
+		instantiator.completeInstantiation(rootFrame);
 	}
 }

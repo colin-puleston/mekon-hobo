@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
@@ -51,16 +52,8 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 	}
 
 	private CModel model;
-	private CAccessor accessor;
+	private IEditor iEditor;
 	private IFrameCategory frameCategory;
-
-	private class AccessorRetriever extends CBootstrapper {
-
-		CAccessor get() {
-
-			return access(model);
-		}
-	}
 
 	private class OneTimeParser {
 
@@ -97,7 +90,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 				if (slot != null) {
 
-					setValues(slot);
+					setValidValues(slot);
 					frameSlots.remove(frame, this);
 
 					return true;
@@ -122,9 +115,14 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 				}
 			}
 
-			private void setValues(ISlot slot) {
+			private void setValidValues(ISlot slot) {
 
-				getSlotEditor(slot).setAssertedValues(getValidValues(slot));
+				setValues(slot, getValidValues(slot));
+			}
+
+			private void setValues(ISlot slot, List<IValue> values) {
+
+				iEditor.getSlotEditor(slot).setAssertedValues(values);
 			}
 
 			private List<IValue> getValidValues(ISlot slot) {
@@ -522,12 +520,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 		this.model = model;
  		this.frameCategory = frameCategory;
 
-		accessor = new AccessorRetriever().get();
-	}
-
-	CAccessor getAccessor() {
-
-		return accessor;
+		iEditor = ZMekonManager.access(model).getIEditor();
 	}
 
 	abstract IFrame instantiateFrame(CFrame type, IFrameCategory category);
@@ -582,11 +575,6 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 	private CFrame getCFrame(CIdentity id) {
 
 		return model.getFrames().get(id);
-	}
-
-	private ISlotEditor getSlotEditor(ISlot slot) {
-
-		return accessor.getIEditor().getSlotEditor(slot);
 	}
 
 	private boolean isClassName(Class<?> testClass, String testName) {

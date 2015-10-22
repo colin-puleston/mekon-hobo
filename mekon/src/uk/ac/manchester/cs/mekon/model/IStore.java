@@ -30,6 +30,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -45,8 +46,9 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public class IStore {
 
+	private ZFreeInstantiator freeInstantiator;
+
 	private InstanceFileStore fileStore;
-	private IFreeInstantiator freeInstantiator;
 	private Set<IMatcher> matchers = new HashSet<IMatcher>();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
@@ -193,8 +195,8 @@ public class IStore {
 
 	IStore(CModel model) {
 
+		freeInstantiator = new ZFreeInstantiatorImpl(model);
 		fileStore = new InstanceFileStore(model);
-		freeInstantiator = new IFreeInstantiatorImpl(model);
 	}
 
 	void setStoreDirectory(File storeDirectory) {

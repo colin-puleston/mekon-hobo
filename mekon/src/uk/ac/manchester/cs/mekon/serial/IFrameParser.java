@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * Parser for the standard XML serialisation of {@link IFrame}
@@ -36,6 +37,8 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  * @author Colin Puleston
  */
 public class IFrameParser extends IFrameParserAbstract {
+
+	private IEditor iEditor;
 
 	/**
 	 * Constructor
@@ -46,6 +49,8 @@ public class IFrameParser extends IFrameParserAbstract {
 	public IFrameParser(CModel model, IFrameCategory frameCategory) {
 
 		super(model, frameCategory);
+
+		iEditor = ZMekonManager.access(model).getIEditor();
 	}
 
 	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
@@ -114,6 +119,6 @@ public class IFrameParser extends IFrameParserAbstract {
 
 	private IFrameEditor getFrameEditor(IFrame frame) {
 
-		return getAccessor().getIEditor().getFrameEditor(frame);
+		return iEditor.getFrameEditor(frame);
 	}
 }

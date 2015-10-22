@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.mechanism;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * Responsible for generating "free" versions of existing
@@ -51,15 +52,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class IFreeInstanceGenerator {
 
-	private IFreeInstantiator instantiator;
-
-	private class InstantiatorRetriever extends CBootstrapper {
-
-		IFreeInstantiator get(CModel model) {
-
-			return access(model).getFreeInstantiator();
-		}
-	}
+	private ZFreeInstantiator instantiator;
 
 	/**
 	 * Constructor.
@@ -68,7 +61,7 @@ public class IFreeInstanceGenerator {
 	 */
 	public IFreeInstanceGenerator(CModel model) {
 
-		instantiator = new InstantiatorRetriever().get(model);
+		instantiator = ZMekonManager.access(model).getFreeInstantiator();
 	}
 
 	/**

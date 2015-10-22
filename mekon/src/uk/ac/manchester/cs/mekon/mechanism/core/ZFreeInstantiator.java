@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
+package uk.ac.manchester.cs.mekon.mechanism.core;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -30,13 +30,12 @@ import uk.ac.manchester.cs.mekon.model.*;
  * Provides the MEKON mechanisms, and those of any extensions of
  * the MEKON framework, with a means of building "free-instances".
  * <p>
- * NOTE: This class is only intended for use by the MEKON and
- * MEKON-extension mechanisms and should not be accessed directly
- * by the client code.
+ * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
+ * OR THE PLUGIN CODE.
  *
  * @author Colin Puleston
  */
-public interface IFreeInstantiator {
+public interface ZFreeInstantiator {
 
 	/**
 	 * Creates a frame that will be part of a free-instance.

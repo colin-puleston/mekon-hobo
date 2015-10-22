@@ -28,11 +28,17 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * @author Colin Puleston
  */
 public class MekonTest extends FramesTestUtils {
+
+	static private CModel createEmptyModel() {
+
+		return ZMekonManager.start().getModel();
+	}
 
 	private CModel model;
 	private IReasoner iReasoner;
@@ -122,17 +128,17 @@ public class MekonTest extends FramesTestUtils {
 
 	public MekonTest() {
 
-		this(new CModel(), null);
+		this(createEmptyModel(), null);
+	}
+
+	public MekonTest(IReasoner iReasoner) {
+
+		this(createEmptyModel(), iReasoner);
 	}
 
 	public MekonTest(CModel model) {
 
 		this(model, null);
-	}
-
-	public MekonTest(IReasoner iReasoner) {
-
-		this(new CModel(), iReasoner);
 	}
 
 	public IFrame createComplexInstance() {

@@ -31,6 +31,7 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * Represents a generic MEKON Frames Model (FM), within which
@@ -42,10 +43,11 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public class CModel implements CAnnotatable {
 
+	private ZMekonCustomiser customiser;
+
 	private CFrame rootFrame = new CRootFrame(this);
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
 
-	private CCustomiser customiser;
 	private CAnnotations annotations = new CAnnotations(this);
 
 	private IEditor iEditor = new IEditorImpl(this);
@@ -163,12 +165,7 @@ public class CModel implements CAnnotatable {
 		return getFrame(identity).instantiateQuery();
 	}
 
-	CModel() {
-
-		this(new CCustomiserDefault());
-	}
-
-	CModel(CCustomiser customiser) {
+	CModel(ZMekonCustomiser customiser) {
 
 		this.customiser = customiser;
 	}

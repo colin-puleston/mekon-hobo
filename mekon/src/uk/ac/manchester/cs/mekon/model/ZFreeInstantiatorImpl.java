@@ -26,12 +26,12 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * @author Colin Puleston
  */
-class IFreeInstantiatorImpl implements IFreeInstantiator {
+class ZFreeInstantiatorImpl implements ZFreeInstantiator {
 
 	static private Map<Class<? extends Number>, CNumberDef> numberDefs
 						= new HashMap<Class<? extends Number>, CNumberDef>();
@@ -131,7 +131,7 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		return new Deriver().copy(sourceInstance);
 	}
 
-	IFreeInstantiatorImpl(CModel model) {
+	ZFreeInstantiatorImpl(CModel model) {
 
 		rootFrame = model.getRootFrame();
 	}

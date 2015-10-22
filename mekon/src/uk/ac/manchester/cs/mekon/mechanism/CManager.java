@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.mechanism;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
@@ -48,7 +49,7 @@ public class CManager {
 	 */
 	static public CBuilder createEmptyBuilder() {
 
-		return new CBootstrapperLocal().start().createBuilder();
+		return ZMekonManager.start().createBuilder();
 	}
 
 	/**
