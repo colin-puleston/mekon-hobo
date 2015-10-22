@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  *   <li><i>Expression-frame</i> Represents a concept-level
  *   expression
  * </ul>
+ * <p>
  * The set of all atomic-frames forms a hierarchy with multiple
  * inheritance. Each atomic-frame, other than a special "root"
  * frame, will have hierarchical links to one of more super-frames,
@@ -66,6 +67,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  *   <li><i>Concrete-extension-frame</i> Can never be equal-to,
  *   subsumed-by, or subsuming-of another extension-frame
  * </ul>
+ * <p>
  * Each frame has a "visibility" status of "exposed" or "hidden".
  * Hidden frames are those that are not relevant to an end-user.
  * Atomic-frames can be either exposed or hidden. Expression-frames

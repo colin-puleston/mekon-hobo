@@ -77,13 +77,14 @@ public class ISlotSpecs {
 
 	/**
 	 * Absorbs all slot-related definitions associated with the
-	 * specified concept-level frame or any of it's ancestors, into the
+	 * specified concept-level frame or any of it's ancestors into the
 	 * current set of slot-specifications, creating new specifications
-	 * where necessary.
+	 * where necessary. Absorbed definitions may include:
 	 * <ul>
 	 *   <li>Concept-level slot definitions
 	 *   <li>Instance-level slot default-values
 	 * </ul>
+	 * <p>
 	 * The new slot-definition information will be used to update
 	 * existing slot-specifications as follows:
 	 * <ul>

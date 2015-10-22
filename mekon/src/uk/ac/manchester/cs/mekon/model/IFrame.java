@@ -48,6 +48,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  *	 assertion-frames are not, and slots on query-frames are more likely
  *	 to be editable by the client than on assertion-frames.
  * </ul>
+ * <p>
  * Query-frames and assertion-frames cannot be mixed within a single
  * model-instantiation. Attempting to do so will result in an
  * exception being thrown.

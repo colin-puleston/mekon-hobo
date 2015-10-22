@@ -28,8 +28,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Responsible for generating "free" versions of existing
- * instance-level frame/slot networks, or "free-instances", in which
- * the schema has been loosened in the following ways:
+ * instance-level frame/slot networks, or "free-instances". A free
+ * instance is one in which the schema has been loosened in the
+ * following ways:
  * <ul>
  *   <li>No effective constraints on slot-values, other than general
  *	 value-category (i.e, {@link IFrame}, {@link CFrame}, or
@@ -38,6 +39,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *	 either generic reasoning mechanisms, or custom procedures
  *	 associated with a mapped object model
  * </ul>
+ * <p>
  * Such free-instances are intended for use by any implementations of
  * {@link IReasoner} and {@link IMatcher} that need to manipulate
  * their instances in a way that (a) is outside the general schema
