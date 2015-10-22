@@ -27,10 +27,10 @@ package uk.ac.manchester.cs.hobo.mechanism.core;
 import uk.ac.manchester.cs.hobo.model.*;
 
 /**
- * Point-of-entry for the HOBO mechanisms.
- * <p>
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
  * OR THE PLUGIN CODE.
+ * <p>
+ * Point-of-entry for the HOBO mechanisms.
  *
  * @author Colin Puleston
  */

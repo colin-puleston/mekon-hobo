@@ -27,13 +27,13 @@ package uk.ac.manchester.cs.hobo.model;
 import uk.ac.manchester.cs.hobo.mechanism.core.*;
 
 /**
+ * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
+ * OR THE PLUGIN CODE.
+ * <p>
  * Provides the HOBO mechanisms, and those of any extensions of
  * the HOBO framework, with a means of creating a {@link DModel}
  * object, and retrieving the associated {@link ZHoboAccessor}
  * object.
- * <p>
- * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
- * OR THE PLUGIN CODE.
  *
  * @author Colin Puleston
  */

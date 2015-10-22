@@ -28,11 +28,11 @@ import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.mechanism.*;
 
 /**
- * Provides the HOBO mechanisms with privileged access to the HOBO
- * model.
- * <p>
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
  * OR THE PLUGIN CODE.
+ * <p>
+ * Provides the HOBO mechanisms with privileged access to the HOBO
+ * model.
  *
  * @author Colin Puleston
  */
