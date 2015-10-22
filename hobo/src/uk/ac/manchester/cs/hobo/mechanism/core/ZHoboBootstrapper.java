@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.model;
+package uk.ac.manchester.cs.hobo.mechanism.core;
 
-import uk.ac.manchester.cs.hobo.mechanism.core.*;
+import uk.ac.manchester.cs.hobo.model.*;
 
 /**
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
@@ -37,21 +37,12 @@ import uk.ac.manchester.cs.hobo.mechanism.core.*;
  *
  * @author Colin Puleston
  */
-public class ZHoboBootstrapper {
-
-	/**
-	 * Constructor.
-	 */
-	protected ZHoboBootstrapper() {
-	}
+public interface ZHoboBootstrapper {
 
 	/**
 	 * Creates an empty model.
 	 *
 	 * @return Accessor for model
 	 */
-	protected ZHoboAccessor start() {
-
-		return new ZHoboAccessorImpl();
-	}
+	public ZHoboAccessor start();
 }

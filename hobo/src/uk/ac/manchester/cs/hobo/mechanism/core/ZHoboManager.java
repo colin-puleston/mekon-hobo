@@ -36,6 +36,22 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public class ZHoboManager {
 
+	static private final String MODEL_CLASS_NAME
+			= "uk.ac.manchester.cs.hobo.model.DModel";
+
+	static private ZHoboBootstrapper bootstrapper = null;
+
+	/**
+	 * Initialises manager with the bootstrapper, as provided by
+	 * {@link DModel} class upon loading.
+	 *
+	 * @param booter Bootstrapper provided by model class
+	 */
+	static public void initialise(ZHoboBootstrapper booter) {
+
+		bootstrapper = booter;
+	}
+
 	/**
 	 * Creates an empty model.
 	 *
@@ -43,6 +59,30 @@ public class ZHoboManager {
 	 */
 	static public ZHoboAccessor start() {
 
-		return new Bootstrapper().start();
+		return getBootstrapper().start();
+	}
+
+	static private ZHoboBootstrapper getBootstrapper() {
+
+		loadModelClassToInitialiseBootstrapper();
+
+		if (bootstrapper == null) {
+
+			throw new Error("HOBO bootstrapper has not been registered!");
+		}
+
+		return bootstrapper;
+	}
+
+	static private void loadModelClassToInitialiseBootstrapper() {
+
+		try {
+
+			Class.forName(MODEL_CLASS_NAME);
+		}
+		catch (ClassNotFoundException e) {
+
+			throw new Error("HOBO model class not found!");
+		}
 	}
 }

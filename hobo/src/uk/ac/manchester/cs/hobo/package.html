@@ -37,6 +37,11 @@ For the HOBO-specific exception classes the following prefix is used:
   <li><b>H:</b> HOBO-specific exception classes
 </ul>
 
+Within the HOBO core-mechanism package (see below) the following prefix is used (as for the MEKON core-mechanism package):
+<ul>
+  <li><b>Z:</b> HOBO core-mechanism classes and interfaces
+</ul>
+
 <H3>Model API</H3>
 <i>Package:</i> {@link uk.ac.manchester.cs.hobo.model}
 <p>
@@ -86,7 +91,12 @@ The model, modeller and mechanism packages, in addition to providing the respect
   <li>Modeller &lt;==> Model
   <li>Mechanism &lt;==> Model
 </ul>
-NOTE: The implementation is facilitated by a special {@link uk.ac.manchester.cs.hobo.model.DBootstrapper} class in the model package, which is used by the mechanism package. Even though this is a public class in the model package, it is not directly relevant to the client, and hence is not considered to be part of the model API.
+
+<H3>Core-Mechanism Package</H3>
+
+<i>Package:</i> {@link uk.ac.manchester.cs.hobo.mechanism.core}
+<p>
+This package contains a set of classes and interfaces that comprise the core HOBO mechanisms, and which are not relevant to either the client or the plugin code.
 
 </BODY>
 </HTML>

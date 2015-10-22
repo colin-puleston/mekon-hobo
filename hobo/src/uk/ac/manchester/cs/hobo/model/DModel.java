@@ -31,6 +31,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.mechanism.core.*;
 import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.mechanism.*;
+import uk.ac.manchester.cs.hobo.mechanism.core.*;
 
 /**
  * Represents the HOBO direct model, which is an Object Model
@@ -48,6 +49,11 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  * @author Colin Puleston
  */
 public class DModel {
+
+	static {
+
+		ZHoboManager.initialise(new ZHoboBootstrapperImpl());
+	}
 
 	private CModel cModel;
 	private IEditor iEditor;

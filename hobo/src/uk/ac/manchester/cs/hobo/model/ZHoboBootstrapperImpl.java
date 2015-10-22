@@ -22,17 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism.core;
+package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.hobo.mechanism.core.*;
 
 /**
  * @author Colin Puleston
  */
-class Bootstrapper extends ZHoboBootstrapper {
+class ZHoboBootstrapperImpl implements ZHoboBootstrapper {
 
-	protected ZHoboAccessor start() {
+	public ZHoboAccessor start() {
 
-		return super.start();
+		return new ZHoboAccessorImpl();
 	}
 }
