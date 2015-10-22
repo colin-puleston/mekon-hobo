@@ -41,7 +41,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class IClassifier extends DefaultIReasoner {
+public abstract class IClassifier extends IReasonerDefault {
 
 	private class Updater {
 

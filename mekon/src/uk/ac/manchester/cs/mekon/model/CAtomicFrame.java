@@ -56,7 +56,7 @@ class CAtomicFrame extends CFrame {
 	private CSlots slots = CSlots.INERT_INSTANCE;
 	private CSlotValues slotValues = CSlotValues.INERT_INSTANCE;
 
-	private IReasoner iReasoner = DefaultIReasoner.get();
+	private IReasoner iReasoner = IReasonerDefault.get();
 	private CFrameSubsumptions subsumptions = new CFrameSubsumptions(this);
 
 	private abstract class DownwardsCrawler extends CHierarchyCrawler {

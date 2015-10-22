@@ -37,7 +37,7 @@ public class MekonTest extends FramesTestUtils {
 	private CModel model;
 	private IReasoner iReasoner;
 
-	private class DynamicSlotInsertionReasoner extends DefaultIReasoner {
+	private class DynamicSlotInsertionReasoner extends IReasonerDefault {
 
 		private CSlot slotType;
 		private CFrame valueType;

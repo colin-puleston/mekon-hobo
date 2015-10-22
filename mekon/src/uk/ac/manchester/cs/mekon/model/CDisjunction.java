@@ -262,7 +262,7 @@ class CDisjunction extends CExpression {
 
 	IReasoner getIReasoner() {
 
-		return DefaultIReasoner.get();
+		return IReasonerDefault.get();
 	}
 
 	String getExpressionTypeName() {
