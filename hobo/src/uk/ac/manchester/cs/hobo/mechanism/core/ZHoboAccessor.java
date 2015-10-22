@@ -22,17 +22,21 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism;
+package uk.ac.manchester.cs.hobo.mechanism.core;
 
 import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.hobo.mechanism.*;
 
 /**
- * Provides privileged access to the HOBO model for extensions
- * of the HOBO framework.
+ * Provides the HOBO mechanisms with privileged access to the HOBO
+ * model.
+ * <p>
+ * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
+ * OR THE PLUGIN CODE.
  *
  * @author Colin Puleston
  */
-public interface DAccessor {
+public interface ZHoboAccessor {
 
 	/**
 	 * Provides the model object.

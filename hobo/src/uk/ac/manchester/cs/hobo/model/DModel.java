@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.mechanism.*;
 
@@ -49,7 +50,8 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 public class DModel {
 
 	private CModel cModel;
-	private CAccessor cAccessor;
+	private IEditor iEditor;
+	private ZObjectModelMapper objectModelMapper;
 
 	private DInitialiser initialiser;
 	private DBindings bindings = new DBindings();
@@ -288,10 +290,15 @@ public class DModel {
 
 	DModel() {
 
-		cAccessor = new CBootstrapperLocal().start(this);
-		cModel = cAccessor.getModel();
+		ZMekonCustomiser mekonCustomiser = new ZMekonCustomiserLocal(this);
+		ZMekonAccessor mekonAccessor = ZMekonManager.start(mekonCustomiser);
+		CBuilder cBuilder = mekonAccessor.createBuilder();
 
-		initialiser = new DInitialiser(cAccessor.createBuilder(), bindings);
+		cModel = mekonAccessor.getModel();
+		iEditor = mekonAccessor.getIEditor();
+		objectModelMapper = mekonAccessor.getObjectModelMapper();
+
+		initialiser = new DInitialiser(cBuilder, bindings);
 	}
 
 	void initialise() {
@@ -324,7 +331,7 @@ public class DModel {
 
 	IEditor getIEditor() {
 
-		return cAccessor.getIEditor();
+		return iEditor;
 	}
 
 	void ensureMappedDObject(IFrame frame, boolean freeInstance) {
@@ -351,14 +358,14 @@ public class DModel {
 													freeInstance);
 		D dObject = instantiator.instantiate(frame);
 
-		cAccessor.setIFrameMappedObject(frame, dObject);
+		objectModelMapper.setMappedObject(frame, dObject);
 
 		return dObject;
 	}
 
 	private Object getMappedObject(IFrame frame) {
 
-		return cAccessor.getIFrameMappedObject(frame);
+		return objectModelMapper.getMappedObject(frame);
 	}
 
 	private CFrame getFrame(CIdentity identity) {

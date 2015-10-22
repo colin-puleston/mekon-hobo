@@ -22,24 +22,27 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.model;
+package uk.ac.manchester.cs.hobo.mechanism.core;
 
-import uk.ac.manchester.cs.hobo.mechanism.*;
+import uk.ac.manchester.cs.hobo.model.*;
 
 /**
+ * Point-of-entry for the HOBO mechanisms.
+ * <p>
+ * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
+ * OR THE PLUGIN CODE.
+ *
  * @author Colin Puleston
  */
-class DAccessorImpl implements DAccessor {
+public class ZHoboManager {
 
-	private DModel model = new DModel();
+	/**
+	 * Creates an empty model.
+	 *
+	 * @return Accessor for model
+	 */
+	static public ZHoboAccessor start() {
 
-	public DModel getModel() {
-
-		return model;
-	}
-
-	public DBuilder createBuilder() {
-
-		return new DBuilderImpl(model);
+		return new Bootstrapper().start();
 	}
 }

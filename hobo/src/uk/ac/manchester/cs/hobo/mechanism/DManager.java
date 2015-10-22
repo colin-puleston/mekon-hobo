@@ -24,9 +24,10 @@
 
 package uk.ac.manchester.cs.hobo.mechanism;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.hobo.mechanism.core.*;
 
 /**
  * Point-of-entry for applications using a direct HOBO model,
@@ -52,7 +53,7 @@ public class DManager {
 	 */
 	static public DBuilder createEmptyBuilder() {
 
-		return new DBootstrapperLocal().start().createBuilder();
+		return ZHoboManager.start().createBuilder();
 	}
 
 	/**
