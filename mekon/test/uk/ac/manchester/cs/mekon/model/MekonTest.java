@@ -37,7 +37,7 @@ public class MekonTest extends FramesTestUtils {
 
 	static private CModel createEmptyModel() {
 
-		return ZMekonManager.start().getModel();
+		return ZMekonAccessor.get().createModel();
 	}
 
 	private CModel model;

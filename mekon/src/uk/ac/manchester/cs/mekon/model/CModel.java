@@ -45,7 +45,7 @@ public class CModel implements CAnnotatable {
 
 	static {
 
-		ZMekonManager.initialise(new ZMekonBootstrapperImpl());
+		ZMekonAccessor.set(new ZMekonAccessorImpl());
 	}
 
 	private ZMekonCustomiser customiser;

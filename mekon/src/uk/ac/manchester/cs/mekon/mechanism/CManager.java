@@ -49,7 +49,9 @@ public class CManager {
 	 */
 	static public CBuilder createEmptyBuilder() {
 
-		return ZMekonManager.start().createBuilder();
+		ZMekonAccessor accessor = ZMekonAccessor.get();
+
+		return accessor.createBuilder(accessor.createModel());
 	}
 
 	/**

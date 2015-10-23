@@ -520,7 +520,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 		this.model = model;
  		this.frameCategory = frameCategory;
 
-		iEditor = ZMekonManager.access(model).getIEditor();
+		iEditor = ZMekonAccessor.get().getIEditor(model);
 	}
 
 	abstract IFrame instantiateFrame(CFrame type, IFrameCategory category);

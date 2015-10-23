@@ -50,7 +50,7 @@ public class IFrameParser extends IFrameParserAbstract {
 
 		super(model, frameCategory);
 
-		iEditor = ZMekonManager.access(model).getIEditor();
+		iEditor = ZMekonAccessor.get().getIEditor(model);
 	}
 
 	IFrame instantiateFrame(CFrame type, IFrameCategory category) {

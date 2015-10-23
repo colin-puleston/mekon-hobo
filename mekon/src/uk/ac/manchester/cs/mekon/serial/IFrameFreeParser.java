@@ -51,7 +51,7 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 
 		super(model, frameCategory);
 
-		instantiator = ZMekonManager.access(model).getFreeInstantiator();
+		instantiator = ZMekonAccessor.get().getFreeInstantiator(model);
 	}
 
 	IFrame instantiateFrame(CFrame type, IFrameCategory category) {

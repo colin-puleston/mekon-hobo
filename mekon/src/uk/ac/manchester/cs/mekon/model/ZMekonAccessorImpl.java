@@ -30,47 +30,32 @@ import uk.ac.manchester.cs.mekon.mechanism.core.*;
 /**
  * @author Colin Puleston
  */
-class ZMekonAccessorImpl implements ZMekonAccessor {
+class ZMekonAccessorImpl extends ZMekonAccessor {
 
-	private CModel model;
-
-	private ZFreeInstantiator freeInstantiator;
 	private ZObjectModelMapper objectModelMapper = new ZObjectModelMapperImpl();
 
-	public CModel getModel() {
+	public CModel createModel(ZMekonCustomiser customiser) {
 
-		return model;
+		return new CModel(customiser);
 	}
 
-	public CBuilder createBuilder() {
+	public CBuilder createBuilder(CModel model) {
 
 		return new CBuilderImpl(model);
 	}
 
-	public IEditor getIEditor() {
+	public IEditor getIEditor(CModel model) {
 
 		return model.getIEditor();
 	}
 
-	public ZFreeInstantiator getFreeInstantiator() {
+	public ZFreeInstantiator getFreeInstantiator(CModel model) {
 
-		return freeInstantiator;
+		return new ZFreeInstantiatorImpl(model);
 	}
 
 	public ZObjectModelMapper getObjectModelMapper() {
 
 		return objectModelMapper;
-	}
-
-	ZMekonAccessorImpl(ZMekonCustomiser customiser) {
-
-		this(new CModel(customiser));
-	}
-
-	ZMekonAccessorImpl(CModel model) {
-
-		this.model = model;
-
-		freeInstantiator = new ZFreeInstantiatorImpl(model);
 	}
 }

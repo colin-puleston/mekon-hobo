@@ -61,7 +61,7 @@ public class IFreeInstanceGenerator {
 	 */
 	public IFreeInstanceGenerator(CModel model) {
 
-		instantiator = ZMekonManager.access(model).getFreeInstantiator();
+		instantiator = ZMekonAccessor.get().getFreeInstantiator(model);
 	}
 
 	/**

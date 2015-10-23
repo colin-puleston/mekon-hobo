@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.mechanism.core;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
@@ -37,40 +38,83 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  *
  * @author Colin Puleston
  */
-public interface ZMekonAccessor {
+public abstract class ZMekonAccessor {
+
+	static private final String MODEL_CLASS_NAME
+			= "uk.ac.manchester.cs.mekon.model.CModel";
+
+	static private KSingleton<ZMekonAccessor> singleton
+							= new KSingleton<ZMekonAccessor>();
 
 	/**
-	 * Provides the model object.
+	 * Sets the singleton accessor object.
 	 *
-	 * @return Model object
+	 * @param accessor Accessor to set as singleton
 	 */
-	public CModel getModel();
+	static public synchronized void set(ZMekonAccessor accessor) {
+
+		singleton.set(accessor);
+	}
 
 	/**
-	 * Creates a builder for the model.
+	 * Retrieves the singleton accessor object. Ensures that the
+	 * {@link CModel} class is loaded, since it is the static
+	 * initialisation method on that class that sets the singleton
+	 * accessor, via the {@link #set} method.
 	 *
+	 * @return Singleton accessor object
+	 */
+	static public ZMekonAccessor get() {
+
+		return singleton.get(MODEL_CLASS_NAME);
+	}
+
+	/**
+	 * Creates an empty model with the default customiser.
+	 *
+	 * @return Created empty model
+	 */
+	public CModel createModel() {
+
+		return createModel(new CustomiserDefault());
+	}
+
+	/**
+	 * Creates an empty model with the specified customiser.
+	 *
+	 * @param customiser Customiser for model
+	 * @return Created empty model
+	 */
+	public abstract CModel createModel(ZMekonCustomiser customiser);
+
+	/**
+	 * Creates a builder for the specified model.
+	 *
+	 * @param model Relevant model
 	 * @return Created builder
 	 */
-	public CBuilder createBuilder();
+	public abstract CBuilder createBuilder(CModel model);
 
 	/**
-	 * Provides the instantiation editor for the model.
+	 * Provides an instantiation editor for the specified model.
 	 *
+	 * @param model Relevant model
 	 * @return Instantiation editor
 	 */
-	public IEditor getIEditor();
+	public abstract IEditor getIEditor(CModel model);
 
 	/**
-	 * Provides the free-instantiator object for the model.
+	 * Provides a free-instantiator object for the specified model.
 	 *
+	 * @param model Relevant model
 	 * @return Free-instantiator object
 	 */
-	public ZFreeInstantiator getFreeInstantiator();
+	public abstract ZFreeInstantiator getFreeInstantiator(CModel model);
 
 	/**
-	 * Provides the object-model mapper for the model.
+	 * Provides a object-model mapper for any model.
 	 *
 	 * @return Object-model mapper
 	 */
-	public ZObjectModelMapper getObjectModelMapper();
+	public abstract ZObjectModelMapper getObjectModelMapper();
 }
