@@ -130,6 +130,11 @@ class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 		return new Intersector().intersect();
 	}
 
+	Class<CFrame> getOperandType() {
+
+		return CFrame.class;
+	}
+
 	private List<CFrame> getMostSpecificOperands() {
 
 		return new MostSpecificCFrames(operands).getCurrents();

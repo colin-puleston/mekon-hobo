@@ -79,4 +79,9 @@ class CNumberIntersection extends CTypeValueIntersection<CNumber> {
 
 		return currents.size() == 1 ? currents.iterator().next() : null;
 	}
+
+	Class<CNumber> getOperandType() {
+
+		return CNumber.class;
+	}
 }

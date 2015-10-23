@@ -65,4 +65,11 @@ public abstract class CTypeValueIntersection<V extends CValue<?>> {
 
 	CTypeValueIntersection() {
 	}
+
+	void addTypeOperand(CValue<?> operand) {
+
+		addOperand(operand.castAs(getOperandType()));
+	}
+
+	abstract Class<V> getOperandType();
 }

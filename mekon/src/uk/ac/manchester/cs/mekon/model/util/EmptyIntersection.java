@@ -24,55 +24,25 @@
 
 package uk.ac.manchester.cs.mekon.model.util;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents an intersection of {@link MFrame} objects.
- *
  * @author Colin Puleston
  */
-class MFrameIntersection extends CTypeValueIntersection<MFrame> {
+class EmptyIntersection extends CTypeValueIntersection<CValue<?>> {
 
-	private CFrameIntersection cIntersection = new CFrameIntersection();
+	public void addOperand(CValue<?> operand) {
 
-	/**
-	 * Constructor.
-	 */
-	public MFrameIntersection() {
+		throw new Error("Method should never be invoked!");
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @param operands Initial operands to add
-	 */
-	public MFrameIntersection(Collection<MFrame> operands) {
+	public CValue<?> getCurrent() {
 
-		addOperands(operands);
+		return null;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public void addOperand(MFrame operand) {
+	Class<CValue<?>> getOperandType() {
 
-		cIntersection.addOperand(operand.getRootCFrame());
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public MFrame getCurrent() {
-
-		CFrame cCurrent = cIntersection.getCurrent();
-
-		return cCurrent != null ? cCurrent.getType() : null;
-	}
-
-	Class<MFrame> getOperandType() {
-
-		return MFrame.class;
+		throw new Error("Method should never be invoked!");
 	}
 }

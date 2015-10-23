@@ -35,7 +35,9 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class CValueIntersection {
 
-	private List<CValue<?>> operands = new ArrayList<CValue<?>>();
+	static private final EmptyIntersection EMPTY_INTERSECTION = new EmptyIntersection();
+
+	private CTypeValueIntersection<?> typeIntersection = EMPTY_INTERSECTION;
 
 	private class TypeIntersectionCreator extends CValueVisitor {
 
@@ -43,22 +45,22 @@ public class CValueIntersection {
 
 		protected void visit(CFrame value) {
 
-			intersection = new CFrameIntersection(operandsAs(CFrame.class));
+			intersection = new CFrameIntersection();
 		}
 
 		protected void visit(CNumber value) {
 
-			intersection = new CNumberIntersection(operandsAs(CNumber.class));
+			intersection = new CNumberIntersection();
 		}
 
 		protected void visit(MFrame value) {
 
-			intersection = new MFrameIntersection(operandsAs(MFrame.class));
+			intersection = new MFrameIntersection();
 		}
 
-		CTypeValueIntersection<?> create() {
+		CTypeValueIntersection<?> create(CValue<?> operand) {
 
-			visit(operands.get(0));
+			visit(operand);
 
 			return intersection;
 		}
@@ -87,7 +89,10 @@ public class CValueIntersection {
 	 */
 	public void addOperands(Collection<CValue<?>> operands) {
 
-		this.operands.addAll(operands);
+		for (CValue<?> operand : operands) {
+
+			addOperand(operand);
+		}
 	}
 
 	/**
@@ -97,7 +102,7 @@ public class CValueIntersection {
 	 */
 	public void addOperand(CValue<?> operand) {
 
-		operands.add(operand);
+		resolveTypeIntersection(operand).addTypeOperand(operand);
 	}
 
 	/**
@@ -107,34 +112,22 @@ public class CValueIntersection {
 	 */
 	public CValue<?> getCurrent() {
 
-		if (operands.isEmpty()) {
-
-			return null;
-		}
-
-		if (operands.size() == 1) {
-
-			return operands.get(0);
-		}
-
-		return getTypeIntersection();
+		return typeIntersection.getCurrent();
 	}
 
-	private CValue<?> getTypeIntersection() {
+	private CTypeValueIntersection<?> resolveTypeIntersection(CValue<?> operand) {
 
-		return new TypeIntersectionCreator().create().getCurrent();
-	}
+		if (typeIntersection == EMPTY_INTERSECTION) {
 
-	private <V extends CValue<?>>Set<V> operandsAs(Class<V> type) {
-
-		Set<V> typeOperands = new HashSet<V>();
-
-		for (CValue<?> operand : operands) {
-
-			typeOperands.add(operand.castAs(type));
+			typeIntersection = createTypeIntersection(operand);
 		}
 
-		return typeOperands;
+		return typeIntersection;
+	}
+
+	private CTypeValueIntersection<?> createTypeIntersection(CValue<?> operand) {
+
+		return new TypeIntersectionCreator().create(operand);
 	}
 }
 
