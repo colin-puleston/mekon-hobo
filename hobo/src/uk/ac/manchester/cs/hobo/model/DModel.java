@@ -52,7 +52,7 @@ public class DModel {
 
 	static {
 
-		ZHoboManager.initialise(new ZHoboBootstrapperImpl());
+		ZHoboAccessor.set(new ZHoboAccessorImpl());
 	}
 
 	private CModel cModel;
@@ -296,13 +296,14 @@ public class DModel {
 
 	DModel() {
 
-		ZMekonCustomiser mekonCustomiser = new ZMekonCustomiserLocal(this);
-		ZMekonAccessor mekonAccessor = ZMekonManager.start(mekonCustomiser);
-		CBuilder cBuilder = mekonAccessor.createBuilder();
+		ZMekonAccessor mekonAccessor = ZMekonAccessor.get();
+		ZMekonCustomiserLocal mekonCustomiser = new ZMekonCustomiserLocal(this);
 
-		cModel = mekonAccessor.getModel();
-		iEditor = mekonAccessor.getIEditor();
+		cModel = mekonAccessor.createModel(mekonCustomiser);
+		iEditor = mekonAccessor.getIEditor(cModel);
 		objectModelMapper = mekonAccessor.getObjectModelMapper();
+
+		CBuilder cBuilder = mekonAccessor.createBuilder(cModel);
 
 		initialiser = new DInitialiser(cBuilder, bindings);
 	}

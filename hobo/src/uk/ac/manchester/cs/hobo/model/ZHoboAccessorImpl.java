@@ -30,16 +30,14 @@ import uk.ac.manchester.cs.hobo.mechanism.core.*;
 /**
  * @author Colin Puleston
  */
-class ZHoboAccessorImpl implements ZHoboAccessor {
+class ZHoboAccessorImpl extends ZHoboAccessor {
 
-	private DModel model = new DModel();
+	public DModel createModel() {
 
-	public DModel getModel() {
-
-		return model;
+		return new DModel();
 	}
 
-	public DBuilder createBuilder() {
+	public DBuilder createBuilder(DModel model) {
 
 		return new DBuilderImpl(model);
 	}

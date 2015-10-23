@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.mechanism.core;
 
+import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.mechanism.*;
 
@@ -36,19 +37,49 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  *
  * @author Colin Puleston
  */
-public interface ZHoboAccessor {
+public abstract class ZHoboAccessor {
+
+	static private final String MODEL_CLASS_NAME
+			= "uk.ac.manchester.cs.hobo.model.DModel";
+
+	static private KSingleton<ZHoboAccessor> singleton
+							= new KSingleton<ZHoboAccessor>();
 
 	/**
-	 * Provides the model object.
+	 * Sets the singleton accessor object.
 	 *
-	 * @return Model object
+	 * @param accessor Accessor to set as singleton
 	 */
-	public DModel getModel();
+	static public synchronized void set(ZHoboAccessor accessor) {
+
+		singleton.set(accessor);
+	}
 
 	/**
-	 * Creates a builder for the model.
+	 * Retrieves the singleton accessor object. Ensures that the
+	 * {@link DModel} class is loaded, since it is the static
+	 * initialisation method on that class that sets the singleton
+	 * accessor, via the {@link #set} method.
 	 *
+	 * @return Singleton accessor object
+	 */
+	static public ZHoboAccessor get() {
+
+		return singleton.get(MODEL_CLASS_NAME);
+	}
+
+	/**
+	 * Creates an empty model.
+	 *
+	 * @return Created empty model
+	 */
+	public abstract DModel createModel();
+
+	/**
+	 * Creates a builder for the specified model.
+	 *
+	 * @param model Relevant model
 	 * @return Created builder
 	 */
-	public DBuilder createBuilder();
+	public abstract DBuilder createBuilder(DModel model);
 }
