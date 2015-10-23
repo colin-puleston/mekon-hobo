@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Responsible for converting instantiations of the standard MEKON
- * frames representation into appropriate node/link networks.
+ * frames representation into corresponding node/link networks.
  *
  * @author Colin Puleston
  */

@@ -32,14 +32,11 @@ Within the MEKON API packages, the following single-character class-name prefixe
   <li><b>F:</b> Non-level-specific entities
 </ul>
 
-Within the MEKON utility packages (see below) the following prefix is used:
+The following prefixes are used within the other MEKON packages (see below for details):
 <ul>
-  <li><b>K:</b> General/utility MEKON classes
-</ul>
-
-Within the MEKON core-mechanism package (see below) the following prefix is used:
-<ul>
-  <li><b>Z:</b> MEKON core-mechanism classes and interfaces
+  <li><b>N:</b> Alternative node/link network representation
+  <li><b>K:</b> General/utility classes
+  <li><b>Z:</b> Core-mechanisms
 </ul>
 
 <H3>Model API</H3>
@@ -88,15 +85,16 @@ The model and mechanism packages, in addition to providing the respective APIs, 
 In addition to the main API packages, MEKON provides the following general/utility packages:
 <ul>
   <li><b>Exceptions:</b> {@link uk.ac.manchester.cs.mekon}
-  <li><b>Configuration-related:</b> {@link uk.ac.manchester.cs.mekon.config}
-  <li><b>General utilities:</b> {@link uk.ac.manchester.cs.mekon.util}
+  <li><b>Configuration-Related:</b> {@link uk.ac.manchester.cs.mekon.config}
+  <li><b>Network Representation:</b> {@link uk.ac.manchester.cs.mekon.network} (provides a simple light-weight node/link representation, for use by specific classification and query-matching plugins)
+  <li><b>General Utilities:</b> {@link uk.ac.manchester.cs.mekon.util}
 </ul>
 
 <H3>Core-Mechanism Package</H3>
 
 <i>Package:</i> {@link uk.ac.manchester.cs.mekon.mechanism.core}
 <p>
-This package contains a set of classes and interfaces that comprise the core MEKON mechanisms, and which are not relevant to either the client or the plugin code.
+This package provides the core MEKON mechanisms, and is not relevant to either the client or the plugin code.
 
 </BODY>
 </HTML>
