@@ -29,6 +29,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.model.util.*;
+
 /**
  * @author Colin Puleston
  */

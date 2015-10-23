@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.util.*;
 
 /**
  * @author Colin Puleston
@@ -257,7 +258,7 @@ class ISlotSpec {
 
 	private CValue<?> getValueTypeOrNull() {
 
-		return new CValueIntersection(valueTypes).getOrNull();
+		return new CValueIntersection(valueTypes).getCurrent();
 	}
 
 	private IFrameEditor getFrameEditor(IFrame frame) {

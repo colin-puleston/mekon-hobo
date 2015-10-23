@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -94,7 +96,7 @@ class IValueSubsumptions {
 
 	static private List<CValue<?>> getMostSpecificCValues(List<CValue<?>> cValues) {
 
-		return new MostSpecificCValues(cValues).getMostSpecifics();
+		return new MostSpecificCValues(cValues).getCurrents();
 	}
 
 	static private List<IValue> removeDuplicates(Collection<? extends IValue> values) {

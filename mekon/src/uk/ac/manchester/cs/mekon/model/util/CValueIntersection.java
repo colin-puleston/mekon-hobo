@@ -1,0 +1,140 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 University of Manchester
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package uk.ac.manchester.cs.mekon.model.util;
+
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+
+/**
+ * Represents an intersection of {@link CValue} objects.
+ *
+ * @author Colin Puleston
+ */
+public class CValueIntersection {
+
+	private List<CValue<?>> operands = new ArrayList<CValue<?>>();
+
+	private class TypeIntersectionCreator extends CValueVisitor {
+
+		private CTypeValueIntersection<?> intersection = null;
+
+		protected void visit(CFrame value) {
+
+			intersection = new CFrameIntersection(operandsAs(CFrame.class));
+		}
+
+		protected void visit(CNumber value) {
+
+			intersection = new CNumberIntersection(operandsAs(CNumber.class));
+		}
+
+		protected void visit(MFrame value) {
+
+			intersection = new MFrameIntersection(operandsAs(MFrame.class));
+		}
+
+		CTypeValueIntersection<?> create() {
+
+			visit(operands.get(0));
+
+			return intersection;
+		}
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public CValueIntersection() {
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param operands Initial operands to add
+	 */
+	public CValueIntersection(Collection<CValue<?>> operands) {
+
+		addOperands(operands);
+	}
+
+	/**
+	 * Adds a set of operands.
+	 *
+	 * @param operands Operands to add
+	 */
+	public void addOperands(Collection<CValue<?>> operands) {
+
+		this.operands.addAll(operands);
+	}
+
+	/**
+	 * Adds an operand.
+	 *
+	 * @param operand Operand to add
+	 */
+	public void addOperand(CValue<?> operand) {
+
+		operands.add(operand);
+	}
+
+	/**
+	 * Provides the current intersection, if applicable.
+	 *
+	 * @return Current intersection, or null if intersection is empty
+	 */
+	public CValue<?> getCurrent() {
+
+		if (operands.isEmpty()) {
+
+			return null;
+		}
+
+		if (operands.size() == 1) {
+
+			return operands.get(0);
+		}
+
+		return getTypeIntersection();
+	}
+
+	private CValue<?> getTypeIntersection() {
+
+		return new TypeIntersectionCreator().create().getCurrent();
+	}
+
+	private <V extends CValue<?>>Set<V> operandsAs(Class<V> type) {
+
+		Set<V> typeOperands = new HashSet<V>();
+
+		for (CValue<?> operand : operands) {
+
+			typeOperands.add(operand.castAs(type));
+		}
+
+		return typeOperands;
+	}
+}
+
