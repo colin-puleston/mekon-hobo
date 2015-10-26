@@ -4,7 +4,15 @@ Root package for the MEKON-OWL plug-ins, which contains a collection of MEKON-fr
 
 <H1>MEKON-OWL Overview</H1>
 
-MEKON-OWL consists of a set of <b>OWL-specific plug-ins</b> for MEKON (and hence for HOBO). These plug-ins enable (a) MEKON/HOBO models to be derived from <b>OWL ontologies</b>, and (b) automatic model-instantiation updating, and querying over sets of instances, based on <b>Description Logic (DL)</b> reasoning. All of these plug-ins are built on top of the <b>OWL API</b>.
+MEKON-OWL consists of a set of <b>OWL-specific plug-ins</b> for MEKON (and hence for HOBO). These plug-ins enable the following:
+<p>
+<ul>
+  <li>MEKON/HOBO models to be derived from <b>OWL ontologies</b>
+  <li>Automatic model-instantiation updating via <b>Description Logic (DL)</b> reasoning
+  <li>Querying over sets of instances, via OWL-compatible reasoning (DL-based and otherwise)
+</ul>
+<p>
+All of these plug-ins are built on top of the <b>OWL API</b>.
 <p>
 The plug-ins are:
 <ul>
@@ -19,7 +27,7 @@ All plug-ins are configurable in various ways, either programatically, via metho
 <p>
 {@link uk.ac.manchester.cs.mekon.owl.build.OBSectionBuilder} can be configured to determine which collections of entities will be loaded from the relevant ontologies, and exactly how they will be used in creating the MEKON FM entities.
 <p>
-Both {@link uk.ac.manchester.cs.mekon.owl.reason.ORClassifier} and {@link uk.ac.manchester.cs.mekon.owl.reason.ORMatcher} can be configured to determine how the FM instantiations will be interpreted semantically when composing the OWL expressions and networks of OWL individuals to be classified and queried over. In both cases, it is also possible to provide implementations of {@link uk.ac.manchester.cs.mekon.owl.reason.ORPreProcessor} to reshape the FM instantiations prior to conversion into OWL constructs.
+Both {@link uk.ac.manchester.cs.mekon.owl.reason.ORClassifier} and {@link uk.ac.manchester.cs.mekon.owl.reason.ORMatcher} can be configured to determine how the FM instantiations will be interpreted semantically when composing the OWL expressions and networks of OWL individuals to be classified and queried over. In both cases, it is possible to provide pre-processors to reshape intermediate node/link network versions of the FM instantiations, prior to conversion into OWL constructs (see {@link uk.ac.manchester.cs.mekon.network}).
 <p>
 All plug-ins make use of the {@link uk.ac.manchester.cs.mekon.owl.OModel} class, which provides MEKON-friendly access of OWL ontologies and DL reasoners via the OWL API. Similarly to the plug-ins themselves, the {@link uk.ac.manchester.cs.mekon.owl.OModel} can be configured either programatically or else via the general MEKON configuration system.
 <p>
