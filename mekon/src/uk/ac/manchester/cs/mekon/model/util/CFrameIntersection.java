@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.model.util.*;
  */
 class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 
-	private List<CFrame> operands = new ArrayList<CFrame>();
+	private MostSpecificCFrames mostSpecifics = new MostSpecificCFrames();
 
 	private class Intersector {
 
@@ -67,7 +67,7 @@ class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 
 		private boolean findDisjuncts() {
 
-			for (CFrame operand : getMostSpecificOperands()) {
+			for (CFrame operand : mostSpecifics.getCurrents()) {
 
 				List<CFrame> subsumeds = operand.getSubsumeds();
 
@@ -119,7 +119,7 @@ class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 	 */
 	public void addOperand(CFrame operand) {
 
-		operands.add(operand);
+		mostSpecifics.update(operand);
 	}
 
 	/**
@@ -133,10 +133,5 @@ class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 	Class<CFrame> getOperandType() {
 
 		return CFrame.class;
-	}
-
-	private List<CFrame> getMostSpecificOperands() {
-
-		return new MostSpecificCFrames(operands).getCurrents();
 	}
 }
