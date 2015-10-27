@@ -126,9 +126,4 @@ class ConceptExpression extends InstanceConstruct {
 
 		return new ArrayList<IRI>(iris);
 	}
-
-	private OWLDataFactory getDataFactory() {
-
-		return model.getDataFactory();
-	}
 }

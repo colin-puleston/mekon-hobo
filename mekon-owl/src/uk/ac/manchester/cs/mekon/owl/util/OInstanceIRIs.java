@@ -44,6 +44,14 @@ public class OInstanceIRIs {
 	static private final String BASE_NAMESPACE = "urn:mekon-owl:instances";
 	static private final String DYNAMIC_INSTANCES_NAMESPACE_EXTN = ":dynamic";
 
+	static private class InstanceIndexes extends KIndexes<CIdentity> {
+
+		protected KRuntimeException createException(String message) {
+
+			return new KSystemConfigException(message);
+		}
+	}
+
 	/**
 	 * Tests whether an IRI has the format that would be generated
 	 * by this class generate for a static instance.
@@ -75,14 +83,6 @@ public class OInstanceIRIs {
 
 	private String namespace;
 	private InstanceIndexes indexes = new InstanceIndexes();
-
-	private class InstanceIndexes extends KIndexes<CIdentity> {
-
-		protected KRuntimeException createException(String message) {
-
-			return new KSystemConfigException(message);
-		}
-	}
 
 	/**
 	 * Constructor.

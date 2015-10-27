@@ -31,7 +31,6 @@ import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -40,7 +39,6 @@ class IndividualNetwork extends InstanceConstruct {
 
 	private OModel model;
 
-	private OInstanceIRIs iris;
 	private IndividualsRenderer renderer;
 	private OWLNamedIndividual rootIndividual;
 
@@ -86,11 +84,6 @@ class IndividualNetwork extends InstanceConstruct {
 	Set<OWLClass> getSuggestedTypes() {
 
 		throw new Error("Method should never be invoked!");
-	}
-
-	private OWLDataFactory getDataFactory() {
-
-		return model.getDataFactory();
 	}
 
 	private OWLReasoner getReasoner() {

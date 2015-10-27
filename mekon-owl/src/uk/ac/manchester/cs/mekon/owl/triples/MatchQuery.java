@@ -35,11 +35,11 @@ class MatchQuery extends SpecificQuery {
 
 	static private final String ROOT_NODE_VARIABLE = "?n";
 
-	private class QueryBodyRenderer extends MatchingQueryBodyRenderer {
+	static private class QueryBodyRenderer extends MatchingQueryBodyRenderer {
 
-		QueryBodyRenderer() {
+		QueryBodyRenderer(OTQueryConstants constants) {
 
-			super(getConstants());
+			super(constants);
 		}
 
 		QueryVariable getRootTripleNode() {
@@ -60,6 +60,6 @@ class MatchQuery extends SpecificQuery {
 
 	private String renderQueryBody(NNode query) {
 
-		return new QueryBodyRenderer().render(query);
+		return new QueryBodyRenderer(getConstants()).render(query);
 	}
 }

@@ -34,8 +34,8 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 
 class PropertyInclusionsConfigReader
-			extends EntityGroupConfigReader<OBPropertyInclusions, OBProperties>
-			implements OBSectionBuilderConfigVocab {
+			extends
+				EntityGroupConfigReader<OBPropertyInclusions, OBProperties> {
 
 	PropertyInclusionsConfigReader(KConfigNode configNode) {
 

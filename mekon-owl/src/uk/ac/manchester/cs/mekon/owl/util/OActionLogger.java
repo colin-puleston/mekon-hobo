@@ -95,14 +95,16 @@ public class OActionLogger {
 
 	public void print(Object toPrint, int indentDepth) {
 
-		String prefix = PREFIX;
+		StringBuilder out = new StringBuilder(PREFIX);
 
 		while (indentDepth-- > 0) {
 
-			prefix += INDENT;
+			out.append(INDENT);
 		}
 
-		System.out.println(prefix + toPrint);
+		out.append(toPrint);
+
+		System.out.println(out.toString());
 	}
 
 	private void printTime(String name, Long valueInMillies) {

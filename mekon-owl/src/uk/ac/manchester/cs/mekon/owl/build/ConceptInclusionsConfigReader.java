@@ -32,8 +32,8 @@ import uk.ac.manchester.cs.mekon.config.*;
  * @author Colin Puleston
  */
 class ConceptInclusionsConfigReader
-			extends EntityGroupConfigReader<OBConceptInclusions, OBConcepts>
-			implements OBSectionBuilderConfigVocab {
+			extends
+				EntityGroupConfigReader<OBConceptInclusions, OBConcepts> {
 
 	ConceptInclusionsConfigReader(KConfigNode configNode) {
 

@@ -92,16 +92,26 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 				: iri.toString();
 	}
 
-	static private String[] getIdentifierComponents(OWLNamedObject object) {
+	static private List<String> getIdentifierComponents(OWLNamedObject object) {
+
+		List<String> components = new ArrayList<String>();
 
 		IRI iriObj = object.getIRI();
 
 		String iri = iriObj.toString();
-		String frag = iriObj.getFragment();
+		String fragment = iriObj.getFragment();
 
-		return frag != null
-				? new String[]{getNamespace(iri, frag), frag}
-				: new String[]{iri};
+		if (fragment != null) {
+
+			components.add(getNamespace(iri, fragment));
+			components.add(fragment);
+		}
+		else {
+
+			components.add(iri);
+		}
+
+		return components;
 	}
 
 	static private String getNamespace(String iri, String fragment) {

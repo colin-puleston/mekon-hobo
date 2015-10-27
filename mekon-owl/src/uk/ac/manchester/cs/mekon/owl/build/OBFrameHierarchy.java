@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
@@ -38,15 +37,12 @@ import uk.ac.manchester.cs.mekon.owl.*;
 class OBFrameHierarchy {
 
 	private OModel model;
-	private OWLReasoner reasoner;
 	private OBFrames frames;
 
 	OBFrameHierarchy(OModel model, OBFrames frames) {
 
 		this.model = model;
 		this.frames = frames;
-
-		reasoner = model.getReasoner();
 	}
 
 	void createLinks() {

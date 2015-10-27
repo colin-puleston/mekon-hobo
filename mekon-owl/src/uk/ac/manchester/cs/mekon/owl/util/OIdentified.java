@@ -63,8 +63,8 @@ public class OIdentified implements Comparable<OIdentified> {
 	}
 
 	/**
-	 * Comparator method based on the comparator for the associated
-	 * {@link OIdentity} objects.
+	 * Provides comparator value derived from that of the associated
+	 * {@link OIdentity} object.
 	 *
 	 * @param other Other identified to compare this one to
 	 * @return Resulting comparison value
