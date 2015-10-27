@@ -120,7 +120,7 @@ class CFramesTree extends CTree {
 
 		List<CFrameNode> frameNodes = ensureFrameNodesIfAny(frame);
 
-		if (frameNodes != null && !selectFirstVisible(frameNodes)) {
+		if (!frameNodes.isEmpty() && !selectFirstVisible(frameNodes)) {
 
 			selectFirst(frameNodes);
 		}

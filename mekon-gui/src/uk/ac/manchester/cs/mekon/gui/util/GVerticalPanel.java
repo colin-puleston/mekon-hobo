@@ -73,9 +73,4 @@ public class GVerticalPanel extends JPanel {
 
 		this.defaultConstraints = defaultConstraints;
 	}
-
-	private void addComponent(JComponent component, GridBagConstraints constraints) {
-
-		add(component, constraints);
-	}
 }

@@ -81,7 +81,7 @@ public class GTree extends JTree {
 
 		private GNode getNode(TreeExpansionEvent event) {
 
-			return (GNode)event.getPath().getLastPathComponent();
+			return GNode.cast(event.getPath().getLastPathComponent());
 		}
 	}
 
@@ -125,12 +125,7 @@ public class GTree extends JTree {
 
 			if (path != null) {
 
-				GNode node = getLeafNode(path);
-
-				if (node != null) {
-
-					processClick(node, event);
-				}
+				processClick(getLeafNode(path), event);
 			}
 		}
 
@@ -156,7 +151,7 @@ public class GTree extends JTree {
 
 		private GNode getLeafNode(TreePath path) {
 
-			return (GNode)path.getLastPathComponent();
+			return GNode.cast(path.getLastPathComponent());
 		}
 	}
 

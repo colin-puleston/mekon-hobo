@@ -54,7 +54,7 @@ public class MekonModelExplorer extends GFrame {
 		return SYSTEM_TITLE + ": " + title;
 	}
 
-	private class Initialiser {
+	static private class Initialiser {
 
 		private ModelFramesPanel modelPanel;
 		private ModelFrameSelectionPanel selectionPanel;

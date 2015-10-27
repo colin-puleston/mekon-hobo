@@ -35,6 +35,16 @@ public abstract class GNode extends GMutableTreeNode {
 
 	static private final long serialVersionUID = -1;
 
+	static GNode cast(Object node) {
+
+		if (node instanceof GNode) {
+
+			return (GNode)node;
+		}
+
+		throw new Error("Object is not of type GNode: " + node);
+	}
+
 	private GTree tree;
 	private GNode parent = null;
 	private ChildList childList = null;
@@ -279,10 +289,5 @@ public abstract class GNode extends GMutableTreeNode {
 		}
 
 		return indices;
-	}
-
-	private void throwInertMethodError() {
-
-		throw new Error("Method should never be invoked!");
 	}
 }

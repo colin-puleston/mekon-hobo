@@ -45,9 +45,7 @@ public class GTable extends JTable {
 	static final float CELL_FONT_SIZE = 14;
 	static final int CELL_FONT_STYLE = Font.PLAIN;
 
-	private CustomTableModel model = new CustomTableModel();
-
-	private class CustomTableModel extends DefaultTableModel {
+	static private class CustomTableModel extends DefaultTableModel {
 
 		static private final long serialVersionUID = -1;
 
@@ -56,6 +54,8 @@ public class GTable extends JTable {
 			return false;
 		}
 	}
+
+	private CustomTableModel model = new CustomTableModel();
 
 	private class CellRenderer implements TableCellRenderer {
 
@@ -174,7 +174,7 @@ public class GTable extends JTable {
 
 		for (Component childComp : component.getComponents()) {
 
-			if (component instanceof JComponent) {
+			if (childComp instanceof JComponent) {
 
 				setFont((JComponent)childComp, fontSize, fontStyle);
 			}

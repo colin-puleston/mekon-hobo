@@ -148,7 +148,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			if (element == null) {
 
-				throw new KAccessException("Cannot find element: " + element);
+				throw new KAccessException("Cannot find element for: " + entity);
 			}
 
 			return element;

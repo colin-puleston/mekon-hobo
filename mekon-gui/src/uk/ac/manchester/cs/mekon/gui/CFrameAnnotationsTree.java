@@ -196,7 +196,9 @@ class CFrameAnnotationsTree extends CTree {
 
 	private Set<CValue<?>> toCValueSetOrNull(Collection<?> elements) {
 
-		return new HashSet<CValue<?>>(toCValueListOrNull(elements));
+		List<CValue<?>> list = toCValueListOrNull(elements);
+
+		return list != null ? new HashSet<CValue<?>>(list) : null;
 	}
 
 	private List<CValue<?>> toCValueListOrNull(Collection<?> elements) {

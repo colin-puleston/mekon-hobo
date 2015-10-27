@@ -69,7 +69,9 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	public int compareTo(GCellDisplay other) {
 
-		return text.toLowerCase().compareTo(other.text.toLowerCase());
+		int c = text.toLowerCase().compareTo(other.text.toLowerCase());
+
+		return c != 0 ? c : text.compareTo(other.text);
 	}
 
 	public void setModifier(GCellDisplay modifier) {
@@ -231,5 +233,10 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 	private Color getSelectionBackground() {
 
 		return UIManager.getColor("Tree.selectionBackground");
+	}
+
+	private boolean equalsCellDisplay(GCellDisplay other) {
+
+		return text.equals(other.text);
 	}
 }

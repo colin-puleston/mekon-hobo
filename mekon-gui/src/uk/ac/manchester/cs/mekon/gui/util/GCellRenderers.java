@@ -35,25 +35,10 @@ class GCellRenderers {
 
 	static private final GCellRenderers singleton = new GCellRenderers();
 
-	static GCellRenderers get() {
+	static private GTreeCellRenderer treeCellRenderer = new GTreeCellRenderer();
+	static private GListCellRenderer listCellRenderer = new GListCellRenderer();
 
-		return singleton;
-	}
-
-	private GTreeCellRenderer treeCellRenderer = new GTreeCellRenderer();
-	private GListCellRenderer listCellRenderer = new GListCellRenderer();
-
-	void set(GTree tree) {
-
-		tree.setCellRenderer(treeCellRenderer);
-	}
-
-	void set(GList<?> list) {
-
-		list.setCellRenderer(listCellRenderer);
-	}
-
-	private class GTreeCellRenderer implements TreeCellRenderer {
+	static private class GTreeCellRenderer implements TreeCellRenderer {
 
 		static private final long serialVersionUID = -1;
 
@@ -66,13 +51,11 @@ class GCellRenderers {
 							int row,
 							boolean hasFocus) {
 
-			GNode node = (GNode)value;
-
-			return node.getDisplay().createComponent(sel);
+			return GNode.cast(value).getDisplay().createComponent(sel);
 		}
 	}
 
-	private class GListCellRenderer implements ListCellRenderer<GCellDisplay> {
+	static private class GListCellRenderer implements ListCellRenderer<GCellDisplay> {
 
 		static private final long serialVersionUID = -1;
 
@@ -85,5 +68,20 @@ class GCellRenderers {
 
 			return value.createComponent(sel);
 		}
+	}
+
+	static GCellRenderers get() {
+
+		return singleton;
+	}
+
+	void set(GTree tree) {
+
+		tree.setCellRenderer(treeCellRenderer);
+	}
+
+	void set(GList<?> list) {
+
+		list.setCellRenderer(listCellRenderer);
 	}
 }

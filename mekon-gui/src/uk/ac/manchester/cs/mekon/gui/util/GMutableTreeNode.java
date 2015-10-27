@@ -57,7 +57,7 @@ public abstract class GMutableTreeNode implements MutableTreeNode {
 
 	public int getIndex(TreeNode node) {
 
-		return getChildren().indexOf((GNode)node);
+		return getChildren().indexOf(GNode.cast(node));
 	}
 
 	public boolean isLeaf() {
