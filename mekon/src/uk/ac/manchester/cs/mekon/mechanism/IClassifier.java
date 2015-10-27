@@ -62,6 +62,7 @@ public abstract class IClassifier extends IReasonerDefault {
 			this.frame = frame;
 
 			doInferreds = updateOps.contains(IUpdateOp.INFERRED_TYPES);
+			doSuggesteds = updateOps.contains(IUpdateOp.SUGGESTED_TYPES);
 			doSlots = updateOps.contains(IUpdateOp.SLOTS);
 			doSlotValues = updateOps.contains(IUpdateOp.SLOT_VALUES);
 
@@ -88,9 +89,8 @@ public abstract class IClassifier extends IReasonerDefault {
 		private IClassifierOps getClassifierOps(Set<IUpdateOp> updateOps) {
 
 			boolean inferreds = doInferreds || doSlots || doSlotValues;
-			boolean suggesteds = updateOps.contains(IUpdateOp.SUGGESTED_TYPES);
 
-			return new IClassifierOps(inferreds, suggesteds);
+			return new IClassifierOps(inferreds, doSuggesteds);
 		}
 
 		private void updateForInferreds(List<CFrame> inferreds) {

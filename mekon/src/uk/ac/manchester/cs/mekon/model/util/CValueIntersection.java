@@ -37,9 +37,7 @@ public class CValueIntersection {
 
 	static private final EmptyIntersection EMPTY_INTERSECTION = new EmptyIntersection();
 
-	private CTypeValueIntersection<?> typeIntersection = EMPTY_INTERSECTION;
-
-	private class TypeIntersectionCreator extends CValueVisitor {
+	static private class TypeIntersectionCreator extends CValueVisitor {
 
 		private CTypeValueIntersection<?> intersection = null;
 
@@ -65,6 +63,8 @@ public class CValueIntersection {
 			return intersection;
 		}
 	}
+
+	private CTypeValueIntersection<?> typeIntersection = EMPTY_INTERSECTION;
 
 	/**
 	 * Constructor.

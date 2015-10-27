@@ -125,7 +125,7 @@ public abstract class NAttribute<V> {
 	 */
 	public boolean equals(Object other) {
 
-		if (getClass() == other.getClass()) {
+		if (other != null && getClass() == other.getClass()) {
 
 			return equalsAttribute((NAttribute<?>)other);
 		}

@@ -60,7 +60,7 @@ public class KConfigClassFinder<T> {
 
 		private void findAll() {
 
-			for (File fileOrSubDir : directory.listFiles()) {
+			for (File fileOrSubDir : listDirContents()) {
 
 				if (fileOrSubDir.isDirectory()) {
 
@@ -71,6 +71,20 @@ public class KConfigClassFinder<T> {
 					checkAddClass(packageName, fileOrSubDir);
 				}
 			}
+		}
+
+		private File[] listDirContents() {
+
+			File[] contents = directory.listFiles();
+
+			if (contents == null) {
+
+				throw new KSystemConfigException(
+							"Cannot find directory: "
+							+ directory);
+			}
+
+			return contents;
 		}
 
 		private void findAllInSubDirectories(File subDir) {

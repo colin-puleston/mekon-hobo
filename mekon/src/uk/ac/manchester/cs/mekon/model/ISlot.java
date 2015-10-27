@@ -205,11 +205,6 @@ public class ISlot implements IEntity {
 		return new ISlotValuesEditor(values, true);
 	}
 
-	private CModel getModel() {
-
-		return container.getType().getModel();
-	}
-
 	private boolean querySlot() {
 
 		return container.getCategory().query();

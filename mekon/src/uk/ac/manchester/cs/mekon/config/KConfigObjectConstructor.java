@@ -96,12 +96,17 @@ public class KConfigObjectConstructor<T> {
 
 			Throwable t = e.getTargetException();
 
+			if (t instanceof Exception) {
+
+				throw new KSystemConfigException((Exception)t);
+			}
+
 			if (t instanceof Error) {
 
 				throw (Error)t;
 			}
 
-			throw new KSystemConfigException((Exception)t);
+			throw new Error(t);
 		}
 	}
 }

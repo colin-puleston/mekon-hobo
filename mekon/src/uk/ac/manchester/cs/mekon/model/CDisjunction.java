@@ -304,11 +304,6 @@ class CDisjunction extends CExpression {
 		hashCode = disjunctsAsSet().hashCode();
 	}
 
-	private void addDisjuncts(List<CFrame> disjuncts) {
-
-		this.disjuncts.addAll(resolveDisjuncts(disjuncts));
-	}
-
 	private List<CFrame> findCommonSupers() {
 
 		return getCommonSubsumersFinder().getAllClosest(disjuncts);

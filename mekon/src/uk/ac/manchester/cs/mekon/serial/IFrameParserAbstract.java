@@ -323,11 +323,6 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 			return parseIFrameDirect(getReferencedFrame(refIndex));
 		}
 
-		private CFrame parseMFrame(XNode node) {
-
-			return parseCFrame(node, MFRAME_ID);
-		}
-
 		private CFrame parseCFrame(XNode node) {
 
 			return parseCFrame(node, CFRAME_ID);
@@ -575,10 +570,5 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 	private CFrame getCFrame(CIdentity id) {
 
 		return model.getFrames().get(id);
-	}
-
-	private boolean isClassName(Class<?> testClass, String testName) {
-
-		return testClass.getSimpleName().equals(testName);
 	}
 }

@@ -31,7 +31,7 @@ import java.util.*;
  */
 class CHierarchyNormaliser {
 
-	private class RedundantSupersRemover extends CHierarchyCrawler {
+	static private class RedundantSupersRemover extends CHierarchyCrawler {
 
 		private CAtomicFrame frame;
 		private List<CAtomicFrame> supers;
@@ -63,7 +63,7 @@ class CHierarchyNormaliser {
 		}
 	}
 
-	private class ExposedSupersEnsurer extends CHierarchyCrawler {
+	static private class ExposedSupersEnsurer extends CHierarchyCrawler {
 
 		private CAtomicFrame exposed;
 

@@ -403,11 +403,6 @@ public abstract class ISlotValues extends KList<IValue> {
 		return IValueSubsumptions.subsumption(testSubsumer, testSubsumed);
 	}
 
-	private CModel getModel() {
-
-		return slot.getContainer().getType().getModel();
-	}
-
 	private CValue<?> getValueType() {
 
 		return slot.getValueType();

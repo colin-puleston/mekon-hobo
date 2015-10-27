@@ -280,9 +280,7 @@ class CExtensionDescriber {
 
 		String describeTail(CValue<?> value) {
 
-			return value instanceof FEntity
-					? ((FEntity)value).getDisplayLabel()
-					: value.toString();
+			return value.getDisplayLabel();
 		}
 
 		String describeSlot(CIdentity slotId) {

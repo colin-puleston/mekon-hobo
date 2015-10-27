@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.serial.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
@@ -36,10 +37,7 @@ class InstanceFileStore {
 	static private final String STORE_FILE_NAME_PREFIX = "MEKON-INSTANCE-";
 	static private final String STORE_FILE_NAME_SUFFIX = ".xml";
 
-	private CModel model;
-	private File directory = new File(".");
-
-	private class StoreFileFilter implements FileFilter {
+	static private class StoreFileFilter implements FileFilter {
 
 		public boolean accept(File file) {
 
@@ -49,6 +47,9 @@ class InstanceFileStore {
 					&& name.endsWith(STORE_FILE_NAME_SUFFIX);
 		}
 	}
+
+	private CModel model;
+	private File directory = new File(".");
 
 	InstanceFileStore(CModel model) {
 
@@ -61,7 +62,7 @@ class InstanceFileStore {
 
 		if (!directory.exists()) {
 
-			directory.mkdirs();
+			createDirectory();
 		}
 	}
 
@@ -77,7 +78,7 @@ class InstanceFileStore {
 
 		for (File file : findAllStoreFiles()) {
 
-			file.delete();
+			deleteFile(file);
 		}
 	}
 
@@ -93,7 +94,7 @@ class InstanceFileStore {
 
 	void remove(int index) {
 
-		getFile(index).delete();
+		deleteFile(getFile(index));
 	}
 
 	private void load(InstanceLoader loader, File file) {
@@ -106,9 +107,38 @@ class InstanceFileStore {
 		loader.load(instance, id, extractIndex(file));
 	}
 
+	private void createDirectory() {
+
+		if (!directory.mkdirs()) {
+
+			throw new KSystemConfigException(
+						"Cannot create instance-store directory: "
+						+ directory);
+		}
+	}
+
 	private File[] findAllStoreFiles() {
 
-		return directory.listFiles(new StoreFileFilter());
+		File[] files = directory.listFiles(new StoreFileFilter());
+
+		if (files == null) {
+
+			throw new KSystemConfigException(
+						"Cannot find instance-store directory: "
+						+ directory);
+		}
+
+		return files;
+	}
+
+	private void deleteFile(File file) {
+
+		if (!file.delete()) {
+
+			throw new KSystemConfigException(
+						"Cannot delete instance-store file: "
+						+ file);
+		}
 	}
 
 	private File getFile(int index) {

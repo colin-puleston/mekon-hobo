@@ -54,29 +54,39 @@ public class KSingleton<S> {
 	/**
 	 * Retrieves the singleton object.
 	 *
-	 * @param initialiserClassName Name of initialiser class
+	 * @param initialiserClass Name of initialiser class
 	 * @return Singleton object
 	 */
-	public S get(String initialiserClassName) {
+	public S get(String initialiserClass) {
+
+		checkInitialised(initialiserClass);
+
+		return singleton;
+	}
+
+	private void checkInitialised(String initialiserClass) {
 
 		if (singleton == null) {
 
-			loadInitialiserClass(initialiserClassName);
+			checkLoadInitialiserClass(initialiserClass);
 
 			if (singleton == null) {
 
 				throw new Error("Singleton initialisation failed!");
 			}
 		}
-
-		return singleton;
 	}
 
-	private void loadInitialiserClass(String initialiserClassName) {
+	private synchronized void checkLoadInitialiserClass(String initialiserClass) {
+
+		if (singleton != null) {
+
+			return;
+		}
 
 		try {
 
-			Class.forName(initialiserClassName);
+			Class.forName(initialiserClass);
 		}
 		catch (ClassNotFoundException e) {
 

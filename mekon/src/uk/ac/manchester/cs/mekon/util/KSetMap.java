@@ -34,13 +34,6 @@ import java.util.*;
 public class KSetMap<K, E> extends KCollectionMap<K, E> {
 
 	/**
-	 */
-	public boolean equals(Object other) {
-
-		return other instanceof KSetMap && equalMaps((KSetMap<?, ?>)other);
-	}
-
-	/**
 	 * Provides a copy of the set for the specified key.
 	 *
 	 * @param key Key for which set is required
@@ -77,5 +70,10 @@ public class KSetMap<K, E> extends KCollectionMap<K, E> {
 	Collection<E> getEmptyCollection() {
 
 		return Collections.<E>emptySet();
+	}
+
+	boolean instanceofLocalExtensionClass(KCollectionMap<?, ?> other) {
+
+		return other instanceof KSetMap;
 	}
 }

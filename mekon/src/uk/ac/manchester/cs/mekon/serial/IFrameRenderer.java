@@ -354,11 +354,6 @@ public class IFrameRenderer extends ISerialiser {
 		}
 	}
 
-	private XNode getTopLevelGraphNode() {
-
-		return null;
-	}
-
 	private String getTopLevelId() {
 
 		return renderAsTree ? ITREE_ID : IGRAPH_ID;

@@ -39,10 +39,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class IDirectMatcher implements IMatcher {
 
-	private Map<CFrame, InstanceGroup> instanceGroups
-					= new HashMap<CFrame, InstanceGroup>();
-
-	private class InstanceGroup {
+	static private class InstanceGroup {
 
 		private CFrame rootFrameType;
 		private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
@@ -66,16 +63,19 @@ public class IDirectMatcher implements IMatcher {
 
 			if (query.getType().subsumes(rootFrameType)) {
 
-				for (CIdentity identity : instances.keySet()) {
+				for (Map.Entry<CIdentity, IFrame> entry : instances.entrySet()) {
 
-					if (query.subsumes(instances.get(identity))) {
+					if (query.subsumes(entry.getValue())) {
 
-						matches.add(identity);
+						matches.add(entry.getKey());
 					}
 				}
 			}
 		}
 	}
+
+	private Map<CFrame, InstanceGroup> instanceGroups
+					= new HashMap<CFrame, InstanceGroup>();
 
 	/**
 	 * {@inheritDoc}

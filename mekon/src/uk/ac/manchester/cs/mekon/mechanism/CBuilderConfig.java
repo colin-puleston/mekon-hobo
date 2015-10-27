@@ -94,9 +94,11 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	private void setUpdateOpEnabling(CBuilder builder, KConfigNode opsNode) {
 
-		for (String attrName : updateOpsByAttr.keySet()) {
+		for (Map.Entry<String, IUpdateOp> entry : updateOpsByAttr.entrySet()) {
 
-			IUpdateOp op = updateOpsByAttr.get(attrName);
+			String attrName = entry.getKey();
+			IUpdateOp op = entry.getValue();
+
 			Boolean enabled = opsNode.getBoolean(attrName, true);
 
 			builder.setDefaultUpdateOp(op, enabled);

@@ -112,6 +112,27 @@ public abstract class KCollectionMap<K, E> {
 	}
 
 	/**
+	 * Tests for equality between this and other specified object.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if other object is <code>KCollectionMap</code>
+	 * of the same type as this one, and containing the same set of
+	 * key-value pairs
+	 */
+	public boolean equals(Object other) {
+
+		if (other instanceof KCollectionMap) {
+
+			return equalsCollectionMap((KCollectionMap<?, ?>)other);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Provides hash-code based on key-value pairs.
+	 *
+	 * @return hash-code for this object
 	 */
 	public int hashCode() {
 
@@ -150,11 +171,6 @@ public abstract class KCollectionMap<K, E> {
 		return map.isEmpty();
 	}
 
-	boolean equalMaps(KCollectionMap<?, ?> other) {
-
-		return map.equals(other.map);
-	}
-
 	Collection<E> getCollection(K key) {
 
 		Collection<E> collection = map.get(key);
@@ -165,6 +181,8 @@ public abstract class KCollectionMap<K, E> {
 	abstract Collection<E> createCollection();
 
 	abstract Collection<E> getEmptyCollection();
+
+	abstract boolean instanceofLocalExtensionClass(KCollectionMap<?, ?> other);
 
 	private Collection<E> resolveCollection(K key) {
 
@@ -177,5 +195,10 @@ public abstract class KCollectionMap<K, E> {
 		}
 
 		return collection;
+	}
+
+	private boolean equalsCollectionMap(KCollectionMap<?, ?> other) {
+
+		return instanceofLocalExtensionClass(other) && map.equals(other.map);
 	}
 }

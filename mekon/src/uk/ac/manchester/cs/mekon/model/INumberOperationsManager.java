@@ -34,22 +34,9 @@ import uk.ac.manchester.cs.mekon.*;
  */
 class INumberOperationsManager {
 
-	static INumberOperationsManager get() {
-
-		return singleton;
-	}
-
 	static private final INumberOperationsManager singleton = new INumberOperationsManager();
 
-	final INumberOperations<Integer> integerOperations;
-	final INumberOperations<Long> longOperations;
-	final INumberOperations<Float> floatOperations;
-	final INumberOperations<Double> doubleOperations;
-
-	private Map<Class<? extends Number>, INumberOperations<?>> finder
-				= new HashMap<Class<? extends Number>, INumberOperations<?>>();
-
-	private class IntegerOperations extends INumberOperations<Integer> {
+	static private class IntegerOperations extends INumberOperations<Integer> {
 
 		Class<Integer> getNumberType() {
 
@@ -77,7 +64,7 @@ class INumberOperationsManager {
 		}
 	}
 
-	private class LongOperations extends INumberOperations<Long> {
+	static private class LongOperations extends INumberOperations<Long> {
 
 		Class<Long> getNumberType() {
 
@@ -105,7 +92,7 @@ class INumberOperationsManager {
 		}
 	}
 
-	private class FloatOperations extends INumberOperations<Float> {
+	static private class FloatOperations extends INumberOperations<Float> {
 
 		Class<Float> getNumberType() {
 
@@ -133,7 +120,7 @@ class INumberOperationsManager {
 		}
 	}
 
-	private class DoubleOperations extends INumberOperations<Double> {
+	static private class DoubleOperations extends INumberOperations<Double> {
 
 		Class<Double> getNumberType() {
 
@@ -160,6 +147,19 @@ class INumberOperationsManager {
 			return new INumber(Double.parseDouble(value));
 		}
 	}
+
+	static INumberOperationsManager get() {
+
+		return singleton;
+	}
+
+	final INumberOperations<Integer> integerOperations;
+	final INumberOperations<Long> longOperations;
+	final INumberOperations<Float> floatOperations;
+	final INumberOperations<Double> doubleOperations;
+
+	private Map<Class<? extends Number>, INumberOperations<?>> finder
+				= new HashMap<Class<? extends Number>, INumberOperations<?>>();
 
 	INumberOperations<?> get(Class<? extends Number> numberType) {
 

@@ -46,6 +46,14 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public class IStore {
 
+	static private class InstanceIndexes extends KIndexes<CIdentity> {
+
+		protected KRuntimeException createException(String message) {
+
+			return new KSystemConfigException(message);
+		}
+	}
+
 	private ZFreeInstantiator freeInstantiator;
 
 	private InstanceFileStore fileStore;
@@ -53,14 +61,6 @@ public class IStore {
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private InstanceIndexes indexes = new InstanceIndexes();
-
-	private class InstanceIndexes extends KIndexes<CIdentity> {
-
-		protected KRuntimeException createException(String message) {
-
-			return new KSystemConfigException(message);
-		}
-	}
 
 	private class FileStoreInstanceLoader extends InstanceLoader {
 

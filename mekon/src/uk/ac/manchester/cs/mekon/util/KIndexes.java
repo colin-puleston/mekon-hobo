@@ -133,7 +133,7 @@ public abstract class KIndexes<E> {
 
 		if (index == null) {
 
-			throw createException("No index for element: " + index);
+			throw createException("No index for element: " + element);
 		}
 
 		return index;

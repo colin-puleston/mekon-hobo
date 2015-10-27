@@ -34,13 +34,6 @@ import java.util.*;
 public class KListMap<K, E> extends KCollectionMap<K, E> {
 
 	/**
-	 */
-	public boolean equals(Object other) {
-
-		return other instanceof KListMap && equalMaps((KListMap<?, ?>)other);
-	}
-
-	/**
 	 * Provides a copy of the list for the specified key.
 	 *
 	 * @param key Key for which list is required
@@ -59,5 +52,10 @@ public class KListMap<K, E> extends KCollectionMap<K, E> {
 	Collection<E> getEmptyCollection() {
 
 		return Collections.<E>emptyList();
+	}
+
+	boolean instanceofLocalExtensionClass(KCollectionMap<?, ?> other) {
+
+		return other instanceof KListMap;
 	}
 }

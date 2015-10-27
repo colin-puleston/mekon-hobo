@@ -125,6 +125,8 @@ public class INumber implements IEntity, IValue {
 
 		abstract boolean moreThan(Value other);
 
+		abstract int hashCodeValue();
+
 		boolean lessThanOrEqualTo(Value other) {
 
 			return !moreThan(other);
@@ -152,11 +154,6 @@ public class INumber implements IEntity, IValue {
 
 		private INumberOperations<N> operations;
 		private N value;
-
-		public int hashCode() {
-
-			return value.hashCode();
-		}
 
 		FiniteValue(INumberOperations<N> operations, N value) {
 
@@ -236,6 +233,11 @@ public class INumber implements IEntity, IValue {
 			return compareTo(other) == 1;
 		}
 
+		int hashCodeValue() {
+
+			return value.hashCode();
+		}
+
 		private int compareTo(Value other) {
 
 			return asBigDecimal().compareTo(other.asBigDecimal());
@@ -284,6 +286,11 @@ public class INumber implements IEntity, IValue {
 		boolean equalTo(Value other) {
 
 			return this == other;
+		}
+
+		int hashCodeValue() {
+
+			return asDouble().hashCode();
 		}
 
 		INumber toINumber(BigDecimal value) {
@@ -385,10 +392,6 @@ public class INumber implements IEntity, IValue {
 
 		private CNumber valueType;
 
-		public int hashCode() {
-
-			return valueType.hashCode();
-		}
 
 		IndefiniteValue(CNumber valueType) {
 
@@ -463,6 +466,11 @@ public class INumber implements IEntity, IValue {
 		boolean undefinedMinMax(Value other) {
 
 			return !equalTo(other) && !lessThan(other) && !moreThan(other);
+		}
+
+		int hashCodeValue() {
+
+			return valueType.hashCode();
 		}
 
 		private boolean strictOrder(Value one, Value two) {
@@ -560,7 +568,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public int hashCode() {
 
-		return value.hashCode();
+		return value.hashCodeValue();
 	}
 
 	/**

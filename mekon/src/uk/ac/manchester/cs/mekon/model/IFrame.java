@@ -57,20 +57,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public class IFrame implements IEntity, IValue {
 
-	private CFrame type;
-	private DynamicTypes inferredTypes = new DynamicTypes();
-	private DynamicTypes suggestedTypes = new DynamicTypes();
-	private IFrameCategory category;
-
-	private ISlots slots = new ISlots();
-	private ISlots referencingSlots = new ISlots();
-
-	private Object mappedObject = null;
-	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
-
-	private boolean autoUpdateEnabled = true;
-
-	private class DynamicTypes {
+	static private class DynamicTypes {
 
 		private CIdentifiedsLocal<CFrame> types = new CIdentifiedsLocal<CFrame>();
 
@@ -119,6 +106,19 @@ public class IFrame implements IEntity, IValue {
 			return types.asSet().equals(new HashSet<CFrame>(testTypes));
 		}
 	}
+
+	private CFrame type;
+	private DynamicTypes inferredTypes = new DynamicTypes();
+	private DynamicTypes suggestedTypes = new DynamicTypes();
+	private IFrameCategory category;
+
+	private ISlots slots = new ISlots();
+	private ISlots referencingSlots = new ISlots();
+
+	private Object mappedObject = null;
+	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
+
+	private boolean autoUpdateEnabled = true;
 
 	private class Editor implements IFrameEditor {
 

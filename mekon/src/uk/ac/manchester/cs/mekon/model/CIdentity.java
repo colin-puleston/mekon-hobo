@@ -76,7 +76,7 @@ public class CIdentity {
 		return labels;
 	}
 
-	private String[] identifierComponents;
+	private List<String> identifierComponents = new ArrayList<String>();
 	private String label;
 
 	/**
@@ -97,7 +97,7 @@ public class CIdentity {
 	 * @param identifierComponents Components of unique identifier
 	 * for entity
 	 */
-	public CIdentity(String[] identifierComponents) {
+	public CIdentity(List<String> identifierComponents) {
 
 		this(identifierComponents, UNSPECIFIED_LABEL);
 	}
@@ -110,7 +110,9 @@ public class CIdentity {
 	 */
 	public CIdentity(String identifier, String label) {
 
-		this(new String[]{identifier}, label);
+		identifierComponents.add(identifier);
+
+		this.label = label;
 	}
 
 	/**
@@ -121,9 +123,10 @@ public class CIdentity {
 	 * for entity
 	 * @param label Label for entity
 	 */
-	public CIdentity(String[] identifierComponents, String label) {
+	public CIdentity(List<String> identifierComponents, String label) {
 
-		this.identifierComponents = identifierComponents;
+		this.identifierComponents.addAll(identifierComponents);
+
 		this.label = label;
 	}
 
@@ -171,8 +174,8 @@ public class CIdentity {
 	 */
 	public String getIdentifier() {
 
-		return identifierComponents.length == 1
-					? identifierComponents[0]
+		return identifierComponents.size() == 1
+					? identifierComponents.get(0)
 					: createIdentifier();
 	}
 

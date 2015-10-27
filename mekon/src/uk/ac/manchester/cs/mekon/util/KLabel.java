@@ -70,14 +70,14 @@ public class KLabel {
 
 	private String create(String name) {
 
-		String label = "";
+		StringBuilder label = new StringBuilder();
 
 		for (int i = 0 ; i < name.length() ; i++) {
 
-			label += toLabelChars(name, i);
+			label.append(toLabelChars(name, i));
 		}
 
-		return label;
+		return label.toString();
 	}
 
 	private String toLabelChars(String name, int index) {
