@@ -27,6 +27,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
@@ -42,9 +43,9 @@ class AssertionInstanceFrame extends InstantiationFrame {
 
 	static private final Dimension NAME_FIELD_SIZE = new Dimension(250, 25);
 
-	static void display(CFramesTree modelTree, IStore iStore, CIdentity identity) {
+	static void display(CFramesTree modelTree, IStore store, CIdentity identity) {
 
-		IFrame instance = iStore.get(identity);
+		IFrame instance = store.get(identity);
 		AssertionInstanceFrame frame = new AssertionInstanceFrame(modelTree, instance);
 
 		frame.setInstanceName(identity.getLabel());
@@ -121,7 +122,7 @@ class AssertionInstanceFrame extends InstantiationFrame {
 
 		if (identity != null && checkStorageRequired(identity)) {
 
-			getIStore().add(getFrame(), identity);
+			getStore().add(getFrame(), identity);
 
 			showStoredMessage(identity);
 		}
@@ -134,7 +135,7 @@ class AssertionInstanceFrame extends InstantiationFrame {
 
 	private boolean checkStorageRequired(CIdentity identity) {
 
-		if (getIStore().contains(identity)) {
+		if (getStore().contains(identity)) {
 
 			return confirmReplaceStored(identity);
 		}

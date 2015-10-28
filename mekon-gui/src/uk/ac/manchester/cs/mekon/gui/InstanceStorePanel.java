@@ -28,6 +28,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
@@ -43,7 +45,7 @@ class InstanceStorePanel extends JPanel {
 	static private final String REMOVE_BUTTON_LABEL = "Remove...";
 	static private final String SELECTOR_TITLE = "Instance Name";
 
-	private CModel model;
+	private IStore store;
 	private CFramesTree modelTree;
 
 	private class RetrieveButton extends GButton {
@@ -80,8 +82,9 @@ class InstanceStorePanel extends JPanel {
 
 		super(new BorderLayout());
 
-		this.model = model;
 		this.modelTree = modelTree;
+
+		store = CManager.getIStore(model);
 
 		setBorder(createBorder());
 		add(createButtonsComponent(), BorderLayout.EAST);
@@ -116,7 +119,7 @@ class InstanceStorePanel extends JPanel {
 
 		if (id != null) {
 
-			AssertionInstanceFrame.display(modelTree, getIStore(), id);
+			AssertionInstanceFrame.display(modelTree, store, id);
 		}
 	}
 
@@ -126,7 +129,7 @@ class InstanceStorePanel extends JPanel {
 
 		if (id != null && confirmRemove(id)) {
 
-			getIStore().remove(id);
+			store.remove(id);
 			showRemovedMessage(id);
 		}
 	}
@@ -137,7 +140,7 @@ class InstanceStorePanel extends JPanel {
 
 		if (id != null) {
 
-			if (getIStore().contains(id)) {
+			if (store.contains(id)) {
 
 				return id;
 			}
@@ -151,11 +154,6 @@ class InstanceStorePanel extends JPanel {
 	private CIdentity getIdentitySelectionOrNull() {
 
 		return new CIdentitySelector(this, SELECTOR_TITLE).getSelectionOrNull();
-	}
-
-	private IStore getIStore() {
-
-		return model.getIStore();
 	}
 
 	private boolean confirmRemove(CIdentity identity) {

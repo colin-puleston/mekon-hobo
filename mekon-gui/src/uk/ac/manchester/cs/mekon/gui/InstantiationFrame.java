@@ -27,7 +27,9 @@ import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
@@ -44,9 +46,10 @@ abstract class InstantiationFrame extends GFrame {
 	static private final String INFERRED_TYPES_TITLE = "Inferred Types";
 	static private final String SUGGESTED_TYPES_TITLE = "Suggested Types";
 
-	private CFramesTree modelTree;
+	private IStore store;
 	private IFrame frame;
 
+	private CFramesTree modelTree;
 	private JTabbedPane aspectTabs = new JTabbedPane();
 
 	private InferredTypesPanel inferredTypesPanel;
@@ -77,6 +80,8 @@ abstract class InstantiationFrame extends GFrame {
 
 		this.modelTree = modelTree;
 		this.frame = frame;
+
+		store = CManager.getIStore(getModel());
 
 		inferredTypesPanel = new InferredTypesPanel(modelTree);
 		suggestedTypesPanel = new SuggestedTypesPanel(modelTree);
@@ -113,9 +118,9 @@ abstract class InstantiationFrame extends GFrame {
 		return modelTree;
 	}
 
-	IStore getIStore() {
+	IStore getStore() {
 
-		return getModel().getIStore();
+		return store;
 	}
 
 	IFrame getFrame() {

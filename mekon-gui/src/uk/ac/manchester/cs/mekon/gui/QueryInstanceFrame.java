@@ -28,7 +28,9 @@ import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.util.*;
+
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
@@ -122,7 +124,7 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 	private void execute() {
 
-		IMatches matches = getIStore().match(getFrame());
+		IMatches matches = getStore().match(getFrame());
 
 		if (matches.anyMatches()) {
 
@@ -168,7 +170,7 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 	private void showMatch(CIdentity id) {
 
-		AssertionInstanceFrame.display(getModelTree(), getIStore(), id);
+		AssertionInstanceFrame.display(getModelTree(), getStore(), id);
 	}
 
 	private void showMessage(String msg) {
