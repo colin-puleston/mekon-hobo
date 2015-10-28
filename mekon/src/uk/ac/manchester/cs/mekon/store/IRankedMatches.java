@@ -22,46 +22,56 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.store;
 
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.*;
 
 /**
+ * Represents the ranked results of an instance-matching query
+ * executed via an {@link IStore} object.
+ *
  * @author Colin Puleston
  */
-class ZMekonAccessorImpl extends ZMekonAccessor {
+public class IRankedMatches extends IMatches {
 
-	private ZObjectModelMapper objectModelMapper = new ZObjectModelMapperImpl();
+	/**
+	 * Constructs object to represent a set of un-ranked matches.
+	 */
+	public IRankedMatches() {
 
-	public CModel createModel(ZMekonCustomiser customiser) {
-
-		return new CModel(customiser);
+		super(true);
 	}
 
-	public CBuilder createBuilder(CModel model) {
+	/**
+	 * Constructs object to represent a set of ranked matches.
+	 *
+	 * @param ranks Ranks of matches ordered by ranking-value,
+	 * highest first
+	 * @throws KModelException If ranks are not strictly ordered
+	 * by ranking-value
+	 */
+	public IRankedMatches(List<IMatchesRank> ranks) {
 
-		return new CBuilderImpl(model);
+		super(true);
+
+		for (IMatchesRank rank : ranks) {
+
+			addRank(rank);
+		}
 	}
 
-	public IStore getIStore(CModel model) {
+	/**
+	 * Adds an additional rank of matches, with a lower ranking-value
+	 * than previously added rank.
+	 *
+	 * @param rank Next rank of matches
+	 * @throws KModelException If rank does not have a strictly lower
+	 * ranking-value than previous rank
+	 */
+	public void addNextRank(IMatchesRank rank) {
 
-		return model.getIStore();
-	}
-
-	public IEditor getIEditor(CModel model) {
-
-		return model.getIEditor();
-	}
-
-	public ZFreeInstantiator getFreeInstantiator(CModel model) {
-
-		return new ZFreeInstantiatorImpl(model);
-	}
-
-	public ZObjectModelMapper getObjectModelMapper() {
-
-		return objectModelMapper;
+		addRank(rank);
 	}
 }

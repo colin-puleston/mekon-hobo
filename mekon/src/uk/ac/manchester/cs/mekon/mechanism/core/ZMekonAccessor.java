@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.mechanism.core;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
@@ -96,10 +97,18 @@ public abstract class ZMekonAccessor {
 	public abstract CBuilder createBuilder(CModel model);
 
 	/**
+	 * Provides the instance-store for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Instance-store for model
+	 */
+	public abstract IStore getIStore(CModel model);
+
+	/**
 	 * Provides an instantiation editor for the specified model.
 	 *
 	 * @param model Relevant model
-	 * @return Instantiation editor
+	 * @return Instantiation editor for model
 	 */
 	public abstract IEditor getIEditor(CModel model);
 
@@ -107,7 +116,7 @@ public abstract class ZMekonAccessor {
 	 * Provides a free-instantiator object for the specified model.
 	 *
 	 * @param model Relevant model
-	 * @return Free-instantiator object
+	 * @return Free-instantiator object for model
 	 */
 	public abstract ZFreeInstantiator getFreeInstantiator(CModel model);
 

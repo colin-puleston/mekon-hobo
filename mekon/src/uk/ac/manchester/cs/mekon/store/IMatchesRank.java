@@ -22,46 +22,56 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.store;
 
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Represents a sub-set of the results of an instance-matching
+ * query executed via an {@link IStore} object, all of which
+ * have been assigned an identical ranking-value by the matching
+ * mechanism.
+ *
  * @author Colin Puleston
  */
-class ZMekonAccessorImpl extends ZMekonAccessor {
+public class IMatchesRank {
 
-	private ZObjectModelMapper objectModelMapper = new ZObjectModelMapperImpl();
+	private List<CIdentity> matches;
+	private int rankingValue;
 
-	public CModel createModel(ZMekonCustomiser customiser) {
+	/**
+	 * Constructor.
+	 *
+	 * @param matches Identities of all instances in rank
+	 * @param rankingValue Ranking-value associated with matches in
+	 * rank
+	 */
+	public IMatchesRank(List<CIdentity> matches, int rankingValue) {
 
-		return new CModel(customiser);
+		this.matches = new ArrayList<CIdentity>(matches);
+		this.rankingValue = rankingValue;
 	}
 
-	public CBuilder createBuilder(CModel model) {
+	/**
+	 * Provides the identities of all instances in rank.
+	 *
+	 * @return Identities of all instances in rank
+	 */
+	public List<CIdentity> getMatches() {
 
-		return new CBuilderImpl(model);
+		return new ArrayList<CIdentity>(matches);
 	}
 
-	public IStore getIStore(CModel model) {
+	/**
+	 * Provides the ranking-value associated with the matches in
+	 * the rank.
+	 *
+	 * @return Ranking-value associated with matches in rank
+	 */
+	public int getRankingValue() {
 
-		return model.getIStore();
-	}
-
-	public IEditor getIEditor(CModel model) {
-
-		return model.getIEditor();
-	}
-
-	public ZFreeInstantiator getFreeInstantiator(CModel model) {
-
-		return new ZFreeInstantiatorImpl(model);
-	}
-
-	public ZObjectModelMapper getObjectModelMapper() {
-
-		return objectModelMapper;
+		return rankingValue;
 	}
 }

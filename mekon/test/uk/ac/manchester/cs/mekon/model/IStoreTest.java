@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 
@@ -42,7 +43,7 @@ public class IStoreTest extends MekonTest {
 	static private final CIdentity FIRST_ID = new CIdentity("First");
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
 
-	private IStore store;
+	private IStoreImpl store;
 
 	private IFrame first = null;
 	private IFrame second = null;
@@ -179,7 +180,7 @@ public class IStoreTest extends MekonTest {
 
 	private void createStore() {
 
-		store = new IStore(getModel());
+		store = new IStoreImpl(getModel());
 	}
 
 	private void testStore() {

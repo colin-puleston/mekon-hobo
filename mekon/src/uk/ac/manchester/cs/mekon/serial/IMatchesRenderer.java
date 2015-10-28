@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.serial;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**

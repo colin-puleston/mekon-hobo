@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.mechanism;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Provides mechanisms for storing and executing queries over

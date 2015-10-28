@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.serial.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
@@ -57,7 +58,7 @@ public class CModel implements CAnnotatable {
 
 	private IEditor iEditor = new IEditorImpl(this);
 	private IUpdating iUpdating = new IUpdating(this);
-	private IStore iStore = new IStore(this);
+	private IStoreImpl iStore = new IStoreImpl(this);
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
@@ -88,16 +89,6 @@ public class CModel implements CAnnotatable {
 	public IUpdating getIUpdating() {
 
 		return iUpdating;
-	}
-
-	/**
-	 * Provides the instance-store for the model.
-	 *
-	 * @return Instance-store for model
-	 */
-	public IStore getIStore() {
-
-		return iStore;
 	}
 
 	/**
@@ -236,6 +227,7 @@ public class CModel implements CAnnotatable {
 
 		new CHierarchyNormaliser(this);
 		new CFramesInitialiser(frames).completeInitialisation();
+
 		iStore.checkLoad();
 
 		pollInitialisationListeners();
@@ -246,6 +238,11 @@ public class CModel implements CAnnotatable {
 	boolean initialised() {
 
 		return initialised;
+	}
+
+	IStoreImpl getIStore() {
+
+		return iStore;
 	}
 
 	IEditor getIEditor() {

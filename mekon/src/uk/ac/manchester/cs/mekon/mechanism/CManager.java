@@ -25,6 +25,8 @@
 package uk.ac.manchester.cs.mekon.mechanism;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.mechanism.core.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
@@ -40,6 +42,8 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 public class CManager {
 
+	static private final ZMekonAccessor accessor = ZMekonAccessor.get();
+
 	/**
 	 * Creates model-builder to build model for which the
 	 * specification of the model section(s) must be provided via
@@ -48,8 +52,6 @@ public class CManager {
 	 * @return Resulting model-builder
 	 */
 	static public CBuilder createEmptyBuilder() {
-
-		ZMekonAccessor accessor = ZMekonAccessor.get();
 
 		return accessor.createBuilder(accessor.createModel());
 	}
@@ -107,6 +109,17 @@ public class CManager {
 	static public void configureBuilder(CBuilder builder, KConfigFile configFile) {
 
 		createConfig(configFile).configure(builder);
+	}
+
+	/**
+	 * Provides the instance-store for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Instance-store for model
+	 */
+	static public IStore getIStore(CModel model) {
+
+		return accessor.getIStore(model);
 	}
 
 	static private CBuilderConfig createConfig(KConfigFile configFile) {

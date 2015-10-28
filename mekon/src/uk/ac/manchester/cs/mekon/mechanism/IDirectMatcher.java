@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Provides an implementation of the reasoning mechanisms defined
