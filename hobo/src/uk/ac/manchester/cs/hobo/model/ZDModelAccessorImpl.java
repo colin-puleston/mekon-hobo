@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.hobo.mechanism.core.*;
 /**
  * @author Colin Puleston
  */
-class ZHoboAccessorImpl extends ZHoboAccessor {
+class ZDModelAccessorImpl extends ZDModelAccessor {
 
 	public DModel createModel() {
 

@@ -53,7 +53,7 @@ public class DManager {
 	 */
 	static public DBuilder createEmptyBuilder() {
 
-		ZHoboAccessor accessor = ZHoboAccessor.get();
+		ZDModelAccessor accessor = ZDModelAccessor.get();
 
 		return accessor.createBuilder(accessor.createModel());
 	}

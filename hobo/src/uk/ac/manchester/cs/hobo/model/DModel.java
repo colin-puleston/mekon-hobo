@@ -52,7 +52,7 @@ public class DModel {
 
 	static {
 
-		ZHoboAccessor.set(new ZHoboAccessorImpl());
+		ZDModelAccessor.set(new ZDModelAccessorImpl());
 	}
 
 	private CModel cModel;
@@ -296,7 +296,7 @@ public class DModel {
 
 	DModel() {
 
-		ZMekonAccessor mekonAccessor = ZMekonAccessor.get();
+		ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
 		ZMekonCustomiserLocal mekonCustomiser = new ZMekonCustomiserLocal(this);
 
 		cModel = mekonAccessor.createModel(mekonCustomiser);

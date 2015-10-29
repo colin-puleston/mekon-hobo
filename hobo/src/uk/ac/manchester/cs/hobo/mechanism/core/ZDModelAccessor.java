@@ -37,20 +37,20 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  *
  * @author Colin Puleston
  */
-public abstract class ZHoboAccessor {
+public abstract class ZDModelAccessor {
 
 	static private final String MODEL_CLASS_NAME
 			= "uk.ac.manchester.cs.hobo.model.DModel";
 
-	static private KSingleton<ZHoboAccessor> singleton
-							= new KSingleton<ZHoboAccessor>();
+	static private KSingleton<ZDModelAccessor> singleton
+							= new KSingleton<ZDModelAccessor>();
 
 	/**
 	 * Sets the singleton accessor object.
 	 *
 	 * @param accessor Accessor to set as singleton
 	 */
-	static public synchronized void set(ZHoboAccessor accessor) {
+	static public synchronized void set(ZDModelAccessor accessor) {
 
 		singleton.set(accessor);
 	}
@@ -63,7 +63,7 @@ public abstract class ZHoboAccessor {
 	 *
 	 * @return Singleton accessor object
 	 */
-	static public ZHoboAccessor get() {
+	static public ZDModelAccessor get() {
 
 		return singleton.get(MODEL_CLASS_NAME);
 	}
