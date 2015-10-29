@@ -54,7 +54,7 @@ public class TestOModel {
 
 	static private File getOWLFile() {
 
-		URL url = TestOModel.class.getResource(OWL_FILE);
+		URL url = getClassLoader().getResource(OWL_FILE);
 
 		if (url == null) {
 
@@ -62,5 +62,10 @@ public class TestOModel {
 		}
 
 		return new File(url.getFile());
+	}
+
+	static private ClassLoader getClassLoader() {
+
+		return Thread.currentThread().getContextClassLoader();
 	}
 }
