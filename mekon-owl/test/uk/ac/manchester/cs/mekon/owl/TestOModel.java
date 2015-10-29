@@ -29,7 +29,6 @@ import java.net.URL;
 
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
-import uk.ac.manchester.cs.jfact.JFactFactory;
 import uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory;
 
 /**
@@ -40,12 +39,13 @@ public class TestOModel {
 	static private final String OWL_FILE = "demo.owl";
 	static private final String NUMERIC_PROPERTY = "numericValue";
 
-	static private final Class<JFactFactory> JFACT_FACTORY = JFactFactory.class;
-	static private final Class<FaCTPlusPlusReasonerFactory> FACTPP_FACTORY = FaCTPlusPlusReasonerFactory.class;
+	static private final Class<FaCTPlusPlusReasonerFactory>
+							REASONER_FACTORY_CLASS
+								= FaCTPlusPlusReasonerFactory.class;
 
 	static public OModel create() {
 
-		OModel model = new OModel(getOWLFile(), FACTPP_FACTORY, true);
+		OModel model = new OModel(getOWLFile(), REASONER_FACTORY_CLASS, true);
 
 		model.setIndirectNumericProperty(new OTest().nameToIRI(NUMERIC_PROPERTY));
 
@@ -54,7 +54,7 @@ public class TestOModel {
 
 	static private File getOWLFile() {
 
-		URL url = TestOModel.class.getClassLoader().getResource(OWL_FILE);
+		URL url = TestOModel.class.getResource(OWL_FILE);
 
 		if (url == null) {
 
