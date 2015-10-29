@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
 /**
  * @author Colin Puleston
  */
-class OJenaGraph implements OTGraph {
+class OJenaGraphAdder implements OTGraphAdder {
 
 	static private final String GRAPH_STATEMENT_URI = "urn:mekon-jena#graph-statement";
 
@@ -44,23 +44,22 @@ class OJenaGraph implements OTGraph {
 
 	private ValueConverter valueConverter;
 
-	public void add(OT_URI subject, OT_URI predicate, OTValue object) {
+	private List<Statement> statements = new ArrayList<Statement>();
+
+	public void addToGraph(OT_URI subject, OT_URI predicate, OTValue object) {
 
 		Statement statement = toStatement(subject, predicate, object);
 
-		model.add(statement);
-		model.add(createContextStatement(statement));
+		statements.add(statement);
+		statements.add(createContextStatement(statement));
 	}
 
-	public void removeGraph() {
+	public void addGraphToStore() {
 
-		for (Statement statement : findStatements()) {
-
-			removeStatement(statement);
-		}
+		model.add(statements);
 	}
 
-	OJenaGraph(Model model, String contextURI) {
+	OJenaGraphAdder(Model model, String contextURI) {
 
 		this.model = model;
 
@@ -94,23 +93,5 @@ class OJenaGraph implements OTGraph {
 	private Property convertPredicateURI(OT_URI uri) {
 
 		return model.createProperty(uri.asURI());
-	}
-
-	private List<Statement> findStatements() {
-
-		StmtIterator i = model.listStatements(context, null, (RDFNode)null);
-		List<Statement> statements = i.toList();
-
-		i.close();
-
-		return statements;
-	}
-
-	private void removeStatement(Statement cxtStatement) {
-
-		ReifiedStatement ref = cxtStatement.getObject().as(ReifiedStatement.class);
-
-		model.remove(cxtStatement);
-		model.remove(ref.getStatement());
 	}
 }

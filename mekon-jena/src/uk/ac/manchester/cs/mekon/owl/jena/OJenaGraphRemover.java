@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.jena;
 
+import java.util.*;
+
 import org.apache.jena.rdf.model.*;
 
 import uk.ac.manchester.cs.mekon.owl.triples.*;
@@ -31,27 +33,49 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
 /**
  * @author Colin Puleston
  */
-class OJenaFactory implements OTFactory {
+class OJenaGraphRemover implements OTGraphRemover {
 
 	private Model model;
+	private Resource context;
 
-	public OTGraphAdder createGraphAdder(String contextURI) {
+	public void removeGraphFromStore() {
 
-		return new OJenaGraphAdder(model, contextURI);
+		for (Statement statement : getStatements()) {
+
+			removeStatement(statement);
+		}
 	}
 
-	public OTGraphRemover createGraphRemover(String contextURI) {
-
-		return new OJenaGraphRemover(model, contextURI);
-	}
-
-	public OTQuery createQuery() {
-
-		return new OJenaQuery(model);
-	}
-
-	OJenaFactory(Model model) {
+	OJenaGraphRemover(Model model, String contextURI) {
 
 		this.model = model;
+
+		context = model.createResource(contextURI);
+	}
+
+	private List<Statement> getStatements() {
+
+		StmtIterator iterator = getStatementIterator();
+		List<Statement> statements = iterator.toList();
+
+		iterator.close();
+
+		return statements;
+	}
+
+	private void removeStatement(Statement cxtStatement) {
+
+		model.remove(cxtStatement);
+		model.remove(getReifiedStatement(cxtStatement).getStatement());
+	}
+
+	private StmtIterator getStatementIterator() {
+
+		return model.listStatements(context, null, (RDFNode)null);
+	}
+
+	private ReifiedStatement getReifiedStatement(Statement cxtStatement) {
+
+		return cxtStatement.getObject().as(ReifiedStatement.class);
 	}
 }
