@@ -37,23 +37,19 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
 /**
  * @author Colin Puleston
  */
-class OStardogGraph implements OTGraph {
+class OStardogGraphRemover implements OTGraphRemover {
 
 	static private final ValueFactory valueFactory = ValueFactoryImpl.getInstance();
 
 	private Connection connection;
 	private URI context;
 
-	public void add(OT_URI subject, OT_URI predicate, OTValue object) {
-
-		URI s = convertURI(subject);
-		URI p = convertURI(predicate);
-		Value o = ValueConverter.convert(object);
+	public void removeGraphFromStore() {
 
 		try {
 
 			connection.begin();
-			connection.add().statement(s, p, o, context);
+			removeAllTriples();
 			connection.commit();
 		}
 		catch (StardogException e) {
@@ -62,37 +58,21 @@ class OStardogGraph implements OTGraph {
 		}
 	}
 
-	public void removeGraph() {
-
-		try {
-
-			connection.begin();
-
-			Iteration<Statement, StardogException> i
-				= connection.get().context(context).iterator();
-
-			while (i.hasNext()) {
-
-				connection.remove().statement(i.next());
-			}
-
-			connection.commit();
-		}
-		catch (StardogException e) {
-
-			throw new KSystemConfigException(e);
-		}
-	}
-
-	OStardogGraph(Connection connection, String contextURI) {
+	OStardogGraphRemover(Connection connection, String contextURI) {
 
 		this.connection = connection;
 
 		context = valueFactory.createURI(contextURI);
 	}
 
-	static private URI convertURI(OT_URI uri) {
+	private void removeAllTriples() throws StardogException {
 
-		return valueFactory.createURI(uri.asURI());
+		Iteration<Statement, StardogException> i
+			= connection.get().context(context).iterator();
+
+		while (i.hasNext()) {
+
+			connection.remove().statement(i.next());
+		}
 	}
 }

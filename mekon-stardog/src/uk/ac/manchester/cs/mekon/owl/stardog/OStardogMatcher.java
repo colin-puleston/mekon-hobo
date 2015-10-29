@@ -49,7 +49,7 @@ public class OStardogMatcher extends OTMatcher {
 
 		super(model, OStardogConfig.DEFAULT_REASONING_TYPE);
 
-		initialise(OStardogConfig.DEFAULT_CONFIG);
+		initialise(OStardogConfig.DEFAULT_DB_NAME);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class OStardogMatcher extends OTMatcher {
 
 		super(model, config.getReasoningType());
 
-		initialise(config);
+		initialise(config.getDatabaseName());
 	}
 
 	/**
@@ -111,13 +111,18 @@ public class OStardogMatcher extends OTMatcher {
 
 	private void initialise(KConfigNode parentConfigNode) {
 
-		initialise(new OStardogConfig(parentConfigNode));
+		initialise(new OStardogConfig(parentConfigNode).getDatabaseName());
 	}
 
-	private void initialise(OStardogConfig config) {
+	private void initialise(String databaseName) {
 
-		server = new OStardogServer(getModel(), config);
+		server = createServer(databaseName);
 
 		initialise(new OStardogFactory(server.getConnection()));
+	}
+
+	private OStardogServer createServer(String databaseName) {
+
+		return new OStardogServer(getModel(), databaseName, getReasoningType());
 	}
 }

@@ -39,9 +39,8 @@ public class OStardogConfig implements OStardogConfigVocab {
 	 */
 	static public final OStardogConfig DEFAULT_CONFIG = new OStardogConfig();
 
-	static final ORReasoningType DEFAULT_REASONING_TYPE = ORReasoningType.RDFS;
-
-	static private final String DEFAULT_DB_NAME = "MEKON";
+	static final String DEFAULT_DB_NAME = "MEKON";
+	static final ORReasoningType DEFAULT_REASONING_TYPE = ORReasoningType.DL;
 
 	static private String getDatabaseName(KConfigNode parentConfigNode) {
 

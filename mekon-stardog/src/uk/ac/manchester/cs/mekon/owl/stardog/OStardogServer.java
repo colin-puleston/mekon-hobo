@@ -51,12 +51,12 @@ class OStardogServer {
 	private Server server;
 	private Connection connection;
 
-	OStardogServer(OModel model, OStardogConfig config) {
+	OStardogServer(OModel model, String databaseName, ORReasoningType reasoningType) {
 
 		server = startServer();
-		connection = startDatabase(config.getDatabaseName());
+		connection = startDatabase(databaseName);
 
-		loadModel(model, config.getReasoningType());
+		loadModel(model, reasoningType);
 	}
 
 	Connection getConnection() {

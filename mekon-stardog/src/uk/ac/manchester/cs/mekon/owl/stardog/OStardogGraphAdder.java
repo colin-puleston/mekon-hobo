@@ -24,34 +24,86 @@
 
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
+import java.util.*;
+
+import org.openrdf.model.*;
+import org.openrdf.model.impl.*;
+
+import com.complexible.stardog.*;
 import com.complexible.stardog.api.*;
 
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
  */
-class OStardogFactory implements OTFactory {
+class OStardogGraphAdder implements OTGraphAdder {
+
+	static private final ValueFactory valueFactory = ValueFactoryImpl.getInstance();
 
 	private Connection connection;
+	private URI context;
 
-	public OTGraphAdder createGraphAdder(String contextURI) {
+	private List<Triple> triples = new ArrayList<Triple>();
 
-		return new OStardogGraphAdder(connection, contextURI);
+	private class Triple {
+
+		private URI subject;
+		private URI predicate;
+		private Value object;
+
+		Triple(OT_URI subj, OT_URI pred, OTValue obj) {
+
+			subject = convertURI(subj);
+			predicate = convertURI(pred);
+			object = ValueConverter.convert(obj);
+
+			triples.add(this);
+		}
+
+		void add() throws StardogException {
+
+			connection.add().statement(subject, predicate, object, context);
+		}
+
+		private URI convertURI(OT_URI uri) {
+
+			return valueFactory.createURI(uri.asURI());
+		}
 	}
 
-	public OTGraphRemover createGraphRemover(String contextURI) {
+	public void addGraphToStore() {
 
-		return new OStardogGraphRemover(connection, contextURI);
+		try {
+
+			connection.begin();
+			addTriples();
+			connection.commit();
+		}
+		catch (StardogException e) {
+
+			throw new KSystemConfigException(e);
+		}
 	}
 
-	public OTQuery createQuery() {
+	public void addToGraph(OT_URI subject, OT_URI predicate, OTValue object) {
 
-		return new OStardogQuery(connection);
+		new Triple(subject, predicate, object);
 	}
 
-	OStardogFactory(Connection connection) {
+	OStardogGraphAdder(Connection connection, String contextURI) {
 
 		this.connection = connection;
+
+		context = valueFactory.createURI(contextURI);
+	}
+
+	private void addTriples() throws StardogException {
+
+		for (Triple triple : triples) {
+
+			triple.add();
+		}
 	}
 }
