@@ -24,9 +24,15 @@
 
 package uk.ac.manchester.cs.mekon.store;
 
+import java.io.*;
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -39,7 +45,39 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public interface IStore {
+public class IStore {
+
+	static {
+
+		ZIStoreAccessor.set(new IStoreAccessor());
+	}
+
+	static private class InstanceIndexes extends KIndexes<CIdentity> {
+
+		protected KRuntimeException createException(String message) {
+
+			return new KSystemConfigException(message);
+		}
+	}
+
+	private ZFreeInstantiator freeInstantiator;
+
+	private InstanceFileStore fileStore;
+	private Set<IMatcher> matchers = new HashSet<IMatcher>();
+
+	private List<CIdentity> identities = new ArrayList<CIdentity>();
+	private InstanceIndexes indexes = new InstanceIndexes();
+
+	private class FileStoreInstanceLoader extends InstanceLoader {
+
+		void load(IFrame instance, CIdentity identity, int index) {
+
+			identities.add(identity);
+			indexes.assignIndex(identity, index);
+
+			checkAddToMatcher(instance, identity);
+		}
+	}
 
 	/**
 	 * Adds an instance to the store, possibly replacing an existing
@@ -52,7 +90,20 @@ public interface IStore {
 	 * @throws KAccessException if instance frame is not of category
 	 * {@link IFrameCategory#ASSERTION}
 	 */
-	public IFrame add(IFrame instance, CIdentity identity);
+	public synchronized IFrame add(IFrame instance, CIdentity identity) {
+
+		instance = deriveFreeInstantiation(instance);
+
+		IFrame previous = checkRemove(identity);
+		int index = indexes.assignIndex(identity);
+
+		identities.add(identity);
+
+		fileStore.write(instance, identity, index);
+		checkAddToMatcher(instance, identity);
+
+		return previous;
+	}
 
 	/**
 	 * Removes an instance from the store.
@@ -61,12 +112,21 @@ public interface IStore {
 	 * @return True if instance removed, false if instance with
 	 * specified identity not present
 	 */
-	public boolean remove(CIdentity identity);
+	public synchronized boolean remove(CIdentity identity) {
+
+		return checkRemove(identity) != null;
+	}
 
 	/**
 	 * Removes all instances from the store.
 	 */
-	public void clear();
+	public synchronized void clear() {
+
+		for (CIdentity identity : getAllIdentities()) {
+
+			remove(identity);
+		}
+	}
 
 	/**
 	 * Checks whether store contains a particular instance.
@@ -74,7 +134,10 @@ public interface IStore {
 	 * @param identity Unique identity of instance to check for
 	 * @return True if store contains required instance
 	 */
-	public boolean contains(CIdentity identity);
+	public synchronized boolean contains(CIdentity identity) {
+
+		return indexes.hasIndex(identity);
+	}
 
 	/**
 	 * Retrieves an instance from the store.
@@ -83,7 +146,10 @@ public interface IStore {
 	 * @return Instance-level frame representing required instance,
 	 * or null if instance with specified identity not present
 	 */
-	public IFrame get(CIdentity identity);
+	public synchronized IFrame get(CIdentity identity) {
+
+		return fileStore.read(indexes.getIndex(identity));
+	}
 
 	/**
 	 * Provides unique identities of all instances in store,
@@ -92,7 +158,10 @@ public interface IStore {
 	 * @return Unique identities of all instances, oldest entries
 	 * first
 	 */
-	public List<CIdentity> getAllIdentities();
+	public synchronized List<CIdentity> getAllIdentities() {
+
+		return new ArrayList<CIdentity>(identities);
+	}
 
 	/**
 	 * Finds all instances that are matched by the supplied query.
@@ -100,7 +169,12 @@ public interface IStore {
 	 * @param query Representation of query
 	 * @return Results of query execution
 	 */
-	public IMatches match(IFrame query);
+	public synchronized IMatches match(IFrame query) {
+
+		query = deriveFreeInstantiation(query);
+
+		return getMatcher(query).match(query);
+	}
 
 	/**
 	 * Tests whether the supplied instance is matched by the supplied
@@ -110,5 +184,89 @@ public interface IStore {
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	public boolean matches(IFrame query, IFrame instance);
+	public synchronized boolean matches(IFrame query, IFrame instance) {
+
+		query = deriveFreeInstantiation(query);
+		instance = deriveFreeInstantiation(instance);
+
+		IMatcher matcher = getMatcher(query);
+
+		if (matcher != getMatcher(instance)) {
+
+			return false;
+		}
+
+		return matcher.matches(query, instance);
+	}
+
+	IStore(CModel model) {
+
+		freeInstantiator = ZCModelAccessor.get().getFreeInstantiator(model);
+		fileStore = new InstanceFileStore(model);
+	}
+
+	void setStoreDirectory(File directory) {
+
+		fileStore.setDirectory(directory);
+	}
+
+	void checkReload() {
+
+		fileStore.loadAll(new FileStoreInstanceLoader());
+	}
+
+	void clearFileStore() {
+
+		fileStore.clear();
+	}
+
+	void addMatcher(IMatcher matcher) {
+
+		matchers.add(matcher);
+	}
+
+	private IFrame checkRemove(CIdentity identity) {
+
+		IFrame removed = null;
+
+		if (indexes.hasIndex(identity)) {
+
+			int index = indexes.freeIndex(identity);
+
+			identities.remove(identity);
+
+			checkRemoveFromMatcher(fileStore.read(index), identity);
+			fileStore.remove(index);
+		}
+
+		return removed;
+	}
+
+	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
+
+		getMatcher(instance).add(instance, identity);
+	}
+
+	private void checkRemoveFromMatcher(IFrame instance, CIdentity identity) {
+
+		getMatcher(instance).remove(identity);
+	}
+
+	private IMatcher getMatcher(IFrame frame) {
+
+		for (IMatcher matcher : matchers) {
+
+			if (matcher.handlesType(frame.getType())) {
+
+				return matcher;
+			}
+		}
+
+		return InertIMatcher.get();
+	}
+
+	private IFrame deriveFreeInstantiation(IFrame instance) {
+
+		return freeInstantiator.deriveInstantiation(instance);
+	}
 }

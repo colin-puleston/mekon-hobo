@@ -39,20 +39,20 @@ import uk.ac.manchester.cs.mekon.util.*;
  *
  * @author Colin Puleston
  */
-public abstract class ZMekonAccessor {
+public abstract class ZCModelAccessor {
 
 	static private final String MODEL_CLASS_NAME
 			= "uk.ac.manchester.cs.mekon.model.CModel";
 
-	static private KSingleton<ZMekonAccessor> singleton
-							= new KSingleton<ZMekonAccessor>();
+	static private KSingleton<ZCModelAccessor> singleton
+							= new KSingleton<ZCModelAccessor>();
 
 	/**
 	 * Sets the singleton accessor object.
 	 *
 	 * @param accessor Accessor to set as singleton
 	 */
-	static public synchronized void set(ZMekonAccessor accessor) {
+	static public synchronized void set(ZCModelAccessor accessor) {
 
 		singleton.set(accessor);
 	}
@@ -65,7 +65,7 @@ public abstract class ZMekonAccessor {
 	 *
 	 * @return Singleton accessor object
 	 */
-	static public ZMekonAccessor get() {
+	static public ZCModelAccessor get() {
 
 		return singleton.get(MODEL_CLASS_NAME);
 	}

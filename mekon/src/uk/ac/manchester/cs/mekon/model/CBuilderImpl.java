@@ -28,7 +28,9 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * @author Colin Puleston
@@ -53,14 +55,14 @@ class CBuilderImpl implements CBuilder {
 		model.getIUpdating().setDefaultOp(op, enabled);
 	}
 
-	public void setIStoreDirectory(File storeDirectory) {
+	public void setIStoreDirectory(File directory) {
 
-		model.getIStore().setStoreDirectory(storeDirectory);
+		ZIStoreAccessor.get().setStoreDirectory(getIStore(), directory);
 	}
 
 	public void addIMatcher(IMatcher iMatcher) {
 
-		model.getIStore().addMatcher(iMatcher);
+		ZIStoreAccessor.get().addMatcher(getIStore(), iMatcher);
 	}
 
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {
@@ -182,5 +184,10 @@ class CBuilderImpl implements CBuilder {
 	private boolean initialBuild() {
 
 		return model.getRootFrame().getSubs().isEmpty();
+	}
+
+	private IStore getIStore() {
+
+		return model.getIStore();
 	}
 }

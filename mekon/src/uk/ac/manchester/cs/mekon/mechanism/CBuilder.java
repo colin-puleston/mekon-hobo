@@ -68,12 +68,12 @@ public interface CBuilder {
 	 * Sets the directory for {@link IStore} serialisation. Defaults
 	 * to the current directory.
 	 *
-	 * @param storeDirectory Required serialisation directory
+	 * @param directory Required serialisation directory
 	 */
-	public void setIStoreDirectory(File storeDirectory);
+	public void setIStoreDirectory(File directory);
 
 	/**
-	 * Adds an instance-matcher object for the model.
+	 * Adds an instance-matcher for the model.
 	 *
 	 * @param iMatcher Instance-matcher for model
 	 */

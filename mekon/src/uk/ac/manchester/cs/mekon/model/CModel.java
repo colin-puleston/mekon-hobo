@@ -46,7 +46,7 @@ public class CModel implements CAnnotatable {
 
 	static {
 
-		ZMekonAccessor.set(new ZMekonAccessorImpl());
+		ZCModelAccessor.set(new ZCModelAccessorImpl());
 	}
 
 	private ZMekonCustomiser customiser;
@@ -58,7 +58,7 @@ public class CModel implements CAnnotatable {
 
 	private IEditor iEditor = new IEditorImpl(this);
 	private IUpdating iUpdating = new IUpdating(this);
-	private IStoreImpl iStore = new IStoreImpl(this);
+	private IStore iStore = ZIStoreAccessor.get().createStore(this);
 
 	private List<InitialisationListener> initialisationListeners
 							= new ArrayList<InitialisationListener>();
@@ -228,7 +228,7 @@ public class CModel implements CAnnotatable {
 		new CHierarchyNormaliser(this);
 		new CFramesInitialiser(frames).completeInitialisation();
 
-		iStore.checkLoad();
+		ZIStoreAccessor.get().checkReload(iStore);
 
 		pollInitialisationListeners();
 
@@ -240,7 +240,7 @@ public class CModel implements CAnnotatable {
 		return initialised;
 	}
 
-	IStoreImpl getIStore() {
+	IStore getIStore() {
 
 		return iStore;
 	}

@@ -515,7 +515,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 		this.model = model;
  		this.frameCategory = frameCategory;
 
-		iEditor = ZMekonAccessor.get().getIEditor(model);
+		iEditor = ZCModelAccessor.get().getIEditor(model);
 	}
 
 	abstract IFrame instantiateFrame(CFrame type, IFrameCategory category);

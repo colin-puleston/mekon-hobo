@@ -37,7 +37,7 @@ public class MekonTest extends FramesTestUtils {
 
 	static private CModel createEmptyModel() {
 
-		return ZMekonAccessor.get().createModel();
+		return ZCModelAccessor.get().createModel();
 	}
 
 	private CModel model;
@@ -139,6 +139,11 @@ public class MekonTest extends FramesTestUtils {
 	public MekonTest(CModel model) {
 
 		this(model, null);
+	}
+
+	public void setQueriesEnabled(boolean enabled) {
+
+		model.setQueriesEnabled(enabled);
 	}
 
 	public IFrame createComplexInstance() {

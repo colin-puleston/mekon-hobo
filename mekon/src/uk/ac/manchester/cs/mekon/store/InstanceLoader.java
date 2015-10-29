@@ -22,46 +22,14 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.store;
 
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class ZMekonAccessorImpl extends ZMekonAccessor {
+abstract class InstanceLoader {
 
-	private ZObjectModelMapper objectModelMapper = new ZObjectModelMapperImpl();
-
-	public CModel createModel(ZMekonCustomiser customiser) {
-
-		return new CModel(customiser);
-	}
-
-	public CBuilder createBuilder(CModel model) {
-
-		return new CBuilderImpl(model);
-	}
-
-	public IStore getIStore(CModel model) {
-
-		return model.getIStore();
-	}
-
-	public IEditor getIEditor(CModel model) {
-
-		return model.getIEditor();
-	}
-
-	public ZFreeInstantiator getFreeInstantiator(CModel model) {
-
-		return new ZFreeInstantiatorImpl(model);
-	}
-
-	public ZObjectModelMapper getObjectModelMapper() {
-
-		return objectModelMapper;
-	}
+	abstract void load(IFrame instance, CIdentity identity, int index);
 }

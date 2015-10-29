@@ -42,7 +42,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 public class CManager {
 
-	static private final ZMekonAccessor accessor = ZMekonAccessor.get();
+	static private final ZCModelAccessor accessor = ZCModelAccessor.get();
 
 	/**
 	 * Creates model-builder to build model for which the

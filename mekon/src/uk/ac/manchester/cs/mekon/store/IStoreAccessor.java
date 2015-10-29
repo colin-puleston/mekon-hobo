@@ -22,66 +22,36 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.serial;
+package uk.ac.manchester.cs.mekon.store;
 
-import java.util.*;
+import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
- * Parser for the standard XML serialisation of {@link IFrame}
- * objects that produces a "free" instantiation of the frame
- * (see {@link IFreeInstanceGenerator}).
- *
  * @author Colin Puleston
  */
-public class IFrameFreeParser extends IFrameParserAbstract {
+class IStoreAccessor extends ZIStoreAccessor {
 
-	private ZFreeInstantiator instantiator;
+	public IStore createStore(CModel model) {
 
-	/**
-	 * Constructor
-	 *
-	 * @param model Relevant model
-	 * @param frameCategory Category of frames to be parsed
-	 */
-	public IFrameFreeParser(CModel model, IFrameCategory frameCategory) {
-
-		super(model, frameCategory);
-
-		instantiator = ZCModelAccessor.get().getFreeInstantiator(model);
+		return new IStore(model);
 	}
 
-	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
+	public void setStoreDirectory(IStore store, File directory) {
 
-		return instantiator.startInstantiation(type, category);
+		store.setStoreDirectory(directory);
 	}
 
-	ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
+	public void addMatcher(IStore store, IMatcher matcher) {
 
-		return instantiator.addIFrameSlot(frame, slotId);
+		store.addMatcher(matcher);
 	}
 
-	ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId) {
+	public void checkReload(IStore store) {
 
-		return instantiator.addCFrameSlot(frame, slotId);
-	}
-
-	ISlot checkResolveINumberSlot(
-				IFrame frame,
-				CIdentity slotId,
-				Class<? extends Number> numberType) {
-
-		return instantiator.addINumberSlot(frame, slotId, numberType);
-	}
-
-	void checkUpdateFrameSlotSets(List<IFrame> frames) {
-	}
-
-	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
-
-		instantiator.completeInstantiation(rootFrame);
+		store.checkReload();
 	}
 }

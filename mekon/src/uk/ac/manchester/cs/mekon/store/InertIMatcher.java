@@ -22,12 +22,41 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.store;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class InstanceLoader {
+class InertIMatcher implements IMatcher {
 
-	abstract void load(IFrame instance, CIdentity identity, int index);
+	static private final IMatcher singleton = new InertIMatcher();
+
+	static IMatcher get() {
+
+		return singleton;
+	}
+
+	public boolean handlesType(CFrame type) {
+
+		return false;
+	}
+
+	public void add(IFrame instance, CIdentity identity) {
+	}
+
+	public void remove(CIdentity identity) {
+	}
+
+	public IMatches match(IFrame query) {
+
+		return IMatches.NO_MATCHES;
+	}
+
+	public boolean matches(IFrame query, IFrame instance) {
+
+		return false;
+	}
 }
