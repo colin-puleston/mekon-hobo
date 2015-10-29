@@ -234,9 +234,4 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 		return UIManager.getColor("Tree.selectionBackground");
 	}
-
-	private boolean equalsCellDisplay(GCellDisplay other) {
-
-		return text.equals(other.text);
-	}
 }
