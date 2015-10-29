@@ -39,11 +39,13 @@ class Assertion {
 
 	private class GraphRenderer extends InstanceRenderer<OT_URI> {
 
-		private OTGraph graph = createGraph();
+		private OTGraphAdder adder = createGraphAdder();
 
 		void render(NNode instance) {
 
 			renderNode(instance);
+
+			adder.addGraphToStore();
 		}
 
 		OT_URI renderNode(int index) {
@@ -63,7 +65,7 @@ class Assertion {
 
 		void renderTriple(OT_URI subject, OT_URI predicate, OTValue object) {
 
-			graph.add(subject, predicate, object);
+			adder.addToGraph(subject, predicate, object);
 		}
 
 		void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects) {
@@ -97,12 +99,17 @@ class Assertion {
 
 	void remove() {
 
-		createGraph().removeGraph();
+		createGraphRemover().removeGraphFromStore();
 	}
 
-	private OTGraph createGraph() {
+	private OTGraphAdder createGraphAdder() {
 
-		return factory.createGraph(baseURI);
+		return factory.createGraphAdder(baseURI);
+	}
+
+	private OTGraphRemover createGraphRemover() {
+
+		return factory.createGraphRemover(baseURI);
 	}
 
 	private OT_URI getNode(int index) {

@@ -25,33 +25,14 @@
 package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
- * Interface representing implementation-specific
- * data-factories
+ * Represents a named graph being removed from the triple store.
  *
  * @author Colin Puleston
  */
-public interface OTFactory {
+public interface OTGraphRemover {
 
 	/**
-	 * Creates graph-adder object.
-	 *
-	 * @param contextURI Graph-context URI
-	 * @return Created graph-adder
+	 * Removes the graph from the triple store.
 	 */
-	public OTGraphAdder createGraphAdder(String contextURI);
-
-	/**
-	 * Creates graph-remover object.
-	 *
-	 * @param contextURI Graph-context URI
-	 * @return Created graph-remover
-	 */
-	public OTGraphRemover createGraphRemover(String contextURI);
-
-	/**
-	 * Creates object for executing SPARQL query.
-	 *
-	 * @return Created query
-	 */
-	public OTQuery createQuery();
+	public void removeGraphFromStore();
 }

@@ -25,25 +25,25 @@
 package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
- * Represents a named graph in the triple store.
+ * Represents a named graph being added to the triple store.
  *
  * @author Colin Puleston
  */
-public interface OTGraph {
+public interface OTGraphAdder {
 
 	/**
-	 * Adds a triple to the graph in the triple store.
+	 * Adds a triple to the graph.
 	 *
 	 * @param subject Subject of triple
 	 * @param predicate Predicate of triple
 	 * @param object Object of triple
 	 */
-	public void add(OT_URI subject, OT_URI predicate, OTValue object);
+	public void addToGraph(OT_URI subject, OT_URI predicate, OTValue object);
 
 
 	/**
-	 * Removes the graph from triple store.
+	 * Adds the graph to triple store.
 	 */
-	public void removeGraph();
+	public void addGraphToStore();
 
 }
