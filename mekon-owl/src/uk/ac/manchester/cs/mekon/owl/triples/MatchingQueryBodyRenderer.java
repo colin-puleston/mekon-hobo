@@ -37,13 +37,13 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 	static private final String NODE_VARIABLE_FORMAT = "?n%d";
 	static private final String UNION_TRIPLE_FORMAT = "{%s %s %s}";
 	static private final String UNION_OPERATOR = " UNION ";
-	static private final String UNION_TERMINATOR = "%n";
+	static private final String UNION_TERMINATOR = "\n";
 	static private final String LIMIT_VARIABLE_FORMAT = "?l%d";
 	static private final String MIN_OPERATOR = ">=";
 	static private final String MAX_OPERATOR = "<=";
-	static private final String LIMIT_FILTER_FORMAT = "FILTER (%s %s %s)%n";
-	static private final String SIMPLE_TRIPLE_FORMAT = "%s %s %s .%n";
-	static private final String QUERY_BODY_FORMAT = "{%n%s%s}";
+	static private final String LIMIT_FILTER_FORMAT = "FILTER (%s %s %s)\n";
+	static private final String SIMPLE_TRIPLE_FORMAT = "%s %s %s .\n";
+	static private final String QUERY_BODY_FORMAT = "{\n%s%s}";
 
 	private StringBuilder statements = new StringBuilder();
 	private StringBuilder filters = new StringBuilder();
