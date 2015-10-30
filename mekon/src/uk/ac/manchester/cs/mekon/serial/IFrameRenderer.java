@@ -39,7 +39,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 public class IFrameRenderer extends ISerialiser {
 
 	private boolean renderAsTree = false;
-	private boolean renderSchema = false;
+	private ISchemaLevel schemaLevel = ISchemaLevel.NONE;
 
 	private class OneTimeRenderer {
 
@@ -241,15 +241,14 @@ public class IFrameRenderer extends ISerialiser {
 
 			renderCSlot(slot.getType(), node);
 
-			if (renderSchema) {
-
-				node.addValue(EDITABILITY_ATTR, slot.getEditability());
+			if (schemaLevel.includesBasics()) {
 
 				new ISlotValueTypeRenderer(slot, node);
 			}
-			else {
 
-				checkRenderSlotNumberType(slot, node);
+			if (schemaLevel.includesDetails()) {
+
+				node.addValue(EDITABILITY_ATTR, slot.getEditability());
 			}
 
 			if (!slot.getValues().isEmpty()) {
@@ -264,19 +263,9 @@ public class IFrameRenderer extends ISerialiser {
 
 			renderIdentity(slot, node);
 
-			if (renderSchema) {
+			if (schemaLevel.includesDetails()) {
 
 				node.addValue(CARDINALITY_ATTR, slot.getCardinality());
-			}
-		}
-
-		private void checkRenderSlotNumberType(ISlot slot, XNode slotNode) {
-
-			CValue<?> valueType = slot.getValueType();
-
-			if (valueType instanceof CNumber) {
-
-				renderNumberType((CNumber)valueType, slotNode);
 			}
 		}
 	}
@@ -294,16 +283,14 @@ public class IFrameRenderer extends ISerialiser {
 	}
 
 	/**
-	 * Sets whether the the schema information, including slot
-	 * value-types, cardinalities and editabilities, should be
-	 * rendered. By default this informaton will not be rendered.
+	 * Sets the level of schema information to be rendered.
+	 * Defaults to {@link ISchemaLevel.NONE}.
 	 *
-	 * @param renderSchema True if schema information should be
-	 * rendered
+	 * @param schemaLevel Required schema-level
 	 */
-	public void setRenderSchema(boolean renderSchema) {
+	public void setSchemaLevel(ISchemaLevel schemaLevel) {
 
-		this.renderSchema = renderSchema;
+		this.schemaLevel = schemaLevel;
 	}
 
 	/**
@@ -341,7 +328,7 @@ public class IFrameRenderer extends ISerialiser {
 
 	private boolean slotToBeRendered(ISlot slot) {
 
-		return renderSchema || !slot.getValues().isEmpty();
+		return schemaLevel.includesBasics() || !slot.getValues().isEmpty();
 	}
 
 	private void checkRenderable(IFrame frame) {

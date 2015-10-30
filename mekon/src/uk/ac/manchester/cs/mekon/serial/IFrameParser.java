@@ -73,9 +73,9 @@ public class IFrameParser extends IFrameParserAbstract {
 	}
 
 	ISlot checkResolveINumberSlot(
-						IFrame frame,
-						CIdentity slotId,
-						Class<? extends Number> numberType) {
+				IFrame frame,
+				CIdentity slotId,
+				Class<? extends Number> numberType) {
 
 		return lookForSlot(frame, slotId);
 	}

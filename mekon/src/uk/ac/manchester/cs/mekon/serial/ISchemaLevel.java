@@ -24,55 +24,39 @@
 
 package uk.ac.manchester.cs.mekon.serial;
 
-import java.io.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
-
 /**
- * Renderer for the standard XML serialisation of an instance,
- * comprising an instance-identifier, and a frame representation
- * of the instance.
+ * Specifies the level of schema information to be rendered
+ * when serialising.
  *
  * @author Colin Puleston
  */
-public class IInstanceRenderer extends ISerialiser {
-
-	private File instanceFile;
-
-	private XDocument document = new XDocument(INSTANCE_ID);
+public enum ISchemaLevel {
 
 	/**
-	 * Constructor.
-	 *
-	 * @param instanceFile Serialisation file
+	 * No schema information
 	 */
-	public IInstanceRenderer(File instanceFile) {
-
-		this.instanceFile = instanceFile;
-	}
+	NONE,
 
 	/**
-	 * Renders the instance to the relevant file.
-	 *
-	 * @param identity Identity of instance
-	 * @param instance Frame representation of instance
+	 * Basic schema information, including slot types and
+	 * value-types, but not including slot cardinalities or
+	 * editabilities.
 	 */
-	public void render(IFrame instance, CIdentity identity) {
+	BASIC,
 
-		XNode rootNode = document.getRootNode();
+	/**
+	 * Full schema information, including slot types, value-types,
+	 * cardinalities and editabilities.
+	 */
+	FULL;
 
-		renderInstance(instance, rootNode);
-		renderIdentity(identity, rootNode);
+	boolean includesBasics() {
 
-		document.writeToFile(instanceFile);
+		return this != NONE;
 	}
 
-	private void renderInstance(IFrame instance, XNode rootNode) {
+	boolean includesDetails() {
 
-		IFrameRenderer frameRenderer = new IFrameRenderer();
-
-		frameRenderer.setSchemaLevel(ISchemaLevel.BASIC);
-		frameRenderer.render(instance, rootNode);
+		return this == FULL;
 	}
 }

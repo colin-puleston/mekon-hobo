@@ -61,8 +61,8 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private List<IFrame> frames = new ArrayList<IFrame>();
 
-		private KSetMap<IFrame, SlotSpec<?>> frameSlots
-							= new KSetMap<IFrame, SlotSpec<?>>();
+		private KListMap<IFrame, SlotSpec<?>> frameSlots
+							= new KListMap<IFrame, SlotSpec<?>>();
 
 		private Map<Integer, IFrame> frameRefs = new HashMap<Integer, IFrame>();
 
@@ -73,15 +73,21 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 			private List<V> valueSpecs = new ArrayList<V>();
 
-			SlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
+			SlotSpec(IFrame frame, XNode slotNode) {
 
 				this.frame = frame;
 
 				slotId = parseIdentity(slotNode.getChild(CSLOT_ID));
 
-				resolveValueSpecs(valuesNode);
-
 				frameSlots.add(frame, this);
+			}
+
+			void addValueSpecs(XNode valuesNode) {
+
+				for (XNode valueNode : valuesNode.getChildren(getValueId())) {
+
+					valueSpecs.add(resolveValueSpec(valueNode));
+				}
 			}
 
 			boolean process() {
@@ -107,17 +113,14 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 			abstract IValue getValue(ISlot slot, V valueSpec);
 
-			private void resolveValueSpecs(XNode valuesNode) {
-
-				for (XNode valueNode : valuesNode.getChildren(getValueId())) {
-
-					valueSpecs.add(resolveValueSpec(valueNode));
-				}
-			}
-
 			private void setValidValues(ISlot slot) {
 
-				setValues(slot, getValidValues(slot));
+				List<IValue> values = getValidValues(slot);
+
+				if (!values.isEmpty()) {
+
+					setValues(slot, values);
+				}
 			}
 
 			private void setValues(ISlot slot, List<IValue> values) {
@@ -146,9 +149,9 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private class IFrameSlotSpec extends SlotSpec<IValue> {
 
-			IFrameSlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
+			IFrameSlotSpec(IFrame frame, XNode slotNode) {
 
-				super(frame, slotNode, valuesNode);
+				super(frame, slotNode);
 			}
 
 			String getValueId() {
@@ -174,9 +177,9 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private class CFrameSlotSpec extends SlotSpec<IValue> {
 
-			CFrameSlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
+			CFrameSlotSpec(IFrame frame, XNode slotNode) {
 
-				super(frame, slotNode, valuesNode);
+				super(frame, slotNode);
 			}
 
 			String getValueId() {
@@ -204,9 +207,9 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 			private Class<? extends Number> numberType;
 
-			INumberSlotSpec(IFrame frame, XNode slotNode, XNode valuesNode) {
+			INumberSlotSpec(IFrame frame, XNode slotNode) {
 
-				super(frame, slotNode, valuesNode);
+				super(frame, slotNode);
 
 				numberType = getNumberTypeOrNull(slotNode);
 			}
@@ -233,9 +236,14 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 			private Class<? extends Number> getNumberTypeOrNull(XNode slotNode) {
 
-				String className = slotNode.getString(NUMBER_TYPE_ATTR, null);
+				XNode typeNode = slotNode.getChildOrNull(CNUMBER_ID);
 
-				return className != null ? getNumberType(className) : null;
+				return typeNode != null ? getNumberType(typeNode) : null;
+			}
+
+			private Class<? extends Number> getNumberType(XNode typeNode) {
+
+				return getNumberType(typeNode.getString(NUMBER_TYPE_ATTR));
 			}
 
 			private Class<? extends Number> getNumberType(String className) {
@@ -386,20 +394,51 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 			XNode valuesNode = slotNode.getChildOrNull(IVALUES_ID);
 
-			if (valuesNode != null) {
+			if (valuesNode == null || !parseISlot(frame, slotNode, valuesNode)) {
 
-				if (valuesNode.hasChild(IFRAME_ID)) {
+				parseISlotWithNoValues(frame, slotNode);
+			}
+		}
 
-					new IFrameSlotSpec(frame, slotNode, valuesNode);
-				}
-				else if (valuesNode.hasChild(INUMBER_ID)) {
+		private boolean parseISlot(IFrame frame, XNode slotNode, XNode valuesNode) {
 
-					new INumberSlotSpec(frame, slotNode, valuesNode);
-				}
-				else if (valuesNode.hasChild(CFRAME_ID)) {
+			SlotSpec<?> spec = null;
 
-					new CFrameSlotSpec(frame, slotNode, valuesNode);
-				}
+			if (valuesNode.hasChild(IFRAME_ID)) {
+
+				spec = new IFrameSlotSpec(frame, slotNode);
+			}
+			else if (valuesNode.hasChild(INUMBER_ID)) {
+
+				spec = new INumberSlotSpec(frame, slotNode);
+			}
+			else if (valuesNode.hasChild(CFRAME_ID)) {
+
+				spec = new CFrameSlotSpec(frame, slotNode);
+			}
+			else {
+
+				return false;
+			}
+
+			spec.addValueSpecs(valuesNode);
+
+			return true;
+		}
+
+		private void parseISlotWithNoValues(IFrame frame, XNode slotNode) {
+
+			if (slotNode.hasChild(CFRAME_ID)) {
+
+				new IFrameSlotSpec(frame, slotNode);
+			}
+			else if (slotNode.hasChild(CNUMBER_ID)) {
+
+				new INumberSlotSpec(frame, slotNode);
+			}
+			else if (slotNode.hasChild(MFRAME_ID)) {
+
+				new CFrameSlotSpec(frame, slotNode);
 			}
 		}
 
@@ -426,7 +465,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 			for (IFrame frame : frameSlots.keySet()) {
 
-				for (SlotSpec<?> spec : frameSlots.getSet(frame)) {
+				for (SlotSpec<?> spec : frameSlots.getList(frame)) {
 
 					anyAdded |= spec.process();
 				}

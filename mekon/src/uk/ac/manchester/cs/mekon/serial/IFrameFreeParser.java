@@ -74,6 +74,11 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 				CIdentity slotId,
 				Class<? extends Number> numberType) {
 
+		if (numberType == null) {
+
+			return null;
+		}
+
 		return instantiator.addINumberSlot(frame, slotId, numberType);
 	}
 

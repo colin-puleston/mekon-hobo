@@ -29,6 +29,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -101,12 +102,16 @@ public class IFrameTest extends MekonTest {
 	public void test_copyAndMatch() {
 
 		IFrame i = createComplexInstance();
-		IFrame iCopy = i.copy();
 
-		assertFalse(i == iCopy);
-		assertTrue(iCopy.matches(i));
-		assertTrue(i.matches(iCopy));
-		assertTrue(i.matches(i));
+		testCopied(i, i.copy());
+	}
+
+	@Test
+	public void test_copyFreeAndMatch() {
+
+		IFrame i = createComplexInstance();
+
+		testCopied(i, createFreeCopy(i));
 	}
 
 	@Test
@@ -130,6 +135,13 @@ public class IFrameTest extends MekonTest {
 		this.monitorIReasoner = monitorIReasoner;
 	}
 
+	private void testCopied(IFrame original, IFrame copy) {
+
+		assertFalse(original == copy);
+		assertTrue(copy.matches(original));
+		assertTrue(original.matches(copy));
+	}
+
 	private void testUpdateInferredTypes(
 					IFrame frame,
 					List<CFrame> required,
@@ -144,5 +156,10 @@ public class IFrameTest extends MekonTest {
 		testList(frame.getInferredTypes().asList(), required);
 		testList(monitor.added, expectedAdded);
 		testList(monitor.removed, expectedRemoveds);
+	}
+
+	private IFrame createFreeCopy(IFrame instance) {
+
+		return new IFreeInstanceGenerator(getModel()).generateFrom(instance);
 	}
 }

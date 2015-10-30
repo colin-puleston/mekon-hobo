@@ -36,48 +36,98 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 public class IFrameSerialiseTest extends MekonTest {
 
-	private IFrameRenderer renderer = null;
-
-	@Before
-	public void setUp() {
-
-		renderer = new IFrameRenderer();
-	}
+	private boolean freeParser = false;
+	private ISchemaLevel schemaLevel = ISchemaLevel.NONE;
+	private boolean renderAsTree = false;
+	private boolean includeEmptySlots = false;
+	private boolean dynamicSlotInsertion = false;
 
 	@Test
 	public void test_renderAndParse() {
 
-		testRenderAndParse(false);
+		testRenderAndParse();
 	}
 
 	@Test
 	public void test_renderAsTreeAndParse() {
 
-		renderer.setRenderAsTree(true);
+		renderAsTree = true;
 
-		testRenderAndParse(false);
+		testRenderAndParse();
 	}
 
 	@Test
-	public void test_renderWithSchemaAndParse() {
+	public void test_renderWithBasicSchemaAndParse() {
 
-		renderer.setRenderSchema(true);
+		schemaLevel = ISchemaLevel.BASIC;
 
-		testRenderAndParse(false);
+		testRenderAndParse();
+	}
+
+	@Test
+	public void test_renderWithFullSchemaAndParse() {
+
+		schemaLevel = ISchemaLevel.FULL;
+
+		testRenderAndParse();
+	}
+
+	@Test
+	public void test_renderAndParseWithEmptySlots() {
+
+		includeEmptySlots = true;
+
+		testRenderAndParse();
 	}
 
 	@Test
 	public void test_renderAndParseWithDynamicSlotInsertion() {
 
-		testRenderAndParse(true);
+		dynamicSlotInsertion = true;
+
+		testRenderAndParse();
 	}
 
-	private void testRenderAndParse(boolean dynamicSlotInsertion) {
+	@Test
+	public void test_renderWithBasicSchemaAndFreeParse() {
 
-		IFrame original = createComplexInstance(dynamicSlotInsertion);
-		IFrame reconstituted = parse(renderer.render(original));
+		freeParser = true;
+		schemaLevel = ISchemaLevel.BASIC;
+
+		testRenderAndParse();
+	}
+
+	@Test
+	public void test_renderWithBasicSchemaAndFreeParseWithEmptySlots() {
+
+		freeParser = true;
+		schemaLevel = ISchemaLevel.BASIC;
+		includeEmptySlots = true;
+
+		testRenderAndParse();
+	}
+
+	@Test
+	public void test_renderWithBasicSchemaAndFreeParseWithDynamicSlotInsertion() {
+
+		freeParser = true;
+		schemaLevel = ISchemaLevel.BASIC;
+		dynamicSlotInsertion = true;
+
+		testRenderAndParse();
+	}
+
+	private void testRenderAndParse() {
+
+		IFrame original = createTestInstance();
+		IFrame reconstituted = parse(render(original));
 
 		assertTrue(reconstituted.matches(original));
+	}
+
+	private XDocument render(IFrame frame) {
+
+		return createRenderer().render(frame);
 	}
 
 	private IFrame parse(XDocument rendering) {
@@ -85,8 +135,36 @@ public class IFrameSerialiseTest extends MekonTest {
 		return createParser().parse(rendering);
 	}
 
-	private IFrameParser createParser() {
+	private IFrameParserAbstract createParser() {
 
-		return new IFrameParser(getModel(), IFrameCategory.ASSERTION);
+		return freeParser
+				? new IFrameFreeParser(getModel(), IFrameCategory.ASSERTION)
+				: new IFrameParser(getModel(), IFrameCategory.ASSERTION);
+	}
+
+	private IFrameRenderer createRenderer() {
+
+		IFrameRenderer renderer = new IFrameRenderer();
+
+		renderer.setRenderAsTree(renderAsTree);
+		renderer.setSchemaLevel(schemaLevel);
+
+		return renderer;
+	}
+
+	private IFrame createTestInstance() {
+
+		IFrame frame = createComplexInstance(dynamicSlotInsertion);
+
+		if (includeEmptySlots) {
+
+			createISlot(
+				frame,
+				"emptySlot",
+				CCardinality.SINGLE_VALUE,
+				frame.getType());
+		}
+
+		return frame;
 	}
 }
