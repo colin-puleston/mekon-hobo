@@ -297,15 +297,13 @@ public class DModel {
 	DModel() {
 
 		ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
-		ZMekonCustomiserLocal mekonCustomiser = new ZMekonCustomiserLocal(this);
 
-		cModel = mekonAccessor.createModel(mekonCustomiser);
+		cModel = mekonAccessor.createModel();
 		iEditor = mekonAccessor.getIEditor(cModel);
 		objectModelMapper = mekonAccessor.getObjectModelMapper();
+		initialiser = new DInitialiser(createCBuilder(), bindings);
 
-		CBuilder cBuilder = mekonAccessor.createBuilder(cModel);
-
-		initialiser = new DInitialiser(cBuilder, bindings);
+		new IFrameMapper(this);
 	}
 
 	void initialise() {
@@ -352,6 +350,11 @@ public class DModel {
 	ISlotValuesEditor getISlotValuesEditor(ISlot slot) {
 
 		return getIEditor().getSlotValuesEditor(slot);
+	}
+
+	private CBuilder createCBuilder() {
+
+		return ZCModelAccessor.get().createBuilder(cModel);
 	}
 
 	private <D extends DObject>D instantiate(

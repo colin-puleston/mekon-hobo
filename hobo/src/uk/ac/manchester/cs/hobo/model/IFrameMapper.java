@@ -30,37 +30,47 @@ import uk.ac.manchester.cs.mekon.mechanism.core.*;
 /**
  * @author Colin Puleston
  */
-class ZMekonCustomiserLocal implements ZMekonCustomiser {
 
-	private DModel dModel;
-	private IFrameMapper iFrameMapper = new IFrameMapper();
+class IFrameMapper implements CFrameListener {
 
-	private class IFrameMapper implements CFrameListener {
+	private DModel model;
 
-		public void onExtended(CFrame extension) {
+	private class AddListener extends ZCModelListener {
 
-			extension.addListener(this);
+		public void onFrameAdded(CFrame frame) {
+
+			frame.addListener(IFrameMapper.this);
 		}
 
-		public void onInstantiated(IFrame instance, boolean freeInstance) {
+		public void onFrameRemoved(CFrame frame) {
+		}
 
-			dModel.ensureMappedDObject(instance, freeInstance);
+		public void onSlotRemoved(CSlot slot) {
+		}
+
+		public void onBuildComplete() {
+		}
+
+		AddListener() {
+
+			super(model.getCModel());
 		}
 	}
 
-	public void onFrameAdded(CFrame frame) {
+	public void onExtended(CFrame extension) {
 
-		frame.addListener(iFrameMapper);
+		extension.addListener(this);
 	}
 
-	public void onFrameRemoved(CFrame frame) {
+	public void onInstantiated(IFrame instance, boolean freeInstance) {
+
+		model.ensureMappedDObject(instance, freeInstance);
 	}
 
-	public void onSlotRemoved(CSlot slot) {
-	}
+	IFrameMapper(DModel model) {
 
-	ZMekonCustomiserLocal(DModel dModel) {
+		this.model = model;
 
-		this.dModel = dModel;
+		new AddListener();
 	}
 }

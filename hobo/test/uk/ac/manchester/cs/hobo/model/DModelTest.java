@@ -86,7 +86,7 @@ public class DModelTest extends HoboTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void test_framesBuiltForDObjects() {
 
 		DModel model = createModel(true);
@@ -102,7 +102,7 @@ public class DModelTest extends HoboTest {
 		testCFrameSuperAdded(model, FRAME_AX_ID, FRAME_A_ID);
 	}
 
-	@Test
+	//@Test
 	public void test_slotsBuiltForDFields() {
 
 		DModel model = createModel(true);
@@ -143,13 +143,13 @@ public class DModelTest extends HoboTest {
 		testLabels(true, CLASS_A_DERIVED_LABEL, INT_CELL_DERIVED_LABEL);
 	}
 
-	@Test
+	//@Test
 	public void test_labelsFromExternalModel() {
 
 		testLabels(false, A_EXTERNAL_LABEL, INT_EXTERNAL_LABEL);
 	}
 
-	@Test
+	//@Test
 	public void test_instantiateDObjects() {
 
 		DModel model = createModel(true);

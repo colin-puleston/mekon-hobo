@@ -72,11 +72,6 @@ class HoboTest extends MekonTest {
 		return cell;
 	}
 
-	CNumber getCNumber(CNumberDef def) {
-
-		return getCNumber(def.getNumberType(), def.getMin(), def.getMax());
-	}
-
 	private HoboTest(DModel model) {
 
 		super(model.getCModel());
