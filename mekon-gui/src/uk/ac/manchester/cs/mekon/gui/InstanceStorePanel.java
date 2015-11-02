@@ -29,7 +29,6 @@ import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
@@ -84,7 +83,7 @@ class InstanceStorePanel extends JPanel {
 
 		this.modelTree = modelTree;
 
-		store = CManager.getIStore(model);
+		store = IStoreManager.get(model);
 
 		setBorder(createBorder());
 		add(createButtonsComponent(), BorderLayout.EAST);
