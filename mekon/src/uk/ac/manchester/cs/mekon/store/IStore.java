@@ -49,7 +49,7 @@ public class IStore {
 
 	static {
 
-		ZIStoreAccessor.set(new IStoreAccessor());
+		ZIStoreAccessor.set(new ZIStoreAccessorImpl());
 	}
 
 	static private class InstanceIndexes extends KIndexes<CIdentity> {
@@ -67,6 +67,28 @@ public class IStore {
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private InstanceIndexes indexes = new InstanceIndexes();
+
+	private class FileStoreLoader extends ZCModelListener {
+
+		public void onFrameAdded(CFrame frame) {
+		}
+
+		public void onFrameRemoved(CFrame frame) {
+		}
+
+		public void onSlotRemoved(CSlot slot) {
+		}
+
+		public void onBuildComplete() {
+
+			loadFromFileStore();
+		}
+
+		FileStoreLoader(CModel model) {
+
+			super(model);
+		}
+	}
 
 	private class FileStoreInstanceLoader extends InstanceLoader {
 
@@ -203,6 +225,8 @@ public class IStore {
 
 		freeInstantiator = ZCModelAccessor.get().getFreeInstantiator(model);
 		fileStore = new InstanceFileStore(model);
+
+		new FileStoreLoader(model);
 	}
 
 	void setStoreDirectory(File directory) {
@@ -210,7 +234,7 @@ public class IStore {
 		fileStore.setDirectory(directory);
 	}
 
-	void checkReload() {
+	void loadFromFileStore() {
 
 		fileStore.loadAll(new FileStoreInstanceLoader());
 	}

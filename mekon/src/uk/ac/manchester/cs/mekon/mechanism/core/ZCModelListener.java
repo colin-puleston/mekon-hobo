@@ -25,62 +25,63 @@
 package uk.ac.manchester.cs.mekon.mechanism.core;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
  * OR THE PLUGIN CODE.
  * <p>
- * Provides the MEKON mechanisms with privileged access to the MEKON
- * instance-store.
+ * Listener for events concerned with the creation and modification
+ * of a {@link CModel}.
  *
  * @author Colin Puleston
  */
-public abstract class ZIStoreAccessor {
-
-	static private final String STORE_CLASS_NAME
-			= "uk.ac.manchester.cs.mekon.store.IStore";
-
-	static private KSingleton<ZIStoreAccessor> singleton
-							= new KSingleton<ZIStoreAccessor>();
+public abstract class ZCModelListener {
 
 	/**
-	 * Sets the singleton accessor object.
-	 *
-	 * @param accessor Accessor to set as singleton
-	 */
-	static public synchronized void set(ZIStoreAccessor accessor) {
-
-		singleton.set(accessor);
-	}
-
-	/**
-	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link IStore} class is loaded, since it is the static
-	 * initialisation method on that class that sets the singleton
-	 * accessor, via the {@link #set} method.
-	 *
-	 * @return Singleton accessor object
-	 */
-	static public ZIStoreAccessor get() {
-
-		return singleton.get(STORE_CLASS_NAME);
-	}
-
-	/**
-	 * Creates and registers the store for the specified model.
+	 * Removes the listener from the static register for the model.
 	 *
 	 * @param model Relevant model
 	 */
-	public abstract void createStore(CModel model);
+	public void remove(CModel model) {
+
+		ZCModelAccessor.get().removeListener(model, this);
+	}
 
 	/**
-	 * Provides an instance-store initialiser for the specified model.
+	 * Method invoked after a frame has been added to a model.
 	 *
-	 * @param builder Relevant model
-	 * @return Instance-store initialiser for model
+	 * @param frame Added frame
 	 */
-	public abstract IStoreInitialiser getStoreInitialiser(CModel model);
+	public abstract void onFrameAdded(CFrame frame);
+
+	/**
+	 * Method invoked after a frame has been removed to from a model.
+	 *
+	 * @param frame Removed frame
+	 */
+	public abstract void onFrameRemoved(CFrame frame);
+
+	/**
+	 * Method invoked after a slot has been removed from an
+	 * atomic-frame.
+	 *
+	 * @param slot Removed slot
+	 */
+	public abstract void onSlotRemoved(CSlot slot);
+
+	/**
+	 * Method invoked after the model-build process has completed.
+	 */
+	public abstract void onBuildComplete();
+
+	/**
+	 * Constructor that adds the listener to the static register
+	 * for the model.
+	 *
+	 * @param model Relevant model
+	 */
+	protected ZCModelListener(CModel model) {
+
+		ZCModelAccessor.get().addListener(model, this);
+	}
 }

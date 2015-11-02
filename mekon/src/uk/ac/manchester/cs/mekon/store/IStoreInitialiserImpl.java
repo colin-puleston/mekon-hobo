@@ -22,60 +22,31 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.store;
 
-import uk.ac.manchester.cs.mekon.store.*;
+import java.io.*;
+
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * @author Colin Puleston
  */
-class ZCModelAccessorImpl extends ZCModelAccessor {
+class IStoreInitialiserImpl implements IStoreInitialiser {
 
-	private ZObjectModelMapper objectModelMapper = new ZObjectModelMapperImpl();
+	private IStore store;
 
-	public CModel createModel() {
+	public void setStoreDirectory(File directory) {
 
-		CModel model = new CModel();
-
-		ZIStoreAccessor.get().createStore(model);
-
-		return model;
+		store.setStoreDirectory(directory);
 	}
 
-	public CBuilder createBuilder(CModel model) {
+	public void addMatcher(IMatcher matcher) {
 
-		return new CBuilderImpl(model);
+		store.addMatcher(matcher);
 	}
 
-	public void addListener(CModel model, ZCModelListener listener) {
+	IStoreInitialiserImpl(IStore store) {
 
-		model.getListeners().add(listener);
-	}
-
-	public void removeListener(CModel model, ZCModelListener listener) {
-
-		model.getListeners().remove(listener);
-	}
-
-	public CModel getModel(CBuilder builder) {
-
-		return ((CBuilderImpl)builder).getModel();
-	}
-
-	public IEditor getIEditor(CModel model) {
-
-		return model.getIEditor();
-	}
-
-	public ZFreeInstantiator getFreeInstantiator(CModel model) {
-
-		return new ZFreeInstantiatorImpl(model);
-	}
-
-	public ZObjectModelMapper getObjectModelMapper() {
-
-		return objectModelMapper;
+		this.store = store;
 	}
 }

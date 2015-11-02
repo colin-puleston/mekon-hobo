@@ -24,34 +24,42 @@
 
 package uk.ac.manchester.cs.mekon.store;
 
-import java.io.*;
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
+ * Manager the for instance-stores associated with Frames Models
+ * (FM). Each instance-store is represented by an {@link IStore}
+ * object, which is registered by, and can be retrieved via, the
+ * relevant {@link CModel} object.
+ *
  * @author Colin Puleston
  */
-class IStoreAccessor extends ZIStoreAccessor {
+public class IStoreManager {
 
-	public IStore createStore(CModel model) {
+	static private final Map<CModel, IStore> stores = new HashMap<CModel, IStore>();
 
-		return new IStore(model);
+	/**
+	 * Provides the instance-store for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Instance-store for model
+	 */
+	static public synchronized IStore get(CModel model) {
+
+		IStore store = stores.get(model);
+
+		if (store == null) {
+
+			throw new Error("Store has not been set for this model");
+		}
+
+		return store;
 	}
 
-	public void setStoreDirectory(IStore store, File directory) {
+	static synchronized void create(CModel model) {
 
-		store.setStoreDirectory(directory);
-	}
-
-	public void addMatcher(IStore store, IMatcher matcher) {
-
-		store.addMatcher(matcher);
-	}
-
-	public void checkReload(IStore store) {
-
-		store.checkReload();
+		stores.put(model, new IStore(model));
 	}
 }

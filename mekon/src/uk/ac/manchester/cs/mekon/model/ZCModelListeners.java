@@ -22,39 +22,63 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.core;
+package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
- * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT
- * OR THE PLUGIN CODE.
- * <p>
- * Allows the mechanisms of extensions of the MEKON system to
- * intervene in, and modify, the default MEKON behaviour.
- *
  * @author Colin Puleston
  */
-public interface ZMekonCustomiser {
+class ZCModelListeners  {
 
-	/**
-	 * Method invoked when a frame is added to the model.
-	 *
-	 * @param frame Added frame
-	 */
-	public void onFrameAdded(CFrame frame);
+	private List<ZCModelListener> listeners = new ArrayList<ZCModelListener>();
 
-	/**
-	 * Method invoked when a frame is removed to from model.
-	 *
-	 * @param frame Removed frame
-	 */
-	public void onFrameRemoved(CFrame frame);
+	void add(ZCModelListener listener) {
 
-	/**
-	 * Method invoked when a slot is removed from an atomic-frame.
-	 *
-	 * @param slot Removed slot
-	 */
-	public void onSlotRemoved(CSlot slot);
+		listeners.add(listener);
+	}
+
+	void remove(ZCModelListener listener) {
+
+		listeners.remove(listener);
+	}
+
+	void onBuildComplete() {
+
+		for (ZCModelListener listener : copyListeners()) {
+
+			listener.onBuildComplete();
+		}
+	}
+
+	void onFrameAdded(CFrame frame) {
+
+		for (ZCModelListener listener : copyListeners()) {
+
+			listener.onFrameAdded(frame);
+		}
+	}
+
+	void onFrameRemoved(CFrame frame) {
+
+		for (ZCModelListener listener : copyListeners()) {
+
+			listener.onFrameRemoved(frame);
+		}
+	}
+
+	void onSlotRemoved(CSlot slot) {
+
+		for (ZCModelListener listener : copyListeners()) {
+
+			listener.onSlotRemoved(slot);
+		}
+	}
+
+	private List<ZCModelListener> copyListeners() {
+
+		return new ArrayList<ZCModelListener>(listeners);
+	}
 }

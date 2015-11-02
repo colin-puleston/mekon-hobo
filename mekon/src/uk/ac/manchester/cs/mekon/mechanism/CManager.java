@@ -42,7 +42,8 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 public class CManager {
 
-	static private final ZCModelAccessor accessor = ZCModelAccessor.get();
+	static private final ZCModelAccessor modelAccessor = ZCModelAccessor.get();
+	static private final ZIStoreAccessor storeAccessor = ZIStoreAccessor.get();
 
 	/**
 	 * Creates model-builder to build model for which the
@@ -53,7 +54,7 @@ public class CManager {
 	 */
 	static public CBuilder createEmptyBuilder() {
 
-		return accessor.createBuilder(accessor.createModel());
+		return modelAccessor.createBuilder(modelAccessor.createModel());
 	}
 
 	/**
@@ -112,14 +113,18 @@ public class CManager {
 	}
 
 	/**
-	 * Provides the instance-store for the specified model.
+	 * Provides an instance-store initialiser for the model associated
+	 * with the specified builder.
 	 *
-	 * @param model Relevant model
-	 * @return Instance-store for model
+	 * @param builder Relevant builder
+	 * @return Instance-store initialiser for model associated with
+	 * builder
 	 */
-	static public IStore getIStore(CModel model) {
+	static public IStoreInitialiser getIStoreInitialiser(CBuilder builder) {
 
-		return accessor.getIStore(model);
+		CModel model = modelAccessor.getModel(builder);
+
+		return storeAccessor.getStoreInitialiser(model);
 	}
 
 	static private CBuilderConfig createConfig(KConfigFile configFile) {

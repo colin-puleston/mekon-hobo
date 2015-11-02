@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
-import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
@@ -63,21 +62,6 @@ public interface CBuilder {
 	 * @param enabled Default enabled-status of operation
 	 */
 	public void setDefaultUpdateOp(IUpdateOp op, boolean enabled);
-
-	/**
-	 * Sets the directory for {@link IStore} serialisation. Defaults
-	 * to the current directory.
-	 *
-	 * @param directory Required serialisation directory
-	 */
-	public void setIStoreDirectory(File directory);
-
-	/**
-	 * Adds an instance-matcher for the model.
-	 *
-	 * @param iMatcher Instance-matcher for model
-	 */
-	public void addIMatcher(IMatcher iMatcher);
 
 	/**
 	 * Adds a builder for a section of the model.

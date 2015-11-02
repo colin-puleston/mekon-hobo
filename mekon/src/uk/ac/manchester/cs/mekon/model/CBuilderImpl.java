@@ -55,16 +55,6 @@ class CBuilderImpl implements CBuilder {
 		model.getIUpdating().setDefaultOp(op, enabled);
 	}
 
-	public void setIStoreDirectory(File directory) {
-
-		ZIStoreAccessor.get().setStoreDirectory(getIStore(), directory);
-	}
-
-	public void addIMatcher(IMatcher iMatcher) {
-
-		ZIStoreAccessor.get().addMatcher(getIStore(), iMatcher);
-	}
-
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {
 
 		sectionBuilders.add(sectionBuilder);
@@ -168,6 +158,11 @@ class CBuilderImpl implements CBuilder {
 		this.model = model;
 	}
 
+	CModel getModel() {
+
+		return model;
+	}
+
 	private void buildSections() {
 
 		boolean initialBuild = initialBuild();
@@ -184,10 +179,5 @@ class CBuilderImpl implements CBuilder {
 	private boolean initialBuild() {
 
 		return model.getRootFrame().getSubs().isEmpty();
-	}
-
-	private IStore getIStore() {
-
-		return model.getIStore();
 	}
 }

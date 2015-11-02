@@ -71,22 +71,11 @@ public abstract class ZCModelAccessor {
 	}
 
 	/**
-	 * Creates an empty model with the default customiser.
+	 * Creates an empty model.
 	 *
 	 * @return Created empty model
 	 */
-	public CModel createModel() {
-
-		return createModel(new CustomiserDefault());
-	}
-
-	/**
-	 * Creates an empty model with the specified customiser.
-	 *
-	 * @param customiser Customiser for model
-	 * @return Created empty model
-	 */
-	public abstract CModel createModel(ZMekonCustomiser customiser);
+	public abstract CModel createModel();
 
 	/**
 	 * Creates a builder for the specified model.
@@ -97,12 +86,28 @@ public abstract class ZCModelAccessor {
 	public abstract CBuilder createBuilder(CModel model);
 
 	/**
-	 * Provides the instance-store for the specified model.
+	 * Adds a model listener for the specified model.
 	 *
 	 * @param model Relevant model
-	 * @return Instance-store for model
+	 * @param listener Listener to add
 	 */
-	public abstract IStore getIStore(CModel model);
+	public abstract void addListener(CModel model, ZCModelListener listener);
+
+	/**
+	 * Removes a model listener for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @param listener Listener to remove
+	 */
+	public abstract void removeListener(CModel model, ZCModelListener listener);
+
+	/**
+	 * Retrieves the model being built by the specified builder.
+	 *
+	 * @param builder Relevant builder
+	 * @return Model being built
+	 */
+	public abstract CModel getModel(CBuilder builder);
 
 	/**
 	 * Provides an instantiation editor for the specified model.

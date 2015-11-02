@@ -33,6 +33,11 @@ import uk.ac.manchester.cs.mekon.MekonTestUtils;
  */
 public class FramesTestUtils extends MekonTestUtils {
 
+	public CNumber getCNumber(CNumberDef def) {
+
+		return getCNumber(def.getNumberType(), def.getMin(), def.getMax());
+	}
+
 	public CNumber getCNumber(
 						Class<? extends Number> type,
 						INumber min,

@@ -156,7 +156,7 @@ public class IStoreTest extends MekonTest {
 
 		testStore();
 		createStore();
-		store.checkReload();
+		store.loadFromFileStore();
 		testRetrieve();
 	}
 

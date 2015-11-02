@@ -49,8 +49,6 @@ public class CModel implements CAnnotatable {
 		ZCModelAccessor.set(new ZCModelAccessorImpl());
 	}
 
-	private ZMekonCustomiser customiser;
-
 	private CFrame rootFrame = new CRootFrame(this);
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
 
@@ -58,13 +56,11 @@ public class CModel implements CAnnotatable {
 
 	private IEditor iEditor = new IEditorImpl(this);
 	private IUpdating iUpdating = new IUpdating(this);
-	private IStore iStore = ZIStoreAccessor.get().createStore(this);
-
-	private List<InitialisationListener> initialisationListeners
-							= new ArrayList<InitialisationListener>();
 
 	private boolean queriesEnabled = false;
 	private boolean initialised = false;
+
+	private ZCModelListeners listeners = new ZCModelListeners();
 
 	/**
 	 * Specifies whether query-instances are allowed (see {@link
@@ -161,19 +157,7 @@ public class CModel implements CAnnotatable {
 		return getFrame(identity).instantiateQuery();
 	}
 
-	CModel(ZMekonCustomiser customiser) {
-
-		this.customiser = customiser;
-	}
-
-	void addInitialisationListener(InitialisationListener listener) {
-
-		initialisationListeners.add(listener);
-	}
-
-	void removeInitialisationListener(InitialisationListener listener) {
-
-		initialisationListeners.remove(listener);
+	CModel() {
 	}
 
 	void setQueriesEnabled(boolean enabled) {
@@ -186,7 +170,7 @@ public class CModel implements CAnnotatable {
 		CAtomicFrame frame = new CAtomicFrame(this, identity, hidden);
 
 		frames.add(frame);
-		customiser.onFrameAdded(frame);
+		listeners.onFrameAdded(frame);
 
 		return frame;
 	}
@@ -201,14 +185,14 @@ public class CModel implements CAnnotatable {
 		frames.remove(frame);
 
 		removeFrameTraces(frame);
-		customiser.onFrameRemoved(frame);
+		listeners.onFrameRemoved(frame);
 
 		return true;
 	}
 
 	void registerRemovedSlot(CSlot slot) {
 
-		customiser.onSlotRemoved(slot);
+		listeners.onSlotRemoved(slot);
 	}
 
 	void startInitialisation() {
@@ -228,9 +212,7 @@ public class CModel implements CAnnotatable {
 		new CHierarchyNormaliser(this);
 		new CFramesInitialiser(frames).completeInitialisation();
 
-		ZIStoreAccessor.get().checkReload(iStore);
-
-		pollInitialisationListeners();
+		listeners.onBuildComplete();
 
 		initialised = true;
 	}
@@ -240,14 +222,14 @@ public class CModel implements CAnnotatable {
 		return initialised;
 	}
 
-	IStore getIStore() {
-
-		return iStore;
-	}
-
 	IEditor getIEditor() {
 
 		return iEditor;
+	}
+
+	ZCModelListeners getListeners() {
+
+		return listeners;
 	}
 
 	private void removeFrameTraces(CAtomicFrame frame) {
@@ -283,18 +265,5 @@ public class CModel implements CAnnotatable {
 	private CFrame getFrame(CIdentity identity) {
 
 		return getFrames().get(identity);
-	}
-
-	private void pollInitialisationListeners() {
-
-		for (InitialisationListener listener : copyInitialisationListeners()) {
-
-			listener.onInitialised();
-		}
-	}
-
-	private List<InitialisationListener> copyInitialisationListeners() {
-
-		return new ArrayList<InitialisationListener>(initialisationListeners);
 	}
 }

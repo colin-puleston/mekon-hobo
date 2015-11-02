@@ -22,21 +22,24 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism.core;
+package uk.ac.manchester.cs.mekon.store;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
 /**
  * @author Colin Puleston
  */
-class CustomiserDefault implements ZMekonCustomiser {
+class ZIStoreAccessorImpl extends ZIStoreAccessor {
 
-	public void onFrameAdded(CFrame frame) {
+	public void createStore(CModel model) {
+
+		IStoreManager.create(model);
 	}
 
-	public void onFrameRemoved(CFrame frame) {
-	}
+	public IStoreInitialiser getStoreInitialiser(CModel model) {
 
-	public void onSlotRemoved(CSlot slot) {
+		return new IStoreInitialiserImpl(IStoreManager.get(model));
 	}
 }

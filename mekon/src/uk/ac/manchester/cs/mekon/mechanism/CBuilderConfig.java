@@ -81,7 +81,7 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	private void setIStoreDirectory(CBuilder builder) {
 
-		builder.setIStoreDirectory(getIStoreDirectory());
+		getIStoreInitialiser(builder).setStoreDirectory(getIStoreDirectory());
 	}
 
 	private void setInstanceUpdating(CBuilder builder) {
@@ -146,5 +146,10 @@ class CBuilderConfig implements CBuilderConfigVocab {
 	private Class<? extends CSectionBuilder> getSectionBuilderClass(KConfigNode sectionNode) {
 
 		return sectionNode.getClass(SECTION_BLDER_CLASS_ATTR, CSectionBuilder.class);
+	}
+
+	private IStoreInitialiser getIStoreInitialiser(CBuilder builder) {
+
+		return CManager.getIStoreInitialiser(builder);
 	}
 }

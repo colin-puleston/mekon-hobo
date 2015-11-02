@@ -22,60 +22,32 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.mechanism;
 
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import java.io.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Provides mechanisms for initialising the instance-store, as
+ * represented by an {@link IStore} object.
+ *
  * @author Colin Puleston
  */
-class ZCModelAccessorImpl extends ZCModelAccessor {
+public interface IStoreInitialiser {
 
-	private ZObjectModelMapper objectModelMapper = new ZObjectModelMapperImpl();
+	/**
+	 * Sets the directory for instance-store serialisation.
+	 * Defaults to the current directory.
+	 *
+	 * @param directory Relevant serialisation directory
+	 */
+	public void setStoreDirectory(File directory);
 
-	public CModel createModel() {
-
-		CModel model = new CModel();
-
-		ZIStoreAccessor.get().createStore(model);
-
-		return model;
-	}
-
-	public CBuilder createBuilder(CModel model) {
-
-		return new CBuilderImpl(model);
-	}
-
-	public void addListener(CModel model, ZCModelListener listener) {
-
-		model.getListeners().add(listener);
-	}
-
-	public void removeListener(CModel model, ZCModelListener listener) {
-
-		model.getListeners().remove(listener);
-	}
-
-	public CModel getModel(CBuilder builder) {
-
-		return ((CBuilderImpl)builder).getModel();
-	}
-
-	public IEditor getIEditor(CModel model) {
-
-		return model.getIEditor();
-	}
-
-	public ZFreeInstantiator getFreeInstantiator(CModel model) {
-
-		return new ZFreeInstantiatorImpl(model);
-	}
-
-	public ZObjectModelMapper getObjectModelMapper() {
-
-		return objectModelMapper;
-	}
+	/**
+	 * Adds an instance-matcher to the instance-store.
+	 *
+	 * @param matcher Instance-matcher to add
+	 */
+	public void addMatcher(IMatcher matcher);
 }
