@@ -52,6 +52,9 @@ class CExtension extends CExpression {
 		public void onFrameRemoved(CFrame frame) {
 		}
 
+		public void onSlotAdded(CSlot slot) {
+		}
+
 		public void onSlotRemoved(CSlot slot) {
 		}
 

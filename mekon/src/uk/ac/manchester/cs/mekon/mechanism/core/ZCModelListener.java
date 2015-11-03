@@ -62,6 +62,14 @@ public abstract class ZCModelListener {
 	public abstract void onFrameRemoved(CFrame frame);
 
 	/**
+	 * Method invoked after a slot has been added from an
+	 * atomic-frame.
+	 *
+	 * @param slot Added slot
+	 */
+	public abstract void onSlotAdded(CSlot slot);
+
+	/**
 	 * Method invoked after a slot has been removed from an
 	 * atomic-frame.
 	 *

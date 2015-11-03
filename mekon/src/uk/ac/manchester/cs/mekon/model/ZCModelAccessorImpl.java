@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.mechanism.core.*;
  */
 class ZCModelAccessorImpl extends ZCModelAccessor {
 
-	private ZObjectModelMapper objectModelMapper = new ZObjectModelMapperImpl();
+	private ZIFrameMapper iFrameMapper = new ZIFrameMapperImpl();
 
 	public CModel createModel() {
 
@@ -74,8 +74,8 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 		return new ZFreeInstantiatorImpl(model);
 	}
 
-	public ZObjectModelMapper getObjectModelMapper() {
+	public ZIFrameMapper getIFrameMapper() {
 
-		return objectModelMapper;
+		return iFrameMapper;
 	}
 }

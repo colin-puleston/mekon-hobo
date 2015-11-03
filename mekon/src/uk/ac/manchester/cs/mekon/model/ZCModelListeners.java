@@ -69,6 +69,14 @@ class ZCModelListeners  {
 		}
 	}
 
+	void onSlotAdded(CSlot slot) {
+
+		for (ZCModelListener listener : copyListeners()) {
+
+			listener.onSlotAdded(slot);
+		}
+	}
+
 	void onSlotRemoved(CSlot slot) {
 
 		for (ZCModelListener listener : copyListeners()) {

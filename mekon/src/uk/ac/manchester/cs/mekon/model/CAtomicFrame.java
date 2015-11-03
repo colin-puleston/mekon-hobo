@@ -347,6 +347,8 @@ class CAtomicFrame extends CFrame {
 
 		slots.add(slot);
 		slot.getValueType().registerReferencingSlot(slot);
+
+		model.getListeners().onSlotAdded(slot);
 	}
 
 	boolean removeSlot(CSlot slot) {
@@ -363,7 +365,7 @@ class CAtomicFrame extends CFrame {
 			slots = CSlots.INERT_INSTANCE;
 		}
 
-		model.registerRemovedSlot(slot);
+		model.getListeners().onSlotRemoved(slot);
 
 		return true;
 	}

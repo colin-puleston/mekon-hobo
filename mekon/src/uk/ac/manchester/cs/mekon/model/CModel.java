@@ -190,11 +190,6 @@ public class CModel implements CAnnotatable {
 		return true;
 	}
 
-	void registerRemovedSlot(CSlot slot) {
-
-		listeners.onSlotRemoved(slot);
-	}
-
 	void startInitialisation() {
 
 		initialised = false;
@@ -212,9 +207,9 @@ public class CModel implements CAnnotatable {
 		new CHierarchyNormaliser(this);
 		new CFramesInitialiser(frames).completeInitialisation();
 
-		listeners.onBuildComplete();
-
 		initialised = true;
+
+		listeners.onBuildComplete();
 	}
 
 	boolean initialised() {

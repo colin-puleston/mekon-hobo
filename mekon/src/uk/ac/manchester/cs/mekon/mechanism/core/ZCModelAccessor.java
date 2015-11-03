@@ -130,5 +130,5 @@ public abstract class ZCModelAccessor {
 	 *
 	 * @return Object-model mapper
 	 */
-	public abstract ZObjectModelMapper getObjectModelMapper();
+	public abstract ZIFrameMapper getIFrameMapper();
 }
