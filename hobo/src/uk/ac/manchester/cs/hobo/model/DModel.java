@@ -57,7 +57,7 @@ public class DModel {
 
 	private CModel cModel;
 	private IEditor iEditor;
-	private ZObjectModelMapper objectModelMapper;
+	private ZIFrameMapper iFrameMapper;
 
 	private DInitialiser initialiser;
 	private DBindings bindings = new DBindings();
@@ -300,8 +300,11 @@ public class DModel {
 
 		cModel = mekonAccessor.createModel();
 		iEditor = mekonAccessor.getIEditor(cModel);
-		objectModelMapper = mekonAccessor.getObjectModelMapper();
-		initialiser = new DInitialiser(createCBuilder(), bindings);
+		iFrameMapper = mekonAccessor.getIFrameMapper();
+
+		CBuilder cBuilder = mekonAccessor.createBuilder(cModel);
+
+		initialiser = new DInitialiser(cBuilder, bindings);
 
 		new IFrameMapper(this);
 	}
@@ -352,11 +355,6 @@ public class DModel {
 		return getIEditor().getSlotValuesEditor(slot);
 	}
 
-	private CBuilder createCBuilder() {
-
-		return ZCModelAccessor.get().createBuilder(cModel);
-	}
-
 	private <D extends DObject>D instantiate(
 									Class<D> dClass,
 									IFrame frame,
@@ -368,14 +366,14 @@ public class DModel {
 													freeInstance);
 		D dObject = instantiator.instantiate(frame);
 
-		objectModelMapper.setMappedObject(frame, dObject);
+		iFrameMapper.setMappedObject(frame, dObject);
 
 		return dObject;
 	}
 
 	private Object getMappedObject(IFrame frame) {
 
-		return objectModelMapper.getMappedObject(frame);
+		return iFrameMapper.getMappedObject(frame);
 	}
 
 	private CFrame getFrame(CIdentity identity) {

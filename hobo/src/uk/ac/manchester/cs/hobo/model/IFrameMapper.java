@@ -45,6 +45,9 @@ class IFrameMapper implements CFrameListener {
 		public void onFrameRemoved(CFrame frame) {
 		}
 
+		public void onSlotAdded(CSlot slot) {
+		}
+
 		public void onSlotRemoved(CSlot slot) {
 		}
 
