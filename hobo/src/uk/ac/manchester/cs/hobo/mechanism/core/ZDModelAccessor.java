@@ -39,9 +39,6 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
  */
 public abstract class ZDModelAccessor {
 
-	static private final String MODEL_CLASS_NAME
-			= "uk.ac.manchester.cs.hobo.model.DModel";
-
 	static private KSingleton<ZDModelAccessor> singleton
 							= new KSingleton<ZDModelAccessor>();
 
@@ -57,7 +54,7 @@ public abstract class ZDModelAccessor {
 
 	/**
 	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link DModel} class is loaded, since it is the static
+	 * {@link DModel} class is initialised, since it is the static
 	 * initialisation method on that class that sets the singleton
 	 * accessor, via the {@link #set} method.
 	 *
@@ -65,7 +62,7 @@ public abstract class ZDModelAccessor {
 	 */
 	static public ZDModelAccessor get() {
 
-		return singleton.get(MODEL_CLASS_NAME);
+		return singleton.get(DModel.class);
 	}
 
 	/**
