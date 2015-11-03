@@ -26,11 +26,11 @@ package uk.ac.manchester.cs.mekon.util;
 
 /**
  * Supplies a singleton object that is initially created and
- * registered by an "initialisation class" upon loading (via
- * that classes static initialisation method). When the first
- * attempt is made to retrieve the singleton, a check is made to
- * ensure that the initialisation class has been loaded, and hence
- * that the singleton has been registered.
+ * registered via the static initialisation method an
+ * "initialisation class". When the first attempt is made to
+ * retrieve the singleton, a check is made to ensure that the
+ * initialisation class has been initialised, and hence that
+ * the singleton has been registered.
  *
  * @author Colin Puleston
  */
@@ -54,21 +54,21 @@ public class KSingleton<S> {
 	/**
 	 * Retrieves the singleton object.
 	 *
-	 * @param initialiserClass Name of initialiser class
+	 * @param initialiserClass Initialiser class
 	 * @return Singleton object
 	 */
-	public S get(String initialiserClass) {
+	public S get(Class<?> initialiserClass) {
 
 		checkInitialised(initialiserClass);
 
 		return singleton;
 	}
 
-	private void checkInitialised(String initialiserClass) {
+	private void checkInitialised(Class<?> initialiserClass) {
 
 		if (singleton == null) {
 
-			checkLoadInitialiserClass(initialiserClass);
+			checkInitialise(initialiserClass);
 
 			if (singleton == null) {
 
@@ -77,7 +77,7 @@ public class KSingleton<S> {
 		}
 	}
 
-	private synchronized void checkLoadInitialiserClass(String initialiserClass) {
+	private synchronized void checkInitialise(Class<?> initialiserClass) {
 
 		if (singleton != null) {
 
@@ -86,11 +86,11 @@ public class KSingleton<S> {
 
 		try {
 
-			Class.forName(initialiserClass);
+			Class.forName(initialiserClass.getName());
 		}
 		catch (ClassNotFoundException e) {
 
-			throw new Error("Singleton initialiser class cannot be loaded!");
+			throw new Error("Cannot find singleton initialiser!");
 		}
 	}
 }

@@ -40,9 +40,6 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public abstract class ZIStoreAccessor {
 
-	static private final String STORE_CLASS_NAME
-			= "uk.ac.manchester.cs.mekon.store.IStore";
-
 	static private KSingleton<ZIStoreAccessor> singleton
 							= new KSingleton<ZIStoreAccessor>();
 
@@ -58,7 +55,7 @@ public abstract class ZIStoreAccessor {
 
 	/**
 	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link IStore} class is loaded, since it is the static
+	 * {@link IStore} class is initialised, since it is the static
 	 * initialisation method on that class that sets the singleton
 	 * accessor, via the {@link #set} method.
 	 *
@@ -66,7 +63,7 @@ public abstract class ZIStoreAccessor {
 	 */
 	static public ZIStoreAccessor get() {
 
-		return singleton.get(STORE_CLASS_NAME);
+		return singleton.get(IStore.class);
 	}
 
 	/**

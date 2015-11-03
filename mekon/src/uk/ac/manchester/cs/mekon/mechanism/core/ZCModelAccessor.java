@@ -41,9 +41,6 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public abstract class ZCModelAccessor {
 
-	static private final String MODEL_CLASS_NAME
-			= "uk.ac.manchester.cs.mekon.model.CModel";
-
 	static private KSingleton<ZCModelAccessor> singleton
 							= new KSingleton<ZCModelAccessor>();
 
@@ -59,7 +56,7 @@ public abstract class ZCModelAccessor {
 
 	/**
 	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link CModel} class is loaded, since it is the static
+	 * {@link CModel} class is initialised, since it is the static
 	 * initialisation method on that class that sets the singleton
 	 * accessor, via the {@link #set} method.
 	 *
@@ -67,7 +64,7 @@ public abstract class ZCModelAccessor {
 	 */
 	static public ZCModelAccessor get() {
 
-		return singleton.get(MODEL_CLASS_NAME);
+		return singleton.get(CModel.class);
 	}
 
 	/**
