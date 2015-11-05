@@ -76,7 +76,7 @@ public abstract class ZIStoreAccessor {
 	/**
 	 * Provides an instance-store initialiser for the specified model.
 	 *
-	 * @param builder Relevant model
+	 * @param model Relevant model
 	 * @return Instance-store initialiser for model
 	 */
 	public abstract IStoreInitialiser getStoreInitialiser(CModel model);

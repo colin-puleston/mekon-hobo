@@ -284,7 +284,7 @@ public class IFrameRenderer extends ISerialiser {
 
 	/**
 	 * Sets the level of schema information to be rendered.
-	 * Defaults to {@link ISchemaLevel.NONE}.
+	 * Defaults to {@link ISchemaLevel#NONE}.
 	 *
 	 * @param schemaLevel Required schema-level
 	 */

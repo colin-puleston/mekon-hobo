@@ -54,7 +54,7 @@ class MFrameIntersection extends CTypeValueIntersection<MFrame> {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	public void addOperand(MFrame operand) {
 
@@ -62,7 +62,7 @@ class MFrameIntersection extends CTypeValueIntersection<MFrame> {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	public MFrame getCurrent() {
 

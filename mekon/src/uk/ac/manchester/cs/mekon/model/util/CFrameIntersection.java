@@ -115,7 +115,7 @@ class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	public void addOperand(CFrame operand) {
 
@@ -123,7 +123,7 @@ class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	public CFrame getCurrent() {
 

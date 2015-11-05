@@ -54,7 +54,7 @@ class CNumberIntersection extends CTypeValueIntersection<CNumber> {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	public void addOperand(CNumber operand) {
 
@@ -73,7 +73,7 @@ class CNumberIntersection extends CTypeValueIntersection<CNumber> {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	public CNumber getCurrent() {
 

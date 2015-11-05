@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Provides mechanisms for initialising the instance-store, as
