@@ -146,6 +146,7 @@ public abstract class DMatchAggregator
 	 * Constructor.
 	 *
 	 * @param model Relevant direct model
+	 * @param matcher Relevant matcher
 	 */
 	protected DMatchAggregator(DModel model, DCustomMatcher matcher) {
 
@@ -155,7 +156,7 @@ public abstract class DMatchAggregator
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected boolean handles(M instance) {
 
@@ -163,7 +164,7 @@ public abstract class DMatchAggregator
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected void preProcess(M instance) {
 
@@ -174,7 +175,7 @@ public abstract class DMatchAggregator
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected IMatches processMatches(M query, IMatches matches) {
 
@@ -182,7 +183,7 @@ public abstract class DMatchAggregator
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected boolean passesMatchesFilter(M query, M instance) {
 
@@ -202,7 +203,7 @@ public abstract class DMatchAggregator
 	 * Retrieves the numeric cell containing the value that will
 	 * contribute towards the aggregation-value, if currently present.
 	 *
-	 * @param instance Top-level instance
+	 * @param target Top-level target section
 	 * @return Required aggrogator cell, or null if not currently
 	 * present
 	 */
@@ -213,7 +214,7 @@ public abstract class DMatchAggregator
 	 * section for which a match must be present for the aggregator
 	 * value to be included in the aggregate, if currently present.
 	 *
-	 * @param instance Top-level instance
+	 * @param target Top-level target section
 	 * @return Required data-section cell, or null if not currently
 	 * present
 	 */

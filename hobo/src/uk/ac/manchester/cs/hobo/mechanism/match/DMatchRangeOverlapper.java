@@ -80,7 +80,7 @@ public abstract class DMatchRangeOverlapper
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected boolean handles(M instance) {
 
@@ -88,7 +88,7 @@ public abstract class DMatchRangeOverlapper
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected void preProcess(M instance) {
 
@@ -101,7 +101,7 @@ public abstract class DMatchRangeOverlapper
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected IMatches processMatches(M query, IMatches matches) {
 
@@ -109,7 +109,7 @@ public abstract class DMatchRangeOverlapper
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected boolean passesMatchesFilter(M query, M instance) {
 

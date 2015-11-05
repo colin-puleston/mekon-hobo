@@ -81,6 +81,7 @@ public abstract class DMatchSectionInverter
 	 * Constructor.
 	 *
 	 * @param model Relevant direct model
+	 * @param matcher Relevant matcher
 	 */
 	public DMatchSectionInverter(DModel model, DCustomMatcher matcher) {
 
@@ -90,7 +91,7 @@ public abstract class DMatchSectionInverter
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected boolean handles(M instance) {
 
@@ -98,7 +99,7 @@ public abstract class DMatchSectionInverter
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected void preProcess(M instance) {
 
@@ -106,7 +107,7 @@ public abstract class DMatchSectionInverter
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected IMatches processMatches(M query, IMatches matches) {
 
@@ -114,7 +115,7 @@ public abstract class DMatchSectionInverter
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritDoc}
 	 */
 	protected boolean passesMatchesFilter(M query, M instance) {
 

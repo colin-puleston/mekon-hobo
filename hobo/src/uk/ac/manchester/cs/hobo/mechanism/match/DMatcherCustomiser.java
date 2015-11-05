@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.hobo.mechanism.match;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
 
