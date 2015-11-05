@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 University of Manchester
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package uk.ac.manchester.cs.hobo.mechanism.match;
 
 import java.util.*;
@@ -8,6 +32,12 @@ import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
 /**
+ * Customiser that modifies the matching process so that specific
+ * numeric-valued fields will be considered as matching whenever
+ * the relevant numeric-ranges overlap (in contrast to the
+ * range-subsumption that would normally be expected from a standard
+ * matcher).
+ *
  * @author Colin Puleston
  */
 public abstract class DMatchRangeOverlapper
@@ -17,75 +47,98 @@ public abstract class DMatchRangeOverlapper
 
 	private class Filter extends DMatchFilter<M> {
 
-		private CNumber queryTargetRange;
+		private CNumber queryMatchRange;
 
 		protected boolean pass(M instance) {
 
-			CNumber targetRange = getTargetRangeOrNull(instance);
+			CNumber range = getMatchRangeOrNull(instance);
 
-			return targetRange != null && targetMatch(targetRange);
+			return range != null && rangeOverlap(range);
 		}
 
 		Filter(M query) {
 
 			super(DMatchRangeOverlapper.this);
 
-			queryTargetRange = getQueryTargetRange(query);
+			queryMatchRange = getMatchRange(query);
 		}
 
-		private CNumber getQueryTargetRange(M query) {
+		private boolean rangeOverlap(CNumber range) {
 
-			CNumber targetRange = getTargetRangeOrNull(query);
-
-			if (targetRange == null) {
-
-				throw new Error("Should never happen!");
-			}
-
-			return targetRange;
-		}
-
-		private boolean targetMatch(CNumber targetRange) {
-
-			return targetRange.intersectsWith(queryTargetRange);
+			return range.intersectsWith(queryMatchRange);
 		}
 	}
 
-	protected DMatchRangeOverlapper(DModel dModel) {
+	/**
+	 * Constructor.
+	 *
+	 * @param model Relevant direct model
+	 */
+	protected DMatchRangeOverlapper(DModel model) {
 
-		super(dModel);
+		super(model);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected boolean handles(M instance) {
 
-		return getTargetRangeOrNull(instance) != null;
+		return getMatchRangeOrNull(instance) != null;
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected void preProcess(M instance) {
 
-		DCell<Integer> target = getTargetCellOrNull(instance);
+		DCell<Integer> cell = getRangeMatchCellOrNull(instance);
 
-		if (target != null) {
+		if (cell != null) {
 
-			target.clear();
+			cell.clear();
 		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected IMatches processMatches(M query, IMatches matches) {
 
 		return new Filter(query).filter(matches);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected boolean passesMatchesFilter(M query, M instance) {
 
 		return new Filter(query).pass(instance);
 	}
 
-	protected abstract DCell<Integer> getTargetCellOrNull(M instance);
+	/**
+	 * Retrieves the required range-match cell from the specified
+	 * top-level instance, if currently present.
+	 *
+	 * @param instance Top-level instance
+	 * @return Required range-match cell, or null if not currently
+	 * present
+	 */
+	protected abstract DCell<Integer> getRangeMatchCellOrNull(M instance);
 
-	private CNumber getTargetRangeOrNull(M instance) {
+	private CNumber getMatchRange(M instance) {
 
-		DCell<Integer> cell = getTargetCellOrNull(instance);
+		return checkNotNull(getMatchRangeOrNull(instance));
+	}
+
+	private DCell<Integer> getRangeMatchCell(M instance) {
+
+		return checkNotNull(getRangeMatchCellOrNull(instance));
+	}
+
+	private CNumber getMatchRangeOrNull(M instance) {
+
+		DCell<Integer> cell = getRangeMatchCellOrNull(instance);
 
 		if (cell != null) {
 
@@ -98,5 +151,15 @@ public abstract class DMatchRangeOverlapper
 		}
 
 		return null;
+	}
+
+	private <V>V checkNotNull(V value) {
+
+		if (value == null) {
+
+			throw new Error("Unexpected null value!");
+		}
+
+		return value;
 	}
 }

@@ -1,3 +1,27 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 University of Manchester
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package uk.ac.manchester.cs.hobo.mechanism.match;
 
 import java.util.*;
@@ -8,44 +32,51 @@ import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
 /**
+ * Customiser that modifies the matching process so that the
+ * values of a specific numeric field contained within a specific
+ * array-section of the stored instances will be combined into
+ * single aggregated values, which will then be matched against
+ * the value of the relevant numeric field in the query.
+ *
  * @author Colin Puleston
  */
 public abstract class DMatchAggregator
-						<M extends DObject,
-						Q extends M,
-						T extends DObject>
-						extends DMatcherCustomiser<M, Q> {
+							<M extends DObject,
+							Q extends M,
+							T extends DObject,
+							D extends DObject>
+							extends DMatcherCustomiser<M, Q> {
 
 	private DCustomMatcher matcher;
 
 	private class Targets {
 
-		private Map<T, INumber> targetDurations = new HashMap<T, INumber>();
+		private Map<T, INumber> aggregators = new HashMap<T, INumber>();
 
 		Targets(M instance) {
 
 			for (T target : getActiveTargets(instance)) {
 
-				targetDurations.put(target, getDurationValue(target));
+				aggregators.put(target, getAggregator(target));
 			}
 		}
 
 		Set<T> getTargets() {
 
-			return targetDurations.keySet();
+			return aggregators.keySet();
 		}
 
-		INumber getDuration(T target) {
+		INumber getAggregatorFor(T target) {
 
-			return targetDurations.get(target);
+			return aggregators.get(target);
 		}
 
-		private INumber getDurationValue(T target) {
+		private INumber getAggregator(T target) {
 
-			return getDurationSlotValue(getDurationCell(target));
+			return getAggregatorSlotValue(getAggregatorCell(target));
 		}
 
-		private INumber getDurationSlotValue(DCell<Integer> duration) {
+		private INumber getAggregatorSlotValue(DCell<Integer> duration) {
 
 			return (INumber)duration.getSlot().getValues().asList().get(0);
 		}
@@ -58,11 +89,11 @@ public abstract class DMatchAggregator
 			super(instance);
 		}
 
-		boolean allAggregatesMatch(Targets queries) {
+		boolean matches(Targets queries) {
 
 			for (T query : queries.getTargets()) {
 
-				if (!aggregatesMatch(query, queries.getDuration(query))) {
+				if (!matches(query, queries.getAggregatorFor(query))) {
 
 					return false;
 				}
@@ -71,22 +102,22 @@ public abstract class DMatchAggregator
 			return true;
 		}
 
-		private boolean aggregatesMatch(T query, INumber queryDuration) {
+		private boolean matches(T query, INumber queryAggregator) {
 
-			INumber aggregateDuration = aggregateMatchingDurations(query);
+			INumber aggregate = aggregateOverDataSectionMatches(query);
 
-			return queryDuration.getType().validValue(aggregateDuration);
+			return queryAggregator.getType().validValue(aggregate);
 		}
 
-		private INumber aggregateMatchingDurations(T query) {
+		private INumber aggregateOverDataSectionMatches(T query) {
 
 			int aggregate = 0;
 
 			for (T instance : getTargets()) {
 
-				if (nonDurationInfoMatches(query, instance)) {
+				if (matchesDataSection(query, instance)) {
 
-					aggregate += getDuration(instance).asInteger();
+					aggregate += getAggregatorFor(instance).asInteger();
 				}
 			}
 
@@ -100,7 +131,7 @@ public abstract class DMatchAggregator
 
 		protected boolean pass(M instance) {
 
-			return new InstanceTargets(instance).allAggregatesMatch(queryTargets);
+			return new InstanceTargets(instance).matches(queryTargets);
 		}
 
 		Filter(M query) {
@@ -111,80 +142,151 @@ public abstract class DMatchAggregator
 		}
 	}
 
-	protected DMatchAggregator(DModel dModel, DCustomMatcher matcher) {
+	/**
+	 * Constructor.
+	 *
+	 * @param model Relevant direct model
+	 */
+	protected DMatchAggregator(DModel model, DCustomMatcher matcher) {
 
-		super(dModel);
+		super(model);
 
 		this.matcher = matcher;
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected boolean handles(M instance) {
 
 		return !getActiveTargets(instance).isEmpty();
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected void preProcess(M instance) {
 
 		for (T target : getActiveTargets(instance)) {
 
-			getDurationCell(target).clear();
+			getAggregatorCell(target).clear();
 		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected IMatches processMatches(M query, IMatches matches) {
 
 		return new Filter(query).filter(matches);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	protected boolean passesMatchesFilter(M query, M instance) {
 
 		return new Filter(query).pass(instance);
 	}
 
-	protected abstract List<T> getAllTargets(M instance);
+	/**
+	 * Provides the array over which the aggregation is to occur, if
+	 * currently present.
+	 *
+	 * @param instance Top-level instance
+	 * @return Required targets array, or null if not currently present
+	 */
+	protected abstract DArray<T> getTargetsArrayOrNull(M instance);
 
-	protected abstract boolean containsNonDurationInfo(T target);
+	/**
+	 * Retrieves the numeric cell containing the value that will
+	 * contribute towards the aggregation-value, if currently present.
+	 *
+	 * @param instance Top-level instance
+	 * @return Required aggrogator cell, or null if not currently
+	 * present
+	 */
+	protected abstract DCell<Integer> getAggregatorCellOrNull(T target);
 
-	protected abstract DCell<Integer> getDurationCellOrNull(T target);
-
-	protected abstract boolean nonDurationInfoMatches(T query, T instance);
+	/**
+	 * Retrieves the cell containing the sub-section of the target
+	 * section for which a match must be present for the aggregator
+	 * value to be included in the aggregate, if currently present.
+	 *
+	 * @param instance Top-level instance
+	 * @return Required data-section cell, or null if not currently
+	 * present
+	 */
+	protected abstract DCell<D> getDataSectionCellOrNull(T target);
 
 	private List<T> getActiveTargets(M instance) {
 
-		List<T> activeTargets = new ArrayList<T>();
+		List<T> activeObjects = new ArrayList<T>();
 
 		for (T target : getAllTargets(instance)) {
 
 			if (activeTarget(target)) {
 
-				activeTargets.add(target);
+				activeObjects.add(target);
 			}
 		}
 
-		return activeTargets;
+		return activeObjects;
+	}
+
+	private List<T> getAllTargets(M instance) {
+
+		DArray<T> array = getTargetsArrayOrNull(instance);
+
+		return array != null ? array.getAll() : Collections.<T>emptyList();
 	}
 
 	private boolean activeTarget(T target) {
 
-		return containsNonDurationInfo(target) && hasDurationValue(target);
+		return hasAggregator(target) && hasDataSection(target);
 	}
 
-	private boolean hasDurationValue(T target) {
+	private boolean matchesDataSection(T query, T instance) {
 
-		DCell<Integer> cell = getDurationCellOrNull(target);
+		return matches(getDataSection(query), getDataSection(instance));
+	}
+
+	private boolean hasAggregator(T target) {
+
+		DCell<Integer> cell = getAggregatorCellOrNull(target);
 
 		return cell != null && !cell.getSlot().getValues().isEmpty();
 	}
 
-	private DCell<Integer> getDurationCell(T target) {
+	private boolean hasDataSection(T target) {
 
-		DCell<Integer> cell = getDurationCellOrNull(target);
+		DCell<D> cell = getDataSectionCellOrNull(target);
 
-		if (cell == null) {
+		return cell != null && cell.isSet();
+	}
 
-			throw new Error("Should never happen!");
+	private DCell<Integer> getAggregatorCell(T target) {
+
+		return checkNotNull(getAggregatorCellOrNull(target));
+	}
+
+	private D getDataSection(T target) {
+
+		return checkNotNull(getDataSectionCellOrNull(target)).get();
+	}
+
+	private boolean matches(DObject query, DObject instance) {
+
+		return matcher.matches(query.getFrame(), instance.getFrame());
+	}
+
+	private <V>V checkNotNull(V value) {
+
+		if (value == null) {
+
+			throw new Error("Unexpected null value!");
 		}
 
-		return cell;
+		return value;
 	}
 }
