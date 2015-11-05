@@ -63,7 +63,7 @@ public class IStore {
 	private ZFreeInstantiator freeInstantiator;
 
 	private InstanceFileStore fileStore;
-	private Set<IMatcher> matchers = new HashSet<IMatcher>();
+	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private InstanceIndexes indexes = new InstanceIndexes();
