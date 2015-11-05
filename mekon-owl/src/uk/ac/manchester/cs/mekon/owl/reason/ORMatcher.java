@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
- * Abstract base-class for OWL-based implementations of the reasoning
+ * Abstract base-class for OWL-based implementations of the matching
  * mechanisms defined by {@link IMatcher}.
  * <p>
  * The instance-level frames that are passed into the implemented
