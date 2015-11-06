@@ -226,7 +226,7 @@ public abstract class DMatchAggregator
 
 		for (T target : getAllTargets(instance)) {
 
-			if (activeTarget(target)) {
+			if (hasAggregator(target)) {
 
 				activeObjects.add(target);
 			}
@@ -242,14 +242,23 @@ public abstract class DMatchAggregator
 		return array != null ? array.getAll() : Collections.<T>emptyList();
 	}
 
-	private boolean activeTarget(T target) {
-
-		return hasAggregator(target) && hasDataSection(target);
-	}
-
 	private boolean matchesDataSection(T query, T instance) {
 
-		return matches(getDataSection(query), getDataSection(instance));
+		D queryData = getDataSectionOrNull(query);
+
+		if (queryData == null) {
+
+			return true;
+		}
+
+		D instanceData = getDataSectionOrNull(instance);
+
+		if (instanceData == null) {
+
+			return false;
+		}
+
+		return matches(queryData, instanceData);
 	}
 
 	private boolean hasAggregator(T target) {
@@ -259,21 +268,16 @@ public abstract class DMatchAggregator
 		return cell != null && !cell.getSlot().getValues().isEmpty();
 	}
 
-	private boolean hasDataSection(T target) {
-
-		DCell<D> cell = getDataSectionCellOrNull(target);
-
-		return cell != null && cell.isSet();
-	}
-
 	private DCell<Integer> getAggregatorCell(T target) {
 
 		return checkNotNull(getAggregatorCellOrNull(target));
 	}
 
-	private D getDataSection(T target) {
+	private D getDataSectionOrNull(T target) {
 
-		return checkNotNull(getDataSectionCellOrNull(target)).get();
+		DCell<D> cell = getDataSectionCellOrNull(target);
+
+		return cell != null && cell.isSet() ? cell.get() : null;
 	}
 
 	private boolean matches(DObject query, DObject instance) {
