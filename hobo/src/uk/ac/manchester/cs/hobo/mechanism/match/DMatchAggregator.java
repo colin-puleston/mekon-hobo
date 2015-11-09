@@ -255,7 +255,7 @@ public abstract class DMatchAggregator
 
 		DNumberCell<Integer> cell = getAggregatorCellOrNull(target);
 
-		return cell != null && !cell.rangeSet();
+		return cell != null && cell.rangeSet();
 	}
 
 	private INumber getAggregator(T target) {
