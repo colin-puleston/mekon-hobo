@@ -50,10 +50,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 			return model.getIEditor();
 		}
 
-		public <V, F extends DField<V>>F getField(DFieldViewer<V, F> viewer) {
-
-			return viewer.getField();
-		}
 
 		public <V>DCell<V> getCell(DCellViewer<V> viewer) {
 

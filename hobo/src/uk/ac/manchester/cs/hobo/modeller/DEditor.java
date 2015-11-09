@@ -47,16 +47,6 @@ public interface DEditor {
 	public IEditor getIEditor();
 
 	/**
-	 * Retrieves the OM field being viewed by the specified viewer.
-	 *
-	 * @param <V> Generic version of field value-type
-	 * @param <F> Generic version of field-type
-	 * @param viewer Viewer for which field is required
-	 * @return Viewed field
-	 */
-	public <V, F extends DField<V>>F getField(DFieldViewer<V, F> viewer);
-
-	/**
 	 * Retrieves the OM cell being viewed by the specified viewer.
 	 *
 	 * @param <V> Generic version of cell value-type
