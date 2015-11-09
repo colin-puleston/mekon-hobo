@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-abstract class DFieldTest extends HoboTest {
+abstract class DFieldTest extends DirectModelTest {
 
 	void addSlotValues(DField<?> field, IValue... values) {
 

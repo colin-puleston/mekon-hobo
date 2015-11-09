@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class DModelTest extends HoboTest {
+public class DModelTest extends FramesTestUtils {
 
 	static private String INTERFACE_R_ID = InterfaceR.class.getName();
 	static private String CLASS_A_ID = ClassA.class.getName();
