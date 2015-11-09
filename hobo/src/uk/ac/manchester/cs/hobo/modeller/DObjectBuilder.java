@@ -83,7 +83,7 @@ public interface DObjectBuilder {
 	 * values, where valid values are defined via a specific
 	 * root-frame.
 	 *
-	 * @param <D> Generic version of valueClass
+	 * @param <D> Generic version of value-class
 	 * @param valueClass OM class that is bound to root-frame
 	 * defining valid field values
 	 * @return Created field
@@ -94,7 +94,7 @@ public interface DObjectBuilder {
 	 * Creates a single-valued OM field with OM-object values of the
 	 * specified type.
 	 *
-	 * @param <D> Generic version of valueClass
+	 * @param <D> Generic version of value-class
 	 * @param valueClass OM class of field values
 	 * @return Created field
 	 */
@@ -107,7 +107,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DCell<Integer> addIntegerCell();
+	public DNumberCell<Integer> addIntegerCell();
 
 	/**
 	 * Creates a single-valued OM field with integer-type values,
@@ -116,7 +116,7 @@ public interface DObjectBuilder {
 	 * @param definition Provides specific value-constraints
 	 * @return Created field
 	 */
-	public DCell<Integer> addIntegerCell(CIntegerDef definition);
+	public DNumberCell<Integer> addIntegerCell(CIntegerDef definition);
 
 	/**
 	 * Creates a single-valued OM field with long-type values,
@@ -124,7 +124,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DCell<Long> addLongCell();
+	public DNumberCell<Long> addLongCell();
 
 	/**
 	 * Creates a single-valued OM field with long-type values,
@@ -133,7 +133,7 @@ public interface DObjectBuilder {
 	 * @param definition Provides specific value-constraints
 	 * @return Created field
 	 */
-	public DCell<Long> addLongCell(CLongDef definition);
+	public DNumberCell<Long> addLongCell(CLongDef definition);
 
 	/**
 	 * Creates a single-valued OM field with float-type values,
@@ -141,7 +141,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DCell<Float> addFloatCell();
+	public DNumberCell<Float> addFloatCell();
 
 	/**
 	 * Creates a single-valued OM field with float-type values,
@@ -150,7 +150,7 @@ public interface DObjectBuilder {
 	 * @param definition Provides specific value-constraints
 	 * @return Created field
 	 */
-	public DCell<Float> addFloatCell(CFloatDef definition);
+	public DNumberCell<Float> addFloatCell(CFloatDef definition);
 
 	/**
 	 * Creates a single-valued OM field with double-type values,
@@ -158,7 +158,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DCell<Double> addDoubleCell();
+	public DNumberCell<Double> addDoubleCell();
 
 	/**
 	 * Creates a single-valued OM field with double-type values,
@@ -167,7 +167,7 @@ public interface DObjectBuilder {
 	 * @param definition Provides specific value-constraints
 	 * @return Created field
 	 */
-	public DCell<Double> addDoubleCell(CDoubleDef definition);
+	public DNumberCell<Double> addDoubleCell(CDoubleDef definition);
 
 	/**
 	 * Creates a multi-valued OM field with concept-level-frame
@@ -182,7 +182,7 @@ public interface DObjectBuilder {
 	 * values, where valid values are defined via a specific
 	 * root-frame.
 	 *
-	 * @param <D> Generic version of valueClass
+	 * @param <D> Generic version of value-class
 	 * @param valueClass OM class that is bound to root-frame
 	 * defining valid field values
 	 * @return Created field
@@ -193,79 +193,11 @@ public interface DObjectBuilder {
 	 * Creates a multi-valued OM field with OM-object values of the
 	 * specified type.
 	 *
-	 * @param <D> Generic version of valueClass
+	 * @param <D> Generic version of value-class
 	 * @param valueClass OM class of field values
 	 * @return Created field
 	 */
 	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass);
-
-	/**
-	 * Creates a multi-valued OM field with integer-type values,
-	 * with no additional value-constraints.
-	 *
-	 * @return Created field
-	 */
-	public DArray<Integer> addIntegerArray();
-
-	/**
-	 * Creates a multi-valued OM field with integer-type values,
-	 * with specified value-constraints.
-	 *
-	 * @param definition Provides specific value-constraints
-	 * @return Created field
-	 */
-	public DArray<Integer> addIntegerArray(CIntegerDef definition);
-
-	/**
-	 * Creates a multi-valued OM field with long-type values,
-	 * with no additional value-constraints.
-	 *
-	 * @return Created field
-	 */
-	public DArray<Long> addLongArray();
-
-	/**
-	 * Creates a multi-valued OM field with long-type values,
-	 * with specified value-constraints.
-	 *
-	 * @param definition Provides specific value-constraints
-	 * @return Created field
-	 */
-	public DArray<Long> addLongArray(CLongDef definition);
-
-	/**
-	 * Creates a multi-valued OM field with float-type values,
-	 * with no additional value-constraints.
-	 *
-	 * @return Created field
-	 */
-	public DArray<Float> addFloatArray();
-
-	/**
-	 * Creates a multi-valued OM field with float-type values,
-	 * with specified value-constraints.
-	 *
-	 * @param definition Provides specific value-constraints
-	 * @return Created field
-	 */
-	public DArray<Float> addFloatArray(CFloatDef definition);
-
-	/**
-	 * Creates a multi-valued OM field with double-type values,
-	 * with no additional value-constraints.
-	 *
-	 * @return Created field
-	 */
-	public DArray<Double> addDoubleArray();
-
-	/**
-	 * Creates a multi-valued OM field with double-type values,
-	 * with specified value-constraints.
-	 *
-	 * @param definition Provides specific value-constraints
-	 * @return Created field
-	 */
-	public DArray<Double> addDoubleArray(CDoubleDef definition);
 
 	/**
 	 * Enables the explicit specification of the "container-class"
@@ -335,20 +267,29 @@ public interface DObjectBuilder {
 	/**
 	 * Provides a viewer for the specified single-valued OM field.
 	 *
-	 * @param <V> Generic version of-values
-	 * @param cell Field for which field is viewer
-	 * @return Viewer for field
+	 * @param <V> Cell value-type
+	 * @param cell Cell to be viewed
+	 * @return Viewer for cell
 	 */
 	public <V>DCellViewer<V> getViewer(DCell<V> cell);
 
 	/**
 	 * Provides a viewer for the specified multi-valued OM field.
 	 *
-	 * @param <V> Generic version of-values
-	 * @param array Field for which field is viewer
-	 * @return Viewer for field
+	 * @param <V> Array value-type
+	 * @param array Array to be viewed
+	 * @return Viewer for array
 	 */
 	public <V>DArrayViewer<V> getViewer(DArray<V> array);
+
+	/**
+	 * Provides a viewer for the specified number-valued OM field.
+	 *
+	 * @param <N> Number-cell value-type
+	 * @param cell Cell to be viewed
+	 * @return Viewer for cell
+	 */
+	public <N extends Number>DNumberCellViewer<N> getViewer(DNumberCell<N> cell);
 
 	/**
 	 * Registers an initialiser to perform any required

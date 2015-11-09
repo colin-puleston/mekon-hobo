@@ -42,6 +42,11 @@ class DObjectValueType<V extends DObject> extends DValueType<V> {
 		this.slotValueType = slotValueType;
 	}
 
+	Class<V> getValueClass() {
+
+		return valueClass;
+	}
+
 	CFrame getSlotValueType() {
 
 		return slotValueType;
@@ -54,7 +59,7 @@ class DObjectValueType<V extends DObject> extends DValueType<V> {
 
 	V toFieldValue(IValue value) {
 
-		return model.getDObject(slotValueType.castValue(value), valueClass);
+		return model.getDObject((IFrame)value, valueClass);
 	}
 
 	CCardinality getDefaultCardinalityForArrays() {

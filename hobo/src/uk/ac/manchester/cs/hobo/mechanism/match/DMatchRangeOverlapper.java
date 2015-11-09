@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.hobo.mechanism.match;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
@@ -92,7 +90,7 @@ public abstract class DMatchRangeOverlapper
 	 */
 	protected void preProcess(M instance) {
 
-		DCell<Integer> cell = getRangeMatchCellOrNull(instance);
+		DNumberCell<Integer> cell = getRangeMatchCellOrNull(instance);
 
 		if (cell != null) {
 
@@ -124,30 +122,20 @@ public abstract class DMatchRangeOverlapper
 	 * @return Required range-match cell, or null if not currently
 	 * present
 	 */
-	protected abstract DCell<Integer> getRangeMatchCellOrNull(M instance);
+	protected abstract DNumberCell<Integer> getRangeMatchCellOrNull(M instance);
 
 	private CNumber getMatchRange(M instance) {
 
 		return checkNotNull(getMatchRangeOrNull(instance));
 	}
 
-	private DCell<Integer> getRangeMatchCell(M instance) {
-
-		return checkNotNull(getRangeMatchCellOrNull(instance));
-	}
-
 	private CNumber getMatchRangeOrNull(M instance) {
 
-		DCell<Integer> cell = getRangeMatchCellOrNull(instance);
+		DNumberCell<Integer> cell = getRangeMatchCellOrNull(instance);
 
-		if (cell != null) {
+		if (cell != null && cell.rangeSet()) {
 
-			List<IValue> values = cell.getSlot().getValues().asList();
-
-			if (!values.isEmpty()) {
-
-				return ((INumber)values.get(0)).getType();
-			}
+			return cell.getRange().asCNumber();
 		}
 
 		return null;

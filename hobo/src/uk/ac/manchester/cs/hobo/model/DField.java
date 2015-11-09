@@ -117,6 +117,14 @@ public abstract class DField<V> implements DFieldView<V> {
 	}
 
 	/**
+	 * Removes all values from the field.
+	 */
+	public void clear() {
+
+		getSlotValuesEditor().clear();
+	}
+
+	/**
 	 * Provides the model with which the field is associated.
 	 *
 	 * @return Model with which field is associated
@@ -136,14 +144,6 @@ public abstract class DField<V> implements DFieldView<V> {
 	public boolean editable() {
 
 		return getSlot().getEditability().editable();
-	}
-
-	/**
-	 * Removes all values from the field.
-	 */
-	public void clear() {
-
-		getSlotValuesEditor().clear();
 	}
 
 	/**
@@ -211,6 +211,11 @@ public abstract class DField<V> implements DFieldView<V> {
 	}
 
 	abstract DFieldViewer<V, ?> createViewer();
+
+	Class<V> getValueClass() {
+
+		return valueType.getValueClass();
+	}
 
 	CValue<?> getSlotValueType() {
 

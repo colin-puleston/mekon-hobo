@@ -41,7 +41,7 @@ public class ClassA extends DObjectShell implements InterfaceR {
 
 		public void initialise() {
 
-			dEditor.getField(intCell).set(5);
+			dEditor.getCell(intCell).set(5);
 		}
 	}
 

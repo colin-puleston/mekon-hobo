@@ -70,16 +70,6 @@ public abstract class DMatchAggregator
 
 			return aggregators.get(target);
 		}
-
-		private INumber getAggregator(T target) {
-
-			return getAggregatorSlotValue(getAggregatorCell(target));
-		}
-
-		private INumber getAggregatorSlotValue(DCell<Integer> duration) {
-
-			return (INumber)duration.getSlot().getValues().asList().get(0);
-		}
 	}
 
 	private class InstanceTargets extends Targets {
@@ -207,7 +197,7 @@ public abstract class DMatchAggregator
 	 * @return Required aggrogator cell, or null if not currently
 	 * present
 	 */
-	protected abstract DCell<Integer> getAggregatorCellOrNull(T target);
+	protected abstract DNumberCell<Integer> getAggregatorCellOrNull(T target);
 
 	/**
 	 * Retrieves the cell containing the sub-section of the target
@@ -263,12 +253,19 @@ public abstract class DMatchAggregator
 
 	private boolean hasAggregator(T target) {
 
-		DCell<Integer> cell = getAggregatorCellOrNull(target);
+		DNumberCell<Integer> cell = getAggregatorCellOrNull(target);
 
-		return cell != null && !cell.getSlot().getValues().isEmpty();
+		return cell != null && !cell.rangeSet();
 	}
 
-	private DCell<Integer> getAggregatorCell(T target) {
+	private INumber getAggregator(T target) {
+
+		DNumberCell<Integer> cell = getAggregatorCell(target);
+
+		return cell.getRange().asCNumber().asINumber();
+	}
+
+	private DNumberCell<Integer> getAggregatorCell(T target) {
 
 		return checkNotNull(getAggregatorCellOrNull(target));
 	}

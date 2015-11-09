@@ -64,8 +64,7 @@ class HoboTest extends MekonTest {
 	DCell<Integer> createIntegerCell(int min, int max) {
 
 		CNumberDef def = CIntegerDef.range(min, max);
-		DValueType<Integer> valueType = createIntegerValueType(def);
-		DCell<Integer> cell = new DCell<Integer>(model, valueType);
+		DCell<Integer> cell = new DNumberCell<Integer>(model, def, Integer.class);
 
 		cell.setSlot(createNumberSlot(def));
 
@@ -82,11 +81,6 @@ class HoboTest extends MekonTest {
 	private DValueType<DObject> createDObjectValueType(CFrame rootFrame) {
 
 		return new DObjectValueType<DObject>(model, DObject.class, rootFrame);
-	}
-
-	private DValueType<Integer> createIntegerValueType(CNumberDef definition) {
-
-		return new DNumberValueType<Integer>(definition, Integer.class);
 	}
 
 	private ISlot createNumberSlot(CNumberDef def) {

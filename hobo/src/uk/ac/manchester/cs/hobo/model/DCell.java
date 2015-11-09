@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.hobo.*;
 public class DCell<V> extends DField<V> implements DCellView<V> {
 
 	/**
-	 * Sets the current value of the field.
+	 * Sets the current value of the cell.
 	 *
 	 * @param value Value to set
 	 */
@@ -59,7 +59,7 @@ public class DCell<V> extends DField<V> implements DCellView<V> {
 
 		if (!isSet()) {
 
-			throw new HAccessException("Field value not set");
+			throw new HAccessException("Cell value not set");
 		}
 
 		return getAll().get(0);

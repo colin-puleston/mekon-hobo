@@ -32,15 +32,20 @@ import uk.ac.manchester.cs.mekon.model.*;
 class DConceptValueType<D extends DObject> extends DValueType<DConcept<D>> {
 
 	private DModel model;
-	private Class<D> valueClass;
+	private Class<D> dClass;
 	private MFrame slotValueType;
 
-	DConceptValueType(DModel model, Class<D> valueClass, CFrame rootSlotValue) {
+	DConceptValueType(DModel model, Class<D> dClass, CFrame rootSlotValue) {
 
 		this.model = model;
-		this.valueClass = valueClass;
+		this.dClass = dClass;
 
 		slotValueType = rootSlotValue.getType();
+	}
+
+	Class<DConcept<D>> getValueClass() {
+
+		throw new Error("Method should never be invoked!");
 	}
 
 	MFrame getSlotValueType() {
@@ -55,7 +60,7 @@ class DConceptValueType<D extends DObject> extends DValueType<DConcept<D>> {
 
 	DConcept<D> toFieldValue(IValue value) {
 
-		return new DConcept<D>(model, valueClass, slotValueType.castValue(value));
+		return new DConcept<D>(model, dClass, (CFrame)value);
 	}
 
 	CCardinality getDefaultCardinalityForArrays() {

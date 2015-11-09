@@ -49,10 +49,37 @@ public interface DEditor {
 	/**
 	 * Retrieves the OM field being viewed by the specified viewer.
 	 *
-	 * @param <V> Generic version of-values
-	 * @param <F> Generic version of
+	 * @param <V> Generic version of field value-type
+	 * @param <F> Generic version of field-type
 	 * @param viewer Viewer for which field is required
 	 * @return Viewed field
 	 */
 	public <V, F extends DField<V>>F getField(DFieldViewer<V, F> viewer);
+
+	/**
+	 * Retrieves the OM cell being viewed by the specified viewer.
+	 *
+	 * @param <V> Generic version of cell value-type
+	 * @param viewer Viewer for which cell is required
+	 * @return Viewed cell
+	 */
+	public <V>DCell<V> getCell(DCellViewer<V> viewer);
+
+	/**
+	 * Retrieves the OM number-cell being viewed by the specified viewer.
+	 *
+	 * @param <N> Generic version of cell value-type
+	 * @param viewer Viewer for which cell is required
+	 * @return Viewed cell
+	 */
+	public <N extends Number>DNumberCell<N> getCell(DNumberCellViewer<N> viewer);
+
+	/**
+	 * Retrieves the OM array being viewed by the specified viewer.
+	 *
+	 * @param <V> Generic version of array value-type
+	 * @param viewer Viewer for which array is required
+	 * @return Viewed array
+	 */
+	public <V>DArray<V> getArray(DArrayViewer<V> viewer);
 }
