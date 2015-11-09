@@ -33,8 +33,269 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class DNumberRange<N extends Number> {
 
+	/**
+	 * Represents an unconstrained integer-range.
+	 */
+	static public final DNumberRange<Integer> INTEGER
+							= createInteger(CIntegerDef.UNCONSTRAINED);
+
+	/**
+	 * Represents an unconstrained long-range.
+	 */
+	static public final DNumberRange<Long> LONG
+							= createLong(CLongDef.UNCONSTRAINED);
+
+	/**
+	 * Represents an unconstrained float-range.
+	 */
+	static public final DNumberRange<Float> FLOAT
+							= createFloat(CFloatDef.UNCONSTRAINED);
+
+	/**
+	 * Represents an unconstrained double-range.
+	 */
+	static public final DNumberRange<Double> DOUBLE
+							= createDouble(CDoubleDef.UNCONSTRAINED);
+
+	/**
+	 * Creates a integer-range with the specified limits.
+	 *
+	 * @param min Minimnum value for range
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Integer> range(Integer min, Integer max) {
+
+		return createInteger(CIntegerDef.range(min, max));
+	}
+
+	/**
+	 * Creates a long-range with the specified limits.
+	 *
+	 * @param min Minimnum value for range
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Long> range(Long min, Long max) {
+
+		return createLong(CLongDef.range(min, max));
+	}
+
+	/**
+	 * Creates a float-range with the specified limits.
+	 *
+	 * @param min Minimnum value for range
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Float> range(Float min, Float max) {
+
+		return createFloat(CFloatDef.range(min, max));
+	}
+
+	/**
+	 * Creates a double-range with the specified limits.
+	 *
+	 * @param min Minimnum value for range
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Double> range(Double min, Double max) {
+
+		return createDouble(CDoubleDef.range(min, max));
+	}
+
+	/**
+	 * Creates a integer-range with the specified minimum value.
+	 *
+	 * @param min Minimnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Integer> min(Integer min) {
+
+		return createInteger(CIntegerDef.min(min));
+	}
+
+	/**
+	 * Creates a long-range with the specified minimum value.
+	 *
+	 * @param min Minimnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Long> min(Long min) {
+
+		return createLong(CLongDef.min(min));
+	}
+
+
+	/**
+	 * Creates a float-range with the specified minimum value.
+	 *
+	 * @param min Minimnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Float> min(Float min) {
+
+		return createFloat(CFloatDef.min(min));
+	}
+
+
+	/**
+	 * Creates a double-range with the specified minimum value.
+	 *
+	 * @param min Minimnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Double> min(Double min) {
+
+		return createDouble(CDoubleDef.min(min));
+	}
+
+	/**
+	 * Creates a integer-range with the specified maximum value.
+	 *
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Integer> max(Integer max) {
+
+		return createInteger(CIntegerDef.max(max));
+	}
+
+	/**
+	 * Creates a long-range with the specified maximum value.
+	 *
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Long> max(Long max) {
+
+		return createLong(CLongDef.max(max));
+	}
+
+	/**
+	 * Creates a float-range with the specified maximum value.
+	 *
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Float> max(Float max) {
+
+		return createFloat(CFloatDef.max(max));
+	}
+
+	/**
+	 * Creates a double-range with the specified maximum value.
+	 *
+	 * @param max Maximnum value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Double> max(Double max) {
+
+		return createDouble(CDoubleDef.max(max));
+	}
+
+	/**
+	 * Creates a integer-range with the specified exact value.
+	 *
+	 * @param exact Exact value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Integer> exact(Integer exact) {
+
+		return createInteger(CIntegerDef.exact(exact));
+	}
+
+	/**
+	 * Creates a long-range with the specified exact value.
+	 *
+	 * @param exact Exact value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Long> exact(Long exact) {
+
+		return createLong(CLongDef.exact(exact));
+	}
+
+	/**
+	 * Creates a float-range with the specified exact value.
+	 *
+	 * @param exact Exact value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Float> exact(Float exact) {
+
+		return createFloat(CFloatDef.exact(exact));
+	}
+
+	/**
+	 * Creates a double-range with the specified exact value.
+	 *
+	 * @param exact Exact value for range
+	 * @return Created range
+	 */
+	static public DNumberRange<Double> exact(Double exact) {
+
+		return createDouble(CDoubleDef.exact(exact));
+	}
+
+	static private DNumberRange<Integer> createInteger(CIntegerDef cDefinition) {
+
+		return new DNumberRange<Integer>(Integer.class, cDefinition);
+	}
+
+	static private DNumberRange<Long> createLong(CLongDef cDefinition) {
+
+		return new DNumberRange<Long>(Long.class, cDefinition);
+	}
+
+	static private DNumberRange<Float> createFloat(CFloatDef cDefinition) {
+
+		return new DNumberRange<Float>(Float.class, cDefinition);
+	}
+
+	static private DNumberRange<Double> createDouble(CDoubleDef cDefinition) {
+
+		return new DNumberRange<Double>(Double.class, cDefinition);
+	}
+
 	private Class<N> numberType;
-	private CNumber cValue;
+	private CNumber cNumber;
+
+	/**
+	 * Tests for equality between this and other specified object.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if other object is another <code>DNumberRange</code>
+	 * with same limit-values, including value-type, as this one
+	 */
+	public boolean equals(Object other) {
+
+		if (other instanceof DNumberRange) {
+
+			return cNumber.equals(((DNumberRange)other).cNumber);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Provides hash-code based on limit-values, including value-type.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return cNumber.hashCode();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+
+		return getClass().getSimpleName() + cNumber.getDisplayLabel();
+	}
 
 	/**
 	 * Specifies whether a minimnum value is defined.
@@ -43,7 +304,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	public boolean hasMin() {
 
-		return cValue.hasMin();
+		return cNumber.hasMin();
 	}
 
 	/**
@@ -53,29 +314,27 @@ public class DNumberRange<N extends Number> {
 	 */
 	public boolean hasMax() {
 
-		return cValue.hasMax();
+		return cNumber.hasMax();
 	}
 
 	/**
-	 * Provides the minimnum value for the numeric-type, if defined.
+	 * Provides the minimnum value, if defined.
 	 *
-	 * @return Minimnum value for the numeric-type, or null in not
-	 * defined
+	 * @return Minimnum value, or null in not defined
 	 */
 	public N getMin() {
 
-		return toLimitValue(cValue.getMin());
+		return toLimitValue(cNumber.getMin());
 	}
 
 	/**
-	 * Provides the maximnum value for the numeric-type, if defined.
+	 * Provides the maximnum value, if defined.
 	 *
-	 * @return Maximnum value for the numeric-type, or null in not
-	 * defined
+	 * @return Maximnum value, or null in not defined
 	 */
 	public N getMax() {
 
-		return toLimitValue(cValue.getMax());
+		return toLimitValue(cNumber.getMax());
 	}
 
 	/**
@@ -85,13 +344,18 @@ public class DNumberRange<N extends Number> {
 	 */
 	public CNumber asCNumber() {
 
-		return cValue;
+		return cNumber;
 	}
 
-	DNumberRange(Class<N> numberType, CNumber cValue) {
+	DNumberRange(Class<N> numberType, CNumber cNumber) {
 
 		this.numberType = numberType;
-		this.cValue = cValue;
+		this.cNumber = cNumber;
+	}
+
+	private DNumberRange(Class<N> numberType, CNumberDef cDefinition) {
+
+		this(numberType, cDefinition.createNumber());
 	}
 
 	private N toLimitValue(INumber iValue) {
