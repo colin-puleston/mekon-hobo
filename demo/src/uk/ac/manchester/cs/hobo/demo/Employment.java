@@ -119,12 +119,12 @@ public class Employment extends DObjectShell {
 
 	private void setJobCount(int count) {
 
-		dEditor.getField(jobCount).set(count);
+		dEditor.getCell(jobCount).set(count);
 	}
 
 	private void setTotalWeeklyPay(int value) {
 
-		dEditor.getField(totalWeeklyPay).set(value);
+		dEditor.getCell(totalWeeklyPay).set(value);
 	}
 
 	private int calculateTotalWeeklyPay() {

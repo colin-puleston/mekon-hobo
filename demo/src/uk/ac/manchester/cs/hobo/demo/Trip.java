@@ -47,6 +47,6 @@ public class Trip extends DObjectShell implements TravelAspect {
 
 	void initialise(TravelMode travelModeValue) {
 
-		dEditor.getField(details).set(travelModeValue);
+		dEditor.getCell(details).set(travelModeValue);
 	}
 }

@@ -51,7 +51,7 @@ public class ConceptSummary extends ValueSummary {
 
 				if (added.add(value)) {
 
-					dEditor.getField(allValues).add(getConcept(value));
+					getAllValuesArray().add(getConcept(value));
 				}
 			}
 		}
@@ -83,7 +83,7 @@ public class ConceptSummary extends ValueSummary {
 
 	void clear() {
 
-		dEditor.getField(allValues).clear();
+		getAllValuesArray().clear();
 	}
 
 	private void setAllValuesValueType(CValue<?> valueType) {
@@ -99,5 +99,10 @@ public class ConceptSummary extends ValueSummary {
 	private ISlotEditor getSlotEditor(ISlot slot) {
 
 		return dEditor.getIEditor().getSlotEditor(slot);
+	}
+
+	private DArray<DConcept<DObject>> getAllValuesArray() {
+
+		return dEditor.getArray(allValues);
 	}
 }

@@ -98,13 +98,13 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 		dEditor = builder.getEditor();
 		summariser = createSummariser(builder.getEditor());
 
-		builder.setEditability(dEditor.getField(mode), CEditability.NONE);
-		builder.setEditability(dEditor.getField(summaries), CEditability.NONE);
+		builder.setEditability(getModeCell(), CEditability.NONE);
+		builder.setEditability(getSummariesArray(), CEditability.NONE);
 	}
 
 	void initialise(DConcept<TravelMode> modeValue) {
 
-		dEditor.getField(mode).set(modeValue);
+		getModeCell().set(modeValue);
 		summariser.initialise(modeValue.getFrame());
 
 		new TripInitialiser(modeValue);
@@ -112,6 +112,16 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 
 	private Summariser createSummariser(DEditor dEditor) {
 
-		return new Summariser(this, dEditor.getField(summaries));
+		return new Summariser(this, getSummariesArray());
+	}
+
+	private DCell<DConcept<TravelMode>> getModeCell() {
+
+		return dEditor.getCell(mode);
+	}
+
+	private DArray<ValueSummary> getSummariesArray() {
+
+		return dEditor.getArray(summaries);
 	}
 }

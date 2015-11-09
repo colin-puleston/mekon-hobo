@@ -78,12 +78,12 @@ public abstract class NumberSummary<N extends Number> extends ValueSummary {
 
 	private DCell<Float> getAverageCell() {
 
-		return dEditor.getField(average);
+		return dEditor.getCell(average);
 	}
 
 	private DCell<N> getTotalCell() {
 
-		return dEditor.getField(getTotalCellViewer());
+		return dEditor.getCell(getTotalCellViewer());
 	}
 
 	private N getTotal(List<N> values) {

@@ -93,7 +93,7 @@ public class Citizen extends DObjectShell {
 
 		private DCell<DConcept<Tax>> getTax() {
 
-			return dEditor.getField(tax);
+			return dEditor.getCell(tax);
 		}
 
 		private DConcept<Tax> getTaxConcept(int pay) {

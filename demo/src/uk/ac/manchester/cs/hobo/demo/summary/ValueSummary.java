@@ -101,7 +101,7 @@ public abstract class ValueSummary extends DObjectShell {
 
 		dEditor = builder.getEditor();
 
-		builder.setEditability(dEditor.getField(property), CEditability.NONE);
+		builder.setEditability(dEditor.getCell(property), CEditability.NONE);
 	}
 
 	void setPopulator(Populator<?> populator) {
@@ -111,7 +111,7 @@ public abstract class ValueSummary extends DObjectShell {
 
 	void initialise(CSlot slotTypeValue) {
 
-		dEditor.getField(property).set(getPropertyRef(slotTypeValue));
+		dEditor.getCell(property).set(getPropertyRef(slotTypeValue));
 	}
 
 	void addSlot(ISlot slot) {

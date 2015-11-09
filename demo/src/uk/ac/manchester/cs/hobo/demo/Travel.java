@@ -45,17 +45,17 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		public void onAdded(DConcept<TravelMode> value) {
 
-			getDetailsField().add(instantiateDetails(value));
+			getDetailsArray().add(instantiateDetails(value));
 		}
 
 		public void onRemoved(DConcept<TravelMode> value) {
 
-			getDetailsField().remove(getDetailsValue(value));
+			getDetailsArray().remove(getDetailsValue(value));
 		}
 
 		public void onCleared(List<DConcept<TravelMode>> values) {
 
-			getDetailsField().clear();
+			getDetailsArray().clear();
 		}
 
 		ModesListener() {
@@ -81,7 +81,7 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		dEditor = builder.getEditor();
 
-		builder.setEditability(dEditor.getField(details), CEditability.NONE);
+		builder.setEditability(dEditor.getArray(details), CEditability.NONE);
 
 		builder.addInitialiser(new Initialiser());
 	}
@@ -98,7 +98,7 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 	private TravelDetails getDetailsValue(DConcept<TravelMode> mode) {
 
-		for (TravelDetails value : getDetailsField().getAll()) {
+		for (TravelDetails value : getDetailsArray().getAll()) {
 
 			if (value.mode.get().equals(mode)) {
 
@@ -109,8 +109,8 @@ public class Travel extends DObjectShell implements CitizenAspect {
 		throw new Error("Details is not a value");
 	}
 
-	private DArray<TravelDetails> getDetailsField() {
+	private DArray<TravelDetails> getDetailsArray() {
 
-		return dEditor.getField(details);
+		return dEditor.getArray(details);
 	}
 }

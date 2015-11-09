@@ -167,7 +167,7 @@ public class Job extends DObjectShell {
 
 	private DCell<Integer> getWeeklyPay() {
 
-		return dEditor.getField(weeklyPay);
+		return dEditor.getCell(weeklyPay);
 	}
 
 	private ISlotEditor getWeeklyPaySlotEditor() {
