@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotTest extends MekonTest {
+public class ISlotTest extends FramesModelTest {
 
 	@Test(expected = KAccessException.class)
 	public void test_getValuesEditor_failsForInactiveSlot() {

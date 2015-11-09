@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 /**
  * @author Colin Puleston
  */
-public class MostSpecificCFramesTest extends MekonTest {
+public class MostSpecificCFramesTest extends FramesModelTest {
 
 	private CFrame fa = createCFrame("FA");
 	private CFrame fax = createCFrame("FAX");

@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * @author Colin Puleston
  */
-public class IFrameSerialiseTest extends MekonTest {
+public class IFrameSerialiseTest extends FramesModelTest {
 
 	private boolean freeParser = false;
 	private ISchemaLevel schemaLevel = ISchemaLevel.NONE;

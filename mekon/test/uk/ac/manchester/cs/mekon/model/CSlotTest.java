@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class CSlotTest extends MekonTest {
+public class CSlotTest extends FramesModelTest {
 
 	@Test
 	public void test_addAndRemoveSlots() {

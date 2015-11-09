@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotSpecsViaDisjunctionsTest extends MekonTest {
+public class ISlotSpecsViaDisjunctionsTest extends FramesModelTest {
 
 	private CAtomicFrame ta = createCFrame("A");
 	private CAtomicFrame tb = createCFrame("B");

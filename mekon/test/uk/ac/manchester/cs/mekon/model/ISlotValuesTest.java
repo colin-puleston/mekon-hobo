@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotValuesTest extends MekonTest {
+public class ISlotValuesTest extends FramesModelTest {
 
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 

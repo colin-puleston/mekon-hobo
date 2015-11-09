@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.serial.*;
 /**
  * @author Colin Puleston
  */
-public class IStoreTest extends MekonTest {
+public class IStoreTest extends FramesModelTest {
 
 	static private final CIdentity FIRST_ID = new CIdentity("First");
 	static private final CIdentity SECOND_ID = new CIdentity("Second");

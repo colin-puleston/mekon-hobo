@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-public class IFrameTest extends MekonTest {
+public class IFrameTest extends FramesModelTest {
 
 	static private final List<CFrame> NO_IFRAMES = Collections.emptyList();
 
