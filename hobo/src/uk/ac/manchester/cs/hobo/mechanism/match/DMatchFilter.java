@@ -81,7 +81,7 @@ public abstract class DMatchFilter<M extends DObject> {
 
 		for (IMatchesRank rank : matches.getRanks()) {
 
-			filtered.addNextRank(filterRank(rank));
+			filtered.addRank(filterRank(rank));
 		}
 
 		return filtered;
