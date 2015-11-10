@@ -84,9 +84,9 @@ public class DNumberCell
 		return new DNumberRange<N>(getValueClass(), value.getType());
 	}
 
-	DNumberCell(DModel model, CNumberDef definition, Class<N> numberType) {
+	DNumberCell(DModel model, DNumberRange<N> range) {
 
-		super(model, new DNumberValueType<N>(definition, numberType));
+		super(model, new DNumberValueType<N>(range));
 	}
 
 	DNumberCellViewer<N> createViewer() {

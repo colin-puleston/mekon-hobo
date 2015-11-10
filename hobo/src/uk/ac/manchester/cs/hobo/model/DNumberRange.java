@@ -37,25 +37,25 @@ public class DNumberRange<N extends Number> {
 	 * Represents an unconstrained integer-range.
 	 */
 	static public final DNumberRange<Integer> INTEGER
-							= createInteger(CIntegerDef.UNCONSTRAINED);
+							= createInteger(CNumber.INTEGER);
 
 	/**
 	 * Represents an unconstrained long-range.
 	 */
 	static public final DNumberRange<Long> LONG
-							= createLong(CLongDef.UNCONSTRAINED);
+							= createLong(CNumber.LONG);
 
 	/**
 	 * Represents an unconstrained float-range.
 	 */
 	static public final DNumberRange<Float> FLOAT
-							= createFloat(CFloatDef.UNCONSTRAINED);
+							= createFloat(CNumber.FLOAT);
 
 	/**
 	 * Represents an unconstrained double-range.
 	 */
 	static public final DNumberRange<Double> DOUBLE
-							= createDouble(CDoubleDef.UNCONSTRAINED);
+							= createDouble(CNumber.DOUBLE);
 
 	/**
 	 * Creates a integer-range with the specified limits.
@@ -66,7 +66,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> range(Integer min, Integer max) {
 
-		return createInteger(CIntegerDef.range(min, max));
+		return createInteger(CNumber.range(min, max));
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> range(Long min, Long max) {
 
-		return createLong(CLongDef.range(min, max));
+		return createLong(CNumber.range(min, max));
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> range(Float min, Float max) {
 
-		return createFloat(CFloatDef.range(min, max));
+		return createFloat(CNumber.range(min, max));
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> range(Double min, Double max) {
 
-		return createDouble(CDoubleDef.range(min, max));
+		return createDouble(CNumber.range(min, max));
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> min(Integer min) {
 
-		return createInteger(CIntegerDef.min(min));
+		return createInteger(CNumber.min(min));
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> min(Long min) {
 
-		return createLong(CLongDef.min(min));
+		return createLong(CNumber.min(min));
 	}
 
 
@@ -136,7 +136,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> min(Float min) {
 
-		return createFloat(CFloatDef.min(min));
+		return createFloat(CNumber.min(min));
 	}
 
 
@@ -148,7 +148,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> min(Double min) {
 
-		return createDouble(CDoubleDef.min(min));
+		return createDouble(CNumber.min(min));
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> max(Integer max) {
 
-		return createInteger(CIntegerDef.max(max));
+		return createInteger(CNumber.max(max));
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> max(Long max) {
 
-		return createLong(CLongDef.max(max));
+		return createLong(CNumber.max(max));
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> max(Float max) {
 
-		return createFloat(CFloatDef.max(max));
+		return createFloat(CNumber.max(max));
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> max(Double max) {
 
-		return createDouble(CDoubleDef.max(max));
+		return createDouble(CNumber.max(max));
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> exact(Integer exact) {
 
-		return createInteger(CIntegerDef.exact(exact));
+		return createInteger(CNumber.exact(exact));
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> exact(Long exact) {
 
-		return createLong(CLongDef.exact(exact));
+		return createLong(CNumber.exact(exact));
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> exact(Float exact) {
 
-		return createFloat(CFloatDef.exact(exact));
+		return createFloat(CNumber.exact(exact));
 	}
 
 	/**
@@ -236,27 +236,27 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> exact(Double exact) {
 
-		return createDouble(CDoubleDef.exact(exact));
+		return createDouble(CNumber.exact(exact));
 	}
 
-	static private DNumberRange<Integer> createInteger(CIntegerDef cDefinition) {
+	static private DNumberRange<Integer> createInteger(CNumber cNumber) {
 
-		return new DNumberRange<Integer>(Integer.class, cDefinition);
+		return new DNumberRange<Integer>(Integer.class, cNumber);
 	}
 
-	static private DNumberRange<Long> createLong(CLongDef cDefinition) {
+	static private DNumberRange<Long> createLong(CNumber cNumber) {
 
-		return new DNumberRange<Long>(Long.class, cDefinition);
+		return new DNumberRange<Long>(Long.class, cNumber);
 	}
 
-	static private DNumberRange<Float> createFloat(CFloatDef cDefinition) {
+	static private DNumberRange<Float> createFloat(CNumber cNumber) {
 
-		return new DNumberRange<Float>(Float.class, cDefinition);
+		return new DNumberRange<Float>(Float.class, cNumber);
 	}
 
-	static private DNumberRange<Double> createDouble(CDoubleDef cDefinition) {
+	static private DNumberRange<Double> createDouble(CNumber cNumber) {
 
-		return new DNumberRange<Double>(Double.class, cDefinition);
+		return new DNumberRange<Double>(Double.class, cNumber);
 	}
 
 	private Class<N> numberType;
@@ -287,6 +287,17 @@ public class DNumberRange<N extends Number> {
 	public int hashCode() {
 
 		return cNumber.hashCode();
+	}
+
+	/**
+	 * Provides the primitive Java <code>Number</code> type for the
+	 * range.
+	 *
+	 * @return Relevant <code>Number</code> type
+	 */
+	public Class<N> getNumberType() {
+
+		return numberType;
 	}
 
 	/**
@@ -351,11 +362,6 @@ public class DNumberRange<N extends Number> {
 
 		this.numberType = numberType;
 		this.cNumber = cNumber;
-	}
-
-	private DNumberRange(Class<N> numberType, CNumberDef cDefinition) {
-
-		this(numberType, cDefinition.createNumber());
 	}
 
 	private N toLimitValue(INumber iValue) {

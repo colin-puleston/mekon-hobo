@@ -34,11 +34,10 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 	private CNumber slotValueType;
 	private Class<N> numberType;
 
-	DNumberValueType(CNumberDef definition, Class<N> numberType) {
+	DNumberValueType(DNumberRange<N> range) {
 
-		this.numberType = numberType;
-
-		slotValueType = createNumber(definition);
+		slotValueType = range.asCNumber();
+		numberType = range.getNumberType();
 	}
 
 	Class<N> getValueClass() {
@@ -69,27 +68,5 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 	CCardinality getDefaultCardinalityForArrays() {
 
 		throw new Error("Method should never be invoked!");
-	}
-
-	private CNumber createNumber(CNumberDef definition) {
-
-		checkNumberDef(definition);
-
-		return definition.createNumber();
-	}
-
-	private void checkNumberDef(CNumberDef definition) {
-
-		Class<? extends Number> defNumberType = definition.getNumberType();
-
-		if (defNumberType != numberType) {
-
-			throw new Error(
-						"Incompatible number-types: "
-						+ " Specfied type: "
-						+ numberType
-						+ ", Type for specified CNumberDef: "
-						+ defNumberType);
-		}
 	}
 }

@@ -49,7 +49,7 @@ public class DNumberCellTest extends DCellGeneralTest {
 
 		DNumberCell<Integer> cell = createUnconstrainedAssertionCell();
 
-		testSetSlotValue(cell, CIntegerDef.exact(6));
+		testSetSlotValue(cell, CNumber.exact(6));
 		testClearSlotValue(cell);
 	}
 
@@ -62,7 +62,7 @@ public class DNumberCellTest extends DCellGeneralTest {
 	@Test(expected = KAccessException.class)
 	public void test_assertion_backDoorNonExactRangeUpdateFails() {
 
-		addSlotValue(createUnconstrainedAssertionCell(), CIntegerDef.range(2, 8));
+		addSlotValue(createUnconstrainedAssertionCell(), CNumber.range(2, 8));
 	}
 
 	@Test
@@ -83,10 +83,10 @@ public class DNumberCellTest extends DCellGeneralTest {
 
 		DNumberCell<Integer> cell = createUnconstrainedQueryCell();
 
-		testSetSlotValue(cell, CIntegerDef.min(3));
-		testSetSlotValue(cell, CIntegerDef.max(7));
-		testSetSlotValue(cell, CIntegerDef.exact(6));
-		testSetSlotValue(cell, CIntegerDef.range(2, 8));
+		testSetSlotValue(cell, CNumber.min(3));
+		testSetSlotValue(cell, CNumber.max(7));
+		testSetSlotValue(cell, CNumber.exact(6));
+		testSetSlotValue(cell, CNumber.range(2, 8));
 
 		testClearSlotValue(cell);
 	}
@@ -100,27 +100,27 @@ public class DNumberCellTest extends DCellGeneralTest {
 	@Test(expected = KAccessException.class)
 	public void test_query_illegalBackRangeDoorUpdateFails() {
 
-		addSlotValue(createRange_5_10_QueryCell(), CIntegerDef.range(2, 8));
+		addSlotValue(createRange_5_10_QueryCell(), CNumber.range(2, 8));
 	}
 
 	private DNumberCell<Integer> createUnconstrainedAssertionCell() {
 
-		return createIntegerCell(CIntegerDef.UNCONSTRAINED);
+		return createIntegerCell(DNumberRange.INTEGER);
 	}
 
 	private DNumberCell<Integer> createUnconstrainedQueryCell() {
 
-		return createQueryCell(CIntegerDef.UNCONSTRAINED);
+		return createQueryCell(DNumberRange.INTEGER);
 	}
 
 	private DNumberCell<Integer> createRange_5_10_QueryCell() {
 
-		return createQueryCell(CIntegerDef.range(5, 10));
+		return createQueryCell(DNumberRange.range(5, 10));
 	}
 
-	private DNumberCell<Integer> createQueryCell(CIntegerDef def) {
+	private DNumberCell<Integer> createQueryCell(DNumberRange<Integer> range) {
 
-		DNumberCell<Integer> cell = createIntegerCell(def);
+		DNumberCell<Integer> cell = createIntegerCell(range);
 
 		cell.getSlot().getContainer().resetCategory(IFrameCategory.QUERY);
 
@@ -129,10 +129,10 @@ public class DNumberCellTest extends DCellGeneralTest {
 
 	private void testSetCellValue(
 					DNumberCell<Integer> cell,
-					DNumberRange<Integer> range) {
+					DNumberRange<Integer> rangeValue) {
 
-		cell.set(range);
-		testCellValue(cell, range.asCNumber());
+		cell.set(rangeValue);
+		testCellValue(cell, rangeValue.asCNumber());
 	}
 
 	private void testClearCellValue(DNumberCell<Integer> cell) {
@@ -141,14 +141,10 @@ public class DNumberCellTest extends DCellGeneralTest {
 		testNoCellOrSlotValue(cell);
 	}
 
-	private void testSetSlotValue(
-					DNumberCell<Integer> cell,
-					CIntegerDef cRangeDef) {
+	private void testSetSlotValue(DNumberCell<Integer> cell, CNumber valueType) {
 
-		CNumber cRange = cRangeDef.createNumber();
-
-		addSlotValues(cell, cRange.asINumber());
-		testCellValue(cell, cRange);
+		addSlotValues(cell, valueType.asINumber());
+		testCellValue(cell, valueType);
 	}
 
 	private void testClearSlotValue(DNumberCell<Integer> cell) {
@@ -157,31 +153,27 @@ public class DNumberCellTest extends DCellGeneralTest {
 		testNoCellValue(cell);
 	}
 
-	private void testCellValue(DNumberCell<Integer> cell, CNumber cRange) {
+	private void testCellValue(DNumberCell<Integer> cell, CNumber valueType) {
 
-		testRangeValue(cell, cRange);
+		testRangeValue(cell, valueType);
 
-		if (cRange.exactValue()) {
+		if (valueType.exactValue()) {
 
-			testCellAndSlotValue(cell, cRange.getMin());
+			testCellAndSlotValue(cell, valueType.getMin());
 		}
 		else {
 
 			testNoCellValue(cell);
-			testSlotValues(cell, cRange.asINumber());
+			testSlotValues(cell, valueType.asINumber());
 		}
 	}
 
-	private void addSlotValue(
-					DNumberCell<Integer> cell,
-					CIntegerDef valueDef) {
+	private void addSlotValue(DNumberCell<Integer> cell, CNumber valueType) {
 
-		addSlotValues(cell, valueDef.createNumber().asINumber());
+		addSlotValues(cell, valueType.asINumber());
 	}
 
-	private void testRangeValue(
-					DNumberCell<Integer> cell,
-					CNumber cRange) {
+	private void testRangeValue(DNumberCell<Integer> cell, CNumber valueType) {
 
 		assertTrue(
 			"Cell range-value should be set",
@@ -191,6 +183,6 @@ public class DNumberCellTest extends DCellGeneralTest {
 
 		assertTrue(
 			"Unexpected cell range-value: " + value,
-			value.asCNumber().equals(cRange));
+			value.asCNumber().equals(valueType));
 	}
 }

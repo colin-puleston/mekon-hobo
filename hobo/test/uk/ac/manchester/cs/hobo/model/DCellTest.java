@@ -72,7 +72,7 @@ public class DCellTest extends DCellGeneralTest {
 
 	private DNumberCell<Integer> createRange_0_10_Cell() {
 
-		return createIntegerCell(CIntegerDef.range(0, 10));
+		return createIntegerCell(DNumberRange.range(0, 10));
 	}
 
 	private void testSetCell(DCell<Integer> cell, int value) {

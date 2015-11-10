@@ -82,7 +82,7 @@ public class DModelTest extends FramesTestUtils {
 			CFrame frameA = builder.addFrame(frameAId, false);
 			CFrameEditor frameAEd = builder.getFrameEditor(frameA);
 
-			frameAEd.addSlot(intSlotId, CCardinality.REPEATABLE_TYPES, getIntegerValueType());
+			frameAEd.addSlot(intSlotId, CCardinality.REPEATABLE_TYPES, CNumber.INTEGER);
 		}
 	}
 
@@ -125,7 +125,7 @@ public class DModelTest extends FramesTestUtils {
 			FRAME_A_ID,
 			INT_SLOT_ID,
 			CCardinality.SINGLE_VALUE,
-			getIntegerValueType(),
+			CNumber.INTEGER,
 			CEditability.QUERY_ONLY);
 
 		testCSlotBuilt(
@@ -188,11 +188,6 @@ public class DModelTest extends FramesTestUtils {
 		DClassMap classAMap = map.addClassMap(ClassA.class, A_EXTERNAL_ID);
 
 		classAMap.addFieldMap(INT_CELL_VAR_NAME, INT_EXTERNAL_ID);
-	}
-
-	private CNumber getIntegerValueType() {
-
-		return getCNumber(CIntegerDef.UNCONSTRAINED);
 	}
 
 	private String getTestModelPackageName() {

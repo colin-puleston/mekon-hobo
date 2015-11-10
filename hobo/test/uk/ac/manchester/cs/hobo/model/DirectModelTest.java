@@ -63,14 +63,14 @@ class DirectModelTest extends FramesModelTest {
 
 	DNumberCell<Integer> createIntegerCell(int min, int max) {
 
-		return createIntegerCell(CIntegerDef.range(min, max));
+		return createIntegerCell(DNumberRange.range(min, max));
 	}
 
-	DNumberCell<Integer> createIntegerCell(CNumberDef def) {
+	DNumberCell<Integer> createIntegerCell(DNumberRange<Integer> range) {
 
-		DNumberCell<Integer> cell = new DNumberCell<Integer>(model, def, Integer.class);
+		DNumberCell<Integer> cell = new DNumberCell<Integer>(model, range);
 
-		cell.setSlot(createNumberSlot(def));
+		cell.setSlot(createNumberSlot(range.asCNumber()));
 
 		return cell;
 	}
@@ -87,8 +87,8 @@ class DirectModelTest extends FramesModelTest {
 		return new DObjectValueType<DObject>(model, DObject.class, rootFrame);
 	}
 
-	private ISlot createNumberSlot(CNumberDef def) {
+	private ISlot createNumberSlot(CNumber type) {
 
-		return createISlot(CCardinality.SINGLE_VALUE, getCNumber(def));
+		return createISlot(CCardinality.SINGLE_VALUE, type);
 	}
 }

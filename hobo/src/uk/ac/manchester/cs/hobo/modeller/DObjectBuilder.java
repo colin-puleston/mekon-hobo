@@ -110,30 +110,12 @@ public interface DObjectBuilder {
 	public DNumberCell<Integer> addIntegerCell();
 
 	/**
-	 * Creates a single-valued OM field with integer-type values,
-	 * with specified value-constraints.
-	 *
-	 * @param definition Provides specific value-constraints
-	 * @return Created field
-	 */
-	public DNumberCell<Integer> addIntegerCell(CIntegerDef definition);
-
-	/**
 	 * Creates a single-valued OM field with long-type values,
 	 * with no additional value-constraints.
 	 *
 	 * @return Created field
 	 */
 	public DNumberCell<Long> addLongCell();
-
-	/**
-	 * Creates a single-valued OM field with long-type values,
-	 * with specified value-constraints.
-	 *
-	 * @param definition Provides specific value-constraints
-	 * @return Created field
-	 */
-	public DNumberCell<Long> addLongCell(CLongDef definition);
 
 	/**
 	 * Creates a single-valued OM field with float-type values,
@@ -144,15 +126,6 @@ public interface DObjectBuilder {
 	public DNumberCell<Float> addFloatCell();
 
 	/**
-	 * Creates a single-valued OM field with float-type values,
-	 * with specified value-constraints.
-	 *
-	 * @param definition Provides specific value-constraints
-	 * @return Created field
-	 */
-	public DNumberCell<Float> addFloatCell(CFloatDef definition);
-
-	/**
 	 * Creates a single-valued OM field with double-type values,
 	 * with no additional value-constraints.
 	 *
@@ -161,13 +134,13 @@ public interface DObjectBuilder {
 	public DNumberCell<Double> addDoubleCell();
 
 	/**
-	 * Creates a single-valued OM field with double-type values,
+	 * Creates a single-valued OM field with number-type values,
 	 * with specified value-constraints.
 	 *
-	 * @param definition Provides specific value-constraints
+	 * @param range Specific value-constraints
 	 * @return Created field
 	 */
-	public DNumberCell<Double> addDoubleCell(CDoubleDef definition);
+	public <N extends Number>DNumberCell<N> addNumberCell(DNumberRange<N> range);
 
 	/**
 	 * Creates a multi-valued OM field with concept-level-frame

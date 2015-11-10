@@ -84,42 +84,27 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	public DNumberCell<Integer> addIntegerCell() {
 
-		return addNumberCell(CIntegerDef.UNCONSTRAINED, Integer.class);
-	}
-
-	public DNumberCell<Integer> addIntegerCell(CIntegerDef definition) {
-
-		return addNumberCell(definition, Integer.class);
+		return addNumberCell(DNumberRange.INTEGER);
 	}
 
 	public DNumberCell<Long> addLongCell() {
 
-		return addNumberCell(CLongDef.UNCONSTRAINED, Long.class);
-	}
-
-	public DNumberCell<Long> addLongCell(CLongDef definition) {
-
-		return addNumberCell(definition, Long.class);
+		return addNumberCell(DNumberRange.LONG);
 	}
 
 	public DNumberCell<Float> addFloatCell() {
 
-		return addNumberCell(CFloatDef.UNCONSTRAINED, Float.class);
-	}
-
-	public DNumberCell<Float> addFloatCell(CFloatDef definition) {
-
-		return addNumberCell(definition, Float.class);
+		return addNumberCell(DNumberRange.FLOAT);
 	}
 
 	public DNumberCell<Double> addDoubleCell() {
 
-		return addNumberCell(CDoubleDef.UNCONSTRAINED, Double.class);
+		return addNumberCell(DNumberRange.DOUBLE);
 	}
 
-	public DNumberCell<Double> addDoubleCell(CDoubleDef definition) {
+	public <N extends Number>DNumberCell<N> addNumberCell(DNumberRange<N> range) {
 
-		return addNumberCell(definition, Double.class);
+		return addField(new DNumberCell<N>(model, range));
 	}
 
 	public DArray<DConcept<DObject>> addConceptArray() {
@@ -219,13 +204,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 			initialiser.initialise();
 		}
-	}
-
-	private <N extends Number>DNumberCell<N> addNumberCell(
-											CNumberDef definition,
-											Class<N> numberType) {
-
-		return addField(new DNumberCell<N>(model, definition, numberType));
 	}
 
 	private <D extends DObject>DCell<DConcept<D>> createConceptCell(Class<D> valueClass) {
