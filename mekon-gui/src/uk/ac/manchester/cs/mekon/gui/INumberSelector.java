@@ -253,7 +253,16 @@ class INumberSelector extends GDialog {
 
 		private INumber getRangeValue(INumber min, INumber max) {
 
-			return createRangeDef(min, max).createNumber().asINumber();
+			if (min == NO_VALUE) {
+
+				min = type.getMin();
+			}
+			else if (max == NO_VALUE) {
+
+				max = type.getMax();
+			}
+
+			return CNumber.range(min, max).asINumber();
 		}
 
 		private boolean invalidRange() {
@@ -269,20 +278,6 @@ class INumberSelector extends GDialog {
 			}
 
 			return min != NO_VALUE && max != NO_VALUE && min.moreThan(max);
-		}
-
-		private CNumberDef createRangeDef(INumber min, INumber max) {
-
-			if (min == NO_VALUE) {
-
-				min = type.getMin();
-			}
-			else if (max == NO_VALUE) {
-
-				max = type.getMax();
-			}
-
-			return CNumberDef.range(min, max);
 		}
 
 		private INumber getMin() {
