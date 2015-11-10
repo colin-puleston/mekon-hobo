@@ -149,7 +149,7 @@ public class Job extends DObjectShell {
 		INumber min = pay.getMin().multiplyBy(hours.getMin());
 		INumber max = pay.getMax().multiplyBy(hours.getMax());
 
-		return CIntegerDef.range(min, max).createNumber();
+		return CNumber.range(min, max);
 	}
 
 	private CNumber getRangeValue(DCell<Integer> cell) {

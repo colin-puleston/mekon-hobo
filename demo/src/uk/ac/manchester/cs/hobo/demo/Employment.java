@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.hobo.demo;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
@@ -95,7 +94,7 @@ public class Employment extends DObjectShell {
 		super(builder);
 
 		jobs = builder.addObjectArray(Job.class);
-		jobCount = builder.getViewer(builder.addIntegerCell(CIntegerDef.min(0)));
+		jobCount = builder.getViewer(builder.addNumberCell(DNumberRange.min(0)));
 		totalWeeklyPay = builder.getViewer(builder.addIntegerCell());
 
 		dEditor = builder.getEditor();
