@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * Represents a numeric-type, defined via a primitive Java
  * <code>Number</code> type and specific numeric range.
@@ -33,6 +35,298 @@ import java.util.*;
  * @author Colin Puleston
  */
 public class CNumber extends CValue<INumber> implements CEntity {
+
+	/**
+	 * Represents an unconstrained integer-type.
+	 */
+	static public final CNumber INTEGER = new CNumber(Integer.class);
+
+	/**
+	 * Represents an unconstrained long-type.
+	 */
+	static public final CNumber LONG = new CNumber(Long.class);
+
+	/**
+	 * Represents an unconstrained float-type.
+	 */
+	static public final CNumber FLOAT = new CNumber(Float.class);
+
+	/**
+	 * Represents an unconstrained double-type.
+	 */
+	static public final CNumber DOUBLE = new CNumber(Double.class);
+
+	/**
+	 * Creates an integer-type with the specified limits.
+	 *
+	 * @param min Minimnum value for integer-type
+	 * @param max Maximnum value for integer-type
+	 * @return Created integer-type
+	 */
+	static public CNumber range(Integer min, Integer max) {
+
+		return range(Integer.class, min, max);
+	}
+
+	/**
+	 * Creates a long-type with the specified limits.
+	 *
+	 * @param min Minimnum value for long-type
+	 * @param max Maximnum value for long-type
+	 * @return Created long-type
+	 */
+	static public CNumber range(Long min, Long max) {
+
+		return range(Long.class, min, max);
+	}
+
+	/**
+	 * Creates a float-type with the specified limits.
+	 *
+	 * @param min Minimnum value for float-type
+	 * @param max Maximnum value for float-type
+	 * @return Created float-type
+	 */
+	static public CNumber range(Float min, Float max) {
+
+		return range(Float.class, min, max);
+	}
+
+	/**
+	 * Creates a double-type with the specified limits.
+	 *
+	 * @param min Minimnum value for double-type
+	 * @param max Maximnum value for double-type
+	 * @return Created double-type
+	 */
+	static public CNumber range(Double min, Double max) {
+
+		return range(Double.class, min, max);
+	}
+
+	/**
+	 * Creates a number-type with the specified limits.
+	 *
+	 * @param min Minimnum value for number-type
+	 * @param max Maximnum value for number-type
+	 * @return Created
+	 * @throws KModelException if minimnum value is greater than
+	 * maximnum value, or if minimnum and maximnum values have
+	 * incompatible number-types
+	 */
+	static public CNumber range(INumber min, INumber max) {
+
+		return new CNumber(getRangeNumberType(min, max), min, max);
+	}
+
+	/**
+	 * Creates an integer-type with the specified minimum value.
+	 *
+	 * @param min Minimnum value for integer-type
+	 * @return Created integer-type
+	 */
+	static public CNumber min(Integer min) {
+
+		return range(min, null);
+	}
+
+	/**
+	 * Creates a long-type with the specified minimum value.
+	 *
+	 * @param min Minimnum value for long-type
+	 * @return Created long-type
+	 */
+	static public CNumber min(Long min) {
+
+		return range(min, null);
+	}
+
+	/**
+	 * Creates a float-type with the specified minimum value.
+	 *
+	 * @param min Minimnum value for float-type
+	 * @return Created float-type
+	 */
+	static public CNumber min(Float min) {
+
+		return range(min, null);
+	}
+
+	/**
+	 * Creates a double-type with the specified minimum value.
+	 *
+	 * @param min Minimnum value for double-type
+	 * @return Created double-type
+	 */
+	static public CNumber min(Double min) {
+
+		return range(min, null);
+	}
+
+	/**
+	 * Creates a number-type with the specified minimum value.
+	 *
+	 * @param min Minimnum value for number-type
+	 * @return Created number-type
+	 */
+	static public CNumber min(INumber min) {
+
+		return new CNumber(min.getNumberType(), min, INumber.PLUS_INFINITY);
+	}
+
+	/**
+	 * Creates an integer-type with the specified maximum value.
+	 *
+	 * @param max Maximnum value for integer-type
+	 * @return Created integer-type
+	 */
+	static public CNumber max(Integer max) {
+
+		return range(null, max);
+	}
+
+	/**
+	 * Creates a long-type with the specified maximum value.
+	 *
+	 * @param max Maximnum value for long-type
+	 * @return Created long-type
+	 */
+	static public CNumber max(Long max) {
+
+		return range(null, max);
+	}
+
+	/**
+	 * Creates a float-type with the specified maximum value.
+	 *
+	 * @param max Maximnum value for float-type
+	 * @return Created float-type
+	 */
+	static public CNumber max(Float max) {
+
+		return range(null, max);
+	}
+
+	/**
+	 * Creates a double-type with the specified maximum value.
+	 *
+	 * @param max Maximnum value for double-type
+	 * @return Created double-type
+	 */
+	static public CNumber max(Double max) {
+
+		return range(null, max);
+	}
+
+	/**
+	 * Creates a number-type with the specified maximum value.
+	 *
+	 * @param max Maximnum value for number-type
+	 * @return Created number-type
+	 */
+	static public CNumber max(INumber max) {
+
+		return new CNumber(max.getNumberType(), INumber.MINUS_INFINITY, max);
+	}
+
+	/**
+	 * Creates an integer-type with the specified exact value.
+	 *
+	 * @param exact Exact value for integer-type
+	 * @return Created integer-type
+	 */
+	static public CNumber exact(Integer exact) {
+
+		return range(exact, exact);
+	}
+
+	/**
+	 * Creates a long-type with the specified exact value.
+	 *
+	 * @param exact Exact value for long-type
+	 * @return Created long-type
+	 */
+	static public CNumber exact(Long exact) {
+
+		return range(exact, exact);
+	}
+
+	/**
+	 * Creates a float-type with the specified exact value.
+	 *
+	 * @param exact Exact value for float-type
+	 * @return Created float-type
+	 */
+	static public CNumber exact(Float exact) {
+
+		return range(exact, exact);
+	}
+
+	/**
+	 * Creates a double-type with the specified exact value.
+	 *
+	 * @param exact Exact value for double-type
+	 * @return Created double-type
+	 */
+	static public CNumber exact(Double exact) {
+
+		return range(exact, exact);
+	}
+
+	/**
+	 * Creates a number-type with the specified exact value.
+	 *
+	 * @param exact Exact value for number-type
+	 * @return Created number-type
+	 */
+	static public CNumber exact(INumber exact) {
+
+		return new CNumber(exact.getNumberType(), exact, exact);
+	}
+
+	static private CNumber range(
+							Class<? extends Number> numberType,
+							Number min,
+							Number max) {
+
+		return new CNumber(numberType, resolveMin(min), resolveMax(max));
+	}
+
+	static private INumber resolveMin(Number min) {
+
+		return resolveLimit(min, INumber.MINUS_INFINITY);
+	}
+
+	static private INumber resolveMax(Number max) {
+
+		return resolveLimit(max, INumber.PLUS_INFINITY);
+	}
+
+	static private INumber resolveLimit(Number limit, INumber infinity) {
+
+		return limit != null ? INumber.create(limit) : infinity;
+	}
+
+	static private Class<? extends Number> getRangeNumberType(INumber min, INumber max) {
+
+		Class<? extends Number> minType = min.getNumberType();
+		Class<? extends Number> maxType = max.getNumberType();
+
+		if (minType == Number.class) {
+
+			return maxType;
+		}
+
+		if (maxType == Number.class || minType == maxType) {
+
+			return minType;
+		}
+
+		throw new KModelException(
+					"Incompatible numeric limit types: "
+					+ "minimum-type = " + minType
+					+ ", maximum-type = " + maxType);
+	}
 
 	private Class<? extends Number> numberType;
 

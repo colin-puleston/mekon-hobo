@@ -33,15 +33,15 @@ import uk.ac.manchester.cs.mekon.mechanism.core.*;
  */
 class ZFreeInstantiatorImpl implements ZFreeInstantiator {
 
-	static private Map<Class<? extends Number>, CNumberDef> numberDefs
-						= new HashMap<Class<? extends Number>, CNumberDef>();
+	static private Map<Class<? extends Number>, CNumber> numberTypes
+						= new HashMap<Class<? extends Number>, CNumber>();
 
 	static {
 
-		numberDefs.put(Integer.class, CIntegerDef.UNCONSTRAINED);
-		numberDefs.put(Long.class, CLongDef.UNCONSTRAINED);
-		numberDefs.put(Float.class, CFloatDef.UNCONSTRAINED);
-		numberDefs.put(Double.class, CDoubleDef.UNCONSTRAINED);
+		numberTypes.put(Integer.class, CNumber.INTEGER);
+		numberTypes.put(Long.class, CNumber.LONG);
+		numberTypes.put(Float.class, CNumber.FLOAT);
+		numberTypes.put(Double.class, CNumber.DOUBLE);
 	}
 
 	private CFrame rootFrame;
@@ -118,7 +118,7 @@ class ZFreeInstantiatorImpl implements ZFreeInstantiator {
 					CIdentity slotTypeId,
 					Class<? extends Number> numberType) {
 
-		return addSlot(container, slotTypeId, getNumberValueType(numberType));
+		return addSlot(container, slotTypeId, numberTypes.get(numberType));
 	}
 
 	public void completeInstantiation(IFrame frame) {
@@ -136,18 +136,25 @@ class ZFreeInstantiatorImpl implements ZFreeInstantiator {
 		rootFrame = model.getRootFrame();
 	}
 
-	private ISlot addSlot(IFrame container, CIdentity id, CValue<?> valueType) {
+	private ISlot addSlot(
+					IFrame container,
+					CIdentity id,
+					CValue<?> valueType) {
 
-		return container.addSlot(createSlotType(container.getType(), id, valueType));
+		CSlot slotType = createSlotType(container.getType(), id, valueType);
+
+		return container.addSlot(slotType);
 	}
 
-	private CSlot createSlotType(CFrame containerType, CIdentity id, CValue<?> valueType) {
+	private CSlot createSlotType(
+					CFrame containerType,
+					CIdentity id,
+					CValue<?> valueType) {
 
-		return new CSlot(containerType, id, CCardinality.REPEATABLE_TYPES, valueType);
-	}
-
-	private CNumber getNumberValueType(Class<? extends Number> numberType) {
-
-		return numberDefs.get(numberType).createNumber();
+		return new CSlot(
+					containerType,
+					id,
+					CCardinality.REPEATABLE_TYPES,
+					valueType);
 	}
 }

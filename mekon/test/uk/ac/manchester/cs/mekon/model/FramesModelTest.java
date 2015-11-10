@@ -174,7 +174,7 @@ public class FramesModelTest extends FramesTestUtils {
 		CFrame tex = createCFrame(typesPrefix + "EX");
 		CFrame tey = createCFrame(typesPrefix + "EY");
 
-		CNumber n = CIntegerDef.range(1, 10).createNumber();
+		CNumber n = CNumber.range(1, 10);
 
 		addSuperFrame(tex, te);
 		addSuperFrame(tey, te);

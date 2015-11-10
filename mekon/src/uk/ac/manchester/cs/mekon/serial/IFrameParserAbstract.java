@@ -382,7 +382,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 				max = parseDefiniteINumber(valueType, node, NUMBER_MAX_ATTR);
 			}
 
-			return CNumberDef.range(min, max).createNumber().asINumber();
+			return CNumber.range(min, max).asINumber();
 		}
 
 		private INumber parseDefiniteINumber(CNumber valueType, XNode node, String attrName) {

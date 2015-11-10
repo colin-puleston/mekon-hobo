@@ -71,12 +71,12 @@ public class CNumberTest extends CValueTest<CNumber> {
 
 	private CNumber getNumber() {
 
-		return CIntegerDef.UNCONSTRAINED.createNumber();
+		return CNumber.INTEGER;
 	}
 
 	private CNumber getNumber(Integer min, Integer max) {
 
-		return CIntegerDef.range(min, max).createNumber();
+		return CNumber.range(min, max);
 	}
 
 	private void testIntersecting(CNumber n1, CNumber n2) {

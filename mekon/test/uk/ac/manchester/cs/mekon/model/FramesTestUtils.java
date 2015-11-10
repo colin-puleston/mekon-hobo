@@ -33,19 +33,6 @@ import uk.ac.manchester.cs.mekon.MekonTestUtils;
  */
 public class FramesTestUtils extends MekonTestUtils {
 
-	public CNumber getCNumber(CNumberDef def) {
-
-		return getCNumber(def.getNumberType(), def.getMin(), def.getMax());
-	}
-
-	public CNumber getCNumber(
-						Class<? extends Number> type,
-						INumber min,
-						INumber max) {
-
-		return new CNumber(type, min, max);
-	}
-
 	public List<CValue<?>> getValueTypes(List<IValue> values) {
 
 		List<CValue<?>> types = new ArrayList<CValue<?>>();
