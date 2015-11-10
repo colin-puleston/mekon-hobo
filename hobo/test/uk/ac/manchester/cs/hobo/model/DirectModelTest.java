@@ -61,10 +61,14 @@ class DirectModelTest extends FramesModelTest {
 		return array;
 	}
 
-	DCell<Integer> createIntegerCell(int min, int max) {
+	DNumberCell<Integer> createIntegerCell(int min, int max) {
 
-		CNumberDef def = CIntegerDef.range(min, max);
-		DCell<Integer> cell = new DNumberCell<Integer>(model, def, Integer.class);
+		return createIntegerCell(CIntegerDef.range(min, max));
+	}
+
+	DNumberCell<Integer> createIntegerCell(CNumberDef def) {
+
+		DNumberCell<Integer> cell = new DNumberCell<Integer>(model, def, Integer.class);
 
 		cell.setSlot(createNumberSlot(def));
 

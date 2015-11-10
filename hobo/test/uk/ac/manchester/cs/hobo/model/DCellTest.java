@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
@@ -33,67 +32,63 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public class DCellTest extends DFieldTest {
+public class DCellTest extends DCellGeneralTest {
 
 	@Test
 	public void test_directUpdates() {
 
-		DCell<Integer> cell = createIntegerCell(0, 10);
+		DCell<Integer> cell = createRange_0_10_Cell();
 
-		cell.set(3);
-		testCellValue(cell, 3);
-
-		cell.set(7);
-		testCellValue(cell, 7);
+		testSetCell(cell, 3);
+		testSetCell(cell, 7);
 
 		cell.clear();
-		testNoCellValue(cell);
+		testNoCellOrSlotValue(cell);
 	}
 
 	@Test
 	public void test_backDoorUpdates() {
 
-		DCell<Integer> cell = createIntegerCell(0, 10);
+		DCell<Integer> cell = createRange_0_10_Cell();
 
-		addSlotValue(cell, 3);
-		testCellValue(cell, 3);
-
-		addSlotValue(cell, 7);
-		testCellValue(cell, 7);
+		testSetSlot(cell, 3);
+		testSetSlot(cell, 7);
 
 		clearSlotValues(cell);
-		testNoCellValue(cell);
+		testNoCellOrSlotValue(cell);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_illegalDirectUpdateFails() {
 
-		createIntegerCell(0, 10).set(11);
+		createRange_0_10_Cell().set(11);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_illegalBackDoorUpdateFails() {
 
-		addSlotValue(createIntegerCell(0, 10), 11);
+		addSlotValue(createRange_0_10_Cell(), 11);
+	}
+
+	private DNumberCell<Integer> createRange_0_10_Cell() {
+
+		return createIntegerCell(CIntegerDef.range(0, 10));
+	}
+
+	private void testSetCell(DCell<Integer> cell, int value) {
+
+		cell.set(value);
+		testCellAndSlotValue(cell, value);
+	}
+
+	private void testSetSlot(DCell<Integer> cell, int value) {
+
+		addSlotValue(cell, value);
+		testCellAndSlotValue(cell, value);
 	}
 
 	private void addSlotValue(DCell<Integer> cell, int value) {
 
 		addSlotValues(cell, INumber.create(value));
-	}
-
-	private void testCellValue(DCell<Integer> cell, int expectValue) {
-
-		assertTrue("Cell-value should be set", cell.isSet());
-		assertTrue("Unexpected cell-value: " + cell.get(), cell.get() == expectValue);
-
-		testSlotValues(cell, INumber.create(expectValue));
-	}
-
-	private void testNoCellValue(DCell<Integer> cell) {
-
-		assertTrue("Cell-value should not be set", !cell.isSet());
-
-		testSlotValues(cell);
 	}
 }

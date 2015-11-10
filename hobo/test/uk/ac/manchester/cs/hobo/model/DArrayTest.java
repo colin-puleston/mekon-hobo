@@ -80,7 +80,6 @@ public class DArrayTest extends DFieldTest {
 		array.clear();
 		testSlotValues();
 		testArrayValues();
-
 	}
 
 	@Test
