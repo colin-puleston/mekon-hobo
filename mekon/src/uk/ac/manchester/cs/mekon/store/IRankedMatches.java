@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.mekon.store;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * Represents the ranked results of an instance-matching query
  * executed via an {@link IStore} object.
@@ -56,22 +54,17 @@ public class IRankedMatches extends IMatches {
 
 		super(true);
 
-		for (IMatchesRank rank : ranks) {
-
-			addRank(rank);
-		}
+		addRanks(ranks);
 	}
 
 	/**
-	 * Adds an additional rank of matches, with a lower ranking-value
-	 * than previously added rank.
+	 * Adds an additional rank of matches to the relevant place in the
+	 * ordered list.
 	 *
-	 * @param rank Next rank of matches
-	 * @throws KModelException If rank does not have a strictly lower
-	 * ranking-value than previous rank
+	 * @param rank Rank of matches to add
 	 */
-	public void addNextRank(IMatchesRank rank) {
+	public void addRank(IMatchesRank rank) {
 
-		addRank(rank);
+		addSingleRank(rank);
 	}
 }

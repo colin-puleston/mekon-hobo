@@ -45,7 +45,7 @@ public class IMatches {
 	 */
 	static public final IMatches NO_MATCHES = new IMatches();
 
-	private List<IMatchesRank> ranks = new ArrayList<IMatchesRank>();
+	private SortedSet<IMatchesRank> ranks = new TreeSet<IMatchesRank>();
 	private boolean ranked;
 
 	/**
@@ -57,7 +57,7 @@ public class IMatches {
 
 		this(false);
 
-		addRank(new IMatchesRank(matches, 0));
+		ranks.add(new IMatchesRank(matches, 0));
 	}
 
 	/**
@@ -118,19 +118,12 @@ public class IMatches {
 		this.ranked = ranked;
 	}
 
-	void addRank(IMatchesRank rank) {
+	void addRanks(List<IMatchesRank> ranks) {
 
-		if (!ranks.isEmpty()) {
+		this.ranks.addAll(ranks);
+	}
 
-			IMatchesRank previousRank = ranks.get(ranks.size() - 1);
-
-			if (rank.getRankingValue() >= previousRank.getRankingValue()) {
-
-				throw new KModelException(
-							"Attempting to add rank whose ranking-value "
-							+ "is not greater than that of last added rank");
-			}
-		}
+	void addSingleRank(IMatchesRank rank) {
 
 		ranks.add(rank);
 	}
