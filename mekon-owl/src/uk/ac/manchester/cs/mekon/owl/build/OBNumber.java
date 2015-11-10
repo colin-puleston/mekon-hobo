@@ -34,9 +34,9 @@ class OBNumber extends OBValue<CNumber> {
 
 	private CNumber cNumber;
 
-	OBNumber(CNumberDef cDefinition) {
+	OBNumber(CNumber cNumber) {
 
-		cNumber = cDefinition.createNumber();
+		this.cNumber = cNumber;
 	}
 
 	boolean canBeSlotValueType() {

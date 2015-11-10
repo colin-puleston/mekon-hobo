@@ -368,7 +368,7 @@ public abstract class ORMatcherTest extends OTest {
 
 	private INumber createRangeAsINumber(int min, int max) {
 
-		return CIntegerDef.range(min, max).createNumber().asINumber();
+		return CNumber.range(min, max).asINumber();
 	}
 
 	private void addInstance(IFrame instance, CIdentity id) {

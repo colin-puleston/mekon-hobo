@@ -78,16 +78,6 @@ public class OTest extends FramesTestUtils {
 		return model.getFrames().get(nameToIdentifier(name));
 	}
 
-	public CNumber getCInteger(Integer min, Integer max) {
-
-		return getCNumber(CIntegerDef.range(min, max));
-	}
-
-	public CNumber getCNumber(CNumberDef def) {
-
-		return getCNumber(def.getNumberType(), def.getMin(), def.getMax());
-	}
-
 	public IFrame createIFrame(String name) {
 
 		return model.instantiate(nameToIdentity(name));

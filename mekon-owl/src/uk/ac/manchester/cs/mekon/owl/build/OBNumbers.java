@@ -90,21 +90,21 @@ class OBNumbers {
 
 		OBNumber createUnconstrained() {
 
-			return new OBNumber(getUnconstrainedDef());
+			return new OBNumber(getUnconstrainedRange());
 		}
 
 		abstract N parseValue(String value);
 
-		abstract CNumberDef getUnconstrainedDef();
+		abstract CNumber getUnconstrainedRange();
 
-		abstract CNumberDef createRangeDef(N min, N max);
+		abstract CNumber createRange(N min, N max);
 
-		private CNumberDef createDef(OWLDatatypeRestriction restriction) {
+		private CNumber createDef(OWLDatatypeRestriction restriction) {
 
 			N min = getValueOrNull(restriction, OWLFacet.MIN_INCLUSIVE);
 			N max = getValueOrNull(restriction, OWLFacet.MAX_INCLUSIVE);
 
-			return createRangeDef(min, max);
+			return createRange(min, max);
 		}
 
 		private N getValueOrNull(OWLDatatypeRestriction restriction, OWLFacet facet) {
@@ -133,14 +133,14 @@ class OBNumbers {
 			return Integer.parseInt(value);
 		}
 
-		CNumberDef getUnconstrainedDef() {
+		CNumber getUnconstrainedRange() {
 
-			return CIntegerDef.UNCONSTRAINED;
+			return CNumber.INTEGER;
 		}
 
-		CNumberDef createRangeDef(Integer min, Integer max) {
+		CNumber createRange(Integer min, Integer max) {
 
-			return CIntegerDef.range(min, max);
+			return CNumber.range(min, max);
 		}
 	}
 
@@ -156,14 +156,14 @@ class OBNumbers {
 			return Float.parseFloat(value);
 		}
 
-		CNumberDef getUnconstrainedDef() {
+		CNumber getUnconstrainedRange() {
 
-			return CFloatDef.UNCONSTRAINED;
+			return CNumber.FLOAT;
 		}
 
-		CNumberDef createRangeDef(Float min, Float max) {
+		CNumber createRange(Float min, Float max) {
 
-			return CFloatDef.range(min, max);
+			return CNumber.range(min, max);
 		}
 	}
 

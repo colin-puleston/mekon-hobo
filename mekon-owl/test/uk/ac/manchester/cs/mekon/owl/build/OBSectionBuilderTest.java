@@ -318,7 +318,7 @@ public class OBSectionBuilderTest extends OTest {
 			PERSONAL_CLASS,
 			AGE_PROPERTY,
 			CCardinality.SINGLE_VALUE,
-			getCInteger(0, null));
+			CNumber.min(0));
 	}
 
 	private void testSlotValues() {
