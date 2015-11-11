@@ -148,10 +148,8 @@ public class IFrame implements IEntity, IValue {
 
 		public ISlot addSlot(CSlot slotType) {
 
-			ISlot slot = IFrame.this.addSlot(slotType);
+			ISlot slot = addSlotInternal(slotType);
 
-			new AutoUpdater(slot);
-			IFrameSlotValueUpdateProcessor.checkAddTo(slot);
 			pollListenersForSlotAdded(slot);
 
 			return slot;
@@ -541,13 +539,14 @@ public class IFrame implements IEntity, IValue {
 		return inferredTypes.update(updateds);
 	}
 
-	ISlot addSlot(CSlot slotType) {
+	ISlot addSlotFree(CSlot slotType) {
 
-		ISlot slot = new ISlot(slotType, this);
+		return addSlotInternal(slotType, true);
+	}
 
-		slots.add(slot);
+	ISlot addSlotInternal(CSlot slotType) {
 
-		return slot;
+		return addSlotInternal(slotType, false);
 	}
 
 	void addReferencingSlot(ISlot slot) {
@@ -579,6 +578,21 @@ public class IFrame implements IEntity, IValue {
 	Object getMappedObject() {
 
 		return mappedObject;
+	}
+
+	private ISlot addSlotInternal(CSlot slotType, boolean free) {
+
+		ISlot slot = new ISlot(slotType, this);
+
+		slots.add(slot);
+		IFrameSlotValueUpdateProcessor.checkAddTo(slot);
+
+		if (!free) {
+
+			new AutoUpdater(slot);
+		}
+
+		return slot;
 	}
 
 	private void validateAsReferencedFrame(IFrame referencingFrame) {

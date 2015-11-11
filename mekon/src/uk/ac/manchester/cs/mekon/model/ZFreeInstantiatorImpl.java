@@ -143,7 +143,7 @@ class ZFreeInstantiatorImpl implements ZFreeInstantiator {
 
 		CSlot slotType = createSlotType(container.getType(), id, valueType);
 
-		return container.addSlot(slotType);
+		return container.addSlotFree(slotType);
 	}
 
 	private CSlot createSlotType(
