@@ -91,10 +91,14 @@ class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 
 		private void purgeDisjuncts() {
 
-			for (CFrame disjunct : new ArrayList<CFrame>(disjuncts)) {
+			Set<CFrame> allDisjunctSubs = new HashSet<CFrame>();
 
-				disjuncts.removeAll(disjunct.getSubs());
+			for (CFrame disjunct : disjuncts) {
+
+				allDisjunctSubs.addAll(disjunct.getSubs());
 			}
+
+			disjuncts.removeAll(allDisjunctSubs);
 		}
 	}
 

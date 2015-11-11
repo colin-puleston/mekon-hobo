@@ -101,7 +101,7 @@ public abstract class CFrame
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
-	public static CFrame resolveDisjunction(List<CFrame> disjuncts) {
+	public static CFrame resolveDisjunction(Collection<CFrame> disjuncts) {
 
 		return CDisjunction.resolve(null, disjuncts);
 	}
@@ -120,7 +120,9 @@ public abstract class CFrame
 	 * @return throws KAccessException if disjunct-list is empty or
 	 * if any of the disjuncts are extension-frames
 	 */
-	public static CFrame resolveDisjunction(String label, List<CFrame> disjuncts) {
+	public static CFrame resolveDisjunction(
+							String label,
+							Collection<CFrame> disjuncts) {
 
 		return CDisjunction.resolve(null, disjuncts);
 	}

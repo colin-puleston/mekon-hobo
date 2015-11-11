@@ -38,12 +38,12 @@ class CDisjunction extends CExpression {
 	static private final String EXPRESSION_TYPE_NAME = "disjunction";
 	static private final String DISPLAY_LABEL_DISJUNCT_SEPARATOR = " OR ";
 
-	static CFrame resolve(List<CFrame> disjuncts) {
+	static CFrame resolve(Collection<CFrame> disjuncts) {
 
 		return resolve(null, disjuncts);
 	}
 
-	static CFrame resolve(String label, List<CFrame> disjuncts) {
+	static CFrame resolve(String label, Collection<CFrame> disjuncts) {
 
 		if (disjuncts.isEmpty()) {
 
@@ -54,13 +54,13 @@ class CDisjunction extends CExpression {
 
 		if (disjuncts.size() == 1) {
 
-			return disjuncts.get(0);
+			return disjuncts.iterator().next();
 		}
 
 		return new CDisjunction(label, resolvedDisjuncts);
 	}
 
-	static private List<CAtomicFrame> resolveDisjuncts(List<CFrame> disjuncts) {
+	static private List<CAtomicFrame> resolveDisjuncts(Collection<CFrame> disjuncts) {
 
 		MostGeneralCFrames mostGenerals = new MostGeneralCFrames();
 
