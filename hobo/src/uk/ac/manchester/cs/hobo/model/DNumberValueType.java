@@ -52,7 +52,7 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 
 	IValue toSlotValue(N value) {
 
-		return INumber.create(value);
+		return new INumber(value);
 	}
 
 	N toFieldValue(IValue value) {

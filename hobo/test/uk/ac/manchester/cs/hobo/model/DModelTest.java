@@ -65,7 +65,7 @@ public class DModelTest extends FramesTestUtils {
 
 	static private IValue[] INITIAL_BS_SLOT_VALUES = new IValue[0];
 	static private IValue[] INITIAL_B_SLOT_VALUES = new IValue[0];
-	static private IValue[] INITIAL_INT_SLOT_VALUES = new IValue[]{INumber.create(5)};
+	static private IValue[] INITIAL_INT_SLOT_VALUES = new IValue[]{new INumber(5)};
 
 	private class ExternalSectionBuilder implements CSectionBuilder {
 

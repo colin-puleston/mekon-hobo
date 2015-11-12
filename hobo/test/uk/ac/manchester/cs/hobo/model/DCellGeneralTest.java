@@ -35,7 +35,7 @@ abstract class DCellGeneralTest extends DFieldTest {
 
 	void testCellAndSlotValue(DCell<Integer> cell, int expectValue) {
 
-		testCellAndSlotValue(cell, INumber.create(expectValue));
+		testCellAndSlotValue(cell, new INumber(expectValue));
 	}
 
 	void testCellAndSlotValue(DCell<Integer> cell, INumber expectValue) {

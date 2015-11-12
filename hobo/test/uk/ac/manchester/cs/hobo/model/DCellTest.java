@@ -89,6 +89,6 @@ public class DCellTest extends DCellGeneralTest {
 
 	private void addSlotValue(DCell<Integer> cell, int value) {
 
-		addSlotValues(cell, INumber.create(value));
+		addSlotValues(cell, new INumber(value));
 	}
 }
