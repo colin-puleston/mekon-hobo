@@ -175,18 +175,18 @@ public class IFrameRenderer extends ISerialiser {
 
 		private void renderCFrame(CFrame frame, XNode parentNode, String tag) {
 
-			if (frame.getCategory().disjunction()) {
+			XNode node = parentNode.addChild(tag);
 
-				XNode disjunctsNode = parentNode.addChild(tag);
+			if (frame.getCategory().disjunction()) {
 
 				for (CFrame disjunct : frame.getSubs()) {
 
-					renderIdentity(disjunct, disjunctsNode.addChild(tag));
+					renderIdentity(disjunct, node.addChild(tag));
 				}
 			}
 			else {
 
-				renderIdentity(frame, parentNode.addChild(tag));
+				renderIdentity(frame, node);
 			}
 		}
 

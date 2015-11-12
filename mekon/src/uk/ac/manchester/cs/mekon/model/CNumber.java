@@ -304,7 +304,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 	static private INumber resolveLimit(Number limit, INumber infinity) {
 
-		return limit != null ? INumber.create(limit) : infinity;
+		return limit != null ? new INumber(limit) : infinity;
 	}
 
 	static private Class<? extends Number> getRangeNumberType(INumber min, INumber max) {
@@ -531,7 +531,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 		try {
 
-			return validTypeValue(INumber.create(numberType, value));
+			return validTypeValue(new INumber(numberType, value));
 		}
 		catch (NumberFormatException e) {
 

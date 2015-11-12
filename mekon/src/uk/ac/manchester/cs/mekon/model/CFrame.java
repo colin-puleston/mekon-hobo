@@ -127,7 +127,7 @@ public abstract class CFrame
 		return CDisjunction.resolve(null, disjuncts);
 	}
 
-	private MFrame type;
+	private MFrame type = new MFrame(this);
 
 	private CAnnotations annotations = new CAnnotations(this);
 	private List<CFrameListener> listeners = new ArrayList<CFrameListener>();
@@ -541,8 +541,6 @@ public abstract class CFrame
 	CFrame() {
 
 		super(IFrame.class);
-
-		type = new MFrame(this);
 	}
 
 	void acceptVisitor(CValueVisitor visitor) throws Exception {

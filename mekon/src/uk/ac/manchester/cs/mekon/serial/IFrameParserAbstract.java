@@ -387,7 +387,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private INumber parseDefiniteINumber(CNumber valueType, XNode node, String attrName) {
 
-			return INumber.create(valueType.getNumberType(), node.getString(attrName));
+			return new INumber(valueType.getNumberType(), node.getString(attrName));
 		}
 
 		private void parseISlot(IFrame frame, XNode slotNode) {

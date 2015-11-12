@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.math.*;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * Represents a numeric-value, with the actual value being represented
  * by a primitive Java <code>Number</code> value of some type.
@@ -39,23 +37,24 @@ public class INumber implements IEntity, IValue {
 	/**
 	 * Represents a numeric-value of plus-infinity
 	 */
-	static public final INumber PLUS_INFINITY = new INumber(true);
+	static public final INumber PLUS_INFINITY = new INumber(new IPlusInfinity());
 
 	/**
 	 * Represents a numeric-value of minus-infinity
 	 */
-	static public final INumber MINUS_INFINITY = new INumber(false);
+	static public final INumber MINUS_INFINITY = new INumber(new IMinusInfinity());
+
+	private ITypeNumber typeNumber;
 
 	/**
 	 * Constructs object representing the specified numeric-value
 	 * with the relevant primitive Java <code>Number</code> value.
 	 *
 	 * @param value Numeric-value to be represented
-	 * @return Created object
 	 */
-	static public INumber create(Number value) {
+	public INumber(Number value) {
 
-		return getOperations(value.getClass()).toINumber(value);
+		this(IDefiniteNumberCreator.get().create(value));
 	}
 
 	/**
@@ -64,481 +63,10 @@ public class INumber implements IEntity, IValue {
 	 *
 	 * @param type Required primitive Java <code>Number</code> type
 	 * @param value String version of numeric-value to be represented
-	 * @return Created object
 	 */
-	static public INumber create(Class<? extends Number> type, String value) {
+	public INumber(Class<? extends Number> type, String value) {
 
-		return getOperations(type).toINumber(value);
-	}
-
-	static private INumberOperations<?> getOperations(Class<? extends Number> type) {
-
-		return getOperationsManager().get(type);
-	}
-
-	static private INumberOperationsManager getOperationsManager() {
-
-		return INumberOperationsManager.get();
-	}
-
-	private Value value;
-
-	private abstract class Value {
-
-		abstract boolean infinite();
-
-		abstract boolean indefinite();
-
-		abstract Class<? extends Number> getNumberType();
-
-		abstract CNumber getValueType();
-
-		abstract String getDescription();
-
-		abstract Number asTypeNumber();
-
-		abstract BigDecimal asBigDecimal();
-
-		Integer asInteger() {
-
-			return asBigDecimal().intValue();
-		}
-
-		Long asLong() {
-
-			return asBigDecimal().longValue();
-		}
-
-		Float asFloat() {
-
-			return asBigDecimal().floatValue();
-		}
-
-		Double asDouble() {
-
-			return asBigDecimal().doubleValue();
-		}
-
-		abstract boolean equalTo(Value other);
-
-		abstract boolean lessThan(Value other);
-
-		abstract boolean moreThan(Value other);
-
-		abstract int hashCodeValue();
-
-		boolean lessThanOrEqualTo(Value other) {
-
-			return !moreThan(other);
-		}
-
-		boolean moreThanOrEqualTo(Value other) {
-
-			return !lessThan(other);
-		}
-
-		boolean undefinedMinMax(Value other) {
-
-			if (other.indefinite()) {
-
-				return other.undefinedMinMax(this);
-			}
-
-			return false;
-		}
-
-		abstract INumber toINumber(BigDecimal value);
-	}
-
-	private class FiniteValue<N extends Number> extends Value {
-
-		private INumberOperations<N> operations;
-		private N value;
-
-		FiniteValue(INumberOperations<N> operations, N value) {
-
-			this.operations = operations;
-			this.value = value;
-		}
-
-		boolean infinite() {
-
-			return false;
-		}
-
-		boolean indefinite() {
-
-			return false;
-		}
-
-		Class<? extends Number> getNumberType() {
-
-			return operations.getNumberType();
-		}
-
-		CNumber getValueType() {
-
-			Class<N> numberType = operations.getNumberType();
-
-			return new CNumber(numberType, INumber.this, INumber.this);
-		}
-
-		String getDescription() {
-
-			return value.toString();
-		}
-
-		Number asTypeNumber() {
-
-			return value;
-		}
-
-		BigDecimal asBigDecimal() {
-
-			return operations.toBigDecimal(value);
-		}
-
-		INumber toINumber(BigDecimal value) {
-
-			return operations.toINumber(value);
-		}
-
-		boolean equalTo(Value other) {
-
-			if (other.infinite() || other.indefinite()) {
-
-				return other.equalTo(this);
-			}
-
-			return compareTo(other) == 0;
-		}
-
-		boolean lessThan(Value other) {
-
-			if (other.infinite() || other.indefinite()) {
-
-				return other.moreThan(this);
-			}
-
-			return compareTo(other) == -1;
-		}
-
-		boolean moreThan(Value other) {
-
-			if (other.infinite() || other.indefinite()) {
-
-				return other.lessThan(this);
-			}
-
-			return compareTo(other) == 1;
-		}
-
-		int hashCodeValue() {
-
-			return value.hashCode();
-		}
-
-		private int compareTo(Value other) {
-
-			return asBigDecimal().compareTo(other.asBigDecimal());
-		}
-	}
-
-	private abstract class InfiniteValue extends Value {
-
-		static private final String NAME_BODY = "-INFINITY";
-
-		boolean infinite() {
-
-			return true;
-		}
-
-		boolean indefinite() {
-
-			return false;
-		}
-
-		Class<? extends Number> getNumberType() {
-
-			return Number.class;
-		}
-
-		CNumber getValueType() {
-
-			throw createInvalidOperationException();
-		}
-
-		String getDescription() {
-
-			return getNamePrefix() + NAME_BODY;
-		}
-
-		Number asTypeNumber() {
-
-			throw createInvalidOperationException();
-		}
-
-		BigDecimal asBigDecimal() {
-
-			throw createInvalidOperationException();
-		}
-
-		boolean equalTo(Value other) {
-
-			return this == other;
-		}
-
-		int hashCodeValue() {
-
-			return asDouble().hashCode();
-		}
-
-		INumber toINumber(BigDecimal value) {
-
-			throw createInvalidOperationException();
-		}
-
-		abstract String getNamePrefix();
-
-		private KAccessException createInvalidOperationException() {
-
-			return new KAccessException(
-						"Cannot perform operation on infinite value: "
-						+ INumber.this);
-		}
-	}
-
-	private class PositiveInfiniteValue extends InfiniteValue {
-
-		static private final String NAME_PREFIX = "PLUS";
-
-		Integer asInteger() {
-
-			return Integer.MAX_VALUE;
-		}
-
-		Long asLong() {
-
-			return Long.MAX_VALUE;
-		}
-
-		Float asFloat() {
-
-			return Float.MAX_VALUE;
-		}
-
-		Double asDouble() {
-
-			return Double.MAX_VALUE;
-		}
-
-		boolean lessThan(Value other) {
-
-			return false;
-		}
-
-		boolean moreThan(Value other) {
-
-			return this != other;
-		}
-
-		String getNamePrefix() {
-
-			return NAME_PREFIX;
-		}
-	}
-
-	private class NegativeInfiniteValue extends InfiniteValue {
-
-		static private final String NAME_PREFIX = "MINUS";
-
-		Integer asInteger() {
-
-			return Integer.MIN_VALUE;
-		}
-
-		Long asLong() {
-
-			return Long.MIN_VALUE;
-		}
-
-		Float asFloat() {
-
-			return Float.MIN_VALUE;
-		}
-
-		Double asDouble() {
-
-			return Double.MIN_VALUE;
-		}
-
-		boolean lessThan(Value other) {
-
-			return this != other;
-		}
-
-		boolean moreThan(Value other) {
-
-			return false;
-		}
-
-		String getNamePrefix() {
-
-			return NAME_PREFIX;
-		}
-	}
-
-	private class IndefiniteValue extends Value {
-
-		private CNumber valueType;
-
-
-		IndefiniteValue(CNumber valueType) {
-
-			this.valueType = valueType;
-		}
-
-		boolean infinite() {
-
-			return false;
-		}
-
-		boolean indefinite() {
-
-			return true;
-		}
-
-		Class<? extends Number> getNumberType() {
-
-			return valueType.getNumberType();
-		}
-
-		CNumber getValueType() {
-
-			return valueType;
-		}
-
-		String getDescription() {
-
-			return valueType.getLimitsString();
-		}
-
-		Number asTypeNumber() {
-
-			throw createInvalidOperationException();
-		}
-
-		BigDecimal asBigDecimal() {
-
-			throw createInvalidOperationException();
-		}
-
-		INumber toINumber(BigDecimal value) {
-
-			throw createInvalidOperationException();
-		}
-
-		boolean equalTo(Value other) {
-
-			return valueType.equals(other.getValueType());
-		}
-
-		boolean lessThan(Value other) {
-
-			return strictOrder(this, other);
-		}
-
-		boolean moreThan(Value other) {
-
-			return strictOrder(other, this);
-		}
-
-		boolean lessThanOrEqualTo(Value other) {
-
-			return lessThan(other) || maxMinEqual(this, other);
-		}
-
-		boolean moreThanOrEqualTo(Value other) {
-
-			return moreThan(other) || maxMinEqual(other, this);
-		}
-
-		boolean undefinedMinMax(Value other) {
-
-			return !equalTo(other) && !lessThan(other) && !moreThan(other);
-		}
-
-		int hashCodeValue() {
-
-			return valueType.hashCode();
-		}
-
-		private boolean strictOrder(Value one, Value two) {
-
-			return getMax(one).lessThan(getMin(two));
-		}
-
-		private boolean maxMinEqual(Value one, Value two) {
-
-			return getMax(one).equalTo(getMin(two));
-		}
-
-		private INumber getMin(Value value) {
-
-			return value.getValueType().getMin();
-		}
-
-		private INumber getMax(Value value) {
-
-			return value.getValueType().getMax();
-		}
-
-		private KAccessException createInvalidOperationException() {
-
-			return new KAccessException(
-						"Cannot perform operation on indefinite value: "
-						+ INumber.this);
-		}
-	}
-
-	/**
-	 * Constructs object representing the specified integer-value.
-	 *
-	 * @param value Integer-value to be represented
-	 */
-	public INumber(Integer value) {
-
-		this(getOperationsManager().integerOperations, value);
-	}
-
-	/**
-	 * Constructs object representing the specified long-value.
-	 *
-	 * @param value Long-value to be represented
-	 */
-	public INumber(Long value) {
-
-		this(getOperationsManager().longOperations, value);
-	}
-
-	/**
-	 * Constructs object representing the specified float-value.
-	 *
-	 * @param value Float-value to be represented
-	 */
-	public INumber(Float value) {
-
-		this(getOperationsManager().floatOperations, value);
-	}
-
-	/**
-	 * Constructs object representing the specified double-value.
-	 *
-	 * @param value Double-value to be represented
-	 */
-	public INumber(Double value) {
-
-		this(getOperationsManager().doubleOperations, value);
+		this(IDefiniteNumberCreator.get().create(type, value));
 	}
 
 	/**
@@ -568,7 +96,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public int hashCode() {
 
-		return value.hashCodeValue();
+		return typeNumber.hashCodeValue();
 	}
 
 	/**
@@ -580,7 +108,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean infinite() {
 
-		return value.infinite();
+		return typeNumber.infinite();
 	}
 
 	/**
@@ -592,7 +120,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean indefinite() {
 
-		return value.indefinite();
+		return typeNumber.indefinite();
 	}
 
 	/**
@@ -600,7 +128,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public String toString() {
 
-		return FEntityDescriber.entityToString(this, value.getDescription());
+		return FEntityDescriber.entityToString(this, getDisplayLabel());
 	}
 
 	/**
@@ -608,7 +136,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public String getDisplayLabel() {
 
-		return value.getDescription();
+		return typeNumber.getDescription();
 	}
 
 	/**
@@ -621,7 +149,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public CNumber getType() {
 
-		return value.getValueType();
+		return typeNumber.getValueType();
 	}
 
 	/**
@@ -643,7 +171,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Class<? extends Number> getNumberType() {
 
-		return value.getNumberType();
+		return typeNumber.getNumberType();
 	}
 
 	/**
@@ -669,7 +197,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean equalTo(INumber other) {
 
-		return value.equalTo(other.value);
+		return typeNumber.equalTo(other.typeNumber);
 	}
 
 	/**
@@ -682,7 +210,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean lessThan(INumber other) {
 
-		return value.lessThan(other.value);
+		return typeNumber.lessThan(other.typeNumber);
 	}
 
 	/**
@@ -695,7 +223,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean lessThanOrEqualTo(INumber other) {
 
-		return value.lessThanOrEqualTo(other.value);
+		return typeNumber.lessThanOrEqualTo(other.typeNumber);
 	}
 
 	/**
@@ -708,7 +236,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean moreThan(INumber other) {
 
-		return value.moreThan(other.value);
+		return typeNumber.moreThan(other.typeNumber);
 	}
 
 	/**
@@ -721,7 +249,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean moreThanOrEqualTo(INumber other) {
 
-		return value.moreThanOrEqualTo(other.value);
+		return typeNumber.moreThanOrEqualTo(other.typeNumber);
 	}
 
 	/**
@@ -813,7 +341,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Number asTypeNumber() {
 
-		return value.asTypeNumber();
+		return typeNumber.asTypeNumber();
 	}
 
 	/**
@@ -824,7 +352,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Integer asInteger() {
 
-		return value.asInteger();
+		return typeNumber.asInteger();
 	}
 
 	/**
@@ -835,7 +363,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Long asLong() {
 
-		return value.asLong();
+		return typeNumber.asLong();
 	}
 
 	/**
@@ -846,7 +374,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Float asFloat() {
 
-		return value.asFloat();
+		return typeNumber.asFloat();
 	}
 
 	/**
@@ -857,50 +385,38 @@ public class INumber implements IEntity, IValue {
 	 */
 	public Double asDouble() {
 
-		return value.asDouble();
+		return typeNumber.asDouble();
 	}
 
 	INumber(CNumber valueType) {
 
-		value = new IndefiniteValue(valueType);
+		typeNumber = new IIndefiniteNumber(valueType);
 	}
 
-	CNumber toExactType() {
+	private INumber(IDefiniteNumber<?> definiteNumber) {
 
-		return new CNumber(getNumberType(), this, this);
+		typeNumber = definiteNumber;
+
+		definiteNumber.setINumber(this);
 	}
 
-	private <N extends Number>INumber(
-								INumberOperations<N> operations,
-								N numberValue) {
+	private INumber(IInfiniteNumber infiniteNumber) {
 
-		value = new FiniteValue<N>(operations, numberValue);
-	}
-
-	private INumber(boolean positiveInfinity) {
-
-		value = createInfiniteValue(positiveInfinity);
-	}
-
-	private InfiniteValue createInfiniteValue(boolean positive) {
-
-		return positive
-				? new PositiveInfiniteValue()
-				: new NegativeInfiniteValue();
+		typeNumber = infiniteNumber;
 	}
 
 	private boolean undefinedMinMax(INumber other) {
 
-		return value.undefinedMinMax(other.value);
+		return typeNumber.undefinedMinMax(other.typeNumber);
 	}
 
 	private BigDecimal asBigDecimal() {
 
-		return value.asBigDecimal();
+		return typeNumber.asBigDecimal();
 	}
 
 	private INumber toINumber(BigDecimal value) {
 
-		return this.value.toINumber(value);
+		return typeNumber.toINumber(value);
 	}
 }

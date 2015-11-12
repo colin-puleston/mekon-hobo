@@ -36,7 +36,6 @@ public enum IFrameCategory {
 	 */
 	ASSERTION,
 
-
 	/**
 	 * Frame represents a query.
 	 */
