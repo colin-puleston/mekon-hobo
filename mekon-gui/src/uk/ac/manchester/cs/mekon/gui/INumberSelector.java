@@ -469,7 +469,7 @@ class INumberSelector extends GDialog {
 
 		if (type.validNumberValue(value)) {
 
-			return INumber.create(type.getNumberType(), value);
+			return new INumber(type.getNumberType(), value);
 		}
 
 		if (showErrorIfInvalid) {
