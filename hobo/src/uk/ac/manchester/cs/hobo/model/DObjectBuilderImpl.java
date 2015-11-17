@@ -56,11 +56,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 			return viewer.getField();
 		}
 
-		public <N extends Number>DNumberCell<N> getCell(DNumberCellViewer<N> viewer) {
-
-			return viewer.getCell();
-		}
-
 		public <V>DArray<V> getArray(DArrayViewer<V> viewer) {
 
 			return viewer.getField();
@@ -82,29 +77,29 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return addField(createObjectCell(valueClass));
 	}
 
-	public DNumberCell<Integer> addIntegerCell() {
+	public DCell<Integer> addIntegerCell() {
 
 		return addNumberCell(DNumberRange.INTEGER);
 	}
 
-	public DNumberCell<Long> addLongCell() {
+	public DCell<Long> addLongCell() {
 
 		return addNumberCell(DNumberRange.LONG);
 	}
 
-	public DNumberCell<Float> addFloatCell() {
+	public DCell<Float> addFloatCell() {
 
 		return addNumberCell(DNumberRange.FLOAT);
 	}
 
-	public DNumberCell<Double> addDoubleCell() {
+	public DCell<Double> addDoubleCell() {
 
 		return addNumberCell(DNumberRange.DOUBLE);
 	}
 
-	public <N extends Number>DNumberCell<N> addNumberCell(DNumberRange<N> range) {
+	public <N extends Number>DCell<N> addNumberCell(DNumberRange<N> range) {
 
-		return addField(new DNumberCell<N>(model, range));
+		return addField(new DCell<N>(model, new DNumberValueType<N>(range)));
 	}
 
 	public DArray<DConcept<DObject>> addConceptArray() {
@@ -149,21 +144,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		array.setUniqueTypes(uniqueTypes);
 	}
 
-	public <V>DCellViewer<V> getViewer(DCell<V> cell) {
-
-		return cell.createViewer();
-	}
-
-	public <N extends Number>DNumberCellViewer<N> getViewer(DNumberCell<N> cell) {
-
-		return cell.createViewer();
-	}
-
-	public <V>DArrayViewer<V> getViewer(DArray<V> array) {
-
-		return array.createViewer();
-	}
-
 	public void addInitialiser(DObjectInitialiser initialiser) {
 
 		initialisers.add(initialiser);
@@ -182,6 +162,28 @@ class DObjectBuilderImpl implements DObjectBuilder {
 	public IFrame getFrame() {
 
 		return frame;
+	}
+
+	public <V>DCellViewer<V> getViewer(DCell<V> cell) {
+
+		return cell.createViewer();
+	}
+
+	public <V>DArrayViewer<V> getViewer(DArray<V> array) {
+
+		return array.createViewer();
+	}
+
+	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
+														DCell<D> objectCell) {
+
+		return FieldDeriver.deriveDisjunctionCell(model, objectCell);
+	}
+
+	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
+														DCell<N> numberCell) {
+
+		return FieldDeriver.deriveNumberRangeCell(model, numberCell);
 	}
 
 	DObjectBuilderImpl(DModel model, IFrame frame) {

@@ -31,8 +31,6 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 abstract class DValueType<V> {
 
-	abstract Class<V> getValueClass();
-
 	abstract CValue<?> getSlotValueType();
 
 	abstract IValue toSlotValue(V value);

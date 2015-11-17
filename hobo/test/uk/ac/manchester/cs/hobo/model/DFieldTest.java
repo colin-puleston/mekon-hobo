@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.hobo.model;
 
 import java.util.*;
 
+import static org.junit.Assert.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -56,5 +58,16 @@ abstract class DFieldTest extends DirectModelTest {
 	void testSlotValues(DField<?> field, IValue... expectedValues) {
 
 		testList(field.getSlot().getValues().asList(), Arrays.asList(expectedValues));
+	}
+
+	void testNoCellOrSlotValue(DCell<?> cell) {
+
+		testNoCellValue(cell);
+		testSlotValues(cell);
+	}
+
+	void testNoCellValue(DCell<?> cell) {
+
+		assertTrue("Cell-value should not be set", !cell.isSet());
 	}
 }

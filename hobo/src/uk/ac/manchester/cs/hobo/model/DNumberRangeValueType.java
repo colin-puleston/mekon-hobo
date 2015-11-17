@@ -24,28 +24,46 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Common interface for both {@link DNumberCell} and {@link
- * DNumberCellViewer}.
- *
  * @author Colin Puleston
  */
-public interface DNumberCellView<N extends Number> extends DCellView<N> {
+class DNumberRangeValueType<N extends Number> extends DValueType<DNumberRange<N>> {
 
-	/**
-	 * Specifies whether field currently has a range-value.
-	 *
-	 * @return True if field has current range-value
-	 */
-	public boolean rangeSet();
+	private CNumber slotValueType;
+	private Class<N> numberType;
 
-	/**
-	 * Retrieves current range-value of the field.
-	 *
-	 * @return Current value
-	 * @throws KAccessException if no current range-value
-	 */
-	public DNumberRange<N> getRange();
+	DNumberRangeValueType(DNumberValueType<N> numberValueType) {
+
+		slotValueType = numberValueType.getSlotValueType();
+		numberType = numberValueType.getNumberType();
+	}
+
+	CNumber getSlotValueType() {
+
+		return slotValueType;
+	}
+
+	IValue toSlotValue(DNumberRange<N> value) {
+
+		return value.asCNumber().asINumber();
+	}
+
+	DNumberRange<N> toFieldValue(IValue value) {
+
+		INumber number = (INumber)value;
+
+		return new DNumberRange<N>(numberType, number.getType());
+	}
+
+	boolean convertibleToFieldValue(IValue value) {
+
+		return !((INumber)value).infinite();
+	}
+
+	CCardinality getDefaultCardinalityForArrays() {
+
+		throw new Error("Method should never be invoked!");
+	}
 }

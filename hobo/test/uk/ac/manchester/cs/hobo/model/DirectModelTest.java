@@ -61,18 +61,24 @@ class DirectModelTest extends FramesModelTest {
 		return array;
 	}
 
-	DNumberCell<Integer> createIntegerCell(int min, int max) {
+	DCell<Integer> createIntegerCell(int min, int max) {
 
 		return createIntegerCell(DNumberRange.range(min, max));
 	}
 
-	DNumberCell<Integer> createIntegerCell(DNumberRange<Integer> range) {
+	DCell<Integer> createIntegerCell(DNumberRange<Integer> range) {
 
-		DNumberCell<Integer> cell = new DNumberCell<Integer>(model, range);
+		DNumberValueType<Integer> valueType = new DNumberValueType<Integer>(range);
+		DCell<Integer> cell = new DCell<Integer>(model, valueType);
 
 		cell.setSlot(createNumberSlot(range.asCNumber()));
 
 		return cell;
+	}
+
+	DModel getDModel() {
+
+		return model;
 	}
 
 	private DirectModelTest(DModel model) {

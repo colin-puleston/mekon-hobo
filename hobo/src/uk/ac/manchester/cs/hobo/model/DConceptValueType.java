@@ -43,11 +43,6 @@ class DConceptValueType<D extends DObject> extends DValueType<DConcept<D>> {
 		slotValueType = rootSlotValue.getType();
 	}
 
-	Class<DConcept<D>> getValueClass() {
-
-		throw new Error("Method should never be invoked!");
-	}
-
 	MFrame getSlotValueType() {
 
 		return slotValueType;

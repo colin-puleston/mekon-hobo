@@ -40,7 +40,8 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public abstract class DMatchRangeOverlapper
 						<M extends DObject,
-						Q extends M>
+						Q extends M,
+						R extends Number>
 						extends DMatcherCustomiser<M, Q> {
 
 	private class Filter extends DMatchFilter<M> {
@@ -90,7 +91,7 @@ public abstract class DMatchRangeOverlapper
 	 */
 	protected void preProcess(M instance) {
 
-		DNumberCell<Integer> cell = getRangeMatchCellOrNull(instance);
+		DCell<DNumberRange<R>> cell = getRangeMatchCellOrNull(instance);
 
 		if (cell != null) {
 
@@ -122,7 +123,7 @@ public abstract class DMatchRangeOverlapper
 	 * @return Required range-match cell, or null if not currently
 	 * present
 	 */
-	protected abstract DNumberCell<Integer> getRangeMatchCellOrNull(M instance);
+	protected abstract DCell<DNumberRange<R>> getRangeMatchCellOrNull(M instance);
 
 	private CNumber getMatchRange(M instance) {
 
@@ -131,14 +132,9 @@ public abstract class DMatchRangeOverlapper
 
 	private CNumber getMatchRangeOrNull(M instance) {
 
-		DNumberCell<Integer> cell = getRangeMatchCellOrNull(instance);
+		DCell<DNumberRange<R>> cell = getRangeMatchCellOrNull(instance);
 
-		if (cell != null && cell.rangeSet()) {
-
-			return cell.getRange().asCNumber();
-		}
-
-		return null;
+		return cell != null && cell.isSet() ? cell.get().asCNumber() : null;
 	}
 
 	private <V>V checkNotNull(V value) {

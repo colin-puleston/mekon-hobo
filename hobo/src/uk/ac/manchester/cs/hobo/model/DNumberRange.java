@@ -271,6 +271,11 @@ public class DNumberRange<N extends Number> {
 	 */
 	public boolean equals(Object other) {
 
+		if (other == this) {
+
+			return true;
+		}
+
 		if (other instanceof DNumberRange) {
 
 			return cNumber.equals(((DNumberRange)other).cNumber);
@@ -305,7 +310,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + cNumber.getDisplayLabel();
+		return getClass().getSimpleName() + "(" + cNumber.getDisplayLabel() + ")";
 	}
 
 	/**

@@ -24,44 +24,42 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import static org.junit.Assert.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class DCellGeneralTest extends DFieldTest {
+class DDisjunctionValueType<D extends DObject> extends DValueType<DDisjunction<D>> {
 
-	void testCellAndSlotValue(DCell<Integer> cell, int expectValue) {
+	private DModel model;
+	private Class<D> disjunctsClass;
+	private CFrame slotValueType;
 
-		testCellAndSlotValue(cell, new INumber(expectValue));
+	DDisjunctionValueType(DModel model, DObjectValueType<D> objectValueType) {
+
+		this.model = model;
+
+		disjunctsClass = objectValueType.getValueClass();
+		slotValueType = objectValueType.getSlotValueType();
 	}
 
-	void testCellAndSlotValue(DCell<Integer> cell, INumber expectValue) {
+	CFrame getSlotValueType() {
 
-		testCellValue(cell, expectValue);
-		testSlotValues(cell, expectValue);
+		return slotValueType;
 	}
 
-	void testCellValue(DCell<Integer> cell, INumber expectValue) {
+	IValue toSlotValue(DDisjunction<D> value) {
 
-		assertTrue(
-			"Cell-value should be set",
-			cell.isSet());
-		assertTrue(
-			"Unexpected cell-value: " + cell.get(),
-			cell.get() == expectValue.asInteger());
+		return value.asDisjunctionIFrame();
 	}
 
-	void testNoCellOrSlotValue(DCell<Integer> cell) {
+	DDisjunction<D> toFieldValue(IValue value) {
 
-		testNoCellValue(cell);
-		testSlotValues(cell);
+		return new DDisjunction<D>(model, disjunctsClass, (IFrame)value);
 	}
 
-	void testNoCellValue(DCell<Integer> cell) {
+	CCardinality getDefaultCardinalityForArrays() {
 
-		assertTrue("Cell-value should not be set", !cell.isSet());
+		return CCardinality.REPEATABLE_TYPES;
 	}
 }

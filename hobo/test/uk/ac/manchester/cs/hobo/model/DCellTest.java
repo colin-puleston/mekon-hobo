@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
@@ -32,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public class DCellTest extends DCellGeneralTest {
+public class DCellTest extends DFieldTest {
 
 	@Test
 	public void test_directUpdates() {
@@ -70,7 +71,7 @@ public class DCellTest extends DCellGeneralTest {
 		addSlotValue(createRange_0_10_Cell(), 11);
 	}
 
-	private DNumberCell<Integer> createRange_0_10_Cell() {
+	private DCell<Integer> createRange_0_10_Cell() {
 
 		return createIntegerCell(DNumberRange.range(0, 10));
 	}
@@ -90,5 +91,26 @@ public class DCellTest extends DCellGeneralTest {
 	private void addSlotValue(DCell<Integer> cell, int value) {
 
 		addSlotValues(cell, new INumber(value));
+	}
+
+	private void testCellAndSlotValue(DCell<?> cell, int expectValue) {
+
+		testCellAndSlotValue(cell, new INumber(expectValue));
+	}
+
+	private void testCellAndSlotValue(DCell<?> cell, INumber expectValue) {
+
+		testCellValue(cell, expectValue);
+		testSlotValues(cell, expectValue);
+	}
+
+	private void testCellValue(DCell<?> cell, INumber expectValue) {
+
+		assertTrue(
+			"Cell-value should be set",
+			cell.isSet());
+		assertTrue(
+			"Unexpected cell-value: " + cell.get(),
+			cell.get() == expectValue.asInteger());
 	}
 }

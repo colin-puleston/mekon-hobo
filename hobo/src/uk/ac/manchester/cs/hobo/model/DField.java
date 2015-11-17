@@ -43,6 +43,8 @@ public abstract class DField<V> implements DFieldView<V> {
 	private DValueType<V> valueType;
 	private ISlot slot = null;
 
+	private List<DField<?>> derivedFields = new ArrayList<DField<?>>();
+
 	private Map<KValuesListener<V>, SlotValuesListener> slotValuesListeners
 						= new HashMap<KValuesListener<V>, SlotValuesListener>();
 
@@ -175,9 +177,28 @@ public abstract class DField<V> implements DFieldView<V> {
 		this.valueType = valueType;
 	}
 
+	void onFieldDerived(DField<?> derivedField) {
+
+		if (slot == null) {
+
+			derivedFields.add(derivedField);
+		}
+		else {
+
+			derivedField.setSlot(slot);
+		}
+	}
+
 	void setSlot(ISlot slot) {
 
 		this.slot = slot;
+
+		for (DField<?> derivedField : derivedFields) {
+
+			derivedField.setSlot(slot);
+		}
+
+		derivedFields = null;
 	}
 
 	boolean add(V value) {
@@ -212,9 +233,9 @@ public abstract class DField<V> implements DFieldView<V> {
 
 	abstract DFieldViewer<V, ?> createViewer();
 
-	Class<V> getValueClass() {
+	DValueType<V> getValueType() {
 
-		return valueType.getValueClass();
+		return valueType;
 	}
 
 	CValue<?> getSlotValueType() {

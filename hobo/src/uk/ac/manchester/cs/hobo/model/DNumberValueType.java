@@ -40,14 +40,14 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 		numberType = range.getNumberType();
 	}
 
-	Class<N> getValueClass() {
-
-		return numberType;
-	}
-
 	CNumber getSlotValueType() {
 
 		return slotValueType;
+	}
+
+	Class<N> getNumberType() {
+
+		return numberType;
 	}
 
 	IValue toSlotValue(N value) {
@@ -62,7 +62,7 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 
 	boolean convertibleToFieldValue(IValue value) {
 
-		return !((INumber)value).indefinite();
+		return ((INumber)value).definite();
 	}
 
 	CCardinality getDefaultCardinalityForArrays() {

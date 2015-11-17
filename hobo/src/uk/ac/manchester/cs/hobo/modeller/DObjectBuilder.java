@@ -107,7 +107,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DNumberCell<Integer> addIntegerCell();
+	public DCell<Integer> addIntegerCell();
 
 	/**
 	 * Creates a single-valued OM field with long-type values,
@@ -115,7 +115,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DNumberCell<Long> addLongCell();
+	public DCell<Long> addLongCell();
 
 	/**
 	 * Creates a single-valued OM field with float-type values,
@@ -123,7 +123,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DNumberCell<Float> addFloatCell();
+	public DCell<Float> addFloatCell();
 
 	/**
 	 * Creates a single-valued OM field with double-type values,
@@ -131,7 +131,7 @@ public interface DObjectBuilder {
 	 *
 	 * @return Created field
 	 */
-	public DNumberCell<Double> addDoubleCell();
+	public DCell<Double> addDoubleCell();
 
 	/**
 	 * Creates a single-valued OM field with number-type values,
@@ -140,7 +140,7 @@ public interface DObjectBuilder {
 	 * @param range Specific value-constraints
 	 * @return Created field
 	 */
-	public <N extends Number>DNumberCell<N> addNumberCell(DNumberRange<N> range);
+	public <N extends Number>DCell<N> addNumberCell(DNumberRange<N> range);
 
 	/**
 	 * Creates a multi-valued OM field with concept-level-frame
@@ -238,33 +238,6 @@ public interface DObjectBuilder {
 	public void setUniqueTypes(DArray<?> array, boolean uniqueTypes);
 
 	/**
-	 * Provides a viewer for the specified single-valued OM field.
-	 *
-	 * @param <V> Cell value-type
-	 * @param cell Cell to be viewed
-	 * @return Viewer for cell
-	 */
-	public <V>DCellViewer<V> getViewer(DCell<V> cell);
-
-	/**
-	 * Provides a viewer for the specified multi-valued OM field.
-	 *
-	 * @param <V> Array value-type
-	 * @param array Array to be viewed
-	 * @return Viewer for array
-	 */
-	public <V>DArrayViewer<V> getViewer(DArray<V> array);
-
-	/**
-	 * Provides a viewer for the specified number-valued OM field.
-	 *
-	 * @param <N> Number-cell value-type
-	 * @param cell Cell to be viewed
-	 * @return Viewer for cell
-	 */
-	public <N extends Number>DNumberCellViewer<N> getViewer(DNumberCell<N> cell);
-
-	/**
 	 * Registers an initialiser to perform any required
 	 * post-construction field-initialisations.
 	 *
@@ -296,4 +269,44 @@ public interface DObjectBuilder {
 	 * @return Frame to which object is bound
 	 */
 	public IFrame getFrame();
+
+	/**
+	 * Provides a viewer for the specified single-valued OM field.
+	 *
+	 * @param <V> Cell value-type
+	 * @param cell Cell to be viewed
+	 * @return Viewer for cell
+	 */
+	public <V>DCellViewer<V> getViewer(DCell<V> cell);
+
+	/**
+	 * Provides a viewer for the specified multi-valued OM field.
+	 *
+	 * @param <V> Array value-type
+	 * @param array Array to be viewed
+	 * @return Viewer for array
+	 */
+	public <V>DArrayViewer<V> getViewer(DArray<V> array);
+
+	/**
+	 * Creates a <code>DDisjunction</code>-valued cell bound to the same
+	 * slot as the specified <code>DObject</code>-valued source cell.
+	 *
+	 * @param <D> Value-type of source cell, and of disjuncts for
+	 * disjunction-values of created cell
+	 * @return objectCell Source cell
+	 * @return Created cell
+	 */
+	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(DCell<D> objectCell);
+
+	/**
+	 * Creates a <code>DNumberRange</code>-valued cell bound to the same
+	 * slot as the specified <code>Number</code>-valued source cell.
+	 *
+	 * @param <N> Value-type of source cell, and of limit-values of the
+	 * range-values of created cell
+	 * @return objectCell Source cell
+	 * @return Created cell
+	 */
+	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(DCell<N> numberCell);
 }

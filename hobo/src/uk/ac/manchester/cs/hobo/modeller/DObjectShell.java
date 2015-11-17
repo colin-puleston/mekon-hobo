@@ -138,19 +138,19 @@ public abstract class DObjectShell implements DObject {
 	}
 
 	/**
-	 * Convenience method that re-sets the category of the
-	 * associated frame, to that of the frame associated with the
-	 * specified template-object.
+	 * Convenience method that re-sets the function of the associated
+	 * frame, to that of the frame associated with the specified
+	 * template-object.
 	 *
-	 * @param template Object whose associated frame-category is
+	 * @param template Object whose associated frame-function is
 	 * to be copied
 	 * @throws KAccessException if the frame associated with this
 	 * object is currently being referenced via the slots of
 	 * another frame
 	 */
-	protected void alignCategory(DObject template) {
+	protected void alignFunction(DObject template) {
 
-		getFrame().alignCategory(template.getFrame());
+		getFrame().alignFunction(template.getFrame());
 	}
 
 	private boolean equalsDObject(DObject other) {

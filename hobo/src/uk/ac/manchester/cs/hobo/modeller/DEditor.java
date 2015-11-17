@@ -56,15 +56,6 @@ public interface DEditor {
 	public <V>DCell<V> getCell(DCellViewer<V> viewer);
 
 	/**
-	 * Retrieves the OM number-cell being viewed by the specified viewer.
-	 *
-	 * @param <N> Generic version of cell value-type
-	 * @param viewer Viewer for which cell is required
-	 * @return Viewed cell
-	 */
-	public <N extends Number>DNumberCell<N> getCell(DNumberCellViewer<N> viewer);
-
-	/**
 	 * Retrieves the OM array being viewed by the specified viewer.
 	 *
 	 * @param <V> Generic version of array value-type
