@@ -137,6 +137,7 @@ public interface DObjectBuilder {
 	 * Creates a single-valued OM field with number-type values,
 	 * with specified value-constraints.
 	 *
+	 * @param <N> Value-type of number-cell
 	 * @param range Specific value-constraints
 	 * @return Created field
 	 */
@@ -293,20 +294,22 @@ public interface DObjectBuilder {
 	 * slot as the specified <code>DObject</code>-valued source cell.
 	 *
 	 * @param <D> Value-type of source cell, and of disjuncts for
-	 * disjunction-values of created cell
-	 * @return objectCell Source cell
-	 * @return Created cell
+	 * disjunction-values of derived cell
+	 * @param objectCell Source cell
+	 * @return Derived cell
 	 */
-	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(DCell<D> objectCell);
+	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
+														DCell<D> objectCell);
 
 	/**
 	 * Creates a <code>DNumberRange</code>-valued cell bound to the same
 	 * slot as the specified <code>Number</code>-valued source cell.
 	 *
 	 * @param <N> Value-type of source cell, and of limit-values of the
-	 * range-values of created cell
-	 * @return objectCell Source cell
-	 * @return Created cell
+	 * range-values of derived cell
+	 * @param numberCell Source cell
+	 * @return Derived cell
 	 */
-	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(DCell<N> numberCell);
+	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
+														DCell<N> numberCell);
 }
