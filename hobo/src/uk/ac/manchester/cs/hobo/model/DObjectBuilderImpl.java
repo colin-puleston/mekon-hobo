@@ -72,9 +72,24 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return addField(createConceptCell(valueClass));
 	}
 
+	public DArray<DConcept<DObject>> addConceptArray() {
+
+		return addConceptArray(DObject.class);
+	}
+
+	public <D extends DObject>DArray<DConcept<D>> addConceptArray(Class<D> valueClass) {
+
+		return addField(createConceptArray(valueClass));
+	}
+
 	public <D extends DObject>DCell<D> addObjectCell(Class<D> valueClass) {
 
 		return addField(createObjectCell(valueClass));
+	}
+
+	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass) {
+
+		return addField(createObjectArray(valueClass));
 	}
 
 	public DCell<Integer> addIntegerCell() {
@@ -102,19 +117,22 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return addField(new DCell<N>(model, new DNumberValueType<N>(range)));
 	}
 
-	public DArray<DConcept<DObject>> addConceptArray() {
+	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
+														DCell<D> objectCell) {
 
-		return addConceptArray(DObject.class);
+		return FieldDeriver.deriveDisjunctionCell(model, objectCell);
 	}
 
-	public <D extends DObject>DArray<DConcept<D>> addConceptArray(Class<D> valueClass) {
+	public <D extends DObject>DArray<DDisjunction<D>> deriveDisjunctionArray(
+														DArray<D> objectArray) {
 
-		return addField(createConceptArray(valueClass));
+		return FieldDeriver.deriveDisjunctionArray(model, objectArray);
 	}
 
-	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass) {
+	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
+														DCell<N> numberCell) {
 
-		return addField(createObjectArray(valueClass));
+		return FieldDeriver.deriveNumberRangeCell(model, numberCell);
 	}
 
 	public void setContainerClass(
@@ -172,18 +190,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 	public <V>DArrayViewer<V> getViewer(DArray<V> array) {
 
 		return array.createViewer();
-	}
-
-	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
-														DCell<D> objectCell) {
-
-		return FieldDeriver.deriveDisjunctionCell(model, objectCell);
-	}
-
-	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
-														DCell<N> numberCell) {
-
-		return FieldDeriver.deriveNumberRangeCell(model, numberCell);
 	}
 
 	DObjectBuilderImpl(DModel model, IFrame frame) {

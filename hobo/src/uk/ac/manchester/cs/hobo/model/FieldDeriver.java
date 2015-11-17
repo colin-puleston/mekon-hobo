@@ -36,21 +36,22 @@ class FieldDeriver {
 									DVT extends DValueType<DV>> {
 
 		final DModel model;
-		final DCell<SV> sourceCell;
+		final DField<SV> sourceField;
 
-		TypeFieldDeriver(DModel model, DCell<SV> sourceCell) {
+		TypeFieldDeriver(DModel model, DField<SV> sourceField) {
 
 			this.model = model;
-			this.sourceCell = sourceCell;
+			this.sourceField = sourceField;
 		}
 
-		DCell<DV> derive() {
+		DCell<DV> deriveCell() {
 
-			DCell<DV> cell = new DCell<DV>(model, deriveValueType());
+			return initialiseDerived(new DCell<DV>(model, deriveValueType()));
+		}
 
-			sourceCell.onFieldDerived(cell);
+		DArray<DV> deriveArray() {
 
-			return cell;
+			return initialiseDerived(new DArray<DV>(model, deriveValueType()));
 		}
 
 		abstract SVT getSourceValueType();
@@ -61,9 +62,17 @@ class FieldDeriver {
 
 			return deriveValueType(getSourceValueType());
 		}
+
+		private <DF extends DField<DV>>DF initialiseDerived(DF derivedField) {
+
+			sourceField.onFieldDerived(derivedField);
+
+			return derivedField;
+		}
 	}
 
-	static private class DisjunctionCellDeriver<D extends DObject>
+	static private class DisjunctionFieldDeriver
+							<D extends DObject>
 							extends
 								TypeFieldDeriver
 									<D,
@@ -71,14 +80,14 @@ class FieldDeriver {
 									DDisjunction<D>,
 									DDisjunctionValueType<D>> {
 
-		DisjunctionCellDeriver(DModel model, DCell<D> sourceCell) {
+		DisjunctionFieldDeriver(DModel model, DField<D> sourceField) {
 
-			super(model, sourceCell);
+			super(model, sourceField);
 		}
 
 		DObjectValueType<D> getSourceValueType() {
 
-			return (DObjectValueType<D>)sourceCell.getValueType();
+			return (DObjectValueType<D>)sourceField.getValueType();
 		}
 
 		DDisjunctionValueType<D> deriveValueType(DObjectValueType<D> sourceValueType) {
@@ -102,7 +111,7 @@ class FieldDeriver {
 
 		DNumberValueType<N> getSourceValueType() {
 
-			return (DNumberValueType<N>)sourceCell.getValueType();
+			return (DNumberValueType<N>)sourceField.getValueType();
 		}
 
 		DNumberRangeValueType<N> deriveValueType(DNumberValueType<N> sourceValueType) {
@@ -115,13 +124,20 @@ class FieldDeriver {
 														DModel model,
 														DCell<D> objectCell) {
 
-		return new DisjunctionCellDeriver<D>(model, objectCell).derive();
+		return new DisjunctionFieldDeriver<D>(model, objectCell).deriveCell();
+	}
+
+	static <D extends DObject>DArray<DDisjunction<D>> deriveDisjunctionArray(
+														DModel model,
+														DArray<D> objectArray) {
+
+		return new DisjunctionFieldDeriver<D>(model, objectArray).deriveArray();
 	}
 
 	static <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
 														DModel model,
 														DCell<N> numberCell) {
 
-		return new NumberRangeCellDeriver<N>(model, numberCell).derive();
+		return new NumberRangeCellDeriver<N>(model, numberCell).deriveCell();
 	}
 }

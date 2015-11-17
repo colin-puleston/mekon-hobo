@@ -91,6 +91,26 @@ public interface DObjectBuilder {
 	public <D extends DObject>DCell<DConcept<D>> addConceptCell(Class<D> valueClass);
 
 	/**
+	 * Creates a multi-valued OM field with concept-level-frame
+	 * values, with no constraints on valid values.
+	 *
+	 * @return Created field
+	 */
+	public DArray<DConcept<DObject>> addConceptArray();
+
+	/**
+	 * Creates a multi-valued OM field with concept-level-frame
+	 * values, where valid values are defined via a specific
+	 * root-frame.
+	 *
+	 * @param <D> Generic version of value-class
+	 * @param valueClass OM class that is bound to root-frame
+	 * defining valid field values
+	 * @return Created field
+	 */
+	public <D extends DObject>DArray<DConcept<D>> addConceptArray(Class<D> valueClass);
+
+	/**
 	 * Creates a single-valued OM field with OM-object values of the
 	 * specified type.
 	 *
@@ -100,6 +120,16 @@ public interface DObjectBuilder {
 	 */
 
 	public <D extends DObject>DCell<D> addObjectCell(Class<D> valueClass);
+
+	/**
+	 * Creates a multi-valued OM field with OM-object values of the
+	 * specified type.
+	 *
+	 * @param <D> Generic version of value-class
+	 * @param valueClass OM class of field values
+	 * @return Created field
+	 */
+	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass);
 
 	/**
 	 * Creates a single-valued OM field with integer-type values,
@@ -144,34 +174,40 @@ public interface DObjectBuilder {
 	public <N extends Number>DCell<N> addNumberCell(DNumberRange<N> range);
 
 	/**
-	 * Creates a multi-valued OM field with concept-level-frame
-	 * values, with no constraints on valid values.
+	 * Creates a <code>DDisjunction</code>-valued cell bound to the same
+	 * slot as the specified <code>DObject</code>-valued source cell.
 	 *
-	 * @return Created field
+	 * @param <D> Value-type of source cell, and of disjuncts for
+	 * disjunction-values of derived cell
+	 * @param objectCell Source cell
+	 * @return Derived cell
 	 */
-	public DArray<DConcept<DObject>> addConceptArray();
+	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
+														DCell<D> objectCell);
 
 	/**
-	 * Creates a multi-valued OM field with concept-level-frame
-	 * values, where valid values are defined via a specific
-	 * root-frame.
+	 * Creates a <code>DDisjunction</code>-valued array bound to the same
+	 * slot as the specified <code>DObject</code>-valued source array.
 	 *
-	 * @param <D> Generic version of value-class
-	 * @param valueClass OM class that is bound to root-frame
-	 * defining valid field values
-	 * @return Created field
+	 * @param <D> Value-type of source array, and of disjuncts for
+	 * disjunction-values of derived array
+	 * @param objectArray Source array
+	 * @return Derived array
 	 */
-	public <D extends DObject>DArray<DConcept<D>> addConceptArray(Class<D> valueClass);
+	public <D extends DObject>DArray<DDisjunction<D>> deriveDisjunctionArray(
+														DArray<D> objectArray);
 
 	/**
-	 * Creates a multi-valued OM field with OM-object values of the
-	 * specified type.
+	 * Creates a <code>DNumberRange</code>-valued cell bound to the same
+	 * slot as the specified <code>Number</code>-valued source cell.
 	 *
-	 * @param <D> Generic version of value-class
-	 * @param valueClass OM class of field values
-	 * @return Created field
+	 * @param <N> Value-type of source cell, and of limit-values of the
+	 * range-values of derived cell
+	 * @param numberCell Source cell
+	 * @return Derived cell
 	 */
-	public <D extends DObject>DArray<D> addObjectArray(Class<D> valueClass);
+	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
+														DCell<N> numberCell);
 
 	/**
 	 * Enables the explicit specification of the "container-class"
@@ -288,28 +324,4 @@ public interface DObjectBuilder {
 	 * @return Viewer for array
 	 */
 	public <V>DArrayViewer<V> getViewer(DArray<V> array);
-
-	/**
-	 * Creates a <code>DDisjunction</code>-valued cell bound to the same
-	 * slot as the specified <code>DObject</code>-valued source cell.
-	 *
-	 * @param <D> Value-type of source cell, and of disjuncts for
-	 * disjunction-values of derived cell
-	 * @param objectCell Source cell
-	 * @return Derived cell
-	 */
-	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
-														DCell<D> objectCell);
-
-	/**
-	 * Creates a <code>DNumberRange</code>-valued cell bound to the same
-	 * slot as the specified <code>Number</code>-valued source cell.
-	 *
-	 * @param <N> Value-type of source cell, and of limit-values of the
-	 * range-values of derived cell
-	 * @param numberCell Source cell
-	 * @return Derived cell
-	 */
-	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
-														DCell<N> numberCell);
 }
