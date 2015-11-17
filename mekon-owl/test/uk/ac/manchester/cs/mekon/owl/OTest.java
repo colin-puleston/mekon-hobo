@@ -80,12 +80,12 @@ public class OTest extends FramesTestUtils {
 
 	public IFrame createIFrame(String name) {
 
-		return model.instantiate(nameToIdentity(name));
+		return instantiate(name, IFrameFunction.ASSERTION);
 	}
 
 	public IFrame createQueryIFrame(String name) {
 
-		return model.instantiateQuery(nameToIdentity(name));
+		return instantiate(name, IFrameFunction.QUERY);
 	}
 
 	public ISlot getISlot(IFrame container, String name) {
@@ -111,5 +111,15 @@ public class OTest extends FramesTestUtils {
 	public String nameToIdentifier(String name) {
 
 		return TEST_NAMESPACE + name;
+	}
+
+	public IFrame instantiate(String name, IFrameFunction function) {
+
+		return getFrame(name).instantiate(function);
+	}
+
+	private CFrame getFrame(String name) {
+
+		return model.getFrames().get(nameToIdentity(name));
 	}
 }
