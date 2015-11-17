@@ -92,8 +92,8 @@ public abstract class CFrame
 						implements CIdentified, CSourced, IValue {
 
 	/**
-	 * Invokes {@link #resolveDisjunction(String, List)}} with a
-	 * generated label providing a description of the disjunction.
+	 * Invokes {@link #resolveDisjunction(String, Collection)}} with
+	 * a generated label providing a description of the disjunction.
 	 *
 	 * @param disjuncts Relevant disjuncts
 	 * @return Created disjunction-frame, or single atomic-frame if

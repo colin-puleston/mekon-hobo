@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.store;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * Represents the ranked results of an instance-matching query
  * executed via an {@link IStore} object.
