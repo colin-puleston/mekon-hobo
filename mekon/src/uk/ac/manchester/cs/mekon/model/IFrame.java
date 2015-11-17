@@ -664,7 +664,7 @@ public class IFrame implements IEntity, IValue {
 			throw new KAccessException(
 						"Cannot add frame: " + this
 						+ " as slot-value on frame: " + referencingFrame
-						+ " (attempting to mix assertion and query frames)");
+						+ " (attempting to mix ASSERTION and QUERY frames)");
 		}
 	}
 

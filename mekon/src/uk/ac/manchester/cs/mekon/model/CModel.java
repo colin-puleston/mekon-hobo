@@ -118,63 +118,6 @@ public class CModel implements CAnnotatable {
 		return annotations;
 	}
 
-	/**
-	 * Creates instantiation of a frame, with category of {@link
-	 * IFrameCategory#ATOMIC} and function of {@link
-	 * IFrameFunction#ASSERTION}.
-	 *
-	 * @param identity Identity of frame to be instantiated
-	 * @return Atomic-assertion instantiation of frame
-	 */
-	public IFrame instantiate(CIdentity identity) {
-
-		return getFrame(identity).instantiate();
-	}
-
-	/**
-	 * Creates instantiation of a frame, with category of {@link
-	 * IFrameCategory#ATOMIC} and specified function.
-	 *
-	 * @param identity Identity of frame to be instantiated
-	 * @param function Required function of frame
-	 * @return Atomic instantiation of frame with required function
-	 */
-	public IFrame instantiate(CIdentity identity, IFrameFunction function) {
-
-		return getFrame(identity).instantiate(function);
-	}
-
-	/**
-	 * Creates instantiation of a frame, with specified category
-	 * and function.
-	 *
-	 * @param identity Identity of frame to be instantiated
-	 * @param function Required function of frame
-	 * @param category Required category of frame
-	 * @return Instantiation of frame with required category and
-	 * function
-	 */
-	public IFrame instantiate(
-					CIdentity identity,
-					IFrameCategory category,
-					IFrameFunction function) {
-
-		return getFrame(identity).instantiate(category, function);
-	}
-
-	/**
-	 * Creates instantiation of a frame, with category of {@link
-	 * IFrameCategory#ATOMIC} and function of {@link
-	 * IFrameFunction#QUERY}.
-	 *
-	 * @param identity Identity of frame to be instantiated
-	 * @return Atomic-query instantiation of frame
-	 */
-	public IFrame instantiateQuery(CIdentity identity) {
-
-		return getFrame(identity).instantiateQuery();
-	}
-
 	CModel() {
 	}
 

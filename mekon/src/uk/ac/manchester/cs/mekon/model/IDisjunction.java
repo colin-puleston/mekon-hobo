@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * @author Colin Puleston
  */
@@ -35,6 +37,18 @@ class IDisjunction extends IFrame {
 	static private final String DISJUNCTS_SLOT_LABEL = "OR...";
 
 	private ISlot disjunctsSlot;
+
+	public void resetFunction(IFrameFunction function) {
+
+		if (function == IFrameFunction.ASSERTION) {
+
+			throw new KAccessException(
+						"Attempting to set function of ASSERTION "
+						+ "for DISJUNCTION frame: " + this);
+		}
+
+		super.resetFunction(function);
+	}
 
 	public int hashCode() {
 

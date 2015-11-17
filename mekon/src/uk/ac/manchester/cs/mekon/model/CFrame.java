@@ -521,24 +521,6 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Creates instantiation of the frame, with specified category
-	 * and function.
-	 *
-	 * @param function Required function of frame
-	 * @param category Required category of frame
-	 * @return Instantiation of frame with required category and
-	 * function
-	 */
-	public IFrame instantiate(
-					IFrameCategory category,
-					IFrameFunction function) {
-
-		function.checkInstantiable(getModel());
-
-		return category.instantiate(this, function);
-	}
-
-	/**
 	 * Creates instantiation of the frame, with category of {@link
 	 * IFrameCategory#ATOMIC} and function of {@link
 	 * IFrameFunction#QUERY}.
@@ -548,6 +530,21 @@ public abstract class CFrame
 	public IFrame instantiateQuery() {
 
 		return instantiate(IFrameFunction.QUERY);
+	}
+
+	/**
+	 * Creates instantiation of the frame, with category of {@link
+	 * IFrameCategory#DISJUNCTION} and function of {@link
+	 * IFrameFunction#QUERY} (which is the only possible function
+	 * that a disjunction-instantiation may have).
+	 *
+	 * @return Disjunction instantiation of frame
+	 */
+	public IFrame instantiateDisjunction() {
+
+		return instantiate(
+					IFrameCategory.DISJUNCTION,
+					IFrameFunction.QUERY);
 	}
 
 	CFrame() {
@@ -627,6 +624,15 @@ public abstract class CFrame
 		}
 
 		return false;
+	}
+
+	private IFrame instantiate(
+						IFrameCategory category,
+						IFrameFunction function) {
+
+		function.checkInstantiable(getModel());
+
+		return category.instantiate(this, function);
 	}
 
 	private List<CFrame> checkStartListWithThis(
