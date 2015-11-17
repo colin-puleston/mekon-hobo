@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
@@ -37,6 +38,25 @@ class IDisjunction extends IFrame {
 	static private final String DISJUNCTS_SLOT_LABEL = "OR...";
 
 	private ISlot disjunctsSlot;
+
+	private class DisjunctsChecker implements KValuesListener<IValue> {
+
+		public void onAdded(IValue value) {
+
+			checkDisjunct((IFrame)value);
+		}
+
+		public void onRemoved(IValue value) {
+		}
+
+		public void onCleared(List<IValue> values) {
+		}
+
+		DisjunctsChecker() {
+
+			disjunctsSlot.getValues().addValuesListener(this);
+		}
+	}
 
 	public void resetFunction(IFrameFunction function) {
 
@@ -92,6 +112,8 @@ class IDisjunction extends IFrame {
 		super(type, function);
 
 		disjunctsSlot = addDisjunctsSlot();
+
+		new DisjunctsChecker();
 	}
 
 	private ISlot addDisjunctsSlot() {
@@ -123,5 +145,16 @@ class IDisjunction extends IFrame {
 	private Set<IFrame> asDisjunctsSet() {
 
 		return new HashSet<IFrame>(asDisjuncts());
+	}
+
+	private void checkDisjunct(IFrame value) {
+
+		if (value.getCategory().disjunction()) {
+
+			throw new KAccessException(
+						"Attempting to add another DISJUNCTION "
+						+ "frame as disjunct for DISJUNCTION frame: "
+						+ this);
+		}
 	}
 }
