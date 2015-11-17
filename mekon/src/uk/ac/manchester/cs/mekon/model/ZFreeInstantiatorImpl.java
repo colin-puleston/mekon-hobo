@@ -98,9 +98,9 @@ class ZFreeInstantiatorImpl implements ZFreeInstantiator {
 		}
 	}
 
-	public IFrame startInstantiation(CFrame type, IFrameCategory category) {
+	public IFrame startInstantiation(CFrame type, IFrameFunction function) {
 
-		return new IFrame(type, category);
+		return new IFrame(type, function);
 	}
 
 	public ISlot addIFrameSlot(IFrame container, CIdentity slotTypeId) {

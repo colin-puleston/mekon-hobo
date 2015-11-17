@@ -121,11 +121,11 @@ public class IFrameTest extends FramesModelTest {
 		IFrame is = createComplexInstanceSubsumer(i);
 
 		assertFalse(i == is);
-		assertFalse(i.matches(is));
+		assertFalse(i.matchesStructure(is));
 
-		assertTrue(is.subsumes(i));
-		assertFalse(i.subsumes(is));
-		assertTrue(i.subsumes(i));
+		assertTrue(is.subsumesStructure(i));
+		assertFalse(i.subsumesStructure(is));
+		assertTrue(i.subsumesStructure(i));
 	}
 
 	private IFrameTest(MonitorIReasoner monitorIReasoner) {
@@ -138,8 +138,8 @@ public class IFrameTest extends FramesModelTest {
 	private void testCopied(IFrame original, IFrame copy) {
 
 		assertFalse(original == copy);
-		assertTrue(copy.matches(original));
-		assertTrue(original.matches(copy));
+		assertTrue(copy.matchesStructure(original));
+		assertTrue(original.matchesStructure(copy));
 	}
 
 	private void testUpdateInferredTypes(

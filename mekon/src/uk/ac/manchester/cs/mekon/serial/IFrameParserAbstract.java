@@ -53,7 +53,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 	private CModel model;
 	private IEditor iEditor;
-	private IFrameCategory frameCategory;
+	private IFrameFunction frameFunction;
 
 	private class OneTimeParser {
 
@@ -444,7 +444,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private IFrame createAndRegisterFrame(CFrame type) {
 
-			IFrame frame = instantiateFrame(type, frameCategory);
+			IFrame frame = instantiateFrame(type, frameFunction);
 
 			frames.add(frame);
 
@@ -549,15 +549,15 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 		return parseFromContainerNode(getContainerNode(parentNode));
 	}
 
-	IFrameParserAbstract(CModel model, IFrameCategory frameCategory) {
+	IFrameParserAbstract(CModel model, IFrameFunction frameFunction) {
 
 		this.model = model;
- 		this.frameCategory = frameCategory;
+ 		this.frameFunction = frameFunction;
 
 		iEditor = ZCModelAccessor.get().getIEditor(model);
 	}
 
-	abstract IFrame instantiateFrame(CFrame type, IFrameCategory category);
+	abstract IFrame instantiateFrame(CFrame type, IFrameFunction function);
 
 	abstract ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId);
 

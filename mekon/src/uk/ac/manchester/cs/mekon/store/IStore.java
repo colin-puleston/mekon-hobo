@@ -37,9 +37,9 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * Represents an instance-store associated with a MEKON Frames
  * Model (FM). Both instances and queries are represented via
- * instance-level frames. The frames representing instances must be
- * of category {@link IFrameCategory#ASSERTION} rather than
- * {@link IFrameCategory#QUERY}, whereas those representing queries
+ * instance-level frames. The frames representing instances must
+ * have function {@link IFrameFunction#ASSERTION} rather than
+ * {@link IFrameFunction#QUERY}, whereas those representing queries
  * can be either, since assertion frames can also be interpreted as
  * queries.
  *
@@ -112,8 +112,8 @@ public class IStore {
 	 * @param identity Unique identity for instance
 	 * @return Existing instance that was replaced, or null if not
 	 * applicable
-	 * @throws KAccessException if instance frame is not of category
-	 * {@link IFrameCategory#ASSERTION}
+	 * @throws KAccessException if instance frame does not have function
+	 * {@link IFrameFunction#ASSERTION}
 	 */
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 

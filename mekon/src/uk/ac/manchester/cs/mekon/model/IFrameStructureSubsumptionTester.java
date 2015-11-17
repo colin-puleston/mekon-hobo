@@ -22,66 +22,65 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.util;
+package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * Represents an intersection of {@link CNumber} objects.
- *
  * @author Colin Puleston
  */
-public class CNumberIntersection extends CTypeValueIntersection<CNumber> {
+class IFrameStructureSubsumptionTester extends IFrameStructureTester {
 
-	private Set<CNumber> currents = new HashSet<CNumber>();
+	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
 
-	/**
-	 * Constructor.
-	 */
-	public CNumberIntersection() {
+		return type1.subsumes(type2);
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @param operands Initial operands to add
-	 */
-	public CNumberIntersection(Collection<CNumber> operands) {
+	boolean listSizesMatch(KList<?> list1, KList<?> list2) {
 
-		addOperands(operands);
+		return list1.size() <= list2.size();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addOperand(CNumber operand) {
+	boolean slotsMatch(ISlots slots1, ISlots slots2) {
 
-		for (CNumber mostSpecific : currents) {
+		for (ISlot slot1 : slots1.asList()) {
 
-			if (operand.intersectsWith(mostSpecific)) {
+			ISlot slot2 = slots2.getOrNull(slot1.getType().getIdentity());
 
-				operand = operand.getIntersection(mostSpecific);
-				currents.remove(mostSpecific);
+			if (slot2 == null || !slotValuesMatch(slot1, slot2)) {
 
-				break;
+				return false;
 			}
 		}
 
-		currents.add(operand);
+		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public CNumber getCurrent() {
+	boolean valuesMatch(List<IValue> values1, List<IValue> values2) {
 
-		return currents.size() == 1 ? currents.iterator().next() : null;
+		for (IValue value1 : values1) {
+
+			if (!valueMatched(value1, values2)) {
+
+				return false;
+			}
+		}
+
+		return true;
 	}
 
-	Class<CNumber> getOperandType() {
+	private boolean valueMatched(IValue value1, List<IValue> values2) {
 
-		return CNumber.class;
+		for (IValue value2 : values2) {
+
+			if (valuesMatch(value1, value2)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

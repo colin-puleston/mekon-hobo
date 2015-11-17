@@ -207,7 +207,7 @@ public class ISlot implements IEntity {
 
 	private boolean querySlot() {
 
-		return container.getCategory().query();
+		return container.getFunction().query();
 	}
 
 	private void checkExternalValuesEditorAccess(

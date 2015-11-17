@@ -152,7 +152,7 @@ public class IUpdating {
 
 		Set<IUpdateOp> purgedOps = new HashSet<IUpdateOp>(ops);
 
-		if (instance.getCategory().query()) {
+		if (instance.getFunction().query()) {
 
 			purgedOps.remove(IUpdateOp.SLOT_VALUES);
 		}

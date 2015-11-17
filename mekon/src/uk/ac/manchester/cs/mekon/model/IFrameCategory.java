@@ -32,32 +32,51 @@ package uk.ac.manchester.cs.mekon.model;
 public enum IFrameCategory {
 
 	/**
-	 * Frame represents an assertion.
+	 * Frame is an atomic-frame.
 	 */
-	ASSERTION,
+	ATOMIC {
+
+		IFrame instantiate(CFrame type, IFrameFunction function) {
+
+			IFrame instance = new IFrame(type, function);
+
+			type.initialiseInstance(instance);
+			instance.completeInstantiation(false);
+
+			return instance;
+		}
+	},
 
 	/**
-	 * Frame represents a query.
+	 * Frame is a disjunction-frame.
 	 */
-	QUERY;
+	DISJUNCTION {
+
+		IFrame instantiate(CFrame type, IFrameFunction function) {
+
+			return new IDisjunction(type, function);
+		}
+	};
 
 	/**
-	 * States whether frame is of type {@link #ASSERTION}.
+	 * States whether frame is of category {@link #ATOMIC}.
 	 *
-	 * @return True if assertion.
+	 * @return True if atomic.
 	 */
-	public boolean assertion() {
+	public boolean atomic() {
 
-		return this == ASSERTION;
+		return this == ATOMIC;
 	}
 
 	/**
-	 * States whether frame is of type {@link #QUERY}.
+	 * States whether frame is of category {@link #DISJUNCTION}.
 	 *
-	 * @return True if query.
+	 * @return True if disjunction.
 	 */
-	public boolean query() {
+	public boolean disjunction() {
 
-		return this == QUERY;
+		return this == DISJUNCTION;
 	}
+
+	abstract IFrame instantiate(CFrame type, IFrameFunction function);
 }

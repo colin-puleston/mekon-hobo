@@ -188,17 +188,17 @@ class CExtension extends CExpression {
 		registerAsReferencerOfSlotValues();
 	}
 
-	List<CAtomicFrame> asModelDisjuncts() {
+	List<CAtomicFrame> asAtomicDisjuncts() {
+
+		return extendedFrame.asAtomicDisjuncts();
+	}
+
+	void checkValidDisjunctionDisjunctSource() {
 
 		throw new KAccessException(
 					"Cannot create disjunction with "
 					+ "extension-frame as a disjunct: "
 					+ this);
-	}
-
-	List<CAtomicFrame> getSubsumptionTestDisjuncts() {
-
-		return extendedFrame.getSubsumptionTestDisjuncts();
 	}
 
 	IReasoner getIReasoner() {

@@ -462,7 +462,7 @@ public abstract class CFrame
 	 */
 	public boolean subsumes(CFrame testSubsumed) {
 
-		for (CAtomicFrame disjunct : testSubsumed.getSubsumptionTestDisjuncts()) {
+		for (CAtomicFrame disjunct : testSubsumed.asAtomicDisjuncts()) {
 
 			if (!subsumesAtomicFrame(disjunct)) {
 
@@ -497,45 +497,57 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Creates instantiation of the frame, setting the category
-	 * of the instantiation to {@link IFrameCategory#ASSERTION}.
+	 * Creates instantiation of the frame, with category of {@link
+	 * IFrameCategory#ATOMIC} and function of {@link
+	 * IFrameFunction#ASSERTION}.
 	 *
-	 * @return Instantiation of this frame, as assertion-instance
+	 * @return Atomic-assertion instantiation of frame
 	 */
 	public IFrame instantiate() {
 
-		return instantiate(IFrameCategory.ASSERTION);
+		return instantiate(IFrameFunction.ASSERTION);
 	}
 
 	/**
-	 * Creates instantiation of the frame, setting the
-	 * frame-category of the instantiation as specified.
+	 * Creates instantiation of the frame, with category of {@link
+	 * IFrameCategory#ATOMIC} and specified function.
 	 *
-	 * @param category Required frame-category
-	 * @return Instantiation of this frame, with required
-	 * frame-category
+	 * @param function Required function of frame
+	 * @return Atomic instantiation of frame with required function
 	 */
-	public IFrame instantiate(IFrameCategory category) {
+	public IFrame instantiate(IFrameFunction function) {
 
-		checkInstantiableAsCategory(category);
-
-		IFrame instance = new IFrame(this, category);
-
-		initialiseInstance(instance);
-		instance.completeInstantiation(false);
-
-		return instance;
+		return instantiate(IFrameCategory.ATOMIC, function);
 	}
 
 	/**
-	 * Creates instantiation of the frame, setting the category
-	 * of the instantiation to {@link IFrameCategory#QUERY}.
+	 * Creates instantiation of the frame, with specified category
+	 * and function.
 	 *
-	 * @return Instantiation of this frame as query
+	 * @param function Required function of frame
+	 * @param category Required category of frame
+	 * @return Instantiation of frame with required category and
+	 * function
+	 */
+	public IFrame instantiate(
+					IFrameCategory category,
+					IFrameFunction function) {
+
+		function.checkInstantiable(getModel());
+
+		return category.instantiate(this, function);
+	}
+
+	/**
+	 * Creates instantiation of the frame, with category of {@link
+	 * IFrameCategory#ATOMIC} and function of {@link
+	 * IFrameFunction#QUERY}.
+	 *
+	 * @return Atomic-query instantiation of frame
 	 */
 	public IFrame instantiateQuery() {
 
-		return instantiate(IFrameCategory.QUERY);
+		return instantiate(IFrameFunction.QUERY);
 	}
 
 	CFrame() {
@@ -552,9 +564,10 @@ public abstract class CFrame
 
 	abstract CAtomicFrame asAtomicFrame();
 
-	abstract List<CAtomicFrame> asModelDisjuncts();
+	abstract List<CAtomicFrame> asAtomicDisjuncts();
 
-	abstract List<CAtomicFrame> getSubsumptionTestDisjuncts();
+	void checkValidDisjunctionDisjunctSource() {
+	}
 
 	boolean structured() {
 
@@ -575,6 +588,11 @@ public abstract class CFrame
 		return other instanceof MFrame ? other.mergeWith(type) : super.mergeWith(other);
 	}
 
+	void initialiseInstance(IFrame instance) {
+
+		getIReasoner().initialiseFrame(getIEditor(), instance);
+	}
+
 	IFrame getDefaultValueOrNull() {
 
 		return instantiate();
@@ -587,12 +605,7 @@ public abstract class CFrame
 
 	boolean typeValueSubsumption(IFrame testSubsumer, IFrame testSubsumed) {
 
-		if (testSubsumed.getSlots().isEmpty()) {
-
-			return testSubsumer.getType().subsumes(testSubsumed.getType());
-		}
-
-		return testSubsumer.equals(testSubsumed);
+		return testSubsumer.subsumes(testSubsumed);
 	}
 
 	void pollListenersForInstantiated(IFrame instance, boolean freeInstance) {
@@ -605,7 +618,7 @@ public abstract class CFrame
 
 	private boolean subsumesAtomicFrame(CAtomicFrame testSubsumed) {
 
-		for (CAtomicFrame disjunct : getSubsumptionTestDisjuncts()) {
+		for (CAtomicFrame disjunct : asAtomicDisjuncts()) {
 
 			if (disjunct.atomicFrameSubsumption(testSubsumed)) {
 
@@ -616,20 +629,9 @@ public abstract class CFrame
 		return false;
 	}
 
-	private void initialiseInstance(IFrame instance) {
-
-		getIReasoner().initialiseFrame(getIEditor(), instance);
-	}
-
-	private void checkInstantiableAsCategory(IFrameCategory category) {
-
-		if (category.query() && !getModel().queriesEnabled()) {
-
-			throw new KAccessException("Query-instances not enabled for model");
-		}
-	}
-
-	private List<CFrame> checkStartListWithThis(List<CFrame> list, CVisibility visibility) {
+	private List<CFrame> checkStartListWithThis(
+							List<CFrame> list,
+							CVisibility visibility) {
 
 		if (visibility.coversHiddenStatus(hidden())) {
 

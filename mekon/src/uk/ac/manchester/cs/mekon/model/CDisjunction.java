@@ -60,15 +60,34 @@ class CDisjunction extends CExpression {
 		return new CDisjunction(label, resolvedDisjuncts);
 	}
 
+	static String getDescriptionForLabel(List<? extends CFrame> disjuncts) {
+
+		StringBuilder bldr = new StringBuilder();
+
+		for (CFrame disjunct : disjuncts) {
+
+			if (bldr.length() != 0) {
+
+				bldr.append(DISPLAY_LABEL_DISJUNCT_SEPARATOR);
+			}
+
+			bldr.append(disjunct.getDisplayLabel());
+		}
+
+		return bldr.toString();
+	}
+
 	static private List<CAtomicFrame> resolveDisjuncts(Collection<CFrame> disjuncts) {
 
 		MostGeneralCFrames mostGenerals = new MostGeneralCFrames();
 
 		for (CFrame disjunct : disjuncts) {
 
-			for (CAtomicFrame modelDisjunct : disjunct.asModelDisjuncts()) {
+			disjunct.checkValidDisjunctionDisjunctSource();
 
-				mostGenerals.update(modelDisjunct);
+			for (CAtomicFrame atomicDisjunct : disjunct.asAtomicDisjuncts()) {
+
+				mostGenerals.update(atomicDisjunct);
 			}
 		}
 
@@ -177,7 +196,7 @@ class CDisjunction extends CExpression {
 
 		if (other instanceof CDisjunction) {
 
-			return disjunctsAsSet().equals(((CDisjunction)other).disjunctsAsSet());
+			return equalDisjuncts((CDisjunction)other);
 		}
 
 		return false;
@@ -205,7 +224,7 @@ class CDisjunction extends CExpression {
 
 	public CFrame getAtomicFrame() {
 
-		return getCommonSubsumersFinder().getClosestSingle(commonSupers);
+		return getSubsumers(commonSupers).getSingleCommon();
 	}
 
 	public List<CFrame> asDisjuncts() {
@@ -251,12 +270,7 @@ class CDisjunction extends CExpression {
 		}
 	}
 
-	List<CAtomicFrame> asModelDisjuncts() {
-
-		return disjuncts;
-	}
-
-	List<CAtomicFrame> getSubsumptionTestDisjuncts() {
+	List<CAtomicFrame> asAtomicDisjuncts() {
 
 		return disjuncts;
 	}
@@ -278,19 +292,7 @@ class CDisjunction extends CExpression {
 
 	String getExpressionDescriptionForLabel() {
 
-		StringBuilder bldr = new StringBuilder();
-
-		for (CFrame disjunct : disjuncts) {
-
-			if (bldr.length() != 0) {
-
-				bldr.append(DISPLAY_LABEL_DISJUNCT_SEPARATOR);
-			}
-
-			bldr.append(disjunct.getDisplayLabel());
-		}
-
-		return bldr.toString();
+		return getDescriptionForLabel(disjuncts);
 	}
 
 	private CDisjunction(String label, List<CAtomicFrame> disjuncts) {
@@ -304,14 +306,19 @@ class CDisjunction extends CExpression {
 		hashCode = disjunctsAsSet().hashCode();
 	}
 
-	private List<CFrame> findCommonSupers() {
+	private boolean equalDisjuncts(CDisjunction other) {
 
-		return getCommonSubsumersFinder().getAllClosest(disjuncts);
+		return disjunctsAsSet().equals(other.disjunctsAsSet());
 	}
 
-	private CommonSubsumersFinder getCommonSubsumersFinder() {
+	private List<CFrame> findCommonSupers() {
 
-		return new CommonSubsumersFinder(CVisibility.EXPOSED);
+		return getSubsumers(new ArrayList<CFrame>(disjuncts)).getClosestCommon();
+	}
+
+	private CFrameSubsumers getSubsumers(List<CFrame> frames) {
+
+		return new CFrameSubsumers(CVisibility.EXPOSED, frames);
 	}
 
 	private Set<CAtomicFrame> disjunctsAsSet() {

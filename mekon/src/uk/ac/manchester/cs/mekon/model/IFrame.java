@@ -31,14 +31,26 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * Represents an instance-level atomic-frame. The frame can be
- * either of category {@link IFrameCategory#ASSERTION} or
- * category {@link IFrameCategory#QUERY}. Assertion-frames differ
- * from query-frames in the following ways:
+ * Represents an instance-level atomic-frame.
+ * <p>
+ * The frame has a category of either {@link IFrameCategory#ATOMIC}
+ * or {@link IFrameCategory#DISJUNCTION}. The latter category being a
+ * special case where the frame will always have exactly one slot,
+ * which will be a special "disjuncts-slot" whose value-type is the
+ * same as the type of the disjunction-frame, and whose values, which
+ * must be of category  {@link IFrameCategory#ATOMIC}, represent the
+ * disjuncts for the disjunction.
+ * <p>
+ * The frame also has a function of either {@link
+ * IFrameFunction#ASSERTION} or {@link IFrameFunction#QUERY}, with the
+ * two differeing in the following ways:
  * <ul>
- *   <li>Query-frames can be instantiations of disjunction-frames
- *   (see {@link CFrameCategory#disjunction}), whereas assertion-frames
- *   cannot.
+ *   <li>Query-frames can be instantiations of concept-level
+ *	 disjunction-frames (see {@link CFrameCategory#disjunction}),
+ *	 whereas assertion-frames cannot
+ *   <li>Query-frames can be disjunction-instantiations of concept-level
+ *	 frames (see {@link IFrameCategory#disjunction}), whereas
+ *	 assertion-frames cannot
  *   <li>Slots on query-frames and assertion-frames may, and generally
  *	 will, have different editabilty criteria (see {@link
  *	 CSlot#getEditability}), specifying whether or not the slot is
@@ -46,12 +58,12 @@ import uk.ac.manchester.cs.mekon.util.*;
  *	 (see {@link IValue#abstractValue}). In general slots on query-frames
  *	 are likely to be allowed abstract values, whereas those on
  *	 assertion-frames are not, and slots on query-frames are more likely
- *	 to be editable by the client than on assertion-frames.
+ *	 to be editable by the client than on assertion-frames
  * </ul>
  * <p>
  * Query-frames and assertion-frames cannot be mixed within a single
- * model-instantiation. Attempting to do so will result in an
- * exception being thrown.
+ * model-instantiation. Attempting to do so will result in an exception
+ * being thrown.
  *
  * @author Colin Puleston
  */
@@ -110,7 +122,7 @@ public class IFrame implements IEntity, IValue {
 	private CFrame type;
 	private DynamicTypes inferredTypes = new DynamicTypes();
 	private DynamicTypes suggestedTypes = new DynamicTypes();
-	private IFrameCategory category;
+	private IFrameFunction function;
 
 	private ISlots slots = new ISlots();
 	private ISlots referencingSlots = new ISlots();
@@ -219,35 +231,35 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Re-sets the frame-category.
+	 * Re-sets the frame-function.
 	 *
-	 * @param category New category for frame
+	 * @param function New function for frame
 	 * @throws KAccessException if the frame is currently being
 	 * referenced via the slots of another frame
 	 */
-	public void resetCategory(IFrameCategory category) {
+	public void resetFunction(IFrameFunction function) {
 
 		if (!referencingSlots.isEmpty()) {
 
 			throw new KAccessException(
-						"Attempting to change category "
+						"Attempting to change function "
 						+ "of referenced frame " + this);
 		}
 
-		this.category = category;
+		this.function = function;
 	}
 
 	/**
-	 * Re-sets the frame-category to that of the specified
+	 * Re-sets the frame-function to that of the specified
 	 * template-frame.
 	 *
-	 * @param template Frame whose category is to be copied
+	 * @param template Frame whose function is to be copied
 	 * @throws KAccessException if the frame is currently being
 	 * referenced via the slots of another frame
 	 */
-	public void alignCategory(IFrame template) {
+	public void alignFunction(IFrame template) {
 
-		resetCategory(template.category);
+		resetFunction(template.function);
 	}
 
 	/**
@@ -353,17 +365,30 @@ public class IFrame implements IEntity, IValue {
 			return true;
 		}
 
-		if (other instanceof IFrame) {
+		return other instanceof IFrame && equalsFrame((IFrame)other);
+	}
 
-			IFrame otherFrame = (IFrame)other;
+	/**
+	 */
+	public int hashCode() {
 
-			if (slots.isEmpty() && otherFrame.slots.isEmpty()) {
+		return slots.isEmpty() ? type.hashCode() : super.hashCode();
+	}
 
-				return type.equals(otherFrame.type);
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean subsumes(IFrame other) {
+
+		for (IFrame disjunct : asDisjunctsSet()) {
+
+			if (!other.hasDisjunct(disjunct)) {
+
+				return false;
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -374,12 +399,14 @@ public class IFrame implements IEntity, IValue {
 	 * operation. Otherwise value-matching is determinied via the
 	 * standard <code>equals</code> methods on the value objects.
 	 *
-	 * @param other Frame to test for subsumption by this one
-	 * @return true if relevant subsumption holds
+	 * @param other Frame to test for structure-matching against this
+	 * one
+	 * @return true if structures match
 	 */
-	public boolean matches(IFrame other) {
+	public boolean matchesStructure(IFrame other) {
 
-		return equals(other) || new IFrameExactMatcher().match(this, other);
+		return equals(other)
+				|| new IFrameStructureMatcher().match(this, other);
 	}
 
 	/**
@@ -391,20 +418,15 @@ public class IFrame implements IEntity, IValue {
 	 * the standard {@link CValue#subsumes} method on the value-type
 	 * objects.
 	 *
-	 * @param other Frame to test for subsumption by this one
-	 * @return true if this frame subsumes other
+	 * @param other Frame to test for structure-subsumption by this
+	 * one
+	 * @return true if this frames structure subsumes that of other
+	 * frame
 	 */
-	public boolean subsumes(IFrame other) {
+	public boolean subsumesStructure(IFrame other) {
 
 		return equals(other)
-				|| new IFrameSubsumptionMatcher().match(this, other);
-	}
-
-	/**
-	 */
-	public int hashCode() {
-
-		return slots.isEmpty() ? type.hashCode() : super.hashCode();
+				|| new IFrameStructureSubsumptionTester().match(this, other);
 	}
 
 	/**
@@ -441,7 +463,17 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public IFrameCategory getCategory() {
 
-		return category;
+		return IFrameCategory.ATOMIC;
+	}
+
+	/**
+	 * Provides the frame-function.
+	 *
+	 * @return Frame-function.
+	 */
+	public IFrameFunction getFunction() {
+
+		return function;
 	}
 
 	/**
@@ -513,6 +545,34 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Provides the special disjuncts-slot (see {@link IFrame}) for
+	 * frames of category {@link IFrameCategory#DISJUNCTION}.
+	 *
+	 * @return Object representing current set of referencing-slots
+	 * @throws KAccessException if this is not a disjunction-frame
+	 */
+	public ISlot getDisjunctsSlot() {
+
+		throw new KAccessException(
+					"Cannot retrieve disjuncts-slot "
+					+ "from atomic frame: " + this);
+	}
+
+	/**
+	 * Provides a representation of the frame as a set of disjuncts,
+	 * which if the frame is of category {@link
+	 * IFrameCategory#DISJUNCTION}, will be the values of the
+	 * disjuncts-slot (see {@link IFrame}), otherwise it will just be
+	 * a set consisting only of the frame itself.
+	 *
+	 * @return Representation of frame as set of disjuncts
+	 */
+	public List<IFrame> asDisjuncts() {
+
+		return Collections.<IFrame>singletonList(this);
+	}
+
+	/**
 	 * Tests whether the frame/slot network emanating from this
 	 * frame contains any cycles.
 	 *
@@ -523,10 +583,10 @@ public class IFrame implements IEntity, IValue {
 		return new IFrameCycleTester(this).leadsToCycle();
 	}
 
-	IFrame(CFrame type, IFrameCategory category) {
+	IFrame(CFrame type, IFrameFunction function) {
 
 		this.type = type;
-		this.category = category;
+		this.function = function;
 	}
 
 	IFrameEditor createEditor() {
@@ -599,7 +659,7 @@ public class IFrame implements IEntity, IValue {
 
 		referencingFrame.validateAsReferencingFrame();
 
-		if (category != referencingFrame.category) {
+		if (function != referencingFrame.function) {
 
 			throw new KAccessException(
 						"Cannot add frame: " + this
@@ -610,7 +670,7 @@ public class IFrame implements IEntity, IValue {
 
 	private void validateAsReferencingFrame() {
 
-		if (disjunctionType() && category.assertion()) {
+		if (disjunctionType() && function.assertion()) {
 
 			throw new KAccessException(
 						"Cannot add slot-values to assertion-frame "
@@ -644,9 +704,63 @@ public class IFrame implements IEntity, IValue {
 		while (updating.checkAutoUpdate(this).contains(IUpdateOp.SLOT_VALUES));
 	}
 
+	private boolean equalsFrame(IFrame other) {
+
+		Set<IFrame> disjuncts = asDisjunctsSet();
+		Set<IFrame> otherDisjuncts = other.asDisjunctsSet();
+
+		if (disjuncts.size() != otherDisjuncts.size()) {
+
+			return false;
+		}
+
+		if (disjuncts.size() != 1) {
+
+			return disjuncts.equals(otherDisjuncts);
+		}
+
+		IFrame disjunct = disjuncts.iterator().next();
+		IFrame otherDisjunct = otherDisjuncts.iterator().next();
+
+		return disjunct.atomicFrameEqualsAtomicFrame(otherDisjunct);
+	}
+
+	private boolean hasDisjunct(IFrame atom) {
+
+		for (IFrame disjunct : asDisjunctsSet()) {
+
+			if (disjunct.atomicFrameEqualsAtomicFrame(atom)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean atomicFrameEqualsAtomicFrame(IFrame other) {
+
+		if (other == this) {
+
+			return true;
+		}
+
+		if (slots.isEmpty() && other.slots.isEmpty()) {
+
+			return type.equals(other.type);
+		}
+
+		return false;
+	}
+
 	private boolean disjunctionType() {
 
 		return type.getCategory().disjunction();
+	}
+
+	private Set<IFrame> asDisjunctsSet() {
+
+		return new HashSet<IFrame>(asDisjuncts());
 	}
 
 	private void pollListenersForUpdatedInferredTypes() {

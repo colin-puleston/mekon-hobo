@@ -44,18 +44,18 @@ public class IFrameParser extends IFrameParserAbstract {
 	 * Constructor
 	 *
 	 * @param model Relevant model
-	 * @param frameCategory Category of frames to be parsed
+	 * @param frameFunction Function of frames to be parsed
 	 */
-	public IFrameParser(CModel model, IFrameCategory frameCategory) {
+	public IFrameParser(CModel model, IFrameFunction frameFunction) {
 
-		super(model, frameCategory);
+		super(model, frameFunction);
 
 		iEditor = ZCModelAccessor.get().getIEditor(model);
 	}
 
-	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
+	IFrame instantiateFrame(CFrame type, IFrameFunction function) {
 
-		IFrame frame = type.instantiate(category);
+		IFrame frame = type.instantiate(function);
 
 		setAutoUpdateEnabled(frame, false);
 

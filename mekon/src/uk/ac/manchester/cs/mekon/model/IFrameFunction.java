@@ -24,63 +24,54 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.util.*;
+import uk.ac.manchester.cs.mekon.*;
 
 /**
+ * Represents the general function of an {@link IFrame}.
+ *
  * @author Colin Puleston
  */
-class IFrameSubsumptionMatcher extends IFrameMatcher {
+public enum IFrameFunction {
 
-	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
+	/**
+	 * Frame represents an assertion.
+	 */
+	ASSERTION,
 
-		return type1.subsumes(type2);
-	}
+	/**
+	 * Frame represents a query.
+	 */
+	QUERY {
 
-	boolean listSizesMatch(KList<?> list1, KList<?> list2) {
+		void checkInstantiable(CModel model) {
 
-		return list1.size() <= list2.size();
-	}
+			if (!model.queriesEnabled()) {
 
-	boolean slotsMatch(ISlots slots1, ISlots slots2) {
-
-		for (ISlot slot1 : slots1.asList()) {
-
-			ISlot slot2 = slots2.getOrNull(slot1.getType().getIdentity());
-
-			if (slot2 == null || !slotValuesMatch(slot1, slot2)) {
-
-				return false;
+				throw new KAccessException("Query-instances not enabled for model");
 			}
 		}
+	};
 
-		return true;
+	/**
+	 * States whether frame is of type {@link #ASSERTION}.
+	 *
+	 * @return True if assertion.
+	 */
+	public boolean assertion() {
+
+		return this == ASSERTION;
 	}
 
-	boolean valuesMatch(List<IValue> values1, List<IValue> values2) {
+	/**
+	 * States whether frame is of type {@link #QUERY}.
+	 *
+	 * @return True if query.
+	 */
+	public boolean query() {
 
-		for (IValue value1 : values1) {
-
-			if (!valueMatched(value1, values2)) {
-
-				return false;
-			}
-		}
-
-		return true;
+		return this == QUERY;
 	}
 
-	private boolean valueMatched(IValue value1, List<IValue> values2) {
-
-		for (IValue value2 : values2) {
-
-			if (valuesMatch(value1, value2)) {
-
-				return true;
-			}
-		}
-
-		return false;
+	void checkInstantiable(CModel model) {
 	}
 }

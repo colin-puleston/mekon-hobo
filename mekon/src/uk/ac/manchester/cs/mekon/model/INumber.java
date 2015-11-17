@@ -124,6 +124,17 @@ public class INumber implements IEntity, IValue {
 	}
 
 	/**
+	 * Specifies whether this object represents a definite
+	 * value.
+	 *
+	 * @return True if object represents definite value
+	 */
+	public boolean definite() {
+
+		return !infinite() && !indefinite();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String toString() {

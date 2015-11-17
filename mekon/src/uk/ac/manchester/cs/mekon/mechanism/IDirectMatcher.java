@@ -66,7 +66,7 @@ public class IDirectMatcher implements IMatcher {
 
 				for (Map.Entry<CIdentity, IFrame> entry : instances.entrySet()) {
 
-					if (query.subsumes(entry.getValue())) {
+					if (query.subsumesStructure(entry.getValue())) {
 
 						matches.add(entry.getKey());
 					}
@@ -137,6 +137,6 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return query.subsumes(instance);
+		return query.subsumesStructure(instance);
 	}
 }

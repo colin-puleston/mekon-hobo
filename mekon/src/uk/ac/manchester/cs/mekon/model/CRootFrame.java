@@ -30,8 +30,7 @@ package uk.ac.manchester.cs.mekon.model;
 class CRootFrame extends CAtomicFrame {
 
 	static private final String IDENTIFIER = CRootFrame.class.getName();
-	static private final String LABEL = "<CONCEPT>";
-	static private final CIdentity IDENTITY = new CIdentity(IDENTIFIER, LABEL);
+	static private final String LABEL = "<ROOT>";
 
 	public boolean isRoot() {
 
@@ -40,7 +39,7 @@ class CRootFrame extends CAtomicFrame {
 
 	CRootFrame(CModel model) {
 
-		super(model, IDENTITY, false);
+		super(model, new CIdentity(IDENTIFIER, LABEL), false);
 
 		setSource(CSource.INTERNAL);
 	}

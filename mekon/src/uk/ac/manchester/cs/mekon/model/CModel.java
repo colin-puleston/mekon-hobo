@@ -64,7 +64,7 @@ public class CModel implements CAnnotatable {
 
 	/**
 	 * Specifies whether query-instances are allowed (see {@link
-	 * IFrameCategory}.
+	 * IFrameFunction}.
 	 * <p>
 	 * By default query-instances will not be allowed.
 	 *
@@ -119,12 +119,12 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Creates instantiation of the frame, setting the category
-	 * of the instantiation to {@link IFrameCategory#ASSERTION}.
+	 * Creates instantiation of a frame, with category of {@link
+	 * IFrameCategory#ATOMIC} and function of {@link
+	 * IFrameFunction#ASSERTION}.
 	 *
 	 * @param identity Identity of frame to be instantiated
-	 * @return Instantiation of specified frame, as
-	 * assertion-instance
+	 * @return Atomic-assertion instantiation of frame
 	 */
 	public IFrame instantiate(CIdentity identity) {
 
@@ -132,25 +132,43 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Creates instantiation of a frame, setting the
-	 * frame-category of the instantiation as specified.
+	 * Creates instantiation of a frame, with category of {@link
+	 * IFrameCategory#ATOMIC} and specified function.
 	 *
 	 * @param identity Identity of frame to be instantiated
-	 * @param category Required frame-category
-	 * @return Instantiation of specified frame, with required
-	 * frame-category
+	 * @param function Required function of frame
+	 * @return Atomic instantiation of frame with required function
 	 */
-	public IFrame instantiate(CIdentity identity, IFrameCategory category) {
+	public IFrame instantiate(CIdentity identity, IFrameFunction function) {
 
-		return getFrame(identity).instantiate(category);
+		return getFrame(identity).instantiate(function);
 	}
 
 	/**
-	 * Creates instantiation of a frame with frame-category
-	 * {@link IFrameCategory#QUERY}.
+	 * Creates instantiation of a frame, with specified category
+	 * and function.
 	 *
 	 * @param identity Identity of frame to be instantiated
-	 * @return Instantiation of specified frame, as query
+	 * @param function Required function of frame
+	 * @param category Required category of frame
+	 * @return Instantiation of frame with required category and
+	 * function
+	 */
+	public IFrame instantiate(
+					CIdentity identity,
+					IFrameCategory category,
+					IFrameFunction function) {
+
+		return getFrame(identity).instantiate(category, function);
+	}
+
+	/**
+	 * Creates instantiation of a frame, with category of {@link
+	 * IFrameCategory#ATOMIC} and function of {@link
+	 * IFrameFunction#QUERY}.
+	 *
+	 * @param identity Identity of frame to be instantiated
+	 * @return Atomic-query instantiation of frame
 	 */
 	public IFrame instantiateQuery(CIdentity identity) {
 

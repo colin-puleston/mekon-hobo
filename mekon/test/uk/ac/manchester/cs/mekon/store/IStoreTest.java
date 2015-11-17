@@ -62,7 +62,7 @@ public class IStoreTest extends FramesModelTest {
 
 		public void add(IFrame instance, CIdentity identity) {
 
-			assertTrue(instance.matches(this.instance));
+			assertTrue(instance.matchesStructure(this.instance));
 		}
 
 		public void remove(CIdentity identity) {
@@ -72,15 +72,15 @@ public class IStoreTest extends FramesModelTest {
 
 		public IMatches match(IFrame query) {
 
-			assertTrue(query.matches(this.query));
+			assertTrue(query.matchesStructure(this.query));
 
 			return new IMatches(getInstanceIdentityAsList());
 		}
 
 		public boolean matches(IFrame query, IFrame instance) {
 
-			assertTrue(query.matches(this.query));
-			assertTrue(instance.matches(this.instance));
+			assertTrue(query.matchesStructure(this.query));
+			assertTrue(instance.matchesStructure(this.instance));
 
 			return true;
 		}
@@ -237,7 +237,7 @@ public class IStoreTest extends FramesModelTest {
 
 		IFrame retrieved = store.get(id);
 
-		assertTrue(retrieved.matches(original));
+		assertTrue(retrieved.matchesStructure(original));
 		assertFalse(retrieved == original);
 	}
 }

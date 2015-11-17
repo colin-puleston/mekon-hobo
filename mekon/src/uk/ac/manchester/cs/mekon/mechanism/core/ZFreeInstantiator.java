@@ -41,10 +41,10 @@ public interface ZFreeInstantiator {
 	 * Creates a frame that will be part of a free-instance.
 	 *
 	 * @param type Type of frame to create
-	 * @param category Category of frame to create
+	 * @param function Function of frame to create
 	 * @return Created free-instance frame
 	 */
-	public IFrame startInstantiation(CFrame type, IFrameCategory category);
+	public IFrame startInstantiation(CFrame type, IFrameFunction function);
 
 	/**
 	 * Creates a free-instance-style {@link IFrame}-valued slot and

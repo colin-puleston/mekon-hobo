@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class IFrameExactMatcher extends IFrameMatcher {
+class IFrameStructureMatcher extends IFrameStructureTester {
 
 	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
 

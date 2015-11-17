@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.model.util.*;
  *
  * @author Colin Puleston
  */
-class CFrameIntersection extends CTypeValueIntersection<CFrame> {
+public class CFrameIntersection extends CTypeValueIntersection<CFrame> {
 
 	private MostSpecificCFrames mostSpecifics = new MostSpecificCFrames();
 

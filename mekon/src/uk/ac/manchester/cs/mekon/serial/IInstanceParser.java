@@ -92,7 +92,7 @@ public class IInstanceParser extends ISerialiser {
 	private IFrameParserAbstract createFrameParser() {
 
 		return freeInstance ?
-				new IFrameFreeParser(model, IFrameCategory.ASSERTION) :
-				new IFrameParser(model, IFrameCategory.ASSERTION);
+				new IFrameFreeParser(model, IFrameFunction.ASSERTION) :
+				new IFrameParser(model, IFrameFunction.ASSERTION);
 	}
 }

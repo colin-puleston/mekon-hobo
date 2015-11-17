@@ -407,12 +407,7 @@ class CAtomicFrame extends CFrame {
 		return this;
 	}
 
-	List<CAtomicFrame> asModelDisjuncts() {
-
-		return asSingletonList();
-	}
-
-	List<CAtomicFrame> getSubsumptionTestDisjuncts() {
+	List<CAtomicFrame> asAtomicDisjuncts() {
 
 		return asSingletonList();
 	}

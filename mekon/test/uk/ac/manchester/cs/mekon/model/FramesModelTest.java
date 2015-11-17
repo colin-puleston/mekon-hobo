@@ -287,7 +287,7 @@ public class FramesModelTest extends FramesTestUtils {
 
 	public IFrame createIFrame(String typeName) {
 
-		return new IFrame(createCFrame(typeName), IFrameCategory.ASSERTION);
+		return new IFrame(createCFrame(typeName), IFrameFunction.ASSERTION);
 	}
 
 	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {

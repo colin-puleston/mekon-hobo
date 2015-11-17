@@ -122,7 +122,7 @@ public class IFrameSerialiseTest extends FramesModelTest {
 		IFrame original = createTestInstance();
 		IFrame reconstituted = parse(render(original));
 
-		assertTrue(reconstituted.matches(original));
+		assertTrue(reconstituted.matchesStructure(original));
 	}
 
 	private XDocument render(IFrame frame) {
@@ -138,8 +138,8 @@ public class IFrameSerialiseTest extends FramesModelTest {
 	private IFrameParserAbstract createParser() {
 
 		return freeParser
-				? new IFrameFreeParser(getModel(), IFrameCategory.ASSERTION)
-				: new IFrameParser(getModel(), IFrameCategory.ASSERTION);
+				? new IFrameFreeParser(getModel(), IFrameFunction.ASSERTION)
+				: new IFrameParser(getModel(), IFrameFunction.ASSERTION);
 	}
 
 	private IFrameRenderer createRenderer() {

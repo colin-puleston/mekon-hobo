@@ -45,18 +45,18 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 	 * Constructor
 	 *
 	 * @param model Relevant model
-	 * @param frameCategory Category of frames to be parsed
+	 * @param frameFunction Function of frames to be parsed
 	 */
-	public IFrameFreeParser(CModel model, IFrameCategory frameCategory) {
+	public IFrameFreeParser(CModel model, IFrameFunction frameFunction) {
 
-		super(model, frameCategory);
+		super(model, frameFunction);
 
 		instantiator = ZCModelAccessor.get().getFreeInstantiator(model);
 	}
 
-	IFrame instantiateFrame(CFrame type, IFrameCategory category) {
+	IFrame instantiateFrame(CFrame type, IFrameFunction function) {
 
-		return instantiator.startInstantiation(type, category);
+		return instantiator.startInstantiation(type, function);
 	}
 
 	ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
