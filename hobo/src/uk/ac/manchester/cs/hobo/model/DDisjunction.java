@@ -113,11 +113,11 @@ public class DDisjunction<D extends DObject> {
 	 */
 	public IFrame asDisjunctionIFrame() {
 
-		IFrame frame = createDisjunctionIFrame();
+		IFrame iDisjunction = createDisjunctionIFrame();
 
-		frame.getDisjunctsSlot().getValuesEditor().addAll(disjunctsToFrames());
+		addDisjuncts(iDisjunction, disjunctsToFrames());
 
-		return frame;
+		return iDisjunction;
 	}
 
 	DDisjunction(DModel model, Class<D> disjunctsClass, IFrame iDisjunction) {
@@ -131,11 +131,14 @@ public class DDisjunction<D extends DObject> {
 	private IFrame createDisjunctionIFrame() {
 
 		IFrame sampleFrame = disjuncts.get(0).getFrame();
-
 		CFrame frameType = sampleFrame.getType();
-		IFrameFunction function = sampleFrame.getFunction();
 
- 		return frameType.instantiate(IFrameCategory.DISJUNCTION, function);
+ 		return frameType.instantiateDisjunction();
+	}
+
+	private void addDisjuncts(IFrame iDisjunction, List<IFrame> iDisjuncts) {
+
+		iDisjunction.getDisjunctsSlot().getValuesEditor().addAll(iDisjuncts);
 	}
 
 	private List<IFrame> disjunctsToFrames() {
