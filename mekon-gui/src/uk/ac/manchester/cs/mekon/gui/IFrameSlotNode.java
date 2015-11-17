@@ -123,7 +123,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	private IFrame instantiate(CFrame type) {
 
-		return type.instantiate(slot.getContainer().getCategory());
+		return type.instantiate(slot.getContainer().getFunction());
 	}
 
 	private IFrame asIFrame(IValue value) {
