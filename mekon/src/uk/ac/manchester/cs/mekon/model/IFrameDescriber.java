@@ -73,9 +73,10 @@ class IFrameDescriber {
 
 				describeStructured(slot);
 			}
+
+			frameStack.pop();
 		}
 
-		frameStack.pop();
 		changeIndent(-1);
 	}
 

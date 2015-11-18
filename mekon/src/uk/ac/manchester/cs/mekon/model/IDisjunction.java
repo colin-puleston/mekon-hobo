@@ -107,6 +107,13 @@ class IDisjunction extends IFrame {
 		return disjuncts;
 	}
 
+	public IFrame normalise() {
+
+		List<IFrame> disjuncts = asDisjuncts();
+
+		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
+	}
+
 	IDisjunction(CFrame type, IFrameFunction function) {
 
 		super(type, function);

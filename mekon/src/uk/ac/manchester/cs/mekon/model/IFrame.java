@@ -545,8 +545,8 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Provides the special disjuncts-slot (see {@link IFrame}) for
-	 * frames of category {@link IFrameCategory#DISJUNCTION}.
+	 * Provides the special disjuncts-slot for frames of category
+	 * {@link IFrameCategory#DISJUNCTION}.
 	 *
 	 * @return Object representing current set of referencing-slots
 	 * @throws KAccessException if this is not a disjunction-frame
@@ -562,14 +562,28 @@ public class IFrame implements IEntity, IValue {
 	 * Provides a representation of the frame as a set of disjuncts,
 	 * which if the frame is of category {@link
 	 * IFrameCategory#DISJUNCTION}, will be the values of the
-	 * disjuncts-slot (see {@link IFrame}), otherwise it will just be
-	 * a set consisting only of the frame itself.
+	 * disjuncts-slot, otherwise it will just be a set consisting
+	 * only of the frame itself.
 	 *
 	 * @return Representation of frame as set of disjuncts
 	 */
 	public List<IFrame> asDisjuncts() {
 
 		return Collections.<IFrame>singletonList(this);
+	}
+
+	/**
+	 * Provides the simplest possible representation of the frame,
+	 * which if the frame is of category {@link
+	 * IFrameCategory#DISJUNCTION} and the disjuncts-slot contains
+	 * exactly one value, will be that value, otherwise it will just
+	 * be the frame itself (disjunction or otherwise).
+	 *
+	 * @return Normalised version of frame
+	 */
+	public IFrame normalise() {
+
+		return this;
 	}
 
 	/**
@@ -655,16 +669,16 @@ public class IFrame implements IEntity, IValue {
 		return slot;
 	}
 
-	private void validateAsReferencedFrame(IFrame referencingFrame) {
+	private void validateAsReferencedFrame(IFrame referencer) {
 
-		referencingFrame.validateAsReferencingFrame();
+		referencer.validateAsReferencingFrame();
 
-		if (function != referencingFrame.function) {
+		if (function != referencer.function) {
 
 			throw new KAccessException(
-						"Cannot add frame: " + this
-						+ " as slot-value on frame: " + referencingFrame
-						+ " (attempting to mix ASSERTION and QUERY frames)");
+						"Cannot add " + function + " frame: " + this
+						+ ", as slot-value on " + referencer.function
+						+ " frame: " + referencer);
 		}
 	}
 
