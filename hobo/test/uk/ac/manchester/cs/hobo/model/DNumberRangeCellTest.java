@@ -24,88 +24,49 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class DNumberRangeCellTest extends DFieldTest {
+public class DNumberRangeCellTest
+				extends
+					AbstractDCellTest
+						<Integer,
+						DNumberRange<Integer>> {
 
-	@Test
-	public void test_updatesToSourceCell() {
-
-		DCell<Integer> sourceCell = createSourceCell();
-		DCell<DNumberRange<Integer>> rangeCell = createRangeCell(sourceCell);
-
-		sourceCell.set(6);
-		testRangeCellAndSlotValue(rangeCell, DNumberRange.exact(6));
-
-		sourceCell.clear();
-		testNoCellOrSlotValue(rangeCell);
-	}
-
-	@Test
-	public void test_concreteUpdatesToRangeCell() {
-
-		DCell<Integer> sourceCell = createSourceCell();
-		DCell<DNumberRange<Integer>> rangeCell = createRangeCell(sourceCell);
-
-		rangeCell.set(DNumberRange.exact(6));
-		testSourceCellAndSlotValue(sourceCell, 6);
-
-		rangeCell.clear();
-		testNoCellOrSlotValue(sourceCell);
-	}
-
-	@Test
-	public void test_abstractUpdatesToRangeCell() {
-
-		DCell<Integer> sourceCell = createSourceCell();
-		DCell<DNumberRange<Integer>> rangeCell = createRangeCell(sourceCell);
-
-		rangeCell.set(DNumberRange.range(1, 5));
-		testNoCellValue(sourceCell);
-		testSlotValues(sourceCell, CNumber.range(1, 5).asINumber());
-	}
-
-	private DCell<Integer> createSourceCell() {
+	DCell<Integer> createSourceCell() {
 
 		return createIntegerCell(DNumberRange.INTEGER);
 	}
 
-	private DCell<DNumberRange<Integer>> createRangeCell(DCell<Integer> sourceCell) {
+	DCell<DNumberRange<Integer>> createDerivedCell(DCell<Integer> sourceCell) {
 
-		return FieldDeriver.deriveNumberRangeCell(getDModel(), sourceCell);
+		return getDeriver().toNumberRangeCell(sourceCell);
 	}
 
-	private void testSourceCellAndSlotValue(DCell<Integer> cell, Integer expectValue) {
+	Integer getSourceTestValue() {
 
-		testSourceCellValue(cell, expectValue);
-		testSlotValues(cell, new INumber(expectValue));
+		return 5;
 	}
 
-	private void testRangeCellAndSlotValue(
-					DCell<DNumberRange<Integer>> cell,
-					DNumberRange<Integer> expectValue) {
+	DNumberRange<Integer> getDerivedOnlyTestValue() {
 
-		testRangeCellValue(cell, expectValue);
-		testSlotValues(cell, expectValue.asCNumber().asINumber());
+		return DNumberRange.range(1, 5);
 	}
 
-	private void testSourceCellValue(DCell<Integer> cell, Integer expectValue) {
+	DNumberRange<Integer> sourceToDerivedValue(Integer sourceValue) {
 
-		assertTrue("Source-cell value should be set", cell.isSet());
-		assertEquals("Unexpected source-cell value", cell.get(), expectValue);
+		return DNumberRange.exact(sourceValue);
 	}
 
-	private void testRangeCellValue(
-					DCell<DNumberRange<Integer>> cell,
-					DNumberRange<Integer> expectValue) {
+	IValue sourceToSlotValue(Integer sourceValue) {
 
-		assertTrue("Range-cell value should be set", cell.isSet());
-		assertEquals("Unexpected range-cell value", cell.get(), expectValue);
+		return new INumber(sourceValue);
+	}
+
+	IValue derivedToSlotValue(DNumberRange<Integer> derivedValue) {
+
+		return derivedValue.asCNumber().asINumber();
 	}
 }

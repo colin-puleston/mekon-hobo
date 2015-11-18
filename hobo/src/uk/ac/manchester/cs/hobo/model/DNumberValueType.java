@@ -29,25 +29,19 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class DNumberValueType<N extends Number> extends DValueType<N> {
+class DNumberValueType<N extends Number> extends DNumberBasedValueType<N, N> {
 
 	private CNumber slotValueType;
 	private Class<N> numberType;
 
 	DNumberValueType(DNumberRange<N> range) {
 
-		slotValueType = range.asCNumber();
-		numberType = range.getNumberType();
+		super(range);
 	}
 
-	CNumber getSlotValueType() {
+	DNumberValueType(DNumberRangeValueType<N> rangeValueType) {
 
-		return slotValueType;
-	}
-
-	Class<N> getNumberType() {
-
-		return numberType;
+		super(rangeValueType);
 	}
 
 	IValue toSlotValue(N value) {
@@ -55,18 +49,13 @@ class DNumberValueType<N extends Number> extends DValueType<N> {
 		return new INumber(value);
 	}
 
-	N toFieldValue(IValue value) {
+	N toFieldValue(INumber value) {
 
-		return numberType.cast(((INumber)value).asTypeNumber());
+		return getNumberType().cast(value.asTypeNumber());
 	}
 
-	boolean convertibleToFieldValue(IValue value) {
+	boolean convertibleToFieldValue(INumber value) {
 
-		return ((INumber)value).definite();
-	}
-
-	CCardinality getDefaultCardinalityForArrays() {
-
-		throw new Error("Method should never be invoked!");
+		return value.definite();
 	}
 }

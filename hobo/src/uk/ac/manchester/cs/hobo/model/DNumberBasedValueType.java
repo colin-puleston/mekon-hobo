@@ -29,32 +29,49 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class DNumberRangeValueType
-			<N extends Number>
-			extends DNumberBasedValueType<N, DNumberRange<N>> {
+abstract class DNumberBasedValueType<N extends Number, V> extends DValueType<V> {
 
-	DNumberRangeValueType(DNumberRange<N> range) {
+	private CNumber slotValueType;
+	private Class<N> numberType;
 
-		super(range);
+	DNumberBasedValueType(DNumberRange<N> range) {
+
+		slotValueType = range.asCNumber();
+		numberType = range.getNumberType();
 	}
 
-	DNumberRangeValueType(DNumberValueType<N> numberValueType) {
+	DNumberBasedValueType(DNumberBasedValueType<N, ?> template) {
 
-		super(numberValueType);
+		slotValueType = template.slotValueType;
+		numberType = template.numberType;
 	}
 
-	IValue toSlotValue(DNumberRange<N> value) {
+	CNumber getSlotValueType() {
 
-		return value.asCNumber().asINumber();
+		return slotValueType;
 	}
 
-	DNumberRange<N> toFieldValue(INumber value) {
+	Class<N> getNumberType() {
 
-		return new DNumberRange<N>(getNumberType(), value.getType());
+		return numberType;
 	}
 
-	boolean convertibleToFieldValue(INumber value) {
+	V toFieldValue(IValue value) {
 
-		return !value.infinite();
+		return toFieldValue((INumber)value);
 	}
+
+	boolean convertibleToFieldValue(IValue value) {
+
+		return convertibleToFieldValue((INumber)value);
+	}
+
+	CCardinality getDefaultCardinalityForArrays() {
+
+		throw new Error("Method should never be invoked!");
+	}
+
+	abstract V toFieldValue(INumber value);
+
+	abstract boolean convertibleToFieldValue(INumber value);
 }

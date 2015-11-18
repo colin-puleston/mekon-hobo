@@ -29,32 +29,57 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class DNumberRangeValueType
-			<N extends Number>
-			extends DNumberBasedValueType<N, DNumberRange<N>> {
+abstract class DObjectBasedValueType<D extends DObject, V> extends DValueType<V> {
 
-	DNumberRangeValueType(DNumberRange<N> range) {
+	private DModel model;
+	private Class<D> dClass;
+	private CFrame slotValueType;
 
-		super(range);
+	DObjectBasedValueType(DModel model, Class<D> dClass, CFrame slotValueType) {
+
+		this.model = model;
+		this.dClass = dClass;
+		this.slotValueType = slotValueType;
 	}
 
-	DNumberRangeValueType(DNumberValueType<N> numberValueType) {
+	DObjectBasedValueType(DObjectBasedValueType<D, ?> template) {
 
-		super(numberValueType);
+		model = template.model;
+		dClass = template.dClass;
+		slotValueType = template.slotValueType;
 	}
 
-	IValue toSlotValue(DNumberRange<N> value) {
+	DModel getModel() {
 
-		return value.asCNumber().asINumber();
+		return model;
 	}
 
-	DNumberRange<N> toFieldValue(INumber value) {
+	Class<D> getDClass() {
 
-		return new DNumberRange<N>(getNumberType(), value.getType());
+		return dClass;
 	}
 
-	boolean convertibleToFieldValue(INumber value) {
+	CFrame getSlotValueType() {
 
-		return !value.infinite();
+		return slotValueType;
 	}
+
+	V toFieldValue(IValue value) {
+
+		return toFieldValue((IFrame)value);
+	}
+
+	boolean convertibleToFieldValue(IValue value) {
+
+		return convertibleToFieldValue((IFrame)value);
+	}
+
+	CCardinality getDefaultCardinalityForArrays() {
+
+		return CCardinality.REPEATABLE_TYPES;
+	}
+
+	abstract V toFieldValue(IFrame value);
+
+	abstract boolean convertibleToFieldValue(IFrame value);
 }

@@ -37,10 +37,7 @@ abstract class DValueType<V> {
 
 	abstract V toFieldValue(IValue value);
 
-	boolean convertibleToFieldValue(IValue value) {
-
-		return true;
-	}
+	abstract boolean convertibleToFieldValue(IValue value);
 
 	abstract CCardinality getDefaultCardinalityForArrays();
 }

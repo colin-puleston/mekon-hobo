@@ -27,20 +27,20 @@ package uk.ac.manchester.cs.hobo.model;
 /**
  * @author Colin Puleston
  */
-class FieldDeriver {
+class AbstractFieldDeriver {
 
-	static private abstract class TypeFieldDeriver
-									<SV,
-									SVT extends DValueType<SV>,
-									DV,
-									DVT extends DValueType<DV>> {
+	private DModel model;
 
-		final DModel model;
+	private abstract class FieldDeriver
+								<SV,
+								SVT extends DValueType<SV>,
+								DV,
+								DVT extends DValueType<DV>> {
+
 		final DField<SV> sourceField;
 
-		TypeFieldDeriver(DModel model, DField<SV> sourceField) {
+		FieldDeriver(DField<SV> sourceField) {
 
-			this.model = model;
 			this.sourceField = sourceField;
 		}
 
@@ -65,24 +65,23 @@ class FieldDeriver {
 
 		private <DF extends DField<DV>>DF initialiseDerived(DF derivedField) {
 
-			sourceField.onFieldDerived(derivedField);
+			sourceField.linkToDerivedField(derivedField);
 
 			return derivedField;
 		}
 	}
 
-	static private class DisjunctionFieldDeriver
-							<D extends DObject>
-							extends
-								TypeFieldDeriver
-									<D,
-									DObjectValueType<D>,
-									DDisjunction<D>,
-									DDisjunctionValueType<D>> {
+	private class DisjunctionFieldDeriver<D extends DObject>
+					extends
+						FieldDeriver
+							<D,
+							DObjectValueType<D>,
+							DDisjunction<D>,
+							DDisjunctionValueType<D>> {
 
-		DisjunctionFieldDeriver(DModel model, DField<D> sourceField) {
+		DisjunctionFieldDeriver(DField<D> sourceField) {
 
-			super(model, sourceField);
+			super(sourceField);
 		}
 
 		DObjectValueType<D> getSourceValueType() {
@@ -92,21 +91,21 @@ class FieldDeriver {
 
 		DDisjunctionValueType<D> deriveValueType(DObjectValueType<D> sourceValueType) {
 
-			return new DDisjunctionValueType<D>(model, sourceValueType);
+			return new DDisjunctionValueType<D>(sourceValueType);
 		}
 	}
 
-	static private class NumberRangeCellDeriver<N extends Number>
-							extends
-								TypeFieldDeriver
-									<N,
-									DNumberValueType<N>,
-									DNumberRange<N>,
-									DNumberRangeValueType<N>> {
+	private class NumberRangeCellDeriver<N extends Number>
+					extends
+						FieldDeriver
+							<N,
+							DNumberValueType<N>,
+							DNumberRange<N>,
+							DNumberRangeValueType<N>> {
 
-		NumberRangeCellDeriver(DModel model, DCell<N> sourceCell) {
+		NumberRangeCellDeriver(DCell<N> sourceCell) {
 
-			super(model, sourceCell);
+			super(sourceCell);
 		}
 
 		DNumberValueType<N> getSourceValueType() {
@@ -120,24 +119,23 @@ class FieldDeriver {
 		}
 	}
 
-	static <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
-														DModel model,
-														DCell<D> objectCell) {
+	AbstractFieldDeriver(DModel model) {
 
-		return new DisjunctionFieldDeriver<D>(model, objectCell).deriveCell();
+		this.model = model;
 	}
 
-	static <D extends DObject>DArray<DDisjunction<D>> deriveDisjunctionArray(
-														DModel model,
-														DArray<D> objectArray) {
+	<D extends DObject>DCell<DDisjunction<D>> toDisjunctionCell(DCell<D> objectCell) {
 
-		return new DisjunctionFieldDeriver<D>(model, objectArray).deriveArray();
+		return new DisjunctionFieldDeriver<D>(objectCell).deriveCell();
 	}
 
-	static <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
-														DModel model,
-														DCell<N> numberCell) {
+	<D extends DObject>DArray<DDisjunction<D>> toDisjunctionArray(DArray<D> objectArray) {
 
-		return new NumberRangeCellDeriver<N>(model, numberCell).deriveCell();
+		return new DisjunctionFieldDeriver<D>(objectArray).deriveArray();
+	}
+
+	<N extends Number>DCell<DNumberRange<N>> toNumberRangeCell(DCell<N> numberCell) {
+
+		return new NumberRangeCellDeriver<N>(numberCell).deriveCell();
 	}
 }

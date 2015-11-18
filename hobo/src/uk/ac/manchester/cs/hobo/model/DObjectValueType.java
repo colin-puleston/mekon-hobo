@@ -29,27 +29,16 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class DObjectValueType<V extends DObject> extends DValueType<V> {
-
-	private DModel model;
-	private Class<V> valueClass;
-	private CFrame slotValueType;
+class DObjectValueType<V extends DObject> extends DObjectBasedValueType<V, V> {
 
 	DObjectValueType(DModel model, Class<V> valueClass, CFrame slotValueType) {
 
-		this.model = model;
-		this.valueClass = valueClass;
-		this.slotValueType = slotValueType;
+		super(model, valueClass, slotValueType);
 	}
 
-	Class<V> getValueClass() {
+	DObjectValueType(DDisjunctionValueType<V> objectValueType) {
 
-		return valueClass;
-	}
-
-	CFrame getSlotValueType() {
-
-		return slotValueType;
+		super(objectValueType);
 	}
 
 	IValue toSlotValue(V value) {
@@ -57,13 +46,13 @@ class DObjectValueType<V extends DObject> extends DValueType<V> {
 		return value.getFrame();
 	}
 
-	V toFieldValue(IValue value) {
+	V toFieldValue(IFrame value) {
 
-		return model.getDObject((IFrame)value, valueClass);
+		return getModel().getDObject(value, getDClass());
 	}
 
-	CCardinality getDefaultCardinalityForArrays() {
+	boolean convertibleToFieldValue(IFrame value) {
 
-		return CCardinality.REPEATABLE_TYPES;
+		return value.getCategory().atomic();
 	}
 }

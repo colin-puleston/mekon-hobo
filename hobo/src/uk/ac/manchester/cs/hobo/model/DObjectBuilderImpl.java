@@ -42,6 +42,7 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	private List<DObjectInitialiser> initialisers = new ArrayList<DObjectInitialiser>();
 	private Map<DField<?>, FieldSlot> fieldSlots = new HashMap<DField<?>, FieldSlot>();
+	private AbstractFieldDeriver abstractFieldDeriver;
 
 	private class DEditorImpl implements DEditor {
 
@@ -117,22 +118,19 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return addField(new DCell<N>(model, new DNumberValueType<N>(range)));
 	}
 
-	public <D extends DObject>DCell<DDisjunction<D>> deriveDisjunctionCell(
-														DCell<D> objectCell) {
+	public <D extends DObject>DCell<DDisjunction<D>> toDisjunctionCell(DCell<D> objectCell) {
 
-		return FieldDeriver.deriveDisjunctionCell(model, objectCell);
+		return abstractFieldDeriver.toDisjunctionCell(objectCell);
 	}
 
-	public <D extends DObject>DArray<DDisjunction<D>> deriveDisjunctionArray(
-														DArray<D> objectArray) {
+	public <D extends DObject>DArray<DDisjunction<D>> toDisjunctionArray(DArray<D> objectArray) {
 
-		return FieldDeriver.deriveDisjunctionArray(model, objectArray);
+		return abstractFieldDeriver.toDisjunctionArray(objectArray);
 	}
 
-	public <N extends Number>DCell<DNumberRange<N>> deriveNumberRangeCell(
-														DCell<N> numberCell) {
+	public <N extends Number>DCell<DNumberRange<N>> toNumberRangeCell(DCell<N> numberCell) {
 
-		return FieldDeriver.deriveNumberRangeCell(model, numberCell);
+		return abstractFieldDeriver.toNumberRangeCell(numberCell);
 	}
 
 	public void setContainerClass(
@@ -196,6 +194,8 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 		this.model = model;
 		this.frame = frame;
+
+		abstractFieldDeriver = new AbstractFieldDeriver(model);
 	}
 
 	void configureFields(DObject containerObj) {

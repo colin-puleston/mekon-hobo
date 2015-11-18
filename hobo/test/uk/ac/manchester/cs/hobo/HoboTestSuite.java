@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.hobo.model.*;
 @SuiteClasses({
 	DCellTest.class,
 	DArrayTest.class,
+	DDisjunctionCellTest.class,
 	DNumberRangeCellTest.class,
 	DModelTest.class})
 public class HoboTestSuite {

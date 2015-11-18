@@ -85,8 +85,6 @@ public class DArrayTest extends DFieldTest {
 	@Test
 	public void test_backDoorUpdates() {
 
-		DArray<DObject> array = createArray();
-
 		addSlotValues(fa);
 		testSlotValues(fa);
 		testArrayValues(da);

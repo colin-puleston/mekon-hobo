@@ -51,6 +51,16 @@ class DirectModelTest extends FramesModelTest {
 		return dObject;
 	}
 
+	DCell<DObject> createDObjectCell(CCardinality cardinality, CFrame rootFrame) {
+
+		DValueType<DObject> valueType = createDObjectValueType(rootFrame);
+		DCell<DObject> cell = new DCell<DObject>(model, valueType);
+
+		cell.setSlot(createISlot(cardinality, rootFrame));
+
+		return cell;
+	}
+
 	DArray<DObject> createDObjectArray(CCardinality cardinality, CFrame rootFrame) {
 
 		DValueType<DObject> valueType = createDObjectValueType(rootFrame);

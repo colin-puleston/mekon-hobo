@@ -58,6 +58,11 @@ class DConceptValueType<D extends DObject> extends DValueType<DConcept<D>> {
 		return new DConcept<D>(model, dClass, (CFrame)value);
 	}
 
+	boolean convertibleToFieldValue(IValue value) {
+
+		return true;
+	}
+
 	CCardinality getDefaultCardinalityForArrays() {
 
 		return CCardinality.UNIQUE_TYPES;

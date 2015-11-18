@@ -29,37 +29,35 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class DDisjunctionValueType<D extends DObject> extends DValueType<DDisjunction<D>> {
+class DDisjunctionValueType
+			<D extends DObject>
+			extends DObjectBasedValueType<D, DDisjunction<D>> {
 
-	private DModel model;
-	private Class<D> disjunctsClass;
-	private CFrame slotValueType;
+	DDisjunctionValueType(
+		DModel model,
+		Class<D> disjunctClass,
+		CFrame slotValueType) {
 
-	DDisjunctionValueType(DModel model, DObjectValueType<D> objectValueType) {
-
-		this.model = model;
-
-		disjunctsClass = objectValueType.getValueClass();
-		slotValueType = objectValueType.getSlotValueType();
+		super(model, disjunctClass, slotValueType);
 	}
 
-	CFrame getSlotValueType() {
+	DDisjunctionValueType(DObjectValueType<D> objectValueType) {
 
-		return slotValueType;
+		super(objectValueType);
 	}
 
 	IValue toSlotValue(DDisjunction<D> value) {
 
-		return value.asDisjunctionIFrame();
+		return value.asDisjunctionIFrame().normalise();
 	}
 
-	DDisjunction<D> toFieldValue(IValue value) {
+	DDisjunction<D> toFieldValue(IFrame value) {
 
-		return new DDisjunction<D>(model, disjunctsClass, (IFrame)value);
+		return new DDisjunction<D>(getModel(), getDClass(), value);
 	}
 
-	CCardinality getDefaultCardinalityForArrays() {
+	boolean convertibleToFieldValue(IFrame value) {
 
-		return CCardinality.REPEATABLE_TYPES;
+		return true;
 	}
 }

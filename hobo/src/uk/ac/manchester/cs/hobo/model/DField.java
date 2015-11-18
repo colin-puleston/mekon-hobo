@@ -177,7 +177,7 @@ public abstract class DField<V> implements DFieldView<V> {
 		this.valueType = valueType;
 	}
 
-	void onFieldDerived(DField<?> derivedField) {
+	void linkToDerivedField(DField<?> derivedField) {
 
 		if (slot == null) {
 
