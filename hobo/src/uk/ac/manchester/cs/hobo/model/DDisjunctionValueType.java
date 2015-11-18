@@ -33,14 +33,6 @@ class DDisjunctionValueType
 			<D extends DObject>
 			extends DObjectBasedValueType<D, DDisjunction<D>> {
 
-	DDisjunctionValueType(
-		DModel model,
-		Class<D> disjunctClass,
-		CFrame slotValueType) {
-
-		super(model, disjunctClass, slotValueType);
-	}
-
 	DDisjunctionValueType(DObjectValueType<D> objectValueType) {
 
 		super(objectValueType);

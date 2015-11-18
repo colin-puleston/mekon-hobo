@@ -36,11 +36,6 @@ class DObjectValueType<V extends DObject> extends DObjectBasedValueType<V, V> {
 		super(model, valueClass, slotValueType);
 	}
 
-	DObjectValueType(DDisjunctionValueType<V> objectValueType) {
-
-		super(objectValueType);
-	}
-
 	IValue toSlotValue(V value) {
 
 		return value.getFrame();

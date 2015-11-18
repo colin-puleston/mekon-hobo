@@ -39,11 +39,6 @@ class DNumberValueType<N extends Number> extends DNumberBasedValueType<N, N> {
 		super(range);
 	}
 
-	DNumberValueType(DNumberRangeValueType<N> rangeValueType) {
-
-		super(rangeValueType);
-	}
-
 	IValue toSlotValue(N value) {
 
 		return new INumber(value);

@@ -33,11 +33,6 @@ class DNumberRangeValueType
 			<N extends Number>
 			extends DNumberBasedValueType<N, DNumberRange<N>> {
 
-	DNumberRangeValueType(DNumberRange<N> range) {
-
-		super(range);
-	}
-
 	DNumberRangeValueType(DNumberValueType<N> numberValueType) {
 
 		super(numberValueType);
