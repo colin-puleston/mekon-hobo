@@ -34,8 +34,9 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 class IDisjunction extends IFrame {
 
+	static private final String LABEL = "One-of...";
 	static private final String DISJUNCTS_SLOT_ID = "@DISJUNCTS";
-	static private final String DISJUNCTS_SLOT_LABEL = "OR...";
+	static private final String DISJUNCTS_SLOT_LABEL = "options";
 
 	private ISlot disjunctsSlot;
 
@@ -70,14 +71,9 @@ class IDisjunction extends IFrame {
 		super.resetFunction(function);
 	}
 
-	public int hashCode() {
-
-		return asDisjunctsSet().hashCode();
-	}
-
 	public String getDisplayLabel() {
 
-		return CDisjunction.getDescriptionForLabel(getDisjunctTypes());
+		return LABEL;
 	}
 
 	public boolean abstractValue() {
@@ -123,6 +119,9 @@ class IDisjunction extends IFrame {
 		new DisjunctsChecker();
 	}
 
+	void autoUpdateThis() {
+	}
+
 	private ISlot addDisjunctsSlot() {
 
 		return addSlotInternal(createDisjunctsSlotType());
@@ -147,11 +146,6 @@ class IDisjunction extends IFrame {
 		}
 
 		return types;
-	}
-
-	private Set<IFrame> asDisjunctsSet() {
-
-		return new HashSet<IFrame>(asDisjuncts());
 	}
 
 	private void checkDisjunct(IFrame value) {

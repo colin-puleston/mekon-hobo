@@ -27,11 +27,13 @@ package uk.ac.manchester.cs.mekon.network;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents a link in the network-based instance representation
+ * Represents a link in the network-based instance representation.
  *
  * @author Colin Puleston
  */
 public class NLink extends NAttribute<NNode> {
+
+	private boolean disjunctionLink = false;
 
 	/**
 	 * Constructor.
@@ -41,6 +43,17 @@ public class NLink extends NAttribute<NNode> {
 	public NLink(CIdentity property) {
 
 		super(property, null);
+	}
+
+	/**
+	 * Set the disjunction-link status for the link (see
+	 * {@link #disjunctionLink}).
+	 *
+	 * @return value True if link is to represent disjunction
+	 */
+	public void setDisjunctionLink(boolean value) {
+
+		disjunctionLink = value;
 	}
 
 	/**
@@ -59,8 +72,24 @@ public class NLink extends NAttribute<NNode> {
 		return this;
 	}
 
+	/**
+	 * Specifies whether this link represents a disjunction, with
+	 * each target-value representing a disjunct.
+	 *
+	 * @return true if link represents disjunction
+	 */
+	public boolean disjunctionLink() {
+
+		return disjunctionLink;
+	}
+
 	NLink(CIdentity property, ISlot iSlot) {
 
 		super(property, iSlot);
+
+		if (iSlot.getContainer().getCategory().disjunction()) {
+
+			disjunctionLink = true;
+		}
 	}
 }

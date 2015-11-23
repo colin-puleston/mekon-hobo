@@ -365,7 +365,12 @@ public class IFrame implements IEntity, IValue {
 			return true;
 		}
 
-		return other instanceof IFrame && equalsFrame((IFrame)other);
+		if (other instanceof IFrame) {
+
+			return equalsFrame((IFrame)other);
+		}
+
+		return false;
 	}
 
 	/**
@@ -380,15 +385,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumes(IFrame other) {
 
-		for (IFrame disjunct : asDisjunctsSet()) {
-
-			if (!other.hasDisjunct(disjunct)) {
-
-				return false;
-			}
-		}
-
-		return true;
+		return asDisjunctsSet().containsAll(asDisjuncts());
 	}
 
 	/**
@@ -654,6 +651,13 @@ public class IFrame implements IEntity, IValue {
 		return mappedObject;
 	}
 
+	void autoUpdateThis() {
+
+		IUpdating updating = getIUpdating();
+
+		while (updating.checkAutoUpdate(this).contains(IUpdateOp.SLOT_VALUES));
+	}
+
 	private ISlot addSlotInternal(CSlot slotType, boolean free) {
 
 		ISlot slot = new ISlot(slotType, this);
@@ -711,53 +715,7 @@ public class IFrame implements IEntity, IValue {
 		}
 	}
 
-	private void autoUpdateThis() {
-
-		IUpdating updating = getIUpdating();
-
-		while (updating.checkAutoUpdate(this).contains(IUpdateOp.SLOT_VALUES));
-	}
-
 	private boolean equalsFrame(IFrame other) {
-
-		Set<IFrame> disjuncts = asDisjunctsSet();
-		Set<IFrame> otherDisjuncts = other.asDisjunctsSet();
-
-		if (disjuncts.size() != otherDisjuncts.size()) {
-
-			return false;
-		}
-
-		if (disjuncts.size() != 1) {
-
-			return disjuncts.equals(otherDisjuncts);
-		}
-
-		IFrame disjunct = disjuncts.iterator().next();
-		IFrame otherDisjunct = otherDisjuncts.iterator().next();
-
-		return disjunct.atomicFrameEqualsAtomicFrame(otherDisjunct);
-	}
-
-	private boolean hasDisjunct(IFrame atom) {
-
-		for (IFrame disjunct : asDisjunctsSet()) {
-
-			if (disjunct.atomicFrameEqualsAtomicFrame(atom)) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private boolean atomicFrameEqualsAtomicFrame(IFrame other) {
-
-		if (other == this) {
-
-			return true;
-		}
 
 		if (slots.isEmpty() && other.slots.isEmpty()) {
 

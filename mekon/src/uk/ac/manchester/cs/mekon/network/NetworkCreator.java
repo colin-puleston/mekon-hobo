@@ -35,17 +35,17 @@ class NetworkCreator {
 
 	private NNode rootNode;
 
-	private IFrameSlotRenderer iFrameSlotsRenderer = new IFrameSlotRenderer();
-	private CFrameSlotRenderer cFrameSlotsRenderer = new CFrameSlotRenderer();
-	private INumberSlotRenderer iNumberSlotsRenderer = new INumberSlotRenderer();
+	private IFrameSlotRenderer iFrameSlotRenderer = new IFrameSlotRenderer();
+	private CFrameSlotRenderer cFrameSlotRenderer = new CFrameSlotRenderer();
+	private INumberSlotRenderer iNumberSlotRenderer = new INumberSlotRenderer();
 
 	private Map<IFrame, NNode> nodesByFrame = new HashMap<IFrame, NNode>();
 
 	private abstract class TypeSlotRenderer<V, A extends NAttribute<V>, IV> {
 
-		void render(NNode node, ISlot iSlot, List<IV> iValues) {
+		void render(NNode node, ISlot slot, List<IV> iValues) {
 
-			render(node, iSlot.getType().getIdentity(), iSlot, iValues);
+			render(node, slot.getType().getIdentity(), slot, iValues);
 		}
 
 		void render(NNode node, CIdentity slotId, List<IV> iValues) {
@@ -55,13 +55,13 @@ class NetworkCreator {
 
 		abstract V getValue(IV iValue);
 
-		abstract A createAttribute(CIdentity id, ISlot iSlot);
+		abstract A createAttribute(CIdentity id, ISlot slot);
 
 		abstract void addAttribute(NNode node, A attribute);
 
-		private void render(NNode node, CIdentity id, ISlot iSlot, List<IV> iValues) {
+		private void render(NNode node, CIdentity id, ISlot slot, List<IV> iValues) {
 
-			A attribute = createAttribute(id, iSlot);
+			A attribute = createAttribute(id, slot);
 
 			for (IV iValue : iValues) {
 
@@ -76,9 +76,9 @@ class NetworkCreator {
 								extends
 									TypeSlotRenderer<NNode, NLink, IV> {
 
-		NLink createAttribute(CIdentity id, ISlot iSlot) {
+		NLink createAttribute(CIdentity id, ISlot slot) {
 
-			return new NLink(id, iSlot);
+			return new NLink(id, slot);
 		}
 
 		void addAttribute(NNode node, NLink attribute) {
@@ -88,6 +88,25 @@ class NetworkCreator {
 	}
 
 	private class IFrameSlotRenderer extends FrameSlotRenderer<IFrame> {
+
+		void render(NNode node, ISlot slot, List<IFrame> iValues) {
+
+			List<IFrame> iConjunctionValues = new ArrayList<IFrame>();
+
+			for (IFrame iValue : iValues) {
+
+				if (iValue.getCategory().disjunction()) {
+
+					render(node, slot, iValue.asDisjuncts());
+				}
+				else {
+
+					iConjunctionValues.add(iValue);
+				}
+			}
+
+			super.render(node, slot, iConjunctionValues);
+		}
 
 		NNode getValue(IFrame iValue) {
 
@@ -112,9 +131,9 @@ class NetworkCreator {
 			return iValue;
 		}
 
-		NNumeric createAttribute(CIdentity id, ISlot iSlot) {
+		NNumeric createAttribute(CIdentity id, ISlot slot) {
 
-			return new NNumeric(id, iSlot);
+			return new NNumeric(id, slot);
 		}
 
 		void addAttribute(NNode node, NNumeric attribute) {
@@ -125,30 +144,30 @@ class NetworkCreator {
 
 	private class ISlotRenderer extends ISlotValuesVisitor {
 
-		private ISlot iSlot;
+		private ISlot slot;
 		private NNode node;
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
-			iFrameSlotsRenderer.render(node, iSlot, values);
+			iFrameSlotRenderer.render(node, slot, values);
 		}
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			iNumberSlotsRenderer.render(node, iSlot, values);
+			iNumberSlotRenderer.render(node, slot, values);
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
-			cFrameSlotsRenderer.render(node, iSlot, values);
+			cFrameSlotRenderer.render(node, slot, values);
 		}
 
-		ISlotRenderer(ISlot iSlot, NNode node) {
+		ISlotRenderer(ISlot slot, NNode node) {
 
-			this.iSlot = iSlot;
+			this.slot = slot;
 			this.node = node;
 
-			visit(iSlot);
+			visit(slot);
 		}
 	}
 
@@ -160,17 +179,17 @@ class NetworkCreator {
 
 		protected void visit(CFrame value) {
 
-			cFrameSlotsRenderer.render(node, slotId, getValues(CFrame.class));
+			cFrameSlotRenderer.render(node, slotId, getValues(CFrame.class));
 		}
 
 		protected void visit(CNumber value) {
 
-			iNumberSlotsRenderer.render(node, slotId, getCNumberValuesAsINumbers());
+			iNumberSlotRenderer.render(node, slotId, getCNumberValuesAsINumbers());
 		}
 
 		protected void visit(MFrame value) {
 
-			cFrameSlotsRenderer.render(node, slotId, getMFrameValuesAsCFrames());
+			cFrameSlotRenderer.render(node, slotId, getMFrameValuesAsCFrames());
 		}
 
 		CSlotValuesRenderer(CSlotValues cSlotValues, CIdentity slotId, NNode node) {
@@ -241,9 +260,9 @@ class NetworkCreator {
 
 		node.setIFrame(frame);
 
-		for (ISlot iSlot : frame.getSlots().asList()) {
+		for (ISlot slot : frame.getSlots().asList()) {
 
-			new ISlotRenderer(iSlot, node);
+			new ISlotRenderer(slot, node);
 		}
 
 		return node;

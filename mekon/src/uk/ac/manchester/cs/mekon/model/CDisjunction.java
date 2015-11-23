@@ -60,23 +60,6 @@ class CDisjunction extends CExpression {
 		return new CDisjunction(label, resolvedDisjuncts);
 	}
 
-	static String getDescriptionForLabel(List<? extends CFrame> disjuncts) {
-
-		StringBuilder bldr = new StringBuilder();
-
-		for (CFrame disjunct : disjuncts) {
-
-			if (bldr.length() != 0) {
-
-				bldr.append(DISPLAY_LABEL_DISJUNCT_SEPARATOR);
-			}
-
-			bldr.append(disjunct.getDisplayLabel());
-		}
-
-		return bldr.toString();
-	}
-
 	static private List<CAtomicFrame> resolveDisjuncts(Collection<CFrame> disjuncts) {
 
 		MostGeneralCFrames mostGenerals = new MostGeneralCFrames();
@@ -292,7 +275,19 @@ class CDisjunction extends CExpression {
 
 	String getExpressionDescriptionForLabel() {
 
-		return getDescriptionForLabel(disjuncts);
+		StringBuilder bldr = new StringBuilder();
+
+		for (CFrame disjunct : disjuncts) {
+
+			if (bldr.length() != 0) {
+
+				bldr.append(DISPLAY_LABEL_DISJUNCT_SEPARATOR);
+			}
+
+			bldr.append(disjunct.getDisplayLabel());
+		}
+
+		return bldr.toString();
 	}
 
 	private CDisjunction(String label, List<CAtomicFrame> disjuncts) {
