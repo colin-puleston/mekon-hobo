@@ -128,16 +128,6 @@ class IndividualsRenderer {
 				addTypeAssignment(construct);
 			}
 
-			OWLClassExpression toExpression(OWLNamedIndividual rendering) {
-
-				return dataFactory.getOWLObjectOneOf(rendering);
-			}
-
-			OWLClassExpression createUnion(Set<OWLNamedIndividual> renderings) {
-
-				return dataFactory.getOWLObjectOneOf(renderings);
-			}
-
 			private OWLNamedIndividual addIndividual() {
 
 				OWLNamedIndividual ind = createIndividual();
@@ -229,6 +219,16 @@ class IndividualsRenderer {
 		NodeRenderer createNodeRenderer(NNode node) {
 
 			return new NodeToIndividualRenderer(node);
+		}
+
+		OWLClassExpression nodeRenderingToExpression(OWLNamedIndividual rendering) {
+
+			return dataFactory.getOWLObjectOneOf(rendering);
+		}
+
+		OWLClassExpression renderUnion(Set<OWLNamedIndividual> operands) {
+
+			return dataFactory.getOWLObjectOneOf(operands);
 		}
 	}
 

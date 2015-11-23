@@ -91,16 +91,6 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 			conjuncts.add(construct);
 		}
-
-		OWLClassExpression toExpression(OWLClassExpression rendering) {
-
-			return rendering;
-		}
-
-		OWLClassExpression createUnion(Set<OWLClassExpression> renderings) {
-
-			return dataFactory.getOWLObjectUnionOf(renderings);
-		}
 	}
 
 	ExpressionRenderer(OModel model, ORSemantics semantics) {
@@ -120,6 +110,16 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 	NodeRenderer createNodeRenderer(NNode node) {
 
 		return new NodeToExpressionRenderer(node);
+	}
+
+	OWLClassExpression nodeRenderingToExpression(OWLClassExpression rendering) {
+
+		return rendering;
+	}
+
+	OWLClassExpression renderUnion(Set<OWLClassExpression> operands) {
+
+		return dataFactory.getOWLObjectUnionOf(operands);
 	}
 
 	private void startRecurse(NNode node) {
