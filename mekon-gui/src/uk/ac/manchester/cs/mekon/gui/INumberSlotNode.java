@@ -38,7 +38,7 @@ class INumberSlotNode extends ISlotNode {
 
 	private class ValueNode extends IValueNode<INumber> {
 
-		protected GNodeAction getNegativeAction() {
+		protected GNodeAction getNegativeAction1() {
 
 			return getRemoveValueAction(getValue());
 		}

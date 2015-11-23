@@ -33,7 +33,6 @@ abstract class GCellDisplaySortedList<E>  {
 
 	private Collection<E> elements;
 	private List<E> list = null;
-	private Map<E, Integer> indices = null;
 
 	private class SortedElementsComparator implements Comparator<E> {
 
@@ -50,17 +49,21 @@ abstract class GCellDisplaySortedList<E>  {
 		}
 	}
 
-	GCellDisplaySortedList(boolean ordered) {
+	GCellDisplaySortedList(boolean sort) {
 
-		elements = ordered ? createSortedSet() : new ArrayList<E>();
+		elements = sort ? createSortedSet() : new ArrayList<E>();
 	}
 
 	void add(E element) {
 
+		insert(element, elements.size());
+	}
+
+	void insert(E element, int index) {
+
 		if (!elements.contains(element)) {
 
-			elements.add(element);
-
+			addToElements(element, index);
 			onEdited();
 		}
 	}
@@ -82,6 +85,11 @@ abstract class GCellDisplaySortedList<E>  {
 		}
 	}
 
+	int size() {
+
+		return list.size();
+	}
+
 	List<E> asList() {
 
 		checkReadable();
@@ -101,12 +109,23 @@ abstract class GCellDisplaySortedList<E>  {
 		return new TreeSet<E>(new SortedElementsComparator());
 	}
 
+	private void addToElements(E element, int index) {
+
+		if (elements instanceof List) {
+
+			((List<E>)elements).add(index, element);
+		}
+		else {
+
+			elements.add(element);
+		}
+	}
+
 	private void onEdited() {
 
 		if (list != null) {
 
 			list = null;
-			indices = null;
 		}
 	}
 
@@ -115,14 +134,10 @@ abstract class GCellDisplaySortedList<E>  {
 		if (list == null) {
 
 			list = new ArrayList<E>();
-			indices = new HashMap<E, Integer>();
-
-			int i = 0;
 
 			for (E element : elements) {
 
 				list.add(element);
-				indices.put(element, i++);
 			}
 		}
 	}

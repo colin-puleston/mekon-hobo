@@ -38,14 +38,14 @@ class CFrameSlotNode extends FFrameSlotNode<CFrame> {
 
 	private class ValueNode extends IValueNode<CFrame> {
 
-		protected GNodeAction getPositiveAction() {
+		protected GNodeAction getPositiveAction1() {
 
-			return getAdditionAction(getValue());
+			return getCFrameAdditionAction(getValue());
 		}
 
-		protected GNodeAction getNegativeAction() {
+		protected GNodeAction getNegativeAction1() {
 
-			return getRemovalAction(getValue());
+			return getFFrameRemovalAction(getValue());
 		}
 
 		ValueNode(CFrame value) {

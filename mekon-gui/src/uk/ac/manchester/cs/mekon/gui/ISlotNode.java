@@ -119,12 +119,12 @@ abstract class ISlotNode extends GNode {
 		valueNodes.addInitialChildNodes();
 	}
 
-	protected GNodeAction getPositiveAction() {
+	protected GNodeAction getPositiveAction1() {
 
 		return new AddValueAction();
 	}
 
-	protected GNodeAction getNegativeAction() {
+	protected GNodeAction getNegativeAction1() {
 
 		return new ClearValuesAction();
 	}
@@ -170,6 +170,14 @@ abstract class ISlotNode extends GNode {
 		onUpdateStart();
 		getValuesEditor().remove(value);
 		onUpdateEnd(null);
+	}
+
+	void replaceValue(IValue oldValue, IValue newValue) {
+
+		startChildReplacementOperation();
+
+		removeValue(oldValue);
+		addValue(newValue);
 	}
 
 	abstract IValue checkObtainValue();

@@ -42,21 +42,6 @@ public class GTree extends JTree {
 	private ActionInvoker positiveActionInvoker = new PositiveActionInvoker();
 	private ActionInvoker negativeActionInvoker = new NegativeActionInvoker();
 
-	private abstract class ActionInvoker {
-
-		void checkInvokeOn(GNode node) {
-
-			GNodeAction action = getNodeAction(node);
-
-			if (action.active()) {
-
-				action.perform();
-			}
-		}
-
-		abstract GNodeAction getNodeAction(GNode node);
-	}
-
 	private class ExpansionManager implements TreeExpansionListener {
 
 		public void treeExpanded(TreeExpansionEvent event) {
@@ -85,19 +70,51 @@ public class GTree extends JTree {
 		}
 	}
 
+	private abstract class ActionInvoker {
+
+		void checkInvokeOn(GNode node, boolean action2) {
+
+			GNodeAction action = getNodeAction(node, action2);
+
+			if (action.active()) {
+
+				action.perform();
+			}
+		}
+
+		abstract GNodeAction getNodeAction1(GNode node);
+
+		abstract GNodeAction getNodeAction2(GNode node);
+
+		private GNodeAction getNodeAction(GNode node, boolean action2) {
+
+			return action2 ? getNodeAction2(node) : getNodeAction1(node);
+		}
+	}
+
 	private class PositiveActionInvoker extends ActionInvoker {
 
-		GNodeAction getNodeAction(GNode node) {
+		GNodeAction getNodeAction1(GNode node) {
 
-			return node.getPositiveAction();
+			return node.getPositiveAction1();
+		}
+
+		GNodeAction getNodeAction2(GNode node) {
+
+			return node.getPositiveAction2();
 		}
 	}
 
 	private class NegativeActionInvoker extends ActionInvoker {
 
-		GNodeAction getNodeAction(GNode node) {
+		GNodeAction getNodeAction1(GNode node) {
 
-			return node.getNegativeAction();
+			return node.getNegativeAction1();
+		}
+
+		GNodeAction getNodeAction2(GNode node) {
+
+			return node.getNegativeAction2();
 		}
 	}
 
@@ -131,17 +148,31 @@ public class GTree extends JTree {
 
 		private void processClick(GNode node, MouseEvent event) {
 
+			clearSelection();
+
+			ActionInvoker actionInvoker = getSelectedActionInvoker(event);
+
+			if (actionInvoker != null) {
+
+				actionInvoker.checkInvokeOn(node, event.isAltDown());
+			}
+		}
+
+		private ActionInvoker getSelectedActionInvoker(MouseEvent event) {
+
 			int button = event.getButton();
 
 			if (button == MouseEvent.BUTTON3 || event.isControlDown()) {
 
-				negativeActionInvoker.checkInvokeOn(node);
+				return negativeActionInvoker;
 			}
-			else if (button == MouseEvent.BUTTON1) {
 
-				clearSelection();
-				positiveActionInvoker.checkInvokeOn(node);
+			if (button == MouseEvent.BUTTON1) {
+
+				return positiveActionInvoker;
 			}
+
+			return null;
 		}
 
 		private TreePath findTreePath(MouseEvent event) {

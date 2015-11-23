@@ -53,9 +53,41 @@ public abstract class GNode extends GMutableTreeNode {
 
 	private class ChildList extends GCellDisplaySortedList<GNode> {
 
+		private boolean replacing = false;
+		private Integer nextIndex = null;
+
 		ChildList() {
 
 			super(orderedChildren());
+		}
+
+		void startReplacementOperation() {
+
+			replacing = true;
+		}
+
+		void performAddition(GNode child) {
+
+			if (nextIndex != null) {
+
+				insert(child, nextIndex);
+
+				nextIndex = null;
+			}
+			else {
+
+				add(child);
+			}
+		}
+
+		void performRemoval(GNode child) {
+
+			if (replacing) {
+
+				nextIndex = getChildren().indexOf(child);
+			}
+
+			remove(child);
 		}
 
 		int compareOrdered(GNode first, GNode second) {
@@ -80,12 +112,17 @@ public abstract class GNode extends GMutableTreeNode {
 
 		child.parent = this;
 
-		getChildList().add(child);
+		getChildList().performAddition(child);
 
 		if (initialised) {
 
 			getTreeModel().nodesWereInserted(this, getIndexAsArray(child));
 			tree.updateAllNodeDisplays();
+
+			if (child.autoExpand()) {
+
+				child.checkExpanded();
+			}
 		}
 	}
 
@@ -131,6 +168,11 @@ public abstract class GNode extends GMutableTreeNode {
 	public void updateNodeDisplay() {
 
 		getTreeModel().nodeChanged(this);
+	}
+
+	public void startChildReplacementOperation() {
+
+		getChildList().startReplacementOperation();
 	}
 
 	public GNode getParent() {
@@ -198,12 +240,22 @@ public abstract class GNode extends GMutableTreeNode {
 		return true;
 	}
 
-	protected GNodeAction getPositiveAction() {
+	protected GNodeAction getPositiveAction1() {
 
 		return GNodeAction.INERT_ACTION;
 	}
 
-	protected GNodeAction getNegativeAction() {
+	protected GNodeAction getPositiveAction2() {
+
+		return GNodeAction.INERT_ACTION;
+	}
+
+	protected GNodeAction getNegativeAction1() {
+
+		return GNodeAction.INERT_ACTION;
+	}
+
+	protected GNodeAction getNegativeAction2() {
 
 		return GNodeAction.INERT_ACTION;
 	}
@@ -247,7 +299,7 @@ public abstract class GNode extends GMutableTreeNode {
 
 		child.collapse();
 		child.parent = null;
-		getChildList().remove(child);
+		getChildList().performRemoval(child);
 
 		getTreeModel().nodesWereRemoved(this, oldIndex, oldChild);
 		tree.updateAllNodeDisplays();

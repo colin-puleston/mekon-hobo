@@ -39,21 +39,97 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 	private ITree tree;
 	private ISlot slot;
 
-	private class ValueNode extends IFrameNode {
+	private class AtomicValueNode extends IFrameNode {
 
-		protected GNodeAction getPositiveAction() {
+		protected GNodeAction getPositiveAction1() {
 
-			return getAdditionAction(getValue());
+			return getCFrameAdditionAction(getValue());
 		}
 
-		protected GNodeAction getNegativeAction() {
+		protected GNodeAction getPositiveAction2() {
 
-			return getRemovalAction(getValue());
+			return getIFrameAdditionAction(getValue());
 		}
 
-		ValueNode(IFrame value) {
+		protected GNodeAction getNegativeAction1() {
+
+			return getFFrameRemovalAction(getValue());
+		}
+
+		AtomicValueNode(IFrame value) {
 
 			super(tree, value);
+		}
+	}
+
+	private class DisjunctionValueNode extends IFrameNode {
+
+		protected GNodeAction getNegativeAction1() {
+
+			return getRemoveValueAction(getValue());
+		}
+
+		DisjunctionValueNode(IFrame value) {
+
+			super(tree, value);
+		}
+
+		private void checkUpdateForRemovedDisjunct() {
+
+			IFrame disjunctionValue = getValue();
+			ISlot disjunctsSlot = disjunctionValue.getDisjunctsSlot();
+			List<IValue> disjuncts = disjunctsSlot.getValues().asList();
+
+			if (disjuncts.size() == 1) {
+
+				replaceValue(disjunctionValue, disjuncts.get(0));
+			}
+		}
+	}
+
+	private class AddIFrameDisjunctAction extends GNodeAction {
+
+		private IFrame value;
+
+		protected void perform() {
+
+			CFrame type = checkObtainCFrameAddition();
+
+			if (type != null) {
+
+				IFrame newValue = instantiate(type);
+
+				if (!newValue.equals(value)) {
+
+					replaceValue(value, createDisjunction(newValue));
+				}
+			}
+		}
+
+		AddIFrameDisjunctAction(IFrame value) {
+
+			this.value = value;
+		}
+
+		private IFrame createDisjunction(IFrame newValue) {
+
+			IFrame disjunction = instantiateDisjunction();
+			ISlotValuesEditor disjunctsEd = getDisjunctsEditor(disjunction);
+
+			disjunctsEd.add(value);
+			disjunctsEd.add(newValue);
+
+			return disjunction;
+		}
+
+		private IFrame instantiateDisjunction() {
+
+			return getValueType().instantiateDisjunction();
+		}
+
+		private ISlotValuesEditor getDisjunctsEditor(IFrame disjunction) {
+
+			return disjunction.getDisjunctsSlot().getValuesEditor();
 		}
 	}
 
@@ -67,7 +143,14 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	GNode createValueNode(IValue value) {
 
-		return new ValueNode(asIFrame(value));
+		IFrame frameValue = asIFrame(value);
+
+		if (frameValue.getCategory().disjunction()) {
+
+			return new DisjunctionValueNode(frameValue);
+		}
+
+		return new AtomicValueNode(frameValue);
 	}
 
 	IValue checkObtainValue() {
@@ -75,6 +158,18 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		CFrame type = checkObtainCFrameAddition();
 
 		return type != null ? instantiate(type) : null;
+	}
+
+	void removeValue(IValue value) {
+
+		super.removeValue(value);
+
+		GNode parent = getParent();
+
+		if (parent instanceof DisjunctionValueNode) {
+
+			((DisjunctionValueNode)parent).checkUpdateForRemovedDisjunct();
+		}
 	}
 
 	String getCFrameRole() {
@@ -121,6 +216,18 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		}
 	}
 
+	private GNodeAction getIFrameAdditionAction(IFrame value) {
+
+		return addIFrameDisjunctActionRequired()
+				? new AddIFrameDisjunctAction(value)
+				: GNodeAction.INERT_ACTION;
+	}
+
+	private boolean addIFrameDisjunctActionRequired() {
+
+		return queryInstance() && abstractEditableSlot();
+	}
+
 	private IFrame instantiate(CFrame type) {
 
 		return type.instantiate(slot.getContainer().getFunction());
@@ -134,5 +241,15 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 	private CFrame getValueType() {
 
 		return slot.getValueType().castAs(CFrame.class);
+	}
+
+	private boolean queryInstance() {
+
+		return slot.getContainer().getFunction().query();
+	}
+
+	private boolean abstractEditableSlot() {
+
+		return slot.getEditability().abstractEditable();
 	}
 }

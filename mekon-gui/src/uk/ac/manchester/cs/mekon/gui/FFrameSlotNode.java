@@ -38,7 +38,7 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 	private ITree tree;
 	private ISlot slot;
 
-	private abstract class UpdateDisjunctsAction extends GNodeAction {
+	private abstract class UpdateCFrameDisjunctsAction extends GNodeAction {
 
 		private F value;
 
@@ -48,16 +48,18 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 			if (updatedValue != value) {
 
-				removeValue(value);
-
 				if (updatedValue != null) {
 
-					addValue(updatedValue);
+					replaceValue(value, updatedValue);
+				}
+				else {
+
+					removeValue(value);
 				}
 			}
 		}
 
-		UpdateDisjunctsAction(F value) {
+		UpdateCFrameDisjunctsAction(F value) {
 
 			this.value = value;
 		}
@@ -83,9 +85,9 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 		}
 	}
 
-	private class AddDisjunctAction extends UpdateDisjunctsAction {
+	private class AddCFrameDisjunctAction extends UpdateCFrameDisjunctsAction {
 
-		AddDisjunctAction(F value) {
+		AddCFrameDisjunctAction(F value) {
 
 			super(value);
 		}
@@ -96,9 +98,9 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 		}
 	}
 
-	private class RemoveDisjunctAction extends UpdateDisjunctsAction {
+	private class RemoveCFrameDisjunctAction extends UpdateCFrameDisjunctsAction {
 
-		RemoveDisjunctAction(F value) {
+		RemoveCFrameDisjunctAction(F value) {
 
 			super(value);
 		}
@@ -117,17 +119,17 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 		this.slot = slot;
 	}
 
-	GNodeAction getAdditionAction(F value) {
+	GNodeAction getCFrameAdditionAction(F value) {
 
-		return addDisjunctActionRequired()
-				? new AddDisjunctAction(value)
+		return addCFrameDisjunctActionRequired()
+				? new AddCFrameDisjunctAction(value)
 				: GNodeAction.INERT_ACTION;
 	}
 
-	GNodeAction getRemovalAction(F value) {
+	GNodeAction getFFrameRemovalAction(F value) {
 
-		return removeDisjunctActionRequired(value)
-				? new RemoveDisjunctAction(value)
+		return removeCFrameDisjunctActionRequired(value)
+				? new RemoveCFrameDisjunctAction(value)
 				: getRemoveValueAction(value);
 	}
 
@@ -146,12 +148,12 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 	abstract F checkUpdateValue(F value, CFrame updatedCFrame);
 
-	private boolean addDisjunctActionRequired() {
+	private boolean addCFrameDisjunctActionRequired() {
 
 		return abstractEditableSlot() && !singleOption();
 	}
 
-	private boolean removeDisjunctActionRequired(F value) {
+	private boolean removeCFrameDisjunctActionRequired(F value) {
 
 		return abstractEditableSlot() && disjunctionValue(value);
 	}
