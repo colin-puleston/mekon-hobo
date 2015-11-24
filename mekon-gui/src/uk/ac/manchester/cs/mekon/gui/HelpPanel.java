@@ -40,8 +40,9 @@ class HelpPanel extends JTabbedPane {
 
 	static private final EntityLevel DEFAULT_LEVEL = EntityLevel.CONCEPT;
 	static private final CSource DEFAULT_SOURCE = CSource.UNSPECIFIED;
-	static private final String LEFT_CLICK_STRING = "LEFT-CLICK";
-	static private final String RIGHT_CLICK_STRING = "RIGHT-CLICK";
+	static private final String POSITIVE_ACTION = "LEFT-CLICK";
+	static private final String POSITIVE_ACTION2 = "LEFT-CLICK / ALT";
+	static private final String NEGATIVE_ACTION = "RIGHT-CLICK";
 
 	static final Icon mValueShape = getValueShape(EntityLevel.META);
 	static final Icon cValueShape = getValueShape(EntityLevel.CONCEPT);
@@ -183,30 +184,25 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns(
 					"Colour",
-					"Entity Types",
-					"Entity Level",
+					"Entity Types (All Levels)",
 					"Entity Source");
 
 				addRow(
 					internalColour,
 					"Frame, Slot",
-					"All",
 					"Internal (i.e. Object Model)");
 				addRow(
 					externalColour,
 					"Frame, Slot",
-					"All",
 					"External (e.g. Ontology)");
 				addRow(
 					dualColour,
 					"Frame, Slot",
-					"All",
 					"Internal AND External");
 				addRow(
 					numberColour,
 					"Number",
-					"All",
-					"Internal AND/OR External (context dependent)");
+					"Internal AND / OR External (context dependent)");
 			}
 		}
 
@@ -227,15 +223,15 @@ class HelpPanel extends JTabbedPane {
 				addCardinalityRow(
 					CCardinality.UNIQUE_TYPES,
 					false,
-					"Multi-valued / Unique value-types");
+					"Multi-valued + Unique value-types");
 				addCardinalityRow(
 					CCardinality.REPEATABLE_TYPES,
 					false,
-					"Multi-valued / Multiple repeatable value-types");
+					"Multi-valued + Multiple repeatable value-types");
 				addCardinalityRow(
 					CCardinality.REPEATABLE_TYPES,
 					true,
-					"Multi-valued / Single repeatable value-type");
+					"Multi-valued + Single repeatable value-type");
 			}
 
 			private void addCardinalityRow(
@@ -289,12 +285,12 @@ class HelpPanel extends JTabbedPane {
 				checkAddRow(
 					defaultSlotShape,
 					mValueShape,
-					"CSlot has MFrame-value-type",
+					"CSlot has MFrame value-type",
 					false);
 				checkAddRow(
 					defaultSlotShape,
 					cValueShape,
-					"CSlot has CFrame/CNumber-value-type",
+					"CSlot has CFrame / CNumber value-type",
 					false);
 				checkAddRow(
 					mValueShape,
@@ -330,7 +326,7 @@ class HelpPanel extends JTabbedPane {
 				super("Node-Shape Modifiers");
 
 				addColumns(
-					"Shape +/- Modifier",
+					"Shape + / - Modifier",
 					"Entity Types",
 					"Represents Attribute");
 
@@ -354,7 +350,7 @@ class HelpPanel extends JTabbedPane {
 					defaultSlotShape,
 					"CSlot",
 					"Default editable "
-					+ "(concrete-only on assertions / fully editable on queries)");
+					+ "(concrete-only on assertions + fully editable on queries)");
 				addRow(
 					fullEditSlotShape,
 					"CSlot",
@@ -364,7 +360,7 @@ class HelpPanel extends JTabbedPane {
 					queryOnlyEditSlotShape,
 					"CSlot",
 					"Query-only editable "
-					+ "(non-editable on assertions / fully editable on queries)");
+					+ "(non-editable on assertions + fully editable on queries)");
 				addRow(
 					nonEditSlotShape,
 					"CSlot",
@@ -407,11 +403,11 @@ class HelpPanel extends JTabbedPane {
 				addRow(
 					defaultSlotShape,
 					cValueShape,
-					"ISlot has CFrame-value");
+					"ISlot has CFrame value");
 				addRow(
 					defaultSlotShape,
 					iValueShape,
-					"ISlot has IFrame/INumber-value");
+					"ISlot has IFrame / INumber value");
 			}
 		}
 
@@ -424,7 +420,7 @@ class HelpPanel extends JTabbedPane {
 				super("Node-Shape Modifiers");
 
 				addColumns(
-					"Shape +/- Modifier",
+					"Shape + / - Modifier",
 					"Entity Types",
 					"Represents Attribute");
 
@@ -454,7 +450,7 @@ class HelpPanel extends JTabbedPane {
 				addColumns("Entity Types", "Label Modifier", "Represents");
 
 				addSlotValueTypeRow("CFrame", true);
-				addSlotValueTypeRow("IFrame/INumber", false);
+				addSlotValueTypeRow("IFrame / INumber", false);
 			}
 
 			private void addSlotValueTypeRow(String valueType, boolean conceptLevel) {
@@ -555,44 +551,49 @@ class HelpPanel extends JTabbedPane {
 				addColumns(
 					"Target Type",
 					"Applicability",
-					"Mouse Action",
+					"Mouse-Action / Key-Pressed",
 					"Model Action");
 
 				addRow(
 					"SLOT",
 					"Editable slots only",
-					LEFT_CLICK_STRING,
+					POSITIVE_ACTION,
 					"Add value");
 				addRow(
 					"SLOT",
 					"Editable slots only",
-					RIGHT_CLICK_STRING,
+					NEGATIVE_ACTION,
 					"Clear value(s)");
 				addRow(
 					"SLOT-VALUE",
 					"Editable slots only",
-					RIGHT_CLICK_STRING,
+					NEGATIVE_ACTION,
 					"Remove value");
 				addRow(
 					"SLOT-VALUE",
 					"Abstract-editable CFrame-valued slots only",
-					LEFT_CLICK_STRING,
+					POSITIVE_ACTION,
 					"Add disjunct to value");
 				addRow(
 					"SLOT-VALUE",
 					"Abstract-editable CFrame-valued slots only",
-					RIGHT_CLICK_STRING,
+					NEGATIVE_ACTION,
 					"Remove disjunct(s) from value");
 				addRow(
 					"SLOT-VALUE",
 					"Abstract-editable IFrame-valued slots only",
-					LEFT_CLICK_STRING,
+					POSITIVE_ACTION,
 					"Add disjunct to value-type of value");
 				addRow(
 					"SLOT-VALUE",
 					"Abstract-editable IFrame-valued slots only",
-					RIGHT_CLICK_STRING,
+					NEGATIVE_ACTION,
 					"Remove disjunct(s) from value-type of value");
+				addRow(
+					"SLOT-VALUE",
+					"Abstract-editable IFrame-valued slots only",
+					POSITIVE_ACTION2,
+					"Add disjunct to value");
 			}
 		}
 
