@@ -43,41 +43,63 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 	private int nodeCount = 0;
 
-	private abstract class AttributesRenderer<V> {
+	private abstract class AttributesRenderer<V, A extends NAttribute<V>> {
 
-		void render(TN subject, List<? extends NAttribute<V>> attributes) {
+		void render(TN subject, List<? extends A> attributes) {
 
-			for (NAttribute<V> attribute : attributes) {
+			for (A attribute : attributes) {
 
 				if (!attribute.getValues().isEmpty()) {
 
-					renderValues(subject, attribute);
+					renderValues(subject, renderType(attribute), attribute);
 				}
 			}
 		}
 
-		abstract void renderValue(TN subject, OT_URI predicate, V value);
-
-		private void renderValues(TN subject, NAttribute<V> attribute) {
-
-			OT_URI predicate = renderType(attribute);
+		void renderValues(TN subject, OT_URI predicate, A attribute) {
 
 			for (V value : attribute.getValues()) {
 
 				renderValue(subject, predicate, value);
 			}
 		}
+
+		abstract void renderValue(TN subject, OT_URI predicate, V value);
 	}
 
-	private class LinksRenderer extends AttributesRenderer<NNode> {
+	private class LinksRenderer extends AttributesRenderer<NNode, NLink> {
+
+		void renderValues(TN subject, OT_URI predicate, NLink attribute) {
+
+			if (attribute.disjunctionLink()) {
+
+				renderUnion(subject, predicate, renderValues(attribute));
+			}
+			else {
+
+				super.renderValues(subject, predicate, attribute);
+			}
+		}
 
 		void renderValue(TN subject, OT_URI predicate, NNode value) {
 
 			renderTriple(subject, predicate, renderNode(value));
 		}
+
+		private Set<OTValue> renderValues(NLink link) {
+
+			Set<OTValue> tripleNodes = new HashSet<OTValue>();
+
+			for (NNode value : link.getValues()) {
+
+				tripleNodes.add(renderNode(value));
+			}
+
+			return tripleNodes;
+		}
 	}
 
-	private class NumericsRenderer extends AttributesRenderer<INumber> {
+	private class NumericsRenderer extends AttributesRenderer<INumber, NNumeric> {
 
 		void renderValue(TN subject, OT_URI predicate, INumber value) {
 
