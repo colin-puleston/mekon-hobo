@@ -166,7 +166,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 			IValue resolveValueSpec(XNode valueNode) {
 
-				return parseIFrame(valueNode);
+				return resolveIFrame(valueNode);
 			}
 
 			IValue getValue(ISlot slot, IValue valueSpec) {
@@ -282,7 +282,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		IFrame parse() {
 
-			IFrame rootFrame = parseIFrame(getTopLevelFrameNode());
+			IFrame rootFrame = resolveIFrame(getTopLevelFrameNode());
 
 			addSlotValues();
 			onParseCompletion(rootFrame, frames);
@@ -290,7 +290,7 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 			return rootFrame;
 		}
 
-		private IFrame parseIFrame(XNode node) {
+		private IFrame resolveIFrame(XNode node) {
 
 			int refIndex = node.getInteger(IFRAME_REF_INDEX_ATTR, 0);
 
@@ -301,6 +301,13 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private IFrame parseIFrameDirect(XNode node) {
 
+			return node.hasChild(CFRAME_ID)
+					? parseAtomicIFrame(node)
+					: parseDisjunctionIFrame(node);
+		}
+
+		private IFrame parseAtomicIFrame(XNode node) {
+
 			CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
 			IFrame frame = createAndRegisterFrame(frameType);
 
@@ -310,6 +317,18 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 			}
 
 			return frame;
+		}
+
+		private IFrame parseDisjunctionIFrame(XNode node) {
+
+			List<IFrame> disjuncts = new ArrayList<IFrame>();
+
+			for (XNode disjunctNode : node.getChildren(IFRAME_ID)) {
+
+				disjuncts.add(resolveIFrame(disjunctNode));
+			}
+
+			return IFrame.createDisjunction(disjuncts);
 		}
 
 		private IFrame resolveIFrameIndirect(Integer refIndex) {
@@ -333,21 +352,16 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private CFrame parseCFrame(XNode node) {
 
-			return parseCFrame(node, CFRAME_ID);
-		}
-
-		private CFrame parseCFrame(XNode node, String tag) {
-
 			return node.hasAttribute(IDENTITY_ATTR)
 					? parseAtomicCFrame(node)
-					: parseDisjunctionCFrame(node, tag);
+					: parseDisjunctionCFrame(node);
 		}
 
-		private CFrame parseDisjunctionCFrame(XNode node, String tag) {
+		private CFrame parseDisjunctionCFrame(XNode node) {
 
 			List<CFrame> disjuncts = new ArrayList<CFrame>();
 
-			for (XNode disjunctNode : node.getChildren(tag)) {
+			for (XNode disjunctNode : node.getChildren(CFRAME_ID)) {
 
 				disjuncts.add(parseAtomicCFrame(disjunctNode));
 			}

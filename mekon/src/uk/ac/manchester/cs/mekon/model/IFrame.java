@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
@@ -117,6 +118,50 @@ public class IFrame implements IEntity, IValue {
 
 			return types.asSet().equals(new HashSet<CFrame>(testTypes));
 		}
+	}
+
+	/**
+	 * Creates an instance-level frame of category {@link
+	 * IFrameCategory#DISJUNCTION}, taking the frame-type to be the
+	 * closest possible common subsumer of the types of the specified
+	 * set of disjunct-frames, and adding each of those disjuncts a
+	 * value for the disjuncts-slot.
+	 *
+	 * @param disjuncts Set of disjunct-frames, to be used in determining
+	 * the type of the frame, and to be set as disjuncts-slot values
+	 * @return Resulting instance-level disjunction-frame
+	 */
+	static public IFrame createDisjunction(Collection<IFrame> disjuncts) {
+
+		CFrame type = getDefaultDisjunctionType(disjuncts);
+		IFrame disjunction = type.instantiateDisjunction();
+		ISlot disjunctsSlot = disjunction.getDisjunctsSlot();
+
+		disjunctsSlot.getValuesEditor().addAll(disjuncts);
+
+ 		return disjunction;
+	}
+
+	static private CFrame getDefaultDisjunctionType(Collection<IFrame> disjuncts) {
+
+		return getCommonFrameTypeSubsumer(getFrameTypes(disjuncts));
+	}
+
+	static private List<CFrame> getFrameTypes(Collection<IFrame> frames) {
+
+		List<CFrame> types = new ArrayList<CFrame>();
+
+		for (IFrame frame : frames) {
+
+			types.add(frame.getType());
+		}
+
+		return types;
+	}
+
+	static private CFrame getCommonFrameTypeSubsumer(List<CFrame> types) {
+
+		return new CFrameSubsumers(CVisibility.EXPOSED, types).getSingleCommon();
 	}
 
 	private CFrame type;

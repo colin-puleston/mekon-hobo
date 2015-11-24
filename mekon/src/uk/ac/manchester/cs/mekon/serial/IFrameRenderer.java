@@ -116,22 +116,34 @@ public class IFrameRenderer extends ISerialiser {
 
 		void render(IFrame frame) {
 
-			renderIFrameDirect(frame, containerNode);
+			renderAtomicIFrameDirect(frame, containerNode);
 		}
 
 		private void renderIFrame(IFrame frame, XNode parentNode) {
 
-			if (renderAsTree) {
+			if (frame.getCategory().disjunction()) {
 
-				renderIFrameDirect(frame, parentNode);
+				renderDisjunctionIFrame(frame, parentNode);
 			}
 			else {
 
-				renderIFrameIndirect(frame, parentNode);
+				renderAtomicIFrame(frame, parentNode);
 			}
 		}
 
-		private void renderIFrameDirect(IFrame frame, XNode parentNode) {
+		private void renderAtomicIFrame(IFrame frame, XNode parentNode) {
+
+			if (renderAsTree) {
+
+				renderAtomicIFrameDirect(frame, parentNode);
+			}
+			else {
+
+				renderAtomicIFrameIndirect(frame, parentNode);
+			}
+		}
+
+		private void renderAtomicIFrameDirect(IFrame frame, XNode parentNode) {
 
 			XNode node = parentNode.addChild(IFRAME_ID);
 
@@ -146,14 +158,24 @@ public class IFrameRenderer extends ISerialiser {
 			}
 		}
 
-		private void renderIFrameIndirect(IFrame frame, XNode parentNode) {
+		private void renderAtomicIFrameIndirect(IFrame frame, XNode parentNode) {
 
 			XNode node = parentNode.addChild(IFRAME_ID);
 
-			node.addValue(IFRAME_REF_INDEX_ATTR, resolveIFrameRef(frame));
+			node.addValue(IFRAME_REF_INDEX_ATTR, resolveAtomicIFrameRef(frame));
 		}
 
-		private int resolveIFrameRef(IFrame frame) {
+		private void renderDisjunctionIFrame(IFrame frame, XNode parentNode) {
+
+			XNode node = parentNode.addChild(IFRAME_ID);
+
+			for (IFrame disjunct : frame.asDisjuncts()) {
+
+				renderIFrame(disjunct, node);
+			}
+		}
+
+		private int resolveAtomicIFrameRef(IFrame frame) {
 
 			Integer refIndex = iFrameRefs.get(frame);
 
@@ -162,7 +184,7 @@ public class IFrameRenderer extends ISerialiser {
 				refIndex = iFrameRefs.size() + 1;
 
 				iFrameRefs.put(frame, refIndex);
-				renderIFrameDirect(frame, containerNode);
+				renderAtomicIFrameDirect(frame, containerNode);
 			}
 
 			return refIndex;
@@ -321,7 +343,8 @@ public class IFrameRenderer extends ISerialiser {
 
 	private void doRender(IFrame frame, XNode containerNode) {
 
-		checkRenderable(frame);
+		checkAtomicTopLevelFrame(frame);
+		checkNonCyclicIfRenderingAsTree(frame);
 
 		new OneTimeRenderer(containerNode).render(frame);
 	}
@@ -331,7 +354,17 @@ public class IFrameRenderer extends ISerialiser {
 		return schemaLevel.includesBasics() || !slot.getValues().isEmpty();
 	}
 
-	private void checkRenderable(IFrame frame) {
+	private void checkAtomicTopLevelFrame(IFrame frame) {
+
+		if (frame.getCategory().disjunction()) {
+
+			throw new KAccessException(
+						"Cannot render instance whose top-level "
+						+ "frame has DISJUNCTION category: " + frame);
+		}
+	}
+
+	private void checkNonCyclicIfRenderingAsTree(IFrame frame) {
 
 		if (renderAsTree && frame.leadsToCycle()) {
 
