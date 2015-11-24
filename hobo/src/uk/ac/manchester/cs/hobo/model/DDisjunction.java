@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.hobo.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.hobo.*;
 
 /**
@@ -114,11 +113,7 @@ public class DDisjunction<D extends DObject> {
 	 */
 	public IFrame asDisjunctionIFrame() {
 
-		IFrame iDisjunction = createDisjunctionIFrame();
-
-		addDisjuncts(iDisjunction, disjunctsToFrames());
-
-		return iDisjunction;
+		return IFrame.createDisjunction(disjunctsToFrames());
 	}
 
 	DDisjunction(DModel model, Class<D> disjunctsClass, IFrame frame) {
@@ -127,24 +122,6 @@ public class DDisjunction<D extends DObject> {
 
 			disjuncts.add(model.getDObject(iDisjunct, disjunctsClass));
 		}
-	}
-
-	private IFrame createDisjunctionIFrame() {
-
-		CFrameSubsumers disjTypeSubs = getDisjunctTypeSubsumers();
-		CFrame commonType = disjTypeSubs.getSingleCommon();
-
- 		return commonType.instantiateDisjunction();
-	}
-
-	private CFrameSubsumers getDisjunctTypeSubsumers() {
-
-		return new CFrameSubsumers(CVisibility.EXPOSED, getDisjunctTypes());
-	}
-
-	private void addDisjuncts(IFrame iDisjunction, List<IFrame> iDisjuncts) {
-
-		iDisjunction.getDisjunctsSlot().getValuesEditor().addAll(iDisjuncts);
 	}
 
 	private List<IFrame> disjunctsToFrames() {
@@ -157,17 +134,5 @@ public class DDisjunction<D extends DObject> {
 		}
 
 		return frames;
-	}
-
-	private List<CFrame> getDisjunctTypes() {
-
-		List<CFrame> types = new ArrayList<CFrame>();
-
-		for (D disjunct : disjuncts) {
-
-			types.add(disjunct.getFrame().getType());
-		}
-
-		return types;
 	}
 }
