@@ -456,7 +456,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumes(IValue other) {
 
-		return other instanceof IFrame && type.subsumes(((IFrame)other).type);
+		return other instanceof IFrame && subsumesFrame((IFrame)other);
 	}
 
 	/**
@@ -791,6 +791,16 @@ public class IFrame implements IEntity, IValue {
 		if (slots.isEmpty() && other.slots.isEmpty()) {
 
 			return type.equals(other.type);
+		}
+
+		return false;
+	}
+
+	private boolean subsumesFrame(IFrame other) {
+
+		if (slots.isEmpty() && other.slots.isEmpty()) {
+
+			return type.subsumes(other.type);
 		}
 
 		return false;
