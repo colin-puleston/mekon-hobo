@@ -84,7 +84,7 @@ public class DDisjunctionCellTest
 
 	IValue derivedToSlotValue(DDisjunction<DObject> derivedValue) {
 
-		return derivedValue.asDisjunctionIFrame();
+		return derivedValue.asDisjunctionIFrame().normalise();
 	}
 
 	private DObject createQueryObjectWithSubRootType(String name) {

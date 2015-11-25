@@ -57,7 +57,9 @@ abstract class DFieldTest extends DirectModelTest {
 
 	void testSlotValues(DField<?> field, IValue... expectedValues) {
 
-		testList(field.getSlot().getValues().asList(), Arrays.asList(expectedValues));
+		testValueList(
+			field.getSlot().getValues().asList(),
+			Arrays.asList(expectedValues));
 	}
 
 	void testNoCellOrSlotValue(DCell<?> cell) {
@@ -69,5 +71,21 @@ abstract class DFieldTest extends DirectModelTest {
 	void testNoCellValue(DCell<?> cell) {
 
 		assertTrue("Cell-value should not be set", !cell.isSet());
+	}
+
+	private void testValueList(List<IValue> got, List<IValue> expected) {
+
+		String err = "Unexpected list-contents: expected: "
+						+ expected + ", got: "
+						+ got;
+
+		assertTrue(err, got.size() == expected.size());
+
+		Iterator<IValue> e = expected.iterator();
+
+		for (IValue gotValue : got) {
+
+			assertTrue(err, gotValue.coincidesWith(e.next()));
+		}
 	}
 }
