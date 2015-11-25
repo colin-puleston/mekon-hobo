@@ -104,6 +104,6 @@ class CFrameSlotNode extends FFrameSlotNode<CFrame> {
 
 	private MFrame getValueType() {
 
-		return slot.getValueType().castAs(MFrame.class);
+		return (MFrame)slot.getValueType();
 	}
 }

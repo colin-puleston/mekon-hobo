@@ -246,7 +246,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	private CFrame getValueType() {
 
-		return slot.getValueType().castAs(CFrame.class);
+		return (CFrame)slot.getValueType();
 	}
 
 	private boolean queryInstance() {

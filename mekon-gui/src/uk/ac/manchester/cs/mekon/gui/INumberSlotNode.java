@@ -86,7 +86,7 @@ class INumberSlotNode extends ISlotNode {
 
 	private CNumber getValueType() {
 
-		return slot.getValueType().castAs(CNumber.class);
+		return (CNumber)slot.getValueType();
 	}
 
 	private boolean abstractEditableSlot() {
