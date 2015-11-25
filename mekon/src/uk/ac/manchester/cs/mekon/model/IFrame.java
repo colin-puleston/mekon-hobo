@@ -396,12 +396,24 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Tests for equality between this and other specified object.
+	 * Provides a hash-code based on the frame-type if the frame has
+	 * any slots, or just be the default <code>Object</code> hash-code,
+	 * otherwise.
+	 */
+	public int hashCode() {
+
+		return slots.isEmpty() ? type.hashCode() : super.hashCode();
+	}
+
+	/**
+	 * Tests for equality between this and another specified object,
+	 * which will be the case if and only if the other object is the same
+	 * object as this one, or is another <code>IFrame</code> with the
+	 * same type as this one, and the type being such that there are no
+	 * attached slots.
 	 *
 	 * @param other Object to test for equality with this one
-	 * @return true if other object is the same object as this one,
-	 * or is another <code>IFrame</code> with the same type as this
-	 * one, and the type being such that there are no attached slots
+	 * @return true if objects are equal
 	 */
 	public boolean equals(Object other) {
 
@@ -419,18 +431,32 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Tests whether this value-entity is currently equivalent to
+	 * another value-entity, which will be the case if and only if
+	 * the other object is another <code>IFrame</code> with the same
+	 * recursive structure as this one, as determined via the
+	 * {@link #equalStructures} method.
+	 *
+	 * @param other Other value-entity to test for coincidence
+	 * @return True if value-entities currently coincidence
 	 */
-	public int hashCode() {
+	public boolean coincidesWith(IValue other) {
 
-		return slots.isEmpty() ? type.hashCode() : super.hashCode();
+		return other instanceof IFrame && equalStructures((IFrame)other);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Tests whether this value-entity subsumes another specified
+	 * value-entity, which will be the case if and only if the other
+	 * value-entity is another <code>IFrame</code> object that has
+	 * no slots, and whose type if subsumed by the type of this one.
+	 *
+	 * @param other Other value-entity to test for subsumption
+	 * @return True if this value-entity subsumes other value-entity
 	 */
-	public boolean subsumes(IFrame other) {
+	public boolean subsumes(IValue other) {
 
-		return asDisjunctsSet().containsAll(asDisjuncts());
+		return other instanceof IFrame && type.subsumes(((IFrame)other).type);
 	}
 
 	/**
@@ -445,7 +471,7 @@ public class IFrame implements IEntity, IValue {
 	 * one
 	 * @return true if structures match
 	 */
-	public boolean matchesStructure(IFrame other) {
+	public boolean equalStructures(IFrame other) {
 
 		return equals(other)
 				|| new IFrameStructureMatcher().match(this, other);
@@ -773,11 +799,6 @@ public class IFrame implements IEntity, IValue {
 	private boolean disjunctionType() {
 
 		return type.getCategory().disjunction();
-	}
-
-	private Set<IFrame> asDisjunctsSet() {
-
-		return new HashSet<IFrame>(asDisjuncts());
 	}
 
 	private void pollListenersForUpdatedInferredTypes() {

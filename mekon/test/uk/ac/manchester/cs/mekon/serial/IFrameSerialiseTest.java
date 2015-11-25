@@ -122,7 +122,7 @@ public class IFrameSerialiseTest extends FramesModelTest {
 		IFrame original = createTestInstance();
 		IFrame reconstituted = parse(render(original));
 
-		assertTrue(reconstituted.matchesStructure(original));
+		assertTrue(reconstituted.equalStructures(original));
 	}
 
 	private XDocument render(IFrame frame) {

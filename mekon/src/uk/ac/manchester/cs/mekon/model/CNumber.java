@@ -336,43 +336,6 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	private CAnnotations annotations = new CAnnotations(this);
 
 	/**
-	 * Tests for equality between this and other specified object.
-	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if other object is another <code>CNumber</code>
-	 * with same numeric-type, limit-values and annotations as this
-	 * one
-	 */
-	public boolean equals(Object other) {
-
-		if (other instanceof CNumber) {
-
-			CNumber n = (CNumber)other;
-
-			return numberType.equals(n.numberType)
-					&& min.equalTo(n.min)
-					&& max.equalTo(n.max)
-					&& annotations.equals(n.annotations);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Provides hash-code based on number-type, limit-values and
-	 * annotations.
-	 *
-	 * @return hash-code for this object
-	 */
-	public int hashCode() {
-
-		return numberType.hashCode()
-				+ min.hashCode()
-				+ max.hashCode()
-				+ annotations.hashCode();
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	public String toString() {
@@ -506,7 +469,55 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Provides hash-code based on number-type, limit-values and
+	 * annotations.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return numberType.hashCode()
+				+ min.hashCode()
+				+ max.hashCode()
+				+ annotations.hashCode();
+	}
+
+	/**
+	 * Tests for equality between this and other specified object,
+	 * which will hold if and only if the other object is another
+	 * <code>CNumber</code> with same numeric-type, limit-values and
+	 * annotations as this one.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other) {
+
+		if (other instanceof CNumber) {
+
+			CNumber n = (CNumber)other;
+
+			return numberType.equals(n.numberType)
+					&& min.equalTo(n.min)
+					&& max.equalTo(n.max)
+					&& annotations.equals(n.annotations);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Tests whether this value-type-entity subsumes another
+	 * specified value-type-entity, which will be the case if and
+	 * only if the other value-type-entity is another
+	 * <code>CNumber</code> object, with the primitive Java
+	 * <code>Number</code> type as this one, and whose range is
+	 * fully contained within the range of this one, as determined
+	 * via the {@link #contains} method.
+	 *
+	 * @param other Other value-type-entity to test for subsumption
+	 * @return True if this value-type-entity subsumes other
+	 * value-type-entity
 	 */
 	public boolean subsumes(CValue<?> other) {
 

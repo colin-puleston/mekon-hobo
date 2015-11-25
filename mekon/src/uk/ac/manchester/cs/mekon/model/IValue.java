@@ -48,4 +48,48 @@ public interface IValue extends FEntity {
 	 * @return True if value-entity is abstract
 	 */
 	public boolean abstractValue();
+
+	/**
+	 * Provides a hash-code appropriate to the {@link #equals} method.
+	 *
+	 * @return hash-code for this object
+	 */
+	public abstract int hashCode();
+
+	/**
+	 * Tests for equality between this and another specified object.
+	 * Objects will be equal if and only if the other object is the
+	 * same object as this one, or if it is a value-entity of the
+	 * same type as this one, which is immutable and represents the
+	 * same thing as this one.
+	 *
+	 * @param other Object to test for equality with this one
+ 	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other);
+
+	/**
+	 * Tests whether this value-entity is currently equivalent to
+	 * another value-entity. For immutable value-entities the result
+	 * will be fixed, and will be the same as the result of the
+	 * {@link #equals} method, whereas for mutable entities the
+	 * result will vary, being dependent on the current configurations
+	 * of the respective value-entities.
+	 *
+	 * @param other Other value-entity to test for coincidence
+	 * @return True if value-entities currently coincidence
+	 */
+	public boolean coincidesWith(IValue other);
+
+	/**
+	 * Tests whether this value-entity subsumes another specified
+	 * value-entity. This will be the case if and only if the
+	 * value-entities are equal, or if this value-entity represents
+	 * a set of some kind, of which the other value-entity is either
+	 * a member, or represents a sub-set.
+	 *
+	 * @param other Other value-entity to test for subsumption
+	 * @return True if this value-entity subsumes other value-entity
+	 */
+	public abstract boolean subsumes(IValue other);
 }

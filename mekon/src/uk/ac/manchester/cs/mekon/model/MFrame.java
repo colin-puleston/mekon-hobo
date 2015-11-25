@@ -108,7 +108,7 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 
 		if (other instanceof MFrame) {
 
-			return rootCFrame.subsumes(other.castAs(MFrame.class).rootCFrame);
+			return rootCFrame.subsumes(((MFrame)other).rootCFrame);
 		}
 
 		return false;
@@ -144,10 +144,5 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	boolean validTypeValue(CFrame value) {
 
 		return rootCFrame.subsumes(value);
-	}
-
-	boolean typeValueSubsumption(CFrame testSubsumer, CFrame testSubsumed) {
-
-		return testSubsumer.subsumes(testSubsumed);
 	}
 }

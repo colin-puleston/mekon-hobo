@@ -141,11 +141,11 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	public abstract boolean onePossibleValue();
 
 	/**
-	 * Tests whether this value-type-entity subsumes another
-	 * specified value-type-entity (which will be the case if and only
-	 * if the set of values-entities defined by this value-type-entity
-	 * subsumes the set of values-entities defined by the other
-	 * value-type-entity).
+	 * Tests whether this value-type-entity subsumes another specified
+	 * value-type-entity. This will be the case if and only if the set
+	 * of value-entities defined by this value-type-entity is a
+	 * super-set of the set of value-entities defined by the other
+	 * value-type-entity.
 	 *
 	 * @param other Other value-type-entity to test for subsumption
 	 * @return True if this value-type-entity subsumes other
@@ -155,10 +155,10 @@ public abstract class CValue<V extends IValue> implements FEntity {
 
 	/**
 	 * Tests whether this value-type-entity is subsumed by another
-	 * specified value-type-entity (which will be the case if and only
-	 * if the set of values-entities defined by this value-type-entity
-	 * is subsumed by the set values-entities defined by the other
-	 * value-type-entity).
+	 * specified value-type-entity. This will be the case if and only
+	 * if the set of value-entities defined by this value-type-entity
+	 * is a sub-set of the set of value-entities defined by the other
+	 * value-type-entity.
 	 *
 	 * @param other Other value-type-entity to test for subsumption
 	 * @return True if this value-type-entity is subsumed by other
@@ -221,20 +221,6 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		}
 
 		return casted;
-	}
-
-	/**
-	 * Specifies subsumption between two value-entities of the relevant
-	 * type (the exact meaning of value-subsumtion is dependent on the
-	 * specific kind of the value-type-entity).
-	 *
-	 * @param testSubsumer Prospective subsuming value-entity
-	 * @param testSubsumed Prospective subsumed value-entity
-	 * @return True if the relevant subsumption holds
-	 */
-	public boolean valueSubsumption(IValue testSubsumer, IValue testSubsumed) {
-
-		return typeValueSubsumption(castValue(testSubsumer), castValue(testSubsumed));
 	}
 
 	/**
@@ -312,9 +298,4 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	abstract V getDefaultValueOrNull();
 
 	abstract boolean validTypeValue(V value);
-
-	boolean typeValueSubsumption(V testSubsumer, V testSubsumed) {
-
-		return testSubsumer.equals(testSubsumed);
-	}
 }

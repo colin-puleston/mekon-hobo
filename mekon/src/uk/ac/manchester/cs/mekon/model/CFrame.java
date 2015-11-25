@@ -195,6 +195,19 @@ public abstract class CFrame
 	}
 
 	/**
+	 * Stipulates that this frame does define specific constraints
+	 * on the value-entities that it defines (the constraints being
+	 * that the value-entities must be instantiations of this frame
+	 * or some descendant-frame).
+	 *
+	 * @return True always.
+	 */
+	public boolean constrained() {
+
+		return true;
+	}
+
+	/**
 	 * Stipulates that this frame is abstract if and only if it is
 	 * a disjunction-frame.
 	 *
@@ -206,16 +219,82 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Stipulates that this frame does define specific constraints
-	 * on the value-entities that it defines (the constraints being
-	 * that the value-entities must be instantiations of this frame
-	 * or some descendant-frame).
+	 * Tests whether this value-entity is currently equivalent to
+	 * another value-entity, which, since <code>CFrame</code> objects
+	 * are immutable, will be the same as the result of the
+	 * {@link #equals} method.
 	 *
-	 * @return True always.
+	 * @param other Other value-entity to test for coincidence
+	 * @return True if value-entities currently coincidence
 	 */
-	public boolean constrained() {
+	public boolean coincidesWith(IValue other) {
+
+		return equals(other);
+	}
+
+	/**
+	 * Tests whether this value-type-entity subsumes another
+	 * specified value-type-entity, which will be the case if and
+	 * only if the other value-type-entity is another
+	 * <code>CFrame</code> object that is subsumed by this one, as
+	 * determined via the {@link #subsumes(CFrame)} method.
+	 *
+	 * @param other Other value-type-entity to test for subsumption
+	 * @return True if this value-type-entity subsumes other
+	 * value-type-entity
+	 */
+	public boolean subsumes(CValue<?> other) {
+
+		return other instanceof CFrame && subsumes((CFrame)other);
+	}
+
+	/**
+	 * Tests whether this value-entity subsumes another specified
+	 * value-entity, which will be the case if and only if the other
+	 * value-entity is another <code>CFrame</code> object that
+	 * is subsumed by this one, as determined via the {@link
+	 * #subsumes(CFrame)} method.
+	 *
+	 * @param other Other value-entity to test for subsumption
+	 * @return True if this value-entity subsumes other value-entity
+	 */
+	public boolean subsumes(IValue other) {
+
+		return other instanceof CFrame && subsumes((CFrame)other);
+	}
+
+	/**
+	 * Checks whether this frame subsumes another specified frame.
+	 * This means either that the frames are equal or that this one is
+	 * an ancestor of the other.
+	 *
+	 * @param testSubsumed Other frame to test for subsumption
+	 * @return True if this frame subsumes specified frame
+	 */
+	public boolean subsumes(CFrame testSubsumed) {
+
+		for (CAtomicFrame disjunct : testSubsumed.asAtomicDisjuncts()) {
+
+			if (!subsumesAtomicFrame(disjunct)) {
+
+				return false;
+			}
+		}
 
 		return true;
+	}
+
+	/**
+	 * Checks whether this frame is subsumed by another specified
+	 * frame This means either that the frames are equal or that this
+	 * one is a descendant of the other.
+	 *
+	 * @param testSubsumer Other frame to test for subsumption
+	 * @return True if this frame is subsumed by specified frame
+	 */
+	public boolean subsumedBy(CFrame testSubsumer) {
+
+		return testSubsumer.subsumes(this);
 	}
 
 	/**
@@ -445,48 +524,6 @@ public abstract class CFrame
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public boolean subsumes(CValue<?> other) {
-
-		return other instanceof CFrame && subsumes(other.castAs(CFrame.class));
-	}
-
-	/**
-	 * Checks whether this frame subsumes another specified frame.
-	 * This means either that the frames are equal or that this one is
-	 * an ancestor of the other.
-	 *
-	 * @param testSubsumed Other frame to test for subsumption
-	 * @return True if this frame subsumes specified frame
-	 */
-	public boolean subsumes(CFrame testSubsumed) {
-
-		for (CAtomicFrame disjunct : testSubsumed.asAtomicDisjuncts()) {
-
-			if (!subsumesAtomicFrame(disjunct)) {
-
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Checks whether this frame is subsumed by another specified
-	 * frame This means either that the frames are equal or that this
-	 * one is a descendant of the other.
-	 *
-	 * @param testSubsumer Other frame to test for subsumption
-	 * @return True if this frame is subsumed by specified frame
-	 */
-	public boolean subsumedBy(CFrame testSubsumer) {
-
-		return testSubsumer.subsumes(this);
-	}
-
-	/**
 	 * Provides any annotations on the frame.
 	 *
 	 * @return Annotations on frame
@@ -598,11 +635,6 @@ public abstract class CFrame
 	boolean validTypeValue(IFrame value) {
 
 		return subsumes(value.getType());
-	}
-
-	boolean typeValueSubsumption(IFrame testSubsumer, IFrame testSubsumed) {
-
-		return testSubsumer.subsumes(testSubsumed);
 	}
 
 	void pollListenersForInstantiated(IFrame instance, boolean freeInstance) {

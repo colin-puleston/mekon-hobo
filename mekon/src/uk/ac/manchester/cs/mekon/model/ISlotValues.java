@@ -312,7 +312,7 @@ public abstract class ISlotValues extends KList<IValue> {
 
 		for (IValue fixed : fixedValues) {
 
-			if (valueSubsumption(asserted, fixed)) {
+			if (asserted.subsumes(fixed)) {
 
 				return true;
 			}
@@ -325,7 +325,7 @@ public abstract class ISlotValues extends KList<IValue> {
 
 		for (IValue asserted : assertedValues) {
 
-			if (valueSubsumption(fixed, asserted)) {
+			if (fixed.subsumes(asserted)) {
 
 				return true;
 			}
@@ -395,12 +395,7 @@ public abstract class ISlotValues extends KList<IValue> {
 
 	private List<IValue> getMostSpecifics(Collection<? extends IValue> values) {
 
-		return IValueSubsumptions.getMostSpecifics(values, getValueType());
-	}
-
-	private boolean valueSubsumption(IValue testSubsumer, IValue testSubsumed) {
-
-		return IValueSubsumptions.subsumption(testSubsumer, testSubsumed);
+		return new MostSpecificIValues(getValueType(), values).get();
 	}
 
 	private CValue<?> getValueType() {
