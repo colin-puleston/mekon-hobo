@@ -523,7 +523,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 		if (other instanceof CNumber) {
 
-			CNumber n = other.castAs(CNumber.class);
+			CNumber n = (CNumber)other;
 
 			return numberType.equals(n.numberType) && contains(n);
 		}

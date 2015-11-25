@@ -130,7 +130,7 @@ public abstract class MostExtremeCValues {
 
 		CFrame toCFrame(CValue<?> value) {
 
-			return value.castAs(CFrame.class);
+			return (CFrame)value;
 		}
 
 		CValue<?> toValue(CFrame frame) {
@@ -143,7 +143,7 @@ public abstract class MostExtremeCValues {
 
 		CFrame toCFrame(CValue<?> value) {
 
-			return value.castAs(MFrame.class).getRootCFrame();
+			return ((MFrame)value).getRootCFrame();
 		}
 
 		CValue<?> toValue(CFrame frame) {
