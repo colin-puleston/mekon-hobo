@@ -169,6 +169,6 @@ public abstract class ValueSummary extends DObjectShell {
 
 	private boolean assertionFrame() {
 
-		return getFrame().getCategory().assertion();
+		return getFrame().getFunction().assertion();
 	}
 }

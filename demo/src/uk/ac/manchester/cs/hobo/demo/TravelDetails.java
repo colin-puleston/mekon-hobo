@@ -76,7 +76,7 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 
 			TravelMode mode = instantiateMode(modeValue.getFrame());
 
-			mode.getFrame().alignCategory(getFrame());
+			mode.getFrame().alignFunction(getFrame());
 
 			return mode;
 		}

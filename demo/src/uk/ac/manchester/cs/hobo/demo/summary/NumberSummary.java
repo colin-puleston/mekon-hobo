@@ -98,11 +98,11 @@ public abstract class NumberSummary<N extends Number> extends ValueSummary {
 
 	private INumber getTotalAsINumber(List<N> values) {
 
-		INumber total = INumber.create(getZeroNumber());
+		INumber total = new INumber(getZeroNumber());
 
 		for (N value : values) {
 
-			total = total.add(INumber.create(value));
+			total = total.add(new INumber(value));
 		}
 
 		return total;

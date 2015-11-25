@@ -104,7 +104,7 @@ public class Employment extends DObjectShell {
 
 	private void checkUpdate() {
 
-		if (getFrame().getCategory().assertion()) {
+		if (getFrame().getFunction().assertion()) {
 
 			update();
 		}

@@ -177,6 +177,6 @@ public class Job extends DObjectShell {
 
 	private boolean assertionFrame() {
 
-		return getFrame().getCategory().assertion();
+		return getFrame().getFunction().assertion();
 	}
 }

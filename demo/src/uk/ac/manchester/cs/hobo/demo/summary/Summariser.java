@@ -70,7 +70,7 @@ public class Summariser {
 
 			ValueSummary summary = getModel().instantiate(type);
 
-			summary.getFrame().alignCategory(summariesContainer.getFrame());
+			summary.getFrame().alignFunction(summariesContainer.getFrame());
 
 			summaries.add(summary);
 			summary.initialise(slotType);
