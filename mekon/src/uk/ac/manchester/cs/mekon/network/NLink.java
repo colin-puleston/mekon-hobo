@@ -49,7 +49,7 @@ public class NLink extends NAttribute<NNode> {
 	 * Set the disjunction-link status for the link (see
 	 * {@link #disjunctionLink}).
 	 *
-	 * @return value True if link is to represent disjunction
+	 * @param value True if link is to represent disjunction
 	 */
 	public void setDisjunctionLink(boolean value) {
 
