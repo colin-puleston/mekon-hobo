@@ -101,7 +101,7 @@ class OStardogServer {
 		}
 	}
 
-	Connection startDatabase(String name) {
+	private Connection startDatabase(String name) {
 
 		try {
 
@@ -126,7 +126,7 @@ class OStardogServer {
 				admin.drop(name);
 			}
 
-			admin.createMemory(name);
+			admin.disk(name).create();
 		}
 		finally {
 
