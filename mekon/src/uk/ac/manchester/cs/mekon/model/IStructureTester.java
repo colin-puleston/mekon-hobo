@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class IFrameStructureTester {
+abstract class IStructureTester {
 
 	private Set<IFrame> visited = new HashSet<IFrame>();
 

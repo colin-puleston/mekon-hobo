@@ -31,25 +31,25 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class IFrameStructureSubsumptionTester extends IFrameStructureTester {
+class IEqualityTester extends IStructureTester {
 
 	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
 
-		return type1.subsumes(type2);
+		return type1.equals(type2);
 	}
 
 	boolean listSizesMatch(KList<?> list1, KList<?> list2) {
 
-		return list1.size() <= list2.size();
+		return list1.size() == list2.size();
 	}
 
 	boolean slotsMatch(ISlots slots1, ISlots slots2) {
 
+		Iterator<ISlot> s2 = slots2.asList().iterator();
+
 		for (ISlot slot1 : slots1.asList()) {
 
-			ISlot slot2 = slots2.getOrNull(slot1.getType().getIdentity());
-
-			if (slot2 == null || !slotValuesMatch(slot1, slot2)) {
+			if (!slotValuesMatch(slot1, s2.next())) {
 
 				return false;
 			}
@@ -60,27 +60,16 @@ class IFrameStructureSubsumptionTester extends IFrameStructureTester {
 
 	boolean valuesMatch(List<IValue> values1, List<IValue> values2) {
 
+		Iterator<IValue> v2 = values2.iterator();
+
 		for (IValue value1 : values1) {
 
-			if (!valueMatched(value1, values2)) {
+			if (!valuesMatch(value1, v2.next())) {
 
 				return false;
 			}
 		}
 
 		return true;
-	}
-
-	private boolean valueMatched(IValue value1, List<IValue> values2) {
-
-		for (IValue value2 : values2) {
-
-			if (valuesMatch(value1, value2)) {
-
-				return true;
-			}
-		}
-
-		return false;
 	}
 }

@@ -31,25 +31,41 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class IFrameStructureMatcher extends IFrameStructureTester {
+class ISubsumptionTester extends IStructureTester {
+
+	boolean match(IFrame frame1, IFrame frame2) {
+
+		List<IFrame> disjuncts1 = frame1.asDisjuncts();
+
+		for (IFrame disjunct2 : frame2.asDisjuncts()) {
+
+			if (!anyMatched(disjuncts1, disjunct2)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
 
-		return type1.equals(type2);
+		return type1.subsumes(type2);
 	}
 
 	boolean listSizesMatch(KList<?> list1, KList<?> list2) {
 
-		return list1.size() == list2.size();
+		return list1.size() <= list2.size();
 	}
 
 	boolean slotsMatch(ISlots slots1, ISlots slots2) {
 
-		Iterator<ISlot> s2 = slots2.asList().iterator();
-
 		for (ISlot slot1 : slots1.asList()) {
 
-			if (!slotValuesMatch(slot1, s2.next())) {
+			CIdentity slot1Id = slot1.getType().getIdentity();
+			ISlot slot2 = slots2.getOrNull(slot1Id);
+
+			if (slot2 == null || !slotValuesMatch(slot1, slot2)) {
 
 				return false;
 			}
@@ -60,16 +76,40 @@ class IFrameStructureMatcher extends IFrameStructureTester {
 
 	boolean valuesMatch(List<IValue> values1, List<IValue> values2) {
 
-		Iterator<IValue> v2 = values2.iterator();
-
 		for (IValue value1 : values1) {
 
-			if (!valuesMatch(value1, v2.next())) {
+			if (!valueMatched(value1, values2)) {
 
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	private boolean anyMatched(List<IFrame> frames1, IFrame frame2) {
+
+		for (IFrame frame1 : frames1) {
+
+			if (super.match(frame1, frame2)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean valueMatched(IValue value1, List<IValue> values2) {
+
+		for (IValue value2 : values2) {
+
+			if (valuesMatch(value1, value2)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

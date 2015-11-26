@@ -473,8 +473,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean equalStructures(IFrame other) {
 
-		return equals(other)
-				|| new IFrameStructureMatcher().match(this, other);
+		return equals(other) || new IEqualityTester().match(this, other);
 	}
 
 	/**
@@ -493,8 +492,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumesStructure(IFrame other) {
 
-		return equals(other)
-				|| new IFrameStructureSubsumptionTester().match(this, other);
+		return equals(other) || new ISubsumptionTester().match(this, other);
 	}
 
 	/**
