@@ -46,9 +46,9 @@ class IndividualIRIs {
 		this.rootIRI = rootIRI;
 	}
 
-	IRI getFor(NNode frame) {
+	IRI getFor(NNode node) {
 
-		if (frame == rootNode) {
+		if (node == rootNode) {
 
 			return rootIRI;
 		}
