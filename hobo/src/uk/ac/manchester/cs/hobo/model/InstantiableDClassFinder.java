@@ -51,121 +51,97 @@ class InstantiableDClassFinder {
 	}
 
 	private DModel model;
-	private Class<? extends DObject> dBaseClass;
+	private CFrame type;
 
-	private class Finder {
+	private Set<CFrame> visited = new HashSet<CFrame>();
+	private Set<DBinding> mostSpecifics = new HashSet<DBinding>();
 
-		private CFrame type;
-		private Set<CFrame> visited = new HashSet<CFrame>();
-		private Set<DBinding> mostSpecifics = new HashSet<DBinding>();
-
-		Finder(CFrame type) {
-
-			this.type = type;
-
-			searchFrom(type);
-		}
-
-		DBinding getOrNull() {
-
-			if (mostSpecifics.isEmpty()) {
-
-				return null;
-			}
-
-			if (mostSpecifics.size() == 1) {
-
-				return mostSpecifics.iterator().next();
-			}
-
-			throw new HAccessException(
-						"Multiple instantiable DObject classes found for: "
-						+ type
-						+ " (" + getMostSpecificDClasses() + ")");
-		}
-
-		private void searchFrom(CFrame frame) {
-
-			DBinding binding = model.getBindings().getOrNull(frame);
-
-			if (binding != null) {
-
-				if (instantiableDescendantOfBase(binding.getDClass())) {
-
-					updateMostSpecifics(binding);
-				}
-			}
-			else {
-
-				searchFromSupers(frame);
-			}
-		}
-
-		private void searchFromSupers(CFrame frame) {
-
-			for (CFrame sup : frame.getSupers()) {
-
-				if (visited.add(sup)) {
-
-					searchFrom(sup);
-				}
-			}
-		}
-
-		private void updateMostSpecifics(DBinding candidate) {
-
-			Class<? extends DObject> candidateClass = candidate.getDClass();
-
-			for (DBinding current : new HashSet<DBinding>(mostSpecifics)) {
-
-				Class<? extends DObject> currentClass = current.getDClass();
-
-				if (candidateClass.isAssignableFrom(currentClass)) {
-
-					return;
-				}
-
-				if (currentClass.isAssignableFrom(candidateClass)) {
-
-					mostSpecifics.remove(current);
-				}
-			}
-
-			mostSpecifics.add(candidate);
-		}
-
-		private Set<Class<? extends DObject>> getMostSpecificDClasses() {
-
-			Set<Class<? extends DObject>> dClasses
-				= new HashSet<Class<? extends DObject>>();
-
-			for (DBinding mostSpecific : mostSpecifics) {
-
-				dClasses.add(mostSpecific.getDClass());
-			}
-
-			return dClasses;
-		}
-
-		private boolean instantiableDescendantOfBase(Class<? extends DObject> dClass) {
-
-			return dBaseClass.isAssignableFrom(dClass) && instantiable(dClass);
-		}
-	}
-
-	InstantiableDClassFinder(DModel model) {
-
-		this(model, DObject.class);
-	}
-
-	InstantiableDClassFinder(DModel model, Class<? extends DObject> dBaseClass) {
+	InstantiableDClassFinder(DModel model, CFrame type) {
 
 		this.model = model;
-		this.dBaseClass = dBaseClass;
+		this.type = type;
 	}
 
-	DBinding getOrNull(CFrame type) {
+	DBinding getOrNull() {
 
-		return new Finder(type).getOrNull();
+		searchFrom(type);
+
+		if (mostSpecifics.isEmpty()) {
+
+			return null;
+		}
+
+		if (mostSpecifics.size() == 1) {
+
+			return mostSpecifics.iterator().next();
+		}
+
+		throw new HAccessException(
+					"Multiple instantiable DObject classes found for: "
+					+ type
+					+ " (" + getMostSpecificDClasses() + ")");
+	}
+
+	private void searchFrom(CFrame frame) {
+
+		DBinding binding = model.getBindings().getOrNull(frame);
+
+		if (binding != null) {
+
+			if (instantiable(binding.getDClass())) {
+
+				updateMostSpecifics(binding);
+			}
+		}
+		else {
+
+			searchFromSupers(frame);
+		}
+	}
+
+	private void searchFromSupers(CFrame frame) {
+
+		for (CFrame sup : frame.getSupers()) {
+
+			if (visited.add(sup)) {
+
+				searchFrom(sup);
+			}
+		}
+	}
+
+	private void updateMostSpecifics(DBinding candidate) {
+
+		Class<? extends DObject> candidateClass = candidate.getDClass();
+
+		for (DBinding current : new HashSet<DBinding>(mostSpecifics)) {
+
+			Class<? extends DObject> currentClass = current.getDClass();
+
+			if (candidateClass.isAssignableFrom(currentClass)) {
+
+				return;
+			}
+
+			if (currentClass.isAssignableFrom(candidateClass)) {
+
+				mostSpecifics.remove(current);
+			}
+		}
+
+		mostSpecifics.add(candidate);
+	}
+
+	private Set<Class<? extends DObject>> getMostSpecificDClasses() {
+
+		Set<Class<? extends DObject>> dClasses
+			= new HashSet<Class<? extends DObject>>();
+
+		for (DBinding mostSpecific : mostSpecifics) {
+
+			dClasses.add(mostSpecific.getDClass());
+		}
+
+		return dClasses;
 	}
 }

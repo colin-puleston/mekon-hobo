@@ -346,7 +346,9 @@ public class DModel {
 
 		if (getMappedObject(frame) == null) {
 
-			instantiate(DObject.class, frame, freeInstance);
+			DObject dObject = instantiate(frame, freeInstance);
+
+			iFrameMapper.setMappedObject(frame, dObject);
 		}
 	}
 
@@ -355,20 +357,9 @@ public class DModel {
 		return getIEditor().getSlotValuesEditor(slot);
 	}
 
-	private <D extends DObject>D instantiate(
-									Class<D> dClass,
-									IFrame frame,
-									boolean freeInstance) {
+	private DObject instantiate(IFrame frame, boolean freeInstance) {
 
-		DObjectInstantiator<D> instantiator = new DObjectInstantiator<D>(
-													this,
-													dClass,
-													freeInstance);
-		D dObject = instantiator.instantiate(frame);
-
-		iFrameMapper.setMappedObject(frame, dObject);
-
-		return dObject;
+		return new DInstantiator(this, freeInstance).instantiate(frame);
 	}
 
 	private Object getMappedObject(IFrame frame) {
