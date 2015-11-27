@@ -63,11 +63,9 @@ abstract class IFrameCopierAbstract {
 
 	IFrame copy(IFrame template) {
 
-		CFrame type = template.getType();
-		IFrame copy = new IFrame(type, template.getFunction());
+		IFrame copy = template.copyEmpty();
 
 		copies.put(template, copy);
-
 		initialiseCopy(template, copy);
 		copy.completeInstantiation(freeInstance());
 

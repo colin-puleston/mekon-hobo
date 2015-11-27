@@ -54,7 +54,7 @@ public class FramesTestUtils extends MekonTestUtils {
 
 		for (CSlot slot : frame.getSlots().asList()) {
 
-			iFrame.addSlotInternal(slot);
+			iFrame.addSlotInternal(slot, false);
 		}
 
 		return iFrame;

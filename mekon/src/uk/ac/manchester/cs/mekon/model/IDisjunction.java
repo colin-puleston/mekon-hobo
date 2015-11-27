@@ -119,12 +119,22 @@ class IDisjunction extends IFrame {
 		new DisjunctsChecker();
 	}
 
+	IFrame copyEmpty() {
+
+		return new IDisjunction(getType(), getFunction());
+	}
+
+	ISlot addSlotInternal(CSlot slotType, boolean free) {
+
+		return disjunctsSlot;
+	}
+
 	void autoUpdateThis() {
 	}
 
 	private ISlot addDisjunctsSlot() {
 
-		return addSlotInternal(createDisjunctsSlotType());
+		return super.addSlotInternal(createDisjunctsSlotType(), false);
 	}
 
 	private CSlot createDisjunctsSlotType() {
