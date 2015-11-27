@@ -154,17 +154,31 @@ public class IFrameSerialiseTest extends FramesModelTest {
 
 	private IFrame createTestInstance() {
 
-		IFrame frame = createComplexInstance(dynamicSlotInsertion);
+		IFrame instance = createBasicTestInstance();
 
 		if (includeEmptySlots) {
 
-			createISlot(
-				frame,
-				"emptySlot",
-				CCardinality.SINGLE_VALUE,
-				frame.getType());
+			addEmptySlot(instance);
 		}
 
-		return frame;
+		return instance;
+	}
+
+	private IFrame createBasicTestInstance() {
+
+		TestInstances instances = createTestInstances();
+
+		instances.setDynamicSlotInsertion(dynamicSlotInsertion);
+
+		return instances.getBasic();
+	}
+
+	private void addEmptySlot(IFrame instance) {
+
+		createISlot(
+			instance,
+			"emptySlot",
+			CCardinality.SINGLE_VALUE,
+			instance.getType());
 	}
 }

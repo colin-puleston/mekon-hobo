@@ -75,11 +75,35 @@ public class IFrameTest extends FramesModelTest {
 		CFrame tc = createCFrame("C");
 		CFrame td = createCFrame("D");
 
-		testUpdateInferredTypes(f, Arrays.asList(ta, tb), Arrays.asList(ta, tb), NO_IFRAMES);
-		testUpdateInferredTypes(f, Arrays.asList(tb, tc, td), Arrays.asList(tc, td), Arrays.asList(ta));
-		testUpdateInferredTypes(f, Arrays.asList(tc), NO_IFRAMES, Arrays.asList(tb, td));
-		testUpdateInferredTypes(f, Arrays.asList(ta), Arrays.asList(ta), Arrays.asList(tc));
-		testUpdateInferredTypes(f, NO_IFRAMES, NO_IFRAMES, Arrays.asList(ta));
+		testUpdateInferredTypes(
+			f,
+			Arrays.asList(ta, tb),
+			Arrays.asList(ta, tb),
+			NO_IFRAMES);
+
+		testUpdateInferredTypes(
+			f,
+			Arrays.asList(tb, tc, td),
+			Arrays.asList(tc, td),
+			Arrays.asList(ta));
+
+		testUpdateInferredTypes(
+			f,
+			Arrays.asList(tc),
+			NO_IFRAMES,
+			Arrays.asList(tb, td));
+
+		testUpdateInferredTypes(
+			f,
+			Arrays.asList(ta),
+			Arrays.asList(ta),
+			Arrays.asList(tc));
+
+		testUpdateInferredTypes(
+			f,
+			NO_IFRAMES,
+			NO_IFRAMES,
+			Arrays.asList(ta));
 	}
 
 	@Test
@@ -89,19 +113,14 @@ public class IFrameTest extends FramesModelTest {
 		IFrame fb = createIFrame("B");
 		IFrame fc = createIFrame("C");
 
-		monitorIReasoner.resetRegisters();
-		createISlotWithValue(fa, "sab", fb);
-		testList(monitorIReasoner.getUpdateds(), Arrays.asList(fa));
-
-		monitorIReasoner.resetRegisters();
-		createISlotWithValue(fb, "sbc", fc);
-		testList(monitorIReasoner.getUpdateds(), Arrays.asList(fb, fa));
+		testUpdateSlotValue(fa, "sab", fb, Arrays.asList(fa));
+		testUpdateSlotValue(fb, "sbc", fc, Arrays.asList(fb, fa));
 	}
 
 	@Test
 	public void test_copyAndMatch() {
 
-		IFrame i = createComplexInstance();
+		IFrame i = createTestInstances().getBasic();
 
 		testCopied(i, i.copy());
 	}
@@ -109,7 +128,7 @@ public class IFrameTest extends FramesModelTest {
 	@Test
 	public void test_copyFreeAndMatch() {
 
-		IFrame i = createComplexInstance();
+		IFrame i = createTestInstances().getBasic();
 
 		testCopied(i, createFreeCopy(i));
 	}
@@ -117,15 +136,20 @@ public class IFrameTest extends FramesModelTest {
 	@Test
 	public void test_subsumption() {
 
-		IFrame i = createComplexInstance();
-		IFrame is = createComplexInstanceSubsumer(i);
+		TestInstances instances = createTestInstances();
 
-		assertFalse(i == is);
-		assertFalse(i.equalStructures(is));
+		testSubsumption(instances.getSubsumer(), instances.getBasic());
+	}
 
-		assertTrue(is.subsumesStructure(i));
-		assertFalse(i.subsumesStructure(is));
-		assertTrue(i.subsumesStructure(i));
+	@Test
+	public void test_subsumption_withAbstractValues() {
+
+		TestInstances instances = createTestInstances();
+
+		setQueriesEnabled(true);
+		instances.setFunction(IFrameFunction.QUERY);
+
+		testSubsumption(instances.getAbstractSubsumer(), instances.getBasic());
 	}
 
 	private IFrameTest(MonitorIReasoner monitorIReasoner) {
@@ -135,11 +159,36 @@ public class IFrameTest extends FramesModelTest {
 		this.monitorIReasoner = monitorIReasoner;
 	}
 
+	private void testSubsumption(IFrame subsumer, IFrame subsumed) {
+
+		assertFalse(subsumer == subsumed);
+		assertFalse(subsumer.equalStructures(subsumed));
+
+		assertTrue(subsumer.subsumesStructure(subsumed));
+		assertFalse(subsumed.subsumesStructure(subsumer));
+		assertTrue(subsumer.subsumesStructure(subsumer));
+		assertTrue(subsumed.subsumesStructure(subsumed));
+	}
+
 	private void testCopied(IFrame original, IFrame copy) {
 
 		assertFalse(original == copy);
 		assertTrue(copy.equalStructures(original));
 		assertTrue(original.equalStructures(copy));
+	}
+
+	public void testUpdateSlotValue(
+					IFrame container,
+					String slotName,
+					IFrame newValue,
+					List<IFrame> expectedValues) {
+
+		ISlot slot = createISlot(container, slotName, newValue.getType());
+
+		monitorIReasoner.resetRegisters();
+		slot.getValuesEditor().add(newValue);
+
+		testList(monitorIReasoner.getUpdateds(), expectedValues);
 	}
 
 	private void testUpdateInferredTypes(

@@ -44,6 +44,7 @@ public class IStoreTest extends FramesModelTest {
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
 
 	private IStore store;
+	private TestInstances instances = createTestInstances();
 
 	private IFrame first = null;
 	private IFrame second = null;
@@ -127,7 +128,6 @@ public class IStoreTest extends FramesModelTest {
 	public void setUp() {
 
 		createStore();
-
 		store.clearFileStore();
 	}
 
@@ -223,7 +223,9 @@ public class IStoreTest extends FramesModelTest {
 
 	private IFrame createInstance(CIdentity id) {
 
-		return createComplexInstance(id.getIdentifier() + "Type");
+		instances.setTypesPrefix(id.getIdentifier() + "Type");
+
+		return instances.getBasic();
 	}
 
 	private void testStoredIds(CIdentity... expectedIds) {

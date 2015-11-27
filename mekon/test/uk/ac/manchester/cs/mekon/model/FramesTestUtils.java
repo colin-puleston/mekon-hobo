@@ -33,6 +33,58 @@ import uk.ac.manchester.cs.mekon.MekonTestUtils;
  */
 public class FramesTestUtils extends MekonTestUtils {
 
+	public void addSuperFrame(CFrame sub, CFrame sup) {
+
+		sub.asAtomicFrame().addSuper(sup.asAtomicFrame());
+	}
+
+	public CFrame createCDisjunction(CFrame... disjuncts) {
+
+		return CFrame.resolveDisjunction(Arrays.asList(disjuncts));
+	}
+
+	public IFrame instantiateCFrame(CFrame frame) {
+
+		return instantiateCFrame(frame, IFrameFunction.ASSERTION);
+	}
+
+	public IFrame instantiateCFrame(CFrame frame, IFrameFunction function) {
+
+		IFrame iFrame = new IFrame(frame, function);
+
+		for (CSlot slot : frame.getSlots().asList()) {
+
+			iFrame.addSlotInternal(slot);
+		}
+
+		return iFrame;
+	}
+
+	public IFrame createIDisjunction(IFrame... disjuncts) {
+
+		return IFrame.createDisjunction(Arrays.asList(disjuncts));
+	}
+
+	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
+
+		frame.setMappedObject(mappedObject);
+	}
+
+	public CIdentity createIdentity(String name) {
+
+		return new CIdentity(name, name);
+	}
+
+	public ISlot getISlot(IFrame container, CIdentity slotId) {
+
+		return container.getSlots().get(slotId);
+	}
+
+	public void setISlotValues(ISlot slot, IValue... values) {
+
+		slot.getValuesEditor().update(Arrays.asList(values));
+	}
+
 	public List<CValue<?>> getValueTypes(List<IValue> values) {
 
 		List<CValue<?>> types = new ArrayList<CValue<?>>();
