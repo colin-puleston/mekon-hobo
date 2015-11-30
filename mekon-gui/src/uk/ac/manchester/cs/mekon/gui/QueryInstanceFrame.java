@@ -40,13 +40,9 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 	static private final long serialVersionUID = -1;
 
-	static private final JPanel BLANK_PANEL = new JPanel();
-
 	static private final String QUERY_LABEL = "Query";
-	static private final String MATCHES_TITLE = "Query Matches";
+	static private final String MATCHES_TITLE = "Matches";
 	static private final String EXECUTE_ACTION_LABEL = "Execute";
-
-	private int matchesTabIndex = 0;
 
 	private class ExecuteButton extends GButton {
 
@@ -82,7 +78,7 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 		public void onUpdated() {
 
-			clearMatchesList();
+			checkClearMatches();
 		}
 
 		MatchesClearer(IFrame frame) {
@@ -102,8 +98,6 @@ class QueryInstanceFrame extends InstantiationFrame {
 	QueryInstanceFrame(CFramesTree modelTree, IFrame frame) {
 
 		super(modelTree, frame);
-
-		matchesTabIndex = addAspectTab(MATCHES_TITLE, BLANK_PANEL);
 
 		new MatchesClearer(frame);
 	}
@@ -128,7 +122,7 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 		if (matches.anyMatches()) {
 
-			showMatchesList(matches);
+			showMatches(matches);
 		}
 		else {
 
@@ -136,20 +130,43 @@ class QueryInstanceFrame extends InstantiationFrame {
 		}
 	}
 
-	private void showMatchesList(IMatches matches) {
+	private void showMatches(IMatches matches) {
 
-		JComponent comp = createMatchesComponent(matches);
+		GSplitPane panel = new GSplitPane();
 
-		getAspectTabs().setComponentAt(matchesTabIndex, comp);
-		getAspectTabs().setSelectedIndex(matchesTabIndex);
+		panel.setHorizontalSplit(false);
+		panel.setTopComponent(getInstanceComponent());
+		panel.setBottomComponent(createMatchesComponent(matches));
+
+		resetMainComponent(panel);
 	}
 
-	private void clearMatchesList() {
+	private void checkClearMatches() {
 
-		getAspectTabs().setComponentAt(matchesTabIndex, BLANK_PANEL);
+		checkResetInstanceComponent();
 	}
 
 	private JComponent createMatchesComponent(IMatches matches) {
+
+		JPanel panel = new JPanel(new BorderLayout());
+
+		panel.add(createMatchesLabelComponent(), BorderLayout.NORTH);
+		panel.add(createMatchesListComponent(matches), BorderLayout.CENTER);
+
+		return panel;
+	}
+
+	private JComponent createMatchesLabelComponent() {
+
+		JLabel label = new JLabel(MATCHES_TITLE);
+
+		GFonts.setMedium(label);
+		label.setBackground(Color.BLUE);
+
+		return label;
+	}
+
+	private JComponent createMatchesListComponent(IMatches matches) {
 
 		return new JScrollPane(createMatchesList(matches));
 	}
