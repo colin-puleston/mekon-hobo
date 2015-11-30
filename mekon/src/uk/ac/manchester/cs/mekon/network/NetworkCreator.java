@@ -43,9 +43,11 @@ class NetworkCreator {
 
 	private abstract class TypeSlotRenderer<V, A extends NAttribute<V>, IV> {
 
-		void render(NNode node, ISlot slot, List<IV> iValues) {
+		A render(NNode node, ISlot slot, List<IV> iValues) {
 
-			render(node, slot.getType().getIdentity(), slot, iValues);
+			CIdentity slotId = slot.getType().getIdentity();
+
+			return render(node, slotId, slot, iValues);
 		}
 
 		void render(NNode node, CIdentity slotId, List<IV> iValues) {
@@ -59,7 +61,7 @@ class NetworkCreator {
 
 		abstract void addAttribute(NNode node, A attribute);
 
-		private void render(NNode node, CIdentity id, ISlot slot, List<IV> iValues) {
+		private A render(NNode node, CIdentity id, ISlot slot, List<IV> iValues) {
 
 			A attribute = createAttribute(id, slot);
 
@@ -69,6 +71,8 @@ class NetworkCreator {
 			}
 
 			addAttribute(node, attribute);
+
+			return attribute;
 		}
 	}
 
@@ -89,7 +93,7 @@ class NetworkCreator {
 
 	private class IFrameSlotRenderer extends FrameSlotRenderer<IFrame> {
 
-		void render(NNode node, ISlot slot, List<IFrame> iValues) {
+		NLink render(NNode node, ISlot slot, List<IFrame> iValues) {
 
 			List<IFrame> iConjunctionValues = new ArrayList<IFrame>();
 
@@ -97,7 +101,7 @@ class NetworkCreator {
 
 				if (iValue.getCategory().disjunction()) {
 
-					render(node, slot, iValue.asDisjuncts());
+					checkRenderDisjunction(node, slot, iValue);
 				}
 				else {
 
@@ -105,12 +109,24 @@ class NetworkCreator {
 				}
 			}
 
-			super.render(node, slot, iConjunctionValues);
+			return super.render(node, slot, iConjunctionValues);
 		}
 
 		NNode getValue(IFrame iValue) {
 
 			return getNode(iValue);
+		}
+
+		private void checkRenderDisjunction(NNode node, ISlot slot, IFrame iValue) {
+
+			List<IFrame> disjuncts = iValue.asDisjuncts();
+
+			if (!disjuncts.isEmpty()) {
+
+				NLink link = super.render(node, slot, disjuncts);
+
+				link.setDisjunctionLink(true);
+			}
 		}
 	}
 

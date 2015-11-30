@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.*;
  */
 public abstract class KIndexes<E> {
 
-	private int maxIndex = 0;
+	private int maxIndex = -1;
 
 	private List<Integer> freeIndexes = new ArrayList<Integer>();
 
@@ -49,7 +49,7 @@ public abstract class KIndexes<E> {
 	 */
 	public int assignIndex() {
 
-		return freeIndexes.isEmpty() ? maxIndex++ : freeIndexes.remove(0);
+		return freeIndexes.isEmpty() ? ++maxIndex : freeIndexes.remove(0);
 	}
 
 	/**
@@ -78,6 +78,11 @@ public abstract class KIndexes<E> {
 		}
 
 		addToMaps(element, index);
+
+		if (index > maxIndex) {
+
+			maxIndex = index;
+		}
 	}
 
 	/**
@@ -108,6 +113,22 @@ public abstract class KIndexes<E> {
 	public void freeIndex(int index) {
 
 		freeIndexes.add(index);
+	}
+
+	/**
+	 * Reinitialises the set of free unique indexes, after a set
+	 * of explicit assignments have been made via the {@link
+	 * #assignIndex(E, int)} method.
+	 */
+	public void reinitialiseFreeIndexes() {
+
+		for (int i = 0 ; i < maxIndex ; i++) {
+
+			if (!indexesToElements.containsKey(i)) {
+
+				freeIndex(i);
+			}
+		}
 	}
 
 	/**

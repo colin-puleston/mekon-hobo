@@ -240,6 +240,8 @@ public class IStore {
 	void loadFromFileStore() {
 
 		fileStore.loadAll(new FileStoreInstanceLoader());
+
+		indexes.reinitialiseFreeIndexes();
 	}
 
 	void clearFileStore() {

@@ -86,10 +86,5 @@ public class NLink extends NAttribute<NNode> {
 	NLink(CIdentity property, ISlot iSlot) {
 
 		super(property, iSlot);
-
-		if (iSlot.getContainer().getCategory().disjunction()) {
-
-			disjunctionLink = true;
-		}
 	}
 }
