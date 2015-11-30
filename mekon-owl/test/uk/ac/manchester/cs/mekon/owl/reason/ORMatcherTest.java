@@ -46,13 +46,16 @@ public abstract class ORMatcherTest extends OTest {
 	static private final String TEACHER_CONCEPT = "Teacher";
 	static private final String RESEARCHER_CONCEPT = "Researcher";
 	static private final String DOCTOR_CONCEPT = "Doctor";
+	static private final String PUBLIC_CONCEPT = "Public";
+	static private final String PRIVATE_CONCEPT = "Private";
 	static private final String UNI_STUDENT_CONCEPT = "UniversityStudent";
 	static private final String POSTGRAD_CONCEPT = "Postgraduate";
 	static private final String UNDERGRAD_CONCEPT = "Undergraduate";
 
 	static private final String INDUSTRY_PROPERTY = "industry";
 	static private final String JOB_TYPE_PROPERTY = "jobType";
-	static private final String HOURLY_PAY_PROPERTY = "hourlyPay";
+	static private final String PAY_RATE_PROPERTY = "hourlyPay";
+	static private final String SECTOR_PROPERTY = "sector";
 	static private final String TEACHES_PROPERTY = "teaches";
 
 	static private final CIdentity UNDERGRAD_TEACHING_JOB_ID = new CIdentity("UndergradTeaching");
@@ -63,14 +66,19 @@ public abstract class ORMatcherTest extends OTest {
 	static private final String NON_OWL_TYPE = "NON-OWL-TYPE";
 	static private final String NON_OWL_BUT_OWL_SUBSUMED_TYPE = "NON-OWL-BUT-OWL-SUBSUMED-TYPE";
 
-	static private final int MIN_HOURLY_RATE = 10;
-	static private final int LOW_HOURLY_RATE = 14;
-	static private final int MID_HOURLY_RATE = 15;
-	static private final int HIGH_HOURLY_RATE = 16;
-	static private final int MAX_HOURLY_RATE = 20;
+	static private final int MIN_PAY_RATE = 10;
+	static private final int LOW_PAY_RATE = 14;
+	static private final int MID_PAY_RATE = 15;
+	static private final int HIGH_PAY_RATE = 16;
+	static private final int MAX_PAY_RATE = 20;
 
 	private ORMatcher matcher;
 	private Map<CIdentity, IFrame> storedInstancesById = new HashMap<CIdentity, IFrame>();
+
+	private IFrame undergradTeachingJob;
+	private IFrame postgradTeachingJob;
+	private IFrame academicResearchJob;
+	private IFrame doctoringJob;
 
 	private class LocalSectionBuilder extends OBSectionBuilder {
 
@@ -119,6 +127,11 @@ public abstract class ORMatcherTest extends OTest {
 		sectionBuilder.setIReasoner(new ORClassifier(model));
 
 		buildModel(sectionBuilder);
+
+		undergradTeachingJob = addUndergradTeachingJob();
+		postgradTeachingJob = addPostgradTeachingJob();
+		academicResearchJob = addAcademicResearchJob();
+		doctoringJob = addDoctoringJob();
 	}
 
 	@Test
@@ -132,8 +145,6 @@ public abstract class ORMatcherTest extends OTest {
 	@Test
 	public void test_addAndQuery() {
 
-		populate();
-
 		testMatching(
 			createJobQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
@@ -145,8 +156,6 @@ public abstract class ORMatcherTest extends OTest {
 	@Test
 	public void test_addRemoveAndQuery() {
 
-		populate();
-
 		removeInstance(POSTGRAD_TEACHING_JOB_ID);
 		removeInstance(ACADEMIC_RESEARCH_JOB_ID);
 
@@ -157,9 +166,7 @@ public abstract class ORMatcherTest extends OTest {
 	}
 
 	@Test
-	public void test_conceptBasedQueries() {
-
-		populate();
+	public void test_basicConceptBasedQueries() {
 
 		testMatching(
 			createAcademiaQuery(),
@@ -173,13 +180,12 @@ public abstract class ORMatcherTest extends OTest {
 			POSTGRAD_TEACHING_JOB_ID);
 
 		testMatching(
-			createPostgraduateTeachingQuery(),
+			createPostgradTeachingQuery(),
 			POSTGRAD_TEACHING_JOB_ID);
+	}
 
-		testMatching(
-			createPostOrUndergradTeachingQuery(),
-			UNDERGRAD_TEACHING_JOB_ID,
-			POSTGRAD_TEACHING_JOB_ID);
+	@Test
+	public void test_conceptAndPropertyBasedQueries() {
 
 		testMatching(
 			createUniStudentTeachingQuery(),
@@ -188,40 +194,66 @@ public abstract class ORMatcherTest extends OTest {
 	}
 
 	@Test
-	public void test_numberBasedQueries() {
-
-		populate();
+	public void test_conceptDisjunctionBasedQueries() {
 
 		testMatching(
-			createNumericJobQuery(MIN_HOURLY_RATE, MAX_HOURLY_RATE),
+			createPostOrUndergradTeachingQuery(),
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID);
+	}
+
+	@Test
+	public void test_instanceDisjunctionBasedQueries() {
+
+		setIndustrySector(undergradTeachingJob, PUBLIC_CONCEPT);
+		setIndustrySector(postgradTeachingJob, PRIVATE_CONCEPT);
+		setIndustrySector(academicResearchJob, PRIVATE_CONCEPT);
+		setIndustrySector(doctoringJob, PRIVATE_CONCEPT);
+
+		testMatching(
+			createHealthOrPublicSectorAcademicQuery(),
+			UNDERGRAD_TEACHING_JOB_ID,
+			DOCTORING_JOB_ID);
+	}
+
+	@Test
+	public void test_numberBasedQueries() {
+
+		setHourlyRate(undergradTeachingJob, LOW_PAY_RATE);
+		setHourlyRate(postgradTeachingJob, MID_PAY_RATE);
+		setHourlyRate(academicResearchJob, MID_PAY_RATE);
+		setHourlyRate(doctoringJob, HIGH_PAY_RATE);
+
+		testMatching(
+			createPayRateQuery(MIN_PAY_RATE, MAX_PAY_RATE),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCH_JOB_ID,
 			DOCTORING_JOB_ID);
 
 		testMatching(
-			createNumericJobQuery(MIN_HOURLY_RATE, LOW_HOURLY_RATE - 1));
+			createPayRateQuery(MIN_PAY_RATE, LOW_PAY_RATE - 1));
 
 		testMatching(
-			createNumericJobQuery(MIN_HOURLY_RATE, MID_HOURLY_RATE - 1),
-			UNDERGRAD_TEACHING_JOB_ID,
-			POSTGRAD_TEACHING_JOB_ID);
+			createPayRateQuery(MIN_PAY_RATE, MID_PAY_RATE - 1),
+			UNDERGRAD_TEACHING_JOB_ID);
 
 		testMatching(
-			createNumericJobQuery(MIN_HOURLY_RATE, HIGH_HOURLY_RATE - 1),
+			createPayRateQuery(MIN_PAY_RATE, HIGH_PAY_RATE - 1),
 			UNDERGRAD_TEACHING_JOB_ID,
 			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCH_JOB_ID);
 
 		testMatching(
-			createNumericJobQuery(HIGH_HOURLY_RATE + 1, MAX_HOURLY_RATE));
+			createPayRateQuery(HIGH_PAY_RATE + 1, MAX_PAY_RATE));
 
 		testMatching(
-			createNumericJobQuery(MID_HOURLY_RATE + 1, MAX_HOURLY_RATE),
+			createPayRateQuery(MID_PAY_RATE + 1, MAX_PAY_RATE),
 			DOCTORING_JOB_ID);
 
 		testMatching(
-			createNumericJobQuery(LOW_HOURLY_RATE + 1, MAX_HOURLY_RATE),
+			createPayRateQuery(LOW_PAY_RATE + 1, MAX_PAY_RATE),
+			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCH_JOB_ID,
 			DOCTORING_JOB_ID);
 	}
@@ -233,62 +265,63 @@ public abstract class ORMatcherTest extends OTest {
 		assertTrue(matcher.handlesType(getCFrame(typeId)) == shouldHandle);
 	}
 
-	private void populate() {
+	private IFrame addUndergradTeachingJob() {
 
-		addUndergraduateTeachingJob();
-		addPostgraduateTeachingJob();
-		addAcademicResearchJob();
-		addDoctorJob();
+		return addAcademicTeachingJob(UNDERGRAD_TEACHING_JOB_ID, UNDERGRAD_CONCEPT);
 	}
 
-	private void addUndergraduateTeachingJob() {
+	private IFrame addPostgradTeachingJob() {
 
-		addAcademicTeachingJob(UNDERGRAD_TEACHING_JOB_ID, UNDERGRAD_CONCEPT);
+		return addAcademicTeachingJob(POSTGRAD_TEACHING_JOB_ID, POSTGRAD_CONCEPT);
 	}
 
-	private void addPostgraduateTeachingJob() {
+	private IFrame addAcademicTeachingJob(CIdentity jobId, String studentTypeConcept) {
 
-		addAcademicTeachingJob(POSTGRAD_TEACHING_JOB_ID, POSTGRAD_CONCEPT);
-	}
-
-	private void addAcademicTeachingJob(CIdentity jobId, String studentTypeConcept) {
-
-		IFrame job = createJob(ACADEMIA_CONCEPT, TEACHER_CONCEPT, LOW_HOURLY_RATE);
+		IFrame job = createJob(ACADEMIA_CONCEPT, TEACHER_CONCEPT);
 		IFrame studentType = createIFrame(studentTypeConcept);
 
 		addISlotValue(job, TEACHES_PROPERTY, studentType);
 
-		addInstance(job, jobId);
+		return addInstance(job, jobId);
 	}
 
-	private void addAcademicResearchJob() {
+	private IFrame addAcademicResearchJob() {
 
-		IFrame job = createJob(ACADEMIA_CONCEPT, RESEARCHER_CONCEPT, MID_HOURLY_RATE);
+		IFrame job = createJob(ACADEMIA_CONCEPT, RESEARCHER_CONCEPT);
 
-		addInstance(job, ACADEMIC_RESEARCH_JOB_ID);
+		return addInstance(job, ACADEMIC_RESEARCH_JOB_ID);
 	}
 
-	private void addDoctorJob() {
+	private IFrame addDoctoringJob() {
 
-		IFrame job = createJob(HEALTH_CONCEPT, DOCTOR_CONCEPT, HIGH_HOURLY_RATE);
+		IFrame job = createJob(HEALTH_CONCEPT, DOCTOR_CONCEPT);
 
-		addInstance(job, DOCTORING_JOB_ID);
+		return addInstance(job, DOCTORING_JOB_ID);
 	}
 
-	private IFrame createJob(
-						String industryConcept,
-						String jobTypeConcept,
-						int hourlyPay) {
+	private IFrame createJob(String industryConcept, String jobTypeConcept) {
 
 		IFrame job = createIFrame(JOB_CONCEPT);
-		IFrame industry = createIFrame(industryConcept);
-		IFrame jobType = createIFrame(jobTypeConcept);
 
-		addISlotValue(job, INDUSTRY_PROPERTY, industry);
-		addISlotValue(job, JOB_TYPE_PROPERTY, jobType);
-		addISlotValue(job, HOURLY_PAY_PROPERTY, new INumber(hourlyPay));
+		addISlotValue(job, INDUSTRY_PROPERTY, createIFrame(industryConcept));
+		addISlotValue(job, JOB_TYPE_PROPERTY, createIFrame(jobTypeConcept));
 
 		return job;
+	}
+
+	private void setIndustrySector(IFrame job, String sectorConcept) {
+
+		ISlot indSlot = getISlot(job, INDUSTRY_PROPERTY);
+		IFrame industry = (IFrame)indSlot.getValues().asList().get(0);
+
+		addISlotValue(industry, SECTOR_PROPERTY, createIFrame(sectorConcept));
+		updateInstance(job);
+	}
+
+	private void setHourlyRate(IFrame job, int hourlyPay) {
+
+		addISlotValue(job, PAY_RATE_PROPERTY, new INumber(hourlyPay));
+		updateInstance(job);
 	}
 
 	private IFrame createAcademiaQuery() {
@@ -316,7 +349,7 @@ public abstract class ORMatcherTest extends OTest {
 		return createStudentTeachingQuery(UNI_STUDENT_CONCEPT);
 	}
 
-	private IFrame createPostgraduateTeachingQuery() {
+	private IFrame createPostgradTeachingQuery() {
 
 		return createStudentTeachingQuery(POSTGRAD_CONCEPT);
 	}
@@ -343,12 +376,26 @@ public abstract class ORMatcherTest extends OTest {
 		return job;
 	}
 
-	private IFrame createNumericJobQuery(int minHourlyPay, int maxHourlyPay) {
+	private IFrame createHealthOrPublicSectorAcademicQuery() {
+
+		IFrame job = createJobQuery();
+		IFrame health = createQueryIFrame(HEALTH_CONCEPT);
+		IFrame academia = createQueryIFrame(ACADEMIA_CONCEPT);
+		IFrame publicSector = createQueryIFrame(PUBLIC_CONCEPT);
+		IFrame industryDisj = createIDisjunction(health, academia);
+
+		addISlotValue(job, INDUSTRY_PROPERTY, industryDisj);
+		addISlotValue(academia, SECTOR_PROPERTY, publicSector);
+
+		return job;
+	}
+
+	private IFrame createPayRateQuery(int minHourlyPay, int maxHourlyPay) {
 
 		IFrame job = createJobQuery();
 		INumber hourlyPay = createRangeAsINumber(minHourlyPay, maxHourlyPay);
 
-		addISlotValue(job, HOURLY_PAY_PROPERTY, hourlyPay);
+		addISlotValue(job, PAY_RATE_PROPERTY, hourlyPay);
 
 		return job;
 	}
@@ -371,16 +418,26 @@ public abstract class ORMatcherTest extends OTest {
 		return CNumber.range(min, max).asINumber();
 	}
 
-	private void addInstance(IFrame instance, CIdentity id) {
+	private IFrame addInstance(IFrame instance, CIdentity id) {
 
 		matcher.add(instance, id);
 		storedInstancesById.put(id, instance);
+
+		return instance;
 	}
 
 	private void removeInstance(CIdentity id) {
 
 		matcher.remove(id);
 		storedInstancesById.remove(id);
+	}
+
+	private void updateInstance(IFrame instance) {
+
+		CIdentity id = getInstanceId(instance);
+
+		removeInstance(id);
+		addInstance(instance, id);
 	}
 
 	private void testMatching(IFrame query, CIdentity... expectedMatchIds) {
@@ -397,4 +454,18 @@ public abstract class ORMatcherTest extends OTest {
 			assertTrue(isMatch == matchIds.contains(id));
 		}
 	}
+
+	private CIdentity getInstanceId(IFrame instance) {
+
+		for (CIdentity id : storedInstancesById.keySet()) {
+
+			if (storedInstancesById.get(id) == instance) {
+
+				return id;
+			}
+		}
+
+		throw new Error("No id for: " + instance);
+	}
 }
+
