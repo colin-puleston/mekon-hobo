@@ -79,7 +79,7 @@ public class ORMatcherLogger extends ORLogger {
 	 */
 	protected void onMatcherRequest(OModel model, OWLObject request) {
 
-		onRequest(model, request, "Matching-Individuals");
+		onRequest(model, request, "Matching-Instances");
 	}
 
 	/**

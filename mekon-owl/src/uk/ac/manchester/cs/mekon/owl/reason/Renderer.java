@@ -127,7 +127,10 @@ abstract class Renderer<NR extends OWLObject> {
 
 			Set<V> values = new HashSet<V>(attribute.getValues());
 
-			addHasValuesConstructs(values);
+			if (!values.isEmpty()) {
+
+				addHasValuesConstructs(values);
+			}
 
 			if (closedWorldSemantics()) {
 
