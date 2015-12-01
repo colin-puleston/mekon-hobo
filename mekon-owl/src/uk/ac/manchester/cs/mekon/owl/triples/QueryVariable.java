@@ -29,17 +29,13 @@ package uk.ac.manchester.cs.mekon.owl.triples;
  */
 class QueryVariable extends OTValue {
 
-	private String rendering;
-
 	QueryVariable(String rendering) {
 
-		super(null);
-
-		this.rendering = rendering;
+		super(rendering);
 	}
 
 	String getQueryRendering(OTQueryConstants constants) {
 
-		return rendering;
+		return asString();
 	}
 }
