@@ -113,6 +113,12 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
+	 * XXX
+	 */
+	public void stop() {
+	}
+
+	/**
 	 */
 	protected void addToOWLStore(NNode instance, IRI iri) {
 

@@ -48,38 +48,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
  */
 public abstract class OTMatcher extends ORMatcher {
 
-	static private Set<OTMatcher> matchers = new HashSet<OTMatcher>();
-
-	/**
-	 * Invokes the {@link #stop} methods on any currently active
-	 * matchers of this type.
-	 */
-	static public void stopAll() {
-
-		for (OTMatcher matcher : new HashSet<OTMatcher>(matchers)) {
-
-			matcher.stop();
-		}
-	}
-
 	private Store store = null;
-
-	/**
-	 * Empties or removes the store and performs any other clear-ups
-	 * required for the matcher.
-	 * <p>
-	 * This method may be invoked manually, either directly, or via
-	 * the static {@link #stopAll} method, or else automatically via
-	 * the object's {@link #finalize} method. If method has already
-	 * been invoked then does nothing.
-	 */
-	public void stop() {
-
-		if (matchers.remove(this)) {
-
-			stopType();
-		}
-	}
 
 	/**
 	 * Constructs matcher for specified model and reasoning-type.
@@ -163,23 +132,5 @@ public abstract class OTMatcher extends ORMatcher {
 	protected void initialise(OTFactory factory) {
 
 		store = new Store(factory);
-
-		matchers.add(this);
-	}
-
-	/**
-	 * Abstract method whose implementations will empty or remove the
-	 * store and perform any other clear-ups required for the specific
-	 * store type.
-	 */
-	protected abstract void stopType();
-
-	/**
-	 * Invokes the {@link #stop} method prior to destruction of the
-	 * matcher.
-	 */
-	protected void finalize() {
-
-		stop();
 	}
 }

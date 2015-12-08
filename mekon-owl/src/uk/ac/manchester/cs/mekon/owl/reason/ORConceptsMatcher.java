@@ -100,6 +100,12 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
+	 * XXX
+	 */
+	public void stop() {
+	}
+
+	/**
 	 */
 	protected void addToOWLStore(NNode instance, IRI iri) {
 

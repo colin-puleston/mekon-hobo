@@ -221,7 +221,6 @@ public abstract class ORMatcher implements IMatcher {
 	}
 
 	/**
-	/**
 	 * Provides the object used to specify the open/closed world
 	 * semantics to be embodied by the OWL constructs that will be
 	 * created to represent instances being stored and queries being
