@@ -104,8 +104,9 @@ public class OJenaMatcher extends OTMatcher {
 	}
 
 	/**
+	 * XXX
 	 */
-	protected void stopType() {
+	public void stop() {
 	}
 
 	private void initialise() {
