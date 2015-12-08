@@ -255,4 +255,12 @@ public class DCustomMatcher implements IMatcher {
 
 		return operations.matches(query, instance);
 	}
+
+	/**
+	 * XXX
+	 */
+	public void stop() {
+
+		coreMatcher.stop();
+	}
 }
