@@ -24,6 +24,7 @@
 package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -116,11 +117,28 @@ public class MekonModelExplorer extends GFrame {
 		}
 	}
 
+	static private class ModelClearUpper extends WindowAdapter {
+
+		private CModel model;
+
+		public void windowClosing(WindowEvent e) {
+
+			CManager.clearUp(model);
+		}
+
+		ModelClearUpper(CModel model) {
+
+			this.model = model;
+		}
+	}
+
 	public MekonModelExplorer(CModel model) {
 
 		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		display(new Initialiser(model).createTopLevelComponent());
+
+		addWindowListener(new ModelClearUpper(model));
 	}
 }
