@@ -37,12 +37,6 @@ public class OStardogMatcherTest extends ORMatcherTest {
 
 	static private final String DB_NAME = "TEST-DB";
 
-	@After
-	public void clearUp() {
-
-		OTMatcher.stopAll();
-	}
-
 	protected ORMatcher createMatcher(OModel model) {
 
 		return new OStardogMatcher(model, createConfig());
