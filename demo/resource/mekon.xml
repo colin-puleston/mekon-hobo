@@ -87,6 +87,8 @@
 			</Semantics>
 		</OWLClassifier>
 
+		<BaseXMatcher/>
+
 		<OWLMatcher
 			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORConceptsMatcher"
 			reasoningType="DL"
@@ -98,6 +100,15 @@
 		<OWLMatcher
 			matcher="uk.ac.manchester.cs.mekon.owl.stardog.OStardogMatcher"
 			database="MEKON-DEMO"
+			reasoningType="EL"
+			loggingMode="DISABLED">
+		</OWLMatcher>
+		-->
+
+		<!--
+		<OWLMatcher
+			matcher="uk.ac.manchester.cs.mekon.owl.jena.OJenaMatcher"
+			reasoningType="RDFS"
 			loggingMode="DISABLED">
 		</OWLMatcher>
 		-->
