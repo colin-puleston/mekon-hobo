@@ -42,4 +42,9 @@ class ZIStoreAccessorImpl extends ZIStoreAccessor {
 
 		return new IStoreInitialiserImpl(IStoreManager.get(model));
 	}
+
+	public void checkStopStore(CModel model) {
+
+		IStoreManager.checkStop(model);
+	}
 }

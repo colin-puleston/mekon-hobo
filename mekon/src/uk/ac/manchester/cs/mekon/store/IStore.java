@@ -254,6 +254,16 @@ public class IStore {
 		matchers.add(matcher);
 	}
 
+	void stop() {
+
+		for (IMatcher matcher : matchers) {
+
+			matcher.stop();
+		}
+
+		matchers.clear();
+	}
+
 	private IFrame checkRemove(CIdentity identity) {
 
 		IFrame removed = null;
@@ -265,7 +275,7 @@ public class IStore {
 			identities.remove(identity);
 
 			checkRemoveFromMatcher(fileStore.read(index), identity);
-			fileStore.remove(index);
+			fileStore.removeFile(index);
 		}
 
 		return removed;

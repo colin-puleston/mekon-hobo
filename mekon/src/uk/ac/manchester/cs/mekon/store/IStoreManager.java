@@ -62,4 +62,14 @@ public class IStoreManager {
 
 		stores.put(model, new IStore(model));
 	}
+
+	static synchronized void checkStop(CModel model) {
+
+		IStore store = stores.remove(model);
+
+		if (store != null) {
+
+			store.stop();
+		}
+	}
 }

@@ -80,4 +80,11 @@ public abstract class ZIStoreAccessor {
 	 * @return Instance-store initialiser for model
 	 */
 	public abstract IStoreInitialiser getStoreInitialiser(CModel model);
+
+	/**
+	 * XXX.
+	 *
+	 * @param model Relevant model
+	 */
+	public abstract void checkStopStore(CModel model);
 }

@@ -127,6 +127,14 @@ public class CManager {
 		return storeAccessor.getStoreInitialiser(model);
 	}
 
+	/**
+	 * XXX
+	 */
+	static public void clearUp(CModel model) {
+
+		storeAccessor.checkStopStore(model);
+	}
+
 	static private CBuilderConfig createConfig(KConfigFile configFile) {
 
 		return new CBuilderConfig(configFile.getRootNode());

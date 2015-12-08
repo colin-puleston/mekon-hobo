@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class NNode {
 
-	private Set<CIdentity> conceptDisjuncts = new HashSet<CIdentity>();
+	private List<CIdentity> conceptDisjuncts = new ArrayList<CIdentity>();
 	private List<NAttribute<?>> attributes = new ArrayList<NAttribute<?>>();
 
 	private CFrame cFrame = null;
@@ -59,7 +59,7 @@ public class NNode {
 	 *
 	 * @param conceptDisjuncts Disjuncts of associated concept
 	 */
-	public NNode(Set<CIdentity> conceptDisjuncts) {
+	public NNode(Collection<CIdentity> conceptDisjuncts) {
 
 		this.conceptDisjuncts.addAll(conceptDisjuncts);
 	}
@@ -216,7 +216,7 @@ public class NNode {
 			return conceptDisjuncts.iterator().next();
 		}
 
-		throw new KAccessException("Not of atomic concept: " + this);
+		throw new KAccessException("Does not have atomic concept: " + this);
 	}
 
 	/**
@@ -226,9 +226,9 @@ public class NNode {
 	 *
 	 * @return All disjuncts of associated concept
 	 */
-	public Set<CIdentity> getConceptDisjuncts() {
+	public List<CIdentity> getConceptDisjuncts() {
 
-		return new HashSet<CIdentity>(conceptDisjuncts);
+		return new ArrayList<CIdentity>(conceptDisjuncts);
 	}
 
 	/**
@@ -306,22 +306,6 @@ public class NNode {
 	public boolean leadsToCycle() {
 
 		return new CycleTester(this).leadsToCycle();
-	}
-
-	/**
-	 * Tests whether the associated concept and the current
-	 * attribute-values of this node subsume those of another. For
-	 * link attributes, value-subsumption testing involves a recursive
-	 * invocation of the same node-subsumption testing operation. For
-	 * numeric attributes, value-matching is determinied via invocation
-	 * of the {@link CNumber#subsumes} method.
-	 *
-	 * @param other Node to test for subsumption by this one
-	 * @return true if subsumption holds
-	 */
-	public boolean subsumes(NNode other) {
-
-		return new SubsumptionTester().subsumption(this, other);
 	}
 
 	NNode(CFrame cFrame) {

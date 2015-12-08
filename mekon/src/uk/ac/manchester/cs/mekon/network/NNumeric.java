@@ -56,7 +56,7 @@ public class NNumeric extends NAttribute<INumber> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public NNumeric asNumber() {
+	public NNumeric asNumeric() {
 
 		return this;
 	}

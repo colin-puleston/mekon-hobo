@@ -139,4 +139,10 @@ public class IDirectMatcher implements IMatcher {
 
 		return query.subsumesStructure(instance);
 	}
+
+	/**
+	 * XXX
+	 */
+	public void stop() {
+	}
 }

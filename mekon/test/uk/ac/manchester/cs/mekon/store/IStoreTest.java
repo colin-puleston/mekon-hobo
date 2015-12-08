@@ -86,6 +86,9 @@ public class IStoreTest extends FramesModelTest {
 			return true;
 		}
 
+		public void stop() {
+		}
+
 		TestMatcher(String typeName) {
 
 			type = createCFrame(typeName);
@@ -133,6 +136,8 @@ public class IStoreTest extends FramesModelTest {
 
 	@After
 	public void clearUp() {
+
+		super.clearUp();
 
 		store.clearFileStore();
 	}

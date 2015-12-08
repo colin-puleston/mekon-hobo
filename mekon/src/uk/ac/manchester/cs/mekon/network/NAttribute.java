@@ -194,9 +194,9 @@ public abstract class NAttribute<V> {
 	 * @return Attribute cast as numeric
 	 * @throws KAccessException if not a numeric
 	 */
-	public NNumeric asNumber() {
+	public NNumeric asNumeric() {
 
-		throw new KAccessException("Not a number: " + this);
+		throw new KAccessException("Not a numeric: " + this);
 	}
 
 	/**

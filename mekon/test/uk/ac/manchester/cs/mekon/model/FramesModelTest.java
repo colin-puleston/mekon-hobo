@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import org.junit.After;
+
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
@@ -53,6 +55,12 @@ public class FramesModelTest extends FramesTestUtils {
 	public FramesModelTest(CModel model) {
 
 		this(model, null);
+	}
+
+	@After
+	public void clearUp() {
+
+		CManager.clearUp(model);
 	}
 
 	public void setQueriesEnabled(boolean enabled) {

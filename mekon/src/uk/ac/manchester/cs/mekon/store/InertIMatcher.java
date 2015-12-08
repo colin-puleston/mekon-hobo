@@ -59,4 +59,7 @@ class InertIMatcher implements IMatcher {
 
 		return false;
 	}
+
+	public void stop() {
+	}
 }
