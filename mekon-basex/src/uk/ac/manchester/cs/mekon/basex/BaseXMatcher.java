@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * XXX.
+ * <i>BaseX</i>-specific implementation of {@link IMatcher}.
  *
  * @author Colin Puleston
  */
@@ -64,10 +64,23 @@ public class BaseXMatcher implements IMatcher {
 	}
 
 	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node. XXX
+	 * Constructs matcher with specified configuration.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param config Configuration for matcher
+	 */
+	public BaseXMatcher(BaseXConfig config) {
+
+		database = new Database(config.getDatabaseName());
+
+		fileStore.setDirectory(config.getStoreDirectory());
+		fileStore.clear();
+	}
+
+	/**
+	 * Constructs matcher, with the configuration defined via the
+	 * appropriately-tagged child of the specified parent
+	 * configuration-node.
 	 *
 	 * @param parentConfigNode Parent of configuration node defining
 	 * appropriate configuration information
@@ -78,26 +91,6 @@ public class BaseXMatcher implements IMatcher {
 	public BaseXMatcher(KConfigNode parentConfigNode) {
 
 		this(new BaseXConfig(parentConfigNode));
-	}
-
-	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node. XXX
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	public BaseXMatcher(BaseXConfig config) {
-
-		database = new Database(config.getDatabaseName());
-
-		fileStore.setDirectory(config.getStoreDirectory());
-		fileStore.clear();
 	}
 
 	/**
@@ -113,7 +106,12 @@ public class BaseXMatcher implements IMatcher {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns true indicating that the matcher handles any type of
+	 * instance-level frame. This method should be overriden if
+	 * more specific behaviour is required.
+	 *
+	 * @param type Relevant frame-type
+	 * @return True indicating that matcher handles specified type
 	 */
 	public boolean handlesType(CFrame type) {
 
@@ -123,10 +121,7 @@ public class BaseXMatcher implements IMatcher {
 	/**
 	 * Converts the specified instance-level instance frame to the
 	 * network-based representation, runs any registered pre-processors
-	 * over the resulting network and then processes it to ensure
-	 * ontology-compliance (see above), then finally adds it to the
-	 * matcher via the {@link #addToXMLStore} method, whose
-	 * implementation is provided by the derived class.
+	 * over the resulting network, then adds it to the XML database.
 	 *
 	 * @param instance Instance to be added
 	 * @param identity Unique identity for instance
@@ -144,9 +139,7 @@ public class BaseXMatcher implements IMatcher {
 	}
 
 	/**
-	 * Removes the specified instance from the matcher via the
-	 * {@link #removeFromXMLStore} method, whose implementation is
-	 * provided by the derived class.
+	 * Removes the specified instance from the XML database.
 	 *
 	 * @param identity Unique identity of instance to be removed
 	 */
@@ -161,10 +154,8 @@ public class BaseXMatcher implements IMatcher {
 	/**
 	 * Converts the specified instance-level query frame to the
 	 * network-based representation, runs any registered pre-processors
-	 * over the resulting network and then processes it to ensure
-	 * ontology-compliance (see above), then finally performs the
-	 * query-matching operation via the {@link #matchInXMLStore} method,
-	 * whose implementation is provided by the derived class.
+	 * over the resulting network, then performs the query-matching
+	 * operation by executing an <i>XQuery</i> over the XML database.
 	 *
 	 * @param query Query to be matched
 	 * @return Unique identities of all matching instances
@@ -182,11 +173,10 @@ public class BaseXMatcher implements IMatcher {
 
 	/**
 	 * Converts the specified instance-level query and instance frames
-	 * to the network-based representation, runs any registered
-	 * pre-processors over the resulting networks and then processes
-	 * them to ensure ontology-compliance (see above), then finally
-	 * performs a single query-matching test via the {@link #matchesInOWL}
-	 * method, whose implementation is provided by the derived classes.
+	 * to the network-based representation, and runs any registered
+	 * pre-processors over the resulting networks, then performs a
+	 * single query-matching test via the {@link NNode#subsumes}
+	 * method.
 	 *
 	 * @param query Query to be matched
 	 * @param instance Instance to test for matching
@@ -198,7 +188,8 @@ public class BaseXMatcher implements IMatcher {
 	}
 
 	/**
-	 * XXX
+	 * Closes the connection to, and removes, the database, and empties
+	 * the file-store.
 	 */
 	public void stop() {
 

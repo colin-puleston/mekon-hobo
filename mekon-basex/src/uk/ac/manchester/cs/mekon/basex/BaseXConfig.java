@@ -43,9 +43,9 @@ public class BaseXConfig implements BaseXConfigVocab {
 
 	/**
 	 * Constructs configuration for matcher with the specified
-	 * <i>Stardog</i> database and default reasoning-type. XXX
+	 * directory for the file-store and the default database-name.
 	 *
-	 * @param databaseName Name of database to create
+	 * @param storeDirectory Name of directory for file-store
 	 */
 	public BaseXConfig(File storeDirectory) {
 
@@ -54,10 +54,10 @@ public class BaseXConfig implements BaseXConfigVocab {
 
 	/**
 	 * Constructs configuration for matcher with the specified
-	 * <i>Stardog</i> database and specified reasoning-type.
+	 * database-name and the specified directory for the file-store.
 	 *
 	 * @param databaseName Name of database to create
-	 * @param storeDirectory Type of reasoning required from matcher
+	 * @param storeDirectory Name of directory for file-store
 	 */
 	public BaseXConfig(String databaseName, File storeDirectory) {
 
