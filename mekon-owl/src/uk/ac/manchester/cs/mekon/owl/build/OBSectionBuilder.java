@@ -303,8 +303,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 		if (ORMatcher.configExists(parentConfigNode)) {
 
-//			setIMatcher(ORMatcher.create(model, parentConfigNode));
-			setIMatcher(new uk.ac.manchester.cs.mekon.basex.BaseXMatcher(parentConfigNode));
+			setIMatcher(ORMatcher.create(model, parentConfigNode));
 		}
 	}
 
