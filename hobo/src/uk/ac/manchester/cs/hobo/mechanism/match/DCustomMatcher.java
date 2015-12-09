@@ -257,7 +257,7 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
-	 * XXX
+	 * Invokes the corresponding method on the the core-matcher.
 	 */
 	public void stop() {
 
