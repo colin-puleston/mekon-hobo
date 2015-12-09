@@ -41,7 +41,8 @@ public class OStardogMatcher extends OTMatcher {
 
 	/**
 	 * Constructs matcher for specified model with the default
-	 * reasoning-type, which is {@link ORReasoningType#RDFS}.
+	 * reasoning-type, which is {@link ORReasoningType#RDFS},
+	 * and default database-name.
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
@@ -53,7 +54,7 @@ public class OStardogMatcher extends OTMatcher {
 	}
 
 	/**
-	 * Constructs matcher for specified model.
+	 * Constructs matcher for specified model and configuration.
 	 *
 	 * @param model Model over which matcher is to operate
 	 * @param config Configuration for matcher
@@ -103,13 +104,7 @@ public class OStardogMatcher extends OTMatcher {
 	}
 
 	/**
-	 * Empties or removes the store and performs any other clear-ups
-	 * required for the matcher.
-	 * <p>
-	 * This method may be invoked manually, either directly, or via
-	 * the static {@link #stopAll} method, or else automatically via
-	 * the object's {@link #finalize} method. If method has already
-	 * been invoked then does nothing. XXX
+	 * Closes the connection to the database and stops the Stardog server.
 	 */
 	public void stop() {
 

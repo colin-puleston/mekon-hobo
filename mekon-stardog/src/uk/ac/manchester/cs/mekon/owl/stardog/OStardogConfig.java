@@ -54,7 +54,7 @@ public class OStardogConfig implements OStardogConfigVocab {
 
 	/**
 	 * Constructs configuration for matcher with the specified
-	 * <i>Stardog</i> database and default reasoning-type.
+	 * database-name and the default reasoning-type.
 	 *
 	 * @param databaseName Name of database to create
 	 */
@@ -65,7 +65,7 @@ public class OStardogConfig implements OStardogConfigVocab {
 
 	/**
 	 * Constructs configuration for matcher with the default
-	 * <i>Stardog</i> database and specified reasoning-type.
+	 * database-name and specified reasoning-type.
 	 *
 	 * @param reasoningType Type of reasoning required from matcher
 	 */
@@ -76,7 +76,7 @@ public class OStardogConfig implements OStardogConfigVocab {
 
 	/**
 	 * Constructs configuration for matcher with the specified
-	 * <i>Stardog</i> database and specified reasoning-type.
+	 * database-name and the specified reasoning-type.
 	 *
 	 * @param databaseName Name of database to create
 	 * @param reasoningType Type of reasoning required from matcher
