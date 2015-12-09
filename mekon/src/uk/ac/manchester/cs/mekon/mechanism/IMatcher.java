@@ -84,13 +84,8 @@ public interface IMatcher {
 	public boolean matches(IFrame query, IFrame instance);
 
 	/**
-	 * Empties or removes the store and performs any other clear-ups
-	 * required for the matcher.
-	 * <p>
-	 * This method may be invoked manually, either directly, or via
-	 * the static {@link #stopAll} method, or else automatically via
-	 * the object's {@link #finalize} method. If method has already
-	 * been invoked then does nothing. XXX
+	 * Performs any necessary clear-ups after all access of the store
+	 * has terminated.
 	 */
 	public void stop();
 }

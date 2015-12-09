@@ -29,7 +29,10 @@ import java.io.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
- * XXX
+ * Provides read/write access to an on-disk file-store, within
+ * which the files are assigned auto-generated names, based on
+ * common prefixes and suffixes and individual file-specific
+ * indexes.
  *
  * @author Colin Puleston
  */
@@ -52,7 +55,10 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Constructor.
+	 *
+	 * @param fileNamePrefix Prefix of all file-names
+	 * @param fileNamePrefix Prefix of all file-names
 	 */
 	public KFileStore(String fileNamePrefix, String fileNameSuffix) {
 
@@ -61,7 +67,10 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Sets the directory for the file-store. Defaults to the
+	 * current directory.
+	 *
+	 * @param directory Directory for file-store
 	 */
 	public void setDirectory(File directory) {
 
@@ -74,7 +83,10 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Removes the file with the specified index from the file-store.
+	 *
+	 * @param index Index of file to be removed
+	 * @return Removed file
 	 */
 	public File removeFile(int index) {
 
@@ -86,7 +98,7 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Removes all files from the file-store.
 	 */
 	public void clear() {
 
@@ -97,7 +109,9 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Provides the directory for the file-store.
+	 *
+	 * @return Directory for file-store
 	 */
 	public File getDirectory() {
 
@@ -105,7 +119,10 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Provides the file with the specified index.
+	 *
+	 * @param index Index of required file
+	 * @return Relevant file
 	 */
 	public File getFile(int index) {
 
@@ -113,7 +130,7 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Provides all files currently in the file-store.
 	 */
 	public File[] getAllFiles() {
 
@@ -130,7 +147,10 @@ public class KFileStore {
 	}
 
 	/**
-	 * XXX
+	 * Provides the index of the specified file.
+	 *
+	 * @param file File whose index is required
+	 * @return Index of specified file
 	 */
 	public int getIndex(File file) {
 

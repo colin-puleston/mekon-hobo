@@ -82,7 +82,8 @@ public abstract class ZIStoreAccessor {
 	public abstract IStoreInitialiser getStoreInitialiser(CModel model);
 
 	/**
-	 * XXX.
+	 * Performs any necessary clear-ups after all access of specified
+	 * model has terminated.
 	 *
 	 * @param model Relevant model
 	 */

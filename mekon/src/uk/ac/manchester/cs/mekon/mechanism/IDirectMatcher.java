@@ -79,7 +79,12 @@ public class IDirectMatcher implements IMatcher {
 					= new HashMap<CFrame, InstanceGroup>();
 
 	/**
-	 * {@inheritDoc}
+	 * Returns true indicating that the matcher handles any type of
+	 * instance-level frame. This method should be overriden if
+	 * more specific behaviour is required.
+	 *
+	 * @param type Relevant frame-type
+	 * @return True indicating that matcher handles specified type
 	 */
 	public boolean handlesType(CFrame type) {
 
@@ -141,7 +146,8 @@ public class IDirectMatcher implements IMatcher {
 	}
 
 	/**
-	 * XXX
+	 * Does nothing since no clear-ups are required for this type
+	 * of store.
 	 */
 	public void stop() {
 	}

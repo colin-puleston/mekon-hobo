@@ -128,7 +128,10 @@ public class CManager {
 	}
 
 	/**
-	 * XXX
+	 * Performs any necessary clear-ups after all access of specified
+	 * model has terminated.
+	 *
+	 * @param model Relevant model
 	 */
 	static public void clearUp(CModel model) {
 
