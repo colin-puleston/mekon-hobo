@@ -100,7 +100,8 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
-	 * XXX
+	 * Does nothing since no clear-ups are required for this type
+	 * of store.
 	 */
 	public void stop() {
 	}
