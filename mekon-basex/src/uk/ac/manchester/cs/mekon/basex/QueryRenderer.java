@@ -37,17 +37,16 @@ class QueryRenderer extends Renderer {
 	static private final String DOCS_VARIABLE = "$d";
 	static private final String DOCS_SET = "collection()";
 	static private final String ROOT_PATH = DOCS_VARIABLE + "/Instance";
-	static private final String INSTANCE_ID_PATH = ROOT_PATH + "/@" + ID_ATTR;
+	static private final String INSTANCE_INDEX_PATH = ROOT_PATH + "/@" + INDEX_ATTR;
 
 	static private final String FOR_STATEMENT_FORMAT = "for %s in %s";
 	static private final String WHERE_START_FORMAT = "where %s";
 	static private final String WHERE_CONTINUE_FORMAT = "and %s";
-	static private final String RETURN_STATEMENT = "return " + INSTANCE_ID_PATH;
+	static private final String RETURN_STATEMENT = "return " + INSTANCE_INDEX_PATH;
 
 	static private final String VARIABLE_FORMAT = "$%s%d";
 	static private final String PATH_ENTITY_FORMAT = "%s/%s";
-	static private final String TYPES_FORMAT = "%s/Type/%s";
-	static private final String TYPE_FORMAT = "@id=\"%s\"";
+	static private final String TYPE_FORMAT = "%s/Type/@id=\"%s\"";
 
 	static private final String OR = " or ";
 	static private final String OPEN_BRACKET = "(";
@@ -93,7 +92,7 @@ class QueryRenderer extends Renderer {
 
 				String path = addDeclaration();
 
-				addTypeStatement(path, attribute.getProperty());
+				addType(path, attribute.getProperty());
 
 				for (V value : attribute.getValues()) {
 
@@ -181,17 +180,12 @@ class QueryRenderer extends Renderer {
 
 		private void addTypesStatement(String path, List<CIdentity> typeIds) {
 
-			addTypesStatement(path, renderTypeExprs(typeIds));
+			addWhereComponent(renderTypes(path, typeIds));
 		}
 
-		private void addTypeStatement(String path, CIdentity typeId) {
+		private void addType(String path, CIdentity typeId) {
 
-			addTypesStatement(path, renderTypeExpr(typeId));
-		}
-
-		private void addTypesStatement(String path, String types) {
-
-			addWhereComponent(renderTypesExpr(path, types));
+			addWhereComponent(renderType(path, typeId));
 		}
 
 		private void addNumberValueComponents(String path, INumber value) {
@@ -265,6 +259,8 @@ class QueryRenderer extends Renderer {
 
 	String render(NNode rootNode) {
 
+		checkNonCyclic(rootNode);
+
 		return new OneTimeRenderer(rootNode).getRendering();
 	}
 
@@ -290,14 +286,14 @@ class QueryRenderer extends Renderer {
 		return String.format(PATH_ENTITY_FORMAT, parentPath, tag);
 	}
 
-	private String renderTypeExprs(List<CIdentity> typeIds) {
+	private String renderTypes(String path, List<CIdentity> typeIds) {
 
 		return typeIds.size() == 1
-				? renderTypeExpr(typeIds.get(0))
-				: renderMultiTypeExprs(typeIds);
+				? renderType(path, typeIds.get(0))
+				: renderMultiTypes(path, typeIds);
 	}
 
-	private String renderMultiTypeExprs(List<CIdentity> typeIds) {
+	private String renderMultiTypes(String path, List<CIdentity> typeIds) {
 
 		StringBuilder types = new StringBuilder();
 		boolean first = true;
@@ -315,7 +311,7 @@ class QueryRenderer extends Renderer {
 				types.append(OR);
 			}
 
-			types.append(renderTypeExpr(typeId));
+			types.append(renderType(path, typeId));
 		}
 
 		types.append(CLOSE_BRACKET);
@@ -323,14 +319,9 @@ class QueryRenderer extends Renderer {
 		return types.toString();
 	}
 
-	private String renderTypesExpr(String path, String types) {
+	private String renderType(String path, CIdentity typeId) {
 
-		return String.format(TYPES_FORMAT, path, types);
-	}
-
-	private String renderTypeExpr(CIdentity typeId) {
-
-		return String.format(TYPE_FORMAT, typeId.getIdentifier());
+		return String.format(TYPE_FORMAT, path, typeId.getIdentifier());
 	}
 
 	private String renderNumberValue(

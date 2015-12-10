@@ -122,14 +122,14 @@ class InstanceRenderer extends Renderer {
 		}
 	}
 
-	XDocument render(NNode rootNode, CIdentity identity) {
+	XDocument render(NNode rootNode, int index) {
 
 		checkNonCyclic(rootNode);
 
 		XDocument document = new XDocument(ROOT_ID);
 		XNode xRoot = document.getRootNode();
 
-		renderId(identity, xRoot);
+		xRoot.addValue(INDEX_ATTR, index);
 		renderNode(rootNode, xRoot.addChild(NODE_ID));
 
 		return document;
@@ -175,16 +175,6 @@ class InstanceRenderer extends Renderer {
 	private void renderId(CIdentity identity, XNode xNode) {
 
 		xNode.addValue(ID_ATTR, identity.getIdentifier());
-	}
-
-	private void checkNonCyclic(NNode rootNode) {
-
-		if (rootNode.leadsToCycle()) {
-
-			throw new KAccessException(
-						"Cannot render cyclic instance as XML tree: "
-						+ "Top-level node: " + rootNode);
-		}
 	}
 
 	private void checkAtomicConcept(NNode node) {

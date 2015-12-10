@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.basex;
 
 import java.io.*;
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
@@ -132,7 +133,7 @@ public class BaseXMatcher implements IMatcher {
 		File file = fileStore.getFile(index);
 
 		NNode rootNode = networkManager.createNetwork(instance);
-		XDocument xDoc = instanceRenderer.render(rootNode, identity);
+		XDocument xDoc = instanceRenderer.render(rootNode, index);
 
 		xDoc.writeToFile(file);
 		database.add(file);
@@ -146,9 +147,10 @@ public class BaseXMatcher implements IMatcher {
 	public void remove(CIdentity identity) {
 
 		int index = indexes.freeIndex(identity);
-		File file = fileStore.removeFile(index);
+		File file = fileStore.getFile(index);
 
 		database.remove(file);
+		fileStore.removeFile(index);
 	}
 
 	/**
@@ -164,19 +166,16 @@ public class BaseXMatcher implements IMatcher {
 
 		NNode rootNode = networkManager.createNetwork(query);
 		String queryRendering = queryRenderer.render(rootNode);
+		List<Integer> matchIndexes = database.executeQuery(queryRendering);
 
 		System.out.println(queryRendering);
-		database.executeQuery(queryRendering);
 
-		return IMatches.NO_MATCHES;
+		return new IMatches(indexes.getElements(matchIndexes));
 	}
 
 	/**
-	 * Converts the specified instance-level query and instance frames
-	 * to the network-based representation, and runs any registered
-	 * pre-processors over the resulting networks, then performs a
-	 * single query-matching test via the {@link NNode#subsumes}
-	 * method.
+	 * Performs a single query-matching test via the {@link
+	 * IFrame#subsumesStructure} method.
 	 *
 	 * @param query Query to be matched
 	 * @param instance Instance to test for matching
@@ -184,7 +183,7 @@ public class BaseXMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return false;
+		return query.subsumesStructure(instance);
 	}
 
 	/**

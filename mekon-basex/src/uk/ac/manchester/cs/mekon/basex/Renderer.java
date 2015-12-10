@@ -24,6 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
+import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.network.*;
+
 /**
  * @author Colin Puleston
  */
@@ -35,6 +38,17 @@ abstract class Renderer {
 	static final String LINK_ID = "Link";
 	static final String NUMERIC_ID = "Numeric";
 
+	static final String INDEX_ATTR = "index";
 	static final String ID_ATTR = "id";
 	static final String VALUE_ATTR = "value";
+
+	void checkNonCyclic(NNode rootNode) {
+
+		if (rootNode.leadsToCycle()) {
+
+			throw new KAccessException(
+						"Cannot render cyclic instance: "
+						+ "Top-level node: " + rootNode);
+		}
+	}
 }

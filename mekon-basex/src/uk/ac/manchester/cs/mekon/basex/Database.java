@@ -25,12 +25,15 @@
 package uk.ac.manchester.cs.mekon.basex;
 
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.basex.core.*;
 import org.basex.core.cmd.*;
 import org.basex.query.*;
 import org.basex.query.iter.*;
 import org.basex.query.value.item.*;
+import org.basex.api.dom.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
 
@@ -59,25 +62,25 @@ class Database {
 		execute(new Delete(file.getPath()));
 	}
 
-	void executeQuery(String query) {
+	List<Integer> executeQuery(String query) {
+
+		List<Integer> ids = new ArrayList<Integer>();
 
 		try {
 
-			QueryProcessor proc = new QueryProcessor(query, context);
+			Iter results = new QueryProcessor(query, context).iter();
 
-			Iter iter = proc.iter();
+			for (Item item ; (item = results.next()) != null ; ) {
 
-			for (Item item; (item = iter.next()) != null;) {
-
-				System.out.println("ITEM: " + item);
-				System.out.println("  TO-JAVA: " + item.toJava());
-				System.out.println("  JAVA-CLASS: " + item.toJava().getClass());
+				ids.add(extractInstanceIndex(item));
 			}
 		}
 		catch (QueryException e) {
 
 			throw new KSystemConfigException(e);
 		}
+
+		return ids;
     }
 
 	void stop() {
@@ -87,7 +90,6 @@ class Database {
 			try {
 
 				execute(new Close());
-				execute(new DropDB(databaseName));
 			}
 			finally {
 
@@ -107,5 +109,12 @@ class Database {
 
 			throw new KSystemConfigException(e);
 		}
+	}
+
+	private Integer extractInstanceIndex(Item queryResult) throws QueryException {
+
+		BXAttr attribute = (BXAttr)queryResult.toJava();
+
+		return Integer.parseInt(attribute.getValue());
 	}
 }

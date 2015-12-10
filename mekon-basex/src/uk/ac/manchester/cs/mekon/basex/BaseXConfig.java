@@ -35,11 +35,33 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 public class BaseXConfig implements BaseXConfigVocab {
 
+	/**
+	 * Default configuration.
+	 */
+	static public final BaseXConfig DEFAULT_CONFIG = new BaseXConfig();
+
 	static private final String DEFAULT_DB_NAME = "MEKON";
 	static private final String DEFAULT_STORE_DIR_NAME = "basex-store";
 
+	static private File getDefaultStoreDirectory(String parentDir) {
+
+		return new File(parentDir, DEFAULT_STORE_DIR_NAME);
+	}
+
 	private String databaseName;
 	private File storeDirectory;
+
+	/**
+	 * Constructs configuration for matcher with the specified
+	 * database-name and a the file-store located in a default-named
+	 * directory for underneath the current directory.
+	 *
+	 * @param databaseName Name of database to create
+	 */
+	public BaseXConfig(String databaseName) {
+
+		this(databaseName, getDefaultStoreDirectory("."));
+	}
 
 	/**
 	 * Constructs configuration for matcher with the specified
@@ -83,6 +105,11 @@ public class BaseXConfig implements BaseXConfigVocab {
 		return storeDirectory;
 	}
 
+	private BaseXConfig() {
+
+		this(DEFAULT_DB_NAME);
+	}
+
 	private File getStoreDirectory(KConfigNode configNode) {
 
 		return configNode.getResource(
@@ -98,7 +125,7 @@ public class BaseXConfig implements BaseXConfigVocab {
 
 	private File getDefaultStoreDirectory(KConfigNode configNode) {
 
-		return new File(getConfigStorePath(configNode), DEFAULT_STORE_DIR_NAME);
+		return getDefaultStoreDirectory(getConfigStorePath(configNode));
 	}
 
 	private String getConfigStorePath(KConfigNode configNode) {
