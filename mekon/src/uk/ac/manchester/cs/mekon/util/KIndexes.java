@@ -179,6 +179,25 @@ public abstract class KIndexes<E> {
 	}
 
 	/**
+	 * Retrieves the entities to which the members of a set of indexes
+	 * are currently assigned.
+	 *
+	 * @param indexes Indexes for which elements are required
+	 * @return Elements to which indexs are currently assigned
+	 */
+	public List<E> getElements(List<Integer> indexes) {
+
+		List<E> elements = new ArrayList<E>();
+
+		for (Integer index : indexes) {
+
+			elements.add(getElement(index));
+		}
+
+		return elements;
+	}
+
+	/**
 	 * Creates a runtime-exception of the required type.
 	 *
 	 * @param message Message for exception
