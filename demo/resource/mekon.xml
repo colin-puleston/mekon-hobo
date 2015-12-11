@@ -87,8 +87,6 @@
 			</Semantics>
 		</OWLClassifier>
 
-		<BaseXMatcher/>
-
 		<OWLMatcher
 			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORConceptsMatcher"
 			reasoningType="DL"
@@ -166,6 +164,19 @@
 		</OWLSanctionedModel>
 
 	</ModelSection>
+
+	<!--
+		Configuration information for general matcher to be used
+		for matching of any instance-level frames whose types are
+		not handled by any matchers specified in the section-builder
+		configuration section. Multiple general matchers can be
+		provided and, where appropriate, should be listed in order
+		of precedence.
+	-->
+	<GeneralMatcher
+		matcher="uk.ac.manchester.cs.mekon.basex.BaseXMatcher">
+		<BaseXMatcher/>
+	</GeneralMatcher>
 
 	<!--
 		Mappings between Java classes/fields from the Object Model
