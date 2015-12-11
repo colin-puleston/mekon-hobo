@@ -36,41 +36,41 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 class InstanceRenderer extends Renderer {
 
-	private abstract class AttributeRenderer<V, A extends NAttribute<V>> {
+	private abstract class FeatureRenderer<V, F extends NFeature<V>> {
 
 		private XNode xParent;
 
-		AttributeRenderer(XNode xParent) {
+		FeatureRenderer(XNode xParent) {
 
 			this.xParent = xParent;
 		}
 
-		void renderAll(List<A> attributes) {
+		void renderAll(List<F> features) {
 
-			for (A attribute : attributes) {
+			for (F feature : features) {
 
-				if (attribute.hasValues()) {
+				if (feature.hasValues()) {
 
-					checkValid(attribute);
-					render(attribute);
+					checkValid(feature);
+					render(feature);
 				}
 			}
 		}
 
 		abstract String getEntityId();
 
-		void checkValid(A attribute) {
+		void checkValid(F feature) {
 		}
 
 		abstract void renderValue(V value, XNode xNode);
 
-		private void render(A attribute) {
+		private void render(F feature) {
 
 			XNode xNode = xParent.addChild(getEntityId());
 
-			renderType(attribute.getProperty(), xNode);
+			renderType(feature.getType(), xNode);
 
-			for (V value : attribute.getValues()) {
+			for (V value : feature.getValues()) {
 
 				renderValue(value, xNode);
 			}
@@ -79,16 +79,16 @@ class InstanceRenderer extends Renderer {
 
 	private class LinkRenderer
 					extends
-						AttributeRenderer<NNode, NLink> {
+						FeatureRenderer<NNode, NLink> {
 
 		LinkRenderer(XNode xParent) {
 
 			super(xParent);
 		}
 
-		void checkValid(NLink attribute) {
+		void checkValid(NLink feature) {
 
-			checkConjunctionLink(attribute);
+			checkConjunctionLink(feature);
 		}
 
 		String getEntityId() {
@@ -104,7 +104,7 @@ class InstanceRenderer extends Renderer {
 
 	private class NumericRenderer
 					extends
-						AttributeRenderer<INumber, NNumeric> {
+						FeatureRenderer<INumber, NNumeric> {
 
 		NumericRenderer(XNode xParent) {
 
@@ -137,7 +137,7 @@ class InstanceRenderer extends Renderer {
 
 	private void renderNode(NNode node, XNode xNode) {
 
-		checkAtomicConcept(node);
+		checkAtomicType(node);
 
 		renderNodeTypes(node, xNode);
 
@@ -147,7 +147,7 @@ class InstanceRenderer extends Renderer {
 
 	private void renderNodeTypes(NNode node, XNode xNode) {
 
-		renderType(node.getAtomicConcept(), xNode);
+		renderType(node.getType(), xNode);
 		renderNodeAncestorTypes(node, xNode);
 	}
 
@@ -177,12 +177,12 @@ class InstanceRenderer extends Renderer {
 		xNode.addValue(ID_ATTR, identity.getIdentifier());
 	}
 
-	private void checkAtomicConcept(NNode node) {
+	private void checkAtomicType(NNode node) {
 
-		if (!node.atomicConcept()) {
+		if (!node.atomicType()) {
 
 			throw new KAccessException(
-						"Cannot render node with disjunction-concept: "
+						"Cannot render node with disjunction-type: "
 						+ node);
 		}
 	}

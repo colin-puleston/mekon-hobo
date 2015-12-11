@@ -64,22 +64,22 @@ class QueryRenderer extends Renderer {
 
 		private Map<String, Integer> variableCountsByTag = new HashMap<String, Integer>();
 
-		private abstract class AttributeStatementsAdder<V> {
+		private abstract class FeatureStatementsAdder<V> {
 
 			private String parentPath;
 
-			AttributeStatementsAdder(String parentPath) {
+			FeatureStatementsAdder(String parentPath) {
 
 				this.parentPath = parentPath;
 			}
 
-			void addForAll(List<? extends NAttribute<V>> attributes) {
+			void addForAll(List<? extends NFeature<V>> features) {
 
-				for (NAttribute<V> attribute : attributes) {
+				for (NFeature<V> feature : features) {
 
-					if (attribute.hasValues()) {
+					if (feature.hasValues()) {
 
-						addFor(attribute);
+						addFor(feature);
 					}
 				}
 			}
@@ -88,13 +88,13 @@ class QueryRenderer extends Renderer {
 
 			abstract void addValue(String path, V value);
 
-			private void addFor(NAttribute<V> attribute) {
+			private void addFor(NFeature<V> feature) {
 
 				String path = addDeclaration();
 
-				addType(path, attribute.getProperty());
+				addTypesStatement(path, feature);
 
-				for (V value : attribute.getValues()) {
+				for (V value : feature.getValues()) {
 
 					addValue(path, value);
 				}
@@ -108,7 +108,7 @@ class QueryRenderer extends Renderer {
 
 		private class LinkStatementsAdder
 						extends
-							AttributeStatementsAdder<NNode> {
+							FeatureStatementsAdder<NNode> {
 
 			LinkStatementsAdder(String parentPath) {
 
@@ -128,7 +128,7 @@ class QueryRenderer extends Renderer {
 
 		private class NumericStatementsAdder
 						extends
-							AttributeStatementsAdder<INumber> {
+							FeatureStatementsAdder<INumber> {
 
 			NumericStatementsAdder(String parentPath) {
 
@@ -163,7 +163,7 @@ class QueryRenderer extends Renderer {
 
 			String path = addDeclarationStatement(parentPath, NODE_ID);
 
-			addTypesStatement(path, node.getConceptDisjuncts());
+			addTypesStatement(path, node);
 
 			new LinkStatementsAdder(path).addForAll(node.getLinks());
 			new NumericStatementsAdder(path).addForAll(node.getNumerics());
@@ -178,14 +178,9 @@ class QueryRenderer extends Renderer {
 			return path;
 		}
 
-		private void addTypesStatement(String path, List<CIdentity> typeIds) {
+		private void addTypesStatement(String path, NEntity entity) {
 
-			addWhereComponent(renderTypes(path, typeIds));
-		}
-
-		private void addType(String path, CIdentity typeId) {
-
-			addWhereComponent(renderType(path, typeId));
+			addWhereComponent(renderTypes(path, entity.getTypeDisjuncts()));
 		}
 
 		private void addNumberValueComponents(String path, INumber value) {
