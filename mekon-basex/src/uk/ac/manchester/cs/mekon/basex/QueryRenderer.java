@@ -79,12 +79,16 @@ class QueryRenderer extends Renderer {
 
 					if (feature.hasValues()) {
 
+						checkValid(feature);
 						addFor(feature);
 					}
 				}
 			}
 
 			abstract String getEntityId();
+
+			void checkValid(NFeature<V> feature) {
+			}
 
 			abstract void addValue(String path, V value);
 
@@ -118,6 +122,11 @@ class QueryRenderer extends Renderer {
 			String getEntityId() {
 
 				return LINK_ID;
+			}
+
+			void checkValid(NLink feature) {
+
+				checkConjunctionLink(feature);
 			}
 
 			void addValue(String path, NNode value) {

@@ -187,16 +187,6 @@ class InstanceRenderer extends Renderer {
 		}
 	}
 
-	private void checkConjunctionLink(NLink link) {
-
-		if (link.disjunctionLink()) {
-
-			throw new KAccessException(
-						"Cannot render disjunction-link: "
-						+ link);
-		}
-	}
-
 	private void checkDefiniteNumberValue(INumber value) {
 
 		if (value.indefinite()) {

@@ -51,4 +51,14 @@ abstract class Renderer {
 						+ "Top-level node: " + rootNode);
 		}
 	}
+
+	void checkConjunctionLink(NLink link) {
+
+		if (link.disjunctionLink()) {
+
+			throw new KAccessException(
+						"Cannot render disjunction-link: "
+						+ link);
+		}
+	}
 }
