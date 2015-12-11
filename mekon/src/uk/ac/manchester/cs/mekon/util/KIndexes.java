@@ -191,7 +191,12 @@ public abstract class KIndexes<E> {
 
 		for (Integer index : indexes) {
 
-			elements.add(getElement(index));
+			E element = indexesToElements.get(index);
+
+			if (element != null) {
+
+				elements.add(element);
+			}
 		}
 
 		return elements;
