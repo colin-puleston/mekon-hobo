@@ -271,9 +271,9 @@ public class ORClassifier extends IClassifier {
 
 	private void purgeInferredTypes(NNode instance, Set<OWLClass> types) {
 
-		for (IRI iri : NetworkIRIs.getConceptDisjuncts(instance)) {
+		for (IRI typeDisjunctIRI : NetworkIRIs.getTypeDisjuncts(instance)) {
 
-			types.remove(getConcept(iri));
+			types.remove(getConcept(typeDisjunctIRI));
 		}
 	}
 

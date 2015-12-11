@@ -43,31 +43,31 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 public class NetworkIRIs {
 
 	/**
-	 * Extracts IRI of concept associated with specified node,
-	 * whose associated concept must be atomic, and which must have
-	 * an identifier that is a valid IRI.
+	 * Extracts IRI of concept associated with specified network
+	 * entity, whose associated concept must be atomic, and which
+	 * must have an identifier that is a valid IRI.
 	 *
 	 * @param node Node for which IRI is to be extracted
 	 * @return Extracted IRI
 	 */
-	static public IRI getAtomicConcept(NNode node) {
+	static public IRI getAtomicType(NEntity entity) {
 
-		return get(node.getAtomicConcept());
+		return get(entity.getType());
 	}
 
 	/**
-	 * Extracts IRI of concept-disjuncts associated with specified
+	 * Extracts IRI of type-disjuncts associated with specified
 	 * node, each of which must have an identifier that is a valid
 	 * IRI.
 	 *
 	 * @param node Node for which IRIs are to be extracted
 	 * @return Extracted IRIs
 	 */
-	static public List<IRI> getConceptDisjuncts(NNode node) {
+	static public List<IRI> getTypeDisjuncts(NNode node) {
 
 		List<IRI> iris = new ArrayList<IRI>();
 
-		for (CIdentity typeDisjunct : node.getConceptDisjuncts()) {
+		for (CIdentity typeDisjunct : node.getTypeDisjuncts()) {
 
 			iris.add(get(typeDisjunct));
 		}
@@ -75,21 +75,9 @@ public class NetworkIRIs {
 		return iris;
 	}
 
-	/**
-	 * Extracts IRI of property associated with specified attribute,
-	 * which must have an identifier that is a valid IRI.
-	 *
-	 * @param attribute Attribute for which IRI is to be extracted
-	 * @return Extracted IRI
-	 */
-	static public IRI getProperty(NAttribute<?> attribute) {
+	static private IRI get(CIdentity type) {
 
-		return get(attribute.getProperty());
-	}
-
-	static private IRI get(CIdentity id) {
-
-		IRI iri = O_IRIExtractor.extractIRI(id);
+		IRI iri = O_IRIExtractor.extractIRI(type);
 
 		if (iri == null) {
 

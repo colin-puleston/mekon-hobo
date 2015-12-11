@@ -85,7 +85,7 @@ class IndividualsRenderer {
 					individuals.put(node, individual);
 
 					addTypeAssignment(type);
-					renderAttributes();
+					renderFeatures();
 				}
 
 				return individual;

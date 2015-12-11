@@ -45,7 +45,7 @@ class OntologyEntityResolver {
 
 		protected void visit(NNode node) {
 
-			resolveAttributes(node);
+			resolveFeatures(node);
 		}
 
 		protected void visit(NLink link) {
@@ -83,13 +83,13 @@ class OntologyEntityResolver {
 		}
 	}
 
-	private void resolveAttributes(NNode node) {
+	private void resolveFeatures(NNode node) {
 
-		for (NAttribute<?> attr : node.getAttributes()) {
+		for (NFeature<?> feature : node.getFeatures()) {
 
-			if (!properties.exists(attr.getProperty())) {
+			if (!properties.exists(feature.getType())) {
 
-				node.removeAttribute(attr);
+				node.removeFeature(feature);
 			}
 		}
 	}
@@ -111,7 +111,7 @@ class OntologyEntityResolver {
 
 		if (cFrame == null) {
 
-			return resolveNodeConceptDisjuncts(node);
+			return resolveNodeTypeDisjuncts(node);
 		}
 
 		if (cFrame.getCategory().disjunction()) {
@@ -119,22 +119,22 @@ class OntologyEntityResolver {
 			return resolveDisjunctionNodeConcept(node, cFrame);
 		}
 
-		return resolveNodeConceptDisjunct(node, cFrame);
+		return resolveNodeTypeDisjunct(node, cFrame);
 	}
 
-	private boolean resolveNodeConceptDisjuncts(NNode node) {
+	private boolean resolveNodeTypeDisjuncts(NNode node) {
 
 		boolean anyOWLConcepts = false;
 
-		for (CIdentity concept : node.getConceptDisjuncts()) {
+		for (CIdentity typeDisjunct : node.getTypeDisjuncts()) {
 
-			if (concepts.exists(concept)) {
+			if (concepts.exists(typeDisjunct)) {
 
 				anyOWLConcepts = true;
 			}
 			else {
 
-				node.removeConceptDisjunct(concept);
+				node.removeTypeDisjunct(typeDisjunct);
 			}
 		}
 
@@ -147,13 +147,13 @@ class OntologyEntityResolver {
 
 		for (CFrame disjunct : cFrame.getSubs()) {
 
-			anyOWLConcepts |= resolveNodeConceptDisjunct(node, disjunct);
+			anyOWLConcepts |= resolveNodeTypeDisjunct(node, disjunct);
 		}
 
 		return anyOWLConcepts;
 	}
 
-	private boolean resolveNodeConceptDisjunct(NNode node, CFrame cFrame) {
+	private boolean resolveNodeTypeDisjunct(NNode node, CFrame cFrame) {
 
 		if (!concepts.exists(cFrame)) {
 
@@ -164,8 +164,8 @@ class OntologyEntityResolver {
 				return false;
 			}
 
-			node.removeConceptDisjunct(cFrame.getIdentity());
-			node.addConceptDisjunct(new CIdentity(iri.toString()));
+			node.removeTypeDisjunct(cFrame.getIdentity());
+			node.addTypeDisjunct(new CIdentity(iri.toString()));
 		}
 
 		return true;

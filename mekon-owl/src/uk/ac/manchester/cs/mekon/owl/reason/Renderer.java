@@ -54,7 +54,7 @@ abstract class Renderer<NR extends OWLObject> {
 
 		abstract NR render(OWLClassExpression type);
 
-		void renderAttributes() {
+		void renderFeatures() {
 
 			for (NLink link : node.getLinks()) {
 
@@ -108,7 +108,7 @@ abstract class Renderer<NR extends OWLObject> {
 
 		private boolean directNumeric(NNumeric numeric) {
 
-			IRI iri = NetworkIRIs.getProperty(numeric);
+			IRI iri = NetworkIRIs.getAtomicType(numeric);
 
 			return model.getDataProperties().contains(iri);
 		}
@@ -116,16 +116,16 @@ abstract class Renderer<NR extends OWLObject> {
 
 	private abstract class ValuesRenderer<V> {
 
-		private NAttribute<V> attribute;
+		private NFeature<V> feature;
 
-		ValuesRenderer(NAttribute<V> attribute) {
+		ValuesRenderer(NFeature<V> feature) {
 
-			this.attribute = attribute;
+			this.feature = feature;
 		}
 
 		void render() {
 
-			Set<V> values = new HashSet<V>(attribute.getValues());
+			Set<V> values = new HashSet<V>(feature.getValues());
 
 			if (!values.isEmpty()) {
 
@@ -144,22 +144,22 @@ abstract class Renderer<NR extends OWLObject> {
 
 		OWLObjectProperty getObjectProperty() {
 
-			return model.getObjectProperties().get(getAttributeIRI());
+			return model.getObjectProperties().get(getFeatureIRI());
 		}
 
 		OWLDataProperty getDataProperty() {
 
-			return model.getDataProperties().get(getAttributeIRI());
+			return model.getDataProperties().get(getFeatureIRI());
 		}
 
 		private boolean closedWorldSemantics() {
 
-			return semantics.getWorld(getAttributeIRI()).closed();
+			return semantics.getWorld(getFeatureIRI()).closed();
 		}
 
-		private IRI getAttributeIRI() {
+		private IRI getFeatureIRI() {
 
-			return NetworkIRIs.getProperty(attribute);
+			return NetworkIRIs.getAtomicType(feature);
 		}
 	}
 
@@ -354,23 +354,23 @@ abstract class Renderer<NR extends OWLObject> {
 
 	private OWLClassExpression getTypeExpression(NNode node) {
 
-		return node.atomicConcept()
+		return node.atomicType()
 				? getAtomicTypeExpression(node)
 				: getUnionTypeExpression(node);
 	}
 
 	private OWLClass getAtomicTypeExpression(NNode node) {
 
-		return getConcept(NetworkIRIs.getAtomicConcept(node));
+		return getConcept(NetworkIRIs.getAtomicType(node));
 	}
 
 	private OWLObjectUnionOf getUnionTypeExpression(NNode node) {
 
 		Set<OWLClass> ops = new HashSet<OWLClass>();
 
-		for (IRI iri : NetworkIRIs.getConceptDisjuncts(node)) {
+		for (IRI typeDisjunctIRI : NetworkIRIs.getTypeDisjuncts(node)) {
 
-			ops.add(getConcept(iri));
+			ops.add(getConcept(typeDisjunctIRI));
 		}
 
 		return dataFactory.getOWLObjectUnionOf(ops);

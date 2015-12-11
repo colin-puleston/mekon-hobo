@@ -56,7 +56,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 		OWLClassExpression render(OWLClassExpression type) {
 
-			renderAttributes();
+			renderFeatures();
 			endRecurse();
 
 			if (conjuncts.isEmpty()) {

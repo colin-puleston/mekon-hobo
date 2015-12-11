@@ -43,22 +43,22 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 	private int nodeCount = 0;
 
-	private abstract class AttributesRenderer<V, A extends NAttribute<V>> {
+	private abstract class FeaturesRenderer<V, F extends NFeature<V>> {
 
-		void render(TN subject, List<? extends A> attributes) {
+		void render(TN subject, List<? extends F> features) {
 
-			for (A attribute : attributes) {
+			for (F feature : features) {
 
-				if (!attribute.getValues().isEmpty()) {
+				if (!feature.getValues().isEmpty()) {
 
-					renderValues(subject, renderType(attribute), attribute);
+					renderValues(subject, renderAtomicType(feature), feature);
 				}
 			}
 		}
 
-		void renderValues(TN subject, OT_URI predicate, A attribute) {
+		void renderValues(TN subject, OT_URI predicate, F feature) {
 
-			for (V value : attribute.getValues()) {
+			for (V value : feature.getValues()) {
 
 				renderValue(subject, predicate, value);
 			}
@@ -67,17 +67,17 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		abstract void renderValue(TN subject, OT_URI predicate, V value);
 	}
 
-	private class LinksRenderer extends AttributesRenderer<NNode, NLink> {
+	private class LinksRenderer extends FeaturesRenderer<NNode, NLink> {
 
-		void renderValues(TN subject, OT_URI predicate, NLink attribute) {
+		void renderValues(TN subject, OT_URI predicate, NLink feature) {
 
-			if (attribute.disjunctionLink()) {
+			if (feature.disjunctionLink()) {
 
-				renderUnion(subject, predicate, renderValues(attribute));
+				renderUnion(subject, predicate, renderValues(feature));
 			}
 			else {
 
-				super.renderValues(subject, predicate, attribute);
+				super.renderValues(subject, predicate, feature);
 			}
 		}
 
@@ -99,7 +99,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		}
 	}
 
-	private class NumericsRenderer extends AttributesRenderer<INumber, NNumeric> {
+	private class NumericsRenderer extends FeaturesRenderer<INumber, NNumeric> {
 
 		void renderValue(TN subject, OT_URI predicate, INumber value) {
 
@@ -142,7 +142,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		TN tripleNode = renderNode(nodeCount++);
 
 		checkRenderType(node, tripleNode);
-		renderAttributeValues(node, tripleNode);
+		renderFeatureValues(node, tripleNode);
 
 		return tripleNode;
 	}
@@ -171,7 +171,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 		OT_URI typePredicate = renderURI(RDFConstants.RDF_TYPE);
 
-		if (node.atomicConcept()) {
+		if (node.atomicType()) {
 
 			renderTriple(tripleNode, typePredicate, renderAtomicType(node));
 		}
@@ -181,7 +181,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		}
 	}
 
-	private void renderAttributeValues(NNode node, TN tripleNode) {
+	private void renderFeatureValues(NNode node, TN tripleNode) {
 
 		linksRenderer.render(tripleNode, node.getLinks());
 		numericsRenderer.render(tripleNode, node.getNumerics());
@@ -191,22 +191,17 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 		Set<OTValue> objects = new HashSet<OTValue>();
 
-		for (IRI iri : NetworkIRIs.getConceptDisjuncts(node)) {
+		for (IRI typeDisjunctIRI : NetworkIRIs.getTypeDisjuncts(node)) {
 
-			objects.add(renderURI(iri));
+			objects.add(renderURI(typeDisjunctIRI));
 		}
 
 		return objects;
 	}
 
-	private OT_URI renderAtomicType(NNode node) {
+	private OT_URI renderAtomicType(NEntity entity) {
 
-		return renderURI(NetworkIRIs.getAtomicConcept(node));
-	}
-
-	private OT_URI renderType(NAttribute<?> attribute) {
-
-		return renderURI(NetworkIRIs.getProperty(attribute));
+		return renderURI(NetworkIRIs.getAtomicType(entity));
 	}
 
 	private OT_URI renderURI(IRI iri) {
