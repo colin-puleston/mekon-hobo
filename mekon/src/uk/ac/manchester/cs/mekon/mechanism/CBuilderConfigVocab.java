@@ -35,6 +35,7 @@ public interface CBuilderConfigVocab {
 	static public final String MODEL_SECTION_ID = "ModelSection";
 	static public final String INSTANCE_UPDATING_ID = "InstanceUpdating";
 	static public final String DEFAULT_UPDATE_OPS_ID = "DefaultOperations";
+	static public final String GENERAL_MATCHER_ID = "GeneralMatcher";
 
 	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
 	static public final String ISTORE_DIRECTORY_ATTR = "instanceStoreDirectory";
@@ -44,4 +45,5 @@ public interface CBuilderConfigVocab {
 	static public final String UPDATE_SUGGESTEDS_ATTR = "suggestedTypes";
 	static public final String UPDATE_SLOTS_ATTR = "slots";
 	static public final String UPDATE_SLOT_VALUES_ATTR = "slotValues";
+	static public final String GENERAL_MATCHER_CLASS_ATTR = "matcher";
 }

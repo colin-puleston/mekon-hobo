@@ -72,6 +72,7 @@ class CBuilderConfig implements CBuilderConfigVocab {
 		setIStoreDirectory(builder);
 		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
+		loadGeneralMatchers(builder);
 	}
 
 	private void setQueriesEnabling(CBuilder builder) {
@@ -118,6 +119,21 @@ class CBuilderConfig implements CBuilderConfigVocab {
 		builder.addSectionBuilder(createSectionBuilder(sectionNode));
 	}
 
+	private void loadGeneralMatchers(CBuilder builder) {
+
+		for (KConfigNode matcherNode : rootNode.getChildren(GENERAL_MATCHER_ID)) {
+
+			loadGeneralMatcher(builder, matcherNode);
+		}
+	}
+
+	private void loadGeneralMatcher(CBuilder builder, KConfigNode matcherNode) {
+
+		IMatcher matcher = createGeneralMatcher(matcherNode);
+
+		CManager.getIStoreInitialiser(builder).addMatcher(matcher);
+	}
+
 	private File getIStoreDirectory() {
 
 		return rootNode.getResource(
@@ -146,6 +162,18 @@ class CBuilderConfig implements CBuilderConfigVocab {
 	private Class<? extends CSectionBuilder> getSectionBuilderClass(KConfigNode sectionNode) {
 
 		return sectionNode.getClass(SECTION_BLDER_CLASS_ATTR, CSectionBuilder.class);
+	}
+
+	private IMatcher createGeneralMatcher(KConfigNode matcherNode) {
+
+		Class<? extends IMatcher> type = getGeneralMatcherClass(matcherNode);
+
+		return new KConfigObjectConstructor<IMatcher>(type).construct(matcherNode);
+	}
+
+	private Class<? extends IMatcher> getGeneralMatcherClass(KConfigNode matcherNode) {
+
+		return matcherNode.getClass(GENERAL_MATCHER_CLASS_ATTR, IMatcher.class);
 	}
 
 	private IStoreInitialiser getIStoreInitialiser(CBuilder builder) {
