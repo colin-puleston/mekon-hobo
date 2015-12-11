@@ -29,25 +29,25 @@ import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Processer that modifies the network-based instance representations
- * by swapping the concepts associated with specific nodes.
+ * by swapping the types for specific entities (nodes or features).
  *
  * @author Colin Puleston
  */
-public class NConceptSwapper extends NNetworkVisitor {
+public class NEntityTypeSwapper extends NNetworkVisitor {
 
-	private CIdentity fromConcept;
-	private CIdentity toConcept;
+	private CIdentity fromType;
+	private CIdentity toType;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param fromConcept Concept to be reset
-	 * @param toConcept Replacement concept
+	 * @param fromType Type to be reset
+	 * @param toType Replacement type
 	 */
-	public NConceptSwapper(CIdentity fromConcept, CIdentity toConcept) {
+	public NEntityTypeSwapper(CIdentity fromType, CIdentity toType) {
 
-		this.fromConcept = fromConcept;
-		this.toConcept = toConcept;
+		this.fromType = fromType;
+		this.toType = toType;
 	}
 
 	/**
@@ -55,21 +55,30 @@ public class NConceptSwapper extends NNetworkVisitor {
 	 */
 	protected void visit(NNode node) {
 
-		if (node.hasAtomicConcept(fromConcept)) {
-
-			node.setAtomicConcept(toConcept);
-		}
+		checkSwapType(node);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void visit(NLink link) {
+
+		checkSwapType(link);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void visit(NNumeric numeric) {
+
+		checkSwapType(numeric);
+	}
+
+	private void checkSwapType(NEntity entity) {
+
+		if (entity.atomicType(fromType)) {
+
+			entity.setType(toType);
+		}
 	}
 }

@@ -74,7 +74,7 @@ public abstract class NLinkBypasser extends NNetworkVisitor {
 
 	private void bypassLink(NNode node, NLink link) {
 
-		node.removeAttribute(link);
+		node.removeFeature(link);
 
 		for (NNode valueNode : link.getValues()) {
 
@@ -86,7 +86,7 @@ public abstract class NLinkBypasser extends NNetworkVisitor {
 				}
 				else {
 
-					node.addAttribute(nestedLink);
+					node.addFeature(nestedLink);
 				}
 			}
 		}

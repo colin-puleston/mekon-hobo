@@ -41,9 +41,9 @@ class NetworkCreator {
 
 	private Map<IFrame, NNode> nodesByFrame = new HashMap<IFrame, NNode>();
 
-	private abstract class TypeSlotRenderer<V, A extends NAttribute<V>, IV> {
+	private abstract class TypeSlotRenderer<V, F extends NFeature<V>, IV> {
 
-		A render(NNode node, ISlot slot, List<IV> iValues) {
+		F render(NNode node, ISlot slot, List<IV> iValues) {
 
 			CIdentity slotId = slot.getType().getIdentity();
 
@@ -57,22 +57,22 @@ class NetworkCreator {
 
 		abstract V getValue(IV iValue);
 
-		abstract A createAttribute(CIdentity id, ISlot slot);
+		abstract F createFeature(CIdentity id, ISlot slot);
 
-		abstract void addAttribute(NNode node, A attribute);
+		abstract void addFeature(NNode node, F feature);
 
-		private A render(NNode node, CIdentity id, ISlot slot, List<IV> iValues) {
+		private F render(NNode node, CIdentity id, ISlot slot, List<IV> iValues) {
 
-			A attribute = createAttribute(id, slot);
+			F feature = createFeature(id, slot);
 
 			for (IV iValue : iValues) {
 
-				attribute.addValue(getValue(iValue));
+				feature.addValue(getValue(iValue));
 			}
 
-			addAttribute(node, attribute);
+			addFeature(node, feature);
 
-			return attribute;
+			return feature;
 		}
 	}
 
@@ -80,14 +80,14 @@ class NetworkCreator {
 								extends
 									TypeSlotRenderer<NNode, NLink, IV> {
 
-		NLink createAttribute(CIdentity id, ISlot slot) {
+		NLink createFeature(CIdentity id, ISlot slot) {
 
 			return new NLink(id, slot);
 		}
 
-		void addAttribute(NNode node, NLink attribute) {
+		void addFeature(NNode node, NLink feature) {
 
-			node.addAttribute(attribute);
+			node.addFeature(feature);
 		}
 	}
 
@@ -147,14 +147,14 @@ class NetworkCreator {
 			return iValue;
 		}
 
-		NNumeric createAttribute(CIdentity id, ISlot slot) {
+		NNumeric createFeature(CIdentity id, ISlot slot) {
 
 			return new NNumeric(id, slot);
 		}
 
-		void addAttribute(NNode node, NNumeric attribute) {
+		void addFeature(NNode node, NNumeric feature) {
 
-			node.addAttribute(attribute);
+			node.addFeature(feature);
 		}
 	}
 

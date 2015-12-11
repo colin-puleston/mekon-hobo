@@ -31,18 +31,18 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public class NLink extends NAttribute<NNode> {
+public class NLink extends NFeature<NNode> {
 
 	private boolean disjunctionLink = false;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param property Associated property
+	 * @param type Type for link feature
 	 */
-	public NLink(CIdentity property) {
+	public NLink(CIdentity type) {
 
-		super(property, null);
+		super(type, null);
 	}
 
 	/**
@@ -83,8 +83,8 @@ public class NLink extends NAttribute<NNode> {
 		return disjunctionLink;
 	}
 
-	NLink(CIdentity property, ISlot iSlot) {
+	NLink(CIdentity type, ISlot iSlot) {
 
-		super(property, iSlot);
+		super(type, iSlot);
 	}
 }

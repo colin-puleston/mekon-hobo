@@ -29,28 +29,28 @@ import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Processer that modifies the network-based instance representations
- * in order to bypass any links with specific associated properties.
+ * in order to bypass any links with specific types.
  *
  * @author Colin Puleston
  */
-public class NPropertyBypasser extends NLinkBypasser {
+public class NTypeLinkBypasser extends NLinkBypasser {
 
-	private CIdentity property;
+	private CIdentity type;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param property Property associated with links to be bypassed
+	 * @param type Type of links to be bypassed
 	 */
-	public NPropertyBypasser(CIdentity property) {
+	public NTypeLinkBypasser(CIdentity type) {
 
-		this.property = property;
+		this.type = type;
 	}
 
 	/**
 	 */
 	protected boolean bypass(NLink link) {
 
-		return link.getProperty().equals(property);
+		return link.atomicType(type);
 	}
 }

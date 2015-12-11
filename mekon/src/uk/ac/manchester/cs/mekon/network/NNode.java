@@ -34,222 +34,137 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public class NNode {
+public class NNode extends NEntity {
 
-	private List<CIdentity> conceptDisjuncts = new ArrayList<CIdentity>();
-	private List<NAttribute<?>> attributes = new ArrayList<NAttribute<?>>();
+	static private List<CIdentity> getTypeDisjuncts(CFrame cFrame) {
+
+		List<CIdentity> typeDisjuncts = new ArrayList<CIdentity>();
+
+		if (cFrame.getCategory().disjunction()) {
+
+			for (CFrame cSub : cFrame.getSubs()) {
+
+				typeDisjuncts.add(cSub.getIdentity());
+			}
+		}
+		else {
+
+			typeDisjuncts.add(cFrame.getIdentity());
+		}
+
+		return typeDisjuncts;
+	}
+
+	private References<NFeature<?>> features = new References<NFeature<?>>();
 
 	private CFrame cFrame = null;
 	private IFrame iFrame = null;
 
-	private int hashCode = 0;
-
 	/**
-	 * Constructor for nodes whose associated concept is atomic.
+	 * Constructor for nodes with atomic type.
 	 *
-	 * @param concept Associated atomic concept
+	 * @param type Atomic type for node
 	 */
-	public NNode(CIdentity concept) {
+	public NNode(CIdentity type) {
 
-		conceptDisjuncts.add(concept);
+		super(type);
 	}
 
 	/**
-	 * Constructor for nodes whose associated concept is a disjunction.
+	 * Constructor for nodes with disjunction type.
 	 *
-	 * @param conceptDisjuncts Disjuncts of associated concept
+	 * @param typeDisjuncts Disjuncts of type for node
+	 * @throws KAccessException if specified collection is empty
 	 */
-	public NNode(Collection<CIdentity> conceptDisjuncts) {
+	public NNode(Collection<CIdentity> typeDisjuncts) {
 
-		this.conceptDisjuncts.addAll(conceptDisjuncts);
+		super(typeDisjuncts);
 	}
 
 	/**
-	 * Sets the associated concept to be an atomic concept.
+	 * Sets a disjunction type for the node.
 	 *
-	 * @param concept Associated atomic concept
+	 * @param typeDisjuncts Disjuncts of type for node
+	 * @throws KAccessException if specified collection is empty
 	 */
-	public void setAtomicConcept(CIdentity concept) {
+	public void setDisjunctionType(Collection<CIdentity> typeDisjuncts) {
 
-		conceptDisjuncts.clear();
-		conceptDisjuncts.add(concept);
-		hashCode = 0;
+		setTypeDisjuncts(typeDisjuncts);
 	}
 
 	/**
-	 * Adds disjunct for the associated concept.
+	 * Adds disjunct to the node type.
 	 *
-	 * @param conceptDisjunct Disjunct to add
+	 * @param typeDisjunct Disjunct to add
 	 */
-	public void addConceptDisjunct(CIdentity conceptDisjunct) {
+	public void addTypeDisjunct(CIdentity typeDisjunct) {
 
-		conceptDisjuncts.add(conceptDisjunct);
-		hashCode = 0;
+		Collection<CIdentity> disjuncts = getTypeDisjuncts();
+
+		disjuncts.add(typeDisjunct);
+		setTypeDisjuncts(disjuncts);
 	}
 
 	/**
-	 * Removes disjunct for the associated concept.
+	 * Removes disjunct from the node type.
 	 *
-	 * @param conceptDisjunct Disjunct to remove
+	 * @param typeDisjunct Disjunct to remove
 	 */
-	public void removeConceptDisjunct(CIdentity conceptDisjunct) {
+	public void removeTypeDisjunct(CIdentity typeDisjunct) {
 
-		conceptDisjuncts.remove(conceptDisjunct);
-		hashCode = 0;
+		Collection<CIdentity> disjuncts = getTypeDisjuncts();
+
+		disjuncts.remove(typeDisjunct);
+		setTypeDisjuncts(disjuncts);
 	}
 
 	/**
-	 * Clears associated concept, whether it is atomic or a disjunction.
-	 */
-	public void clearConcept() {
-
-		conceptDisjuncts.clear();
-		hashCode = 0;
-	}
-
-	/**
-	 * Adds an attribute to the node.
+	 * Adds an feature to the node.
 	 *
-	 * @param attribute Attribute to add
+	 * @param feature Feature to add
 	 */
-	public void addAttribute(NAttribute<?> attribute) {
+	public void addFeature(NFeature<?> feature) {
 
-		attributes.add(attribute);
-		hashCode = 0;
+		features.add(feature);
 	}
 
 	/**
-	 * Removes an attribute from the node.
+	 * Removes an feature from the node.
 	 *
-	 * @param attribute Attribute to remove
+	 * @param feature Feature to remove
 	 */
-	public void removeAttribute(NAttribute<?> attribute) {
+	public void removeFeature(NFeature<?> feature) {
 
-		attributes.remove(attribute);
-		hashCode = 0;
+		features.remove(feature);
 	}
 
 	/**
-	 * Removes all attributes from the node.
+	 * Removes all features from the node.
 	 */
-	public void clearAttributes() {
+	public void clearFeatures() {
 
-		attributes.clear();
-		hashCode = 0;
+		features.clear();
 	}
 
 	/**
-	 */
-	public String toString() {
-
-		return "NNode:" + conceptDisjuncts;
-	}
-
-	/**
-	 * Tests if the other specified object is another <code>NNode</code>
-	 * with the same associated concept as this one (whether atomic or
-	 * disjunction), and with identical attributes, having identical
-	 * values.
+	 * Checks whether the node has any features.
 	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if objects are equal
+	 * @return True if node has features
 	 */
-	public boolean equals(Object other) {
+	public boolean hasFeatures() {
 
-		if (other instanceof NNode) {
-
-			return equalsNode((NNode)other);
-		}
-
-		return false;
+		return !features.isEmpty();
 	}
 
 	/**
-	 * Provides hash-code for this object.
-	 *
-	 * @return Relelevant hash-code
-	 */
-	public int hashCode() {
-
-		if (hashCode == 0) {
-
-			hashCode = calcHashCode();
-		}
-
-		return hashCode;
-	}
-
-	/**
-	 * Specifies whether the associated concept is atomic, rather than
-	 * a disjunction.
-	 *
-	 * @return True associated concept is atomic
-	 */
-	public boolean atomicConcept() {
-
-		return conceptDisjuncts.size() == 1;
-	}
-
-	/**
-	 * Specifies whether the associated concept is atomic and equal
-	 * to the specified concept.
-	 *
-	 * @param concept Atomic concept to test for
-	 * @return True if associated concept is as specified
-	 */
-	public boolean hasAtomicConcept(CIdentity concept) {
-
-		return atomicConcept() && getAtomicConcept().equals(concept);
-	}
-
-	/**
-	 * Provides the atomic concept associated with the node, for
-	 * relevant nodes.
-	 *
-	 * @return Associated atomic concept
-	 * @throws KAccessException if associated concept is disjunction
-	 */
-	public CIdentity getAtomicConcept() {
-
-		if (atomicConcept()) {
-
-			return conceptDisjuncts.iterator().next();
-		}
-
-		throw new KAccessException("Does not have atomic concept: " + this);
-	}
-
-	/**
-	 * Provides all disjuncts of associated concept. Where associated
-	 * concept is atomic, the returned set will consist of that single
-	 * atomic concept
-	 *
-	 * @return All disjuncts of associated concept
-	 */
-	public List<CIdentity> getConceptDisjuncts() {
-
-		return new ArrayList<CIdentity>(conceptDisjuncts);
-	}
-
-	/**
-	 * Checks whether the node has any attributes.
-	 *
-	 * @return True if node has attributes
-	 */
-	public boolean hasAttributes() {
-
-		return !attributes.isEmpty();
-	}
-
-	/**
-	 * Provides all attributes on the node, including both links and
+	 * Provides all features on the node, including both links and
 	 * numerics.
 	 *
-	 * @return All attributes on node
+	 * @return All features on node
 	 */
-	public List<NAttribute<?>> getAttributes() {
+	public List<NFeature<?>> getFeatures() {
 
-		return new ArrayList<NAttribute<?>>(attributes);
+		return new ArrayList<NFeature<?>>(features);
 	}
 
 	/**
@@ -259,7 +174,7 @@ public class NNode {
 	 */
 	public List<NLink> getLinks() {
 
-		return getTypeAttributes(NLink.class);
+		return getTypeFeatures(NLink.class);
 	}
 
 	/**
@@ -269,15 +184,15 @@ public class NNode {
 	 */
 	public List<NNumeric> getNumerics() {
 
-		return getTypeAttributes(NNumeric.class);
+		return getTypeFeatures(NNumeric.class);
 	}
 
 	/**
-	 * Provides the corresponding concept-level frame, for nodes
-	 * that have been directly derived from either concept-level
+	 * Provides the corresponding type-level frame, for nodes
+	 * that have been directly derived from either type-level
 	 * or instance-level frames.
 	 *
-	 * @return Corresponding concept-level frame, or null if not
+	 * @return Corresponding type-level frame, or null if not
 	 * applicable
 	 */
 	public CFrame getCFrame() {
@@ -310,16 +225,9 @@ public class NNode {
 
 	NNode(CFrame cFrame) {
 
+		this(getTypeDisjuncts(cFrame));
+
 		this.cFrame = cFrame;
-
-		if (cFrame.getCategory().disjunction()) {
-
-			addConceptDisjuncts(cFrame.getSubs());
-		}
-		else {
-
-			addConceptDisjunct(cFrame);
-		}
 	}
 
 	void setIFrame(IFrame iFrame) {
@@ -327,42 +235,23 @@ public class NNode {
 		this.iFrame = iFrame;
 	}
 
-	private void addConceptDisjuncts(List<CFrame> cFrames) {
+	References<?> getLateralReferences() {
 
-		for (CFrame cFrame : cFrames) {
-
-			addConceptDisjunct(cFrame);
-		}
+		return features;
 	}
 
-	private void addConceptDisjunct(CFrame cFrame) {
+	private <F extends NFeature<?>>List<F> getTypeFeatures(Class<F> type) {
 
-		conceptDisjuncts.add(cFrame.getIdentity());
-	}
+		List<F> typeFeatures = new ArrayList<F>();
 
-	private boolean equalsNode(NNode other) {
+		for (NFeature<?> feature : features) {
 
-		return conceptDisjuncts.equals(other.conceptDisjuncts)
-					&& attributes.equals(other.attributes);
-	}
+			if (feature.getClass() == type) {
 
-	private int calcHashCode() {
-
-		return conceptDisjuncts.hashCode() + attributes.hashCode();
-	}
-
-	private <A extends NAttribute<?>>List<A> getTypeAttributes(Class<A> type) {
-
-		List<A> typeAttrs = new ArrayList<A>();
-
-		for (NAttribute<?> attribute : attributes) {
-
-			if (attribute.getClass() == type) {
-
-				typeAttrs.add(type.cast(attribute));
+				typeFeatures.add(type.cast(feature));
 			}
 		}
 
-		return typeAttrs;
+		return typeFeatures;
 	}
 }

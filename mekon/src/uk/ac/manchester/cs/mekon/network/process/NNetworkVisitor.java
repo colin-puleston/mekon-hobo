@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Abstract base-class for processers that visit each node and
- * attribute in a network instance representation in turn,
+ * feature in a network instance representation in turn,
  * via a depth-first traversal starting from the root-node.
  *
  * @author Colin Puleston

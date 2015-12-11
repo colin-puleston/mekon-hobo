@@ -28,21 +28,21 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents a numeric attribute in the network-based instance
+ * Represents a numeric feature in the network-based instance
  * representation
  *
  * @author Colin Puleston
  */
-public class NNumeric extends NAttribute<INumber> {
+public class NNumeric extends NFeature<INumber> {
 
 	/**
 	 * Constructor.
 	 *
-	 * @param property Associated property
+	 * @param type Type for numeric feature
 	 */
-	public NNumeric(CIdentity property) {
+	public NNumeric(CIdentity type) {
 
-		super(property, null);
+		super(type, null);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class NNumeric extends NAttribute<INumber> {
 	}
 
 	/**
-	 * Provides current number-value for the slot.
+	 * Provides current number-value for the feature.
 	 *
 	 * @return Current number-value
 	 * @throws KAccessException if no current value
@@ -74,13 +74,11 @@ public class NNumeric extends NAttribute<INumber> {
 			return getValues().iterator().next();
 		}
 
-		throw new KAccessException(
-					"No current value for numeric: "
-					+ getProperty());
+		throw new KAccessException("No current value for numeric: " + this);
 	}
 
-	NNumeric(CIdentity property, ISlot iSlot) {
+	NNumeric(CIdentity type, ISlot iSlot) {
 
-		super(property, iSlot);
+		super(type, iSlot);
 	}
 }

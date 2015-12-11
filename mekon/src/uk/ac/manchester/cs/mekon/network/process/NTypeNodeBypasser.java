@@ -29,47 +29,28 @@ import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Processer that modifies the network-based instance representations
- * by swapping the properties associated with specific links.
+ * in order to bypass any nodes with specific types.
  *
  * @author Colin Puleston
  */
-public class NPropertySwapper extends NNetworkVisitor {
+public class NTypeNodeBypasser extends NNodeBypasser {
 
-	private CIdentity fromProperty;
-	private CIdentity toProperty;
+	private CIdentity type;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param fromProperty Property to be reset
-	 * @param toProperty Replacement property
+	 * @param type Type of nodes to be bypassed
 	 */
-	public NPropertySwapper(CIdentity fromProperty, CIdentity toProperty) {
+	public NTypeNodeBypasser(CIdentity type) {
 
-		this.fromProperty = fromProperty;
-		this.toProperty = toProperty;
+		this.type = type;
 	}
 
 	/**
-	 * {@inheritDoc}
 	 */
-	protected void visit(NNode node) {
-	}
+	protected boolean bypass(NNode node) {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void visit(NLink link) {
-
-		if (link.getProperty().equals(fromProperty)) {
-
-			link.setProperty(toProperty);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void visit(NNumeric numeric) {
+		return node.atomicType(type);
 	}
 }

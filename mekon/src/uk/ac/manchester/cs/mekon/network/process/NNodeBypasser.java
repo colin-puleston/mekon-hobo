@@ -72,21 +72,21 @@ public abstract class NNodeBypasser extends NNetworkVisitor {
 	 */
 	protected abstract boolean bypass(NNode node);
 
-	private void bypassNode(NLink parentAttribute, NNode node) {
+	private void bypassNode(NLink parentLink, NNode node) {
 
-		parentAttribute.removeValue(node);
+		parentLink.removeValue(node);
 
-		for (NLink nestedAttribute : node.getLinks()) {
+		for (NLink nestedLink : node.getLinks()) {
 
-			for (NNode nestedNode : nestedAttribute.getValues()) {
+			for (NNode nestedNode : nestedLink.getValues()) {
 
 				if (bypass(nestedNode)) {
 
-					bypassNode(parentAttribute, nestedNode);
+					bypassNode(parentLink, nestedNode);
 				}
 				else {
 
-					parentAttribute.addValue(nestedNode);
+					parentLink.addValue(nestedNode);
 				}
 			}
 		}
