@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.mechanism;
 
 import java.util.*;
 
+import org.junit.After;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -34,6 +36,12 @@ import uk.ac.manchester.cs.mekon.model.*;
 public abstract class DemoModelTest extends DemoModelTestUtils {
 
 	private CModel model;
+
+	@After
+	public void clearUp() {
+
+		CManager.clearUp(model);
+	}
 
 	public CBuilder buildModel(CSectionBuilder sectionBuilder) {
 

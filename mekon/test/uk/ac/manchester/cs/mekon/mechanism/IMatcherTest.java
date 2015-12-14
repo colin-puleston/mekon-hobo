@@ -135,6 +135,11 @@ public abstract class IMatcherTest extends DemoModelTest {
 	@Test
 	public void test_instanceDisjunctionBasedQueries() {
 
+		if (!handlesInstanceDisjunctionBasedQueries()) {
+
+			return;
+		}
+
 		setIndustrySector(undergradTeachingJob, PUBLIC);
 		setIndustrySector(postgradTeachingJob, PRIVATE);
 		setIndustrySector(academicResearchJob, PRIVATE);
@@ -194,6 +199,11 @@ public abstract class IMatcherTest extends DemoModelTest {
 	}
 
 	protected abstract IMatcher createMatcher();
+
+	protected boolean handlesInstanceDisjunctionBasedQueries() {
+
+		return true;
+	}
 
 	protected IMatcher getMatcher() {
 
