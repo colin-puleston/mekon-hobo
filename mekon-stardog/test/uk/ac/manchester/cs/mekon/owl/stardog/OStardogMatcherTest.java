@@ -24,11 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
-import org.junit.After;
-
-import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
-import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
  * @author Colin Puleston
@@ -37,9 +33,9 @@ public class OStardogMatcherTest extends ORMatcherTest {
 
 	static private final String DB_NAME = "TEST-DB";
 
-	protected ORMatcher createMatcher(OModel model) {
+	protected ORMatcher createMatcher() {
 
-		return new OStardogMatcher(model, createConfig());
+		return new OStardogMatcher(getOModel(), createConfig());
 	}
 
 	private OStardogConfig createConfig() {
