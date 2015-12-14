@@ -92,10 +92,12 @@ public abstract class ORMatcherTest extends IMatcherTest {
 		return new ORMatcherSectionBuilder();
 	}
 
-	protected OModel getOModel() {
+	protected IMatcher createMatcher() {
 
-		return oModel;
+		return createMatcher(oModel);
 	}
+
+	protected abstract ORMatcher createMatcher(OModel oModel);
 
 	private void testHandlesType(String typeId, boolean shouldHandle) {
 
