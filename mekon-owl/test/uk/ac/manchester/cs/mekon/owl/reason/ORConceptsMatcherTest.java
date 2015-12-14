@@ -24,15 +24,13 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import uk.ac.manchester.cs.mekon.owl.*;
-
 /**
  * @author Colin Puleston
  */
 public class ORConceptsMatcherTest extends ORMatcherTest {
 
-	protected ORMatcher createMatcher(OModel model) {
+	protected ORMatcher createMatcher() {
 
-		return new ORConceptsMatcher(model);
+		return new ORConceptsMatcher(getOModel());
 	}
 }

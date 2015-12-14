@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.Before;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
@@ -35,37 +36,19 @@ import uk.ac.manchester.cs.mekon.owl.build.*;
 /**
  * @author Colin Puleston
  */
-public class ORClassifierTest extends OTest {
-
-	static private final String CITIZEN_CONCEPT = "Citizen";
-	static private final String EMPLOYED_CITIZEN_CONCEPT = "EmployedCitizen";
-	static private final String UNEMPLOYED_CITIZEN_CONCEPT = "UnemployedCitizen";
-	static private final String EMPLOYMENT_CONCEPT = "Employment";
-	static private final String JOB_CONCEPT = "Job";
-	static private final String ACADEMIC_JOB_CONCEPT = "AcademicJob";
-	static private final String ACADEMIC_TEACHING_JOB_CONCEPT = "AcademicTeachingJob";
-	static private final String ACADEMIA_CONCEPT = "Academia";
-	static private final String TEACHER_CONCEPT = "Teacher";
-
-	static private final String EMPLOYMENT_PROPERTY = "employment";
-	static private final String JOBS_PROPERTY = "job";
-	static private final String INDUSTRY_PROPERTY = "industry";
-	static private final String JOB_TYPE_PROPERTY = "jobType";
-	static private final String TAX_PAID_PROPERTY = "taxPaid";
-	static private final String BENEFIT_RECEIVED_PROPERTY = "benefitReceived";
-	static private final String TEACHES_PROPERTY = "teaches";
+public class ORClassifierTest extends DemoModelTest {
 
 	private ORClassifier classifier;
 
-	private String[] unemployedCitizenConcepts = new String[]{UNEMPLOYED_CITIZEN_CONCEPT};
-	private String[] employedCitizenConcepts = new String[]{EMPLOYED_CITIZEN_CONCEPT};
-	private String[] academicJobConcepts = new String[]{ACADEMIC_JOB_CONCEPT};
-	private String[] academicTeachingJobConcepts = new String[]{ACADEMIC_TEACHING_JOB_CONCEPT};
+	private String[] unemployedCitizenConcepts = new String[]{UNEMPLOYED_CITIZEN};
+	private String[] employedCitizenConcepts = new String[]{EMPLOYED_CITIZEN};
+	private String[] academicJobConcepts = new String[]{ACADEMIC_JOB};
+	private String[] academicTeachingJobConcepts = new String[]{ACADEMIC_TEACHING_JOB};
 
 	@Before
 	public void setUp() {
 
-		OModel model = TestOModel.create();
+		OModel model = ODemoModel.create();
 		OBSectionBuilder sectionBuilder = new OBSectionBuilder(model);
 
 		classifier = new ORClassifier(model);
@@ -132,11 +115,11 @@ public class ORClassifierTest extends OTest {
 
 		classifier.setForceIndividualBasedClassification(individuals);
 
-		IFrame citizen = createIFrame(CITIZEN_CONCEPT);
-		IFrame employ = createIFrame(EMPLOYMENT_CONCEPT);
-		IFrame job = createIFrame(JOB_CONCEPT);
-		IFrame academia = createIFrame(ACADEMIA_CONCEPT);
-		IFrame teacher = createIFrame(TEACHER_CONCEPT);
+		IFrame citizen = createIFrame(CITIZEN);
+		IFrame employ = createIFrame(EMPLOYMENT);
+		IFrame job = createIFrame(JOB);
+		IFrame academia = createIFrame(ACADEMIA);
+		IFrame teacher = createIFrame(TEACHER);
 
 		testInferredTypes(citizen);
 
@@ -170,8 +153,8 @@ public class ORClassifierTest extends OTest {
 		// Exclude only those properties whose closure would cause inconsistencies
 		setSemantics(
 			ORSemanticWorld.CLOSED,
-			TAX_PAID_PROPERTY,
-			BENEFIT_RECEIVED_PROPERTY,
+			TAX_PROPERTY,
+			BENEFIT_PROPERTY,
 			TEACHES_PROPERTY);
 	}
 

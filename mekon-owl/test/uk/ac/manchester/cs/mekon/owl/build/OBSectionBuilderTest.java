@@ -30,6 +30,8 @@ import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
@@ -38,34 +40,16 @@ import uk.ac.manchester.cs.mekon.owl.*;
 /**
  * @author Colin Puleston
  */
-public class OBSectionBuilderTest extends OTest {
+public class OBSectionBuilderTest extends DemoModelTest {
 
-	static private final String DOMAIN_CONCEPT_CLASS = "DomainConcept";
-	static private final String DATA_TYPE_CONCEPT_CLASS = "DataTypeConcept";
+	static private final String DOMAIN_CONCEPT = "DomainConcept";
+	static private final String DATA_TYPE = "DataTypeConcept";
+	static private final String TRAVEL_CLASS = "TravelClass";
+	static private final String TRAIN = "Train";
 
-	static private final String CITIZEN_CLASS = "Citizen";
-	static private final String UNEMPLOYED_CITIZEN_CLASS = "UnemployedCitizen";
-	static private final String EMPLOYMENT_CLASS = "Employment";
-	static private final String PERSONAL_CLASS = "Personal";
-	static private final String TAX_CLASS = "Tax";
-	static private final String ZERO_TAX_CLASS = "ZeroTax";
-	static private final String BENEFIT_CLASS = "Benefit";
-	static private final String UNEMPLOYMENT_BENEFIT_CLASS = "UnemploymentBenefit";
-	static private final String JOB_CLASS = "Job";
-	static private final String ACADEMIC_JOB_CLASS = "AcademicJob";
-	static private final String ACADEMIC_TEACHING_JOB_CLASS = "AcademicTeachingJob";
-	static private final String TRAIN_CLASS = "Train";
-	static private final String TRAVEL_CLASS_CLASS = "TravelClass";
-	static private final String JOB_TYPE_CLASS = "JobType";
-	static private final String SPECIALIST_CLASS = "Specialist";
-	static private final String TEACHER_CLASS = "Teacher";
-
-	static private final String JOB_PROPERTY = "job";
-	static private final String TAX_PAID_PROPERTY = "taxPaid";
-	static private final String BENEFIT_RECIEVED_PROPERTY = "benefitReceived";
+	static private final String CITIZEN_ASPECT_PROPERTY = "citizenAspect";
 	static private final String AGE_PROPERTY = "age";
 	static private final String TRAVEL_CLASS_PROPERTY = "travelClass";
-	static private final String CITIZEN_ASPECT_PROPERTY = "citizenAspect";
 
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
@@ -85,7 +69,7 @@ public class OBSectionBuilderTest extends OTest {
 	@Before
 	public void setUp() {
 
-		sectionBuilder = new OBSectionBuilder(TestOModel.create());
+		sectionBuilder = new OBSectionBuilder(ODemoModel.create());
 	}
 
 	@Test
@@ -93,124 +77,124 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(CITIZEN_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(DATA_TYPE_CONCEPT_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(CITIZEN, FrameStatus.EXPOSED);
+		testFrameStatus(JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
+		testFrameStatus(DATA_TYPE, FrameStatus.EXPOSED);
 
-		testFrameSupers(CITIZEN_CLASS, DOMAIN_CONCEPT_CLASS);
-		testFrameSupers(ACADEMIC_JOB_CLASS, JOB_CLASS);
+		testFrameSupers(CITIZEN, DOMAIN_CONCEPT);
+		testFrameSupers(ACADEMIC_JOB, JOB);
 	}
 
 	@Test
 	public void test_frames_byGroupIncludingRoot() {
 
-		addConcepts(DOMAIN_CONCEPT_CLASS);
+		addConcepts(DOMAIN_CONCEPT);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(DATA_TYPE_CONCEPT_CLASS, FrameStatus.ABSENT);
+		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
+		testFrameStatus(DATA_TYPE, FrameStatus.ABSENT);
 	}
 
 	@Test
 	public void test_frames_byGroupExcludingRoot() {
 
-		addConceptsExcludingRoot(DOMAIN_CONCEPT_CLASS);
+		addConceptsExcludingRoot(DOMAIN_CONCEPT);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.ABSENT);
-		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(DATA_TYPE_CONCEPT_CLASS, FrameStatus.ABSENT);
+		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.ABSENT);
+		testFrameStatus(JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
+		testFrameStatus(DATA_TYPE, FrameStatus.ABSENT);
 	}
 
 	@Test
 	public void test_frames_hidingCandidates_ALL() {
 
-		addConcepts(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ALL);
+		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.ALL);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.HIDDEN);
+		testFrameStatus(JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
 	}
 
 	@Test
 	public void test_frames_hidingCandidates_ROOTS_ONLY() {
 
-		addConcepts(DOMAIN_CONCEPT_CLASS, OBEntitySelection.ROOTS_ONLY);
+		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.ROOTS_ONLY);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.HIDDEN);
+		testFrameStatus(JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
 	}
 
 	@Test
 	public void test_frames_hidingCandidates_NON_ROOTS_ONLY() {
 
-		addConcepts(DOMAIN_CONCEPT_CLASS, OBEntitySelection.NON_ROOTS_ONLY);
+		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.NON_ROOTS_ONLY);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
 	}
 
 	@Test
 	public void test_frames_hidingFilter_ANY() {
 
-		addConcepts(JOB_CLASS, OBConceptHidingFilter.ANY);
-		addConcepts(JOB_TYPE_CLASS, OBConceptHidingFilter.ANY);
+		addConcepts(JOB, OBConceptHidingFilter.ANY);
+		addConcepts(JOB_TYPE, OBConceptHidingFilter.ANY);
 
 		buildModel();
 
-		testFrameStatus(JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_TEACHING_JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(JOB_TYPE_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(SPECIALIST_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(TEACHER_CLASS, FrameStatus.HIDDEN);
+		testFrameStatus(JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_TYPE, FrameStatus.HIDDEN);
+		testFrameStatus(SPECIALIST, FrameStatus.HIDDEN);
+		testFrameStatus(TEACHER, FrameStatus.HIDDEN);
 	}
 
 	@Test
 	public void test_frames_hidingFilter_DEFINIED_CONCEPTS_ONLY() {
 
-		addConcepts(JOB_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
-		addConcepts(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
+		addConcepts(JOB, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
+		addConcepts(JOB_TYPE, OBConceptHidingFilter.DEFINIED_CONCEPTS_ONLY);
 
 		buildModel();
 
-		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_TEACHING_JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(JOB_TYPE_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(SPECIALIST_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(TEACHER_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_TYPE, FrameStatus.EXPOSED);
+		testFrameStatus(SPECIALIST, FrameStatus.HIDDEN);
+		testFrameStatus(TEACHER, FrameStatus.EXPOSED);
 	}
 
 	@Test
 	public void test_frames_hidingFilter_DEFINIED_SUB_TREES_ONLY() {
 
-		addConcepts(JOB_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
-		addConcepts(JOB_TYPE_CLASS, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
+		addConcepts(JOB, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
+		addConcepts(JOB_TYPE, OBConceptHidingFilter.DEFINIED_SUB_TREES_ONLY);
 
 		buildModel();
 
-		testFrameStatus(JOB_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(ACADEMIC_JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_TEACHING_JOB_CLASS, FrameStatus.HIDDEN);
-		testFrameStatus(JOB_TYPE_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(SPECIALIST_CLASS, FrameStatus.EXPOSED);
-		testFrameStatus(TEACHER_CLASS, FrameStatus.EXPOSED);
+		testFrameStatus(JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(JOB_TYPE, FrameStatus.EXPOSED);
+		testFrameStatus(SPECIALIST, FrameStatus.EXPOSED);
+		testFrameStatus(TEACHER, FrameStatus.EXPOSED);
 	}
 
 	@Test
@@ -218,35 +202,35 @@ public class OBSectionBuilderTest extends OTest {
 
 		buildModel();
 
-		testSlotStatus(CITIZEN_CLASS, TAX_PAID_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(EMPLOYMENT_CLASS, JOB_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(PERSONAL_CLASS, AGE_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(CITIZEN, TAX_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(EMPLOYMENT, JOBS_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(PERSONAL, AGE_PROPERTY, SlotStatus.PRESENT);
 	}
 
 	@Test
 	public void test_properties_byGroupIncludingRoot() {
 
 		addProperties(CITIZEN_ASPECT_PROPERTY);
-		addProperties(JOB_PROPERTY);
+		addProperties(JOBS_PROPERTY);
 
 		buildModel();
 
-		testSlotStatus(CITIZEN_CLASS, TAX_PAID_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(EMPLOYMENT_CLASS, JOB_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(PERSONAL_CLASS, AGE_PROPERTY, SlotStatus.ABSENT);
+		testSlotStatus(CITIZEN, TAX_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(EMPLOYMENT, JOBS_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(PERSONAL, AGE_PROPERTY, SlotStatus.ABSENT);
 	}
 
 	@Test
 	public void test_properties_byGroupExcludingRoot() {
 
 		addPropertiesExcludingRoot(CITIZEN_ASPECT_PROPERTY);
-		addPropertiesExcludingRoot(JOB_PROPERTY);
+		addPropertiesExcludingRoot(JOBS_PROPERTY);
 
 		buildModel();
 
-		testSlotStatus(CITIZEN_CLASS, TAX_PAID_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(EMPLOYMENT_CLASS, JOB_PROPERTY, SlotStatus.ABSENT);
-		testSlotStatus(PERSONAL_CLASS, AGE_PROPERTY, SlotStatus.ABSENT);
+		testSlotStatus(CITIZEN, TAX_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(EMPLOYMENT, JOBS_PROPERTY, SlotStatus.ABSENT);
+		testSlotStatus(PERSONAL, AGE_PROPERTY, SlotStatus.ABSENT);
 	}
 
 	@Test
@@ -295,27 +279,27 @@ public class OBSectionBuilderTest extends OTest {
 	private void testSlots() {
 
 		testSlot(
-			CITIZEN_CLASS,
-			TAX_PAID_PROPERTY,
+			CITIZEN,
+			TAX_PROPERTY,
 			CCardinality.SINGLE_VALUE,
-			getNoStructureFrameSlotValueType(TAX_CLASS));
+			getNoStructureFrameSlotValueType(TAX));
 		testSlot(
-			UNEMPLOYED_CITIZEN_CLASS,
-			TAX_PAID_PROPERTY,
+			UNEMPLOYED_CITIZEN,
+			TAX_PROPERTY,
 			CCardinality.SINGLE_VALUE,
-			getNoStructureFrameSlotValueType(ZERO_TAX_CLASS));
+			getNoStructureFrameSlotValueType(ZERO_TAX));
 		testSlot(
-			EMPLOYMENT_CLASS,
-			JOB_PROPERTY,
+			EMPLOYMENT,
+			JOBS_PROPERTY,
 			CCardinality.REPEATABLE_TYPES,
-			getCFrame(JOB_CLASS));
+			getCFrame(JOB));
 		testSlot(
-			TRAIN_CLASS,
+			TRAIN,
 			TRAVEL_CLASS_PROPERTY,
 			CCardinality.SINGLE_VALUE,
-			getNoStructureFrameSlotValueType(TRAVEL_CLASS_CLASS));
+			getNoStructureFrameSlotValueType(TRAVEL_CLASS));
 		testSlot(
-			PERSONAL_CLASS,
+			PERSONAL,
 			AGE_PROPERTY,
 			CCardinality.SINGLE_VALUE,
 			CNumber.min(0));
@@ -324,13 +308,13 @@ public class OBSectionBuilderTest extends OTest {
 	private void testSlotValues() {
 
 		testSlotValues(
-			UNEMPLOYED_CITIZEN_CLASS,
-			TAX_PAID_PROPERTY,
-			getNoStructureFrameSlotFixedValues(ZERO_TAX_CLASS));
+			UNEMPLOYED_CITIZEN,
+			TAX_PROPERTY,
+			getNoStructureFrameSlotFixedValues(ZERO_TAX));
 		testSlotValues(
-			UNEMPLOYED_CITIZEN_CLASS,
-			BENEFIT_RECIEVED_PROPERTY,
-			getNoStructureFrameSlotFixedValues(UNEMPLOYMENT_BENEFIT_CLASS));
+			UNEMPLOYED_CITIZEN,
+			BENEFIT_PROPERTY,
+			getNoStructureFrameSlotFixedValues(UNEMPLOYMENT_BENEFIT));
 	}
 
 	private void buildModel() {
@@ -524,5 +508,10 @@ public class OBSectionBuilderTest extends OTest {
 		}
 
 		return values;
+	}
+
+	static private IRI nameToIRI(String name) {
+
+		return IRI.create(DemoModelTestUtils.nameToIdentifier(name));
 	}
 }
