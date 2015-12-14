@@ -25,15 +25,13 @@
 package uk.ac.manchester.cs.mekon.basex;
 
 import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * @author Colin Puleston
  */
-public class BaseXMatcherTest extends ORMatcherTest {
+public class BaseXMatcherTest extends IMatcherTest {
 
-	protected IMatcher createMatcher(OModel model) {
+	protected IMatcher createMatcher() {
 
 		return new BaseXMatcher(BaseXConfig.DEFAULT_CONFIG);
 	}
