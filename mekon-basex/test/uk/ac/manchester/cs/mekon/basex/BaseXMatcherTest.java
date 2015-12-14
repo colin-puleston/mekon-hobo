@@ -35,4 +35,9 @@ public class BaseXMatcherTest extends IMatcherTest {
 
 		return new BaseXMatcher(BaseXConfig.DEFAULT_CONFIG);
 	}
+
+	protected boolean handlesInstanceDisjunctionBasedQueries() {
+
+		return false;
+	}
 }

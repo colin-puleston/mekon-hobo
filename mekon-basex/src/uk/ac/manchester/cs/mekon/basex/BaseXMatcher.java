@@ -168,8 +168,6 @@ public class BaseXMatcher implements IMatcher {
 		String queryRendering = queryRenderer.render(rootNode);
 		List<Integer> matchIndexes = database.executeQuery(queryRendering);
 
-		System.out.println(queryRendering);
-
 		return new IMatches(indexes.getElements(matchIndexes));
 	}
 

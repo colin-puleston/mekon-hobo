@@ -124,9 +124,9 @@ class QueryRenderer extends Renderer {
 				return LINK_ID;
 			}
 
-			void checkValid(NLink feature) {
+			void checkValid(NFeature<NNode> feature) {
 
-				checkConjunctionLink(feature);
+				checkConjunctionLink((NLink)feature);
 			}
 
 			void addValue(String path, NNode value) {
