@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.jena;
 
+import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
@@ -31,8 +32,8 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
  */
 public class OJenaMatcherTest extends ORMatcherTest {
 
-	protected ORMatcher createMatcher() {
+	protected ORMatcher createMatcher(OModel oModel) {
 
-		return new OJenaMatcher(getOModel());
+		return new OJenaMatcher(oModel);
 	}
 }
