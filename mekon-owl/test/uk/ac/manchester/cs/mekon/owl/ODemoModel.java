@@ -32,7 +32,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -58,7 +58,7 @@ public class ODemoModel {
 
 	static private IRI nameToIRI(String name) {
 
-		return IRI.create(DemoModelTestUtils.nameToIdentifier(name));
+		return IRI.create(DemoModelBasedTest.nameToIdentifier(name));
 	}
 
 	static private File getOWLFile() {

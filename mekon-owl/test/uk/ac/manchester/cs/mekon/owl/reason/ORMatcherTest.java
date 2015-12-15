@@ -29,6 +29,7 @@ import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
 
@@ -42,13 +43,22 @@ public abstract class ORMatcherTest extends IMatcherTest {
 
 	private class ORMatcherSectionBuilder extends OBSectionBuilder {
 
+		private class ModelEnhancer extends DemoModelBuilder {
+
+			ModelEnhancer(CBuilder builder) {
+
+				super(builder);
+
+				addFrame(NON_OWL_TYPE);
+				addFrame(NON_OWL_BUT_OWL_SUBSUMED_TYPE);
+				addSuperFrame(NON_OWL_BUT_OWL_SUBSUMED_TYPE, JOB);
+			}
+		}
+
 		public void build(CBuilder builder) {
 
 			super.build(builder);
-
-			addFrame(builder, NON_OWL_TYPE);
-			addFrame(builder, NON_OWL_BUT_OWL_SUBSUMED_TYPE);
-			addSuperFrame(builder, NON_OWL_BUT_OWL_SUBSUMED_TYPE, JOB);
+			new ModelEnhancer(builder);
 		}
 
 		ORMatcherSectionBuilder() {
@@ -56,24 +66,6 @@ public abstract class ORMatcherTest extends IMatcherTest {
 			super(oModel);
 
 			setIReasoner(new ORClassifier(oModel));
-		}
-
-		private CFrame addFrame(CBuilder builder, String name) {
-
-			return builder.addFrame(nameToIdentity(name), false);
-		}
-
-		private void addSuperFrame(CBuilder builder, String subName, String supName) {
-
-			CFrame sub = getFrame(builder, subName);
-			CFrame sup = getFrame(builder, supName);
-
-			builder.getFrameEditor(sub).addSuper(sup);
-		}
-
-		private CFrame getFrame(CBuilder builder, String name) {
-
-			return builder.getFrames().get(nameToIdentity(name));
 		}
 	}
 
@@ -87,7 +79,7 @@ public abstract class ORMatcherTest extends IMatcherTest {
 		testHandlesType(NON_OWL_BUT_OWL_SUBSUMED_TYPE, true);
 	}
 
-	protected OBSectionBuilder createSectionBuilder() {
+	protected CSectionBuilder createSectionBuilder() {
 
 		return new ORMatcherSectionBuilder();
 	}

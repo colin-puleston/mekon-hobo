@@ -34,13 +34,13 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
-public class OBSectionBuilderTest extends DemoModelTest {
+public class OBSectionBuilderTest extends DemoModelBasedTest {
 
 	static private final String DOMAIN_CONCEPT = "DomainConcept";
 	static private final String DATA_TYPE = "DataTypeConcept";
@@ -408,7 +408,7 @@ public class OBSectionBuilderTest extends DemoModelTest {
 		CFrame sub = getCFrame(subName);
 		Set<CFrame> supers = new HashSet<CFrame>(sub.getSupers());
 
-		testSet(supers, getCFrames(expectedSupersNames));
+		MekonTestUtils.testSet(supers, getCFrames(expectedSupersNames));
 	}
 
 	private void testSlotStatus(
@@ -441,7 +441,7 @@ public class OBSectionBuilderTest extends DemoModelTest {
 
 		List<IValue> values = getSlotValues(containerName, slotName);
 
-		testListContents(values, expectedValues);
+		MekonTestUtils.testListContents(values, expectedValues);
 	}
 
 	private FrameStatus getFrameStatus(String name) {
@@ -512,6 +512,6 @@ public class OBSectionBuilderTest extends DemoModelTest {
 
 	static private IRI nameToIRI(String name) {
 
-		return IRI.create(DemoModelTestUtils.nameToIdentifier(name));
+		return IRI.create(nameToIdentifier(name));
 	}
 }

@@ -24,19 +24,22 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
+import java.util.*;
+
 import org.junit.Test;
 import org.junit.Before;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
 
 /**
  * @author Colin Puleston
  */
-public class ORClassifierTest extends DemoModelTest {
+public class ORClassifierTest extends DemoModelBasedTest {
 
 	private ORClassifier classifier;
 
@@ -175,6 +178,8 @@ public class ORClassifierTest extends DemoModelTest {
 
 	private void testInferredTypes(IFrame iFrame, String... typeNames) {
 
-		testSet(iFrame.getInferredTypes().asSet(), getCFrames(typeNames));
+		Set<CFrame> infTypes = iFrame.getInferredTypes().asSet();
+
+		MekonTestUtils.testSet(infTypes, getCFrames(typeNames));
 	}
 }
