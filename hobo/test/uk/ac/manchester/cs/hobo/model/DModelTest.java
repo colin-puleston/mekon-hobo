@@ -29,6 +29,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.hobo.model.testmodel.*;
@@ -37,7 +38,7 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class DModelTest extends FramesTestUtils {
+public class DModelTest extends MekonTestUtils {
 
 	static private String INTERFACE_R_ID = InterfaceR.class.getName();
 	static private String CLASS_A_ID = ClassA.class.getName();

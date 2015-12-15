@@ -123,6 +123,11 @@ public class DArrayTest extends DFieldTest {
 		return createDObjectArray(CCardinality.REPEATABLE_TYPES, fr.getType());
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private void addSlotValues(IValue... values) {
 
 		addSlotValues(array, values);
@@ -151,5 +156,10 @@ public class DArrayTest extends DFieldTest {
 	private void testArrayValues(DObject... expectValues) {
 
 		testList(array.getAll(), Arrays.asList(expectValues));
+	}
+
+	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testList(got, expected);
 	}
 }

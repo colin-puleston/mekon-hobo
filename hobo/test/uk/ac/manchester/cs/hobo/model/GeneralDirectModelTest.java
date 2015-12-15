@@ -32,11 +32,11 @@ import uk.ac.manchester.cs.hobo.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class DirectModelTest extends FramesModelTest {
+class GeneralDirectModelTest extends GeneralFramesModelTest {
 
 	private DModel model;
 
-	DirectModelTest() {
+	GeneralDirectModelTest() {
 
 		this(new DModel(){});
 	}
@@ -46,7 +46,7 @@ class DirectModelTest extends FramesModelTest {
 		IFrame frame = createIFrame(frameTypeName);
 		DObject dObject = new DObjectDefault(model, frame);
 
-		setIFrameMappedObject(frame, dObject);
+		FramesTestUtils.setIFrameMappedObject(frame, dObject);
 
 		return dObject;
 	}
@@ -91,7 +91,7 @@ class DirectModelTest extends FramesModelTest {
 		return model;
 	}
 
-	private DirectModelTest(DModel model) {
+	private GeneralDirectModelTest(DModel model) {
 
 		super(model.getCModel());
 

@@ -107,4 +107,9 @@ public class DDisjunctionCellTest
 
 		return new DDisjunction<DObject>(Arrays.asList(disjuncts));
 	}
+
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
 }
