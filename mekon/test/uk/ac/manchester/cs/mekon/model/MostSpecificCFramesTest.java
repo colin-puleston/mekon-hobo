@@ -29,12 +29,13 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class MostSpecificCFramesTest extends FramesModelTest {
+public class MostSpecificCFramesTest extends GeneralFramesModelTest {
 
 	private CFrame fa = createCFrame("FA");
 	private CFrame fax = createCFrame("FAX");
@@ -138,6 +139,11 @@ public class MostSpecificCFramesTest extends FramesModelTest {
 		test(fa, fb, fc);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private CDisjunction createDisjunction(CFrame... disjuncts) {
 
 		return (CDisjunction)CFrame.resolveDisjunction(Arrays.asList(disjuncts));
@@ -151,5 +157,10 @@ public class MostSpecificCFramesTest extends FramesModelTest {
 	private void test(CFrame... expected) {
 
 		testListContents(mostSpecifics.getCurrents(), Arrays.asList(expected));
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 }

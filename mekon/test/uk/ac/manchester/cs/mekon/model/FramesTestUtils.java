@@ -26,29 +26,27 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.MekonTestUtils;
-
 /**
  * @author Colin Puleston
  */
-public class FramesTestUtils extends MekonTestUtils {
+public class FramesTestUtils {
 
-	public void addSuperFrame(CFrame sub, CFrame sup) {
+	static public void addSuperFrame(CFrame sub, CFrame sup) {
 
 		sub.asAtomicFrame().addSuper(sup.asAtomicFrame());
 	}
 
-	public CFrame createCDisjunction(CFrame... disjuncts) {
+	static public CFrame createCDisjunction(CFrame... disjuncts) {
 
 		return CFrame.resolveDisjunction(Arrays.asList(disjuncts));
 	}
 
-	public IFrame instantiateCFrame(CFrame frame) {
+	static public IFrame instantiateCFrame(CFrame frame) {
 
 		return instantiateCFrame(frame, IFrameFunction.ASSERTION);
 	}
 
-	public IFrame instantiateCFrame(CFrame frame, IFrameFunction function) {
+	static public IFrame instantiateCFrame(CFrame frame, IFrameFunction function) {
 
 		IFrame iFrame = new IFrame(frame, function);
 
@@ -60,40 +58,13 @@ public class FramesTestUtils extends MekonTestUtils {
 		return iFrame;
 	}
 
-	public IFrame createIDisjunction(IFrame... disjuncts) {
+	static public IFrame createIDisjunction(IFrame... disjuncts) {
 
 		return IFrame.createDisjunction(Arrays.asList(disjuncts));
 	}
 
-	public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
+	static public void setIFrameMappedObject(IFrame frame, Object mappedObject) {
 
 		frame.setMappedObject(mappedObject);
-	}
-
-	public CIdentity createIdentity(String name) {
-
-		return new CIdentity(name, name);
-	}
-
-	public ISlot getISlot(IFrame container, CIdentity slotId) {
-
-		return container.getSlots().get(slotId);
-	}
-
-	public void setISlotValues(ISlot slot, IValue... values) {
-
-		slot.getValuesEditor().update(Arrays.asList(values));
-	}
-
-	public List<CValue<?>> getValueTypes(List<IValue> values) {
-
-		List<CValue<?>> types = new ArrayList<CValue<?>>();
-
-		for (IValue value : values) {
-
-			types.add(value.getType());
-		}
-
-		return types;
 	}
 }

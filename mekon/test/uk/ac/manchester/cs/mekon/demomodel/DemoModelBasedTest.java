@@ -22,18 +22,31 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
+package uk.ac.manchester.cs.mekon.demomodel;
 
 import java.util.*;
 
 import org.junit.After;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.mechanism.*;
 
 /**
  * @author Colin Puleston
  */
-public abstract class DemoModelTest extends DemoModelTestUtils {
+public abstract class DemoModelBasedTest implements DemoModelEntities {
+
+	static private final String NAMESPACE = "http://mekon/demo.owl#";
+
+	static public CIdentity nameToIdentity(String name) {
+
+		return new CIdentity(nameToIdentifier(name), name);
+	}
+
+	static public String nameToIdentifier(String name) {
+
+		return NAMESPACE + name;
+	}
 
 	private CModel model;
 

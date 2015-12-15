@@ -31,9 +31,9 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class TestInstances extends FramesTestUtils {
+public class TestInstances {
 
-	private FramesModelTest modelTest;
+	private GeneralFramesModelTest modelTest;
 
 	private String typesPrefix = "";
 	private IFrameFunction function = IFrameFunction.ASSERTION;
@@ -222,7 +222,7 @@ public class TestInstances extends FramesTestUtils {
 		return new AbstractSubsumerInstanceCreator().get();
 	}
 
-	TestInstances(FramesModelTest modelTest) {
+	TestInstances(GeneralFramesModelTest modelTest) {
 
 		this.modelTest = modelTest;
 
@@ -268,13 +268,30 @@ public class TestInstances extends FramesTestUtils {
 		return modelTest.createCSlot(container, name, valueType);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
+	private CFrame createCDisjunction(CFrame... disjuncts) {
+
+		return FramesTestUtils.createCDisjunction(disjuncts);
+	}
+
+	private IFrame createIDisjunction(IFrame... disjuncts) {
+
+		return FramesTestUtils.createIDisjunction(disjuncts);
+	}
+
 	private IFrame createIFrame(CFrame type) {
 
-		return instantiateCFrame(type, function);
+		return FramesTestUtils.instantiateCFrame(type, function);
 	}
 
 	private void setISlotValues(IFrame container, CSlot type, IValue... values) {
 
-		setISlotValues(getISlot(container, type.getIdentity()), values);
+		ISlot slot = container.getSlots().get(type.getIdentity());
+
+		slot.getValuesEditor().update(Arrays.asList(values));
 	}
 }

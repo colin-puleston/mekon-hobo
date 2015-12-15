@@ -30,12 +30,14 @@ import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.demomodel.*;
 
 /**
  * @author Colin Puleston
  */
-public abstract class IMatcherTest extends DemoModelTest {
+public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	static private final CIdentity UNDERGRAD_TEACHING_JOB_ID = new CIdentity("UndergradTeaching");
 	static private final CIdentity POSTGRAD_TEACHING_JOB_ID = new CIdentity("PostgradTeaching");
@@ -363,6 +365,11 @@ public abstract class IMatcherTest extends DemoModelTest {
 		return CNumber.range(min, max).asINumber();
 	}
 
+	private IFrame createIDisjunction(IFrame... disjuncts) {
+
+		return FramesTestUtils.createIDisjunction(disjuncts);
+	}
+
 	private IFrame addInstance(IFrame instance, CIdentity id) {
 
 		matcher.add(instance, id);
@@ -411,6 +418,11 @@ public abstract class IMatcherTest extends DemoModelTest {
 		}
 
 		throw new Error("No id for: " + instance);
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 }
 

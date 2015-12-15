@@ -29,6 +29,8 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * @author Colin Puleston
  */
@@ -140,6 +142,11 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 		testStrictSubsumption(a_sup_bc, ab_sub_c);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private CDisjunction createDisjunction(CFrame... disjuncts) {
 
 		return (CDisjunction)CFrame.resolveDisjunction(Arrays.asList(disjuncts));
@@ -165,5 +172,10 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 
 		assertFalse(f1.equals(f2));
 		assertFalse(f2.equals(f1));
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 }

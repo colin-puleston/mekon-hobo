@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotSpecsTest extends FramesModelTest {
+public class ISlotSpecsTest extends GeneralFramesModelTest {
 
 	private CAtomicFrame ta = createCFrame("A");
 	private CAtomicFrame tb = createCFrame("B");
@@ -47,7 +47,7 @@ public class ISlotSpecsTest extends FramesModelTest {
 	private CAtomicFrame ty2 = createCFrame("Y2");
 	private CAtomicFrame tz = createCFrame("Z");
 
-	private CIdentity slotId = createIdentity("SLOT");
+	private CIdentity slotId = new CIdentity("SLOT");
 
 	private CSlot sa = createCSlot(ta, CCardinality.REPEATABLE_TYPES, tx);
 	private CSlot sb = createCSlot(tb, CCardinality.UNIQUE_TYPES, ty1);
@@ -183,6 +183,11 @@ public class ISlotSpecsTest extends FramesModelTest {
 		testSlotEditability(CEditability.DEFAULT);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private void initialiseContainer() {
 
 		iContainer = createIFrame("CONTAINER");
@@ -242,6 +247,11 @@ public class ISlotSpecsTest extends FramesModelTest {
 	private void testSlotCount(int expected) {
 
 		assertEquals(expected, iContainer.getSlots().size());
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 
 	private CSlot createCSlot(

@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotSpecsViaDisjunctionsTest extends FramesModelTest {
+public class ISlotSpecsViaDisjunctionsTest extends GeneralFramesModelTest {
 
 	private CAtomicFrame ta = createCFrame("A");
 	private CAtomicFrame tb = createCFrame("B");
@@ -48,9 +48,9 @@ public class ISlotSpecsViaDisjunctionsTest extends FramesModelTest {
 	private CAtomicFrame ty2 = createCFrame("Y2");
 	private CAtomicFrame tz = createCFrame("Z");
 
-	private CIdentity slot1Id = createIdentity("SLOT-1");
-	private CIdentity slot2Id = createIdentity("SLOT-2");
-	private CIdentity slot3Id = createIdentity("SLOT-3");
+	private CIdentity slot1Id = new CIdentity("SLOT-1");
+	private CIdentity slot2Id = new CIdentity("SLOT-2");
+	private CIdentity slot3Id = new CIdentity("SLOT-3");
 
 	private CSlot ta_slot1 = createCSlot(ta, slot1Id, CCardinality.REPEATABLE_TYPES, tx);
 	private CSlot ta_slot2 = createCSlot(ta, slot2Id, CCardinality.REPEATABLE_TYPES, ty1);
@@ -106,6 +106,11 @@ public class ISlotSpecsViaDisjunctionsTest extends FramesModelTest {
 		testCardinality(slot2Id, CCardinality.REPEATABLE_TYPES);
 		testActiveSlot(slot2Id, false);
 		testSlotEditability(slot2Id, CEditability.FULL);
+	}
+
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
 	}
 
 	private void updateContainerSlots() {
@@ -172,5 +177,10 @@ public class ISlotSpecsViaDisjunctionsTest extends FramesModelTest {
 	private CFrame createDisjunction(CFrame... disjuncts) {
 
 		return CFrame.resolveDisjunction(Arrays.asList(disjuncts));
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 }

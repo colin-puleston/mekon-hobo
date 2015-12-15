@@ -29,13 +29,14 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class IFrameTest extends FramesModelTest {
+public class IFrameTest extends GeneralFramesModelTest {
 
 	static private final List<CFrame> NO_IFRAMES = Collections.emptyList();
 
@@ -205,6 +206,11 @@ public class IFrameTest extends FramesModelTest {
 		testList(frame.getInferredTypes().asList(), required);
 		testList(monitor.added, expectedAdded);
 		testList(monitor.removed, expectedRemoveds);
+	}
+
+	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testList(got, expected);
 	}
 
 	private IFrame createFreeCopy(IFrame instance) {

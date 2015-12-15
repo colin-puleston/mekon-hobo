@@ -22,14 +22,12 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.mechanism;
-
-import uk.ac.manchester.cs.mekon.model.*;
+package uk.ac.manchester.cs.mekon.demomodel;
 
 /**
  * @author Colin Puleston
  */
-public abstract class DemoModelTestUtils extends FramesTestUtils {
+public interface DemoModelEntities {
 
 	static public final String CITIZEN = "Citizen";
 	static public final String EMPLOYED_CITIZEN = "EmployedCitizen";
@@ -74,59 +72,4 @@ public abstract class DemoModelTestUtils extends FramesTestUtils {
 	static public final String PAY_RATE_PROPERTY = "hourlyPay";
 	static public final String SECTOR_PROPERTY = "sector";
 	static public final String TEACHES_PROPERTY = "teaches";
-
-	static private final String NAMESPACE = "http://mekon/demo.owl#";
-
-	static public CFrame addFrame(CBuilder builder, String name) {
-
-		return builder.addFrame(nameToIdentity(name), false);
-	}
-
-	static public void addSuperFrame(CBuilder builder, String subName, String supName) {
-
-		CFrame sub = getFrame(builder, subName);
-		CFrame sup = getFrame(builder, supName);
-
-		builder.getFrameEditor(sub).addSuper(sup);
-	}
-
-	static public void addSlot(
-							CBuilder builder,
-							String containerName,
-							String propertyName,
-							String valueTypeName) {
-
-		CFrame valueType = getFrame(builder, valueTypeName);
-
-		addSlot(builder, containerName, propertyName, valueType);
-	}
-
-	static public void addSlot(
-							CBuilder builder,
-							String containerName,
-							String propertyName,
-							CValue<?> valueType) {
-
-		CFrame container = getFrame(builder, containerName);
-		CIdentity propId = nameToIdentity(propertyName);
-
-		CFrameEditor containerEd = builder.getFrameEditor(container);
-
-		containerEd.addSlot(propId, CCardinality.REPEATABLE_TYPES, valueType);
-	}
-
-	static public CFrame getFrame(CBuilder builder, String name) {
-
-		return builder.getFrames().get(nameToIdentity(name));
-	}
-
-	static public CIdentity nameToIdentity(String name) {
-
-		return new CIdentity(nameToIdentifier(name), name);
-	}
-
-	static public String nameToIdentifier(String name) {
-
-		return NAMESPACE + name;
-	}
 }

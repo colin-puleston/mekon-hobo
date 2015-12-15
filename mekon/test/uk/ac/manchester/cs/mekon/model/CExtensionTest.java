@@ -39,10 +39,10 @@ public class CExtensionTest extends CValueTest<CFrame> {
 	private CAtomicFrame c = createCFrame("C");
 	private CAtomicFrame cx = createCFrame("CX");
 
-	private CIdentity sab = createIdentity("SAB");
-	private CIdentity sac = createIdentity("SAC");
-	private CIdentity sbb = createIdentity("SBB");
-	private CIdentity sbc = createIdentity("SBC");
+	private CIdentity sab = new CIdentity("SAB");
+	private CIdentity sac = new CIdentity("SAC");
+	private CIdentity sbb = new CIdentity("SBB");
+	private CIdentity sbc = new CIdentity("SBC");
 
 	public CExtensionTest() {
 
@@ -105,6 +105,11 @@ public class CExtensionTest extends CValueTest<CFrame> {
 		testMutualSubsumption(extn_a, createAExtension(null));
 		testMutualSubsumption(extn_a_c, createAExtension(c));
 		testMutualSubsumption(extn_a_cx, createAExtension(cx));
+	}
+
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
 	}
 
 	private CExtension createAExtension(CFrame fcValue) {

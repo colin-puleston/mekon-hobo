@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.mechanism.core.*;
 /**
  * @author Colin Puleston
  */
-public class FramesModelTest extends FramesTestUtils {
+public class GeneralFramesModelTest {
 
 	static private CModel createEmptyModel() {
 
@@ -42,17 +42,17 @@ public class FramesModelTest extends FramesTestUtils {
 	private CModel model;
 	private IReasoner iReasoner;
 
-	public FramesModelTest() {
+	public GeneralFramesModelTest() {
 
 		this(createEmptyModel(), null);
 	}
 
-	public FramesModelTest(IReasoner iReasoner) {
+	public GeneralFramesModelTest(IReasoner iReasoner) {
 
 		this(createEmptyModel(), iReasoner);
 	}
 
-	public FramesModelTest(CModel model) {
+	public GeneralFramesModelTest(CModel model) {
 
 		this(model, null);
 	}
@@ -130,7 +130,7 @@ public class FramesModelTest extends FramesTestUtils {
 					CCardinality cardinality,
 					CValue<?> valueType) {
 
-		return createCSlot(container, createIdentity(name), cardinality, valueType);
+		return createCSlot(container, new CIdentity(name), cardinality, valueType);
 	}
 
 	public CSlot createCSlot(
@@ -209,7 +209,7 @@ public class FramesModelTest extends FramesTestUtils {
 		return new TestInstances(this);
 	}
 
-	private FramesModelTest(CModel model, IReasoner iReasoner) {
+	private GeneralFramesModelTest(CModel model, IReasoner iReasoner) {
 
 		this.model = model;
 		this.iReasoner = iReasoner;
@@ -217,7 +217,7 @@ public class FramesModelTest extends FramesTestUtils {
 
 	private CAtomicFrame createCFrame(String name, boolean hidden) {
 
-		CAtomicFrame frame = model.addFrame(createIdentity(name), hidden);
+		CAtomicFrame frame = model.addFrame(new CIdentity(name), hidden);
 
 		if (iReasoner != null) {
 

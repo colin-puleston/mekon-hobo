@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.serial.*;
@@ -38,7 +39,7 @@ import uk.ac.manchester.cs.mekon.serial.*;
 /**
  * @author Colin Puleston
  */
-public class IStoreTest extends FramesModelTest {
+public class IStoreTest extends GeneralFramesModelTest {
 
 	static private final CIdentity FIRST_ID = new CIdentity("First");
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
@@ -246,5 +247,10 @@ public class IStoreTest extends FramesModelTest {
 
 		assertTrue(retrieved.equalStructures(original));
 		assertFalse(retrieved == original);
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 }

@@ -33,14 +33,14 @@ import static org.junit.Assert.*;
  */
 public class MekonTestUtils {
 
-	public <E>void testList(List<? extends E> got, List<? extends E> expected) {
+	static public <E>void testList(List<? extends E> got, List<? extends E> expected) {
 
 		assertTrue(
 			"Unexpected list: expected: " + expected + ", got: " + got,
 			got.equals(expected));
 	}
 
-	public <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+	static public <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
 
 		assertTrue(
 			"Unexpected list-contents: expected: " + expected + ", got: " + got,
@@ -49,7 +49,7 @@ public class MekonTestUtils {
 		testSet(new HashSet<E>(got), new HashSet<E>(expected));
 	}
 
-	public <E>void testSet(Set<? extends E> got, Set<? extends E> expected) {
+	static public <E>void testSet(Set<? extends E> got, Set<? extends E> expected) {
 
 		assertTrue(
 			"Unexpected set: expected: " + expected + ", got: " + got,

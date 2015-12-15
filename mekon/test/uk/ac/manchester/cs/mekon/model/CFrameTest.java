@@ -325,6 +325,11 @@ public class CFrameTest extends CValueTest<CFrame> {
 		testAddSlots(false);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private void testSupers(CFrame frame, List<CFrame> expected) {
 
 		testSupers(frame, CVisibility.ALL, expected);
@@ -369,6 +374,16 @@ public class CFrameTest extends CValueTest<CFrame> {
 		createCSlot(b, "S", CCardinality.REPEATABLE_TYPES, vb);
 
 		b.getSlots().validateAll(b);
+	}
+
+	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testList(got, expected);
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 
 	private List<CFrame> getRootFrameAsList() {

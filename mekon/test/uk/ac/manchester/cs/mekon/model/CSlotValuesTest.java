@@ -34,12 +34,12 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class CSlotValuesTest extends FramesModelTest {
+public class CSlotValuesTest extends GeneralFramesModelTest {
 
 	private CAtomicFrame container = createCFrame("CONTAINER");
 
-	private CIdentity slot1Name = createIdentity("SLOT-1");
-	private CIdentity slot2Name = createIdentity("SLOT-2");
+	private CIdentity slot1Name = new CIdentity("SLOT-1");
+	private CIdentity slot2Name = new CIdentity("SLOT-2");
 
 	private CAtomicFrame rootValueSlot1 = createCFrame("ROOT-VALUE-SLOT-1");
 	private CAtomicFrame rootValueSlot2 = createCFrame("ROOT-VALUE-SLOT-2");
@@ -50,7 +50,7 @@ public class CSlotValuesTest extends FramesModelTest {
 	private CAtomicFrame value1Slot2 = createCFrame("VALUE-1-SLOT-2");
 	private CAtomicFrame value2Slot2 = createCFrame("VALUE-2-SLOT-2");
 
-	private CIdentity badSlotId = createIdentity("BAD-SLOT-NAME");
+	private CIdentity badSlotId = new CIdentity("BAD-SLOT-NAME");
 	private CAtomicFrame badValue = createCFrame("BAD-VALUE");
 
 	public CSlotValuesTest() {
@@ -132,6 +132,11 @@ public class CSlotValuesTest extends FramesModelTest {
 		addAndValidate(slot1Name, badValue);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private void addAndValidate(CIdentity slotId, CValue<?> value) {
 
 		container.addSlotValue(slotId, value);
@@ -142,6 +147,11 @@ public class CSlotValuesTest extends FramesModelTest {
 
 		assertTrue(getSlotValues().valueFor(slotId));
 		testList(getSlotValues().getValues(slotId), Arrays.asList(values));
+	}
+
+	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testList(got, expected);
 	}
 
 	private CSlotValues getSlotValues() {

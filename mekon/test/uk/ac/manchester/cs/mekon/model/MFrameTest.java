@@ -47,4 +47,9 @@ public class MFrameTest extends CValueTest<MFrame> {
 		testStrictSubsumption(a.getType(), c.getType());
 		testNeitherSubsumption(a.getType(), d.getType());
 	}
+
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
 }

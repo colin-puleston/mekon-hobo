@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotValuesTest extends FramesModelTest {
+public class ISlotValuesTest extends GeneralFramesModelTest {
 
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
@@ -139,6 +139,11 @@ public class ISlotValuesTest extends FramesModelTest {
 		createSlotValues(CCardinality.REPEATABLE_TYPES).add(createIFrame("IllegalValue"), false);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private void testAddRemoveValues_multiValued(CCardinality cardinality) {
 
 		ISlotValues values = createSlotValues(cardinality);
@@ -234,6 +239,16 @@ public class ISlotValuesTest extends FramesModelTest {
 	private void testTypes(ISlotValues slotValues, List<IValue> expectedValues) {
 
 		testListContents(slotValues.asList(), expectedValues);
+	}
+
+	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testList(got, expected);
+	}
+
+	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testListContents(got, expected);
 	}
 
 	private List<IValue> iValues(CFrame... cFrames) {

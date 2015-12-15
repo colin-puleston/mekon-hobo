@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-public class CSlotTest extends FramesModelTest {
+public class CSlotTest extends GeneralFramesModelTest {
 
 	@Test
 	public void test_addAndRemoveSlots() {
@@ -128,6 +128,11 @@ public class CSlotTest extends FramesModelTest {
 		s.createEditor().absorbValueType(b);
 	}
 
+	private void addSuperFrame(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
 	private void testAbsorbCardinality(
 					CCardinality initial,
 					CCardinality absorb,
@@ -147,5 +152,10 @@ public class CSlotTest extends FramesModelTest {
 		slot.createEditor().absorbValueType(absorb);
 
 		assertEquals(expect, slot.getValueType());
+	}
+
+	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
+
+		MekonTestUtils.testList(got, expected);
 	}
 }
