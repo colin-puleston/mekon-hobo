@@ -116,7 +116,7 @@ class OntologyEntityResolver {
 
 		if (cFrame.getCategory().disjunction()) {
 
-			return resolveDisjunctionNodeConcept(node, cFrame);
+			return resolveDisjunctionNodeTypes(node, cFrame);
 		}
 
 		return resolveNodeTypeDisjunct(node, cFrame);
@@ -134,6 +134,11 @@ class OntologyEntityResolver {
 			}
 			else {
 
+				if (node.getTypeDisjuncts().size() == 1) {
+
+					break;
+				}
+
 				node.removeTypeDisjunct(typeDisjunct);
 			}
 		}
@@ -141,7 +146,7 @@ class OntologyEntityResolver {
 		return anyOWLConcepts;
 	}
 
-	private boolean resolveDisjunctionNodeConcept(NNode node, CFrame cFrame) {
+	private boolean resolveDisjunctionNodeTypes(NNode node, CFrame cFrame) {
 
 		boolean anyOWLConcepts = false;
 
@@ -164,8 +169,8 @@ class OntologyEntityResolver {
 				return false;
 			}
 
-			node.removeTypeDisjunct(cFrame.getIdentity());
 			node.addTypeDisjunct(new CIdentity(iri.toString()));
+			node.removeTypeDisjunct(cFrame.getIdentity());
 		}
 
 		return true;
