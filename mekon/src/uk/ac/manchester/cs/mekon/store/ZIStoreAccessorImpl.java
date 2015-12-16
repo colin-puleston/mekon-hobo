@@ -24,27 +24,47 @@
 
 package uk.ac.manchester.cs.mekon.store;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * @author Colin Puleston
  */
 class ZIStoreAccessorImpl extends ZIStoreAccessor {
 
+	private Map<CModel, IStoreInitialiser> storeInitialisers
+						= new HashMap<CModel, IStoreInitialiser>();
+
 	public void createStore(CModel model) {
 
 		IStoreManager.create(model);
+
+		storeInitialisers.put(model, createStoreInitialiser(model));
 	}
 
 	public IStoreInitialiser getStoreInitialiser(CModel model) {
 
-		return new IStoreInitialiserImpl(IStoreManager.get(model));
+		IStoreInitialiser initialiser = storeInitialisers.get(model);
+
+		if (initialiser == null) {
+
+			throw new KSystemConfigException("Store has not been created for model");
+		}
+
+		return initialiser;
 	}
 
 	public void checkStopStore(CModel model) {
 
 		IStoreManager.checkStop(model);
+	}
+
+	private IStoreInitialiser createStoreInitialiser(CModel model) {
+
+		return new IStoreInitialiserImpl(IStoreManager.get(model));
 	}
 }

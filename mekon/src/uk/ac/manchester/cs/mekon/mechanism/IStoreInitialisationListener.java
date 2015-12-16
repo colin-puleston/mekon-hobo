@@ -27,61 +27,48 @@ package uk.ac.manchester.cs.mekon.mechanism;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.*;
 
 /**
- * Provides mechanisms for initialising the instance-store, as
- * represented by an {@link IStore} object.
+ * Listener for {@link IStoreInitialiser} operations.
  *
  * @author Colin Puleston
  */
-public interface IStoreInitialiser {
+public interface IStoreInitialisationListener {
 
 	/**
-	 * Adds listener for initialisation operations.
-	 *
-	 * @param listener Listener to add
-	 */
-	public void addListener(IStoreInitialisationListener listener);
-
-	/**
-	 * Sets the directory for instance-store serialisation.
-	 * Defaults to the current directory.
+	 * Method invoked after {@link IStoreInitialiser#setStoreDirectory}.
 	 *
 	 * @param directory Relevant serialisation directory
 	 */
-	public void setStoreDirectory(File directory);
+	public void onStoreDirectorySet(File directory);
 
 	/**
-	 * Adds an instance-matcher to the instance-store.
+	 * Method invoked after {@link IStoreInitialiser#addMatcher}.
 	 *
-	 * @param matcher Instance-matcher to add
+	 * @param matcher Added instance-matcher
 	 */
-	public void addMatcher(IMatcher matcher);
+	public void onMatcherAdded(IMatcher matcher);
 
 	/**
-	 * Removes an instance-matcher from the instance-store.
+	 * Method invoked after {@link IStoreInitialiser#removeMatcher}.
 	 *
-	 * @param matcher Instance-matcher to remove
+	 * @param matcher Removed instance-matcher
 	 */
-	public void removeMatcher(IMatcher matcher);
+	public void onMatcherRemoved(IMatcher matcher);
 
 	/**
-	 * Adds an instance-matcher to the instance-store, inserting
-	 * it at the specified position in the ordered list.
+	 * Method invoked after {@link IStoreInitialiser#insertMatcher}.
 	 *
-	 * @param matcher Instance-matcher to add
-	 * @param index Index at which to insert matcher
+	 * @param matcher Inserted instance-matcher
+	 * @param index Index at which matcher was insert
 	 */
-	public void insertMatcher(IMatcher matcher, int index);
+	public void onMatcherInserted(IMatcher matcher, int index);
 
 	/**
-	 * Replaces an instance-matcher for the instance-store, placing
-	 * the new matcher at the same position as the old in the ordered
-	 * list.
+	 * Method invoked after {@link IStoreInitialiser#replaceMatcher}.
 	 *
-	 * @param oldMatcher Instance-matcher to be replaced
+	 * @param oldMatcher Replaced instance-matcher
 	 * @param newMatcher Replacement instance-matcher
 	 */
-	public void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher);
+	public void onMatcherReplaced(IMatcher oldMatcher, IMatcher newMatcher);
 }

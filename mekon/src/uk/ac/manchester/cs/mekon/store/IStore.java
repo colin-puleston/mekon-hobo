@@ -254,6 +254,21 @@ public class IStore {
 		matchers.add(matcher);
 	}
 
+	void removeMatcher(IMatcher matcher) {
+
+		matchers.remove(matcher);
+	}
+
+	void insertMatcher(IMatcher matcher, int index) {
+
+		matchers.add(index, matcher);
+	}
+
+	void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher) {
+
+		matchers.set(matchers.indexOf(oldMatcher), newMatcher);
+	}
+
 	void stop() {
 
 		for (IMatcher matcher : matchers) {
