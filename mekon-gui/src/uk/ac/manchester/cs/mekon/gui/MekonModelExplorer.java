@@ -47,7 +47,12 @@ public class MekonModelExplorer extends GFrame {
 
 	static public void main(String[] args) {
 
-		new MekonModelExplorer(CManager.createBuilder().build());
+		CBuilder builder = CManager.createBuilder();
+		CModel model = builder.build();
+
+		CManager.getIStoreBuilder(builder).build();
+
+		new MekonModelExplorer(model);
 	}
 
 	static String getSystemTitle(String title) {
