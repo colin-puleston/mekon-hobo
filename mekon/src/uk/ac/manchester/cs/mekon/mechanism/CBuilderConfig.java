@@ -82,7 +82,7 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	private void setIStoreDirectory(CBuilder builder) {
 
-		getIStoreInitialiser(builder).setStoreDirectory(getIStoreDirectory());
+		getIStoreBuilder(builder).setStoreDirectory(getIStoreDirectory());
 	}
 
 	private void setInstanceUpdating(CBuilder builder) {
@@ -121,17 +121,14 @@ class CBuilderConfig implements CBuilderConfigVocab {
 
 	private void loadGeneralMatchers(CBuilder builder) {
 
+		GeneralMatcherAdder adder = new GeneralMatcherAdder();
+
 		for (KConfigNode matcherNode : rootNode.getChildren(GENERAL_MATCHER_ID)) {
 
-			loadGeneralMatcher(builder, matcherNode);
+			adder.add(createGeneralMatcher(matcherNode));
 		}
-	}
 
-	private void loadGeneralMatcher(CBuilder builder, KConfigNode matcherNode) {
-
-		IMatcher matcher = createGeneralMatcher(matcherNode);
-
-		CManager.getIStoreInitialiser(builder).addMatcher(matcher);
+		builder.addSectionBuilder(adder);
 	}
 
 	private File getIStoreDirectory() {
@@ -176,8 +173,8 @@ class CBuilderConfig implements CBuilderConfigVocab {
 		return matcherNode.getClass(GENERAL_MATCHER_CLASS_ATTR, IMatcher.class);
 	}
 
-	private IStoreInitialiser getIStoreInitialiser(CBuilder builder) {
+	private IStoreBuilder getIStoreBuilder(CBuilder builder) {
 
-		return CManager.getIStoreInitialiser(builder);
+		return CManager.getIStoreBuilder(builder);
 	}
 }

@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.mechanism;
 
 import java.io.*;
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
@@ -35,14 +36,7 @@ import uk.ac.manchester.cs.mekon.store.*;
  *
  * @author Colin Puleston
  */
-public interface IStoreInitialiser {
-
-	/**
-	 * Adds listener for initialisation operations.
-	 *
-	 * @param listener Listener to add
-	 */
-	public void addListener(IStoreInitialisationListener listener);
+public interface IStoreBuilder {
 
 	/**
 	 * Sets the directory for instance-store serialisation.
@@ -84,4 +78,15 @@ public interface IStoreInitialiser {
 	 * @param newMatcher Replacement instance-matcher
 	 */
 	public void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher);
+
+	/**
+	 * Provides all matchers that have been registered.
+	 */
+	public List<IMatcher> getMatchers();
+
+	/**
+	 * Creates the {@link IStore} object and loads any matchers that
+	 * have been registered with the relevant instance data.
+	 */
+	public IStore build();
 }

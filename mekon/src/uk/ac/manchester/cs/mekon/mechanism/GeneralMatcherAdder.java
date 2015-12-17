@@ -24,51 +24,32 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
-import java.io.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
+import java.util.*;
 
 /**
- * Listener for {@link IStoreInitialiser} operations.
- *
  * @author Colin Puleston
  */
-public interface IStoreInitialisationListener {
+class GeneralMatcherAdder implements CSectionBuilder {
 
-	/**
-	 * Method invoked after {@link IStoreInitialiser#setStoreDirectory}.
-	 *
-	 * @param directory Relevant serialisation directory
-	 */
-	public void onStoreDirectorySet(File directory);
+	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
-	/**
-	 * Method invoked after {@link IStoreInitialiser#addMatcher}.
-	 *
-	 * @param matcher Added instance-matcher
-	 */
-	public void onMatcherAdded(IMatcher matcher);
+	public boolean supportsIncrementalBuild() {
 
-	/**
-	 * Method invoked after {@link IStoreInitialiser#removeMatcher}.
-	 *
-	 * @param matcher Removed instance-matcher
-	 */
-	public void onMatcherRemoved(IMatcher matcher);
+		return false;
+	}
 
-	/**
-	 * Method invoked after {@link IStoreInitialiser#insertMatcher}.
-	 *
-	 * @param matcher Inserted instance-matcher
-	 * @param index Index at which matcher was insert
-	 */
-	public void onMatcherInserted(IMatcher matcher, int index);
+	public void build(CBuilder builder) {
 
-	/**
-	 * Method invoked after {@link IStoreInitialiser#replaceMatcher}.
-	 *
-	 * @param oldMatcher Replaced instance-matcher
-	 * @param newMatcher Replacement instance-matcher
-	 */
-	public void onMatcherReplaced(IMatcher oldMatcher, IMatcher newMatcher);
+		IStoreBuilder iStoreBuilder = CManager.getIStoreBuilder(builder);
+
+		for (IMatcher matcher : matchers) {
+
+			iStoreBuilder.addMatcher(matcher);
+		}
+	}
+
+	void add(IMatcher matcher) {
+
+		matchers.add(matcher);
+	}
 }

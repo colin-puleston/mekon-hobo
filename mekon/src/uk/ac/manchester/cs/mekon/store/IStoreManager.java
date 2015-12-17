@@ -58,9 +58,13 @@ public class IStoreManager {
 		return store;
 	}
 
-	static synchronized void create(CModel model) {
+	static synchronized IStore create(CModel model) {
 
-		stores.put(model, new IStore(model));
+		IStore store = new IStore(model);
+
+		stores.put(model, store);
+
+		return store;
 	}
 
 	static synchronized void checkStop(CModel model) {

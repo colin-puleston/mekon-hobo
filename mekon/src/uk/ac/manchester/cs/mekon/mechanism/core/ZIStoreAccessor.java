@@ -67,19 +67,12 @@ public abstract class ZIStoreAccessor {
 	}
 
 	/**
-	 * Creates and registers the store for the specified model.
+	 * Provides the instance-store builder for the specified model.
 	 *
 	 * @param model Relevant model
+	 * @return Instance-store builder for model
 	 */
-	public abstract void createStore(CModel model);
-
-	/**
-	 * Provides an instance-store initialiser for the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return Instance-store initialiser for model
-	 */
-	public abstract IStoreInitialiser getStoreInitialiser(CModel model);
+	public abstract IStoreBuilder getStoreBuilder(CModel model);
 
 	/**
 	 * Performs any necessary clear-ups after all access of specified

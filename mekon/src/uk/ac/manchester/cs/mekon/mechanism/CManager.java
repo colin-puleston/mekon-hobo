@@ -113,18 +113,15 @@ public class CManager {
 	}
 
 	/**
-	 * Provides an instance-store initialiser for the model associated
+	 * Provides an instance-store builder for the model associated
 	 * with the specified builder.
 	 *
 	 * @param builder Relevant builder
-	 * @return Instance-store initialiser for model associated with
-	 * builder
+	 * @return Instance-store builder for relevant model
 	 */
-	static public IStoreInitialiser getIStoreInitialiser(CBuilder builder) {
+	static public IStoreBuilder getIStoreBuilder(CBuilder builder) {
 
-		CModel model = modelAccessor.getModel(builder);
-
-		return storeAccessor.getStoreInitialiser(model);
+		return storeAccessor.getStoreBuilder(modelAccessor.getModel(builder));
 	}
 
 	/**

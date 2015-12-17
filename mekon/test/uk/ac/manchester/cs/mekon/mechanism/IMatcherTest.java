@@ -65,8 +65,10 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		CSectionBuilder sectionBuilder = createSectionBuilder();
 		CBuilder cBuilder = buildModel(sectionBuilder);
+		IStoreBuilder iStoreBuilder = CManager.getIStoreBuilder(cBuilder);
 
-		CManager.getIStoreInitialiser(cBuilder).addMatcher(matcher);
+		iStoreBuilder.addMatcher(matcher);
+		iStoreBuilder.build();
 
 		undergradTeachingJob = addUndergradTeachingJob();
 		postgradTeachingJob = addPostgradTeachingJob();

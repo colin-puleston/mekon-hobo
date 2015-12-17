@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.mechanism.core.*;
 
@@ -37,11 +36,7 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 
 	public CModel createModel() {
 
-		CModel model = new CModel();
-
-		ZIStoreAccessor.get().createStore(model);
-
-		return model;
+		return new CModel();
 	}
 
 	public CBuilder createBuilder(CModel model) {

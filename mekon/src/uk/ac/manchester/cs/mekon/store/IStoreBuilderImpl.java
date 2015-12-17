@@ -32,75 +32,49 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
 /**
  * @author Colin Puleston
  */
-class IStoreInitialiserImpl implements IStoreInitialiser {
+class IStoreBuilderImpl implements IStoreBuilder {
 
 	private IStore store;
-
-	private List<IStoreInitialisationListener> listeners
-				= new ArrayList<IStoreInitialisationListener>();
-
-	public void addListener(IStoreInitialisationListener listener) {
-
-		listeners.add(listener);
-	}
 
 	public void setStoreDirectory(File directory) {
 
 		store.setStoreDirectory(directory);
-
-		for (IStoreInitialisationListener listener : copyListeners()) {
-
-			listener.onStoreDirectorySet(directory);
-		}
 	}
 
 	public void addMatcher(IMatcher matcher) {
 
 		store.addMatcher(matcher);
-
-		for (IStoreInitialisationListener listener : copyListeners()) {
-
-			listener.onMatcherAdded(matcher);
-		}
 	}
 
 	public void removeMatcher(IMatcher matcher) {
 
 		store.removeMatcher(matcher);
-
-		for (IStoreInitialisationListener listener : copyListeners()) {
-
-			listener.onMatcherRemoved(matcher);
-		}
 	}
 
 	public void insertMatcher(IMatcher matcher, int index) {
 
 		store.insertMatcher(matcher, index);
-
-		for (IStoreInitialisationListener listener : copyListeners()) {
-
-			listener.onMatcherInserted(matcher, index);
-		}
 	}
 
 	public void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher) {
 
 		store.replaceMatcher(oldMatcher, newMatcher);
-
-		for (IStoreInitialisationListener listener : copyListeners()) {
-
-			listener.onMatcherReplaced(oldMatcher, newMatcher);
-		}
 	}
 
-	IStoreInitialiserImpl(IStore store) {
+	public List<IMatcher> getMatchers() {
+
+		return store.getMatchers();
+	}
+
+	public IStore build() {
+
+		store.loadFromFileStore();
+
+		return store;
+	}
+
+	IStoreBuilderImpl(IStore store) {
 
 		this.store = store;
-	}
-
-	private List<IStoreInitialisationListener> copyListeners() {
-
-		return new ArrayList<IStoreInitialisationListener>(listeners);
 	}
 }

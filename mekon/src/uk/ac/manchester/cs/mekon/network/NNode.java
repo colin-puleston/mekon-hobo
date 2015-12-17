@@ -223,6 +223,24 @@ public class NNode extends NEntity {
 		return new CycleTester(this).leadsToCycle();
 	}
 
+	/**
+	 * Tests whether the type and the current feature-values of this
+	 * node subsume those of another node. For link features,
+	 * value-subsumption testing involves a recursive invocation of
+	 * the same node-subsumption testing operation. For numeric
+	 * features, value-subsumption is determinied via invocation
+	 * of the {@link CNumber#subsumes} method.
+	 *
+	 * @param other Node to test for structure-subsumption by this
+	 * one
+	 * @return true if this nodes structure subsumes that of other
+	 * node
+	 */
+	public boolean subsumesStructure(NNode other) {
+
+		return new SubsumptionTester().subsumption(this, other);
+	}
+
 	NNode(CFrame cFrame) {
 
 		this(getTypeDisjuncts(cFrame));

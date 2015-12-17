@@ -269,6 +269,11 @@ public class IStore {
 		matchers.set(matchers.indexOf(oldMatcher), newMatcher);
 	}
 
+	List<IMatcher> getMatchers() {
+
+		return new ArrayList<IMatcher>(matchers);
+	}
+
 	void stop() {
 
 		for (IMatcher matcher : matchers) {
