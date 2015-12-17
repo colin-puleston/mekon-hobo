@@ -15,6 +15,8 @@
 	<property name="mekon.test" value="mekon/test/"/>
 	<property name="mekon-owl.src" value="mekon-owl/src/"/>
 	<property name="mekon-owl.test" value="mekon-owl/test/"/>
+	<property name="mekon-basex.src" value="mekon-basex/src/"/>
+	<property name="mekon-basex.test" value="mekon-basex/test/"/>
 	<property name="mekon-gui.src" value="mekon-gui/src/"/>
 	<property name="hobo.src" value="hobo/src/"/>
 	<property name="hobo.test" value="hobo/test/"/>
@@ -29,6 +31,7 @@
 	<property name="build.classes" location="${build}/classes" />
 	<property name="build.classes.mekon" location="${build.classes}/mekon" />
 	<property name="build.classes.mekon-owl" location="${build.classes}/mekon-owl" />
+	<property name="build.classes.mekon-basex" location="${build.classes}/mekon-basex" />
 	<property name="build.classes.mekon-gui" location="${build.classes}/mekon-gui" />
 	<property name="build.classes.hobo" location="${build.classes}/hobo" />
 	<property name="build.classes.hobo-gui" location="${build.classes}/hobo-gui" />
@@ -40,6 +43,7 @@
 	<!-- output jars -->
 	<property name="build.mekon.jar" location="${build.lib}/mekon.jar"/>
 	<property name="build.mekon-owl.jar" location="${build.lib}/mekon-owl.jar"/>
+	<property name="build.mekon-basex.jar" location="${build.lib}/mekon-basex.jar"/>
 	<property name="build.mekon-gui.jar" location="${build.lib}/mekon-gui.jar"/>
 	<property name="build.hobo.jar" location="${build.lib}/hobo.jar"/>
 	<property name="build.hobo-gui.jar" location="${build.lib}/hobo-gui.jar"/>
@@ -114,6 +118,7 @@
 	<target name="base">
 		<mkdir dir="${build.classes.mekon}"/>
 		<mkdir dir="${build.classes.mekon-owl}"/>
+		<mkdir dir="${build.classes.mekon-basex}"/>
 		<mkdir dir="${build.classes.mekon-gui}"/>
 		<mkdir dir="${build.classes.hobo}"/>
 		<mkdir dir="${build.classes.hobo-gui}"/>
@@ -169,6 +174,19 @@
 		</jar>
 	</target>
 
+	<target name="mekon-basex" depends="mekon-jar">
+		<javac srcdir="${mekon-basex.src}" classpathref="classpath" destdir="${build.classes.mekon-basex}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-basex-jar" depends="mekon-basex">
+		<jar destfile="${build.mekon-basex.jar}">
+			<fileset dir="${build.classes.mekon-basex}" />
+			<fileset dir="${mekon-basex.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
 	<target name="mekon-gui" depends="mekon-jar">
 		<javac srcdir="${mekon-gui.src}" classpathref="classpath" destdir="${build.classes.mekon-gui}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -208,11 +226,11 @@
 		</jar>
 	</target>
 
-	<target name="jars" depends="hobo-jar, hobo-gui-jar, mekon-owl-jar">
+	<target name="jars" depends="hobo-jar, hobo-gui-jar, mekon-owl-jar, mekon-basex-jar">
 	</target>
 
 	<!-- mekon demo targets -->
-	<target name="mekon-demo" depends="mekon-gui-jar, mekon-owl-jar, resource-base">
+	<target name="mekon-demo" depends="mekon-gui-jar, mekon-owl-jar, mekon-basex-jar, resource-base">
 		<echo file="${build.demo.mekon.run.sh}">java -cp ${build.demo.mekon.classpath.sh} ${build.demo.mekon.java.run}</echo>
 		<echo file="${build.demo.mekon.run.win}">java -cp ${build.demo.mekon.classpath.win} ${build.demo.mekon.java.run}</echo>
 		<chmod dir="${build}" includes="mekondemo.*" perm="+x"/>
@@ -225,7 +243,7 @@
 		</javac>
 	</target>
 
-	<target name="hobo-demo" depends="hobo-demo-classes, hobo-gui-jar, mekon-owl-jar">
+	<target name="hobo-demo" depends="hobo-demo-classes, hobo-gui-jar, mekon-owl-jar, mekon-basex-jar">
 		<echo file="${build.demo.hobo.run.sh}">java -cp ${build.demo.hobo.classpath.sh} ${build.demo.hobo.java.run}</echo>
 		<echo file="${build.demo.hobo.run.win}">java -cp ${build.demo.hobo.classpath.win} ${build.demo.hobo.java.run}</echo>
 		<chmod dir="${build}" includes="hobodemo.*" perm="+x"/>
@@ -244,13 +262,19 @@
 		</javac>
 	</target>
 
+	<target name="mekon-basex-test" depends="mekon-basex-jar, mekon-test">
+		<javac srcdir="${mekon-basex.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
 	<target name="hobo-test" depends="hobo-jar, mekon-test">
 		<javac srcdir="${hobo.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
-	<target name="test" depends="hobo-test, mekon-owl-test, hobo-jar, mekon-owl-jar, mekon-demo">
+	<target name="test" depends="hobo-test, mekon-owl-test, mekon-basex-test, hobo-jar, mekon-owl-jar, mekon-basex-jar, mekon-demo">
 		<echo file="${build.test.run.sh}">java -cp ${build.test.classpath.sh} ${build.test.java.run}</echo>
 		<echo file="${build.test.run.win}">java -cp ${build.test.classpath.win} ${build.test.java.run}</echo>
 		<chmod dir="${build}" includes="test.*" perm="+x"/>
