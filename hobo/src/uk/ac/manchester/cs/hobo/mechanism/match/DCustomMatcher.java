@@ -249,7 +249,7 @@ public class DCustomMatcher implements IMatcher {
 	 *
 	 * @param query Query to be matched
 	 * @param instance Instance to test for matching
-	 * @return True if query matched by query instance
+	 * @return True if query matched by instance
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
