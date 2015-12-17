@@ -262,7 +262,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 		if (iMatcher != null) {
 
-			CManager.getIStoreInitialiser(builder).addMatcher(iMatcher);
+			CManager.getIStoreBuilder(builder).addMatcher(iMatcher);
 		}
 		else {
 

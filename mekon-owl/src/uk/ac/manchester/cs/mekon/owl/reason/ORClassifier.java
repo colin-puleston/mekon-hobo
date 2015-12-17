@@ -62,7 +62,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  *
  * @author Colin Puleston
  */
-public class ORClassifier extends IClassifier {
+public class ORClassifier extends NClassifier {
 
 	/**
 	 * Test whether an appropriately-tagged child of the specified
@@ -81,8 +81,6 @@ public class ORClassifier extends IClassifier {
 	private ORSemantics semantics;
 
 	private OntologyEntityResolver ontologyEntityResolver;
-	private NNetworkManager networkManager = new NNetworkManager();
-
 	private IndividualsRenderer individualsRenderer;
 	private OInstanceIRIs individualRootIRIs = new OInstanceIRIs(true);
 
@@ -140,19 +138,6 @@ public class ORClassifier extends IClassifier {
 	}
 
 	/**
-	 * Registers a pre-processor to perform certain required
-	 * modifications to the network-based representations of instances
-	 * that are about to be classified.
-	 *
-	 * @param preProcessor Pre-processor for instances about to be
-	 * classified
-	 */
-	public void addPreProcessor(NNetworkProcessor preProcessor) {
-
-		networkManager.addPreProcessor(preProcessor);
-	}
-
-	/**
 	 * Provides the model over which the classifier is operating.
 	 *
 	 * @return Model over which classifier is operating
@@ -175,36 +160,18 @@ public class ORClassifier extends IClassifier {
 	}
 
 	/**
-	 * Converts the specified instance-level frame to the network-based
-	 * representation, runs any registered pre-processors over the
-	 * resulting network, then processes it to ensure ontology-compliance
-	 * (see above), then finally performs classification operation via
-	 * invocation of the OWL reasoner.
+	 * Processes the specified network-based instance representation
+	 * to ensure ontology-compliance (see above), converts it to the
+	 * appropriate set of OWL constrcts, then performs the classification
+	 * operation via invocation of the OWL reasoner.
 	 *
 	 * @param instance Instance to classify
 	 * @param ops Types of classification operations to be performed
 	 * @return Results of classification operations
 	 */
-	protected IClassification classify(IFrame instance, IClassifierOps ops) {
+	protected IClassification classify(NNode instance, IClassifierOps ops) {
 
-		return classify(createNetwork(instance), ops);
-	}
-
-	void setForceIndividualBasedClassification(boolean value) {
-
-		forceIndividualBasedClassification = value;
-	}
-
-	private NNode createNetwork(IFrame rootFrame) {
-
-		NNode rootNode = networkManager.createNetwork(rootFrame);
-
-		ontologyEntityResolver.resolve(rootNode);
-
-		return rootNode;
-	}
-
-	private IClassification classify(NNode instance, IClassifierOps ops) {
+		ontologyEntityResolver.resolve(instance);
 
 		InstanceConstruct construct = createInstanceConstruct(instance);
 		OWLObject owlConstruct = construct.getOWLConstruct();
@@ -229,6 +196,11 @@ public class ORClassifier extends IClassifier {
 		ORMonitor.pollForClassifierDone(model, owlConstruct);
 
 		return new IClassification(inferredIds, suggestedIds);
+	}
+
+	void setForceIndividualBasedClassification(boolean value) {
+
+		forceIndividualBasedClassification = value;
 	}
 
 	private List<CIdentity> getInferredTypes(
