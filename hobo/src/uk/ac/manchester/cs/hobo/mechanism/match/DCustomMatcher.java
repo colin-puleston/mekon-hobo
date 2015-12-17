@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.hobo.mechanism.match;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
@@ -38,155 +37,42 @@ import uk.ac.manchester.cs.hobo.model.*;
  * customisation of the matching mechanisms provided by a
  * "core-matcher", based on a particular domain-specific Object
  * Model (OM). The core-matcher can be provided by any
- * implementation of {@link IMatcher}. Specific customisations
- * are provided in the form of appropriate extensions of the
- * {@link DMatcherCustomiser} class, via the {@link #initialise}
- * method.
+ * implementation of {@link IMatcher}.
+ * <p>
+ * Specific customisations to the basic matching mechanisms are
+ * provided in the form of appropriate extensions of the {@link
+ * DMatcherCustomiser} class, which form an ordered list, and
+ * whose pre- and post-processing methods will be applied in the
+ * relevant order before and after each matching operation.
  *
  * @author Colin Puleston
  */
 public class DCustomMatcher implements IMatcher {
 
 	private IMatcher coreMatcher;
-	private Operations operations = new IndirectOperations();
-
-	private abstract class Operations {
-
-		abstract void initialise(DMatcherCustomisers customisers);
-
-		abstract void add(IFrame instance, CIdentity identity);
-
-		abstract void remove(CIdentity identity);
-
-		abstract IMatches match(IFrame query);
-
-		abstract boolean matches(IFrame query, IFrame instance);
-	}
-
-	private class IndirectOperations extends Operations {
-
-		private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
-
-		void initialise(DMatcherCustomisers customisers) {
-
-			DirectOperations directOps = new DirectOperations(customisers);
-
-			for (CIdentity id : instances.keySet()) {
-
-				directOps.add(instances.get(id), id);
-			}
-
-			operations = directOps;
-		}
-
-		void add(IFrame instance, CIdentity identity) {
-
-			instances.put(identity, instance);
-		}
-
-		void remove(CIdentity identity) {
-
-			throw createNotInitialisedException();
-		}
-
-		IMatches match(IFrame query) {
-
-			throw createNotInitialisedException();
-		}
-
-		boolean matches(IFrame query, IFrame instance) {
-
-			throw createNotInitialisedException();
-		}
-
-		private KAccessException createNotInitialisedException() {
-
-			return new KAccessException("DCustomMatcher has not been initialised");
-		}
-	}
-
-	private class DirectOperations extends Operations {
-
-		private DMatcherCustomisers customisers;
-
-		DirectOperations(DMatcherCustomisers customisers) {
-
-			this.customisers = customisers;
-		}
-
-		void initialise(DMatcherCustomisers customisers) {
-
-			throw new KAccessException("DCustomMatcher has already been initialised");
-		}
-
-		void add(IFrame instance, CIdentity identity) {
-
-			coreMatcher.add(preProcess(instance), identity);
-		}
-
-		void remove(CIdentity identity) {
-
-			coreMatcher.remove(identity);
-		}
-
-		IMatches match(IFrame query) {
-
-			return processMatches(query, coreMatcher.match(preProcess(query)));
-		}
-
-		boolean matches(IFrame query, IFrame instance) {
-
-			if (coreMatcher.matches(preProcess(query), preProcess(instance))) {
-
-				return passesMatchesFilter(query, instance);
-			}
-
-			return false;
-		}
-
-		private IFrame preProcess(IFrame instance) {
-
-			return customisers.preProcess(instance);
-		}
-
-		private IMatches processMatches(IFrame query, IMatches matches) {
-
-			return customisers.processMatches(query, matches);
-		}
-
-		private boolean passesMatchesFilter(IFrame query, IFrame instance) {
-
-			return customisers.passesMatchesFilter(query, instance);
-		}
-	}
+	private Customisers customisers;
 
 	/**
 	 * Constructor.
 	 *
+	 * @param model Relevant direct model
 	 * @param coreMatcher Provider of basic matching mechanisms
 	 */
-	public DCustomMatcher(IMatcher coreMatcher) {
+	public DCustomMatcher(DModel model, IMatcher coreMatcher) {
+
+		customisers = new Customisers(model);
 
 		this.coreMatcher = coreMatcher;
 	}
 
 	/**
-	 * Inititialiser that must be invoked prior to use. Addes the
-	 * set of customisers that will provide the required
-	 * customisations  to the basic matching mechanisms, as provided
-	 * by the core-matcher.
-	 * <p>
-	 * NOTE: The reason that the customisers are not added via the
-	 * constructor, is that they depend upon the {@link DModel}, which
-	 * is not available during the main build process, during which
-	 * all matchers must be created and added to the instance-store.
+	 * Adds a customiser to the end of the ordered list.
 	 *
-	 * @param customisers Customisers to provide customisations to
-	 * basic matching mechanisms provided by core-matcher
+	 * @param customiser Customiser to add
 	 */
-	public void initialise(DMatcherCustomisers customisers) {
+	public void addCustomiser(DMatcherCustomiser<?, ?> customiser) {
 
-		operations.initialise(customisers);
+		matcher.addCustomiser(customiser);
 	}
 
 	/**
@@ -212,7 +98,7 @@ public class DCustomMatcher implements IMatcher {
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
-		operations.add(instance, identity);
+		coreMatcher.add(preProcess(instance), identity);
 	}
 
 	/**
@@ -223,7 +109,7 @@ public class DCustomMatcher implements IMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		operations.remove(identity);
+		coreMatcher.remove(identity);
 	}
 
 	/**
@@ -238,7 +124,7 @@ public class DCustomMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return operations.match(query);
+		return processMatches(query, coreMatcher.match(preProcess(query)));
 	}
 
 	/**
@@ -253,7 +139,12 @@ public class DCustomMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return operations.matches(query, instance);
+		if (coreMatcher.matches(preProcess(query), preProcess(instance))) {
+
+			return passesMatchesFilter(query, instance);
+		}
+
+		return false;
 	}
 
 	/**
@@ -262,5 +153,20 @@ public class DCustomMatcher implements IMatcher {
 	public void stop() {
 
 		coreMatcher.stop();
+	}
+
+	private IFrame preProcess(IFrame instance) {
+
+		return customisers.preProcess(instance);
+	}
+
+	private IMatches processMatches(IFrame query, IMatches matches) {
+
+		return customisers.processMatches(query, matches);
+	}
+
+	private boolean passesMatchesFilter(IFrame query, IFrame instance) {
+
+		return customisers.passesMatchesFilter(query, instance);
 	}
 }

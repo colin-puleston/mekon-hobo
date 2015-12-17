@@ -29,51 +29,27 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.mechanism.*;
+
 import uk.ac.manchester.cs.hobo.model.*;
 
 /**
- * Represents an ordered list of {@link DMatcherCustomiser}
- * objects whose pre- and post-processing methods will be applied
- * in the relevant order.
- *
  * @author Colin Puleston
  */
-public class DMatcherCustomisers {
+public class Customisers {
 
 	private IFreeInstanceGenerator freeInstances;
 
 	private List<DMatcherCustomiser<?, ?>> customisers
 				= new ArrayList<DMatcherCustomiser<?, ?>>();
 
-	/**
-	 * Constructor.
-	 *
-	 * @param model Relevant direct model
-	 */
-	public DMatcherCustomisers(DModel model) {
+	Customisers(DModel model) {
 
 		freeInstances = new IFreeInstanceGenerator(model.getCModel());
 	}
 
-	/**
-	 * Add a customiser to the end of the current list.
-	 *
-	 * @param customiser Customiser to add
-	 */
-	public void add(DMatcherCustomiser<?, ?> customiser) {
+	void add(DMatcherCustomiser<?, ?> customiser) {
 
 		customisers.add(customiser);
-	}
-
-	/**
-	 * Adds an ordered set of customisers to the end of the current
-	 * list.
-	 *
-	 * @param customisers Customisers to add
-	 */
-	public void addAll(List<DMatcherCustomiser<?, ?>> customisers) {
-
-		this.customisers.addAll(customisers);
 	}
 
 	IFrame preProcess(IFrame instance) {
