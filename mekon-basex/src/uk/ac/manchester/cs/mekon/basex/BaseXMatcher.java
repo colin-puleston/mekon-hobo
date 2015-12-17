@@ -30,7 +30,6 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
@@ -41,12 +40,11 @@ import uk.ac.manchester.cs.mekon.util.*;
  *
  * @author Colin Puleston
  */
-public class BaseXMatcher implements IMatcher {
+public class BaseXMatcher extends NMatcher {
 
 	static private final String STORE_FILE_NAME_PREFIX = "BASEX-INSTANCE-";
 	static private final String STORE_FILE_NAME_SUFFIX = ".xml";
 
-	private NNetworkManager networkManager = new NNetworkManager();
 	private InstanceIndexes indexes = new InstanceIndexes();
 	private InstanceRenderer instanceRenderer = new InstanceRenderer();
 	private QueryRenderer queryRenderer = new QueryRenderer();
@@ -95,18 +93,6 @@ public class BaseXMatcher implements IMatcher {
 	}
 
 	/**
-	 * Registers a pre-processor to perform certain required
-	 * modifications to appropriate representations of instances that
-	 * are about to be stored, or queries that are about to be matched.
-	 *
-	 * @param preProcessor Pre-processor for instances and queries
-	 */
-	public void addPreProcessor(NNetworkProcessor preProcessor) {
-
-		networkManager.addPreProcessor(preProcessor);
-	}
-
-	/**
 	 * Returns true indicating that the matcher handles any type of
 	 * instance-level frame. This method should be overriden if
 	 * more specific behaviour is required.
@@ -127,13 +113,11 @@ public class BaseXMatcher implements IMatcher {
 	 * @param instance Instance to be added
 	 * @param identity Unique identity for instance
 	 */
-	public void add(IFrame instance, CIdentity identity) {
+	public void add(NNode instance, CIdentity identity) {
 
 		int index = indexes.assignIndex(identity);
 		File file = fileStore.getFile(index);
-
-		NNode rootNode = networkManager.createNetwork(instance);
-		XDocument xDoc = instanceRenderer.render(rootNode, index);
+		XDocument xDoc = instanceRenderer.render(instance, index);
 
 		xDoc.writeToFile(file);
 		database.add(file);
@@ -162,10 +146,9 @@ public class BaseXMatcher implements IMatcher {
 	 * @param query Query to be matched
 	 * @return Unique identities of all matching instances
 	 */
-	public IMatches match(IFrame query) {
+	public IMatches match(NNode query) {
 
-		NNode rootNode = networkManager.createNetwork(query);
-		String queryRendering = queryRenderer.render(rootNode);
+		String queryRendering = queryRenderer.render(query);
 		List<Integer> matchIndexes = database.executeQuery(queryRendering);
 
 		return new IMatches(indexes.getElements(matchIndexes));
@@ -173,13 +156,13 @@ public class BaseXMatcher implements IMatcher {
 
 	/**
 	 * Performs a single query-matching test via the {@link
-	 * IFrame#subsumesStructure} method.
+	 * NNode#subsumesStructure} method.
 	 *
 	 * @param query Query to be matched
 	 * @param instance Instance to test for matching
-	 * @return True if query matched by query instance
+	 * @return True if query matched by instance
 	 */
-	public boolean matches(IFrame query, IFrame instance) {
+	public boolean matches(NNode query, NNode instance) {
 
 		return query.subsumesStructure(instance);
 	}
