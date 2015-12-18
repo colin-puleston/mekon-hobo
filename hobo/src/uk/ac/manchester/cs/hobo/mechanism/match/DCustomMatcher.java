@@ -72,7 +72,7 @@ public class DCustomMatcher implements IMatcher {
 	 */
 	public void addCustomiser(DMatcherCustomiser<?, ?> customiser) {
 
-		matcher.addCustomiser(customiser);
+		customisers.add(customiser);
 	}
 
 	/**
