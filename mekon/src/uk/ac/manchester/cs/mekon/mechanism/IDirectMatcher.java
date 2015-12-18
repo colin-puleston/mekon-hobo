@@ -24,59 +24,34 @@
 
 package uk.ac.manchester.cs.mekon.mechanism;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Provides an implementation of the reasoning mechanisms defined
  * by {@link IMatcher} in which the matching is done directly on
- * the networks of instance-level frames representing the queries
- * and instances. The matching takes into account subsumption
- * relationships between the value-types.
+ * the frame/slot network representations of queries and instances.
+ * The matching acts recursively through the networks, taking into
+ * account subsumption relationships between the frame-types.
  *
  * @author Colin Puleston
  */
 public class IDirectMatcher implements IMatcher {
 
-	static private class InstanceGroup {
+	private Core core = new Core();
 
-		private CFrame rootFrameType;
-		private Map<CIdentity, IFrame> instances = new HashMap<CIdentity, IFrame>();
+	private class Core extends ISimpleMatcherCore<IFrame> {
 
-		InstanceGroup(CFrame rootFrameType) {
+		protected CFrame getTypeOrNull(IFrame instance) {
 
-			this.rootFrameType = rootFrameType;
+			return instance.getType();
 		}
 
-		void add(IFrame instance, CIdentity identity) {
+		protected boolean subsumesStructure(IFrame query, IFrame instance) {
 
-			instances.put(identity, instance);
-		}
-
-		boolean checkRemove(CIdentity identity) {
-
-			return instances.remove(identity) != null;
-		}
-
-		void collectMatches(IFrame query, List<CIdentity> matches) {
-
-			if (query.getType().subsumes(rootFrameType)) {
-
-				for (Map.Entry<CIdentity, IFrame> entry : instances.entrySet()) {
-
-					if (query.subsumesStructure(entry.getValue())) {
-
-						matches.add(entry.getKey());
-					}
-				}
-			}
+			return query.subsumesStructure(instance);
 		}
 	}
-
-	private Map<CFrame, InstanceGroup> instanceGroups
-					= new HashMap<CFrame, InstanceGroup>();
 
 	/**
 	 * Returns true indicating that the matcher handles any type of
@@ -96,16 +71,7 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
-		CFrame rootFrameType = instance.getType();
-		InstanceGroup group = instanceGroups.get(rootFrameType);
-
-		if (group == null) {
-
-			group = new InstanceGroup(rootFrameType);
-			instanceGroups.put(rootFrameType, group);
-		}
-
-		group.add(instance, identity);
+		core.add(instance, identity);
 	}
 
 	/**
@@ -113,13 +79,7 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		for (InstanceGroup group : instanceGroups.values()) {
-
-			if (group.checkRemove(identity)) {
-
-				break;
-			}
-		}
+		core.remove(identity);
 	}
 
 	/**
@@ -127,14 +87,7 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		List<CIdentity> matches = new ArrayList<CIdentity>();
-
-		for (InstanceGroup group : instanceGroups.values()) {
-
-			group.collectMatches(query, matches);
-		}
-
-		return new IMatches(matches);
+		return core.match(query);
 	}
 
 	/**
@@ -142,7 +95,7 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return query.subsumesStructure(instance);
+		return core.matches(query, instance);
 	}
 
 	/**
