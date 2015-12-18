@@ -41,7 +41,7 @@ class OntologyEntityResolver {
 	private OConceptFinder concepts;
 	private OPropertyFinder properties;
 
-	private class Processor extends NNetworkVisitor {
+	private class Processor extends NCrawler {
 
 		protected void visit(NNode node) {
 
