@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.network.*;
  *
  * @author Colin Puleston
  */
-public abstract class NLinkBypasser extends NNetworkVisitor {
+public abstract class NLinkBypasser extends NCrawler {
 
 	/**
 	 * {@inheritDoc}

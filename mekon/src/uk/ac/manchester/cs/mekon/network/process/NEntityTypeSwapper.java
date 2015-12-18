@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.network.*;
  *
  * @author Colin Puleston
  */
-public class NEntityTypeSwapper extends NNetworkVisitor {
+public class NEntityTypeSwapper extends NCrawler {
 
 	private CIdentity fromType;
 	private CIdentity toType;

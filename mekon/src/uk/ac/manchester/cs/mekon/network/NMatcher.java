@@ -45,7 +45,7 @@ import uk.ac.manchester.cs.mekon.mechanism.*;
  */
 public abstract class NMatcher implements IMatcher {
 
-	private NNetworkManager networkManager = new NNetworkManager();
+	private NetworkCreator networkCreator = new NetworkCreator();
 
 	/**
 	 * Registers a pre-processor to perform certain required
@@ -54,9 +54,9 @@ public abstract class NMatcher implements IMatcher {
 	 *
 	 * @param preProcessor Pre-processor for instances and queries
 	 */
-	public void addPreProcessor(NNetworkProcessor preProcessor) {
+	public void addPreProcessor(NProcessor preProcessor) {
 
-		networkManager.addPreProcessor(preProcessor);
+		networkCreator.addPreProcessor(preProcessor);
 	}
 
 	/**
@@ -130,6 +130,6 @@ public abstract class NMatcher implements IMatcher {
 
 	private NNode toNetwork(IFrame rootFrame) {
 
-		return networkManager.createNetwork(rootFrame);
+		return networkCreator.createNetwork(rootFrame);
 	}
 }

@@ -64,6 +64,7 @@ public class IStore {
 
 	private InstanceFileStore fileStore;
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
+	private IDirectMatcher defaultMatcher = new IDirectMatcher();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private InstanceIndexes indexes = new InstanceIndexes();
@@ -321,7 +322,7 @@ public class IStore {
 			}
 		}
 
-		return InertIMatcher.get();
+		return defaultMatcher;
 	}
 
 	private IFrame deriveFreeInstantiation(IFrame instance) {

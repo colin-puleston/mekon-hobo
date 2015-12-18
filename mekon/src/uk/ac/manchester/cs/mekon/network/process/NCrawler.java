@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.network.*;
  *
  * @author Colin Puleston
  */
-public abstract class NNetworkVisitor implements NNetworkProcessor {
+public abstract class NCrawler implements NProcessor {
 
 	/**
 	 * {@inheritDoc}

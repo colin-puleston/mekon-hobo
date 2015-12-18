@@ -30,7 +30,7 @@ package uk.ac.manchester.cs.mekon.network;
  *
  * @author Colin Puleston
  */
-public interface NNetworkProcessor {
+public interface NProcessor {
 
 	/**
 	 * Performs required modifications to instance representation.
