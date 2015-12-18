@@ -57,6 +57,36 @@ class SubsumptionTester {
 			return true;
 		}
 
+		boolean valueSubsumptions(F feature1, F feature2) {
+
+			List<V> values2 = feature2.getValues();
+
+			for (V value1 : feature1.getValues()) {
+
+				if (!anyValueSubsumptions(value1, values2)) {
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		boolean anyValueSubsumptions(F feature1, F feature2) {
+
+			List<V> values2 = feature2.getValues();
+
+			for (V value1 : feature1.getValues()) {
+
+				if (anyValueSubsumptions(value1, values2)) {
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		abstract List<F> getFeatures(NNode node);
 
 		abstract boolean valueSubsumption(V value1, V value2);
@@ -80,21 +110,6 @@ class SubsumptionTester {
 					&& valueSubsumptions(feature1, feature2);
 		}
 
-		private boolean valueSubsumptions(F feature1, F feature2) {
-
-			List<V> values2 = feature2.getValues();
-
-			for (V value1 : feature1.getValues()) {
-
-				if (!anyValueSubsumptions(value1, values2)) {
-
-					return false;
-				}
-			}
-
-			return true;
-		}
-
 		private boolean anyValueSubsumptions(V value1, List<V> values2) {
 
 			for (V value2 : values2) {
@@ -115,6 +130,16 @@ class SubsumptionTester {
 	}
 
 	private class LinksTester extends FeaturesTester<NNode, NLink> {
+
+		boolean valueSubsumptions(NLink feature1, NLink feature2) {
+
+			if (feature1.disjunctionLink() && !feature2.disjunctionLink()) {
+
+				return anyValueSubsumptions(feature1, feature2);
+			}
+
+			return super.valueSubsumptions(feature1, feature2);
+		}
 
 		List<NLink> getFeatures(NNode node) {
 
