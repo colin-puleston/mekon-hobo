@@ -16,9 +16,9 @@ All of these plug-ins are built on top of the <b>OWL API</b>.
 <p>
 The plug-ins are:
 <ul>
-  <li><b>Model-Section Builder:</b> {@link uk.ac.manchester.cs.mekon.owl.build.OBSectionBuilder} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.CSectionBuilder} which builds an indirect section of the frames model (FM) based on a set of OWL ontologies loaded via a standard "sanctioning" mechanism.
-  <li><b>Instance Reasoner:</b> {@link uk.ac.manchester.cs.mekon.owl.reason.ORClassifier} is an implementation of {@link uk.ac.manchester.cs.mekon.mechanism.IReasoner} based on a DL reasoner operating over a set of OWL ontologies, using either OWL class-expressions or ad-hoc networks of OWL individuals to represent the instances.
-  <li><b>Instance Matcher:</b> {@link uk.ac.manchester.cs.mekon.owl.reason.ORMatcher} is an abstract implementation of {@link uk.ac.manchester.cs.mekon.mechanism.IMatcher} based on a DL reasoner operating over a set of OWL ontologies, with specific extension classes that use OWL class-expressions and ad-hoc networks of OWL individuals to represent the instances.
+  <li><b>Model-Section Builder:</b> {@link uk.ac.manchester.cs.mekon.owl.build.OBSectionBuilder} is an implementation of {@link uk.ac.manchester.cs.mekon.model.motor.CSectionBuilder} which builds an indirect section of the frames model (FM) based on a set of OWL ontologies loaded via a standard "sanctioning" mechanism.
+  <li><b>Instance Reasoner:</b> {@link uk.ac.manchester.cs.mekon.owl.reason.ORClassifier} is an implementation of {@link uk.ac.manchester.cs.mekon.model.motor.IReasoner} based on a DL reasoner operating over a set of OWL ontologies, using either OWL class-expressions or ad-hoc networks of OWL individuals to represent the instances.
+  <li><b>Instance Matcher:</b> {@link uk.ac.manchester.cs.mekon.owl.reason.ORMatcher} is an abstract implementation of {@link uk.ac.manchester.cs.mekon.store.motor.IMatcher} based on a DL reasoner operating over a set of OWL ontologies, with specific extension classes that use OWL class-expressions and ad-hoc networks of OWL individuals to represent the instances.
 </ul>
 <p>
 These plug-ins are compatible with each other, and can be used either together or seperately, possibly in conjunction with other compatible section-building and reasoning plug-ins.

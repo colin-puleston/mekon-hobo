@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
