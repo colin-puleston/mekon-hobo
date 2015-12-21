@@ -28,8 +28,10 @@ import java.util.*;
 
 import org.junit.After;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
  * @author Colin Puleston
@@ -53,7 +55,7 @@ public abstract class DemoModelBasedTest implements DemoModelEntities {
 	@After
 	public void clearUp() {
 
-		CManager.clearUp(model);
+		IStoreManager.clearUp(model);
 	}
 
 	public CBuilder buildModel(CSectionBuilder sectionBuilder) {

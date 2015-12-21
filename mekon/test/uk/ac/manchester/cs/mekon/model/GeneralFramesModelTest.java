@@ -26,8 +26,10 @@ package uk.ac.manchester.cs.mekon.model;
 
 import org.junit.After;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.manage.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
  * @author Colin Puleston
@@ -60,7 +62,7 @@ public class GeneralFramesModelTest {
 	@After
 	public void clearUp() {
 
-		CManager.clearUp(model);
+		IStoreManager.clearUp(model);
 	}
 
 	public void setQueriesEnabled(boolean enabled) {

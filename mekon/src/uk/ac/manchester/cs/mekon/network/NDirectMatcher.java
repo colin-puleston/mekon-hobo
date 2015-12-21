@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.network;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
  * Provides an implementation of the reasoning mechanisms defined

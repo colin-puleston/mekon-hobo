@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.model;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * Represents a concept-level model-slot.

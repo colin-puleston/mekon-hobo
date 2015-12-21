@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
@@ -348,7 +348,7 @@ class CAtomicFrame extends CFrame {
 		slots.add(slot);
 		slot.getValueType().registerReferencingSlot(slot);
 
-		model.getListeners().onSlotAdded(slot);
+		model.getBuildListeners().onSlotAdded(slot);
 	}
 
 	boolean removeSlot(CSlot slot) {
@@ -365,7 +365,7 @@ class CAtomicFrame extends CFrame {
 			slots = CSlots.INERT_INSTANCE;
 		}
 
-		model.getListeners().onSlotRemoved(slot);
+		model.getBuildListeners().onSlotRemoved(slot);
 
 		return true;
 	}

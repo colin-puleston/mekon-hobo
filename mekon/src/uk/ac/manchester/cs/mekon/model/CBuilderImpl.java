@@ -28,8 +28,8 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
  * @author Colin Puleston
@@ -52,6 +52,16 @@ class CBuilderImpl implements CBuilder {
 	public void setDefaultUpdateOp(IUpdateOp op, boolean enabled) {
 
 		model.getIUpdating().setDefaultOp(op, enabled);
+	}
+
+	public void addListener(CBuildListener listener) {
+
+		model.getBuildListeners().add(listener);
+	}
+
+	public void removeListener(CBuildListener listener) {
+
+		model.getBuildListeners().remove(listener);
 	}
 
 	public void addSectionBuilder(CSectionBuilder sectionBuilder) {

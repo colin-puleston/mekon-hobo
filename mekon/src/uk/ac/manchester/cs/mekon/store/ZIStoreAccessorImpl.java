@@ -27,38 +27,39 @@ package uk.ac.manchester.cs.mekon.store;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.zlink.*;
 
 /**
  * @author Colin Puleston
  */
 class ZIStoreAccessorImpl extends ZIStoreAccessor {
 
-	private Map<CModel, IStoreBuilder> storeBuilders
-					= new HashMap<CModel, IStoreBuilder>();
+	private Map<CBuilder, IStoreBuilder> storeBuilders
+					= new HashMap<CBuilder, IStoreBuilder>();
 
-	public IStoreBuilder getStoreBuilder(CModel model) {
+	public IStoreBuilder getStoreBuilder(CBuilder builder) {
 
-		IStoreBuilder builder = storeBuilders.get(model);
+		IStoreBuilder storeBuilder = storeBuilders.get(builder);
 
-		if (builder == null) {
+		if (storeBuilder == null) {
 
-			builder = createStoreBuilder(model);
+			storeBuilder = createStoreBuilder(builder);
 
-			storeBuilders.put(model, builder);
+			storeBuilders.put(builder, storeBuilder);
 		}
 
-		return builder;
+		return storeBuilder;
 	}
 
 	public void checkStopStore(CModel model) {
 
-		IStoreManager.checkStop(model);
+		StoreRegister.checkStop(model);
 	}
 
-	private IStoreBuilder createStoreBuilder(CModel model) {
+	private IStoreBuilder createStoreBuilder(CBuilder builder) {
 
-		return new IStoreBuilderImpl(IStoreManager.create(model));
+		return new IStoreBuilderImpl(StoreRegister.createAndAdd(builder));
 	}
 }

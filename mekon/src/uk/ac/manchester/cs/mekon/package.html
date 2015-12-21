@@ -36,7 +36,7 @@ The following prefixes are used within the other MEKON packages (see below for d
 <ul>
   <li><b>N:</b> Alternative node/link network representation
   <li><b>K:</b> General/utility classes
-  <li><b>Z:</b> MEKON core-mechanisms
+  <li><b>Z:</b> Internal MEKON linking package
 </ul>
 
 <H3>Model API</H3>
@@ -55,15 +55,15 @@ Such updates will be provided either by generic reasoning mechanisms associated 
 
 <H3>Mechanism API</H3>
 
-<i>Package:</i> {@link uk.ac.manchester.cs.mekon.mechanism}
+<i>Package:</i> {@link uk.ac.manchester.cs.mekon.model.motor}
 <p>
-The {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder} class is responsible for building the FM, which involves the following steps:
+The {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder} class is responsible for building the FM, which involves the following steps:
 <ul>
   <li>Registration of set of section-builder plugins, one for each ontology
   <li>Invocation of registered section-builder plugins
   <li>Return of resulting {@link uk.ac.manchester.cs.mekon.model.CModel} object
 </ul>
-The section-builder plugins are instances of specific extensions of {@link uk.ac.manchester.cs.mekon.mechanism.CSectionBuilder}, with each such extension being responsible for loading ontologies of a specific type. The section-builders will use mechanisms accessible from {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder} to create and register an appropriate set of FM entities. The section-builders are also responsible for providing reasoning plugins, in the form of specific implementations of {@link uk.ac.manchester.cs.mekon.mechanism.IReasoner}, and attaching them to appropriate frames, over whose instantiations they will perform any required reasoning.
+The section-builder plugins are instances of specific extensions of {@link uk.ac.manchester.cs.mekon.model.motor.CSectionBuilder}, with each such extension being responsible for loading ontologies of a specific type. The section-builders will use mechanisms accessible from {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder} to create and register an appropriate set of FM entities. The section-builders are also responsible for providing reasoning plugins, in the form of specific implementations of {@link uk.ac.manchester.cs.mekon.model.motor.IReasoner}, and attaching them to appropriate frames, over whose instantiations they will perform any required reasoning.
 <p>
 The registration of the section-builder plugins can be done either via the API or via the MEKON configuration system.
 
@@ -90,11 +90,11 @@ In addition to the main API packages, MEKON provides the following general/utili
   <li><b>General Utilities:</b> {@link uk.ac.manchester.cs.mekon.util}
 </ul>
 
-<H3>Core-Mechanism Package</H3>
+<H3>Internal MEKON Linking Package</H3>
 
-<i>Package:</i> {@link uk.ac.manchester.cs.mekon.mechanism.core}
+<i>Package:</i> {@link uk.ac.manchester.cs.mekon.model.zlink}
 <p>
-This package provides the core MEKON mechanisms, and is not relevant to either the client or the plugin code.
+This package provides internal MEKON under-the-hood access of the {@link uk.ac.manchester.cs.mekon.model} package, and is not relevant to either the client or the plugin code.
 
 </BODY>
 </HTML>

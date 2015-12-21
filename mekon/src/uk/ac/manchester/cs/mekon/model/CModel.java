@@ -29,8 +29,8 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
  * Represents a generic MEKON Frames Model (FM), within which
@@ -58,7 +58,7 @@ public class CModel implements CAnnotatable {
 	private boolean queriesEnabled = false;
 	private boolean initialised = false;
 
-	private ZCModelListeners listeners = new ZCModelListeners();
+	private CBuildListeners buildListeners = new CBuildListeners();
 
 	/**
 	 * Specifies whether query-instances are allowed (see {@link
@@ -129,7 +129,7 @@ public class CModel implements CAnnotatable {
 		CAtomicFrame frame = new CAtomicFrame(this, identity, hidden);
 
 		frames.add(frame);
-		listeners.onFrameAdded(frame);
+		buildListeners.onFrameAdded(frame);
 
 		return frame;
 	}
@@ -144,7 +144,7 @@ public class CModel implements CAnnotatable {
 		frames.remove(frame);
 
 		removeFrameTraces(frame);
-		listeners.onFrameRemoved(frame);
+		buildListeners.onFrameRemoved(frame);
 
 		return true;
 	}
@@ -168,7 +168,7 @@ public class CModel implements CAnnotatable {
 
 		initialised = true;
 
-		listeners.onBuildComplete();
+		buildListeners.onBuildComplete();
 	}
 
 	boolean initialised() {
@@ -181,9 +181,9 @@ public class CModel implements CAnnotatable {
 		return iEditor;
 	}
 
-	ZCModelListeners getListeners() {
+	CBuildListeners getBuildListeners() {
 
-		return listeners;
+		return buildListeners;
 	}
 
 	private void removeFrameTraces(CAtomicFrame frame) {

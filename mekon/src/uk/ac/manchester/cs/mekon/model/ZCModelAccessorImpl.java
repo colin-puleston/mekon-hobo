@@ -24,15 +24,13 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
  * @author Colin Puleston
  */
 class ZCModelAccessorImpl extends ZCModelAccessor {
-
-	private ZIFrameMapper iFrameMapper = new ZIFrameMapperImpl();
 
 	public CModel createModel() {
 
@@ -42,16 +40,6 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 	public CBuilder createBuilder(CModel model) {
 
 		return new CBuilderImpl(model);
-	}
-
-	public void addListener(CModel model, ZCModelListener listener) {
-
-		model.getListeners().add(listener);
-	}
-
-	public void removeListener(CModel model, ZCModelListener listener) {
-
-		model.getListeners().remove(listener);
 	}
 
 	public CModel getModel(CBuilder builder) {
@@ -64,13 +52,18 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 		return model.getIEditor();
 	}
 
-	public ZFreeInstantiator getFreeInstantiator(CModel model) {
+	public IFreeInstantiator getFreeInstantiator(CModel model) {
 
-		return new ZFreeInstantiatorImpl(model);
+		return new IFreeInstantiatorImpl(model);
 	}
 
-	public ZIFrameMapper getIFrameMapper() {
+	public void setMappedObject(IFrame frame, Object mappedObject) {
 
-		return iFrameMapper;
+		frame.setMappedObject(mappedObject);
+	}
+
+	public Object getMappedObject(IFrame frame) {
+
+		return frame.getMappedObject();
 	}
 }

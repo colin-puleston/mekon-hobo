@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * Represents an instance-level model-slot.

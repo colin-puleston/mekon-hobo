@@ -30,8 +30,9 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.zlink.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -47,6 +48,17 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public class IStore {
 
+	/**
+	 * Provides the instance-store for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Instance-store for model
+	 */
+	static public synchronized IStore get(CModel model) {
+
+		return StoreRegister.get(model);
+	}
+
 	static {
 
 		ZIStoreAccessor.set(new ZIStoreAccessorImpl());
@@ -60,7 +72,7 @@ public class IStore {
 		}
 	}
 
-	private ZFreeInstantiator freeInstantiator;
+	private IFreeInstantiator freeInstantiator;
 
 	private InstanceFileStore fileStore;
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
@@ -68,31 +80,6 @@ public class IStore {
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private InstanceIndexes indexes = new InstanceIndexes();
-
-	private class FileStoreLoader extends ZCModelListener {
-
-		public void onFrameAdded(CFrame frame) {
-		}
-
-		public void onFrameRemoved(CFrame frame) {
-		}
-
-		public void onSlotAdded(CSlot slot) {
-		}
-
-		public void onSlotRemoved(CSlot slot) {
-		}
-
-		public void onBuildComplete() {
-
-			loadFromFileStore();
-		}
-
-		FileStoreLoader(CModel model) {
-
-			super(model);
-		}
-	}
 
 	private class FileStoreInstanceLoader extends InstanceLoader {
 
@@ -227,10 +214,8 @@ public class IStore {
 
 	IStore(CModel model) {
 
-		freeInstantiator = ZCModelAccessor.get().getFreeInstantiator(model);
+		freeInstantiator = new IFreeInstances(model).getInstantiator();
 		fileStore = new InstanceFileStore(model);
-
-		new FileStoreLoader(model);
 	}
 
 	void setStoreDirectory(File directory) {
@@ -327,6 +312,6 @@ public class IStore {
 
 	private IFrame deriveFreeInstantiation(IFrame instance) {
 
-		return freeInstantiator.deriveInstantiation(instance);
+		return freeInstantiator.createFreeCopy(instance);
 	}
 }

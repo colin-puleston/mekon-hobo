@@ -27,8 +27,7 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
@@ -44,7 +43,7 @@ class CExtension extends CExpression {
 
 	private int hashCode;
 
-	private class DelayedSlotValuesValidator extends ZCModelListener {
+	private class DelayedSlotValuesValidator implements CBuildListener {
 
 		public void onFrameAdded(CFrame frame) {
 		}
@@ -60,14 +59,17 @@ class CExtension extends CExpression {
 
 		public void onBuildComplete() {
 
-			slotValues.validateAll(CExtension.this);
-
-			remove(getModel());
+			getBuildListeners().remove(this);
 		}
 
 		DelayedSlotValuesValidator() {
 
-			super(getModel());
+			getBuildListeners().add(this);
+		}
+
+		private CBuildListeners getBuildListeners() {
+
+			return getModel().getBuildListeners();
 		}
 	}
 

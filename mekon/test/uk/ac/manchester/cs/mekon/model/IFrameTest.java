@@ -30,7 +30,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -215,6 +215,6 @@ public class IFrameTest extends GeneralFramesModelTest {
 
 	private IFrame createFreeCopy(IFrame instance) {
 
-		return new IFreeInstanceGenerator(getModel()).generateFrom(instance);
+		return new IFreeInstances(getModel()).createFreeCopy(instance);
 	}
 }

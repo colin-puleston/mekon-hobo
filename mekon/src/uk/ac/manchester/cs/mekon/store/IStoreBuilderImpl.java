@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.store;
 import java.io.*;
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
  * @author Colin Puleston

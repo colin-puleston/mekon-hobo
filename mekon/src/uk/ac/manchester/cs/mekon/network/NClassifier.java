@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.network;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * Abstract base-class for extensions of {@link NClassifier} that
