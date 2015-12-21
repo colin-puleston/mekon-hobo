@@ -23,8 +23,8 @@
  */
 package uk.ac.manchester.cs.hobo.gui;
 
+import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.*;
-import uk.ac.manchester.cs.hobo.mechanism.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 
