@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism.match;
+package uk.ac.manchester.cs.hobo.model.motor.match;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
 
@@ -53,7 +53,7 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 
 		this.model = model;
 
-		iStore = IStoreManager.get(model.getCModel());
+		iStore = IStore.get(model.getCModel());
 		matchingType = model.getFrame(getMatchingClass());
 	}
 

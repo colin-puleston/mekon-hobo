@@ -27,11 +27,12 @@ package uk.ac.manchester.cs.hobo.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
+
 import uk.ac.manchester.cs.hobo.*;
-import uk.ac.manchester.cs.hobo.mechanism.*;
-import uk.ac.manchester.cs.hobo.mechanism.core.*;
+import uk.ac.manchester.cs.hobo.model.motor.*;
+import uk.ac.manchester.cs.hobo.model.zlink.*;
 
 /**
  * Represents the HOBO direct model, which is an Object Model
@@ -56,8 +57,7 @@ public class DModel {
 	}
 
 	private CModel cModel;
-	private IEditor iEditor;
-	private ZIFrameMapper iFrameMapper;
+	private ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
 
 	private DInitialiser initialiser;
 	private DBindings bindings = new DBindings();
@@ -296,17 +296,13 @@ public class DModel {
 
 	DModel() {
 
-		ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
-
 		cModel = mekonAccessor.createModel();
-		iEditor = mekonAccessor.getIEditor(cModel);
-		iFrameMapper = mekonAccessor.getIFrameMapper();
 
 		CBuilder cBuilder = mekonAccessor.createBuilder(cModel);
 
 		initialiser = new DInitialiser(cBuilder, bindings);
 
-		new IFrameMapper(this);
+		new IFrameMapper(this, cBuilder);
 	}
 
 	void initialise() {
@@ -339,7 +335,7 @@ public class DModel {
 
 	IEditor getIEditor() {
 
-		return iEditor;
+		return mekonAccessor.getIEditor(cModel);
 	}
 
 	void ensureMappedDObject(IFrame frame, boolean freeInstance) {
@@ -348,7 +344,7 @@ public class DModel {
 
 			DObject dObject = instantiate(frame, freeInstance);
 
-			iFrameMapper.setMappedObject(frame, dObject);
+			mekonAccessor.setMappedObject(frame, dObject);
 		}
 	}
 
@@ -364,7 +360,7 @@ public class DModel {
 
 	private Object getMappedObject(IFrame frame) {
 
-		return iFrameMapper.getMappedObject(frame);
+		return mekonAccessor.getMappedObject(frame);
 	}
 
 	private CFrame getFrame(CIdentity identity) {

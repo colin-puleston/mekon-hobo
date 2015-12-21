@@ -25,8 +25,8 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
-import uk.ac.manchester.cs.hobo.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.hobo.model.motor.*;
 
 /**
  * @author Colin Puleston

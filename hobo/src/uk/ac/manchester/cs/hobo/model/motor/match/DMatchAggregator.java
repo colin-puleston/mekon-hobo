@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism.match;
+package uk.ac.manchester.cs.hobo.model.motor.match;
 
 import java.util.*;
 

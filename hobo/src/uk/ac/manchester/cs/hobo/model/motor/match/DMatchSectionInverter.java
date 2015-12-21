@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism.match;
+package uk.ac.manchester.cs.hobo.model.motor.match;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.model.*;
-import uk.ac.manchester.cs.hobo.mechanism.match.*;
+import uk.ac.manchester.cs.hobo.model.motor.match.*;
 
 /**
  * Customiser that modifies the matching process so that for

@@ -30,7 +30,7 @@ HOBO follows the MEKON convention of using single-character class-name prefixes 
 <ul>
   <li><b>D:</b> All HOBO model/modeller/mechanism API entities
   <li><b>H:</b> HOBO-specific exception classes
-  <li><b>Z:</b> HOBO core-mechanisms (see below)
+  <li><b>Z:</b> Internal HOBO linking package (see below)
 </ul>
 
 <H3>Model API</H3>
@@ -55,15 +55,15 @@ The abstract {@link uk.ac.manchester.cs.hobo.modeller.DObjectShell} class provid
 Each implementation of {@link uk.ac.manchester.cs.hobo.model.DObject} is required to provide a constructor that takes a single parameter of type {@link uk.ac.manchester.cs.hobo.modeller.DObjectBuilder}, which is a modeller class that provides access, either directly or indirectly, to methods for initialising and modifying the OM instantiations, and the FM instantiations to which they are bound, in ways that are not not available to the OM client.
 
 <H3>Mechanism API</H3>
-<i>Package:</i> {@link uk.ac.manchester.cs.hobo.mechanism}
+<i>Package:</i> {@link uk.ac.manchester.cs.hobo.model.motor}
 <p>
-The {@link uk.ac.manchester.cs.hobo.mechanism.DBuilder} class is a wrapper around {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder} and is responsible for:
+The {@link uk.ac.manchester.cs.hobo.model.motor.DBuilder} class is a wrapper around {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder} and is responsible for:
 <ul>
   <li>Registration of required OM packages
   <li>Registration of mappings between OM entities and entities derived from external knowledge sources
-  <li>Registration (via wrapped {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder}) of special frames-model section-builder plugin to build the FM entities that will be bound to the OM entities
-  <li>Registration (via wrapped {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder}) of frames-model section-builder plugins to build the FM entities that will be bound to externally-derived entities
-  <li>Invocation (via wrapped {@link uk.ac.manchester.cs.mekon.mechanism.CBuilder}) of all registered frames-model section-builder plugins, including special section-builder for OM-derived entities, to create {@link uk.ac.manchester.cs.mekon.model.CModel} object
+  <li>Registration (via wrapped {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder}) of special frames-model section-builder plugin to build the FM entities that will be bound to the OM entities
+  <li>Registration (via wrapped {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder}) of frames-model section-builder plugins to build the FM entities that will be bound to externally-derived entities
+  <li>Invocation (via wrapped {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder}) of all registered frames-model section-builder plugins, including special section-builder for OM-derived entities, to create {@link uk.ac.manchester.cs.mekon.model.CModel} object
   <li>Creation of resulting {@link uk.ac.manchester.cs.hobo.model.DModel} object (providing access to wrapped {@link uk.ac.manchester.cs.mekon.model.CModel} object)
 </ul>
 Along with the registration of the section-builder plugins, the registration of the OM classes and the specification of the entity mappings can be done either via the API or via the HOBO configuration system.
@@ -83,11 +83,11 @@ The model, modeller and mechanism packages, in addition to providing the respect
   <li>Mechanism &lt;==> Model
 </ul>
 
-<H3>Core-Mechanism Package</H3>
+<H3>Internal HOBO Linking Package</H3>
 
-<i>Package:</i> {@link uk.ac.manchester.cs.hobo.mechanism.core}
+<i>Package:</i> {@link uk.ac.manchester.cs.hobo.model.zlink}
 <p>
-This package provides the core HOBO mechanisms, and is not relevant to either the client or the plugin code.
+This package provides internal HOBO under-the-hood access of the {@link uk.ac.manchester.cs.hobo.model} package, and is not relevant to either the client or the plugin code.
 
 </BODY>
 </HTML>

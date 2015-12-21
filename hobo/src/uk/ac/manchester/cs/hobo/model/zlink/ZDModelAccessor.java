@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism.core;
+package uk.ac.manchester.cs.hobo.model.zlink;
 
 import uk.ac.manchester.cs.mekon.util.*;
+
 import uk.ac.manchester.cs.hobo.model.*;
-import uk.ac.manchester.cs.hobo.mechanism.*;
+import uk.ac.manchester.cs.hobo.model.motor.*;
 
 /**
  * THIS CLASS SHOULD NOT BE ACCESSED DIRECTLY BY EITHER THE CLIENT

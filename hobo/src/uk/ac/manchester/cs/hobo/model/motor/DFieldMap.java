@@ -22,23 +22,46 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.model;
+package uk.ac.manchester.cs.hobo.model.motor;
 
-import uk.ac.manchester.cs.hobo.model.motor.*;
-import uk.ac.manchester.cs.hobo.model.zlink.*;
+import uk.ac.manchester.cs.hobo.model.*;
 
 /**
+ * Represents a mapping between an Object Model (OM) field (a
+ * {@link DField}-derived class) and a correponding entity in
+ * an external source.
+ *
  * @author Colin Puleston
  */
-class ZDModelAccessorImpl extends ZDModelAccessor {
+public class DFieldMap {
 
-	public DModel createModel() {
+	private String fieldName;
+	private String externalId;
 
-		return new DModel();
+	/**
+	 * Provides the name of the mapped OM field.
+	 *
+	 * @return Name of mapped OM field
+	 */
+	public String getFieldName() {
+
+		return fieldName;
 	}
 
-	public DBuilder createBuilder(DModel model) {
+	/**
+	 * Provides the identifier for the mapped entity in the
+	 * external source.
+	 *
+	 * @return Identifier for mapped entity in external source
+	 */
+	public String getExternalId() {
 
-		return new DBuilderImpl(model);
+		return externalId;
+	}
+
+	DFieldMap(String fieldName, String externalId) {
+
+		this.fieldName = fieldName;
+		this.externalId = externalId;
 	}
 }

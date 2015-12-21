@@ -22,23 +22,25 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.model;
-
-import uk.ac.manchester.cs.hobo.model.motor.*;
-import uk.ac.manchester.cs.hobo.model.zlink.*;
+package uk.ac.manchester.cs.hobo.manage;
 
 /**
+ * Vocabulary used in the {@link DBuilder}-definition section
+ * of the HOBO/MEKON configuration file.
+ *
  * @author Colin Puleston
  */
-class ZDModelAccessorImpl extends ZDModelAccessor {
+public interface DConfigVocab {
 
-	public DModel createModel() {
+	static public final String DIRECT_SECTION_ID = "DirectModelSection";
+	static public final String MAPPINGS_ID = "Mappings";
+	static public final String CLASS_MAP_ID = "ClassMap";
+	static public final String FIELD_MAP_ID = "FieldMap";
 
-		return new DModel();
-	}
-
-	public DBuilder createBuilder(DModel model) {
-
-		return new DBuilderImpl(model);
-	}
+	static public final String DIRECT_CLASS_LABELS_ATTR = "labelsFromDirectClasses";
+	static public final String DIRECT_FIELD_LABELS_ATTR = "labelsFromDirectFields";
+	static public final String TOP_LEVEL_PKG_ATTR = "topLevelPackage";
+	static public final String CLASS_MAP_CLASS_ATTR = "javaClass";
+	static public final String FIELD_MAP_FIELD_ATTR = "fieldName";
+	static public final String EXTERNAL_ID_ATTR = "externalId";
 }

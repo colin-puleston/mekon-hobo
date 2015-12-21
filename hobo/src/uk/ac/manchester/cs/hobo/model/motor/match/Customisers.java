@@ -22,13 +22,13 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.mechanism.match;
+package uk.ac.manchester.cs.hobo.model.motor.match;
 
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
 
@@ -37,14 +37,14 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public class Customisers {
 
-	private IFreeInstanceGenerator freeInstances;
+	private IFreeInstances freeInstances;
 
 	private List<DMatcherCustomiser<?, ?>> customisers
 				= new ArrayList<DMatcherCustomiser<?, ?>>();
 
 	Customisers(DModel model) {
 
-		freeInstances = new IFreeInstanceGenerator(model.getCModel());
+		freeInstances = new IFreeInstances(model.getCModel());
 	}
 
 	void add(DMatcherCustomiser<?, ?> customiser) {
@@ -54,7 +54,7 @@ public class Customisers {
 
 	IFrame preProcess(IFrame instance) {
 
-		instance = freeInstances.generateFrom(instance);
+		instance = freeInstances.createFreeCopy(instance);
 
 		for (DMatcherCustomiser<?, ?> customiser : filterCustomisers(instance)) {
 

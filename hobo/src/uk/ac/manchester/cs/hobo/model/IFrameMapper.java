@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.core.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
@@ -35,7 +35,7 @@ class IFrameMapper implements CFrameListener {
 
 	private DModel model;
 
-	private class AddListener extends ZCModelListener {
+	private class MapperAdder implements CBuildListener {
 
 		public void onFrameAdded(CFrame frame) {
 
@@ -53,11 +53,6 @@ class IFrameMapper implements CFrameListener {
 
 		public void onBuildComplete() {
 		}
-
-		AddListener() {
-
-			super(model.getCModel());
-		}
 	}
 
 	public void onExtended(CFrame extension) {
@@ -70,10 +65,10 @@ class IFrameMapper implements CFrameListener {
 		model.ensureMappedDObject(instance, freeInstance);
 	}
 
-	IFrameMapper(DModel model) {
+	IFrameMapper(DModel model, CBuilder cBuilder) {
 
 		this.model = model;
 
-		new AddListener();
+		cBuilder.addListener(new MapperAdder());
 	}
 }
