@@ -81,7 +81,7 @@ abstract class InstantiationFrame extends GFrame {
 		this.modelTree = modelTree;
 		this.frame = frame;
 
-		store = IStoreManager.get(getModel());
+		store = IStore.get(getModel());
 
 		instanceComponent = createInstanceComponent();
 		inferredTypesPanel = new InferredTypesPanel(modelTree);

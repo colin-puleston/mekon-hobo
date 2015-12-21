@@ -83,7 +83,7 @@ class InstanceStorePanel extends JPanel {
 
 		this.modelTree = modelTree;
 
-		store = IStoreManager.get(model);
+		store = IStore.get(model);
 
 		setBorder(createBorder());
 		add(createButtonsComponent(), BorderLayout.EAST);

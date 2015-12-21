@@ -27,8 +27,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.mechanism.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
@@ -50,7 +52,7 @@ public class MekonModelExplorer extends GFrame {
 		CBuilder builder = CManager.createBuilder();
 		CModel model = builder.build();
 
-		CManager.getIStoreBuilder(builder).build();
+		IStoreManager.getBuilder(builder).build();
 
 		new MekonModelExplorer(model);
 	}
@@ -128,7 +130,7 @@ public class MekonModelExplorer extends GFrame {
 
 		public void windowClosing(WindowEvent e) {
 
-			CManager.clearUp(model);
+			IStoreManager.clearUp(model);
 		}
 
 		ModelClearUpper(CModel model) {
