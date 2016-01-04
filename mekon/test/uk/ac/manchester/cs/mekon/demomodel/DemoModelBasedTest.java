@@ -55,7 +55,7 @@ public abstract class DemoModelBasedTest implements DemoModelEntities {
 	@After
 	public void clearUp() {
 
-		IStoreManager.clearUp(model);
+		IStoreManager.stop(model);
 	}
 
 	public CBuilder buildModel(CSectionBuilder sectionBuilder) {

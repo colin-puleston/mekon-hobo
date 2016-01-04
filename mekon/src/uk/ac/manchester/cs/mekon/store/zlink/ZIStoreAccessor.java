@@ -82,5 +82,5 @@ public abstract class ZIStoreAccessor {
 	 *
 	 * @param model Relevant model
 	 */
-	public abstract void checkStopStore(CModel model);
+	public abstract void stopStore(CModel model);
 }

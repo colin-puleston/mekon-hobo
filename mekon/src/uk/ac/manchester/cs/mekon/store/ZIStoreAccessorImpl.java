@@ -53,9 +53,9 @@ class ZIStoreAccessorImpl extends ZIStoreAccessor {
 		return storeBuilder;
 	}
 
-	public void checkStopStore(CModel model) {
+	public void stopStore(CModel model) {
 
-		StoreRegister.checkStop(model);
+		StoreRegister.stop(model);
 	}
 
 	private IStoreBuilder createStoreBuilder(CBuilder builder) {

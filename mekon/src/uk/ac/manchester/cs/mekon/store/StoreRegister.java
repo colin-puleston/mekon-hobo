@@ -61,7 +61,7 @@ class StoreRegister {
 		return store;
 	}
 
-	static synchronized void checkStop(CModel model) {
+	static synchronized void stop(CModel model) {
 
 		IStore store = stores.remove(model);
 

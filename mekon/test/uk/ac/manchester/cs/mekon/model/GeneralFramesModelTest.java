@@ -62,7 +62,7 @@ public class GeneralFramesModelTest {
 	@After
 	public void clearUp() {
 
-		IStoreManager.clearUp(model);
+		IStoreManager.stop(model);
 	}
 
 	public void setQueriesEnabled(boolean enabled) {
