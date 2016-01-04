@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.hobo.manage;
 
 /**
- * Vocabulary used in the {@link DBuilder}-definition section
+ * Vocabulary used in the direct-model definition section
  * of the HOBO/MEKON configuration file.
  *
  * @author Colin Puleston
