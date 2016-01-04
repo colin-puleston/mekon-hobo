@@ -47,7 +47,7 @@ public class NetworkIRIs {
 	 * entity, whose associated concept must be atomic, and which
 	 * must have an identifier that is a valid IRI.
 	 *
-	 * @param node Node for which IRI is to be extracted
+	 * @param entity Entity for which IRI is to be extracted
 	 * @return Extracted IRI
 	 */
 	static public IRI getAtomicType(NEntity entity) {
