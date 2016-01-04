@@ -81,12 +81,16 @@ public interface IStoreBuilder {
 
 	/**
 	 * Provides all matchers that have been registered.
+	 *
+	 * @return All registered matchers
 	 */
 	public List<IMatcher> getMatchers();
 
 	/**
 	 * Creates the {@link IStore} object and loads any matchers that
 	 * have been registered with the relevant instance data.
+	 *
+	 * @return Created store object
 	 */
 	public IStore build();
 }

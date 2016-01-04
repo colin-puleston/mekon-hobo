@@ -116,9 +116,9 @@ public abstract class KIndexes<E> {
 	}
 
 	/**
-	 * Reinitialises the set of free unique indexes, after a set
+	 * Reinitialises the set of free unique indexes after a set
 	 * of explicit assignments have been made via the {@link
-	 * #assignIndex(E, int)} method.
+	 * #assignIndex(Object, int)} method.
 	 */
 	public void reinitialiseFreeIndexes() {
 

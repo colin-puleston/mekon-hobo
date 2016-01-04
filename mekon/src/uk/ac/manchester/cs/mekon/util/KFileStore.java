@@ -57,8 +57,8 @@ public class KFileStore {
 	/**
 	 * Constructor.
 	 *
-	 * @param fileNamePrefix Prefix of all file-names
-	 * @param fileNamePrefix Prefix of all file-names
+	 * @param fileNamePrefix Prefix for all file-names
+	 * @param fileNameSuffix Suffix for all file-names
 	 */
 	public KFileStore(String fileNamePrefix, String fileNameSuffix) {
 
@@ -131,6 +131,8 @@ public class KFileStore {
 
 	/**
 	 * Provides all files currently in the file-store.
+	 *
+	 * @return All files currently in store
 	 */
 	public File[] getAllFiles() {
 

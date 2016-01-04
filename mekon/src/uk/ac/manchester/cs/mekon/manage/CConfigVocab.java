@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.manage;
 
 /**
- * Vocabulary used in the {@link CBuilder}-definition section
+ * Vocabulary used in the frames-model definition section
  * of the MEKON configuration file.
  *
  * @author Colin Puleston
