@@ -130,7 +130,7 @@ public class MekonModelExplorer extends GFrame {
 
 		public void windowClosing(WindowEvent e) {
 
-			IStoreManager.clearUp(model);
+			IStoreManager.stop(model);
 		}
 
 		ModelClearUpper(CModel model) {
