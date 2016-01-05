@@ -56,7 +56,6 @@ class StoreRegister {
 		IStore store = new IStore(model);
 
 		stores.put(model, store);
-		builder.addListener(new FileStoreLoader(store));
 
 		return store;
 	}
