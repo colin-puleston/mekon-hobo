@@ -174,7 +174,7 @@ class InstanceRenderer extends Renderer {
 
 	private void renderId(CIdentity identity, XNode xNode) {
 
-		xNode.addValue(ID_ATTR, identity.getIdentifier());
+		xNode.addValue(ID_ATTR, renderId(identity));
 	}
 
 	private void checkAtomicType(NNode node) {

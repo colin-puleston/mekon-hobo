@@ -24,7 +24,11 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
+import java.io.*;
+import java.net.*;
+
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 
 /**
@@ -59,6 +63,23 @@ abstract class Renderer {
 			throw new KAccessException(
 						"Cannot render disjunction-link: "
 						+ link);
+		}
+	}
+
+	String renderId(CIdentity identity) {
+
+		return checkEncodeIdentifier(identity.getIdentifier());
+	}
+
+	private String checkEncodeIdentifier(String id) {
+
+		try {
+
+			return URLEncoder.encode(id, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e) {
+
+			throw new Error("Unexpected exception!");
 		}
 	}
 }

@@ -325,7 +325,7 @@ class QueryRenderer extends Renderer {
 
 	private String renderType(String path, CIdentity typeId) {
 
-		return String.format(TYPE_FORMAT, path, typeId.getIdentifier());
+		return String.format(TYPE_FORMAT, path, renderId(typeId));
 	}
 
 	private String renderNumberValue(
