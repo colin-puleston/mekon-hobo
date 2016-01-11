@@ -99,10 +99,13 @@ public class NNode extends NEntity {
 	 */
 	public void addTypeDisjunct(CIdentity typeDisjunct) {
 
-		Collection<CIdentity> disjuncts = getTypeDisjuncts();
+		Collection<CIdentity> typeDisjuncts = getTypeDisjuncts();
 
-		disjuncts.add(typeDisjunct);
-		setTypeDisjuncts(disjuncts);
+		if (!typeDisjuncts.contains(typeDisjunct)) {
+
+			typeDisjuncts.add(typeDisjunct);
+			setTypeDisjuncts(typeDisjuncts);
+		}
 	}
 
 	/**
@@ -144,6 +147,20 @@ public class NNode extends NEntity {
 	public void clearFeatures() {
 
 		features.clear();
+	}
+
+	/**
+	 * Uses the specified type-level frame to reset the type-disjuncts
+	 * for the node, and also to reset the nodes corresponding
+	 * type-level frame accordingly.
+	 *
+	 * @param cFrame Type-level frame to use for update
+	 */
+	public void reset(CFrame cFrame) {
+
+		this.cFrame = cFrame;
+
+		setTypeDisjuncts(getTypeDisjuncts(cFrame));
 	}
 
 	/**
