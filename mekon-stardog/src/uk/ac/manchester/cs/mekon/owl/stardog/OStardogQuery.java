@@ -165,7 +165,7 @@ class OStardogQuery implements OTQuery {
 
 	private OT_URI getSingleBoundURI(BindingSet bindings) {
 
-		URI boundURI = (URI)bindings.iterator().next().getValue();
+		IRI boundURI = (IRI)bindings.iterator().next().getValue();
 
 		return new OT_URI(boundURI.toString());
 	}

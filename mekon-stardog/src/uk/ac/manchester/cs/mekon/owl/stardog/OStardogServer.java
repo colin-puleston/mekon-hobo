@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import java.io.*;
+import java.nio.file.*;
 
 import org.openrdf.rio.*;
 
@@ -157,8 +158,10 @@ class OStardogServer {
 
 		try {
 
+			Path path = Paths.get(file.toURI());
+
 			connection.begin();
-			connection.add().io().format(RDFFormat.RDFXML).file(file);
+			connection.add().io().format(RDFFormat.RDFXML).file(path);
 			connection.commit();
 		}
 		catch (StardogException e) {

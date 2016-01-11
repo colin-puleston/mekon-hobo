@@ -40,17 +40,17 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  */
 class OStardogGraphAdder implements OTGraphAdder {
 
-	static private final ValueFactory valueFactory = ValueFactoryImpl.getInstance();
+	static private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
 	private Connection connection;
-	private URI context;
+	private IRI context;
 
 	private List<Triple> triples = new ArrayList<Triple>();
 
 	private class Triple {
 
-		private URI subject;
-		private URI predicate;
+		private IRI subject;
+		private IRI predicate;
 		private Value object;
 
 		Triple(OT_URI subj, OT_URI pred, OTValue obj) {
@@ -67,9 +67,9 @@ class OStardogGraphAdder implements OTGraphAdder {
 			connection.add().statement(subject, predicate, object, context);
 		}
 
-		private URI convertURI(OT_URI uri) {
+		private IRI convertURI(OT_URI uri) {
 
-			return valueFactory.createURI(uri.asURI());
+			return valueFactory.createIRI(uri.asURI());
 		}
 	}
 
@@ -96,7 +96,7 @@ class OStardogGraphAdder implements OTGraphAdder {
 
 		this.connection = connection;
 
-		context = valueFactory.createURI(contextURI);
+		context = valueFactory.createIRI(contextURI);
 	}
 
 	private void addTriples() throws StardogException {

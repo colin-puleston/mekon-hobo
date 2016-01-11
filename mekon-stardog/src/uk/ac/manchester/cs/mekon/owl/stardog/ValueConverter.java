@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  */
 class ValueConverter {
 
-	static private final ValueFactory valueFactory = ValueFactoryImpl.getInstance();
+	static private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
 	static Value convert(OTValue value) {
 
@@ -43,9 +43,9 @@ class ValueConverter {
 				: convertNumber((OTNumber)value);
 	}
 
-	static private URI convertURI(OT_URI uri) {
+	static private IRI convertURI(OT_URI uri) {
 
-		return valueFactory.createURI(uri.asURI());
+		return valueFactory.createIRI(uri.asURI());
 	}
 
 	static private Literal convertNumber(OTNumber number) {
