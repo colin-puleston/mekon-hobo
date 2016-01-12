@@ -45,11 +45,18 @@ class Database {
 	private Context context = new Context();
 	private String databaseName;
 
-	Database(String databaseName) {
+	Database(String databaseName, boolean rebuild) {
 
 		this.databaseName = databaseName;
 
-		execute(new CreateDB(databaseName));
+		if (rebuild) {
+
+			execute(new CreateDB(databaseName));
+		}
+		else {
+
+			execute(new Check(databaseName));
+		}
 	}
 
 	void add(File file) {
@@ -90,6 +97,7 @@ class Database {
 			try {
 
 				execute(new Close());
+//				execute(new DropDB(databaseName));
 			}
 			finally {
 

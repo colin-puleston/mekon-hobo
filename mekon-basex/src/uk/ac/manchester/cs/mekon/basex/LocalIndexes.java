@@ -24,34 +24,40 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
-import org.junit.Before;
+import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class BaseXMatcherTest extends IMatcherTest {
+class LocalIndexes
+		extends KIndexes<CIdentity>
+		implements IMatcherIndexes {
 
-	@Before
-	public void setUp() {
+	public int getIndex(CIdentity identity) {
 
-		super.setUp();
+		Integer index = getIndexOrNull(identity);
 
-		getMatcher().initialise(new LocalIndexes());
+		return index != null ? index : assignIndex(identity);
 	}
 
-	protected IMatcher createMatcher() {
+	public CIdentity getIdentity(int index) {
 
-		BaseXMatcher matcher = new BaseXMatcher(BaseXConfig.DEFAULT_CONFIG);
-
-		matcher.setForceUseLocalIndexes();
-
-		return matcher;
+		return getElement(index);
 	}
 
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
+	public List<CIdentity> getIdentities(List<Integer> indexes) {
 
-		return false;
+		return getElements(indexes);
+	}
+
+	protected KRuntimeException createException(String message) {
+
+		return new KSystemConfigException(message);
 	}
 }

@@ -30,6 +30,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
@@ -45,7 +46,7 @@ public class BaseXMatcher extends NMatcher {
 	static private final String STORE_FILE_NAME_PREFIX = "BASEX-INSTANCE-";
 	static private final String STORE_FILE_NAME_SUFFIX = ".xml";
 
-	private InstanceIndexes indexes = new InstanceIndexes();
+	private IMatcherIndexes indexes = new LocalIndexes();
 	private InstanceRenderer instanceRenderer = new InstanceRenderer();
 	private QueryRenderer queryRenderer = new QueryRenderer();
 
@@ -54,13 +55,10 @@ public class BaseXMatcher extends NMatcher {
 										STORE_FILE_NAME_PREFIX,
 										STORE_FILE_NAME_SUFFIX);
 
-	static private class InstanceIndexes extends KIndexes<CIdentity> {
+	private boolean rebuild = true;
+	private boolean persist = false;
 
-		protected KRuntimeException createException(String message) {
-
-			return new KSystemConfigException(message);
-		}
-	}
+	private boolean forceUseLocalIndexes = false;
 
 	/**
 	 * Constructs matcher with specified configuration.
@@ -70,10 +68,14 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public BaseXMatcher(BaseXConfig config) {
 
-		database = new Database(config.getDatabaseName());
+		database = new Database(config.getDatabaseName(), rebuild);
 
 		fileStore.setDirectory(config.getStoreDirectory());
-		fileStore.clear();
+
+		if (rebuild) {
+
+			fileStore.clear();
+		}
 	}
 
 	/**
@@ -90,6 +92,17 @@ public class BaseXMatcher extends NMatcher {
 	public BaseXMatcher(KConfigNode parentConfigNode) {
 
 		this(new BaseXConfig(parentConfigNode));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void initialise(IMatcherIndexes indexes) {
+
+		if (!forceUseLocalIndexes) {
+
+			this.indexes = indexes;
+		}
 	}
 
 	/**
@@ -115,7 +128,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void add(NNode instance, CIdentity identity) {
 
-		int index = indexes.assignIndex(identity);
+		int index = indexes.getIndex(identity);
 		File file = fileStore.getFile(index);
 		XDocument xDoc = instanceRenderer.render(instance, index);
 
@@ -130,11 +143,27 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		int index = indexes.freeIndex(identity);
+		int index = indexes.getIndex(identity);
+
+		database.remove(fileStore.getFile(index));
+		fileStore.removeFile(index);
+	}
+
+	/**
+	 * Provides the time-stamp of the persistant version of the
+	 * specified instance, as contained in the XML database, if such
+	 * a version exists.
+	 *
+	 * @param identity Unique identity of relevant instance
+	 * @return time-stamp of persistant version of instance, or null
+	 * if no persistant version
+	 */
+	public Long timeStamp(CIdentity identity) {
+
+		Integer index = indexes.getIndex(identity);
 		File file = fileStore.getFile(index);
 
-		database.remove(file);
-		fileStore.removeFile(index);
+		return file.exists() ? file.lastModified() : null;
 	}
 
 	/**
@@ -151,7 +180,7 @@ public class BaseXMatcher extends NMatcher {
 		String queryRendering = queryRenderer.render(query);
 		List<Integer> matchIndexes = database.executeQuery(queryRendering);
 
-		return new IMatches(indexes.getElements(matchIndexes));
+		return new IMatches(indexes.getIdentities(matchIndexes));
 	}
 
 	/**
@@ -174,6 +203,15 @@ public class BaseXMatcher extends NMatcher {
 	public void stop() {
 
 		database.stop();
-		fileStore.clear();
+
+		if (!persist) {
+
+			fileStore.clear();
+		}
+	}
+
+	void setForceUseLocalIndexes() {
+
+		forceUseLocalIndexes = true;
 	}
 }
