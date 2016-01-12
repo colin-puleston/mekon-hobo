@@ -29,6 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
@@ -39,6 +41,14 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	private OModel matcherModel = null;
+
+	public void initialise(IMatcherIndexes indexes) {
+	}
+
+	public Long timeStamp(CIdentity identity) {
+
+		return null;
+	}
 
 	protected List<IRI> matchInOWLStore(NNode query) {
 
