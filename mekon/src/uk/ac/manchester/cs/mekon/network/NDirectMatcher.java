@@ -57,6 +57,12 @@ public class NDirectMatcher extends NMatcher {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public void initialise(IMatcherIndexes indexes) {
+	}
+
+	/**
 	 * Returns true indicating that the matcher handles any type of
 	 * instance-level frame. This method should be overriden if
 	 * more specific behaviour is required.
@@ -83,6 +89,14 @@ public class NDirectMatcher extends NMatcher {
 	public void remove(CIdentity identity) {
 
 		core.remove(identity);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Long timeStamp(CIdentity identity) {
+
+		return null;
 	}
 
 	/**

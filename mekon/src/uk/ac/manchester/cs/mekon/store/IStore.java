@@ -27,13 +27,10 @@ package uk.ac.manchester.cs.mekon.store;
 import java.io.*;
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.store.zlink.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -64,14 +61,6 @@ public class IStore {
 		ZIStoreAccessor.set(new ZIStoreAccessorImpl());
 	}
 
-	static private class InstanceIndexes extends KIndexes<CIdentity> {
-
-		protected KRuntimeException createException(String message) {
-
-			return new KSystemConfigException(message);
-		}
-	}
-
 	private IFreeInstantiator freeInstantiator;
 
 	private InstanceFileStore fileStore;
@@ -83,12 +72,12 @@ public class IStore {
 
 	private class FileStoreInstanceLoader extends InstanceLoader {
 
-		void load(IFrame instance, CIdentity identity, int index) {
+		void load(IFrame instance, CIdentity identity, int index, long timeStamp) {
 
 			identities.add(identity);
 			indexes.assignIndex(identity, index);
 
-			checkAddToMatcher(instance, identity);
+			checkAddToMatcher(instance, identity, timeStamp);
 		}
 	}
 
@@ -238,6 +227,7 @@ public class IStore {
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
+		matcher.initialise(indexes);
 	}
 
 	void removeMatcher(IMatcher matcher) {
@@ -285,6 +275,17 @@ public class IStore {
 		}
 
 		return removed;
+	}
+
+	private void checkAddToMatcher(IFrame instance, CIdentity identity, long timeStamp) {
+
+		IMatcher matcher = getMatcher(instance);
+		Long matcherTimeStamp = matcher.timeStamp(identity);
+
+		if (matcherTimeStamp == null || matcherTimeStamp < timeStamp) {
+
+			matcher.add(instance, identity);
+		}
 	}
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {

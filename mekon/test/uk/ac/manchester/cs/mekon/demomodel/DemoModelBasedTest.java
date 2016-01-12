@@ -31,6 +31,7 @@ import org.junit.After;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
@@ -73,6 +74,11 @@ public abstract class DemoModelBasedTest implements DemoModelEntities {
 	public CModel getModel() {
 
 		return model;
+	}
+
+	public IStore getStore() {
+
+		return IStore.get(model);
 	}
 
 	public Set<CFrame> getCFrames(String... names) {

@@ -24,64 +24,33 @@
 
 package uk.ac.manchester.cs.mekon.store;
 
-import java.io.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
  */
-class InstanceFileStore extends KFileStore {
+class InstanceIndexes
+		extends KIndexes<CIdentity>
+		implements IMatcherIndexes {
 
-	static private final String STORE_FILE_NAME_PREFIX = "MEKON-INSTANCE-";
-	static private final String STORE_FILE_NAME_SUFFIX = ".xml";
+	public CIdentity getIdentity(int index) {
 
-	private CModel model;
-
-	InstanceFileStore(CModel model) {
-
-		super(STORE_FILE_NAME_PREFIX, STORE_FILE_NAME_SUFFIX);
-
-		this.model = model;
+		return getElement(index);
 	}
 
-	void loadAll(InstanceLoader loader) {
+	public List<CIdentity> getIdentities(List<Integer> indexes) {
 
-		for (File file : getAllFiles()) {
-
-			load(loader, file);
-		}
+		return getElements(indexes);
 	}
 
-	void write(IFrame instance, CIdentity identity, int index) {
+	protected KRuntimeException createException(String message) {
 
-		new IInstanceRenderer(getFile(index)).render(instance, identity);
-	}
-
-	IFrame read(int index) {
-
-		return createParser(getFile(index), false).parseInstance();
-	}
-
-	private void load(InstanceLoader loader, File file) {
-
-		IInstanceParser parser = createParser(file, true);
-
-		CIdentity id = parser.parseIdentity();
-		IFrame instance = parser.parseInstance();
-
-		loader.load(instance, id, getIndex(file), file.lastModified());
-	}
-
-	private IInstanceParser createParser(File file, boolean freeInstance) {
-
-		IInstanceParser parser = new IInstanceParser(model, file);
-
-		parser.setFreeInstance(freeInstance);
-
-		return parser;
+		return new KSystemConfigException(message);
 	}
 }

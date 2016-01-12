@@ -161,6 +161,19 @@ public abstract class KIndexes<E> {
 	}
 
 	/**
+	 * Retrieves the currently assigned index for an element, if
+	 * applicable.
+	 *
+	 * @param element Element for which index is required
+	 * @return Currently assigned index, or null if no currently
+	 * assigned index
+	 */
+	public Integer getIndexOrNull(E element) {
+
+		return elementsToIndexes.get(element);
+	}
+
+	/**
 	 * Retrieves the element to which an index is currently assigned.
 	 *
 	 * @param index Index for which element is required

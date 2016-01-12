@@ -43,13 +43,22 @@ import uk.ac.manchester.cs.mekon.store.*;
 public interface IMatcher {
 
 	/**
+	 * Initialisation method that will be called at somr point
+	 * prior to the first access of any of the other defined methods.
+	 *
+	 * @param indexes Mappings between unique instance identities
+ 	 * and corresponding unique index values
+	 */
+	public void initialise(IMatcherIndexes indexes);
+
+	/**
 	 * Checks whether the matcher handles instance-level frames
 	 * of the specified type.
 	 *
 	 * @param type Relevant frame-type
 	 * @return True if matcher handles specified type
 	 */
-	public abstract boolean handlesType(CFrame type);
+	public boolean handlesType(CFrame type);
 
 	/**
 	 * Adds the specified instance to the matcher.
@@ -65,6 +74,17 @@ public interface IMatcher {
 	 * @param identity Unique identity of instance to be removed
 	 */
 	public void remove(CIdentity identity);
+
+	/**
+	 * Provides the time-stamp of a persistant version of the
+	 * specified instance, as held by the matcher, if such a version
+	 * exists.
+	 *
+	 * @param identity Unique identity of relevant instance
+	 * @return time-stamp of persistant version of instance, or null
+	 * if no persistant version
+	 */
+	public Long timeStamp(CIdentity identity);
 
 	/**
 	 * Finds all instances that match the specified query.

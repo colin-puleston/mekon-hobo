@@ -22,14 +22,44 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.store.motor;
+
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Provides mapping for each unique instance identity to a
+ * corresponding unique index value. Each mapping will persist
+ * between subsequent invocations of the system, for as long as the
+ * relevant instance exists.
+ *
  * @author Colin Puleston
  */
-abstract class InstanceLoader {
+public interface IMatcherIndexes {
 
-	abstract void load(IFrame instance, CIdentity identity, int index, long timeStamp);
+	/**
+	 * Retrieves the index corresponding to the specified identity.
+	 *
+	 * @param identity Identity for which index is required
+	 * @return Relevant index
+	 */
+	public int getIndex(CIdentity identity);
+
+	/**
+	 * Retrieves the identity corresponding to the specified index.
+	 *
+	 * @param index Index for which identity is required
+	 * @return Relevant identity
+	 */
+	public CIdentity getIdentity(int index);
+
+	/**
+	 * Retrieves the identities corresponding to the specified set
+	 * of indexes.
+	 *
+	 * @param indexes Indexes for which identities are required
+	 * @return Relevant set of identities
+	 */
+	public List<CIdentity> getIdentities(List<Integer> indexes);
 }
