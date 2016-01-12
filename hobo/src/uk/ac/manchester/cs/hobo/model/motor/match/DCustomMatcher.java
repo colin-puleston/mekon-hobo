@@ -76,6 +76,17 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
+	 * Invokes the corresponding method on the the core-matcher.
+	 *
+	 * @param indexes Mappings between unique instance identities
+ 	 * and corresponding unique index values
+	 */
+	public void initialise(IMatcherIndexes indexes) {
+
+		coreMatcher.initialise(indexes);
+	}
+
+	/**
 	 * Checks whether the core-matcher handles instance-level
 	 * frames of the specified type by invoking the corresponding
 	 * method on that matcher.
@@ -91,7 +102,7 @@ public class DCustomMatcher implements IMatcher {
 	/**
 	 * Polls the customisers to perform all required pre-processing
 	 * on the specified instance, then invokes the corresponding
-	 * method to add the resulting instance to the core-matcher.
+	 * method on the the core-matcher to add the resulting instance.
 	 *
 	 * @param instance Instance to be added
 	 * @param identity Unique identity for instance
@@ -102,14 +113,28 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
-	 * Invokes the corresponding method to remove the specified
-	 * instance from the core-matcher.
+	 * Invokes the corresponding method the core-matcher to remove
+	 * the specified instance.
 	 *
 	 * @param identity Unique identity of instance to be removed
 	 */
 	public void remove(CIdentity identity) {
 
 		coreMatcher.remove(identity);
+	}
+
+	/**
+	 * Invokes the corresponding method the core-matcher to obtain the
+	 * time-stamp of a persistant version of the specified instance, as
+	 * held by the matcher, if such a version exists.
+	 *
+	 * @param identity Unique identity of relevant instance
+	 * @return time-stamp of persistant version of instance, or null
+	 * if no persistant version
+	 */
+	public Long timeStamp(CIdentity identity) {
+
+		return coreMatcher.timeStamp(identity);
 	}
 
 	/**
