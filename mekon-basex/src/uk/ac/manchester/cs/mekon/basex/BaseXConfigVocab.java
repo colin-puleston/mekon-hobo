@@ -36,4 +36,6 @@ public interface BaseXConfigVocab {
 
 	static public final String STORE_DIRECTORY_ATTR = "storeDirectory";
 	static public final String DATABASE_NAME_ATTR = "database";
+	static public final String REBUILD_STORE_ATTR = "rebuildStore";
+	static public final String PERSIST_STORE_ATTR = "persistStore";
 }

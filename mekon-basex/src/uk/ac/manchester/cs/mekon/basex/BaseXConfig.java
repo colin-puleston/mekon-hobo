@@ -35,64 +35,120 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 public class BaseXConfig implements BaseXConfigVocab {
 
-	/**
-	 * Default configuration.
-	 */
-	static public final BaseXConfig DEFAULT_CONFIG = new BaseXConfig();
-
 	static private final String DEFAULT_DB_NAME = "MEKON";
 	static private final String DEFAULT_STORE_DIR_NAME = "basex-store";
 
-	static private File getDefaultStoreDirectory(String parentDir) {
+	static private File getDefaultStoreDir(String parentDir) {
 
 		return new File(parentDir, DEFAULT_STORE_DIR_NAME);
 	}
 
-	private String databaseName;
-	private File storeDirectory;
+	private String databaseName = DEFAULT_DB_NAME;
+	private File storeDirectory = getDefaultStoreDir(".");
+	private boolean rebuildStore = true;
+	private boolean persistStore = false;
 
-	/**
-	 * Constructs configuration for matcher with the specified
-	 * database-name and a the file-store located in a default-named
-	 * directory for underneath the current directory.
-	 *
-	 * @param databaseName Name of database to create
-	 */
-	public BaseXConfig(String databaseName) {
+	private class ConfigNodeBasedInitialiser {
 
-		this(databaseName, getDefaultStoreDirectory("."));
+		private KConfigNode configNode;
+
+		ConfigNodeBasedInitialiser(KConfigNode parentConfigNode) {
+
+			configNode = parentConfigNode.getChild(MATCHER_ROOT_ID);
+
+			databaseName = getDatabaseName();
+			storeDirectory = getStoreDirectory();
+			rebuildStore = getRebuildStore();
+			persistStore = getPersistStore();
+		}
+
+		private File getStoreDirectory() {
+
+			return configNode.getResource(
+						STORE_DIRECTORY_ATTR,
+						KConfigResourceFinder.DIRS,
+						getDefaultStoreDirInConfigDir());
+		}
+
+		private String getDatabaseName() {
+
+			return configNode.getString(DATABASE_NAME_ATTR, DEFAULT_DB_NAME);
+		}
+
+		private boolean getRebuildStore() {
+
+			return configNode.getBoolean(REBUILD_STORE_ATTR, rebuildStore);
+		}
+
+		private boolean getPersistStore() {
+
+			return configNode.getBoolean(PERSIST_STORE_ATTR, persistStore);
+		}
+
+		private File getDefaultStoreDirInConfigDir() {
+
+			return getDefaultStoreDir(getConfigStorePath());
+		}
+
+		private String getConfigStorePath() {
+
+			return configNode.getConfigFile().getFile().getParent();
+		}
 	}
 
 	/**
-	 * Constructs configuration for matcher with the specified
-	 * directory for the file-store and the default database-name.
-	 *
-	 * @param storeDirectory Name of directory for file-store
+	 * Constructor.
 	 */
-	public BaseXConfig(File storeDirectory) {
-
-		this(DEFAULT_DB_NAME, storeDirectory);
+	public BaseXConfig() {
 	}
 
 	/**
-	 * Constructs configuration for matcher with the specified
-	 * database-name and the specified directory for the file-store.
+	 * Sets the name of the database. Defaults to "MEKON".
 	 *
-	 * @param databaseName Name of database to create
-	 * @param storeDirectory Name of directory for file-store
+	 * @param databaseName Name of database
 	 */
-	public BaseXConfig(String databaseName, File storeDirectory) {
+	public void setDatabaseName(String databaseName) {
 
 		this.databaseName = databaseName;
+	}
+
+	/**
+	 * Sets the directory for the file-store. Defaults to a
+	 * a directory named "basex-store" under the current directory.
+	 *
+	 * @param storeDirectory Directory for file-store
+	 */
+	public void setStoreDirectory(File storeDirectory) {
+
 		this.storeDirectory = storeDirectory;
+	}
+
+	/**
+	 * Sets whether the BaseX store should be completely rebuilt
+	 * from the main MEKON instance store on start-up. Defaults to
+	 * true.
+	 *
+	 * @param rebuildStore True if BaseX store should be rebuilt
+	 */
+	public void setRebuildStore(boolean rebuildStore) {
+
+		this.rebuildStore = rebuildStore;
+	}
+
+	/**
+	 * Sets whether the BaseX store should persist after the matcher
+	 * is destroyed. Defaults to false.
+	 *
+	 * @param persistStore True if BaseX store should persist
+	 */
+	public void setPersistStore(boolean persistStore) {
+
+		this.persistStore = persistStore;
 	}
 
 	BaseXConfig(KConfigNode parentConfigNode) {
 
-		KConfigNode configNode = parentConfigNode.getChild(MATCHER_ROOT_ID);
-
-		databaseName = getDatabaseName(configNode);
-		storeDirectory = getStoreDirectory(configNode);
+		new ConfigNodeBasedInitialiser(parentConfigNode);
 	}
 
 	String getDatabaseName() {
@@ -105,31 +161,13 @@ public class BaseXConfig implements BaseXConfigVocab {
 		return storeDirectory;
 	}
 
-	private BaseXConfig() {
+	boolean rebuildStore() {
 
-		this(DEFAULT_DB_NAME);
+		return rebuildStore;
 	}
 
-	private File getStoreDirectory(KConfigNode configNode) {
+	boolean persistStore() {
 
-		return configNode.getResource(
-					STORE_DIRECTORY_ATTR,
-					KConfigResourceFinder.DIRS,
-					getDefaultStoreDirectory(configNode));
-	}
-
-	private String getDatabaseName(KConfigNode configNode) {
-
-		return configNode.getString(DATABASE_NAME_ATTR, DEFAULT_DB_NAME);
-	}
-
-	private File getDefaultStoreDirectory(KConfigNode configNode) {
-
-		return getDefaultStoreDirectory(getConfigStorePath(configNode));
-	}
-
-	private String getConfigStorePath(KConfigNode configNode) {
-
-		return configNode.getConfigFile().getFile().getParent();
+		return persistStore;
 	}
 }

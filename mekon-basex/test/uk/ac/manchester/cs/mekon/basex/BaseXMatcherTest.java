@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
-import org.junit.Before;
-
 import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
@@ -33,17 +31,9 @@ import uk.ac.manchester.cs.mekon.store.motor.*;
  */
 public class BaseXMatcherTest extends IMatcherTest {
 
-	@Before
-	public void setUp() {
-
-		super.setUp();
-
-		getMatcher().initialise(new LocalIndexes());
-	}
-
 	protected IMatcher createMatcher() {
 
-		BaseXMatcher matcher = new BaseXMatcher(BaseXConfig.DEFAULT_CONFIG);
+		BaseXMatcher matcher = new BaseXMatcher();
 
 		matcher.setForceUseLocalIndexes();
 

@@ -54,21 +54,34 @@ public class BaseXMatcher extends NMatcher {
 	private KFileStore fileStore = new KFileStore(
 										STORE_FILE_NAME_PREFIX,
 										STORE_FILE_NAME_SUFFIX);
-
-	private boolean rebuild = true;
-	private boolean persist = false;
+	private boolean persistStore;
 
 	private boolean forceUseLocalIndexes = false;
 
 	/**
-	 * Constructs matcher with specified configuration.
+	 * Constructs matcher with the default configuration (see
+	 * individual "set" methods on {@link BaseXConfig} for default
+	 * values).
+	 *
+	 * @param model Model over which matcher is to operate
+	 */
+	public BaseXMatcher() {
+
+		this(new BaseXConfig());
+	}
+
+	/**
+	 * Constructs matcher with the specified configuration.
 	 *
 	 * @param model Model over which matcher is to operate
 	 * @param config Configuration for matcher
 	 */
 	public BaseXMatcher(BaseXConfig config) {
 
+		boolean rebuild = config.rebuildStore();
+
 		database = new Database(config.getDatabaseName(), rebuild);
+		persistStore = config.persistStore();
 
 		fileStore.setDirectory(config.getStoreDirectory());
 
@@ -204,7 +217,7 @@ public class BaseXMatcher extends NMatcher {
 
 		database.stop();
 
-		if (!persist) {
+		if (!persistStore) {
 
 			fileStore.clear();
 		}
