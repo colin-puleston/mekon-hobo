@@ -87,6 +87,17 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
+	 * Invokes the corresponding method the core-matcher to determine
+	 * whether a rebuild is required.
+	 *
+	 * @return true is rebuild required
+	 */
+	public boolean rebuildOnStartup() {
+
+		return coreMatcher.rebuildOnStartup();
+	}
+
+	/**
 	 * Checks whether the core-matcher handles instance-level
 	 * frames of the specified type by invoking the corresponding
 	 * method on that matcher.
@@ -121,20 +132,6 @@ public class DCustomMatcher implements IMatcher {
 	public void remove(CIdentity identity) {
 
 		coreMatcher.remove(identity);
-	}
-
-	/**
-	 * Invokes the corresponding method the core-matcher to obtain the
-	 * time-stamp of a persistant version of the specified instance, as
-	 * held by the matcher, if such a version exists.
-	 *
-	 * @param identity Unique identity of relevant instance
-	 * @return time-stamp of persistant version of instance, or null
-	 * if no persistant version
-	 */
-	public Long timeStamp(CIdentity identity) {
-
-		return coreMatcher.timeStamp(identity);
 	}
 
 	/**
