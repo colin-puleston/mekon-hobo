@@ -72,12 +72,15 @@ public class IStore {
 
 	private class FileStoreInstanceLoader extends InstanceLoader {
 
-		void load(IFrame instance, CIdentity identity, int index, long timeStamp) {
+		void addToStore(CIdentity identity, int index) {
 
 			identities.add(identity);
 			indexes.assignIndex(identity, index);
+		}
 
-			checkAddToMatcher(instance, identity, timeStamp);
+		IMatcher getMatcher(CFrame frameType) {
+
+			return IStore.this.getMatcher(frameType);
 		}
 	}
 
@@ -271,21 +274,10 @@ public class IStore {
 			identities.remove(identity);
 
 			checkRemoveFromMatcher(fileStore.read(index), identity);
-			fileStore.removeFile(index);
+			fileStore.remove(index);
 		}
 
 		return removed;
-	}
-
-	private void checkAddToMatcher(IFrame instance, CIdentity identity, long timeStamp) {
-
-		IMatcher matcher = getMatcher(instance);
-		Long matcherTimeStamp = matcher.timeStamp(identity);
-
-		if (matcherTimeStamp == null || matcherTimeStamp < timeStamp) {
-
-			matcher.add(instance, identity);
-		}
 	}
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
@@ -300,9 +292,14 @@ public class IStore {
 
 	private IMatcher getMatcher(IFrame frame) {
 
+		return getMatcher(frame.getType());
+	}
+
+	private IMatcher getMatcher(CFrame frameType) {
+
 		for (IMatcher matcher : matchers) {
 
-			if (matcher.handlesType(frame.getType())) {
+			if (matcher.handlesType(frameType)) {
 
 				return matcher;
 			}

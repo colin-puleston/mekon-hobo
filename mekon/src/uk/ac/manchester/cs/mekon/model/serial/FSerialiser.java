@@ -26,41 +26,18 @@ package uk.ac.manchester.cs.mekon.model.serial;
 
 import java.lang.reflect.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class FSerialiser {
+class FSerialiser extends CIdentitySerialiser {
 
 	static final String CFRAME_ID = "CFrame";
-
-	static final String IDENTITY_ATTR = "id";
-	static final String LABEL_ATTR = "label";
-
-	static void renderIdentity(CIdentity id, XNode node) {
-
-		node.addValue(IDENTITY_ATTR, id.getIdentifier());
-		node.addValue(LABEL_ATTR, id.getLabel());
-	}
-
-	static void renderIdentity(CIdentified id, XNode node) {
-
-		renderIdentity(id.getIdentity(), node);
-	}
 
 	static void renderClassId(Class<?> leafClass, XNode node, String attr) {
 
 		node.addValue(attr, getClassId(leafClass));
-	}
-
-	static CIdentity parseIdentity(XNode node) {
-
-		String id = node.getString(IDENTITY_ATTR);
-		String label = node.getString(LABEL_ATTR, null);
-
-		return label != null ? new CIdentity(id, label) : new CIdentity(id);
 	}
 
 	static private String getClassId(Class<?> leafClass) {

@@ -27,61 +27,107 @@ package uk.ac.manchester.cs.mekon.store;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
  */
-class InstanceFileStore extends KFileStore {
+class InstanceFileStore {
 
-	static private final String STORE_FILE_NAME_PREFIX = "MEKON-INSTANCE-";
-	static private final String STORE_FILE_NAME_SUFFIX = ".xml";
+	static private final String PROFILE_FILE_PREFIX = "PROFILE-";
+	static private final String INSTANCE_FILE_PREFIX = "INSTANCE-";
+	static private final String FILE_SUFFIX = ".xml";
 
-	private CModel model;
+	private KFileStore profiles = new KFileStore(
+										PROFILE_FILE_PREFIX,
+										FILE_SUFFIX);
+
+	private KFileStore instances = new KFileStore(
+										INSTANCE_FILE_PREFIX,
+										FILE_SUFFIX);
+
+	private InstanceSerialiser serialiser;
 
 	InstanceFileStore(CModel model) {
 
-		super(STORE_FILE_NAME_PREFIX, STORE_FILE_NAME_SUFFIX);
+		serialiser = new InstanceSerialiser(model);
+	}
 
-		this.model = model;
+	void setDirectory(File directory) {
+
+		profiles.setDirectory(directory);
+		instances.setDirectory(directory);
 	}
 
 	void loadAll(InstanceLoader loader) {
 
-		for (File file : getAllFiles()) {
+		for (File profileFile : profiles.getAllFiles()) {
 
-			load(loader, file);
+			load(loader, profileFile);
 		}
 	}
 
 	void write(IFrame instance, CIdentity identity, int index) {
 
-		new IInstanceRenderer(getFile(index)).render(instance, identity);
+		renderProfile(identity, instance.getType(), index);
+		renderInstance(instance, index);
 	}
 
 	IFrame read(int index) {
 
-		return createParser(getFile(index), false).parseInstance();
+		return parseInstance(index, false);
 	}
 
-	private void load(InstanceLoader loader, File file) {
+	void remove(int index) {
 
-		IInstanceParser parser = createParser(file, true);
-
-		CIdentity id = parser.parseIdentity();
-		IFrame instance = parser.parseInstance();
-
-		loader.load(instance, id, getIndex(file), file.lastModified());
+		profiles.removeFile(index);
+		instances.removeFile(index);
 	}
 
-	private IInstanceParser createParser(File file, boolean freeInstance) {
+	void clear() {
 
-		IInstanceParser parser = new IInstanceParser(model, file);
+		profiles.clear();
+		instances.clear();
+	}
 
-		parser.setFreeInstance(freeInstance);
+	private void load(InstanceLoader loader, File profileFile) {
 
-		return parser;
+		InstanceProfile profile = serialiser.parseProfile(profileFile);
+
+		CIdentity id = profile.getIdentity();
+		CFrame type = profile.getType();
+		int index = profiles.getIndex(profileFile);
+
+		loader.addToStore(id, index);
+
+		IMatcher matcher = loader.getMatcher(type);
+
+		if (matcher.rebuildOnStartup()) {
+
+			matcher.add(parseInstance(index, false), id);
+		}
+	}
+
+	private void renderProfile(CIdentity identity, CFrame type, int index) {
+
+		File file = profiles.getFile(index);
+
+		serialiser.renderProfile(new InstanceProfile(identity, type), file);
+	}
+
+	private void renderInstance(IFrame instance, int index) {
+
+		File file = instances.getFile(index);
+
+		serialiser.renderInstance(instance, file);
+	}
+
+	private IFrame parseInstance(int index, boolean freeInstance) {
+
+		File file = instances.getFile(index);
+
+		return serialiser.parseInstance(file, freeInstance);
 	}
 }

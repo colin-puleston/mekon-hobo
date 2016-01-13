@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.store.serial;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
@@ -34,14 +35,11 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  *
  * @author Colin Puleston
  */
-public class IMatchesRenderer {
+public class IMatchesRenderer extends CIdentitySerialiser {
 
 	static final String MATCHES_ID = "Matches";
 	static final String RANK_ID = "Rank";
 	static final String MATCH_ID = "Match";
-
-	static final String IDENTITY_ATTR = "id";
-	static final String LABEL_ATTR = "label";
 
 	static final String RANKED_ATTR = "ranked";
 	static final String RANK_VALUE_ATTR = "rankValue";
@@ -92,11 +90,5 @@ public class IMatchesRenderer {
 
 			renderIdentity(match, node.addChild(MATCH_ID));
 		}
-	}
-
-	private void renderIdentity(CIdentity id, XNode node) {
-
-		node.addValue(IDENTITY_ATTR, id.getIdentifier());
-		node.addValue(LABEL_ATTR, id.getLabel());
 	}
 }

@@ -22,57 +22,31 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
-
-import java.io.*;
+package uk.ac.manchester.cs.mekon.store;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renderer for the standard XML serialisation of an instance,
- * comprising an instance-identifier, and a frame representation
- * of the instance.
- *
  * @author Colin Puleston
  */
-public class IInstanceRenderer extends ISerialiser {
+class InstanceProfile {
 
-	private File instanceFile;
+	private CIdentity identity;
+	private CFrame type;
 
-	private XDocument document = new XDocument(INSTANCE_ID);
+	InstanceProfile(CIdentity identity, CFrame type) {
 
-	/**
-	 * Constructor.
-	 *
-	 * @param instanceFile Serialisation file
-	 */
-	public IInstanceRenderer(File instanceFile) {
-
-		this.instanceFile = instanceFile;
+		this.identity = identity;
+		this.type = type;
 	}
 
-	/**
-	 * Renders the instance to the relevant file.
-	 *
-	 * @param identity Identity of instance
-	 * @param instance Frame representation of instance
-	 */
-	public void render(IFrame instance, CIdentity identity) {
+	CIdentity getIdentity() {
 
-		XNode rootNode = document.getRootNode();
-
-		renderInstance(instance, rootNode);
-		renderIdentity(identity, rootNode);
-
-		document.writeToFile(instanceFile);
+		return identity;
 	}
 
-	private void renderInstance(IFrame instance, XNode rootNode) {
+	CFrame getType() {
 
-		IFrameRenderer frameRenderer = new IFrameRenderer();
-
-		frameRenderer.setSchemaLevel(ISchemaLevel.BASIC);
-		frameRenderer.render(instance, rootNode);
+		return type;
 	}
 }

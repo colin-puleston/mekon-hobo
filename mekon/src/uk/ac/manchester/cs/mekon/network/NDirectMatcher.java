@@ -61,6 +61,16 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public void initialise(IMatcherIndexes indexes) {
 	}
+	/**
+	 * Always returns true since a rebuild is always required on
+	 * startup.
+	 *
+	 * @return true is rebuild required
+	 */
+	public boolean rebuildOnStartup() {
+
+		return true;
+	}
 
 	/**
 	 * Returns true indicating that the matcher handles any type of
@@ -89,14 +99,6 @@ public class NDirectMatcher extends NMatcher {
 	public void remove(CIdentity identity) {
 
 		core.remove(identity);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Long timeStamp(CIdentity identity) {
-
-		return null;
 	}
 
 	/**

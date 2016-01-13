@@ -60,6 +60,11 @@ public class IStoreTest extends GeneralFramesModelTest {
 		public void initialise(IMatcherIndexes indexes) {
 		}
 
+		public boolean rebuildOnStartup() {
+
+			return true;
+		}
+
 		public boolean handlesType(CFrame type) {
 
 			return type == this.type;
@@ -73,11 +78,6 @@ public class IStoreTest extends GeneralFramesModelTest {
 		public void remove(CIdentity identity) {
 
 			assertTrue(identity.equals(type.getIdentity()));
-		}
-
-		public Long timeStamp(CIdentity identity) {
-
-			return null;
 		}
 
 		public IMatches match(IFrame query) {

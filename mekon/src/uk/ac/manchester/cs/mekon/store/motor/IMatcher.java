@@ -52,6 +52,15 @@ public interface IMatcher {
 	public void initialise(IMatcherIndexes indexes);
 
 	/**
+	 * Specifies whether the representations held by the matcher of
+	 * any persistently stored instances needs to be rebuilt on
+	 * start-up.
+	 *
+	 * @return true is rebuild required
+	 */
+	public boolean rebuildOnStartup();
+
+	/**
 	 * Checks whether the matcher handles instance-level frames
 	 * of the specified type.
 	 *
@@ -74,17 +83,6 @@ public interface IMatcher {
 	 * @param identity Unique identity of instance to be removed
 	 */
 	public void remove(CIdentity identity);
-
-	/**
-	 * Provides the time-stamp of a persistant version of the
-	 * specified instance, as held by the matcher, if such a version
-	 * exists.
-	 *
-	 * @param identity Unique identity of relevant instance
-	 * @return time-stamp of persistant version of instance, or null
-	 * if no persistant version
-	 */
-	public Long timeStamp(CIdentity identity);
 
 	/**
 	 * Finds all instances that match the specified query.

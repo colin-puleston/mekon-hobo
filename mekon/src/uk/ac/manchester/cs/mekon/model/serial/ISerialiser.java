@@ -29,8 +29,6 @@ package uk.ac.manchester.cs.mekon.model.serial;
  */
 abstract class ISerialiser extends FSerialiser {
 
-	static final String INSTANCE_ID = "Instance";
-
 	static final String ITREE_ID = "ITree";
 	static final String IGRAPH_ID = "IGraph";
 

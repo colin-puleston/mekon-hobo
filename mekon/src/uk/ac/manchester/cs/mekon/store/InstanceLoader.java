@@ -25,11 +25,14 @@
 package uk.ac.manchester.cs.mekon.store;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
  * @author Colin Puleston
  */
 abstract class InstanceLoader {
 
-	abstract void load(IFrame instance, CIdentity identity, int index, long timeStamp);
+	abstract void addToStore(CIdentity identity, int index);
+
+	abstract IMatcher getMatcher(CFrame frameType);
 }
