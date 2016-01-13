@@ -215,7 +215,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void stop() {
 
-		database.stop();
+		database.stop(persistStore);
 
 		if (!persistStore) {
 

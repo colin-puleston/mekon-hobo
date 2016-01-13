@@ -49,14 +49,9 @@ class Database {
 
 		this.databaseName = databaseName;
 
-		if (rebuild) {
-
-			execute(new CreateDB(databaseName));
-		}
-		else {
-
-			execute(new Check(databaseName));
-		}
+		execute(getStartCommand(rebuild));
+		System.out.println("STARTED");
+		System.out.println(execute(new org.basex.core.cmd.List()));
 	}
 
 	void add(File file) {
@@ -71,33 +66,31 @@ class Database {
 
 	List<Integer> executeQuery(String query) {
 
-		List<Integer> ids = new ArrayList<Integer>();
+		QueryProcessor proc = new QueryProcessor(query, context);
 
 		try {
 
-			Iter results = new QueryProcessor(query, context).iter();
-
-			for (Item item ; (item = results.next()) != null ; ) {
-
-				ids.add(extractInstanceIndex(item));
-			}
+			return extractInstanceIndexes(proc.iter());
 		}
 		catch (QueryException e) {
 
 			throw new KSystemConfigException(e);
 		}
+		finally {
 
-		return ids;
+			proc.close();
+		}
     }
 
-	void stop() {
+	void stop(boolean persist) {
 
 		if (context != null) {
 
 			try {
 
-				execute(new Close());
-//				execute(new DropDB(databaseName));
+				System.out.println("STOPPING");
+				System.out.println(execute(new org.basex.core.cmd.List()));
+				execute(getStopCommand(persist));
 			}
 			finally {
 
@@ -107,11 +100,23 @@ class Database {
 		}
 	}
 
-	private void execute(Command command) {
+	private Command getStartCommand(boolean rebuild) {
+
+		return rebuild
+				? new CreateDB(databaseName)
+				: new Check(databaseName);
+	}
+
+	private Command getStopCommand(boolean persist) {
+
+		return persist ? new Close() : new DropDB(databaseName);
+	}
+
+	private String execute(Command command) {
 
 		try {
 
-			command.execute(context);
+			return command.execute(context);
 		}
 		catch (BaseXException e) {
 
@@ -119,7 +124,23 @@ class Database {
 		}
 	}
 
-	private Integer extractInstanceIndex(Item queryResult) throws QueryException {
+	private List<Integer> extractInstanceIndexes(
+							Iter queryResults)
+							throws QueryException {
+
+		List<Integer> indexes = new ArrayList<Integer>();
+
+		for (Item item ; (item = queryResults.next()) != null ; ) {
+
+			indexes.add(extractInstanceIndex(item));
+		}
+
+		return indexes;
+    }
+
+	private Integer extractInstanceIndex(
+						Item queryResult)
+						throws QueryException {
 
 		BXAttr attribute = (BXAttr)queryResult.toJava();
 
