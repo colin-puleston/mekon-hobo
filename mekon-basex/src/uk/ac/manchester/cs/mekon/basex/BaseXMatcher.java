@@ -43,8 +43,8 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public class BaseXMatcher extends NMatcher {
 
-	static private final String STORE_FILE_NAME_PREFIX = "BASEX-INSTANCE-";
-	static private final String STORE_FILE_NAME_SUFFIX = ".xml";
+	static private final String STORE_FILE_PREFIX = "INSTANCE-";
+	static private final String STORE_FILE_SUFFIX = ".xml";
 
 	private IMatcherIndexes indexes = new LocalIndexes();
 	private InstanceRenderer instanceRenderer = new InstanceRenderer();
@@ -52,8 +52,9 @@ public class BaseXMatcher extends NMatcher {
 
 	private Database database;
 	private KFileStore fileStore = new KFileStore(
-										STORE_FILE_NAME_PREFIX,
-										STORE_FILE_NAME_SUFFIX);
+										STORE_FILE_PREFIX,
+										STORE_FILE_SUFFIX);
+	private boolean rebuildStore;
 	private boolean persistStore;
 
 	private boolean forceUseLocalIndexes = false;
@@ -78,14 +79,14 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public BaseXMatcher(BaseXConfig config) {
 
-		boolean rebuild = config.rebuildStore();
-
-		database = new Database(config.getDatabaseName(), rebuild);
+		rebuildStore = config.rebuildStore();
 		persistStore = config.persistStore();
+
+		database = new Database(config.getDatabaseName(), rebuildStore);
 
 		fileStore.setDirectory(config.getStoreDirectory());
 
-		if (rebuild) {
+		if (rebuildStore) {
 
 			fileStore.clear();
 		}
@@ -116,6 +117,17 @@ public class BaseXMatcher extends NMatcher {
 
 			this.indexes = indexes;
 		}
+	}
+
+	/**
+	 * Specifies that a rebuild is required if and only if the
+	 * matcher is configured to require a rebuild.
+	 *
+	 * @return true is rebuild required
+	 */
+	public boolean rebuildOnStartup() {
+
+		return rebuildStore;
 	}
 
 	/**
@@ -160,23 +172,6 @@ public class BaseXMatcher extends NMatcher {
 
 		database.remove(fileStore.getFile(index));
 		fileStore.removeFile(index);
-	}
-
-	/**
-	 * Provides the time-stamp of the persistant version of the
-	 * specified instance, as contained in the XML database, if such
-	 * a version exists.
-	 *
-	 * @param identity Unique identity of relevant instance
-	 * @return time-stamp of persistant version of instance, or null
-	 * if no persistant version
-	 */
-	public Long timeStamp(CIdentity identity) {
-
-		Integer index = indexes.getIndex(identity);
-		File file = fileStore.getFile(index);
-
-		return file.exists() ? file.lastModified() : null;
 	}
 
 	/**
