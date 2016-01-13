@@ -45,9 +45,9 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 	public void initialise(IMatcherIndexes indexes) {
 	}
 
-	public Long timeStamp(CIdentity identity) {
+	public boolean rebuildOnStartup() {
 
-		return null;
+		return true;
 	}
 
 	protected List<IRI> matchInOWLStore(NNode query) {
