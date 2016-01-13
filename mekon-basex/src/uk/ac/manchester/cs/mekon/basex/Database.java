@@ -50,8 +50,6 @@ class Database {
 		this.databaseName = databaseName;
 
 		execute(getStartCommand(rebuild));
-		System.out.println("STARTED");
-		System.out.println(execute(new org.basex.core.cmd.List()));
 	}
 
 	void add(File file) {
@@ -88,8 +86,6 @@ class Database {
 
 			try {
 
-				System.out.println("STOPPING");
-				System.out.println(execute(new org.basex.core.cmd.List()));
 				execute(getStopCommand(persist));
 			}
 			finally {
