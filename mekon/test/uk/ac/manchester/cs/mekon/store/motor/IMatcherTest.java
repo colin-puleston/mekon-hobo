@@ -89,7 +89,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			DOCTORING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_addRemoveAndQuery() {
 
 		removeInstance(POSTGRAD_TEACHING_JOB_ID);
@@ -101,7 +101,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			DOCTORING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_basicConceptBasedQueries() {
 
 		testMatching(
@@ -120,7 +120,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			POSTGRAD_TEACHING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_conceptAndPropertyBasedQueries() {
 
 		testMatching(
@@ -129,7 +129,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			POSTGRAD_TEACHING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_conceptDisjunctionBasedQueries() {
 
 		testMatching(
@@ -138,7 +138,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			POSTGRAD_TEACHING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_instanceDisjunctionBasedQueries() {
 
 		if (!handlesInstanceDisjunctionBasedQueries()) {
@@ -157,7 +157,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			DOCTORING_JOB_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_numberBasedQueries() {
 
 		setHourlyRate(undergradTeachingJob, LOW_PAY_RATE);
