@@ -45,11 +45,11 @@ class Database {
 	private Context context = new Context();
 	private String databaseName;
 
-	Database(String databaseName, boolean rebuild) {
+	Database(String databaseName, boolean forceNewDB) {
 
 		this.databaseName = databaseName;
 
-		execute(getStartCommand(rebuild));
+		execute(getStartCommand(forceNewDB));
 	}
 
 	void add(File file) {
@@ -96,16 +96,16 @@ class Database {
 		}
 	}
 
-	private Command getStartCommand(boolean rebuild) {
+	private Command getStartCommand(boolean forceNewDB) {
 
-		return rebuild
+		return forceNewDB
 				? new CreateDB(databaseName)
 				: new Check(databaseName);
 	}
 
-	private Command getStopCommand(boolean persist) {
+	private Command getStopCommand(boolean keepDB) {
 
-		return persist ? new Close() : new DropDB(databaseName);
+		return keepDB ? new Close() : new DropDB(databaseName);
 	}
 
 	private String execute(Command command) {

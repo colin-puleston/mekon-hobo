@@ -30,12 +30,12 @@ import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * Represents the configuration for a {@link BaseXMatcher}.
+ * See individual "set" methods for default values.
  *
  * @author Colin Puleston
  */
 public class BaseXConfig implements BaseXConfigVocab {
 
-	static private final String DEFAULT_DB_NAME = "MEKON";
 	static private final String DEFAULT_STORE_DIR_NAME = "basex-store";
 
 	static private File getDefaultStoreDir(String parentDir) {
@@ -43,7 +43,7 @@ public class BaseXConfig implements BaseXConfigVocab {
 		return new File(parentDir, DEFAULT_STORE_DIR_NAME);
 	}
 
-	private String databaseName = DEFAULT_DB_NAME;
+	private String databaseName = "MEKON";
 	private File storeDirectory = getDefaultStoreDir(".");
 	private boolean rebuildStore = true;
 	private boolean persistStore = false;
@@ -72,7 +72,7 @@ public class BaseXConfig implements BaseXConfigVocab {
 
 		private String getDatabaseName() {
 
-			return configNode.getString(DATABASE_NAME_ATTR, DEFAULT_DB_NAME);
+			return configNode.getString(DATABASE_NAME_ATTR, storeDirectory);
 		}
 
 		private boolean getRebuildStore() {
