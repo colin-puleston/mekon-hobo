@@ -106,7 +106,7 @@ class InstanceFileStore {
 
 		if (matcher.rebuildOnStartup()) {
 
-			matcher.add(parseInstance(index, false), id);
+			matcher.add(parseInstance(index, true), id);
 		}
 	}
 
