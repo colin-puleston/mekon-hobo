@@ -39,18 +39,19 @@ public class OStardogMatcher extends OTMatcher {
 
 	private OStardogServer server = null;
 
+	private boolean rebuildStore;
+	private boolean persistStore;
+
 	/**
-	 * Constructs matcher for specified model with the default
-	 * reasoning-type, which is {@link ORReasoningType#RDFS},
-	 * and default database-name.
+	 * Constructs matcher with the default configuration (see
+	 * individual "set" methods on {@link OStardogConfig} for
+	 * default values).
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
 	public OStardogMatcher(OModel model) {
 
-		super(model, OStardogConfig.DEFAULT_REASONING_TYPE);
-
-		initialise(OStardogConfig.DEFAULT_DB_NAME);
+		this(model, new OStardogConfig());
 	}
 
 	/**
@@ -63,7 +64,7 @@ public class OStardogMatcher extends OTMatcher {
 
 		super(model, config.getReasoningType());
 
-		initialise(config.getDatabaseName());
+		initialise(config);
 	}
 
 	/**
@@ -111,7 +112,7 @@ public class OStardogMatcher extends OTMatcher {
 	 */
 	public boolean rebuildOnStartup() {
 
-		return true;
+		return rebuildStore;
 	}
 
 	/**
@@ -119,23 +120,30 @@ public class OStardogMatcher extends OTMatcher {
 	 */
 	public void stop() {
 
-		server.stop();
+		server.stop(persistStore);
 	}
 
 	private void initialise(KConfigNode parentConfigNode) {
 
-		initialise(new OStardogConfig(parentConfigNode).getDatabaseName());
+		initialise(new OStardogConfig(parentConfigNode));
 	}
 
-	private void initialise(String databaseName) {
+	private void initialise(OStardogConfig config) {
 
-		server = createServer(databaseName);
+		server = createServer(config.getDatabaseName());
+
+		rebuildStore = config.rebuildStore();
+		persistStore = config.persistStore();
 
 		initialise(new OStardogFactory(server.getConnection()));
 	}
 
 	private OStardogServer createServer(String databaseName) {
 
-		return new OStardogServer(getModel(), databaseName, getReasoningType());
+		return new OStardogServer(
+						getModel(),
+						databaseName,
+						getReasoningType(),
+						rebuildStore);
 	}
 }

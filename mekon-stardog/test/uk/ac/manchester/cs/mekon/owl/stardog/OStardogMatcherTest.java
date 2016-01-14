@@ -46,6 +46,11 @@ public class OStardogMatcherTest extends ORMatcherTest {
 
 	private OStardogConfig createConfig() {
 
-		return new OStardogConfig(DB_NAME, ORReasoningType.TRANSITIVE);
+		OStardogConfig config = new OStardogConfig();
+
+		config.setDatabaseName(DB_NAME);
+		config.setReasoningType(ORReasoningType.TRANSITIVE);
+
+		return config;
 	}
 }

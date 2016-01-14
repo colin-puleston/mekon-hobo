@@ -29,67 +29,99 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * Represents the configuration for a {@link OStardogMatcher}.
+ * See individual "set" methods for default values.
  *
  * @author Colin Puleston
  */
 public class OStardogConfig implements OStardogConfigVocab {
 
-	/**
-	 * Default configuration.
-	 */
-	static public final OStardogConfig DEFAULT_CONFIG = new OStardogConfig();
+	private String databaseName = "MEKON";
+	private ORReasoningType reasoningType = ORReasoningType.DL;
+	private boolean rebuildStore = true;
+	private boolean persistStore = false;
 
-	static final String DEFAULT_DB_NAME = "MEKON";
-	static final ORReasoningType DEFAULT_REASONING_TYPE = ORReasoningType.DL;
+	private class ConfigNodeBasedInitialiser {
 
-	static private String getDatabaseName(KConfigNode parentConfigNode) {
+		private KConfigNode configNode;
 
-		KConfigNode configNode = parentConfigNode.getChild(MATCHER_ROOT_ID);
+		ConfigNodeBasedInitialiser(KConfigNode parentConfigNode) {
 
-		return configNode.getString(DATABASE_NAME_ATTR, DEFAULT_DB_NAME);
-	}
+			configNode = parentConfigNode.getChild(MATCHER_ROOT_ID);
 
-	private String databaseName;
-	private ORReasoningType reasoningType;
+			databaseName = getDatabaseName();
+			rebuildStore = getRebuildStore();
+			persistStore = getPersistStore();
+		}
 
-	/**
-	 * Constructs configuration for matcher with the specified
-	 * database-name and the default reasoning-type.
-	 *
-	 * @param databaseName Name of database to create
-	 */
-	public OStardogConfig(String databaseName) {
+		private String getDatabaseName() {
 
-		this(databaseName, DEFAULT_REASONING_TYPE);
-	}
+			return configNode.getString(DATABASE_NAME_ATTR, databaseName);
+		}
 
-	/**
-	 * Constructs configuration for matcher with the default
-	 * database-name and specified reasoning-type.
-	 *
-	 * @param reasoningType Type of reasoning required from matcher
-	 */
-	public OStardogConfig(ORReasoningType reasoningType) {
+		private boolean getRebuildStore() {
 
-		this(DEFAULT_DB_NAME, reasoningType);
+			return configNode.getBoolean(REBUILD_STORE_ATTR, rebuildStore);
+		}
+
+		private boolean getPersistStore() {
+
+			return configNode.getBoolean(PERSIST_STORE_ATTR, persistStore);
+		}
 	}
 
 	/**
-	 * Constructs configuration for matcher with the specified
-	 * database-name and the specified reasoning-type.
-	 *
-	 * @param databaseName Name of database to create
-	 * @param reasoningType Type of reasoning required from matcher
+	 * Constructor.
 	 */
-	public OStardogConfig(String databaseName, ORReasoningType reasoningType) {
+	public OStardogConfig() {
+	}
+
+	/**
+	 * Sets the name of the database. Defaults to "MEKON".
+	 *
+	 * @param databaseName Name of database
+	 */
+	public void setDatabaseName(String databaseName) {
 
 		this.databaseName = databaseName;
+	}
+
+	/**
+	 * Sets the type of reasoning required from the matcher.
+	 * Defaults to {@link ORReasoningType#DL}.
+	 *
+	 * @param reasoningType Required reasoning type
+	 */
+	public void setReasoningType(ORReasoningType reasoningType) {
+
 		this.reasoningType = reasoningType;
+	}
+
+	/**
+	 * Sets whether the BaseX store should be completely rebuilt
+	 * from the main MEKON instance store on start-up. Defaults to
+	 * true.
+	 *
+	 * @param rebuildStore True if BaseX store should be rebuilt
+	 */
+	public void setRebuildStore(boolean rebuildStore) {
+
+		this.rebuildStore = rebuildStore;
+	}
+
+	/**
+	 * Sets whether the BaseX store should persist after the matcher
+	 * is destroyed. Defaults to false.
+	 *
+	 * @param persistStore True if BaseX store should persist
+	 */
+	public void setPersistStore(boolean persistStore) {
+
+		this.persistStore = persistStore;
 	}
 
 	OStardogConfig(KConfigNode parentConfigNode) {
 
-		this(getDatabaseName(parentConfigNode));
+		new ConfigNodeBasedInitialiser(parentConfigNode);
 	}
 
 	String getDatabaseName() {
@@ -102,8 +134,13 @@ public class OStardogConfig implements OStardogConfigVocab {
 		return reasoningType;
 	}
 
-	private OStardogConfig() {
+	boolean rebuildStore() {
 
-		this(DEFAULT_DB_NAME);
+		return rebuildStore;
+	}
+
+	boolean persistStore() {
+
+		return persistStore;
 	}
 }

@@ -52,10 +52,18 @@ class OStardogServer {
 	private Server server;
 	private Connection connection;
 
-	OStardogServer(OModel model, String databaseName, ORReasoningType reasoningType) {
+	private String databaseName;
+
+	OStardogServer(
+		OModel model,
+		String databaseName,
+		ORReasoningType reasoningType,
+		boolean forceNewDB) {
+
+		this.databaseName = databaseName;
 
 		server = startServer();
-		connection = startDatabase(databaseName);
+		connection = startDatabase(forceNewDB);
 
 		loadModel(model, reasoningType);
 	}
@@ -65,13 +73,20 @@ class OStardogServer {
 		return connection;
 	}
 
-	void stop() {
+	void stop(boolean keepDB) {
 
 		if (server != null) {
+
+			AdminConnection admin = connectForAdmin();
 
 			try {
 
 				connection.close();
+
+				if (!keepDB) {
+
+					admin.drop(databaseName);
+				}
 			}
 			catch (StardogException e) {
 
@@ -79,6 +94,7 @@ class OStardogServer {
 			}
 			finally {
 
+				admin.close();
 				server.stop();
 
 				server = null;
@@ -102,13 +118,13 @@ class OStardogServer {
 		}
 	}
 
-	private Connection startDatabase(String name) {
+	private Connection startDatabase(boolean forceNewDB) {
 
 		try {
 
-			createDatabase(name);
+			ensureDatabase(forceNewDB);
 
-			return connectToDatabase(name);
+			return connectToDatabase();
 		}
 		catch (StardogException e) {
 
@@ -116,18 +132,24 @@ class OStardogServer {
 		}
 	}
 
-	private void createDatabase(String name) throws StardogException {
+	private void ensureDatabase(boolean forceNewDB) throws StardogException {
 
-		AdminConnection admin = connectToServer();
+		AdminConnection admin = connectForAdmin();
 
 		try {
 
-			if (admin.list().contains(name)) {
+			boolean exists = admin.list().contains(databaseName);
 
-				admin.drop(name);
+			if (exists && forceNewDB) {
+
+				admin.drop(databaseName);
+				exists = false;
 			}
 
-			admin.disk(name).create();
+			if (!exists) {
+
+				admin.disk(databaseName).create();
+			}
 		}
 		finally {
 
@@ -135,7 +157,7 @@ class OStardogServer {
 		}
 	}
 
-	private AdminConnection connectToServer() throws StardogException {
+	private AdminConnection connectForAdmin() throws StardogException {
 
 		return AdminConnectionConfiguration
 				.toEmbeddedServer()
@@ -143,10 +165,10 @@ class OStardogServer {
 				.connect();
 	}
 
-	private Connection connectToDatabase(String name) throws StardogException {
+	private Connection connectToDatabase() throws StardogException {
 
 		return ConnectionConfiguration
-				.to(name)
+				.to(databaseName)
 				.credentials(PASSWORD, PASSWORD)
 				.reasoning(true)
 				.connect();

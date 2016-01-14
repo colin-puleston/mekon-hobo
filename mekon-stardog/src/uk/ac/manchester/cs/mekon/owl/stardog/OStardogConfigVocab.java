@@ -35,4 +35,6 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 public interface OStardogConfigVocab extends ORConfigVocab {
 
 	static public final String DATABASE_NAME_ATTR = "database";
+	static public final String REBUILD_STORE_ATTR = "rebuildStore";
+	static public final String PERSIST_STORE_ATTR = "persistStore";
 }
