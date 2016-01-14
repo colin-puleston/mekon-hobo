@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
@@ -49,6 +50,12 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 public abstract class OTMatcher extends ORMatcher {
 
 	private Store store = null;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void initialise(IMatcherIndexes indexes) {
+	}
 
 	/**
 	 * Constructs matcher for specified model and reasoning-type.
