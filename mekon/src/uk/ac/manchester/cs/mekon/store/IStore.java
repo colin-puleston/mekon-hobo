@@ -70,20 +70,6 @@ public class IStore {
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private InstanceIndexes indexes = new InstanceIndexes();
 
-	private class FileStoreInstanceLoader extends InstanceLoader {
-
-		void addToStore(CIdentity identity, int index) {
-
-			identities.add(identity);
-			indexes.assignIndex(identity, index);
-		}
-
-		IMatcher getMatcher(CFrame frameType) {
-
-			return IStore.this.getMatcher(frameType);
-		}
-	}
-
 	/**
 	 * Adds an instance to the store, possibly replacing an existing
 	 * instance with the same identity.
@@ -153,7 +139,7 @@ public class IStore {
 	 */
 	public synchronized IFrame get(CIdentity identity) {
 
-		return fileStore.read(indexes.getIndex(identity));
+		return fileStore.read(indexes.getIndex(identity), false);
 	}
 
 	/**
@@ -207,24 +193,12 @@ public class IStore {
 	IStore(CModel model) {
 
 		freeInstantiator = new IFreeInstances(model).getInstantiator();
-		fileStore = new InstanceFileStore(model);
+		fileStore = new InstanceFileStore(model, this);
 	}
 
 	void setStoreDirectory(File directory) {
 
 		fileStore.setDirectory(directory);
-	}
-
-	void loadFromFileStore() {
-
-		fileStore.loadAll(new FileStoreInstanceLoader());
-
-		indexes.reinitialiseFreeIndexes();
-	}
-
-	void clearFileStore() {
-
-		fileStore.clear();
 	}
 
 	void addMatcher(IMatcher matcher) {
@@ -253,6 +227,32 @@ public class IStore {
 		return new ArrayList<IMatcher>(matchers);
 	}
 
+	void loadFromFileStore() {
+
+		fileStore.reloadAll();
+		indexes.reinitialiseFreeIndexes();
+	}
+
+	void clearFileStore() {
+
+		fileStore.clear();
+	}
+
+	void reload(InstanceProfile profile, int index) {
+
+		CIdentity identity = profile.getIdentity();
+
+		identities.add(identity);
+		indexes.assignIndex(identity, index);
+
+		IMatcher matcher = getMatcher(profile.getType());
+
+		if (matcher.rebuildOnStartup()) {
+
+			matcher.add(fileStore.read(index, true), identity);
+		}
+	}
+
 	void stop() {
 
 		for (IMatcher matcher : matchers) {
@@ -273,7 +273,7 @@ public class IStore {
 
 			identities.remove(identity);
 
-			checkRemoveFromMatcher(fileStore.read(index), identity);
+			checkRemoveFromMatcher(fileStore.readType(index), identity);
 			fileStore.remove(index);
 		}
 
@@ -285,9 +285,9 @@ public class IStore {
 		getMatcher(instance).add(instance, identity);
 	}
 
-	private void checkRemoveFromMatcher(IFrame instance, CIdentity identity) {
+	private void checkRemoveFromMatcher(CFrame type, CIdentity identity) {
 
-		getMatcher(instance).remove(identity);
+		getMatcher(type).remove(identity);
 	}
 
 	private IMatcher getMatcher(IFrame frame) {

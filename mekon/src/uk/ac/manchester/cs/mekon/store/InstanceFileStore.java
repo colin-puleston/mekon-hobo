@@ -27,8 +27,6 @@ package uk.ac.manchester.cs.mekon.store;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -40,6 +38,8 @@ class InstanceFileStore {
 	static private final String INSTANCE_FILE_PREFIX = "INSTANCE-";
 	static private final String FILE_SUFFIX = ".xml";
 
+	private IStore iStore;
+
 	private KFileStore profiles = new KFileStore(
 										PROFILE_FILE_PREFIX,
 										FILE_SUFFIX);
@@ -50,7 +50,9 @@ class InstanceFileStore {
 
 	private InstanceSerialiser serialiser;
 
-	InstanceFileStore(CModel model) {
+	InstanceFileStore(CModel model, IStore iStore) {
+
+		this.iStore = iStore;
 
 		serialiser = new InstanceSerialiser(model);
 	}
@@ -61,23 +63,30 @@ class InstanceFileStore {
 		instances.setDirectory(directory);
 	}
 
-	void loadAll(InstanceLoader loader) {
-
-		for (File profileFile : profiles.getAllFiles()) {
-
-			load(loader, profileFile);
-		}
-	}
-
 	void write(IFrame instance, CIdentity identity, int index) {
 
-		renderProfile(identity, instance.getType(), index);
-		renderInstance(instance, index);
+		CFrame type = instance.getType();
+		InstanceProfile profile = new InstanceProfile(identity, type);
+
+		File pFile = profiles.getFile(index);
+		File iFile = instances.getFile(index);
+
+		serialiser.renderProfile(profile, pFile);
+		serialiser.renderInstance(instance, iFile);
 	}
 
-	IFrame read(int index) {
+	IFrame read(int index, boolean freeInstance) {
 
-		return parseInstance(index, false);
+		File iFile = instances.getFile(index);
+
+		return serialiser.parseInstance(iFile, freeInstance);
+	}
+
+	CFrame readType(int index) {
+
+		File pFile = profiles.getFile(index);
+
+		return serialiser.parseProfile(pFile).getType();
 	}
 
 	void remove(int index) {
@@ -92,42 +101,13 @@ class InstanceFileStore {
 		instances.clear();
 	}
 
-	private void load(InstanceLoader loader, File profileFile) {
+	void reloadAll() {
 
-		InstanceProfile profile = serialiser.parseProfile(profileFile);
+		for (File pFile : profiles.getAllFiles()) {
 
-		CIdentity id = profile.getIdentity();
-		CFrame type = profile.getType();
-		int index = profiles.getIndex(profileFile);
+			InstanceProfile p = serialiser.parseProfile(pFile);
 
-		loader.addToStore(id, index);
-
-		IMatcher matcher = loader.getMatcher(type);
-
-		if (matcher.rebuildOnStartup()) {
-
-			matcher.add(parseInstance(index, true), id);
+			iStore.reload(p, profiles.getIndex(pFile));
 		}
-	}
-
-	private void renderProfile(CIdentity identity, CFrame type, int index) {
-
-		File file = profiles.getFile(index);
-
-		serialiser.renderProfile(new InstanceProfile(identity, type), file);
-	}
-
-	private void renderInstance(IFrame instance, int index) {
-
-		File file = instances.getFile(index);
-
-		serialiser.renderInstance(instance, file);
-	}
-
-	private IFrame parseInstance(int index, boolean freeInstance) {
-
-		File file = instances.getFile(index);
-
-		return serialiser.parseInstance(file, freeInstance);
 	}
 }
