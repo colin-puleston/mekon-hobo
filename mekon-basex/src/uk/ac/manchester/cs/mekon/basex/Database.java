@@ -25,7 +25,9 @@
 package uk.ac.manchester.cs.mekon.basex;
 
 import java.io.*;
+import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
 import java.util.ArrayList;
 
 import org.basex.core.*;
@@ -125,10 +127,16 @@ class Database {
 							throws QueryException {
 
 		List<Integer> indexes = new ArrayList<Integer>();
+		Set<Integer> indexSet = new HashSet<Integer>();
 
 		for (Item item ; (item = queryResults.next()) != null ; ) {
 
-			indexes.add(extractInstanceIndex(item));
+			int index = extractInstanceIndex(item);
+
+			if (indexSet.add(index)) {
+
+				indexes.add(index);
+			}
 		}
 
 		return indexes;
