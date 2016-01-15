@@ -72,7 +72,7 @@ public class BaseXConfig implements BaseXConfigVocab {
 
 		private String getDatabaseName() {
 
-			return configNode.getString(DATABASE_NAME_ATTR, storeDirectory);
+			return configNode.getString(DATABASE_NAME_ATTR, databaseName);
 		}
 
 		private boolean getRebuildStore() {
