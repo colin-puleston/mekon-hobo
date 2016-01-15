@@ -77,29 +77,16 @@ class OStardogServer {
 
 		if (server != null) {
 
-			AdminConnection admin = connectForAdmin();
+			if (!keepDB) {
 
-			try {
-
-				connection.close();
-
-				if (!keepDB) {
-
-					admin.drop(databaseName);
-				}
+				removeDatabase();
 			}
-			catch (StardogException e) {
 
-				throw new KSystemConfigException(e);
-			}
-			finally {
+			server.stop();
+			connection.close();
 
-				admin.close();
-				server.stop();
-
-				server = null;
-				connection = null;
-			}
+			server = null;
+			connection = null;
 		}
 	}
 
@@ -120,52 +107,40 @@ class OStardogServer {
 
 	private Connection startDatabase(boolean forceNewDB) {
 
-		try {
+		ensureDatabase(forceNewDB);
 
-			ensureDatabase(forceNewDB);
-
-			return connectToDatabase();
-		}
-		catch (StardogException e) {
-
-			throw new KSystemConfigException(e);
-		}
+		return connectToDatabase();
 	}
 
-	private void ensureDatabase(boolean forceNewDB) throws StardogException {
+	private void ensureDatabase(boolean forceNewDB) {
+
+		AdminConnection admin = connectForAdmin();
+		boolean exists = admin.list().contains(databaseName);
+
+		if (exists && forceNewDB) {
+
+			admin.drop(databaseName);
+
+			exists = false;
+		}
+
+		if (!exists) {
+
+			admin.disk(databaseName).create();
+		}
+
+		admin.close();
+	}
+
+	private void removeDatabase() {
 
 		AdminConnection admin = connectForAdmin();
 
-		try {
-
-			boolean exists = admin.list().contains(databaseName);
-
-			if (exists && forceNewDB) {
-
-				admin.drop(databaseName);
-				exists = false;
-			}
-
-			if (!exists) {
-
-				admin.disk(databaseName).create();
-			}
-		}
-		finally {
-
-			admin.close();
-		}
+		admin.drop(databaseName);
+		admin.close();
 	}
 
-	private AdminConnection connectForAdmin() throws StardogException {
-
-		return AdminConnectionConfiguration
-				.toEmbeddedServer()
-				.credentials(USERNAME, PASSWORD)
-				.connect();
-	}
-
-	private Connection connectToDatabase() throws StardogException {
+	private Connection connectToDatabase() {
 
 		return ConnectionConfiguration
 				.to(databaseName)
@@ -174,26 +149,24 @@ class OStardogServer {
 				.connect();
 	}
 
+	private AdminConnection connectForAdmin() {
+
+		return AdminConnectionConfiguration
+				.toEmbeddedServer()
+				.credentials(USERNAME, PASSWORD)
+				.connect();
+	}
+
 	private void loadModel(OModel model, ORReasoningType reasoningType) {
 
 		File file = createTempOWLFile(model, reasoningType);
+		Path path = Paths.get(file.toURI());
 
-		try {
+		connection.begin();
+		connection.add().io().format(RDFFormat.RDFXML).file(path);
+		connection.commit();
 
-			Path path = Paths.get(file.toURI());
-
-			connection.begin();
-			connection.add().io().format(RDFFormat.RDFXML).file(path);
-			connection.commit();
-		}
-		catch (StardogException e) {
-
-			throw new KSystemConfigException(e);
-		}
-		finally {
-
-			file.delete();
-		}
+		file.delete();
 	}
 
 	private File createTempOWLFile(

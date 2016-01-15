@@ -30,10 +30,8 @@ import java.util.stream.*;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.*;
 
-import com.complexible.stardog.*;
 import com.complexible.stardog.api.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
@@ -48,26 +46,7 @@ class OStardogGraphRemover implements OTGraphRemover {
 
 	public void removeGraphFromStore() {
 
-		try {
-
-			connection.begin();
-			removeAllTriples();
-			connection.commit();
-		}
-		catch (StardogException e) {
-
-			throw new KSystemConfigException(e);
-		}
-	}
-
-	OStardogGraphRemover(Connection connection, String contextURI) {
-
-		this.connection = connection;
-
-		context = valueFactory.createIRI(contextURI);
-	}
-
-	private void removeAllTriples() throws StardogException {
+		connection.begin();
 
 		Iterator<Statement> triples = getAllTriples();
 
@@ -75,6 +54,15 @@ class OStardogGraphRemover implements OTGraphRemover {
 
 			connection.remove().statement(triples.next());
 		}
+
+		connection.commit();
+	}
+
+	OStardogGraphRemover(Connection connection, String contextURI) {
+
+		this.connection = connection;
+
+		context = valueFactory.createIRI(contextURI);
 	}
 
 	private Iterator<Statement> getAllTriples() {

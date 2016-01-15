@@ -31,7 +31,6 @@ import org.openrdf.query.BindingSet;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.query.QueryEvaluationException;
 
-import com.complexible.stardog.*;
 import com.complexible.stardog.api.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
@@ -48,21 +47,14 @@ class OStardogQuery implements OTQuery {
 
 		R execute(String query, OTQueryConstants constants) {
 
-			try {
+			Query<R> queryExec = create(query);
 
-				Query<R> queryExec = create(query);
+			addConstants(queryExec, constants);
 
-				addConstants(queryExec, constants);
-
-				return queryExec.execute();
-			}
-			catch (StardogException e) {
-
-				throw new KSystemConfigException(e);
-			}
+			return queryExec.execute();
 		}
 
-		abstract Query<R> create(String query) throws StardogException;
+		abstract Query<R> create(String query);
 
 		private void addConstants(Query<?> query, OTQueryConstants constants) {
 
@@ -77,7 +69,7 @@ class OStardogQuery implements OTQuery {
 
 	private class AskExecutor extends Executor<Boolean> {
 
-		Query<Boolean> create(String query) throws StardogException {
+		Query<Boolean> create(String query) {
 
 			return connection.ask(query);
 		}
@@ -85,7 +77,7 @@ class OStardogQuery implements OTQuery {
 
 	private class UpdateExecutor extends Executor<Boolean> {
 
-		Query<Boolean> create(String query) throws StardogException {
+		Query<Boolean> create(String query) {
 
 			return connection.update(query);
 		}
@@ -93,7 +85,7 @@ class OStardogQuery implements OTQuery {
 
 	private class SelectExecutor extends Executor<TupleQueryResult> {
 
-		Query<TupleQueryResult> create(String query) throws StardogException {
+		Query<TupleQueryResult> create(String query) {
 
 			return connection.select(query);
 		}
@@ -116,51 +108,22 @@ class OStardogQuery implements OTQuery {
 
 	public List<OT_URI> executeSelect(String query, OTQueryConstants constants) {
 
-		TupleQueryResult result = new SelectExecutor().execute(query, constants);
-
-		try {
-
-			return getURIBindings(result);
-		}
-		catch (QueryEvaluationException e) {
-
-			throw new KSystemConfigException(e);
-		}
-		finally {
-
-			closeResult(result);
-		}
-	}
-
-	OStardogQuery(Connection connection) {
-
-		this.connection = connection;
-	}
-
-	private List<OT_URI> getURIBindings(
-							TupleQueryResult result)
-							throws QueryEvaluationException {
-
 		List<OT_URI> bindings = new ArrayList<OT_URI>();
+		TupleQueryResult result = new SelectExecutor().execute(query, constants);
 
 		while (result.hasNext()) {
 
 			bindings.add(getSingleBoundURI(result.next()));
 		}
 
+		result.close();
+
 		return bindings;
 	}
 
-	private void closeResult(TupleQueryResult result) {
+	OStardogQuery(Connection connection) {
 
-		try {
-
-			result.close();
-		}
-		catch (QueryEvaluationException e) {
-
-			throw new KSystemConfigException(e);
-		}
+		this.connection = connection;
 	}
 
 	private OT_URI getSingleBoundURI(BindingSet bindings) {

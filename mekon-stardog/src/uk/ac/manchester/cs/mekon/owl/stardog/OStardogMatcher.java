@@ -130,10 +130,10 @@ public class OStardogMatcher extends OTMatcher {
 
 	private void initialise(OStardogConfig config) {
 
-		server = createServer(config.getDatabaseName());
-
 		rebuildStore = config.rebuildStore();
 		persistStore = config.persistStore();
+
+		server = createServer(config.getDatabaseName());
 
 		initialise(new OStardogFactory(server.getConnection()));
 	}

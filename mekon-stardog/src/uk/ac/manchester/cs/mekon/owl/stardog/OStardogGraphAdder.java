@@ -29,10 +29,8 @@ import java.util.*;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.*;
 
-import com.complexible.stardog.*;
 import com.complexible.stardog.api.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
@@ -62,7 +60,7 @@ class OStardogGraphAdder implements OTGraphAdder {
 			triples.add(this);
 		}
 
-		void add() throws StardogException {
+		void add() {
 
 			connection.add().statement(subject, predicate, object, context);
 		}
@@ -75,16 +73,14 @@ class OStardogGraphAdder implements OTGraphAdder {
 
 	public void addGraphToStore() {
 
-		try {
+		connection.begin();
 
-			connection.begin();
-			addTriples();
-			connection.commit();
-		}
-		catch (StardogException e) {
+		for (Triple triple : triples) {
 
-			throw new KSystemConfigException(e);
+			triple.add();
 		}
+
+		connection.commit();
 	}
 
 	public void addToGraph(OT_URI subject, OT_URI predicate, OTValue object) {
@@ -97,13 +93,5 @@ class OStardogGraphAdder implements OTGraphAdder {
 		this.connection = connection;
 
 		context = valueFactory.createIRI(contextURI);
-	}
-
-	private void addTriples() throws StardogException {
-
-		for (Triple triple : triples) {
-
-			triple.add();
-		}
 	}
 }
