@@ -54,7 +54,7 @@ public class OInstanceIRIs {
 
 	/**
 	 * Tests whether an IRI has the format that would be generated
-	 * by this class generate for a static instance.
+	 * by this class for a static instance.
 	 *
 	 * @param iri IRI to test
 	 * @return true if IRI has relevant format
@@ -66,14 +66,14 @@ public class OInstanceIRIs {
 
 	/**
 	 * Tests whether an IRI has the format that would be generated
-	 * by this class generate for a dynamic instance.
+	 * by this class for a dynamic instance.
 	 *
 	 * @param iri IRI to test
 	 * @return true if IRI has relevant format
 	 */
 	static public boolean dynamicInstanceIRI(IRI iri) {
 
-		return instanceIRI(iri, BASE_NAMESPACE);
+		return instanceIRI(iri, DYNAMIC_INSTANCES_NAMESPACE_EXTN);
 	}
 
 	static private boolean instanceIRI(IRI iri, String testNamespace) {

@@ -81,16 +81,6 @@ public class ORMatcherModel {
 	}
 
 	/**
-	 * Provides the ontology that is to be used by the matcher.
-	 *
-	 * @return Ontology for matcher
-	 */
-	public OWLOntology getOntology() {
-
-		return ontology;
-	}
-
-	/**
 	 * Provides a MEKON-OWL model representing the ontology that is
 	 * to be used by the matcher.
 	 *
