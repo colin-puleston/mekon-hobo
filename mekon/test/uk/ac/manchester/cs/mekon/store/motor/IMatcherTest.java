@@ -28,12 +28,14 @@ import java.util.*;
 
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.After;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
 
 /**
@@ -52,7 +54,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	static private final int HIGH_PAY_RATE = 16;
 	static private final int MAX_PAY_RATE = 20;
 
+	private IStore store;
 	private IMatcher matcher;
+
 	private Map<CIdentity, IFrame> storedInstancesById = new HashMap<CIdentity, IFrame>();
 
 	private IFrame undergradTeachingJob;
@@ -72,10 +76,20 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		iStoreBuilder.addMatcher(matcher);
 		iStoreBuilder.build();
 
+		store = getStore();
+		store.clear();
+
 		undergradTeachingJob = addUndergradTeachingJob();
 		postgradTeachingJob = addPostgradTeachingJob();
 		academicResearchJob = addAcademicResearchJob();
 		doctoringJob = addDoctoringJob();
+	}
+
+	@After
+	public void clearUp() {
+
+		store.clear();
+		super.clearUp();
 	}
 
 	@Test
@@ -376,7 +390,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private IFrame addInstance(IFrame instance, CIdentity id) {
 
-		matcher.add(instance, id);
+		store.add(instance, id);
 		storedInstancesById.put(id, instance);
 
 		return instance;
@@ -384,7 +398,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private void removeInstance(CIdentity id) {
 
-		matcher.remove(id);
+		store.remove(id);
 		storedInstancesById.remove(id);
 	}
 
@@ -398,14 +412,14 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private void testMatching(IFrame query, CIdentity... expectedMatchIds) {
 
-		List<CIdentity> matchIds = matcher.match(query).getAllMatches();
+		List<CIdentity> matchIds = store.match(query).getAllMatches();
 
 		testListContents(matchIds, Arrays.asList(expectedMatchIds));
 
 		for (CIdentity id : storedInstancesById.keySet()) {
 
 			IFrame instance = storedInstancesById.get(id);
-			boolean isMatch = matcher.matches(query, instance);
+			boolean isMatch = store.matches(query, instance);
 
 			assertTrue(isMatch == matchIds.contains(id));
 		}

@@ -233,11 +233,6 @@ public class IStore {
 		indexes.reinitialiseFreeIndexes();
 	}
 
-	void clearFileStore() {
-
-		fileStore.clear();
-	}
-
 	void reload(InstanceProfile profile, int index) {
 
 		CIdentity identity = profile.getIdentity();
@@ -269,12 +264,13 @@ public class IStore {
 
 		if (indexes.hasIndex(identity)) {
 
-			int index = indexes.freeIndex(identity);
-
 			identities.remove(identity);
+
+			int index = indexes.getIndex(identity);
 
 			checkRemoveFromMatcher(fileStore.readType(index), identity);
 			fileStore.remove(index);
+			indexes.freeIndex(identity);
 		}
 
 		return removed;

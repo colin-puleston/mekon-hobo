@@ -34,6 +34,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 class InstanceFileStore {
 
+	static private final String DEFAULT_STORE_DIR = "mekon-store";
 	static private final String PROFILE_FILE_PREFIX = "PROFILE-";
 	static private final String INSTANCE_FILE_PREFIX = "INSTANCE-";
 	static private final String FILE_SUFFIX = ".xml";
@@ -55,6 +56,8 @@ class InstanceFileStore {
 		this.iStore = iStore;
 
 		serialiser = new InstanceSerialiser(model);
+
+		setDirectory(new File(DEFAULT_STORE_DIR));
 	}
 
 	void setDirectory(File directory) {

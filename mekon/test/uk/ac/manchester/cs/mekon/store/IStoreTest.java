@@ -140,15 +140,14 @@ public class IStoreTest extends GeneralFramesModelTest {
 	public void setUp() {
 
 		createStore();
-		store.clearFileStore();
+		store.clear();
 	}
 
 	@After
 	public void clearUp() {
 
 		super.clearUp();
-
-		store.clearFileStore();
+		store.clear();
 	}
 
 	@Test
