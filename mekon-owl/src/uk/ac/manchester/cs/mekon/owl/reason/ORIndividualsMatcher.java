@@ -47,7 +47,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	private IndividualsRenderer storeRenderer;
 	private IndividualsRenderer dynamicRenderer;
 
-	private OInstanceIRIs dynamicRootIRIs = new OInstanceIRIs(true);
+	private ODynamicInstanceIRIs dynamicRootIRIs = new ODynamicInstanceIRIs();
 
 	/**
 	 * Constructs matcher for specified model with the default

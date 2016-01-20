@@ -52,12 +52,6 @@ public abstract class OTMatcher extends ORMatcher {
 	private Store store = null;
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public void initialise(IMatcherIndexes indexes) {
-	}
-
-	/**
 	 * Constructs matcher for specified model and reasoning-type.
 	 *
 	 * @param model Model over which matcher is to operate

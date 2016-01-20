@@ -42,9 +42,6 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	private OModel matcherModel = null;
 
-	public void initialise(IMatcherIndexes indexes) {
-	}
-
 	public boolean rebuildOnStartup() {
 
 		return true;
@@ -126,7 +123,7 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 		for (IRI match : matches) {
 
-			if (OInstanceIRIs.staticInstanceIRI(match)) {
+			if (OStaticInstanceIRIs.staticInstance(match)) {
 
 				purged.add(match);
 			}

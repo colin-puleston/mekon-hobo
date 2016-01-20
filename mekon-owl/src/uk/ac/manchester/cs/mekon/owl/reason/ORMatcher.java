@@ -123,7 +123,15 @@ public abstract class ORMatcher extends NMatcher {
 
 	private OConceptFinder concepts;
 	private OntologyEntityResolver ontologyEntityResolver;
-	private OInstanceIRIs instanceIRIs = new OInstanceIRIs(false);
+	private OStaticInstanceIRIs instanceIRIs = new OStaticInstanceIRIs();
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void initialise(IMatcherIndexes indexes) {
+
+		instanceIRIs.resetIndexes(indexes);
+	}
 
 	/**
 	 * Checks whether the matcher handles instance-level frames
@@ -151,7 +159,7 @@ public abstract class ORMatcher extends NMatcher {
 
 		ontologyEntityResolver.resolve(instance);
 
-		addToOWLStore(instance, instanceIRIs.assign(identity));
+		addToOWLStore(instance, instanceIRIs.get(identity));
 	}
 
 	/**
@@ -163,7 +171,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		removeFromOWLStore(instanceIRIs.free(identity));
+		removeFromOWLStore(instanceIRIs.get(identity));
 	}
 
 	/**

@@ -82,7 +82,7 @@ public class ORClassifier extends NClassifier {
 
 	private OntologyEntityResolver ontologyEntityResolver;
 	private IndividualsRenderer individualsRenderer;
-	private OInstanceIRIs individualRootIRIs = new OInstanceIRIs(true);
+	private ODynamicInstanceIRIs individualRootIRIs = new ODynamicInstanceIRIs();
 
 	private boolean forceIndividualBasedClassification = false;
 

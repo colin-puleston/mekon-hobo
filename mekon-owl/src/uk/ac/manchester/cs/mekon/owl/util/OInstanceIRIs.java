@@ -28,10 +28,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Manages the assignment of unique IRIs to a set of OWL-based
@@ -39,125 +36,30 @@ import uk.ac.manchester.cs.mekon.util.*;
  *
  * @author Colin Puleston
  */
-public class OInstanceIRIs {
+public abstract class OInstanceIRIs {
 
 	static private final String BASE_NAMESPACE = "urn:mekon-owl:instances";
-	static private final String DYNAMIC_INSTANCES_NAMESPACE_EXTN = ":dynamic";
 
-	static private class InstanceIndexes extends KIndexes<CIdentity> {
+	static boolean instanceIRI(IRI iri, String namespaceExtn) {
 
-		protected KRuntimeException createException(String message) {
-
-			return new KSystemConfigException(message);
-		}
+		return iri.toString().startsWith(getNamespace(namespaceExtn) + "#");
 	}
 
-	/**
-	 * Tests whether an IRI has the format that would be generated
-	 * by this class for a static instance.
-	 *
-	 * @param iri IRI to test
-	 * @return true if IRI has relevant format
-	 */
-	static public boolean staticInstanceIRI(IRI iri) {
+	static private String getNamespace(String extn) {
 
-		return instanceIRI(iri, BASE_NAMESPACE);
-	}
-
-	/**
-	 * Tests whether an IRI has the format that would be generated
-	 * by this class for a dynamic instance.
-	 *
-	 * @param iri IRI to test
-	 * @return true if IRI has relevant format
-	 */
-	static public boolean dynamicInstanceIRI(IRI iri) {
-
-		return instanceIRI(iri, DYNAMIC_INSTANCES_NAMESPACE_EXTN);
-	}
-
-	static private boolean instanceIRI(IRI iri, String testNamespace) {
-
-		return iri.toString().startsWith(testNamespace + "#");
+		return extn.length() == 0
+				? BASE_NAMESPACE
+				: (BASE_NAMESPACE + ":" + extn);
 	}
 
 	private String namespace;
-	private InstanceIndexes indexes = new InstanceIndexes();
 
 	/**
 	 * Constructor.
-	 *
-	 * @param dynamicInstances True if IRIs will be generated with the
-	 * dynamic-instances namespace, rather than the default namespace
 	 */
-	public OInstanceIRIs(boolean dynamicInstances) {
+	public OInstanceIRIs() {
 
-		namespace = BASE_NAMESPACE;
-
-		if (dynamicInstances) {
-
-			namespace += DYNAMIC_INSTANCES_NAMESPACE_EXTN;
-		}
-	}
-
-	/**
-	 * Assigns a unique IRI to an unspecified instance.
-	 *
-	 * @return Assigned IRI
-	 */
-	public IRI assign() {
-
-		return create(indexes.assignIndex());
-	}
-
-	/**
-	 * Assigns a unique IRI to an instance.
-	 *
-	 * @param identity Identity of instance for which IRI is required
-	 * @return Assigned IRI
-	 */
-	public IRI assign(CIdentity identity) {
-
-		return create(indexes.assignIndex(identity));
-	}
-
-	/**
-	 * Frees up a unique IRI that was previously assigned to a specific
-	 * instance.
-	 *
-	 * @param identity Identity of instance for which IRI is no longer
-	 * required
-	 * @return Freed IRI
-	 */
-	public IRI free(CIdentity identity) {
-
-		IRI iri = get(identity);
-
-		indexes.freeIndex(identity);
-
-		return iri;
-	}
-
-	/**
-	 * Frees up a unique IRI that was previously assigned to an
-	 * unspecified instance.
-	 *
-	 * @param iri IRI to be freed
-	 */
-	public void free(IRI iri) {
-
-		indexes.freeIndex(extractIndex(iri));
-	}
-
-	/**
-	 * Retrieves the currently assigned IRI for an instance.
-	 *
-	 * @param identity Identity of instance for which IRI is required
-	 * @return Currently assigned IRI
-	 */
-	public IRI get(CIdentity identity) {
-
-		return create(indexes.getIndex(identity));
+		namespace = getNamespace(getNamespaceExtn());
 	}
 
 	/**
@@ -169,7 +71,7 @@ public class OInstanceIRIs {
 	 */
 	public CIdentity toIdentity(IRI iri) {
 
-		return indexes.getElement(extractIndex(iri));
+		return toIdentity(extractIndex(iri));
 	}
 
 	/**
@@ -191,13 +93,17 @@ public class OInstanceIRIs {
 		return identities;
 	}
 
-	private IRI create(Integer index) {
+	IRI create(Integer index) {
 
 		return IRI.create(namespace + "#" + index.toString());
 	}
 
-	private int extractIndex(IRI iri) {
+	int extractIndex(IRI iri) {
 
 		return Integer.parseInt(iri.getFragment());
 	}
+
+	abstract String getNamespaceExtn();
+
+	abstract CIdentity toIdentity(int index);
 }

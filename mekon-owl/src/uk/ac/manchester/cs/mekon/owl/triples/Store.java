@@ -38,7 +38,7 @@ class Store {
 
 	private OTFactory factory;
 
-	private OInstanceIRIs dynamicInstanceIRIs = new OInstanceIRIs(true);
+	private ODynamicInstanceIRIs dynamicInstanceIRIs = new ODynamicInstanceIRIs();
 
 	Store(OTFactory factory) {
 
