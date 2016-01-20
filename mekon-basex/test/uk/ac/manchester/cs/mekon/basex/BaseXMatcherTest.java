@@ -33,11 +33,7 @@ public class BaseXMatcherTest extends IMatcherTest {
 
 	protected IMatcher createMatcher() {
 
-		BaseXMatcher matcher = new BaseXMatcher();
-
-		matcher.setForceUseLocalIndexes();
-
-		return matcher;
+		return new BaseXMatcher();
 	}
 
 	protected boolean handlesInstanceDisjunctionBasedQueries() {

@@ -57,8 +57,6 @@ public class BaseXMatcher extends NMatcher {
 	private boolean rebuildStore;
 	private boolean persistStore;
 
-	private boolean forceUseLocalIndexes = false;
-
 	/**
 	 * Constructs matcher with the default configuration (see
 	 * individual "set" methods on {@link BaseXConfig} for default
@@ -113,10 +111,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void initialise(IMatcherIndexes indexes) {
 
-		if (!forceUseLocalIndexes) {
-
-			this.indexes = indexes;
-		}
+		this.indexes = indexes;
 	}
 
 	/**
@@ -172,6 +167,11 @@ public class BaseXMatcher extends NMatcher {
 
 		database.remove(fileStore.getFile(index));
 		fileStore.removeFile(index);
+
+		if (indexes instanceof LocalIndexes) {
+
+			((LocalIndexes)indexes).freeIndex(identity);
+		}
 	}
 
 	/**
@@ -216,10 +216,5 @@ public class BaseXMatcher extends NMatcher {
 
 			fileStore.clear();
 		}
-	}
-
-	void setForceUseLocalIndexes() {
-
-		forceUseLocalIndexes = true;
 	}
 }
