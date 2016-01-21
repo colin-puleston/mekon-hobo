@@ -40,7 +40,7 @@ public abstract class OInstanceIRIs {
 
 	static private final String BASE_NAMESPACE = "urn:mekon-owl:instances";
 
-	static boolean instanceIRI(IRI iri, String namespaceExtn) {
+	static boolean generatedIRI(IRI iri, String namespaceExtn) {
 
 		return iri.toString().startsWith(getNamespace(namespaceExtn) + "#");
 	}

@@ -43,14 +43,14 @@ public class ODynamicInstanceIRIs extends OInstanceIRIs {
 
 	/**
 	 * Tests whether an IRI has the format that would be generated
-	 * by this class for a dynamic instance.
+	 * by this class.
 	 *
 	 * @param iri IRI to test
 	 * @return true if IRI has relevant format
 	 */
 	static public boolean dynamicInstance(IRI iri) {
 
-		return instanceIRI(iri, NAMESPACE_EXTN);
+		return generatedIRI(iri, NAMESPACE_EXTN);
 	}
 
 	private KIndexes<CIdentity> indexes = new LocalIndexes();

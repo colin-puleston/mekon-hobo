@@ -335,4 +335,9 @@ public abstract class ORMatcher extends NMatcher {
 
 		this.reasoningType = reasoningType;
 	}
+
+	boolean instanceIRI(IRI iri) {
+
+		return instanceIRIs.staticInstance(iri);
+	}
 }

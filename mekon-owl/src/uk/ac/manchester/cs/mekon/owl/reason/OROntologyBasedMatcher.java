@@ -123,7 +123,7 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 
 		for (IRI match : matches) {
 
-			if (OStaticInstanceIRIs.staticInstance(match)) {
+			if (instanceIRI(match)) {
 
 				purged.add(match);
 			}
