@@ -167,11 +167,6 @@ public class BaseXMatcher extends NMatcher {
 
 		database.remove(fileStore.getFile(index));
 		fileStore.removeFile(index);
-
-		if (indexes instanceof LocalIndexes) {
-
-			((LocalIndexes)indexes).freeIndex(identity);
-		}
 	}
 
 	/**

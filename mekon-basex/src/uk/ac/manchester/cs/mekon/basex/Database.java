@@ -56,12 +56,12 @@ class Database {
 
 	void add(File file) {
 
-		execute(new Add("", file.getPath()));
+		execute(new Add(getDatabasePath(file), file.getPath()));
 	}
 
 	void remove(File file) {
 
-		execute(new Delete(file.getPath()));
+		execute(new Delete(getDatabasePath(file)));
 	}
 
 	List<Integer> executeQuery(String query) {
@@ -108,6 +108,13 @@ class Database {
 	private Command getStopCommand(boolean keepDB) {
 
 		return keepDB ? new Close() : new DropDB(databaseName);
+	}
+
+	private String getDatabasePath(File file) {
+
+		String name = file.getName();
+
+		return name.substring(0, name.indexOf('.'));
 	}
 
 	private String execute(Command command) {
