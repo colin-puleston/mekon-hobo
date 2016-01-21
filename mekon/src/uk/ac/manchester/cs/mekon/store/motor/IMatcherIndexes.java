@@ -39,6 +39,14 @@ import uk.ac.manchester.cs.mekon.model.*;
 public interface IMatcherIndexes {
 
 	/**
+	 * Checks whether an identity has an assigned index.
+	 *
+	 * @param identity Identity to check
+	 * @return True if identity has an assigned index
+	 */
+	public boolean hasIndex(CIdentity identity);
+
+	/**
 	 * Retrieves the index corresponding to the specified identity.
 	 *
 	 * @param identity Identity for which index is required

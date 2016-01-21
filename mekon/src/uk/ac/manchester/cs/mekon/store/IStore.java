@@ -164,7 +164,11 @@ public class IStore {
 
 		query = deriveFreeInstantiation(query);
 
-		return getMatcher(query).match(query);
+		IMatches matches = getMatcher(query).match(query);
+
+		matches.ensureOriginalLabels(indexes);
+
+		return matches;
 	}
 
 	/**

@@ -128,6 +128,14 @@ public class IMatches {
 		ranks.add(rank);
 	}
 
+	void ensureOriginalLabels(InstanceIndexes indexes) {
+
+		for (IMatchesRank rank : ranks) {
+
+			rank.ensureOriginalLabels(indexes);
+		}
+	}
+
 	private IMatches() {
 
 		this(Collections.<CIdentity>emptyList());
