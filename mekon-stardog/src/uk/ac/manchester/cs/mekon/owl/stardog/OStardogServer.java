@@ -39,7 +39,6 @@ import com.complexible.stardog.protocols.snarl.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * @author Colin Puleston
@@ -54,18 +53,14 @@ class OStardogServer {
 
 	private String databaseName;
 
-	OStardogServer(
-		OModel model,
-		String databaseName,
-		ORReasoningType reasoningType,
-		boolean forceNewDB) {
+	OStardogServer(OModel model, String databaseName, boolean forceNewDB) {
 
 		this.databaseName = databaseName;
 
 		server = startServer();
 		connection = startDatabase(forceNewDB);
 
-		loadModel(model, reasoningType);
+		loadModel(model);
 	}
 
 	Connection getConnection() {
@@ -157,9 +152,9 @@ class OStardogServer {
 				.connect();
 	}
 
-	private void loadModel(OModel model, ORReasoningType reasoningType) {
+	private void loadModel(OModel model) {
 
-		File file = createTempOWLFile(model, reasoningType);
+		File file = model.renderModelToTempFile();
 		Path path = Paths.get(file.toURI());
 
 		connection.begin();
@@ -167,12 +162,5 @@ class OStardogServer {
 		connection.commit();
 
 		file.delete();
-	}
-
-	private File createTempOWLFile(
-					OModel model,
-					ORReasoningType reasoningType) {
-
-		return new ORMatcherModel(model, reasoningType).createTempOWLFile();
 	}
 }

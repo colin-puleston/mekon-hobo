@@ -62,7 +62,7 @@ public class OStardogMatcher extends OTMatcher {
 	 */
 	public OStardogMatcher(OModel model, OStardogConfig config) {
 
-		super(model, config.getReasoningType());
+		super(model);
 
 		initialise(config);
 	}
@@ -140,10 +140,6 @@ public class OStardogMatcher extends OTMatcher {
 
 	private OStardogServer createServer(String databaseName) {
 
-		return new OStardogServer(
-						getModel(),
-						databaseName,
-						getReasoningType(),
-						rebuildStore);
+		return new OStardogServer(getModel(), databaseName, rebuildStore);
 	}
 }

@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * Represents the configuration for a {@link OStardogMatcher}.
@@ -36,7 +35,6 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 public class OStardogConfig implements OStardogConfigVocab {
 
 	private String databaseName = "MEKON";
-	private ORReasoningType reasoningType = ORReasoningType.DL;
 	private boolean rebuildStore = true;
 	private boolean persistStore = false;
 
@@ -86,17 +84,6 @@ public class OStardogConfig implements OStardogConfigVocab {
 	}
 
 	/**
-	 * Sets the type of reasoning required from the matcher.
-	 * Defaults to {@link ORReasoningType#DL}.
-	 *
-	 * @param reasoningType Required reasoning type
-	 */
-	public void setReasoningType(ORReasoningType reasoningType) {
-
-		this.reasoningType = reasoningType;
-	}
-
-	/**
 	 * Sets whether the BaseX store should be completely rebuilt
 	 * from the main MEKON instance store on start-up. Defaults to
 	 * true.
@@ -127,11 +114,6 @@ public class OStardogConfig implements OStardogConfigVocab {
 	String getDatabaseName() {
 
 		return databaseName;
-	}
-
-	ORReasoningType getReasoningType() {
-
-		return reasoningType;
 	}
 
 	boolean rebuildStore() {
