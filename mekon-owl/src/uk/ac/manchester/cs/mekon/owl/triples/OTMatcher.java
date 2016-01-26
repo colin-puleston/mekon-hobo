@@ -52,14 +52,13 @@ public abstract class OTMatcher extends ORMatcher {
 	private Store store = null;
 
 	/**
-	 * Constructs matcher for specified model and reasoning-type.
+	 * Constructs matcher for specified model.
 	 *
 	 * @param model Model over which matcher is to operate
-	 * @param reasoningType Required reasoning-type for matching
 	 */
-	protected OTMatcher(OModel model, ORReasoningType reasoningType) {
+	protected OTMatcher(OModel model) {
 
-		super(model, reasoningType);
+		super(model);
 	}
 
 	/**

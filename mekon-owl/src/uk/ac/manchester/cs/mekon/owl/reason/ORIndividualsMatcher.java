@@ -50,27 +50,13 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	private ODynamicInstanceIRIs dynamicRootIRIs = new ODynamicInstanceIRIs();
 
 	/**
-	 * Constructs matcher for specified model with the default
-	 * reasoning-type, which is {@link ORReasoningType#DL}.
+	 * Constructs matcher for specified model.
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
 	public ORIndividualsMatcher(OModel model) {
 
 		super(model);
-
-		initialise();
-	}
-
-	/**
-	 * Constructs matcher for specified model and reasoning-type.
-	 *
-	 * @param model Model over which matcher is to operate
-	 * @param reasoningType Required reasoning-type for matching
-	 */
-	public ORIndividualsMatcher(OModel model, ORReasoningType reasoningType) {
-
-		super(model, reasoningType);
 
 		initialise();
 	}
@@ -156,7 +142,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private IndividualsRenderer createRenderer() {
 
-		return new IndividualsRenderer(getMatcherModel(), getSemantics());
+		return new IndividualsRenderer(getReasoningModel());
 	}
 
 	private IndividualNetwork createNetwork(NNode node) {
@@ -164,7 +150,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 		IRI rootIRI = dynamicRootIRIs.assign();
 
 		return new IndividualNetwork(
-						getMatcherModel(),
+						getModel(),
 						node,
 						rootIRI,
 						dynamicRenderer);

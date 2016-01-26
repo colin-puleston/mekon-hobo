@@ -40,22 +40,28 @@ public class O_IRIExtractor {
 
 	/**
 	 * Extracts an IRI from the specified <code>CIdentity</code>
-	 * object, assuming that the entity's identifier is a valid IRI.
+	 * object, assuming that the entity's identifier is a valid
+	 * absolute URI.
 	 *
 	 * @param identity Identity from which IRI is to be extracted
 	 * @return IRI extracted from model-entity, or null if entity's
-	 * identifier is not a valid IRI
+	 * identifier is not a valid absolute URI
 	 */
 	static public IRI extractIRI(CIdentity identity) {
 
 		try {
 
-			return IRI.create(new URI(identity.getIdentifier()));
+			URI uri = new URI(identity.getIdentifier());
+
+			if (uri.isAbsolute()) {
+
+				return IRI.create(uri);
+			}
 		}
 		catch (URISyntaxException e) {
-
-			return null;
 		}
+
+		return null;
 	}
 
 	/**

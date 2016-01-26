@@ -154,7 +154,7 @@ abstract class Renderer<NR extends OWLObject> {
 
 		private boolean closedWorldSemantics() {
 
-			return semantics.getWorld(getFeatureIRI()).closed();
+			return semantics.getWorld(model, getFeatureIRI()).closed();
 		}
 
 		private IRI getFeatureIRI() {

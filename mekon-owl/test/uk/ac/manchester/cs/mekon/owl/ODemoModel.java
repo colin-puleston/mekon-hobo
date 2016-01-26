@@ -49,11 +49,16 @@ public class ODemoModel {
 
 	static public OModel create() {
 
-		OModel model = new OModel(getOWLFile(), REASONER_FACTORY_CLASS, true);
+		OModelBuilder bldr = createBuilder();
 
-		model.setIndirectNumericProperty(nameToIRI(NUMERIC_PROPERTY));
+		bldr.setIndirectNumericProperty(nameToIRI(NUMERIC_PROPERTY));
 
-		return model;
+		return bldr.create(true);
+	}
+
+	static private OModelBuilder createBuilder() {
+
+		return new OModelBuilder(getOWLFile(), REASONER_FACTORY_CLASS);
 	}
 
 	static private IRI nameToIRI(String name) {

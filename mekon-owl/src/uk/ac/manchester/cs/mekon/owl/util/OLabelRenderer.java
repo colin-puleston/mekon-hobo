@@ -160,6 +160,6 @@ public class OLabelRenderer {
 
 		return new OWLOntologyImportsClosureSetProvider(
 						model.getManager(),
-						model.getMainOntology());
+						model.getModelOntology());
 	}
 }

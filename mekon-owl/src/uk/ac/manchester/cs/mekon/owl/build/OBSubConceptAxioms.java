@@ -63,7 +63,7 @@ class OBSubConceptAxioms {
 
 	private Set<OWLSubClassOfAxiom> getAxioms() {
 
-		return getMainOntology().getAxioms(AxiomType.SUBCLASS_OF, true);
+		return getModelOntology().getAxioms(AxiomType.SUBCLASS_OF, true);
 	}
 
 	private boolean isModelAxiom(OWLSubClassOfAxiom subConceptOf) {
@@ -78,8 +78,8 @@ class OBSubConceptAxioms {
 				&& properties.containsAllInSignature(expression);
 	}
 
-	private OWLOntology getMainOntology() {
+	private OWLOntology getModelOntology() {
 
-		return model.getMainOntology();
+		return model.getModelOntology();
 	}
 }

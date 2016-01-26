@@ -45,7 +45,7 @@ class OObjectProperties
 
 	Set<OWLObjectProperty> findAll() {
 
-		return getMainOntology().getObjectPropertiesInSignature(true);
+		return getModelOntology().getObjectPropertiesInSignature(true);
 	}
 
 	OWLObjectProperty getTop() {

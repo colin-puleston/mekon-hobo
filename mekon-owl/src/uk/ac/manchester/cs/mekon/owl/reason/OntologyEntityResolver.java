@@ -59,14 +59,13 @@ class OntologyEntityResolver {
 
 	OntologyEntityResolver(OModel model) {
 
-		this(model, new OConceptFinder(model));
+		concepts = new OConceptFinder(model);
+		properties = new OPropertyFinder(model);
 	}
 
-	OntologyEntityResolver(OModel model, OConceptFinder concepts) {
+	boolean canResolve(CFrame rootType) {
 
-		this.concepts = concepts;
-
-		properties = new OPropertyFinder(model);
+		return concepts.getSubsumerOrNull(rootType) != null;
 	}
 
 	void resolve(NNode rootNode) {

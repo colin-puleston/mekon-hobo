@@ -29,10 +29,8 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
-import org.semanticweb.owlapi.apibinding.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * Provides access to an OWL model and associated reasoner, via
@@ -40,9 +38,12 @@ import uk.ac.manchester.cs.mekon.config.*;
  * of MEKON-specific convenience methods. The OWL model is accessed
  * via:
  * <ul>
- *   <li>A main ontology
- *   <li>A complete set of associated ontologies, constituting the
- *   imports-closure for the main ontology
+ *   <li>A single model ontology, combining axioms from all of the
+ *	 initial input ontologies (the main entry-point ontology plus the
+ *	 set of ontologies constituting its imports-closure)
+ *   <li>A single "instance" ontology, into which any direct
+ *	 ontology-based model-instantiation representations will be
+ *	 rendered
  *   <li>A manager for the relevant set of ontologies
  *   <li>A reasoner for reasoning over the relevant set of ontologies
  * </ul>
@@ -52,8 +53,10 @@ import uk.ac.manchester.cs.mekon.config.*;
 public class OModel {
 
 	private OWLOntologyManager manager;
-	private OWLOntology mainOntology;
+	private OWLOntology modelOntology;
+	private OWLOntology instanceOntology;
 	private OWLReasonerFactory reasonerFactory;
+	private OReasoningType reasoningType;
 	private OWLDataProperty indirectNumericProperty;
 
 	private ReasonerAccessor reasonerAccessor = new ReasonerStarter();
@@ -62,7 +65,8 @@ public class OModel {
 	private OObjectProperties objectProperties;
 	private ODataProperties dataProperties;
 
-	private OAxioms axioms;
+	private OAxioms modelAxioms;
+	private OAxioms instanceAxioms;
 
 	private abstract class ReasonerAccessor {
 
@@ -82,7 +86,7 @@ public class OModel {
 
 		private OWLReasoner create() {
 
-			return reasonerFactory.createReasoner(mainOntology);
+			return reasonerFactory.createReasoner(instanceOntology);
 		}
 	}
 
@@ -102,88 +106,6 @@ public class OModel {
 	}
 
 	/**
-	 * Creates model with specified manager, main ontology and reasoner
-	 * created by specified factory.
-	 *
-	 * @param manager Manager for set of ontologies
-	 * @param mainOntology Main ontology
-	 * @param reasonerFactory Factory for creating required reasoner
-	 * @param startReasoner True if initial classification of the ontology
-	 * and subsequent initialisation of cached-data are to be invoked
-	 * (otherwise {@link #startReasoner} method should be invoked
-	 * prior to use)
-	 */
-	public OModel(
-			OWLOntologyManager manager,
-			OWLOntology mainOntology,
-			OWLReasonerFactory reasonerFactory,
-			boolean startReasoner) {
-
-		this.manager = manager;
-		this.mainOntology = mainOntology;
-		this.reasonerFactory = reasonerFactory;
-
-		initialise(startReasoner);
-	}
-
-	/**
-	 * Creates model with main ontology loaded from specified OWL file
-	 * manager created for that ontology and it's imports-closure,
-	 * and reasoner created by a factory of the specified type. The OWL
-	 * files containing the imports should all be located in the same
-	 * directory as the main OWL file, or a descendant directory of
-	 * that one.
-	 *
-	 * @param mainOWLFile OWL file containing main ontology
-	 * @param reasonerFactoryType Type of factory for creating required
-	 * reasoner
-	 * @param startReasoner True if initial classification of the ontology
-	 * and subsequent initialisation of cached-data are to be invoked
-	 * (otherwise {@link #startReasoner} method should be invoked
-	 * prior to use)
-	 */
-	public OModel(
-			File mainOWLFile,
-			Class<? extends OWLReasonerFactory> reasonerFactoryType,
-			boolean startReasoner) {
-
-		manager = createManager(mainOWLFile);
-		mainOntology = loadOntology(mainOWLFile);
-		reasonerFactory = createReasonerFactory(reasonerFactoryType);
-
-		initialise(startReasoner);
-	}
-
-	/**
-	 * Creates new model with all ontologies from this one copied into
-	 * a single ontology. Also copies the "indirect-numeric-property" from
-	 * this model, if set.
-	 *
-	 * @param reasonerFactory Factory for creating required reasoner
-	 * @param startReasoner True if initial classification of the ontology
-	 * and subsequent initialisation of cached-data are to be invoked on
-	 * copy (otherwise {@link #startReasoner} method should be invoked
-	 * prior to use)
-	 * @return Created model
-	 */
-	public OModel copy(
-					OWLReasonerFactory reasonerFactory,
-					boolean startReasoner) {
-
-		OWLOntologyManager om = OWLManager.createOWLOntologyManager();
-		OWLOntology ontology = copyOntologies(om);
-
-		OModel copy = new OModel(om, ontology, reasonerFactory, startReasoner);
-
-		if (indirectNumericProperty != null) {
-
-			copy.setIndirectNumericProperty(indirectNumericProperty.getIRI());
-		}
-
-		return copy;
-	}
-
-	/**
 	 * Sets the "indirect-numeric-property" for the model.
 	 *
 	 * @param iri IRI of indirect-numeric-property for model, or null
@@ -195,43 +117,83 @@ public class OModel {
 	}
 
 	/**
-	 * Adds an axiom to the main-ontology.
+	 * Adds an axiom to the model-ontology.
 	 *
 	 * @param axiom Axiom to be added
 	 */
-	public void addAxiom(OWLAxiom axiom) {
+	public void addModelAxiom(OWLAxiom axiom) {
 
-		axioms.add(axiom);
+		modelAxioms.add(axiom);
 	}
 
 	/**
-	 * Adds a set of axioms to the main-ontology.
+	 * Adds a set of axioms to the model-ontology.
 	 *
-	 * @param axiomsSet Axioms to be added
+	 * @param axioms Axioms to be added
 	 */
-	public void addAxioms(Set<? extends OWLAxiom> axiomsSet) {
+	public void addModelAxioms(Set<? extends OWLAxiom> axioms) {
 
-		axioms.addAll(axiomsSet);
+		modelAxioms.addAll(axioms);
 	}
 
 	/**
-	 * Removes an axiom from the main-ontology.
+	 * Removes an axiom from the model-ontology.
 	 *
 	 * @param axiom Axiom to be removed
 	 */
-	public void removeAxiom(OWLAxiom axiom) {
+	public void removeModelAxiom(OWLAxiom axiom) {
 
-		axioms.remove(axiom);
+		modelAxioms.remove(axiom);
 	}
 
 	/**
-	 * Removes a set of axioms from the main-ontology.
+	 * Removes a set of axioms from the model-ontology.
 	 *
-	 * @param axiomsSet Axioms to be removed
+	 * @param axioms Axioms to be removed
 	 */
-	public void removeAxioms(Set<? extends OWLAxiom> axiomsSet) {
+	public void removeModelAxioms(Set<? extends OWLAxiom> axioms) {
 
-		axioms.removeAll(axiomsSet);
+		modelAxioms.removeAll(axioms);
+	}
+
+	/**
+	 * Adds an axiom to the instance-ontology.
+	 *
+	 * @param axiom Axiom to be added
+	 */
+	public void addInstanceAxiom(OWLAxiom axiom) {
+
+		instanceAxioms.add(axiom);
+	}
+
+	/**
+	 * Adds a set of axioms to the instance-ontology.
+	 *
+	 * @param axioms Axioms to be added
+	 */
+	public void addInstanceAxioms(Set<? extends OWLAxiom> axioms) {
+
+		instanceAxioms.addAll(axioms);
+	}
+
+	/**
+	 * Removes an axiom from the instance-ontology.
+	 *
+	 * @param axiom Axiom to be removed
+	 */
+	public void removeInstanceAxiom(OWLAxiom axiom) {
+
+		instanceAxioms.remove(axiom);
+	}
+
+	/**
+	 * Removes a set of axioms from the instance-ontology.
+	 *
+	 * @param axioms Axioms to be removed
+	 */
+	public void removeInstanceAxioms(Set<? extends OWLAxiom> axioms) {
+
+		instanceAxioms.removeAll(axioms);
 	}
 
 	/**
@@ -239,7 +201,7 @@ public class OModel {
 	 */
 	public void retainOnlyDeclarationAxioms() {
 
-		axioms.retainOnlyDeclarations();
+		modelAxioms.retainOnlyDeclarations();
 	}
 
 	/**
@@ -274,13 +236,23 @@ public class OModel {
 	}
 
 	/**
-	 * Provides the main ontology.
+	 * Provides the model ontology.
 	 *
-	 * @return Main ontology
+	 * @return Instance ontology
 	 */
-	public OWLOntology getMainOntology() {
+	public OWLOntology getModelOntology() {
 
-		return mainOntology;
+		return modelOntology;
+	}
+
+	/**
+	 * Provides the instance ontology.
+	 *
+	 * @return Instance ontology
+	 */
+	public OWLOntology getInstanceOntology() {
+
+		return instanceOntology;
 	}
 
 	/**
@@ -314,13 +286,14 @@ public class OModel {
 	}
 
 	/**
-	 * Provides the factory for creating the reasoner.
+	 * Specifies the type of reasoning that is to be performed on
+	 * the model.
 	 *
-	 * @return Factory for reasoner
+	 * @return Relevant reasoning-type
 	 */
-	public OWLReasonerFactory getReasonerFactory() {
+	public OReasoningType getReasoningType() {
 
-		return reasonerFactory;
+		return reasoningType;
 	}
 
 	/**
@@ -364,7 +337,7 @@ public class OModel {
 	 */
 	public OWLAnnotationProperty getAnnotationProperty(IRI iri) {
 
-		if (mainOntology.containsAnnotationPropertyInSignature(iri, true)) {
+		if (modelOntology.containsAnnotationPropertyInSignature(iri, true)) {
 
 			return getDataFactory().getOWLAnnotationProperty(iri);
 		}
@@ -601,68 +574,88 @@ public class OModel {
 		return indirectNumericProperty;
 	}
 
-	private OWLOntologyManager createManager(File owlFile) {
+	/**
+	 * Renders the model ontology to the specified file.
+	 *
+	 * @param file File to which model ontology is to be rendered
+	 */
+	public void renderModelToFile(File file) {
 
-		OWLOntologyManager om = OWLManager.createOWLOntologyManager();
-
-		om.addIRIMapper(createIRIMapper(owlFile));
-
-		return om;
+		new OntologyFileRenderer(modelOntology).renderTo(file);
 	}
 
-	private OWLOntology loadOntology(File owlFile) {
+	/**
+	 * Renders the model ontology to a temporary file, which is
+	 * created via the {@link File#createTempFile} method.
+	 *
+	 * @return Temporary file to which model ontology has been rendered
+	 */
+	public File renderModelToTempFile() {
 
-		try {
-
-			OMonitor.pollForPreOntologyLoad(owlFile);
-			OWLOntology ontology = manager.loadOntologyFromOntologyDocument(owlFile);
-			OMonitor.pollForOntologyLoaded();
-
-			return ontology;
-		}
-		catch (OWLOntologyCreationException e) {
-
-			throw new KModelException(e);
-		}
+		return new OntologyFileRenderer(modelOntology).renderToTemp();
 	}
 
-	private void initialise(boolean startReasoner) {
+	/**
+	 * Renders the instance ontology to the specified file.
+	 *
+	 * @param file File to which instance ontology is to be rendered
+	 */
+	public void renderInstancesToFile(File file) {
+
+		new OntologyFileRenderer(instanceOntology).renderTo(file);
+	}
+
+	/**
+	 * Renders the instance ontology to a temporary file, which is
+	 * created via the {@link File#createTempFile} method.
+	 *
+	 * @return Temporary file to which instance ontology has been rendered
+	 */
+	public File renderInstancesToTempFile() {
+
+		return new OntologyFileRenderer(instanceOntology).renderToTemp();
+	}
+
+	OModel(
+		OWLOntologyManager manager,
+		OWLOntology modelOntology,
+		OWLOntology instanceOntology,
+		OWLReasonerFactory reasonerFactory,
+		OReasoningType reasoningType) {
+
+		this.manager = manager;
+		this.modelOntology = modelOntology;
+		this.instanceOntology = instanceOntology;
+		this.reasonerFactory = reasonerFactory;
+		this.reasoningType = reasoningType;
 
 		concepts = new OConcepts(this);
 		objectProperties = new OObjectProperties(this);
 		dataProperties = new ODataProperties(this);
 
-		axioms = new OAxioms(this);
+		modelAxioms = new OAxioms(this, modelOntology);
+		instanceAxioms = new OAxioms(this, instanceOntology);
+	}
 
-		if (startReasoner) {
+	void purgeForReasoningType() {
 
-			startReasoner();
+		for (OWLAxiom axiom : modelOntology.getAxioms()) {
+
+			if (!reasoningType.requiredAxiom(axiom)) {
+
+				modelAxioms.remove(axiom);
+			}
 		}
 	}
 
-	private OWLReasonerFactory createReasonerFactory(
-									Class<? extends OWLReasonerFactory> type) {
+	void assertSubConcept(OWLClass concept, OWLClass subConcept) {
 
-		return new KConfigObjectConstructor<OWLReasonerFactory>(type).construct();
+		addModelAxiom(getSubClassAxiom(concept, subConcept));
 	}
 
-	private OWLOntologyIRIMapper createIRIMapper(File owlFile) {
+	OWLReasonerFactory getReasonerFactory() {
 
-		return new PathSearchOntologyIRIMapper(owlFile.getParentFile());
-	}
-
-	private OWLOntology copyOntologies(OWLOntologyManager newManager) {
-
-		IRI iri = mainOntology.getOntologyID().getOntologyIRI();
-
-		try {
-
-			return newManager.createOntology(iri, getAllOntologies(), false);
-		}
-		catch (OWLOntologyCreationException e) {
-
-			throw new KModelException(e);
-		}
+		return reasonerFactory;
 	}
 
 	private void classify() {
@@ -679,7 +672,7 @@ public class OModel {
 			return null;
 		}
 
-		if (mainOntology.containsDataPropertyInSignature(iri, true)) {
+		if (modelOntology.containsDataPropertyInSignature(iri, true)) {
 
 			return manager.getOWLDataFactory().getOWLDataProperty(iri);
 		}

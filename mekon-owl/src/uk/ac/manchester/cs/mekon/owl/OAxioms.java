@@ -29,14 +29,13 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * @author Colin Puleston
  */
 class OAxioms {
 
 	private OModel model;
+	private OWLOntology ontology;
 
 	private abstract class AxiomProcessor {
 
@@ -87,14 +86,15 @@ class OAxioms {
 		}
 	}
 
-	OAxioms(OModel model) {
+	OAxioms(OModel model, OWLOntology ontology) {
 
 		this.model = model;
+		this.ontology = ontology;
 	}
 
 	synchronized void add(OWLAxiom axiom) {
 
-		getManager().addAxiom(getMainOntology(), axiom);
+		getManager().addAxiom(ontology, axiom);
 
 		new AddedAxiomProcessor().process(axiom);
 	}
@@ -109,7 +109,7 @@ class OAxioms {
 
 	synchronized void remove(OWLAxiom axiom) {
 
-		getManager().removeAxiom(findOntology(axiom), axiom);
+		getManager().removeAxiom(ontology, axiom);
 
 		new RemovedAxiomProcessor().process(axiom);
 	}
@@ -124,43 +124,17 @@ class OAxioms {
 
 	void retainOnlyDeclarations() {
 
-		for (OWLOntology ont : getAllOntologies()) {
+		for (OWLAxiom axiom : ontology.getAxioms()) {
 
-			for (OWLAxiom axiom : ont.getAxioms()) {
+			if (!(axiom instanceof OWLDeclarationAxiom)) {
 
-				if (!(axiom instanceof OWLDeclarationAxiom)) {
-
-					getManager().removeAxiom(ont, axiom);
-				}
+				getManager().removeAxiom(ontology, axiom);
 			}
 		}
-	}
-
-	private OWLOntology findOntology(OWLAxiom axiom) {
-
-		for (OWLOntology ont : getAllOntologies()) {
-
-			if (ont.containsAxiom(axiom)) {
-
-				return ont;
-			}
-		}
-
-		throw new KModelException("Cannot find axiom: " + axiom);
 	}
 
 	private OWLOntologyManager getManager() {
 
 		return model.getManager();
-	}
-
-	private OWLOntology getMainOntology() {
-
-		return model.getMainOntology();
-	}
-
-	private Set<OWLOntology> getAllOntologies() {
-
-		return model.getAllOntologies();
 	}
 }

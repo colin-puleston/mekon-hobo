@@ -127,9 +127,9 @@ public abstract class OEntities<E extends OWLEntity> {
 		return model;
 	}
 
-	OWLOntology getMainOntology() {
+	OWLOntology getModelOntology() {
 
-		return model.getMainOntology();
+		return model.getModelOntology();
 	}
 
 	Set<OWLOntology> getAllOntologies() {

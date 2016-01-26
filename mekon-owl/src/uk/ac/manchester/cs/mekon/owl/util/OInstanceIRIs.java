@@ -38,7 +38,10 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public abstract class OInstanceIRIs {
 
-	static private final String BASE_NAMESPACE = "urn:mekon-owl:instances";
+	/**
+	 * Provides the base-namespace for all instantiation IRIs.
+	 */
+	static public final String BASE_NAMESPACE = "urn:mekon-owl:instances";
 
 	static boolean generatedIRI(IRI iri, String namespaceExtn) {
 

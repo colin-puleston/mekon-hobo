@@ -165,15 +165,16 @@ public class ORClassifierTest extends DemoModelBasedTest {
 					ORSemanticWorld defaultWorld,
 					String... exceptionPropertyNames) {
 
-		ORSemantics ss = classifier.getSemantics();
+		ORSemantics semantics = new ORSemantics();
 
-		ss.setDefaultWorld(defaultWorld);
-		ss.clearExceptionProperties();
+		semantics.setDefaultWorld(defaultWorld);
 
 		for (String exPropName : exceptionPropertyNames) {
 
-			ss.addExceptionProperty(nameToIdentifier(exPropName));
+			semantics.addExceptionProperty(nameToIdentifier(exPropName));
 		}
+
+		classifier.setSemantics(semantics);
 	}
 
 	private void testInferredTypes(IFrame iFrame, String... typeNames) {

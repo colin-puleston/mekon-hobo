@@ -47,7 +47,8 @@ class OModelConfig implements OModelConfigVocab {
 	void configure(OModelBuilder builder, File baseDirectory) {
 
 		builder.setMainOWLFile(getMainOWLFile(baseDirectory));
-		builder.setReasonerFactory(getReasonerFactoryClass());
+		builder.setReasoner(getReasonerFactoryClass());
+		builder.setReasoningType(getReasoningType());
 		builder.setIndirectNumericProperty(getIndirectNumericPropertyIRI());
 	}
 
@@ -59,6 +60,14 @@ class OModelConfig implements OModelConfigVocab {
 	private Class<? extends OWLReasonerFactory> getReasonerFactoryClass() {
 
 		return configNode.getClass(REASONER_FACTORY_CLASS_ATTR, OWLReasonerFactory.class);
+	}
+
+	private OReasoningType getReasoningType() {
+
+		 return configNode.getEnum(
+			 		REASONING_TYPE_ATTR,
+			 		OReasoningType.class,
+			 		OReasoningType.DL);
 	}
 
 	private IRI getIndirectNumericPropertyIRI() {

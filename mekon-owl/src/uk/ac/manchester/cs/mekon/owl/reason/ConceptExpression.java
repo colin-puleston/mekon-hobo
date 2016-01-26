@@ -38,14 +38,12 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 class ConceptExpression extends InstanceConstruct {
 
 	private OModel model;
-
 	private OWLClassExpression expression;
 
-	ConceptExpression(OModel model, ORSemantics semantics, NNode node) {
+	ConceptExpression(ReasoningModel reasoningModel, NNode node) {
 
-		this.model = model;
-
-		expression = nodeToExpression(node, semantics);
+		model = reasoningModel.getModel();
+		expression = nodeToExpression(node, reasoningModel.getSemantics());
 	}
 
 	boolean subsumes(ConceptExpression testSubsumed) {

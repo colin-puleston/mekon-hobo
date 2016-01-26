@@ -36,13 +36,17 @@ class ORClassifierConfig extends ORConfig {
 		return parentConfigNode.getChildOrNull(CLASSIFIER_ROOT_ID) != null;
 	}
 
-	ORClassifierConfig(KConfigNode parentConfigNode) {
+	private ORClassifier classifier;
 
-		super(parentConfigNode, CLASSIFIER_ROOT_ID);
+	ORClassifierConfig(
+		ReasoningModel reasoningModel,
+		KConfigNode parentConfigNode) {
+
+		super(reasoningModel, parentConfigNode, CLASSIFIER_ROOT_ID);
 	}
 
-	void configure(ORClassifier classifier) {
+	ORLogger getLogger() {
 
-		configure(classifier.getSemantics(), ORClassifierLogger.get());
+		return ORClassifierLogger.get();
 	}
 }

@@ -200,9 +200,9 @@ public abstract class OBEntities
 		return model;
 	}
 
-	OWLOntology getMainOntology() {
+	OWLOntology getModelOntology() {
 
-		return model.getMainOntology();
+		return model.getModelOntology();
 	}
 
 	OWLDataFactory getDataFactory() {

@@ -28,79 +28,92 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class OROntologyBasedMatcher extends ORMatcher {
+class ReasoningModel {
 
-	public boolean rebuildOnStartup() {
+	static final ORSemantics DEFAULT_SEMANTICS = new ORSemantics();
 
-		return true;
+	private OModel model;
+	private OModel sourceModel;
+
+	private ORSemantics semantics = DEFAULT_SEMANTICS;
+	private OntologyEntityResolver ontologyEntities;
+
+	ReasoningModel(OModel model) {
+
+		setModel(model);
+
+		sourceModel = model;
 	}
 
-	protected List<IRI> matchInOWLStore(NNode query) {
+	void setReasoningType(OReasoningType reasoningType) {
 
-		ConceptExpression expr = createConceptExpression(query);
-		OWLObject owlConstruct = expr.getOWLConstruct();
+		if (reasoningType != model.getReasoningType()) {
 
-		ORMonitor.pollForMatcherRequest(getModel(), owlConstruct);
-
-		List<IRI> matches = purgeMatches(matchInOWLStore(expr));
-
-		ORMonitor.pollForMatchesFound(getModel(), matches);
-		ORMonitor.pollForMatcherDone(getModel(), owlConstruct);
-
-		return matches;
-	}
-
-	protected boolean matchesInOWL(NNode query, NNode instance) {
-
-		return matchesInOWL(createConceptExpression(query), instance);
-	}
-
-	OROntologyBasedMatcher(OModel model) {
-
-		super(model);
-	}
-
-	OROntologyBasedMatcher(KConfigNode parentConfigNode) {
-
-		super(parentConfigNode);
-	}
-
-	OROntologyBasedMatcher(OModel model, KConfigNode parentConfigNode) {
-
-		super(model, parentConfigNode);
-	}
-
-	abstract List<IRI> matchInOWLStore(ConceptExpression queryExpr);
-
-	abstract boolean matchesInOWL(ConceptExpression queryExpr, NNode instance);
-
-	ConceptExpression createConceptExpression(NNode node) {
-
-		return new ConceptExpression(getReasoningModel(), node);
-	}
-
-	private List<IRI> purgeMatches(List<IRI> matches) {
-
-		List<IRI> purged = new ArrayList<IRI>();
-
-		for (IRI match : matches) {
-
-			if (instanceIRI(match)) {
-
-				purged.add(match);
-			}
+			setModel(deriveModel(reasoningType));
 		}
+	}
 
-		return purged;
+	void setSemantics(ORSemantics semantics) {
+
+		this.semantics = semantics;
+	}
+
+	void ensureLocalModel() {
+
+		if (model == sourceModel) {
+
+			setModel(copyModel());
+		}
+	}
+
+	OModel getModel() {
+
+		return model;
+	}
+
+	ORSemantics getSemantics() {
+
+		return semantics;
+	}
+
+	boolean canResolveOntologyEntities(CFrame rootType) {
+
+		return ontologyEntities.canResolve(rootType);
+	}
+
+	void resolveOntologyEntities(NNode rootNode) {
+
+		ontologyEntities.resolve(rootNode);
+	}
+
+	private OModel deriveModel(OReasoningType reasoningType) {
+
+		OModelCopier copier = new OModelCopier(model);
+
+		copier.setReasoningType(reasoningType);
+
+		return copier.create(true);
+	}
+
+	private OModel copyModel() {
+
+		return new OModelCopier(model).create(true);
+	}
+
+	private void setModel(OModel model) {
+
+		this.model = model;
+
+		ontologyEntities = new OntologyEntityResolver(model);
 	}
 }

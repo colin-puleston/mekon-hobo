@@ -25,38 +25,53 @@
 package uk.ac.manchester.cs.mekon.owl.reason;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
 abstract class ORConfig implements ORConfigVocab {
 
+	private ReasoningModel reasoningModel;
 	private KConfigNode configNode;
 
-	ORConfig(KConfigNode parentConfigNode, String rootId) {
+	ORConfig(
+		ReasoningModel reasoningModel,
+		KConfigNode parentConfigNode,
+		String rootId) {
+
+		this.reasoningModel = reasoningModel;
 
 		configNode = parentConfigNode.getChild(rootId);
+
+		checkSetReasoningType();
+		checkSetSemantics();
+		checkEnableLogging();
 	}
 
-	void configure(ORSemantics semantics, ORLogger logger) {
+	abstract ORLogger getLogger();
 
-		checkSetSemantics(semantics);
-		checkEnableLogging(logger);
+	private void checkSetReasoningType() {
+
+		OReasoningType reasoningType = getReasoningTypeOrNull();
+
+		if (reasoningType != null) {
+
+			reasoningModel.setReasoningType(reasoningType);
+		}
 	}
 
-	KConfigNode getConfigNode() {
+	private void checkSetSemantics() {
 
-		return configNode;
-	}
-
-	private void checkSetSemantics(ORSemantics semantics) {
-
+		ORSemantics semantics = new ORSemantics();
 		KConfigNode semanticNode = configNode.getChildOrNull(SEMANTICS_ID);
 
 		if (semanticNode != null) {
 
 			setDefaultSemantics(semanticNode, semantics);
 			setSemanticsOverrides(semanticNode, semantics);
+
+			reasoningModel.setSemantics(semantics);
 		}
 	}
 
@@ -73,20 +88,17 @@ abstract class ORConfig implements ORConfigVocab {
 
 		for (KConfigNode exNode : semanticNode.getChildren(EXCEPTION_PROP_ID)) {
 
-			semantics.addExceptionProperty(getExceptionPropertyURI(exNode));
+			semantics.addExceptionProperty(getSemanticsExceptionPropURI(exNode));
 		}
 	}
 
-	private ORSemanticWorld getDefaultSemantics(KConfigNode semanticsNode) {
-
-		return semanticsNode.getEnum(DEFAULT_SEMANTICS_ATTR, ORSemanticWorld.class);
-	}
-
-	private void checkEnableLogging(ORLogger logger) {
+	private void checkEnableLogging() {
 
 		ORLoggingMode mode = getLoggingMode();
 
 		if (mode != ORLoggingMode.DISABLED) {
+
+			ORLogger logger = getLogger();
 
 			logger.checkStart();
 
@@ -98,13 +110,26 @@ abstract class ORConfig implements ORConfigVocab {
 		}
 	}
 
-	private ORLoggingMode getLoggingMode() {
+	private OReasoningType getReasoningTypeOrNull() {
 
-		return getConfigNode().getEnum(LOGGING_MODE_ATTR, ORLoggingMode.class);
+		 return configNode.getEnum(
+			 		REASONING_TYPE_ATTR,
+			 		OReasoningType.class,
+			 		null);
 	}
 
-	private String getExceptionPropertyURI(KConfigNode expPropNode) {
+	private ORSemanticWorld getDefaultSemantics(KConfigNode semanticsNode) {
 
-		return expPropNode.getString(EXCEPTION_PROP_URI_ATTR);
+		return semanticsNode.getEnum(DEFAULT_SEMANTICS_ATTR, ORSemanticWorld.class);
+	}
+
+	private String getSemanticsExceptionPropURI(KConfigNode expPropNode) {
+
+		return expPropNode.getString(SEMANICS_EXCEPTION_PROP_URI_ATTR);
+	}
+
+	private ORLoggingMode getLoggingMode() {
+
+		return configNode.getEnum(LOGGING_MODE_ATTR, ORLoggingMode.class);
 	}
 }

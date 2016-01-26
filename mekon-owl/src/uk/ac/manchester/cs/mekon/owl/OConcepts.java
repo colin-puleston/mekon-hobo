@@ -96,7 +96,7 @@ class OConcepts extends OEntities<OWLClass> {
 
 	Set<OWLClass> findAll() {
 
-		return getMainOntology().getClassesInSignature(true);
+		return getModelOntology().getClassesInSignature(true);
 	}
 
 	OWLClass getTop() {

@@ -161,7 +161,11 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 
 	private OModel createPayloadsModel(OModel mainModel) {
 
-		return mainModel.copy(new StructuralReasonerFactory(), true);
+		OModelCopier copier = new OModelCopier(mainModel);
+
+		copier.setReasoner(StructuralReasonerFactory.class);
+
+		return copier.create(true);
 	}
 
 	private void removePayloadAxioms(OWLOntologyManager manager) {

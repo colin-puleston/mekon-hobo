@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.util;
 
-import java.net.*;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
@@ -68,7 +67,7 @@ public class OStaticInstanceIRIs extends OInstanceIRIs {
 	public IRI get(CIdentity identity) {
 
 		int index = indexes.getIndex(identity);
-		IRI iri = checkPredefinedIRI(identity);
+		IRI iri = O_IRIExtractor.extractIRI(identity);
 
 		return iri != null ? iri : create(index);
 	}
@@ -102,18 +101,6 @@ public class OStaticInstanceIRIs extends OInstanceIRIs {
 	CIdentity toIdentity(int index) {
 
 		return indexes.getIdentity(index);
-	}
-
-	private IRI checkPredefinedIRI(CIdentity identity) {
-
-		try {
-
-			return IRI.create(new URI(identity.getIdentifier()));
-		}
-		catch (URISyntaxException e) {
-
-			return null;
-		}
 	}
 
 	private boolean predefinedIRI(IRI iri) {

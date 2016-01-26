@@ -36,5 +36,6 @@ public interface OModelConfigVocab {
 
 	static public final String OWL_FILE_ATTR = "owlFile";
 	static public final String REASONER_FACTORY_CLASS_ATTR = "reasonerFactory";
+	static public final String REASONING_TYPE_ATTR = "reasoningType";
 	static public final String INDIRECT_NUMERIC_PROPERTY_URI_ATTR = "indirectNumericProperty";
 }

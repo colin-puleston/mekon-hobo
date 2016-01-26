@@ -117,13 +117,41 @@ public abstract class ORMatcher extends NMatcher {
 		return new OModelBuilder(parentConfigNode).create(true);
 	}
 
-	private OModel model;
-	private ORReasoningType reasoningType;
-	private ORSemantics semantics;
-
-	private OConceptFinder concepts;
-	private OntologyEntityResolver ontologyEntityResolver;
+	private ReasoningModel reasoningModel;
 	private OStaticInstanceIRIs instanceIRIs = new OStaticInstanceIRIs();
+
+	/**
+	 * Sets the type of reasoning that is to be performed on the
+	 * model.
+	 *
+	 * @param reasoningType Relevant reasoning-type
+	 */
+	public void setReasoningType(OReasoningType reasoningType) {
+
+		reasoningModel.setReasoningType(reasoningType);
+	}
+
+	/**
+	 * Set the the open/closed world semantics that are to be
+	 * embodied by the OWL constructs that will be created to
+	 * represent instances being stored and queries being executed.
+	 *
+	 * @param semantics Required semantics
+	 */
+	public void setSemantics(ORSemantics semantics) {
+
+		reasoningModel.setSemantics(semantics);
+	}
+
+	/**
+	 * Provides the model over which the matcher is operating.
+	 *
+	 * @return Model over which matcher is operating
+	 */
+	public OModel getModel() {
+
+		return reasoningModel.getModel();
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -143,7 +171,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	public boolean handlesType(CFrame type) {
 
-		return concepts.getSubsumerOrNull(type) != null;
+		return reasoningModel.canResolveOntologyEntities(type);
 	}
 
 	/**
@@ -157,7 +185,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	public void add(NNode instance, CIdentity identity) {
 
-		ontologyEntityResolver.resolve(instance);
+		reasoningModel.resolveOntologyEntities(instance);
 
 		addToOWLStore(instance, instanceIRIs.get(identity));
 	}
@@ -184,7 +212,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	public IMatches match(NNode query) {
 
-		ontologyEntityResolver.resolve(query);
+		reasoningModel.resolveOntologyEntities(query);
 
 		List<IRI> iris = matchInOWLStore(query);
 
@@ -203,61 +231,20 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	public boolean matches(NNode query, NNode instance) {
 
-		ontologyEntityResolver.resolve(query);
-		ontologyEntityResolver.resolve(instance);
+		reasoningModel.resolveOntologyEntities(query);
+		reasoningModel.resolveOntologyEntities(instance);
 
 		return matchesInOWL(query, instance);
-	}
-
-	/**
-	 * Provides the model over which the matcher is operating.
-	 *
-	 * @return Model over which matcher is operating
-	 */
-	public OModel getModel() {
-
-		return model;
-	}
-
-	/**
-	 * Provides the object used to specify the open/closed world
-	 * semantics to be embodied by the OWL constructs that will be
-	 * created to represent instances being stored and queries being
-	 * executed.
-	 *
-	 * @return Object for specifying open/closed world semantics
-	 */
-	public ORSemantics getSemantics() {
-
-		return semantics;
-	}
-
-	/**
-	 * Specifies the type of reasoning that the matcher is required
-	 * to perform.
-	 *
-	 * @return Required reasoning-type
-	 */
-	public ORReasoningType getReasoningType() {
-
-		return reasoningType;
 	}
 
 	/**
 	 * Constructs matcher for specified model and reasoning-type.
 	 *
 	 * @param model Model over which matcher is to operate
-	 * @param reasoningType Required reasoning-type for matching
 	 */
-	protected ORMatcher(OModel model, ORReasoningType reasoningType) {
+	protected ORMatcher(OModel model) {
 
-		this.model = model;
-		this.reasoningType = reasoningType;
-
-		semantics = new ORSemantics(model);
-
-		concepts = new OConceptFinder(model);
-		ontologyEntityResolver = new OntologyEntityResolver(model, concepts);
+		this(model, null);
 	}
 
 	/**
@@ -290,9 +277,14 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	protected ORMatcher(OModel model, KConfigNode parentConfigNode) {
 
-		this(model, ORReasoningType.DL);
+		reasoningModel = new ReasoningModel(model);
 
-		new ORMatcherConfig(parentConfigNode).configure(this);
+		if (parentConfigNode != null) {
+
+			new ORMatcherConfig(reasoningModel, parentConfigNode);
+		}
+
+		reasoningModel.ensureLocalModel();
 	}
 
 	/**
@@ -331,9 +323,9 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	protected abstract boolean matchesInOWL(NNode query, NNode instance);
 
-	void setReasoningType(ORReasoningType reasoningType) {
+	ReasoningModel getReasoningModel() {
 
-		this.reasoningType = reasoningType;
+		return reasoningModel;
 	}
 
 	boolean instanceIRI(IRI iri) {

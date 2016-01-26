@@ -67,7 +67,7 @@ public class OBProperties
 
 		boolean handles(IRI iri) {
 
-			return getMainOntology().containsObjectPropertyInSignature(iri, true);
+			return getModelOntology().containsObjectPropertyInSignature(iri, true);
 		}
 
 		OWLProperty<?, ?> get(IRI iri) {
@@ -95,7 +95,7 @@ public class OBProperties
 
 		boolean handles(IRI iri) {
 
-			return getMainOntology().containsDataPropertyInSignature(iri, true);
+			return getModelOntology().containsDataPropertyInSignature(iri, true);
 		}
 
 		OWLProperty<?, ?> get(IRI iri) {

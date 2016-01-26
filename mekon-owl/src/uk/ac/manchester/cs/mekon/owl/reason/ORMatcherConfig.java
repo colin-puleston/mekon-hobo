@@ -36,30 +36,15 @@ class ORMatcherConfig extends ORConfig {
 		return parentConfigNode.getChildOrNull(MATCHER_ROOT_ID) != null;
 	}
 
-	ORMatcherConfig(KConfigNode parentConfigNode) {
+	ORMatcherConfig(
+		ReasoningModel reasoningModel,
+		KConfigNode parentConfigNode) {
 
-		super(parentConfigNode, MATCHER_ROOT_ID);
+		super(reasoningModel, parentConfigNode, MATCHER_ROOT_ID);
 	}
 
-	void configure(ORMatcher matcher) {
+	ORLogger getLogger() {
 
-		configure(matcher.getSemantics(), ORMatcherLogger.get());
-
-		checkSetReasoningType(matcher);
-	}
-
-	private void checkSetReasoningType(ORMatcher matcher) {
-
-		ORReasoningType type = getReasoningTypeOrNull();
-
-		if (type != null) {
-
-			matcher.setReasoningType(type);
-		}
-	}
-
-	private ORReasoningType getReasoningTypeOrNull() {
-
-		 return getConfigNode().getEnum(REASONING_TYPE_ATTR, ORReasoningType.class, null);
+		return ORMatcherLogger.get();
 	}
 }

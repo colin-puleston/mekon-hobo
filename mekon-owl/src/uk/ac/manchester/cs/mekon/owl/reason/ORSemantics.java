@@ -44,18 +44,91 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class ORSemantics {
 
-	private OModel model;
 	private ORSemanticWorld defaultWorld = ORSemanticWorld.OPEN;
 	private Set<String> exceptionPropertyURIs = new HashSet<String>();
 
-	/**
-	 * Constructor.
-	 *
-	 * @param model Model to which semantics are to apply
-	 */
-	public ORSemantics(OModel model) {
+	private class PropertyWorldResolver {
 
-		this.model = model;
+		private OModel model;
+		private IRI propertyIRI;
+
+		PropertyWorldResolver(OModel model, IRI propertyIRI) {
+
+			this.model = model;
+			this.propertyIRI = propertyIRI;
+		}
+
+		ORSemanticWorld resolve() {
+
+			return hasNonDefaultSemantics()
+						? defaultWorld.getOpposite()
+						: defaultWorld;
+		}
+
+		private boolean hasNonDefaultSemantics() {
+
+			return exceptionProperty() || hasExceptionSuperProperty();
+		}
+
+		private boolean hasExceptionSuperProperty() {
+
+			for (OWLProperty<?, ?> superProp : getSuperProperties()) {
+
+				if (exceptionProperty(superProp.getIRI())) {
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private boolean exceptionProperty() {
+
+			return exceptionProperty(propertyIRI);
+		}
+
+		private boolean exceptionProperty(IRI iri) {
+
+			return exceptionPropertyURIs.contains(iriAsString(iri));
+		}
+
+		private Set<? extends OWLProperty<?, ?>> getSuperProperties() {
+
+			return dataProperty()
+					? getSuperDataProperties()
+					: getSuperObjectProperties();
+		}
+
+		private boolean dataProperty() {
+
+			return model.getDataProperties().contains(propertyIRI);
+		}
+
+		private Set<OWLObjectProperty> getSuperObjectProperties() {
+
+			return model.getInferredSupers(getObjectProperty(), false);
+		}
+
+		private Set<OWLDataProperty> getSuperDataProperties() {
+
+			return model.getInferredSupers(getDataProperty(), false);
+		}
+
+		private OWLObjectProperty getObjectProperty() {
+
+			return model.getObjectProperties().get(propertyIRI);
+		}
+
+		private OWLDataProperty getDataProperty() {
+
+			return model.getDataProperties().get(propertyIRI);
+		}
+
+		private String iriAsString(IRI iri) {
+
+			return iri.toURI().toASCIIString();
+		}
 	}
 
 	/**
@@ -79,92 +152,8 @@ public class ORSemantics {
 		exceptionPropertyURIs.add(exceptionPropertyURI);
 	}
 
-	/**
-	 * Removes an exception property.
-	 *
-	 * @param exceptionPropertyURI URI of exception property to remove
-	 */
-	public void removeExceptionProperty(String exceptionPropertyURI) {
+	ORSemanticWorld getWorld(OModel model, IRI propertyIRI) {
 
-		exceptionPropertyURIs.remove(exceptionPropertyURI);
-	}
-
-	/**
-	 * Removes all exception properties.
-	 */
-	public void clearExceptionProperties() {
-
-		exceptionPropertyURIs.clear();
-	}
-
-	/**
-	 * Provides the open/closed-world semantics for the specified
-	 * property.
-	 *
-	 * @param propertyIRI URI of property for which semantics are
-	 * required
-	 * @return Relevant open/closed-world semantics
-	 */
-	public ORSemanticWorld getWorld(IRI propertyIRI) {
-
-		return hasNonDefaultSemantics(propertyIRI)
-					? defaultWorld.getOpposite()
-					: defaultWorld;
-	}
-
-	private boolean hasNonDefaultSemantics(IRI propertyIRI) {
-
-		return isExceptionPropertyIRI(propertyIRI)
-				|| hasExceptionSuperProperty(propertyIRI);
-	}
-
-	private boolean hasExceptionSuperProperty(IRI propertyIRI) {
-
-		for (OWLProperty<?, ?> superProp : getSuperProperties(propertyIRI)) {
-
-			if (isExceptionPropertyIRI(superProp.getIRI())) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private boolean isExceptionPropertyIRI(IRI propertyIRI) {
-
-		return exceptionPropertyURIs.contains(propertyIRI.toURI().toASCIIString());
-	}
-
-	private Set<? extends OWLProperty<?, ?>> getSuperProperties(IRI propertyIRI) {
-
-		return dataProperty(propertyIRI)
-				? getSuperDataProperties(propertyIRI)
-				: getSuperObjectProperties(propertyIRI);
-	}
-
-	private boolean dataProperty(IRI iri) {
-
-		return model.getDataProperties().contains(iri);
-	}
-
-	private Set<OWLObjectProperty> getSuperObjectProperties(IRI propertyIRI) {
-
-		return model.getInferredSupers(getObjectProperty(propertyIRI), false);
-	}
-
-	private Set<OWLDataProperty> getSuperDataProperties(IRI propertyIRI) {
-
-		return model.getInferredSupers(getDataProperty(propertyIRI), false);
-	}
-
-	private OWLObjectProperty getObjectProperty(IRI iri) {
-
-		return model.getObjectProperties().get(iri);
-	}
-
-	private OWLDataProperty getDataProperty(IRI iri) {
-
-		return model.getDataProperties().get(iri);
+		return new PropertyWorldResolver(model, propertyIRI).resolve();
 	}
 }

@@ -77,10 +77,8 @@ public class ORClassifier extends NClassifier {
 		return ORClassifierConfig.configNodeExists(parentConfigNode);
 	}
 
-	private OModel model;
-	private ORSemantics semantics;
+	private ReasoningModel reasoningModel;
 
-	private OntologyEntityResolver ontologyEntityResolver;
 	private IndividualsRenderer individualsRenderer;
 	private ODynamicInstanceIRIs individualRootIRIs = new ODynamicInstanceIRIs();
 
@@ -119,7 +117,7 @@ public class ORClassifier extends NClassifier {
 
 		this(model);
 
-		new ORClassifierConfig(parentConfigNode).configure(this);
+		new ORClassifierConfig(reasoningModel, parentConfigNode);
 	}
 
 	/**
@@ -129,12 +127,31 @@ public class ORClassifier extends NClassifier {
 	 */
 	public ORClassifier(OModel model) {
 
-		this.model = model;
+		reasoningModel = new ReasoningModel(model);
+		individualsRenderer = new IndividualsRenderer(reasoningModel);
+	}
 
-		semantics = new ORSemantics(model);
+	/**
+	 * Sets the type of reasoning that is to be performed on the
+	 * model.
+	 *
+	 * @param reasoningType Relevant reasoning-type
+	 */
+	public void setReasoningType(OReasoningType reasoningType) {
 
-		ontologyEntityResolver = new OntologyEntityResolver(model);
-		individualsRenderer = new IndividualsRenderer(model, semantics);
+		reasoningModel.setReasoningType(reasoningType);
+	}
+
+	/**
+	 * Set the the open/closed world semantics that are to be
+	 * embodied by the OWL constructs that will be created and
+	 * classified.
+	 *
+	 * @param semantics Required semantics
+	 */
+	public void setSemantics(ORSemantics semantics) {
+
+		reasoningModel.setSemantics(semantics);
 	}
 
 	/**
@@ -144,19 +161,7 @@ public class ORClassifier extends NClassifier {
 	 */
 	public OModel getModel() {
 
-		return model;
-	}
-
-	/**
-	 * Provides the object used to specify the open/closed world
-	 * semantics to be embodied by the OWL constructs that will be
-	 * created to represent instances being classified.
-	 *
-	 * @return Object for specifying open/closed world semantics
-	 */
-	public ORSemantics getSemantics() {
-
-		return semantics;
+		return reasoningModel.getModel();
 	}
 
 	/**
@@ -171,12 +176,12 @@ public class ORClassifier extends NClassifier {
 	 */
 	protected IClassification classify(NNode instance, IClassifierOps ops) {
 
-		ontologyEntityResolver.resolve(instance);
+		reasoningModel.resolveOntologyEntities(instance);
 
 		InstanceConstruct construct = createInstanceConstruct(instance);
 		OWLObject owlConstruct = construct.getOWLConstruct();
 
-		ORMonitor.pollForClassifierRequest(model, owlConstruct);
+		ORMonitor.pollForClassifierRequest(getModel(), owlConstruct);
 
 		List<CIdentity> inferredIds = new ArrayList<CIdentity>();
 		List<CIdentity> suggestedIds = new ArrayList<CIdentity>();
@@ -193,7 +198,7 @@ public class ORClassifier extends NClassifier {
 
 		construct.cleanUp();
 
-		ORMonitor.pollForClassifierDone(model, owlConstruct);
+		ORMonitor.pollForClassifierDone(getModel(), owlConstruct);
 
 		return new IClassification(inferredIds, suggestedIds);
 	}
@@ -210,7 +215,7 @@ public class ORClassifier extends NClassifier {
 		Set<OWLClass> inferreds = construct.getInferredTypes();
 
 		purgeInferredTypes(instance, inferreds);
-		ORMonitor.pollForTypesInferred(model, inferreds);
+		ORMonitor.pollForTypesInferred(getModel(), inferreds);
 
 		return toIdentityList(inferreds);
 	}
@@ -219,7 +224,7 @@ public class ORClassifier extends NClassifier {
 
 		Set<OWLClass> suggesteds = construct.getSuggestedTypes();
 
-		ORMonitor.pollForTypesSuggested(model, suggesteds);
+		ORMonitor.pollForTypesSuggested(getModel(), suggesteds);
 
 		return toIdentityList(suggesteds);
 	}
@@ -231,14 +236,14 @@ public class ORClassifier extends NClassifier {
 			return createIndividualNetwork(instance);
 		}
 
-		return new ConceptExpression(model, semantics, instance);
+		return new ConceptExpression(reasoningModel, instance);
 	}
 
 	private IndividualNetwork createIndividualNetwork(NNode instance) {
 
 		IRI rootIRI = individualRootIRIs.assign();
 
-		return new IndividualNetwork(model, instance, rootIRI, individualsRenderer);
+		return new IndividualNetwork(getModel(), instance, rootIRI, individualsRenderer);
 	}
 
 	private void purgeInferredTypes(NNode instance, Set<OWLClass> types) {
@@ -251,7 +256,7 @@ public class ORClassifier extends NClassifier {
 
 	private OWLClass getConcept(IRI iri) {
 
-		return model.getConcepts().get(iri);
+		return getModel().getConcepts().get(iri);
 	}
 
 	private List<CIdentity> toIdentityList(Set<OWLClass> entities) {

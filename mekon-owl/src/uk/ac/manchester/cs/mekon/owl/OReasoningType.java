@@ -22,27 +22,74 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason;
+package uk.ac.manchester.cs.mekon.owl;
 
 import org.semanticweb.owlapi.model.*;
 
 /**
+ * Specifies the type of reasoning that a matcher is required to
+ * perform.
+ *
  * @author Colin Puleston
  */
-class RDFSChecker extends TransitiveChecker {
+public enum OReasoningType {
 
-	static private final RDFSChecker singleton = new RDFSChecker();
+	/**
+	 * Simple transitive type reasoning.
+	 */
+	TRANSITIVE {
 
-	static RDFSChecker get() {
+		boolean requiredAxiom(OWLAxiom axiom) {
 
-		return singleton;
+			return TransitiveChecker.get().valid(axiom);
+		}
+	},
+
+	/**
+	 * RDFS type reasoning.
+	 */
+	RDFS {
+
+		boolean requiredAxiom(OWLAxiom axiom) {
+
+			return RDFSChecker.get().valid(axiom);
+		}
+	},
+
+	/**
+	 * OWL-EL type reasoning.
+	 */
+	EL {
+
+		boolean requiredAxiom(OWLAxiom axiom) {
+
+			return ELChecker.get().valid(axiom);
+		}
+	},
+
+	/**
+	 * OWL-DL type reasoning.
+	 */
+	DL {
+
+		boolean requiredAxiom(OWLAxiom axiom) {
+
+			return true;
+		}
+	};
+
+	/**
+	 * Specifes whether this reasoning-type is more powerfull than
+	 * the other specified reasoning-type (Note that the ordering of
+	 * the cardinalities progresses from less to more powerfull).
+	 *
+	 * @param other Other reasoning-type to test against
+	 * @return True if this is the more powerfull of the two
+	 */
+	public boolean morePowerfullThan(OReasoningType other) {
+
+		return ordinal() > other.ordinal();
 	}
 
-	private RDFSChecker() {
-
-		addValidAxiomType(OWLObjectPropertyDomainAxiom.class);
-		addValidAxiomType(OWLObjectPropertyRangeAxiom.class);
-		addValidAxiomType(OWLDataPropertyDomainAxiom.class);
-		addValidAxiomType(OWLDataPropertyRangeAxiom.class);
-	}
+	abstract boolean requiredAxiom(OWLAxiom axiom);
 }

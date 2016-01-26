@@ -45,25 +45,13 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	/**
-	 * Constructs matcher for specified model with the default
-	 * reasoning-type, which is {@link ORReasoningType#DL}.
+	 * Constructs matcher for specified model.
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
 	public ORConceptsMatcher(OModel model) {
 
 		super(model);
-	}
-
-	/**
-	 * Constructs matcher for specified model and reasoning-type.
-	 *
-	 * @param model Model over which matcher is to operate
-	 * @param reasoningType Required reasoning-type for matching
-	 */
-	public ORConceptsMatcher(OModel model, ORReasoningType reasoningType) {
-
-		super(model, reasoningType);
 	}
 
 	/**
@@ -153,12 +141,12 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	private void addAxiom(OWLAxiom axiom) {
 
-		getMatcherModel().addAxiom(axiom);
+		getModel().addInstanceAxiom(axiom);
 	}
 
 	private void removeAxioms(Set<? extends OWLAxiom> axioms) {
 
-		getMatcherModel().removeAxioms(axioms);
+		getModel().removeInstanceAxioms(axioms);
 	}
 
 	private OWLClass getConcept(IRI iri) {
@@ -168,16 +156,11 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	private Set<? extends OWLAxiom> getConceptAxioms(IRI iri) {
 
-		return getOntology().getAxioms(getConcept(iri));
-	}
-
-	private OWLOntology getOntology() {
-
-		return getMatcherModel().getMainOntology();
+		return getModel().getInstanceOntology().getAxioms(getConcept(iri));
 	}
 
 	private OWLDataFactory getDataFactory() {
 
-		return getMatcherModel().getDataFactory();
+		return getModel().getDataFactory();
 	}
 }

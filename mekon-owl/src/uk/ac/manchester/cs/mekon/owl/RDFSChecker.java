@@ -22,61 +22,27 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.reason;
+package uk.ac.manchester.cs.mekon.owl;
 
 import org.semanticweb.owlapi.model.*;
 
 /**
- * Specifies the type of reasoning that a matcher is required to
- * perform.
- *
  * @author Colin Puleston
  */
-public enum ORReasoningType {
+class RDFSChecker extends TransitiveChecker {
 
-	/**
-	 * Simple transitive type reasoning.
-	 */
-	TRANSITIVE {
+	static private final RDFSChecker singleton = new RDFSChecker();
 
-		boolean requiredAxiom(OWLAxiom axiom) {
+	static RDFSChecker get() {
 
-			return TransitiveChecker.get().valid(axiom);
-		}
-	},
+		return singleton;
+	}
 
-	/**
-	 * RDFS type reasoning.
-	 */
-	RDFS {
+	private RDFSChecker() {
 
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return RDFSChecker.get().valid(axiom);
-		}
-	},
-
-	/**
-	 * OWL-EL type reasoning.
-	 */
-	EL {
-
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return ELChecker.get().valid(axiom);
-		}
-	},
-
-	/**
-	 * OWL-DL type reasoning.
-	 */
-	DL {
-
-		boolean requiredAxiom(OWLAxiom axiom) {
-
-			return true;
-		}
-	};
-
-	abstract boolean requiredAxiom(OWLAxiom axiom);
+		addValidAxiomType(OWLObjectPropertyDomainAxiom.class);
+		addValidAxiomType(OWLObjectPropertyRangeAxiom.class);
+		addValidAxiomType(OWLDataPropertyDomainAxiom.class);
+		addValidAxiomType(OWLDataPropertyRangeAxiom.class);
+	}
 }

@@ -45,7 +45,7 @@ class ODataProperties
 
 	Set<OWLDataProperty> findAll() {
 
-		return getMainOntology().getDataPropertiesInSignature(true);
+		return getModelOntology().getDataPropertiesInSignature(true);
 	}
 
 	OWLDataProperty getTop() {

@@ -68,7 +68,7 @@ public class OBConcepts
 
 	boolean isValidEntity(IRI iri) {
 
-		return getMainOntology().containsClassInSignature(iri, true);
+		return getModelOntology().containsClassInSignature(iri, true);
 	}
 
 	OWLClass get(IRI iri) {

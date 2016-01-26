@@ -34,15 +34,50 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
- * Builder for creating a {@link OModel} object.
+ * Responsible for creating an {@link OModel} object representing a
+ * set of ontologies loaded from disk, together with an associated
+ * reasoner. The input ontologies will consist of a main
+ * entry-point ontology plus the set of ontologies constituting its
+ * imports-closure. The OWL files containing the imports should all
+ * be located in the same directory as the main OWL file, or a
+ * descendant directory.
  *
  * @author Colin Puleston
  */
-public class OModelBuilder {
+public class OModelBuilder extends OModelCreator {
 
 	private File mainOWLFile;
-	private Class<? extends OWLReasonerFactory> reasonerFactory;
 	private IRI indirectNumericProperty = null;
+
+	/**
+	 * Creates builder for model loaded from disk, together with
+	 * reasoner created by factory of specified type.
+	 *
+	 * @param mainOWLFile File containing main entry-point ontology
+	 * @param reasoner Type of factory for creating required reasoner
+	 */
+	public OModelBuilder(
+			File mainOWLFile,
+			Class<? extends OWLReasonerFactory> reasoner) {
+
+		super(reasoner);
+
+		this.mainOWLFile = mainOWLFile;
+	}
+
+	/**
+	 * Creates builder for model loaded from disk, together with
+	 * reasoner created by specified factory.
+	 *
+	 * @param mainOWLFile File containing main entry-point ontology
+	 * @param reasoner Factory for creating required reasoner
+	 */
+	public OModelBuilder(File mainOWLFile, OWLReasonerFactory reasoner) {
+
+		super(reasoner);
+
+		this.mainOWLFile = mainOWLFile;
+	}
 
 	/**
 	 * Creates builder for model defined via the appropriately-tagged
@@ -76,10 +111,10 @@ public class OModelBuilder {
 	}
 
 	/**
-	 * Sets the OWL file containing the main ontology, overriding the
-	 * value obtained via the configuration node.
+	 * Sets the OWL file containing the main ontology, possibly
+	 * overriding a value obtained via a configuration node.
 	 *
-	 * @param file OWL file containing main ontology
+	 * @param mainOWLFile File containing main entry-point ontology
 	 */
 	public void setMainOWLFile(File file) {
 
@@ -87,19 +122,8 @@ public class OModelBuilder {
 	}
 
 	/**
-	 * Sets the class of factory that is to be used for creating required
-	 * reasoner, overriding the value obtained via the configuration node.
-	 *
-	 * @param type Class of factory to be used for creating required reasoner
-	 */
-	public void setReasonerFactory(Class<? extends OWLReasonerFactory> type) {
-
-		reasonerFactory = type;
-	}
-
-	/**
-	 * Sets the "indirect-numeric-property" for the model, overriding the
-	 * value obtained via the configuration node, if applicable.
+	 * Sets the "indirect-numeric-property" for the model, possibly
+	 * overriding a value obtained via a configuration node.
 	 *
 	 * @param iri IRI of indirect-numeric-property for model, or null
 	 * if not defined
@@ -109,24 +133,68 @@ public class OModelBuilder {
 		indirectNumericProperty = iri;
 	}
 
-	/**
-	 * Creates and then initialises the {@link OModel}.
-	 *
-	 * @param startReasoner True if initial classification of the ontology
-	 * and subsequent initialisation of cached-data are to be invoked
-	 * (otherwise {@link OModel#startReasoner} method should be invoked
-	 * prior to use)
-	 * @return Created model
-	 */
-	public OModel create(boolean startReasoner) {
+	OWLOntology createModelOntology(OWLOntologyManager manager) {
 
-		OModel model = new OModel(mainOWLFile, reasonerFactory, startReasoner);
+		OMonitor.pollForPreOntologyLoad(mainOWLFile);
 
-		if (indirectNumericProperty != null) {
+		OWLOntologyManager sourceManager = createSourceManager();
+		OWLOntology mainInput = loadInputOntologies(sourceManager);
+		Set<OWLOntology> allInputs = sourceManager.getOntologies();
 
-			model.setIndirectNumericProperty(indirectNumericProperty);
+		IRI ontIRI = getOntologyIRI(mainInput);
+		OWLOntology ontology = createModelOntology(manager, allInputs, ontIRI);
+
+		OMonitor.pollForOntologyLoaded();
+
+		return ontology;
+	}
+
+	void assertExternallyInferableHierarchy(OModel model) {
+	}
+
+	IRI getIndirectNumericProperty() {
+
+		return indirectNumericProperty;
+	}
+
+	private OWLOntology createModelOntology(
+							OWLOntologyManager manager,
+							Set<OWLOntology> inputs,
+							IRI ontologyIRI) {
+
+		try {
+
+			return manager.createOntology(ontologyIRI, inputs, false);
 		}
+		catch (OWLOntologyCreationException e) {
 
-		return model;
+			throw new KModelException(e);
+		}
+	}
+
+	private OWLOntology loadInputOntologies(OWLOntologyManager manager) {
+
+		try {
+
+			return manager.loadOntologyFromOntologyDocument(mainOWLFile);
+		}
+		catch (OWLOntologyCreationException e) {
+
+			throw new KModelException(e);
+		}
+	}
+
+	private OWLOntologyManager createSourceManager() {
+
+		OWLOntologyManager manager = createManager();
+
+		manager.addIRIMapper(createIRIMapper());
+
+		return manager;
+	}
+
+	private OWLOntologyIRIMapper createIRIMapper() {
+
+		return new PathSearchOntologyIRIMapper(mainOWLFile.getParentFile());
 	}
 }
