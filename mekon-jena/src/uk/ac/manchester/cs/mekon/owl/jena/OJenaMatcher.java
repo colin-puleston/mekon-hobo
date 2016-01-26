@@ -32,7 +32,6 @@ import org.apache.jena.ontology.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**
@@ -43,25 +42,13 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
 public class OJenaMatcher extends OTMatcher {
 
 	/**
-	 * Constructs matcher for specified model with the default
-	 * reasoning-type, which is {@link ORReasoningType#RDFS}.
+	 * Constructs matcher for specified model.
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
 	public OJenaMatcher(OModel model) {
 
-		this(model, ORReasoningType.RDFS);
-	}
-
-	/**
-	 * Constructs matcher for specified model and reasoning-type.
-	 *
-	 * @param model Model over which matcher is to operate
-	 * @param reasoningType Required reasoning-type for matching
-	 */
-	public OJenaMatcher(OModel model, ORReasoningType reasoningType) {
-
-		super(model, reasoningType);
+		super(model);
 
 		initialise();
 	}
@@ -142,14 +129,10 @@ public class OJenaMatcher extends OTMatcher {
 
 	private void loadMatchingOntology(OntModel jenaModel) {
 
-		File owlFile = createTempOWLFile();
+		File owlFile = getModel().renderInstancesToTempFile();
 
 		jenaModel.read(owlFile.toURI().toString(), null);
+
 		owlFile.delete();
-	}
-
-	private File createTempOWLFile() {
-
-		return new ORMatcherModel(getModel(), getReasoningType()).createTempOWLFile();
 	}
 }
