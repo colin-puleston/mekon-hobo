@@ -56,7 +56,7 @@ public interface IMatcher {
 	 * any persistently stored instances needs to be rebuilt on
 	 * start-up.
 	 *
-	 * @return true is rebuild required
+	 * @return true as rebuild required
 	 */
 	public boolean rebuildOnStartup();
 
