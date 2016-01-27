@@ -60,7 +60,7 @@ public class CIdentitySerialiser {
 	/**
 	 * Renders an identity to a configuration file node.
 	 *
-	 * @param identied Identified object whose identity is to be
+	 * @param identified Identified object whose identity is to be
 	 * rendered
 	 * @param node Node to render to
 	 */
