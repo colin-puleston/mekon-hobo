@@ -118,7 +118,7 @@ public class BaseXMatcher extends NMatcher {
 	 * Specifies that a rebuild is required if and only if the
 	 * matcher is configured to require a rebuild.
 	 *
-	 * @return true is rebuild required
+	 * @return true as rebuild required
 	 */
 	public boolean rebuildOnStartup() {
 
