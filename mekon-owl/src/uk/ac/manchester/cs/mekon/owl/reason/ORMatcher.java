@@ -244,7 +244,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	protected ORMatcher(OModel model) {
 
-		this(model, null);
+		this(model, false, null);
 	}
 
 	/**
@@ -261,7 +261,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	protected ORMatcher(KConfigNode parentConfigNode) {
 
-		this(createModel(parentConfigNode), parentConfigNode);
+		this(createModel(parentConfigNode), true, parentConfigNode);
 	}
 
 	/**
@@ -277,14 +277,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	protected ORMatcher(OModel model, KConfigNode parentConfigNode) {
 
-		reasoningModel = new ReasoningModel(model);
-
-		if (parentConfigNode != null) {
-
-			new ORMatcherConfig(reasoningModel, parentConfigNode);
-		}
-
-		reasoningModel.ensureLocalModel();
+		this(model, false, parentConfigNode);
 	}
 
 	/**
@@ -331,5 +324,23 @@ public abstract class ORMatcher extends NMatcher {
 	boolean instanceIRI(IRI iri) {
 
 		return instanceIRIs.staticInstance(iri);
+	}
+
+	private ORMatcher(
+				OModel model,
+				boolean localModel,
+				KConfigNode parentConfigNode) {
+
+		reasoningModel = new ReasoningModel(model);
+
+		if (parentConfigNode != null) {
+
+			new ORMatcherConfig(reasoningModel, parentConfigNode);
+		}
+
+		if (!localModel) {
+
+			reasoningModel.ensureLocalModel();
+		}
 	}
 }

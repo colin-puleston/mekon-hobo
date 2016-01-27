@@ -114,7 +114,7 @@ public class OModelBuilder extends OModelCreator {
 	 * Sets the OWL file containing the main ontology, possibly
 	 * overriding a value obtained via a configuration node.
 	 *
-	 * @param mainOWLFile File containing main entry-point ontology
+	 * @param file File containing main entry-point ontology
 	 */
 	public void setMainOWLFile(File file) {
 

@@ -47,7 +47,7 @@ public class OStaticInstanceIRIs extends OInstanceIRIs {
 	 * Resets the index manager used in generating the IRIs. By default
 	 * a locally created manager will be used.
 	 *
-	 * @return Index manager to be used
+	 * @param indexes Index manager to be used
 	 */
 	public void resetIndexes(IMatcherIndexes indexes) {
 

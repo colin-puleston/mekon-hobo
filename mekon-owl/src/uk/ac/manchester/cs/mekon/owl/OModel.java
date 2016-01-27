@@ -38,14 +38,14 @@ import uk.ac.manchester.cs.mekon.*;
  * of MEKON-specific convenience methods. The OWL model is accessed
  * via:
  * <ul>
- *   <li>A single model ontology, combining axioms from all of the
- *	 initial input ontologies (the main entry-point ontology plus the
- *	 set of ontologies constituting its imports-closure)
- *   <li>A single "instance" ontology, into which any direct
- *	 ontology-based model-instantiation representations will be
- *	 rendered
- *   <li>A manager for the relevant set of ontologies
- *   <li>A reasoner for reasoning over the relevant set of ontologies
+ *   <li>A single "model" ontology, combining axioms from all of the
+ *	 initial input ontologies (the main entry-point ontology plus
+ *	 the set of ontologies constituting its imports-closure)
+ *   <li>A single "instance" ontology, which imports the model
+ *	 ontology, and into which any direct ontology-based instance
+ *	 representations will be rendered
+ *   <li>A manager for these ontologies
+ *   <li>A reasoner for reasoning over these ontologies
  * </ul>
  *
  * @author Colin Puleston
@@ -103,17 +103,6 @@ public class OModel {
 
 			return reasoner;
 		}
-	}
-
-	/**
-	 * Sets the "indirect-numeric-property" for the model.
-	 *
-	 * @param iri IRI of indirect-numeric-property for model, or null
-	 * if not defined
-	 */
-	public void setIndirectNumericProperty(IRI iri) {
-
-		indirectNumericProperty = getIndirectNumericProperty(iri);
 	}
 
 	/**
@@ -635,6 +624,11 @@ public class OModel {
 
 		modelAxioms = new OAxioms(this, modelOntology);
 		instanceAxioms = new OAxioms(this, instanceOntology);
+	}
+
+	void setIndirectNumericProperty(IRI iri) {
+
+		indirectNumericProperty = getIndirectNumericProperty(iri);
 	}
 
 	void purgeForReasoningType() {
