@@ -36,13 +36,39 @@ import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
+ * XXX
+ *
  * @author Colin Puleston
  */
-abstract class OROntologyBasedMatcher extends ORMatcher {
+public abstract class OROntologyBasedMatcher extends ORMatcher {
 
+	private String instanceFileName = null;
+
+	/**
+	 * XXX
+	 */
+	public void setPersistentInstances(String fileName) {
+
+		instanceFileName = fileName;
+	}
+
+	/**
+	 * XXX
+	 */
 	public boolean rebuildOnStartup() {
 
 		return true;
+	}
+
+	/**
+	 * XXX
+	 */
+	public void stop() {
+
+		if (instanceFileName != null) {
+
+			getModel().renderInstancesToFile(instanceFileName);
+		}
 	}
 
 	protected List<IRI> matchInOWLStore(NNode query) {
@@ -73,11 +99,15 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 	OROntologyBasedMatcher(KConfigNode parentConfigNode) {
 
 		super(parentConfigNode);
+
+		checkInstancePersistence(parentConfigNode);
 	}
 
 	OROntologyBasedMatcher(OModel model, KConfigNode parentConfigNode) {
 
 		super(model, parentConfigNode);
+
+		checkInstancePersistence(parentConfigNode);
 	}
 
 	abstract List<IRI> matchInOWLStore(ConceptExpression queryExpr);
@@ -87,6 +117,11 @@ abstract class OROntologyBasedMatcher extends ORMatcher {
 	ConceptExpression createConceptExpression(NNode node) {
 
 		return new ConceptExpression(getReasoningModel(), node);
+	}
+
+	private void checkInstancePersistence(KConfigNode parentConfigNode) {
+
+		new InstancePersistenceConfig(parentConfigNode).check(this);
 	}
 
 	private List<IRI> purgeMatches(List<IRI> matches) {

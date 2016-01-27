@@ -58,7 +58,7 @@ public class ODemoModel {
 
 	static private OModelBuilder createBuilder() {
 
-		return new OModelBuilder(getOWLFile(), REASONER_FACTORY_CLASS);
+		return new OModelBuilder(getSourceFile(), REASONER_FACTORY_CLASS);
 	}
 
 	static private IRI nameToIRI(String name) {
@@ -66,7 +66,7 @@ public class ODemoModel {
 		return IRI.create(DemoModelBasedTest.nameToIdentifier(name));
 	}
 
-	static private File getOWLFile() {
+	static private File getSourceFile() {
 
 		URL url = getClassLoader().getResource(OWL_FILE);
 

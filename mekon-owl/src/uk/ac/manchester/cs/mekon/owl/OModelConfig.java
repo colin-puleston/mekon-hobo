@@ -46,20 +46,25 @@ class OModelConfig implements OModelConfigVocab {
 
 	void configure(OModelBuilder builder, File baseDirectory) {
 
-		builder.setMainOWLFile(getMainOWLFile(baseDirectory));
+		builder.setMainSourceFile(getMainSourceFile(baseDirectory));
 		builder.setReasoner(getReasonerFactoryClass());
 		builder.setReasoningType(getReasoningType());
 		builder.setIndirectNumericProperty(getIndirectNumericPropertyIRI());
+		builder.setInstanceOntologyIRI(getInstanceOntologyIRI());
 	}
 
-	private File getMainOWLFile(File baseDir) {
+	private File getMainSourceFile(File baseDir) {
 
-		return configNode.getResource(OWL_FILE_ATTR, getOWLFileFinder(baseDir));
+		return configNode.getResource(
+				SOURCE_FILE_ATTR,
+				getSourceFileFinder(baseDir));
 	}
 
 	private Class<? extends OWLReasonerFactory> getReasonerFactoryClass() {
 
-		return configNode.getClass(REASONER_FACTORY_CLASS_ATTR, OWLReasonerFactory.class);
+		return configNode.getClass(
+				REASONER_FACTORY_CLASS_ATTR,
+				OWLReasonerFactory.class);
 	}
 
 	private OReasoningType getReasoningType() {
@@ -72,12 +77,22 @@ class OModelConfig implements OModelConfigVocab {
 
 	private IRI getIndirectNumericPropertyIRI() {
 
-		URI uri = configNode.getURI(INDIRECT_NUMERIC_PROPERTY_URI_ATTR, null);
+		return getIRI(INDIRECT_NUMERIC_PROPERTY_URI_ATTR);
+	}
+
+	private IRI getInstanceOntologyIRI() {
+
+		return getIRI(INSTANCE_ONTOLOGY_URI_ATTR);
+	}
+
+	private IRI getIRI(String uriAttr) {
+
+		URI uri = configNode.getURI(uriAttr, null);
 
 		return uri != null ? IRI.create(uri) : null;
 	}
 
-	private KConfigResourceFinder getOWLFileFinder(File baseDir) {
+	private KConfigResourceFinder getSourceFileFinder(File baseDir) {
 
 		return baseDir == null
 				? KConfigResourceFinder.FILES

@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl;
 
+import java.io.*;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
@@ -53,6 +54,8 @@ public class OModelCopier extends OModelCreator {
 		super(sourceModel.getReasonerFactory().getClass());
 
 		this.sourceModel = sourceModel;
+
+		setInstanceOntologyIRI(getInstanceOntologyIRI());
 	}
 
 	OWLOntology createModelOntology(OWLOntologyManager manager) {
@@ -75,6 +78,11 @@ public class OModelCopier extends OModelCreator {
 		}
 	}
 
+	File getMainSourceFile() {
+
+		return sourceModel.getMainSourceFile();
+	}
+
 	IRI getIndirectNumericProperty() {
 
 		if (sourceModel.indirectNumericPropertyDefined()) {
@@ -83,6 +91,11 @@ public class OModelCopier extends OModelCreator {
 		}
 
 		return null;
+	}
+
+	private IRI getInstanceOntologyIRI() {
+
+		return getOntologyIRI(sourceModel.getInstanceOntology());
 	}
 
 	private OWLOntology createOntology(

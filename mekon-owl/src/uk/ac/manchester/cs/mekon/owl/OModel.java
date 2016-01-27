@@ -52,6 +52,7 @@ import uk.ac.manchester.cs.mekon.*;
  */
 public class OModel {
 
+	private File mainSourceFile;
 	private OWLOntologyManager manager;
 	private OWLOntology modelOntology;
 	private OWLOntology instanceOntology;
@@ -212,6 +213,17 @@ public class OModel {
 
 		getReasoner().flush();
 		classify();
+	}
+
+	/**
+	 * Provides the OWL file from which the main entry-point
+	 * ontology was originally loaded.
+	 *
+	 * @return File containing main entry-point ontology
+	 */
+	public File getMainSourceFile() {
+
+		return mainSourceFile;
 	}
 
 	/**
@@ -564,6 +576,18 @@ public class OModel {
 	}
 
 	/**
+	 * Renders the model ontology to a file with the specified
+	 * name, located in the same directory as the main source-file
+	 * (see {@link #getMainSourceFile()).
+	 *
+	 * @param name File to which model ontology is to be rendered
+	 */
+	public void renderModelToFile(String name) {
+
+		renderModelToFile(getFileInMainSourceFileDir(name));
+	}
+
+	/**
 	 * Renders the model ontology to the specified file.
 	 *
 	 * @param file File to which model ontology is to be rendered
@@ -574,14 +598,26 @@ public class OModel {
 	}
 
 	/**
-	 * Renders the model ontology to a temporary file, which is
-	 * created via the {@link File#createTempFile} method.
+	 * Renders the model ontology to a temporary file, created via
+	 * the {@link File#createTempFile} method.
 	 *
 	 * @return Temporary file to which model ontology has been rendered
 	 */
 	public File renderModelToTempFile() {
 
 		return new OntologyFileRenderer(modelOntology).renderToTemp();
+	}
+
+	/**
+	 * Renders the instance ontology to a file with the specified
+	 * name, located in the same directory as the main source-file
+	 * (see {@link #getMainSourceFile()).
+	 *
+	 * @param name File to which instance ontology is to be rendered
+	 */
+	public void renderInstancesToFile(String name) {
+
+		renderInstancesToFile(getFileInMainSourceFileDir(name));
 	}
 
 	/**
@@ -595,8 +631,8 @@ public class OModel {
 	}
 
 	/**
-	 * Renders the instance ontology to a temporary file, which is
-	 * created via the {@link File#createTempFile} method.
+	 * Renders the instance ontology to a temporary file, created via
+	 * the {@link File#createTempFile} method.
 	 *
 	 * @return Temporary file to which instance ontology has been rendered
 	 */
@@ -606,12 +642,14 @@ public class OModel {
 	}
 
 	OModel(
+		File mainSourceFile,
 		OWLOntologyManager manager,
 		OWLOntology modelOntology,
 		OWLOntology instanceOntology,
 		OWLReasonerFactory reasonerFactory,
 		OReasoningType reasoningType) {
 
+		this.mainSourceFile = mainSourceFile;
 		this.manager = manager;
 		this.modelOntology = modelOntology;
 		this.instanceOntology = instanceOntology;
@@ -672,6 +710,11 @@ public class OModel {
 		}
 
 		throw new KModelException("Cannot find indirect-numeric-property: " + iri);
+	}
+
+	private File getFileInMainSourceFileDir(String name) {
+
+		return new File(mainSourceFile.getParent(), name);
 	}
 
 	private OWLAxiom getSubClassAxiom(

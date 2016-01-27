@@ -38,9 +38,11 @@ public interface ORConfigVocab {
 	static public final String REASONING_TYPE_ATTR = "reasoningType";
 	static public final String SEMANTICS_ID = "Semantics";
 	static public final String EXCEPTION_PROP_ID = "ExceptionProperty";
+	static public final String INSTANCE_PERSISTENCE_ID = "InstancePersistence";
 
 	static public final String DEFAULT_SEMANTICS_ATTR = "defaultWorld";
 	static public final String SEMANICS_EXCEPTION_PROP_URI_ATTR = "uri";
 	static public final String LOGGING_MODE_ATTR = "loggingMode";
 	static public final String MATCHER_CLASS_ATTR = "matcher";
+	static public final String INSTANCES_FILE_NAME_ATTR = "fileName";
 }

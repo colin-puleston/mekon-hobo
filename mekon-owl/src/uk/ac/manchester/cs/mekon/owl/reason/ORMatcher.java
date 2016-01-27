@@ -238,6 +238,13 @@ public abstract class ORMatcher extends NMatcher {
 	}
 
 	/**
+	 * Does nothing since no clear-ups are required for this type
+	 * of store.
+	 */
+	public void stop() {
+	}
+
+	/**
 	 * Constructs matcher for specified model and reasoning-type.
 	 *
 	 * @param model Model over which matcher is to operate

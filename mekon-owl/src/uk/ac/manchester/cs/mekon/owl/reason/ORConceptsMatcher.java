@@ -88,13 +88,6 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
-	 * Does nothing since no clear-ups are required for this type
-	 * of store.
-	 */
-	public void stop() {
-	}
-
-	/**
 	 */
 	protected void addToOWLStore(NNode instance, IRI iri) {
 

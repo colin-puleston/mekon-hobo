@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl;
 
+import java.io.*;
+
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.apibinding.*;
@@ -41,8 +43,8 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 public abstract class OModelCreator {
 
-	static private final IRI INSTANCE_ONTOLOGY_IRI
-			= IRI.create(OInstanceIRIs.BASE_NAMESPACE);
+	static private final IRI DEFAULT_INSTANCES_IRI
+				= IRI.create(OInstanceIRIs.BASE_NAMESPACE);
 
 	static OWLOntologyManager createManager() {
 
@@ -68,6 +70,7 @@ public abstract class OModelCreator {
 
 	private OWLReasonerFactory reasoner;
 	private OReasoningType reasoningType = OReasoningType.DL;
+	private IRI instancesIRI = DEFAULT_INSTANCES_IRI;
 
 	/**
 	 * Sets the factory to be used for creating the required reasoner.
@@ -101,6 +104,19 @@ public abstract class OModelCreator {
 	public void setReasoningType(OReasoningType reasoningType) {
 
 		this.reasoningType = reasoningType;
+	}
+
+	/**
+	 * Sets the IRI for the instance-ontology.
+	 *
+	 * @param instancesIRI Relevant IRI
+	 */
+	public void setInstanceOntologyIRI(IRI instancesIRI) {
+
+		if (instancesIRI != null) {
+
+			this.instancesIRI = instancesIRI;
+		}
 	}
 
 	/**
@@ -144,17 +160,20 @@ public abstract class OModelCreator {
 
 	abstract void assertExternallyInferableHierarchy(OModel model);
 
+	abstract File getMainSourceFile();
+
 	abstract IRI getIndirectNumericProperty();
 
 	private OModel construct() {
 
+		File file = getMainSourceFile();
 		OWLOntologyManager man = createManager();
 		OWLOntology modOnt = createModelOntology(man);
 		OWLOntology instOnt = createInstanceOntology(man);
 
 		addImport(man, instOnt, getOntologyIRI(modOnt));
 
-		return new OModel(man, modOnt, instOnt, reasoner, reasoningType);
+		return new OModel(file, man, modOnt, instOnt, reasoner, reasoningType);
 	}
 
 	private void configure(OModel model) {
@@ -168,7 +187,7 @@ public abstract class OModelCreator {
 
 		try {
 
-			return manager.createOntology(INSTANCE_ONTOLOGY_IRI);
+			return manager.createOntology(instancesIRI);
 		}
 		catch (OWLOntologyCreationException e) {
 
