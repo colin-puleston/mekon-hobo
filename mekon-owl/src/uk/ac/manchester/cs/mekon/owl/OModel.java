@@ -578,7 +578,7 @@ public class OModel {
 	/**
 	 * Renders the model ontology to a file with the specified
 	 * name, located in the same directory as the main source-file
-	 * (see {@link #getMainSourceFile()).
+	 * (see {@link #getMainSourceFile}).
 	 *
 	 * @param name File to which model ontology is to be rendered
 	 */
@@ -611,7 +611,7 @@ public class OModel {
 	/**
 	 * Renders the instance ontology to a file with the specified
 	 * name, located in the same directory as the main source-file
-	 * (see {@link #getMainSourceFile()).
+	 * (see {@link #getMainSourceFile}).
 	 *
 	 * @param name File to which instance ontology is to be rendered
 	 */

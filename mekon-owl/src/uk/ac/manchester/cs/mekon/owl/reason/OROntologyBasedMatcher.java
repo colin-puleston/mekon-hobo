@@ -36,7 +36,8 @@ import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
- * XXX
+ * Base-class for {@link ORMatcher}-extensions that represent the
+ * instance as constructs in the ontology.
  *
  * @author Colin Puleston
  */
@@ -45,7 +46,14 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 	private String instanceFileName = null;
 
 	/**
-	 * XXX
+	 * Specifies that the OWL constructs representing the instances
+	 * should, on termination of the matcher, be saved to a file of
+	 * the specified name, located in the same directory as the OWL
+	 * file from which the main entry-point ontology was originally
+	 * loaded.
+	 *
+	 * @param fileName Name of file in which constructs representing
+	 * the instances will be stored
 	 */
 	public void setPersistentInstances(String fileName) {
 
@@ -53,7 +61,10 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 	}
 
 	/**
-	 * XXX
+	 * Always returns true since a rebuild will always occur on
+	 * startup.
+	 *
+	 * @return true as rebuild required
 	 */
 	public boolean rebuildOnStartup() {
 
@@ -61,7 +72,8 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 	}
 
 	/**
-	 * XXX
+	 * Stores the OWL constructs representing the instances to file,
+	 * if applicable (See #setPersistentInstances).
 	 */
 	public void stop() {
 
