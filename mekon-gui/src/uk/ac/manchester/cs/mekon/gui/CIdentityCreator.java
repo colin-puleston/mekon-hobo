@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.net.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -33,53 +34,45 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CIdentityCreator {
 
-	static CIdentity createOrNull(String label) {
+	static CIdentity createOrNull(String identifier) {
 
-		if (label.length() == 0) {
+		if (identifier.length() == 0) {
 
 			showMessage("Instance name required!");
-		}
-		else {
 
-			if (validLabel(label)) {
-
-				return new CIdentity(labelToIdentifier(label), label);
-			}
-
-			showMessage("Invalid instance name!");
+			return null;
 		}
 
-		return null;
+		return new CIdentity(identifier, getLabel(identifier));
 	}
 
-	static private boolean validLabel(String label) {
+	static private String getLabel(String identifier) {
 
-		return validLabelStart(label) && validLabelBody(label);
-	}
+		URI uri = asURIOrNull(identifier);
 
-	static private boolean validLabelStart(String label) {
+		if (uri != null && uri.isAbsolute()) {
 
-		return Character.isLetter(label.charAt(0));
-	}
+			String frag = uri.getFragment();
 
-	static private boolean validLabelBody(String label) {
+			if (frag != null) {
 
-		for (int i = 1 ; i < label.length() ; i++) {
-
-			char c = label.charAt(i);
-
-			if (!Character.isLetterOrDigit(c) && !Character.isSpaceChar(c)) {
-
-				return false;
+				return frag;
 			}
 		}
 
-		return true;
+		return identifier;
 	}
 
-	static private String labelToIdentifier(String label) {
+	static private URI asURIOrNull(String identifier) {
 
-		return label.replace(' ', '-');
+		try {
+
+			return new URI(identifier);
+		}
+		catch (URISyntaxException e) {
+
+			return null;
+		}
 	}
 
 	static private void showMessage(String msg) {
