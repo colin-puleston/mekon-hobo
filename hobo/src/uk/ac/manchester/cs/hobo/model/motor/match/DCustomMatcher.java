@@ -90,7 +90,7 @@ public class DCustomMatcher implements IMatcher {
 	 * Invokes the corresponding method the core-matcher to determine
 	 * whether a rebuild is required.
 	 *
-	 * @return true is rebuild required
+	 * @return true as rebuild required
 	 */
 	public boolean rebuildOnStartup() {
 
