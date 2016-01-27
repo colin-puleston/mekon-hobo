@@ -94,7 +94,7 @@ public class OJenaMatcher extends OTMatcher {
 	 * Always returns true since a rebuild is always required on
 	 * startup.
 	 *
-	 * @return true is rebuild required
+	 * @return true as rebuild required
 	 */
 	public boolean rebuildOnStartup() {
 
