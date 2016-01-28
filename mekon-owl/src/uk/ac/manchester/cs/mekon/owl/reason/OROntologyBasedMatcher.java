@@ -46,6 +46,17 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 	private String instanceFileName = null;
 
 	/**
+	 * Sets the open/closed world semantics that are to be embodied
+	 * by the OWL constructs that will be created and classified.
+	 *
+	 * @param semantics Required semantics
+	 */
+	public void setSemantics(ORSemantics semantics) {
+
+		getReasoningModel().setSemantics(semantics);
+	}
+
+	/**
 	 * Specifies that the OWL constructs representing the instances
 	 * should, on termination of the matcher, be saved to a file of
 	 * the specified name, located in the same directory as the OWL

@@ -121,18 +121,6 @@ public abstract class ORMatcher extends NMatcher {
 	private OStaticInstanceIRIs instanceIRIs = new OStaticInstanceIRIs();
 
 	/**
-	 * Set the the open/closed world semantics that are to be
-	 * embodied by the OWL constructs that will be created and
-	 * classified.
-	 *
-	 * @param semantics Required semantics
-	 */
-	public void setSemantics(ORSemantics semantics) {
-
-		reasoningModel.setSemantics(semantics);
-	}
-
-	/**
 	 * Provides the model over which the matcher is operating.
 	 *
 	 * @return Model over which matcher is operating
