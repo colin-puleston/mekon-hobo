@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.store.zlink.*;
 
@@ -60,6 +61,16 @@ class ZIStoreAccessorImpl extends ZIStoreAccessor {
 
 	private IStoreBuilder createStoreBuilder(CBuilder builder) {
 
-		return new IStoreBuilderImpl(StoreRegister.createAndAdd(builder));
+		return new IStoreBuilderImpl(createStore(builder));
+	}
+
+	private IStore createStore(CBuilder builder) {
+
+		return new IStore(getModel(builder));
+	}
+
+	private CModel getModel(CBuilder builder) {
+
+		return ZCModelAccessor.get().getModel(builder);
 	}
 }

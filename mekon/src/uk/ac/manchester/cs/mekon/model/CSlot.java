@@ -108,7 +108,6 @@ public class CSlot implements CIdentified, CSourced {
 	 * Provides the model with which the slot is associated.
 	 *
 	 * @return Model with which slot is associated
-	 * @throws KAccessException if this is the root-slot
 	 */
 	public CModel getModel() {
 

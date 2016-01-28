@@ -29,7 +29,6 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
  * @author Colin Puleston
@@ -50,14 +49,9 @@ class StoreRegister {
 		return store;
 	}
 
-	static synchronized IStore createAndAdd(CBuilder builder) {
+	static synchronized void add(IStore store) {
 
-		CModel model = ZCModelAccessor.get().getModel(builder);
-		IStore store = new IStore(model);
-
-		stores.put(model, store);
-
-		return store;
+		stores.put(store.getModel(), store);
 	}
 
 	static synchronized void stop(CModel model) {

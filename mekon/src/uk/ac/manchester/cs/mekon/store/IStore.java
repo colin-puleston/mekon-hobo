@@ -62,6 +62,7 @@ public class IStore {
 		ZIStoreAccessor.set(new ZIStoreAccessorImpl());
 	}
 
+	private CModel model;
 	private IFreeInstantiator freeInstantiator;
 
 	private InstanceFileStore fileStore;
@@ -70,6 +71,16 @@ public class IStore {
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private InstanceIndexes indexes = new InstanceIndexes();
+
+	/**
+	 * Provides the model with which the store is associated.
+	 *
+	 * @return Model with which store is associated
+	 */
+	public CModel getModel() {
+
+		return model;
+	}
 
 	/**
 	 * Adds an instance to the store, possibly replacing an existing
@@ -196,6 +207,8 @@ public class IStore {
 	}
 
 	IStore(CModel model) {
+
+		this.model = model;
 
 		freeInstantiator = new IFreeInstances(model).getInstantiator();
 		fileStore = new InstanceFileStore(model, this);
