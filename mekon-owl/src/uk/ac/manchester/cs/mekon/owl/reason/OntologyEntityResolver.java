@@ -38,8 +38,8 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 class OntologyEntityResolver {
 
-	private OConceptFinder concepts;
-	private OPropertyFinder properties;
+	private OFrameConcepts frameConcepts;
+	private OSlotProperties slotProperties;
 
 	private class Processor extends NCrawler {
 
@@ -59,13 +59,13 @@ class OntologyEntityResolver {
 
 	OntologyEntityResolver(OModel model) {
 
-		concepts = new OConceptFinder(model);
-		properties = new OPropertyFinder(model);
+		frameConcepts = new OFrameConcepts(model);
+		slotProperties = new OSlotProperties(model);
 	}
 
 	boolean canResolve(CFrame rootType) {
 
-		return concepts.getSubsumerOrNull(rootType) != null;
+		return frameConcepts.getSubsumerOrNull(rootType) != null;
 	}
 
 	void resolve(NNode rootNode) {
@@ -86,7 +86,7 @@ class OntologyEntityResolver {
 
 		for (NFeature<?> feature : node.getFeatures()) {
 
-			if (!properties.exists(feature.getType())) {
+			if (!slotProperties.exists(feature.getType())) {
 
 				node.removeFeature(feature);
 			}
@@ -127,7 +127,7 @@ class OntologyEntityResolver {
 
 		for (CIdentity typeDisjunct : node.getTypeDisjuncts()) {
 
-			if (concepts.exists(typeDisjunct)) {
+			if (frameConcepts.exists(typeDisjunct)) {
 
 				anyOWLConcepts = true;
 			}
@@ -159,9 +159,9 @@ class OntologyEntityResolver {
 
 	private boolean resolveNodeTypeDisjunct(NNode node, CFrame cFrame) {
 
-		if (!concepts.exists(cFrame)) {
+		if (!frameConcepts.exists(cFrame)) {
 
-			IRI iri = concepts.getAncestorOrNull(cFrame);
+			IRI iri = frameConcepts.getAncestorOrNull(cFrame);
 
 			if (iri == null) {
 
