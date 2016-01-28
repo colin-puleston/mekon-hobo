@@ -126,14 +126,19 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	abstract boolean matchesInOWL(ConceptExpression queryExpr, NNode instance);
 
-	ConceptExpression createConceptExpression(NNode node) {
+	boolean requireLocalModel() {
 
-		return new ConceptExpression(getReasoningModel(), node);
+		return true;
 	}
 
 	private void checkInstancePersistence(KConfigNode parentConfigNode) {
 
 		new InstancePersistenceConfig(parentConfigNode).check(this);
+	}
+
+	private ConceptExpression createConceptExpression(NNode node) {
+
+		return new ConceptExpression(getReasoningModel(), node);
 	}
 
 	private List<IRI> purgeMatches(List<IRI> matches) {

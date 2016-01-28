@@ -333,6 +333,11 @@ public abstract class ORMatcher extends NMatcher {
 		return instanceIRIs.staticInstance(iri);
 	}
 
+	boolean requireLocalModel() {
+
+		return false;
+	}
+
 	private ORMatcher(
 				OModel model,
 				boolean localModel,
@@ -345,7 +350,7 @@ public abstract class ORMatcher extends NMatcher {
 			new ORMatcherConfig(reasoningModel, parentConfigNode);
 		}
 
-		if (!localModel) {
+		if (requireLocalModel() && !localModel) {
 
 			reasoningModel.ensureLocalModel();
 		}

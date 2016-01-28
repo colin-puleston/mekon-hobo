@@ -116,6 +116,11 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 		return createConceptExpression(node).getOWLConstruct();
 	}
 
+	private ConceptExpression createConceptExpression(NNode node) {
+
+		return new ConceptExpression(getReasoningModel(), node);
+	}
+
 	private OWLClass addConcept(IRI iri) {
 
 		OWLClass concept = getConcept(iri);
