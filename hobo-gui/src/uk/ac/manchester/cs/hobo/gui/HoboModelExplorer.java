@@ -25,6 +25,7 @@ package uk.ac.manchester.cs.hobo.gui;
 
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.hobo.model.motor.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 
@@ -37,7 +38,22 @@ public class HoboModelExplorer extends MekonModelExplorer {
 
 	static public void main(String[] args) {
 
-		new HoboModelExplorer(DManager.createBuilder().build());
+		new HoboModelExplorer();
+	}
+
+	public HoboModelExplorer() {
+
+		this(DManager.createBuilder());
+	}
+
+	public HoboModelExplorer(DBuilder builder) {
+
+		this(builder.build(), builder);
+	}
+
+	public HoboModelExplorer(DModel model, DBuilder builder) {
+
+		super(model.getCModel(), builder.getCBuilder());
 	}
 
 	public HoboModelExplorer(DModel model) {
