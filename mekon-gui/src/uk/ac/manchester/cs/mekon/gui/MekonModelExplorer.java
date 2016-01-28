@@ -57,13 +57,6 @@ public class MekonModelExplorer extends GFrame {
 		return SYSTEM_TITLE + ": " + title;
 	}
 
-	static private CModel initialiseForNewBuild(CModel model, CBuilder builder) {
-
-		IStoreManager.getBuilder(builder).build();
-
-		return model;
-	}
-
 	static private class Initialiser {
 
 		private ModelFramesPanel modelPanel;
@@ -153,16 +146,21 @@ public class MekonModelExplorer extends GFrame {
 
 	public MekonModelExplorer(CModel model, CBuilder builder) {
 
-		this(initialiseForNewBuild(model, builder));
-	}
-
-	public MekonModelExplorer(CModel model) {
-
 		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		addWindowListener(new ModelClearUpper(model));
 
+		if (builder != null ) {
+
+			IStoreManager.getBuilder(builder).build();
+		}
+
 		display(new Initialiser(model).createTopLevelComponent());
+	}
+
+	public MekonModelExplorer(CModel model) {
+
+		this(model, null);
 	}
 }
