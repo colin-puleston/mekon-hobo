@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
+import uk.ac.manchester.cs.mekon.owl.*;
+
 /**
  * Vocabulary used in the {@link ORClassifier} and
  * {@link ORMatcher}-definition sections of the MEKON
@@ -31,11 +33,10 @@ package uk.ac.manchester.cs.mekon.owl.reason;
  *
  * @author Colin Puleston
  */
-public interface ORConfigVocab {
+public interface ORConfigVocab extends OModelConfigVocab {
 
 	static public final String CLASSIFIER_ROOT_ID = "OWLClassifier";
 	static public final String MATCHER_ROOT_ID = "OWLMatcher";
-	static public final String REASONING_TYPE_ATTR = "reasoningType";
 	static public final String SEMANTICS_ID = "Semantics";
 	static public final String EXCEPTION_PROP_ID = "ExceptionProperty";
 	static public final String INSTANCE_PERSISTENCE_ID = "InstancePersistence";

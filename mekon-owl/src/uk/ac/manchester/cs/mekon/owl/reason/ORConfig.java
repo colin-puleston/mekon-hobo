@@ -24,6 +24,11 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
+import java.net.*;
+
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
+
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
@@ -35,60 +40,99 @@ abstract class ORConfig implements ORConfigVocab {
 	private ReasoningModel reasoningModel;
 	private KConfigNode configNode;
 
-	ORConfig(
-		ReasoningModel reasoningModel,
-		KConfigNode parentConfigNode,
-		String rootId) {
+	ORConfig(ReasoningModel reasoningModel, KConfigNode parentConfigNode) {
 
 		this.reasoningModel = reasoningModel;
 
-		configNode = parentConfigNode.getChild(rootId);
+		configNode = parentConfigNode.getChild(getRootId());
 
-		checkSetReasoningType();
+		checkUpdateReasoning();
 		checkSetSemantics();
 		checkEnableLogging();
 	}
 
+	abstract String getRootId();
+
 	abstract ORLogger getLogger();
 
-	private void checkSetReasoningType() {
+	private void checkUpdateReasoning() {
 
-		OReasoningType reasoningType = getReasoningTypeOrNull();
+		OModel model = reasoningModel.getModel();
+		OModelCopier copier = new OModelCopier(model);
 
-		if (reasoningType != null) {
+		boolean update = false;
 
-			reasoningModel.setReasoningType(reasoningType);
+		update |= checkSetReasoner(model, copier);
+		update |= checkSetReasoningType(model, copier);
+		update |= checkSetInstanceOntologyIRI(model, copier);
+
+		if (update) {
+
+			reasoningModel.setModel(copier.create(true));
 		}
+	}
+
+	private boolean checkSetReasoner(OModel model, OModelCopier copier) {
+
+		Class<? extends OWLReasonerFactory> type = getReasonerClassOrNull();
+
+		if (type != null && type != model.getReasonerFactory().getClass()) {
+
+			copier.setReasoner(type);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean checkSetReasoningType(OModel model, OModelCopier copier) {
+
+		OReasoningType type = getReasoningTypeOrNull();
+
+		if (type != null && type != model.getReasoningType()) {
+
+			copier.setReasoningType(type);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean checkSetInstanceOntologyIRI(OModel model, OModelCopier copier) {
+
+		IRI iri = getInstanceOntologyIRIOrNull();
+
+		if (iri != null && iri != getInstanceOntologyIRI(model)) {
+
+			copier.setInstanceOntologyIRI(iri);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private void checkSetSemantics() {
 
-		ORSemantics semantics = new ORSemantics();
-		KConfigNode semanticNode = configNode.getChildOrNull(SEMANTICS_ID);
+		KConfigNode node = configNode.getChildOrNull(SEMANTICS_ID);
 
-		if (semanticNode != null) {
+		if (node != null) {
 
-			setDefaultSemantics(semanticNode, semantics);
-			setSemanticsOverrides(semanticNode, semantics);
-
-			reasoningModel.setSemantics(semantics);
+			setSemantics(node);
 		}
 	}
 
-	private void setDefaultSemantics(
-					KConfigNode semanticNode,
-					ORSemantics semantics) {
+	private void setSemantics(KConfigNode node) {
 
-		semantics.setDefaultWorld(getDefaultSemantics(semanticNode));
-	}
+		ORSemantics s = reasoningModel.getSemantics();
 
-	private void setSemanticsOverrides(
-					KConfigNode semanticNode,
-					ORSemantics semantics) {
+		s.setDefaultWorld(getDefaultSemantics(node));
 
-		for (KConfigNode exNode : semanticNode.getChildren(EXCEPTION_PROP_ID)) {
+		for (KConfigNode exNode : node.getChildren(EXCEPTION_PROP_ID)) {
 
-			semantics.addExceptionProperty(getSemanticsExceptionPropURI(exNode));
+			s.addExceptionProperty(getSemanticsExceptionPropURI(exNode));
 		}
 	}
 
@@ -110,26 +154,51 @@ abstract class ORConfig implements ORConfigVocab {
 		}
 	}
 
+	private Class<? extends OWLReasonerFactory> getReasonerClassOrNull() {
+
+		return configNode.getClass(
+				REASONER_FACTORY_CLASS_ATTR,
+				OWLReasonerFactory.class,
+				null);
+	}
+
 	private OReasoningType getReasoningTypeOrNull() {
 
 		 return configNode.getEnum(
-			 		REASONING_TYPE_ATTR,
-			 		OReasoningType.class,
-			 		null);
+					REASONING_TYPE_ATTR,
+					OReasoningType.class,
+					null);
 	}
 
-	private ORSemanticWorld getDefaultSemantics(KConfigNode semanticsNode) {
+	private IRI getInstanceOntologyIRIOrNull() {
 
-		return semanticsNode.getEnum(DEFAULT_SEMANTICS_ATTR, ORSemanticWorld.class);
+		return getIRIOrNull(INSTANCE_ONTOLOGY_URI_ATTR);
 	}
 
-	private String getSemanticsExceptionPropURI(KConfigNode expPropNode) {
+	private ORSemanticWorld getDefaultSemantics(KConfigNode node) {
 
-		return expPropNode.getString(SEMANICS_EXCEPTION_PROP_URI_ATTR);
+		return node.getEnum(DEFAULT_SEMANTICS_ATTR, ORSemanticWorld.class);
+	}
+
+	private String getSemanticsExceptionPropURI(KConfigNode node) {
+
+		return node.getString(SEMANICS_EXCEPTION_PROP_URI_ATTR);
 	}
 
 	private ORLoggingMode getLoggingMode() {
 
 		return configNode.getEnum(LOGGING_MODE_ATTR, ORLoggingMode.class);
+	}
+
+	private IRI getIRIOrNull(String uriAttr) {
+
+		URI uri = configNode.getURI(uriAttr, null);
+
+		return uri != null ? IRI.create(uri) : null;
+	}
+
+	private IRI getInstanceOntologyIRI(OModel model) {
+
+		return model.getInstanceOntology().getOntologyID().getOntologyIRI();
 	}
 }

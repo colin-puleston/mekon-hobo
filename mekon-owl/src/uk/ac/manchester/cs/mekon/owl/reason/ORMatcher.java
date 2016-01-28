@@ -121,20 +121,9 @@ public abstract class ORMatcher extends NMatcher {
 	private OStaticInstanceIRIs instanceIRIs = new OStaticInstanceIRIs();
 
 	/**
-	 * Sets the type of reasoning that is to be performed on the
-	 * model.
-	 *
-	 * @param reasoningType Relevant reasoning-type
-	 */
-	public void setReasoningType(OReasoningType reasoningType) {
-
-		reasoningModel.setReasoningType(reasoningType);
-	}
-
-	/**
 	 * Set the the open/closed world semantics that are to be
-	 * embodied by the OWL constructs that will be created to
-	 * represent instances being stored and queries being executed.
+	 * embodied by the OWL constructs that will be created and
+	 * classified.
 	 *
 	 * @param semantics Required semantics
 	 */

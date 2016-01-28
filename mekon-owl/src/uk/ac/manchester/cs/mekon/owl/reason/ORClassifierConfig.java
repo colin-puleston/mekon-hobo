@@ -42,7 +42,12 @@ class ORClassifierConfig extends ORConfig {
 		ReasoningModel reasoningModel,
 		KConfigNode parentConfigNode) {
 
-		super(reasoningModel, parentConfigNode, CLASSIFIER_ROOT_ID);
+		super(reasoningModel, parentConfigNode);
+	}
+
+	String getRootId() {
+
+		return CLASSIFIER_ROOT_ID;
 	}
 
 	ORLogger getLogger() {

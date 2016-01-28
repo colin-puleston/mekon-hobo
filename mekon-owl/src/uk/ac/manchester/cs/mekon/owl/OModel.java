@@ -287,6 +287,17 @@ public class OModel {
 	}
 
 	/**
+	 * Provides the factory that was used to create the reasoner for
+	 * the model.
+	 *
+	 * @return Factory that created reasoner for model
+	 */
+	public OWLReasonerFactory getReasonerFactory() {
+
+		return reasonerFactory;
+	}
+
+	/**
 	 * Specifies the type of reasoning that is to be performed on
 	 * the model.
 	 *
@@ -683,11 +694,6 @@ public class OModel {
 	void assertSubConcept(OWLClass concept, OWLClass subConcept) {
 
 		addModelAxiom(getSubClassAxiom(concept, subConcept));
-	}
-
-	OWLReasonerFactory getReasonerFactory() {
-
-		return reasonerFactory;
 	}
 
 	private void classify() {

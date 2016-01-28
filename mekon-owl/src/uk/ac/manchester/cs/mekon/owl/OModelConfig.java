@@ -49,8 +49,8 @@ class OModelConfig implements OModelConfigVocab {
 		builder.setMainSourceFile(getMainSourceFile(baseDirectory));
 		builder.setReasoner(getReasonerFactoryClass());
 		builder.setReasoningType(getReasoningType());
-		builder.setIndirectNumericProperty(getIndirectNumericPropertyIRI());
-		builder.setInstanceOntologyIRI(getInstanceOntologyIRI());
+		builder.setIndirectNumericProperty(getIndirectNumericPropertyIRIOrNull());
+		builder.setInstanceOntologyIRI(getInstanceOntologyIRIOrNull());
 	}
 
 	private File getMainSourceFile(File baseDir) {
@@ -75,17 +75,17 @@ class OModelConfig implements OModelConfigVocab {
 			 		OReasoningType.DL);
 	}
 
-	private IRI getIndirectNumericPropertyIRI() {
+	private IRI getIndirectNumericPropertyIRIOrNull() {
 
-		return getIRI(INDIRECT_NUMERIC_PROPERTY_URI_ATTR);
+		return getIRIOrNull(INDIRECT_NUMERIC_PROPERTY_URI_ATTR);
 	}
 
-	private IRI getInstanceOntologyIRI() {
+	private IRI getInstanceOntologyIRIOrNull() {
 
-		return getIRI(INSTANCE_ONTOLOGY_URI_ATTR);
+		return getIRIOrNull(INSTANCE_ONTOLOGY_URI_ATTR);
 	}
 
-	private IRI getIRI(String uriAttr) {
+	private IRI getIRIOrNull(String uriAttr) {
 
 		URI uri = configNode.getURI(uriAttr, null);
 

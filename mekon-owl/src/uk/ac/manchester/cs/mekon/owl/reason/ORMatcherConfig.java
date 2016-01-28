@@ -40,7 +40,12 @@ class ORMatcherConfig extends ORConfig {
 		ReasoningModel reasoningModel,
 		KConfigNode parentConfigNode) {
 
-		super(reasoningModel, parentConfigNode, MATCHER_ROOT_ID);
+		super(reasoningModel, parentConfigNode);
+	}
+
+	String getRootId() {
+
+		return MATCHER_ROOT_ID;
 	}
 
 	ORLogger getLogger() {

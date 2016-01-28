@@ -33,7 +33,6 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -55,12 +54,11 @@ class ReasoningModel {
 		sourceModel = model;
 	}
 
-	void setReasoningType(OReasoningType reasoningType) {
+	void setModel(OModel model) {
 
-		if (reasoningType != model.getReasoningType()) {
+		this.model = model;
 
-			setModel(deriveModel(reasoningType));
-		}
+		ontologyEntities = new OntologyEntityResolver(model);
 	}
 
 	void setSemantics(ORSemantics semantics) {
@@ -96,24 +94,8 @@ class ReasoningModel {
 		ontologyEntities.resolve(rootNode);
 	}
 
-	private OModel deriveModel(OReasoningType reasoningType) {
-
-		OModelCopier copier = new OModelCopier(model);
-
-		copier.setReasoningType(reasoningType);
-
-		return copier.create(true);
-	}
-
 	private OModel copyModel() {
 
 		return new OModelCopier(model).create(true);
-	}
-
-	private void setModel(OModel model) {
-
-		this.model = model;
-
-		ontologyEntities = new OntologyEntityResolver(model);
 	}
 }

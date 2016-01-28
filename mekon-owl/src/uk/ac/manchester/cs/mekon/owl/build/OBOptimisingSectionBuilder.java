@@ -163,7 +163,7 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 
 		OModelCopier copier = new OModelCopier(mainModel);
 
-		copier.setReasoner(StructuralReasonerFactory.class);
+		copier.setReasoner(new StructuralReasonerFactory());
 
 		return copier.create(true);
 	}
