@@ -169,7 +169,6 @@ public class IStoreTest extends GeneralFramesModelTest {
 
 		testStore();
 		createStore();
-		store.loadFromFileStore();
 		testRetrieve();
 	}
 
@@ -194,6 +193,8 @@ public class IStoreTest extends GeneralFramesModelTest {
 	private void createStore() {
 
 		store = new IStore(getModel());
+
+		store.initialisePostRegistration();
 	}
 
 	private void testStore() {

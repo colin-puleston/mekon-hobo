@@ -67,20 +67,12 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		matcher = createMatcher();
 
-		CSectionBuilder sectionBuilder = createSectionBuilder();
-		CBuilder cBuilder = buildModel(sectionBuilder);
+		buildModel(createSectionBuilder());
 
 		undergradTeachingJob = addUndergradTeachingJob();
 		postgradTeachingJob = addPostgradTeachingJob();
 		academicResearchJob = addAcademicResearchJob();
 		doctoringJob = addDoctoringJob();
-	}
-
-	@After
-	public void clearUp() {
-
-		matcher.stop();
-		super.clearUp();
 	}
 
 	@Test

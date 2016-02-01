@@ -222,7 +222,6 @@ public class IStore {
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
-		matcher.initialise(indexes);
 	}
 
 	void removeMatcher(IMatcher matcher) {
@@ -240,12 +239,9 @@ public class IStore {
 		matchers.set(matchers.indexOf(oldMatcher), newMatcher);
 	}
 
-	List<IMatcher> getMatchers() {
+	void initialisePostRegistration() {
 
-		return new ArrayList<IMatcher>(matchers);
-	}
-
-	void loadFromFileStore() {
+		initialiseMatchers();
 
 		fileStore.reloadAll();
 		indexes.reinitialiseFreeIndexes();
@@ -274,6 +270,19 @@ public class IStore {
 		}
 
 		matchers.clear();
+	}
+
+	List<IMatcher> getMatchers() {
+
+		return new ArrayList<IMatcher>(matchers);
+	}
+
+	private void initialiseMatchers() {
+
+		for (IMatcher matcher : matchers) {
+
+			matcher.initialise(indexes);
+		}
 	}
 
 	private IFrame checkRemove(CIdentity identity) {

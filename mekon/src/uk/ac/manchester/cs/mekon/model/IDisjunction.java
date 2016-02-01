@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 class IDisjunction extends IFrame {
 
-	static private final String LABEL = "One-of...";
+	static private final String LABEL = "Any-of...";
 	static private final String DISJUNCTS_SLOT_ID = "@DISJUNCTS";
 	static private final String DISJUNCTS_SLOT_LABEL = "options";
 

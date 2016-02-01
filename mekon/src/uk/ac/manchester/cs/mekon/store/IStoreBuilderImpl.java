@@ -69,7 +69,7 @@ class IStoreBuilderImpl implements IStoreBuilder {
 	public IStore build() {
 
 		StoreRegister.add(store);
-		store.loadFromFileStore();
+		store.initialisePostRegistration();
 
 		return store;
 	}
