@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public class Customisers {
 
+	private DModel model;
 	private IFreeInstances freeInstances;
 
 	private List<DMatcherCustomiser<?, ?>> customisers
@@ -44,12 +45,22 @@ public class Customisers {
 
 	Customisers(DModel model) {
 
+		this.model = model;
+
 		freeInstances = new IFreeInstances(model.getCModel());
 	}
 
 	void add(DMatcherCustomiser<?, ?> customiser) {
 
 		customisers.add(customiser);
+	}
+
+	void initialisePostStoreBuild() {
+
+		for (DMatcherCustomiser<?, ?> customiser : customisers) {
+
+			customiser.initialisePostStoreBuild();
+		}
 	}
 
 	IFrame preProcess(IFrame instance) {

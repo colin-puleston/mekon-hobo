@@ -40,7 +40,7 @@ import uk.ac.manchester.cs.hobo.model.*;
 public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 
 	private DModel model;
-	private IStore iStore;
+	private IStore iStore = null;
 
 	private CFrame matchingType;
 
@@ -53,7 +53,6 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 
 		this.model = model;
 
-		iStore = IStore.get(model.getCModel());
 		matchingType = model.getFrame(getMatchingClass());
 	}
 
@@ -124,6 +123,11 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 	protected M getStoredInstance(CIdentity identity) {
 
 		return getMatchingObject(iStore.get(identity));
+	}
+
+	void initialisePostStoreBuild() {
+
+		iStore = IStore.get(model.getCModel());
 	}
 
 	boolean handles(IFrame instance) {
