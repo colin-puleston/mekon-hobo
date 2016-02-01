@@ -53,6 +53,11 @@ class EntityIcons implements EntityIconConstants {
 
 	Icon get(IFrame frame) {
 
+		if (frame.getCategory().disjunction()) {
+
+			return null;
+		}
+
 		return get(frame.getType(), EntityLevel.INSTANCE);
 	}
 
@@ -82,6 +87,11 @@ class EntityIcons implements EntityIconConstants {
 	}
 
 	Icon get(ISlot slot) {
+
+		if (slot.getContainer().getCategory().disjunction()) {
+
+			return null;
+		}
 
 		return getISlotIcons(slot).get(slot.getType().getSource());
 	}
