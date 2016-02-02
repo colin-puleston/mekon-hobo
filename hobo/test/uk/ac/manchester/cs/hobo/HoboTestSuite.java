@@ -29,6 +29,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.hobo.model.motor.match.*;
 
 /**
  * @author Colin Puleston
@@ -39,6 +40,7 @@ import uk.ac.manchester.cs.hobo.model.*;
 	DArrayTest.class,
 	DDisjunctionCellTest.class,
 	DNumberRangeCellTest.class,
-	DModelTest.class})
+	DModelTest.class,
+	DCustomMatcherTest.class})
 public class HoboTestSuite {
 }

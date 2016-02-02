@@ -50,19 +50,21 @@ public class DCustomMatcherTest {
 	@After
 	public void clearUp() {
 
-		matcher.stop();
+		store.clear();
+
+		IStoreManager.stop(model.getCModel());
 	}
 
 	@Test
 	public void testBasicRangeQuery() {
 
-		Citizen ten = createCitizenWithTotalWeeklyPay(100);
-		Citizen twenty = createCitizenWithTotalWeeklyPay(200);
-		Citizen thirty = createCitizenWithTotalWeeklyPay(300);
+		Citizen _100 = createCitizenWithTotalWeeklyPay(100);
+		Citizen _200 = createCitizenWithTotalWeeklyPay(200);
+		Citizen _300 = createCitizenWithTotalWeeklyPay(300);
 
 		Citizen query = createCitizenWithTotalWeeklyPay(150, 250);
 
-		testMatchAndNonMatches(query, twenty, ten, thirty);
+		testMatchAndNonMatches(query, _200, _100, _300);
 	}
 
 	@Test
