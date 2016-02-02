@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.hobo.model.*;
 /**
  * @author Colin Puleston
  */
-public class Customisers {
+class Customisers {
 
 	private DModel model;
 	private IFreeInstances freeInstances;

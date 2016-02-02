@@ -201,15 +201,14 @@ public abstract class DMatchAggregator
 	protected abstract DCell<DNumberRange<R>> getAggregatorCellOrNull(T target);
 
 	/**
-	 * Retrieves the cell containing the sub-section of the target
-	 * section for which a match must be present for the aggregator
-	 * value to be included in the aggregate, if currently present.
+	 * Retrieves the sub-section of the target section for which a
+	 * match must be present for the aggregator value to be included
+	 * in the aggregate, if currently present.
 	 *
 	 * @param target Top-level target section
-	 * @return Required data-section cell, or null if not currently
-	 * present
+	 * @return Required data-section, or null if not currently present
 	 */
-	protected abstract DCell<D> getDataSectionCellOrNull(T target);
+	protected abstract D getDataSectionOrNull(T target);
 
 	private List<T> getActiveTargets(M instance) {
 
@@ -267,13 +266,6 @@ public abstract class DMatchAggregator
 	private DCell<DNumberRange<R>> getAggregatorCell(T target) {
 
 		return checkNotNull(getAggregatorCellOrNull(target));
-	}
-
-	private D getDataSectionOrNull(T target) {
-
-		DCell<D> cell = getDataSectionCellOrNull(target);
-
-		return cell != null && cell.isSet() ? cell.get() : null;
 	}
 
 	private boolean matches(DObject query, DObject instance) {
