@@ -50,7 +50,8 @@
 		<OWLModel
 			owlFile="demo.owl"
 			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
-			indirectNumericProperty="http://mekon/demo.owl#numericValue">
+			indirectNumericProperty="http://mekon/demo.owl#numericValue"
+			instanceOntology="http://mekon/demo-instances.owl">
 		</OWLModel>
 
 		<!-- Reasoner options...
@@ -92,6 +93,7 @@
 			reasoningType="DL"
 			loggingMode="DISABLED">
 			<Semantics defaultWorld="OPEN"/>
+			<InstancePersistence fileName="demo-owl-instances.owl"/>
 		</OWLMatcher>
 
 		<!--
@@ -173,10 +175,12 @@
 		provided and, where appropriate, should be listed in order
 		of precedence.
 	-->
+	<!--
 	<GeneralMatcher
 		matcher="uk.ac.manchester.cs.mekon.basex.BaseXMatcher">
 		<BaseXMatcher/>
 	</GeneralMatcher>
+	-->
 
 	<!--
 		Mappings between Java classes/fields from the Object Model
@@ -199,9 +203,14 @@
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.Job"
 			externalId="http://mekon/demo.owl#Job">
+			<FieldMap fieldName="jobType" externalId="http://mekon/demo.owl#jobType"/>
 			<FieldMap fieldName="hourlyPay" externalId="http://mekon/demo.owl#hourlyPay"/>
 			<FieldMap fieldName="weeklyPay" externalId="http://mekon/demo.owl#weeklyPay"/>
 			<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/demo.owl#hoursPerWeek"/>
+		</ClassMap>
+		<ClassMap
+			javaClass="uk.ac.manchester.cs.hobo.demo.JobType"
+			externalId="http://mekon/demo.owl#JobType">
 		</ClassMap>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.CitizenAspect"
