@@ -30,9 +30,9 @@ class TotalWeeklyPayOverlapper
 		return null;
 	}
 
-	TotalWeeklyPayOverlapper(DModel dModel) {
+	TotalWeeklyPayOverlapper(DModel model) {
 
-		super(dModel);
+		super(model);
 	}
 }
 

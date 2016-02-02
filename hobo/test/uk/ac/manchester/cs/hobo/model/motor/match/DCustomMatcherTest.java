@@ -12,6 +12,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.demomodel.*;
 
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.*;
@@ -21,7 +22,7 @@ import uk.ac.manchester.cs.hobo.demo.*;
 /**
  * @author Colin Puleston
  */
-public class DCustomMatcherTest {
+public class DCustomMatcherTest extends DemoModelBasedTest {
 
 	static private final String DEMO_PACKAGE_NAME = Citizen.class.getPackage().getName();
 
@@ -29,7 +30,91 @@ public class DCustomMatcherTest {
 	private IStore store;
 	private DCustomMatcher matcher;
 
+	private CitizenInstantiator assertions
+				= new CitizenInstantiator(IFrameFunction.ASSERTION);
+
+	private CitizenInstantiator queries
+				= new CitizenInstantiator(IFrameFunction.QUERY);
+
 	private int storedAssertionCount = 0;
+
+	private class CitizenInstantiator {
+
+		private IFrameFunction function;
+
+		CitizenInstantiator(IFrameFunction function) {
+
+			this.function = function;
+		}
+
+		Citizen createWithWeeklyPay(int pay) {
+
+			return createWithWeeklyPay(DNumberRange.exact(pay));
+		}
+
+		Citizen createWithWeeklyPay(int minPay, int maxPay) {
+
+			return createWithWeeklyPay(DNumberRange.range(minPay, maxPay));
+		}
+
+		Citizen createWithWeeklyPay(DNumberRange<Integer> pay) {
+
+			Citizen citizen = createEmployed();
+
+			addJob(citizen);
+			citizen.employment.get().totalWeeklyPayAsRange.set(pay);
+
+			return citizen;
+		}
+
+		Citizen createEmployed() {
+
+			Citizen citizen = instantiate(Citizen.class);
+			Employment employment = instantiate(Employment.class);
+
+			citizen.employment.set(employment);
+
+			return citizen;
+		}
+
+		void addJobWithHoursPerWeek(Citizen citizen, String jobType, int hours) {
+
+			addJobWithHoursPerWeek(citizen, jobType, DNumberRange.exact(hours));
+		}
+
+		void addJobWithHoursPerWeek(Citizen citizen, String jobType, int minHours, int maxHours) {
+
+			addJobWithHoursPerWeek(
+				citizen,
+				jobType,
+				DNumberRange.range(minHours, maxHours));
+		}
+
+		void addJobWithHoursPerWeek(Citizen citizen, String jobType, DNumberRange<Integer> hours) {
+
+			Job job = addJob(citizen);
+
+			job.jobType.set(getDemoModelConcept(JobType.class, jobType));
+			job.hoursPerWeekAsRange.set(hours);
+		}
+
+		private Job addJob(Citizen citizen) {
+
+			Job job = instantiate(Job.class);
+
+			citizen.employment.get().jobs.add(job);
+
+			return job;
+		}
+
+		private <D extends DObject>D instantiate(Class<D> dClass) {
+
+			CFrame frameType = model.getFrame(dClass);
+			IFrame frame = frameType.instantiate(function);
+
+			return model.getDObject(frame, dClass);
+		}
+	}
 
 	@Before
 	public void setUp() {
@@ -56,34 +141,60 @@ public class DCustomMatcherTest {
 	}
 
 	@Test
-	public void testBasicRangeQuery() {
+	public void testMatchRangeOverlapper_simpleContainment() {
 
-		Citizen _100 = createCitizenWithTotalWeeklyPay(100);
-		Citizen _200 = createCitizenWithTotalWeeklyPay(200);
-		Citizen _300 = createCitizenWithTotalWeeklyPay(300);
+		Citizen _100 = assertions.createWithWeeklyPay(100);
+		Citizen _200 = assertions.createWithWeeklyPay(200);
+		Citizen _300 = assertions.createWithWeeklyPay(300);
 
-		Citizen query = createCitizenWithTotalWeeklyPay(150, 250);
+		Citizen query = queries.createWithWeeklyPay(150, 250);
 
 		testMatchAndNonMatches(query, _200, _100, _300);
 	}
 
 	@Test
-	public void testRangeOverlapQuery() {
+	public void testMatchRangeOverlapper_overlaps() {
 
-		Citizen _0_50 = createCitizenWithTotalWeeklyPay(0, 50);
-		Citizen _100_200 = createCitizenWithTotalWeeklyPay(100, 200);
-		Citizen _150_240 = createCitizenWithTotalWeeklyPay(150, 240);
-		Citizen _160_240 = createCitizenWithTotalWeeklyPay(160, 240);
-		Citizen _160_250 = createCitizenWithTotalWeeklyPay(160, 250);
-		Citizen _200_300 = createCitizenWithTotalWeeklyPay(200, 300);
-		Citizen _300_400 = createCitizenWithTotalWeeklyPay(300, 400);
+		Citizen _0_50 = assertions.createWithWeeklyPay(0, 50);
+		Citizen _100_200 = assertions.createWithWeeklyPay(100, 200);
+		Citizen _150_240 = assertions.createWithWeeklyPay(150, 240);
+		Citizen _160_240 = assertions.createWithWeeklyPay(160, 240);
+		Citizen _160_250 = assertions.createWithWeeklyPay(160, 250);
+		Citizen _200_300 = assertions.createWithWeeklyPay(200, 300);
+		Citizen _300_400 = assertions.createWithWeeklyPay(300, 400);
 
-		Citizen query = createCitizenWithTotalWeeklyPay(150, 250);
+		Citizen query = queries.createWithWeeklyPay(150, 250);
 
 		testMatchesAndNonMatches(
 			query,
 			new DObject[]{_100_200, _150_240, _160_240, _160_250, _200_300},
 			new DObject[]{_0_50, _300_400});
+	}
+
+	@Test
+	public void testMatchAggregator() {
+
+		Citizen zero = assertions.createEmployed();
+		Citizen thirty = assertions.createEmployed();
+		Citizen forty = assertions.createEmployed();
+		Citizen fifty = assertions.createEmployed();
+
+		assertions.addJobWithHoursPerWeek(zero, SPECIALIST, 15);
+
+		assertions.addJobWithHoursPerWeek(thirty, DOCTOR, 30);
+
+		assertions.addJobWithHoursPerWeek(forty, NURSE, 20);
+		assertions.addJobWithHoursPerWeek(forty, PHYSIO, 20);
+
+		assertions.addJobWithHoursPerWeek(fifty, NURSE, 10);
+		assertions.addJobWithHoursPerWeek(fifty, DOCTOR, 10);
+		assertions.addJobWithHoursPerWeek(fifty, PHYSIO, 30);
+
+		Citizen query = queries.createEmployed();
+
+		queries.addJobWithHoursPerWeek(query, MEDIC, 35, 45);
+
+		testMatchAndNonMatches(query, forty, zero, thirty, fifty);
 	}
 
 	private DCustomMatcher createCustomMatcher(DModel model) {
@@ -92,6 +203,7 @@ public class DCustomMatcherTest {
 		DCustomMatcher custom = new DCustomMatcher(model, core);
 
 		custom.addCustomiser(new TotalWeeklyPayOverlapper(model));
+		custom.addCustomiser(new HoursPerWeekAggregator(model, custom));
 
 		return custom;
 	}
@@ -102,39 +214,6 @@ public class DCustomMatcherTest {
 
 			storeBuilder.removeMatcher(matcher);
 		}
-	}
-
-	private Citizen createCitizenWithTotalWeeklyPayQuery(int minPay, int maxPay) {
-
-		Citizen citizen = createCitizenWithTotalWeeklyPay(minPay, maxPay);
-
-		citizen.getFrame().resetFunction(IFrameFunction.QUERY);
-
-		return citizen;
-	}
-
-	private Citizen createCitizenWithTotalWeeklyPay(int pay) {
-
-		return createCitizenWithTotalWeeklyPay(DNumberRange.exact(pay));
-	}
-
-	private Citizen createCitizenWithTotalWeeklyPay(int minPay, int maxPay) {
-
-		return createCitizenWithTotalWeeklyPay(DNumberRange.range(minPay, maxPay));
-	}
-
-	private Citizen createCitizenWithTotalWeeklyPay(DNumberRange<Integer> pay) {
-
-		Citizen citizen = model.instantiate(Citizen.class);
-		Employment employment = model.instantiate(Employment.class);
-		Job job = model.instantiate(Job.class);
-
-		citizen.employment.set(employment);
-
-		employment.jobs.add(job);
-		employment.totalWeeklyPayAsRange.set(pay);
-
-		return citizen;
 	}
 
 	private void testMatchAndNonMatches(
@@ -155,16 +234,6 @@ public class DCustomMatcherTest {
 
 		storeAll(expectNonMatches);
 		testMatchesSet(query, storeAll(expectMatches));
-	}
-
-	private void testOrderedMatches(DObject query, DObject... expectMatches) {
-
-		testMatchesList(query, storeAll(expectMatches));
-	}
-
-	private void testMatchesList(DObject query, List<CIdentity> expectedIds) {
-
-		assertEquals(expectedIds, match(query));
 	}
 
 	private void testMatchesSet(DObject query, List<CIdentity> expectedIds) {
@@ -205,5 +274,12 @@ public class DCustomMatcherTest {
 		String id = "A" + (++storedAssertionCount);
 
 		return new CIdentity(id, id);
+	}
+
+	private <D extends DObject>DConcept<D> getDemoModelConcept(
+												Class<D> dClass,
+												String name) {
+
+		return model.getConcept(dClass, DemoModelBasedTest.nameToIdentity(name));
 	}
 }
