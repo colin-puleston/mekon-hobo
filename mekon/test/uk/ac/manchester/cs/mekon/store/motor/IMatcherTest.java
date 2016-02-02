@@ -32,7 +32,6 @@ import org.junit.After;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
@@ -73,6 +72,12 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		postgradTeachingJob = addPostgradTeachingJob();
 		academicResearchJob = addAcademicResearchJob();
 		doctoringJob = addDoctoringJob();
+	}
+
+	@After
+	public void clearUp() {
+
+		matcher.stop();
 	}
 
 	@Test

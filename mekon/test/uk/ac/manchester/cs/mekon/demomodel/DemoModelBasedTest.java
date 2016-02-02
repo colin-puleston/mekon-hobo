@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.mekon.demomodel;
 
 import java.util.*;
 
-import org.junit.After;
-
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
@@ -51,12 +49,6 @@ public abstract class DemoModelBasedTest implements DemoModelEntities {
 	}
 
 	private CModel model;
-
-	@After
-	public void clearUp() {
-
-		IStoreManager.stop(model);
-	}
 
 	public CBuilder buildModel(CSectionBuilder sectionBuilder) {
 
