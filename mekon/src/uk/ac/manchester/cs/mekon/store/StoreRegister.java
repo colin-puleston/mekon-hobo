@@ -39,14 +39,7 @@ class StoreRegister {
 
 	static synchronized IStore get(CModel model) {
 
-		IStore store = stores.get(model);
-
-		if (store == null) {
-
-			throw new KAccessException("Store has not been created for model!");
-		}
-
-		return store;
+		return checkRegistered(stores.get(model));
 	}
 
 	static synchronized void add(IStore store) {
@@ -56,11 +49,16 @@ class StoreRegister {
 
 	static synchronized void stop(CModel model) {
 
-		IStore store = stores.remove(model);
+		checkRegistered(stores.remove(model)).stop();
+	}
 
-		if (store != null) {
+	static private IStore checkRegistered(IStore store) {
 
-			store.stop();
+		if (store == null) {
+
+			throw new KAccessException("Store has not been created for model!");
 		}
+
+		return store;
 	}
 }

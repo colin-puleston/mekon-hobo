@@ -146,7 +146,6 @@ public class IStoreTest extends GeneralFramesModelTest {
 	@After
 	public void clearUp() {
 
-		super.clearUp();
 		store.clear();
 	}
 

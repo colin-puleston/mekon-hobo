@@ -24,9 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import org.junit.After;
-
-import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
@@ -57,12 +54,6 @@ public class GeneralFramesModelTest {
 	public GeneralFramesModelTest(CModel model) {
 
 		this(model, null);
-	}
-
-	@After
-	public void clearUp() {
-
-		IStoreManager.stop(model);
 	}
 
 	public void setQueriesEnabled(boolean enabled) {
