@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.hobo.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
+public abstract class DMatcherCustomiser<M extends DObject> {
 
 	private DModel model;
 	private IStore iStore = null;
@@ -106,13 +106,6 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 	 */
 	protected abstract Class<M> getMatchingClass();
 
-	/**
-	 * Provides the class that specifically represents the relevant type
-	 * of queries in the OM.
-	 *
-	 * @return Relevant class
-	 */
-	protected abstract Class<Q> getQueryClass();
 
 	/**
 	 * Retieves the specified instance fron the instance-store.

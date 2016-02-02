@@ -40,9 +40,8 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public abstract class DMatchRangeOverlapper
 						<M extends DObject,
-						Q extends M,
 						R extends Number>
-						extends DMatcherCustomiser<M, Q> {
+						extends DMatcherCustomiser<M> {
 
 	private class Filter extends DMatchFilter<M> {
 

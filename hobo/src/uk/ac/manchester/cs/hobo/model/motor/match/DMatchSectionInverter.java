@@ -42,9 +42,8 @@ import uk.ac.manchester.cs.hobo.model.motor.match.*;
  */
 public abstract class DMatchSectionInverter
 							<M extends DObject,
-							Q extends M,
 							I extends DObject>
-							extends DMatcherCustomiser<M, Q> {
+							extends DMatcherCustomiser<M> {
 
 	private DCustomMatcher matcher;
 

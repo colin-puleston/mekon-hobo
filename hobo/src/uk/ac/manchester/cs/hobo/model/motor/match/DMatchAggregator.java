@@ -42,11 +42,10 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public abstract class DMatchAggregator
 							<M extends DObject,
-							Q extends M,
 							T extends DObject,
 							D extends DObject,
 							R extends Number>
-							extends DMatcherCustomiser<M, Q> {
+							extends DMatcherCustomiser<M> {
 
 	private DCustomMatcher matcher;
 
