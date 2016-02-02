@@ -39,6 +39,8 @@ public class Employment extends DObjectShell {
 	public final DCellViewer<Integer> jobCount;
 	public final DCellViewer<Integer> totalWeeklyPay;
 
+	public final DCell<DNumberRange<Integer>> totalWeeklyPayAsRange;
+
 	private DEditor dEditor;
 
 	private class JobConsequenceUpdater implements KValuesListener<Job> {
@@ -95,7 +97,11 @@ public class Employment extends DObjectShell {
 
 		jobs = builder.addObjectArray(Job.class);
 		jobCount = builder.getViewer(builder.addNumberCell(DNumberRange.min(0)));
-		totalWeeklyPay = builder.getViewer(builder.addIntegerCell());
+
+		DCell<Integer> totalWeeklyPayCell = builder.addIntegerCell();
+
+		totalWeeklyPay = builder.getViewer(totalWeeklyPayCell);
+		totalWeeklyPayAsRange = builder.toNumberRangeCell(totalWeeklyPayCell);
 
 		dEditor = builder.getEditor();
 
