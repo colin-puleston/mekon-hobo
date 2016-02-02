@@ -40,8 +40,8 @@ class Customisers {
 	private DModel model;
 	private IFreeInstances freeInstances;
 
-	private List<DMatcherCustomiser<?, ?>> customisers
-				= new ArrayList<DMatcherCustomiser<?, ?>>();
+	private List<DMatcherCustomiser<?>> customisers
+				= new ArrayList<DMatcherCustomiser<?>>();
 
 	Customisers(DModel model) {
 
@@ -50,14 +50,14 @@ class Customisers {
 		freeInstances = new IFreeInstances(model.getCModel());
 	}
 
-	void add(DMatcherCustomiser<?, ?> customiser) {
+	void add(DMatcherCustomiser<?> customiser) {
 
 		customisers.add(customiser);
 	}
 
 	void initialisePostStoreBuild() {
 
-		for (DMatcherCustomiser<?, ?> customiser : customisers) {
+		for (DMatcherCustomiser<?> customiser : customisers) {
 
 			customiser.initialisePostStoreBuild();
 		}
@@ -67,7 +67,7 @@ class Customisers {
 
 		instance = freeInstances.createFreeCopy(instance);
 
-		for (DMatcherCustomiser<?, ?> customiser : filterCustomisers(instance)) {
+		for (DMatcherCustomiser<?> customiser : filterCustomisers(instance)) {
 
 			customiser.preProcess(instance);
 		}
@@ -77,7 +77,7 @@ class Customisers {
 
 	IMatches processMatches(IFrame query, IMatches matches) {
 
-		for (DMatcherCustomiser<?, ?> customiser : filterCustomisers(query)) {
+		for (DMatcherCustomiser<?> customiser : filterCustomisers(query)) {
 
 			matches = customiser.processMatches(query, matches);
 		}
@@ -87,7 +87,7 @@ class Customisers {
 
 	boolean passesMatchesFilter(IFrame query, IFrame instance) {
 
-		for (DMatcherCustomiser<?, ?> customiser : filterCustomisers(query)) {
+		for (DMatcherCustomiser<?> customiser : filterCustomisers(query)) {
 
 			if (!customiser.passesMatchesFilter(query, instance)) {
 
@@ -98,12 +98,12 @@ class Customisers {
 		return true;
 	}
 
-	private List<DMatcherCustomiser<?, ?>> filterCustomisers(IFrame tester) {
+	private List<DMatcherCustomiser<?>> filterCustomisers(IFrame tester) {
 
-		List<DMatcherCustomiser<?, ?>> filtered
-			= new ArrayList<DMatcherCustomiser<?, ?>>();
+		List<DMatcherCustomiser<?>> filtered
+			= new ArrayList<DMatcherCustomiser<?>>();
 
-		for (DMatcherCustomiser<?, ?> customiser : customisers) {
+		for (DMatcherCustomiser<?> customiser : customisers) {
 
 			if (customiser.handles(tester)) {
 
