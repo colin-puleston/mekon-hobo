@@ -41,6 +41,8 @@ public class Job extends DObjectShell {
 	public final DCell<Integer> hourlyPay;
 	public final DCellViewer<Integer> weeklyPay;
 
+	public final DCell<DNumberRange<Integer>> hoursPerWeekAsRange;
+
 	private DEditor dEditor;
 
 	private class WeeklyPayUpdater implements KUpdateListener {
@@ -113,6 +115,8 @@ public class Job extends DObjectShell {
 		hoursPerWeek = builder.addIntegerCell();
 		hourlyPay = builder.addIntegerCell();
 		weeklyPay = builder.getViewer(builder.addIntegerCell());
+
+		hoursPerWeekAsRange = builder.toNumberRangeCell(hoursPerWeek);
 
 		dEditor = builder.getEditor();
 
