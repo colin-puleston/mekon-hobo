@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
  */
 public class Job extends DObjectShell {
 
+	public final DCell<DConcept<JobType>> jobType;
 	public final DCell<Integer> hoursPerWeek;
 	public final DCell<Integer> hourlyPay;
 	public final DCellViewer<Integer> weeklyPay;
@@ -112,6 +113,7 @@ public class Job extends DObjectShell {
 
 		super(builder);
 
+		jobType = builder.addConceptCell(JobType.class);
 		hoursPerWeek = builder.addIntegerCell();
 		hourlyPay = builder.addIntegerCell();
 		weeklyPay = builder.getViewer(builder.addIntegerCell());
