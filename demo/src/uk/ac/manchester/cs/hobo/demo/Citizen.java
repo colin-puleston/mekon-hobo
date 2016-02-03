@@ -35,6 +35,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
  */
 public class Citizen extends DObjectShell {
 
+	public final DCell<Personal> personal;
 	public final DCell<Employment> employment;
 	public final DCellViewer<DConcept<Tax>> tax;
 	public final DArrayViewer<DConcept<Benefit>> benefits;
@@ -119,6 +120,7 @@ public class Citizen extends DObjectShell {
 
 		super(builder);
 
+		personal = builder.addObjectCell(Personal.class);
 		employment = builder.addObjectCell(Employment.class);
 		tax = builder.getViewer(builder.addConceptCell(Tax.class));
 		benefits = builder.getViewer(builder.addConceptArray(Benefit.class));
