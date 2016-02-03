@@ -59,7 +59,7 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 
 		Citizen createWithWeeklyPay(DNumberRange<Integer> pay) {
 
-			Citizen citizen = createEmployed();
+			Citizen citizen = create();
 
 			addJob(citizen);
 			citizen.employment.get().totalWeeklyPayAsRange.set(pay);
@@ -67,14 +67,21 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 			return citizen;
 		}
 
-		Citizen createEmployed() {
+		Citizen create() {
 
 			Citizen citizen = instantiate(Citizen.class);
+			Personal personal = instantiate(Personal.class);
 			Employment employment = instantiate(Employment.class);
 
+			citizen.personal.set(personal);
 			citizen.employment.set(employment);
 
 			return citizen;
+		}
+
+		void setLocation(Citizen citizen, String location) {
+
+			setLocation(citizen.personal.get(), location);
 		}
 
 		void addJobWithHoursPerWeek(Citizen citizen, String jobType, int hours) {
@@ -82,7 +89,11 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 			addJobWithHoursPerWeek(citizen, jobType, DNumberRange.exact(hours));
 		}
 
-		void addJobWithHoursPerWeek(Citizen citizen, String jobType, int minHours, int maxHours) {
+		void addJobWithHoursPerWeek(
+				Citizen citizen,
+				String jobType,
+				int minHours,
+				int maxHours) {
 
 			addJobWithHoursPerWeek(
 				citizen,
@@ -90,12 +101,21 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 				DNumberRange.range(minHours, maxHours));
 		}
 
-		void addJobWithHoursPerWeek(Citizen citizen, String jobType, DNumberRange<Integer> hours) {
+		void addJobWithHoursPerWeek(
+				Citizen citizen,
+				String jobType,
+				DNumberRange<Integer> hours) {
+
+			addJob(citizen, jobType).hoursPerWeekAsRange.set(hours);
+		}
+
+		Job addJob(Citizen citizen, String jobType) {
 
 			Job job = addJob(citizen);
 
 			setJobType(job, jobType);
-			job.hoursPerWeekAsRange.set(hours);
+
+			return job;
 		}
 
 		private Job addJob(Citizen citizen) {
@@ -107,22 +127,32 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 			return job;
 		}
 
+		private void setLocation(Personal personal, String location) {
+
+			setCFrameSlotValue(personal.getFrame(), LOCATION_PROPERTY, location);
+		}
+
 		private void setJobType(Job job, String jobType) {
 
-			ISlot slot = getJobTypeSlot(job.getFrame());
-			CFrame value = getJobTypeValue(jobType);
-
-			slot.getValuesEditor().add(value);
+			setCFrameSlotValue(job.getFrame(), JOB_TYPE_PROPERTY, jobType);
 		}
 
-		private ISlot getJobTypeSlot(IFrame job) {
+		private void setCFrameSlotValue(
+						IFrame container,
+						String slotName,
+						String valueName) {
 
-			return job.getSlots().get(getDemoModelId(JOB_TYPE_PROPERTY));
+			getSlot(container, slotName).getValuesEditor().add(getCFrame(valueName));
 		}
 
-		private CFrame getJobTypeValue(String jobType) {
+		private ISlot getSlot(IFrame container, String slotName) {
 
-			return model.getCModel().getFrames().get(getDemoModelId(JOB_TYPE));
+			return container.getSlots().get(getDemoModelId(slotName));
+		}
+
+		private CFrame getCFrame(String valueName) {
+
+			return model.getCModel().getFrames().get(getDemoModelId(valueName));
 		}
 
 		private <D extends DObject>D instantiate(Class<D> dClass) {
@@ -189,10 +219,10 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 	@Test
 	public void testMatchAggregator() {
 
-		Citizen zero = assertions.createEmployed();
-		Citizen thirty = assertions.createEmployed();
-		Citizen forty = assertions.createEmployed();
-		Citizen fifty = assertions.createEmployed();
+		Citizen zero = assertions.create();
+		Citizen thirty = assertions.create();
+		Citizen forty = assertions.create();
+		Citizen fifty = assertions.create();
 
 		assertions.addJobWithHoursPerWeek(zero, SPECIALIST, 15);
 
@@ -205,11 +235,39 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 		assertions.addJobWithHoursPerWeek(fifty, DOCTOR, 10);
 		assertions.addJobWithHoursPerWeek(fifty, PHYSIO, 30);
 
-		Citizen query = queries.createEmployed();
+		Citizen query = queries.create();
 
 		queries.addJobWithHoursPerWeek(query, MEDIC, 35, 45);
 
 		testMatchAndNonMatches(query, forty, zero, thirty, fifty);
+	}
+
+	@Test
+	public void testSectionInverter() {
+
+		Citizen allSpecific = assertions.create();
+		Citizen allGeneral = assertions.create();
+		Citizen specJobGenLoc = assertions.create();
+
+		assertions.setLocation(allSpecific, ENGLAND);
+		assertions.addJob(allSpecific, NURSE);
+
+		assertions.setLocation(allGeneral, EU);
+		assertions.addJob(allGeneral, SPECIALIST);
+
+		assertions.setLocation(specJobGenLoc, EU);
+		assertions.addJob(specJobGenLoc, NURSE);
+
+		Citizen query = queries.create();
+
+		queries.setLocation(query, UK);
+		queries.addJob(query, MEDIC);
+
+		testMatchAndNonMatches(
+			query,
+			specJobGenLoc,
+			allSpecific,
+			allGeneral);
 	}
 
 	private DCustomMatcher createCustomMatcher(DModel model) {
@@ -219,6 +277,7 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 
 		custom.addCustomiser(new TotalWeeklyPayOverlapper(model));
 		custom.addCustomiser(new HoursPerWeekAggregator(model, custom));
+		custom.addCustomiser(new LocationInverter(model, custom));
 
 		return custom;
 	}
