@@ -203,14 +203,9 @@
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.Job"
 			externalId="http://mekon/demo.owl#Job">
-			<FieldMap fieldName="jobType" externalId="http://mekon/demo.owl#jobType"/>
 			<FieldMap fieldName="hourlyPay" externalId="http://mekon/demo.owl#hourlyPay"/>
 			<FieldMap fieldName="weeklyPay" externalId="http://mekon/demo.owl#weeklyPay"/>
 			<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/demo.owl#hoursPerWeek"/>
-		</ClassMap>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.JobType"
-			externalId="http://mekon/demo.owl#JobType">
 		</ClassMap>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.CitizenAspect"
