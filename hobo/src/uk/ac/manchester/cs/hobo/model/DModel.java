@@ -287,14 +287,6 @@ public class DModel {
 		return mekonAccessor.getIEditor(cModel);
 	}
 
-	<D extends DObject>D instantiate(
-							Class<D> dClass,
-							CFrame frame,
-							IFrameFunction function) {
-
-		return getDObject(frame.instantiate(function), dClass);
-	}
-
 	void ensureMappedDObject(IFrame frame, boolean freeInstance) {
 
 		if (getMappedObject(frame) == null) {

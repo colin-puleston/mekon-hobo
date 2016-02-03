@@ -154,7 +154,7 @@ public class DConcept<D extends DObject> {
 	 */
 	public D instantiate(IFrameFunction function) {
 
-		return model.instantiate(dClass, frame, function);
+		return model.getDObject(frame.instantiate(function), dClass);
 	}
 
 	/**
