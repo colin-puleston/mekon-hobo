@@ -200,57 +200,6 @@ public class DModel {
 	}
 
 	/**
-	 * Instantiates the specified OM class to represent an instance
-	 * of the concept represented by the root concept-level frame
-	 * ({@link CFrame}) for that class. The root-frame will be
-	 * "instantiated" to provide the instance-level frame
-	 * ({@link IFrame}) that will be associated with the created OM
-	 * object.
-	 *
-	 * @param <D> Generic version of dClass
-	 * @param dClass OM class to be instantiated
-	 * @return Required OM class instantiation
-	 */
-	public <D extends DObject>D instantiate(Class<D> dClass) {
-
-		return instantiate(dClass, getFrame(dClass));
-	}
-
-	/**
-	 * Instantiates the specified OM class to represent an instance
-	 * of the concept represented by the specified concept-level frame.
-	 * The frame will be "instantiated" to provide the instance-level
-	 * frame ({@link IFrame}) object that will be associated with the
-	 * created OM object.
-	 *
-	 * @param <D> Generic version of dClass
-	 * @param dClass OM class to be instantiated
-	 * @param identity Identity of frame representing relevant concept
-	 * @return Resulting OM object
-	 */
-	public <D extends DObject>D instantiate(Class<D> dClass, CIdentity identity) {
-
-		return instantiate(dClass, getFrame(identity));
-	}
-
-	/**
-	 * Instantiates the specified OM class to represent an instance
-	 * of the concept represented by the specified concept-level frame.
-	 * The frame will be "instantiated" to provide the instance-level
-	 * frame ({@link IFrame}) object that will be associated with the
-	 * created OM object.
-	 *
-	 * @param <D> Generic version of dClass
-	 * @param dClass OM class to be instantiated
-	 * @param frame Frame representing relevant concept
-	 * @return Resulting OM object
-	 */
-	public <D extends DObject>D instantiate(Class<D> dClass, CFrame frame) {
-
-		return getDObject(frame.instantiate(), dClass);
-	}
-
-	/**
 	 * Retrieves the OM object associated with the specified instance-level
 	 * frame.
 	 *
@@ -338,11 +287,19 @@ public class DModel {
 		return mekonAccessor.getIEditor(cModel);
 	}
 
+	<D extends DObject>D instantiate(
+							Class<D> dClass,
+							CFrame frame,
+							IFrameFunction function) {
+
+		return getDObject(frame.instantiate(function), dClass);
+	}
+
 	void ensureMappedDObject(IFrame frame, boolean freeInstance) {
 
 		if (getMappedObject(frame) == null) {
 
-			DObject dObject = instantiate(frame, freeInstance);
+			DObject dObject = createDObject(frame, freeInstance);
 
 			mekonAccessor.setMappedObject(frame, dObject);
 		}
@@ -353,7 +310,7 @@ public class DModel {
 		return getIEditor().getSlotValuesEditor(slot);
 	}
 
-	private DObject instantiate(IFrame frame, boolean freeInstance) {
+	private DObject createDObject(IFrame frame, boolean freeInstance) {
 
 		return new DInstantiator(this, freeInstance).instantiate(frame);
 	}

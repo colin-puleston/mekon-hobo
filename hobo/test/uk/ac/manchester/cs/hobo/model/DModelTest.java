@@ -157,9 +157,9 @@ public class DModelTest extends MekonTestUtils {
 
 		DModel model = createModel(true);
 
-		ClassA aObject = model.instantiate(ClassA.class);
-		ClassAX axObject = model.instantiate(ClassAX.class);
-		ClassB bObject = model.instantiate(ClassB.class);
+		ClassA aObject = model.getConcept(ClassA.class).instantiate();
+		ClassAX axObject = model.getConcept(ClassAX.class).instantiate();
+		ClassB bObject = model.getConcept(ClassB.class).instantiate();
 
 		testDObjectIFrameMapping(aObject, FRAME_A_ID);
 		testDObjectIFrameMapping(axObject, FRAME_AX_ID);

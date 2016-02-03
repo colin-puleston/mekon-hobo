@@ -109,10 +109,7 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 
 		private <D extends DObject>D instantiate(Class<D> dClass) {
 
-			CFrame frameType = model.getFrame(dClass);
-			IFrame frame = frameType.instantiate(function);
-
-			return model.getDObject(frame, dClass);
+			return model.getConcept(dClass).instantiate(function);
 		}
 	}
 

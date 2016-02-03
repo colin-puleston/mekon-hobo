@@ -133,28 +133,40 @@ public class DConcept<D extends DObject> {
 	}
 
 	/**
-	 * Instantiates this concept as an instance of the OM class that
-	 * defines the general type for the concept.
+	 * Instantiates the concept as an instance of the OM class that
+	 * defines the general type for the concept, and set's the function
+	 * of the associated frame to be {@link IFrameFunction#ASSERTION}.
 	 *
-	 * @return Instantiation of concept
+	 * @return Appropriate instantiation of concept
 	 */
 	public D instantiate() {
 
-		return instantiate(dClass);
+		return instantiate(IFrameFunction.ASSERTION);
 	}
 
 	/**
-	 * Instantiates this concept as an instance of the specified OM
-	 * class.
+	 * Instantiates the concept as an instance of the OM class that
+	 * defines the general type for the concept, and set's the function
+	 * of the associated frame as specified.
 	 *
-	 * @param <N> Generic version of dClass
-	 * @param dClass OM class to be instantiated
-	 * @return Instantiation of concept
-	 * @throws KAccessException if required instantiation is invalid
+	 * @param function Required function of frame
+	 * @return Appropriate instantiation of concept
 	 */
-	public <N extends DObject>N instantiate(Class<N> dClass) {
+	public D instantiate(IFrameFunction function) {
 
-		return model.instantiate(dClass, frame);
+		return model.instantiate(dClass, frame, function);
+	}
+
+	/**
+	 * Instantiates the concept as an instance of the OM class that
+	 * defines the general type for the concept, and set's the function
+	 * of the associated frame to be {@link IFrameFunction#QUERY}.
+	 *
+	 * @return Appropriate instantiation of concept
+	 */
+	public D instantiateQuery() {
+
+		return instantiate(IFrameFunction.QUERY);
 	}
 
 	/**
