@@ -190,9 +190,14 @@
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.Citizen"
 			externalId="http://mekon/demo.owl#Citizen">
+			<FieldMap fieldName="personal" externalId="http://mekon/demo.owl#personal"/>
 			<FieldMap fieldName="employment" externalId="http://mekon/demo.owl#employment"/>
 			<FieldMap fieldName="tax" externalId="http://mekon/demo.owl#taxPaid"/>
 			<FieldMap fieldName="benefits" externalId="http://mekon/demo.owl#benefitReceived"/>
+		</ClassMap>
+		<ClassMap
+			javaClass="uk.ac.manchester.cs.hobo.demo.Personal"
+			externalId="http://mekon/demo.owl#Personal">
 		</ClassMap>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.Employment"
