@@ -94,7 +94,7 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 
 			Job job = addJob(citizen);
 
-			job.jobType.set(getDemoModelConcept(JobType.class, jobType));
+			setJobType(job, jobType);
 			job.hoursPerWeekAsRange.set(hours);
 		}
 
@@ -105,6 +105,24 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 			citizen.employment.get().jobs.add(job);
 
 			return job;
+		}
+
+		private void setJobType(Job job, String jobType) {
+
+			ISlot slot = getJobTypeSlot(job.getFrame());
+			CFrame value = getJobTypeValue(jobType);
+
+			slot.getValuesEditor().add(value);
+		}
+
+		private ISlot getJobTypeSlot(IFrame job) {
+
+			return job.getSlots().get(getDemoModelId(JOB_TYPE_PROPERTY));
+		}
+
+		private CFrame getJobTypeValue(String jobType) {
+
+			return model.getCModel().getFrames().get(getDemoModelId(JOB_TYPE));
 		}
 
 		private <D extends DObject>D instantiate(Class<D> dClass) {
@@ -273,10 +291,8 @@ public class DCustomMatcherTest extends DemoModelBasedTest {
 		return new CIdentity(id, id);
 	}
 
-	private <D extends DObject>DConcept<D> getDemoModelConcept(
-												Class<D> dClass,
-												String name) {
+	private CIdentity getDemoModelId(String name) {
 
-		return model.getConcept(dClass, DemoModelBasedTest.nameToIdentity(name));
+		return DemoModelBasedTest.nameToIdentity(name);
 	}
 }
