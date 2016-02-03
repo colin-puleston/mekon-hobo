@@ -45,7 +45,7 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		public void onAdded(DConcept<TravelMode> value) {
 
-			getDetailsArray().add(instantiateDetails(value));
+			getDetailsArray().add(createDetails(value));
 		}
 
 		public void onRemoved(DConcept<TravelMode> value) {
@@ -86,14 +86,25 @@ public class Travel extends DObjectShell implements CitizenAspect {
 		builder.addInitialiser(new Initialiser());
 	}
 
-	private TravelDetails instantiateDetails(DConcept<TravelMode> modeValue) {
+	private TravelDetails createDetails(DConcept<TravelMode> modeValue) {
 
-		TravelDetails detailsValue = getModel().instantiate(TravelDetails.class);
+		TravelDetails detailsValue = instantiateDetails();
 
-		detailsValue.getFrame().alignFunction(getFrame());
 		detailsValue.initialise(modeValue);
 
 		return detailsValue;
+	}
+
+	private TravelDetails instantiateDetails() {
+
+		IFrameFunction function = getFrame().getFunction();
+
+		return getDetailsConcept().instantiate(function);
+	}
+
+	private DConcept<TravelDetails> getDetailsConcept() {
+
+		return getModel().getConcept(TravelDetails.class);
 	}
 
 	private TravelDetails getDetailsValue(DConcept<TravelMode> mode) {

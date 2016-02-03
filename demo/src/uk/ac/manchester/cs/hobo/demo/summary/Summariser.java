@@ -68,12 +68,22 @@ public class Summariser {
 
 		private void addSummary(Class<? extends ValueSummary> type) {
 
-			ValueSummary summary = getModel().instantiate(type);
-
-			summary.getFrame().alignFunction(summariesContainer.getFrame());
+			ValueSummary summary = createSummary(type);
 
 			summaries.add(summary);
 			summary.initialise(slotType);
+		}
+
+		private ValueSummary createSummary(Class<? extends ValueSummary> type) {
+
+			IFrameFunction function = getFrameFunction();
+
+			return getModel().getConcept(type).instantiate(function);
+		}
+
+		private IFrameFunction getFrameFunction() {
+
+			return summariesContainer.getFrame().getFunction();
 		}
 	}
 

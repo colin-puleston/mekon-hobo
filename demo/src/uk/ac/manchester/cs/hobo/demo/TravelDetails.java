@@ -83,7 +83,19 @@ public class TravelDetails extends DObjectShell implements TravelAspect {
 
 		private TravelMode instantiateMode(CFrame frame) {
 
-			return getModel().instantiate(TravelMode.class, frame);
+			return getModeConcept().instantiate(getFrameFunction());
+		}
+
+		private DConcept<TravelMode> getModeConcept() {
+
+			CFrame cFrame = modeValue.getFrame();
+
+			return getModel().getConcept(TravelMode.class, cFrame);
+		}
+
+		private IFrameFunction getFrameFunction() {
+
+			return getFrame().getFunction();
 		}
 	}
 
