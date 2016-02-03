@@ -66,6 +66,10 @@ public interface DemoModelEntities {
 	static public final String POSTGRAD = "Postgraduate";
 	static public final String UNDERGRAD = "Undergraduate";
 
+	static public final String EU = "EU";
+	static public final String UK = "UK";
+	static public final String ENGLAND = "England";
+
 	static public final String TAX_PROPERTY = "taxPaid";
 	static public final String BENEFIT_PROPERTY = "benefitReceived";
 	static public final String EMPLOYMENT_PROPERTY = "employment";
@@ -75,4 +79,5 @@ public interface DemoModelEntities {
 	static public final String PAY_RATE_PROPERTY = "hourlyPay";
 	static public final String SECTOR_PROPERTY = "sector";
 	static public final String TEACHES_PROPERTY = "teaches";
+	static public final String LOCATION_PROPERTY = "location";
 }
