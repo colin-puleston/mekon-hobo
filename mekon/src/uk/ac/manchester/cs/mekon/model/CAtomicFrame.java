@@ -141,11 +141,7 @@ class CAtomicFrame extends CFrame {
 						CCardinality cardinality,
 						CValue<?> valueType) {
 
-			CSlot slot = new CSlot(CAtomicFrame.this, slotId, cardinality, valueType);
-
-			CAtomicFrame.this.addSlot(slot);
-
-			return slot;
+			return CAtomicFrame.this.addSlot(slotId, cardinality, valueType);
 		}
 
 		public boolean removeSlot(CIdentity slotId) {
@@ -462,6 +458,18 @@ class CAtomicFrame extends CFrame {
 
 			subs = CAtomicFrames.INERT_INSTANCE;
 		}
+	}
+
+	private CSlot addSlot(
+					CIdentity slotId,
+					CCardinality cardinality,
+					CValue<?> valueType) {
+
+		CSlot slot = new CSlot(this, slotId, cardinality, valueType);
+
+		addSlot(slot);
+
+		return slot;
 	}
 
 	private boolean removeSlot(CIdentity slotId) {

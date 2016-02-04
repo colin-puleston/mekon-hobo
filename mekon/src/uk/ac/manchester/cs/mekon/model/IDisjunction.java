@@ -139,9 +139,7 @@ class IDisjunction extends IFrame {
 
 	private CSlot createDisjunctsSlotType() {
 
-		CIdentity id = new CIdentity(
-							DISJUNCTS_SLOT_ID,
-							DISJUNCTS_SLOT_LABEL);
+		CIdentity id = new CIdentity(DISJUNCTS_SLOT_ID, DISJUNCTS_SLOT_LABEL);
 
 		return new CSlot(getType(), id, CCardinality.REPEATABLE_TYPES, getType());
 	}

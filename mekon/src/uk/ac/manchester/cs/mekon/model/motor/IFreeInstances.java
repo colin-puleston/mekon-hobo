@@ -44,7 +44,7 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
  * Such free-instances are intended for use by any plug-in mechanisms
  * that need to manipulate  their instances in a way that (a) is
  * outside the general schema imposed by the model, and/or (b) does not
- * incur the additional, and uneccesary overheads of the reasoning
+ * incur the additional, and unneccesary overheads of the reasoning
  * mechanisms kicking in as updates are made.
  *
  * @author Colin Puleston

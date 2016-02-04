@@ -138,22 +138,25 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 
 	private ISlot addSlot(
 					IFrame container,
-					CIdentity id,
+					CIdentity slotTypeId,
 					CValue<?> valueType) {
 
-		CSlot slotType = createSlotType(container.getType(), id, valueType);
+		CFrame contType = container.getType();
+		CSlot slotType = createSlotType(contType, slotTypeId, valueType);
+
+		slotType.setEditability(CEditability.FULL);
 
 		return container.addSlotInternal(slotType, true);
 	}
 
 	private CSlot createSlotType(
 					CFrame containerType,
-					CIdentity id,
+					CIdentity slotTypeId,
 					CValue<?> valueType) {
 
 		return new CSlot(
 					containerType,
-					id,
+					slotTypeId,
 					CCardinality.REPEATABLE_TYPES,
 					valueType);
 	}
