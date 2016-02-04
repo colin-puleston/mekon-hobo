@@ -276,38 +276,6 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Re-sets the frame-function.
-	 *
-	 * @param function New function for frame
-	 * @throws KAccessException if the frame is currently being
-	 * referenced via the slots of another frame
-	 */
-	public void resetFunction(IFrameFunction function) {
-
-		if (!referencingSlots.isEmpty()) {
-
-			throw new KAccessException(
-						"Attempting to change function "
-						+ "of referenced frame " + this);
-		}
-
-		this.function = function;
-	}
-
-	/**
-	 * Re-sets the frame-function to that of the specified
-	 * template-frame.
-	 *
-	 * @param template Frame whose function is to be copied
-	 * @throws KAccessException if the frame is currently being
-	 * referenced via the slots of another frame
-	 */
-	public void alignFunction(IFrame template) {
-
-		resetFunction(template.function);
-	}
-
-	/**
 	 * Adds a frame-listener.
 	 *
 	 * @param listener Listener to add
@@ -672,6 +640,11 @@ public class IFrame implements IEntity, IValue {
 	IFrameEditor createEditor() {
 
 		return new Editor();
+	}
+
+	void resetFunction(IFrameFunction function) {
+
+		this.function = function;
 	}
 
 	IFrame copyEmpty() {

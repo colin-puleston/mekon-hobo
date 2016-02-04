@@ -59,18 +59,6 @@ class IDisjunction extends IFrame {
 		}
 	}
 
-	public void resetFunction(IFrameFunction function) {
-
-		if (function == IFrameFunction.ASSERTION) {
-
-			throw new KAccessException(
-						"Attempting to set function of ASSERTION "
-						+ "for DISJUNCTION frame: " + this);
-		}
-
-		super.resetFunction(function);
-	}
-
 	public String getDisplayLabel() {
 
 		return LABEL;

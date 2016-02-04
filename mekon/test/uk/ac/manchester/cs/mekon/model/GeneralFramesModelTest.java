@@ -187,6 +187,11 @@ public class GeneralFramesModelTest {
 		return container.createEditor().addSlot(type);
 	}
 
+	public void resetIFrameFunction(IFrame frame, IFrameFunction function) {
+
+		frame.resetFunction(function);
+	}
+
 	public void normaliseCFramesHierarchy() {
 
 		new CHierarchyNormaliser(model);
