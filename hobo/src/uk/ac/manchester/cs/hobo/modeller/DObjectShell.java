@@ -24,9 +24,10 @@
 
 package uk.ac.manchester.cs.hobo.modeller;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+
 import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.hobo.*;
 
 /**
  * Abstract implementation of {@link DObject} whose extensions
@@ -144,7 +145,7 @@ public abstract class DObjectShell implements DObject {
 	 *
 	 * @param template Object whose associated frame-function is
 	 * to be copied
-	 * @throws KAccessException if the frame associated with this
+	 * @throws HAccessException if the frame associated with this
 	 * object is currently being referenced via the slots of
 	 * another frame
 	 */

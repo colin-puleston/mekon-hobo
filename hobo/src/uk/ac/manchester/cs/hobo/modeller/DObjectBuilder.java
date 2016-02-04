@@ -24,8 +24,9 @@
 
 package uk.ac.manchester.cs.hobo.modeller;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.hobo.*;
 import uk.ac.manchester.cs.hobo.model.*;
 
 /**
@@ -180,7 +181,7 @@ public interface DObjectBuilder {
 	 *
 	 * @param field Field whose attribute is to be set
 	 * @param containerClass Value for attribute
-	 * @throws KAccessException if the field was not constructed
+	 * @throws HAccessException if the field was not constructed
 	 * by this fields-factory
 	 */
 	public void setContainerClass(
@@ -194,7 +195,7 @@ public interface DObjectBuilder {
 	 *
 	 * @param field Field whose attribute is to be set
 	 * @param fieldName Value for attribute
-	 * @throws KAccessException if the field was not constructed
+	 * @throws HAccessException if the field was not constructed
 	 * by this fields-factory
 	 */
 	public void setFieldName(DField<?> field, String fieldName);
@@ -206,7 +207,7 @@ public interface DObjectBuilder {
 	 *
 	 * @param field Field whose attribute is to be set
 	 * @param slotLabel Value for attribute
-	 * @throws KAccessException if the field was not constructed
+	 * @throws HAccessException if the field was not constructed
 	 * by this fields-factory
 	 */
 	public void setSlotLabel(DField<?> field, String slotLabel);
@@ -218,7 +219,7 @@ public interface DObjectBuilder {
 	 *
 	 * @param field Field whose attribute is to be set
 	 * @param editability Value for attribute
-	 * @throws KAccessException if the field was not constructed
+	 * @throws HAccessException if the field was not constructed
 	 * by this fields-factory
 	 */
 	public void setEditability(DField<?> field, CEditability editability);
@@ -233,7 +234,7 @@ public interface DObjectBuilder {
 	 *
 	 * @param array Array whose attribute is to be set
 	 * @param uniqueTypes Value for attribute
-	 * @throws KAccessException if the array was not constructed
+	 * @throws HAccessException if the array was not constructed
 	 * by this fields-factory
 	 */
 	public void setUniqueTypes(DArray<?> array, boolean uniqueTypes);

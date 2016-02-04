@@ -24,8 +24,9 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.hobo.*;
 
 /**
  * Type-safe representation of a concept-level frame within the
@@ -177,7 +178,7 @@ public class DConcept<D extends DObject> {
 	 * @param <N> Generic version of dClass
 	 * @param dClass New OM class
 	 * @return Derived concept
-	 * @throws KAccessException if new OM class is not applicable
+	 * @throws HAccessException if new OM class is not applicable
 	 */
 	public <N extends DObject>DConcept<N> asType(Class<N> dClass) {
 

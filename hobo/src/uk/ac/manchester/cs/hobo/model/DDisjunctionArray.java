@@ -26,6 +26,10 @@ package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.hobo.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.hobo.*;
+
 /**
  * A <code>DDisjunction</code>-valued array bound to the same slot as
  * a specific <code>DObject</code>-valued "source" array, enabling the
@@ -33,7 +37,7 @@ import uk.ac.manchester.cs.hobo.*;
  * <p>
  * NOTE: Objects of this type can only be created for source-arrays
  * whose associated slots are abstract-editable (i.e. have editabilily
- * status of {@link IEditability.FULL}).
+ * status of {@link IEditability#FULL}).
  *
  * @author Colin Puleston
  */
@@ -42,8 +46,8 @@ public class DDisjunctionArray<D extends DObject> extends DArray<DDisjunction<D>
 	/**
 	 * Constructor.
 	 *
-	 * @param source Source array
-	 * @throws KAccessException if relevant slot is not abstract-editable
+	 * @param sourceArray Source array
+	 * @throws HAccessException if relevant slot is not abstract-editable
 	 */
 	public DDisjunctionArray(DArray<D> sourceArray) {
 
@@ -56,7 +60,7 @@ public class DDisjunctionArray<D extends DObject> extends DArray<DDisjunction<D>
 	 * Constructor.
 	 *
 	 * @param sourceArrayViewer Viewer for source array
-	 * @throws KAccessException if relevant slot is not abstract-editable
+	 * @throws HAccessException if relevant slot is not abstract-editable
 	 */
 	public DDisjunctionArray(DArrayViewer<D> sourceArrayViewer) {
 

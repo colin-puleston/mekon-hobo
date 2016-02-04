@@ -24,8 +24,9 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.hobo.*;
 
 /**
  * Interface implemented by all classes in the Object Model (OM).
@@ -67,7 +68,7 @@ public interface DObject {
 	 * @param <D> Generic version of dClass
 	 * @param dClass OM class that object implements
 	 * @return Concept of which object represents instance
-	 * @throws KAccessException if object does not implement provided
+	 * @throws HAccessException if object does not implement provided
 	 * OM class
 	 */
 	public <D extends DObject>DConcept<D> getConcept(Class<D> dClass);

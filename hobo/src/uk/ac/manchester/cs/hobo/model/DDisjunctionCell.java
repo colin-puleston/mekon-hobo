@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 import uk.ac.manchester.cs.hobo.*;
 
 /**
@@ -33,7 +35,7 @@ import uk.ac.manchester.cs.hobo.*;
  * <p>
  * NOTE: Objects of this type can only be created for source-cells
  * whose associated slots are abstract-editable (i.e. have editabilily
- * status of {@link IEditability.FULL}).
+ * status of {@link IEditability#FULL}).
  *
  * @author Colin Puleston
  */
@@ -43,7 +45,7 @@ public class DDisjunctionCell<D extends DObject> extends DCell<DDisjunction<D>> 
 	 * Constructor.
 	 *
 	 * @param sourceCell Source cell
-	 * @throws KAccessException if relevant slot is not abstract-editable
+	 * @throws HAccessException if relevant slot is not abstract-editable
 	 */
 	public DDisjunctionCell(DCell<D> sourceCell) {
 
@@ -56,7 +58,7 @@ public class DDisjunctionCell<D extends DObject> extends DCell<DDisjunction<D>> 
 	 * Constructor.
 	 *
 	 * @param sourceCellViewer Viewer for source cell
-	 * @throws KAccessException if relevant slot is not abstract-editable
+	 * @throws HAccessException if relevant slot is not abstract-editable
 	 */
 	public DDisjunctionCell(DCellViewer<D> sourceCellViewer) {
 
