@@ -35,9 +35,16 @@ package uk.ac.manchester.cs.mekon.model;
 public enum CEditability {
 
 	/**
+	 * Slot has {@link IEditability#NONE} editability on both
+	 * assertions and queries.
+	 */
+	NONE(IEditability.NONE, IEditability.NONE),
+
+	/**
 	 * Slot has {@link IEditability#CONCRETE_ONLY} editability on
 	 * assertions, and {@link IEditability#FULL} editability on
-	 * queries.
+	 * queries, for normal slots (see {@link ISlot#getEditability}
+	 * for a discussion of the exceptional case of "disjuncts-slots").
 	 */
 	DEFAULT(IEditability.CONCRETE_ONLY, IEditability.FULL),
 
@@ -46,12 +53,6 @@ public enum CEditability {
 	 * assertions and queries.
 	 */
 	FULL(IEditability.FULL, IEditability.FULL),
-
-	/**
-	 * Slot has {@link IEditability#NONE} editability on both
-	 * assertions and queries.
-	 */
-	NONE(IEditability.NONE, IEditability.NONE),
 
 	/**
 	 * Slot has {@link IEditability#NONE} editability on assertions,

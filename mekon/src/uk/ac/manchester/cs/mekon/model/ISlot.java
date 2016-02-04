@@ -150,10 +150,22 @@ public class ISlot implements IEntity {
 
 	/**
 	 * Specifies the editability status for the slot.
+	 * <p>
+	 * NOTE: If the slot is a special "disjuncts-slots" attached to
+	 * a disjunction-frame (see {@link IFrame} for details), then
+	 * editability will always be {@link IEditability#CONCRETE_ONLY})
+	 * on both assertions and queries, despite the editability status
+	 * of the slot-type being {@link CEditability#DEFAULT}, which will
+	 * always be the case for disjuncts-slots.
 	 *
 	 * @return Editability status for slot
 	 */
 	public IEditability getEditability() {
+
+		if (disjunctsSlot()) {
+
+			return IEditability.CONCRETE_ONLY;
+		}
 
 		return type.getEditability().forInstances(querySlot());
 	}
@@ -208,6 +220,11 @@ public class ISlot implements IEntity {
 	private boolean querySlot() {
 
 		return container.getFunction().query();
+	}
+
+	private boolean disjunctsSlot() {
+
+		return container.getCategory().disjunction();
 	}
 
 	private void checkExternalValuesEditorAccess(
