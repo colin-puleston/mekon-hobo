@@ -37,11 +37,16 @@ import uk.ac.manchester.cs.hobo.modeller.*;
  */
 public class Job extends DObjectShell {
 
+	static private boolean makeHoursPerWeekAbstractEditable = false;
+
+	static public void makeHoursPerWeekAbstractEditableForTesting() {
+
+		makeHoursPerWeekAbstractEditable = true;
+	}
+
 	public final DCell<Integer> hoursPerWeek;
 	public final DCell<Integer> hourlyPay;
 	public final DCellViewer<Integer> weeklyPay;
-
-	public final DCell<DNumberRange<Integer>> hoursPerWeekAsRange;
 
 	private DEditor dEditor;
 
@@ -116,11 +121,14 @@ public class Job extends DObjectShell {
 		hourlyPay = builder.addIntegerCell();
 		weeklyPay = builder.getViewer(builder.addIntegerCell());
 
-		hoursPerWeekAsRange = builder.toNumberRangeCell(hoursPerWeek);
-
 		dEditor = builder.getEditor();
 
 		builder.addInitialiser(new Initialiser());
+
+		if (makeHoursPerWeekAbstractEditable) {
+
+			builder.setEditability(hoursPerWeek, CEditability.FULL);
+		}
 	}
 
 	private void updateWeeklyPayValue() {
