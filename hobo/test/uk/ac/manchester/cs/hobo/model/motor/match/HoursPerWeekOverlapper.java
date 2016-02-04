@@ -6,7 +6,7 @@ import uk.ac.manchester.cs.hobo.demo.*;
 /**
  * @author Colin Puleston
  */
-class TotalWeeklyPayOverlapper
+class HoursPerWeekOverlapper
 		extends
 			DMatchRangeOverlapper<Citizen, Integer> {
 
@@ -17,17 +17,17 @@ class TotalWeeklyPayOverlapper
 
 	protected DCell<DNumberRange<Integer>> getRangeMatchCellOrNull(Citizen citizen) {
 
-		if (citizen.employment.isSet()) {
-
-			return citizen.employment.get().totalWeeklyPayAsRange;
-		}
-
-		return null;
+		return new DNumberRangeCell<Integer>(getHoursPerWeek(citizen));
 	}
 
-	TotalWeeklyPayOverlapper(DModel model) {
+	HoursPerWeekOverlapper(DModel model) {
 
 		super(model);
+	}
+
+	private DCell<Integer> getHoursPerWeek(Citizen citizen) {
+
+		return citizen.employment.get().jobs.getAll().get(0).hoursPerWeek;
 	}
 }
 

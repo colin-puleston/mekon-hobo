@@ -33,9 +33,9 @@ class DNumberRangeValueType
 			<N extends Number>
 			extends DNumberBasedValueType<N, DNumberRange<N>> {
 
-	DNumberRangeValueType(DNumberValueType<N> numberValueType) {
+	DNumberRangeValueType(DCell<N> sourceCell) {
 
-		super(numberValueType);
+		super((DNumberValueType<N>)sourceCell.getValueType());
 	}
 
 	IValue toSlotValue(DNumberRange<N> value) {

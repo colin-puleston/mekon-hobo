@@ -34,8 +34,6 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public abstract class AbstractDCellTest<SV, DV> extends DFieldTest {
 
-	private AbstractFieldDeriver deriver;
-
 	@Test
 	public void test_updatesToSourceCell() {
 
@@ -81,17 +79,7 @@ public abstract class AbstractDCellTest<SV, DV> extends DFieldTest {
 		testSlotValueViaDerivedValue(derivedCell, derivedValue);
 	}
 
-	AbstractDCellTest() {
-
-		deriver = new AbstractFieldDeriver(getDModel());
-	}
-
-	AbstractFieldDeriver getDeriver() {
-
-		return deriver;
-	}
-
-	abstract DCell<SV> createSourceCell();
+	abstract DCell<SV> createSourceCellAsAssertion();
 
 	abstract DCell<DV> createDerivedCell(DCell<SV> sourceCell);
 
@@ -104,6 +92,15 @@ public abstract class AbstractDCellTest<SV, DV> extends DFieldTest {
 	abstract IValue sourceToSlotValue(SV sourceValue);
 
 	abstract IValue derivedToSlotValue(DV derivedValue);
+
+	private DCell<SV> createSourceCell() {
+
+		DCell<SV> cell = createSourceCellAsAssertion();
+
+		cell.getSlot().getContainer().resetFunction(IFrameFunction.QUERY);
+
+		return cell;
+	}
 
 	private void testSourceCellAndSlotValue(DCell<SV> cell, SV expectValue) {
 

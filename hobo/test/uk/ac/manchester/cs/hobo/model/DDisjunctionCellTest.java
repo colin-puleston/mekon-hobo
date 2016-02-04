@@ -48,18 +48,14 @@ public class DDisjunctionCellTest
 		setQueriesEnabled(true);
 	}
 
-	DCell<DObject> createSourceCell() {
+	DCell<DObject> createSourceCellAsAssertion() {
 
-		DCell<DObject> cell = createSourceCellAsAssertion();
-
-		cell.getSlot().getContainer().resetFunction(IFrameFunction.QUERY);
-
-		return cell;
+		return createDObjectCell(CCardinality.REPEATABLE_TYPES, rootFrame);
 	}
 
 	DCell<DDisjunction<DObject>> createDerivedCell(DCell<DObject> sourceCell) {
 
-		return getDeriver().toDisjunctionCell(sourceCell);
+		return new DDisjunctionCell<DObject>(sourceCell);
 	}
 
 	DObject getSourceTestValue() {
@@ -96,11 +92,6 @@ public class DDisjunctionCellTest
 		addSuperFrame(frame.getType(), rootFrame);
 
 		return obj;
-	}
-
-	private DCell<DObject> createSourceCellAsAssertion() {
-
-		return createDObjectCell(CCardinality.REPEATABLE_TYPES, rootFrame);
 	}
 
 	private DDisjunction<DObject> createDisjunction(DObject... disjuncts) {

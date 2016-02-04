@@ -24,32 +24,42 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.hobo.*;
 
 /**
+ * A <code>DNumberRange</code>-valued cell bound to the same slot as
+ * a specific <code>Number</code>-valued "source" cell, enabling the
+ * setting of numeric-range values for the slot.
+ * <p>
+ * NOTE: Objects of this type can only be created for source-cells
+ * whose associated slots are abstract-editable (i.e. have editabilily
+ * status of {@link IEditability.FULL}).
+ *
  * @author Colin Puleston
  */
-class DDisjunctionValueType
-			<D extends DObject>
-			extends DObjectBasedValueType<D, DDisjunction<D>> {
+public class DNumberRangeCell<N extends Number> extends DCell<DNumberRange<N>> {
 
-	DDisjunctionValueType(DField<D> sourceField) {
+	/**
+	 * Constructor.
+	 *
+	 * @param source Source cell
+	 * @throws KAccessException if relevant slot is not abstract-editable
+	 */
+	public DNumberRangeCell(DCell<N> sourceCell) {
 
-		super((DObjectValueType<D>)sourceField.getValueType());
+		super(sourceCell.getModel(), new DNumberRangeValueType<N>(sourceCell));
+
+		initialiseAbstractField(sourceCell);
 	}
 
-	IValue toSlotValue(DDisjunction<D> value) {
+	/**
+	 * Constructor.
+	 *
+	 * @param sourceCellViewer Viewer for source cell
+	 * @throws KAccessException if relevant slot is not abstract-editable
+	 */
+	public DNumberRangeCell(DCellViewer<N> sourceCellViewer) {
 
-		return value.asDisjunctionIFrame().normalise();
-	}
-
-	DDisjunction<D> toFieldValue(IFrame value) {
-
-		return new DDisjunction<D>(getModel(), getDClass(), value);
-	}
-
-	boolean convertibleToFieldValue(IFrame value) {
-
-		return true;
+		this(sourceCellViewer.getField());
 	}
 }

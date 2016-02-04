@@ -44,7 +44,7 @@ public abstract class DMatchAggregator
 							<M extends DObject,
 							T extends DObject,
 							D extends DObject,
-							R extends Number>
+							N extends Number>
 							extends DMatcherCustomiser<M> {
 
 	private DCustomMatcher matcher;
@@ -197,7 +197,7 @@ public abstract class DMatchAggregator
 	 * @return Required aggrogator cell, or null if not currently
 	 * present
 	 */
-	protected abstract DCell<DNumberRange<R>> getAggregatorCellOrNull(T target);
+	protected abstract DCell<DNumberRange<N>> getAggregatorCellOrNull(T target);
 
 	/**
 	 * Retrieves the sub-section of the target section for which a
@@ -252,7 +252,7 @@ public abstract class DMatchAggregator
 
 	private boolean hasAggregator(T target) {
 
-		DCell<DNumberRange<R>> cell = getAggregatorCellOrNull(target);
+		DCell<DNumberRange<N>> cell = getAggregatorCellOrNull(target);
 
 		return cell != null && cell.isSet();
 	}
@@ -262,7 +262,7 @@ public abstract class DMatchAggregator
 		return getAggregatorCell(target).get().asCNumber().asINumber();
 	}
 
-	private DCell<DNumberRange<R>> getAggregatorCell(T target) {
+	private DCell<DNumberRange<N>> getAggregatorCell(T target) {
 
 		return checkNotNull(getAggregatorCellOrNull(target));
 	}

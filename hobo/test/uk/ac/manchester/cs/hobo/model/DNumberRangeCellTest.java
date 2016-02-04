@@ -35,14 +35,14 @@ public class DNumberRangeCellTest
 						<Integer,
 						DNumberRange<Integer>> {
 
-	DCell<Integer> createSourceCell() {
+	DCell<Integer> createSourceCellAsAssertion() {
 
 		return createIntegerCell(DNumberRange.INTEGER);
 	}
 
 	DCell<DNumberRange<Integer>> createDerivedCell(DCell<Integer> sourceCell) {
 
-		return getDeriver().toNumberRangeCell(sourceCell);
+		return new DNumberRangeCell<Integer>(sourceCell);
 	}
 
 	Integer getSourceTestValue() {

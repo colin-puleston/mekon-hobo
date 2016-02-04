@@ -41,6 +41,8 @@ import uk.ac.manchester.cs.hobo.model.motor.match.*;
 	DDisjunctionCellTest.class,
 	DNumberRangeCellTest.class,
 	DModelTest.class,
-	DCustomMatcherTest.class})
+	DMatchRangeOverlapperTest.class,
+	DMatchAggregatorTest.class,
+	DMatchSectionInverterTest.class})
 public class HoboTestSuite {
 }

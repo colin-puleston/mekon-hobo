@@ -23,17 +23,12 @@ class HoursPerWeekAggregator
 
 	protected DArray<Job> getTargetsArrayOrNull(Citizen citizen) {
 
-		if (citizen.employment.isSet()) {
-
-			return citizen.employment.get().jobs;
-		}
-
-		return null;
+		return citizen.employment.get().jobs;
 	}
 
 	protected DCell<DNumberRange<Integer>> getAggregatorCellOrNull(Job job) {
 
-		return job.hoursPerWeekAsRange;
+		return new DNumberRangeCell<Integer>(job.hoursPerWeek);
 	}
 
 	protected Job getDataSectionOrNull(Job job) {

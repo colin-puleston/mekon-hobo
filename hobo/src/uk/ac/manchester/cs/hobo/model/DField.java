@@ -26,9 +26,10 @@ package uk.ac.manchester.cs.hobo.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
+
+import uk.ac.manchester.cs.hobo.*;
 
 /**
  * Represents a field in the Object Model (OM). The field will be
@@ -42,8 +43,6 @@ public abstract class DField<V> implements DFieldView<V> {
 	private DModel model;
 	private DValueType<V> valueType;
 	private ISlot slot = null;
-
-	private List<DField<?>> derivedFields = new ArrayList<DField<?>>();
 
 	private Map<KValuesListener<V>, SlotValuesListener> slotValuesListeners
 						= new HashMap<KValuesListener<V>, SlotValuesListener>();
@@ -163,9 +162,9 @@ public abstract class DField<V> implements DFieldView<V> {
 
 		if (slot == null) {
 
-			throw new KAccessException(
+			throw new HAccessException(
 						"Attempting to access slot associated with "
-						+ "field on un-initialised DObject: " + slot);
+						+ "field on un-initialised DObject: ");
 		}
 
 		return slot;
@@ -177,28 +176,22 @@ public abstract class DField<V> implements DFieldView<V> {
 		this.valueType = valueType;
 	}
 
-	void linkToDerivedField(DField<?> derivedField) {
+	void initialiseAbstractField(DField<?> sourceField) {
 
-		if (slot == null) {
+		slot = sourceField.slot;
 
-			derivedFields.add(derivedField);
-		}
-		else {
+		if (!slot.getEditability().abstractEditable()) {
 
-			derivedField.setSlot(slot);
+			throw new HAccessException(
+						"Attempting to derive abstract field "
+						+ "from field whose associated slot "
+						+ "is not abstract-editable");
 		}
 	}
 
 	void setSlot(ISlot slot) {
 
 		this.slot = slot;
-
-		for (DField<?> derivedField : derivedFields) {
-
-			derivedField.setSlot(slot);
-		}
-
-		derivedFields = null;
 	}
 
 	boolean add(V value) {

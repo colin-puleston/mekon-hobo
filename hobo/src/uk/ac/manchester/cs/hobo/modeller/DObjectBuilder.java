@@ -174,42 +174,6 @@ public interface DObjectBuilder {
 	public <N extends Number>DCell<N> addNumberCell(DNumberRange<N> range);
 
 	/**
-	 * Provides a <code>DDisjunction</code>-valued cell bound to the
-	 * same slot as the specified <code>DObject</code>-valued source
-	 * cell.
-	 *
-	 * @param <D> Value-type of source cell, and of disjuncts for
-	 * disjunction-values of derived cell
-	 * @param objectCell Source cell
-	 * @return Derived cell
-	 */
-	public <D extends DObject>DCell<DDisjunction<D>> toDisjunctionCell(DCell<D> objectCell);
-
-	/**
-	 * Provides a <code>DDisjunction</code>-valued array bound to the
-	 * same slot as the specified <code>DObject</code>-valued source
-	 * array.
-	 *
-	 * @param <D> Value-type of source array, and of disjuncts for
-	 * disjunction-values of derived array
-	 * @param objectArray Source array
-	 * @return Derived cell
-	 */
-	public <D extends DObject>DArray<DDisjunction<D>> toDisjunctionArray(DArray<D> objectArray);
-
-	/**
-	 * Provides a <code>DNumberRange</code>-valued cell bound to the
-	 * same slot as the specified <code>Number</code>-valued source
-	 * cell.
-	 *
-	 * @param <N> Value-type of source cell, and of limit-values of the
-	 * range-values of derived cell
-	 * @param numberCell Source cell
-	 * @return Derived cell
-	 */
-	public <N extends Number>DCell<DNumberRange<N>> toNumberRangeCell(DCell<N> numberCell);
-
-	/**
 	 * Enables the explicit specification of the "container-class"
 	 * attribute for a particular field that has been constructed
 	 * by this fields-factory.

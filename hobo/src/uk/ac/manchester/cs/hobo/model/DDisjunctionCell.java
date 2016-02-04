@@ -24,32 +24,42 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.hobo.*;
 
 /**
+ * A <code>DDisjunction</code>-valued cell bound to the same slot as
+ * a specific <code>DObject</code>-valued "source" cell, enabling the
+ * setting of disjunction values for the slot.
+ * <p>
+ * NOTE: Objects of this type can only be created for source-cells
+ * whose associated slots are abstract-editable (i.e. have editabilily
+ * status of {@link IEditability.FULL}).
+ *
  * @author Colin Puleston
  */
-class DDisjunctionValueType
-			<D extends DObject>
-			extends DObjectBasedValueType<D, DDisjunction<D>> {
+public class DDisjunctionCell<D extends DObject> extends DCell<DDisjunction<D>> {
 
-	DDisjunctionValueType(DField<D> sourceField) {
+	/**
+	 * Constructor.
+	 *
+	 * @param sourceCell Source cell
+	 * @throws KAccessException if relevant slot is not abstract-editable
+	 */
+	public DDisjunctionCell(DCell<D> sourceCell) {
 
-		super((DObjectValueType<D>)sourceField.getValueType());
+		super(sourceCell.getModel(), new DDisjunctionValueType<D>(sourceCell));
+
+		initialiseAbstractField(sourceCell);
 	}
 
-	IValue toSlotValue(DDisjunction<D> value) {
+	/**
+	 * Constructor.
+	 *
+	 * @param sourceCellViewer Viewer for source cell
+	 * @throws KAccessException if relevant slot is not abstract-editable
+	 */
+	public DDisjunctionCell(DCellViewer<D> sourceCellViewer) {
 
-		return value.asDisjunctionIFrame().normalise();
-	}
-
-	DDisjunction<D> toFieldValue(IFrame value) {
-
-		return new DDisjunction<D>(getModel(), getDClass(), value);
-	}
-
-	boolean convertibleToFieldValue(IFrame value) {
-
-		return true;
+		this(sourceCellViewer.getField());
 	}
 }
