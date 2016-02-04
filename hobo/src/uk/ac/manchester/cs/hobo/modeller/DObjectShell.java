@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.hobo.modeller;
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
-import uk.ac.manchester.cs.hobo.*;
 
 /**
  * Abstract implementation of {@link DObject} whose extensions
@@ -136,22 +135,6 @@ public abstract class DObjectShell implements DObject {
 
 		model = builder.getModel();
 		frame = builder.getFrame();
-	}
-
-	/**
-	 * Convenience method that re-sets the function of the associated
-	 * frame, to that of the frame associated with the specified
-	 * template-object.
-	 *
-	 * @param template Object whose associated frame-function is
-	 * to be copied
-	 * @throws HAccessException if the frame associated with this
-	 * object is currently being referenced via the slots of
-	 * another frame
-	 */
-	protected void alignFunction(DObject template) {
-
-		getFrame().alignFunction(template.getFrame());
 	}
 
 	private boolean equalsDObject(DObject other) {

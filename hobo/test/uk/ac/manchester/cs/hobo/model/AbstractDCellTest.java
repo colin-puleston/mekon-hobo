@@ -96,8 +96,9 @@ public abstract class AbstractDCellTest<SV, DV> extends DFieldTest {
 	private DCell<SV> createSourceCell() {
 
 		DCell<SV> cell = createSourceCellAsAssertion();
+		IFrame containerFrame = cell.getSlot().getContainer();
 
-		cell.getSlot().getContainer().resetFunction(IFrameFunction.QUERY);
+		resetIFrameFunction(containerFrame, IFrameFunction.QUERY);
 
 		return cell;
 	}

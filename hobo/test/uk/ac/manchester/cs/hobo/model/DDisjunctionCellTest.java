@@ -88,7 +88,7 @@ public class DDisjunctionCellTest
 		DObject obj = createDObject(name);
 		IFrame frame = obj.getFrame();
 
-		frame.resetFunction(IFrameFunction.QUERY);
+		resetIFrameFunction(frame, IFrameFunction.QUERY);
 		addSuperFrame(frame.getType(), rootFrame);
 
 		return obj;
