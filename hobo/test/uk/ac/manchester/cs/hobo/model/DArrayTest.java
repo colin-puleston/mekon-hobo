@@ -120,7 +120,7 @@ public class DArrayTest extends DFieldTest {
 
 	private DArray<DObject> createArray() {
 
-		return createDObjectArray(CCardinality.REPEATABLE_TYPES, fr.getType());
+		return fields.createDObjectArray(fr.getType());
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {

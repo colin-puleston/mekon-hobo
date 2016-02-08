@@ -37,20 +37,20 @@ public class DDisjunctionCellTest
 						<DObject,
 						DDisjunction<DObject>> {
 
-	private CFrame rootFrame = createCFrame("ROOT");
+	private CFrame rootFrame = frameTypes.create("ROOT");
 
-	private DObject a = createQueryObjectWithSubRootType("A");
-	private DObject b = createQueryObjectWithSubRootType("B");
-	private DObject c = createQueryObjectWithSubRootType("C");
+	private DObject a = createObjectWithSubRootType("A");
+	private DObject b = createObjectWithSubRootType("B");
+	private DObject c = createObjectWithSubRootType("C");
 
 	public DDisjunctionCellTest() {
 
-		setQueriesEnabled(true);
+		testCModel.setQueriesEnabled(true);
 	}
 
-	DCell<DObject> createSourceCellAsAssertion() {
+	DCell<DObject> createSourceCell() {
 
-		return createDObjectCell(CCardinality.REPEATABLE_TYPES, rootFrame);
+		return fields.createDObjectCell(rootFrame);
 	}
 
 	DCell<DDisjunction<DObject>> createDerivedCell(DCell<DObject> sourceCell) {
@@ -83,13 +83,11 @@ public class DDisjunctionCellTest
 		return derivedValue.asDisjunctionIFrame().normalise();
 	}
 
-	private DObject createQueryObjectWithSubRootType(String name) {
+	private DObject createObjectWithSubRootType(String name) {
 
 		DObject obj = createDObject(name);
-		IFrame frame = obj.getFrame();
 
-		resetIFrameFunction(frame, IFrameFunction.QUERY);
-		addSuperFrame(frame.getType(), rootFrame);
+		addSuperFrame(obj.getFrame().getType(), rootFrame);
 
 		return obj;
 	}

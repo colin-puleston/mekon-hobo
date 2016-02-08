@@ -73,7 +73,7 @@ public class DCellTest extends DFieldTest {
 
 	private DCell<Integer> createRange_0_10_Cell() {
 
-		return createIntegerCell(DNumberRange.range(0, 10));
+		return fields.createIntegerCell(DNumberRange.range(0, 10));
 	}
 
 	private void testSetCell(DCell<Integer> cell, int value) {

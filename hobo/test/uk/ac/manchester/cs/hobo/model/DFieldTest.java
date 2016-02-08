@@ -33,7 +33,24 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-abstract class DFieldTest extends GeneralDirectModelTest {
+abstract class DFieldTest {
+
+	final DModel model = new DModel(){};
+
+	final TestCModel testCModel = new TestCModel(model.getCModel());
+	final TestCFrames frameTypes = testCModel.cFrames;
+	final TestIFrames frames = testCModel.iFrameQueries;
+	final TestDFields fields = new TestDFields(model, frames);
+
+	DObject createDObject(String frameTypeName) {
+
+		IFrame frame = frames.create(frameTypeName);
+		DObject dObject = new DObjectDefault(model, frame);
+
+		FramesTestUtils.setIFrameMappedObject(frame, dObject);
+
+		return dObject;
+	}
 
 	void addSlotValues(DField<?> field, IValue... values) {
 

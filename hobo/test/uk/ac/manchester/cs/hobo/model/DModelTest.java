@@ -175,6 +175,7 @@ public class DModelTest extends MekonTestUtils {
 		DBuilder dBuilder = DManager.createEmptyBuilder();
 
 		populateModelMap(dBuilder, labelsFromDirectModel);
+
 		dBuilder.addDClasses(getTestModelPackageName());
 		dBuilder.getCBuilder().addSectionBuilder(new ExternalSectionBuilder());
 

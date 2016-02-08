@@ -79,7 +79,7 @@ public abstract class AbstractDCellTest<SV, DV> extends DFieldTest {
 		testSlotValueViaDerivedValue(derivedCell, derivedValue);
 	}
 
-	abstract DCell<SV> createSourceCellAsAssertion();
+	abstract DCell<SV> createSourceCell();
 
 	abstract DCell<DV> createDerivedCell(DCell<SV> sourceCell);
 
@@ -92,16 +92,6 @@ public abstract class AbstractDCellTest<SV, DV> extends DFieldTest {
 	abstract IValue sourceToSlotValue(SV sourceValue);
 
 	abstract IValue derivedToSlotValue(DV derivedValue);
-
-	private DCell<SV> createSourceCell() {
-
-		DCell<SV> cell = createSourceCellAsAssertion();
-		IFrame containerFrame = cell.getSlot().getContainer();
-
-		resetIFrameFunction(containerFrame, IFrameFunction.QUERY);
-
-		return cell;
-	}
 
 	private void testSourceCellAndSlotValue(DCell<SV> cell, SV expectValue) {
 

@@ -35,9 +35,9 @@ public class DNumberRangeCellTest
 						<Integer,
 						DNumberRange<Integer>> {
 
-	DCell<Integer> createSourceCellAsAssertion() {
+	DCell<Integer> createSourceCell() {
 
-		return createIntegerCell(DNumberRange.INTEGER);
+		return fields.createIntegerCell(DNumberRange.INTEGER);
 	}
 
 	DCell<DNumberRange<Integer>> createDerivedCell(DCell<Integer> sourceCell) {

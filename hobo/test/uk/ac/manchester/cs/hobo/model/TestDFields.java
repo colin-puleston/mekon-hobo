@@ -26,47 +26,43 @@ package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.config.*;
+
 import uk.ac.manchester.cs.hobo.model.motor.*;
 
 /**
  * @author Colin Puleston
  */
-class GeneralDirectModelTest extends GeneralFramesModelTest {
+class TestDFields {
 
 	private DModel model;
 
-	GeneralDirectModelTest() {
+	private TestISlots repeatTypesSlots;
+	private TestISlots singleValueSlots;
 
-		this(new DModel(){});
+	TestDFields(DModel model, TestIFrames frames) {
+
+		this.model = model;
+
+		repeatTypesSlots = frames.repeatTypesSlots;
+		singleValueSlots = frames.singleValueSlots;
 	}
 
-	DObject createDObject(String frameTypeName) {
+	DCell<DObject> createDObjectCell(CFrame rootValueType) {
 
-		IFrame frame = createIFrame(frameTypeName);
-		DObject dObject = new DObjectDefault(model, frame);
-
-		FramesTestUtils.setIFrameMappedObject(frame, dObject);
-
-		return dObject;
-	}
-
-	DCell<DObject> createDObjectCell(CCardinality cardinality, CFrame rootFrame) {
-
-		DValueType<DObject> valueType = createDObjectValueType(rootFrame);
+		DValueType<DObject> valueType = createDObjectValueType(rootValueType);
 		DCell<DObject> cell = new DCell<DObject>(model, valueType);
 
-		cell.setSlot(createISlot(cardinality, rootFrame));
+		cell.setSlot(createObjectsSlot(rootValueType));
 
 		return cell;
 	}
 
-	DArray<DObject> createDObjectArray(CCardinality cardinality, CFrame rootFrame) {
+	DArray<DObject> createDObjectArray(CFrame rootValueType) {
 
-		DValueType<DObject> valueType = createDObjectValueType(rootFrame);
+		DValueType<DObject> valueType = createDObjectValueType(rootValueType);
 		DArray<DObject> array = new DArray<DObject>(model, valueType);
 
-		array.setSlot(createISlot(cardinality, rootFrame));
+		array.setSlot(createObjectsSlot(rootValueType));
 
 		return array;
 	}
@@ -91,20 +87,28 @@ class GeneralDirectModelTest extends GeneralFramesModelTest {
 		return model;
 	}
 
-	private GeneralDirectModelTest(DModel model) {
+	private ISlot createObjectsSlot(CFrame rootValueType) {
 
-		super(model.getCModel());
-
-		this.model = model;
-	}
-
-	private DValueType<DObject> createDObjectValueType(CFrame rootFrame) {
-
-		return new DObjectValueType<DObject>(model, DObject.class, rootFrame);
+		return repeatTypesSlots.create(createSlotName(rootValueType), rootValueType);
 	}
 
 	private ISlot createNumberSlot(CNumber type) {
 
-		return createISlot(CCardinality.SINGLE_VALUE, type);
+		return singleValueSlots.create(createSlotName(type), type);
+	}
+
+	private String createSlotName(CFrame rootValueType) {
+
+		return "SLOT-FOR-" + rootValueType.getIdentity();
+	}
+
+	private String createSlotName(CNumber type) {
+
+		return "SLOT-FOR-" + type.toString();
+	}
+
+	private DValueType<DObject> createDObjectValueType(CFrame rootValueType) {
+
+		return new DObjectValueType<DObject>(model, DObject.class, rootValueType);
 	}
 }
