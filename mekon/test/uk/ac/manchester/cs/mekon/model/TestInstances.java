@@ -33,7 +33,8 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  */
 public class TestInstances {
 
-	private GeneralFramesModelTest modelTest;
+	private TestCFrames frameTypes;
+	private TestCSlots slotTypes;
 
 	private String typesPrefix = "";
 	private IFrameFunction function = IFrameFunction.ASSERTION;
@@ -85,8 +86,8 @@ public class TestInstances {
 
 		DynamicSlotInsertionReasoner() {
 
-			valueType = createCFrame("InsertSlotValue");
-			slotType = createCSlot("insertSlot", valueType);
+			valueType = createFrameType("InsertSlotValue");
+			slotType = slotTypes.create("insertSlot", valueType);
 
 			ta.asAtomicFrame().setIReasoner(this);
 		}
@@ -137,55 +138,55 @@ public class TestInstances {
 
 	private abstract class InstanceCreator {
 
-		final IFrame fa = createIFrame(ta);
-		final IFrame fb = createIFrame(tb);
-		final IFrame fc = createIFrame(tc);
-		final IFrame fd = createIFrame(td);
+		final IFrame fa = createFrame(ta);
+		final IFrame fb = createFrame(tb);
+		final IFrame fc = createFrame(tc);
+		final IFrame fd = createFrame(td);
 
-		final IFrame fcx = createIFrame(tcx);
-		final IFrame fcy = createIFrame(tcy);
+		final IFrame fcx = createFrame(tcx);
+		final IFrame fcy = createFrame(tcy);
 
 		IFrame get() {
 
-			setSlotValues();
+			initialise();
 
 			return fa;
 		}
 
-		abstract void setSlotValues();
+		abstract void initialise();
 	}
 
 	private class BasicInstanceCreator extends InstanceCreator {
 
-		void setSlotValues() {
+		void initialise() {
 
-			setISlotValues(fa, sab, fb);
-			setISlotValues(fa, sac, fcx);
-			setISlotValues(fb, sbd, fd);
-			setISlotValues(fb, sbe, tex, tey);
-			setISlotValues(fb, sbn, tn.getMax());
+			setSlotValues(fa, sab, fb);
+			setSlotValues(fa, sac, fcx);
+			setSlotValues(fb, sbd, fd);
+			setSlotValues(fb, sbe, tex, tey);
+			setSlotValues(fb, sbn, tn.getMax());
 		}
 	}
 
 	private class SubsumerInstanceCreator extends InstanceCreator {
 
-		void setSlotValues() {
+		void initialise() {
 
-			setISlotValues(fa, sab, fb);
-			setISlotValues(fb, sbd, fd);
-			setISlotValues(fb, sbe, te);
-			setISlotValues(fb, sbn, tn.getMax());
+			setSlotValues(fa, sab, fb);
+			setSlotValues(fb, sbd, fd);
+			setSlotValues(fb, sbe, te);
+			setSlotValues(fb, sbn, tn.getMax());
 		}
 	}
 
 	private class AbstractSubsumerInstanceCreator extends InstanceCreator {
 
-		void setSlotValues() {
+		void initialise() {
 
-			setISlotValues(fa, sab, fb);
-			setISlotValues(fa, sac, createIDisjunction(fcx, fcy));
-			setISlotValues(fb, sbe, createCDisjunction(tex, tey));
-			setISlotValues(fb, sbn, tn.asINumber());
+			setSlotValues(fa, sab, fb);
+			setSlotValues(fa, sac, createDisjunction(fcx, fcy));
+			setSlotValues(fb, sbe, createDisjunctionType(tex, tey));
+			setSlotValues(fb, sbn, tn.asINumber());
 		}
 	}
 
@@ -194,12 +195,9 @@ public class TestInstances {
 		typesPrefix = value;
 	}
 
-	public void setDynamicSlotInsertion(boolean value) {
+	public void setDynamicSlotInsertion() {
 
-		if (value) {
-
-			new DynamicSlotInsertionReasoner();
-		}
+		new DynamicSlotInsertionReasoner();
 	}
 
 	public void setFunction(IFrameFunction value) {
@@ -222,73 +220,65 @@ public class TestInstances {
 		return new AbstractSubsumerInstanceCreator().get();
 	}
 
-	TestInstances(GeneralFramesModelTest modelTest) {
+	TestInstances(TestCFrames frameTypes) {
 
-		this.modelTest = modelTest;
+		this.frameTypes = frameTypes;
 
-		ta = createCFrame("A");
-		tb = createCFrame("B");
-		tc = createCFrame("C");
-		td = createCFrame("D");
-		te = createCFrame("E");
+		slotTypes = frameTypes.repeatTypesSlots;
 
-		tcx = createCFrame("CX");
-		tcy = createCFrame("CY");
-		tex = createCFrame("EX");
-		tey = createCFrame("EY");
+		ta = createFrameType("A");
+		tb = createFrameType("B");
+		tc = createFrameType("C");
+		td = createFrameType("D");
+		te = createFrameType("E");
+
+		tcx = createFrameType("CX");
+		tcy = createFrameType("CY");
+		tex = createFrameType("EX");
+		tey = createFrameType("EY");
 
 		tn = CNumber.range(1, 10);
 
-		sab = createCSlot(ta, "sab", tb);
-		sac = createCSlot(ta, "sac", tc);
+		sab = slotTypes.create(ta, "sab", tb);
+		sac = slotTypes.create(ta, "sac", tc);
 
-		sbd = createCSlot(tb, "sbd", td);
-		sbe = createCSlot(tb, "sbe", te.getType());
-		sbn = createCSlot(tb, "sbn", tn);
+		sbd = slotTypes.create(tb, "sbd", td);
+		sbe = slotTypes.create(tb, "sbe", te.getType());
+		sbn = slotTypes.create(tb, "sbn", tn);
 
-		addSuperFrame(tcx, tc);
-		addSuperFrame(tcy, tc);
+		addSuperFrameType(tcx, tc);
+		addSuperFrameType(tcy, tc);
 
-		addSuperFrame(tex, te);
-		addSuperFrame(tey, te);
+		addSuperFrameType(tex, te);
+		addSuperFrameType(tey, te);
 	}
 
-	private CFrame createCFrame(String name) {
+	private CFrame createFrameType(String name) {
 
-		return modelTest.createCFrame(typesPrefix + name);
+		return frameTypes.create(typesPrefix + name);
 	}
 
-	private CSlot createCSlot(String name, CValue<?> valueType) {
-
-		return modelTest.createCSlot(name, valueType);
-	}
-
-	private CSlot createCSlot(CFrame container, String name, CValue<?> valueType) {
-
-		return modelTest.createCSlot(container, name, valueType);
-	}
-
-	private void addSuperFrame(CFrame sub, CFrame sup) {
-
-		FramesTestUtils.addSuperFrame(sub, sup);
-	}
-
-	private CFrame createCDisjunction(CFrame... disjuncts) {
+	private CFrame createDisjunctionType(CFrame... disjuncts) {
 
 		return FramesTestUtils.createCDisjunction(disjuncts);
 	}
 
-	private IFrame createIDisjunction(IFrame... disjuncts) {
+	private void addSuperFrameType(CFrame sub, CFrame sup) {
+
+		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
+	private IFrame createDisjunction(IFrame... disjuncts) {
 
 		return FramesTestUtils.createIDisjunction(disjuncts);
 	}
 
-	private IFrame createIFrame(CFrame type) {
+	private IFrame createFrame(CFrame type) {
 
 		return FramesTestUtils.instantiateCFrame(type, function);
 	}
 
-	private void setISlotValues(IFrame container, CSlot type, IValue... values) {
+	private void setSlotValues(IFrame container, CSlot type, IValue... values) {
 
 		ISlot slot = container.getSlots().get(type.getIdentity());
 

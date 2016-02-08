@@ -39,19 +39,21 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	static private final List<CFrame> NO_CFRAMES = Collections.emptyList();
 
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
+	private TestCSlots slots = frames.repeatTypesSlots;
+
 	@Test
 	public void test_addAndRemove() {
 
-		CModel model = getModel();
-
-		CFrame a = createCFrame("A");
-		CFrame b = createCFrame("B");
-		CFrame c = createCFrame("C");
+		CFrame a = frames.create("A");
+		CFrame b = frames.create("B");
+		CFrame c = frames.create("C");
 
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);
 
-		testList(model.getFrames().asList(), Arrays.asList(a, b, c));
+		testList(getModelFrames(), Arrays.asList(a, b, c));
 		testList(a.getSupers(), getRootFrameAsList());
 		testList(a.getSubs(), Arrays.asList(b));
 		testList(b.getSupers(), Arrays.asList(a));
@@ -59,9 +61,9 @@ public class CFrameTest extends CValueTest<CFrame> {
 		testList(c.getSupers(), Arrays.asList(b));
 		testList(c.getSubs(), NO_CFRAMES);
 
-		model.removeFrame(b.asAtomicFrame());
+		model.model.removeFrame(b.asAtomicFrame());
 
-		testList(model.getFrames().asList(), Arrays.asList(a, c));
+		testList(getModelFrames(), Arrays.asList(a, c));
 		testList(a.getSupers(), getRootFrameAsList());
 		testList(a.getSubs(), Arrays.asList(c));
 		testList(c.getSupers(), Arrays.asList(a));
@@ -71,9 +73,9 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test(expected = KModelException.class)
 	public void test_cycleInHierarchyProducesException_1() {
 
-		CFrame a = createCFrame("A");
-		CFrame b = createCFrame("B");
-		CFrame c = createCFrame("C");
+		CFrame a = frames.create("A");
+		CFrame b = frames.create("B");
+		CFrame c = frames.create("C");
 
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);
@@ -83,9 +85,9 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test(expected = KModelException.class)
 	public void test_cycleInHierarchyProducesException_2() {
 
-		CFrame a = createCFrame("A");
-		CFrame b = createHiddenCFrame("B");
-		CFrame c = createCFrame("C");
+		CFrame a = frames.create("A");
+		CFrame b = frames.createHidden("B");
+		CFrame c = frames.create("C");
 
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);
@@ -95,10 +97,10 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_subsumptionTesting_1() {
 
-		CFrame a = createCFrame("A");
-		CFrame b = createCFrame("B");
-		CFrame c = createCFrame("C");
-		CFrame d = createCFrame("D");
+		CFrame a = frames.create("A");
+		CFrame b = frames.create("B");
+		CFrame c = frames.create("C");
+		CFrame d = frames.create("D");
 
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);
@@ -112,10 +114,10 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_subsumptionTesting_2() {
 
-		CFrame a = createCFrame("A");
-		CFrame b = createHiddenCFrame("B");
-		CFrame c = createCFrame("C");
-		CFrame d = createHiddenCFrame("D");
+		CFrame a = frames.create("A");
+		CFrame b = frames.createHidden("B");
+		CFrame c = frames.create("C");
+		CFrame d = frames.createHidden("D");
 
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);
@@ -129,10 +131,10 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_subsumptionTesting_3() {
 
-		CFrame a = createHiddenCFrame("A");
-		CFrame b = createHiddenCFrame("B");
-		CFrame c = createHiddenCFrame("C");
-		CFrame d = createHiddenCFrame("D");
+		CFrame a = frames.createHidden("A");
+		CFrame b = frames.createHidden("B");
+		CFrame c = frames.createHidden("C");
+		CFrame d = frames.createHidden("D");
 
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);
@@ -146,11 +148,11 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_hierarchyBuilding() {
 
-		CFrame er = createCFrame("EXPOSED-ROOT");
-		CFrame hr = createHiddenCFrame("HIDDEN-ROOT");
-		CFrame e1 = createCFrame("EXPOSED-1");
-		CFrame e2 = createCFrame("EXPOSED-2");
-		CFrame h1 = createHiddenCFrame("HIDDEN-1");
+		CFrame er = frames.create("EXPOSED-ROOT");
+		CFrame hr = frames.createHidden("HIDDEN-ROOT");
+		CFrame e1 = frames.create("EXPOSED-1");
+		CFrame e2 = frames.create("EXPOSED-2");
+		CFrame h1 = frames.createHidden("HIDDEN-1");
 
 		addSuperFrame(e1, er);
 		addSuperFrame(e2, er);
@@ -179,10 +181,10 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_hierarchyNormalisation_1() {
 
-		CFrame er = createCFrame("EXPOSED-ROOT");
-		CFrame e1 = createCFrame("EXPOSED-1");
-		CFrame e2 = createCFrame("EXPOSED-2");
-		CFrame e3 = createCFrame("EXPOSED-3");
+		CFrame er = frames.create("EXPOSED-ROOT");
+		CFrame e1 = frames.create("EXPOSED-1");
+		CFrame e2 = frames.create("EXPOSED-2");
+		CFrame e3 = frames.create("EXPOSED-3");
 
 		addSuperFrame(e1, er);
 		addSuperFrame(e2, er);
@@ -191,7 +193,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(e2, e1);
 		addSuperFrame(e3, e2);
 
-		normaliseCFramesHierarchy();
+		model.normaliseCFramesHierarchy();
 
 		testSupers(e2, Arrays.asList(e1));
 		testSupers(e3, Arrays.asList(e2));
@@ -200,10 +202,10 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_hierarchyNormalisation_2() {
 
-		CFrame hr = createCFrame("HIDDEN-ROOT");
-		CFrame h1 = createCFrame("HIDDEN-1");
-		CFrame h2 = createCFrame("HIDDEN-2");
-		CFrame h3 = createCFrame("HIDDEN-3");
+		CFrame hr = frames.create("HIDDEN-ROOT");
+		CFrame h1 = frames.create("HIDDEN-1");
+		CFrame h2 = frames.create("HIDDEN-2");
+		CFrame h3 = frames.create("HIDDEN-3");
 
 		addSuperFrame(h1, hr);
 		addSuperFrame(h2, hr);
@@ -212,7 +214,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(h2, h1);
 		addSuperFrame(h3, h2);
 
-		normaliseCFramesHierarchy();
+		model.normaliseCFramesHierarchy();
 
 		testSupers(h2, Arrays.asList(h1));
 		testSupers(h3, Arrays.asList(h2));
@@ -221,14 +223,14 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_hierarchyNormalisation_3() {
 
-		CFrame er = createCFrame("EXPOSED-ROOT");
-		CFrame ea1 = createCFrame("EXPOSED-a1");
-		CFrame ea2 = createCFrame("EXPOSED-a2");
-		CFrame h1 = createHiddenCFrame("HIDDEN-1");
-		CFrame h2 = createHiddenCFrame("HIDDEN-2");
-		CFrame h3 = createHiddenCFrame("HIDDEN-3");
-		CFrame eb1 = createCFrame("EXPOSED-b1");
-		CFrame eb2 = createCFrame("EXPOSED-b2");
+		CFrame er = frames.create("EXPOSED-ROOT");
+		CFrame ea1 = frames.create("EXPOSED-a1");
+		CFrame ea2 = frames.create("EXPOSED-a2");
+		CFrame h1 = frames.createHidden("HIDDEN-1");
+		CFrame h2 = frames.createHidden("HIDDEN-2");
+		CFrame h3 = frames.createHidden("HIDDEN-3");
+		CFrame eb1 = frames.create("EXPOSED-b1");
+		CFrame eb2 = frames.create("EXPOSED-b2");
 
 		addSuperFrame(ea1, er);
 		addSuperFrame(ea2, er);
@@ -245,7 +247,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(eb1, h3);
 		addSuperFrame(eb2, eb1);
 
-		normaliseCFramesHierarchy();
+		model.normaliseCFramesHierarchy();
 
 		testSupers(er, getRootFrameAsList());
 		testSupers(ea1, Arrays.asList(er));
@@ -260,13 +262,13 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_hierarchyNormalisation_4() {
 
-		CFrame er = createCFrame("EXPOSED-ROOT");
-		CFrame ea1 = createCFrame("EXPOSED-a1");
-		CFrame ea2 = createCFrame("EXPOSED-a2");
-		CFrame h1 = createHiddenCFrame("HIDDEN-1");
-		CFrame h2 = createHiddenCFrame("HIDDEN-2");
-		CFrame eb1 = createCFrame("EXPOSED-b1");
-		CFrame eb2 = createCFrame("EXPOSED-b2");
+		CFrame er = frames.create("EXPOSED-ROOT");
+		CFrame ea1 = frames.create("EXPOSED-a1");
+		CFrame ea2 = frames.create("EXPOSED-a2");
+		CFrame h1 = frames.createHidden("HIDDEN-1");
+		CFrame h2 = frames.createHidden("HIDDEN-2");
+		CFrame eb1 = frames.create("EXPOSED-b1");
+		CFrame eb2 = frames.create("EXPOSED-b2");
 
 		addSuperFrame(ea1, er);
 		addSuperFrame(ea2, er);
@@ -275,7 +277,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(eb1, h1);
 		addSuperFrame(eb2, h2);
 
-		normaliseCFramesHierarchy();
+		model.normaliseCFramesHierarchy();
 
 		testSupers(er, getRootFrameAsList());
 		testSupers(ea1, Arrays.asList(er));
@@ -289,12 +291,12 @@ public class CFrameTest extends CValueTest<CFrame> {
 	@Test
 	public void test_hierarchyNormalisation_5() {
 
-		CFrame er = createCFrame("EXPOSED-ROOT");
-		CFrame ea1 = createCFrame("EXPOSED-a1");
-		CFrame ea2 = createCFrame("EXPOSED-a2");
-		CFrame h1 = createHiddenCFrame("HIDDEN-1");
-		CFrame h2 = createHiddenCFrame("HIDDEN-2");
-		CFrame eb1 = createCFrame("EXPOSED-b1");
+		CFrame er = frames.create("EXPOSED-ROOT");
+		CFrame ea1 = frames.create("EXPOSED-a1");
+		CFrame ea2 = frames.create("EXPOSED-a2");
+		CFrame h1 = frames.createHidden("HIDDEN-1");
+		CFrame h2 = frames.createHidden("HIDDEN-2");
+		CFrame eb1 = frames.create("EXPOSED-b1");
 
 		addSuperFrame(ea1, er);
 		addSuperFrame(ea2, ea1);
@@ -303,7 +305,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(eb1, h1);
 		addSuperFrame(eb1, h2);
 
-		normaliseCFramesHierarchy();
+		model.normaliseCFramesHierarchy();
 
 		testSupers(er, getRootFrameAsList());
 		testSupers(ea1, Arrays.asList(er));
@@ -358,10 +360,10 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private void testAddSlots(boolean addValidatingLink) {
 
-		CAtomicFrame a = createCFrame("A");
-		CAtomicFrame b = createCFrame("B");
-		CFrame va = createCFrame("VA");
-		CFrame vb = createCFrame("VB");
+		CAtomicFrame a = frames.create("A");
+		CAtomicFrame b = frames.create("B");
+		CFrame va = frames.create("VA");
+		CFrame vb = frames.create("VB");
 
 		addSuperFrame(b, a);
 
@@ -370,10 +372,15 @@ public class CFrameTest extends CValueTest<CFrame> {
 			addSuperFrame(vb, va);
 		}
 
-		createCSlot(a, "S", CCardinality.REPEATABLE_TYPES, va);
-		createCSlot(b, "S", CCardinality.REPEATABLE_TYPES, vb);
+		slots.create(a, "S", va);
+		slots.create(b, "S", vb);
 
 		b.getSlots().validateAll(b);
+	}
+
+	private List<CFrame> getModelFrames() {
+
+		return model.model.getFrames().asList();
 	}
 
 	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
@@ -388,6 +395,6 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private List<CFrame> getRootFrameAsList() {
 
-		return Arrays.asList(getModel().getRootFrame());
+		return Arrays.asList(model.model.getRootFrame());
 	}
 }

@@ -39,13 +39,16 @@ import uk.ac.manchester.cs.mekon.store.motor.*;
 /**
  * @author Colin Puleston
  */
-public class IStoreTest extends GeneralFramesModelTest {
+public class IStoreTest {
 
 	static private final CIdentity FIRST_ID = new CIdentity("First");
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
 
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
+	private TestInstances instances = model.createTestInstances();
+
 	private IStore store;
-	private TestInstances instances = createTestInstances();
 
 	private IFrame first = null;
 	private IFrame second = null;
@@ -100,7 +103,7 @@ public class IStoreTest extends GeneralFramesModelTest {
 
 		TestMatcher(String typeName) {
 
-			type = createCFrame(typeName);
+			type = frames.create(typeName);
 			instance = type.instantiate();
 			query = type.instantiateQuery();
 
@@ -174,7 +177,7 @@ public class IStoreTest extends GeneralFramesModelTest {
 	@Test
 	public void test_matching() {
 
-		setQueriesEnabled(true);
+		model.setQueriesEnabled(true);
 
 		TestMatcher matcherA = new TestMatcher("A");
 		TestMatcher matcherB = new TestMatcher("B");
@@ -191,7 +194,7 @@ public class IStoreTest extends GeneralFramesModelTest {
 
 	private void createStore() {
 
-		store = new IStore(getModel());
+		store = new IStore(model.model);
 
 		store.initialisePostRegistration();
 	}

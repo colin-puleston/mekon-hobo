@@ -642,11 +642,6 @@ public class IFrame implements IEntity, IValue {
 		return new Editor();
 	}
 
-	void resetFunction(IFrameFunction function) {
-
-		this.function = function;
-	}
-
 	IFrame copyEmpty() {
 
 		return new IFrame(type, function);

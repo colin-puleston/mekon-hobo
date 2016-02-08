@@ -34,24 +34,28 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class CSlotValuesTest extends GeneralFramesModelTest {
+public class CSlotValuesTest {
 
-	private CAtomicFrame container = createCFrame("CONTAINER");
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
+	private TestCSlots slots = frames.repeatTypesSlots;
+
+	private CAtomicFrame container = frames.create("CONTAINER");
 
 	private CIdentity slot1Name = new CIdentity("SLOT-1");
 	private CIdentity slot2Name = new CIdentity("SLOT-2");
 
-	private CAtomicFrame rootValueSlot1 = createCFrame("ROOT-VALUE-SLOT-1");
-	private CAtomicFrame rootValueSlot2 = createCFrame("ROOT-VALUE-SLOT-2");
+	private CAtomicFrame rootValueSlot1 = frames.create("ROOT-VALUE-SLOT-1");
+	private CAtomicFrame rootValueSlot2 = frames.create("ROOT-VALUE-SLOT-2");
 
-	private CAtomicFrame value1Slot1 = createCFrame("VALUE-1-SLOT-1");
-	private CAtomicFrame value2Slot1 = createCFrame("VALUE-2-SLOT-1");
-	private CAtomicFrame value2XSlot1 = createCFrame("VALUE-2X-SLOT-1");
-	private CAtomicFrame value1Slot2 = createCFrame("VALUE-1-SLOT-2");
-	private CAtomicFrame value2Slot2 = createCFrame("VALUE-2-SLOT-2");
+	private CAtomicFrame value1Slot1 = frames.create("VALUE-1-SLOT-1");
+	private CAtomicFrame value2Slot1 = frames.create("VALUE-2-SLOT-1");
+	private CAtomicFrame value2XSlot1 = frames.create("VALUE-2X-SLOT-1");
+	private CAtomicFrame value1Slot2 = frames.create("VALUE-1-SLOT-2");
+	private CAtomicFrame value2Slot2 = frames.create("VALUE-2-SLOT-2");
 
 	private CIdentity badSlotId = new CIdentity("BAD-SLOT-NAME");
-	private CAtomicFrame badValue = createCFrame("BAD-VALUE");
+	private CAtomicFrame badValue = frames.create("BAD-VALUE");
 
 	public CSlotValuesTest() {
 
@@ -62,8 +66,8 @@ public class CSlotValuesTest extends GeneralFramesModelTest {
 		addSuperFrame(value1Slot2, rootValueSlot2);
 		addSuperFrame(value2Slot2, rootValueSlot2);
 
-		createCSlot(container, slot1Name, CCardinality.REPEATABLE_TYPES, rootValueSlot1);
-		createCSlot(container, slot2Name, CCardinality.REPEATABLE_TYPES, rootValueSlot2);
+		slots.create(container, slot1Name, rootValueSlot1);
+		slots.create(container, slot2Name, rootValueSlot2);
 	}
 
 	@Test
@@ -123,7 +127,7 @@ public class CSlotValuesTest extends GeneralFramesModelTest {
 	@Test(expected = KModelException.class)
 	public void test_addValueForInvalidSlotId() {
 
-		addAndValidate(badSlotId, createCFrame("VALUE-FOR-BAD-SLOT-NAME"));
+		addAndValidate(badSlotId, frames.create("VALUE-FOR-BAD-SLOT-NAME"));
 	}
 
 	@Test(expected = KModelException.class)

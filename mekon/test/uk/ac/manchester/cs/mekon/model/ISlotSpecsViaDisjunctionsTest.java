@@ -35,29 +35,36 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotSpecsViaDisjunctionsTest extends GeneralFramesModelTest {
+public class ISlotSpecsViaDisjunctionsTest {
 
-	private CAtomicFrame ta = createCFrame("A");
-	private CAtomicFrame tb = createCFrame("B");
-	private CAtomicFrame tc = createCFrame("C");
-	private CAtomicFrame td = createCFrame("D");
-	private CAtomicFrame te = createCFrame("E");
+	static private final CIdentity SLOT1_ID = new CIdentity("SLOT-1");
+	static private final CIdentity SLOT2_ID = new CIdentity("SLOT-2");
+	static private final CIdentity SLOT3_ID = new CIdentity("SLOT-3");
 
-	private CAtomicFrame tx = createCFrame("X");
-	private CAtomicFrame ty1 = createCFrame("Y1");
-	private CAtomicFrame ty2 = createCFrame("Y2");
-	private CAtomicFrame tz = createCFrame("Z");
+	private TestCModel model = new TestCModel();
+	private TestCFrames frameTypes = model.cFrames;
+	private TestIFrames frames = model.iFrameAssertions;
 
-	private CIdentity slot1Id = new CIdentity("SLOT-1");
-	private CIdentity slot2Id = new CIdentity("SLOT-2");
-	private CIdentity slot3Id = new CIdentity("SLOT-3");
+	private TestCSlots repeatTypesSlotTypes = frameTypes.repeatTypesSlots;
+	private TestCSlots singleValueSlotTypes = frameTypes.singleValueSlots;
 
-	private CSlot ta_slot1 = createCSlot(ta, slot1Id, CCardinality.REPEATABLE_TYPES, tx);
-	private CSlot ta_slot2 = createCSlot(ta, slot2Id, CCardinality.REPEATABLE_TYPES, ty1);
-	private CSlot tc_slot2 = createCSlot(tc, slot2Id, CCardinality.SINGLE_VALUE, ty2);
-	private CSlot tb_slot3 = createCSlot(tb, slot3Id, CCardinality.REPEATABLE_TYPES, tz);
+	private CAtomicFrame ta = frameTypes.create("A");
+	private CAtomicFrame tb = frameTypes.create("B");
+	private CAtomicFrame tc = frameTypes.create("C");
+	private CAtomicFrame td = frameTypes.create("D");
+	private CAtomicFrame te = frameTypes.create("E");
 
-	private IFrame iContainer = createIFrame("CONTAINER");
+	private CAtomicFrame tx = frameTypes.create("X");
+	private CAtomicFrame ty1 = frameTypes.create("Y1");
+	private CAtomicFrame ty2 = frameTypes.create("Y2");
+	private CAtomicFrame tz = frameTypes.create("Z");
+
+	private CSlot ta_slot1 = repeatTypesSlotTypes.create(ta, SLOT1_ID, tx.getType());
+	private CSlot ta_slot2 = repeatTypesSlotTypes.create(ta, SLOT2_ID, ty1.getType());
+	private CSlot tc_slot2 = singleValueSlotTypes.create(tc, SLOT2_ID, ty2.getType());
+	private CSlot tb_slot3 = repeatTypesSlotTypes.create(tb, SLOT3_ID, tz.getType());
+
+	private IFrame iContainer = frames.create("CONTAINER");
 
 	public ISlotSpecsViaDisjunctionsTest() {
 
@@ -75,25 +82,25 @@ public class ISlotSpecsViaDisjunctionsTest extends GeneralFramesModelTest {
 		testSlotCount(0);
 		updateContainerSlots();
 		testSlotCount(2);
-		testSlotValueType(slot2Id, ty2);
-		testSlotValueType(slot3Id, tz);
+		testSlotValueType(SLOT2_ID, ty2);
+		testSlotValueType(SLOT3_ID, tz);
 	}
 
 	@Test
 	public void test_slotValueUpdates() {
 
-		CAtomicFrame ty3a = createCFrame("Y3A");
-		CAtomicFrame ty3b = createCFrame("Y3B");
+		CAtomicFrame ty3a = frameTypes.create("Y3A");
+		CAtomicFrame ty3b = frameTypes.create("Y3B");
 
 		addSuperFrame(ty3a, ty2);
 		addSuperFrame(ty3b, ty2);
 
-		td.addSlotValue(slot2Id, ty3a.getType());
-		td.addSlotValue(slot2Id, ty3b.getType());
-		te.addSlotValue(slot2Id, ty3a.getType());
+		td.addSlotValue(SLOT2_ID, ty3a.getType());
+		td.addSlotValue(SLOT2_ID, ty3b.getType());
+		te.addSlotValue(SLOT2_ID, ty3a.getType());
 
 		updateContainerSlots();
-		testSlotValues(slot2Id, ty3a);
+		testSlotValues(SLOT2_ID, ty3a);
 	}
 
 	@Test
@@ -103,9 +110,9 @@ public class ISlotSpecsViaDisjunctionsTest extends GeneralFramesModelTest {
 		ta_slot2.setEditability(CEditability.FULL);
 
 		updateContainerSlots();
-		testCardinality(slot2Id, CCardinality.REPEATABLE_TYPES);
-		testActiveSlot(slot2Id, false);
-		testSlotEditability(slot2Id, CEditability.FULL);
+		testCardinality(SLOT2_ID, CCardinality.REPEATABLE_TYPES);
+		testActiveSlot(SLOT2_ID, false);
+		testSlotEditability(SLOT2_ID, CEditability.FULL);
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {
@@ -115,7 +122,7 @@ public class ISlotSpecsViaDisjunctionsTest extends GeneralFramesModelTest {
 
 	private void updateContainerSlots() {
 
-		ISlotSpecs specs = new ISlotSpecs(getModel().getIEditor());
+		ISlotSpecs specs = new ISlotSpecs(model.iEditor);
 
 		specs.absorb(createDisjunction(td, te));
 		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);
@@ -163,15 +170,6 @@ public class ISlotSpecsViaDisjunctionsTest extends GeneralFramesModelTest {
 		assertTrue(slots.containsValueFor(slotId));
 
 		return slots.get(slotId);
-	}
-
-	private CSlot createCSlot(
-					CAtomicFrame container,
-					CIdentity slotId,
-					CCardinality cardinality,
-					CAtomicFrame rootValue) {
-
-		return createCSlot(container, slotId, cardinality, rootValue.getType());
 	}
 
 	private CFrame createDisjunction(CFrame... disjuncts) {

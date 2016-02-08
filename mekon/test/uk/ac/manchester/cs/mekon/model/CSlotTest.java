@@ -35,28 +35,33 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 /**
  * @author Colin Puleston
  */
-public class CSlotTest extends GeneralFramesModelTest {
+public class CSlotTest {
+
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
+
+	private TestCSlots repeatTypesSlots = frames.repeatTypesSlots;
+	private TestCSlots uniqueTypesSlots = frames.uniqueTypesSlots;
+	private TestCSlots singleValueSlots = frames.singleValueSlots;
 
 	@Test
 	public void test_addAndRemoveSlots() {
 
-		CModel model = getModel();
+		CAtomicFrame a = frames.create("A");
 
-		CAtomicFrame a = createCFrame("A");
+		CAtomicFrame v1 = frames.create("V1");
+		CAtomicFrame v2 = frames.create("V2");
+		CAtomicFrame v3 = frames.create("V3");
+		CAtomicFrame v4 = frames.create("V4");
 
-		CAtomicFrame v1 = createCFrame("V1");
-		CAtomicFrame v2 = createCFrame("V2");
-		CAtomicFrame v3 = createCFrame("V3");
-		CAtomicFrame v4 = createCFrame("V4");
-
-		CSlot s1 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v1);
-		CSlot s2 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v2);
-		CSlot s3 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v3);
-		CSlot s4 = createCSlot(a, CCardinality.REPEATABLE_TYPES, v4);
+		CSlot s1 = repeatTypesSlots.create(a, "s1", v1);
+		CSlot s2 = repeatTypesSlots.create(a, "s2", v2);
+		CSlot s3 = repeatTypesSlots.create(a, "s3", v3);
+		CSlot s4 = repeatTypesSlots.create(a, "s4", v4);
 
 		testList(a.getSlots().asList(), Arrays.asList(s1, s2, s3, s4));
 
-		model.removeFrame(v1);
+		model.model.removeFrame(v1);
 		a.removeSlot(s3);
 
 		testList(a.getSlots().asList(), Arrays.asList(s2, s4));
@@ -66,41 +71,41 @@ public class CSlotTest extends GeneralFramesModelTest {
 	public void test_absorbCardinality() {
 
 		testAbsorbCardinality(
-			CCardinality.SINGLE_VALUE,
+			singleValueSlots,
 			CCardinality.SINGLE_VALUE,
 			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
-			CCardinality.SINGLE_VALUE,
+			singleValueSlots,
 			CCardinality.UNIQUE_TYPES,
 			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
-			CCardinality.SINGLE_VALUE,
+			singleValueSlots,
 			CCardinality.REPEATABLE_TYPES,
 			CCardinality.SINGLE_VALUE);
 
 		testAbsorbCardinality(
-			CCardinality.UNIQUE_TYPES,
+			uniqueTypesSlots,
 			CCardinality.SINGLE_VALUE,
 			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
-			CCardinality.UNIQUE_TYPES,
+			uniqueTypesSlots,
 			CCardinality.UNIQUE_TYPES,
 			CCardinality.UNIQUE_TYPES);
 		testAbsorbCardinality(
-			CCardinality.UNIQUE_TYPES,
+			uniqueTypesSlots,
 			CCardinality.REPEATABLE_TYPES,
 			CCardinality.UNIQUE_TYPES);
 
 		testAbsorbCardinality(
-			CCardinality.REPEATABLE_TYPES,
+			repeatTypesSlots,
 			CCardinality.SINGLE_VALUE,
 			CCardinality.SINGLE_VALUE);
 		testAbsorbCardinality(
-			CCardinality.REPEATABLE_TYPES,
+			repeatTypesSlots,
 			CCardinality.UNIQUE_TYPES,
 			CCardinality.UNIQUE_TYPES);
 		testAbsorbCardinality(
-			CCardinality.REPEATABLE_TYPES,
+			repeatTypesSlots,
 			CCardinality.REPEATABLE_TYPES,
 			CCardinality.REPEATABLE_TYPES);
 	}
@@ -108,9 +113,9 @@ public class CSlotTest extends GeneralFramesModelTest {
 	@Test
 	public void test_absorbValueType() {
 
-		CFrame a = createCFrame("A");
-		CFrame b = createCFrame("B");
-		CSlot s = createCSlot(CCardinality.REPEATABLE_TYPES, a);
+		CFrame a = frames.create("A");
+		CFrame b = frames.create("B");
+		CSlot s = repeatTypesSlots.create("s", a);
 
 		addSuperFrame(b, a);
 
@@ -121,9 +126,9 @@ public class CSlotTest extends GeneralFramesModelTest {
 	@Test(expected = KModelException.class)
 	public void test_absorbValueTypeFail() {
 
-		CFrame a = createCFrame("A");
-		CFrame b = createCFrame("B");
-		CSlot s = createCSlot(CCardinality.REPEATABLE_TYPES, a);
+		CFrame a = frames.create("A");
+		CFrame b = frames.create("B");
+		CSlot s = repeatTypesSlots.create("s", a);
 
 		s.createEditor().absorbValueType(b);
 	}
@@ -134,11 +139,11 @@ public class CSlotTest extends GeneralFramesModelTest {
 	}
 
 	private void testAbsorbCardinality(
-					CCardinality initial,
+					TestCSlots slots,
 					CCardinality absorb,
 					CCardinality expect) {
 
-		CSlot slot = createCSlot(initial);
+		CSlot slot = slots.create("s");
 
 		slot.createEditor().absorbCardinality(absorb);
 

@@ -27,8 +27,6 @@ package uk.ac.manchester.cs.mekon.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import uk.ac.manchester.cs.mekon.model.motor.*;
-
 /**
  * @author Colin Puleston
  */

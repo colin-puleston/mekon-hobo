@@ -36,11 +36,17 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-public class IFrameTest extends GeneralFramesModelTest {
+public class IFrameTest {
 
 	static private final List<CFrame> NO_IFRAMES = Collections.emptyList();
 
-	private MonitorIReasoner monitorIReasoner;
+	private MonitorIReasoner monitorIReasoner = new MonitorIReasoner();
+
+	private TestCModel model = new TestCModel(monitorIReasoner);
+	private TestCFrames frameTypes = model.cFrames;
+	private TestIFrames frames = model.iFrameAssertions;
+	private TestISlots slots = frames.repeatTypesSlots;
+	private TestInstances instances = model.createTestInstances();
 
 	private class CFrameListMonitor implements KValuesListener<CFrame> {
 
@@ -61,20 +67,15 @@ public class IFrameTest extends GeneralFramesModelTest {
 		}
 	}
 
-	public IFrameTest() {
-
-		this(new MonitorIReasoner());
-	}
-
 	@Test
 	public void test_updateInferredTypes() {
 
-		IFrame f = createIFrame("F");
+		IFrame f = frames.create("F");
 
-		CFrame ta = createCFrame("A");
-		CFrame tb = createCFrame("B");
-		CFrame tc = createCFrame("C");
-		CFrame td = createCFrame("D");
+		CFrame ta = frameTypes.create("A");
+		CFrame tb = frameTypes.create("B");
+		CFrame tc = frameTypes.create("C");
+		CFrame td = frameTypes.create("D");
 
 		testUpdateInferredTypes(
 			f,
@@ -110,9 +111,9 @@ public class IFrameTest extends GeneralFramesModelTest {
 	@Test
 	public void test_updateSlotValue() {
 
-		IFrame fa = createIFrame("A");
-		IFrame fb = createIFrame("B");
-		IFrame fc = createIFrame("C");
+		IFrame fa = frames.create("A");
+		IFrame fb = frames.create("B");
+		IFrame fc = frames.create("C");
 
 		testUpdateSlotValue(fa, "sab", fb, Arrays.asList(fa));
 		testUpdateSlotValue(fb, "sbc", fc, Arrays.asList(fb, fa));
@@ -121,7 +122,7 @@ public class IFrameTest extends GeneralFramesModelTest {
 	@Test
 	public void test_copyAndMatch() {
 
-		IFrame i = createTestInstances().getBasic();
+		IFrame i = instances.getBasic();
 
 		testCopied(i, i.copy());
 	}
@@ -129,7 +130,7 @@ public class IFrameTest extends GeneralFramesModelTest {
 	@Test
 	public void test_copyFreeAndMatch() {
 
-		IFrame i = createTestInstances().getBasic();
+		IFrame i = instances.getBasic();
 
 		testCopied(i, createFreeCopy(i));
 	}
@@ -137,27 +138,16 @@ public class IFrameTest extends GeneralFramesModelTest {
 	@Test
 	public void test_subsumption() {
 
-		TestInstances instances = createTestInstances();
-
 		testSubsumption(instances.getSubsumer(), instances.getBasic());
 	}
 
 	@Test
 	public void test_subsumption_withAbstractValues() {
 
-		TestInstances instances = createTestInstances();
-
-		setQueriesEnabled(true);
+		model.setQueriesEnabled(true);
 		instances.setFunction(IFrameFunction.QUERY);
 
 		testSubsumption(instances.getAbstractSubsumer(), instances.getBasic());
-	}
-
-	private IFrameTest(MonitorIReasoner monitorIReasoner) {
-
-		super(monitorIReasoner);
-
-		this.monitorIReasoner = monitorIReasoner;
 	}
 
 	private void testSubsumption(IFrame subsumer, IFrame subsumed) {
@@ -184,7 +174,7 @@ public class IFrameTest extends GeneralFramesModelTest {
 					IFrame newValue,
 					List<IFrame> expectedValues) {
 
-		ISlot slot = createISlot(container, slotName, newValue.getType());
+		ISlot slot = slots.create(container, slotName, newValue.getType());
 
 		monitorIReasoner.resetRegisters();
 		slot.getValuesEditor().add(newValue);
@@ -215,6 +205,6 @@ public class IFrameTest extends GeneralFramesModelTest {
 
 	private IFrame createFreeCopy(IFrame instance) {
 
-		return new IFreeInstances(getModel()).createFreeCopy(instance);
+		return new IFreeInstances(model.model).createFreeCopy(instance);
 	}
 }

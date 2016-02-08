@@ -34,15 +34,23 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotValuesTest extends GeneralFramesModelTest {
+public class ISlotValuesTest {
 
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
-	private CFrame r = createCFrame("ROOT");
-	private CFrame a = createCFrame("A");
-	private CFrame b = createCFrame("B");
-	private CFrame c = createCFrame("C");
-	private CFrame cx = createCFrame("CX");
+	private TestCModel model = new TestCModel();
+	private TestCFrames frameTypes = model.cFrames;
+	private TestIFrames frames = model.iFrameAssertions;
+
+	private TestISlots repeatTypesSlots = frames.repeatTypesSlots;
+	private TestISlots uniqueTypesSlots = frames.uniqueTypesSlots;
+	private TestISlots singleValueSlots = frames.singleValueSlots;
+
+	private CFrame r = frameTypes.create("ROOT");
+	private CFrame a = frameTypes.create("A");
+	private CFrame b = frameTypes.create("B");
+	private CFrame c = frameTypes.create("C");
+	private CFrame cx = frameTypes.create("CX");
 
 	public ISlotValuesTest() {
 
@@ -53,9 +61,9 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 	}
 
 	@Test
-	public void test_addRemoveValues_singletonCardinality() {
+	public void test_addRemoveValues_singleValueCardinality() {
 
-		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
+		ISlotValues values = createSlotValues(singleValueSlots);
 
 		testAdd(values, a, iValues(a));
 		testAdd(values, b, iValues(b));
@@ -65,19 +73,19 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 	@Test
 	public void test_addRemoveValues_uniqueTypesCardinality() {
 
-		testAddRemoveValues_multiValued(CCardinality.UNIQUE_TYPES);
+		testAddRemoveValues_multiValued(uniqueTypesSlots);
 	}
 
 	@Test
-	public void test_addRemoveValues_freeCardinality() {
+	public void test_addRemoveValues_repeatTypesCardinality() {
 
-		testAddRemoveValues_multiValued(CCardinality.REPEATABLE_TYPES);
+		testAddRemoveValues_multiValued(repeatTypesSlots);
 	}
 
 	@Test
-	public void test_updateValues_singletonCardinality() {
+	public void test_updateValues_singleValueCardinality() {
 
-		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
+		ISlotValues values = createSlotValues(singleValueSlots);
 
 		testUpdate(values, iValues(a), iValues(a));
 		testUpdate(values, iValues(b), iValues(b));
@@ -87,19 +95,19 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 	@Test
 	public void test_updateValues_uniqueTypesCardinality() {
 
-		testUpdateValues_multiValued(CCardinality.UNIQUE_TYPES);
+		testUpdateValues_multiValued(uniqueTypesSlots);
 	}
 
 	@Test
-	public void test_updateValues_freeCardinality() {
+	public void test_updateValues_repeatTypesCardinality() {
 
-		testUpdateValues_multiValued(CCardinality.REPEATABLE_TYPES);
+		testUpdateValues_multiValued(repeatTypesSlots);
 	}
 
 	@Test
-	public void test_updateFixeds_singletonCardinality() {
+	public void test_updateFixeds_singleValueCardinality() {
 
-		ISlotValues values = createSlotValues(CCardinality.SINGLE_VALUE);
+		ISlotValues values = createSlotValues(singleValueSlots);
 
 		testUpdate(values, iValues(c), iValues(c));
 
@@ -110,33 +118,33 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 	}
 
 	@Test(expected = KModelException.class)
-	public void test_updateFixedsFails_singletonCardinality() {
+	public void test_updateFixedsFails_singleValueCardinality() {
 
-		createSlotValues(CCardinality.SINGLE_VALUE).updateFixedValues(iValues(a, b));
+		createSlotValues(singleValueSlots).updateFixedValues(iValues(a, b));
 	}
 
 	@Test
 	public void test_updateFixeds_uniqueTypesCardinality() {
 
-		testUpdateFixeds_multiValued(CCardinality.UNIQUE_TYPES);
+		testUpdateFixeds_multiValued(uniqueTypesSlots);
 	}
 
 	@Test
-	public void test_updateFixeds_freeCardinality() {
+	public void test_updateFixeds_repeatTypesCardinality() {
 
-		testUpdateFixeds_multiValued(CCardinality.REPEATABLE_TYPES);
+		testUpdateFixeds_multiValued(repeatTypesSlots);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_illegalUpdateFails() {
 
-		createSlotValues(CCardinality.REPEATABLE_TYPES).add(createIFrame("IllegalValue"), false);
+		createSlotValues(repeatTypesSlots).add(frames.create("IllegalValue"), false);
 	}
 
-	@Test(expected = KAccessException.class)
+	@Test(expected = KAccessException.class) // XXX
 	public void test_abstractUpdateFailsForAssertion() {
 
-		createSlotValues(CCardinality.REPEATABLE_TYPES).add(createIFrame("IllegalValue"), false);
+		createSlotValues(repeatTypesSlots).add(frames.create("IllegalValue"), false);
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {
@@ -144,16 +152,16 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 		FramesTestUtils.addSuperFrame(sub, sup);
 	}
 
-	private void testAddRemoveValues_multiValued(CCardinality cardinality) {
+	private void testAddRemoveValues_multiValued(TestISlots slots) {
 
-		ISlotValues values = createSlotValues(cardinality);
+		ISlotValues values = createSlotValues(slots);
 
 		testAdd(values, a, iValues(a));
 		testAdd(values, b, iValues(a, b));
 		testRemove(values, a, iValues(b));
 		testAdd(values, c, iValues(b, c));
 
-		if (cardinality == CCardinality.UNIQUE_TYPES) {
+		if (slots == uniqueTypesSlots) {
 
 			testAdd(values, cx, iValues(b, cx));
 		}
@@ -167,9 +175,9 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 		testRemove(values, b, NO_IVALUES);
 	}
 
-	private void testUpdateValues_multiValued(CCardinality cardinality) {
+	private void testUpdateValues_multiValued(TestISlots slots) {
 
-		ISlotValues values = createSlotValues(cardinality);
+		ISlotValues values = createSlotValues(slots);
 
 		testUpdate(values, iValues(a, b), iValues(a, b));
 		testUpdate(values, iValues(b, c), iValues(b, c));
@@ -178,9 +186,9 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 		testUpdate(values, NO_IVALUES, NO_IVALUES);
 	}
 
-	private void testUpdateFixeds_multiValued(CCardinality cardinality) {
+	private void testUpdateFixeds_multiValued(TestISlots slots) {
 
-		ISlotValues values = createSlotValues(cardinality);
+		ISlotValues values = createSlotValues(slots);
 
 		testUpdate(values, iValues(c), iValues(c));
 		testUpdateFixeds(values, iValues(a, b), iValues(a, b, c));
@@ -190,9 +198,9 @@ public class ISlotValuesTest extends GeneralFramesModelTest {
 		testUpdateFixeds(values, NO_IVALUES, NO_IVALUES);
 	}
 
-	private ISlotValues createSlotValues(CCardinality cardinality) {
+	private ISlotValues createSlotValues(TestISlots slots) {
 
-		return createISlot(cardinality, r.getType()).getValues();
+		return slots.create("s", r.getType()).getValues();
 	}
 
 	private void testAdd(

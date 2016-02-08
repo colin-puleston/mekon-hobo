@@ -31,12 +31,15 @@ import uk.ac.manchester.cs.mekon.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotTest extends GeneralFramesModelTest {
+public class ISlotTest {
+
+	private TestCModel model = new TestCModel();
+	private TestISlots slots = model.iFrameAssertions.repeatTypesSlots;
 
 	@Test(expected = KAccessException.class)
 	public void test_getValuesEditor_failsForInactiveSlot() {
 
-		ISlot s = createISlot(CCardinality.REPEATABLE_TYPES);
+		ISlot s = slots.create("s");
 
 		s.createEditor().setActive(false);
 		s.getValuesEditor();
@@ -45,7 +48,7 @@ public class ISlotTest extends GeneralFramesModelTest {
 	@Test(expected = KAccessException.class)
 	public void test_getValuesEditor_failsForNonEditable() {
 
-		ISlot s = createISlot(CCardinality.REPEATABLE_TYPES);
+		ISlot s = slots.create("s");
 
 		s.getType().setEditability(CEditability.NONE);
 		s.getValuesEditor();

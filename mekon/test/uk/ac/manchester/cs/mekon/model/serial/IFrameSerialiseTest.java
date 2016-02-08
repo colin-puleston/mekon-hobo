@@ -34,13 +34,16 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * @author Colin Puleston
  */
-public class IFrameSerialiseTest extends GeneralFramesModelTest {
+public class IFrameSerialiseTest {
+
+	private TestCModel model = new TestCModel();
+	private TestISlots slots = model.iFrameAssertions.repeatTypesSlots;
+	private TestInstances instances = model.createTestInstances();
 
 	private boolean freeParser = false;
 	private ISchemaLevel schemaLevel = ISchemaLevel.NONE;
 	private boolean renderAsTree = false;
 	private boolean includeEmptySlots = false;
-	private boolean dynamicSlotInsertion = false;
 
 	@Test
 	public void test_renderAndParse() {
@@ -83,7 +86,7 @@ public class IFrameSerialiseTest extends GeneralFramesModelTest {
 	@Test
 	public void test_renderAndParseWithDynamicSlotInsertion() {
 
-		dynamicSlotInsertion = true;
+		instances.setDynamicSlotInsertion();
 
 		testRenderAndParse();
 	}
@@ -112,7 +115,8 @@ public class IFrameSerialiseTest extends GeneralFramesModelTest {
 
 		freeParser = true;
 		schemaLevel = ISchemaLevel.BASIC;
-		dynamicSlotInsertion = true;
+
+		instances.setDynamicSlotInsertion();
 
 		testRenderAndParse();
 	}
@@ -137,9 +141,11 @@ public class IFrameSerialiseTest extends GeneralFramesModelTest {
 
 	private IFrameParserAbstract createParser() {
 
+		CModel cModel = model.model;
+
 		return freeParser
-				? new IFrameFreeParser(getModel(), IFrameFunction.ASSERTION)
-				: new IFrameParser(getModel(), IFrameFunction.ASSERTION);
+				? new IFrameFreeParser(cModel, IFrameFunction.ASSERTION)
+				: new IFrameParser(cModel, IFrameFunction.ASSERTION);
 	}
 
 	private IFrameRenderer createRenderer() {
@@ -154,7 +160,7 @@ public class IFrameSerialiseTest extends GeneralFramesModelTest {
 
 	private IFrame createTestInstance() {
 
-		IFrame instance = createBasicTestInstance();
+		IFrame instance = instances.getBasic();
 
 		if (includeEmptySlots) {
 
@@ -164,21 +170,8 @@ public class IFrameSerialiseTest extends GeneralFramesModelTest {
 		return instance;
 	}
 
-	private IFrame createBasicTestInstance() {
-
-		TestInstances instances = createTestInstances();
-
-		instances.setDynamicSlotInsertion(dynamicSlotInsertion);
-
-		return instances.getBasic();
-	}
-
 	private void addEmptySlot(IFrame instance) {
 
-		createISlot(
-			instance,
-			"emptySlot",
-			CCardinality.SINGLE_VALUE,
-			instance.getType());
+		slots.create(instance, "emptySlot", instance.getType());
 	}
 }

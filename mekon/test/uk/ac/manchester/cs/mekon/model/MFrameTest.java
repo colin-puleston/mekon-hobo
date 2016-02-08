@@ -31,13 +31,17 @@ import org.junit.Test;
  */
 public class MFrameTest extends CValueTest<MFrame> {
 
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
+	private TestCSlots slots = frames.repeatTypesSlots;
+
 	@Test
 	public void test_subsumptionTesting() {
 
-		CFrame a = createCFrame("A");
-		CFrame b = createHiddenCFrame("B");
-		CFrame c = createCFrame("C");
-		CFrame d = createCFrame("D");
+		CFrame a = frames.create("A");
+		CFrame b = frames.createHidden("B");
+		CFrame c = frames.create("C");
+		CFrame d = frames.create("D");
 
 		addSuperFrame(b, a);
 		addSuperFrame(c, b);

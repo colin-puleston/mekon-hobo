@@ -35,24 +35,32 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 /**
  * @author Colin Puleston
  */
-public class ISlotSpecsTest extends GeneralFramesModelTest {
+public class ISlotSpecsTest {
 
-	private CAtomicFrame ta = createCFrame("A");
-	private CAtomicFrame tb = createCFrame("B");
-	private CAtomicFrame tc = createCFrame("C");
-	private CAtomicFrame td = createCFrame("D");
+	static private final CIdentity SLOT_ID = new CIdentity("SLOT", "SLOT");
 
-	private CAtomicFrame tx = createCFrame("X");
-	private CAtomicFrame ty1 = createCFrame("Y1");
-	private CAtomicFrame ty2 = createCFrame("Y2");
-	private CAtomicFrame tz = createCFrame("Z");
+	private TestCModel model = new TestCModel();
+	private TestCFrames frameTypes = model.cFrames;
+	private TestIFrames frames = model.iFrameAssertions;
 
-	private CIdentity slotId = new CIdentity("SLOT");
+	private TestCSlots repeatTypesSlotTypes = frameTypes.repeatTypesSlots;
+	private TestCSlots uniqueTypesSlotTypes = frameTypes.uniqueTypesSlots;
+	private TestCSlots singleValueSlotTypes = frameTypes.singleValueSlots;
 
-	private CSlot sa = createCSlot(ta, CCardinality.REPEATABLE_TYPES, tx);
-	private CSlot sb = createCSlot(tb, CCardinality.UNIQUE_TYPES, ty1);
-	private CSlot sc = createCSlot(tc, CCardinality.REPEATABLE_TYPES, tz);
-	private CSlot sd = createCSlot(td, CCardinality.SINGLE_VALUE, ty2);
+	private CAtomicFrame ta = frameTypes.create("A");
+	private CAtomicFrame tb = frameTypes.create("B");
+	private CAtomicFrame tc = frameTypes.create("C");
+	private CAtomicFrame td = frameTypes.create("D");
+
+	private CAtomicFrame tx = frameTypes.create("X");
+	private CAtomicFrame ty1 = frameTypes.create("Y1");
+	private CAtomicFrame ty2 = frameTypes.create("Y2");
+	private CAtomicFrame tz = frameTypes.create("Z");
+
+	private CSlot sa = repeatTypesSlotTypes.create(ta, SLOT_ID, tx.getType());
+	private CSlot sb = uniqueTypesSlotTypes.create(tb, SLOT_ID, ty1.getType());
+	private CSlot sc = repeatTypesSlotTypes.create(tc, SLOT_ID, tz.getType());
+	private CSlot sd = singleValueSlotTypes.create(td, SLOT_ID, ty2.getType());
 
 	private IFrame iContainer;
 
@@ -98,8 +106,8 @@ public class ISlotSpecsTest extends GeneralFramesModelTest {
 	@Test
 	public void test_valueUpdates() {
 
-		tb.addSlotValue(slotId, tz.getType());
-		td.addSlotValue(slotId, tz.getType());
+		tb.addSlotValue(SLOT_ID, tz.getType());
+		td.addSlotValue(SLOT_ID, tz.getType());
 
 		updateContainerSlots(ta);
 		testSlotValues();
@@ -190,7 +198,7 @@ public class ISlotSpecsTest extends GeneralFramesModelTest {
 
 	private void initialiseContainer() {
 
-		iContainer = createIFrame("CONTAINER");
+		iContainer = frames.create("CONTAINER");
 	}
 
 	private void initialiseContainerAndSlots(CFrame... containerTypes) {
@@ -201,7 +209,7 @@ public class ISlotSpecsTest extends GeneralFramesModelTest {
 
 	private void updateContainerSlots(CFrame... containerTypes) {
 
-		ISlotSpecs specs = new ISlotSpecs(getModel().getIEditor());
+		ISlotSpecs specs = new ISlotSpecs(model.iEditor);
 
 		specs.absorbAll(Arrays.asList(containerTypes));
 		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);
@@ -249,16 +257,10 @@ public class ISlotSpecsTest extends GeneralFramesModelTest {
 		assertEquals(expected, iContainer.getSlots().size());
 	}
 
-	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
+	private <E>void testListContents(
+						List<? extends E> got,
+						List<? extends E> expected) {
 
 		MekonTestUtils.testListContents(got, expected);
-	}
-
-	private CSlot createCSlot(
-					CAtomicFrame container,
-					CCardinality cardinality,
-					CAtomicFrame rootValue) {
-
-		return createCSlot(container, slotId, cardinality, rootValue.getType());
 	}
 }

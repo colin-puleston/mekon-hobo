@@ -35,15 +35,18 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 /**
  * @author Colin Puleston
  */
-public class MostSpecificCFramesTest extends GeneralFramesModelTest {
+public class MostSpecificCFramesTest {
 
-	private CFrame fa = createCFrame("FA");
-	private CFrame fax = createCFrame("FAX");
-	private CFrame faxx = createCFrame("FAXX");
-	private CFrame fb = createCFrame("FB");
-	private CFrame fbx = createCFrame("FBX");
-	private CFrame fc = createCFrame("FC");
-	private CFrame fd = createCFrame("FD");
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
+
+	private CFrame fa = frames.create("FA");
+	private CFrame fax = frames.create("FAX");
+	private CFrame faxx = frames.create("FAXX");
+	private CFrame fb = frames.create("FB");
+	private CFrame fbx = frames.create("FBX");
+	private CFrame fc = frames.create("FC");
+	private CFrame fd = frames.create("FD");
 
 	private CDisjunction dab = createDisjunction(fa, fb);
 	private CDisjunction dbc = createDisjunction(fb, fc);

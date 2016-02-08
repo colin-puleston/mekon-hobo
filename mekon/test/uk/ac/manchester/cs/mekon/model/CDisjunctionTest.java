@@ -38,13 +38,16 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 
 	static private final List<CFrame> NO_CFRAMES = Collections.emptyList();
 
-	private CFrame a = createCFrame("A");
-	private CFrame b = createCFrame("B");
-	private CFrame c = createCFrame("C");
-	private CFrame d = createCFrame("D");
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
 
-	private CFrame a_sup = createCFrame("A-SUPER");
-	private CFrame b_sub = createCFrame("B-SUB");
+	private CFrame a = frames.create("A");
+	private CFrame b = frames.create("B");
+	private CFrame c = frames.create("C");
+	private CFrame d = frames.create("D");
+
+	private CFrame a_sup = frames.create("A-SUPER");
+	private CFrame b_sub = frames.create("B-SUB");
 
 	public CDisjunctionTest() {
 
@@ -55,11 +58,11 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 	@Test
 	public void testSupers() {
 
-		CFrame ab_sup = createCFrame("AB_SUP");
-		CFrame ac_sup = createCFrame("BC_SUP");
-		CFrame abc_sup_1 = createCFrame("ABC_SUP_1");
-		CFrame abc_sup_2 = createCFrame("ABC_SUP_2");
-		CFrame singleCommonAnc = createCFrame("SINGLE_COMMON_ANC");
+		CFrame ab_sup = frames.create("AB_SUP");
+		CFrame ac_sup = frames.create("BC_SUP");
+		CFrame abc_sup_1 = frames.create("ABC_SUP_1");
+		CFrame abc_sup_2 = frames.create("ABC_SUP_2");
+		CFrame singleCommonAnc = frames.create("SINGLE_COMMON_ANC");
 
 		List<CFrame> expectSups = Arrays.asList(abc_sup_1, abc_sup_2);
 

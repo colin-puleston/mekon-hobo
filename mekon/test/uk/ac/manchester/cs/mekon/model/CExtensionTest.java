@@ -34,10 +34,14 @@ import static org.junit.Assert.*;
  */
 public class CExtensionTest extends CValueTest<CFrame> {
 
-	private CAtomicFrame a = createCFrame("A");
-	private CAtomicFrame b = createCFrame("B");
-	private CAtomicFrame c = createCFrame("C");
-	private CAtomicFrame cx = createCFrame("CX");
+	private TestCModel model = new TestCModel();
+	private TestCFrames frames = model.cFrames;
+	private TestCSlots slots = frames.repeatTypesSlots;
+
+	private CAtomicFrame a = frames.create("A");
+	private CAtomicFrame b = frames.create("B");
+	private CAtomicFrame c = frames.create("C");
+	private CAtomicFrame cx = frames.create("CX");
 
 	private CIdentity sab = new CIdentity("SAB");
 	private CIdentity sac = new CIdentity("SAC");
@@ -48,10 +52,10 @@ public class CExtensionTest extends CValueTest<CFrame> {
 
 		addSuperFrame(cx, c);
 
-		createCSlot(a, sab, CCardinality.REPEATABLE_TYPES, b);
-		createCSlot(a, sac, CCardinality.REPEATABLE_TYPES, c);
-		createCSlot(b, sbb, CCardinality.REPEATABLE_TYPES, b);
-		createCSlot(b, sbc, CCardinality.REPEATABLE_TYPES, c);
+		slots.create(a, sab, b);
+		slots.create(a, sac, c);
+		slots.create(b, sbb, b);
+		slots.create(b, sbc, c);
 	}
 
 	@Test
