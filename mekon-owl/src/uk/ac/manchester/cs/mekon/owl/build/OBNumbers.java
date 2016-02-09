@@ -81,7 +81,14 @@ class OBNumbers {
 			creators.add(this);
 		}
 
-		abstract boolean createsFor(OWLDatatype datatype);
+		boolean createsFor(OWLDatatype datatype) {
+
+			OWL2Datatype builtIn = datatype.getBuiltInDatatype();
+
+			return getBuiltInDatatypes().contains(builtIn);
+		}
+
+		abstract List<OWL2Datatype> getBuiltInDatatypes();
 
 		OBNumber create(OWLDatatypeRestriction restriction) {
 
@@ -123,9 +130,9 @@ class OBNumbers {
 
 	private class IntegerCreator extends TypeNumberCreator<Integer> {
 
-		boolean createsFor(OWLDatatype datatype) {
+		List<OWL2Datatype> getBuiltInDatatypes() {
 
-			return datatype.isInteger();
+			return Arrays.asList(OWL2Datatype.XSD_INTEGER, OWL2Datatype.XSD_INT);
 		}
 
 		Integer parseValue(String value) {
@@ -146,9 +153,9 @@ class OBNumbers {
 
 	private class FloatCreator extends TypeNumberCreator<Float> {
 
-		boolean createsFor(OWLDatatype datatype) {
+		List<OWL2Datatype> getBuiltInDatatypes() {
 
-			return datatype.isFloat();
+			return Arrays.asList(OWL2Datatype.XSD_FLOAT);
 		}
 
 		Float parseValue(String value) {
@@ -207,6 +214,13 @@ class OBNumbers {
 		return null;
 	}
 
+	OBNumber checkCreateNumber(OWLDatatype datatype) {
+
+		TypeNumberCreator<?> creator = lookForCreator(datatype);
+
+		return creator != null ? creator.createUnconstrained() : null;
+	}
+
 	private OBNumber checkExtractNumber(Set<OWLClass> concepts) {
 
 		for (OWLClass concept : concepts) {
@@ -229,13 +243,6 @@ class OBNumbers {
 		return model.isIndirectNumericProperty(property)
 				? checkCreateNumber(range)
 				: null;
-	}
-
-	private OBNumber checkCreateNumber(OWLDatatype datatype) {
-
-		TypeNumberCreator<?> creator = lookForCreator(datatype);
-
-		return creator != null ? creator.createUnconstrained() : null;
 	}
 
 	private OBNumber checkCreateNumber(OWLDatatypeRestriction restriction) {

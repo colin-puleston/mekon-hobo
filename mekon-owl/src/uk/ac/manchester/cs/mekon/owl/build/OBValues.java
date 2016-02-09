@@ -70,6 +70,11 @@ class OBValues {
 				return checkCreate((OWLDataRange)source);
 			}
 
+			if (source instanceof OWLDatatype) {
+
+				return checkCreate((OWLDatatype)source);
+			}
+
 			return null;
 		}
 
@@ -121,6 +126,11 @@ class OBValues {
 		}
 
 		private OBNumber checkCreate(OWLDataRange source) {
+
+			return numbers.checkCreateNumber(source);
+		}
+
+		private OBNumber checkCreate(OWLDatatype source) {
 
 			return numbers.checkCreateNumber(source);
 		}

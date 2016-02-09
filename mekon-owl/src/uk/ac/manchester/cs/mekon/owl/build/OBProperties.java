@@ -52,7 +52,14 @@ public class OBProperties
 			handlers.add(this);
 		}
 
-		abstract boolean handles(IRI iri);
+		boolean handles(IRI iri) {
+
+			return top(iri) || handlesNonTop(iri);
+		}
+
+		abstract boolean handlesNonTop(IRI iri);
+
+		abstract OWLProperty<?, ?> getTop();
 
 		abstract OWLProperty<?, ?> get(IRI iri);
 
@@ -61,13 +68,23 @@ public class OBProperties
 		abstract Set<? extends OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property);
 
 		abstract Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression);
+
+		private boolean top(IRI iri) {
+
+			return getTop().getIRI().equals(iri);
+		}
 	}
 
 	private class ObjectPropertyHandler extends Handler {
 
-		boolean handles(IRI iri) {
+		boolean handlesNonTop(IRI iri) {
 
 			return getModelOntology().containsObjectPropertyInSignature(iri, true);
+		}
+
+		OWLProperty<?, ?> getTop() {
+
+			return getDataFactory().getOWLTopObjectProperty();
 		}
 
 		OWLProperty<?, ?> get(IRI iri) {
@@ -93,9 +110,14 @@ public class OBProperties
 
 	private class DataPropertyHandler extends Handler {
 
-		boolean handles(IRI iri) {
+		boolean handlesNonTop(IRI iri) {
 
 			return getModelOntology().containsDataPropertyInSignature(iri, true);
+		}
+
+		OWLProperty<?, ?> getTop() {
+
+			return getDataFactory().getOWLTopDataProperty();
 		}
 
 		OWLProperty<?, ?> get(IRI iri) {

@@ -41,6 +41,8 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 	private Map<OWLProperty<?, ?>, OWLObject> ranges
 				= new HashMap<OWLProperty<?, ?>, OWLObject>();
 
+	private OWLClass owlThing;
+
 	private abstract class AxiomFinder<A extends OWLUnaryPropertyAxiom<?>> {
 
 		AxiomFinder() {
@@ -112,7 +114,12 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 				OWLPropertyRangeAxiom<?, ?> axiom,
 				OWLProperty<?, ?> property) {
 
-			ranges.put(property, axiom.getRange());
+			OWLObject range = axiom.getRange();
+
+			if (!range.equals(owlThing)) {
+
+				ranges.put(property, range);
+			}
 		}
 	}
 
@@ -139,6 +146,8 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 		OBProperties properties) {
 
 		super(model, slots, concepts, properties);
+
+		owlThing = model.getDataFactory().getOWLThing();
 
 		new ObjectDomainAxiomFinder();
 		new DataDomainAxiomFinder();
