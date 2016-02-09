@@ -39,6 +39,7 @@ class OBSlots {
 	private OModel model;
 	private OBFrames frames;
 	private OBValues values;
+	private OBConcepts concepts;
 	private OBProperties properties;
 	private OBEntityLabels labels;
 	private OBFrameSlotsPolicy defaultFrameSlotsPolicy
@@ -49,8 +50,9 @@ class OBSlots {
 	private abstract class SlotSpec extends OBSlotSpec {
 
 		private OWLProperty<?, ?> property;
+		private OWLObject range;
+
 		private OBPropertyAttributes propertyAttributes;
-		private OWLObject filler;
 
 		SlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
 
@@ -58,9 +60,13 @@ class OBSlots {
 
 			if (property != null) {
 
-				propertyAttributes = properties.getAttributes(property);
-				filler = restriction.getFiller();
+				initialise(property, restriction.getFiller());
 			}
+		}
+
+		SlotSpec(OWLProperty<?, ?> property, OWLObject range) {
+
+			initialise(property, range);
 		}
 
 		OWLProperty<?, ?> getProperty() {
@@ -110,9 +116,17 @@ class OBSlots {
 			return null;
 		}
 
+		private void initialise(OWLProperty<?, ?> property, OWLObject range) {
+
+			this.property = property;
+			this.range = range;
+
+			propertyAttributes = properties.getAttributes(property);
+		}
+
 		private OBValue<?> checkCreateValueType() {
 
-			return values.checkCreateValue(filler);
+			return values.checkCreateValue(range);
 		}
 
 		private OWLProperty<?, ?> getPropertyOrNull(OWLPropertyExpression<?, ?> expr) {
@@ -136,6 +150,11 @@ class OBSlots {
 		AllValuesFromSlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
 
 			super(restriction);
+		}
+
+		AllValuesFromSlotSpec(OWLProperty<?, ?> property, OWLObject range) {
+
+			super(property, range);
 		}
 
 		boolean valuedRequired() {
@@ -298,11 +317,13 @@ class OBSlots {
 	OBSlots(
 		OModel model,
 		OBFrames frames,
+		OBConcepts concepts,
 		OBProperties properties,
 		OBEntityLabels labels) {
 
 		this.model = model;
 		this.frames = frames;
+		this.concepts = concepts;
 		this.properties = properties;
 		this.labels = labels;
 
@@ -314,69 +335,44 @@ class OBSlots {
 		defaultFrameSlotsPolicy = value;
 	}
 
-	void createAll(OBSubConceptAxioms subConceptOfs) {
+	void createAll() {
 
-		for (OWLSubClassOfAxiom subConceptOf : subConceptOfs.getAll()) {
-
-			createSlots(subConceptOf);
-		}
+		new OBRestrictionSlotDeriver(model, this, concepts, properties).createAll();
+		new OBDomainRangePairSlotDeriver(model, this, concepts, properties).createAll();
 	}
 
-	OBSlot checkCreateSlot(OWLClassExpression sup) {
+	void checkCreateSlot(OWLClass frameConcept, OWLClassExpression slotExpression) {
 
-		SlotSpec spec = sup.accept(specCreator);
+		checkAddSlot(frameConcept, checkCreateLooseSlot(slotExpression));
+	}
+
+	void checkCreateAllValuesSlot(
+			OWLClass frameConcept,
+			OWLProperty<?, ?> property,
+			OWLObject range) {
+
+		checkAddSlot(frameConcept, checkCreateLooseAllValuesSlot(property, range));
+	}
+
+	OBSlot checkCreateLooseSlot(OWLClassExpression slotExpression) {
+
+		SlotSpec spec = slotExpression.accept(specCreator);
 
 		return spec != null ? spec.checkCreate() : null;
 	}
 
-	private void createSlots(OWLSubClassOfAxiom subConceptOf) {
+	private OBSlot checkCreateLooseAllValuesSlot(
+						OWLProperty<?, ?> property,
+						OWLObject range) {
 
-		OWLClassExpression sub = subConceptOf.getSubClass();
-		OWLClassExpression sup = subConceptOf.getSuperClass();
-
-		if (sup instanceof OWLObjectIntersectionOf) {
-
-			createSlots(sub, (OWLObjectIntersectionOf)sup);
-		}
-
-		createSlots(sub, sup);
+		return new AllValuesFromSlotSpec(property, range).checkCreate();
 	}
 
-	private void createSlots(OWLClassExpression sub, OWLObjectIntersectionOf sups) {
-
-		for (OWLClassExpression sup : sups.getOperands()) {
-
-			createSlots(sub, sup);
-		}
-	}
-
-	private void createSlots(OWLClassExpression sub, OWLClassExpression sup) {
-
-		if (sub instanceof OWLClass) {
-
-			checkCreateSlot((OWLClass)sub, sup);
-		}
-		else {
-
-			for (OWLClass subSub : getSubConcepts(sub)) {
-
-				checkCreateSlot(subSub, sup);
-			}
-		}
-	}
-
-	private void checkCreateSlot(OWLClass sub, OWLClassExpression sup) {
-
-		OBSlot slot = checkCreateSlot(sup);
+	private void checkAddSlot(OWLClass frameConcept, OBSlot slot) {
 
 		if (slot != null) {
 
-			frames.get(sub).addSlot(slot);
+			frames.get(frameConcept).addSlot(slot);
 		}
-	}
-
-	private Set<OWLClass> getSubConcepts(OWLClassExpression expression) {
-
-		return model.getInferredSubs(expression, true);
 	}
 }

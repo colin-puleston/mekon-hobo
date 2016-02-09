@@ -134,7 +134,7 @@ class OBValues {
 
 			for (OWLClassExpression slotSource : slotSources) {
 
-				OBSlot slot = slots.checkCreateSlot(slotSource);
+				OBSlot slot = slots.checkCreateLooseSlot(slotSource);
 
 				if (slot != null) {
 

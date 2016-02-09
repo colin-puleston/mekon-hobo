@@ -289,7 +289,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 		properties = new OBProperties(model);
 
 		frames = new OBFrames(concepts, properties, labels);
-		slots = new OBSlots(model, frames, properties, labels);
+		slots = new OBSlots(model, frames, concepts, properties, labels);
 	}
 
 	void initialise(OModel model, KConfigNode parentConfigNode) {
@@ -312,7 +312,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	private void buildIntermediate() {
 
 		frames.createAll();
-		slots.createAll(getSubConceptAxioms());
+		slots.createAll();
 
 		new OBFrameHierarchy(model, frames).createLinks();
 	}
@@ -323,10 +323,5 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 			frame.ensureCStructure(builder, annotations);
 		}
-	}
-
-	private OBSubConceptAxioms getSubConceptAxioms() {
-
-		return new OBSubConceptAxioms(model, concepts, properties);
 	}
 }
