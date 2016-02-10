@@ -88,6 +88,6 @@ abstract class EntityInclusionsConfig
 		return groupNode.getEnum(
 					ENTITY_INCLUSION_ATTR,
 					OBEntitySelection.class,
-					OBEntitySelection.ALL);
+					OBEntityGroup.DEFAULT_ENTITY_SELECTION);
 	}
 }

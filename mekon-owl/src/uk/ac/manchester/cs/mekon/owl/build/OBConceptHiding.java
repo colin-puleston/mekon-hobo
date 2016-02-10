@@ -37,8 +37,11 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class OBConceptHiding {
 
-	private OBEntitySelection candidates = OBEntitySelection.NONE;
-	private OBConceptHidingFilter filter = OBConceptHidingFilter.ANY;
+	static OBEntitySelection DEFAULT_CANDIDATES = OBEntitySelection.NONE;
+	static OBConceptHidingFilter DEFAULT_FILTER = OBConceptHidingFilter.ANY;
+
+	private OBEntitySelection candidates = DEFAULT_CANDIDATES;
+	private OBConceptHidingFilter filter = DEFAULT_FILTER;
 
 	/**
 	 * Allows the specification of which concepts from within the

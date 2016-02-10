@@ -35,8 +35,10 @@ import org.semanticweb.owlapi.model.*;
  */
 public class OBEntityGroup {
 
+	static final OBEntitySelection DEFAULT_ENTITY_SELECTION = OBEntitySelection.ALL;
+
 	private IRI rootEntityIRI;
-	private OBEntitySelection inclusion = OBEntitySelection.ALL;
+	private OBEntitySelection inclusion = DEFAULT_ENTITY_SELECTION;
 
 	/**
 	 * Constructor.

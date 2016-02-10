@@ -35,10 +35,14 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
+	static final CCardinality DEFAULT_CARDINALITY = CCardinality.REPEATABLE_TYPES;
+	static final CEditability DEFAULT_EDITABILITY = CEditability.DEFAULT;
+
 	private boolean frameSource = false;
 
-	private CCardinality slotCardinality = CCardinality.REPEATABLE_TYPES;
-	private CEditability slotEditability = CEditability.DEFAULT;
+	private CCardinality slotCardinality = DEFAULT_CARDINALITY;
+	private CEditability slotEditability = DEFAULT_EDITABILITY;
+
 	private OBSlotSources slotSources = OBSlotSources.UNSPECIFIED;
 	private OBFrameSlotsPolicy frameSlotsPolicy = OBFrameSlotsPolicy.UNSPECIFIED;
 

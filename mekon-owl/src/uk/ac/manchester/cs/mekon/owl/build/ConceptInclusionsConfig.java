@@ -61,7 +61,7 @@ class ConceptInclusionsConfig
 		return groupNode.getEnum(
 					CONCEPT_HIDING_CANDIDATES_ATTR,
 					OBEntitySelection.class,
-					OBEntitySelection.NONE);
+					OBConceptHiding.DEFAULT_CANDIDATES);
 	}
 
 	private OBConceptHidingFilter getHidingFilter(KConfigNode groupNode) {
@@ -69,6 +69,6 @@ class ConceptInclusionsConfig
 		return groupNode.getEnum(
 					CONCEPT_HIDING_FILTER_ATTR,
 					OBConceptHidingFilter.class,
-					OBConceptHidingFilter.ANY);
+					OBConceptHiding.DEFAULT_FILTER);
 	}
 }

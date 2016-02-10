@@ -71,7 +71,7 @@ class PropertyInclusionsConfig
 		return groupNode.getEnum(
 					SLOT_CARDINALITY_ATTR,
 					CCardinality.class,
-					CCardinality.REPEATABLE_TYPES);
+					OBPropertyAttributes.DEFAULT_CARDINALITY);
 	}
 
 	private CEditability getSlotEditability(KConfigNode groupNode) {
@@ -79,7 +79,7 @@ class PropertyInclusionsConfig
 		return groupNode.getEnum(
 					SLOT_EDITABILITY_ATTR,
 					CEditability.class,
-					CEditability.DEFAULT);
+					OBPropertyAttributes.DEFAULT_EDITABILITY);
 	}
 
 	private OBSlotSources getSlotSources(KConfigNode groupNode) {
@@ -87,7 +87,7 @@ class PropertyInclusionsConfig
 		return groupNode.getEnum(
 					SLOT_SOURCES_ATTR,
 					OBSlotSources.class,
-					OBSlotSources.UNSPECIFIED);
+					OBSlots.DEFAULT_SLOT_SOURCES);
 	}
 
 	private OBFrameSlotsPolicy getFrameSlotsPolicy(KConfigNode groupNode) {
@@ -95,6 +95,6 @@ class PropertyInclusionsConfig
 		return groupNode.getEnum(
 					FRAME_SLOTS_POLICY_ATTR,
 					OBFrameSlotsPolicy.class,
-					OBFrameSlotsPolicy.UNSPECIFIED);
+					OBSlots.DEFAULT_FRAME_SLOTS_POLICY);
 	}
 }
