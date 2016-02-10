@@ -167,7 +167,7 @@ public class OBProperties
 		return "property";
 	}
 
-	boolean isValidEntity(IRI iri) {
+	boolean validEntity(IRI iri) {
 
 		return getHandlerOrNull(iri) != null;
 	}

@@ -66,9 +66,9 @@ public class OBConcepts
 		return "class";
 	}
 
-	boolean isValidEntity(IRI iri) {
+	boolean validEntity(IRI iri) {
 
-		return getModelOntology().containsClassInSignature(iri, true);
+		return owlThing(iri) || ontologyClass(iri);
 	}
 
 	OWLClass get(IRI iri) {
@@ -89,6 +89,16 @@ public class OBConcepts
 	Set<OWLClass> extractAll(OWLClassExpression expression) {
 
 		return expression.getClassesInSignature();
+	}
+
+	private boolean owlThing(IRI iri) {
+
+		return iri.equals(getDataFactory().getOWLThing().getIRI());
+	}
+
+	boolean ontologyClass(IRI iri) {
+
+		return getModelOntology().containsClassInSignature(iri, true);
 	}
 
 	private OBConceptAttributes createAttributes(boolean hidden)  {

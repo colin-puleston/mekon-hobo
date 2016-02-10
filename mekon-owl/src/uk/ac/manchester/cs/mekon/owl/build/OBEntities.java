@@ -185,7 +185,7 @@ public abstract class OBEntities
 
 	abstract String getTypeName();
 
-	abstract boolean isValidEntity(IRI iri);
+	abstract boolean validEntity(IRI iri);
 
 	abstract E get(IRI iri);
 
@@ -212,7 +212,7 @@ public abstract class OBEntities
 
 	private E getRoot(IRI iri) {
 
-		if (isValidEntity(iri)) {
+		if (validEntity(iri)) {
 
 			return get(iri);
 		}
