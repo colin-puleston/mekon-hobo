@@ -39,7 +39,8 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
 	private CCardinality slotCardinality = CCardinality.REPEATABLE_TYPES;
 	private CEditability slotEditability = CEditability.DEFAULT;
-	private OBFrameSlotsPolicy frameSlotsPolicy = OBFrameSlotsPolicy.NONE;
+	private OBSlotSources slotSources = OBSlotSources.UNSPECIFIED;
+	private OBFrameSlotsPolicy frameSlotsPolicy = OBFrameSlotsPolicy.UNSPECIFIED;
 
 	/**
 	 * Used to specifiy whether the property, in addition to any
@@ -80,6 +81,20 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 	}
 
 	/**
+	 * Sets the policy for the types of constructs to be used in
+	 * creating frames-model slots that will be generated for the
+	 * property. Defaults to the general default-value for the
+	 * section-builder if method is never invoked (see {@link
+	 * OBSectionBuilder#setDefaultSlotSources}).
+	 *
+	 * @param slotSources Policy for generating frame-valued slots
+	 */
+	public void setSlotSources(OBSlotSources slotSources) {
+
+		this.slotSources = slotSources;
+	}
+
+	/**
 	 * Sets the policy for the frame-valued frames-model slots that
 	 * will be generated for the property. Defaults to the general
 	 * default-value for the section-builder if method is never invoked
@@ -99,6 +114,7 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		updated.setFrameSource(frameSource || updates.frameSource());
 		updated.setSlotCardinality(updateSlotCardinalities(updates));
 		updated.setSlotEditability(updateSlotEditabilities(updates));
+		updated.setSlotSources(updates.getSlotSources());
 		updated.setFrameSlotsPolicy(updates.getFrameSlotsPolicy());
 
 		return updated;
@@ -117,6 +133,11 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 	CEditability getSlotEditability() {
 
 		return slotEditability;
+	}
+
+	OBSlotSources getSlotSources() {
+
+		return slotSources;
 	}
 
 	OBFrameSlotsPolicy getFrameSlotsPolicy() {

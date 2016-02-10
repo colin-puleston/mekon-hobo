@@ -149,6 +149,18 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 	/**
 	 * Sets the attribute that defines the default value for the
+	 * types of constructs to be used in creating slots. Defaults
+	 * to {@link OBSlotSources#ALL} if method is never invoked.
+	 *
+	 * @param value Required value of attribute
+	 */
+	public void setDefaultSlotSources(OBSlotSources value) {
+
+		slots.setDefaultSlotSources(value);
+	}
+
+	/**
+	 * Sets the attribute that defines the default value for the
 	 * policy to be used when creating frame-valued slots. Defaults
 	 * to {@link OBFrameSlotsPolicy#IFRAME_VALUED_ONLY} if method is
 	 * never invoked.

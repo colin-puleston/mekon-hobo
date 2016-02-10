@@ -53,21 +53,21 @@ abstract class OBSlotDeriver {
 	}
 
 	void createSlots(
-			OWLClassExpression frameExpression,
-			OWLClassExpression slotExpression) {
+			OWLClassExpression frameSource,
+			OWLClassExpression slotSource) {
 
-		for (OWLClass frameConcept : toFrameConcepts(frameExpression)) {
+		for (OWLClass frameConcept : toFrameConcepts(frameSource)) {
 
-			slots.checkCreateSlot(frameConcept, slotExpression);
+			slots.checkCreateSlot(frameConcept, slotSource);
 		}
 	}
 
 	void createAllValuesSlots(
-			OWLClassExpression frameExpression,
+			OWLClassExpression frameSource,
 			OWLProperty<?, ?> property,
 			OWLObject range) {
 
-		for (OWLClass frameConcept : toFrameConcepts(frameExpression)) {
+		for (OWLClass frameConcept : toFrameConcepts(frameSource)) {
 
 			slots.checkCreateAllValuesSlot(frameConcept, property, range);
 		}
@@ -89,17 +89,17 @@ abstract class OBSlotDeriver {
 		return properties.contains(property);
 	}
 
-	private Set<OWLClass> toFrameConcepts(OWLClassExpression frameExpression) {
+	private Set<OWLClass> toFrameConcepts(OWLClassExpression frameSource) {
 
 		Set<OWLClass> concepts = new HashSet<OWLClass>();
 
-		if (frameExpression instanceof OWLClass) {
+		if (frameSource instanceof OWLClass) {
 
-			concepts.add((OWLClass)frameExpression);
+			concepts.add((OWLClass)frameSource);
 		}
 		else {
 
-			concepts.addAll(getSubConcepts(frameExpression));
+			concepts.addAll(getSubConcepts(frameSource));
 		}
 
 		return concepts;

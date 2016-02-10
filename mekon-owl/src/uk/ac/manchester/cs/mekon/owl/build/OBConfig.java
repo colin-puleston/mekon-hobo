@@ -46,6 +46,7 @@ class OBConfig implements OBConfigVocab {
 		addProperties(builder);
 		addAnnotationInclusion(builder);
 		addLabelAnnotationProperties(builder);
+		setDefaultSlotSources(builder);
 		setDefaultFrameSlotsPolicy(builder);
 		setAnnotateFramesWithDefinitions(builder);
 		setRetainOnlyDeclarationAxioms(builder);
@@ -55,14 +56,14 @@ class OBConfig implements OBConfigVocab {
 
 		OBConcepts concepts = builder.getConcepts();
 
-		new ConceptInclusionsConfigReader(configNode).createGroups(concepts);
+		new ConceptInclusionsConfig(configNode).createGroups(concepts);
 	}
 
 	private void addProperties(OBSectionBuilder builder) {
 
 		OBProperties properties = builder.getProperties();
 
-		new PropertyInclusionsConfigReader(configNode).createGroups(properties);
+		new PropertyInclusionsConfig(configNode).createGroups(properties);
 	}
 
 	private void addAnnotationInclusion(OBSectionBuilder builder) {
@@ -97,6 +98,11 @@ class OBConfig implements OBConfigVocab {
 
 			labels.addAnnotationProperty(getAnnotationPropertyIRI(propNode));
 		}
+	}
+
+	private void setDefaultSlotSources(OBSectionBuilder builder) {
+
+		builder.setDefaultSlotSources(getDefaultSlotSources());
 	}
 
 	private void setDefaultFrameSlotsPolicy(OBSectionBuilder builder) {
@@ -141,6 +147,14 @@ class OBConfig implements OBConfigVocab {
 	private IRI getAnnotationPropertyIRI(KConfigNode propNode) {
 
 		return IRI.create(propNode.getURI(ANNO_PROPERTY_URI_ATTR));
+	}
+
+	private OBSlotSources getDefaultSlotSources() {
+
+		return configNode.getEnum(
+					DEFAULT_SLOT_SOURCES_ATTR,
+					OBSlotSources.class,
+					OBSlotSources.ALL);
 	}
 
 	private OBFrameSlotsPolicy getDefaultFrameSlotsPolicy() {

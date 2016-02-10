@@ -36,7 +36,7 @@ public enum OBFrameSlotsPolicy {
 	/**
 	 * No policy has been defined.
 	 */
-	NONE,
+	UNSPECIFIED,
 
 	/**
 	 * All frame-valued slots are to {@link IFrame}-valued.

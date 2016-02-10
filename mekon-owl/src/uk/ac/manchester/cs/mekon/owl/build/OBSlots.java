@@ -42,6 +42,9 @@ class OBSlots {
 	private OBConcepts concepts;
 	private OBProperties properties;
 	private OBEntityLabels labels;
+
+	private OBSlotSources defaultSlotSources = OBSlotSources.ALL;
+
 	private OBFrameSlotsPolicy defaultFrameSlotsPolicy
 					= OBFrameSlotsPolicy.IFRAME_VALUED_ONLY;
 
@@ -60,13 +63,13 @@ class OBSlots {
 
 			if (property != null) {
 
-				initialise(property, restriction.getFiller());
+				initialise(property, restriction.getFiller(), false);
 			}
 		}
 
 		SlotSpec(OWLProperty<?, ?> property, OWLObject range) {
 
-			initialise(property, range);
+			initialise(property, range, true);
 		}
 
 		OWLProperty<?, ?> getProperty() {
@@ -88,7 +91,7 @@ class OBSlots {
 
 			OBFrameSlotsPolicy policy = propertyAttributes.getFrameSlotsPolicy();
 
-			if (policy == OBFrameSlotsPolicy.NONE) {
+			if (policy == OBFrameSlotsPolicy.UNSPECIFIED) {
 
 				return defaultFrameSlotsPolicy;
 			}
@@ -116,12 +119,39 @@ class OBSlots {
 			return null;
 		}
 
-		private void initialise(OWLProperty<?, ?> property, OWLObject range) {
-
-			this.property = property;
-			this.range = range;
+		private void initialise(
+						OWLProperty<?, ?> property,
+						OWLObject range,
+						boolean fromDomainRangePairs) {
 
 			propertyAttributes = properties.getAttributes(property);
+
+			if (requiredSource(fromDomainRangePairs)) {
+
+				this.property = property;
+				this.range = range;
+			}
+		}
+
+		private boolean requiredSource(boolean fromDomainRangePairs) {
+
+			OBSlotSources sources = getSlotSources();
+
+			return fromDomainRangePairs
+					? sources.includesDomainRangePairs()
+					: sources.includesRestrictions();
+		}
+
+		private OBSlotSources getSlotSources() {
+
+			OBSlotSources sources = propertyAttributes.getSlotSources();
+
+			if (sources == OBSlotSources.UNSPECIFIED) {
+
+				return defaultSlotSources;
+			}
+
+			return sources;
 		}
 
 		private OBValue<?> checkCreateValueType() {
@@ -330,6 +360,11 @@ class OBSlots {
 		values = new OBValues(model, frames, this);
 	}
 
+	void setDefaultSlotSources(OBSlotSources value) {
+
+		defaultSlotSources = value;
+	}
+
 	void setDefaultFrameSlotsPolicy(OBFrameSlotsPolicy value) {
 
 		defaultFrameSlotsPolicy = value;
@@ -341,9 +376,9 @@ class OBSlots {
 		new OBDomainRangePairSlotDeriver(model, this, concepts, properties).createAll();
 	}
 
-	void checkCreateSlot(OWLClass frameConcept, OWLClassExpression slotExpression) {
+	void checkCreateSlot(OWLClass frameConcept, OWLClassExpression slotSource) {
 
-		checkAddSlot(frameConcept, checkCreateLooseSlot(slotExpression));
+		checkAddSlot(frameConcept, checkCreateLooseSlot(slotSource));
 	}
 
 	void checkCreateAllValuesSlot(
@@ -354,9 +389,9 @@ class OBSlots {
 		checkAddSlot(frameConcept, checkCreateLooseAllValuesSlot(property, range));
 	}
 
-	OBSlot checkCreateLooseSlot(OWLClassExpression slotExpression) {
+	OBSlot checkCreateLooseSlot(OWLClassExpression slotSource) {
 
-		SlotSpec spec = slotExpression.accept(specCreator);
+		SlotSpec spec = slotSource.accept(specCreator);
 
 		return spec != null ? spec.checkCreate() : null;
 	}

@@ -42,6 +42,7 @@ public interface OBConfigVocab {
 	static public final String LABEL_ANNO_PROPERTIES_ID = "LabelAnnotations";
 	static public final String LABEL_ANNO_PROPERTY_ID = "AnnotationProperty";
 
+	static public final String DEFAULT_SLOT_SOURCES_ATTR = "defaultSlotSources";
 	static public final String DEFAULT_FRAME_SLOTS_POLICY_ATTR = "defaultFrameSlotsPolicy";
 	static public final String ANNOTATE_FRAMES_WITH_DEFNS_ATTR = "annotateFramesWithDefinitions";
 	static public final String RETAIN_ONLY_DECLARATIONS_ATTR = "retainOnlyDeclarationAxioms";
@@ -52,6 +53,7 @@ public interface OBConfigVocab {
 	static public final String FRAME_SOURCE_PROPERTIES_ATTR = "frameSources";
 	static public final String SLOT_CARDINALITY_ATTR = "cardinality";
 	static public final String SLOT_EDITABILITY_ATTR = "editability";
+	static public final String SLOT_SOURCES_ATTR = "slotSources";
 	static public final String FRAME_SLOTS_POLICY_ATTR = "frameSlotsPolicy";
 	static public final String ANNO_PROPERTY_URI_ATTR = "uri";
 	static public final String ANNO_ID_ATTR = "id";
