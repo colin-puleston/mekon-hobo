@@ -81,9 +81,9 @@ public class OBConcepts
 		return getModel().getConcepts().getAll();
 	}
 
-	Set<OWLClass> getDescendants(OWLClass entity) {
+	Set<OWLClass> getSubs(OWLClass entity) {
 
-		return getModel().getInferredSubs(entity, false);
+		return getModel().getInferredSubs(entity, true);
 	}
 
 	Set<OWLClass> extractAll(OWLClassExpression expression) {

@@ -65,7 +65,7 @@ public class OBProperties
 
 		abstract Set<? extends OWLProperty<?, ?>> getAllInModel();
 
-		abstract Set<? extends OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property);
+		abstract Set<? extends OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property);
 
 		abstract Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression);
 
@@ -97,9 +97,9 @@ public class OBProperties
 			return getModel().getObjectProperties().getAll();
 		}
 
-		Set<? extends OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property) {
+		Set<? extends OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property) {
 
-			return getModel().getInferredSubs((OWLObjectProperty)property, false);
+			return getModel().getInferredSubs((OWLObjectProperty)property, true);
 		}
 
 		Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
@@ -130,9 +130,9 @@ public class OBProperties
 			return getModel().getDataProperties().getAll();
 		}
 
-		Set<? extends OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property) {
+		Set<? extends OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property) {
 
-			return getModel().getInferredSubs((OWLDataProperty)property, false);
+			return getModel().getInferredSubs((OWLDataProperty)property, true);
 		}
 
 		Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
@@ -189,11 +189,11 @@ public class OBProperties
 		return all;
 	}
 
-	Set<OWLProperty<?, ?>> getDescendants(OWLProperty<?, ?> property) {
+	Set<OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property) {
 
 		Handler handler = getHandler(property.getIRI());
 
-		return new HashSet<OWLProperty<?, ?>>(handler.getDescendants(property));
+		return new HashSet<OWLProperty<?, ?>>(handler.getSubs(property));
 	}
 
 	Set<OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {

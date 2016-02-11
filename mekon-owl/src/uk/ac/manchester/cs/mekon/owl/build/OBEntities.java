@@ -83,12 +83,9 @@ public abstract class OBEntities
 			addGroupEntity(group, root, true);
 		}
 
-		if (group.getInclusion().includesNonRoots()) {
+		if (group.getInclusion().includesAnyNonRoots()) {
 
-			for (E nonRoot : getDescendants(root)) {
-
-				addGroupEntity(group, nonRoot, false);
-			}
+			addNonRootGroupEntities(group, root);
 		}
 	}
 
@@ -191,7 +188,7 @@ public abstract class OBEntities
 
 	abstract Set<E> getAllInModel();
 
-	abstract Set<E> getDescendants(E entity);
+	abstract Set<E> getSubs(E entity);
 
 	abstract Set<E> extractAll(OWLClassExpression expression);
 
@@ -210,6 +207,21 @@ public abstract class OBEntities
 		return model.getDataFactory();
 	}
 
+	private void addNonRootGroupEntities(G group, E current) {
+
+		Set<E> subs = getSubs(current);
+
+		if (group.getInclusion().includesNonRoot(subs.isEmpty())) {
+
+			addGroupEntity(group, current, false);
+		}
+
+		for (E sub : subs) {
+
+			addNonRootGroupEntities(group, sub);
+		}
+	}
+
 	private E getRoot(IRI iri) {
 
 		if (validEntity(iri)) {
@@ -221,4 +233,5 @@ public abstract class OBEntities
 					"Cannot find OWL-"
 					+ getTypeName() + ": " + iri);
 	}
+
 }

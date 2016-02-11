@@ -54,20 +54,33 @@ public enum OBEntitySelection {
 	 * Represents the selection of only the non-root-entities from
 	 * the relevant section of hierarchy.
 	 */
-	NON_ROOTS_ONLY;
+	NON_ROOTS_ONLY,
+
+	/**
+	 * Represents the selection of only the leaf-entities from the
+	 * relevant section of hierarchy.
+	 */
+	LEAFS_ONLY;
 
 	boolean includesRoot() {
 
 		return this == ALL || this == ROOTS_ONLY;
 	}
 
-	boolean includesNonRoots() {
+	boolean includesAnyNonRoots() {
 
-		return this == ALL || this == NON_ROOTS_ONLY;
+		return this == ALL
+				|| this == NON_ROOTS_ONLY
+				|| this == LEAFS_ONLY;
 	}
 
-	boolean includes(boolean isRoot) {
+	boolean includesNonRoot(boolean leaf) {
 
-		return isRoot ? includesRoot() : includesNonRoots();
+		if (this == ALL || this == NON_ROOTS_ONLY) {
+
+			return true;
+		}
+
+		return leaf && this == LEAFS_ONLY;
 	}
 }
