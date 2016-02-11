@@ -39,36 +39,9 @@ class CFixedValuesNode extends GNode {
 	private CIdentity slotId;
 	private List<CValue<?>> fixedValues;
 
-	private class ValueNodeCreator extends CValueVisitor {
-
-		private GNode created = null;
-
-		protected void visit(CFrame value) {
-
-			created = new CFrameNode(tree, value);
-		}
-
-		protected void visit(CNumber value) {
-
-			created = new CNumberNode(tree, value);
-		}
-
-		protected void visit(MFrame value) {
-
-			created = new MFrameNode(tree, value);
-		}
-
-		GNode create(CValue<?> value) {
-
-			visit(value);
-
-			return created;
-		}
-	}
-
 	protected void addInitialChildren() {
 
-		ValueNodeCreator creator = new ValueNodeCreator();
+		CValueNodeCreator creator = new CValueNodeCreator(tree);
 
 		for (CValue<?> fixedValue : fixedValues) {
 

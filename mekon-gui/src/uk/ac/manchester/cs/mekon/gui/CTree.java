@@ -38,35 +38,8 @@ abstract class CTree extends GTree {
 
 	static private final long serialVersionUID = -1;
 
-	private CValueNodeCreator valueNodeCreator = new CValueNodeCreator();
+	private CValueNodeCreator valueNodeCreator = new CValueNodeCreator(this);
 	private CFrameSelectionListeners selectionListeners = new CFrameSelectionListeners();
-
-	private class CValueNodeCreator extends CValueVisitor {
-
-		private GNode created = null;
-
-		protected void visit(CFrame value) {
-
-			created = new CFrameNode(CTree.this, value);
-		}
-
-		protected void visit(CNumber value) {
-
-			created = new CNumberNode(CTree.this, value);
-		}
-
-		protected void visit(MFrame value) {
-
-			created = new MFrameNode(CTree.this, value);
-		}
-
-		GNode create(CValue<?> value) {
-
-			visit(value);
-
-			return created;
-		}
-	}
 
 	private class SelectionListener implements TreeSelectionListener {
 
