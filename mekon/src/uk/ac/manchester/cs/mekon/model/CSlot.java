@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  *
  * @author Colin Puleston
  */
-public class CSlot implements CIdentified, CSourced {
+public class CSlot implements CIdentified, CSourced, CAnnotatable {
 
 	private CIdentity identity;
 	private CFrame container;

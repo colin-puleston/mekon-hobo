@@ -654,7 +654,10 @@ public class IFrame implements IEntity, IValue {
 
 	ISlot addSlotInternal(CSlot slotType, boolean free) {
 
-		ISlot slot = new ISlot(slotType, this);
+		return addSlotInternal(new ISlot(slotType, this), free);
+	}
+
+	ISlot addSlotInternal(ISlot slot, boolean free) {
 
 		slots.add(slot);
 		IFrameSlotValueUpdateProcessor.checkAddTo(slot);

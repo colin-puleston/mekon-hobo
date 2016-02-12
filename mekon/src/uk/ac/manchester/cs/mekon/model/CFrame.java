@@ -89,7 +89,7 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  */
 public abstract class CFrame
 						extends CValue<IFrame>
-						implements CIdentified, CSourced, IValue {
+						implements CIdentified, CSourced, CAnnotatable, IValue {
 
 	/**
 	 * Invokes {@link #resolveDisjunction(String, Collection)}} with

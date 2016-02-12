@@ -30,5 +30,5 @@ package uk.ac.manchester.cs.mekon.model;
  *
  * @author Colin Puleston
  */
-public interface CEntity extends FEntity, CAnnotatable {
+public interface CEntity extends FEntity {
 }

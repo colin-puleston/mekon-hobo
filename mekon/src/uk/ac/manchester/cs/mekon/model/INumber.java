@@ -145,7 +145,7 @@ public class INumber implements IEntity, IValue {
 	}
 
 	/**
-	 * Provides hash-code based on numeric-value.
+	 * Provides hash-code based on the numeric-value.
 	 *
 	 * @return hash-code for this object
 	 */
@@ -178,7 +178,7 @@ public class INumber implements IEntity, IValue {
 
 	/**
 	 * Tests whether this value-entity is currently equivalent to
-	 * another value-entity, which, since <code>CNumber</code>
+	 * another value-entity, which, since <code>INumber</code>
 	 * objects are immutable, will be the same as the result of the
 	 * {@link #equals} method.
 	 *

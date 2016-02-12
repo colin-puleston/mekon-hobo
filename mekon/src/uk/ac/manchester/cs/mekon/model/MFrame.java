@@ -102,7 +102,16 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Tests whether this value-type-entity subsumes another
+	 * specified value-type-entity, which will be the case if and
+	 * only if the other value-type-entity is another
+	 * <code>MFrame</code> object whose root concept-level frame is
+	 * subsumed by the root concept-level frame of this one, as
+	 * determined via the {@link CFrame#subsumes(CFrame)} method.
+	 *
+	 * @param other Other value-type-entity to test for subsumption
+	 * @return True if this value-type-entity subsumes other
+	 * value-type-entity
 	 */
 	public boolean subsumes(CValue<?> other) {
 

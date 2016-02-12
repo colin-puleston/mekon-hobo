@@ -333,8 +333,6 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	private INumber min;
 	private INumber max;
 
-	private CAnnotations annotations = new CAnnotations(this);
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -469,24 +467,20 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	}
 
 	/**
-	 * Provides hash-code based on number-type, limit-values and
-	 * annotations.
+	 * Provides hash-code based on number-type and limit-values.
 	 *
 	 * @return hash-code for this object
 	 */
 	public int hashCode() {
 
-		return numberType.hashCode()
-				+ min.hashCode()
-				+ max.hashCode()
-				+ annotations.hashCode();
+		return numberType.hashCode() + min.hashCode() + max.hashCode();
 	}
 
 	/**
 	 * Tests for equality between this and other specified object,
 	 * which will hold if and only if the other object is another
-	 * <code>CNumber</code> with same numeric-type, limit-values and
-	 * annotations as this one.
+	 * <code>CNumber</code> with same numeric-type and limit-values
+	 * as this one.
 	 *
 	 * @param other Object to test for equality with this one
 	 * @return true if objects are equal
@@ -499,8 +493,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 
 			return numberType.equals(n.numberType)
 					&& min.equalTo(n.min)
-					&& max.equalTo(n.max)
-					&& annotations.equals(n.annotations);
+					&& max.equalTo(n.max);
 		}
 
 		return false;
@@ -579,8 +572,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	 * Produces a new numeric-type with the same primitive Java
 	 * <code>Number</code> type as this one, whose range is the
 	 * intersection of the ranges of this and the other specified
-	 * numeric-type, and which includes all annotations from both
-	 * sources.
+	 * numeric-type.
 	 *
 	 * @param other Other numeric-type to whose range is to be
 	 * intersected
@@ -588,13 +580,7 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	 */
 	public CNumber getIntersection(CNumber other) {
 
-		CNumber intersect = createCNumber(getMaxMin(other), getMinMax(other));
-		CAnnotations intersectAnnos = intersect.getAnnotations();
-
-		intersectAnnos.addAll(annotations);
-		intersectAnnos.addAll(other.annotations);
-
-		return intersect;
+		return createCNumber(getMaxMin(other), getMinMax(other));
 	}
 
 	/**
@@ -609,16 +595,6 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	public INumber asINumber() {
 
 		return exactValue() ? min : new INumber(this);
-	}
-
-	/**
-	 * Provides any annotations on the numeric-type.
-	 *
-	 * @return Annotations on numeric-type
-	 */
-	public CAnnotations getAnnotations() {
-
-		return annotations;
 	}
 
 	CNumber(Class<? extends Number> numberType) {

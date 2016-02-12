@@ -26,38 +26,14 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.util.*;
-
 /**
  * @author Colin Puleston
  */
 class IDisjunction extends IFrame {
 
 	static private final String LABEL = "Any-of...";
-	static private final String DISJUNCTS_SLOT_ID = "@DISJUNCTS";
-	static private final String DISJUNCTS_SLOT_LABEL = "options";
 
-	private ISlot disjunctsSlot;
-
-	private class DisjunctsChecker implements KValuesListener<IValue> {
-
-		public void onAdded(IValue value) {
-
-			checkDisjunct((IFrame)value);
-		}
-
-		public void onRemoved(IValue value) {
-		}
-
-		public void onCleared(List<IValue> values) {
-		}
-
-		DisjunctsChecker() {
-
-			disjunctsSlot.getValues().addValuesListener(this);
-		}
-	}
+	private IDisjunctsSlot disjunctsSlot;
 
 	public String getDisplayLabel() {
 
@@ -81,14 +57,7 @@ class IDisjunction extends IFrame {
 
 	public List<IFrame> asDisjuncts() {
 
-		List<IFrame> disjuncts = new ArrayList<IFrame>();
-
-		for (IValue disjunct : disjunctsSlot.getValues().asList()) {
-
-			disjuncts.add((IFrame)disjunct);
-		}
-
-		return disjuncts;
+		return disjunctsSlot.getDisjuncts();
 	}
 
 	public IFrame normalise() {
@@ -102,9 +71,9 @@ class IDisjunction extends IFrame {
 
 		super(type, function);
 
-		disjunctsSlot = addDisjunctsSlot();
+		disjunctsSlot = new IDisjunctsSlot(this);
 
-		new DisjunctsChecker();
+		super.addSlotInternal(disjunctsSlot, false);
 	}
 
 	IFrame copyEmpty() {
@@ -118,40 +87,5 @@ class IDisjunction extends IFrame {
 	}
 
 	void autoUpdateThis() {
-	}
-
-	private ISlot addDisjunctsSlot() {
-
-		return super.addSlotInternal(createDisjunctsSlotType(), false);
-	}
-
-	private CSlot createDisjunctsSlotType() {
-
-		CIdentity id = new CIdentity(DISJUNCTS_SLOT_ID, DISJUNCTS_SLOT_LABEL);
-
-		return new CSlot(getType(), id, CCardinality.REPEATABLE_TYPES, getType());
-	}
-
-	private List<CFrame> getDisjunctTypes() {
-
-		List<CFrame> types = new ArrayList<CFrame>();
-
-		for (IFrame disjunct : asDisjuncts()) {
-
-			types.add(disjunct.getType());
-		}
-
-		return types;
-	}
-
-	private void checkDisjunct(IFrame value) {
-
-		if (value.getCategory().disjunction()) {
-
-			throw new KAccessException(
-						"Attempting to add another DISJUNCTION "
-						+ "frame as disjunct for DISJUNCTION frame: "
-						+ this);
-		}
 	}
 }
