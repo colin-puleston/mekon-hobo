@@ -70,8 +70,8 @@ public class OBConceptHiding {
 	OBConceptHiding() {
 	}
 
-	boolean isHidden(OModel model, OWLClass concept, boolean isRoot) {
+	boolean hidden(OModel model, OWLClass concept, EntityLocation location) {
 
-		return candidates.includes(isRoot) && filter.passesFilter(model, concept);
+		return candidates.includes(location) && filter.passesFilter(model, concept);
 	}
 }

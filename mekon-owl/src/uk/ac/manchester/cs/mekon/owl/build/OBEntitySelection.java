@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.build;
 
+import java.util.*;
+
 /**
  * Specifies which concepts or properties are to be selected from
  * of within a particular section of hierarchy.
@@ -36,51 +38,61 @@ public enum OBEntitySelection {
 	 * Represents the selection of no entities from the relevant
 	 * section of hierarchy.
 	 */
-	NONE,
+	NONE(),
 
 	/**
 	 * Represents the selection of all entities from the relevant
 	 * section of hierarchy.
 	 */
-	ALL,
+	ALL(EntityLocation.ROOT, EntityLocation.INTERMEDIATE, EntityLocation.LEAF),
 
 	/**
 	 * Represents the selection of only the root-entity from the
 	 * relevant section of hierarchy.
 	 */
-	ROOTS_ONLY,
+	ROOTS_ONLY(EntityLocation.ROOT),
 
 	/**
 	 * Represents the selection of only the non-root-entities from
 	 * the relevant section of hierarchy.
 	 */
-	NON_ROOTS_ONLY,
+	NON_ROOTS_ONLY(EntityLocation.INTERMEDIATE, EntityLocation.LEAF),
 
 	/**
 	 * Represents the selection of only the leaf-entities from the
 	 * relevant section of hierarchy.
 	 */
-	LEAFS_ONLY;
+	LEAFS_ONLY(EntityLocation.LEAF);
 
 	boolean includesRoot() {
 
-		return this == ALL || this == ROOTS_ONLY;
+		return includes(EntityLocation.ROOT);
 	}
 
 	boolean includesAnyNonRoots() {
 
-		return this == ALL
-				|| this == NON_ROOTS_ONLY
-				|| this == LEAFS_ONLY;
+		return includesIntermediates() || includesLeafs();
 	}
 
-	boolean includesNonRoot(boolean leaf) {
+	boolean includesIntermediates() {
 
-		if (this == ALL || this == NON_ROOTS_ONLY) {
+		return includes(EntityLocation.INTERMEDIATE);
+	}
 
-			return true;
-		}
+	boolean includesLeafs() {
 
-		return leaf && this == LEAFS_ONLY;
+		return includes(EntityLocation.LEAF);
+	}
+
+	boolean includes(EntityLocation location) {
+
+		return includedLocations.contains(location);
+	}
+
+	private List<EntityLocation> includedLocations;
+
+	private OBEntitySelection(EntityLocation... includedLocations) {
+
+		this.includedLocations = Arrays.asList(includedLocations);
 	}
 }

@@ -152,7 +152,7 @@ public class OBProperties
 	void addGroupEntity(
 			OBPropertyInclusions group,
 			OWLProperty<?, ?> property,
-			boolean isRoot) {
+			EntityLocation location) {
 
 		add(property, group.getAttributes());
 	}

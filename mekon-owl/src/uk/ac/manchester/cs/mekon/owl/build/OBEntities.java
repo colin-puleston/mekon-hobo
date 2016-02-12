@@ -80,7 +80,7 @@ public abstract class OBEntities
 
 		if (group.getInclusion().includesRoot()) {
 
-			addGroupEntity(group, root, true);
+			addGroupEntity(group, root, EntityLocation.ROOT);
 		}
 
 		if (group.getInclusion().includesAnyNonRoots()) {
@@ -153,7 +153,7 @@ public abstract class OBEntities
 		entitiesToAttributes.put(entity, attributes);
 	}
 
-	abstract void addGroupEntity(G group, E entity, boolean isRoot);
+	abstract void addGroupEntity(G group, E entity, EntityLocation location);
 
 	abstract A createAttributes();
 
@@ -210,10 +210,11 @@ public abstract class OBEntities
 	private void addNonRootGroupEntities(G group, E current) {
 
 		Set<E> subs = getSubs(current);
+		EntityLocation location = getNonRootLocation(subs);
 
-		if (group.getInclusion().includesNonRoot(subs.isEmpty())) {
+		if (group.getInclusion().includes(location)) {
 
-			addGroupEntity(group, current, false);
+			addGroupEntity(group, current, location);
 		}
 
 		for (E sub : subs) {
@@ -234,4 +235,10 @@ public abstract class OBEntities
 					+ getTypeName() + ": " + iri);
 	}
 
+	private EntityLocation getNonRootLocation(Set<E> subs) {
+
+		return subs.isEmpty()
+				? EntityLocation.LEAF
+				: EntityLocation.INTERMEDIATE;
+	}
 }

@@ -81,7 +81,7 @@ public class OBAnnotations {
 		annotateFramesWithDefinitions = value;
 	}
 
-	void checkAnnotate(CBuilder builder, CEntity cEntity, OWLEntity owlEntity) {
+	void checkAnnotate(CBuilder builder, CAnnotatable cEntity, OWLEntity owlEntity) {
 
 		CAnnotationsEditor cEditor = getCEditor(builder, cEntity);
 
@@ -135,7 +135,7 @@ public class OBAnnotations {
 		return equivs;
 	}
 
-	private CAnnotationsEditor getCEditor(CBuilder builder, CEntity cEntity) {
+	private CAnnotationsEditor getCEditor(CBuilder builder, CAnnotatable cEntity) {
 
 		return builder.getAnnotationsEditor(cEntity.getAnnotations());
 	}

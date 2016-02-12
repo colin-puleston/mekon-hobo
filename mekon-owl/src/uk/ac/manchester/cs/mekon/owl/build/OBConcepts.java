@@ -51,9 +51,9 @@ public class OBConcepts
 	void addGroupEntity(
 			OBConceptInclusions group,
 			OWLClass concept,
-			boolean isRoot) {
+			EntityLocation location) {
 
-		add(concept, createAttributes(hidden(group, concept, isRoot)));
+		add(concept, createAttributes(hidden(group, concept, location)));
 	}
 
 	OBConceptAttributes createAttributes()  {
@@ -113,8 +113,8 @@ public class OBConcepts
 	private boolean hidden(
 						OBConceptInclusions group,
 						OWLClass concept,
-						boolean isRoot) {
+						EntityLocation location) {
 
-		return group.getConceptHiding().isHidden(getModel(), concept, isRoot);
+		return group.getConceptHiding().hidden(getModel(), concept, location);
 	}
 }
