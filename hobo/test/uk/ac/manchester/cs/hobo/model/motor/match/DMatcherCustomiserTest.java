@@ -178,9 +178,11 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 	@After
 	public void clearUp() {
 
-		store.clear();
+		if (store != null) {
 
-		IStoreManager.stop(model.getCModel());
+			store.clear();
+			IStoreManager.stop(model.getCModel());
+		}
 	}
 
 	abstract DMatcherCustomiser<?> createCustomiser(DModel model, DCustomMatcher matcher);
