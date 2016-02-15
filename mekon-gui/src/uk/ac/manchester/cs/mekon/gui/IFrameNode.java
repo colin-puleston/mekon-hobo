@@ -51,6 +51,11 @@ class IFrameNode extends IValueNode<IFrame> {
 			created = new INumberSlotNode(tree, slot);
 		}
 
+		protected void visit(CString type) {
+
+			created = new IStringSlotNode(tree, slot);
+		}
+
 		protected void visit(MFrame type) {
 
 			created = new CFrameSlotNode(tree, slot);

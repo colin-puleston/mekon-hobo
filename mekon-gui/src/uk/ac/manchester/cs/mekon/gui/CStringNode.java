@@ -31,40 +31,21 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class CValueNodeCreator extends CValueVisitor {
+class CStringNode extends GNode {
 
-	private CTree tree;
-	private GNode created = null;
+	static private final long serialVersionUID = -1;
 
-	protected void visit(CFrame value) {
+	private CString cString;
 
-		created = new CFrameNode(tree, value);
+	protected GCellDisplay getDisplay() {
+
+		return EntityDisplays.get().get(cString);
 	}
 
-	protected void visit(CNumber value) {
+	CStringNode(CTree tree, CString cString) {
 
-		created = new CNumberNode(tree, value);
-	}
+		super(tree);
 
-	protected void visit(CString value) {
-
-		created = new CStringNode(tree, value);
-	}
-
-	protected void visit(MFrame value) {
-
-		created = new MFrameNode(tree, value);
-	}
-
-	CValueNodeCreator(CTree tree) {
-
-		this.tree = tree;
-	}
-
-	GNode create(CValue<?> value) {
-
-		visit(value);
-
-		return created;
+		this.cString = cString;
 	}
 }

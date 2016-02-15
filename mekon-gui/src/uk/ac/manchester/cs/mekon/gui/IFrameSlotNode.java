@@ -151,7 +151,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	GNode createValueNode(IValue value) {
 
-		IFrame frameValue = asIFrame(value);
+		IFrame frameValue = (IFrame)value;
 
 		if (frameValue.getCategory().disjunction()) {
 
@@ -237,11 +237,6 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 	private IFrame instantiate(CFrame type) {
 
 		return type.instantiate(slot.getContainer().getFunction());
-	}
-
-	private IFrame asIFrame(IValue value) {
-
-		return getValueType().castValue(value);
 	}
 
 	private CFrame getValueType() {

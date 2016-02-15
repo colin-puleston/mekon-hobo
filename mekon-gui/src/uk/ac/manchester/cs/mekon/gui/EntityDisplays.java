@@ -58,6 +58,11 @@ class EntityDisplays {
 		return forValue(number, icons.get(number));
 	}
 
+	GCellDisplay get(IString string) {
+
+		return forValue(string, icons.get(string));
+	}
+
 	GCellDisplay get(CFrame frame) {
 
 		return forValue(frame, icons.get(frame));
@@ -66,6 +71,11 @@ class EntityDisplays {
 	GCellDisplay get(CNumber number) {
 
 		return forValue(number, icons.get(number));
+	}
+
+	GCellDisplay get(CString string) {
+
+		return forValue(string, icons.get(string));
 	}
 
 	GCellDisplay get(MFrame frame) {

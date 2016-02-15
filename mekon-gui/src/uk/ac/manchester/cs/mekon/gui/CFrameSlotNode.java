@@ -69,7 +69,7 @@ class CFrameSlotNode extends FFrameSlotNode<CFrame> {
 
 	GNode createValueNode(IValue value) {
 
-		return new ValueNode(asCFrame(value));
+		return new ValueNode((CFrame)value);
 	}
 
 	IValue checkObtainValue() {
@@ -95,11 +95,6 @@ class CFrameSlotNode extends FFrameSlotNode<CFrame> {
 	CFrame checkUpdateValue(CFrame value, CFrame updatedCFrame) {
 
 		return updatedCFrame;
-	}
-
-	private CFrame asCFrame(IValue value) {
-
-		return getValueType().castValue(value);
 	}
 
 	private MFrame getValueType() {

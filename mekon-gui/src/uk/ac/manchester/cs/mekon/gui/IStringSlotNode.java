@@ -31,40 +31,44 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class CValueNodeCreator extends CValueVisitor {
+class IStringSlotNode extends ISlotNode {
 
-	private CTree tree;
-	private GNode created = null;
+	private ITree tree;
+	private ISlot slot;
 
-	protected void visit(CFrame value) {
+	private class ValueNode extends IValueNode<IString> {
 
-		created = new CFrameNode(tree, value);
+		protected GNodeAction getNegativeAction1() {
+
+			return getRemoveValueAction(getValue());
+		}
+
+		ValueNode(IString number) {
+
+			super(tree, number);
+		}
+
+		GCellDisplay getDefaultDisplay() {
+
+			return EntityDisplays.get().get(getValue());
+		}
 	}
 
-	protected void visit(CNumber value) {
+	IStringSlotNode(ITree tree, ISlot slot) {
 
-		created = new CNumberNode(tree, value);
-	}
-
-	protected void visit(CString value) {
-
-		created = new CStringNode(tree, value);
-	}
-
-	protected void visit(MFrame value) {
-
-		created = new MFrameNode(tree, value);
-	}
-
-	CValueNodeCreator(CTree tree) {
+		super(tree, slot);
 
 		this.tree = tree;
+		this.slot = slot;
 	}
 
-	GNode create(CValue<?> value) {
+	GNode createValueNode(IValue value) {
 
-		visit(value);
+		return new ValueNode((IString)value);
+	}
 
-		return created;
+	IValue checkObtainValue() {
+
+		return null;
 	}
 }

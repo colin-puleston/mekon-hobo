@@ -64,7 +64,7 @@ class INumberSlotNode extends ISlotNode {
 
 	GNode createValueNode(IValue value) {
 
-		return new ValueNode(asINumber(value));
+		return new ValueNode((INumber)value);
 	}
 
 	IValue checkObtainValue() {
@@ -77,11 +77,6 @@ class INumberSlotNode extends ISlotNode {
 		boolean rangeEnabled = abstractEditableSlot();
 
 		return new INumberSelector(tree, getValueType(), rangeEnabled);
-	}
-
-	private INumber asINumber(IValue value) {
-
-		return getValueType().castValue(value);
 	}
 
 	private CNumber getValueType() {

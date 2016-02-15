@@ -44,6 +44,7 @@ class EntityIcons implements EntityIconConstants {
 	final FrameIcons hiddenFrames = new FrameIcons(true);
 
 	final EntityIconsByLevel numbers = new EntityIconsByLevel(NUMBER_CLR, ENTITY_SIZE);
+	final EntityIconsByLevel strings = new EntityIconsByLevel(STRING_CLR, ENTITY_SIZE);
 
 	final SlotIcons defaultSlots = new DefaultSlotIcons();
 	final SlotIcons nonEditSlots = new NonEditSlotIcons();
@@ -79,6 +80,16 @@ class EntityIcons implements EntityIconConstants {
 	Icon get(CNumber number) {
 
 		return numbers.get(EntityLevel.CONCEPT);
+	}
+
+	Icon get(IString string) {
+
+		return strings.get(EntityLevel.INSTANCE);
+	}
+
+	Icon get(CString string) {
+
+		return strings.get(EntityLevel.CONCEPT);
 	}
 
 	Icon get(CSlot slot) {
