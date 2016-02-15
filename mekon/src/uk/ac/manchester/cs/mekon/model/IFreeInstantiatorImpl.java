@@ -64,6 +64,11 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 			slot = addINumberSlot(container, slotTypeId, value.getNumberType());
 		}
 
+		protected void visit(CString value) {
+
+			slot = addIStringSlot(container, slotTypeId);
+		}
+
 		protected void visit(MFrame value) {
 
 			slot = addCFrameSlot(container, slotTypeId);
@@ -108,17 +113,22 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		return addSlot(container, slotTypeId, rootFrame);
 	}
 
-	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId) {
-
-		return addSlot(container, slotTypeId, rootFrame.getType());
-	}
-
 	public ISlot addINumberSlot(
 					IFrame container,
 					CIdentity slotTypeId,
 					Class<? extends Number> numberType) {
 
 		return addSlot(container, slotTypeId, numberTypes.get(numberType));
+	}
+
+	public ISlot addIStringSlot(IFrame container, CIdentity slotTypeId) {
+
+		return addSlot(container, slotTypeId, CString.SINGLETON);
+	}
+
+	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId) {
+
+		return addSlot(container, slotTypeId, rootFrame.getType());
 	}
 
 	public void completeInstantiation(IFrame frame) {

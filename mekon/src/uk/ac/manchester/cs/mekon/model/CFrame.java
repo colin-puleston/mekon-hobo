@@ -251,8 +251,8 @@ public abstract class CFrame
 	/**
 	 * Tests whether this value-entity subsumes another specified
 	 * value-entity, which will be the case if and only if the other
-	 * value-entity is another <code>CFrame</code> object that
-	 * is subsumed by this one, as determined via the {@link
+	 * value-entity is another <code>CFrame</code> object that is
+	 * subsumed by this one, as determined via the {@link
 	 * #subsumes(CFrame)} method.
 	 *
 	 * @param other Other value-entity to test for subsumption

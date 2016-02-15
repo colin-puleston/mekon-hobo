@@ -58,18 +58,13 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 		return instantiator.startInstantiation(type, function);
 	}
 
-	ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
+	ISlot checkResolveIFrameSlot(IFrame container, CIdentity slotId) {
 
-		return instantiator.addIFrameSlot(frame, slotId);
-	}
-
-	ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId) {
-
-		return instantiator.addCFrameSlot(frame, slotId);
+		return instantiator.addIFrameSlot(container, slotId);
 	}
 
 	ISlot checkResolveINumberSlot(
-				IFrame frame,
+				IFrame container,
 				CIdentity slotId,
 				Class<? extends Number> numberType) {
 
@@ -78,7 +73,17 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 			return null;
 		}
 
-		return instantiator.addINumberSlot(frame, slotId, numberType);
+		return instantiator.addINumberSlot(container, slotId, numberType);
+	}
+
+	ISlot checkResolveIStringSlot(IFrame container, CIdentity slotId) {
+
+		return instantiator.addIStringSlot(container, slotId);
+	}
+
+	ISlot checkResolveCFrameSlot(IFrame container, CIdentity slotId) {
+
+		return instantiator.addCFrameSlot(container, slotId);
 	}
 
 	void checkUpdateFrameSlotSets(List<IFrame> frames) {

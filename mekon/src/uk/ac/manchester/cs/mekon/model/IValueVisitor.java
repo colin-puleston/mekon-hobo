@@ -47,6 +47,11 @@ public abstract class IValueVisitor extends FVisitor<IValue> {
 			IValueVisitor.this.visit(castValue(valueType));
 		}
 
+		protected void visit(CString valueType) {
+
+			IValueVisitor.this.visit(castValue(valueType));
+		}
+
 		protected void visit(MFrame valueType) {
 
 			IValueVisitor.this.visit(castValue(valueType));
@@ -80,6 +85,14 @@ public abstract class IValueVisitor extends FVisitor<IValue> {
 	 * @param value Entity being visited.
 	 */
 	protected abstract void visit(INumber value);
+
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting entity of relevant type.
+	 *
+	 * @param value Entity being visited.
+	 */
+	protected abstract void visit(IString value);
 
 	/**
 	 * Method whose implementation defines actions to be performed on

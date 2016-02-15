@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 class SubsumptionTester {
 
 	private LinksTester linksTester = new LinksTester();
-	private NumericsTester numericsTester = new NumericsTester();
+	private NumbersTester numbersTester = new NumbersTester();
 
 	private KSetMap<NNode, NNode> testing = new KSetMap<NNode, NNode>();
 	private KSetMap<NNode, NNode> subsumptions = new KSetMap<NNode, NNode>();
@@ -152,11 +152,11 @@ class SubsumptionTester {
 		}
 	}
 
-	private class NumericsTester extends FeaturesTester<INumber, NNumeric> {
+	private class NumbersTester extends FeaturesTester<INumber, NNumber> {
 
-		List<NNumeric> getFeatures(NNode node) {
+		List<NNumber> getFeatures(NNode node) {
 
-			return node.getNumerics();
+			return node.getNumbers();
 		}
 
 		boolean valueSubsumption(INumber value1, INumber value2) {
@@ -196,7 +196,7 @@ class SubsumptionTester {
 
 		return typeSubsumption(node1, node2)
 				&& linksTester.subsumptions(node1, node2)
-				&& numericsTester.subsumptions(node1, node2);
+				&& numbersTester.subsumptions(node1, node2);
 	}
 
 	private boolean typeSubsumption(NNode node1, NNode node2) {

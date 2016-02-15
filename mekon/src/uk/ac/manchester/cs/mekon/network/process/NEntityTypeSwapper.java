@@ -69,9 +69,17 @@ public class NEntityTypeSwapper extends NCrawler {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void visit(NNumeric numeric) {
+	protected void visit(NNumber number) {
 
-		checkSwapType(numeric);
+		checkSwapType(number);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(NString string) {
+
+		checkSwapType(string);
 	}
 
 	private void checkSwapType(NEntity entity) {

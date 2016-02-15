@@ -53,20 +53,27 @@ public abstract class NCrawler implements NProcessor {
 	protected abstract void visit(NNode node);
 
 	/**
-	 * Visitor for node-valued links in network instance
-	 * representation.
+	 * Visitor for links in network instance representation.
 	 *
 	 * @param link Visited link
 	 */
 	protected abstract void visit(NLink link);
 
 	/**
-	 * Visitor for number-valued links in network instance
+	 * Visitor for number-valued features in network instance
 	 * representation.
 	 *
-	 * @param numeric Visited numeric
+	 * @param number Visited number-valued feature
 	 */
-	protected abstract void visit(NNumeric numeric);
+	protected abstract void visit(NNumber number);
+
+	/**
+	 * Visitor for string-valued features links in network
+	 * instance representation.
+	 *
+	 * @param string Visited string-valued feature
+	 */
+	protected abstract void visit(NString string);
 
 	private void visitAll(NNode node, Set<NNode> visited) {
 
@@ -84,9 +91,14 @@ public abstract class NCrawler implements NProcessor {
 				}
 			}
 
-			for (NNumeric numeric : node.getNumerics()) {
+			for (NNumber number : node.getNumbers()) {
 
-				visit(numeric);
+				visit(number);
+			}
+
+			for (NString string : node.getStrings()) {
+
+				visit(string);
 			}
 		}
 	}

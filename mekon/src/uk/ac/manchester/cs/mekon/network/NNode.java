@@ -174,8 +174,8 @@ public class NNode extends NEntity {
 	}
 
 	/**
-	 * Provides all features on the node, including both links and
-	 * numerics.
+	 * Provides all features on the node, including both links
+	 * and data-valued features.
 	 *
 	 * @return All features on node
 	 */
@@ -195,13 +195,23 @@ public class NNode extends NEntity {
 	}
 
 	/**
-	 * Provides all numerics on the node.
+	 * Provides all number-valued features on the node.
 	 *
-	 * @return All numerics on node
+	 * @return All number-valued features on node
 	 */
-	public List<NNumeric> getNumerics() {
+	public List<NNumber> getNumbers() {
 
-		return getTypeFeatures(NNumeric.class);
+		return getTypeFeatures(NNumber.class);
+	}
+
+	/**
+	 * Provides all string-valued features on the node.
+	 *
+	 * @return All string-valued features on node
+	 */
+	public List<NString> getStrings() {
+
+		return getTypeFeatures(NString.class);
 	}
 
 	/**
@@ -244,9 +254,10 @@ public class NNode extends NEntity {
 	 * Tests whether the type and the current feature-values of this
 	 * node subsume those of another node. For link features,
 	 * value-subsumption testing involves a recursive invocation of
-	 * the same node-subsumption testing operation. For numeric
-	 * features, value-subsumption is determinied via invocation
-	 * of the {@link CNumber#subsumes} method.
+	 * the same node-subsumption testing operation. For number-valued
+	 * features, value-subsumption is determinied via invocation of
+	 * the {@link CNumber#subsumes} method, and for string-valued
+	 * features subsumption means string-equality.
 	 *
 	 * @param other Node to test for structure-subsumption by this
 	 * one

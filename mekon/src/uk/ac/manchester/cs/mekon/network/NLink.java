@@ -57,22 +57,6 @@ public class NLink extends NFeature<NNode> {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public boolean link() {
-
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public NLink asLink() {
-
-		return this;
-	}
-
-	/**
 	 * Specifies whether this link represents a disjunction, with
 	 * each target-value representing a disjunct.
 	 *

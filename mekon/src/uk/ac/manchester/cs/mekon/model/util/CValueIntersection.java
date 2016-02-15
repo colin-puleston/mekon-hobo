@@ -51,6 +51,11 @@ public class CValueIntersection {
 			intersection = new CNumberIntersection();
 		}
 
+		protected void visit(CString value) {
+
+			intersection = new CStringIntersection();
+		}
+
 		protected void visit(MFrame value) {
 
 			intersection = new MFrameIntersection();

@@ -22,32 +22,30 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
+package uk.ac.manchester.cs.mekon.network;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Represents a string-valued feature in the network-based
+ * instance representation
+ *
  * @author Colin Puleston
  */
-abstract class ISerialiser extends FSerialiser {
+public class NString extends NDataFeature<String> {
 
-	static final String ITREE_ID = "ITree";
-	static final String IGRAPH_ID = "IGraph";
+	/**
+	 * Constructor.
+	 *
+	 * @param type Type for string-valued feature
+	 */
+	public NString(CIdentity type) {
 
-	static final String MFRAME_ID = "MFrame";
-	static final String CNUMBER_ID = "CNumber";
-	static final String CSTRING_ID = "CString";
-	static final String CSLOT_ID = "CSlot";
-	static final String IFRAME_ID = "IFrame";
-	static final String INUMBER_ID = "INumber";
-	static final String ISTRING_ID = "IString";
-	static final String ISLOT_ID = "ISlot";
-	static final String IVALUES_ID = "IValues";
+		super(type, null);
+	}
 
-	static final String IFRAME_REF_INDEX_ATTR = "refIndex";
-	static final String NUMBER_TYPE_ATTR = "numberType";
-	static final String NUMBER_MIN_ATTR = "min";
-	static final String NUMBER_MAX_ATTR = "max";
-	static final String NUMBER_VALUE_ATTR = "value";
-	static final String STRING_VALUE_ATTR = "value";
-	static final String CARDINALITY_ATTR = "cardinality";
-	static final String EDITABILITY_ATTR = "editability";
+	NString(CIdentity type, ISlot iSlot) {
+
+		super(type, iSlot);
+	}
 }

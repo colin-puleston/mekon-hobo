@@ -26,13 +26,12 @@ package uk.ac.manchester.cs.mekon.network;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Represents an feature attached to a node in the network-based
  * instance representation. Features can be of either link or
- * numeric type.
+ * data-valued type.
  *
  * @author Colin Puleston
  */
@@ -87,47 +86,6 @@ public abstract class NFeature<V> extends NEntity {
 	public void clearValues() {
 
 		values.clear();
-	}
-
-	/**
-	 * Specifies whether this is a link feature, rather than a
-	 * numeric feature.
-	 *
-	 * @return True if link feature
-	 */
-	public abstract boolean link();
-
-	/**
-	 * Specifies whether this is a numeric feature, rather than a
-	 * link feature.
-	 *
-	 * @return True if numeric feature
-	 */
-	public boolean number() {
-
-		return !link();
-	}
-
-	/**
-	 * Casts feature as a link.
-	 *
-	 * @return Feature cast as link
-	 * @throws KAccessException if not a link
-	 */
-	public NLink asLink() {
-
-		throw new KAccessException("Not a link: " + this);
-	}
-
-	/**
-	 * Casts feature as a numeric.
-	 *
-	 * @return Feature cast as numeric
-	 * @throws KAccessException if not a numeric
-	 */
-	public NNumeric asNumeric() {
-
-		throw new KAccessException("Not a numeric: " + this);
 	}
 
 	/**

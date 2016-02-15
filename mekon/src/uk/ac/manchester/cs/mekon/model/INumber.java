@@ -166,14 +166,7 @@ public class INumber implements IEntity, IValue {
 	 */
 	public boolean equals(Object other) {
 
-		if (other instanceof INumber) {
-
-			INumber n = (INumber)other;
-
-			return getNumberType().equals(n.getNumberType()) && equalTo(n);
-		}
-
-		return false;
+		return other instanceof INumber && equalsNumber((INumber)other);
 	}
 
 	/**
@@ -448,6 +441,11 @@ public class INumber implements IEntity, IValue {
 	private INumber(IInfiniteNumber infiniteNumber) {
 
 		typeNumber = infiniteNumber;
+	}
+
+	private boolean equalsNumber(INumber other) {
+
+		return getNumberType().equals(other.getNumberType()) && equalTo(other);
 	}
 
 	private boolean subsumesNumber(INumber other) {

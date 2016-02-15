@@ -388,11 +388,6 @@ class CAtomicFrame extends CFrame {
 		slotValues.validateAll(this);
 	}
 
-	void acceptVisitor(CValueVisitor visitor) throws Exception {
-
-		visitor.visit(this);
-	}
-
 	IReasoner getIReasoner() {
 
 		return iReasoner;

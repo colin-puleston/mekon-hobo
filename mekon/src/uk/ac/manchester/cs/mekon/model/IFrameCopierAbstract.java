@@ -32,34 +32,6 @@ import java.util.*;
 abstract class IFrameCopierAbstract {
 
 	private Map<IFrame, IFrame> copies = new HashMap<IFrame, IFrame>();
-	private ValueCopiesSupplier valueCopies = new ValueCopiesSupplier();
-
-	private class ValueCopiesSupplier extends IValueVisitor {
-
-		private IValue copyValue = null;
-
-		protected void visit(IFrame value) {
-
-			copyValue = getFrameCopy(value);
-		}
-
-		protected void visit(INumber value) {
-
-			copyValue = value;
-		}
-
-		protected void visit(CFrame value) {
-
-			copyValue = value;
-		}
-
-		IValue getCopy(IValue template) {
-
-			visit(template);
-
-			return copyValue;
-		}
-	}
 
 	IFrame copy(IFrame template) {
 
@@ -88,18 +60,23 @@ abstract class IFrameCopierAbstract {
 			CSlot slotType = templateSlot.getType();
 			ISlot copySlot = addSlot(copy, slotType);
 
-			copySlotValues(templateSlot, copySlot);
+			getCopySlotValues(templateSlot, copySlot);
 		}
 	}
 
-	private void copySlotValues(ISlot templateSlot, ISlot copySlot) {
+	private void getCopySlotValues(ISlot templateSlot, ISlot copySlot) {
 
 		ISlotValues copyValues = copySlot.getValues();
 
 		for (IValue value : templateSlot.getValues().asList()) {
 
-			copyValues.add(valueCopies.getCopy(value), true);
+			copyValues.add(getCopyValue(value), true);
 		}
+	}
+
+	private IValue getCopyValue(IValue value) {
+
+		return value instanceof IFrame ? getFrameCopy((IFrame)value) : value;
 	}
 
 	private IFrame getFrameCopy(IFrame template) {

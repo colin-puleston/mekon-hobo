@@ -55,6 +55,14 @@ public abstract class CValueVisitor extends FVisitor<CValue<?>> {
 	 *
 	 * @param value Entity being visited.
 	 */
+	protected abstract void visit(CString value);
+
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting entity of relevant type.
+	 *
+	 * @param value Entity being visited.
+	 */
 	protected abstract void visit(MFrame value);
 
 	void performVisit(CValue<?> acceptor) throws Exception {

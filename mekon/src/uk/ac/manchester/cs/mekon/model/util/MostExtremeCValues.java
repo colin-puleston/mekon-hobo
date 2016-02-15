@@ -52,6 +52,11 @@ public abstract class MostExtremeCValues {
 			handler = new DefaultTypeHandler();
 		}
 
+		protected void visit(CString value) {
+
+			handler = new DefaultTypeHandler();
+		}
+
 		protected void visit(MFrame value) {
 
 			handler = new MFrameTypeHandler();

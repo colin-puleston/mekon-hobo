@@ -62,22 +62,27 @@ public class IFrameParser extends IFrameParserAbstract {
 		return frame;
 	}
 
-	ISlot checkResolveIFrameSlot(IFrame frame, CIdentity slotId) {
+	ISlot checkResolveIFrameSlot(IFrame container, CIdentity slotId) {
 
-		return lookForSlot(frame, slotId);
-	}
-
-	ISlot checkResolveCFrameSlot(IFrame frame, CIdentity slotId) {
-
-		return lookForSlot(frame, slotId);
+		return lookForSlot(container, slotId);
 	}
 
 	ISlot checkResolveINumberSlot(
-				IFrame frame,
+				IFrame container,
 				CIdentity slotId,
 				Class<? extends Number> numberType) {
 
-		return lookForSlot(frame, slotId);
+		return lookForSlot(container, slotId);
+	}
+
+	ISlot checkResolveIStringSlot(IFrame container, CIdentity slotId) {
+
+		return lookForSlot(container, slotId);
+	}
+
+	ISlot checkResolveCFrameSlot(IFrame container, CIdentity slotId) {
+
+		return lookForSlot(container, slotId);
 	}
 
 	void checkUpdateFrameSlotSets(List<IFrame> frames) {
@@ -97,9 +102,9 @@ public class IFrameParser extends IFrameParserAbstract {
 		setAutoUpdateEnabled(frames, true);
 	}
 
-	private ISlot lookForSlot(IFrame frame, CIdentity slotId) {
+	private ISlot lookForSlot(IFrame container, CIdentity slotId) {
 
-		ISlots slots = frame.getSlots();
+		ISlots slots = container.getSlots();
 
 		return slots.containsValueFor(slotId) ? slots.get(slotId) : null;
 	}

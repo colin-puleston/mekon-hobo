@@ -28,56 +28,35 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents a numeric feature in the network-based instance
+ * Represents a data-valued feature in the network-based instance
  * representation
  *
  * @author Colin Puleston
  */
-public class NNumeric extends NFeature<INumber> {
+public abstract class NDataFeature<V> extends NFeature<V> {
 
 	/**
-	 * Constructor.
+	 * Provides current value for the feature.
 	 *
-	 * @param type Type for numeric feature
-	 */
-	public NNumeric(CIdentity type) {
-
-		super(type, null);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean link() {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public NNumeric asNumeric() {
-
-		return this;
-	}
-
-	/**
-	 * Provides current number-value for the feature.
-	 *
-	 * @return Current number-value
+	 * @return Current value
 	 * @throws KAccessException if no current value
 	 */
-	public INumber getValue() {
+	public V getValue() {
 
 		if (hasValues()) {
 
 			return getValues().iterator().next();
 		}
 
-		throw new KAccessException("No current value for numeric: " + this);
+		throw new KAccessException("No current value for feature: " + this);
 	}
 
-	NNumeric(CIdentity type, ISlot iSlot) {
+	NDataFeature(CIdentity type) {
+
+		super(type, null);
+	}
+
+	NDataFeature(CIdentity type, ISlot iSlot) {
 
 		super(type, iSlot);
 	}

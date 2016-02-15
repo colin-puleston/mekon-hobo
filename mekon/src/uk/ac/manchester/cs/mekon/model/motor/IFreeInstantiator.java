@@ -54,16 +54,6 @@ public interface IFreeInstantiator {
 	public ISlot addIFrameSlot(IFrame container, CIdentity slotTypeId);
 
 	/**
-	 * Creates a free-instance-style {@link CFrame}-valued slot and
-	 * adds it to the specified frame.
-	 *
-	 * @param container Frame to which slot is to be added
-	 * @param slotTypeId Identity of slot-type for slot to be created
-	 * @return Created and added slot
-	 */
-	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId);
-
-	/**
 	 * Creates a free-instance-style {@link INumber}-valued slot and
 	 * adds it to the specified frame.
 	 *
@@ -77,6 +67,26 @@ public interface IFreeInstantiator {
 					IFrame container,
 					CIdentity slotTypeId,
 					Class<? extends Number> numberType);
+
+	/**
+	 * Creates a free-instance-style {@link IString}-valued slot and
+	 * adds it to the specified frame.
+	 *
+	 * @param container Frame to which slot is to be added
+	 * @param slotTypeId Identity of slot-type for slot to be created
+	 * @return Created and added slot
+	 */
+	public ISlot addIStringSlot(IFrame container, CIdentity slotTypeId);
+
+	/**
+	 * Creates a free-instance-style {@link CFrame}-valued slot and
+	 * adds it to the specified frame.
+	 *
+	 * @param container Frame to which slot is to be added
+	 * @param slotTypeId Identity of slot-type for slot to be created
+	 * @return Created and added slot
+	 */
+	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId);
 
 	/**
 	 * Performs the required instantiation-completion operations for a

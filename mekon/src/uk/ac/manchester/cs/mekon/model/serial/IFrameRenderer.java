@@ -60,6 +60,11 @@ public class IFrameRenderer extends ISerialiser {
 				renderCNumber(value, slotNode);
 			}
 
+			protected void visit(CString value) {
+
+				renderCString(value, slotNode);
+			}
+
 			protected void visit(MFrame value) {
 
 				renderMFrame(value, slotNode);
@@ -90,6 +95,14 @@ public class IFrameRenderer extends ISerialiser {
 				for (INumber value : values) {
 
 					renderINumber(value, valuesNode);
+				}
+			}
+
+			protected void visit(CString valueType, List<IString> values) {
+
+				for (IString value : values) {
+
+					renderIString(value, valuesNode);
 				}
 			}
 
@@ -217,6 +230,19 @@ public class IFrameRenderer extends ISerialiser {
 			renderCFrame(frame.getRootCFrame(), parentNode, MFRAME_ID);
 		}
 
+		private void renderCNumber(CNumber number, XNode parentNode) {
+
+			XNode node = parentNode.addChild(CNUMBER_ID);
+
+			renderNumberType(number, node);
+			renderNumberRange(number, node);
+		}
+
+		private void renderCString(CString number, XNode parentNode) {
+
+			parentNode.addChild(CSTRING_ID);
+		}
+
 		private void renderINumber(INumber number, XNode parentNode) {
 
 			XNode node = parentNode.addChild(INUMBER_ID);
@@ -231,12 +257,11 @@ public class IFrameRenderer extends ISerialiser {
 			}
 		}
 
-		private void renderCNumber(CNumber number, XNode parentNode) {
+		private void renderIString(IString number, XNode parentNode) {
 
-			XNode node = parentNode.addChild(CNUMBER_ID);
+			XNode node = parentNode.addChild(ISTRING_ID);
 
-			renderNumberType(number, node);
-			renderNumberRange(number, node);
+			node.addValue(STRING_VALUE_ATTR, number.get());
 		}
 
 		private void renderNumberType(CNumber number, XNode node) {

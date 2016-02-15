@@ -22,32 +22,41 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
+package uk.ac.manchester.cs.mekon.model.util;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class ISerialiser extends FSerialiser {
+class CStringIntersection extends CTypeValueIntersection<CString> {
 
-	static final String ITREE_ID = "ITree";
-	static final String IGRAPH_ID = "IGraph";
+	private boolean started = false;
+	private CString current = null;
 
-	static final String MFRAME_ID = "MFrame";
-	static final String CNUMBER_ID = "CNumber";
-	static final String CSTRING_ID = "CString";
-	static final String CSLOT_ID = "CSlot";
-	static final String IFRAME_ID = "IFrame";
-	static final String INUMBER_ID = "INumber";
-	static final String ISTRING_ID = "IString";
-	static final String ISLOT_ID = "ISlot";
-	static final String IVALUES_ID = "IValues";
+	public void addOperand(CString operand) {
 
-	static final String IFRAME_REF_INDEX_ATTR = "refIndex";
-	static final String NUMBER_TYPE_ATTR = "numberType";
-	static final String NUMBER_MIN_ATTR = "min";
-	static final String NUMBER_MAX_ATTR = "max";
-	static final String NUMBER_VALUE_ATTR = "value";
-	static final String STRING_VALUE_ATTR = "value";
-	static final String CARDINALITY_ATTR = "cardinality";
-	static final String EDITABILITY_ATTR = "editability";
+		if (started) {
+
+			if (!operand.equals(current)) {
+
+				current = null;
+			}
+		}
+		else {
+
+			current = operand;
+			started = true;
+		}
+	}
+
+	public CString getCurrent() {
+
+		return current;
+	}
+
+	public Class<CString> getOperandType() {
+
+		return CString.class;
+	}
 }

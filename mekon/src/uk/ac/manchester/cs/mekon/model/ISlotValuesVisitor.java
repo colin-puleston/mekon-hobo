@@ -50,6 +50,11 @@ public abstract class ISlotValuesVisitor extends FVisitor<ISlot> {
 			ISlotValuesVisitor.this.visit(valueType, castValues(valueType));
 		}
 
+		protected void visit(CString valueType) {
+
+			ISlotValuesVisitor.this.visit(valueType, castValues(valueType));
+		}
+
 		protected void visit(MFrame valueType) {
 
 			ISlotValuesVisitor.this.visit(valueType, castValues(valueType));
@@ -85,6 +90,15 @@ public abstract class ISlotValuesVisitor extends FVisitor<ISlot> {
 	 * @param values Values being visited
 	 */
 	protected abstract void visit(CNumber valueType, List<INumber> values);
+
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting values of relevant type.
+	 *
+	 * @param valueType Type of values being visited
+	 * @param values Values being visited
+	 */
+	protected abstract void visit(CString valueType, List<IString> values);
 
 	/**
 	 * Method whose implementation defines actions to be performed on

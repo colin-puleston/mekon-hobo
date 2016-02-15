@@ -147,19 +147,19 @@ class NNetwork {
 
 	private class INumberSlotRenderer
 						extends
-							TypeSlotRenderer<INumber, NNumeric, INumber> {
+							TypeSlotRenderer<INumber, NNumber, INumber> {
 
 		INumber getValue(INumber iValue) {
 
 			return iValue;
 		}
 
-		NNumeric createFeature(CIdentity id, ISlot slot) {
+		NNumber createFeature(CIdentity id, ISlot slot) {
 
-			return new NNumeric(id, slot);
+			return new NNumber(id, slot);
 		}
 
-		void addFeature(NNode node, NNumeric feature) {
+		void addFeature(NNode node, NNumber feature) {
 
 			node.addFeature(feature);
 		}
@@ -178,6 +178,9 @@ class NNetwork {
 		protected void visit(CNumber valueType, List<INumber> values) {
 
 			iNumberSlotRenderer.render(node, slot, values);
+		}
+
+		protected void visit(CString valueType, List<IString> values) {
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
@@ -208,6 +211,9 @@ class NNetwork {
 		protected void visit(CNumber value) {
 
 			iNumberSlotRenderer.render(node, slotId, getCNumberValuesAsINumbers());
+		}
+
+		protected void visit(CString value) {
 		}
 
 		protected void visit(MFrame value) {

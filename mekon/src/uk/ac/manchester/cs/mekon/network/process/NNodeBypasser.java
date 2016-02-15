@@ -61,7 +61,13 @@ public abstract class NNodeBypasser extends NCrawler {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void visit(NNumeric numeric) {
+	protected void visit(NNumber number) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void visit(NString string) {
 	}
 
 	/**
