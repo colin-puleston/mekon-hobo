@@ -24,51 +24,21 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class IStringSlotNode extends ISlotNode {
+class DefiniteINumberSelector extends INumberSelector {
 
-	private ITree tree;
-	private ISlot slot;
+	static private final long serialVersionUID = -1;
 
-	private class ValueNode extends IValueNode<IString> {
+	DefiniteINumberSelector(JComponent parent, CNumber type) {
 
-		protected GNodeAction getNegativeAction1() {
+		super(parent, type);
 
-			return getRemoveValueAction(getValue());
-		}
-
-		ValueNode(IString number) {
-
-			super(tree, number);
-		}
-
-		GCellDisplay getDefaultDisplay() {
-
-			return EntityDisplays.get().get(getValue());
-		}
-	}
-
-	IStringSlotNode(ITree tree, ISlot slot) {
-
-		super(tree, slot);
-
-		this.tree = tree;
-		this.slot = slot;
-	}
-
-	GNode createValueNode(IValue value) {
-
-		return new ValueNode((IString)value);
-	}
-
-	IValue checkObtainValue() {
-
-		return new IStringSelector(tree).getSelectionOrNull();
+		initialise();
 	}
 }

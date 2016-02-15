@@ -74,14 +74,11 @@ class INumberSlotNode extends ISlotNode {
 
 	private INumberSelector createSelector() {
 
-		boolean rangeEnabled = abstractEditableSlot();
+		CNumber valueType = (CNumber)slot.getValueType();
 
-		return new INumberSelector(tree, getValueType(), rangeEnabled);
-	}
-
-	private CNumber getValueType() {
-
-		return (CNumber)slot.getValueType();
+		return abstractEditableSlot()
+				? new IndefiniteINumberSelector(tree, valueType)
+				: new DefiniteINumberSelector(tree, valueType);
 	}
 
 	private boolean abstractEditableSlot() {
