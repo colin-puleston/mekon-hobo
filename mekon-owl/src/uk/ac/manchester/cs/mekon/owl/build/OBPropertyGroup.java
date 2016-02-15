@@ -26,49 +26,33 @@ package uk.ac.manchester.cs.mekon.owl.build;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
-
 /**
+ * Represents a set of OWL properties to be included in the model
+ * building process.
+ *
  * @author Colin Puleston
  */
-class ConceptInclusionsConfig
-			extends
-				EntityInclusionsConfig<OBConceptGroup, OBConcepts> {
+public class OBPropertyGroup extends OBEntityGroup {
 
-	ConceptInclusionsConfig(KConfigNode configNode) {
+	private OBPropertyAttributes attributes = new OBPropertyAttributes();
 
-		super(configNode);
+	/**
+	 * Constructor.
+	 *
+	 * @param rootPropertyIRI IRI of root-property
+	 */
+	public OBPropertyGroup(IRI rootPropertyIRI) {
+
+		super(rootPropertyIRI);
 	}
 
-	String getInclusionId() {
+	/**
+	 * Provides the entity-generation attributes for the group.
+	 *
+	 * @return Attributes for group
+	 */
+	public OBPropertyAttributes getAttributes() {
 
-		return CONCEPT_INCLUSION_ID;
-	}
-
-	OBConceptGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
-
-		OBConceptGroup group = new OBConceptGroup(rootIRI);
-		OBConceptHiding hiding = group.getConceptHiding();
-
-		hiding.setCandidates(getHidingCandidates(groupNode));
-		hiding.setFilter(getHidingFilter(groupNode));
-
-		return group;
-	}
-
-	private OBEntitySelection getHidingCandidates(KConfigNode groupNode) {
-
-		return groupNode.getEnum(
-					CONCEPT_HIDING_CANDIDATES_ATTR,
-					OBEntitySelection.class,
-					OBConceptHiding.DEFAULT_CANDIDATES);
-	}
-
-	private OBConceptHidingFilter getHidingFilter(KConfigNode groupNode) {
-
-		return groupNode.getEnum(
-					CONCEPT_HIDING_FILTER_ATTR,
-					OBConceptHidingFilter.class,
-					OBConceptHiding.DEFAULT_FILTER);
+		return attributes;
 	}
 }

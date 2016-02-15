@@ -40,7 +40,7 @@ public class OBConcepts
 				extends
 					OBEntities
 						<OWLClass,
-						OBConceptInclusions,
+						OBConceptGroup,
 						OBConceptAttributes> {
 
 	OBConcepts(OModel model) {
@@ -49,7 +49,7 @@ public class OBConcepts
 	}
 
 	void addGroupEntity(
-			OBConceptInclusions group,
+			OBConceptGroup group,
 			OWLClass concept,
 			EntityLocation location) {
 
@@ -111,7 +111,7 @@ public class OBConcepts
 	}
 
 	private boolean hidden(
-						OBConceptInclusions group,
+						OBConceptGroup group,
 						OWLClass concept,
 						EntityLocation location) {
 

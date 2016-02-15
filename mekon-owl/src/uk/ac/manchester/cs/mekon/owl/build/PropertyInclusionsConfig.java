@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.config.*;
 
 class PropertyInclusionsConfig
 			extends
-				EntityInclusionsConfig<OBPropertyInclusions, OBProperties> {
+				EntityInclusionsConfig<OBPropertyGroup, OBProperties> {
 
 	PropertyInclusionsConfig(KConfigNode configNode) {
 
@@ -47,9 +47,9 @@ class PropertyInclusionsConfig
 		return PROPERTY_INCLUSION_ID;
 	}
 
-	OBPropertyInclusions createGroup(KConfigNode groupNode, IRI rootIRI) {
+	OBPropertyGroup createGroup(KConfigNode groupNode, IRI rootIRI) {
 
-		OBPropertyInclusions group = new OBPropertyInclusions(rootIRI);
+		OBPropertyGroup group = new OBPropertyGroup(rootIRI);
 		OBPropertyAttributes attributes = group.getAttributes();
 
 		attributes.setFrameSource(getFrameSources(groupNode));

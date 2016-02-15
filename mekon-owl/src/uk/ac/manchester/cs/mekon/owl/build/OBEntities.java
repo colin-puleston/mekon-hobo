@@ -78,14 +78,11 @@ public abstract class OBEntities
 
 		E root = getRoot(group.getRootEntityIRI());
 
-		if (group.getInclusion().includesRoot()) {
-
-			addGroupEntity(group, root, EntityLocation.ROOT);
-		}
+		checkAddGroupEntity(group, root, EntityLocation.ROOT);
 
 		if (group.getInclusion().includesAnyNonRoots()) {
 
-			addNonRootGroupEntities(group, root);
+			addNonRootGroupEntities(group, getSubs(root));
 		}
 	}
 
@@ -207,19 +204,32 @@ public abstract class OBEntities
 		return model.getDataFactory();
 	}
 
-	private void addNonRootGroupEntities(G group, E current) {
+	private void addNonRootGroupEntities(G group, Set<E> currents) {
 
-		Set<E> subs = getSubs(current);
-		EntityLocation location = getNonRootLocation(subs);
+		for (E current : currents) {
+
+			Set<E> subs = getSubs(current);
+
+			if (subs.isEmpty()) {
+
+				checkAddGroupEntity(group, current, EntityLocation.LEAF);
+			}
+			else {
+
+				checkAddGroupEntity(group, current, EntityLocation.INTERMEDIATE);
+				addNonRootGroupEntities(group, subs);
+			}
+		}
+	}
+
+	private void checkAddGroupEntity(
+					G group,
+					E entity,
+					EntityLocation location) {
 
 		if (group.getInclusion().includes(location)) {
 
-			addGroupEntity(group, current, location);
-		}
-
-		for (E sub : subs) {
-
-			addNonRootGroupEntities(group, sub);
+			addGroupEntity(group, entity, location);
 		}
 	}
 
@@ -233,12 +243,5 @@ public abstract class OBEntities
 		throw new KModelException(
 					"Cannot find OWL-"
 					+ getTypeName() + ": " + iri);
-	}
-
-	private EntityLocation getNonRootLocation(Set<E> subs) {
-
-		return subs.isEmpty()
-				? EntityLocation.LEAF
-				: EntityLocation.INTERMEDIATE;
 	}
 }

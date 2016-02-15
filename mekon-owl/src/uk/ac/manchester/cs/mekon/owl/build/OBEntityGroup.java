@@ -28,8 +28,8 @@ import org.semanticweb.owlapi.model.*;
 
 /**
  * Represents a set of OWL entities defined via a single root-entity.
- * The set will include the root-entity and/or all descendant entities,
- * subject to setting of the "inclusion" option.
+ * The set will include a specified combination of root, intermediate
+ * and leaf entities.
  *
  * @author Colin Puleston
  */

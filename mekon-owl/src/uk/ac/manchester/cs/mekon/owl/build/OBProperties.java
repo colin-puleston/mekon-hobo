@@ -40,7 +40,7 @@ public class OBProperties
 				extends
 					OBEntities
 						<OWLProperty<?, ?>,
-						OBPropertyInclusions,
+						OBPropertyGroup,
 						OBPropertyAttributes> {
 
 	private Set<Handler> handlers = new HashSet<Handler>();
@@ -150,7 +150,7 @@ public class OBProperties
 	}
 
 	void addGroupEntity(
-			OBPropertyInclusions group,
+			OBPropertyGroup group,
 			OWLProperty<?, ?> property,
 			EntityLocation location) {
 
