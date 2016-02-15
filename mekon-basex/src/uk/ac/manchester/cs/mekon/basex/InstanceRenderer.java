@@ -36,11 +36,11 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 class InstanceRenderer extends Renderer {
 
-	private abstract class FeatureRenderer<V, F extends NFeature<V>> {
+	private abstract class FeaturesRenderer<V, F extends NFeature<V>> {
 
 		private XNode xParent;
 
-		FeatureRenderer(XNode xParent) {
+		FeaturesRenderer(XNode xParent) {
 
 			this.xParent = xParent;
 		}
@@ -77,11 +77,11 @@ class InstanceRenderer extends Renderer {
 		}
 	}
 
-	private class LinkRenderer
+	private class LinksRenderer
 					extends
-						FeatureRenderer<NNode, NLink> {
+						FeaturesRenderer<NNode, NLink> {
 
-		LinkRenderer(XNode xParent) {
+		LinksRenderer(XNode xParent) {
 
 			super(xParent);
 		}
@@ -102,11 +102,11 @@ class InstanceRenderer extends Renderer {
 		}
 	}
 
-	private class NumericRenderer
+	private class NumbersRenderer
 					extends
-						FeatureRenderer<INumber, NNumeric> {
+						FeaturesRenderer<INumber, NNumber> {
 
-		NumericRenderer(XNode xParent) {
+		NumbersRenderer(XNode xParent) {
 
 			super(xParent);
 		}
@@ -141,8 +141,8 @@ class InstanceRenderer extends Renderer {
 
 		renderNodeTypes(node, xNode);
 
-		new LinkRenderer(xNode).renderAll(node.getLinks());
-		new NumericRenderer(xNode).renderAll(node.getNumerics());
+		new LinksRenderer(xNode).renderAll(node.getLinks());
+		new NumbersRenderer(xNode).renderAll(node.getNumbers());
 	}
 
 	private void renderNodeTypes(NNode node, XNode xNode) {

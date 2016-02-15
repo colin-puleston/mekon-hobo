@@ -135,11 +135,11 @@ class QueryRenderer extends Renderer {
 			}
 		}
 
-		private class NumericStatementsAdder
+		private class NumberStatementsAdder
 						extends
 							FeatureStatementsAdder<INumber> {
 
-			NumericStatementsAdder(String parentPath) {
+			NumberStatementsAdder(String parentPath) {
 
 				super(parentPath);
 			}
@@ -175,7 +175,7 @@ class QueryRenderer extends Renderer {
 			addTypesStatement(path, node);
 
 			new LinkStatementsAdder(path).addForAll(node.getLinks());
-			new NumericStatementsAdder(path).addForAll(node.getNumerics());
+			new NumberStatementsAdder(path).addForAll(node.getNumbers());
 		}
 
 		private String addDeclarationStatement(String parentPath, String tag) {
