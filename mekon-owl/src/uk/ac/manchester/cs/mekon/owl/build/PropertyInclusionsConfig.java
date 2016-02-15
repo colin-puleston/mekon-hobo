@@ -95,6 +95,6 @@ class PropertyInclusionsConfig
 		return groupNode.getEnum(
 					FRAME_SLOTS_POLICY_ATTR,
 					OBFrameSlotsPolicy.class,
-					OBSlots.DEFAULT_FRAME_SLOTS_POLICY);
+					OBFrameSlotsPolicy.UNSPECIFIED);
 	}
 }

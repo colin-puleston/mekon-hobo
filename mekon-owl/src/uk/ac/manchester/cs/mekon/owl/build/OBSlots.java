@@ -37,8 +37,6 @@ import uk.ac.manchester.cs.mekon.owl.*;
 class OBSlots {
 
 	static final OBSlotSources DEFAULT_SLOT_SOURCES = OBSlotSources.ALL;
-	static final OBFrameSlotsPolicy DEFAULT_FRAME_SLOTS_POLICY
-									= OBFrameSlotsPolicy.IFRAME_VALUED_ONLY;
 
 	private OModel model;
 	private OBFrames frames;
@@ -48,7 +46,7 @@ class OBSlots {
 	private OBEntityLabels labels;
 
 	private OBSlotSources defaultSlotSources = DEFAULT_SLOT_SOURCES;
-	private OBFrameSlotsPolicy defaultFrameSlotsPolicy = DEFAULT_FRAME_SLOTS_POLICY;
+	private OBFrameSlotsPolicy defaultFrameSlotsPolicy = OBFrameSlotsPolicy.IFRAME_VALUED_ONLY;
 
 	private SpecCreator specCreator = new SpecCreator();
 
