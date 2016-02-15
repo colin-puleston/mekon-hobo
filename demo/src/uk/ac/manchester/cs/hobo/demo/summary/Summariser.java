@@ -56,6 +56,9 @@ public class Summariser {
 			}
 		}
 
+		protected void visit(CString value) {
+		}
+
 		protected void visit(MFrame value) {
 
 			addSummary(ConceptSummary.class);
