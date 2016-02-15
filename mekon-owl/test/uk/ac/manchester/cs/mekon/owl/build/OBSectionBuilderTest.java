@@ -122,7 +122,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 
 		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.HIDDEN);
 		testFrameStatus(JOB, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 
 		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.HIDDEN);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
-		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.EXPOSED);
 	}
 
 	@Test
@@ -146,7 +146,19 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 
 		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
 		testFrameStatus(JOB, FrameStatus.HIDDEN);
-		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
+		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
+	}
+
+	@Test
+	public void test_frames_hidingCandidates_LEAFS_ONLY() {
+
+		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.LEAFS_ONLY);
+
+		buildModel();
+
+		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(JOB, FrameStatus.EXPOSED);
+		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
 	}
 
 	@Test
@@ -322,36 +334,36 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		buildModel(sectionBuilder);
 	}
 
-	private OBConceptInclusions addConcepts(String rootName) {
+	private OBConceptGroup addConcepts(String rootName) {
 
 		return addConcepts(createConceptInclusions(rootName));
 	}
 
-	private OBConceptInclusions addConceptsExcludingRoot(String rootName) {
+	private OBConceptGroup addConceptsExcludingRoot(String rootName) {
 
-		OBConceptInclusions inclusions = createConceptInclusions(rootName);
+		OBConceptGroup inclusions = createConceptInclusions(rootName);
 
 		inclusions.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
 		return addConcepts(inclusions);
 	}
 
-	private OBConceptInclusions addConcepts(
-									String rootName,
-									OBEntitySelection hidingCandidates) {
+	private OBConceptGroup addConcepts(
+								String rootName,
+								OBEntitySelection hidingCandidates) {
 
-		OBConceptInclusions inclusions = createConceptInclusions(rootName);
+		OBConceptGroup inclusions = createConceptInclusions(rootName);
 
 		inclusions.getConceptHiding().setCandidates(hidingCandidates);
 
 		return addConcepts(inclusions);
 	}
 
-	private OBConceptInclusions addConcepts(
-									String rootName,
-									OBConceptHidingFilter hidingFilter) {
+	private OBConceptGroup addConcepts(
+								String rootName,
+								OBConceptHidingFilter hidingFilter) {
 
-		OBConceptInclusions inclusions = createConceptInclusions(rootName);
+		OBConceptGroup inclusions = createConceptInclusions(rootName);
 		OBConceptHiding hiding = inclusions.getConceptHiding();
 
 		hiding.setCandidates(OBEntitySelection.ALL);
@@ -360,38 +372,38 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		return addConcepts(inclusions);
 	}
 
-	private OBConceptInclusions createConceptInclusions(String rootName) {
+	private OBConceptGroup createConceptInclusions(String rootName) {
 
-		return new OBConceptInclusions(nameToIRI(rootName));
+		return new OBConceptGroup(nameToIRI(rootName));
 	}
 
-	private OBConceptInclusions addConcepts(OBConceptInclusions inclusions) {
+	private OBConceptGroup addConcepts(OBConceptGroup inclusions) {
 
 		sectionBuilder.getConcepts().addGroup(inclusions);
 
 		return inclusions;
 	}
 
-	private OBPropertyInclusions addProperties(String rootName) {
+	private OBPropertyGroup addProperties(String rootName) {
 
 		return addProperties(createPropertyInclusions(rootName));
 	}
 
-	private OBPropertyInclusions addPropertiesExcludingRoot(String rootName) {
+	private OBPropertyGroup addPropertiesExcludingRoot(String rootName) {
 
-		OBPropertyInclusions inclusions = createPropertyInclusions(rootName);
+		OBPropertyGroup inclusions = createPropertyInclusions(rootName);
 
 		inclusions.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
 		return addProperties(inclusions);
 	}
 
-	private OBPropertyInclusions createPropertyInclusions(String rootName) {
+	private OBPropertyGroup createPropertyInclusions(String rootName) {
 
-		return new OBPropertyInclusions(nameToIRI(rootName));
+		return new OBPropertyGroup(nameToIRI(rootName));
 	}
 
-	private OBPropertyInclusions addProperties(OBPropertyInclusions inclusions) {
+	private OBPropertyGroup addProperties(OBPropertyGroup inclusions) {
 
 		sectionBuilder.getProperties().addGroup(inclusions);
 
