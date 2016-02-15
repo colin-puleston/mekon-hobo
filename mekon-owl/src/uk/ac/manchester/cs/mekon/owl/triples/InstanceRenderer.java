@@ -39,7 +39,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 abstract class InstanceRenderer<TN extends OTValue> {
 
 	private LinksRenderer linksRenderer = new LinksRenderer();
-	private NumericsRenderer numericsRenderer = new NumericsRenderer();
+	private NumbersRenderer numbersRenderer = new NumbersRenderer();
 
 	private int nodeCount = 0;
 
@@ -99,7 +99,9 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		}
 	}
 
-	private class NumericsRenderer extends FeaturesRenderer<INumber, NNumeric> {
+	private class NumbersRenderer
+					extends
+						FeaturesRenderer<INumber, NNumber> {
 
 		void renderValue(TN subject, OT_URI predicate, INumber value) {
 
@@ -184,7 +186,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 	private void renderFeatureValues(NNode node, TN tripleNode) {
 
 		linksRenderer.render(tripleNode, node.getLinks());
-		numericsRenderer.render(tripleNode, node.getNumerics());
+		numbersRenderer.render(tripleNode, node.getNumbers());
 	}
 
 	private Set<OTValue> renderTypeDisjuncts(NNode node) {

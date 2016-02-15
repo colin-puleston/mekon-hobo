@@ -53,7 +53,10 @@ class OntologyEntityResolver {
 			resolveValues(link);
 		}
 
-		protected void visit(NNumeric numeric) {
+		protected void visit(NNumber number) {
+		}
+
+		protected void visit(NString string) {
 		}
 	}
 

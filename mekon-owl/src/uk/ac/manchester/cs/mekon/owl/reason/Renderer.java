@@ -61,9 +61,9 @@ abstract class Renderer<NR extends OWLObject> {
 				renderLinkValues(link);
 			}
 
-			for (NNumeric numeric : node.getNumerics()) {
+			for (NNumber number : node.getNumbers()) {
 
-				renderNumericValues(numeric);
+				renderNumberValues(number);
 			}
 		}
 
@@ -94,21 +94,21 @@ abstract class Renderer<NR extends OWLObject> {
 			new LinkValuesRenderer(this, link).render();
 		}
 
-		private void renderNumericValues(NNumeric numeric) {
+		private void renderNumberValues(NNumber number) {
 
-			getNumericValuesRenderer(numeric).render();
+			getNumberValuesRenderer(number).render();
 		}
 
-		private ValuesRenderer<INumber> getNumericValuesRenderer(NNumeric numeric) {
+		private ValuesRenderer<INumber> getNumberValuesRenderer(NNumber number) {
 
-			return directNumeric(numeric)
-					? new DirectNumericValuesRenderer(this, numeric)
-					: new IndirectNumericValuesRenderer(this, numeric);
+			return directNumber(number)
+					? new DirectNumberValuesRenderer(this, number)
+					: new IndirectNumberValuesRenderer(this, number);
 		}
 
-		private boolean directNumeric(NNumeric numeric) {
+		private boolean directNumber(NNumber number) {
 
-			IRI iri = NetworkIRIs.getAtomicType(numeric);
+			IRI iri = NetworkIRIs.getAtomicType(number);
 
 			return model.getDataProperties().contains(iri);
 		}
@@ -227,14 +227,14 @@ abstract class Renderer<NR extends OWLObject> {
 		}
 	}
 
-	private class DirectNumericValuesRenderer extends ValuesRenderer<INumber> {
+	private class DirectNumberValuesRenderer extends ValuesRenderer<INumber> {
 
 		private NodeRenderer nodeRenderer;
 		private NumberRenderer numberRenderer;
 
-		DirectNumericValuesRenderer(NodeRenderer nodeRenderer, NNumeric numeric) {
+		DirectNumberValuesRenderer(NodeRenderer nodeRenderer, NNumber number) {
 
-			super(numeric);
+			super(number);
 
 			this.nodeRenderer = nodeRenderer;
 
@@ -277,14 +277,14 @@ abstract class Renderer<NR extends OWLObject> {
 		}
 	}
 
-	private class IndirectNumericValuesRenderer extends ValuesRenderer<INumber> {
+	private class IndirectNumberValuesRenderer extends ValuesRenderer<INumber> {
 
 		private NodeRenderer nodeRenderer;
 		private OWLObjectProperty property;
 
-		IndirectNumericValuesRenderer(NodeRenderer nodeRenderer, NNumeric numeric) {
+		IndirectNumberValuesRenderer(NodeRenderer nodeRenderer, NNumber number) {
 
-			super(numeric);
+			super(number);
 
 			this.nodeRenderer = nodeRenderer;
 
