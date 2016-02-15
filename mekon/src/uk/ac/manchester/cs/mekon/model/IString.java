@@ -32,6 +32,11 @@ package uk.ac.manchester.cs.mekon.model;
  */
 public class IString implements IEntity, IValue {
 
+	/**
+	 * Represents the Empty string.
+	 */
+	static public final IString EMPTY_STRING = new IString("");
+
 	private String value;
 
 	/**
