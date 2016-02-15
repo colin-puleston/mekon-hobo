@@ -163,6 +163,9 @@
 					rootURI="http://mekon/demo.owl#referencableObjectProperty"
 					inclusion="ALL"
 					frameSources="TRUE"/>
+				<Group
+					rootURI="http://mekon/demo.owl#stringValue"
+					inclusion="NON_ROOTS_ONLY"/>
 			</PropertyInclusion>
 		</OWLSanctionedModel>
 
