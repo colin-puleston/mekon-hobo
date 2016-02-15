@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.build;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.vocab.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
 
@@ -68,11 +69,6 @@ class OBValues {
 			if (source instanceof OWLDataRange) {
 
 				return checkCreate((OWLDataRange)source);
-			}
-
-			if (source instanceof OWLDatatype) {
-
-				return checkCreate((OWLDatatype)source);
 			}
 
 			return null;
@@ -125,14 +121,11 @@ class OBValues {
 			return createDisjunctionFrame(namedOps);
 		}
 
-		private OBNumber checkCreate(OWLDataRange source) {
+		private OBValue<?> checkCreate(OWLDataRange source) {
 
-			return numbers.checkCreateNumber(source);
-		}
-
-		private OBNumber checkCreate(OWLDatatype source) {
-
-			return numbers.checkCreateNumber(source);
+			return stringDatatype(source)
+					? OBString.SINGLETON
+					: numbers.checkCreateNumber(source);
 		}
 
 		private OBFrame createExtensionFrame(
@@ -186,6 +179,16 @@ class OBValues {
 
 			return source instanceof OWLClassExpression
 					|| source instanceof OWLDataRange;
+		}
+
+		private boolean stringDatatype(OWLDataRange range) {
+
+			return range.isDatatype() && stringDatatype(range.asOWLDatatype());
+		}
+
+		private boolean stringDatatype(OWLDatatype datatype) {
+
+			return datatype.getBuiltInDatatype() == OWL2Datatype.XSD_STRING;
 		}
 	}
 

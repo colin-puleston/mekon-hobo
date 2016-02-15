@@ -25,12 +25,11 @@
 package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
  */
-class OBNumber extends OBValue<CNumber> {
+class OBNumber extends OBDataValue<CNumber> {
 
 	private CNumber cNumber;
 
@@ -39,34 +38,14 @@ class OBNumber extends OBValue<CNumber> {
 		this.cNumber = cNumber;
 	}
 
-	boolean canBeSlotValueType() {
-
-		return true;
-	}
-
-	boolean canBeFixedSlotValue(
-				CValue<?> cValue,
-				boolean valueStructureAllowed) {
-
-		return false;
-	}
-
-	boolean valueStructureAllowedIfSlotValueType() {
-
-		return false;
-	}
-
-	CNumber ensureCStructure(
-				CBuilder builder,
-				OBAnnotations annotations) {
+	CNumber ensureCStructure() {
 
 		return cNumber;
 	}
 
 	CValue<?> resolveToCSlotValueType(
 					CNumber cValue,
-					OBValue<?> topLevelValueType,
-					boolean valueStructureAllowed) {
+					OBValue<?> topLevelValueType) {
 
 		OBNumber topLevelNumber = (OBNumber)topLevelValueType;
 

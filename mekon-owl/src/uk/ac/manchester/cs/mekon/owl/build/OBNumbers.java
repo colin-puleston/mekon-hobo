@@ -214,13 +214,6 @@ class OBNumbers {
 		return null;
 	}
 
-	OBNumber checkCreateNumber(OWLDatatype datatype) {
-
-		TypeNumberCreator<?> creator = lookForCreator(datatype);
-
-		return creator != null ? creator.createUnconstrained() : null;
-	}
-
 	private OBNumber checkExtractNumber(Set<OWLClass> concepts) {
 
 		for (OWLClass concept : concepts) {
@@ -234,6 +227,13 @@ class OBNumbers {
 		}
 
 		return null;
+	}
+
+	private OBNumber checkCreateNumber(OWLDatatype datatype) {
+
+		TypeNumberCreator<?> creator = lookForCreator(datatype);
+
+		return creator != null ? creator.createUnconstrained() : null;
 	}
 
 	private OBNumber checkCreateNumber(
