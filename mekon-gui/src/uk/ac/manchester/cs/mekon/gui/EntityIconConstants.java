@@ -36,8 +36,7 @@ interface EntityIconConstants {
 	static final Color INTERNAL_SOURCE_CLR = Color.blue;
 	static final Color EXTERNAL_SOURCE_CLR = Color.red;
 	static final Color UNSPECIFIED_SOURCE_CLR = Color.gray;
-	static final Color NUMBER_CLR = Color.green.darker().darker();
-	static final Color STRING_CLR = Color.green.darker();
+	static final Color DATA_VALUE_CLR = Color.green.darker().darker();
 	static final Color HIDDEN_FRAME_MARKER_CLR = Color.darkGray.darker();
 	static final Color CURBED_SLOT_MARKER_CLR = Color.darkGray.darker();
 	static final Color SEMI_CURBED_SLOT_MARKER_CLR = Color.gray;

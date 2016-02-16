@@ -43,8 +43,9 @@ class EntityIcons implements EntityIconConstants {
 	final FrameIcons exposedFrames = new FrameIcons(false);
 	final FrameIcons hiddenFrames = new FrameIcons(true);
 
-	final EntityIconsByLevel numbers = new EntityIconsByLevel(NUMBER_CLR, ENTITY_SIZE);
-	final EntityIconsByLevel strings = new EntityIconsByLevel(STRING_CLR, ENTITY_SIZE);
+	final EntityIconsByLevel dataValues = new EntityIconsByLevel(
+												DATA_VALUE_CLR,
+												ENTITY_SIZE);
 
 	final SlotIcons defaultSlots = new DefaultSlotIcons();
 	final SlotIcons nonEditSlots = new NonEditSlotIcons();
@@ -53,11 +54,6 @@ class EntityIcons implements EntityIconConstants {
 	final SlotIcons inactiveSlots = new InactiveSlotIcons();
 
 	Icon get(IFrame frame) {
-
-		if (frame.getCategory().disjunction()) {
-
-			return null;
-		}
 
 		return get(frame.getType(), EntityLevel.INSTANCE);
 	}
@@ -72,24 +68,14 @@ class EntityIcons implements EntityIconConstants {
 		return get(frame.getRootCFrame(), EntityLevel.META);
 	}
 
-	Icon get(INumber number) {
+	Icon get(IDataValue dataValue) {
 
-		return numbers.get(EntityLevel.INSTANCE);
+		return dataValues.get(EntityLevel.INSTANCE);
 	}
 
-	Icon get(CNumber number) {
+	Icon get(CDataValue<?> dataValue) {
 
-		return numbers.get(EntityLevel.CONCEPT);
-	}
-
-	Icon get(IString string) {
-
-		return strings.get(EntityLevel.INSTANCE);
-	}
-
-	Icon get(CString string) {
-
-		return strings.get(EntityLevel.CONCEPT);
+		return dataValues.get(EntityLevel.CONCEPT);
 	}
 
 	Icon get(CSlot slot) {

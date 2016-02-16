@@ -35,6 +35,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 class EntityDisplays {
 
+	static private final String DISJUNCTS_SLOT_LABEL = "OR...";
 	static private final String FIXED_VALUES_LABEL = "fixed-values";
 
 	static private final EntityDisplays singleton = new EntityDisplays();
@@ -44,6 +45,7 @@ class EntityDisplays {
 		return singleton;
 	}
 
+	final GCellDisplay disjunctsSlotDisplay = forDisjunctsSlot();
 	final GCellDisplay fixedValuesDisplay = forFixedValues();
 
 	private EntityIcons icons = EntityIcons.get();
@@ -90,7 +92,12 @@ class EntityDisplays {
 
 	GCellDisplay get(ISlot slot) {
 
-		return forSlot(slot.getType(), icons.get(slot));
+		if (slot.getContainer().getCategory().disjunction()) {
+
+			return disjunctsSlotDisplay;
+		}
+
+		return forSlot(slot, icons.get(slot));
 	}
 
 	GCellDisplay get(String label, Icon icon, NodeTextDisplay textDisplay) {
@@ -138,9 +145,14 @@ class EntityDisplays {
 		return get(value.getDisplayLabel(), icon, NodeTextDisplay.VALUE);
 	}
 
-	private GCellDisplay forSlot(CSlot slot, Icon icon) {
+	private GCellDisplay forSlot(FEntity slot, Icon icon) {
 
 		return get(slot.getDisplayLabel(), icon, NodeTextDisplay.SLOT);
+	}
+
+	private GCellDisplay forDisjunctsSlot() {
+
+		return get(DISJUNCTS_SLOT_LABEL, null, NodeTextDisplay.DISJUNCTS_SLOT);
 	}
 
 	private GCellDisplay forFixedValues() {

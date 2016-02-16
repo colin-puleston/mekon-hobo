@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.gui;
 
 import java.util.*;
-import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -59,30 +58,6 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		AtomicValueNode(IFrame value) {
 
 			super(tree, value);
-		}
-	}
-
-	private class DisjunctionValueNode extends IFrameNode {
-
-		protected GNodeAction getNegativeAction1() {
-
-			return getRemoveValueAction(getValue());
-		}
-
-		DisjunctionValueNode(IFrame value) {
-
-			super(tree, value);
-		}
-
-		void replaceIfSingleDisjunct() {
-
-			IFrame disjunctionValue = getValue();
-			List<IFrame> disjuncts = disjunctionValue.asDisjuncts();
-
-			if (disjuncts.size() == 1) {
-
-				replaceValue(disjunctionValue, disjuncts.get(0));
-			}
 		}
 	}
 
@@ -138,7 +113,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	protected boolean autoExpand() {
 
-		return disjunctsSlot();
+		return false;
 	}
 
 	IFrameSlotNode(ITree tree, ISlot slot) {
@@ -155,7 +130,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 		if (frameValue.getCategory().disjunction()) {
 
-			return new DisjunctionValueNode(frameValue);
+			return new DisjunctionIFrameValueNode(tree, frameValue);
 		}
 
 		return new AtomicValueNode(frameValue);
@@ -166,16 +141,6 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		CFrame type = checkObtainCFrameAddition();
 
 		return type != null ? instantiate(type) : null;
-	}
-
-	void removeValue(IValue value) {
-
-		super.removeValue(value);
-
-		if (disjunctsSlot()) {
-
-			((DisjunctionValueNode)getParent()).replaceIfSingleDisjunct();
-		}
 	}
 
 	String getCFrameRole() {
@@ -202,16 +167,16 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		return newValue;
 	}
 
+	boolean addIFrameDisjunctActionRequired() {
+
+		return queryInstance() && abstractEditableSlot();
+	}
+
 	private GNodeAction getIFrameAdditionAction(IFrame value) {
 
 		return addIFrameDisjunctActionRequired()
 				? new AddIFrameDisjunctAction(value)
 				: GNodeAction.INERT_ACTION;
-	}
-
-	private boolean addIFrameDisjunctActionRequired() {
-
-		return queryInstance() && abstractEditableSlot();
 	}
 
 	private void copyAssertedSlotValues(IFrame from, IFrame to) {
@@ -252,10 +217,5 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 	private boolean abstractEditableSlot() {
 
 		return slot.getEditability().abstractEditable();
-	}
-
-	private boolean disjunctsSlot() {
-
-		return slot.getContainer().getCategory().disjunction();
 	}
 }

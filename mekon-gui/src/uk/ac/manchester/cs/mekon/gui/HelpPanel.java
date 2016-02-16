@@ -58,7 +58,7 @@ class HelpPanel extends JTabbedPane {
 	static final Icon internalColour = getColour(CSource.INTERNAL);
 	static final Icon externalColour = getColour(CSource.EXTERNAL);
 	static final Icon dualColour = getColour(CSource.DUAL);
-	static final Icon numberColour = getNumberColour();
+	static final Icon dataValueColor = getDataValueColour();
 
 	static private Icon getValueShape(EntityLevel level) {
 
@@ -100,9 +100,9 @@ class HelpPanel extends JTabbedPane {
 		return getIcons().exposedFrames.get(source, DEFAULT_LEVEL);
 	}
 
-	static private Icon getNumberColour() {
+	static private Icon getDataValueColour() {
 
-		return getIcons().numbers.get(EntityLevel.CONCEPT);
+		return getIcons().dataValues.get(EntityLevel.CONCEPT);
 	}
 
 	static private EntityIcons getIcons() {
@@ -160,12 +160,12 @@ class HelpPanel extends JTabbedPane {
 					cValueShape,
 					"Value-entity",
 					"Concept",
-					"CFrame, CNumber");
+					"CFrame, CNumber, CString");
 				addRow(
 					iValueShape,
 					"Value-entity",
 					"Instance",
-					"IFrame, INumber");
+					"IFrame, INumber, IString");
 				addRow(
 					defaultSlotShape,
 					"Slot",
@@ -200,8 +200,8 @@ class HelpPanel extends JTabbedPane {
 					"Frame, Slot",
 					"Internal AND External");
 				addRow(
-					numberColour,
-					"Number",
+					dataValueColor,
+					"Number, String",
 					"Internal AND / OR External (context dependent)");
 			}
 		}
@@ -290,7 +290,7 @@ class HelpPanel extends JTabbedPane {
 				checkAddRow(
 					defaultSlotShape,
 					cValueShape,
-					"CSlot has CFrame / CNumber value-type",
+					"CSlot has CFrame / CNumber / CString value-type",
 					false);
 				checkAddRow(
 					mValueShape,
@@ -407,7 +407,7 @@ class HelpPanel extends JTabbedPane {
 				addRow(
 					defaultSlotShape,
 					iValueShape,
-					"ISlot has IFrame / INumber value");
+					"ISlot has IFrame / INumber / IString value");
 			}
 		}
 
@@ -450,7 +450,7 @@ class HelpPanel extends JTabbedPane {
 				addColumns("Entity Types", "Label Modifier", "Represents");
 
 				addSlotValueTypeRow("CFrame", true);
-				addSlotValueTypeRow("IFrame / INumber", false);
+				addSlotValueTypeRow("IFrame / INumber / IString", false);
 			}
 
 			private void addSlotValueTypeRow(String valueType, boolean conceptLevel) {
@@ -476,7 +476,7 @@ class HelpPanel extends JTabbedPane {
 					"Effect(s) of Latest User Action on Entity");
 
 				addRow(
-					"IFrame, CFrame, INumber",
+					"CFrame, IFrame, INumber, IString",
 					getValueLabelComponent(ITreeUpdateMarker.DIRECT_UPDATES_CLR),
 					"Value added by user");
 				addRow(
@@ -485,7 +485,7 @@ class HelpPanel extends JTabbedPane {
 					"Value(s) removed by user");
 
 				addRow(
-					"CFrame, INumber",
+					"CFrame, INumber, IString",
 					getValueLabelComponent(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
 					"Value added by model");
 				addRow(

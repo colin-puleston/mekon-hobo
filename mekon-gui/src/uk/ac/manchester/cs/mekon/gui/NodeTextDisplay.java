@@ -33,6 +33,7 @@ enum NodeTextDisplay {
 
 	VALUE(Font.BOLD),
 	SLOT(Font.PLAIN),
+	DISJUNCTS_SLOT(Font.BOLD | Font.ITALIC),
 	SLOT_VALUE_TYPE_MODIFIER(Color.orange.darker(), Font.PLAIN),
 	SLOT_CARDINALITY_MODIFIER(Color.orange.darker().darker(), Font.PLAIN),
 	SLOT_VALUES(Font.ITALIC),
