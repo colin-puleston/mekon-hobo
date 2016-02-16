@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.*;
  *
  * @author Colin Puleston
  */
-public class CNumber extends CValue<INumber> implements CEntity {
+public class CNumber extends CDataValue<INumber> {
 
 	/**
 	 * Represents an unconstrained integer-type.
@@ -336,22 +336,6 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String toString() {
-
-		return FEntityDescriber.entityToString(this, getDescription());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getDisplayLabel() {
-
-		return getDescription();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public Class<INumber> getValueType() {
 
 		return INumber.class;
@@ -639,6 +623,11 @@ public class CNumber extends CValue<INumber> implements CEntity {
 		return contains(value.getType());
 	}
 
+	String getDataValueDescription() {
+
+		return numberType.getSimpleName() + "[" + getLimitsString() +"]";
+	}
+
 	String getLimitsString() {
 
 		String limits = minToString();
@@ -664,11 +653,6 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	private INumber getMinMax(CNumber other) {
 
 		return max.min(other.max);
-	}
-
-	private String getDescription() {
-
-		return numberType.getSimpleName() + "[" + getLimitsString() +"]";
 	}
 
 	private String minToString() {

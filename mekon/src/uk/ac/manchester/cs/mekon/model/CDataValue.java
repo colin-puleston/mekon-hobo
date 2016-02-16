@@ -24,68 +24,31 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import java.util.*;
-
 /**
+ * Represents the value-type for a data-type value.
+ *
  * @author Colin Puleston
  */
-class IDisjunction extends IFrame {
+public abstract class CDataValue
+						<V extends IDataValue>
+						extends CValue<V>
+						implements CEntity {
 
-	static private final String LABEL = "Disjunction";
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
 
-	private IDisjunctsSlot disjunctsSlot;
+		return FEntityDescriber.entityToString(this, getDataValueDescription());
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getDisplayLabel() {
 
-		return LABEL;
+		return getDataValueDescription();
 	}
 
-	public boolean abstractValue() {
-
-		return true;
-	}
-
-	public IFrameCategory getCategory() {
-
-		return IFrameCategory.DISJUNCTION;
-	}
-
-	public ISlot getDisjunctsSlot() {
-
-		return disjunctsSlot;
-	}
-
-	public List<IFrame> asDisjuncts() {
-
-		return disjunctsSlot.getDisjuncts();
-	}
-
-	public IFrame normalise() {
-
-		List<IFrame> disjuncts = asDisjuncts();
-
-		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
-	}
-
-	IDisjunction(CFrame type, IFrameFunction function) {
-
-		super(type, function);
-
-		disjunctsSlot = new IDisjunctsSlot(this);
-
-		super.addSlotInternal(disjunctsSlot, false);
-	}
-
-	IFrame copyEmpty() {
-
-		return new IDisjunction(getType(), getFunction());
-	}
-
-	ISlot addSlotInternal(CSlot slotType, boolean free) {
-
-		return disjunctsSlot;
-	}
-
-	void autoUpdateThis() {
-	}
+	abstract String getDataValueDescription();
 }

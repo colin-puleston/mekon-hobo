@@ -29,30 +29,12 @@ package uk.ac.manchester.cs.mekon.model;
  *
  * @author Colin Puleston
  */
-public class CString extends CValue<IString> implements CEntity {
+public class CString extends CDataValue<IString> {
 
 	/**
 	 * Singleton string value-type object.
 	 */
 	static public final CString SINGLETON = new CString();
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String toString() {
-
-		return FEntityDescriber.entityToString(
-					this,
-					getClass().getSimpleName());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getDisplayLabel() {
-
-		return String.class.getSimpleName();
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -128,6 +110,11 @@ public class CString extends CValue<IString> implements CEntity {
 	boolean validTypeValue(IString value) {
 
 		return true;
+	}
+
+	String getDataValueDescription() {
+
+		return String.class.getSimpleName();
 	}
 
 	private CString() {

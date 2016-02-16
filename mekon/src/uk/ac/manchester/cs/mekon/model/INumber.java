@@ -32,7 +32,7 @@ import java.math.*;
  *
  * @author Colin Puleston
  */
-public class INumber implements IEntity, IValue {
+public class INumber extends IDataValue {
 
 	/**
 	 * Represents a numeric-value of plus-infinity
@@ -102,22 +102,6 @@ public class INumber implements IEntity, IValue {
 	public boolean definite() {
 
 		return !infinite() && !indefinite();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String toString() {
-
-		return FEntityDescriber.entityToString(this, getDisplayLabel());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getDisplayLabel() {
-
-		return typeNumber.getDescription();
 	}
 
 	/**
@@ -429,6 +413,11 @@ public class INumber implements IEntity, IValue {
 	INumber(CNumber valueType) {
 
 		typeNumber = new IIndefiniteNumber(valueType);
+	}
+
+	String getDataValueDescription() {
+
+		return typeNumber.getDescription();
 	}
 
 	private INumber(IDefiniteNumber<?> definiteNumber) {

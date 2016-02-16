@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 class IDisjunctsSlot extends ISlot {
 
 	static private final String IDENTIFIER = "@DISJUNCTS";
-	static private final String LABEL = "options";
+	static private final String LABEL = "disjuncts";
 	static private final CIdentity IDENTITY = new CIdentity(IDENTIFIER, LABEL);
 
 	static private CSlot createType(IDisjunction disjunction) {

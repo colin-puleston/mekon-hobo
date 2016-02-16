@@ -162,11 +162,6 @@ public class ISlot implements IEntity {
 	 */
 	public IEditability getEditability() {
 
-		if (disjunctsSlot()) {
-
-			return IEditability.CONCRETE_ONLY;
-		}
-
 		return type.getEditability().forInstances(querySlot());
 	}
 
@@ -220,11 +215,6 @@ public class ISlot implements IEntity {
 	private boolean querySlot() {
 
 		return container.getFunction().query();
-	}
-
-	private boolean disjunctsSlot() {
-
-		return container.getCategory().disjunction();
 	}
 
 	private void checkExternalValuesEditorAccess(

@@ -30,7 +30,7 @@ package uk.ac.manchester.cs.mekon.model;
  *
  * @author Colin Puleston
  */
-public class IString implements IEntity, IValue {
+public class IString extends IDataValue {
 
 	/**
 	 * Represents the Empty string.
@@ -47,22 +47,6 @@ public class IString implements IEntity, IValue {
 	public IString(String value) {
 
 		this.value = value;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String toString() {
-
-		return FEntityDescriber.entityToString(this, value);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getDisplayLabel() {
-
-		return value;
 	}
 
 	/**
@@ -144,6 +128,11 @@ public class IString implements IEntity, IValue {
 	 * @return Represented string-value
 	 */
 	public String get() {
+
+		return value;
+	}
+
+	String getDataValueDescription() {
 
 		return value;
 	}
