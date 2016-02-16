@@ -195,6 +195,14 @@ public abstract class CFrame
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public Class<IFrame> getValueType() {
+
+		return IFrame.class;
+	}
+
+	/**
 	 * Stipulates that this frame does define specific constraints
 	 * on the value-entities that it defines (the constraints being
 	 * that the value-entities must be instantiations of this frame
@@ -585,8 +593,6 @@ public abstract class CFrame
 	}
 
 	CFrame() {
-
-		super(IFrame.class);
 	}
 
 	void acceptVisitor(CValueVisitor visitor) throws Exception {

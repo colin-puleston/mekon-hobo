@@ -55,6 +55,14 @@ public class CString extends CValue<IString> implements CEntity {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public Class<IString> getValueType() {
+
+		return IString.class;
+	}
+
+	/**
 	 * Stipulates that the string value-type is never constrained.
 	 *
 	 * @return False always.
@@ -123,7 +131,5 @@ public class CString extends CValue<IString> implements CEntity {
 	}
 
 	private CString() {
-
-		super(IString.class);
 	}
 }

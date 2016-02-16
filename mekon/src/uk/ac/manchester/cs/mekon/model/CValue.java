@@ -80,8 +80,6 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		return false;
 	}
 
-	private Class<V> valueType;
-
 	private List<CSlot> referencingSlots = new ArrayList<CSlot>();
 	private List<CFrame> slotValueReferencingFrames = new ArrayList<CFrame>();
 
@@ -111,10 +109,7 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	 *
 	 * @return Class of defined value-entities
 	 */
-	public Class<V> getValueType() {
-
-		return valueType;
-	}
+	public abstract Class<V> getValueType();
 
 	/**
 	 * Specifies whether this value-type-entity defines any
@@ -191,6 +186,8 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	 */
 	public V castValue(IValue value) {
 
+		Class<V> valueType = getValueType();
+
 		if (!valueType.isAssignableFrom(value.getClass())) {
 
 			throw new KAccessException(
@@ -244,11 +241,6 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	public List<CFrame> getSlotValueReferencingFrames() {
 
 		return new ArrayList<CFrame>(slotValueReferencingFrames);
-	}
-
-	CValue(Class<V> valueType) {
-
-		this.valueType = valueType;
 	}
 
 	abstract void acceptVisitor(CValueVisitor visitor) throws Exception;

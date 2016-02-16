@@ -350,6 +350,14 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public Class<INumber> getValueType() {
+
+		return INumber.class;
+	}
+
+	/**
 	 * Stipulates that this numeric-type defines specific
 	 * constraints on the value-entities that it defines if and only
 	 * if it has any defined limits.
@@ -603,8 +611,6 @@ public class CNumber extends CValue<INumber> implements CEntity {
 	}
 
 	CNumber(Class<? extends Number> numberType, INumber min, INumber max) {
-
-		super(INumber.class);
 
 		this.numberType = numberType;
 		this.min = min;

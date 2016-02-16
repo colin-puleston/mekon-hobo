@@ -63,6 +63,14 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public Class<CFrame> getValueType() {
+
+		return CFrame.class;
+	}
+
+	/**
 	 * Stipulates that this meta-leval frame does define specific
 	 * constraints on the value-entities that it defines (the
 	 * constraints being that the value-entities must be
@@ -124,8 +132,6 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	MFrame(CFrame rootCFrame) {
-
-		super(CFrame.class);
 
 		this.rootCFrame = rootCFrame;
 	}
