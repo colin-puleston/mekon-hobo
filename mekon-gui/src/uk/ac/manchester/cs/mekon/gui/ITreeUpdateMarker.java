@@ -107,7 +107,7 @@ class ITreeUpdateMarker {
 		this.rootNode = rootNode;
 	}
 
-	void registerAction(ISlotNode updatedSlotNode, IValue addedValue) {
+	void registerUpdatedSlot(ISlotNode updatedSlotNode, IValue addedValue) {
 
 		this.updatedSlotNode = updatedSlotNode;
 		this.addedValue = addedValue;
@@ -227,14 +227,22 @@ class ITreeUpdateMarker {
 
 	private boolean addedValueNode(GNode node) {
 
+		return addedValue != null && addedValue.equals(getValueOrNull(node));
+	}
+
+	private IValue getValueOrNull(GNode node) {
+
 		if (node instanceof IValueNode<?>) {
 
-			IValueNode<?> valueNode = (IValueNode<?>)node;
-
-			return valueNode.getValue().equals(addedValue);
+			return ((IValueNode<?>)node).getValue();
 		}
 
-		return false;
+		if (node instanceof DisjunctionIFrameValueNode) {
+
+			return ((DisjunctionIFrameValueNode)node).getValue();
+		}
+
+		return null;
 	}
 
 	private boolean hasNewParent(GNode node) {

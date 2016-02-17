@@ -45,7 +45,6 @@ class EntityDisplays {
 		return singleton;
 	}
 
-	final GCellDisplay disjunctsSlotDisplay = forDisjunctsSlot();
 	final GCellDisplay fixedValuesDisplay = forFixedValues();
 
 	private EntityIcons icons = EntityIcons.get();
@@ -94,7 +93,7 @@ class EntityDisplays {
 
 		if (slot.getContainer().getCategory().disjunction()) {
 
-			return disjunctsSlotDisplay;
+			return forDisjunctsSlot();
 		}
 
 		return forSlot(slot, icons.get(slot));

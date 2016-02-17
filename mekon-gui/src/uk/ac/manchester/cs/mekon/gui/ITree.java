@@ -57,7 +57,7 @@ class ITree extends GTree {
 	void onSlotValuesUpdateEnd(ISlotNode node, IValue addedValue) {
 
 		collapseds.restore();
-		updateMarker.registerAction(node, addedValue);
+		updateMarker.registerUpdatedSlot(node, addedValue);
 	}
 
 	ITreeUpdateMarker getUpdateMarker() {
