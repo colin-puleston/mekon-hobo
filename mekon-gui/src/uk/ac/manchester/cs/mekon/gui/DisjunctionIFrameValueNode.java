@@ -53,8 +53,6 @@ class DisjunctionIFrameValueNode extends IFrameSlotNode {
 		super(tree, disjunction.getDisjunctsSlot());
 
 		this.disjunction = disjunction;
-
-		tree.getUpdateMarker().registerUpdatedValue(this);
 	}
 
 	void removeValue(IValue value) {
