@@ -36,6 +36,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 abstract class ISlotNode extends GNode {
 
 	private ITree tree;
+
 	private ISlot slot;
 	private ValueNodes valueNodes;
 
@@ -131,19 +132,19 @@ abstract class ISlotNode extends GNode {
 
 	protected GCellDisplay getDisplay() {
 
-		GCellDisplay main = EntityDisplays.get().get(slot);
-		GCellDisplay valType = EntityDisplays.get().forSlotValueTypeModifier(slot);
-		GCellDisplay card = EntityDisplays.get().forSlotCardinalityModifier(slot);
+		EntityDisplays ds = EntityDisplays.get();
 
-		main.setModifier(valType);
-		valType.setModifier(card);
+		GCellDisplay display = ds.get(slot);
+		GCellDisplay valTypeDisp = ds.forSlotValueTypeModifier(slot);
+		GCellDisplay cardDisp = ds.forSlotCardinalityModifier(slot);
 
-		ITreeUpdateMarker updateMarker = tree.getUpdateMarker();
+		display.setModifier(valTypeDisp);
+		valTypeDisp.setModifier(cardDisp);
 
-		updateMarker.checkMarkForGeneralUpdate(this, main);
-		updateMarker.checkMarkForSlotValueTypeUpdate(this, valType);
+		tree.checkMarkForGeneralUpdate(this, display);
+		tree.checkMarkForSlotValueTypeUpdate(this, valTypeDisp);
 
-		return main;
+		return display;
 	}
 
 	ISlotNode(ITree tree, ISlot slot) {
@@ -160,24 +161,19 @@ abstract class ISlotNode extends GNode {
 
 	void addValue(IValue value) {
 
-		onUpdateStart();
-		getValuesEditor().add(value);
-		onUpdateEnd(value);
+		tree.addValue(this, value);
 	}
 
 	void removeValue(IValue value) {
 
-		onUpdateStart();
-		getValuesEditor().remove(value);
-		onUpdateEnd(null);
+		tree.removeValue(this, value);
 	}
 
 	void replaceValue(IValue oldValue, IValue newValue) {
 
 		startChildReplacementOperation();
-
-		removeValue(oldValue);
-		addValue(newValue);
+		tree.replaceValue(this, newValue, oldValue);
+		endChildReplacementOperation();
 	}
 
 	abstract IValue checkObtainValue();
@@ -198,28 +194,11 @@ abstract class ISlotNode extends GNode {
 
 	private void clearValues() {
 
-		onUpdateStart();
-		getValuesEditor().clear();
-		onUpdateEnd(null);
-	}
-
-	private void onUpdateStart() {
-
-		tree.onSlotValuesUpdateStart(this);
-	}
-
-	private void onUpdateEnd(IValue addedValue) {
-
-		tree.onSlotValuesUpdateEnd(this, addedValue);
+		tree.clearValues(this);
 	}
 
 	private boolean editableSlot() {
 
 		return slot.getEditability().editable();
-	}
-
-	private ISlotValuesEditor getValuesEditor() {
-
-		return slot.getValuesEditor();
 	}
 }

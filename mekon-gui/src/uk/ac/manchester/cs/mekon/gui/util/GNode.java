@@ -66,6 +66,16 @@ public abstract class GNode extends GMutableTreeNode {
 			replacing = true;
 		}
 
+		void endReplacementOperation() {
+
+			replacing = false;
+		}
+
+		boolean replacing() {
+
+			return replacing;
+		}
+
 		void performAddition(GNode child) {
 
 			if (nextIndex != null) {
@@ -173,6 +183,16 @@ public abstract class GNode extends GMutableTreeNode {
 	public void startChildReplacementOperation() {
 
 		getChildList().startReplacementOperation();
+	}
+
+	public void endChildReplacementOperation() {
+
+		getChildList().endReplacementOperation();
+	}
+
+	public boolean replacingChild() {
+
+		return getChildList().replacing();
 	}
 
 	public GNode getParent() {

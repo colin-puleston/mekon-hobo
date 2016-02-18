@@ -59,11 +59,9 @@ class DisjunctionIFrameValueNode extends IFrameSlotNode {
 
 		super.removeValue(value);
 
-		List<IFrame> disjuncts = disjunction.asDisjuncts();
+		if (!replacingChild()) {
 
-		if (disjuncts.size() == 1) {
-
-			getParentSlotNode().replaceValue(disjunction, disjuncts.get(0));
+			checkRevertToAtomicValue();
 		}
 	}
 
@@ -75,6 +73,16 @@ class DisjunctionIFrameValueNode extends IFrameSlotNode {
 	IFrame getValue() {
 
 		return disjunction;
+	}
+
+	private void checkRevertToAtomicValue() {
+
+		List<IFrame> disjuncts = disjunction.asDisjuncts();
+
+		if (disjuncts.size() == 1) {
+
+			getParentSlotNode().replaceValue(disjunction, disjuncts.get(0));
+		}
 	}
 
 	private IFrameSlotNode getParentSlotNode() {

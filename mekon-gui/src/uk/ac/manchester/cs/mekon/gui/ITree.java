@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.awt.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -35,33 +37,107 @@ class ITree extends GTree {
 
 	static private final long serialVersionUID = -1;
 
+	static final Color DIRECT_UPDATES_CLR = Color.yellow;
+	static final Color INDIRECT_UPDATES_CLR = Color.cyan;
+
 	private ITreeCollapsedNodes collapseds = null;
-	private ITreeUpdateMarker updateMarker = new ITreeUpdateMarker();
+	private ITreeUpdates updates = null;
+
+	private class ISlotValueUpdates {
+
+		private ISlotNode slotNode;
+		private ISlotValuesEditor editor;
+
+		ISlotValueUpdates(ISlotNode slotNode) {
+
+			this.slotNode = slotNode;
+
+			editor = slotNode.getISlot().getValuesEditor();
+		}
+
+		void performUpdate(IValue valueToAdd, IValue valueToRemove) {
+
+			collapseds.update(slotNode);
+			updates.onSlotToBeUpdated(slotNode, valueToAdd, valueToRemove);
+
+			if (valueToAdd == null && valueToRemove == null) {
+
+				editor.clear();
+			}
+			else {
+
+				if (valueToAdd != null) {
+
+					editor.add(valueToAdd);
+				}
+
+				if (valueToRemove != null) {
+
+					editor.remove(valueToRemove);
+				}
+			}
+
+			collapseds.restore();
+		}
+	}
 
 	ITree(IFrame rootFrame) {
 
 		initialise(new IFrameNode(this, rootFrame));
-		setActiveTree();
 
+		updates = new ITreeUpdates(getRootNode());
 		collapseds = new ITreeCollapsedNodes(getRootNode());
 
-		updateMarker.initialise(getRootNode());
+		setActiveTree();
 	}
 
-	void onSlotValuesUpdateStart(ISlotNode node) {
+	void addValue(ISlotNode slotNode, IValue value) {
 
-		collapseds.update(node);
-		updateMarker.update();
+		new ISlotValueUpdates(slotNode).performUpdate(value, null);
 	}
 
-	void onSlotValuesUpdateEnd(ISlotNode node, IValue addedValue) {
+	void removeValue(ISlotNode slotNode, IValue value) {
 
-		collapseds.restore();
-		updateMarker.registerUpdatedSlot(node, addedValue);
+		new ISlotValueUpdates(slotNode).performUpdate(null, value);
 	}
 
-	ITreeUpdateMarker getUpdateMarker() {
+	void replaceValue(ISlotNode slotNode, IValue oldValue, IValue newValue) {
 
-		return updateMarker;
+		new ISlotValueUpdates(slotNode).performUpdate(oldValue, newValue);
+	}
+
+	void clearValues(ISlotNode slotNode) {
+
+		new ISlotValueUpdates(slotNode).performUpdate(null, null);
+	}
+
+	void checkMarkForGeneralUpdate(GNode node, GCellDisplay display) {
+
+		if (updates == null) {
+
+			return;
+		}
+
+		if (updates.indirectGeneralUpdateMarkRequired(node)) {
+
+			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
+		}
+		else if (updates.directGeneralUpdateMarkRequired(node)) {
+
+			display.setBackgroundColour(DIRECT_UPDATES_CLR);
+		}
+	}
+
+	void checkMarkForSlotValueTypeUpdate(ISlotNode node, GCellDisplay display) {
+
+		if (updates == null) {
+
+			return;
+		}
+
+		if (updates.indirectSlotValueTypeUpdateMarkRequired(node)) {
+
+			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
+		}
 	}
 }

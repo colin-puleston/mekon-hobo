@@ -477,28 +477,28 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					"CFrame, IFrame, INumber, IString",
-					getValueLabelComponent(ITreeUpdateMarker.DIRECT_UPDATES_CLR),
+					getValueLabelComponent(InstanceEditor.DIRECT_UPDATES_CLR),
 					"Value added by user");
 				addRow(
 					"ISlot",
-					getSlotLabelComponent(ITreeUpdateMarker.DIRECT_UPDATES_CLR, null),
+					getSlotLabelComponent(InstanceEditor.DIRECT_UPDATES_CLR, null),
 					"Value(s) removed by user");
 
 				addRow(
 					"CFrame, INumber, IString",
-					getValueLabelComponent(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
+					getValueLabelComponent(InstanceEditor.INDIRECT_UPDATES_CLR),
 					"Value added by model");
 				addRow(
 					"IFrame",
-					getValueLabelComponent(ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
+					getValueLabelComponent(InstanceEditor.INDIRECT_UPDATES_CLR),
 					"Value added, or non-visible descendant(s) updated, by model");
 				addRow(
 					"ISlot",
-					getSlotLabelComponent(ITreeUpdateMarker.INDIRECT_UPDATES_CLR, null),
+					getSlotLabelComponent(InstanceEditor.INDIRECT_UPDATES_CLR, null),
 					"Value(s) removed, or non-visible descendant(s) updated, by model");
 				addRow(
 					"ISlot",
-					getSlotLabelComponent(null, ITreeUpdateMarker.INDIRECT_UPDATES_CLR),
+					getSlotLabelComponent(null, InstanceEditor.INDIRECT_UPDATES_CLR),
 					"Value-type updated by model");
 			}
 
