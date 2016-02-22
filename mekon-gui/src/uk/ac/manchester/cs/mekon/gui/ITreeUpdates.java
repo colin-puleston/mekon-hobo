@@ -134,10 +134,14 @@ class ITreeUpdates {
 
 		if (nodeStates == null
 			|| node == updatedSlotNode
-			|| node == getDirectAddedValueNodeOrNull()
-			|| newParent(node)) {
+			|| node == getDirectAddedValueNodeOrNull()) {
 
 			return false;
+		}
+
+		if (newParent(node)) {
+
+			return !node.getChildren().isEmpty();
 		}
 
 		if (newOrChildrenMissing(node)) {
