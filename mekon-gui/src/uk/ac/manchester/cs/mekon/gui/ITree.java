@@ -88,13 +88,13 @@ class ITree extends GTree {
 			return;
 		}
 
-		if (updates.indirectGeneralUpdateMarkRequired(node)) {
-
-			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
-		}
-		else if (updates.directGeneralUpdateMarkRequired(node)) {
+		if (updates.directGeneralUpdateMarkRequired(node)) {
 
 			display.setBackgroundColour(DIRECT_UPDATES_CLR);
+		}
+		else if (updates.indirectGeneralUpdateMarkRequired(node)) {
+
+			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
 		}
 	}
 
