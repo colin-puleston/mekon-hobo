@@ -41,24 +41,32 @@ public class ConceptSummary extends ValueSummary {
 	private DModel model;
 	private DEditor dEditor;
 
-	class ConceptSummaryPopulator extends Populator<CFrame> {
+	private class ConceptSummaryPopulator extends Populator<CFrame> {
 
 		void set(List<CFrame> values) {
 
+			getAllValuesArray().update(toConcepts(values));
+		}
+
+		CFrame extractValue(IValue value) {
+
+			return (CFrame)value;
+		}
+
+		private List<DConcept<DObject>> toConcepts(List<CFrame> values) {
+
+			List<DConcept<DObject>> concepts = new ArrayList<DConcept<DObject>>();
 			Set<CFrame> added = new HashSet<CFrame>();
 
 			for (CFrame value : values) {
 
 				if (added.add(value)) {
 
-					getAllValuesArray().add(getConcept(value));
+					concepts.add(getConcept(value));
 				}
 			}
-		}
 
-		CFrame extractValue(IValue value) {
-
-			return (CFrame)value;
+			return concepts;
 		}
 	}
 

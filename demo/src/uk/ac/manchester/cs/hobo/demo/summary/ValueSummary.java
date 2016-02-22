@@ -156,7 +156,6 @@ public abstract class ValueSummary extends DObjectShell {
 
 	private void update() {
 
-		clear();
 		populator.populate();
 	}
 

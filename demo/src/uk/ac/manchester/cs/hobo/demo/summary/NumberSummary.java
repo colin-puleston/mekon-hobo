@@ -39,7 +39,7 @@ public abstract class NumberSummary<N extends Number> extends ValueSummary {
 
 	private DEditor dEditor;
 
-	class NumberSummaryPopulator extends Populator<N> {
+	private class NumberSummaryPopulator extends Populator<N> {
 
 		void set(List<N> values) {
 
