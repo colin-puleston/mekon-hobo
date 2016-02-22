@@ -43,44 +43,6 @@ class ITree extends GTree {
 	private ITreeCollapsedNodes collapseds = null;
 	private ITreeUpdates updates = null;
 
-	private class ISlotValueUpdates {
-
-		private ISlotNode slotNode;
-		private ISlotValuesEditor editor;
-
-		ISlotValueUpdates(ISlotNode slotNode) {
-
-			this.slotNode = slotNode;
-
-			editor = slotNode.getISlot().getValuesEditor();
-		}
-
-		void performUpdate(IValue valueToAdd, IValue valueToRemove) {
-
-			collapseds.update(slotNode);
-			updates.onSlotToBeUpdated(slotNode, valueToAdd, valueToRemove);
-
-			if (valueToAdd == null && valueToRemove == null) {
-
-				editor.clear();
-			}
-			else {
-
-				if (valueToAdd != null) {
-
-					editor.add(valueToAdd);
-				}
-
-				if (valueToRemove != null) {
-
-					editor.remove(valueToRemove);
-				}
-			}
-
-			collapseds.restore();
-		}
-	}
-
 	ITree(IFrame rootFrame) {
 
 		initialise(new IFrameNode(this, rootFrame));
@@ -93,22 +55,30 @@ class ITree extends GTree {
 
 	void addValue(ISlotNode slotNode, IValue value) {
 
-		new ISlotValueUpdates(slotNode).performUpdate(value, null);
+		update(slotNode, value, null);
 	}
 
 	void removeValue(ISlotNode slotNode, IValue value) {
 
-		new ISlotValueUpdates(slotNode).performUpdate(null, value);
+		update(slotNode, null, value);
 	}
 
 	void replaceValue(ISlotNode slotNode, IValue oldValue, IValue newValue) {
 
-		new ISlotValueUpdates(slotNode).performUpdate(oldValue, newValue);
+		update(slotNode, oldValue, newValue);
 	}
 
 	void clearValues(ISlotNode slotNode) {
 
-		new ISlotValueUpdates(slotNode).performUpdate(null, null);
+		update(slotNode, null, null);
+	}
+
+	void onAddedValue(GNode addedValueNode) {
+
+		if (updates != null) {
+
+			updates.onAddedValue(addedValueNode);
+		}
 	}
 
 	void checkMarkForGeneralUpdate(GNode node, GCellDisplay display) {
@@ -139,5 +109,12 @@ class ITree extends GTree {
 
 			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
 		}
+	}
+
+	private void update(ISlotNode slotNode, IValue valueToAdd, IValue valueToRemove) {
+
+		collapseds.update(slotNode);
+		updates.update(slotNode, valueToAdd, valueToRemove);
+		collapseds.restore();
 	}
 }

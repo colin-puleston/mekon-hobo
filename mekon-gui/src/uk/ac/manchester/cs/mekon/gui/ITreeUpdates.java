@@ -39,8 +39,8 @@ class ITreeUpdates {
 	private Map<GNode, GNodeState> nodeStates = null;
 
 	private ISlotNode updatedSlotNode = null;
-	private IValue addedValue = null;
-	private boolean replacedValue = false;
+	private GNode addedValueNode = null;
+	private boolean valueReplaced = false;
 
 	private GeneralUpdateChecker directGeneralUpdateChecker
 									= new GeneralUpdateChecker(true);
@@ -148,7 +148,7 @@ class ITreeUpdates {
 
 		private boolean requiredUpdateType(GNode node) {
 
-			if (replacedValue && !addedValue(node)) {
+			if (valueReplaced && node != addedValueNode) {
 
 				return false;
 			}
@@ -162,17 +162,19 @@ class ITreeUpdates {
 		this.rootNode = rootNode;
 	}
 
-	void onSlotToBeUpdated(
-			ISlotNode updatedSlotNode,
-			IValue addedValue,
-			IValue removedValue) {
+	void update(ISlotNode slotNode, IValue valueToAdd, IValue valueToRemove) {
 
-		this.updatedSlotNode = updatedSlotNode;
-		this.addedValue = addedValue;
-
-		replacedValue = (addedValue != null && removedValue != null);
+		updatedSlotNode = slotNode;
+		addedValueNode = null;
+		valueReplaced = valueToAdd != null && valueToRemove != null;
 
 		updateNodeStates();
+		updateValues(valueToAdd, valueToRemove);
+	}
+
+	void onAddedValue(GNode addedValueNode) {
+
+		this.addedValueNode = addedValueNode;
 	}
 
 	boolean directGeneralUpdateMarkRequired(GNode node) {
@@ -188,6 +190,28 @@ class ITreeUpdates {
 	boolean indirectSlotValueTypeUpdateMarkRequired(ISlotNode node) {
 
 		return nodeStates != null && updatedSlotValueType(node);
+	}
+
+	private void updateValues(IValue valueToAdd, IValue valueToRemove) {
+
+		ISlotValuesEditor editor = getSlotValuesEditor();
+
+		if (valueToAdd != null || valueToRemove != null) {
+
+			if (valueToAdd != null) {
+
+				editor.add(valueToAdd);
+			}
+
+			if (valueToRemove != null) {
+
+				editor.remove(valueToRemove);
+			}
+		}
+		else {
+
+			editor.clear();
+		}
 	}
 
 	private void updateNodeStates() {
@@ -247,27 +271,7 @@ class ITreeUpdates {
 
 	private boolean directlyUpdated(GNode node) {
 
-		return node.equals(updatedSlotNode) || addedValue(node);
-	}
-
-	private boolean addedValue(GNode node) {
-
-		return addedValue != null && addedValue.equals(getValueOrNull(node));
-	}
-
-	private IValue getValueOrNull(GNode node) {
-
-		if (node instanceof IValueNode<?>) {
-
-			return ((IValueNode<?>)node).getValue();
-		}
-
-		if (node instanceof DisjunctionIFrameValueNode) {
-
-			return ((DisjunctionIFrameValueNode)node).getValue();
-		}
-
-		return null;
+		return node.equals(updatedSlotNode) || node.equals(addedValueNode);
 	}
 
 	private boolean updatedSlotValueType(ISlotNode node) {
@@ -275,5 +279,10 @@ class ITreeUpdates {
 		ISlotNodeState state = (ISlotNodeState)nodeStates.get(node);
 
 		return state != null && state.updatedValueType(node);
+	}
+
+	private ISlotValuesEditor getSlotValuesEditor() {
+
+		return updatedSlotNode.getISlot().getValuesEditor();
 	}
 }

@@ -195,6 +195,11 @@ public abstract class GNode extends GMutableTreeNode {
 		return getChildList().replacing();
 	}
 
+	public String toString() {
+
+		return getClass().getSimpleName() + "[" + getDisplay().getText() + "]";
+	}
+
 	public GNode getParent() {
 
 		return parent;
