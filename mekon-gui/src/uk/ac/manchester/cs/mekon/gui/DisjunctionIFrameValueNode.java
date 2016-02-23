@@ -45,7 +45,7 @@ class DisjunctionIFrameValueNode extends IFrameSlotNode {
 
 	protected GNodeAction getNegativeAction1() {
 
-		return getRemoveValueAction(disjunction);
+		return getParentSlotNode().getRemoveValueAction(disjunction);
 	}
 
 	DisjunctionIFrameValueNode(ITree tree, IFrame disjunction) {

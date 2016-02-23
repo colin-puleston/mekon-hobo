@@ -73,14 +73,6 @@ class ITree extends GTree {
 		update(slotNode, null, null);
 	}
 
-	void onAddedValue(GNode addedValueNode) {
-
-		if (updates != null) {
-
-			updates.onAddedValue(addedValueNode);
-		}
-	}
-
 	void checkMarkForGeneralUpdate(GNode node, GCellDisplay display) {
 
 		if (updates == null) {

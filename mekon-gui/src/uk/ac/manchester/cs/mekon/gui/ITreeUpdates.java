@@ -39,7 +39,7 @@ class ITreeUpdates {
 	private Map<GNode, GNodeState> nodeStates = null;
 
 	private ISlotNode updatedSlotNode = null;
-	private List<GNode> addedValueNodes = new ArrayList<GNode>();
+	private boolean valueAdded = false;
 
 	private class GNodeState {
 
@@ -52,10 +52,23 @@ class ITreeUpdates {
 
 		boolean updated(GNode node) {
 
-			return childrenMissing(node);
+			return childrenRemoved(node);
 		}
 
-		boolean childrenMissing(GNode node) {
+		boolean childrenAdded(GNode node) {
+
+			for (GNode child : node.getChildren()) {
+
+				if (!children.contains(child)) {
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		boolean childrenRemoved(GNode node) {
 
 			List<GNode> currentChildren = node.getChildren();
 
@@ -106,45 +119,42 @@ class ITreeUpdates {
 	void update(ISlotNode slotNode, IValue valueToAdd, IValue valueToRemove) {
 
 		updatedSlotNode = slotNode;
-
-		addedValueNodes.clear();
+		valueAdded = valueToAdd != null;
 
 		updateNodeStates();
 		updateValues(valueToAdd, valueToRemove);
 	}
 
-	void onAddedValue(GNode addedValueNode) {
-
-		addedValueNodes.add(addedValueNode);
-	}
-
 	boolean directGeneralUpdateMarkRequired(GNode node) {
 
-		GNode addedValueNode = getDirectAddedValueNodeOrNull();
+		if (valueAdded) {
 
-		if (node == updatedSlotNode) {
+			GNode parent = node.getParent();
 
-			return addedValueNode == null;
+			if (parent != null && addedValueNode(parent)) {
+
+				return iFrameDisjunctNode(node) && lastChildNode(node);
+			}
+
+			return addedValueNode(node);
 		}
 
-		return node == addedValueNode;
+		return node == updatedSlotNode;
 	}
 
 	boolean indirectGeneralUpdateMarkRequired(GNode node) {
 
-		if (nodeStates == null
-			|| node == updatedSlotNode
-			|| node == getDirectAddedValueNodeOrNull()) {
+		if (node == updatedSlotNode || addedValueNode(node)) {
 
 			return false;
 		}
 
-		if (newParent(node)) {
+		if (iFrameDisjunctNode(node)) {
 
-			return !node.getChildren().isEmpty();
+			return false;
 		}
 
-		if (newOrChildrenMissing(node)) {
+		if (localUpdate(node)) {
 
 			return true;
 		}
@@ -154,7 +164,14 @@ class ITreeUpdates {
 
 	boolean indirectSlotValueTypeUpdateMarkRequired(ISlotNode node) {
 
-		return nodeStates != null && updatedSlotValueType(node);
+		if (nodeStates == null) {
+
+			return false;
+		}
+
+		ISlotNodeState state = (ISlotNodeState)nodeStates.get(node);
+
+		return state != null && state.updatedValueType(node);
 	}
 
 	private void updateValues(IValue valueToAdd, IValue valueToRemove) {
@@ -213,32 +230,28 @@ class ITreeUpdates {
 		return new GNodeState(node);
 	}
 
-	private boolean newParent(GNode node) {
+	private boolean localUpdate(GNode node) {
 
-		GNode parent = node.getParent();
+		if (nodeStates == null) {
 
-		return parent != null && nodeStates.get(parent) == null;
-	}
-
-	private boolean newOrUpdated(GNode node) {
+			return false;
+		}
 
 		GNodeState state = nodeStates.get(node);
 
-		return state == null || state.updated(node);
-	}
+		if (state == null) {
 
-	private boolean newOrChildrenMissing(GNode node) {
+			return node instanceof IValueNode;
+		}
 
-		GNodeState state = nodeStates.get(node);
-
-		return state == null || state.childrenMissing(node);
+		return state.childrenRemoved(node) && !state.childrenAdded(node);
 	}
 
 	private boolean updatesInSubTree(GNode node) {
 
 		for (GNode child : node.getChildren()) {
 
-			if (newOrUpdated(child) || updatesInSubTree(child)) {
+			if (newOrUpdatedNode(child) || updatesInSubTree(child)) {
 
 				return true;
 			}
@@ -247,28 +260,34 @@ class ITreeUpdates {
 		return false;
 	}
 
-	private boolean updatedSlotValueType(ISlotNode node) {
+	private boolean newOrUpdatedNode(GNode node) {
 
-		ISlotNodeState state = (ISlotNodeState)nodeStates.get(node);
+		GNodeState state = nodeStates.get(node);
 
-		return state != null && state.updatedValueType(node);
+		return state == null || state.updated(node);
+	}
+
+	private boolean iFrameDisjunctNode(GNode node) {
+
+		return node.getParent() instanceof DisjunctionIFrameValueNode;
+	}
+
+	private boolean addedValueNode(GNode node) {
+
+		return valueAdded
+				&& node.getParent() == updatedSlotNode
+				&& lastChildNode(node);
+	}
+
+	private boolean lastChildNode(GNode child) {
+
+		List<GNode> siblings = child.getParent().getChildren();
+
+		return siblings.indexOf(child) == (siblings.size() - 1);
 	}
 
 	private ISlotValuesEditor getSlotValuesEditor() {
 
 		return updatedSlotNode.getISlot().getValuesEditor();
-	}
-
-	private GNode getDirectAddedValueNodeOrNull() {
-
-		for (GNode node : addedValueNodes) {
-
-			if (node.getParent() == updatedSlotNode) {
-
-				return node;
-			}
-		}
-
-		return null;
 	}
 }

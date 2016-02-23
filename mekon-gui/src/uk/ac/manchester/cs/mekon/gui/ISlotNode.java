@@ -111,7 +111,7 @@ abstract class ISlotNode extends GNode {
 
 		GNode createChildNode(IValue value) {
 
-			return createAndRegisterValueNode(value);
+			return createValueNode(value);
 		}
 	}
 
@@ -190,15 +190,6 @@ abstract class ISlotNode extends GNode {
 	ISlot getISlot() {
 
 		return slot;
-	}
-
-	private GNode createAndRegisterValueNode(IValue value) {
-
-		GNode valueNode = createValueNode(value);
-
-		tree.onAddedValue(valueNode);
-
-		return valueNode;
 	}
 
 	private void clearValues() {
