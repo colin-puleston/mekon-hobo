@@ -241,10 +241,20 @@ class ITreeUpdates {
 
 		if (state == null) {
 
-			return node instanceof IValueNode;
+			return nonDefaultNode(node);
 		}
 
 		return state.childrenRemoved(node) && !state.childrenAdded(node);
+	}
+
+	private boolean nonDefaultNode(GNode node) {
+
+		if (node instanceof ISlotNode) {
+
+			return nodeStates.get(node.getParent()) != null;
+		}
+
+		return true;
 	}
 
 	private boolean updatesInSubTree(GNode node) {
