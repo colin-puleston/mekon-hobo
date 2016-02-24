@@ -36,52 +36,52 @@ import uk.ac.manchester.cs.hobo.demo.summary.*;
 /**
  * @author Colin Puleston
  */
-public class TripsByTravelMode extends DObjectShell implements TravelAspect {
+public class TripsOfType extends DObjectShell implements TravelAspect {
 
-	public final DCellViewer<DConcept<TravelMode>> mode;
-	public final DArray<Trip> trips;
+	public final DCellViewer<DConcept<Trip>> tripType;
+	public final DArray<TripOfType> trips;
 	public final DArrayViewer<ValueSummary> summaries;
 
 	private DEditor dEditor;
 	private Summariser summariser;
 
-	private class TripInitialiser implements KValuesListener<Trip> {
+	private class TripInitialiser implements KValuesListener<TripOfType> {
 
-		private DConcept<TravelMode> modeValue;
+		private DConcept<Trip> typeValue;
 
-		public void onAdded(Trip value) {
+		public void onAdded(TripOfType value) {
 
-			value.initialise(instantiateMode());
-			summariser.addSummarised(value.details.get().getFrame());
+			value.initialise(instantiateType());
+			summariser.addSummarised(value.trip.get().getFrame());
 		}
 
-		public void onRemoved(Trip value) {
+		public void onRemoved(TripOfType value) {
 
-			summariser.removeSummarised(value.details.get().getFrame());
+			summariser.removeSummarised(value.trip.get().getFrame());
 		}
 
-		public void onCleared(List<Trip> values) {
+		public void onCleared(List<TripOfType> values) {
 
 			summariser.clearSummariseds();
 		}
 
-		TripInitialiser(DConcept<TravelMode> modeValue) {
+		TripInitialiser(DConcept<Trip> typeValue) {
 
-			this.modeValue = modeValue;
+			this.typeValue = typeValue;
 
 			trips.addValuesListener(this);
 		}
 
-		private TravelMode instantiateMode() {
+		private Trip instantiateType() {
 
-			return getModeConcept().instantiate(getFrameFunction());
+			return getTypeConcept().instantiate(getFrameFunction());
 		}
 
-		private DConcept<TravelMode> getModeConcept() {
+		private DConcept<Trip> getTypeConcept() {
 
-			CFrame valueFrame = modeValue.getFrame();
+			CFrame valueFrame = typeValue.getFrame();
 
-			return getModel().getConcept(TravelMode.class, valueFrame);
+			return getModel().getConcept(Trip.class, valueFrame);
 		}
 
 		private IFrameFunction getFrameFunction() {
@@ -90,27 +90,27 @@ public class TripsByTravelMode extends DObjectShell implements TravelAspect {
 		}
 	}
 
-	public TripsByTravelMode(DObjectBuilder builder) {
+	public TripsOfType(DObjectBuilder builder) {
 
 		super(builder);
 
-		mode = builder.getViewer(builder.addConceptCell(TravelMode.class));
-		trips = builder.addObjectArray(Trip.class);
+		tripType = builder.getViewer(builder.addConceptCell(Trip.class));
+		trips = builder.addObjectArray(TripOfType.class);
 		summaries = builder.getViewer(builder.addObjectArray(ValueSummary.class));
 
 		dEditor = builder.getEditor();
 		summariser = createSummariser(builder.getEditor());
 
-		builder.setEditability(getModeCell(), CEditability.NONE);
+		builder.setEditability(getTripTypeCell(), CEditability.NONE);
 		builder.setEditability(getSummariesArray(), CEditability.NONE);
 	}
 
-	void initialise(DConcept<TravelMode> modeValue) {
+	void initialise(DConcept<Trip> typeValue) {
 
-		getModeCell().set(modeValue);
-		summariser.initialise(modeValue.getFrame());
+		getTripTypeCell().set(typeValue);
+		summariser.initialise(typeValue.getFrame());
 
-		new TripInitialiser(modeValue);
+		new TripInitialiser(typeValue);
 	}
 
 	private Summariser createSummariser(DEditor dEditor) {
@@ -118,9 +118,9 @@ public class TripsByTravelMode extends DObjectShell implements TravelAspect {
 		return new Summariser(this, getSummariesArray());
 	}
 
-	private DCell<DConcept<TravelMode>> getModeCell() {
+	private DCell<DConcept<Trip>> getTripTypeCell() {
 
-		return dEditor.getCell(mode);
+		return dEditor.getCell(tripType);
 	}
 
 	private DArray<ValueSummary> getSummariesArray() {

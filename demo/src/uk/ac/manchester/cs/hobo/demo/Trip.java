@@ -24,29 +24,15 @@
 
 package uk.ac.manchester.cs.hobo.demo;
 
-import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
  * @author Colin Puleston
  */
-public class Trip extends DObjectShell implements TravelAspect {
-
-	public final DCellViewer<TravelMode> details;
-
-	private DEditor dEditor;
+public class Trip extends DObjectShell {
 
 	public Trip(DObjectBuilder builder) {
 
 		super(builder);
-
-		details = builder.getViewer(builder.addObjectCell(TravelMode.class));
-
-		dEditor = builder.getEditor();
-	}
-
-	void initialise(TravelMode travelModeValue) {
-
-		dEditor.getCell(details).set(travelModeValue);
 	}
 }

@@ -36,31 +36,31 @@ import uk.ac.manchester.cs.hobo.modeller.*;
  */
 public class Travel extends DObjectShell implements CitizenAspect {
 
-	public final DArray<DConcept<TravelMode>> modes;
-	public final DArrayViewer<TripsByTravelMode> trips;
+	public final DArray<DConcept<Trip>> tripTypes;
+	public final DArrayViewer<TripsOfType> trips;
 
 	private DEditor dEditor;
 
-	private class ModesListener implements KValuesListener<DConcept<TravelMode>> {
+	private class TripsListener implements KValuesListener<DConcept<Trip>> {
 
-		public void onAdded(DConcept<TravelMode> value) {
+		public void onAdded(DConcept<Trip> value) {
 
 			getTripsArray().add(createTrips(value));
 		}
 
-		public void onRemoved(DConcept<TravelMode> value) {
+		public void onRemoved(DConcept<Trip> value) {
 
 			getTripsArray().remove(getTripsValue(value));
 		}
 
-		public void onCleared(List<DConcept<TravelMode>> values) {
+		public void onCleared(List<DConcept<Trip>> values) {
 
 			getTripsArray().clear();
 		}
 
-		ModesListener() {
+		TripsListener() {
 
-			modes.addValuesListener(this);
+			tripTypes.addValuesListener(this);
 		}
 	}
 
@@ -68,7 +68,7 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		public void initialise() {
 
-			new ModesListener();
+			new TripsListener();
 		}
 	}
 
@@ -76,8 +76,8 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		super(builder);
 
-		modes = builder.addConceptArray(TravelMode.class);
-		trips = builder.getViewer(builder.addObjectArray(TripsByTravelMode.class));
+		tripTypes = builder.addConceptArray(Trip.class);
+		trips = builder.getViewer(builder.addObjectArray(TripsOfType.class));
 
 		dEditor = builder.getEditor();
 
@@ -86,41 +86,41 @@ public class Travel extends DObjectShell implements CitizenAspect {
 		builder.addInitialiser(new Initialiser());
 	}
 
-	private TripsByTravelMode createTrips(DConcept<TravelMode> modeValue) {
+	private TripsOfType createTrips(DConcept<Trip> tripTypeValue) {
 
-		TripsByTravelMode tripsValue = instantiateTrips();
+		TripsOfType tripsValue = instantiateTrips();
 
-		tripsValue.initialise(modeValue);
+		tripsValue.initialise(tripTypeValue);
 
 		return tripsValue;
 	}
 
-	private TripsByTravelMode instantiateTrips() {
+	private TripsOfType instantiateTrips() {
 
 		IFrameFunction function = getFrame().getFunction();
 
 		return getTripsConcept().instantiate(function);
 	}
 
-	private DConcept<TripsByTravelMode> getTripsConcept() {
+	private DConcept<TripsOfType> getTripsConcept() {
 
-		return getModel().getConcept(TripsByTravelMode.class);
+		return getModel().getConcept(TripsOfType.class);
 	}
 
-	private TripsByTravelMode getTripsValue(DConcept<TravelMode> mode) {
+	private TripsOfType getTripsValue(DConcept<Trip> tripType) {
 
-		for (TripsByTravelMode value : getTripsArray().getAll()) {
+		for (TripsOfType value : getTripsArray().getAll()) {
 
-			if (value.mode.get().equals(mode)) {
+			if (value.tripType.get().equals(tripType)) {
 
 				return value;
 			}
 		}
 
-		throw new Error("Not a value: " + mode);
+		throw new Error("Not a value: " + tripType);
 	}
 
-	private DArray<TripsByTravelMode> getTripsArray() {
+	private DArray<TripsOfType> getTripsArray() {
 
 		return dEditor.getArray(trips);
 	}
