@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 public class Travel extends DObjectShell implements CitizenAspect {
 
 	public final DArray<DConcept<TravelMode>> modes;
-	public final DArrayViewer<TravelDetails> details;
+	public final DArrayViewer<TripsByTravelMode> trips;
 
 	private DEditor dEditor;
 
@@ -45,17 +45,17 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		public void onAdded(DConcept<TravelMode> value) {
 
-			getDetailsArray().add(createDetails(value));
+			getTripsArray().add(createTrips(value));
 		}
 
 		public void onRemoved(DConcept<TravelMode> value) {
 
-			getDetailsArray().remove(getDetailsValue(value));
+			getTripsArray().remove(getTripsValue(value));
 		}
 
 		public void onCleared(List<DConcept<TravelMode>> values) {
 
-			getDetailsArray().clear();
+			getTripsArray().clear();
 		}
 
 		ModesListener() {
@@ -77,39 +77,39 @@ public class Travel extends DObjectShell implements CitizenAspect {
 		super(builder);
 
 		modes = builder.addConceptArray(TravelMode.class);
-		details = builder.getViewer(builder.addObjectArray(TravelDetails.class));
+		trips = builder.getViewer(builder.addObjectArray(TripsByTravelMode.class));
 
 		dEditor = builder.getEditor();
 
-		builder.setEditability(dEditor.getArray(details), CEditability.NONE);
+		builder.setEditability(dEditor.getArray(trips), CEditability.NONE);
 
 		builder.addInitialiser(new Initialiser());
 	}
 
-	private TravelDetails createDetails(DConcept<TravelMode> modeValue) {
+	private TripsByTravelMode createTrips(DConcept<TravelMode> modeValue) {
 
-		TravelDetails detailsValue = instantiateDetails();
+		TripsByTravelMode tripsValue = instantiateTrips();
 
-		detailsValue.initialise(modeValue);
+		tripsValue.initialise(modeValue);
 
-		return detailsValue;
+		return tripsValue;
 	}
 
-	private TravelDetails instantiateDetails() {
+	private TripsByTravelMode instantiateTrips() {
 
 		IFrameFunction function = getFrame().getFunction();
 
-		return getDetailsConcept().instantiate(function);
+		return getTripsConcept().instantiate(function);
 	}
 
-	private DConcept<TravelDetails> getDetailsConcept() {
+	private DConcept<TripsByTravelMode> getTripsConcept() {
 
-		return getModel().getConcept(TravelDetails.class);
+		return getModel().getConcept(TripsByTravelMode.class);
 	}
 
-	private TravelDetails getDetailsValue(DConcept<TravelMode> mode) {
+	private TripsByTravelMode getTripsValue(DConcept<TravelMode> mode) {
 
-		for (TravelDetails value : getDetailsArray().getAll()) {
+		for (TripsByTravelMode value : getTripsArray().getAll()) {
 
 			if (value.mode.get().equals(mode)) {
 
@@ -117,11 +117,11 @@ public class Travel extends DObjectShell implements CitizenAspect {
 			}
 		}
 
-		throw new Error("Details is not a value");
+		throw new Error("Not a value: " + mode);
 	}
 
-	private DArray<TravelDetails> getDetailsArray() {
+	private DArray<TripsByTravelMode> getTripsArray() {
 
-		return dEditor.getArray(details);
+		return dEditor.getArray(trips);
 	}
 }
