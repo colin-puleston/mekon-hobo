@@ -46,7 +46,7 @@ public class ORClassifierTest extends DemoModelBasedTest {
 	private String[] unemployedCitizenConcepts = new String[]{UNEMPLOYED_CITIZEN};
 	private String[] employedCitizenConcepts = new String[]{EMPLOYED_CITIZEN};
 	private String[] academicJobConcepts = new String[]{ACADEMIC_JOB};
-	private String[] academicTeachingJobConcepts = new String[]{ACADEMIC_TEACHING_JOB};
+	private String[] lecturerJobConcepts = new String[]{ACADEMIC_TEACHING_JOB, RESEARCH_JOB};
 
 	@Before
 	public void setUp() {
@@ -122,7 +122,7 @@ public class ORClassifierTest extends DemoModelBasedTest {
 		IFrame employ = createIFrame(EMPLOYMENT);
 		IFrame job = createIFrame(JOB);
 		IFrame academia = createIFrame(ACADEMIA);
-		IFrame teacher = createIFrame(TEACHER);
+		IFrame lecturer = createIFrame(LECTURER);
 
 		testInferredTypes(citizen);
 
@@ -137,8 +137,8 @@ public class ORClassifierTest extends DemoModelBasedTest {
 		addISlotValue(job, INDUSTRY_PROPERTY, academia);
 		testInferredTypes(job, academicJobConcepts);
 
-		addISlotValue(job, JOB_TYPE_PROPERTY, teacher);
-		testInferredTypes(job, academicTeachingJobConcepts);
+		addISlotValue(job, JOB_TYPE_PROPERTY, lecturer);
+		testInferredTypes(job, lecturerJobConcepts);
 	}
 
 	private void setOpenWorldSemantics() {
