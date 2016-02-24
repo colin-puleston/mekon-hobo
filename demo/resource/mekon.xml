@@ -235,8 +235,8 @@
 			javaClass="uk.ac.manchester.cs.hobo.demo.UnemploymentBenefit"
 			externalId="http://mekon/demo.owl#UnemploymentBenefit"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.TravelMode"
-			externalId="http://mekon/demo.owl#TravelMode"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.Trip"
+			externalId="http://mekon/demo.owl#Trip"/>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.summary.PropertyRef"
 			externalId="http://mekon/demo.owl#referencableObjectProperty"/>
