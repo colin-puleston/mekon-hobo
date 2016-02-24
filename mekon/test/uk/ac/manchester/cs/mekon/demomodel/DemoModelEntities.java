@@ -46,7 +46,9 @@ public interface DemoModelEntities {
 	static public final String SPECIALIST = "Specialist";
 	static public final String ACADEMIC_JOB = "AcademicJob";
 	static public final String ACADEMIC_TEACHING_JOB = "AcademicTeachingJob";
+	static public final String RESEARCH_JOB = "ResearchJob";
 	static public final String TEACHER = "Teacher";
+	static public final String LECTURER = "Lecturer";
 	static public final String RESEARCHER = "Researcher";
 	static public final String MEDIC = "Medic";
 	static public final String DOCTOR = "Doctor";

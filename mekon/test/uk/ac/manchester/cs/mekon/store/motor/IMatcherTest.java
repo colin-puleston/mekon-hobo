@@ -230,7 +230,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private IFrame addAcademicTeachingJob(CIdentity jobId, String studentTypeConcept) {
 
-		IFrame job = createJob(ACADEMIA, TEACHER);
+		IFrame job = createJob(ACADEMIA, LECTURER);
 		IFrame studentType = createIFrame(studentTypeConcept);
 
 		addISlotValue(job, TEACHES_PROPERTY, studentType);
@@ -290,7 +290,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	private IFrame createAcademicTeachingQuery() {
 
 		IFrame job = createAcademiaQuery();
-		IFrame jobType = createQueryIFrame(TEACHER);
+		IFrame jobType = createQueryIFrame(LECTURER);
 
 		addISlotValue(job, JOB_TYPE_PROPERTY, jobType);
 

@@ -59,6 +59,7 @@ public class DemoModelEmulatingSectionBuilder
 			addFrame(ACADEMIC_TEACHING_JOB);
 			addFrame(DOCTOR);
 			addFrame(TEACHER);
+			addFrame(LECTURER);
 			addFrame(RESEARCHER);
 
 			addFrame(INDUSTRY);
@@ -83,6 +84,7 @@ public class DemoModelEmulatingSectionBuilder
 			addSuperFrame(SPECIALIST, JOB_TYPE);
 			addSuperFrame(ACADEMIC_JOB, JOB_TYPE);
 			addSuperFrame(TEACHER, JOB_TYPE);
+			addSuperFrame(LECTURER, JOB_TYPE);
 			addSuperFrame(RESEARCHER, JOB_TYPE);
 			addSuperFrame(DOCTOR, JOB_TYPE);
 			addSuperFrame(ACADEMIC_TEACHING_JOB, ACADEMIC_JOB);
