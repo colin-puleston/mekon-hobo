@@ -111,7 +111,7 @@ public class Travel extends DObjectShell implements CitizenAspect {
 
 		for (TripsOfType value : getTripsArray().getAll()) {
 
-			if (value.tripType.get().equals(tripType)) {
+			if (value.type.get().equals(tripType)) {
 
 				return value;
 			}

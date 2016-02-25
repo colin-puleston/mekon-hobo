@@ -112,6 +112,8 @@ public abstract class ValueSummary extends DObjectShell {
 	void initialise(CSlot slotTypeValue) {
 
 		dEditor.getCell(property).set(getPropertyRef(slotTypeValue));
+
+		checkUpdate();
 	}
 
 	void addSlot(ISlot slot) {
