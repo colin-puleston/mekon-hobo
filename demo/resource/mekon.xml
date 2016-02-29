@@ -226,8 +226,11 @@
 			javaClass="uk.ac.manchester.cs.hobo.demo.Tax"
 			externalId="http://mekon/demo.owl#Tax"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.NonZeroTax"
-			externalId="http://mekon/demo.owl#NonZeroTax"/>
+			javaClass="uk.ac.manchester.cs.hobo.demo.StandardTax"
+			externalId="http://mekon/demo.owl#StandardTax"/>
+		<ClassMap
+			javaClass="uk.ac.manchester.cs.hobo.demo.SuperTax"
+			externalId="http://mekon/demo.owl#SuperTax"/>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.Benefit"
 			externalId="http://mekon/demo.owl#Benefit"/>
