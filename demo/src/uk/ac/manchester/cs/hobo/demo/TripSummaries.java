@@ -32,15 +32,15 @@ import uk.ac.manchester.cs.hobo.demo.summary.*;
 /**
  * @author Colin Puleston
  */
-public class TripSummaries extends ValueSummaries<TripOfType> {
+public class TripSummaries extends ValueSummaries<Trip> {
 
 	public TripSummaries(DObjectBuilder builder) {
 
 		super(builder);
 	}
 
-	protected DObject getSummarised(TripOfType source) {
+	protected DObject getSummarised(Trip source) {
 
-		return source.trip.get();
+		return source;
 	}
 }

@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class SuperTax extends NonZeroTax {
+public class SuperTax extends Tax {
 
 	public SuperTax(DObjectBuilder builder) {
 

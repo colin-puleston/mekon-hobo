@@ -27,7 +27,9 @@ package uk.ac.manchester.cs.hobo.demo;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.util.*;
+
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
@@ -39,29 +41,10 @@ import uk.ac.manchester.cs.hobo.demo.summary.*;
 public class TripsOfType extends DObjectShell implements TravelAspect {
 
 	public final DCellViewer<DConcept<Trip>> type;
-	public final DArray<TripOfType> trips;
+	public final DArray<Trip> trips;
 	public final DCell<TripSummaries> summaries;
 
 	private DEditor dEditor;
-
-	private class TripInitialiser implements KValuesListener<TripOfType> {
-
-		public void onAdded(TripOfType value) {
-
-			value.initialise(instantiateType());
-		}
-
-		public void onRemoved(TripOfType value) {
-		}
-
-		public void onCleared(List<TripOfType> values) {
-		}
-
-		TripInitialiser() {
-
-			trips.addValuesListener(this);
-		}
-	}
 
 	private class SummariesInitialiser implements KValuesListener<TripSummaries> {
 
@@ -87,7 +70,7 @@ public class TripsOfType extends DObjectShell implements TravelAspect {
 		super(builder);
 
 		type = builder.getViewer(builder.addConceptCell(Trip.class));
-		trips = builder.addObjectArray(TripOfType.class);
+		trips = builder.addObjectArray(Trip.class);
 		summaries = builder.addObjectCell(TripSummaries.class);
 
 		dEditor = builder.getEditor();
@@ -98,8 +81,8 @@ public class TripsOfType extends DObjectShell implements TravelAspect {
 	void initialise(DConcept<Trip> typeValue) {
 
 		getTypeCell().set(typeValue);
+		getTripsSlotEditor().setValueType(typeValue.getFrame());
 
-		new TripInitialiser();
 		new SummariesInitialiser();
 	}
 
@@ -120,5 +103,10 @@ public class TripsOfType extends DObjectShell implements TravelAspect {
 	private DCell<DConcept<Trip>> getTypeCell() {
 
 		return dEditor.getCell(type);
+	}
+
+	private ISlotEditor getTripsSlotEditor() {
+
+		return dEditor.getIEditor().getSlotEditor(trips.getSlot());
 	}
 }
