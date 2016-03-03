@@ -153,17 +153,17 @@ class NumberRenderer {
 
 		if (type == Long.class) {
 
-			return renderDatatype(OWL2Datatype.XSD_INTEGER);
+			return renderDatatype(OWL2Datatype.XSD_LONG);
 		}
 
 		if (type == Float.class) {
 
-			return renderDatatype(OWL2Datatype.XSD_INTEGER);
+			return renderDatatype(OWL2Datatype.XSD_FLOAT);
 		}
 
 		if (type == Double.class) {
 
-			return renderDatatype(OWL2Datatype.XSD_INTEGER);
+			return renderDatatype(OWL2Datatype.XSD_DOUBLE);
 		}
 
 		throw new KModelException("Cannot handle number-type: " + type);

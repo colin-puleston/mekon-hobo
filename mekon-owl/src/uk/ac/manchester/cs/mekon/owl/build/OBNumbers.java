@@ -151,6 +151,29 @@ class OBNumbers {
 		}
 	}
 
+	private class LongCreator extends TypeNumberCreator<Long> {
+
+		List<OWL2Datatype> getBuiltInDatatypes() {
+
+			return Arrays.asList(OWL2Datatype.XSD_LONG);
+		}
+
+		Long parseValue(String value) {
+
+			return Long.parseLong(value);
+		}
+
+		CNumber getUnconstrainedRange() {
+
+			return CNumber.LONG;
+		}
+
+		CNumber createRange(Long min, Long max) {
+
+			return CNumber.range(min, max);
+		}
+	}
+
 	private class FloatCreator extends TypeNumberCreator<Float> {
 
 		List<OWL2Datatype> getBuiltInDatatypes() {
@@ -174,12 +197,37 @@ class OBNumbers {
 		}
 	}
 
+	private class DoubleCreator extends TypeNumberCreator<Double> {
+
+		List<OWL2Datatype> getBuiltInDatatypes() {
+
+			return Arrays.asList(OWL2Datatype.XSD_DOUBLE);
+		}
+
+		Double parseValue(String value) {
+
+			return Double.parseDouble(value);
+		}
+
+		CNumber getUnconstrainedRange() {
+
+			return CNumber.DOUBLE;
+		}
+
+		CNumber createRange(Double min, Double max) {
+
+			return CNumber.range(min, max);
+		}
+	}
+
 	OBNumbers(OModel model) {
 
 		this.model = model;
 
 		new IntegerCreator();
+		new LongCreator();
 		new FloatCreator();
+		new DoubleCreator();
 	}
 
 	OBNumber checkExtractNumber(OWLClass concept) {
