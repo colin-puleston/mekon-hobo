@@ -115,7 +115,7 @@ class FieldSlotInitialiser {
 
 		CIdentity id = new CIdentity(slotId, slotLabel);
 
-		return getFrameTypeEditor().addSlot(id, cardinality, valueType);
+		return getFrameTypeEditor().addSlot(id, valueType, cardinality);
 	}
 
 	private ISlot addSlot(CSlot slotType) {

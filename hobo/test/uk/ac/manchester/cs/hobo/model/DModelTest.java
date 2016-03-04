@@ -85,7 +85,7 @@ public class DModelTest extends MekonTestUtils {
 			CFrame frameA = builder.addFrame(frameAId, false);
 			CFrameEditor frameAEd = builder.getFrameEditor(frameA);
 
-			frameAEd.addSlot(intSlotId, CCardinality.REPEATABLE_TYPES, CNumber.INTEGER);
+			frameAEd.addSlot(intSlotId, CNumber.INTEGER, CCardinality.REPEATABLE_TYPES);
 		}
 	}
 
