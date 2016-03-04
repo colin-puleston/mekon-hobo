@@ -36,7 +36,12 @@ import uk.ac.manchester.cs.mekon.model.*;
 public interface ISlotEditor {
 
 	/**
-	 * Re-sets the value-type for the slot.
+	 * Re-sets the value-type for the slot, by resetting the
+	 * value-type for the associated slot-type.
+	 * <p>
+	 * NOTE: The associated slot-type will always be a local copy
+	 * of the instantiated slot-type, and hence any edits will only
+	 * affect the particular slot.
 	 *
 	 * @param valueType New value-type for slot
 	 * @return True if value-type has been updated.
@@ -44,7 +49,25 @@ public interface ISlotEditor {
 	public boolean setValueType(CValue<?> valueType);
 
 	/**
-	 * Re-sets the "active" status of the slot.
+	 * Re-sets the cardinality of the slot, by resetting the
+	 * cardinality for the associated slot-type.
+	 * <p>
+	 * NOTE: The associated slot-type will always be a local copy
+	 * of the instantiated slot-type, and hence any edits will only
+	 * affect the particular slot.
+	 *
+	 * @param cardinality Cardinality to set
+	 * @return True if cardinality has been updated.
+	 */
+	public boolean setCardinality(CCardinality cardinality);
+
+	/**
+	 * Re-sets the "active" status of the slot, by resetting the
+	 * status for the associated slot-type.
+	 * <p>
+	 * NOTE: The associated slot-type will always be a local copy
+	 * of the instantiated slot-type, and hence any edits will only
+	 * affect the particular slot.
 	 *
 	 * @param active Status to set
 	 * @return True if status has been updated.
@@ -52,7 +75,12 @@ public interface ISlotEditor {
 	public boolean setActive(boolean active);
 
 	/**
-	 * Re-sets the editability of the slot.
+	 * Re-sets the editability of the slot, by resetting the
+	 * editability for the associated slot-type.
+	 * <p>
+	 * NOTE: The associated slot-type will always be a local copy
+	 * of the instantiated slot-type, and hence any edits will only
+	 * affect the particular slot.
 	 *
 	 * @param editability Editability to set
 	 * @return True if editability has been updated.

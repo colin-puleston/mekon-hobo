@@ -38,11 +38,13 @@ class ISlotSpec {
 
 	private CIdentity identity;
 	private CSource source = CSource.UNSPECIFIED;
-	private CCardinality cardinality = CCardinality.REPEATABLE_TYPES;
 	private List<CValue<?>> valueTypes = new ArrayList<CValue<?>>();
-	private List<IValue> fixedValues = new ArrayList<IValue>();
+
+	private CCardinality cardinality = CCardinality.REPEATABLE_TYPES;
 	private boolean active = false;
 	private CEditability editability = CEditability.DEFAULT;
+
+	private List<IValue> fixedValues = new ArrayList<IValue>();
 
 	ISlotSpec(IEditor iEditor, CIdentity identity) {
 
@@ -53,20 +55,20 @@ class ISlotSpec {
 	void intersectWith(ISlotSpec other) {
 
 		absorbSource(other.source);
+		absorbValueTypes(other.valueTypes);
 		intersectCardinality(other.cardinality);
 		intersectActive(other.active);
 		absorbEditability(other.editability);
-		absorbValueTypes(other.valueTypes);
 		intersectFixedValues(other.fixedValues);
 	}
 
 	void absorbSpec(ISlotSpec other) {
 
 		absorbSource(other.source);
+		absorbValueTypes(other.valueTypes);
 		absorbCardinality(other.cardinality);
 		absorbActive(other.active);
 		absorbEditability(other.editability);
-		absorbValueTypes(other.valueTypes);
 		absorbFixedValues(other.fixedValues);
 	}
 
@@ -128,6 +130,14 @@ class ISlotSpec {
 		source = source.combineWith(newSource);
 	}
 
+	private void absorbValueTypes(List<CValue<?>> newValueTypes) {
+
+		for (CValue<?> valueType : newValueTypes) {
+
+			absorbValueType(valueType);
+		}
+	}
+
 	private void absorbCardinality(CCardinality newCardinality) {
 
 		cardinality = cardinality.getMoreRestrictive(newCardinality);
@@ -141,14 +151,6 @@ class ISlotSpec {
 	private void absorbEditability(CEditability newEditability) {
 
 		editability = editability.getStrongest(newEditability);
-	}
-
-	private void absorbValueTypes(List<CValue<?>> newValueTypes) {
-
-		for (CValue<?> valueType : newValueTypes) {
-
-			absorbValueType(valueType);
-		}
 	}
 
 	private void absorbValueType(CValue<?> newValueType) {
@@ -180,8 +182,8 @@ class ISlotSpec {
 			.addSlot(
 				identity,
 				source,
-				cardinality,
 				valueType,
+				cardinality,
 				active,
 				editability);
 	}

@@ -58,7 +58,7 @@ public class TestCSlots {
 
 		CFrameEditor contEd = container.asAtomicFrame().createEditor();
 
-		return contEd.addSlot(identity, cardinality, valueType);
+		return contEd.addSlot(identity, valueType, cardinality);
 	}
 
 	TestCSlots(TestCFrames frames, CCardinality cardinality) {

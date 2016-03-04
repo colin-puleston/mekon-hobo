@@ -167,7 +167,7 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		return new CSlot(
 					containerType,
 					slotTypeId,
-					CCardinality.REPEATABLE_TYPES,
-					valueType);
+					valueType,
+					CCardinality.REPEATABLE_TYPES);
 	}
 }

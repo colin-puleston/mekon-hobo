@@ -215,12 +215,12 @@ public class IFrame implements IEntity, IValue {
 		public ISlot addSlot(
 						CIdentity identity,
 						CSource source,
-						CCardinality cardinality,
 						CValue<?> valueType,
+						CCardinality cardinality,
 						boolean active,
 						CEditability editability) {
 
-			CSlot slotType = new CSlot(type, identity, cardinality, valueType);
+			CSlot slotType = new CSlot(type, identity, valueType, cardinality);
 
 			slotType.setSource(source);
 			slotType.setActive(active);
@@ -654,7 +654,7 @@ public class IFrame implements IEntity, IValue {
 
 	ISlot addSlotInternal(CSlot slotType, boolean free) {
 
-		return addSlotInternal(new ISlot(slotType, this), free);
+		return addSlotInternal(new ISlot(slotType.copy(), this), free);
 	}
 
 	ISlot addSlotInternal(ISlot slot, boolean free) {

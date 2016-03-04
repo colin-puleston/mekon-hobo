@@ -38,8 +38,8 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	private CFrame container;
 
 	private CSource source = CSource.EXTERNAL;
-	private CCardinality cardinality;
 	private CValue<?> valueType;
+	private CCardinality cardinality;
 	private boolean active = true;
 	private CEditability editability = CEditability.DEFAULT;
 
@@ -145,26 +145,6 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	}
 
 	/**
-	 * Provides the cardinality of the slot.
-	 *
-	 * @return Cardinality of slot
-	 */
-	public CCardinality getCardinality() {
-
-		return cardinality;
-	}
-
-	/**
-	 * Provides any annotations on the slot.
-	 *
-	 * @return Annotations on slot
-	 */
-	public CAnnotations getAnnotations() {
-
-		return annotations;
-	}
-
-	/**
 	 * Provides the value-type for the slot.
 	 *
 	 * @return value-type for slot
@@ -172,6 +152,16 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	public CValue<?> getValueType() {
 
 		return valueType;
+	}
+
+	/**
+	 * Provides the cardinality of the slot.
+	 *
+	 * @return Cardinality of slot
+	 */
+	public CCardinality getCardinality() {
+
+		return cardinality;
 	}
 
 	/**
@@ -196,16 +186,38 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		return editability;
 	}
 
+	/**
+	 * Provides any annotations on the slot.
+	 *
+	 * @return Annotations on slot
+	 */
+	public CAnnotations getAnnotations() {
+
+		return annotations;
+	}
+
 	CSlot(
 		CFrame container,
 		CIdentity identity,
-		CCardinality cardinality,
-		CValue<?> valueType) {
+		CValue<?> valueType,
+		CCardinality cardinality) {
 
 		this.container = container;
 		this.identity = identity;
-		this.cardinality = cardinality;
 		this.valueType = valueType;
+		this.cardinality = cardinality;
+	}
+
+	CSlot copy() {
+
+		CSlot copy = new CSlot(container, identity, valueType, cardinality);
+
+		copy.source = source;
+		copy.active = active;
+		copy.editability = editability;
+		copy.annotations = annotations;
+
+		return copy;
 	}
 
 	CSlotEditor createEditor() {
@@ -223,6 +235,18 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		if (!valueType.equals(this.valueType)) {
 
 			this.valueType = valueType;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setCardinality(CCardinality cardinality) {
+
+		if (cardinality != this.cardinality) {
+
+			this.cardinality = cardinality;
 
 			return true;
 		}

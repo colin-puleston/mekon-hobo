@@ -42,7 +42,7 @@ class IDisjunctsSlot extends ISlot {
 
 		CFrame dType = disjunction.getType();
 
-		return new CSlot(dType, IDENTITY, CCardinality.REPEATABLE_TYPES, dType);
+		return new CSlot(dType, IDENTITY, dType, CCardinality.REPEATABLE_TYPES);
 	}
 
 	private IDisjunction disjunction;

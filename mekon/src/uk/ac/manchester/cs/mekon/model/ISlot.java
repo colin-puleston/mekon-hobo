@@ -56,6 +56,18 @@ public class ISlot implements IEntity {
 			return false;
 		}
 
+		public boolean setCardinality(CCardinality cardinality) {
+
+			if (type.setCardinality(cardinality)) {
+
+				pollListenersForUpdatedCardinality();
+
+				return true;
+			}
+
+			return false;
+		}
+
 		public boolean setActive(boolean active) {
 
 			if (type.setActive(active)) {
@@ -236,6 +248,14 @@ public class ISlot implements IEntity {
 		for (ISlotListener listener : copyListeners()) {
 
 			listener.onUpdatedValueType(getValueType());
+		}
+	}
+
+	private void pollListenersForUpdatedCardinality() {
+
+		for (ISlotListener listener : copyListeners()) {
+
+			listener.onUpdatedCardinality(type.getCardinality());
 		}
 	}
 

@@ -59,7 +59,7 @@ public class DemoModelBuilder {
 		CFrameEditor contEd = getFrameEditor(container);
 		CIdentity propId = nameToIdentity(property);
 
-		contEd.addSlot(propId, CCardinality.REPEATABLE_TYPES, valueType);
+		contEd.addSlot(propId, valueType, CCardinality.REPEATABLE_TYPES);
 	}
 
 	public CFrame getFrame(String name) {

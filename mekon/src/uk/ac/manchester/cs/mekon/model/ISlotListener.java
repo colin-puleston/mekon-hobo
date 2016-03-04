@@ -39,6 +39,13 @@ public interface ISlotListener {
 	public void onUpdatedValueType(CValue<?> valueType);
 
 	/**
+	 * Method invoked after the slot's cardinality has been updated.
+	 *
+	 * @param cardinality New cardinality
+	 */
+	public void onUpdatedCardinality(CCardinality cardinality);
+
+	/**
 	 * Method invoked after the slot's "active" status has been updated.
 	 *
 	 * @param active New active status

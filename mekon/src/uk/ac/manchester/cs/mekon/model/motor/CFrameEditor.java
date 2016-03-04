@@ -67,14 +67,14 @@ public interface CFrameEditor {
 	 * Creates a slot and adds it to the frame.
 	 *
 	 * @param slotId Identity for slot
-	 * @param cardinality Cardinality for slot
 	 * @param valueType Value-type for slot
+	 * @param cardinality Cardinality for slot
 	 * @return Created and added slot
 	 */
 	public CSlot addSlot(
 					CIdentity slotId,
-					CCardinality cardinality,
-					CValue<?> valueType);
+					CValue<?> valueType,
+					CCardinality cardinality);
 
 	/**
 	 * Removes specified slot from the frame, if possible. Does
