@@ -83,7 +83,7 @@ class IFrameNode extends IValueNode<IFrame> {
 
 		boolean childNodeRequiredFor(ISlot slot) {
 
-			return slot.getType().active();
+			return slot.getType().getActivation().active();
 		}
 
 		GNode createChildNode(ISlot slot) {

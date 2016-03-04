@@ -52,7 +52,7 @@ abstract class ISlotNode extends GNode {
 			updateNodeDisplay();
 		}
 
-		public void onUpdatedActiveStatus(boolean active) {
+		public void onUpdatedActivation(CActivation activation) {
 
 			updateNodeDisplay();
 		}

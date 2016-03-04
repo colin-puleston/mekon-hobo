@@ -110,7 +110,7 @@ class EntityIcons implements EntityIconConstants {
 
 	private SlotIcons getCSlotIcons(CSlot slot) {
 
-		if (!slot.active()) {
+		if (!slot.getActivation().active()) {
 
 			return inactiveSlots;
 		}
