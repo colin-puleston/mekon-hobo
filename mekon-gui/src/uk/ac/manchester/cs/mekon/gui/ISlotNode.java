@@ -47,6 +47,11 @@ abstract class ISlotNode extends GNode {
 			updateNodeDisplay();
 		}
 
+		public void onUpdatedCardinality(CCardinality cardinality) {
+
+			updateNodeDisplay();
+		}
+
 		public void onUpdatedActiveStatus(boolean active) {
 
 			updateNodeDisplay();
