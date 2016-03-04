@@ -68,9 +68,9 @@ public class ISlot implements IEntity {
 			return false;
 		}
 
-		public boolean setActive(boolean active) {
+		public boolean setActivation(CActivation activation) {
 
-			if (type.setActive(active)) {
+			if (type.setActivation(activation)) {
 
 				pollListenersForUpdatedActiveStatus();
 
@@ -196,7 +196,7 @@ public class ISlot implements IEntity {
 	public ISlotValuesEditor getValuesEditor() {
 
 		checkExternalValuesEditorAccess(
-			type.active(),
+			type.getActivation().active(),
 			"inactive");
 
 		checkExternalValuesEditorAccess(
@@ -263,7 +263,7 @@ public class ISlot implements IEntity {
 
 		for (ISlotListener listener : copyListeners()) {
 
-			listener.onUpdatedActiveStatus(type.active());
+			listener.onUpdatedActivation(type.getActivation());
 		}
 	}
 

@@ -217,13 +217,13 @@ public class IFrame implements IEntity, IValue {
 						CSource source,
 						CValue<?> valueType,
 						CCardinality cardinality,
-						boolean active,
+						CActivation activation,
 						CEditability editability) {
 
 			CSlot slotType = new CSlot(type, identity, valueType, cardinality);
 
 			slotType.setSource(source);
-			slotType.setActive(active);
+			slotType.setActivation(activation);
 			slotType.setEditability(editability);
 
 			return addSlot(slotType);

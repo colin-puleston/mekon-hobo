@@ -62,17 +62,17 @@ public interface ISlotEditor {
 	public boolean setCardinality(CCardinality cardinality);
 
 	/**
-	 * Re-sets the "active" status of the slot, by resetting the
-	 * status for the associated slot-type.
+	 * Re-sets the activation of the slot, by resetting the
+	 * activation for the associated slot-type.
 	 * <p>
 	 * NOTE: The associated slot-type will always be a local copy
 	 * of the instantiated slot-type, and hence any edits will only
 	 * affect the particular slot.
 	 *
-	 * @param active Status to set
-	 * @return True if status has been updated.
+	 * @param activation Activation to set
+	 * @return True if activation has been updated.
 	 */
-	public boolean setActive(boolean active);
+	public boolean setActivation(CActivation activation);
 
 	/**
 	 * Re-sets the editability of the slot, by resetting the

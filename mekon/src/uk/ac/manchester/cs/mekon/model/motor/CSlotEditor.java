@@ -50,16 +50,6 @@ public interface CSlotEditor {
 	public void resetLabel(String newLabel);
 
 	/**
-	 * Sets the slot cardinality to be whichever is the more
-	 * restrictive between the current cardinality and the other
-	 * specified cardinality (as defined by
-	 * {@link CCardinality#moreRestrictiveThan(CCardinality)}).
-	 *
-	 * @param otherCardinality Other candidate cardinality for slot
-	 */
-	public void absorbCardinality(CCardinality otherCardinality);
-
-	/**
 	 * Sets the slot value-type to be whichever is more-specific
 	 * between the current value-type and the other specified
 	 * value-type (as defined by {@link CValue#subsumedBy(CValue)}).
@@ -71,21 +61,30 @@ public interface CSlotEditor {
 	public void absorbValueType(CValue<?> otherValueType);
 
 	/**
-	 * Updates the {@link CSlot#active} status of the slot to
-	 * incorporate the specified additional status. Combined status
-	 * will be true if and only if both current status and specified
-	 * status are true.
+	 * Sets the slot cardinality to be whichever is the more
+	 * restrictive between the current cardinality and the other
+	 * specified cardinality (as defined by
+	 * {@link CCardinality#moreRestrictiveThan(CCardinality)}).
 	 *
-	 * @param otherActive Additional status to incorporate
+	 * @param otherCardinality Other candidate cardinality for slot
 	 */
-	public void absorbActive(boolean otherActive);
+	public void absorbCardinality(CCardinality otherCardinality);
 
 	/**
-	 * Updates the {@link CSlot#editability} status of the slot to
-	 * incorporate the specified additional status. Resulting status
-	 * determined via the {@link CEditability#getStrongest} method.
+	 * Updates the activation of the slot to incorporate the specified
+	 * additional activation value. Resulting status determined via the
+	 * {@link CActivation#getWeakest} method.
 	 *
-	 * @param otherEditability Additional status to incorporate
+	 * @param otherActive Additional activation to incorporate
+	 */
+	public void absorbActivation(CActivation otherActivation);
+
+	/**
+	 * Updates the editability of the slot to incorporate the specified
+	 * additional editability value. Resulting status determined via the
+	 * {@link CEditability#getStrongest} method.
+	 *
+	 * @param otherEditability Additional editability to incorporate
 	 */
 	public void absorbEditability(CEditability otherEditability);
 }

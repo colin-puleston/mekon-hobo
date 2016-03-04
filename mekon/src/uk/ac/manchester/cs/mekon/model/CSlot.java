@@ -40,7 +40,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	private CSource source = CSource.EXTERNAL;
 	private CValue<?> valueType;
 	private CCardinality cardinality;
-	private boolean active = true;
+	private CActivation activation = CActivation.ACTIVE;
 	private CEditability editability = CEditability.DEFAULT;
 
 	private CAnnotations annotations = new CAnnotations(this);
@@ -77,9 +77,9 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 			valueType = mergedType;
 		}
 
-		public void absorbActive(boolean otherActive) {
+		public void absorbActivation(CActivation otherActivation) {
 
-			active &= otherActive;
+			activation = activation.getWeakest(otherActivation);
 		}
 
 		public void absorbEditability(CEditability otherEditability) {
@@ -165,21 +165,19 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	}
 
 	/**
-	 * Specifies whether instantiations of this slot will be "active"
-	 * on the particular frames to which they are attached. If a slot
-	 * is inactive then it will never have any current values.
+	 * Specifies the activation of instantiations of this slot.
 	 *
-	 * @return True if instantiations of slot will be active
+	 * @return Activation of instantiations
 	 */
-	public boolean active() {
+	public CActivation getActivation() {
 
-		return active;
+		return activation;
 	}
 
 	/**
-	 * Specifies the editability status for instantiations of this slot.
+	 * Specifies the editability of instantiations of this slot.
 	 *
-	 * @return Editability status for instantiations
+	 * @return Editability of instantiations
 	 */
 	public CEditability getEditability() {
 
@@ -213,7 +211,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		CSlot copy = new CSlot(container, identity, valueType, cardinality);
 
 		copy.source = source;
-		copy.active = active;
+		copy.activation = activation;
 		copy.editability = editability;
 		copy.annotations = annotations;
 
@@ -254,11 +252,11 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		return false;
 	}
 
-	boolean setActive(boolean active) {
+	boolean setActivation(CActivation activation) {
 
-		if (active != this.active) {
+		if (activation != this.activation) {
 
-			this.active = active;
+			this.activation = activation;
 
 			return true;
 		}

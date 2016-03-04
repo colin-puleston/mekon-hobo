@@ -71,9 +71,8 @@ public interface IFrameEditor {
 	 * @param source Source-type for concept-level slot
 	 * @param valueType Value-type for concept-level slot
 	 * @param cardinality Cardinality for concept-level slot
-	 * @param active Active status for concept-level slot (see {@link
-	 * CSlot#active})
-	 * @param editability Editability status for concept-level slot
+	 * @param activation Activation for concept-level slot
+	 * @param editability Editability for concept-level slot
 	 * @return Created and added instance-level slot
 	 */
 	public ISlot addSlot(
@@ -81,7 +80,7 @@ public interface IFrameEditor {
 					CSource source,
 					CValue<?> valueType,
 					CCardinality cardinality,
-					boolean active,
+					CActivation activation,
 					CEditability editability);
 
 	/**

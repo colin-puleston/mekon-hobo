@@ -136,16 +136,16 @@ public class ISlotSpecsTest {
 	}
 
 	@Test
-	public void test_activeStatusUpdates() {
+	public void test_activationUpdates() {
 
-		sa.setActive(false);
+		sa.setActivation(CActivation.INACTIVE);
 
 		updateContainerSlots(ta);
-		testActiveSlot(false);
+		testSlotActivation(CActivation.INACTIVE);
 		updateContainerSlots(ta, tb);
-		testActiveSlot(true);
+		testSlotActivation(CActivation.ACTIVE);
 		updateContainerSlots(ta);
-		testActiveSlot(false);
+		testSlotActivation(CActivation.INACTIVE);
 	}
 
 	@Test
@@ -235,9 +235,9 @@ public class ISlotSpecsTest {
 		assertEquals(expected, testSingleSlot().getType().getCardinality());
 	}
 
-	private void testActiveSlot(boolean expected) {
+	private void testSlotActivation(CActivation expected) {
 
-		assertEquals(expected, testSingleSlot().getType().active());
+		assertEquals(expected, testSingleSlot().getType().getActivation());
 	}
 
 	private void testSlotEditability(CEditability expected) {

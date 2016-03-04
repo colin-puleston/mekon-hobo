@@ -88,15 +88,15 @@ public class ISlotSpecs {
 	 * The new slot-definition information will be used to update
 	 * existing slot-specifications as follows:
 	 * <ul>
-	 *   <li>The most-specific of the cardinalities will be retained
-	 *   (as defined by {@link CValue#subsumedBy(CValue)})
 	 *   <li>The most-specific of the slot value-types will be retained
+	 *   (as defined by {@link CValue#subsumedBy(CValue)})
+	 *   <li>The most-specific of the cardinalities will be retained
 	 *   (as defined by
 	 *   {@link CCardinality#moreRestrictiveThan(CCardinality)})
-	 *   <li>The "active" status will be true if and only if the both
-	 *   the existing status and the new status are true
-	 *   <li>The "editability" status will be the "strongest" of the
-	 *   existing and new statuses (see {@link CEditability#getStrongest})
+	 *   <li>The activation will be the "strongest" of the existing
+	 *	 and new activations (see {@link CActivation#getStrongest})
+	 *   <li>The editability will be the "strongest" of the existing
+	 *	 and new editabilities (see {@link CEditability#getStrongest})
 	 * </ul>
 	 *
 	 * @param frameType Concept-level frame whose slot-related
@@ -131,9 +131,9 @@ public class ISlotSpecs {
 	}
 
 	/**
-	 * Initialises the slot-set, including value-types and "active" and
-	 * "editability" statuses, and the fixed slot-values, on the specified
-	 * instance-level frame, using the current set of slot-specifications.
+	 * Initialises the slot-set, including value-types, editabilities,
+	 * activations and fixed slot-values, on the specified instance-level
+	 * frame, using the current set of slot-specifications.
 	 *
 	 * @param frame Instance-level frame to be initialised
 	 */
@@ -148,9 +148,9 @@ public class ISlotSpecs {
 	}
 
 	/**
-	 * Updates the slot-set, including value-types and "active" statuses,
-	 * and/or the fixed slot-values, on the specified instance-level frame,
-	 * using the current set of slot-specifications.
+	 * Updates the slot-set, including value-types, editabilities,
+	 * activations and fixed slot-values, on the specified instance-level
+	 * frame, using the current set of slot-specifications.
 	 * <p>
 	 * NOTE: Even if the required update operations (as specified via the
 	 * relevant parameter) do not include slot-value updates, removals of

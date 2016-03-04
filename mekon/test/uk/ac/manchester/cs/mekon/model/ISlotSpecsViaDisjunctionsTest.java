@@ -106,12 +106,12 @@ public class ISlotSpecsViaDisjunctionsTest {
 	@Test
 	public void test_slotAttributesUpdates() {
 
-		ta_slot2.setActive(false);
+		ta_slot2.setActivation(CActivation.INACTIVE);
 		ta_slot2.setEditability(CEditability.FULL);
 
 		updateContainerSlots();
 		testCardinality(SLOT2_ID, CCardinality.REPEATABLE_TYPES);
-		testActiveSlot(SLOT2_ID, false);
+		testSlotActivation(SLOT2_ID, CActivation.INACTIVE);
 		testSlotEditability(SLOT2_ID, CEditability.FULL);
 	}
 
@@ -153,9 +153,9 @@ public class ISlotSpecsViaDisjunctionsTest {
 		assertEquals(expected, testFindSlot(slotId).getType().getCardinality());
 	}
 
-	private void testActiveSlot(CIdentity slotId, boolean expected) {
+	private void testSlotActivation(CIdentity slotId, CActivation expected) {
 
-		assertEquals(expected, testFindSlot(slotId).getType().active());
+		assertEquals(expected, testFindSlot(slotId).getType().getActivation());
 	}
 
 	private void testSlotEditability(CIdentity slotId, CEditability expected) {

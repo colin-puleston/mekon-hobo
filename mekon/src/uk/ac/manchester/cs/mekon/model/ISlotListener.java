@@ -46,11 +46,11 @@ public interface ISlotListener {
 	public void onUpdatedCardinality(CCardinality cardinality);
 
 	/**
-	 * Method invoked after the slot's "active" status has been updated.
+	 * Method invoked after the slot's activation has been updated.
 	 *
-	 * @param active New active status
+	 * @param activation New activation
 	 */
-	public void onUpdatedActiveStatus(boolean active);
+	public void onUpdatedActivation(CActivation activation);
 
 	/**
 	 * Method invoked after the slot's editability has been updated.

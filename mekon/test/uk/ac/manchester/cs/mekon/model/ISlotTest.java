@@ -41,7 +41,7 @@ public class ISlotTest {
 
 		ISlot s = slots.create("s");
 
-		s.createEditor().setActive(false);
+		s.createEditor().setActivation(CActivation.INACTIVE);
 		s.getValuesEditor();
 	}
 

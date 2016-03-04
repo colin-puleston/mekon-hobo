@@ -41,7 +41,7 @@ class ISlotSpec {
 	private List<CValue<?>> valueTypes = new ArrayList<CValue<?>>();
 
 	private CCardinality cardinality = CCardinality.REPEATABLE_TYPES;
-	private boolean active = false;
+	private CActivation activation = CActivation.INACTIVE;
 	private CEditability editability = CEditability.DEFAULT;
 
 	private List<IValue> fixedValues = new ArrayList<IValue>();
@@ -57,7 +57,7 @@ class ISlotSpec {
 		absorbSource(other.source);
 		absorbValueTypes(other.valueTypes);
 		intersectCardinality(other.cardinality);
-		intersectActive(other.active);
+		intersectActivation(other.activation);
 		absorbEditability(other.editability);
 		intersectFixedValues(other.fixedValues);
 	}
@@ -67,7 +67,7 @@ class ISlotSpec {
 		absorbSource(other.source);
 		absorbValueTypes(other.valueTypes);
 		absorbCardinality(other.cardinality);
-		absorbActive(other.active);
+		absorbActivation(other.activation);
 		absorbEditability(other.editability);
 		absorbFixedValues(other.fixedValues);
 	}
@@ -76,7 +76,7 @@ class ISlotSpec {
 
 		absorbSource(slotType.getSource());
 		absorbCardinality(slotType.getCardinality());
-		absorbActive(slotType.active());
+		absorbActivation(slotType.getActivation());
 		absorbEditability(slotType.getEditability());
 		absorbValueType(slotType.getValueType());
 	}
@@ -143,9 +143,9 @@ class ISlotSpec {
 		cardinality = cardinality.getMoreRestrictive(newCardinality);
 	}
 
-	private void absorbActive(boolean newActive) {
+	private void absorbActivation(CActivation newActivation) {
 
-		active |= newActive;
+		activation = activation.getStrongest(newActivation);
 	}
 
 	private void absorbEditability(CEditability newEditability) {
@@ -166,9 +166,9 @@ class ISlotSpec {
 		cardinality = cardinality.getLessRestrictive(newCardinality);
 	}
 
-	private void intersectActive(boolean newActive) {
+	private void intersectActivation(CActivation newActivation) {
 
-		active &= newActive;
+		activation = activation.getWeakest(newActivation);
 	}
 
 	private void intersectFixedValues(List<IValue> newFixedValues) {
@@ -184,7 +184,7 @@ class ISlotSpec {
 				source,
 				valueType,
 				cardinality,
-				active,
+				activation,
 				editability);
 	}
 
@@ -210,7 +210,7 @@ class ISlotSpec {
 		boolean updates = false;
 
 		updates |= checkUpdateValueType(slot, valueType);
-		updates |= checkUpdateActive(slot);
+		updates |= checkUpdateActivation(slot);
 
 		return updates;
 	}
@@ -227,14 +227,14 @@ class ISlotSpec {
 		return true;
 	}
 
-	private boolean checkUpdateActive(ISlot slot) {
+	private boolean checkUpdateActivation(ISlot slot) {
 
-		if (active == slot.getType().active()) {
+		if (activation == slot.getType().getActivation()) {
 
 			return false;
 		}
 
-		getSlotEditor(slot).setActive(active);
+		getSlotEditor(slot).setActivation(activation);
 
 		return true;
 	}
