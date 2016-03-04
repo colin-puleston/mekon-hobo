@@ -85,6 +85,9 @@ public class Job extends DObjectShell {
 			}
 		}
 
+		public void onUpdatedCardinality(CCardinality cardinality) {
+		}
+
 		public void onUpdatedActiveStatus(boolean active) {
 		}
 
