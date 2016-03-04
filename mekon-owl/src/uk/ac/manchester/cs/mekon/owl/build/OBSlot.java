@@ -99,7 +99,7 @@ class OBSlot extends OIdentified {
 
 		private CSlot addSlot(CFrame container, CCardinality cardinality) {
 
-			return getEditor(container).addSlot(getIdentity(), cardinality, getCValue());
+			return getEditor(container).addSlot(getIdentity(), getCValue(), cardinality);
 		}
 
 		private void absorbSlotOverrides(CSlot slot) {

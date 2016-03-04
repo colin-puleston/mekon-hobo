@@ -85,7 +85,6 @@ class NumberRenderer {
 
 	private OWLClassExpression renderHasExactValue(INumber value) {
 
-		System.out.println("LITERAL: " + renderLiteral(value));
 		return dataFactory.getOWLDataHasValue(property, renderLiteral(value));
 	}
 
