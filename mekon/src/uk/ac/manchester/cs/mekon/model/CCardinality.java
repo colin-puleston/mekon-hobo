@@ -37,9 +37,14 @@ public enum CCardinality {
 	 */
 	SINGLE_VALUE {
 
-		ISlotValues createSlotValues(ISlot slot) {
+		boolean singleValued() {
 
-			return new SingletonISlotValues(slot);
+			return true;
+		}
+
+		boolean conflictingAsserteds(IValue value1, IValue value2) {
+
+			return true;
 		}
 	},
 
@@ -49,9 +54,19 @@ public enum CCardinality {
 	 */
 	UNIQUE_TYPES {
 
-		ISlotValues createSlotValues(ISlot slot) {
+		boolean singleValued() {
 
-			return new UniqueTypesISlotValues(slot);
+			return false;
+		}
+
+		boolean conflictingAsserteds(IValue value1, IValue value2) {
+
+			return typeSubsumption(value1, value2) || typeSubsumption(value2, value1);
+		}
+
+		private boolean typeSubsumption(IValue testSubsumer, IValue testSubsumed) {
+
+			return testSubsumer.getType().subsumes(testSubsumed.getType());
 		}
 	},
 
@@ -61,9 +76,14 @@ public enum CCardinality {
 	 */
 	REPEATABLE_TYPES {
 
-		ISlotValues createSlotValues(ISlot slot) {
+		boolean singleValued() {
 
-			return new RepeatableTypesISlotValues(slot);
+			return false;
+		}
+
+		boolean conflictingAsserteds(IValue value1, IValue value2) {
+
+			return false;
 		}
 	};
 
@@ -141,5 +161,7 @@ public enum CCardinality {
 		return lessRestrictiveThan(other) ? this : other;
 	}
 
-	abstract ISlotValues createSlotValues(ISlot slot);
+	abstract boolean singleValued();
+
+	abstract boolean conflictingAsserteds(IValue value1, IValue value2);
 }

@@ -38,7 +38,7 @@ public class ISlot implements IEntity {
 
 	private CSlot type;
 	private IFrame container;
-	private ISlotValues values;
+	private ISlotValues values = new ISlotValues(this);
 	private List<ISlotListener> listeners = new ArrayList<ISlotListener>();
 
 	private class Editor implements ISlotEditor {
@@ -210,8 +210,6 @@ public class ISlot implements IEntity {
 
 		this.type = type;
 		this.container = container;
-
-		values = type.getCardinality().createSlotValues(this);
 	}
 
 	ISlotEditor createEditor() {

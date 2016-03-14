@@ -41,7 +41,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  *
  * @author Colin Puleston
  */
-public abstract class ISlotValues extends KList<IValue> {
+public class ISlotValues extends KList<IValue> {
 
 	private ISlot slot;
 
@@ -197,10 +197,6 @@ public abstract class ISlotValues extends KList<IValue> {
 
 		updateSlotValues();
 	}
-
-	abstract boolean singleValued();
-
-	abstract boolean conflictingAsserteds(IValue value1, IValue value2);
 
 	private List<IValue> addAllAsserteds(
 							Collection<? extends IValue> asserteds,
@@ -401,5 +397,20 @@ public abstract class ISlotValues extends KList<IValue> {
 	private CValue<?> getValueType() {
 
 		return slot.getValueType();
+	}
+
+	private boolean singleValued() {
+
+		return getCardinality().singleValued();
+	}
+
+	private boolean conflictingAsserteds(IValue value1, IValue value2) {
+
+		return getCardinality().conflictingAsserteds(value1, value2);
+	}
+
+	private CCardinality getCardinality() {
+
+		return slot.getType().getCardinality();
 	}
 }
