@@ -80,11 +80,11 @@ class ITree extends GTree {
 			return;
 		}
 
-		if (updates.directGeneralUpdateMarkRequired(node)) {
+		if (updates.showDirectUpdate(node)) {
 
 			display.setBackgroundColour(DIRECT_UPDATES_CLR);
 		}
-		else if (updates.indirectGeneralUpdateMarkRequired(node)) {
+		else if (updates.showGeneralIndirectUpdate(node)) {
 
 			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
 		}
@@ -97,7 +97,7 @@ class ITree extends GTree {
 			return;
 		}
 
-		if (updates.indirectSlotValueTypeUpdateMarkRequired(node)) {
+		if (updates.showValueTypeIndirectUpdate(node)) {
 
 			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
 		}

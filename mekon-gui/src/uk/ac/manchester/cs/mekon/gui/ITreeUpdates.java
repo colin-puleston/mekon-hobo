@@ -125,7 +125,7 @@ class ITreeUpdates {
 		updateValues(valueToAdd, valueToRemove);
 	}
 
-	boolean directGeneralUpdateMarkRequired(GNode node) {
+	boolean showDirectUpdate(GNode node) {
 
 		if (valueAdded) {
 
@@ -142,7 +142,7 @@ class ITreeUpdates {
 		return node == updatedSlotNode;
 	}
 
-	boolean indirectGeneralUpdateMarkRequired(GNode node) {
+	boolean showGeneralIndirectUpdate(GNode node) {
 
 		if (node == updatedSlotNode || addedValueNode(node)) {
 
@@ -154,15 +154,15 @@ class ITreeUpdates {
 			return false;
 		}
 
-		if (localUpdate(node)) {
+		if (showGeneralIndirectUpdateForExposedNode(node)) {
 
 			return true;
 		}
 
-		return node.collapsed() && updatesInSubTree(node);
+		return node.collapsed() && showIndirectUpdateForHiddenSubTree(node);
 	}
 
-	boolean indirectSlotValueTypeUpdateMarkRequired(ISlotNode node) {
+	boolean showValueTypeIndirectUpdate(ISlotNode node) {
 
 		if (nodeStates == null) {
 
@@ -230,7 +230,7 @@ class ITreeUpdates {
 		return new GNodeState(node);
 	}
 
-	private boolean localUpdate(GNode node) {
+	private boolean showGeneralIndirectUpdateForExposedNode(GNode node) {
 
 		if (nodeStates == null) {
 
@@ -241,30 +241,36 @@ class ITreeUpdates {
 
 		if (state == null) {
 
-			return nonDefaultNode(node);
+			return !defaultNode(node);
 		}
 
 		return state.childrenRemoved(node) && !state.childrenAdded(node);
 	}
 
-	private boolean nonDefaultNode(GNode node) {
-
-		if (node instanceof ISlotNode) {
-
-			return nodeStates.get(node.getParent()) != null;
-		}
-
-		return true;
-	}
-
-	private boolean updatesInSubTree(GNode node) {
+	private boolean showIndirectUpdateForHiddenSubTree(GNode node) {
 
 		for (GNode child : node.getChildren()) {
 
-			if (newOrUpdatedNode(child) || updatesInSubTree(child)) {
+			if (showIndirectUpdateForHiddenNode(child)
+				|| showIndirectUpdateForHiddenSubTree(child)) {
 
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	private boolean showIndirectUpdateForHiddenNode(GNode node) {
+
+		return newOrUpdatedNode(node) && !showDirectUpdate(node);
+	}
+
+	private boolean defaultNode(GNode node) {
+
+		if (node instanceof ISlotNode) {
+
+			return nodeStates.get(node.getParent()) == null;
 		}
 
 		return false;
