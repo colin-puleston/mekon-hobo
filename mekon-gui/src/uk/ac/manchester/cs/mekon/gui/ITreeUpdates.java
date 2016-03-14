@@ -50,11 +50,6 @@ class ITreeUpdates {
 			children = node.getChildren();
 		}
 
-		boolean updated(GNode node) {
-
-			return childrenRemoved(node);
-		}
-
 		boolean childrenAdded(GNode node) {
 
 			for (GNode child : node.getChildren()) {
@@ -82,6 +77,11 @@ class ITreeUpdates {
 
 			return false;
 		}
+
+		boolean updatedSlotValueType(GNode node) {
+
+			return false;
+		}
 	}
 
 	private class ISlotNodeState extends GNodeState {
@@ -92,20 +92,15 @@ class ITreeUpdates {
 
 			super(node);
 
-			valueType = getValueType(node);
+			valueType = getSlotValueType(node);
 		}
 
-		boolean updated(GNode node) {
+		boolean updatedSlotValueType(GNode node) {
 
-			return super.updated(node) || updatedValueType((ISlotNode)node);
+			return !getValueType((ISlotNode)node).equals(valueType);
 		}
 
-		boolean updatedValueType(ISlotNode node) {
-
-			return !getValueType(node).equals(valueType);
-		}
-
-		private CValue<?> getValueType(ISlotNode node) {
+		private CValue<?> getSlotValueType(ISlotNode node) {
 
 			return node.getISlot().getType().getValueType();
 		}
@@ -169,9 +164,9 @@ class ITreeUpdates {
 			return false;
 		}
 
-		ISlotNodeState state = (ISlotNodeState)nodeStates.get(node);
+		GNodeState state = nodeStates.get(node);
 
-		return state != null && state.updatedValueType(node);
+		return state != null && state.updatedSlotValueType(node);
 	}
 
 	private void updateValues(IValue valueToAdd, IValue valueToRemove) {
@@ -263,7 +258,19 @@ class ITreeUpdates {
 
 	private boolean showIndirectUpdateForHiddenNode(GNode node) {
 
-		return newOrUpdatedNode(node) && !showDirectUpdate(node);
+		if (node == updatedSlotNode || addedValueNode(node)) {
+
+			return false;
+		}
+
+		GNodeState state = nodeStates.get(node);
+
+		if (state == null) {
+
+			return true;
+		}
+
+		return state.childrenRemoved(node) || state.updatedSlotValueType(node);
 	}
 
 	private boolean defaultNode(GNode node) {
@@ -274,13 +281,6 @@ class ITreeUpdates {
 		}
 
 		return false;
-	}
-
-	private boolean newOrUpdatedNode(GNode node) {
-
-		GNodeState state = nodeStates.get(node);
-
-		return state == null || state.updated(node);
 	}
 
 	private boolean iFrameDisjunctNode(GNode node) {
