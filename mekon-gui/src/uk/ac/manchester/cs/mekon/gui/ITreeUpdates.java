@@ -97,7 +97,7 @@ class ITreeUpdates {
 
 		boolean updatedSlotValueType(GNode node) {
 
-			return !getValueType((ISlotNode)node).equals(valueType);
+			return !getSlotValueType((ISlotNode)node).equals(valueType);
 		}
 
 		private CValue<?> getSlotValueType(ISlotNode node) {
