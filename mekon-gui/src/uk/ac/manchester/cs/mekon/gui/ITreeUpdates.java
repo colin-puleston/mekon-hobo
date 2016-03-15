@@ -124,9 +124,7 @@ class ITreeUpdates {
 
 		if (valueAdded) {
 
-			GNode parent = node.getParent();
-
-			if (parent != null && addedValueNode(parent)) {
+			if (childOfAddedValueNode(node)) {
 
 				return iFrameDisjunctNode(node) && lastChildNode(node);
 			}
@@ -139,17 +137,24 @@ class ITreeUpdates {
 
 	boolean showGeneralIndirectUpdate(GNode node) {
 
-		if (node == updatedSlotNode || addedValueNode(node)) {
+		if (nodeStates == null) {
 
 			return false;
 		}
 
-		if (iFrameDisjunctNode(node)) {
+		if (resultOfDirectUpdate(node) || iFrameDisjunctNode(node)) {
 
 			return false;
 		}
 
-		if (showGeneralIndirectUpdateForExposedNode(node)) {
+		GNodeState state = nodeStates.get(node);
+
+		if (state == null) {
+
+			return !defaultNode(node);
+		}
+
+		if (state.childrenRemoved(node) && !state.childrenAdded(node)) {
 
 			return true;
 		}
@@ -225,23 +230,6 @@ class ITreeUpdates {
 		return new GNodeState(node);
 	}
 
-	private boolean showGeneralIndirectUpdateForExposedNode(GNode node) {
-
-		if (nodeStates == null) {
-
-			return false;
-		}
-
-		GNodeState state = nodeStates.get(node);
-
-		if (state == null) {
-
-			return !defaultNode(node);
-		}
-
-		return state.childrenRemoved(node) && !state.childrenAdded(node);
-	}
-
 	private boolean showIndirectUpdateForHiddenSubTree(GNode node) {
 
 		for (GNode child : node.getChildren()) {
@@ -258,7 +246,7 @@ class ITreeUpdates {
 
 	private boolean showIndirectUpdateForHiddenNode(GNode node) {
 
-		if (node == updatedSlotNode || addedValueNode(node)) {
+		if (resultOfDirectUpdate(node)) {
 
 			return false;
 		}
@@ -286,6 +274,20 @@ class ITreeUpdates {
 	private boolean iFrameDisjunctNode(GNode node) {
 
 		return node.getParent() instanceof DisjunctionIFrameValueNode;
+	}
+
+	private boolean resultOfDirectUpdate(GNode node) {
+
+		return node == updatedSlotNode
+				|| addedValueNode(node)
+				|| childOfAddedValueNode(node);
+	}
+
+	private boolean childOfAddedValueNode(GNode node) {
+
+		GNode parent = node.getParent();
+
+		return parent != null && addedValueNode(parent);
 	}
 
 	private boolean addedValueNode(GNode node) {
