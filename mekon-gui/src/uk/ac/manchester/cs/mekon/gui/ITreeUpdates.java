@@ -162,7 +162,7 @@ class ITreeUpdates {
 		return node.collapsed() && showIndirectUpdateForHiddenSubTree(node);
 	}
 
-	boolean showValueTypeIndirectUpdate(ISlotNode node) {
+	boolean showValueTypeIndirectUpdate(GNode node) {
 
 		if (nodeStates == null) {
 

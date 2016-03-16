@@ -73,7 +73,10 @@ class ITree extends GTree {
 		update(slotNode, null, null);
 	}
 
-	void checkMarkForGeneralUpdate(GNode node, GCellDisplay display) {
+	void checkShowUpdate(
+			GNode node,
+			GCellDisplay mainDisplay,
+			GCellDisplay valueTypeDisplay) {
 
 		if (updates == null) {
 
@@ -82,24 +85,19 @@ class ITree extends GTree {
 
 		if (updates.showDirectUpdate(node)) {
 
-			display.setBackgroundColour(DIRECT_UPDATES_CLR);
+			mainDisplay.setBackgroundColour(DIRECT_UPDATES_CLR);
 		}
 		else if (updates.showGeneralIndirectUpdate(node)) {
 
-			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
-		}
-	}
+			mainDisplay.setBackgroundColour(INDIRECT_UPDATES_CLR);
 
-	void checkMarkForSlotValueTypeUpdate(ISlotNode node, GCellDisplay display) {
+			if (valueTypeDisplay != null) {
 
-		if (updates == null) {
+				if (updates.showValueTypeIndirectUpdate(node)) {
 
-			return;
-		}
-
-		if (updates.showValueTypeIndirectUpdate(node)) {
-
-			display.setBackgroundColour(INDIRECT_UPDATES_CLR);
+					valueTypeDisplay.setBackgroundColour(INDIRECT_UPDATES_CLR);
+				}
+			}
 		}
 	}
 

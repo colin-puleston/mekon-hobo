@@ -40,7 +40,7 @@ abstract class IValueNode<V extends IValue> extends GNode {
 
 		GCellDisplay display = getDefaultDisplay();
 
-		tree.checkMarkForGeneralUpdate(this, display);
+		tree.checkShowUpdate(this, display, null);
 
 		return display;
 	}

@@ -146,8 +146,7 @@ abstract class ISlotNode extends GNode {
 		display.setModifier(valTypeDisp);
 		valTypeDisp.setModifier(cardDisp);
 
-		tree.checkMarkForGeneralUpdate(this, display);
-		tree.checkMarkForSlotValueTypeUpdate(this, valTypeDisp);
+		tree.checkShowUpdate(this, display, valTypeDisp);
 
 		return display;
 	}
