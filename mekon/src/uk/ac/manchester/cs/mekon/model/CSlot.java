@@ -64,7 +64,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 
 		public void absorbValueType(CValue<?> otherValueType) {
 
-			CValue<?> mergedType = valueType.mergeWith(otherValueType);
+			CValue<?> mergedType = valueType.update(otherValueType);
 
 			if (mergedType == null) {
 

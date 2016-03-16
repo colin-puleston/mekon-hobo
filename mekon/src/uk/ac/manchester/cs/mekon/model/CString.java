@@ -92,14 +92,14 @@ public class CString extends CDataValue<IString> {
 		return other instanceof CString;
 	}
 
+	CValue<?> update(CValue<?> other) {
+
+		return this;
+	}
+
 	void acceptVisitor(CValueVisitor visitor) throws Exception {
 
 		visitor.visit(this);
-	}
-
-	CValue<?> mergeWith(CValue<?> other) {
-
-		return this;
 	}
 
 	IString getDefaultValueOrNull() {

@@ -595,6 +595,21 @@ public abstract class CFrame
 	CFrame() {
 	}
 
+	CValue<?> update(CValue<?> other) {
+
+		if (other instanceof CFrame) {
+
+			return getMostSpecific((CFrame)other);
+		}
+
+		if (other instanceof MFrame) {
+
+			return type.getMostSpecific((MFrame)other);
+		}
+
+		return null;
+	}
+
 	void acceptVisitor(CValueVisitor visitor) throws Exception {
 
 		visitor.visit(this);
@@ -621,11 +636,6 @@ public abstract class CFrame
 		pollListenersForExtended(extn);
 
 		return extn;
-	}
-
-	CValue<?> mergeWith(CValue<?> other) {
-
-		return other instanceof MFrame ? other.mergeWith(type) : super.mergeWith(other);
 	}
 
 	void initialiseInstance(IFrame instance) {

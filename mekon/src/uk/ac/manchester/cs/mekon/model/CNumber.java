@@ -601,16 +601,16 @@ public class CNumber extends CDataValue<INumber> {
 		this.max = max;
 	}
 
-	void acceptVisitor(CValueVisitor visitor) throws Exception {
-
-		visitor.visit(this);
-	}
-
-	CValue<?> mergeWith(CValue<?> other) {
+	CValue<?> update(CValue<?> other) {
 
 		return other instanceof CNumber
 				? getIntersection((CNumber)other)
 				: null;
+	}
+
+	void acceptVisitor(CValueVisitor visitor) throws Exception {
+
+		visitor.visit(this);
 	}
 
 	INumber getDefaultValueOrNull() {

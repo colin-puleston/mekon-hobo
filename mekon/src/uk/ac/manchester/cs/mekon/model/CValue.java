@@ -243,6 +243,8 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		return new ArrayList<CFrame>(slotValueReferencingFrames);
 	}
 
+	abstract CValue<?> update(CValue<?> other);
+
 	abstract void acceptVisitor(CValueVisitor visitor) throws Exception;
 
 	void registerReferencingSlot(CSlot slot) {
@@ -255,12 +257,7 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		slotValueReferencingFrames.add(frame);
 	}
 
-	CValue<?> mergeWith(CValue<?> other) {
-
-		return getMostSpecifics(other);
-	}
-
-	CValue<?> getMostSpecifics(CValue<?> other) {
+	CValue<?> getMostSpecific(CValue<?> other) {
 
 		if (subsumes(other)) {
 
