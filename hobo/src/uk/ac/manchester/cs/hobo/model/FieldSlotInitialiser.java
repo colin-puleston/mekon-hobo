@@ -38,8 +38,8 @@ class FieldSlotInitialiser {
 	private IFrame frame;
 	private String slotId;
 	private String slotLabel;
-	private CCardinality cardinality;
 	private CValue<?> valueType;
+	private CCardinality cardinality;
 	private CEditability editability;
 
 	FieldSlotInitialiser(DModel model, IFrame frame, FieldSlot fieldSlot) {
@@ -54,8 +54,8 @@ class FieldSlotInitialiser {
 		frameType = binding.getFrame();
 		slotId = binding.getSlotId(fieldName);
 		slotLabel = fieldSlot.getSlotLabel();
-		cardinality = field.getCardinality();
 		valueType = field.getSlotValueType();
+		cardinality = field.getCardinality();
 		editability = fieldSlot.getEditability();
 	}
 
