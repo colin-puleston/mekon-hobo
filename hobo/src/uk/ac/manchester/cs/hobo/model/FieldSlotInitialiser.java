@@ -106,8 +106,8 @@ class FieldSlotInitialiser {
 
 		CSlotEditor slotTypeEd = getSlotTypeEditor(slotType);
 
-		slotTypeEd.absorbCardinality(cardinality);
 		slotTypeEd.absorbValueType(valueType);
+		slotTypeEd.absorbCardinality(cardinality);
 		slotTypeEd.absorbEditability(editability);
 	}
 
