@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -109,6 +111,11 @@ class IFrameNode extends IValueNode<IFrame> {
 		this.tree = tree;
 
 		valueNodes = new ValueNodes();
+	}
+
+	List<ISlot> getChildEntities() {
+
+		return getValue().getSlots().asList();
 	}
 
 	GCellDisplay getDefaultDisplay() {

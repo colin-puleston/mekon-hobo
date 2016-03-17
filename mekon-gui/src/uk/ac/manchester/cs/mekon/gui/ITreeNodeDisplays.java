@@ -40,12 +40,12 @@ class ITreeNodeDisplays {
 
 	private class Highlighter {
 
-		private GNode node;
+		private INode node;
 		private GCellDisplay mainDisplay;
 		private GCellDisplay valueTypeDisplay;
 
 		Highlighter(
-			GNode node,
+			INode node,
 			GCellDisplay mainDisplay,
 			GCellDisplay valueTypeDisplay) {
 

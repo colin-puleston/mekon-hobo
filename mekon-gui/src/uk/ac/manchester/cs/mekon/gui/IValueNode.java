@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -31,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class IValueNode<V extends IValue> extends GNode {
+abstract class IValueNode<V extends IValue> extends INode {
 
 	private ITree tree;
 	private V value;
@@ -47,6 +49,16 @@ abstract class IValueNode<V extends IValue> extends GNode {
 
 		this.tree = tree;
 		this.value = value;
+	}
+
+	V getEntity() {
+
+		return value;
+	}
+
+	List<? extends FEntity> getChildEntities() {
+
+		return Collections.<FEntity>emptyList();
 	}
 
 	V getValue() {

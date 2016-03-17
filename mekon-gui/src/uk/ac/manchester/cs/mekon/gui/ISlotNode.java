@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class ISlotNode extends GNode {
+abstract class ISlotNode extends INode {
 
 	private ITree tree;
 
@@ -181,6 +181,16 @@ abstract class ISlotNode extends GNode {
 	GNodeAction getRemoveValueAction(IValue value) {
 
 		return new RemoveValueAction(value);
+	}
+
+	ISlot getEntity() {
+
+		return slot;
+	}
+
+	List<IValue> getChildEntities() {
+
+		return slot.getValues().asList();
 	}
 
 	ISlot getISlot() {

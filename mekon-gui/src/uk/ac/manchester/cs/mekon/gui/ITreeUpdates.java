@@ -35,24 +35,24 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 class ITreeUpdates {
 
-	private GNode rootNode = null;
-	private Map<GNode, GNodeState> nodeStates = null;
+	private INode rootNode = null;
 
-	private ISlotNode updatedSlotNode = null;
+	private ISlotNode updateSlotNode = null;
 	private boolean valueAdded = false;
+	private Map<FEntity, IState> iStates = new HashMap<FEntity, IState>();
 
-	private class GNodeState {
+	private class IState {
 
-		private List<GNode> children;
+		private List<? extends FEntity> children;
 
-		GNodeState(GNode node) {
+		IState(INode node) {
 
-			children = node.getChildren();
+			children = node.getChildEntities();
 		}
 
-		boolean childrenAdded(GNode node) {
+		boolean childrenAdded(INode node) {
 
-			for (GNode child : node.getChildren()) {
+			for (FEntity child : node.getChildEntities()) {
 
 				if (!children.contains(child)) {
 
@@ -63,11 +63,11 @@ class ITreeUpdates {
 			return false;
 		}
 
-		boolean childrenRemoved(GNode node) {
+		boolean childrenRemoved(INode node) {
 
-			List<GNode> currentChildren = node.getChildren();
+			List<? extends FEntity> currentChildren = node.getChildEntities();
 
-			for (GNode child : children) {
+			for (FEntity child : children) {
 
 				if (!currentChildren.contains(child)) {
 
@@ -78,24 +78,24 @@ class ITreeUpdates {
 			return false;
 		}
 
-		boolean updatedSlotValueType(GNode node) {
+		boolean updatedSlotValueType(INode node) {
 
 			return false;
 		}
 	}
 
-	private class ISlotNodeState extends GNodeState {
+	private class ISlotState extends IState {
 
 		private CValue<?> valueType;
 
-		ISlotNodeState(ISlotNode node) {
+		ISlotState(ISlotNode node) {
 
 			super(node);
 
 			valueType = getSlotValueType(node);
 		}
 
-		boolean updatedSlotValueType(GNode node) {
+		boolean updatedSlotValueType(INode node) {
 
 			return !getSlotValueType((ISlotNode)node).equals(valueType);
 		}
@@ -106,21 +106,26 @@ class ITreeUpdates {
 		}
 	}
 
-	ITreeUpdates(GNode rootNode) {
+	ITreeUpdates(INode rootNode) {
 
 		this.rootNode = rootNode;
 	}
 
 	void update(ISlotNode slotNode, IValue valueToAdd, IValue valueToRemove) {
 
-		updatedSlotNode = slotNode;
+		updateSlotNode = slotNode;
 		valueAdded = valueToAdd != null;
 
-		updateNodeStates();
+		updateIStates();
 		updateValues(valueToAdd, valueToRemove);
 	}
 
-	boolean showDirectUpdate(GNode node) {
+	boolean showDirectUpdate(INode node) {
+
+		if (updateSlotNode == null) {
+
+			return false;
+		}
 
 		if (valueAdded) {
 
@@ -132,12 +137,12 @@ class ITreeUpdates {
 			return addedValueNode(node);
 		}
 
-		return node == updatedSlotNode;
+		return nodeForUpdateSlot(node);
 	}
 
-	boolean showGeneralIndirectUpdate(GNode node) {
+	boolean showGeneralIndirectUpdate(INode node) {
 
-		if (nodeStates == null) {
+		if (updateSlotNode == null) {
 
 			return false;
 		}
@@ -147,7 +152,7 @@ class ITreeUpdates {
 			return false;
 		}
 
-		GNodeState state = nodeStates.get(node);
+		IState state = getState(node);
 
 		if (state == null) {
 
@@ -162,21 +167,21 @@ class ITreeUpdates {
 		return node.collapsed() && showIndirectUpdateForHiddenSubTree(node);
 	}
 
-	boolean showValueTypeIndirectUpdate(GNode node) {
+	boolean showValueTypeIndirectUpdate(INode node) {
 
-		if (nodeStates == null) {
+		if (updateSlotNode == null) {
 
 			return false;
 		}
 
-		GNodeState state = nodeStates.get(node);
+		IState state = getState(node);
 
 		return state != null && state.updatedSlotValueType(node);
 	}
 
 	private void updateValues(IValue valueToAdd, IValue valueToRemove) {
 
-		ISlotValuesEditor editor = getSlotValuesEditor();
+		ISlotValuesEditor editor = getUpdateSlotValuesEditor();
 
 		if (valueToAdd != null || valueToRemove != null) {
 
@@ -196,43 +201,41 @@ class ITreeUpdates {
 		}
 	}
 
-	private void updateNodeStates() {
+	private void updateIStates() {
 
-		if (nodeStates == null) {
+		iStates.clear();
 
-			nodeStates = new HashMap<GNode, GNodeState>();
-		}
-		else {
-
-			nodeStates.clear();
-		}
-
-		addNodeStates(rootNode);
+		addIStates(rootNode, new HashSet<FEntity>());
 	}
 
-	private void addNodeStates(GNode node) {
+	private void addIStates(INode node, Set<FEntity> visitedEntities) {
 
-		nodeStates.put(node, createNodeState(node));
+		FEntity entity = node.getEntity();
 
-		for (GNode child : node.getChildren()) {
+		if (visitedEntities.add(entity)) {
 
-			addNodeStates(child);
+			iStates.put(entity, createIState(node));
+
+			for (INode child : node.getIChildren()) {
+
+				addIStates(child, visitedEntities);
+			}
 		}
 	}
 
-	private GNodeState createNodeState(GNode node) {
+	private IState createIState(INode node) {
 
 		if (node instanceof ISlotNode) {
 
-			return new ISlotNodeState((ISlotNode)node);
+			return new ISlotState((ISlotNode)node);
 		}
 
-		return new GNodeState(node);
+		return new IState(node);
 	}
 
-	private boolean showIndirectUpdateForHiddenSubTree(GNode node) {
+	private boolean showIndirectUpdateForHiddenSubTree(INode node) {
 
-		for (GNode child : node.getChildren()) {
+		for (INode child : node.getIChildren()) {
 
 			if (showIndirectUpdateForHiddenNode(child)
 				|| showIndirectUpdateForHiddenSubTree(child)) {
@@ -244,14 +247,14 @@ class ITreeUpdates {
 		return false;
 	}
 
-	private boolean showIndirectUpdateForHiddenNode(GNode node) {
+	private boolean showIndirectUpdateForHiddenNode(INode node) {
 
 		if (resultOfDirectUpdate(node)) {
 
 			return false;
 		}
 
-		GNodeState state = nodeStates.get(node);
+		IState state = getState(node);
 
 		if (state == null) {
 
@@ -261,51 +264,72 @@ class ITreeUpdates {
 		return state.childrenRemoved(node) || state.updatedSlotValueType(node);
 	}
 
-	private boolean defaultNode(GNode node) {
+	private boolean defaultNode(INode node) {
 
 		if (node instanceof ISlotNode) {
 
-			return nodeStates.get(node.getParent()) == null;
+			return getState(node.getIParent()) == null;
 		}
 
 		return false;
 	}
 
-	private boolean iFrameDisjunctNode(GNode node) {
+	private boolean iFrameDisjunctNode(INode node) {
 
-		return node.getParent() instanceof DisjunctionIFrameValueNode;
+		return node.getIParent() instanceof DisjunctionIFrameValueNode;
 	}
 
-	private boolean resultOfDirectUpdate(GNode node) {
+	private boolean resultOfDirectUpdate(INode node) {
 
-		return node == updatedSlotNode
+		return nodeForUpdateSlot(node)
 				|| addedValueNode(node)
 				|| childOfAddedValueNode(node);
 	}
 
-	private boolean childOfAddedValueNode(GNode node) {
+	private boolean childOfAddedValueNode(INode node) {
 
-		GNode parent = node.getParent();
+		INode parent = node.getIParent();
 
 		return parent != null && addedValueNode(parent);
 	}
 
-	private boolean addedValueNode(GNode node) {
+	private boolean addedValueNode(INode node) {
 
 		return valueAdded
-				&& node.getParent() == updatedSlotNode
+				&& nodeForUpdateSlot(node.getIParent())
 				&& lastChildNode(node);
 	}
 
-	private boolean lastChildNode(GNode child) {
+	private boolean nodeForUpdateSlot(INode node) {
 
-		List<GNode> siblings = child.getParent().getChildren();
+		return node instanceof ISlotNode
+				&& nodeForUpdateSlot((ISlotNode)node);
+	}
+
+	private boolean nodeForUpdateSlot(ISlotNode node) {
+
+		return node.getISlot() == getUpdateSlot();
+	}
+
+	private boolean lastChildNode(INode child) {
+
+		List<INode> siblings = child.getIParent().getIChildren();
 
 		return siblings.indexOf(child) == (siblings.size() - 1);
 	}
 
-	private ISlotValuesEditor getSlotValuesEditor() {
+	private IState getState(INode node) {
 
-		return updatedSlotNode.getISlot().getValuesEditor();
+		return iStates.get(node.getEntity());
+	}
+
+	private ISlotValuesEditor getUpdateSlotValuesEditor() {
+
+		return getUpdateSlot().getValuesEditor();
+	}
+
+	private ISlot getUpdateSlot() {
+
+		return updateSlotNode.getISlot();
 	}
 }
