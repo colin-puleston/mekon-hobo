@@ -28,8 +28,6 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
-
 /**
  * @author Colin Puleston
  */

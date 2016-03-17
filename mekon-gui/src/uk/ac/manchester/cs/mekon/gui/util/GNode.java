@@ -306,9 +306,12 @@ public abstract class GNode extends GMutableTreeNode {
 
 		updateNodeDisplay();
 
-		for (GNode child : getChildren()) {
+		if (childList != null) {
 
-			child.updateSubTreeNodeDisplays();
+			for (GNode child : getChildren()) {
+
+				child.updateSubTreeNodeDisplays();
+			}
 		}
 	}
 

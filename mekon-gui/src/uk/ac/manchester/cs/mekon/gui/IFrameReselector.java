@@ -29,8 +29,6 @@ import java.awt.event.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
-
 /**
  * @author Colin Puleston
  */
@@ -79,7 +77,7 @@ class IFrameReselector {
 		return reselectionSlotNode != null;
 	}
 
-	boolean reselectable(GNode node) {
+	boolean reselectable(INode node) {
 
 		return node instanceof IFrameNode && reselectable((IFrameNode)node);
 	}
@@ -94,11 +92,18 @@ class IFrameReselector {
 
 	private boolean reselectable(IFrameNode node) {
 
-		return getSelectionType().subsumes(node.getValue().getType());
+		IFrame iFrame = node.getValue();
+
+		return reselectableType(iFrame) && !reselectionSlotValue(iFrame);
 	}
 
-	private CFrame getSelectionType() {
+	private boolean reselectableType(IFrame iFrame) {
 
-		return reselectionSlotNode.getValueType();
+		return reselectionSlotNode.getValueType().subsumes(iFrame.getType());
+	}
+
+	private boolean reselectionSlotValue(IFrame iFrame) {
+
+		return reselectionSlotNode.getISlot().getValues().asList().contains(iFrame);
 	}
 }
