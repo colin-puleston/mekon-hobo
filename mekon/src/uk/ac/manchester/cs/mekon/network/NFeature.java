@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public abstract class NFeature<V> extends NEntity {
 
-	private References<V> values = new References<V>();
+	private List<V> values = new ArrayList<V>();
 	private ISlot iSlot = null;
 
 	/**
@@ -137,10 +137,5 @@ public abstract class NFeature<V> extends NEntity {
 		super(type);
 
 		this.iSlot = iSlot;
-	}
-
-	References<?> getLateralReferences() {
-
-		return values;
 	}
 }

@@ -36,54 +36,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public abstract class NEntity {
 
-	private int hashCode = 0;
-
-	private References<CIdentity> typeDisjuncts = new References<CIdentity>();
-
-	class References<V> extends ArrayList<V> {
-
-		static private final long serialVersionUID = -1;
-
-		public boolean add(V value) {
-
-			onUpdate();
-
-			return super.add(value);
-		}
-
-		public boolean addAll(Collection<? extends V> values) {
-
-			onUpdate();
-
-			return super.addAll(values);
-		}
-
-		public boolean remove(Object value) {
-
-			onUpdate();
-
-			return super.remove(value);
-		}
-
-		public boolean removeAll(Collection<?> values) {
-
-			onUpdate();
-
-			return super.removeAll(values);
-		}
-
-		public void clear() {
-
-			onUpdate();
-
-			super.clear();
-		}
-
-		private void onUpdate() {
-
-			hashCode = 0;
-		}
-	}
+	private List<CIdentity> typeDisjuncts = new ArrayList<CIdentity>();
 
 	/**
 	 * Sets an atomic type for the entity.
@@ -94,40 +47,6 @@ public abstract class NEntity {
 
 		typeDisjuncts.clear();
 		typeDisjuncts.add(type);
-	}
-
-	/**
-	 * Tests if the other specified object is another
-	 * <code>NEntity</code> with the same type as this one
-	 * (whether atomic or disjunction), and referencing recursively
-	 * identical network structure.
-	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if objects are equal
-	 */
-	public boolean equals(Object other) {
-
-		if (other != null && getClass() == other.getClass()) {
-
-			return equalsEntity((NEntity)other);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Provides hash-code for this object.
-	 *
-	 * @return Relelevant hash-code
-	 */
-	public int hashCode() {
-
-		if (hashCode == 0) {
-
-			hashCode = calcHashCode();
-		}
-
-		return hashCode;
 	}
 
 	/**
@@ -207,18 +126,5 @@ public abstract class NEntity {
 
 		typeDisjuncts.clear();
 		typeDisjuncts.addAll(disjuncts);
-	}
-
-	abstract References<?> getLateralReferences();
-
-	private boolean equalsEntity(NEntity other) {
-
-		return typeDisjuncts.equals(other.typeDisjuncts)
-				&& getLateralReferences().equals(other.getLateralReferences());
-	}
-
-	private int calcHashCode() {
-
-		return typeDisjuncts.hashCode() + getLateralReferences().hashCode();
 	}
 }

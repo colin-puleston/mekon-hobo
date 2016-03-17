@@ -55,7 +55,7 @@ public class NNode extends NEntity {
 		return typeDisjuncts;
 	}
 
-	private References<NFeature<?>> features = new References<NFeature<?>>();
+	private List<NFeature<?>> features = new ArrayList<NFeature<?>>();
 
 	private CFrame cFrame = null;
 	private IFrame iFrame = null;
@@ -279,11 +279,6 @@ public class NNode extends NEntity {
 	void setIFrame(IFrame iFrame) {
 
 		this.iFrame = iFrame;
-	}
-
-	References<?> getLateralReferences() {
-
-		return features;
 	}
 
 	private <F extends NFeature<?>>List<F> getTypeFeatures(Class<F> type) {

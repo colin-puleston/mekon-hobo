@@ -287,23 +287,20 @@ class NNetwork {
 
 		if (node == null) {
 
-			node = renderNode(frame);
+			node = createNode(frame);
+
 			nodesByFrame.put(frame, node);
+			renderSlots(frame, node);
 		}
 
 		return node;
 	}
 
-	private NNode renderNode(IFrame frame) {
+	private NNode createNode(IFrame frame) {
 
 		NNode node = createNode(frame.getType());
 
 		node.setIFrame(frame);
-
-		for (ISlot slot : frame.getSlots().asList()) {
-
-			new ISlotRenderer(slot, node);
-		}
 
 		return node;
 	}
@@ -327,6 +324,14 @@ class NNetwork {
 		for (CIdentity slotId : slotValues.getSlotIdentities()) {
 
 			new CSlotValuesRenderer(slotValues, slotId, node);
+		}
+	}
+
+	private void renderSlots(IFrame frame, NNode node) {
+
+		for (ISlot slot : frame.getSlots().asList()) {
+
+			new ISlotRenderer(slot, node);
 		}
 	}
 }

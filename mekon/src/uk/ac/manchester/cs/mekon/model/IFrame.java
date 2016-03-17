@@ -734,10 +734,10 @@ public class IFrame implements IEntity, IValue {
 
 	private void performAutoUpdates() {
 
-		performAutoUpdates(new ArrayList<IFrame>());
+		performAutoUpdates(new HashSet<IFrame>());
 	}
 
-	private void performAutoUpdates(List<IFrame> visited) {
+	private void performAutoUpdates(Set<IFrame> visited) {
 
 		if (visited.add(this)) {
 
