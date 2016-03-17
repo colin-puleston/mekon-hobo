@@ -39,16 +39,26 @@ class ITree extends GTree {
 
 	static final Color DIRECT_UPDATES_CLR = Color.yellow;
 	static final Color INDIRECT_UPDATES_CLR = Color.cyan;
+	static final Color RESELECTABLE_IFRAME_CLR = Color.green;
 
-	private ITreeCollapsedNodes collapseds = null;
-	private ITreeUpdates updates = null;
+	static final Color IFRAME_RESELECT_BACKGROUND_CLR = Color.gray.brighter();
+	static final Color DEFAULT_BACKGROUND_CLR = Color.white;
+
+	private ITreeUpdates updates;
+	private ITreeCollapsedNodes collapseds;
+	private IFrameReselector iFrameReselector;
+	private ITreeNodeDisplays nodeDisplays;
 
 	ITree(IFrame rootFrame) {
 
-		initialise(new IFrameNode(this, rootFrame));
+		IFrameNode rootNode = new IFrameNode(this, rootFrame);
 
-		updates = new ITreeUpdates(getRootNode());
-		collapseds = new ITreeCollapsedNodes(getRootNode());
+		updates = new ITreeUpdates(rootNode);
+		collapseds = new ITreeCollapsedNodes(rootNode);
+		iFrameReselector = new IFrameReselector(this);
+		nodeDisplays = new ITreeNodeDisplays(this);
+
+		initialise(rootNode);
 
 		setActiveTree();
 	}
@@ -73,32 +83,19 @@ class ITree extends GTree {
 		update(slotNode, null, null);
 	}
 
-	void checkShowUpdate(
-			GNode node,
-			GCellDisplay mainDisplay,
-			GCellDisplay valueTypeDisplay) {
+	ITreeUpdates getUpdates() {
 
-		if (updates == null) {
+		return updates;
+	}
 
-			return;
-		}
+	IFrameReselector getIFrameReselector() {
 
-		if (updates.showDirectUpdate(node)) {
+		return iFrameReselector;
+	}
 
-			mainDisplay.setBackgroundColour(DIRECT_UPDATES_CLR);
-		}
-		else if (updates.showGeneralIndirectUpdate(node)) {
+	ITreeNodeDisplays getNodeDisplays() {
 
-			mainDisplay.setBackgroundColour(INDIRECT_UPDATES_CLR);
-
-			if (valueTypeDisplay != null) {
-
-				if (updates.showValueTypeIndirectUpdate(node)) {
-
-					valueTypeDisplay.setBackgroundColour(INDIRECT_UPDATES_CLR);
-				}
-			}
-		}
+		return nodeDisplays;
 	}
 
 	private void update(ISlotNode slotNode, IValue valueToAdd, IValue valueToRemove) {

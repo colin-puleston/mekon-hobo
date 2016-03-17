@@ -38,11 +38,18 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 	private ITree tree;
 	private ISlot slot;
 
-	private abstract class UpdateCFrameDisjunctsAction extends GNodeAction {
+	private abstract class UpdateCFrameDisjunctsAction extends ITreeNodeAction {
 
 		private F value;
 
-		protected void perform() {
+		UpdateCFrameDisjunctsAction(F value) {
+
+			super(tree);
+
+			this.value = value;
+		}
+
+		void performDefault() {
 
 			F updatedValue = getUpdatedValue();
 
@@ -57,11 +64,6 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 					removeValue(value);
 				}
 			}
-		}
-
-		UpdateCFrameDisjunctsAction(F value) {
-
-			this.value = value;
 		}
 
 		abstract CFrame checkUpdateCFrameDisjuncts(CFrame cFrame);

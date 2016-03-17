@@ -38,11 +38,7 @@ abstract class IValueNode<V extends IValue> extends GNode {
 
 	protected GCellDisplay getDisplay() {
 
-		GCellDisplay display = getDefaultDisplay();
-
-		tree.checkShowUpdate(this, display, null);
-
-		return display;
+		return tree.getNodeDisplays().get(this);
 	}
 
 	IValueNode(ITree tree, V value) {

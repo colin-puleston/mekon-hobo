@@ -213,6 +213,11 @@ public class GTree extends JTree {
 		rootNode.initialiseSubTree();
 	}
 
+	public void updateAllNodeDisplays() {
+
+		rootNode.updateSubTreeNodeDisplays();
+	}
+
 	public GNode getRootNode() {
 
 		return rootNode;
@@ -221,11 +226,6 @@ public class GTree extends JTree {
 	public boolean isEmptyTree() {
 
 		return rootNode == null || rootNode.getChildCount() == 0;
-	}
-
-	void updateAllNodeDisplays() {
-
-		rootNode.updateSubTreeNodeDisplays();
 	}
 
 	DefaultTreeModel getTreeModel() {

@@ -40,6 +40,55 @@ abstract class ISlotNode extends GNode {
 	private ISlot slot;
 	private ValueNodes valueNodes;
 
+	abstract class ISlotNodeAction extends ITreeNodeAction {
+
+		protected boolean active() {
+
+			return editableSlot();
+		}
+
+		ISlotNodeAction() {
+
+			super(tree);
+		}
+	}
+
+	private class AddValueAction extends ISlotNodeAction {
+
+		void performDefault() {
+
+			IValue value = checkObtainValue();
+
+			if (value != null) {
+
+				addValue(value);
+			}
+		}
+	}
+
+	private class RemoveValueAction extends ISlotNodeAction {
+
+		private IValue value;
+
+		RemoveValueAction(IValue value) {
+
+			this.value = value;
+		}
+
+		void performDefault() {
+
+			removeValue(value);
+		}
+	}
+
+	private class ClearValuesAction extends ISlotNodeAction {
+
+		void performDefault() {
+
+			clearValues();
+		}
+	}
+
 	private class DisplayUpdater implements ISlotListener {
 
 		public void onUpdatedValueType(CValue<?> valueType) {
@@ -60,50 +109,6 @@ abstract class ISlotNode extends GNode {
 		public void onUpdatedEditability(CEditability editability) {
 
 			updateNodeDisplay();
-		}
-	}
-
-	private abstract class ISlotNodeAction extends GNodeAction {
-
-		protected boolean active() {
-
-			return editableSlot();
-		}
-	}
-
-	private class AddValueAction extends ISlotNodeAction {
-
-		protected void perform() {
-
-			IValue value = checkObtainValue();
-
-			if (value != null) {
-
-				addValue(value);
-			}
-		}
-	}
-
-	private class RemoveValueAction extends GNodeAction {
-
-		private IValue value;
-
-		protected void perform() {
-
-			removeValue(value);
-		}
-
-		RemoveValueAction(IValue value) {
-
-			this.value = value;
-		}
-	}
-
-	private class ClearValuesAction extends ISlotNodeAction {
-
-		protected void perform() {
-
-			clearValues();
 		}
 	}
 
@@ -137,18 +142,7 @@ abstract class ISlotNode extends GNode {
 
 	protected GCellDisplay getDisplay() {
 
-		EntityDisplays ds = EntityDisplays.get();
-
-		GCellDisplay display = ds.get(slot);
-		GCellDisplay valTypeDisp = ds.forSlotValueTypeModifier(slot);
-		GCellDisplay cardDisp = ds.forSlotCardinalityModifier(slot);
-
-		display.setModifier(valTypeDisp);
-		valTypeDisp.setModifier(cardDisp);
-
-		tree.checkShowUpdate(this, display, valTypeDisp);
-
-		return display;
+		return tree.getNodeDisplays().get(this);
 	}
 
 	ISlotNode(ITree tree, ISlot slot) {
@@ -186,9 +180,7 @@ abstract class ISlotNode extends GNode {
 
 	GNodeAction getRemoveValueAction(IValue value) {
 
-		return editableSlot()
-					? new RemoveValueAction(value)
-					: GNodeAction.INERT_ACTION;
+		return new RemoveValueAction(value);
 	}
 
 	ISlot getISlot() {

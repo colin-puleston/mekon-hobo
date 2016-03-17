@@ -38,34 +38,44 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 	private ITree tree;
 	private ISlot slot;
 
-	private class AtomicValueNode extends IFrameNode {
+	private class ValueReselectionStartAction extends ISlotNodeAction {
 
-		protected GNodeAction getPositiveAction1() {
+		void performDefault() {
 
-			return getCFrameAdditionAction(getValue());
-		}
-
-		protected GNodeAction getPositiveAction2() {
-
-			return getIFrameAdditionAction(getValue());
-		}
-
-		protected GNodeAction getNegativeAction1() {
-
-			return getFFrameRemovalAction(getValue());
-		}
-
-		AtomicValueNode(IFrame value) {
-
-			super(tree, value);
+			tree.getIFrameReselector().start(IFrameSlotNode.this);
 		}
 	}
 
-	private class AddIFrameDisjunctAction extends GNodeAction {
+	private class ValueReselectionEndAction extends ISlotNodeAction {
 
 		private IFrame value;
 
-		protected void perform() {
+		ValueReselectionEndAction(IFrame value) {
+
+			this.value = value;
+		}
+
+		void performDefault() {
+		}
+
+		void performIFrameReselection() {
+
+			tree.getIFrameReselector().end(value);
+		}
+	}
+
+	private class AddIFrameDisjunctAction extends ITreeNodeAction {
+
+		private IFrame value;
+
+		AddIFrameDisjunctAction(IFrame value) {
+
+			super(tree);
+
+			this.value = value;
+		}
+
+		void performDefault() {
 
 			CFrame type = checkObtainCFrameAddition();
 
@@ -73,11 +83,6 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 				checkAddDisjunct(type);
 			}
-		}
-
-		AddIFrameDisjunctAction(IFrame value) {
-
-			this.value = value;
 		}
 
 		private void checkAddDisjunct(CFrame disjunctType) {
@@ -111,9 +116,42 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		}
 	}
 
+	private class AtomicValueNode extends IFrameNode {
+
+		protected GNodeAction getPositiveAction1() {
+
+			if (tree.getIFrameReselector().reselecting()) {
+
+				return new ValueReselectionEndAction(getValue());
+			}
+
+			return getCFrameAdditionAction(getValue());
+		}
+
+		protected GNodeAction getPositiveAction2() {
+
+			return getIFrameAdditionAction(getValue());
+		}
+
+		protected GNodeAction getNegativeAction1() {
+
+			return getFFrameRemovalAction(getValue());
+		}
+
+		AtomicValueNode(IFrame value) {
+
+			super(tree, value);
+		}
+	}
+
 	protected boolean autoExpand() {
 
 		return false;
+	}
+
+	protected GNodeAction getPositiveAction2() {
+
+		return new ValueReselectionStartAction();
 	}
 
 	IFrameSlotNode(ITree tree, ISlot slot) {
@@ -172,6 +210,11 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		return queryInstance() && abstractEditableSlot();
 	}
 
+	CFrame getValueType() {
+
+		return (CFrame)slot.getValueType();
+	}
+
 	private GNodeAction getIFrameAdditionAction(IFrame value) {
 
 		return addIFrameDisjunctActionRequired()
@@ -202,11 +245,6 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 	private IFrame instantiate(CFrame type) {
 
 		return type.instantiate(slot.getContainer().getFunction());
-	}
-
-	private CFrame getValueType() {
-
-		return (CFrame)slot.getValueType();
 	}
 
 	private boolean queryInstance() {
