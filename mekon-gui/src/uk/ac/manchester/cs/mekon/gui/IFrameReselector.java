@@ -55,9 +55,18 @@ class IFrameReselector {
 		tree.addKeyListener(new ExitKeyListener());
 	}
 
-	void start(IFrameSlotNode slotNode) {
+	void checkStart(IFrameSlotNode slotNode) {
 
-		update(slotNode, ITree.IFRAME_RESELECT_BACKGROUND_CLR);
+		reselectionSlotNode = slotNode;
+
+		if (anyReselectable()) {
+
+			updateDisplay(ITree.IFRAME_RESELECT_BACKGROUND_CLR);
+		}
+		else {
+
+			reselectionSlotNode = null;
+		}
 	}
 
 	void end(IFrame selection) {
@@ -69,7 +78,9 @@ class IFrameReselector {
 
 	void end() {
 
-		update(null, ITree.DEFAULT_BACKGROUND_CLR);
+		reselectionSlotNode = null;
+
+		updateDisplay(ITree.DEFAULT_BACKGROUND_CLR);
 	}
 
 	boolean reselecting() {
@@ -82,12 +93,22 @@ class IFrameReselector {
 		return node instanceof IFrameNode && reselectable((IFrameNode)node);
 	}
 
-	private void update(IFrameSlotNode slotNode, Color background) {
+	private boolean anyReselectable() {
 
-		reselectionSlotNode = slotNode;
+		return anyReselectableDescendants((INode)tree.getRootNode());
+	}
 
-		tree.setBackground(background);
-		tree.updateAllNodeDisplays();
+	private boolean anyReselectableDescendants(INode node) {
+
+		for (INode child : node.getIChildren()) {
+
+			if (reselectable(child) || anyReselectableDescendants(child)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private boolean reselectable(IFrameNode node) {
@@ -105,5 +126,11 @@ class IFrameReselector {
 	private boolean reselectionSlotValue(IFrame iFrame) {
 
 		return reselectionSlotNode.getISlot().getValues().asList().contains(iFrame);
+	}
+
+	private void updateDisplay(Color background) {
+
+		tree.setBackground(background);
+		tree.updateAllNodeDisplays();
 	}
 }

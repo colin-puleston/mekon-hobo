@@ -42,7 +42,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 		void performDefault() {
 
-			tree.getIFrameReselector().start(IFrameSlotNode.this);
+			tree.getIFrameReselector().checkStart(IFrameSlotNode.this);
 		}
 	}
 
