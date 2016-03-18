@@ -43,6 +43,7 @@ class HelpPanel extends JTabbedPane {
 	static private final String POSITIVE_ACTION = "LEFT-CLICK";
 	static private final String POSITIVE_ACTION2 = "LEFT-CLICK / ALT";
 	static private final String NEGATIVE_ACTION = "RIGHT-CLICK";
+	static private final String ANY_MOUSE_ACTION = "Any Mouse-Click";
 
 	static final Icon mValueShape = getValueShape(EntityLevel.META);
 	static final Icon cValueShape = getValueShape(EntityLevel.CONCEPT);
@@ -382,7 +383,7 @@ class HelpPanel extends JTabbedPane {
 		}
 	}
 
-	private class InstantiationsPanel extends CategoryPanel {
+	private class TreeInstantiationsPanel extends CategoryPanel {
 
 		static final long serialVersionUID = -1;
 
@@ -462,84 +463,6 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		private class LabelColoursPanel extends SectionPanel {
-
-			static final long serialVersionUID = -1;
-
-			LabelColoursPanel() {
-
-				super("Label Colours");
-
-				addColumns(
-					"Entity Types",
-					"Entity Label / Label-Section Colours",
-					"Effect(s) of Latest User Action on Entity");
-
-				addRow(
-					"CFrame, IFrame, INumber, IString",
-					getValueLabelComponent(ITree.DIRECT_UPDATES_CLR),
-					"Value added by user");
-				addRow(
-					"ISlot",
-					getSlotLabelComponent(ITree.DIRECT_UPDATES_CLR, null),
-					"Value(s) removed by user");
-
-				addRow(
-					"CFrame, INumber, IString",
-					getValueLabelComponent(ITree.INDIRECT_UPDATES_CLR),
-					"Value added by model");
-				addRow(
-					"IFrame",
-					getValueLabelComponent(ITree.INDIRECT_UPDATES_CLR),
-					"Value added, or non-visible descendant(s) updated, by model");
-				addRow(
-					"ISlot",
-					getSlotLabelComponent(ITree.INDIRECT_UPDATES_CLR, null),
-					"Value(s) removed, or non-visible descendant(s) updated, by model");
-				addRow(
-					"ISlot",
-					getSlotLabelComponent(null, ITree.INDIRECT_UPDATES_CLR),
-					"Value-type updated by model");
-			}
-
-			private JComponent getValueLabelComponent(Color colour) {
-
-				Box comp = Box.createHorizontalBox();
-
-				comp.add(getLabel("VALUE-LABEL", colour));
-
-				return comp;
-			}
-
-			private JComponent getSlotLabelComponent(
-									Color nameColour,
-									Color valueTypeColour) {
-
-				Box comp = Box.createHorizontalBox();
-
-				comp.add(getLabel("SLOT-NAME", nameColour));
-				comp.add(Box.createHorizontalStrut(10));
-				comp.add(getLabel("VALUE-TYPE", valueTypeColour));
-				comp.add(Box.createHorizontalStrut(10));
-				comp.add(new JLabel("[...]"));
-
-				return comp;
-			}
-
-			private JLabel getLabel(String text, Color colour) {
-
-				JLabel label = new JLabel(text);
-
-				if (colour != null) {
-
-					label.setOpaque(true);
-					label.setBackground(colour);
-				}
-
-				return label;
-			}
-		}
-
 		private class ActionsPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
@@ -597,15 +520,150 @@ class HelpPanel extends JTabbedPane {
 			}
 		}
 
-		InstantiationsPanel() {
+		private class LabelColoursPanel extends SectionPanel {
 
-			super("Instantiations");
+			static final long serialVersionUID = -1;
+
+			LabelColoursPanel() {
+
+				super("Label Colours");
+
+				addColumns(
+					"Entity Types",
+					"Entity Label / Label-Section Colours",
+					"Effect(s) of Latest User Action on Entity");
+
+				addRow(
+					"CFrame, IFrame, INumber, IString",
+					getValueLabelComponent(ITree.DIRECT_UPDATES_CLR),
+					"Value added by user");
+				addRow(
+					"ISlot",
+					getSlotLabelComponent(ITree.DIRECT_UPDATES_CLR, null),
+					"Value(s) removed by user");
+
+				addRow(
+					"CFrame, INumber, IString",
+					getValueLabelComponent(ITree.INDIRECT_UPDATES_CLR),
+					"Value added by model");
+				addRow(
+					"IFrame",
+					getValueLabelComponent(ITree.INDIRECT_UPDATES_CLR),
+					"Value added, or non-visible descendant(s) updated, by model");
+				addRow(
+					"ISlot",
+					getSlotLabelComponent(ITree.INDIRECT_UPDATES_CLR, null),
+					"Value(s) removed, or non-visible descendant(s) updated, by model");
+				addRow(
+					"ISlot",
+					getSlotLabelComponent(null, ITree.INDIRECT_UPDATES_CLR),
+					"Value-type updated by model");
+			}
+		}
+
+		TreeInstantiationsPanel() {
+
+			super("Instantiations (Tree)");
 
 			new TreeSemanticsPanel();
 			new NodeShapeModifiersPanel();
 			new ExtraLabelModifiersPanel();
-			new LabelColoursPanel();
 			new ActionsPanel();
+			new LabelColoursPanel();
+		}
+	}
+
+	private class GraphInstantiationsPanel extends CategoryPanel {
+
+		static final long serialVersionUID = -1;
+
+		private class ActionsPanel extends SectionPanel {
+
+			static final long serialVersionUID = -1;
+
+			ActionsPanel() {
+
+				super("Extra Actions");
+
+				addColumns(
+					"Current Edit Mode",
+					"Target Type",
+					"Applicability",
+					"Mouse-Action",
+					"Action");
+
+				addRow(
+					"DEFAULT",
+					"SLOT",
+					"Editable IFrame-slots only",
+					POSITIVE_ACTION,
+					"Start slot-value selection / Enter IFrame-RESELECT mode");
+				addRow(
+					"IFrame-RESELECT",
+					"SLOT-VALUE",
+					"Highlighted IFrame-values only",
+					POSITIVE_ACTION,
+					"Select as slot-value / Exit IFrame-RESELECT mode");
+				addRow(
+					"IFrame-RESELECT",
+					"SLOT / SLOT-VALUE",
+					"All non-highlighted entities",
+					ANY_MOUSE_ACTION,
+					"Exit IFrame-RESELECT mode");
+			}
+		}
+
+		private class LabelColoursPanel extends SectionPanel {
+
+			static final long serialVersionUID = -1;
+
+			LabelColoursPanel() {
+
+				super("Extra Label Colours");
+
+				addColumns(
+					"Current Edit Mode",
+					"Entity Types",
+					"Entity Label",
+					"Denotes");
+
+				addRow(
+					"IFrame-RESELECT",
+					"IFrame",
+					getValueLabelComponent(ITree.RESELECTABLE_IFRAME_CLR),
+					"Selectable value");
+			}
+		}
+
+		private class BackgroundColoursPanel extends SectionPanel {
+
+			static final long serialVersionUID = -1;
+
+			BackgroundColoursPanel() {
+
+				super("Background Colours");
+
+				addColumns(
+					"Current Edit Mode",
+					"Background");
+
+				addRow(
+					"DEFAULT",
+					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
+
+				addRow(
+					"IFrame-RESELECT",
+					getColouredPanel(ITree.IFRAME_RESELECT_BACKGROUND_CLR));
+			}
+		}
+
+		GraphInstantiationsPanel() {
+
+			super("Instantiations (Graph+)");
+
+			new ActionsPanel();
+			new BackgroundColoursPanel();
+			new LabelColoursPanel();
 		}
 	}
 
@@ -617,11 +675,58 @@ class HelpPanel extends JTabbedPane {
 
 		new GeneralPanel();
 		new ModelPanel();
-		new InstantiationsPanel();
+		new TreeInstantiationsPanel();
+		new GraphInstantiationsPanel();
 	}
 
 	private void addCategory(String title, CategoryPanel category) {
 
 		addTab(title, category);
+	}
+
+	private JComponent getValueLabelComponent(Color colour) {
+
+		Box comp = Box.createHorizontalBox();
+
+		comp.add(getLabel("VALUE-LABEL", colour));
+
+		return comp;
+	}
+
+	private JComponent getSlotLabelComponent(
+							Color nameColour,
+							Color valueTypeColour) {
+
+		Box comp = Box.createHorizontalBox();
+
+		comp.add(getLabel("SLOT-NAME", nameColour));
+		comp.add(Box.createHorizontalStrut(10));
+		comp.add(getLabel("VALUE-TYPE", valueTypeColour));
+		comp.add(Box.createHorizontalStrut(10));
+		comp.add(new JLabel("[...]"));
+
+		return comp;
+	}
+
+	private JLabel getLabel(String text, Color colour) {
+
+		JLabel label = new JLabel(text);
+
+		if (colour != null) {
+
+			label.setOpaque(true);
+			label.setBackground(colour);
+		}
+
+		return label;
+	}
+
+	private JPanel getColouredPanel(Color colour) {
+
+		JPanel panel = new JPanel();
+
+		panel.setBackground(colour);
+
+		return panel;
 	}
 }
