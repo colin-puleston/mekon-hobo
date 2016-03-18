@@ -45,7 +45,7 @@ class ITree extends GTree {
 	static final Color DEFAULT_BACKGROUND_CLR = Color.white;
 
 	private ITreeUpdates updates;
-	private ITreeCollapsedNodes collapseds;
+	private ITreeExpansions expansions;
 	private IFrameReselector iFrameReselector;
 	private ITreeNodeDisplays nodeDisplays;
 
@@ -54,7 +54,7 @@ class ITree extends GTree {
 		IFrameNode rootNode = new IFrameNode(this, rootFrame);
 
 		updates = new ITreeUpdates(rootNode);
-		collapseds = new ITreeCollapsedNodes(rootNode);
+		expansions = new ITreeExpansions(rootNode);
 		iFrameReselector = new IFrameReselector(this);
 		nodeDisplays = new ITreeNodeDisplays(this);
 
@@ -100,8 +100,8 @@ class ITree extends GTree {
 
 	private void update(ISlotNode slotNode, IValue valueToAdd, IValue valueToRemove) {
 
-		collapseds.update(slotNode);
+		expansions.update(slotNode);
 		updates.update(slotNode, valueToAdd, valueToRemove);
-		collapseds.restore();
+		expansions.restore();
 	}
 }

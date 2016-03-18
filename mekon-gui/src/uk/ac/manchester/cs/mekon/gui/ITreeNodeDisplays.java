@@ -69,9 +69,12 @@ class ITreeNodeDisplays {
 
 				highlightMain(ITree.DIRECT_UPDATES_CLR);
 			}
-			else if (updates.showGeneralIndirectUpdate(node)) {
+			else {
 
-				highlightMain(ITree.INDIRECT_UPDATES_CLR);
+				if (updates.showGeneralIndirectUpdate(node)) {
+
+					highlightMain(ITree.INDIRECT_UPDATES_CLR);
+				}
 
 				if (valueTypeDisplay != null) {
 

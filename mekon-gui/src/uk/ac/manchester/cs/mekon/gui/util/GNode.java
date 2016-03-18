@@ -94,7 +94,7 @@ public abstract class GNode extends GMutableTreeNode {
 
 			if (replacing) {
 
-				nextIndex = getChildren().indexOf(child);
+				nextIndex = asList().indexOf(child);
 			}
 
 			remove(child);
@@ -207,7 +207,9 @@ public abstract class GNode extends GMutableTreeNode {
 
 	public List<GNode> getChildren() {
 
-		return getChildList().asList();
+		return childList != null
+				? childList.asList()
+				: Collections.<GNode>emptyList();
 	}
 
 	public GTree getTree() {
@@ -295,7 +297,7 @@ public abstract class GNode extends GMutableTreeNode {
 
 			checkExpanded();
 
-			for (GNode child : getChildren()) {
+			for (GNode child : ensureChildren()) {
 
 				child.initialiseSubTree();
 			}
@@ -306,18 +308,20 @@ public abstract class GNode extends GMutableTreeNode {
 
 		updateNodeDisplay();
 
-		if (childList != null) {
+		for (GNode child : getChildren()) {
 
-			for (GNode child : getChildren()) {
-
-				child.updateSubTreeNodeDisplays();
-			}
+			child.updateSubTreeNodeDisplays();
 		}
 	}
 
 	void setLocalExpansion(boolean locallyExpanded) {
 
 		this.locallyExpanded = locallyExpanded;
+	}
+
+	List<GNode> ensureChildren() {
+
+		return getChildList().asList();
 	}
 
 	private void removeChild(GNode child) {

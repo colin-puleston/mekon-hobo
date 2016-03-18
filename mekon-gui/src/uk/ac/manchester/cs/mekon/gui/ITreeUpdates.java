@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class ITreeUpdates {
 
-	private INode rootNode = null;
+	private INode rootNode;
 
 	private ISlotNode updateSlotNode = null;
 	private boolean valueAdded = false;

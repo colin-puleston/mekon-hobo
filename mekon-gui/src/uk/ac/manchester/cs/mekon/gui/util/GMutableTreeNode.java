@@ -37,7 +37,7 @@ public abstract class GMutableTreeNode implements MutableTreeNode {
 
 	public Enumeration<GNode> children() {
 
-		return Collections.enumeration(getChildren());
+		return Collections.enumeration(ensureChildren());
 	}
 
 	public boolean getAllowsChildren() {
@@ -47,24 +47,24 @@ public abstract class GMutableTreeNode implements MutableTreeNode {
 
 	public TreeNode getChildAt(int childIndex) {
 
-		return getChildren().get(childIndex);
+		return ensureChildren().get(childIndex);
 	}
 
 	public int getChildCount() {
 
-		return getChildren().size();
+		return ensureChildren().size();
 	}
 
 	public int getIndex(TreeNode node) {
 
-		return getChildren().indexOf(GNode.cast(node));
+		return ensureChildren().indexOf(GNode.cast(node));
 	}
 
 	public boolean isLeaf() {
 
 		Boolean leaf = leafNodeFastCheck();
 
-		return leaf != null ? leaf : getChildren().isEmpty();
+		return leaf != null ? leaf : ensureChildren().isEmpty();
 	}
 
 	public void insert(MutableTreeNode child, int index) {
@@ -105,7 +105,7 @@ public abstract class GMutableTreeNode implements MutableTreeNode {
 	GMutableTreeNode() {
 	}
 
-	abstract List<GNode> getChildren();
+	abstract List<GNode> ensureChildren();
 
 	private void throwInertMethodError() {
 
