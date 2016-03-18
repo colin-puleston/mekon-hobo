@@ -85,7 +85,7 @@ abstract class ISlotNode extends INode {
 
 		void performDefault() {
 
-			clearValues();
+			checkClearValues();
 		}
 	}
 
@@ -198,9 +198,12 @@ abstract class ISlotNode extends INode {
 		return slot;
 	}
 
-	private void clearValues() {
+	private void checkClearValues() {
 
-		tree.clearValues(this);
+		if (!slot.getValues().isEmpty()) {
+
+			tree.clearValues(this);
+		}
 	}
 
 	private boolean editableSlot() {
