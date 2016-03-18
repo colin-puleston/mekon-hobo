@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.gui.util;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import javax.swing.event.*;
 
 /**
  * @author Colin Puleston
@@ -41,34 +40,6 @@ public class GTree extends JTree {
 
 	private ActionInvoker positiveActionInvoker = new PositiveActionInvoker();
 	private ActionInvoker negativeActionInvoker = new NegativeActionInvoker();
-
-	private class ExpansionManager implements TreeExpansionListener {
-
-		public void treeExpanded(TreeExpansionEvent event) {
-
-			setNodeExpansion(event, true);
-		}
-
-		public void treeCollapsed(TreeExpansionEvent event) {
-
-			setNodeExpansion(event, false);
-		}
-
-		ExpansionManager() {
-
-			addTreeExpansionListener(this);
-		}
-
-		private void setNodeExpansion(TreeExpansionEvent event, boolean expanded) {
-
-			getNode(event).setLocalExpansion(expanded);
-		}
-
-		private GNode getNode(TreeExpansionEvent event) {
-
-			return GNode.cast(event.getPath().getLastPathComponent());
-		}
-	}
 
 	private abstract class ActionInvoker {
 
@@ -186,11 +157,6 @@ public class GTree extends JTree {
 		}
 	}
 
-	public GTree() {
-
-		new ExpansionManager();
-	}
-
 	public void setActiveTree() {
 
 		new ActiveTreeClickMonitor();
@@ -209,7 +175,6 @@ public class GTree extends JTree {
 		setModel(treeModel);
 		GCellRenderers.get().set(this);
 
-		rootNode.setLocalExpansion(true);
 		rootNode.initialiseSubTree();
 	}
 

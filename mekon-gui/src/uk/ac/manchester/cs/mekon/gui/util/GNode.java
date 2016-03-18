@@ -49,7 +49,6 @@ public abstract class GNode extends GMutableTreeNode {
 	private GNode parent = null;
 	private ChildList childList = null;
 	private boolean initialised = false;
-	private boolean locallyExpanded = false;
 
 	private class ChildList extends GCellDisplaySortedList<GNode> {
 
@@ -239,16 +238,6 @@ public abstract class GNode extends GMutableTreeNode {
 		return tree.isCollapsed(getTreePath());
 	}
 
-	public boolean locallyExpanded() {
-
-		return locallyExpanded;
-	}
-
-	public boolean locallyCollapsed() {
-
-		return !locallyExpanded;
-	}
-
 	protected void addInitialChildren() {
 	}
 
@@ -312,11 +301,6 @@ public abstract class GNode extends GMutableTreeNode {
 
 			child.updateSubTreeNodeDisplays();
 		}
-	}
-
-	void setLocalExpansion(boolean locallyExpanded) {
-
-		this.locallyExpanded = locallyExpanded;
 	}
 
 	List<GNode> ensureChildren() {
