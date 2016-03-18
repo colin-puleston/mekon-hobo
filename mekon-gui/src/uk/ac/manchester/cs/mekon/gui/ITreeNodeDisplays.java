@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 class ITreeNodeDisplays {
 
 	private ITreeUpdates updates;
-	private IFrameReselector iFrameReselector;
+	private ITreeCrossLinker crossLinker;
 
 	private class Highlighter {
 
@@ -53,9 +53,9 @@ class ITreeNodeDisplays {
 			this.mainDisplay = mainDisplay;
 			this.valueTypeDisplay = valueTypeDisplay;
 
-			if (iFrameReselector.reselecting()) {
+			if (crossLinker.linking()) {
 
-				checkForReselectableIFrame();
+				checkForCrossLinkable();
 			}
 			else {
 
@@ -86,11 +86,11 @@ class ITreeNodeDisplays {
 			}
 		}
 
-		private void checkForReselectableIFrame() {
+		private void checkForCrossLinkable() {
 
-			if (iFrameReselector.reselectable(node)) {
+			if (crossLinker.linkable(node)) {
 
-				highlightMain(ITree.RESELECTABLE_IFRAME_CLR);
+				highlightMain(ITree.CROSS_LINKABLE_IFRAME_CLR);
 			}
 		}
 
@@ -108,7 +108,7 @@ class ITreeNodeDisplays {
 	ITreeNodeDisplays(ITree tree) {
 
 		updates = tree.getUpdates();
-		iFrameReselector = tree.getIFrameReselector();
+		crossLinker = tree.getCrossLinker();
 	}
 
 	GCellDisplay get(IValueNode<?> valueNode) {

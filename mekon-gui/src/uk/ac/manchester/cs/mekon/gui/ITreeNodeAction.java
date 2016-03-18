@@ -35,9 +35,9 @@ abstract class ITreeNodeAction extends GNodeAction {
 
 	protected void perform() {
 
-		if (tree.getIFrameReselector().reselecting()) {
+		if (tree.getCrossLinker().linking()) {
 
-			performIFrameReselection();
+			performCrossLink();
 		}
 		else {
 
@@ -52,8 +52,8 @@ abstract class ITreeNodeAction extends GNodeAction {
 
 	abstract void performDefault();
 
-	void performIFrameReselection() {
+	void performCrossLink() {
 
-		tree.getIFrameReselector().end();
+		tree.getCrossLinker().endLinking();
 	}
 }

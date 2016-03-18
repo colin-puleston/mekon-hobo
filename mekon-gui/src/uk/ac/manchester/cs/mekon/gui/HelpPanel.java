@@ -41,9 +41,10 @@ class HelpPanel extends JTabbedPane {
 	static private final EntityLevel DEFAULT_LEVEL = EntityLevel.CONCEPT;
 	static private final CSource DEFAULT_SOURCE = CSource.UNSPECIFIED;
 	static private final String POSITIVE_ACTION = "LEFT-CLICK";
-	static private final String POSITIVE_ACTION2 = "LEFT-CLICK / ALT";
+	static private final String POSITIVE_ACTION2 = "LEFT-CLICK / ALT=KEY";
 	static private final String NEGATIVE_ACTION = "RIGHT-CLICK";
-	static private final String ANY_MOUSE_ACTION = "Any Mouse-Click";
+	static private final String ANY_MOUSE_ACTION = "LEFT / RIGHT-CLICK";
+	static private final String ESCAPE_KEY = "ESCAPE-KEY";
 
 	static final Icon mValueShape = getValueShape(EntityLevel.META);
 	static final Icon cValueShape = getValueShape(EntityLevel.CONCEPT);
@@ -472,49 +473,49 @@ class HelpPanel extends JTabbedPane {
 				super("Actions");
 
 				addColumns(
-					"Target Type",
+					"Target",
 					"Applicability",
-					"Mouse-Action / Key-Pressed",
+					"Mouse-Click / Key",
 					"Model Action");
 
 				addRow(
 					"SLOT",
-					"Editable slots only",
+					"Editable slots",
 					POSITIVE_ACTION,
 					"Add value");
 				addRow(
 					"SLOT",
-					"Editable slots only",
+					"Editable slots",
 					NEGATIVE_ACTION,
 					"Clear value(s)");
 				addRow(
 					"SLOT-VALUE",
-					"Editable slots only",
+					"Editable slots",
 					NEGATIVE_ACTION,
 					"Remove value");
 				addRow(
 					"SLOT-VALUE",
-					"Abstract-editable CFrame-valued slots only",
+					"Abstract-editable CFrame-valued slots",
 					POSITIVE_ACTION,
 					"Add disjunct to value");
 				addRow(
 					"SLOT-VALUE",
-					"Abstract-editable CFrame-valued slots only",
+					"Abstract-editable CFrame-valued slots",
 					NEGATIVE_ACTION,
 					"Remove disjunct(s) from value");
 				addRow(
 					"SLOT-VALUE",
-					"Abstract-editable IFrame-valued slots only",
+					"Abstract-editable IFrame-valued slots",
 					POSITIVE_ACTION,
 					"Add disjunct to value-type of value");
 				addRow(
 					"SLOT-VALUE",
-					"Abstract-editable IFrame-valued slots only",
+					"Abstract-editable IFrame-valued slots",
 					NEGATIVE_ACTION,
 					"Remove disjunct(s) from value-type of value");
 				addRow(
 					"SLOT-VALUE",
-					"Abstract-editable IFrame-valued slots only",
+					"Abstract-editable IFrame-valued slots",
 					POSITIVE_ACTION2,
 					"Add disjunct to value");
 			}
@@ -563,7 +564,7 @@ class HelpPanel extends JTabbedPane {
 
 		TreeInstantiationsPanel() {
 
-			super("Instantiations (Tree)");
+			super("Instantiations (tree)");
 
 			new TreeSemanticsPanel();
 			new NodeShapeModifiersPanel();
@@ -573,7 +574,7 @@ class HelpPanel extends JTabbedPane {
 		}
 	}
 
-	private class GraphInstantiationsPanel extends CategoryPanel {
+	private class GraphLinkInstantiationsPanel extends CategoryPanel {
 
 		static final long serialVersionUID = -1;
 
@@ -583,33 +584,39 @@ class HelpPanel extends JTabbedPane {
 
 			ActionsPanel() {
 
-				super("Extra Actions");
+				super("Actions");
 
 				addColumns(
 					"Current Edit Mode",
-					"Target Type",
+					"Target",
 					"Applicability",
-					"Mouse-Action",
+					"Mouse-Click / Key",
 					"Action");
 
 				addRow(
 					"DEFAULT",
 					"SLOT",
-					"Editable IFrame-slots only",
+					"Editable IFrame-slots for which linkable values exist",
 					POSITIVE_ACTION,
-					"Start slot-value selection / Enter IFrame-RESELECT mode");
+					"Select slot / Enter CROSS-LINK mode");
 				addRow(
-					"IFrame-RESELECT",
+					"CROSS-LINK",
 					"SLOT-VALUE",
-					"Highlighted IFrame-values only",
+					"Highlighted IFrame-values",
 					POSITIVE_ACTION,
-					"Select as slot-value / Exit IFrame-RESELECT mode");
+					"Select as slot-value / Exit CROSS-LINK mode");
 				addRow(
-					"IFrame-RESELECT",
+					"CROSS-LINK",
 					"SLOT / SLOT-VALUE",
 					"All non-highlighted entities",
 					ANY_MOUSE_ACTION,
-					"Exit IFrame-RESELECT mode");
+					"Exit CROSS-LINK mode");
+				addRow(
+					"CROSS-LINK",
+					"Anywhere in panel",
+					"",
+					ESCAPE_KEY,
+					"Exit CROSS-LINK mode");
 			}
 		}
 
@@ -619,7 +626,7 @@ class HelpPanel extends JTabbedPane {
 
 			LabelColoursPanel() {
 
-				super("Extra Label Colours");
+				super("Label Colours");
 
 				addColumns(
 					"Current Edit Mode",
@@ -628,9 +635,9 @@ class HelpPanel extends JTabbedPane {
 					"Denotes");
 
 				addRow(
-					"IFrame-RESELECT",
+					"CROSS-LINK",
 					"IFrame",
-					getValueLabelComponent(ITree.RESELECTABLE_IFRAME_CLR),
+					getValueLabelComponent(ITree.CROSS_LINKABLE_IFRAME_CLR),
 					"Selectable value");
 			}
 		}
@@ -645,21 +652,21 @@ class HelpPanel extends JTabbedPane {
 
 				addColumns(
 					"Current Edit Mode",
-					"Background");
+					"Background Colour");
 
 				addRow(
 					"DEFAULT",
 					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
 
 				addRow(
-					"IFrame-RESELECT",
-					getColouredPanel(ITree.IFRAME_RESELECT_BACKGROUND_CLR));
+					"CROSS-LINK",
+					getColouredPanel(ITree.CROSS_LINKING_BACKGROUND_CLR));
 			}
 		}
 
-		GraphInstantiationsPanel() {
+		GraphLinkInstantiationsPanel() {
 
-			super("Instantiations (Graph+)");
+			super("Instantiations (cross-link)");
 
 			new ActionsPanel();
 			new BackgroundColoursPanel();
@@ -676,7 +683,7 @@ class HelpPanel extends JTabbedPane {
 		new GeneralPanel();
 		new ModelPanel();
 		new TreeInstantiationsPanel();
-		new GraphInstantiationsPanel();
+		new GraphLinkInstantiationsPanel();
 	}
 
 	private void addCategory(String title, CategoryPanel category) {

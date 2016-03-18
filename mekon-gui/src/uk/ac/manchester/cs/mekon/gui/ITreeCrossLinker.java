@@ -32,10 +32,10 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class IFrameReselector {
+class ITreeCrossLinker {
 
 	private ITree tree;
-	private IFrameSlotNode reselectionSlotNode = null;
+	private IFrameSlotNode targetSlotNode = null;
 
 	private class ExitKeyListener extends KeyAdapter {
 
@@ -43,66 +43,66 @@ class IFrameReselector {
 
 			if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
 
-				end();
+				endLinking();
 			}
 		}
 	}
 
-	IFrameReselector(ITree tree) {
+	ITreeCrossLinker(ITree tree) {
 
 		this.tree = tree;
 
 		tree.addKeyListener(new ExitKeyListener());
 	}
 
-	void checkStart(IFrameSlotNode slotNode) {
+	void checkStartLinking(IFrameSlotNode slotNode) {
 
-		reselectionSlotNode = slotNode;
+		targetSlotNode = slotNode;
 
-		if (anyReselectable()) {
+		if (anyLinkable()) {
 
-			updateDisplay(ITree.IFRAME_RESELECT_BACKGROUND_CLR);
+			updateDisplay(ITree.CROSS_LINKING_BACKGROUND_CLR);
 		}
 		else {
 
-			reselectionSlotNode = null;
+			targetSlotNode = null;
 		}
 	}
 
-	void end(IFrame selection) {
+	void endLinking(IFrame selectedValue) {
 
-		reselectionSlotNode.addValue(selection);
+		targetSlotNode.addValue(selectedValue);
 
-		end();
+		endLinking();
 	}
 
-	void end() {
+	void endLinking() {
 
-		reselectionSlotNode = null;
+		targetSlotNode = null;
 
 		updateDisplay(ITree.DEFAULT_BACKGROUND_CLR);
 	}
 
-	boolean reselecting() {
+	boolean linking() {
 
-		return reselectionSlotNode != null;
+		return targetSlotNode != null;
 	}
 
-	boolean reselectable(INode node) {
+	boolean linkable(INode node) {
 
-		return node instanceof IFrameNode && reselectable((IFrameNode)node);
+		return node instanceof IFrameNode && linkable((IFrameNode)node);
 	}
 
-	private boolean anyReselectable() {
+	private boolean anyLinkable() {
 
-		return anyReselectableDescendants((INode)tree.getRootNode());
+		return anyLinkableDescendants((INode)tree.getRootNode());
 	}
 
-	private boolean anyReselectableDescendants(INode node) {
+	private boolean anyLinkableDescendants(INode node) {
 
 		for (INode child : node.getIChildren()) {
 
-			if (reselectable(child) || anyReselectableDescendants(child)) {
+			if (linkable(child) || anyLinkableDescendants(child)) {
 
 				return true;
 			}
@@ -111,21 +111,21 @@ class IFrameReselector {
 		return false;
 	}
 
-	private boolean reselectable(IFrameNode node) {
+	private boolean linkable(IFrameNode node) {
 
 		IFrame iFrame = node.getValue();
 
-		return reselectableType(iFrame) && !reselectionSlotValue(iFrame);
+		return linkableType(iFrame) && !targetSlotValue(iFrame);
 	}
 
-	private boolean reselectableType(IFrame iFrame) {
+	private boolean linkableType(IFrame iFrame) {
 
-		return reselectionSlotNode.getValueType().subsumes(iFrame.getType());
+		return targetSlotNode.getValueType().subsumes(iFrame.getType());
 	}
 
-	private boolean reselectionSlotValue(IFrame iFrame) {
+	private boolean targetSlotValue(IFrame iFrame) {
 
-		return reselectionSlotNode.getISlot().getValues().asList().contains(iFrame);
+		return targetSlotNode.getISlot().getValues().asList().contains(iFrame);
 	}
 
 	private void updateDisplay(Color background) {

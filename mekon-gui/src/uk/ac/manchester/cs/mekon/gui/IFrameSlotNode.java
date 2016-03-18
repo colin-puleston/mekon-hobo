@@ -38,19 +38,19 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 	private ITree tree;
 	private ISlot slot;
 
-	private class ValueReselectionStartAction extends ISlotNodeAction {
+	private class CrossLinkStartAction extends ISlotNodeAction {
 
 		void performDefault() {
 
-			tree.getIFrameReselector().checkStart(IFrameSlotNode.this);
+			tree.getCrossLinker().checkStartLinking(IFrameSlotNode.this);
 		}
 	}
 
-	private class ValueReselectionEndAction extends ISlotNodeAction {
+	private class CrossLinkEndAction extends ISlotNodeAction {
 
 		private IFrame value;
 
-		ValueReselectionEndAction(IFrame value) {
+		CrossLinkEndAction(IFrame value) {
 
 			this.value = value;
 		}
@@ -58,9 +58,9 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		void performDefault() {
 		}
 
-		void performIFrameReselection() {
+		void performCrossLink() {
 
-			tree.getIFrameReselector().end(value);
+			tree.getCrossLinker().endLinking(value);
 		}
 	}
 
@@ -120,9 +120,9 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 		protected GNodeAction getPositiveAction1() {
 
-			if (tree.getIFrameReselector().reselecting()) {
+			if (tree.getCrossLinker().linking()) {
 
-				return new ValueReselectionEndAction(getValue());
+				return new CrossLinkEndAction(getValue());
 			}
 
 			return getCFrameAdditionAction(getValue());
@@ -151,7 +151,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	protected GNodeAction getPositiveAction2() {
 
-		return new ValueReselectionStartAction();
+		return new CrossLinkStartAction();
 	}
 
 	IFrameSlotNode(ITree tree, ISlot slot) {
