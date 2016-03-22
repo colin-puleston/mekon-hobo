@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.Color;
 import javax.swing.*;
+import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -594,16 +595,16 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					"DEFAULT",
-					"All TREE actions + CROSS-LINK actions specified for DEFAULT mode",
+					"All TREE actions + CROSS-LINK actions for DEFAULT mode",
 					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
 				addRow(
 					"LINK-CREATE",
-					"CROSS-LINK actions specified for LINK-CREATE mode only",
+					"CROSS-LINK actions for LINK-CREATE mode",
 					getColouredPanel(ITree.CROSS_LINKING_BACKGROUND_CLR));
 				addRow(
 					"LINK-VIEW",
-					"CROSS-LINK actions specified for LINK-VIEW mode only",
-					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
+					"CROSS-LINK actions for LINK-VIEW mode",
+					getColouredPanel(ITree.CROSS_LINKS_SHOW_BACKGROUND_CLR));
 			}
 		}
 
@@ -764,6 +765,7 @@ class HelpPanel extends JTabbedPane {
 
 		JPanel panel = new JPanel();
 
+		panel.setBorder(new EtchedBorder());
 		panel.setBackground(colour);
 
 		return panel;

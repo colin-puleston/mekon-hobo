@@ -68,10 +68,7 @@ class ITreeCrossLinks {
 
 		abstract boolean showForMode(INode node);
 
-		Color getBackgroundColour() {
-
-			return ITree.DEFAULT_BACKGROUND_CLR;
-		}
+		abstract Color getBackgroundColour();
 
 		void creatLink(IFrame selectedValue) {
 
@@ -89,6 +86,11 @@ class ITreeCrossLinks {
 		boolean showForMode(INode node) {
 
 			return false;
+		}
+
+		Color getBackgroundColour() {
+
+			return ITree.DEFAULT_BACKGROUND_CLR;
 		}
 	}
 
@@ -184,6 +186,11 @@ class ITreeCrossLinks {
 			}
 
 			return node.collapsed() && anyApplicableDescendants(node);
+		}
+
+		Color getBackgroundColour() {
+
+			return ITree.CROSS_LINKS_SHOW_BACKGROUND_CLR;
 		}
 
 		boolean applicableNode(IFrameNode node) {
