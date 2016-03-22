@@ -49,7 +49,7 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 			this.value = value;
 		}
 
-		void performDefault() {
+		void performDefaultAction() {
 
 			F updatedValue = getUpdatedValue();
 

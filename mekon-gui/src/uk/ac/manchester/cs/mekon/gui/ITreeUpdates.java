@@ -125,17 +125,12 @@ class ITreeUpdates {
 			return false;
 		}
 
-		if (valueAdded) {
+		if (showDirectUpdateForExposedNode(node)) {
 
-			if (childOfAddedValueNode(node)) {
-
-				return iFrameDisjunctNode(node) && lastChildNode(node);
-			}
-
-			return addedValueNode(node);
+			return true;
 		}
 
-		return nodeForUpdateSlot(node);
+		return node.collapsed() && showDirectUpdateForHiddenSubTree(node);
 	}
 
 	boolean showGeneralIndirectUpdate(INode node) {
@@ -145,19 +140,7 @@ class ITreeUpdates {
 			return false;
 		}
 
-		if (resultOfDirectUpdate(node) || iFrameDisjunctNode(node)) {
-
-			return false;
-		}
-
-		IState state = getState(node);
-
-		if (state == null) {
-
-			return !defaultNode(node);
-		}
-
-		if (state.childrenRemoved(node) && !state.childrenAdded(node)) {
+		if (showIndirectUpdateForExposedNode(node)) {
 
 			return true;
 		}
@@ -231,6 +214,48 @@ class ITreeUpdates {
 		return new IState(node);
 	}
 
+	private boolean showDirectUpdateForExposedNode(INode node) {
+
+		if (valueAdded) {
+
+			if (childOfAddedValueNode(node)) {
+
+				return iFrameDisjunctNode(node) && lastChildNode(node);
+			}
+
+			return addedValueNode(node);
+		}
+
+		return nodeForUpdateSlot(node);
+	}
+
+	private boolean showDirectUpdateForHiddenSubTree(INode node) {
+
+		if (valueAdded && nodeForUpdateSlot(node)) {
+
+			return true;
+		}
+
+		return descendantNodeForUpdateSlot(node);
+	}
+
+	private boolean showIndirectUpdateForExposedNode(INode node) {
+
+		if (resultOfDirectUpdate(node) || iFrameDisjunctNode(node)) {
+
+			return false;
+		}
+
+		IState state = getState(node);
+
+		if (state == null) {
+
+			return !defaultNode(node);
+		}
+
+		return state.childrenRemoved(node) && !state.childrenAdded(node);
+	}
+
 	private boolean showIndirectUpdateForHiddenSubTree(INode node) {
 
 		for (INode child : node.getIChildren()) {
@@ -298,15 +323,27 @@ class ITreeUpdates {
 				&& lastChildNode(node);
 	}
 
-	private boolean nodeForUpdateSlot(INode node) {
+	private boolean descendantNodeForUpdateSlot(INode node) {
 
-		return node instanceof ISlotNode
-				&& nodeForUpdateSlot((ISlotNode)node);
+		for (INode child : node.getIChildren()) {
+
+			if (nodeForUpdateSlot(child) || descendantNodeForUpdateSlot(child)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	private boolean nodeForUpdateSlot(ISlotNode node) {
+	private boolean nodeForUpdateSlot(INode node) {
 
-		return node.getISlot() == getUpdateSlot();
+		if (node instanceof ISlotNode) {
+
+			return ((ISlotNode)node).getISlot() == getUpdateSlot();
+		}
+
+		return false;
 	}
 
 	private boolean lastChildNode(INode child) {

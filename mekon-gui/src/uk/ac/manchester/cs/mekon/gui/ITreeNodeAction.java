@@ -31,29 +31,29 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 abstract class ITreeNodeAction extends GNodeAction {
 
-	private ITree tree;
+	private ITreeCrossLinks crossLinks;
 
 	protected void perform() {
 
-		if (tree.getCrossLinker().linking()) {
+		if (crossLinks.active()) {
 
-			performCrossLink();
+			performCrossLinkAction();
 		}
 		else {
 
-			performDefault();
+			performDefaultAction();
 		}
 	}
 
 	ITreeNodeAction(ITree tree) {
 
-		this.tree = tree;
+		crossLinks = tree.getCrossLinks();
 	}
 
-	abstract void performDefault();
+	abstract void performDefaultAction();
 
-	void performCrossLink() {
+	void performCrossLinkAction() {
 
-		tree.getCrossLinker().endLinking();
+		crossLinks.deactivate();
 	}
 }

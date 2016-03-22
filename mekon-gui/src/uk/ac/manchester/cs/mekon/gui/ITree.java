@@ -40,13 +40,14 @@ class ITree extends GTree {
 	static final Color DIRECT_UPDATES_CLR = Color.yellow;
 	static final Color INDIRECT_UPDATES_CLR = Color.cyan;
 	static final Color CROSS_LINKABLE_IFRAME_CLR = Color.green;
+	static final Color CROSS_LINKED_IFRAME_CLR = Color.green;
 
 	static final Color CROSS_LINKING_BACKGROUND_CLR = Color.gray.brighter();
 	static final Color DEFAULT_BACKGROUND_CLR = Color.white;
 
 	private ITreeUpdates updates;
 	private ITreeExpansions expansions;
-	private ITreeCrossLinker crossLinker;
+	private ITreeCrossLinks crossLinks;
 	private ITreeNodeDisplays nodeDisplays;
 
 	ITree(IFrame rootFrame) {
@@ -55,7 +56,7 @@ class ITree extends GTree {
 
 		updates = new ITreeUpdates(rootNode);
 		expansions = new ITreeExpansions(rootNode);
-		crossLinker = new ITreeCrossLinker(this);
+		crossLinks = new ITreeCrossLinks(this);
 		nodeDisplays = new ITreeNodeDisplays(this);
 
 		initialise(rootNode);
@@ -88,9 +89,9 @@ class ITree extends GTree {
 		return updates;
 	}
 
-	ITreeCrossLinker getCrossLinker() {
+	ITreeCrossLinks getCrossLinks() {
 
-		return crossLinker;
+		return crossLinks;
 	}
 
 	ITreeNodeDisplays getNodeDisplays() {

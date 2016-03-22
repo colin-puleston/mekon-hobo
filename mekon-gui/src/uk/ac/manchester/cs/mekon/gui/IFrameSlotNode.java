@@ -40,9 +40,9 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	private class CrossLinkStartAction extends ISlotNodeAction {
 
-		void performDefault() {
+		void performDefaultAction() {
 
-			tree.getCrossLinker().checkStartLinking(IFrameSlotNode.this);
+			tree.getCrossLinks().checkStartLinking(IFrameSlotNode.this);
 		}
 	}
 
@@ -55,12 +55,27 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 			this.value = value;
 		}
 
-		void performDefault() {
+		void performDefaultAction() {
 		}
 
-		void performCrossLink() {
+		void performCrossLinkAction() {
 
-			tree.getCrossLinker().endLinking(value);
+			tree.getCrossLinks().endLinking(value);
+		}
+	}
+
+	private class CrossLinkDisplayStartAction extends ISlotNodeAction {
+
+		private IFrameNode displayNode;
+
+		CrossLinkDisplayStartAction(IFrameNode displayNode) {
+
+			this.displayNode = displayNode;
+		}
+
+		void performDefaultAction() {
+
+			tree.getCrossLinks().checkStartShowingLinked(displayNode);
 		}
 	}
 
@@ -75,7 +90,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 			this.value = value;
 		}
 
-		void performDefault() {
+		void performDefaultAction() {
 
 			CFrame type = checkObtainCFrameAddition();
 
@@ -120,7 +135,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 		protected GNodeAction getPositiveAction1() {
 
-			if (tree.getCrossLinker().linking()) {
+			if (tree.getCrossLinks().linking()) {
 
 				return new CrossLinkEndAction(getValue());
 			}
@@ -131,6 +146,11 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		protected GNodeAction getPositiveAction2() {
 
 			return getIFrameAdditionAction(getValue());
+		}
+
+		protected GNodeAction getPositiveAction3() {
+
+			return new CrossLinkDisplayStartAction(this);
 		}
 
 		protected GNodeAction getNegativeAction1() {
@@ -149,7 +169,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		return false;
 	}
 
-	protected GNodeAction getPositiveAction2() {
+	protected GNodeAction getPositiveAction3() {
 
 		return new CrossLinkStartAction();
 	}

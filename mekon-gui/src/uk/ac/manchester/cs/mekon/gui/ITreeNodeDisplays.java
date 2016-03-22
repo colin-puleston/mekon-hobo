@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 class ITreeNodeDisplays {
 
 	private ITreeUpdates updates;
-	private ITreeCrossLinker crossLinker;
+	private ITreeCrossLinks crossLinks;
 
 	private class Highlighter {
 
@@ -53,9 +53,9 @@ class ITreeNodeDisplays {
 			this.mainDisplay = mainDisplay;
 			this.valueTypeDisplay = valueTypeDisplay;
 
-			if (crossLinker.linking()) {
+			if (crossLinks.active()) {
 
-				checkForCrossLinkable();
+				checkForCrossLinking();
 			}
 			else {
 
@@ -86,11 +86,15 @@ class ITreeNodeDisplays {
 			}
 		}
 
-		private void checkForCrossLinkable() {
+		private void checkForCrossLinking() {
 
-			if (crossLinker.linkable(node)) {
+			if (crossLinks.showLinkable(node)) {
 
 				highlightMain(ITree.CROSS_LINKABLE_IFRAME_CLR);
+			}
+			else if (crossLinks.showLinked(node)) {
+
+				highlightMain(ITree.CROSS_LINKED_IFRAME_CLR);
 			}
 		}
 
@@ -108,7 +112,7 @@ class ITreeNodeDisplays {
 	ITreeNodeDisplays(ITree tree) {
 
 		updates = tree.getUpdates();
-		crossLinker = tree.getCrossLinker();
+		crossLinks = tree.getCrossLinks();
 	}
 
 	GCellDisplay get(IValueNode<?> valueNode) {

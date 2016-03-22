@@ -266,12 +266,22 @@ public abstract class GNode extends GMutableTreeNode {
 		return GNodeAction.INERT_ACTION;
 	}
 
+	protected GNodeAction getPositiveAction3() {
+
+		return GNodeAction.INERT_ACTION;
+	}
+
 	protected GNodeAction getNegativeAction1() {
 
 		return GNodeAction.INERT_ACTION;
 	}
 
 	protected GNodeAction getNegativeAction2() {
+
+		return GNodeAction.INERT_ACTION;
+	}
+
+	protected GNodeAction getNegativeAction3() {
 
 		return GNodeAction.INERT_ACTION;
 	}

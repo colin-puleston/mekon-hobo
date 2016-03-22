@@ -43,9 +43,9 @@ public class GTree extends JTree {
 
 	private abstract class ActionInvoker {
 
-		void checkInvokeOn(GNode node, boolean action2) {
+		void checkInvokeOn(GNode node, MouseEvent event) {
 
-			GNodeAction action = getNodeAction(node, action2);
+			GNodeAction action = getNodeAction(node, event);
 
 			if (action.active()) {
 
@@ -57,9 +57,21 @@ public class GTree extends JTree {
 
 		abstract GNodeAction getNodeAction2(GNode node);
 
-		private GNodeAction getNodeAction(GNode node, boolean action2) {
+		abstract GNodeAction getNodeAction3(GNode node);
 
-			return action2 ? getNodeAction2(node) : getNodeAction1(node);
+		private GNodeAction getNodeAction(GNode node, MouseEvent event) {
+
+			if (event.isAltDown()) {
+
+				return getNodeAction2(node);
+			}
+
+			if (event.isShiftDown()) {
+
+				return getNodeAction3(node);
+			}
+
+			return getNodeAction1(node);
 		}
 	}
 
@@ -74,6 +86,11 @@ public class GTree extends JTree {
 
 			return node.getPositiveAction2();
 		}
+
+		GNodeAction getNodeAction3(GNode node) {
+
+			return node.getPositiveAction3();
+		}
 	}
 
 	private class NegativeActionInvoker extends ActionInvoker {
@@ -86,6 +103,11 @@ public class GTree extends JTree {
 		GNodeAction getNodeAction2(GNode node) {
 
 			return node.getNegativeAction2();
+		}
+
+		GNodeAction getNodeAction3(GNode node) {
+
+			return node.getNegativeAction3();
 		}
 	}
 
@@ -125,7 +147,7 @@ public class GTree extends JTree {
 
 			if (actionInvoker != null) {
 
-				actionInvoker.checkInvokeOn(node, event.isAltDown());
+				actionInvoker.checkInvokeOn(node, event);
 			}
 		}
 

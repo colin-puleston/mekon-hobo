@@ -41,9 +41,10 @@ class HelpPanel extends JTabbedPane {
 	static private final EntityLevel DEFAULT_LEVEL = EntityLevel.CONCEPT;
 	static private final CSource DEFAULT_SOURCE = CSource.UNSPECIFIED;
 	static private final String POSITIVE_ACTION = "LEFT-CLICK";
-	static private final String POSITIVE_ACTION2 = "LEFT-CLICK / ALT=KEY";
+	static private final String POSITIVE_ACTION2 = "LEFT-CLICK + ALT-KEY";
+	static private final String POSITIVE_ACTION3 = "LEFT-CLICK + SHIFT-KEY";
 	static private final String NEGATIVE_ACTION = "RIGHT-CLICK";
-	static private final String ANY_MOUSE_ACTION = "LEFT / RIGHT-CLICK";
+	static private final String ANY_MOUSE_ACTION = "LEFT-CLICK OR RIGHT-CLICK";
 	static private final String ESCAPE_KEY = "ESCAPE-KEY";
 
 	static final Icon mValueShape = getValueShape(EntityLevel.META);
@@ -564,7 +565,7 @@ class HelpPanel extends JTabbedPane {
 
 		TreeInstantiationsPanel() {
 
-			super("Instantiations (tree)");
+			super("Instantiations (Tree)");
 
 			new TreeSemanticsPanel();
 			new NodeShapeModifiersPanel();
@@ -578,13 +579,41 @@ class HelpPanel extends JTabbedPane {
 
 		static final long serialVersionUID = -1;
 
+		private class EditModesPanel extends SectionPanel {
+
+			static final long serialVersionUID = -1;
+
+			EditModesPanel() {
+
+				super("Edit Modes");
+
+				addColumns(
+					"Edit Mode",
+					"Applicable Actions",
+					"Background Colour");
+
+				addRow(
+					"DEFAULT",
+					"All TREE actions + Specified CROSS-LINK actions",
+					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
+				addRow(
+					"LINK-CREATE",
+					"Specified CROSS-LINK actions",
+					getColouredPanel(ITree.CROSS_LINKING_BACKGROUND_CLR));
+				addRow(
+					"LINK-VIEW",
+					"Specified CROSS-LINK actions",
+					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
+			}
+		}
+
 		private class ActionsPanel extends SectionPanel {
 
 			static final long serialVersionUID = -1;
 
 			ActionsPanel() {
 
-				super("Actions");
+				super("Cross-Link Actions");
 
 				addColumns(
 					"Current Edit Mode",
@@ -597,26 +626,46 @@ class HelpPanel extends JTabbedPane {
 					"DEFAULT",
 					"SLOT",
 					"Editable IFrame-slots for which linkable values exist",
-					POSITIVE_ACTION,
-					"Select slot / Enter CROSS-LINK mode");
+					POSITIVE_ACTION3,
+					"Select slot / Enter LINK-CREATE mode");
 				addRow(
-					"CROSS-LINK",
+					"DEFAULT",
+					"SLOT-VALUE",
+					"Currently linked IFrame-values",
+					POSITIVE_ACTION3,
+					"Select value / Enter LINK-VIEW mode");
+
+				addRow(
+					"LINK-CREATE",
 					"SLOT-VALUE",
 					"Highlighted IFrame-values",
 					POSITIVE_ACTION,
-					"Select as slot-value / Exit CROSS-LINK mode");
+					"Select as slot-value / Exit LINK-CREATE mode");
 				addRow(
-					"CROSS-LINK",
+					"LINK-CREATE",
 					"SLOT / SLOT-VALUE",
 					"All non-highlighted entities",
 					ANY_MOUSE_ACTION,
-					"Exit CROSS-LINK mode");
+					"Exit LINK-CREATE mode");
 				addRow(
-					"CROSS-LINK",
-					"Anywhere in panel",
-					"",
+					"LINK-CREATE",
+					"N/A",
+					"N/A",
 					ESCAPE_KEY,
-					"Exit CROSS-LINK mode");
+					"Exit LINK-CREATE mode");
+
+				addRow(
+					"LINK-VIEW",
+					"SLOT / SLOT-VALUE",
+					"All non-highlighted entities",
+					ANY_MOUSE_ACTION,
+					"Exit LINK-VIEW mode");
+				addRow(
+					"LINK-VIEW",
+					"N/A",
+					"N/A",
+					ESCAPE_KEY,
+					"Exit LINK-VIEW mode");
 			}
 		}
 
@@ -626,7 +675,7 @@ class HelpPanel extends JTabbedPane {
 
 			LabelColoursPanel() {
 
-				super("Label Colours");
+				super("Cross-Link Label Colours");
 
 				addColumns(
 					"Current Edit Mode",
@@ -635,41 +684,24 @@ class HelpPanel extends JTabbedPane {
 					"Denotes");
 
 				addRow(
-					"CROSS-LINK",
+					"LINK-CREATE",
 					"IFrame",
 					getValueLabelComponent(ITree.CROSS_LINKABLE_IFRAME_CLR),
 					"Selectable value");
-			}
-		}
-
-		private class BackgroundColoursPanel extends SectionPanel {
-
-			static final long serialVersionUID = -1;
-
-			BackgroundColoursPanel() {
-
-				super("Background Colours");
-
-				addColumns(
-					"Current Edit Mode",
-					"Background Colour");
-
 				addRow(
-					"DEFAULT",
-					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
-
-				addRow(
-					"CROSS-LINK",
-					getColouredPanel(ITree.CROSS_LINKING_BACKGROUND_CLR));
+					"LINK-VIEW",
+					"IFrame",
+					getValueLabelComponent(ITree.CROSS_LINKED_IFRAME_CLR),
+					"Linked value");
 			}
 		}
 
 		GraphLinkInstantiationsPanel() {
 
-			super("Instantiations (cross-link)");
+			super("Instantiations (Cross-Link)");
 
+			new EditModesPanel();
 			new ActionsPanel();
-			new BackgroundColoursPanel();
 			new LabelColoursPanel();
 		}
 	}

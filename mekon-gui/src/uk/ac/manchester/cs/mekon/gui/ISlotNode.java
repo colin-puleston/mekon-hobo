@@ -55,7 +55,7 @@ abstract class ISlotNode extends INode {
 
 	private class AddValueAction extends ISlotNodeAction {
 
-		void performDefault() {
+		void performDefaultAction() {
 
 			IValue value = checkObtainValue();
 
@@ -75,7 +75,7 @@ abstract class ISlotNode extends INode {
 			this.value = value;
 		}
 
-		void performDefault() {
+		void performDefaultAction() {
 
 			removeValue(value);
 		}
@@ -83,7 +83,7 @@ abstract class ISlotNode extends INode {
 
 	private class ClearValuesAction extends ISlotNodeAction {
 
-		void performDefault() {
+		void performDefaultAction() {
 
 			checkClearValues();
 		}
