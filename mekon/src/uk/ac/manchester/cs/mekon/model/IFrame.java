@@ -176,6 +176,7 @@ public class IFrame implements IEntity, IValue {
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
 	private boolean autoUpdateEnabled = true;
+	private boolean autoUpdating = false;
 
 	private class Editor implements IFrameEditor {
 
@@ -247,11 +248,9 @@ public class IFrame implements IEntity, IValue {
 		private ISlotValues slotValues;
 		private List<IValue> assertedValues;
 
-		private boolean updating = false;
-
 		public void onUpdated() {
 
-			if (autoUpdateEnabled && !updating) {
+			if (autoUpdateEnabled && !autoUpdating) {
 
 				List<IValue> latestAsserteds = slotValues.getAssertedValues();
 
@@ -259,9 +258,9 @@ public class IFrame implements IEntity, IValue {
 
 					assertedValues = latestAsserteds;
 
-					updating = true;
+					autoUpdating = true;
 					performAutoUpdates();
-					updating = false;
+					autoUpdating = false;
 				}
 			}
 		}
