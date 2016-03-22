@@ -594,15 +594,15 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					"DEFAULT",
-					"All TREE actions + Specified CROSS-LINK actions",
+					"All TREE actions + CROSS-LINK actions specified for DEFAULT mode",
 					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
 				addRow(
 					"LINK-CREATE",
-					"Specified CROSS-LINK actions",
+					"CROSS-LINK actions specified for LINK-CREATE mode only",
 					getColouredPanel(ITree.CROSS_LINKING_BACKGROUND_CLR));
 				addRow(
 					"LINK-VIEW",
-					"Specified CROSS-LINK actions",
+					"CROSS-LINK actions specified for LINK-VIEW mode only",
 					getColouredPanel(ITree.DEFAULT_BACKGROUND_CLR));
 			}
 		}
