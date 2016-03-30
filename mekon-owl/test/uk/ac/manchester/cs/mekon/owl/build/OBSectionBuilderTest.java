@@ -440,9 +440,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		CSlot slot = getSlot(containerName, slotName);
 		CCardinality cardinality = slot.getCardinality();
 
-		assertTrue(
-			"Unexpected CSlot cardinality: " + cardinality,
-			cardinality == expectedCardinality);
+		assertEquals(expectedCardinality, cardinality);
 		assertEquals(expectedValueType, slot.getValueType());
 	}
 

@@ -57,19 +57,12 @@ class OBSlot extends OIdentified {
 
 		void checkCreate(CFrame container) {
 
-			if (OBSlot.this == topLevelSlot) {
+			if (canProvideSlot()) {
 
-				if (canProvideSlot()) {
-
-					addOrUpdateSlot(container, getCardinalityIfTopLevelSlot());
-				}
+				addOrUpdateSlot(container, getCardinality());
 			}
-			else {
 
-				if (topLevelSlot.spec.singleValued() && canProvideSlot()) {
-
-					addOrUpdateSlot(container, CCardinality.SINGLE_VALUE);
-				}
+			if (OBSlot.this != topLevelSlot) {
 
 				if (spec.valuedRequired() && canProvideFixedValue()) {
 
@@ -128,9 +121,9 @@ class OBSlot extends OIdentified {
 						valueStructureAllowed());
 		}
 
-		private boolean valueStructureAllowed() {
+		private CCardinality getCardinality() {
 
-			return topLevelSlot.valueStructureAllowedIfTopLevelSlot();
+			return topLevelSlot.getCardinalityIfTopLevelSlot();
 		}
 
 		private CValue<?> getCValue() {
@@ -151,6 +144,11 @@ class OBSlot extends OIdentified {
 							annotations,
 							topLevelSlot.valueType,
 							valueStructureAllowed());
+		}
+
+		private boolean valueStructureAllowed() {
+
+			return topLevelSlot.valueStructureAllowedIfTopLevelSlot();
 		}
 
 		private CFrameEditor getEditor(CFrame container) {
