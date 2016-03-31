@@ -40,14 +40,6 @@ public class DArrayViewer<V>
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<V> getAll() {
-
-		return getField().getAll();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public <S extends V>List<S> getAll(Class<S> subValueType) {
 
 		return getField().getAll(subValueType);

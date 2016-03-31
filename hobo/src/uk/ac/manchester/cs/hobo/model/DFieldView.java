@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
@@ -73,6 +75,13 @@ public interface DFieldView<V> {
 	 * @return true if field has value
 	 */
 	public boolean hasValue(V value);
+
+	/**
+	 * Retrieves all current values for the field.
+	 *
+	 * @return All current values
+	 */
+	public List<V> getAll();
 
 	/**
 	 * Provides the slot to which the field is bound.

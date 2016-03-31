@@ -112,14 +112,6 @@ public class DArray<V> extends DField<V> implements DArrayView<V> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<V> getAll() {
-
-		return new ArrayList<V>(super.getAll());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public <S extends V>List<S> getAll(Class<S> subValueType) {
 
 		List<S> selected = new ArrayList<S>();

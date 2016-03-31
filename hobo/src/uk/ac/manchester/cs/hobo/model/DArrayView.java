@@ -34,13 +34,6 @@ import java.util.*;
 public interface DArrayView<V> extends DFieldView<V> {
 
 	/**
-	 * Retrieves all current values for the field.
-	 *
-	 * @return All current values
-	 */
-	public List<V> getAll();
-
-	/**
 	 * Retrieves all current values for the field that are of specified
 	 * type.
 	 *

@@ -152,7 +152,15 @@ public abstract class DField<V> implements DFieldView<V> {
 	 */
 	public boolean hasValue(V value) {
 
-		return getSlot().getValues().contains(toSlotValue(value));
+		return getSlotValues().contains(toSlotValue(value));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<V> getAll() {
+
+		return toFieldValues(getSlotValues().asList());
 	}
 
 	/**
@@ -237,11 +245,6 @@ public abstract class DField<V> implements DFieldView<V> {
 	}
 
 	abstract CCardinality getCardinality();
-
-	List<V> getAll() {
-
-		return toFieldValues(getSlot().getValues().asList());
-	}
 
 	private List<IValue> toSlotValues(Collection<? extends V> values) {
 

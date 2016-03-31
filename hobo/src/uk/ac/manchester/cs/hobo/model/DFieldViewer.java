@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
@@ -76,6 +78,14 @@ public class DFieldViewer<V, F extends DField<V>> implements DFieldView<V> {
 	public boolean hasValue(V value) {
 
 		return field.hasValue(value);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<V> getAll() {
+
+		return getField().getAll();
 	}
 
 	/**
