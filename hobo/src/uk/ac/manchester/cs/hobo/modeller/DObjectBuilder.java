@@ -175,6 +175,13 @@ public interface DObjectBuilder {
 	public <N extends Number>DCell<N> addNumberCell(DNumberRange<N> range);
 
 	/**
+	 * Creates a single-valued OM field with string-type values.
+	 *
+	 * @return Created field
+	 */
+	public DCell<String> addStringCell();
+
+	/**
 	 * Enables the explicit specification of the "container-class"
 	 * attribute for a particular field that has been constructed
 	 * by this fields-factory.

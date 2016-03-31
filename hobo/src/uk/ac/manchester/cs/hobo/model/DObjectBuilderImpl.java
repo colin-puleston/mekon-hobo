@@ -116,6 +116,11 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		return addField(new DCell<N>(model, new DNumberValueType<N>(range)));
 	}
 
+	public DCell<String> addStringCell() {
+
+		return addField(new DCell<String>(model, DStringValueType.SINGLETON));
+	}
+
 	public void setContainerClass(
 					DField<?> field,
 					Class<? extends DObject> containerClass) {
