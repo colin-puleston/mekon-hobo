@@ -31,6 +31,9 @@ import java.math.*;
  */
 abstract class ITypeNumber {
 
+	void setINumber(INumber iNumber) {
+	}
+
 	abstract int hashCodeValue();
 
 	abstract boolean infinite();
@@ -45,27 +48,13 @@ abstract class ITypeNumber {
 
 	abstract Number asTypeNumber();
 
-	abstract BigDecimal asBigDecimal();
+	abstract Integer asInteger();
 
-	Integer asInteger() {
+	abstract Long asLong();
 
-		return asBigDecimal().intValue();
-	}
+	abstract Float asFloat();
 
-	Long asLong() {
-
-		return asBigDecimal().longValue();
-	}
-
-	Float asFloat() {
-
-		return asBigDecimal().floatValue();
-	}
-
-	Double asDouble() {
-
-		return asBigDecimal().doubleValue();
-	}
+	abstract Double asDouble();
 
 	abstract boolean equalTo(ITypeNumber other);
 
@@ -93,5 +82,11 @@ abstract class ITypeNumber {
 		return false;
 	}
 
-	abstract INumber toINumber(BigDecimal value);
+	abstract ITypeNumber add(ITypeNumber other);
+
+	abstract ITypeNumber subtract(ITypeNumber other);
+
+	abstract ITypeNumber multiplyBy(ITypeNumber other);
+
+	abstract ITypeNumber divideBy(ITypeNumber other);
 }

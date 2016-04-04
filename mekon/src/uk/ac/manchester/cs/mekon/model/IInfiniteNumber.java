@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import java.math.*;
-
 import uk.ac.manchester.cs.mekon.*;
 
 /**
@@ -70,7 +68,22 @@ abstract class IInfiniteNumber extends ITypeNumber {
 		throw createInvalidOperationException();
 	}
 
-	BigDecimal asBigDecimal() {
+	Integer asInteger() {
+
+		throw createInvalidOperationException();
+	}
+
+	Long asLong() {
+
+		throw createInvalidOperationException();
+	}
+
+	Float asFloat() {
+
+		throw createInvalidOperationException();
+	}
+
+	Double asDouble() {
 
 		throw createInvalidOperationException();
 	}
@@ -80,9 +93,24 @@ abstract class IInfiniteNumber extends ITypeNumber {
 		return this == other;
 	}
 
-	INumber toINumber(BigDecimal value) {
+	ITypeNumber add(ITypeNumber other) {
 
-		throw createInvalidOperationException();
+		return this;
+	}
+
+	ITypeNumber subtract(ITypeNumber other) {
+
+		return this;
+	}
+
+	ITypeNumber multiplyBy(ITypeNumber other) {
+
+		return this;
+	}
+
+	ITypeNumber divideBy(ITypeNumber other) {
+
+		return this;
 	}
 
 	abstract String getNamePrefix();

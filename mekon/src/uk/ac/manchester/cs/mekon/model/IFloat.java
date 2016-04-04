@@ -46,8 +46,8 @@ class IFloat extends IDefiniteNumber<Float> {
 		return new BigDecimal(value);
 	}
 
-	INumber toINumber(BigDecimal value) {
+	IFloat toDefiniteNumber(BigDecimal value) {
 
-		return new INumber(value.floatValue());
+		return new IFloat(value.floatValue());
 	}
 }

@@ -46,8 +46,8 @@ class ILong extends IDefiniteNumber<Long> {
 		return new BigDecimal(value);
 	}
 
-	INumber toINumber(BigDecimal value) {
+	ILong toDefiniteNumber(BigDecimal value) {
 
-		return new INumber(value.longValue());
+		return new ILong(value.longValue());
 	}
 }

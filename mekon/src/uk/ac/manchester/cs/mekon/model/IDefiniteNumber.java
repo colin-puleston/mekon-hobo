@@ -74,45 +74,127 @@ abstract class IDefiniteNumber<N extends Number> extends ITypeNumber {
 		return value;
 	}
 
-	BigDecimal asBigDecimal() {
+	Integer asInteger() {
 
-		return toBigDecimal(value);
+		return asBigDecimal().intValue();
+	}
+
+	Long asLong() {
+
+		return asBigDecimal().longValue();
+	}
+
+	Float asFloat() {
+
+		return asBigDecimal().floatValue();
+	}
+
+	Double asDouble() {
+
+		return asBigDecimal().doubleValue();
 	}
 
 	abstract BigDecimal toBigDecimal(N value);
 
 	boolean equalTo(ITypeNumber other) {
 
-		if (other.infinite() || other.indefinite()) {
+		if (other instanceof IDefiniteNumber) {
 
-			return other.equalTo(this);
+			return compareTo((IDefiniteNumber<?>)other) == 0;
 		}
 
-		return compareTo(other) == 0;
+		return other.equalTo(this);
 	}
 
 	boolean lessThan(ITypeNumber other) {
 
-		if (other.infinite() || other.indefinite()) {
+		if (other instanceof IDefiniteNumber) {
 
-			return other.moreThan(this);
+			return compareTo((IDefiniteNumber<?>)other) == -1;
 		}
 
-		return compareTo(other) == -1;
+		return other.moreThan(this);
 	}
 
 	boolean moreThan(ITypeNumber other) {
 
-		if (other.infinite() || other.indefinite()) {
+		if (other instanceof IDefiniteNumber) {
 
-			return other.lessThan(this);
+			return compareTo((IDefiniteNumber<?>)other) == 1;
 		}
 
-		return compareTo(other) == 1;
+		return other.lessThan(this);
 	}
 
-	private int compareTo(ITypeNumber other) {
+	ITypeNumber add(ITypeNumber other) {
+
+		if (other instanceof IDefiniteNumber) {
+
+			return add((IDefiniteNumber<?>)other);
+		}
+
+		return other.add(this);
+	}
+
+	ITypeNumber subtract(ITypeNumber other) {
+
+		if (other instanceof IDefiniteNumber) {
+
+			return subtract((IDefiniteNumber<?>)other);
+		}
+
+		return other.subtract(this);
+	}
+
+	ITypeNumber multiplyBy(ITypeNumber other) {
+
+		if (other instanceof IDefiniteNumber) {
+
+			return multiplyBy((IDefiniteNumber<?>)other);
+		}
+
+		return other.multiplyBy(this);
+	}
+
+	ITypeNumber divideBy(ITypeNumber other) {
+
+		if (other instanceof IDefiniteNumber) {
+
+			return divideBy((IDefiniteNumber<?>)other);
+		}
+
+		return other.divideBy(this);
+	}
+
+	abstract IDefiniteNumber<N> toDefiniteNumber(BigDecimal value);
+
+	private int compareTo(IDefiniteNumber<?> other) {
 
 		return asBigDecimal().compareTo(other.asBigDecimal());
+	}
+
+	private IDefiniteNumber<?> add(IDefiniteNumber<?> other) {
+
+		return toDefiniteNumber(asBigDecimal().add(other.asBigDecimal()));
+	}
+
+	private IDefiniteNumber<?> subtract(IDefiniteNumber<?> other) {
+
+		return toDefiniteNumber(asBigDecimal().subtract(other.asBigDecimal()));
+	}
+
+	private IDefiniteNumber<?> multiplyBy(IDefiniteNumber<?> other) {
+
+		return toDefiniteNumber(asBigDecimal().multiply(other.asBigDecimal()));
+	}
+
+	private IDefiniteNumber<?> divideBy(IDefiniteNumber<?> other) {
+
+		return toDefiniteNumber(asBigDecimal().divide(other.asBigDecimal()));
+	}
+
+	private BigDecimal asBigDecimal() {
+
+		return toBigDecimal(value);
 	}
 }

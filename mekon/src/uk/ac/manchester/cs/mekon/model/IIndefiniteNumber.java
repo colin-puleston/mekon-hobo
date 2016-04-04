@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import java.math.*;
-
 import uk.ac.manchester.cs.mekon.*;
 
 /**
@@ -75,12 +73,22 @@ class IIndefiniteNumber extends ITypeNumber {
 		throw createInvalidOperationException();
 	}
 
-	BigDecimal asBigDecimal() {
+	Integer asInteger() {
 
 		throw createInvalidOperationException();
 	}
 
-	INumber toINumber(BigDecimal value) {
+	Long asLong() {
+
+		throw createInvalidOperationException();
+	}
+
+	Float asFloat() {
+
+		throw createInvalidOperationException();
+	}
+
+	Double asDouble() {
 
 		throw createInvalidOperationException();
 	}
@@ -113,6 +121,26 @@ class IIndefiniteNumber extends ITypeNumber {
 	boolean undefinedMinMax(ITypeNumber other) {
 
 		return !equalTo(other) && !lessThan(other) && !moreThan(other);
+	}
+
+	ITypeNumber add(ITypeNumber other) {
+
+		throw createInvalidOperationException();
+	}
+
+	ITypeNumber subtract(ITypeNumber other) {
+
+		throw createInvalidOperationException();
+	}
+
+	ITypeNumber multiplyBy(ITypeNumber other) {
+
+		throw createInvalidOperationException();
+	}
+
+	ITypeNumber divideBy(ITypeNumber other) {
+
+		throw createInvalidOperationException();
 	}
 
 	private boolean strictOrder(ITypeNumber one, ITypeNumber two) {

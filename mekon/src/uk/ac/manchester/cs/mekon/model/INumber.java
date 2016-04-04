@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import java.math.*;
-
 /**
  * Represents a numeric-value, with the actual value being represented
  * by a primitive Java <code>Number</code> value of some type.
@@ -318,7 +316,7 @@ public class INumber extends IDataValue {
 	 */
 	public INumber add(INumber other) {
 
-		return toINumber(asBigDecimal().add(other.asBigDecimal()));
+		return new INumber(typeNumber.add(other.typeNumber));
 	}
 
 	/**
@@ -329,7 +327,7 @@ public class INumber extends IDataValue {
 	 */
 	public INumber subtract(INumber other) {
 
-		return toINumber(asBigDecimal().subtract(other.asBigDecimal()));
+		return new INumber(typeNumber.subtract(other.typeNumber));
 	}
 
 	/**
@@ -340,7 +338,7 @@ public class INumber extends IDataValue {
 	 */
 	public INumber multiplyBy(INumber other) {
 
-		return toINumber(asBigDecimal().multiply(other.asBigDecimal()));
+		return new INumber(typeNumber.multiplyBy(other.typeNumber));
 	}
 
 	/**
@@ -351,7 +349,7 @@ public class INumber extends IDataValue {
 	 */
 	public INumber divideBy(INumber other) {
 
-		return toINumber(asBigDecimal().divide(other.asBigDecimal()));
+		return new INumber(typeNumber.divideBy(other.typeNumber));
 	}
 
 	/**
@@ -420,16 +418,11 @@ public class INumber extends IDataValue {
 		return typeNumber.getDescription();
 	}
 
-	private INumber(IDefiniteNumber<?> definiteNumber) {
+	private INumber(ITypeNumber typeNumber) {
 
-		typeNumber = definiteNumber;
+		this.typeNumber = typeNumber;
 
-		definiteNumber.setINumber(this);
-	}
-
-	private INumber(IInfiniteNumber infiniteNumber) {
-
-		typeNumber = infiniteNumber;
+		typeNumber.setINumber(this);
 	}
 
 	private boolean equalsNumber(INumber other) {
@@ -445,15 +438,5 @@ public class INumber extends IDataValue {
 	private boolean undefinedMinMax(INumber other) {
 
 		return typeNumber.undefinedMinMax(other.typeNumber);
-	}
-
-	private BigDecimal asBigDecimal() {
-
-		return typeNumber.asBigDecimal();
-	}
-
-	private INumber toINumber(BigDecimal value) {
-
-		return typeNumber.toINumber(value);
 	}
 }

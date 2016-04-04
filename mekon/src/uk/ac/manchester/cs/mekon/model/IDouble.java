@@ -46,8 +46,8 @@ class IDouble extends IDefiniteNumber<Double> {
 		return new BigDecimal(value);
 	}
 
-	INumber toINumber(BigDecimal value) {
+	IDouble toDefiniteNumber(BigDecimal value) {
 
-		return new INumber(value.doubleValue());
+		return new IDouble(value.doubleValue());
 	}
 }

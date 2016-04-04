@@ -46,8 +46,8 @@ class IInteger extends IDefiniteNumber<Integer> {
 		return new BigDecimal(value);
 	}
 
-	INumber toINumber(BigDecimal value) {
+	IInteger toDefiniteNumber(BigDecimal value) {
 
-		return new INumber(value.intValue());
+		return new IInteger(value.intValue());
 	}
 }
