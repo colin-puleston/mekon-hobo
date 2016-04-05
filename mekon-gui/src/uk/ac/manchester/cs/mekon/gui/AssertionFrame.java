@@ -27,13 +27,12 @@ import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
 /**
  * @author Colin Puleston
  */
-class AssertionInstanceFrame extends InstantiationFrame {
+class AssertionFrame extends InstantiationFrame {
 
 	static private final long serialVersionUID = -1;
 
@@ -43,15 +42,6 @@ class AssertionInstanceFrame extends InstantiationFrame {
 
 	static private final Dimension NAME_FIELD_SIZE = new Dimension(250, 25);
 
-	static void display(CFramesTree modelTree, IStore store, CIdentity identity) {
-
-		IFrame instance = store.get(identity);
-		AssertionInstanceFrame frame = new AssertionInstanceFrame(modelTree, instance);
-
-		frame.setInstanceName(identity.getLabel());
-		frame.display();
-	}
-
 	private JTextField nameField = new JTextField();
 
 	private class StoreButton extends GButton {
@@ -60,16 +50,18 @@ class AssertionInstanceFrame extends InstantiationFrame {
 
 		protected void doButtonThing() {
 
-			store();
+			checkStore();
 		}
 
 		StoreButton() {
 
 			super(STORE_ACTION_LABEL);
+
+			setEnabling(this);
 		}
 	}
 
-	AssertionInstanceFrame(CFramesTree modelTree, IFrame frame) {
+	AssertionFrame(CFramesTree modelTree, IFrame frame) {
 
 		super(modelTree, frame);
 
@@ -77,9 +69,11 @@ class AssertionInstanceFrame extends InstantiationFrame {
 		nameField.setPreferredSize(NAME_FIELD_SIZE);
 	}
 
-	void setInstanceName(String name) {
+	void display(CIdentity identity) {
 
-		nameField.setText(name);
+		nameField.setText(identity.getLabel());
+
+		display();
 	}
 
 	String getCategoryLabel() {
@@ -101,8 +95,8 @@ class AssertionInstanceFrame extends InstantiationFrame {
 
 		JPanel panel = new JPanel();
 
-		panel.add(createNameFieldLabel());
-		panel.add(nameField);
+		panel.add(setEnabling(createNameFieldLabel()));
+		panel.add(setEnabling(nameField));
 
 		return panel;
 	}
@@ -116,61 +110,25 @@ class AssertionInstanceFrame extends InstantiationFrame {
 		return label;
 	}
 
-	private void store() {
+	private JComponent setEnabling(JComponent component) {
 
-		CIdentity identity = getIdentityOrNull();
+		getActions().setInstanceStoreComponentEnabling(component);
 
-		if (identity != null && checkStorageRequired(identity)) {
+		return component;
+	}
 
-			getStore().add(getFrame(), identity);
+	private void checkStore() {
 
-			showStoredMessage(identity);
+		CIdentity id = getIdentityOrNull();
+
+		if (id != null) {
+
+			getActions().storeInstance(getFrame(), id);
 		}
 	}
 
 	private CIdentity getIdentityOrNull() {
 
 		return CIdentityCreator.createOrNull(nameField.getText());
-	}
-
-	private boolean checkStorageRequired(CIdentity identity) {
-
-		if (getStore().contains(identity)) {
-
-			return confirmReplaceStored(identity);
-		}
-
-		return true;
-	}
-
-	private boolean confirmReplaceStored(CIdentity identity) {
-
-		return obtainConfirmation(
-					"Replace stored instance: "
-					+ "\"" + identity.getLabel() + "\"");
-	}
-
-	private void showStoredMessage(CIdentity identity) {
-
-		showMessage("Instance stored: \"" + identity.getLabel() + "\"");
-	}
-
-	private boolean obtainConfirmation(String msg) {
-
-		return obtainConfirmationOption(msg) == JOptionPane.OK_OPTION;
-	}
-
-	private int obtainConfirmationOption(String msg) {
-
-		return JOptionPane.showConfirmDialog(
-					null,
-					msg,
-					"Confirm?",
-					JOptionPane.OK_CANCEL_OPTION);
-	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
 	}
 }

@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 /**
  * @author Colin Puleston
  */
-class QueryInstanceFrame extends InstantiationFrame {
+class QueryFrame extends InstantiationFrame {
 
 	static private final long serialVersionUID = -1;
 
@@ -91,11 +91,11 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 		protected void onSelected(CIdentity entity) {
 
-			showMatch(entity);
+			getActions().retrieveAndDisplayInstance(entity);
 		}
 	}
 
-	QueryInstanceFrame(CFramesTree modelTree, IFrame frame) {
+	QueryFrame(CFramesTree modelTree, IFrame frame) {
 
 		super(modelTree, frame);
 
@@ -118,15 +118,11 @@ class QueryInstanceFrame extends InstantiationFrame {
 
 	private void execute() {
 
-		IMatches matches = getStore().match(getFrame());
+		IMatches matches = getActions().executeQuery(getFrame());
 
 		if (matches.anyMatches()) {
 
 			showMatches(matches);
-		}
-		else {
-
-			showMessage("No matches for supplied query");
 		}
 	}
 
@@ -183,11 +179,6 @@ class QueryInstanceFrame extends InstantiationFrame {
 		}
 
 		return list;
-	}
-
-	private void showMatch(CIdentity id) {
-
-		AssertionInstanceFrame.display(getModelTree(), getStore(), id);
 	}
 
 	private void showMessage(String msg) {

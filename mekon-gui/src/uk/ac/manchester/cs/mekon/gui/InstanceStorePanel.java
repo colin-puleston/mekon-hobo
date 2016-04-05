@@ -28,7 +28,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
 
@@ -42,18 +41,28 @@ class InstanceStorePanel extends JPanel {
 	static private final String TITLE = "Instance Store";
 	static private final String RETRIEVE_BUTTON_LABEL = "Retrieve...";
 	static private final String REMOVE_BUTTON_LABEL = "Remove...";
-	static private final String SELECTOR_TITLE = "Instance Name";
 
-	private IStore store;
-	private CFramesTree modelTree;
+	private InstanceStoreActions actions;
 
-	private class RetrieveButton extends GButton {
+	private abstract class ActionButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		ActionButton(String label) {
+
+			super(label);
+
+			actions.setInstanceStoreComponentEnabling(this);
+		}
+	}
+
+	private class RetrieveButton extends ActionButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			retrieveInstance();
+			actions.retrieveAndDisplaySelectedInstance();
 		}
 
 		RetrieveButton() {
@@ -62,13 +71,13 @@ class InstanceStorePanel extends JPanel {
 		}
 	}
 
-	private class RemoveButton extends GButton {
+	private class RemoveButton extends ActionButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			removeInstance();
+			actions.removeSelectedInstance();
 		}
 
 		RemoveButton() {
@@ -81,9 +90,7 @@ class InstanceStorePanel extends JPanel {
 
 		super(new BorderLayout());
 
-		this.modelTree = modelTree;
-
-		store = IStore.get(model);
+		actions = new InstanceStoreActions(model, modelTree);
 
 		setBorder(createBorder());
 		add(createButtonsComponent(), BorderLayout.EAST);
@@ -110,84 +117,5 @@ class InstanceStorePanel extends JPanel {
 		panel.add(new RemoveButton());
 
 		return panel;
-	}
-
-	private void retrieveInstance() {
-
-		CIdentity id = getIdentityOrNull();
-
-		if (id != null) {
-
-			AssertionInstanceFrame.display(modelTree, store, id);
-		}
-	}
-
-	private void removeInstance() {
-
-		CIdentity id = getIdentityOrNull();
-
-		if (id != null && confirmRemove(id)) {
-
-			store.remove(id);
-			showRemovedMessage(id);
-		}
-	}
-
-	private CIdentity getIdentityOrNull() {
-
-		CIdentity id = getIdentitySelectionOrNull();
-
-		if (id != null) {
-
-			if (store.contains(id)) {
-
-				return id;
-			}
-
-			showNotStoredMessage(id);
-		}
-
-		return null;
-	}
-
-	private CIdentity getIdentitySelectionOrNull() {
-
-		return new CIdentitySelector(this, SELECTOR_TITLE).getSelectionOrNull();
-	}
-
-	private boolean confirmRemove(CIdentity identity) {
-
-		return obtainConfirmation(
-					"Remove stored instance: "
-					+ "\"" + identity.getLabel() + "\"");
-	}
-
-	private void showNotStoredMessage(CIdentity identity) {
-
-		showMessage("Not a stored instance: \"" + identity.getLabel() + "\"");
-	}
-
-	private void showRemovedMessage(CIdentity identity) {
-
-		showMessage("Instance removed from store: \"" + identity.getLabel() + "\"");
-	}
-
-	private boolean obtainConfirmation(String msg) {
-
-		return obtainConfirmationOption(msg) == JOptionPane.OK_OPTION;
-	}
-
-	private int obtainConfirmationOption(String msg) {
-
-		return JOptionPane.showConfirmDialog(
-					null,
-					msg,
-					"Confirm?",
-					JOptionPane.OK_CANCEL_OPTION);
-	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
 	}
 }

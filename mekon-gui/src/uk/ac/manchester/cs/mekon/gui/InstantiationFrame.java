@@ -45,10 +45,9 @@ abstract class InstantiationFrame extends GFrame {
 	static private final String INFERRED_TYPES_TITLE = "Inferred Types";
 	static private final String SUGGESTED_TYPES_TITLE = "Suggested Types";
 
-	private IStore store;
 	private IFrame frame;
+	private InstanceStoreActions actions;
 
-	private CFramesTree modelTree;
 	private JTabbedPane aspectTabs = new JTabbedPane();
 
 	private JComponent instanceComponent;
@@ -78,10 +77,9 @@ abstract class InstantiationFrame extends GFrame {
 
 		super("", WIDTH, HEIGHT);
 
-		this.modelTree = modelTree;
 		this.frame = frame;
 
-		store = IStore.get(getModel());
+		actions = new InstanceStoreActions(getModel(), modelTree);
 
 		instanceComponent = createInstanceComponent();
 		inferredTypesPanel = new InferredTypesPanel(modelTree);
@@ -102,14 +100,9 @@ abstract class InstantiationFrame extends GFrame {
 
 	abstract JComponent createControlsPanel();
 
-	CFramesTree getModelTree() {
+	InstanceStoreActions getActions() {
 
-		return modelTree;
-	}
-
-	IStore getStore() {
-
-		return store;
+		return actions;
 	}
 
 	IFrame getFrame() {

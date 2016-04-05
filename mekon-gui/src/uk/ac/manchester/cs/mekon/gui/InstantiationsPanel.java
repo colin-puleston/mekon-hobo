@@ -120,12 +120,12 @@ class InstantiationsPanel extends JPanel {
 
 	private void instantiateAssertion() {
 
-		new AssertionInstanceFrame(modelTree, frame.instantiate()).display();
+		new AssertionFrame(modelTree, frame.instantiate()).display();
 	}
 
 	private void instantiateQuery() {
 
-		new QueryInstanceFrame(modelTree, frame.instantiateQuery()).display();
+		new QueryFrame(modelTree, frame.instantiateQuery()).display();
 	}
 
 	private boolean frameHasSlots() {

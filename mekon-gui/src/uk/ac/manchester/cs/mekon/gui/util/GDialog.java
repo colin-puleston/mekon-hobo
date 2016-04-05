@@ -34,8 +34,8 @@ public class GDialog extends JDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private JFrame findFrame(JComponent parent)
-	{
+	static private JFrame findFrame(JComponent parent) {
+
 		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, parent);
 	}
 
