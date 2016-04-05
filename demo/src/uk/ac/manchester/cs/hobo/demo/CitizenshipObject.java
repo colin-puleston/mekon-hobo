@@ -29,9 +29,9 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class Personal extends CitizenshipObject {
+public class CitizenshipObject extends DObjectShell {
 
-	public Personal(DObjectBuilder builder) {
+	public CitizenshipObject(DObjectBuilder builder) {
 
 		super(builder);
 	}

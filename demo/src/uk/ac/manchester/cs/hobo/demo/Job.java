@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class Job extends DObjectShell {
+public class Job extends CitizenshipObject {
 
 	static private boolean makeHoursPerWeekAbstractEditable = false;
 

@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public abstract class ValueSummaries<SS extends DObject> extends DObjectShell {
+public abstract class ValueSummaries<SS extends DObject> extends SummarisationObject {
 
 	public final DArrayViewer<ValueSummary> summaries;
 

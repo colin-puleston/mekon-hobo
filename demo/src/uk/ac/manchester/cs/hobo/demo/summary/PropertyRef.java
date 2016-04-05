@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class PropertyRef extends DObjectShell {
+public class PropertyRef extends SummarisationObject {
 
 	public PropertyRef(DObjectBuilder builder) {
 

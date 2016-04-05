@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class Travel extends DObjectShell implements CitizenAspect {
+public class Travel extends CitizenshipObject {
 
 	public final DArray<DConcept<Trip>> tripTypes;
 	public final DArrayViewer<TripsOfType> trips;

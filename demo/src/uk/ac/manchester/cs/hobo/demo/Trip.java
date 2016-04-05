@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class Trip extends DObjectShell {
+public class Trip extends CitizenshipObject {
 
 	public Trip(DObjectBuilder builder) {
 

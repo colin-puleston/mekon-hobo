@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class Tax extends DObjectShell {
+public class Tax extends CitizenshipObject {
 
 	public Tax(DObjectBuilder builder) {
 

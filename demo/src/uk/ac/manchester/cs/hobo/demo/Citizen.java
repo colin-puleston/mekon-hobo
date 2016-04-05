@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class Citizen extends DObjectShell {
+public class Citizen extends CitizenshipObject {
 
 	public final DCell<Personal> personal;
 	public final DCell<Employment> employment;

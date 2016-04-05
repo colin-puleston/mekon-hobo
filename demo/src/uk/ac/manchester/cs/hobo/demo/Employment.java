@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class Employment extends DObjectShell {
+public class Employment extends CitizenshipObject {
 
 	public final DArray<Job> jobs;
 	public final DCellViewer<Integer> jobCount;

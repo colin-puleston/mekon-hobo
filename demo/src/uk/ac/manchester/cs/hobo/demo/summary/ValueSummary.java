@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public abstract class ValueSummary extends DObjectShell {
+public abstract class ValueSummary extends SummarisationObject {
 
 	public final DCellViewer<DConcept<PropertyRef>> property;
 
