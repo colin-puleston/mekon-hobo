@@ -550,7 +550,7 @@
     <!-- http://mekon/demo.owl#Citizen -->
 
     <owl:Class rdf:about="http://mekon/demo.owl#Citizen">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DomainConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CitizenshipConcept"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo.owl#benefitReceived"/>
@@ -585,7 +585,7 @@
     <!-- http://mekon/demo.owl#CitizenAspect -->
 
     <owl:Class rdf:about="http://mekon/demo.owl#CitizenAspect">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DomainConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CitizenshipConcept"/>
     </owl:Class>
     
 
@@ -626,9 +626,9 @@
     
 
 
-    <!-- http://mekon/demo.owl#DomainConcept -->
+    <!-- http://mekon/demo.owl#CitizenshipConcept -->
 
-    <owl:Class rdf:about="http://mekon/demo.owl#DomainConcept"/>
+    <owl:Class rdf:about="http://mekon/demo.owl#CitizenshipConcept"/>
     
 
 
@@ -722,7 +722,7 @@
     <!-- http://mekon/demo.owl#EmploymentAspect -->
 
     <owl:Class rdf:about="http://mekon/demo.owl#EmploymentAspect">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DomainConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CitizenshipConcept"/>
     </owl:Class>
     
 
@@ -1081,7 +1081,7 @@
     <!-- http://mekon/demo.owl#JobAspect -->
 
     <owl:Class rdf:about="http://mekon/demo.owl#JobAspect">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DomainConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CitizenshipConcept"/>
     </owl:Class>
     
 
@@ -1357,7 +1357,7 @@
     <!-- http://mekon/demo.owl#PersonalAspect -->
 
     <owl:Class rdf:about="http://mekon/demo.owl#PersonalAspect">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DomainConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CitizenshipConcept"/>
     </owl:Class>
     
 
@@ -1775,7 +1775,7 @@
     <!-- http://mekon/demo.owl#TravelAspect -->
 
     <owl:Class rdf:about="http://mekon/demo.owl#TravelAspect">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DomainConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CitizenshipConcept"/>
     </owl:Class>
     
 

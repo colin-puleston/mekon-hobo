@@ -150,7 +150,7 @@
 					rootURI="http://mekon/demo.owl#DataTypeConcept"
 					inclusion="ALL"/>
 				<Group
-					rootURI="http://mekon/demo.owl#DomainConcept"
+					rootURI="http://mekon/demo.owl#CitizenshipConcept"
 					inclusion="ALL"
 					conceptHidingCandidates="ALL"
 					conceptHidingFilter="DEFINIED_SUB_TREES_ONLY"/>
@@ -216,12 +216,6 @@
 			<FieldMap fieldName="weeklyPay" externalId="http://mekon/demo.owl#weeklyPay"/>
 			<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/demo.owl#hoursPerWeek"/>
 		</ClassMap>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.CitizenAspect"
-			externalId="http://mekon/demo.owl#CitizenAspect"/>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.TravelAspect"
-			externalId="http://mekon/demo.owl#TravelAspect"/>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.Tax"
 			externalId="http://mekon/demo.owl#Tax"/>
