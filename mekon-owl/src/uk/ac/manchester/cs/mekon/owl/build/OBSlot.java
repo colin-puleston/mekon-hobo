@@ -62,12 +62,9 @@ class OBSlot extends OIdentified {
 				addOrUpdateSlot(container, getCardinality());
 			}
 
-			if (OBSlot.this != topLevelSlot) {
+			if (canProvideFixedValue()) {
 
-				if (spec.valuedRequired() && canProvideFixedValue()) {
-
-					getEditor(container).addSlotValue(getIdentity(), getCValue());
-				}
+				getEditor(container).addSlotValue(getIdentity(), getCValue());
 			}
 		}
 
@@ -110,10 +107,22 @@ class OBSlot extends OIdentified {
 
 		private boolean canProvideSlot() {
 
-			return valueType.canBeSlotValueType();
+			if (OBSlot.this == topLevelSlot || topLevelSlot.spec.singleValued()) {
+
+				return valueType.canBeSlotValueType();
+			}
+
+			return false;
 		}
 
 		private boolean canProvideFixedValue() {
+
+			return OBSlot.this != topLevelSlot
+					&& spec.valuedRequired()
+					&& valueTypeCanProvideFixedValue();
+		}
+
+		private boolean valueTypeCanProvideFixedValue() {
 
 			return valueType
 					.canBeFixedSlotValue(
