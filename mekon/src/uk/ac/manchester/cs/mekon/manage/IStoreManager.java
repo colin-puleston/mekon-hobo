@@ -62,8 +62,8 @@ public class IStoreManager {
 	 *
 	 * @param model Relevant model
 	 */
-	static public void stop(CModel model) {
+	static public void checkStop(CModel model) {
 
-		storeAccessor.stopStore(model);
+		storeAccessor.checkStopStore(model);
 	}
 }

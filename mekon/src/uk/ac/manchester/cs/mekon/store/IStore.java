@@ -57,6 +57,18 @@ public class IStore {
 		return StoreRegister.get(model);
 	}
 
+	/**
+	 * Checks whether an instance-store has been registered for
+	 * the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return True if instance-store is registered for model
+	 */
+	static public boolean storeFor(CModel model) {
+
+		return StoreRegister.contains(model);
+	}
+
 	static {
 
 		ZIStoreAccessor.set(new ZIStoreAccessorImpl());

@@ -37,28 +37,35 @@ class StoreRegister {
 
 	static private final Map<CModel, IStore> stores = new HashMap<CModel, IStore>();
 
-	static synchronized IStore get(CModel model) {
-
-		return checkRegistered(stores.get(model));
-	}
-
 	static synchronized void add(IStore store) {
 
 		stores.put(store.getModel(), store);
 	}
 
-	static synchronized void stop(CModel model) {
+	static synchronized void checkStop(CModel model) {
 
-		checkRegistered(stores.remove(model)).stop();
+		IStore store = stores.remove(model);
+
+		if (store != null) {
+
+			store.stop();
+		}
 	}
 
-	static private IStore checkRegistered(IStore store) {
+	static synchronized IStore get(CModel model) {
 
-		if (store == null) {
+		IStore store = stores.get(model);
+
+		if (store != null) {
 
 			throw new KAccessException("Store has not been created for model!");
 		}
 
 		return store;
+	}
+
+	static synchronized boolean contains(CModel model) {
+
+		return stores.get(model) != null;
 	}
 }

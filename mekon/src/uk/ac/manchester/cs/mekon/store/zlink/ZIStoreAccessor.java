@@ -77,10 +77,10 @@ public abstract class ZIStoreAccessor {
 	public abstract IStoreBuilder getStoreBuilder(CBuilder builder);
 
 	/**
-	 * Performs any necessary clear-ups after all access of specified
-	 * model has terminated.
+	 * Performs any necessary instance-store clear-ups after all
+	 * access of specified model has terminated.
 	 *
 	 * @param model Relevant model
 	 */
-	public abstract void stopStore(CModel model);
+	public abstract void checkStopStore(CModel model);
 }
