@@ -36,16 +36,42 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 class CFrameFixedValuesNode extends GNode {
 
 	private CTree tree;
-	private CFrame frame;
+
 	private List<CIdentity> slotIds;
+	private CSlotValues fixedValues;
+
+	private class SlotValuesNode extends GNode {
+
+		private CIdentity slotId;
+
+		protected void addInitialChildren() {
+
+			CValueNodeCreator creator = new CValueNodeCreator(tree);
+
+			for (CValue<?> value : fixedValues.getValues(slotId)) {
+
+				addChild(creator.create(value));
+			}
+		}
+
+		protected GCellDisplay getDisplay() {
+
+			return EntityDisplays.get().forCSlotValues(slotId);
+		}
+
+		SlotValuesNode(CIdentity slotId) {
+
+			super(tree);
+
+			this.slotId = slotId;
+		}
+	}
 
 	protected void addInitialChildren() {
 
-		CSlotValues values = frame.getSlotValues();
-
 		for (CIdentity id : slotIds) {
 
-			addChild(new CFixedValuesNode(tree, id, values.getValues(id)));
+			addChild(new SlotValuesNode(id));
 		}
 	}
 
@@ -59,7 +85,8 @@ class CFrameFixedValuesNode extends GNode {
 		super(tree);
 
 		this.tree = tree;
-		this.frame = frame;
 		this.slotIds = slotIds;
+
+		fixedValues = frame.getSlotValues();
 	}
 }
