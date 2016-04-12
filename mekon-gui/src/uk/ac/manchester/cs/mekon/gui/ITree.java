@@ -63,6 +63,7 @@ class ITree extends GTree {
 		initialise(rootNode);
 
 		setActiveTree();
+		updates.initialise();
 	}
 
 	void addValue(ISlotNode slotNode, IValue value) {

@@ -35,6 +35,11 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
  */
 abstract class INode extends GNode {
 
+	protected String entityToString() {
+
+		return getEntity().toString();
+	}
+
 	INode(ITree tree) {
 
 		super(tree);

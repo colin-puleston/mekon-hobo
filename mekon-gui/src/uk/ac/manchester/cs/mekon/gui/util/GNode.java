@@ -196,7 +196,7 @@ public abstract class GNode extends GMutableTreeNode {
 
 	public String toString() {
 
-		return getClass().getSimpleName() + "[" + getDisplay().getText() + "]";
+		return getClass().getSimpleName() + "[" + entityToString() + "]";
 	}
 
 	public GNode getParent() {
@@ -287,6 +287,11 @@ public abstract class GNode extends GMutableTreeNode {
 	}
 
 	protected abstract GCellDisplay getDisplay();
+
+	protected String entityToString() {
+
+		return getDisplay().getText();
+	}
 
 	void initialiseSubTree() {
 

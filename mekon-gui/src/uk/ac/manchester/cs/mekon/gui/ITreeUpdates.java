@@ -109,6 +109,11 @@ class ITreeUpdates {
 		this.rootNode = rootNode;
 	}
 
+	void initialise() {
+
+		updateIStates();
+	}
+
 	void update(ISlotNode slotNode, IValue valueToAdd, IValue valueToRemove) {
 
 		updateSlotNode = slotNode;
