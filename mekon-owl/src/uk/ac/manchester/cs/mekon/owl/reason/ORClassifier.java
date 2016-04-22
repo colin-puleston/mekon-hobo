@@ -48,7 +48,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  * <p>
  * The classification process can be customised by adding one or more
  * pre-processors to modify the networks that will be passed to the
- * methods on the derived class (see {@link #addPreProcessor}).
+ * methods on the derived class (see {@link NClassifier#addPreProcessor}).
  * <p>
  * After any required pre-processing the networks are then processed to
  * ensure "ontology-compliance". This ensures that they will only contain
