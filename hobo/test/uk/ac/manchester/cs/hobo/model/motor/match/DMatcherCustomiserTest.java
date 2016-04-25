@@ -181,7 +181,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 		if (store != null) {
 
 			store.clear();
-			IStoreManager.stop(model.getCModel());
+			IStoreManager.checkStop(model.getCModel());
 		}
 	}
 
