@@ -86,7 +86,10 @@ class CAtomicFrame extends CFrame {
 
 		CrawlMode process(CAtomicFrame current) {
 
-			allRemoved &= removeOrClear(current);
+			if (!removeOrClear(current) && allRemoved) {
+
+				 allRemoved = false;
+			 }
 
 			return CrawlMode.CRAWL;
 		}

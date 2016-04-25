@@ -46,7 +46,7 @@ class IFrameSlotValueUpdateProcessor implements KValuesListener<IValue> {
 
 	public void onAdded(IValue value) {
 
-		IFrame frame = (IFrame)value;
+		IFrame frame = valueAsIFrame(value);
 
 		if (frame.getType().hidden()) {
 
@@ -61,7 +61,7 @@ class IFrameSlotValueUpdateProcessor implements KValuesListener<IValue> {
 
 	public void onRemoved(IValue value) {
 
-		((IFrame)value).removeReferencingSlot(slot);
+		valueAsIFrame(value).removeReferencingSlot(slot);
 	}
 
 	public void onCleared(List<IValue> values) {
@@ -77,5 +77,15 @@ class IFrameSlotValueUpdateProcessor implements KValuesListener<IValue> {
 		this.slot = slot;
 
 		slot.getValues().addValuesListener(this);
+	}
+
+	private IFrame valueAsIFrame(IValue value) {
+
+		if (value instanceof IFrame) {
+
+			return (IFrame)value;
+		}
+
+		throw new Error("Value not of type IFrame: " + value.getClass());
 	}
 }

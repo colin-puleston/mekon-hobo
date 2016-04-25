@@ -215,9 +215,4 @@ public class CModel implements CAnnotatable {
 			refFrame.getSlotValues().removeAll(value);
 		}
 	}
-
-	private CFrame getFrame(CIdentity identity) {
-
-		return getFrames().get(identity);
-	}
 }

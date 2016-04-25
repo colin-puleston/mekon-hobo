@@ -51,7 +51,7 @@ class IDisjunctsSlot extends ISlot {
 
 		public void onAdded(IValue value) {
 
-			checkDisjunct((IFrame)value);
+			checkDisjunct(valueAsIFrame(value));
 		}
 
 		public void onRemoved(IValue value) {
@@ -81,10 +81,20 @@ class IDisjunctsSlot extends ISlot {
 
 		for (IValue disjunct : getValues().asList()) {
 
-			disjuncts.add((IFrame)disjunct);
+			disjuncts.add(valueAsIFrame(disjunct));
 		}
 
 		return disjuncts;
+	}
+
+	private IFrame valueAsIFrame(IValue value) {
+
+		if (value instanceof IFrame) {
+
+			return (IFrame)value;
+		}
+
+		throw new Error("Value not of type IFrame: " + value);
 	}
 
 	private void checkDisjunct(IFrame value) {

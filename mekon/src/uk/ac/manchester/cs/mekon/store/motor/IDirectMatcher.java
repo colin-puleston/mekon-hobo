@@ -38,9 +38,7 @@ import uk.ac.manchester.cs.mekon.store.*;
  */
 public class IDirectMatcher implements IMatcher {
 
-	private Core core = new Core();
-
-	private class Core extends ISimpleMatcherCore<IFrame> {
+	static private class Core extends ISimpleMatcherCore<IFrame> {
 
 		protected CFrame getTypeOrNull(IFrame instance) {
 
@@ -52,6 +50,8 @@ public class IDirectMatcher implements IMatcher {
 			return query.subsumesStructure(instance);
 		}
 	}
+
+	private Core core = new Core();
 
 	/**
 	 * {@inheritDoc}

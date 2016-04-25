@@ -41,9 +41,7 @@ import uk.ac.manchester.cs.mekon.store.motor.*;
  */
 public class NDirectMatcher extends NMatcher {
 
-	private Core core = new Core();
-
-	private class Core extends ISimpleMatcherCore<NNode> {
+	static private class Core extends ISimpleMatcherCore<NNode> {
 
 		protected CFrame getTypeOrNull(NNode instance) {
 
@@ -55,6 +53,8 @@ public class NDirectMatcher extends NMatcher {
 			return query.subsumesStructure(instance);
 		}
 	}
+
+	private Core core = new Core();
 
 	/**
 	 * {@inheritDoc}
