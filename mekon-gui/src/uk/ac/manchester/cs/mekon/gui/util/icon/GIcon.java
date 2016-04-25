@@ -73,7 +73,7 @@ public class GIcon implements Icon {
 
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 
-		Graphics2D g2d = (Graphics2D)g;
+		Graphics2D g2d = asGraphics2D(g);
 
 		x += BORDER;
 		y += BORDER;
@@ -92,6 +92,16 @@ public class GIcon implements Icon {
 	public int getIconHeight() {
 
 		return height + BORDER;
+	}
+
+	private Graphics2D asGraphics2D(Graphics g) {
+
+		if (g instanceof Graphics2D) {
+
+			return (Graphics2D)g;
+		}
+
+		throw new Error("Graphics object not of type Graphics2D: " + g.getClass());
 	}
 }
 

@@ -44,7 +44,7 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 	static private final String OK_BUTTON_LABEL = "Ok";
 	static private final String CANCEL_BUTTON_LABEL = "Cancel";
 
-	private ValueSelector valueSelector;
+	private ValueSelector valueSelector = null;
 	private OkButton okButton = new OkButton();
 	private boolean windowClosing = false;
 

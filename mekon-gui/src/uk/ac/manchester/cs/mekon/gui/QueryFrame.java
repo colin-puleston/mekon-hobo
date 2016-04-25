@@ -180,9 +180,4 @@ class QueryFrame extends InstantiationFrame {
 
 		return list;
 	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
-	}
 }

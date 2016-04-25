@@ -41,6 +41,19 @@ class HelpInvocationPanel extends JPanel {
 	static private final int FRAME_WIDTH = 900;
 	static private final int FRAME_HEIGHT = 400;
 
+	static private class HelpFrame extends GFrame {
+
+		static private final long serialVersionUID = -1;
+
+		HelpFrame(HelpPanel helpPanel, WindowListener buttonEnabler) {
+
+			super(FRAME_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
+
+			addWindowListener(buttonEnabler);
+			display(helpPanel);
+		}
+	}
+
 	private HelpPanel helpPanel = new HelpPanel();
 	private HelpButton helpButton = new HelpButton();
 
@@ -61,25 +74,13 @@ class HelpInvocationPanel extends JPanel {
 		protected void doButtonThing() {
 
 			setEnabled(false);
-			new HelpFrame(buttonEnabler);
+
+			new HelpFrame(helpPanel, buttonEnabler);
 		}
 
 		HelpButton() {
 
 			super(BUTTON_LABEL);
-		}
-	}
-
-	private class HelpFrame extends GFrame {
-
-		static private final long serialVersionUID = -1;
-
-		public HelpFrame(WindowListener buttonEnabler) {
-
-			super(FRAME_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
-
-			addWindowListener(buttonEnabler);
-			display(helpPanel);
 		}
 	}
 

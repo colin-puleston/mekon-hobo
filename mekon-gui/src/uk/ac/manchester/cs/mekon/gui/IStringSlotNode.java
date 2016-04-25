@@ -34,7 +34,6 @@ import uk.ac.manchester.cs.mekon.gui.util.*;
 class IStringSlotNode extends ISlotNode {
 
 	private ITree tree;
-	private ISlot slot;
 
 	private class ValueNode extends IValueNode<IString> {
 
@@ -59,7 +58,6 @@ class IStringSlotNode extends ISlotNode {
 		super(tree, slot);
 
 		this.tree = tree;
-		this.slot = slot;
 	}
 
 	GNode createValueNode(IValue value) {

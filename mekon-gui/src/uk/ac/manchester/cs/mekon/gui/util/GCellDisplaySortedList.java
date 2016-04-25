@@ -31,8 +31,7 @@ import java.util.*;
  */
 abstract class GCellDisplaySortedList<E>  {
 
-	private Collection<E> elements;
-	private List<E> list = null;
+	private Elements elements;
 
 	private class SortedElementsComparator implements Comparator<E> {
 
@@ -49,52 +48,125 @@ abstract class GCellDisplaySortedList<E>  {
 		}
 	}
 
+	private class Elements {
+
+		private List<E> list = new ArrayList<E>();
+
+		void add(E element, int index) {
+
+			list.add(index, element);
+		}
+
+		void remove(E element) {
+
+			list.remove(element);
+		}
+
+		void clear() {
+
+			list.clear();
+		}
+
+		Collection<E> view() {
+
+			return list;
+		}
+
+		List<E> asList() {
+
+			return list;
+		}
+	}
+
+	private class SortedElements extends Elements {
+
+		private Set<E> sorted = new TreeSet<E>(new SortedElementsComparator());
+		private boolean upToDate = true;
+
+		void add(E element, int index) {
+
+			edit().add(element);
+		}
+
+		void remove(E element) {
+
+			edit().remove(element);
+		}
+
+		void clear() {
+
+			edit().clear();
+		}
+
+		Collection<E> view() {
+
+			return sorted;
+		}
+
+		List<E> asList() {
+
+			List<E> list = super.asList();
+
+			if (!upToDate) {
+
+				list.addAll(sorted);
+				upToDate = true;
+			}
+
+			return list;
+		}
+
+		private Collection<E> edit() {
+
+			super.asList().clear();
+			upToDate = false;
+
+			return sorted;
+		}
+	}
+
 	GCellDisplaySortedList(boolean sort) {
 
-		elements = sort ? createSortedSet() : new ArrayList<E>();
+		elements = sort ? new SortedElements() : new Elements();
 	}
 
 	void add(E element) {
 
-		insert(element, elements.size());
+		insert(element, elements.view().size());
 	}
 
 	void insert(E element, int index) {
 
-		if (!elements.contains(element)) {
+		if (!elements.view().contains(element)) {
 
-			addToElements(element, index);
-			onEdited();
+			elements.add(element, index);
 		}
 	}
 
 	void remove(E element) {
 
-		if (elements.remove(element)) {
+		if (elements.view().contains(element)) {
 
-			onEdited();
+			elements.remove(element);
 		}
 	}
 
 	void clear() {
 
-		if (!elements.isEmpty()) {
+		if (!elements.view().isEmpty()) {
 
 			elements.clear();
-			onEdited();
 		}
 	}
 
 	int size() {
 
-		return list.size();
+		return elements.view().size();
 	}
 
 	List<E> asList() {
 
-		checkReadable();
-
-		return list;
+		return elements.asList();
 	}
 
 	int compareOrdered(E first, E second) {
@@ -103,44 +175,6 @@ abstract class GCellDisplaySortedList<E>  {
 	}
 
 	abstract GCellDisplay getDisplay(E element);
-
-	private SortedSet<E> createSortedSet() {
-
-		return new TreeSet<E>(new SortedElementsComparator());
-	}
-
-	private void addToElements(E element, int index) {
-
-		if (elements instanceof List) {
-
-			((List<E>)elements).add(index, element);
-		}
-		else {
-
-			elements.add(element);
-		}
-	}
-
-	private void onEdited() {
-
-		if (list != null) {
-
-			list = null;
-		}
-	}
-
-	private void checkReadable() {
-
-		if (list == null) {
-
-			list = new ArrayList<E>();
-
-			for (E element : elements) {
-
-				list.add(element);
-			}
-		}
-	}
 
 	private int compareLabels(String first, String second) {
 
