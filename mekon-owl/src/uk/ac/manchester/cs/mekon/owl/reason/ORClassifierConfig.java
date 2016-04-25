@@ -36,8 +36,6 @@ class ORClassifierConfig extends ORConfig {
 		return parentConfigNode.getChildOrNull(CLASSIFIER_ROOT_ID) != null;
 	}
 
-	private ORClassifier classifier;
-
 	ORClassifierConfig(
 		ReasoningModel reasoningModel,
 		KConfigNode parentConfigNode) {

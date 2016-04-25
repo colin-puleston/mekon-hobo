@@ -42,7 +42,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class OBSectionBuilderTest extends DemoModelBasedTest {
 
-	static private final String DOMAIN_CONCEPT = "DomainConcept";
+	static private final String DOMAIN_CONCEPT = "CitizenshipConcept";
 	static private final String DATA_TYPE = "DataTypeConcept";
 	static private final String TRAVEL_CLASS = "TravelClass";
 	static private final String TRAIN_TRIP = "TrainTrip";

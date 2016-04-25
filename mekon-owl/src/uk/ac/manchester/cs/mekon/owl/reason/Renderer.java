@@ -254,11 +254,6 @@ abstract class Renderer<NR extends OWLObject> {
 			nodeRenderer.addValueConstruct(numberRenderer.renderOnlyValues(values));
 		}
 
-		private OWLClassExpression renderValueUnion(Set<INumber> values) {
-
-			return dataFactory.getOWLObjectUnionOf(renderValues(values));
-		}
-
 		private Set<OWLClassExpression> renderValues(Set<INumber> values) {
 
 			Set<OWLClassExpression> renderings = new HashSet<OWLClassExpression>();

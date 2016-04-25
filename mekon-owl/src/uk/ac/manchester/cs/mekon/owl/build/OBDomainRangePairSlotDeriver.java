@@ -157,13 +157,14 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 
 	void createAll() {
 
-		for (OWLProperty<?, ?> property : domains.keySet()) {
+		for (Map.Entry<OWLProperty<?, ?>, OWLClassExpression> entry : domains.entrySet()) {
 
+			OWLProperty<?, ?> property = entry.getKey();
 			OWLObject range = ranges.get(property);
 
 			if (range != null) {
 
-				createAllValuesSlots(domains.get(property), property, range);
+				createAllValuesSlots(entry.getValue(), property, range);
 			}
 		}
 	}
