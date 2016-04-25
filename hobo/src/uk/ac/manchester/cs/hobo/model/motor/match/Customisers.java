@@ -37,15 +37,12 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 class Customisers {
 
-	private DModel model;
 	private IFreeInstances freeInstances;
 
 	private List<DMatcherCustomiser<?>> customisers
 				= new ArrayList<DMatcherCustomiser<?>>();
 
 	Customisers(DModel model) {
-
-		this.model = model;
 
 		freeInstances = new IFreeInstances(model.getCModel());
 	}

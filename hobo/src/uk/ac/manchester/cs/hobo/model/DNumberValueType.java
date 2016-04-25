@@ -31,9 +31,6 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class DNumberValueType<N extends Number> extends DNumberBasedValueType<N, N> {
 
-	private CNumber slotValueType;
-	private Class<N> numberType;
-
 	DNumberValueType(DNumberRange<N> range) {
 
 		super(range);
