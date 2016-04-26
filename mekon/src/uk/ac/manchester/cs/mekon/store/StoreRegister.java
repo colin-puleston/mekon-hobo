@@ -56,7 +56,7 @@ class StoreRegister {
 
 		IStore store = stores.get(model);
 
-		if (store != null) {
+		if (store == null) {
 
 			throw new KAccessException("Store has not been created for model!");
 		}
