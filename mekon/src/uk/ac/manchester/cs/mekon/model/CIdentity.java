@@ -164,7 +164,7 @@ public class CIdentity {
 	 */
 	public String toString() {
 
-		return "CIdentity" + "(" + toIdentifierPlusLabelString() + ")";
+		return getClass().getSimpleName() + "(" + toInnerString() + ")";
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class CIdentity {
 		return new CIdentity(identifierComponents, newLabel);
 	}
 
-	String toIdentifierPlusLabelString() {
+	String toInnerString() {
 
 		return getIdentifier() + "(" + label + ")";
 	}

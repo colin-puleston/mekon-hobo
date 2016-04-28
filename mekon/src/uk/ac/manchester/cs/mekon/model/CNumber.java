@@ -667,6 +667,6 @@ public class CNumber extends CDataValue<INumber> {
 
 	private String limitToString(INumber limit, INumber absLimit) {
 
-		return limit != absLimit ? limit.getDisplayLabel() : "?";
+		return limit.equals(absLimit) ? "?" : limit.getDisplayLabel();
 	}
 }

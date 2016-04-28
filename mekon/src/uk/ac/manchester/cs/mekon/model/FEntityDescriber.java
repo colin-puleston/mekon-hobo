@@ -38,7 +38,7 @@ class FEntityDescriber {
 
 	static String entityToString(FEntity entity, CIdentity identity) {
 
-		return entityToString(entity, identity.toIdentifierPlusLabelString());
+		return entityToString(entity, identity.toInnerString());
 	}
 
 	static String entityToString(FEntity entity, String description) {
