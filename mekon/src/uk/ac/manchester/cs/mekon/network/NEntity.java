@@ -53,14 +53,14 @@ public abstract class NEntity {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + ": " + typeDisjuncts;
+		return getClass().getSimpleName() + "(" + typeDisjuncts + ")";
 	}
 
 	/**
 	 * Specifies whether the entity type is atomic, rather than
 	 * a disjunction.
 	 *
-	 * @return True entity type is atomic
+	 * @return True if entity type is atomic
 	 */
 	public boolean atomicType() {
 
@@ -126,5 +126,27 @@ public abstract class NEntity {
 
 		typeDisjuncts.clear();
 		typeDisjuncts.addAll(disjuncts);
+	}
+
+	private String typeDisjunctsToString() {
+
+		StringBuilder s = new StringBuilder();
+		boolean first = true;
+
+		for (CIdentity typeDisjunct : typeDisjuncts) {
+
+			if (first) {
+
+				first = false;
+			}
+			else {
+
+				s.append(" OR ");
+			}
+
+			s.append(typeDisjunct.toString());
+		}
+
+		return s.toString();
 	}
 }
