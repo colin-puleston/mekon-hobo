@@ -285,7 +285,7 @@ public class DNumberRange<N extends Number> {
 	}
 
 	/**
-	 * Provides hash-code based on limit-values, including value-type.
+	 * Provides hash-code based on number-type and limit-values.
 	 *
 	 * @return hash-code for this object
 	 */
