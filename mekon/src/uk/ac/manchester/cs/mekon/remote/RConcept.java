@@ -98,6 +98,18 @@ public class RConcept {
 		this.disjunctIds.addAll(disjunctIds);
 	}
 
+	RConceptSpec toSpec() {
+
+		RConceptSpec spec = new RConceptSpec();
+
+		for (RIdentity disjunctId : disjunctIds) {
+
+			spec.addDisjunctId(disjunctId.toSpec());
+		}
+
+		return spec;
+	}
+
 	String toInnerString() {
 
 		StringBuilder s = new StringBuilder();

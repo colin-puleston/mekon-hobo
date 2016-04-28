@@ -85,12 +85,12 @@ public class RFrameSpec {
 		return new ArrayList<RSlotSpec>(slots);
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RFrame create() {
+	void addSlot(RSlotSpec slot) {
+
+		slots.add(slot);
+	}
+
+	RFrame create() {
 
 		RFrame frame = new RFrame(type.create());
 

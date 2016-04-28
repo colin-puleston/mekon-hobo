@@ -82,12 +82,7 @@ public class RIdentitySpec {
 		return label;
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RIdentity create() {
+	RIdentity create() {
 
 		return new RIdentity(identifier, label);
 	}

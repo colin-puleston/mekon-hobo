@@ -101,6 +101,16 @@ public class RIdentity {
 		return label;
 	}
 
+	RIdentitySpec toSpec() {
+
+		RIdentitySpec spec = new RIdentitySpec();
+
+		spec.setIdentifier(identifier);
+		spec.setLabel(label);
+
+		return spec;
+	}
+
 	String toInnerString() {
 
 		return identifier + "(" + label + ")";

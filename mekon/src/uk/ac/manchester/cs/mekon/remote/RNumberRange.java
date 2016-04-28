@@ -233,7 +233,7 @@ public class RNumberRange {
 		return range(exact, exact);
 	}
 
-	private Class<? extends Number> type;
+	private Class<? extends Number> numberType;
 	private Number min;
 	private Number max;
 
@@ -266,18 +266,17 @@ public class RNumberRange {
 	 */
 	public int hashCode() {
 
-		return type.hashCode() + min.hashCode() + max.hashCode();
+		return numberType.hashCode() + min.hashCode() + max.hashCode();
 	}
 
 	/**
-	 * Provides the primitive Java <code>Number</code> type for the
-	 * range.
+	 * Provides the <code>Number</code> type for the range.
 	 *
 	 * @return Relevant <code>Number</code> type
 	 */
-	public Class<? extends Number> getType() {
+	public Class<? extends Number> getNumberType() {
 
-		return type;
+		return numberType;
 	}
 
 	/**
@@ -328,21 +327,32 @@ public class RNumberRange {
 		return max;
 	}
 
-	RNumberRange(Class<? extends Number> type, Number min, Number max) {
+	RNumberRange(Class<? extends Number> numberType, Number min, Number max) {
 
-		this.type = type;
+		this.numberType = numberType;
 		this.min = min;
 		this.max = max;
 	}
 
-	private RNumberRange(Class<? extends Number> type) {
+	RNumberRangeSpec toSpec() {
 
-		this(type, null, null);
+		RNumberRangeSpec spec = new RNumberRangeSpec();
+
+		spec.setNumberType(numberType);
+		spec.setMin(min);
+		spec.setMax(max);
+
+		return spec;
+	}
+
+	private RNumberRange(Class<? extends Number> numberType) {
+
+		this(numberType, null, null);
 	}
 
 	private boolean equalsRange(RNumberRange other) {
 
-		return type == other.type
+		return numberType == other.numberType
 				&& equalLimits(min, other.min)
 				&& equalLimits(max, other.max);
 	}

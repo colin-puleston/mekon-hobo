@@ -33,7 +33,7 @@ package uk.ac.manchester.cs.mekon.remote;
  */
 public class RNumberRangeSpec {
 
-	private Class<? extends Number> type;
+	private Class<? extends Number> numberType;
 	private Number min;
 	private Number max;
 
@@ -48,9 +48,9 @@ public class RNumberRangeSpec {
 	 *
 	 * @param type Value to set
 	 */
-	public void setType(Class<? extends Number> type) {
+	public void setNumberType(Class<? extends Number> numberType) {
 
-		this.type = type;
+		this.numberType = numberType;
 	}
 
 	/**
@@ -78,9 +78,9 @@ public class RNumberRangeSpec {
 	 *
 	 * @return Relevant value
 	 */
-	public Class<? extends Number> getType() {
+	public Class<? extends Number> getNumberType() {
 
-		return type;
+		return numberType;
 	}
 
 	/**
@@ -103,14 +103,9 @@ public class RNumberRangeSpec {
 		return max;
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RNumberRange create() {
+	RNumberRange create() {
 
-		return new RNumberRange(type, min, max);
+		return new RNumberRange(numberType, min, max);
 	}
 }
 

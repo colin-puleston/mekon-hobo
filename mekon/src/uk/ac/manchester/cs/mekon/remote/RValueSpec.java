@@ -61,12 +61,7 @@ public class RValueSpec {
 		return value;
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RValue create() {
+	RValue create() {
 
 		return new RValue(value);
 	}

@@ -107,18 +107,18 @@ public class RSlotSpec {
 		return new ArrayList<RValueSpec>(values);
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RSlot create() {
+	void addValue(RValueSpec value) {
+
+		values.add(value);
+	}
+
+	RSlot create() {
 
 		RSlot slot = new RSlot(type.create(), valueType.create());
 
-		for (RValueSpec valueSpec : values) {
+		for (RValueSpec value : values) {
 
-			slot.addValueNoChecks(valueSpec.create());
+			slot.addValueNoChecks(value.create());
 		}
 
 		return slot;

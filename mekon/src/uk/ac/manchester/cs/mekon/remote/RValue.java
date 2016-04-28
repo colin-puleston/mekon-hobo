@@ -144,6 +144,15 @@ public class RValue {
 		this.value = value;
 	}
 
+	RValueSpec toSpec() {
+
+		RValueSpec spec = new RValueSpec();
+
+		spec.setValue(value);
+
+		return spec;
+	}
+
 	private <T>T as(Class<T> type) {
 
 		if (type == value.getClass()) {

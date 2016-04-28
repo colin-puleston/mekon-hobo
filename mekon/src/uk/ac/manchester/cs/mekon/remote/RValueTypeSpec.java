@@ -34,8 +34,8 @@ package uk.ac.manchester.cs.mekon.remote;
 public class RValueTypeSpec {
 
 	private RValueCategory category;
-	private RCardinality cardinality;
 	private Boolean editable;
+	private RCardinality cardinality;
 	private RConceptSpec rootConcept;
 	private RNumberRangeSpec numberRange;
 
@@ -56,16 +56,6 @@ public class RValueTypeSpec {
 	}
 
 	/**
-	 * Sets value of cardinality.
-	 *
-	 * @param cardinality Value to set
-	 */
-	public void setCardinality(RCardinality cardinality) {
-
-		this.cardinality = cardinality;
-	}
-
-	/**
 	 * Sets value of editable.
 	 *
 	 * @param editable Value to set
@@ -73,6 +63,16 @@ public class RValueTypeSpec {
 	public void setEditable(Boolean editable) {
 
 		this.editable = editable;
+	}
+
+	/**
+	 * Sets value of cardinality.
+	 *
+	 * @param cardinality Value to set
+	 */
+	public void setCardinality(RCardinality cardinality) {
+
+		this.cardinality = cardinality;
 	}
 
 	/**
@@ -106,16 +106,6 @@ public class RValueTypeSpec {
 	}
 
 	/**
-	 * Gets value of cardinality.
-	 *
-	 * @return Relevant value
-	 */
-	public RCardinality getCardinality() {
-
-		return cardinality;
-	}
-
-	/**
 	 * Gets value of editable.
 	 *
 	 * @return Relevant value
@@ -123,6 +113,16 @@ public class RValueTypeSpec {
 	public Boolean getEditable() {
 
 		return editable;
+	}
+
+	/**
+	 * Gets value of cardinality.
+	 *
+	 * @return Relevant value
+	 */
+	public RCardinality getCardinality() {
+
+		return cardinality;
 	}
 
 	/**
@@ -145,20 +145,6 @@ public class RValueTypeSpec {
 		return numberRange;
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RValueType create() {
-
-		RValueType valueType = new RValueType(category, editable);
-
-		category.configureValueType(valueType, this);
-
-		return valueType;
-	}
-
 	void configureConceptDefinedValueType(RValueType valueType) {
 
 		valueType.configure(rootConcept.create(), cardinality);
@@ -167,5 +153,14 @@ public class RValueTypeSpec {
 	void configureNumberValueType(RValueType valueType) {
 
 		valueType.configure(numberRange.create());
+	}
+
+	RValueType create() {
+
+		RValueType valueType = new RValueType(category, editable);
+
+		category.configureValueType(valueType, this);
+
+		return valueType;
 	}
 }

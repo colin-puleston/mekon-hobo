@@ -124,6 +124,21 @@ public class RSlot {
 		this.valueType = valueType;
 	}
 
+	RSlotSpec toSpec() {
+
+		RSlotSpec spec = new RSlotSpec();
+
+		spec.setType(type.toSpec());
+		spec.setValueType(valueType.toSpec());
+
+		for (RValue value : values) {
+
+			spec.addValue(value.toSpec());
+		}
+
+		return spec;
+	}
+
 	void addValueNoChecks(RValue value) {
 
 		values.add(value);

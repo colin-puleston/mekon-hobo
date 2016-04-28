@@ -64,12 +64,7 @@ public class RFrameDisjunctionSpec {
 		return new ArrayList<RFrameSpec>(disjuncts);
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RFrameDisjunction create() {
+	RFrameDisjunction create() {
 
 		return new RFrameDisjunction(createDisjuncts());
 	}

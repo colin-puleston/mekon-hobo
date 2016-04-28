@@ -64,12 +64,12 @@ public class RConceptSpec {
 		return new ArrayList<RIdentitySpec>(disjunctIds);
 	}
 
-	/**
-	 * Create the specified object.
-	 *
-	 * @return Created object
-	 */
-	public RConcept create() {
+	void addDisjunctId(RIdentitySpec disjunctId) {
+
+		disjunctIds.add(disjunctId);
+	}
+
+	RConcept create() {
 
 		return new RConcept(createDisjunctIds());
 	}

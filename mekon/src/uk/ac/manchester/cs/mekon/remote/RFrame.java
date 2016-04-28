@@ -68,6 +68,20 @@ public class RFrame {
 		this.type = type;
 	}
 
+	RFrameSpec toSpec() {
+
+		RFrameSpec spec = new RFrameSpec();
+
+		spec.setType(type.toSpec());
+
+		for (RSlot slot : slots) {
+
+			spec.addSlot(slot.toSpec());
+		}
+
+		return spec;
+	}
+
 	void addSlot(RSlot slot) {
 
 		slots.add(slot);

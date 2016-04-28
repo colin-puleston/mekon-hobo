@@ -130,16 +130,6 @@ public class RValueType {
 	}
 
 	/**
-	 * Specifies the cardinality of the slot.
-	 *
-	 * @return Cardinality of slot
-	 */
-	public RCardinality getCardinality() {
-
-		return config.getCardinality();
-	}
-
-	/**
 	 * Specifies the client editability of the slot.
 	 *
 	 * @return True if slot is editable by client
@@ -147,6 +137,16 @@ public class RValueType {
 	public boolean editable() {
 
 		return editable;
+	}
+
+	/**
+	 * Specifies the cardinality of the slot.
+	 *
+	 * @return Cardinality of slot
+	 */
+	public RCardinality getCardinality() {
+
+		return config.getCardinality();
 	}
 
 	/**
@@ -187,5 +187,18 @@ public class RValueType {
 	void configure(RNumberRange numberRange) {
 
 		config = new NumberValuesConfig(numberRange);
+	}
+
+	RValueTypeSpec toSpec() {
+
+		RValueTypeSpec spec = new RValueTypeSpec();
+
+		spec.setCategory(category);
+		spec.setEditable(editable);
+		spec.setCardinality(getCardinality());
+		spec.setRootConcept(getRootConcept().toSpec());
+		spec.setNumberRange(getNumberRange().toSpec());
+
+		return spec;
 	}
 }
