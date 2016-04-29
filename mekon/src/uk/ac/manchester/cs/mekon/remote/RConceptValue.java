@@ -24,88 +24,33 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
+import java.util.*;
+
 /**
- * Responsible for creating and serialisation of {@link RNumberRange}
- * objects. The parameterless constructor and relevant sets of "get"
- * and "set" methods are designed to enable JSON serialisation.
+ * Represents a concept value, which can either be an atomic concept,
+ * or a disjunction of atomic concepts.
  *
  * @author Colin Puleston
  */
-public class RNumberRangeSpec {
+public class RConceptValue extends RLogicalValue<RConcept, RConceptSpec, RConceptValueSpec> {
 
-	private Class<? extends Number> numberType;
-	private Number min;
-	private Number max;
+	RConceptValue(RConcept frame) {
 
-	/**
-	 * Constructor.
-	 */
-	public RNumberRangeSpec() {
+		super(frame);
 	}
 
-	/**
-	 * Sets value of type.
-	 *
-	 * @param type Value to set
-	 */
-	public void setNumberType(Class<? extends Number> numberType) {
+	RConceptValue(Collection<RConcept> disjuncts) {
 
-		this.numberType = numberType;
+		super(disjuncts);
 	}
 
-	/**
-	 * Sets value of min.
-	 *
-	 * @param min Value to set
-	 */
-	public void setMin(Number min) {
+	RConceptValueSpec createSpec() {
 
-		this.min = min;
+		return new RConceptValueSpec();
 	}
 
-	/**
-	 * Sets value of max.
-	 *
-	 * @param max Value to set
-	 */
-	public void setMax(Number max) {
+	RConceptSpec entityToSpec(RConcept entity) {
 
-		this.max = max;
-	}
-
-	/**
-	 * Gets value of type.
-	 *
-	 * @return Relevant value
-	 */
-	public Class<? extends Number> getNumberType() {
-
-		return numberType;
-	}
-
-	/**
-	 * Gets value of min.
-	 *
-	 * @return Relevant value
-	 */
-	public Number getMin() {
-
-		return min;
-	}
-
-	/**
-	 * Gets value of max.
-	 *
-	 * @return Relevant value
-	 */
-	public Number getMax() {
-
-		return max;
-	}
-
-	RNumberRange create() {
-
-		return new RNumberRange(numberType, min, max);
+		return entity.toSpec();
 	}
 }
-

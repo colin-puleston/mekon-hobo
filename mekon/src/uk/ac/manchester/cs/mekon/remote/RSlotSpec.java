@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class RSlotSpec {
 
-	private RIdentitySpec type;
+	private RPropertySpec property;
 	private RValueTypeSpec valueType;
 
 	private List<RValueSpec> values = new ArrayList<RValueSpec>();
@@ -47,13 +47,13 @@ public class RSlotSpec {
 	}
 
 	/**
-	 * Sets value of type-spec.
+	 * Sets value of property-spec.
 	 *
-	 * @param type Value to set
+	 * @param property Value to set
 	 */
-	public void setType(RIdentitySpec type) {
+	public void setProperty(RPropertySpec property) {
 
-		this.type = type;
+		this.property = property;
 	}
 
 	/**
@@ -78,13 +78,13 @@ public class RSlotSpec {
 	}
 
 	/**
-	 * Gets value of type-spec.
+	 * Gets value of property-spec.
 	 *
 	 * @return Relevant value
 	 */
-	public RIdentitySpec getType() {
+	public RPropertySpec getProperty() {
 
-		return type;
+		return property;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class RSlotSpec {
 
 	RSlot create() {
 
-		RSlot slot = new RSlot(type.create(), valueType.create());
+		RSlot slot = new RSlot(property.create(), valueType.create());
 
 		for (RValueSpec value : values) {
 

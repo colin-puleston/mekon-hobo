@@ -25,22 +25,50 @@
 package uk.ac.manchester.cs.mekon.remote;
 
 /**
- * Responsible for creating and serialisation of {@link RConcept}
- * objects. The parameterless constructor and relevant sets of "get"
- * and "set" methods are designed to enable JSON serialisation.
+ * Visitor for values represented by {@link RValue} objects.
  *
  * @author Colin Puleston
  */
-public class RConceptSpec extends RIdentifiedSpec<RConcept> {
+public abstract class RValueVisitor {
 
 	/**
-	 * Constructor.
+	 * Causes relevant value-type-specific visit method to be invoked.
+	 *
+	 * @param value Object whose represented value is to be visited
 	 */
-	public RConceptSpec() {
+	public void visit(RValue value) {
+
 	}
 
-	RConcept create(String identifier, String label) {
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting concept value.
+	 *
+	 * @param value Value being visited.
+	 */
+	public abstract void visit(RConcept value);
 
-		return new RConcept(identifier, label);
-	}
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting frame-value value.
+	 *
+	 * @param value Value being visited.
+	 */
+	public abstract void visit(RFrameValue value);
+
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting number-range value.
+	 *
+	 * @param value Value being visited.
+	 */
+	public abstract void visit(RNumber value);
+
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting string value.
+	 *
+	 * @param value Value being visited.
+	 */
+	public abstract void visit(String value);
 }

@@ -25,22 +25,22 @@
 package uk.ac.manchester.cs.mekon.remote;
 
 /**
- * Responsible for creating and serialisation of {@link RConcept}
+ * Responsible for creating and serialisation of {@link RProperty}
  * objects. The parameterless constructor and relevant sets of "get"
  * and "set" methods are designed to enable JSON serialisation.
  *
  * @author Colin Puleston
  */
-public class RConceptSpec extends RIdentifiedSpec<RConcept> {
+public class RPropertySpec extends RIdentifiedSpec<RProperty> {
 
 	/**
 	 * Constructor.
 	 */
-	public RConceptSpec() {
+	public RPropertySpec() {
 	}
 
-	RConcept create(String identifier, String label) {
+	RProperty create(String identifier, String label) {
 
-		return new RConcept(identifier, label);
+		return new RProperty(identifier, label);
 	}
 }

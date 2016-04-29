@@ -24,23 +24,24 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
+import java.util.*;
+
 /**
- * Responsible for creating and serialisation of {@link RConcept}
+ * Responsible for creating and serialisation of {@link RFrame}
  * objects. The parameterless constructor and relevant sets of "get"
  * and "set" methods are designed to enable JSON serialisation.
  *
  * @author Colin Puleston
  */
-public class RConceptSpec extends RIdentifiedSpec<RConcept> {
+public class RFrameValueSpec extends RLogicalValueSpec<RFrame, RFrameSpec, RFrameValue> {
 
-	/**
-	 * Constructor.
-	 */
-	public RConceptSpec() {
+	RFrameValue create(List<RFrame> disjuncts) {
+
+		return new RFrameValue(disjuncts);
 	}
 
-	RConcept create(String identifier, String label) {
+	RFrame createEntity(RFrameSpec spec) {
 
-		return new RConcept(identifier, label);
+		return spec.create();
 	}
 }

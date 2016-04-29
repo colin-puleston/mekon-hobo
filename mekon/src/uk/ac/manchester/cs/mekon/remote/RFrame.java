@@ -33,24 +33,24 @@ import java.util.*;
  */
 public class RFrame {
 
-	private RConcept type;
+	private RConceptValue concept;
 	private List<RSlot> slots = new ArrayList<RSlot>();
 
 	/**
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + type.toInnerString() + ")";
+		return getClass().getSimpleName() + "(" + concept.toInnerString() + ")";
 	}
 
 	/**
-	 * Provides the concept representing the type of the frame.
+	 * Provides the concept associated with the frame.
 	 *
-	 * @return Concept representing type of frame
+	 * @return Concept associated with frame
 	 */
-	public RConcept getType() {
+	public RConceptValue getConcept() {
 
-		return type;
+		return concept;
 	}
 
 	/**
@@ -63,16 +63,16 @@ public class RFrame {
 		return new ArrayList<RSlot>(slots);
 	}
 
-	RFrame(RConcept type) {
+	RFrame(RConceptValue concept) {
 
-		this.type = type;
+		this.concept = concept;
 	}
 
 	RFrameSpec toSpec() {
 
 		RFrameSpec spec = new RFrameSpec();
 
-		spec.setType(type.toSpec());
+		spec.setConcept(concept.toSpec());
 
 		for (RSlot slot : slots) {
 

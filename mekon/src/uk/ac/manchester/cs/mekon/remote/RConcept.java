@@ -24,111 +24,20 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.*;
-
 /**
- * Represents a concept, which can either be an atomic concept,
- * or a disjunction of atomic concepts.
+ * Represents a single atomic concept.
  *
  * @author Colin Puleston
  */
-public class RConcept {
+public class RConcept extends RIdentified<RConceptSpec> {
 
-	private List<RIdentity> disjunctIds = new ArrayList<RIdentity>();
+	RConcept(String identifier, String label) {
 
-	/**
-	 */
-	public String toString() {
-
-		return getClass().getSimpleName() + "(" + toInnerString() + ")";
+		super(identifier, label);
 	}
 
-	/**
-	 * Specifies whether the concept is atomic, rather than a
-	 * disjunction.
-	 *
-	 * @return True if concept is atomic
-	 */
-	public boolean atomic() {
+	RConceptSpec createSpec() {
 
-		return disjunctIds.size() == 1;
-	}
-
-	/**
-	 * Provides the identity of the atomic concept, if applicable.
-	 *
-	 * @return Identity of atomic concept
-	 * @throws KAccessException if concept is disjunction
-	 */
-	public RIdentity getAtomicId() {
-
-		if (atomic()) {
-
-			return disjunctIds.get(0);
-		}
-
-		throw new KAccessException("Not an atomic concept: " + this);
-	}
-
-	/**
-	 * Provides identities of all disjuncts. Where concept is atomic,
-	 * the returned set will consist of that single atomic concept.
-	 *
-	 * @return Identities of all disjuncts
-	 */
-	public List<RIdentity> getDisjunctIds() {
-
-		return new ArrayList<RIdentity>(disjunctIds);
-	}
-
-	RConcept(RIdentity conceptId) {
-
-		disjunctIds.add(conceptId);
-	}
-
-	RConcept(Collection<RIdentity> disjunctIds) {
-
-		if (disjunctIds.isEmpty()) {
-
-			throw new KAccessException("Cannot have empty disjuncts set");
-		}
-
-		this.disjunctIds.addAll(disjunctIds);
-	}
-
-	RConceptSpec toSpec() {
-
-		RConceptSpec spec = new RConceptSpec();
-
-		for (RIdentity disjunctId : disjunctIds) {
-
-			spec.addDisjunctId(disjunctId.toSpec());
-		}
-
-		return spec;
-	}
-
-	String toInnerString() {
-
-		StringBuilder s = new StringBuilder();
-		boolean first = true;
-
-		for (RIdentity disjunctId : disjunctIds) {
-
-			if (first) {
-
-				first = false;
-			}
-			else {
-
-				s.append(" OR ");
-			}
-
-			s.append(disjunctId.toInnerString());
-		}
-
-		return s.toString();
+		return new RConceptSpec();
 	}
 }

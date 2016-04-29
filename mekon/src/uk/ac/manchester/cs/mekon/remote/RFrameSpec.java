@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class RFrameSpec {
 
-	private RConceptSpec type;
+	private RConceptValueSpec concept;
 	private List<RSlotSpec> slots = new ArrayList<RSlotSpec>();
 
 	/**
@@ -45,13 +45,13 @@ public class RFrameSpec {
 	}
 
 	/**
-	 * Sets value of type-spec.
+	 * Sets value of concept-spec.
 	 *
-	 * @param type Value to set
+	 * @param concept Value to set
 	 */
-	public void setType(RConceptSpec type) {
+	public void setConcept(RConceptValueSpec concept) {
 
-		this.type = type;
+		this.concept = concept;
 	}
 
 	/**
@@ -66,13 +66,13 @@ public class RFrameSpec {
 	}
 
 	/**
-	 * Gets value of type-spec.
+	 * Gets value of concept-spec.
 	 *
 	 * @return Relevant value
 	 */
-	public RConceptSpec getType() {
+	public RConceptValueSpec getConcept() {
 
-		return type;
+		return concept;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class RFrameSpec {
 
 	RFrame create() {
 
-		RFrame frame = new RFrame(type.create());
+		RFrame frame = new RFrame(concept.create());
 
 		for (RSlotSpec slot : slots) {
 

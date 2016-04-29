@@ -25,22 +25,87 @@
 package uk.ac.manchester.cs.mekon.remote;
 
 /**
- * Responsible for creating and serialisation of {@link RConcept}
+ * Responsible for creating and serialisation of {@link RNumber}
  * objects. The parameterless constructor and relevant sets of "get"
  * and "set" methods are designed to enable JSON serialisation.
  *
  * @author Colin Puleston
  */
-public class RConceptSpec extends RIdentifiedSpec<RConcept> {
+public class RNumberSpec {
+
+	private Class<? extends Number> numberType;
+	private Number min;
+	private Number max;
 
 	/**
 	 * Constructor.
 	 */
-	public RConceptSpec() {
+	public RNumberSpec() {
 	}
 
-	RConcept create(String identifier, String label) {
+	/**
+	 * Sets value of type.
+	 *
+	 * @param type Value to set
+	 */
+	public void setNumberType(Class<? extends Number> numberType) {
 
-		return new RConcept(identifier, label);
+		this.numberType = numberType;
+	}
+
+	/**
+	 * Sets value of min.
+	 *
+	 * @param min Value to set
+	 */
+	public void setMin(Number min) {
+
+		this.min = min;
+	}
+
+	/**
+	 * Sets value of max.
+	 *
+	 * @param max Value to set
+	 */
+	public void setMax(Number max) {
+
+		this.max = max;
+	}
+
+	/**
+	 * Gets value of type.
+	 *
+	 * @return Relevant value
+	 */
+	public Class<? extends Number> getNumberType() {
+
+		return numberType;
+	}
+
+	/**
+	 * Gets value of min.
+	 *
+	 * @return Relevant value
+	 */
+	public Number getMin() {
+
+		return min;
+	}
+
+	/**
+	 * Gets value of max.
+	 *
+	 * @return Relevant value
+	 */
+	public Number getMax() {
+
+		return max;
+	}
+
+	RNumber create() {
+
+		return new RNumber(numberType, min, max);
 	}
 }
+

@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
+import java.util.*;
+
 /**
  * Responsible for creating and serialisation of {@link RConcept}
  * objects. The parameterless constructor and relevant sets of "get"
@@ -31,16 +33,15 @@ package uk.ac.manchester.cs.mekon.remote;
  *
  * @author Colin Puleston
  */
-public class RConceptSpec extends RIdentifiedSpec<RConcept> {
+public class RConceptValueSpec extends RLogicalValueSpec<RConcept, RConceptSpec, RConceptValue> {
 
-	/**
-	 * Constructor.
-	 */
-	public RConceptSpec() {
+	RConceptValue create(List<RConcept> disjuncts) {
+
+		return new RConceptValue(disjuncts);
 	}
 
-	RConcept create(String identifier, String label) {
+	RConcept createEntity(RConceptSpec spec) {
 
-		return new RConcept(identifier, label);
+		return spec.create();
 	}
 }

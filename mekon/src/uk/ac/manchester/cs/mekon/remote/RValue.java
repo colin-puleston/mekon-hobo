@@ -112,20 +112,9 @@ public class RValue {
 	 * @return Value as number
 	 * @throws KAccessException if not number value
 	 */
-	public Number asNumber() {
+	public RNumber asNumber() {
 
-		return as(Number.class);
-	}
-
-	/**
-	 * Provides represented value as number-range, if applicable.
-	 *
-	 * @return Value as number-range
-	 * @throws KAccessException if not number-range value
-	 */
-	public RNumberRange asNumberRange() {
-
-		return as(RNumberRange.class);
+		return as(RNumber.class);
 	}
 
 	/**

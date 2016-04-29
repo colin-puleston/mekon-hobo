@@ -37,7 +37,7 @@ public class RValueTypeSpec {
 	private Boolean editable;
 	private RCardinality cardinality;
 	private RConceptSpec rootConcept;
-	private RNumberRangeSpec numberRange;
+	private RNumberSpec numberRange;
 
 	/**
 	 * Constructor.
@@ -90,7 +90,7 @@ public class RValueTypeSpec {
 	 *
 	 * @param numberRange Value to set
 	 */
-	public void setNumberRange(RNumberRangeSpec numberRange) {
+	public void setNumberRange(RNumberSpec numberRange) {
 
 		this.numberRange = numberRange;
 	}
@@ -140,7 +140,7 @@ public class RValueTypeSpec {
 	 *
 	 * @return Relevant value
 	 */
-	public RNumberRangeSpec getNumberRange() {
+	public RNumberSpec getNumberRange() {
 
 		return numberRange;
 	}

@@ -25,39 +25,27 @@
 package uk.ac.manchester.cs.mekon.remote;
 
 /**
- * Identifies a concept-level entity via a unique identifier and label.
+ * Represents an entity that is identified via a unique identifier.
  *
  * @author Colin Puleston
  */
-public class RIdentity {
+public abstract class RIdentified<S extends RIdentifiedSpec<?>> {
 
 	private String identifier;
 	private String label;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param identifier Unique identifier for entity
-	 * @param label Label for entity
-	 */
-	public RIdentity(String identifier, String label) {
-
-		this.identifier = identifier;
-		this.label = label;
-	}
-
-	/**
 	 * Tests for equality between this and other specified object.
 	 *
 	 * @param other Object to test for equality with this one
-	 * @return true if other object is another <code>RIdentity</code>
-	 * with the same identifier
+	 * @return true if other object is another <code>RIdentified</code>
+	 * of the same sub-class as this one with the same identifier
 	 */
 	public boolean equals(Object other) {
 
-		if (other instanceof RIdentity) {
+		if (getClass() == other.getClass()) {
 
-			return identifier.equals(((RIdentity)other).identifier);
+			return identifier.equals(((RIdentified)other).identifier);
 		}
 
 		return false;
@@ -101,15 +89,23 @@ public class RIdentity {
 		return label;
 	}
 
-	RIdentitySpec toSpec() {
+	RIdentified(String identifier, String label) {
 
-		RIdentitySpec spec = new RIdentitySpec();
+		this.identifier = identifier;
+		this.label = label;
+	}
+
+	S toSpec() {
+
+		S spec = createSpec();
 
 		spec.setIdentifier(identifier);
 		spec.setLabel(label);
 
 		return spec;
 	}
+
+	abstract S createSpec();
 
 	String toInnerString() {
 

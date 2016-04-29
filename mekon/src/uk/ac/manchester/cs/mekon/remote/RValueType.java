@@ -48,7 +48,7 @@ public class RValueType {
 			return checkForIllegalMethodInvocation(category, getRootConceptOrNull());
 		}
 
-		RNumberRange getNumberRange(RValueCategory category) {
+		RNumber getNumberRange(RValueCategory category) {
 
 			return checkForIllegalMethodInvocation(category, getNumberRangeOrNull());
 		}
@@ -58,7 +58,7 @@ public class RValueType {
 			return null;
 		}
 
-		RNumberRange getNumberRangeOrNull() {
+		RNumber getNumberRangeOrNull() {
 
 			return null;
 		}
@@ -106,14 +106,14 @@ public class RValueType {
 
 	private class NumberValuesConfig extends CategoryConfig {
 
-		private RNumberRange range;
+		private RNumber range;
 
-		NumberValuesConfig(RNumberRange range) {
+		NumberValuesConfig(RNumber range) {
 
 			this.range = range;
 		}
 
-		RNumberRange getNumberRangeOrNull() {
+		RNumber getNumberRangeOrNull() {
 
 			return range;
 		}
@@ -168,7 +168,7 @@ public class RValueType {
 	 * @return Value-range for slot
 	 * @throws KAccessException if slot not of applicable category
 	 */
-	public RNumberRange getNumberRange() {
+	public RNumber getNumberRange() {
 
 		return config.getNumberRange(category);
 	}
@@ -184,7 +184,7 @@ public class RValueType {
 		config = new ConceptDefinedValuesConfig(rootConcept, cardinality);
 	}
 
-	void configure(RNumberRange numberRange) {
+	void configure(RNumber numberRange) {
 
 		config = new NumberValuesConfig(numberRange);
 	}

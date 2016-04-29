@@ -24,66 +24,69 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
+import java.util.*;
+
 /**
- * Responsible for creating and serialisation of {@link RIdentity}
+ * Responsible for creating and serialisation of {@link RLogicalValue}
  * objects. The parameterless constructor and relevant sets of "get"
  * and "set" methods are designed to enable JSON serialisation.
  *
  * @author Colin Puleston
  */
-public class RIdentitySpec {
+public abstract class RLogicalValueSpec<E, ES, L extends RLogicalValue<E, ES, ?>> {
 
-	private String identifier;
-	private String label;
+	private List<ES> disjuncts = new ArrayList<ES>();
 
 	/**
 	 * Constructor.
 	 */
-	public RIdentitySpec() {
+	public RLogicalValueSpec() {
 	}
 
 	/**
-	 * Sets value of identifier.
+	 * Sets value of disjunct-specs.
 	 *
-	 * @param identifier Value to set
+	 * @param disjuncts Value to set
 	 */
-	public void setIdentifier(String identifier) {
+	public void setDisjuncts(List<ES> disjuncts) {
 
-		this.identifier = identifier;
+		this.disjuncts.clear();
+		this.disjuncts.addAll(disjuncts);
 	}
 
 	/**
-	 * Sets value of label.
-	 *
-	 * @param label Value to set
-	 */
-	public void setLabel(String label) {
-
-		this.label = label;
-	}
-
-	/**
-	 * Gets value of identifier.
+	 * Gets value of disjunct-specs.
 	 *
 	 * @return Relevant value
 	 */
-	public String getIdentifier() {
+	public List<ES> getDisjuncts() {
 
-		return identifier;
+		return new ArrayList<ES>(disjuncts);
 	}
 
-	/**
-	 * Gets value of label.
-	 *
-	 * @return Relevant value
-	 */
-	public String getLabel() {
+	void addDisjunct(ES disjunct) {
 
-		return label;
+		disjuncts.add(disjunct);
 	}
 
-	RIdentity create() {
+	L create() {
 
-		return new RIdentity(identifier, label);
+		return create(createDisjuncts());
+	}
+
+	abstract L create(List<E> disjuncts);
+
+	abstract E createEntity(ES spec);
+
+	private List<E> createDisjuncts() {
+
+		List<E> createdDisjuncts = new ArrayList<E>();
+
+		for (ES disjunct : disjuncts) {
+
+			createdDisjuncts.add(createEntity(disjunct));
+		}
+
+		return createdDisjuncts;
 	}
 }

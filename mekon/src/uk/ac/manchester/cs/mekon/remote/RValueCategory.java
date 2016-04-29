@@ -43,7 +43,7 @@ public enum RValueCategory {
 	},
 
 	/**
-	 * Slot has values of type {@link DFrame} or {@link DFrameDisjunction}
+	 * Slot has values of type {@link DFrameValue}
 	 */
 	FRAME {
 
@@ -54,7 +54,7 @@ public enum RValueCategory {
 	},
 
 	/**
-	 * Slot has values of type {@link Number} or {@link RNumberRange}
+	 * Slot has values of type {@link RNumber}
 	 */
 	NUMBER {
 

@@ -33,7 +33,7 @@ import java.util.*;
  */
 public class RSlot {
 
-	private RIdentity type;
+	private RProperty property;
 	private RValueType valueType;
 
 	private List<RValue> values = new ArrayList<RValue>();
@@ -85,17 +85,17 @@ public class RSlot {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + type.toInnerString() + ")";
+		return getClass().getSimpleName() + "(" + property.toInnerString() + ")";
 	}
 
 	/**
-	 * Provides the identity representing the type of the slot.
+	 * Provides the property associated with of the slot.
 	 *
-	 * @return Identity representing type of slot
+	 * @return Property associated with slot
 	 */
-	public RIdentity getType() {
+	public RProperty getProperty() {
 
-		return type;
+		return property;
 	}
 
 	/**
@@ -118,9 +118,9 @@ public class RSlot {
 		return new ArrayList<RValue>(values);
 	}
 
-	RSlot(RIdentity type, RValueType valueType) {
+	RSlot(RProperty property, RValueType valueType) {
 
-		this.type = type;
+		this.property = property;
 		this.valueType = valueType;
 	}
 
@@ -128,7 +128,7 @@ public class RSlot {
 
 		RSlotSpec spec = new RSlotSpec();
 
-		spec.setType(type.toSpec());
+		spec.setProperty(property.toSpec());
 		spec.setValueType(valueType.toSpec());
 
 		for (RValue value : values) {

@@ -24,23 +24,33 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
+import java.util.*;
+
 /**
- * Responsible for creating and serialisation of {@link RConcept}
- * objects. The parameterless constructor and relevant sets of "get"
- * and "set" methods are designed to enable JSON serialisation.
+ * Represents a frame value, which can either be an atomic frame,
+ * or a disjunction of atomic frames.
  *
  * @author Colin Puleston
  */
-public class RConceptSpec extends RIdentifiedSpec<RConcept> {
+public class RFrameValue extends RLogicalValue<RFrame, RFrameSpec, RFrameValueSpec> {
 
-	/**
-	 * Constructor.
-	 */
-	public RConceptSpec() {
+	RFrameValue(RFrame frame) {
+
+		super(frame);
 	}
 
-	RConcept create(String identifier, String label) {
+	RFrameValue(Collection<RFrame> disjuncts) {
 
-		return new RConcept(identifier, label);
+		super(disjuncts);
+	}
+
+	RFrameValueSpec createSpec() {
+
+		return new RFrameValueSpec();
+	}
+
+	RFrameSpec entityToSpec(RFrame entity) {
+
+		return entity.toSpec();
 	}
 }

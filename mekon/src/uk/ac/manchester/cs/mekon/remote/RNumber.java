@@ -25,42 +25,42 @@
 package uk.ac.manchester.cs.mekon.remote;
 
 /**
- * Represents a numeric range.
+ * Represents either a exact number or a numeric range.
  *
  * @author Colin Puleston
  */
-public class RNumberRange {
+public class RNumber {
 
 	/**
 	 * Represents an unconstrained integer-range.
 	 */
-	static public final RNumberRange INTEGER = new RNumberRange(Integer.class);
+	static public final RNumber INTEGER = new RNumber(Integer.class);
 
 	/**
 	 * Represents an unconstrained long-range.
 	 */
-	static public final RNumberRange LONG = new RNumberRange(Long.class);
+	static public final RNumber LONG = new RNumber(Long.class);
 
 	/**
 	 * Represents an unconstrained float-range.
 	 */
-	static public final RNumberRange FLOAT = new RNumberRange(Float.class);
+	static public final RNumber FLOAT = new RNumber(Float.class);
 
 	/**
 	 * Represents an unconstrained double-range.
 	 */
-	static public final RNumberRange DOUBLE = new RNumberRange(Double.class);
+	static public final RNumber DOUBLE = new RNumber(Double.class);
 
 	/**
 	 * Creates a integer-range with the specified limits.
 	 *
 	 * @param min Minimnum value for range
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange range(Integer min, Integer max) {
+	static public RNumber range(Integer min, Integer max) {
 
-		return new RNumberRange(Integer.class, min, max);
+		return new RNumber(Integer.class, min, max);
 	}
 
 	/**
@@ -68,11 +68,11 @@ public class RNumberRange {
 	 *
 	 * @param min Minimnum value for range
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange range(Long min, Long max) {
+	static public RNumber range(Long min, Long max) {
 
-		return new RNumberRange(Long.class, min, max);
+		return new RNumber(Long.class, min, max);
 	}
 
 	/**
@@ -80,11 +80,11 @@ public class RNumberRange {
 	 *
 	 * @param min Minimnum value for range
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange range(Float min, Float max) {
+	static public RNumber range(Float min, Float max) {
 
-		return new RNumberRange(Float.class, min, max);
+		return new RNumber(Float.class, min, max);
 	}
 
 	/**
@@ -92,143 +92,151 @@ public class RNumberRange {
 	 *
 	 * @param min Minimnum value for range
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange range(Double min, Double max) {
+	static public RNumber range(Double min, Double max) {
 
-		return new RNumberRange(Double.class, min, max);
+		return new RNumber(Double.class, min, max);
 	}
 
 	/**
-	 * Creates a integer-range with the specified minimum value.
+	 * Creates a integer-range with the specified minimum value and no
+	 * maximum.
 	 *
 	 * @param min Minimnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange min(Integer min) {
+	static public RNumber min(Integer min) {
 
 		return range(min, null);
 	}
 
 	/**
-	 * Creates a long-range with the specified minimum value.
+	 * Creates a long-range with the specified minimum value and no
+	 * maximum.
 	 *
 	 * @param min Minimnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange min(Long min) {
-
-		return range(min, null);
-	}
-
-
-	/**
-	 * Creates a float-range with the specified minimum value.
-	 *
-	 * @param min Minimnum value for range
-	 * @return Created range
-	 */
-	static public RNumberRange min(Float min) {
+	static public RNumber min(Long min) {
 
 		return range(min, null);
 	}
 
 
 	/**
-	 * Creates a double-range with the specified minimum value.
+	 * Creates a float-range with the specified minimum value and no
+	 * maximum.
 	 *
 	 * @param min Minimnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange min(Double min) {
+	static public RNumber min(Float min) {
+
+		return range(min, null);
+	}
+
+
+	/**
+	 * Creates a double-range with the specified minimum value and no
+	 * maximum.
+	 *
+	 * @param min Minimnum value for range
+	 * @return Created object representing relevant range
+	 */
+	static public RNumber min(Double min) {
 
 		return range(min, null);
 	}
 
 	/**
-	 * Creates a integer-range with the specified maximum value.
+	 * Creates a integer-range with the specified maximum value and no
+	 * minimum.
 	 *
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange max(Integer max) {
+	static public RNumber max(Integer max) {
 
 		return range(null, max);
 	}
 
 	/**
-	 * Creates a long-range with the specified maximum value.
+	 * Creates a long-range with the specified maximum value and no
+	 * minimum.
 	 *
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange max(Long max) {
+	static public RNumber max(Long max) {
 
 		return range(null, max);
 	}
 
 	/**
-	 * Creates a float-range with the specified maximum value.
+	 * Creates a float-range with the specified maximum value and no
+	 * minimum.
 	 *
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange max(Float max) {
+	static public RNumber max(Float max) {
 
 		return range(null, max);
 	}
 
 	/**
-	 * Creates a double-range with the specified maximum value.
+	 * Creates a double-range with the specified maximum value and no
+	 * minimum.
 	 *
 	 * @param max Maximnum value for range
-	 * @return Created range
+	 * @return Created object representing relevant range
 	 */
-	static public RNumberRange max(Double max) {
+	static public RNumber max(Double max) {
 
 		return range(null, max);
 	}
 
 	/**
-	 * Creates a integer-range with the specified exact value.
+	 * Creates a integer with the specified exact value.
 	 *
-	 * @param exact Exact value for range
-	 * @return Created range
+	 * @param exact Exact value
+	 * @return Created object representing exact value
 	 */
-	static public RNumberRange exact(Integer exact) {
+	static public RNumber exact(Integer exact) {
 
 		return range(exact, exact);
 	}
 
 	/**
-	 * Creates a long-range with the specified exact value.
+	 * Creates a long with the specified exact value.
 	 *
-	 * @param exact Exact value for range
-	 * @return Created range
+	 * @param exact Exact value
+	 * @return Created object representing exact value
 	 */
-	static public RNumberRange exact(Long exact) {
+	static public RNumber exact(Long exact) {
 
 		return range(exact, exact);
 	}
 
 	/**
-	 * Creates a float-range with the specified exact value.
+	 * Creates a float with the specified exact value.
 	 *
-	 * @param exact Exact value for range
-	 * @return Created range
+	 * @param exact Exact value
+	 * @return Created object representing exact value
 	 */
-	static public RNumberRange exact(Float exact) {
+	static public RNumber exact(Float exact) {
 
 		return range(exact, exact);
 	}
 
 	/**
-	 * Creates a double-range with the specified exact value.
+	 * Creates a double with the specified exact value.
 	 *
-	 * @param exact Exact value for range
-	 * @return Created range
+	 * @param exact Exact value
+	 * @return Created object representing exact value
 	 */
-	static public RNumberRange exact(Double exact) {
+	static public RNumber exact(Double exact) {
 
 		return range(exact, exact);
 	}
@@ -241,7 +249,7 @@ public class RNumberRange {
 	 * Tests for equality between this and other specified object.
 	 *
 	 * @param other Object to test for equality with this one
-	 * @return true if other object is another <code>RNumberRange</code>
+	 * @return true if other object is another <code>RNumber</code>
 	 * with same limit-values, including value-type, as this one
 	 */
 	public boolean equals(Object other) {
@@ -251,9 +259,9 @@ public class RNumberRange {
 			return true;
 		}
 
-		if (other instanceof RNumberRange) {
+		if (other instanceof RNumber) {
 
-			return equalsRange((RNumberRange)other);
+			return equalsRange((RNumber)other);
 		}
 
 		return false;
@@ -288,7 +296,18 @@ public class RNumberRange {
 	}
 
 	/**
-	 * Specifies whether a minimnum value is defined.
+	 * Specifies whether the number is exact.
+	 *
+	 * @return True if exact
+	 */
+	public boolean exact() {
+
+		return min != null && min.equals(max);
+	}
+
+	/**
+	 * Specifies whether a minimnum value is defined. For exact numbers
+	 * the minimum will simply be the exact value.
 	 *
 	 * @return True if min value defined
 	 */
@@ -298,7 +317,8 @@ public class RNumberRange {
 	}
 
 	/**
-	 * Specifies whether a maximnum value is defined.
+	 * Specifies whether a maximnum value is defined. For exact numbers
+	 * the maximnum will simply be the exact value.
 	 *
 	 * @return True if max value defined
 	 */
@@ -327,16 +347,16 @@ public class RNumberRange {
 		return max;
 	}
 
-	RNumberRange(Class<? extends Number> numberType, Number min, Number max) {
+	RNumber(Class<? extends Number> numberType, Number min, Number max) {
 
 		this.numberType = numberType;
 		this.min = min;
 		this.max = max;
 	}
 
-	RNumberRangeSpec toSpec() {
+	RNumberSpec toSpec() {
 
-		RNumberRangeSpec spec = new RNumberRangeSpec();
+		RNumberSpec spec = new RNumberSpec();
 
 		spec.setNumberType(numberType);
 		spec.setMin(min);
@@ -345,12 +365,12 @@ public class RNumberRange {
 		return spec;
 	}
 
-	private RNumberRange(Class<? extends Number> numberType) {
+	private RNumber(Class<? extends Number> numberType) {
 
 		this(numberType, null, null);
 	}
 
-	private boolean equalsRange(RNumberRange other) {
+	private boolean equalsRange(RNumber other) {
 
 		return numberType == other.numberType
 				&& equalLimits(min, other.min)

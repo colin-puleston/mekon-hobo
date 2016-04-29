@@ -25,22 +25,67 @@
 package uk.ac.manchester.cs.mekon.remote;
 
 /**
- * Responsible for creating and serialisation of {@link RConcept}
+ * Responsible for creating and serialisation of {@link RIdentified}
  * objects. The parameterless constructor and relevant sets of "get"
  * and "set" methods are designed to enable JSON serialisation.
  *
  * @author Colin Puleston
  */
-public class RConceptSpec extends RIdentifiedSpec<RConcept> {
+public abstract class RIdentifiedSpec<I extends RIdentified<?>> {
+
+	private String identifier;
+	private String label;
 
 	/**
 	 * Constructor.
 	 */
-	public RConceptSpec() {
+	public RIdentifiedSpec() {
 	}
 
-	RConcept create(String identifier, String label) {
+	/**
+	 * Sets value of identifier.
+	 *
+	 * @param identifier Value to set
+	 */
+	public void setIdentifier(String identifier) {
 
-		return new RConcept(identifier, label);
+		this.identifier = identifier;
 	}
+
+	/**
+	 * Sets value of label.
+	 *
+	 * @param label Value to set
+	 */
+	public void setLabel(String label) {
+
+		this.label = label;
+	}
+
+	/**
+	 * Gets value of identifier.
+	 *
+	 * @return Relevant value
+	 */
+	public String getIdentifier() {
+
+		return identifier;
+	}
+
+	/**
+	 * Gets value of label.
+	 *
+	 * @return Relevant value
+	 */
+	public String getLabel() {
+
+		return label;
+	}
+
+	I create() {
+
+		return create(identifier, label);
+	}
+
+	abstract I create(String identifier, String label);
 }
