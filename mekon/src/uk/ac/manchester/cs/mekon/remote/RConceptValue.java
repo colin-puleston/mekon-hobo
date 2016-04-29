@@ -44,6 +44,11 @@ public class RConceptValue extends RLogicalValue<RConcept, RConceptSpec, RConcep
 		super(disjuncts);
 	}
 
+	void acceptVisitor(RValueVisitor visitor) {
+
+		visitor.visit(this);
+	}
+
 	RConceptValueSpec createSpec() {
 
 		return new RConceptValueSpec();

@@ -77,6 +77,11 @@ public class RString extends RValue {
 		return value;
 	}
 
+	void acceptVisitor(RValueVisitor visitor) {
+
+		visitor.visit(this);
+	}
+
 	RStringSpec toSpec() {
 
 		RStringSpec spec = new RStringSpec();

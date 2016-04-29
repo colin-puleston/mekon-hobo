@@ -38,6 +38,7 @@ public abstract class RValueVisitor {
 	 */
 	public void visit(RValue value) {
 
+		value.acceptVisitor(this);
 	}
 
 	/**

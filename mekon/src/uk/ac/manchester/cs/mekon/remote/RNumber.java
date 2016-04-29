@@ -354,6 +354,11 @@ public class RNumber extends RValue {
 		this.max = max;
 	}
 
+	void acceptVisitor(RValueVisitor visitor) {
+
+		visitor.visit(this);
+	}
+
 	RNumberSpec toSpec() {
 
 		RNumberSpec spec = new RNumberSpec();

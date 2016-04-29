@@ -32,5 +32,7 @@ package uk.ac.manchester.cs.mekon.remote;
  */
 public abstract class RValue {
 
+	abstract void acceptVisitor(RValueVisitor visitor);
+
 	abstract RValueSpec toSpec();
 }

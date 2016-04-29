@@ -44,6 +44,11 @@ public class RFrameValue extends RLogicalValue<RFrame, RFrameSpec, RFrameValueSp
 		super(disjuncts);
 	}
 
+	void acceptVisitor(RValueVisitor visitor) {
+
+		visitor.visit(this);
+	}
+
 	RFrameValueSpec createSpec() {
 
 		return new RFrameValueSpec();
