@@ -25,51 +25,52 @@
 package uk.ac.manchester.cs.mekon.remote;
 
 /**
- * Visitor for {@link RValue} objects.
+ * Visitor for {@link RValueType} objects, with specific visit-method
+ * selection being based on value-type category.
  *
  * @author Colin Puleston
  */
-public abstract class RValueVisitor {
+public abstract class RValueTypeVisitor {
 
 	/**
 	 * Causes relevant value-type-specific visit method to be invoked.
 	 *
 	 * @param value Object to be visited
 	 */
-	public void visit(RValue value) {
+	public void visit(RValueType valueType) {
 
-		value.acceptVisitor(this);
+		valueType.getCategory().visitValueType(this, valueType);
 	}
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting concept value.
+	 * visiting value-types of category {@link RValueCategory.CONCEPT}.
 	 *
 	 * @param value Value being visited.
 	 */
-	public abstract void visit(RConcept value);
+	public abstract void visitConceptType(RValueType valueType);
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting frame-value value.
+	 * visiting value-types of category {@link RValueCategory.FRAME}.
 	 *
 	 * @param value Value being visited.
 	 */
-	public abstract void visit(RFrameValue value);
+	public abstract void visitFrameType(RValueType valueType);
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting number-range value.
+	 * visiting value-types of category {@link RValueCategory.NUMBER}.
 	 *
 	 * @param value Value being visited.
 	 */
-	public abstract void visit(RNumber value);
+	public abstract void visitNumberType(RValueType valueType);
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting string value.
+	 * visiting value-types of category {@link RValueCategory.STRING}.
 	 *
 	 * @param value Value being visited.
 	 */
-	public abstract void visit(RString value);
+	public abstract void visitStringType(RValueType valueType);
 }

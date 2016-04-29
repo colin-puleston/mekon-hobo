@@ -145,12 +145,12 @@ public class RValueTypeSpec {
 		return numberRange;
 	}
 
-	void configureConceptDefinedValueType(RValueType valueType) {
+	void configureConceptDefinedType(RValueType valueType) {
 
 		valueType.configure(rootConcept.create(), cardinality);
 	}
 
-	void configureNumberValueType(RValueType valueType) {
+	void configureNumberType(RValueType valueType) {
 
 		valueType.configure(numberRange.create());
 	}

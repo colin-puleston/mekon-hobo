@@ -150,8 +150,9 @@ public class RValueType {
 	}
 
 	/**
-	 * Specifies the root-concept for slot, for slots of category {@link
-	 * RValueCategory.CONCEPT} or {@link RValueCategory.FRAME}.
+	 * Specifies the root-concept for slot, if applicable, which will be
+	 * the case if slot is of category {@link RValueCategory.CONCEPT} or
+	 * {@link RValueCategory.FRAME}.
 	 *
 	 * @return Root-concept for slot
 	 * @throws KAccessException if slot not of applicable category
@@ -162,8 +163,8 @@ public class RValueType {
 	}
 
 	/**
-	 * Specifies the permitted value-range for slot, for slots of category
-	 * {@link RValueCategory.NUMBER}.
+	 * Specifies the permitted value-range for slot, if applicable, which
+	 * will be the case if slot is of category {@link RValueCategory.NUMBER}.
 	 *
 	 * @return Value-range for slot
 	 * @throws KAccessException if slot not of applicable category

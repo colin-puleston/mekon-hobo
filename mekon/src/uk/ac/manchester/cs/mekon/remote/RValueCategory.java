@@ -38,7 +38,12 @@ public enum RValueCategory {
 
 		void configureValueType(RValueType valueType, RValueTypeSpec spec) {
 
-			spec.configureConceptDefinedValueType(valueType);
+			spec.configureConceptDefinedType(valueType);
+		}
+
+		void visitValueType(RValueTypeVisitor visitor, RValueType valueType) {
+
+			visitor.visitConceptType(valueType);
 		}
 	},
 
@@ -49,7 +54,12 @@ public enum RValueCategory {
 
 		void configureValueType(RValueType valueType, RValueTypeSpec spec) {
 
-			spec.configureConceptDefinedValueType(valueType);
+			spec.configureConceptDefinedType(valueType);
+		}
+
+		void visitValueType(RValueTypeVisitor visitor, RValueType valueType) {
+
+			visitor.visitFrameType(valueType);
 		}
 	},
 
@@ -60,7 +70,12 @@ public enum RValueCategory {
 
 		void configureValueType(RValueType valueType, RValueTypeSpec spec) {
 
-			spec.configureNumberValueType(valueType);
+			spec.configureNumberType(valueType);
+		}
+
+		void visitValueType(RValueTypeVisitor visitor, RValueType valueType) {
+
+			visitor.visitNumberType(valueType);
 		}
 	},
 
@@ -71,7 +86,14 @@ public enum RValueCategory {
 
 		void configureValueType(RValueType valueType, RValueTypeSpec spec) {
 		}
+
+		void visitValueType(RValueTypeVisitor visitor, RValueType valueType) {
+
+			visitor.visitStringType(valueType);
+		}
 	};
 
 	abstract void configureValueType(RValueType valueType, RValueTypeSpec spec);
+
+	abstract void visitValueType(RValueTypeVisitor visitor, RValueType valueType);
 }
