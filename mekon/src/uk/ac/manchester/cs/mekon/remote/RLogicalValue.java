@@ -34,7 +34,9 @@ import uk.ac.manchester.cs.mekon.*;
  *
  * @author Colin Puleston
  */
-public abstract class RLogicalValue<E, ES, S extends RLogicalValueSpec<E, ES, ?>> {
+public abstract class RLogicalValue
+						<E, ES, S extends RLogicalValueSpec<E, ES, ?>>
+						extends RValue {
 
 	private List<E> disjuncts = new ArrayList<E>();
 
@@ -42,7 +44,7 @@ public abstract class RLogicalValue<E, ES, S extends RLogicalValueSpec<E, ES, ?>
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + disjunctsToString() + ")";
+		return getClass().getSimpleName() + "(" + toInnerString() + ")";
 	}
 
 	/**
@@ -114,7 +116,7 @@ public abstract class RLogicalValue<E, ES, S extends RLogicalValueSpec<E, ES, ?>
 
 	abstract ES entityToSpec(E entity);
 
-	private String disjunctsToString() {
+	String toInnerString() {
 
 		StringBuilder s = new StringBuilder();
 		boolean first = true;

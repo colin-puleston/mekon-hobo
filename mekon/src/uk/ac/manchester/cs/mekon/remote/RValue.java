@@ -24,128 +24,13 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * Represents a value for a slot in the remote frames-based
  * representation.
  *
  * @author Colin Puleston
  */
-public class RValue {
+public abstract class RValue {
 
-	private Object value;
-
-	/**
-	 * Tests for equality between this and other specified object.
-	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if other object is another <code>RValue</code>
-	 * object representing the same value
-	 */
-	public boolean equals(Object other) {
-
-		if (other instanceof RValue) {
-
-			return value.equals(((RValue)other).value);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Provides hash-code based on represented value.
-	 *
-	 * @return hash-code for this object
-	 */
-	public int hashCode() {
-
-		return value.hashCode();
-	}
-
-	/**
-	 * Provides the class of the represented value.
-	 *
-	 * @return Class of represented value
-	 */
-	public Class<?> getValueClass() {
-
-		return value.getClass();
-	}
-
-	/**
-	 * Provides represented value as concept, if applicable.
-	 *
-	 * @return Value as concept
-	 * @throws KAccessException if not concept value
-	 */
-	public RConcept asConcept() {
-
-		return as(RConcept.class);
-	}
-
-	/**
-	 * Provides represented value as frame-value, if applicable.
-	 *
-	 * @return Value as frame-value
-	 * @throws KAccessException if not frame-value value
-	 */
-	public RFrameValue asFrameValue() {
-
-		return as(RFrameValue.class);
-	}
-
-	/**
-	 * Provides represented value as number, if applicable.
-	 *
-	 * @return Value as number
-	 * @throws KAccessException if not number value
-	 */
-	public RNumber asNumber() {
-
-		return as(RNumber.class);
-	}
-
-	/**
-	 * Provides represented value as string, if applicable.
-	 *
-	 * @return Value as string
-	 * @throws KAccessException if not string value
-	 */
-	public String asString() {
-
-		return as(String.class);
-	}
-
-	RValue(Object value) {
-
-		this.value = value;
-	}
-
-	void acceptVisitor(RValueVisitor visitor) throws Exception {
-
-		visitor.visit(this);
-	}
-
-	RValueSpec toSpec() {
-
-		RValueSpec spec = new RValueSpec();
-
-		spec.setValue(value);
-
-		return spec;
-	}
-
-	private <T>T as(Class<T> type) {
-
-		if (type == value.getClass()) {
-
-			return type.cast(value);
-		}
-
-		throw new KAccessException(
-					"Value not of required type: "
-					+ "required type: " + type
-					+ ", actual type: " + value.getClass());
-	}
+	abstract RValueSpec toSpec();
 }

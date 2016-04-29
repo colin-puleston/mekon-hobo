@@ -24,29 +24,45 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
-import java.util.*;
-
 /**
- * Represents a frame-disjunction in the remote frames-based representation.
+ * Responsible for creating and serialisation of {@link RString}
+ * objects. The parameterless constructor and relevant sets of "get"
+ * and "set" methods are designed to enable JSON serialisation.
  *
  * @author Colin Puleston
  */
-public class RFrameDisjunction {
+public class RStringSpec extends RValueSpec {
 
-	private List<RFrame> disjuncts = new ArrayList<RFrame>();
+	private String value;
 
 	/**
-	 * Provides all disjunct-frames.
-	 *
-	 * @return All disjunct frames
+	 * Constructor.
 	 */
-	public List<RFrame> getDisjuncts() {
-
-		return new ArrayList<RFrame>(disjuncts);
+	public RStringSpec() {
 	}
 
-	RFrameDisjunction(List<RFrame> disjuncts) {
+	/**
+	 * Sets value of value.
+	 *
+	 * @param value Value to set
+	 */
+	public void setValue(String value) {
 
-		this.disjuncts.addAll(disjuncts);
+		this.value = value;
+	}
+
+	/**
+	 * Gets value of value.
+	 *
+	 * @return Relevant value
+	 */
+	public String getValue() {
+
+		return value;
+	}
+
+	RString create() {
+
+		return new RString(value);
 	}
 }

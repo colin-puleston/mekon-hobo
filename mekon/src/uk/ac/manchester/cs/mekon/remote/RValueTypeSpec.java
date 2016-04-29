@@ -36,7 +36,7 @@ public class RValueTypeSpec {
 	private RValueCategory category;
 	private Boolean editable;
 	private RCardinality cardinality;
-	private RConceptSpec rootConcept;
+	private RConceptValueSpec rootConcept;
 	private RNumberSpec numberRange;
 
 	/**
@@ -80,7 +80,7 @@ public class RValueTypeSpec {
 	 *
 	 * @param rootConcept Value to set
 	 */
-	public void setRootConcept(RConceptSpec rootConcept) {
+	public void setRootConcept(RConceptValueSpec rootConcept) {
 
 		this.rootConcept = rootConcept;
 	}
@@ -130,7 +130,7 @@ public class RValueTypeSpec {
 	 *
 	 * @return Relevant value
 	 */
-	public RConceptSpec getRootConcept() {
+	public RConceptValueSpec getRootConcept() {
 
 		return rootConcept;
 	}

@@ -31,38 +31,7 @@ package uk.ac.manchester.cs.mekon.remote;
  *
  * @author Colin Puleston
  */
-public class RValueSpec {
+public abstract class RValueSpec {
 
-	private Object value;
-
-	/**
-	 * Constructor.
-	 */
-	public RValueSpec() {
-	}
-
-	/**
-	 * Sets value of value.
-	 *
-	 * @param value Value to set
-	 */
-	public void setValue(Object value) {
-
-		this.value = value;
-	}
-
-	/**
-	 * Gets value of value.
-	 *
-	 * @return Relevant value
-	 */
-	public Object getValue() {
-
-		return value;
-	}
-
-	RValue create() {
-
-		return new RValue(value);
-	}
+	abstract RValue create();
 }

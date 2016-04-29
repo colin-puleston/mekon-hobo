@@ -32,7 +32,7 @@ package uk.ac.manchester.cs.mekon.remote;
 public enum RValueCategory {
 
 	/**
-	 * Slot has values of type {@link DConcept}
+	 * Slot has values of type {@link DConceptValue}
 	 */
 	CONCEPT {
 
@@ -65,7 +65,7 @@ public enum RValueCategory {
 	},
 
 	/**
-	 * Slot has values of type {@link String}
+	 * Slot has values of type {@link RString}
 	 */
 	STRING {
 

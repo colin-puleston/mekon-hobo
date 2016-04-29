@@ -35,6 +35,26 @@ import java.util.*;
  */
 public class RConceptValueSpec extends RLogicalValueSpec<RConcept, RConceptSpec, RConceptValue> {
 
+	/**
+	 * Sets value of disjunct-specs.
+	 *
+	 * @param disjuncts Value to set
+	 */
+	public void setDisjuncts(List<RConceptSpec> disjuncts) {
+
+		setDisjunctsGeneric(disjuncts);
+	}
+
+	/**
+	 * Gets value of disjunct-specs.
+	 *
+	 * @return Relevant value
+	 */
+	public List<RConceptSpec> getDisjuncts() {
+
+		return getDisjunctsGeneric();
+	}
+
 	RConceptValue create(List<RConcept> disjuncts) {
 
 		return new RConceptValue(disjuncts);

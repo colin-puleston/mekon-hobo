@@ -24,60 +24,65 @@
 
 package uk.ac.manchester.cs.mekon.remote;
 
-import java.util.*;
-
 /**
- * Responsible for creating and serialisation of {@link RFrameDisjunction}
- * objects. The parameterless constructor and relevant sets of "get"
- * and "set" methods are designed to enable JSON serialisation.
+ * Represents a string-value.
  *
  * @author Colin Puleston
  */
-public class RFrameDisjunctionSpec {
+public class RString extends RValue {
 
-	private List<RFrameSpec> disjuncts = new ArrayList<RFrameSpec>();
+	private String value;
 
 	/**
 	 * Constructor.
+	 *
+	 * @param value String-value to be represented
 	 */
-	public RFrameDisjunctionSpec() {
+	public RString(String value) {
+
+		this.value = value;
 	}
 
 	/**
-	 * Sets value of disjunct-specs.
+	 * Tests for equality between this and other specified object,
+	 * which will hold if and only if the other object is another
+	 * <code>RString</code> object representing the same string-value
+	 * as this one.
 	 *
-	 * @param disjuncts Value to set
+	 * @param other Object to test for equality with this one
+	 * @return true if objects are equal
 	 */
-	public void setDisjuncts(List<RFrameSpec> disjuncts) {
+	public boolean equals(Object other) {
 
-		this.disjuncts.clear();
-		this.disjuncts.addAll(disjuncts);
+		return other instanceof RString && value.equals(((RString)other).value);
 	}
 
 	/**
-	 * Gets value of disjunct-specs.
+	 * Provides hash-code based on the string-value.
 	 *
-	 * @return Relevant value
+	 * @return hash-code for this object
 	 */
-	public List<RFrameSpec> getDisjuncts() {
+	public int hashCode() {
 
-		return new ArrayList<RFrameSpec>(disjuncts);
+		return value.hashCode();
 	}
 
-	RFrameDisjunction create() {
+	/**
+	 * Provides the represented string-value.
+	 *
+	 * @return Represented string-value
+	 */
+	public String get() {
 
-		return new RFrameDisjunction(createDisjuncts());
+		return value;
 	}
 
-	private List<RFrame> createDisjuncts() {
+	RStringSpec toSpec() {
 
-		List<RFrame> createdDisjuncts = new ArrayList<RFrame>();
+		RStringSpec spec = new RStringSpec();
 
-		for (RFrameSpec disjunct : disjuncts) {
+		spec.setValue(value);
 
-			createdDisjuncts.add(disjunct.create());
-		}
-
-		return createdDisjuncts;
+		return spec;
 	}
 }

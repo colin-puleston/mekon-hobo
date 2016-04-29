@@ -37,12 +37,6 @@ public abstract class RIdentifiedSpec<I extends RIdentified<?>> {
 	private String label;
 
 	/**
-	 * Constructor.
-	 */
-	public RIdentifiedSpec() {
-	}
-
-	/**
 	 * Sets value of identifier.
 	 *
 	 * @param identifier Value to set

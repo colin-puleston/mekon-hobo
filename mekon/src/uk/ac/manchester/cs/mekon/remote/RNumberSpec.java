@@ -31,7 +31,7 @@ package uk.ac.manchester.cs.mekon.remote;
  *
  * @author Colin Puleston
  */
-public class RNumberSpec {
+public class RNumberSpec extends RValueSpec {
 
 	private Class<? extends Number> numberType;
 	private Number min;

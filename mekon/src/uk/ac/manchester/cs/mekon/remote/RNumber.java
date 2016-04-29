@@ -29,7 +29,7 @@ package uk.ac.manchester.cs.mekon.remote;
  *
  * @author Colin Puleston
  */
-public class RNumber {
+public class RNumber extends RValue {
 
 	/**
 	 * Represents an unconstrained integer-range.

@@ -70,5 +70,5 @@ public abstract class RValueVisitor {
 	 *
 	 * @param value Value being visited.
 	 */
-	public abstract void visit(String value);
+	public abstract void visit(RString value);
 }

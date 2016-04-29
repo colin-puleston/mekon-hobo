@@ -35,6 +35,26 @@ import java.util.*;
  */
 public class RFrameValueSpec extends RLogicalValueSpec<RFrame, RFrameSpec, RFrameValue> {
 
+	/**
+	 * Sets value of disjunct-specs.
+	 *
+	 * @param disjuncts Value to set
+	 */
+	public void setDisjuncts(List<RFrameSpec> disjuncts) {
+
+		setDisjunctsGeneric(disjuncts);
+	}
+
+	/**
+	 * Gets value of disjunct-specs.
+	 *
+	 * @return Relevant value
+	 */
+	public List<RFrameSpec> getDisjuncts() {
+
+		return getDisjunctsGeneric();
+	}
+
 	RFrameValue create(List<RFrame> disjuncts) {
 
 		return new RFrameValue(disjuncts);

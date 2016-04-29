@@ -33,40 +33,26 @@ import java.util.*;
  *
  * @author Colin Puleston
  */
-public abstract class RLogicalValueSpec<E, ES, L extends RLogicalValue<E, ES, ?>> {
+public abstract class RLogicalValueSpec
+						<E, ES, L extends RLogicalValue<E, ES, ?>>
+						extends RValueSpec {
 
 	private List<ES> disjuncts = new ArrayList<ES>();
 
-	/**
-	 * Constructor.
-	 */
-	public RLogicalValueSpec() {
+	void addDisjunct(ES disjunct) {
+
+		disjuncts.add(disjunct);
 	}
 
-	/**
-	 * Sets value of disjunct-specs.
-	 *
-	 * @param disjuncts Value to set
-	 */
-	public void setDisjuncts(List<ES> disjuncts) {
+	void setDisjunctsGeneric(List<ES> disjuncts) {
 
 		this.disjuncts.clear();
 		this.disjuncts.addAll(disjuncts);
 	}
 
-	/**
-	 * Gets value of disjunct-specs.
-	 *
-	 * @return Relevant value
-	 */
-	public List<ES> getDisjuncts() {
+	List<ES> getDisjunctsGeneric() {
 
 		return new ArrayList<ES>(disjuncts);
-	}
-
-	void addDisjunct(ES disjunct) {
-
-		disjuncts.add(disjunct);
 	}
 
 	L create() {

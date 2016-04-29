@@ -43,7 +43,7 @@ public class RValueType {
 			return RCardinality.SINGLE_VALUE;
 		}
 
-		RConcept getRootConcept(RValueCategory category) {
+		RConceptValue getRootConcept(RValueCategory category) {
 
 			return checkForIllegalMethodInvocation(category, getRootConceptOrNull());
 		}
@@ -53,7 +53,7 @@ public class RValueType {
 			return checkForIllegalMethodInvocation(category, getNumberRangeOrNull());
 		}
 
-		RConcept getRootConceptOrNull() {
+		RConceptValue getRootConceptOrNull() {
 
 			return null;
 		}
@@ -84,10 +84,10 @@ public class RValueType {
 
 	private class ConceptDefinedValuesConfig extends CategoryConfig {
 
-		private RConcept rootConcept;
+		private RConceptValue rootConcept;
 		private RCardinality cardinality;
 
-		ConceptDefinedValuesConfig(RConcept rootConcept, RCardinality cardinality) {
+		ConceptDefinedValuesConfig(RConceptValue rootConcept, RCardinality cardinality) {
 
 			this.rootConcept = rootConcept;
 			this.cardinality = cardinality;
@@ -98,7 +98,7 @@ public class RValueType {
 			return cardinality;
 		}
 
-		RConcept getRootConceptOrNull() {
+		RConceptValue getRootConceptOrNull() {
 
 			return rootConcept;
 		}
@@ -156,7 +156,7 @@ public class RValueType {
 	 * @return Root-concept for slot
 	 * @throws KAccessException if slot not of applicable category
 	 */
-	public RConcept getRootConcept() {
+	public RConceptValue getRootConcept() {
 
 		return config.getRootConcept(category);
 	}
@@ -179,7 +179,7 @@ public class RValueType {
 		this.editable = editable;
 	}
 
-	void configure(RConcept rootConcept, RCardinality cardinality) {
+	void configure(RConceptValue rootConcept, RCardinality cardinality) {
 
 		config = new ConceptDefinedValuesConfig(rootConcept, cardinality);
 	}
