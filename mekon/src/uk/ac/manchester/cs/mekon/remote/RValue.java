@@ -85,25 +85,14 @@ public class RValue {
 	}
 
 	/**
-	 * Provides represented value as frame, if applicable.
+	 * Provides represented value as frame-value, if applicable.
 	 *
-	 * @return Value as frame
-	 * @throws KAccessException if not frame value
+	 * @return Value as frame-value
+	 * @throws KAccessException if not frame-value value
 	 */
-	public RFrame asFrame() {
+	public RFrameValue asFrameValue() {
 
-		return as(RFrame.class);
-	}
-
-	/**
-	 * Provides represented value as frame-disjunction, if applicable.
-	 *
-	 * @return Value as frame-disjunction
-	 * @throws KAccessException if not frame-disjunction value
-	 */
-	public RFrameDisjunction asFrameDisjunction() {
-
-		return as(RFrameDisjunction.class);
+		return as(RFrameValue.class);
 	}
 
 	/**
@@ -131,6 +120,11 @@ public class RValue {
 	RValue(Object value) {
 
 		this.value = value;
+	}
+
+	void acceptVisitor(RValueVisitor visitor) throws Exception {
+
+		visitor.visit(this);
 	}
 
 	RValueSpec toSpec() {
