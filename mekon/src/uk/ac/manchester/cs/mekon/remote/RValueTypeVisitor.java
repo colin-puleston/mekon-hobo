@@ -44,7 +44,7 @@ public abstract class RValueTypeVisitor {
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting value-types of category {@link RValueCategory.CONCEPT}.
+	 * visiting value-types of category {@link RValueCategory#CONCEPT}.
 	 *
 	 * @param valueType Value being visited.
 	 */
@@ -52,7 +52,7 @@ public abstract class RValueTypeVisitor {
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting value-types of category {@link RValueCategory.FRAME}.
+	 * visiting value-types of category {@link RValueCategory#FRAME}.
 	 *
 	 * @param valueType Value being visited.
 	 */
@@ -60,7 +60,7 @@ public abstract class RValueTypeVisitor {
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting value-types of category {@link RValueCategory.NUMBER}.
+	 * visiting value-types of category {@link RValueCategory#NUMBER}.
 	 *
 	 * @param valueType Value being visited.
 	 */
@@ -68,7 +68,7 @@ public abstract class RValueTypeVisitor {
 
 	/**
 	 * Method whose implementation defines actions to be performed on
-	 * visiting value-types of category {@link RValueCategory.STRING}.
+	 * visiting value-types of category {@link RValueCategory#STRING}.
 	 *
 	 * @param valueType Value being visited.
 	 */
