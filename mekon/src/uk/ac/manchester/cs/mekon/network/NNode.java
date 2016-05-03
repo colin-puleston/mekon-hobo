@@ -276,7 +276,9 @@ public class NNode extends NEntity {
 		this.cFrame = cFrame;
 	}
 
-	void setIFrame(IFrame iFrame) {
+	NNode(IFrame iFrame) {
+
+		this(iFrame.getType());
 
 		this.iFrame = iFrame;
 	}

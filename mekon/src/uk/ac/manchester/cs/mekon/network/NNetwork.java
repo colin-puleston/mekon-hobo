@@ -27,236 +27,175 @@ package uk.ac.manchester.cs.mekon.network;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.util.*;
 
 /**
- * Provides an intermediate network-based representation, which
- * provides a more malleable alternative to the standard MEKON
- * frames representation, for use by specific implementations
- * of {@link IReasoner} and {@link IMatcher}. The node/link
- * networks are generated from the corresponding frame/slot
- * networks.
+ * Provides an intermediate network-based representation, which provides
+ * a more malleable alternative to the standard MEKON frames representation,
+ * for use by specific implementations of {@link IReasoner} and {@link
+ * IMatcher}. The node/link  networks are generated from the corresponding
+ * frame/slot networks.
  *
  * @author Colin Puleston
  */
-class NNetwork {
+public class NNetwork {
 
 	private NNode rootNode;
 
-	private IFrameSlotRenderer iFrameSlotRenderer = new IFrameSlotRenderer();
-	private CFrameSlotRenderer cFrameSlotRenderer = new CFrameSlotRenderer();
-	private INumberSlotRenderer iNumberSlotRenderer = new INumberSlotRenderer();
+	private class Creator extends IFrameConverter<NNode, NFeature<?>> {
 
-	private Map<IFrame, NNode> nodesByFrame = new HashMap<IFrame, NNode>();
+		private abstract class NFeatureCreator
+									<V, F extends NFeature<V>, IV>
+									extends TypeISlotConverter<IV> {
 
-	private abstract class TypeSlotRenderer<V, F extends NFeature<V>, IV> {
+			protected void convert(NNode node, ISlot slot, List<IV> iValues) {
 
-		F render(NNode node, ISlot slot, List<IV> iValues) {
-
-			CIdentity slotId = slot.getType().getIdentity();
-
-			return render(node, slotId, slot, iValues);
-		}
-
-		void render(NNode node, CIdentity slotId, List<IV> iValues) {
-
-			render(node, slotId, null, iValues);
-		}
-
-		abstract V getValue(IV iValue);
-
-		abstract F createFeature(CIdentity id, ISlot slot);
-
-		abstract void addFeature(NNode node, F feature);
-
-		private F render(NNode node, CIdentity id, ISlot slot, List<IV> iValues) {
-
-			F feature = createFeature(id, slot);
-
-			for (IV iValue : iValues) {
-
-				feature.addValue(getValue(iValue));
+				addFeatureSet(node, slot, iValues);
 			}
 
-			addFeature(node, feature);
+			protected void convert(NNode node, CIdentity slotId, List<IV> iValues) {
 
-			return feature;
-		}
-	}
+				addFeature(node, slotId, null, iValues);
+			}
 
-	private abstract class FrameSlotRenderer<IV>
-								extends
-									TypeSlotRenderer<NNode, NLink, IV> {
+			void addFeatureSet(NNode node, ISlot slot, List<IV> iValues) {
 
-		NLink createFeature(CIdentity id, ISlot slot) {
+				addFeature(node, slot, iValues);
+			}
 
-			return new NLink(id, slot);
-		}
+			F addFeature(NNode node, ISlot slot, List<IV> iValues) {
 
-		void addFeature(NNode node, NLink feature) {
+				return addFeature(node, slot.getType().getIdentity(), slot, iValues);
+			}
 
-			node.addFeature(feature);
-		}
-	}
+			abstract V getValue(IV iValue);
 
-	private class IFrameSlotRenderer extends FrameSlotRenderer<IFrame> {
+			abstract F createFeature(CIdentity slotId, ISlot slot);
 
-		NLink render(NNode node, ISlot slot, List<IFrame> iValues) {
+			abstract void addFeature(NNode node, F feature);
 
-			List<IFrame> iConjunctionValues = new ArrayList<IFrame>();
+			private F addFeature(NNode node, CIdentity id, ISlot slot, List<IV> iValues) {
 
-			for (IFrame iValue : iValues) {
+				F feature = createFeature(id, slot);
 
-				if (iValue.getCategory().disjunction()) {
+				for (IV iValue : iValues) {
 
-					checkRenderDisjunction(node, slot, iValue);
+					feature.addValue(getValue(iValue));
 				}
-				else {
 
-					iConjunctionValues.add(iValue);
+				addFeature(node, feature);
+
+				return feature;
+			}
+		}
+
+		private abstract class NLinkCreator<IV>
+									extends
+										NFeatureCreator<NNode, NLink, IV> {
+
+			NLink createFeature(CIdentity id, ISlot slot) {
+
+				return new NLink(id, slot);
+			}
+
+			void addFeature(NNode node, NLink feature) {
+
+				node.addFeature(feature);
+			}
+		}
+
+		private class IFrameSlotsNLinkCreator extends NLinkCreator<IFrame> {
+
+			void addFeatureSet(NNode node, ISlot slot, List<IFrame> iValues) {
+
+				List<IFrame> iConjunctionValues = new ArrayList<IFrame>();
+
+				for (IFrame iValue : iValues) {
+
+					if (iValue.getCategory().disjunction()) {
+
+						checkRenderDisjunction(node, slot, iValue);
+					}
+					else {
+
+						iConjunctionValues.add(iValue);
+					}
+				}
+
+				addFeature(node, slot, iConjunctionValues);
+			}
+
+			NNode getValue(IFrame iValue) {
+
+				return getFrameConversion(iValue);
+			}
+
+			private void checkRenderDisjunction(NNode node, ISlot slot, IFrame iValue) {
+
+				List<IFrame> disjuncts = iValue.asDisjuncts();
+
+				if (!disjuncts.isEmpty()) {
+
+					addFeature(node, slot, disjuncts).setDisjunctionLink(true);
 				}
 			}
-
-			return super.render(node, slot, iConjunctionValues);
 		}
 
-		NNode getValue(IFrame iValue) {
+		private class CFrameSlotsNLinkCreator extends NLinkCreator<CFrame> {
 
-			return getNode(iValue);
-		}
+			NNode getValue(CFrame iValue) {
 
-		private void checkRenderDisjunction(NNode node, ISlot slot, IFrame iValue) {
+				NNode value = new NNode(iValue);
 
-			List<IFrame> disjuncts = iValue.asDisjuncts();
+				configureFrameConversionType(value, iValue);
 
-			if (!disjuncts.isEmpty()) {
-
-				NLink link = super.render(node, slot, disjuncts);
-
-				link.setDisjunctionLink(true);
+				return value;
 			}
 		}
-	}
 
-	private class CFrameSlotRenderer extends FrameSlotRenderer<CFrame> {
+		private class NNumberCreator
+							extends
+								NFeatureCreator<INumber, NNumber, INumber> {
 
-		NNode getValue(CFrame iValue) {
+			INumber getValue(INumber iValue) {
 
-			return createNode(iValue);
-		}
-	}
-
-	private class INumberSlotRenderer
-						extends
-							TypeSlotRenderer<INumber, NNumber, INumber> {
-
-		INumber getValue(INumber iValue) {
-
-			return iValue;
-		}
-
-		NNumber createFeature(CIdentity id, ISlot slot) {
-
-			return new NNumber(id, slot);
-		}
-
-		void addFeature(NNode node, NNumber feature) {
-
-			node.addFeature(feature);
-		}
-	}
-
-	private class ISlotRenderer extends ISlotValuesVisitor {
-
-		private ISlot slot;
-		private NNode node;
-
-		protected void visit(CFrame valueType, List<IFrame> values) {
-
-			iFrameSlotRenderer.render(node, slot, values);
-		}
-
-		protected void visit(CNumber valueType, List<INumber> values) {
-
-			iNumberSlotRenderer.render(node, slot, values);
-		}
-
-		protected void visit(CString valueType, List<IString> values) {
-		}
-
-		protected void visit(MFrame valueType, List<CFrame> values) {
-
-			cFrameSlotRenderer.render(node, slot, values);
-		}
-
-		ISlotRenderer(ISlot slot, NNode node) {
-
-			this.slot = slot;
-			this.node = node;
-
-			visit(slot);
-		}
-	}
-
-	private class CSlotValuesRenderer extends CValueVisitor {
-
-		private CSlotValues cSlotValues;
-		private CIdentity slotId;
-		private NNode node;
-
-		protected void visit(CFrame value) {
-
-			cFrameSlotRenderer.render(node, slotId, getValues(CFrame.class));
-		}
-
-		protected void visit(CNumber value) {
-
-			iNumberSlotRenderer.render(node, slotId, getCNumberValuesAsINumbers());
-		}
-
-		protected void visit(CString value) {
-		}
-
-		protected void visit(MFrame value) {
-
-			cFrameSlotRenderer.render(node, slotId, getMFrameValuesAsCFrames());
-		}
-
-		CSlotValuesRenderer(CSlotValues cSlotValues, CIdentity slotId, NNode node) {
-
-			this.cSlotValues = cSlotValues;
-			this.slotId = slotId;
-			this.node = node;
-
-			visit(cSlotValues.getValues(slotId).get(0));
-		}
-
-		private List<CFrame> getMFrameValuesAsCFrames() {
-
-			List<CFrame> cFrames = new ArrayList<CFrame>();
-
-			for (MFrame mFrame : getValues(MFrame.class)) {
-
-				cFrames.add(mFrame.getRootCFrame());
+				return iValue;
 			}
 
-			return cFrames;
-		}
+			NNumber createFeature(CIdentity id, ISlot slot) {
 
-		private List<INumber> getCNumberValuesAsINumbers() {
-
-			List<INumber> iNumbers = new ArrayList<INumber>();
-
-			for (CNumber cNumber : getValues(CNumber.class)) {
-
-				iNumbers.add(cNumber.asINumber());
+				return new NNumber(id, slot);
 			}
 
-			return iNumbers;
+			void addFeature(NNode node, NNumber feature) {
+
+				node.addFeature(feature);
+			}
 		}
 
-		private <V extends CValue<?>>List<V> getValues(Class<V> valueClass) {
+		protected TypeISlotConverter<IFrame> createIFrameSlotConverter() {
 
-			return cSlotValues.getValues(slotId, valueClass);
+			return new IFrameSlotsNLinkCreator();
+		}
+
+		protected TypeISlotConverter<CFrame> createCFrameSlotConverter() {
+
+			return new CFrameSlotsNLinkCreator();
+		}
+
+		protected TypeISlotConverter<INumber> createINumberSlotConverter() {
+
+			return new NNumberCreator();
+		}
+
+		protected TypeISlotConverter<IString> createIStringSlotConverter() {
+
+			return createTypeISlotNonConverter(IString.class);
+		}
+
+		protected NNode createUnconfiguredFrameConversion(IFrame frame) {
+
+			return new NNode(frame);
 		}
 	}
 
@@ -268,7 +207,7 @@ class NNetwork {
 	 */
 	public NNetwork(IFrame rootFrame) {
 
-		rootNode = getNode(rootFrame);
+		rootNode = new Creator().convert(rootFrame);
 	}
 
 	/**
@@ -279,59 +218,5 @@ class NNetwork {
 	public NNode getRootNode() {
 
 		return rootNode;
-	}
-
-	private NNode getNode(IFrame frame) {
-
-		NNode node = nodesByFrame.get(frame);
-
-		if (node == null) {
-
-			node = createNode(frame);
-
-			nodesByFrame.put(frame, node);
-			renderSlots(frame, node);
-		}
-
-		return node;
-	}
-
-	private NNode createNode(IFrame frame) {
-
-		NNode node = createNode(frame.getType());
-
-		node.setIFrame(frame);
-
-		return node;
-	}
-
-	private NNode createNode(CFrame cFrame) {
-
-		NNode node = new NNode(cFrame);
-
-		if (cFrame.getCategory().extension()) {
-
-			configureExtensionNode(node, cFrame);
-		}
-
-		return node;
-	}
-
-	private void configureExtensionNode(NNode node, CFrame cFrame) {
-
-		CSlotValues slotValues = cFrame.getSlotValues();
-
-		for (CIdentity slotId : slotValues.getSlotIdentities()) {
-
-			new CSlotValuesRenderer(slotValues, slotId, node);
-		}
-	}
-
-	private void renderSlots(IFrame frame, NNode node) {
-
-		for (ISlot slot : frame.getSlots().asList()) {
-
-			new ISlotRenderer(slot, node);
-		}
 	}
 }
