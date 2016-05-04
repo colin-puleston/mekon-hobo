@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class IFrameConverter<FC, SC> {
+public abstract class IFrameConverter<FTC, FC, SC> {
 
 	private TypeISlotConverter<IFrame> iFrameSlotConverter;
 	private TypeISlotConverter<CFrame> cFrameSlotConverter;
@@ -51,28 +51,36 @@ public abstract class IFrameConverter<FC, SC> {
 		/**
 		 * Converts specified slot together with specified set of slot-values.
 		 *
-		 * @param frameConversion Entity to which slot-conversions are to be added
+		 * @param frameConversion Frame-conversion to which slot-conversion
+		 * and value-conversions are to be added
 		 * @param slot Slot being converted
 		 * @param iValues Slot-values to be converted
 		 */
-		protected abstract void convert(FC frameConversion, ISlot slot, List<IV> iValues);
+		protected abstract void convertSlot(FC frameConversion, ISlot slot, List<IV> iValues);
 
 		/**
-		 * Converts specified slot together with specified set of slot-values.
+		 * Converts specified fixed-values for specified slot.
 		 *
-		 * @param frameConversion Entity to which slot-conversions are to be added
+		 * @param frameTypeConversion Frame-type-conversion to which value-conversions
+		 * are to be added
 		 * @param slotId Identity of slot being converted
 		 * @param iValues Slot-values to be converted
 		 */
-		protected abstract void convert(FC frameConversion, CIdentity slotId, List<IV> iValues);
+		protected abstract void convertFixedValues(
+									FTC frameTypeConversion,
+									CIdentity slotId,
+									List<IV> iValues);
 	}
 
 	private class TypeISlotNonConverter<IV> extends TypeISlotConverter<IV> {
 
-		protected void convert(FC frameConversion, ISlot slot, List<IV> iValues) {
+		protected void convertSlot(FC frameConversion, ISlot slot, List<IV> iValues) {
 		}
 
-		protected void convert(FC frameConversion, CIdentity slotId, List<IV> iValues) {
+		protected void convertFixedValues(
+							FTC frameTypeConversion,
+							CIdentity slotId,
+							List<IV> iValues) {
 		}
 	}
 
@@ -83,20 +91,22 @@ public abstract class IFrameConverter<FC, SC> {
 
 		protected void visit(CFrame valueType, List<IFrame> values) {
 
-			iFrameSlotConverter.convert(frameConversion, slot, values);
+			iFrameSlotConverter.convertSlot(frameConversion, slot, values);
 		}
 
 		protected void visit(CNumber valueType, List<INumber> values) {
 
-			iNumberSlotConverter.convert(frameConversion, slot, values);
+			iNumberSlotConverter.convertSlot(frameConversion, slot, values);
 		}
 
 		protected void visit(CString valueType, List<IString> values) {
+
+			iStringSlotConverter.convertSlot(frameConversion, slot, values);
 		}
 
 		protected void visit(MFrame valueType, List<CFrame> values) {
 
-			cFrameSlotConverter.convert(frameConversion, slot, values);
+			cFrameSlotConverter.convertSlot(frameConversion, slot, values);
 		}
 
 		ISlotConverter(ISlot slot, FC frameConversion) {
@@ -112,16 +122,24 @@ public abstract class IFrameConverter<FC, SC> {
 
 		private CSlotValues cSlotValues;
 		private CIdentity slotId;
-		private FC frameConversion;
+		private FTC frameTypeConversion;
 
 		protected void visit(CFrame value) {
 
-			cFrameSlotConverter.convert(frameConversion, slotId, getValues(CFrame.class));
+			cFrameSlotConverter
+				.convertFixedValues(
+					frameTypeConversion,
+					slotId,
+					getValues(CFrame.class));
 		}
 
 		protected void visit(CNumber value) {
 
-			iNumberSlotConverter.convert(frameConversion, slotId, getCNumberValuesAsINumbers());
+			iNumberSlotConverter
+				.convertFixedValues(
+					frameTypeConversion,
+					slotId,
+					getCNumberValuesAsINumbers());
 		}
 
 		protected void visit(CString value) {
@@ -129,14 +147,21 @@ public abstract class IFrameConverter<FC, SC> {
 
 		protected void visit(MFrame value) {
 
-			cFrameSlotConverter.convert(frameConversion, slotId, getMFrameValuesAsCFrames());
+			cFrameSlotConverter
+				.convertFixedValues(
+					frameTypeConversion,
+					slotId,
+					getMFrameValuesAsCFrames());
 		}
 
-		CSlotValuesConverter(CSlotValues cSlotValues, CIdentity slotId, FC frameConversion) {
+		CSlotValuesConverter(
+			CSlotValues cSlotValues,
+			CIdentity slotId,
+			FTC frameTypeConversion) {
 
 			this.cSlotValues = cSlotValues;
 			this.slotId = slotId;
-			this.frameConversion = frameConversion;
+			this.frameTypeConversion = frameTypeConversion;
 
 			visit(cSlotValues.getValues(slotId).get(0));
 		}
@@ -253,7 +278,7 @@ public abstract class IFrameConverter<FC, SC> {
 
 			frameConversions.put(frame, conversion);
 
-			configureFrameConversionType(conversion, frame.getType());
+			configureFrameConversionType(conversion, frame);
 			convertSlots(frame, conversion);
 		}
 
@@ -270,21 +295,38 @@ public abstract class IFrameConverter<FC, SC> {
 	protected abstract FC createUnconfiguredFrameConversion(IFrame frame);
 
 	/**
+	 * Provides the frame-type-conversion associated with the specified
+	 * frame-conversion.
+	 *
+	 * @param frameConversion Frame-conversion whose type-conversion is
+	 * required
+	 * @return Required frame-type-conversion
+	 */
+	protected abstract FTC getFrameTypeConversion(FC frameConversion);
+
+	/**
 	 * Performs any required frame-type related configurations for
 	 * a newly-created frame-conversion.
 	 *
 	 * @param conversion Newly-created frame-conversion
 	 * @return Type of converted frame
 	 */
-	protected void configureFrameConversionType(FC conversion, CFrame frameType) {
+	protected void configureFrameTypeConversion(FTC conversion, CFrame frameType) {
 
 		if (frameType.getCategory().extension()) {
 
-			configureExtensionFrameConversion(conversion, frameType);
+			configureExtensionFrameTypeConversion(conversion, frameType);
 		}
 	}
 
-	private void configureExtensionFrameConversion(FC conversion, CFrame frameType) {
+	private void configureFrameConversionType(FC conversion, IFrame frame) {
+
+		FTC typeConv = getFrameTypeConversion(conversion);
+
+		configureFrameTypeConversion(typeConv, frame.getType());
+	}
+
+	private void configureExtensionFrameTypeConversion(FTC conversion, CFrame frameType) {
 
 		CSlotValues slotValues = frameType.getSlotValues();
 

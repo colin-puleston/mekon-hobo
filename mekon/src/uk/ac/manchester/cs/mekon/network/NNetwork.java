@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.util.*;
  * Provides an intermediate network-based representation, which provides
  * a more malleable alternative to the standard MEKON frames representation,
  * for use by specific implementations of {@link IReasoner} and {@link
- * IMatcher}. The node/link  networks are generated from the corresponding
+ * IMatcher}. The node/link networks are generated from the corresponding
  * frame/slot networks.
  *
  * @author Colin Puleston
@@ -42,18 +42,18 @@ public class NNetwork {
 
 	private NNode rootNode;
 
-	private class Creator extends IFrameConverter<NNode, NFeature<?>> {
+	private class Creator extends IFrameConverter<NNode, NNode, NFeature<?>> {
 
 		private abstract class NFeatureCreator
 									<V, F extends NFeature<V>, IV>
 									extends TypeISlotConverter<IV> {
 
-			protected void convert(NNode node, ISlot slot, List<IV> iValues) {
+			protected void convertSlot(NNode node, ISlot slot, List<IV> iValues) {
 
 				addFeatureSet(node, slot, iValues);
 			}
 
-			protected void convert(NNode node, CIdentity slotId, List<IV> iValues) {
+			protected void convertFixedValues(NNode node, CIdentity slotId, List<IV> iValues) {
 
 				addFeature(node, slotId, null, iValues);
 			}
@@ -147,7 +147,7 @@ public class NNetwork {
 
 				NNode value = new NNode(iValue);
 
-				configureFrameConversionType(value, iValue);
+				configureFrameTypeConversion(value, iValue);
 
 				return value;
 			}
@@ -196,6 +196,11 @@ public class NNetwork {
 		protected NNode createUnconfiguredFrameConversion(IFrame frame) {
 
 			return new NNode(frame);
+		}
+
+		protected NNode getFrameTypeConversion(NNode frameConversion) {
+
+			return frameConversion;
 		}
 	}
 
