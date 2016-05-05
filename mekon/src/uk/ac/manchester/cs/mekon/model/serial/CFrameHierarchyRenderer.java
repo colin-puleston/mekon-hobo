@@ -30,7 +30,8 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renderer for the standard XML serialisation of a {@link CFrame}.
+ * Renderer for the standard XML serialisation of section of
+ * {@link CFrame}-hierarchy.
  *
  * @author Colin Puleston
  */
