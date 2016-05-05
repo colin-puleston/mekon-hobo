@@ -55,9 +55,11 @@ public interface IFrameEditor {
 
 	/**
 	 * Adds a new slot to the frame, where the slot is created by
-	 * directly instantiating the specified concept-level slot.
+	 * directly instantiating a copy of the specified concept-level
+	 * slot.
 	 *
-	 * @param slotType Concept-level slot to instantiate
+	 * @param slotType Concept-level slot whose copy is to be
+	 * instantiated
 	 * @return Created and added instance-level slot
 	 */
 	public ISlot addSlot(CSlot slotType);
