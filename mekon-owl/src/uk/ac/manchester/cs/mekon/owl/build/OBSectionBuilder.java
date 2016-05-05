@@ -263,11 +263,10 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
-	 * Builds or updates the model-section from the set of OWL
-	 * ontologies via the standard sanctioning mechanism.
+	 * Builds the model-section from the set of OWL ontologies via
+	 * the standard sanctioning mechanism.
 	 *
-	 * @param builder Builder for use in building/updating
-	 * model-section
+	 * @param builder Builder for use in building model-section
 	 */
 	public void build(CBuilder builder) {
 
