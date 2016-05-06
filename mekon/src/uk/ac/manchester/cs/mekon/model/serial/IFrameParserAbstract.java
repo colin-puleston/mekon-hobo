@@ -61,10 +61,11 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private List<IFrame> frames = new ArrayList<IFrame>();
 
+		private Map<String, IFrame> framesByXDocId;
+		private Map<String, XNode> frameNodesByXDocId = new HashMap<String, XNode>();
+
 		private KListMap<IFrame, SlotSpec<?>> frameSlots
 							= new KListMap<IFrame, SlotSpec<?>>();
-
-		private Map<Integer, IFrame> frameRefs = new HashMap<Integer, IFrame>();
 
 		private abstract class SlotSpec<V> {
 
@@ -303,9 +304,10 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 			}
 		}
 
-		OneTimeParser(XNode containerNode) {
+		OneTimeParser(XNode containerNode, Map<String, IFrame> framesByXDocId) {
 
 			this.containerNode = containerNode;
+			this.framesByXDocId = framesByXDocId;
 		}
 
 		IFrame parse() {
@@ -320,14 +322,26 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 		private IFrame resolveIFrame(XNode node) {
 
-			int refIndex = node.getInteger(IFRAME_REF_INDEX_ATTR, 0);
+			String xid = node.getString(IFRAME_XDOC_ID_REF_ATTR, null);
+			boolean tree = xid == null;
 
-			return refIndex == 0
-					? parseIFrameDirect(node)
-					: resolveIFrameIndirect(refIndex);
+			if (tree) {
+
+				xid = node.getString(IFRAME_XDOC_ID_ATTR);
+			}
+
+			IFrame frame = framesByXDocId.get(xid);
+
+			if (frame == null) {
+
+				frame = parseIFrame(tree ? node : getGraphFrameNode(xid));
+				framesByXDocId.put(xid, frame);
+			}
+
+			return frame;
 		}
 
-		private IFrame parseIFrameDirect(XNode node) {
+		private IFrame parseIFrame(XNode node) {
 
 			return node.hasChild(CFRAME_ID)
 					? parseAtomicIFrame(node)
@@ -357,25 +371,6 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 			}
 
 			return IFrame.createDisjunction(disjuncts);
-		}
-
-		private IFrame resolveIFrameIndirect(Integer refIndex) {
-
-			IFrame frame = frameRefs.get(refIndex);
-
-			if (frame == null) {
-
-				frame = parseIFrameIndirect(refIndex);
-
-				frameRefs.put(refIndex, frame);
-			}
-
-			return frame;
-		}
-
-		private IFrame parseIFrameIndirect(int refIndex) {
-
-			return parseIFrameDirect(getReferencedFrame(refIndex));
 		}
 
 		private INumber parseINumber(CNumber valueType, XNode node) {
@@ -557,21 +552,36 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 						+ " node");
 		}
 
-		private XNode getReferencedFrame(int refIndex) {
+		private XNode getGraphFrameNode(String xid) {
 
-			List<XNode> frames = containerNode.getChildren(IFRAME_ID);
+			XNode frameNode = getFrameNodesByXDocId().get(xid);
 
-			if (frames.size() >= refIndex) {
+			if (frameNode != null) {
 
-				return frames.get(refIndex);
+				return frameNode;
 			}
 
 			throw new XDocumentException(
-						"Invalid index for "
+						"Invalid reference for "
 						+ "\"" + IFRAME_ID + "\""
 						+ " node on "
 						+ "\"" + IGRAPH_ID + "\""
-						+ " node: " + refIndex);
+						+ " node: " + xid);
+		}
+
+		private Map<String, XNode> getFrameNodesByXDocId() {
+
+			if (frameNodesByXDocId.isEmpty()) {
+
+				for (XNode frameNode : containerNode.getChildren(IFRAME_ID)) {
+
+					String xid = frameNode.getString(IFRAME_XDOC_ID_ATTR);
+
+					frameNodesByXDocId.put(xid, frameNode);
+				}
+			}
+
+			return frameNodesByXDocId;
 		}
 	}
 
@@ -588,6 +598,21 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 	}
 
 	/**
+	 * Parses serialised frame from top-level element of specified
+	 * document.
+	 *
+	 * @param document Document containing serialised frame
+	 * @param framesByXDocId Map into which to write the document-specific
+	 * frame-identifiers corresponding to the generated component frames
+	 *
+	 * @return Generated frame
+	 */
+	public IFrame parse(XDocument document, Map<String, IFrame> framesByXDocId) {
+
+		return parseFromContainerNode(document.getRootNode(), framesByXDocId);
+	}
+
+	/**
 	 * Parses serialised frame from relevant child of specified
 	 * parent. This will be a node with either a "ITree" or "IGraph"
 	 * tag, depending on the format in which the frame is serialised.
@@ -598,6 +623,22 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 	public IFrame parse(XNode parentNode) {
 
 		return parseFromContainerNode(getContainerNode(parentNode));
+	}
+
+	/**
+	 * Parses serialised frame from relevant child of specified
+	 * parent. This will be a node with either a "ITree" or "IGraph"
+	 * tag, depending on the format in which the frame is serialised.
+	 *
+	 * @param parentNode Parent of relevant node
+	 * @param framesByXDocId Map into which to write the document-specific
+	 * frame-identifiers corresponding to the generated component frames
+	 *
+	 * @return Generated frame
+	 */
+	public IFrame parse(XNode parentNode, Map<String, IFrame> framesByXDocId) {
+
+		return parseFromContainerNode(getContainerNode(parentNode), framesByXDocId);
 	}
 
 	IFrameParserAbstract(CModel model, IFrameFunction frameFunction) {
@@ -627,7 +668,14 @@ public abstract class IFrameParserAbstract extends ISerialiser {
 
 	private IFrame parseFromContainerNode(XNode containerNode) {
 
-		return new OneTimeParser(containerNode).parse();
+		return parseFromContainerNode(containerNode, new HashMap<String, IFrame>());
+	}
+
+	private IFrame parseFromContainerNode(
+						XNode containerNode,
+						Map<String, IFrame> framesByXDocId) {
+
+		return new OneTimeParser(containerNode, framesByXDocId).parse();
 	}
 
 	private XNode getContainerNode(XNode parentNode) {

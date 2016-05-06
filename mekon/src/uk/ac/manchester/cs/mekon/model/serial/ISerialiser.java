@@ -42,7 +42,8 @@ abstract class ISerialiser extends FSerialiser {
 	static final String ISLOT_ID = "ISlot";
 	static final String IVALUES_ID = "IValues";
 
-	static final String IFRAME_REF_INDEX_ATTR = "refIndex";
+	static final String IFRAME_XDOC_ID_ATTR = "xid";
+	static final String IFRAME_XDOC_ID_REF_ATTR = "xidRef";
 	static final String NUMBER_TYPE_ATTR = "numberType";
 	static final String NUMBER_MIN_ATTR = "min";
 	static final String NUMBER_MAX_ATTR = "max";

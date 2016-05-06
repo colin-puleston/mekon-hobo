@@ -44,7 +44,7 @@ public class IFrameRenderer extends ISerialiser {
 	private class OneTimeRenderer {
 
 		private XNode containerNode;
-		private Map<IFrame, Integer> iFrameRefs = new HashMap<IFrame, Integer>();
+		private IFrameXDocIds iFrameXDocIds;
 
 		private class ISlotValueTypeRenderer extends CValueVisitor {
 
@@ -122,14 +122,15 @@ public class IFrameRenderer extends ISerialiser {
 			}
 		}
 
-		OneTimeRenderer(XNode containerNode) {
+		OneTimeRenderer(XNode containerNode, IFrameXDocIds iFrameXDocIds) {
 
 			this.containerNode = containerNode;
+			this.iFrameXDocIds = iFrameXDocIds;
 		}
 
 		void render(IFrame frame) {
 
-			renderAtomicIFrameDirect(frame, containerNode);
+			renderAtomicIFrame(frame, containerNode, true);
 		}
 
 		private void renderIFrame(IFrame frame, XNode parentNode) {
@@ -140,25 +141,30 @@ public class IFrameRenderer extends ISerialiser {
 			}
 			else {
 
-				renderAtomicIFrame(frame, parentNode);
+				renderAtomicIFrame(frame, parentNode, renderAsTree);
 			}
 		}
 
-		private void renderAtomicIFrame(IFrame frame, XNode parentNode) {
+		private void renderAtomicIFrame(IFrame frame, XNode parentNode, boolean direct) {
 
-			if (renderAsTree) {
+			IFrameXDocIds.Resolution xidRes = iFrameXDocIds.resolve(frame);
 
-				renderAtomicIFrameDirect(frame, parentNode);
+			if (direct) {
+
+				renderAtomicIFrameDirect(frame, parentNode, xidRes.getId());
 			}
 			else {
 
-				renderAtomicIFrameIndirect(frame, parentNode);
+				if (xidRes.newFrame()) {
+
+					renderAtomicIFrameIndirect(frame, parentNode, xidRes.getId());
+				}
 			}
 		}
 
-		private void renderAtomicIFrameDirect(IFrame frame, XNode parentNode) {
+		private void renderAtomicIFrameDirect(IFrame frame, XNode parentNode, String xid) {
 
-			XNode node = parentNode.addChild(IFRAME_ID);
+			XNode node = renderAtomicIFrameCommon(parentNode, xid, IFRAME_XDOC_ID_ATTR);
 
 			renderCFrame(frame.getType(), node);
 
@@ -171,11 +177,19 @@ public class IFrameRenderer extends ISerialiser {
 			}
 		}
 
-		private void renderAtomicIFrameIndirect(IFrame frame, XNode parentNode) {
+		private void renderAtomicIFrameIndirect(IFrame frame, XNode parentNode, String xid) {
+
+			renderAtomicIFrameCommon(parentNode, xid, IFRAME_XDOC_ID_REF_ATTR);
+			renderAtomicIFrameDirect(frame, containerNode, xid);
+		}
+
+		private XNode renderAtomicIFrameCommon(XNode parentNode, String xid, String xidTag) {
 
 			XNode node = parentNode.addChild(IFRAME_ID);
 
-			node.addValue(IFRAME_REF_INDEX_ATTR, resolveAtomicIFrameRef(frame));
+			node.addValue(xidTag, xid);
+
+			return node;
 		}
 
 		private void renderDisjunctionIFrame(IFrame frame, XNode parentNode) {
@@ -186,21 +200,6 @@ public class IFrameRenderer extends ISerialiser {
 
 				renderIFrame(disjunct, node);
 			}
-		}
-
-		private int resolveAtomicIFrameRef(IFrame frame) {
-
-			Integer refIndex = iFrameRefs.get(frame);
-
-			if (refIndex == null) {
-
-				refIndex = iFrameRefs.size() + 1;
-
-				iFrameRefs.put(frame, refIndex);
-				renderAtomicIFrameDirect(frame, containerNode);
-			}
-
-			return refIndex;
 		}
 
 		private void renderCFrame(CFrame frame, XNode parentNode) {
@@ -348,11 +347,21 @@ public class IFrameRenderer extends ISerialiser {
 	 */
 	public XDocument render(IFrame frame) {
 
-		XDocument document = new XDocument(getTopLevelId());
+		return renderDocument(frame, new IFrameXDocIds());
+	}
 
-		doRender(frame, document.getRootNode());
+	/**
+	 * Renders the specified frame to produce an XML document.
+	 *
+	 * @param frame Frame to render
+	 * @return Rendered document
+	 * @param frameXDocIds Set of pre-assigned frame-identifiers to use as
+	 * document-specific identifiers for renderings of any relevant component
+	 * frames
+	 */
+	public XDocument render(IFrame frame, Map<IFrame, String> frameXDocIds) {
 
-		return document;
+		return renderDocument(frame, new IFrameXDocIds(frameXDocIds));
 	}
 
 	/**
@@ -363,15 +372,43 @@ public class IFrameRenderer extends ISerialiser {
 	 */
 	public void render(IFrame frame, XNode parentNode) {
 
-		doRender(frame, parentNode.addChild(getTopLevelId()));
+		renderToChild(frame, parentNode, new IFrameXDocIds());
 	}
 
-	private void doRender(IFrame frame, XNode containerNode) {
+	/**
+	 * Renders the specified frame to the specified parent-node.
+	 *
+	 * @param frame Frame to render
+	 * @param parentNode Parent-node for rendering
+	 * @param frameXDocIds Set of pre-assigned frame-identifiers to use as
+	 * document-specific identifiers for renderings of any relevant component
+	 * frames
+	 */
+	public void render(IFrame frame, XNode parentNode, Map<IFrame, String> frameXDocIds) {
+
+		renderToChild(frame, parentNode, new IFrameXDocIds(frameXDocIds));
+	}
+
+	private XDocument renderDocument(IFrame frame, IFrameXDocIds frameXDocIds) {
+
+		XDocument document = new XDocument(getTopLevelId());
+
+		render(frame, document.getRootNode(), frameXDocIds);
+
+		return document;
+	}
+
+	private void renderToChild(IFrame frame, XNode parentNode, IFrameXDocIds frameXDocIds) {
+
+		render(frame, parentNode.addChild(getTopLevelId()), frameXDocIds);
+	}
+
+	private void render(IFrame frame, XNode containerNode, IFrameXDocIds frameXDocIds) {
 
 		checkAtomicTopLevelFrame(frame);
 		checkNonCyclicIfRenderingAsTree(frame);
 
-		new OneTimeRenderer(containerNode).render(frame);
+		new OneTimeRenderer(containerNode, new IFrameXDocIds()).render(frame);
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {
