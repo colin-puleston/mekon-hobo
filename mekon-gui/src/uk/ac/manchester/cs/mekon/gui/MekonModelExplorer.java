@@ -47,16 +47,6 @@ public class MekonModelExplorer extends GFrame {
 	static private final int FRAME_WIDTH = 900;
 	static private final int FRAME_HEIGHT = 700;
 
-	static public void main(String[] args) {
-
-		new MekonModelExplorer();
-	}
-
-	static String getSystemTitle(String title) {
-
-		return SYSTEM_TITLE + ": " + title;
-	}
-
 	static private class Initialiser {
 
 		private ModelFramesPanel modelPanel;
@@ -132,6 +122,16 @@ public class MekonModelExplorer extends GFrame {
 
 			this.model = model;
 		}
+	}
+
+	static public void main(String[] args) {
+
+		new MekonModelExplorer();
+	}
+
+	static String getSystemTitle(String title) {
+
+		return SYSTEM_TITLE + ": " + title;
 	}
 
 	public MekonModelExplorer() {
