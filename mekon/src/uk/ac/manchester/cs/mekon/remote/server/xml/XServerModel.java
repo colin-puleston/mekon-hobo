@@ -48,17 +48,27 @@ public class XServerModel {
 	/**
 	 * Constructor.
 	 *
-	 * @param hierarchy Representation of concept-level frames hierarchy
-	 * present on the server
+	 * @param cBuilder Builder to use in creating frames model
 	 */
 	public XServerModel(CBuilder cBuilder) {
 
-		cBuilder.setAutoUpdate(true);
+		this(cBuilder.build(), cBuilder);
+	}
 
-		cModel = cBuilder.build();
+	/**
+	 * Constructor.
+	 *
+	 * @param cModel frames model
+	 * @param cBuilder Builder that was used to create frames model
+	 */
+	public XServerModel(CModel cModel, CBuilder cBuilder) {
+
+		this.cModel = cModel;
+
 		iFrameParser = new IFrameParser(cModel, IFrameFunction.ASSERTION);
 
 		iFrameRenderer.setSchemaRender(ISchemaRender.FULL);
+		cBuilder.setAutoUpdate(true);
 	}
 
 	/**
