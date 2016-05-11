@@ -210,7 +210,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 	private DCustomMatcher createCustomMatcher(DModel model) {
 
 		IMatcher core = new IDirectMatcher();
-		DCustomMatcher custom = new DCustomMatcher(model, core);
+		DCustomMatcher custom = new DCustomMatcher(core);
 
 		custom.addCustomiser(createCustomiser(model, custom));
 

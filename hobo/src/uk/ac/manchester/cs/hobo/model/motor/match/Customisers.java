@@ -37,15 +37,8 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 class Customisers {
 
-	private IFreeInstances freeInstances;
-
 	private List<DMatcherCustomiser<?>> customisers
 				= new ArrayList<DMatcherCustomiser<?>>();
-
-	Customisers(DModel model) {
-
-		freeInstances = new IFreeInstances(model.getCModel());
-	}
 
 	void add(DMatcherCustomiser<?> customiser) {
 
@@ -62,7 +55,7 @@ class Customisers {
 
 	IFrame preProcess(IFrame instance) {
 
-		instance = freeInstances.createFreeCopy(instance);
+		instance = IFreeInstantiator.get().createFreeCopy(instance);
 
 		for (DMatcherCustomiser<?> customiser : filterCustomisers(instance)) {
 

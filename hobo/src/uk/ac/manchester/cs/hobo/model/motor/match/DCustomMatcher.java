@@ -30,8 +30,6 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
 
-import uk.ac.manchester.cs.hobo.model.*;
-
 /**
  * Implementation of the {@link IMatcher} interface that enables
  * customisation of the matching mechanisms provided by a
@@ -50,17 +48,14 @@ import uk.ac.manchester.cs.hobo.model.*;
 public class DCustomMatcher implements IMatcher {
 
 	private IMatcher coreMatcher;
-	private Customisers customisers;
+	private Customisers customisers = new Customisers();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param model Relevant direct model
 	 * @param coreMatcher Provider of basic matching mechanisms
 	 */
-	public DCustomMatcher(DModel model, IMatcher coreMatcher) {
-
-		customisers = new Customisers(model);
+	public DCustomMatcher(IMatcher coreMatcher) {
 
 		this.coreMatcher = coreMatcher;
 	}

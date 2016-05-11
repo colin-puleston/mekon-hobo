@@ -14,7 +14,6 @@ class HoursPerWeekAggregator
 			DMatchAggregator<Citizen, Job, Job, Integer> {
 
 	private DModel model;
-	private IFreeInstances freeInstances;
 
 	protected Class<Citizen> getMatchingClass() {
 
@@ -45,16 +44,16 @@ class HoursPerWeekAggregator
 		super(model, matcher);
 
 		this.model = model;
-
-		freeInstances = new IFreeInstances(model.getCModel());
 	}
 
 	private Job copyJob(Job job) {
 
-		IFrame frame = job.getFrame();
-		IFrame copyFrame = freeInstances.createFreeCopy(frame);
+		return model.getDObject(copyFrame(job.getFrame()), Job.class);
+	}
 
-		return model.getDObject(copyFrame, Job.class);
+	private IFrame copyFrame(IFrame frame) {
+
+		return IFreeInstantiator.get().createFreeCopy(frame);
 	}
 }
 
