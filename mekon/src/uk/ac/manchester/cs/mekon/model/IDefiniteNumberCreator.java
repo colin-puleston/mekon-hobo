@@ -157,7 +157,7 @@ class IDefiniteNumberCreator {
 		if (creator == null) {
 
 			throw new KAccessException(
-						"Cannot create INumber for value-type: "
+						"Cannot create INumber for number-type: "
 						+ numberType);
 		}
 

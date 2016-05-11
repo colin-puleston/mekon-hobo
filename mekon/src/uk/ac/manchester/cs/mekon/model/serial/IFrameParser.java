@@ -503,7 +503,7 @@ public class IFrameParser extends ISerialiser {
 				max = parseDefiniteINumber(numberType, node, NUMBER_MAX_ATTR);
 			}
 
-			return CNumber.range(min, max);
+			return CNumber.range(numberType, min, max);
 		}
 
 		private void parseISlot(IFrame container, XNode slotNode) {

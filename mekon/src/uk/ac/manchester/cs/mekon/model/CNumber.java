@@ -121,16 +121,23 @@ public class CNumber extends CDataValue<INumber> {
 	/**
 	 * Creates a number-type with the specified limits.
 	 *
+	 * @param numberType Relevant number-type
 	 * @param min Minimnum value for number-type
 	 * @param max Maximnum value for number-type
 	 * @return Created
-	 * @throws KModelException if minimnum value is greater than
-	 * maximnum value, or if minimnum and maximnum values have
-	 * incompatible number-types
+	 * @throws KModelException if minimnum value is greater than maximnum
+	 * value, or if minimnum and maximnum values have incompatible
+	 * number-types
 	 */
-	static public CNumber range(INumber min, INumber max) {
+	static public CNumber range(
+							Class<? extends Number> numberType,
+							INumber min,
+							INumber max) {
 
-		return new CNumber(getRangeNumberType(min, max), min, max);
+		checkValidLimit(numberType, min);
+		checkValidLimit(numberType, max);
+
+		return new CNumber(numberType, min, max);
 	}
 
 	/**
@@ -321,25 +328,15 @@ public class CNumber extends CDataValue<INumber> {
 		return limit != null ? new INumber(limit) : infinity;
 	}
 
-	static private Class<? extends Number> getRangeNumberType(INumber min, INumber max) {
+	static private void checkValidLimit(Class<? extends Number> numberType, INumber limit) {
 
-		Class<? extends Number> minType = min.getNumberType();
-		Class<? extends Number> maxType = max.getNumberType();
+		if (!limit.infinite() && limit.getNumberType() != numberType) {
 
-		if (minType == Number.class) {
-
-			return maxType;
+			throw new KModelException(
+						"Limit not compatible with number-type: "
+						+ "number-type = " + numberType
+						+ ", limit = " + limit);
 		}
-
-		if (maxType == Number.class || minType == maxType) {
-
-			return minType;
-		}
-
-		throw new KModelException(
-					"Incompatible numeric limit types: "
-					+ "minimum-type = " + minType
-					+ ", maximum-type = " + maxType);
 	}
 
 	private Class<? extends Number> numberType;
