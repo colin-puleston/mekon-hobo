@@ -32,6 +32,9 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
  */
 class ZCModelAccessorImpl extends ZCModelAccessor {
 
+	private IFreeInstantiator freeInstantiator = new IFreeInstantiatorImpl();
+	private IRelaxedInstantiator relaxedInstantiator = new IRelaxedInstantiatorImpl();
+
 	public CModel createModel() {
 
 		return new CModel();
@@ -52,9 +55,14 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 		return model.getIEditor();
 	}
 
-	public IFreeInstantiator getFreeInstantiator(CModel model) {
+	public IFreeInstantiator getFreeInstantiator() {
 
-		return new IFreeInstantiatorImpl(model);
+		return freeInstantiator;
+	}
+
+	public IRelaxedInstantiator getRelaxedInstantiator() {
+
+		return relaxedInstantiator;
 	}
 
 	public void setMappedObject(IFrame frame, Object mappedObject) {

@@ -43,9 +43,53 @@ public abstract class RClientModel {
 
 	private class Reasoner implements IReasoner {
 
+		private Initialiser initialiser = new Initialiser();
+		private Updater updater = new Updater();
+
+		private boolean processing = false;
+
+		private abstract class Processor {
+
+			void checkProcess(IEditor iEditor, IFrame frame) {
+
+				if (!processing) {
+
+					processing = true;
+					process(iEditor, frame);
+					processing = false;
+				}
+			}
+
+			abstract RUpdates processOnServer(IFrame frame);
+
+			private void process(IEditor iEditor, IFrame frame) {
+
+				IFrame root = findRootFrame(frame);
+				RUpdates updates = processOnServer(root);
+
+				new NetworkAligner(iEditor, updates).align(root);
+			}
+		}
+
+		private class Initialiser extends Processor {
+
+			RUpdates processOnServer(IFrame frame) {
+
+				return initialiseAssertionOnServer(frame);
+			}
+		}
+
+		private class Updater extends Processor {
+
+			RUpdates processOnServer(IFrame frame) {
+
+				return updateAssertionOnServer(frame);
+			}
+		}
+
 		public void initialiseFrame(IEditor iEditor, IFrame frame) {
 
-			updateNetwork(iEditor, frame);
+			initialiser.checkProcess(iEditor, frame);
 		}
 
 		public Set<IUpdateOp> updateFrame(
@@ -53,7 +97,7 @@ public abstract class RClientModel {
 								IFrame frame,
 								Set<IUpdateOp> ops) {
 
-			updateNetwork(iEditor, frame);
+			updater.checkProcess(iEditor, frame);
 
 			return Collections.<IUpdateOp>emptySet();
 		}
@@ -81,13 +125,22 @@ public abstract class RClientModel {
 	}
 
 	/**
+	 * Sends a newly-created instance-level frame to be initialised on the
+	 * server.
+	 *
+	 * @param frame Relevant frame
+	 * @return Results of initialisation process
+	 */
+	protected abstract RUpdates initialiseAssertionOnServer(IFrame rootFrame);
+
+	/**
 	 * Sends an instance-level frame/slot network to be automatically
 	 * updated on the server.
 	 *
 	 * @param rootFrame Root-frame of frame/slot network
 	 * @return Results of update process
 	 */
-	protected abstract RUpdates updateOnServer(IFrame rootFrame);
+	protected abstract RUpdates updateAssertionOnServer(IFrame rootFrame);
 
 	private CModel buildCModel(CFrameHierarchy hierarchy) {
 
@@ -97,14 +150,6 @@ public abstract class RClientModel {
 		bldr.addSectionBuilder(new SectionBuilder(hierarchy, reasoner));
 
 		return bldr.build();
-	}
-
-	private void updateNetwork(IEditor iEditor, IFrame frame) {
-
-		IFrame root = findRootFrame(frame);
-		RUpdates update = updateOnServer(root);
-
-		new Updater(iEditor, update).update(root);
 	}
 
 	private IFrame findRootFrame(IFrame start) {

@@ -41,7 +41,7 @@ class IFrameCopier extends IFrameCopierAbstract {
 
 	ISlot addSlot(IFrame container, CSlot slotType) {
 
-		return container.addSlotInternal(slotType, false);
+		return container.addSlotInternal(slotType);
 	}
 
 	boolean freeInstance() {

@@ -36,6 +36,9 @@ import uk.ac.manchester.cs.mekon.*;
  */
 public class CNumber extends CDataValue<INumber> {
 
+	static private Map<Class<? extends Number>, CNumber> unconstraineds
+							= new HashMap<Class<? extends Number>, CNumber>();
+
 	/**
 	 * Represents an unconstrained integer-type.
 	 */
@@ -55,6 +58,17 @@ public class CNumber extends CDataValue<INumber> {
 	 * Represents an unconstrained double-type.
 	 */
 	static public final CNumber DOUBLE = new CNumber(Double.class);
+
+	/**
+	 * Provides an unconstrained numeric-type.
+	 *
+	 * @param numberType Relevant number-type
+	 * @return Unconstrained numeric-type
+	 */
+	static public CNumber unconstrained(Class<? extends Number> numberType) {
+
+		return unconstraineds.get(numberType);
+	}
 
 	/**
 	 * Creates an integer-type with the specified limits.
@@ -576,6 +590,16 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
+	 * Provides the unconstrained version of this numeric-type.
+	 *
+	 * @return Unconstrained version of this numeric-type
+	 */
+	public CNumber getUnconstrained() {
+
+		return unconstraineds.get(numberType);
+	}
+
+	/**
 	 * Provides an instance-level representation of this numeric-type.
 	 * If the numeric-type represents an exact value (see {@link
 	 * #exactValue}) then the returned object will represent that
@@ -587,11 +611,6 @@ public class CNumber extends CDataValue<INumber> {
 	public INumber asINumber() {
 
 		return exactValue() ? min : new INumber(this);
-	}
-
-	CNumber(Class<? extends Number> numberType) {
-
-		this(numberType, INumber.MINUS_INFINITY, INumber.PLUS_INFINITY);
 	}
 
 	CNumber(Class<? extends Number> numberType, INumber min, INumber max) {
@@ -638,6 +657,13 @@ public class CNumber extends CDataValue<INumber> {
 		}
 
 		return limits;
+	}
+
+	private CNumber(Class<? extends Number> numberType) {
+
+		this(numberType, INumber.MINUS_INFINITY, INumber.PLUS_INFINITY);
+
+		unconstraineds.put(numberType, this);
 	}
 
 	private CNumber createCNumber(INumber min, INumber max) {

@@ -45,44 +45,51 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
  * that need to manipulate  their instances in a way that (a) is
  * outside the general schema imposed by the model, and/or (b) does not
  * incur the additional, and unneccesary overheads of the reasoning
- * mechanisms kicking in as updates are made.
+ * mechanisms kicking in as updates are made. XXX
  *
  * @author Colin Puleston
  */
-public class IFreeInstances {
-
-	private IFreeInstantiator instantiator;
+public abstract class IRelaxedInstantiator {
 
 	/**
-	 * Constructor.
-	 *
-	 * @param model Relevant model
+	 * Provides a relaxed-instantiator object that is applicable to
+	 * any model.
 	 */
-	public IFreeInstances(CModel model) {
+	static public IRelaxedInstantiator get() {
 
-		instantiator = ZCModelAccessor.get().getFreeInstantiator(model);
+		return ZCModelAccessor.get().getRelaxedInstantiator();
 	}
 
 	/**
-	 * Generates a free-instance version of the specified source
-	 * instance.
+	 * Creates a frame that will be part of a free-instance.
 	 *
-	 * @param sourceInstance Instance of which free-instance version
-	 * is required
-	 * @return Generated free-instance
+	 * @param type Type of frame to create
+	 * @param function Function of frame to create
+	 * @return Created free-instance frame
 	 */
-	public IFrame createFreeCopy(IFrame sourceInstance) {
-
-		return instantiator.createFreeCopy(sourceInstance);
-	}
+	public abstract IFrame startInstantiation(CFrame type, IFrameFunction function);
 
 	/**
-	 * Provides an object for instantiating free-instances.
+	 * Creates a free-instance-style {@link IFrame}-valued slot and adds
+	 * it to the specified frame.
 	 *
-	 * @return Generated Free-instantiator object
+	 * @param container Frame to which slot is to be added
+	 * @param slotTypeId Identity of slot-type for slot to be created
+	 * @param valueType Value-type for slot to be created
+	 * @return Created and added slot XXX
 	 */
-	public IFreeInstantiator getInstantiator() {
+	public abstract ISlot addSlot(
+							IFrame container,
+							CIdentity slotTypeId,
+							CValue<?> valueType,
+							CCardinality cardinality,
+							IEditability editability);
 
-		return instantiator;
-	}
+	/**
+	 * Performs the required instantiation-completion operations for a
+	 * free-instance frame, after all slots have been added.
+	 *
+	 * @param frame Relevant free-instance frame
+	 */
+	public abstract void completeInstantiation(IFrame frame);
 }

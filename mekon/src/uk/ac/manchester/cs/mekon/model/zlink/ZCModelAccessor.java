@@ -103,7 +103,15 @@ public abstract class ZCModelAccessor {
 	 * @param model Relevant model
 	 * @return Free-instantiator object for model
 	 */
-	public abstract IFreeInstantiator getFreeInstantiator(CModel model);
+	public abstract IFreeInstantiator getFreeInstantiator();
+
+	/**
+	 * Provides a relaxed-instantiator object that is applicable to
+	 * any model.
+	 *
+	 * @return Relaxed-instantiator object for any model
+	 */
+	public abstract IRelaxedInstantiator getRelaxedInstantiator();
 
 	/**
 	 * Maps an object from an external domain-specific Object Model

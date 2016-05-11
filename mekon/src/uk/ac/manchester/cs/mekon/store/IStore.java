@@ -75,7 +75,6 @@ public class IStore {
 	}
 
 	private CModel model;
-	private IFreeInstantiator freeInstantiator;
 
 	private InstanceFileStore fileStore;
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
@@ -107,7 +106,7 @@ public class IStore {
 	 */
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
-		instance = deriveFreeInstantiation(instance);
+		instance = createFreeCopy(instance);
 
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
@@ -186,7 +185,7 @@ public class IStore {
 	 */
 	public synchronized IMatches match(IFrame query) {
 
-		query = deriveFreeInstantiation(query);
+		query = createFreeCopy(query);
 
 		IMatches matches = getMatcher(query).match(query);
 
@@ -205,8 +204,8 @@ public class IStore {
 	 */
 	public synchronized boolean matches(IFrame query, IFrame instance) {
 
-		query = deriveFreeInstantiation(query);
-		instance = deriveFreeInstantiation(instance);
+		query = createFreeCopy(query);
+		instance = createFreeCopy(instance);
 
 		IMatcher matcher = getMatcher(query);
 
@@ -222,7 +221,6 @@ public class IStore {
 
 		this.model = model;
 
-		freeInstantiator = new IFreeInstances(model).getInstantiator();
 		fileStore = new InstanceFileStore(model, this);
 	}
 
@@ -343,8 +341,8 @@ public class IStore {
 		return defaultMatcher;
 	}
 
-	private IFrame deriveFreeInstantiation(IFrame instance) {
+	private IFrame createFreeCopy(IFrame instance) {
 
-		return freeInstantiator.createFreeCopy(instance);
+		return IFreeInstantiator.get().createFreeCopy(instance);
 	}
 }

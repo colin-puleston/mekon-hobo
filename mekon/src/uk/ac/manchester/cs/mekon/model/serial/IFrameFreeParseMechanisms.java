@@ -28,29 +28,20 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
- * Parser for the standard XML serialisation of {@link IFrame}
- * objects that produces a "free" instantiation of the frame
- * (see {@link IFreeInstances}).
- *
  * @author Colin Puleston
  */
-public class IFrameFreeParser extends IFrameParserAbstract {
+class IFrameFreeParseMechanisms extends IFrameParseMechanisms {
 
-	private IFreeInstantiator instantiator;
+	static final IFrameFreeParseMechanisms SINGLETON = new IFrameFreeParseMechanisms();
 
-	/**
-	 * Constructor
-	 *
-	 * @param model Relevant model
-	 * @param frameFunction Function of frames to be parsed
-	 */
-	public IFrameFreeParser(CModel model, IFrameFunction frameFunction) {
+	private IFreeInstantiator instantiator = IFreeInstantiator.get();
 
-		super(model, frameFunction);
+	ISchemaParse getSchemaParse() {
 
-		instantiator = new IFreeInstances(model).getInstantiator();
+		return ISchemaParse.FREE;
 	}
 
 	IFrame instantiateFrame(CFrame type, IFrameFunction function) {
@@ -58,32 +49,13 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 		return instantiator.startInstantiation(type, function);
 	}
 
-	ISlot checkResolveIFrameSlot(IFrame container, CIdentity slotId) {
+	ISlot checkResolveSlot(IFrameParserSlotSpec spec) {
 
-		return instantiator.addIFrameSlot(container, slotId);
-	}
-
-	ISlot checkResolveINumberSlot(
-				IFrame container,
-				CIdentity slotId,
-				Class<? extends Number> numberType) {
-
-		if (numberType == null) {
-
-			return null;
-		}
-
-		return instantiator.addINumberSlot(container, slotId, numberType);
-	}
-
-	ISlot checkResolveIStringSlot(IFrame container, CIdentity slotId) {
-
-		return instantiator.addIStringSlot(container, slotId);
-	}
-
-	ISlot checkResolveCFrameSlot(IFrame container, CIdentity slotId) {
-
-		return instantiator.addCFrameSlot(container, slotId);
+		return instantiator
+				.addSlot(
+					spec.getContainer(),
+					spec.getSlotId(),
+					spec.getDefaultValueType());
 	}
 
 	void checkUpdateFrameSlotSets(List<IFrame> frames) {
@@ -92,5 +64,8 @@ public class IFrameFreeParser extends IFrameParserAbstract {
 	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
 
 		instantiator.completeInstantiation(rootFrame);
+	}
+
+	private IFrameFreeParseMechanisms() {
 	}
 }

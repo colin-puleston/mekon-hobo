@@ -44,16 +44,26 @@ class SectionBuilder implements CSectionBuilder {
 
 			this.builder = builder;
 
-			addSubTree(hierarchy.getRootFrameId());
+			addSubTree(builder.getRootFrame());
 		}
 
-		private CFrame addSubTree(CIdentity subRootId) {
+		private void addSubTree(CFrame subRoot) {
 
-			CFrame subRoot = addFrame(subRootId);
-
-			for (CIdentity subId : hierarchy.getSubFrameIds(subRootId)) {
+			for (CIdentity subId : hierarchy.getSubFrameIds(subRoot.getIdentity())) {
 
 				addSubFrame(subRoot, checkAddSubTree(subId));
+			}
+		}
+
+		private CFrame checkAddSubTree(CIdentity subRootId) {
+
+			CFrame subRoot = builder.getFrames().getOrNull(subRootId);
+
+			if (subRoot == null) {
+
+				subRoot = addFrame(subRootId);
+
+				addSubTree(subRoot);
 			}
 
 			return subRoot;
@@ -68,16 +78,9 @@ class SectionBuilder implements CSectionBuilder {
 			return frame;
 		}
 
-		private CFrame checkAddSubTree(CIdentity subRootId) {
-
-			CFrame subRoot = builder.getFrames().getOrNull(subRootId);
-
-			return subRoot != null ? subRoot : addSubTree(subRootId);
-		}
-
 		private void addSubFrame(CFrame sup, CFrame sub) {
 
-			builder.getFrameEditor(sub).addSuper(sub);
+			builder.getFrameEditor(sub).addSuper(sup);
 		}
 	}
 

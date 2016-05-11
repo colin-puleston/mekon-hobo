@@ -24,77 +24,52 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
  */
-class IFreeInstantiatorImpl implements IFreeInstantiator {
+class IFreeInstantiatorImpl extends IFreeInstantiator {
 
-	static private Map<Class<? extends Number>, CNumber> numberTypes
-						= new HashMap<Class<? extends Number>, CNumber>();
+	private FreeValueTypes freeValueTypes = new FreeValueTypes();
 
-	static {
+	private class FreeValueTypes extends CValueVisitor {
 
-		numberTypes.put(Integer.class, CNumber.INTEGER);
-		numberTypes.put(Long.class, CNumber.LONG);
-		numberTypes.put(Float.class, CNumber.FLOAT);
-		numberTypes.put(Double.class, CNumber.DOUBLE);
-	}
-
-	private CFrame rootFrame;
-
-	private class SlotAdder extends CValueVisitor {
-
-		private IFrame container;
-		private CIdentity slotTypeId;
-		private CValue<?> valueType;
-
-		private ISlot slot = null;
+		private CValue<?> freeValueType;
 
 		protected void visit(CFrame value) {
 
-			slot = addIFrameSlot(container, slotTypeId);
+			freeValueType = value.getModel().getRootFrame();
 		}
 
 		protected void visit(CNumber value) {
 
-			slot = addINumberSlot(container, slotTypeId, value.getNumberType());
+			freeValueType = value.getUnconstrained();
 		}
 
 		protected void visit(CString value) {
 
-			slot = addIStringSlot(container, slotTypeId);
+			freeValueType = value;
 		}
 
 		protected void visit(MFrame value) {
 
-			slot = addCFrameSlot(container, slotTypeId);
+			freeValueType = value.getRootCFrame().getModel().getRootFrame().getType();
 		}
 
-		SlotAdder(IFrame container, CSlot slotType) {
+		CValue<?> get(CValue<?> templateValueType) {
 
-			this.container = container;
+			visit(templateValueType);
 
-			slotTypeId = slotType.getIdentity();
-			valueType = slotType.getValueType();
-		}
-
-		ISlot add() {
-
-			visit(valueType);
-
-			return slot;
+			return freeValueType;
 		}
 	}
 
-	private class Deriver extends IFrameCopierAbstract {
+	private class OneTimeInstantiator extends IFrameCopierAbstract {
 
 		ISlot addSlot(IFrame container, CSlot slotType) {
 
-			return new SlotAdder(container, slotType).add();
+			return addFreeSlot(container, slotType.getIdentity(), slotType.getValueType());
 		}
 
 		boolean freeInstance() {
@@ -108,27 +83,12 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 		return new IFrame(type, function);
 	}
 
-	public ISlot addIFrameSlot(IFrame container, CIdentity slotTypeId) {
-
-		return addSlot(container, slotTypeId, rootFrame);
-	}
-
-	public ISlot addINumberSlot(
+	public ISlot addSlot(
 					IFrame container,
 					CIdentity slotTypeId,
-					Class<? extends Number> numberType) {
+					CValue<?> templateValueType) {
 
-		return addSlot(container, slotTypeId, numberTypes.get(numberType));
-	}
-
-	public ISlot addIStringSlot(IFrame container, CIdentity slotTypeId) {
-
-		return addSlot(container, slotTypeId, CString.SINGLETON);
-	}
-
-	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId) {
-
-		return addSlot(container, slotTypeId, rootFrame.getType());
+		return addFreeSlot(container, slotTypeId, templateValueType);
 	}
 
 	public void completeInstantiation(IFrame frame) {
@@ -138,36 +98,26 @@ class IFreeInstantiatorImpl implements IFreeInstantiator {
 
 	public IFrame createFreeCopy(IFrame sourceInstance) {
 
-		return new Deriver().copy(sourceInstance);
+		return new OneTimeInstantiator().copy(sourceInstance);
 	}
 
-	IFreeInstantiatorImpl(CModel model) {
+	private ISlot addFreeSlot(IFrame container, CIdentity id, CValue<?> templateValueType) {
 
-		rootFrame = model.getRootFrame();
+		return container.addFreeSlot(createFreeSlotType(container, id, templateValueType));
 	}
 
-	private ISlot addSlot(
-					IFrame container,
-					CIdentity slotTypeId,
-					CValue<?> valueType) {
+	private CSlot createFreeSlotType(
+						IFrame container,
+						CIdentity id,
+						CValue<?> templateValueType) {
 
 		CFrame contType = container.getType();
-		CSlot slotType = createSlotType(contType, slotTypeId, valueType);
+		CValue<?> valueType = freeValueTypes.get(templateValueType);
+
+		CSlot slotType = new CSlot(contType, id, valueType, CCardinality.REPEATABLE_TYPES);
 
 		slotType.setEditability(CEditability.FULL);
 
-		return container.addSlotInternal(slotType, true);
-	}
-
-	private CSlot createSlotType(
-					CFrame containerType,
-					CIdentity slotTypeId,
-					CValue<?> valueType) {
-
-		return new CSlot(
-					containerType,
-					slotTypeId,
-					valueType,
-					CCardinality.REPEATABLE_TYPES);
+		return slotType;
 	}
 }

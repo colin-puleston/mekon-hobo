@@ -47,6 +47,11 @@ public class CFrameHierarchy {
 		final List<CIdentity> subIds = new ArrayList<CIdentity>();
 		final KListMap<Object, Object> annotations = new KListMap<Object, Object>();
 
+		Node(CIdentity frameId) {
+
+			nodes.put(frameId, this);
+		}
+
 		void addSub(CIdentity subId) {
 
 			subIds.add(subId);
@@ -129,18 +134,18 @@ public class CFrameHierarchy {
 
 		this.rootFrameId = rootFrameId;
 
-		addNode(rootFrameId);
+		new Node(rootFrameId);
 	}
 
 	boolean addSub(CIdentity frameId, CIdentity subFrameId) {
 
 		Node node = getNode(frameId);
-		Node subNode = nodes.get(frameId);
+		Node subNode = nodes.get(subFrameId);
 		boolean newSub = (subNode == null);
 
 		if (newSub) {
 
-			subNode = addNode(frameId);
+			subNode = new Node(subFrameId);
 		}
 
 		node.addSub(subFrameId);
@@ -155,7 +160,7 @@ public class CFrameHierarchy {
 
 	private void addSubTree(CFrame subRoot) {
 
-		Node subRootNode = addNode(subRoot.getIdentity());
+		Node subRootNode = new Node(subRoot.getIdentity());
 
 		addAnnotations(subRoot, subRootNode);
 
@@ -164,15 +169,6 @@ public class CFrameHierarchy {
 			subRootNode.addSub(sub.getIdentity());
 			addSubTree(sub);
 		}
-	}
-
-	private Node addNode(CIdentity frameId) {
-
-		Node node = new Node();
-
-		nodes.put(frameId, node);
-
-		return node;
 	}
 
 	private void addAnnotations(CFrame frame, Node node) {

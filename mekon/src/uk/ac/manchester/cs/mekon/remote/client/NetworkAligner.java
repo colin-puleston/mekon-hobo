@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 /**
  * @author Colin Puleston
  */
-class Updater {
+class NetworkAligner {
 
 	private IEditor iEditor;
 
@@ -43,14 +43,14 @@ class Updater {
 
 	private Set<IFrame> updatedMasters = new HashSet<IFrame>();
 
-	private class IFrameUpdater {
+	private class IFrameAligner {
 
 		private IFrame master;
 		private IFrame update;
 
 		private IFrameEditor masterEd;
 
-		IFrameUpdater(IFrame master, IFrame update) {
+		IFrameAligner(IFrame master, IFrame update) {
 
 			this.master = master;
 			this.update = update;
@@ -58,7 +58,7 @@ class Updater {
 			masterEd = iEditor.getFrameEditor(master);
 		}
 
-		void update() {
+		void align() {
 
 			removeOldSlots();
 			updateCurrentSlots();
@@ -148,17 +148,17 @@ class Updater {
 
 		private void updateSlotValues(ISlot slot) {
 
-			createValuesUpdater(slot, getUpdateSlot(slot)).update();
+			createValuesAligner(slot, getUpdateSlot(slot)).align();
 		}
 
-		private IValuesUpdater createValuesUpdater(ISlot masterSlot, ISlot updateSlot) {
+		private IValuesAligner createValuesAligner(ISlot masterSlot, ISlot updateSlot) {
 
 			if (masterSlot.getValueType() instanceof CFrame) {
 
-				return new IFrameValuesUpdater(masterSlot, updateSlot);
+				return new IFrameValuesAligner(masterSlot, updateSlot);
 			}
 
-			return new IValuesUpdater(masterSlot, updateSlot);
+			return new IValuesAligner(masterSlot, updateSlot);
 		}
 
 		private ISlot getUpdateSlot(ISlot masterSlot) {
@@ -172,14 +172,14 @@ class Updater {
 		}
 	}
 
-	private class IValuesUpdater {
+	private class IValuesAligner {
 
 		final ISlot master;
 		final ISlot update;
 
 		private ISlotValuesEditor masterEd;
 
-		IValuesUpdater(ISlot master, ISlot update) {
+		IValuesAligner(ISlot master, ISlot update) {
 
 			this.master = master;
 			this.update = update;
@@ -187,7 +187,7 @@ class Updater {
 			masterEd = iEditor.getSlotValuesEditor(master);
 		}
 
-		void update() {
+		void align() {
 
 			removeOldValues();
 			updateCurrentValues();
@@ -235,9 +235,9 @@ class Updater {
 		}
 	}
 
-	private class IFrameValuesUpdater extends IValuesUpdater {
+	private class IFrameValuesAligner extends IValuesAligner {
 
-		IFrameValuesUpdater(ISlot master, ISlot update) {
+		IFrameValuesAligner(ISlot master, ISlot update) {
 
 			super(master, update);
 		}
@@ -267,7 +267,7 @@ class Updater {
 
 		private void updateCurrentValue(IFrame masterValue) {
 
-			updateFrom(masterValue, mastersToUpdates.get(masterValue));
+			alignFrom(masterValue, mastersToUpdates.get(masterValue));
 		}
 
 		private boolean matchingValueFor(
@@ -296,7 +296,7 @@ class Updater {
 		}
 	}
 
-	Updater(IEditor iEditor, RUpdates updates) {
+	NetworkAligner(IEditor iEditor, RUpdates updates) {
 
 		this.iEditor = iEditor;
 
@@ -309,21 +309,21 @@ class Updater {
 		}
 	}
 
-	void update(IFrame masterRoot) {
+	void align(IFrame masterRoot) {
 
-		updateFrom(masterRoot, updateRoot);
+		alignFrom(masterRoot, updateRoot);
 	}
 
-	private void updateFrom(IFrame master, IFrame update) {
+	private void alignFrom(IFrame master, IFrame update) {
 
 		if (updatedMasters.add(master)) {
 
-			new IFrameUpdater(master, update).update();
+			new IFrameAligner(master, update).align();
 		}
 	}
 
 	private void initialise(IFrame master, IFrame update) {
 
-		new IFrameUpdater(master, update).initialise();
+		new IFrameAligner(master, update).initialise();
 	}
 }

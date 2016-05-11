@@ -52,7 +52,7 @@ public class FramesTestUtils {
 
 		for (CSlot slot : frame.getSlots().asList()) {
 
-			iFrame.addSlotInternal(slot, false);
+			iFrame.addSlotInternal(slot);
 		}
 
 		return iFrame;

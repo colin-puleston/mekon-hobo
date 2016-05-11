@@ -41,7 +41,7 @@ public class IFrameSerialiseTest {
 	private TestInstances instances = model.createTestInstances();
 
 	private boolean freeParser = false;
-	private ISchemaLevel schemaLevel = ISchemaLevel.NONE;
+	private ISchemaRender schemaRender = ISchemaRender.NONE;
 	private boolean renderAsTree = false;
 	private boolean includeEmptySlots = false;
 
@@ -62,7 +62,7 @@ public class IFrameSerialiseTest {
 	@Test
 	public void test_renderWithBasicSchemaAndParse() {
 
-		schemaLevel = ISchemaLevel.BASIC;
+		schemaRender = ISchemaRender.BASIC;
 
 		testRenderAndParse();
 	}
@@ -70,7 +70,7 @@ public class IFrameSerialiseTest {
 	@Test
 	public void test_renderWithFullSchemaAndParse() {
 
-		schemaLevel = ISchemaLevel.FULL;
+		schemaRender = ISchemaRender.FULL;
 
 		testRenderAndParse();
 	}
@@ -95,7 +95,7 @@ public class IFrameSerialiseTest {
 	public void test_renderWithBasicSchemaAndFreeParse() {
 
 		freeParser = true;
-		schemaLevel = ISchemaLevel.BASIC;
+		schemaRender = ISchemaRender.BASIC;
 
 		testRenderAndParse();
 	}
@@ -104,7 +104,7 @@ public class IFrameSerialiseTest {
 	public void test_renderWithBasicSchemaAndFreeParseWithEmptySlots() {
 
 		freeParser = true;
-		schemaLevel = ISchemaLevel.BASIC;
+		schemaRender = ISchemaRender.BASIC;
 		includeEmptySlots = true;
 
 		testRenderAndParse();
@@ -114,7 +114,7 @@ public class IFrameSerialiseTest {
 	public void test_renderWithBasicSchemaAndFreeParseWithDynamicSlotInsertion() {
 
 		freeParser = true;
-		schemaLevel = ISchemaLevel.BASIC;
+		schemaRender = ISchemaRender.BASIC;
 
 		instances.setDynamicSlotInsertion();
 
@@ -136,16 +136,14 @@ public class IFrameSerialiseTest {
 
 	private IFrame parse(XDocument rendering) {
 
-		return createParser().parse(rendering);
-	}
+		IFrameParser parser = new IFrameParser(model.model, IFrameFunction.ASSERTION);
 
-	private IFrameParserAbstract createParser() {
+		if (freeParser) {
 
-		CModel cModel = model.model;
+			parser.setSchemaParse(ISchemaParse.FREE);
+		}
 
-		return freeParser
-				? new IFrameFreeParser(cModel, IFrameFunction.ASSERTION)
-				: new IFrameParser(cModel, IFrameFunction.ASSERTION);
+		return parser.parse(rendering);
 	}
 
 	private IFrameRenderer createRenderer() {
@@ -153,7 +151,7 @@ public class IFrameSerialiseTest {
 		IFrameRenderer renderer = new IFrameRenderer();
 
 		renderer.setRenderAsTree(renderAsTree);
-		renderer.setSchemaLevel(schemaLevel);
+		renderer.setSchemaRender(schemaRender);
 
 		return renderer;
 	}

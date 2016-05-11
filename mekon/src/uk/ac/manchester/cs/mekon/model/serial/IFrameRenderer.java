@@ -31,15 +31,15 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renderer for the standard XML serialisation of {@link IFrame}
- * objects.
+ * Renderer for the standard XML serialisation of {@link IFrame}/{@link ISlot}
+ * networks.
  *
  * @author Colin Puleston
  */
 public class IFrameRenderer extends ISerialiser {
 
 	private boolean renderAsTree = false;
-	private ISchemaLevel schemaLevel = ISchemaLevel.NONE;
+	private ISchemaRender schemaRender = ISchemaRender.NONE;
 
 	private class OneTimeRenderer {
 
@@ -287,12 +287,12 @@ public class IFrameRenderer extends ISerialiser {
 
 			renderCSlot(slot.getType(), node);
 
-			if (schemaLevel.includesBasics()) {
+			if (schemaRender.includesBasics()) {
 
 				new ISlotValueTypeRenderer(slot, node);
 			}
 
-			if (schemaLevel.includesDetails()) {
+			if (schemaRender.includesDetails()) {
 
 				node.addValue(EDITABILITY_ATTR, slot.getEditability());
 			}
@@ -309,7 +309,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			renderIdentity(slot, node);
 
-			if (schemaLevel.includesDetails()) {
+			if (schemaRender.includesDetails()) {
 
 				node.addValue(CARDINALITY_ATTR, slot.getCardinality());
 			}
@@ -329,14 +329,14 @@ public class IFrameRenderer extends ISerialiser {
 	}
 
 	/**
-	 * Sets the level of schema information to be rendered.
-	 * Defaults to {@link ISchemaLevel#NONE}.
+	 * Sets the type of schema information to be rendered. Defaults to
+	 * {@link ISchemaRender#NONE}.
 	 *
-	 * @param schemaLevel Required schema-level
+	 * @param schemaRender Required schema-level
 	 */
-	public void setSchemaLevel(ISchemaLevel schemaLevel) {
+	public void setSchemaRender(ISchemaRender schemaRender) {
 
-		this.schemaLevel = schemaLevel;
+		this.schemaRender = schemaRender;
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class IFrameRenderer extends ISerialiser {
 
 	private boolean slotToBeRendered(ISlot slot) {
 
-		return schemaLevel.includesBasics() || !slot.getValues().isEmpty();
+		return schemaRender.includesBasics() || !slot.getValues().isEmpty();
 	}
 
 	private void checkAtomicTopLevelFrame(IFrame frame) {

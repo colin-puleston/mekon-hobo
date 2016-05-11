@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.store.*;
  * All of the instance-level frame/slot-network representations of
  * instances and queries that are passed into the matcher methods
  * will be "free-instance" copies of the originals (see {@link
- * IFreeInstances}).
+ * IFreeInstantiator}).
  *
  * @author Colin Puleston
  */

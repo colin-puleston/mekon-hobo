@@ -22,70 +22,40 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
-
-import java.util.*;
+package uk.ac.manchester.cs.mekon.model.serial;
 
 /**
+ * Specifies the type of schema information to be rendered when
+ * serialising {@link IFrame}/{@link ISlot} networks.
+ *
  * @author Colin Puleston
  */
-class IDisjunction extends IFrame {
+public enum ISchemaRender {
 
-	static private final String LABEL = "Disjunction";
+	/**
+	 * No schema information to be rendered.
+	 */
+	NONE,
 
-	private IDisjunctsSlot disjunctsSlot;
+	/**
+	 * Basic schema information be rendered, including slot types and
+	 * value-types, but not including slot cardinalities or editabilities.
+	 */
+	BASIC,
 
-	public String getDisplayLabel() {
+	/**
+	 * Full schema information to be rendered, including slot types,
+	 * value-types, cardinalities and editabilities.
+	 */
+	FULL;
 
-		return LABEL;
+	boolean includesBasics() {
+
+		return this != NONE;
 	}
 
-	public boolean abstractValue() {
+	boolean includesDetails() {
 
-		return true;
-	}
-
-	public IFrameCategory getCategory() {
-
-		return IFrameCategory.DISJUNCTION;
-	}
-
-	public ISlot getDisjunctsSlot() {
-
-		return disjunctsSlot;
-	}
-
-	public List<IFrame> asDisjuncts() {
-
-		return disjunctsSlot.getDisjuncts();
-	}
-
-	public IFrame normalise() {
-
-		List<IFrame> disjuncts = asDisjuncts();
-
-		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
-	}
-
-	IDisjunction(CFrame type, IFrameFunction function) {
-
-		super(type, function);
-
-		disjunctsSlot = new IDisjunctsSlot(this);
-
-		super.addSlotInternal(disjunctsSlot);
-	}
-
-	IFrame copyEmpty() {
-
-		return new IDisjunction(getType(), getFunction());
-	}
-
-	ISlot addSlotInternal(CSlot slotType) {
-
-		return disjunctsSlot;
-	}
-
-	void autoUpdateThis() {
+		return this == FULL;
 	}
 }

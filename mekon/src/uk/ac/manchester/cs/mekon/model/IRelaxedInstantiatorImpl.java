@@ -26,66 +26,45 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
+
 /**
  * @author Colin Puleston
  */
-class IDisjunction extends IFrame {
+class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
-	static private final String LABEL = "Disjunction";
+	static private final Map<IEditability, CEditability> editabilities
+								= new HashMap<IEditability, CEditability>();
 
-	private IDisjunctsSlot disjunctsSlot;
+	static {
 
-	public String getDisplayLabel() {
-
-		return LABEL;
+		editabilities.put(IEditability.NONE, CEditability.NONE);
+		editabilities.put(IEditability.CONCRETE_ONLY, CEditability.DEFAULT);
+		editabilities.put(IEditability.FULL, CEditability.FULL);
 	}
 
-	public boolean abstractValue() {
+	public IFrame startInstantiation(CFrame type, IFrameFunction function) {
 
-		return true;
+		return new IFrame(type, function);
 	}
 
-	public IFrameCategory getCategory() {
+	public ISlot addSlot(
+					IFrame container,
+					CIdentity slotTypeId,
+					CValue<?> valueType,
+					CCardinality cardinality,
+					IEditability editability) {
 
-		return IFrameCategory.DISJUNCTION;
+		CFrame contType = container.getType();
+		CSlot slotType = new CSlot(contType, slotTypeId, valueType, cardinality);
+
+		slotType.setEditability(editabilities.get(editability));
+
+		return container.addSlotInternal(slotType);
 	}
 
-	public ISlot getDisjunctsSlot() {
+	public void completeInstantiation(IFrame frame) {
 
-		return disjunctsSlot;
-	}
-
-	public List<IFrame> asDisjuncts() {
-
-		return disjunctsSlot.getDisjuncts();
-	}
-
-	public IFrame normalise() {
-
-		List<IFrame> disjuncts = asDisjuncts();
-
-		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
-	}
-
-	IDisjunction(CFrame type, IFrameFunction function) {
-
-		super(type, function);
-
-		disjunctsSlot = new IDisjunctsSlot(this);
-
-		super.addSlotInternal(disjunctsSlot);
-	}
-
-	IFrame copyEmpty() {
-
-		return new IDisjunction(getType(), getFunction());
-	}
-
-	ISlot addSlotInternal(CSlot slotType) {
-
-		return disjunctsSlot;
-	}
-
-	void autoUpdateThis() {
+		frame.completeInstantiation(true);
 	}
 }

@@ -22,70 +22,52 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.model.serial;
 
 import java.util.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
  * @author Colin Puleston
  */
-class IDisjunction extends IFrame {
+class IFrameStaticParseMechanisms extends IFrameParseMechanisms {
 
-	static private final String LABEL = "Disjunction";
+	static final IFrameStaticParseMechanisms SINGLETON = new IFrameStaticParseMechanisms();
 
-	private IDisjunctsSlot disjunctsSlot;
+	private IRelaxedInstantiator instantiator = IRelaxedInstantiator.get();
 
-	public String getDisplayLabel() {
+	ISchemaParse getSchemaParse() {
 
-		return LABEL;
+		return ISchemaParse.STATIC;
 	}
 
-	public boolean abstractValue() {
+	IFrame instantiateFrame(CFrame type, IFrameFunction function) {
 
-		return true;
+		return instantiator.startInstantiation(type, function);
 	}
 
-	public IFrameCategory getCategory() {
+	ISlot checkResolveSlot(IFrameParserSlotSpec spec) {
 
-		return IFrameCategory.DISJUNCTION;
+		return instantiator
+				.addSlot(
+					spec.getContainer(),
+					spec.getSlotId(),
+					spec.getValueType(),
+					spec.getCardinality(),
+					spec.getEditability());
 	}
 
-	public ISlot getDisjunctsSlot() {
-
-		return disjunctsSlot;
+	void checkUpdateFrameSlotSets(List<IFrame> frames) {
 	}
 
-	public List<IFrame> asDisjuncts() {
+	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
 
-		return disjunctsSlot.getDisjuncts();
+		instantiator.completeInstantiation(rootFrame);
 	}
 
-	public IFrame normalise() {
-
-		List<IFrame> disjuncts = asDisjuncts();
-
-		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
-	}
-
-	IDisjunction(CFrame type, IFrameFunction function) {
-
-		super(type, function);
-
-		disjunctsSlot = new IDisjunctsSlot(this);
-
-		super.addSlotInternal(disjunctsSlot);
-	}
-
-	IFrame copyEmpty() {
-
-		return new IDisjunction(getType(), getFunction());
-	}
-
-	ISlot addSlotInternal(CSlot slotType) {
-
-		return disjunctsSlot;
-	}
-
-	void autoUpdateThis() {
+	private IFrameStaticParseMechanisms() {
 	}
 }

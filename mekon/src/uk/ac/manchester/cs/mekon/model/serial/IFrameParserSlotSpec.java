@@ -22,70 +22,24 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.model.serial;
 
-import java.util.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class IDisjunction extends IFrame {
+abstract class IFrameParserSlotSpec {
 
-	static private final String LABEL = "Disjunction";
+	abstract IFrame getContainer();
 
-	private IDisjunctsSlot disjunctsSlot;
+	abstract CIdentity getSlotId();
 
-	public String getDisplayLabel() {
+	abstract CValue<?> getValueType();
 
-		return LABEL;
-	}
+	abstract CValue<?> getDefaultValueType();
 
-	public boolean abstractValue() {
+	abstract CCardinality getCardinality();
 
-		return true;
-	}
-
-	public IFrameCategory getCategory() {
-
-		return IFrameCategory.DISJUNCTION;
-	}
-
-	public ISlot getDisjunctsSlot() {
-
-		return disjunctsSlot;
-	}
-
-	public List<IFrame> asDisjuncts() {
-
-		return disjunctsSlot.getDisjuncts();
-	}
-
-	public IFrame normalise() {
-
-		List<IFrame> disjuncts = asDisjuncts();
-
-		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
-	}
-
-	IDisjunction(CFrame type, IFrameFunction function) {
-
-		super(type, function);
-
-		disjunctsSlot = new IDisjunctsSlot(this);
-
-		super.addSlotInternal(disjunctsSlot);
-	}
-
-	IFrame copyEmpty() {
-
-		return new IDisjunction(getType(), getFunction());
-	}
-
-	ISlot addSlotInternal(CSlot slotType) {
-
-		return disjunctsSlot;
-	}
-
-	void autoUpdateThis() {
-	}
+	abstract IEditability getEditability();
 }

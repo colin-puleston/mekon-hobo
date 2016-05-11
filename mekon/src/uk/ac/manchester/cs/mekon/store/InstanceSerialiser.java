@@ -80,27 +80,27 @@ class InstanceSerialiser extends CIdentitySerialiser {
 
 	IFrame parseInstance(File file, boolean freeInstance) {
 
-		return createFrameParser(freeInstance).parse(getRootNode(file));
+		IFrameParser parser = new IFrameParser(model, IFrameFunction.ASSERTION);
+
+		if (freeInstance) {
+
+			parser.setSchemaParse(ISchemaParse.FREE);
+		}
+
+		return parser.parse(getRootNode(file));
 	}
 
 	private void renderInstance(IFrame instance, XNode rootNode) {
 
 		IFrameRenderer frameRenderer = new IFrameRenderer();
 
-		frameRenderer.setSchemaLevel(ISchemaLevel.BASIC);
+		frameRenderer.setSchemaRender(ISchemaRender.BASIC);
 		frameRenderer.render(instance, rootNode);
 	}
 
 	private CFrame parseType(XNode typeNode) {
 
 		return model.getFrames().get(parseIdentity(typeNode));
-	}
-
-	private IFrameParserAbstract createFrameParser(boolean freeInstance) {
-
-		return freeInstance ?
-				new IFrameFreeParser(model, IFrameFunction.ASSERTION) :
-				new IFrameParser(model, IFrameFunction.ASSERTION);
 	}
 
 	private XNode getRootNode(File file) {

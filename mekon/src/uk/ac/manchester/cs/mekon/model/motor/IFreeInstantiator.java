@@ -25,14 +25,39 @@
 package uk.ac.manchester.cs.mekon.model.motor;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
- * Provides mechanisms for constructing "free-instances" (see {@link
- * IFreeInstances}).
+ * Responsible for generating "free" versions of existing
+ * instance-level frame/slot networks, or "free-instances". A free
+ * instance is one in which the schema has been loosened in the
+ * following ways:
+ * <ul>
+ *   <li>No effective constraints on slot-values, other than general
+ *	 value-category (i.e, {@link IFrame}, {@link CFrame}, or
+ *	 {@link INumber})
+ *   <li>No automatic updates to slot-sets or slot-values due to
+ *	 either generic reasoning mechanisms, or custom procedures
+ *	 associated with a mapped object model
+ * </ul>
+ * <p>
+ * Such free-instances are intended for use by any plug-in mechanisms
+ * that need to manipulate  their instances in a way that (a) is
+ * outside the general schema imposed by the model, and/or (b) does not
+ * incur the additional, and unneccesary overheads of the reasoning
+ * mechanisms kicking in as updates are made. XXX
  *
  * @author Colin Puleston
  */
-public interface IFreeInstantiator {
+public abstract class IFreeInstantiator {
+
+	/**
+	 * Provides a free-instantiator object that is applicable to any model.
+	 */
+	static public IFreeInstantiator get() {
+
+		return ZCModelAccessor.get().getFreeInstantiator();
+	}
 
 	/**
 	 * Creates a frame that will be part of a free-instance.
@@ -41,52 +66,21 @@ public interface IFreeInstantiator {
 	 * @param function Function of frame to create
 	 * @return Created free-instance frame
 	 */
-	public IFrame startInstantiation(CFrame type, IFrameFunction function);
+	public abstract IFrame startInstantiation(CFrame type, IFrameFunction function);
 
 	/**
-	 * Creates a free-instance-style {@link IFrame}-valued slot and
-	 * adds it to the specified frame.
+	 * Creates a free-instance-style {@link IFrame}-valued slot and adds
+	 * it to the specified frame.
 	 *
 	 * @param container Frame to which slot is to be added
 	 * @param slotTypeId Identity of slot-type for slot to be created
-	 * @return Created and added slot
+	 * @param templateValueType Value-type for slot to be created
+	 * @return Created and added slot XXX
 	 */
-	public ISlot addIFrameSlot(IFrame container, CIdentity slotTypeId);
-
-	/**
-	 * Creates a free-instance-style {@link INumber}-valued slot and
-	 * adds it to the specified frame.
-	 *
-	 * @param container Frame to which slot is to be added
-	 * @param slotTypeId Identity of slot-type for slot to be created
-	 * @param numberType Type of number that slot-values are to
-	 * represent
-	 * @return Created and added slot
-	 */
-	public ISlot addINumberSlot(
-					IFrame container,
-					CIdentity slotTypeId,
-					Class<? extends Number> numberType);
-
-	/**
-	 * Creates a free-instance-style {@link IString}-valued slot and
-	 * adds it to the specified frame.
-	 *
-	 * @param container Frame to which slot is to be added
-	 * @param slotTypeId Identity of slot-type for slot to be created
-	 * @return Created and added slot
-	 */
-	public ISlot addIStringSlot(IFrame container, CIdentity slotTypeId);
-
-	/**
-	 * Creates a free-instance-style {@link CFrame}-valued slot and
-	 * adds it to the specified frame.
-	 *
-	 * @param container Frame to which slot is to be added
-	 * @param slotTypeId Identity of slot-type for slot to be created
-	 * @return Created and added slot
-	 */
-	public ISlot addCFrameSlot(IFrame container, CIdentity slotTypeId);
+	public abstract ISlot addSlot(
+							IFrame container,
+							CIdentity slotTypeId,
+							CValue<?> templateValueType);
 
 	/**
 	 * Performs the required instantiation-completion operations for a
@@ -94,7 +88,7 @@ public interface IFreeInstantiator {
 	 *
 	 * @param frame Relevant free-instance frame
 	 */
-	public void completeInstantiation(IFrame frame);
+	public abstract void completeInstantiation(IFrame frame);
 
 	/**
 	 * Generates a free-instance version of the specified source
@@ -104,5 +98,5 @@ public interface IFreeInstantiator {
 	 * is required
 	 * @return Generated free-instance
 	 */
-	public IFrame createFreeCopy(IFrame sourceInstance);
+	public abstract IFrame createFreeCopy(IFrame sourceInstance);
 }

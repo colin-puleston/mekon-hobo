@@ -24,39 +24,52 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+
 /**
- * Specifies the level of schema information to be rendered
- * when serialising.
+ * Specifies the manner in which schema information is to be derived
+ * when parsing serialised {@link IFrame}/{@link ISlot} networks.
  *
  * @author Colin Puleston
  */
-public enum ISchemaLevel {
+public enum ISchemaParse {
 
 	/**
-	 * No schema information
+	 * A "free-instance" is to be created with a minimal schema (see
+	 * {@link IFreeInstantiator} for description of free-instances).
 	 */
-	NONE,
+	FREE {
+
+		IFrameParseMechanisms getMechanisms(CModel model) {
+
+			return IFrameFreeParseMechanisms.SINGLETON;
+		}
+	},
 
 	/**
-	 * Basic schema information, including slot types and
-	 * value-types, but not including slot cardinalities or
-	 * editabilities.
+	 * Static schema information is to be parsed from the serialisation,
+	 * along with the frame/slot network instantiation information.
 	 */
-	BASIC,
+	STATIC {
+
+		IFrameParseMechanisms getMechanisms(CModel model) {
+
+			return IFrameStaticParseMechanisms.SINGLETON;
+		}
+	},
 
 	/**
-	 * Full schema information, including slot types, value-types,
-	 * cardinalities and editabilities.
+	 * Schema information is to be derived dynamically from the model
+	 * as the frame/slot network is instantiated.
 	 */
-	FULL;
+	DYNAMIC {
 
-	boolean includesBasics() {
+		IFrameParseMechanisms getMechanisms(CModel model) {
 
-		return this != NONE;
-	}
+			return new IFrameDynamicParseMechanisms(model);
+		}
+	};
 
-	boolean includesDetails() {
-
-		return this == FULL;
-	}
+	abstract IFrameParseMechanisms getMechanisms(CModel model);
 }
