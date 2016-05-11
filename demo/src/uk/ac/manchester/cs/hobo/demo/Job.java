@@ -164,7 +164,7 @@ public class Job extends CitizenshipObject {
 		INumber min = pay.getMin().multiplyBy(hours.getMin());
 		INumber max = pay.getMax().multiplyBy(hours.getMax());
 
-		return CNumber.range(min, max);
+		return CNumber.range(Integer.class, min, max);
 	}
 
 	private CNumber getRangeValue(DCell<Integer> cell) {
