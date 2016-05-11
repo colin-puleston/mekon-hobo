@@ -368,6 +368,18 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
+	 * Provides the unconstrained version of this value-type-entity,
+	 * which will be a numeric-type with the same number-type but no
+	 * minimnum or maximnum values.
+	 *
+	 * @return Unconstrained version of this value-type-entity
+	 */
+	public CNumber toUnconstrained() {
+
+		return unconstraineds.get(numberType);
+	}
+
+	/**
 	 * Stipulates that this numeric-type can provide a default
 	 * value-entity if and only if it represents an exact value (see
 	 * {@link #exactValue}). If so then that exact value will be the
@@ -587,16 +599,6 @@ public class CNumber extends CDataValue<INumber> {
 	public CNumber getIntersection(CNumber other) {
 
 		return createCNumber(getMaxMin(other), getMinMax(other));
-	}
-
-	/**
-	 * Provides the unconstrained version of this numeric-type.
-	 *
-	 * @return Unconstrained version of this numeric-type
-	 */
-	public CNumber getUnconstrained() {
-
-		return unconstraineds.get(numberType);
 	}
 
 	/**

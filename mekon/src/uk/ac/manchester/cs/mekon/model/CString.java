@@ -55,6 +55,17 @@ public class CString extends CDataValue<IString> {
 	}
 
 	/**
+	 * Provides the unconstrained version of this value-type-entity,
+	 * which will simply be this singleton string-type itself.
+	 *
+	 * @return Unconstrained version of this value-type-entity
+	 */
+	public CString toUnconstrained() {
+
+		return this;
+	}
+
+	/**
 	 * Stipulates that the string value-type is never defines a
 	 * default value-entity.
 	 *

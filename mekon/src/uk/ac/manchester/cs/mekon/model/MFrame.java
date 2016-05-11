@@ -85,6 +85,17 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
+	 * Provides the unconstrained version of this value-type-entity,
+	 * which will be the root meta-level frame.
+	 *
+	 * @return Unconstrained version of this value-type-entity
+	 */
+	public MFrame toUnconstrained() {
+
+		return rootCFrame.getModel().getRootFrame().getType();
+	}
+
+	/**
 	 * Stipulates that this meta-leval frame does define a default
 	 * value-entity, which will be the root concept-level frame.
 	 *

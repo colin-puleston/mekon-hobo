@@ -120,6 +120,13 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	public abstract boolean constrained();
 
 	/**
+	 * Provides the unconstrained version of this value-type-entity.
+	 *
+	 * @return Unconstrained version of this value-type-entity
+	 */
+	public abstract CValue<?> toUnconstrained();
+
+	/**
 	 * Specifies whether this value-type-entity comes with a default
 	 * value.
 	 *

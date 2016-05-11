@@ -31,40 +31,6 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  */
 class IFreeInstantiatorImpl extends IFreeInstantiator {
 
-	private FreeValueTypes freeValueTypes = new FreeValueTypes();
-
-	private class FreeValueTypes extends CValueVisitor {
-
-		private CValue<?> freeValueType;
-
-		protected void visit(CFrame value) {
-
-			freeValueType = value.getModel().getRootFrame();
-		}
-
-		protected void visit(CNumber value) {
-
-			freeValueType = value.getUnconstrained();
-		}
-
-		protected void visit(CString value) {
-
-			freeValueType = value;
-		}
-
-		protected void visit(MFrame value) {
-
-			freeValueType = value.getRootCFrame().getModel().getRootFrame().getType();
-		}
-
-		CValue<?> get(CValue<?> templateValueType) {
-
-			visit(templateValueType);
-
-			return freeValueType;
-		}
-	}
-
 	private class OneTimeInstantiator extends IFrameCopierAbstract {
 
 		ISlot addSlot(IFrame container, CSlot slotType) {
@@ -86,9 +52,9 @@ class IFreeInstantiatorImpl extends IFreeInstantiator {
 	public ISlot addSlot(
 					IFrame container,
 					CIdentity slotTypeId,
-					CValue<?> templateValueType) {
+					CValue<?> valueTypeSource) {
 
-		return addFreeSlot(container, slotTypeId, templateValueType);
+		return addFreeSlot(container, slotTypeId, valueTypeSource);
 	}
 
 	public void completeInstantiation(IFrame frame) {
@@ -101,18 +67,18 @@ class IFreeInstantiatorImpl extends IFreeInstantiator {
 		return new OneTimeInstantiator().copy(sourceInstance);
 	}
 
-	private ISlot addFreeSlot(IFrame container, CIdentity id, CValue<?> templateValueType) {
+	private ISlot addFreeSlot(IFrame container, CIdentity id, CValue<?> valueTypeSource) {
 
-		return container.addFreeSlot(createFreeSlotType(container, id, templateValueType));
+		return container.addFreeSlot(createFreeSlotType(container, id, valueTypeSource));
 	}
 
 	private CSlot createFreeSlotType(
 						IFrame container,
 						CIdentity id,
-						CValue<?> templateValueType) {
+						CValue<?> valueTypeSource) {
 
 		CFrame contType = container.getType();
-		CValue<?> valueType = freeValueTypes.get(templateValueType);
+		CValue<?> valueType = valueTypeSource.toUnconstrained();
 
 		CSlot slotType = new CSlot(contType, id, valueType, CCardinality.REPEATABLE_TYPES);
 

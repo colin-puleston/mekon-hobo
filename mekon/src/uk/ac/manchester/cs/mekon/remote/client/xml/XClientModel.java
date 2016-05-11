@@ -33,7 +33,9 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.*;
 
 /**
- * Represents the client version of the MEKON frames model. XXX
+ * Represents a client-side version of the MEKON frames model that uses
+ * the standard MEKON XML-based serialisation to communicate with the
+ * server.
  *
  * @author Colin Puleston
  */
@@ -97,8 +99,8 @@ public abstract class XClientModel extends RClientModel {
 	/**
 	 * Constructor.
 	 *
-	 * @param hierarchy Representation of concept-level frames hierarchy
-	 * present on the server
+	 * @param frameHierarchyDoc Document containing standard MEKON XML-based
+	 * serialisation of concept-level frames hierarchy present on server
 	 */
 	public XClientModel(XDocument frameHierarchyDoc) {
 
@@ -108,8 +110,8 @@ public abstract class XClientModel extends RClientModel {
 	/**
 	 * Constructor.
 	 *
-	 * @param hierarchy Representation of concept-level frames hierarchy
-	 * present on the server
+	 * @param frameHierarchyDoc Root-node of standard MEKON XML-based
+	 * serialisation of concept-level frames hierarchy present on server
 	 */
 	public XClientModel(XNode frameHierarchyRootNode) {
 
@@ -117,10 +119,7 @@ public abstract class XClientModel extends RClientModel {
 	}
 
 	/**
-	 * Sends an instance-level frame to be initialised on the server.
-	 *
-	 * @param frame Relevant frame
-	 * @return Results of initialisation process
+	 * {@inheritDoc}
 	 */
 	protected RUpdates initialiseAssertionOnServer(IFrame frame) {
 
@@ -128,11 +127,7 @@ public abstract class XClientModel extends RClientModel {
 	}
 
 	/**
-	 * Sends an instance-level frame/slot network to be automatically
-	 * updated on the server.
-	 *
-	 * @param rootFrame Root-frame of frame/slot network
-	 * @return Results of update process
+	 * {@inheritDoc}
 	 */
 	protected RUpdates updateAssertionOnServer(IFrame rootFrame) {
 
@@ -140,9 +135,11 @@ public abstract class XClientModel extends RClientModel {
 	}
 
 	/**
-	 * Sends an instance-level frame to be initialised on the server.
+	 * Sends an uninitialised instance-level frame to be initialised on
+	 * the server.
 	 *
-	 * @param rootFrame Document representing relevant frame
+	 * @param assertionDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant uninitialised frame
 	 * @return Updated version of document
 	 */
 	protected abstract XDocument initialiseAssertionOnServer(XDocument assertionDoc);
@@ -151,7 +148,8 @@ public abstract class XClientModel extends RClientModel {
 	 * Sends an instance-level frame/slot network to be automatically
 	 * updated on the server.
 	 *
-	 * @param rootFrame Document representing relevant frame/slot network
+	 * @param assertionDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant frame/slot network
 	 * @return Updated version of document
 	 */
 	protected abstract XDocument updateAssertionOnServer(XDocument assertionDoc);

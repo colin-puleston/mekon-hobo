@@ -28,32 +28,20 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
- * Responsible for generating "free" versions of existing
- * instance-level frame/slot networks, or "free-instances". A free
- * instance is one in which the schema has been loosened in the
- * following ways:
- * <ul>
- *   <li>No effective constraints on slot-values, other than general
- *	 value-category (i.e, {@link IFrame}, {@link CFrame}, or
- *	 {@link INumber})
- *   <li>No automatic updates to slot-sets or slot-values due to
- *	 either generic reasoning mechanisms, or custom procedures
- *	 associated with a mapped object model
- * </ul>
- * <p>
- * Such free-instances are intended for use by any plug-in mechanisms
- * that need to manipulate  their instances in a way that (a) is
- * outside the general schema imposed by the model, and/or (b) does not
- * incur the additional, and unneccesary overheads of the reasoning
- * mechanisms kicking in as updates are made. XXX
+ * Responsible for regenerating previously existing instance-level
+ * frame/slot networks, without performing the normal reasoning
+ * operations that would be required if the networks were being built
+ * up from scratch. Specifically suitable for regenerating networks
+ * that have been serialised in some way.
  *
  * @author Colin Puleston
  */
 public abstract class IRelaxedInstantiator {
 
 	/**
-	 * Provides a relaxed-instantiator object that is applicable to
-	 * any model.
+	 * Provides a relaxed-instantiator object applicable to any model.
+	 *
+	 * @return Relaxed-instantiator object for any model
 	 */
 	static public IRelaxedInstantiator get() {
 
@@ -61,22 +49,23 @@ public abstract class IRelaxedInstantiator {
 	}
 
 	/**
-	 * Creates a frame that will be part of a free-instance.
+	 * Creates a frame that will be part of a regenerated network.
 	 *
 	 * @param type Type of frame to create
 	 * @param function Function of frame to create
-	 * @return Created free-instance frame
+	 * @return Created frame
 	 */
 	public abstract IFrame startInstantiation(CFrame type, IFrameFunction function);
 
 	/**
-	 * Creates a free-instance-style {@link IFrame}-valued slot and adds
-	 * it to the specified frame.
+	 * Adds a slot to a regenerated network.
 	 *
 	 * @param container Frame to which slot is to be added
 	 * @param slotTypeId Identity of slot-type for slot to be created
 	 * @param valueType Value-type for slot to be created
-	 * @return Created and added slot XXX
+	 * @param cardinality Cardinality of slot to be created
+	 * @param editability Editability of slot to be created
+	 * @return Created and added slot
 	 */
 	public abstract ISlot addSlot(
 							IFrame container,
@@ -87,9 +76,9 @@ public abstract class IRelaxedInstantiator {
 
 	/**
 	 * Performs the required instantiation-completion operations for a
-	 * free-instance frame, after all slots have been added.
+	 * frame in a regenerated network, after all slots have been added.
 	 *
-	 * @param frame Relevant free-instance frame
+	 * @param frame Relevant frame
 	 */
 	public abstract void completeInstantiation(IFrame frame);
 }

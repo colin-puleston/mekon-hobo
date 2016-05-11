@@ -98,16 +98,15 @@ public abstract class ZCModelAccessor {
 	public abstract IEditor getIEditor(CModel model);
 
 	/**
-	 * Provides a free-instantiator object for the specified model.
+	 * Provides a free-instantiator object applicable to any model.
 	 *
 	 * @param model Relevant model
-	 * @return Free-instantiator object for model
+	 * @return Free-instantiator object for any model
 	 */
 	public abstract IFreeInstantiator getFreeInstantiator();
 
 	/**
-	 * Provides a relaxed-instantiator object that is applicable to
-	 * any model.
+	 * Provides a relaxed-instantiator object applicable to any model.
 	 *
 	 * @return Relaxed-instantiator object for any model
 	 */

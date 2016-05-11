@@ -33,14 +33,14 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  */
 class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
-	static private final Map<IEditability, CEditability> editabilities
-								= new HashMap<IEditability, CEditability>();
+	static private final Map<IEditability, CEditability> editabilitiesIsToCs
+									= new HashMap<IEditability, CEditability>();
 
 	static {
 
-		editabilities.put(IEditability.NONE, CEditability.NONE);
-		editabilities.put(IEditability.CONCRETE_ONLY, CEditability.DEFAULT);
-		editabilities.put(IEditability.FULL, CEditability.FULL);
+		editabilitiesIsToCs.put(IEditability.NONE, CEditability.NONE);
+		editabilitiesIsToCs.put(IEditability.CONCRETE_ONLY, CEditability.DEFAULT);
+		editabilitiesIsToCs.put(IEditability.FULL, CEditability.FULL);
 	}
 
 	public IFrame startInstantiation(CFrame type, IFrameFunction function) {
@@ -58,7 +58,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		CFrame contType = container.getType();
 		CSlot slotType = new CSlot(contType, slotTypeId, valueType, cardinality);
 
-		slotType.setEditability(editabilities.get(editability));
+		slotType.setEditability(editabilitiesIsToCs.get(editability));
 
 		return container.addSlotInternal(slotType);
 	}

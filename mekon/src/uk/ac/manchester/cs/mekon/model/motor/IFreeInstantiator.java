@@ -42,17 +42,19 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
  * </ul>
  * <p>
  * Such free-instances are intended for use by any plug-in mechanisms
- * that need to manipulate  their instances in a way that (a) is
+ * that need to manipulate their instances in a way that (a) is
  * outside the general schema imposed by the model, and/or (b) does not
  * incur the additional, and unneccesary overheads of the reasoning
- * mechanisms kicking in as updates are made. XXX
+ * mechanisms kicking in as updates are made.
  *
  * @author Colin Puleston
  */
 public abstract class IFreeInstantiator {
 
 	/**
-	 * Provides a free-instantiator object that is applicable to any model.
+	 * Provides a free-instantiator object applicable to any model.
+	 *
+	 * @return Free-instantiator object for any model
 	 */
 	static public IFreeInstantiator get() {
 
@@ -70,17 +72,19 @@ public abstract class IFreeInstantiator {
 
 	/**
 	 * Creates a free-instance-style {@link IFrame}-valued slot and adds
-	 * it to the specified frame.
+	 * it to the specified frame. The value-type for the slot will be
+	 * derived by invoking the {@link CValue#toUnconstrained} method on
+	 * a "source" value-type object.
 	 *
 	 * @param container Frame to which slot is to be added
 	 * @param slotTypeId Identity of slot-type for slot to be created
-	 * @param templateValueType Value-type for slot to be created
-	 * @return Created and added slot XXX
+	 * @param valueTypeSource Source value-type for slot to be created
+	 * @return Created and added slot
 	 */
 	public abstract ISlot addSlot(
 							IFrame container,
 							CIdentity slotTypeId,
-							CValue<?> templateValueType);
+							CValue<?> valueTypeSource);
 
 	/**
 	 * Performs the required instantiation-completion operations for a

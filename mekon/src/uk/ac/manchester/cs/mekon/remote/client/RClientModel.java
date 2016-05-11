@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
 
 /**
- * Represents the client version of the MEKON frames model.
+ * Represents a client-side version of the MEKON frames model.
  *
  * @author Colin Puleston
  */

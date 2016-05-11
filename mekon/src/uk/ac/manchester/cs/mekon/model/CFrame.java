@@ -216,6 +216,17 @@ public abstract class CFrame
 	}
 
 	/**
+	 * Provides the unconstrained version of this value-type-entity,
+	 * which will be the root concept-level frame.
+	 *
+	 * @return Unconstrained version of this value-type-entity
+	 */
+	public CFrame toUnconstrained() {
+
+		return getModel().getRootFrame();
+	}
+
+	/**
 	 * Stipulates that this frame is abstract if and only if it is
 	 * a disjunction-frame.
 	 *

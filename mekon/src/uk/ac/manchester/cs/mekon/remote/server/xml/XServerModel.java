@@ -32,7 +32,9 @@ import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Represents the client version of the MEKON frames model. XXX
+ * Represents a server-side version of the MEKON frames model that uses
+ * the standard MEKON XML-based serialisation to communicate with the
+ * client.
  *
  * @author Colin Puleston
  */
@@ -60,9 +62,9 @@ public class XServerModel {
 	}
 
 	/**
-	 * Provides the client MEKON frames model.
+	 * Provides the server-side version of the frames model.
 	 *
-	 * @return Client MEKON frames model
+	 * @return Server-side version of frames model
 	 */
 	public CModel getCModel() {
 
@@ -70,10 +72,10 @@ public class XServerModel {
 	}
 
 	/**
-	 * Constructor.
+	 * Provides document containing standard MEKON XML-based serialisation
+	 * of concept-level frames hierarchy present on server.
 	 *
-	 * @param hierarchy Representation of concept-level frames hierarchy
-	 * present on the server
+	 * @return relevant document
 	 */
 	public XDocument getCFrameHierarchy() {
 
@@ -85,11 +87,11 @@ public class XServerModel {
 	}
 
 	/**
-	 * Sends an instance-level frame/slot network to be automatically
-	 * updated on the server.
+	 * Initialises the specified uninitialised instance-level frame.
 	 *
-	 * @param rootFrame Root-frame of frame/slot network
-	 * @return Results of update process
+	 * @param assertionDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant uninitialised frame
+	 * @return Updated version of document
 	 */
 	public XDocument initialiseAssertion(XDocument assertionDoc) {
 
@@ -99,11 +101,11 @@ public class XServerModel {
 	}
 
 	/**
-	 * Sends an instance-level frame/slot network to be automatically
-	 * updated on the server.
+	 * Automatically updates the specified instance-level frame/slot network.
 	 *
-	 * @param rootFrame Root-frame of frame/slot network
-	 * @return Results of update process
+	 * @param assertionDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant frame/slot network
+	 * @return Updated version of document
 	 */
 	public XDocument updateAssertion(XDocument assertionDoc) {
 
