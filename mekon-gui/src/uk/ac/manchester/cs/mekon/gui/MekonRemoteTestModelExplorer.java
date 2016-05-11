@@ -25,6 +25,7 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
@@ -60,14 +61,21 @@ public class MekonRemoteTestModelExplorer extends MekonModelExplorer {
 
 	static public void main(String[] args) {
 
-		XServerModel serverModel = new XServerModel(CManager.createBuilder());
-		XClientModel clientModel = new LocalXClientModel(serverModel);
-
-		new MekonRemoteTestModelExplorer(clientModel.getCModel());
+		new MekonRemoteTestModelExplorer();
 	}
 
-	public MekonRemoteTestModelExplorer(CModel model) {
+	public MekonRemoteTestModelExplorer() {
 
-		super(model);
+		super(CManager.createBuilder());
+	}
+
+	public MekonRemoteTestModelExplorer(CBuilder builder) {
+
+		super(builder.build(), builder);
+	}
+
+	public MekonRemoteTestModelExplorer(CModel model, CBuilder builder) {
+
+		super(new LocalXClientModel(new XServerModel(model, builder)).getCModel());
 	}
 }
