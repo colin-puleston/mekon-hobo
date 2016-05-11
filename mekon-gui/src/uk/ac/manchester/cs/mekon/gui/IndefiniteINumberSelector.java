@@ -205,7 +205,7 @@ class IndefiniteINumberSelector extends INumberSelector {
 			max = type.getMax();
 		}
 
-		return CNumber.range(min, max).asINumber();
+		return CNumber.range(type.getNumberType(), min, max).asINumber();
 	}
 
 	private boolean invalidRange() {
