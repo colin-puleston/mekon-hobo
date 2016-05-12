@@ -66,12 +66,12 @@ public class MekonRemoteTestModelExplorer extends MekonModelExplorer {
 
 	public MekonRemoteTestModelExplorer() {
 
-		super(CManager.createBuilder());
+		this(CManager.createBuilder());
 	}
 
 	public MekonRemoteTestModelExplorer(CBuilder builder) {
 
-		super(builder.build(), builder);
+		this(builder.build(), builder);
 	}
 
 	public MekonRemoteTestModelExplorer(CModel model, CBuilder builder) {
