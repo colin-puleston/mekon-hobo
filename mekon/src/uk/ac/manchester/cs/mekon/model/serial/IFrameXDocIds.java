@@ -57,55 +57,54 @@ class IFrameXDocIds {
 		}
 	}
 
-	private Map<IFrame, String> preAssignedIds;
-	private Map<IFrame, String> activeIds = new HashMap<IFrame, String>();
+	private Map<IFrame, String> ids = new HashMap<IFrame, String>();
+	private Set<IFrame> assignedFrames = new HashSet<IFrame>();
 
 	IFrameXDocIds() {
 
 		this(new HashMap<IFrame, String>());
 	}
 
-	IFrameXDocIds(Map<IFrame, String> preAssignedIds) {
+	IFrameXDocIds(Map<IFrame, String> ids) {
 
-		this.preAssignedIds = preAssignedIds;
+		this.ids = ids;
 	}
 
 	Resolution resolve(IFrame frame) {
 
-		String id = activeIds.get(frame);
-		boolean newFrame = id == null;
+		String id = ids.get(frame);
 
-		if (newFrame) {
+		if (id == null) {
 
-			id = resolveForNewFrame(frame);
+			id = createNew(frame);
 
-			activeIds.put(frame, id);
+			ids.put(frame, id);
 		}
 
-		return new Resolution(id, newFrame);
+		return new Resolution(id, assignedFrames.add(frame));
 	}
 
-	private String resolveForNewFrame(IFrame frame) {
+	private String createNew(IFrame frame) {
 
-		String id = preAssignedIds.get(frame);
+		String id = null;
 
 		for (int i = 0 ; id == null ; i++) {
 
-			id = tryCreate(i);
+			id = tryCreateNew(i);
 		}
 
 		return id;
 	}
 
-	private String tryCreate(int index) {
+	private String tryCreateNew(int index) {
 
 		String id = create(index);
 
-		return activeIds.containsKey(id) ? null : id;
+		return ids.containsKey(id) ? null : id;
 	}
 
 	private String create(int index) {
 
-		return String.format(ID_FORMAT, activeIds.size() + index);
+		return String.format(ID_FORMAT, ids.size() + index);
 	}
 }

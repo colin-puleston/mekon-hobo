@@ -351,13 +351,15 @@ public class IFrameRenderer extends ISerialiser {
 	}
 
 	/**
-	 * Renders the specified frame to produce an XML document.
+	 * Renders the specified frame to produce an XML document, and writes
+	 * the document-specific frame-identifiers that are generated into the
+	 * provided map. This map can also be pre-populated with any identifiers
+	 * that are to be used in the rendering.
 	 *
 	 * @param frame Frame to render
+	 * @param frameXDocIds Map for document-specific frame-identifiers
+	 * (possibly pre-populated)
 	 * @return Rendered document
-	 * @param frameXDocIds Set of pre-assigned frame-identifiers to use as
-	 * document-specific identifiers for renderings of any relevant component
-	 * frames
 	 */
 	public XDocument render(IFrame frame, Map<IFrame, String> frameXDocIds) {
 
@@ -376,13 +378,15 @@ public class IFrameRenderer extends ISerialiser {
 	}
 
 	/**
-	 * Renders the specified frame to the specified parent-node.
+	 * Renders the specified frame to the specified parent-node, and writes
+	 * the document-specific frame-identifiers that are generated into the
+	 * provided map. This map can also be pre-populated with any identifiers
+	 * that are to be used in the rendering.
 	 *
 	 * @param frame Frame to render
 	 * @param parentNode Parent-node for rendering
-	 * @param frameXDocIds Set of pre-assigned frame-identifiers to use as
-	 * document-specific identifiers for renderings of any relevant component
-	 * frames
+	 * @param frameXDocIds Map for document-specific frame-identifiers
+	 * (possibly pre-populated)
 	 */
 	public void render(IFrame frame, XNode parentNode, Map<IFrame, String> frameXDocIds) {
 
@@ -408,7 +412,7 @@ public class IFrameRenderer extends ISerialiser {
 		checkAtomicTopLevelFrame(frame);
 		checkNonCyclicIfRenderingAsTree(frame);
 
-		new OneTimeRenderer(containerNode, new IFrameXDocIds()).render(frame);
+		new OneTimeRenderer(containerNode, frameXDocIds).render(frame);
 	}
 
 	private boolean slotToBeRendered(ISlot slot) {

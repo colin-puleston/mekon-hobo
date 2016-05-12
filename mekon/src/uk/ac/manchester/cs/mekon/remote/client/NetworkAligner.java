@@ -218,6 +218,8 @@ class NetworkAligner {
 
 				if (!matchingUpdateValueFor(value)) {
 
+					System.out.println("ALIGN-SLOT-VALS: " + master);
+					System.out.println("  REMOVE: " + value);
 					masterEd.remove(value);
 				}
 			}
@@ -229,6 +231,8 @@ class NetworkAligner {
 
 				if (!matchingMasterValueFor(value)) {
 
+					System.out.println("ALIGN-SLOT-VALS: " + master);
+					System.out.println("  ADD: " + value);
 					masterEd.add(getNewValue(value));
 				}
 			}
@@ -246,6 +250,8 @@ class NetworkAligner {
 
 			for (IValue value : master.getValues().asList()) {
 
+				System.out.println("ALIGN-SLOT-VALS: " + master);
+				System.out.println("  UPDATE: " + value);
 				updateCurrentValue((IFrame)value);
 			}
 		}
@@ -275,7 +281,7 @@ class NetworkAligner {
 							IValue template,
 							Map<IFrame, IFrame> toTemplates) {
 
-			for (IValue value : master.getValues().asList()) {
+			for (IValue value : slot.getValues().asList()) {
 
 				if (toTemplates.containsKey(value)) {
 
@@ -311,6 +317,7 @@ class NetworkAligner {
 
 	void align(IFrame masterRoot) {
 
+		System.out.println("\n\nSTART-ALIGN: " + mastersToUpdates);
 		alignFrom(masterRoot, updateRoot);
 	}
 

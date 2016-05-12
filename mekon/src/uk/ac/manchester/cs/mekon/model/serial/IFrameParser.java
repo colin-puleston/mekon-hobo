@@ -711,8 +711,9 @@ public class IFrameParser extends ISerialiser {
 	 * document.
 	 *
 	 * @param document Document containing serialised frame
-	 * @param framesByXDocId Map into which to write the document-specific
+	 * @param framesByXDocId Map into which the document-specific
 	 * frame-identifiers corresponding to the generated component frames
+	 * are to be written
 	 *
 	 * @return Generated frame
 	 */
@@ -740,9 +741,9 @@ public class IFrameParser extends ISerialiser {
 	 * tag, depending on the format in which the frame is serialised.
 	 *
 	 * @param parentNode Parent of relevant node
-	 * @param framesByXDocId Map into which to write the document-specific
+	 * @param framesByXDocId Map into which the document-specific
 	 * frame-identifiers corresponding to the generated component frames
-	 *
+	 * are to be written
 	 * @return Generated frame
 	 */
 	public IFrame parse(XNode parentNode, Map<String, IFrame> framesByXDocId) {

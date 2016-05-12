@@ -51,12 +51,14 @@ public abstract class XClientModel extends RClientModel {
 
 		RUpdates process(IFrame masterRoot) {
 
+			System.out.println("\n\n\nSTART-PROCESS: ");
 			XDocument masterDoc = iFrameRenderer.render(masterRoot, mastersToIds);
 			XDocument updateDoc = processDoc(masterDoc);
 
-			updateDoc.writeToOutput(System.out);
 			IFrame updateRoot = iFrameParser.parse(updateDoc, idsToUpdates);
 
+			System.out.println("\nXXX:mastersToIds: " + mastersToIds);
+			System.out.println("\nXXX:idsToUpdates: " + idsToUpdates);
 			return createUpdates(updateRoot);
 		}
 
@@ -66,12 +68,15 @@ public abstract class XClientModel extends RClientModel {
 
 			RUpdates updates = new RUpdates(updatedRoot);
 
+			System.out.println("\nXXX:createUpdates: ");
 			for (Map.Entry<IFrame, String> entry : mastersToIds.entrySet()) {
 
+				System.out.println("\nXXX:id: " + entry.getValue());
 				IFrame update = idsToUpdates.get(entry.getValue());
 
 				if (update != null) {
 
+					System.out.println("ADD-MAP: ");
 					updates.addMapping(entry.getKey(), update);
 				}
 			}
