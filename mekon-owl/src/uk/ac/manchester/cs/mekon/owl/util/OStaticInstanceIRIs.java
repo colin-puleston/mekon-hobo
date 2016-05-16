@@ -29,7 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 
 /**
  * Manages the assignment of unique IRIs to a set of OWL-based

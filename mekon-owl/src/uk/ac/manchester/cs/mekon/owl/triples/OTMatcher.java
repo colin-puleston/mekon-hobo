@@ -30,7 +30,7 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
