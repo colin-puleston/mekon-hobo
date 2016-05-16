@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 
 /**
  * @author Colin Puleston
