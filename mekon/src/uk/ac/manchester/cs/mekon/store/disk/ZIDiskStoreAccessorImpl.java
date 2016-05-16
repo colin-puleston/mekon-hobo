@@ -22,27 +22,27 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon.store.zlink.*;
+import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
 
 /**
  * @author Colin Puleston
  */
-class ZIStoreAccessorImpl extends ZIStoreAccessor {
+class ZIDiskStoreAccessorImpl extends ZIDiskStoreAccessor {
 
-	private Map<CBuilder, IStoreBuilder> storeBuilders
-					= new HashMap<CBuilder, IStoreBuilder>();
+	private Map<CBuilder, IDiskStoreBuilder> storeBuilders
+					= new HashMap<CBuilder, IDiskStoreBuilder>();
 
-	public IStoreBuilder getStoreBuilder(CBuilder builder) {
+	public IDiskStoreBuilder getStoreBuilder(CBuilder builder) {
 
-		IStoreBuilder storeBuilder = storeBuilders.get(builder);
+		IDiskStoreBuilder storeBuilder = storeBuilders.get(builder);
 
 		if (storeBuilder == null) {
 
@@ -54,19 +54,29 @@ class ZIStoreAccessorImpl extends ZIStoreAccessor {
 		return storeBuilder;
 	}
 
+	public IStore getStore(CModel model) {
+
+		return StoreRegister.get(model);
+	}
+
+	public boolean storeFor(CModel model) {
+
+		return StoreRegister.contains(model);
+	}
+
 	public void checkStopStore(CModel model) {
 
 		StoreRegister.checkStop(model);
 	}
 
-	private IStoreBuilder createStoreBuilder(CBuilder builder) {
+	private IDiskStoreBuilder createStoreBuilder(CBuilder builder) {
 
-		return new IStoreBuilderImpl(createStore(builder));
+		return new IDiskStoreBuilder(createStore(builder));
 	}
 
-	private IStore createStore(CBuilder builder) {
+	private IDiskStore createStore(CBuilder builder) {
 
-		return new IStore(getModel(builder));
+		return new IDiskStore(getModel(builder));
 	}
 
 	private CModel getModel(CBuilder builder) {

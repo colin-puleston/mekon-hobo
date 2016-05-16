@@ -22,48 +22,51 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.manage;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon.store.zlink.*;
 
 /**
- * Manager the for instance-stores associated with Frames Models
- * (FM). Each instance-store is represented by an {@link IStore}
- * object, which is registered by, and can be retrieved via, the
- * relevant {@link CModel} object.
- *
  * @author Colin Puleston
  */
-public class IStoreManager {
+class StoreRegister {
 
-	static private final ZIStoreAccessor storeAccessor = ZIStoreAccessor.get();
+	static private final Map<CModel, IDiskStore> stores = new HashMap<CModel, IDiskStore>();
 
-	/**
-	 * Provides an instance-store builder for the model associated
-	 * with the specified builder.
-	 *
-	 * @param builder Relevant builder
-	 * @return Instance-store builder for relevant model
-	 */
-	static public IStoreBuilder getBuilder(CBuilder builder) {
+	static synchronized void add(IDiskStore store) {
 
-		return storeAccessor.getStoreBuilder(builder);
+		stores.put(store.getModel(), store);
 	}
 
-	/**
-	 * Performs any necessary instance-store clear-ups after all
-	 * access of specified model has terminated.
-	 *
-	 * @param model Relevant model
-	 */
-	static public void checkStop(CModel model) {
+	static synchronized IDiskStore get(CModel model) {
 
-		storeAccessor.checkStopStore(model);
+		IDiskStore store = stores.get(model);
+
+		if (store == null) {
+
+			throw new KAccessException("Store has not been created for model!");
+		}
+
+		return store;
+	}
+
+	static synchronized boolean contains(CModel model) {
+
+		return stores.get(model) != null;
+	}
+
+	static synchronized void checkStop(CModel model) {
+
+		IDiskStore store = stores.remove(model);
+
+		if (store != null) {
+
+			store.stop();
+		}
 	}
 }

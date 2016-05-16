@@ -63,16 +63,13 @@ class NetworkAligner {
 			removeOldSlots();
 			updateCurrentSlots();
 			addNewSlots();
-
 			updateSlotValues();
 		}
 
 		void initialise() {
 
-			for (ISlot slot : update.getSlots().asList()) {
-
-				masterEd.addSlot(slot.getType());
-			}
+			addNewSlots();
+			updateSlotValues();
 		}
 
 		private void removeOldSlots() {
@@ -218,8 +215,6 @@ class NetworkAligner {
 
 				if (!matchingUpdateValueFor(value)) {
 
-					System.out.println("ALIGN-SLOT-VALS: " + master);
-					System.out.println("  REMOVE: " + value);
 					masterEd.remove(value);
 				}
 			}
@@ -231,8 +226,6 @@ class NetworkAligner {
 
 				if (!matchingMasterValueFor(value)) {
 
-					System.out.println("ALIGN-SLOT-VALS: " + master);
-					System.out.println("  ADD: " + value);
 					masterEd.add(getNewValue(value));
 				}
 			}
@@ -250,8 +243,6 @@ class NetworkAligner {
 
 			for (IValue value : master.getValues().asList()) {
 
-				System.out.println("ALIGN-SLOT-VALS: " + master);
-				System.out.println("  UPDATE: " + value);
 				updateCurrentValue((IFrame)value);
 			}
 		}
@@ -317,7 +308,6 @@ class NetworkAligner {
 
 	void align(IFrame masterRoot) {
 
-		System.out.println("\n\nSTART-ALIGN: " + mastersToUpdates);
 		alignFrom(masterRoot, updateRoot);
 	}
 

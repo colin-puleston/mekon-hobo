@@ -86,21 +86,4 @@ public class IMatchesRank implements Comparable<IMatchesRank> {
 
 		return rankingValue;
 	}
-
-	void ensureOriginalLabels(InstanceIndexes indexes) {
-
-		List<CIdentity> rawMatches = new ArrayList<CIdentity>(matches);
-
-		matches.clear();
-
-		for (CIdentity id : rawMatches) {
-
-			matches.add(ensureOriginalLabel(indexes, id));
-		}
-	}
-
-	private CIdentity ensureOriginalLabel(InstanceIndexes indexes, CIdentity id) {
-
-		return indexes.getIdentity(indexes.getIndex(id));
-	}
 }

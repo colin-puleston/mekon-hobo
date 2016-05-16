@@ -24,23 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
  * @author Colin Puleston
  */
 class IFrameDynamicParseMechanisms extends IFrameParseMechanisms {
 
-	private IEditor iEditor;
-
-	IFrameDynamicParseMechanisms(CModel model) {
-
-		iEditor = ZCModelAccessor.get().getIEditor(model);
-	}
+	static final IFrameDynamicParseMechanisms SINGLETON = new IFrameDynamicParseMechanisms();
 
 	ISchemaParse getSchemaParse() {
 
@@ -49,11 +40,7 @@ class IFrameDynamicParseMechanisms extends IFrameParseMechanisms {
 
 	IFrame instantiateFrame(CFrame type, IFrameFunction function) {
 
-		IFrame frame = type.instantiate(function);
-
-		setAutoUpdateEnabled(frame, false);
-
-		return frame;
+		return type.instantiate(function);
 	}
 
 	ISlot checkResolveSlot(IFrameParserSlotSpec spec) {
@@ -61,41 +48,22 @@ class IFrameDynamicParseMechanisms extends IFrameParseMechanisms {
 		ISlots slots = spec.getContainer().getSlots();
 		CIdentity slotId = spec.getSlotId();
 
-		return slots.containsValueFor(slotId) ? slots.get(slotId) : null;
-	}
+		if (slots.containsValueFor(slotId)) {
 
-	void checkUpdateFrameSlotSets(List<IFrame> frames) {
+			ISlot slot = slots.get(slotId);
 
-		setAutoUpdateEnabled(frames, true);
+			if (slot.getEditability() != IEditability.NONE) {
 
-		for (IFrame frame : frames) {
-
-			frame.update();
+				return slot;
+			}
 		}
 
-		setAutoUpdateEnabled(frames, false);
+		return null;
 	}
 
-	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
-
-		setAutoUpdateEnabled(frames, true);
+	void onParseCompletion(IFrame rootFrame) {
 	}
 
-	private void setAutoUpdateEnabled(List<IFrame> frames, boolean enabled) {
-
-		for (IFrame frame : frames) {
-
-			setAutoUpdateEnabled(frame, enabled);
-		}
-	}
-
-	private void setAutoUpdateEnabled(IFrame frame, boolean enabled) {
-
-		getFrameEditor(frame).setAutoUpdateEnabled(enabled);
-	}
-
-	private IFrameEditor getFrameEditor(IFrame frame) {
-
-		return iEditor.getFrameEditor(frame);
+	private IFrameDynamicParseMechanisms() {
 	}
 }

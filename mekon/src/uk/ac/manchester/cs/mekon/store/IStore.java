@@ -24,14 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.store;
 
-import java.io.*;
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon.store.zlink.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -44,54 +39,14 @@ import uk.ac.manchester.cs.mekon.store.zlink.*;
  *
  * @author Colin Puleston
  */
-public class IStore {
-
-	/**
-	 * Provides the instance-store for the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return Instance-store for model
-	 */
-	static public synchronized IStore get(CModel model) {
-
-		return StoreRegister.get(model);
-	}
-
-	/**
-	 * Checks whether an instance-store has been registered for
-	 * the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return True if instance-store is registered for model
-	 */
-	static public boolean storeFor(CModel model) {
-
-		return StoreRegister.contains(model);
-	}
-
-	static {
-
-		ZIStoreAccessor.set(new ZIStoreAccessorImpl());
-	}
-
-	private CModel model;
-
-	private InstanceFileStore fileStore;
-	private List<IMatcher> matchers = new ArrayList<IMatcher>();
-	private IDirectMatcher defaultMatcher = new IDirectMatcher();
-
-	private List<CIdentity> identities = new ArrayList<CIdentity>();
-	private InstanceIndexes indexes = new InstanceIndexes();
+public interface IStore {
 
 	/**
 	 * Provides the model with which the store is associated.
 	 *
 	 * @return Model with which store is associated
 	 */
-	public CModel getModel() {
-
-		return model;
-	}
+	public CModel getModel();
 
 	/**
 	 * Adds an instance to the store, possibly replacing an existing
@@ -104,20 +59,7 @@ public class IStore {
 	 * @throws KAccessException if instance frame does not have function
 	 * {@link IFrameFunction#ASSERTION}
 	 */
-	public synchronized IFrame add(IFrame instance, CIdentity identity) {
-
-		instance = createFreeCopy(instance);
-
-		IFrame previous = checkRemove(identity);
-		int index = indexes.assignIndex(identity);
-
-		identities.add(identity);
-
-		fileStore.write(instance, identity, index);
-		checkAddToMatcher(instance, identity);
-
-		return previous;
-	}
+	public IFrame add(IFrame instance, CIdentity identity);
 
 	/**
 	 * Removes an instance from the store.
@@ -126,21 +68,12 @@ public class IStore {
 	 * @return True if instance removed, false if instance with
 	 * specified identity not present
 	 */
-	public synchronized boolean remove(CIdentity identity) {
-
-		return checkRemove(identity) != null;
-	}
+	public boolean remove(CIdentity identity);
 
 	/**
 	 * Removes all instances from the store.
 	 */
-	public synchronized void clear() {
-
-		for (CIdentity identity : getAllIdentities()) {
-
-			remove(identity);
-		}
-	}
+	public void clear();
 
 	/**
 	 * Checks whether store contains a particular instance.
@@ -148,10 +81,7 @@ public class IStore {
 	 * @param identity Unique identity of instance to check for
 	 * @return True if store contains required instance
 	 */
-	public synchronized boolean contains(CIdentity identity) {
-
-		return indexes.hasIndex(identity);
-	}
+	public boolean contains(CIdentity identity);
 
 	/**
 	 * Retrieves an instance from the store.
@@ -160,10 +90,7 @@ public class IStore {
 	 * @return Instance-level frame representing required instance,
 	 * or null if instance with specified identity not present
 	 */
-	public synchronized IFrame get(CIdentity identity) {
-
-		return fileStore.read(indexes.getIndex(identity), false);
-	}
+	public IFrame get(CIdentity identity);
 
 	/**
 	 * Provides unique identities of all instances in store,
@@ -172,10 +99,7 @@ public class IStore {
 	 * @return Unique identities of all instances, oldest entries
 	 * first
 	 */
-	public synchronized List<CIdentity> getAllIdentities() {
-
-		return new ArrayList<CIdentity>(identities);
-	}
+	public List<CIdentity> getAllIdentities();
 
 	/**
 	 * Finds all instances that are matched by the supplied query.
@@ -183,16 +107,7 @@ public class IStore {
 	 * @param query Representation of query
 	 * @return Results of query execution
 	 */
-	public synchronized IMatches match(IFrame query) {
-
-		query = createFreeCopy(query);
-
-		IMatches matches = getMatcher(query).match(query);
-
-		matches.ensureOriginalLabels(indexes);
-
-		return matches;
-	}
+	public IMatches match(IFrame query);
 
 	/**
 	 * Tests whether the supplied instance is matched by the supplied
@@ -202,147 +117,5 @@ public class IStore {
 	 * @param instance Representation of instance
 	 * @return True if instance matched by query
 	 */
-	public synchronized boolean matches(IFrame query, IFrame instance) {
-
-		query = createFreeCopy(query);
-		instance = createFreeCopy(instance);
-
-		IMatcher matcher = getMatcher(query);
-
-		if (matcher != getMatcher(instance)) {
-
-			return false;
-		}
-
-		return matcher.matches(query, instance);
-	}
-
-	IStore(CModel model) {
-
-		this.model = model;
-
-		fileStore = new InstanceFileStore(model, this);
-	}
-
-	void setStoreDirectory(File directory) {
-
-		fileStore.setDirectory(directory);
-	}
-
-	void addMatcher(IMatcher matcher) {
-
-		matchers.add(matcher);
-	}
-
-	void removeMatcher(IMatcher matcher) {
-
-		matchers.remove(matcher);
-	}
-
-	void insertMatcher(IMatcher matcher, int index) {
-
-		matchers.add(index, matcher);
-	}
-
-	void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher) {
-
-		matchers.set(matchers.indexOf(oldMatcher), newMatcher);
-	}
-
-	void initialisePostRegistration() {
-
-		initialiseMatchers();
-
-		fileStore.reloadAll();
-		indexes.reinitialiseFreeIndexes();
-	}
-
-	void reload(InstanceProfile profile, int index) {
-
-		CIdentity identity = profile.getIdentity();
-
-		identities.add(identity);
-		indexes.assignIndex(identity, index);
-
-		IMatcher matcher = getMatcher(profile.getType());
-
-		if (matcher.rebuildOnStartup()) {
-
-			matcher.add(fileStore.read(index, true), identity);
-		}
-	}
-
-	void stop() {
-
-		for (IMatcher matcher : matchers) {
-
-			matcher.stop();
-		}
-
-		matchers.clear();
-	}
-
-	List<IMatcher> getMatchers() {
-
-		return new ArrayList<IMatcher>(matchers);
-	}
-
-	private void initialiseMatchers() {
-
-		for (IMatcher matcher : matchers) {
-
-			matcher.initialise(indexes);
-		}
-	}
-
-	private IFrame checkRemove(CIdentity identity) {
-
-		IFrame removed = null;
-
-		if (indexes.hasIndex(identity)) {
-
-			identities.remove(identity);
-
-			int index = indexes.getIndex(identity);
-
-			checkRemoveFromMatcher(fileStore.readType(index), identity);
-			fileStore.remove(index);
-			indexes.freeIndex(identity);
-		}
-
-		return removed;
-	}
-
-	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
-
-		getMatcher(instance).add(instance, identity);
-	}
-
-	private void checkRemoveFromMatcher(CFrame type, CIdentity identity) {
-
-		getMatcher(type).remove(identity);
-	}
-
-	private IMatcher getMatcher(IFrame frame) {
-
-		return getMatcher(frame.getType());
-	}
-
-	private IMatcher getMatcher(CFrame frameType) {
-
-		for (IMatcher matcher : matchers) {
-
-			if (matcher.handlesType(frameType)) {
-
-				return matcher;
-			}
-		}
-
-		return defaultMatcher;
-	}
-
-	private IFrame createFreeCopy(IFrame instance) {
-
-		return IFreeInstantiator.get().createFreeCopy(instance);
-	}
+	public boolean matches(IFrame query, IFrame instance);
 }

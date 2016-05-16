@@ -24,11 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
  * @author Colin Puleston
@@ -60,10 +57,7 @@ class IFrameStaticParseMechanisms extends IFrameParseMechanisms {
 					spec.getEditability());
 	}
 
-	void checkUpdateFrameSlotSets(List<IFrame> frames) {
-	}
-
-	void onParseCompletion(IFrame rootFrame, List<IFrame> frames) {
+	void onParseCompletion(IFrame rootFrame) {
 
 		instantiator.completeInstantiation(rootFrame);
 	}

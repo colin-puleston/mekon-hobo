@@ -22,35 +22,52 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
+ * Provides mapping for each unique instance identity to a
+ * corresponding unique index value. Each mapping will persist
+ * between subsequent invocations of the system, for as long as the
+ * relevant instance exists.
+ *
  * @author Colin Puleston
  */
-class InstanceIndexes
-		extends KIndexes<CIdentity>
-		implements IMatcherIndexes {
+public interface IMatcherIndexes {
 
-	public CIdentity getIdentity(int index) {
+	/**
+	 * Checks whether an identity has an assigned index.
+	 *
+	 * @param identity Identity to check
+	 * @return True if identity has an assigned index
+	 */
+	public boolean hasIndex(CIdentity identity);
 
-		return getElement(index);
-	}
+	/**
+	 * Retrieves the index corresponding to the specified identity.
+	 *
+	 * @param identity Identity for which index is required
+	 * @return Relevant index
+	 */
+	public int getIndex(CIdentity identity);
 
-	public List<CIdentity> getIdentities(List<Integer> indexes) {
+	/**
+	 * Retrieves the identity corresponding to the specified index.
+	 *
+	 * @param index Index for which identity is required
+	 * @return Relevant identity
+	 */
+	public CIdentity getIdentity(int index);
 
-		return getElements(indexes);
-	}
-
-	protected KRuntimeException createException(String message) {
-
-		return new KSystemConfigException(message);
-	}
+	/**
+	 * Retrieves the identities corresponding to the specified set
+	 * of indexes.
+	 *
+	 * @param indexes Indexes for which identities are required
+	 * @return Relevant set of identities
+	 */
+	public List<CIdentity> getIdentities(List<Integer> indexes);
 }

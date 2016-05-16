@@ -24,9 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
-
 /**
  * Specifies the manner in which schema information is to be derived
  * when parsing serialised {@link IFrame}/{@link ISlot} networks.
@@ -41,7 +38,7 @@ public enum ISchemaParse {
 	 */
 	FREE {
 
-		IFrameParseMechanisms getMechanisms(CModel model) {
+		IFrameParseMechanisms getMechanisms() {
 
 			return IFrameFreeParseMechanisms.SINGLETON;
 		}
@@ -53,7 +50,7 @@ public enum ISchemaParse {
 	 */
 	STATIC {
 
-		IFrameParseMechanisms getMechanisms(CModel model) {
+		IFrameParseMechanisms getMechanisms() {
 
 			return IFrameStaticParseMechanisms.SINGLETON;
 		}
@@ -65,11 +62,11 @@ public enum ISchemaParse {
 	 */
 	DYNAMIC {
 
-		IFrameParseMechanisms getMechanisms(CModel model) {
+		IFrameParseMechanisms getMechanisms() {
 
-			return new IFrameDynamicParseMechanisms(model);
+			return IFrameDynamicParseMechanisms.SINGLETON;
 		}
 	};
 
-	abstract IFrameParseMechanisms getMechanisms(CModel model);
+	abstract IFrameParseMechanisms getMechanisms();
 }

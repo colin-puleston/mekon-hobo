@@ -29,7 +29,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
@@ -84,7 +84,7 @@ class CConfig implements CConfigVocab {
 
 	private void setIStoreDirectory(CBuilder builder) {
 
-		IStoreManager.getBuilder(builder).setStoreDirectory(getIStoreDirectory());
+		IDiskStoreManager.getBuilder(builder).setStoreDirectory(getIStoreDirectory());
 	}
 
 	private void setInstanceUpdating(CBuilder builder) {

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.util.*;
 
@@ -34,12 +34,12 @@ import static org.junit.Assert.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
  */
-public class IStoreTest {
+public class IDiskStoreTest {
 
 	static private final CIdentity FIRST_ID = new CIdentity("First");
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
@@ -48,7 +48,7 @@ public class IStoreTest {
 	private TestCFrames frames = model.cFrames;
 	private TestInstances instances = model.createTestInstances();
 
-	private IStore store;
+	private IDiskStore store;
 
 	private IFrame first = null;
 	private IFrame second = null;
@@ -194,7 +194,7 @@ public class IStoreTest {
 
 	private void createStore() {
 
-		store = new IStore(model.model);
+		store = new IDiskStore(model.model);
 
 		store.initialisePostRegistration();
 	}

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store.motor;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.util.*;
 

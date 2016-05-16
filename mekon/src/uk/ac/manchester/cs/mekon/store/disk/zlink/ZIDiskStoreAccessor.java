@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store.zlink;
+package uk.ac.manchester.cs.mekon.store.disk.zlink;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -35,36 +35,36 @@ import uk.ac.manchester.cs.mekon.util.*;
  * OR THE PLUGIN CODE.
  * <p>
  * Provides the MEKON mechanisms with privileged access to the MEKON
- * instance-store.
+ * disk-based instance-store.
  *
  * @author Colin Puleston
  */
-public abstract class ZIStoreAccessor {
+public abstract class ZIDiskStoreAccessor {
 
-	static private KSingleton<ZIStoreAccessor> singleton
-							= new KSingleton<ZIStoreAccessor>();
+	static private KSingleton<ZIDiskStoreAccessor> singleton
+							= new KSingleton<ZIDiskStoreAccessor>();
 
 	/**
 	 * Sets the singleton accessor object.
 	 *
 	 * @param accessor Accessor to set as singleton
 	 */
-	static public synchronized void set(ZIStoreAccessor accessor) {
+	static public synchronized void set(ZIDiskStoreAccessor accessor) {
 
 		singleton.set(accessor);
 	}
 
 	/**
 	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link IStore} class is initialised, since it is the static
-	 * initialisation method on that class that sets the singleton
-	 * accessor, via the {@link #set} method.
+	 * {@link IDiskStoreBuilder} class is initialised, since it is the
+	 * static initialisation method on that class that sets the
+	 * singleton accessor, via the {@link #set} method.
 	 *
 	 * @return Singleton accessor object
 	 */
-	static public ZIStoreAccessor get() {
+	static public ZIDiskStoreAccessor get() {
 
-		return singleton.get(IStore.class);
+		return singleton.get(IDiskStoreBuilder.class);
 	}
 
 	/**
@@ -74,7 +74,24 @@ public abstract class ZIStoreAccessor {
 	 * @param builder Relevant builder
 	 * @return Instance-store builder for associated model
 	 */
-	public abstract IStoreBuilder getStoreBuilder(CBuilder builder);
+	public abstract IDiskStoreBuilder getStoreBuilder(CBuilder builder);
+
+	/**
+	 * Provides the instance-store for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Instance-store for model
+	 */
+	public abstract IStore getStore(CModel model);
+
+	/**
+	 * Checks whether an instance-store has been registered for
+	 * the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return True if instance-store is registered for model
+	 */
+	public abstract boolean storeFor(CModel model);
 
 	/**
 	 * Performs any necessary instance-store clear-ups after all

@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.network;
 
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 
 /**
  * @author Colin Puleston

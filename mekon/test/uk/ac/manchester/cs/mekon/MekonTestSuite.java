@@ -31,7 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
 
 /**
@@ -54,7 +54,7 @@ import uk.ac.manchester.cs.mekon.network.*;
 	ISlotValuesTest.class,
 	ISlotSpecsTest.class,
 	ISlotSpecsViaDisjunctionsTest.class,
-	IStoreTest.class,
+	IDiskStoreTest.class,
 	IFrameSerialiseTest.class,
 	IDirectMatcherTest.class,
 	NDirectMatcherTest.class})

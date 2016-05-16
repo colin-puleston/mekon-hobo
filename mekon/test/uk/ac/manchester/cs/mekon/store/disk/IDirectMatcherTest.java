@@ -22,31 +22,16 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
-
-import uk.ac.manchester.cs.mekon.model.*;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 /**
  * @author Colin Puleston
  */
-class InstanceProfile {
+public class IDirectMatcherTest extends IMatcherTest {
 
-	private CIdentity identity;
-	private CFrame type;
+	protected IMatcher createMatcher() {
 
-	InstanceProfile(CIdentity identity, CFrame type) {
-
-		this.identity = identity;
-		this.type = type;
-	}
-
-	CIdentity getIdentity() {
-
-		return identity;
-	}
-
-	CFrame getType() {
-
-		return type;
+		return new IDirectMatcher();
 	}
 }
+

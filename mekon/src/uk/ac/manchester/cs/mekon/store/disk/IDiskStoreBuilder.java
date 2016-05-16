@@ -22,21 +22,28 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store.motor;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.io.*;
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
 
 /**
- * Provides mechanisms for initialising the instance-store, as
+ * Provides mechanisms for building a disk-based instance-store, as
  * represented by an {@link IStore} object.
  *
  * @author Colin Puleston
  */
-public interface IStoreBuilder {
+public class IDiskStoreBuilder {
+
+	static {
+
+		ZIDiskStoreAccessor.set(new ZIDiskStoreAccessorImpl());
+	}
+
+	private IDiskStore store;
 
 	/**
 	 * Sets the directory for instance-store serialisation.
@@ -44,21 +51,30 @@ public interface IStoreBuilder {
 	 *
 	 * @param directory Relevant serialisation directory
 	 */
-	public void setStoreDirectory(File directory);
+	public void setStoreDirectory(File directory) {
+
+		store.setStoreDirectory(directory);
+	}
 
 	/**
 	 * Adds an instance-matcher to the instance-store.
 	 *
 	 * @param matcher Instance-matcher to add
 	 */
-	public void addMatcher(IMatcher matcher);
+	public void addMatcher(IMatcher matcher) {
+
+		store.addMatcher(matcher);
+	}
 
 	/**
 	 * Removes an instance-matcher from the instance-store.
 	 *
 	 * @param matcher Instance-matcher to remove
 	 */
-	public void removeMatcher(IMatcher matcher);
+	public void removeMatcher(IMatcher matcher) {
+
+		store.removeMatcher(matcher);
+	}
 
 	/**
 	 * Adds an instance-matcher to the instance-store, inserting
@@ -67,7 +83,10 @@ public interface IStoreBuilder {
 	 * @param matcher Instance-matcher to add
 	 * @param index Index at which to insert matcher
 	 */
-	public void insertMatcher(IMatcher matcher, int index);
+	public void insertMatcher(IMatcher matcher, int index) {
+
+		store.insertMatcher(matcher, index);
+	}
 
 	/**
 	 * Replaces an instance-matcher for the instance-store, placing
@@ -77,14 +96,20 @@ public interface IStoreBuilder {
 	 * @param oldMatcher Instance-matcher to be replaced
 	 * @param newMatcher Replacement instance-matcher
 	 */
-	public void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher);
+	public void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher) {
+
+		store.replaceMatcher(oldMatcher, newMatcher);
+	}
 
 	/**
 	 * Provides all matchers that have been registered.
 	 *
 	 * @return All registered matchers
 	 */
-	public List<IMatcher> getMatchers();
+	public List<IMatcher> getMatchers() {
+
+		return store.getMatchers();
+	}
 
 	/**
 	 * Creates the {@link IStore} object and loads any matchers that
@@ -92,5 +117,16 @@ public interface IStoreBuilder {
 	 *
 	 * @return Created store object
 	 */
-	public IStore build();
+	public IStore build() {
+
+		StoreRegister.add(store);
+		store.initialisePostRegistration();
+
+		return store;
+	}
+
+	IDiskStoreBuilder(IDiskStore store) {
+
+		this.store = store;
+	}
 }

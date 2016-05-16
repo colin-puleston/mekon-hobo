@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -39,7 +37,5 @@ abstract class IFrameParseMechanisms {
 
 	abstract ISlot checkResolveSlot(IFrameParserSlotSpec spec);
 
-	abstract void checkUpdateFrameSlotSets(List<IFrame> frames);
-
-	abstract void onParseCompletion(IFrame rootFrame, List<IFrame> frames);
+	abstract void onParseCompletion(IFrame rootFrame);
 }

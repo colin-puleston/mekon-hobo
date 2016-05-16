@@ -55,7 +55,7 @@ public class IFrameParser extends ISerialiser {
 	private IEditor iEditor;
 	private IFrameFunction frameFunction;
 
-	private IFrameParseMechanisms mechanisms;
+	private IFrameParseMechanisms mechanisms = IFrameDynamicParseMechanisms.SINGLETON;
 
 	private class OneTimeParser {
 
@@ -384,7 +384,7 @@ public class IFrameParser extends ISerialiser {
 			IFrame rootFrame = resolveIFrame(getTopLevelFrameNode());
 
 			addSlotValues();
-			mechanisms.onParseCompletion(rootFrame, frames);
+			mechanisms.onParseCompletion(rootFrame);
 
 			return rootFrame;
 		}
@@ -579,17 +579,14 @@ public class IFrameParser extends ISerialiser {
 
 		private void addSlotValues() {
 
-			while (!frameSlots.isEmpty() && addValuesForAvailableSlots()) {
-
-				mechanisms.checkUpdateFrameSlotSets(frames);
-			}
+			while (addValuesForAvailableSlots());
 		}
 
 		private boolean addValuesForAvailableSlots() {
 
 			boolean anyAdded = false;
 
-			for (IFrame frame : frameSlots.keySet()) {
+			for (IFrame frame : frames) {
 
 				for (SlotSpec<?> spec : frameSlots.getList(frame)) {
 
@@ -677,7 +674,6 @@ public class IFrameParser extends ISerialiser {
  		this.frameFunction = frameFunction;
 
 		iEditor = ZCModelAccessor.get().getIEditor(model);
-		mechanisms = new IFrameDynamicParseMechanisms(model);
 	}
 
 	/**
@@ -690,7 +686,7 @@ public class IFrameParser extends ISerialiser {
 
 		if (mechanisms.getSchemaParse() != schemaParse) {
 
-			mechanisms = schemaParse.getMechanisms(model);
+			mechanisms = schemaParse.getMechanisms();
 		}
 	}
 

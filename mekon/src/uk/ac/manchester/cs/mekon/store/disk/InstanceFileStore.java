@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -39,7 +40,7 @@ class InstanceFileStore {
 	static private final String INSTANCE_FILE_PREFIX = "INSTANCE-";
 	static private final String FILE_SUFFIX = ".xml";
 
-	private IStore iStore;
+	private IDiskStore iStore;
 
 	private KFileStore profiles = new KFileStore(
 										PROFILE_FILE_PREFIX,
@@ -51,7 +52,7 @@ class InstanceFileStore {
 
 	private InstanceSerialiser serialiser;
 
-	InstanceFileStore(CModel model, IStore iStore) {
+	InstanceFileStore(CModel model, IDiskStore iStore) {
 
 		this.iStore = iStore;
 

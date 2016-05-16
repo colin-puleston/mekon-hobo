@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.manage;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 
 /**
  * @author Colin Puleston
@@ -43,7 +43,7 @@ class GeneralMatcherAdder implements CSectionBuilder {
 
 	public void build(CBuilder builder) {
 
-		IStoreBuilder iStoreBuilder = IStoreManager.getBuilder(builder);
+		IDiskStoreBuilder iStoreBuilder = IDiskStoreManager.getBuilder(builder);
 
 		for (IMatcher matcher : matchers) {
 
