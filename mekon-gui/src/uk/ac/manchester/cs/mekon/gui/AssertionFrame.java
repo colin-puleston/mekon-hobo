@@ -42,6 +42,7 @@ class AssertionFrame extends InstantiationFrame {
 
 	static private final Dimension NAME_FIELD_SIZE = new Dimension(250, 25);
 
+	private InstanceStoreActions actions;
 	private JTextField nameField = new JTextField();
 
 	private class StoreButton extends GButton {
@@ -61,9 +62,11 @@ class AssertionFrame extends InstantiationFrame {
 		}
 	}
 
-	AssertionFrame(CFramesTree modelTree, IFrame frame) {
+	AssertionFrame(CFramesTree modelTree, InstanceStoreActions actions, IFrame frame) {
 
 		super(modelTree, frame);
+
+		this.actions = actions;
 
 		GFonts.setMedium(nameField);
 		nameField.setPreferredSize(NAME_FIELD_SIZE);
@@ -112,7 +115,7 @@ class AssertionFrame extends InstantiationFrame {
 
 	private JComponent setEnabling(JComponent component) {
 
-		getActions().setInstanceStoreComponentEnabling(component);
+		actions.setInstanceStoreComponentEnabling(component);
 
 		return component;
 	}
@@ -123,7 +126,7 @@ class AssertionFrame extends InstantiationFrame {
 
 		if (id != null) {
 
-			getActions().storeInstance(getFrame(), id);
+			actions.storeInstance(getFrame(), id);
 		}
 	}
 

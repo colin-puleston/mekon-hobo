@@ -46,7 +46,6 @@ abstract class InstantiationFrame extends GFrame {
 	static private final String SUGGESTED_TYPES_TITLE = "Suggested Types";
 
 	private IFrame frame;
-	private InstanceStoreActions actions;
 
 	private JTabbedPane aspectTabs = new JTabbedPane();
 
@@ -79,8 +78,6 @@ abstract class InstantiationFrame extends GFrame {
 
 		this.frame = frame;
 
-		actions = new InstanceStoreActions(getModel(), modelTree);
-
 		instanceComponent = createInstanceComponent();
 		inferredTypesPanel = new InferredTypesPanel(modelTree);
 		suggestedTypesPanel = new SuggestedTypesPanel(modelTree);
@@ -99,11 +96,6 @@ abstract class InstantiationFrame extends GFrame {
 	abstract String getCategoryLabel();
 
 	abstract JComponent createControlsPanel();
-
-	InstanceStoreActions getActions() {
-
-		return actions;
-	}
 
 	IFrame getFrame() {
 

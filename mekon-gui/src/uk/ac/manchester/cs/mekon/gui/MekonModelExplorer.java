@@ -55,14 +55,15 @@ public class MekonModelExplorer extends GFrame {
 
 		private ModelFrameSelections selections = new ModelFrameSelections();
 
-		Initialiser(CModel model) {
+		Initialiser(CModel model, IStore store) {
 
 			modelPanel = new ModelFramesPanel(model);
 
 			CFramesTree modelTree = modelPanel.getTree();
+			InstanceStoreActions storeActions = new InstanceStoreActions(store, modelTree);
 
-			selectionPanel = new ModelFrameSelectionPanel(model, modelTree);
-			instanceStorePanel = new InstanceStorePanel(model, modelTree);
+			selectionPanel = new ModelFrameSelectionPanel(modelTree, storeActions);
+			instanceStorePanel = new InstanceStorePanel(storeActions);
 
 			selections.addSelectionRelay(modelPanel.getSelectionRelay());
 			selections.addSelectionRelay(selectionPanel.getSelectionRelay());
@@ -115,7 +116,7 @@ public class MekonModelExplorer extends GFrame {
 
 		public void windowClosing(WindowEvent e) {
 
-			IStoreManager.checkStop(model);
+			IDiskStoreManager.checkStopStore(model);
 		}
 
 		ModelClearUpper(CModel model) {
@@ -126,7 +127,16 @@ public class MekonModelExplorer extends GFrame {
 
 	static public void main(String[] args) {
 
-		new MekonModelExplorer();
+		CBuilder builder = CManager.createBuilder();
+
+		createWithDiskStore(builder.build(), builder);
+	}
+
+	static public void createWithDiskStore(CModel model, CBuilder builder) {
+
+		IStore store = IDiskStoreManager.getBuilder(builder).build();
+
+		new MekonModelExplorer(model, store);
 	}
 
 	static String getSystemTitle(String title) {
@@ -134,33 +144,18 @@ public class MekonModelExplorer extends GFrame {
 		return SYSTEM_TITLE + ": " + title;
 	}
 
-	public MekonModelExplorer() {
+	public MekonModelExplorer(CModel model) {
 
-		this(CManager.createBuilder());
+		this(model, null);
 	}
 
-	public MekonModelExplorer(CBuilder builder) {
-
-		this(builder.build(), builder);
-	}
-
-	public MekonModelExplorer(CModel model, CBuilder builder) {
+	public MekonModelExplorer(CModel model, IStore store) {
 
 		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		addWindowListener(new ModelClearUpper(model));
 
-		if (builder != null ) {
-
-			IStoreManager.getBuilder(builder).build();
-		}
-
-		display(new Initialiser(model).createTopLevelComponent());
-	}
-
-	public MekonModelExplorer(CModel model) {
-
-		this(model, null);
+		display(new Initialiser(model, store).createTopLevelComponent());
 	}
 }

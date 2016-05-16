@@ -43,6 +43,7 @@ class InstantiationsPanel extends JPanel {
 	static private final String QUERY_BUTTON_LABEL = "Query...";
 
 	private CFramesTree modelTree;
+	private InstanceStoreActions storeActions;
 	private CFrame frame;
 
 	private class InstantiateAssertionButton extends GButton {
@@ -77,12 +78,16 @@ class InstantiationsPanel extends JPanel {
 		}
 	}
 
-	InstantiationsPanel(CFramesTree modelTree, CFrame frame) {
+	InstantiationsPanel(
+		CFramesTree modelTree,
+		CFrame frame,
+		InstanceStoreActions storeActions) {
 
 		super(new BorderLayout());
 
 		this.modelTree = modelTree;
 		this.frame = frame;
+		this.storeActions = storeActions;
 
 		setBorder(createBorder());
 		add(createButtonsComponent(), BorderLayout.EAST);
@@ -118,12 +123,12 @@ class InstantiationsPanel extends JPanel {
 
 	private void instantiateAssertion() {
 
-		new AssertionFrame(modelTree, frame.instantiate()).display();
+		new AssertionFrame(modelTree, storeActions, frame.instantiate()).display();
 	}
 
 	private void instantiateQuery() {
 
-		new QueryFrame(modelTree, frame.instantiateQuery()).display();
+		new QueryFrame(modelTree, storeActions, frame.instantiateQuery()).display();
 	}
 
 	private boolean queriesEnabled() {

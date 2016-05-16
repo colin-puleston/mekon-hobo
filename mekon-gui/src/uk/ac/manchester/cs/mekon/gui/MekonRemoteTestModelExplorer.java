@@ -33,9 +33,7 @@ import uk.ac.manchester.cs.mekon.remote.server.xml.*;
 /**
  * @author Colin Puleston
  */
-public class MekonRemoteTestModelExplorer extends MekonModelExplorer {
-
-	static private final long serialVersionUID = -1;
+public class MekonRemoteTestModelExplorer {
 
 	private static class LocalXClientModel extends XClientModel {
 
@@ -61,21 +59,16 @@ public class MekonRemoteTestModelExplorer extends MekonModelExplorer {
 
 	static public void main(String[] args) {
 
-		new MekonRemoteTestModelExplorer();
+		CBuilder builder = CManager.createBuilder();
+
+		create(builder.build(), builder);
 	}
 
-	public MekonRemoteTestModelExplorer() {
+	static public void create(CModel model, CBuilder builder) {
 
-		this(CManager.createBuilder());
-	}
+		XServerModel serverModel = new XServerModel(model, builder);
+		XClientModel clientModel = new LocalXClientModel(serverModel);
 
-	public MekonRemoteTestModelExplorer(CBuilder builder) {
-
-		this(builder.build(), builder);
-	}
-
-	public MekonRemoteTestModelExplorer(CModel model, CBuilder builder) {
-
-		super(new LocalXClientModel(new XServerModel(model, builder)).getCModel());
+		new MekonModelExplorer(clientModel.getCModel());
 	}
 }

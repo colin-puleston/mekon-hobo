@@ -44,6 +44,8 @@ class QueryFrame extends InstantiationFrame {
 	static private final String MATCHES_TITLE = "Matches";
 	static private final String EXECUTE_ACTION_LABEL = "Execute";
 
+	private InstanceStoreActions actions;
+
 	private class ExecuteButton extends GButton {
 
 		static private final long serialVersionUID = -1;
@@ -91,13 +93,15 @@ class QueryFrame extends InstantiationFrame {
 
 		protected void onSelected(CIdentity entity) {
 
-			getActions().retrieveAndDisplayInstance(entity);
+			actions.retrieveAndDisplayInstance(entity);
 		}
 	}
 
-	QueryFrame(CFramesTree modelTree, IFrame frame) {
+	QueryFrame(CFramesTree modelTree, InstanceStoreActions actions, IFrame frame) {
 
 		super(modelTree, frame);
+
+		this.actions = actions;
 
 		new MatchesClearer(frame);
 	}
@@ -118,7 +122,7 @@ class QueryFrame extends InstantiationFrame {
 
 	private void execute() {
 
-		IMatches matches = getActions().executeQuery(getFrame());
+		IMatches matches = actions.executeQuery(getFrame());
 
 		if (matches.anyMatches()) {
 

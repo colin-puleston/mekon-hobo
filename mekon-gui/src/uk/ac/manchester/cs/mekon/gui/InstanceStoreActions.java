@@ -25,6 +25,7 @@ package uk.ac.manchester.cs.mekon.gui;
 
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
@@ -37,18 +38,18 @@ class InstanceStoreActions {
 
 	static private final String SELECTOR_TITLE = "Instance Name";
 
-	private CModel model;
+	private IStore store;
 	private CFramesTree modelTree;
 
-	InstanceStoreActions(CModel model, CFramesTree modelTree) {
+	InstanceStoreActions(IStore store, CFramesTree modelTree) {
 
-		this.model = model;
+		this.store = store;
 		this.modelTree = modelTree;
 	}
 
 	void setInstanceStoreComponentEnabling(JComponent component) {
 
-		component.setEnabled(isStore());
+		component.setEnabled(store != null);
 	}
 
 	void storeInstance(IFrame instance, CIdentity id) {
@@ -65,7 +66,7 @@ class InstanceStoreActions {
 
 		IFrame instance = getStore().get(id);
 
-		new AssertionFrame(modelTree, instance).display(id);
+		new AssertionFrame(modelTree, this, instance).display(id);
 	}
 
 	void retrieveAndDisplaySelectedInstance() {
@@ -181,13 +182,13 @@ class InstanceStoreActions {
 		JOptionPane.showMessageDialog(null, msg);
 	}
 
-	private boolean isStore() {
-
-		return IStore.storeFor(model);
-	}
-
 	private IStore getStore() {
 
-		return IStore.get(model);
+		if (store == null) {
+
+			throw new Error("Instance store not set!");
+		}
+
+		return store;
 	}
 }
