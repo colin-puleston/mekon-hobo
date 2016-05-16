@@ -10,7 +10,7 @@ import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
 
 import uk.ac.manchester.cs.hobo.manage.*;
@@ -164,7 +164,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 
 		DBuilder dBuilder = DManager.createBuilder();
 		CBuilder cBuilder = dBuilder.getCBuilder();
-		IStoreBuilder storeBuilder = IStoreManager.getBuilder(cBuilder);
+		IDiskStoreBuilder storeBuilder = IDiskStoreManager.getBuilder(cBuilder);
 
 		model = dBuilder.build();
 		matcher = createCustomMatcher(model);
@@ -181,7 +181,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 		if (store != null) {
 
 			store.clear();
-			IStoreManager.checkStop(model.getCModel());
+			IDiskStoreManager.checkStopStore(model.getCModel());
 		}
 	}
 
@@ -217,7 +217,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 		return custom;
 	}
 
-	private void removeAllMatchers(IStoreBuilder storeBuilder) {
+	private void removeAllMatchers(IDiskStoreBuilder storeBuilder) {
 
 		for (IMatcher matcher : storeBuilder.getMatchers()) {
 

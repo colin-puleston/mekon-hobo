@@ -24,9 +24,10 @@
 
 package uk.ac.manchester.cs.hobo.model.motor.match;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
 
@@ -120,7 +121,7 @@ public abstract class DMatcherCustomiser<M extends DObject> {
 
 	void initialisePostStoreBuild() {
 
-		iStore = IStore.get(model.getCModel());
+		iStore = IDiskStoreManager.getStore(model.getCModel());
 	}
 
 	boolean handles(IFrame instance) {
