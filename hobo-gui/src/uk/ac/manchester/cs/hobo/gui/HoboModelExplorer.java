@@ -24,40 +24,24 @@
 package uk.ac.manchester.cs.hobo.gui;
 
 import uk.ac.manchester.cs.hobo.manage.*;
-import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.model.motor.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboModelExplorer extends MekonModelExplorer {
-
-	static private final long serialVersionUID = -1;
+public class HoboModelExplorer {
 
 	static public void main(String[] args) {
 
-		new HoboModelExplorer();
-	}
+		DBuilder dBuilder = DManager.createBuilder();
+		CBuilder cBuilder = dBuilder.getCBuilder();
+		CModel cModel = dBuilder.build().getCModel();
 
-	public HoboModelExplorer() {
-
-		this(DManager.createBuilder());
-	}
-
-	public HoboModelExplorer(DBuilder builder) {
-
-		this(builder.build(), builder);
-	}
-
-	public HoboModelExplorer(DModel model, DBuilder builder) {
-
-		super(model.getCModel(), builder.getCBuilder());
-	}
-
-	public HoboModelExplorer(DModel model) {
-
-		super(model.getCModel());
+		MekonModelExplorer.createWithDiskStore(cModel, cBuilder);
 	}
 }
