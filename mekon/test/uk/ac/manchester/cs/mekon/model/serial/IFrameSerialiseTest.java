@@ -40,7 +40,7 @@ public class IFrameSerialiseTest {
 	private TestISlots slots = model.iFrameAssertions.repeatTypesSlots;
 	private TestInstances instances = model.createTestInstances();
 
-	private boolean freeParser = false;
+	private boolean freeInstances = false;
 	private boolean renderAsTree = false;
 	private boolean includeEmptySlots = false;
 
@@ -91,12 +91,12 @@ public class IFrameSerialiseTest {
 
 		IFrameParser parser = new IFrameParser(model.model, IFrameFunction.ASSERTION);
 
-		if (freeParser) {
+		if (freeInstances) {
 
-			parser.setFreeInstantiations(true);
+			parser.setFreeInstances(true);
 		}
 
-		return parser.parse(rendering);
+		return parser.parse(new IFrameParseInput(rendering));
 	}
 
 	private IFrameRenderer createRenderer() {

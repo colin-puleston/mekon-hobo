@@ -61,11 +61,6 @@ class IFrameXDocIds {
 	private Map<IFrame, String> ids = new HashMap<IFrame, String>();
 	private Set<IFrame> assignedFrames = new HashSet<IFrame>();
 
-	IFrameXDocIds() {
-
-		this(new HashMap<IFrame, String>());
-	}
-
 	IFrameXDocIds(Map<IFrame, String> ids) {
 
 		this.ids = ids;

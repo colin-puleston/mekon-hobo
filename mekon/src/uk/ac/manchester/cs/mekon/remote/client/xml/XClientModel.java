@@ -54,7 +54,7 @@ public abstract class XClientModel extends RClientModel {
 			XDocument masterDoc = iFrameRenderer.render(createRenderInput(masterRoot));
 			XDocument updateDoc = processDoc(masterDoc);
 
-			IFrame updateRoot = iFrameParser.parse(updateDoc, idsToUpdates);
+			IFrame updateRoot = iFrameParser.parse(createParseInput(updateDoc));
 
 			return createUpdates(updateRoot);
 		}
@@ -65,7 +65,16 @@ public abstract class XClientModel extends RClientModel {
 
 			IFrameRenderInput input = new IFrameRenderInput(masterRoot);
 
-			input.setXDocIds(mastersToIds);
+			input.setFrameXDocIds(mastersToIds);
+
+			return input;
+		}
+
+		private IFrameParseInput createParseInput(XDocument updateDoc) {
+
+			IFrameParseInput input = new IFrameParseInput(updateDoc);
+
+			input.setFramesByXDocId(idsToUpdates);
 
 			return input;
 		}

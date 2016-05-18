@@ -104,10 +104,12 @@ public class XServerModel {
 	 */
 	public XDocument initialiseAssertion(XDocument assertionDoc) {
 
-		IFrame rawRootFrame = iFrameParser.parse(assertionDoc);
-		IFrame initRootFrame = rawRootFrame.getType().instantiate();
+		IFrameParseInput parseInput = new IFrameParseInput(assertionDoc);
+		IFrame preInitRootFrame = iFrameParser.parse(parseInput);
+		IFrame initRootFrame = preInitRootFrame.getType().instantiate();
+		IFrameRenderInput renderInput = new IFrameRenderInput(initRootFrame);
 
-		return iFrameRenderer.render(new IFrameRenderInput(initRootFrame));
+		return iFrameRenderer.render(renderInput);
 	}
 
 	/**
@@ -119,30 +121,20 @@ public class XServerModel {
 	 */
 	public XDocument updateAssertion(XDocument assertionDoc) {
 
-		Map<String, IFrame> idsToFrames = new HashMap<String, IFrame>();
-		IFrame rootFrame = iFrameParser.parse(assertionDoc, idsToFrames);
+		IFrameParseInput parseInput = new IFrameParseInput(assertionDoc);
+		IFrame rootFrame = iFrameParser.parse(parseInput);
+		IFrameRenderInput renderInput = new IFrameRenderInput(rootFrame);
 
-		rootFrame.checkManualUpdate();
+		renderInput.setFrameXDocIds(parseInput.getFrameXDocIds());
 
-		return iFrameRenderer.render(createRenderInput(rootFrame, idsToFrames));
+		return iFrameRenderer.render(renderInput);
 	}
 
-	private IFrameRenderInput createRenderInput(
-								IFrame rootFrame,
-								Map<String, IFrame> idsToFrames) {
-
-		IFrameRenderInput input = new IFrameRenderInput(rootFrame);
-
-		input.setXDocIds(mapFramesToIds(idsToFrames));
-
-		return input;
-	}
-
-	private Map<IFrame, String> mapFramesToIds(Map<String, IFrame> idsToFrames) {
+	private Map<IFrame, String> mapFramesToIds(IFrameParseInput parseInput) {
 
 		Map<IFrame, String> framesToIds = new HashMap<IFrame, String>();
 
-		for (Map.Entry<String, IFrame> entry : idsToFrames.entrySet()) {
+		for (Map.Entry<String, IFrame> entry : parseInput.getFramesByXDocId().entrySet()) {
 
 			framesToIds.put(entry.getValue(), entry.getKey());
 		}

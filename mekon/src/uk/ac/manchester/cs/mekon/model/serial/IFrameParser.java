@@ -426,10 +426,10 @@ public class IFrameParser extends ISerialiser {
 			}
 		}
 
-		OneTimeParser(XNode containerNode, Map<String, IFrame> framesByXDocId) {
+		OneTimeParser(IFrameParseInput input) {
 
-			this.containerNode = containerNode;
-			this.framesByXDocId = framesByXDocId;
+			containerNode = resolveContainerNode(input);
+			framesByXDocId = input.getFramesByXDocId();
 		}
 
 		IFrame parse() {
@@ -748,72 +748,40 @@ public class IFrameParser extends ISerialiser {
 	}
 
 	/**
-	 * Parses serialised frame from top-level element of specified
-	 * document.
+	 * Parses serialised frame/slot network.
 	 *
-	 * @param document Document containing serialised frame
+	 * @param input Input to parsing process
 	 * @return Generated frame
 	 */
-	public IFrame parse(XDocument document) {
+	public IFrame parse(IFrameParseInput input) {
 
-		return parseFromContainerNode(document.getRootNode());
+		return new OneTimeParser(input).parse();
 	}
 
-	/**
-	 * Parses serialised frame from top-level element of specified
-	 * document.
-	 *
-	 * @param document Document containing serialised frame
-	 * @param framesByXDocId Map into which the document-specific
-	 * frame-identifiers corresponding to the generated component frames
-	 * are to be written
-	 *
-	 * @return Generated frame
-	 */
-	public IFrame parse(XDocument document, Map<String, IFrame> framesByXDocId) {
+	private CFrame getRootCFrame() {
 
-		return parseFromContainerNode(document.getRootNode(), framesByXDocId);
+		return model.getRootFrame();
 	}
 
-	/**
-	 * Parses serialised frame from relevant child of specified
-	 * parent. This will be a node with either a "ITree" or "IGraph"
-	 * tag, depending on the format in which the frame is serialised.
-	 *
-	 * @param parentNode Parent of relevant node
-	 * @return Generated frame
-	 */
-	public IFrame parse(XNode parentNode) {
+	private CFrame getCFrame(CIdentity id) {
 
-		return parseFromContainerNode(getContainerNode(parentNode));
+		CFrame rootFrame = model.getRootFrame();
+
+		if (rootFrame.getIdentity().equals(id)) {
+
+			return rootFrame;
+		}
+
+		return model.getFrames().get(id);
 	}
 
-	/**
-	 * Parses serialised frame from relevant child of specified
-	 * parent. This will be a node with either a "ITree" or "IGraph"
-	 * tag, depending on the format in which the frame is serialised.
-	 *
-	 * @param parentNode Parent of relevant node
-	 * @param framesByXDocId Map into which the document-specific
-	 * frame-identifiers corresponding to the generated component frames
-	 * are to be written
-	 * @return Generated frame
-	 */
-	public IFrame parse(XNode parentNode, Map<String, IFrame> framesByXDocId) {
+	private XNode resolveContainerNode(IFrameParseInput input) {
 
-		return parseFromContainerNode(getContainerNode(parentNode), framesByXDocId);
-	}
+		XNode containerNode = input.getContainerNode();
 
-	private IFrame parseFromContainerNode(XNode containerNode) {
-
-		return parseFromContainerNode(containerNode, new HashMap<String, IFrame>());
-	}
-
-	private IFrame parseFromContainerNode(
-						XNode containerNode,
-						Map<String, IFrame> framesByXDocId) {
-
-		return new OneTimeParser(containerNode, framesByXDocId).parse();
+		return containerNode != null
+				? containerNode
+				: getContainerNode(input.getParentNode());
 	}
 
 	private XNode getContainerNode(XNode parentNode) {
@@ -843,22 +811,5 @@ public class IFrameParser extends ISerialiser {
 					+ " or "
 					+ "\"" + ITREE_ID + "\""
 					+ " node at top-level");
-	}
-
-	private CFrame getRootCFrame() {
-
-		return model.getRootFrame();
-	}
-
-	private CFrame getCFrame(CIdentity id) {
-
-		CFrame rootFrame = model.getRootFrame();
-
-		if (rootFrame.getIdentity().equals(id)) {
-
-			return rootFrame;
-		}
-
-		return model.getFrames().get(id);
 	}
 }

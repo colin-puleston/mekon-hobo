@@ -126,7 +126,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			this.containerNode = containerNode;
 
-			frameXDocIds = input.getXDocIds();
+			frameXDocIds = new IFrameXDocIds(input.getFrameXDocIds());
 			update = input.getUpdate();
 
 			renderAtomicIFrame(input.getTopLevelFrame(), containerNode, true);
