@@ -21,7 +21,7 @@ public class DMatchRangeOverlapperTest extends DMatcherCustomiserTest {
 		super.setUp();
 	}
 
-	@Test
+	//@Test
 	public void testMatchRangeOverlapper_exactValuesInRange() {
 
 		Citizen _10 = assertions.createWithJobWithHoursPerWeek(10);

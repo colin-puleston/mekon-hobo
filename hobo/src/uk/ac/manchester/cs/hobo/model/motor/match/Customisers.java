@@ -55,7 +55,7 @@ class Customisers {
 
 	IFrame preProcess(IFrame instance) {
 
-		instance = IFreeInstantiator.get().createFreeCopy(instance);
+		instance = IFreeCopier.get().createFreeCopy(instance);
 
 		for (DMatcherCustomiser<?> customiser : filterCustomisers(instance)) {
 

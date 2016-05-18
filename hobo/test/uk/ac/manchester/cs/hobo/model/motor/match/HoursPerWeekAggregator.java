@@ -53,7 +53,7 @@ class HoursPerWeekAggregator
 
 	private IFrame copyFrame(IFrame frame) {
 
-		return IFreeInstantiator.get().createFreeCopy(frame);
+		return IFreeCopier.get().createFreeCopy(frame);
 	}
 }
 
