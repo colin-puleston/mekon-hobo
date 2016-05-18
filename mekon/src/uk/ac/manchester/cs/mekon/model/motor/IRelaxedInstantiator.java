@@ -32,7 +32,8 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
  * frame/slot networks, without performing the normal reasoning
  * operations that would be required if the networks were being built
  * up from scratch. Specifically suitable for regenerating networks
- * that have been serialised in some way.
+ * that have been serialised in some way. Enables the generation of
+ * either normal instances or "free-instances" (see {@link IFreeCopier}).
  *
  * @author Colin Puleston
  */
@@ -75,10 +76,27 @@ public abstract class IRelaxedInstantiator {
 							IEditability editability);
 
 	/**
+	 * Creates a free-instance-style {@link IFrame}-valued slot and adds
+	 * it to the specified frame. The value-type for the slot will be
+	 * derived by invoking the {@link CValue#toUnconstrained} method on
+	 * a "source" value-type object.
+	 *
+	 * @param container Frame to which slot is to be added
+	 * @param slotTypeId Identity of slot-type for slot to be created
+	 * @param valueTypeSource Source value-type for slot to be created
+	 * @return Created and added slot
+	 */
+	public abstract ISlot addFreeSlot(
+							IFrame container,
+							CIdentity slotTypeId,
+							CValue<?> valueTypeSource);
+
+	/**
 	 * Performs the required instantiation-completion operations for a
 	 * frame in a regenerated network, after all slots have been added.
 	 *
 	 * @param frame Relevant frame
+	 * @param freeInstance True if generating a free-instance
 	 */
-	public abstract void completeInstantiation(IFrame frame);
+	public abstract void completeInstantiation(IFrame frame, boolean freeInstance);
 }

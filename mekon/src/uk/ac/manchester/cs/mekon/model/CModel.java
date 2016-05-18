@@ -96,9 +96,9 @@ public class CModel implements CAnnotatable {
 	}
 
 	/**
-	 * Provides all frames in the model.
+	 * Provides all frames in the model, excluding the root-frame.
 	 *
-	 * @return All frames in model
+	 * @return All frames in model, excluding root
 	 */
 	public CIdentifieds<CFrame> getFrames() {
 
@@ -136,12 +136,10 @@ public class CModel implements CAnnotatable {
 
 	boolean removeFrame(CAtomicFrame frame) {
 
-		if (frame.getSource().internal() || !frames.contains(frame)) {
+		if (frame.getSource().internal() || !frames.remove(frame)) {
 
 			return false;
 		}
-
-		frames.remove(frame);
 
 		removeFrameTraces(frame);
 		buildListeners.onFrameRemoved(frame);

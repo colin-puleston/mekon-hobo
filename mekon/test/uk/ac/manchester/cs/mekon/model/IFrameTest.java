@@ -205,6 +205,6 @@ public class IFrameTest {
 
 	private IFrame createFreeCopy(IFrame instance) {
 
-		return IFreeInstantiator.get().createFreeCopy(instance);
+		return IFreeCopier.get().createFreeCopy(instance);
 	}
 }

@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  * <p>
  * The instance-level frame/slot-networks representations of instances
  * that are passed into the {@link #classify} method will be
- * "free-instance" copies of the originals (see {@link IFreeInstantiator}).
+ * "free-instance" copies of the originals (see {@link IFreeCopier}).
  *
  * @author Colin Puleston
  */
@@ -185,6 +185,6 @@ public abstract class IClassifier extends IReasonerDefault {
 
 		CModel model = instance.getType().getModel();
 
-		return IFreeInstantiator.get().createFreeCopy(instance);
+		return IFreeCopier.get().createFreeCopy(instance);
 	}
 }

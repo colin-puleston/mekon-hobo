@@ -28,10 +28,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
- * Responsible for generating "free" versions of existing
- * instance-level frame/slot networks, or "free-instances". A free
- * instance is one in which the schema has been loosened in the
- * following ways:
+ * Responsible for generating "free-instance" versions of existing
+ * instance-level frame/slot networks. A free instance is one in which
+ * the schema has been loosened in the following ways:
  * <ul>
  *   <li>No effective constraints on slot-values, other than general
  *	 value-category (i.e, {@link IFrame}, {@link CFrame}, or
@@ -49,50 +48,17 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
  *
  * @author Colin Puleston
  */
-public abstract class IFreeInstantiator {
+public abstract class IFreeCopier {
 
 	/**
-	 * Provides a free-instantiator object applicable to any model.
+	 * Provides a free-copier object applicable to any model.
 	 *
-	 * @return Free-instantiator object for any model
+	 * @return Free-copier object for any model
 	 */
-	static public IFreeInstantiator get() {
+	static public IFreeCopier get() {
 
-		return ZCModelAccessor.get().getFreeInstantiator();
+		return ZCModelAccessor.get().getFreeCopier();
 	}
-
-	/**
-	 * Creates a frame that will be part of a free-instance.
-	 *
-	 * @param type Type of frame to create
-	 * @param function Function of frame to create
-	 * @return Created free-instance frame
-	 */
-	public abstract IFrame startInstantiation(CFrame type, IFrameFunction function);
-
-	/**
-	 * Creates a free-instance-style {@link IFrame}-valued slot and adds
-	 * it to the specified frame. The value-type for the slot will be
-	 * derived by invoking the {@link CValue#toUnconstrained} method on
-	 * a "source" value-type object.
-	 *
-	 * @param container Frame to which slot is to be added
-	 * @param slotTypeId Identity of slot-type for slot to be created
-	 * @param valueTypeSource Source value-type for slot to be created
-	 * @return Created and added slot
-	 */
-	public abstract ISlot addSlot(
-							IFrame container,
-							CIdentity slotTypeId,
-							CValue<?> valueTypeSource);
-
-	/**
-	 * Performs the required instantiation-completion operations for a
-	 * free-instance frame, after all slots have been added.
-	 *
-	 * @param frame Relevant free-instance frame
-	 */
-	public abstract void completeInstantiation(IFrame frame);
 
 	/**
 	 * Generates a free-instance version of the specified source

@@ -24,42 +24,61 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
  */
-class IFrameFreeParseMechanisms extends IFrameParseMechanisms {
+class IUpdate {
 
-	static final IFrameFreeParseMechanisms SINGLETON = new IFrameFreeParseMechanisms();
+	static final IUpdate NO_UPDATE = new IUpdate(null, 0);
 
-	private IFreeInstantiator instantiator = IFreeInstantiator.get();
+	static IUpdate createAddition(ISlot slot, IValue addedValue) {
 
-	ISchemaParse getSchemaParse() {
-
-		return ISchemaParse.FREE;
+		return new IUpdate(slot, getAddedValueIndex(slot, addedValue));
 	}
 
-	IFrame instantiateFrame(CFrame type, IFrameFunction function) {
+	static IUpdate createRemovals(ISlot slot) {
 
-		return instantiator.startInstantiation(type, function);
+		return new IUpdate(slot, -1);
 	}
 
-	ISlot checkResolveSlot(IFrameParserSlotSpec spec) {
+	private static int getAddedValueIndex(ISlot slot, IValue addedValue) {
 
-		return instantiator
-				.addSlot(
-					spec.getContainer(),
-					spec.getSlotId(),
-					spec.getDefaultValueType());
+		int index = slot.getValues().asList().indexOf(addedValue);
+
+		if (index != -1) {
+
+			return index;
+		}
+
+		throw new KAccessException(
+					"Invalid value-addition for slot: " + slot
+					+ ", specified-value not found: " + addedValue);
 	}
 
-	void onParseCompletion(IFrame rootFrame) {
+	private ISlot slot;
+	private int addedValueIndex;
 
-		instantiator.completeInstantiation(rootFrame);
+	boolean refersToSlot(ISlot testSlot) {
+
+		return testSlot == slot;
 	}
 
-	private IFrameFreeParseMechanisms() {
+	boolean addition() {
+
+		return addedValueIndex != -1;
+	}
+
+	int getAddedValueIndex() {
+
+		return addedValueIndex;
+	}
+
+	private IUpdate(ISlot slot, int addedValueIndex) {
+
+		this.slot = slot;
+		this.addedValueIndex = addedValueIndex;
 	}
 }

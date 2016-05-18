@@ -42,6 +42,8 @@ abstract class ISerialiser extends FSerialiser {
 	static final String ISLOT_ID = "ISlot";
 	static final String IVALUES_ID = "IValues";
 
+	static final String IVALUES_UPDATE_ID = "IValuesUpdate";
+
 	static final String IFRAME_XDOC_ID_ATTR = "xid";
 	static final String IFRAME_XDOC_ID_REF_ATTR = "xidRef";
 	static final String NUMBER_TYPE_ATTR = "numberType";
@@ -51,4 +53,6 @@ abstract class ISerialiser extends FSerialiser {
 	static final String STRING_VALUE_ATTR = "value";
 	static final String CARDINALITY_ATTR = "cardinality";
 	static final String EDITABILITY_ATTR = "editability";
+
+	static final String ADDED_VALUE_INDEX_ATTR = "addedValueIndex";
 }

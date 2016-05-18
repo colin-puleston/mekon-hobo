@@ -43,9 +43,28 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		editabilitiesIsToCs.put(IEditability.FULL, CEditability.FULL);
 	}
 
+	static CSlot createFreeSlotType(
+					IFrame container,
+					CIdentity id,
+					CValue<?> valueTypeSource) {
+
+		CFrame contType = container.getType();
+		CValue<?> valueType = valueTypeSource.toUnconstrained();
+
+		CSlot slotType = new CSlot(contType, id, valueType, CCardinality.REPEATABLE_TYPES);
+
+		slotType.setEditability(CEditability.FULL);
+
+		return slotType;
+	}
+
 	public IFrame startInstantiation(CFrame type, IFrameFunction function) {
 
-		return new IFrame(type, function);
+		IFrame frame = new IFrame(type, function);
+
+		frame.setAutoUpdateEnabled(false);
+
+		return frame;
 	}
 
 	public ISlot addSlot(
@@ -63,8 +82,23 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return container.addSlotInternal(slotType);
 	}
 
-	public void completeInstantiation(IFrame frame) {
+	public ISlot addFreeSlot(
+					IFrame container,
+					CIdentity slotTypeId,
+					CValue<?> valueTypeSource) {
 
-		frame.completeInstantiation(true);
+		CSlot slotType = createFreeSlotType(container, slotTypeId, valueTypeSource);
+
+		return container.addSlotInternal(slotType);
+	}
+
+	public void completeInstantiation(IFrame frame, boolean freeInstance) {
+
+		frame.completeInstantiation(freeInstance);
+
+		if (!freeInstance) {
+
+			frame.setAutoUpdateEnabled(true);
+		}
 	}
 }

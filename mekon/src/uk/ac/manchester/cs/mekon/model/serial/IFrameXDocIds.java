@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.model.serial;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -68,6 +69,20 @@ class IFrameXDocIds {
 	IFrameXDocIds(Map<IFrame, String> ids) {
 
 		this.ids = ids;
+	}
+
+	String get(IFrame frame) {
+
+		String id = ids.get(frame);
+
+		if (id != null) {
+
+			return id;
+		}
+
+		throw new KAccessException(
+					"Update value-frame not part of"
+					+ " instance being rendered: " + frame);
 	}
 
 	Resolution resolve(IFrame frame) {

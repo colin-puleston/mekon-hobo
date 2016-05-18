@@ -22,46 +22,45 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.serial;
+package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
  */
-class IFrameStaticParseMechanisms extends IFrameParseMechanisms {
+class IFreeCopierImpl extends IFreeCopier {
 
-	static final IFrameStaticParseMechanisms SINGLETON = new IFrameStaticParseMechanisms();
+	private class OneTimeCopier extends IFrameCopierAbstract {
 
-	private IRelaxedInstantiator instantiator = IRelaxedInstantiator.get();
+		void initialiseCopy(IFrame template, IFrame copy) {
 
-	ISchemaParse getSchemaParse() {
+			copy.setAutoUpdateEnabled(false);
 
-		return ISchemaParse.STATIC;
+			super.initialiseCopy(template, copy);
+		}
+
+		ISlot addSlot(IFrame container, CSlot slotType) {
+
+			return container.addSlotInternal(createFreeSlotTypeCopy(container, slotType));
+		}
+
+		boolean freeInstance() {
+
+			return true;
+		}
 	}
 
-	IFrame instantiateFrame(CFrame type, IFrameFunction function) {
+	public IFrame createFreeCopy(IFrame sourceInstance) {
 
-		return instantiator.startInstantiation(type, function);
+		return new OneTimeCopier().copy(sourceInstance);
 	}
 
-	ISlot checkResolveSlot(IFrameParserSlotSpec spec) {
+	private CSlot createFreeSlotTypeCopy(IFrame container, CSlot slotType) {
 
-		return instantiator
-				.addSlot(
-					spec.getContainer(),
-					spec.getSlotId(),
-					spec.getValueType(),
-					spec.getCardinality(),
-					spec.getEditability());
-	}
+		CIdentity slotTypeId = slotType.getIdentity();
+		CValue<?> valueType = slotType.getValueType();
 
-	void onParseCompletion(IFrame rootFrame) {
-
-		instantiator.completeInstantiation(rootFrame);
-	}
-
-	private IFrameStaticParseMechanisms() {
+		return IRelaxedInstantiatorImpl.createFreeSlotType(container, slotTypeId, valueType);
 	}
 }

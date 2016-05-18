@@ -246,6 +246,6 @@ class IDiskStore implements IStore {
 
 	private IFrame createFreeCopy(IFrame instance) {
 
-		return IFreeInstantiator.get().createFreeCopy(instance);
+		return IFreeCopier.get().createFreeCopy(instance);
 	}
 }

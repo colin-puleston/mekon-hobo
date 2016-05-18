@@ -40,6 +40,7 @@ class InstanceSerialiser extends CIdentitySerialiser {
 	static private final String TYPE_ID = "Type";
 
 	private CModel model;
+	private IFrameRenderer frameRenderer = new IFrameRenderer();
 
 	InstanceSerialiser(CModel model) {
 
@@ -82,20 +83,14 @@ class InstanceSerialiser extends CIdentitySerialiser {
 
 		IFrameParser parser = new IFrameParser(model, IFrameFunction.ASSERTION);
 
-		if (freeInstance) {
-
-			parser.setSchemaParse(ISchemaParse.FREE);
-		}
+		parser.setFreeInstantiations(freeInstance);
 
 		return parser.parse(getRootNode(file));
 	}
 
 	private void renderInstance(IFrame instance, XNode rootNode) {
 
-		IFrameRenderer frameRenderer = new IFrameRenderer();
-
-		frameRenderer.setSchemaRender(ISchemaRender.BASIC);
-		frameRenderer.render(instance, rootNode);
+		frameRenderer.render(new IFrameRenderInput(instance), rootNode);
 	}
 
 	private CFrame parseType(XNode typeNode) {

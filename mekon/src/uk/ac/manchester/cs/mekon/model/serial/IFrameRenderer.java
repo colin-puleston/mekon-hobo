@@ -39,12 +39,12 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 public class IFrameRenderer extends ISerialiser {
 
 	private boolean renderAsTree = false;
-	private ISchemaRender schemaRender = ISchemaRender.NONE;
 
 	private class OneTimeRenderer {
 
 		private XNode containerNode;
-		private IFrameXDocIds iFrameXDocIds;
+		private IFrameXDocIds frameXDocIds;
+		private IUpdate update;
 
 		private class ISlotValueTypeRenderer extends CValueVisitor {
 
@@ -122,15 +122,14 @@ public class IFrameRenderer extends ISerialiser {
 			}
 		}
 
-		OneTimeRenderer(XNode containerNode, IFrameXDocIds iFrameXDocIds) {
+		OneTimeRenderer(IFrameRenderInput input, XNode containerNode) {
 
 			this.containerNode = containerNode;
-			this.iFrameXDocIds = iFrameXDocIds;
-		}
 
-		void render(IFrame frame) {
+			frameXDocIds = input.getXDocIds();
+			update = input.getUpdate();
 
-			renderAtomicIFrame(frame, containerNode, true);
+			renderAtomicIFrame(input.getTopLevelFrame(), containerNode, true);
 		}
 
 		private void renderIFrame(IFrame frame, XNode parentNode) {
@@ -147,7 +146,7 @@ public class IFrameRenderer extends ISerialiser {
 
 		private void renderAtomicIFrame(IFrame frame, XNode parentNode, boolean direct) {
 
-			IFrameXDocIds.Resolution xidRes = iFrameXDocIds.resolve(frame);
+			IFrameXDocIds.Resolution xidRes = frameXDocIds.resolve(frame);
 
 			if (direct) {
 
@@ -170,10 +169,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			for (ISlot slot : frame.getSlots().asList()) {
 
-				if (slotToBeRendered(slot)) {
-
-					renderISlot(slot, node);
-				}
+				renderISlot(slot, node);
 			}
 		}
 
@@ -286,20 +282,17 @@ public class IFrameRenderer extends ISerialiser {
 			XNode node = parentNode.addChild(ISLOT_ID);
 
 			renderCSlot(slot.getType(), node);
-
-			if (schemaRender.includesBasics()) {
-
-				new ISlotValueTypeRenderer(slot, node);
-			}
-
-			if (schemaRender.includesDetails()) {
-
-				node.addValue(EDITABILITY_ATTR, slot.getEditability());
-			}
+			new ISlotValueTypeRenderer(slot, node);
+			node.addValue(EDITABILITY_ATTR, slot.getEditability());
 
 			if (!slot.getValues().isEmpty()) {
 
 				new ISlotValuesRenderer(slot, node);
+			}
+
+			if (update.refersToSlot(slot)) {
+
+				renderISlotValuesUpdate(slot, node);
 			}
 		}
 
@@ -308,10 +301,16 @@ public class IFrameRenderer extends ISerialiser {
 			XNode node = parentNode.addChild(CSLOT_ID);
 
 			renderIdentity(slot, node);
+			node.addValue(CARDINALITY_ATTR, slot.getCardinality());
+		}
 
-			if (schemaRender.includesDetails()) {
+		private void renderISlotValuesUpdate(ISlot slot, XNode parentNode) {
 
-				node.addValue(CARDINALITY_ATTR, slot.getCardinality());
+			XNode node = parentNode.addChild(IVALUES_UPDATE_ID);
+
+			if (update.addition()) {
+
+				node.addValue(ADDED_VALUE_INDEX_ATTR, update.getAddedValueIndex());
 			}
 		}
 	}
@@ -329,95 +328,39 @@ public class IFrameRenderer extends ISerialiser {
 	}
 
 	/**
-	 * Sets the type of schema information to be rendered. Defaults to
-	 * {@link ISchemaRender#NONE}.
+	 * Renders a frame/slot network to produce an XML document.
 	 *
-	 * @param schemaRender Required schema-level
-	 */
-	public void setSchemaRender(ISchemaRender schemaRender) {
-
-		this.schemaRender = schemaRender;
-	}
-
-	/**
-	 * Renders the specified frame to produce an XML document.
-	 *
-	 * @param frame Frame to render
+	 * @param input Input to rendering process
 	 * @return Rendered document
 	 */
-	public XDocument render(IFrame frame) {
+	public XDocument render(IFrameRenderInput input) {
 
-		return renderDocument(frame, new IFrameXDocIds());
-	}
+		XDocument document = new XDocument(getContainerNodeId());
 
-	/**
-	 * Renders the specified frame to produce an XML document, and writes
-	 * the document-specific frame-identifiers that are generated into the
-	 * provided map. This map can also be pre-populated with any identifiers
-	 * that are to be used in the rendering.
-	 *
-	 * @param frame Frame to render
-	 * @param frameXDocIds Map for document-specific frame-identifiers
-	 * (possibly pre-populated)
-	 * @return Rendered document
-	 */
-	public XDocument render(IFrame frame, Map<IFrame, String> frameXDocIds) {
-
-		return renderDocument(frame, new IFrameXDocIds(frameXDocIds));
-	}
-
-	/**
-	 * Renders the specified frame to the specified parent-node.
-	 *
-	 * @param frame Frame to render
-	 * @param parentNode Parent-node for rendering
-	 */
-	public void render(IFrame frame, XNode parentNode) {
-
-		renderToChild(frame, parentNode, new IFrameXDocIds());
-	}
-
-	/**
-	 * Renders the specified frame to the specified parent-node, and writes
-	 * the document-specific frame-identifiers that are generated into the
-	 * provided map. This map can also be pre-populated with any identifiers
-	 * that are to be used in the rendering.
-	 *
-	 * @param frame Frame to render
-	 * @param parentNode Parent-node for rendering
-	 * @param frameXDocIds Map for document-specific frame-identifiers
-	 * (possibly pre-populated)
-	 */
-	public void render(IFrame frame, XNode parentNode, Map<IFrame, String> frameXDocIds) {
-
-		renderToChild(frame, parentNode, new IFrameXDocIds(frameXDocIds));
-	}
-
-	private XDocument renderDocument(IFrame frame, IFrameXDocIds frameXDocIds) {
-
-		XDocument document = new XDocument(getTopLevelId());
-
-		render(frame, document.getRootNode(), frameXDocIds);
+		renderToContainerNode(input, document.getRootNode());
 
 		return document;
 	}
 
-	private void renderToChild(IFrame frame, XNode parentNode, IFrameXDocIds frameXDocIds) {
+	/**
+	 * Renders a frame/slot network to the specified parent-node.
+	 *
+	 * @param input Input to rendering process
+	 * @param parentNode Parent-node for rendering
+	 */
+	public void render(IFrameRenderInput input, XNode parentNode) {
 
-		render(frame, parentNode.addChild(getTopLevelId()), frameXDocIds);
+		renderToContainerNode(input, parentNode.addChild(getContainerNodeId()));
 	}
 
-	private void render(IFrame frame, XNode containerNode, IFrameXDocIds frameXDocIds) {
+	private void renderToContainerNode(IFrameRenderInput input, XNode containerNode) {
+
+		IFrame frame = input.getTopLevelFrame();
 
 		checkAtomicTopLevelFrame(frame);
 		checkNonCyclicIfRenderingAsTree(frame);
 
-		new OneTimeRenderer(containerNode, frameXDocIds).render(frame);
-	}
-
-	private boolean slotToBeRendered(ISlot slot) {
-
-		return schemaRender.includesBasics() || !slot.getValues().isEmpty();
+		new OneTimeRenderer(input, containerNode);
 	}
 
 	private void checkAtomicTopLevelFrame(IFrame frame) {
@@ -440,7 +383,7 @@ public class IFrameRenderer extends ISerialiser {
 		}
 	}
 
-	private String getTopLevelId() {
+	private String getContainerNodeId() {
 
 		return renderAsTree ? ITREE_ID : IGRAPH_ID;
 	}

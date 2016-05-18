@@ -30,7 +30,6 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Parser for the standard XML serialisation of {@link IFrame}/{@link ISlot}
@@ -39,6 +38,8 @@ import uk.ac.manchester.cs.mekon.util.*;
  * @author Colin Puleston
  */
 public class IFrameParser extends ISerialiser {
+
+	static private IRelaxedInstantiator instantiator = IRelaxedInstantiator.get();
 
 	static private Set<Class<? extends Number>> numberTypes
 						= new HashSet<Class<? extends Number>>();
@@ -54,28 +55,59 @@ public class IFrameParser extends ISerialiser {
 	private CModel model;
 	private IEditor iEditor;
 	private IFrameFunction frameFunction;
-
-	private IFrameParseMechanisms mechanisms = IFrameDynamicParseMechanisms.SINGLETON;
+	private boolean freeInstances = false;
 
 	private class OneTimeParser {
 
 		private XNode containerNode;
 
-		private List<IFrame> frames = new ArrayList<IFrame>();
-
 		private Map<String, IFrame> framesByXDocId;
 		private Map<String, XNode> frameNodesByXDocId = new HashMap<String, XNode>();
 
-		private KListMap<IFrame, SlotSpec<?>> frameSlots
-							= new KListMap<IFrame, SlotSpec<?>>();
+		private List<SlotSpec<?>> slotSpecs = new ArrayList<SlotSpec<?>>();
+		private ValuesUpdate valuesUpdate = new ValuesUpdate();
 
-		private abstract class SlotSpec<V> extends IFrameParserSlotSpec {
+		private class ValuesUpdate {
+
+			private ISlot slot = null;
+			private IValue addedValue = null;
+
+			void setSlot(ISlot slot) {
+
+				this.slot = slot;
+			}
+
+			void setAddedValue(IValue addedValue) {
+
+				this.addedValue = addedValue;
+			}
+
+			void checkApply() {
+
+				if (slot != null) {
+
+					if (addedValue != null) {
+
+						slot.getValuesEditor().add(addedValue);
+					}
+					else {
+
+						slot.getContainer().update(); // XXX
+					}
+				}
+			}
+		}
+
+		private abstract class SlotSpec<V> {
 
 			private IFrame container;
+			private ISlot slot;
+
 			private XNode slotNode;
 			private XNode slotTypeNode;
 
 			private List<V> valueSpecs = new ArrayList<V>();
+			private int addedValueIndex = -1;
 
 			SlotSpec(IFrame container, XNode slotNode) {
 
@@ -83,8 +115,14 @@ public class IFrameParser extends ISerialiser {
 				this.slotNode = slotNode;
 
 				slotTypeNode = slotNode.getChild(CSLOT_ID);
+				slot = addSlot();
 
-				frameSlots.add(container, this);
+				if (!freeInstances) {
+
+					checkInitForValuesUpdate();
+				}
+
+				slotSpecs.add(this);
 			}
 
 			void addValueSpecs(XNode valuesNode) {
@@ -95,49 +133,31 @@ public class IFrameParser extends ISerialiser {
 				}
 			}
 
-			boolean process() {
+			void processValueSpecs() {
 
-				ISlot slot = mechanisms.checkResolveSlot(this);
+				CValue<?> valueType = slot.getValueType();
+				List<IValue> validNonNewValues = new ArrayList<IValue>();
 
-				if (slot != null) {
+				int index = 0;
 
-					setValidValues(slot);
-					frameSlots.remove(container, this);
+				for (V valueSpec : valueSpecs) {
 
-					return true;
+					IValue value = getValue(slot, valueSpec);
+
+					if (index++ == addedValueIndex) {
+
+						valuesUpdate.setAddedValue(value);
+					}
+					else {
+
+						if (valueType.validValue(value)) {
+
+							validNonNewValues.add(value);
+						}
+					}
 				}
 
-				return false;
-			}
-
-			IFrame getContainer() {
-
-				return container;
-			}
-
-			CIdentity getSlotId() {
-
-				return parseIdentity(slotTypeNode);
-			}
-
-			CValue<?> getValueType() {
-
-				return getValueType(slotNode.getChild(getValueTypeId()));
-			}
-
-			CValue<?> getDefaultValueType() {
-
-				return getDefaultValueType(slotNode);
-			}
-
-			CCardinality getCardinality() {
-
-				return slotTypeNode.getEnum(CARDINALITY_ATTR, CCardinality.class);
-			}
-
-			IEditability getEditability() {
-
-				return slotNode.getEnum(EDITABILITY_ATTR, IEditability.class);
+				setValues(validNonNewValues);
 			}
 
 			abstract String getValueTypeId();
@@ -152,37 +172,70 @@ public class IFrameParser extends ISerialiser {
 
 			abstract IValue getValue(ISlot slot, V valueSpec);
 
-			private void setValidValues(ISlot slot) {
+			private ISlot addSlot() {
 
-				List<IValue> values = getValidValues(slot);
+				return freeInstances ? addFreeSlot() : addConstrainedSlot();
+			}
+
+			private ISlot addFreeSlot() {
+
+				return instantiator.addFreeSlot(container, getSlotId(), getDefaultValueType());
+			}
+
+			private ISlot addConstrainedSlot() {
+
+				return instantiator
+						.addSlot(
+							container,
+							getSlotId(),
+							getValueType(),
+							getCardinality(),
+							getEditability());
+			}
+
+			private void checkInitForValuesUpdate() {
+
+				XNode updNode = slotNode.getChildOrNull(IVALUES_UPDATE_ID);
+
+				if (updNode != null) {
+
+					valuesUpdate.setSlot(slot);
+
+					addedValueIndex = updNode.getInteger(ADDED_VALUE_INDEX_ATTR, -1);
+				}
+			}
+
+			private void setValues(List<IValue> values) {
 
 				if (!values.isEmpty()) {
 
-					setValues(slot, values);
+					iEditor.getSlotEditor(slot).setAssertedValues(values);
 				}
 			}
 
-			private void setValues(ISlot slot, List<IValue> values) {
+			private CIdentity getSlotId() {
 
-				iEditor.getSlotEditor(slot).setAssertedValues(values);
+				return parseIdentity(slotTypeNode);
 			}
 
-			private List<IValue> getValidValues(ISlot slot) {
+			private CValue<?> getValueType() {
 
-				List<IValue> values = new ArrayList<IValue>();
-				CValue<?> valueType = slot.getValueType();
+				return getValueType(slotNode.getChild(getValueTypeId()));
+			}
 
-				for (V valueSpec : valueSpecs) {
+			private CValue<?> getDefaultValueType() {
 
-					IValue value = getValue(slot, valueSpec);
+				return getDefaultValueType(slotNode);
+			}
 
-					if (valueType.validValue(value)) {
+			private CCardinality getCardinality() {
 
-						values.add(value);
-					}
-				}
+				return slotTypeNode.getEnum(CARDINALITY_ATTR, CCardinality.class);
+			}
 
-				return values;
+			private IEditability getEditability() {
+
+				return slotNode.getEnum(EDITABILITY_ATTR, IEditability.class);
 			}
 		}
 
@@ -383,8 +436,10 @@ public class IFrameParser extends ISerialiser {
 
 			IFrame rootFrame = resolveIFrame(getTopLevelFrameNode());
 
-			addSlotValues();
-			mechanisms.onParseCompletion(rootFrame);
+			processSlotValueSpecs();
+			completeReInstantiation();
+
+			valuesUpdate.checkApply();
 
 			return rootFrame;
 		}
@@ -420,7 +475,7 @@ public class IFrameParser extends ISerialiser {
 		private IFrame parseAtomicIFrame(XNode node) {
 
 			CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
-			IFrame frame = createAndRegisterFrame(frameType);
+			IFrame frame = startInstantiation(frameType);
 
 			for (XNode slotNode : node.getChildren(ISLOT_ID)) {
 
@@ -517,6 +572,11 @@ public class IFrameParser extends ISerialiser {
 			}
 		}
 
+		private IFrame startInstantiation(CFrame frameType) {
+
+			return instantiator.startInstantiation(frameType, frameFunction);
+		}
+
 		private SlotSpec<?> checkCreateSlotSpec(
 								IFrame container,
 								XNode slotNode,
@@ -568,33 +628,20 @@ public class IFrameParser extends ISerialiser {
 			return null;
 		}
 
-		private IFrame createAndRegisterFrame(CFrame type) {
+		private void processSlotValueSpecs() {
 
-			IFrame frame = mechanisms.instantiateFrame(type, frameFunction);
+			for (SlotSpec<?> spec : slotSpecs) {
 
-			frames.add(frame);
-
-			return frame;
-		}
-
-		private void addSlotValues() {
-
-			while (addValuesForAvailableSlots());
-		}
-
-		private boolean addValuesForAvailableSlots() {
-
-			boolean anyAdded = false;
-
-			for (IFrame frame : frames) {
-
-				for (SlotSpec<?> spec : frameSlots.getList(frame)) {
-
-					anyAdded |= spec.process();
-				}
+				spec.processValueSpecs();
 			}
+		}
 
-			return anyAdded;
+		private void completeReInstantiation() {
+
+			for (IFrame frame : framesByXDocId.values()) {
+
+				instantiator.completeInstantiation(frame, freeInstances);
+			}
 		}
 
 		private XNode getTopLevelFrameNode() {
@@ -660,6 +707,18 @@ public class IFrameParser extends ISerialiser {
 
 			return frameNodesByXDocId;
 		}
+
+		private IFrame getFrame(String xid) {
+
+			IFrame frame = framesByXDocId.get(xid);
+
+			if (frame != null) {
+
+				return frame;
+			}
+
+			throw new XDocumentException("Invalid frame-reference: " + xid);
+		}
 	}
 
 	/**
@@ -677,17 +736,15 @@ public class IFrameParser extends ISerialiser {
 	}
 
 	/**
-	 * Sets the manner in which schema information is to be derived
-	 * when parsing. Defaults to {@link ISchemaParse#DYNAMIC}.
+	 * Determines whether "free-instances", rather than normal instances
+	 * are to be generated as a result of the parsing (see
+	 * {@link IFreeCopier}).
 	 *
-	 * @param schemaParse Required schema-level
+	 * @param freeInstances True if free-instances are to be generated
 	 */
-	public void setSchemaParse(ISchemaParse schemaParse) {
+	public void setFreeInstances(boolean freeInstances) {
 
-		if (mechanisms.getSchemaParse() != schemaParse) {
-
-			mechanisms = schemaParse.getMechanisms();
-		}
+		this.freeInstances = freeInstances;
 	}
 
 	/**
@@ -794,6 +851,13 @@ public class IFrameParser extends ISerialiser {
 	}
 
 	private CFrame getCFrame(CIdentity id) {
+
+		CFrame rootFrame = model.getRootFrame();
+
+		if (rootFrame.getIdentity().equals(id)) {
+
+			return rootFrame;
+		}
 
 		return model.getFrames().get(id);
 	}

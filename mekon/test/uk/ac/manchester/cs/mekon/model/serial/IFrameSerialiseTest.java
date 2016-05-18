@@ -41,7 +41,6 @@ public class IFrameSerialiseTest {
 	private TestInstances instances = model.createTestInstances();
 
 	private boolean freeParser = false;
-	private ISchemaRender schemaRender = ISchemaRender.NONE;
 	private boolean renderAsTree = false;
 	private boolean includeEmptySlots = false;
 
@@ -55,22 +54,6 @@ public class IFrameSerialiseTest {
 	public void test_renderAsTreeAndParse() {
 
 		renderAsTree = true;
-
-		testRenderAndParse();
-	}
-
-	@Test
-	public void test_renderWithBasicSchemaAndParse() {
-
-		schemaRender = ISchemaRender.BASIC;
-
-		testRenderAndParse();
-	}
-
-	@Test
-	public void test_renderWithFullSchemaAndParse() {
-
-		schemaRender = ISchemaRender.FULL;
 
 		testRenderAndParse();
 	}
@@ -91,36 +74,6 @@ public class IFrameSerialiseTest {
 		testRenderAndParse();
 	}
 
-	@Test
-	public void test_renderWithBasicSchemaAndFreeParse() {
-
-		freeParser = true;
-		schemaRender = ISchemaRender.BASIC;
-
-		testRenderAndParse();
-	}
-
-	@Test
-	public void test_renderWithBasicSchemaAndFreeParseWithEmptySlots() {
-
-		freeParser = true;
-		schemaRender = ISchemaRender.BASIC;
-		includeEmptySlots = true;
-
-		testRenderAndParse();
-	}
-
-	@Test
-	public void test_renderWithBasicSchemaAndFreeParseWithDynamicSlotInsertion() {
-
-		freeParser = true;
-		schemaRender = ISchemaRender.BASIC;
-
-		instances.setDynamicSlotInsertion();
-
-		testRenderAndParse();
-	}
-
 	private void testRenderAndParse() {
 
 		IFrame original = createTestInstance();
@@ -131,7 +84,7 @@ public class IFrameSerialiseTest {
 
 	private XDocument render(IFrame frame) {
 
-		return createRenderer().render(frame);
+		return createRenderer().render(new IFrameRenderInput(frame));
 	}
 
 	private IFrame parse(XDocument rendering) {
@@ -140,7 +93,7 @@ public class IFrameSerialiseTest {
 
 		if (freeParser) {
 
-			parser.setSchemaParse(ISchemaParse.FREE);
+			parser.setFreeInstantiations(true);
 		}
 
 		return parser.parse(rendering);
@@ -151,7 +104,6 @@ public class IFrameSerialiseTest {
 		IFrameRenderer renderer = new IFrameRenderer();
 
 		renderer.setRenderAsTree(renderAsTree);
-		renderer.setSchemaRender(schemaRender);
 
 		return renderer;
 	}

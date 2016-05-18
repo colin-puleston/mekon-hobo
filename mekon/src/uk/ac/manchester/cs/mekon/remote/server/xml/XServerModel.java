@@ -67,7 +67,6 @@ public class XServerModel {
 
 		iFrameParser = new IFrameParser(cModel, IFrameFunction.ASSERTION);
 
-		iFrameRenderer.setSchemaRender(ISchemaRender.FULL);
 		cBuilder.setAutoUpdate(true);
 	}
 
@@ -105,9 +104,10 @@ public class XServerModel {
 	 */
 	public XDocument initialiseAssertion(XDocument assertionDoc) {
 
-		IFrame rootFrame = iFrameParser.parse(assertionDoc);
+		IFrame rawRootFrame = iFrameParser.parse(assertionDoc);
+		IFrame initRootFrame = rawRootFrame.getType().instantiate();
 
-		return iFrameRenderer.render(rootFrame.getType().instantiate());
+		return iFrameRenderer.render(new IFrameRenderInput(initRootFrame));
 	}
 
 	/**
@@ -124,7 +124,18 @@ public class XServerModel {
 
 		rootFrame.checkManualUpdate();
 
-		return iFrameRenderer.render(rootFrame, mapFramesToIds(idsToFrames));
+		return iFrameRenderer.render(createRenderInput(rootFrame, idsToFrames));
+	}
+
+	private IFrameRenderInput createRenderInput(
+								IFrame rootFrame,
+								Map<String, IFrame> idsToFrames) {
+
+		IFrameRenderInput input = new IFrameRenderInput(rootFrame);
+
+		input.setXDocIds(mapFramesToIds(idsToFrames));
+
+		return input;
 	}
 
 	private Map<IFrame, String> mapFramesToIds(Map<String, IFrame> idsToFrames) {
