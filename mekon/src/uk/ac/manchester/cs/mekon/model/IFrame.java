@@ -296,9 +296,9 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
-	 * then performs the default set of update operations on this frame.
-	 * Otherwise does nothing.
+	 * Performs the default set of update operations on this frame,
+	 * whether or not auto-update is enabled (see {@link
+	 * IUpdating#autoUpdate}).
 	 * <p>
 	 * NOTE: Even if the default update operations do not include
 	 * slot-value updates, removals of (asserted) slot-values may still
@@ -329,9 +329,9 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Performs the default set of update operations on this frame,
-	 * whether or not auto-update is enabled (see {@link
-	 * IUpdating#autoUpdate}).
+	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
+	 * then performs the default set of update operations on this frame.
+	 * Otherwise does nothing.
 	 * <p>
 	 * NOTE: Even if the default update operations do not include
 	 * slot-value updates, removals of (asserted) slot-values may still

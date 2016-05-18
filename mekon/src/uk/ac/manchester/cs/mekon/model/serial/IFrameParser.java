@@ -92,7 +92,22 @@ public class IFrameParser extends ISerialiser {
 					}
 					else {
 
-						slot.getContainer().update(); // XXX
+						updateForRemovals(slot, new HashSet<IFrame>());
+					}
+				}
+			}
+
+			private void updateForRemovals(ISlot currentSlot, Set<IFrame> visitedFrames) {
+
+				IFrame currentFrame = currentSlot.getContainer();
+
+				if (visitedFrames.add(currentFrame)) {
+
+					currentFrame.update();
+
+					for (ISlot refSlot : currentFrame.getReferencingSlots().asList()) {
+
+						updateForRemovals(refSlot, visitedFrames);
 					}
 				}
 			}
