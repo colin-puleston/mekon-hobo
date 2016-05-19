@@ -76,6 +76,11 @@ public class Employment extends CitizenshipObject {
 		JobConsequenceUpdater() {
 
 			jobs.addValuesListener(this);
+
+			for (Job job : jobs.getAll()) {
+
+				new UpdaterForJobWeeklyPay(job);
+			}
 		}
 	}
 

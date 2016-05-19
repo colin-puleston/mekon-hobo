@@ -41,7 +41,7 @@ public class Travel extends CitizenshipObject {
 
 	private DEditor dEditor;
 
-	private class TripsListener implements KValuesListener<DConcept<Trip>> {
+	private class TripsAligner implements KValuesListener<DConcept<Trip>> {
 
 		public void onAdded(DConcept<Trip> value) {
 
@@ -58,9 +58,14 @@ public class Travel extends CitizenshipObject {
 			getTripsArray().clear();
 		}
 
-		TripsListener() {
+		TripsAligner() {
 
 			tripTypes.addValuesListener(this);
+
+			for (TripsOfType trip : trips.getAll()) {
+
+				trip.reinitialise();
+			}
 		}
 	}
 
@@ -68,7 +73,7 @@ public class Travel extends CitizenshipObject {
 
 		public void initialise() {
 
-			new TripsListener();
+			new TripsAligner();
 		}
 	}
 

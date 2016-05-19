@@ -47,7 +47,7 @@ public class Citizen extends CitizenshipObject {
 
 		public void onAdded(Employment value) {
 
-			new TaxUpdater(value.totalWeeklyPay);
+			initialise(value);
 		}
 
 		public void onRemoved(Employment value) {
@@ -59,6 +59,16 @@ public class Citizen extends CitizenshipObject {
 		EmploymentInitialiser() {
 
 			employment.addValuesListener(this);
+
+			if (employment.isSet()) {
+
+				initialise(employment.get());
+			}
+		}
+
+		private void initialise(Employment value) {
+
+			new TaxUpdater(value.totalWeeklyPay);
 		}
 	}
 

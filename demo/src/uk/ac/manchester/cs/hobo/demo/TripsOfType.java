@@ -86,6 +86,11 @@ public class TripsOfType extends CitizenshipObject {
 		new SummariesInitialiser();
 	}
 
+	void reinitialise() {
+
+		new SummariesInitialiser();
+	}
+
 	private Trip instantiateType() {
 
 		IFrameFunction function = getFrame().getFunction();
