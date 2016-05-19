@@ -225,22 +225,22 @@ public class DModel {
 	 */
 	public <D extends DObject>D getDObject(IFrame frame, Class<D> dClass) {
 
-		Object mappedObj = getMappedObject(frame);
+		Object dObject = mekonAccessor.getMappedObject(frame);
 
-		if (mappedObj == null) {
+		if (dObject == null) {
 
-			throw new HAccessException("Mapped-object not set for: " + frame);
+			dObject = createDObject(frame);
 		}
 
-		if (dClass.isAssignableFrom(mappedObj.getClass())) {
+		if (dClass.isAssignableFrom(dObject.getClass())) {
 
-			return dClass.cast(mappedObj);
+			return dClass.cast(dObject);
 		}
 
 		throw new HAccessException(
 					"Mapped-object not of expected type for: " + frame
 					+ ", expected type: " + dClass
-					+ " , found type: " + mappedObj.getClass());
+					+ " , found type: " + dObject.getClass());
 	}
 
 	DModel() {
@@ -287,29 +287,14 @@ public class DModel {
 		return mekonAccessor.getIEditor(cModel);
 	}
 
-	void ensureMappedDObject(IFrame frame, boolean freeInstance) {
-
-		if (getMappedObject(frame) == null) {
-
-			DObject dObject = createDObject(frame, freeInstance);
-
-			mekonAccessor.setMappedObject(frame, dObject);
-		}
-	}
-
 	ISlotValuesEditor getISlotValuesEditor(ISlot slot) {
 
 		return getIEditor().getSlotValuesEditor(slot);
 	}
 
-	private DObject createDObject(IFrame frame, boolean freeInstance) {
+	private DObject createDObject(IFrame frame) {
 
-		return new DInstantiator(this, freeInstance).instantiate(frame);
-	}
-
-	private Object getMappedObject(IFrame frame) {
-
-		return mekonAccessor.getMappedObject(frame);
+		return new DInstantiator(this).instantiate(frame);
 	}
 
 	private CFrame getFrame(CIdentity identity) {

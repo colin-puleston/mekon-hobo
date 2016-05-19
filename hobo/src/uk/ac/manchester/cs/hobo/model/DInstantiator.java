@@ -26,6 +26,9 @@ package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
+
 import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
@@ -33,13 +36,13 @@ import uk.ac.manchester.cs.hobo.modeller.*;
  */
 class DInstantiator {
 
-	private DModel model;
-	private boolean freeInstance;
+	private ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
 
-	DInstantiator(DModel model, boolean freeInstance) {
+	private DModel model;
+
+	DInstantiator(DModel model) {
 
 		this.model = model;
-		this.freeInstance = freeInstance;
 	}
 
 	DObject instantiate(IFrame frame) {
@@ -48,7 +51,7 @@ class DInstantiator {
 
 		if (binding == null || binding.getDClass() == DObject.class) {
 
-			return new DObjectDefault(model, frame);
+			return createDefaultObject(frame);
 		}
 
 		return build(binding.getDClass(), frame);
@@ -64,14 +67,24 @@ class DInstantiator {
 		return new InstantiableDClassFinder(model, frame.getType()).getOrNull();
 	}
 
+	private DObject createDefaultObject(IFrame frame) {
+
+		DObject dObject = new DObjectDefault(model, frame);
+
+		mekonAccessor.setMappedObject(frame, dObject);
+
+		return dObject;
+	}
+
 	private DObject build(Class<? extends DObject> dClass, IFrame frame) {
 
 		DObjectBuilderImpl builder = new DObjectBuilderImpl(model, frame);
 		DObject dObject = construct(dClass, builder);
 
+		mekonAccessor.setMappedObject(frame, dObject);
 		builder.configureFields(dObject);
 
-		if (!freeInstance) {
+		if (!mekonAccessor.freeInstance(frame)) {
 
 			builder.invokeInitialisers();
 		}

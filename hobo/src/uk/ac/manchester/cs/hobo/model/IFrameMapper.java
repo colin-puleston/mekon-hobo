@@ -60,9 +60,9 @@ class IFrameMapper implements CFrameListener {
 		extension.addListener(this);
 	}
 
-	public void onInstantiated(IFrame instance, boolean freeInstance) {
+	public void onInstantiated(IFrame instance) {
 
-		model.ensureMappedDObject(instance, freeInstance);
+		model.getDObject(instance);
 	}
 
 	IFrameMapper(DModel model, CBuilder cBuilder) {
