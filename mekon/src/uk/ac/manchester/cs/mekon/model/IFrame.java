@@ -165,9 +165,11 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	private CFrame type;
+	private IFrameFunction function;
+	private boolean freeInstance;
+
 	private DynamicTypes inferredTypes = new DynamicTypes();
 	private DynamicTypes suggestedTypes = new DynamicTypes();
-	private IFrameFunction function;
 
 	private ISlots slots = new ISlots();
 	private ISlots referencingSlots = new ISlots();
@@ -630,10 +632,11 @@ public class IFrame implements IEntity, IValue {
 		return new IFrameCycleTester(this).leadsToCycle();
 	}
 
-	IFrame(CFrame type, IFrameFunction function) {
+	IFrame(CFrame type, IFrameFunction function, boolean freeInstance) {
 
 		this.type = type;
 		this.function = function;
+		this.freeInstance = freeInstance;
 	}
 
 	IFrameEditor createEditor() {
@@ -641,9 +644,9 @@ public class IFrame implements IEntity, IValue {
 		return new Editor();
 	}
 
-	IFrame copyEmpty() {
+	IFrame copyEmpty(boolean freeInstance) {
 
-		return new IFrame(type, function);
+		return new IFrame(type, function, freeInstance);
 	}
 
 	boolean updateInferredTypes(List<CFrame> updateds) {
@@ -687,9 +690,14 @@ public class IFrame implements IEntity, IValue {
 		autoUpdateEnabled = enabled;
 	}
 
-	void completeInstantiation(boolean freeInstance) {
+	void completeInstantiation() {
 
-		type.pollListenersForInstantiated(this, freeInstance);
+		type.pollListenersForInstantiated(this);
+	}
+
+	boolean freeInstance() {
+
+		return freeInstance;
 	}
 
 	Object getMappedObject() {

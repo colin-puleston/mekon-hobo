@@ -67,18 +67,18 @@ class IDisjunction extends IFrame {
 		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
 	}
 
-	IDisjunction(CFrame type, IFrameFunction function) {
+	IDisjunction(CFrame type, IFrameFunction function, boolean freeInstance) {
 
-		super(type, function);
+		super(type, function, freeInstance);
 
 		disjunctsSlot = new IDisjunctsSlot(this);
 
 		super.addSlotInternal(disjunctsSlot);
 	}
 
-	IFrame copyEmpty() {
+	IFrame copyEmpty(boolean freeInstance) {
 
-		return new IDisjunction(getType(), getFunction());
+		return new IDisjunction(getType(), getFunction(), freeInstance);
 	}
 
 	ISlot addSlotInternal(CSlot slotType) {

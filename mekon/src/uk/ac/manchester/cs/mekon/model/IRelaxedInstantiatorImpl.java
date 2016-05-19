@@ -58,9 +58,9 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return slotType;
 	}
 
-	public IFrame startInstantiation(CFrame type, IFrameFunction function) {
+	public IFrame startInstantiation(CFrame type, IFrameFunction function, boolean freeInstance) {
 
-		IFrame frame = new IFrame(type, function);
+		IFrame frame = new IFrame(type, function, freeInstance);
 
 		frame.setAutoUpdateEnabled(false);
 
@@ -92,11 +92,11 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return container.addSlotInternal(slotType);
 	}
 
-	public void completeInstantiation(IFrame frame, boolean freeInstance) {
+	public void completeInstantiation(IFrame frame) {
 
-		frame.completeInstantiation(freeInstance);
+		frame.completeInstantiation();
 
-		if (!freeInstance) {
+		if (!frame.freeInstance()) {
 
 			frame.setAutoUpdateEnabled(true);
 		}

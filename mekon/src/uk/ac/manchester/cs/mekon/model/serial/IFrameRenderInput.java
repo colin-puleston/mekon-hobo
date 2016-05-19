@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.model.serial;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.util.*;
 
 /**
  * Represents the input-data for a specific {@link IFrame}/{@link ISlot}
@@ -37,48 +38,33 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class IFrameRenderInput {
 
-	private IFrame topLevelFrame;
-	private IUpdate update = IUpdate.NO_UPDATE;
+	private IFrame rootFrame;
+	private IValuesUpdate valuesUpdate = IValuesUpdate.NO_UPDATE;
 
 	private Map<IFrame, String> frameXDocIds = new HashMap<IFrame, String>();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param topLevelFrame Top-level frame of network to be rendered
+	 * @param rootFrame Root-frame of network to be rendered
 	 */
-	public IFrameRenderInput(IFrame topLevelFrame) {
+	public IFrameRenderInput(IFrame rootFrame) {
 
-		this.topLevelFrame = topLevelFrame;
+		this.rootFrame = rootFrame;
 	}
 
 	/**
-	 * Registers a slot-value-addition operation as the latest update that
-	 * was made to the network being rendered.
+	 * Registers the latest client-update operation prior to the network
+	 * being rendered.
 	 * <p>
-	 * This information should be provided when sending information to the
-	 * server for automatic-update.
+	 * NOTE: This information should be provided when sending information
+	 * to the server for automatic-update.
 	 *
-	 * @param slot Slot to which value was added
-	 * @param addedValue Value that was added to slot
+	 * @param valuesUpdate Latest client-update operation
 	 */
-	public void registerAddition(ISlot slot, IValue addedValue) {
+	public void setValuesUpdate(IValuesUpdate valuesUpdate) {
 
-		update = IUpdate.createAddition(slot, addedValue);
-	}
-
-	/**
-	 * Registers a slot-value(s)-removal operation as the latest update that
-	 * was made to the network being rendered.
-	 * <p>
-	 * This information should be provided when sending information to the
-	 * server for automatic-update.
-	 *
-	 * @param slot Slot from which value(s) were removed
-	 */
-	public void registerRemovals(ISlot slot) {
-
-		update = IUpdate.createRemovals(slot);
+		this.valuesUpdate = valuesUpdate;
 	}
 
 	/**
@@ -108,13 +94,13 @@ public class IFrameRenderInput {
 		return frameXDocIds;
 	}
 
-	IFrame getTopLevelFrame() {
+	IFrame getRootFrame() {
 
-		return topLevelFrame;
+		return rootFrame;
 	}
 
-	IUpdate getUpdate() {
+	IValuesUpdate getValuesUpdate() {
 
-		return update;
+		return valuesUpdate;
 	}
 }

@@ -105,9 +105,9 @@ public class XServerModel {
 	public XDocument initialiseAssertion(XDocument assertionDoc) {
 
 		IFrameParseInput parseInput = new IFrameParseInput(assertionDoc);
-		IFrame preInitRootFrame = iFrameParser.parse(parseInput);
-		IFrame initRootFrame = preInitRootFrame.getType().instantiate();
-		IFrameRenderInput renderInput = new IFrameRenderInput(initRootFrame);
+		CFrame rootType = iFrameParser.parseRootFrameType(parseInput);
+		IFrame rootFrame = rootType.instantiate();
+		IFrameRenderInput renderInput = new IFrameRenderInput(rootFrame);
 
 		return iFrameRenderer.render(renderInput);
 	}

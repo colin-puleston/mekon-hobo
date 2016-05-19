@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
@@ -44,7 +45,7 @@ public class IFrameRenderer extends ISerialiser {
 
 		private XNode containerNode;
 		private IFrameXDocIds frameXDocIds;
-		private IUpdate update;
+		private IValuesUpdate valuesUpdate;
 
 		private class ISlotValueTypeRenderer extends CValueVisitor {
 
@@ -127,9 +128,9 @@ public class IFrameRenderer extends ISerialiser {
 			this.containerNode = containerNode;
 
 			frameXDocIds = new IFrameXDocIds(input.getFrameXDocIds());
-			update = input.getUpdate();
+			valuesUpdate = input.getValuesUpdate();
 
-			renderAtomicIFrame(input.getTopLevelFrame(), containerNode, true);
+			renderAtomicIFrame(input.getRootFrame(), containerNode, true);
 		}
 
 		private void renderIFrame(IFrame frame, XNode parentNode) {
@@ -283,6 +284,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			renderCSlot(slot.getType(), node);
 			new ISlotValueTypeRenderer(slot, node);
+
 			node.addValue(EDITABILITY_ATTR, slot.getEditability());
 
 			if (!slot.getValues().isEmpty()) {
@@ -290,7 +292,7 @@ public class IFrameRenderer extends ISerialiser {
 				new ISlotValuesRenderer(slot, node);
 			}
 
-			if (update.refersToSlot(slot)) {
+			if (slot == valuesUpdate.getSlot()) {
 
 				renderISlotValuesUpdate(slot, node);
 			}
@@ -308,9 +310,9 @@ public class IFrameRenderer extends ISerialiser {
 
 			XNode node = parentNode.addChild(IVALUES_UPDATE_ID);
 
-			if (update.addition()) {
+			if (valuesUpdate.addition()) {
 
-				node.addValue(ADDED_VALUE_INDEX_ATTR, update.getAddedValueIndex());
+				node.addValue(ADDED_VALUE_INDEX_ATTR, valuesUpdate.getAddedValueIndex());
 			}
 		}
 	}
@@ -355,21 +357,22 @@ public class IFrameRenderer extends ISerialiser {
 
 	private void renderToContainerNode(IFrameRenderInput input, XNode containerNode) {
 
-		IFrame frame = input.getTopLevelFrame();
+		IFrame frame = input.getRootFrame();
 
-		checkAtomicTopLevelFrame(frame);
+		checkAtomicRootFrame(frame);
 		checkNonCyclicIfRenderingAsTree(frame);
 
 		new OneTimeRenderer(input, containerNode);
 	}
 
-	private void checkAtomicTopLevelFrame(IFrame frame) {
+	private void checkAtomicRootFrame(IFrame frame) {
 
 		if (frame.getCategory().disjunction()) {
 
 			throw new KAccessException(
-						"Cannot render instance whose top-level "
-						+ "frame has DISJUNCTION category: " + frame);
+						"Cannot render instance whose root-frame "
+						+ "has category DISJUNCTION: "
+						+ frame);
 		}
 	}
 
@@ -379,7 +382,7 @@ public class IFrameRenderer extends ISerialiser {
 
 			throw new KAccessException(
 						"Cannot render cyclic instance as tree: "
-						+ "Top-level frame: " + frame);
+						+ frame);
 		}
 	}
 

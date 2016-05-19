@@ -65,6 +65,11 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 		return relaxedInstantiator;
 	}
 
+	public boolean freeInstance(IFrame frame) {
+
+		return frame.freeInstance();
+	}
+
 	public void setMappedObject(IFrame frame, Object mappedObject) {
 
 		frame.setMappedObject(mappedObject);

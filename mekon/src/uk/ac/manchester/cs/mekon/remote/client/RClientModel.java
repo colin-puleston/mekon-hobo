@@ -30,6 +30,7 @@ import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * Represents a client-side version of the MEKON frames model.
@@ -39,67 +40,143 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 public abstract class RClientModel {
 
 	private CModel cModel;
-	private Reasoner reasoner = new Reasoner();
+	private IEditor iEditor;
 
-	private class Reasoner implements IReasoner {
+	private boolean processingIFrame = false;
 
-		private Initialiser initialiser = new Initialiser();
-		private Updater updater = new Updater();
+	private abstract class IFrameAction {
 
-		private boolean processing = false;
+		void checkPerform(IFrame frame) {
 
-		private abstract class Processor {
+			if (!processingIFrame) {
 
-			void checkProcess(IEditor iEditor, IFrame frame) {
-
-				if (!processing) {
-
-					processing = true;
-					process(iEditor, frame);
-					processing = false;
-				}
-			}
-
-			abstract RUpdates processOnServer(IFrame frame);
-
-			private void process(IEditor iEditor, IFrame frame) {
-
-				IFrame root = findRootFrame(frame);
-				RUpdates updates = processOnServer(root);
-
-				new NetworkAligner(iEditor, updates).align(root);
+				processingIFrame = true;
+				perform(frame);
+				processingIFrame = false;
 			}
 		}
 
-		private class Initialiser extends Processor {
+		abstract RUpdates performOnServer(IFrame frame);
 
-			RUpdates processOnServer(IFrame frame) {
+		private void perform(IFrame frame) {
 
-				return initialiseAssertionOnServer(frame);
+			IFrame root = findRootFrame(frame);
+			RUpdates updates = performOnServer(root);
+
+			new NetworkAligner(iEditor, updates).align(root);
+		}
+	}
+
+	private class IFrameInitAction extends IFrameAction {
+
+		RUpdates performOnServer(IFrame frame) {
+
+			return initialiseAssertionOnServer(frame);
+		}
+	}
+
+	private class IFrameUpdateAction extends IFrameAction {
+
+		private IValuesUpdate clientUpdate;
+
+		IFrameUpdateAction(IValuesUpdate clientUpdate) {
+
+			this.clientUpdate = clientUpdate;
+		}
+
+		RUpdates performOnServer(IFrame frame) {
+
+			return updateAssertionOnServer(frame, clientUpdate);
+		}
+	}
+
+	private class IFrameInitialiser implements CFrameListener {
+
+		private IFrameInitAction initAction = new IFrameInitAction();
+
+		public void onExtended(CFrame extension) {
+		}
+
+		public void onInstantiated(IFrame instance) {
+
+			new ISlotInitialiser(instance);
+
+			initAction.checkPerform(instance);
+		}
+
+		IFrameInitialiser() {
+
+			for (CFrame frame : cModel.getFrames().asList()) {
+
+				frame.addListener(this);
 			}
 		}
+	}
 
-		private class Updater extends Processor {
+	private class ISlotInitialiser implements IFrameListener {
 
-			RUpdates processOnServer(IFrame frame) {
-
-				return updateAssertionOnServer(frame);
-			}
+		public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates) {
 		}
 
-		public void initialiseFrame(IEditor iEditor, IFrame frame) {
-
-			initialiser.checkProcess(iEditor, frame);
+		public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates) {
 		}
 
-		public Set<IUpdateOp> updateFrame(
-								IEditor iEditor,
-								IFrame frame,
-								Set<IUpdateOp> ops) {
+		public void onSlotAdded(ISlot slot) {
 
-			updater.checkProcess(iEditor, frame);
+			new IFrameUpdater(slot);
+		}
 
-			return Collections.<IUpdateOp>emptySet();
+		public void onSlotRemoved(ISlot slot) {
+		}
+
+		ISlotInitialiser(IFrame container) {
+
+			container.addListener(this);
+		}
+	}
+
+	private class IFrameUpdater implements KValuesListener<IValue> {
+
+		private ISlot slot;
+		private IFrameUpdateAction postRemovalsAction;
+
+		public void onAdded(IValue value) {
+
+			checkUpdate(createAdditionAction(value));
+		}
+
+		public void onRemoved(IValue value) {
+
+			checkUpdate(postRemovalsAction);
+		}
+
+		public void onCleared(List<IValue> values) {
+
+			checkUpdate(postRemovalsAction);
+		}
+
+		IFrameUpdater(ISlot slot) {
+
+			this.slot = slot;
+
+			postRemovalsAction = createRemovalsAction();
+
+			slot.getValues().addValuesListener(this);
+		}
+
+		private IFrameUpdateAction createAdditionAction(IValue addedValue) {
+
+			return new IFrameUpdateAction(IValuesUpdate.createAddition(slot, addedValue));
+		}
+
+		private IFrameUpdateAction createRemovalsAction() {
+
+			return new IFrameUpdateAction(IValuesUpdate.createRemovals(slot));
+		}
+
+		private void checkUpdate(IFrameUpdateAction action) {
+
+			action.checkPerform(slot.getContainer());
 		}
 	}
 
@@ -111,7 +188,12 @@ public abstract class RClientModel {
 	 */
 	public RClientModel(CFrameHierarchy hierarchy) {
 
-		cModel = buildCModel(hierarchy);
+		CBuilder cBuilder = createCBuilder(hierarchy);
+
+		cModel = cBuilder.build();
+		iEditor = cBuilder.getIEditor();
+
+		new IFrameInitialiser();
 	}
 
 	/**
@@ -135,21 +217,25 @@ public abstract class RClientModel {
 
 	/**
 	 * Sends an instance-level frame/slot network to be automatically
-	 * updated on the server.
+	 * updated on the server after a slot-value update has occurred on the
+	 * client.
 	 *
 	 * @param rootFrame Root-frame of frame/slot network
+	 * @param clientUpdate Relevant slot-value update
 	 * @return Results of update process
 	 */
-	protected abstract RUpdates updateAssertionOnServer(IFrame rootFrame);
+	protected abstract RUpdates updateAssertionOnServer(
+									IFrame rootFrame,
+									IValuesUpdate clientUpdate);
 
-	private CModel buildCModel(CFrameHierarchy hierarchy) {
+	private CBuilder createCBuilder(CFrameHierarchy hierarchy) {
 
-		CBuilder bldr = CManager.createEmptyBuilder();
+		CBuilder cBuilder = CManager.createEmptyBuilder();
 
-		bldr.setQueriesEnabled(true);
-		bldr.addSectionBuilder(new SectionBuilder(hierarchy, reasoner));
+		cBuilder.setQueriesEnabled(true);
+		cBuilder.addSectionBuilder(new SectionBuilder(hierarchy));
 
-		return bldr.build();
+		return cBuilder;
 	}
 
 	private IFrame findRootFrame(IFrame start) {

@@ -54,9 +54,13 @@ public abstract class IRelaxedInstantiator {
 	 *
 	 * @param type Type of frame to create
 	 * @param function Function of frame to create
+	 * @param freeInstance True if generating a free-instance
 	 * @return Created frame
 	 */
-	public abstract IFrame startInstantiation(CFrame type, IFrameFunction function);
+	public abstract IFrame startInstantiation(
+								CFrame type,
+								IFrameFunction function,
+								boolean freeInstance);
 
 	/**
 	 * Adds a slot to a regenerated network.
@@ -76,10 +80,9 @@ public abstract class IRelaxedInstantiator {
 							IEditability editability);
 
 	/**
-	 * Creates a free-instance-style {@link IFrame}-valued slot and adds
-	 * it to the specified frame. The value-type for the slot will be
-	 * derived by invoking the {@link CValue#toUnconstrained} method on
-	 * a "source" value-type object.
+	 * Creates a free-instance-style slot and adds it to the specified
+	 * frame. The value-type for the slot will be  derived by invoking the
+	 * {@link CValue#toUnconstrained} method on a "source" value-type object.
 	 *
 	 * @param container Frame to which slot is to be added
 	 * @param slotTypeId Identity of slot-type for slot to be created
@@ -96,7 +99,6 @@ public abstract class IRelaxedInstantiator {
 	 * frame in a regenerated network, after all slots have been added.
 	 *
 	 * @param frame Relevant frame
-	 * @param freeInstance True if generating a free-instance
 	 */
-	public abstract void completeInstantiation(IFrame frame, boolean freeInstance);
+	public abstract void completeInstantiation(IFrame frame);
 }

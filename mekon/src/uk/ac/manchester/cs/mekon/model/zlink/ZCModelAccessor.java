@@ -113,6 +113,14 @@ public abstract class ZCModelAccessor {
 	public abstract IRelaxedInstantiator getRelaxedInstantiator();
 
 	/**
+	 * Specifies whether frame is a "free-instance" (see {@link
+	 * IFreeCopier})
+	 *
+	 * @return True if frame is free-instance
+	 */
+	public abstract boolean freeInstance(IFrame frame);
+
+	/**
 	 * Maps an object from an external domain-specific Object Model
 	 * (OM) to an instance-level frame in a MEKON frames-model
 	 * instantiation.

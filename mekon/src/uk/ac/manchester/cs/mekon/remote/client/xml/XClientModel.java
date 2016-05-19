@@ -44,24 +44,22 @@ public abstract class XClientModel extends RClientModel {
 	private IFrameRenderer iFrameRenderer = new IFrameRenderer();
 	private IFrameParser iFrameParser;
 
-	private abstract class IFrameProcessor {
+	private abstract class IFrameAction {
 
 		private Map<IFrame, String> mastersToIds = new HashMap<IFrame, String>();
 		private Map<String, IFrame> idsToUpdates = new HashMap<String, IFrame>();
 
-		RUpdates process(IFrame masterRoot) {
+		RUpdates perform(IFrame masterRoot) {
 
 			XDocument masterDoc = iFrameRenderer.render(createRenderInput(masterRoot));
-			XDocument updateDoc = processDoc(masterDoc);
+			XDocument updateDoc = processDocOnServer(masterDoc);
 
 			IFrame updateRoot = iFrameParser.parse(createParseInput(updateDoc));
 
 			return createUpdates(updateRoot);
 		}
 
-		abstract XDocument processDoc(XDocument masterDoc);
-
-		private IFrameRenderInput createRenderInput(IFrame masterRoot) {
+		IFrameRenderInput createRenderInput(IFrame masterRoot) {
 
 			IFrameRenderInput input = new IFrameRenderInput(masterRoot);
 
@@ -69,6 +67,8 @@ public abstract class XClientModel extends RClientModel {
 
 			return input;
 		}
+
+		abstract XDocument processDocOnServer(XDocument masterDoc);
 
 		private IFrameParseInput createParseInput(XDocument updateDoc) {
 
@@ -97,17 +97,33 @@ public abstract class XClientModel extends RClientModel {
 		}
 	}
 
-	private class IFrameInitialiser extends IFrameProcessor {
+	private class IFrameInitAction extends IFrameAction {
 
-		XDocument processDoc(XDocument masterDoc) {
+		XDocument processDocOnServer(XDocument masterDoc) {
 
 			return initialiseAssertionOnServer(masterDoc);
 		}
 	}
 
-	private class IFrameUpdater extends IFrameProcessor {
+	private class IFrameUpdateAction extends IFrameAction {
 
-		XDocument processDoc(XDocument masterDoc) {
+		private IValuesUpdate clientUpdate;
+
+		IFrameUpdateAction(IValuesUpdate clientUpdate) {
+
+			this.clientUpdate = clientUpdate;
+		}
+
+		IFrameRenderInput createRenderInput(IFrame masterRoot) {
+
+			IFrameRenderInput input = super.createRenderInput(masterRoot);
+
+			input.setValuesUpdate(clientUpdate);
+
+			return input;
+		}
+
+		XDocument processDocOnServer(XDocument masterDoc) {
 
 			return updateAssertionOnServer(masterDoc);
 		}
@@ -140,15 +156,17 @@ public abstract class XClientModel extends RClientModel {
 	 */
 	protected RUpdates initialiseAssertionOnServer(IFrame frame) {
 
-		return new IFrameInitialiser().process(frame);
+		return new IFrameInitAction().perform(frame);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected RUpdates updateAssertionOnServer(IFrame rootFrame) {
+	protected RUpdates updateAssertionOnServer(
+							IFrame rootFrame,
+							IValuesUpdate clientUpdate) {
 
-		return new IFrameUpdater().process(rootFrame);
+		return new IFrameUpdateAction(clientUpdate).perform(rootFrame);
 	}
 
 	/**

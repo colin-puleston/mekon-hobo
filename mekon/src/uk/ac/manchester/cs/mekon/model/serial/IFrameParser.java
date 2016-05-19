@@ -273,7 +273,7 @@ public class IFrameParser extends ISerialiser {
 
 			CValue<?> getValueType(XNode valueTypeNode) {
 
-				return getCFrame(parseIdentity(valueTypeNode)).getType();
+				return parseMFrame(valueTypeNode);
 			}
 
 			CValue<?> getDefaultValueType(XNode slotNode) {
@@ -311,7 +311,7 @@ public class IFrameParser extends ISerialiser {
 
 			CValue<?> getValueType(XNode valueTypeNode) {
 
-				return getCFrame(parseIdentity(valueTypeNode));
+				return parseCFrame(valueTypeNode);
 			}
 
 			CValue<?> getDefaultValueType(XNode slotNode) {
@@ -449,7 +449,7 @@ public class IFrameParser extends ISerialiser {
 
 		IFrame parse() {
 
-			IFrame rootFrame = resolveIFrame(getTopLevelFrameNode());
+			IFrame rootFrame = resolveIFrame(getRootFrameNode());
 
 			processSlotValueSpecs();
 			completeReInstantiation();
@@ -457,6 +457,11 @@ public class IFrameParser extends ISerialiser {
 			valuesUpdate.checkApply();
 
 			return rootFrame;
+		}
+
+		CFrame parseRootFrameType() {
+
+			return parseCFrame(getRootFrameNode().getChild(CFRAME_ID));
 		}
 
 		private IFrame resolveIFrame(XNode node) {
@@ -534,18 +539,28 @@ public class IFrameParser extends ISerialiser {
 			return new IString(node.getString(STRING_VALUE_ATTR));
 		}
 
+		private MFrame parseMFrame(XNode node) {
+
+			return parseCFrame(node, MFRAME_ID).getType();
+		}
+
 		private CFrame parseCFrame(XNode node) {
+
+			return parseCFrame(node, CFRAME_ID);
+		}
+
+		private CFrame parseCFrame(XNode node, String disjunctTag) {
 
 			return node.hasAttribute(IDENTITY_ATTR)
 					? parseAtomicCFrame(node)
-					: parseDisjunctionCFrame(node);
+					: parseDisjunctionCFrame(node, disjunctTag);
 		}
 
-		private CFrame parseDisjunctionCFrame(XNode node) {
+		private CFrame parseDisjunctionCFrame(XNode node, String disjunctTag) {
 
 			List<CFrame> disjuncts = new ArrayList<CFrame>();
 
-			for (XNode disjunctNode : node.getChildren(CFRAME_ID)) {
+			for (XNode disjunctNode : node.getChildren(disjunctTag)) {
 
 				disjuncts.add(parseAtomicCFrame(disjunctNode));
 			}
@@ -589,7 +604,7 @@ public class IFrameParser extends ISerialiser {
 
 		private IFrame startInstantiation(CFrame frameType) {
 
-			return instantiator.startInstantiation(frameType, frameFunction);
+			return instantiator.startInstantiation(frameType, frameFunction, freeInstances);
 		}
 
 		private SlotSpec<?> checkCreateSlotSpec(
@@ -655,11 +670,11 @@ public class IFrameParser extends ISerialiser {
 
 			for (IFrame frame : framesByXDocId.values()) {
 
-				instantiator.completeInstantiation(frame, freeInstances);
+				instantiator.completeInstantiation(frame);
 			}
 		}
 
-		private XNode getTopLevelFrameNode() {
+		private XNode getRootFrameNode() {
 
 			if (containerNode.getId().equals(ITREE_ID)) {
 
@@ -771,6 +786,18 @@ public class IFrameParser extends ISerialiser {
 	public IFrame parse(IFrameParseInput input) {
 
 		return new OneTimeParser(input).parse();
+	}
+
+	/**
+	 * Parses only the type of the root-frame of the serialised frame/slot
+	 * network.
+	 *
+	 * @param input Input to parsing process
+	 * @return Type of the root-frame
+	 */
+	public CFrame parseRootFrameType(IFrameParseInput input) {
+
+		return new OneTimeParser(input).parseRootFrameType();
 	}
 
 	private CFrame getRootCFrame() {

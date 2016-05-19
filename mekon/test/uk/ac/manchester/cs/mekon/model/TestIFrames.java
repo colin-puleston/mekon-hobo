@@ -38,7 +38,7 @@ public class TestIFrames {
 
 	public IFrame create(String typeName) {
 
-		return new IFrame(types.create(typeName), function);
+		return new IFrame(types.create(typeName), function, false);
 	}
 
 	TestIFrames(TestCFrames types, IFrameFunction function) {

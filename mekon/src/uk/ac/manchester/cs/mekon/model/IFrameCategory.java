@@ -38,10 +38,10 @@ public enum IFrameCategory {
 
 		IFrame instantiate(CFrame type, IFrameFunction function) {
 
-			IFrame instance = new IFrame(type, function);
+			IFrame instance = new IFrame(type, function, false);
 
 			type.initialiseInstance(instance);
-			instance.completeInstantiation(false);
+			instance.completeInstantiation();
 
 			return instance;
 		}
@@ -54,7 +54,11 @@ public enum IFrameCategory {
 
 		IFrame instantiate(CFrame type, IFrameFunction function) {
 
-			return new IDisjunction(type, function);
+			IFrame instance = new IDisjunction(type, function, false);
+
+			instance.completeInstantiation();
+
+			return instance;
 		}
 	};
 

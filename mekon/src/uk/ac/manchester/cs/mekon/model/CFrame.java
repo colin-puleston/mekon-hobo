@@ -664,11 +664,11 @@ public abstract class CFrame
 		return subsumes(value.getType());
 	}
 
-	void pollListenersForInstantiated(IFrame instance, boolean freeInstance) {
+	void pollListenersForInstantiated(IFrame instance) {
 
 		for (CFrameListener listener : copyListeners()) {
 
-			listener.onInstantiated(instance, freeInstance);
+			listener.onInstantiated(instance);
 		}
 	}
 
@@ -685,9 +685,7 @@ public abstract class CFrame
 		return false;
 	}
 
-	private IFrame instantiate(
-						IFrameCategory category,
-						IFrameFunction function) {
+	private IFrame instantiate(IFrameCategory category, IFrameFunction function) {
 
 		function.checkInstantiable(getModel());
 

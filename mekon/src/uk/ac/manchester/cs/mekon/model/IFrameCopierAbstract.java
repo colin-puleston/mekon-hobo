@@ -35,11 +35,11 @@ abstract class IFrameCopierAbstract {
 
 	IFrame copy(IFrame template) {
 
-		IFrame copy = template.copyEmpty();
+		IFrame copy = template.copyEmpty(freeInstance());
 
 		copies.put(template, copy);
 		initialiseCopy(template, copy);
-		copy.completeInstantiation(freeInstance());
+		copy.completeInstantiation();
 
 		return copy;
 	}
