@@ -132,15 +132,18 @@ public class ISlotValues extends KList<IValue> {
 
 	void clear() {
 
-		assertedValues.clear();
+		if (!assertedValues.isEmpty() || !fixedValues.isEmpty()) {
 
-		if (fixedValues.isEmpty()) {
+			assertedValues.clear();
 
-			clearValues();
-		}
-		else {
+			if (fixedValues.isEmpty()) {
 
-			updateSlotValues();
+				clearValues();
+			}
+			else {
+
+				updateSlotValues();
+			}
 		}
 	}
 
@@ -192,10 +195,15 @@ public class ISlotValues extends KList<IValue> {
 
 	void removeInvalidValues() {
 
-		removeInvalidValues(fixedValues);
-		removeInvalidValues(assertedValues);
+		boolean anyRemoved = false;
 
-		updateSlotValues();
+		anyRemoved |= removeInvalidValues(fixedValues);
+		anyRemoved |= removeInvalidValues(assertedValues);
+
+		if (anyRemoved) {
+
+			updateSlotValues();
+		}
 	}
 
 	private List<IValue> addAllAsserteds(
@@ -246,15 +254,21 @@ public class ISlotValues extends KList<IValue> {
 		return removals;
 	}
 
-	private void removeInvalidValues(List<IValue> values) {
+	private boolean removeInvalidValues(List<IValue> values) {
+
+		boolean anyRemoved = false;
 
 		for (IValue value : new ArrayList<IValue>(values)) {
 
 			if (!validTypeValue(value)) {
 
 				values.remove(value);
+
+				anyRemoved = true;
 			}
 		}
+
+		return anyRemoved;
 	}
 
 	private void removeConflictingAsserteds(IValue newAsserted) {

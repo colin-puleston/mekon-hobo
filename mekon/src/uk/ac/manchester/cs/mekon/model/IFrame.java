@@ -365,16 +365,6 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Provides a hash-code based on the frame-type if the frame has
-	 * any slots, or just be the default <code>Object</code> hash-code,
-	 * otherwise.
-	 */
-	public int hashCode() {
-
-		return slots.isEmpty() ? type.hashCode() : super.hashCode();
-	}
-
-	/**
 	 * Tests for equality between this and another specified object,
 	 * which will be the case if and only if the other object is the same
 	 * object as this one, or is another <code>IFrame</code> with the
@@ -397,6 +387,16 @@ public class IFrame implements IEntity, IValue {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Provides a hash-code based on the frame-type if the frame has
+	 * any slots, or just be the default <code>Object</code> hash-code,
+	 * otherwise.
+	 */
+	public int hashCode() {
+
+		return slots.isEmpty() ? type.hashCode() : super.hashCode();
 	}
 
 	/**

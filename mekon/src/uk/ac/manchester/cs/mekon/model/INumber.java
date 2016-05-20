@@ -68,6 +68,31 @@ public class INumber extends IDataValue {
 	}
 
 	/**
+	 * Tests for equality between this and other specified object,
+	 * which will hold if and only if the other object is another
+	 * <code>INumber</code> with the same primitive Java
+	 * <code>Number</code> type as this one, and representing the
+	 * same numeric-value.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other) {
+
+		return other instanceof INumber && equalsNumber((INumber)other);
+	}
+
+	/**
+	 * Provides hash-code based on the numeric-value.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return typeNumber.hashCodeValue();
+	}
+
+	/**
 	 * Specifies whether this object represents an infinite value
 	 * (will be true if and only if the object equals either
 	 * {@link #PLUS_INFINITY} or {@link #MINUS_INFINITY}).
@@ -124,31 +149,6 @@ public class INumber extends IDataValue {
 	public boolean abstractValue() {
 
 		return indefinite();
-	}
-
-	/**
-	 * Provides hash-code based on the numeric-value.
-	 *
-	 * @return hash-code for this object
-	 */
-	public int hashCode() {
-
-		return typeNumber.hashCodeValue();
-	}
-
-	/**
-	 * Tests for equality between this and other specified object,
-	 * which will hold if and only if the other object is another
-	 * <code>INumber</code> with the same primitive Java
-	 * <code>Number</code> type as this one, and representing the
-	 * same numeric-value.
-	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if objects are equal
-	 */
-	public boolean equals(Object other) {
-
-		return other instanceof INumber && equalsNumber((INumber)other);
 	}
 
 	/**

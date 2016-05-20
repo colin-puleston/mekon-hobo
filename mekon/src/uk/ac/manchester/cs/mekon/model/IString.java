@@ -50,6 +50,30 @@ public class IString extends IDataValue {
 	}
 
 	/**
+	 * Tests for equality between this and other specified object,
+	 * which will hold if and only if the other object is another
+	 * <code>IString</code> object representing the same string-value
+	 * as this one.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other) {
+
+		return other instanceof IString && equalsString((IString)other);
+	}
+
+	/**
+	 * Provides hash-code based on the string-value.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return value.hashCode();
+	}
+
+	/**
 	 * Provides the type of the value-entity, which will always be the
 	 * {@link CString#SINGLETON} object.
 	 *
@@ -68,30 +92,6 @@ public class IString extends IDataValue {
 	public boolean abstractValue() {
 
 		return false;
-	}
-
-	/**
-	 * Provides hash-code based on the string-value.
-	 *
-	 * @return hash-code for this object
-	 */
-	public int hashCode() {
-
-		return value.hashCode();
-	}
-
-	/**
-	 * Tests for equality between this and other specified object,
-	 * which will hold if and only if the other object is another
-	 * <code>IString</code> object representing the same string-value
-	 * as this one.
-	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if objects are equal
-	 */
-	public boolean equals(Object other) {
-
-		return other instanceof IString && equalsString((IString)other);
 	}
 
 	/**

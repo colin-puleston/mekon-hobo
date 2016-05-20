@@ -33,6 +33,25 @@ package uk.ac.manchester.cs.mekon.model;
 public interface IValue extends FEntity {
 
 	/**
+	 * Tests for equality between this and another specified object.
+	 * Objects will be equal if and only if the other object is the
+	 * same object as this one, or if it is a value-entity of the
+	 * same type as this one, which is immutable and represents the
+	 * same thing as this one.
+	 *
+	 * @param other Object to test for equality with this one
+ 	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other);
+
+	/**
+	 * Provides a hash-code appropriate to the {@link #equals} method.
+	 *
+	 * @return hash-code for this object
+	 */
+	public abstract int hashCode();
+
+	/**
 	 * Provides the type of the value-entity (which could be either a
 	 * concept-level entity or a meta-level entity, depending on the
 	 * level of the value-entity).
@@ -48,25 +67,6 @@ public interface IValue extends FEntity {
 	 * @return True if value-entity is abstract
 	 */
 	public boolean abstractValue();
-
-	/**
-	 * Provides a hash-code appropriate to the {@link #equals} method.
-	 *
-	 * @return hash-code for this object
-	 */
-	public abstract int hashCode();
-
-	/**
-	 * Tests for equality between this and another specified object.
-	 * Objects will be equal if and only if the other object is the
-	 * same object as this one, or if it is a value-entity of the
-	 * same type as this one, which is immutable and represents the
-	 * same thing as this one.
-	 *
-	 * @param other Object to test for equality with this one
- 	 * @return true if objects are equal
-	 */
-	public boolean equals(Object other);
 
 	/**
 	 * Tests whether this value-entity is currently equivalent to

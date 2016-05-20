@@ -345,6 +345,39 @@ public class CNumber extends CDataValue<INumber> {
 	private INumber max;
 
 	/**
+	 * Tests for equality between this and other specified object,
+	 * which will hold if and only if the other object is another
+	 * <code>CNumber</code> with same numeric-type and limit-values
+	 * as this one.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other) {
+
+		if (other instanceof CNumber) {
+
+			CNumber n = (CNumber)other;
+
+			return numberType.equals(n.numberType)
+					&& min.equalTo(n.min)
+					&& max.equalTo(n.max);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Provides hash-code based on number-type and limit-values.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return numberType.hashCode() + min.hashCode() + max.hashCode();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public Class<INumber> getValueType() {
@@ -479,39 +512,6 @@ public class CNumber extends CDataValue<INumber> {
 	public INumber getMax() {
 
 		return max;
-	}
-
-	/**
-	 * Provides hash-code based on number-type and limit-values.
-	 *
-	 * @return hash-code for this object
-	 */
-	public int hashCode() {
-
-		return numberType.hashCode() + min.hashCode() + max.hashCode();
-	}
-
-	/**
-	 * Tests for equality between this and other specified object,
-	 * which will hold if and only if the other object is another
-	 * <code>CNumber</code> with same numeric-type and limit-values
-	 * as this one.
-	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if objects are equal
-	 */
-	public boolean equals(Object other) {
-
-		if (other instanceof CNumber) {
-
-			CNumber n = (CNumber)other;
-
-			return numberType.equals(n.numberType)
-					&& min.equalTo(n.min)
-					&& max.equalTo(n.max);
-		}
-
-		return false;
 	}
 
 	/**

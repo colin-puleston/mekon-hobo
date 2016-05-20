@@ -37,6 +37,32 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	private CFrame rootCFrame;
 
 	/**
+	 * Provides hash-code based on hash-code of root concept-level
+	 * frame.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return rootCFrame.hashCode();
+	}
+
+	/**
+	 * Tests for equality between this and other specified object,
+	 * which will hold if and only if the other object is another
+	 * <code>MFrame</code> with the same root concept-level frame as
+	 * this one, as determined via the relevant <code>equals</code>
+	 * method.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other) {
+
+		return other instanceof MFrame && rootCFrame.equals(((MFrame)other).rootCFrame);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String toString() {
