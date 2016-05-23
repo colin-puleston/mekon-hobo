@@ -39,7 +39,7 @@ class IDiskStore implements IStore {
 
 	private CModel model;
 
-	private InstanceFileStore fileStore;
+	private FileStore fileStore;
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 	private IDirectMatcher defaultMatcher = new IDirectMatcher();
 
@@ -124,7 +124,7 @@ class IDiskStore implements IStore {
 
 		this.model = model;
 
-		fileStore = new InstanceFileStore(model, this);
+		fileStore = new FileStore(model, this);
 	}
 
 	void setStoreDirectory(File directory) {

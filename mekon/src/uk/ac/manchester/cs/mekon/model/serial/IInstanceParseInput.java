@@ -31,12 +31,12 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * Represents the input-data for a specific {@link IFrame}/{@link ISlot}
- * network parsing operation to be performed by a {@link IFrameParseer},
+ * network parsing operation to be performed by a {@link IInstanceParseer},
  * including structures into which certain output-data may be written.
  *
  * @author Colin Puleston
  */
-public class IFrameParseInput {
+public class IInstanceParseInput {
 
 	private XNode parentNode = null;
 	private XNode containerNode = null;
@@ -48,7 +48,7 @@ public class IFrameParseInput {
 	 *
 	 * @param document Document containing serialised frame/slot network
 	 */
-	public IFrameParseInput(XDocument document) {
+	public IInstanceParseInput(XDocument document) {
 
 		containerNode = document.getRootNode();
 	}
@@ -60,7 +60,7 @@ public class IFrameParseInput {
 	 * network (identified via either "ITree" or "IGraph" tag, depending on
 	 * serialisation format)
 	 */
-	public IFrameParseInput(XNode parentNode) {
+	public IInstanceParseInput(XNode parentNode) {
 
 		this.parentNode = parentNode;
 	}

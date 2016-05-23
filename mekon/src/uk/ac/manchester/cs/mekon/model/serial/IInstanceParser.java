@@ -32,12 +32,12 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Parser for the standard XML serialisation of {@link IFrame}/{@link ISlot}
- * networks.
+ * Parser for the standard XML serialisation of MEKON instances as
+ * represented via {@link IFrame}/{@link ISlot} networks.
  *
  * @author Colin Puleston
  */
-public class IFrameParser extends ISerialiser {
+public class IInstanceParser extends ISerialiser {
 
 	static private IRelaxedInstantiator instantiator = IRelaxedInstantiator.get();
 
@@ -441,7 +441,7 @@ public class IFrameParser extends ISerialiser {
 			}
 		}
 
-		OneTimeParser(IFrameParseInput input) {
+		OneTimeParser(IInstanceParseInput input) {
 
 			containerNode = resolveContainerNode(input);
 			framesByXDocId = input.getFramesByXDocId();
@@ -757,7 +757,7 @@ public class IFrameParser extends ISerialiser {
 	 * @param model Relevant model
 	 * @param frameFunction Function of frames to be parsed
 	 */
-	public IFrameParser(CModel model, IFrameFunction frameFunction) {
+	public IInstanceParser(CModel model, IFrameFunction frameFunction) {
 
 		this.model = model;
  		this.frameFunction = frameFunction;
@@ -781,9 +781,9 @@ public class IFrameParser extends ISerialiser {
 	 * Parses serialised frame/slot network.
 	 *
 	 * @param input Input to parsing process
-	 * @return Generated frame
+	 * @return Root-frame of generated network
 	 */
-	public IFrame parse(IFrameParseInput input) {
+	public IFrame parse(IInstanceParseInput input) {
 
 		return new OneTimeParser(input).parse();
 	}
@@ -795,7 +795,7 @@ public class IFrameParser extends ISerialiser {
 	 * @param input Input to parsing process
 	 * @return Type of the root-frame
 	 */
-	public CFrame parseRootFrameType(IFrameParseInput input) {
+	public CFrame parseRootFrameType(IInstanceParseInput input) {
 
 		return new OneTimeParser(input).parseRootFrameType();
 	}
@@ -817,7 +817,7 @@ public class IFrameParser extends ISerialiser {
 		return model.getFrames().get(id);
 	}
 
-	private XNode resolveContainerNode(IFrameParseInput input) {
+	private XNode resolveContainerNode(IInstanceParseInput input) {
 
 		XNode containerNode = input.getContainerNode();
 

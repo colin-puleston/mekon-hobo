@@ -32,12 +32,12 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renderer for the standard XML serialisation of {@link IFrame}/{@link ISlot}
- * networks.
+ * Renderer for the standard XML serialisation of MEKON instances as
+ * represented via {@link IFrame}/{@link ISlot} networks.
  *
  * @author Colin Puleston
  */
-public class IFrameRenderer extends ISerialiser {
+public class IInstanceRenderer extends ISerialiser {
 
 	private boolean renderAsTree = false;
 
@@ -123,7 +123,7 @@ public class IFrameRenderer extends ISerialiser {
 			}
 		}
 
-		OneTimeRenderer(IFrameRenderInput input, XNode containerNode) {
+		OneTimeRenderer(IInstanceRenderInput input, XNode containerNode) {
 
 			this.containerNode = containerNode;
 
@@ -335,7 +335,7 @@ public class IFrameRenderer extends ISerialiser {
 	 * @param input Input to rendering process
 	 * @return Rendered document
 	 */
-	public XDocument render(IFrameRenderInput input) {
+	public XDocument render(IInstanceRenderInput input) {
 
 		XDocument document = new XDocument(getContainerNodeId());
 
@@ -350,12 +350,12 @@ public class IFrameRenderer extends ISerialiser {
 	 * @param input Input to rendering process
 	 * @param parentNode Parent-node for rendering
 	 */
-	public void render(IFrameRenderInput input, XNode parentNode) {
+	public void render(IInstanceRenderInput input, XNode parentNode) {
 
 		renderToContainerNode(input, parentNode.addChild(getContainerNodeId()));
 	}
 
-	private void renderToContainerNode(IFrameRenderInput input, XNode containerNode) {
+	private void renderToContainerNode(IInstanceRenderInput input, XNode containerNode) {
 
 		IFrame frame = input.getRootFrame();
 

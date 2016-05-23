@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * Represents a server-side version of the MEKON frames model that uses
- * the standard MEKON XML-based serialisation to communicate with the
+ * the standard MEKON XML-based serialisations to communicate with the
  * client.
  *
  * @author Colin Puleston
@@ -42,8 +42,8 @@ public class XServerModel {
 
 	private CModel cModel;
 
-	private IFrameRenderer iFrameRenderer = new IFrameRenderer();
-	private IFrameParser iFrameParser;
+	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
+	private IInstanceParser instanceParser;
 
 	/**
 	 * Constructor.
@@ -65,7 +65,7 @@ public class XServerModel {
 
 		this.cModel = cModel;
 
-		iFrameParser = new IFrameParser(cModel, IFrameFunction.ASSERTION);
+		instanceParser = new IInstanceParser(cModel, IFrameFunction.ASSERTION);
 
 		cBuilder.setAutoUpdate(true);
 	}
@@ -104,12 +104,12 @@ public class XServerModel {
 	 */
 	public XDocument initialiseAssertion(XDocument assertionDoc) {
 
-		IFrameParseInput parseInput = new IFrameParseInput(assertionDoc);
-		CFrame rootType = iFrameParser.parseRootFrameType(parseInput);
+		IInstanceParseInput parseInput = new IInstanceParseInput(assertionDoc);
+		CFrame rootType = instanceParser.parseRootFrameType(parseInput);
 		IFrame rootFrame = rootType.instantiate();
-		IFrameRenderInput renderInput = new IFrameRenderInput(rootFrame);
+		IInstanceRenderInput renderInput = new IInstanceRenderInput(rootFrame);
 
-		return iFrameRenderer.render(renderInput);
+		return instanceRenderer.render(renderInput);
 	}
 
 	/**
@@ -121,16 +121,16 @@ public class XServerModel {
 	 */
 	public XDocument updateAssertion(XDocument assertionDoc) {
 
-		IFrameParseInput parseInput = new IFrameParseInput(assertionDoc);
-		IFrame rootFrame = iFrameParser.parse(parseInput);
-		IFrameRenderInput renderInput = new IFrameRenderInput(rootFrame);
+		IInstanceParseInput parseInput = new IInstanceParseInput(assertionDoc);
+		IFrame rootFrame = instanceParser.parse(parseInput);
+		IInstanceRenderInput renderInput = new IInstanceRenderInput(rootFrame);
 
 		renderInput.setFrameXDocIds(parseInput.getFrameXDocIds());
 
-		return iFrameRenderer.render(renderInput);
+		return instanceRenderer.render(renderInput);
 	}
 
-	private Map<IFrame, String> mapFramesToIds(IFrameParseInput parseInput) {
+	private Map<IFrame, String> mapFramesToIds(IInstanceParseInput parseInput) {
 
 		Map<IFrame, String> framesToIds = new HashMap<IFrame, String>();
 

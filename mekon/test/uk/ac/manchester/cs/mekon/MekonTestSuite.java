@@ -55,7 +55,7 @@ import uk.ac.manchester.cs.mekon.network.*;
 	ISlotSpecsTest.class,
 	ISlotSpecsViaDisjunctionsTest.class,
 	IDiskStoreTest.class,
-	IFrameSerialiseTest.class,
+	IInstanceSerialiseTest.class,
 	IDirectMatcherTest.class,
 	NDirectMatcherTest.class})
 public class MekonTestSuite {

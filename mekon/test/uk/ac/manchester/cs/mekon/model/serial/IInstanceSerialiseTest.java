@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * @author Colin Puleston
  */
-public class IFrameSerialiseTest {
+public class IInstanceSerialiseTest {
 
 	private TestCModel model = new TestCModel();
 	private TestISlots slots = model.iFrameAssertions.repeatTypesSlots;
@@ -84,24 +84,24 @@ public class IFrameSerialiseTest {
 
 	private XDocument render(IFrame frame) {
 
-		return createRenderer().render(new IFrameRenderInput(frame));
+		return createRenderer().render(new IInstanceRenderInput(frame));
 	}
 
 	private IFrame parse(XDocument rendering) {
 
-		IFrameParser parser = new IFrameParser(model.model, IFrameFunction.ASSERTION);
+		IInstanceParser parser = new IInstanceParser(model.model, IFrameFunction.ASSERTION);
 
 		if (freeInstances) {
 
 			parser.setFreeInstances(true);
 		}
 
-		return parser.parse(new IFrameParseInput(rendering));
+		return parser.parse(new IInstanceParseInput(rendering));
 	}
 
-	private IFrameRenderer createRenderer() {
+	private IInstanceRenderer createRenderer() {
 
-		IFrameRenderer renderer = new IFrameRenderer();
+		IInstanceRenderer renderer = new IInstanceRenderer();
 
 		renderer.setRenderAsTree(renderAsTree);
 

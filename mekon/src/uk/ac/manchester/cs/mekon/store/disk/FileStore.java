@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class InstanceFileStore {
+class FileStore {
 
 	static private final String DEFAULT_STORE_DIR = "mekon-store";
 	static private final String PROFILE_FILE_PREFIX = "PROFILE-";
@@ -50,13 +50,13 @@ class InstanceFileStore {
 										INSTANCE_FILE_PREFIX,
 										FILE_SUFFIX);
 
-	private InstanceSerialiser serialiser;
+	private Serialiser serialiser;
 
-	InstanceFileStore(CModel model, IDiskStore iStore) {
+	FileStore(CModel model, IDiskStore iStore) {
 
 		this.iStore = iStore;
 
-		serialiser = new InstanceSerialiser(model);
+		serialiser = new Serialiser(model);
 
 		setDirectory(new File(DEFAULT_STORE_DIR));
 	}

@@ -31,12 +31,12 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 
 /**
  * Represents the input-data for a specific {@link IFrame}/{@link ISlot}
- * network rendering operation to be performed by a {@link IFrameRenderer},
+ * network rendering operation to be performed by a {@link IInstanceRenderer},
  * including structures into which certain output-data may be written.
  *
  * @author Colin Puleston
  */
-public class IFrameRenderInput {
+public class IInstanceRenderInput {
 
 	private IFrame rootFrame;
 	private IValuesUpdate valuesUpdate = IValuesUpdate.NO_UPDATE;
@@ -48,7 +48,7 @@ public class IFrameRenderInput {
 	 *
 	 * @param rootFrame Root-frame of network to be rendered
 	 */
-	public IFrameRenderInput(IFrame rootFrame) {
+	public IInstanceRenderInput(IFrame rootFrame) {
 
 		this.rootFrame = rootFrame;
 	}

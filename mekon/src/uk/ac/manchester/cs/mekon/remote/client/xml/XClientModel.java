@@ -34,15 +34,15 @@ import uk.ac.manchester.cs.mekon.remote.client.*;
 
 /**
  * Represents a client-side version of the MEKON frames model that uses
- * the standard MEKON XML-based serialisation to communicate with the
+ * the standard MEKON XML-based serialisations to communicate with the
  * server.
  *
  * @author Colin Puleston
  */
 public abstract class XClientModel extends RClientModel {
 
-	private IFrameRenderer iFrameRenderer = new IFrameRenderer();
-	private IFrameParser iFrameParser;
+	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
+	private IInstanceParser instanceParser;
 
 	private abstract class IFrameAction {
 
@@ -51,17 +51,17 @@ public abstract class XClientModel extends RClientModel {
 
 		RUpdates perform(IFrame masterRoot) {
 
-			XDocument masterDoc = iFrameRenderer.render(createRenderInput(masterRoot));
+			XDocument masterDoc = instanceRenderer.render(createRenderInput(masterRoot));
 			XDocument updateDoc = processDocOnServer(masterDoc);
 
-			IFrame updateRoot = iFrameParser.parse(createParseInput(updateDoc));
+			IFrame updateRoot = instanceParser.parse(createParseInput(updateDoc));
 
 			return createUpdates(updateRoot);
 		}
 
-		IFrameRenderInput createRenderInput(IFrame masterRoot) {
+		IInstanceRenderInput createRenderInput(IFrame masterRoot) {
 
-			IFrameRenderInput input = new IFrameRenderInput(masterRoot);
+			IInstanceRenderInput input = new IInstanceRenderInput(masterRoot);
 
 			input.setFrameXDocIds(mastersToIds);
 
@@ -70,9 +70,9 @@ public abstract class XClientModel extends RClientModel {
 
 		abstract XDocument processDocOnServer(XDocument masterDoc);
 
-		private IFrameParseInput createParseInput(XDocument updateDoc) {
+		private IInstanceParseInput createParseInput(XDocument updateDoc) {
 
-			IFrameParseInput input = new IFrameParseInput(updateDoc);
+			IInstanceParseInput input = new IInstanceParseInput(updateDoc);
 
 			input.setFramesByXDocId(idsToUpdates);
 
@@ -114,9 +114,9 @@ public abstract class XClientModel extends RClientModel {
 			this.clientUpdate = clientUpdate;
 		}
 
-		IFrameRenderInput createRenderInput(IFrame masterRoot) {
+		IInstanceRenderInput createRenderInput(IFrame masterRoot) {
 
-			IFrameRenderInput input = super.createRenderInput(masterRoot);
+			IInstanceRenderInput input = super.createRenderInput(masterRoot);
 
 			input.setValuesUpdate(clientUpdate);
 
@@ -193,6 +193,6 @@ public abstract class XClientModel extends RClientModel {
 
 		super(hierarchy);
 
-		iFrameParser = new IFrameParser(getCModel(), IFrameFunction.ASSERTION);
+		instanceParser = new IInstanceParser(getCModel(), IFrameFunction.ASSERTION);
 	}
 }

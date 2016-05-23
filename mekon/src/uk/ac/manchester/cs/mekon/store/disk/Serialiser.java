@@ -34,25 +34,25 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * @author Colin Puleston
  */
-class InstanceSerialiser extends CIdentitySerialiser {
+class Serialiser extends CIdentitySerialiser {
 
-	static private final String ROOT_ID = "Instance";
-	static private final String TYPE_ID = "Type";
+	static private final String PROFILE_ROOT_ID = "Instance";
+	static private final String PROFILE_TYPE_ID = "Type";
 
 	private CModel model;
-	private IFrameRenderer frameRenderer = new IFrameRenderer();
+	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
-	InstanceSerialiser(CModel model) {
+	Serialiser(CModel model) {
 
 		this.model = model;
 	}
 
 	void renderProfile(InstanceProfile profile, File file) {
 
-		XDocument document = new XDocument(ROOT_ID);
+		XDocument document = new XDocument(PROFILE_ROOT_ID);
 
 		XNode rootNode = document.getRootNode();
-		XNode typeNode = rootNode.addChild(TYPE_ID);
+		XNode typeNode = rootNode.addChild(PROFILE_TYPE_ID);
 
 		renderIdentity(profile.getIdentity(), rootNode);
 		renderIdentity(profile.getType(), typeNode);
@@ -62,44 +62,28 @@ class InstanceSerialiser extends CIdentitySerialiser {
 
 	void renderInstance(IFrame instance, File file) {
 
-		XDocument document = new XDocument(ROOT_ID);
-
-		renderInstance(instance, document.getRootNode());
-		document.writeToFile(file);
+		instanceRenderer.render(new IInstanceRenderInput(instance)).writeToFile(file);
 	}
 
 	InstanceProfile parseProfile(File file) {
 
-		XNode rootNode = getRootNode(file);
-		XNode typeNode = rootNode.getChild(TYPE_ID);
+		XNode rootNode = new XDocument(file).getRootNode();
+		XNode typeNode = rootNode.getChild(PROFILE_TYPE_ID);
 
-
-		return new InstanceProfile(
-					parseIdentity(rootNode),
-					parseType(typeNode));
+		return new InstanceProfile(parseIdentity(rootNode), parseType(typeNode));
 	}
 
 	IFrame parseInstance(File file, boolean freeInstance) {
 
-		IFrameParser parser = new IFrameParser(model, IFrameFunction.ASSERTION);
+		IInstanceParser parser = new IInstanceParser(model, IFrameFunction.ASSERTION);
 
 		parser.setFreeInstances(freeInstance);
 
-		return parser.parse(new IFrameParseInput(getRootNode(file)));
-	}
-
-	private void renderInstance(IFrame instance, XNode rootNode) {
-
-		frameRenderer.render(new IFrameRenderInput(instance), rootNode);
+		return parser.parse(new IInstanceParseInput(new XDocument(file)));
 	}
 
 	private CFrame parseType(XNode typeNode) {
 
 		return model.getFrames().get(parseIdentity(typeNode));
-	}
-
-	private XNode getRootNode(File file) {
-
-		return new XDocument(file).getRootNode();
 	}
 }
