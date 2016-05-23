@@ -42,17 +42,17 @@ public abstract class RClientModel {
 	private CModel cModel;
 	private IEditor iEditor;
 
-	private boolean processingIFrame = false;
+	private boolean performingInstanceAction = false;
 
-	private abstract class IFrameAction {
+	private abstract class InstanceAction {
 
 		void checkPerform(IFrame frame) {
 
-			if (!processingIFrame) {
+			if (!performingInstanceAction) {
 
-				processingIFrame = true;
+				performingInstanceAction = true;
 				perform(frame);
-				processingIFrame = false;
+				performingInstanceAction = false;
 			}
 		}
 
@@ -67,32 +67,32 @@ public abstract class RClientModel {
 		}
 	}
 
-	private class IFrameInitAction extends IFrameAction {
+	private class InstanceInitAction extends InstanceAction {
 
 		RUpdates performOnServer(IFrame frame) {
 
-			return initialiseAssertionOnServer(frame);
+			return initialiseOnServer(frame);
 		}
 	}
 
-	private class IFrameUpdateAction extends IFrameAction {
+	private class InstanceUpdateAction extends InstanceAction {
 
 		private IValuesUpdate clientUpdate;
 
-		IFrameUpdateAction(IValuesUpdate clientUpdate) {
+		InstanceUpdateAction(IValuesUpdate clientUpdate) {
 
 			this.clientUpdate = clientUpdate;
 		}
 
 		RUpdates performOnServer(IFrame frame) {
 
-			return updateAssertionOnServer(frame, clientUpdate);
+			return updateOnServer(frame, clientUpdate);
 		}
 	}
 
 	private class IFrameInitialiser implements CFrameListener {
 
-		private IFrameInitAction initAction = new IFrameInitAction();
+		private InstanceInitAction initAction = new InstanceInitAction();
 
 		public void onExtended(CFrame extension) {
 		}
@@ -138,7 +138,7 @@ public abstract class RClientModel {
 	private class IFrameUpdater implements KValuesListener<IValue> {
 
 		private ISlot slot;
-		private IFrameUpdateAction postRemovalsAction;
+		private InstanceUpdateAction postRemovalsAction;
 
 		public void onAdded(IValue value) {
 
@@ -164,17 +164,17 @@ public abstract class RClientModel {
 			slot.getValues().addValuesListener(this);
 		}
 
-		private IFrameUpdateAction createAdditionAction(IValue addedValue) {
+		private InstanceUpdateAction createAdditionAction(IValue addedValue) {
 
-			return new IFrameUpdateAction(IValuesUpdate.createAddition(slot, addedValue));
+			return new InstanceUpdateAction(IValuesUpdate.createAddition(slot, addedValue));
 		}
 
-		private IFrameUpdateAction createRemovalsAction() {
+		private InstanceUpdateAction createRemovalsAction() {
 
-			return new IFrameUpdateAction(IValuesUpdate.createRemovals(slot));
+			return new InstanceUpdateAction(IValuesUpdate.createRemovals(slot));
 		}
 
-		private void checkUpdate(IFrameUpdateAction action) {
+		private void checkUpdate(InstanceUpdateAction action) {
 
 			action.checkPerform(slot.getContainer());
 		}
@@ -213,7 +213,7 @@ public abstract class RClientModel {
 	 * @param frame Relevant frame
 	 * @return Results of initialisation process
 	 */
-	protected abstract RUpdates initialiseAssertionOnServer(IFrame rootFrame);
+	protected abstract RUpdates initialiseOnServer(IFrame rootFrame);
 
 	/**
 	 * Sends an instance-level frame/slot network to be automatically
@@ -224,9 +224,7 @@ public abstract class RClientModel {
 	 * @param clientUpdate Relevant slot-value update
 	 * @return Results of update process
 	 */
-	protected abstract RUpdates updateAssertionOnServer(
-									IFrame rootFrame,
-									IValuesUpdate clientUpdate);
+	protected abstract RUpdates updateOnServer(IFrame rootFrame, IValuesUpdate clientUpdate);
 
 	private CBuilder createCBuilder(CFrameHierarchy hierarchy) {
 

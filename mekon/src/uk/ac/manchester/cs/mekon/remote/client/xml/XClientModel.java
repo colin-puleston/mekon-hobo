@@ -44,7 +44,7 @@ public abstract class XClientModel extends RClientModel {
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 	private IInstanceParser instanceParser;
 
-	private abstract class IFrameAction {
+	private abstract class InstanceAction {
 
 		private Map<IFrame, String> mastersToIds = new HashMap<IFrame, String>();
 		private Map<String, IFrame> idsToUpdates = new HashMap<String, IFrame>();
@@ -52,7 +52,7 @@ public abstract class XClientModel extends RClientModel {
 		RUpdates perform(IFrame masterRoot) {
 
 			XDocument masterDoc = instanceRenderer.render(createRenderInput(masterRoot));
-			XDocument updateDoc = processDocOnServer(masterDoc);
+			XDocument updateDoc = processOnServer(masterDoc, masterRoot);
 
 			IFrame updateRoot = instanceParser.parse(createParseInput(updateDoc));
 
@@ -68,7 +68,16 @@ public abstract class XClientModel extends RClientModel {
 			return input;
 		}
 
-		abstract XDocument processDocOnServer(XDocument masterDoc);
+		abstract XDocument processAssertionOnServer(XDocument assertionDoc);
+
+		abstract XDocument processQueryOnServer(XDocument queryDoc);
+
+		private XDocument processOnServer(XDocument doc, IFrame root) {
+
+			return root.getFunction().query()
+					? processQueryOnServer(doc)
+					: processAssertionOnServer(doc);
+		}
 
 		private IInstanceParseInput createParseInput(XDocument updateDoc) {
 
@@ -97,19 +106,24 @@ public abstract class XClientModel extends RClientModel {
 		}
 	}
 
-	private class IFrameInitAction extends IFrameAction {
+	private class InstanceInitAction extends InstanceAction {
 
-		XDocument processDocOnServer(XDocument masterDoc) {
+		XDocument processAssertionOnServer(XDocument assertionDoc) {
 
-			return initialiseAssertionOnServer(masterDoc);
+			return initialiseAssertionOnServer(assertionDoc);
+		}
+
+		XDocument processQueryOnServer(XDocument queryDoc) {
+
+			return initialiseQueryOnServer(queryDoc);
 		}
 	}
 
-	private class IFrameUpdateAction extends IFrameAction {
+	private class InstanceUpdateAction extends InstanceAction {
 
 		private IValuesUpdate clientUpdate;
 
-		IFrameUpdateAction(IValuesUpdate clientUpdate) {
+		InstanceUpdateAction(IValuesUpdate clientUpdate) {
 
 			this.clientUpdate = clientUpdate;
 		}
@@ -123,9 +137,14 @@ public abstract class XClientModel extends RClientModel {
 			return input;
 		}
 
-		XDocument processDocOnServer(XDocument masterDoc) {
+		XDocument processAssertionOnServer(XDocument assertionDoc) {
 
-			return updateAssertionOnServer(masterDoc);
+			return updateAssertionOnServer(assertionDoc);
+		}
+
+		XDocument processQueryOnServer(XDocument queryDoc) {
+
+			return updateQueryOnServer(queryDoc);
 		}
 	}
 
@@ -154,40 +173,60 @@ public abstract class XClientModel extends RClientModel {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected RUpdates initialiseAssertionOnServer(IFrame frame) {
+	protected RUpdates initialiseOnServer(IFrame frame) {
 
-		return new IFrameInitAction().perform(frame);
+		return new InstanceInitAction().perform(frame);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected RUpdates updateAssertionOnServer(
+	protected RUpdates updateOnServer(
 							IFrame rootFrame,
 							IValuesUpdate clientUpdate) {
 
-		return new IFrameUpdateAction(clientUpdate).perform(rootFrame);
+		return new InstanceUpdateAction(clientUpdate).perform(rootFrame);
 	}
 
 	/**
-	 * Sends an uninitialised instance-level frame to be initialised on
-	 * the server.
+	 * Sends an uninitialised instance-level frame with function {@link
+	 * IFrameFunction#ASSERTION} to be initialised on the server.
 	 *
 	 * @param assertionDoc Document containing standard MEKON XML-based
-	 * serialisation of relevant uninitialised frame
+	 * serialisation of relevant uninitialised assertion frame
 	 * @return Updated version of document
 	 */
 	protected abstract XDocument initialiseAssertionOnServer(XDocument assertionDoc);
 
 	/**
-	 * Sends an instance-level frame/slot network to be automatically
-	 * updated on the server.
+	 * Sends an uninitialised instance-level frame with function {@link
+	 * IFrameFunction#QUERY} to be initialised on the server.
+	 *
+	 * @param queryDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant uninitialised query frame
+	 * @return Updated version of document
+	 */
+	protected abstract XDocument initialiseQueryOnServer(XDocument queryDoc);
+
+	/**
+	 * Sends an instance-level frame/slot network with function {@link
+	 * IFrameFunction#ASSERTION} to be automatically updated on the server.
 	 *
 	 * @param assertionDoc Document containing standard MEKON XML-based
-	 * serialisation of relevant frame/slot network
+	 * serialisation of relevant assertion frame/slot network
 	 * @return Updated version of document
 	 */
 	protected abstract XDocument updateAssertionOnServer(XDocument assertionDoc);
+
+	/**
+	 * Sends an instance-level frame/slot network with function {@link
+	 * IFrameFunction#QUERY} to be automatically updated on the server.
+	 *
+	 * @param queryDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant query frame/slot network
+	 * @return Updated version of document
+	 */
+	protected abstract XDocument updateQueryOnServer(XDocument queryDoc);
 
 	private XClientModel(CFrameHierarchy hierarchy) {
 

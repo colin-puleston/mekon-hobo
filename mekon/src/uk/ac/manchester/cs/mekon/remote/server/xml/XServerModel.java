@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.remote.server.xml;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
@@ -43,7 +41,9 @@ public class XServerModel {
 	private CModel cModel;
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
-	private IInstanceParser instanceParser;
+
+	private IInstanceParser assertionParser;
+	private IInstanceParser queryParser;
 
 	/**
 	 * Constructor.
@@ -65,7 +65,8 @@ public class XServerModel {
 
 		this.cModel = cModel;
 
-		instanceParser = new IInstanceParser(cModel, IFrameFunction.ASSERTION);
+		assertionParser = new IInstanceParser(cModel, IFrameFunction.ASSERTION);
+		queryParser = new IInstanceParser(cModel, IFrameFunction.QUERY);
 
 		cBuilder.setAutoUpdate(true);
 	}
@@ -96,7 +97,8 @@ public class XServerModel {
 	}
 
 	/**
-	 * Initialises the specified uninitialised instance-level frame.
+	 * Initialises the specified uninitialised instance-level frame with
+	 * function {@link IFrameFunction#ASSERTION}.
 	 *
 	 * @param assertionDoc Document containing standard MEKON XML-based
 	 * serialisation of relevant uninitialised frame
@@ -104,16 +106,25 @@ public class XServerModel {
 	 */
 	public XDocument initialiseAssertion(XDocument assertionDoc) {
 
-		IInstanceParseInput parseInput = new IInstanceParseInput(assertionDoc);
-		CFrame rootType = instanceParser.parseRootFrameType(parseInput);
-		IFrame rootFrame = rootType.instantiate();
-		IInstanceRenderInput renderInput = new IInstanceRenderInput(rootFrame);
+		return initialiseInstance(assertionParser, assertionDoc);
+	}
 
-		return instanceRenderer.render(renderInput);
+	/**
+	 * Initialises the specified uninitialised instance-level frame with
+	 * function {@link IFrameFunction#QUERY}.
+	 *
+	 * @param queryDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant uninitialised frame
+	 * @return Updated version of document
+	 */
+	public XDocument initialiseQuery(XDocument queryDoc) {
+
+		return initialiseInstance(queryParser, queryDoc);
 	}
 
 	/**
 	 * Automatically updates the specified instance-level frame/slot network.
+	 * with function {@link IFrameFunction#ASSERTION}.
 	 *
 	 * @param assertionDoc Document containing standard MEKON XML-based
 	 * serialisation of relevant frame/slot network
@@ -121,24 +132,38 @@ public class XServerModel {
 	 */
 	public XDocument updateAssertion(XDocument assertionDoc) {
 
-		IInstanceParseInput parseInput = new IInstanceParseInput(assertionDoc);
-		IFrame rootFrame = instanceParser.parse(parseInput);
+		return updateInstance(assertionParser, assertionDoc);
+	}
+
+	/**
+	 * Automatically updates the specified instance-level frame/slot network
+	 * with function {@link IFrameFunction#QUERY}.
+	 *
+	 * @param queryDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant frame/slot network
+	 * @return Updated version of document
+	 */
+	public XDocument updateQuery(XDocument queryDoc) {
+
+		return updateInstance(queryParser, queryDoc);
+	}
+
+	private XDocument initialiseInstance(IInstanceParser parser, XDocument doc) {
+
+		IInstanceParseInput parseInput = new IInstanceParseInput(doc);
+		IFrame rootFrame = parser.parseRootFrameType(parseInput).instantiate();
+
+		return instanceRenderer.render(new IInstanceRenderInput(rootFrame));
+	}
+
+	private XDocument updateInstance(IInstanceParser parser, XDocument doc) {
+
+		IInstanceParseInput parseInput = new IInstanceParseInput(doc);
+		IFrame rootFrame = parser.parse(parseInput);
 		IInstanceRenderInput renderInput = new IInstanceRenderInput(rootFrame);
 
 		renderInput.setFrameXDocIds(parseInput.getFrameXDocIds());
 
 		return instanceRenderer.render(renderInput);
-	}
-
-	private Map<IFrame, String> mapFramesToIds(IInstanceParseInput parseInput) {
-
-		Map<IFrame, String> framesToIds = new HashMap<IFrame, String>();
-
-		for (Map.Entry<String, IFrame> entry : parseInput.getFramesByXDocId().entrySet()) {
-
-			framesToIds.put(entry.getValue(), entry.getKey());
-		}
-
-		return framesToIds;
 	}
 }
