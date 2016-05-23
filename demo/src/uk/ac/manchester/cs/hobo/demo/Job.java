@@ -109,6 +109,7 @@ public class Job extends CitizenshipObject {
 
 		public void initialise() {
 
+			updateWeeklyPayValue();
 			updateWeeklyPayValueType();
 
 			new WeeklyPayUpdater();
