@@ -44,9 +44,19 @@ public class MekonRemoteTestModelExplorer {
 			return serverModel.initialiseAssertion(assertionDoc);
 		}
 
+		protected XDocument initialiseQueryOnServer(XDocument queryDoc) {
+
+			return serverModel.initialiseQuery(queryDoc);
+		}
+
 		protected XDocument updateAssertionOnServer(XDocument assertionDoc) {
 
 			return serverModel.updateAssertion(assertionDoc);
+		}
+
+		protected XDocument updateQueryOnServer(XDocument queryDoc) {
+
+			return serverModel.updateQuery(queryDoc);
 		}
 
 		LocalXClientModel(XServerModel serverModel) {
