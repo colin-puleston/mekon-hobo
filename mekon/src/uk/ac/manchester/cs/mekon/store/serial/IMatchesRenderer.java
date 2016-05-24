@@ -25,30 +25,21 @@
 package uk.ac.manchester.cs.mekon.store.serial;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * Renderer for the standard XML serialisation of a
- * {@link IMatches} object.
+ * Renderer for the standard XML serialisation of a {@link IMatches}
+ * object.
  *
  * @author Colin Puleston
  */
-public class IMatchesRenderer extends CIdentitySerialiser {
-
-	static final String MATCHES_ID = "Matches";
-	static final String RANK_ID = "Rank";
-	static final String MATCH_ID = "Match";
-
-	static final String RANKED_ATTR = "ranked";
-	static final String RANK_VALUE_ATTR = "rankValue";
+public class IMatchesRenderer extends IMatchesSerialiser {
 
 	/**
-	 * Renders the specified matches-object to produce an XML
-	 * document.
+	 * Renders a matches-object to produce an XML document.
 	 *
-	 * @param matches Matches-object to render
+	 * @param matches Matches object to render
 	 * @return Rendered document
 	 */
 	public XDocument render(IMatches matches) {
@@ -61,10 +52,10 @@ public class IMatchesRenderer extends CIdentitySerialiser {
 	}
 
 	/**
-	 * Renders the specified matches-object to the specified
-	 * parent-node.
+	 * Renders a matches-object to an appropriately tagged child
+	 * of the specified parent-node.
 	 *
-	 * @param matches Matches-object to render
+	 * @param matches Matches object to render
 	 * @param parentNode Parent-node for rendering
 	 */
 	public void render(IMatches matches, XNode parentNode) {
