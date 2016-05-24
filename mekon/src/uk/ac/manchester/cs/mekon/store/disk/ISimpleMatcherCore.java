@@ -132,7 +132,7 @@ public abstract class ISimpleMatcherCore<I> {
 			group.collectMatches(query, matches);
 		}
 
-		return new IMatches(matches);
+		return IMatches.unranked(matches);
 	}
 
 	/**

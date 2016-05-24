@@ -87,7 +87,7 @@ public class IDiskStoreTest {
 
 			assertTrue(query.equalStructures(this.query));
 
-			return new IMatches(getInstanceIdentityAsList());
+			return IMatches.unranked(getInstanceIdentityAsList());
 		}
 
 		public boolean matches(IFrame query, IFrame instance) {

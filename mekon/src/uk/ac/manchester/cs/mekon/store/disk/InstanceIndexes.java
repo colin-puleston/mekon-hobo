@@ -61,19 +61,19 @@ class InstanceIndexes
 			return ensureOriginalLabelsInRankedMatches(matches);
 		}
 
-		return new IMatches(ensureOriginalLabels(matches.getAllMatches()));
+		return IMatches.unranked(ensureOriginalLabels(matches.getAllMatches()));
 	}
 
 	private IMatches ensureOriginalLabelsInRankedMatches(IMatches matches) {
 
-		IRankedMatches updatedMatches = new IRankedMatches();
+		List<IMatchesRank> updatedRanks = new ArrayList<IMatchesRank>();
 
 		for (IMatchesRank rank : matches.getRanks()) {
 
-			updatedMatches.addRank(ensureOriginalLabelsInMatchesRank(rank));
+			updatedRanks.add(ensureOriginalLabelsInMatchesRank(rank));
 		}
 
-		return updatedMatches;
+		return IMatches.ranked(updatedRanks);
 	}
 
 	private IMatchesRank ensureOriginalLabelsInMatchesRank(IMatchesRank rank) {

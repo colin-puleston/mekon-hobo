@@ -145,6 +145,10 @@ public class ISlotValuesTest {
 
 	@Test(expected = KAccessException.class) // XXX
 	public void test_abstractUpdateFailsForAssertion() {
+
+		ISlotValues values = createSlotValues(repeatTypesSlots);
+
+		values.addAssertedValue(frames.create("IllegalValue"), false);
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {

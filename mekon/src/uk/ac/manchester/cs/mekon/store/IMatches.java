@@ -33,8 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  * Represents the results of an instance-matching query executed
  * via an {@link IStore} object. The set of results can optionally
  * be ranked to reflect some measure of the degree to which each
- * result matches the query (such a set can be specified via the
- * {@link IRankedMatches} class, which extends this one).
+ * result matches the query.
  *
  * @author Colin Puleston
  */
@@ -43,22 +42,41 @@ public class IMatches {
 	/**
 	 * Object representing no matches.
 	 */
-	static public final IMatches NO_MATCHES = new IMatches();
-
-	private SortedSet<IMatchesRank> ranks = new TreeSet<IMatchesRank>();
-	private boolean ranked;
+	static public final IMatches NO_MATCHES = new IMatches(false);
 
 	/**
 	 * Constructs object to represent a set of un-ranked matches.
 	 *
-	 * @param matches Identities of all matching instances
+	 * @param matches Identities of matching instances
+	 * @return Appropriately constructed object
 	 */
-	public IMatches(List<CIdentity> matches) {
+	static public IMatches unranked(List<CIdentity> matches) {
 
-		this(false);
+		IMatches unranked = new IMatches(false);
 
-		ranks.add(new IMatchesRank(matches, 0));
+		unranked.ranks.add(new IMatchesRank(matches, 0));
+
+		return unranked;
 	}
+
+	/**
+	 * Constructs object to represent a set of ranked matches,
+	 * reorganising the ranks into relevant order if necessary.
+	 *
+	 * @param ranks Ranks of matching instances
+	 * @return Appropriately constructed object
+	 */
+	static public IMatches ranked(Collection<IMatchesRank> ranks) {
+
+		IMatches ranked = new IMatches(true);
+
+		ranked.ranks.addAll(ranks);
+
+		return ranked;
+	}
+
+	private SortedSet<IMatchesRank> ranks = new TreeSet<IMatchesRank>();
+	private boolean ranked;
 
 	/**
 	 * Specifies whether matches are ranked.
@@ -113,23 +131,8 @@ public class IMatches {
 		return new ArrayList<IMatchesRank>(ranks);
 	}
 
-	IMatches(boolean ranked) {
+	private IMatches(boolean ranked) {
 
 		this.ranked = ranked;
-	}
-
-	void addRanks(List<IMatchesRank> ranks) {
-
-		this.ranks.addAll(ranks);
-	}
-
-	void addSingleRank(IMatchesRank rank) {
-
-		ranks.add(rank);
-	}
-
-	private IMatches() {
-
-		this(Collections.<CIdentity>emptyList());
 	}
 }
