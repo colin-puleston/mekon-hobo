@@ -62,9 +62,7 @@ public abstract class DMatchFilter<M extends DObject> {
 	 */
 	public IMatches filter(IMatches matches) {
 
-		return matches.ranked()
-				? filterRanked(matches)
-				: filterUnranked(matches);
+		return matches.ranked() ? filterRanked(matches) : filterUnranked(matches);
 	}
 
 	/**
@@ -77,14 +75,14 @@ public abstract class DMatchFilter<M extends DObject> {
 
 	private IMatches filterRanked(IMatches matches) {
 
-		IRankedMatches filtered = new IRankedMatches();
+		List<IMatchesRank> filteredRanks = new ArrayList<IMatchesRank>();
 
 		for (IMatchesRank rank : matches.getRanks()) {
 
-			filtered.addRank(filterRank(rank));
+			filteredRanks.add(filterRank(rank));
 		}
 
-		return filtered;
+		return IMatches.ranked(filteredRanks);
 	}
 
 	private IMatchesRank filterRank(IMatchesRank rank) {
@@ -97,7 +95,7 @@ public abstract class DMatchFilter<M extends DObject> {
 
 	private IMatches filterUnranked(IMatches matches) {
 
-		return new IMatches(filter(matches.getAllMatches()));
+		return IMatches.unranked(filter(matches.getAllMatches()));
 	}
 
 	private List<CIdentity> filter(List<CIdentity> all) {
