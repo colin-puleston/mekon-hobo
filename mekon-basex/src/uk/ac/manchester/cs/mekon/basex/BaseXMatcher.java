@@ -183,7 +183,7 @@ public class BaseXMatcher extends NMatcher {
 		String queryRendering = queryRenderer.render(query);
 		List<Integer> matchIndexes = database.executeQuery(queryRendering);
 
-		return new IMatches(indexes.getIdentities(matchIndexes));
+		return IMatches.unranked(indexes.getIdentities(matchIndexes));
 	}
 
 	/**
