@@ -193,7 +193,7 @@ public abstract class ORMatcher extends NMatcher {
 
 		List<IRI> iris = matchInOWLStore(query);
 
-		return new IMatches(instanceIRIs.toIdentities(iris));
+		return IMatches.unranked(instanceIRIs.toIdentities(iris));
 	}
 
 	/**
