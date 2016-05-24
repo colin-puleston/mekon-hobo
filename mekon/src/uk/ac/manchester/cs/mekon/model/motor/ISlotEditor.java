@@ -88,18 +88,15 @@ public interface ISlotEditor {
 	public boolean setEditability(CEditability editability);
 
 	/**
-	 * Re-sets the asserted values for the slot.
-	 *
-	 * @param assertedValues New asserted values for slot
-	 * @return True if asserted values set has been updated
-	 */
-	public boolean setAssertedValues(List<IValue> assertedValues);
-
-	/**
-	 * Re-sets the fixed values for the slot.
+	 * Updates the "fixed" value-list for the slot, so that it contains
+	 * each of the specified values, and only those values, making any
+	 * required additions and deletions, and then updating the
+	 * current value-list accordingly. Where relevant, will maintain
+	 * the current fixed value-list ordering in preference to the
+	 * supplied list.
 	 *
 	 * @param fixedValues New fixed values for slot
 	 * @return True if fixed values set has been updated
 	 */
-	public boolean setFixedValues(List<IValue> fixedValues);
+	public boolean updateFixedValues(List<IValue> fixedValues);
 }

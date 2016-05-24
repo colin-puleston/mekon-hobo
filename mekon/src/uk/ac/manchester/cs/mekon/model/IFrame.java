@@ -234,7 +234,7 @@ public class IFrame implements IEntity, IValue {
 
 		public void removeSlot(ISlot slot) {
 
-			slot.getValues().clearAllFixedAndAsserteds();
+			slot.getValues().clearAllFixedAndAssertedValues();
 			slots.remove(slot);
 			pollListenersForSlotRemoved(slot);
 		}

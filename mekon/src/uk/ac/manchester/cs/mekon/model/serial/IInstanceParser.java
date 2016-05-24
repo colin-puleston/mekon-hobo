@@ -121,7 +121,9 @@ public class IInstanceParser extends ISerialiser {
 			private XNode slotNode;
 			private XNode slotTypeNode;
 
-			private List<V> valueSpecs = new ArrayList<V>();
+			private List<V> fixedValueSpecs = new ArrayList<V>();
+			private List<V> assertedValueSpecs = new ArrayList<V>();
+
 			private int addedValueIndex = -1;
 
 			SlotSpec(IFrame container, XNode slotNode) {
@@ -144,35 +146,21 @@ public class IInstanceParser extends ISerialiser {
 
 				for (XNode valueNode : valuesNode.getChildren(getValueId())) {
 
-					valueSpecs.add(resolveValueSpec(valueNode));
+					getValueSpecsList(valueNode).add(resolveValueSpec(valueNode));
 				}
 			}
 
 			void processValueSpecs() {
 
-				CValue<?> valueType = slot.getValueType();
-				List<IValue> validNonNewValues = new ArrayList<IValue>();
+				if (!fixedValueSpecs.isEmpty()) {
 
-				int index = 0;
-
-				for (V valueSpec : valueSpecs) {
-
-					IValue value = getValue(slot, valueSpec);
-
-					if (index++ == addedValueIndex) {
-
-						valuesUpdate.setAddedValue(value);
-					}
-					else {
-
-						if (valueType.validValue(value)) {
-
-							validNonNewValues.add(value);
-						}
-					}
+					processFixedValueSpecs();
 				}
 
-				setValues(validNonNewValues);
+				if (!assertedValueSpecs.isEmpty()) {
+
+					processAssertedValueSpecs();
+				}
 			}
 
 			abstract String getValueTypeId();
@@ -220,12 +208,56 @@ public class IInstanceParser extends ISerialiser {
 				}
 			}
 
-			private void setValues(List<IValue> values) {
+			private List<V> getValueSpecsList(XNode valueNode) {
 
-				if (!values.isEmpty()) {
+				return valueNode.getBoolean(FIXED_VALUE_STATUS_ATTR)
+						? fixedValueSpecs
+						: assertedValueSpecs;
+			}
 
-					iEditor.getSlotEditor(slot).setAssertedValues(values);
+			private void processFixedValueSpecs() {
+
+				getSlotEditor().updateFixedValues(getValues(fixedValueSpecs));
+			}
+
+			private void processAssertedValueSpecs() {
+
+				CValue<?> valueType = slot.getValueType();
+				List<IValue> validNonNewValues = new ArrayList<IValue>();
+
+				int index = 0;
+
+				for (IValue value : getValues(assertedValueSpecs)) {
+
+					if (index++ == addedValueIndex) {
+
+						valuesUpdate.setAddedValue(value);
+					}
+					else {
+
+						if (valueType.validValue(value)) {
+
+							validNonNewValues.add(value);
+						}
+					}
 				}
+
+				if (!validNonNewValues.isEmpty()) {
+
+					getValuesEditor().update(validNonNewValues);
+				}
+			}
+
+			private List<IValue> getValues(List<V> valueSpecs) {
+
+				List<IValue> values = new ArrayList<IValue>();
+
+				for (V valueSpec : valueSpecs) {
+
+					values.add(getValue(slot, valueSpec));
+				}
+
+				return values;
 			}
 
 			private CIdentity getSlotId() {
@@ -251,6 +283,16 @@ public class IInstanceParser extends ISerialiser {
 			private IEditability getEditability() {
 
 				return slotNode.getEnum(EDITABILITY_ATTR, IEditability.class);
+			}
+
+			private ISlotEditor getSlotEditor() {
+
+				return iEditor.getSlotEditor(slot);
+			}
+
+			private ISlotValuesEditor getValuesEditor() {
+
+				return iEditor.getSlotValuesEditor(slot);
 			}
 		}
 

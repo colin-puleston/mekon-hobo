@@ -117,7 +117,7 @@ class ISlotSpec {
 
 	ISlotOps checkUpdateSlotValues(ISlot slot) {
 
-		return setFixedValues(slot) ? ISlotOps.VALUES : ISlotOps.NONE;
+		return updateFixedValues(slot) ? ISlotOps.VALUES : ISlotOps.NONE;
 	}
 
 	CIdentity getIdentity() {
@@ -248,9 +248,9 @@ class ISlotSpec {
 					: ISlotOps.SLOTS_AND_VALUES;
 	}
 
-	private boolean setFixedValues(ISlot slot) {
+	private boolean updateFixedValues(ISlot slot) {
 
-		return getSlotEditor(slot).setFixedValues(fixedValues);
+		return getSlotEditor(slot).updateFixedValues(fixedValues);
 	}
 
 	private boolean valueUpdates(ISlot slot, List<IValue> preValues) {

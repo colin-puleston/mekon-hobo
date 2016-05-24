@@ -66,12 +66,24 @@ abstract class IFrameCopierAbstract {
 
 	private void getCopySlotValues(ISlot templateSlot, ISlot copySlot) {
 
-		ISlotValues copyValues = copySlot.getValues();
+		ISlotValues tempVals = templateSlot.getValues();
 
-		for (IValue value : templateSlot.getValues().asList()) {
+		List<IValue> fixeds = getCopyValues(tempVals.getFixedValues());
+		List<IValue> asserteds = getCopyValues(tempVals.getAssertedValues());
 
-			copyValues.add(getCopyValue(value), true);
+		copySlot.getValues().reinitialise(fixeds, asserteds);
+	}
+
+	private List<IValue> getCopyValues(List<IValue> templateValues) {
+
+		List<IValue> copyValues = new ArrayList<IValue>();
+
+		for (IValue templateValue : templateValues) {
+
+			copyValues.add(getCopyValue(templateValue));
 		}
+
+		return copyValues;
 	}
 
 	private IValue getCopyValue(IValue value) {

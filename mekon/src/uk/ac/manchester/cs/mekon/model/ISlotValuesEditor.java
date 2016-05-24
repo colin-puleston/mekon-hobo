@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.*;
 public class ISlotValuesEditor {
 
 	private ISlotValues slotValues;
-	private boolean internalEditor;
+	private boolean privilegedAccess;
 
 	/**
 	 * Adds the specified value to the "asserted" value-list, if
@@ -49,7 +49,7 @@ public class ISlotValuesEditor {
 	 */
 	public boolean add(IValue value) {
 
-		return slotValues.add(value, internalEditor);
+		return slotValues.addAssertedValue(value, privilegedAccess);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class ISlotValuesEditor {
 	 */
 	public List<IValue> addAll(Collection<? extends IValue> values) {
 
-		return slotValues.addAll(values, internalEditor);
+		return slotValues.addAssertedValues(values, privilegedAccess);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class ISlotValuesEditor {
 	 */
 	public boolean remove(IValue value) {
 
-		return slotValues.remove(value);
+		return slotValues.removeAssertedValue(value);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class ISlotValuesEditor {
 	 */
 	public void remove(int index) {
 
-		slotValues.remove(index);
+		slotValues.removeAssertedValue(index);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class ISlotValuesEditor {
 	 */
 	public List<IValue> removeAll(Collection<? extends IValue> values) {
 
-		return slotValues.removeAll(values);
+		return slotValues.removeAssertedValues(values);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class ISlotValuesEditor {
 	 */
 	public void clear() {
 
-		slotValues.clear();
+		slotValues.clearAssertedValues();
 	}
 
 	/**
@@ -130,12 +130,12 @@ public class ISlotValuesEditor {
 	 */
 	public void update(Collection<? extends IValue> latestValues) {
 
-		slotValues.update(latestValues, internalEditor);
+		slotValues.updateAssertedValues(latestValues, privilegedAccess);
 	}
 
-	ISlotValuesEditor(ISlotValues slotValues, boolean internalEditor) {
+	ISlotValuesEditor(ISlotValues slotValues, boolean privilegedAccess) {
 
 		this.slotValues = slotValues;
-		this.internalEditor = internalEditor;
+		this.privilegedAccess = privilegedAccess;
 	}
 }

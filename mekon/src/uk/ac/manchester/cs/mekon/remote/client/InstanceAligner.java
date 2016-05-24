@@ -32,16 +32,14 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 /**
  * @author Colin Puleston
  */
-class NetworkAligner {
+class InstanceAligner {
 
 	private IEditor iEditor;
 
 	private IFrame updateRoot;
+	private Map<IFrame, IFrame> updatesToMasters;
 
-	private Map<IFrame, IFrame> mastersToUpdates;
-	private Map<IFrame, IFrame> updatesToMasters = new HashMap<IFrame, IFrame>();
-
-	private Set<IFrame> updatedMasters = new HashSet<IFrame>();
+	private Set<IFrame> alignedMasters = new HashSet<IFrame>();
 
 	private class IFrameAligner {
 
@@ -145,17 +143,7 @@ class NetworkAligner {
 
 		private void updateSlotValues(ISlot slot) {
 
-			createValuesAligner(slot, getUpdateSlot(slot)).align();
-		}
-
-		private IValuesAligner createValuesAligner(ISlot masterSlot, ISlot updateSlot) {
-
-			if (masterSlot.getValueType() instanceof CFrame) {
-
-				return new IFrameValuesAligner(masterSlot, updateSlot);
-			}
-
-			return new IValuesAligner(masterSlot, updateSlot);
+			new IValuesAligner(slot, getUpdateSlot(slot)).align();
 		}
 
 		private ISlot getUpdateSlot(ISlot masterSlot) {
@@ -171,116 +159,75 @@ class NetworkAligner {
 
 	private class IValuesAligner {
 
-		final ISlot master;
-		final ISlot update;
-
-		private ISlotValuesEditor masterEd;
+		private ISlot master;
+		private ISlot update;
 
 		IValuesAligner(ISlot master, ISlot update) {
 
 			this.master = master;
 			this.update = update;
-
-			masterEd = iEditor.getSlotValuesEditor(master);
 		}
 
 		void align() {
 
-			removeOldValues();
-			updateCurrentValues();
-			addNewValues();
+			ISlotValues updateVals = update.getValues();
+
+			updateFixedValues(getAlignedValues(updateVals.getFixedValues()));
+			updateAssertedValues(getAlignedValues(updateVals.getAssertedValues()));
 		}
 
-		void updateCurrentValues() {
+		private void updateFixedValues(List<IValue> updatedValues) {
+
+			iEditor.getSlotEditor(master).updateFixedValues(updatedValues);
 		}
 
-		boolean matchingMasterValueFor(IValue updateValue) {
+		private void updateAssertedValues(List<IValue> updatedValues) {
 
-			return master.getValues().contains(updateValue);
+			iEditor.getSlotValuesEditor(master).update(updatedValues);
 		}
 
-		boolean matchingUpdateValueFor(IValue masterValue) {
+		private List<IValue> getAlignedValues(List<IValue> updateValues) {
 
-			return update.getValues().contains(masterValue);
-		}
+			List<IValue> alignedValues = new ArrayList<IValue>();
 
-		IValue getNewValue(IValue updateValue) {
+			for (IValue updateValue : updateValues) {
 
-			return updateValue;
-		}
-
-		private void removeOldValues() {
-
-			for (IValue value : master.getValues().asList()) {
-
-				if (!matchingUpdateValueFor(value)) {
-
-					masterEd.remove(value);
-				}
-			}
-		}
-
-		private void addNewValues() {
-
-			for (IValue value : update.getValues().asList()) {
-
-				if (!matchingMasterValueFor(value)) {
-
-					masterEd.add(getNewValue(value));
-				}
-			}
-		}
-	}
-
-	private class IFrameValuesAligner extends IValuesAligner {
-
-		IFrameValuesAligner(ISlot master, ISlot update) {
-
-			super(master, update);
-		}
-
-		void updateCurrentValues() {
-
-			for (IValue value : master.getValues().asList()) {
-
-				updateCurrentValue((IFrame)value);
-			}
-		}
-
-		boolean matchingMasterValueFor(IValue updateValue) {
-
-			return matchingValueFor(master, updateValue, mastersToUpdates);
-		}
-
-		boolean matchingUpdateValueFor(IValue masterValue) {
-
-			return matchingValueFor(update, masterValue, updatesToMasters);
-		}
-
-		IValue getNewValue(IValue updateValue) {
-
-			return createNewMasterFrame((IFrame)updateValue);
-		}
-
-		private void updateCurrentValue(IFrame masterValue) {
-
-			alignFrom(masterValue, mastersToUpdates.get(masterValue));
-		}
-
-		private boolean matchingValueFor(
-							ISlot slot,
-							IValue template,
-							Map<IFrame, IFrame> toTemplates) {
-
-			for (IValue value : slot.getValues().asList()) {
-
-				if (toTemplates.containsKey(value)) {
-
-					return true;
-				}
+				alignedValues.add(getAlignedValue(updateValue));
 			}
 
-			return false;
+			return alignedValues;
+		}
+
+		private IValue getAlignedValue(IValue updateValue) {
+
+			if (updateValue instanceof IFrame) {
+
+				return getAlignedFrameValue((IFrame)updateValue);
+			}
+
+			return getAlignedValueDefault(updateValue);
+		}
+
+		private IValue getAlignedValueDefault(IValue updateValue) {
+
+			List<IValue> masterVals = master.getValues().asList();
+			int masterIndex = masterVals.indexOf(updateValue);
+
+			return masterIndex != -1 ? masterVals.get(masterIndex) : updateValue;
+		}
+
+		private IValue getAlignedFrameValue(IFrame updateFrame) {
+
+			IFrame masterFrame = updatesToMasters.get(updateFrame);
+
+			if (masterFrame == null) {
+
+				masterFrame = createNewMasterFrame(updateFrame);
+			}
+
+			alignFrom(masterFrame, updateFrame);
+
+			return masterFrame;
 		}
 
 		private IFrame createNewMasterFrame(IFrame updateFrame) {
@@ -293,17 +240,12 @@ class NetworkAligner {
 		}
 	}
 
-	NetworkAligner(IEditor iEditor, RUpdates updates) {
+	InstanceAligner(IEditor iEditor, RUpdates updates) {
 
 		this.iEditor = iEditor;
 
 		updateRoot = updates.getRoot();
-		mastersToUpdates = updates.getMastersToUpdates();
-
-		for (Map.Entry<IFrame, IFrame> entry : mastersToUpdates.entrySet()) {
-
-			updatesToMasters.put(entry.getValue(), entry.getKey());
-		}
+		updatesToMasters = updates.getUpdatesToMasters();
 	}
 
 	void align(IFrame masterRoot) {
@@ -313,7 +255,7 @@ class NetworkAligner {
 
 	private void alignFrom(IFrame master, IFrame update) {
 
-		if (updatedMasters.add(master)) {
+		if (alignedMasters.add(master)) {
 
 			new IFrameAligner(master, update).align();
 		}

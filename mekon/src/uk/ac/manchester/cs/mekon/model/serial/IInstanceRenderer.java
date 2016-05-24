@@ -79,47 +79,45 @@ public class IInstanceRenderer extends ISerialiser {
 			}
 		}
 
-		private class ISlotValuesRenderer extends ISlotValuesVisitor {
+		private class ISlotValuesRenderer extends IValueVisitor {
 
 			private XNode valuesNode;
+			private boolean fixedValues;
 
-			protected void visit(CFrame valueType, List<IFrame> values) {
+			protected void visit(IFrame value) {
 
-				for (IFrame value : values) {
+				renderFixedStatus(renderIFrame(value, valuesNode));
+			}
 
-					renderIFrame(value, valuesNode);
+			protected void visit(INumber value) {
+
+				renderFixedStatus(renderINumber(value, valuesNode));
+			}
+
+			protected void visit(IString value) {
+
+				renderFixedStatus(renderIString(value, valuesNode));
+			}
+
+			protected void visit(CFrame value) {
+
+				renderFixedStatus(renderCFrame(value, valuesNode));
+			}
+
+			ISlotValuesRenderer(List<IValue> values, XNode valuesNode, boolean fixedValues) {
+
+				this.valuesNode = valuesNode;
+				this.fixedValues = fixedValues;
+
+				for (IValue value : values) {
+
+					visit(value);
 				}
 			}
 
-			protected void visit(CNumber valueType, List<INumber> values) {
+			private void renderFixedStatus(XNode valueNode) {
 
-				for (INumber value : values) {
-
-					renderINumber(value, valuesNode);
-				}
-			}
-
-			protected void visit(CString valueType, List<IString> values) {
-
-				for (IString value : values) {
-
-					renderIString(value, valuesNode);
-				}
-			}
-
-			protected void visit(MFrame valueType, List<CFrame> values) {
-
-				for (CFrame value : values) {
-
-					renderCFrame(value, valuesNode);
-				}
-			}
-
-			ISlotValuesRenderer(ISlot slot, XNode slotNode) {
-
-				valuesNode = slotNode.addChild(IVALUES_ID);
-
-				visit(slot);
+				valueNode.addValue(FIXED_VALUE_STATUS_ATTR, fixedValues);
 			}
 		}
 
@@ -133,36 +131,29 @@ public class IInstanceRenderer extends ISerialiser {
 			renderAtomicIFrame(input.getRootFrame(), containerNode, true);
 		}
 
-		private void renderIFrame(IFrame frame, XNode parentNode) {
+		private XNode renderIFrame(IFrame frame, XNode parentNode) {
 
 			if (frame.getCategory().disjunction()) {
 
-				renderDisjunctionIFrame(frame, parentNode);
+				return renderDisjunctionIFrame(frame, parentNode);
 			}
-			else {
 
-				renderAtomicIFrame(frame, parentNode, renderAsTree);
-			}
+			return renderAtomicIFrame(frame, parentNode, renderAsTree);
 		}
 
-		private void renderAtomicIFrame(IFrame frame, XNode parentNode, boolean direct) {
+		private XNode renderAtomicIFrame(IFrame frame, XNode parentNode, boolean direct) {
 
 			IFrameXDocIds.Resolution xidRes = frameXDocIds.resolve(frame);
 
 			if (direct) {
 
-				renderAtomicIFrameDirect(frame, parentNode, xidRes.getId());
+				return renderAtomicIFrameDirect(frame, parentNode, xidRes.getId());
 			}
-			else {
 
-				if (xidRes.newFrame()) {
-
-					renderAtomicIFrameIndirect(frame, parentNode, xidRes.getId());
-				}
-			}
+			return renderAtomicIFrameIndirect(frame, parentNode, xidRes);
 		}
 
-		private void renderAtomicIFrameDirect(IFrame frame, XNode parentNode, String xid) {
+		private XNode renderAtomicIFrameDirect(IFrame frame, XNode parentNode, String xid) {
 
 			XNode node = renderAtomicIFrameCommon(parentNode, xid, IFRAME_XDOC_ID_ATTR);
 
@@ -172,12 +163,24 @@ public class IInstanceRenderer extends ISerialiser {
 
 				renderISlot(slot, node);
 			}
+
+			return node;
 		}
 
-		private void renderAtomicIFrameIndirect(IFrame frame, XNode parentNode, String xid) {
+		private XNode renderAtomicIFrameIndirect(
+						IFrame frame,
+						XNode parentNode,
+						IFrameXDocIds.Resolution xidRes) {
 
-			renderAtomicIFrameCommon(parentNode, xid, IFRAME_XDOC_ID_REF_ATTR);
-			renderAtomicIFrameDirect(frame, containerNode, xid);
+			String xid = xidRes.getId();
+			XNode localNode = renderAtomicIFrameCommon(parentNode, xid, IFRAME_XDOC_ID_REF_ATTR);
+
+			if (xidRes.newFrame()) {
+
+				renderAtomicIFrameDirect(frame, containerNode, xid);
+			}
+
+			return localNode;
 		}
 
 		private XNode renderAtomicIFrameCommon(XNode parentNode, String xid, String xidTag) {
@@ -189,7 +192,7 @@ public class IInstanceRenderer extends ISerialiser {
 			return node;
 		}
 
-		private void renderDisjunctionIFrame(IFrame frame, XNode parentNode) {
+		private XNode renderDisjunctionIFrame(IFrame frame, XNode parentNode) {
 
 			XNode node = parentNode.addChild(IFRAME_ID);
 
@@ -197,14 +200,16 @@ public class IInstanceRenderer extends ISerialiser {
 
 				renderIFrame(disjunct, node);
 			}
+
+			return node;
 		}
 
-		private void renderCFrame(CFrame frame, XNode parentNode) {
+		private XNode renderCFrame(CFrame frame, XNode parentNode) {
 
-			renderCFrame(frame, parentNode, CFRAME_ID);
+			return renderCFrame(frame, parentNode, CFRAME_ID);
 		}
 
-		private void renderCFrame(CFrame frame, XNode parentNode, String tag) {
+		private XNode renderCFrame(CFrame frame, XNode parentNode, String tag) {
 
 			XNode node = parentNode.addChild(tag);
 
@@ -219,6 +224,8 @@ public class IInstanceRenderer extends ISerialiser {
 
 				renderIdentity(frame, node);
 			}
+
+			return node;
 		}
 
 		private void renderMFrame(MFrame frame, XNode parentNode) {
@@ -239,7 +246,7 @@ public class IInstanceRenderer extends ISerialiser {
 			parentNode.addChild(CSTRING_ID);
 		}
 
-		private void renderINumber(INumber number, XNode parentNode) {
+		private XNode renderINumber(INumber number, XNode parentNode) {
 
 			XNode node = parentNode.addChild(INUMBER_ID);
 
@@ -251,13 +258,17 @@ public class IInstanceRenderer extends ISerialiser {
 
 				node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
 			}
+
+			return node;
 		}
 
-		private void renderIString(IString number, XNode parentNode) {
+		private XNode renderIString(IString number, XNode parentNode) {
 
 			XNode node = parentNode.addChild(ISTRING_ID);
 
 			node.addValue(STRING_VALUE_ATTR, number.get());
+
+			return node;
 		}
 
 		private void renderNumberType(CNumber number, XNode node) {
@@ -289,7 +300,7 @@ public class IInstanceRenderer extends ISerialiser {
 
 			if (!slot.getValues().isEmpty()) {
 
-				new ISlotValuesRenderer(slot, node);
+				renderISlotValues(slot, node);
 			}
 
 			if (slot == valuesUpdate.getSlot()) {
@@ -306,9 +317,18 @@ public class IInstanceRenderer extends ISerialiser {
 			node.addValue(CARDINALITY_ATTR, slot.getCardinality());
 		}
 
-		private void renderISlotValuesUpdate(ISlot slot, XNode parentNode) {
+		private void renderISlotValues(ISlot slot, XNode slotNode) {
 
-			XNode node = parentNode.addChild(IVALUES_UPDATE_ID);
+			ISlotValues slotValues = slot.getValues();
+			XNode node = slotNode.addChild(IVALUES_ID);
+
+			new ISlotValuesRenderer(slotValues.getFixedValues(), node, true);
+			new ISlotValuesRenderer(slotValues.getAssertedValues(), node, false);
+		}
+
+		private void renderISlotValuesUpdate(ISlot slot, XNode slotNode) {
+
+			XNode node = slotNode.addChild(IVALUES_UPDATE_ID);
 
 			if (valuesUpdate.addition()) {
 

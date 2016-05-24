@@ -73,9 +73,17 @@ public class ISlotValues extends KList<IValue> {
 		this.slot = slot;
 	}
 
-	boolean add(IValue value, boolean internalEdit) {
+	void reinitialise(List<IValue> fixedValues, List<IValue> assertedValues) {
 
-		if (addNewAsserted(value, internalEdit)) {
+		this.fixedValues.addAll(fixedValues);
+		this.assertedValues.addAll(assertedValues);
+
+		updateSlotValues();
+	}
+
+	boolean addAssertedValue(IValue value, boolean privilegedAccess) {
+
+		if (addToAsserteds(value, privilegedAccess)) {
 
 			updateSlotValues();
 
@@ -85,13 +93,13 @@ public class ISlotValues extends KList<IValue> {
 		return false;
 	}
 
-	List<IValue> addAll(
+	List<IValue> addAssertedValues(
 					Collection<? extends IValue> values,
-					boolean internalEdit) {
+					boolean privilegedAccess) {
 
 		values = getMostSpecifics(values);
 
-		List<IValue> additions = addAllAsserteds(values, internalEdit);
+		List<IValue> additions = addToAsserteds(values, privilegedAccess);
 
 		if (!additions.isEmpty()) {
 
@@ -101,7 +109,7 @@ public class ISlotValues extends KList<IValue> {
 		return additions;
 	}
 
-	boolean remove(IValue value) {
+	boolean removeAssertedValue(IValue value) {
 
 		if (assertedValues.remove(value)) {
 
@@ -113,14 +121,14 @@ public class ISlotValues extends KList<IValue> {
 		return false;
 	}
 
-	void remove(int index) {
+	void removeAssertedValue(int index) {
 
-		remove(asList().get(index));
+		removeAssertedValue(asList().get(index));
 	}
 
-	List<IValue> removeAll(Collection<? extends IValue> values) {
+	List<IValue> removeAssertedValues(Collection<? extends IValue> values) {
 
-		List<IValue> removals = removeAllAsserteds(values);
+		List<IValue> removals = removeFromAsserteds(values);
 
 		if (!removals.isEmpty()) {
 
@@ -130,7 +138,7 @@ public class ISlotValues extends KList<IValue> {
 		return removals;
 	}
 
-	void clear() {
+	void clearAssertedValues() {
 
 		if (!assertedValues.isEmpty() || !fixedValues.isEmpty()) {
 
@@ -147,22 +155,24 @@ public class ISlotValues extends KList<IValue> {
 		}
 	}
 
-	void clearAllFixedAndAsserteds() {
+	void clearAllFixedAndAssertedValues() {
 
 		fixedValues.clear();
-		clear();
+		assertedValues.clear();
+
+		clearValues();
 	}
 
-	boolean update(
+	boolean updateAssertedValues(
 				Collection<? extends IValue> values,
-				boolean internalEdit) {
+				boolean privilegedAccess) {
 
 		values = getMostSpecifics(values);
 
 		if (!valuesAsSet(values).equals(valuesAsSet(assertedValues))) {
 
 			assertedValues.clear();
-			addAllAsserteds(values, internalEdit);
+			addToAsserteds(values, privilegedAccess);
 
 			updateSlotValues();
 
@@ -206,15 +216,15 @@ public class ISlotValues extends KList<IValue> {
 		}
 	}
 
-	private List<IValue> addAllAsserteds(
+	private List<IValue> addToAsserteds(
 							Collection<? extends IValue> asserteds,
-							boolean internalEdit) {
+							boolean privilegedAccess) {
 
 		List<IValue> additions = new ArrayList<IValue>();
 
 		for (IValue asserted : asserteds) {
 
-			if (addNewAsserted(asserted, internalEdit)) {
+			if (addToAsserteds(asserted, privilegedAccess)) {
 
 				additions.add(asserted);
 			}
@@ -223,9 +233,9 @@ public class ISlotValues extends KList<IValue> {
 		return additions;
 	}
 
-	private boolean addNewAsserted(IValue asserted, boolean internalEdit) {
+	private boolean addToAsserteds(IValue asserted, boolean privilegedAccess) {
 
-		validateValue(asserted, internalEdit);
+		validateValue(asserted, privilegedAccess);
 
 		if (!assertedValues.contains(asserted)
 			&& !redundantAsserted(asserted)) {
@@ -239,7 +249,7 @@ public class ISlotValues extends KList<IValue> {
 		return false;
 	}
 
-	private List<IValue> removeAllAsserteds(Collection<? extends IValue> asserteds) {
+	private List<IValue> removeFromAsserteds(Collection<? extends IValue> asserteds) {
 
 		List<IValue> removals = new ArrayList<IValue>();
 
@@ -351,15 +361,15 @@ public class ISlotValues extends KList<IValue> {
 
 	private void validateValues(
 					Collection<? extends IValue> values,
-					boolean internalEdit) {
+					boolean privilegedAccess) {
 
 		for (IValue value : values) {
 
-			validateValue(value, internalEdit);
+			validateValue(value, privilegedAccess);
 		}
 	}
 
-	private void validateValue(IValue value, boolean internalEdit) {
+	private void validateValue(IValue value, boolean privilegedAccess) {
 
 		if (!validTypeValue(value)) {
 
@@ -368,7 +378,7 @@ public class ISlotValues extends KList<IValue> {
 				"expected value of type: " + getValueType());
 		}
 
-		if (!internalEdit
+		if (!privilegedAccess
 				&& value.abstractValue()
 				&& !slot.getEditability().abstractEditable()) {
 

@@ -63,7 +63,7 @@ public abstract class RClientModel {
 			IFrame root = findRootFrame(frame);
 			RUpdates updates = performOnServer(root);
 
-			new NetworkAligner(iEditor, updates).align(root);
+			new InstanceAligner(iEditor, updates).align(root);
 		}
 	}
 

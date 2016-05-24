@@ -94,10 +94,10 @@ public class ISlot implements IEntity {
 
 		public boolean setAssertedValues(List<IValue> assertedValues) {
 
-			return values.update(assertedValues, true);
+			return values.updateAssertedValues(assertedValues, true);
 		}
 
-		public boolean setFixedValues(List<IValue> fixedValues) {
+		public boolean updateFixedValues(List<IValue> fixedValues) {
 
 			return values.updateFixedValues(fixedValues);
 		}
@@ -217,7 +217,7 @@ public class ISlot implements IEntity {
 		return new Editor();
 	}
 
-	ISlotValuesEditor getValuesEditorInternal() {
+	ISlotValuesEditor getPrivilegedAccessValuesEditor() {
 
 		return new ISlotValuesEditor(values, true);
 	}

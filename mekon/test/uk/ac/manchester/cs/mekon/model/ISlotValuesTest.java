@@ -138,13 +138,13 @@ public class ISlotValuesTest {
 	@Test(expected = KAccessException.class)
 	public void test_illegalUpdateFails() {
 
-		createSlotValues(repeatTypesSlots).add(frames.create("IllegalValue"), false);
+		ISlotValues values = createSlotValues(repeatTypesSlots);
+
+		values.addAssertedValue(frames.create("IllegalValue"), false);
 	}
 
 	@Test(expected = KAccessException.class) // XXX
 	public void test_abstractUpdateFailsForAssertion() {
-
-		createSlotValues(repeatTypesSlots).add(frames.create("IllegalValue"), false);
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {
@@ -208,7 +208,7 @@ public class ISlotValuesTest {
 					IValue value,
 					List<IValue> expectedValues) {
 
-		slotValues.add(value, false);
+		slotValues.addAssertedValue(value, false);
 		testValues(slotValues, expectedValues);
 	}
 
@@ -217,7 +217,7 @@ public class ISlotValuesTest {
 					IValue value,
 					List<IValue> expectedValues) {
 
-		slotValues.remove(value);
+		slotValues.removeAssertedValue(value);
 		testValues(slotValues, expectedValues);
 	}
 
@@ -226,7 +226,7 @@ public class ISlotValuesTest {
 					List<IValue> values,
 					List<IValue> expectedValues) {
 
-		slotValues.update(values, false);
+		slotValues.updateAssertedValues(values, false);
 		testTypes(slotValues, expectedValues);
 	}
 

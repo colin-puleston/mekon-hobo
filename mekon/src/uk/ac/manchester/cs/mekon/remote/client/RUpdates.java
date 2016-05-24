@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 public class RUpdates {
 
 	private IFrame root;
-	private Map<IFrame, IFrame> mastersToUpdates = new HashMap<IFrame, IFrame>();
+	private Map<IFrame, IFrame> updatesToMasters = new HashMap<IFrame, IFrame>();
 
 	/**
 	 * Constructor.
@@ -59,7 +59,7 @@ public class RUpdates {
 	 */
 	public void addMapping(IFrame master, IFrame update) {
 
-		mastersToUpdates.put(master, update);
+		updatesToMasters.put(update, master);
 	}
 
 	IFrame getRoot() {
@@ -67,8 +67,8 @@ public class RUpdates {
 		return root;
 	}
 
-	Map<IFrame, IFrame> getMastersToUpdates() {
+	Map<IFrame, IFrame> getUpdatesToMasters() {
 
-		return mastersToUpdates;
+		return updatesToMasters;
 	}
 }
