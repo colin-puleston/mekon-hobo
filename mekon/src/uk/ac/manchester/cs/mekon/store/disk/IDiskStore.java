@@ -53,8 +53,6 @@ class IDiskStore implements IStore {
 
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
-		instance = createFreeCopy(instance);
-
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
 
@@ -218,7 +216,7 @@ class IDiskStore implements IStore {
 
 	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
 
-		getMatcher(instance).add(instance, identity);
+		getMatcher(instance).add(createFreeCopy(instance), identity);
 	}
 
 	private void checkRemoveFromMatcher(CFrame type, CIdentity identity) {
