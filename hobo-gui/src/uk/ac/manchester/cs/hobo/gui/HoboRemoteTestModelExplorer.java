@@ -26,8 +26,10 @@ package uk.ac.manchester.cs.hobo.gui;
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.motor.*;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 
@@ -41,7 +43,8 @@ public class HoboRemoteTestModelExplorer {
 		DBuilder dBuilder = DManager.createBuilder();
 		CBuilder cBuilder = dBuilder.getCBuilder();
 		CModel cModel = dBuilder.build().getCModel();
+		IStore iStore = IDiskStoreManager.getBuilder(cBuilder).build();
 
-		MekonRemoteTestModelExplorer.create(cModel, cBuilder);
+		MekonRemoteTestModelExplorer.create(cModel, cBuilder, iStore);
 	}
 }
