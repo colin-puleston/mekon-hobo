@@ -147,6 +147,11 @@ public abstract class OEntities<E extends OWLEntity> {
 		return model.getReasoner();
 	}
 
+	Set<E> normalise(NodeSet<E> entities) {
+
+		return normalise(entities.getFlattened());
+	}
+
 	Set<E> normalise(Set<E> entities) {
 
 		entities.remove(getTop());

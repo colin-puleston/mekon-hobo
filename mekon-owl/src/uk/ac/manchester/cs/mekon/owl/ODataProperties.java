@@ -77,13 +77,13 @@ class ODataProperties
 							OWLDataProperty property,
 							boolean directOnly) {
 
-		return getReasoner().getSuperDataProperties(property, directOnly).getFlattened();
+		return normalise(getReasoner().getSuperDataProperties(property, directOnly));
 	}
 
 	Set<OWLDataProperty> getInferredSubProperties(
 							OWLDataProperty property,
 							boolean directOnly) {
 
-		return getReasoner().getSubDataProperties(property, directOnly).getFlattened();
+		return normalise(getReasoner().getSubDataProperties(property, directOnly));
 	}
 }
