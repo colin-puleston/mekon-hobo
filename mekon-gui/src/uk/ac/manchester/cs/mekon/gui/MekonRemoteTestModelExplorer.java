@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.gui;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
@@ -67,18 +68,91 @@ public class MekonRemoteTestModelExplorer {
 		}
 	}
 
+	private static class LocalXClientStore extends XClientStore {
+
+		private XServerStore serverStore;
+
+		protected XDocument addOnServer(XDocument instance, XDocument identity) {
+
+			return serverStore.add(instance, identity);
+		}
+
+		protected boolean removeOnServer(XDocument identity) {
+
+			return serverStore.remove(identity);
+		}
+
+		protected void clearOnServer() {
+
+			serverStore.clear();
+		}
+
+		protected boolean containsOnServer(XDocument identity) {
+
+			return serverStore.contains(identity);
+		}
+
+		protected XDocument getOnServer(XDocument identity) {
+
+			return serverStore.get(identity);
+		}
+
+		protected XDocument getAllIdentitiesOnServer() {
+
+			return serverStore.getAllIdentities();
+		}
+
+		protected XDocument matchOnServer(XDocument query) {
+
+			return serverStore.match(query);
+		}
+
+		protected boolean matchesOnServer(XDocument query, XDocument instance) {
+
+			return serverStore.matches(query, instance);
+		}
+
+		LocalXClientStore(XServerStore serverStore) {
+
+			super(serverStore.getStore().getModel());
+
+			this.serverStore = serverStore;
+		}
+	}
+
 	static public void main(String[] args) {
 
 		CBuilder builder = CManager.createBuilder();
 
-		create(builder.build(), builder);
+		create(builder.build(), builder, createStore(builder));
 	}
 
 	static public void create(CModel model, CBuilder builder) {
 
-		XServerModel serverModel = new XServerModel(model, builder);
-		XClientModel clientModel = new LocalXClientModel(serverModel);
+		new MekonModelExplorer(createRemoteModel(model, builder));
+	}
 
-		new MekonModelExplorer(clientModel.getCModel());
+	static public void create(CModel model, CBuilder builder, IStore store) {
+
+		new MekonModelExplorer(
+				createRemoteModel(model, builder),
+				createRemoteStore(store));
+	}
+
+	static private IStore createStore(CBuilder builder) {
+
+		return IDiskStoreManager.getBuilder(builder).build();
+	}
+
+	static private CModel createRemoteModel(CModel model, CBuilder builder) {
+
+		XServerModel serverModel = new XServerModel(model, builder);
+
+		return new LocalXClientModel(serverModel).getModel();
+	}
+
+	static private IStore createRemoteStore(IStore store) {
+
+		return new LocalXClientStore(new XServerStore(store));
 	}
 }
