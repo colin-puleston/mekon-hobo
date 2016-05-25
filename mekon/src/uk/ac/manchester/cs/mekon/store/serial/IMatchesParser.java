@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.store.serial;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
@@ -47,7 +48,7 @@ public class IMatchesParser extends IMatchesSerialiser {
 	 */
 	public IMatches parse(XDocument document) {
 
-		return parseMatches(document.getRootNode());
+		return parseFromNode(document.getRootNode());
 	}
 
 	/**
@@ -59,10 +60,10 @@ public class IMatchesParser extends IMatchesSerialiser {
 	 */
 	public IMatches parse(XNode parentNode) {
 
-		return parseMatches(parentNode.getChild(MATCHES_ID));
+		return parseFromNode(parentNode.getChild(MATCHES_ID));
 	}
 
-	private IMatches parseMatches(XNode node) {
+	private IMatches parseFromNode(XNode node) {
 
 		boolean ranked = node.getBoolean(RANKED_ATTR);
 
@@ -95,13 +96,11 @@ public class IMatchesParser extends IMatchesSerialiser {
 
 	private List<CIdentity> parseMatchIds(XNode node) {
 
-		List<CIdentity> ids = new ArrayList<CIdentity>();
+		return CIdentitySerialiser.parseList(node, MATCH_ID);
+	}
 
-		for (XNode idNode : node.getChildren(MATCH_ID)) {
+	private CIdentity parseIdentity(XNode node) {
 
-			ids.add(parseIdentity(idNode));
-		}
-
-		return ids;
+		return CIdentitySerialiser.parse(node);
 	}
 }

@@ -101,4 +101,9 @@ public class CFrameHierarchyParser extends CSerialiser {
 
 		return new OneTimeParser().parse(rootFrameNode);
 	}
+
+	private CIdentity parseIdentity(XNode node) {
+
+		return CIdentitySerialiser.parse(node);
+	}
 }

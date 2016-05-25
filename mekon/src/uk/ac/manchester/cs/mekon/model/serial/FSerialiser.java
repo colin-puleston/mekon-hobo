@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * @author Colin Puleston
  */
-class FSerialiser extends CIdentitySerialiser {
+class FSerialiser {
 
 	static final String CFRAME_ID = "CFrame";
 

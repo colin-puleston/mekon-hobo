@@ -134,6 +134,11 @@ public class CFrameHierarchyRenderer extends CSerialiser {
 		}
 	}
 
+	private void renderIdentity(CIdentified identified, XNode node) {
+
+		CIdentitySerialiser.render(identified, node);
+	}
+
 	private boolean requireAnnotations(Object key) {
 
 		return annotationKeys == null || annotationKeys.contains(key);

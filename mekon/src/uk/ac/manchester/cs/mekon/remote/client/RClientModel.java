@@ -39,7 +39,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public abstract class RClientModel {
 
-	private CModel cModel;
+	private CModel model;
 	private IEditor iEditor;
 
 	private boolean performingInstanceAction = false;
@@ -106,7 +106,7 @@ public abstract class RClientModel {
 
 		IFrameInitialiser() {
 
-			for (CFrame frame : cModel.getFrames().asList()) {
+			for (CFrame frame : model.getFrames().asList()) {
 
 				frame.addListener(this);
 			}
@@ -190,7 +190,7 @@ public abstract class RClientModel {
 
 		CBuilder cBuilder = createCBuilder(hierarchy);
 
-		cModel = cBuilder.build();
+		model = cBuilder.build();
 		iEditor = cBuilder.getIEditor();
 
 		new IFrameInitialiser();
@@ -201,9 +201,9 @@ public abstract class RClientModel {
 	 *
 	 * @return Client MEKON frames model
 	 */
-	public CModel getCModel() {
+	public CModel getModel() {
 
-		return cModel;
+		return model;
 	}
 
 	/**

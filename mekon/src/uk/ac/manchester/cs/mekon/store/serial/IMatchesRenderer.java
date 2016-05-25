@@ -24,7 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.store.serial;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
@@ -46,7 +49,7 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 
 		XDocument document = new XDocument(MATCHES_ID);
 
-		renderMatches(matches, document.getRootNode());
+		renderToNode(matches, document.getRootNode());
 
 		return document;
 	}
@@ -60,10 +63,10 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 	 */
 	public void render(IMatches matches, XNode parentNode) {
 
-		renderMatches(matches, parentNode.addChild(MATCHES_ID));
+		renderToNode(matches, parentNode.addChild(MATCHES_ID));
 	}
 
-	private void renderMatches(IMatches matches, XNode node) {
+	private void renderToNode(IMatches matches, XNode node) {
 
 		node.addValue(RANKED_ATTR, matches.ranked());
 
@@ -76,10 +79,16 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 	private void renderRank(IMatchesRank rank, XNode node) {
 
 		node.addValue(RANK_VALUE_ATTR, rank.getRankingValue());
+		renderMatchIds(rank.getMatches(), node);
+	}
 
-		for (CIdentity match : rank.getMatches()) {
+	private void renderMatchIds(List<CIdentity> matches, XNode node) {
 
-			renderIdentity(match, node.addChild(MATCH_ID));
-		}
+		CIdentitySerialiser.renderList(matches, node, MATCH_ID);
+	}
+
+	private void renderIdentity(CIdentity identity, XNode node) {
+
+		CIdentitySerialiser.render(identity, node);
 	}
 }

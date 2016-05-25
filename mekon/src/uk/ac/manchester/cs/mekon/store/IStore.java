@@ -110,8 +110,8 @@ public interface IStore {
 	public IMatches match(IFrame query);
 
 	/**
-	 * Tests whether the supplied instance is matched by the supplied
-	 * query.
+	 * Uses the query mechanisms associated with the store to test
+	 * whether the supplied instance is matched by the supplied query.
 	 *
 	 * @param query Representation of query
 	 * @param instance Representation of instance

@@ -385,6 +385,11 @@ public class IInstanceRenderer extends ISerialiser {
 		new OneTimeRenderer(input, containerNode);
 	}
 
+	private void renderIdentity(CIdentified identified, XNode node) {
+
+		CIdentitySerialiser.render(identified, node);
+	}
+
 	private void checkAtomicRootFrame(IFrame frame) {
 
 		if (frame.getCategory().disjunction()) {

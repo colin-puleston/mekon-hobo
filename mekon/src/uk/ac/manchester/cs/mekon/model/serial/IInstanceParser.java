@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
@@ -38,6 +39,8 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  * @author Colin Puleston
  */
 public class IInstanceParser extends ISerialiser {
+
+	static private final String IDENTIFIER_ATTR = CIdentitySerialiser.IDENTIFIER_ATTR;
 
 	static private IRelaxedInstantiator instantiator = IRelaxedInstantiator.get();
 
@@ -593,7 +596,7 @@ public class IInstanceParser extends ISerialiser {
 
 		private CFrame parseCFrame(XNode node, String disjunctTag) {
 
-			return node.hasAttribute(IDENTITY_ATTR)
+			return node.hasAttribute(IDENTIFIER_ATTR)
 					? parseAtomicCFrame(node)
 					: parseDisjunctionCFrame(node, disjunctTag);
 		}
@@ -895,5 +898,10 @@ public class IInstanceParser extends ISerialiser {
 					+ " or "
 					+ "\"" + ITREE_ID + "\""
 					+ " node at top-level");
+	}
+
+	private CIdentity parseIdentity(XNode node) {
+
+		return CIdentitySerialiser.parse(node);
 	}
 }

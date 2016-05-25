@@ -24,12 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.store.serial;
 
-import uk.ac.manchester.cs.mekon.model.serial.*;
-
 /**
  * @author Colin Puleston
  */
-class IMatchesSerialiser extends CIdentitySerialiser {
+class IMatchesSerialiser {
 
 	static final String MATCHES_ID = "Matches";
 	static final String RANK_ID = "Rank";

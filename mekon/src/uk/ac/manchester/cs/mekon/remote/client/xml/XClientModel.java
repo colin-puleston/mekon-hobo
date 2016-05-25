@@ -42,7 +42,9 @@ import uk.ac.manchester.cs.mekon.remote.client.*;
 public abstract class XClientModel extends RClientModel {
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
-	private IInstanceParser instanceParser;
+
+	private IInstanceParser assertionParser;
+	private IInstanceParser queryParser;
 
 	private abstract class InstanceAction {
 
@@ -51,10 +53,12 @@ public abstract class XClientModel extends RClientModel {
 
 		RUpdates perform(IFrame masterRoot) {
 
-			XDocument masterDoc = instanceRenderer.render(createRenderInput(masterRoot));
-			XDocument updateDoc = processOnServer(masterDoc, masterRoot);
+			boolean query = masterRoot.getFunction().query();
 
-			IFrame updateRoot = instanceParser.parse(createParseInput(updateDoc));
+			XDocument masterDoc = instanceRenderer.render(createRenderInput(masterRoot));
+			XDocument updateDoc = processOnServer(masterDoc, query);
+
+			IFrame updateRoot = getParser(query).parse(createParseInput(updateDoc));
 
 			return createUpdates(updateRoot);
 		}
@@ -72,11 +76,14 @@ public abstract class XClientModel extends RClientModel {
 
 		abstract XDocument processQueryOnServer(XDocument queryDoc);
 
-		private XDocument processOnServer(XDocument doc, IFrame root) {
+		private XDocument processOnServer(XDocument doc, boolean query) {
 
-			return root.getFunction().query()
-					? processQueryOnServer(doc)
-					: processAssertionOnServer(doc);
+			return query ? processQueryOnServer(doc) : processAssertionOnServer(doc);
+		}
+
+		private IInstanceParser getParser(boolean query) {
+
+			return query ? assertionParser : queryParser;
 		}
 
 		private IInstanceParseInput createParseInput(XDocument updateDoc) {
@@ -232,6 +239,7 @@ public abstract class XClientModel extends RClientModel {
 
 		super(hierarchy);
 
-		instanceParser = new IInstanceParser(getCModel(), IFrameFunction.ASSERTION);
+		assertionParser = new IInstanceParser(getModel(), IFrameFunction.ASSERTION);
+		queryParser = new IInstanceParser(getModel(), IFrameFunction.QUERY);
 	}
 }

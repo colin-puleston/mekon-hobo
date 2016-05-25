@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * @author Colin Puleston
  */
-class Serialiser extends CIdentitySerialiser {
+class Serialiser {
 
 	static private final String PROFILE_ROOT_ID = "Instance";
 	static private final String PROFILE_TYPE_ID = "Type";
@@ -82,8 +82,23 @@ class Serialiser extends CIdentitySerialiser {
 		return parser.parse(new IInstanceParseInput(new XDocument(file)));
 	}
 
+	private void renderIdentity(CIdentity identity, XNode node) {
+
+		CIdentitySerialiser.render(identity, node);
+	}
+
+	private void renderIdentity(CIdentified identified, XNode node) {
+
+		CIdentitySerialiser.render(identified, node);
+	}
+
 	private CFrame parseType(XNode typeNode) {
 
 		return model.getFrames().get(parseIdentity(typeNode));
+	}
+
+	private CIdentity parseIdentity(XNode node) {
+
+		return CIdentitySerialiser.parse(node);
 	}
 }
