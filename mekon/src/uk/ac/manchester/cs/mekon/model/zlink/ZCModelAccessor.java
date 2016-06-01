@@ -100,7 +100,6 @@ public abstract class ZCModelAccessor {
 	/**
 	 * Provides a free-copier object applicable to any model.
 	 *
-	 * @param model Relevant model
 	 * @return Free-copier object for any model
 	 */
 	public abstract IFreeCopier getFreeCopier();
@@ -113,9 +112,9 @@ public abstract class ZCModelAccessor {
 	public abstract IRelaxedInstantiator getRelaxedInstantiator();
 
 	/**
-	 * Specifies whether frame is a "free-instance" (see {@link
-	 * IFreeCopier})
+	 * Checks whether frame is a "free-instance" (see {@link IFreeCopier})
 	 *
+	 * @param frame Frame to check
 	 * @return True if frame is free-instance
 	 */
 	public abstract boolean freeInstance(IFrame frame);

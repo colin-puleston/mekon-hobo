@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.remote.client.xml;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
@@ -44,9 +45,7 @@ public abstract class XClientStore implements IStore {
 	private CModel cModel;
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
-
 	private IInstanceParser assertionParser;
-	private IMatchesParser matchesParser = new IMatchesParser();
 
 	/**
 	 * {@inheritDoc}
@@ -236,6 +235,6 @@ public abstract class XClientStore implements IStore {
 
 	private IMatches parseMatches(XDocument doc) {
 
-		return matchesParser.parse(doc);
+		return IMatchesParser.parse(doc);
 	}
 }

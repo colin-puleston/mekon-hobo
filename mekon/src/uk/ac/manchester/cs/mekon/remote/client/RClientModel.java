@@ -207,10 +207,10 @@ public abstract class RClientModel {
 	}
 
 	/**
-	 * Sends a newly-created instance-level frame to be initialised on the
-	 * server.
+	 * Sends a newly-created instance-level frame/slot network to be
+	 * initialised on the server.
 	 *
-	 * @param frame Relevant frame
+	 * @param rootFrame Root-frame of frame/slot network
 	 * @return Results of initialisation process
 	 */
 	protected abstract RUpdates initialiseOnServer(IFrame rootFrame);

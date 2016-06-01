@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * Represents the input-data for a specific {@link IFrame}/{@link ISlot}
- * network parsing operation to be performed by a {@link IInstanceParseer},
+ * network parsing operation to be performed by a {@link IInstanceParser},
  * including structures into which certain output-data may be written.
  *
  * @author Colin Puleston

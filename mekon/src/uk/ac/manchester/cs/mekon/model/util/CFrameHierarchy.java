@@ -73,7 +73,7 @@ public class CFrameHierarchy {
 	 * root-frame (which is not necessarily the root-frame of the entire
 	 * frame-hierarchy for the relevat model).
 	 *
-	 * @param Root-frame for hierarchy to be represented
+	 * @param rootFrame Root-frame for hierarchy to be represented
 	 */
 	public CFrameHierarchy(CFrame rootFrame) {
 

@@ -75,7 +75,7 @@ public interface CSlotEditor {
 	 * additional activation value. Resulting status determined via the
 	 * {@link CActivation#getWeakest} method.
 	 *
-	 * @param otherActive Additional activation to incorporate
+	 * @param otherActivation Additional activation to incorporate
 	 */
 	public void absorbActivation(CActivation otherActivation);
 

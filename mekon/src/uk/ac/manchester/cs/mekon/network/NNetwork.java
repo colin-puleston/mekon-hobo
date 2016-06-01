@@ -32,9 +32,8 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 /**
  * Provides an intermediate network-based representation, which provides
  * a more malleable alternative to the standard MEKON frames representation,
- * for use by specific implementations of {@link IReasoner} and {@link
- * IMatcher}. The node/link networks are generated from the corresponding
- * frame/slot networks.
+ * for use by specific reasoner and matcher implementations. The node/link
+ * networks are generated from the corresponding frame/slot networks.
  *
  * @author Colin Puleston
  */

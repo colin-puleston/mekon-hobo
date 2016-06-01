@@ -169,7 +169,7 @@ public abstract class XClientModel extends RClientModel {
 	/**
 	 * Constructor.
 	 *
-	 * @param frameHierarchyDoc Root-node of standard MEKON XML-based
+	 * @param frameHierarchyRootNode Root-node of standard MEKON XML-based
 	 * serialisation of concept-level frames hierarchy present on server
 	 */
 	public XClientModel(XNode frameHierarchyRootNode) {

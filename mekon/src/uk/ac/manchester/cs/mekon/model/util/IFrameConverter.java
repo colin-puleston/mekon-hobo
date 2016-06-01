@@ -248,9 +248,11 @@ public abstract class IFrameConverter<FTC, FC, SC> {
 	protected abstract TypeISlotConverter<IString> createIStringSlotConverter();
 
 	/**
-	 * Creates a converter for slots with specified value-type that
-	 * are not required to appear in the output network.
+	 * Creates a converter for slots with specified general value-type
+	 * that are not required to appear in the output network.
 	 *
+	 * @param <T> Generic version of general value-type
+	 * @param type Relevant general value-type
 	 * @return Created converter
 	 */
 	protected <T>TypeISlotConverter<T> createTypeISlotNonConverter(Class<T> type) {
@@ -309,7 +311,7 @@ public abstract class IFrameConverter<FTC, FC, SC> {
 	 * a newly-created frame-conversion.
 	 *
 	 * @param conversion Newly-created frame-conversion
-	 * @return Type of converted frame
+	 * @param frameType Type of converted frame
 	 */
 	protected void configureFrameTypeConversion(FTC conversion, CFrame frameType) {
 

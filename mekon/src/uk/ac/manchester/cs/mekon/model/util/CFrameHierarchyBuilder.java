@@ -39,7 +39,7 @@ public class CFrameHierarchyBuilder {
 	/**
 	 * Constructor.
 	 *
-	 * @param frameId Identity of root-frame for hierarchy
+	 * @param rootFrameId Identity of root-frame for hierarchy
 	 */
 	public CFrameHierarchyBuilder(CIdentity rootFrameId) {
 
@@ -67,7 +67,7 @@ public class CFrameHierarchyBuilder {
 	 *
 	 * @param frameId Identity of relevant frame
 	 * @param key Key for relevant annotation
-	 * @return Value for specified annotation
+	 * @param value Value for specified annotation
 	 * @throws KAccessException if specified frame not present in hierarchy
 	 */
 	public void addAnnotation(CIdentity frameId, Object key, Object value) {

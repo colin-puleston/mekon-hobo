@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.remote.server.xml;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
@@ -44,7 +45,6 @@ public class XServerStore {
 	private IStore store;
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
-	private IMatchesRenderer matchesRenderer = new IMatchesRenderer();
 
 	private IInstanceParser assertionParser;
 	private IInstanceParser queryParser;
@@ -194,7 +194,7 @@ public class XServerStore {
 
 	private XDocument render(IMatches matches) {
 
-		return matchesRenderer.render(matches);
+		return IMatchesRenderer.render(matches);
 	}
 
 	private IFrame parseAssertion(XDocument doc) {
