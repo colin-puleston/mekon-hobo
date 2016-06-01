@@ -45,7 +45,7 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 	 * @param matches Matches object to render
 	 * @return Rendered document
 	 */
-	public XDocument render(IMatches matches) {
+	static public XDocument render(IMatches matches) {
 
 		XDocument document = new XDocument(MATCHES_ID);
 
@@ -61,12 +61,12 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 	 * @param matches Matches object to render
 	 * @param parentNode Parent-node for rendering
 	 */
-	public void render(IMatches matches, XNode parentNode) {
+	static public void render(IMatches matches, XNode parentNode) {
 
 		renderToNode(matches, parentNode.addChild(MATCHES_ID));
 	}
 
-	private void renderToNode(IMatches matches, XNode node) {
+	static private void renderToNode(IMatches matches, XNode node) {
 
 		node.addValue(RANKED_ATTR, matches.ranked());
 
@@ -76,18 +76,18 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 		}
 	}
 
-	private void renderRank(IMatchesRank rank, XNode node) {
+	static private void renderRank(IMatchesRank rank, XNode node) {
 
 		node.addValue(RANK_VALUE_ATTR, rank.getRankingValue());
 		renderMatchIds(rank.getMatches(), node);
 	}
 
-	private void renderMatchIds(List<CIdentity> matches, XNode node) {
+	static private void renderMatchIds(List<CIdentity> matches, XNode node) {
 
 		CIdentitySerialiser.renderList(matches, node, MATCH_ID);
 	}
 
-	private void renderIdentity(CIdentity identity, XNode node) {
+	static private void renderIdentity(CIdentity identity, XNode node) {
 
 		CIdentitySerialiser.render(identity, node);
 	}

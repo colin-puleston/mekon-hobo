@@ -46,7 +46,7 @@ public class IMatchesParser extends IMatchesSerialiser {
 	 * @param document Document for parsing
 	 * @return Generated matches object
 	 */
-	public IMatches parse(XDocument document) {
+	static public IMatches parse(XDocument document) {
 
 		return parseFromNode(document.getRootNode());
 	}
@@ -58,24 +58,24 @@ public class IMatchesParser extends IMatchesSerialiser {
 	 * @param parentNode Parent of root-node for parsing
 	 * @return Generated matches object
 	 */
-	public IMatches parse(XNode parentNode) {
+	static public IMatches parse(XNode parentNode) {
 
 		return parseFromNode(parentNode.getChild(MATCHES_ID));
 	}
 
-	private IMatches parseFromNode(XNode node) {
+	static private IMatches parseFromNode(XNode node) {
 
 		boolean ranked = node.getBoolean(RANKED_ATTR);
 
 		return ranked ? parseRanked(node) : parseUnranked(node);
 	}
 
-	private IMatches parseUnranked(XNode node) {
+	static private IMatches parseUnranked(XNode node) {
 
 		return IMatches.unranked(parseMatchIds(node.getChild(RANK_ID)));
 	}
 
-	private IMatches parseRanked(XNode node) {
+	static private IMatches parseRanked(XNode node) {
 
 		List<IMatchesRank> ranks = new ArrayList<IMatchesRank>();
 
@@ -87,19 +87,19 @@ public class IMatchesParser extends IMatchesSerialiser {
 		return IMatches.ranked(ranks);
 	}
 
-	private IMatchesRank parseRank(XNode node) {
+	static private IMatchesRank parseRank(XNode node) {
 
 		int rankValue = node.getInteger(RANK_VALUE_ATTR);
 
 		return new IMatchesRank(parseMatchIds(node), rankValue);
 	}
 
-	private List<CIdentity> parseMatchIds(XNode node) {
+	static private List<CIdentity> parseMatchIds(XNode node) {
 
 		return CIdentitySerialiser.parseList(node, MATCH_ID);
 	}
 
-	private CIdentity parseIdentity(XNode node) {
+	static private CIdentity parseIdentity(XNode node) {
 
 		return CIdentitySerialiser.parse(node);
 	}
