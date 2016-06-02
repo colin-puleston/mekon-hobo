@@ -143,12 +143,13 @@ public class ISlotValuesTest {
 		values.addAssertedValue(frames.create("IllegalValue"), false);
 	}
 
-	@Test(expected = KAccessException.class) // XXX
+	@Test(expected = KAccessException.class)
 	public void test_abstractUpdateFailsForAssertion() {
 
 		ISlotValues values = createSlotValues(repeatTypesSlots);
+		IValue abstractVal = CFrame.resolveDisjunction(cFrames(a, b, c));
 
-		values.addAssertedValue(frames.create("IllegalValue"), false);
+		values.addAssertedValue(abstractVal, false);
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {
@@ -261,6 +262,11 @@ public class ISlotValuesTest {
 	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
 
 		MekonTestUtils.testListContents(got, expected);
+	}
+
+	private List<CFrame> cFrames(CFrame... cFrames) {
+
+		return Arrays.<CFrame>asList(cFrames);
 	}
 
 	private List<IValue> iValues(CFrame... cFrames) {
