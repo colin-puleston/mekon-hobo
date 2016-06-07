@@ -86,12 +86,9 @@ class InstantiableDClassFinder {
 
 		DBinding binding = model.getBindings().getOrNull(frame);
 
-		if (binding != null) {
+		if (binding != null && instantiable(binding.getDClass())) {
 
-			if (instantiable(binding.getDClass())) {
-
-				updateMostSpecifics(binding);
-			}
+			updateMostSpecifics(binding);
 		}
 		else {
 
