@@ -245,34 +245,49 @@ public class IFrame implements IEntity, IValue {
 		}
 	}
 
-	private class AutoUpdater implements KUpdateListener {
+	private class AutoUpdater implements KValuesListener<IValue> {
 
 		private ISlotValues slotValues;
-		private List<IValue> assertedValues;
+		private int assertedValueCount = 0;
 
-		public void onUpdated() {
+		public void onAdded(IValue value) {
 
-			if (autoUpdateEnabled && !autoUpdating) {
+			checkAutoUpdates();
+		}
 
-				List<IValue> latestAsserteds = slotValues.getAssertedValues();
+		public void onRemoved(IValue value) {
 
-				if (!latestAsserteds.equals(assertedValues)) {
+			checkAutoUpdates();
+		}
 
-					assertedValues = latestAsserteds;
+		public void onCleared(List<IValue> values) {
 
-					autoUpdating = true;
-					performAutoUpdates();
-					autoUpdating = false;
-				}
-			}
+			checkAutoUpdates();
 		}
 
 		AutoUpdater(ISlot slot) {
 
 			slotValues = slot.getValues();
-			assertedValues = slotValues.getAssertedValues();
+			slotValues.addValuesListener(this);
+		}
 
-			slotValues.addUpdateListener(this);
+		private void checkAutoUpdates() {
+
+			if (autoUpdateEnabled && !autoUpdating && updateAssertedValueCount()) {
+
+				autoUpdating = true;
+				performAutoUpdates();
+				autoUpdating = false;
+			}
+		}
+
+		private boolean updateAssertedValueCount() {
+
+			int previous = assertedValueCount;
+
+			assertedValueCount = slotValues.getAssertedValues().size();
+
+			return assertedValueCount != previous;
 		}
 	}
 
