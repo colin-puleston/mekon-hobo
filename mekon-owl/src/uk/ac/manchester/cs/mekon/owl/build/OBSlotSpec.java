@@ -37,7 +37,7 @@ abstract class OBSlotSpec {
 
 	abstract boolean singleValued();
 
-	abstract boolean valuedRequired();
+	abstract boolean valueRequired();
 
 	abstract OBFrameSlotsPolicy getFrameSlotsPolicy();
 

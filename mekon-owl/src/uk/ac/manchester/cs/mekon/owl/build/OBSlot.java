@@ -57,14 +57,16 @@ class OBSlot extends OIdentified {
 
 		void checkCreate(CFrame container) {
 
-			if (canProvideSlot()) {
+			if (valueType.canBeSlotValueType()) {
 
-				addOrUpdateSlot(container, getCardinality());
+				addOrUpdateSlot(container);
 			}
 
-			if (canProvideFixedValue()) {
+			if (OBSlot.this != topLevelSlot
+				&& spec.valueRequired()
+				&& valueTypeCanProvideFixedValue()) {
 
-				getEditor(container).addSlotValue(getIdentity(), getCValue());
+				addSlotValue(container);
 			}
 		}
 
@@ -73,13 +75,13 @@ class OBSlot extends OIdentified {
 			container.addSlotValue(getIdentity(), getCValue());
 		}
 
-		private void addOrUpdateSlot(CFrame container, CCardinality cardinality) {
+		private void addOrUpdateSlot(CFrame container) {
 
 			CSlot slot = container.getSlots().getOrNull(getIdentity());
 
 			if (slot == null) {
 
-				slot = addSlot(container, cardinality);
+				slot = addSlot(container);
 
 				annotations.checkAnnotate(builder, slot, spec.getProperty());
 			}
@@ -87,9 +89,14 @@ class OBSlot extends OIdentified {
 			absorbSlotOverrides(slot);
 		}
 
-		private CSlot addSlot(CFrame container, CCardinality cardinality) {
+		private CSlot addSlot(CFrame container) {
 
-			return getEditor(container).addSlot(getIdentity(), getCValue(), cardinality);
+			return getEditor(container).addSlot(getIdentity(), getCValue(), getCardinality());
+		}
+
+		private void addSlotValue(CFrame container) {
+
+			getEditor(container).addSlotValue(getIdentity(), getCValue());
 		}
 
 		private void absorbSlotOverrides(CSlot slot) {
@@ -103,23 +110,6 @@ class OBSlot extends OIdentified {
 
 			slotEd.absorbCardinality(cardOverride);
 			slotEd.absorbEditability(editOverride);
-		}
-
-		private boolean canProvideSlot() {
-
-			if (OBSlot.this == topLevelSlot || topLevelSlot.spec.singleValued()) {
-
-				return valueType.canBeSlotValueType();
-			}
-
-			return false;
-		}
-
-		private boolean canProvideFixedValue() {
-
-			return OBSlot.this != topLevelSlot
-					&& spec.valuedRequired()
-					&& valueTypeCanProvideFixedValue();
 		}
 
 		private boolean valueTypeCanProvideFixedValue() {

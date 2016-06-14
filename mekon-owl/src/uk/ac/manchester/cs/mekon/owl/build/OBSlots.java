@@ -187,7 +187,7 @@ class OBSlots {
 			super(property, range);
 		}
 
-		boolean valuedRequired() {
+		boolean valueRequired() {
 
 			return false;
 		}
@@ -200,7 +200,7 @@ class OBSlots {
 			super(restriction);
 		}
 
-		boolean valuedRequired() {
+		boolean valueRequired() {
 
 			return true;
 		}
@@ -222,7 +222,7 @@ class OBSlots {
 			return super.singleValued() || (includesMax() && cardinality == 1);
 		}
 
-		boolean valuedRequired() {
+		boolean valueRequired() {
 
 			return includesMin() && cardinality != 0;
 		}
