@@ -186,15 +186,7 @@ public abstract class DField<V> implements DFieldView<V> {
 
 	void initialiseAbstractField(DField<?> sourceField) {
 
-		slot = sourceField.slot;
-
-		if (!slot.getEditability().abstractEditable()) {
-
-			throw new HAccessException(
-						"Attempting to derive abstract field "
-						+ "from field whose associated slot "
-						+ "is not abstract-editable");
-		}
+		slot = sourceField.getSlot();
 	}
 
 	void setSlot(ISlot slot) {
