@@ -103,7 +103,7 @@ public abstract class OInstanceIRIs {
 
 	int extractIndex(IRI iri) {
 
-		return Integer.parseInt(iri.getFragment());
+		return Integer.parseInt(iri.toURI().getFragment());
 	}
 
 	abstract String getNamespaceExtn();

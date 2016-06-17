@@ -107,6 +107,6 @@ class OntologyFileRenderer {
 
 		IRI iri = ontology.getOntologyID().getOntologyIRI();
 
-		return iri != null ? iri.getFragment() : ANNON_ONTOLOGY_NAME;
+		return iri != null ? iri.toURI().getFragment() : ANNON_ONTOLOGY_NAME;
 	}
 }

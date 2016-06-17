@@ -85,7 +85,7 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 	static public String createDefaultLabel(OWLNamedObject object) {
 
 		IRI iri = object.getIRI();
-		String frag = iri.getFragment();
+		String frag = iri.toURI().getFragment();
 
 		return frag != null
 				? KLabel.create(frag, object instanceof OWLClass)
@@ -99,7 +99,7 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 		IRI iriObj = object.getIRI();
 
 		String iri = iriObj.toString();
-		String fragment = iriObj.getFragment();
+		String fragment = iriObj.toURI().getFragment();
 
 		if (fragment != null) {
 
