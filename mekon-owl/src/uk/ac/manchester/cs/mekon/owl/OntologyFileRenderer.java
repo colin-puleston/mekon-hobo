@@ -38,7 +38,7 @@ class OntologyFileRenderer {
 
 	static private final String TEMP_PREFIX_FORMAT = "MEKON-OWL-%s-";
 	static private final String TEMP_SUFFIX = ".owl";
-	static private final String ANNON_ONTOLOGY_NAME = "UNNAMED";
+	static private final String ANON_ONTOLOGY_NAME = "UNNAMED";
 
 	private OWLOntology ontology;
 
@@ -107,6 +107,6 @@ class OntologyFileRenderer {
 
 		IRI iri = ontology.getOntologyID().getOntologyIRI();
 
-		return iri != null ? iri.toURI().getFragment() : ANNON_ONTOLOGY_NAME;
+		return iri != null ? iri.toURI().getFragment() : ANON_ONTOLOGY_NAME;
 	}
 }
