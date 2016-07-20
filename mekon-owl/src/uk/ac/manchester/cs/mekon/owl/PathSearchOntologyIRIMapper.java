@@ -33,11 +33,15 @@ import org.semanticweb.owlapi.model.*;
  */
 class PathSearchOntologyIRIMapper implements OWLOntologyIRIMapper {
 
+	static private final String URL_SEPARATOR = "/";
+	static private final String URN_SEPARATOR = ":";
+	static private final String OWL_EXTENSION = ".owl";
+
 	private File leafDirectory;
 
 	public IRI getDocumentIRI(IRI iri) {
 
-		File file = lookForFile(leafDirectory, getFileName(iri));
+		File file = lookForFile(leafDirectory, guessFileName(iri));
 
 		return file != null ? IRI.create(file) : iri;
 	}
@@ -47,11 +51,24 @@ class PathSearchOntologyIRIMapper implements OWLOntologyIRIMapper {
 		this.leafDirectory = leafDirectory;
 	}
 
-	private String getFileName(IRI iri) {
+	private String guessFileName(IRI iri) {
 
 		String path = iri.toString();
+		int lastDiv = path.lastIndexOf(URL_SEPARATOR);
 
-		return path.substring(path.lastIndexOf("/") + 1);
+		if (lastDiv == -1) {
+
+			lastDiv = path.lastIndexOf(URN_SEPARATOR);
+		}
+
+		path = path.substring(lastDiv + 1);
+
+		if (!path.endsWith(OWL_EXTENSION)) {
+
+			path += OWL_EXTENSION;
+		}
+
+		return path;
 	}
 
 	private File lookForFile(File dir, String fileName) {
