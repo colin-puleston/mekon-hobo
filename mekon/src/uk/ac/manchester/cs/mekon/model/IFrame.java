@@ -223,7 +223,8 @@ public class IFrame implements IEntity, IValue {
 						CActivation activation,
 						CEditability editability) {
 
-			CSlot slotType = new CSlot(type, identity, valueType, cardinality);
+			CFrame atomicType = type.getAtomicFrame();
+			CSlot slotType = new CSlot(atomicType, identity, valueType, cardinality);
 
 			slotType.setSource(source);
 			slotType.setActivation(activation);
@@ -310,6 +311,20 @@ public class IFrame implements IEntity, IValue {
 	public IFrame copy() {
 
 		return new IFrameCopier().copy(this);
+	}
+
+	/**
+	 * Creates a representation of the <code>IFrame/ISlot</code> network
+	 * emanating from this frame, as a {@link CFrame} object of category
+	 * {@link CFrameCategory#ABSTRACT_EXTENSION}.
+	 *
+	 * @return Resulting representation of network
+	 * @throws KAccessException If network is not a tree, and hence
+	 * not convertible
+	 */
+	public CFrame toExtension() {
+
+		return toExtension(new HashSet<IFrame>());
 	}
 
 	/**
@@ -659,6 +674,11 @@ public class IFrame implements IEntity, IValue {
 		return new Editor();
 	}
 
+	void ensureAtomicType() {
+
+		type = type.getAtomicFrame();
+	}
+
 	IFrame copyEmpty(boolean freeInstance) {
 
 		return new IFrame(type, function, freeInstance);
@@ -725,6 +745,48 @@ public class IFrame implements IEntity, IValue {
 		IUpdating updating = getIUpdating();
 
 		while (updating.checkAutoUpdate(this).contains(IUpdateOp.SLOT_VALUES));
+	}
+
+	private CFrame toExtension(Set<IFrame> visited) {
+
+		CExtender extender = new CExtender(type);
+
+		for (ISlot slot : slots.asList()) {
+
+			CIdentity slotId = slot.getType().getIdentity();
+
+			for (IValue value : slot.getValues().asList()) {
+
+				extender.addSlotValue(slotId, toExtensionSlotValue(value, visited));
+			}
+		}
+
+
+		return extender.extend();
+	}
+
+	private CValue<?> toExtensionSlotValue(IValue value, Set<IFrame> visited) {
+
+		if (value instanceof IFrame) {
+
+			return ((IFrame)value).toExtensionSlotValue(visited);
+		}
+
+		return value.getType();
+	}
+
+	private CValue<?> toExtensionSlotValue(Set<IFrame> visited) {
+
+		if (visited.add(this)) {
+
+			return toExtension(visited);
+		}
+
+		throw new KAccessException(
+					"Cannot convert IFrame/ISlot-network "
+					+ "containing cycles to extension-CFrame: "
+					+ "Cycles detected at: " + this);
+
 	}
 
 	private void validateAsReferencedFrame(IFrame referencer) {

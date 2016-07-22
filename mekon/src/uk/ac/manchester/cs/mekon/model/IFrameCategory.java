@@ -40,7 +40,9 @@ public enum IFrameCategory {
 
 			IFrame instance = new IFrame(type, function, false);
 
-			type.initialiseInstance(instance);
+			type.initialiseAtomicInstance(instance);
+
+			instance.ensureAtomicType();
 			instance.completeInstantiation();
 
 			return instance;

@@ -649,7 +649,7 @@ public abstract class CFrame
 		return extn;
 	}
 
-	void initialiseInstance(IFrame instance) {
+	void initialiseAtomicInstance(IFrame instance) {
 
 		getIReasoner().initialiseFrame(getIEditor(), instance);
 	}
