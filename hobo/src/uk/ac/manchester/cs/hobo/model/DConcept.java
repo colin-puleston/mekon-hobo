@@ -120,6 +120,32 @@ public class DConcept<D extends DObject> {
 	}
 
 	/**
+	 * Tests whether the concept-level frame representing this concept
+	 * subsumes the concept-level frame representing the other specified
+	 * concept.
+	 *
+	 * @param testSubsumer Concept to test as subsumed
+	 * @return True if required subsumption holds
+	 */
+	public boolean subsumes(DConcept<?> testSubsumed) {
+
+		return frame.subsumes(testSubsumed.frame);
+	}
+
+	/**
+	 * Tests whether the concept-level frame representing this concept
+	 * is subsumed by the concept-level frame representing the other
+	 * specified concept.
+	 *
+	 * @param testSubsumer Concept to test as subsumer
+	 * @return True if required subsumption holds
+	 */
+	public boolean subsumedBy(DConcept<?> testSubsumer) {
+
+		return frame.subsumedBy(testSubsumer.frame);
+	}
+
+	/**
 	 * Tests whether the concept-level frame representing the concept
 	 * is subsumed by the frame that is bound to the specified
 	 * sub-class of the OM class that defines the general type for the
