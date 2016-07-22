@@ -784,8 +784,8 @@ public class IFrame implements IEntity, IValue {
 
 		throw new KAccessException(
 					"Cannot convert IFrame/ISlot-network "
-					+ "containing cycles to extension-CFrame: "
-					+ "Cycles detected at: " + this);
+					+ "to extension-CFrame: "
+					+ "Cycle detected at: " + this);
 
 	}
 
