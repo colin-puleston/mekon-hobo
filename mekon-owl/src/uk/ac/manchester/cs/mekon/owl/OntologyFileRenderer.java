@@ -41,10 +41,13 @@ class OntologyFileRenderer {
 	static private final String ANON_ONTOLOGY_NAME = "UNNAMED";
 
 	private OWLOntology ontology;
+	private OWLOntologyManager manager;
 
 	OntologyFileRenderer(OWLOntology ontology) {
 
 		this.ontology = ontology;
+
+		manager = ontology.getOWLOntologyManager();
 	}
 
 	File renderToTemp() {
@@ -74,7 +77,7 @@ class OntologyFileRenderer {
 
 		try {
 
-			new RDFXMLRenderer(ontology, writer).render();
+			new RDFXMLRenderer(manager, ontology, writer).render();
 		}
 		finally {
 
