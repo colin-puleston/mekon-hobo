@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.io.*;
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
 
@@ -43,7 +44,10 @@ public class IDiskStoreBuilder {
 		ZIDiskStoreAccessor.set(new ZIDiskStoreAccessorImpl());
 	}
 
-	private IDiskStore store;
+	private CModel model;
+	private List<IMatcher> matchers = new ArrayList<IMatcher>();
+
+	private File directory = null;
 
 	/**
 	 * Sets the directory for instance-store serialisation.
@@ -53,7 +57,19 @@ public class IDiskStoreBuilder {
 	 */
 	public void setStoreDirectory(File directory) {
 
-		store.setStoreDirectory(directory);
+		this.directory = directory;
+	}
+
+	/**
+	 * Sets the directory for instance-store serialisation to be
+	 * the default-named directory within the specified parent
+	 * directory.
+	 *
+	 * @param parentDir Relevant parent-directory
+	 */
+	public void setDefaultNamedStoreDirectory(File parentDir) {
+
+		directory = FileStore.getDefaultNamedDirectory(parentDir);
 	}
 
 	/**
@@ -63,7 +79,7 @@ public class IDiskStoreBuilder {
 	 */
 	public void addMatcher(IMatcher matcher) {
 
-		store.addMatcher(matcher);
+		matchers.add(matcher);
 	}
 
 	/**
@@ -73,7 +89,7 @@ public class IDiskStoreBuilder {
 	 */
 	public void removeMatcher(IMatcher matcher) {
 
-		store.removeMatcher(matcher);
+		matchers.remove(matcher);
 	}
 
 	/**
@@ -85,7 +101,7 @@ public class IDiskStoreBuilder {
 	 */
 	public void insertMatcher(IMatcher matcher, int index) {
 
-		store.insertMatcher(matcher, index);
+		matchers.add(index, matcher);
 	}
 
 	/**
@@ -98,7 +114,7 @@ public class IDiskStoreBuilder {
 	 */
 	public void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher) {
 
-		store.replaceMatcher(oldMatcher, newMatcher);
+		matchers.set(matchers.indexOf(oldMatcher), newMatcher);
 	}
 
 	/**
@@ -108,7 +124,7 @@ public class IDiskStoreBuilder {
 	 */
 	public List<IMatcher> getMatchers() {
 
-		return store.getMatchers();
+		return new ArrayList<IMatcher>(matchers);
 	}
 
 	/**
@@ -119,14 +135,16 @@ public class IDiskStoreBuilder {
 	 */
 	public IStore build() {
 
+		IDiskStore store = new IDiskStore(model, matchers, directory);
+
 		StoreRegister.add(store);
 		store.initialisePostRegistration();
 
 		return store;
 	}
 
-	IDiskStoreBuilder(IDiskStore store) {
+	IDiskStoreBuilder(CModel model) {
 
-		this.store = store;
+		this.model = model;
 	}
 }

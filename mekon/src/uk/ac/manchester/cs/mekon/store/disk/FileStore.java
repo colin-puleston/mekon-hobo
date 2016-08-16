@@ -35,10 +35,15 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 class FileStore {
 
-	static private final String DEFAULT_STORE_DIR = "mekon-store";
+	static private final String DEFAULT_STORE_DIR_NAME = "mekon-store";
 	static private final String PROFILE_FILE_PREFIX = "PROFILE-";
 	static private final String INSTANCE_FILE_PREFIX = "INSTANCE-";
 	static private final String FILE_SUFFIX = ".xml";
+
+	static File getDefaultNamedDirectory(File parentDir) {
+
+		return new File(parentDir, DEFAULT_STORE_DIR_NAME);
+	}
 
 	private IDiskStore iStore;
 
@@ -52,16 +57,16 @@ class FileStore {
 
 	private Serialiser serialiser;
 
-	FileStore(CModel model, IDiskStore iStore) {
+	FileStore(CModel model, IDiskStore iStore, File directory) {
 
 		this.iStore = iStore;
 
 		serialiser = new Serialiser(model);
 
-		setDirectory(new File(DEFAULT_STORE_DIR));
-	}
+		if (directory == null) {
 
-	void setDirectory(File directory) {
+			directory = new File(DEFAULT_STORE_DIR_NAME);
+		}
 
 		profiles.setDirectory(directory);
 		instances.setDirectory(directory);

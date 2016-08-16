@@ -37,8 +37,6 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 class CConfig implements CConfigVocab {
 
-	static private final String DEFAULT_ISTORE_DIR_NAME = "mekon-store";
-
 	static private final Map<String, IUpdateOp> updateOpsByAttr
 								= new HashMap<String, IUpdateOp>();
 
@@ -84,7 +82,17 @@ class CConfig implements CConfigVocab {
 
 	private void setIStoreDirectory(CBuilder builder) {
 
-		IDiskStoreManager.getBuilder(builder).setStoreDirectory(getIStoreDirectory());
+		IDiskStoreBuilder storeBldr = IDiskStoreManager.getBuilder(builder);
+		File dir = getIStoreDirectoryOrNull();
+
+		if (dir != null) {
+
+			storeBldr.setStoreDirectory(dir);
+		}
+		else {
+
+			storeBldr.setDefaultNamedStoreDirectory(getConfigFileDir());
+		}
 	}
 
 	private void setInstanceUpdating(CBuilder builder) {
@@ -133,22 +141,14 @@ class CConfig implements CConfigVocab {
 		builder.addSectionBuilder(adder);
 	}
 
-	private File getIStoreDirectory() {
+	private File getIStoreDirectoryOrNull() {
 
-		return rootNode.getResource(
-					ISTORE_DIRECTORY_ATTR,
-					KConfigResourceFinder.DIRS,
-					getDefaultIStoreDirectory());
+		return rootNode.getResource(ISTORE_DIRECTORY_ATTR, KConfigResourceFinder.DIRS, null);
 	}
 
-	private File getDefaultIStoreDirectory() {
+	private File getConfigFileDir() {
 
-		return new File(getConfigFileDirPath(), DEFAULT_ISTORE_DIR_NAME);
-	}
-
-	private String getConfigFileDirPath() {
-
-		return rootNode.getConfigFile().getFile().getParent();
+		return rootNode.getConfigFile().getFile().getParentFile();
 	}
 
 	private CSectionBuilder createSectionBuilder(KConfigNode sectionNode) {

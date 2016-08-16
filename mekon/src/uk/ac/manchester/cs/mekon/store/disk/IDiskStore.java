@@ -40,7 +40,7 @@ class IDiskStore implements IStore {
 	private CModel model;
 
 	private FileStore fileStore;
-	private List<IMatcher> matchers = new ArrayList<IMatcher>();
+	private List<IMatcher> matchers;
 	private IDirectMatcher defaultMatcher = new IDirectMatcher();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
@@ -120,34 +120,20 @@ class IDiskStore implements IStore {
 
 	IDiskStore(CModel model) {
 
-		this.model = model;
-
-		fileStore = new FileStore(model, this);
+		this(model, new ArrayList<IMatcher>(), null);
 	}
 
-	void setStoreDirectory(File directory) {
+	IDiskStore(CModel model, List<IMatcher> matchers, File directory) {
 
-		fileStore.setDirectory(directory);
+		this.model = model;
+		this.matchers = matchers;
+
+		fileStore = new FileStore(model, this, directory);
 	}
 
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
-	}
-
-	void removeMatcher(IMatcher matcher) {
-
-		matchers.remove(matcher);
-	}
-
-	void insertMatcher(IMatcher matcher, int index) {
-
-		matchers.add(index, matcher);
-	}
-
-	void replaceMatcher(IMatcher oldMatcher, IMatcher newMatcher) {
-
-		matchers.set(matchers.indexOf(oldMatcher), newMatcher);
 	}
 
 	void initialisePostRegistration() {
@@ -181,11 +167,6 @@ class IDiskStore implements IStore {
 		}
 
 		matchers.clear();
-	}
-
-	List<IMatcher> getMatchers() {
-
-		return new ArrayList<IMatcher>(matchers);
 	}
 
 	private void initialiseMatchers() {

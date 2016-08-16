@@ -71,12 +71,7 @@ class ZIDiskStoreAccessorImpl extends ZIDiskStoreAccessor {
 
 	private IDiskStoreBuilder createStoreBuilder(CBuilder builder) {
 
-		return new IDiskStoreBuilder(createStore(builder));
-	}
-
-	private IDiskStore createStore(CBuilder builder) {
-
-		return new IDiskStore(getModel(builder));
+		return new IDiskStoreBuilder(getModel(builder));
 	}
 
 	private CModel getModel(CBuilder builder) {
