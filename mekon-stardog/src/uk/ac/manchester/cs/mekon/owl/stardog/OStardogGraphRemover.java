@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import java.util.*;
-import java.util.stream.*;
 
 import org.openrdf.model.*;
 import org.openrdf.model.impl.*;
