@@ -57,16 +57,19 @@ class OBSlot extends OIdentified {
 
 		void checkCreate(CFrame container) {
 
-			if (valueType.canBeSlotValueType()) {
+			if (OBSlot.this != topLevelSlot && spec.valueRequired()) {
 
-				addOrUpdateSlot(container);
+				if (valueTypeCanProvideFixedValue()) {
+
+					addSlotValue(container);
+				}
 			}
+			else {
 
-			if (OBSlot.this != topLevelSlot
-				&& spec.valueRequired()
-				&& valueTypeCanProvideFixedValue()) {
+				if (valueType.canBeSlotValueType()) {
 
-				addSlotValue(container);
+					addOrUpdateSlot(container);
+				}
 			}
 		}
 
@@ -154,6 +157,13 @@ class OBSlot extends OIdentified {
 
 			return builder.getFrameEditor(container);
 		}
+	}
+
+	public int compareTo(OIdentified other) {
+
+		int comp = super.compareTo(other);
+
+		return comp == 0 ? 1 : comp;
 	}
 
 	OBSlot(OBSlotSpec spec, OBValue<?> valueType) {

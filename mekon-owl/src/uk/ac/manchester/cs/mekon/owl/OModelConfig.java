@@ -39,6 +39,43 @@ class OModelConfig implements OModelConfigVocab {
 
 	private KConfigNode configNode;
 
+	private class MainSourceFileFinder extends FileProvider {
+
+		private KConfigResourceFinder finder;
+
+		MainSourceFileFinder(File dir) {
+
+			super(null);
+
+			finder = getFinder(dir);
+		}
+
+		File get() {
+
+			if (super.get() == null) {
+
+				set(find());
+			}
+
+			return super.get();
+		}
+
+		private KConfigResourceFinder getFinder(File dir) {
+
+			return dir == null ? KConfigResourceFinder.FILES : createFinder(dir);
+		}
+
+		private KConfigResourceFinder createFinder(File dir) {
+
+			return new KConfigResourceFinder(dir, false);
+		}
+
+		private File find() {
+
+			return configNode.getResource(SOURCE_FILE_ATTR, finder);
+		}
+	}
+
 	OModelConfig(KConfigNode parentConfigNode) {
 
 		configNode = parentConfigNode.getChild(ROOT_ID);
@@ -46,18 +83,11 @@ class OModelConfig implements OModelConfigVocab {
 
 	void configure(OModelBuilder builder, File baseDirectory) {
 
-		builder.setMainSourceFile(getMainSourceFile(baseDirectory));
+		builder.setMainSourceFile(new MainSourceFileFinder(baseDirectory));
 		builder.setReasoner(getReasonerFactoryClass());
 		builder.setReasoningType(getReasoningType());
 		builder.setIndirectNumericProperty(getIndirectNumericPropertyIRIOrNull());
 		builder.setInstanceOntologyIRI(getInstanceOntologyIRIOrNull());
-	}
-
-	private File getMainSourceFile(File baseDir) {
-
-		return configNode.getResource(
-				SOURCE_FILE_ATTR,
-				getSourceFileFinder(baseDir));
 	}
 
 	private Class<? extends OWLReasonerFactory> getReasonerFactoryClass() {
@@ -90,12 +120,5 @@ class OModelConfig implements OModelConfigVocab {
 		URI uri = configNode.getURI(uriAttr, null);
 
 		return uri != null ? IRI.create(uri) : null;
-	}
-
-	private KConfigResourceFinder getSourceFileFinder(File baseDir) {
-
-		return baseDir == null
-				? KConfigResourceFinder.FILES
-				: new KConfigResourceFinder(baseDir, false);
 	}
 }

@@ -46,7 +46,7 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 public class OModelBuilder extends OModelCreator {
 
-	private File mainSourceFile;
+	private FileProvider mainSourceFileProvider;
 	private IRI indirectNumericProperty = null;
 
 	/**
@@ -62,7 +62,7 @@ public class OModelBuilder extends OModelCreator {
 
 		super(reasoner);
 
-		this.mainSourceFile = mainSourceFile;
+		mainSourceFileProvider = new FileProvider(mainSourceFile);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class OModelBuilder extends OModelCreator {
 
 		super(reasoner);
 
-		this.mainSourceFile = mainSourceFile;
+		mainSourceFileProvider = new FileProvider(mainSourceFile);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class OModelBuilder extends OModelCreator {
 	 */
 	public void setMainSourceFile(File file) {
 
-		mainSourceFile = file;
+		mainSourceFileProvider = new FileProvider(file);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class OModelBuilder extends OModelCreator {
 
 	OWLOntology createModelOntology(OWLOntologyManager manager) {
 
-		OMonitor.pollForPreOntologyLoad(mainSourceFile);
+		OMonitor.pollForPreOntologyLoad(getMainSourceFile());
 
 		OWLOntologyManager sourceManager = createSourceManager();
 		OWLOntology mainInput = loadInputOntologies(sourceManager);
@@ -152,9 +152,14 @@ public class OModelBuilder extends OModelCreator {
 	void assertExternallyInferableHierarchy(OModel model) {
 	}
 
+	void setMainSourceFile(FileProvider provider) {
+
+		mainSourceFileProvider = provider;
+	}
+
 	File getMainSourceFile() {
 
-		return mainSourceFile;
+		return mainSourceFileProvider.get();
 	}
 
 	IRI getIndirectNumericProperty() {
@@ -181,7 +186,7 @@ public class OModelBuilder extends OModelCreator {
 
 		try {
 
-			return manager.loadOntologyFromOntologyDocument(mainSourceFile);
+			return manager.loadOntologyFromOntologyDocument(getMainSourceFile());
 		}
 		catch (OWLOntologyCreationException e) {
 
@@ -200,6 +205,6 @@ public class OModelBuilder extends OModelCreator {
 
 	private OWLOntologyIRIMapper createIRIMapper() {
 
-		return new PathSearchOntologyIRIMapper(mainSourceFile.getParentFile());
+		return new PathSearchOntologyIRIMapper(getMainSourceFile().getParentFile());
 	}
 }
