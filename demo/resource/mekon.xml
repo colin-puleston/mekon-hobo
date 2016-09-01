@@ -58,7 +58,7 @@
 			reasonerFactory="org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
-			reasonerFactory="uk.ac.manchester.cs.owlutil.HermitReasonerFactoryWrapper"
+			reasonerFactory="org.semanticweb.HermiT.ReasonerFactory"
 			reasonerFactory="org.semanticweb.elk.owlapi.ElkReasonerFactory"
 			reasonerFactory="com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory"
 		-->
