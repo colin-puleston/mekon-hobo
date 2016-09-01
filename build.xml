@@ -124,9 +124,11 @@
 		<mkdir dir="${build.classes.hobo}"/>
 		<mkdir dir="${build.classes.hobo-gui}"/>
 		<mkdir dir="${build.lib}"/>
-		<copy todir="${build.lib}">
+		<copy todir="${build.lib}" flatten="true">
 			<fileset dir="${src.lib}/">
-				<include name="*.*"/>
+                <include name="**/*.jar"/>
+                <include name="**/*.dll"/>
+                <include name="**/*.jnilib"/>
 			</fileset>
 		</copy>
 	</target>
