@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -162,14 +163,14 @@ class IndividualsRenderer {
 
 			private OWLIndividual toIndividualValue(OWLObjectOneOf oneOf) {
 
-				return oneOf.getIndividuals().iterator().next();
+				return OWLAPIVersion.getIndividuals(oneOf).iterator().next();
 			}
 
 			private OWLIndividual toIndividualValue(OWLDataHasValue hasValue) {
 
 				OWLNamedIndividual indValue = addIndividual();
 				OWLDataPropertyExpression numericProp = hasValue.getProperty();
-				OWLLiteral number = hasValue.getValue();
+				OWLLiteral number = hasValue.getFiller();
 
 				addAxiom(
 					dataFactory

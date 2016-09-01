@@ -29,14 +29,13 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.io.*;
 import org.semanticweb.owlapi.vocab.*;
+import org.semanticweb.owlapi.manchestersyntax.renderer.*;
 import org.semanticweb.owlapi.util.*;
-
-import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
- * Renderer for OWL objects that uses the standard OWL-API short-form
+ * Renderer for OWL entities that uses the standard OWL-API short-form
  * renderer with the standard RDFS label attribute.
  *
  * @author Colin Puleston
@@ -51,7 +50,7 @@ public class OLabelRenderer {
 	/**
 	 * Constructor.
 	 *
-	 * @param model Model containing objects to be rendered
+	 * @param model Model containing entities to be rendered
 	 */
 	public OLabelRenderer(OModel model) {
 

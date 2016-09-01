@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -83,7 +84,7 @@ class OBValues {
 
 		private OBFrame checkCreate(OWLObjectIntersectionOf source) {
 
-			Set<OWLClassExpression> ops = source.getOperands();
+			Set<OWLClassExpression> ops = OWLAPIVersion.getOperands(source);
 			Set<OWLClass> namedOps = extractNamedConcepts(ops);
 
 			if (namedOps.size() != 1) {
@@ -105,7 +106,7 @@ class OBValues {
 
 		private OBFrame checkCreate(OWLObjectUnionOf source) {
 
-			Set<OWLClassExpression> ops = source.getOperands();
+			Set<OWLClassExpression> ops = OWLAPIVersion.getOperands(source);
 			Set<OWLClass> namedOps = extractNamedConcepts(ops);
 
 			if (namedOps.isEmpty()) {
@@ -183,7 +184,7 @@ class OBValues {
 
 		private boolean stringDatatype(OWLDataRange range) {
 
-			return range.isDatatype() && stringDatatype(range.asOWLDatatype());
+			return range instanceof OWLDatatype && stringDatatype(range.asOWLDatatype());
 		}
 
 		private boolean stringDatatype(OWLDatatype datatype) {

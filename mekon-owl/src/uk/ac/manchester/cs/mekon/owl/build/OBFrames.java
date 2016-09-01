@@ -92,7 +92,7 @@ class OBFrames {
 
 	private void createAllForProperties() {
 
-		for (OWLProperty<?, ?> property : properties.getAll()) {
+		for (OWLProperty property : properties.getAll()) {
 
 			if (properties.getAttributes(property).frameSource()) {
 

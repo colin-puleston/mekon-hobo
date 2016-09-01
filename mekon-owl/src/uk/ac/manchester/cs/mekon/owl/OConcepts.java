@@ -41,17 +41,17 @@ class OConcepts extends OEntities<OWLClass> {
 
 	Set<OWLClassExpression> getAssertedSupers(OWLClass concept) {
 
-		return concept.getSuperClasses(getAllOntologies());
+		return OWLAPIVersion.getSuperClasses(concept, getAllOntologies());
 	}
 
 	Set<OWLClassExpression> getAssertedSubs(OWLClass concept) {
 
-		return concept.getSubClasses(getAllOntologies());
+		return OWLAPIVersion.getSubClasses(concept, getAllOntologies());
 	}
 
 	Set<OWLIndividual> getAssertedIndividuals(OWLClass concept) {
 
-		return concept.getIndividuals(getAllOntologies());
+		return OWLAPIVersion.getIndividuals(concept, getAllOntologies());
 	}
 
 	Set<OWLClass> getInferredSupers(
@@ -77,16 +77,15 @@ class OConcepts extends OEntities<OWLClass> {
 
 		return normaliseNonSubs(
 					expression,
-					getReasoner()
-						.getEquivalentClasses(expression)
-							.getEntities());
+					OWLAPIVersion.getEntities(
+						getReasoner().getEquivalentClasses(expression)));
 	}
 
 	Set<OWLNamedIndividual> getInferredIndividuals(
 								OWLClassExpression expression,
 								boolean directOnly) {
 
-		return getReasoner().getInstances(expression, directOnly).getFlattened();
+		return OWLAPIVersion.getEntities(getReasoner().getInstances(expression, directOnly));
 	}
 
 	String getEntityTypeName() {
@@ -96,7 +95,7 @@ class OConcepts extends OEntities<OWLClass> {
 
 	Set<OWLClass> findAll() {
 
-		return getModelOntology().getClassesInSignature(true);
+		return OWLAPIVersion.getClassesInSignature(getModelOntology());
 	}
 
 	OWLClass getTop() {
@@ -111,14 +110,14 @@ class OConcepts extends OEntities<OWLClass> {
 
 	private Set<OWLClass> normaliseSubs(NodeSet<OWLClass> concepts) {
 
-		return normalise(concepts.getFlattened());
+		return normalise(OWLAPIVersion.getEntities(concepts));
 	}
 
 	private Set<OWLClass> normaliseNonSubs(
 							OWLClassExpression expression,
 							NodeSet<OWLClass> concepts) {
 
-		return normaliseNonSubs(expression, concepts.getFlattened());
+		return normaliseNonSubs(expression, OWLAPIVersion.getEntities(concepts));
 	}
 
 	private Set<OWLClass> normaliseNonSubs(

@@ -29,6 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
+import uk.ac.manchester.cs.mekon.owl.util.*;
+
 class ODataProperties
 			extends
 				OProperties<OWLDataPropertyExpression, OWLDataProperty> {
@@ -45,7 +47,7 @@ class ODataProperties
 
 	Set<OWLDataProperty> findAll() {
 
-		return getModelOntology().getDataPropertiesInSignature(true);
+		return OWLAPIVersion.getDataPropertiesInSignature(getModelOntology());
 	}
 
 	OWLDataProperty getTop() {
@@ -65,12 +67,18 @@ class ODataProperties
 
 	Set<OWLDataProperty> getAssertedSuperProperties(OWLDataProperty property) {
 
-		return normaliseExprs(property.getSuperProperties(getAllOntologies()));
+		return normaliseExprs(
+					OWLAPIVersion.getSuperProperties(
+						property,
+						getAllOntologies()));
 	}
 
 	Set<OWLDataProperty> getAssertedSubProperties(OWLDataProperty property) {
 
-		return normaliseExprs(property.getSubProperties(getAllOntologies()));
+		return normaliseExprs(
+					OWLAPIVersion.getSubProperties(
+							property,
+							getAllOntologies()));
 	}
 
 	Set<OWLDataProperty> getInferredSuperProperties(

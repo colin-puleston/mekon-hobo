@@ -29,6 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Represents a filter that will be applied to the concepts
@@ -80,7 +81,7 @@ public enum OBConceptHidingFilter {
 
 	static private boolean isDefined(OModel model, OWLClass concept) {
 
-		return concept.isDefined(model.getAllOntologies());
+		return OWLAPIVersion.isDefined(concept, model.getAllOntologies());
 	}
 
 	static private boolean hasPrimitiveDescendant(OModel model, OWLClass concept) {

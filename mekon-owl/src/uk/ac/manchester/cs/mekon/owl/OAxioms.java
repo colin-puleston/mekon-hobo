@@ -29,6 +29,8 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
+import uk.ac.manchester.cs.mekon.owl.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -94,7 +96,7 @@ class OAxioms {
 
 	synchronized void add(OWLAxiom axiom) {
 
-		getManager().addAxiom(ontology, axiom);
+		OWLAPIVersion.addAxiom(ontology, axiom);
 
 		new AddedAxiomProcessor().process(axiom);
 	}
@@ -109,7 +111,7 @@ class OAxioms {
 
 	synchronized void remove(OWLAxiom axiom) {
 
-		getManager().removeAxiom(ontology, axiom);
+		OWLAPIVersion.removeAxiom(ontology, axiom);
 
 		new RemovedAxiomProcessor().process(axiom);
 	}
@@ -124,11 +126,11 @@ class OAxioms {
 
 	void retainOnlyDeclarations() {
 
-		for (OWLAxiom axiom : ontology.getAxioms()) {
+		for (OWLAxiom axiom : OWLAPIVersion.getAxioms(ontology)) {
 
 			if (!(axiom instanceof OWLDeclarationAxiom)) {
 
-				getManager().removeAxiom(ontology, axiom);
+				OWLAPIVersion.removeAxiom(ontology, axiom);
 			}
 		}
 	}

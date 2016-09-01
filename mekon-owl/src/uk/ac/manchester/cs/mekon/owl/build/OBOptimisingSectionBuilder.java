@@ -35,6 +35,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Specialisation of {@link OBSectionBuilder} that builds the
@@ -170,13 +171,13 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 
 	private void removePayloadAxioms(OWLOntologyManager manager) {
 
-		for (OWLOntology ont : manager.getOntologies()) {
+		for (OWLOntology ont : OWLAPIVersion.getOntologies(manager)) {
 
 			for (OWLSubClassOfAxiom subConceptOf : getSubConceptAxioms(ont)) {
 
 				if (payloadAxiom(subConceptOf)) {
 
-					manager.removeAxiom(ont, subConceptOf);
+					OWLAPIVersion.removeAxiom(ont, subConceptOf);
 				}
 			}
 		}
@@ -184,7 +185,7 @@ public class OBOptimisingSectionBuilder extends OBSectionBuilder {
 
 	private Set<OWLSubClassOfAxiom> getSubConceptAxioms(OWLOntology ontology) {
 
-		return ontology.getAxioms(AxiomType.SUBCLASS_OF, false);
+		return OWLAPIVersion.getAxioms(ontology, AxiomType.SUBCLASS_OF);
 	}
 
 	private boolean payloadAxiom(OWLSubClassOfAxiom subConceptOf) {

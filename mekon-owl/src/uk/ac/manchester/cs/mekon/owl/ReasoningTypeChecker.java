@@ -28,6 +28,8 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.owl.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -153,7 +155,7 @@ abstract class ReasoningTypeChecker {
 
 	private boolean validClassExprTypes(OWLAxiom axiom) {
 
-		return validTypes(classExprTypes, axiom.getNestedClassExpressions());
+		return validTypes(classExprTypes, OWLAPIVersion.getNestedClassExpressions(axiom));
 	}
 
 	private <T>boolean validTypes(Set<Class<? extends T>> valids, Set<T> tests) {

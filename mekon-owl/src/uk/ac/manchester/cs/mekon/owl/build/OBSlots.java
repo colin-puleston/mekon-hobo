@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -48,16 +49,14 @@ class OBSlots {
 	private OBSlotSources defaultSlotSources = DEFAULT_SLOT_SOURCES;
 	private OBFrameSlotsPolicy defaultFrameSlotsPolicy = OBFrameSlotsPolicy.IFRAME_VALUED_ONLY;
 
-	private SpecCreator specCreator = new SpecCreator();
-
 	private abstract class SlotSpec extends OBSlotSpec {
 
-		private OWLProperty<?, ?> property;
+		private OWLProperty property;
 		private OWLObject range;
 
 		private OBPropertyAttributes propertyAttributes;
 
-		SlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
+		SlotSpec(OWLQuantifiedRestriction<?> restriction) {
 
 			property = getPropertyOrNull(restriction.getProperty());
 
@@ -67,19 +66,26 @@ class OBSlots {
 			}
 		}
 
-		SlotSpec(OWLProperty<?, ?> property, OWLObject range) {
+		SlotSpec(OWLProperty property, OWLObject range) {
 
 			initialise(property, range, true);
 		}
 
-		OWLProperty<?, ?> getProperty() {
+		OWLProperty getProperty() {
 
 			return property;
 		}
 
 		boolean singleValued() {
 
-			return property.isFunctional(model.getAllOntologies());
+			Set<OWLOntology> onts = model.getAllOntologies();
+
+			if (property instanceof OWLObjectProperty) {
+
+				return OWLAPIVersion.isFunctional((OWLObjectProperty)property, onts);
+			}
+
+			return OWLAPIVersion.isFunctional((OWLDataProperty)property, onts);
 		}
 
 		String getLabel() {
@@ -120,7 +126,7 @@ class OBSlots {
 		}
 
 		private void initialise(
-						OWLProperty<?, ?> property,
+						OWLProperty property,
 						OWLObject range,
 						boolean fromDomainRangePairs) {
 
@@ -159,11 +165,11 @@ class OBSlots {
 			return values.checkCreateValue(range);
 		}
 
-		private OWLProperty<?, ?> getPropertyOrNull(OWLPropertyExpression<?, ?> expr) {
+		private OWLProperty getPropertyOrNull(OWLPropertyExpression expr) {
 
 			if (expr instanceof OWLProperty) {
 
-				OWLProperty<?, ?> property = (OWLProperty<?, ?>)expr;
+				OWLProperty property = (OWLProperty)expr;
 
 				if (properties.contains(property)) {
 
@@ -177,12 +183,12 @@ class OBSlots {
 
 	private class AllValuesFromSlotSpec extends SlotSpec {
 
-		AllValuesFromSlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
+		AllValuesFromSlotSpec(OWLQuantifiedRestriction<?> restriction) {
 
 			super(restriction);
 		}
 
-		AllValuesFromSlotSpec(OWLProperty<?, ?> property, OWLObject range) {
+		AllValuesFromSlotSpec(OWLProperty property, OWLObject range) {
 
 			super(property, range);
 		}
@@ -195,7 +201,7 @@ class OBSlots {
 
 	private class SomeValuesFromSlotSpec extends SlotSpec {
 
-		SomeValuesFromSlotSpec(OWLQuantifiedRestriction<?, ?, ?> restriction) {
+		SomeValuesFromSlotSpec(OWLQuantifiedRestriction<?> restriction) {
 
 			super(restriction);
 		}
@@ -210,7 +216,7 @@ class OBSlots {
 
 		private int cardinality;
 
-		CardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
+		CardinalitySlotSpec(OWLCardinalityRestriction<?> restriction) {
 
 			super(restriction);
 
@@ -234,7 +240,7 @@ class OBSlots {
 
 	private class ExactCardinalitySlotSpec extends CardinalitySlotSpec {
 
-		ExactCardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
+		ExactCardinalitySlotSpec(OWLCardinalityRestriction<?> restriction) {
 
 			super(restriction);
 		}
@@ -252,7 +258,7 @@ class OBSlots {
 
 	private class MinCardinalitySlotSpec extends CardinalitySlotSpec {
 
-		MinCardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
+		MinCardinalitySlotSpec(OWLCardinalityRestriction<?> restriction) {
 
 			super(restriction);
 		}
@@ -270,7 +276,7 @@ class OBSlots {
 
 	private class MaxCardinalitySlotSpec extends CardinalitySlotSpec {
 
-		MaxCardinalitySlotSpec(OWLCardinalityRestriction<?, ?, ?> restriction) {
+		MaxCardinalitySlotSpec(OWLCardinalityRestriction<?> restriction) {
 
 			super(restriction);
 		}
@@ -283,64 +289,6 @@ class OBSlots {
 		boolean includesMax() {
 
 			return true;
-		}
-	}
-
-	private class SpecCreator extends OWLObjectVisitorExAdapter<SlotSpec> {
-
-		public SlotSpec visit(OWLObjectSomeValuesFrom e) {
-
-			return new SomeValuesFromSlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLObjectAllValuesFrom e) {
-
-			return new AllValuesFromSlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLObjectExactCardinality e) {
-
-			return new ExactCardinalitySlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLObjectMinCardinality e) {
-
-			return new MinCardinalitySlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLObjectMaxCardinality e) {
-
-			return new MaxCardinalitySlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLDataSomeValuesFrom e) {
-
-			return new SomeValuesFromSlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLDataAllValuesFrom e) {
-
-			return new AllValuesFromSlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLDataExactCardinality e) {
-
-			return new ExactCardinalitySlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLDataMinCardinality e) {
-
-			return new MinCardinalitySlotSpec(e);
-		}
-
-		public SlotSpec visit(OWLDataMaxCardinality e) {
-
-			return new MaxCardinalitySlotSpec(e);
-		}
-
-		protected SlotSpec getDefaultReturnValue(OWLObject e) {
-
-			return null;
 		}
 	}
 
@@ -383,7 +331,7 @@ class OBSlots {
 
 	void checkCreateAllValuesSlot(
 			OWLClass frameConcept,
-			OWLProperty<?, ?> property,
+			OWLProperty property,
 			OWLObject range) {
 
 		checkAddSlot(frameConcept, checkCreateLooseAllValuesSlot(property, range));
@@ -391,13 +339,13 @@ class OBSlots {
 
 	OBSlot checkCreateLooseSlot(OWLClassExpression slotSource) {
 
-		SlotSpec spec = slotSource.accept(specCreator);
+		SlotSpec spec = checkCreateSpec(slotSource);
 
 		return spec != null ? spec.checkCreate() : null;
 	}
 
 	private OBSlot checkCreateLooseAllValuesSlot(
-						OWLProperty<?, ?> property,
+						OWLProperty property,
 						OWLObject range) {
 
 		return new AllValuesFromSlotSpec(property, range).checkCreate();
@@ -409,5 +357,60 @@ class OBSlots {
 
 			frames.get(frameConcept).addSlot(slot);
 		}
+	}
+
+	private SlotSpec checkCreateSpec(OWLClassExpression slotSource) {
+
+		if (slotSource instanceof OWLObjectSomeValuesFrom) {
+
+			return new SomeValuesFromSlotSpec((OWLObjectSomeValuesFrom)slotSource);
+		}
+
+		if (slotSource instanceof OWLObjectAllValuesFrom) {
+
+			return new AllValuesFromSlotSpec((OWLObjectAllValuesFrom)slotSource);
+		}
+
+		if (slotSource instanceof OWLObjectExactCardinality) {
+
+			return new ExactCardinalitySlotSpec((OWLObjectExactCardinality)slotSource);
+		}
+
+		if (slotSource instanceof OWLObjectMinCardinality) {
+
+			return new MinCardinalitySlotSpec((OWLObjectMinCardinality)slotSource);
+		}
+
+		if (slotSource instanceof OWLObjectMaxCardinality) {
+
+			return new MaxCardinalitySlotSpec((OWLObjectMaxCardinality)slotSource);
+		}
+
+		if (slotSource instanceof OWLDataSomeValuesFrom) {
+
+			return new SomeValuesFromSlotSpec((OWLDataSomeValuesFrom)slotSource);
+		}
+
+		if (slotSource instanceof OWLDataAllValuesFrom) {
+
+			return new AllValuesFromSlotSpec((OWLDataAllValuesFrom)slotSource);
+		}
+
+		if (slotSource instanceof OWLDataExactCardinality) {
+
+			return new ExactCardinalitySlotSpec((OWLDataExactCardinality)slotSource);
+		}
+
+		if (slotSource instanceof OWLDataMinCardinality) {
+
+			return new MinCardinalitySlotSpec((OWLDataMinCardinality)slotSource);
+		}
+
+		if (slotSource instanceof OWLDataMaxCardinality) {
+
+			return new MaxCardinalitySlotSpec((OWLDataMaxCardinality)slotSource);
+		}
+
+		return null;
 	}
 }

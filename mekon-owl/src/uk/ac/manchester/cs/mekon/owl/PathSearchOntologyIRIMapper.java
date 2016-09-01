@@ -33,6 +33,8 @@ import org.semanticweb.owlapi.model.*;
  */
 class PathSearchOntologyIRIMapper implements OWLOntologyIRIMapper {
 
+	static private final long serialVersionUID = -1;
+
 	static private final String URL_SEPARATOR = "/";
 	static private final String URN_SEPARATOR = ":";
 	static private final String OWL_EXTENSION = ".owl";

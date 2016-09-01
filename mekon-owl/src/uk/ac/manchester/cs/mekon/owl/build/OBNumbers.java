@@ -32,6 +32,7 @@ import org.semanticweb.owlapi.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -42,28 +43,21 @@ class OBNumbers {
 
 	private Set<TypeNumberCreator<?>> creators = new HashSet<TypeNumberCreator<?>>();
 
-	private class SupersProcessor extends OWLObjectVisitorExAdapter<OBNumber> {
+	private class SupersProcessor {
 
 		private Set<OWLClass> concepts = new HashSet<OWLClass>();
 
-		public OBNumber visit(OWLClass e) {
+		OBNumber process(OWLClassExpression sup) {
 
-			concepts.add(e);
+			if (sup instanceof OWLDataSomeValuesFrom) {
 
-			return null;
-		}
+				return checkCreateNumber((OWLDataSomeValuesFrom)sup);
+			}
 
-		public OBNumber visit(OWLDataSomeValuesFrom e) {
+			if (sup instanceof OWLClass) {
 
-			return checkCreateNumber(e.getProperty(), e.getFiller());
-		}
-
-		public OBNumber visit(OWLDataExactCardinality e) {
-
-			return checkCreateNumber(e.getProperty(), e.getFiller());
-		}
-
-		protected OBNumber getDefaultReturnValue(OWLObject e) {
+				concepts.add((OWLClass)sup);
+			}
 
 			return null;
 		}
@@ -116,11 +110,11 @@ class OBNumbers {
 
 		private N getValueOrNull(OWLDatatypeRestriction restriction, OWLFacet facet) {
 
-			for (OWLFacetRestriction facetRest : restriction.getFacetRestrictions()) {
+			for (OWLFacetRestriction fRes : OWLAPIVersion.getFacetRestrictions(restriction)) {
 
-				if (facetRest.getFacet() == facet) {
+				if (fRes.getFacet() == facet) {
 
-					return parseValue(facetRest.getFacetValue().getLiteral());
+					return parseValue(fRes.getFacetValue().getLiteral());
 				}
 			}
 
@@ -236,7 +230,7 @@ class OBNumbers {
 
 		for (OWLClassExpression sup : model.getAssertedSupers(concept)) {
 
-			OBNumber num = sup.accept(supersProcessor);
+			OBNumber num = supersProcessor.process(sup);
 
 			if (num != null) {
 
@@ -249,7 +243,7 @@ class OBNumbers {
 
 	OBNumber checkCreateNumber(OWLDataRange range) {
 
-		if (range.isDatatype()) {
+		if (range instanceof OWLDatatype) {
 
 			return checkCreateNumber(range.asOWLDatatype());
 		}
@@ -277,20 +271,18 @@ class OBNumbers {
 		return null;
 	}
 
-	private OBNumber checkCreateNumber(OWLDatatype datatype) {
-
-		TypeNumberCreator<?> creator = lookForCreator(datatype);
-
-		return creator != null ? creator.createUnconstrained() : null;
-	}
-
 	private OBNumber checkCreateNumber(
 						OWLDataPropertyExpression property,
 						OWLDataRange range) {
 
-		return model.isIndirectNumericProperty(property)
+		return model.indirectNumericProperty(property)
 				? checkCreateNumber(range)
 				: null;
+	}
+
+	private OBNumber checkCreateNumber(OWLDataSomeValuesFrom restriction) {
+
+		return checkCreateNumber(restriction.getFiller());
 	}
 
 	private OBNumber checkCreateNumber(OWLDatatypeRestriction restriction) {
@@ -299,6 +291,13 @@ class OBNumbers {
 		TypeNumberCreator<?> creator = lookForCreator(datatype);
 
 		return creator != null ? creator.create(restriction) : null;
+	}
+
+	private OBNumber checkCreateNumber(OWLDatatype datatype) {
+
+		TypeNumberCreator<?> creator = lookForCreator(datatype);
+
+		return creator != null ? creator.createUnconstrained() : null;
 	}
 
 	private TypeNumberCreator<?> lookForCreator(OWLDatatype datatype) {

@@ -29,6 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -64,7 +65,7 @@ abstract class OBSlotDeriver {
 
 	void createAllValuesSlots(
 			OWLClassExpression frameSource,
-			OWLProperty<?, ?> property,
+			OWLProperty property,
 			OWLObject range) {
 
 		for (OWLClass frameConcept : toFrameConcepts(frameSource)) {
@@ -75,7 +76,7 @@ abstract class OBSlotDeriver {
 
 	<A extends OWLAxiom>Set<A> getTypeAxioms(AxiomType<A> type) {
 
-		return model.getModelOntology().getAxioms(type, true);
+		return OWLAPIVersion.getAxioms(model.getModelOntology(), type);
 	}
 
 	boolean modelExpression(OWLClassExpression expression) {
@@ -84,7 +85,7 @@ abstract class OBSlotDeriver {
 				&& properties.containsAllInSignature(expression);
 	}
 
-	boolean modelProperty(OWLProperty<?, ?> property) {
+	boolean modelProperty(OWLProperty property) {
 
 		return properties.contains(property);
 	}

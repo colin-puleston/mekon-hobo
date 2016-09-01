@@ -154,7 +154,12 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	private Set<? extends OWLAxiom> getConceptAxioms(IRI iri) {
 
-		return getModel().getInstanceOntology().getAxioms(getConcept(iri));
+		return OWLAPIVersion.getAxioms(getInstanceOntology(), getConcept(iri));
+	}
+
+	private OWLOntology getInstanceOntology() {
+
+		return getModel().getInstanceOntology();
 	}
 
 	private OWLDataFactory getDataFactory() {

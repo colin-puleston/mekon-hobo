@@ -72,7 +72,7 @@ public class ORSemantics {
 
 		private boolean hasExceptionSuperProperty() {
 
-			for (OWLProperty<?, ?> superProp : getSuperProperties()) {
+			for (OWLProperty superProp : getSuperProperties()) {
 
 				if (exceptionProperty(superProp.getIRI())) {
 
@@ -93,7 +93,7 @@ public class ORSemantics {
 			return exceptionPropertyURIs.contains(iriAsString(iri));
 		}
 
-		private Set<? extends OWLProperty<?, ?>> getSuperProperties() {
+		private Set<? extends OWLProperty> getSuperProperties() {
 
 			return dataProperty()
 					? getSuperDataProperties()

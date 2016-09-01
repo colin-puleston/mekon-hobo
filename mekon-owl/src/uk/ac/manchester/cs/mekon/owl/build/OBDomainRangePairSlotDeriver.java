@@ -35,11 +35,11 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 
-	private Map<OWLProperty<?, ?>, OWLClassExpression> domains
-				= new HashMap<OWLProperty<?, ?>, OWLClassExpression>();
+	private Map<OWLProperty, OWLClassExpression> domains
+				= new HashMap<OWLProperty, OWLClassExpression>();
 
-	private Map<OWLProperty<?, ?>, OWLObject> ranges
-				= new HashMap<OWLProperty<?, ?>, OWLObject>();
+	private Map<OWLProperty, OWLObject> ranges
+				= new HashMap<OWLProperty, OWLObject>();
 
 	private OWLClass owlThing;
 
@@ -55,15 +55,15 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 
 		abstract AxiomType<? extends A> getAxiomType();
 
-		abstract void processAxiom(A axiom, OWLProperty<?, ?> property);
+		abstract void processAxiom(A axiom, OWLProperty property);
 
 		private void processAxiom(A axiom) {
 
-			OWLPropertyExpression<?, ?> expr = axiom.getProperty();
+			OWLPropertyExpression expr = axiom.getProperty();
 
 			if (expr instanceof OWLProperty) {
 
-				OWLProperty<?, ?> property = (OWLProperty<?, ?>)expr;
+				OWLProperty property = (OWLProperty)expr;
 
 				if (modelProperty(property)) {
 
@@ -79,7 +79,7 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 
 		void processAxiom(
 				OWLPropertyDomainAxiom<?> axiom,
-				OWLProperty<?, ?> property) {
+				OWLProperty property) {
 
 			OWLClassExpression domain = axiom.getDomain();
 
@@ -112,7 +112,7 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 
 		void processAxiom(
 				OWLPropertyRangeAxiom<?, ?> axiom,
-				OWLProperty<?, ?> property) {
+				OWLProperty property) {
 
 			OWLObject range = axiom.getRange();
 
@@ -157,9 +157,9 @@ class OBDomainRangePairSlotDeriver extends OBSlotDeriver {
 
 	void createAll() {
 
-		for (Map.Entry<OWLProperty<?, ?>, OWLClassExpression> entry : domains.entrySet()) {
+		for (Map.Entry<OWLProperty, OWLClassExpression> entry : domains.entrySet()) {
 
-			OWLProperty<?, ?> property = entry.getKey();
+			OWLProperty property = entry.getKey();
 			OWLObject range = ranges.get(property);
 
 			if (range != null) {

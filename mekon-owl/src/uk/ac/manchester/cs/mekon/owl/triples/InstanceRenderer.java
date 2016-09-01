@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.rdf.util.*;
+import org.semanticweb.owlapi.rdf.rdfxml.parser.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;

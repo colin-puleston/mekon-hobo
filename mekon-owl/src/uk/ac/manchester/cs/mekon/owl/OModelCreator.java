@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.owl;
 
 import java.io.*;
+import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
@@ -54,9 +55,19 @@ public abstract class OModelCreator {
 	static IRI getOntologyIRI(OWLOntology ontology) {
 
 		OWLOntologyID id = ontology.getOntologyID();
-		IRI iri = id.getOntologyIRI();
+		Optional<IRI> iri = OWLAPIVersion.getOntologyIRI(id);
 
-		return iri != null ? iri : id.getDefaultDocumentIRI();
+		if (!iri.isPresent()) {
+
+			iri = OWLAPIVersion.getDefaultDocumentIRI(id);
+
+			if (!iri.isPresent()) {
+
+				throw new KModelException("No IRI for ontology");
+			}
+		}
+
+		return iri.get();
 	}
 
 	static private OWLReasonerFactory

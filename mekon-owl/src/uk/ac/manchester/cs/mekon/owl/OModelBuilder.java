@@ -32,6 +32,7 @@ import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Responsible for creating an {@link OModel} object representing a
@@ -139,7 +140,7 @@ public class OModelBuilder extends OModelCreator {
 
 		OWLOntologyManager sourceManager = createSourceManager();
 		OWLOntology mainInput = loadInputOntologies(sourceManager);
-		Set<OWLOntology> allInputs = sourceManager.getOntologies();
+		Set<OWLOntology> allInputs = OWLAPIVersion.getOntologies(sourceManager);
 
 		IRI ontIRI = getOntologyIRI(mainInput);
 		OWLOntology ontology = createModelOntology(manager, allInputs, ontIRI);
@@ -198,7 +199,7 @@ public class OModelBuilder extends OModelCreator {
 
 		OWLOntologyManager manager = createManager();
 
-		manager.addIRIMapper(createIRIMapper());
+		manager.getIRIMappers().add(createIRIMapper());
 
 		return manager;
 	}

@@ -29,6 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -70,7 +71,7 @@ class OBRestrictionSlotDeriver extends OBSlotDeriver {
 
 	private void createSlots(OWLClassExpression sub, OWLObjectIntersectionOf sups) {
 
-		for (OWLClassExpression sup : sups.getOperands()) {
+		for (OWLClassExpression sup : OWLAPIVersion.getOperands(sups)) {
 
 			createSlots(sub, sup);
 		}

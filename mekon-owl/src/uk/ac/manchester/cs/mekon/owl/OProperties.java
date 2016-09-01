@@ -29,9 +29,11 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
+import uk.ac.manchester.cs.mekon.owl.util.*;
+
 abstract class OProperties
-					<E extends OWLPropertyExpression<?, E>,
-					P extends OWLProperty<?, E>>
+					<E extends OWLPropertyExpression,
+					P extends OWLProperty>
 					extends OEntities<P> {
 
 	private AssertedLinks assertedSupers = new AssertedSupers();
@@ -192,7 +194,7 @@ abstract class OProperties
 
 	Set<P> normaliseExprs(NodeSet<E> exprs) {
 
-		return normaliseExprs(exprs.getFlattened());
+		return normaliseExprs(OWLAPIVersion.getEntities(exprs));
 	}
 
 	Set<P> normaliseExprs(Set<E> exprs) {

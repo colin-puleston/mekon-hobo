@@ -120,7 +120,7 @@ public class OBAnnotations {
 
 		for (OWLOntology ontology : model.getAllOntologies()) {
 
-			for (OWLClassAxiom axiom : ontology.getAxioms(owlConcept)) {
+			for (OWLClassAxiom axiom : OWLAPIVersion.getAxioms(ontology, owlConcept)) {
 
 				if (axiom instanceof OWLEquivalentClassesAxiom) {
 

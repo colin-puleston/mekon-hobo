@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Provides access to an OWL model and associated reasoner, via
@@ -65,6 +66,7 @@ public class OModel {
 	private OConcepts concepts;
 	private OObjectProperties objectProperties;
 	private ODataProperties dataProperties;
+	private OAnnotationProperties annotationProperties;
 
 	private OAxioms modelAxioms;
 	private OAxioms instanceAxioms;
@@ -263,7 +265,7 @@ public class OModel {
 	 */
 	public Set<OWLOntology> getAllOntologies() {
 
-		return manager.getOntologies();
+		return OWLAPIVersion.getOntologies(manager);
 	}
 
 	/**
@@ -349,12 +351,7 @@ public class OModel {
 	 */
 	public OWLAnnotationProperty getAnnotationProperty(IRI iri) {
 
-		if (modelOntology.containsAnnotationPropertyInSignature(iri, true)) {
-
-			return getDataFactory().getOWLAnnotationProperty(iri);
-		}
-
-		throw new KModelException("Cannot find annotation-property: " + iri);
+		return annotationProperties.get(iri);
 	}
 
 	/**
@@ -570,7 +567,7 @@ public class OModel {
 	 * @return True if specified property is indirect-numeric-property for
 	 * model
 	 */
-	public boolean isIndirectNumericProperty(OWLDataPropertyExpression property) {
+	public boolean indirectNumericProperty(OWLDataPropertyExpression property) {
 
 		return property.equals(indirectNumericProperty);
 	}
@@ -670,6 +667,7 @@ public class OModel {
 		concepts = new OConcepts(this);
 		objectProperties = new OObjectProperties(this);
 		dataProperties = new ODataProperties(this);
+		annotationProperties = new OAnnotationProperties(this);
 
 		modelAxioms = new OAxioms(this, modelOntology);
 		instanceAxioms = new OAxioms(this, instanceOntology);
@@ -682,7 +680,7 @@ public class OModel {
 
 	void purgeForReasoningType() {
 
-		for (OWLAxiom axiom : modelOntology.getAxioms()) {
+		for (OWLAxiom axiom : OWLAPIVersion.getAxioms(modelOntology)) {
 
 			if (!reasoningType.requiredAxiom(axiom)) {
 
@@ -710,7 +708,7 @@ public class OModel {
 			return null;
 		}
 
-		if (modelOntology.containsDataPropertyInSignature(iri, true)) {
+		if (dataProperties.contains(iri)) {
 
 			return manager.getOWLDataFactory().getOWLDataProperty(iri);
 		}

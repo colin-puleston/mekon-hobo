@@ -29,6 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Represents the set of OWL properties that will be used in
@@ -39,7 +40,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
 public class OBProperties
 				extends
 					OBEntities
-						<OWLProperty<?, ?>,
+						<OWLProperty,
 						OBPropertyGroup,
 						OBPropertyAttributes> {
 
@@ -59,15 +60,15 @@ public class OBProperties
 
 		abstract boolean handlesNonTop(IRI iri);
 
-		abstract OWLProperty<?, ?> getTop();
+		abstract OWLProperty getTop();
 
-		abstract OWLProperty<?, ?> get(IRI iri);
+		abstract OWLProperty get(IRI iri);
 
-		abstract Set<? extends OWLProperty<?, ?>> getAllInModel();
+		abstract Set<? extends OWLProperty> getAllInModel();
 
-		abstract Set<? extends OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property);
+		abstract Set<? extends OWLProperty> getSubs(OWLProperty property);
 
-		abstract Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression);
+		abstract Set<? extends OWLProperty> extractAll(OWLClassExpression expression);
 
 		private boolean top(IRI iri) {
 
@@ -79,32 +80,32 @@ public class OBProperties
 
 		boolean handlesNonTop(IRI iri) {
 
-			return getModelOntology().containsObjectPropertyInSignature(iri, true);
+			return getModelOntology().containsObjectPropertyInSignature(iri);
 		}
 
-		OWLProperty<?, ?> getTop() {
+		OWLProperty getTop() {
 
 			return getDataFactory().getOWLTopObjectProperty();
 		}
 
-		OWLProperty<?, ?> get(IRI iri) {
+		OWLProperty get(IRI iri) {
 
 			return getDataFactory().getOWLObjectProperty(iri);
 		}
 
-		Set<? extends OWLProperty<?, ?>> getAllInModel() {
+		Set<? extends OWLProperty> getAllInModel() {
 
 			return getModel().getObjectProperties().getAll();
 		}
 
-		Set<? extends OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property) {
+		Set<? extends OWLProperty> getSubs(OWLProperty property) {
 
 			return getModel().getInferredSubs((OWLObjectProperty)property, true);
 		}
 
-		Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
+		Set<? extends OWLProperty> extractAll(OWLClassExpression expression) {
 
-			return expression.getObjectPropertiesInSignature();
+			return OWLAPIVersion.getObjectPropertiesInSignature(expression);
 		}
 	}
 
@@ -112,32 +113,32 @@ public class OBProperties
 
 		boolean handlesNonTop(IRI iri) {
 
-			return getModelOntology().containsDataPropertyInSignature(iri, true);
+			return getModelOntology().containsDataPropertyInSignature(iri);
 		}
 
-		OWLProperty<?, ?> getTop() {
+		OWLProperty getTop() {
 
 			return getDataFactory().getOWLTopDataProperty();
 		}
 
-		OWLProperty<?, ?> get(IRI iri) {
+		OWLProperty get(IRI iri) {
 
 			return getDataFactory().getOWLDataProperty(iri);
 		}
 
-		Set<? extends OWLProperty<?, ?>> getAllInModel() {
+		Set<? extends OWLProperty> getAllInModel() {
 
 			return getModel().getDataProperties().getAll();
 		}
 
-		Set<? extends OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property) {
+		Set<? extends OWLProperty> getSubs(OWLProperty property) {
 
 			return getModel().getInferredSubs((OWLDataProperty)property, true);
 		}
 
-		Set<? extends OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
+		Set<? extends OWLProperty> extractAll(OWLClassExpression expression) {
 
-			return expression.getDataPropertiesInSignature();
+			return OWLAPIVersion.getDataPropertiesInSignature(expression);
 		}
 	}
 
@@ -151,7 +152,7 @@ public class OBProperties
 
 	void addGroupEntity(
 			OBPropertyGroup group,
-			OWLProperty<?, ?> property,
+			OWLProperty property,
 			EntityLocation location) {
 
 		add(property, group.getAttributes());
@@ -172,14 +173,14 @@ public class OBProperties
 		return getHandlerOrNull(iri) != null;
 	}
 
-	OWLProperty<?, ?> get(IRI iri) {
+	OWLProperty get(IRI iri) {
 
 		return getHandler(iri).get(iri);
 	}
 
-	Set<OWLProperty<?, ?>> getAllInModel() {
+	Set<OWLProperty> getAllInModel() {
 
-		Set<OWLProperty<?, ?>> all = new HashSet<OWLProperty<?, ?>>();
+		Set<OWLProperty> all = new HashSet<OWLProperty>();
 
 		for (Handler handler : handlers) {
 
@@ -189,16 +190,16 @@ public class OBProperties
 		return all;
 	}
 
-	Set<OWLProperty<?, ?>> getSubs(OWLProperty<?, ?> property) {
+	Set<OWLProperty> getSubs(OWLProperty property) {
 
 		Handler handler = getHandler(property.getIRI());
 
-		return new HashSet<OWLProperty<?, ?>>(handler.getSubs(property));
+		return new HashSet<OWLProperty>(handler.getSubs(property));
 	}
 
-	Set<OWLProperty<?, ?>> extractAll(OWLClassExpression expression) {
+	Set<OWLProperty> extractAll(OWLClassExpression expression) {
 
-		Set<OWLProperty<?, ?>> all = new HashSet<OWLProperty<?, ?>>();
+		Set<OWLProperty> all = new HashSet<OWLProperty>();
 
 		for (Handler handler : handlers) {
 

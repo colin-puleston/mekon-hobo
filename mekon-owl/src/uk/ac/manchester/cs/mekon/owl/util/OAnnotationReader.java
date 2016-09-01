@@ -127,22 +127,26 @@ public class OAnnotationReader {
 
 	private String getValueOrNull(OWLEntity entity, OWLAnnotationProperty property) {
 
-		for (OWLOntology ont : model.getAllOntologies()) {
+		for (OWLAnnotation anno : getAnnotations(entity, property)) {
 
-			for (OWLAnnotation anno : entity.getAnnotations(ont, property)) {
+			if (anno.getProperty().equals(property)) {
 
-				if (anno.getProperty().equals(property)) {
+				OWLAnnotationValue value = anno.getValue();
 
-					OWLAnnotationValue value = anno.getValue();
+				if (value instanceof OWLLiteral) {
 
-					if (value instanceof OWLLiteral) {
-
-						return ((OWLLiteral)value).getLiteral();
-					}
+					return ((OWLLiteral)value).getLiteral();
 				}
 			}
 		}
 
 		return null;
+	}
+
+	private Set<OWLAnnotation> getAnnotations(
+									OWLEntity entity,
+									OWLAnnotationProperty property) {
+
+		return OWLAPIVersion.getAnnotations(entity, model.getAllOntologies(), property);
 	}
 }

@@ -25,11 +25,13 @@
 package uk.ac.manchester.cs.mekon.owl;
 
 import java.io.*;
+import java.util.*;
 
-import org.coode.owlapi.rdf.rdfxml.*;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.rdf.rdfxml.renderer.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -41,13 +43,10 @@ class OntologyFileRenderer {
 	static private final String ANON_ONTOLOGY_NAME = "UNNAMED";
 
 	private OWLOntology ontology;
-	private OWLOntologyManager manager;
 
 	OntologyFileRenderer(OWLOntology ontology) {
 
 		this.ontology = ontology;
-
-		manager = ontology.getOWLOntologyManager();
 	}
 
 	File renderToTemp() {
@@ -73,11 +72,11 @@ class OntologyFileRenderer {
 
 	private void tryRender(File file) throws IOException {
 
-		FileWriter writer = new FileWriter(file);
+		PrintWriter writer = new PrintWriter(new FileWriter(file));
 
 		try {
 
-			new RDFXMLRenderer(manager, ontology, writer).render();
+			new RDFXMLRenderer(ontology, writer).render();
 		}
 		finally {
 
@@ -108,8 +107,10 @@ class OntologyFileRenderer {
 
 	private String getSimpleOntologyName() {
 
-		IRI iri = ontology.getOntologyID().getOntologyIRI();
+		Optional<IRI> iri = OWLAPIVersion.getOntologyIRI(ontology.getOntologyID());
 
-		return iri != null ? iri.toURI().getFragment() : ANON_ONTOLOGY_NAME;
+		return iri.isPresent()
+				? iri.get().toURI().getFragment()
+				: ANON_ONTOLOGY_NAME;
 	}
 }

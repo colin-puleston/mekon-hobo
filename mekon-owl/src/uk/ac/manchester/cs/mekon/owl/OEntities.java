@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Represents set of {@link OWLEntity} objects of a specific type.
@@ -72,6 +73,17 @@ public abstract class OEntities<E extends OWLEntity> {
 		}
 
 		return entity;
+	}
+
+	/**
+	 * Retrieves the entity with the specified IRI, if present.
+	 *
+	 * @param iri IRI of required entity
+	 * @return Required entity, or null if entity not found
+	 */
+	public E getOrNull(IRI iri) {
+
+		return entitiesByIRI.get(iri);
 	}
 
 	/**
@@ -149,7 +161,7 @@ public abstract class OEntities<E extends OWLEntity> {
 
 	Set<E> normalise(NodeSet<E> entities) {
 
-		return normalise(entities.getFlattened());
+		return normalise(OWLAPIVersion.getEntities(entities));
 	}
 
 	Set<E> normalise(Set<E> entities) {

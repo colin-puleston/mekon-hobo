@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -199,6 +200,11 @@ abstract class ORConfig implements ORConfigVocab {
 
 	private IRI getInstanceOntologyIRI(OModel model) {
 
-		return model.getInstanceOntology().getOntologyID().getOntologyIRI();
+		return OWLAPIVersion.getOntologyIRI(getOntologyID(model)).get();
+	}
+
+	private OWLOntologyID getOntologyID(OModel model) {
+
+		return model.getInstanceOntology().getOntologyID();
 	}
 }

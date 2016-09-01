@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -76,9 +77,7 @@ class IndividualNetwork extends InstanceConstruct {
 
 	Set<OWLClass> getInferredTypes() {
 
-		return getReasoner()
-				.getTypes(rootIndividual, true)
-				.getFlattened();
+		return OWLAPIVersion.getEntities(getReasoner().getTypes(rootIndividual, true));
 	}
 
 	Set<OWLClass> getSuggestedTypes() {

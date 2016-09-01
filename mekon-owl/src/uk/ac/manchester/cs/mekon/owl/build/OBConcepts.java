@@ -29,6 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Represents the set of OWL classes that will be used in generating
@@ -88,7 +89,7 @@ public class OBConcepts
 
 	Set<OWLClass> extractAll(OWLClassExpression expression) {
 
-		return expression.getClassesInSignature();
+		return OWLAPIVersion.getClassesInSignature(expression);
 	}
 
 	private boolean owlThing(IRI iri) {
@@ -98,7 +99,7 @@ public class OBConcepts
 
 	boolean ontologyClass(IRI iri) {
 
-		return getModelOntology().containsClassInSignature(iri, true);
+		return getModelOntology().containsClassInSignature(iri);
 	}
 
 	private OBConceptAttributes createAttributes(boolean hidden)  {
