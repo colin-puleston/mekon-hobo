@@ -330,7 +330,12 @@ class ITreeUpdates {
 
 			IState<?, ?> state = getState(node);
 
-			return state != null ? state.childrenRemoved() : !defaultSlotNode(node);
+			if (state == null) {
+
+				return !defaultSlotNode(node);
+			}
+
+			return state.childrenRemoved() && !state.childrenAdded();
 		}
 
 		boolean showForIFrameDisjunctExposedNode(INode node) {
