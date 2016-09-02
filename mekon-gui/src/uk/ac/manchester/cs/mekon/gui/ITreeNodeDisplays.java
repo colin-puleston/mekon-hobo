@@ -65,23 +65,33 @@ class ITreeNodeDisplays {
 
 		private void checkForUpdate() {
 
-			if (updates.showDirectUpdate(node)) {
+			boolean showDirect = updates.showDirectUpdate(node);
+			boolean showGenIndirect = updates.showGeneralIndirectUpdate(node);
 
-				highlightMain(ITree.DIRECT_UPDATES_CLR);
+			if (showDirect) {
+
+				if (showGenIndirect) {
+
+					highlightMain(ITree.DIRECT_AND_INDIRECT_UPDATES_CLR);
+				}
+				else {
+
+					highlightMain(ITree.DIRECT_UPDATES_CLR);
+				}
 			}
 			else {
 
-				if (updates.showGeneralIndirectUpdate(node)) {
+				if (showGenIndirect) {
 
 					highlightMain(ITree.INDIRECT_UPDATES_CLR);
 				}
+			}
 
-				if (valueTypeDisplay != null) {
+			if (valueTypeDisplay != null) {
 
-					if (updates.showValueTypeIndirectUpdate(node)) {
+				if (updates.showValueTypeIndirectUpdate(node)) {
 
-						highlightValueType(ITree.INDIRECT_UPDATES_CLR);
-					}
+					highlightValueType(ITree.INDIRECT_UPDATES_CLR);
 				}
 			}
 		}

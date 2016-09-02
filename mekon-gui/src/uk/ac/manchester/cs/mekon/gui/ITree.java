@@ -39,12 +39,26 @@ class ITree extends GTree {
 
 	static final Color DIRECT_UPDATES_CLR = Color.yellow;
 	static final Color INDIRECT_UPDATES_CLR = Color.cyan;
+	static final Color DIRECT_AND_INDIRECT_UPDATES_CLR
+							= mergeColours(
+								DIRECT_UPDATES_CLR,
+								INDIRECT_UPDATES_CLR);
+
 	static final Color CROSS_LINKABLE_IFRAME_CLR = Color.green;
 	static final Color CROSS_LINKED_IFRAME_CLR = Color.green;
 
 	static final Color DEFAULT_BACKGROUND_CLR = Color.white;
 	static final Color CROSS_LINKING_BACKGROUND_CLR = Color.gray.brighter();
 	static final Color CROSS_LINKS_SHOW_BACKGROUND_CLR = Color.white;
+
+	static private Color mergeColours(Color c1, Color c2) {
+
+		int r = (c1.getRed() + c2.getRed()) / 2;
+		int g = (c1.getGreen() + c2.getGreen()) / 2;
+		int b = (c1.getBlue() + c2.getBlue()) / 2;
+
+		return new Color(r, g, b);
+	}
 
 	private ITreeUpdates updates;
 	private ITreeExpansions expansions;

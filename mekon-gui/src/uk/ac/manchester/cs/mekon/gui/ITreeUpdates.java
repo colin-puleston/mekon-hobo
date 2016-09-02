@@ -40,9 +40,8 @@ class ITreeUpdates {
 
 	private Map<FEntity, IState<?, ?>> iStates = new HashMap<FEntity, IState<?, ?>>();
 
-	private UpdateType directUpdate = new DirectUpdate();
-	private UpdateType generalIndirectUpdate = new GeneralIndirectUpdate();
-	private UpdateType valueTypeIndirectUpdate = new ValueTypeIndirectUpdate();
+	private GeneralUpdate directUpdate = new DirectUpdate();
+	private GeneralUpdate generalIndirectUpdate = new GeneralIndirectUpdate();
 
 	private abstract class IState<E extends FEntity, C extends FEntity> {
 
@@ -64,29 +63,9 @@ class ITreeUpdates {
 
 		abstract void addDescendantStates(C child, Set<IFrame> visitedFrames);
 
-		boolean updateSlotInSubTree() {
+		boolean updateInSubTree(boolean direct) {
 
-			if (entity == updateSlot) {
-
-				return true;
-			}
-
-			for (C child : children) {
-
-				IState<?, ?> childState = iStates.get(child);
-
-				if (childState != null && childState.updateSlotInSubTree()) {
-
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		boolean updatesInSubTree() {
-
-			if (childrenAdded() || childrenRemoved() || updatedSlotValueType()) {
+			if (updateHere(direct)) {
 
 				return true;
 			}
@@ -95,7 +74,7 @@ class ITreeUpdates {
 
 				IState<?, ?> childState = iStates.get(child);
 
-				if (childState == null || childState.updatesInSubTree()) {
+				if (childState == null || childState.updateInSubTree(direct)) {
 
 					return true;
 				}
@@ -142,6 +121,16 @@ class ITreeUpdates {
 		private List<C> getCurrentChildren() {
 
 			return getChildren(entity);
+		}
+
+		private boolean updateHere(boolean direct) {
+
+			return entity == updateSlot ? direct : (!direct && anyUpdateHere());
+		}
+
+		private boolean anyUpdateHere() {
+
+			return childrenAdded() || childrenRemoved() || updatedSlotValueType();
 		}
 
 		private boolean updatedSlotValueType() {
@@ -231,7 +220,7 @@ class ITreeUpdates {
 		}
 	}
 
-	private abstract class UpdateType {
+	private abstract class GeneralUpdate {
 
 		boolean show(INode node) {
 
@@ -245,41 +234,76 @@ class ITreeUpdates {
 				return true;
 			}
 
-			return node.collapsed() && showForHiddenSubTree(node);
+			return node.collapsed() && showForCollapsedSubTree(node);
 		}
 
-		abstract boolean showForExposedNode(INode node);
+		abstract boolean direct();
 
-		abstract boolean showForHiddenSubTree(INode node);
+		abstract boolean showForDefaultTypeExposedNode(INode node);
+
+		abstract boolean showForIFrameDisjunctExposedNode(INode node);
+
+		abstract boolean showForCollapsedNode(INode node);
+
+		abstract boolean showForNewHiddenSubTree(INode node);
+
+		private boolean showForExposedNode(INode node) {
+
+			return iFrameDisjunctNode(node)
+					? showForIFrameDisjunctExposedNode(node)
+					: showForDefaultTypeExposedNode(node);
+		}
+
+		private boolean showForCollapsedSubTree(INode node) {
+
+			return showForCollapsedNode(node) || showForHiddenSubTree(node);
+		}
+
+		private boolean showForHiddenSubTree(INode node) {
+
+			IState<?, ?> state = getState(node);
+
+			return state != null
+					? state.updateInSubTree(direct())
+					: showForNewHiddenSubTree(node);
+		}
+
+		private boolean iFrameDisjunctNode(INode node) {
+
+			return node.getIParent() instanceof DisjunctionIFrameValueNode;
+		}
 	}
 
-	private class DirectUpdate extends UpdateType {
+	private class DirectUpdate extends GeneralUpdate {
 
-		boolean showForExposedNode(INode node) {
+		boolean direct() {
 
-			if (valueAdded) {
-
-				if (childOfAddedValueNode(node)) {
-
-					return iFrameDisjunctNode(node) && lastChildNode(node);
-				}
-
-				return addedValueNode(node);
-			}
-
-			return updateSlot(node);
+			return true;
 		}
 
-		boolean showForHiddenSubTree(INode node) {
+		boolean showForDefaultTypeExposedNode(INode node) {
 
-			if (valueAdded && updateSlot(node)) {
+			return valueAdded ? addedValueNode(node) : updateSlotNode(node);
+		}
+
+		boolean showForIFrameDisjunctExposedNode(INode node) {
+
+			if (childOfAddedValueNode(node) && lastChildNode(node)) {
 
 				return true;
 			}
 
-			IState<?, ?> state = getState(node);
+			return showForDefaultTypeExposedNode(node);
+		}
 
-			return state != null && state.updateSlotInSubTree();
+		boolean showForCollapsedNode(INode node) {
+
+			return valueAdded && updateSlotNode(node);
+		}
+
+		boolean showForNewHiddenSubTree(INode node) {
+
+			return false;
 		}
 
 		private boolean childOfAddedValueNode(INode node) {
@@ -288,61 +312,40 @@ class ITreeUpdates {
 
 			return parent != null && addedValueNode(parent);
 		}
-
-		private boolean addedValueNode(INode node) {
-
-			return valueAdded && updateSlotChild(node) && lastChildNode(node);
-		}
-
-		private boolean updateSlotChild(INode node) {
-
-			INode parent = node.getIParent();
-
-			return parent != null && updateSlot(parent);
-		}
-
-		private boolean updateSlot(INode node) {
-
-			return node.getEntity() == updateSlot;
-		}
-
-		private boolean lastChildNode(INode child) {
-
-			List<INode> siblings = child.getIParent().getIChildren();
-
-			return siblings.indexOf(child) == (siblings.size() - 1);
-		}
 	}
 
-	private class GeneralIndirectUpdate extends UpdateType {
+	private class GeneralIndirectUpdate extends GeneralUpdate {
 
-		boolean showForExposedNode(INode node) {
+		boolean direct() {
 
-			if (iFrameDisjunctNode(node)) {
+			return false;
+		}
+
+		boolean showForDefaultTypeExposedNode(INode node) {
+
+			if (updateSlotNode(node) || addedValueNode(node)) {
 
 				return false;
 			}
 
 			IState<?, ?> state = getState(node);
 
-			if (state == null) {
-
-				return !defaultSlotNode(node);
-			}
-
-			return state.childrenRemoved() && !state.childrenAdded();
+			return state != null ? state.childrenRemoved() : !defaultSlotNode(node);
 		}
 
-		boolean showForHiddenSubTree(INode node) {
+		boolean showForIFrameDisjunctExposedNode(INode node) {
 
-			IState<?, ?> state = getState(node);
+			return false;
+		}
 
-			if (state == null) {
+		boolean showForCollapsedNode(INode node) {
 
-				return !node.getChildEntities().isEmpty();
-			}
+			return false;
+		}
 
-			return state.updatesInSubTree();
+		boolean showForNewHiddenSubTree(INode node) {
+
+			return hasDescendantValue(node.getEntity());
 		}
 
 		private boolean defaultSlotNode(INode node) {
@@ -354,20 +357,38 @@ class ITreeUpdates {
 
 			return false;
 		}
-	}
 
-	private class ValueTypeIndirectUpdate extends UpdateType {
+		private boolean hasDescendantValue(FEntity entity) {
 
-		boolean showForExposedNode(INode node) {
+			if (entity instanceof IFrame) {
 
-			IState<?, ?> state = getState(node);
+				return anySlotValues((IFrame)entity);
+			}
 
-			return state != null && state.updatedSlotValueType();
-		}
+			if (entity instanceof ISlot) {
 
-		boolean showForHiddenSubTree(INode node) {
+				return anyValues((ISlot)entity);
+			}
 
 			return false;
+		}
+
+		private boolean anySlotValues(IFrame frame) {
+
+			for (ISlot slot : frame.getSlots().asList()) {
+
+				if (anyValues(slot)) {
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private boolean anyValues(ISlot slot) {
+
+			return !slot.getValues().isEmpty();
 		}
 	}
 
@@ -402,7 +423,14 @@ class ITreeUpdates {
 
 	boolean showValueTypeIndirectUpdate(INode node) {
 
-		return valueTypeIndirectUpdate.show(node);
+		if (updateSlot == null) {
+
+			return false;
+		}
+
+		IState<?, ?> state = getState(node);
+
+		return state != null && state.updatedSlotValueType();
 	}
 
 	private void updateValues(IValue valueToAdd, IValue valueToRemove) {
@@ -439,8 +467,27 @@ class ITreeUpdates {
 		return iStates.get(node.getEntity());
 	}
 
-	private boolean iFrameDisjunctNode(INode node) {
+	private boolean updateSlotNode(INode node) {
 
-		return node.getIParent() instanceof DisjunctionIFrameValueNode;
+		return node.getEntity() == updateSlot;
+	}
+
+	private boolean addedValueNode(INode node) {
+
+		return valueAdded && updateSlotChild(node) && lastChildNode(node);
+	}
+
+	private boolean updateSlotChild(INode node) {
+
+		INode parent = node.getIParent();
+
+		return parent != null && updateSlotNode(parent);
+	}
+
+	private boolean lastChildNode(INode child) {
+
+		List<INode> siblings = child.getIParent().getIChildren();
+
+		return siblings.indexOf(child) == (siblings.size() - 1);
 	}
 }

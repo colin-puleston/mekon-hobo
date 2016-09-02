@@ -537,13 +537,17 @@ class HelpPanel extends JTabbedPane {
 					"Effect(s) of Latest User Action on Entity");
 
 				addRow(
-					"CFrame, IFrame, INumber, IString",
+					"CFrame, INumber, IString",
 					getValueLabelComponent(ITree.DIRECT_UPDATES_CLR),
 					"Value added by user");
 				addRow(
+					"IFrame",
+					getValueLabelComponent(ITree.DIRECT_UPDATES_CLR),
+					"Value added, or non-visible descendant(s) updated, by user");
+				addRow(
 					"ISlot",
 					getSlotLabelComponent(ITree.DIRECT_UPDATES_CLR, null),
-					"Value(s) removed by user");
+					"Value(s) removed, or non-visible descendant(s) updated, by user");
 
 				addRow(
 					"CFrame, INumber, IString",
@@ -561,6 +565,15 @@ class HelpPanel extends JTabbedPane {
 					"ISlot",
 					getSlotLabelComponent(null, ITree.INDIRECT_UPDATES_CLR),
 					"Value-type updated by model");
+
+				addRow(
+					"IFrame",
+					getValueLabelComponent(ITree.DIRECT_AND_INDIRECT_UPDATES_CLR),
+					"Value added by user and non-visible descendant(s) initialised by model");
+				addRow(
+					"ISlot",
+					getSlotLabelComponent(ITree.DIRECT_AND_INDIRECT_UPDATES_CLR, null),
+					"Value(s) removed by user and non-visible descendant(s) updated by model");
 			}
 		}
 
