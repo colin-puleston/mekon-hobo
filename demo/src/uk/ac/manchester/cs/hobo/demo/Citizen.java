@@ -51,9 +51,13 @@ public class Citizen extends CitizenshipObject {
 		}
 
 		public void onRemoved(Employment value) {
+
+			clearUp();
 		}
 
 		public void onCleared(List<Employment> values) {
+
+			clearUp();
 		}
 
 		EmploymentInitialiser() {
@@ -69,6 +73,11 @@ public class Citizen extends CitizenshipObject {
 		private void initialise(Employment value) {
 
 			new TaxUpdater(value.totalWeeklyPay);
+		}
+
+		private void clearUp() {
+
+			getTax().clear();
 		}
 	}
 
@@ -100,11 +109,6 @@ public class Citizen extends CitizenshipObject {
 		private int getTotalWeeklyPay() {
 
 			return totalWeeklyPay.isSet() ? totalWeeklyPay.get() : 0;
-		}
-
-		private DCell<DConcept<Tax>> getTax() {
-
-			return dEditor.getCell(tax);
 		}
 
 		private DConcept<Tax> getTaxConcept(int pay) {
@@ -139,5 +143,10 @@ public class Citizen extends CitizenshipObject {
 		dEditor = builder.getEditor();
 
 		builder.addInitialiser(new Initialiser());
+	}
+
+	private DCell<DConcept<Tax>> getTax() {
+
+		return dEditor.getCell(tax);
 	}
 }
