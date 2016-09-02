@@ -674,9 +674,9 @@ public class IFrame implements IEntity, IValue {
 		return new Editor();
 	}
 
-	void ensureAtomicType() {
+	void normaliseType() {
 
-		type = type.getAtomicFrame();
+		type = type.toNormalisedInstanceType();
 	}
 
 	IFrame copyEmpty(boolean freeInstance) {

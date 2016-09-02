@@ -208,6 +208,11 @@ class CExtension extends CExpression {
 		return extendedFrame.getIReasoner();
 	}
 
+	CFrame toNormalisedInstanceType() {
+
+		return extendedFrame;
+	}
+
 	String getExpressionTypeName() {
 
 		return EXPRESSION_TYPE_NAME;

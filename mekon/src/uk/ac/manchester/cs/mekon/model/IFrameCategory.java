@@ -42,7 +42,7 @@ public enum IFrameCategory {
 
 			type.initialiseAtomicInstance(instance);
 
-			instance.ensureAtomicType();
+			instance.normaliseType();
 			instance.completeInstantiation();
 
 			return instance;

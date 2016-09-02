@@ -336,7 +336,7 @@ public abstract class CFrame
 
 	/**
 	 * Provides the closest atomic-frame subsumer of this frame that
-	 * can be unambiguosly defined. This will depend on the type of
+	 * can be unambiguously defined. This will depend on the type of
 	 * this frame as follows:
 	 * <ul>
 	 *   <li><i>Atomic-frames:</i> The frame itself
@@ -647,6 +647,11 @@ public abstract class CFrame
 		pollListenersForExtended(extn);
 
 		return extn;
+	}
+
+	CFrame toNormalisedInstanceType() {
+
+		return this;
 	}
 
 	void initialiseAtomicInstance(IFrame instance) {
