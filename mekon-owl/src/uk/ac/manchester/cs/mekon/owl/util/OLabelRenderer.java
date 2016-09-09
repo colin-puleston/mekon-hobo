@@ -42,7 +42,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class OLabelRenderer {
 
-	static private IRI LABEL_ANNOTATION_IRI = OWLRDFVocabulary.RDFS_LABEL.getIRI();
+	static private final IRI LABEL_ANNOTATION_IRI = OWLRDFVocabulary.RDFS_LABEL.getIRI();
 
 	private OWLObjectRenderer renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 	private boolean allowCarriageReturns = true;
