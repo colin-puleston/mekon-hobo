@@ -476,6 +476,27 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Calculates an integer-value based on the current recursive
+	 * structure of the frame, suitable for use as a hash-code value for
+	 * any wrapper-class that is to use the {@link #equalStructures}
+	 * method in it's implementation of the general {@link Object#equals}
+	 * method.
+	 *
+	 * @return Suitable structure-based hash-code value
+	 */
+	public int structuralHashCode() {
+
+		int code = type.hashCode();
+
+		for (ISlot slot : slots.asList()) {
+
+			code += slot.structuralHashCode();
+		}
+
+		return code;
+	}
+
+	/**
 	 * Tests whether the type and the current slot-values of this
 	 * frame subsume those of another frame. For
 	 * <code>IFrame</code>-valued slots, value-subsumption testing
@@ -760,7 +781,6 @@ public class IFrame implements IEntity, IValue {
 				extender.addSlotValue(slotId, toExtensionSlotValue(value, visited));
 			}
 		}
-
 
 		return extender.extend();
 	}

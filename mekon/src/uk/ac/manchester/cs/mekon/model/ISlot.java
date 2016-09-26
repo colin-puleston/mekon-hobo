@@ -222,6 +222,18 @@ public class ISlot implements IEntity {
 		return new ISlotValuesEditor(values, true);
 	}
 
+	int structuralHashCode() {
+
+		int code = type.hashCode();
+
+		for (IValue value : values.asList()) {
+
+			code += getValueType().structuralHashCodeForValue(value);
+		}
+
+		return code;
+	}
+
 	private boolean querySlot() {
 
 		return container.getFunction().query();
