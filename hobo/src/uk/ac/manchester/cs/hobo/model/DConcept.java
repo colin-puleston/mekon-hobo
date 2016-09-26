@@ -124,7 +124,7 @@ public class DConcept<D extends DObject> {
 	 * subsumes the concept-level frame representing the other specified
 	 * concept.
 	 *
-	 * @param testSubsumer Concept to test as subsumed
+	 * @param testSubsumed Concept to test as subsumed
 	 * @return True if required subsumption holds
 	 */
 	public boolean subsumes(DConcept<?> testSubsumed) {
