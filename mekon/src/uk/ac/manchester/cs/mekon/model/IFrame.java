@@ -486,14 +486,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public int structuralHashCode() {
 
-		int code = type.hashCode();
-
-		for (ISlot slot : slots.asList()) {
-
-			code += slot.structuralHashCode();
-		}
-
-		return code;
+		return new IStructuralHashCode(this).getCode();
 	}
 
 	/**

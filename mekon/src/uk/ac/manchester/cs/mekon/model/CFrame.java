@@ -626,11 +626,6 @@ public abstract class CFrame
 		visitor.visit(this);
 	}
 
-	int structuralHashCodeForTypeValue(IFrame value) {
-
-		return value.structuralHashCode();
-	}
-
 	abstract IReasoner getIReasoner();
 
 	abstract CAtomicFrame asAtomicFrame();

@@ -254,16 +254,6 @@ public abstract class CValue<V extends IValue> implements FEntity {
 
 	abstract void acceptVisitor(CValueVisitor visitor) throws Exception;
 
-	int structuralHashCodeForValue(IValue value) {
-
-		return structuralHashCodeForTypeValue(castValue(value));
-	}
-
-	int structuralHashCodeForTypeValue(V value) {
-
-		return value.hashCode();
-	}
-
 	void registerReferencingSlot(CSlot slot) {
 
 		referencingSlots.add(slot);
