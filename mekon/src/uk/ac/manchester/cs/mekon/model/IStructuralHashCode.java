@@ -61,7 +61,7 @@ class IStructuralHashCode {
 
 	private void updateFor(ISlot slot) {
 
-		code += slot.getType().hashCode();
+		code += slot.getType().getIdentity().hashCode();
 
 		for (IValue value : slot.getValues().asList()) {
 
