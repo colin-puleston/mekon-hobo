@@ -103,29 +103,29 @@ public class OAnnotationReader {
 	}
 
 	/**
-	 * Retrieves a value for the specified entity, of any member of
-	 * the relevant set of annotation properties for which such a
-	 * value exists.
+	 * Retrieves all values for the specified entity, for any member of
+	 * the relevant set of annotation properties for which such values
+	 * exist.
 	 *
-	 * @param entity Entity whose annotation value is required
-	 * @return Relevant value, or null if not found
+	 * @param entity Entity whose annotation values are required
+	 * @return Relevant set of values
 	 */
-	public String getValueOrNull(OWLEntity entity) {
+	public List<String> getAllValues(OWLEntity entity) {
+
+		List<String> values = new ArrayList<String>();
 
 		for (OWLAnnotationProperty property : properties) {
 
-			String value = getValueOrNull(entity, property);
-
-			if (value != null) {
-
-				return value;
-			}
+			addValuesForProperty(values, entity, property);
 		}
 
-		return null;
+		return values;
 	}
 
-	private String getValueOrNull(OWLEntity entity, OWLAnnotationProperty property) {
+	private void addValuesForProperty(
+					List<String> values,
+					OWLEntity entity,
+					OWLAnnotationProperty property) {
 
 		for (OWLAnnotation anno : getAnnotations(entity, property)) {
 
@@ -135,12 +135,10 @@ public class OAnnotationReader {
 
 				if (value instanceof OWLLiteral) {
 
-					return ((OWLLiteral)value).getLiteral();
+					values.add(((OWLLiteral)value).getLiteral());
 				}
 			}
 		}
-
-		return null;
 	}
 
 	private Set<OWLAnnotation> getAnnotations(

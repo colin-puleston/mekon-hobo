@@ -76,8 +76,11 @@ public class OBEntityLabels {
 
 	String getLabel(OWLEntity entity) {
 
-		String label = annotationReader.getValueOrNull(entity);
+		for (String label : annotationReader.getAllValues(entity)) {
 
-		return label != null ? label : OIdentity.createDefaultLabel(entity);
+			return label;
+		}
+
+		return OIdentity.createDefaultLabel(entity);
 	}
 }

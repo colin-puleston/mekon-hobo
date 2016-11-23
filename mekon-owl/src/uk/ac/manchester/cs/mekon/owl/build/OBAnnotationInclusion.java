@@ -96,36 +96,34 @@ public class OBAnnotationInclusion {
 
 	void checkAdd(OModel model, OWLEntity owlEntity, CAnnotationsEditor editor) {
 
-		String owlValue = getOWLValueOrNull(model, owlEntity);
-
-		if (owlValue != null) {
-
-			editor.addAll(framesAnnotationId, toFramesValues(owlValue));
-		}
+		editor.addAll(framesAnnotationId, getValues(model, owlEntity));
 	}
 
-	private String getOWLValueOrNull(OModel model, OWLEntity owlEntity) {
+	private List<String> getValues(OModel model, OWLEntity owlEntity) {
 
-		return getAnnotationReader(model).getValueOrNull(owlEntity);
-	}
+		List<String> values = new ArrayList<String>();
 
-	private Set<String> toFramesValues(String owlValue) {
+		for (String owlValue : getOWLValues(model, owlEntity)) {
 
-		Set<String> values = new HashSet<String>();
+			for (String value : owlValueToList(owlValue)) {
 
-		for (String owlValueComponent : owlValueToList(owlValue)) {
-
-			values.add(toFramesValue(owlValueComponent));
+				values.add(resolveValue(value));
+			}
 		}
 
 		return values;
 	}
 
-	private String toFramesValue(String owlValue) {
+	private String resolveValue(String owlValue) {
 
 		String substitute = valueSubstitutions.get(owlValue);
 
 		return substitute != null ? substitute : owlValue;
+	}
+
+	private List<String> getOWLValues(OModel model, OWLEntity owlEntity) {
+
+		return getAnnotationReader(model).getAllValues(owlEntity);
 	}
 
 	private List<String> owlValueToList(String owlValue) {
