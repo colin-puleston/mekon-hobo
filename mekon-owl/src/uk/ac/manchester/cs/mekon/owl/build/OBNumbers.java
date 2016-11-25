@@ -271,6 +271,11 @@ class OBNumbers {
 		return null;
 	}
 
+	private OBNumber checkCreateNumber(OWLDataSomeValuesFrom restriction) {
+
+		return checkCreateNumber(restriction.getProperty(), restriction.getFiller());
+	}
+
 	private OBNumber checkCreateNumber(
 						OWLDataPropertyExpression property,
 						OWLDataRange range) {
@@ -278,11 +283,6 @@ class OBNumbers {
 		return model.indirectNumericProperty(property)
 				? checkCreateNumber(range)
 				: null;
-	}
-
-	private OBNumber checkCreateNumber(OWLDataSomeValuesFrom restriction) {
-
-		return checkCreateNumber(restriction.getFiller());
 	}
 
 	private OBNumber checkCreateNumber(OWLDatatypeRestriction restriction) {
