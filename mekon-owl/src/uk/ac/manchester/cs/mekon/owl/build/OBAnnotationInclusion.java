@@ -96,22 +96,13 @@ public class OBAnnotationInclusion {
 
 	void checkAdd(OModel model, OWLEntity owlEntity, CAnnotationsEditor editor) {
 
-		editor.addAll(framesAnnotationId, getValues(model, owlEntity));
-	}
-
-	private List<String> getValues(OModel model, OWLEntity owlEntity) {
-
-		List<String> values = new ArrayList<String>();
-
 		for (String owlValue : getOWLValues(model, owlEntity)) {
 
 			for (String value : owlValueToList(owlValue)) {
 
-				values.add(resolveValue(value));
+				editor.add(framesAnnotationId, resolveValue(value));
 			}
 		}
-
-		return values;
 	}
 
 	private String resolveValue(String owlValue) {

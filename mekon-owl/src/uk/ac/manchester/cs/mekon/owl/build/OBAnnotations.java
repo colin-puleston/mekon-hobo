@@ -87,8 +87,7 @@ public class OBAnnotations {
 
 		addInclusions(cEditor, owlEntity);
 
-		if (annotateFramesWithDefinitions
-			&& owlEntity instanceof OWLClass) {
+		if (annotateFramesWithDefinitions && owlEntity instanceof OWLClass) {
 
 			addCFrameDefinitions(cEditor, (OWLClass)owlEntity);
 		}
