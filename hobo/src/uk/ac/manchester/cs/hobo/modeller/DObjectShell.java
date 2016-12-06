@@ -97,6 +97,14 @@ public abstract class DObjectShell implements DObject {
 	/**
 	 * {@inheritDoc}
 	 */
+	public <D extends DObject> D copy(Class<D> dClass) {
+
+		return model.getDObject(frame.copy(), dClass);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public DModel getModel() {
 
 		return model;

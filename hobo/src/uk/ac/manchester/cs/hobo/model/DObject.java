@@ -47,6 +47,18 @@ import uk.ac.manchester.cs.hobo.*;
 public interface DObject {
 
 	/**
+	 * Copies this object by creating a deep copy of the associated
+	 * frame and all recursively referenced frames, and using the
+	 * copy to instantiate an OM of the specified type, which must
+	 * represent a valid type for the frame.
+	 *
+	 * @param dClass Required type of OM object to be created
+	 * @return Created OM object
+	 * @throws HAccessException if specified type is not valid
+	 */
+	public <D extends DObject> D copy(Class<D> dClass);
+
+	/**
 	 * Provides the model with which the object is associated.
 	 *
 	 * @return Model with which object is associated
