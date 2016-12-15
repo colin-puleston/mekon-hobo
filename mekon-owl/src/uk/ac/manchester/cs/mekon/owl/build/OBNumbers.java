@@ -45,7 +45,7 @@ class OBNumbers {
 
 	private class SupersProcessor {
 
-		private Set<OWLClass> concepts = new HashSet<OWLClass>();
+		final Set<OWLClass> concepts = new HashSet<OWLClass>();
 
 		OBNumber process(OWLClassExpression sup) {
 
@@ -60,11 +60,6 @@ class OBNumbers {
 			}
 
 			return null;
-		}
-
-		Set<OWLClass> getConcepts() {
-
-			return concepts;
 		}
 	}
 
@@ -238,7 +233,7 @@ class OBNumbers {
 			}
 		}
 
-		return checkExtractNumber(supersProcessor.getConcepts());
+		return checkExtractNumber(supersProcessor.concepts);
 	}
 
 	OBNumber checkCreateNumber(OWLDataRange range) {
@@ -273,16 +268,12 @@ class OBNumbers {
 
 	private OBNumber checkCreateNumber(OWLDataSomeValuesFrom restriction) {
 
-		return checkCreateNumber(restriction.getProperty(), restriction.getFiller());
-	}
+		if (model.indirectNumericProperty(restriction.getProperty())) {
 
-	private OBNumber checkCreateNumber(
-						OWLDataPropertyExpression property,
-						OWLDataRange range) {
+			return checkCreateNumber(restriction.getFiller());
+		}
 
-		return model.indirectNumericProperty(property)
-				? checkCreateNumber(range)
-				: null;
+		return null;
 	}
 
 	private OBNumber checkCreateNumber(OWLDatatypeRestriction restriction) {
