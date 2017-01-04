@@ -55,7 +55,7 @@ public class ISlotValues extends KList<IValue> {
 	 */
 	public List<IValue> getFixedValues() {
 
-		return new ArrayList<IValue>(fixedValues);
+		return filterForCurrentValues(fixedValues);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class ISlotValues extends KList<IValue> {
 	 */
 	public List<IValue> getAssertedValues() {
 
-		return new ArrayList<IValue>(assertedValues);
+		return filterForCurrentValues(assertedValues);
 	}
 
 	ISlotValues(ISlot slot) {
@@ -283,7 +283,7 @@ public class ISlotValues extends KList<IValue> {
 
 	private void removeConflictingAsserteds(IValue newAsserted) {
 
-		for (IValue asserted : getAssertedValues()) {
+		for (IValue asserted : copyAssertedValues()) {
 
 			if (conflictingAsserteds(newAsserted, asserted)) {
 
@@ -294,7 +294,7 @@ public class ISlotValues extends KList<IValue> {
 
 	private void removeRedundantAsserteds() {
 
-		for (IValue asserted : getAssertedValues()) {
+		for (IValue asserted : copyAssertedValues()) {
 
 			if (redundantAsserted(asserted)) {
 
@@ -315,7 +315,7 @@ public class ISlotValues extends KList<IValue> {
 
 	private void updateSlotValues() {
 
-		List<IValue> values = getAssertedValues();
+		List<IValue> values = copyAssertedValues();
 
 		for (IValue fixed : fixedValues) {
 
@@ -406,6 +406,20 @@ public class ISlotValues extends KList<IValue> {
 					"Invalid slot-value: " + value
 					+ ", for slot: " + slot
 					+ ": " + extraMsg);
+	}
+
+	private List<IValue> copyAssertedValues() {
+
+		return new ArrayList<IValue>(assertedValues);
+	}
+
+	private List<IValue> filterForCurrentValues(List<IValue> values) {
+
+		List<IValue> all = asList();
+
+		all.retainAll(values);
+
+		return all;
 	}
 
 	private Set<IValue> valuesAsSet(Collection<? extends IValue> values) {

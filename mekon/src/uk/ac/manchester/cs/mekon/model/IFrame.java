@@ -249,7 +249,6 @@ public class IFrame implements IEntity, IValue {
 	private class AutoUpdater implements KValuesListener<IValue> {
 
 		private ISlotValues slotValues;
-		private int assertedValueCount = 0;
 
 		public void onAdded(IValue value) {
 
@@ -274,21 +273,12 @@ public class IFrame implements IEntity, IValue {
 
 		private void checkAutoUpdates() {
 
-			if (autoUpdateEnabled && !autoUpdating && updateAssertedValueCount()) {
+			if (autoUpdateEnabled && !autoUpdating) {
 
 				autoUpdating = true;
 				performAutoUpdates();
 				autoUpdating = false;
 			}
-		}
-
-		private boolean updateAssertedValueCount() {
-
-			int previous = assertedValueCount;
-
-			assertedValueCount = slotValues.getAssertedValues().size();
-
-			return assertedValueCount != previous;
 		}
 	}
 
