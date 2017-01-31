@@ -439,7 +439,7 @@ public class ISlotValues extends KList<IValue> {
 
 	private boolean singleValued() {
 
-		return getCardinality().singleValued();
+		return getCardinality().singleValue();
 	}
 
 	private boolean conflictingAsserteds(IValue value1, IValue value2) {

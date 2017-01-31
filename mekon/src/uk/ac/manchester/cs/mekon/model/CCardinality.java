@@ -37,11 +37,6 @@ public enum CCardinality {
 	 */
 	SINGLE_VALUE {
 
-		boolean singleValued() {
-
-			return true;
-		}
-
 		boolean conflictingAsserteds(IValue value1, IValue value2) {
 
 			return true;
@@ -53,11 +48,6 @@ public enum CCardinality {
 	 * value-types duplicate or subsume one another.
 	 */
 	UNIQUE_TYPES {
-
-		boolean singleValued() {
-
-			return false;
-		}
 
 		boolean conflictingAsserteds(IValue value1, IValue value2) {
 
@@ -75,11 +65,6 @@ public enum CCardinality {
 	 * permitted.
 	 */
 	REPEATABLE_TYPES {
-
-		boolean singleValued() {
-
-			return false;
-		}
 
 		boolean conflictingAsserteds(IValue value1, IValue value2) {
 
@@ -160,8 +145,6 @@ public enum CCardinality {
 
 		return lessRestrictiveThan(other) ? this : other;
 	}
-
-	abstract boolean singleValued();
 
 	abstract boolean conflictingAsserteds(IValue value1, IValue value2);
 }
