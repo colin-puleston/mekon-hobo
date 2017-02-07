@@ -85,13 +85,16 @@ public class GTable extends JTable {
 
 			JLabel label = new JLabel();
 
-			if (value instanceof Icon) {
+			if (value != null) {
 
-				label.setIcon((Icon)value);
-			}
-			else {
+				if (value instanceof Icon) {
 
-				label.setText(value.toString());
+					label.setIcon((Icon)value);
+				}
+				else {
+
+					label.setText(value.toString());
+				}
 			}
 
 			return label;
