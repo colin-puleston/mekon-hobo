@@ -276,6 +276,11 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		return false;
 	}
 
+	void setAnnotations(CAnnotations annotations) {
+
+		this.annotations = annotations;
+	}
+
 	void remove() {
 
 		container.getSlots().remove(this);

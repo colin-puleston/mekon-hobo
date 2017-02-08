@@ -46,6 +46,8 @@ class ISlotSpec {
 
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 
+	private List<CAnnotations> annotations = new ArrayList<CAnnotations>();
+
 	ISlotSpec(IEditor iEditor, CIdentity identity) {
 
 		this.identity = identity;
@@ -60,6 +62,7 @@ class ISlotSpec {
 		intersectActivation(other.activation);
 		absorbEditability(other.editability);
 		intersectFixedValues(other.fixedValues);
+		absorbAnnotations(other.annotations);
 	}
 
 	void absorbSpec(ISlotSpec other) {
@@ -70,6 +73,7 @@ class ISlotSpec {
 		absorbActivation(other.activation);
 		absorbEditability(other.editability);
 		absorbFixedValues(other.fixedValues);
+		absorbAnnotations(other.annotations);
 	}
 
 	void absorbType(CSlot slotType) {
@@ -79,6 +83,7 @@ class ISlotSpec {
 		absorbActivation(slotType.getActivation());
 		absorbEditability(slotType.getEditability());
 		absorbValueType(slotType.getValueType());
+		absorbAnnotations(slotType.getAnnotations());
 	}
 
 	void absorbFixedValues(List<IValue> newFixedValues) {
@@ -130,14 +135,6 @@ class ISlotSpec {
 		source = source.combineWith(newSource);
 	}
 
-	private void absorbValueTypes(List<CValue<?>> newValueTypes) {
-
-		for (CValue<?> valueType : newValueTypes) {
-
-			absorbValueType(valueType);
-		}
-	}
-
 	private void absorbCardinality(CCardinality newCardinality) {
 
 		cardinality = cardinality.getMoreRestrictive(newCardinality);
@@ -153,12 +150,30 @@ class ISlotSpec {
 		editability = editability.getStrongest(newEditability);
 	}
 
+	private void absorbValueTypes(List<CValue<?>> newValueTypes) {
+
+		for (CValue<?> valueType : newValueTypes) {
+
+			absorbValueType(valueType);
+		}
+	}
+
 	private void absorbValueType(CValue<?> newValueType) {
 
 		if (!valueTypes.contains(newValueType)) {
 
 			valueTypes.add(newValueType);
 		}
+	}
+
+	private void absorbAnnotations(List<CAnnotations> newAnnotations) {
+
+		annotations.addAll(newAnnotations);
+	}
+
+	private void absorbAnnotations(CAnnotations newAnnotations) {
+
+		annotations.add(newAnnotations);
 	}
 
 	private void intersectCardinality(CCardinality newCardinality) {
@@ -185,7 +200,8 @@ class ISlotSpec {
 				valueType,
 				cardinality,
 				activation,
-				editability);
+				editability,
+				annotations);
 	}
 
 	private ISlotOps checkUpdateSlot(ISlot slot, CValue<?> valueType) {

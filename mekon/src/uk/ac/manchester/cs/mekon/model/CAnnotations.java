@@ -38,7 +38,21 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public class CAnnotations {
 
-	private CAnnotatable annotatedEntity;
+	static CAnnotations combineAll(
+							CAnnotatable target,
+							Collection<CAnnotations> sources) {
+
+		CAnnotations combined = new CAnnotations(target);
+
+		for (CAnnotations source : sources) {
+
+			combined.absorb(source);
+		}
+
+		return combined;
+	}
+
+	private CAnnotatable target;
 	private KListMap<Object, Object> annotations = new KListMap<Object, Object>();
 
 	private class Editor implements CAnnotationsEditor {
@@ -207,9 +221,9 @@ public class CAnnotations {
 		return values;
 	}
 
-	CAnnotations(CAnnotatable annotatedEntity) {
+	CAnnotations(CAnnotatable target) {
 
-		this.annotatedEntity = annotatedEntity;
+		this.target = target;
 	}
 
 	CAnnotationsEditor createEditor() {
@@ -217,11 +231,19 @@ public class CAnnotations {
 		return new Editor();
 	}
 
-	void addAll(CAnnotations source) {
+	private void absorb(CAnnotations source) {
 
-		for (Object key : source.annotations.keySet()) {
+		for (Object key : source.getKeys()) {
 
-			annotations.addAll(key, source.annotations.getList(key));
+			List<Object> startValues = getAll(key);
+
+			for (Object value : source.getAll(key)) {
+
+				if (!startValues.contains(value)) {
+
+					annotations.add(key, value);
+				}
+			}
 		}
 	}
 
@@ -241,7 +263,7 @@ public class CAnnotations {
 
 		throw new KAccessException(
 					"Expected exactly one annotation-value for key: "
-					+ key + " on entity: " + annotatedEntity
+					+ key + " on entity: " + target
 					+ ", found: " + values.size());
 	}
 
@@ -254,7 +276,7 @@ public class CAnnotations {
 
 		throw new KAccessException(
 					"Annotation-value not of expected type for key: "
-					+ key + " on entity: " + annotatedEntity
+					+ key + " on entity: " + target
 					+ " (expected type: " + valueType
 					+ " , found type: " + value.getClass() + ")");
 	}
