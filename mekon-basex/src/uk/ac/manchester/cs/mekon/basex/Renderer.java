@@ -68,10 +68,10 @@ abstract class Renderer {
 
 	String renderId(CIdentity identity) {
 
-		return checkEncodeIdentifier(identity.getIdentifier());
+		return encodeIdentifier(identity.getIdentifier());
 	}
 
-	private String checkEncodeIdentifier(String id) {
+	private String encodeIdentifier(String id) {
 
 		try {
 
@@ -79,7 +79,7 @@ abstract class Renderer {
 		}
 		catch (UnsupportedEncodingException e) {
 
-			throw new Error("Unexpected exception!");
+			throw new Error(e);
 		}
 	}
 }
