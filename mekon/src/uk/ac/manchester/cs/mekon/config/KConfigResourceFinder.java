@@ -160,7 +160,7 @@ public class KConfigResourceFinder {
 
 		File file = fileFinder.lookFor(path);
 
-		return file != null && expectedFileType(file) ? file : null;
+		return file != null && expectedFileType(file) ? normalise(file) : null;
 	}
 
 	private KConfigResourceFinder(boolean expectDir) {
@@ -173,5 +173,22 @@ public class KConfigResourceFinder {
 	private boolean expectedFileType(File file) {
 
 		return file.isDirectory() == expectDir;
+	}
+
+	private File normalise(File file) {
+
+		return file != null ? new File(normalisePath(file.getPath())) : null;
+	}
+
+	private String normalisePath(String path) {
+
+		try {
+
+			return URLDecoder.decode(path, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e) {
+
+			throw new Error(e);
+		}
 	}
 }
