@@ -33,6 +33,11 @@ public class GFrame extends JFrame {
 
 	static private final long serialVersionUID = -1;
 
+	public GFrame(String title) {
+
+		super(title);
+	}
+
 	public GFrame(String title, int width, int height) {
 
 		super(title);
