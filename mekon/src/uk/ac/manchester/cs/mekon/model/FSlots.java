@@ -38,6 +38,28 @@ import java.util.*;
 public abstract class FSlots<S> extends FIdentifiables<S> {
 
 	/**
+	 * Provides list of currently active slots (see {@link
+	 * CSlot#getActivation}.
+	 *
+	 * @return List of currently active slots
+	 */
+	public List<S> activesAsList() {
+
+		return activesAsCollection(new ArrayList<S>());
+	}
+
+	/**
+	 * Provides set of currently active slots (see {@link
+	 * CSlot#getActivation}.
+	 *
+	 * @return Set of currently active slots
+	 */
+	public Set<S> activesAsSet() {
+
+		return activesAsCollection(new HashSet<S>());
+	}
+
+	/**
 	 * Provides the identity for the property associated with the
 	 * specified slot.
 	 *
@@ -70,4 +92,17 @@ public abstract class FSlots<S> extends FIdentifiables<S> {
 	}
 
 	abstract CSlot getCSlot(S slot);
+
+	private <C extends Collection<S>> C activesAsCollection(C actives) {
+
+		for (S slot : asList()) {
+
+			if (getCSlot(slot).getActivation().active()) {
+
+				actives.add(slot);
+			}
+		}
+
+		return actives;
+	}
 }
