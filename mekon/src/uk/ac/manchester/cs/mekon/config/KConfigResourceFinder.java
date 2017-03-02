@@ -177,18 +177,6 @@ public class KConfigResourceFinder {
 
 	private File normalise(File file) {
 
-		return file != null ? new File(normalisePath(file.getPath())) : null;
-	}
-
-	private String normalisePath(String path) {
-
-		try {
-
-			return URLDecoder.decode(path, "UTF-8");
-		}
-		catch (UnsupportedEncodingException e) {
-
-			throw new Error(e);
-		}
+		return KFilePathNormaliser.normalise(file);
 	}
 }

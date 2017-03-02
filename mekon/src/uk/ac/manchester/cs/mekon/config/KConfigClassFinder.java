@@ -125,7 +125,7 @@ public class KConfigClassFinder<T> {
 
 			for (URL url: classloader.getURLs()) {
 
-				File jarFile = checkGetJarFile(url.getFile());
+				File jarFile = checkGetJarFile(toFilePath(url));
 
 				if (jarFile != null) {
 
@@ -304,5 +304,10 @@ public class KConfigClassFinder<T> {
 	private String extendPackageName(String packageName, String leafName) {
 
 		return packageName + "." + leafName;
+	}
+
+	private String toFilePath(URL url) {
+
+		return KFilePathNormaliser.normalise(url.getFile()).getPath();
 	}
 }
