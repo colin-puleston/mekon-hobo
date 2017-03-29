@@ -691,7 +691,7 @@ public class CNumber extends CDataValue<INumber> {
 
 	boolean validTypeValue(INumber value) {
 
-		return contains(value.getType());
+		return subsumes(value.getType());
 	}
 
 	String getDataValueDescription() {

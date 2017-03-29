@@ -39,7 +39,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  * special case where the frame will always have exactly one slot,
  * which will be a special "disjuncts-slot" whose value-type is the
  * same as the type of the disjunction-frame, and whose values, which
- * must be of category  {@link IFrameCategory#ATOMIC}, represent the
+ * must be of category {@link IFrameCategory#ATOMIC}, represent the
  * disjuncts for the disjunction.
  * <p>
  * The frame also has a function of either {@link
@@ -312,8 +312,8 @@ public class IFrame implements IEntity, IValue {
 	 * {@link CFrameCategory#ABSTRACT_EXTENSION}.
 	 *
 	 * @return Resulting representation of network
-	 * @throws KAccessException If network is not a tree, and hence
-	 * not convertible
+	 * @throws KAccessException If network is not a tree, and hence not
+	 * convertible
 	 */
 	public CFrame toExtension() {
 
@@ -423,6 +423,20 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Calculates an integer-value based on the current recursive
+	 * structure of the frame, suitable for use as a hash-code value for
+	 * any wrapper-class that is to use the {@link #equalStructures}
+	 * method in it's implementation of the general {@link Object#equals}
+	 * method.
+	 *
+	 * @return Suitable structure-based hash-code value
+	 */
+	public int structuralHashCode() {
+
+		return new IStructuralHashCode(this).getCode();
+	}
+
+	/**
 	 * Tests whether this value-entity is currently equivalent to
 	 * another value-entity, which will be the case if and only if
 	 * the other object is another <code>IFrame</code> with the same
@@ -466,20 +480,6 @@ public class IFrame implements IEntity, IValue {
 	public boolean equalStructures(IFrame other) {
 
 		return equals(other) || new IEqualityTester().match(this, other);
-	}
-
-	/**
-	 * Calculates an integer-value based on the current recursive
-	 * structure of the frame, suitable for use as a hash-code value for
-	 * any wrapper-class that is to use the {@link #equalStructures}
-	 * method in it's implementation of the general {@link Object#equals}
-	 * method.
-	 *
-	 * @return Suitable structure-based hash-code value
-	 */
-	public int structuralHashCode() {
-
-		return new IStructuralHashCode(this).getCode();
 	}
 
 	/**
