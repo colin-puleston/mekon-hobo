@@ -136,19 +136,6 @@ public class ISlotSpecsTest {
 	}
 
 	@Test
-	public void test_activationUpdates() {
-
-		sa.setActivation(CActivation.INACTIVE);
-
-		updateContainerSlots(ta);
-		testSlotActivation(CActivation.INACTIVE);
-		updateContainerSlots(ta, tb);
-		testSlotActivation(CActivation.ACTIVE);
-		updateContainerSlots(ta);
-		testSlotActivation(CActivation.INACTIVE);
-	}
-
-	@Test
 	public void test_editabilityInitialisation() {
 
 		sa.setEditability(CEditability.DEFAULT);

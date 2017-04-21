@@ -208,7 +208,7 @@ class ISlotSpec {
 
 		List<IValue> preValues = slot.getValues().asList();
 
-		if (checkUpdateSlotAttributes(slot, valueType)) {
+		if (checkUpdateValueType(slot, valueType)) {
 
 			if (valueUpdates(slot, preValues)) {
 
@@ -219,16 +219,6 @@ class ISlotSpec {
 		}
 
 		return ISlotOps.NONE;
-	}
-
-	private boolean checkUpdateSlotAttributes(ISlot slot, CValue<?> valueType) {
-
-		boolean updates = false;
-
-		updates |= checkUpdateValueType(slot, valueType);
-		updates |= checkUpdateActivation(slot);
-
-		return updates;
 	}
 
 	private boolean checkUpdateValueType(ISlot slot, CValue<?> valueType) {
