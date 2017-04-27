@@ -69,6 +69,27 @@ class CBuilderImpl implements CBuilder {
 		sectionBuilders.add(sectionBuilder);
 	}
 
+	public void removeSectionBuilder(CSectionBuilder sectionBuilder) {
+
+		sectionBuilders.remove(sectionBuilder);
+	}
+
+	public void removeSectionBuilders(Class<? extends CSectionBuilder> type) {
+
+		for (CSectionBuilder bldr : new ArrayList<CSectionBuilder>(sectionBuilders)) {
+
+			if (type.isAssignableFrom(bldr.getClass())) {
+
+				sectionBuilders.remove(bldr);
+			}
+		}
+	}
+
+	public void clearSectionBuilders() {
+
+		sectionBuilders.clear();
+	}
+
 	public CFrame addFrame(CIdentity identity, boolean hidden) {
 
 		if (getFrames().containsValueFor(identity)) {

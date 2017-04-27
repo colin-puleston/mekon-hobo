@@ -80,11 +80,30 @@ public interface CBuilder {
 	public void removeListener(CBuildListener listener);
 
 	/**
-	 * Adds a builder for a section of the model.
+	 * Adds a section-builder to build a section of the model.
 	 *
-	 * @param sectionBuilder Builder to build section of model
+	 * @param sectionBuilder Section-builder to add
 	 */
 	public void addSectionBuilder(CSectionBuilder sectionBuilder);
+
+	/**
+	 * Removes the specified section-builder, if present.
+	 *
+	 * @param sectionBuilder Section-builder to add
+	 */
+	public void removeSectionBuilder(CSectionBuilder sectionBuilder);
+
+	/**
+	 * Removes any section-builders of the specified type that have been added.
+	 *
+	 * @param sectionBuilderType Type of section-builder to remove
+	 */
+	public void removeSectionBuilders(Class<? extends CSectionBuilder> type);
+
+	/**
+	 * Removes all section-builders that have been added.
+	 */
+	public void clearSectionBuilders();
 
 	/**
 	 * Creates a new atomic-frame and adds it to the model.
