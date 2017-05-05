@@ -166,7 +166,7 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 		if (newDisjunct != null) {
 
-			List<CFrame> disjuncts = cFrame.asDisjuncts();
+			List<CFrame> disjuncts = new ArrayList<CFrame>(cFrame.asDisjuncts());
 
 			if (updateCFrameDisjuncts(disjuncts, newDisjunct)) {
 
@@ -201,7 +201,7 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 	private CFrame checkRemoveCFrameDisjunct(CFrame cFrame) {
 
-		List<CFrame> disjuncts = cFrame.asDisjuncts();
+		List<CFrame> disjuncts = new ArrayList<CFrame>(cFrame.asDisjuncts());
 		List<CFrame> oldDisjuncts = getCFrameRemovalSelections(disjuncts);
 
 		if (!oldDisjuncts.isEmpty()) {
