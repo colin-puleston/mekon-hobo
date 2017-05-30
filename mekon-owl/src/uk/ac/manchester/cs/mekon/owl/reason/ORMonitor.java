@@ -65,7 +65,7 @@ public abstract class ORMonitor {
 		monitors.remove(monitor);
 	}
 
-	static void pollForClassifierRequest(OModel model, OWLObject request) {
+	static synchronized void pollForClassifierRequest(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -73,7 +73,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForTypesInferred(OModel model, Set<OWLClass> types) {
+	static synchronized void pollForTypesInferred(OModel model, Set<OWLClass> types) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -81,7 +81,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForTypesSuggested(OModel model, Set<OWLClass> types) {
+	static synchronized void pollForTypesSuggested(OModel model, Set<OWLClass> types) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -89,7 +89,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForClassifierDone(OModel model, OWLObject request) {
+	static synchronized void pollForClassifierDone(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -97,7 +97,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForMatcherRequest(OModel model, OWLObject request) {
+	static synchronized void pollForMatcherRequest(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -105,7 +105,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForMatchesFound(OModel model, List<IRI> matches) {
+	static synchronized void pollForMatchesFound(OModel model, List<IRI> matches) {
 
 		for (ORMonitor monitor : monitors) {
 
@@ -113,7 +113,7 @@ public abstract class ORMonitor {
 		}
 	}
 
-	static void pollForMatcherDone(OModel model, OWLObject request) {
+	static synchronized void pollForMatcherDone(OModel model, OWLObject request) {
 
 		for (ORMonitor monitor : monitors) {
 

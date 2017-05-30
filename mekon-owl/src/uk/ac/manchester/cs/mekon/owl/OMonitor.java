@@ -63,7 +63,7 @@ public abstract class OMonitor {
 		monitors.remove(monitor);
 	}
 
-	static void pollForPreOntologyLoad(File owlFile) {
+	static synchronized void pollForPreOntologyLoad(File owlFile) {
 
 		for (OMonitor monitor : monitors) {
 
@@ -71,7 +71,7 @@ public abstract class OMonitor {
 		}
 	}
 
-	static void pollForOntologyLoaded() {
+	static synchronized void pollForOntologyLoaded() {
 
 		for (OMonitor monitor : monitors) {
 
@@ -79,7 +79,7 @@ public abstract class OMonitor {
 		}
 	}
 
-	static void pollForPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass) {
+	static synchronized void pollForPreReasonerLoad(Class<? extends OWLReasoner> reasonerClass) {
 
 		for (OMonitor monitor : monitors) {
 
@@ -87,7 +87,7 @@ public abstract class OMonitor {
 		}
 	}
 
-	static void pollForReasonerLoaded() {
+	static synchronized void pollForReasonerLoaded() {
 
 		for (OMonitor monitor : monitors) {
 
