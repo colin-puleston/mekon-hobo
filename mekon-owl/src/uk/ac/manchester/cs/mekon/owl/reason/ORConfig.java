@@ -49,7 +49,7 @@ abstract class ORConfig implements ORConfigVocab {
 
 		checkUpdateReasoning();
 		checkSetSemantics();
-		checkEnableLogging();
+		setLoggingMode();
 	}
 
 	abstract String getRootId();
@@ -137,22 +137,9 @@ abstract class ORConfig implements ORConfigVocab {
 		}
 	}
 
-	private void checkEnableLogging() {
+	private void setLoggingMode() {
 
-		ORLoggingMode mode = getLoggingMode();
-
-		if (mode != ORLoggingMode.DISABLED) {
-
-			ORLogger logger = getLogger();
-
-			logger.checkStart();
-
-			if (mode != ORLoggingMode.TIMES_ONLY) {
-
-				logger.setShowRequests(true);
-				logger.setShowResults(true);
-			}
-		}
+		getLogger().setLogging(getLoggingMode());
 	}
 
 	private Class<? extends OWLReasonerFactory> getReasonerClassOrNull() {

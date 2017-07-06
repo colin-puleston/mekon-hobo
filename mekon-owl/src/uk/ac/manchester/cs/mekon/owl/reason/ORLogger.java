@@ -54,6 +54,28 @@ public abstract class ORLogger extends ORMonitor {
 	private OActionLogger actions = new OActionLogger();
 
 	/**
+	 * Sets logging in accordance with the specified logging-mode.
+	 *
+	 * @param mode Required logging-mode
+	 */
+	public void setLogging(ORLoggingMode mode) {
+
+		if (mode == ORLoggingMode.DISABLED) {
+
+			stop();
+		}
+		else {
+
+			checkStart();
+		}
+
+		boolean fullLogging = mode == ORLoggingMode.FULL;
+
+		setShowRequests(fullLogging);
+		setShowResults(fullLogging);
+	}
+
+	/**
 	 * Used to specify whether requests should be printed out.
 	 * By default they will not be printed out.
 	 *

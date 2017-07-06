@@ -99,7 +99,7 @@ class OModelConfig implements OModelConfigVocab {
 
 	private OReasoningType getReasoningType() {
 
-		 return configNode.getEnum(
+		return configNode.getEnum(
 			 		REASONING_TYPE_ATTR,
 			 		OReasoningType.class,
 			 		OReasoningType.DL);
