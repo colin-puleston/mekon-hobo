@@ -37,15 +37,15 @@ import java.net.*;
 public class KConfigResourceFinder {
 
 	/**
-	 * Constructs finder for locating files relative to some
-	 * location on the class-path.
+	 * Finder for locating files relative to some location on the
+	 * class-path.
 	 */
 	static public final KConfigResourceFinder FILES
 						= new KConfigResourceFinder(false);
 
 	/**
-	 * Constructs finder for locating directories relative to some
-	 * location on the class-path.
+	 * Finder for locating directories relative to some location on
+	 * the class-path.
 	 */
 	static public final KConfigResourceFinder DIRS
 						= new KConfigResourceFinder(true);
@@ -129,14 +129,14 @@ public class KConfigResourceFinder {
 	 */
 	public File getResource(String path) {
 
-		File file = lookForResource(path);
+		File file = fileFinder.lookFor(path);
 
-		if (file == null) {
+		if (file == null || !file.exists()) {
 
 			throw new KSystemConfigException("Cannot find resource: " + path);
 		}
 
-		if (!expectedFileType(file)) {
+		if (!requiredResourceType(file)) {
 
 			throw new KSystemConfigException(
 							"Resource is not a "
@@ -160,7 +160,7 @@ public class KConfigResourceFinder {
 
 		File file = fileFinder.lookFor(path);
 
-		return file != null && expectedFileType(file) ? normalise(file) : null;
+		return file != null && requiredResource(file) ? normalise(file) : null;
 	}
 
 	private KConfigResourceFinder(boolean expectDir) {
@@ -170,7 +170,12 @@ public class KConfigResourceFinder {
 		this.expectDir = expectDir;
 	}
 
-	private boolean expectedFileType(File file) {
+	private boolean requiredResource(File file) {
+
+		return file.exists() && requiredResourceType(file);
+	}
+
+	private boolean requiredResourceType(File file) {
 
 		return file.isDirectory() == expectDir;
 	}
