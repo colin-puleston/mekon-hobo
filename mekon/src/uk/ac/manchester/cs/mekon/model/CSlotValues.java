@@ -97,7 +97,7 @@ public class CSlotValues {
 	 */
 	public List<CIdentity> getSlotIdentities() {
 
-		return slotIds;
+		return new ArrayList<CIdentity>(slotIds);
 	}
 
 	/**
