@@ -102,7 +102,7 @@ abstract class DFieldTest {
 
 		for (IValue gotValue : got) {
 
-			assertTrue(err, gotValue.coincidesWith(e.next()));
+			assertTrue(err, gotValue.equalsStructure(e.next()));
 		}
 	}
 }
