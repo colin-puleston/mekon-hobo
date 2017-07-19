@@ -423,85 +423,6 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
-	 * Calculates an integer-value based on the current recursive
-	 * structure of the frame, suitable for use as a hash-code value for
-	 * any wrapper-class that is to use the {@link #equalStructures}
-	 * method in it's implementation of the general {@link Object#equals}
-	 * method.
-	 *
-	 * @return Suitable structure-based hash-code value
-	 */
-	public int structuralHashCode() {
-
-		return new IStructuralHashCode(this).getCode();
-	}
-
-	/**
-	 * Tests whether this value-entity is currently equivalent to
-	 * another value-entity, which will be the case if and only if
-	 * the other object is another <code>IFrame</code> with the same
-	 * recursive structure as this one, as determined via the
-	 * {@link #equalStructures} method.
-	 *
-	 * @param other Other value-entity to test for coincidence
-	 * @return True if value-entities currently coincidence
-	 */
-	public boolean coincidesWith(IValue other) {
-
-		return other instanceof IFrame && equalStructures((IFrame)other);
-	}
-
-	/**
-	 * Tests whether this value-entity subsumes another specified
-	 * value-entity, which will be the case if and only if the other
-	 * value-entity is another <code>IFrame</code> object that has
-	 * no slots, and whose type if subsumed by the type of this one.
-	 *
-	 * @param other Other value-entity to test for subsumption
-	 * @return True if this value-entity subsumes other value-entity
-	 */
-	public boolean subsumes(IValue other) {
-
-		return other instanceof IFrame && subsumesFrame((IFrame)other);
-	}
-
-	/**
-	 * Tests whether the type and the current slot-values (in matching
-	 * order) of this frame are identical to those of another frame.
-	 * For <code>IFrame</code>-valued slots, value-match testing
-	 * involves a recursive invocation of the same frame-match testing
-	 * operation. Otherwise value-matching is determinied via the
-	 * standard <code>equals</code> methods on the value objects.
-	 *
-	 * @param other Frame to test for structure-matching against this
-	 * one
-	 * @return true if structures match
-	 */
-	public boolean equalStructures(IFrame other) {
-
-		return equals(other) || new IEqualityTester().match(this, other);
-	}
-
-	/**
-	 * Tests whether the type and the current slot-values of this
-	 * frame subsume those of another frame. For
-	 * <code>IFrame</code>-valued slots, value-subsumption testing
-	 * involves a recursive invocation of the same frame-subsumption
-	 * testing operation. Otherwise value-matching is determinied via
-	 * the standard {@link CValue#subsumes} method on the value-type
-	 * objects.
-	 *
-	 * @param other Frame to test for structure-subsumption by this
-	 * one
-	 * @return true if this frames structure subsumes that of other
-	 * frame
-	 */
-	public boolean subsumesStructure(IFrame other) {
-
-		return equals(other) || new ISubsumptionTester().match(this, other);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	public String toString() {
@@ -529,6 +450,86 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Stipulates that this frame is abstract if and only if the
+	 * concept-level frame representing it's type is a {@link
+	 * CFrameCategory#disjunction} frame.
+	 *
+	 * @return True if type-frame is a disjunction
+	 */
+	public boolean abstractValue() {
+
+		return disjunctionType();
+	}
+
+	/**
+	 * Tests whether this value-entity subsumes another specified
+	 * value-entity, which will be the case if and only if the other
+	 * value-entity is another <code>IFrame</code> object that has
+	 * no slots, and whose type if subsumed by the type of this one.
+	 *
+	 * @param other Other value-entity to test for subsumption
+	 * @return True if this value-entity subsumes other value-entity
+	 */
+	public boolean subsumes(IValue other) {
+
+		return other instanceof IFrame && subsumesFrame((IFrame)other);
+	}
+
+	/**
+	 * Tests whether this value-entity currently has a structure that
+	 * is equivalent to another value-entity, which will be the case if
+	 * and only if the other value-entity is another <code>IFrame</code>
+	 * object, and both the type and the oredered set of current
+	 * slot-values of this frame are identical to those of the other
+	 * frame. For <code>IFrame</code>-valued slots, value-match testing
+	 * involves a recursive invocation of the same frame-match testing
+	 * operation. Otherwise value-matching is determinied via the
+	 * standard <code>equals</code> methods on the value objects.
+	 *
+	 * @param other Other value-entity to test for structure-matching
+	 * with this one
+	 * @return true if structures match
+	 */
+	public boolean equalsStructure(IValue other) {
+
+		return testStructure(other, true);
+	}
+
+	/**
+	 * Tests whether this value-entity currently has a structure that
+	 * subsumes that of another value-entity, which will be the case if
+	 * and only if the other value-entity is another <code>IFrame</code>
+	 * object, and the both the type and the current slot-values of this
+	 * frame subsume those of the other frame. For
+	 * <code>IFrame</code>-valued slots, value-subsumption testing involves
+	 * a recursive invocation of the same frame-subsumption testing
+	 * operation. Otherwise value-matching is determinied via the standard
+	 * {@link CValue#subsumes} method on the value-type objects.
+	 *
+	 * @param other Other value-entity to test for structure-subsumption
+	 * with this one
+	 * @return true if structures match
+	 */
+	public boolean subsumesStructure(IValue other) {
+
+		return testStructure(other, false);
+	}
+
+	/**
+	 * Calculates an integer-value based on the current recursive
+	 * structure of the frame, suitable for use as a hash-code value for
+	 * any wrapper-class that is to use the {@link #equalsStructure}
+	 * method in it's implementation of the general {@link Object#equals}
+	 * method.
+	 *
+	 * @return Suitable structure-based hash-code value
+	 */
+	public int structuralHashCode() {
+
+		return new IStructuralHashCode(this).getCode();
+	}
+
+	/**
 	 * Provides the frame-category.
 	 *
 	 * @return Frame-category.
@@ -546,18 +547,6 @@ public class IFrame implements IEntity, IValue {
 	public IFrameFunction getFunction() {
 
 		return function;
-	}
-
-	/**
-	 * Stipulates that this frame is abstract if and only if the
-	 * concept-level frame representing it's type is a {@link
-	 * CFrameCategory#disjunction} frame.
-	 *
-	 * @return True if type-frame is a disjunction
-	 */
-	public boolean abstractValue() {
-
-		return disjunctionType();
 	}
 
 	/**
@@ -793,6 +782,28 @@ public class IFrame implements IEntity, IValue {
 					+ "to extension-CFrame: "
 					+ "Cycle detected at: " + this);
 
+	}
+
+	private boolean testStructure(IValue other, boolean equality) {
+
+		return other instanceof IFrame && testStructure((IFrame)other, equality);
+	}
+
+	private boolean testStructure(IFrame other, boolean equality) {
+
+		if (other instanceof IFrame) {
+
+			return equals(other) || getStructureTester(equality).match(this, other);
+		}
+
+		return false;
+	}
+
+	private IStructureTester getStructureTester(boolean equality) {
+
+		return equality
+				? new IStructureEqualityTester()
+				: new IStructureSubsumptionTester();
 	}
 
 	private void validateAsReferencedFrame(IFrame referencer) {

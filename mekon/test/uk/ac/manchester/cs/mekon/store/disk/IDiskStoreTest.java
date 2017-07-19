@@ -75,7 +75,7 @@ public class IDiskStoreTest {
 
 		public void add(IFrame instance, CIdentity identity) {
 
-			assertTrue(instance.equalStructures(this.instance));
+			assertTrue(instance.equalsStructure(this.instance));
 		}
 
 		public void remove(CIdentity identity) {
@@ -85,15 +85,15 @@ public class IDiskStoreTest {
 
 		public IMatches match(IFrame query) {
 
-			assertTrue(query.equalStructures(this.query));
+			assertTrue(query.equalsStructure(this.query));
 
 			return IMatches.unranked(getInstanceIdentityAsList());
 		}
 
 		public boolean matches(IFrame query, IFrame instance) {
 
-			assertTrue(query.equalStructures(this.query));
-			assertTrue(instance.equalStructures(this.instance));
+			assertTrue(query.equalsStructure(this.query));
+			assertTrue(instance.equalsStructure(this.instance));
 
 			return true;
 		}
@@ -255,7 +255,7 @@ public class IDiskStoreTest {
 
 		IFrame retrieved = store.get(id);
 
-		assertTrue(retrieved.equalStructures(original));
+		assertTrue(retrieved.equalsStructure(original));
 		assertFalse(retrieved == original);
 	}
 

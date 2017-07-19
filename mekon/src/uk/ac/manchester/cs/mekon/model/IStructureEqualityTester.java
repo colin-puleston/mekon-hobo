@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class IEqualityTester extends IStructureTester {
+class IStructureEqualityTester extends IStructureTester {
 
 	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
 

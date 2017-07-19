@@ -97,7 +97,7 @@ public class ISlotValues extends KList<IValue> {
 					Collection<? extends IValue> values,
 					boolean privilegedAccess) {
 
-		values = getMostSpecifics(values);
+		values = getMostSpecifics(values, false);
 
 		List<IValue> additions = addToAsserteds(values, privilegedAccess);
 
@@ -167,7 +167,7 @@ public class ISlotValues extends KList<IValue> {
 				Collection<? extends IValue> values,
 				boolean privilegedAccess) {
 
-		values = getMostSpecifics(values);
+		values = getMostSpecifics(values, false);
 
 		if (!valuesAsSet(values).equals(valuesAsSet(assertedValues))) {
 
@@ -184,9 +184,9 @@ public class ISlotValues extends KList<IValue> {
 
 	boolean updateFixedValues(Collection<? extends IValue> values) {
 
-		values = getMostSpecifics(values);
+		values = getMostSpecifics(values, true);
 
-		if (!fixedValues.equals(values)) {
+		if (!matchesFixedValues(values)) {
 
 			validateValues(values, true);
 			validateFixedValueCombination(values);
@@ -237,8 +237,7 @@ public class ISlotValues extends KList<IValue> {
 
 		validateValue(asserted, privilegedAccess);
 
-		if (!assertedValues.contains(asserted)
-			&& !redundantAsserted(asserted)) {
+		if (!assertedValues.contains(asserted) && !redundantAsserted(asserted)) {
 
 			removeConflictingAsserteds(asserted);
 			assertedValues.add(asserted);
@@ -354,6 +353,11 @@ public class ISlotValues extends KList<IValue> {
 		return false;
 	}
 
+	private boolean matchesFixedValues(Collection<? extends IValue> values) {
+
+		return IValueStructuresMatcher.elementsMatch(fixedValues, values);
+	}
+
 	private boolean validTypeValue(IValue value) {
 
 		return getValueType().validValue(value);
@@ -427,9 +431,15 @@ public class ISlotValues extends KList<IValue> {
 		return new HashSet<IValue>(values);
 	}
 
-	private List<IValue> getMostSpecifics(Collection<? extends IValue> values) {
+	private List<IValue> getMostSpecifics(
+							Collection<? extends IValue> values,
+							boolean structureSubsumption) {
 
-		return new MostSpecificIValues(getValueType(), values).get();
+		return new MostSpecificIValues(
+						getValueType(),
+						values,
+						structureSubsumption)
+							.get();
 	}
 
 	private CValue<?> getValueType() {

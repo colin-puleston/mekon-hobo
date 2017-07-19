@@ -79,7 +79,7 @@ public class IInstanceSerialiseTest {
 		IFrame original = createTestInstance();
 		IFrame reconstituted = parse(render(original));
 
-		assertTrue(reconstituted.equalStructures(original));
+		assertTrue(reconstituted.equalsStructure(original));
 	}
 
 	private XDocument render(IFrame frame) {

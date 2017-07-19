@@ -34,6 +34,8 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 class MostSpecificIValues {
 
 	private Collection<? extends IValue> values;
+	private boolean structureSubsumption;
+
 	private Finder finder;
 
 	private abstract class Finder {
@@ -59,18 +61,25 @@ class MostSpecificIValues {
 
 			for (IValue value : new ArrayList<IValue>(mostSpecifics)) {
 
-				if (value.subsumes(newValue)) {
+				if (testSubsumption(value, newValue)) {
 
 					return;
 				}
 
-				if (newValue.subsumes(value)) {
+				if (testSubsumption(newValue, value)) {
 
 					mostSpecifics.remove(value);
 				}
 			}
 
 			mostSpecifics.add(newValue);
+		}
+
+		private boolean testSubsumption(IValue subsumer, IValue subsumed) {
+
+			return structureSubsumption
+					? subsumer.subsumesStructure(subsumed)
+					: subsumer.subsumes(subsumed);
 		}
 	}
 
@@ -111,9 +120,13 @@ class MostSpecificIValues {
 		}
 	}
 
-	MostSpecificIValues(CValue<?> valueType, Collection<? extends IValue> values) {
+	MostSpecificIValues(
+		CValue<?> valueType,
+		Collection<? extends IValue> values,
+		boolean structureSubsumption) {
 
 		this.values = values;
+		this.structureSubsumption = structureSubsumption;
 
 		finder = getFinder(valueType);
 	}

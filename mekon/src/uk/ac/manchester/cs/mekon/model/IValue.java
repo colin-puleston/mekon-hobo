@@ -69,19 +69,6 @@ public interface IValue extends FEntity {
 	public boolean abstractValue();
 
 	/**
-	 * Tests whether this value-entity is currently equivalent to
-	 * another value-entity. For immutable value-entities the result
-	 * will be fixed, and will be the same as the result of the
-	 * {@link #equals} method, whereas for mutable entities the
-	 * result will vary, being dependent on the current configurations
-	 * of the respective value-entities.
-	 *
-	 * @param other Other value-entity to test for coincidence
-	 * @return True if value-entities currently coincidence
-	 */
-	public boolean coincidesWith(IValue other);
-
-	/**
 	 * Tests whether this value-entity subsumes another specified
 	 * value-entity. This will be the case if and only if the
 	 * value-entities are equal, or if this value-entity represents
@@ -91,5 +78,47 @@ public interface IValue extends FEntity {
 	 * @param other Other value-entity to test for subsumption
 	 * @return True if this value-entity subsumes other value-entity
 	 */
-	public abstract boolean subsumes(IValue other);
+	public boolean subsumes(IValue other);
+
+	/**
+	 * Tests whether this value-entity currently has a structure that
+	 * is equivalent to another value-entity. For immutable
+	 * value-entities the result will be fixed, and will be the same
+	 * as the result of the {@link #equals} method, whereas for mutable
+	 * entities the result will vary, being dependent on the current
+	 * configurations of the respective value-entities.
+	 *
+	 * @param other Other value-entity to test for structure-matching
+	 * with this one
+	 * @return true if structures match
+	 */
+	public boolean equalsStructure(IValue other);
+
+	/**
+	 * Tests whether this value-entity currently has a structure that
+	 * subsumes that of another value-entity. For immutable
+	 * value-entities the result will be fixed, and will be the same
+	 * as the result of the {@link #subsumes} method, whereas for
+	 * mutable entities the result will vary, being dependent on the
+	 * current configurations of the respective value-entities.
+	 *
+	 * @param other Other value-entity to test for structure-subsumption
+	 * with this one
+	 * @return true if structures match
+	 */
+	public boolean subsumesStructure(IValue other);
+
+	/**
+	 * Calculates an integer-value based on the current structure of the
+	 * value-entity, suitable for use as a hash-code value for
+	 * any wrapper-class that is to use the {@link #equalsStructure}
+	 * method in it's implementation of the general {@link Object#equals}
+	 * method. For immutable value-entities the result will be fixed, and
+	 * will be the same as the result of the {@link #hashCode} method,
+	 * whereas for mutable entities the result will vary, being dependent
+	 * on the current configurations of the respective value-entities.
+	 *
+	 * @return Suitable structure-based hash-code value
+	 */
+	public int structuralHashCode();
 }

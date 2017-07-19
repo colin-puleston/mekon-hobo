@@ -95,23 +95,9 @@ public class IString extends IDataValue {
 	}
 
 	/**
-	 * Tests whether this value-entity is currently equivalent to
-	 * another value-entity, which, since <code>IString</code>
-	 * objects are immutable, will be the same as the result of the
-	 * {@link #equals} method.
-	 *
-	 * @param other Other value-entity to test for coincidence
-	 * @return True if value-entities currently coincidence
-	 */
-	public boolean coincidesWith(IValue other) {
-
-		return equals(other);
-	}
-
-	/**
 	 * Tests whether this value-entity subsumes another specified
 	 * value-entity, which will be the case if and only if the
-	 * value-entities equal, as determined via the {@link #equals}
+	 * value-entities are equal, as determined via the {@link #equals}
 	 * method.
 	 *
 	 * @param other Other value-entity to test for subsumption

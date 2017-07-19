@@ -93,6 +93,48 @@ public class INumber extends IDataValue {
 	}
 
 	/**
+	 * Provides the most specific numeric value-type of which
+	 * this numeric-value is an instance, which will be one
+	 * where both the minimum and maximum values are equal to
+	 * the value represented by this numeric-value.
+	 *
+	 * @return Relevant numeric value-type
+	 */
+	public CNumber getType() {
+
+		return typeNumber.getValueType();
+	}
+
+	/**
+	 * Stipulates that this frame is abstract if and only if it is
+	 * an {@link #indefinite} number.
+	 *
+	 * @return True if indefinite number
+	 */
+	public boolean abstractValue() {
+
+		return indefinite();
+	}
+
+	/**
+	 * Tests whether this value-entity subsumes another specified
+	 * value-entity, which will be the case if and only if the other
+	 * value-entity is another <code>INumber</code> object, whose
+	 * type object (see {@link #getType}) is subsumed by that of this
+	 * one. If this is a definite number then subsumption is equivalent
+	 * to equality, whereas if it is an indefinite number subsumption
+	 * holds if the number represented by the other object (definite or
+	 * indefinite) falls within the relevant range.
+	 *
+	 * @param other Other value-entity to test for subsumption
+	 * @return True if this value-entity subsumes other value-entity
+	 */
+	public boolean subsumes(IValue other) {
+
+		return other instanceof INumber && subsumesNumber((INumber)other);
+	}
+
+	/**
 	 * Specifies whether this object represents an infinite value
 	 * (will be true if and only if the object equals either
 	 * {@link #PLUS_INFINITY} or {@link #MINUS_INFINITY}).
@@ -125,62 +167,6 @@ public class INumber extends IDataValue {
 	public boolean definite() {
 
 		return !infinite() && !indefinite();
-	}
-
-	/**
-	 * Provides the most specific numeric value-type of which
-	 * this numeric-value is an instance, which will be one
-	 * where both the minimum and maximum values are equal to
-	 * the value represented by this numeric-value.
-	 *
-	 * @return Relevant numeric value-type
-	 */
-	public CNumber getType() {
-
-		return typeNumber.getValueType();
-	}
-
-	/**
-	 * Stipulates that this frame is abstract if and only if it is
-	 * an {@link #indefinite} number.
-	 *
-	 * @return True if indefinite number
-	 */
-	public boolean abstractValue() {
-
-		return indefinite();
-	}
-
-	/**
-	 * Tests whether this value-entity is currently equivalent to
-	 * another value-entity, which, since <code>INumber</code>
-	 * objects are immutable, will be the same as the result of the
-	 * {@link #equals} method.
-	 *
-	 * @param other Other value-entity to test for coincidence
-	 * @return True if value-entities currently coincidence
-	 */
-	public boolean coincidesWith(IValue other) {
-
-		return equals(other);
-	}
-
-	/**
-	 * Tests whether this value-entity subsumes another specified
-	 * value-entity, which will be the case if and only if the other
-	 * value-entity is another <code>INumber</code> object, whose
-	 * type object (see {@link #getType}) is subsumed by that of this
-	 * one. If this is a definite number then subsumption is equivalent
-	 * to equality, whereas if it is an indefinite number subsumption
-	 * holds if the number represented by the other object (definite or
-	 * indefinite) falls within the relevant range.
-	 *
-	 * @param other Other value-entity to test for subsumption
-	 * @return True if this value-entity subsumes other value-entity
-	 */
-	public boolean subsumes(IValue other) {
-
-		return other instanceof INumber && subsumesNumber((INumber)other);
 	}
 
 	/**

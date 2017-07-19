@@ -238,20 +238,6 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Tests whether this value-entity is currently equivalent to
-	 * another value-entity, which, since <code>CFrame</code> objects
-	 * are immutable, will be the same as the result of the
-	 * {@link #equals} method.
-	 *
-	 * @param other Other value-entity to test for coincidence
-	 * @return True if value-entities currently coincidence
-	 */
-	public boolean coincidesWith(IValue other) {
-
-		return equals(other);
-	}
-
-	/**
 	 * Tests whether this value-type-entity subsumes another
 	 * specified value-type-entity, which will be the case if and
 	 * only if the other value-type-entity is another
@@ -314,6 +300,48 @@ public abstract class CFrame
 	public boolean subsumedBy(CFrame testSubsumer) {
 
 		return testSubsumer.subsumes(this);
+	}
+	/**
+	 * Tests whether this value-entity currently has a structure that
+	 * is equivalent to another value-entity, which since concept-level
+	 * frames  are always immutable will be the same as the result of
+	 * the {@link #equals} method.
+	 *
+	 * @param other Other value-entity to test for structure-subsumption
+	 * with this one
+	 * @return true if values are equal
+	 */
+	public boolean equalsStructure(IValue other) {
+
+		return equals(other);
+	}
+
+	/**
+	 * Tests whether this value-entity currently has a structure that
+	 * subsumes that of another value-entity, which since concept-level
+	 * frames are always immutable will be the same as the result of the
+	 * {@link #subsumes} method.
+	 *
+	 * @param other Other value-entity to test for structure-subsumption
+	 * with this one
+	 * @return true if structures match
+	 */
+	public boolean subsumesStructure(IValue other) {
+
+		return subsumes(other);
+	}
+
+	/**
+	 * Calculates an integer-value based on the current recursive
+	 * structure of the value-entity, which since concept-level frames
+	 * are always immutable will be the same as the result of the
+	 * {@link #hashCode} method.
+	 *
+	 * @return Suitable structure-based hash-code value
+	 */
+	public int structuralHashCode() {
+
+		return hashCode();
 	}
 
 	/**

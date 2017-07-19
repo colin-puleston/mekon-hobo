@@ -153,7 +153,7 @@ public class IFrameTest {
 	private void testSubsumption(IFrame subsumer, IFrame subsumed) {
 
 		assertFalse(subsumer == subsumed);
-		assertFalse(subsumer.equalStructures(subsumed));
+		assertFalse(subsumer.equalsStructure(subsumed));
 
 		assertTrue(subsumer.subsumesStructure(subsumed));
 		assertFalse(subsumed.subsumesStructure(subsumer));
@@ -164,8 +164,8 @@ public class IFrameTest {
 	private void testCopied(IFrame original, IFrame copy) {
 
 		assertFalse(original == copy);
-		assertTrue(copy.equalStructures(original));
-		assertTrue(original.equalStructures(copy));
+		assertTrue(copy.equalsStructure(original));
+		assertTrue(original.equalsStructure(copy));
 		assertTrue(original.structuralHashCode() == copy.structuralHashCode());
 	}
 
