@@ -54,6 +54,22 @@ class XMLDocument {
 		}
 	}
 
+	static Document read(InputStream input) {
+
+		try {
+
+			return createBuilder().parse(input);
+		}
+		catch (IOException e) {
+
+			throw new XDocumentException(e);
+		}
+		catch (SAXException e) {
+
+			throw new XDocumentException(e);
+		}
+	}
+
 	static void write(Document document, File file) {
 
 		FileOutputStream output = openStream(file);

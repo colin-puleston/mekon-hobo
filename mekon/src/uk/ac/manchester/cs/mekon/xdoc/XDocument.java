@@ -44,12 +44,24 @@ public class XDocument {
 	 *
 	 * @param file Path of relevant file
 	 * @throws XDocumentException if file does not exist or if it
-	 * contains  incorrectly specified information, either
+	 * contains incorrectly specified information, either
 	 * syntactically or semantically
 	 */
 	public XDocument(File file) {
 
 		this(XMLDocument.read(file));
+	}
+
+	/**
+	 * Constructor that loads document from an input-stream.
+	 *
+	 * @param inputStream Relevant input-stream
+	 * @throws XDocumentException if input-stream contains incorrectly
+	 * specified information, either syntactically or semantically
+	 */
+	public XDocument(InputStream inputStream) {
+
+		this(XMLDocument.read(inputStream));
 	}
 
 	/**
