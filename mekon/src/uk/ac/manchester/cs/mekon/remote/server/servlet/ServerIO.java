@@ -39,10 +39,12 @@ class ServerIO {
 
 	private ServerActionSpec actionSpec;
 
-	ServerIO(ServletRequest request, ServletResponse response) {
+	ServerIO(ServletRequest request, ServletResponse response) throws ServletException {
 
 		this.request = request;
 		this.response = response;
+
+		actionSpec = new ServerActionSpec(request);
 	}
 
 	ServerActionSpec getActionSpec() {

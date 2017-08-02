@@ -33,9 +33,9 @@ public enum RActionAspect {
 
 	/**
 	 */
-	ACTION_CATEGORY,
+	CATEGORY,
 
 	/**
 	 */
-	ACTION_TYPE
+	TYPE
 }

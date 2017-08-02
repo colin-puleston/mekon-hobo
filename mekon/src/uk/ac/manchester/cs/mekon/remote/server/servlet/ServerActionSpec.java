@@ -36,10 +36,10 @@ class ServerActionSpec {
 	private String category;
 	private String type;
 
-	ServerActionSpec(String category, String type) {
+	ServerActionSpec(ServletRequest request) throws ServletException {
 
-		this.category = category;
-		this.type = type;
+		category = getAspect(request, RActionAspect.CATEGORY);
+		type = getAspect(request, RActionAspect.TYPE);
 	}
 
 	boolean hasCategory(RActionCategory category) {
@@ -57,5 +57,22 @@ class ServerActionSpec {
 		return new ServletException(
 						"Unrecognised server action: "
 						+ "\"" + category + ":" + type + "\"");
+	}
+
+	private String getAspect(
+						ServletRequest request,
+						RActionAspect aspect)
+						throws ServletException {
+
+		String param = request.getParameter(aspect.name());
+
+		if (param != null) {
+
+			return param;
+		}
+
+		throw new ServletException(
+						"Server action parameter not specified: "
+						+ "\"" + aspect + "\"");
 	}
 }
