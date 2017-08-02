@@ -51,8 +51,8 @@ public class RUpdates {
 
 	/**
 	 * Adds a mapping between a frame from the master version of the
-	 * frame/slot network as held on the client, and the corresponding frame
-	 * from the updated version of the network.
+	 * frame/slot network as held on the client, and the corresponding
+	 * frame from the updated version of the network.
 	 *
 	 * @param master Frame from master version of network
 	 * @param update Frame from updated version of network
