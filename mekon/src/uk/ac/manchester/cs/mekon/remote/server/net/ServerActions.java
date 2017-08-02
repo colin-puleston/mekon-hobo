@@ -22,70 +22,59 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.servlet;
+package uk.ac.manchester.cs.mekon.remote.server.net;
 
 import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 
-import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-class ServerIO {
+abstract class ServerActions {
 
-	private ServletRequest request;
-	private ServletResponse response;
+	private List<Action<?>> actions = new ArrayList<Action<?>>();
 
-	private ServerActionSpec actionSpec;
+	abstract class Action<T extends Enum<T>> {
 
-	ServerIO(ServletRequest request, ServletResponse response) throws ServletException {
+		Action() {
 
-		this.request = request;
-		this.response = response;
+			actions.add(this);
+		}
 
-		actionSpec = new ServerActionSpec(request);
+		abstract T getType();
+
+		abstract void perform(ServerIO io) throws ServletException, IOException;
 	}
 
-	ServerActionSpec getActionSpec() {
+	boolean checkPerformAction(ServerIO io) throws ServletException, IOException {
 
-		return actionSpec;
+		ServerActionSpec spec = io.getActionSpec();
+
+		if (spec.hasCategory(getCategory())) {
+
+			findAction(spec).perform(io);
+
+			return true;
+		}
+
+		return false;
 	}
 
-	XDocument acceptDocument() throws ServletException, IOException {
+	abstract RActionCategory getCategory();
 
-		try {
+	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
 
-			return new XDocument(request.getInputStream());
+		for (Action<?> action : actions) {
+
+			if (spec.hasType(action.getType())) {
+
+				return action;
+			}
 		}
-		catch (Throwable t) {
 
-			throw new ServletException(t);
-		}
-	}
-
-	void returnDocument(XDocument document) throws ServletException, IOException {
-
-		try {
-
-			document.writeToOutput(response.getOutputStream());
-		}
-		catch (Throwable t) {
-
-			throw new ServletException(t);
-		}
-	}
-
-	void checkReturnDocument(XDocument document) throws ServletException, IOException {
-
-		if (document != null) {
-
-			returnDocument(document);
-		}
-	}
-
-	void returnBoolean(Boolean value) throws IOException {
-
-		response.getWriter().append(value.toString());
+		throw spec.getBadSpecException();
 	}
 }

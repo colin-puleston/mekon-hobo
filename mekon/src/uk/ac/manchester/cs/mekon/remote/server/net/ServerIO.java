@@ -22,59 +22,70 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.servlet;
+package uk.ac.manchester.cs.mekon.remote.server.net;
 
 import java.io.*;
-import java.util.*;
 import javax.servlet.*;
 
-import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class ServerActions {
+class ServerIO {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	private ServletRequest request;
+	private ServletResponse response;
 
-	abstract class Action<T extends Enum<T>> {
+	private ServerActionSpec actionSpec;
 
-		Action() {
+	ServerIO(ServletRequest request, ServletResponse response) throws ServletException {
 
-			actions.add(this);
-		}
+		this.request = request;
+		this.response = response;
 
-		abstract T getType();
-
-		abstract void perform(ServerIO io) throws ServletException, IOException;
+		actionSpec = new ServerActionSpec(request);
 	}
 
-	boolean checkPerformAction(ServerIO io) throws ServletException, IOException {
+	ServerActionSpec getActionSpec() {
 
-		ServerActionSpec spec = io.getActionSpec();
-
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(io);
-
-			return true;
-		}
-
-		return false;
+		return actionSpec;
 	}
 
-	abstract RActionCategory getCategory();
+	XDocument acceptDocument() throws ServletException, IOException {
 
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
+		try {
 
-		for (Action<?> action : actions) {
-
-			if (spec.hasType(action.getType())) {
-
-				return action;
-			}
+			return new XDocument(request.getInputStream());
 		}
+		catch (Throwable t) {
 
-		throw spec.getBadSpecException();
+			throw new ServletException(t);
+		}
+	}
+
+	void returnDocument(XDocument document) throws ServletException, IOException {
+
+		try {
+
+			document.writeToOutput(response.getOutputStream());
+		}
+		catch (Throwable t) {
+
+			throw new ServletException(t);
+		}
+	}
+
+	void checkReturnDocument(XDocument document) throws ServletException, IOException {
+
+		if (document != null) {
+
+			returnDocument(document);
+		}
+	}
+
+	void returnBoolean(Boolean value) throws IOException {
+
+		response.getWriter().append(value.toString());
 	}
 }
