@@ -92,7 +92,7 @@ public class IValuesUpdate {
 	 * Specifies whether this object represents a slot-value(s)-removal
 	 * operation.
 	 *
-	 * @return True if slot-value-addition operation
+	 * @return True if slot-value(s)-removal operation
 	 */
 	public boolean removal() {
 

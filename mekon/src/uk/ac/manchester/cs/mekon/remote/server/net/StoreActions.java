@@ -40,14 +40,14 @@ class StoreActions extends ServerActions {
 
 	private XServerStore store;
 
-	private abstract class StoreAction extends Action<RStoreAction> {
+	private abstract class StoreAction extends Action<RStoreActionType> {
 	}
 
 	private class AddAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.ADD;
+			return RStoreActionType.ADD;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -58,9 +58,9 @@ class StoreActions extends ServerActions {
 
 	private class RemoveAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.REMOVE;
+			return RStoreActionType.REMOVE;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -71,9 +71,9 @@ class StoreActions extends ServerActions {
 
 	private class ClearsAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.CLEAR;
+			return RStoreActionType.CLEAR;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -84,9 +84,9 @@ class StoreActions extends ServerActions {
 
 	private class ContainsAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.CONTAINS;
+			return RStoreActionType.CONTAINS;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -97,9 +97,9 @@ class StoreActions extends ServerActions {
 
 	private class GetAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.GET;
+			return RStoreActionType.GET;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -110,9 +110,9 @@ class StoreActions extends ServerActions {
 
 	private class GetIdsAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.GET_IDS;
+			return RStoreActionType.GET_IDS;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -123,9 +123,9 @@ class StoreActions extends ServerActions {
 
 	private class MatchAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.MATCH;
+			return RStoreActionType.MATCH;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -136,9 +136,9 @@ class StoreActions extends ServerActions {
 
 	private class MatchesAction extends StoreAction {
 
-		RStoreAction getType() {
+		RStoreActionType getType() {
 
-			return RStoreAction.MATCHES;
+			return RStoreActionType.MATCHES;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {

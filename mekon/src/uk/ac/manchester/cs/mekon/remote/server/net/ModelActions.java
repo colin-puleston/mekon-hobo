@@ -38,14 +38,14 @@ class ModelActions extends ServerActions {
 
 	private XServerModel model;
 
-	private abstract class ModelAction extends Action<RModelAction> {
+	private abstract class ModelAction extends Action<RModelActionType> {
 	}
 
 	private class GetFrameHierarchyAction extends ModelAction {
 
-		RModelAction getType() {
+		RModelActionType getType() {
 
-			return RModelAction.GET_FRAME_HIERARCHY;
+			return RModelActionType.GET_FRAME_HIERARCHY;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -56,9 +56,9 @@ class ModelActions extends ServerActions {
 
 	private class InitialiseAssertionAction extends ModelAction {
 
-		RModelAction getType() {
+		RModelActionType getType() {
 
-			return RModelAction.INITIALISE_ASSERTION;
+			return RModelActionType.INITIALISE_ASSERTION;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -69,9 +69,9 @@ class ModelActions extends ServerActions {
 
 	private class InitialiseQueryAction extends ModelAction {
 
-		RModelAction getType() {
+		RModelActionType getType() {
 
-			return RModelAction.INITIALISE_QUERY;
+			return RModelActionType.INITIALISE_QUERY;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -82,9 +82,9 @@ class ModelActions extends ServerActions {
 
 	private class UpdateAssertionAction extends ModelAction {
 
-		RModelAction getType() {
+		RModelActionType getType() {
 
-			return RModelAction.UPDATE_ASSERTION;
+			return RModelActionType.UPDATE_ASSERTION;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {
@@ -95,9 +95,9 @@ class ModelActions extends ServerActions {
 
 	private class UpdateQueryAction extends ModelAction {
 
-		RModelAction getType() {
+		RModelActionType getType() {
 
-			return RModelAction.UPDATE_QUERY;
+			return RModelActionType.UPDATE_QUERY;
 		}
 
 		void perform(ServerIO io) throws ServletException, IOException {

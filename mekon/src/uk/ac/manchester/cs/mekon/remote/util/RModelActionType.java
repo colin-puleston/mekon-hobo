@@ -29,7 +29,7 @@ package uk.ac.manchester.cs.mekon.remote.util;
  *
  * @author Colin Puleston
  */
-public enum RModelAction {
+public enum RModelActionType {
 
 	/**
 	 */

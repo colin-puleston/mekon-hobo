@@ -138,7 +138,7 @@ public abstract class RClientModel {
 	private class IFrameUpdater implements KValuesListener<IValue> {
 
 		private ISlot slot;
-		private InstanceUpdateAction postRemovalsAction;
+		private InstanceUpdateAction removalsAction;
 
 		public void onAdded(IValue value) {
 
@@ -147,19 +147,19 @@ public abstract class RClientModel {
 
 		public void onRemoved(IValue value) {
 
-			checkUpdate(postRemovalsAction);
+			checkUpdate(removalsAction);
 		}
 
 		public void onCleared(List<IValue> values) {
 
-			checkUpdate(postRemovalsAction);
+			checkUpdate(removalsAction);
 		}
 
 		IFrameUpdater(ISlot slot) {
 
 			this.slot = slot;
 
-			postRemovalsAction = createRemovalsAction();
+			removalsAction = createRemovalsAction();
 
 			slot.getValues().addValuesListener(this);
 		}
