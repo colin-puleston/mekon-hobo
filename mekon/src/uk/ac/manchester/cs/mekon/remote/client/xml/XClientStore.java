@@ -40,83 +40,71 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  *
  * @author Colin Puleston
  */
-public abstract class XClientStore implements IStore {
+public abstract class XClientStore {
 
 	private CModel cModel;
+	private IStore iStore = new XClientIStore();
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 	private IInstanceParser assertionParser;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public CModel getModel() {
+	private class XClientIStore implements IStore {
 
-		return cModel;
+		public CModel getModel() {
+
+			return cModel;
+		}
+
+		public IFrame add(IFrame instance, CIdentity identity) {
+
+			return parseAssertionOrNull(addOnServer(render(instance), render(identity)));
+		}
+
+		public boolean remove(CIdentity identity) {
+
+			return removeOnServer(render(identity));
+		}
+
+		public boolean clear() {
+
+			return clearOnServer();
+		}
+
+		public boolean contains(CIdentity identity) {
+
+			return containsOnServer(render(identity));
+		}
+
+		public IFrame get(CIdentity identity) {
+
+			return parseAssertionOrNull(getOnServer(render(identity)));
+		}
+
+		public List<CIdentity> getAllIdentities() {
+
+			return parseIdentities(getAllIdentitiesOnServer());
+		}
+
+		public IMatches match(IFrame query) {
+
+			return parseMatches(matchOnServer(render(query)));
+		}
+
+		public boolean matches(IFrame query, IFrame instance) {
+
+			return matchesOnServer(render(query), render(instance));
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public IFrame add(IFrame instance, CIdentity identity) {
-
-		return parseAssertionOrNull(addOnServer(render(instance), render(identity)));
-	}
 
 	/**
-	 * {@inheritDoc}
+	 * Provides the client MEKON frames store.
+	 *
+	 * @return Client MEKON frames store
 	 */
-	public boolean remove(CIdentity identity) {
+	public IStore getIStore() {
 
-		return removeOnServer(render(identity));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean clear() {
-
-		return clearOnServer();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean contains(CIdentity identity) {
-
-		return containsOnServer(render(identity));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public IFrame get(CIdentity identity) {
-
-		return parseAssertionOrNull(getOnServer(render(identity)));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public List<CIdentity> getAllIdentities() {
-
-		return parseIdentities(getAllIdentitiesOnServer());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public IMatches match(IFrame query) {
-
-		return parseMatches(matchOnServer(render(query)));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean matches(IFrame query, IFrame instance) {
-
-		return matchesOnServer(render(query), render(instance));
+		return iStore;
 	}
 
 	/**
@@ -127,7 +115,6 @@ public abstract class XClientStore implements IStore {
 	protected XClientStore(XClientModel model) {
 
 		cModel = model.getCModel();
-
 		assertionParser = new IInstanceParser(cModel, IFrameFunction.ASSERTION);
 	}
 
