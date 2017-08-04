@@ -82,9 +82,9 @@ public class MekonRemoteTestModelExplorer {
 			return serverStore.remove(identity);
 		}
 
-		protected void clearOnServer() {
+		protected boolean clearOnServer() {
 
-			serverStore.clear();
+			return serverStore.clear();
 		}
 
 		protected boolean containsOnServer(XDocument identity) {
