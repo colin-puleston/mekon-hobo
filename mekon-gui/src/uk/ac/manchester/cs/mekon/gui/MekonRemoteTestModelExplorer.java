@@ -112,9 +112,9 @@ public class MekonRemoteTestModelExplorer {
 			return serverStore.matches(query, instance);
 		}
 
-		LocalXClientStore(XServerStore serverStore) {
+		LocalXClientStore(XClientModel clientModel, XServerStore serverStore) {
 
-			super(serverStore.getStore().getModel());
+			super(clientModel);
 
 			this.serverStore = serverStore;
 		}
@@ -129,30 +129,25 @@ public class MekonRemoteTestModelExplorer {
 
 	static public void create(CModel model, CBuilder builder) {
 
-		new MekonModelExplorer(createRemoteModel(model, builder));
+		XServerModel serverModel = new XServerModel(model, builder);
+		XClientModel clientModel = new LocalXClientModel(serverModel);
+
+		new MekonModelExplorer(clientModel.getCModel());
 	}
 
 	static public void create(CModel model, CBuilder builder, IStore store) {
 
-		new MekonModelExplorer(
-				createRemoteModel(model, builder),
-				createRemoteStore(store));
+		XServerModel serverModel = new XServerModel(model, builder);
+		XServerStore serverStore = new XServerStore(store);
+
+		XClientModel clientModel = new LocalXClientModel(serverModel);
+		XClientStore clientStore = new LocalXClientStore(clientModel, serverStore);
+
+		new MekonModelExplorer(clientModel.getCModel(), clientStore);
 	}
 
 	static private IStore createStore(CBuilder builder) {
 
 		return IDiskStoreManager.getBuilder(builder).build();
-	}
-
-	static private CModel createRemoteModel(CModel model, CBuilder builder) {
-
-		XServerModel serverModel = new XServerModel(model, builder);
-
-		return new LocalXClientModel(serverModel).getModel();
-	}
-
-	static private IStore createRemoteStore(IStore store) {
-
-		return new LocalXClientStore(new XServerStore(store));
 	}
 }
