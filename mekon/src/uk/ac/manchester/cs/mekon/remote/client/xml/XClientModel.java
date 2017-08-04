@@ -239,7 +239,7 @@ public abstract class XClientModel extends RClientModel {
 
 		super(hierarchy);
 
-		assertionParser = new IInstanceParser(getModel(), IFrameFunction.ASSERTION);
-		queryParser = new IInstanceParser(getModel(), IFrameFunction.QUERY);
+		assertionParser = new IInstanceParser(getCModel(), IFrameFunction.ASSERTION);
+		queryParser = new IInstanceParser(getCModel(), IFrameFunction.QUERY);
 	}
 }

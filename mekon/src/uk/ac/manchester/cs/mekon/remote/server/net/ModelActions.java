@@ -48,9 +48,9 @@ class ModelActions extends ServerActions {
 			return RModelActionType.GET_FRAME_HIERARCHY;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnDocument(model.getCFrameHierarchy());
+			link.writeDocument(model.getCFrameHierarchy());
 		}
 	}
 
@@ -61,9 +61,9 @@ class ModelActions extends ServerActions {
 			return RModelActionType.INITIALISE_ASSERTION;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnDocument(model.initialiseAssertion(io.acceptDocument()));
+			link.writeDocument(model.initialiseAssertion(link.readDocument()));
 		}
 	}
 
@@ -74,9 +74,9 @@ class ModelActions extends ServerActions {
 			return RModelActionType.INITIALISE_QUERY;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnDocument(model.updateQuery(io.acceptDocument()));
+			link.writeDocument(model.updateQuery(link.readDocument()));
 		}
 	}
 
@@ -87,9 +87,9 @@ class ModelActions extends ServerActions {
 			return RModelActionType.UPDATE_ASSERTION;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnDocument(model.updateAssertion(io.acceptDocument()));
+			link.writeDocument(model.updateAssertion(link.readDocument()));
 		}
 	}
 
@@ -100,9 +100,9 @@ class ModelActions extends ServerActions {
 			return RModelActionType.UPDATE_QUERY;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnDocument(model.initialiseQuery(io.acceptDocument()));
+			link.writeDocument(model.initialiseQuery(link.readDocument()));
 		}
 	}
 

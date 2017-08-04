@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 public class XServerModel {
 
-	private CModel model;
+	private CModel cModel;
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
@@ -58,15 +58,15 @@ public class XServerModel {
 	/**
 	 * Constructor.
 	 *
-	 * @param model frames model
+	 * @param cModel frames model
 	 * @param cBuilder Builder that was used to create frames model
 	 */
-	public XServerModel(CModel model, CBuilder cBuilder) {
+	public XServerModel(CModel cModel, CBuilder cBuilder) {
 
-		this.model = model;
+		this.cModel = cModel;
 
-		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
-		queryParser = new IInstanceParser(model, IFrameFunction.QUERY);
+		assertionParser = new IInstanceParser(cModel, IFrameFunction.ASSERTION);
+		queryParser = new IInstanceParser(cModel, IFrameFunction.QUERY);
 
 		cBuilder.setAutoUpdate(true);
 	}
@@ -76,9 +76,9 @@ public class XServerModel {
 	 *
 	 * @return Server-side version of frames model
 	 */
-	public CModel getModel() {
+	public CModel getCModel() {
 
-		return model;
+		return cModel;
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class XServerModel {
 
 		renderer.setVisibilityFilter(CVisibility.EXPOSED);
 
-		return renderer.render(model.getRootFrame());
+		return renderer.render(cModel.getRootFrame());
 	}
 
 	/**

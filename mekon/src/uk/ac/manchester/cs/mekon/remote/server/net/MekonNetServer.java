@@ -25,56 +25,62 @@
 package uk.ac.manchester.cs.mekon.remote.server.net;
 
 import java.io.*;
-import java.util.*;
 import javax.servlet.*;
 
-import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon.manage.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
+ * XXX.
+ *
  * @author Colin Puleston
  */
-abstract class ServerActions {
+public class MekonNetServer extends GenericServlet {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	static private final long serialVersionUID = -1;
 
-	abstract class Action<T extends Enum<T>> {
+	private ModelActions modelActions = null;
+	private StoreActions storeActions = null;
 
-		Action() {
+	/**
+	 */
+	public void init() throws ServletException {
 
-			actions.add(this);
-		}
+		CBuilder cBuilder = CManager.createBuilder();
 
-		abstract T getType();
-
-		abstract void perform(NetLink link) throws ServletException, IOException;
+		modelActions = new ModelActions(cBuilder);
+		storeActions = new StoreActions(cBuilder);
 	}
 
-	boolean checkPerformAction(NetLink link) throws ServletException, IOException {
+	/**
+	 */
+	public void service(
+					ServletRequest request,
+					ServletResponse response)
+					throws ServletException, IOException {
 
-		ServerActionSpec spec = link.getActionSpec();
+		response.setContentType("text/html");
 
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(link);
-
-			return true;
-		}
-
-		return false;
+		performAction(new NetLink(request, response));
 	}
 
-	abstract RActionCategory getCategory();
+	/**
+	 */
+	public void destroy() {
+	}
 
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
+	private void performAction(NetLink link) throws ServletException, IOException {
 
-		for (Action<?> action : actions) {
+		if (modelActions.checkPerformAction(link)) {
 
-			if (spec.hasType(action.getType())) {
-
-				return action;
-			}
+			return;
 		}
 
-		throw spec.getBadSpecException();
+		if (storeActions.checkPerformAction(link)) {
+
+			return;
+		}
+
+		throw link.getActionSpec().getBadSpecException();
 	}
 }

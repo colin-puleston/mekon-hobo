@@ -22,59 +22,38 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
+package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class ServerActions {
+class NetClientModel extends XClientModel {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	protected XDocument initialiseAssertionOnServer(XDocument assertionDoc) {
 
-	abstract class Action<T extends Enum<T>> {
-
-		Action() {
-
-			actions.add(this);
-		}
-
-		abstract T getType();
-
-		abstract void perform(NetLink link) throws ServletException, IOException;
+		return null;
 	}
 
-	boolean checkPerformAction(NetLink link) throws ServletException, IOException {
+	protected XDocument initialiseQueryOnServer(XDocument queryDoc) {
 
-		ServerActionSpec spec = link.getActionSpec();
-
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(link);
-
-			return true;
-		}
-
-		return false;
+		return null;
 	}
 
-	abstract RActionCategory getCategory();
+	protected XDocument updateAssertionOnServer(XDocument assertionDoc) {
 
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
+		return null;
+	}
 
-		for (Action<?> action : actions) {
+	protected XDocument updateQueryOnServer(XDocument queryDoc) {
 
-			if (spec.hasType(action.getType())) {
+		return null;
+	}
 
-				return action;
-			}
-		}
+	NetClientModel(XDocument frameHierarchyDoc) {
 
-		throw spec.getBadSpecException();
+		super(frameHierarchyDoc);
 	}
 }

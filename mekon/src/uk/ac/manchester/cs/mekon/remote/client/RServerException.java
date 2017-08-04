@@ -22,59 +22,35 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
-
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon.remote.util.*;
+package uk.ac.manchester.cs.mekon.remote.client;
 
 /**
+ * Exception thrown when an error has occured on the server
+ * during a MEKON remote access operation.
+ *
  * @author Colin Puleston
  */
-abstract class ServerActions {
+public class RServerException extends RuntimeException {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	static private final long serialVersionUID = -1;
 
-	abstract class Action<T extends Enum<T>> {
+	/**
+	 * Constructor.
+	 *
+	 * @param exception Wrapped exception
+	 */
+	public RServerException(Exception exception) {
 
-		Action() {
-
-			actions.add(this);
-		}
-
-		abstract T getType();
-
-		abstract void perform(NetLink link) throws ServletException, IOException;
+		super(exception);
 	}
 
-	boolean checkPerformAction(NetLink link) throws ServletException, IOException {
+	/**
+	 * Constructor.
+	 *
+	 * @param message Error message
+	 */
+	public RServerException(String message) {
 
-		ServerActionSpec spec = link.getActionSpec();
-
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(link);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	abstract RActionCategory getCategory();
-
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
-
-		for (Action<?> action : actions) {
-
-			if (spec.hasType(action.getType())) {
-
-				return action;
-			}
-		}
-
-		throw spec.getBadSpecException();
+		super(message);
 	}
 }

@@ -22,59 +22,76 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
+package uk.ac.manchester.cs.mekon.remote.client.net;
 
 import java.io.*;
-import java.util.*;
-import javax.servlet.*;
+import java.net.*;
 
+import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class ServerActions {
+class NetLink {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	private URLConnection connection;
 
-	abstract class Action<T extends Enum<T>> {
+	private InputStream input = null;
+	private OutputStream output = null;
 
-		Action() {
+	NetLink(URL serverURL) throws IOException {
 
-			actions.add(this);
-		}
+		connection = serverURL.openConnection();
 
-		abstract T getType();
-
-		abstract void perform(NetLink link) throws ServletException, IOException;
+		connection.connect();
 	}
 
-	boolean checkPerformAction(NetLink link) throws ServletException, IOException {
+	void writeDocument(XDocument document) throws IOException {
 
-		ServerActionSpec spec = link.getActionSpec();
-
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(link);
-
-			return true;
-		}
-
-		return false;
+		document.writeToOutput(getOutputStream());
 	}
 
-	abstract RActionCategory getCategory();
+	XDocument readDocument() throws IOException {
 
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
+		return new XDocument(getInputStream());
+	}
 
-		for (Action<?> action : actions) {
+	Boolean readBoolean() throws IOException {
 
-			if (spec.hasType(action.getType())) {
+		return RBoolean.fromInteger(getInputStream().read());
+	}
 
-				return action;
-			}
+	void close() throws IOException {
+
+		if (input != null) {
+
+			input.close();
 		}
 
-		throw spec.getBadSpecException();
+		if (output != null) {
+
+			output.close();
+		}
+	}
+
+	private InputStream getInputStream() throws IOException {
+
+		if (input == null) {
+
+			input = connection.getInputStream();
+		}
+
+		return input;
+	}
+
+	private OutputStream getOutputStream() throws IOException {
+
+		if (output == null) {
+
+			output = connection.getOutputStream();
+		}
+
+		return output;
 	}
 }

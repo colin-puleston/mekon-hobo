@@ -22,59 +22,58 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
+package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class ServerActions {
+class NetClientStore extends XClientStore {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	protected XDocument addOnServer(XDocument instance, XDocument identity) {
 
-	abstract class Action<T extends Enum<T>> {
-
-		Action() {
-
-			actions.add(this);
-		}
-
-		abstract T getType();
-
-		abstract void perform(NetLink link) throws ServletException, IOException;
+		return null;
 	}
 
-	boolean checkPerformAction(NetLink link) throws ServletException, IOException {
+	protected boolean removeOnServer(XDocument identity) {
 
-		ServerActionSpec spec = link.getActionSpec();
-
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(link);
-
-			return true;
-		}
-
-		return false;
+		return true;
 	}
 
-	abstract RActionCategory getCategory();
+	protected void clearOnServer() {
 
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
+	}
 
-		for (Action<?> action : actions) {
+	protected boolean containsOnServer(XDocument identity) {
 
-			if (spec.hasType(action.getType())) {
+		return true;
+	}
 
-				return action;
-			}
-		}
+	protected XDocument getOnServer(XDocument identity) {
 
-		throw spec.getBadSpecException();
+		return null;
+	}
+
+	protected XDocument getAllIdentitiesOnServer() {
+
+		return null;
+	}
+
+	protected XDocument matchOnServer(XDocument query) {
+
+		return null;
+	}
+
+	protected boolean matchesOnServer(XDocument query, XDocument instance) {
+
+		return true;
+	}
+
+	NetClientStore(NetClientModel model) {
+
+		super(model);
 	}
 }

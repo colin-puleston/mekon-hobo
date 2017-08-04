@@ -28,21 +28,25 @@ import java.io.*;
 import javax.servlet.*;
 
 import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-class ServerIO {
+class NetLink {
 
-	private ServletRequest request;
 	private ServletResponse response;
+	private ServletRequest request;
 
 	private ServerActionSpec actionSpec;
 
-	ServerIO(ServletRequest request, ServletResponse response) throws ServletException {
+	private InputStream input = null;
+	private OutputStream output = null;
 
-		this.request = request;
+	NetLink(ServletRequest request, ServletResponse response) throws ServletException {
+
 		this.response = response;
+		this.request = request;
 
 		actionSpec = new ServerActionSpec(request);
 	}
@@ -52,40 +56,60 @@ class ServerIO {
 		return actionSpec;
 	}
 
-	XDocument acceptDocument() throws ServletException, IOException {
+	XDocument readDocument() throws ServletException, IOException {
 
 		try {
 
-			return new XDocument(request.getInputStream());
+			return new XDocument(getInputStream());
 		}
-		catch (Throwable t) {
+		catch (XDocumentException e) {
 
-			throw new ServletException(t);
+			throw new ServletException(e);
 		}
 	}
 
-	void returnDocument(XDocument document) throws ServletException, IOException {
+	void writeDocument(XDocument document) throws ServletException, IOException {
 
 		try {
 
-			document.writeToOutput(response.getOutputStream());
+			document.writeToOutput(getOutputStream());
 		}
-		catch (Throwable t) {
+		catch (XDocumentException e) {
 
-			throw new ServletException(t);
+			throw new ServletException(e);
 		}
 	}
 
-	void checkReturnDocument(XDocument document) throws ServletException, IOException {
+	void checkWriteDocument(XDocument document) throws ServletException, IOException {
 
 		if (document != null) {
 
-			returnDocument(document);
+			writeDocument(document);
 		}
 	}
 
-	void returnBoolean(Boolean value) throws IOException {
+	void writeBoolean(boolean value) throws IOException {
 
-		response.getWriter().append(value.toString());
+		getOutputStream().write(RBoolean.toInteger(value));
+	}
+
+	private InputStream getInputStream() throws IOException {
+
+		if (input == null) {
+
+			input = request.getInputStream();
+		}
+
+		return input;
+	}
+
+	private OutputStream getOutputStream() throws IOException {
+
+		if (output == null) {
+
+			output = response.getOutputStream();
+		}
+
+		return output;
 	}
 }

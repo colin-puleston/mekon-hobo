@@ -22,65 +22,12 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
-
-import java.io.*;
-import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon.manage.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
+package uk.ac.manchester.cs.mekon.remote.client.net;
 
 /**
  * XXX.
  *
  * @author Colin Puleston
  */
-public class MekonServlet extends GenericServlet {
-
-	static private final long serialVersionUID = -1;
-
-	private ModelActions modelActions = null;
-	private StoreActions storeActions = null;
-
-	/**
-	 */
-	public void init() throws ServletException {
-
-		CBuilder cBuilder = CManager.createBuilder();
-
-		modelActions = new ModelActions(cBuilder);
-		storeActions = new StoreActions(cBuilder);
-	}
-
-	/**
-	 */
-	public void service(
-					ServletRequest request,
-					ServletResponse response)
-					throws ServletException, IOException {
-
-		response.setContentType("text/html");
-
-		performAction(new ServerIO(request, response));
-	}
-
-	/**
-	 */
-	public void destroy() {
-	}
-
-	private void performAction(ServerIO io) throws ServletException, IOException {
-
-		if (modelActions.checkPerformAction(io)) {
-
-			return;
-		}
-
-		if (storeActions.checkPerformAction(io)) {
-
-			return;
-		}
-
-		throw io.getActionSpec().getBadSpecException();
-	}
+public class MekonNetClient {
 }

@@ -22,59 +22,22 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
-
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon.remote.util.*;
+package uk.ac.manchester.cs.mekon.remote.util;
 
 /**
+ * XXX.
+ *
  * @author Colin Puleston
  */
-abstract class ServerActions {
+public class RBoolean {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	static public int toInteger(boolean value) {
 
-	abstract class Action<T extends Enum<T>> {
-
-		Action() {
-
-			actions.add(this);
-		}
-
-		abstract T getType();
-
-		abstract void perform(NetLink link) throws ServletException, IOException;
+		return value ? 1 : 0;
 	}
 
-	boolean checkPerformAction(NetLink link) throws ServletException, IOException {
+	static public boolean fromInteger(int value) {
 
-		ServerActionSpec spec = link.getActionSpec();
-
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(link);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	abstract RActionCategory getCategory();
-
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
-
-		for (Action<?> action : actions) {
-
-			if (spec.hasType(action.getType())) {
-
-				return action;
-			}
-		}
-
-		throw spec.getBadSpecException();
+		return value == 1;
 	}
 }

@@ -50,9 +50,9 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.ADD;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.checkReturnDocument(store.add(io.acceptDocument(), io.acceptDocument()));
+			link.checkWriteDocument(store.add(link.readDocument(), link.readDocument()));
 		}
 	}
 
@@ -63,9 +63,9 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.REMOVE;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnBoolean(store.remove(io.acceptDocument()));
+			link.writeBoolean(store.remove(link.readDocument()));
 		}
 	}
 
@@ -76,7 +76,7 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.CLEAR;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
 			store.clear();
 		}
@@ -89,9 +89,9 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.CONTAINS;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnBoolean(store.contains(io.acceptDocument()));
+			link.writeBoolean(store.contains(link.readDocument()));
 		}
 	}
 
@@ -102,9 +102,9 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.GET;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.checkReturnDocument(store.get(io.acceptDocument()));
+			link.checkWriteDocument(store.get(link.readDocument()));
 		}
 	}
 
@@ -115,9 +115,9 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.GET_IDS;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnDocument(store.getAllIdentities());
+			link.writeDocument(store.getAllIdentities());
 		}
 	}
 
@@ -128,9 +128,9 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.MATCH;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnDocument(store.match(io.acceptDocument()));
+			link.writeDocument(store.match(link.readDocument()));
 		}
 	}
 
@@ -141,9 +141,9 @@ class StoreActions extends ServerActions {
 			return RStoreActionType.MATCHES;
 		}
 
-		void perform(ServerIO io) throws ServletException, IOException {
+		void perform(NetLink link) throws ServletException, IOException {
 
-			io.returnBoolean(store.matches(io.acceptDocument(), io.acceptDocument()));
+			link.writeBoolean(store.matches(link.readDocument(), link.readDocument()));
 		}
 	}
 

@@ -122,11 +122,11 @@ public abstract class XClientStore implements IStore {
 	/**
 	 * Constructor.
 	 *
-	 * @param cModel Client-side model associated with the store
+	 * @param model Client-side model associated with the store
 	 */
-	protected XClientStore(CModel cModel) {
+	protected XClientStore(XClientModel model) {
 
-		this.cModel = cModel;
+		cModel = model.getCModel();
 
 		assertionParser = new IInstanceParser(cModel, IFrameFunction.ASSERTION);
 	}
