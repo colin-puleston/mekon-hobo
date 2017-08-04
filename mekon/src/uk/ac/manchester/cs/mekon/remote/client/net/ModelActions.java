@@ -24,25 +24,22 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import java.io.*;
 import java.net.*;
 
-import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class DocumentResultActions
-					<T extends Enum<T>>
-					extends ServerActions<T, XDocument> {
+class ModelActions extends ServerActions<RModelActionType> {
 
-	DocumentResultActions(URL serverURL) {
+	ModelActions(URL serverURL) {
 
 		super(serverURL);
 	}
 
-	XDocument getResult(NetLink link) throws IOException {
+	RActionCategory getCategory() {
 
-		return link.readDocument();
+		return RActionCategory.MODEL;
 	}
 }

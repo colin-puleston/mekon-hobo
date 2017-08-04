@@ -24,23 +24,22 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import java.io.*;
 import java.net.*;
+
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class BooleanResultActions
-					<T extends Enum<T>>
-					extends ServerActions<T, Boolean> {
+class StoreActions extends ServerActions<RStoreActionType> {
 
-	BooleanResultActions(URL serverURL) {
+	StoreActions(URL serverURL) {
 
 		super(serverURL);
 	}
 
-	Boolean getResult(NetLink link) throws IOException {
+	RActionCategory getCategory() {
 
-		return link.readBoolean();
+		return RActionCategory.STORE;
 	}
 }

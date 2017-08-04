@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import java.net.*;
-
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
@@ -37,43 +35,30 @@ class NetClientModel extends XClientModel {
 
 	private ModelActions actions;
 
-	private class ModelActions extends DocumentResultActions<RModelActionType> {
-
-		ModelActions(URL serverURL) {
-
-			super(serverURL);
-		}
-
-		RActionCategory getCategory() {
-
-			return RActionCategory.MODEL;
-		}
-	}
-
 	protected XDocument initialiseAssertionOnServer(XDocument assertionDoc) {
 
-		return actions.perform(RModelActionType.INITIALISE_ASSERTION, assertionDoc);
+		return actions.getDocumentResult(RModelActionType.INITIALISE_ASSERTION, assertionDoc);
 	}
 
 	protected XDocument initialiseQueryOnServer(XDocument queryDoc) {
 
-		return actions.perform(RModelActionType.INITIALISE_QUERY, queryDoc);
+		return actions.getDocumentResult(RModelActionType.INITIALISE_QUERY, queryDoc);
 	}
 
 	protected XDocument updateAssertionOnServer(XDocument assertionDoc) {
 
-		return actions.perform(RModelActionType.UPDATE_ASSERTION, assertionDoc);
+		return actions.getDocumentResult(RModelActionType.UPDATE_ASSERTION, assertionDoc);
 	}
 
 	protected XDocument updateQueryOnServer(XDocument queryDoc) {
 
-		return actions.perform(RModelActionType.UPDATE_QUERY, queryDoc);
+		return actions.getDocumentResult(RModelActionType.UPDATE_QUERY, queryDoc);
 	}
 
-	NetClientModel(URL serverURL, XDocument frameHierarchyDoc) {
+	NetClientModel(ModelActions actions) {
 
-		super(frameHierarchyDoc);
+		super(actions.getDocumentResult(RModelActionType.GET_FRAME_HIERARCHY));
 
-		actions = new ModelActions(serverURL);
+		this.actions = actions;
 	}
 }

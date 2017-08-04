@@ -161,7 +161,7 @@ public abstract class XClientModel extends RClientModel {
 	 * @param frameHierarchyDoc Document containing standard MEKON XML-based
 	 * serialisation of concept-level frames hierarchy present on server
 	 */
-	public XClientModel(XDocument frameHierarchyDoc) {
+	protected XClientModel(XDocument frameHierarchyDoc) {
 
 		this(new CFrameHierarchyParser().parse(frameHierarchyDoc));
 	}
@@ -172,7 +172,7 @@ public abstract class XClientModel extends RClientModel {
 	 * @param frameHierarchyRootNode Root-node of standard MEKON XML-based
 	 * serialisation of concept-level frames hierarchy present on server
 	 */
-	public XClientModel(XNode frameHierarchyRootNode) {
+	protected XClientModel(XNode frameHierarchyRootNode) {
 
 		this(new CFrameHierarchyParser().parse(frameHierarchyRootNode));
 	}

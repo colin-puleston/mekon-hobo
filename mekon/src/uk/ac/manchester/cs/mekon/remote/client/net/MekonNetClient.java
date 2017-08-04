@@ -24,10 +24,24 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
+import java.net.*;
+
 /**
  * XXX.
  *
  * @author Colin Puleston
  */
 public class MekonNetClient {
+
+	private NetClientModel model;
+	private NetClientStore store;
+
+	/**
+	 * XXX.
+	 */
+	public MekonNetClient(URL serverURL) {
+
+		model = new NetClientModel(new ModelActions(serverURL));
+		store = new NetClientStore(model, new StoreActions(serverURL));
+	}
 }

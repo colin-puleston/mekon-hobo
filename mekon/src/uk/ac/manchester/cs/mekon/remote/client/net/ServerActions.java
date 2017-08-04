@@ -34,16 +34,50 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class ServerActions<T extends Enum<T>, R> {
+abstract class ServerActions<T extends Enum<T>> {
 
 	private URL serverURL;
+
+	private DocumentRetriever documentRetriever = new DocumentRetriever();
+	private BooleanRetriever booleanRetriever = new BooleanRetriever();
+
+	private abstract class Retriever<R> {
+
+		abstract R get(NetLink link) throws IOException;
+	}
+
+	private class DocumentRetriever extends Retriever<XDocument> {
+
+		XDocument get(NetLink link) throws IOException {
+
+			return link.readDocument();
+		}
+	}
+
+	private class BooleanRetriever extends Retriever<Boolean> {
+
+		Boolean get(NetLink link) throws IOException {
+
+			return link.readBoolean();
+		}
+	}
 
 	ServerActions(URL serverURL) {
 
 		this.serverURL = serverURL;
 	}
 
-	R perform(T type, XDocument... inputDocs) {
+	XDocument getDocumentResult(T type, XDocument... inputDocs) {
+
+		return perform(type, documentRetriever, inputDocs);
+	}
+
+	Boolean getBooleanResult(T type, XDocument... inputDocs) {
+
+		return perform(type, booleanRetriever, inputDocs);
+	}
+
+	private <R>R perform(T type, Retriever<R> retriever, XDocument... inputDocs) {
 
 		try {
 
@@ -53,7 +87,7 @@ abstract class ServerActions<T extends Enum<T>, R> {
 			link.setActionAspect(RActionAspect.TYPE, type);
 			link.writeDocuments(inputDocs);
 
-			R result = getResult(link);
+			R result = retriever.get(link);
 
 			link.close();
 
@@ -66,6 +100,4 @@ abstract class ServerActions<T extends Enum<T>, R> {
 	}
 
 	abstract RActionCategory getCategory();
-
-	abstract R getResult(NetLink link) throws IOException;
 }

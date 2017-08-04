@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import java.net.*;
-
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
@@ -35,84 +33,52 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
  */
 class NetClientStore extends XClientStore {
 
-	private DocumentResultStoreActions docResultActions;
-	private BooleanResultStoreActions boolResultActions;
-
-	private class DocumentResultStoreActions
-					extends
-						DocumentResultActions<RStoreActionType> {
-
-		DocumentResultStoreActions(URL serverURL) {
-
-			super(serverURL);
-		}
-
-		RActionCategory getCategory() {
-
-			return RActionCategory.STORE;
-		}
-	}
-
-	private class BooleanResultStoreActions
-					extends
-						BooleanResultActions<RStoreActionType> {
-
-		BooleanResultStoreActions(URL serverURL) {
-
-			super(serverURL);
-		}
-
-		RActionCategory getCategory() {
-
-			return RActionCategory.STORE;
-		}
-	}
+	private StoreActions actions;
 
 	protected XDocument addOnServer(XDocument instance, XDocument identity) {
 
-		return docResultActions.perform(RStoreActionType.ADD, instance, identity);
+		return actions.getDocumentResult(RStoreActionType.ADD, instance, identity);
 	}
 
 	protected boolean removeOnServer(XDocument identity) {
 
-		return boolResultActions.perform(RStoreActionType.REMOVE, identity);
+		return actions.getBooleanResult(RStoreActionType.REMOVE, identity);
 	}
 
 	protected boolean clearOnServer() {
 
-		return boolResultActions.perform(RStoreActionType.CLEAR);
+		return actions.getBooleanResult(RStoreActionType.CLEAR);
 	}
 
 	protected boolean containsOnServer(XDocument identity) {
 
-		return boolResultActions.perform(RStoreActionType.CONTAINS, identity);
+		return actions.getBooleanResult(RStoreActionType.CONTAINS, identity);
 	}
 
 	protected XDocument getOnServer(XDocument identity) {
 
-		return docResultActions.perform(RStoreActionType.GET, identity);
+		return actions.getDocumentResult(RStoreActionType.GET, identity);
 	}
 
 	protected XDocument getAllIdentitiesOnServer() {
 
-		return docResultActions.perform(RStoreActionType.GET_IDS);
+		return actions.getDocumentResult(RStoreActionType.GET_IDS);
 	}
 
 	protected XDocument matchOnServer(XDocument query) {
 
-		return docResultActions.perform(RStoreActionType.MATCH, query);
+		return actions.getDocumentResult(RStoreActionType.MATCH, query);
 	}
 
 	protected boolean matchesOnServer(XDocument query, XDocument instance) {
 
-		return boolResultActions.perform(RStoreActionType.MATCHES, query, instance);
+		return actions.getBooleanResult(RStoreActionType.MATCHES, query, instance);
 	}
 
-	NetClientStore(URL serverURL, NetClientModel model) {
+	NetClientStore(NetClientModel model, StoreActions actions) {
 
 		super(model);
 
-		docResultActions = new DocumentResultStoreActions(serverURL);
-		boolResultActions = new BooleanResultStoreActions(serverURL);
+		this.actions = actions;
 	}
 }
