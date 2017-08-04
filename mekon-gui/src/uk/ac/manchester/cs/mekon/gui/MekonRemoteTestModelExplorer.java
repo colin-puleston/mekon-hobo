@@ -143,7 +143,7 @@ public class MekonRemoteTestModelExplorer {
 		XClientModel clientModel = new LocalXClientModel(serverModel);
 		XClientStore clientStore = new LocalXClientStore(clientModel, serverStore);
 
-		new MekonModelExplorer(clientModel.getCModel(), clientStore);
+		new MekonModelExplorer(clientModel.getCModel(), clientStore.getIStore());
 	}
 
 	static private IStore createStore(CBuilder builder) {
