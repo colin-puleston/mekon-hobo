@@ -28,83 +28,44 @@ import java.io.*;
 import java.net.*;
 
 import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.client.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-class NetLink {
+abstract class ServerActions<T extends Enum<T>, R> {
 
-	private URLConnection connection;
+	private URL serverURL;
 
-	private InputStream input = null;
-	private OutputStream output = null;
+	ServerActions(URL serverURL) {
 
-	NetLink(URL serverURL) throws IOException {
-
-		connection = serverURL.openConnection();
+		this.serverURL = serverURL;
 	}
 
-	void setActionAspect(Enum<?> key, Enum<?> value) throws IOException {
+	R perform(T type, XDocument... inputDocs) {
 
-		connection.setRequestProperty(key.name(), value.name());
-	}
+		try {
 
-	void writeDocuments(XDocument... documents) throws IOException {
+			NetLink link = new NetLink(serverURL);
 
-		for (XDocument document : documents) {
+			link.setActionAspect(RActionAspect.CATEGORY, getCategory());
+			link.setActionAspect(RActionAspect.TYPE, type);
+			link.writeDocuments(inputDocs);
 
-			document.writeToOutput(getOutputStream());
+			R result = getResult(link);
+
+			link.close();
+
+			return result;
+		}
+		catch (IOException e) {
+
+			throw new RServerException(e);
 		}
 	}
 
-	XDocument readDocument() throws IOException {
+	abstract RActionCategory getCategory();
 
-		return new XDocument(getInputStream());
-	}
-
-	Boolean readBoolean() throws IOException {
-
-		return RBoolean.fromInteger(getInputStream().read());
-	}
-
-	void close() throws IOException {
-
-		if (input != null) {
-
-			input.close();
-		}
-
-		if (output != null) {
-
-			output.close();
-		}
-	}
-
-	private InputStream getInputStream() throws IOException {
-
-		if (input == null) {
-
-			if (output == null) {
-
-				connection.connect();
-			}
-
-			input = connection.getInputStream();
-		}
-
-		return input;
-	}
-
-	private OutputStream getOutputStream() throws IOException {
-
-		if (output == null) {
-
-			connection.connect();
-
-			output = connection.getOutputStream();
-		}
-
-		return output;
-	}
+	abstract R getResult(NetLink link) throws IOException;
 }

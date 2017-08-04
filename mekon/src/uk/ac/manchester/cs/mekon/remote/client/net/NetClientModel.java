@@ -24,36 +24,56 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
+import java.net.*;
+
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
 class NetClientModel extends XClientModel {
 
+	private ModelActions actions;
+
+	private class ModelActions extends DocumentResultActions<RModelActionType> {
+
+		ModelActions(URL serverURL) {
+
+			super(serverURL);
+		}
+
+		RActionCategory getCategory() {
+
+			return RActionCategory.MODEL;
+		}
+	}
+
 	protected XDocument initialiseAssertionOnServer(XDocument assertionDoc) {
 
-		return null;
+		return actions.perform(RModelActionType.INITIALISE_ASSERTION, assertionDoc);
 	}
 
 	protected XDocument initialiseQueryOnServer(XDocument queryDoc) {
 
-		return null;
+		return actions.perform(RModelActionType.INITIALISE_QUERY, queryDoc);
 	}
 
 	protected XDocument updateAssertionOnServer(XDocument assertionDoc) {
 
-		return null;
+		return actions.perform(RModelActionType.UPDATE_ASSERTION, assertionDoc);
 	}
 
 	protected XDocument updateQueryOnServer(XDocument queryDoc) {
 
-		return null;
+		return actions.perform(RModelActionType.UPDATE_QUERY, queryDoc);
 	}
 
-	NetClientModel(XDocument frameHierarchyDoc) {
+	NetClientModel(URL serverURL, XDocument frameHierarchyDoc) {
 
 		super(frameHierarchyDoc);
+
+		actions = new ModelActions(serverURL);
 	}
 }

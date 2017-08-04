@@ -107,10 +107,13 @@ public class XServerStore {
 
 	/**
 	 * Removes all instances from the store.
+	 *
+	 * @return True if any instances removed, false if no instances
+	 * were present
 	 */
-	public void clear() {
+	public boolean clear() {
 
-		store.clear();
+		return store.clear();
 	}
 
 	/**

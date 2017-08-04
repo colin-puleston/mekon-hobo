@@ -24,56 +24,95 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import java.net.*;
+
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
 class NetClientStore extends XClientStore {
 
+	private DocumentResultStoreActions docResultActions;
+	private BooleanResultStoreActions boolResultActions;
+
+	private class DocumentResultStoreActions
+					extends
+						DocumentResultActions<RStoreActionType> {
+
+		DocumentResultStoreActions(URL serverURL) {
+
+			super(serverURL);
+		}
+
+		RActionCategory getCategory() {
+
+			return RActionCategory.STORE;
+		}
+	}
+
+	private class BooleanResultStoreActions
+					extends
+						BooleanResultActions<RStoreActionType> {
+
+		BooleanResultStoreActions(URL serverURL) {
+
+			super(serverURL);
+		}
+
+		RActionCategory getCategory() {
+
+			return RActionCategory.STORE;
+		}
+	}
+
 	protected XDocument addOnServer(XDocument instance, XDocument identity) {
 
-		return null;
+		return docResultActions.perform(RStoreActionType.ADD, instance, identity);
 	}
 
 	protected boolean removeOnServer(XDocument identity) {
 
-		return true;
+		return boolResultActions.perform(RStoreActionType.REMOVE, identity);
 	}
 
-	protected void clearOnServer() {
+	protected boolean clearOnServer() {
 
+		return boolResultActions.perform(RStoreActionType.CLEAR);
 	}
 
 	protected boolean containsOnServer(XDocument identity) {
 
-		return true;
+		return boolResultActions.perform(RStoreActionType.CONTAINS, identity);
 	}
 
 	protected XDocument getOnServer(XDocument identity) {
 
-		return null;
+		return docResultActions.perform(RStoreActionType.GET, identity);
 	}
 
 	protected XDocument getAllIdentitiesOnServer() {
 
-		return null;
+		return docResultActions.perform(RStoreActionType.GET_IDS);
 	}
 
 	protected XDocument matchOnServer(XDocument query) {
 
-		return null;
+		return docResultActions.perform(RStoreActionType.MATCH, query);
 	}
 
 	protected boolean matchesOnServer(XDocument query, XDocument instance) {
 
-		return true;
+		return boolResultActions.perform(RStoreActionType.MATCHES, query, instance);
 	}
 
-	NetClientStore(NetClientModel model) {
+	NetClientStore(URL serverURL, NetClientModel model) {
 
 		super(model);
+
+		docResultActions = new DocumentResultStoreActions(serverURL);
+		boolResultActions = new BooleanResultStoreActions(serverURL);
 	}
 }

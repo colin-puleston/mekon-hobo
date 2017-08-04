@@ -69,12 +69,19 @@ class IDiskStore implements IStore {
 		return checkRemove(identity) != null;
 	}
 
-	public synchronized void clear() {
+	public synchronized boolean clear() {
+
+		if (identities.isEmpty()) {
+
+			return false;
+		}
 
 		for (CIdentity identity : getAllIdentities()) {
 
 			remove(identity);
 		}
+
+		return true;
 	}
 
 	public synchronized boolean contains(CIdentity identity) {

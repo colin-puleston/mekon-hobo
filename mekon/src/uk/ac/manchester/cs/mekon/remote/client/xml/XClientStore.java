@@ -74,9 +74,9 @@ public abstract class XClientStore implements IStore {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void clear() {
+	public boolean clear() {
 
-		clearOnServer();
+		return clearOnServer();
 	}
 
 	/**
@@ -155,8 +155,11 @@ public abstract class XClientStore implements IStore {
 
 	/**
 	 * Removes all instances from the server-based store.
+	 *
+	 * @return True if any instances removed, false if no instances
+	 * were present
 	 */
-	protected abstract void clearOnServer();
+	protected abstract boolean clearOnServer();
 
 	/**
 	 * Checks whether server-based store contains a particular instance.

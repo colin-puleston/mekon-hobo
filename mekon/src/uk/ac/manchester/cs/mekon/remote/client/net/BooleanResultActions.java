@@ -27,27 +27,20 @@ package uk.ac.manchester.cs.mekon.remote.client.net;
 import java.io.*;
 import java.net.*;
 
-import uk.ac.manchester.cs.mekon.remote.client.*;
-
 /**
  * @author Colin Puleston
  */
-abstract class ServerAction {
+abstract class BooleanResultActions
+					<T extends Enum<T>>
+					extends ServerActions<T, Boolean> {
 
-	void perform(URL serverURL) {
+	BooleanResultActions(URL serverURL) {
 
-		try {
-
-			NetLink link = new NetLink(serverURL);
-
-			perform(link);
-			link.close();
-		}
-		catch (IOException e) {
-
-			throw new RServerException(e);
-		}
+		super(serverURL);
 	}
 
-	abstract void perform(NetLink link);
+	Boolean getResult(NetLink link) throws IOException {
+
+		return link.readBoolean();
+	}
 }

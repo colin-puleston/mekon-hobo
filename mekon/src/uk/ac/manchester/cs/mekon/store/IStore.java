@@ -73,8 +73,11 @@ public interface IStore {
 
 	/**
 	 * Removes all instances from the store.
+	 *
+	 * @return True if any instances removed, false if no instances
+	 * were present
 	 */
-	public void clear();
+	public boolean clear();
 
 	/**
 	 * Checks whether store contains a particular instance.

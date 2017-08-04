@@ -28,83 +28,21 @@ import java.io.*;
 import java.net.*;
 
 import uk.ac.manchester.cs.mekon.xdoc.*;
-import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-class NetLink {
+abstract class DocumentResultActions
+					<T extends Enum<T>>
+					extends ServerActions<T, XDocument> {
 
-	private URLConnection connection;
+	DocumentResultActions(URL serverURL) {
 
-	private InputStream input = null;
-	private OutputStream output = null;
-
-	NetLink(URL serverURL) throws IOException {
-
-		connection = serverURL.openConnection();
+		super(serverURL);
 	}
 
-	void setActionAspect(Enum<?> key, Enum<?> value) throws IOException {
+	XDocument getResult(NetLink link) throws IOException {
 
-		connection.setRequestProperty(key.name(), value.name());
-	}
-
-	void writeDocuments(XDocument... documents) throws IOException {
-
-		for (XDocument document : documents) {
-
-			document.writeToOutput(getOutputStream());
-		}
-	}
-
-	XDocument readDocument() throws IOException {
-
-		return new XDocument(getInputStream());
-	}
-
-	Boolean readBoolean() throws IOException {
-
-		return RBoolean.fromInteger(getInputStream().read());
-	}
-
-	void close() throws IOException {
-
-		if (input != null) {
-
-			input.close();
-		}
-
-		if (output != null) {
-
-			output.close();
-		}
-	}
-
-	private InputStream getInputStream() throws IOException {
-
-		if (input == null) {
-
-			if (output == null) {
-
-				connection.connect();
-			}
-
-			input = connection.getInputStream();
-		}
-
-		return input;
-	}
-
-	private OutputStream getOutputStream() throws IOException {
-
-		if (output == null) {
-
-			connection.connect();
-
-			output = connection.getOutputStream();
-		}
-
-		return output;
+		return link.readDocument();
 	}
 }
