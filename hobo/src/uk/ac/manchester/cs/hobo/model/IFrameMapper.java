@@ -60,7 +60,7 @@ class IFrameMapper implements CFrameListener {
 		extension.addListener(this);
 	}
 
-	public void onInstantiated(IFrame instance) {
+	public void onInstantiated(IFrame instance, boolean reinstantiation) {
 
 		model.getDObject(instance);
 	}
