@@ -43,7 +43,7 @@ public enum IFrameCategory {
 			type.initialiseAtomicInstance(instance);
 
 			instance.normaliseType();
-			instance.completeInstantiation();
+			instance.completeInstantiation(false);
 
 			return instance;
 		}
@@ -58,7 +58,7 @@ public enum IFrameCategory {
 
 			IFrame instance = new IDisjunction(type, function, false);
 
-			instance.completeInstantiation();
+			instance.completeInstantiation(false);
 
 			return instance;
 		}

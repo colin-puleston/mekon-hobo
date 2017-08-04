@@ -43,6 +43,9 @@ public interface CFrameListener {
 	 * Method invoked after the frame has been instantiated.
 	 *
 	 * @param instance Instantiation of frame
+	 * @param reinstantiation True if frame has been reinstantiated,
+	 * along with any previously exiting structure (as a result of
+	 * copying or deserialisation)
 	 */
-	public void onInstantiated(IFrame instance);
+	public void onInstantiated(IFrame instance, boolean reinstantiation);
 }

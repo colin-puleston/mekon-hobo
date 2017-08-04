@@ -721,9 +721,9 @@ public class IFrame implements IEntity, IValue {
 		autoUpdateEnabled = enabled;
 	}
 
-	void completeInstantiation() {
+	void completeInstantiation(boolean reinstantiation) {
 
-		type.pollListenersForInstantiated(this);
+		type.pollListenersForInstantiated(this, reinstantiation);
 	}
 
 	boolean freeInstance() {

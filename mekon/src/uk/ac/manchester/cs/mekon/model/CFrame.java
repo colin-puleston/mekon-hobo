@@ -697,11 +697,11 @@ public abstract class CFrame
 		return subsumes(value.getType());
 	}
 
-	void pollListenersForInstantiated(IFrame instance) {
+	void pollListenersForInstantiated(IFrame instance, boolean reinstantiation) {
 
 		for (CFrameListener listener : copyListeners()) {
 
-			listener.onInstantiated(instance);
+			listener.onInstantiated(instance, reinstantiation);
 		}
 	}
 

@@ -94,7 +94,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
 	public void completeInstantiation(IFrame frame) {
 
-		frame.completeInstantiation();
+		frame.completeInstantiation(true);
 
 		if (!frame.freeInstance()) {
 
