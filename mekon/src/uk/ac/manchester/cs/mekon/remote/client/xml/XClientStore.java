@@ -96,7 +96,6 @@ public abstract class XClientStore {
 		}
 	}
 
-
 	/**
 	 * Provides the client MEKON frames store.
 	 *

@@ -26,6 +26,9 @@ package uk.ac.manchester.cs.mekon.remote.client.net;
 
 import java.net.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
+
 /**
  * XXX.
  *
@@ -43,5 +46,25 @@ public class MekonNetClient {
 
 		model = new NetClientModel(new ModelActions(serverURL));
 		store = new NetClientStore(model, new StoreActions(serverURL));
+	}
+
+	/**
+	 * Provides the client MEKON frames model.
+	 *
+	 * @return Client MEKON frames model
+	 */
+	public CModel getCModel() {
+
+		return model.getCModel();
+	}
+
+	/**
+	 * Provides the client MEKON frames store.
+	 *
+	 * @return Client MEKON frames store
+	 */
+	public IStore getIStore() {
+
+		return store.getIStore();
 	}
 }
