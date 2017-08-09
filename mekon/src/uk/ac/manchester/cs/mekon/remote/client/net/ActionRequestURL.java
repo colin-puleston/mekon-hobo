@@ -22,35 +22,51 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.config;
+package uk.ac.manchester.cs.mekon.remote.client.net;
 
 import java.io.*;
 import java.net.*;
 
+import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
+
 /**
  * @author Colin Puleston
  */
-class KFilePathNormaliser {
+class ActionRequestURL {
 
-	static File normalise(File file) {
+	private StringBuilder urlContent = new StringBuilder();
 
-		return file != null ? normalise(file.getPath()) : null;
+	ActionRequestURL(URL serverURL, RActionCategory actionCategory, Enum<?> actionType) {
+
+		urlContent.append(serverURL.toString());
+
+		addActionAspect('?', RActionAspect.CATEGORY, actionCategory);
+		addActionAspect('&', RActionAspect.TYPE, actionType);
 	}
 
-	static File normalise(String path) {
+	URLConnection openConnection() throws IOException {
 
-		if (path == null) {
+		return createURL().openConnection();
+	}
 
-			return null;
-		}
+	private void addActionAspect(char prefix, RActionAspect aspect, Enum<?> value) {
+
+		urlContent.append(prefix);
+		urlContent.append(aspect.name());
+		urlContent.append('=');
+		urlContent.append(value.name());
+	}
+
+	private URL createURL() {
 
 		try {
 
-			return new File(URLDecoder.decode(path, "UTF-8"));
+			return new URL(urlContent.toString());
 		}
-		catch (UnsupportedEncodingException e) {
+		catch (MalformedURLException e) {
 
-			throw new Error(e);
+			throw new KAccessException(e);
 		}
 	}
 }

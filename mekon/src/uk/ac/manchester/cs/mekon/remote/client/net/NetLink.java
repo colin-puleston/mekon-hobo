@@ -40,14 +40,12 @@ class NetLink {
 	private InputStream input = null;
 	private OutputStream output = null;
 
-	NetLink(URL serverURL) throws IOException {
+	NetLink(ActionRequestURL requestURL) throws IOException {
 
-		connection = serverURL.openConnection();
-	}
+		connection = requestURL.openConnection();
 
-	void setActionAspect(Enum<?> key, Enum<?> value) throws IOException {
-
-		connection.setRequestProperty(key.name(), value.name());
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
 	}
 
 	void writeDocuments(XDocument... documents) throws IOException {
@@ -55,6 +53,11 @@ class NetLink {
 		for (XDocument document : documents) {
 
 			document.writeToOutput(getOutputStream());
+		}
+
+		if (output != null) {
+
+			output.close();
 		}
 	}
 
@@ -74,11 +77,6 @@ class NetLink {
 
 			input.close();
 		}
-
-		if (output != null) {
-
-			output.close();
-		}
 	}
 
 	private InputStream getInputStream() throws IOException {
@@ -90,7 +88,7 @@ class NetLink {
 				connection.connect();
 			}
 
-			input = connection.getInputStream();
+			input = new BufferedInputStream(connection.getInputStream());
 		}
 
 		return input;

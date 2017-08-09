@@ -35,8 +35,8 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
  */
 class NetLink {
 
-	private ServletResponse response;
 	private ServletRequest request;
+	private ServletResponse response;
 
 	private ServerActionSpec actionSpec;
 
@@ -45,8 +45,8 @@ class NetLink {
 
 	NetLink(ServletRequest request, ServletResponse response) throws ServletException {
 
-		this.response = response;
 		this.request = request;
+		this.response = response;
 
 		actionSpec = new ServerActionSpec(request);
 	}
@@ -97,7 +97,7 @@ class NetLink {
 
 		if (input == null) {
 
-			input = request.getInputStream();
+			input = new BufferedInputStream(request.getInputStream());
 		}
 
 		return input;

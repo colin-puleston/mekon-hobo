@@ -125,7 +125,7 @@ public class KConfigClassFinder<T> {
 
 			for (URL url: classloader.getURLs()) {
 
-				File jarFile = checkGetJarFile(toFilePath(url));
+				File jarFile = checkGetJarFile(url);
 
 				if (jarFile != null) {
 
@@ -134,16 +134,13 @@ public class KConfigClassFinder<T> {
 			}
 		}
 
-		private File checkGetJarFile(String filePath) {
+		private File checkGetJarFile(URL fileURL) {
 
-			if (filePath.endsWith(JAR_EXTENSION)) {
+			File file = URLToFileConverter.convert(fileURL);
 
-				File jarFile = new File(filePath);
+			if (file.getPath().endsWith(JAR_EXTENSION) && file.exists()) {
 
-				if (jarFile.exists()) {
-
-					return jarFile;
-				}
+				return file;
 			}
 
 			return null;
@@ -304,10 +301,5 @@ public class KConfigClassFinder<T> {
 	private String extendPackageName(String packageName, String leafName) {
 
 		return packageName + "." + leafName;
-	}
-
-	private String toFilePath(URL url) {
-
-		return KFilePathNormaliser.normalise(url.getFile()).getPath();
 	}
 }

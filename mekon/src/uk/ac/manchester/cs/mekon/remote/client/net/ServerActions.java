@@ -81,10 +81,8 @@ abstract class ServerActions<T extends Enum<T>> {
 
 		try {
 
-			NetLink link = new NetLink(serverURL);
+			NetLink link = new NetLink(getActionRequestURL(type));
 
-			link.setActionAspect(RActionAspect.CATEGORY, getCategory());
-			link.setActionAspect(RActionAspect.TYPE, type);
 			link.writeDocuments(inputDocs);
 
 			R result = retriever.get(link);
@@ -100,4 +98,9 @@ abstract class ServerActions<T extends Enum<T>> {
 	}
 
 	abstract RActionCategory getCategory();
+
+	private ActionRequestURL getActionRequestURL(T type) {
+
+		return new ActionRequestURL(serverURL, getCategory(), type);
+	}
 }

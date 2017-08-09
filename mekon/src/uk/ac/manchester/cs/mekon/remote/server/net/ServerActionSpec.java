@@ -36,8 +36,26 @@ class ServerActionSpec {
 	private String category;
 	private String type;
 
+	static int XXX = 0;
+
 	ServerActionSpec(ServletRequest request) throws ServletException {
 
+		System.out.println("START: " + XXX);
+		try {
+			if (XXX++ == 1) {
+				java.io.InputStream in = request.getInputStream();
+				int ch;
+				StringBuilder sb = new StringBuilder();
+				while((ch = in.read()) != -1)
+					sb.append((char)ch);
+				System.out.println("INPUT... ");
+				System.out.println(sb.toString());
+			}
+		}
+		catch (Exception e) {
+
+			throw new ServletException(e);
+		}
 		category = getAspect(request, RActionAspect.CATEGORY);
 		type = getAspect(request, RActionAspect.TYPE);
 	}

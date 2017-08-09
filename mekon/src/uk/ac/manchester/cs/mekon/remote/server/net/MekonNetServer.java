@@ -29,6 +29,7 @@ import javax.servlet.*;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * XXX.
@@ -67,6 +68,16 @@ public class MekonNetServer extends GenericServlet {
 	/**
 	 */
 	public void destroy() {
+	}
+
+	private KConfigFile getMekonConfigFile() {
+
+		return new KConfigFile(new File(getMekonConfigFilePath()));
+	}
+
+	private String getMekonConfigFilePath() {
+
+		return getServletContext().getRealPath("resource/mekon.xml");
 	}
 
 	private void performAction(NetLink link) throws ServletException, IOException {

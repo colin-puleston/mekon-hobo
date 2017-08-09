@@ -77,9 +77,7 @@ public class KConfigResourceFinder {
 
 		File lookFor(String path) {
 
-			URL url = getURLOrNull(path);
-
-			return url != null ? new File(url.getFile()) : null;
+			return URLToFileConverter.convert(getURLOrNull(path));
 		}
 
 		private URL getURLOrNull(String path) {
@@ -131,7 +129,7 @@ public class KConfigResourceFinder {
 
 		File file = fileFinder.lookFor(path);
 
-		if (file == null || !file.exists()) {
+/*		if (file == null || !file.exists()) {
 
 			throw new KSystemConfigException("Cannot find resource: " + path);
 		}
@@ -143,7 +141,7 @@ public class KConfigResourceFinder {
 							+ (expectDir ? "directory" : "file")
 							+ ": "
 							+ file);
-		}
+		}*/
 
 		return file;
 	}
@@ -160,7 +158,7 @@ public class KConfigResourceFinder {
 
 		File file = fileFinder.lookFor(path);
 
-		return file != null && requiredResource(file) ? normalise(file) : null;
+		return file != null && requiredResource(file) ? file : null;
 	}
 
 	private KConfigResourceFinder(boolean expectDir) {
@@ -178,10 +176,5 @@ public class KConfigResourceFinder {
 	private boolean requiredResourceType(File file) {
 
 		return file.isDirectory() == expectDir;
-	}
-
-	private File normalise(File file) {
-
-		return KFilePathNormaliser.normalise(file);
 	}
 }
