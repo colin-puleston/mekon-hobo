@@ -102,7 +102,7 @@ public abstract class XClientStore {
 
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET_IDS);
 
-			return performIdentityListResponseAction(request);
+			return performIdentitiesResponseAction(request);
 		}
 
 		public IMatches match(IFrame query) {
@@ -174,9 +174,9 @@ public abstract class XClientStore {
 		return assertionParser.parse(response.getInstanceResponseParseInput());
 	}
 
-	private List<CIdentity> performIdentityListResponseAction(XRequestRenderer request) {
+	private List<CIdentity> performIdentitiesResponseAction(XRequestRenderer request) {
 
-		return performAction(request).getIdentityListResponse();
+		return performAction(request).getIdentitiesResponse();
 	}
 
 	private IMatches performMatchesResponseAction(XRequestRenderer request) {

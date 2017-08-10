@@ -122,7 +122,7 @@ class StoreActions extends ServerActions<RStoreActionType> {
 
 		void perform(XRequestParser request, XResponseRenderer response) {
 
-			response.setIdentityListResponse(store.getAllIdentities());
+			response.setIdentitiesResponse(store.getAllIdentities());
 		}
 	}
 

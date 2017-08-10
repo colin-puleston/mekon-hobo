@@ -103,7 +103,7 @@ public class XResponseRenderer extends XPackageSerialiser implements XResponseVo
 	/**
 	 * XXX.
 	 */
-	public void setIdentityListResponse(List<CIdentity> identities) {
+	public void setIdentitiesResponse(List<CIdentity> identities) {
 
 		CIdentitySerialiser.renderList(identities, addStructuredResponseNode());
 	}

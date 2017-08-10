@@ -84,7 +84,7 @@ public class XResponseParser extends XPackageSerialiser implements XResponseVoca
 	/**
 	 * XXX.
 	 */
-	public List<CIdentity> getIdentityListResponse() {
+	public List<CIdentity> getIdentitiesResponse() {
 
 		return CIdentitySerialiser.parseList(getStructuredResponseNode());
 	}
