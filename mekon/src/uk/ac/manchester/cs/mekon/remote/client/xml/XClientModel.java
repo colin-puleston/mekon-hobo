@@ -205,7 +205,7 @@ public abstract class XClientModel {
 
 		XRClientModel() {
 
-			super(getCFrameHierarchy());
+			super(getHierarchy());
 		}
 	}
 
@@ -240,12 +240,12 @@ public abstract class XClientModel {
 	 */
 	protected abstract XDocument performActionOnServer(XDocument request);
 
-	private CFrameHierarchy getCFrameHierarchy() {
+	private CHierarchy getHierarchy() {
 
-		return performAction(getCFrameHierarchyRequest()).getCFrameHierarchyResponse();
+		return performAction(getHierarchyRequest()).getHierarchyResponse();
 	}
 
-	private XRequestRenderer getCFrameHierarchyRequest() {
+	private XRequestRenderer getHierarchyRequest() {
 
 		return new XRequestRenderer(RModelActionType.GET_FRAME_HIERARCHY);
 	}

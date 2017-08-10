@@ -28,22 +28,22 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Builder for a {@link CFrameHierarchy} object.
+ * Builder for a {@link CHierarchy} object.
  *
  * @author Colin Puleston
  */
-public class CFrameHierarchyBuilder {
+public class CHierarchyBuilder {
 
-	private CFrameHierarchy hierarchy;
+	private CHierarchy hierarchy;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param rootFrameId Identity of root-frame for hierarchy
 	 */
-	public CFrameHierarchyBuilder(CIdentity rootFrameId) {
+	public CHierarchyBuilder(CIdentity rootFrameId) {
 
-		hierarchy = new CFrameHierarchy(rootFrameId);
+		hierarchy = new CHierarchy(rootFrameId);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class CFrameHierarchyBuilder {
 	 *
 	 * @return Object that has-been/is-being built
 	 */
-	public CFrameHierarchy getHierarchy() {
+	public CHierarchy getHierarchy() {
 
 		return hierarchy;
 	}

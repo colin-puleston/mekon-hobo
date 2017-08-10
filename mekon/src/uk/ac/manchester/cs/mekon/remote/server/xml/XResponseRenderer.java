@@ -61,9 +61,9 @@ public class XResponseRenderer extends XPackageSerialiser implements XResponseVo
 	/**
 	 * XXX.
 	 */
-	public void setCFrameHierarchyResponse(CFrame rootFrame) {
+	public void setHierarchyResponse(CFrame rootFrame) {
 
-		CFrameHierarchyRenderer renderer = new CFrameHierarchyRenderer();
+		CHierarchyRenderer renderer = new CHierarchyRenderer();
 
 		renderer.setVisibilityFilter(CVisibility.EXPOSED);
 		renderer.render(rootFrame, addStructuredResponseNode());

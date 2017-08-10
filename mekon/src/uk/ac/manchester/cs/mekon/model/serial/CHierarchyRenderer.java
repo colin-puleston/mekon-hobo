@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  *
  * @author Colin Puleston
  */
-public class CFrameHierarchyRenderer extends CSerialiser {
+public class CHierarchyRenderer extends CSerialiser {
 
 	private CVisibility visibilityFilter = CVisibility.ALL;
 	private Set<Object> annotationKeys = new HashSet<Object>();

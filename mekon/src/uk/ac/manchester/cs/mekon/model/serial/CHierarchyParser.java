@@ -31,21 +31,21 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * Parser for the standard XML serialisation of section of
  * {@link CFrame}-hierarchy. Provides the parsed hierarchy in the form
- * of a {@link CFrameHierarchy} object.
+ * of a {@link CHierarchy} object.
  *
  * @author Colin Puleston
  */
-public class CFrameHierarchyParser extends CSerialiser {
+public class CHierarchyParser extends CSerialiser {
 
 	private class OneTimeParser {
 
-		private CFrameHierarchyBuilder hierarchyBldr;
+		private CHierarchyBuilder hierarchyBldr;
 
-		CFrameHierarchy parse(XNode rootFrameNode) {
+		CHierarchy parse(XNode rootFrameNode) {
 
 			CIdentity rootFrameId = parseIdentity(rootFrameNode);
 
-			hierarchyBldr = new CFrameHierarchyBuilder(rootFrameId);
+			hierarchyBldr = new CHierarchyBuilder(rootFrameId);
 
 			parseFrom(rootFrameId, rootFrameNode);
 
@@ -85,7 +85,7 @@ public class CFrameHierarchyParser extends CSerialiser {
 	 * @param document Document containing serialised hierarchy
 	 * @return Generated hierarchy
 	 */
-	public CFrameHierarchy parse(XDocument document) {
+	public CHierarchy parse(XDocument document) {
 
 		return parse(document.getRootNode());
 	}
@@ -96,7 +96,7 @@ public class CFrameHierarchyParser extends CSerialiser {
 	 * @param parentNode Parent-node for parsing
 	 * @return Generated hierarchy
 	 */
-	public CFrameHierarchy parse(XNode parentNode) {
+	public CHierarchy parse(XNode parentNode) {
 
 		return new OneTimeParser().parse(parentNode.getChild(CFRAME_ID));
 	}

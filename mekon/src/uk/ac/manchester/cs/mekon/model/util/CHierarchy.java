@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  *
  * @author Colin Puleston
  */
-public class CFrameHierarchy {
+public class CHierarchy {
 
 	private CIdentity rootFrameId;
 	private Map<CIdentity, Node> nodes = new HashMap<CIdentity, Node>();
@@ -75,7 +75,7 @@ public class CFrameHierarchy {
 	 *
 	 * @param rootFrame Root-frame for hierarchy to be represented
 	 */
-	public CFrameHierarchy(CFrame rootFrame) {
+	public CHierarchy(CFrame rootFrame) {
 
 		this(rootFrame.getIdentity());
 
@@ -130,7 +130,7 @@ public class CFrameHierarchy {
 		return getNode(frameId).annotations.getList(key);
 	}
 
-	CFrameHierarchy(CIdentity rootFrameId) {
+	CHierarchy(CIdentity rootFrameId) {
 
 		this.rootFrameId = rootFrameId;
 

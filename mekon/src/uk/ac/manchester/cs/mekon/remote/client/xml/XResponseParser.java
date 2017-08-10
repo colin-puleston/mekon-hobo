@@ -68,9 +68,9 @@ public class XResponseParser extends XPackageSerialiser implements XResponseVoca
 	/**
 	 * XXX.
 	 */
-	public CFrameHierarchy getCFrameHierarchyResponse() {
+	public CHierarchy getHierarchyResponse() {
 
-		return new CFrameHierarchyParser().parse(getStructuredResponseNode());
+		return new CHierarchyParser().parse(getStructuredResponseNode());
 	}
 
 	/**

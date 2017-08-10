@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.util.*;
  */
 class RClientSectionBuilder implements CSectionBuilder {
 
-	private CFrameHierarchy hierarchy;
+	private CHierarchy hierarchy;
 
 	private class HierarchyBuilder {
 
@@ -84,7 +84,7 @@ class RClientSectionBuilder implements CSectionBuilder {
 		new HierarchyBuilder(builder);
 	}
 
-	RClientSectionBuilder(CFrameHierarchy hierarchy) {
+	RClientSectionBuilder(CHierarchy hierarchy) {
 
 		this.hierarchy = hierarchy;
 	}

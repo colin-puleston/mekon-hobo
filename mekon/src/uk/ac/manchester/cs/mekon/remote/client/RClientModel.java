@@ -194,7 +194,7 @@ public abstract class RClientModel {
 	 * @param hierarchy Representation of concept-level frames hierarchy
 	 * present on the server
 	 */
-	public RClientModel(CFrameHierarchy hierarchy) {
+	public RClientModel(CHierarchy hierarchy) {
 
 		CBuilder cBuilder = createCBuilder(hierarchy);
 
@@ -234,7 +234,7 @@ public abstract class RClientModel {
 	 */
 	protected abstract RUpdates updateOnServer(IFrame rootFrame, IValuesUpdate clientUpdate);
 
-	private CBuilder createCBuilder(CFrameHierarchy hierarchy) {
+	private CBuilder createCBuilder(CHierarchy hierarchy) {
 
 		CBuilder cBuilder = CManager.createEmptyBuilder();
 

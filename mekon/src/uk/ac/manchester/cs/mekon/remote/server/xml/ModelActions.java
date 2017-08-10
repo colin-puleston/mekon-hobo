@@ -47,7 +47,7 @@ class ModelActions extends ServerActions<RModelActionType> {
 
 		void perform(XRequestParser request, XResponseRenderer response) {
 
-			response.setCFrameHierarchyResponse(model.getRootFrame());
+			response.setHierarchyResponse(model.getRootFrame());
 		}
 	}
 
