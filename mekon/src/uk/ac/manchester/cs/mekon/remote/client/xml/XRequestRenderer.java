@@ -22,67 +22,73 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
+package uk.ac.manchester.cs.mekon.remote.client.xml;
 
-import java.io.*;
-import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon.manage.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
-import uk.ac.manchester.cs.mekon.remote.server.xml.*;
+import uk.ac.manchester.cs.mekon.remote.xml.*;
 
 /**
  * XXX.
  *
  * @author Colin Puleston
  */
-public class MekonNetServer extends GenericServlet {
+public class XRequestRenderer extends XPackageSerialiser implements XRequestVocab {
 
-	static private final long serialVersionUID = -1;
-
-	private XServer server = null;
+	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
 	/**
+	 * XXX.
 	 */
-	public void init() throws ServletException {
+	public XRequestRenderer(RModelActionType actionType) {
 
-		server = new XServer(CManager.createBuilder().build());
-	}
-
-	/**
-	 */
-	public void service(
-					ServletRequest request,
-					ServletResponse response)
-					throws ServletException, IOException {
-
-		response.setContentType("text/html");
-
-		try {
-
-			XDocument requestDoc = new XDocument(getInputStream(request));
-			XDocument responseDoc = server.performAction(requestDoc);
-
-			responseDoc.writeToOutput(getOutputStream(response));
-		}
-		catch (XDocumentException e) {
-
-			throw new ServletException(e);
-		}
+		this(RActionCategory.MODEL, actionType);
 	}
 
 	/**
+	 * XXX.
 	 */
-	public void destroy() {
+	public XRequestRenderer(RStoreActionType actionType) {
+
+		this(RActionCategory.STORE, actionType);
 	}
 
-	private InputStream getInputStream(ServletRequest request) throws IOException {
+	/**
+	 * XXX.
+	 */
+	public void addParameter(CIdentity identity) {
 
-		return new BufferedInputStream(request.getInputStream());
+		CIdentitySerialiser.render(identity, addParameterNode());
 	}
 
-	private OutputStream getOutputStream(ServletResponse response) throws IOException {
+	/**
+	 * XXX.
+	 */
+	public void addParameter(IFrame instance) {
 
-		return new BufferedOutputStream(response.getOutputStream());
+		addParameter(new IInstanceRenderInput(instance));
+	}
+
+	/**
+	 * XXX.
+	 */
+	public void addParameter(IInstanceRenderInput instance) {
+
+		instanceRenderer.render(instance, addParameterNode());
+	}
+
+	private XRequestRenderer(RActionCategory actionCategory, Enum<?> actionType) {
+
+		super(REQUEST_ROOT_ID);
+
+		addTopLevelAttribute(ACTION_CATEGORY_ATTR, actionCategory);
+		addTopLevelAttribute(ACTION_TYPE_ATTR, actionType);
+	}
+
+	private XNode addParameterNode() {
+
+		return addTopLevelNode(PARAMETER_ID);
 	}
 }

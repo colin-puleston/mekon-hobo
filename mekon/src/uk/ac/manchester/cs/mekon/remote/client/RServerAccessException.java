@@ -22,24 +22,35 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.client.net;
-
-import java.net.*;
-
-import uk.ac.manchester.cs.mekon.remote.util.*;
+package uk.ac.manchester.cs.mekon.remote.client;
 
 /**
+ * Exception thrown by the client when an error has occured
+ * on the server during a MEKON remote access operation.
+ *
  * @author Colin Puleston
  */
-class ModelActions extends ServerActions<RModelActionType> {
+public class RServerAccessException extends RuntimeException {
 
-	ModelActions(URL serverURL) {
+	static private final long serialVersionUID = -1;
 
-		super(serverURL);
+	/**
+	 * Constructor.
+	 *
+	 * @param exception Wrapped exception
+	 */
+	public RServerAccessException(Exception exception) {
+
+		super(exception);
 	}
 
-	RActionCategory getCategory() {
+	/**
+	 * Constructor.
+	 *
+	 * @param message Error message
+	 */
+	public RServerAccessException(String message) {
 
-		return RActionCategory.MODEL;
+		super(message);
 	}
 }

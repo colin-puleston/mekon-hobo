@@ -26,12 +26,12 @@ package uk.ac.manchester.cs.mekon.remote.client.xml;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.serial.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.xml.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * Represents a client-side version of the MEKON instance-store that
@@ -42,57 +42,86 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 public abstract class XClientStore {
 
-	private CModel cModel;
-	private IStore iStore = new XClientIStore();
+	private CModel model;
+	private IStore store = new XClientIStore();
 
-	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 	private IInstanceParser assertionParser;
 
 	private class XClientIStore implements IStore {
 
 		public CModel getModel() {
 
-			return cModel;
+			return model;
 		}
 
 		public IFrame add(IFrame instance, CIdentity identity) {
 
-			return parseAssertionOrNull(addOnServer(render(instance), render(identity)));
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.ADD);
+
+			request.addParameter(instance);
+			request.addParameter(identity);
+
+			return performAssertionOrNullResponseAction(request);
 		}
 
 		public boolean remove(CIdentity identity) {
 
-			return removeOnServer(render(identity));
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.REMOVE);
+
+			request.addParameter(identity);
+
+			return performBooleanResponseAction(request);
 		}
 
 		public boolean clear() {
 
-			return clearOnServer();
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.CLEAR);
+
+			return performBooleanResponseAction(request);
 		}
 
 		public boolean contains(CIdentity identity) {
 
-			return containsOnServer(render(identity));
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.CONTAINS);
+
+			request.addParameter(identity);
+
+			return performBooleanResponseAction(request);
 		}
 
 		public IFrame get(CIdentity identity) {
 
-			return parseAssertionOrNull(getOnServer(render(identity)));
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET);
+
+			request.addParameter(identity);
+
+			return performAssertionOrNullResponseAction(request);
 		}
 
 		public List<CIdentity> getAllIdentities() {
 
-			return parseIdentities(getAllIdentitiesOnServer());
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET_IDS);
+
+			return performIdentityListResponseAction(request);
 		}
 
 		public IMatches match(IFrame query) {
 
-			return parseMatches(matchOnServer(render(query)));
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.MATCH);
+
+			request.addParameter(query);
+
+			return performMatchesResponseAction(request);
 		}
 
 		public boolean matches(IFrame query, IFrame instance) {
 
-			return matchesOnServer(render(query), render(instance));
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.MATCHES);
+
+			request.addParameter(query);
+			request.addParameter(instance);
+
+			return performBooleanResponseAction(request);
 		}
 	}
 
@@ -103,7 +132,7 @@ public abstract class XClientStore {
 	 */
 	public IStore getIStore() {
 
-		return iStore;
+		return store;
 	}
 
 	/**
@@ -111,119 +140,52 @@ public abstract class XClientStore {
 	 *
 	 * @param model Client-side model associated with the store
 	 */
-	protected XClientStore(XClientModel model) {
+	protected XClientStore(CModel model) {
 
-		cModel = model.getCModel();
-		assertionParser = new IInstanceParser(cModel, IFrameFunction.ASSERTION);
+		this.model = model;
+
+		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
 	}
 
 	/**
-	 * Adds an instance to the server-based store, possibly replacing an
-	 * existing instance with the same identity.
+	 * Sends an uninitialised instance-level frame with function {@link
+	 * IFrameFunction#ASSERTION} to be initialised on the server.
 	 *
-	 * @param instance Representation of instance to be stored
-	 * @param identity Unique identity for instance
-	 * @return Existing instance that was replaced, or null if not
-	 * applicable
-	 * @throws KAccessException if instance frame does not have function
-	 * {@link IFrameFunction#ASSERTION}
+	 * @param requestDoc Document containing standard MEKON XML-based
+	 * serialisation of relevant uninitialised assertion frame
+	 * @return Updated version of document XXX
 	 */
-	protected abstract XDocument addOnServer(XDocument instance, XDocument identity);
+	protected abstract XDocument performActionOnServer(XDocument request);
 
-	/**
-	 * Removes an instance from the server-based store.
-	 *
-	 * @param identity Unique identity of instance
-	 * @return True if instance removed, false if instance with
-	 * specified identity not present
-	 */
-	protected abstract boolean removeOnServer(XDocument identity);
+	private boolean performBooleanResponseAction(XRequestRenderer request) {
 
-	/**
-	 * Removes all instances from the server-based store.
-	 *
-	 * @return True if any instances removed, false if no instances
-	 * were present
-	 */
-	protected abstract boolean clearOnServer();
-
-	/**
-	 * Checks whether server-based store contains a particular instance.
-	 *
-	 * @param identity Unique identity of instance to check for
-	 * @return True if store contains required instance
-	 */
-	protected abstract boolean containsOnServer(XDocument identity);
-
-	/**
-	 * Retrieves an instance from the server-based store.
-	 *
-	 * @param identity Unique identity of instance
-	 * @return Instance-level frame representing required instance,
-	 * or null if instance with specified identity not present
-	 */
-	protected abstract XDocument getOnServer(XDocument identity);
-
-	/**
-	 * Provides unique identities of all instances in server-based store,
-	 * ordered by the time/date they were added.
-	 *
-	 * @return Unique identities of all instances, oldest entries
-	 * first
-	 */
-	protected abstract XDocument getAllIdentitiesOnServer();
-
-	/**
-	 * Finds all instances from the server-based store that are matched by
-	 * the supplied query.
-	 *
-	 * @param query Representation of query
-	 * @return Results of query execution
-	 */
-	protected abstract XDocument matchOnServer(XDocument query);
-
-	/**
-	 * Uses the query mechanisms associated with the server-based store to
-	 * test whether the supplied instance is matched by the supplied query.
-	 *
-	 * @param query Representation of query
-	 * @param instance Representation of instance
-	 * @return True if instance matched by query
-	 */
-	protected abstract boolean matchesOnServer(XDocument query, XDocument instance);
-
-	private XDocument render(IFrame instance) {
-
-		return instanceRenderer.render(new IInstanceRenderInput(instance));
+		return performAction(request).getBooleanResponse();
 	}
 
-	private XDocument render(CIdentity identity) {
+	private IFrame performAssertionOrNullResponseAction(XRequestRenderer request) {
 
-		return CIdentitySerialiser.render(identity);
+		XResponseParser response = performAction(request);
+
+		if (response.isNullResponse()) {
+
+			return null;
+		}
+
+		return assertionParser.parse(response.getInstanceResponseParseInput());
 	}
 
-	private IFrame parseAssertionOrNull(XDocument doc) {
+	private List<CIdentity> performIdentityListResponseAction(XRequestRenderer request) {
 
-		return doc != null ? parseAssertion(doc) : null;
+		return performAction(request).getIdentityListResponse();
 	}
 
-	private IFrame parseAssertion(XDocument doc) {
+	private IMatches performMatchesResponseAction(XRequestRenderer request) {
 
-		return assertionParser.parse(new IInstanceParseInput(doc));
+		return performAction(request).getMatchesResponse();
 	}
 
-	private CIdentity parseIdentity(XDocument doc) {
+	private XResponseParser performAction(XRequestRenderer request) {
 
-		return CIdentitySerialiser.parse(doc);
-	}
-
-	private List<CIdentity> parseIdentities(XDocument doc) {
-
-		return CIdentitySerialiser.parseList(doc);
-	}
-
-	private IMatches parseMatches(XDocument doc) {
-
-		return IMatchesParser.parse(doc);
+		return new XResponseParser(performActionOnServer(request.getDocument()));
 	}
 }

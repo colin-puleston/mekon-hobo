@@ -22,43 +22,18 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.client.net;
-
-import uk.ac.manchester.cs.mekon.xdoc.*;
-import uk.ac.manchester.cs.mekon.remote.client.xml.*;
-import uk.ac.manchester.cs.mekon.remote.util.*;
+package uk.ac.manchester.cs.mekon.remote.xml;
 
 /**
+ * XXX.
+ *
  * @author Colin Puleston
  */
-class NetClientModel extends XClientModel {
+public interface XResponseVocab {
 
-	private ModelActions actions;
+	static public final String RESPONSE_ROOT_ID = "MekonActionResponse";
+	static public final String STRUCTURED_RESPONSE_ID = "StructuredResponse";
+	static public final String NULL_RESPONSE_ID = "NullResponse";
 
-	protected XDocument initialiseAssertionOnServer(XDocument assertionDoc) {
-
-		return actions.getDocumentResult(RModelActionType.INITIALISE_ASSERTION, assertionDoc);
-	}
-
-	protected XDocument initialiseQueryOnServer(XDocument queryDoc) {
-
-		return actions.getDocumentResult(RModelActionType.INITIALISE_QUERY, queryDoc);
-	}
-
-	protected XDocument updateAssertionOnServer(XDocument assertionDoc) {
-
-		return actions.getDocumentResult(RModelActionType.UPDATE_ASSERTION, assertionDoc);
-	}
-
-	protected XDocument updateQueryOnServer(XDocument queryDoc) {
-
-		return actions.getDocumentResult(RModelActionType.UPDATE_QUERY, queryDoc);
-	}
-
-	NetClientModel(ModelActions actions) {
-
-		super(actions.getDocumentResult(RModelActionType.GET_FRAME_HIERARCHY));
-
-		this.actions = actions;
-	}
+	static public final String BOOLEAN_RESPONSE_ATTR = "booleanResponse";
 }

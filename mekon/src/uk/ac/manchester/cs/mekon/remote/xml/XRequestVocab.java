@@ -22,59 +22,18 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
-
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon.remote.util.*;
+package uk.ac.manchester.cs.mekon.remote.xml;
 
 /**
+ * XXX.
+ *
  * @author Colin Puleston
  */
-abstract class ServerActions {
+public interface XRequestVocab {
 
-	private List<Action<?>> actions = new ArrayList<Action<?>>();
+	static public final String REQUEST_ROOT_ID = "MekonActionRequest";
+	static public final String PARAMETER_ID = "Parameter";
 
-	abstract class Action<T extends Enum<T>> {
-
-		Action() {
-
-			actions.add(this);
-		}
-
-		abstract T getType();
-
-		abstract void perform(NetLink link) throws ServletException, IOException;
-	}
-
-	boolean checkPerformAction(NetLink link) throws ServletException, IOException {
-
-		ServerActionSpec spec = link.getActionSpec();
-
-		if (spec.hasCategory(getCategory())) {
-
-			findAction(spec).perform(link);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	abstract RActionCategory getCategory();
-
-	private Action<?> findAction(ServerActionSpec spec) throws ServletException {
-
-		for (Action<?> action : actions) {
-
-			if (spec.hasType(action.getType())) {
-
-				return action;
-			}
-		}
-
-		throw spec.getBadSpecException();
-	}
+	static public final String ACTION_CATEGORY_ATTR = "actionCategory";
+	static public final String ACTION_TYPE_ATTR = "actionType";
 }

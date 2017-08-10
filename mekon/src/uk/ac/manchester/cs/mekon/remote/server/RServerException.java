@@ -22,51 +22,35 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.client.net;
-
-import java.io.*;
-import java.net.*;
-
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.remote.util.*;
+package uk.ac.manchester.cs.mekon.remote.server;
 
 /**
+ * Exception thrown on the server when an error has occured
+ * during a MEKON remote access operation.
+ *
  * @author Colin Puleston
  */
-class ActionRequestURL {
+public class RServerException extends RuntimeException {
 
-	private StringBuilder urlContent = new StringBuilder();
+	static private final long serialVersionUID = -1;
 
-	ActionRequestURL(URL serverURL, RActionCategory actionCategory, Enum<?> actionType) {
+	/**
+	 * Constructor.
+	 *
+	 * @param exception Wrapped exception
+	 */
+	public RServerException(Exception exception) {
 
-		urlContent.append(serverURL.toString());
-
-		addActionAspect('?', RActionAspect.CATEGORY, actionCategory);
-		addActionAspect('&', RActionAspect.TYPE, actionType);
+		super(exception);
 	}
 
-	URLConnection openConnection() throws IOException {
+	/**
+	 * Constructor.
+	 *
+	 * @param message Error message
+	 */
+	public RServerException(String message) {
 
-		return createURL().openConnection();
-	}
-
-	private void addActionAspect(char prefix, RActionAspect aspect, Enum<?> value) {
-
-		urlContent.append(prefix);
-		urlContent.append(aspect.name());
-		urlContent.append('=');
-		urlContent.append(value.name());
-	}
-
-	private URL createURL() {
-
-		try {
-
-			return new URL(urlContent.toString());
-		}
-		catch (MalformedURLException e) {
-
-			throw new KAccessException(e);
-		}
+		super(message);
 	}
 }

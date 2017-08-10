@@ -24,10 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
+import java.io.*;
 import java.net.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.client.*;
+import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 
 /**
  * XXX.
@@ -36,16 +40,41 @@ import uk.ac.manchester.cs.mekon.store.*;
  */
 public class MekonNetClient {
 
-	private NetClientModel model;
-	private NetClientStore store;
+	private URL serverURL;
+
+	private CModel model;
+	private IStore store;
+
+	private class NetClientModel extends XClientModel {
+
+		protected XDocument performActionOnServer(XDocument request) {
+
+			return performAction(request);
+		}
+	}
+
+	private class NetClientStore extends XClientStore {
+
+		protected XDocument performActionOnServer(XDocument request) {
+
+			return performAction(request);
+		}
+
+		NetClientStore() {
+
+			super(model);
+		}
+	}
 
 	/**
 	 * XXX.
 	 */
 	public MekonNetClient(URL serverURL) {
 
-		model = new NetClientModel(new ModelActions(serverURL));
-		store = new NetClientStore(model, new StoreActions(serverURL));
+		this.serverURL = serverURL;
+
+		model = new NetClientModel().getCModel();
+		store = new NetClientStore().getIStore();
 	}
 
 	/**
@@ -55,7 +84,7 @@ public class MekonNetClient {
 	 */
 	public CModel getCModel() {
 
-		return model.getCModel();
+		return model;
 	}
 
 	/**
@@ -65,6 +94,52 @@ public class MekonNetClient {
 	 */
 	public IStore getIStore() {
 
-		return store.getIStore();
+		return store;
+	}
+
+	private XDocument performAction(XDocument request) {
+
+		try {
+
+			URLConnection connection = connect();
+
+			send(connection, request);
+
+			return receive(connection);
+		}
+		catch (IOException e) {
+
+			throw new RServerAccessException(e);
+		}
+	}
+
+	private URLConnection connect() throws IOException {
+
+		URLConnection connection = serverURL.openConnection();
+
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
+
+		connection.connect();
+
+		return connection;
+	}
+
+	private void send(URLConnection connection, XDocument request) throws IOException {
+
+		OutputStream output = connection.getOutputStream();
+
+		request.writeToOutput(new BufferedOutputStream(output));
+		output.close();
+	}
+
+	private XDocument receive(URLConnection connection) throws IOException {
+
+		InputStream input = connection.getInputStream();
+		XDocument response = new XDocument(new BufferedInputStream(input));
+
+		input.close();
+
+		return response;
 	}
 }

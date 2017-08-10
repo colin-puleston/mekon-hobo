@@ -22,35 +22,63 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.client;
+package uk.ac.manchester.cs.mekon.remote.server.xml;
+
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.remote.xml.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon.remote.server.*;
 
 /**
- * Exception thrown when an error has occured on the server
- * during a MEKON remote access operation.
- *
  * @author Colin Puleston
  */
-public class RServerException extends RuntimeException {
+abstract class ServerActions<T extends Enum<T>> {
 
-	static private final long serialVersionUID = -1;
+	private List<Action> actions = new ArrayList<Action>();
 
-	/**
-	 * Constructor.
-	 *
-	 * @param exception Wrapped exception
-	 */
-	public RServerException(Exception exception) {
+	abstract class Action {
 
-		super(exception);
+		Action() {
+
+			actions.add(this);
+		}
+
+		abstract T getActionType();
+
+		abstract void perform(XRequestParser request, XResponseRenderer response);
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @param message Error message
-	 */
-	public RServerException(String message) {
+	boolean checkPerformAction(XRequestParser request, XResponseRenderer response) {
 
-		super(message);
+		if (getActionCategory() == request.getActionCategory()) {
+
+			findAction(request).perform(request, response);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	abstract RActionCategory getActionCategory();
+
+	abstract T getRequestActionType(XRequestParser request);
+
+	private Action findAction(XRequestParser request) {
+
+		T type = getRequestActionType(request);
+
+		for (Action action : actions) {
+
+			if (action.getActionType() == type) {
+
+				return action;
+			}
+		}
+
+		throw new RServerException(
+					"Unrecognised server action: "
+					+ "\"" + getActionCategory() + ":" + type + "\"");
 	}
 }

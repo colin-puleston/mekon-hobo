@@ -22,87 +22,76 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.client.net;
+package uk.ac.manchester.cs.mekon.remote.server.xml;
 
-import java.io.*;
-import java.net.*;
-
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
+ * XXX.
+ *
  * @author Colin Puleston
  */
-class NetLink {
+public class XRequestParser extends XPackageSerialiser implements XRequestVocab {
 
-	private URLConnection connection;
+	/**
+	 * XXX.
+	 */
+	public XRequestParser(XDocument document) {
 
-	private InputStream input = null;
-	private OutputStream output = null;
-
-	NetLink(ActionRequestURL requestURL) throws IOException {
-
-		connection = requestURL.openConnection();
-
-		connection.setDoInput(true);
-		connection.setDoOutput(true);
+		super(document);
 	}
 
-	void writeDocuments(XDocument... documents) throws IOException {
+	/**
+	 * XXX.
+	 */
+	public RActionCategory getActionCategory() {
 
-		for (XDocument document : documents) {
-
-			document.writeToOutput(getOutputStream());
-		}
-
-		if (output != null) {
-
-			output.close();
-		}
+		return getTopLevelEnum(ACTION_CATEGORY_ATTR, RActionCategory.class);
 	}
 
-	XDocument readDocument() throws IOException {
+	/**
+	 * XXX.
+	 */
+	public RModelActionType getModelActionType() {
 
-		return new XDocument(getInputStream());
+		return getActionType(RModelActionType.class);
 	}
 
-	Boolean readBoolean() throws IOException {
+	/**
+	 * XXX.
+	 */
+	public RStoreActionType getStoreActionType() {
 
-		return RBoolean.fromInteger(getInputStream().read());
+		return getActionType(RStoreActionType.class);
 	}
 
-	void close() throws IOException {
+	/**
+	 * XXX.
+	 */
+	public CIdentity getIdentityParameter(int index) {
 
-		if (input != null) {
-
-			input.close();
-		}
+		return CIdentitySerialiser.parse(getParameterNode(index));
 	}
 
-	private InputStream getInputStream() throws IOException {
+	/**
+	 * XXX.
+	 */
+	public IInstanceParseInput getInstanceParameterParseInput(int index) {
 
-		if (input == null) {
-
-			if (output == null) {
-
-				connection.connect();
-			}
-
-			input = new BufferedInputStream(connection.getInputStream());
-		}
-
-		return input;
+		return new IInstanceParseInput(getParameterNode(index));
 	}
 
-	private OutputStream getOutputStream() throws IOException {
+	private <E extends Enum<E>>E getActionType(Class<E> type) {
 
-		if (output == null) {
+		return getTopLevelEnum(ACTION_TYPE_ATTR, type);
+	}
 
-			connection.connect();
+	private XNode getParameterNode(int index) {
 
-			output = connection.getOutputStream();
-		}
-
-		return output;
+		return getTopLevelNode(PARAMETER_ID, index);
 	}
 }

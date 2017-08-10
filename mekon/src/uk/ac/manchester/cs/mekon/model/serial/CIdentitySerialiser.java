@@ -113,16 +113,25 @@ public class CIdentitySerialiser {
 
 	/**
 	 * Renders a list of identities to a set of specifically-created
-	 * configuration file nodes.
+	 * configuration file nodes, using standard tag for created nodes.
+	 *
+	 * @param identities Identities to be be rendered
+	 * @param parentNode Parent of nodes to be created
+	 */
+	static public void renderList(List<CIdentity> identities, XNode parentNode) {
+
+		renderList(identities, parentNode, IDENTITY_ID);
+	}
+
+	/**
+	 * Renders a list of identities to a set of specifically-created
+	 * configuration file nodes, using specified tag for created nodes.
 	 *
 	 * @param identities Identities to be be rendered
 	 * @param parentNode Parent of nodes to be created
 	 * @param tag Tag for created nodes
 	 */
-	static public void renderList(
-						List<CIdentity> identities,
-						XNode parentNode,
-						String tag) {
+	static public void renderList(List<CIdentity> identities, XNode parentNode, String tag) {
 
 		for (CIdentity identity : identities) {
 
@@ -167,7 +176,20 @@ public class CIdentitySerialiser {
 	}
 
 	/**
-	 * Parses a list of identities from a set of configuration file nodes.
+	 * Parses a list of identities from a set of configuration file nodes
+	 * with standard tag.
+	 *
+	 * @param parentNode Parent of relevant nodes
+	 * @return Generated identities
+	 */
+	static public List<CIdentity> parseList(XNode parentNode) {
+
+		return parseList(parentNode, IDENTITY_ID);
+	}
+
+	/**
+	 * Parses a list of identities from a set of configuration file nodes
+	 * with specified tag.
 	 *
 	 * @param parentNode Parent of relevant nodes
 	 * @param tag Tag of relevant nodes

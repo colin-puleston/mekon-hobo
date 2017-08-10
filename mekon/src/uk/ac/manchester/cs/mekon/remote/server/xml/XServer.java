@@ -22,24 +22,60 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.client.net;
+package uk.ac.manchester.cs.mekon.remote.server.xml;
 
-import java.net.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.xml.*;
+import uk.ac.manchester.cs.mekon.remote.server.*;
 
 /**
+ * XXX.
+ *
  * @author Colin Puleston
  */
-class StoreActions extends ServerActions<RStoreActionType> {
+public class XServer {
 
-	StoreActions(URL serverURL) {
+	private CModel model;
 
-		super(serverURL);
+	private List<ServerActions<?>> allActions = new ArrayList<ServerActions<?>>();
+
+	/**
+	 */
+	public XServer(CModel model) {
+
+		this.model = model;
+
+		allActions.add(new ModelActions(model));
 	}
 
-	RActionCategory getCategory() {
+	/**
+	 */
+	public void setStore(IStore iStore) {
 
-		return RActionCategory.STORE;
+		allActions.add(new StoreActions(iStore));
+	}
+
+	/**
+	 */
+	public XDocument performAction(XDocument requestDoc) {
+
+		XRequestParser request = new XRequestParser(requestDoc);
+		XResponseRenderer response = new XResponseRenderer();
+
+		for (ServerActions<?> actions : allActions) {
+
+			if (actions.checkPerformAction(request, response)) {
+
+				return response.getDocument();
+			}
+		}
+
+		throw new RServerException(
+					"Unrecognised server action category: "
+					+ "\"" + request.getActionCategory() + "\"");
 	}
 }

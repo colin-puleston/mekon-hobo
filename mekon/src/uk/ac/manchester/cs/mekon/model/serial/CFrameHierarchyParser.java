@@ -93,13 +93,12 @@ public class CFrameHierarchyParser extends CSerialiser {
 	/**
 	 * Parses serialised hierarchy from node representing the root-frame.
 	 *
-	 * @param rootFrameNode Node representing root-frame of serialised
-	 * hierarchy
+	 * @param parentNode Parent-node for parsing
 	 * @return Generated hierarchy
 	 */
-	public CFrameHierarchy parse(XNode rootFrameNode) {
+	public CFrameHierarchy parse(XNode parentNode) {
 
-		return new OneTimeParser().parse(rootFrameNode);
+		return new OneTimeParser().parse(parentNode.getChild(CFRAME_ID));
 	}
 
 	private CIdentity parseIdentity(XNode node) {

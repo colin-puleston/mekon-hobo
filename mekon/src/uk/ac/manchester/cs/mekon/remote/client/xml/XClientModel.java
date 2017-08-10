@@ -31,6 +31,8 @@ import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.*;
+import uk.ac.manchester.cs.mekon.remote.xml.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * Represents a client-side version of the MEKON frames model that uses
@@ -39,9 +41,9 @@ import uk.ac.manchester.cs.mekon.remote.client.*;
  *
  * @author Colin Puleston
  */
-public abstract class XClientModel extends RClientModel {
+public abstract class XClientModel {
 
-	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
+	private CModel model;
 
 	private IInstanceParser assertionParser;
 	private IInstanceParser queryParser;
@@ -53,42 +55,41 @@ public abstract class XClientModel extends RClientModel {
 
 		RUpdates perform(IFrame masterRoot) {
 
-			boolean query = masterRoot.getFunction().query();
+			XRequestRenderer request = getRequest(masterRoot);
+			XResponseParser response = performAction(request);
 
-			XDocument masterDoc = instanceRenderer.render(createRenderInput(masterRoot));
-			XDocument updateDoc = processOnServer(masterDoc, query);
-
-			IFrame updateRoot = getParser(query).parse(createParseInput(updateDoc));
-
-			return createUpdates(updateRoot);
+			return createUpdates(parseInstance(createParseInput(response)));
 		}
 
-		IInstanceRenderInput createRenderInput(IFrame masterRoot) {
+		abstract RModelActionType getActionType();
+
+		abstract IFrame parseInstance(IInstanceParseInput input);
+
+		void customiseRenderInput(IInstanceRenderInput input) {
+		}
+
+		private XRequestRenderer getRequest(IFrame masterRoot) {
+
+			XRequestRenderer request = new XRequestRenderer(getActionType());
+
+			request.addParameter(createRenderInput(masterRoot));
+
+			return request;
+		}
+
+		private IInstanceRenderInput createRenderInput(IFrame masterRoot) {
 
 			IInstanceRenderInput input = new IInstanceRenderInput(masterRoot);
 
 			input.setFrameXDocIds(mastersToIds);
+			customiseRenderInput(input);
 
 			return input;
 		}
 
-		abstract XDocument processAssertionOnServer(XDocument assertionDoc);
+		private IInstanceParseInput createParseInput(XResponseParser response) {
 
-		abstract XDocument processQueryOnServer(XDocument queryDoc);
-
-		private XDocument processOnServer(XDocument doc, boolean query) {
-
-			return query ? processQueryOnServer(doc) : processAssertionOnServer(doc);
-		}
-
-		private IInstanceParser getParser(boolean query) {
-
-			return query ? assertionParser : queryParser;
-		}
-
-		private IInstanceParseInput createParseInput(XDocument updateDoc) {
-
-			IInstanceParseInput input = new IInstanceParseInput(updateDoc);
+			IInstanceParseInput input = response.getInstanceResponseParseInput();
 
 			input.setFramesByXDocId(idsToUpdates);
 
@@ -113,20 +114,33 @@ public abstract class XClientModel extends RClientModel {
 		}
 	}
 
-	private class InstanceInitAction extends InstanceAction {
+	private class AssertionInitAction extends InstanceAction {
 
-		XDocument processAssertionOnServer(XDocument assertionDoc) {
+		RModelActionType getActionType() {
 
-			return initialiseAssertionOnServer(assertionDoc);
+			return RModelActionType.INITIALISE_ASSERTION;
 		}
 
-		XDocument processQueryOnServer(XDocument queryDoc) {
+		IFrame parseInstance(IInstanceParseInput input) {
 
-			return initialiseQueryOnServer(queryDoc);
+			return assertionParser.parse(input);
 		}
 	}
 
-	private class InstanceUpdateAction extends InstanceAction {
+	private class QueryInitAction extends InstanceAction {
+
+		RModelActionType getActionType() {
+
+			return RModelActionType.INITIALISE_QUERY;
+		}
+
+		IFrame parseInstance(IInstanceParseInput input) {
+
+			return queryParser.parse(input);
+		}
+	}
+
+	private abstract class InstanceUpdateAction extends InstanceAction {
 
 		private IValuesUpdate clientUpdate;
 
@@ -135,111 +149,129 @@ public abstract class XClientModel extends RClientModel {
 			this.clientUpdate = clientUpdate;
 		}
 
-		IInstanceRenderInput createRenderInput(IFrame masterRoot) {
-
-			IInstanceRenderInput input = super.createRenderInput(masterRoot);
+		void customiseRenderInput(IInstanceRenderInput input) {
 
 			input.setValuesUpdate(clientUpdate);
+		}
+	}
 
-			return input;
+	private class AssertionUpdateAction extends InstanceUpdateAction {
+
+		AssertionUpdateAction(IValuesUpdate clientUpdate) {
+
+			super(clientUpdate);
 		}
 
-		XDocument processAssertionOnServer(XDocument assertionDoc) {
+		RModelActionType getActionType() {
 
-			return updateAssertionOnServer(assertionDoc);
+			return RModelActionType.UPDATE_ASSERTION;
 		}
 
-		XDocument processQueryOnServer(XDocument queryDoc) {
+		IFrame parseInstance(IInstanceParseInput input) {
 
-			return updateQueryOnServer(queryDoc);
+			return assertionParser.parse(input);
 		}
+	}
+
+	private class QueryUpdateAction extends InstanceUpdateAction {
+
+		QueryUpdateAction(IValuesUpdate clientUpdate) {
+
+			super(clientUpdate);
+		}
+
+		RModelActionType getActionType() {
+
+			return RModelActionType.UPDATE_QUERY;
+		}
+
+		IFrame parseInstance(IInstanceParseInput input) {
+
+			return queryParser.parse(input);
+		}
+	}
+
+	private class XRClientModel extends RClientModel {
+
+		protected RUpdates initialiseOnServer(IFrame frame) {
+
+			return getInitAction(frame).perform(frame);
+		}
+
+		protected RUpdates updateOnServer(IFrame rootFrame, IValuesUpdate clientUpdate) {
+
+			return getUpdateAction(rootFrame, clientUpdate).perform(rootFrame);
+		}
+
+		XRClientModel() {
+
+			super(getCFrameHierarchy());
+		}
+	}
+
+	/**
+	 * Provides the client MEKON frames model.
+	 *
+	 * @return Client MEKON frames model
+	 */
+	public CModel getCModel() {
+
+		return model;
 	}
 
 	/**
 	 * Constructor.
-	 *
-	 * @param frameHierarchyDoc Document containing standard MEKON XML-based
-	 * serialisation of concept-level frames hierarchy present on server
 	 */
-	protected XClientModel(XDocument frameHierarchyDoc) {
+	protected XClientModel() {
 
-		this(new CFrameHierarchyParser().parse(frameHierarchyDoc));
-	}
+		model = new XRClientModel().getCModel();
 
-	/**
-	 * Constructor.
-	 *
-	 * @param frameHierarchyRootNode Root-node of standard MEKON XML-based
-	 * serialisation of concept-level frames hierarchy present on server
-	 */
-	protected XClientModel(XNode frameHierarchyRootNode) {
-
-		this(new CFrameHierarchyParser().parse(frameHierarchyRootNode));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected RUpdates initialiseOnServer(IFrame frame) {
-
-		return new InstanceInitAction().perform(frame);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected RUpdates updateOnServer(
-							IFrame rootFrame,
-							IValuesUpdate clientUpdate) {
-
-		return new InstanceUpdateAction(clientUpdate).perform(rootFrame);
+		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
+		queryParser = new IInstanceParser(model, IFrameFunction.QUERY);
 	}
 
 	/**
 	 * Sends an uninitialised instance-level frame with function {@link
 	 * IFrameFunction#ASSERTION} to be initialised on the server.
 	 *
-	 * @param assertionDoc Document containing standard MEKON XML-based
+	 * @param requestDoc Document containing standard MEKON XML-based
 	 * serialisation of relevant uninitialised assertion frame
-	 * @return Updated version of document
+	 * @return Updated version of document XXX
 	 */
-	protected abstract XDocument initialiseAssertionOnServer(XDocument assertionDoc);
+	protected abstract XDocument performActionOnServer(XDocument request);
 
-	/**
-	 * Sends an uninitialised instance-level frame with function {@link
-	 * IFrameFunction#QUERY} to be initialised on the server.
-	 *
-	 * @param queryDoc Document containing standard MEKON XML-based
-	 * serialisation of relevant uninitialised query frame
-	 * @return Updated version of document
-	 */
-	protected abstract XDocument initialiseQueryOnServer(XDocument queryDoc);
+	private CFrameHierarchy getCFrameHierarchy() {
 
-	/**
-	 * Sends an instance-level frame/slot network with function {@link
-	 * IFrameFunction#ASSERTION} to be automatically updated on the server.
-	 *
-	 * @param assertionDoc Document containing standard MEKON XML-based
-	 * serialisation of relevant assertion frame/slot network
-	 * @return Updated version of document
-	 */
-	protected abstract XDocument updateAssertionOnServer(XDocument assertionDoc);
+		return performAction(getCFrameHierarchyRequest()).getCFrameHierarchyResponse();
+	}
 
-	/**
-	 * Sends an instance-level frame/slot network with function {@link
-	 * IFrameFunction#QUERY} to be automatically updated on the server.
-	 *
-	 * @param queryDoc Document containing standard MEKON XML-based
-	 * serialisation of relevant query frame/slot network
-	 * @return Updated version of document
-	 */
-	protected abstract XDocument updateQueryOnServer(XDocument queryDoc);
+	private XRequestRenderer getCFrameHierarchyRequest() {
 
-	private XClientModel(CFrameHierarchy hierarchy) {
+		return new XRequestRenderer(RModelActionType.GET_FRAME_HIERARCHY);
+	}
 
-		super(hierarchy);
+	private XResponseParser performAction(XRequestRenderer request) {
 
-		assertionParser = new IInstanceParser(getCModel(), IFrameFunction.ASSERTION);
-		queryParser = new IInstanceParser(getCModel(), IFrameFunction.QUERY);
+		XDocument requestDoc = request.getDocument();
+		XDocument responseDoc = performActionOnServer(requestDoc);
+
+		return new XResponseParser(responseDoc);
+	}
+
+	private InstanceAction getInitAction(IFrame frame) {
+
+		return query(frame) ? new QueryInitAction() : new AssertionInitAction();
+	}
+
+	private InstanceAction getUpdateAction(IFrame frame, IValuesUpdate update) {
+
+		return query(frame)
+				? new QueryUpdateAction(update)
+				: new AssertionUpdateAction(update);
+	}
+
+	private boolean query(IFrame frame) {
+
+		return frame.getFunction().query();
 	}
 }
