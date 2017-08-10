@@ -36,118 +36,66 @@ import uk.ac.manchester.cs.mekon.remote.server.xml.*;
  */
 public class MekonRemoteTestModelExplorer {
 
-	private static class LocalXClientModel extends XClientModel {
-
-		private XServerModel serverModel;
-
-		protected XDocument initialiseAssertionOnServer(XDocument assertionDoc) {
-
-			return serverModel.initialiseAssertion(assertionDoc);
-		}
-
-		protected XDocument initialiseQueryOnServer(XDocument queryDoc) {
-
-			return serverModel.initialiseQuery(queryDoc);
-		}
-
-		protected XDocument updateAssertionOnServer(XDocument assertionDoc) {
-
-			return serverModel.updateAssertion(assertionDoc);
-		}
-
-		protected XDocument updateQueryOnServer(XDocument queryDoc) {
-
-			return serverModel.updateQuery(queryDoc);
-		}
-
-		LocalXClientModel(XServerModel serverModel) {
-
-			super(serverModel.getCFrameHierarchy());
-
-			this.serverModel = serverModel;
-		}
-	}
-
-	private static class LocalXClientStore extends XClientStore {
-
-		private XServerStore serverStore;
-
-		protected XDocument addOnServer(XDocument instance, XDocument identity) {
-
-			return serverStore.add(instance, identity);
-		}
-
-		protected boolean removeOnServer(XDocument identity) {
-
-			return serverStore.remove(identity);
-		}
-
-		protected boolean clearOnServer() {
-
-			return serverStore.clear();
-		}
-
-		protected boolean containsOnServer(XDocument identity) {
-
-			return serverStore.contains(identity);
-		}
-
-		protected XDocument getOnServer(XDocument identity) {
-
-			return serverStore.get(identity);
-		}
-
-		protected XDocument getAllIdentitiesOnServer() {
-
-			return serverStore.getAllIdentities();
-		}
-
-		protected XDocument matchOnServer(XDocument query) {
-
-			return serverStore.match(query);
-		}
-
-		protected boolean matchesOnServer(XDocument query, XDocument instance) {
-
-			return serverStore.matches(query, instance);
-		}
-
-		LocalXClientStore(XClientModel clientModel, XServerStore serverStore) {
-
-			super(clientModel);
-
-			this.serverStore = serverStore;
-		}
-	}
-
 	static public void main(String[] args) {
 
 		CBuilder builder = CManager.createBuilder();
 
-		create(builder.build(), builder, createStore(builder));
-	}
-
-	static public void create(CModel model, CBuilder builder) {
-
-		XServerModel serverModel = new XServerModel(model, builder);
-		XClientModel clientModel = new LocalXClientModel(serverModel);
-
-		new MekonModelExplorer(clientModel.getCModel());
-	}
-
-	static public void create(CModel model, CBuilder builder, IStore store) {
-
-		XServerModel serverModel = new XServerModel(model, builder);
-		XServerStore serverStore = new XServerStore(store);
-
-		XClientModel clientModel = new LocalXClientModel(serverModel);
-		XClientStore clientStore = new LocalXClientStore(clientModel, serverStore);
-
-		new MekonModelExplorer(clientModel.getCModel(), clientStore.getIStore());
+		new MekonRemoteTestModelExplorer(builder.build(), createStore(builder));
 	}
 
 	static private IStore createStore(CBuilder builder) {
 
 		return IDiskStoreManager.getBuilder(builder).build();
+	}
+
+	private XServer server;
+
+	private class LocalXClientModel extends XClientModel {
+
+		protected XDocument performActionOnServer(XDocument request) {
+
+			return server.performAction(request);
+		}
+	}
+
+	private class LocalXClientStore extends XClientStore {
+
+		protected XDocument performActionOnServer(XDocument request) {
+
+			return server.performAction(request);
+		}
+
+		LocalXClientStore(CModel model) {
+
+			super(model);
+		}
+	}
+
+	public MekonRemoteTestModelExplorer(CModel model) {
+
+		server = new XServer(model);
+
+		new MekonModelExplorer(createClientModel());
+	}
+
+	public MekonRemoteTestModelExplorer(CModel model, IStore store) {
+
+		server = new XServer(model);
+
+		server.setStore(store);
+
+		CModel clientModel = createClientModel();
+
+		new MekonModelExplorer(clientModel, createClientStore(clientModel));
+	}
+
+	private CModel createClientModel() {
+
+		return new LocalXClientModel().getCModel();
+	}
+
+	private IStore createClientStore(CModel clientModel) {
+
+		return new LocalXClientStore(clientModel).getIStore();
 	}
 }
