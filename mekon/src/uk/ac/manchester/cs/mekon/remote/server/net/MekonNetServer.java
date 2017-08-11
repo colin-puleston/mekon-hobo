@@ -27,6 +27,8 @@ package uk.ac.manchester.cs.mekon.remote.server.net;
 import java.io.*;
 import javax.servlet.*;
 
+import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
@@ -46,7 +48,16 @@ public class MekonNetServer extends GenericServlet {
 	 */
 	public void init() throws ServletException {
 
-		server = new XServer(CManager.createBuilder().build());
+		setLibraryPath();
+
+		try {
+
+			server = new XServer(createModel());
+		}
+		catch (KRuntimeException e) {
+
+			throw new ServletException(e);
+		}
 	}
 
 	/**
@@ -56,8 +67,6 @@ public class MekonNetServer extends GenericServlet {
 					ServletResponse response)
 					throws ServletException, IOException {
 
-		response.setContentType("text/html");
-
 		try {
 
 			XDocument requestDoc = new XDocument(getInputStream(request));
@@ -65,7 +74,7 @@ public class MekonNetServer extends GenericServlet {
 
 			responseDoc.writeToOutput(getOutputStream(response));
 		}
-		catch (XDocumentException e) {
+		catch (KRuntimeException e) {
 
 			throw new ServletException(e);
 		}
@@ -76,6 +85,13 @@ public class MekonNetServer extends GenericServlet {
 	public void destroy() {
 	}
 
+	/**
+	 */
+	protected CModel createModel() {
+
+		return CManager.createBuilder().build();
+	}
+
 	private InputStream getInputStream(ServletRequest request) throws IOException {
 
 		return new BufferedInputStream(request.getInputStream());
@@ -84,5 +100,10 @@ public class MekonNetServer extends GenericServlet {
 	private OutputStream getOutputStream(ServletResponse response) throws IOException {
 
 		return new BufferedOutputStream(response.getOutputStream());
+	}
+
+	private void setLibraryPath() {
+
+		LibraryPathHandler.setLibraryPath(getServletContext());
 	}
 }
