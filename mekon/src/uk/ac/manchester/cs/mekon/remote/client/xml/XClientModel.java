@@ -58,12 +58,12 @@ public abstract class XClientModel {
 			XRequestRenderer request = getRequest(masterRoot);
 			XResponseParser response = performAction(request);
 
-			return createUpdates(parseInstance(createParseInput(response)));
+			return createUpdates(getInstance(response));
 		}
 
 		abstract RModelActionType getActionType();
 
-		abstract IFrame parseInstance(IInstanceParseInput input);
+		abstract IInstanceParser getInstanceParser();
 
 		void customiseRenderInput(IInstanceRenderInput input) {
 		}
@@ -75,6 +75,11 @@ public abstract class XClientModel {
 			request.addParameter(createRenderInput(masterRoot));
 
 			return request;
+		}
+
+		private IFrame getInstance(XResponseParser response) {
+
+			return getInstanceParser().parse(createParseInput(response));
 		}
 
 		private IInstanceRenderInput createRenderInput(IFrame masterRoot) {
@@ -121,9 +126,9 @@ public abstract class XClientModel {
 			return RModelActionType.INITIALISE_ASSERTION;
 		}
 
-		IFrame parseInstance(IInstanceParseInput input) {
+		IInstanceParser getInstanceParser() {
 
-			return assertionParser.parse(input);
+			return assertionParser;
 		}
 	}
 
@@ -134,9 +139,9 @@ public abstract class XClientModel {
 			return RModelActionType.INITIALISE_QUERY;
 		}
 
-		IFrame parseInstance(IInstanceParseInput input) {
+		IInstanceParser getInstanceParser() {
 
-			return queryParser.parse(input);
+			return queryParser;
 		}
 	}
 
@@ -167,9 +172,9 @@ public abstract class XClientModel {
 			return RModelActionType.UPDATE_ASSERTION;
 		}
 
-		IFrame parseInstance(IInstanceParseInput input) {
+		IInstanceParser getInstanceParser() {
 
-			return assertionParser.parse(input);
+			return assertionParser;
 		}
 	}
 
@@ -185,9 +190,9 @@ public abstract class XClientModel {
 			return RModelActionType.UPDATE_QUERY;
 		}
 
-		IFrame parseInstance(IInstanceParseInput input) {
+		IInstanceParser getInstanceParser() {
 
-			return queryParser.parse(input);
+			return queryParser;
 		}
 	}
 

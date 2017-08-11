@@ -95,14 +95,19 @@ class ModelActions extends ServerActions<RModelActionType> {
 		void perform(XRequestParser request, XResponseRenderer response) {
 
 			IInstanceParseInput parseInput = request.getInstanceParameterParseInput(0);
-			IFrame inAndOut = parseParameter(parseInput);
+			IFrame inAndOut = parseInstance(parseInput);
 			IInstanceRenderInput renderInput = new IInstanceRenderInput(inAndOut);
 
 			renderInput.setFrameXDocIds(parseInput.getFrameXDocIds());
 			response.setInstanceResponse(renderInput);
 		}
 
-		abstract IFrame parseParameter(IInstanceParseInput input);
+		abstract IInstanceParser getInstanceParser();
+
+		private IFrame parseInstance(IInstanceParseInput input) {
+
+			return getInstanceParser().parse(input);
+		}
 	}
 
 	private class UpdateAssertionAction extends UpdateInstanceAction {
@@ -112,9 +117,9 @@ class ModelActions extends ServerActions<RModelActionType> {
 			return RModelActionType.UPDATE_ASSERTION;
 		}
 
-		IFrame parseParameter(IInstanceParseInput input) {
+		IInstanceParser getInstanceParser() {
 
-			return assertionParser.parse(input);
+			return assertionParser;
 		}
 	}
 
@@ -125,9 +130,9 @@ class ModelActions extends ServerActions<RModelActionType> {
 			return RModelActionType.UPDATE_QUERY;
 		}
 
-		IFrame parseParameter(IInstanceParseInput input) {
+		IInstanceParser getInstanceParser() {
 
-			return queryParser.parse(input);
+			return queryParser;
 		}
 	}
 
