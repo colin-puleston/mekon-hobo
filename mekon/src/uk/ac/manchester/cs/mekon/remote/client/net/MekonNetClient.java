@@ -34,7 +34,11 @@ import uk.ac.manchester.cs.mekon.remote.client.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 
 /**
- * XXX.
+ * Represents a client-side version of the MEKON frames model and an
+ * associated instance store.
+ * <p>
+ * This class is designed to be used in combination with the companion
+ * server class, <code>MekonNetServer</code>.
  *
  * @author Colin Puleston
  */
@@ -67,7 +71,10 @@ public class MekonNetClient {
 	}
 
 	/**
-	 * XXX.
+	 * Constructor.
+	 *
+	 * @param serverURL URL providing access to relevant instance of
+	 * <code>MekonNetServer</code> running on server
 	 */
 	public MekonNetClient(URL serverURL) {
 
@@ -88,9 +95,9 @@ public class MekonNetClient {
 	}
 
 	/**
-	 * Provides the client MEKON frames store.
+	 * Provides the client MEKON instance store.
 	 *
-	 * @return Client MEKON frames store
+	 * @return Client MEKON instance store
 	 */
 	public IStore getIStore() {
 

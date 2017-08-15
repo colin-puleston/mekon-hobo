@@ -29,8 +29,6 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
- * XXX.
- *
  * @author Colin Puleston
  */
 public abstract class XPackageSerialiser {
@@ -38,7 +36,6 @@ public abstract class XPackageSerialiser {
 	private XDocument document;
 
 	/**
-	 * XXX.
 	 */
 	public XDocument getDocument() {
 
@@ -46,7 +43,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected XPackageSerialiser(String rootId) {
 
@@ -54,7 +50,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected XPackageSerialiser(XDocument document) {
 
@@ -62,7 +57,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected XNode addTopLevelNode(String id) {
 
@@ -70,7 +64,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected void addTopLevelAttribute(String id, Object value) {
 
@@ -78,7 +71,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected XNode getTopLevelNode(String id, int index) {
 
@@ -93,7 +85,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected XNode getTopLevelNode(String id) {
 
@@ -101,7 +92,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected boolean isTopLevelNode(String id) {
 
@@ -109,7 +99,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected boolean getTopLevelBoolean(String id) {
 
@@ -117,7 +106,6 @@ public abstract class XPackageSerialiser {
 	}
 
 	/**
-	 * XXX.
 	 */
 	protected <E extends Enum<E>>E getTopLevelEnum(String id, Class<E> type) {
 

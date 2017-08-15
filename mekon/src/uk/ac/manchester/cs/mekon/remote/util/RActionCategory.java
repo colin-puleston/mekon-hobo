@@ -25,17 +25,19 @@
 package uk.ac.manchester.cs.mekon.remote.util;
 
 /**
- * XXX.
+ * Specifies the general category of a remote action.
  *
  * @author Colin Puleston
  */
 public enum RActionCategory {
 
 	/**
+	 * Specifies an action over the remote frames model
 	 */
 	MODEL,
 
 	/**
+	 * Specifies an action over the remote instance store
 	 */
 	STORE
 }

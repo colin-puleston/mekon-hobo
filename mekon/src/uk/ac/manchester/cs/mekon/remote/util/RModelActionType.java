@@ -25,29 +25,34 @@
 package uk.ac.manchester.cs.mekon.remote.util;
 
 /**
- * XXX.
+ * Specifies a particular action over the remote frames model.
  *
  * @author Colin Puleston
  */
 public enum RModelActionType {
 
 	/**
+	 * Specifies a complete frames-hierarchy retrieval action
 	 */
 	GET_FRAME_HIERARCHY,
 
 	/**
+	 * Specifies an assertion-instance initialisation action
 	 */
 	INITIALISE_ASSERTION,
 
 	/**
+	 * Specifies an query-instance initialisation action
 	 */
 	INITIALISE_QUERY,
 
 	/**
+	 * Specifies an assertion-instance update action
 	 */
 	UPDATE_ASSERTION,
 
 	/**
+	 * Specifies an query-instance update action
 	 */
 	UPDATE_QUERY
 }

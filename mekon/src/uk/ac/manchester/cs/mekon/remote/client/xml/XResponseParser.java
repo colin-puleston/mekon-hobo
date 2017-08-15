@@ -35,64 +35,41 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
 
 /**
- * XXX.
- *
  * @author Colin Puleston
  */
-public class XResponseParser extends XPackageSerialiser implements XResponseVocab {
+class XResponseParser extends XPackageSerialiser implements XResponseVocab {
 
-	/**
-	 * XXX.
-	 */
-	public XResponseParser(XDocument document) {
+	XResponseParser(XDocument document) {
 
 		super(document);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public boolean isNullResponse() {
+	boolean isNullResponse() {
 
 		return isTopLevelNode(NULL_RESPONSE_ID);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public boolean getBooleanResponse() {
+	boolean getBooleanResponse() {
 
 		return getTopLevelBoolean(BOOLEAN_RESPONSE_ATTR);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public CHierarchy getHierarchyResponse() {
+	CHierarchy getHierarchyResponse() {
 
 		return new CHierarchyParser().parse(getStructuredResponseNode());
 	}
 
-	/**
-	 * XXX.
-	 */
-	public IInstanceParseInput getInstanceResponseParseInput() {
+	IInstanceParseInput getInstanceResponseParseInput() {
 
 		return new IInstanceParseInput(getStructuredResponseNode());
 	}
 
-	/**
-	 * XXX.
-	 */
-	public List<CIdentity> getIdentitiesResponse() {
+	List<CIdentity> getIdentitiesResponse() {
 
 		return CIdentitySerialiser.parseList(getStructuredResponseNode());
 	}
 
-	/**
-	 * XXX.
-	 */
-	public IMatches getMatchesResponse() {
+	IMatches getMatchesResponse() {
 
 		return IMatchesParser.parse(getStructuredResponseNode());
 	}

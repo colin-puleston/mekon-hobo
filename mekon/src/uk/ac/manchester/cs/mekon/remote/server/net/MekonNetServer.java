@@ -34,7 +34,11 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
 
 /**
- * XXX.
+ * Servlet that provides access to a server-side version of the MEKON
+ * frames model and an associated instance store.
+ * <p>
+ * This class is designed to be used in combination with the companion
+ * client class, <code>MekonNetClient</code>.
  *
  * @author Colin Puleston
  */

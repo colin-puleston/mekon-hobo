@@ -25,8 +25,6 @@
 package uk.ac.manchester.cs.mekon.remote.xml;
 
 /**
- * XXX.
- *
  * @author Colin Puleston
  */
 public interface XResponseVocab {

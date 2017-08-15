@@ -31,50 +31,33 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
 
 /**
- * XXX.
- *
  * @author Colin Puleston
  */
-public class XRequestRenderer extends XPackageSerialiser implements XRequestVocab {
+class XRequestRenderer extends XPackageSerialiser implements XRequestVocab {
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
-	/**
-	 * XXX.
-	 */
-	public XRequestRenderer(RModelActionType actionType) {
+	XRequestRenderer(RModelActionType actionType) {
 
 		this(RActionCategory.MODEL, actionType);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public XRequestRenderer(RStoreActionType actionType) {
+	XRequestRenderer(RStoreActionType actionType) {
 
 		this(RActionCategory.STORE, actionType);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void addParameter(CIdentity identity) {
+	void addParameter(CIdentity identity) {
 
 		CIdentitySerialiser.render(identity, addParameterNode());
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void addParameter(IFrame instance) {
+	void addParameter(IFrame instance) {
 
 		addParameter(new IInstanceRenderInput(instance));
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void addParameter(IInstanceRenderInput instance) {
+	void addParameter(IInstanceRenderInput instance) {
 
 		instanceRenderer.render(instance, addParameterNode());
 	}

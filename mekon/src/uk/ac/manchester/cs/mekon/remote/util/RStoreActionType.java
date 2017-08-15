@@ -25,41 +25,49 @@
 package uk.ac.manchester.cs.mekon.remote.util;
 
 /**
- * XXX.
+ * Specifies a particular action over the remote instance store.
  *
  * @author Colin Puleston
  */
 public enum RStoreActionType {
 
 	/**
+	 * Specifies an instance addition action
 	 */
 	ADD,
 
 	/**
+	 * Specifies an instance removal action
 	 */
 	REMOVE,
 
 	/**
+	 * Specifies an store clear action
 	 */
 	CLEAR,
 
 	/**
+	 * Specifies an instance presence test action
 	 */
 	CONTAINS,
 
 	/**
+	 * Specifies an instance retrieval action
 	 */
 	GET,
 
 	/**
+	 * Specifies an all-instance-identities retrieval action
 	 */
 	GET_IDS,
 
 	/**
+	 * Specifies an query-matching instance retrieval action
 	 */
 	MATCH,
 
 	/**
+	 * Specifies an query/instance match test
 	 */
 	MATCHES
 }

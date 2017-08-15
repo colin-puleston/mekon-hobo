@@ -35,9 +35,17 @@ import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
- * Represents a client-side version of the MEKON frames model that uses
- * the standard MEKON XML-based serialisations to communicate with the
- * server.
+ * Represents a client-side version of the MEKON frames model, with
+ * all client/server interaction being via XML-based representations
+ * of specific actions.
+ * <p>
+ * Both this class and {@link XClientModel} are designed to be used
+ * in combination with the companion XML-based server class,
+ * <code>XServer</code>. All encoding and decoding of the action
+ * requests and responses is handled by this set of client/server
+ * classes. Hence the extending and wrapper classes are only required
+ * to pass on the relevant documents, and never need to interpret any
+ * of the XML contained within.
  *
  * @author Colin Puleston
  */
@@ -236,12 +244,11 @@ public abstract class XClientModel {
 	}
 
 	/**
-	 * Sends an uninitialised instance-level frame with function {@link
-	 * IFrameFunction#ASSERTION} to be initialised on the server.
+	 * Accesses the server to perform a particular model-related action.
 	 *
-	 * @param requestDoc Document containing standard MEKON XML-based
-	 * serialisation of relevant uninitialised assertion frame
-	 * @return Updated version of document XXX
+	 * @param requestDoc Document representing specification of required
+	 * action
+	 * @return Document representing output produced by action
 	 */
 	protected abstract XDocument performActionOnServer(XDocument request);
 

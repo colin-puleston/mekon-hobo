@@ -33,7 +33,17 @@ import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.server.*;
 
 /**
- * XXX.
+ * Provides access to a server-side version of the MEKON frames model,
+ * and optionally an associated instance store, with all client/server
+ * interaction being via XML-based representations of specific actions.
+ * <p>
+ * This class is designed to be used in combination with the companion
+ * XML-based client classes, <code>XClientModel</code> and
+ * <code>XClientStore</code>. All encoding and decoding of the action
+ * requests and responses is handled by this set of client/server
+ * classes. Hence the extending and wrapper classes are only required
+ * to pass on the relevant documents, and never need to interpret any
+ * of the XML contained within.
  *
  * @author Colin Puleston
  */
@@ -44,6 +54,9 @@ public class XServer {
 	private List<ServerActions<?>> allActions = new ArrayList<ServerActions<?>>();
 
 	/**
+	 * Constructor.
+	 *
+	 * @param model Server-side frames model
 	 */
 	public XServer(CModel model) {
 
@@ -53,6 +66,9 @@ public class XServer {
 	}
 
 	/**
+	 * Allows the specification of a MEKON instance store.
+	 *
+	 * @return Client MEKON instance store
 	 */
 	public void setStore(IStore iStore) {
 
@@ -60,6 +76,11 @@ public class XServer {
 	}
 
 	/**
+	 * Performs a particular model or store-related action.
+	 *
+	 * @param requestDoc Document representing specification of required
+	 * action
+	 * @return Document representing output produced by action
 	 */
 	public XDocument performAction(XDocument requestDoc) {
 

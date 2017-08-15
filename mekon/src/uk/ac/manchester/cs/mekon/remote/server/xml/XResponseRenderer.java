@@ -34,34 +34,23 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
 
 /**
- * XXX.
- *
  * @author Colin Puleston
  */
-public class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
+class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
 
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
-	/**
-	 * XXX.
-	 */
-	public XResponseRenderer() {
+	XResponseRenderer() {
 
 		super(RESPONSE_ROOT_ID);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void setBooleanResponse(boolean value) {
+	void setBooleanResponse(boolean value) {
 
 		addTopLevelAttribute(BOOLEAN_RESPONSE_ATTR, value);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void setHierarchyResponse(CFrame rootFrame) {
+	void setHierarchyResponse(CFrame rootFrame) {
 
 		CHierarchyRenderer renderer = new CHierarchyRenderer();
 
@@ -69,26 +58,17 @@ public class XResponseRenderer extends XPackageSerialiser implements XResponseVo
 		renderer.render(rootFrame, addStructuredResponseNode());
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void setInstanceResponse(IFrame instance) {
+	void setInstanceResponse(IFrame instance) {
 
 		setInstanceResponse(new IInstanceRenderInput(instance));
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void setInstanceResponse(IInstanceRenderInput instance) {
+	void setInstanceResponse(IInstanceRenderInput instance) {
 
 		instanceRenderer.render(instance, addStructuredResponseNode());
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void setInstanceOrNullResponse(IFrame instance) {
+	void setInstanceOrNullResponse(IFrame instance) {
 
 		if (instance == null) {
 
@@ -100,18 +80,12 @@ public class XResponseRenderer extends XPackageSerialiser implements XResponseVo
 		}
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void setIdentitiesResponse(List<CIdentity> identities) {
+	void setIdentitiesResponse(List<CIdentity> identities) {
 
 		CIdentitySerialiser.renderList(identities, addStructuredResponseNode());
 	}
 
-	/**
-	 * XXX.
-	 */
-	public void setMatchesResponse(IMatches matches) {
+	void setMatchesResponse(IMatches matches) {
 
 		IMatchesRenderer.render(matches, addStructuredResponseNode());
 	}

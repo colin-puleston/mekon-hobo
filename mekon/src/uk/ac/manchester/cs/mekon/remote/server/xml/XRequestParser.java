@@ -31,56 +31,36 @@ import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
- * XXX.
- *
  * @author Colin Puleston
  */
-public class XRequestParser extends XPackageSerialiser implements XRequestVocab {
+class XRequestParser extends XPackageSerialiser implements XRequestVocab {
 
-	/**
-	 * XXX.
-	 */
-	public XRequestParser(XDocument document) {
+	XRequestParser(XDocument document) {
 
 		super(document);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public RActionCategory getActionCategory() {
+	RActionCategory getActionCategory() {
 
 		return getTopLevelEnum(ACTION_CATEGORY_ATTR, RActionCategory.class);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public RModelActionType getModelActionType() {
+	RModelActionType getModelActionType() {
 
 		return getActionType(RModelActionType.class);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public RStoreActionType getStoreActionType() {
+	RStoreActionType getStoreActionType() {
 
 		return getActionType(RStoreActionType.class);
 	}
 
-	/**
-	 * XXX.
-	 */
-	public CIdentity getIdentityParameter(int index) {
+	CIdentity getIdentityParameter(int index) {
 
 		return CIdentitySerialiser.parse(getParameterNode(index));
 	}
 
-	/**
-	 * XXX.
-	 */
-	public IInstanceParseInput getInstanceParameterParseInput(int index) {
+	IInstanceParseInput getInstanceParameterParseInput(int index) {
 
 		return new IInstanceParseInput(getParameterNode(index));
 	}
