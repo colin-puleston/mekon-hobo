@@ -30,7 +30,12 @@ import uk.ac.manchester.cs.mekon.remote.server.net.*;
 import uk.ac.manchester.cs.hobo.manage.*;
 
 /**
- * XXX.
+ * Represents a server-side version of the MEKON frames model, with a
+ * bound HOBO object model, and an associated instance store.
+ * <p>
+ * This class is an extension of {@link MekonNetServer}, which is
+ * designed to be used in combination with the companion server class,
+ * <code>MekonNetClient</code>.
  *
  * @author Colin Puleston
  */

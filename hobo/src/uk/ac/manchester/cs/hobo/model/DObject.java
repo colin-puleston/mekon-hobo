@@ -52,6 +52,8 @@ public interface DObject {
 	 * copy to instantiate an OM of the specified type, which must
 	 * represent a valid type for the frame.
 	 *
+	 * @param <D> Generic version of required type of OM object to
+	 * be created
 	 * @param dClass Required type of OM object to be created
 	 * @return Created OM object
 	 * @throws HAccessException if specified type is not valid
