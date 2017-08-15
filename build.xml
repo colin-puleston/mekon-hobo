@@ -40,6 +40,8 @@
 	<!-- output lib -->
 	<property name="build.lib.rel" value="lib" />
 	<property name="build.lib" location="${build}/${build.lib.rel}" />
+	<property name="build.client.lib.rel" value="client-lib" />
+	<property name="build.client.lib" location="${build}/${build.client.lib.rel}" />
 
 	<!-- output resource -->
 	<property name="build.resource.rel" value="resource" />
@@ -115,7 +117,7 @@
 		</fileset>
 	</path>
 
-	<!-- output dir structure -->
+	<!-- output dir structures -->
 	<target name="base">
 		<mkdir dir="${build.classes.mekon}"/>
 		<mkdir dir="${build.classes.mekon-owl}"/>
@@ -150,7 +152,7 @@
 		<mkdir dir="${build.test.classes}"/>
 	</target>
 
-	<!-- targets -->
+	<!-- core mekon targets -->
 	<target name="mekon" depends="base">
 		<javac srcdir="${mekon.src}" classpathref="classpath" destdir="${build.classes.mekon}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -164,6 +166,7 @@
 		</jar>
 	</target>
 
+	<!-- mekon-owl targets -->
 	<target name="mekon-owl" depends="mekon-jar">
 		<javac srcdir="${mekon-owl.src}" classpathref="classpath" destdir="${build.classes.mekon-owl}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -177,6 +180,7 @@
 		</jar>
 	</target>
 
+	<!-- mekon-basex targets -->
 	<target name="mekon-basex" depends="mekon-jar">
 		<javac srcdir="${mekon-basex.src}" classpathref="classpath" destdir="${build.classes.mekon-basex}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -190,19 +194,7 @@
 		</jar>
 	</target>
 
-	<target name="mekon-gui" depends="mekon-jar">
-		<javac srcdir="${mekon-gui.src}" classpathref="classpath" destdir="${build.classes.mekon-gui}" debug="${debug}">
-			<compilerarg value="-Xlint"/>
-		</javac>
-	</target>
-
-	<target name="mekon-gui-jar" depends="mekon-gui">
-		<jar destfile="${build.mekon-gui.jar}">
-			<fileset dir="${build.classes.mekon-gui}" />
-			<fileset dir="${mekon-gui.src}" includes="**/*.java"/>
-		</jar>
-	</target>
-
+	<!-- hobo targets -->
 	<target name="hobo" depends="mekon-jar">
 		<javac srcdir="${hobo.src}" classpathref="classpath" destdir="${build.classes.hobo}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -216,6 +208,21 @@
 		</jar>
 	</target>
 
+	<!-- mekon gui targets -->
+	<target name="mekon-gui" depends="mekon-jar">
+		<javac srcdir="${mekon-gui.src}" classpathref="classpath" destdir="${build.classes.mekon-gui}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-gui-jar" depends="mekon-gui">
+		<jar destfile="${build.mekon-gui.jar}">
+			<fileset dir="${build.classes.mekon-gui}" />
+			<fileset dir="${mekon-gui.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- hobo gui targets -->
 	<target name="hobo-gui" depends="hobo-jar, mekon-gui-jar">
 		<javac srcdir="${hobo-gui.src}" classpathref="classpath" destdir="${build.classes.hobo-gui}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -230,6 +237,13 @@
 	</target>
 
 	<target name="jars" depends="hobo-jar, hobo-gui-jar, mekon-owl-jar, mekon-basex-jar">
+	</target>
+
+	<!-- mekon client-library targets -->
+	<target name="client-lib" depends="mekon-gui-jar">
+		<mkdir dir="${build.client.lib}"/>
+		<copy file="${build.mekon.jar}" todir="${build.client.lib}"/>
+		<copy file="${build.mekon-gui.jar}" todir="${build.client.lib}"/>
 	</target>
 
 	<!-- mekon demo targets -->
