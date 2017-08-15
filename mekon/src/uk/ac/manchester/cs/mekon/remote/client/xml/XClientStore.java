@@ -162,7 +162,7 @@ public abstract class XClientStore {
 	 * action
 	 * @return Document representing output produced by action
 	 */
-	protected abstract XDocument performActionOnServer(XDocument request);
+	protected abstract XDocument performActionOnServer(XDocument requestDoc);
 
 	private boolean performBooleanResponseAction(XRequestRenderer request) {
 

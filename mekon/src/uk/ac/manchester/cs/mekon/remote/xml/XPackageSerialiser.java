@@ -35,43 +35,31 @@ public abstract class XPackageSerialiser {
 
 	private XDocument document;
 
-	/**
-	 */
 	public XDocument getDocument() {
 
 		return document;
 	}
 
-	/**
-	 */
 	protected XPackageSerialiser(String rootId) {
 
 		this(new XDocument(rootId));
 	}
 
-	/**
-	 */
 	protected XPackageSerialiser(XDocument document) {
 
 		this.document = document;
 	}
 
-	/**
-	 */
 	protected XNode addTopLevelNode(String id) {
 
 		return getRootNode().addChild(id);
 	}
 
-	/**
-	 */
 	protected void addTopLevelAttribute(String id, Object value) {
 
 		getRootNode().addValue(id, value);
 	}
 
-	/**
-	 */
 	protected XNode getTopLevelNode(String id, int index) {
 
 		List<XNode> nodes = getTopLevelNodes(id);
@@ -84,29 +72,21 @@ public abstract class XPackageSerialiser {
 		throw new XDocumentException("Cannot find entity: " + id + "[" + index + "]");
 	}
 
-	/**
-	 */
 	protected XNode getTopLevelNode(String id) {
 
 		return getRootNode().getChild(id);
 	}
 
-	/**
-	 */
 	protected boolean isTopLevelNode(String id) {
 
 		return getRootNode().getChildOrNull(id) != null;
 	}
 
-	/**
-	 */
 	protected boolean getTopLevelBoolean(String id) {
 
 		return getRootNode().getBoolean(id);
 	}
 
-	/**
-	 */
 	protected <E extends Enum<E>>E getTopLevelEnum(String id, Class<E> type) {
 
 		return getRootNode().getEnum(id, type);

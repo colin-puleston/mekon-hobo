@@ -66,13 +66,13 @@ public class XServer {
 	}
 
 	/**
-	 * Allows the specification of a MEKON instance store.
+	 * Allows the specification of a server-side MEKON instance store.
 	 *
-	 * @return Client MEKON instance store
+	 * @param store Server-side MEKON instance store
 	 */
-	public void setStore(IStore iStore) {
+	public void setStore(IStore store) {
 
-		allActions.add(new StoreActions(iStore));
+		allActions.add(new StoreActions(store));
 	}
 
 	/**

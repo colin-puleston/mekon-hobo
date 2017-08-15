@@ -96,7 +96,7 @@ public interface CBuilder {
 	/**
 	 * Removes any section-builders of the specified type that have been added.
 	 *
-	 * @param sectionBuilderType Type of section-builder to remove
+	 * @param type Type of section-builder to remove
 	 */
 	public void removeSectionBuilders(Class<? extends CSectionBuilder> type);
 

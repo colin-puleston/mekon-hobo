@@ -48,8 +48,6 @@ public class MekonNetServer extends GenericServlet {
 
 	private XServer server = null;
 
-	/**
-	 */
 	public void init() throws ServletException {
 
 		setLibraryPath();
@@ -64,8 +62,6 @@ public class MekonNetServer extends GenericServlet {
 		}
 	}
 
-	/**
-	 */
 	public void service(
 					ServletRequest request,
 					ServletResponse response)
@@ -84,13 +80,9 @@ public class MekonNetServer extends GenericServlet {
 		}
 	}
 
-	/**
-	 */
 	public void destroy() {
 	}
 
-	/**
-	 */
 	protected CModel createModel() {
 
 		return CManager.createBuilder().build();
