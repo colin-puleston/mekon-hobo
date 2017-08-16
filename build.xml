@@ -79,29 +79,33 @@
 	<property name="hobogui.mainclass" value="uk.ac.manchester.cs.hobo.gui.HoboModelExplorer"/>
 
 	<!-- mekon client invocation -->
-	<property name="build.mekon-client.run.sh" location="${build.client}/mekon-client.sh"/>
-	<property name="build.mekon-client.run.win" location="${build.client}/mekon-client.bat"/>
+	<property name="build.mekon-client.run.name" value="mekon-client"/>
+	<property name="build.mekon-client.run.sh" location="${build.client}/${build.mekon-client.run.name}.sh"/>
+	<property name="build.mekon-client.run.win" location="${build.client}/${build.mekon-client.run.name}.bat"/>
 	<property name="build.mekon-client.classpath.sh" value="${build.client}/*"/>
 	<property name="build.mekon-client.classpath.win" value="${build.client}/*"/>
 	<property name="build.mekon-client.java.run" value="${mekonclientgui.mainclass}"/>
 
 	<!-- mekon demo invocation -->
-	<property name="build.mekon-demo.run.sh" location="${build}/mekon-demo.sh"/>
-	<property name="build.mekon-demo.run.win" location="${build}/mekon-demo.bat"/>
+	<property name="build.mekon-demo.run.name" value="mekon-demo"/>
+	<property name="build.mekon-demo.run.sh" location="${build}/${build.mekon-demo.run.name}.sh"/>
+	<property name="build.mekon-demo.run.win" location="${build}/${build.mekon-demo.run.name}.bat"/>
 	<property name="build.mekon-demo.classpath.sh" value="${build.lib.rel}/*:${build.resource.rel}"/>
 	<property name="build.mekon-demo.classpath.win" value="${build.lib.rel}/*;${build.resource.rel}"/>
 	<property name="build.mekon-demo.java.run" value="${java.opts} ${mekongui.mainclass}"/>
 
 	<!-- hobo demo invocation -->
-	<property name="build.hobo-demo.run.sh" location="${build}/hobo-demo.sh"/>
-	<property name="build.hobo-demo.run.win" location="${build}/hobo-demo.bat"/>
+	<property name="build.hobo-demo.run.name" value="hobo-demo"/>
+	<property name="build.hobo-demo.run.sh" location="${build}/${build.hobo-demo.run.name}.sh"/>
+	<property name="build.hobo-demo.run.win" location="${build}/${build.hobo-demo.run.name}.bat"/>
 	<property name="build.hobo-demo.classpath.sh" value="${build.lib.rel}/*:${build.hobo-demo.classes.rel}:${build.resource.rel}"/>
 	<property name="build.hobo-demo.classpath.win" value="${build.lib.rel}/*;${build.hobo-demo.classes.rel};${build.resource.rel}"/>
 	<property name="build.hobo-demo.java.run" value="${java.opts} ${hobogui.mainclass}"/>
 
 	<!-- test invocation -->
-	<property name="build.test.run.sh" location="${build}/test.sh"/>
-	<property name="build.test.run.win" location="${build}/test.bat"/>
+	<property name="build.test.run.name" value="test"/>
+	<property name="build.test.run.sh" location="${build}/${build.test.run.name}.sh"/>
+	<property name="build.test.run.win" location="${build}/${build.test.run.name}.bat"/>
 
 	<property name="junit.mainclass" value="org.junit.runner.JUnitCore"/>
 	<property name="test.testsuites"
@@ -252,14 +256,14 @@
 		<copy file="${build.mekon-gui.jar}" todir="${build.client}"/>
 		<echo file="${build.mekon-client.run.sh}">java -cp ${build.mekon-client.classpath.sh} ${build.mekon-client.java.run} $1</echo>
 		<echo file="${build.mekon-client.run.win}">java -cp ${build.mekon-client.classpath.win} ${build.mekon-client.java.run} %1</echo>
-		<chmod dir="${build}" includes="mekon-client.*" perm="+x"/>
+		<chmod dir="${build.client}" includes="${build.mekon-client.run.name}.sh" perm="+x"/>
 	</target>
 
 	<!-- mekon demo targets -->
 	<target name="mekon-demo" depends="mekon-gui-jar, mekon-owl-jar, mekon-basex-jar, resource">
 		<echo file="${build.mekon-demo.run.sh}">java -cp ${build.mekon-demo.classpath.sh} ${build.mekon-demo.java.run}</echo>
 		<echo file="${build.mekon-demo.run.win}">java -cp ${build.mekon-demo.classpath.win} ${build.mekon-demo.java.run}</echo>
-		<chmod dir="${build}" includes="mekondemo.*" perm="+x"/>
+		<chmod dir="${build}" includes="${build.mekon-demo.run.name}.sh" perm="+x"/>
 	</target>
 
 	<!-- hobo demo targets -->
@@ -280,7 +284,7 @@
 	<target name="hobo-demo" depends="hobo-demo-jar, hobo-gui-jar, mekon-demo">
 		<echo file="${build.hobo-demo.run.sh}">java -cp ${build.hobo-demo.classpath.sh} ${build.hobo-demo.java.run}</echo>
 		<echo file="${build.hobo-demo.run.win}">java -cp ${build.hobo-demo.classpath.win} ${build.hobo-demo.java.run}</echo>
-		<chmod dir="${build}" includes="hobodemo.*" perm="+x"/>
+		<chmod dir="${build}" includes="${build.hobo-demo.run.name}.sh" perm="+x"/>
 	</target>
 
 	<!-- test targets -->
@@ -312,7 +316,7 @@
 	<target name="test" depends="hobo-test, mekon-owl-test, mekon-basex-test">
 		<echo file="${build.test.run.sh}">java -cp ${build.test.classpath.sh} ${build.test.java.run}</echo>
 		<echo file="${build.test.run.win}">java -cp ${build.test.classpath.win} ${build.test.java.run}</echo>
-		<chmod dir="${build}" includes="test.*" perm="+x"/>
+		<chmod dir="${build}" includes="${build.tesy.run.name}.sh" perm="+x"/>
 	</target>
 
 </project>
