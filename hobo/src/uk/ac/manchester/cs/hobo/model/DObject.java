@@ -49,8 +49,8 @@ public interface DObject {
 	/**
 	 * Copies this object by creating a deep copy of the associated
 	 * frame and all recursively referenced frames, and using the
-	 * copy to instantiate an OM of the specified type, which must
-	 * represent a valid type for the frame.
+	 * copy to instantiate an OM object of the specified type, which
+	 * must represent a valid type for the frame.
 	 *
 	 * @param <D> Generic version of required type of OM object to
 	 * be created
