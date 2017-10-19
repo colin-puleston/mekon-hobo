@@ -129,7 +129,7 @@ public class KConfigResourceFinder {
 
 		File file = fileFinder.lookFor(path);
 
-/*		if (file == null || !file.exists()) {
+		if (file == null || !file.exists()) {
 
 			throw new KSystemConfigException("Cannot find resource: " + path);
 		}
@@ -141,7 +141,7 @@ public class KConfigResourceFinder {
 							+ (expectDir ? "directory" : "file")
 							+ ": "
 							+ file);
-		}*/
+		}
 
 		return file;
 	}
