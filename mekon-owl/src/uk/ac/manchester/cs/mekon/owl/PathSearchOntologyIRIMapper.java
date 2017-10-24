@@ -75,15 +75,37 @@ class PathSearchOntologyIRIMapper implements OWLOntologyIRIMapper {
 
 	private File lookForFile(File dir, String fileName) {
 
-		File path = new File(dir, fileName);
+		File file = getFileOrNull(dir, fileName);
 
-		if (path.exists()) {
+		if (file != null) {
 
-			return path;
+			return file;
 		}
 
 		File parentDir = dir = dir.getParentFile();
 
 		return parentDir != null ? lookForFile(parentDir, fileName) : null;
+	}
+
+	private File getFileOrNull(File dir, String fileName) {
+
+		File caseFreeMatch = null;
+
+		for (File file : dir.listFiles()) {
+
+			String name = file.getName();
+
+			if (name.equals(fileName)) {
+
+				return file;
+			}
+
+			if (name.toUpperCase().equals(fileName.toUpperCase())) {
+
+				caseFreeMatch = file;
+			}
+		}
+
+		return caseFreeMatch;
 	}
 }
