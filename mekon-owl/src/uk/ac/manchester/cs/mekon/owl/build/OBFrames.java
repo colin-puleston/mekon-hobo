@@ -82,6 +82,16 @@ class OBFrames {
 		return frame;
 	}
 
+	OBAtomicFrame getOrNull(OWLEntity sourceEntity) {
+
+		return frames.get(sourceEntity);
+	}
+
+	boolean exists(OWLEntity sourceEntity) {
+
+		return frames.containsKey(sourceEntity);
+	}
+
 	private void createAllForConcepts() {
 
 		for (OWLClass concept : concepts.getAll()) {

@@ -37,14 +37,11 @@ class OBExtensionFrame extends OBExpressionFrame {
 	private OBAtomicFrame baseFrame;
 	private Set<OBSlot> slots = new HashSet<OBSlot>();
 
-	OBExtensionFrame(OBAtomicFrame baseFrame) {
+	OBExtensionFrame(OBAtomicFrame baseFrame, Set<OBSlot> slots) {
 
 		this.baseFrame = baseFrame;
-	}
 
-	void addSlot(OBSlot slot) {
-
-		slots.add(slot);
+		this.slots.addAll(slots);
 	}
 
 	boolean canBeSlotValueType() {

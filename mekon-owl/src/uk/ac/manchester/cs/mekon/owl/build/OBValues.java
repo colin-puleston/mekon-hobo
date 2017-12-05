@@ -79,7 +79,7 @@ class OBValues {
 
 			OBNumber number = numbers.checkExtractNumber(source);
 
-			return number != null ? number : frames.get(source);
+			return number != null ? number : frames.getOrNull(source);
 		}
 
 		private OBFrame checkCreate(OWLObjectIntersectionOf source) {
@@ -101,7 +101,7 @@ class OBValues {
 
 			ops.remove(named);
 
-			return createExtensionFrame(named, ops);
+			return checkCreateExtensionFrame(named, ops);
 		}
 
 		private OBFrame checkCreate(OWLObjectUnionOf source) {
@@ -129,24 +129,13 @@ class OBValues {
 					: numbers.checkCreateNumber(source);
 		}
 
-		private OBFrame createExtensionFrame(
+		private OBFrame checkCreateExtensionFrame(
 							OWLClass named,
 							Set<OWLClassExpression> slotSources) {
 
-			OBAtomicFrame base = frames.get(named);
-			OBExtensionFrame frame = new OBExtensionFrame(base);
+			Set<OBSlot> slots = createSlots(slotSources);
 
-			for (OWLClassExpression slotSource : slotSources) {
-
-				OBSlot slot = slots.checkCreateLooseSlot(slotSource);
-
-				if (slot != null) {
-
-					frame.addSlot(slot);
-				}
-			}
-
-			return frame;
+			return slots.isEmpty() ? null : new OBExtensionFrame(frames.get(named), slots);
 		}
 
 		private OBFrame createDisjunctionFrame(Set<OWLClass> concepts) {
@@ -161,6 +150,23 @@ class OBValues {
 			return frame;
 		}
 
+		private Set<OBSlot> createSlots(Set<OWLClassExpression> sources) {
+
+			Set<OBSlot> createdSlots = new HashSet<OBSlot>();
+
+			for (OWLClassExpression source : sources) {
+
+				OBSlot slot = slots.checkCreateLooseSlot(source);
+
+				if (slot != null) {
+
+					createdSlots.add(slot);
+				}
+			}
+
+			return createdSlots;
+		}
+
 		private Set<OWLClass> extractNamedConcepts(Set<OWLClassExpression> ops) {
 
 			Set<OWLClass> namedOps = new HashSet<OWLClass>();
@@ -169,7 +175,12 @@ class OBValues {
 
 				if (op instanceof OWLClass) {
 
-					namedOps.add((OWLClass)op);
+					OWLClass named = (OWLClass)op;
+
+					if (frames.exists(named)) {
+
+						namedOps.add(named);
+					}
 				}
 			}
 
@@ -178,8 +189,7 @@ class OBValues {
 
 		private boolean validSource(OWLObject source) {
 
-			return source instanceof OWLClassExpression
-					|| source instanceof OWLDataRange;
+			return source instanceof OWLClassExpression || source instanceof OWLDataRange;
 		}
 
 		private boolean stringDatatype(OWLDataRange range) {

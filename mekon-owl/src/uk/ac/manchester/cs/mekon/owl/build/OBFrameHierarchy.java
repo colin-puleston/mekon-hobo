@@ -57,7 +57,12 @@ class OBFrameHierarchy {
 
 		for (OWLEntity source : getSubFrameSources(frame)) {
 
-			frame.addSubFrame(frames.get(source));
+			OBAtomicFrame subFrame = frames.getOrNull(source);
+
+			if (subFrame != null) {
+
+				frame.addSubFrame(subFrame);
+			}
 		}
 	}
 
