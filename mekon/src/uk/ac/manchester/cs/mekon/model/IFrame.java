@@ -508,7 +508,7 @@ public class IFrame implements IEntity, IValue {
 	 *
 	 * @param other Other value-entity to test for structure-subsumption
 	 * with this one
-	 * @return true if structures match
+	 * @return True if structure-subsumption holds
 	 */
 	public boolean subsumesStructure(IValue other) {
 
