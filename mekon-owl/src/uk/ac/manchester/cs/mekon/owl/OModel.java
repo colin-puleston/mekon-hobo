@@ -89,7 +89,7 @@ public class OModel {
 
 		private OWLReasoner create() {
 
-			return reasonerFactory.createReasoner(instanceOntology);
+			return new ThreadSafeOWLReasoner(reasonerFactory.createReasoner(instanceOntology));
 		}
 	}
 
