@@ -41,6 +41,7 @@ class FieldSlot {
 	private Class<? extends DObject> containerClass = null;
 	private String fieldName = null;
 	private String slotLabel = null;
+	private CActivation activation = CActivation.ACTIVE;
 	private CEditability editability = null;
 
 	private class AttributeResolver {
@@ -225,6 +226,11 @@ class FieldSlot {
 		this.slotLabel = slotLabel;
 	}
 
+	void setActivation(CActivation activation) {
+
+		this.activation = activation;
+	}
+
 	void setEditability(CEditability editability) {
 
 		this.editability = editability;
@@ -243,6 +249,11 @@ class FieldSlot {
 	String getSlotLabel() {
 
 		return slotLabel;
+	}
+
+	CActivation getActivation() {
+
+		return activation;
 	}
 
 	CEditability getEditability() {

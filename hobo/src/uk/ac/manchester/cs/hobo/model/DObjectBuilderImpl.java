@@ -138,6 +138,11 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		getFieldSlot(field).setSlotLabel(slotLabel);
 	}
 
+	public void setActivation(DField<?> field, CActivation activation) {
+
+		getFieldSlot(field).setActivation(activation);
+	}
+
 	public void setEditability(DField<?> field, CEditability editability) {
 
 		getFieldSlot(field).setEditability(editability);

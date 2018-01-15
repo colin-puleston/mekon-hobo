@@ -136,6 +136,18 @@ public abstract class DField<V> implements DFieldView<V> {
 	}
 
 	/**
+	 * Specifies whether the field is "active". If the field is not
+	 * active then it cannot have any values set either by the model
+	 * or the client.
+	 *
+	 * @return True if field is active
+	 */
+	public boolean active() {
+
+		return getSlot().getType().getActivation().active();
+	}
+
+	/**
 	 * Specifies whether the field is "editable". If the field is not
 	 * editable then any current values will be provided by the model
 	 * rather than the client.

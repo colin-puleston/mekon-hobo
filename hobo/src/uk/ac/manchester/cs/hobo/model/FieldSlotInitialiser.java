@@ -40,6 +40,7 @@ class FieldSlotInitialiser {
 	private String slotLabel;
 	private CValue<?> valueType;
 	private CCardinality cardinality;
+	private CActivation activation;
 	private CEditability editability;
 
 	FieldSlotInitialiser(DModel model, IFrame frame, FieldSlot fieldSlot) {
@@ -56,6 +57,7 @@ class FieldSlotInitialiser {
 		slotLabel = fieldSlot.getSlotLabel();
 		valueType = field.getSlotValueType();
 		cardinality = field.getCardinality();
+		activation = fieldSlot.getActivation();
 		editability = fieldSlot.getEditability();
 	}
 
@@ -108,6 +110,7 @@ class FieldSlotInitialiser {
 
 		slotTypeEd.absorbValueType(valueType);
 		slotTypeEd.absorbCardinality(cardinality);
+		slotTypeEd.absorbActivation(activation);
 		slotTypeEd.absorbEditability(editability);
 	}
 

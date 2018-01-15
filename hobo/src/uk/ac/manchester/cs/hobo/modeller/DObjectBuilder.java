@@ -220,6 +220,18 @@ public interface DObjectBuilder {
 	public void setSlotLabel(DField<?> field, String slotLabel);
 
 	/**
+	 * Enables the explicit specification of the "activation"
+	 * attribute for the slot associated with a particular field
+	 * that has been constructed by this fields-factory.
+	 *
+	 * @param field Field whose attribute is to be set
+	 * @param activation Value for attribute
+	 * @throws HAccessException if the field was not constructed
+	 * by this fields-factory
+	 */
+	public void setActivation(DField<?> field, CActivation activation);
+
+	/**
 	 * Enables the explicit specification of the "editability"
 	 * attribute for the slot associated with a particular field
 	 * that has been constructed by this fields-factory.
