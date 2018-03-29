@@ -47,7 +47,9 @@ public class GFrame extends JFrame {
 
 	public void display(JComponent content) {
 
+		getContentPane().removeAll();
 		getContentPane().add(content);
+
 		pack();
 		centreOnScreen();
 		setVisible(true);
