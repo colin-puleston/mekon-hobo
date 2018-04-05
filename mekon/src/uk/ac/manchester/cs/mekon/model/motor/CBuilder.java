@@ -122,8 +122,9 @@ public interface CBuilder {
 	 * atomic-frame and adds it to the model.
 	 *
 	 * @param identity Identify of frame to retrieve or create
-	 * @param hidden True if created frame is to be a "hidden" frame
-	 * (will have no effect if frame already exists)
+	 * @param hidden True if created frame, or existing frame, is to
+	 * be a "hidden" frame (if already defined as hidden, a value of
+	 * false will have no effect)
 	 * @return Retrieved or created frame
 	 */
 	public CFrame resolveFrame(CIdentity identity, boolean hidden);

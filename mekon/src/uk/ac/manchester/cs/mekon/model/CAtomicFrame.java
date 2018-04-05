@@ -297,6 +297,11 @@ class CAtomicFrame extends CFrame {
 		this.source = source;
 	}
 
+	void absorbHidden(boolean hidden) {
+
+		this.hidden |= hidden;
+	}
+
 	void setIReasoner(IReasoner iReasoner) {
 
 		this.iReasoner = iReasoner;

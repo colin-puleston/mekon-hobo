@@ -104,7 +104,14 @@ class CBuilderImpl implements CBuilder {
 
 		CFrame frame = getFrames().getOrNull(identity);
 
-		return frame != null ? frame : model.addFrame(identity, hidden);
+		if (frame != null) {
+
+			frame.asAtomicFrame().absorbHidden(hidden);
+
+			return frame;
+		}
+
+		return model.addFrame(identity, hidden);
 	}
 
 	public boolean removeFrame(CIdentity identity) {
