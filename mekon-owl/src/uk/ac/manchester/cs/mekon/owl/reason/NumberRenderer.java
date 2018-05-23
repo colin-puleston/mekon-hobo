@@ -41,11 +41,6 @@ class NumberRenderer {
 	private OWLDataFactory dataFactory;
 	private OWLDataProperty property = null;
 
-	NumberRenderer(OModel model) {
-
-		this(model, model.getIndirectNumericProperty());
-	}
-
 	NumberRenderer(OModel model, OWLDataProperty property) {
 
 		dataFactory = model.getDataFactory();
@@ -55,32 +50,14 @@ class NumberRenderer {
 
 	OWLClassExpression renderHasValue(INumber value) {
 
-		if (property == null) {
-
-			return dataFactory.getOWLThing();
-		}
-
-		if (value.indefinite()) {
-
-			return renderHasRange(value);
-		}
-
-		return renderHasExactValue(value);
+		return value.indefinite() ? renderHasRange(value) : renderHasExactValue(value);
 	}
 
 	OWLClassExpression renderOnlyValues(Set<INumber> values) {
 
-		if (property == null) {
-
-			return dataFactory.getOWLThing();
-		}
-
-		if (anyIndefiniteValues(values)) {
-
-			return renderOnlyRanges(values);
-		}
-
-		return renderOnlyExactValues(values);
+		return anyIndefiniteValues(values)
+				? renderOnlyRanges(values)
+				: renderOnlyExactValues(values);
 	}
 
 	private OWLClassExpression renderHasExactValue(INumber value) {

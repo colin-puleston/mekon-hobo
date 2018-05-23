@@ -28,6 +28,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
@@ -41,7 +42,7 @@ abstract class Renderer<NR extends OWLObject> {
 	private ORSemantics semantics;
 
 	private OWLDataFactory dataFactory;
-	private NumberRenderer defaultNumberRenderer;
+	private NumberRenderer indirectNumberRenderer;
 
 	abstract class NodeRenderer {
 
@@ -101,16 +102,22 @@ abstract class Renderer<NR extends OWLObject> {
 
 		private ValuesRenderer<INumber> getNumberValuesRenderer(NNumber number) {
 
-			return directNumber(number)
-					? new DirectNumberValuesRenderer(this, number)
-					: new IndirectNumberValuesRenderer(this, number);
-		}
-
-		private boolean directNumber(NNumber number) {
-
 			IRI iri = NetworkIRIs.getAtomicType(number);
 
-			return model.getDataProperties().contains(iri);
+			if (model.getDataProperties().contains(iri)) {
+
+				return new DirectNumberValuesRenderer(this, number);
+			}
+
+			if (indirectNumberRenderer != null) {
+
+				return new IndirectNumberValuesRenderer(this, number);
+			}
+
+			throw new KModelException(
+						"Cannot handle numeric values for property: " + iri
+						+ " (since (a) not a recognised data-property, and"
+						+ " (b) indirect-numeric-property not defined");
 		}
 	}
 
@@ -318,7 +325,7 @@ abstract class Renderer<NR extends OWLObject> {
 
 		private OWLClassExpression renderValue(INumber value) {
 
-			return defaultNumberRenderer.renderHasValue(value);
+			return indirectNumberRenderer.renderHasValue(value);
 		}
 	}
 
@@ -328,7 +335,7 @@ abstract class Renderer<NR extends OWLObject> {
 		this.semantics = semantics;
 
 		dataFactory = model.getDataFactory();
-		defaultNumberRenderer = new NumberRenderer(model);
+		indirectNumberRenderer = checkCreateIndirectNumberRenderer();
 	}
 
 	NR renderNode(NNode node) {
@@ -341,6 +348,13 @@ abstract class Renderer<NR extends OWLObject> {
 	abstract OWLClassExpression nodeRenderingToExpression(NR rendering);
 
 	abstract OWLClassExpression renderUnion(Set<NR> operands);
+
+	private NumberRenderer checkCreateIndirectNumberRenderer() {
+
+		OWLDataProperty property = model.getIndirectNumericProperty();
+
+		return property != null ? new NumberRenderer(model, property) : null;
+	}
 
 	private NR renderNode(NNode node, OWLClassExpression type) {
 
