@@ -463,16 +463,15 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
-	 * Stipulates that this numeric-type can provide a default
-	 * value-entity if and only if it represents an exact value (see
-	 * {@link #exactValue}). If so then that exact value will be the
-	 * default-value.
+	 * Stipulates that this numeric-type does define a default
+	 * value-entity, which will be the value that is provided by the
+	 * {@link #asINumber} method.
 	 *
-	 * @return True if numeric-type represents an exact value
+	 * @return True always
 	 */
 	public boolean hasDefaultValue() {
 
-		return exactValue();
+		return true;
 	}
 
 	/**
@@ -686,12 +685,12 @@ public class CNumber extends CDataValue<INumber> {
 
 	INumber getDefaultValueOrNull() {
 
-		return exactValue() ? min : null;
+		return asINumber();
 	}
 
 	boolean validTypeValue(INumber value) {
 
-		return subsumes(value.getType());
+		return subsumes(value.normaliseValueTypeTo(this));
 	}
 
 	String getDataValueDescription() {

@@ -753,18 +753,23 @@ public class IFrame implements IEntity, IValue {
 
 			for (IValue value : slot.getValues().asList()) {
 
-				extender.addSlotValue(slotId, toExtensionSlotValue(value, visited));
+				extender.addSlotValue(slotId, toExtensionSlotValue(slot, value, visited));
 			}
 		}
 
 		return extender.extend();
 	}
 
-	private CValue<?> toExtensionSlotValue(IValue value, Set<IFrame> visited) {
+	private CValue<?> toExtensionSlotValue(ISlot slot, IValue value, Set<IFrame> visited) {
 
 		if (value instanceof IFrame) {
 
 			return ((IFrame)value).toExtensionSlotValue(visited);
+		}
+
+		if (value instanceof INumber) {
+
+			return ((INumber)value).normaliseValueTypeTo((CNumber)slot.getValueType());
 		}
 
 		return value.getType();

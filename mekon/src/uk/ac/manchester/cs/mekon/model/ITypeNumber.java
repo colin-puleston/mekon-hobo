@@ -44,6 +44,11 @@ abstract class ITypeNumber {
 
 	abstract CNumber getValueType();
 
+	CNumber normaliseValueTypeTo(CNumber type) {
+
+		return getValueType();
+	}
+
 	abstract String getDescription();
 
 	abstract Number asTypeNumber();

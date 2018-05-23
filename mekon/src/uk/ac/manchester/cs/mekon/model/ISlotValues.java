@@ -377,7 +377,7 @@ public class ISlotValues extends KList<IValue> {
 
 		if (!validTypeValue(value)) {
 
-			throwInvalidValueException(
+			throw createInvalidValueException(
 				value,
 				"expected value of type: " + getValueType());
 		}
@@ -386,7 +386,7 @@ public class ISlotValues extends KList<IValue> {
 				&& value.abstractValue()
 				&& !slot.getEditability().abstractEditable()) {
 
-			throwInvalidValueException(
+			throw createInvalidValueException(
 				value,
 				"cannot set abstract values for slots "
 				+ "of this type on assertion-instances");
@@ -404,9 +404,9 @@ public class ISlotValues extends KList<IValue> {
 		}
 	}
 
-	private void throwInvalidValueException(IValue value, String extraMsg) {
+	private KAccessException createInvalidValueException(IValue value, String extraMsg) {
 
-		throw new KAccessException(
+		return new KAccessException(
 					"Invalid slot-value: " + value
 					+ ", for slot: " + slot
 					+ ": " + extraMsg);

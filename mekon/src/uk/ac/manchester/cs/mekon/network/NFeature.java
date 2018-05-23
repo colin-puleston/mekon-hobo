@@ -61,6 +61,28 @@ public abstract class NFeature<V> extends NEntity {
 	}
 
 	/**
+	 * Adds value for the feature, replacing any current values.
+	 *
+	 * @param value Value to set
+	 */
+	public void setValue(V value) {
+
+		values.clear();
+		values.add(value);
+	}
+
+	/**
+	 * Adds a set of values to the feature, replacing any current values.
+	 *
+	 * @param values Values to add
+	 */
+	public void setValues(Collection<V> values) {
+
+		this.values.clear();
+		this.values.addAll(values);
+	}
+
+	/**
 	 * Removes a value from the feature.
 	 *
 	 * @param value Value to remove

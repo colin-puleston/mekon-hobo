@@ -399,6 +399,11 @@ public class INumber extends IDataValue {
 		typeNumber = new IIndefiniteNumber(valueType);
 	}
 
+	CNumber normaliseValueTypeTo(CNumber type) {
+
+		return typeNumber.normaliseValueTypeTo(type);
+	}
+
 	String getDataValueDescription() {
 
 		return typeNumber.getDescription();

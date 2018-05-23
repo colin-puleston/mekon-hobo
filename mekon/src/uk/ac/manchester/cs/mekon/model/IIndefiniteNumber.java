@@ -63,6 +63,22 @@ class IIndefiniteNumber extends ITypeNumber {
 		return valueType;
 	}
 
+	CNumber normaliseValueTypeTo(CNumber type) {
+
+		boolean adoptMin = type.hasMin() && !valueType.hasMin();
+		boolean adoptMax = type.hasMax() && !valueType.hasMax();
+
+		if (adoptMin && adoptMax) {
+
+			return type;
+		}
+
+		INumber min = adoptMin ? type.getMin() : valueType.getMin();
+		INumber max = adoptMax ? type.getMax() : valueType.getMax();
+
+		return CNumber.range(min, max);
+	}
+
 	String getDescription() {
 
 		return valueType.getLimitsString();
