@@ -68,7 +68,7 @@ public class CSlots extends FSlots<CSlot> {
 
 		for (CSlot slot : asList()) {
 
-			new CSlotValueTypeValidator(slot).checkNotInvalidFor(container);
+			new CSlotValueTypeValidator(container, slot).checkNotInvalidFor();
 		}
 	}
 }

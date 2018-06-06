@@ -33,30 +33,32 @@ import uk.ac.manchester.cs.mekon.*;
  */
 class CSlotValueTypeValidator extends CHierarchyCrawler {
 
+	private CFrame container;
 	private CIdentity slotId;
 	private CValue<?> valueType;
 
 	private boolean valid = false;
 
-	CSlotValueTypeValidator(CSlot slot) {
+	CSlotValueTypeValidator(CFrame container, CSlot slot) {
 
-		this(slot.getIdentity(), slot.getValueType());
+		this(container, slot.getIdentity(), slot.getValueType());
 	}
 
-	CSlotValueTypeValidator(CIdentity slotId, CValue<?> valueType) {
+	CSlotValueTypeValidator(CFrame container, CIdentity slotId, CValue<?> valueType) {
 
+		this.container = container;
 		this.slotId = slotId;
 		this.valueType = valueType;
 	}
 
-	void checkNotInvalidFor(CFrame container) {
+	void checkNotInvalidFor() {
 
-		processLinked(getAtomicFrame(container));
+		processLinked(getAtomicContainer());
 	}
 
-	void checkValidFor(CFrame container) {
+	void checkValidFor() {
 
-		processAll(getAtomicFrame(container));
+		processAll(getAtomicContainer());
 
 		if (!valid) {
 
@@ -92,14 +94,14 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 		if (!slot.getValueType().subsumes(valueType)) {
 
 			throw new KModelException(
-						"Invalid value-type for slot: " + slot
-						+ ": on frame: " + slot.getContainer()
+						"Invalid value-type for slot: " + slotId
+						+ ": on frame: " + container
 						+ ": expected type: " + slot.getValueType()
 						+ ": invalid type: " + valueType);
 		}
 	}
 
-	private CAtomicFrame getAtomicFrame(CFrame container) {
+	private CAtomicFrame getAtomicContainer() {
 
 		return container.getAtomicFrame().asAtomicFrame();
 	}

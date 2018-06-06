@@ -230,7 +230,7 @@ public class CSlotValues {
 
 	void validate(CFrame container, CIdentity slotId, CValue<?> value) {
 
-		new CSlotValueTypeValidator(slotId, value).checkValidFor(container);
+		new CSlotValueTypeValidator(container, slotId, value).checkValidFor();
 	}
 
 	int createHashCode() {

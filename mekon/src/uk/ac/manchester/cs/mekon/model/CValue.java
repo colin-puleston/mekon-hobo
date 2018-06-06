@@ -259,6 +259,11 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		referencingSlots.add(slot);
 	}
 
+	void deregisterReferencingSlot(CSlot slot) {
+
+		referencingSlots.remove(slot);
+	}
+
 	void registerSlotValueReferencingFrame(CFrame frame) {
 
 		slotValueReferencingFrames.add(frame);

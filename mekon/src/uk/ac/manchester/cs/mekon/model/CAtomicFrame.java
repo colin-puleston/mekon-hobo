@@ -174,10 +174,12 @@ class CAtomicFrame extends CFrame {
 
 		public void clearSlotValues() {
 
-			new DescendantSlotValuesClearer();
+			CAtomicFrame.this.clearSlotValues();
 		}
 
 		public void clearSlotValuesFromDescendants() {
+
+			new DescendantSlotValuesClearer();
 		}
 	}
 
@@ -363,6 +365,7 @@ class CAtomicFrame extends CFrame {
 		}
 
 		slots.remove(slot);
+		slot.getValueType().deregisterReferencingSlot(slot);
 
 		if (slots.isEmpty()) {
 
