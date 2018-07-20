@@ -782,18 +782,6 @@ public class IInstanceParser extends ISerialiser {
 
 			return frameNodesByXDocId;
 		}
-
-		private IFrame getFrame(String xid) {
-
-			IFrame frame = framesByXDocId.get(xid);
-
-			if (frame != null) {
-
-				return frame;
-			}
-
-			throw new XDocumentException("Invalid frame-reference: " + xid);
-		}
 	}
 
 	/**
