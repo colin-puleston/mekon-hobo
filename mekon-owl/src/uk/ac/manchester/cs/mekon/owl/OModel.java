@@ -203,18 +203,27 @@ public class OModel {
 	public void startReasoner() {
 
 		classify();
-
-		objectProperties.initialiseForSupportedInferenceTypes();
-		dataProperties.initialiseForSupportedInferenceTypes();
+		initialiseCachesForReasoner();
 	}
 
 	/**
-	 * Forces reclassification of the ontology.
+	 * Forces re-classification of the ontology. Should be invoked after
+	 * any ontology updates that may affect classification.
 	 */
-	public void reclassify() {
+	public void updateReasoner() {
 
 		getReasoner().flush();
 		classify();
+	}
+
+	/**
+	 * Updates all caches to align with any changes made directly to
+	 * ontology. Should be invoked after any direct ontology updates.
+	 */
+	public void updateCaches() {
+
+		createCaches();
+		initialiseCachesForReasoner();
 	}
 
 	/**
@@ -664,13 +673,7 @@ public class OModel {
 		this.reasonerFactory = reasonerFactory;
 		this.reasoningType = reasoningType;
 
-		concepts = new OConcepts(this);
-		objectProperties = new OObjectProperties(this);
-		dataProperties = new ODataProperties(this);
-		annotationProperties = new OAnnotationProperties(this);
-
-		modelAxioms = new OAxioms(this, modelOntology);
-		instanceAxioms = new OAxioms(this, instanceOntology);
+		createCaches();
 	}
 
 	void setIndirectNumericProperty(IRI iri) {
@@ -694,11 +697,28 @@ public class OModel {
 		addModelAxiom(getSubClassAxiom(concept, subConcept));
 	}
 
+	private void createCaches() {
+
+		concepts = new OConcepts(this);
+		objectProperties = new OObjectProperties(this);
+		dataProperties = new ODataProperties(this);
+		annotationProperties = new OAnnotationProperties(this);
+
+		modelAxioms = new OAxioms(this, modelOntology);
+		instanceAxioms = new OAxioms(this, instanceOntology);
+	}
+
 	private void classify() {
 
 		OMonitor.pollForPreReasonerLoad(getReasoner().getClass());
 		getReasoner().precomputeInferences(InferenceType.values());
 		OMonitor.pollForReasonerLoaded();
+	}
+
+	private void initialiseCachesForReasoner() {
+
+		objectProperties.initialiseForSupportedInferenceTypes();
+		dataProperties.initialiseForSupportedInferenceTypes();
 	}
 
 	private OWLDataProperty getIndirectNumericProperty(IRI iri) {
