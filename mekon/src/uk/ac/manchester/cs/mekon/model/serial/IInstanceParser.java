@@ -70,6 +70,8 @@ public class IInstanceParser extends ISerialiser {
 		private List<SlotSpec<?>> slotSpecs = new ArrayList<SlotSpec<?>>();
 		private ValuesUpdate valuesUpdate = new ValuesUpdate();
 
+		private Set<CIdentity> invalidCFrameIds = new HashSet<CIdentity>();
+
 		private class ValuesUpdate {
 
 			private ISlot slot = null;
@@ -196,6 +198,7 @@ public class IInstanceParser extends ISerialiser {
 							getSlotId(),
 							getValueType(),
 							getCardinality(),
+							getActivation(),
 							getEditability());
 			}
 
@@ -281,6 +284,11 @@ public class IInstanceParser extends ISerialiser {
 			private CCardinality getCardinality() {
 
 				return slotTypeNode.getEnum(CARDINALITY_ATTR, CCardinality.class);
+			}
+
+			private CActivation getActivation() {
+
+				return slotTypeNode.getEnum(ACTIVATION_ATTR, CActivation.class);
 			}
 
 			private IEditability getEditability() {
@@ -652,6 +660,25 @@ public class IInstanceParser extends ISerialiser {
 			return instantiator.startInstantiation(frameType, frameFunction, freeInstances);
 		}
 
+		private CFrame getCFrame(CIdentity id) {
+
+			CFrame rootFrame = model.getRootFrame();
+
+			if (!rootFrame.getIdentity().equals(id)) {
+
+				CFrame frame = model.getFrames().getOrNull(id);
+
+				if (frame != null) {
+
+					return frame;
+				}
+
+				invalidCFrameIds.add(id);
+			}
+
+			return rootFrame;
+		}
+
 		private SlotSpec<?> checkCreateSlotSpec(
 								IFrame container,
 								XNode slotNode,
@@ -836,18 +863,6 @@ public class IInstanceParser extends ISerialiser {
 	private CFrame getRootCFrame() {
 
 		return model.getRootFrame();
-	}
-
-	private CFrame getCFrame(CIdentity id) {
-
-		CFrame rootFrame = model.getRootFrame();
-
-		if (rootFrame.getIdentity().equals(id)) {
-
-			return rootFrame;
-		}
-
-		return model.getFrames().get(id);
 	}
 
 	private XNode resolveContainerNode(IInstanceParseInput input) {

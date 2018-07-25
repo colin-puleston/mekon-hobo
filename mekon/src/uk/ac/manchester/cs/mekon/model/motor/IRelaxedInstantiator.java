@@ -69,6 +69,7 @@ public abstract class IRelaxedInstantiator {
 	 * @param slotTypeId Identity of slot-type for slot to be created
 	 * @param valueType Value-type for slot to be created
 	 * @param cardinality Cardinality of slot to be created
+	 * @param activation Activation of slot to be created
 	 * @param editability Editability of slot to be created
 	 * @return Created and added slot
 	 */
@@ -77,6 +78,7 @@ public abstract class IRelaxedInstantiator {
 							CIdentity slotTypeId,
 							CValue<?> valueType,
 							CCardinality cardinality,
+							CActivation activation,
 							IEditability editability);
 
 	/**

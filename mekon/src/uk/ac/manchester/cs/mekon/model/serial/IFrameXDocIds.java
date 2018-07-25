@@ -58,7 +58,7 @@ class IFrameXDocIds {
 		}
 	}
 
-	private Map<IFrame, String> ids = new HashMap<IFrame, String>();
+	private Map<IFrame, String> ids;
 	private Set<IFrame> assignedFrames = new HashSet<IFrame>();
 
 	IFrameXDocIds(Map<IFrame, String> ids) {

@@ -84,28 +84,23 @@ public class IInstanceSerialiseTest {
 
 	private XDocument render(IFrame frame) {
 
-		return createRenderer().render(new IInstanceRenderInput(frame));
+		IInstanceRenderer renderer = new IInstanceRenderer(frame);
+
+		renderer.setRenderAsTree(renderAsTree);
+
+		return renderer.render();
 	}
 
 	private IFrame parse(XDocument rendering) {
 
-		IInstanceParser parser = new IInstanceParser(model.model, IFrameFunction.ASSERTION);
+		IInstanceParser parser = new IInstanceParser(
+										model.model,
+										IFrameFunction.ASSERTION,
+										rendering);
 
-		if (freeInstances) {
+		parser.setFreeInstances(freeInstances);
 
-			parser.setFreeInstances(true);
-		}
-
-		return parser.parse(new IInstanceParseInput(rendering));
-	}
-
-	private IInstanceRenderer createRenderer() {
-
-		IInstanceRenderer renderer = new IInstanceRenderer();
-
-		renderer.setRenderAsTree(renderAsTree);
-
-		return renderer;
+		return parser.parse();
 	}
 
 	private IFrame createTestInstance() {

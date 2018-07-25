@@ -314,7 +314,9 @@ public class IInstanceRenderer extends ISerialiser {
 			XNode node = parentNode.addChild(CSLOT_ID);
 
 			renderIdentity(slot, node);
+
 			node.addValue(CARDINALITY_ATTR, slot.getCardinality());
+			node.addValue(ACTIVATION_ATTR, slot.getActivation());
 		}
 
 		private void renderISlotValues(ISlot slot, XNode slotNode) {

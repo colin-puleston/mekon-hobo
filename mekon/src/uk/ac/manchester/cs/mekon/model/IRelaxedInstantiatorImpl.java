@@ -72,11 +72,13 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 					CIdentity slotTypeId,
 					CValue<?> valueType,
 					CCardinality cardinality,
+					CActivation activation,
 					IEditability editability) {
 
 		CFrame contType = container.getType();
 		CSlot slotType = new CSlot(contType, slotTypeId, valueType, cardinality);
 
+		slotType.setActivation(activation);
 		slotType.setEditability(editabilitiesIsToCs.get(editability));
 
 		return container.addSlotInternal(slotType);
