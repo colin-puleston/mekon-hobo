@@ -155,6 +155,21 @@ public abstract class IClassifier extends IReasonerDefault {
 	/**
 	 * {@inheritDoc}
 	 */
+	public Set<IUpdateOp> reinitialiseFrame(
+							IEditor iEditor,
+							IFrame frame,
+							Set<IUpdateOp> ops) {
+
+		Set<IUpdateOp> allOps = new HashSet<IUpdateOp>(ops);
+
+		allOps.add(IUpdateOp.SLOTS);
+
+		return updateFrame(iEditor, frame, allOps);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public Set<IUpdateOp> updateFrame(
 							IEditor iEditor,
 							IFrame frame,

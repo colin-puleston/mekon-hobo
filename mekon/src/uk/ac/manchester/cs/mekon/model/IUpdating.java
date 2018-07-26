@@ -42,7 +42,7 @@ public class IUpdating {
 	private CModel model;
 
 	private boolean autoUpdate = true;
-	private Set<IUpdateOp> defaultOps = getAllUpdateOpsAsSet();
+	private Set<IUpdateOp> defaultOps = IUpdateOp.valuesAsSet();
 
 	/**
 	 * Specifies whether automatic updating of instance-level
@@ -139,6 +139,14 @@ public class IUpdating {
 		return reasoner.updateFrame(model.getIEditor(), instance, ops);
 	}
 
+	Set<IUpdateOp> reinitialise(IFrame instance) {
+
+		IReasoner reasoner = instance.getType().getIReasoner();
+		Set<IUpdateOp> ops = getDefaultOps();
+
+		return reasoner.reinitialiseFrame(model.getIEditor(), instance, ops);
+	}
+
 	private Set<IUpdateOp> removeDefaultOps(Set<IUpdateOp> ops) {
 
 		Set<IUpdateOp> nonDefaultOps = new HashSet<IUpdateOp>(ops);
@@ -158,11 +166,6 @@ public class IUpdating {
 		}
 
 		return purgedOps;
-	}
-
-	private Set<IUpdateOp> getAllUpdateOpsAsSet() {
-
-		return new HashSet<IUpdateOp>(Arrays.asList(IUpdateOp.values()));
 	}
 }
 

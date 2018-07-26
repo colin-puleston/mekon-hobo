@@ -338,6 +338,19 @@ public class IFrame implements IEntity, IValue {
 
 	/**
 	 * Performs all of the specified update operations on this frame,
+	 * whether or not auto-update is enabled (see {@link #update(Set)}
+	 * for further details).
+	 *
+	 * @param ops Update operations to be performed
+	 * @return Types of update produced
+	 */
+	public Set<IUpdateOp> update(IUpdateOp... ops) {
+
+		return update(new HashSet<IUpdateOp>(Arrays.asList(ops)));
+	}
+
+	/**
+	 * Performs all of the specified update operations on this frame,
 	 * whether or not auto-update is enabled (see {@link
 	 * IUpdating#autoUpdate}).
 	 * <p>
@@ -719,6 +732,11 @@ public class IFrame implements IEntity, IValue {
 	void setAutoUpdateEnabled(boolean enabled) {
 
 		autoUpdateEnabled = enabled;
+	}
+
+	Set<IUpdateOp> reinitialise() {
+
+		return getIUpdating().reinitialise(this);
 	}
 
 	void completeInstantiation(boolean reinstantiation) {

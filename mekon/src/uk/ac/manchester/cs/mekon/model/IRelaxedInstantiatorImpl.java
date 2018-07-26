@@ -94,13 +94,20 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return container.addSlotInternal(slotType);
 	}
 
-	public void completeInstantiation(IFrame frame) {
+	public Set<IUpdateOp> completeReinstantiation(IFrame frame) {
+
+		if (frame.freeInstance()) {
+
+			frame.completeInstantiation(true);
+
+			return Collections.<IUpdateOp>emptySet();
+		}
+
+		Set<IUpdateOp> enactedUpdateOps = frame.reinitialise();
 
 		frame.completeInstantiation(true);
+		frame.setAutoUpdateEnabled(true);
 
-		if (!frame.freeInstance()) {
-
-			frame.setAutoUpdateEnabled(true);
-		}
+		return enactedUpdateOps;
 	}
 }

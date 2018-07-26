@@ -56,7 +56,18 @@ public class IReasonerDefault implements IReasoner {
 	 */
 	public void initialiseFrame(IEditor iEditor, IFrame frame) {
 
-		new ISlotSpecs(iEditor, frame.getType()).initialise(frame);
+		getSlotSpecs(iEditor, frame).initialise(frame);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Set<IUpdateOp> reinitialiseFrame(
+							IEditor iEditor,
+							IFrame frame,
+							Set<IUpdateOp> ops) {
+
+		return getSlotSpecs(iEditor, frame).update(frame, ISlotOps.SLOTS).asUpdateOps();
 	}
 
 	/**
@@ -75,4 +86,10 @@ public class IReasonerDefault implements IReasoner {
 	 */
 	protected IReasonerDefault() {
 	}
+
+	private ISlotSpecs getSlotSpecs(IEditor iEditor, IFrame frame) {
+
+		return new ISlotSpecs(iEditor, frame.getType());
+	}
+
 }

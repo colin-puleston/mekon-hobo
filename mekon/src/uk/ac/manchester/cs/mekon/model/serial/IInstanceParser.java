@@ -505,7 +505,7 @@ public class IInstanceParser extends ISerialiser {
 			IFrame rootFrame = resolveIFrame(getRootFrameNode());
 
 			processSlotValueSpecs();
-			completeReInstantiation();
+			completeReinstantiation();
 
 			valuesUpdate.checkApply();
 
@@ -738,11 +738,11 @@ public class IInstanceParser extends ISerialiser {
 			}
 		}
 
-		private void completeReInstantiation() {
+		private void completeReinstantiation() {
 
 			for (IFrame frame : framesByXDocId.values()) {
 
-				instantiator.completeInstantiation(frame);
+				instantiator.completeReinstantiation(frame);
 			}
 		}
 

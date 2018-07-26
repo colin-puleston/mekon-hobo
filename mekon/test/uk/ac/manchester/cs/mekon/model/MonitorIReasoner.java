@@ -41,6 +41,14 @@ class MonitorIReasoner implements IReasoner {
 		initialiseds.add(frame);
 	}
 
+	public Set<IUpdateOp> reinitialiseFrame(
+							IEditor iEditor,
+							IFrame frame,
+							Set<IUpdateOp> ops) {
+
+		return Collections.<IUpdateOp>emptySet();
+	}
+
 	public Set<IUpdateOp> updateFrame(
 							IEditor iEditor,
 							IFrame frame,

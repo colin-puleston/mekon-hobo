@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model.motor;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 
@@ -101,6 +103,8 @@ public abstract class IRelaxedInstantiator {
 	 * frame in a regenerated network, after all slots have been added.
 	 *
 	 * @param frame Relevant frame
+	 * @return Subset of required update operations that actually
+	 * produced updates
 	 */
-	public abstract void completeInstantiation(IFrame frame);
+	public abstract Set<IUpdateOp> completeReinstantiation(IFrame frame);
 }

@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 /**
  * Represents the types of update operation that can be performed
  * on instance-level frames as the result of reasoning.
@@ -52,5 +54,15 @@ public enum IUpdateOp {
 	 * Updates of fixed values for relevant slots.
 	 */
 	SLOT_VALUES;
+
+	/**
+	 * Provides all value-options in the form of a set.
+	 *
+	 * @return Value-options as set
+	 */
+	static public Set<IUpdateOp> valuesAsSet() {
+
+		return new HashSet<IUpdateOp>(Arrays.asList(IUpdateOp.values()));
+	}
 }
 

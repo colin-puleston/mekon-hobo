@@ -54,6 +54,23 @@ public interface IReasoner {
 	public void initialiseFrame(IEditor iEditor, IFrame frame);
 
 	/**
+	 * Performs any required updates on specified de-serilaized
+	 * instance-level frame to bring it into line with the latest
+	 * version of the model, which may have been updated since frame
+	 * was serilaized. Updates will include any required updates to
+	 * set of slots, plus any of the other specified update operations
+	 * that apply.
+	 *
+	 * @param iEditor Model-instantiation editor
+	 * @param frame Frame to be re-initialised
+	 * @param ops Types of update operations to be performed (in
+	 * addition to any required slot update operations)
+	 * @return Subset of required update operations that actually
+	 * produced updates
+	 */
+	public Set<IUpdateOp> reinitialiseFrame(IEditor iEditor, IFrame frame, Set<IUpdateOp> ops);
+
+	/**
 	 * Performs selected update operations on specified instance-level
 	 * frame.
 	 *
