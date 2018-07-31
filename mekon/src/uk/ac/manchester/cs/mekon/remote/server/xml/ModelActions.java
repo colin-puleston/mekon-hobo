@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.remote.server.xml;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.remote.server.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
@@ -34,9 +35,7 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
 class ModelActions extends ServerActions<RModelActionType> {
 
 	private CModel model;
-
-	private IInstanceParser assertionParser;
-	private IInstanceParser queryParser;
+	private RServerInstanceParser parameterParser;
 
 	private class GetFrameHierarchyAction extends Action {
 
@@ -55,13 +54,13 @@ class ModelActions extends ServerActions<RModelActionType> {
 
 		void perform(XRequestParser request, XResponseRenderer response) {
 
-			IInstanceParseInput parseInput = request.getInstanceParameterParseInput(0);
-			CFrame type = getInstanceParser().parseRootFrameType(parseInput);
+			IInstanceParseInput input = request.getInstanceParameterParseInput(0);
+			CFrame type = parameterParser.parseRootType(input, query());
 
 			response.setInstanceResponse(type.instantiate());
 		}
 
-		abstract IInstanceParser getInstanceParser();
+		abstract boolean query();
 	}
 
 	private class InitialiseAssertionAction extends InitialiseInstanceAction {
@@ -71,9 +70,9 @@ class ModelActions extends ServerActions<RModelActionType> {
 			return RModelActionType.INITIALISE_ASSERTION;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return assertionParser;
+			return false;
 		}
 	}
 
@@ -84,9 +83,9 @@ class ModelActions extends ServerActions<RModelActionType> {
 			return RModelActionType.INITIALISE_QUERY;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return queryParser;
+			return true;
 		}
 	}
 
@@ -95,19 +94,14 @@ class ModelActions extends ServerActions<RModelActionType> {
 		void perform(XRequestParser request, XResponseRenderer response) {
 
 			IInstanceParseInput parseInput = request.getInstanceParameterParseInput(0);
-			IFrame inAndOut = parseInstance(parseInput);
+			IFrame inAndOut = parameterParser.parse(parseInput, query());
 			IInstanceRenderInput renderInput = new IInstanceRenderInput(inAndOut);
 
 			renderInput.setFrameXDocIds(parseInput.getFrameXDocIds());
 			response.setInstanceResponse(renderInput);
 		}
 
-		abstract IInstanceParser getInstanceParser();
-
-		private IFrame parseInstance(IInstanceParseInput input) {
-
-			return getInstanceParser().parse(input);
-		}
+		abstract boolean query();
 	}
 
 	private class UpdateAssertionAction extends UpdateInstanceAction {
@@ -117,9 +111,9 @@ class ModelActions extends ServerActions<RModelActionType> {
 			return RModelActionType.UPDATE_ASSERTION;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return assertionParser;
+			return false;
 		}
 	}
 
@@ -130,9 +124,9 @@ class ModelActions extends ServerActions<RModelActionType> {
 			return RModelActionType.UPDATE_QUERY;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return queryParser;
+			return true;
 		}
 	}
 
@@ -140,8 +134,7 @@ class ModelActions extends ServerActions<RModelActionType> {
 
 		this.model = model;
 
-		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
-		queryParser = new IInstanceParser(model, IFrameFunction.QUERY);
+		parameterParser = new RServerInstanceParser(model);
 
 		new GetFrameHierarchyAction();
 		new InitialiseAssertionAction();

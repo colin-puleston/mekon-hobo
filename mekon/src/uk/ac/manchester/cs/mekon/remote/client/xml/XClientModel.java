@@ -53,8 +53,7 @@ public abstract class XClientModel {
 
 	private CModel model;
 
-	private IInstanceParser assertionParser;
-	private IInstanceParser queryParser;
+	private RClientInstanceParser responseParser;
 
 	private abstract class InstanceAction {
 
@@ -66,12 +65,12 @@ public abstract class XClientModel {
 			XRequestRenderer request = getRequest(masterRoot);
 			XResponseParser response = performAction(request);
 
-			return createUpdates(getInstance(response));
+			return createUpdates(parseInstance(response));
 		}
 
 		abstract RModelActionType getActionType();
 
-		abstract IInstanceParser getInstanceParser();
+		abstract boolean query();
 
 		void customiseRenderInput(IInstanceRenderInput input) {
 		}
@@ -85,9 +84,9 @@ public abstract class XClientModel {
 			return request;
 		}
 
-		private IFrame getInstance(XResponseParser response) {
+		private IFrame parseInstance(XResponseParser response) {
 
-			return getInstanceParser().parse(createParseInput(response));
+			return responseParser.parse(createParseInput(response), query());
 		}
 
 		private IInstanceRenderInput createRenderInput(IFrame masterRoot) {
@@ -134,9 +133,9 @@ public abstract class XClientModel {
 			return RModelActionType.INITIALISE_ASSERTION;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return assertionParser;
+			return false;
 		}
 	}
 
@@ -147,9 +146,9 @@ public abstract class XClientModel {
 			return RModelActionType.INITIALISE_QUERY;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return queryParser;
+			return true;
 		}
 	}
 
@@ -180,9 +179,9 @@ public abstract class XClientModel {
 			return RModelActionType.UPDATE_ASSERTION;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return assertionParser;
+			return false;
 		}
 	}
 
@@ -198,9 +197,9 @@ public abstract class XClientModel {
 			return RModelActionType.UPDATE_QUERY;
 		}
 
-		IInstanceParser getInstanceParser() {
+		boolean query() {
 
-			return queryParser;
+			return true;
 		}
 	}
 
@@ -238,9 +237,7 @@ public abstract class XClientModel {
 	protected XClientModel() {
 
 		model = new XRClientModel().getCModel();
-
-		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
-		queryParser = new IInstanceParser(model, IFrameFunction.QUERY);
+		responseParser = new RClientInstanceParser(model);
 	}
 
 	/**

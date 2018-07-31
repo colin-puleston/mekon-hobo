@@ -22,38 +22,58 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.model.serial;
 
-import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Represents the output-data from a specific operation to parse just
+ * the type of the root-frame of a serialised {@link CFrame}/{@link ISlot}
+ * network.
+ *
  * @author Colin Puleston
  */
-class IFreeCopierImpl extends IFreeCopier {
+public class IInstanceTypeParseOutput {
 
-	private class OneTimeCopier extends IFrameCopierAbstract {
+	private CIdentity rootTypeId;
+	private CFrame rootType;
 
-		ISlot addSlot(IFrame container, CSlot slotType) {
+	/**
+	 * Specifies whether parsed root-frame type represents a currently
+	 * valid {@link CFrame}.
+	 *
+	 * @return True if currently valid root-frame type
+	 */
+	public boolean validRootType() {
 
-			return container.addSlotInternal(createFreeSlotTypeCopy(container, slotType));
-		}
-
-		boolean freeInstance() {
-
-			return true;
-		}
+		return rootType != null;
 	}
 
-	public IFrame createFreeCopy(IFrame sourceInstance) {
+	/**
+	 * Provides root-frame type identity as produced by parsing process,
+	 * which may or may not represent a currently valid {@link CFrame}.
+	 *
+	 * @return Root-frame type identity
+	 */
+	public CIdentity getRootTypeId() {
 
-		return new OneTimeCopier().copy(sourceInstance);
+		return rootTypeId;
 	}
 
-	private CSlot createFreeSlotTypeCopy(IFrame container, CSlot slotType) {
+	/**
+	 * Provides type of root-frame as produced by parsing process
+	 *
+	 * @return Type of root-frame, or null if root-frame type no longer
+	 * valid
+	 */
+	public CFrame getRootType() {
 
-		CIdentity slotTypeId = slotType.getIdentity();
-		CValue<?> valueType = slotType.getValueType();
+		return rootType;
+	}
 
-		return IRelaxedInstantiatorImpl.createFreeSlotType(container, slotTypeId, valueType);
+	IInstanceTypeParseOutput(CFrame rootTypeIfValid, boolean validType) {
+
+		rootTypeId = rootTypeIfValid.getIdentity();
+		rootType = validType ? rootTypeIfValid : null;
 	}
 }

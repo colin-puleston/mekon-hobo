@@ -35,6 +35,12 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 /**
  * Parser for the standard XML serialisation of MEKON instances as
  * represented via {@link IFrame}/{@link ISlot} networks.
+ * <p>
+ * If any updates have occured to the model since an instance was
+ * serialised that prevent it from being reassembled in its orignial
+ * form, the instance will be partially assembled as far as the
+ * updates allow, with data being collected to inform the client of
+ * any pruning that has occurred (see {@link #getPruningData}).
  *
  * @author Colin Puleston
  */
@@ -59,6 +65,7 @@ public class IInstanceParser extends ISerialiser {
 	private IEditor iEditor;
 	private IFrameFunction frameFunction;
 	private boolean freeInstances = false;
+	private boolean possibleModelUpdates = false;
 
 	private class OneTimeParser {
 
@@ -70,7 +77,7 @@ public class IInstanceParser extends ISerialiser {
 		private List<SlotSpec<?>> slotSpecs = new ArrayList<SlotSpec<?>>();
 		private ValuesUpdate valuesUpdate = new ValuesUpdate();
 
-		private Set<CIdentity> invalidCFrameIds = new HashSet<CIdentity>();
+		private Set<CFrame> invalidFrameTypes = new HashSet<CFrame>();
 
 		private class ValuesUpdate {
 
@@ -180,6 +187,10 @@ public class IInstanceParser extends ISerialiser {
 
 			abstract IValue getValue(ISlot slot, V valueSpec);
 
+			abstract String valueAsString(IValue value);
+
+			abstract boolean validModelValue(IValue value);
+
 			private ISlot addSlot() {
 
 				return freeInstances ? addFreeSlot() : addConstrainedSlot();
@@ -241,7 +252,7 @@ public class IInstanceParser extends ISerialiser {
 					}
 					else {
 
-						if (valueType.validValue(value)) {
+						if (validModelValue(value) && valueType.validValue(value)) {
 
 							validNonNewValues.add(value);
 						}
@@ -307,7 +318,32 @@ public class IInstanceParser extends ISerialiser {
 			}
 		}
 
-		private class CFrameSlotSpec extends SlotSpec<IValue> {
+		private abstract class FrameSlotSpec extends SlotSpec<IValue> {
+
+			FrameSlotSpec(IFrame container, XNode slotNode) {
+
+				super(container, slotNode);
+			}
+
+			IValue getValue(ISlot slot, IValue valueSpec) {
+
+				return valueSpec;
+			}
+
+			boolean validModelValue(IValue value) {
+
+				return validFrameType(valueToCFrame(value));
+			}
+
+			String valueAsString(IValue value) {
+
+				return valueToCFrame(value).getIdentity().toString();
+			}
+
+			abstract CFrame valueToCFrame(IValue value);
+		}
+
+		private class CFrameSlotSpec extends FrameSlotSpec {
 
 			CFrameSlotSpec(IFrame container, XNode slotNode) {
 
@@ -339,13 +375,13 @@ public class IInstanceParser extends ISerialiser {
 				return parseCFrame(valueNode);
 			}
 
-			IValue getValue(ISlot slot, IValue valueSpec) {
+			CFrame valueToCFrame(IValue value) {
 
-				return valueSpec;
+				return (CFrame)value;
 			}
 		}
 
-		private class IFrameSlotSpec extends SlotSpec<IValue> {
+		private class IFrameSlotSpec extends FrameSlotSpec {
 
 			IFrameSlotSpec(IFrame container, XNode slotNode) {
 
@@ -377,9 +413,9 @@ public class IInstanceParser extends ISerialiser {
 				return resolveIFrame(valueNode);
 			}
 
-			IValue getValue(ISlot slot, IValue valueSpec) {
+			CFrame valueToCFrame(IValue value) {
 
-				return valueSpec;
+				return ((IFrame)value).getType();
 			}
 		}
 
@@ -420,6 +456,16 @@ public class IInstanceParser extends ISerialiser {
 			IValue getValue(ISlot slot, XNode valueSpec) {
 
 				return parseINumber(getValueType(slot), valueSpec);
+			}
+
+			boolean validModelValue(IValue value) {
+
+				return true;
+			}
+
+			String valueAsString(IValue value) {
+
+				return ((INumber)value).toString();
 			}
 
 			private Class<? extends Number> getNumberType(XNode typeNode) {
@@ -492,6 +538,16 @@ public class IInstanceParser extends ISerialiser {
 
 				return valueSpec;
 			}
+
+			boolean validModelValue(IValue value) {
+
+				return true;
+			}
+
+			String valueAsString(IValue value) {
+
+				return ((IString)value).get();
+			}
 		}
 
 		OneTimeParser(IInstanceParseInput input) {
@@ -500,21 +556,31 @@ public class IInstanceParser extends ISerialiser {
 			framesByXDocId = input.getFramesByXDocId();
 		}
 
-		IFrame parse() {
+		IInstanceParseOutput parse() {
 
 			IFrame rootFrame = resolveIFrame(getRootFrameNode());
+			boolean validRootType = validFrame(rootFrame);
+			PruningData pruningData = new PruningData();
 
-			processSlotValueSpecs();
-			completeReinstantiation();
+			if (validRootType) {
 
-			valuesUpdate.checkApply();
+				processSlotValueSpecs();
 
-			return rootFrame;
+				pruningData.processPrePruned(rootFrame);
+				completeReinstantiation();
+				pruningData.processPostPruned(rootFrame);
+
+				valuesUpdate.checkApply();
+			}
+
+			return new IInstanceParseOutput(rootFrame, validRootType, pruningData);
 		}
 
-		CFrame parseRootFrameType() {
+		IInstanceTypeParseOutput parseRootType() {
 
-			return parseCFrame(getRootFrameNode().getChild(CFRAME_ID));
+			CFrame rootType = parseCFrame(getRootTypeNode());
+
+			return new IInstanceTypeParseOutput(rootType, validFrameType(rootType));
 		}
 
 		private IFrame resolveIFrame(XNode node) {
@@ -550,9 +616,12 @@ public class IInstanceParser extends ISerialiser {
 			CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
 			IFrame frame = startInstantiation(frameType);
 
-			for (XNode slotNode : node.getChildren(ISLOT_ID)) {
+			if (validFrame(frame)) {
 
-				parseISlot(frame, slotNode);
+				for (XNode slotNode : node.getChildren(ISLOT_ID)) {
+
+					parseISlot(frame, slotNode);
+				}
 			}
 
 			return frame;
@@ -662,21 +731,31 @@ public class IInstanceParser extends ISerialiser {
 
 		private CFrame getCFrame(CIdentity id) {
 
-			CFrame rootFrame = model.getRootFrame();
+			CFrame frame = model.getRootFrame();
 
-			if (!rootFrame.getIdentity().equals(id)) {
+			if (!frame.getIdentity().equals(id)) {
 
-				CFrame frame = model.getFrames().getOrNull(id);
+				frame = model.getFrames().getOrNull(id);
 
-				if (frame != null) {
+				if (frame == null) {
 
-					return frame;
+					frame = instantiator.getNonModelFrameType(id);
+
+					invalidFrameTypes.add(frame);
 				}
-
-				invalidCFrameIds.add(id);
 			}
 
-			return rootFrame;
+			return frame;
+		}
+
+		private boolean validFrame(IFrame frame) {
+
+			return validFrameType(frame.getType());
+		}
+
+		private boolean validFrameType(CFrame type) {
+
+			return !invalidFrameTypes.contains(type);
 		}
 
 		private SlotSpec<?> checkCreateSlotSpec(
@@ -742,8 +821,13 @@ public class IInstanceParser extends ISerialiser {
 
 			for (IFrame frame : framesByXDocId.values()) {
 
-				instantiator.completeReinstantiation(frame);
+				instantiator.completeReinstantiation(frame, possibleModelUpdates);
 			}
+		}
+
+		private XNode getRootTypeNode() {
+
+			return getRootFrameNode().getChild(CFRAME_ID);
 		}
 
 		private XNode getRootFrameNode() {
@@ -826,9 +910,8 @@ public class IInstanceParser extends ISerialiser {
 	}
 
 	/**
-	 * Determines whether "free-instances", rather than normal instances
-	 * are to be generated as a result of the parsing (see
-	 * {@link IFreeCopier}).
+	 * Sets whether "free-instances", rather than normal instances are
+	 * to be generated as a result of the parsing (see {@link IFreeCopier}).
 	 *
 	 * @param freeInstances True if free-instances are to be generated
 	 */
@@ -838,12 +921,24 @@ public class IInstanceParser extends ISerialiser {
 	}
 
 	/**
+	 * Sets whether model could possibly have been updated since
+	 * frame/slot network was serialized.
+	 *
+	 * @param possibleModelUpdates True if model possibly updated since
+	 * serialiszation
+	 */
+	public void setPossibleModelUpdates(boolean possibleModelUpdates) {
+
+		this.possibleModelUpdates = possibleModelUpdates;
+	}
+
+	/**
 	 * Parses serialised frame/slot network.
 	 *
 	 * @param input Input to parsing process
-	 * @return Root-frame of generated network
+	 * @return Output of parsing process
 	 */
-	public IFrame parse(IInstanceParseInput input) {
+	public IInstanceParseOutput parse(IInstanceParseInput input) {
 
 		return new OneTimeParser(input).parse();
 	}
@@ -853,11 +948,11 @@ public class IInstanceParser extends ISerialiser {
 	 * network.
 	 *
 	 * @param input Input to parsing process
-	 * @return Type of the root-frame
+	 * @return Output of parsing process
 	 */
-	public CFrame parseRootFrameType(IInstanceParseInput input) {
+	public IInstanceTypeParseOutput parseRootType(IInstanceParseInput input) {
 
-		return new OneTimeParser(input).parseRootFrameType();
+		return new OneTimeParser(input).parseRootType();
 	}
 
 	private CFrame getRootCFrame() {

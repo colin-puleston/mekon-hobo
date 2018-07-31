@@ -65,6 +65,14 @@ public class TestInstances {
 
 		private boolean firstInsert = true;
 
+		public Set<IUpdateOp> reinitialiseFrame(
+								IEditor iEditor,
+								IFrame frame,
+								Set<IUpdateOp> ops) {
+
+			return Collections.<IUpdateOp>emptySet();
+		}
+
 		public Set<IUpdateOp> updateFrame(
 								IEditor iEditor,
 								IFrame frame,
@@ -86,8 +94,8 @@ public class TestInstances {
 
 		DynamicSlotInsertionReasoner() {
 
-			valueType = createFrameType("InsertSlotValue");
-			slotType = slotTypes.create("insertSlot", valueType);
+			valueType = createFrameType("Insert-value");
+			slotType = slotTypes.create("insert-slot", valueType);
 
 			ta.asAtomicFrame().setIReasoner(this);
 		}

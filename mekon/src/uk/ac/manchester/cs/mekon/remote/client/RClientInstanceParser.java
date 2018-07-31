@@ -22,38 +22,23 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.remote.client;
 
-import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston
  */
-class IFreeCopierImpl extends IFreeCopier {
+public class RClientInstanceParser extends RInstanceParser {
 
-	private class OneTimeCopier extends IFrameCopierAbstract {
+	public RClientInstanceParser(CModel model) {
 
-		ISlot addSlot(IFrame container, CSlot slotType) {
-
-			return container.addSlotInternal(createFreeSlotTypeCopy(container, slotType));
-		}
-
-		boolean freeInstance() {
-
-			return true;
-		}
+		super(model);
 	}
 
-	public IFrame createFreeCopy(IFrame sourceInstance) {
+	protected RuntimeException createException(String message) {
 
-		return new OneTimeCopier().copy(sourceInstance);
-	}
-
-	private CSlot createFreeSlotTypeCopy(IFrame container, CSlot slotType) {
-
-		CIdentity slotTypeId = slotType.getIdentity();
-		CValue<?> valueType = slotType.getValueType();
-
-		return IRelaxedInstantiatorImpl.createFreeSlotType(container, slotTypeId, valueType);
+		return new RServerAccessException(message);
 	}
 }

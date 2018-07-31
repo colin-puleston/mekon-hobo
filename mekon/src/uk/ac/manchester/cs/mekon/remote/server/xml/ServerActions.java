@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.mekon.remote.server.xml;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.remote.xml.*;
-import uk.ac.manchester.cs.mekon.remote.util.*;
 import uk.ac.manchester.cs.mekon.remote.server.*;
+import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
  * @author Colin Puleston

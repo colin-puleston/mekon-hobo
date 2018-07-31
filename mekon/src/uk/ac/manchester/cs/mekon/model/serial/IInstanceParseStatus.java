@@ -22,38 +22,31 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
-
-import uk.ac.manchester.cs.mekon.model.motor.*;
+package uk.ac.manchester.cs.mekon.model.serial;
 
 /**
+ * Represents the status of a completed parse operation on a
+ * serialised frame/slot network.
+ *
  * @author Colin Puleston
  */
-class IFreeCopierImpl extends IFreeCopier {
+public enum IInstanceParseStatus {
 
-	private class OneTimeCopier extends IFrameCopierAbstract {
+	/**
+	 * All components still valid, hence instance regenerated in
+	 * its original form
+	 */
+	FULLY_VALID,
 
-		ISlot addSlot(IFrame container, CSlot slotType) {
+	/**
+	 * Some non-root components no longer valid, hence instance
+	 * regenerated in pruned form
+	 */
+	PARTIALLY_VALID,
 
-			return container.addSlotInternal(createFreeSlotTypeCopy(container, slotType));
-		}
-
-		boolean freeInstance() {
-
-			return true;
-		}
-	}
-
-	public IFrame createFreeCopy(IFrame sourceInstance) {
-
-		return new OneTimeCopier().copy(sourceInstance);
-	}
-
-	private CSlot createFreeSlotTypeCopy(IFrame container, CSlot slotType) {
-
-		CIdentity slotTypeId = slotType.getIdentity();
-		CValue<?> valueType = slotType.getValueType();
-
-		return IRelaxedInstantiatorImpl.createFreeSlotType(container, slotTypeId, valueType);
-	}
+	/**
+	 * Root frame-type no longer valid, hence instance could not
+	 * be regenerated in any form
+	 */
+	FULLY_INVALID;
 }

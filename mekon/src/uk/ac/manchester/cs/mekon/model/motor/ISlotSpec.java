@@ -78,9 +78,6 @@ class ISlotSpec {
 
 	void absorbType(CSlot slotType) {
 
-		System.out.println("Spec: " + identity);
-		System.out.println("  Type: " + slotType.getIdentity());
-		System.out.println("  Annos: " + slotType.getAnnotations().getKeys());
 		absorbSource(slotType.getSource());
 		absorbCardinality(slotType.getCardinality());
 		absorbActivation(slotType.getActivation());

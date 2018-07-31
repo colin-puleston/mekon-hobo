@@ -60,11 +60,12 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
 	public IFrame startInstantiation(CFrame type, IFrameFunction function, boolean freeInstance) {
 
-		IFrame frame = new IFrame(type, function, freeInstance);
+		return new IFrame(type, function, freeInstance);
+	}
 
-		frame.setAutoUpdateEnabled(false);
+	public CFrame getNonModelFrameType(CIdentity identity) {
 
-		return frame;
+		return new CAtomicFrame(new CModel(), identity, false);
 	}
 
 	public ISlot addSlot(
@@ -94,20 +95,10 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return container.addSlotInternal(slotType);
 	}
 
-	public Set<IUpdateOp> completeReinstantiation(IFrame frame) {
+	public Set<IUpdateOp> completeReinstantiation(
+							IFrame frame,
+							boolean possibleModelUpdates) {
 
-		if (frame.freeInstance()) {
-
-			frame.completeInstantiation(true);
-
-			return Collections.<IUpdateOp>emptySet();
-		}
-
-		Set<IUpdateOp> enactedUpdateOps = frame.reinitialise();
-
-		frame.completeInstantiation(true);
-		frame.setAutoUpdateEnabled(true);
-
-		return enactedUpdateOps;
+		return frame.completeReinstantiation(possibleModelUpdates);
 	}
 }

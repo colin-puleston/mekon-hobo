@@ -27,9 +27,9 @@ package uk.ac.manchester.cs.mekon.remote.client.xml;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon.remote.client.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
@@ -53,7 +53,7 @@ public abstract class XClientStore {
 	private CModel model;
 	private IStore store = new XClientIStore();
 
-	private IInstanceParser assertionParser;
+	private RClientInstanceParser responseParser;
 
 	private class XClientIStore implements IStore {
 
@@ -152,7 +152,7 @@ public abstract class XClientStore {
 
 		this.model = model;
 
-		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
+		responseParser = new RClientInstanceParser(model);
 	}
 
 	/**
@@ -178,7 +178,7 @@ public abstract class XClientStore {
 			return null;
 		}
 
-		return assertionParser.parse(response.getInstanceResponseParseInput());
+		return responseParser.parse(response.getInstanceResponseParseInput(), false);
 	}
 
 	private List<CIdentity> performIdentitiesResponseAction(XRequestRenderer request) {

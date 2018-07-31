@@ -91,7 +91,7 @@ class IDiskStore implements IStore {
 
 	public synchronized IFrame get(CIdentity identity) {
 
-		return fileStore.read(indexes.getIndex(identity), false);
+		return fileStore.read(identity, indexes.getIndex(identity), false);
 	}
 
 	public synchronized List<CIdentity> getAllIdentities() {
@@ -154,16 +154,22 @@ class IDiskStore implements IStore {
 	void reload(InstanceProfile profile, int index) {
 
 		CIdentity identity = profile.getIdentity();
-
-		identities.add(identity);
-		indexes.assignIndex(identity, index);
-
 		IMatcher matcher = getMatcher(profile.getType());
 
 		if (matcher.rebuildOnStartup()) {
 
-			matcher.add(fileStore.read(index, true), identity);
+			IFrame instance = fileStore.read(identity, index, true);
+
+			if (instance == null) {
+
+				return;
+			}
+
+			matcher.add(instance, identity);
 		}
+
+		identities.add(identity);
+		indexes.assignIndex(identity, index);
 	}
 
 	void stop() {

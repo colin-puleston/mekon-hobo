@@ -77,9 +77,10 @@ public class IInstanceSerialiseTest {
 	private void testRenderAndParse() {
 
 		IFrame original = createTestInstance();
-		IFrame reconstituted = parse(render(original));
+		IInstanceParseOutput parseOut = parse(render(original));
 
-		assertTrue(reconstituted.equalsStructure(original));
+		assertEquals(IInstanceParseStatus.FULLY_VALID, parseOut.getStatus());
+		assertTrue(parseOut.getRootFrame().equalsStructure(original));
 	}
 
 	private XDocument render(IFrame frame) {
@@ -87,7 +88,7 @@ public class IInstanceSerialiseTest {
 		return createRenderer().render(new IInstanceRenderInput(frame));
 	}
 
-	private IFrame parse(XDocument rendering) {
+	private IInstanceParseOutput parse(XDocument rendering) {
 
 		IInstanceParser parser = new IInstanceParser(model.model, IFrameFunction.ASSERTION);
 

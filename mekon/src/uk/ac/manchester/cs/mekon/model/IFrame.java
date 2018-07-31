@@ -177,7 +177,7 @@ public class IFrame implements IEntity, IValue {
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
-	private boolean autoUpdateEnabled = true;
+	private boolean autoUpdateEnabled = false;
 	private boolean autoUpdating = false;
 
 	private class Editor implements IFrameEditor {
@@ -245,7 +245,7 @@ public class IFrame implements IEntity, IValue {
 
 		public void setAutoUpdateEnabled(boolean enabled) {
 
-			IFrame.this.setAutoUpdateEnabled(enabled);
+			autoUpdateEnabled = enabled;
 		}
 	}
 
@@ -729,19 +729,18 @@ public class IFrame implements IEntity, IValue {
 		this.mappedObject = mappedObject;
 	}
 
-	void setAutoUpdateEnabled(boolean enabled) {
+	Set<IUpdateOp> completeReinstantiation(boolean possibleModelUpdates) {
 
-		autoUpdateEnabled = enabled;
+		Set<IUpdateOp> updates = checkReinitialise(possibleModelUpdates);
+
+		completeInstantiation(true);
+
+		return updates;
 	}
 
-	Set<IUpdateOp> reinitialise() {
+	void completeInstantiation() {
 
-		return getIUpdating().reinitialise(this);
-	}
-
-	void completeInstantiation(boolean reinstantiation) {
-
-		type.pollListenersForInstantiated(this, reinstantiation);
+		completeInstantiation(false);
 	}
 
 	boolean freeInstance() {
@@ -759,6 +758,23 @@ public class IFrame implements IEntity, IValue {
 		IUpdating updating = getIUpdating();
 
 		while (updating.checkAutoUpdate(this).contains(IUpdateOp.SLOT_VALUES));
+	}
+
+	private Set<IUpdateOp> checkReinitialise(boolean possibleModelUpdates) {
+
+		if (possibleModelUpdates && !freeInstance()) {
+
+			return getIUpdating().reinitialise(this);
+		}
+
+		return Collections.<IUpdateOp>emptySet();
+	}
+
+	private void completeInstantiation(boolean reinstantiation) {
+
+		autoUpdateEnabled = !freeInstance();
+
+		type.pollListenersForInstantiated(this, reinstantiation);
 	}
 
 	private CFrame toExtension(Set<IFrame> visited) {

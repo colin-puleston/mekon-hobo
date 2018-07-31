@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.remote.server.xml;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.remote.server.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
@@ -35,9 +36,7 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
 class StoreActions extends ServerActions<RStoreActionType> {
 
 	private IStore store;
-
-	private IInstanceParser assertionParser;
-	private IInstanceParser queryParser;
+	private RServerInstanceParser parameterParser;
 
 	private class AddAction extends Action {
 
@@ -161,10 +160,7 @@ class StoreActions extends ServerActions<RStoreActionType> {
 
 		this.store = store;
 
-		CModel model = store.getModel();
-
-		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
-		queryParser = new IInstanceParser(model, IFrameFunction.QUERY);
+		parameterParser = new RServerInstanceParser(store.getModel());
 
 		new AddAction();
 		new RemoveAction();
@@ -188,11 +184,18 @@ class StoreActions extends ServerActions<RStoreActionType> {
 
 	private IFrame getAssertionParameter(XRequestParser request, int index) {
 
-		return assertionParser.parse(request.getInstanceParameterParseInput(index));
+		return getParameter(request, index, false);
 	}
 
 	private IFrame getQueryParameter(XRequestParser request, int index) {
 
-		return queryParser.parse(request.getInstanceParameterParseInput(index));
+		return getParameter(request, index, true);
+	}
+
+	private IFrame getParameter(XRequestParser request, int index, boolean query) {
+
+		IInstanceParseInput input = request.getInstanceParameterParseInput(index);
+
+		return parameterParser.parse(input, query);
 	}
 }

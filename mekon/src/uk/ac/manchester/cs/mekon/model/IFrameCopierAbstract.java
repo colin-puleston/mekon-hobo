@@ -39,7 +39,7 @@ abstract class IFrameCopierAbstract {
 
 		copies.put(template, copy);
 		initialiseCopy(template, copy);
-		copy.completeInstantiation(true);
+		copy.completeReinstantiation(false);
 
 		return copy;
 	}

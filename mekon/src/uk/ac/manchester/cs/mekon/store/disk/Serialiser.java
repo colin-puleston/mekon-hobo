@@ -29,6 +29,7 @@ import java.io.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
@@ -73,13 +74,52 @@ class Serialiser {
 		return new InstanceProfile(parseIdentity(rootNode), parseType(typeNode));
 	}
 
-	IFrame parseInstance(File file, boolean freeInstance) {
+	IFrame parseInstance(CIdentity identity, File file, boolean freeInstance) {
 
 		IInstanceParser parser = new IInstanceParser(model, IFrameFunction.ASSERTION);
 
 		parser.setFreeInstances(freeInstance);
+		parser.setPossibleModelUpdates(true);
 
-		return parser.parse(new IInstanceParseInput(new XDocument(file)));
+		IInstanceParseInput input = new IInstanceParseInput(new XDocument(file));
+		IInstanceParseOutput output = parser.parse(input);
+
+		checkValidInstance(identity, output);
+
+		return output.getRootFrame();
+	}
+
+	private void checkValidInstance(CIdentity identity, IInstanceParseOutput output) {
+
+		switch (output.getStatus()) {
+
+			case FULLY_INVALID:
+				reportInvalidInstance(identity, output);
+				break;
+
+			case PARTIALLY_VALID:
+				reportPrunedInstance(identity, output);
+				break;
+		}
+	}
+
+	private void reportInvalidInstance(CIdentity identity, IInstanceParseOutput output) {
+
+		reportWarning(
+			"Cannot re-load instance: " + identity
+			+ ": Invalid root-frame type: " + output.getRootTypeId());
+	}
+
+	private void reportPrunedInstance(CIdentity identity, IInstanceParseOutput output) {
+
+		reportWarning(
+			"Removed invalid components from re-loaded instance: " + identity
+			+ "...");
+
+		for (IPath path : output.getAllPrunedPaths()) {
+
+			reportLine(path.toString());
+		}
 	}
 
 	private void renderIdentity(CIdentity identity, XNode node) {
@@ -100,5 +140,15 @@ class Serialiser {
 	private CIdentity parseIdentity(XNode node) {
 
 		return CIdentitySerialiser.parse(node);
+	}
+
+	private void reportWarning(String message) {
+
+		reportLine("INSTANCE STORE WARNING: " + message);
+	}
+
+	private void reportLine(String message) {
+
+		System.out.println(message);
 	}
 }

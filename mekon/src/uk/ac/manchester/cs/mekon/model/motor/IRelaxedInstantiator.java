@@ -65,6 +65,16 @@ public abstract class IRelaxedInstantiator {
 								boolean freeInstance);
 
 	/**
+	 * Creates a {@link CFrame} object that is not part of the model,
+	 * specifically for use during the parsing of a serialised
+	 * instance that is non-longer valid with respect to the current
+	 * model.
+	 *
+	 * @param identity Identity of created non-model frame
+	 */
+	public abstract CFrame getNonModelFrameType(CIdentity identity);
+
+	/**
 	 * Adds a slot to a regenerated network.
 	 *
 	 * @param container Frame to which slot is to be added
@@ -103,8 +113,12 @@ public abstract class IRelaxedInstantiator {
 	 * frame in a regenerated network, after all slots have been added.
 	 *
 	 * @param frame Relevant frame
-	 * @return Subset of required update operations that actually
-	 * produced updates
+	 * @param possibleModelUpdates True if re-instantiating serialized
+	 * network where model may have been updated since serialization
+	 * @return Any update operations performed in order to align
+	 * regenerated network with updated model, if applicable
 	 */
-	public abstract Set<IUpdateOp> completeReinstantiation(IFrame frame);
+	public abstract Set<IUpdateOp> completeReinstantiation(
+										IFrame frame,
+										boolean possibleModelUpdates);
 }

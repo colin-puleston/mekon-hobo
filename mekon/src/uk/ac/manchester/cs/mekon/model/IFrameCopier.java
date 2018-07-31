@@ -31,12 +31,9 @@ class IFrameCopier extends IFrameCopierAbstract {
 
 	void initialiseCopy(IFrame template, IFrame copy) {
 
-		copy.setAutoUpdateEnabled(false);
-
 		super.initialiseCopy(template, copy);
-		copyInferredTypes(template, copy);
 
-		copy.setAutoUpdateEnabled(true);
+		copyInferredTypes(template, copy);
 	}
 
 	ISlot addSlot(IFrame container, CSlot slotType) {

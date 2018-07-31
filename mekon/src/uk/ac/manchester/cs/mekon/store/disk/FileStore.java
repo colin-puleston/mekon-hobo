@@ -84,11 +84,11 @@ class FileStore {
 		serialiser.renderInstance(instance, iFile);
 	}
 
-	IFrame read(int index, boolean freeInstance) {
+	IFrame read(CIdentity identity, int index, boolean freeInstance) {
 
 		File iFile = instances.getFile(index);
 
-		return serialiser.parseInstance(iFile, freeInstance);
+		return serialiser.parseInstance(identity, iFile, freeInstance);
 	}
 
 	CFrame readType(int index) {
