@@ -38,22 +38,24 @@ class FileStore {
 	static private final String DEFAULT_STORE_DIR_NAME = "mekon-store";
 	static private final String PROFILE_FILE_PREFIX = "PROFILE-";
 	static private final String INSTANCE_FILE_PREFIX = "INSTANCE-";
-	static private final String FILE_SUFFIX = ".xml";
+	static private final String STORE_FILE_SUFFIX = ".xml";
 
 	static File getDefaultNamedDirectory(File parentDir) {
 
 		return new File(parentDir, DEFAULT_STORE_DIR_NAME);
 	}
 
+	static private KFileStore createFileStore(String filePrefix) {
+
+		return new KFileStore(filePrefix, STORE_FILE_SUFFIX);
+	}
+
 	private IDiskStore iStore;
 
-	private KFileStore profiles = new KFileStore(
-										PROFILE_FILE_PREFIX,
-										FILE_SUFFIX);
+	private KFileStore profiles = createFileStore(PROFILE_FILE_PREFIX);
+	private KFileStore instances = createFileStore(INSTANCE_FILE_PREFIX);
 
-	private KFileStore instances = new KFileStore(
-										INSTANCE_FILE_PREFIX,
-										FILE_SUFFIX);
+	private LogFile log;
 
 	private Serialiser serialiser;
 
@@ -61,12 +63,13 @@ class FileStore {
 
 		this.iStore = iStore;
 
-		serialiser = new Serialiser(model);
-
 		if (directory == null) {
 
 			directory = new File(DEFAULT_STORE_DIR_NAME);
 		}
+
+		log = new LogFile(directory);
+		serialiser = new Serialiser(model, log);
 
 		profiles.setDirectory(directory);
 		instances.setDirectory(directory);

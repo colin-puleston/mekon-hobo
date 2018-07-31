@@ -41,11 +41,14 @@ class Serialiser {
 	static private final String PROFILE_TYPE_ID = "Type";
 
 	private CModel model;
+	private LogFile log;
+
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
-	Serialiser(CModel model) {
+	Serialiser(CModel model, LogFile log) {
 
 		this.model = model;
+		this.log = log;
 	}
 
 	void renderProfile(InstanceProfile profile, File file) {
@@ -84,42 +87,9 @@ class Serialiser {
 		IInstanceParseInput input = new IInstanceParseInput(new XDocument(file));
 		IInstanceParseOutput output = parser.parse(input);
 
-		checkValidInstance(identity, output);
+		log.logParsedInstance(identity, output);
 
 		return output.getRootFrame();
-	}
-
-	private void checkValidInstance(CIdentity identity, IInstanceParseOutput output) {
-
-		switch (output.getStatus()) {
-
-			case FULLY_INVALID:
-				reportInvalidInstance(identity, output);
-				break;
-
-			case PARTIALLY_VALID:
-				reportPrunedInstance(identity, output);
-				break;
-		}
-	}
-
-	private void reportInvalidInstance(CIdentity identity, IInstanceParseOutput output) {
-
-		reportWarning(
-			"Cannot re-load instance: " + identity
-			+ ": Invalid root-frame type: " + output.getRootTypeId());
-	}
-
-	private void reportPrunedInstance(CIdentity identity, IInstanceParseOutput output) {
-
-		reportWarning(
-			"Removed invalid components from re-loaded instance: " + identity
-			+ "...");
-
-		for (IPath path : output.getAllPrunedPaths()) {
-
-			reportLine(path.toString());
-		}
 	}
 
 	private void renderIdentity(CIdentity identity, XNode node) {
@@ -140,15 +110,5 @@ class Serialiser {
 	private CIdentity parseIdentity(XNode node) {
 
 		return CIdentitySerialiser.parse(node);
-	}
-
-	private void reportWarning(String message) {
-
-		reportLine("INSTANCE STORE WARNING: " + message);
-	}
-
-	private void reportLine(String message) {
-
-		System.out.println(message);
 	}
 }
