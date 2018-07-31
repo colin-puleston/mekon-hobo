@@ -51,9 +51,8 @@ public class BaseXMatcher extends NMatcher {
 	private QueryRenderer queryRenderer = new QueryRenderer();
 
 	private Database database;
-	private KFileStore fileStore = new KFileStore(
-										STORE_FILE_PREFIX,
-										STORE_FILE_SUFFIX);
+	private KFileStore fileStore = new KFileStore(STORE_FILE_PREFIX, STORE_FILE_SUFFIX);
+
 	private boolean rebuildStore;
 	private boolean persistStore;
 
