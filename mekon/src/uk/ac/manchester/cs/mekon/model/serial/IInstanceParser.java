@@ -78,6 +78,7 @@ public class IInstanceParser extends ISerialiser {
 		private ValuesUpdate valuesUpdate = new ValuesUpdate();
 
 		private Set<CFrame> invalidFrameTypes = new HashSet<CFrame>();
+		private PruningData pruningData = new PruningData();
 
 		private class ValuesUpdate {
 
@@ -255,6 +256,10 @@ public class IInstanceParser extends ISerialiser {
 						if (validModelValue(value) && valueType.validValue(value)) {
 
 							validNonNewValues.add(value);
+						}
+						else {
+
+							pruningData.addPrunedValue(slot, value);
 						}
 					}
 				}
@@ -560,7 +565,6 @@ public class IInstanceParser extends ISerialiser {
 
 			IFrame rootFrame = resolveIFrame(getRootFrameNode());
 			boolean validRootType = validFrame(rootFrame);
-			PruningData pruningData = new PruningData();
 
 			if (validRootType) {
 

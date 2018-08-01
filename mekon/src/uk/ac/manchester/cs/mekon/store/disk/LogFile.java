@@ -35,69 +35,96 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 class LogFile {
 
-	static private final String FILE_NAME = "LOG.file";
+	static private final String FILE_NAME = "LOG.log";
 
 	private File file;
+	private boolean started = false;
 
 	private class ParsedInstanceLogger {
 
+		private CIdentity identity;
 		private IInstanceParseOutput output;
 
 		private PrintWriter writer = createWriter();
 
 		ParsedInstanceLogger(CIdentity identity, IInstanceParseOutput output) {
 
+			this.identity = identity;
 			this.output = output;
 
-			log(identity);
+			log();
 			writer.close();
 		}
 
-		private void log(CIdentity identity) {
+		private void log() {
 
-			IInstanceParseStatus status = output.getStatus();
+			startLog();
 
-			logLine("\nINSTANCE: " + identity);
-			logLine("Status: " + status);
-
-			switch (status) {
+			switch (output.getStatus()) {
 
 				case FULLY_INVALID:
-					logInvalidInstance();
+					logInvalid();
 					break;
 
 				case PARTIALLY_VALID:
-					logPrunedInstance();
+					logPruned();
 					break;
 			}
 		}
 
-		private void logInvalidInstance() {
+		private void startLog() {
 
-			logWarning(
-				"Cannot re-load: "
-				+ "Invalid root-frame type: "
+			logLine(0, "\nLOADING INSTANCE: \"" + identity.getIdentifier() + "\"");
+			logLine(1, "STATUS: " + getStatusString());
+		}
+
+		private void logInvalid() {
+
+			logError(
+				"Cannot re-load: Invalid root-frame type: "
 				+ output.getRootTypeId());
 		}
 
-		private void logPrunedInstance() {
+		private void logPruned() {
 
 			logWarning("Removed invalid components...");
 
 			for (IPath path : output.getAllPrunedPaths()) {
 
-				logLine(path.toString());
+				logLine(2, path.toString());
 			}
+		}
+
+		private void logError(String message) {
+
+			logLine(1, "ERROR: " + message);
 		}
 
 		private void logWarning(String message) {
 
-			logLine("WARNING: " + message);
+			logLine(1, "WARNING: " + message);
 		}
 
-		private void logLine(String message) {
+		private void logLine(int tabs, String message) {
 
-			writer.println(message);
+			writer.println(getTabs(tabs) + message);
+		}
+
+		private String getTabs(int count) {
+
+			StringBuilder tabs = new StringBuilder();
+
+			for (int i = 0 ; i < count ; i++) {
+
+				tabs.append("  ");
+			}
+
+			return tabs.toString();
+		}
+
+		private String getStatusString() {
+
+			return output.getStatus().toString().toLowerCase().replace("_", "-");
 		}
 	}
 
@@ -115,7 +142,11 @@ class LogFile {
 
 		try {
 
-			return new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+			boolean append = started;
+
+			started = true;
+
+			return new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
 		}
 		catch (IOException e) {
 

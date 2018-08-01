@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.model.serial;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 class PruningData {
 
@@ -34,7 +35,10 @@ class PruningData {
 	private List<IPath> prunedSlotPaths = new ArrayList<IPath>();
 	private List<IPath> prunedValuePaths = new ArrayList<IPath>();
 
-	private Set<List<String>> prunedPrunedPathCandidates = new HashSet<List<String>>();
+	private KListMap<ISlot, IValue> prunedValues = new KListMap<ISlot, IValue>();
+
+	private Set<List<String>> slotPaths = new HashSet<List<String>>();
+	private List<List<String>> prunedPathCandidates = new ArrayList<List<String>>();
 
 	private abstract class PathProcessor {
 
@@ -43,32 +47,30 @@ class PruningData {
 			processFromSlots(rootFrame, new ArrayList<String>());
 		}
 
-		abstract boolean processSlot(List<String> path);
+		abstract void processSlot(ISlot slot, List<String> path);
 
-		abstract boolean processValue(List<String> path);
+		abstract void processValue(List<String> path);
 
 		private void processFromFrame(IFrame frame, List<String> path) {
 
-			if (processValue(path)) {
-
-				processFromSlots(frame, path);
-			}
+			processValue(path);
+			processFromSlots(frame, path);
 		}
 
 		private void processFromSlots(IFrame frame, List<String> path) {
 
 			for (ISlot slot : frame.getSlots().asList()) {
 
-				processFromSlot(slot, extendPath(path, slot.getType()));
+				processFromSlot(slot, path);
 			}
 		}
 
-		private void processFromSlot(ISlot slot, List<String> path) {
+		private void processFromSlot(ISlot slot, List<String> parentPath) {
 
-			if (processSlot(path)) {
+			List<String> path = extendPathWithId(parentPath, slot.getType());
 
-				processFromValues(slot, path);
-			}
+			processSlot(slot, path);
+			processFromValues(slot, path);
 		}
 
 		private void processFromValues(ISlot slot, List<String> path) {
@@ -81,107 +83,54 @@ class PruningData {
 
 		private void processFromValue(IValue value, List<String> parentPath) {
 
+			List<String> path = extendPathWithValue(parentPath, value);
+
 			if (value instanceof IFrame) {
 
-				IFrame frame = (IFrame)value;
-
-				processFromFrame(frame, extendPath(parentPath, frame.getType()));
-			}
-			else if (value instanceof CFrame) {
-
-				processValue(extendPath(parentPath, (CFrame)value));
+				processFromFrame((IFrame)value, path);
 			}
 			else {
 
-				processValue(extendPath(parentPath, value.toString()));
+				processValue(path);
+			}
+		}
+	}
+
+	private class PrunedPathCandidateAdder extends PathProcessor {
+
+		void processSlot(ISlot slot, List<String> path) {
+
+			slotPaths.add(path);
+			prunedPathCandidates.add(path);
+
+			for (IValue value : prunedValues.getList(slot)) {
+
+				prunedPathCandidates.add(extendPathWithValue(path, value));
 			}
 		}
 
-		private List<String> extendPath(List<String> path, CIdentified next) {
+		void processValue(List<String> path) {
 
-			return extendPath(path, toPathValue(next.getIdentity()));
-		}
-
-		private List<String> extendPath(List<String> path, String value) {
-
-			path = new ArrayList<String>(path);
-			path.add(value);
-
-			return path;
-		}
-
-		private String toPathValue(CIdentity id) {
-
-			String label = id.getLabel();
-
-			return label.length() == 0 ? id.getIdentifier() : label;
+			prunedPathCandidates.add(path);
 		}
 	}
 
-	private abstract class PrunedPathCandidateProcessor extends PathProcessor {
+	private class PrunedPathCandidateRemover extends PathProcessor {
 
-		boolean processSlot(List<String> path) {
+		void processSlot(ISlot slot, List<String> path) {
 
-			processCandidate(path);
-
-			return true;
+			prunedPathCandidates.remove(path);
 		}
 
-		boolean processValue(List<String> path) {
+		void processValue(List<String> path) {
 
-			processCandidate(path);
-
-			return true;
-		}
-
-		abstract void processCandidate(List<String> path);
-	}
-
-	private class PrunedPathCandidateAdder extends PrunedPathCandidateProcessor {
-
-		void processCandidate(List<String> path) {
-
-			prunedPrunedPathCandidates.add(path);
+			prunedPathCandidates.remove(path);
 		}
 	}
 
-	private class PrunedPathCandidateRemover extends PrunedPathCandidateProcessor {
+	void addPrunedValue(ISlot slot, IValue value) {
 
-		void processCandidate(List<String> path) {
-
-			prunedPrunedPathCandidates.remove(path);
-		}
-	}
-
-	private class PrunedPathFinder extends PathProcessor {
-
-		boolean processSlot(List<String> path) {
-
-			return process(true, prunedSlotPaths, path);
-		}
-
-		boolean processValue(List<String> path) {
-
-			return process(false, prunedValuePaths, path);
-		}
-
-		private boolean process(
-							boolean slotPath,
-							List<IPath> prunedTypePaths,
-							List<String> path) {
-
-			if (prunedPrunedPathCandidates.contains(path)) {
-
-				IPath ipath = new IPath(path, slotPath);
-
-				prunedPaths.add(ipath);
-				prunedTypePaths.add(ipath);
-
-				return false;
-			}
-
-			return true;
-		}
+		prunedValues.add(slot, value);
 	}
 
 	void processPrePruned(IFrame rootFrame) {
@@ -192,7 +141,8 @@ class PruningData {
 	void processPostPruned(IFrame rootFrame) {
 
 		new PrunedPathCandidateRemover().processAll(rootFrame);
-		new PrunedPathFinder().processAll(rootFrame);
+
+		setPrunedPaths();
 	}
 
 	List<IPath> getAllPrunedPaths() {
@@ -208,5 +158,56 @@ class PruningData {
 	List<IPath> getPrunedValuePaths() {
 
 		return prunedValuePaths;
+	}
+
+	private void setPrunedPaths() {
+
+		for (List<String> path : prunedPathCandidates) {
+
+			IPath ipath = new IPath(path, slotPaths.contains(path));
+
+			prunedPaths.add(ipath);
+			getTypePrunedPaths(ipath).add(ipath);
+		}
+	}
+
+	private List<IPath> getTypePrunedPaths(IPath ipath) {
+
+		return ipath.slotPath() ? prunedSlotPaths : prunedValuePaths;
+	}
+
+	private List<String> extendPathWithValue(List<String> path, IValue value) {
+
+		if (value instanceof IFrame) {
+
+			return extendPathWithId(path, ((IFrame)value).getType());
+		}
+
+		if (value instanceof CFrame) {
+
+			return extendPathWithId(path, (CFrame)value);
+		}
+
+		return extendPathWithString(path, value.toString());
+	}
+
+	private List<String> extendPathWithId(List<String> path, CIdentified next) {
+
+		return extendPathWithString(path, toPathString(next.getIdentity()));
+	}
+
+	private List<String> extendPathWithString(List<String> path, String value) {
+
+		path = new ArrayList<String>(path);
+		path.add(value);
+
+		return path;
+	}
+
+	private String toPathString(CIdentity id) {
+
+		String label = id.getLabel();
+
+		return label.length() == 0 ? id.getIdentifier() : label;
 	}
 }

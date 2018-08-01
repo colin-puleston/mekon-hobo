@@ -762,7 +762,7 @@ public class IFrame implements IEntity, IValue {
 
 	private Set<IUpdateOp> checkReinitialise(boolean possibleModelUpdates) {
 
-		if (possibleModelUpdates && !freeInstance()) {
+		if (possibleModelUpdates && !freeInstance) {
 
 			return getIUpdating().reinitialise(this);
 		}
@@ -772,7 +772,7 @@ public class IFrame implements IEntity, IValue {
 
 	private void completeInstantiation(boolean reinstantiation) {
 
-		autoUpdateEnabled = !freeInstance();
+		autoUpdateEnabled = !freeInstance;
 
 		type.pollListenersForInstantiated(this, reinstantiation);
 	}

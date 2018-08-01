@@ -64,6 +64,11 @@ public interface CFrameEditor {
 	public void removeSuper(CFrame sup);
 
 	/**
+	 * Removes all direct super-frames for the frame.
+	 */
+	public void clearSupers();
+
+	/**
 	 * Creates a slot and adds it to the frame.
 	 *
 	 * @param slotId Identity for slot

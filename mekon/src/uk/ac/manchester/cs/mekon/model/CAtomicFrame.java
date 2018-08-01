@@ -139,6 +139,14 @@ class CAtomicFrame extends CFrame {
 			ensureNoLinksToSuper(sup.asAtomicFrame());
 		}
 
+		public void clearSupers() {
+
+			for (CFrame sup : getSupers()) {
+
+				removeSuper(sup);
+			}
+		}
+
 		public CSlot addSlot(
 						CIdentity slotId,
 						CValue<?> valueType,

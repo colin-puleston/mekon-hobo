@@ -61,7 +61,7 @@ public class IPath {
 	 */
 	public String toString() {
 
-		return getPathTypePrefix() + ": " + path.toString();
+		return getPathTypePrefix() + pathToString();
 	}
 
 	/**
@@ -105,8 +105,30 @@ public class IPath {
 		this.slotPath = slotPath;
 	}
 
+	private String pathToString() {
+
+		StringBuilder s = new StringBuilder();
+		boolean first = true;
+
+		for (String node : path) {
+
+			if (first) {
+
+				first = false;
+			}
+			else {
+
+				s.append("->");
+			}
+
+			s.append(node);
+		}
+
+		return s.toString();
+	}
+
 	private String getPathTypePrefix() {
 
-		return slotPath ?  "SLOT" : "VALUE";
+		return slotPath ?  "SLOT:  " : "VALUE: ";
 	}
 }
