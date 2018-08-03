@@ -64,7 +64,7 @@ class InstanceStoreActions {
 
 	void retrieveAndDisplayInstance(CIdentity id) {
 
-		IFrame instance = getStore().get(id);
+		IFrame instance = getStore().get(id).getRootFrame();
 
 		new AssertionFrame(modelTree, this, instance).display(id);
 	}
