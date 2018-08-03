@@ -78,7 +78,7 @@ class Serialiser {
 		return new InstanceProfile(parseIdentity(rootNode), parseType(typeNode));
 	}
 
-	IFrame parseInstance(CIdentity identity, File file, boolean freeInstance) {
+	IRegenInstance parseInstance(CIdentity identity, File file, boolean freeInstance) {
 
 		IInstanceParser parser = new IInstanceParser(model, IFrameFunction.ASSERTION);
 
@@ -90,7 +90,7 @@ class Serialiser {
 
 		log.logParsedInstance(identity, output);
 
-		return output.getRootFrame();
+		return output;
 	}
 
 	private void renderIdentity(CIdentity identity, XNode node) {

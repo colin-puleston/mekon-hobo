@@ -27,6 +27,8 @@ package uk.ac.manchester.cs.mekon.remote.client.xml;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
+import uk.ac.manchester.cs.mekon.model.regen.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.*;
@@ -97,13 +99,18 @@ public abstract class XClientStore {
 			return performBooleanResponseAction(request);
 		}
 
-		public IFrame get(CIdentity identity) {
+		public IRegenInstance get(CIdentity identity) {
 
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET);
 
 			request.addParameter(identity);
 
-			return performAssertionOrNullResponseAction(request);
+			IFrame instance = performAssertionOrNullResponseAction(request);
+			IRegenInstanceBuilder regenBuilder = new IRegenInstanceBuilder();
+
+			return instance != null
+					? regenBuilder.createValid(instance)
+					: regenBuilder.createInvalid(identity);
 		}
 
 		public List<CIdentity> getAllIdentities() {

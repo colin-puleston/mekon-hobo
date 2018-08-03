@@ -35,9 +35,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class InstanceIndexes
-		extends KIndexes<CIdentity>
-		implements IMatcherIndexes {
+class InstanceIndexes extends KIndexes<CIdentity> implements IMatcherIndexes {
 
 	public CIdentity getIdentity(int index) {
 

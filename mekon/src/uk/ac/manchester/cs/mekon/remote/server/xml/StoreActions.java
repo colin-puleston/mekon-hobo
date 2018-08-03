@@ -108,7 +108,7 @@ class StoreActions extends ServerActions<RStoreActionType> {
 
 			CIdentity id = request.getIdentityParameter(0);
 
-			response.setInstanceOrNullResponse(store.get(id));
+			response.setInstanceOrNullResponse(store.get(id).getRootFrame());
 		}
 	}
 

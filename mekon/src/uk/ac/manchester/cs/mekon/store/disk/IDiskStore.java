@@ -30,6 +30,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 /**
@@ -89,7 +90,7 @@ class IDiskStore implements IStore {
 		return indexes.hasIndex(identity);
 	}
 
-	public synchronized IFrame get(CIdentity identity) {
+	public synchronized IRegenInstance get(CIdentity identity) {
 
 		return fileStore.read(identity, indexes.getIndex(identity), false);
 	}
@@ -158,14 +159,14 @@ class IDiskStore implements IStore {
 
 		if (matcher.rebuildOnStartup()) {
 
-			IFrame instance = fileStore.read(identity, index, true);
+			IRegenInstance regen = fileStore.read(identity, index, true);
 
-			if (instance == null) {
+			if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
 
 				return;
 			}
 
-			matcher.add(instance, identity);
+			matcher.add(regen.getRootFrame(), identity);
 		}
 
 		identities.add(identity);

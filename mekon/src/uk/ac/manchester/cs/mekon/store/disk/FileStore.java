@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
@@ -87,7 +88,7 @@ class FileStore {
 		serialiser.renderInstance(instance, iFile);
 	}
 
-	IFrame read(CIdentity identity, int index, boolean freeInstance) {
+	IRegenInstance read(CIdentity identity, int index, boolean freeInstance) {
 
 		File iFile = instances.getFile(index);
 

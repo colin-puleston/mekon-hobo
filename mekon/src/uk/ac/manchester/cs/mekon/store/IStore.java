@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -88,13 +89,17 @@ public interface IStore {
 	public boolean contains(CIdentity identity);
 
 	/**
-	 * Retrieves an instance from the store.
+	 * Retrieves an instance from the store, if still fully or
+	 * partially valid with repect to the current model, and/or info
+	 * on current validity and on any pruning that was required in
+	 * order to conform to the current model.
 	 *
 	 * @param identity Unique identity of instance
-	 * @return Instance-level frame representing required instance,
-	 * or null if instance with specified identity not present
+	 * @return Representation of instance-level frame representing
+	 * required instance and/or any relevant validity and pruning
+	 * info
 	 */
-	public IFrame get(CIdentity identity);
+	public IRegenInstance get(CIdentity identity);
 
 	/**
 	 * Provides unique identities of all instances in store,
