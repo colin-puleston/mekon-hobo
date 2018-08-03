@@ -116,7 +116,7 @@ public abstract class DMatcherCustomiser<M extends DObject> {
 	 */
 	protected M getStoredInstance(CIdentity identity) {
 
-		return getMatchingObject(iStore.get(identity));
+		return getMatchingObject(iStore.get(identity).getRootFrame());
 	}
 
 	void initialisePostStoreBuild() {
