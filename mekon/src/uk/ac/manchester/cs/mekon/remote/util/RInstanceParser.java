@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.remote.util;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 
 /**
@@ -43,7 +44,7 @@ public abstract class RInstanceParser {
 
 	public IFrame parse(IInstanceParseInput input, boolean query) {
 
-		IInstanceParseOutput output = getParser(query).parse(input);
+		IRegenInstance output = getParser(query).parse(input);
 
 		checkParsedInstance(output);
 
@@ -52,9 +53,9 @@ public abstract class RInstanceParser {
 
 	public CFrame parseRootType(IInstanceParseInput input, boolean query) {
 
-		IInstanceTypeParseOutput output = getParser(query).parseRootType(input);
+		IRegenType output = getParser(query).parseRootType(input);
 
-		checkParsedInstanceType(output);
+		checkParsedType(output);
 
 		return output.getRootType();
 	}
@@ -66,7 +67,7 @@ public abstract class RInstanceParser {
 		return query ? queryParser : assertionParser;
 	}
 
-	private void checkParsedInstance(IInstanceParseOutput output) {
+	private void checkParsedInstance(IRegenInstance output) {
 
 		switch (output.getStatus()) {
 
@@ -83,7 +84,7 @@ public abstract class RInstanceParser {
 		}
 	}
 
-	private void checkParsedInstanceType(IInstanceTypeParseOutput output) {
+	private void checkParsedType(IRegenType output) {
 
 		if (!output.validRootType()) {
 
@@ -93,13 +94,13 @@ public abstract class RInstanceParser {
 		}
 	}
 
-	private void reportInvalidInstanceComponents(IInstanceParseOutput output) {
+	private void reportInvalidInstanceComponents(IRegenInstance output) {
 
 		System.out.println(
 			"INSTANCE SERIALIZATION ERROR: "
 			+ "Invalid components in serialization...");
 
-		for (IPath path : output.getAllPrunedPaths()) {
+		for (IRegenPath path : output.getAllPrunedPaths()) {
 
 			System.out.println(path.toString());
 		}

@@ -28,6 +28,8 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
+import uk.ac.manchester.cs.mekon.model.regen.motor.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
@@ -40,7 +42,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  * serialised that prevent it from being reassembled in its orignial
  * form, the instance will be partially assembled as far as the
  * updates allow, with data being collected to inform the client of
- * any pruning that has occurred (see {@link #getPruningData}).
+ * any pruning that has occurred (see {@link #getInstanceRegenCreator}).
  *
  * @author Colin Puleston
  */
@@ -78,7 +80,7 @@ public class IInstanceParser extends ISerialiser {
 		private ValuesUpdate valuesUpdate = new ValuesUpdate();
 
 		private Set<CFrame> invalidFrameTypes = new HashSet<CFrame>();
-		private PruningData pruningData = new PruningData();
+		private InstanceRegenCreator regenCreator = new InstanceRegenCreator();
 
 		private class ValuesUpdate {
 
@@ -259,7 +261,7 @@ public class IInstanceParser extends ISerialiser {
 						}
 						else {
 
-							pruningData.addPrunedValue(slot, value);
+							regenCreator.addPrunedValue(slot, value);
 						}
 					}
 				}
@@ -561,7 +563,7 @@ public class IInstanceParser extends ISerialiser {
 			framesByXDocId = input.getFramesByXDocId();
 		}
 
-		IInstanceParseOutput parse() {
+		IRegenInstance parse() {
 
 			IFrame rootFrame = resolveIFrame(getRootFrameNode());
 			boolean validRootType = validFrame(rootFrame);
@@ -570,21 +572,24 @@ public class IInstanceParser extends ISerialiser {
 
 				processSlotValueSpecs();
 
-				pruningData.processPrePruned(rootFrame);
+				regenCreator.processPrePruned(rootFrame);
 				completeReinstantiation();
-				pruningData.processPostPruned(rootFrame);
 
 				valuesUpdate.checkApply();
+
+				return regenCreator.createValid(rootFrame);
 			}
 
-			return new IInstanceParseOutput(rootFrame, validRootType, pruningData);
+			return regenCreator.createInvalid(rootFrame.getType().getIdentity());
 		}
 
-		IInstanceTypeParseOutput parseRootType() {
+		IRegenType parseRootType() {
 
 			CFrame rootType = parseCFrame(getRootTypeNode());
 
-			return new IInstanceTypeParseOutput(rootType, validFrameType(rootType));
+			return validFrameType(rootType)
+					? IRegenTypeBuilder.createValid(rootType)
+					: IRegenTypeBuilder.createInvalid(rootType.getIdentity());
 		}
 
 		private IFrame resolveIFrame(XNode node) {
@@ -942,7 +947,7 @@ public class IInstanceParser extends ISerialiser {
 	 * @param input Input to parsing process
 	 * @return Output of parsing process
 	 */
-	public IInstanceParseOutput parse(IInstanceParseInput input) {
+	public IRegenInstance parse(IInstanceParseInput input) {
 
 		return new OneTimeParser(input).parse();
 	}
@@ -954,7 +959,7 @@ public class IInstanceParser extends ISerialiser {
 	 * @param input Input to parsing process
 	 * @return Output of parsing process
 	 */
-	public IInstanceTypeParseOutput parseRootType(IInstanceParseInput input) {
+	public IRegenType parseRootType(IInstanceParseInput input) {
 
 		return new OneTimeParser(input).parseRootType();
 	}

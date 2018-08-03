@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
@@ -43,11 +44,11 @@ class LogFile {
 	private class ParsedInstanceLogger {
 
 		private CIdentity identity;
-		private IInstanceParseOutput output;
+		private IRegenInstance output;
 
 		private PrintWriter writer = createWriter();
 
-		ParsedInstanceLogger(CIdentity identity, IInstanceParseOutput output) {
+		ParsedInstanceLogger(CIdentity identity, IRegenInstance output) {
 
 			this.identity = identity;
 			this.output = output;
@@ -89,7 +90,7 @@ class LogFile {
 
 			logWarning("Removed invalid components...");
 
-			for (IPath path : output.getAllPrunedPaths()) {
+			for (IRegenPath path : output.getAllPrunedPaths()) {
 
 				logLine(2, path.toString());
 			}
@@ -133,7 +134,7 @@ class LogFile {
 		file = new File(directory, FILE_NAME);
 	}
 
-	void logParsedInstance(CIdentity identity, IInstanceParseOutput output) {
+	void logParsedInstance(CIdentity identity, IRegenInstance output) {
 
 		new ParsedInstanceLogger(identity, output);
 	}

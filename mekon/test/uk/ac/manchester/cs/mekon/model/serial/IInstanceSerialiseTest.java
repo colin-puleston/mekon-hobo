@@ -29,6 +29,7 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
@@ -77,9 +78,9 @@ public class IInstanceSerialiseTest {
 	private void testRenderAndParse() {
 
 		IFrame original = createTestInstance();
-		IInstanceParseOutput parseOut = parse(render(original));
+		IRegenInstance parseOut = parse(render(original));
 
-		assertEquals(IInstanceParseStatus.FULLY_VALID, parseOut.getStatus());
+		assertEquals(IRegenStatus.FULLY_VALID, parseOut.getStatus());
 		assertTrue(parseOut.getRootFrame().equalsStructure(original));
 	}
 
@@ -88,7 +89,7 @@ public class IInstanceSerialiseTest {
 		return createRenderer().render(new IInstanceRenderInput(frame));
 	}
 
-	private IInstanceParseOutput parse(XDocument rendering) {
+	private IRegenInstance parse(XDocument rendering) {
 
 		IInstanceParser parser = new IInstanceParser(model.model, IFrameFunction.ASSERTION);
 

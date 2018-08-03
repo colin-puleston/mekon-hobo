@@ -28,6 +28,7 @@ import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
@@ -85,7 +86,7 @@ class Serialiser {
 		parser.setPossibleModelUpdates(true);
 
 		IInstanceParseInput input = new IInstanceParseInput(new XDocument(file));
-		IInstanceParseOutput output = parser.parse(input);
+		IRegenInstance output = parser.parse(input);
 
 		log.logParsedInstance(identity, output);
 
