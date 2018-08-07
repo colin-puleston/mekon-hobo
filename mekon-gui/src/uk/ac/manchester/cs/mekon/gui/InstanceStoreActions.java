@@ -70,11 +70,11 @@ class InstanceStoreActions {
 		switch (regen.getStatus()) {
 
 			case FULLY_INVALID:
-				showMessage("Cannot load instance: Root-frame currently invalid: " + id);
+				showMessage(createInvalidInstanceMessage(regen));
 				return;
 
 			case PARTIALLY_VALID:
-				showPartiallyValidInstanceMessage(id, regen);
+				showMessage(createPartiallyValidInstanceMessage(regen));
 		}
 
 		displayInstance(id, regen.getRootFrame());
@@ -193,28 +193,31 @@ class InstanceStoreActions {
 					JOptionPane.OK_CANCEL_OPTION);
 	}
 
-	private void showPartiallyValidInstanceMessage(CIdentity id, IRegenInstance regen) {
+	private String createInvalidInstanceMessage(IRegenInstance regen) {
 
-		JOptionPane pane = new JOptionPane(
-								"Instance pruned for currently invalid components: "
-								+ id);
+		StringBuilder msg = new StringBuilder();
 
-		pane.add(createPrunedPathsDisplay(regen));
-		pane.createDialog("Loading partially valid instance").setVisible(true);
+		msg.append("Cannot load instance..");
+		msg.append("\n\n");
+		msg.append("Root-frame type currently invalid: ");
+		msg.append(regen.getRootTypeId().getLabel());
+
+		return msg.toString();
 	}
 
-	private JTextArea createPrunedPathsDisplay(IRegenInstance regen) {
+	private String createPartiallyValidInstanceMessage(IRegenInstance regen) {
 
-		JTextArea area = new JTextArea("Pruned components...\n\n");
+		StringBuilder msg = new StringBuilder();
 
-		area.setEditable(false);
+		msg.append("Instance pruned for currently invalid components...");
+		msg.append("\n\n");
 
 		for (IRegenPath path : regen.getAllPrunedPaths()) {
 
-			area.append(path.toString() + '\n');
+			msg.append(path.toString() + '\n');
 		}
 
-		return area;
+		return msg.toString();
 	}
 
 	private void showMessage(String msg) {
