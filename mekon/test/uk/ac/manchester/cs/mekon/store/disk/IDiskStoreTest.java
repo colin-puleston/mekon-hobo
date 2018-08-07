@@ -33,6 +33,7 @@ import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
@@ -253,7 +254,13 @@ public class IDiskStoreTest {
 
 		assertTrue(store.contains(id));
 
-		IFrame retrieved = store.get(id);
+		IRegenInstance regen = store.get(id);
+		IFrame retrieved = regen.getRootFrame();
+
+		assertTrue(store.contains(id));
+
+		assertEquals(original.getType().getIdentity(), regen.getRootTypeId());
+		assertEquals(IRegenStatus.FULLY_VALID, regen.getStatus());
 
 		assertTrue(retrieved.equalsStructure(original));
 		assertFalse(retrieved == original);

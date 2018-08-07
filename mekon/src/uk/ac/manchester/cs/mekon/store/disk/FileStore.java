@@ -25,10 +25,10 @@
 package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.io.*;
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.regen.*;
-import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -60,9 +60,7 @@ class FileStore {
 
 	private Serialiser serialiser;
 
-	FileStore(CModel model, IDiskStore iStore, File directory) {
-
-		this.iStore = iStore;
+	FileStore(CModel model, File directory) {
 
 		if (directory == null) {
 
@@ -114,13 +112,18 @@ class FileStore {
 		instances.clear();
 	}
 
-	void reloadAll() {
+	List<StoredProfile> getStoredProfiles() {
+
+		List<StoredProfile> storedProfiles = new ArrayList<StoredProfile>();
 
 		for (File pFile : profiles.getAllFiles()) {
 
-			InstanceProfile p = serialiser.parseProfile(pFile);
+			InstanceProfile profile = serialiser.parseProfile(pFile);
+			int index = profiles.getIndex(pFile);
 
-			iStore.reload(p, profiles.getIndex(pFile));
+			storedProfiles.add(new StoredProfile(profile, index));
 		}
+
+		return storedProfiles;
 	}
 }

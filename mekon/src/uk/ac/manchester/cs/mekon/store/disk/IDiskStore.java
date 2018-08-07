@@ -136,7 +136,7 @@ class IDiskStore implements IStore {
 		this.model = model;
 		this.matchers = matchers;
 
-		fileStore = new FileStore(model, this, directory);
+		fileStore = new FileStore(model, directory);
 	}
 
 	void addMatcher(IMatcher matcher) {
@@ -148,29 +148,12 @@ class IDiskStore implements IStore {
 
 		initialiseMatchers();
 
-		fileStore.reloadAll();
-		indexes.reinitialiseFreeIndexes();
-	}
+		for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
 
-	void reload(InstanceProfile profile, int index) {
-
-		CIdentity identity = profile.getInstanceId();
-		CFrame type = getTypeOrNull(profile.getTypeId());
-
-		identities.add(identity);
-		indexes.assignIndex(identity, index);
-
-		if (type != null) {
-
-			IMatcher matcher = getMatcher(type);
-
-			if (matcher.rebuildOnStartup()) {
-
-				IRegenInstance regen = fileStore.read(identity, index, true);
-
-				matcher.add(regen.getRootFrame(), identity);
-			}
+			reload(storedProfile.getProfile(), storedProfile.getIndex());
 		}
+
+		indexes.reinitialiseFreeIndexes();
 	}
 
 	void stop() {
@@ -188,6 +171,27 @@ class IDiskStore implements IStore {
 		for (IMatcher matcher : matchers) {
 
 			matcher.initialise(indexes);
+		}
+	}
+
+	private void reload(InstanceProfile profile, int index) {
+
+		CIdentity identity = profile.getInstanceId();
+		CFrame type = getTypeOrNull(profile.getTypeId());
+
+		identities.add(identity);
+		indexes.assignIndex(identity, index);
+
+		if (type != null) {
+
+			IMatcher matcher = getMatcher(type);
+
+			if (matcher.rebuildOnStartup()) {
+
+				IRegenInstance regen = fileStore.read(identity, index, true);
+
+				matcher.add(regen.getRootFrame(), identity);
+			}
 		}
 	}
 
