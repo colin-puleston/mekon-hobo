@@ -27,6 +27,7 @@ import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 import uk.ac.manchester.cs.mekon.gui.util.*;
@@ -64,9 +65,19 @@ class InstanceStoreActions {
 
 	void retrieveAndDisplayInstance(CIdentity id) {
 
-		IFrame instance = getStore().get(id).getRootFrame();
+		IRegenInstance regen = getStore().get(id);
 
-		new AssertionFrame(modelTree, this, instance).display(id);
+		switch (regen.getStatus()) {
+
+			case FULLY_INVALID:
+				showMessage("Cannot load instance: Root-frame currently invalid: " + id);
+				return;
+
+			case PARTIALLY_VALID:
+				showPartiallyValidInstanceMessage(id, regen);
+		}
+
+		displayInstance(id, regen.getRootFrame());
 	}
 
 	void retrieveAndDisplaySelectedInstance() {
@@ -100,6 +111,11 @@ class InstanceStoreActions {
 		}
 
 		return matches;
+	}
+
+	private void displayInstance(CIdentity id, IFrame instance) {
+
+		new AssertionFrame(modelTree, this, instance).display(id);
 	}
 
 	private CIdentity getIdentityOrNull() {
@@ -175,6 +191,30 @@ class InstanceStoreActions {
 					msg,
 					"Confirm?",
 					JOptionPane.OK_CANCEL_OPTION);
+	}
+
+	private void showPartiallyValidInstanceMessage(CIdentity id, IRegenInstance regen) {
+
+		JOptionPane pane = new JOptionPane(
+								"Instance pruned for currently invalid components: "
+								+ id);
+
+		pane.add(createPrunedPathsDisplay(regen));
+		pane.createDialog("Loading partially valid instance").setVisible(true);
+	}
+
+	private JTextArea createPrunedPathsDisplay(IRegenInstance regen) {
+
+		JTextArea area = new JTextArea("Pruned components...\n\n");
+
+		area.setEditable(false);
+
+		for (IRegenPath path : regen.getAllPrunedPaths()) {
+
+			area.append(path.toString() + '\n');
+		}
+
+		return area;
 	}
 
 	private void showMessage(String msg) {
