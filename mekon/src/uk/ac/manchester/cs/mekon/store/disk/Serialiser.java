@@ -59,8 +59,8 @@ class Serialiser {
 		XNode rootNode = document.getRootNode();
 		XNode typeNode = rootNode.addChild(PROFILE_TYPE_ID);
 
-		renderIdentity(profile.getIdentity(), rootNode);
-		renderIdentity(profile.getType(), typeNode);
+		renderIdentity(profile.getInstanceId(), rootNode);
+		renderIdentity(profile.getTypeId(), typeNode);
 
 		document.writeToFile(file);
 	}
@@ -75,7 +75,7 @@ class Serialiser {
 		XNode rootNode = new XDocument(file).getRootNode();
 		XNode typeNode = rootNode.getChild(PROFILE_TYPE_ID);
 
-		return new InstanceProfile(parseIdentity(rootNode), parseType(typeNode));
+		return new InstanceProfile(parseIdentity(rootNode), parseIdentity(typeNode));
 	}
 
 	IRegenInstance parseInstance(CIdentity identity, File file, boolean freeInstance) {
@@ -96,16 +96,6 @@ class Serialiser {
 	private void renderIdentity(CIdentity identity, XNode node) {
 
 		CIdentitySerialiser.render(identity, node);
-	}
-
-	private void renderIdentity(CIdentified identified, XNode node) {
-
-		CIdentitySerialiser.render(identified, node);
-	}
-
-	private CFrame parseType(XNode typeNode) {
-
-		return model.getFrames().get(parseIdentity(typeNode));
 	}
 
 	private CIdentity parseIdentity(XNode node) {

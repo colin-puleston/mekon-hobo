@@ -154,23 +154,23 @@ class IDiskStore implements IStore {
 
 	void reload(InstanceProfile profile, int index) {
 
-		CIdentity identity = profile.getIdentity();
-		IMatcher matcher = getMatcher(profile.getType());
-
-		if (matcher.rebuildOnStartup()) {
-
-			IRegenInstance regen = fileStore.read(identity, index, true);
-
-			if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
-
-				return;
-			}
-
-			matcher.add(regen.getRootFrame(), identity);
-		}
+		CIdentity identity = profile.getInstanceId();
+		CFrame type = getTypeOrNull(profile.getTypeId());
 
 		identities.add(identity);
 		indexes.assignIndex(identity, index);
+
+		if (type != null) {
+
+			IMatcher matcher = getMatcher(type);
+
+			if (matcher.rebuildOnStartup()) {
+
+				IRegenInstance regen = fileStore.read(identity, index, true);
+
+				matcher.add(regen.getRootFrame(), identity);
+			}
+		}
 	}
 
 	void stop() {
@@ -200,8 +200,9 @@ class IDiskStore implements IStore {
 			identities.remove(identity);
 
 			int index = indexes.getIndex(identity);
+			CFrame type = getType(fileStore.readTypeId(index));
 
-			checkRemoveFromMatcher(fileStore.readType(index), identity);
+			checkRemoveFromMatcher(type, identity);
 			fileStore.remove(index);
 			indexes.freeIndex(identity);
 		}
@@ -240,5 +241,15 @@ class IDiskStore implements IStore {
 	private IFrame createFreeCopy(IFrame instance) {
 
 		return IFreeCopier.get().createFreeCopy(instance);
+	}
+
+	private CFrame getType(CIdentity typeId) {
+
+		return model.getFrames().get(typeId);
+	}
+
+	private CFrame getTypeOrNull(CIdentity typeId) {
+
+		return model.getFrames().getOrNull(typeId);
 	}
 }

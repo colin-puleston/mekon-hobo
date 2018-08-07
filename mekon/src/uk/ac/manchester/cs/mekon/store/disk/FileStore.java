@@ -78,8 +78,8 @@ class FileStore {
 
 	void write(IFrame instance, CIdentity identity, int index) {
 
-		CFrame type = instance.getType();
-		InstanceProfile profile = new InstanceProfile(identity, type);
+		CIdentity typeId = instance.getType().getIdentity();
+		InstanceProfile profile = new InstanceProfile(identity, typeId);
 
 		File pFile = profiles.getFile(index);
 		File iFile = instances.getFile(index);
@@ -95,11 +95,11 @@ class FileStore {
 		return serialiser.parseInstance(identity, iFile, freeInstance);
 	}
 
-	CFrame readType(int index) {
+	CIdentity readTypeId(int index) {
 
 		File pFile = profiles.getFile(index);
 
-		return serialiser.parseProfile(pFile).getType();
+		return serialiser.parseProfile(pFile).getTypeId();
 	}
 
 	void remove(int index) {

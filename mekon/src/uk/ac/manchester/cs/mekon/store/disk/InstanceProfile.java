@@ -31,22 +31,22 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class InstanceProfile {
 
-	private CIdentity identity;
-	private CFrame type;
+	private CIdentity instanceId;
+	private CIdentity typeId;
 
-	InstanceProfile(CIdentity identity, CFrame type) {
+	InstanceProfile(CIdentity instanceId, CIdentity typeId) {
 
-		this.identity = identity;
-		this.type = type;
+		this.instanceId = instanceId;
+		this.typeId = typeId;
 	}
 
-	CIdentity getIdentity() {
+	CIdentity getInstanceId() {
 
-		return identity;
+		return instanceId;
 	}
 
-	CFrame getType() {
+	CIdentity getTypeId() {
 
-		return type;
+		return typeId;
 	}
 }
