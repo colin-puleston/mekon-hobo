@@ -65,12 +65,38 @@ public class IRegenPath {
 	}
 
 	/**
-	 * Provides a string-based representation of the path,
-	 * consisting of the labels of any frames or slots in the
-	 * path, and string representations of any other types of
-	 * value.
+	 * Provides a string-based representation of the path.
 	 *
 	 * @return String-based representation of path
+	 */
+	public String pathToString() {
+
+		StringBuilder s = new StringBuilder();
+		boolean first = true;
+
+		for (String node : path) {
+
+			if (first) {
+
+				first = false;
+			}
+			else {
+
+				s.append("->");
+			}
+
+			s.append(node);
+		}
+
+		return s.toString();
+	}
+
+	/**
+	 * Provides a representation of the path as an ordered list of
+	 * string-based representations of the components.
+	 *
+	 * @return Ordered list of string-based representations of path
+	 * components
 	 */
 	public List<String> getPath() {
 
@@ -103,28 +129,6 @@ public class IRegenPath {
 
 		this.path = path;
 		this.slotPath = slotPath;
-	}
-
-	private String pathToString() {
-
-		StringBuilder s = new StringBuilder();
-		boolean first = true;
-
-		for (String node : path) {
-
-			if (first) {
-
-				first = false;
-			}
-			else {
-
-				s.append("->");
-			}
-
-			s.append(node);
-		}
-
-		return s.toString();
 	}
 
 	private String getPathTypePrefix() {
