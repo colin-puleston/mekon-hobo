@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model.regen;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * Represents the path from the root-frame of a regenerated
  * {@link IFrame}/{@link ISlot} network to a specific slot or
@@ -35,8 +37,10 @@ import java.util.*;
  */
 public class IRegenPath {
 
+	private ISlot slot;
+	private IValue value;
+
 	private List<String> path;
-	private boolean slotPath;
 
 	/**
 	 */
@@ -111,7 +115,7 @@ public class IRegenPath {
 	 */
 	public boolean slotPath() {
 
-		return slotPath;
+		return slot != null;
 	}
 
 	/**
@@ -122,17 +126,39 @@ public class IRegenPath {
 	 */
 	public boolean valuePath() {
 
-		return !slotPath;
+		return value != null;
 	}
 
-	IRegenPath(List<String> path, boolean slotPath) {
+	/**
+	 * Specifies the slot for a slot-path, or the slot to which the
+	 * value is attached for a value-path.
+	 *
+	 * @return Relevant slot
+	 */
+	public ISlot getSlot() {
 
+		return slot;
+	}
+
+	/**
+	 * Specifies the value for a value-path.
+	 *
+	 * @return Relevant value, or null if not a value-path
+	 */
+	public IValue getValue() {
+
+		return value;
+	}
+
+	IRegenPath(ISlot slot, IValue value, List<String> path) {
+
+		this.slot = slot;
+		this.value = value;
 		this.path = path;
-		this.slotPath = slotPath;
 	}
 
 	private String getPathTypePrefix() {
 
-		return slotPath ?  "SLOT:  " : "VALUE: ";
+		return slot != null ?  "SLOT:  " : "VALUE: ";
 	}
 }

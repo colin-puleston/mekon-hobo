@@ -48,8 +48,8 @@ class ZIRegenAccessorImpl extends ZIRegenAccessor {
 		return new IRegenInstance(rootTypeId, rootFrame, prunedPaths);
 	}
 
-	public IRegenPath createRegenPath(List<String> path, boolean slotPath) {
+	public IRegenPath createRegenPath(ISlot slot, IValue value, List<String> path) {
 
-		return new IRegenPath(path, slotPath);
+		return new IRegenPath(slot, value, path);
 	}
 }

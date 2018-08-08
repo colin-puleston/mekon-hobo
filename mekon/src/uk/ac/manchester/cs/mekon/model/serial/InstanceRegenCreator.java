@@ -33,9 +33,11 @@ import uk.ac.manchester.cs.mekon.util.*;
 
 class InstanceRegenCreator {
 
-	private KListMap<ISlot, IValue> prunedValues = new KListMap<ISlot, IValue>();
+	private Map<List<String>, ISlot> slotsByPath = new HashMap<List<String>, ISlot>();
+	private Map<List<String>, IValue> valuesByPath = new HashMap<List<String>, IValue>();
+
 	private List<List<String>> prunedPathCandidates = new ArrayList<List<String>>();
-	private Set<List<String>> slotPaths = new HashSet<List<String>>();
+	private KListMap<ISlot, IValue> prunedValuesBySlot = new KListMap<ISlot, IValue>();
 
 	private abstract class PathProcessor {
 
@@ -46,13 +48,7 @@ class InstanceRegenCreator {
 
 		abstract void processSlot(ISlot slot, List<String> path);
 
-		abstract void processValue(List<String> path);
-
-		private void processFromFrame(IFrame frame, List<String> path) {
-
-			processValue(path);
-			processFromSlots(frame, path);
-		}
+		abstract void processValue(IValue value, List<String> path);
 
 		private void processFromSlots(IFrame frame, List<String> path) {
 
@@ -62,9 +58,9 @@ class InstanceRegenCreator {
 			}
 		}
 
-		private void processFromSlot(ISlot slot, List<String> parentPath) {
+		private void processFromSlot(ISlot slot, List<String> framePath) {
 
-			List<String> path = extendPathWithId(parentPath, slot.getType());
+			List<String> path = extendPathWithId(framePath, slot.getType());
 
 			processSlot(slot, path);
 			processFromValues(slot, path);
@@ -74,21 +70,19 @@ class InstanceRegenCreator {
 
 			for (IValue value : slot.getValues().asList()) {
 
-				processFromValue(value, path);
+				processFromValue(slot, value, path);
 			}
 		}
 
-		private void processFromValue(IValue value, List<String> parentPath) {
+		private void processFromValue(ISlot slot, IValue value, List<String> slotPath) {
 
-			List<String> path = extendPathWithValue(parentPath, value);
+			List<String> path = extendPathWithValue(slotPath, value);
+
+			processValue(value, path);
 
 			if (value instanceof IFrame) {
 
-				processFromFrame((IFrame)value, path);
-			}
-			else {
-
-				processValue(path);
+				processFromSlots((IFrame)value, path);
 			}
 		}
 	}
@@ -97,17 +91,18 @@ class InstanceRegenCreator {
 
 		void processSlot(ISlot slot, List<String> path) {
 
-			slotPaths.add(path);
+			slotsByPath.put(path, slot);
 			prunedPathCandidates.add(path);
 
-			for (IValue value : prunedValues.getList(slot)) {
+			for (IValue value : prunedValuesBySlot.getList(slot)) {
 
-				prunedPathCandidates.add(extendPathWithValue(path, value));
+				processValue(value, extendPathWithValue(path, value));
 			}
 		}
 
-		void processValue(List<String> path) {
+		void processValue(IValue value, List<String> path) {
 
+			valuesByPath.put(path, value);
 			prunedPathCandidates.add(path);
 		}
 	}
@@ -119,7 +114,7 @@ class InstanceRegenCreator {
 			prunedPathCandidates.remove(path);
 		}
 
-		void processValue(List<String> path) {
+		void processValue(IValue value, List<String> path) {
 
 			prunedPathCandidates.remove(path);
 		}
@@ -127,7 +122,7 @@ class InstanceRegenCreator {
 
 	void addPrunedValue(ISlot slot, IValue value) {
 
-		prunedValues.add(slot, value);
+		prunedValuesBySlot.add(slot, value);
 	}
 
 	void processPrePruned(IFrame rootFrame) {
@@ -155,8 +150,27 @@ class InstanceRegenCreator {
 
 		for (List<String> path : prunedPathCandidates) {
 
-			builder.addPrunedPath(path, slotPaths.contains(path));
+			addPrunedPath(builder, path);
 		}
+	}
+
+	private void addPrunedPath(IRegenInstanceBuilder builder, List<String> path) {
+
+		ISlot slot = slotsByPath.get(path);
+		IValue value = null;
+
+		if (slot == null) {
+
+			slot = slotsByPath.get(getParentPath(path));
+			value = valuesByPath.get(path);
+		}
+
+		builder.addPrunedPath(slot, value, path);
+	}
+
+	private List<String> getParentPath(List<String> path) {
+
+		return path.subList(0, path.size() - 1);
 	}
 
 	private List<String> extendPathWithValue(List<String> path, IValue value) {

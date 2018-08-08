@@ -41,15 +41,17 @@ public class IRegenInstanceBuilder {
 	private List<IRegenPath> prunedPaths = new ArrayList<IRegenPath>();
 
 	/**
-	 * Adds a path that has been pruned from the network as a result of
-	 * updates to the model since the instance was serialised.
+	 * Adds a path that has been pruned from the network as a result
+	 * of updates to the model since the instance was serialised.
 	 *
+	 * @param slot Relevant slot for pruned slot-path, or slot to
+	 * which value attached for pruned value-path
+	 * @return Relevant value if pruned value-path, or null otherwise
 	 * @param path String-based representation of pruned path
-	 * @param slotPath True if path is slot-path as opposed to value-path
 	 */
-	public void addPrunedPath(List<String> path, boolean slotPath) {
+	public void addPrunedPath(ISlot slot, IValue value, List<String> path) {
 
-		prunedPaths.add(regenAccessor.createRegenPath(path, slotPath));
+		prunedPaths.add(regenAccessor.createRegenPath(slot, value, path));
 	}
 
 	/**

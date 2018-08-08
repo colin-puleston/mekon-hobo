@@ -95,9 +95,10 @@ public abstract class ZIRegenAccessor {
 	/**
 	 * Creates a regenerated-instance path representation.
 	 *
-	 * @param path String-based representation of path
-	 * @param slotPath True if path is slot-path as opposed to value-path
+	 * @param slot Relevant slot if slot-path, or slot to which value
+	 * attached if value-path
+	 * @return Relevant value if value-path, or null otherwise
 	 * @return Created path representation
 	 */
-	public abstract IRegenPath createRegenPath(List<String> path, boolean slotPath);
+	public abstract IRegenPath createRegenPath(ISlot slot, IValue value, List<String> path);
 }
