@@ -43,20 +43,43 @@ class OBNumbers {
 
 	private Set<TypeNumberCreator<?>> creators = new HashSet<TypeNumberCreator<?>>();
 
-	private class SupersProcessor {
+	private class NumberExtractor {
 
-		final Set<OWLClass> concepts = new HashSet<OWLClass>();
+		private Set<OWLClass> visited = new HashSet<OWLClass>();
 
-		OBNumber process(OWLClassExpression sup) {
+		OBNumber checkExtract(OWLClass concept) {
 
-			if (sup instanceof OWLDataSomeValuesFrom) {
+			Set<OWLClass> supers = new HashSet<OWLClass>();
 
-				return checkCreateNumber((OWLDataSomeValuesFrom)sup);
+			for (OWLClassExpression sup : model.getAssertedSupers(concept)) {
+
+				if (sup instanceof OWLDataSomeValuesFrom) {
+
+					return checkCreateNumber((OWLDataSomeValuesFrom)sup);
+				}
+
+				if (sup instanceof OWLClass) {
+
+					supers.add((OWLClass)sup);
+				}
 			}
 
-			if (sup instanceof OWLClass) {
+			return checkExtractFromAny(supers);
+		}
 
-				concepts.add((OWLClass)sup);
+		private OBNumber checkExtractFromAny(Set<OWLClass> concepts) {
+
+			for (OWLClass concept : concepts) {
+
+				if (visited.add(concept)) {
+
+					OBNumber num = checkExtract(concept);
+
+					if (num != null) {
+
+						return num;
+					}
+				}
 			}
 
 			return null;
@@ -221,19 +244,7 @@ class OBNumbers {
 
 	OBNumber checkExtractNumber(OWLClass concept) {
 
-		SupersProcessor supersProcessor = new SupersProcessor();
-
-		for (OWLClassExpression sup : model.getAssertedSupers(concept)) {
-
-			OBNumber num = supersProcessor.process(sup);
-
-			if (num != null) {
-
-				return num;
-			}
-		}
-
-		return checkExtractNumber(supersProcessor.concepts);
+		return new NumberExtractor().checkExtract(concept);
 	}
 
 	OBNumber checkCreateNumber(OWLDataRange range) {
@@ -246,21 +257,6 @@ class OBNumbers {
 		if (range instanceof OWLDatatypeRestriction) {
 
 			return checkCreateNumber((OWLDatatypeRestriction)range);
-		}
-
-		return null;
-	}
-
-	private OBNumber checkExtractNumber(Set<OWLClass> concepts) {
-
-		for (OWLClass concept : concepts) {
-
-			OBNumber num = checkExtractNumber(concept);
-
-			if (num != null) {
-
-				return num;
-			}
 		}
 
 		return null;
