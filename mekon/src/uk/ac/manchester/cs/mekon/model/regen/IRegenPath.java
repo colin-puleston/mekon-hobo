@@ -86,7 +86,7 @@ public class IRegenPath {
 			}
 			else {
 
-				s.append("->");
+				s.append("/");
 			}
 
 			s.append(node);
