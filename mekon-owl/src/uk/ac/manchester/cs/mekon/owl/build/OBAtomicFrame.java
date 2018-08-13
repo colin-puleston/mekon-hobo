@@ -61,7 +61,7 @@ class OBAtomicFrame extends OBFrame {
 			ensureCSubFrameStructure();
 			ensureCSlotStructure();
 
-			annotations.checkAnnotate(builder, cFrame, sourceEntity);
+			annotations.checkAnnotateFrame(builder, cFrame, sourceEntity);
 		}
 
 		private CFrame createCFrame() {

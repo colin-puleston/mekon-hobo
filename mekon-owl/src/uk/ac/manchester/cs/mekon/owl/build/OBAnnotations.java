@@ -81,15 +81,37 @@ public class OBAnnotations {
 		annotateFramesWithDefinitions = value;
 	}
 
-	void checkAnnotate(CBuilder builder, CAnnotatable cEntity, OWLEntity owlEntity) {
+	void checkAnnotateFrame(CBuilder builder, CFrame cFrame, OWLEntity owlEntity) {
 
-		CAnnotationsEditor cEditor = getCEditor(builder, cEntity);
+		CAnnotationsEditor cEditor = getCEditor(builder, cFrame);
 
-		addInclusions(cEditor, owlEntity);
+		if (owlEntity instanceof OWLClass) {
 
-		if (annotateFramesWithDefinitions && owlEntity instanceof OWLClass) {
+			addInclusions(cEditor, owlEntity);
 
-			addCFrameDefinitions(cEditor, (OWLClass)owlEntity);
+			if (annotateFramesWithDefinitions) {
+
+				addCFrameDefinitions(cEditor, (OWLClass)owlEntity);
+			}
+		}
+		else {
+
+			addPropertyInclusions(cEditor, (OWLProperty)owlEntity);
+		}
+	}
+
+	void checkAnnotateSlot(CBuilder builder, CSlot cSlot, OWLProperty owlProperty) {
+
+		addPropertyInclusions(getCEditor(builder, cSlot), owlProperty);
+	}
+
+	private void addPropertyInclusions(CAnnotationsEditor cEditor, OWLProperty owlProperty) {
+
+		addInclusions(cEditor, owlProperty);
+
+		for (OWLProperty owlSuperProperty : getSuperProperties(owlProperty)) {
+
+			addPropertyInclusions(cEditor, owlSuperProperty);
 		}
 	}
 
@@ -132,6 +154,13 @@ public class OBAnnotations {
 		}
 
 		return equivs;
+	}
+
+	private Set<? extends OWLProperty> getSuperProperties(OWLProperty owlProperty) {
+
+		return owlProperty instanceof OWLObjectProperty
+					? model.getInferredSupers((OWLObjectProperty)owlProperty, true)
+					: model.getInferredSupers((OWLDataProperty)owlProperty, true);
 	}
 
 	private CAnnotationsEditor getCEditor(CBuilder builder, CAnnotatable cEntity) {
