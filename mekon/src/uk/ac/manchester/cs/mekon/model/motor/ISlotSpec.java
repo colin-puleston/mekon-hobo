@@ -233,18 +233,6 @@ class ISlotSpec {
 		return true;
 	}
 
-	private boolean checkUpdateActivation(ISlot slot) {
-
-		if (activation == slot.getType().getActivation()) {
-
-			return false;
-		}
-
-		getSlotEditor(slot).setActivation(activation);
-
-		return true;
-	}
-
 	private ISlotOps removeSlot(ISlot slot) {
 
 		getFrameEditor(slot.getContainer()).removeSlot(slot);
