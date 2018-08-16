@@ -37,7 +37,6 @@ class CExtension extends CExpression {
 	static private final String EXPRESSION_TYPE_NAME = "expression";
 
 	private CAtomicFrame extendedFrame;
-	private List<CFrame> structuredAncestors;
 	private CSlotValues slotValues;
 	private boolean concrete;
 
@@ -144,7 +143,15 @@ class CExtension extends CExpression {
 
 	public List<CFrame> getStructuredAncestors() {
 
-		return structuredAncestors;
+		List<CFrame> structAncs = extendedFrame.getStructuredAncestors();
+
+		if (extendedFrame.structured()) {
+
+			structAncs = new ArrayList<CFrame>(structAncs);
+			structAncs.add(extendedFrame);
+		}
+
+		return structAncs;
 	}
 
 	public List<CFrame> getDescendants(CVisibility visibility) {
@@ -175,7 +182,6 @@ class CExtension extends CExpression {
 		this.slotValues = slotValues;
 		this.concrete = concrete;
 
-		structuredAncestors = resolveStructuredAncestors();
 		hashCode = createHashCode();
 
 		if (getModel().initialised()) {
@@ -226,19 +232,6 @@ class CExtension extends CExpression {
 	String getExpressionDescriptionForLabel() {
 
 		return new CExtensionDescriber(this).describeForLabel();
-	}
-
-	private List<CFrame> resolveStructuredAncestors() {
-
-		List<CFrame> resolved = extendedFrame.getStructuredAncestors();
-
-		if (extendedFrame.structured()) {
-
-			resolved = new ArrayList<CFrame>(resolved);
-			resolved.add(extendedFrame);
-		}
-
-		return resolved;
 	}
 
 	private int createHashCode() {
