@@ -57,9 +57,7 @@ public class OBAnnotationInclusion {
 	 * @param framesAnnotationId Identifier for annotations in
 	 * Frames Model (FM)
 	 */
-	public OBAnnotationInclusion(
-				IRI annotationPropertyIRI,
-				String framesAnnotationId) {
+	public OBAnnotationInclusion(IRI annotationPropertyIRI, String framesAnnotationId) {
 
 		this.annotationPropertyIRI = annotationPropertyIRI;
 		this.framesAnnotationId = framesAnnotationId;
