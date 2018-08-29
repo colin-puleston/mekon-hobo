@@ -164,7 +164,7 @@ public class CIdentity {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + toInnerString() + ")";
+		return CIdentity.class.getSimpleName() + "(" + toInnerString() + ")";
 	}
 
 	/**
