@@ -44,6 +44,8 @@ public class OBAnnotations {
 	static private final String FRAME_DEFINITION_ID = "OWL-Definition";
 
 	private OModel model;
+	private OBEntityLabels labels;
+
 	private boolean annotateFramesWithDefinitions = false;
 
 	private Set<OBAnnotationInclusion> inclusions
@@ -71,9 +73,10 @@ public class OBAnnotations {
 		this.inclusions.addAll(inclusions);
 	}
 
-	OBAnnotations(OModel model) {
+	OBAnnotations(OModel model, OBEntityLabels labels) {
 
 		this.model = model;
+		this.labels = labels;
 	}
 
 	void setAnnotateFramesWithDefinitions(boolean value) {
@@ -100,9 +103,9 @@ public class OBAnnotations {
 		}
 	}
 
-	void checkAnnotateSlot(CBuilder builder, CSlot cSlot, OWLProperty owlProperty) {
+	void checkAnnotateSlotSet(CBuilder builder, OWLProperty owlProperty) {
 
-		addPropertyInclusions(getCEditor(builder, cSlot), owlProperty);
+		addPropertyInclusions(getCEditor(builder, toSlotId(owlProperty)), owlProperty);
 	}
 
 	private void addPropertyInclusions(CAnnotationsEditor cEditor, OWLProperty owlProperty) {
@@ -163,8 +166,18 @@ public class OBAnnotations {
 					: model.getInferredSupers((OWLDataProperty)owlProperty, true);
 	}
 
-	private CAnnotationsEditor getCEditor(CBuilder builder, CAnnotatable cEntity) {
+	private CAnnotationsEditor getCEditor(CBuilder builder, CFrame cFrame) {
 
-		return builder.getAnnotationsEditor(cEntity.getAnnotations());
+		return builder.getAnnotationsEditor(cFrame.getAnnotations());
+	}
+
+	private CAnnotationsEditor getCEditor(CBuilder builder, CIdentity slotId) {
+
+		return builder.getSlotAnnotationsEditor(slotId);
+	}
+
+	private CIdentity toSlotId(OWLProperty owlProperty) {
+
+		return new OIdentity(owlProperty, labels.getLabel(owlProperty));
 	}
 }

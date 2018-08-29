@@ -329,10 +329,7 @@ class OBSlots {
 		checkAddSlot(frameConcept, checkCreateLooseSlot(slotSource));
 	}
 
-	void checkCreateAllValuesSlot(
-			OWLClass frameConcept,
-			OWLProperty property,
-			OWLObject range) {
+	void checkCreateAllValuesSlot(OWLClass frameConcept, OWLProperty property, OWLObject range) {
 
 		checkAddSlot(frameConcept, checkCreateLooseAllValuesSlot(property, range));
 	}
@@ -344,9 +341,7 @@ class OBSlots {
 		return spec != null ? spec.checkCreate() : null;
 	}
 
-	private OBSlot checkCreateLooseAllValuesSlot(
-						OWLProperty property,
-						OWLObject range) {
+	private OBSlot checkCreateLooseAllValuesSlot(OWLProperty property, OWLObject range) {
 
 		return new AllValuesFromSlotSpec(property, range).checkCreate();
 	}

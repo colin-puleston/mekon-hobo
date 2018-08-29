@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.owl.build;
 
 import java.util.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
@@ -294,7 +296,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 		this.model = model;
 
 		labels = new OBEntityLabels(model);
-		annotations = new OBAnnotations(model);
+		annotations = new OBAnnotations(model, labels);
 
 		concepts = new OBConcepts(model);
 		properties = new OBProperties(model);
@@ -330,9 +332,23 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 	private void buildFinal(CBuilder builder) {
 
+		buildCStructure(builder);
+		annotateCSlotSets(builder);
+	}
+
+	private void buildCStructure(CBuilder builder) {
+
 		for (OBAtomicFrame frame : frames.getAll()) {
 
 			frame.ensureCStructure(builder, annotations);
+		}
+	}
+
+	private void annotateCSlotSets(CBuilder builder) {
+
+		for (OWLProperty property : properties.getAll()) {
+
+			annotations.checkAnnotateSlotSet(builder, property);
 		}
 	}
 }
