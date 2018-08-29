@@ -91,7 +91,7 @@ public class DDisjunction<D extends DObject> {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + disjunctsToFrames() + ")";
+		return DDisjunction.class.getSimpleName() + "(" + disjunctsToFrames() + ")";
 	}
 
 	/**

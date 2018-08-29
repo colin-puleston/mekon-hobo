@@ -85,7 +85,7 @@ public class DConcept<D extends DObject> {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + frame + ")";
+		return DConcept.class.getSimpleName() + "(" + frame + ")";
 	}
 
 	/**

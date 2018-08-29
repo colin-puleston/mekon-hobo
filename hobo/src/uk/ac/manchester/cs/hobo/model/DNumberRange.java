@@ -310,7 +310,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + cNumber.getDisplayLabel() + ")";
+		return DNumberRange.class.getSimpleName() + "(" + cNumber.getDisplayLabel() + ")";
 	}
 
 	/**
