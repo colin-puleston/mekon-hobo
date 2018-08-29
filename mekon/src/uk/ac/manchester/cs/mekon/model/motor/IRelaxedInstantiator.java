@@ -78,7 +78,7 @@ public abstract class IRelaxedInstantiator {
 	 * Adds a slot to a regenerated network.
 	 *
 	 * @param container Frame to which slot is to be added
-	 * @param slotTypeId Identity of slot-type for slot to be created
+	 * @param slotId Identity of slot to be created
 	 * @param valueType Value-type for slot to be created
 	 * @param cardinality Cardinality of slot to be created
 	 * @param activation Activation of slot to be created
@@ -87,7 +87,7 @@ public abstract class IRelaxedInstantiator {
 	 */
 	public abstract ISlot addSlot(
 							IFrame container,
-							CIdentity slotTypeId,
+							CIdentity slotId,
 							CValue<?> valueType,
 							CCardinality cardinality,
 							CActivation activation,
@@ -99,13 +99,13 @@ public abstract class IRelaxedInstantiator {
 	 * {@link CValue#toUnconstrained} method on a "source" value-type object.
 	 *
 	 * @param container Frame to which slot is to be added
-	 * @param slotTypeId Identity of slot-type for slot to be created
+	 * @param slotId Identity of slot to be created
 	 * @param valueTypeSource Source value-type for slot to be created
 	 * @return Created and added slot
 	 */
 	public abstract ISlot addFreeSlot(
 							IFrame container,
-							CIdentity slotTypeId,
+							CIdentity slotId,
 							CValue<?> valueTypeSource);
 
 	/**

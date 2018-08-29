@@ -206,6 +206,15 @@ public interface CBuilder {
 	public CAnnotationsEditor getAnnotationsEditor(CAnnotations annotations);
 
 	/**
+	 * Provides an editor for annotations on the specified slot-set.
+	 *
+	 * @param slotId Identity of slots in slot-set for which editor
+	 * is required
+	 * @return Editor for relevant slot-set annotations
+	 */
+	public CAnnotationsEditor getSlotAnnotationsEditor(CIdentity slotId);
+
+	/**
 	 * Provides the editor that allows "under-the-hood" editing of
 	 * model instantiations.
 	 *

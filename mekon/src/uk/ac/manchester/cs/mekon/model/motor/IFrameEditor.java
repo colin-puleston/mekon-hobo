@@ -75,9 +75,6 @@ public interface IFrameEditor {
 	 * @param cardinality Cardinality for concept-level slot
 	 * @param activation Activation for concept-level slot
 	 * @param editability Editability for concept-level slot
-	 * @param annotationSources Set of sources for annotations to
-	 * be applied to concept-level slot (Any key/value pairs that occur
-	 * in multiple sets will not be duplicated)
 	 * @return Created and added instance-level slot
 	 */
 	public ISlot addSlot(
@@ -86,8 +83,7 @@ public interface IFrameEditor {
 					CValue<?> valueType,
 					CCardinality cardinality,
 					CActivation activation,
-					CEditability editability,
-					Collection<CAnnotations> annotationSources);
+					CEditability editability);
 
 	/**
 	 * Removes the specified slot from the frame.

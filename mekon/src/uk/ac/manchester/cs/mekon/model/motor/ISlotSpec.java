@@ -46,8 +46,6 @@ class ISlotSpec {
 
 	private List<IValue> fixedValues = new ArrayList<IValue>();
 
-	private List<CAnnotations> annotations = new ArrayList<CAnnotations>();
-
 	ISlotSpec(IEditor iEditor, CIdentity identity) {
 
 		this.identity = identity;
@@ -62,7 +60,6 @@ class ISlotSpec {
 		intersectActivation(other.activation);
 		absorbEditability(other.editability);
 		intersectFixedValues(other.fixedValues);
-		absorbAnnotations(other.annotations);
 	}
 
 	void absorbSpec(ISlotSpec other) {
@@ -73,17 +70,15 @@ class ISlotSpec {
 		absorbActivation(other.activation);
 		absorbEditability(other.editability);
 		absorbFixedValues(other.fixedValues);
-		absorbAnnotations(other.annotations);
 	}
 
 	void absorbType(CSlot slotType) {
 
 		absorbSource(slotType.getSource());
+		absorbValueType(slotType.getValueType());
 		absorbCardinality(slotType.getCardinality());
 		absorbActivation(slotType.getActivation());
 		absorbEditability(slotType.getEditability());
-		absorbValueType(slotType.getValueType());
-		absorbAnnotations(slotType.getAnnotations());
 	}
 
 	void absorbFixedValues(List<IValue> newFixedValues) {
@@ -166,16 +161,6 @@ class ISlotSpec {
 		}
 	}
 
-	private void absorbAnnotations(List<CAnnotations> newAnnotations) {
-
-		annotations.addAll(newAnnotations);
-	}
-
-	private void absorbAnnotations(CAnnotations newAnnotations) {
-
-		annotations.add(newAnnotations);
-	}
-
 	private void intersectCardinality(CCardinality newCardinality) {
 
 		cardinality = cardinality.getLessRestrictive(newCardinality);
@@ -200,8 +185,7 @@ class ISlotSpec {
 				valueType,
 				cardinality,
 				activation,
-				editability,
-				annotations);
+				editability);
 	}
 
 	private ISlotOps checkUpdateSlot(ISlot slot, CValue<?> valueType) {

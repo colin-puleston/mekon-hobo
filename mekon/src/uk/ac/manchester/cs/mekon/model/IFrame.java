@@ -221,17 +221,14 @@ public class IFrame implements IEntity, IValue {
 						CValue<?> valueType,
 						CCardinality cardinality,
 						CActivation activation,
-						CEditability editability,
-						Collection<CAnnotations> annotationSources) {
+						CEditability editability) {
 
 			CFrame atomicType = type.getAtomicFrame();
 			CSlot slotType = new CSlot(atomicType, identity, valueType, cardinality);
-			CAnnotations annotations = CAnnotations.combineAll(slotType, annotationSources);
 
 			slotType.setSource(source);
 			slotType.setActivation(activation);
 			slotType.setEditability(editability);
-			slotType.setAnnotations(annotations);
 
 			return addSlot(slotType);
 		}

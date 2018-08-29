@@ -43,8 +43,6 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	private CActivation activation = CActivation.ACTIVE;
 	private CEditability editability = CEditability.DEFAULT;
 
-	private CAnnotations annotations = new CAnnotations(this);
-
 	private class Editor implements CSlotEditor {
 
 		public void setSource(CSource source) {
@@ -185,13 +183,15 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	}
 
 	/**
-	 * Provides any annotations on the slot.
+	 * Provides any annotations on the slot-set of which this slot
+	 * is a member, which consists of all slots in the model with
+	 * the same identity as this slot.
 	 *
-	 * @return Annotations on slot
+	 * @return Annotations on slot-set of which this slot is a member
 	 */
 	public CAnnotations getAnnotations() {
 
-		return annotations;
+		return getModel().getSlotAnnotations(identity);
 	}
 
 	CSlot(
@@ -213,7 +213,6 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		copy.source = source;
 		copy.activation = activation;
 		copy.editability = editability;
-		copy.annotations = annotations;
 
 		return copy;
 	}
@@ -274,11 +273,6 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		}
 
 		return false;
-	}
-
-	void setAnnotations(CAnnotations annotations) {
-
-		this.annotations = annotations;
 	}
 
 	void remove() {

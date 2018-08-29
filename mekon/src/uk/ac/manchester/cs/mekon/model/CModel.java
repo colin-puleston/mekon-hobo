@@ -51,6 +51,7 @@ public class CModel implements CAnnotatable {
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
 
 	private CAnnotations annotations = new CAnnotations(this);
+	private CSlotAnnotations slotAnnotations = new CSlotAnnotations();
 
 	private IEditor iEditor = new IEditorImpl(this);
 	private IUpdating iUpdating = new IUpdating(this);
@@ -114,6 +115,18 @@ public class CModel implements CAnnotatable {
 	public CAnnotations getAnnotations() {
 
 		return annotations;
+	}
+
+	/**
+	 * Provides any annotations on the slot-set that consists of all
+	 * slots in the model with the specified identity.
+	 *
+	 * @param slotId Identity of slots in slot-set
+	 * @return Annotations on relevant slot-set
+	 */
+	public CAnnotations getSlotAnnotations(CIdentity slotId) {
+
+		return slotAnnotations.get(slotId);
 	}
 
 	CModel() {

@@ -45,17 +45,28 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
 	static CSlot createFreeSlotType(
 					IFrame container,
-					CIdentity id,
+					CIdentity slotId,
 					CValue<?> valueTypeSource) {
 
-		CFrame contType = container.getType();
 		CValue<?> valueType = valueTypeSource.toUnconstrained();
-
-		CSlot slotType = new CSlot(contType, id, valueType, CCardinality.REPEATABLE_TYPES);
+		CSlot slotType = createSlotType(
+							container,
+							slotId,
+							valueType,
+							CCardinality.REPEATABLE_TYPES);
 
 		slotType.setEditability(CEditability.FULL);
 
 		return slotType;
+	}
+
+	static private CSlot createSlotType(
+							IFrame container,
+							CIdentity slotId,
+							CValue<?> valueType,
+							CCardinality cardinality) {
+
+		return new CSlot(container.getType(), slotId, valueType, cardinality);
 	}
 
 	public IFrame startInstantiation(CFrame type, IFrameFunction function, boolean freeInstance) {
@@ -70,14 +81,13 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
 	public ISlot addSlot(
 					IFrame container,
-					CIdentity slotTypeId,
+					CIdentity slotId,
 					CValue<?> valueType,
 					CCardinality cardinality,
 					CActivation activation,
 					IEditability editability) {
 
-		CFrame contType = container.getType();
-		CSlot slotType = new CSlot(contType, slotTypeId, valueType, cardinality);
+		CSlot slotType = createSlotType(container, slotId, valueType, cardinality);
 
 		slotType.setActivation(activation);
 		slotType.setEditability(editabilitiesIsToCs.get(editability));
@@ -85,12 +95,9 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return container.addSlotInternal(slotType);
 	}
 
-	public ISlot addFreeSlot(
-					IFrame container,
-					CIdentity slotTypeId,
-					CValue<?> valueTypeSource) {
+	public ISlot addFreeSlot(IFrame container, CIdentity slotId, CValue<?> valueTypeSource) {
 
-		CSlot slotType = createFreeSlotType(container, slotTypeId, valueTypeSource);
+		CSlot slotType = createFreeSlotType(container, slotId, valueTypeSource);
 
 		return container.addSlotInternal(slotType);
 	}
