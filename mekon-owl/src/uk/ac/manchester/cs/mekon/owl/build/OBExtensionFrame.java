@@ -49,9 +49,7 @@ class OBExtensionFrame extends OBExpressionFrame {
 		return false;
 	}
 
-	boolean canBeFixedSlotValue(
-				CValue<?> cValue,
-				boolean valueStructureAllowed) {
+	boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed) {
 
 		return !valueStructureAllowed;
 	}

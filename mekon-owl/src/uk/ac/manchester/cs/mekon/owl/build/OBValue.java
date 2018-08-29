@@ -60,9 +60,7 @@ abstract class OBValue<CV extends CValue<?>> extends OIdentified {
 
 	abstract boolean canBeSlotValueType();
 
-	abstract boolean canBeFixedSlotValue(
-						CValue<?> cValue,
-						boolean valueStructureAllowed);
+	abstract boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed);
 
 	abstract boolean valueStructureAllowedIfSlotValueType();
 

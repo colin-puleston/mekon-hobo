@@ -37,9 +37,7 @@ abstract class OBDataValue<CV extends CValue<?>> extends OBValue<CV> {
 		return true;
 	}
 
-	boolean canBeFixedSlotValue(
-				CValue<?> cValue,
-				boolean valueStructureAllowed) {
+	boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed) {
 
 		return false;
 	}

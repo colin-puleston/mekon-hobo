@@ -46,9 +46,7 @@ class OBDisjunctionFrame extends OBExpressionFrame {
 		return true;
 	}
 
-	boolean canBeFixedSlotValue(
-				CValue<?> cValue,
-				boolean valueStructureAllowed) {
+	boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed) {
 
 		return false;
 	}
