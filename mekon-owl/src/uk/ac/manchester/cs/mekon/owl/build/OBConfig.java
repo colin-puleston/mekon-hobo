@@ -49,7 +49,7 @@ class OBConfig implements OBConfigVocab {
 		setDefaultSlotSources(builder);
 		setDefaultFrameSlotsPolicy(builder);
 		setAnnotateFramesWithDefinitions(builder);
-		setRetainOnlyDeclarationAxioms(builder);
+		setAxiomPurgePolicy(builder);
 	}
 
 	private void addConcepts(OBSectionBuilder builder) {
@@ -115,9 +115,9 @@ class OBConfig implements OBConfigVocab {
 		builder.setAnnotateFramesWithDefinitions(annotateFramesWithDefinitions());
 	}
 
-	private void setRetainOnlyDeclarationAxioms(OBSectionBuilder builder) {
+	private void setAxiomPurgePolicy(OBSectionBuilder builder) {
 
-		builder.setRetainOnlyDeclarationAxioms(retainOnlyDeclarationAxioms());
+		builder.setAxiomPurgePolicy(getAxiomPurgePolicy());
 	}
 
 	private OBAnnotationInclusion getAnnotationInclusion(KConfigNode incNode) {
@@ -170,8 +170,11 @@ class OBConfig implements OBConfigVocab {
 		return configNode.getBoolean(ANNOTATE_FRAMES_WITH_DEFNS_ATTR);
 	}
 
-	private boolean retainOnlyDeclarationAxioms() {
+	private OBAxiomPurgePolicy getAxiomPurgePolicy() {
 
-		return configNode.getBoolean(RETAIN_ONLY_DECLARATIONS_ATTR);
+		return configNode.getEnum(
+					AXIOM_PURGE_POLICY_ATTR,
+					OBAxiomPurgePolicy.class,
+					OBAxiomPurgePolicy.RETAIN_ALL);
 	}
 }

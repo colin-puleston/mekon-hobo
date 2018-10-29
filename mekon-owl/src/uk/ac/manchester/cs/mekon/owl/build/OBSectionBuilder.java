@@ -70,7 +70,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	private OBFrames frames;
 	private OBSlots slots;
 
-	private boolean retainOnlyDeclarationAxioms = false;
+	private OBAxiomPurgePolicy axiomPurgePolicy = OBAxiomPurgePolicy.RETAIN_ALL;
 
 	/**
 	 * Constructs section-builder with configuration defined via the
@@ -187,16 +187,18 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
-	 * Sets the attribute that determines whether or not all axioms
-	 * other than class-declarations will be removed from OWL model
-	 * after the section has been built. This enables the minimisation
-	 * of memory usage where appropriate.
+	 * Sets the axiom-purge policy, which determines which axioms, if
+	 * any, will be removed from the OWL model after the section has
+	 * been built and the reasoner loaded. Setting this attribute
+	 * enables the minimisation of memory usage where appropriate.
+	 * Defaults to {@link OBAxiomPurgePolicy#RETAIN_ALL} if method is
+	 * never invoked.
 	 *
 	 * @param value Required value of attribute
 	 */
-	public void setRetainOnlyDeclarationAxioms(boolean value) {
+	public void setAxiomPurgePolicy(OBAxiomPurgePolicy axiomPurgePolicy) {
 
-		retainOnlyDeclarationAxioms = value;
+		this.axiomPurgePolicy = axiomPurgePolicy;
 	}
 
 	/**
@@ -279,12 +281,10 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 			IDiskStoreManager.getBuilder(builder).addMatcher(iMatcher);
 		}
-		else {
 
-			if (retainOnlyDeclarationAxioms) {
+		if (axiomPurgePolicy != OBAxiomPurgePolicy.RETAIN_ALL) {
 
-				model.retainOnlyDeclarationAxioms();
-			}
+			model.purgeAxioms(createAxiomPurgeSpec());
 		}
 	}
 
@@ -350,5 +350,15 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 			annotations.checkAnnotateSlotSet(builder, property);
 		}
+	}
+
+	private OBAxiomPurgeSpec createAxiomPurgeSpec() {
+
+		return new OBAxiomPurgeSpec(retainConceptHierarchy(), concepts, properties);
+	}
+
+	private boolean retainConceptHierarchy() {
+
+		return axiomPurgePolicy == OBAxiomPurgePolicy.RETAIN_FRAME_MODEL_NAMES_AND_HIERARCHY;
 	}
 }

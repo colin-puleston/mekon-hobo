@@ -100,7 +100,7 @@ public abstract class OBEntities
 	}
 
 	/**
-	 * Tests whether the specified OWL entity has  been registered.
+	 * Tests whether the specified OWL entity has been registered.
 	 *
 	 * @param entity Required entity
 	 * @return True if entity has been registered
