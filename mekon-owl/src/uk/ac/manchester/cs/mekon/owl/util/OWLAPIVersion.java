@@ -63,7 +63,7 @@ public class OWLAPIVersion {
 
 	static public Set<OWLAxiom> getAxioms(OWLOntology ontology) {
 
-		return ontology.getAxioms();
+		return ontology.getAxioms(Imports.INCLUDED);
 	}
 
 	static public Set<OWLClassAxiom> getAxioms(OWLOntology ontology, OWLClass concept) {
@@ -75,7 +75,7 @@ public class OWLAPIVersion {
 												OWLOntology ontology,
 												AxiomType<T> axiomType) {
 
-		return ontology.getAxioms(axiomType);
+		return ontology.getAxioms(axiomType, Imports.INCLUDED);
 	}
 
 	static public Set<OWLClass> getClassesInSignature(HasClassesInSignature container) {
