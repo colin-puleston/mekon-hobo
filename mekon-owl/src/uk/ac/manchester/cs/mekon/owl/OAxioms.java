@@ -72,6 +72,84 @@ class OAxioms {
 		}
 	}
 
+	private abstract class Purger {
+
+		void purge() {
+
+			for (OWLAxiom axiom : OWLAPIVersion.getAxioms(ontology)) {
+
+				if (!retain(axiom)) {
+
+					OWLAPIVersion.removeAxiom(ontology, axiom);
+				}
+			}
+		}
+
+		abstract boolean retainDeclaration(OWLDeclarationAxiom axiom);
+
+		abstract boolean retainNonDeclaration(OWLAxiom axiom);
+
+		private boolean retain(OWLAxiom axiom) {
+
+			return axiom instanceof OWLDeclarationAxiom
+					? retainDeclaration((OWLDeclarationAxiom)axiom)
+					: retainNonDeclaration(axiom);
+		}
+	}
+
+	private class DeclarationPurger extends Purger {
+
+		private OAxiomPurgeSpec spec;
+
+		DeclarationPurger(OAxiomPurgeSpec spec) {
+
+			this.spec = spec;
+		}
+
+		boolean retainDeclaration(OWLDeclarationAxiom axiom) {
+
+			OWLEntity entity = axiom.getEntity();
+			IRI iri = entity.getIRI();
+
+			if (entity instanceof OWLClass) {
+
+				return spec.retainConcept(iri);
+			}
+
+			if (entity instanceof OWLProperty) {
+
+				return spec.retainProperty(iri);
+			}
+
+			return false;
+		}
+
+		boolean retainNonDeclaration(OWLAxiom axiom) {
+
+			return true;
+		}
+	}
+
+	private class NonDeclarationPurger extends Purger {
+
+		private boolean retainConceptHierarchy;
+
+		NonDeclarationPurger(OAxiomPurgeSpec spec) {
+
+			retainConceptHierarchy = spec.retainConceptHierarchy();
+		}
+
+		boolean retainDeclaration(OWLDeclarationAxiom axiom) {
+
+			return true;
+		}
+
+		boolean retainNonDeclaration(OWLAxiom axiom) {
+
+			return retainConceptHierarchy && axiom instanceof OWLSubClassOfAxiom;
+		}
+	}
+
 	private class AddedAxiomProcessor extends AxiomProcessor {
 
 		<E extends OWLEntity>void updateEntities(OEntities<E> all, E entity) {
@@ -124,15 +202,10 @@ class OAxioms {
 		}
 	}
 
-	void retainOnlyDeclarations() {
+	void purge(OAxiomPurgeSpec purgeSpec) {
 
-		for (OWLAxiom axiom : OWLAPIVersion.getAxioms(ontology)) {
-
-			if (!(axiom instanceof OWLDeclarationAxiom)) {
-
-				OWLAPIVersion.removeAxiom(ontology, axiom);
-			}
-		}
+		new DeclarationPurger(purgeSpec).purge();
+		new NonDeclarationPurger(purgeSpec).purge();
 	}
 
 	private OWLOntologyManager getManager() {

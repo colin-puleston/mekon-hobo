@@ -69,7 +69,7 @@ public class OModelCopier extends OModelCreator {
 
 	void assertExternallyInferableHierarchy(OModel model) {
 
-		if (soureInferableHierarchy(model)) {
+		if (sourceInferableHierarchy(model)) {
 
 			for (OWLClass concept : model.getConcepts().getAll()) {
 
@@ -118,7 +118,7 @@ public class OModelCopier extends OModelCreator {
 		return Collections.<OWLOntology>singleton(ontology);
 	}
 
-	private boolean soureInferableHierarchy(OModel model) {
+	private boolean sourceInferableHierarchy(OModel model) {
 
 		OReasoningType srcReasonType = sourceModel.getReasoningType();
 		OReasoningType copyReasonType = model.getReasoningType();

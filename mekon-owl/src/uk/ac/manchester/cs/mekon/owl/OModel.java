@@ -189,11 +189,23 @@ public class OModel {
 	}
 
 	/**
-	 * Removes all axioms other than class-declarations.
+	 * Performs axiom-purge operation in order to minimise memory usage
+	 * after the OWL-based model section has been built and the reasoner
+	 * initialised. Where hierarchical links between concepts have been
+	 * derived via reasoning, those links will be added back in as axioms,
+	 * since the definitions from which they have been inferred will have
+	 * been removed.
+	 *
+	 * @param purgeSpec Specification of required purge opertaion
 	 */
-	public void retainOnlyDeclarationAxioms() {
+	public void purgeAxioms(OAxiomPurgeSpec purgeSpec) {
 
-		modelAxioms.retainOnlyDeclarations();
+		if (purgeSpec.retainConceptHierarchy()) {
+
+			assertInferredConceptHierarchy();
+		}
+
+		modelAxioms.purge(purgeSpec);
 	}
 
 	/**
@@ -719,6 +731,27 @@ public class OModel {
 
 		objectProperties.initialiseForSupportedInferenceTypes();
 		dataProperties.initialiseForSupportedInferenceTypes();
+	}
+
+	private void assertInferredConceptHierarchy() {
+
+		for (OWLClass concept : concepts.getAll()) {
+
+			assertInferredSubConcepts(concept);
+		}
+	}
+
+	private void assertInferredSubConcepts(OWLClass concept) {
+
+		Set<OWLClassExpression> assertedSubs = getAssertedSubs(concept);
+
+		for (OWLClass inferredSub : getInferredSubs(concept, true)) {
+
+			if (!assertedSubs.contains(inferredSub)) {
+
+				assertSubConcept(concept, inferredSub);
+			}
+		}
 	}
 
 	private OWLDataProperty getIndirectNumericProperty(IRI iri) {
