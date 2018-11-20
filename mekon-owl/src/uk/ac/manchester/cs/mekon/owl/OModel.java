@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.util.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
@@ -202,10 +203,15 @@ public class OModel {
 
 		if (purgeSpec.retainConceptHierarchy()) {
 
-			assertInferredConceptHierarchy();
-		}
+			InferredConceptHierarchy hierarchy = new InferredConceptHierarchy(this);
 
-		modelAxioms.purge(purgeSpec);
+			modelAxioms.purge(purgeSpec);
+			ensureAssertedHierarchy(hierarchy);
+		}
+		else {
+
+			modelAxioms.purge(purgeSpec);
+		}
 	}
 
 	/**
@@ -704,9 +710,25 @@ public class OModel {
 		}
 	}
 
-	void assertSubConcept(OWLClass concept, OWLClass subConcept) {
+	void ensureAssertedHierarchy(InferredConceptHierarchy hierarchy) {
 
-		addModelAxiom(getSubClassAxiom(concept, subConcept));
+		KSetMap<OWLClass, OWLClass> subConcepts = hierarchy.getSubConceptsMap();
+		Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
+
+		for (OWLClass concept : concepts.getAll()) {
+
+			Set<OWLClassExpression> assertedSubs = getAssertedSubs(concept);
+
+			for (OWLClass sub : subConcepts.getSet(concept)) {
+
+				if (!assertedSubs.contains(sub)) {
+
+					axioms.add(getSubClassAxiom(concept, sub));
+				}
+			}
+		}
+
+		modelAxioms.addAll(axioms);
 	}
 
 	private void createCaches() {
@@ -731,27 +753,6 @@ public class OModel {
 
 		objectProperties.initialiseForSupportedInferenceTypes();
 		dataProperties.initialiseForSupportedInferenceTypes();
-	}
-
-	private void assertInferredConceptHierarchy() {
-
-		for (OWLClass concept : concepts.getAll()) {
-
-			assertInferredSubConcepts(concept);
-		}
-	}
-
-	private void assertInferredSubConcepts(OWLClass concept) {
-
-		Set<OWLClassExpression> assertedSubs = getAssertedSubs(concept);
-
-		for (OWLClass inferredSub : getInferredSubs(concept, true)) {
-
-			if (!assertedSubs.contains(inferredSub)) {
-
-				assertSubConcept(concept, inferredSub);
-			}
-		}
 	}
 
 	private OWLDataProperty getIndirectNumericProperty(IRI iri) {

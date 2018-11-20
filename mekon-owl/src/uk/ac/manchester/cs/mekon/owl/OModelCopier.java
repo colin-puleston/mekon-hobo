@@ -71,10 +71,7 @@ public class OModelCopier extends OModelCreator {
 
 		if (sourceInferableHierarchy(model)) {
 
-			for (OWLClass concept : model.getConcepts().getAll()) {
-
-				assertInferableSubs(model, concept);
-			}
+			model.ensureAssertedHierarchy(new InferredConceptHierarchy(sourceModel));
 		}
 	}
 
@@ -124,26 +121,5 @@ public class OModelCopier extends OModelCreator {
 		OReasoningType copyReasonType = model.getReasoningType();
 
 		return srcReasonType.morePowerfullThan(copyReasonType);
-	}
-
-	private void assertInferableSubs(OModel model, OWLClass concept) {
-
-		Set<OWLClassExpression> assSubs = model.getAssertedSubs(concept);
-
-		for (OWLClass infSub : getInferredSubsFromSourceModel(concept)) {
-
-			if (!assSubs.contains(infSub)) {
-
-				model.assertSubConcept(concept, infSub);
-			}
-		}
-	}
-
-	private Set<OWLClass> getInferredSubsFromSourceModel(OWLClass concept) {
-
-		IRI iri = concept.getIRI();
-		OWLClass sourceConcept = sourceModel.getConcepts().get(iri);
-
-		return sourceModel.getInferredSubs(sourceConcept, true);
 	}
 }
