@@ -34,6 +34,11 @@ class OAnnotationProperties
 			extends
 				OProperties<OWLAnnotationProperty, OWLAnnotationProperty> {
 
+	public boolean contains(IRI iri) {
+
+		return getModelOntology().containsAnnotationPropertyInSignature(iri);
+	}
+
 	OAnnotationProperties(OModel model) {
 
 		super(model);
@@ -44,11 +49,6 @@ class OAnnotationProperties
 		return "annotation-property";
 	}
 
-	Set<OWLAnnotationProperty> findAll() {
-
-		return OWLAPIVersion.getAnnotationPropertiesInSignature(getModelOntology());
-	}
-
 	OWLAnnotationProperty getTop() {
 
 		return null;
@@ -57,6 +57,16 @@ class OAnnotationProperties
 	OWLAnnotationProperty getBottom() {
 
 		return null;
+	}
+
+	OWLAnnotationProperty getContained(IRI iri) {
+
+		return getDataFactory().getOWLAnnotationProperty(iri);
+	}
+
+	Set<OWLAnnotationProperty> getAllPreNormalise() {
+
+		return OWLAPIVersion.getAnnotationPropertiesInSignature(getModelOntology());
 	}
 
 	Class<OWLAnnotationProperty> getPropertyClass() {

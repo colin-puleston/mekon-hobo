@@ -35,6 +35,11 @@ class ODataProperties
 			extends
 				OProperties<OWLDataPropertyExpression, OWLDataProperty> {
 
+	public boolean contains(IRI iri) {
+
+		return getModelOntology().containsDataPropertyInSignature(iri);
+	}
+
 	ODataProperties(OModel model) {
 
 		super(model);
@@ -45,11 +50,6 @@ class ODataProperties
 		return "data-property";
 	}
 
-	Set<OWLDataProperty> findAll() {
-
-		return OWLAPIVersion.getDataPropertiesInSignature(getModelOntology());
-	}
-
 	OWLDataProperty getTop() {
 
 		return getDataFactory().getOWLTopDataProperty();
@@ -58,6 +58,16 @@ class ODataProperties
 	OWLDataProperty getBottom() {
 
 		return getDataFactory().getOWLBottomDataProperty();
+	}
+
+	OWLDataProperty getContained(IRI iri) {
+
+		return getDataFactory().getOWLDataProperty(iri);
+	}
+
+	Set<OWLDataProperty> getAllPreNormalise() {
+
+		return OWLAPIVersion.getDataPropertiesInSignature(getModelOntology());
 	}
 
 	Class<OWLDataProperty> getPropertyClass() {

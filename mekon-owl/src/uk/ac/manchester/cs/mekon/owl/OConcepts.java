@@ -34,6 +34,11 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 
 class OConcepts extends OEntities<OWLClass> {
 
+	public boolean contains(IRI iri) {
+
+		return getModelOntology().containsClassInSignature(iri);
+	}
+
 	OConcepts(OModel model) {
 
 		super(model);
@@ -93,11 +98,6 @@ class OConcepts extends OEntities<OWLClass> {
 		return "class";
 	}
 
-	Set<OWLClass> findAll() {
-
-		return OWLAPIVersion.getClassesInSignature(getModelOntology());
-	}
-
 	OWLClass getTop() {
 
 		return getDataFactory().getOWLThing();
@@ -106,6 +106,16 @@ class OConcepts extends OEntities<OWLClass> {
 	OWLClass getBottom() {
 
 		return getDataFactory().getOWLNothing();
+	}
+
+	OWLClass getContained(IRI iri) {
+
+		return getDataFactory().getOWLClass(iri);
+	}
+
+	Set<OWLClass> getAllPreNormalise() {
+
+		return OWLAPIVersion.getClassesInSignature(getModelOntology());
 	}
 
 	private Set<OWLClass> normaliseSubs(NodeSet<OWLClass> concepts) {
@@ -124,7 +134,7 @@ class OConcepts extends OEntities<OWLClass> {
 							OWLClassExpression expression,
 							Set<OWLClass> concepts) {
 
-		if (concepts.contains(getDataFactory().getOWLNothing())) {
+		if (concepts.contains(getBottom())) {
 
 			throw new KModelException(
 						"Inconsistent class-expression: "

@@ -48,7 +48,7 @@ class OAxioms {
 
 			for (OWLAxiom axiom : axioms) {
 
-				processNoReasonerUpdate(axiom);
+				updateOntology(axiom);
 			}
 
 			updateReasoner();
@@ -56,41 +56,11 @@ class OAxioms {
 
 		void process(OWLAxiom axiom) {
 
-			processNoReasonerUpdate(axiom);
+			updateOntology(axiom);
 			updateReasoner();
 		}
 
 		abstract void updateOntology(OWLAxiom axiom);
-
-		abstract <E extends OWLEntity>void updateEntities(OEntities<E> all, E entity);
-
-		private void processNoReasonerUpdate(OWLAxiom axiom) {
-
-			updateOntology(axiom);
-
-			if (axiom instanceof OWLDeclarationAxiom) {
-
-				checkUpdateEntities((OWLDeclarationAxiom)axiom);
-			}
-		}
-
-		private void checkUpdateEntities(OWLDeclarationAxiom axiom) {
-
-			OWLEntity entity = axiom.getEntity();
-
-			if (entity instanceof OWLClass) {
-
-				updateEntities(model.getConcepts(), (OWLClass)entity);
-			}
-			else if (entity instanceof OWLObjectProperty) {
-
-				updateEntities(model.getObjectProperties(), (OWLObjectProperty)entity);
-			}
-			else if (entity instanceof OWLDataProperty) {
-
-				updateEntities(model.getDataProperties(), (OWLDataProperty)entity);
-			}
-		}
 
 		private void updateReasoner() {
 
@@ -104,11 +74,6 @@ class OAxioms {
 
 			OWLAPIVersion.addAxiom(ontology, axiom);
 		}
-
-		<E extends OWLEntity>void updateEntities(OEntities<E> all, E entity) {
-
-			all.add(entity);
-		}
 	}
 
 	private class AxiomRemover extends AxiomProcessor {
@@ -116,11 +81,6 @@ class OAxioms {
 		void updateOntology(OWLAxiom axiom) {
 
 			OWLAPIVersion.removeAxiom(ontology, axiom);
-		}
-
-		<E extends OWLEntity>void updateEntities(OEntities<E> all, E entity) {
-
-			all.remove(entity);
 		}
 	}
 
@@ -232,10 +192,5 @@ class OAxioms {
 
 		new DeclarationPurger(purgeSpec).purge();
 		new NonDeclarationPurger(purgeSpec).purge();
-	}
-
-	private OWLOntologyManager getManager() {
-
-		return model.getManager();
 	}
 }

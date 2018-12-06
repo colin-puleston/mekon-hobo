@@ -41,18 +41,13 @@ public abstract class OEntities<E extends OWLEntity> {
 
 	private OModel model;
 
-	private Map<IRI, E> entitiesByIRI = new HashMap<IRI, E>();
-
 	/**
 	 * Tests for the presence of the entity with the specified IRI.
 	 *
 	 * @param iri IRI of required entity
 	 * @return True if entity found
 	 */
-	public boolean contains(IRI iri) {
-
-		return entitiesByIRI.containsKey(iri);
-	}
+	public abstract boolean contains(IRI iri);
 
 	/**
 	 * Retrieves the entity with the specified IRI.
@@ -63,16 +58,16 @@ public abstract class OEntities<E extends OWLEntity> {
 	 */
 	public E get(IRI iri) {
 
-		E entity = entitiesByIRI.get(iri);
+		E entity = getOrNull(iri);
 
-		if (entity == null) {
+		if (entity != null) {
 
-			throw new KModelException(
-						"Cannot find OWL " + getEntityTypeName() + ": "
-						+ iri);
+			return entity;
 		}
 
-		return entity;
+		throw new KModelException(
+					"Cannot find OWL " + getEntityTypeName() + ": "
+					+ iri);
 	}
 
 	/**
@@ -83,7 +78,7 @@ public abstract class OEntities<E extends OWLEntity> {
 	 */
 	public E getOrNull(IRI iri) {
 
-		return entitiesByIRI.get(iri);
+		return contains(iri) ? getContained(iri) : null;
 	}
 
 	/**
@@ -93,7 +88,7 @@ public abstract class OEntities<E extends OWLEntity> {
 	 */
 	public Set<E> getAll() {
 
-		return new HashSet<E>(entitiesByIRI.values());
+		return normalise(getAllPreNormalise());
 	}
 
 	/**
@@ -103,36 +98,23 @@ public abstract class OEntities<E extends OWLEntity> {
 	 */
 	public Set<IRI> getAllIRIs() {
 
-		return entitiesByIRI.keySet();
+		return getIRIs(getAll());
 	}
 
 	OEntities(OModel model) {
 
 		this.model = model;
-
-		for (E entity : normalise(findAll())) {
-
-			add(entity);
-		}
-	}
-
-	void add(E entity) {
-
-		entitiesByIRI.put(entity.getIRI(), entity);
-	}
-
-	void remove(E entity) {
-
-		entitiesByIRI.remove(entity.getIRI());
 	}
 
 	abstract String getEntityTypeName();
 
-	abstract Set<E> findAll();
-
 	abstract E getTop();
 
 	abstract E getBottom();
+
+	abstract E getContained(IRI iri);
+
+	abstract Set<E> getAllPreNormalise();
 
 	OModel getModel() {
 
@@ -170,5 +152,17 @@ public abstract class OEntities<E extends OWLEntity> {
 		entities.remove(getBottom());
 
 		return entities;
+	}
+
+	private Set<IRI> getIRIs(Set<E> entities) {
+
+		Set<IRI> iris = new HashSet<IRI>();
+
+		for (E entity : entities) {
+
+			iris.add(entity.getIRI());
+		}
+
+		return iris;
 	}
 }
