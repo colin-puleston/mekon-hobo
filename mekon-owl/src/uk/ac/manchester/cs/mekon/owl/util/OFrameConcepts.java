@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OFrameConcepts extends OFramesEntityMapper {
+public class OFrameConcepts extends OFramesEntities {
 
 	/**
 	 * Constructor.
@@ -44,7 +44,7 @@ public class OFrameConcepts extends OFramesEntityMapper {
 	 */
 	public OFrameConcepts(OModel model) {
 
-		super(model.getConcepts().getAllIRIs());
+		super(model.getConcepts());
 	}
 
 	/**

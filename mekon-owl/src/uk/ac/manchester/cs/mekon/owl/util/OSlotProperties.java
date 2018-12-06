@@ -24,11 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.util;
 
-import java.util.*;
-
-import org.semanticweb.owlapi.model.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -37,17 +32,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  *
  * @author Colin Puleston
  */
-public class OSlotProperties extends OFramesEntityMapper {
-
-	static private Set<IRI> getAllIRIs(OModel model) {
-
-		Set<IRI> iris = new HashSet<IRI>();
-
-		iris.addAll(model.getObjectProperties().getAllIRIs());
-		iris.addAll(model.getDataProperties().getAllIRIs());
-
-		return iris;
-	}
+public class OSlotProperties extends OFramesEntities {
 
 	/**
 	 * Constructor.
@@ -56,6 +41,6 @@ public class OSlotProperties extends OFramesEntityMapper {
 	 */
 	public OSlotProperties(OModel model) {
 
-		super(getAllIRIs(model));
+		super(model.getObjectProperties(), model.getDataProperties());
 	}
 }

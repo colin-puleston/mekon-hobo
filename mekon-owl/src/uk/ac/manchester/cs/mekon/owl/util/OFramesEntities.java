@@ -29,6 +29,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * Responsible for finding IRIs of OWL entities that correspond
@@ -37,9 +38,9 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class OFramesEntityMapper {
+public abstract class OFramesEntities {
 
-	private Set<IRI> entityIRIs;
+	private List<OEntities<?>> entitySets;
 
 	/**
 	 * Tests whether there is an OWL entity that corresponds to the
@@ -50,7 +51,7 @@ public abstract class OFramesEntityMapper {
 	 */
 	public boolean exists(CIdentity identity) {
 
-		return getOrNull(identity) != null;
+		return exists(toIRI(identity));
 	}
 
 	/**
@@ -63,13 +64,31 @@ public abstract class OFramesEntityMapper {
 	 */
 	public IRI getOrNull(CIdentity identity) {
 
-		IRI iri = O_IRIExtractor.extractIRI(identity);
+		IRI iri = toIRI(identity);
 
-		return iri != null && entityIRIs.contains(iri) ? iri : null;
+		return exists(iri) ? iri : null;
 	}
 
-	OFramesEntityMapper(Set<IRI> entityIRIs) {
+	OFramesEntities(OEntities<?>... entitySets) {
 
-		this.entityIRIs = entityIRIs;
+		this.entitySets = Arrays.asList(entitySets);
+	}
+
+	private boolean exists(IRI iri) {
+
+		for (OEntities<?> entitySet : entitySets) {
+
+			if (entitySet.contains(iri)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private IRI toIRI(CIdentity identity) {
+
+		return O_IRIExtractor.extractIRI(identity);
 	}
 }
