@@ -41,168 +41,6 @@ class OBValues {
 	private OBSlots slots;
 	private OBNumbers numbers;
 
-	private class ValueSpec {
-
-		private OWLObject source;
-
-		ValueSpec(OWLObject source) {
-
-			this.source = validSource(source) ? source : null;
-		}
-
-		OBValue<?> checkCreate() {
-
-			if (source instanceof OWLClass) {
-
-				return checkCreate((OWLClass)source);
-			}
-
-			if (source instanceof OWLObjectIntersectionOf) {
-
-				return checkCreate((OWLObjectIntersectionOf)source);
-			}
-
-			if (source instanceof OWLObjectUnionOf) {
-
-				return checkCreate((OWLObjectUnionOf)source);
-			}
-
-			if (source instanceof OWLDataRange) {
-
-				return checkCreate((OWLDataRange)source);
-			}
-
-			return null;
-		}
-
-		private OBValue<?> checkCreate(OWLClass source) {
-
-			OBNumber number = numbers.checkExtractNumber(source);
-
-			return number != null ? number : frames.getOrNull(source);
-		}
-
-		private OBFrame checkCreate(OWLObjectIntersectionOf source) {
-
-			Set<OWLClassExpression> ops = OWLAPIVersion.getOperands(source);
-			Set<OWLClass> namedOps = extractNamedConcepts(ops);
-
-			if (namedOps.size() != 1) {
-
-				return null;
-			}
-
-			OWLClass named = namedOps.iterator().next();
-
-			if (ops.size() == 1) {
-
-				return frames.get(named);
-			}
-
-			ops.remove(named);
-
-			return checkCreateExtensionFrame(named, ops);
-		}
-
-		private OBFrame checkCreate(OWLObjectUnionOf source) {
-
-			Set<OWLClassExpression> ops = OWLAPIVersion.getOperands(source);
-			Set<OWLClass> namedOps = extractNamedConcepts(ops);
-
-			if (namedOps.isEmpty()) {
-
-				return null;
-			}
-
-			if (namedOps.size() == 1) {
-
-				return frames.get(namedOps.iterator().next());
-			}
-
-			return createDisjunctionFrame(namedOps);
-		}
-
-		private OBValue<?> checkCreate(OWLDataRange source) {
-
-			return stringDatatype(source)
-					? OBString.SINGLETON
-					: numbers.checkCreateNumber(source);
-		}
-
-		private OBFrame checkCreateExtensionFrame(
-							OWLClass named,
-							Set<OWLClassExpression> slotSources) {
-
-			Set<OBSlot> slots = createSlots(slotSources);
-
-			return slots.isEmpty() ? null : new OBExtensionFrame(frames.get(named), slots);
-		}
-
-		private OBFrame createDisjunctionFrame(Set<OWLClass> concepts) {
-
-			OBDisjunctionFrame frame = new OBDisjunctionFrame();
-
-			for (OWLClass concept : concepts) {
-
-				frame.addDisjunct(frames.get(concept));
-			}
-
-			return frame;
-		}
-
-		private Set<OBSlot> createSlots(Set<OWLClassExpression> sources) {
-
-			Set<OBSlot> createdSlots = new HashSet<OBSlot>();
-
-			for (OWLClassExpression source : sources) {
-
-				OBSlot slot = slots.checkCreateLooseSlot(source);
-
-				if (slot != null) {
-
-					createdSlots.add(slot);
-				}
-			}
-
-			return createdSlots;
-		}
-
-		private Set<OWLClass> extractNamedConcepts(Set<OWLClassExpression> ops) {
-
-			Set<OWLClass> namedOps = new HashSet<OWLClass>();
-
-			for (OWLClassExpression op : ops) {
-
-				if (op instanceof OWLClass) {
-
-					OWLClass named = (OWLClass)op;
-
-					if (frames.exists(named)) {
-
-						namedOps.add(named);
-					}
-				}
-			}
-
-			return namedOps;
-		}
-
-		private boolean validSource(OWLObject source) {
-
-			return source instanceof OWLClassExpression || source instanceof OWLDataRange;
-		}
-
-		private boolean stringDatatype(OWLDataRange range) {
-
-			return range instanceof OWLDatatype && stringDatatype(range.asOWLDatatype());
-		}
-
-		private boolean stringDatatype(OWLDatatype datatype) {
-
-			return datatype.getBuiltInDatatype() == OWL2Datatype.XSD_STRING;
-		}
-	}
-
 	OBValues(OModel model, OBFrames frames, OBSlots slots) {
 
 		this.frames = frames;
@@ -213,6 +51,141 @@ class OBValues {
 
 	OBValue<?> checkCreateValue(OWLObject source) {
 
-		return new ValueSpec(source).checkCreate();
+		if (source instanceof OWLClass) {
+
+			return checkCreateAtomicFrameOrNumber((OWLClass)source);
+		}
+
+		if (source instanceof OWLObjectIntersectionOf) {
+
+			return checkCreateExtensionFrame((OWLObjectIntersectionOf)source);
+		}
+
+		if (source instanceof OWLObjectUnionOf) {
+
+			return checkCreateDisjunctionFrame((OWLObjectUnionOf)source);
+		}
+
+		if (source instanceof OWLDataRange) {
+
+			return checkCreateDataValue((OWLDataRange)source);
+		}
+
+		return null;
+	}
+
+	private OBValue<?> checkCreateAtomicFrameOrNumber(OWLClass source) {
+
+		OBNumber number = numbers.checkExtractNumber(source);
+
+		return number != null ? number : frames.getOrNull(source);
+	}
+
+	private OBFrame checkCreateExtensionFrame(OWLObjectIntersectionOf source) {
+
+		Set<OWLClassExpression> ops = OWLAPIVersion.getOperands(source);
+		Set<OWLClass> namedOps = extractNamedConcepts(ops);
+
+		if (namedOps.size() != 1) {
+
+			return null;
+		}
+
+		OWLClass named = namedOps.iterator().next();
+
+		if (ops.size() == 1) {
+
+			return frames.get(named);
+		}
+
+		ops.remove(named);
+
+		Set<OBSlot> slots = createSlots(ops);
+
+		return slots.isEmpty() ? null : new OBExtensionFrame(frames.get(named), slots);
+	}
+
+	private OBFrame checkCreateDisjunctionFrame(OWLObjectUnionOf source) {
+
+		Set<OWLClassExpression> ops = OWLAPIVersion.getOperands(source);
+		Set<OWLClass> namedOps = extractNamedConcepts(ops);
+
+		if (namedOps.isEmpty()) {
+
+			return null;
+		}
+
+		if (namedOps.size() == 1) {
+
+			return frames.get(namedOps.iterator().next());
+		}
+
+		return createDisjunctionFrame(namedOps);
+	}
+
+	private OBValue<?> checkCreateDataValue(OWLDataRange source) {
+
+		return stringDatatype(source)
+				? OBString.SINGLETON
+				: numbers.checkCreateNumber(source);
+	}
+
+	private OBFrame createDisjunctionFrame(Set<OWLClass> concepts) {
+
+		OBDisjunctionFrame frame = new OBDisjunctionFrame();
+
+		for (OWLClass concept : concepts) {
+
+			frame.addDisjunct(frames.get(concept));
+		}
+
+		return frame;
+	}
+
+	private Set<OBSlot> createSlots(Set<OWLClassExpression> sources) {
+
+		Set<OBSlot> createdSlots = new HashSet<OBSlot>();
+
+		for (OWLClassExpression source : sources) {
+
+			OBSlot slot = slots.checkCreateLooseSlot(source);
+
+			if (slot != null) {
+
+				createdSlots.add(slot);
+			}
+		}
+
+		return createdSlots;
+	}
+
+	private Set<OWLClass> extractNamedConcepts(Set<OWLClassExpression> ops) {
+
+		Set<OWLClass> namedOps = new HashSet<OWLClass>();
+
+		for (OWLClassExpression op : ops) {
+
+			if (op instanceof OWLClass) {
+
+				OWLClass named = (OWLClass)op;
+
+				if (frames.exists(named)) {
+
+					namedOps.add(named);
+				}
+			}
+		}
+
+		return namedOps;
+	}
+
+	private boolean stringDatatype(OWLDataRange range) {
+
+		return range instanceof OWLDatatype && stringDatatype(range.asOWLDatatype());
+	}
+
+	private boolean stringDatatype(OWLDatatype datatype) {
+
+		return datatype.getBuiltInDatatype() == OWL2Datatype.XSD_STRING;
 	}
 }
