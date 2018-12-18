@@ -143,7 +143,8 @@
 		<OWLSanctionedModel
 			defaultSlotSources="RESTRICTIONS_ONLY"
 			defaultFrameSlotsPolicy="CFRAME_VALUED_IF_NO_STRUCTURE"
-			annotateFramesWithDefinitions="TRUE"
+			annotateFramesWithOWLDefinitions="TRUE"
+			annotateFramesWithMekonDefinitions="TRUE"
 			retainOnlyDeclarationAxioms="FALSE">
 			<ConceptInclusion>
 				<Group
