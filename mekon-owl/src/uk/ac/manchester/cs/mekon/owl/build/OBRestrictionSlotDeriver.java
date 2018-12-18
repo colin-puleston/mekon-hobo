@@ -65,10 +65,8 @@ class OBRestrictionSlotDeriver extends OBSlotDeriver {
 
 			createSlots(sub, (OWLObjectIntersectionOf)sup);
 		}
-		else {
 
-			createSlots(sub, sup);
-		}
+		createSlots(sub, sup);
 	}
 
 	private void createSlots(OWLClassExpression sub, OWLObjectIntersectionOf sups) {
