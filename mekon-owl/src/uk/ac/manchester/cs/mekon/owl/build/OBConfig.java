@@ -48,8 +48,9 @@ class OBConfig implements OBConfigVocab {
 		addLabelAnnotationProperties(builder);
 		setDefaultSlotSources(builder);
 		setDefaultFrameSlotsPolicy(builder);
-		setAnnotateFramesWithDefinitions(builder);
 		setAxiomPurgePolicy(builder);
+		setAnnotateFramesWithOWLDefinitions(builder);
+		setAnnotateFramesWithMekonDefinitions(builder);
 	}
 
 	private void addConcepts(OBSectionBuilder builder) {
@@ -110,14 +111,23 @@ class OBConfig implements OBConfigVocab {
 		builder.setDefaultFrameSlotsPolicy(getDefaultFrameSlotsPolicy());
 	}
 
-	private void setAnnotateFramesWithDefinitions(OBSectionBuilder builder) {
-
-		builder.setAnnotateFramesWithDefinitions(annotateFramesWithDefinitions());
-	}
-
 	private void setAxiomPurgePolicy(OBSectionBuilder builder) {
 
 		builder.setAxiomPurgePolicy(getAxiomPurgePolicy());
+	}
+
+	private void setAnnotateFramesWithOWLDefinitions(OBSectionBuilder builder) {
+
+		OBAnnotations annos = builder.getAnnotations();
+
+		annos.setAnnotateFramesWithOWLDefinitions(annotateFramesWithOWLDefinitions());
+	}
+
+	private void setAnnotateFramesWithMekonDefinitions(OBSectionBuilder builder) {
+
+		OBAnnotations annos = builder.getAnnotations();
+
+		annos.setAnnotateFramesWithMekonDefinitions(annotateFramesWithMekonDefinitions());
 	}
 
 	private OBAnnotationInclusion getAnnotationInclusion(KConfigNode incNode) {
@@ -165,16 +175,21 @@ class OBConfig implements OBConfigVocab {
 					OBFrameSlotsPolicy.IFRAME_VALUED_ONLY);
 	}
 
-	private boolean annotateFramesWithDefinitions() {
-
-		return configNode.getBoolean(ANNOTATE_FRAMES_WITH_DEFNS_ATTR);
-	}
-
 	private OBAxiomPurgePolicy getAxiomPurgePolicy() {
 
 		return configNode.getEnum(
 					AXIOM_PURGE_POLICY_ATTR,
 					OBAxiomPurgePolicy.class,
 					OBAxiomPurgePolicy.RETAIN_ALL);
+	}
+
+	private boolean annotateFramesWithOWLDefinitions() {
+
+		return configNode.getBoolean(ANNOTATE_FRAMES_WITH_OWL_DEFNS_ATTR);
+	}
+
+	private boolean annotateFramesWithMekonDefinitions() {
+
+		return configNode.getBoolean(ANNOTATE_FRAMES_WITH_MEKON_DEFNS_ATTR);
 	}
 }

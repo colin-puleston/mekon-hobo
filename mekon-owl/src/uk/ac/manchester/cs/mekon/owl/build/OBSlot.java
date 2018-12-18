@@ -45,10 +45,7 @@ class OBSlot extends OIdentified {
 		private OBAnnotations annotations;
 		private CValue<?> cValue = null;
 
-		CStructureCreator(
-			CBuilder builder,
-			OBSlot topLevelSlot,
-			OBAnnotations annotations) {
+		CStructureCreator(CBuilder builder, OBSlot topLevelSlot, OBAnnotations annotations) {
 
 			this.builder = builder;
 			this.topLevelSlot = topLevelSlot;
@@ -70,7 +67,7 @@ class OBSlot extends OIdentified {
 			}
 		}
 
-		void checkCreate(CExtender container) {
+		void create(CExtender container) {
 
 			container.addSlotValue(getIdentity(), getCValue());
 		}
@@ -182,11 +179,7 @@ class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		new CStructureCreator(
-				builder,
-				topLevelSlot,
-				annotations)
-					.checkCreate(container);
+		new CStructureCreator(builder, topLevelSlot, annotations).checkCreate(container);
 	}
 
 	void ensureCStructure(
@@ -195,11 +188,7 @@ class OBSlot extends OIdentified {
 			OBSlot topLevelSlot,
 			OBAnnotations annotations) {
 
-		new CStructureCreator(
-				builder,
-				topLevelSlot,
-				annotations)
-					.checkCreate(container);
+		new CStructureCreator(builder, topLevelSlot, annotations).create(container);
 	}
 
 	private CCardinality getCardinalityIfTopLevelSlot() {

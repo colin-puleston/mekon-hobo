@@ -41,15 +41,161 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 public class OBAnnotations {
 
-	static private final String FRAME_DEFINITION_ID = "OWL-Definition";
+	static private final String FRAME_OWL_DEFINITION_ID = "OWL-definition";
+	static private final String FRAME_MEKON_DEFINITION_ID = "MEKON-definition";
 
 	private OModel model;
-	private OBEntityLabels labels;
 
-	private boolean annotateFramesWithDefinitions = false;
+	private OBValues values;
+	private OBEntityLabels entityLabels;
+	private OLabelRenderer expressionLabels;
+
+	private boolean annotateFramesWithOWLDefinitions = false;
+	private boolean annotateFramesWithMekonDefinitions = false;
 
 	private Set<OBAnnotationInclusion> inclusions
 				= new HashSet<OBAnnotationInclusion>();
+
+	private class FrameAnnotator {
+
+		private CBuilder builder;
+		private CFrame frame;
+
+		private CAnnotationsEditor cEditor;
+
+		FrameAnnotator(CBuilder builder, CFrame frame) {
+
+			this.builder = builder;
+			this.frame = frame;
+
+			cEditor = getCEditor();
+		}
+
+		void checkAnnotate(OWLEntity owlEntity) {
+
+			if (owlEntity instanceof OWLClass) {
+
+				addInclusions(cEditor, owlEntity);
+
+				if (annotateWithDefinitions()) {
+
+					addDefinitions((OWLClass)owlEntity);
+				}
+			}
+			else {
+
+				annotateSlotSet((OWLProperty)owlEntity);
+			}
+		}
+
+		private boolean annotateWithDefinitions() {
+
+			return annotateFramesWithOWLDefinitions
+					|| annotateFramesWithMekonDefinitions;
+		}
+
+		private void addDefinitions(OWLClass owlConcept) {
+
+			for (OWLClassExpression owlDefn : getEquivalents(owlConcept)) {
+
+				if (annotateFramesWithOWLDefinitions) {
+
+					addOWLDefinition(owlDefn);
+				}
+
+				if (annotateFramesWithMekonDefinitions) {
+
+					checkAddMekonDefinition(owlDefn);
+				}
+			}
+		}
+
+		private void addOWLDefinition(OWLClassExpression owlDefn) {
+
+			cEditor.add(FRAME_OWL_DEFINITION_ID, expressionLabels.render(owlDefn));
+		}
+
+		private void checkAddMekonDefinition(OWLClassExpression owlDefn) {
+
+			OBValue<?> defnBldr = values.checkCreateValue(owlDefn);
+
+			if (defnBldr != null && defnBldr instanceof OBExtensionFrame) {
+
+				CFrame defn = createMekonDefinition((OBExtensionFrame)defnBldr);
+
+				cEditor.add(FRAME_MEKON_DEFINITION_ID, defn);
+			}
+		}
+
+		private CFrame createMekonDefinition(OBExtensionFrame defnBldr) {
+
+			return defnBldr.ensureCStructure(builder, OBAnnotations.this);
+		}
+
+		private void annotateSlotSet(OWLProperty owlProperty) {
+
+			new SlotSetAnnotator(builder, cEditor).checkAnnotate(owlProperty);
+		}
+
+		private CAnnotationsEditor getCEditor() {
+
+			return builder.getAnnotationsEditor(frame.getAnnotations());
+		}
+	}
+
+	private class SlotSetAnnotator {
+
+		private CBuilder builder;
+		private CAnnotationsEditor cEditor;
+
+		SlotSetAnnotator(CBuilder builder) {
+
+			this(builder, null);
+		}
+
+		SlotSetAnnotator(CBuilder builder, CAnnotationsEditor cEditor) {
+
+			this.builder = builder;
+			this.cEditor = cEditor;
+		}
+
+		void checkAnnotate(OWLProperty owlProperty) {
+
+			if (cEditor != null) {
+
+				cEditor = getCEditor(owlProperty);
+			}
+
+			addAllInclusions(owlProperty);
+		}
+
+		private void addAllInclusions(OWLProperty owlProperty) {
+
+			addInclusions(cEditor, owlProperty);
+
+			for (OWLProperty owlSuperProperty : getSuperProperties(owlProperty)) {
+
+				addAllInclusions(owlSuperProperty);
+			}
+		}
+
+		private Set<? extends OWLProperty> getSuperProperties(OWLProperty owlProperty) {
+
+			return owlProperty instanceof OWLObjectProperty
+						? model.getInferredSupers((OWLObjectProperty)owlProperty, true)
+						: model.getInferredSupers((OWLDataProperty)owlProperty, true);
+		}
+
+		private CAnnotationsEditor getCEditor(OWLProperty owlProperty) {
+
+			return builder.getSlotAnnotationsEditor(toSlotId(owlProperty));
+		}
+
+		private CIdentity toSlotId(OWLProperty owlProperty) {
+
+			return new OIdentity(owlProperty, entityLabels.getLabel(owlProperty));
+		}
+	}
 
 	/**
 	 * Adds a specification of a set of annotations to be included.
@@ -73,49 +219,54 @@ public class OBAnnotations {
 		this.inclusions.addAll(inclusions);
 	}
 
-	OBAnnotations(OModel model, OBEntityLabels labels) {
+	/**
+	 * Sets the attribute that determines whether or not all frames
+	 * that are built will be annotated with any OWL equivalent-classes
+	 * that have been asserted or inferred.
+	 *
+	 * @param value Required value of attribute
+	 */
+	public void setAnnotateFramesWithOWLDefinitions(boolean value) {
 
-		this.model = model;
-		this.labels = labels;
+		annotateFramesWithOWLDefinitions = value;
 	}
 
-	void setAnnotateFramesWithDefinitions(boolean value) {
+	/**
+	 * Sets the attribute that determines whether or not all frames
+	 * that are built will be annotated with frames-model versions
+	 * of any OWL equivalent-classes that have been asserted or inferred,
+	 * and which can be represented within the frames-model.
+	 *
+	 * @param value Required value of attribute
+	 */
+	public void setAnnotateFramesWithMekonDefinitions(boolean value) {
 
-		annotateFramesWithDefinitions = value;
+		annotateFramesWithMekonDefinitions = value;
+	}
+
+	OBAnnotations(
+		OModel model,
+		OBFrames frames,
+		OBSlots slots,
+		OBEntityLabels entityLabels) {
+
+		this.model = model;
+		this.entityLabels = entityLabels;
+
+		values = new OBValues(model, frames, slots);
+		expressionLabels = new OLabelRenderer(model);
+
+		expressionLabels.setAllowCarriageReturns(false);
 	}
 
 	void checkAnnotateFrame(CBuilder builder, CFrame cFrame, OWLEntity owlEntity) {
 
-		CAnnotationsEditor cEditor = getCEditor(builder, cFrame);
-
-		if (owlEntity instanceof OWLClass) {
-
-			addInclusions(cEditor, owlEntity);
-
-			if (annotateFramesWithDefinitions) {
-
-				addCFrameDefinitions(cEditor, (OWLClass)owlEntity);
-			}
-		}
-		else {
-
-			addPropertyInclusions(cEditor, (OWLProperty)owlEntity);
-		}
+		new FrameAnnotator(builder, cFrame).checkAnnotate(owlEntity);
 	}
 
 	void checkAnnotateSlotSet(CBuilder builder, OWLProperty owlProperty) {
 
-		addPropertyInclusions(getCEditor(builder, toSlotId(owlProperty)), owlProperty);
-	}
-
-	private void addPropertyInclusions(CAnnotationsEditor cEditor, OWLProperty owlProperty) {
-
-		addInclusions(cEditor, owlProperty);
-
-		for (OWLProperty owlSuperProperty : getSuperProperties(owlProperty)) {
-
-			addPropertyInclusions(cEditor, owlSuperProperty);
-		}
+		new SlotSetAnnotator(builder).checkAnnotate(owlProperty);
 	}
 
 	private void addInclusions(CAnnotationsEditor cEditor, OWLEntity owlEntity) {
@@ -123,18 +274,6 @@ public class OBAnnotations {
 		for (OBAnnotationInclusion inclusion : inclusions) {
 
 			inclusion.checkAdd(model, owlEntity, cEditor);
-		}
-	}
-
-	private void addCFrameDefinitions(CAnnotationsEditor cEditor, OWLClass owlConcept) {
-
-		OLabelRenderer labels = new OLabelRenderer(model);
-
-		labels.setAllowCarriageReturns(false);
-
-		for (OWLClassExpression equiv : getEquivalents(owlConcept)) {
-
-			cEditor.add(FRAME_DEFINITION_ID, labels.render(equiv));
 		}
 	}
 
@@ -157,27 +296,5 @@ public class OBAnnotations {
 		}
 
 		return equivs;
-	}
-
-	private Set<? extends OWLProperty> getSuperProperties(OWLProperty owlProperty) {
-
-		return owlProperty instanceof OWLObjectProperty
-					? model.getInferredSupers((OWLObjectProperty)owlProperty, true)
-					: model.getInferredSupers((OWLDataProperty)owlProperty, true);
-	}
-
-	private CAnnotationsEditor getCEditor(CBuilder builder, CFrame cFrame) {
-
-		return builder.getAnnotationsEditor(cFrame.getAnnotations());
-	}
-
-	private CAnnotationsEditor getCEditor(CBuilder builder, CIdentity slotId) {
-
-		return builder.getSlotAnnotationsEditor(slotId);
-	}
-
-	private CIdentity toSlotId(OWLProperty owlProperty) {
-
-		return new OIdentity(owlProperty, labels.getLabel(owlProperty));
 	}
 }

@@ -175,18 +175,6 @@ public class OBSectionBuilder implements CSectionBuilder {
 	}
 
 	/**
-	 * Sets the attribute that determines whether or not all frames
-	 * that are built will be annotated with any equivalent-classes
-	 * that have been asserted.
-	 *
-	 * @param value Required value of attribute
-	 */
-	public void setAnnotateFramesWithDefinitions(boolean value) {
-
-		annotations.setAnnotateFramesWithDefinitions(value);
-	}
-
-	/**
 	 * Sets the axiom-purge policy, which determines which axioms, if
 	 * any, will be removed from the OWL model after the section has
 	 * been built and the reasoner loaded. Setting this attribute
@@ -296,13 +284,14 @@ public class OBSectionBuilder implements CSectionBuilder {
 		this.model = model;
 
 		labels = new OBEntityLabels(model);
-		annotations = new OBAnnotations(model, labels);
 
 		concepts = new OBConcepts(model);
 		properties = new OBProperties(model);
 
 		frames = new OBFrames(concepts, properties, labels);
 		slots = new OBSlots(model, frames, concepts, properties, labels);
+
+		annotations = new OBAnnotations(model, frames, slots, labels);
 	}
 
 	void initialise(OModel model, KConfigNode parentConfigNode) {

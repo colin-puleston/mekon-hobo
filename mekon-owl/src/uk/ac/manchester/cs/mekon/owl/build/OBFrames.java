@@ -44,10 +44,7 @@ class OBFrames {
 	private Map<OWLEntity, OBAtomicFrame> frames
 				= new HashMap<OWLEntity, OBAtomicFrame>();
 
-	OBFrames(
-		OBConcepts concepts,
-		OBProperties properties,
-		OBEntityLabels labels) {
+	OBFrames(OBConcepts concepts, OBProperties properties, OBEntityLabels labels) {
 
 		this.concepts = concepts;
 		this.properties = properties;
