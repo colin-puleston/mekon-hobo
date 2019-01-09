@@ -71,4 +71,9 @@ public class NLink extends NFeature<NNode> {
 
 		super(type, iSlot);
 	}
+
+	void renderAttribute(NEntityRenderer renderer, NNode value) {
+
+		value.render(renderer);
+	}
 }

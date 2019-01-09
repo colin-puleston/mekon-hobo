@@ -53,7 +53,11 @@ public abstract class NEntity {
 	 */
 	public String toString() {
 
-		return getClass().getSimpleName() + "(" + typeDisjuncts + ")";
+		NEntityRenderer r = new NEntityRenderer();
+
+		render(r);
+
+		return r.getRendering();
 	}
 
 	/**
@@ -128,6 +132,12 @@ public abstract class NEntity {
 		typeDisjuncts.addAll(disjuncts);
 	}
 
+	void render(NEntityRenderer renderer) {
+
+		renderer.addLine(getClass().getSimpleName() + "(" + typeDisjuncts + ")");
+		renderAttributes(renderer.nextLevel());
+	}
+
 	private String typeDisjunctsToString() {
 
 		StringBuilder s = new StringBuilder();
@@ -149,4 +159,6 @@ public abstract class NEntity {
 
 		return s.toString();
 	}
+
+	abstract void renderAttributes(NEntityRenderer renderer);
 }

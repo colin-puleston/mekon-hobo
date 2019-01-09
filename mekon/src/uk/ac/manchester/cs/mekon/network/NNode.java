@@ -283,6 +283,17 @@ public class NNode extends NEntity {
 		this.iFrame = iFrame;
 	}
 
+	void renderAttributes(NEntityRenderer renderer) {
+
+		for (NFeature<?> feature : features) {
+
+			if (feature.hasValues()) {
+
+				feature.render(renderer);
+			}
+		}
+	}
+
 	private <F extends NFeature<?>>List<F> getTypeFeatures(Class<F> type) {
 
 		List<F> typeFeatures = new ArrayList<F>();

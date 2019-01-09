@@ -160,4 +160,14 @@ public abstract class NFeature<V> extends NEntity {
 
 		this.iSlot = iSlot;
 	}
+
+	void renderAttributes(NEntityRenderer renderer) {
+
+		for (V value : values) {
+
+			renderAttribute(renderer, value);
+		}
+	}
+
+	abstract void renderAttribute(NEntityRenderer renderer, V value);
 }

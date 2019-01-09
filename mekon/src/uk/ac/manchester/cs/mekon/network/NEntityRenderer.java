@@ -24,45 +24,39 @@
 
 package uk.ac.manchester.cs.mekon.network;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
- * Represents a data-valued feature in the network-based instance
- * representation
- *
  * @author Colin Puleston
  */
-public abstract class NDataFeature<V> extends NFeature<V> {
+class NEntityRenderer {
 
-	/**
-	 * Provides current value for the feature.
-	 *
-	 * @return Current value
-	 * @throws KAccessException if no current value
-	 */
-	public V getValue() {
+	static private final String TAB = "  ";
 
-		if (hasValues()) {
+	private StringBuilder rendering;
+	private String tabs;
 
-			return getValues().iterator().next();
-		}
+	NEntityRenderer() {
 
-		throw new KAccessException("No current value for feature: " + this);
+		this(new StringBuilder(), "");
 	}
 
-	NDataFeature(CIdentity type) {
+	NEntityRenderer nextLevel() {
 
-		super(type, null);
+		return new NEntityRenderer(rendering, tabs + TAB);
 	}
 
-	NDataFeature(CIdentity type, ISlot iSlot) {
+	void addLine(Object obj) {
 
-		super(type, iSlot);
+		rendering.append(tabs + obj + '\n');
 	}
 
-	void renderAttribute(NEntityRenderer renderer, V value) {
+	String getRendering() {
 
-		renderer.addLine(value.toString());
+		return rendering.toString();
+	}
+
+	private NEntityRenderer(StringBuilder rendering, String tabs) {
+
+		this.rendering = rendering;
+		this.tabs = tabs;
 	}
 }
