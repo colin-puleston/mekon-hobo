@@ -41,7 +41,7 @@ class OntologyEntityResolver {
 	private OFrameConcepts frameConcepts;
 	private OSlotProperties slotProperties;
 
-	private class Processor extends NCrawler {
+	private class NestedStructureResolver extends NCrawler {
 
 		protected void visit(NNode node) {
 
@@ -73,16 +73,14 @@ class OntologyEntityResolver {
 
 	void resolve(NNode rootNode) {
 
-		if (resolveNode(rootNode)) {
-
-			new Processor().process(rootNode);
-		}
-		else {
+		if (!resolveNode(rootNode)) {
 
 			throw new KModelException(
 						"No OWL class found for any subsumer of: "
 						+ rootNode.getCFrame());
 		}
+
+		new NestedStructureResolver().process(rootNode);
 	}
 
 	private void resolveFeatures(NNode node) {
