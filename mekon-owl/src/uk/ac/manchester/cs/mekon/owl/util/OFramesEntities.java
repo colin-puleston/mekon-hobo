@@ -40,7 +40,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public abstract class OFramesEntities {
 
-	private List<OEntities<?>> entitySets;
+	private List<OEntities<?>> entitySets = new ArrayList<OEntities<?>>();
 
 	/**
 	 * Tests whether there is an OWL entity that corresponds to the
@@ -69,9 +69,9 @@ public abstract class OFramesEntities {
 		return exists(iri) ? iri : null;
 	}
 
-	OFramesEntities(OEntities<?>... entitySets) {
+	void addEntitySet(OEntities<?> entitySet) {
 
-		this.entitySets = Arrays.asList(entitySets);
+		entitySets.add(entitySet);
 	}
 
 	private boolean exists(IRI iri) {

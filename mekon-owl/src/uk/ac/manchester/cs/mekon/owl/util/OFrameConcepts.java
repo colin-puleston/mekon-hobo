@@ -44,7 +44,7 @@ public class OFrameConcepts extends OFramesEntities {
 	 */
 	public OFrameConcepts(OModel model) {
 
-		super(model.getConcepts());
+		addEntitySet(model.getConcepts());
 	}
 
 	/**

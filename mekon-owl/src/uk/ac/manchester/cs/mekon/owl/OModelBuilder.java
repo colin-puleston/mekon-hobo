@@ -143,11 +143,11 @@ public class OModelBuilder extends OModelCreator {
 		Set<OWLOntology> allInputs = OWLAPIVersion.getOntologies(sourceManager);
 
 		IRI ontIRI = getOntologyIRI(mainInput);
-		OWLOntology ontology = createModelOntology(manager, allInputs, ontIRI);
+		OWLOntology model = createModelOntology(manager, allInputs, ontIRI);
 
 		OMonitor.pollForOntologyLoaded();
 
-		return ontology;
+		return model;
 	}
 
 	void assertExternallyInferableHierarchy(OModel model) {

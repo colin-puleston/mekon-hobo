@@ -41,6 +41,7 @@ public class OSlotProperties extends OFramesEntities {
 	 */
 	public OSlotProperties(OModel model) {
 
-		super(model.getObjectProperties(), model.getDataProperties());
+		addEntitySet(model.getObjectProperties());
+		addEntitySet(model.getDataProperties());
 	}
 }

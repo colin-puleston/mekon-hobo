@@ -226,7 +226,9 @@ public class OModel {
 	public void startReasoner() {
 
 		classify();
-		initialiseCachesForReasoner();
+
+		objectProperties.initialiseForSupportedInferenceTypes();
+		dataProperties.initialiseForSupportedInferenceTypes();
 	}
 
 	/**
@@ -237,16 +239,6 @@ public class OModel {
 
 		getReasoner().flush();
 		classify();
-	}
-
-	/**
-	 * Updates all caches to align with any changes made directly to
-	 * ontology. Should be invoked after any direct ontology updates.
-	 */
-	public void updateCaches() {
-
-		createCaches();
-		initialiseCachesForReasoner();
 	}
 
 	/**
@@ -696,7 +688,13 @@ public class OModel {
 		this.reasonerFactory = reasonerFactory;
 		this.reasoningType = reasoningType;
 
-		createCaches();
+		concepts = new OConcepts(this);
+		objectProperties = new OObjectProperties(this);
+		dataProperties = new ODataProperties(this);
+		annotationProperties = new OAnnotationProperties(this);
+
+		modelAxioms = new OAxioms(this, modelOntology);
+		instanceAxioms = new OAxioms(this, instanceOntology);
 	}
 
 	void setIndirectNumericProperty(IRI iri) {
@@ -736,28 +734,11 @@ public class OModel {
 		modelAxioms.addAll(axioms);
 	}
 
-	private void createCaches() {
-
-		concepts = new OConcepts(this);
-		objectProperties = new OObjectProperties(this);
-		dataProperties = new ODataProperties(this);
-		annotationProperties = new OAnnotationProperties(this);
-
-		modelAxioms = new OAxioms(this, modelOntology);
-		instanceAxioms = new OAxioms(this, instanceOntology);
-	}
-
 	private void classify() {
 
 		OMonitor.pollForPreReasonerLoad(getReasoner().getClass());
 		getReasoner().precomputeInferences(InferenceType.values());
 		OMonitor.pollForReasonerLoaded();
-	}
-
-	private void initialiseCachesForReasoner() {
-
-		objectProperties.initialiseForSupportedInferenceTypes();
-		dataProperties.initialiseForSupportedInferenceTypes();
 	}
 
 	private OWLDataProperty getIndirectNumericProperty(IRI iri) {
