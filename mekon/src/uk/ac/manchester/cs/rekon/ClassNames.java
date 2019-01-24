@@ -52,11 +52,38 @@ class ClassNames extends EntityNames<OWLClass, OWLClassExpression, ClassName> {
 
 	Collection<OWLClassExpression> getAssertedSupers(OWLClass entity) {
 
-		return assertions.getSupers(entity);
+		Set<OWLClassExpression> sups = new HashSet<OWLClassExpression>();
+
+		sups.addAll(assertions.getSupers(entity));
+		addDirectlyImpliedSupers(sups, entity);
+
+		return sups;
 	}
 
 	ClassName createName(OWLClass entity, int ref) {
 
 		return new ClassName(entity, ref);
+	}
+
+	private void addDirectlyImpliedSupers(Set<OWLClassExpression> sups, OWLClass cls) {
+
+		for (OWLClassExpression def : getAssertedEquivalents(cls)) {
+
+			if (def instanceof OWLObjectIntersectionOf) {
+
+				addDirectlyImpliedSupers(sups, (OWLObjectIntersectionOf)def);
+			}
+		}
+	}
+
+	private void addDirectlyImpliedSupers(Set<OWLClassExpression> sups, OWLObjectIntersectionOf def) {
+
+		for (OWLClassExpression op : def.getOperands()) {
+
+			if (op instanceof OWLClass) {
+
+				sups.add(op);
+			}
+		}
 	}
 }

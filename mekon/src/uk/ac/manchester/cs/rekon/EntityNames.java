@@ -54,11 +54,15 @@ abstract class EntityNames<E extends OWLEntity, S extends OWLObject, N extends N
 		resolveUpwardLinks();
 	}
 
-	void resolveAllLinksPostClassification() {
+	void resolveAllLinksPostClassification(boolean classifiableType) {
 
-		clearDerivedLinks();
-		resolveUpwardLinks();
-		purgeSupers();
+		if (classifiableType) {
+
+			clearDerivedLinks();
+			resolveUpwardLinks();
+			purgeSupers();
+		}
+
 		setSubs();
 		resolveDownwardLinks();
 	}

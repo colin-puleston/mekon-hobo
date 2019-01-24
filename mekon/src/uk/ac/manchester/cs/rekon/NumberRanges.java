@@ -32,30 +32,30 @@ import org.semanticweb.owlapi.vocab.*;
 /**
  * @author Colin Puleston
  */
-class NumberRangeExtractor {
+class NumberRanges {
 
-	private Set<TypeRangeExtractor<?>> extractors = new HashSet<TypeRangeExtractor<?>>();
+	private Set<TypeHandler<?>> typeHandlers = new HashSet<TypeHandler<?>>();
 
 	private boolean cacheAdditionsEnabled = true;
 
-	private abstract class TypeRangeExtractor<N extends Number> {
+	private abstract class TypeHandler<N extends Number> {
 
 		private Map<OWLDatatypeRestriction, NumberRange> cache
 					= new HashMap<OWLDatatypeRestriction, NumberRange>();
 
-		TypeRangeExtractor() {
+		TypeHandler() {
 
-			extractors.add(this);
+			typeHandlers.add(this);
 		}
 
-		boolean extractsType(OWLDatatype datatype) {
+		boolean handlesType(OWLDatatype datatype) {
 
 			return getBuiltInDatatypes().contains(datatype.getBuiltInDatatype());
 		}
 
 		abstract List<OWL2Datatype> getBuiltInDatatypes();
 
-		NumberRange extract(OWLDatatypeRestriction res) {
+		NumberRange toRange(OWLDatatypeRestriction res) {
 
 			NumberRange r = cache.get(res);
 
@@ -100,7 +100,7 @@ class NumberRangeExtractor {
 		}
 	}
 
-	private class IntegerRangeExtractor extends TypeRangeExtractor<Integer> {
+	private class IntegerRanges extends TypeHandler<Integer> {
 
 		List<OWL2Datatype> getBuiltInDatatypes() {
 
@@ -123,7 +123,7 @@ class NumberRangeExtractor {
 		}
 	}
 
-	private class LongRangeExtractor extends TypeRangeExtractor<Long> {
+	private class LongRanges extends TypeHandler<Long> {
 
 		List<OWL2Datatype> getBuiltInDatatypes() {
 
@@ -146,7 +146,7 @@ class NumberRangeExtractor {
 		}
 	}
 
-	private class FloatRangeExtractor extends TypeRangeExtractor<Float> {
+	private class FloatRanges extends TypeHandler<Float> {
 
 		List<OWL2Datatype> getBuiltInDatatypes() {
 
@@ -169,7 +169,7 @@ class NumberRangeExtractor {
 		}
 	}
 
-	private class DoubleRangeExtractor extends TypeRangeExtractor<Double> {
+	private class DoubleRanges extends TypeHandler<Double> {
 
 		List<OWL2Datatype> getBuiltInDatatypes() {
 
@@ -192,12 +192,12 @@ class NumberRangeExtractor {
 		}
 	}
 
-	NumberRangeExtractor() {
+	NumberRanges() {
 
-		new IntegerRangeExtractor();
-		new LongRangeExtractor();
-		new FloatRangeExtractor();
-		new DoubleRangeExtractor();
+		new IntegerRanges();
+		new LongRanges();
+		new FloatRanges();
+		new DoubleRanges();
 	}
 
 	void setCacheAdditionsEnabled(boolean value) {
@@ -205,43 +205,43 @@ class NumberRangeExtractor {
 		cacheAdditionsEnabled = value;
 	}
 
-	NumberRange extract(OWLDataRange range) {
+	NumberRange toRange(OWLDataRange range) {
 
 		if (range instanceof OWLDatatype) {
 
-			return extract(range.asOWLDatatype());
+			return toRange(range.asOWLDatatype());
 		}
 
 		if (range instanceof OWLDatatypeRestriction) {
 
-			return extract((OWLDatatypeRestriction)range);
+			return toRange((OWLDatatypeRestriction)range);
 		}
 
 		return null;
 	}
 
-	private NumberRange extract(OWLDatatypeRestriction res) {
+	private NumberRange toRange(OWLDatatypeRestriction res) {
 
 		OWLDatatype datatype = res.getDatatype();
-		TypeRangeExtractor<?> extractor = lookForExtractor(datatype);
+		TypeHandler<?> handler = lookFors(datatype);
 
-		return extractor != null ? extractor.extract(res) : null;
+		return handler != null ? handler.toRange(res) : null;
 	}
 
-	private NumberRange extract(OWLDatatype datatype) {
+	private NumberRange toRange(OWLDatatype datatype) {
 
-		TypeRangeExtractor<?> extractor = lookForExtractor(datatype);
+		TypeHandler<?> handler = lookFors(datatype);
 
-		return extractor != null ? extractor.getUnconstrained() : null;
+		return handler != null ? handler.getUnconstrained() : null;
 	}
 
-	private TypeRangeExtractor<?> lookForExtractor(OWLDatatype datatype) {
+	private TypeHandler<?> lookFors(OWLDatatype datatype) {
 
-		for (TypeRangeExtractor<?> extractor : extractors) {
+		for (TypeHandler<?> handler : typeHandlers) {
 
-			if (extractor.extractsType(datatype)) {
+			if (handler.handlesType(datatype)) {
 
-				return extractor;
+				return handler;
 			}
 		}
 

@@ -40,6 +40,8 @@ public class RekonReasoner extends StructuralReasoner {
 	static final String REASONER_NAME = "REKON";
 	static final Version REASONER_VERSION = new Version(1, 0, 0, 0);
 
+	private OWLOntology rootOntology;
+
 	private Names names;
 	private Classifier classifier;
 
@@ -47,10 +49,9 @@ public class RekonReasoner extends StructuralReasoner {
 
 		super(rootOntology, new SimpleConfiguration(), BufferingMode.BUFFERING);
 
-		Assertions assertions = new Assertions(rootOntology);
+		this.rootOntology = rootOntology;
 
-		names = new Names(assertions);
-		classifier = new Classifier(assertions, names);
+		initialise();
 	}
 
 	public String getReasonerName() {
@@ -76,6 +77,21 @@ public class RekonReasoner extends StructuralReasoner {
 	public NodeSet<OWLClass> getSubClasses(OWLClassExpression expr, boolean directOnly) {
 
 		return toNodeSet(getSubClassSet(expr, directOnly));
+	}
+
+    public void flush() {
+
+		super.flush();
+
+		initialise();
+    }
+
+	private void initialise() {
+
+		Assertions assertions = new Assertions(rootOntology);
+
+		names = new Names(assertions);
+		classifier = new Classifier(assertions, names);
 	}
 
 	private Set<OWLClass> getEquivalentClassSet(OWLClassExpression expr) {

@@ -48,7 +48,9 @@ class Names {
 
 	void resolveAllLinksPostClassification() {
 
-		classNames.resolveAllLinksPostClassification();
+		classNames.resolveAllLinksPostClassification(true);
+		objectPropertyNames.resolveAllLinksPostClassification(false);
+		dataPropertyNames.resolveAllLinksPostClassification(false);
 	}
 
 	Collection<ClassName> getAllClassNames() {

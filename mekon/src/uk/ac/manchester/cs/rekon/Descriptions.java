@@ -31,7 +31,7 @@ import org.semanticweb.owlapi.model.*;
 /**
  * @author Colin Puleston
  */
-class DescriptionExtractor {
+class Descriptions {
 
 	private Names names;
 
@@ -40,7 +40,7 @@ class DescriptionExtractor {
 	private DataSuccessors dataSuccessors = new DataSuccessors();
 	private Disjunctions disjunctions = new Disjunctions();
 
-	private NumberRangeExtractor numberRanges = new NumberRangeExtractor();
+	private NumberRanges numberRanges = new NumberRanges();
 
 	private boolean cacheAdditionsEnabled = true;
 
@@ -54,7 +54,7 @@ class DescriptionExtractor {
 
 			if (expr == null) {
 
-				expr = extract(source);
+				expr = create(source);
 
 				if (cacheAdditionsEnabled) {
 
@@ -65,7 +65,7 @@ class DescriptionExtractor {
 			return expr;
 		}
 
-		abstract E extract(S source);
+		abstract E create(S source);
 	}
 
 	private class ClassDescriptions extends TypeExpressions<OWLClassExpression, Description> {
@@ -92,7 +92,7 @@ class DescriptionExtractor {
 			return get(source, false);
 		}
 
-		Description extract(OWLClassExpression source) {
+		Description create(OWLClassExpression source) {
 
 			if (source instanceof OWLClass) {
 
@@ -101,7 +101,7 @@ class DescriptionExtractor {
 
 			if (source instanceof OWLObjectIntersectionOf) {
 
-				return extract((OWLObjectIntersectionOf)source);
+				return create((OWLObjectIntersectionOf)source);
 			}
 
 			return null;
@@ -114,7 +114,7 @@ class DescriptionExtractor {
 			return get(source);
 		}
 
-		private Description extract(OWLObjectIntersectionOf source) {
+		private Description create(OWLObjectIntersectionOf source) {
 
 			Set<OWLClassExpression> ops = source.getOperands();
 			OWLClass c = removeSingleNamedClass(ops);
@@ -124,12 +124,12 @@ class DescriptionExtractor {
 				return null;
 			}
 
-			Set<Expression> s = extractSuccessors(ops);
+			Set<Expression> s = createSuccessors(ops);
 
 			return s != null ? new Description(names.get(c), s) : null;
 		}
 
-		private Set<Expression> extractSuccessors(Set<OWLClassExpression> sources) {
+		private Set<Expression> createSuccessors(Set<OWLClassExpression> sources) {
 
 			Set<Expression> succs = new HashSet<Expression>();
 
@@ -137,7 +137,7 @@ class DescriptionExtractor {
 
 				if (source instanceof OWLRestriction) {
 
-					Expression s = extractSuccessor((OWLRestriction)source);
+					Expression s = createSuccessor((OWLRestriction)source);
 
 					if (s == null) {
 
@@ -155,52 +155,52 @@ class DescriptionExtractor {
 			return succs;
 		}
 
-		private Expression extractSuccessor(OWLRestriction source) {
+		private Expression createSuccessor(OWLRestriction source) {
 
 			if (source instanceof OWLCardinalityRestriction) {
 
-				return extractSuccessor((OWLCardinalityRestriction)source);
+				return createSuccessor((OWLCardinalityRestriction)source);
 			}
 
 			if (source instanceof OWLObjectSomeValuesFrom) {
 
-				return extractObjectSuccessor(source);
+				return createObjectSuccessor(source);
 			}
 
 			if (source instanceof OWLDataSomeValuesFrom) {
 
-				return extractDataSuccessor(source);
+				return createDataSuccessor(source);
 			}
 
 			return null;
 		}
 
-		private Expression extractSuccessor(OWLCardinalityRestriction<?> source) {
+		private Expression createSuccessor(OWLCardinalityRestriction<?> source) {
 
 			if (source.getCardinality() != 0) {
 
 				if (source instanceof OWLObjectExactCardinality
 					|| source instanceof OWLObjectMinCardinality) {
 
-					return extractObjectSuccessor(source);
+					return createObjectSuccessor(source);
 				}
 
 				if (source instanceof OWLDataExactCardinality
 					|| source instanceof OWLDataMinCardinality) {
 
-					return extractDataSuccessor(source);
+					return createDataSuccessor(source);
 				}
 			}
 
 			return null;
 		}
 
-		private Description extractObjectSuccessor(OWLRestriction source) {
+		private Description createObjectSuccessor(OWLRestriction source) {
 
 			return objectSuccessors.get((OWLQuantifiedObjectRestriction)source);
 		}
 
-		private Description extractDataSuccessor(OWLRestriction source) {
+		private Description createDataSuccessor(OWLRestriction source) {
 
 			return dataSuccessors.get((OWLQuantifiedDataRestriction)source);
 		}
@@ -231,13 +231,13 @@ class DescriptionExtractor {
 					extends
 						TypeExpressions<OWLQuantifiedObjectRestriction, Description> {
 
-		Description extract(OWLQuantifiedObjectRestriction source) {
+		Description create(OWLQuantifiedObjectRestriction source) {
 
 			OWLObjectPropertyExpression expr = source.getProperty();
 
 			if (expr instanceof OWLObjectProperty) {
 
-				NameExpression s = extractNameExpression(source.getFiller());
+				NameExpression s = createNameExpression(source.getFiller());
 
 				if (s != null) {
 
@@ -248,7 +248,7 @@ class DescriptionExtractor {
 			return null;
 		}
 
-		private NameExpression extractNameExpression(OWLClassExpression source) {
+		private NameExpression createNameExpression(OWLClassExpression source) {
 
 			if (source instanceof OWLObjectUnionOf) {
 
@@ -263,13 +263,13 @@ class DescriptionExtractor {
 					extends
 						TypeExpressions<OWLQuantifiedDataRestriction, Description> {
 
-		Description extract(OWLQuantifiedDataRestriction source) {
+		Description create(OWLQuantifiedDataRestriction source) {
 
 			OWLDataPropertyExpression expr = source.getProperty();
 
 			if (expr instanceof OWLDataProperty) {
 
-				NumberRange s = numberRanges.extract(source.getFiller());
+				NumberRange s = numberRanges.toRange(source.getFiller());
 
 				if (s != null) {
 
@@ -283,7 +283,7 @@ class DescriptionExtractor {
 
 	private class Disjunctions extends TypeExpressions<OWLObjectUnionOf, Disjunction> {
 
-		Disjunction extract(OWLObjectUnionOf source) {
+		Disjunction create(OWLObjectUnionOf source) {
 
 			Set<Description> disjuncts = new HashSet<Description>();
 
@@ -303,7 +303,7 @@ class DescriptionExtractor {
 		}
 	}
 
-	DescriptionExtractor(Names names) {
+	Descriptions(Names names) {
 
 		this.names = names;
 	}
@@ -315,13 +315,13 @@ class DescriptionExtractor {
 		numberRanges.setCacheAdditionsEnabled(value);
 	}
 
-	Set<Description> extractStructuredDescriptions(Collection<OWLClassExpression> sources) {
+	Set<Description> toStructuredDescriptions(Collection<OWLClassExpression> sources) {
 
 		Set<Description> descs = new HashSet<Description>();
 
 		for (OWLClassExpression e : sources) {
 
-			Description d = extractStructuredDescription(e);
+			Description d = toStructuredDescription(e);
 
 			if (d != null) {
 
@@ -332,7 +332,7 @@ class DescriptionExtractor {
 		return descs;
 	}
 
-	Description extractStructuredDescription(OWLClassExpression source) {
+	Description toStructuredDescription(OWLClassExpression source) {
 
 		return classDescriptions.getStructured(source);
 	}

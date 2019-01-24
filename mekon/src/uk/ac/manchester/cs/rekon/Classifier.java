@@ -35,7 +35,7 @@ class Classifier {
 
 	private Assertions assertions;
 	private Names names;
-	private DescriptionExtractor extractor;
+	private Descriptions extractor;
 
 	private ClassDefinition rootClassDefinition = new ClassDefinition();
 	private SortedSet<ClassDefinition> classDefinitions = new TreeSet<ClassDefinition>();
@@ -81,7 +81,7 @@ class Classifier {
 
 			Collection<OWLClassExpression> eqs = assertions.getDistictEquivalents(cls);
 
-			return extractor.extractStructuredDescriptions(eqs);
+			return extractor.toStructuredDescriptions(eqs);
 		}
 	}
 
@@ -126,7 +126,7 @@ class Classifier {
 		private Description extractDescription(OWLClass cls) {
 
 			Collection<OWLClassExpression> sups = assertions.getSupers(cls);
-			Set<Description> descs = extractor.extractStructuredDescriptions(sups);
+			Set<Description> descs = extractor.toStructuredDescriptions(sups);
 
 			return descs.isEmpty() ? null : new Description(names.get(cls), descs);
 		}
@@ -210,7 +210,7 @@ class Classifier {
 		this.assertions = assertions;
 		this.names = names;
 
-		extractor = new DescriptionExtractor(names);
+		extractor = new Descriptions(names);
 
 		new ClassDefinitionsInitialiser();
 		new ClassDescriptionsInitialiser();
@@ -220,7 +220,7 @@ class Classifier {
 
 	Set<ClassName> getEquivalents(OWLClassExpression expr) {
 
-		Description d = extractor.extractStructuredDescription(expr);
+		Description d = extractor.toStructuredDescription(expr);
 
 		if (d != null) {
 
@@ -232,7 +232,7 @@ class Classifier {
 
 	Set<ClassName> getSupers(OWLClassExpression expr, boolean directOnly) {
 
-		Description d = extractor.extractStructuredDescription(expr);
+		Description d = extractor.toStructuredDescription(expr);
 
 		if (d != null) {
 
