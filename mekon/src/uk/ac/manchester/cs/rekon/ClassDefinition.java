@@ -358,7 +358,7 @@ class ClassDefinition implements Comparable<ClassDefinition> {
 
 	private void addToEquivalents(ClassDefinition equ) {
 
-		equivalents.add(this);
+		equivalents.add(equ);
 
 		for (ClassDefinition e : equivalents) {
 
