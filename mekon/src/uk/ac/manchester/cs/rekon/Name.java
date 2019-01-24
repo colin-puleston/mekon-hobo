@@ -55,19 +55,19 @@ class Name {
 		this.ref = ref;
 	}
 
-	void addEquivalent(Name name) {
+	void addEquivalent(Name equ) {
 
-		if (name != this) {
+		if (equ != this && addToEquivalents(equ)) {
 
-			equivalents.add(name);
+			equ.addToEquivalents(this);
 		}
 	}
 
-	void addSuper(Name name) {
+	void addSuper(Name sup) {
 
-		if (name != this) {
+		if (sup != this) {
 
-			supers.add(name);
+			supers.add(sup);
 		}
 	}
 
@@ -174,6 +174,21 @@ class Name {
 	boolean subsumedBy(Name name) {
 
 		return name == this || equivalents.contains(name) || ancestors.contains(name);
+	}
+
+	private boolean addToEquivalents(Name equ) {
+
+		if (equivalents.add(equ)) {
+
+			for (Name e : equivalents.getSet()) {
+
+				e.equivalents.add(equ);
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private <E extends OWLEntity>Set<E> getEntities(Class<E> type, NameSet sources) {

@@ -41,28 +41,24 @@ class NameSet {
 		return getClass().getSimpleName() + "(" + names + ")";
 	}
 
-	void add(Name name) {
+	boolean add(Name name) {
 
-		names.add(name);
-		refs = null;
+		return processForUpdateOp(names.add(name));
 	}
 
-	void addAll(NameSet set) {
+	boolean addAll(NameSet set) {
 
-		names.addAll(set.names);
-		refs = null;
+		return processForUpdateOp(names.addAll(set.names));
 	}
 
-	void removeAll(NameSet set) {
+	boolean removeAll(NameSet set) {
 
-		names.removeAll(set.names);
-		refs = null;
+		return processForUpdateOp(names.removeAll(set.names));
 	}
 
 	void clear() {
 
 		names.clear();
-		refs = null;
 	}
 
 	Set<Name> getSet() {
@@ -93,6 +89,16 @@ class NameSet {
 	boolean containsAny(NameSet set) {
 
 		return containsAnyRefs(ensureRefs(), set.ensureRefs());
+	}
+
+	private boolean processForUpdateOp(boolean updated) {
+
+		if (updated) {
+
+			refs = null;
+		}
+
+		return updated;
 	}
 
 	private boolean containsRef(int[] refs, int testRef) {

@@ -162,8 +162,7 @@ class Classifier {
 			inferSubsumptionsFromClassifiables();
 			inferSupersFromClassDescriptions();
 
-			//return removeReclassifiables();
-			return Collections.emptySet();
+			return removeReclassifiables();
 		}
 
 		private void absorbClassifiables() {
