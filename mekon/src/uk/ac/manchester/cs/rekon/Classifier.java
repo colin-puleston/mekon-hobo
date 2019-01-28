@@ -70,10 +70,8 @@ class Classifier {
 
 		private void extractDefinitions(ClassName name) {
 
-			System.out.println("\nCLASS: " + name);
 			for (Description d : extractDefinitions(name.getCls())) {
 
-				System.out.println("\nDEFN: " + d);
 				classDefinitions.add(new ClassDefinition(name, d));
 
 				referencedNames.add(d.getName());

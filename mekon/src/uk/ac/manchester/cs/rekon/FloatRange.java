@@ -31,6 +31,11 @@ class FloatRange extends NumberRange {
 
 	static final FloatRange UNCONSTRAINED = new FloatRange(null, null);
 
+	FloatRange(Float exact) {
+
+		this(exact, exact);
+	}
+
 	FloatRange(Float min, Float max) {
 
 		super(min, max);

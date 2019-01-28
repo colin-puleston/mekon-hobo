@@ -33,6 +33,8 @@ import org.semanticweb.owlapi.model.*;
  */
 class NameSet {
 
+	static final NameSet EMPTY_SET = new NameSet();
+
 	private Set<Name> names = new HashSet<Name>();
 	private int[] refs = null;
 
@@ -121,6 +123,11 @@ class NameSet {
 
 	private boolean containsAllRefs(int[] refs, int[] testRefs) {
 
+		if (testRefs.length == 0) {
+
+			return true;
+		}
+
 		int it = 0;
 
 		for (int i = 0 ; i < refs.length ; i++) {
@@ -135,6 +142,11 @@ class NameSet {
 	}
 
 	private boolean containsAnyRefs(int[] refs, int[] testRefs) {
+
+		if (testRefs.length == 0) {
+
+			return false;
+		}
 
 		int it = 0;
 

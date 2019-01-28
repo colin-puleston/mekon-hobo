@@ -96,17 +96,7 @@ class Descriptions {
 				return create((OWLObjectIntersectionOf)source);
 			}
 
-			if (source instanceof OWLRestriction) {
-
-				Expression s = toSuccessor((OWLRestriction)source);
-
-				if (s != null) {
-
-					return new Description(ClassName.THING, s);
-				}
-			}
-
-			return null;
+			return createAnonymous(source);
 		}
 
 		private Description get(OWLClassExpression source, boolean structuredOnly) {
@@ -130,11 +120,35 @@ class Descriptions {
 
 			return s != null ? new Description(name, s) : null;
 		}
+
+		private Description createAnonymous(OWLClassExpression source) {
+
+			if (source instanceof OWLRestriction) {
+
+				Expression s = toSuccessor((OWLRestriction)source);
+
+				if (s != null) {
+
+					return new Description(ClassName.THING, s);
+				}
+			}
+
+			return null;
+		}
 	}
 
 	private class ObjectSuccessors
 					extends
 						TypeExpressions<OWLQuantifiedObjectRestriction, Description> {
+
+		private boolean complement = false;
+
+		Description get(OWLQuantifiedObjectRestriction source, boolean complement) {
+
+			this.complement = complement;
+
+			return get(source);
+		}
 
 		Description create(OWLQuantifiedObjectRestriction source) {
 
@@ -156,6 +170,11 @@ class Descriptions {
 		private Expression createSuccessor(OWLQuantifiedObjectRestriction source) {
 
 			OWLClassExpression filler = source.getFiller();
+
+			if (complement) {
+
+				return filler.isOWLThing() ? Nothing.SINGLETON : null;
+			}
 
 			if (source instanceof OWLObjectAllValuesFrom) {
 
@@ -179,7 +198,7 @@ class Descriptions {
 
 			if (expr instanceof OWLDataProperty) {
 
-				Expression v = getValue(source);
+				Expression v = toDataValue(source);
 
 				if (v != null) {
 
@@ -188,33 +207,6 @@ class Descriptions {
 			}
 
 			return null;
-		}
-
-		private Expression getValue(OWLDataRestriction source) {
-
-			if (source instanceof OWLQuantifiedDataRestriction) {
-
-				return getDataType((OWLQuantifiedDataRestriction)source);
-			}
-
-			if (source instanceof OWLDataHasValue) {
-
-				return getBooleanValue((OWLDataHasValue)source);
-			}
-
-			throw new Error("Unexpected OWLDataRestriction type");
-		}
-
-		private Expression getDataType(OWLQuantifiedDataRestriction source) {
-
-			return dataTypes.getFor(source.getFiller());
-		}
-
-		private BooleanType getBooleanValue(OWLDataHasValue source) {
-
-			OWLLiteral v = source.getFiller();
-
-			return v.isBoolean() ? BooleanType.valueFor(v.parseBoolean()) : null;
 		}
 	}
 
@@ -254,7 +246,6 @@ class Descriptions {
 
 	Set<Description> toStructures(Collection<OWLClassExpression> sources) {
 
-		System.out.println("\nSOURCES: " + sources);
 		Set<Description> descs = new HashSet<Description>();
 
 		for (OWLClassExpression s : sources) {
@@ -263,7 +254,6 @@ class Descriptions {
 
 			if (d != null) {
 
-				System.out.println("DEFN: " + d);
 				descs.add(d);
 			}
 		}
@@ -283,22 +273,7 @@ class Descriptions {
 
 	Description toSuccessor(OWLClassExpression source) {
 
-		if (source instanceof OWLCardinalityRestriction) {
-
-			return toSuccessor((OWLCardinalityRestriction)source);
-		}
-
-		if (source instanceof OWLQuantifiedObjectRestriction) {
-
-			return toObjectSuccessor(source);
-		}
-
-		if (source instanceof OWLDataSomeValuesFrom || source instanceof OWLDataHasValue) {
-
-			return toDataSuccessor(source);
-		}
-
-		return null;
+		return toSuccessor(source, false);
 	}
 
 	private Set<Description> toSuccessors(
@@ -327,29 +302,62 @@ class Descriptions {
 		return succs;
 	}
 
-	private Description toSuccessor(OWLCardinalityRestriction<?> source) {
+	private Description toSuccessor(OWLClassExpression source, boolean complement) {
+
+		if (source instanceof OWLObjectComplementOf) {
+
+			return toSuccessor((OWLObjectComplementOf)source, complement);
+		}
+
+		if (source instanceof OWLCardinalityRestriction) {
+
+			return toSuccessor((OWLCardinalityRestriction)source, complement);
+		}
+
+		if (source instanceof OWLQuantifiedObjectRestriction) {
+
+			return toObjectSuccessor(source, complement);
+		}
+
+		if (source instanceof OWLDataSomeValuesFrom || source instanceof OWLDataHasValue) {
+
+			return toDataSuccessor(source);
+		}
+
+		return null;
+	}
+
+	private Description toSuccessor(OWLObjectComplementOf source, boolean wasComplement) {
+
+		return toSuccessor(source.getOperand(), !wasComplement);
+	}
+
+	private Description toSuccessor(OWLCardinalityRestriction<?> source, boolean complement) {
 
 		if (source.getCardinality() != 0) {
 
 			if (source instanceof OWLObjectExactCardinality
 				|| source instanceof OWLObjectMinCardinality) {
 
-				return toObjectSuccessor(source);
+				return toObjectSuccessor(source, complement);
 			}
 
-			if (source instanceof OWLDataExactCardinality
-				|| source instanceof OWLDataMinCardinality) {
+			if (!complement) {
 
-				return toDataSuccessor(source);
+				if (source instanceof OWLDataExactCardinality
+					|| source instanceof OWLDataMinCardinality) {
+
+					return toDataSuccessor(source);
+				}
 			}
 		}
 
 		return null;
 	}
 
-	private Description toObjectSuccessor(OWLClassExpression source) {
+	private Description toObjectSuccessor(OWLClassExpression source, boolean complement) {
 
-		return objectSuccessors.get((OWLQuantifiedObjectRestriction)source);
+		return objectSuccessors.get((OWLQuantifiedObjectRestriction)source, complement);
 	}
 
 	private Description toDataSuccessor(OWLClassExpression source) {
@@ -376,5 +384,52 @@ class Descriptions {
 		}
 
 		return named == null ? ClassName.THING : names.get(named);
+	}
+
+	private Expression toDataValue(OWLDataRestriction source) {
+
+		if (source instanceof OWLQuantifiedDataRestriction) {
+
+			return toDataType((OWLQuantifiedDataRestriction)source);
+		}
+
+		if (source instanceof OWLDataHasValue) {
+
+			return toDataValue((OWLDataHasValue)source);
+		}
+
+		throw new Error("Unexpected OWLDataRestriction type");
+	}
+
+	private Expression toDataType(OWLQuantifiedDataRestriction source) {
+
+		return dataTypes.getFor(source.getFiller());
+	}
+
+	private Expression toDataValue(OWLDataHasValue source) {
+
+		OWLLiteral v = source.getFiller();
+
+		if (v.isBoolean()) {
+
+			return BooleanValue.valueFor(v.parseBoolean());
+		}
+
+		if (v.isInteger()) {
+
+			return new IntegerRange(v.parseInteger());
+		}
+
+		if (v.isFloat()) {
+
+			return new FloatRange(v.parseFloat());
+		}
+
+		if (v.isDouble()) {
+
+			return new DoubleRange(v.parseDouble());
+		}
+
+		return null;
 	}
 }

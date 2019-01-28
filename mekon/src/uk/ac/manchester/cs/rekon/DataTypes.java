@@ -66,7 +66,7 @@ class DataTypes {
 
 		Expression getUnconstrained() {
 
-			return BooleanType.BOOLEAN;
+			return BooleanValue.BOOLEAN;
 		}
 
 		Expression getFor(OWLDatatypeRestriction source) {
@@ -146,29 +146,6 @@ class DataTypes {
 		}
 	}
 
-	private class LongRanges extends NumberRangeHandler<Long> {
-
-		List<OWL2Datatype> getBuiltInTypes() {
-
-			return Arrays.asList(OWL2Datatype.XSD_LONG);
-		}
-
-		NumberRange getUnconstrained() {
-
-			return LongRange.UNCONSTRAINED;
-		}
-
-		NumberRange create(Long min, Long max) {
-
-			return new LongRange(min, max);
-		}
-
-		Long parseValue(String value) {
-
-			return Long.parseLong(value);
-		}
-	}
-
 	private class FloatRanges extends NumberRangeHandler<Float> {
 
 		List<OWL2Datatype> getBuiltInTypes() {
@@ -219,7 +196,6 @@ class DataTypes {
 
 		new Booleans();
 		new IntegerRanges();
-		new LongRanges();
 		new FloatRanges();
 		new DoubleRanges();
 	}

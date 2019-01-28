@@ -31,6 +31,11 @@ class IntegerRange extends NumberRange {
 
 	static final IntegerRange UNCONSTRAINED = new IntegerRange(null, null);
 
+	IntegerRange(Integer exact) {
+
+		this(exact, exact);
+	}
+
 	IntegerRange(Integer min, Integer max) {
 
 		super(min, max);

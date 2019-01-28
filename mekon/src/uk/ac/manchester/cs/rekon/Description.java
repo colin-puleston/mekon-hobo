@@ -90,13 +90,18 @@ class Description extends NameExpression {
 		return successors;
 	}
 
+	NameSet getCompulsoryNestedNames() {
+
+		return getNestedNames();
+	}
+
 	boolean subsumesOther(Expression e) {
 
 		Description d = e.asDescription();
 
 		return d != null
 				&& name.subsumes(d.name)
-				&& subsumesAllNestedNames(d)
+				&& possibleNestedSubsumption(d)
 				&& successorSubsumptions(d);
 	}
 

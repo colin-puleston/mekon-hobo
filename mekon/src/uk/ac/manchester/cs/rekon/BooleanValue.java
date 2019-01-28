@@ -27,27 +27,31 @@ package uk.ac.manchester.cs.rekon;
 /**
  * @author Colin Puleston
  */
-class LongRange extends NumberRange {
+class BooleanValue extends Expression {
 
-	static final LongRange UNCONSTRAINED = new LongRange(null, null);
+	static final BooleanValue BOOLEAN = new BooleanValue("BOOLEAN");
+	static final BooleanValue TRUE = new BooleanValue("TRUE");
+	static final BooleanValue FALSE = new BooleanValue("FALSE");
 
-	LongRange(Long min, Long max) {
+	static BooleanValue valueFor(boolean value) {
 
-		super(min, max);
+		return value ? TRUE : FALSE;
 	}
 
-	LongRange asLongRange() {
+	private String name;
 
-		return this;
+	boolean subsumesOther(Expression e) {
+
+		return this == BOOLEAN || this == e;
 	}
 
-	NumberRange asTypeRange(Expression e) {
+	void render(ExpressionRenderer r) {
 
-		return e.asLongRange();
+		r.addLine("[" + name + "]");
 	}
 
-	boolean notMoreThan(Number test, Number limit) {
+	private BooleanValue(String name) {
 
-		return test.floatValue() <= limit.floatValue();
+		this.name = name;
 	}
 }

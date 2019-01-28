@@ -31,6 +31,11 @@ class DoubleRange extends NumberRange {
 
 	static final DoubleRange UNCONSTRAINED = new DoubleRange(null, null);
 
+	DoubleRange(Double exact) {
+
+		this(exact, exact);
+	}
+
 	DoubleRange(Double min, Double max) {
 
 		super(min, max);

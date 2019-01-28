@@ -35,10 +35,11 @@ abstract class NameExpression extends Expression {
 
 	private NestedNames nestedNames = new NestedNames();
 	private NestedNameSubsumers nestedNameSubsumers = new NestedNameSubsumers();
+	private CompulsoryNestedNames compulsoryNestedNames = new CompulsoryNestedNames();
 
-	private abstract class NameReferences {
+	private abstract class NestedNameReferences {
 
-		NameSet refs = null;
+		private NameSet refs = null;
 
 		NameSet get() {
 
@@ -57,9 +58,7 @@ abstract class NameExpression extends Expression {
 			refs = null;
 		}
 
-		abstract void addExtraNameRefs(Name name);
-
-		abstract void addNestedRefs(NameExpression s);
+		abstract void addSubExpressionRefs(NameSet refs, NameExpression s);
 
 		private void initialise() {
 
@@ -69,37 +68,43 @@ abstract class NameExpression extends Expression {
 
 				if (ns != null) {
 
-					addSubExpressionRefs(ns);
+					addSubExpressionRefs(refs, ns);
 				}
 			}
 		}
+	}
 
-		private void addSubExpressionRefs(NameExpression s) {
+	private abstract class PrimaryNestedNameReferences extends NestedNameReferences {
+
+		void addSubExpressionRefs(NameSet refs, NameExpression s) {
 
 			Name name = s.getNameOrNull();
 
 			if (name != null) {
 
-				refs.add(name);
-				addExtraNameRefs(name);
+				addNameRefs(refs, name);
 			}
 
-			addNestedRefs(s);
+			addNextNestedRefs(refs, s);
 		}
+
+		void addNameRefs(NameSet refs, Name name) {
+
+			refs.add(name);
+		}
+
+		abstract void addNextNestedRefs(NameSet refs, NameExpression s);
 	}
 
-	private class NestedNames extends NameReferences {
+	private class NestedNames extends PrimaryNestedNameReferences {
 
-		void addExtraNameRefs(Name name) {
-		}
-
-		void addNestedRefs(NameExpression s) {
+		void addNextNestedRefs(NameSet refs, NameExpression s) {
 
 			refs.addAll(s.getNestedNames());
 		}
 	}
 
-	private class NestedNameSubsumers extends NameReferences {
+	private class NestedNameSubsumers extends PrimaryNestedNameReferences {
 
 		private Set<Name> activeAncestors;
 
@@ -108,7 +113,9 @@ abstract class NameExpression extends Expression {
 			this.activeAncestors = activeAncestors;
 		}
 
-		void addExtraNameRefs(Name name) {
+		void addNameRefs(NameSet refs, Name name) {
+
+			super.addNameRefs(refs, name);
 
 			for (Name a : name.getAncestors()) {
 
@@ -119,9 +126,17 @@ abstract class NameExpression extends Expression {
 			}
 		}
 
-		void addNestedRefs(NameExpression s) {
+		void addNextNestedRefs(NameSet refs, NameExpression s) {
 
 			refs.addAll(s.getNestedNameSubsumers());
+		}
+	}
+
+	private class CompulsoryNestedNames extends NestedNameReferences {
+
+		void addSubExpressionRefs(NameSet refs, NameExpression s) {
+
+			refs.addAll(s.getCompulsoryNestedNames());
 		}
 	}
 
@@ -130,10 +145,11 @@ abstract class NameExpression extends Expression {
 		nestedNameSubsumers.setActiveAncestors(activeAncestors);
 	}
 
-	void resetNameReferences() {
+	void resetNestedNameReferences() {
 
 		nestedNames.reset();
 		nestedNameSubsumers.reset();
+		compulsoryNestedNames.reset();
 
 		for (Expression s : getSubExpressions()) {
 
@@ -141,15 +157,19 @@ abstract class NameExpression extends Expression {
 
 			if (ns != null) {
 
-				ns.resetNameReferences();
+				ns.resetNestedNameReferences();
 			}
 		}
 	}
 
-	boolean subsumesAllNestedNames(NameExpression e) {
+	boolean possibleNestedSubsumption(NameExpression e) {
 
-		return e.nestedNameSubsumers.get().containsAll(nestedNames.get());
+		return e.nestedNameSubsumers.get().containsAll(compulsoryNestedNames.get());
 	}
+
+ 	abstract Name getNameOrNull();
+
+	abstract Set<? extends Expression> getSubExpressions();
 
 	NameSet getNestedNames() {
 
@@ -161,7 +181,5 @@ abstract class NameExpression extends Expression {
 		return nestedNameSubsumers.get();
 	}
 
- 	abstract Name getNameOrNull();
-
-	abstract Set<? extends Expression> getSubExpressions();
+	abstract NameSet getCompulsoryNestedNames();
 }

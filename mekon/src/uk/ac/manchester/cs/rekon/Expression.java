@@ -58,11 +58,6 @@ abstract class Expression {
 		return null;
 	}
 
-	LongRange asLongRange() {
-
-		return null;
-	}
-
 	FloatRange asFloatRange() {
 
 		return null;

@@ -58,20 +58,25 @@ class Disjunction extends NameExpression {
 		return disjuncts;
 	}
 
+	NameSet getCompulsoryNestedNames() {
+
+		return NameSet.EMPTY_SET;
+	}
+
 	boolean subsumesOther(Expression e) {
 
 		Description de = e.asDescription();
 
 		if (de != null) {
 
-			return subsumesAllNestedNames(de) && subsumesDescription(de);
+			return possibleNestedSubsumption(de) && subsumesDescription(de);
 		}
 
 		Disjunction di = e.asDisjunction();
 
 		if (di != null) {
 
-			return subsumesAllNestedNames(di) && subsumesDisjunction(di);
+			return possibleNestedSubsumption(di) && subsumesDisjunction(di);
 		}
 
 		return false;
