@@ -145,7 +145,7 @@ abstract class NameExpression extends Expression {
 		nestedNameSubsumers.setActiveAncestors(activeAncestors);
 	}
 
-	void resetNestedNameReferences() {
+	void resetNameReferences() {
 
 		nestedNames.reset();
 		nestedNameSubsumers.reset();
@@ -157,7 +157,7 @@ abstract class NameExpression extends Expression {
 
 			if (ns != null) {
 
-				ns.resetNestedNameReferences();
+				ns.resetNameReferences();
 			}
 		}
 	}
