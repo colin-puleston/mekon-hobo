@@ -31,13 +31,50 @@ import org.semanticweb.owlapi.model.*;
  */
 class ClassName extends Name {
 
+	static final ClassName THING = new ClassName(null, -1);
+
 	ClassName(OWLClass entity, int ref) {
 
 		super(entity, ref);
 	}
 
+	String getEntityName() {
+
+		return this == THING ? "[THING]" : super.getEntityName();
+	}
+
 	OWLClass getCls() {
 
 		return (OWLClass)getEntity();
+	}
+
+	boolean subsumedBy(Name name) {
+
+		if (this == THING) {
+
+			return false;
+		}
+
+		if (name == THING) {
+
+			return true;
+		}
+
+		return super.subsumedBy(name);
+	}
+
+	boolean subsumedByAny(NameSet names) {
+
+		if (this == THING) {
+
+			return names.contains(this);
+		}
+
+		if (names.contains(THING)) {
+
+			return true;
+		}
+
+		return super.subsumedByAny(names);
 	}
 }

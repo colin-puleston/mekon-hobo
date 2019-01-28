@@ -24,94 +24,34 @@
 
 package uk.ac.manchester.cs.rekon;
 
-import java.util.*;
-
 /**
  * @author Colin Puleston
  */
-class Disjunction extends NameExpression {
+class BooleanType extends Expression {
 
-	private Set<Description> disjuncts;
+	static final BooleanType BOOLEAN = new BooleanType("BOOLEAN");
+	static final BooleanType TRUE = new BooleanType("TRUE");
+	static final BooleanType FALSE = new BooleanType("FALSE");
 
-	Disjunction(Set<Description> disjuncts) {
+	static BooleanType valueFor(boolean value) {
 
-		this.disjuncts = disjuncts;
+		return value ? TRUE : FALSE;
 	}
 
-	NameExpression asNameExpression() {
-
-		return this;
-	}
-
-	Disjunction asDisjunction() {
-
-		return this;
-	}
-
-	Name getNameOrNull() {
-
-		return null;
-	}
-
-	Set<? extends Expression> getSubExpressions() {
-
-		return disjuncts;
-	}
+	private String name;
 
 	boolean subsumesOther(Expression e) {
 
-		Description de = e.asDescription();
-
-		if (de != null) {
-
-			return subsumesAllNestedNames(de) && subsumesDescription(de);
-		}
-
-		Disjunction di = e.asDisjunction();
-
-		if (di != null) {
-
-			return subsumesAllNestedNames(di) && subsumesDisjunction(di);
-		}
-
-		return false;
+		return this == BOOLEAN || this == e;
 	}
 
 	void render(ExpressionRenderer r) {
 
-		r.addLine("OR");
-
-		r = r.nextLevel();
-
-		for (Description d : disjuncts) {
-
-			d.render(r);
-		}
+		r.addLine("[" + name + "]");
 	}
 
-	private boolean subsumesDisjunction(Disjunction d) {
+	private BooleanType(String name) {
 
-		for (Description disjunct : d.disjuncts) {
-
-			if (!subsumesDescription(disjunct)) {
-
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private boolean subsumesDescription(Description d) {
-
-		for (Description disjunct : disjuncts) {
-
-			if (disjunct.subsumes(d)) {
-
-				return true;
-			}
-		}
-
-		return false;
+		this.name = name;
 	}
 }

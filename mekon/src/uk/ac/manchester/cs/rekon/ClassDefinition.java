@@ -236,7 +236,7 @@ class ClassDefinition implements Comparable<ClassDefinition> {
 
 	public int compareTo(ClassDefinition d) {
 
-		int c = nameCount() - d.nameCount();
+		int c = nestedNameCount() - d.nestedNameCount();
 
 		return c == 0 ? 1 : c;
 	}
@@ -285,7 +285,7 @@ class ClassDefinition implements Comparable<ClassDefinition> {
 
 	boolean removeReclassifiable(NameSet updateds) {
 
-		if (definition.getReferencedNameSubsumers().containsAny(updateds)) {
+		if (definition.dependsOnAny(updateds)) {
 
 			remove();
 
@@ -397,8 +397,8 @@ class ClassDefinition implements Comparable<ClassDefinition> {
 		return name == null;
 	}
 
-	private int nameCount() {
+	private int nestedNameCount() {
 
-		return definition.getReferencedNames().getSet().size();
+		return definition.getNestedNames().getSet().size();
 	}
 }

@@ -141,6 +141,11 @@ class Name {
 		return entity;
 	}
 
+	String getEntityName() {
+
+		return entity != null ? entity.toString() : "[UNDEFINED]";
+	}
+
 	int getRef() {
 
 		return ref;
@@ -174,6 +179,13 @@ class Name {
 	boolean subsumedBy(Name name) {
 
 		return name == this || equivalents.contains(name) || ancestors.contains(name);
+	}
+
+	boolean subsumedByAny(NameSet names) {
+
+		return names.contains(this)
+				|| equivalents.containsAny(names)
+				|| ancestors.containsAny(names);
 	}
 
 	private boolean addToEquivalents(Name equ) {

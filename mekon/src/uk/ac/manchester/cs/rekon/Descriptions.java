@@ -40,7 +40,7 @@ class Descriptions {
 	private DataSuccessors dataSuccessors = new DataSuccessors();
 	private Disjunctions disjunctions = new Disjunctions();
 
-	private NumberRanges numberRanges = new NumberRanges();
+	private DataTypes dataTypes = new DataTypes();
 
 	private boolean cacheAdditionsEnabled = true;
 
@@ -74,17 +74,9 @@ class Descriptions {
 
 		Description getStructured(OWLClassExpression source) {
 
-			if (source instanceof OWLObjectIntersectionOf) {
+			Description d = get(source, true);
 
-				Description d = get(source, true);
-
-				if (d != null && d.structured()) {
-
-					return d;
-				}
-			}
-
-			return null;
+			return d != null && d.structured() ? d : null;
 		}
 
 		Description getAny(OWLClassExpression source) {
@@ -104,6 +96,16 @@ class Descriptions {
 				return create((OWLObjectIntersectionOf)source);
 			}
 
+			if (source instanceof OWLRestriction) {
+
+				Expression s = toSuccessor((OWLRestriction)source);
+
+				if (s != null) {
+
+					return new Description(ClassName.THING, s);
+				}
+			}
+
 			return null;
 		}
 
@@ -117,113 +119,16 @@ class Descriptions {
 		private Description create(OWLObjectIntersectionOf source) {
 
 			Set<OWLClassExpression> ops = source.getOperands();
-			OWLClass c = removeSingleNamedClass(ops);
+			ClassName name = extractSingleClassName(ops);
 
-			if (c == null || (structuredOnly && ops.isEmpty())) {
+			if (name == null || (structuredOnly && ops.isEmpty())) {
 
 				return null;
 			}
 
-			Set<Expression> s = createSuccessors(ops);
+			Set<Description> s = toSuccessors(ops, true);
 
-			return s != null ? new Description(names.get(c), s) : null;
-		}
-
-		private Set<Expression> createSuccessors(Set<OWLClassExpression> sources) {
-
-			Set<Expression> succs = new HashSet<Expression>();
-
-			for (OWLClassExpression source : sources) {
-
-				if (source instanceof OWLRestriction) {
-
-					Expression s = createSuccessor((OWLRestriction)source);
-
-					if (s == null) {
-
-						return null;
-					}
-
-					succs.add(s);
-				}
-				else {
-
-					return null;
-				}
-			}
-
-			return succs;
-		}
-
-		private Expression createSuccessor(OWLRestriction source) {
-
-			if (source instanceof OWLCardinalityRestriction) {
-
-				return createSuccessor((OWLCardinalityRestriction)source);
-			}
-
-			if (source instanceof OWLObjectSomeValuesFrom) {
-
-				return createObjectSuccessor(source);
-			}
-
-			if (source instanceof OWLDataSomeValuesFrom) {
-
-				return createDataSuccessor(source);
-			}
-
-			return null;
-		}
-
-		private Expression createSuccessor(OWLCardinalityRestriction<?> source) {
-
-			if (source.getCardinality() != 0) {
-
-				if (source instanceof OWLObjectExactCardinality
-					|| source instanceof OWLObjectMinCardinality) {
-
-					return createObjectSuccessor(source);
-				}
-
-				if (source instanceof OWLDataExactCardinality
-					|| source instanceof OWLDataMinCardinality) {
-
-					return createDataSuccessor(source);
-				}
-			}
-
-			return null;
-		}
-
-		private Description createObjectSuccessor(OWLRestriction source) {
-
-			return objectSuccessors.get((OWLQuantifiedObjectRestriction)source);
-		}
-
-		private Description createDataSuccessor(OWLRestriction source) {
-
-			return dataSuccessors.get((OWLQuantifiedDataRestriction)source);
-		}
-
-		private OWLClass removeSingleNamedClass(Set<OWLClassExpression> ops) {
-
-			OWLClass named = null;
-
-			for (OWLClassExpression op : ops) {
-
-				if (op instanceof OWLClass) {
-
-					if (named != null) {
-
-						return null;
-					}
-
-					named = (OWLClass)op;
-					ops.remove(op);
-				}
-			}
-
-			return named;
+			return s != null ? new Description(name, s) : null;
 		}
 	}
 
@@ -237,7 +142,7 @@ class Descriptions {
 
 			if (expr instanceof OWLObjectProperty) {
 
-				NameExpression s = createNameExpression(source.getFiller());
+				Expression s = createSuccessor(source);
 
 				if (s != null) {
 
@@ -248,36 +153,68 @@ class Descriptions {
 			return null;
 		}
 
-		private NameExpression createNameExpression(OWLClassExpression source) {
+		private Expression createSuccessor(OWLQuantifiedObjectRestriction source) {
 
-			if (source instanceof OWLObjectUnionOf) {
+			OWLClassExpression filler = source.getFiller();
 
-				return disjunctions.get((OWLObjectUnionOf)source);
+			if (source instanceof OWLObjectAllValuesFrom) {
+
+				return filler.isOWLNothing() ? Nothing.SINGLETON : null;
 			}
 
-			return classDescriptions.getAny(source);
+			if (filler instanceof OWLObjectUnionOf) {
+
+				return disjunctions.get((OWLObjectUnionOf)filler);
+			}
+
+			return classDescriptions.getAny(filler);
 		}
 	}
 
-	private class DataSuccessors
-					extends
-						TypeExpressions<OWLQuantifiedDataRestriction, Description> {
+	private class DataSuccessors extends TypeExpressions<OWLDataRestriction, Description> {
 
-		Description create(OWLQuantifiedDataRestriction source) {
+		Description create(OWLDataRestriction source) {
 
 			OWLDataPropertyExpression expr = source.getProperty();
 
 			if (expr instanceof OWLDataProperty) {
 
-				NumberRange s = numberRanges.toRange(source.getFiller());
+				Expression v = getValue(source);
 
-				if (s != null) {
+				if (v != null) {
 
-					return new Description(names.get((OWLDataProperty)expr), s);
+					return new Description(names.get((OWLDataProperty)expr), v);
 				}
 			}
 
 			return null;
+		}
+
+		private Expression getValue(OWLDataRestriction source) {
+
+			if (source instanceof OWLQuantifiedDataRestriction) {
+
+				return getDataType((OWLQuantifiedDataRestriction)source);
+			}
+
+			if (source instanceof OWLDataHasValue) {
+
+				return getBooleanValue((OWLDataHasValue)source);
+			}
+
+			throw new Error("Unexpected OWLDataRestriction type");
+		}
+
+		private Expression getDataType(OWLQuantifiedDataRestriction source) {
+
+			return dataTypes.getFor(source.getFiller());
+		}
+
+		private BooleanType getBooleanValue(OWLDataHasValue source) {
+
+			OWLLiteral v = source.getFiller();
+
+			return v.isBoolean() ? BooleanType.valueFor(v.parseBoolean()) : null;
 		}
 	}
 
@@ -312,19 +249,21 @@ class Descriptions {
 
 		cacheAdditionsEnabled = value;
 
-		numberRanges.setCacheAdditionsEnabled(value);
+		dataTypes.setCacheAdditionsEnabled(value);
 	}
 
-	Set<Description> toStructuredDescriptions(Collection<OWLClassExpression> sources) {
+	Set<Description> toStructures(Collection<OWLClassExpression> sources) {
 
+		System.out.println("\nSOURCES: " + sources);
 		Set<Description> descs = new HashSet<Description>();
 
-		for (OWLClassExpression e : sources) {
+		for (OWLClassExpression s : sources) {
 
-			Description d = toStructuredDescription(e);
+			Description d = toStructure(s);
 
 			if (d != null) {
 
+				System.out.println("DEFN: " + d);
 				descs.add(d);
 			}
 		}
@@ -332,8 +271,110 @@ class Descriptions {
 		return descs;
 	}
 
-	Description toStructuredDescription(OWLClassExpression source) {
+	Description toStructure(OWLClassExpression source) {
 
 		return classDescriptions.getStructured(source);
+	}
+
+	Set<Description> toSuccessors(Collection<OWLClassExpression> sources) {
+
+		return toSuccessors(sources, false);
+	}
+
+	Description toSuccessor(OWLClassExpression source) {
+
+		if (source instanceof OWLCardinalityRestriction) {
+
+			return toSuccessor((OWLCardinalityRestriction)source);
+		}
+
+		if (source instanceof OWLQuantifiedObjectRestriction) {
+
+			return toObjectSuccessor(source);
+		}
+
+		if (source instanceof OWLDataSomeValuesFrom || source instanceof OWLDataHasValue) {
+
+			return toDataSuccessor(source);
+		}
+
+		return null;
+	}
+
+	private Set<Description> toSuccessors(
+								Collection<OWLClassExpression> sources,
+								boolean nullOnAnyFails) {
+
+		Set<Description> succs = new HashSet<Description>();
+
+		for (OWLClassExpression source : sources) {
+
+			Description s = toSuccessor(source);
+
+			if (s != null) {
+
+				succs.add(s);
+			}
+			else {
+
+				if (nullOnAnyFails) {
+
+					return null;
+				}
+			}
+		}
+
+		return succs;
+	}
+
+	private Description toSuccessor(OWLCardinalityRestriction<?> source) {
+
+		if (source.getCardinality() != 0) {
+
+			if (source instanceof OWLObjectExactCardinality
+				|| source instanceof OWLObjectMinCardinality) {
+
+				return toObjectSuccessor(source);
+			}
+
+			if (source instanceof OWLDataExactCardinality
+				|| source instanceof OWLDataMinCardinality) {
+
+				return toDataSuccessor(source);
+			}
+		}
+
+		return null;
+	}
+
+	private Description toObjectSuccessor(OWLClassExpression source) {
+
+		return objectSuccessors.get((OWLQuantifiedObjectRestriction)source);
+	}
+
+	private Description toDataSuccessor(OWLClassExpression source) {
+
+		return dataSuccessors.get((OWLDataRestriction)source);
+	}
+
+	private ClassName extractSingleClassName(Set<OWLClassExpression> ops) {
+
+		OWLClass named = null;
+
+		for (OWLClassExpression op : ops) {
+
+			if (op instanceof OWLClass) {
+
+				if (named != null) {
+
+					return null;
+				}
+
+				named = (OWLClass)op;
+				ops.remove(op);
+			}
+		}
+
+		return named == null ? ClassName.THING : names.get(named);
 	}
 }

@@ -83,7 +83,7 @@ public class RekonReasoner extends StructuralReasoner {
 
 		super.flush();
 
-		initialise();
+		// XXX initialise();
     }
 
 	private void initialise() {

@@ -94,12 +94,20 @@ class Description extends NameExpression {
 
 		Description d = e.asDescription();
 
-		return d != null && possiblySubsumes(d) && subsumesDescription(d);
+		return d != null
+				&& name.subsumes(d.name)
+				&& subsumesAllNestedNames(d)
+				&& successorSubsumptions(d);
+	}
+
+	boolean dependsOnAny(NameSet names) {
+
+		return name.subsumedByAny(names) || getNestedNameSubsumers().containsAny(names);
 	}
 
 	void render(ExpressionRenderer r) {
 
-		r.addLine(name.getEntity());
+		r.addLine(name.getEntityName());
 
 		r = r.nextLevel();
 
@@ -107,11 +115,6 @@ class Description extends NameExpression {
 
 			s.render(r);
 		}
-	}
-
-	private boolean subsumesDescription(Description d) {
-
-		return name.subsumes(d.name) && successorSubsumptions(d);
 	}
 
 	private boolean successorSubsumptions(Description d) {

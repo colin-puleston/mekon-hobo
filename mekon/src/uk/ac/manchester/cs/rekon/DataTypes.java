@@ -32,67 +32,90 @@ import org.semanticweb.owlapi.vocab.*;
 /**
  * @author Colin Puleston
  */
-class NumberRanges {
+class DataTypes {
 
-	private Set<TypeHandler<?>> typeHandlers = new HashSet<TypeHandler<?>>();
+	private Set<TypeHandler> typeHandlers = new HashSet<TypeHandler>();
 
 	private boolean cacheAdditionsEnabled = true;
 
-	private abstract class TypeHandler<N extends Number> {
-
-		private Map<OWLDatatypeRestriction, NumberRange> cache
-					= new HashMap<OWLDatatypeRestriction, NumberRange>();
+	private abstract class TypeHandler {
 
 		TypeHandler() {
 
 			typeHandlers.add(this);
 		}
 
-		boolean handlesType(OWLDatatype datatype) {
+		boolean handlesType(OWLDatatype type) {
 
-			return getBuiltInDatatypes().contains(datatype.getBuiltInDatatype());
+			return getBuiltInTypes().contains(type.getBuiltInDatatype());
 		}
 
-		abstract List<OWL2Datatype> getBuiltInDatatypes();
+		abstract List<OWL2Datatype> getBuiltInTypes();
 
-		NumberRange toRange(OWLDatatypeRestriction res) {
+		abstract Expression getUnconstrained();
 
-			NumberRange r = cache.get(res);
+		abstract Expression getFor(OWLDatatypeRestriction source);
+	}
+
+	private class Booleans extends TypeHandler {
+
+		List<OWL2Datatype> getBuiltInTypes() {
+
+			return Arrays.asList(OWL2Datatype.XSD_BOOLEAN);
+		}
+
+		Expression getUnconstrained() {
+
+			return BooleanType.BOOLEAN;
+		}
+
+		Expression getFor(OWLDatatypeRestriction source) {
+
+			return null;
+		}
+	}
+
+	private abstract class NumberRangeHandler<N extends Number> extends TypeHandler {
+
+		private Map<OWLDatatypeRestriction, NumberRange> cache
+					= new HashMap<OWLDatatypeRestriction, NumberRange>();
+
+		Expression getFor(OWLDatatypeRestriction source) {
+
+			NumberRange r = cache.get(source);
 
 			if (r == null) {
 
-				r = create(res);
+				r = create(source);
 
 				if (cacheAdditionsEnabled) {
 
-					cache.put(res, r);
+					cache.put(source, r);
 				}
 			}
 
 			return r;
 		}
 
-		abstract NumberRange getUnconstrained();
-
 		abstract NumberRange create(N min, N max);
 
 		abstract N parseValue(String value);
 
-		private NumberRange create(OWLDatatypeRestriction res) {
+		private NumberRange create(OWLDatatypeRestriction source) {
 
-			N min = getValueOrNull(res, OWLFacet.MIN_INCLUSIVE);
-			N max = getValueOrNull(res, OWLFacet.MAX_INCLUSIVE);
+			N min = getLimit(source, OWLFacet.MIN_INCLUSIVE);
+			N max = getLimit(source, OWLFacet.MAX_INCLUSIVE);
 
 			return create(min, max);
 		}
 
-		private N getValueOrNull(OWLDatatypeRestriction res, OWLFacet facet) {
+		private N getLimit(OWLDatatypeRestriction source, OWLFacet facet) {
 
-			for (OWLFacetRestriction fres : res.getFacetRestrictions()) {
+			for (OWLFacetRestriction fr : source.getFacetRestrictions()) {
 
-				if (fres.getFacet() == facet) {
+				if (fr.getFacet() == facet) {
 
-					return parseValue(fres.getFacetValue().getLiteral());
+					return parseValue(fr.getFacetValue().getLiteral());
 				}
 			}
 
@@ -100,9 +123,9 @@ class NumberRanges {
 		}
 	}
 
-	private class IntegerRanges extends TypeHandler<Integer> {
+	private class IntegerRanges extends NumberRangeHandler<Integer> {
 
-		List<OWL2Datatype> getBuiltInDatatypes() {
+		List<OWL2Datatype> getBuiltInTypes() {
 
 			return Arrays.asList(OWL2Datatype.XSD_INTEGER, OWL2Datatype.XSD_INT);
 		}
@@ -123,9 +146,9 @@ class NumberRanges {
 		}
 	}
 
-	private class LongRanges extends TypeHandler<Long> {
+	private class LongRanges extends NumberRangeHandler<Long> {
 
-		List<OWL2Datatype> getBuiltInDatatypes() {
+		List<OWL2Datatype> getBuiltInTypes() {
 
 			return Arrays.asList(OWL2Datatype.XSD_LONG);
 		}
@@ -146,9 +169,9 @@ class NumberRanges {
 		}
 	}
 
-	private class FloatRanges extends TypeHandler<Float> {
+	private class FloatRanges extends NumberRangeHandler<Float> {
 
-		List<OWL2Datatype> getBuiltInDatatypes() {
+		List<OWL2Datatype> getBuiltInTypes() {
 
 			return Arrays.asList(OWL2Datatype.XSD_FLOAT);
 		}
@@ -169,9 +192,9 @@ class NumberRanges {
 		}
 	}
 
-	private class DoubleRanges extends TypeHandler<Double> {
+	private class DoubleRanges extends NumberRangeHandler<Double> {
 
-		List<OWL2Datatype> getBuiltInDatatypes() {
+		List<OWL2Datatype> getBuiltInTypes() {
 
 			return Arrays.asList(OWL2Datatype.XSD_DOUBLE);
 		}
@@ -192,8 +215,9 @@ class NumberRanges {
 		}
 	}
 
-	NumberRanges() {
+	DataTypes() {
 
+		new Booleans();
 		new IntegerRanges();
 		new LongRanges();
 		new FloatRanges();
@@ -205,41 +229,41 @@ class NumberRanges {
 		cacheAdditionsEnabled = value;
 	}
 
-	NumberRange toRange(OWLDataRange range) {
+	Expression getFor(OWLDataRange source) {
 
-		if (range instanceof OWLDatatype) {
+		if (source instanceof OWLDatatype) {
 
-			return toRange(range.asOWLDatatype());
+			return getFor(source.asOWLDatatype());
 		}
 
-		if (range instanceof OWLDatatypeRestriction) {
+		if (source instanceof OWLDatatypeRestriction) {
 
-			return toRange((OWLDatatypeRestriction)range);
+			return getFor((OWLDatatypeRestriction)source);
 		}
 
 		return null;
 	}
 
-	private NumberRange toRange(OWLDatatypeRestriction res) {
+	private Expression getFor(OWLDatatypeRestriction source) {
 
-		OWLDatatype datatype = res.getDatatype();
-		TypeHandler<?> handler = lookFors(datatype);
+		OWLDatatype type = source.getDatatype();
+		TypeHandler handler = lookForHandler(type);
 
-		return handler != null ? handler.toRange(res) : null;
+		return handler != null ? handler.getFor(source) : null;
 	}
 
-	private NumberRange toRange(OWLDatatype datatype) {
+	private Expression getFor(OWLDatatype source) {
 
-		TypeHandler<?> handler = lookFors(datatype);
+		TypeHandler handler = lookForHandler(source);
 
 		return handler != null ? handler.getUnconstrained() : null;
 	}
 
-	private TypeHandler<?> lookFors(OWLDatatype datatype) {
+	private TypeHandler lookForHandler(OWLDatatype type) {
 
-		for (TypeHandler<?> handler : typeHandlers) {
+		for (TypeHandler handler : typeHandlers) {
 
-			if (handler.handlesType(datatype)) {
+			if (handler.handlesType(type)) {
 
 				return handler;
 			}

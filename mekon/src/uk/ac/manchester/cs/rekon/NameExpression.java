@@ -33,8 +33,8 @@ import org.semanticweb.owlapi.model.*;
  */
 abstract class NameExpression extends Expression {
 
-	private ReferencedNames referencedNames = new ReferencedNames();
-	private ReferencedNameSubsumers referencedNameSubsumers = new ReferencedNameSubsumers();
+	private NestedNames nestedNames = new NestedNames();
+	private NestedNameSubsumers nestedNameSubsumers = new NestedNameSubsumers();
 
 	private abstract class NameReferences {
 
@@ -59,11 +59,24 @@ abstract class NameExpression extends Expression {
 
 		abstract void addExtraNameRefs(Name name);
 
-		abstract void addSubExpressionRefs(NameExpression ne);
+		abstract void addNestedRefs(NameExpression s);
 
 		private void initialise() {
 
-			Name name = getNameOrNull();
+			for (Expression s : getSubExpressions()) {
+
+				NameExpression ns = s.asNameExpression();
+
+				if (ns != null) {
+
+					addSubExpressionRefs(ns);
+				}
+			}
+		}
+
+		private void addSubExpressionRefs(NameExpression s) {
+
+			Name name = s.getNameOrNull();
 
 			if (name != null) {
 
@@ -71,30 +84,22 @@ abstract class NameExpression extends Expression {
 				addExtraNameRefs(name);
 			}
 
-			for (Expression e : getSubExpressions()) {
-
-				NameExpression ne = e.asNameExpression();
-
-				if (ne != null) {
-
-					addSubExpressionRefs(ne);
-				}
-			}
+			addNestedRefs(s);
 		}
 	}
 
-	private class ReferencedNames extends NameReferences {
+	private class NestedNames extends NameReferences {
 
 		void addExtraNameRefs(Name name) {
 		}
 
-		void addSubExpressionRefs(NameExpression ne) {
+		void addNestedRefs(NameExpression s) {
 
-			refs.addAll(ne.getReferencedNames());
+			refs.addAll(s.getNestedNames());
 		}
 	}
 
-	private class ReferencedNameSubsumers extends NameReferences {
+	private class NestedNameSubsumers extends NameReferences {
 
 		private Set<Name> activeAncestors;
 
@@ -114,46 +119,46 @@ abstract class NameExpression extends Expression {
 			}
 		}
 
-		void addSubExpressionRefs(NameExpression ne) {
+		void addNestedRefs(NameExpression s) {
 
-			refs.addAll(ne.getReferencedNameSubsumers());
+			refs.addAll(s.getNestedNameSubsumers());
 		}
 	}
 
 	void setActiveAncestors(Set<Name> activeAncestors) {
 
-		referencedNameSubsumers.setActiveAncestors(activeAncestors);
+		nestedNameSubsumers.setActiveAncestors(activeAncestors);
 	}
 
 	void resetNameReferences() {
 
-		referencedNames.reset();
-		referencedNameSubsumers.reset();
+		nestedNames.reset();
+		nestedNameSubsumers.reset();
 
-		for (Expression e : getSubExpressions()) {
+		for (Expression s : getSubExpressions()) {
 
-			NameExpression ne = e.asNameExpression();
+			NameExpression ns = s.asNameExpression();
 
-			if (ne != null) {
+			if (ns != null) {
 
-				ne.resetNameReferences();
+				ns.resetNameReferences();
 			}
 		}
 	}
 
-	boolean possiblySubsumes(NameExpression e) {
+	boolean subsumesAllNestedNames(NameExpression e) {
 
-		return e.referencedNameSubsumers.get().containsAll(referencedNames.get());
+		return e.nestedNameSubsumers.get().containsAll(nestedNames.get());
 	}
 
-	NameSet getReferencedNames() {
+	NameSet getNestedNames() {
 
-		return referencedNames.get();
+		return nestedNames.get();
 	}
 
-	NameSet getReferencedNameSubsumers() {
+	NameSet getNestedNameSubsumers() {
 
-		return referencedNameSubsumers.get();
+		return nestedNameSubsumers.get();
 	}
 
  	abstract Name getNameOrNull();

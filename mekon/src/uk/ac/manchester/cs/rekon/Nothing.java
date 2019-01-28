@@ -24,94 +24,23 @@
 
 package uk.ac.manchester.cs.rekon;
 
-import java.util.*;
-
 /**
  * @author Colin Puleston
  */
-class Disjunction extends NameExpression {
+class Nothing extends Expression {
 
-	private Set<Description> disjuncts;
-
-	Disjunction(Set<Description> disjuncts) {
-
-		this.disjuncts = disjuncts;
-	}
-
-	NameExpression asNameExpression() {
-
-		return this;
-	}
-
-	Disjunction asDisjunction() {
-
-		return this;
-	}
-
-	Name getNameOrNull() {
-
-		return null;
-	}
-
-	Set<? extends Expression> getSubExpressions() {
-
-		return disjuncts;
-	}
+	static final Nothing SINGLETON = new Nothing();
 
 	boolean subsumesOther(Expression e) {
 
-		Description de = e.asDescription();
-
-		if (de != null) {
-
-			return subsumesAllNestedNames(de) && subsumesDescription(de);
-		}
-
-		Disjunction di = e.asDisjunction();
-
-		if (di != null) {
-
-			return subsumesAllNestedNames(di) && subsumesDisjunction(di);
-		}
-
-		return false;
+		return e == this;
 	}
 
 	void render(ExpressionRenderer r) {
 
-		r.addLine("OR");
-
-		r = r.nextLevel();
-
-		for (Description d : disjuncts) {
-
-			d.render(r);
-		}
+		r.addLine("[NOTHING]");
 	}
 
-	private boolean subsumesDisjunction(Disjunction d) {
-
-		for (Description disjunct : d.disjuncts) {
-
-			if (!subsumesDescription(disjunct)) {
-
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private boolean subsumesDescription(Description d) {
-
-		for (Description disjunct : disjuncts) {
-
-			if (disjunct.subsumes(d)) {
-
-				return true;
-			}
-		}
-
-		return false;
+	private Nothing() {
 	}
 }

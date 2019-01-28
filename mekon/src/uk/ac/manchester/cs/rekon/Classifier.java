@@ -35,7 +35,7 @@ class Classifier {
 
 	private Assertions assertions;
 	private Names names;
-	private Descriptions extractor;
+	private Descriptions descriptions;
 
 	private ClassDefinition rootClassDefinition = new ClassDefinition();
 	private SortedSet<ClassDefinition> classDefinitions = new TreeSet<ClassDefinition>();
@@ -70,18 +70,20 @@ class Classifier {
 
 		private void extractDefinitions(ClassName name) {
 
+			System.out.println("\nCLASS: " + name);
 			for (Description d : extractDefinitions(name.getCls())) {
 
+				System.out.println("\nDEFN: " + d);
 				classDefinitions.add(new ClassDefinition(name, d));
-				referencedNames.addAll(d.getReferencedNames().getSet());
+
+				referencedNames.add(d.getName());
+				referencedNames.addAll(d.getNestedNames().getSet());
 			}
 		}
 
 		private Set<Description> extractDefinitions(OWLClass cls) {
 
-			Collection<OWLClassExpression> eqs = assertions.getDistictEquivalents(cls);
-
-			return extractor.toStructuredDescriptions(eqs);
+			return descriptions.toStructures(assertions.getDistictEquivalents(cls));
 		}
 	}
 
@@ -126,7 +128,7 @@ class Classifier {
 		private Description extractDescription(OWLClass cls) {
 
 			Collection<OWLClassExpression> sups = assertions.getSupers(cls);
-			Set<Description> descs = extractor.toStructuredDescriptions(sups);
+			Set<Description> descs = descriptions.toSuccessors(sups);
 
 			return descs.isEmpty() ? null : new Description(names.get(cls), descs);
 		}
@@ -137,7 +139,12 @@ class Classifier {
 
 				for (Name an : desc.getName().getAncestors()) {
 
-					desc.addSuccessors(resolveSuccessors(finder.get(an)));
+					Description ad = finder.get(an);
+
+					if (ad != null) {
+
+						desc.addSuccessors(resolveSuccessors(ad));
+					}
 				}
 			}
 
@@ -210,7 +217,7 @@ class Classifier {
 		this.assertions = assertions;
 		this.names = names;
 
-		extractor = new Descriptions(names);
+		descriptions = new Descriptions(names);
 
 		new ClassDefinitionsInitialiser();
 		new ClassDescriptionsInitialiser();
@@ -220,7 +227,7 @@ class Classifier {
 
 	Set<ClassName> getEquivalents(OWLClassExpression expr) {
 
-		Description d = extractor.toStructuredDescription(expr);
+		Description d = descriptions.toStructure(expr);
 
 		if (d != null) {
 
@@ -232,7 +239,7 @@ class Classifier {
 
 	Set<ClassName> getSupers(OWLClassExpression expr, boolean directOnly) {
 
-		Description d = extractor.toStructuredDescription(expr);
+		Description d = descriptions.toStructure(expr);
 
 		if (d != null) {
 
@@ -260,7 +267,7 @@ class Classifier {
 		}
 
 		names.resolveAllLinksPostClassification();
-		extractor.setCacheAdditionsEnabled(false);
+		descriptions.setCacheAdditionsEnabled(false);
 	}
 
 	private void resetClassDefinitionNameReferences() {

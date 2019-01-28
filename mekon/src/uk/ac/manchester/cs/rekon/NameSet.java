@@ -109,6 +109,11 @@ class NameSet {
 
 				return true;
 			}
+
+			if (refs[i] > testRef) {
+
+				break;
+			}
 		}
 
 		return false;
@@ -116,42 +121,33 @@ class NameSet {
 
 	private boolean containsAllRefs(int[] refs, int[] testRefs) {
 
-		int r = 0;
+		int it = 0;
 
-		for (int tr = 0 ; tr < testRefs.length ; tr++) {
+		for (int i = 0 ; i < refs.length ; i++) {
 
-			boolean found = false;
+			if (refs[i] == testRefs[it] && ++it == testRefs.length) {
 
-			for (; r < refs.length ; r++) {
-
-				if (refs[r] == testRefs[tr]) {
-
-					found = true;
-					break;
-				}
-			}
-
-			if (!found) {
-
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	private boolean containsAnyRefs(int[] refs, int[] testRefs) {
 
-		int r = 0;
+		int it = 0;
 
-		for (int tr = 0 ; tr < testRefs.length ; tr++) {
+		for (int i = 0 ; i < refs.length ; i++) {
 
-			for (; r < refs.length ; r++) {
+			if (refs[i] == testRefs[it]) {
 
-				if (refs[r] == testRefs[tr]) {
+				return true;
+			}
 
-					return true;
-				}
+			if (refs[i] > testRefs[it] && ++it == testRefs.length) {
+
+				break;
 			}
 		}
 
