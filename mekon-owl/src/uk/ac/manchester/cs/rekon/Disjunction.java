@@ -29,30 +29,13 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-class Description extends NameExpression {
+class Disjunction extends NameExpression {
 
-	private Name name;
-	private Set<Expression> successors = new HashSet<Expression>();
+	private Set<Description> disjuncts;
 
-	Description(Name name) {
+	Disjunction(Set<Description> disjuncts) {
 
-		this(name, Collections.emptySet());
-	}
-
-	Description(Name name, Expression successor) {
-
-		this(name, Collections.singleton(successor));
-	}
-
-	Description(Name name, Set<? extends Expression> successors) {
-
-		this.name = name;
-		this.successors.addAll(successors);
-	}
-
-	void addSuccessors(Set<? extends Expression> successors) {
-
-		this.successors.addAll(successors);
+		this.disjuncts = disjuncts;
 	}
 
 	NameExpression asNameExpression() {
@@ -60,73 +43,62 @@ class Description extends NameExpression {
 		return this;
 	}
 
-	Description asDescription() {
+	Disjunction asDisjunction() {
 
 		return this;
 	}
 
-	Name getName() {
+	NameSet getCompulsoryNestedNames() {
 
-		return name;
-	}
-
-	Set<Expression> getSuccessors() {
-
-		return successors;
-	}
-
-	boolean structured() {
-
-		return !successors.isEmpty();
+		return NameSet.EMPTY_SET;
 	}
 
 	Name getNameOrNull() {
 
-		return name;
+		return null;
 	}
 
 	Set<? extends Expression> getSubExpressions() {
 
-		return successors;
-	}
-
-	NameSet getCompulsoryNestedNames() {
-
-		return getNestedNames();
+		return disjuncts;
 	}
 
 	boolean subsumesOther(Expression e) {
 
-		Description d = e.asDescription();
+		Description de = e.asDescription();
 
-		return d != null
-				&& name.subsumes(d.name)
-				&& possibleNestedSubsumption(d)
-				&& successorSubsumptions(d);
-	}
+		if (de != null) {
 
-	boolean dependsOnAny(NameSet names) {
+			return possibleNestedSubsumption(de) && subsumesDescription(de);
+		}
 
-		return name.subsumedByAny(names) || getNestedNameSubsumers().containsAny(names);
+		Disjunction di = e.asDisjunction();
+
+		if (di != null) {
+
+			return possibleNestedSubsumption(di) && subsumesDisjunction(di);
+		}
+
+		return false;
 	}
 
 	void render(ExpressionRenderer r) {
 
-		r.addLine(name.getEntityName());
+		r.addLine("OR");
 
 		r = r.nextLevel();
 
-		for (Expression s : successors) {
+		for (Description d : disjuncts) {
 
-			s.render(r);
+			d.render(r);
 		}
 	}
 
-	private boolean successorSubsumptions(Description d) {
+	private boolean subsumesDisjunction(Disjunction d) {
 
-		for (Expression s : successors) {
+		for (Description disjunct : d.disjuncts) {
 
-			if (!successorSubsumption(d, s)) {
+			if (!subsumesDescription(disjunct)) {
 
 				return false;
 			}
@@ -135,11 +107,11 @@ class Description extends NameExpression {
 		return true;
 	}
 
-	private boolean successorSubsumption(Description d, Expression s) {
+	private boolean subsumesDescription(Description d) {
 
-		for (Expression ds : d.successors) {
+		for (Description disjunct : disjuncts) {
 
-			if (s.subsumes(ds)) {
+			if (disjunct.subsumes(d)) {
 
 				return true;
 			}

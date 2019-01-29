@@ -55,20 +55,28 @@ class Name {
 		this.ref = ref;
 	}
 
-	void addEquivalent(Name equ) {
+	boolean addEquivalent(Name equ) {
 
 		if (equ != this && addToEquivalents(equ)) {
 
 			equ.addToEquivalents(this);
+
+			return true;
 		}
+
+		return false;
 	}
 
-	void addSuper(Name sup) {
+	boolean addSuper(Name sup) {
 
-		if (sup != this) {
+		if (!supers.contains(sup)) {
 
 			supers.add(sup);
+
+			return true;
 		}
+
+		return false;
 	}
 
 	NameSet resolveUpwardLinks() {

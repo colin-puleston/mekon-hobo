@@ -19,7 +19,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ test_closedWorldSemanticsByMinimalInclusion* THE SOFTWARE.
  */
 
 package uk.ac.manchester.cs.mekon.owl.reason;
@@ -153,12 +153,14 @@ public class ORClassifierTest extends DemoModelBasedTest {
 
 	private void setClosedWorldSemanticsByMinimalExclusion() {
 
-		// Exclude only those properties whose closure would cause inconsistencies
 		setSemantics(
 			ORSemanticWorld.CLOSED,
-			TAX_PROPERTY,
-			BENEFIT_PROPERTY,
-			TEACHES_PROPERTY);
+			getAllPropertiesThatCauseInconsistenciesIfClosed());
+	}
+
+	private String[] getAllPropertiesThatCauseInconsistenciesIfClosed() {
+
+		return new String[]{TAX_PROPERTY, BENEFIT_PROPERTY, TEACHES_PROPERTY};
 	}
 
 	private void setSemantics(

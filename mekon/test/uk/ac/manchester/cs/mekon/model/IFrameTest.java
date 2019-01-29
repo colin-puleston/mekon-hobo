@@ -67,7 +67,7 @@ public class IFrameTest {
 		}
 	}
 
-	//@Test
+	@Test
 	public void test_updateInferredTypes() {
 
 		IFrame f = frames.create("F");
@@ -108,7 +108,7 @@ public class IFrameTest {
 			Arrays.asList(ta));
 	}
 
-	//@Test
+	@Test
 	public void test_updateSlotValue() {
 
 		IFrame fa = frames.create("A");
@@ -127,7 +127,7 @@ public class IFrameTest {
 		testCopied(i, i.copy());
 	}
 
-	//@Test
+	@Test
 	public void test_copyFreeAndMatch() {
 
 		IFrame i = instances.getBasic();
@@ -135,13 +135,13 @@ public class IFrameTest {
 		testCopied(i, createFreeCopy(i));
 	}
 
-	//@Test
+	@Test
 	public void test_subsumption() {
 
 		testSubsumption(instances.getSubsumer(), instances.getBasic());
 	}
 
-	//@Test
+	@Test
 	public void test_subsumption_withAbstractValues() {
 
 		model.setQueriesEnabled(true);

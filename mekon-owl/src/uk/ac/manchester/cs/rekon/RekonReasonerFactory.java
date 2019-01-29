@@ -32,30 +32,30 @@ import org.semanticweb.owlapi.reasoner.*;
  */
 public class RekonReasonerFactory implements OWLReasonerFactory {
 
-	 public String getReasonerName() {
+	public String getReasonerName() {
 
-		 return RekonReasoner.REASONER_NAME;
-	 }
+		return RekonReasoner.REASONER_NAME;
+	}
 
-	 public OWLReasoner createReasoner(OWLOntology ontology) {
+	public OWLReasoner createReasoner(OWLOntology ontology) {
 
-		 return new RekonReasoner(ontology);
-	 }
+		return new RekonReasoner(ontology);
+	}
 
- 	 public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) {
+ 	public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) {
 
- 		 return new RekonReasoner(ontology);
- 	 }
+ 		return new RekonReasoner(ontology);
+ 	}
 
-	 public OWLReasoner createNonBufferingReasoner(OWLOntology ontology) {
+	public OWLReasoner createNonBufferingReasoner(OWLOntology ontology) {
 
-		 return new RekonReasoner(ontology);
-	 }
+		return new RekonReasoner(ontology);
+	}
 
-	 public OWLReasoner createNonBufferingReasoner(
-		 					OWLOntology ontology,
-		 					OWLReasonerConfiguration config) {
+	public OWLReasoner createNonBufferingReasoner(
+							OWLOntology ontology,
+							OWLReasonerConfiguration config) {
 
-		 return new RekonReasoner(ontology);
-	 }
+		return new RekonReasoner(ontology);
+	}
 }

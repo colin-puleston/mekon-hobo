@@ -116,9 +116,7 @@ class Descriptions {
 				return null;
 			}
 
-			Set<Description> s = toSuccessors(ops, true);
-
-			return s != null ? new Description(name, s) : null;
+			return new Description(name, toSuccessors(ops));
 		}
 
 		private Description createAnonymous(OWLClassExpression source) {
@@ -268,18 +266,6 @@ class Descriptions {
 
 	Set<Description> toSuccessors(Collection<OWLClassExpression> sources) {
 
-		return toSuccessors(sources, false);
-	}
-
-	Description toSuccessor(OWLClassExpression source) {
-
-		return toSuccessor(source, false);
-	}
-
-	private Set<Description> toSuccessors(
-								Collection<OWLClassExpression> sources,
-								boolean nullOnAnyFails) {
-
 		Set<Description> succs = new HashSet<Description>();
 
 		for (OWLClassExpression source : sources) {
@@ -290,16 +276,14 @@ class Descriptions {
 
 				succs.add(s);
 			}
-			else {
-
-				if (nullOnAnyFails) {
-
-					return null;
-				}
-			}
 		}
 
 		return succs;
+	}
+
+	Description toSuccessor(OWLClassExpression source) {
+
+		return toSuccessor(source, false);
 	}
 
 	private Description toSuccessor(OWLClassExpression source, boolean complement) {
