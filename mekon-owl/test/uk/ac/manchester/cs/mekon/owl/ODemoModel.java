@@ -28,10 +28,9 @@ import java.io.File;
 import java.net.URL;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory;
-import uk.ac.manchester.cs.rekon.RekonReasonerFactory;
 
 import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
@@ -44,7 +43,9 @@ public class ODemoModel {
 	static private final String OWL_FILE = "demo.owl";
 	static private final String NUMERIC_PROPERTY = "numericValue";
 
-	static private final Class<? extends OWLReasonerFactory> REASONER_FACTORY = RekonReasonerFactory.class;
+	static private final Class<FaCTPlusPlusReasonerFactory>
+							REASONER_FACTORY_CLASS
+								= FaCTPlusPlusReasonerFactory.class;
 
 	static public OModel create() {
 
@@ -57,7 +58,7 @@ public class ODemoModel {
 
 	static private OModelBuilder createBuilder() {
 
-		return new OModelBuilder(getSourceFile(), REASONER_FACTORY);
+		return new OModelBuilder(getSourceFile(), REASONER_FACTORY_CLASS);
 	}
 
 	static private IRI nameToIRI(String name) {
