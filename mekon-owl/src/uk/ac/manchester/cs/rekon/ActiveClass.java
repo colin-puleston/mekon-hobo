@@ -33,8 +33,7 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 	private ClassName name;
 
-	// XXX private
-	Description definition;
+	private Description definition;
 	private Description profile;
 
 	private Set<ActiveClass> equivalents = new HashSet<ActiveClass>();
@@ -42,9 +41,19 @@ class ActiveClass implements Comparable<ActiveClass> {
 	private Set<ActiveClass> supers = new HashSet<ActiveClass>();
 	private Set<ActiveClass> subs = new HashSet<ActiveClass>();
 
-	public int compareTo(ActiveClass d) {
+	public int compareTo(ActiveClass other) {
 
-		int c = nestedNameCount() - d.nestedNameCount();
+		if (definition == null) {
+
+			return 1;
+		}
+
+		if (other.definition == null) {
+
+			return -1;
+		}
+
+		int c = definitionSize() - other.definitionSize();
 
 		return c == 0 ? 1 : c;
 	}
@@ -204,14 +213,19 @@ class ActiveClass implements Comparable<ActiveClass> {
 		return definition != null && desc.subsumes(definition);
 	}
 
-	boolean sameDefinitions(ActiveClass other) {
+	boolean hasDefinition() {
 
-		return definition != null && definition == other.definition;
+		return definition != null;
 	}
 
 	boolean hasDefinition(Description defn) {
 
 		return definition == defn;
+	}
+
+	boolean sameDefinitions(ActiveClass other) {
+
+		return definition != null && definition == other.definition;
 	}
 
 	void printHierarchy(String tabs) {
@@ -282,8 +296,8 @@ class ActiveClass implements Comparable<ActiveClass> {
 		}
 	}
 
-	private int nestedNameCount() {
+	private int definitionSize() {
 
-		return profile.getNestedNames().getSet().size();
+		return definition.getNestedNames().getSet().size();
 	}
 }

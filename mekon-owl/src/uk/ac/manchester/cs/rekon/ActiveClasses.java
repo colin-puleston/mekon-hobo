@@ -58,7 +58,10 @@ class ActiveClasses {
 
 			for (ActiveClass sub : current.getSubs()) {
 
-				subsumption |= crawlFromSub(sub, subject);
+				if (sub.hasDefinition()) {
+
+					subsumption |= crawlFromSub(sub, subject);
+				}
 			}
 
 			return subsumption;
@@ -208,7 +211,10 @@ class ActiveClasses {
 
 		if (defns.isEmpty()) {
 
-			add(name, null, new Description(name, sups));
+			if (!sups.isEmpty()) {
+
+				add(name, null, new Description(name, sups));
+			}
 		}
 		else {
 

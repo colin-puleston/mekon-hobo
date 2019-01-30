@@ -46,6 +46,7 @@ class Classifier {
 		ClassificationPass(Collection<ActiveClass> classifiables) {
 
 			this.classifiables = classifiables;
+			System.out.println("\nSTART-PASS: " + classifiables.size());
 		}
 
 		Collection<ActiveClass> perfomPass() {
