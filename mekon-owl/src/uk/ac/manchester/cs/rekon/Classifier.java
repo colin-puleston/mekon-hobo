@@ -45,7 +45,7 @@ class Classifier {
 
 		ClassificationPass(Collection<ActiveClass> classifiables) {
 
-			this.classifiables = classifiables;
+			this.classifiables = new TreeSet<ActiveClass>(classifiables);
 		}
 
 		Collection<ActiveClass> perfomPass() {

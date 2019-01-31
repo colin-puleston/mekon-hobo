@@ -31,7 +31,7 @@ import java.util.*;
  */
 class ActiveClasses {
 
-	private SortedSet<ActiveClass> all = new TreeSet<ActiveClass>();
+	private Set<ActiveClass> all = new HashSet<ActiveClass>();
 	private Set<ActiveClass> definitions = new HashSet<ActiveClass>();
 
 	private ActiveClass classificationRoot = new ActiveClass();
