@@ -46,7 +46,6 @@ class Classifier {
 		ClassificationPass(Collection<ActiveClass> classifiables) {
 
 			this.classifiables = classifiables;
-			System.out.println("\nSTART-PASS: " + classifiables.size());
 		}
 
 		Collection<ActiveClass> perfomPass() {
@@ -61,7 +60,7 @@ class Classifier {
 
 			for (ActiveClass c : classifiables) {
 
-				activeClasses.absorbIntoHierarchy(c);
+				activeClasses.classify(c);
 			}
 		}
 
@@ -97,7 +96,7 @@ class Classifier {
 
 		initialiseActiveClasses(assertions);
 		setActiveNames();
-		perfomClassifications();
+		classify();
 	}
 
 	Set<ClassName> getEquivalents(OWLClassExpression expr) {
@@ -124,6 +123,18 @@ class Classifier {
 		return Collections.emptySet();
 	}
 
+	Set<ClassName> getSubs(OWLClassExpression expr, boolean directOnly) {
+
+		Description d = descriptions.toStructure(expr);
+
+		if (d != null) {
+
+			return activeClasses.getSubs(d, directOnly);
+		}
+
+		return Collections.emptySet();
+	}
+
 	private void initialiseActiveClasses(Assertions assertions) {
 
 		for (ClassName name : names.getAllClassNames()) {
@@ -142,7 +153,7 @@ class Classifier {
 
 		for (ActiveClass c : activeClasses.getAll()) {
 
-			activeNames.addAll(c.getAllNames());
+			activeNames.addAll(c.getAllProfileNames());
 		}
 
 		for (ActiveClass c : activeClasses.getAll()) {
@@ -151,7 +162,7 @@ class Classifier {
 		}
 	}
 
-	private void perfomClassifications() {
+	private void classify() {
 
 		Collection<ActiveClass> classifiables = activeClasses.getAll();
 
@@ -164,14 +175,14 @@ class Classifier {
 				break;
 			}
 
-			resetNameActiveClassReferences();
+			resetActiveClassNameReferences();
 		}
 
 		names.resolveAllLinksPostClassification();
 		descriptions.setCacheAdditionsEnabled(false);
 	}
 
-	private void resetNameActiveClassReferences() {
+	private void resetActiveClassNameReferences() {
 
 		for (ActiveClass c : activeClasses.getAll()) {
 

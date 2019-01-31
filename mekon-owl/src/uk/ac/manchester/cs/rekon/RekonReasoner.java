@@ -121,7 +121,7 @@ public class RekonReasoner extends StructuralReasoner {
 			return names.get((OWLClass)expr).getSubEntities(OWLClass.class, directOnly);
 		}
 
-		return Collections.emptySet();
+		return toClasses(classifier.getSubs(expr, directOnly));
 	}
 
 	private OWLClassNodeSet toNodeSet(Set<OWLClass> classes) {

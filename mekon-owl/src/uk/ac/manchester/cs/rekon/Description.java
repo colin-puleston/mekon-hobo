@@ -31,28 +31,53 @@ import java.util.*;
  */
 class Description extends NameExpression {
 
-	private Name name;
+	private Set<Name> names = new HashSet<Name>();
 	private Set<Expression> successors = new HashSet<Expression>();
 
 	Description(Name name) {
 
-		this(name, Collections.emptySet());
+		this(Collections.singleton(name));
 	}
 
 	Description(Name name, Expression successor) {
 
-		this(name, Collections.singleton(successor));
+		this(Collections.singleton(name), successor);
 	}
 
 	Description(Name name, Set<? extends Expression> successors) {
 
-		this.name = name;
+		this(Collections.singleton(name), successors);
+	}
+
+	Description(Collection<Name> names) {
+
+		this(names, Collections.emptySet());
+	}
+
+	Description(Collection<Name> names, Expression successor) {
+
+		this(names, Collections.singleton(successor));
+	}
+
+	Description(Collection<Name> names, Set<? extends Expression> successors) {
+
+		this.names.addAll(names);
 		this.successors.addAll(successors);
+	}
+
+	Description combineWith(Description other) {
+
+		Description e = new Description(names, successors);
+
+		e.names.addAll(other.names);
+		e.successors.addAll(other.successors);
+
+		return e;
 	}
 
 	Description extend(Set<? extends Expression> extraSuccessors) {
 
-		Description e = new Description(name, successors);
+		Description e = new Description(names, successors);
 
 		e.successors.addAll(extraSuccessors);
 
@@ -69,9 +94,9 @@ class Description extends NameExpression {
 		return this;
 	}
 
-	Name getName() {
+	Set<Name> getNames() {
 
-		return name;
+		return names;
 	}
 
 	Set<Expression> getSuccessors() {
@@ -84,14 +109,14 @@ class Description extends NameExpression {
 		return !successors.isEmpty();
 	}
 
+	Set<Name> getDirectNames() {
+
+		return names;
+	}
+
 	NameSet getCompulsoryNestedNames() {
 
 		return getNestedNames();
-	}
-
-	Name getNameOrNull() {
-
-		return name;
 	}
 
 	Set<? extends Expression> getSubExpressions() {
@@ -104,14 +129,14 @@ class Description extends NameExpression {
 		Description d = e.asDescription();
 
 		return d != null
-				&& name.subsumes(d.name)
+				&& nameSubsumptions(d)
 				&& possibleNestedSubsumption(d)
 				&& successorSubsumptions(d);
 	}
 
 	void render(ExpressionRenderer r) {
 
-		r.addLine(name.getEntityName());
+		r.addLine(namesToString());
 
 		r = r.nextLevel();
 
@@ -119,6 +144,32 @@ class Description extends NameExpression {
 
 			s.render(r);
 		}
+	}
+
+	private boolean nameSubsumptions(Description d) {
+
+		for (Name n : names) {
+
+			if (!nameSubsumption(d, n)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean nameSubsumption(Description d, Name n) {
+
+		for (Name dn : d.names) {
+
+			if (n.subsumes(dn)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private boolean successorSubsumptions(Description d) {
@@ -145,5 +196,27 @@ class Description extends NameExpression {
 		}
 
 		return false;
+	}
+
+	private String namesToString() {
+
+		if (names.isEmpty()) {
+
+			return ClassName.THING.toString();
+		}
+
+		if (names.size() == 1) {
+
+			return names.iterator().next().getEntityName();
+		}
+
+		List<String> l = new ArrayList<String>();
+
+		for (Name n : names) {
+
+			l.add(n.getEntityName());
+		}
+
+		return l.toString();
 	}
 }

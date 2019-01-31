@@ -31,34 +31,58 @@ import java.util.*;
  */
 class ActiveClasses {
 
-	private ActiveClass root = new ActiveClass();
 	private SortedSet<ActiveClass> all = new TreeSet<ActiveClass>();
+	private Set<ActiveClass> definitions = new HashSet<ActiveClass>();
 
-	private abstract class SubsumptionCrawler<S> {
+	private ActiveClass classificationRoot = new ActiveClass();
+
+	private EquivalentsFinder equivalentsFinder = new EquivalentsFinder();
+	private SupersFinder supersFinder = new SupersFinder();
+	private SubsFinder subsFinder = new SubsFinder();
+
+	private class ClassClassifier {
 
 		private Set<ActiveClass> visited = new HashSet<ActiveClass>();
 		private Set<ActiveClass> subsumers = new HashSet<ActiveClass>();
 
-		void crawl(S subject) {
+		ClassClassifier(ActiveClass subject) {
 
-			crawlFrom(root, subject);
+			crawlFrom(classificationRoot, subject);
 		}
 
-		abstract boolean sameDefinitions(ActiveClass c, S subject);
+		private boolean crawlFrom(ActiveClass current, ActiveClass subject) {
 
-		abstract boolean subsumption(ActiveClass c, S subject);
+			boolean defnMatch = current.definitionMatch(subject);
 
-		abstract boolean subsumption(S subject, ActiveClass c);
+			if (defnMatch || current.subsumes(subject)) {
 
-		abstract void processSubsumption(ActiveClass current, S subject, boolean equiv);
+				subsumers.add(current);
 
-		boolean crawlFromSubs(ActiveClass current, S subject) {
+				if (defnMatch || subject.subsumes(current)) {
+
+					current.addEquivalent(subject);
+				}
+				else {
+
+					if (checkAsSub(current, subject)) {
+
+						current.addSub(subject);
+					}
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private boolean crawlFromSubs(ActiveClass current, ActiveClass subject) {
 
 			boolean subsumption = false;
 
 			for (ActiveClass sub : current.getSubs()) {
 
-				if (sub.hasDefinition()) {
+				if (sub.hasDefinitions()) {
 
 					subsumption |= crawlFromSub(sub, subject);
 				}
@@ -67,60 +91,26 @@ class ActiveClasses {
 			return subsumption;
 		}
 
-		private boolean crawlFrom(ActiveClass current, S subject) {
+		private boolean crawlFromSub(ActiveClass sub, ActiveClass subject) {
 
-			boolean sameDefns = sameDefinitions(current, subject);
+			return visited.add(sub) ? crawlFrom(sub, subject) : subsumers.contains(sub);
+		}
 
-			if (sameDefns || subsumption(current, subject)) {
+		private boolean checkAsSub(ActiveClass current, ActiveClass subject) {
 
-				boolean equiv = sameDefns || subsumption(subject, current);
+			if (subject.hasDefinitions()) {
 
-				subsumers.add(current);
-				processSubsumption(current, subject, equiv);
+				if (crawlFromSubs(current, subject)) {
+
+					return false;
+				}
+
+				checkInsertNewSub(current, subject);
 
 				return true;
 			}
 
-			return false;
-		}
-
-		private boolean crawlFromSub(ActiveClass sub, S subject) {
-
-			return visited.add(sub) ? crawlFrom(sub, subject) : subsumers.contains(sub);
-		}
-	}
-
-	private class Absorber extends SubsumptionCrawler<ActiveClass> {
-
-		Absorber(ActiveClass defn) {
-
-			crawl(defn);
-		}
-
-		boolean sameDefinitions(ActiveClass c1, ActiveClass c2) {
-
-			return c1.sameDefinitions(c2);
-		}
-
-		boolean subsumption(ActiveClass c1, ActiveClass c2) {
-
-			return c1.subsumes(c2);
-		}
-
-		void processSubsumption(ActiveClass current, ActiveClass subject, boolean equiv) {
-
-			if (equiv) {
-
-				current.addEquivalent(subject);
-			}
-			else {
-
-				if (!crawlFromSubs(current, subject)) {
-
-					checkInsertNewSub(current, subject);
-					current.addSub(subject);
-				}
-			}
+			return current != classificationRoot;
 		}
 
 		private void checkInsertNewSub(ActiveClass current, ActiveClass newSub) {
@@ -136,74 +126,77 @@ class ActiveClasses {
 		}
 	}
 
-	private abstract class DescriptionClassifier extends SubsumptionCrawler<Description> {
+	private abstract class DescriptionClassifier {
 
-		final Set<ClassName> names = new HashSet<ClassName>();
+		Set<ClassName> findFor(Description desc, boolean purgeAncestors) {
 
-		Set<ClassName> findAll(Description d) {
+			Set<ClassName> cs = new HashSet<ClassName>();
 
-			crawl(d);
+			for (ActiveClass c : getCandidateClasses()) {
 
-			return names;
+				if (selectClass(desc, c)) {
+
+					cs.add(c.getName());
+				}
+			}
+
+			if (purgeAncestors) {
+
+				purgeAncestors(cs);
+			}
+
+			return cs;
 		}
 
-		boolean sameDefinitions(ActiveClass c, Description subject) {
+		abstract Set<ActiveClass> getCandidateClasses();
 
-			return c.hasDefinition(subject);
-		}
+		abstract boolean selectClass(Description desc, ActiveClass c);
 
-		boolean subsumption(ActiveClass c, Description subject) {
+		private void purgeAncestors(Set<ClassName> cs) {
 
-			return c.subsumes(subject);
-		}
+			for (ClassName c : new HashSet<ClassName>(cs)) {
 
-		boolean subsumption(Description subject, ActiveClass c) {
-
-			return c.subsumedBy(subject);
+				cs.removeAll(c.getAncestors());
+			}
 		}
 	}
 
 	private class EquivalentsFinder extends DescriptionClassifier {
 
-		void processSubsumption(ActiveClass current, Description subject, boolean equiv) {
+		Set<ActiveClass> getCandidateClasses() {
 
-			if (equiv) {
+			return definitions;
+		}
 
-				names.add(current.getName());
+		boolean selectClass(Description desc, ActiveClass c) {
 
-				for (ActiveClass equ : current.getEquivalents()) {
-
-					names.add(equ.getName());
-				}
-			}
-			else {
-
-				crawlFromSubs(current, subject);
-			}
+			return c.equivalentTo(desc);
 		}
 	}
 
 	private class SupersFinder extends DescriptionClassifier {
 
-		private boolean directOnly;
+		Set<ActiveClass> getCandidateClasses() {
 
-		SupersFinder(boolean directOnly) {
-
-			this.directOnly = directOnly;
+			return definitions;
 		}
 
-		void processSubsumption(ActiveClass current, Description subject, boolean equiv) {
+		boolean selectClass(Description desc, ActiveClass c) {
 
-			if (!equiv) {
+			return c.subsumes(desc);
+		}
+	}
 
-				if (!crawlFromSubs(current, subject) || !directOnly) {
+	private class SubsFinder extends DescriptionClassifier {
 
-					if (!current.isRoot()) {
+		Set<ActiveClass> getCandidateClasses() {
 
-						names.add(current.getName());
-					}
-				}
-			}
+			return all;
+		}
+
+		boolean selectClass(Description desc, ActiveClass c) {
+
+			return c.subsumedBy(desc);
 		}
 	}
 
@@ -213,21 +206,18 @@ class ActiveClasses {
 
 			if (!sups.isEmpty()) {
 
-				add(name, null, new Description(name, sups));
+				add(name, new Description(name, sups));
 			}
 		}
 		else {
 
-			for (Description defn : defns) {
-
-				add(name, defn, resolveProfile(defn, sups));
-			}
+			addDefinition(name, defns, sups);
 		}
 	}
 
-	void absorbIntoHierarchy(ActiveClass c) {
+	void classify(ActiveClass c) {
 
-		new Absorber(c);
+		new ClassClassifier(c);
 	}
 
 	Set<ActiveClass> getAll() {
@@ -237,21 +227,45 @@ class ActiveClasses {
 
 	Set<ClassName> getEquivalents(Description desc) {
 
-		return new EquivalentsFinder().findAll(desc);
+		return equivalentsFinder.findFor(desc, false);
 	}
 
 	Set<ClassName> getSupers(Description desc, boolean directOnly) {
 
-		return new SupersFinder(directOnly).findAll(desc);
+		return supersFinder.findFor(desc, directOnly);
 	}
 
-	private Description resolveProfile(Description defn, Set<Description> sups) {
+	Set<ClassName> getSubs(Description desc, boolean directOnly) {
 
-		return sups.isEmpty() ? defn : defn.extend(sups);
+		return subsFinder.findFor(desc, directOnly);
 	}
 
-	private void add(ClassName name, Description defn, Description prof) {
+	private void addDefinition(ClassName name, Set<Description> defns, Set<Description> sups) {
 
-		all.add(new ActiveClass(name, defn, prof));
+		ActiveClass c = add(name, resolveProfile(defns, sups));
+
+		c.addDefinitions(defns);
+		definitions.add(c);
+	}
+
+	private ActiveClass add(ClassName name, Description prof) {
+
+		ActiveClass c = new ActiveClass(name, prof);
+
+		all.add(c);
+
+		return c;
+	}
+
+	private Description resolveProfile(Set<Description> defns, Set<Description> sups) {
+
+		Description combo = null;
+
+		for (Description d : defns) {
+
+			combo = combo == null ? d : combo.combineWith(d);
+		}
+
+		return sups.isEmpty() ? combo : combo.extend(sups);
 	}
 }

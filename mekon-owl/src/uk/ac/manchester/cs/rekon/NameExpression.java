@@ -78,11 +78,9 @@ abstract class NameExpression extends Expression {
 
 		void addSubExpressionRefs(NameSet refs, NameExpression s) {
 
-			Name name = s.getNameOrNull();
+			for (Name n : getDirectNames()) {
 
-			if (name != null) {
-
-				addNameRefs(refs, name);
+				addNameRefs(refs, n);
 			}
 
 			addNextNestedRefs(refs, s);
@@ -170,13 +168,8 @@ abstract class NameExpression extends Expression {
 	Set<Name> getAllNames() {
 
 		Set<Name> all = new HashSet<Name>();
-		Name name = getNameOrNull();
 
-		if (name != null) {
-
-			all.add(name);
-		}
-
+		all.addAll(getDirectNames());
 		all.addAll(nestedNames.get().getSet());
 
 		return all;
@@ -194,7 +187,7 @@ abstract class NameExpression extends Expression {
 
 	abstract NameSet getCompulsoryNestedNames();
 
- 	abstract Name getNameOrNull();
+ 	abstract Set<Name> getDirectNames();
 
 	abstract Set<? extends Expression> getSubExpressions();
 }

@@ -33,27 +33,26 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 	private ClassName name;
 
-	private Description definition;
 	private Description profile;
+	private Set<Description> definitions = new HashSet<Description>();
 
 	private Set<ActiveClass> equivalents = new HashSet<ActiveClass>();
-
 	private Set<ActiveClass> supers = new HashSet<ActiveClass>();
 	private Set<ActiveClass> subs = new HashSet<ActiveClass>();
 
 	public int compareTo(ActiveClass other) {
 
-		if (definition == null) {
+		if (definitions.isEmpty()) {
 
 			return 1;
 		}
 
-		if (other.definition == null) {
+		if (other.definitions.isEmpty()) {
 
 			return -1;
 		}
 
-		int c = definitionSize() - other.definitionSize();
+		int c = minDefinitionSize() - other.minDefinitionSize();
 
 		return c == 0 ? 1 : c;
 	}
@@ -65,19 +64,25 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 	ActiveClass() {
 
-		this(null, null, null);
+		this(ClassName.THING, new Description(ClassName.THING));
 	}
 
-	ActiveClass(ClassName name, Description definition, Description profile) {
+	ActiveClass(ClassName name, Description profile) {
 
 		this.name = name;
-		this.definition = definition;
 		this.profile = profile;
+	}
+
+	void addDefinitions(Collection<Description> definitions) {
+
+		this.definitions.addAll(definitions);
 	}
 
 	void setActiveNames(Set<Name> activeNames) {
 
-		for (Description d : getDescriptions()) {
+		profile.setActiveNames(activeNames);
+
+		for (Description d : definitions) {
 
 			d.setActiveNames(activeNames);
 		}
@@ -85,18 +90,13 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 	void setNameSubsumptions(NameSet updateds) {
 
-		if (equivalents.isEmpty() && supers.isEmpty()) {
-
-			return;
-		}
-
 		boolean updates = false;
 
 		for (ActiveClass equ : equivalents) {
 
 			if (name.addEquivalent(equ.name)) {
 
-				updates = true;;
+				updates |= true;
 				updateds.add(equ.name);
 			}
 		}
@@ -105,7 +105,7 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 			if (name.addSuper(sup.name)) {
 
-				updates = true;;
+				updates |= true;
 				updateds.add(sup.name);
 			}
 		}
@@ -118,7 +118,9 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 	void resetNameReferences() {
 
-		for (Description d : getDescriptions()) {
+		profile.resetNameReferences();
+
+		for (Description d : definitions) {
 
 			d.resetNameReferences();
 		}
@@ -128,7 +130,7 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 		if (profile.getNestedNameSubsumers().containsAny(updateds)) {
 
-			remove();
+			removeFromClassification();
 
 			return true;
 		}
@@ -160,7 +162,7 @@ class ActiveClass implements Comparable<ActiveClass> {
 
 	boolean isRoot() {
 
-		return name == null;
+		return name == ClassName.THING;
 	}
 
 	ClassName getName() {
@@ -168,7 +170,7 @@ class ActiveClass implements Comparable<ActiveClass> {
 		return name;
 	}
 
-	Set<Name> getAllNames() {
+	Set<Name> getAllProfileNames() {
 
 		return profile.getAllNames();
 	}
@@ -188,6 +190,29 @@ class ActiveClass implements Comparable<ActiveClass> {
 		return subs;
 	}
 
+	boolean hasDefinitions() {
+
+		return !definitions.isEmpty();
+	}
+
+	boolean definitionMatch(ActiveClass other) {
+
+		for (Description d : definitions) {
+
+			if (other.definitions.contains(d)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	boolean equivalentTo(Description desc) {
+
+		return definitions.contains(desc) || (subsumes(desc) && subsumedBy(desc));
+	}
+
 	boolean subsumes(ActiveClass other) {
 
 		return other.isRoot() ? isRoot() : subsumes(other.profile);
@@ -200,7 +225,15 @@ class ActiveClass implements Comparable<ActiveClass> {
 			return true;
 		}
 
-		return definition != null && definition.subsumes(desc);
+		for (Description d : definitions) {
+
+			if (d.subsumes(desc)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	boolean subsumedBy(Description desc) {
@@ -210,22 +243,15 @@ class ActiveClass implements Comparable<ActiveClass> {
 			return false;
 		}
 
-		return definition != null && desc.subsumes(definition);
-	}
+		for (Description d : definitions) {
 
-	boolean hasDefinition() {
+			if (desc.subsumes(d)) {
 
-		return definition != null;
-	}
+				return true;
+			}
+		}
 
-	boolean hasDefinition(Description defn) {
-
-		return definition == defn;
-	}
-
-	boolean sameDefinitions(ActiveClass other) {
-
-		return definition != null && definition == other.definition;
+		return false;
 	}
 
 	void printHierarchy(String tabs) {
@@ -238,7 +264,7 @@ class ActiveClass implements Comparable<ActiveClass> {
 		}
 	}
 
-	private void remove() {
+	private void removeFromClassification() {
 
 		removeEquivalents();
 		removeFromHierarchy();
@@ -257,6 +283,8 @@ class ActiveClass implements Comparable<ActiveClass> {
 	private void removeFromHierarchy() {
 
 		for (ActiveClass sup : supers) {
+
+			sup.removeSub(this);
 
 			for (ActiveClass sub : subs) {
 
@@ -278,26 +306,20 @@ class ActiveClass implements Comparable<ActiveClass> {
 		}
 	}
 
-	private List<Description> getDescriptions() {
+	private int minDefinitionSize() {
 
-		List<Description> descs = new ArrayList<Description>();
+		int min = 0;
 
-		checkAddDescription(descs, profile);
-		checkAddDescription(descs, definition);
+		for (Description d : definitions) {
 
-		return descs;
-	}
+			int s = d.getNestedNames().getSet().size();
 
-	private void checkAddDescription(List<Description> descs, Description d) {
+			if (min == 0 || s < min) {
 
-		if (d != null) {
-
-			descs.add(d);
+				min = s;
+			}
 		}
-	}
 
-	private int definitionSize() {
-
-		return definition.getNestedNames().getSet().size();
+		return min;
 	}
 }

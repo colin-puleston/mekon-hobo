@@ -109,14 +109,14 @@ class Descriptions {
 		private Description create(OWLObjectIntersectionOf source) {
 
 			Set<OWLClassExpression> ops = source.getOperands();
-			ClassName name = extractSingleClassName(ops);
+			Set<Name> ns = extractClassNames(ops);
 
-			if (name == null || (structuredOnly && ops.isEmpty())) {
+			if (structuredOnly && ns.size() == 1 && ops.isEmpty()) {
 
 				return null;
 			}
 
-			return new Description(name, toSuccessors(ops));
+			return new Description(ns, toSuccessors(ops));
 		}
 
 		private Description createAnonymous(OWLClassExpression source) {
@@ -349,25 +349,25 @@ class Descriptions {
 		return dataSuccessors.get((OWLDataRestriction)source);
 	}
 
-	private ClassName extractSingleClassName(Set<OWLClassExpression> ops) {
+	private Set<Name> extractClassNames(Set<OWLClassExpression> ops) {
 
-		OWLClass named = null;
+		Set<Name> ns = new HashSet<Name>();
 
-		for (OWLClassExpression op : ops) {
+		for (OWLClassExpression op : new HashSet<OWLClassExpression>(ops)) {
 
 			if (op instanceof OWLClass) {
 
-				if (named != null) {
-
-					return null;
-				}
-
-				named = (OWLClass)op;
+				ns.add(names.get((OWLClass)op));
 				ops.remove(op);
 			}
 		}
 
-		return named == null ? ClassName.THING : names.get(named);
+		if (ns.isEmpty()) {
+
+			ns.add(ClassName.THING);
+		}
+
+		return ns;
 	}
 
 	private Expression toDataValue(OWLDataRestriction source) {

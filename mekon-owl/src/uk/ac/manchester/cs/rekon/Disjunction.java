@@ -48,14 +48,14 @@ class Disjunction extends NameExpression {
 		return this;
 	}
 
+	Set<Name> getDirectNames() {
+
+		return Collections.emptySet();
+	}
+
 	NameSet getCompulsoryNestedNames() {
 
 		return NameSet.EMPTY_SET;
-	}
-
-	Name getNameOrNull() {
-
-		return null;
 	}
 
 	Set<? extends Expression> getSubExpressions() {
