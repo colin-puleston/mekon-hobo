@@ -38,7 +38,7 @@ public class TestIFrames {
 
 	public IFrame create(String typeName) {
 
-		return new IFrame(types.create(typeName), function, false);
+		return IFrameCategory.ATOMIC.instantiate(types.create(typeName), function);
 	}
 
 	TestIFrames(TestCFrames types, IFrameFunction function) {
