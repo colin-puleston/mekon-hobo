@@ -72,6 +72,11 @@ public enum OReasoningType {
 	 */
 	DL {
 
+		boolean axiomPurgeRequired() {
+
+			return false;
+		}
+
 		boolean requiredAxiom(OWLAxiom axiom) {
 
 			return true;
@@ -89,6 +94,11 @@ public enum OReasoningType {
 	public boolean morePowerfullThan(OReasoningType other) {
 
 		return ordinal() > other.ordinal();
+	}
+
+	boolean axiomPurgeRequired() {
+
+		return true;
 	}
 
 	abstract boolean requiredAxiom(OWLAxiom axiom);

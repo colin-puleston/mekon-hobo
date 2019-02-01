@@ -704,11 +704,14 @@ public class OModel {
 
 	void purgeForReasoningType() {
 
-		for (OWLAxiom axiom : OWLAPIVersion.getAxioms(modelOntology)) {
+		if (reasoningType.axiomPurgeRequired()) {
 
-			if (!reasoningType.requiredAxiom(axiom)) {
+			for (OWLAxiom axiom : OWLAPIVersion.getAxioms(modelOntology)) {
 
-				modelAxioms.remove(axiom);
+				if (!reasoningType.requiredAxiom(axiom)) {
+
+					modelAxioms.remove(axiom);
+				}
 			}
 		}
 	}
