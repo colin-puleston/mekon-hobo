@@ -39,6 +39,7 @@ import uk.ac.manchester.cs.mekon.*;
 public abstract class KList<V> {
 
 	private List<V> values = new ArrayList<V>();
+	private Set<V> valueFinder = new HashSet<V>();
 
 	private List<KUpdateListener> updateListeners = new ArrayList<KUpdateListener>();
 	private List<KValuesListener<V>> valuesListeners = new ArrayList<KValuesListener<V>>();
@@ -142,7 +143,7 @@ public abstract class KList<V> {
 	 */
 	public boolean contains(V value) {
 
-		return values.contains(value);
+		return valueFinder.contains(value);
 	}
 
 	/**
@@ -270,6 +271,7 @@ public abstract class KList<V> {
 			List<V> cleared = new ArrayList<V>(values);
 
 			values.clear();
+			valueFinder.clear();
 
 			pollListenersForCleared(cleared);
 			pollListenersForUpdate();
@@ -332,7 +334,7 @@ public abstract class KList<V> {
 
 	private boolean addNewValue(V value) {
 
-		if (!values.contains(value)) {
+		if (valueFinder.add(value)) {
 
 			values.add(value);
 			pollListenersForAdded(value);
@@ -345,8 +347,9 @@ public abstract class KList<V> {
 
 	private boolean removeOldValue(V value) {
 
-		if (values.remove(value)) {
+		if (valueFinder.remove(value)) {
 
+			values.remove(value);
 			pollListenersForRemoved(value);
 
 			return true;
@@ -357,7 +360,7 @@ public abstract class KList<V> {
 
 	private void pollListenersForUpdate() {
 
-		for (KUpdateListener listener : copyUpdateListeners()) {
+		for (KUpdateListener listener : copyListeners(updateListeners)) {
 
 			listener.onUpdated();
 		}
@@ -365,7 +368,7 @@ public abstract class KList<V> {
 
 	private void pollListenersForAdded(V value) {
 
-		for (KValuesListener<V> listener : copyValuesListeners()) {
+		for (KValuesListener<V> listener : copyListeners(valuesListeners)) {
 
 			listener.onAdded(value);
 		}
@@ -373,7 +376,7 @@ public abstract class KList<V> {
 
 	private void pollListenersForRemoved(V value) {
 
-		for (KValuesListener<V> listener : copyValuesListeners()) {
+		for (KValuesListener<V> listener : copyListeners(valuesListeners)) {
 
 			listener.onRemoved(value);
 		}
@@ -381,19 +384,14 @@ public abstract class KList<V> {
 
 	private void pollListenersForCleared(List<V> values) {
 
-		for (KValuesListener<V> listener : copyValuesListeners()) {
+		for (KValuesListener<V> listener : copyListeners(valuesListeners)) {
 
 			listener.onCleared(values);
 		}
 	}
 
-	private List<KUpdateListener> copyUpdateListeners() {
+	private <L>List<L> copyListeners(List<L> source) {
 
-		return new ArrayList<KUpdateListener>(updateListeners);
-	}
-
-	private List<KValuesListener<V>> copyValuesListeners() {
-
-		return new ArrayList<KValuesListener<V>>(valuesListeners);
+		return source.isEmpty() ? Collections.emptyList() : new ArrayList<L>(source);
 	}
 }
