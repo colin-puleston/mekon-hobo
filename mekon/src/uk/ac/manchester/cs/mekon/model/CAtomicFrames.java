@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -49,7 +51,7 @@ class CAtomicFrames {
 		}
 	};
 
-	private List<CAtomicFrame> frames = new ArrayList<CAtomicFrame>();
+	private KSimpleList<CAtomicFrame> frames = new KSimpleList<CAtomicFrame>();
 
 	private abstract class Getter<F extends CFrame> {
 
@@ -66,7 +68,7 @@ class CAtomicFrames {
 
 			List<F> selected = new ArrayList<F>();
 
-			for (CAtomicFrame frame : frames) {
+			for (CAtomicFrame frame : frames.asList()) {
 
 				if (visibility.coversHiddenStatus(frame.hidden())) {
 
@@ -82,7 +84,7 @@ class CAtomicFrames {
 
 		List<CFrame> getAll() {
 
-			return new ArrayList<CFrame>(frames);
+			return frames.asList(CFrame.class);
 		}
 
 		void addSelection(List<CFrame> selected, CAtomicFrame frame) {
@@ -95,7 +97,7 @@ class CAtomicFrames {
 
 		List<CAtomicFrame> getAll() {
 
-			return new ArrayList<CAtomicFrame>(frames);
+			return frames.asList();
 		}
 
 		void addSelection(List<CAtomicFrame> selected, CAtomicFrame frame) {
@@ -106,12 +108,12 @@ class CAtomicFrames {
 
 	void add(CAtomicFrame frame) {
 
-		frames.add(frame);
+		frames.addValue(frame);
 	}
 
 	void remove(CAtomicFrame frame) {
 
-		frames.remove(frame);
+		frames.removeValue(frame);
 	}
 
 	boolean isEmpty() {
