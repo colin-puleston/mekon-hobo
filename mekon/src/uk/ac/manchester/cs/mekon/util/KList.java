@@ -157,6 +157,29 @@ public abstract class KList<V> {
 	}
 
 	/**
+	 * Provides contents of list as a <code>List</code> object with
+	 * specified element-type, filtering out any elements not of the
+	 * required type.
+	 *
+	 * @param elementType Required element type
+	 * @return Ordered elements of required type
+	 */
+	public <E>List<E> asList(Class<E> elementType) {
+
+		List<E> list = new ArrayList<E>();
+
+		for (V value : values) {
+
+			if (elementType.isAssignableFrom(value.getClass())) {
+
+				list.add(elementType.cast(value));
+			}
+		}
+
+		return list;
+	}
+
+	/**
 	 * Provides contents of list as a <code>Set</code> object.
 	 *
 	 * @return List contents
@@ -164,6 +187,29 @@ public abstract class KList<V> {
 	public Set<V> asSet() {
 
 		return new HashSet<V>(values);
+	}
+
+	/**
+	 * Provides contents of list as a <code>Set</code> object with
+	 * specified element-type, filtering out any elements not of the
+	 * required type.
+	 *
+	 * @param elementType Required element type
+	 * @return Elements of required type
+	 */
+	public <E>Set<E> asSet(Class<E> elementType) {
+
+		Set<E> set = new HashSet<E>();
+
+		for (V value : values) {
+
+			if (elementType.isAssignableFrom(value.getClass())) {
+
+				set.add(elementType.cast(value));
+			}
+		}
+
+		return set;
 	}
 
 	/**
