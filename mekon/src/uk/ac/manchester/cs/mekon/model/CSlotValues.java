@@ -120,9 +120,7 @@ public class CSlotValues {
 	 * @param valueClass Known class of values
 	 * @return Relevant set of values
 	 */
-	public <V extends CValue<?>>List<V> getValues(
-											CIdentity slotId,
-											Class<V> valueClass) {
+	public <V extends CValue<?>>List<V> getValues(CIdentity slotId, Class<V> valueClass) {
 
 		List<V> values = new ArrayList<V>();
 
@@ -186,16 +184,16 @@ public class CSlotValues {
 		}
 	}
 
-	boolean equalSlotValues(CSlotValues other) {
+	boolean equalsSlotValues(CSlotValues other) {
 
-		if (!slotIds.equals(other.slotIds)) {
+		if (!getSlotIdSet().equals(other.getSlotIdSet())) {
 
 			return false;
 		}
 
 		for (CIdentity slotId : slotIds) {
 
-			if (!getValues(slotId).equals(other.getValues(slotId))) {
+			if (!getValueSet(slotId).equals(other.getValueSet(slotId))) {
 
 				return false;
 			}
@@ -235,11 +233,11 @@ public class CSlotValues {
 
 	int createHashCode() {
 
-		int hashCode = slotIds.hashCode();
+		int hashCode = 0;
 
 		for (CIdentity slotId : slotIds) {
 
-			hashCode += getValues(slotId).hashCode();
+			hashCode += getValueSet(slotId).hashCode();
 		}
 
 		return hashCode;
@@ -274,5 +272,15 @@ public class CSlotValues {
 		List<CValue<?>> testSubValues = testSubsumed.getValues(slotId);
 
 		return CValue.allSubsumptions(values, testSubValues);
+	}
+
+	private Set<CIdentity> getSlotIdSet() {
+
+		return new HashSet<CIdentity>(slotIds);
+	}
+
+	private Set<CValue<?>> getValueSet(CIdentity slotId) {
+
+		return new HashSet<CValue<?>>(valuesBySlotId.getList(slotId));
 	}
 }

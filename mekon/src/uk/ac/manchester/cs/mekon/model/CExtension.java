@@ -263,7 +263,7 @@ class CExtension extends CExpression {
 		}
 
 		return extendedFrame.equals(other.extendedFrame)
-				&& slotValues.equalSlotValues(other.slotValues);
+				&& slotValues.equalsSlotValues(other.slotValues);
 	}
 
 	private boolean subsumesExtension(CExtension testSubsumed) {
