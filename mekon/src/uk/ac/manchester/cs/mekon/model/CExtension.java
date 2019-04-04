@@ -186,7 +186,7 @@ class CExtension extends CExpression {
 
 		if (getModel().initialised()) {
 
-			this.slotValues.validateAll(this);
+			slotValues.validateAll(this);
 		}
 		else {
 
