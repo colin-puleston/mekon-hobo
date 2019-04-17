@@ -33,11 +33,11 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 abstract class IStructureTester {
 
-	private Set<IFrame> visited = new HashSet<IFrame>();
+	private Set<IFrame[]> visited = new HashSet<IFrame[]>();
 
 	boolean match(IFrame frame1, IFrame frame2) {
 
-		return !visited.add(frame1) || framesMatch(frame1, frame2);
+		return checkVisitedPair(frame1, frame2) || framesMatch(frame1, frame2);
 	}
 
 	boolean slotValuesMatch(ISlot slot1, ISlot slot2) {
@@ -70,6 +70,11 @@ abstract class IStructureTester {
 	abstract boolean slotsMatch(ISlots slots1, ISlots slots2);
 
 	abstract boolean valuesMatch(List<IValue> values1, List<IValue> values2);
+
+	private boolean checkVisitedPair(IFrame frame1, IFrame frame2) {
+
+		return !visited.add(new IFrame[]{frame1, frame2});
+	}
 
 	private boolean framesMatch(IFrame frame1, IFrame frame2) {
 
