@@ -147,6 +147,17 @@ public abstract class KList<V> {
 	}
 
 	/**
+	 * Provides index within list of the specified value, if applicable.
+	 *
+	 * @param value Value whose index is required
+	 * @return Index of value, or -1 if value not in list
+	 */
+	public int indexOf(V value) {
+
+		return values.indexOf(value);
+	}
+
+	/**
 	 * Provides contents of list as a <code>List</code> object.
 	 *
 	 * @return Ordered list contents
@@ -229,10 +240,10 @@ public abstract class KList<V> {
 	}
 
 	/**
-	 * Adds specified value to the list (if not already present).
+	 * Adds specified value to the list, if not already present.
 	 *
 	 * @param value Value to add
-	 * @return True if value was added (i.e. not already present)
+	 * @return True if value was added
 	 */
 	protected boolean addValue(V value) {
 
@@ -247,11 +258,47 @@ public abstract class KList<V> {
 	}
 
 	/**
-	 * Adds all specified values to the list (if not already present).
+	 * Inserts value at specified position in the list. If value is
+	 * already present then moves it to the new position.
+	 *
+	 * @param value Value to add/move
+	 * @param index Relevant index
+	 * @return Previous index of moved value, or -1 if not previously
+	 * present
+	 * @throws KAccessException If specified index is invalid
+	 */
+	protected int insertValue(V value, int index) {
+
+		int oldIndex = values.indexOf(value);
+
+		if (oldIndex != -1) {
+
+			values.remove(value);
+		}
+
+		if (index > values.size()) {
+
+			throw new KAccessException("Invalid index: " + index);
+		}
+
+		values.add(index, value);
+
+		if (oldIndex == -1) {
+
+			valueFinder.add(value);
+			pollListenersForAdded(value);
+		}
+
+		pollListenersForUpdate();
+
+		return oldIndex;
+	}
+
+	/**
+	 * Adds all specified values to the list, if not already present.
 	 *
 	 * @param values Values to add
-	 * @return All values that were added (i.e. those not already
-	 * present)
+	 * @return All values that were added
 	 */
 	protected List<V> addAllValues(Collection<V> values) {
 
@@ -274,21 +321,21 @@ public abstract class KList<V> {
 	}
 
 	/**
-	 * Removes specified value from the list (if present).
+	 * Removes specified value from the list, if present.
 	 *
 	 * @param value Value to remove
-	 * @return True if value was removed (i.e. if present)
+	 * @return Index of removed value, or -1 if not present
 	 */
-	protected boolean removeValue(V value) {
+	protected int removeValue(V value) {
 
-		if (removeOldValue(value)) {
+		int index = removeOldValue(value);
+
+		if (index != -1) {
 
 			pollListenersForUpdate();
-
-			return true;
 		}
 
-		return false;
+		return index;
 	}
 
 	/**
@@ -391,17 +438,19 @@ public abstract class KList<V> {
 		return false;
 	}
 
-	private boolean removeOldValue(V value) {
+	private int removeOldValue(V value) {
 
 		if (valueFinder.remove(value)) {
+
+			int index = values.indexOf(value);
 
 			values.remove(value);
 			pollListenersForRemoved(value);
 
-			return true;
+			return index;
 		}
 
-		return false;
+		return -1;
 	}
 
 	private void pollListenersForUpdate() {

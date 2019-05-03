@@ -35,17 +35,12 @@ class CAtomicFrames {
 
 	static final CAtomicFrames INERT_INSTANCE = new CAtomicFrames() {
 
-		void add(CAtomicFrame frame) {
+		boolean add(CAtomicFrame frame) {
 
-			onAttemptedUpdate();
+			throw new Error("Illegal updating of inert object!");
 		}
 
-		void remove(CAtomicFrame frame) {
-
-			onAttemptedUpdate();
-		}
-
-		private void onAttemptedUpdate() {
+		int remove(CAtomicFrame frame) {
 
 			throw new Error("Illegal updating of inert object!");
 		}
@@ -106,14 +101,23 @@ class CAtomicFrames {
 		}
 	}
 
-	void add(CAtomicFrame frame) {
+	boolean add(CAtomicFrame frame) {
 
-		frames.addValue(frame);
+		return frames.addValue(frame);
 	}
 
-	void remove(CAtomicFrame frame) {
+	int remove(CAtomicFrame frame) {
 
-		frames.removeValue(frame);
+		return frames.removeValue(frame);
+	}
+
+	int insert(CAtomicFrame frame, int index) {
+
+		int oldIndex = remove(frame);
+
+		frames.insertValue(frame, index);
+
+		return oldIndex;
 	}
 
 	boolean isEmpty() {

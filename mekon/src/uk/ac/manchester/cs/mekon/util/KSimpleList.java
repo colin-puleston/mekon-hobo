@@ -59,6 +59,15 @@ public class KSimpleList<V> extends KList<V> {
 		return super.addValue(value);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int insertValue(V value, int index) {
+
+		return super.insertValue(value, index);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -70,7 +79,7 @@ public class KSimpleList<V> extends KList<V> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean removeValue(V value) {
+	public int removeValue(V value) {
 
 		return super.removeValue(value);
 	}

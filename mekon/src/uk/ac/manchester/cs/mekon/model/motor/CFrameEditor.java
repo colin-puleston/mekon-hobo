@@ -69,6 +69,20 @@ public interface CFrameEditor {
 	public void clearSupers();
 
 	/**
+	 * Either adds a direct sub-frame for the frame, positioning it at
+	 * the specified index within the current set of sub-frames, or, if
+	 * the supplied frame is already a sub-frame, repositions it to the
+	 * required index.
+	 *
+	 * @param sub Sub-frame to insert
+	 * @param index Required index within current sub-frames
+	 * @return Previous index within sub-frames, if applicable, or -1
+	 * if new sub-frame
+	 * @throws KAccessException if specified index is invalid
+	 */
+	public int insertSub(CFrame sub, int index);
+
+	/**
 	 * Creates a slot and adds it to the frame.
 	 *
 	 * @param slotId Identity for slot
@@ -80,6 +94,33 @@ public interface CFrameEditor {
 					CIdentity slotId,
 					CValue<?> valueType,
 					CCardinality cardinality);
+
+	/**
+	 * Creates a slot and adds it to the frame, positioning it at the
+	 * specified index within the current set of slots.
+	 *
+	 * @param slotId Identity for slot
+	 * @param valueType Value-type for slot
+	 * @param cardinality Cardinality for slot
+	 * @param index Required index within current slots
+	 * @return Created and added slot
+	 * @throws KAccessException if specified index is invalid
+	 */
+	public CSlot insertSlot(
+					CIdentity slotId,
+					CValue<?> valueType,
+					CCardinality cardinality,
+					int index);
+
+	/**
+	 * Moves an existing slot to the specified index within the current
+	 * set of slots.
+	 *
+	 * @param slotId Identity olot to be moved
+	 * @param index Required index within current slots
+	 * @return Previous index of moved slot
+	 */
+	public int positionSlot(CIdentity slotId, int index);
 
 	/**
 	 * Removes specified slot from the frame, if possible. Does

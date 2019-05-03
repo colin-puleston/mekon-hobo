@@ -51,7 +51,7 @@ class CIdentifiedsLocal<V extends CIdentified> extends CIdentifieds<V> {
 
 	boolean remove(V value) {
 
-		return removeValue(value);
+		return removeValue(value) != -1;
 	}
 
 	void remove(int index) {

@@ -81,6 +81,11 @@ public abstract class FSlots<S> extends FIdentifiables<S> {
 		addAllValues(slots);
 	}
 
+	int insert(S slot, int index) {
+
+		return insertValue(slot, index);
+	}
+
 	void remove(S slot) {
 
 		removeValue(slot);

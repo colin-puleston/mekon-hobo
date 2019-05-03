@@ -148,6 +148,6 @@ public class IValuesUpdate {
 
 	private int getNonNullAddedValueIndex() {
 
-		return slot.getValues().asList().indexOf(addedValue);
+		return slot.getValues().indexOf(addedValue);
 	}
 }

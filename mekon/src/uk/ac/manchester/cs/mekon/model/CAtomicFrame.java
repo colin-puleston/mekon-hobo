@@ -147,12 +147,31 @@ class CAtomicFrame extends CFrame {
 			}
 		}
 
+		public int insertSub(CFrame sup, int index) {
+
+			return CAtomicFrame.this.insertSub(sup.asAtomicFrame(), index);
+		}
+
 		public CSlot addSlot(
 						CIdentity slotId,
 						CValue<?> valueType,
 						CCardinality cardinality) {
 
 			return CAtomicFrame.this.addSlot(slotId, valueType, cardinality);
+		}
+
+		public CSlot insertSlot(
+						CIdentity slotId,
+						CValue<?> valueType,
+						CCardinality cardinality,
+						int index) {
+
+			return CAtomicFrame.this.insertSlot(slotId, valueType, cardinality, index);
+		}
+
+		public int positionSlot(CIdentity slotId, int index) {
+
+			return CAtomicFrame.this.positionSlot(slotId, index);
 		}
 
 		public boolean removeSlot(CIdentity slotId) {
@@ -454,6 +473,19 @@ class CAtomicFrame extends CFrame {
 		sup.removeSub(this);
 	}
 
+	private int insertSub(CAtomicFrame sub, int index) {
+
+		if (subs.contains(sub)) {
+
+			return subs.insert(sub, index);
+		}
+
+		sub.addSuper(this);
+		subs.insert(sub, index);
+
+		return -1;
+	}
+
 	private void addSub(CAtomicFrame sub) {
 
 		if (subs == CAtomicFrames.INERT_INSTANCE) {
@@ -484,6 +516,24 @@ class CAtomicFrame extends CFrame {
 		addSlot(slot);
 
 		return slot;
+	}
+
+	private CSlot insertSlot(
+					CIdentity slotId,
+					CValue<?> valueType,
+					CCardinality cardinality,
+					int index) {
+
+		CSlot slot = addSlot(slotId, valueType, cardinality);
+
+		slots.insert(slot, index);
+
+		return slot;
+	}
+
+	private int positionSlot(CIdentity slotId, int index) {
+
+		return slots.insert(slots.get(slotId), index);
 	}
 
 	private boolean removeSlot(CIdentity slotId) {
