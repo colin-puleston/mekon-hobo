@@ -29,22 +29,37 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * Represents an instance-level atomic-frame.
+ * Represents an instance-level frame.
  * <p>
- * The frame has a category of either {@link IFrameCategory#ATOMIC}
- * or {@link IFrameCategory#DISJUNCTION}. The latter category being a
- * special case where the frame will always have exactly one slot,
- * which will be a special "disjuncts-slot" whose value-type is the
- * same as the type of the disjunction-frame, and whose values, which
- * must be of category {@link IFrameCategory#ATOMIC}, represent the
- * disjuncts for the disjunction.
+ * Each such instance-level frame represents an instantiation of a
+ * specific concept-level frame, which will be the frame-type of
+ * the instance-level frame.
  * <p>
- * The frame also has a function of either {@link
- * IFrameFunction#ASSERTION} or {@link IFrameFunction#QUERY}, with the
- * two differeing in the following ways:
+ * There are three categories of instance-level frame, as provided via
+ * an appropriate {@link IFrameCategory} value. The possible categories
+ * are:
+ * <ul>
+ *   <li><i>Atomic</i> Represents a standard instantiation, with the
+ *   current slot-set, slot-constraints and fixed slot-values being
+ *   determined via dynamic reasoning dependent on the frame-type (i.e.
+ *   the concept-level frame of which the frame is an instantiation),
+ *   in combination with the current set of slot-values
+ *   <li><i>Disjunction</i> Represents a disjunction of instance-level
+ *   frames of the relevant type, providing only a single slot, the
+ *   "disjuncts" slot, whose value-type is the frame-type, and whose
+ *   values (which can not themselves be of disjunction category)
+ *   represent the disjuncts
+ *   <li><i>Reference</i> Represents a reference to a specific existing
+ *   instantiation of the relevant frame-type, typically located in some
+ *   database, with the referencing instantiation providing only an
+ *   identifier for the referenced instantiation (and hence providing no
+ *   slots itself)
+ * </ul>
+ * The frame also has a function of either {@link IFrameFunction#ASSERTION}
+ * or {@link IFrameFunction#QUERY}, with the two differeing in the following
+ * ways:
  * <ul>
  *   <li>Query-frames can be instantiations of concept-level
  *	 disjunction-frames (see {@link CFrameCategory#disjunction}),
@@ -68,57 +83,9 @@ import uk.ac.manchester.cs.mekon.util.*;
  *
  * @author Colin Puleston
  */
-public class IFrame implements IEntity, IValue {
+public abstract class IFrame implements IEntity, IValue {
 
-	static private class DynamicTypes {
-
-		private CIdentifiedsLocal<CFrame> types = new CIdentifiedsLocal<CFrame>();
-
-		boolean update(List<CFrame> updates) {
-
-			if (typesMatch(updates)) {
-
-				return false;
-			}
-
-			removeOldTypes(updates);
-			addNewTypes(updates);
-
-			return true;
-		}
-
-		CIdentifieds<CFrame> getTypes() {
-
-			return types;
-		}
-
-		private void removeOldTypes(List<CFrame> updates) {
-
-			for (CFrame type : types.asList()) {
-
-				if (!updates.contains(type)) {
-
-					types.remove(type);
-				}
-			}
-		}
-
-		private void addNewTypes(List<CFrame> updates) {
-
-			for (CFrame type : updates) {
-
-				if (!types.contains(type)) {
-
-					types.add(type);
-				}
-			}
-		}
-
-		private boolean typesMatch(List<CFrame> testTypes) {
-
-			return types.asSet().equals(new HashSet<CFrame>(testTypes));
-		}
-	}
+	static private final CIdentifiedsLocal<CFrame> NO_TYPES = new CIdentifiedsLocal<CFrame>();
 
 	/**
 	 * Creates an instance-level frame of category {@link
@@ -168,117 +135,103 @@ public class IFrame implements IEntity, IValue {
 	private IFrameFunction function;
 	private boolean freeInstance;
 
-	private DynamicTypes inferredTypes = new DynamicTypes();
-	private DynamicTypes suggestedTypes = new DynamicTypes();
-
-	private ISlots slots = new ISlots();
 	private ISlots referencingSlots = new ISlots();
 
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
-	private boolean autoUpdateEnabled = false;
-	private boolean autoUpdating = false;
+	private abstract class MatchTester {
 
-	private class Editor implements IFrameEditor {
+		boolean matches(Object other) {
 
-		public boolean updateInferredTypes(List<CFrame> updateds) {
-
-			if (inferredTypes.update(updateds)) {
-
-				pollListenersForUpdatedInferredTypes();
+			if (other == IFrame.this) {
 
 				return true;
 			}
 
-			return false;
+			IFrame frame = toCategoryFrameOrNull(other);
+
+			return frame != null && matchesCategoryFrame(frame);
 		}
 
-		public boolean updateSuggestedTypes(List<CFrame> updateds) {
+		abstract boolean matchesCategoryFrame(IFrame frame);
 
-			if (suggestedTypes.update(updateds)) {
+		private IFrame toCategoryFrameOrNull(Object obj) {
 
-				pollListenersForUpdatedSuggestedTypes();
+			if (obj instanceof IFrame) {
 
-				return true;
+				IFrame frame = (IFrame)obj;
+
+				if (frame.getCategory() == getCategory()) {
+
+					return frame;
+				}
 			}
 
-			return false;
-		}
-
-		public ISlot addSlot(CSlot slotType) {
-
-			ISlot slot = addSlotInternal(slotType);
-
-			pollListenersForSlotAdded(slot);
-
-			return slot;
-		}
-
-		public ISlot addSlot(
-						CIdentity identity,
-						CSource source,
-						CValue<?> valueType,
-						CCardinality cardinality,
-						CActivation activation,
-						CEditability editability) {
-
-			CFrame atomicType = type.getAtomicFrame();
-			CSlot slotType = new CSlot(atomicType, identity, valueType, cardinality);
-
-			slotType.setSource(source);
-			slotType.setActivation(activation);
-			slotType.setEditability(editability);
-
-			return addSlot(slotType);
-		}
-
-		public void removeSlot(ISlot slot) {
-
-			slot.getValues().clearAllFixedAndAssertedValues();
-			slots.remove(slot);
-			pollListenersForSlotRemoved(slot);
-		}
-
-		public void setAutoUpdateEnabled(boolean enabled) {
-
-			autoUpdateEnabled = enabled;
+			return null;
 		}
 	}
 
-	private class AutoUpdater implements KValuesListener<IValue> {
+	private class EqualityTester extends MatchTester {
 
-		private ISlotValues slotValues;
+		boolean matchesCategoryFrame(IFrame frame) {
 
-		public void onAdded(IValue value) {
+			return equalsCategoryFrame(frame);
+		}
+	}
 
-			checkAutoUpdates();
+	private class SubsumptionTester extends MatchTester {
+
+		boolean matchesCategoryFrame(IFrame frame) {
+
+			return subsumesCategoryFrame(frame);
+		}
+	}
+
+	private class LocalEqualityTester extends MatchTester {
+
+		boolean matchesCategoryFrame(IFrame frame) {
+
+			return locallyEqualsCategoryFrame(frame);
+		}
+	}
+
+	private class LocalSubsumptionTester extends MatchTester {
+
+		boolean matchesCategoryFrame(IFrame frame) {
+
+			return locallySubsumesCategoryFrame(frame);
+		}
+	}
+
+	private abstract class StructureMatchTester extends MatchTester {
+
+		boolean matchesCategoryFrame(IFrame frame) {
+
+			return equalsCategoryFrame(frame) || matchesStructure(frame);
 		}
 
-		public void onRemoved(IValue value) {
+		abstract IStructureTester createTester();
 
-			checkAutoUpdates();
+		private boolean matchesStructure(IFrame other) {
+
+			return createTester().match(IFrame.this, other);
 		}
+	}
 
-		public void onCleared(List<IValue> values) {
+	private class StructureEqualityTester extends StructureMatchTester {
 
-			checkAutoUpdates();
+		IStructureTester createTester() {
+
+			return new IStructureEqualityTester();
 		}
+	}
 
-		AutoUpdater(ISlot slot) {
+	private class StructureSubsumptionTester extends StructureMatchTester {
 
-			slotValues = slot.getValues();
-			slotValues.addValuesListener(this);
-		}
+		IStructureTester createTester() {
 
-		private void checkAutoUpdates() {
-
-			if (autoUpdateEnabled && !autoUpdating) {
-
-				autoUpdating = true;
-				performAutoUpdates();
-				autoUpdating = false;
-			}
+			return new IStructureSubsumptionTester();
 		}
 	}
 
@@ -320,7 +273,8 @@ public class IFrame implements IEntity, IValue {
 	/**
 	 * Performs the default set of update operations on this frame,
 	 * whether or not auto-update is enabled (see {@link
-	 * IUpdating#autoUpdate}).
+	 * IUpdating#autoUpdate}). If the frames is not of atomic category,
+	 * will do nothing.
 	 * <p>
 	 * NOTE: Even if the default update operations do not include
 	 * slot-value updates, removals of (asserted) slot-values may still
@@ -330,26 +284,28 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public Set<IUpdateOp> update() {
 
-		return getIUpdating().update(this);
+		return Collections.emptySet();
 	}
 
 	/**
 	 * Performs all of the specified update operations on this frame,
 	 * whether or not auto-update is enabled (see {@link #update(Set)}
-	 * for further details).
+	 * for further details). If the frames is not of atomic category,
+	 * will do nothing.
 	 *
 	 * @param ops Update operations to be performed
 	 * @return Types of update produced
 	 */
 	public Set<IUpdateOp> update(IUpdateOp... ops) {
 
-		return update(new HashSet<IUpdateOp>(Arrays.asList(ops)));
+		return Collections.emptySet();
 	}
 
 	/**
 	 * Performs all of the specified update operations on this frame,
 	 * whether or not auto-update is enabled (see {@link
-	 * IUpdating#autoUpdate}).
+	 * IUpdating#autoUpdate}). If the frames is not of atomic category,
+	 * will do nothing.
 	 * <p>
 	 * NOTE: Even if the specified update operations do not include
 	 * slot-value updates, removals of (asserted) slot-values may still
@@ -360,13 +316,14 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public Set<IUpdateOp> update(Set<IUpdateOp> ops) {
 
-		return getIUpdating().update(this, ops);
+		return Collections.emptySet();
 	}
 
 	/**
 	 * If auto-update is not enabled (see {@link IUpdating#autoUpdate}),
 	 * then performs the default set of update operations on this frame.
-	 * Otherwise does nothing.
+	 * Otherwise does nothing. If the frames is not of atomic category,
+	 * will do nothing.
 	 * <p>
 	 * NOTE: Even if the default update operations do not include
 	 * slot-value updates, removals of (asserted) slot-values may still
@@ -376,7 +333,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public Set<IUpdateOp> checkManualUpdate() {
 
-		return getIUpdating().checkManualUpdate(this);
+		return Collections.emptySet();
 	}
 
 	/**
@@ -394,7 +351,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public Set<IUpdateOp> checkManualUpdate(Set<IUpdateOp> ops) {
 
-		return getIUpdating().checkManualUpdate(this, ops);
+		return Collections.emptySet();
 	}
 
 	/**
@@ -409,27 +366,19 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean equals(Object other) {
 
-		if (other == this) {
-
-			return true;
-		}
-
-		if (other instanceof IFrame) {
-
-			return equalsFrame((IFrame)other);
-		}
-
-		return false;
+		return new EqualityTester().matches(other);
 	}
 
 	/**
-	 * Provides a hash-code based on the frame-type if the frame has
-	 * any slots, or just be the default <code>Object</code> hash-code,
-	 * otherwise.
+	 * For atomic-frames provides a hash-code based on the frame-type
+	 * if the frame has no slots, or just the default <code>Object</code>
+	 * hash-code, otherwise. For disjunction-frames provides a hash-code
+	 * based on those of the current set of disjuncts. For reference-frames
+	 * provides a hash-code based on the identity of referenced instance.
 	 */
 	public int hashCode() {
 
-		return slots.isEmpty() ? type.hashCode() : super.hashCode();
+		return categoryHashCode();
 	}
 
 	/**
@@ -443,10 +392,7 @@ public class IFrame implements IEntity, IValue {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getDisplayLabel() {
-
-		return type.getDisplayLabel();
-	}
+	public abstract String getDisplayLabel();
 
 	/**
 	 * Provides the concept-level frame of which this frame is an
@@ -468,7 +414,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean abstractValue() {
 
-		return disjunctionType();
+		return false;
 	}
 
 	/**
@@ -482,7 +428,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumes(IValue other) {
 
-		return other instanceof IFrame && subsumesFrame((IFrame)other);
+		return new SubsumptionTester().matches(other);
 	}
 
 	/**
@@ -502,7 +448,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean equalsStructure(IValue other) {
 
-		return testStructure(other, true);
+		return new StructureEqualityTester().matches(other);
 	}
 
 	/**
@@ -522,7 +468,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumesStructure(IValue other) {
 
-		return testStructure(other, false);
+		return new StructureSubsumptionTester().matches(other);
 	}
 
 	/**
@@ -544,10 +490,7 @@ public class IFrame implements IEntity, IValue {
 	 *
 	 * @return Frame-category.
 	 */
-	public IFrameCategory getCategory() {
-
-		return IFrameCategory.ATOMIC;
-	}
+	public abstract IFrameCategory getCategory();
 
 	/**
 	 * Provides the frame-function.
@@ -562,13 +505,13 @@ public class IFrame implements IEntity, IValue {
 	/**
 	 * Provides the auto-update-enabled status for the frame, which
 	 * determines whether or not any automatic updates can occur when
-	 * slot-values are updated.
+	 * slot-values of atomic-frames are updated.
 	 *
 	 * @return True if auto-update is enabled
 	 */
 	public boolean autoUpdateEnabled() {
 
-		return autoUpdateEnabled;
+		return false;
 	}
 
 	/**
@@ -579,7 +522,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public CIdentifieds<CFrame> getInferredTypes() {
 
-		return inferredTypes.getTypes();
+		return NO_TYPES;
 	}
 
 	/**
@@ -590,7 +533,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public CIdentifieds<CFrame> getSuggestedTypes() {
 
-		return suggestedTypes.getTypes();
+		return NO_TYPES;
 	}
 
 	/**
@@ -599,10 +542,7 @@ public class IFrame implements IEntity, IValue {
 	 *
 	 * @return Object representing current set of slots
 	 */
-	public ISlots getSlots() {
-
-		return slots;
-	}
+	public abstract ISlots getSlots();
 
 	/**
 	 * Provides the object that represents the current set of slots
@@ -616,6 +556,18 @@ public class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Provides the identity of the referenced instance for frames
+	 * of category {@link IFrameCategory#REFERENCE}.
+	 *
+	 * @return referenceId Identity of referenced instance
+	 * @throws KAccessException if this is not a reference-frame
+	 */
+	public CIdentity getReferenceId() {
+
+		throw createCategoryRetrievalException("referenced-identity");
+	}
+
+	/**
 	 * Provides the special disjuncts-slot for frames of category
 	 * {@link IFrameCategory#DISJUNCTION}.
 	 *
@@ -624,9 +576,7 @@ public class IFrame implements IEntity, IValue {
 	 */
 	public ISlot getDisjunctsSlot() {
 
-		throw new KAccessException(
-					"Cannot retrieve disjuncts-slot "
-					+ "from atomic frame: " + this);
+		throw createCategoryRetrievalException("disjuncts-slot");
 	}
 
 	/**
@@ -675,39 +625,26 @@ public class IFrame implements IEntity, IValue {
 		this.freeInstance = freeInstance;
 	}
 
-	IFrameEditor createEditor() {
+	void initialise() {
 
-		return new Editor();
+		completeInstantiation(false);
 	}
 
-	void normaliseType() {
-
-		type = type.toNormalisedInstanceType();
-	}
-
-	IFrame copyEmpty(boolean freeInstance) {
-
-		return new IFrame(type, function, freeInstance);
-	}
+	abstract IFrame copyEmpty(boolean freeInstance);
 
 	boolean updateInferredTypes(List<CFrame> updateds) {
 
-		return inferredTypes.update(updateds);
+		return false;
 	}
 
 	ISlot addSlotInternal(CSlot slotType) {
 
-		return addSlotInternal(new ISlot(slotType, this));
+		throw createCategoryAdditionException("slot");
 	}
 
 	ISlot addSlotInternal(ISlot slot) {
 
-		slots.add(slot);
-		IFrameSlotValueUpdateProcessor.checkAddTo(slot);
-
-		new AutoUpdater(slot);
-
-		return slot;
+		throw createCategoryAdditionException("slot");
 	}
 
 	void addReferencingSlot(ISlot slot) {
@@ -735,10 +672,25 @@ public class IFrame implements IEntity, IValue {
 		return updates;
 	}
 
-	void completeInstantiation() {
+	Set<IUpdateOp> reinitialise() {
 
-		completeInstantiation(false);
+		return Collections.<IUpdateOp>emptySet();
 	}
+
+	IFrameEditor createEditor() {
+
+		throw createCategoryRetrievalException("editor");
+	}
+
+	void autoUpdateReferencingFrames(Set<IFrame> visited) {
+
+		for (ISlot slot : referencingSlots.asList()) {
+
+			slot.getContainer().autoUpdate(visited);
+		}
+	}
+
+	abstract void autoUpdate(Set<IFrame> visited);
 
 	boolean freeInstance() {
 
@@ -750,35 +702,68 @@ public class IFrame implements IEntity, IValue {
 		return mappedObject;
 	}
 
-	void autoUpdateThis() {
+	boolean locallyEquals(IFrame other) {
 
-		IUpdating updating = getIUpdating();
-
-		while (updating.checkAutoUpdate(this).contains(IUpdateOp.SLOT_VALUES));
+		return new LocalEqualityTester().matches(other);
 	}
 
-	private Set<IUpdateOp> checkReinitialise(boolean possibleModelUpdates) {
+	boolean locallySubsumes(IFrame other) {
 
-		if (possibleModelUpdates && !freeInstance) {
+		return new LocalSubsumptionTester().matches(other);
+	}
 
-			return getIUpdating().reinitialise(this);
-		}
+	abstract boolean equalsCategoryFrame(IFrame other);
 
-		return Collections.<IUpdateOp>emptySet();
+	abstract boolean subsumesCategoryFrame(IFrame other);
+
+	boolean locallyEqualsCategoryFrame(IFrame other) {
+
+		return type.equals(other.type);
+	}
+
+	boolean locallySubsumesCategoryFrame(IFrame other) {
+
+		return type.subsumes(other.type);
+	}
+
+	int categoryHashCode() {
+
+		return super.hashCode();
+	}
+
+	int categoryLocalHashCode() {
+
+		return type.hashCode();
+	}
+
+	String describeLocally() {
+
+		return FEntityDescriber.entityToString(this, type);
+	}
+
+	List<IFrameListener> copyListeners() {
+
+		return new ArrayList<IFrameListener>(listeners);
 	}
 
 	private void completeInstantiation(boolean reinstantiation) {
 
-		autoUpdateEnabled = !freeInstance;
-
+		type = type.toNormalisedInstanceType();
 		type.pollListenersForInstantiated(this, reinstantiation);
+	}
+
+	private Set<IUpdateOp> checkReinitialise(boolean possibleModelUpdates) {
+
+		return possibleModelUpdates && !freeInstance
+				? reinitialise()
+				: Collections.<IUpdateOp>emptySet();
 	}
 
 	private CFrame toExtension(Set<IFrame> visited) {
 
 		CExtender extender = new CExtender(type);
 
-		for (ISlot slot : slots.asList()) {
+		for (ISlot slot : getSlots().asList()) {
 
 			CIdentity slotId = slot.getType().getIdentity();
 
@@ -820,28 +805,6 @@ public class IFrame implements IEntity, IValue {
 
 	}
 
-	private boolean testStructure(IValue other, boolean equality) {
-
-		return other instanceof IFrame && testStructure((IFrame)other, equality);
-	}
-
-	private boolean testStructure(IFrame other, boolean equality) {
-
-		if (other instanceof IFrame) {
-
-			return equals(other) || getStructureTester(equality).match(this, other);
-		}
-
-		return false;
-	}
-
-	private IStructureTester getStructureTester(boolean equality) {
-
-		return equality
-				? new IStructureEqualityTester()
-				: new IStructureSubsumptionTester();
-	}
-
 	private void validateAsReferencedFrame(IFrame referencer) {
 
 		referencer.validateAsReferencingFrame();
@@ -857,102 +820,26 @@ public class IFrame implements IEntity, IValue {
 
 	private void validateAsReferencingFrame() {
 
-		if (disjunctionType() && function.assertion()) {
+		if (type.getCategory().disjunction() && function.assertion()) {
 
 			throw new KAccessException(
 						"Cannot add slot-values to assertion-frame "
-						+ "with disjunction type: "
-						+ this);
+						+ "with disjunction type: " + this);
 		}
 	}
 
-	private void performAutoUpdates() {
+	private KAccessException createCategoryAdditionException(String entityName) {
 
-		performAutoUpdates(new HashSet<IFrame>());
+		return new KAccessException("Cannot add " + entityName + " to");
 	}
 
-	private void performAutoUpdates(Set<IFrame> visited) {
+	private KAccessException createCategoryRetrievalException(String entityName) {
 
-		if (visited.add(this)) {
-
-			autoUpdateThis();
-
-			for (ISlot slot : referencingSlots.asList()) {
-
-				slot.getContainer().performAutoUpdates(visited);
-			}
-		}
+		return new KAccessException("Cannot retrieve " + entityName + " from");
 	}
 
-	private boolean equalsFrame(IFrame other) {
+	private KAccessException createCategoryException(String msgPrefix) {
 
-		if (slots.isEmpty() && other.slots.isEmpty()) {
-
-			return type.equals(other.type);
-		}
-
-		return false;
-	}
-
-	private boolean subsumesFrame(IFrame other) {
-
-		if (slots.isEmpty() && other.slots.isEmpty()) {
-
-			return type.subsumes(other.type);
-		}
-
-		return false;
-	}
-
-	private boolean disjunctionType() {
-
-		return type.getCategory().disjunction();
-	}
-
-	private void pollListenersForUpdatedInferredTypes() {
-
-		for (IFrameListener listener : copyListeners()) {
-
-			listener.onUpdatedInferredTypes(inferredTypes.getTypes());
-		}
-	}
-
-	private void pollListenersForUpdatedSuggestedTypes() {
-
-		for (IFrameListener listener : copyListeners()) {
-
-			listener.onUpdatedSuggestedTypes(suggestedTypes.getTypes());
-		}
-	}
-
-	private void pollListenersForSlotAdded(ISlot slot) {
-
-		for (IFrameListener listener : copyListeners()) {
-
-			listener.onSlotAdded(slot);
-		}
-	}
-
-	private void pollListenersForSlotRemoved(ISlot slot) {
-
-		for (IFrameListener listener : copyListeners()) {
-
-			listener.onSlotRemoved(slot);
-		}
-	}
-
-	private List<IFrameListener> copyListeners() {
-
-		return new ArrayList<IFrameListener>(listeners);
-	}
-
-	private IUpdating getIUpdating() {
-
-		return getModel().getIUpdating();
-	}
-
-	private CModel getModel() {
-
-		return type.getModel();
+		return new KAccessException(msgPrefix + " " + getCategory() + " frame: " + this);
 	}
 }

@@ -48,6 +48,11 @@ class IStructureSubsumptionTester extends IStructureTester {
 		return true;
 	}
 
+	boolean localMatch(IFrame frame1, IFrame frame2) {
+
+		return frame1.locallySubsumes(frame2);
+	}
+
 	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
 
 		return type1.subsumes(type2);

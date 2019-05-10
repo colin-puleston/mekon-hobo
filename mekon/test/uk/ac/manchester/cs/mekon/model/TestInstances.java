@@ -63,7 +63,7 @@ public class TestInstances {
 		private CSlot slotType;
 		private CFrame valueType;
 
-		private boolean firstInsert = true;
+		private boolean slotInserted = true;
 
 		public Set<IUpdateOp> reinitialiseFrame(
 								IEditor iEditor,
@@ -80,13 +80,15 @@ public class TestInstances {
 
 			ISlots slots = frame.getSlots();
 
-			if (requireInsertion(slots)) {
+			if (!slotInserted && readyForSlotInsertion(slots)) {
 
 				List<ISlot> startSlots = slots.asList();
 
 				slots.clear();
-				addInsertSlot(frame);
+				addInsertSlotAndValue(frame);
 				slots.addAll(startSlots);
+
+				slotInserted = true;
 			}
 
 			return Collections.<IUpdateOp>emptySet();
@@ -100,22 +102,9 @@ public class TestInstances {
 			ta.asAtomicFrame().setIReasoner(this);
 		}
 
-		private boolean requireInsertion(ISlots slots) {
+		private boolean readyForSlotInsertion(ISlots slots) {
 
-			return !slots.isEmpty() && allValuesSet(slots) && !dynamicSlot(slots);
-		}
-
-		private boolean dynamicSlot(ISlots slots) {
-
-			for (ISlot slot : slots.asList()) {
-
-				if (slot.getType().equals(slotType)) {
-
-					return true;
-				}
-			}
-
-			return false;
+			return !slots.isEmpty() && allValuesSet(slots);
 		}
 
 		private boolean allValuesSet(ISlots slots) {
@@ -131,16 +120,11 @@ public class TestInstances {
 			return true;
 		}
 
-		private void addInsertSlot(IFrame frame) {
+		private void addInsertSlotAndValue(IFrame frame) {
 
 			ISlot slot = frame.createEditor().addSlot(slotType);
 
-			if (firstInsert) {
-
-				firstInsert = false;
-
-				slot.getValuesEditor().add(valueType.instantiate());
-			}
+			slot.getValuesEditor().add(createFrame(valueType));
 		}
 	}
 
@@ -153,6 +137,9 @@ public class TestInstances {
 
 		final IFrame fcx = createFrame(tcx);
 		final IFrame fcy = createFrame(tcy);
+
+		final IFrame rfbx = createReferenceFrame(tb, "ref-bx");
+		final IFrame rfby = createReferenceFrame(tb, "ref-by");
 
 		IFrame get() {
 
@@ -168,7 +155,7 @@ public class TestInstances {
 
 		void initialise() {
 
-			setSlotValues(fa, sab, fb);
+			setSlotValues(fa, sab, fb, rfbx, rfby);
 			setSlotValues(fa, sac, fcx);
 			setSlotValues(fb, sbd, fd);
 			setSlotValues(fb, sbe, tex, tey);
@@ -180,7 +167,7 @@ public class TestInstances {
 
 		void initialise() {
 
-			setSlotValues(fa, sab, fb);
+			setSlotValues(fa, sab, fb, rfbx);
 			setSlotValues(fb, sbd, fd);
 			setSlotValues(fb, sbe, te);
 			setSlotValues(fb, sbn, tn.getMax());
@@ -191,7 +178,7 @@ public class TestInstances {
 
 		void initialise() {
 
-			setSlotValues(fa, sab, fb);
+			setSlotValues(fa, sab, fb, rfbx);
 			setSlotValues(fa, sac, createDisjunction(fcx, fcy));
 			setSlotValues(fb, sbe, createDisjunctionType(tex, tey));
 			setSlotValues(fb, sbn, tn.asINumber());
@@ -284,6 +271,11 @@ public class TestInstances {
 	private IFrame createFrame(CFrame type) {
 
 		return FramesTestUtils.instantiateCFrame(type, function);
+	}
+
+	private IFrame createReferenceFrame(CFrame type, String ref) {
+
+		return new IReference(type, new CIdentity(ref, ref), function, false);
 	}
 
 	private void setSlotValues(IFrame container, CSlot type, IValue... values) {

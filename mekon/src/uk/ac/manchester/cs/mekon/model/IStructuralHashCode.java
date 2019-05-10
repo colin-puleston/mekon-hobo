@@ -50,7 +50,7 @@ class IStructuralHashCode {
 
 		if (visited.add(frame)) {
 
-			code += frame.getType().hashCode();
+			code += frame.categoryLocalHashCode();
 
 			for (ISlot slot : frame.getSlots().asList()) {
 

@@ -50,6 +50,15 @@ class IDisjunction extends IFrame {
 		return IFrameCategory.DISJUNCTION;
 	}
 
+	public ISlots getSlots() {
+
+		ISlots slots = new ISlots();
+
+		slots.add(disjunctsSlot);
+
+		return slots;
+	}
+
 	public ISlot getDisjunctsSlot() {
 
 		return disjunctsSlot;
@@ -72,8 +81,6 @@ class IDisjunction extends IFrame {
 		super(type, function, freeInstance);
 
 		disjunctsSlot = new IDisjunctsSlot(this);
-
-		super.addSlotInternal(disjunctsSlot);
 	}
 
 	IFrame copyEmpty(boolean freeInstance) {
@@ -86,6 +93,54 @@ class IDisjunction extends IFrame {
 		return disjunctsSlot;
 	}
 
-	void autoUpdateThis() {
+	void autoUpdate(Set<IFrame> visited) {
+
+		autoUpdateReferencingFrames(visited);
+	}
+
+	boolean equalsCategoryFrame(IFrame other) {
+
+		return disjunctsMatch(other, true);
+	}
+
+	boolean subsumesCategoryFrame(IFrame other) {
+
+		return disjunctsMatch(other, false);
+	}
+
+	int categoryHashCode() {
+
+		return asDisjunctSet().hashCode();
+	}
+
+	private boolean disjunctsMatch(IFrame other, boolean testEquality) {
+
+		List<IFrame> these = asDisjuncts();
+		List<IFrame> others = other.asDisjuncts();
+
+		if (disjunctSizeMatch(these.size(), others.size(), testEquality)) {
+
+			return false;
+		}
+
+		for (IFrame disjunct : these) {
+
+			if (!others.contains(disjunct)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean disjunctSizeMatch(int these, int others, boolean testEquality) {
+
+		return testEquality ? these == others : these <= others;
+	}
+
+	private Set<IFrame> asDisjunctSet() {
+
+		return new HashSet<IFrame>(asDisjuncts());
 	}
 }

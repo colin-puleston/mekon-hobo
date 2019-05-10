@@ -102,8 +102,8 @@ class IDisjunctsSlot extends ISlot {
 		if (value.getCategory().disjunction()) {
 
 			throw new KAccessException(
-						"Attempting to add DISJUNCTION frame as "
-						+ "disjunct for another DISJUNCTION frame: "
+						"Attempting to add disjunction frame as "
+						+ "disjunct for another disjunction frame: "
 						+ disjunction);
 		}
 	}

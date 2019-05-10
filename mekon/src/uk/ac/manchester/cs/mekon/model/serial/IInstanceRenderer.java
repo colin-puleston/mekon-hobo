@@ -159,9 +159,16 @@ public class IInstanceRenderer extends ISerialiser {
 
 			renderCFrame(frame.getType(), node);
 
-			for (ISlot slot : frame.getSlots().asList()) {
+			if (frame.getCategory().reference()) {
 
-				renderISlot(slot, node);
+				renderIReference(frame.getReferenceId(), node);
+			}
+			else {
+
+				for (ISlot slot : frame.getSlots().asList()) {
+
+					renderISlot(slot, node);
+				}
 			}
 
 			return node;
@@ -244,6 +251,11 @@ public class IInstanceRenderer extends ISerialiser {
 		private void renderCString(CString number, XNode parentNode) {
 
 			parentNode.addChild(CSTRING_ID);
+		}
+
+		private void renderIReference(CIdentity reference, XNode parentNode) {
+
+			renderIdentity(reference, parentNode.addChild(IREFERENCE_ID));
 		}
 
 		private XNode renderINumber(INumber number, XNode parentNode) {
@@ -390,6 +402,11 @@ public class IInstanceRenderer extends ISerialiser {
 	private void renderIdentity(CIdentified identified, XNode node) {
 
 		CIdentitySerialiser.render(identified, node);
+	}
+
+	private void renderIdentity(CIdentity identity, XNode node) {
+
+		CIdentitySerialiser.render(identity, node);
 	}
 
 	private void checkAtomicRootFrame(IFrame frame) {

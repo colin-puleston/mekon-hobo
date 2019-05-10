@@ -33,6 +33,11 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 class IStructureEqualityTester extends IStructureTester {
 
+	boolean localMatch(IFrame frame1, IFrame frame2) {
+
+		return frame1.locallyEquals(frame2);
+	}
+
 	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
 
 		return type1.equals(type2);

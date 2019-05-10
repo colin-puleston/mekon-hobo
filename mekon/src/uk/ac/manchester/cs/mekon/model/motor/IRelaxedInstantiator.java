@@ -52,15 +52,32 @@ public abstract class IRelaxedInstantiator {
 	}
 
 	/**
-	 * Creates a frame that will be part of a regenerated network.
+	 * Creates a frame of category {@IFrameCategory.ATOMIC} that will
+	 * form part of a regenerated network.
 	 *
 	 * @param type Type of frame to create
 	 * @param function Function of frame to create
 	 * @param freeInstance True if generating a free-instance
 	 * @return Created frame
 	 */
-	public abstract IFrame startInstantiation(
+	public abstract IFrame createAtomicFrame(
 								CFrame type,
+								IFrameFunction function,
+								boolean freeInstance);
+
+	/**
+	 * Creates a frame of category {@IFrameCategory.REFERENCE} that will
+	 * form part of a regenerated network.
+	 *
+	 * @param type Type of frame to create
+	 * @param referenceId Identity of referenced instance
+	 * @param function Function of frame to create
+	 * @param freeInstance True if generating a free-instance
+	 * @return Created frame
+	 */
+	public abstract IFrame createReferenceFrame(
+								CFrame type,
+								CIdentity referenceId,
 								IFrameFunction function,
 								boolean freeInstance);
 

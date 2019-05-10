@@ -48,7 +48,7 @@ public class FramesTestUtils {
 
 	static public IFrame instantiateCFrame(CFrame frame, IFrameFunction function) {
 
-		IFrame iFrame = new IFrame(frame, function, false);
+		IFrame iFrame = new IAtomicFrame(frame, function, false);
 
 		for (CSlot slot : frame.getSlots().asList()) {
 

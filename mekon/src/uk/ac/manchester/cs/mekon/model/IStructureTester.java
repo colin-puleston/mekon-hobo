@@ -60,8 +60,10 @@ abstract class IStructureTester {
 			return match((IFrame)value1, (IFrame)value2);
 		}
 
-		return typesMatch(value1, value2);
+		return typesMatch(value1.getType(), value2.getType());
 	}
+
+	abstract boolean localMatch(IFrame frame1, IFrame frame2);
 
 	abstract boolean typesMatch(CValue<?> type1, CValue<?> type2);
 
@@ -78,7 +80,7 @@ abstract class IStructureTester {
 
 	private boolean framesMatch(IFrame frame1, IFrame frame2) {
 
-		return typesMatch(frame1, frame2) && frameSlotsMatch(frame1, frame2);
+		return localMatch(frame1, frame2) && frameSlotsMatch(frame1, frame2);
 	}
 
 	private boolean frameSlotsMatch(IFrame frame1, IFrame frame2) {
@@ -87,10 +89,5 @@ abstract class IStructureTester {
 		ISlots slots2 = frame2.getSlots();
 
 		return listSizesMatch(slots1, slots2) && slotsMatch(slots1, slots2);
-	}
-
-	private boolean typesMatch(IValue value1, IValue value2) {
-
-		return typesMatch(value1.getType(), value2.getType());
 	}
 }

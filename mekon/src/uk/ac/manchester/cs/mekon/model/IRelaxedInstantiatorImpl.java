@@ -69,9 +69,21 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return new CSlot(container.getType(), slotId, valueType, cardinality);
 	}
 
-	public IFrame startInstantiation(CFrame type, IFrameFunction function, boolean freeInstance) {
+	public IFrame createAtomicFrame(
+						CFrame type,
+						IFrameFunction function,
+						boolean freeInstance) {
 
-		return new IFrame(type, function, freeInstance);
+		return new IAtomicFrame(type, function, freeInstance);
+	}
+
+	public IFrame createReferenceFrame(
+						CFrame type,
+						CIdentity referenceId,
+						IFrameFunction function,
+						boolean freeInstance) {
+
+		return new IReference(type, referenceId, function, freeInstance);
 	}
 
 	public CFrame getNonModelFrameType(CIdentity identity) {

@@ -44,6 +44,7 @@ public class IInstanceSerialiseTest {
 	private boolean freeInstances = false;
 	private boolean renderAsTree = false;
 	private boolean includeEmptySlots = false;
+	private boolean includeAbstractValues = false;
 
 	@Test
 	public void test_renderAndParse() {
@@ -75,7 +76,17 @@ public class IInstanceSerialiseTest {
 		testRenderAndParse();
 	}
 
+	@Test
+	public void test_renderAndParseWithAbstractValues() {
+
+		includeAbstractValues = true;
+
+		testRenderAndParse();
+	}
+
 	private void testRenderAndParse() {
+
+		model.setQueriesEnabled(includeAbstractValues);
 
 		IFrame original = createTestInstance();
 		IRegenInstance parseOut = parse(render(original));
@@ -91,12 +102,9 @@ public class IInstanceSerialiseTest {
 
 	private IRegenInstance parse(XDocument rendering) {
 
-		IInstanceParser parser = new IInstanceParser(model.model, IFrameFunction.ASSERTION);
+		IInstanceParser parser = new IInstanceParser(model.model, getFunction());
 
-		if (freeInstances) {
-
-			parser.setFreeInstances(true);
-		}
+		parser.setFreeInstances(freeInstances);
 
 		return parser.parse(new IInstanceParseInput(rendering));
 	}
@@ -112,7 +120,7 @@ public class IInstanceSerialiseTest {
 
 	private IFrame createTestInstance() {
 
-		IFrame instance = instances.getBasic();
+		IFrame instance = createCategoryTestInstance();
 
 		if (includeEmptySlots) {
 
@@ -122,8 +130,22 @@ public class IInstanceSerialiseTest {
 		return instance;
 	}
 
+	private IFrame createCategoryTestInstance() {
+
+		instances.setFunction(getFunction());
+
+		return includeAbstractValues
+				? instances.getAbstractSubsumer()
+				: instances.getBasic();
+	}
+
 	private void addEmptySlot(IFrame instance) {
 
 		slots.create(instance, "emptySlot", instance.getType());
+	}
+
+	private IFrameFunction getFunction() {
+
+		return includeAbstractValues ? IFrameFunction.QUERY : IFrameFunction.ASSERTION;
 	}
 }

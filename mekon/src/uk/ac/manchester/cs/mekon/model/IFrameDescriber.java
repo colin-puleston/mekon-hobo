@@ -47,7 +47,7 @@ class IFrameDescriber {
 		}
 		else {
 
-			add(getBasicDescription(frame));
+			add(frame.describeLocally());
 		}
 	}
 
@@ -58,7 +58,7 @@ class IFrameDescriber {
 
 	private void describeStructured(IFrame frame) {
 
-		addLine(getBasicDescription(frame));
+		addLine(frame.describeLocally());
 		changeIndent(1);
 
 		if (frameStack.contains(frame)) {
@@ -103,11 +103,6 @@ class IFrameDescriber {
 
 			addLine(value.toString());
 		}
-	}
-
-	private String getBasicDescription(IFrame frame) {
-
-		return FEntityDescriber.entityToString(frame, frame.getType());
 	}
 
 	private boolean hasStructure(IFrame frame) {

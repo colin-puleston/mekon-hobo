@@ -38,7 +38,12 @@ public class TestIFrames {
 
 	public IFrame create(String typeName) {
 
-		return IFrameCategory.ATOMIC.instantiate(types.create(typeName), function);
+		CFrame type = types.create(typeName);
+		IFrame instance = IFrameCategory.ATOMIC.createCategoryFrame(type, function);
+
+		instance.initialise();
+
+		return instance;
 	}
 
 	TestIFrames(TestCFrames types, IFrameFunction function) {

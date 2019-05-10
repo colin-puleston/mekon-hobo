@@ -595,18 +595,29 @@ public class IInstanceParser extends ISerialiser {
 		private IFrame resolveIFrame(XNode node) {
 
 			String xid = node.getString(IFRAME_XDOC_ID_REF_ATTR, null);
-			boolean tree = xid == null;
 
-			if (tree) {
+			if (xid != null) {
 
-				xid = node.getString(IFRAME_XDOC_ID_ATTR);
+				return resolveNonDisjunctionIFrame(node, xid, true);
 			}
+
+			xid = node.getString(IFRAME_XDOC_ID_ATTR, null);
+
+			if (xid != null) {
+
+				return resolveNonDisjunctionIFrame(node, xid, false);
+			}
+
+			return parseIFrame(node);
+		}
+
+		private IFrame resolveNonDisjunctionIFrame(XNode node, String xid, boolean refXid) {
 
 			IFrame frame = framesByXDocId.get(xid);
 
 			if (frame == null) {
 
-				frame = parseIFrame(tree ? node : getGraphFrameNode(xid));
+				frame = parseIFrame(refXid ? getGraphFrameNode(xid) : node);
 				framesByXDocId.put(xid, frame);
 			}
 
@@ -615,15 +626,24 @@ public class IInstanceParser extends ISerialiser {
 
 		private IFrame parseIFrame(XNode node) {
 
-			return node.hasChild(CFRAME_ID)
-					? parseAtomicIFrame(node)
-					: parseDisjunctionIFrame(node);
+			if (node.hasChild(CFRAME_ID)) {
+
+				CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
+
+				if (node.hasChild(IREFERENCE_ID)) {
+
+					return parseReferenceIFrame(frameType, node);
+				}
+
+				return parseAtomicIFrame(frameType, node);
+			}
+
+			return parseDisjunctionIFrame(node);
 		}
 
-		private IFrame parseAtomicIFrame(XNode node) {
+		private IFrame parseAtomicIFrame(CFrame frameType, XNode node) {
 
-			CFrame frameType = parseCFrame(node.getChild(CFRAME_ID));
-			IFrame frame = startInstantiation(frameType);
+			IFrame frame = createAtomicFrame(frameType);
 
 			if (validFrame(frame)) {
 
@@ -634,6 +654,13 @@ public class IInstanceParser extends ISerialiser {
 			}
 
 			return frame;
+		}
+
+		private IFrame parseReferenceIFrame(CFrame frameType, XNode node) {
+
+			XNode refNode = node.getChildOrNull(IREFERENCE_ID);
+
+			return createReferenceFrame(frameType, parseIdentity(refNode));
 		}
 
 		private IFrame parseDisjunctionIFrame(XNode node) {
@@ -733,9 +760,14 @@ public class IInstanceParser extends ISerialiser {
 			}
 		}
 
-		private IFrame startInstantiation(CFrame frameType) {
+		private IFrame createAtomicFrame(CFrame frameType) {
 
-			return instantiator.startInstantiation(frameType, frameFunction, freeInstances);
+			return instantiator.createAtomicFrame(frameType, frameFunction, freeInstances);
+		}
+
+		private IFrame createReferenceFrame(CFrame frameType, CIdentity refId) {
+
+			return instantiator.createReferenceFrame(frameType, refId, frameFunction, freeInstances);
 		}
 
 		private CFrame getCFrame(CIdentity id) {

@@ -618,6 +618,49 @@ public abstract class CFrame
 
 	/**
 	 * Creates instantiation of the frame, with category of {@link
+	 * IFrameCategory#REFERENCE} and function of {@link
+	 * IFrameFunction#ASSERTION}.
+	 *
+	 * @param referenceId Identity of referenced instance
+	 * @return Atomic-assertion instantiation of frame
+	 */
+	public IFrame instantiate(CIdentity referenceId) {
+
+		return instantiate(referenceId, IFrameFunction.ASSERTION);
+	}
+
+	/**
+	 * Creates instantiation of the frame, with category of {@link
+	 * IFrameCategory#REFERENCE} and specified function.
+	 *
+	 * @param referenceId Identity of referenced instance
+	 * @param function Required function of frame
+	 * @return Atomic instantiation of frame with required function
+	 */
+	public IFrame instantiate(CIdentity referenceId, IFrameFunction function) {
+
+		IFrame instance = instantiate(IFrameCategory.REFERENCE, function);
+
+		((IReference)instance).setReferenceId(referenceId);
+
+		return instance;
+	}
+
+	/**
+	 * Creates instantiation of the frame, with category of {@link
+	 * IFrameCategory#REFERENCE} and function of {@link
+	 * IFrameFunction#QUERY}.
+	 *
+	 * @param referenceId Identity of referenced instance
+	 * @return Atomic-query instantiation of frame
+	 */
+	public IFrame instantiateQuery(CIdentity referenceId) {
+
+		return instantiate(referenceId, IFrameFunction.QUERY);
+	}
+
+	/**
+	 * Creates instantiation of the frame, with category of {@link
 	 * IFrameCategory#DISJUNCTION} and function of {@link
 	 * IFrameFunction#QUERY} (which is the only possible function
 	 * that a disjunction-instantiation may have).
@@ -626,9 +669,7 @@ public abstract class CFrame
 	 */
 	public IFrame instantiateDisjunction() {
 
-		return instantiate(
-					IFrameCategory.DISJUNCTION,
-					IFrameFunction.QUERY);
+		return instantiate(IFrameCategory.DISJUNCTION, IFrameFunction.QUERY);
 	}
 
 	CFrame() {
@@ -722,7 +763,11 @@ public abstract class CFrame
 
 		function.checkInstantiable(getModel());
 
-		return category.instantiate(this, function);
+		IFrame instance = category.createCategoryFrame(this, function);
+
+		instance.initialise();
+
+		return instance;
 	}
 
 	private List<CFrame> checkStartListWithThis(

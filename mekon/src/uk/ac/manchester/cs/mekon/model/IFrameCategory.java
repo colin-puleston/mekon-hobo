@@ -36,16 +36,9 @@ public enum IFrameCategory {
 	 */
 	ATOMIC {
 
-		IFrame instantiate(CFrame type, IFrameFunction function) {
+		IFrame createCategoryFrame(CFrame type, IFrameFunction function) {
 
-			IFrame instance = new IFrame(type, function, false);
-
-			type.initialiseAtomicInstance(instance);
-
-			instance.normaliseType();
-			instance.completeInstantiation();
-
-			return instance;
+			return new IAtomicFrame(type, function, false);
 		}
 	},
 
@@ -54,13 +47,20 @@ public enum IFrameCategory {
 	 */
 	DISJUNCTION {
 
-		IFrame instantiate(CFrame type, IFrameFunction function) {
+		IFrame createCategoryFrame(CFrame type, IFrameFunction function) {
 
-			IFrame instance = new IDisjunction(type, function, false);
+			return new IDisjunction(type, function, false);
+		}
+	},
 
-			instance.completeInstantiation();
+	/**
+	 * Frame is a reference-frame.
+	 */
+	REFERENCE {
 
-			return instance;
+		IFrame createCategoryFrame(CFrame type, IFrameFunction function) {
+
+			return new IReference(type, function, false);
 		}
 	};
 
@@ -84,5 +84,15 @@ public enum IFrameCategory {
 		return this == DISJUNCTION;
 	}
 
-	abstract IFrame instantiate(CFrame type, IFrameFunction function);
+	/**
+	 * States whether frame is of category {@link #REFERENCE}.
+	 *
+	 * @return True if reference.
+	 */
+	public boolean reference() {
+
+		return this == REFERENCE;
+	}
+
+	abstract IFrame createCategoryFrame(CFrame type, IFrameFunction function);
 }
