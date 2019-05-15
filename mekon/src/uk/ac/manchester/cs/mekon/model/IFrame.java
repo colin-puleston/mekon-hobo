@@ -559,7 +559,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 * Provides the identity of the referenced instance for frames
 	 * of category {@link IFrameCategory#REFERENCE}.
 	 *
-	 * @return referenceId Identity of referenced instance
+	 * @return Identity of referenced instance
 	 * @throws KAccessException if this is not a reference-frame
 	 */
 	public CIdentity getReferenceId() {

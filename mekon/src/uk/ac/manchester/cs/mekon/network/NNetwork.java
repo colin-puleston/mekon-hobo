@@ -172,6 +172,26 @@ public class NNetwork {
 			}
 		}
 
+		private class NStringCreator
+							extends
+								NFeatureCreator<String, NString, IString> {
+
+			String getValue(IString iValue) {
+
+				return iValue.get();
+			}
+
+			NString createFeature(CIdentity id, ISlot slot) {
+
+				return new NString(id, slot);
+			}
+
+			void addFeature(NNode node, NString feature) {
+
+				node.addFeature(feature);
+			}
+		}
+
 		protected TypeISlotConverter<IFrame> createIFrameSlotConverter() {
 
 			return new IFrameSlotsNLinkCreator();
@@ -189,7 +209,7 @@ public class NNetwork {
 
 		protected TypeISlotConverter<IString> createIStringSlotConverter() {
 
-			return createTypeISlotNonConverter(IString.class);
+			return new NStringCreator();
 		}
 
 		protected NNode createUnconfiguredFrameConversion(IFrame frame) {

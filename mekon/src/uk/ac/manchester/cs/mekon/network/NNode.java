@@ -164,6 +164,32 @@ public class NNode extends NEntity {
 	}
 
 	/**
+	 * Tests whether the node represents a reference to a specific
+	 * existing instance, which will be the case if and only of it
+	 * has been directly derived from an instance-level frame of
+	 * {@link IFrameCategory#REFERENCE} category.
+	 *
+	 * @return True if node represents reference to specific existing
+	 * instance
+	 */
+	public boolean instanceReference() {
+
+		return iFrame != null && iFrame.getCategory().reference();
+	}
+
+	/**
+	 * Provides the identity of the referenced instance for nodes
+	 * that represent references to specific existing instances.
+	 *
+	 * @return Identity of referenced instance, or null if not
+	 * applicable
+	 */
+	public CIdentity getReferencedInstanceId() {
+
+		return instanceReference() ? iFrame.getReferenceId() : null;
+	}
+
+	/**
 	 * Checks whether the node has any features.
 	 *
 	 * @return True if node has features
@@ -215,7 +241,7 @@ public class NNode extends NEntity {
 	}
 
 	/**
-	 * Provides the corresponding type-level frame, for nodes
+	 * Provides the corresponding type-level frame for nodes
 	 * that have been directly derived from either type-level
 	 * or instance-level frames.
 	 *
@@ -228,7 +254,7 @@ public class NNode extends NEntity {
 	}
 
 	/**
-	 * Provides the corresponding instance-level frame, for nodes
+	 * Provides the corresponding instance-level frame for nodes
 	 * that have been directly derived from such frames.
 	 *
 	 * @return Corresponding instance-level frame, or null if not

@@ -29,7 +29,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents an feature attached to a node in the network-based
+ * Represents a feature attached to a node in the network-based
  * instance representation. Features can be of either link or
  * data-valued type.
  *
@@ -143,7 +143,7 @@ public abstract class NFeature<V> extends NEntity {
 	}
 
 	/**
-	 * Provides the corresponding instance-level slot for slots
+	 * Provides the corresponding instance-level slot for features
 	 * that have been directly derived from such slots.
 	 *
 	 * @return Corresponding instance-level slot, or null if not

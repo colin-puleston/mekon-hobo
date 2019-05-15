@@ -72,18 +72,6 @@ public abstract class IFrameConverter<FTC, FC, SC> {
 									List<IV> iValues);
 	}
 
-	private class TypeISlotNonConverter<IV> extends TypeISlotConverter<IV> {
-
-		protected void convertSlot(FC frameConversion, ISlot slot, List<IV> iValues) {
-		}
-
-		protected void convertFixedValues(
-							FTC frameTypeConversion,
-							CIdentity slotId,
-							List<IV> iValues) {
-		}
-	}
-
 	private class ISlotConverter extends ISlotValuesVisitor {
 
 		private ISlot slot;
@@ -246,19 +234,6 @@ public abstract class IFrameConverter<FTC, FC, SC> {
 	 * @return Created converter
 	 */
 	protected abstract TypeISlotConverter<IString> createIStringSlotConverter();
-
-	/**
-	 * Creates a converter for slots with specified general value-type
-	 * that are not required to appear in the output network.
-	 *
-	 * @param <T> Generic version of general value-type
-	 * @param type Relevant general value-type
-	 * @return Created converter
-	 */
-	protected <T>TypeISlotConverter<T> createTypeISlotNonConverter(Class<T> type) {
-
-		return new TypeISlotNonConverter<T>();
-	}
 
 	/**
 	 * Provides a conversion of the specified frame, including

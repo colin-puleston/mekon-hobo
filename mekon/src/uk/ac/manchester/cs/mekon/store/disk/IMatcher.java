@@ -43,7 +43,7 @@ import uk.ac.manchester.cs.mekon.store.*;
 public interface IMatcher {
 
 	/**
-	 * Initialisation method that will be called at somr point
+	 * Initialisation method that will be called at some point
 	 * prior to the first access of any of the other defined methods.
 	 *
 	 * @param indexes Mappings between unique instance identities
