@@ -39,6 +39,11 @@ class TripleNodeURIs {
 
 	static String getNodeURI(String baseURI, int index) {
 
+		if (index == 0) {
+
+			return baseURI;
+		}
+
 		return baseURI + getNodeURISuffix(index);
 	}
 
