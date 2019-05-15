@@ -105,8 +105,8 @@ public class OStardogMatcher extends OTMatcher {
 	}
 
 	/**
-	 * Always returns true since a rebuild is always required on
-	 * startup.
+	 * Specifies that a rebuild is required if and only if the
+	 * matcher is configured to require a rebuild.
 	 *
 	 * @return true as rebuild required
 	 */
@@ -116,7 +116,9 @@ public class OStardogMatcher extends OTMatcher {
 	}
 
 	/**
-	 * Closes the connection to the database and stops the Stardog server.
+	 * Closes the connection to the database and stops the Stardog server,
+	 * and, unless the matcher is configured to persist the database, removes
+	 * it.
 	 */
 	public void stop() {
 
