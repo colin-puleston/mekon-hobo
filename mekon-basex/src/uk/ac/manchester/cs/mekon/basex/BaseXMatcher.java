@@ -199,8 +199,8 @@ public class BaseXMatcher extends NMatcher {
 	}
 
 	/**
-	 * Closes the connection to, and removes, the database, and empties
-	 * the file-store.
+	 * Closes the connection to the database, and, unless the matcher
+	 * is configured to persist the database, empties the file-store.
 	 */
 	public void stop() {
 
