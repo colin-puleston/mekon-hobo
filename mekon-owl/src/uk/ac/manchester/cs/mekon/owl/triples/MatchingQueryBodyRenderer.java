@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
+import java.net.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -58,7 +59,7 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 
 	String render(NNode instance) {
 
-		renderNode(instance);
+		renderFrom(instance);
 
 		return getQueryBody();
 	}
@@ -68,6 +69,11 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		return index == 0
 				? getRootTripleNode()
 				: new QueryVariable(getNodeVariable(index));
+	}
+
+	QueryVariable renderNode(URI uri) {
+
+		return new QueryVariable(constants.register(new OT_URI(uri)));
 	}
 
 	OTValue renderNumberMin(OTNumber value) {
@@ -92,12 +98,20 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 
 	OT_URI renderURI(String uri) {
 
-		return registerConstant(super.renderURI(uri));
+		OT_URI triplesURI = super.renderURI(uri);
+
+		constants.register(triplesURI);
+
+		return triplesURI;
 	}
 
 	OTNumber renderDefiniteNumber(INumber number) {
 
-		return registerConstant(super.renderDefiniteNumber(number));
+		OTNumber triplesNumber = super.renderDefiniteNumber(number);
+
+		constants.register(triplesNumber);
+
+		return triplesNumber;
 	}
 
 	abstract QueryVariable getRootTripleNode();
@@ -109,13 +123,6 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		filters.append(getLimitFilterString(var, op, renderValue(value)));
 
 		return new QueryVariable(var);
-	}
-
-	private <V extends OTValue>V registerConstant(V value) {
-
-		constants.register(value);
-
-		return value;
 	}
 
 	private String getUnionString(
@@ -163,10 +170,10 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 						OTValue object) {
 
 		return String.format(
-						format,
-						renderValue(subject),
-						renderValue(predicate),
-						renderValue(object));
+					format,
+					renderValue(subject),
+					renderValue(predicate),
+					renderValue(object));
 	}
 
 	private String getLimitFilterString(String var, String op, String value) {

@@ -39,6 +39,7 @@ import uk.ac.manchester.cs.mekon.owl.build.*;
  */
 public abstract class ORMatcherTest extends IMatcherTest {
 
+	static private final String OWL_TYPE = JOB;
 	static private final String NON_OWL_TYPE = "NON-OWL-TYPE";
 	static private final String NON_OWL_BUT_OWL_SUBSUMED_TYPE = "NON-OWL-BUT-OWL-SUBSUMED-TYPE";
 
@@ -52,7 +53,7 @@ public abstract class ORMatcherTest extends IMatcherTest {
 
 				addFrame(NON_OWL_TYPE);
 				addFrame(NON_OWL_BUT_OWL_SUBSUMED_TYPE);
-				addSuperFrame(NON_OWL_BUT_OWL_SUBSUMED_TYPE, JOB);
+				addSuperFrame(NON_OWL_BUT_OWL_SUBSUMED_TYPE, OWL_TYPE);
 			}
 		}
 
@@ -75,7 +76,7 @@ public abstract class ORMatcherTest extends IMatcherTest {
 	@Test
 	public void test_handlesType() {
 
-		testHandlesType(JOB, true);
+		testHandlesType(OWL_TYPE, true);
 		testHandlesType(NON_OWL_TYPE, false);
 		testHandlesType(NON_OWL_BUT_OWL_SUBSUMED_TYPE, true);
 	}

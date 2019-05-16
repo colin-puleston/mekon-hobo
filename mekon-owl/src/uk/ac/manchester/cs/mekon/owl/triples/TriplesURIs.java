@@ -27,10 +27,16 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 /**
  * @author Colin Puleston
  */
-class TripleNodeURIs {
+class TriplesURIs {
 
-	static private final String SUFFIX_PREFIX = "-N";
-	static private final String SUFFIX_FORMAT = SUFFIX_PREFIX + "%d";
+	static private final String GRAPH_SUFFIX = "-GRAPH";
+	static private final String NODE_SUFFIX_PREFIX = "-N";
+	static private final String NODE_SUFFIX_FORMAT = NODE_SUFFIX_PREFIX + "%d";
+
+	static String getGraphURI(String baseURI) {
+
+		return baseURI + GRAPH_SUFFIX;
+	}
 
 	static String getRootNodeURI(String baseURI) {
 
@@ -51,9 +57,9 @@ class TripleNodeURIs {
 
 		String uriSlice = removeFinalDigits(nodeURI);
 
-		if (uriSlice.endsWith(SUFFIX_PREFIX)) {
+		if (uriSlice.endsWith(NODE_SUFFIX_PREFIX)) {
 
-			int l = uriSlice.length() - SUFFIX_PREFIX.length();
+			int l = uriSlice.length() - NODE_SUFFIX_PREFIX.length();
 
 			return uriSlice.substring(0, l);
 		}
@@ -63,7 +69,7 @@ class TripleNodeURIs {
 
 	static private String getNodeURISuffix(int index) {
 
-		return String.format(SUFFIX_FORMAT, index);
+		return String.format(NODE_SUFFIX_FORMAT, index);
 	}
 
 	static private String removeFinalDigits(String uri) {

@@ -58,6 +58,16 @@ public abstract class OTValue {
 	}
 
 	/**
+	 * Provides a rendering of the value as a string.
+	 *
+	 * @return String rendering of value
+	 */
+	public String toString() {
+
+		return value.toString();
+	}
+
+	/**
 	 * Tests whether value is a URI.
 	 *
 	 * @return True if value is URI
@@ -105,16 +115,6 @@ public abstract class OTValue {
 	public boolean isDouble() {
 
 		return isValueType(Double.class);
-	}
-
-	/**
-	 * Provides a rendering of the value as a string.
-	 *
-	 * @return String rendering of value
-	 */
-	public String asString() {
-
-		return value.toString();
 	}
 
 	/**

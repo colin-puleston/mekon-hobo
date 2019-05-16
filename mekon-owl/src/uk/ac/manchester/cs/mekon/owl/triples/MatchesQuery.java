@@ -39,7 +39,7 @@ class MatchesQuery extends SpecificQuery {
 
 			super(getConstants());
 
-			rootNodeURI = TripleNodeURIs.getRootNodeURI(baseURI);
+			rootNodeURI = TriplesURIs.getRootNodeURI(baseURI);
 		}
 
 		QueryVariable getRootTripleNode() {

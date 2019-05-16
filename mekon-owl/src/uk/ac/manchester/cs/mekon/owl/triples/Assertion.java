@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
+import java.net.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
@@ -43,14 +44,19 @@ class Assertion {
 
 		void render(NNode instance) {
 
-			renderNode(instance);
+			renderFrom(instance);
 
 			adder.addGraphToStore();
 		}
 
 		OT_URI renderNode(int index) {
 
-			return getNode(index);
+			return new OT_URI(TriplesURIs.getNodeURI(baseURI, index));
+		}
+
+		OT_URI renderNode(URI uri) {
+
+			return new OT_URI(uri);
 		}
 
 		OTValue renderNumberMin(OTNumber value) {
@@ -104,16 +110,16 @@ class Assertion {
 
 	private OTGraphAdder createGraphAdder() {
 
-		return factory.createGraphAdder(baseURI);
+		return factory.createGraphAdder(getGraphURI());
 	}
 
 	private OTGraphRemover createGraphRemover() {
 
-		return factory.createGraphRemover(baseURI);
+		return factory.createGraphRemover(getGraphURI());
 	}
 
-	private OT_URI getNode(int index) {
+	private String getGraphURI() {
 
-		return new OT_URI(TripleNodeURIs.getNodeURI(baseURI, index));
+		return TriplesURIs.getGraphURI(baseURI);
 	}
 }

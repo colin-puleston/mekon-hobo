@@ -70,7 +70,7 @@ public class OTQueryConstants {
 		return getVariableRendering(toVarNames.get(constant));
 	}
 
-	void register(OTValue constant) {
+	String register(OTValue constant) {
 
 		String varName = toVarNames.get(constant);
 
@@ -80,6 +80,8 @@ public class OTQueryConstants {
 
 			toVarNames.put(constant, varName);
 		}
+
+		return getVariableRendering(varName);
 	}
 
 	private String getNextVariableName() {

@@ -24,12 +24,24 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
+import java.net.*;
+
 /**
  * Represents a URI used in a triple.
  *
  * @author Colin Puleston
  */
 public class OT_URI extends OTValue {
+
+	/**
+	 * Constructor.
+	 *
+	 * @param uri URI value
+	 */
+	public OT_URI(URI uri) {
+
+		super(uri.toString());
+	}
 
 	/**
 	 * Constructor.

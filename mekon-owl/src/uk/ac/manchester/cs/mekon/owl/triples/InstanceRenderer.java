@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.triples;
 
+import java.net.*;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
@@ -83,19 +84,19 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 		void renderValue(TN subject, OT_URI predicate, NNode value) {
 
-			renderTriple(subject, predicate, renderNode(value));
+			renderTriple(subject, predicate, renderFrom(value));
 		}
 
 		private Set<OTValue> renderValues(NLink link) {
 
-			Set<OTValue> tripleNodes = new HashSet<OTValue>();
+			Set<OTValue> tripleValues = new HashSet<OTValue>();
 
 			for (NNode value : link.getValues()) {
 
-				tripleNodes.add(renderNode(value));
+				tripleValues.add(renderFrom(value));
 			}
 
-			return tripleNodes;
+			return tripleValues;
 		}
 	}
 
@@ -139,17 +140,16 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		}
 	}
 
-	TN renderNode(NNode node) {
+	TN renderFrom(NNode node) {
 
-		TN tripleNode = renderNode(nodeCount++);
+		URI refURI = checkExtractInstanceRef(node);
 
-		checkRenderType(node, tripleNode);
-		renderFeatureValues(node, tripleNode);
-
-		return tripleNode;
+		return refURI != null ? renderNode(refURI) : renderFromNonInstanceRefNode(node);
 	}
 
 	abstract TN renderNode(int index);
+
+	abstract TN renderNode(URI uri);
 
 	abstract OTValue renderNumberMin(OTNumber value);
 
@@ -169,7 +169,17 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		return new OTNumber(number.asTypeNumber());
 	}
 
-	private void checkRenderType(NNode node, TN tripleNode) {
+	private TN renderFromNonInstanceRefNode(NNode node) {
+
+		TN tripleNode = renderNode(nodeCount++);
+
+		renderType(node, tripleNode);
+		renderFeatureValues(node, tripleNode);
+
+		return tripleNode;
+	}
+
+	private void renderType(NNode node, TN tripleNode) {
 
 		OT_URI typePredicate = renderURI(RDFConstants.RDF_TYPE);
 
@@ -209,5 +219,24 @@ abstract class InstanceRenderer<TN extends OTValue> {
 	private OT_URI renderURI(IRI iri) {
 
 		return renderURI(iri.toString());
+	}
+
+	private URI checkExtractInstanceRef(NNode node) {
+
+		return node.instanceReference()
+				? toURIOrNull(node.getReferencedInstanceId())
+				: null;
+	}
+
+	private URI toURIOrNull(CIdentity identity) {
+
+		try {
+
+			return new URI(identity.getIdentifier());
+		}
+		catch (URISyntaxException e) {
+
+			return null;
+		}
 	}
 }

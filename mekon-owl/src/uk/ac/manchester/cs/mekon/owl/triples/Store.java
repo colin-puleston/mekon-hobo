@@ -110,6 +110,6 @@ class Store {
 
 	private String extractBaseURI(String uri) {
 
-		return TripleNodeURIs.extractBaseURI(uri);
+		return TriplesURIs.extractBaseURI(uri);
 	}
 }

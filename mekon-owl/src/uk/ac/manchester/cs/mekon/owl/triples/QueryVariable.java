@@ -36,6 +36,6 @@ class QueryVariable extends OTValue {
 
 	String getQueryRendering(OTQueryConstants constants) {
 
-		return asString();
+		return toString();
 	}
 }
