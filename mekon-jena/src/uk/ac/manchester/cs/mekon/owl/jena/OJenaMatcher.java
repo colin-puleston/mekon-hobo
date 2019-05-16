@@ -129,7 +129,7 @@ public class OJenaMatcher extends OTMatcher {
 
 	private void loadMatchingOntology(OntModel jenaModel) {
 
-		File owlFile = getModel().renderInstancesToTempFile();
+		File owlFile = getModel().renderModelToTempFile();
 
 		jenaModel.read(owlFile.toURI().toString(), null);
 
