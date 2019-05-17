@@ -59,7 +59,7 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 
 	String render(NNode instance) {
 
-		renderFrom(instance);
+		renderFromRoot(instance);
 
 		return getQueryBody();
 	}

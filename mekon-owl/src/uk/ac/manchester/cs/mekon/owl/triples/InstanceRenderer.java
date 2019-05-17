@@ -39,6 +39,11 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
  */
 abstract class InstanceRenderer<TN extends OTValue> {
 
+	static private final String TRIPLES_NAMESPACE = "urn:mekon-owl:triples#";
+
+	static private final String TRIPLES_TYPE_URI = TRIPLES_NAMESPACE + "TYPE";
+	static private final String TRIPLES_GRAPH_ROOT_TYPE_URI = TRIPLES_NAMESPACE + "GRAPH-ROOT";
+
 	private LinksRenderer linksRenderer = new LinksRenderer();
 	private NumbersRenderer numbersRenderer = new NumbersRenderer();
 
@@ -140,16 +145,11 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		}
 	}
 
-	TN renderFrom(NNode node) {
+	TN renderFromRoot(NNode rootNode) {
 
-		TN tripleNode = renderNode(node);
+		TN tripleNode = renderFrom(rootNode);
 
-		if (typeRenderingRequired(node)) {
-
-			renderType(node, tripleNode);
-		}
-
-		renderFeatureValues(node, tripleNode);
+		renderTriplesGraphRootType(tripleNode);
 
 		return tripleNode;
 	}
@@ -178,6 +178,20 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		return new OTNumber(number.asTypeNumber());
 	}
 
+	private TN renderFrom(NNode node) {
+
+		TN tripleNode = renderNode(node);
+
+		if (typeRenderingRequired(node)) {
+
+			renderType(node, tripleNode);
+		}
+
+		renderFeatureValues(node, tripleNode);
+
+		return tripleNode;
+	}
+
 	private TN renderNode(NNode node) {
 
 		URI refURI = checkExtractInstanceRef(node);
@@ -185,6 +199,14 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		return refURI != null
 				? renderInstanceRefNode(refURI)
 				: renderDynamicNode(dynamicNodeCount++);
+	}
+
+	private void renderTriplesGraphRootType(TN tripleNode) {
+
+		renderTriple(
+			tripleNode,
+			renderURI(TRIPLES_TYPE_URI),
+			renderURI(TRIPLES_GRAPH_ROOT_TYPE_URI));
 	}
 
 	private void renderType(NNode node, TN tripleNode) {

@@ -44,7 +44,7 @@ class Assertion {
 
 		void render(NNode instance) {
 
-			renderFrom(instance);
+			renderFromRoot(instance);
 
 			adder.addGraphToStore();
 		}
