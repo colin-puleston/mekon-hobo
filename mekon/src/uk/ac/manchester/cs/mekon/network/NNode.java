@@ -184,7 +184,7 @@ public class NNode extends NEntity {
 	 * @return Identity of referenced instance, or null if not
 	 * applicable
 	 */
-	public CIdentity getReferencedInstanceId() {
+	public CIdentity getInstanceRef() {
 
 		return instanceReference() ? iFrame.getReferenceId() : null;
 	}
