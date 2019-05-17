@@ -65,8 +65,11 @@ class OJenaGraphRemover implements OTGraphRemover {
 
 	private void removeStatement(Statement cxtStatement) {
 
+		ReifiedStatement reified = getReifiedStatement(cxtStatement);
+
 		model.remove(cxtStatement);
-		model.remove(getReifiedStatement(cxtStatement).getStatement());
+		model.remove(reified.getStatement());
+		model.removeReification(reified);
 	}
 
 	private StmtIterator getStatementIterator() {
