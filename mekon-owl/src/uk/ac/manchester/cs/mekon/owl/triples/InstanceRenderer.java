@@ -42,7 +42,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 	private LinksRenderer linksRenderer = new LinksRenderer();
 	private NumbersRenderer numbersRenderer = new NumbersRenderer();
 
-	private int nodeCount = 0;
+	private int dynamicNodeCount = 0;
 
 	private abstract class FeaturesRenderer<V, F extends NFeature<V>> {
 
@@ -142,14 +142,21 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 	TN renderFrom(NNode node) {
 
-		URI refURI = checkExtractInstanceRef(node);
+		TN tripleNode = renderNode(node);
 
-		return refURI != null ? renderNode(refURI) : renderFromNonInstanceRefNode(node);
+		if (typeRenderingRequired(node)) {
+
+			renderType(node, tripleNode);
+		}
+
+		renderFeatureValues(node, tripleNode);
+
+		return tripleNode;
 	}
 
-	abstract TN renderNode(int index);
+	abstract TN renderDynamicNode(int index);
 
-	abstract TN renderNode(URI uri);
+	abstract TN renderInstanceRefNode(URI refURI);
 
 	abstract OTValue renderNumberMin(OTNumber value);
 
@@ -158,6 +165,8 @@ abstract class InstanceRenderer<TN extends OTValue> {
 	abstract void renderTriple(TN subject, OT_URI predicate, OTValue object);
 
 	abstract void renderUnion(TN subject, OT_URI predicate, Set<OTValue> objects);
+
+	abstract boolean typeRenderingRequired(NNode node);
 
 	OT_URI renderURI(String uri) {
 
@@ -169,14 +178,13 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		return new OTNumber(number.asTypeNumber());
 	}
 
-	private TN renderFromNonInstanceRefNode(NNode node) {
+	private TN renderNode(NNode node) {
 
-		TN tripleNode = renderNode(nodeCount++);
+		URI refURI = checkExtractInstanceRef(node);
 
-		renderType(node, tripleNode);
-		renderFeatureValues(node, tripleNode);
-
-		return tripleNode;
+		return refURI != null
+				? renderInstanceRefNode(refURI)
+				: renderDynamicNode(dynamicNodeCount++);
 	}
 
 	private void renderType(NNode node, TN tripleNode) {
@@ -223,9 +231,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 	private URI checkExtractInstanceRef(NNode node) {
 
-		return node.instanceReference()
-				? toURIOrNull(node.getReferencedInstanceId())
-				: null;
+		return node.instanceReference() ? toURIOrNull(node.getInstanceRef()) : null;
 	}
 
 	private URI toURIOrNull(CIdentity identity) {

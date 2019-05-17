@@ -49,14 +49,14 @@ class Assertion {
 			adder.addGraphToStore();
 		}
 
-		OT_URI renderNode(int index) {
+		OT_URI renderDynamicNode(int index) {
 
 			return new OT_URI(TriplesURIs.getNodeURI(baseURI, index));
 		}
 
-		OT_URI renderNode(URI uri) {
+		OT_URI renderInstanceRefNode(URI refURI) {
 
-			return new OT_URI(uri);
+			return new OT_URI(refURI);
 		}
 
 		OTValue renderNumberMin(OTNumber value) {
@@ -77,6 +77,11 @@ class Assertion {
 		void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects) {
 
 			throw createBadConstructException("nodes with disjunction types");
+		}
+
+		boolean typeRenderingRequired(NNode node) {
+
+			return true;
 		}
 
 		private KAccessException createIndefiniteNumberException() {

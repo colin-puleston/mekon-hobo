@@ -64,16 +64,16 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		return getQueryBody();
 	}
 
-	QueryVariable renderNode(int index) {
+	QueryVariable renderDynamicNode(int index) {
 
 		return index == 0
 				? getRootTripleNode()
 				: new QueryVariable(getNodeVariable(index));
 	}
 
-	QueryVariable renderNode(URI uri) {
+	QueryVariable renderInstanceRefNode(URI refURI) {
 
-		return new QueryVariable(constants.register(new OT_URI(uri)));
+		return new QueryVariable(constants.register(new OT_URI(refURI)));
 	}
 
 	OTValue renderNumberMin(OTNumber value) {
@@ -94,6 +94,11 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 	void renderUnion(QueryVariable subject, OT_URI predicate, Set<OTValue> objects) {
 
 		statements.append(getUnionString(subject, predicate, objects));
+	}
+
+	boolean typeRenderingRequired(NNode node) {
+
+		return !node.instanceReference();
 	}
 
 	OT_URI renderURI(String uri) {
