@@ -194,6 +194,12 @@ class SubsumptionTester {
 
 	private boolean nodeSubsumption(NNode node1, NNode node2) {
 
+		if (node1.instanceReference()) {
+
+			return node2.instanceReference()
+					&& node1.getInstanceRef().equals(node2.getInstanceRef());
+		}
+
 		return typeSubsumption(node1, node2)
 				&& linksTester.subsumptions(node1, node2)
 				&& numbersTester.subsumptions(node1, node2);
@@ -209,14 +215,6 @@ class SubsumptionTester {
 			return cFrame1.subsumes(cFrame2);
 		}
 
-		return typesSubsumption(node1, node2);
-	}
-
-	private boolean typesSubsumption(NNode node1, NNode node2) {
-
-		List<CIdentity> disjuncts1 = node1.getTypeDisjuncts();
-		List<CIdentity> disjuncts2 = node2.getTypeDisjuncts();
-
-		return disjuncts2.containsAll(disjuncts1);
+		return node2.getTypeDisjuncts().containsAll(node1.getTypeDisjuncts());
 	}
 }

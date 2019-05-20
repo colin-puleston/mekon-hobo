@@ -307,24 +307,57 @@ class IAtomicFrame extends IFrame {
 		return slot;
 	}
 
-	boolean equalsCategoryFrame(IFrame other) {
+	boolean equalsAtomicFrame(IAtomicFrame other) {
 
-		return typeBasedCategoryMatch(other) && locallyEqualsCategoryFrame(other);
+		return noSlots() && other.noSlots() && equalsType(other);
 	}
 
-	boolean subsumesCategoryFrame(IFrame other) {
+	boolean equalsDisjunctionFrame(IDisjunction other) {
 
-		return typeBasedCategoryMatch(other) && locallySubsumesCategoryFrame(other);
+		return other.equalsAtomicFrame(this);
 	}
 
-	boolean locallyEqualsCategoryFrame(IFrame other) {
+	boolean equalsReferenceFrame(IReference other) {
 
-		return getType().equals(other.getType());
+		return false;
 	}
 
-	boolean locallySubsumesCategoryFrame(IFrame other) {
+	boolean subsumesAtomicFrame(IAtomicFrame other) {
 
-		return getType().subsumes(other.getType());
+		return noSlots() && other.noSlots() && subsumesType(other);
+	}
+
+	boolean subsumesDisjunctionFrame(IDisjunction other) {
+
+		for (IFrame disjunct : other.asDisjuncts()) {
+
+			if (!subsumes(disjunct)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	boolean subsumesReferenceFrame(IReference other) {
+
+		return noSlots() && subsumesType(other);
+	}
+
+	boolean structurallyIncompatibleCategory(IFrameCategory category) {
+
+		return category.reference();
+	}
+
+	boolean equalsLocalStructure(IFrame other) {
+
+		return !other.getCategory().reference() && equalsType(other);
+	}
+
+	boolean subsumesLocalStructure(IFrame other) {
+
+		return !other.getCategory().reference() && subsumesType(other);
 	}
 
 	int categoryHashCode() {
@@ -383,11 +416,6 @@ class IAtomicFrame extends IFrame {
 
 			listener.onUpdatedSuggestedTypes(updates);
 		}
-	}
-
-	private boolean typeBasedCategoryMatch(IFrame other) {
-
-		return noSlots() && ((IAtomicFrame)other).noSlots();
 	}
 
 	private boolean noSlots() {

@@ -98,34 +98,31 @@ class IDisjunction extends IFrame {
 		autoUpdateReferencingFrames(visited);
 	}
 
-	boolean equalsCategoryFrame(IFrame other) {
+	boolean equalsAtomicFrame(IAtomicFrame other) {
 
-		return disjunctsMatch(other, true);
+		return hasSingleDisjunct(other);
 	}
 
-	boolean subsumesCategoryFrame(IFrame other) {
+	boolean equalsDisjunctionFrame(IDisjunction other) {
 
-		return disjunctsMatch(other, false);
+		return asDisjunctSet().equals(other.asDisjunctSet());
 	}
 
-	int categoryHashCode() {
+	boolean equalsReferenceFrame(IReference other) {
 
-		return asDisjunctSet().hashCode();
+		return hasSingleDisjunct(other);
 	}
 
-	private boolean disjunctsMatch(IFrame other, boolean testEquality) {
+	boolean subsumesAtomicFrame(IAtomicFrame other) {
 
-		List<IFrame> these = asDisjuncts();
-		List<IFrame> others = other.asDisjuncts();
+		return subsumesNonDisjunctionFrame(other);
+	}
 
-		if (disjunctSizeMatch(these.size(), others.size(), testEquality)) {
+	boolean subsumesDisjunctionFrame(IDisjunction other) {
 
-			return false;
-		}
+		for (IFrame disjunct : other.asDisjuncts()) {
 
-		for (IFrame disjunct : these) {
-
-			if (!others.contains(disjunct)) {
+			if (!subsumesNonDisjunctionFrame(disjunct)) {
 
 				return false;
 			}
@@ -134,9 +131,44 @@ class IDisjunction extends IFrame {
 		return true;
 	}
 
-	private boolean disjunctSizeMatch(int these, int others, boolean testEquality) {
+	boolean subsumesReferenceFrame(IReference other) {
 
-		return testEquality ? these == others : these <= others;
+		return subsumesNonDisjunctionFrame(other);
+	}
+
+	boolean equalsLocalStructure(IFrame other) {
+
+		return !other.getCategory().reference() && equalsType(other);
+	}
+
+	boolean subsumesLocalStructure(IFrame other) {
+
+		return !other.getCategory().reference() && subsumesType(other);
+	}
+
+	int categoryHashCode() {
+
+		return asDisjunctSet().hashCode();
+	}
+
+	private boolean subsumesNonDisjunctionFrame(IFrame other) {
+
+		for (IFrame disjunct : asDisjuncts()) {
+
+			if (disjunct.subsumes(other)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean hasSingleDisjunct(IFrame other) {
+
+		List<IFrame> disjuncts = asDisjuncts();
+
+		return disjuncts.size() == 1 && disjuncts.get(0).equals(other);
 	}
 
 	private Set<IFrame> asDisjunctSet() {

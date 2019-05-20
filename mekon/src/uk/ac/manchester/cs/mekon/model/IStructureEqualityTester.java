@@ -35,7 +35,7 @@ class IStructureEqualityTester extends IStructureTester {
 
 	boolean localMatch(IFrame frame1, IFrame frame2) {
 
-		return frame1.locallyEquals(frame2);
+		return frame1.equalsLocalStructure(frame2);
 	}
 
 	boolean typesMatch(CValue<?> type1, CValue<?> type2) {

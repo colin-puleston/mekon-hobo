@@ -60,11 +60,11 @@ abstract class IFrameCopierAbstract {
 			CSlot copySlotType = templateSlot.getType().copy();
 			ISlot copySlot = addSlot(copy, copySlotType);
 
-			getCopySlotValues(templateSlot, copySlot);
+			setCopySlotValues(templateSlot, copySlot);
 		}
 	}
 
-	private void getCopySlotValues(ISlot templateSlot, ISlot copySlot) {
+	private void setCopySlotValues(ISlot templateSlot, ISlot copySlot) {
 
 		ISlotValues tempVals = templateSlot.getValues();
 

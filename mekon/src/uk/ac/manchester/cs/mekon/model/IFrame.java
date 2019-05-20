@@ -140,101 +140,6 @@ public abstract class IFrame implements IEntity, IValue {
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
-	private abstract class MatchTester {
-
-		boolean matches(Object other) {
-
-			if (other == IFrame.this) {
-
-				return true;
-			}
-
-			IFrame frame = toCategoryFrameOrNull(other);
-
-			return frame != null && matchesCategoryFrame(frame);
-		}
-
-		abstract boolean matchesCategoryFrame(IFrame frame);
-
-		private IFrame toCategoryFrameOrNull(Object obj) {
-
-			if (obj instanceof IFrame) {
-
-				IFrame frame = (IFrame)obj;
-
-				if (frame.getCategory() == getCategory()) {
-
-					return frame;
-				}
-			}
-
-			return null;
-		}
-	}
-
-	private class EqualityTester extends MatchTester {
-
-		boolean matchesCategoryFrame(IFrame frame) {
-
-			return equalsCategoryFrame(frame);
-		}
-	}
-
-	private class SubsumptionTester extends MatchTester {
-
-		boolean matchesCategoryFrame(IFrame frame) {
-
-			return subsumesCategoryFrame(frame);
-		}
-	}
-
-	private class LocalEqualityTester extends MatchTester {
-
-		boolean matchesCategoryFrame(IFrame frame) {
-
-			return locallyEqualsCategoryFrame(frame);
-		}
-	}
-
-	private class LocalSubsumptionTester extends MatchTester {
-
-		boolean matchesCategoryFrame(IFrame frame) {
-
-			return locallySubsumesCategoryFrame(frame);
-		}
-	}
-
-	private abstract class StructureMatchTester extends MatchTester {
-
-		boolean matchesCategoryFrame(IFrame frame) {
-
-			return equalsCategoryFrame(frame) || matchesStructure(frame);
-		}
-
-		abstract IStructureTester createTester();
-
-		private boolean matchesStructure(IFrame other) {
-
-			return createTester().match(IFrame.this, other);
-		}
-	}
-
-	private class StructureEqualityTester extends StructureMatchTester {
-
-		IStructureTester createTester() {
-
-			return new IStructureEqualityTester();
-		}
-	}
-
-	private class StructureSubsumptionTester extends StructureMatchTester {
-
-		IStructureTester createTester() {
-
-			return new IStructureSubsumptionTester();
-		}
-	}
-
 	/**
 	 * Adds a frame-listener.
 	 *
@@ -366,7 +271,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean equals(Object other) {
 
-		return new EqualityTester().matches(other);
+		return other instanceof IFrame && equalsFrame((IFrame)other);
 	}
 
 	/**
@@ -428,7 +333,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumes(IValue other) {
 
-		return new SubsumptionTester().matches(other);
+		return other instanceof IFrame && subsumesFrame((IFrame)other);
 	}
 
 	/**
@@ -448,7 +353,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean equalsStructure(IValue other) {
 
-		return new StructureEqualityTester().matches(other);
+		return other instanceof IFrame && equalsFrameStructure((IFrame)other);
 	}
 
 	/**
@@ -468,7 +373,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumesStructure(IValue other) {
 
-		return new StructureSubsumptionTester().matches(other);
+		return other instanceof IFrame && subsumesFrameStructure((IFrame)other);
 	}
 
 	/**
@@ -702,26 +607,28 @@ public abstract class IFrame implements IEntity, IValue {
 		return mappedObject;
 	}
 
-	boolean locallyEquals(IFrame other) {
+	abstract boolean equalsAtomicFrame(IAtomicFrame other);
 
-		return new LocalEqualityTester().matches(other);
-	}
+	abstract boolean equalsDisjunctionFrame(IDisjunction other);
 
-	boolean locallySubsumes(IFrame other) {
+	abstract boolean equalsReferenceFrame(IReference other);
 
-		return new LocalSubsumptionTester().matches(other);
-	}
+	abstract boolean subsumesAtomicFrame(IAtomicFrame other);
 
-	abstract boolean equalsCategoryFrame(IFrame other);
+	abstract boolean subsumesDisjunctionFrame(IDisjunction other);
 
-	abstract boolean subsumesCategoryFrame(IFrame other);
+	abstract boolean subsumesReferenceFrame(IReference other);
 
-	boolean locallyEqualsCategoryFrame(IFrame other) {
+	abstract boolean equalsLocalStructure(IFrame other);
+
+	abstract boolean subsumesLocalStructure(IFrame other);
+
+	boolean equalsType(IFrame other) {
 
 		return type.equals(other.type);
 	}
 
-	boolean locallySubsumesCategoryFrame(IFrame other) {
+	boolean subsumesType(IFrame other) {
 
 		return type.subsumes(other.type);
 	}
@@ -803,6 +710,66 @@ public abstract class IFrame implements IEntity, IValue {
 					+ "to extension-CFrame: "
 					+ "Cycle detected at: " + this);
 
+	}
+
+	private boolean equalsFrame(IFrame other) {
+
+		if (other == this) {
+
+			return true;
+		}
+
+		if (other.getCategory().atomic()) {
+
+			return equalsAtomicFrame((IAtomicFrame)other);
+		}
+
+		if (other.getCategory().disjunction()) {
+
+			return equalsDisjunctionFrame((IDisjunction)other);
+		}
+
+		if (other.getCategory().reference()) {
+
+			return equalsReferenceFrame((IReference)other);
+		}
+
+		throw new Error("Unrecognised frame category: " + other.getCategory());
+	}
+
+	private boolean subsumesFrame(IFrame other) {
+
+		if (other == this) {
+
+			return true;
+		}
+
+		if (other.getCategory().atomic()) {
+
+			return subsumesAtomicFrame((IAtomicFrame)other);
+		}
+
+		if (other.getCategory().disjunction()) {
+
+			return subsumesDisjunctionFrame((IDisjunction)other);
+		}
+
+		if (other.getCategory().reference()) {
+
+			return subsumesReferenceFrame((IReference)other);
+		}
+
+		throw new Error("Unrecognised frame category: " + other.getCategory());
+	}
+
+	private boolean equalsFrameStructure(IFrame other) {
+
+		return new IStructureEqualityTester().match(this, other);
+	}
+
+	private boolean subsumesFrameStructure(IFrame other) {
+
+		return new IStructureSubsumptionTester().match(this, other);
 	}
 
 	private void validateAsReferencedFrame(IFrame referencer) {
