@@ -307,64 +307,6 @@ class IAtomicFrame extends IFrame {
 		return slot;
 	}
 
-	boolean equalsAtomicFrame(IAtomicFrame other) {
-
-		return noSlots() && other.noSlots() && equalsType(other);
-	}
-
-	boolean equalsDisjunctionFrame(IDisjunction other) {
-
-		return other.equalsAtomicFrame(this);
-	}
-
-	boolean equalsReferenceFrame(IReference other) {
-
-		return false;
-	}
-
-	boolean subsumesAtomicFrame(IAtomicFrame other) {
-
-		return noSlots() && other.noSlots() && subsumesType(other);
-	}
-
-	boolean subsumesDisjunctionFrame(IDisjunction other) {
-
-		for (IFrame disjunct : other.asDisjuncts()) {
-
-			if (!subsumes(disjunct)) {
-
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	boolean subsumesReferenceFrame(IReference other) {
-
-		return noSlots() && subsumesType(other);
-	}
-
-	boolean structurallyIncompatibleCategory(IFrameCategory category) {
-
-		return category.reference();
-	}
-
-	boolean equalsLocalStructure(IFrame other) {
-
-		return !other.getCategory().reference() && equalsType(other);
-	}
-
-	boolean subsumesLocalStructure(IFrame other) {
-
-		return !other.getCategory().reference() && subsumesType(other);
-	}
-
-	int categoryHashCode() {
-
-		return noSlots() ? getType().hashCode() : super.categoryHashCode();
-	}
-
 	private void autoUpdateThis() {
 
 		IUpdating updating = getIUpdating();
@@ -416,11 +358,6 @@ class IAtomicFrame extends IFrame {
 
 			listener.onUpdatedSuggestedTypes(updates);
 		}
-	}
-
-	private boolean noSlots() {
-
-		return getSlots().isEmpty();
 	}
 
 	private IUpdating getIUpdating() {

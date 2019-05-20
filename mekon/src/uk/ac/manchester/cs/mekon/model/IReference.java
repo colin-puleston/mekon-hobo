@@ -94,61 +94,6 @@ class IReference extends IFrame {
 	void autoUpdate(Set<IFrame> visited) {
 	}
 
-	boolean equalsAtomicFrame(IAtomicFrame other) {
-
-		return false;
-	}
-
-	boolean equalsDisjunctionFrame(IDisjunction other) {
-
-		return other.equalsReferenceFrame(this);
-	}
-
-	boolean equalsReferenceFrame(IReference other) {
-
-		return referenceId.equals(other.referenceId);
-	}
-
-	boolean subsumesAtomicFrame(IAtomicFrame other) {
-
-		return false;
-	}
-
-	boolean subsumesDisjunctionFrame(IDisjunction other) {
-
-		return other.equalsReferenceFrame(this);
-	}
-
-	boolean subsumesReferenceFrame(IReference other) {
-
-		return equalsReferenceFrame(other);
-	}
-
-	boolean equalsLocalStructure(IFrame other) {
-
-		return other.getCategory().reference() && equalsReferenceFrame((IReference)other);
-	}
-
-	boolean subsumesLocalStructure(IFrame other) {
-
-		return equalsLocalStructure(other);
-	}
-
-	boolean structurallyIncompatibleCategory(IFrameCategory category) {
-
-		return !category.reference();
-	}
-
-	int categoryHashCode() {
-
-		return referenceId.hashCode();
-	}
-
-	int categoryLocalHashCode() {
-
-		return referenceId.hashCode();
-	}
-
 	String describeLocally() {
 
 		return FEntityDescriber.entityToString(this, referenceId);

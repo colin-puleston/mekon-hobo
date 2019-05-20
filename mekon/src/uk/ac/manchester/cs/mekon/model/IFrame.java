@@ -140,6 +140,73 @@ public abstract class IFrame implements IEntity, IValue {
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
+	private abstract class MatchTester {
+
+		boolean match(Object other) {
+
+			if (other == IFrame.this) {
+
+				return true;
+			}
+
+			return other instanceof IFrame && match((IFrame)other);
+		}
+
+		private boolean match(IFrame other) {
+
+			for (IFrame disjunct : other.asDisjuncts()) {
+
+				if (!matchNonDisjunction(disjunct)) {
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private boolean matchNonDisjunction(IFrame other) {
+
+			for (IFrame disjunct : asDisjuncts()) {
+
+				if (matchNoDisjunctions(disjunct, other)) {
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private boolean matchNoDisjunctions(IFrame first, IFrame second) {
+
+			if (first.referenceTestApplicable(second)) {
+
+				return first.equalsReference(second);
+			}
+
+			return first.noSlots() && second.noSlots() && typeMatch(first, second);
+		}
+
+		abstract boolean typeMatch(IFrame first, IFrame second);
+	}
+
+	private class EqualityTester extends MatchTester {
+
+		boolean typeMatch(IFrame first, IFrame second) {
+
+			return first.equalsType(second);
+		}
+	}
+
+	private class SubsumptionTester extends MatchTester {
+
+		boolean typeMatch(IFrame first, IFrame second) {
+
+			return first.subsumesType(second);
+		}
+	}
+
 	/**
 	 * Adds a frame-listener.
 	 *
@@ -271,7 +338,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean equals(Object other) {
 
-		return other instanceof IFrame && equalsFrame((IFrame)other);
+		return new EqualityTester().match(other);
 	}
 
 	/**
@@ -283,7 +350,12 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public int hashCode() {
 
-		return categoryHashCode();
+		if (getCategory().reference()) {
+
+			return getReferenceId().hashCode();
+		}
+
+		return slots.isEmpty() ? type.hashCode() : super.hashCode();
 	}
 
 	/**
@@ -333,7 +405,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumes(IValue other) {
 
-		return other instanceof IFrame && subsumesFrame((IFrame)other);
+		return new SubsumptionTester().match(other);
 	}
 
 	/**
@@ -607,40 +679,24 @@ public abstract class IFrame implements IEntity, IValue {
 		return mappedObject;
 	}
 
-	abstract boolean equalsAtomicFrame(IAtomicFrame other);
+	boolean equalsLocalStructure(IFrame other) {
 
-	abstract boolean equalsDisjunctionFrame(IDisjunction other);
-
-	abstract boolean equalsReferenceFrame(IReference other);
-
-	abstract boolean subsumesAtomicFrame(IAtomicFrame other);
-
-	abstract boolean subsumesDisjunctionFrame(IDisjunction other);
-
-	abstract boolean subsumesReferenceFrame(IReference other);
-
-	abstract boolean equalsLocalStructure(IFrame other);
-
-	abstract boolean subsumesLocalStructure(IFrame other);
-
-	boolean equalsType(IFrame other) {
-
-		return type.equals(other.type);
+		return referenceTestApplicable(other) ? equalsReference(other) : equalsType(other);
 	}
 
-	boolean subsumesType(IFrame other) {
+	boolean subsumesLocalStructure(IFrame other) {
 
-		return type.subsumes(other.type);
+		return referenceTestApplicable(other) ? equalsReference(other) : subsumesType(other);
 	}
 
-	int categoryHashCode() {
+	private Set<IFrame> asDisjunctSet() {
 
-		return super.hashCode();
+		return new HashSet<IFrame>(asDisjuncts());
 	}
 
-	int categoryLocalHashCode() {
+	int localHashCode() {
 
-		return type.hashCode();
+		return getCategory().reference() ? getReferenceId().hashCode() : type.hashCode();
 	}
 
 	String describeLocally() {
@@ -712,56 +768,6 @@ public abstract class IFrame implements IEntity, IValue {
 
 	}
 
-	private boolean equalsFrame(IFrame other) {
-
-		if (other == this) {
-
-			return true;
-		}
-
-		if (other.getCategory().atomic()) {
-
-			return equalsAtomicFrame((IAtomicFrame)other);
-		}
-
-		if (other.getCategory().disjunction()) {
-
-			return equalsDisjunctionFrame((IDisjunction)other);
-		}
-
-		if (other.getCategory().reference()) {
-
-			return equalsReferenceFrame((IReference)other);
-		}
-
-		throw new Error("Unrecognised frame category: " + other.getCategory());
-	}
-
-	private boolean subsumesFrame(IFrame other) {
-
-		if (other == this) {
-
-			return true;
-		}
-
-		if (other.getCategory().atomic()) {
-
-			return subsumesAtomicFrame((IAtomicFrame)other);
-		}
-
-		if (other.getCategory().disjunction()) {
-
-			return subsumesDisjunctionFrame((IDisjunction)other);
-		}
-
-		if (other.getCategory().reference()) {
-
-			return subsumesReferenceFrame((IReference)other);
-		}
-
-		throw new Error("Unrecognised frame category: " + other.getCategory());
-	}
-
 	private boolean equalsFrameStructure(IFrame other) {
 
 		return new IStructureEqualityTester().match(this, other);
@@ -770,6 +776,36 @@ public abstract class IFrame implements IEntity, IValue {
 	private boolean subsumesFrameStructure(IFrame other) {
 
 		return new IStructureSubsumptionTester().match(this, other);
+	}
+
+	private boolean equalsType(IFrame other) {
+
+		return type.equals(other.type);
+	}
+
+	private boolean subsumesType(IFrame other) {
+
+		return type.subsumes(other.type);
+	}
+
+	private boolean referenceTestApplicable(IFrame other) {
+
+		return getCategory().reference() || other.getCategory().reference();
+	}
+
+	private boolean equalsReference(IFrame other) {
+
+		if (getCategory().reference() && other.getCategory().reference()) {
+
+			return getReferenceId().equals(other.getReferenceId());
+		}
+
+		return false;
+	}
+
+	private boolean noSlots() {
+
+		return getSlots().isEmpty();
 	}
 
 	private void validateAsReferencedFrame(IFrame referencer) {
