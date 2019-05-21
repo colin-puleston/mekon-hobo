@@ -96,7 +96,7 @@ class QueryRenderer extends Renderer {
 
 				String path = addDeclaration();
 
-				addTypesStatement(path, feature);
+				addTypesStatement(path, feature.getTypeDisjuncts());
 
 				for (V value : feature.getValues()) {
 
@@ -172,7 +172,7 @@ class QueryRenderer extends Renderer {
 
 			String path = addDeclarationStatement(parentPath, NODE_ID);
 
-			addTypesStatement(path, node);
+			addTypesStatement(path, getEffectiveTypeDisjuncts(node));
 
 			new LinkStatementsAdder(path).addForAll(node.getLinks());
 			new NumberStatementsAdder(path).addForAll(node.getNumbers());
@@ -187,9 +187,9 @@ class QueryRenderer extends Renderer {
 			return path;
 		}
 
-		private void addTypesStatement(String path, NEntity entity) {
+		private void addTypesStatement(String path, List<CIdentity> typeDisjuncts) {
 
-			addWhereComponent(renderTypes(path, entity.getTypeDisjuncts()));
+			addWhereComponent(renderTypes(path, typeDisjuncts));
 		}
 
 		private void addNumberValueComponents(String path, INumber value) {
@@ -246,6 +246,16 @@ class QueryRenderer extends Renderer {
 			}
 
 			whereStatement.append(renderWhereComponent(condition, first));
+		}
+
+		private List<CIdentity> getEffectiveTypeDisjuncts(NNode node) {
+
+			if (node.instanceReference()) {
+
+				return Collections.singletonList(node.getInstanceRef());
+			}
+
+			return node.getTypeDisjuncts();
 		}
 
 		private String createNextPathVariable(String tag) {

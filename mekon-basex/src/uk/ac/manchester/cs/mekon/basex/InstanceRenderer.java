@@ -149,6 +149,11 @@ class InstanceRenderer extends Renderer {
 
 		renderType(node.getType(), xNode);
 		renderNodeAncestorTypes(node, xNode);
+
+		if (node.instanceReference()) {
+
+			renderType(node.getInstanceRef(), xNode);
+		}
 	}
 
 	private void renderNodeAncestorTypes(NNode node, XNode xNode) {
