@@ -41,16 +41,29 @@ import uk.ac.manchester.cs.mekon.demomodel.*;
  */
 public abstract class IMatcherTest extends DemoModelBasedTest {
 
-	static private final CIdentity UNDERGRAD_TEACHING_JOB_ID = new CIdentity("UndergradTeaching");
-	static private final CIdentity POSTGRAD_TEACHING_JOB_ID = new CIdentity("PostgradTeaching");
-	static private final CIdentity ACADEMIC_RESEARCHING_JOB_ID = new CIdentity("AcademicResearching");
-	static private final CIdentity DOCTORING_JOB_ID = new CIdentity("Doctoring");
+	static private final String INSTANCE_ID_NAMESPACE = "urn:mekon-test-instance#";
+
+	static private final CIdentity UNDERGRAD_TEACHING_JOB_ID = createInstanceId("UndergradTeaching");
+	static private final CIdentity POSTGRAD_TEACHING_JOB_ID = createInstanceId("PostgradTeaching");
+	static private final CIdentity ACADEMIC_RESEARCHING_JOB_ID = createInstanceId("AcademicResearching");
+	static private final CIdentity DOCTORING_JOB_ID = createInstanceId("Doctoring");
+
+	static private final CIdentity UNDERGRAD_TEACHER_ID = createInstanceId("UndergradTeacher");
+	static private final CIdentity POSTGRAD_TEACHER_ID = createInstanceId("PostgradTeacher");
+	static private final CIdentity ACADEMIC_RESEARCHER_ID = createInstanceId("AcademicResearcher");
+	static private final CIdentity DOCTOR_ID = createInstanceId("Doctor");
 
 	static private final int MIN_PAY_RATE = 10;
+	static private final int MAX_PAY_RATE = 20;
+
 	static private final int LOW_PAY_RATE = 14;
 	static private final int MID_PAY_RATE = 15;
 	static private final int HIGH_PAY_RATE = 16;
-	static private final int MAX_PAY_RATE = 20;
+
+	static private CIdentity createInstanceId(String fragment) {
+
+		return new CIdentity(INSTANCE_ID_NAMESPACE + fragment, fragment);
+	}
 
 	private IMatcher matcher;
 
@@ -60,6 +73,11 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	private IFrame postgradTeachingJob;
 	private IFrame academicResearchJob;
 	private IFrame doctoringJob;
+
+	private IFrame undergradTeacher;
+	private IFrame postgradTeacher;
+	private IFrame academicResearcher;
+	private IFrame doctor;
 
 	@Before
 	public void setUp() {
@@ -72,6 +90,11 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		postgradTeachingJob = addPostgradTeachingJob();
 		academicResearchJob = addAcademicResearchJob();
 		doctoringJob = addDoctoringJob();
+
+		undergradTeacher = addUndergradTeacher();
+		postgradTeacher = addPostgradTeacher();
+		academicResearcher = addAcademicResearcher();
+		doctor = addDoctor();
 	}
 
 	@After
@@ -89,6 +112,13 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			POSTGRAD_TEACHING_JOB_ID,
 			ACADEMIC_RESEARCHING_JOB_ID,
 			DOCTORING_JOB_ID);
+
+		testMatching(
+			createCitizenQuery(),
+			UNDERGRAD_TEACHER_ID,
+			POSTGRAD_TEACHER_ID,
+			ACADEMIC_RESEARCHER_ID,
+			DOCTOR_ID);
 	}
 
 	@Test
@@ -96,15 +126,22 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		removeInstance(POSTGRAD_TEACHING_JOB_ID);
 		removeInstance(ACADEMIC_RESEARCHING_JOB_ID);
+		removeInstance(ACADEMIC_RESEARCHER_ID);
 
 		testMatching(
 			createJobQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
 			DOCTORING_JOB_ID);
+
+		testMatching(
+			createCitizenQuery(),
+			UNDERGRAD_TEACHER_ID,
+			POSTGRAD_TEACHER_ID,
+			DOCTOR_ID);
 	}
 
 	@Test
-	public void test_basicConceptBasedQueries() {
+	public void test_conceptPropertyBasedQueries() {
 
 		testMatching(
 			createAcademiaQuery(),
@@ -123,7 +160,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	}
 
 	@Test
-	public void test_conceptAndPropertyBasedQueries() {
+	public void test_conceptHierarchyBasedQueries() {
 
 		testMatching(
 			createUniStudentTeachingQuery(),
@@ -157,6 +194,37 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			createHealthOrPublicSectorAcademicQuery(),
 			UNDERGRAD_TEACHING_JOB_ID,
 			DOCTORING_JOB_ID);
+	}
+
+	@Test
+	public void test_instanceReferenceBasedQueriesWithoutInstanceLinking() {
+
+		if (!handlesInstanceReferenceBasedQueriesWithoutInstanceLinking()) {
+
+			return;
+		}
+
+		testMatching(
+			createCitizenQuery(ACADEMIC_RESEARCHING_JOB_ID),
+			ACADEMIC_RESEARCHER_ID);
+
+		testMatching(
+			createCitizenQuery(DOCTORING_JOB_ID),
+			DOCTOR_ID);
+	}
+
+	@Test
+	public void test_instanceReferenceBasedQueriesWithInstanceLinking() {
+
+		if (!handlesInstanceReferenceBasedQueriesWithInstanceLinking()) {
+
+			return;
+		}
+
+		testMatching(
+			createUniStudentTeacherQuery(),
+			UNDERGRAD_TEACHER_ID,
+			POSTGRAD_TEACHER_ID);
 	}
 
 	@Test
@@ -213,6 +281,16 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return true;
 	}
 
+	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+
+		return true;
+	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+
+		return true;
+	}
+
 	protected IMatcher getMatcher() {
 
 		return matcher;
@@ -252,6 +330,31 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return addInstance(job, DOCTORING_JOB_ID);
 	}
 
+	private IFrame addUndergradTeacher() {
+
+		return addCitizen(UNDERGRAD_TEACHER_ID, UNDERGRAD_TEACHING_JOB_ID);
+	}
+
+	private IFrame addPostgradTeacher() {
+
+		return addCitizen(POSTGRAD_TEACHER_ID, POSTGRAD_TEACHING_JOB_ID);
+	}
+
+	private IFrame addAcademicResearcher() {
+
+		return addCitizen(ACADEMIC_RESEARCHER_ID, ACADEMIC_RESEARCHING_JOB_ID);
+	}
+
+	private IFrame addDoctor() {
+
+		return addCitizen(DOCTOR_ID, DOCTORING_JOB_ID);
+	}
+
+	private IFrame addCitizen(CIdentity citizenId, CIdentity jobId) {
+
+		return addInstance(createCitizen(jobId), citizenId);
+	}
+
 	private IFrame createJob(String industryConcept, String jobTypeConcept) {
 
 		IFrame job = createIFrame(JOB);
@@ -260,6 +363,18 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		addISlotValue(job, JOB_TYPE_PROPERTY, createIFrame(jobTypeConcept));
 
 		return job;
+	}
+
+	private IFrame createCitizen(CIdentity jobId) {
+
+		IFrame citizen = createIFrame(CITIZEN);
+		IFrame employment = createIFrame(EMPLOYMENT);
+		IFrame jobRef = createRefIFrame(JOB, jobId);
+
+		addISlotValue(citizen, EMPLOYMENT_PROPERTY, employment);
+		addISlotValue(employment, JOBS_PROPERTY, jobRef);
+
+		return citizen;
 	}
 
 	private void setIndustrySector(IFrame job, String sectorConcept) {
@@ -358,6 +473,32 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return createQueryIFrame(JOB);
 	}
 
+	private IFrame createUniStudentTeacherQuery() {
+
+		return createCitizenQuery(createUniStudentTeachingQuery());
+	}
+
+	private IFrame createCitizenQuery(CIdentity jobId) {
+
+		return createCitizenQuery(createRefQueryIFrame(JOB, jobId));
+	}
+
+	private IFrame createCitizenQuery(IFrame job) {
+
+		IFrame citizen = createCitizenQuery();
+		IFrame employment = createQueryIFrame(EMPLOYMENT);
+
+		addISlotValue(citizen, EMPLOYMENT_PROPERTY, employment);
+		addISlotValue(employment, JOBS_PROPERTY, job);
+
+		return citizen;
+	}
+
+	private IFrame createCitizenQuery() {
+
+		return createQueryIFrame(CITIZEN);
+	}
+
 	private CFrame createPostOrUndergradDisjunction() {
 
 		CFrame postgrad = getCFrame(POSTGRAD);
@@ -392,7 +533,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private void updateInstance(IFrame instance) {
 
-		CIdentity id = getInstanceId(instance);
+		CIdentity id = createInstanceId(instance);
 
 		removeInstance(id);
 		addInstance(instance, id);
@@ -413,7 +554,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		}
 	}
 
-	private CIdentity getInstanceId(IFrame instance) {
+	private CIdentity createInstanceId(IFrame instance) {
 
 		for (CIdentity id : storedInstancesById.keySet()) {
 

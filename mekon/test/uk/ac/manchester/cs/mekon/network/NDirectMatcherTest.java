@@ -35,5 +35,10 @@ public class NDirectMatcherTest extends IMatcherTest {
 
 		return new NDirectMatcher();
 	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+
+		return false;
+	}
 }
 

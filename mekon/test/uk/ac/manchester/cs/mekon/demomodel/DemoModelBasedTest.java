@@ -99,6 +99,16 @@ public abstract class DemoModelBasedTest implements DemoModelEntities {
 		return instantiate(name, IFrameFunction.QUERY);
 	}
 
+	public IFrame createRefIFrame(String name, CIdentity refId) {
+
+		return instantiateRef(name, refId, IFrameFunction.ASSERTION);
+	}
+
+	public IFrame createRefQueryIFrame(String name, CIdentity refId) {
+
+		return instantiateRef(name, refId, IFrameFunction.QUERY);
+	}
+
 	public ISlot getISlot(IFrame container, String name) {
 
 		return container.getSlots().get(nameToIdentity(name));
@@ -109,9 +119,14 @@ public abstract class DemoModelBasedTest implements DemoModelEntities {
 		getISlot(container, slotName).getValuesEditor().add(value);
 	}
 
-	public IFrame instantiate(String name, IFrameFunction function) {
+	private IFrame instantiate(String name, IFrameFunction function) {
 
 		return getFrame(name).instantiate(function);
+	}
+
+	private IFrame instantiateRef(String name, CIdentity refId, IFrameFunction function) {
+
+		return getFrame(name).instantiate(refId, function);
 	}
 
 	private CFrame getFrame(String name) {
