@@ -91,6 +91,16 @@ public abstract class ORMatcherTest extends IMatcherTest {
 		return createMatcher(oModel);
 	}
 
+	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+
+		return false;
+	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+
+		return false;
+	}
+
 	protected abstract ORMatcher createMatcher(OModel oModel);
 
 	private void testHandlesType(String typeId, boolean shouldHandle) {
