@@ -355,7 +355,7 @@ public abstract class IFrame implements IEntity, IValue {
 			return getReferenceId().hashCode();
 		}
 
-		return slots.isEmpty() ? type.hashCode() : super.hashCode();
+		return getSlots().isEmpty() ? type.hashCode() : super.hashCode();
 	}
 
 	/**
