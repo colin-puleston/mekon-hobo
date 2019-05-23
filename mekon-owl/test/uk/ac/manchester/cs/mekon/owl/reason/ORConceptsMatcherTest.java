@@ -35,4 +35,14 @@ public class ORConceptsMatcherTest extends ORMatcherTest {
 
 		return new ORConceptsMatcher(oModel);
 	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+
+		return true;
+	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+
+		return false;
+	}
 }

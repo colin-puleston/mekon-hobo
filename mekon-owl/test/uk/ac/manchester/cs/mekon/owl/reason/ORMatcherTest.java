@@ -60,6 +60,7 @@ public abstract class ORMatcherTest extends IMatcherTest {
 		public void build(CBuilder builder) {
 
 			super.build(builder);
+
 			new ModelEnhancer(builder);
 		}
 
@@ -89,16 +90,6 @@ public abstract class ORMatcherTest extends IMatcherTest {
 	protected IMatcher createMatcher() {
 
 		return createMatcher(oModel);
-	}
-
-	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
-
-		return false;
-	}
-
-	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
-
-		return false;
 	}
 
 	protected abstract ORMatcher createMatcher(OModel oModel);

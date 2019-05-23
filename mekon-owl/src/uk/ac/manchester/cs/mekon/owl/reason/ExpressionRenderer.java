@@ -38,24 +38,33 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
+	private OModel model;
 	private OWLDataFactory dataFactory;
 
 	private ArrayDeque<NNode> nodeStack = new ArrayDeque<NNode>();
 
 	private class NodeToExpressionRenderer extends NodeRenderer {
 
-		private Set<OWLClassExpression> conjuncts
-					= new HashSet<OWLClassExpression>();
+		private NNode node;
+		private Set<OWLClassExpression> conjuncts = new HashSet<OWLClassExpression>();
 
 		NodeToExpressionRenderer(NNode node) {
 
 			super(node);
 
-			startRecurse(node);
+			this.node = node;
 		}
 
 		OWLClassExpression render(OWLClassExpression type) {
 
+			IRI refIRI = IndividualIRIs.getInstanceRefIRIOrNull(node);
+
+			if (refIRI != null) {
+
+				return renderInstanceRef(refIRI);
+			}
+
+			startRecurse(node);
 			renderFeatures();
 			endRecurse();
 
@@ -91,11 +100,32 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 			conjuncts.add(construct);
 		}
+
+		private OWLClassExpression renderInstanceRef(IRI iri) {
+
+			OWLNamedIndividual ind = createIndividual(iri);
+
+			addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
+
+			return dataFactory.getOWLObjectOneOf(ind);
+		}
+
+		private OWLNamedIndividual createIndividual(IRI iri) {
+
+			return dataFactory.getOWLNamedIndividual(iri);
+		}
+
+		private void addAxiom(OWLAxiom axiom) {
+
+			model.addInstanceAxiom(axiom);
+		}
 	}
 
 	ExpressionRenderer(OModel model, ORSemantics semantics) {
 
 		super(model, semantics);
+
+		this.model = model;
 
 		dataFactory = model.getDataFactory();
 	}

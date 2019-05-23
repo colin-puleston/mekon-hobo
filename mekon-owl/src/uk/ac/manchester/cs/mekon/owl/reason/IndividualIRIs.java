@@ -26,19 +26,28 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 
 import org.semanticweb.owlapi.model.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
  */
 class IndividualIRIs {
 
-	static private final String REF_SECTION_PREFIX = "-REF-";
+	static private final String GENERATED_FRAGMENT_CONNECTOR = "-GEN-";
+
+	static IRI getInstanceRefIRIOrNull(NNode node) {
+
+		CIdentity refId = node.getInstanceRef();
+
+		return refId != null ? O_IRIExtractor.extractIRI(refId) : null;
+	}
 
 	private NNode rootNode;
 	private IRI rootIRI;
 
-	private int refCount = 0;
+	private int generatedCount = 0;
 
 	IndividualIRIs(NNode rootNode, IRI rootIRI) {
 
@@ -48,16 +57,23 @@ class IndividualIRIs {
 
 	IRI getFor(NNode node) {
 
-		if (node == rootNode) {
+		IRI refIRI = getInstanceRefIRIOrNull(node);
 
-			return rootIRI;
+		if (refIRI != null) {
+
+			return refIRI;
 		}
 
-		return IRI.create(rootIRI.toString() + getNextRefFragmentSection());
+		return node == rootNode ? rootIRI : generateNonRootIRI();
 	}
 
-	private String getNextRefFragmentSection() {
+	private IRI generateNonRootIRI() {
 
-		return REF_SECTION_PREFIX + refCount++;
+		return IRI.create(rootIRI.toString() + generateFragmentSuffix());
+	}
+
+	private String generateFragmentSuffix() {
+
+		return GENERATED_FRAGMENT_CONNECTOR + generatedCount++;
 	}
 }

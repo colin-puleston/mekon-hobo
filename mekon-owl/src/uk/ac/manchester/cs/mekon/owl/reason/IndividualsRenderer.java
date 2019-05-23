@@ -241,6 +241,11 @@ class IndividualsRenderer {
 		return new GroupRenderer(node, rootIRI).render();
 	}
 
+	boolean groupExists(IRI rootIRI) {
+
+		return rootIndividualsByIRI.containsKey(rootIRI);
+	}
+
 	void removeGroup(IRI rootIRI) {
 
 		OWLNamedIndividual rootIndividual = rootIndividualsByIRI.remove(rootIRI);

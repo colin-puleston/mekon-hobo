@@ -114,7 +114,17 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	List<IRI> matchInOWLStore(ConceptExpression queryExpr) {
 
-		return queryExpr.getMatchingIndividuals();
+		List<IRI> matches = new ArrayList<IRI>();
+
+		for (IRI match : queryExpr.getMatchingIndividuals()) {
+
+			if (storeRenderer.groupExists(match)) {
+
+				matches.add(match);
+			}
+		}
+
+		return matches;
 	}
 
 	boolean matchesInOWL(ConceptExpression queryExpr, NNode instance) {
