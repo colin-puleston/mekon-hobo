@@ -40,19 +40,6 @@ abstract class IStructureTester {
 		return checkVisitedPair(frame1, frame2) || framesMatch(frame1, frame2);
 	}
 
-	boolean slotValuesMatch(ISlot slot1, ISlot slot2) {
-
-		ISlotValues values1 = slot1.getValues();
-		ISlotValues values2 = slot2.getValues();
-
-		if (!listSizesMatch(values1, values2)) {
-
-			return false;
-		}
-
-		return valuesMatch(values1.asList(), values2.asList());
-	}
-
 	boolean valuesMatch(IValue value1, IValue value2) {
 
 		if (value1 instanceof IFrame) {
@@ -67,9 +54,7 @@ abstract class IStructureTester {
 
 	abstract boolean typesMatch(CValue<?> type1, CValue<?> type2);
 
-	abstract boolean listSizesMatch(KList<?> list1, KList<?> list2);
-
-	abstract boolean slotsMatch(ISlots slots1, ISlots slots2);
+	abstract boolean valueSlotsSizeMatch(List<ISlot> slots1, List<ISlot> slots2);
 
 	abstract boolean valuesMatch(List<IValue> values1, List<IValue> values2);
 
@@ -80,14 +65,53 @@ abstract class IStructureTester {
 
 	private boolean framesMatch(IFrame frame1, IFrame frame2) {
 
-		return localMatch(frame1, frame2) && frameSlotsMatch(frame1, frame2);
+		return localMatch(frame1, frame2) && slotsMatch(frame1, frame2);
 	}
 
-	private boolean frameSlotsMatch(IFrame frame1, IFrame frame2) {
+	private boolean slotsMatch(IFrame frame1, IFrame frame2) {
 
 		ISlots slots1 = frame1.getSlots();
 		ISlots slots2 = frame2.getSlots();
 
-		return listSizesMatch(slots1, slots2) && slotsMatch(slots1, slots2);
+		List<ISlot> valueSlots1 = getValueSlots(slots1);
+		List<ISlot> valueSlots2 = getValueSlots(slots2);
+
+		if (!valueSlotsSizeMatch(valueSlots1, valueSlots2)) {
+
+			return false;
+		}
+
+		for (ISlot slot1 : valueSlots1) {
+
+			CIdentity slot1Id = slot1.getType().getIdentity();
+			ISlot slot2 = slots2.getOrNull(slot1Id);
+
+			if (slot2 == null || !slotValuesMatch(slot1, slot2)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	boolean slotValuesMatch(ISlot slot1, ISlot slot2) {
+
+		return valuesMatch(slot1.getValues().asList(), slot2.getValues().asList());
+	}
+
+	private List<ISlot> getValueSlots(ISlots slots) {
+
+		List<ISlot> slotsWithValues = new ArrayList<ISlot>();
+
+		for (ISlot slot : slots.asList()) {
+
+			if (!slot.getValues().isEmpty()) {
+
+				slotsWithValues.add(slot);
+			}
+		}
+
+		return slotsWithValues;
 	}
 }

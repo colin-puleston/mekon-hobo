@@ -43,27 +43,17 @@ class IStructureEqualityTester extends IStructureTester {
 		return type1.equals(type2);
 	}
 
-	boolean listSizesMatch(KList<?> list1, KList<?> list2) {
+	boolean valueSlotsSizeMatch(List<ISlot> slots1, List<ISlot> slots2) {
 
-		return list1.size() == list2.size();
-	}
-
-	boolean slotsMatch(ISlots slots1, ISlots slots2) {
-
-		Iterator<ISlot> s2 = slots2.asList().iterator();
-
-		for (ISlot slot1 : slots1.asList()) {
-
-			if (!slotValuesMatch(slot1, s2.next())) {
-
-				return false;
-			}
-		}
-
-		return true;
+		return slots1.size() == slots2.size();
 	}
 
 	boolean valuesMatch(List<IValue> values1, List<IValue> values2) {
+
+		if (values1.size() != values2.size()) {
+
+			return false;
+		}
 
 		Iterator<IValue> v2 = values2.iterator();
 

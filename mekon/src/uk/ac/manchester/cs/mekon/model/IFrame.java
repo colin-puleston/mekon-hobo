@@ -140,73 +140,6 @@ public abstract class IFrame implements IEntity, IValue {
 	private Object mappedObject = null;
 	private List<IFrameListener> listeners = new ArrayList<IFrameListener>();
 
-	private abstract class MatchTester {
-
-		boolean match(Object other) {
-
-			if (other == IFrame.this) {
-
-				return true;
-			}
-
-			return other instanceof IFrame && match((IFrame)other);
-		}
-
-		private boolean match(IFrame other) {
-
-			for (IFrame disjunct : other.asDisjuncts()) {
-
-				if (!matchNonDisjunction(disjunct)) {
-
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		private boolean matchNonDisjunction(IFrame other) {
-
-			for (IFrame disjunct : asDisjuncts()) {
-
-				if (matchNoDisjunctions(disjunct, other)) {
-
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private boolean matchNoDisjunctions(IFrame first, IFrame second) {
-
-			if (first.referenceTestApplicable(second)) {
-
-				return first.equalsReference(second);
-			}
-
-			return first.noSlots() && second.noSlots() && typeMatch(first, second);
-		}
-
-		abstract boolean typeMatch(IFrame first, IFrame second);
-	}
-
-	private class EqualityTester extends MatchTester {
-
-		boolean typeMatch(IFrame first, IFrame second) {
-
-			return first.equalsType(second);
-		}
-	}
-
-	private class SubsumptionTester extends MatchTester {
-
-		boolean typeMatch(IFrame first, IFrame second) {
-
-			return first.subsumesType(second);
-		}
-	}
-
 	/**
 	 * Adds a frame-listener.
 	 *
@@ -338,7 +271,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean equals(Object other) {
 
-		return new EqualityTester().match(other);
+		return other instanceof IFrame && subsumes((IFrame)other, true);
 	}
 
 	/**
@@ -350,12 +283,12 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public int hashCode() {
 
-		if (getCategory().reference()) {
+		if (reference()) {
 
 			return getReferenceId().hashCode();
 		}
 
-		return getSlots().isEmpty() ? type.hashCode() : super.hashCode();
+		return noSlots() ? type.hashCode() : super.hashCode();
 	}
 
 	/**
@@ -405,7 +338,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumes(IValue other) {
 
-		return new SubsumptionTester().match(other);
+		return other instanceof IFrame && subsumes((IFrame)other, false);
 	}
 
 	/**
@@ -681,22 +614,17 @@ public abstract class IFrame implements IEntity, IValue {
 
 	boolean equalsLocalStructure(IFrame other) {
 
-		return referenceTestApplicable(other) ? equalsReference(other) : equalsType(other);
+		return subsumesLocalStructure(other, true);
 	}
 
 	boolean subsumesLocalStructure(IFrame other) {
 
-		return referenceTestApplicable(other) ? equalsReference(other) : subsumesType(other);
-	}
-
-	private Set<IFrame> asDisjunctSet() {
-
-		return new HashSet<IFrame>(asDisjuncts());
+		return subsumesLocalStructure(other, false);
 	}
 
 	int localHashCode() {
 
-		return getCategory().reference() ? getReferenceId().hashCode() : type.hashCode();
+		return reference() ? getReferenceId().hashCode() : type.hashCode();
 	}
 
 	String describeLocally() {
@@ -778,29 +706,70 @@ public abstract class IFrame implements IEntity, IValue {
 		return new IStructureSubsumptionTester().match(this, other);
 	}
 
-	private boolean equalsType(IFrame other) {
+	private boolean subsumes(IFrame other, boolean equalityOnly) {
 
-		return type.equals(other.type);
+		if (other == this) {
+
+			return true;
+		}
+
+		for (IFrame disjunct : other.asDisjuncts()) {
+
+			if (!subsumesNonDisjunction(disjunct, equalityOnly)) {
+
+				return false;
+			}
+		}
+
+		return true;
 	}
 
-	private boolean subsumesType(IFrame other) {
+	private boolean subsumesNonDisjunction(IFrame other, boolean equalityOnly) {
+
+		if (other == this) {
+
+			return true;
+		}
+
+		for (IFrame disjunct : asDisjuncts()) {
+
+			if (disjunct.subsumesNoDisjunctions(other, equalityOnly)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean subsumesNoDisjunctions(IFrame other, boolean equalityOnly) {
+
+		if (other == this) {
+
+			return true;
+		}
+
+		return noSlots() && other.noSlots() && subsumesLocalStructure(other, equalityOnly);
+	}
+
+	private boolean subsumesLocalStructure(IFrame other, boolean equalityOnly) {
+
+		if (reference()) {
+
+			return other.reference() && getReferenceId().equals(other.getReferenceId());
+		}
+
+		if (equalityOnly) {
+
+			return !other.reference() && type.equals(other.type);
+		}
 
 		return type.subsumes(other.type);
 	}
 
-	private boolean referenceTestApplicable(IFrame other) {
+	private boolean reference() {
 
-		return getCategory().reference() || other.getCategory().reference();
-	}
-
-	private boolean equalsReference(IFrame other) {
-
-		if (getCategory().reference() && other.getCategory().reference()) {
-
-			return getReferenceId().equals(other.getReferenceId());
-		}
-
-		return false;
+		return getCategory().reference();
 	}
 
 	private boolean noSlots() {

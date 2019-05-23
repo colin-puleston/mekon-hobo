@@ -309,7 +309,7 @@ public class ISlotValues extends KList<IValue> {
 			return false;
 		}
 
-		return singleValued() || subsumesFixed(asserted);
+		return singleValued() || subsumesAny(asserted, fixedValues);
 	}
 
 	private void updateSlotValues() {
@@ -318,7 +318,7 @@ public class ISlotValues extends KList<IValue> {
 
 		for (IValue fixed : fixedValues) {
 
-			if (!subsumesAsserted(fixed)) {
+			if (!subsumesAny(fixed, assertedValues)) {
 
 				values.add(fixed);
 			}
@@ -327,24 +327,11 @@ public class ISlotValues extends KList<IValue> {
 		updateValues(values);
 	}
 
-	private boolean subsumesFixed(IValue asserted) {
+	private boolean subsumesAny(IValue subsumer, List<IValue> subsumeds) {
 
-		for (IValue fixed : fixedValues) {
+		for (IValue subsumed : subsumeds) {
 
-			if (asserted.subsumes(fixed)) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private boolean subsumesAsserted(IValue fixed) {
-
-		for (IValue asserted : assertedValues) {
-
-			if (fixed.subsumes(asserted)) {
+			if (subsumer.subsumes(subsumed)) {
 
 				return true;
 			}

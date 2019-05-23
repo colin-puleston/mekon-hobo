@@ -311,11 +311,18 @@ public class NNode extends NEntity {
 
 	void renderAttributes(NEntityRenderer renderer) {
 
-		for (NFeature<?> feature : features) {
+		if (instanceReference()) {
 
-			if (feature.hasValues()) {
+			renderer.addLine("INSTANCE:" + getInstanceRef());
+		}
+		else {
 
-				feature.render(renderer);
+			for (NFeature<?> feature : features) {
+
+				if (feature.hasValues()) {
+
+					feature.render(renderer);
+				}
 			}
 		}
 	}

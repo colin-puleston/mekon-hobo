@@ -44,9 +44,9 @@ class SubsumptionTester {
 
 		boolean subsumptions(NNode node1, NNode node2) {
 
-			List<F> features2 = getFeatures(node2);
+			List<F> features2 = getValueFeatures(node2);
 
-			for (F feature1 : getFeatures(node1)) {
+			for (F feature1 : getValueFeatures(node1)) {
 
 				if (!anySubsumptions(feature1, features2)) {
 
@@ -90,6 +90,21 @@ class SubsumptionTester {
 		abstract List<F> getFeatures(NNode node);
 
 		abstract boolean valueSubsumption(V value1, V value2);
+
+		private List<F> getValueFeatures(NNode node) {
+
+			List<F> valueFeatures = new ArrayList<F>();
+
+			for (F feature : getFeatures(node)) {
+
+				if (feature.hasValues()) {
+
+					valueFeatures.add(feature);
+				}
+			}
+
+			return valueFeatures;
+		}
 
 		private boolean anySubsumptions(F feature1, List<F> features2) {
 
