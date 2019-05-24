@@ -97,4 +97,16 @@ class IDisjunction extends IFrame {
 
 		autoUpdateReferencingFrames(visited);
 	}
+
+	String describeLocally() {
+
+		return FEntityDescriber.entityToString(this, getRelabelledId());
+	}
+
+	private CIdentity getRelabelledId() {
+
+		CIdentity id = getType().getIdentity();
+
+		return new CIdentity(id.getIdentifier(), id.getLabel() + ":" + LABEL);
+	}
 }

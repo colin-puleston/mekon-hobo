@@ -271,7 +271,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean equals(Object other) {
 
-		return other instanceof IFrame && subsumes((IFrame)other, true);
+		return other.getClass() == getClass() && subsumes((IFrame)other, true);
 	}
 
 	/**
@@ -338,7 +338,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumes(IValue other) {
 
-		return other instanceof IFrame && subsumes((IFrame)other, false);
+		return other instanceof IFrame && disjunctsSubsumeDisjuncts((IFrame)other);
 	}
 
 	/**
@@ -358,7 +358,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean equalsStructure(IValue other) {
 
-		return other instanceof IFrame && equalsFrameStructure((IFrame)other);
+		return other instanceof IFrame && equalsStructure((IFrame)other);
 	}
 
 	/**
@@ -378,7 +378,7 @@ public abstract class IFrame implements IEntity, IValue {
 	 */
 	public boolean subsumesStructure(IValue other) {
 
-		return other instanceof IFrame && subsumesFrameStructure((IFrame)other);
+		return other instanceof IFrame && subsumesStructure((IFrame)other);
 	}
 
 	/**
@@ -627,10 +627,7 @@ public abstract class IFrame implements IEntity, IValue {
 		return reference() ? getReferenceId().hashCode() : type.hashCode();
 	}
 
-	String describeLocally() {
-
-		return FEntityDescriber.entityToString(this, type);
-	}
+	abstract String describeLocally();
 
 	List<IFrameListener> copyListeners() {
 
@@ -696,17 +693,7 @@ public abstract class IFrame implements IEntity, IValue {
 
 	}
 
-	private boolean equalsFrameStructure(IFrame other) {
-
-		return new IStructureEqualityTester().match(this, other);
-	}
-
-	private boolean subsumesFrameStructure(IFrame other) {
-
-		return new IStructureSubsumptionTester().match(this, other);
-	}
-
-	private boolean subsumes(IFrame other, boolean equalityOnly) {
+	private boolean disjunctsSubsumeDisjuncts(IFrame other) {
 
 		if (other == this) {
 
@@ -715,7 +702,7 @@ public abstract class IFrame implements IEntity, IValue {
 
 		for (IFrame disjunct : other.asDisjuncts()) {
 
-			if (!subsumesNonDisjunction(disjunct, equalityOnly)) {
+			if (!anyDisjunctSubsumesDisjunct(disjunct)) {
 
 				return false;
 			}
@@ -724,16 +711,16 @@ public abstract class IFrame implements IEntity, IValue {
 		return true;
 	}
 
-	private boolean subsumesNonDisjunction(IFrame other, boolean equalityOnly) {
+	private boolean anyDisjunctSubsumesDisjunct(IFrame otherDisjunct) {
 
-		if (other == this) {
+		if (otherDisjunct == this) {
 
 			return true;
 		}
 
 		for (IFrame disjunct : asDisjuncts()) {
 
-			if (disjunct.subsumesNoDisjunctions(other, equalityOnly)) {
+			if (disjunct.subsumes(otherDisjunct, false)) {
 
 				return true;
 			}
@@ -742,7 +729,7 @@ public abstract class IFrame implements IEntity, IValue {
 		return false;
 	}
 
-	private boolean subsumesNoDisjunctions(IFrame other, boolean equalityOnly) {
+	private boolean subsumes(IFrame other, boolean equalityOnly) {
 
 		if (other == this) {
 
@@ -765,6 +752,16 @@ public abstract class IFrame implements IEntity, IValue {
 		}
 
 		return type.subsumes(other.type);
+	}
+
+	private boolean equalsStructure(IFrame other) {
+
+		return new IStructureEqualityTester().match(this, other);
+	}
+
+	private boolean subsumesStructure(IFrame other) {
+
+		return new IStructureSubsumptionTester().match(this, other);
 	}
 
 	private boolean reference() {

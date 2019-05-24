@@ -307,6 +307,11 @@ class IAtomicFrame extends IFrame {
 		return slot;
 	}
 
+	String describeLocally() {
+
+		return FEntityDescriber.entityToString(this, getType());
+	}
+
 	private void autoUpdateThis() {
 
 		IUpdating updating = getIUpdating();
