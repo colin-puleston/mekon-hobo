@@ -579,7 +579,7 @@ class HelpPanel extends JTabbedPane {
 
 		TreeInstantiationsPanel() {
 
-			super("Instantiations (Tree)");
+			super("Instantiations: Tree");
 
 			new TreeSemanticsPanel();
 			new NodeShapeModifiersPanel();
@@ -627,7 +627,7 @@ class HelpPanel extends JTabbedPane {
 
 			ActionsPanel() {
 
-				super("Cross-Link Actions");
+				super("Actions");
 
 				addColumns(
 					"Current Edit Mode",
@@ -689,7 +689,7 @@ class HelpPanel extends JTabbedPane {
 
 			LabelColoursPanel() {
 
-				super("Cross-Link Label Colours");
+				super("Label Colours");
 
 				addColumns(
 					"Current Edit Mode",
@@ -712,7 +712,7 @@ class HelpPanel extends JTabbedPane {
 
 		GraphLinkInstantiationsPanel() {
 
-			super("Instantiations (Cross-Link)");
+			super("Instantiations: Cross-Links");
 
 			new EditModesPanel();
 			new ActionsPanel();
