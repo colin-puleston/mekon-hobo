@@ -211,6 +211,25 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		testMatching(
 			createCitizenQuery(DOCTORING_JOB_ID),
 			DOCTOR_ID);
+
+		testMatching(
+			createCitizenWithJobQuery(),
+			UNDERGRAD_TEACHER_ID,
+			POSTGRAD_TEACHER_ID,
+			ACADEMIC_RESEARCHER_ID,
+			DOCTOR_ID);
+
+		removeInstance(UNDERGRAD_TEACHING_JOB_ID);
+		removeInstance(POSTGRAD_TEACHING_JOB_ID);
+		removeInstance(ACADEMIC_RESEARCHING_JOB_ID);
+		removeInstance(DOCTORING_JOB_ID);
+
+		testMatching(
+			createCitizenWithJobQuery(),
+			UNDERGRAD_TEACHER_ID,
+			POSTGRAD_TEACHER_ID,
+			ACADEMIC_RESEARCHER_ID,
+			DOCTOR_ID);
 	}
 
 	@Test
@@ -471,6 +490,11 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	private IFrame createJobQuery() {
 
 		return createQueryIFrame(JOB);
+	}
+
+	private IFrame createCitizenWithJobQuery() {
+
+		return createCitizenQuery(createJobQuery());
 	}
 
 	private IFrame createUniStudentTeacherQuery() {
