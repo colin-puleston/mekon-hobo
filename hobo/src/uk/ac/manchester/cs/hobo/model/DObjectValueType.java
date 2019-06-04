@@ -48,6 +48,6 @@ class DObjectValueType<V extends DObject> extends DObjectBasedValueType<V, V> {
 
 	boolean convertibleToFieldValue(IFrame value) {
 
-		return value.getCategory().atomic();
+		return !value.getCategory().disjunction();
 	}
 }
