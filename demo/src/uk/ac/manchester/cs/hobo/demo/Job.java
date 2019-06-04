@@ -73,11 +73,9 @@ public class Job extends CitizenshipObject {
 
 	private class WeeklyPayValueTypeRestorer implements ISlotListener {
 
-		private CNumber defaultPayRange = getDynamicWeeklyPayRange();
-
 		public void onUpdatedValueType(CValue<?> valueType) {
 
-			CNumber reqValueType = getRequiredValueType();
+			CNumber reqValueType = getDynamicWeeklyPayRange();
 
 			if (!valueType.equals(reqValueType)) {
 
@@ -97,11 +95,6 @@ public class Job extends CitizenshipObject {
 		WeeklyPayValueTypeRestorer() {
 
 			weeklyPay.getSlot().addListener(this);
-		}
-
-		private CNumber getRequiredValueType() {
-
-			return assertionFrame() ? defaultPayRange : getDynamicWeeklyPayRange();
 		}
 	}
 
@@ -173,7 +166,7 @@ public class Job extends CitizenshipObject {
 		ISlot slot = cell.getSlot();
 		ISlotValues values = slot.getValues();
 
-		if (values.isEmpty()) {
+		if (assertionFrame() || values.isEmpty()) {
 
 			return (CNumber)slot.getValueType();
 		}
