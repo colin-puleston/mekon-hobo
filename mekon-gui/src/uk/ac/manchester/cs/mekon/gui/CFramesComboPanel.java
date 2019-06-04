@@ -40,86 +40,16 @@ class CFramesComboPanel extends JTabbedPane {
 
 	static private final String TREE_TITLE = "Tree";
 	static private final String LIST_TITLE = "List/Search";
-	static private final String SUB_TREE_LIST_TITLE = "Sub-Tree List/Search";
 
-	static private final int SUB_TREE_LIST_TAB_INDEX = 2;
-
+	private CFrame rootFrame;
 	private CVisibility visibility;
+	private boolean showRoot;
+
 	private CFramesTree tree;
-
-	private class SubTreeListManager {
-
-		private SubTreeListListener subTreeListListener = new SubTreeListListener();
-
-		private class TreeListener extends CFrameSelectionListener {
-
-			protected void onSelected(CFrame frame) {
-
-				select(frame);
-			}
-		}
-
-		private class SubTreeListListener extends CFrameSelectionListener {
-
-			protected void onSelected(CFrame frame) {
-
-				tree.select(frame);
-			}
-		}
-
-		SubTreeListManager() {
-
-			tree.addSelectionListener(new TreeListener());
-		}
-
-		private void select(CFrame frame) {
-
-			int index = getSelectedIndex();
-
-			checkRemoveOldSubTreeList();
-			checkAddNewSubTreeList(frame);
-
-			if (getTabCount() > index) {
-
-				setSelectedIndex(index);
-			}
-		}
-
-		private void checkRemoveOldSubTreeList() {
-
-			if (getTabCount() > SUB_TREE_LIST_TAB_INDEX) {
-
-				removeTabAt(SUB_TREE_LIST_TAB_INDEX);
-			}
-		}
-
-		private void checkAddNewSubTreeList(CFrame frame) {
-
-			if (!frame.getSubs(visibility).isEmpty()) {
-
-				CFramesList subTreeList = addList(SUB_TREE_LIST_TITLE, frame, false);
-
-				subTreeList.addSelectionListener(subTreeListListener);
-			}
-		}
-	}
-
-	private class TreeTabReselector extends CFrameSelectionListener {
-
-		protected void onSelected(CFrame frame) {
-
-			setSelectedIndex(0);
-		}
-
-		TreeTabReselector() {
-
-			tree.addSelectionListener(this);
-		}
-	}
 
 	private class ListPanelFocuser implements ChangeListener {
 
-		private GListPanel<CFrame> panel;
+		private GListPanel<?> panel;
 
 		public void stateChanged(ChangeEvent e) {
 
@@ -129,7 +59,7 @@ class CFramesComboPanel extends JTabbedPane {
 			}
 		}
 
-		ListPanelFocuser(GListPanel<CFrame> panel) {
+		ListPanelFocuser(GListPanel<?> panel) {
 
 			this.panel = panel;
 
@@ -139,22 +69,47 @@ class CFramesComboPanel extends JTabbedPane {
 
 	CFramesComboPanel(CFrame rootFrame, CVisibility visibility, boolean showRoot) {
 
+		this.rootFrame = rootFrame;
 		this.visibility = visibility;
-
-		tree = addTree(rootFrame, showRoot);
-
-		CFramesList fullList = addList(LIST_TITLE, rootFrame, showRoot);
-		CFrameSelectionSynchroniser synchroniser = new CFrameSelectionSynchroniser();
-
-		synchroniser.add(tree.getSelectionRelay());
-		synchroniser.add(fullList.getSelectionRelay());
-
-		new TreeTabReselector();
+		this.showRoot = showRoot;
 	}
 
-	void enableSubTreeList() {
+	void addDefaultTree() {
 
-		new SubTreeListManager();
+		addTree(createDefaultTree());
+	}
+
+	void addTree(CFramesTree tree) {
+
+		this.tree = tree;
+
+		addTab(TREE_TITLE, new JScrollPane(tree));
+	}
+
+	CFramesList addDefaultList() {
+
+		return addDefaultList("");
+	}
+
+	CFramesList addDefaultList(String titlePrefix) {
+
+		CFramesList list = new CFramesList(rootFrame, visibility, showRoot);
+		CFrameSelectionSynchroniser synchroniser = new CFrameSelectionSynchroniser();
+
+		addList(titlePrefix, list);
+
+		synchroniser.add(tree.getSelectionRelay());
+		synchroniser.add(list.getSelectionRelay());
+
+		return list;
+	}
+
+	<E>void addList(String titlePrefix, GList<E> list) {
+
+		GListPanel<E> panel = new GListPanel<E>(list);
+
+		addTab(getListTitle(titlePrefix), panel);
+		new ListPanelFocuser(panel);
 	}
 
 	void addSelectionListener(CFrameSelectionListener listener) {
@@ -167,23 +122,22 @@ class CFramesComboPanel extends JTabbedPane {
 		return tree;
 	}
 
-	private CFramesTree addTree(CFrame rootFrame, boolean showRoot) {
+	private CFramesTree createDefaultTree() {
 
-		CFramesTree tree = new CFramesTree(rootFrame, visibility, showRoot);
+		CFramesTree tree = new CFramesTree(visibility);
 
-		addTab(TREE_TITLE, new JScrollPane(tree));
+		tree.initialise(rootFrame, showRoot);
 
 		return tree;
 	}
 
-	private CFramesList addList(String title, CFrame rootFrame, boolean showRoot) {
+	private String getListTitle(String prefix) {
 
-		CFramesList list = new CFramesList(rootFrame, visibility, showRoot);
-		GListPanel<CFrame> panel = new GListPanel<CFrame>(list);
+		if (prefix.length() > 0) {
 
-		addTab(title, panel);
-		new ListPanelFocuser(panel);
+			prefix += " ";
+		}
 
-		return list;
+		return prefix + LIST_TITLE;
 	}
 }

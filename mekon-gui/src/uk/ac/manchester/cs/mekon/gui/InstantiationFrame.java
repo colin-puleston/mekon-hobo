@@ -46,6 +46,7 @@ abstract class InstantiationFrame extends GFrame {
 	static private final String SUGGESTED_TYPES_TITLE = "Suggested Types";
 
 	private IFrame frame;
+	private InstanceStoreActions storeActions;
 
 	private JTabbedPane aspectTabs = new JTabbedPane();
 
@@ -72,11 +73,15 @@ abstract class InstantiationFrame extends GFrame {
 		}
 	}
 
-	InstantiationFrame(CFramesTree modelTree, IFrame frame) {
+	InstantiationFrame(
+		CFramesTree modelTree,
+		InstanceStoreActions storeActions,
+		IFrame frame) {
 
 		super("", WIDTH, HEIGHT);
 
 		this.frame = frame;
+		this.storeActions = storeActions;
 
 		instanceComponent = createInstanceComponent();
 		inferredTypesPanel = new InferredTypesPanel(modelTree);
@@ -100,6 +105,11 @@ abstract class InstantiationFrame extends GFrame {
 	IFrame getFrame() {
 
 		return frame;
+	}
+
+	InstanceStoreActions getStoreActions() {
+
+		return storeActions;
 	}
 
 	void resetMainComponent(JComponent mainComponent) {
@@ -133,7 +143,7 @@ abstract class InstantiationFrame extends GFrame {
 
 	private JComponent createInstanceComponent() {
 
-		return new JScrollPane(new ITree(frame));
+		return new JScrollPane(new ITree(frame, storeActions));
 	}
 
 	private void setTabs(JComponent mainTabComponent) {

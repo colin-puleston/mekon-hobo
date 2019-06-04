@@ -63,6 +63,11 @@ class InstanceStoreActions {
 		}
 	}
 
+	CFrame getInstanceType(CIdentity id) {
+
+		return getStore().getType(id).getRootType();
+	}
+
 	void retrieveAndDisplayInstance(CIdentity id) {
 
 		IRegenInstance regen = getStore().get(id);

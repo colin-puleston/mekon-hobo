@@ -92,17 +92,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 		void performDefaultAction() {
 
-			CFrame type = checkObtainCFrameAddition();
-
-			if (type != null) {
-
-				checkAddDisjunct(type);
-			}
-		}
-
-		private void checkAddDisjunct(CFrame disjunctType) {
-
-			IFrame disjunct = instantiate(disjunctType);
+			IFrame disjunct = checkObtainIFrameValue();
 
 			if (!disjunct.equals(value)) {
 
@@ -196,9 +186,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	IValue checkObtainValue() {
 
-		CFrame type = checkObtainCFrameAddition();
-
-		return type != null ? instantiate(type) : null;
+		return checkObtainIFrameValue();
 	}
 
 	String getCFrameRole() {
@@ -242,6 +230,32 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 				: GNodeAction.INERT_ACTION;
 	}
 
+	private IFrame checkObtainIFrameValue() {
+
+		CFrameInstances instances = getInstances();
+
+		return instances.any()
+				? getInstantiationSelectionOrNull(instances)
+				: checkObtainAndInstantiateType();
+	}
+
+	private IFrame getInstantiationSelectionOrNull(CFrameInstances instances) {
+
+		return new CFrameInstantiationSelector(
+					tree,
+					getRootCFrame(),
+					instances,
+					getInstanceFunction())
+						.getInstantiationOrNull();
+	}
+
+	private IFrame checkObtainAndInstantiateType() {
+
+		CFrame type = checkObtainCFrameAddition();
+
+		return type != null ? instantiate(type) : null;
+	}
+
 	private void copyAssertedSlotValues(IFrame from, IFrame to) {
 
 		ISlots toSlots = to.getSlots();
@@ -262,6 +276,11 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		}
 	}
 
+	private CFrameInstances getInstances() {
+
+		return new CFrameInstances(getRootCFrame(), tree.getStoreActions());
+	}
+
 	private IFrame instantiate(CFrame type) {
 
 		return type.instantiate(slot.getContainer().getFunction());
@@ -269,7 +288,12 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	private boolean queryInstance() {
 
-		return slot.getContainer().getFunction().query();
+		return getInstanceFunction().query();
+	}
+
+	private IFrameFunction getInstanceFunction() {
+
+		return slot.getContainer().getFunction();
 	}
 
 	private boolean abstractEditableSlot() {

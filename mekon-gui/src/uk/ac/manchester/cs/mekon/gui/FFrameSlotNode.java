@@ -137,9 +137,7 @@ abstract class FFrameSlotNode<F extends IValue> extends ISlotNode {
 
 	CFrame checkObtainCFrameAddition() {
 
-		return singleOption()
-					? getRootCFrame()
-					: getCFrameAdditionSelectionOrNull();
+		return singleOption() ? getRootCFrame() : getCFrameAdditionSelectionOrNull();
 	}
 
 	abstract String getCFrameRole();

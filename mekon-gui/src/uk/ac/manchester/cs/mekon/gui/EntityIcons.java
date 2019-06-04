@@ -93,6 +93,11 @@ class EntityIcons implements EntityIconConstants {
 		return getISlotIcons(slot).get(slot.getType().getSource());
 	}
 
+	Icon forInstanceRef() {
+
+		return exposedFrames.get(CSource.EXTERNAL, EntityLevel.INSTANCE);
+	}
+
 	Icon forCSlotValues() {
 
 		return defaultSlots.get(CSource.EXTERNAL);

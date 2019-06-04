@@ -60,12 +60,16 @@ class ITree extends GTree {
 		return new Color(r, g, b);
 	}
 
+	private InstanceStoreActions storeActions;
+
 	private ITreeUpdates updates;
 	private ITreeExpansions expansions;
 	private ITreeCrossLinks crossLinks;
 	private ITreeNodeDisplays nodeDisplays;
 
-	ITree(IFrame rootFrame) {
+	ITree(IFrame rootFrame, InstanceStoreActions storeActions) {
+
+		this.storeActions = storeActions;
 
 		IFrameNode rootNode = new IFrameNode(this, rootFrame);
 
@@ -98,6 +102,11 @@ class ITree extends GTree {
 	void clearValues(ISlotNode slotNode) {
 
 		update(slotNode, null, null);
+	}
+
+	InstanceStoreActions getStoreActions() {
+
+		return storeActions;
 	}
 
 	ITreeUpdates getUpdates() {

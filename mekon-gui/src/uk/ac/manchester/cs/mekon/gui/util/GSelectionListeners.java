@@ -31,8 +31,7 @@ import java.util.*;
  */
 public class GSelectionListeners<E> {
 
-	private List<GSelectionListener<E>> listeners
-				= new ArrayList<GSelectionListener<E>>();
+	private List<GSelectionListener<E>> listeners = new ArrayList<GSelectionListener<E>>();
 
 	public void add(GSelectionListener<E> listener) {
 

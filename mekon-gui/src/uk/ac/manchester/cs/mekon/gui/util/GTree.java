@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.gui.util;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.tree.*;
+import javax.swing.event.*;
 
 /**
  * @author Colin Puleston
@@ -40,6 +41,21 @@ public class GTree extends JTree {
 
 	private ActionInvoker positiveActionInvoker = new PositiveActionInvoker();
 	private ActionInvoker negativeActionInvoker = new NegativeActionInvoker();
+
+	private GSelectionListeners<GNode> nodeSelectionListeners = new GSelectionListeners<GNode>();
+
+	private class SelectionListener implements TreeSelectionListener {
+
+		public void valueChanged(TreeSelectionEvent event) {
+
+			nodeSelectionListeners.poll(extractLeafNode(event));
+		}
+
+		private GNode extractLeafNode(TreeSelectionEvent event) {
+
+			return (GNode)event.getPath().getLastPathComponent();
+		}
+	}
 
 	private abstract class ActionInvoker {
 
@@ -179,6 +195,11 @@ public class GTree extends JTree {
 		}
 	}
 
+	public GTree() {
+
+		addTreeSelectionListener(new SelectionListener());
+	}
+
 	public void setActiveTree() {
 
 		new ActiveTreeClickMonitor();
@@ -198,6 +219,11 @@ public class GTree extends JTree {
 		GCellRenderers.get().set(this);
 
 		rootNode.initialiseSubTree();
+	}
+
+	public void addNodeSelectionListener(GSelectionListener<GNode> nodeSelectionListener) {
+
+		nodeSelectionListeners.add(nodeSelectionListener);
 	}
 
 	public void updateAllNodeDisplays() {

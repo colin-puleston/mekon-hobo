@@ -78,10 +78,7 @@ class InstantiationsPanel extends JPanel {
 		}
 	}
 
-	InstantiationsPanel(
-		CFramesTree modelTree,
-		CFrame frame,
-		InstanceStoreActions storeActions) {
+	InstantiationsPanel(CFramesTree modelTree, CFrame frame, InstanceStoreActions storeActions) {
 
 		super(new BorderLayout());
 

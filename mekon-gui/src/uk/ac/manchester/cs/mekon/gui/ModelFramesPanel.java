@@ -33,15 +33,76 @@ class ModelFramesPanel extends CFramesComboPanel {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String SUB_TREE_LIST_TITLE_PREFIX = "Sub-Tree";
+	static private final int SUB_TREE_LIST_TAB_INDEX = 2;
+
+	private SubTreeListListener subTreeListListener = new SubTreeListListener();
+
+	private class TreeListener extends CFrameSelectionListener {
+
+		protected void onSelected(CFrame frame) {
+
+			updateSubTreeList(frame);
+			setSelectedIndex(0);
+		}
+
+		TreeListener() {
+
+			getTree().addSelectionListener(this);
+		}
+	}
+
+	private class SubTreeListListener extends CFrameSelectionListener {
+
+		protected void onSelected(CFrame frame) {
+
+			getTree().select(frame);
+		}
+	}
+
 	ModelFramesPanel(CModel model) {
 
 		super(model.getRootFrame(), CVisibility.ALL, false);
 
-		enableSubTreeList();
+		addDefaultTree();
+		addDefaultList();
+
+		new TreeListener();
 	}
 
 	CFrameSelectionRelay getSelectionRelay() {
 
 		return getTree().getSelectionRelay();
+	}
+
+	private void updateSubTreeList(CFrame selected) {
+
+		checkRemoveOldSubTreeList();
+		checkAddNewSubTreeList(selected);
+	}
+
+	private void checkRemoveOldSubTreeList() {
+
+		if (getTabCount() > SUB_TREE_LIST_TAB_INDEX) {
+
+			removeTabAt(SUB_TREE_LIST_TAB_INDEX);
+		}
+	}
+
+	private void checkAddNewSubTreeList(CFrame selected) {
+
+		if (!selected.getSubs().isEmpty()) {
+
+			addSubTreeList(selected);
+		}
+	}
+
+	private void addSubTreeList(CFrame selected) {
+
+		CFramesList list = new CFramesList(selected, CVisibility.ALL, false);
+
+		addList(SUB_TREE_LIST_TITLE_PREFIX, list);
+
+		list.addSelectionListener(subTreeListListener);
 	}
 }

@@ -53,7 +53,7 @@ class CFramesTree extends CTree {
 
 			for (CFrame rootFrame : rootFrames) {
 
-				addSubRootNode(new CFrameNode(CFramesTree.this, rootFrame));
+				addSubRootNode(createCFrameNode(rootFrame));
 			}
 		}
 
@@ -89,18 +89,26 @@ class CFramesTree extends CTree {
 		}
 	}
 
-	CFramesTree(CFrame rootFrame, CVisibility visibility, boolean showRoot) {
+	CFramesTree(CVisibility visibility) {
 
-		this(visibility, showRoot);
-
-		addFrameNode(initialise(rootFrame));
+		this.visibility = visibility;
 	}
 
-	CFramesTree(List<CFrame> rootFrames, CVisibility visibility) {
+	void initialise(CFrame rootFrame, boolean showRoot) {
 
-		this(visibility, false);
+		addFrameNode(initialise(rootFrame));
+
+		if (!showRoot) {
+
+			hideRoot();
+		}
+	}
+
+	void initialise(List<CFrame> rootFrames) {
 
 		initialise(new DummyRootNode(rootFrames));
+
+		hideRoot();
 	}
 
 	Boolean leafCFrameNodeFastCheck(CFrameNode node) {
@@ -131,15 +139,10 @@ class CFramesTree extends CTree {
 		return selectionRelay;
 	}
 
-	private CFramesTree(CVisibility visibility, boolean showRoot) {
+	private void hideRoot() {
 
-		this.visibility = visibility;
-
-		if (!showRoot) {
-
-			setRootVisible(false);
-			setShowsRootHandles(true);
-		}
+		setRootVisible(false);
+		setShowsRootHandles(true);
 	}
 
 	private void addFrameNode(CFrameNode node) {

@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import javax.swing.event.*;
 import javax.swing.tree.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -41,22 +40,22 @@ abstract class CTree extends GTree {
 	private CValueNodeCreator valueNodeCreator = new CValueNodeCreator(this);
 	private CFrameSelectionListeners selectionListeners = new CFrameSelectionListeners();
 
-	private class SelectionListener implements TreeSelectionListener {
+	private class NodeSelectionListener extends GSelectionListener<GNode> {
 
-		public void valueChanged(TreeSelectionEvent event) {
+		protected void onSelected(GNode node) {
 
-			onSelected(event.getPath());
+			onSelectedNode(node);
 		}
 	}
 
 	CTree() {
 
-		addTreeSelectionListener(new SelectionListener());
+		addNodeSelectionListener(new NodeSelectionListener());
 	}
 
 	CFrameNode initialise(CFrame rootFrame) {
 
-		CFrameNode rootNode = new CFrameNode(this, rootFrame);
+		CFrameNode rootNode = createCFrameNode(rootFrame);
 
 		initialise(rootNode);
 
@@ -66,6 +65,11 @@ abstract class CTree extends GTree {
 	void addSelectionListener(CFrameSelectionListener selectionListener) {
 
 		selectionListeners.add(selectionListener);
+	}
+
+	CFrameNode createCFrameNode(CFrame frame) {
+
+		return new CFrameNode(this, frame);
 	}
 
 	Boolean leafCFrameNodeFastCheck(CFrameNode node) {
@@ -90,9 +94,9 @@ abstract class CTree extends GTree {
 		return 1;
 	}
 
-	private void onSelected(TreePath path) {
+	private void onSelectedNode(GNode selectedNode) {
 
-		CFrame selectedCFrame = extractCFrame(path.getLastPathComponent());
+		CFrame selectedCFrame = extractCFrame(selectedNode);
 
 		if (selectedCFrame != null) {
 
@@ -104,7 +108,7 @@ abstract class CTree extends GTree {
 		}
 	}
 
-	private CFrame extractCFrame(Object selectedNode) {
+	private CFrame extractCFrame(GNode selectedNode) {
 
 		if (selectedNode instanceof CFrameNode) {
 

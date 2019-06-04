@@ -110,6 +110,11 @@ class EntityDisplays {
 		return display;
 	}
 
+	GCellDisplay forInstanceRef(CIdentity instanceRef) {
+
+		return get(instanceRef.getLabel(), icons.forInstanceRef(), NodeTextDisplay.VALUE);
+	}
+
 	GCellDisplay forCSlotValues(CIdentity slotId) {
 
 		return get(slotId.getLabel(), icons.forCSlotValues(), NodeTextDisplay.SLOT);

@@ -1,4 +1,4 @@
-/**
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2014 University of Manchester
@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -31,24 +31,46 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class SuggestedTypesPanel extends InstanceTypesPanel {
+class CFrameInstantiationSelector extends CFrameSelector {
 
 	static private final long serialVersionUID = -1;
 
-	SuggestedTypesPanel(CFramesTree modelTree) {
+	private IFrameFunction instanceFunction;
+	private CFramesInstantiatorPanel instantiatorPanel;
 
-		super(modelTree);
+	CFrameInstantiationSelector(
+		JComponent parent,
+		CFrame rootFrame,
+		CFrameInstances instances,
+		IFrameFunction instanceFunction) {
+
+		super(parent, "Value-Type/Value");
+
+		this.instanceFunction = instanceFunction;
+
+		instantiatorPanel = new CFramesInstantiatorPanel(rootFrame, instances);
 	}
 
-	JComponent createFramesComponent(
-					List<CFrame> types,
-					CFrameSelectionListener listener) {
+	JComponent resolveSelectorPanel(CFrameSelectionListener selectorListener) {
 
-		CFramesTree tree = new CFramesTree(CVisibility.ALL);
+		instantiatorPanel.addSelectionListener(selectorListener);
 
-		tree.initialise(types);
-		tree.addSelectionListener(listener);
+		return instantiatorPanel;
+	}
 
-		return tree;
+	IFrame getInstantiationOrNull() {
+
+		CFrame frame = getSelectionOrNull();
+
+		return frame != null ? instantiate(frame) : null;
+	}
+
+	private IFrame instantiate(CFrame frame) {
+
+		CIdentity instance = instantiatorPanel.getInstanceOrNull();
+
+		return instance != null
+					? frame.instantiate(instance, instanceFunction)
+					: frame.instantiate(instanceFunction);
 	}
 }

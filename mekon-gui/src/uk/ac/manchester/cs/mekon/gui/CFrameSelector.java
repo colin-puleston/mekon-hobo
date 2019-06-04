@@ -41,9 +41,9 @@ abstract class CFrameSelector extends GDialog {
 	static private final Dimension WINDOW_SIZE = new Dimension(450, 300);
 	static private final String MAIN_TITLE = "%s Selector";
 
-	static String createMainTitle(String cFrameRole) {
+	static String createMainTitle(String selectionRole) {
 
-		return String.format(MAIN_TITLE, cFrameRole);
+		return String.format(MAIN_TITLE, selectionRole);
 	}
 
 	private CFrame selection = null;
@@ -56,21 +56,21 @@ abstract class CFrameSelector extends GDialog {
 		}
 	}
 
-	CFrameSelector(JComponent parent, String cFrameRole) {
+	CFrameSelector(JComponent parent, String selectionRole) {
 
-		super(parent, createMainTitle(cFrameRole), true);
+		super(parent, createMainTitle(selectionRole), true);
 
 		setPreferredSize(WINDOW_SIZE);
 	}
 
 	CFrame getSelectionOrNull() {
 
-		display(createSelectorComponent(new SelectorListener()));
+		display(resolveSelectorPanel(new SelectorListener()));
 
 		return selection;
 	}
 
-	abstract JComponent createSelectorComponent(CFrameSelectionListener selectionListener);
+	abstract JComponent resolveSelectorPanel(CFrameSelectionListener selectorListener);
 
 	private void select(CFrame frame) {
 

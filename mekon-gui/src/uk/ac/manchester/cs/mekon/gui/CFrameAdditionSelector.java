@@ -37,29 +37,22 @@ class CFrameAdditionSelector extends CFrameSelector {
 
 	private CFrame rootFrame;
 
-	CFrameAdditionSelector(
-		JComponent parent,
-		String cFrameRole,
-		CFrame rootFrame) {
+	CFrameAdditionSelector(JComponent parent, String selectionRole, CFrame rootFrame) {
 
-		super(parent, cFrameRole);
+		super(parent, selectionRole);
 
 		this.rootFrame = rootFrame;
 	}
 
-	JComponent createSelectorComponent(CFrameSelectionListener selectorListener) {
+	JComponent resolveSelectorPanel(CFrameSelectionListener selectorListener) {
 
-		CFramesComboPanel combo = createComboPanel();
+		boolean showRoot = rootFrame.getCategory().atomic();
+		CFramesComboPanel combo = new CFramesComboPanel(rootFrame, CVisibility.EXPOSED, showRoot);
 
+		combo.addDefaultTree();
+		combo.addDefaultList();
 		combo.addSelectionListener(selectorListener);
 
 		return combo;
-	}
-
-	private CFramesComboPanel createComboPanel() {
-
-		boolean showRoot = rootFrame.getCategory().atomic();
-
-		return new CFramesComboPanel(rootFrame, CVisibility.EXPOSED, showRoot);
 	}
 }

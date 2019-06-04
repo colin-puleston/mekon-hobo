@@ -63,15 +63,15 @@ class CFrameRemovalsSelector extends CFrameSelector {
 
 	CFrameRemovalsSelector(
 		JComponent parent,
-		String cFrameRole,
+		String selectionRole,
 		List<CFrame> options) {
 
-		super(parent, cFrameRole);
+		super(parent, selectionRole);
 
 		this.options = options;
 	}
 
-	JComponent createSelectorComponent(CFrameSelectionListener selectorListener) {
+	JComponent resolveSelectorPanel(CFrameSelectionListener selectorListener) {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
