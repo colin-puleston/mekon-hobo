@@ -28,6 +28,9 @@ import java.util.*;
 import java.lang.reflect.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
+
 import uk.ac.manchester.cs.hobo.*;
 
 /**
@@ -41,6 +44,7 @@ class FieldSlot {
 	private Class<? extends DObject> containerClass = null;
 	private String fieldName = null;
 	private String slotLabel = null;
+	private CIdentity slotId = null;
 	private CActivation activation = CActivation.ACTIVE;
 	private CEditability editability = null;
 
@@ -65,6 +69,8 @@ class FieldSlot {
 
 				slotLabel = DIdentity.createLabel(fieldName);
 			}
+
+			slotId = new CIdentity(resolveSlotIdentity(), slotLabel);
 
 			if (editability == null) {
 
@@ -104,6 +110,13 @@ class FieldSlot {
 							+ " for a field on object: "
 							+ containerObj);
 			}
+		}
+
+		private String resolveSlotIdentity() {
+
+			String bindingId = getBinding().getSlotIdOrNull(fieldName);
+
+			return bindingId != null ? bindingId : fieldName;
 		}
 	}
 
@@ -241,14 +254,9 @@ class FieldSlot {
 		return field;
 	}
 
-	String getFieldName() {
+	CIdentity getSlotId() {
 
-		return fieldName;
-	}
-
-	String getSlotLabel() {
-
-		return slotLabel;
+		return slotId;
 	}
 
 	CActivation getActivation() {
@@ -261,36 +269,57 @@ class FieldSlot {
 		return editability;
 	}
 
-	DBinding getBinding() {
+	ISlot resolveSlot(DObject containerObj) {
+
+		new AttributeResolver(containerObj).resolve();
+
+		return resolveSlot(containerObj.getFrame());
+	}
+
+	private ISlot resolveSlot(IFrame frame) {
+
+		if (frame.getCategory().reference()) {
+
+			return addReferenceFrameSlot(frame);
+		}
+
+		if (model.initialised()) {
+
+			return frame.getSlots().get(slotId);
+		}
+
+		return initialiseAtomicFrameSlot(frame);
+	}
+
+	private ISlot addReferenceFrameSlot(IFrame frame) {
+
+		CSlot slotType = getFrameType().getSlots().get(slotId);
+
+		return ZCModelAccessor.get().addReferenceFrameMappingSlot(frame, slotType);
+	}
+
+	private ISlot initialiseAtomicFrameSlot(IFrame frame) {
+
+		return getFrameEditor(frame).addSlot(resolveSlotType());
+	}
+
+	private CSlot resolveSlotType() {
+
+		return new SlotTypeResolver(model, getFrameType(), this).resolve();
+	}
+
+	private CFrame getFrameType() {
+
+		return getBinding().getFrame();
+	}
+
+	private DBinding getBinding() {
 
 		return model.getBindings().get(containerClass);
 	}
 
-	ISlot resolveSlot(DObject containerObj) {
+	private IFrameEditor getFrameEditor(IFrame frame) {
 
-		resolveAttributes(containerObj);
-
-		return model.initialised()
-					? retrieveSlot(containerObj)
-					: initialiseSlot(containerObj);
-	}
-
-	private void resolveAttributes(DObject containerObj) {
-
-		new AttributeResolver(containerObj).resolve();
-	}
-
-	private ISlot retrieveSlot(DObject containerObj) {
-
-		String id = getBinding().getSlotId(fieldName);
-
-		return containerObj.getFrame().getSlots().get(id);
-	}
-
-	private ISlot initialiseSlot(DObject containerObj) {
-
-		IFrame frame = containerObj.getFrame();
-
-		return new FieldSlotInitialiser(model, frame, this).initialiseSlot();
+		return model.getIEditor().getFrameEditor(frame);
 	}
 }

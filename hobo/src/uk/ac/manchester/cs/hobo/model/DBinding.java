@@ -67,10 +67,8 @@ class DBinding {
 		return frame;
 	}
 
-	String getSlotId(String fieldName) {
+	String getSlotIdOrNull(String fieldName) {
 
-		String slotId = fieldNamesToSlotIds.get(fieldName);
-
-		return slotId != null ? slotId : fieldName;
+		return fieldNamesToSlotIds.get(fieldName);
 	}
 }
