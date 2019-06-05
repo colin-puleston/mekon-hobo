@@ -144,7 +144,13 @@ public class ISlotSpecs {
 			spec.checkAddSlot(frame);
 		}
 
-		update(frame, ISlotOps.VALUES);
+		if (frame.getCategory().atomic()) {
+
+			for (ISlotSpec spec : specs) {
+
+				updateSlotValuesFor(frame, spec);
+			}
+		}
 	}
 
 	/**
@@ -154,7 +160,7 @@ public class ISlotSpecs {
 	 * <p>
 	 * NOTE: Even if the required update operations (as specified via the
 	 * relevant parameter) do not include slot-value updates, removals of
-	 * (asserted) slot-values may still occur as a result of either slot
+	 * asserted slot-values may still occur as a result of either slot
 	 * removals or value-type updates.
 	 *
 	 * @param frame Instance-level frame to be updated

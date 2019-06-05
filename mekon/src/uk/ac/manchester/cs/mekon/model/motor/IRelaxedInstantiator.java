@@ -96,6 +96,7 @@ public abstract class IRelaxedInstantiator {
 	 *
 	 * @param container Frame to which slot is to be added
 	 * @param slotId Identity of slot to be created
+	 * @param source Source-type for slot to be created
 	 * @param valueType Value-type for slot to be created
 	 * @param cardinality Cardinality of slot to be created
 	 * @param activation Activation of slot to be created
@@ -105,6 +106,7 @@ public abstract class IRelaxedInstantiator {
 	public abstract ISlot addSlot(
 							IFrame container,
 							CIdentity slotId,
+							CSource source,
 							CValue<?> valueType,
 							CCardinality cardinality,
 							CActivation activation,

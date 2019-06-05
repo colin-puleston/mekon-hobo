@@ -83,14 +83,14 @@ class IDisjunction extends IFrame {
 		disjunctsSlot = new IDisjunctsSlot(this);
 	}
 
-	IFrame copyEmpty(boolean freeInstance) {
-
-		return new IDisjunction(getType(), getFunction(), freeInstance);
-	}
-
 	ISlot addSlotInternal(CSlot slotType) {
 
 		return disjunctsSlot;
+	}
+
+	IFrame copyEmpty(boolean freeInstance) {
+
+		return new IDisjunction(getType(), getFunction(), freeInstance);
 	}
 
 	void autoUpdate(Set<IFrame> visited) {

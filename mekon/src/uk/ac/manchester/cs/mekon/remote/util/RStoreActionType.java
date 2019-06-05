@@ -52,6 +52,11 @@ public enum RStoreActionType {
 	CONTAINS,
 
 	/**
+	 * Specifies an instance-type retrieval action
+	 */
+	GET_TYPE,
+
+	/**
 	 * Specifies an instance retrieval action
 	 */
 	GET,

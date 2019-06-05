@@ -256,26 +256,40 @@ class IAtomicFrame extends IFrame {
 		autoUpdateEnabled = !freeInstance;
 	}
 
-	void initialise() {
+	void completeInitialInstantiation() {
 
-		getType().initialiseAtomicInstance(this);
+		getType().initialiseAtomicInstanceSlots(this);
 
-		super.initialise();
+		super.completeInitialInstantiation();
 	}
 
-	IFrame copyEmpty(boolean freeInstance) {
+	Set<IUpdateOp> completeReinstantiation(boolean possibleModelUpdates) {
 
-		return new IAtomicFrame(getType(), getFunction(), freeInstance);
-	}
+		Set<IUpdateOp> updates = checkReinitialise(possibleModelUpdates);
 
-	Set<IUpdateOp> reinitialise() {
+		super.completeReinstantiation(possibleModelUpdates);
 
-		return getIUpdating().reinitialise(this);
+		return updates;
 	}
 
 	IFrameEditor createEditor() {
 
 		return new Editor();
+	}
+
+	ISlot addSlotInternal(ISlot slot) {
+
+		slots.add(slot);
+		IFrameSlotValueUpdateProcessor.checkAddTo(slot);
+
+		new AutoUpdater(slot);
+
+		return slot;
+	}
+
+	IFrame copyEmpty(boolean freeInstance) {
+
+		return new IAtomicFrame(getType(), getFunction(), freeInstance);
 	}
 
 	void autoUpdate(Set<IFrame> visited) {
@@ -292,24 +306,19 @@ class IAtomicFrame extends IFrame {
 		return inferredTypes.update(updateds);
 	}
 
-	ISlot addSlotInternal(CSlot slotType) {
-
-		return addSlotInternal(new ISlot(slotType, this));
-	}
-
-	ISlot addSlotInternal(ISlot slot) {
-
-		slots.add(slot);
-		IFrameSlotValueUpdateProcessor.checkAddTo(slot);
-
-		new AutoUpdater(slot);
-
-		return slot;
-	}
-
 	String describeLocally() {
 
 		return FEntityDescriber.entityToString(this, getType());
+	}
+
+	private Set<IUpdateOp> checkReinitialise(boolean possibleModelUpdates) {
+
+		if (possibleModelUpdates && !freeInstance()) {
+
+			return getIUpdating().reinitialise(this);
+		}
+
+		return Collections.<IUpdateOp>emptySet();
 	}
 
 	private void autoUpdateThis() {

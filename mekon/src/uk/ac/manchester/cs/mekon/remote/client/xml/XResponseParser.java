@@ -64,6 +64,11 @@ class XResponseParser extends XPackageSerialiser implements XResponseVocab {
 		return new IInstanceParseInput(getStructuredResponseNode());
 	}
 
+	CIdentity getIdentityResponse() {
+
+		return CIdentitySerialiser.parse(getStructuredResponseNode());
+	}
+
 	List<CIdentity> getIdentitiesResponse() {
 
 		return CIdentitySerialiser.parseList(getStructuredResponseNode());

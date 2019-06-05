@@ -210,6 +210,7 @@ public class IInstanceParser extends ISerialiser {
 						.addSlot(
 							container,
 							getSlotId(),
+							getSource(),
 							getValueType(),
 							getCardinality(),
 							getActivation(),
@@ -297,6 +298,11 @@ public class IInstanceParser extends ISerialiser {
 			private CValue<?> getDefaultValueType() {
 
 				return getDefaultValueType(slotNode);
+			}
+
+			private CSource getSource() {
+
+				return slotTypeNode.getEnum(SOURCE_ATTR, CSource.class);
 			}
 
 			private CCardinality getCardinality() {

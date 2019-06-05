@@ -139,4 +139,19 @@ public abstract class ZCModelAccessor {
 	 * object
 	 */
 	public abstract Object getMappedObject(IFrame frame);
+
+	/**
+	 * Adds a slot with an activation status of {@link
+	 * CActivation#INACTIVE} to a frame of category {@link
+	 * CFrameCategory#REFERENCE}. Enables the addition of slots that
+	 * are required for mappings to fields on objects from an external
+	 * domain-specific Object Model (OM). The added slot will be
+	 * permenantly deactivated, since in general slots are not relevant
+	 * to the representation of reference-frames.
+	 *
+	 * @param frame Reference-frame to which slot is to be added
+	 * @param slotType Type for slot to be added
+	 * @return Added slot
+	 */
+	public abstract ISlot addReferenceFrameMappingSlot(IFrame frame, CSlot slotType);
 }

@@ -99,6 +99,26 @@ public abstract class XClientStore {
 			return performBooleanResponseAction(request);
 		}
 
+		public IRegenType getType(CIdentity identity) {
+
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET_TYPE);
+
+			request.addParameter(identity);
+
+			CIdentity typeId = performIdentityOrNullResponseAction(request);
+
+			if (typeId == null) {
+
+				return null;
+			}
+
+			CFrame type = model.getFrames().getOrNull(typeId);
+
+			return type != null
+					? IRegenTypeBuilder.createValid(type)
+					: IRegenTypeBuilder.createInvalid(typeId);
+		}
+
 		public IRegenInstance get(CIdentity identity) {
 
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET);
@@ -106,11 +126,13 @@ public abstract class XClientStore {
 			request.addParameter(identity);
 
 			IFrame instance = performAssertionOrNullResponseAction(request);
-			IRegenInstanceBuilder regenBuilder = new IRegenInstanceBuilder();
 
-			return instance != null
-					? regenBuilder.createValid(instance)
-					: regenBuilder.createInvalid(identity);
+			if (instance == null) {
+
+				return null;
+			}
+
+			return new IRegenInstanceBuilder().createValid(instance);
 		}
 
 		public List<CIdentity> getAllIdentities() {
@@ -186,6 +208,13 @@ public abstract class XClientStore {
 		}
 
 		return responseParser.parse(response.getInstanceResponseParseInput(), false);
+	}
+
+	private CIdentity performIdentityOrNullResponseAction(XRequestRenderer request) {
+
+		XResponseParser response = performAction(request);
+
+		return response.isNullResponse() ? null : response.getIdentityResponse();
 	}
 
 	private List<CIdentity> performIdentitiesResponseAction(XRequestRenderer request) {

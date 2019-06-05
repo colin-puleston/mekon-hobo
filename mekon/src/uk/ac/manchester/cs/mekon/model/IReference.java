@@ -31,13 +31,12 @@ import java.util.*;
  */
 class IReference extends IFrame {
 
-	static private final ISlots NO_SLOTS = new ISlots();
-
-	private CIdentity referenceId;
+	private CIdentity referenceId = null;
+	private ISlots slots = new ISlots();
 
 	public String getDisplayLabel() {
 
-		return getType().getDisplayLabel() + "(" + referenceId.getLabel() + ")";
+		return getType().getDisplayLabel() + " [REF:" + referenceId.getLabel() + "]";
 	}
 
 	public IFrameCategory getCategory() {
@@ -47,7 +46,7 @@ class IReference extends IFrame {
 
 	public ISlots getSlots() {
 
-		return NO_SLOTS;
+		return slots;
 	}
 
 	public CIdentity getReferenceId() {
@@ -67,7 +66,7 @@ class IReference extends IFrame {
 
 	IReference(CFrame type, IFrameFunction function, boolean freeInstance) {
 
-		this(type, null, function, freeInstance);
+		super(type, function, freeInstance);
 	}
 
 	IReference(
@@ -76,14 +75,33 @@ class IReference extends IFrame {
 		IFrameFunction function,
 		boolean freeInstance) {
 
-		super(type, function, freeInstance);
+		this(type, function, freeInstance);
 
 		this.referenceId = referenceId;
 	}
 
-	void setReferenceId(CIdentity referenceId) {
+	void completeInitialInstantiation(CIdentity referenceId) {
 
 		this.referenceId = referenceId;
+
+		completeInitialInstantiation();
+	}
+
+	ISlot addDeactivatedSlotForMapping(CSlot slotType) {
+
+		slotType = slotType.copy();
+
+		slotType.setActivation(CActivation.INACTIVE);
+		slotType.setEditability(CEditability.NONE);
+
+		return addSlotInternal(slotType);
+	}
+
+	ISlot addSlotInternal(ISlot slot) {
+
+		slots.add(slot);
+
+		return slot;
 	}
 
 	IFrame copyEmpty(boolean freeInstance) {

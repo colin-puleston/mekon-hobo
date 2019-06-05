@@ -639,9 +639,9 @@ public abstract class CFrame
 	 */
 	public IFrame instantiate(CIdentity referenceId, IFrameFunction function) {
 
-		IFrame instance = instantiate(IFrameCategory.REFERENCE, function);
+		IFrame instance = beginInstantiation(IFrameCategory.REFERENCE, function);
 
-		((IReference)instance).setReferenceId(referenceId);
+		((IReference)instance).completeInitialInstantiation(referenceId);
 
 		return instance;
 	}
@@ -723,7 +723,7 @@ public abstract class CFrame
 		return this;
 	}
 
-	void initialiseAtomicInstance(IFrame instance) {
+	void initialiseAtomicInstanceSlots(IAtomicFrame instance) {
 
 		getIReasoner().initialiseFrame(getIEditor(), instance);
 	}
@@ -761,13 +761,18 @@ public abstract class CFrame
 
 	private IFrame instantiate(IFrameCategory category, IFrameFunction function) {
 
-		function.checkInstantiable(getModel());
+		IFrame instance = beginInstantiation(category, function);
 
-		IFrame instance = category.createCategoryFrame(this, function);
-
-		instance.initialise();
+		instance.completeInitialInstantiation();
 
 		return instance;
+	}
+
+	private IFrame beginInstantiation(IFrameCategory category, IFrameFunction function) {
+
+		function.checkInstantiable(getModel());
+
+		return category.createCategoryFrame(this, function);
 	}
 
 	private List<CFrame> checkStartListWithThis(

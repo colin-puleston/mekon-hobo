@@ -80,6 +80,18 @@ class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
 		}
 	}
 
+	void setIdentityOrNullResponse(CIdentity identity) {
+
+		if (identity == null) {
+
+			addNullResponseNode();
+		}
+		else {
+
+			CIdentitySerialiser.render(identity, addStructuredResponseNode());
+		}
+	}
+
 	void setIdentitiesResponse(List<CIdentity> identities) {
 
 		CIdentitySerialiser.renderList(identities, addStructuredResponseNode());

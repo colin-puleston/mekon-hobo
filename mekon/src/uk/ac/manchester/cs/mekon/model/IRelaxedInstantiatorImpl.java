@@ -94,6 +94,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 	public ISlot addSlot(
 					IFrame container,
 					CIdentity slotId,
+					CSource source,
 					CValue<?> valueType,
 					CCardinality cardinality,
 					CActivation activation,
@@ -101,6 +102,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
 		CSlot slotType = createSlotType(container, slotId, valueType, cardinality);
 
+		slotType.setSource(source);
 		slotType.setActivation(activation);
 		slotType.setEditability(editabilitiesIsToCs.get(editability));
 

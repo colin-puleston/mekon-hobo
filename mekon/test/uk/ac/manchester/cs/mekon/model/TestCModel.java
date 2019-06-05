@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.model;
 
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 
 /**
@@ -35,7 +34,12 @@ public class TestCModel {
 
 	static private CModel createEmptyModel() {
 
-		return ZCModelAccessor.get().createModel();
+		CModel model = new CModel();
+
+		model.startInitialisation();
+		model.completeInitialisation();
+
+		return model;
 	}
 
 	public final CModel model;

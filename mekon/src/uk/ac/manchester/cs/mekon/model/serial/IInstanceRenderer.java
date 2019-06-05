@@ -327,6 +327,7 @@ public class IInstanceRenderer extends ISerialiser {
 
 			renderIdentity(slot, node);
 
+			node.addValue(SOURCE_ATTR, slot.getSource());
 			node.addValue(CARDINALITY_ATTR, slot.getCardinality());
 			node.addValue(ACTIVATION_ATTR, slot.getActivation());
 		}

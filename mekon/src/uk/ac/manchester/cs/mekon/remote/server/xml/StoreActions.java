@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.remote.server.xml;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.server.*;
@@ -97,6 +98,23 @@ class StoreActions extends ServerActions<RStoreActionType> {
 		}
 	}
 
+	private class GetTypeAction extends Action {
+
+		RStoreActionType getActionType() {
+
+			return RStoreActionType.GET_TYPE;
+		}
+
+		void perform(XRequestParser request, XResponseRenderer response) {
+
+			CIdentity id = request.getIdentityParameter(0);
+			IRegenType regen = store.getType(id);
+			CIdentity typeId = regen != null ? regen.getRootTypeId() : null;
+
+			response.setIdentityOrNullResponse(typeId);
+		}
+	}
+
 	private class GetAction extends Action {
 
 		RStoreActionType getActionType() {
@@ -107,8 +125,10 @@ class StoreActions extends ServerActions<RStoreActionType> {
 		void perform(XRequestParser request, XResponseRenderer response) {
 
 			CIdentity id = request.getIdentityParameter(0);
+			IRegenInstance regen = store.get(id);
+			IFrame frame = regen != null ? regen.getRootFrame() : null;
 
-			response.setInstanceOrNullResponse(store.get(id).getRootFrame());
+			response.setInstanceOrNullResponse(frame);
 		}
 	}
 

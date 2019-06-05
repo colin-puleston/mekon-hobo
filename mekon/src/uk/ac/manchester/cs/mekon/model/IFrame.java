@@ -178,7 +178,7 @@ public abstract class IFrame implements IEntity, IValue {
 	/**
 	 * Performs the default set of update operations on this frame,
 	 * whether or not auto-update is enabled (see {@link
-	 * IUpdating#autoUpdate}). If the frames is not of atomic category,
+	 * IUpdating#autoUpdate}). If the frame is not of atomic category,
 	 * will do nothing.
 	 * <p>
 	 * NOTE: Even if the default update operations do not include
@@ -535,21 +535,21 @@ public abstract class IFrame implements IEntity, IValue {
 		this.freeInstance = freeInstance;
 	}
 
-	void initialise() {
+	void completeInitialInstantiation() {
 
 		completeInstantiation(false);
 	}
 
-	abstract IFrame copyEmpty(boolean freeInstance);
+	Set<IUpdateOp> completeReinstantiation(boolean possibleModelUpdates) {
 
-	boolean updateInferredTypes(List<CFrame> updateds) {
+		completeInstantiation(true);
 
-		return false;
+		return Collections.<IUpdateOp>emptySet();
 	}
 
 	ISlot addSlotInternal(CSlot slotType) {
 
-		throw createCategoryAdditionException("slot");
+		return addSlotInternal(new ISlot(slotType, this));
 	}
 
 	ISlot addSlotInternal(ISlot slot) {
@@ -573,23 +573,18 @@ public abstract class IFrame implements IEntity, IValue {
 		this.mappedObject = mappedObject;
 	}
 
-	Set<IUpdateOp> completeReinstantiation(boolean possibleModelUpdates) {
-
-		Set<IUpdateOp> updates = checkReinitialise(possibleModelUpdates);
-
-		completeInstantiation(true);
-
-		return updates;
-	}
-
-	Set<IUpdateOp> reinitialise() {
-
-		return Collections.<IUpdateOp>emptySet();
-	}
-
 	IFrameEditor createEditor() {
 
 		throw createCategoryRetrievalException("editor");
+	}
+
+	abstract IFrame copyEmpty(boolean freeInstance);
+
+	abstract void autoUpdate(Set<IFrame> visited);
+
+	boolean updateInferredTypes(List<CFrame> updateds) {
+
+		return false;
 	}
 
 	void autoUpdateReferencingFrames(Set<IFrame> visited) {
@@ -599,8 +594,6 @@ public abstract class IFrame implements IEntity, IValue {
 			slot.getContainer().autoUpdate(visited);
 		}
 	}
-
-	abstract void autoUpdate(Set<IFrame> visited);
 
 	boolean freeInstance() {
 
@@ -638,13 +631,6 @@ public abstract class IFrame implements IEntity, IValue {
 
 		type = type.toNormalisedInstanceType();
 		type.pollListenersForInstantiated(this, reinstantiation);
-	}
-
-	private Set<IUpdateOp> checkReinitialise(boolean possibleModelUpdates) {
-
-		return possibleModelUpdates && !freeInstance
-				? reinitialise()
-				: Collections.<IUpdateOp>emptySet();
 	}
 
 	private CFrame toExtension(Set<IFrame> visited) {

@@ -52,6 +52,7 @@ abstract class ISerialiser extends FSerialiser {
 	static final String NUMBER_MAX_ATTR = "max";
 	static final String NUMBER_VALUE_ATTR = "value";
 	static final String STRING_VALUE_ATTR = "value";
+	static final String SOURCE_ATTR = "source";
 	static final String CARDINALITY_ATTR = "cardinality";
 	static final String ACTIVATION_ATTR = "activation";
 	static final String EDITABILITY_ATTR = "editability";

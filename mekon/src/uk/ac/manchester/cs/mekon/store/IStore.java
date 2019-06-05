@@ -89,6 +89,17 @@ public interface IStore {
 	public boolean contains(CIdentity identity);
 
 	/**
+	 * Retrieves a representation of the type of the root-frame of
+	 * an instance from the store, including info on the current
+	 * validity of that type with regards to the current model.
+	 *
+	 * @param identity Unique identity of instance
+	 * @return Representation of type of root-frame of relevant
+	 * instance, or null if no such stored instance
+	 */
+	public IRegenType getType(CIdentity identity);
+
+	/**
 	 * Retrieves an instance from the store, if still fully or
 	 * partially valid with repect to the current model, and/or info
 	 * on current validity and on any pruning that was required in
@@ -97,7 +108,7 @@ public interface IStore {
 	 * @param identity Unique identity of instance
 	 * @return Representation of instance-level frame representing
 	 * required instance and/or any relevant validity and pruning
-	 * info
+	 * info, or null if no such stored instance
 	 */
 	public IRegenInstance get(CIdentity identity);
 
