@@ -549,7 +549,7 @@ public abstract class IFrame implements IEntity, IValue {
 
 	ISlot addSlotInternal(CSlot slotType) {
 
-		return addSlotInternal(new ISlot(slotType, this));
+		throw createCategoryAdditionException("slot");
 	}
 
 	ISlot addSlotInternal(ISlot slot) {
@@ -785,16 +785,16 @@ public abstract class IFrame implements IEntity, IValue {
 
 	private KAccessException createCategoryAdditionException(String entityName) {
 
-		return new KAccessException("Cannot add " + entityName + " to");
+		return createCategoryException("Cannot add " + entityName + " to");
 	}
 
 	private KAccessException createCategoryRetrievalException(String entityName) {
 
-		return new KAccessException("Cannot retrieve " + entityName + " from");
+		return createCategoryException("Cannot retrieve " + entityName + " from");
 	}
 
 	private KAccessException createCategoryException(String msgPrefix) {
 
-		return new KAccessException(msgPrefix + " " + getCategory() + " frame: " + this);
+		return createCategoryException(msgPrefix + " " + getCategory() + " frame: " + this);
 	}
 }

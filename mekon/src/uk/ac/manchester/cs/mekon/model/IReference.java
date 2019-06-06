@@ -87,17 +87,9 @@ class IReference extends IFrame {
 		completeInitialInstantiation();
 	}
 
-	ISlot addDeactivatedSlotForMapping(CSlot slotType) {
+	ISlot addSlotInternal(CSlot slotType) {
 
-		slotType = slotType.copy();
-
-		slotType.setActivation(CActivation.INACTIVE);
-		slotType.setEditability(CEditability.NONE);
-
-		return addSlotInternal(slotType);
-	}
-
-	ISlot addSlotInternal(ISlot slot) {
+		ISlot slot = new ISlot(toDeactivatedSlotType(slotType), this);
 
 		slots.add(slot);
 
@@ -115,5 +107,15 @@ class IReference extends IFrame {
 	String describeLocally() {
 
 		return FEntityDescriber.entityToString(this, referenceId);
+	}
+
+	private CSlot toDeactivatedSlotType(CSlot slotType) {
+
+		slotType = slotType.copy();
+
+		slotType.setActivation(CActivation.INACTIVE);
+		slotType.setEditability(CEditability.NONE);
+
+		return slotType;
 	}
 }

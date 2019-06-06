@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.*;
+
 /**
  * @author Colin Puleston
  */
@@ -84,6 +86,14 @@ class IDisjunction extends IFrame {
 	}
 
 	ISlot addSlotInternal(CSlot slotType) {
+
+		if (!IDisjunctsSlot.disjunctsSlotType(slotType)) {
+
+			throw new KAccessException(
+						"Cannot add non-disjuncts slot to "
+						+ IFrameCategory.DISJUNCTION + " category frame: "
+						+ "Attempting to add slot of type: " + slotType);
+		}
 
 		return disjunctsSlot;
 	}

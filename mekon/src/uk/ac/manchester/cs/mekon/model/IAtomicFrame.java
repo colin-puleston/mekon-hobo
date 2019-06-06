@@ -277,6 +277,11 @@ class IAtomicFrame extends IFrame {
 		return new Editor();
 	}
 
+	ISlot addSlotInternal(CSlot slotType) {
+
+		return addSlotInternal(new ISlot(slotType.copy(), this));
+	}
+
 	ISlot addSlotInternal(ISlot slot) {
 
 		slots.add(slot);

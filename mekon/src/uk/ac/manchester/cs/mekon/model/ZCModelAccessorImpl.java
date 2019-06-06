@@ -82,6 +82,6 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 
 	public ISlot addReferenceFrameMappingSlot(IFrame frame, CSlot slotType) {
 
-		return ((IReference)frame).addDeactivatedSlotForMapping(slotType);
+		return ((IReference)frame).addSlotInternal(slotType);
 	}
 }

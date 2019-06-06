@@ -38,11 +38,16 @@ class IDisjunctsSlot extends ISlot {
 	static private final String LABEL = "disjuncts";
 	static private final CIdentity IDENTITY = new CIdentity(IDENTIFIER, LABEL);
 
+	static boolean disjunctsSlotType(CSlot slotType) {
+
+		return slotType.getIdentity().equals(IDENTITY);
+	}
+
 	static private CSlot createType(IDisjunction disjunction) {
 
-		CFrame dType = disjunction.getType();
+		CFrame djType = disjunction.getType();
 
-		return new CSlot(dType, IDENTITY, dType, CCardinality.REPEATABLE_TYPES);
+		return new CSlot(djType, IDENTITY, djType, CCardinality.REPEATABLE_TYPES);
 	}
 
 	private IDisjunction disjunction;
