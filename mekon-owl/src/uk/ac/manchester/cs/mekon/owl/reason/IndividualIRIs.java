@@ -28,7 +28,6 @@ import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
-import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -37,27 +36,22 @@ class IndividualIRIs {
 
 	static private final String GENERATED_FRAGMENT_CONNECTOR = "-GEN-";
 
-	static IRI getInstanceRefIRIOrNull(NNode node) {
-
-		CIdentity refId = node.getInstanceRef();
-
-		return refId != null ? O_IRIExtractor.extractIRI(refId) : null;
-	}
-
 	private NNode rootNode;
 	private IRI rootIRI;
+	private InstanceRefIRIs instanceRefIRIs;
 
 	private int generatedCount = 0;
 
-	IndividualIRIs(NNode rootNode, IRI rootIRI) {
+	IndividualIRIs(NNode rootNode, IRI rootIRI, InstanceRefIRIs instanceRefIRIs) {
 
 		this.rootNode = rootNode;
 		this.rootIRI = rootIRI;
+		this.instanceRefIRIs = instanceRefIRIs;
 	}
 
 	IRI getFor(NNode node) {
 
-		IRI refIRI = getInstanceRefIRIOrNull(node);
+		IRI refIRI = instanceRefIRIs.getOrNull(node);
 
 		if (refIRI != null) {
 

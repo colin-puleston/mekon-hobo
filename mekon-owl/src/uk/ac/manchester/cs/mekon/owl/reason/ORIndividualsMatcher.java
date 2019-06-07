@@ -139,23 +139,19 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	private void initialise() {
 
-		storeRenderer = createRenderer();
-		dynamicRenderer = createRenderer();
-	}
+		ReasoningModel reasoningModel = getReasoningModel();
 
-	private IndividualsRenderer createRenderer() {
+		OStaticInstanceIRIs storedInstanceIRIs = getStoredInstanceIRIs();
+		InstanceRefIRIs instanceRefIRIs = new InstanceRefIRIs(storedInstanceIRIs);
 
-		return new IndividualsRenderer(getReasoningModel());
+		storeRenderer = new IndividualsRenderer(reasoningModel, instanceRefIRIs);
+		dynamicRenderer = new IndividualsRenderer(reasoningModel, instanceRefIRIs);
 	}
 
 	private IndividualNetwork createNetwork(NNode node) {
 
 		IRI rootIRI = dynamicRootIRIs.assign();
 
-		return new IndividualNetwork(
-						getModel(),
-						node,
-						rootIRI,
-						dynamicRenderer);
+		return new IndividualNetwork(getModel(), node, rootIRI, dynamicRenderer);
 	}
 }

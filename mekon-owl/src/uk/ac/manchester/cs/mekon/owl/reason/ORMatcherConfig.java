@@ -36,9 +36,7 @@ class ORMatcherConfig extends ORConfig {
 		return parentConfigNode.getChildOrNull(MATCHER_ROOT_ID) != null;
 	}
 
-	ORMatcherConfig(
-		ReasoningModel reasoningModel,
-		KConfigNode parentConfigNode) {
+	ORMatcherConfig(ReasoningModel reasoningModel, KConfigNode parentConfigNode) {
 
 		super(reasoningModel, parentConfigNode);
 	}

@@ -40,6 +40,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 	private OModel model;
 	private OWLDataFactory dataFactory;
+	private InstanceRefIRIs instanceRefIRIs;
 
 	private ArrayDeque<NNode> nodeStack = new ArrayDeque<NNode>();
 
@@ -57,7 +58,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 		OWLClassExpression render(OWLClassExpression type) {
 
-			IRI refIRI = IndividualIRIs.getInstanceRefIRIOrNull(node);
+			IRI refIRI = instanceRefIRIs.getOrNull(node);
 
 			if (refIRI != null) {
 
@@ -121,11 +122,12 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 		}
 	}
 
-	ExpressionRenderer(OModel model, ORSemantics semantics) {
+	ExpressionRenderer(OModel model, ORSemantics semantics, InstanceRefIRIs instanceRefIRIs) {
 
 		super(model, semantics);
 
 		this.model = model;
+		this.instanceRefIRIs = instanceRefIRIs;
 
 		dataFactory = model.getDataFactory();
 	}

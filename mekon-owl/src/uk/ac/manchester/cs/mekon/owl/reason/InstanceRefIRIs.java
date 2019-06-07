@@ -24,76 +24,48 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import java.util.*;
-
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
-import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
  */
-class ReasoningModel {
+class InstanceRefIRIs {
 
-	private OModel model;
-	private OModel sourceModel;
+	private OStaticInstanceIRIs instanceIRIs;
+	private boolean dynamicIRIs;
 
-	private ORSemantics semantics = new ORSemantics();
-	private OntologyEntityResolver ontologyEntities;
+	InstanceRefIRIs() {
 
-	ReasoningModel(OModel model) {
-
-		setModel(model);
-
-		sourceModel = model;
+		this(new OStaticInstanceIRIs(), true);
 	}
 
-	void setModel(OModel model) {
+	InstanceRefIRIs(OStaticInstanceIRIs storedInstanceIRIs) {
 
-		this.model = model;
-
-		ontologyEntities = new OntologyEntityResolver(model);
+		this(storedInstanceIRIs, false);
 	}
 
-	void setSemantics(ORSemantics semantics) {
+	IRI getOrNull(NNode node) {
 
-		this.semantics = semantics;
-	}
+		if (node.instanceReference()) {
 
-	void ensureLocalModel() {
+			CIdentity refId = node.getInstanceRef();
 
-		if (model == sourceModel) {
+			if (dynamicIRIs || instanceIRIs.assigned(refId)) {
 
-			setModel(copyModel());
+				return instanceIRIs.get(refId);
+			}
 		}
+
+		return null;
 	}
 
-	OModel getModel() {
+	private InstanceRefIRIs(OStaticInstanceIRIs instanceIRIs, boolean dynamicIRIs) {
 
-		return model;
-	}
-
-	ORSemantics getSemantics() {
-
-		return semantics;
-	}
-
-	boolean canResolveOntologyEntities(CFrame rootType) {
-
-		return ontologyEntities.canResolve(rootType);
-	}
-
-	void resolveOntologyEntities(NNode rootNode) {
-
-		ontologyEntities.resolve(rootNode);
-	}
-
-	private OModel copyModel() {
-
-		return new OModelCopier(model).create(true);
+		this.instanceIRIs = instanceIRIs;
+		this.dynamicIRIs = dynamicIRIs;
 	}
 }

@@ -300,6 +300,16 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	protected abstract boolean matchesInOWL(NNode query, NNode instance);
 
+	/**
+	 * Provides object for accessing URIs of stored instances.
+	 *
+	 * @return Object for accessing stored instance URIs
+	 */
+	protected OStaticInstanceIRIs getStoredInstanceIRIs() {
+
+		return instanceIRIs;
+	}
+
 	ReasoningModel getReasoningModel() {
 
 		return reasoningModel;
@@ -315,10 +325,7 @@ public abstract class ORMatcher extends NMatcher {
 		return false;
 	}
 
-	private ORMatcher(
-				OModel model,
-				boolean localModel,
-				KConfigNode parentConfigNode) {
+	private ORMatcher(OModel model, boolean localModel, KConfigNode parentConfigNode) {
 
 		reasoningModel = new ReasoningModel(model);
 

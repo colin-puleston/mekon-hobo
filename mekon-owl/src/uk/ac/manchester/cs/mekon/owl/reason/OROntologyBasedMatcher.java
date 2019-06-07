@@ -142,14 +142,17 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 		return true;
 	}
 
+	ConceptExpression createConceptExpression(NNode node) {
+
+		OStaticInstanceIRIs storedInstanceIRIs = getStoredInstanceIRIs();
+		InstanceRefIRIs instanceRefIRIs = new InstanceRefIRIs(storedInstanceIRIs);
+
+		return new ConceptExpression(getReasoningModel(), instanceRefIRIs, node);
+	}
+
 	private void checkInstancePersistence(KConfigNode parentConfigNode) {
 
 		new InstancePersistenceConfig(parentConfigNode).check(this);
-	}
-
-	private ConceptExpression createConceptExpression(NNode node) {
-
-		return new ConceptExpression(getReasoningModel(), node);
 	}
 
 	private List<IRI> purgeMatches(List<IRI> matches) {

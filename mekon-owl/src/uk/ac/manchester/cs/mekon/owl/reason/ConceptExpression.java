@@ -42,8 +42,16 @@ class ConceptExpression extends InstanceConstruct {
 
 	ConceptExpression(ReasoningModel reasoningModel, NNode node) {
 
+		this(reasoningModel, new InstanceRefIRIs(), node);
+	}
+
+	ConceptExpression(
+		ReasoningModel reasoningModel,
+		InstanceRefIRIs instanceRefIRIs,
+		NNode node) {
+
 		model = reasoningModel.getModel();
-		expression = nodeToExpression(node, reasoningModel.getSemantics());
+		expression = createRenderer(reasoningModel, instanceRefIRIs).render(node);
 	}
 
 	boolean subsumes(ConceptExpression testSubsumed) {
@@ -86,9 +94,13 @@ class ConceptExpression extends InstanceConstruct {
 		return model.getInferredSubs(expression, true);
 	}
 
-	private OWLClassExpression nodeToExpression(NNode node, ORSemantics semantics) {
+	private ExpressionRenderer createRenderer(
+									ReasoningModel reasoningModel,
+									InstanceRefIRIs instanceRefIRIs) {
 
-		return new ExpressionRenderer(model, semantics).render(node);
+		ORSemantics semantics = reasoningModel.getSemantics();
+
+		return new ExpressionRenderer(model, semantics, instanceRefIRIs);
 	}
 
 	private Set<OWLClass> inferEquivalentsOrDirectSupers() {

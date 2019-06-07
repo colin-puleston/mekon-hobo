@@ -48,11 +48,14 @@ public abstract class OInstanceIRIs {
 		return iri.toString().startsWith(getNamespace(namespaceExtn) + "#");
 	}
 
+	static int extractIndex(IRI iri) {
+
+		return Integer.parseInt(iri.toURI().getFragment());
+	}
+
 	static private String getNamespace(String extn) {
 
-		return extn.length() == 0
-				? BASE_NAMESPACE
-				: (BASE_NAMESPACE + ":" + extn);
+		return extn.length() == 0 ? BASE_NAMESPACE : (BASE_NAMESPACE + ":" + extn);
 	}
 
 	private String namespace;
@@ -99,11 +102,6 @@ public abstract class OInstanceIRIs {
 	IRI create(Integer index) {
 
 		return IRI.create(namespace + "#" + index.toString());
-	}
-
-	int extractIndex(IRI iri) {
-
-		return Integer.parseInt(iri.toURI().getFragment());
 	}
 
 	abstract String getNamespaceExtn();

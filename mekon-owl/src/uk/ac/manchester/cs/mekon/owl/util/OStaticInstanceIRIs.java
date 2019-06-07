@@ -55,6 +55,18 @@ public class OStaticInstanceIRIs extends OInstanceIRIs {
 	}
 
 	/**
+	 * Checks whether an instance currently has an assigned IRI.
+	 *
+	 * @param identity Identity of instance for which IRI is to be
+	 * checked for
+	 * @return True if instance currently has an assigned IRI
+	 */
+	public boolean assigned(CIdentity identity) {
+
+		return indexes.hasIndex(identity);
+	}
+
+	/**
 	 * Provides the unique IRI that will be used to represent the
 	 * specified instance. This will either be derived directly from
 	 * instance identifier, if that identifier has an appropriate
