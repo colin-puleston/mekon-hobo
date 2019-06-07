@@ -60,9 +60,7 @@ abstract class Renderer {
 
 		if (link.disjunctionLink()) {
 
-			throw new KAccessException(
-						"Cannot render disjunction-link: "
-						+ link);
+			throw new KAccessException("Cannot render disjunction-link: " + link);
 		}
 	}
 
