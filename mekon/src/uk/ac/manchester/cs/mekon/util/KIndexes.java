@@ -86,6 +86,21 @@ public abstract class KIndexes<E> {
 	}
 
 	/**
+	 * Either retrieves the currently assigned index for an element,
+	 * or if no index currently assigned for that element, assigns
+	 * it a unique index.
+	 *
+	 * @param element Element for which index is required
+	 * @return Resulting assigned index
+	 */
+	public int ensureIndex(E element) {
+
+		Integer index = elementsToIndexes.get(element);
+
+		return index != null ? index : assignIndex(element);
+	}
+
+	/**
 	 * Frees up a unique index that was previously assigned to a
 	 * specific element.
 	 *
