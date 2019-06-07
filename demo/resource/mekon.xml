@@ -49,13 +49,12 @@
 		-->
 		<OWLModel
 			owlFile="demo.owl"
-			reasonerFactory="uk.ac.manchester.cs.rekon.RekonReasonerFactory"
+			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			indirectNumericProperty="http://mekon/demo.owl#numericValue"
 			instanceOntology="http://mekon/demo-instances.owl">
 		</OWLModel>
 
 		<!-- Reasoner options...
-			reasonerFactory="uk.ac.manchester.cs.rekon.RekonReasonerFactory"
 			reasonerFactory="org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
@@ -93,9 +92,25 @@
 			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORConceptsMatcher"
 			reasoningType="DL"
 			loggingMode="DISABLED">
-			<Semantics defaultWorld="OPEN"/>
+			<Semantics
+				defaultWorld="OPEN">
+				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
+			</Semantics>
 			<InstancePersistence fileName="demo-owl-instances.owl"/>
 		</OWLMatcher>
+
+		<!--
+		<OWLMatcher
+			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORIndividualsMatcher"
+			reasoningType="DL"
+			loggingMode="DISABLED">
+			<Semantics
+				defaultWorld="OPEN">
+				<ExceptionProperty uri="http://mekon/demo.owl#job"/>
+			</Semantics>
+			<InstancePersistence fileName="demo-owl-instances.owl"/>
+		</OWLMatcher>
+		-->
 
 		<!--
 		<OWLMatcher
