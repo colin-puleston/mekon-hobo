@@ -61,6 +61,7 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public void initialise(IMatcherIndexes indexes) {
 	}
+
 	/**
 	 * Always returns true since a rebuild is always required on
 	 * startup.
