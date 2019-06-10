@@ -91,8 +91,6 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 	 */
 	protected void addToOWLStore(NNode instance, IRI iri) {
 
-		System.out.println("\nINSTANCE: " + iri);
-		System.out.println("DEFN: " + createConceptDefinition(instance));
 		addConceptDefinition(addConcept(iri), createConceptDefinition(instance));
 	}
 
