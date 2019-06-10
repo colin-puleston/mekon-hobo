@@ -41,8 +41,6 @@ import uk.ac.manchester.cs.mekon.demomodel.*;
  */
 public abstract class IMatcherTest extends DemoModelBasedTest {
 
-	static private final String INSTANCE_ID_NAMESPACE = "urn:mekon-test-instance#";
-
 	static private final CIdentity UNDERGRAD_TEACHING_JOB_ID = createInstanceId("UndergradTeaching");
 	static private final CIdentity POSTGRAD_TEACHING_JOB_ID = createInstanceId("PostgradTeaching");
 	static private final CIdentity ACADEMIC_RESEARCHING_JOB_ID = createInstanceId("AcademicResearching");
@@ -60,9 +58,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	static private final int MID_PAY_RATE = 15;
 	static private final int HIGH_PAY_RATE = 16;
 
-	static private CIdentity createInstanceId(String fragment) {
+	static private CIdentity createInstanceId(String name) {
 
-		return new CIdentity(INSTANCE_ID_NAMESPACE + fragment, fragment);
+		return new CIdentity(name + "Id", name);
 	}
 
 	private IMatcher matcher;
