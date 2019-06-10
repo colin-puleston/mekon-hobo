@@ -144,10 +144,7 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	ConceptExpression createConceptExpression(NNode node) {
 
-		OStaticInstanceIRIs storedInstanceIRIs = getStoredInstanceIRIs();
-		InstanceRefIRIs instanceRefIRIs = new InstanceRefIRIs(storedInstanceIRIs);
-
-		return new ConceptExpression(getReasoningModel(), instanceRefIRIs, node);
+		return new ConceptExpression(getReasoningModel(), node);
 	}
 
 	private void checkInstancePersistence(KConfigNode parentConfigNode) {

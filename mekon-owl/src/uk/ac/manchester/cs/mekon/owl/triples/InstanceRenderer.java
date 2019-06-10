@@ -33,6 +33,7 @@ import org.semanticweb.owlapi.rdf.rdfxml.parser.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -253,18 +254,11 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 	private URI checkExtractInstanceRef(NNode node) {
 
-		return node.instanceReference() ? toURIOrNull(node.getInstanceRef()) : null;
+		return node.instanceReference() ? toStoredURI(node.getInstanceRef()) : null;
 	}
 
-	private URI toURIOrNull(CIdentity identity) {
+	private URI toStoredURI(CIdentity identity) {
 
-		try {
-
-			return new URI(identity.getIdentifier());
-		}
-		catch (URISyntaxException e) {
-
-			return null;
-		}
+		return OStoredInstanceIRIs.toIRI(identity).toURI();
 	}
 }

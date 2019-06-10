@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.util;
 
+import java.io.*;
 import java.net.*;
 
 import org.semanticweb.owlapi.model.*;
@@ -41,17 +42,40 @@ public class O_IRIExtractor {
 	/**
 	 * Extracts an IRI from the specified <code>CIdentity</code>
 	 * object, assuming that the entity's identifier is a valid
-	 * absolute URI.
+	 * absolute IRI.
 	 *
 	 * @param identity Identity from which IRI is to be extracted
-	 * @return IRI extracted from model-entity, or null if entity's
-	 * identifier is not a valid absolute URI
+	 * @return IRI extracted from identity, or null if relevant
+	 * identifier is not a valid absolute IRI
 	 */
 	static public IRI extractIRI(CIdentity identity) {
 
+		return extractIRI(identity.getIdentifier());
+	}
+
+	/**
+	 * Extracts an IRI from the specified <code>CIdentity</code>
+	 * object or, if the entity's identifier is not a valid absolute
+	 * IRI, uses the identifier in combination with the supplied
+	 * default-namespace to provide a suitable IRI.
+	 *
+	 * @param identity Identity from which IRI is to be extracted
+	 * @return IRI extracted directly from identity, or created from
+	 * identity plus default-namespace
+	 */
+	static public IRI extractIRI(CIdentity identity, String defaultNamespace) {
+
+		String identifier = identity.getIdentifier();
+		IRI iri = extractIRI(identifier);
+
+		return iri != null ? iri : createIRI(defaultNamespace, identifier);
+	}
+
+	static private IRI extractIRI(String identifier) {
+
 		try {
 
-			URI uri = new URI(identity.getIdentifier());
+			URI uri = new URI(identifier);
 
 			if (uri.isAbsolute()) {
 
@@ -64,18 +88,20 @@ public class O_IRIExtractor {
 		return null;
 	}
 
-	/**
-	 * Extracts an IRI from the <code>CIdentity</code> associated
-	 * with the specified model-entity, assuming that the entity's
-	 * identifier is a valid IRI.
-	 *
-	 * @param identified Frames-based model-entity with associated
-	 * identity from which IRI is to be extracted
-	 * @return IRI extracted from model-entity, or null if entity's
-	 * identifier is not a valid IRI
-	 */
-	static public IRI extractIRI(CIdentified identified) {
+	static private IRI createIRI(String namespace, String identifier) {
 
-		return extractIRI(identified.getIdentity());
+		return IRI.create(namespace + "#" + toIRIFragment(identifier));
+	}
+
+	static private String toIRIFragment(String identifier) {
+
+		try {
+
+			return URLEncoder.encode(identifier, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e) {
+
+			throw new Error(e);
+		}
 	}
 }

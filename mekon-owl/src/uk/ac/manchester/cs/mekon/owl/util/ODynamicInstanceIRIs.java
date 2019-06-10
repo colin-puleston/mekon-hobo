@@ -37,9 +37,9 @@ import uk.ac.manchester.cs.mekon.util.*;
  *
  * @author Colin Puleston
  */
-public class ODynamicInstanceIRIs extends OInstanceIRIs {
+public class ODynamicInstanceIRIs {
 
-	static private final String NAMESPACE_EXTN = "dynamic";
+	static private final String NAMESPACE_EXTENSION = "dynamic-instances";
 
 	/**
 	 * Tests whether an IRI has the format that would be generated
@@ -50,7 +50,7 @@ public class ODynamicInstanceIRIs extends OInstanceIRIs {
 	 */
 	static public boolean dynamicInstance(IRI iri) {
 
-		return generatedIRI(iri, NAMESPACE_EXTN);
+		return O_IRINamespaces.entityInNamespace(iri, NAMESPACE_EXTENSION);
 	}
 
 	private KIndexes<CIdentity> indexes = new LocalIndexes();
@@ -76,13 +76,44 @@ public class ODynamicInstanceIRIs extends OInstanceIRIs {
 		indexes.freeIndex(extractIndex(iri));
 	}
 
-	String getNamespaceExtn() {
+	/**
+	 * Retrieves the identity of the instance to which an IRI is
+	 * currently assigned.
+	 *
+	 * @param iri IRI for which instance identity is required
+	 * @return Identity of relevant instance
+	 */
+	public CIdentity toIdentity(IRI iri) {
 
-		return NAMESPACE_EXTN;
+		return indexes.getElement(extractIndex(iri));
 	}
 
-	CIdentity toIdentity(int index) {
+	/**
+	 * Retrieves the identities of the instances to which the members
+	 * of a set of IRIs are currently assigned.
+	 *
+	 * @param iris IRIs for which instance identities are required
+	 * @return Identities of relevant instances
+	 */
+	public List<CIdentity> toIdentities(List<IRI> iris) {
 
-		return indexes.getElement(index);
+		List<CIdentity> identities = new ArrayList<CIdentity>();
+
+		for (IRI iri : iris) {
+
+			identities.add(toIdentity(iri));
+		}
+
+		return identities;
+	}
+
+	private IRI create(Integer index) {
+
+		return O_IRINamespaces.createEntityIRI(NAMESPACE_EXTENSION, index.toString());
+	}
+
+	private int extractIndex(IRI iri) {
+
+		return Integer.parseInt(iri.toURI().getFragment());
 	}
 }

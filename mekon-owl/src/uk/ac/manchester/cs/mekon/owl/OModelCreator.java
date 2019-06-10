@@ -45,7 +45,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 public abstract class OModelCreator {
 
 	static private final IRI DEFAULT_INSTANCES_IRI
-				= IRI.create(OInstanceIRIs.BASE_NAMESPACE);
+			= IRI.create(O_IRINamespaces.createNamespace("instances"));
 
 	static OWLOntologyManager createManager() {
 

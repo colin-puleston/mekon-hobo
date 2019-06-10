@@ -141,11 +141,8 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 		ReasoningModel reasoningModel = getReasoningModel();
 
-		OStaticInstanceIRIs storedInstanceIRIs = getStoredInstanceIRIs();
-		InstanceRefIRIs instanceRefIRIs = new InstanceRefIRIs(storedInstanceIRIs);
-
-		storeRenderer = new IndividualsRenderer(reasoningModel, instanceRefIRIs);
-		dynamicRenderer = new IndividualsRenderer(reasoningModel, instanceRefIRIs);
+		storeRenderer = new IndividualsRenderer(reasoningModel);
+		dynamicRenderer = new IndividualsRenderer(reasoningModel);
 	}
 
 	private IndividualNetwork createNetwork(NNode node) {

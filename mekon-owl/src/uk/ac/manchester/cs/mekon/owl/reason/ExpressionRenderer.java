@@ -32,6 +32,7 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -40,7 +41,6 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 	private OModel model;
 	private OWLDataFactory dataFactory;
-	private InstanceRefIRIs instanceRefIRIs;
 
 	private ArrayDeque<NNode> nodeStack = new ArrayDeque<NNode>();
 
@@ -58,7 +58,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 		OWLClassExpression render(OWLClassExpression type) {
 
-			IRI refIRI = instanceRefIRIs.getOrNull(node);
+			IRI refIRI = getInstanceIRIOrNull();
 
 			if (refIRI != null) {
 
@@ -102,6 +102,16 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 			conjuncts.add(construct);
 		}
 
+		private IRI getInstanceIRIOrNull() {
+
+			if (node.instanceReference()) {
+
+				return OStoredInstanceIRIs.toIRI(node.getInstanceRef());
+			}
+
+			return null;
+		}
+
 		private OWLClassExpression renderInstanceRef(IRI iri) {
 
 			OWLNamedIndividual ind = createIndividual(iri);
@@ -122,12 +132,11 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 		}
 	}
 
-	ExpressionRenderer(OModel model, ORSemantics semantics, InstanceRefIRIs instanceRefIRIs) {
+	ExpressionRenderer(OModel model, ORSemantics semantics) {
 
 		super(model, semantics);
 
 		this.model = model;
-		this.instanceRefIRIs = instanceRefIRIs;
 
 		dataFactory = model.getDataFactory();
 	}

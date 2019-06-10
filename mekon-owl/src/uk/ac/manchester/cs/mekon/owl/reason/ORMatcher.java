@@ -118,7 +118,7 @@ public abstract class ORMatcher extends NMatcher {
 	}
 
 	private ReasoningModel reasoningModel;
-	private OStaticInstanceIRIs instanceIRIs = new OStaticInstanceIRIs();
+	private OStoredInstanceIRIs instanceIRIs = new OStoredInstanceIRIs();
 
 	/**
 	 * Provides the model over which the matcher is operating.
@@ -134,8 +134,6 @@ public abstract class ORMatcher extends NMatcher {
 	 * {@inheritDoc}
 	 */
 	public void initialise(IMatcherIndexes indexes) {
-
-		instanceIRIs.resetIndexes(indexes);
 	}
 
 	/**
@@ -164,7 +162,7 @@ public abstract class ORMatcher extends NMatcher {
 
 		reasoningModel.resolveOntologyEntities(instance);
 
-		addToOWLStore(instance, instanceIRIs.get(identity));
+		addToOWLStore(instance, instanceIRIs.mapToIRI(identity));
 	}
 
 	/**
@@ -176,7 +174,7 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		removeFromOWLStore(instanceIRIs.get(identity));
+		removeFromOWLStore(instanceIRIs.mapToIRI(identity));
 	}
 
 	/**
@@ -193,7 +191,7 @@ public abstract class ORMatcher extends NMatcher {
 
 		List<IRI> iris = matchInOWLStore(query);
 
-		return IMatches.unranked(instanceIRIs.toIdentities(iris));
+		return IMatches.unranked(instanceIRIs.getMappedIds(iris));
 	}
 
 	/**
@@ -300,16 +298,6 @@ public abstract class ORMatcher extends NMatcher {
 	 */
 	protected abstract boolean matchesInOWL(NNode query, NNode instance);
 
-	/**
-	 * Provides object for accessing URIs of stored instances.
-	 *
-	 * @return Object for accessing stored instance URIs
-	 */
-	protected OStaticInstanceIRIs getStoredInstanceIRIs() {
-
-		return instanceIRIs;
-	}
-
 	ReasoningModel getReasoningModel() {
 
 		return reasoningModel;
@@ -317,7 +305,7 @@ public abstract class ORMatcher extends NMatcher {
 
 	boolean instanceIRI(IRI iri) {
 
-		return instanceIRIs.staticInstance(iri);
+		return instanceIRIs.mappedIRI(iri);
 	}
 
 	boolean requireLocalModel() {
