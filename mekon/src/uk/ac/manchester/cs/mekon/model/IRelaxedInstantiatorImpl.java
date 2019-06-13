@@ -86,7 +86,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 		return new IReference(type, referenceId, function, freeInstance);
 	}
 
-	public CFrame getNonModelFrameType(CIdentity identity) {
+	public CFrame createNonModelFrameType(CIdentity identity) {
 
 		return new CAtomicFrame(new CModel(), identity, false);
 	}

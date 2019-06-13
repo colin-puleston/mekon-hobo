@@ -52,8 +52,8 @@ public abstract class IRelaxedInstantiator {
 	}
 
 	/**
-	 * Creates a frame of category {@IFrameCategory.ATOMIC} that will
-	 * form part of a regenerated network.
+	 * Creates a frame of category {@link IFrameCategory#ATOMIC} that
+	 * will form part of a regenerated network.
 	 *
 	 * @param type Type of frame to create
 	 * @param function Function of frame to create
@@ -66,8 +66,8 @@ public abstract class IRelaxedInstantiator {
 								boolean freeInstance);
 
 	/**
-	 * Creates a frame of category {@IFrameCategory.REFERENCE} that will
-	 * form part of a regenerated network.
+	 * Creates a frame of category {@link IFrameCategory#REFERENCE} that
+	 * will form part of a regenerated network.
 	 *
 	 * @param type Type of frame to create
 	 * @param referenceId Identity of referenced instance
@@ -84,12 +84,13 @@ public abstract class IRelaxedInstantiator {
 	/**
 	 * Creates a {@link CFrame} object that is not part of the model,
 	 * specifically for use during the parsing of a serialised
-	 * instance that is non-longer valid with respect to the current
+	 * instance that is no longer valid with respect to the current
 	 * model.
 	 *
 	 * @param identity Identity of created non-model frame
+	 * @return Created model-level frame
 	 */
-	public abstract CFrame getNonModelFrameType(CIdentity identity);
+	public abstract CFrame createNonModelFrameType(CIdentity identity);
 
 	/**
 	 * Adds a slot to a regenerated network.

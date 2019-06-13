@@ -46,7 +46,7 @@ public class IRegenInstanceBuilder {
 	 *
 	 * @param slot Relevant slot for pruned slot-path, or slot to
 	 * which value attached for pruned value-path
-	 * @return Relevant value if pruned value-path, or null otherwise
+	 * @param value Relevant value if pruned value-path, or null otherwise
 	 * @param path String-based representation of pruned path
 	 */
 	public void addPrunedPath(ISlot slot, IValue value, List<String> path) {

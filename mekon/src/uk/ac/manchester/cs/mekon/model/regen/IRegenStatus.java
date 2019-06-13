@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model.regen;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * Represents the status of a specific {@link IFrame}/{@link ISlot}
  * network that has been regenerated from a serialized form.

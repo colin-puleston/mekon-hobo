@@ -143,7 +143,7 @@ public abstract class ZCModelAccessor {
 	/**
 	 * Adds a slot with an activation status of {@link
 	 * CActivation#INACTIVE} to a frame of category {@link
-	 * CFrameCategory#REFERENCE}. Enables the addition of slots that
+	 * IFrameCategory#REFERENCE}. Enables the addition of slots that
 	 * are required for mappings to fields on objects from an external
 	 * domain-specific Object Model (OM). The added slot will be
 	 * permenantly deactivated, since in general slots are not relevant

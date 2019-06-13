@@ -97,7 +97,8 @@ public abstract class ZIRegenAccessor {
 	 *
 	 * @param slot Relevant slot if slot-path, or slot to which value
 	 * attached if value-path
-	 * @return Relevant value if value-path, or null otherwise
+	 * @param value Relevant value if value-path, or null otherwise
+	 * @param path String-based representation of path
 	 * @return Created path representation
 	 */
 	public abstract IRegenPath createRegenPath(ISlot slot, IValue value, List<String> path);

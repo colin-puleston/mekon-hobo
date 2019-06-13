@@ -39,10 +39,10 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  * represented via {@link IFrame}/{@link ISlot} networks.
  * <p>
  * If any updates have occured to the model since an instance was
- * serialised that prevent it from being reassembled in its orignial
- * form, the instance will be partially assembled as far as the
- * updates allow, with data being collected to inform the client of
- * any pruning that has occurred (see {@link #getInstanceRegenCreator}).
+ * serialised which prevent the instance from being reassembled in
+ * its orignial form, the instance will be partially assembled as
+ * far as the updates allow, and provided together with information
+ * as to the pruning that was required.
  *
  * @author Colin Puleston
  */
@@ -786,7 +786,7 @@ public class IInstanceParser extends ISerialiser {
 
 				if (frame == null) {
 
-					frame = instantiator.getNonModelFrameType(id);
+					frame = instantiator.createNonModelFrameType(id);
 
 					invalidFrameTypes.add(frame);
 				}

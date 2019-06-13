@@ -172,6 +172,7 @@ public abstract class KList<V> {
 	 * specified element-type, filtering out any elements not of the
 	 * required type.
 	 *
+	 * @param <E> Generic version of elementType
 	 * @param elementType Required element type
 	 * @return Ordered elements of required type
 	 */
@@ -205,6 +206,7 @@ public abstract class KList<V> {
 	 * specified element-type, filtering out any elements not of the
 	 * required type.
 	 *
+	 * @param <E> Generic version of elementType
 	 * @param elementType Required element type
 	 * @return Elements of required type
 	 */
