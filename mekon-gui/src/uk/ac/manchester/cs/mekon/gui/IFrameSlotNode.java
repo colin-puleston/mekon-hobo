@@ -60,7 +60,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 		void performCrossLinkAction() {
 
-			tree.getCrossLinks().endLinking(value);
+			tree.getCrossLinks().checkCreateLink(value);
 		}
 	}
 

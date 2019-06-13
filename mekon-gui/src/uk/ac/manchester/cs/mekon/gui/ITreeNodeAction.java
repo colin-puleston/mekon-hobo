@@ -53,7 +53,5 @@ abstract class ITreeNodeAction extends GNodeAction {
 	abstract void performDefaultAction();
 
 	void performCrossLinkAction() {
-
-		crossLinks.deactivate();
 	}
 }

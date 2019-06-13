@@ -157,6 +157,18 @@ abstract class ISlotNode extends INode {
 		slot.addListener(new DisplayUpdater());
 	}
 
+	boolean checkAddValue(IValue value) {
+
+		if (slot.getValueType().validValue(value)) {
+
+			addValue(value);
+
+			return true;
+		}
+
+		return false;
+	}
+
 	void addValue(IValue value) {
 
 		tree.addValue(this, value);
