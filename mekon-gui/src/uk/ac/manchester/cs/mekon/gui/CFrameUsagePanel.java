@@ -69,11 +69,11 @@ class CFrameUsagePanel extends GVerticalPanel {
 		}
 	}
 
-	private class SubFrameUsageTree extends UsageTree {
+	private class UsageAsSubFrameTree extends UsageTree {
 
 		static private final long serialVersionUID = -1;
 
-		SubFrameUsageTree(CFrame rootFrame) {
+		UsageAsSubFrameTree(CFrame rootFrame) {
 
 			super(rootFrame);
 		}
@@ -84,11 +84,11 @@ class CFrameUsagePanel extends GVerticalPanel {
 		}
 	}
 
-	private class SlotValueTypeUsageTree extends UsageTree {
+	private class UsageAsSlotValueTypeTree extends UsageTree {
 
 		static private final long serialVersionUID = -1;
 
-		SlotValueTypeUsageTree(CFrame rootFrame) {
+		UsageAsSlotValueTypeTree(CFrame rootFrame) {
 
 			super(rootFrame);
 		}
@@ -99,11 +99,11 @@ class CFrameUsagePanel extends GVerticalPanel {
 		}
 	}
 
-	private class SlotValuesUsageTree extends UsageTree {
+	private class UsageAsSlotValueTree extends UsageTree {
 
 		static private final long serialVersionUID = -1;
 
-		SlotValuesUsageTree(CFrame rootFrame) {
+		UsageAsSlotValueTree(CFrame rootFrame) {
 
 			super(rootFrame);
 		}
@@ -121,37 +121,37 @@ class CFrameUsagePanel extends GVerticalPanel {
 		this.frame = frame;
 		this.reselectionListener = reselectionListener;
 
-		addSubFrameUsage();
-		addSlotValueTypeUsage(frame);
-		addSlotValueTypeUsage(frame.getType());
-		addSlotValuesUsage(frame);
-		addSlotValuesUsage(frame.getType());
+		addUsageAsSubFrame();
+		addUsageAsSlotValueType(frame);
+		addUsageAsSlotValueType(frame.getType());
+		addUsageAsSlotValue(frame);
+		addUsageAsSlotValue(frame.getType());
 	}
 
-	private void addSubFrameUsage() {
+	private void addUsageAsSubFrame() {
 
 		for (CFrame sup : frame.getSupers()) {
 
 			if (!sup.isRoot()) {
 
-				new SubFrameUsageTree(sup);
+				new UsageAsSubFrameTree(sup);
 			}
 		}
 	}
 
-	private void addSlotValueTypeUsage(CValue<?> usedValue) {
+	private void addUsageAsSlotValueType(CValue<?> usedValue) {
 
 		for (CSlot slot : usedValue.getReferencingSlots()) {
 
-			new SlotValueTypeUsageTree(slot.getContainer());
+			new UsageAsSlotValueTypeTree(slot.getContainer());
 		}
 	}
 
-	private void addSlotValuesUsage(CValue<?> usedValue) {
+	private void addUsageAsSlotValue(CValue<?> usedValue) {
 
 		for (CFrame frame : usedValue.getSlotValueReferencingFrames()) {
 
-			new SlotValuesUsageTree(frame);
+			new UsageAsSlotValueTree(frame);
 		}
 	}
 
