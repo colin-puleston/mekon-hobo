@@ -182,7 +182,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 	 * Defaults to {@link OBAxiomPurgePolicy#RETAIN_ALL} if method is
 	 * never invoked.
 	 *
-	 * @param value Required value of attribute
+	 * @param axiomPurgePolicy Required axiom-purge policy
 	 */
 	public void setAxiomPurgePolicy(OBAxiomPurgePolicy axiomPurgePolicy) {
 
