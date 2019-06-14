@@ -36,7 +36,7 @@ class ITreeCrossLinks {
 
 	private ITree tree;
 
-	private Mode inactive = new Inactive();
+	private Mode inactive = new Mode();
 	private Mode mode = inactive;
 
 	private class ExitKeyListener extends KeyAdapter {
@@ -45,34 +45,44 @@ class ITreeCrossLinks {
 
 			if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
 
-				inactive.start();
+				inactive.enterMode();
 			}
 		}
 	}
 
-	private abstract class Mode {
+	private class Mode {
 
-		void start() {
+		void enterMode() {
 
 			updateDisplay(getBackgroundColour());
 
 			mode = this;
 		}
 
-		abstract Color getBackgroundColour();
+		boolean active() {
 
-		boolean showForActiveMode(INode node) {
+			return false;
+		}
 
-			throw new Error("Method should never be invoked!");
+		boolean linking() {
+
+			return false;
+		}
+
+		boolean showLinkable(INode node) {
+
+			return false;
+		}
+
+		boolean showLinked(INode node) {
+
+			return false;
 		}
 
 		void checkCreateLink(IFrame selectedValue) {
 
 			throw new Error("Method should never be invoked!");
 		}
-	}
-
-	private class Inactive extends Mode {
 
 		Color getBackgroundColour() {
 
@@ -82,22 +92,49 @@ class ITreeCrossLinks {
 
 	private abstract class Active extends Mode {
 
-		void checkStart() {
+		void checkActivate() {
 
 			if (anyApplicableNodes()) {
 
-				start();
+				enterMode();
 			}
+		}
+
+		boolean active() {
+
+			return true;
+		}
+
+		boolean showForActiveMode(INode node) {
+
+			if (applicableNode(node)) {
+
+				return true;
+			}
+
+			return node.collapsed() && anyApplicableDescendants(node);
 		}
 
 		boolean applicableNode(INode node) {
 
-			return node instanceof IFrameNode && applicableNode((IFrameNode)node);
+			if (node instanceof IFrameNode) {
+
+				IFrameNode frameNode = (IFrameNode)node;
+
+				return applicableValue(frameNode.getValue());
+			}
+
+			return false;
 		}
 
-		abstract boolean applicableNode(IFrameNode node);
+		abstract boolean applicableValue(IFrame value);
 
-		boolean anyApplicableDescendants(INode current) {
+		private boolean anyApplicableNodes() {
+
+			return anyApplicableDescendants(getRootINode());
+		}
+
+		private boolean anyApplicableDescendants(INode current) {
 
 			for (INode child : current.getIChildren()) {
 
@@ -108,11 +145,6 @@ class ITreeCrossLinks {
 			}
 
 			return false;
-		}
-
-		private boolean anyApplicableNodes() {
-
-			return anyApplicableDescendants(getRootINode());
 		}
 	}
 
@@ -130,24 +162,33 @@ class ITreeCrossLinks {
 			return ITree.CROSS_LINKING_BACKGROUND_CLR;
 		}
 
-		boolean showForActiveMode(INode node) {
+		boolean linking() {
 
-			return applicableNode(node);
+			return true;
+		}
+
+		boolean showLinkable(INode node) {
+
+			return showForActiveMode(node);
 		}
 
 		void checkCreateLink(IFrame selectedValue) {
 
-			if (slotNode.checkAddValue(selectedValue)) {
+			if (!currentSlotValue(selectedValue)
+				&& slotNode.checkAddValue(selectedValue)) {
 
-				inactive.start();
+				inactive.enterMode();
 			}
 		}
 
-		boolean applicableNode(IFrameNode node) {
-
-			IFrame value = node.getValue();
+		boolean applicableValue(IFrame value) {
 
 			return linkableType(value) && !linkingSlotValue(value);
+		}
+
+		private boolean currentSlotValue(IFrame value) {
+
+			return slotNode.getISlot().getValues().contains(value);
 		}
 
 		private boolean linkableType(IFrame value) {
@@ -163,21 +204,11 @@ class ITreeCrossLinks {
 
 	private class ShowingLinked extends Active {
 
-		private IFrame linkedFrame;
+		private IFrame linkingValue;
 
-		ShowingLinked(IFrame linkedFrame) {
+		ShowingLinked(IFrameNode frameNode) {
 
-			this.linkedFrame = linkedFrame;
-		}
-
-		boolean showForActiveMode(INode node) {
-
-			if (applicableNode(node)) {
-
-				return true;
-			}
-
-			return node.collapsed() && anyApplicableDescendants(node);
+			linkingValue = frameNode.getValue();
 		}
 
 		Color getBackgroundColour() {
@@ -185,9 +216,14 @@ class ITreeCrossLinks {
 			return ITree.CROSS_LINKS_SHOW_BACKGROUND_CLR;
 		}
 
-		boolean applicableNode(IFrameNode node) {
+		boolean showLinked(INode node) {
 
-			return node.getValue() == linkedFrame;
+			return showForActiveMode(node);
+		}
+
+		boolean applicableValue(IFrame value) {
+
+			return value == linkingValue;
 		}
 	}
 
@@ -200,12 +236,12 @@ class ITreeCrossLinks {
 
 	void checkStartLinking(IFrameSlotNode slotNode) {
 
-		new Linking(slotNode).checkStart();
+		new Linking(slotNode).checkActivate();
 	}
 
 	void checkStartShowingLinked(IFrameNode frameNode) {
 
-		new ShowingLinked(frameNode.getValue()).checkStart();
+		new ShowingLinked(frameNode).checkActivate();
 	}
 
 	void checkCreateLink(IFrame selectedValue) {
@@ -215,27 +251,22 @@ class ITreeCrossLinks {
 
 	boolean active() {
 
-		return mode instanceof Active;
+		return mode.active();
 	}
 
 	boolean linking() {
 
-		return mode instanceof Linking;
-	}
-
-	boolean showingLinked() {
-
-		return mode instanceof ShowingLinked;
+		return mode.linking();
 	}
 
 	boolean showLinkable(INode node) {
 
-		return linking() && mode.showForActiveMode(node);
+		return mode.showLinkable(node);
 	}
 
 	boolean showLinked(INode node) {
 
-		return showingLinked() && mode.showForActiveMode(node);
+		return mode.showLinked(node);
 	}
 
 	private void updateDisplay(Color background) {
