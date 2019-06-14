@@ -29,6 +29,10 @@ import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 
 /**
+ * Wrapper round {@link IInstanceParser} for use by the MEKON remote
+ * access mechanisms. This is an abstract class with client and server
+ * specific extensions.
+ *
  * @author Colin Puleston
  */
 public abstract class RInstanceParser {
@@ -36,12 +40,25 @@ public abstract class RInstanceParser {
 	private IInstanceParser assertionParser;
 	private IInstanceParser queryParser;
 
+	/**
+	 * Constructor
+	 *
+	 * @param model Relevant model
+	 */
 	public RInstanceParser(CModel model) {
 
 		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
 		queryParser = new IInstanceParser(model, IFrameFunction.QUERY);
 	}
 
+	/**
+	 * Parses serialised frame/slot network.
+	 *
+	 * @param input Input to parsing process
+	 * @param query True if input represents query, false if input
+	 * represents assertion
+	 * @return Root-frame of resulting network
+	 */
 	public IFrame parse(IInstanceParseInput input, boolean query) {
 
 		IRegenInstance output = getParser(query).parse(input);
@@ -51,6 +68,15 @@ public abstract class RInstanceParser {
 		return output.getRootFrame();
 	}
 
+	/**
+	 * Parses only the type of the root-frame of the serialised frame/slot
+	 * network.
+	 *
+	 * @param input Input to parsing process
+	 * @param query True if input represents query, false if input
+	 * represents assertion
+	 * @return Resulting root-frame type
+	 */
 	public CFrame parseRootType(IInstanceParseInput input, boolean query) {
 
 		IRegenType output = getParser(query).parseRootType(input);
@@ -60,6 +86,13 @@ public abstract class RInstanceParser {
 		return output.getRootType();
 	}
 
+	/**
+	 * Creates exception of appropriate type for either client-side
+	 * or server-side, to be thrown when parsing problem is detected.
+	 *
+	 * @param message Error message
+	 * @return Resulting exception
+	 */
 	protected abstract RuntimeException createException(String message);
 
 	private IInstanceParser getParser(boolean query) {
@@ -72,12 +105,15 @@ public abstract class RInstanceParser {
 		switch (output.getStatus()) {
 
 			case FULLY_INVALID:
+
 				throw createException(
 							"Invalid root-frame type in instance serialization: "
 							+ output.getRootTypeId());
 
 			case PARTIALLY_VALID:
+
 				reportInvalidInstanceComponents(output);
+
 				throw createException(
 							"Invalid components in instance serialization "
 							+ "(See console for details)");

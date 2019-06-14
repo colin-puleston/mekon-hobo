@@ -25,18 +25,34 @@
 package uk.ac.manchester.cs.mekon.remote.client;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
 
 /**
+ * Wrapper round {@link IInstanceParser} used by the client-side
+ * of the MEKON remote access mechanisms.
+ *
  * @author Colin Puleston
  */
 public class RClientInstanceParser extends RInstanceParser {
 
+	/**
+	 * Constructor
+	 *
+	 * @param model Relevant model
+	 */
 	public RClientInstanceParser(CModel model) {
 
 		super(model);
 	}
 
+	/**
+	 * Creates exception of type {@link RServerAccessException},
+	 * to be thrown when parsing problem is detected on client-side.
+	 *
+	 * @param message Error message
+	 * @return Resulting exception
+	 */
 	protected RuntimeException createException(String message) {
 
 		return new RServerAccessException(message);

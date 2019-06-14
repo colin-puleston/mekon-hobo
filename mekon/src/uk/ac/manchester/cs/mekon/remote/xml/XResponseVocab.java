@@ -25,6 +25,9 @@
 package uk.ac.manchester.cs.mekon.remote.xml;
 
 /**
+ * Response vocabulary used by the XML-based serialisation for
+ * the MEKON remote access mechanisms.
+ *
  * @author Colin Puleston
  */
 public interface XResponseVocab {
