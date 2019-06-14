@@ -1,0 +1,3 @@
+cd ..
+mkjavadoc
+cd javadoc
