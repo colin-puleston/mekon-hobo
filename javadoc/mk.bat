@@ -1,3 +1,3 @@
 cd ..
-mkjavadoc
+call mkjavadoc
 cd javadoc
