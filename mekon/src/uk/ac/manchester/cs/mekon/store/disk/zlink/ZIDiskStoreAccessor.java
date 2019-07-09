@@ -68,13 +68,12 @@ public abstract class ZIDiskStoreAccessor {
 	}
 
 	/**
-	 * Provides the instance-store builder for the model associated
-	 * with the specified builder.
+	 * Provides the instance-store builder for the specified model.
 	 *
-	 * @param builder Relevant builder
-	 * @return Instance-store builder for associated model
+	 * @param model Relevant model
+	 * @return Instance-store builder for model
 	 */
-	public abstract IDiskStoreBuilder getStoreBuilder(CBuilder builder);
+	public abstract IDiskStoreBuilder getStoreBuilder(CModel model);
 
 	/**
 	 * Provides the instance-store for the specified model.

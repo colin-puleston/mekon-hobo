@@ -27,8 +27,6 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
 
@@ -37,18 +35,18 @@ import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
  */
 class ZIDiskStoreAccessorImpl extends ZIDiskStoreAccessor {
 
-	private Map<CBuilder, IDiskStoreBuilder> storeBuilders
-					= new HashMap<CBuilder, IDiskStoreBuilder>();
+	private Map<CModel, IDiskStoreBuilder> storeBuilders
+					= new HashMap<CModel, IDiskStoreBuilder>();
 
-	public IDiskStoreBuilder getStoreBuilder(CBuilder builder) {
+	public IDiskStoreBuilder getStoreBuilder(CModel model) {
 
-		IDiskStoreBuilder storeBuilder = storeBuilders.get(builder);
+		IDiskStoreBuilder storeBuilder = storeBuilders.get(model);
 
 		if (storeBuilder == null) {
 
-			storeBuilder = createStoreBuilder(builder);
+			storeBuilder = new IDiskStoreBuilder(model);
 
-			storeBuilders.put(builder, storeBuilder);
+			storeBuilders.put(model, storeBuilder);
 		}
 
 		return storeBuilder;
@@ -67,15 +65,5 @@ class ZIDiskStoreAccessorImpl extends ZIDiskStoreAccessor {
 	public void checkStopStore(CModel model) {
 
 		StoreRegister.checkStop(model);
-	}
-
-	private IDiskStoreBuilder createStoreBuilder(CBuilder builder) {
-
-		return new IDiskStoreBuilder(getModel(builder));
-	}
-
-	private CModel getModel(CBuilder builder) {
-
-		return ZCModelAccessor.get().getModel(builder);
 	}
 }

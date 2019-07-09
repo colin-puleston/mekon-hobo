@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.manage;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
@@ -40,6 +41,7 @@ import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
  */
 public class IDiskStoreManager {
 
+	static private final ZCModelAccessor modelAccessor = ZCModelAccessor.get();
 	static private final ZIDiskStoreAccessor storeAccessor = ZIDiskStoreAccessor.get();
 
 	/**
@@ -51,7 +53,18 @@ public class IDiskStoreManager {
 	 */
 	static public IDiskStoreBuilder getBuilder(CBuilder builder) {
 
-		return storeAccessor.getStoreBuilder(builder);
+		return getBuilder(modelAccessor.getModel(builder));
+	}
+
+	/**
+	 * Provides the instance-store builder for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Instance-store builder for model
+	 */
+	static public IDiskStoreBuilder getBuilder(CModel model) {
+
+		return storeAccessor.getStoreBuilder(model);
 	}
 
 	/**
