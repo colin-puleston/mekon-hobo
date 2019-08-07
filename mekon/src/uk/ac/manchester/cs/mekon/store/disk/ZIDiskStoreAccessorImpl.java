@@ -64,6 +64,9 @@ class ZIDiskStoreAccessorImpl extends ZIDiskStoreAccessor {
 
 	public void checkStopStore(CModel model) {
 
-		StoreRegister.checkStop(model);
+		if (storeBuilders.remove(model) != null) {
+
+			StoreRegister.checkStop(model);
+		}
 	}
 }
