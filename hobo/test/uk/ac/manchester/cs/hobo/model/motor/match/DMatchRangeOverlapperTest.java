@@ -52,7 +52,7 @@ public class DMatchRangeOverlapperTest extends DMatcherCustomiserTest {
 			Arrays.asList(_10_15, _45_50));
 	}
 
-	DMatcherCustomiser<?> createCustomiser(DModel model, DCustomMatcher matcher) {
+	DMatcherCustomiser<?, ?> createCustomiser(DModel model, DCustomMatcher matcher) {
 
 		return new HoursPerWeekOverlapper(model);
 	}

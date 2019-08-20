@@ -36,7 +36,7 @@ public class DMatchAggregatorTest extends DMatcherCustomiserTest {
 		testMatchAndNonMatches(query, forty, zero, thirty, fifty);
 	}
 
-	DMatcherCustomiser<?> createCustomiser(DModel model, DCustomMatcher matcher) {
+	DMatcherCustomiser<?, ?> createCustomiser(DModel model, DCustomMatcher matcher) {
 
 		return new HoursPerWeekAggregator(model, matcher);
 	}

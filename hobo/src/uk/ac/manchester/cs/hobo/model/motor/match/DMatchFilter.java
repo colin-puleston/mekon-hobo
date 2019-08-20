@@ -41,14 +41,14 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public abstract class DMatchFilter<M extends DObject> {
 
-	private DMatcherCustomiser<M> customiser;
+	private DMatcherCustomiser<M, ?> customiser;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param customiser Relevant customiser
 	 */
-	public DMatchFilter(DMatcherCustomiser<M> customiser) {
+	public DMatchFilter(DMatcherCustomiser<M, ?> customiser) {
 
 		this.customiser = customiser;
 	}

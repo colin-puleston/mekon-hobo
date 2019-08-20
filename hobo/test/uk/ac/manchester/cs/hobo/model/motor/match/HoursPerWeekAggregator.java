@@ -11,11 +11,16 @@ import uk.ac.manchester.cs.hobo.demo.*;
  */
 class HoursPerWeekAggregator
 		extends
-			DMatchAggregator<Citizen, Job, Job, Integer> {
+			DMatchAggregator<Citizen, Citizen, Job, Job, Integer> {
 
 	private DModel model;
 
 	protected Class<Citizen> getMatchingClass() {
+
+		return Citizen.class;
+	}
+
+	protected Class<Citizen> getQueryClass() {
 
 		return Citizen.class;
 	}

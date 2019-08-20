@@ -38,12 +38,12 @@ import uk.ac.manchester.cs.hobo.model.*;
  *
  * @author Colin Puleston
  */
-public abstract class DMatcherCustomiser<M extends DObject> {
+public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 
 	private DModel model;
 	private IStore iStore = null;
 
-	private CFrame matchingType;
+	private CFrame queryType;
 
 	/**
 	 * Constructor.
@@ -54,27 +54,24 @@ public abstract class DMatcherCustomiser<M extends DObject> {
 
 		this.model = model;
 
-		matchingType = model.getFrame(getMatchingClass());
+		queryType = model.getFrame(getQueryClass());
 	}
 
 	/**
-	 * Checks whether the customiser can handle the specified instance
-	 * (which could be either an assertion or a query).
+	 * Checks whether the customiser can handle the specified query.
 	 *
-	 * @param instance Relevant instance
-	 * @return True if customiser can handle specified instance
+	 * @param instance Relevant query
+	 * @return True if customiser can handle specified query
 	 */
-	protected abstract boolean handles(M instance);
+	protected abstract boolean handlesQuery(Q query);
 
 	/**
-	 * Performs any required pre-processing of the specified instance
-	 * prior to storing (relevant only to assertions only) or being
-	 * used in a matching process (potentially relevant to both queries
-	 * and assertions).
+	 * Performs any required pre-processing of the specified query
+	 * prior to use in a matching process.
 	 *
-	 * @param instance Relevant instance
+	 * @param instance Relevant query
 	 */
-	protected abstract void preProcess(M instance);
+	protected abstract void preProcessQuery(Q query);
 
 	/**
 	 * Performs any required post-processing of the matches produced
@@ -85,7 +82,7 @@ public abstract class DMatcherCustomiser<M extends DObject> {
 	 * @param matches Raw match results
 	 * @return Proccessed version of match results
 	 */
-	protected abstract IMatches processMatches(M query, IMatches matches);
+	protected abstract IMatches processMatches(Q query, IMatches matches);
 
 	/**
 	 * Subjects any query/instance pairs for which the {@link
@@ -97,7 +94,7 @@ public abstract class DMatcherCustomiser<M extends DObject> {
 	 * pre-processing)
 	 * @return True if additional filtering is passed
 	 */
-	protected abstract boolean passesMatchesFilter(M query, M instance);
+	protected abstract boolean passesMatchesFilter(Q query, M instance);
 
 	/**
 	 * Provides the base-class that represents the relevant type of both
@@ -107,6 +104,14 @@ public abstract class DMatcherCustomiser<M extends DObject> {
 	 */
 	protected abstract Class<M> getMatchingClass();
 
+	/**
+	 * Provides the base-class that represents the relevant type of queries
+	 * in the OM, which is either identical to or an extension of the base
+	 * matching-class (see {@link #getMatchingClass}.
+	 *
+	 * @return Relevant class
+	 */
+	protected abstract Class<Q> getQueryClass();
 
 	/**
 	 * Retieves the specified instance fron the instance-store.
@@ -124,35 +129,40 @@ public abstract class DMatcherCustomiser<M extends DObject> {
 		iStore = IDiskStoreManager.getStore(model.getCModel());
 	}
 
-	boolean handles(IFrame instance) {
+	boolean handlesQuery(IFrame query) {
 
-		return hasMatchingType(instance) && handles(getMatchingObject(instance));
+		return hasQueryType(query) && handlesQuery(getQueryObject(query));
 	}
 
-	void preProcess(IFrame instance) {
+	void preProcessQuery(IFrame query) {
 
-		preProcess(getMatchingObject(instance));
+		preProcessQuery(getQueryObject(query));
 	}
 
 	IMatches processMatches(IFrame query, IMatches matches) {
 
-		return processMatches(getMatchingObject(query), matches);
+		return processMatches(getQueryObject(query), matches);
 	}
 
 	boolean passesMatchesFilter(IFrame query, IFrame instance) {
 
 		return passesMatchesFilter(
-					getMatchingObject(query),
+					getQueryObject(query),
 					getMatchingObject(instance));
 	}
 
-	private boolean hasMatchingType(IFrame instance) {
+	private boolean hasQueryType(IFrame query) {
 
-		return matchingType.subsumes(instance.getType());
+		return queryType.subsumes(query.getType());
 	}
 
 	private M getMatchingObject(IFrame instance) {
 
 		return model.getDObject(instance, getMatchingClass());
+	}
+
+	private Q getQueryObject(IFrame query) {
+
+		return model.getDObject(query, getQueryClass());
 	}
 }

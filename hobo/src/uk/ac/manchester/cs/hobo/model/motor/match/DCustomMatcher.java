@@ -65,7 +65,7 @@ public class DCustomMatcher implements IMatcher {
 	 *
 	 * @param customiser Customiser to add
 	 */
-	public void addCustomiser(DMatcherCustomiser<?> customiser) {
+	public void addCustomiser(DMatcherCustomiser<?, ?> customiser) {
 
 		customisers.add(customiser);
 	}
@@ -110,16 +110,15 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
-	 * Polls the customisers to perform all required pre-processing
-	 * on the specified instance, then invokes the corresponding
-	 * method on the the core-matcher to add the resulting instance.
+	 * Invokes the corresponding method the core-matcher to add
+	 * the specified instance.
 	 *
 	 * @param instance Instance to be added
 	 * @param identity Unique identity for instance
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
-		coreMatcher.add(preProcess(instance), identity);
+		coreMatcher.add(instance, identity);
 	}
 
 	/**
@@ -145,7 +144,7 @@ public class DCustomMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return processMatches(query, coreMatcher.match(preProcess(query)));
+		return processMatches(query, coreMatcher.match(preProcessQuery(query)));
 	}
 
 	/**
@@ -160,7 +159,7 @@ public class DCustomMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		if (coreMatcher.matches(preProcess(query), preProcess(instance))) {
+		if (coreMatcher.matches(preProcessQuery(query), instance)) {
 
 			return passesMatchesFilter(query, instance);
 		}
@@ -176,9 +175,9 @@ public class DCustomMatcher implements IMatcher {
 		coreMatcher.stop();
 	}
 
-	private IFrame preProcess(IFrame instance) {
+	private IFrame preProcessQuery(IFrame query) {
 
-		return customisers.preProcess(instance);
+		return customisers.preProcessQuery(query);
 	}
 
 	private IMatches processMatches(IFrame query, IMatches matches) {

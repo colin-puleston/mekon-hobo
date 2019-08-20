@@ -37,37 +37,37 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 class Customisers {
 
-	private List<DMatcherCustomiser<?>> customisers
-				= new ArrayList<DMatcherCustomiser<?>>();
+	private List<DMatcherCustomiser<?, ?>> customisers
+				= new ArrayList<DMatcherCustomiser<?, ?>>();
 
-	void add(DMatcherCustomiser<?> customiser) {
+	void add(DMatcherCustomiser<?, ?> customiser) {
 
 		customisers.add(customiser);
 	}
 
 	void initialisePostStoreBuild() {
 
-		for (DMatcherCustomiser<?> customiser : customisers) {
+		for (DMatcherCustomiser<?, ?> customiser : customisers) {
 
 			customiser.initialisePostStoreBuild();
 		}
 	}
 
-	IFrame preProcess(IFrame instance) {
+	IFrame preProcessQuery(IFrame query) {
 
-		instance = IFreeCopier.get().createFreeCopy(instance);
+		query = IFreeCopier.get().createFreeCopy(query);
 
-		for (DMatcherCustomiser<?> customiser : filterCustomisers(instance)) {
+		for (DMatcherCustomiser<?, ?> customiser : filterCustomisers(query)) {
 
-			customiser.preProcess(instance);
+			customiser.preProcessQuery(query);
 		}
 
-		return instance;
+		return query;
 	}
 
 	IMatches processMatches(IFrame query, IMatches matches) {
 
-		for (DMatcherCustomiser<?> customiser : filterCustomisers(query)) {
+		for (DMatcherCustomiser<?, ?> customiser : filterCustomisers(query)) {
 
 			matches = customiser.processMatches(query, matches);
 		}
@@ -77,7 +77,7 @@ class Customisers {
 
 	boolean passesMatchesFilter(IFrame query, IFrame instance) {
 
-		for (DMatcherCustomiser<?> customiser : filterCustomisers(query)) {
+		for (DMatcherCustomiser<?, ?> customiser : filterCustomisers(query)) {
 
 			if (!customiser.passesMatchesFilter(query, instance)) {
 
@@ -88,14 +88,14 @@ class Customisers {
 		return true;
 	}
 
-	private List<DMatcherCustomiser<?>> filterCustomisers(IFrame tester) {
+	private List<DMatcherCustomiser<?, ?>> filterCustomisers(IFrame query) {
 
-		List<DMatcherCustomiser<?>> filtered
-			= new ArrayList<DMatcherCustomiser<?>>();
+		List<DMatcherCustomiser<?, ?>> filtered
+			= new ArrayList<DMatcherCustomiser<?, ?>>();
 
-		for (DMatcherCustomiser<?> customiser : customisers) {
+		for (DMatcherCustomiser<?, ?> customiser : customisers) {
 
-			if (customiser.handles(tester)) {
+			if (customiser.handlesQuery(query)) {
 
 				filtered.add(customiser);
 			}

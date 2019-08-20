@@ -40,8 +40,9 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public abstract class DMatchRangeOverlapper
 						<M extends DObject,
+						Q extends M,
 						R extends Number>
-						extends DMatcherCustomiser<M> {
+						extends DMatcherCustomiser<M, Q> {
 
 	private class Filter extends DMatchFilter<M> {
 
@@ -54,7 +55,7 @@ public abstract class DMatchRangeOverlapper
 			return range != null && rangeOverlap(range);
 		}
 
-		Filter(M query) {
+		Filter(Q query) {
 
 			super(DMatchRangeOverlapper.this);
 
@@ -80,17 +81,17 @@ public abstract class DMatchRangeOverlapper
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean handles(M instance) {
+	protected boolean handlesQuery(Q query) {
 
-		return getMatchRangeOrNull(instance) != null;
+		return getMatchRangeOrNull(query) != null;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void preProcess(M instance) {
+	protected void preProcessQuery(Q query) {
 
-		DCell<DNumberRange<R>> cell = getRangeMatchCellOrNull(instance);
+		DCell<DNumberRange<R>> cell = getRangeMatchCellOrNull(query);
 
 		if (cell != null) {
 
@@ -101,7 +102,7 @@ public abstract class DMatchRangeOverlapper
 	/**
 	 * {@inheritDoc}
 	 */
-	protected IMatches processMatches(M query, IMatches matches) {
+	protected IMatches processMatches(Q query, IMatches matches) {
 
 		return new Filter(query).filter(matches);
 	}
@@ -109,7 +110,7 @@ public abstract class DMatchRangeOverlapper
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean passesMatchesFilter(M query, M instance) {
+	protected boolean passesMatchesFilter(Q query, M instance) {
 
 		return new Filter(query).pass(instance);
 	}

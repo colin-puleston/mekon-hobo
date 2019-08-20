@@ -8,9 +8,14 @@ import uk.ac.manchester.cs.hobo.demo.*;
  */
 class HoursPerWeekOverlapper
 		extends
-			DMatchRangeOverlapper<Citizen, Integer> {
+			DMatchRangeOverlapper<Citizen, Citizen, Integer> {
 
 	protected Class<Citizen> getMatchingClass() {
+
+		return Citizen.class;
+	}
+
+	protected Class<Citizen> getQueryClass() {
 
 		return Citizen.class;
 	}

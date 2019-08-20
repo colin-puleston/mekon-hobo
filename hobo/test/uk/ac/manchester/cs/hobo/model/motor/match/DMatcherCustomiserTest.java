@@ -185,7 +185,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 		}
 	}
 
-	abstract DMatcherCustomiser<?> createCustomiser(DModel model, DCustomMatcher matcher);
+	abstract DMatcherCustomiser<?, ?> createCustomiser(DModel model, DCustomMatcher matcher);
 
 	void testMatchAndNonMatches(
 			DObject query,

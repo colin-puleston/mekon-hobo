@@ -38,7 +38,7 @@ public class DMatchSectionInverterTest extends DMatcherCustomiserTest {
 			allGeneral);
 	}
 
-	DMatcherCustomiser<?> createCustomiser(DModel model, DCustomMatcher matcher) {
+	DMatcherCustomiser<?, ?> createCustomiser(DModel model, DCustomMatcher matcher) {
 
 		return new LocationInverter(model, matcher);
 	}

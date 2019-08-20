@@ -6,9 +6,14 @@ import uk.ac.manchester.cs.hobo.demo.*;
 /**
  * @author Colin Puleston
  */
-class LocationInverter extends DMatchSectionInverter<Citizen, Personal> {
+class LocationInverter extends DMatchSectionInverter<Citizen, Citizen, Personal> {
 
 	protected Class<Citizen> getMatchingClass() {
+
+		return Citizen.class;
+	}
+
+	protected Class<Citizen> getQueryClass() {
 
 		return Citizen.class;
 	}

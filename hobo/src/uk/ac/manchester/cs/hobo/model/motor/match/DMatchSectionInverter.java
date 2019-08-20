@@ -42,8 +42,9 @@ import uk.ac.manchester.cs.hobo.model.motor.match.*;
  */
 public abstract class DMatchSectionInverter
 							<M extends DObject,
+							Q extends M,
 							I extends DObject>
-							extends DMatcherCustomiser<M> {
+							extends DMatcherCustomiser<M, Q> {
 
 	private DCustomMatcher matcher;
 
@@ -63,7 +64,7 @@ public abstract class DMatchSectionInverter
 			return true;
 		}
 
-		Filter(M query) {
+		Filter(Q query) {
 
 			super(DMatchSectionInverter.this);
 
@@ -92,23 +93,23 @@ public abstract class DMatchSectionInverter
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean handles(M instance) {
+	protected boolean handlesQuery(Q query) {
 
-		return getInversionSectionOrNull(instance) != null;
+		return getInversionSectionOrNull(query) != null;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void preProcess(M instance) {
+	protected void preProcessQuery(Q query) {
 
-		getInversionSectionCell(instance).clear();
+		getInversionSectionCell(query).clear();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected IMatches processMatches(M query, IMatches matches) {
+	protected IMatches processMatches(Q query, IMatches matches) {
 
 		return new Filter(query).filter(matches);
 	}
@@ -116,7 +117,7 @@ public abstract class DMatchSectionInverter
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean passesMatchesFilter(M query, M instance) {
+	protected boolean passesMatchesFilter(Q query, M instance) {
 
 		throw new HAccessException("Method should never be invoked!");
 	}

@@ -42,10 +42,11 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public abstract class DMatchAggregator
 							<M extends DObject,
+							Q extends M,
 							T extends DObject,
 							D extends DObject,
 							N extends Number>
-							extends DMatcherCustomiser<M> {
+							extends DMatcherCustomiser<M, Q> {
 
 	private DCustomMatcher matcher;
 
@@ -124,7 +125,7 @@ public abstract class DMatchAggregator
 			return new InstanceTargets(instance).matches(queryTargets);
 		}
 
-		Filter(M query) {
+		Filter(Q query) {
 
 			super(DMatchAggregator.this);
 
@@ -148,17 +149,17 @@ public abstract class DMatchAggregator
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean handles(M instance) {
+	protected boolean handlesQuery(Q query) {
 
-		return !getActiveTargets(instance).isEmpty();
+		return !getActiveTargets(query).isEmpty();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void preProcess(M instance) {
+	protected void preProcessQuery(Q query) {
 
-		for (T target : getActiveTargets(instance)) {
+		for (T target : getActiveTargets(query)) {
 
 			getAggregatorCell(target).clear();
 		}
@@ -167,7 +168,7 @@ public abstract class DMatchAggregator
 	/**
 	 * {@inheritDoc}
 	 */
-	protected IMatches processMatches(M query, IMatches matches) {
+	protected IMatches processMatches(Q query, IMatches matches) {
 
 		return new Filter(query).filter(matches);
 	}
@@ -175,7 +176,7 @@ public abstract class DMatchAggregator
 	/**
 	 * {@inheritDoc}
 	 */
-	protected boolean passesMatchesFilter(M query, M instance) {
+	protected boolean passesMatchesFilter(Q query, M instance) {
 
 		return new Filter(query).pass(instance);
 	}
