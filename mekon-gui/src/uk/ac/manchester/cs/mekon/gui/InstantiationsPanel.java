@@ -58,6 +58,8 @@ class InstantiationsPanel extends JPanel {
 		InstantiateAssertionButton() {
 
 			super(ASSERTION_BUTTON_LABEL);
+
+			setEnabled(frameHasSlots());
 		}
 	}
 
@@ -74,11 +76,14 @@ class InstantiationsPanel extends JPanel {
 
 			super(QUERY_BUTTON_LABEL);
 
-			setEnabled(queriesEnabled());
+			setEnabled(queriesEnabled() && frameHasSlots());
 		}
 	}
 
-	InstantiationsPanel(CFramesTree modelTree, CFrame frame, InstanceStoreActions storeActions) {
+	InstantiationsPanel(
+		CFramesTree modelTree,
+		CFrame frame,
+		InstanceStoreActions storeActions) {
 
 		super(new BorderLayout());
 
@@ -126,6 +131,11 @@ class InstantiationsPanel extends JPanel {
 	private void instantiateQuery() {
 
 		new QueryFrame(modelTree, storeActions, frame.instantiateQuery()).display();
+	}
+
+	private boolean frameHasSlots() {
+
+		return !frame.instantiate().getSlots().isEmpty();
 	}
 
 	private boolean queriesEnabled() {
