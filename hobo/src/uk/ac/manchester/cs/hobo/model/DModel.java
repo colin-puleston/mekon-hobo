@@ -51,6 +51,18 @@ import uk.ac.manchester.cs.hobo.model.zlink.*;
  */
 public class DModel {
 
+	/**
+	 * Checks whether the specified OM class is a concrete class,
+	 * and can therefore be directly instantiated.
+	 *
+	 * @param dClass OM class to check
+	 * @return True if class can be directly instantiated
+	 */
+	static public boolean instantiable(Class<? extends DObject> dClass) {
+
+		return InstantiableDClassFinder.instantiable(dClass);
+	}
+
 	static {
 
 		ZDModelAccessor.set(new ZDModelAccessorImpl());

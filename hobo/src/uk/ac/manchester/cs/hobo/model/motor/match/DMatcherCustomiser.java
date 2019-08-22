@@ -117,11 +117,11 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 	 * Retieves the specified instance fron the instance-store.
 	 *
 	 * @param identity Identity of required instance
-	 * @return Retrieved instance
+	 * @return Retrieved instance, or null if instance not of required type
 	 */
-	protected M getStoredInstance(CIdentity identity) {
+	protected M getStoredInstanceOrNull(CIdentity identity) {
 
-		return getMatchingObject(iStore.get(identity).getRootFrame());
+		return getMatchingObjectOrNull(iStore.get(identity).getRootFrame());
 	}
 
 	void initialisePostStoreBuild() {
@@ -131,7 +131,14 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 
 	boolean handlesQuery(IFrame query) {
 
-		return hasQueryType(query) && handlesQuery(getQueryObject(query));
+		if (hasQueryType(query)) {
+
+			Q queryObj = getQueryObjectOrNull(query);
+
+			return queryObj != null && handlesQuery(queryObj);
+		}
+
+		return false;
 	}
 
 	void preProcessQuery(IFrame query) {
@@ -146,9 +153,9 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 
 	boolean passesMatchesFilter(IFrame query, IFrame instance) {
 
-		return passesMatchesFilter(
-					getQueryObject(query),
-					getMatchingObject(instance));
+		M instObj = getMatchingObjectOrNull(instance);
+
+		return instObj != null && passesMatchesFilter(getQueryObject(query), instObj);
 	}
 
 	private boolean hasQueryType(IFrame query) {
@@ -156,13 +163,30 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 		return queryType.subsumes(query.getType());
 	}
 
-	private M getMatchingObject(IFrame instance) {
+	private M getMatchingObjectOrNull(IFrame instance) {
 
-		return model.getDObject(instance, getMatchingClass());
+		return getDObjectOrNull(instance, getMatchingClass());
+	}
+
+	private Q getQueryObjectOrNull(IFrame query) {
+
+		return getDObjectOrNull(query, getQueryClass());
 	}
 
 	private Q getQueryObject(IFrame query) {
 
 		return model.getDObject(query, getQueryClass());
+	}
+
+	private <D extends DObject>D getDObjectOrNull(IFrame query, Class<D> dClass) {
+
+		DObject dObject = model.getDObject(query);
+
+		if (dClass.isAssignableFrom(dObject.getClass())) {
+
+			return dClass.cast(dObject);
+		}
+
+		return null;
 	}
 }
