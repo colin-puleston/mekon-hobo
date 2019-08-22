@@ -39,7 +39,8 @@ import uk.ac.manchester.cs.mekon.config.*;
  */
 public class OStoredInstanceIRIs {
 
-	static private final String NAMESPACE_EXTENSION = "generated-instances-uris";
+	static private final String DEFAULT_NAMESPACE
+			= O_IRINamespaces.createNamespace("generated-instance-uris");
 
 	/**
 	 * Provides a unique IRI to be used in representing the specified
@@ -53,7 +54,7 @@ public class OStoredInstanceIRIs {
 	 */
 	static public IRI toIRI(CIdentity identity) {
 
-		return O_IRIExtractor.extractIRI(identity, NAMESPACE_EXTENSION);
+		return O_IRIExtractor.extractIRI(identity, DEFAULT_NAMESPACE);
 	}
 
 	private Map<IRI, CIdentity> irisToIds = new HashMap<IRI, CIdentity>();

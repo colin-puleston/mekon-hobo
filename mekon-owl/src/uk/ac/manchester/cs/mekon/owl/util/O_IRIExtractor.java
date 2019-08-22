@@ -60,7 +60,7 @@ public class O_IRIExtractor {
 	 * default-namespace to provide a suitable IRI.
 	 *
 	 * @param identity Identity from which IRI is to be extracted
-	 * @param defaultNamespace Required default-namespace if required
+	 * @param defaultNamespace Default namespace for IRI, if required
 	 * @return IRI extracted directly from identity, or created from
 	 * identity plus default-namespace
 	 */
