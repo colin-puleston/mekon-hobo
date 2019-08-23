@@ -104,7 +104,9 @@ public abstract class DMatchFilter<M extends DObject> {
 
 		for (CIdentity id : all) {
 
-			if (pass(customiser.getStoredInstance(id))) {
+			M instance = customiser.getStoredInstanceOrNull(id);
+
+			if (instance != null && pass(instance)) {
 
 				filtered.add(id);
 			}
