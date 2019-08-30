@@ -44,13 +44,19 @@ public class OBEntityLabels {
 
 	/**
 	 * Adds an annotation-property that will provide entity
-	 * labels.
+	 * labels. If specified property is not present in the ontology
+	 * then does nothing.
 	 *
 	 * @param annotationPropIRI IRI of relevant annotation-property
 	 */
 	public void addAnnotationProperty(IRI annotationPropIRI) {
 
-		annotationReader.addProperty(model.getAnnotationProperty(annotationPropIRI));
+		OEntities<OWLAnnotationProperty> props = model.getAnnotationProperties();
+
+		if (props.contains(annotationPropIRI)) {
+
+			annotationReader.addProperty(props.get(annotationPropIRI));
+		}
 	}
 
 	/**

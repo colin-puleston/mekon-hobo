@@ -367,15 +367,14 @@ public class OModel {
 	}
 
 	/**
-	 * Retrieves the annotation-property with the specified IRI.
+	 * Provides all annotation-properties referenced within the set of
+	 * ontologies.
 	 *
-	 * @param iri IRI of required annotation-property
-	 * @return Required annotation-property
-	 * @throws KModelException if required annotation-property not found
+	 * @return All annotation-properties referenced within ontologies
 	 */
-	public OWLAnnotationProperty getAnnotationProperty(IRI iri) {
+	public OEntities<OWLAnnotationProperty> getAnnotationProperties() {
 
-		return annotationProperties.get(iri);
+		return annotationProperties;
 	}
 
 	/**
@@ -542,6 +541,28 @@ public class OModel {
 									boolean directOnly) {
 
 		return objectProperties.getInferredSubs(property, directOnly);
+	}
+
+	/**
+	 * Retrieves the inferred super-properties of the specified property.
+	 *
+	 * @param property Class whose super-properties are required
+	 * @return Required set of super-properties
+	 */
+	public Set<OWLDataProperty> getAssertedSupers(OWLDataProperty property) {
+
+		return dataProperties.getAssertedSupers(property);
+	}
+
+	/**
+	 * Retrieves the asserted sub-properties of the specified property.
+	 *
+	 * @param property Class whose sub-properties are required
+	 * @return Required set of sub-properties
+	 */
+	public Set<OWLDataProperty> getAssertedSubs(OWLDataProperty property) {
+
+		return dataProperties.getAssertedSubs(property);
 	}
 
 	/**

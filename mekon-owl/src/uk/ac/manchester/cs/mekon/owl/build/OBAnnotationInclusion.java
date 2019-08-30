@@ -48,7 +48,53 @@ public class OBAnnotationInclusion {
 	private String valueSeparators = null;
 	private Map<String, String> valueSubstitutions = new HashMap<String, String>();
 
-	private OAnnotationReader reader = null;
+	private EntityAnnotator entityAnnotator = null;
+
+	private abstract class EntityAnnotator {
+
+		abstract void checkAdd(OWLEntity owlEntity, CAnnotationsEditor editor);
+	}
+
+	private class ActiveEntityAnnotator extends EntityAnnotator {
+
+		private OAnnotationReader reader;
+
+		ActiveEntityAnnotator(OModel model, OWLAnnotationProperty property) {
+
+			reader = new OAnnotationReader(model, property);
+		}
+
+		void checkAdd(OWLEntity owlEntity, CAnnotationsEditor editor) {
+
+			for (String owlValue : reader.getAllValues(owlEntity)) {
+
+				for (String value : owlValueToList(owlValue)) {
+
+					editor.add(framesAnnotationId, resolveValue(value));
+				}
+			}
+		}
+
+		private List<String> owlValueToList(String owlValue) {
+
+			return valueSeparators != null
+					? Arrays.asList(owlValue.split(valueSeparators))
+					: Collections.singletonList(owlValue);
+		}
+
+		private String resolveValue(String owlValue) {
+
+			String substitute = valueSubstitutions.get(owlValue);
+
+			return substitute != null ? substitute : owlValue;
+		}
+	}
+
+	private class InertEntityAnnotator extends EntityAnnotator {
+
+		void checkAdd(OWLEntity owlEntity, CAnnotationsEditor editor) {
+		}
+	}
 
 	/**
 	 * Constructor.
@@ -94,51 +140,28 @@ public class OBAnnotationInclusion {
 
 	void checkAdd(OModel model, OWLEntity owlEntity, CAnnotationsEditor editor) {
 
-		for (String owlValue : getOWLValues(model, owlEntity)) {
-
-			for (String value : owlValueToList(owlValue)) {
-
-				editor.add(framesAnnotationId, resolveValue(value));
-			}
-		}
+		getEntityAnnotator(model).checkAdd(owlEntity, editor);
 	}
 
-	private String resolveValue(String owlValue) {
+	private EntityAnnotator getEntityAnnotator(OModel model) {
 
-		String substitute = valueSubstitutions.get(owlValue);
+		if (entityAnnotator == null) {
 
-		return substitute != null ? substitute : owlValue;
-	}
-
-	private List<String> getOWLValues(OModel model, OWLEntity owlEntity) {
-
-		return getAnnotationReader(model).getAllValues(owlEntity);
-	}
-
-	private List<String> owlValueToList(String owlValue) {
-
-		return valueSeparators != null
-				? Arrays.asList(owlValue.split(valueSeparators))
-				: Collections.singletonList(owlValue);
-	}
-
-	private OAnnotationReader getAnnotationReader(OModel model) {
-
-		if (reader == null) {
-
-			reader = createAnnotationReader(model);
+			entityAnnotator = createEntityAnnotator(model);
 		}
 
-		return reader;
+		return entityAnnotator;
 	}
 
-	private OAnnotationReader createAnnotationReader(OModel model) {
+	private EntityAnnotator createEntityAnnotator(OModel model) {
 
-		return new OAnnotationReader(model, getAnnotationProperty(model));
-	}
+		OEntities<OWLAnnotationProperty> props = model.getAnnotationProperties();
 
-	private OWLAnnotationProperty getAnnotationProperty(OModel model) {
+		if (props.contains(annotationPropertyIRI)) {
 
-		return model.getAnnotationProperty(annotationPropertyIRI);
+			return new ActiveEntityAnnotator(model, props.get(annotationPropertyIRI));
+		}
+
+		return new InertEntityAnnotator();
 	}
 }
