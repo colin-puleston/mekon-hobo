@@ -162,6 +162,7 @@
 			annotateFramesWithOWLDefinitions="TRUE"
 			annotateFramesWithMekonDefinitions="TRUE"
 			retainOnlyDeclarationAxioms="FALSE">
+
 			<ConceptInclusion>
 				<Group
 					rootURI="http://mekon/demo.owl#DataTypeConcept"
@@ -172,6 +173,7 @@
 					conceptHidingCandidates="ALL"
 					conceptHidingFilter="DEFINIED_SUB_TREES_ONLY"/>
 			</ConceptInclusion>
+
 			<PropertyInclusion>
 				<Group
 					rootURI="http://mekon/demo.owl#simpleObjectProperty"
@@ -184,6 +186,15 @@
 					rootURI="http://mekon/demo.owl#stringValue"
 					inclusion="NON_ROOTS_ONLY"/>
 			</PropertyInclusion>
+
+			<AnnotationInclusion>
+				<Include uri="http://mekon/demo.owl#dummyAnnotationProperty"/>
+			</AnnotationInclusion>
+
+			<LabelAnnotations>
+				<AnnotationProperty uri="http://www.w3.org/2000/01/rdf-schema#label"/>
+			</LabelAnnotations>
+
 		</OWLSanctionedModel>
 
 	</ModelSection>
