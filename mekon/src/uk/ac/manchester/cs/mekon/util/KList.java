@@ -392,6 +392,28 @@ public abstract class KList<V> {
 		}
 	}
 
+	/**
+	 * Re-orders the current set of values.
+	 *
+	 * @param reorderedValues List containing all current values
+	 * ordered as required
+	 * @throws KAccessException If provided list does not contain
+	 * all current values and only current values
+	 */
+	protected void reorderValues(List<V> reorderedValues) {
+
+		if (!currentValueSet(reorderedValues)) {
+
+			throw new KAccessException(
+						"Not a re-ordering of current value-set: "
+						+ " Current values: " + values
+						+ " Provided values: " + reorderedValues);
+		}
+
+		values.clear();
+		values.addAll(reorderedValues);
+	}
+
 	private boolean addNewValues(List<V> latestValues) {
 
 		boolean additions = false;
@@ -453,6 +475,11 @@ public abstract class KList<V> {
 		}
 
 		return -1;
+	}
+
+	private boolean currentValueSet(List<V> testValues) {
+
+		return new HashSet<V>(testValues).equals(valueFinder);
 	}
 
 	private void pollListenersForUpdate() {

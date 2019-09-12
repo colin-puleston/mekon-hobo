@@ -174,6 +174,11 @@ class CAtomicFrame extends CFrame {
 			return CAtomicFrame.this.positionSlot(slotId, index);
 		}
 
+		public void reorderSlots(List<CSlot> reorderedSlots) {
+
+			slots.reorder(reorderedSlots);
+		}
+
 		public boolean removeSlot(CIdentity slotId) {
 
 			return CAtomicFrame.this.removeSlot(slotId);

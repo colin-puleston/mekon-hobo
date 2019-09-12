@@ -96,6 +96,11 @@ public abstract class FSlots<S> extends FIdentifiables<S> {
 		clearValues();
 	}
 
+	void reorder(List<S> reorderedSlots) {
+
+		reorderValues(reorderedSlots);
+	}
+
 	abstract CSlot getCSlot(S slot);
 
 	private <C extends Collection<S>> C activesAsCollection(C actives) {

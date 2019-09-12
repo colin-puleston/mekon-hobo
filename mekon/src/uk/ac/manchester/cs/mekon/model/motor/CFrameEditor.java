@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model.motor;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -117,11 +119,21 @@ public interface CFrameEditor {
 	 * Moves an existing slot to the specified index within the current
 	 * set of slots.
 	 *
-	 * @param slotId Identity olot to be moved
+	 * @param slotId Identity of slot to be moved
 	 * @param index Required index within current slots
 	 * @return Previous index of moved slot
 	 */
 	public int positionSlot(CIdentity slotId, int index);
+
+	/**
+	 * Re-orders the current set of slots on the frame.
+	 *
+	 * @param reorderedSlots List containing all current slots ordered
+	 * as required
+	 * @throws KAccessException If provided list does not contain
+	 * all current slots and only current slots
+	 */
+	public void reorderSlots(List<CSlot> reorderedSlots);
 
 	/**
 	 * Removes specified slot from the frame, if possible. Does

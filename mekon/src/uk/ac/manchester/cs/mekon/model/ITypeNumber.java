@@ -51,6 +51,8 @@ abstract class ITypeNumber {
 
 	abstract String getDescription();
 
+	abstract String getDisplayLabel();
+
 	abstract Number asTypeNumber();
 
 	abstract Integer asInteger();
