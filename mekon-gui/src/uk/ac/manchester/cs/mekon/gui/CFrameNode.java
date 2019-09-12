@@ -81,13 +81,10 @@ class CFrameNode extends GNode {
 			boolean h1 = ((CFrameNode)first).frame.hidden();
 			boolean h2 = ((CFrameNode)second).frame.hidden();
 
-			if (h1 != h2) {
-
-				return h1 ? 1 : -1;
-			}
+			return h1 == h2 ? 0 : (h1 ? 1 : -1);
 		}
 
-		return 0;
+		return 1;
 	}
 
 	protected boolean autoExpand() {

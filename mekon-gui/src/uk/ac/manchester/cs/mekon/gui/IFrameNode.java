@@ -99,11 +99,6 @@ class IFrameNode extends IValueNode<IFrame> {
 		valueNodes.addInitialChildNodes();
 	}
 
-	protected boolean orderedChildren() {
-
-		return true;
-	}
-
 	IFrameNode(ITree tree, IFrame iFrame) {
 
 		super(tree, iFrame);
