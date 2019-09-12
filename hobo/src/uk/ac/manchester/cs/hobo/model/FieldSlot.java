@@ -48,6 +48,8 @@ class FieldSlot {
 	private CActivation activation = CActivation.ACTIVE;
 	private CEditability editability = null;
 
+	private boolean newTypeBinding = false;
+
 	private class AttributeResolver {
 
 		private DObject containerObj;
@@ -55,9 +57,11 @@ class FieldSlot {
 		AttributeResolver(DObject containerObj) {
 
 			this.containerObj = containerObj;
+
+			resolve();
 		}
 
-		void resolve() {
+		private void resolve() {
 
 			if (fieldName == null || editability == null) {
 
@@ -271,9 +275,14 @@ class FieldSlot {
 
 	ISlot resolveSlot(DObject containerObj) {
 
-		new AttributeResolver(containerObj).resolve();
+		new AttributeResolver(containerObj);
 
 		return resolveSlot(containerObj.getFrame());
+	}
+
+	boolean newTypeBinding() {
+
+		return newTypeBinding;
 	}
 
 	private ISlot resolveSlot(IFrame frame) {
@@ -305,7 +314,11 @@ class FieldSlot {
 
 	private CSlot resolveSlotType() {
 
-		return new SlotTypeResolver(model, getFrameType(), this).resolve();
+		SlotTypeResolver resolver = new SlotTypeResolver(model, getFrameType(), this);
+
+		newTypeBinding = resolver.newTypeBinding();
+
+		return resolver.getSlotType();
 	}
 
 	private CFrame getFrameType() {

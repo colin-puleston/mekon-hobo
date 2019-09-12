@@ -41,6 +41,8 @@ class DObjectBuilderImpl implements DObjectBuilder {
 	private DEditor dEditor = new DEditorImpl();
 
 	private List<DObjectInitialiser> initialisers = new ArrayList<DObjectInitialiser>();
+
+	private List<DField<?>> fields = new ArrayList<DField<?>>();
 	private Map<DField<?>, FieldSlot> fieldSlots = new HashMap<DField<?>, FieldSlot>();
 
 	private class DEditorImpl implements DEditor {
@@ -191,9 +193,19 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	void configureFields(DObject containerObj) {
 
-		for (DField<?> field : fieldSlots.keySet()) {
+		boolean newSlotTypeBindings = false;
 
-			field.setSlot(getFieldSlot(field).resolveSlot(containerObj));
+		for (DField<?> field : fields) {
+
+			FieldSlot fieldSlot = getFieldSlot(field);
+
+			field.setSlot(fieldSlot.resolveSlot(containerObj));
+			newSlotTypeBindings |= fieldSlot.newTypeBinding();
+		}
+
+		if (newSlotTypeBindings) {
+
+			reorderSlotTypes();
 		}
 	}
 
@@ -203,6 +215,40 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 			initialiser.initialise();
 		}
+	}
+
+	private void reorderSlotTypes() {
+
+		List<CSlot> oldOrder = frame.getType().getSlots().asList();
+		List<CSlot> newOrder = new ArrayList<CSlot>();
+
+		for (DField<?> field : fields) {
+
+			CIdentity slotId = field.getSlot().getType().getIdentity();
+			CSlot slotType = lookForSlotType(oldOrder, slotId);
+
+			if (slotType != null) {
+
+				oldOrder.remove(slotType);
+				newOrder.add(slotType);
+			}
+		}
+
+		newOrder.addAll(oldOrder);
+		getFrameTypeEditor().reorderSlots(newOrder);
+	}
+
+	private CSlot lookForSlotType(List<CSlot> types, CIdentity slotId) {
+
+		for (CSlot type : types) {
+
+			if (type.getIdentity().equals(slotId)) {
+
+				return type;
+			}
+		}
+
+		return null;
 	}
 
 	private <D extends DObject>DCell<DConcept<D>> createConceptCell(Class<D> valueClass) {
@@ -247,6 +293,7 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	private <F extends DField<?>>F addField(F field) {
 
+		fields.add(field);
 		fieldSlots.put(field, new FieldSlot(model, field));
 
 		return field;
@@ -274,5 +321,10 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		}
 
 		return model.getFrame(dClass);
+	}
+
+	private CFrameEditor getFrameTypeEditor() {
+
+		return model.getInitialiser().getCBuilder().getFrameEditor(frame.getType());
 	}
 }

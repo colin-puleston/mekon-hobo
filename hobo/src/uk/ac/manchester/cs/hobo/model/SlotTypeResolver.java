@@ -40,6 +40,9 @@ class SlotTypeResolver {
 	private CActivation activation;
 	private CEditability editability;
 
+	private CSlot slotType;
+	private boolean newTypeBinding = false;
+
 	SlotTypeResolver(DModel model, CFrame frameType, FieldSlot fieldSlot) {
 
 		this.model = model;
@@ -52,29 +55,32 @@ class SlotTypeResolver {
 		cardinality = field.getCardinality();
 		activation = fieldSlot.getActivation();
 		editability = fieldSlot.getEditability();
-	}
 
-	CSlot resolve() {
-
-		CSlot slotType = frameType.getSlots().getOrNull(slotId);
+		slotType = frameType.getSlots().getOrNull(slotId);
 
 		if (slotType == null) {
 
 			slotType = add();
 
-			setAsDirect(slotType, CSource.INTERNAL);
+			update(CSource.INTERNAL);
 		}
 		else {
 
 			if (slotType.getSource() == CSource.EXTERNAL) {
 
-				setAsDirect(slotType, CSource.DUAL);
+				update(CSource.DUAL);
 			}
 		}
+	}
 
-		absorbFieldAttributes(slotType);
+	CSlot getSlotType() {
 
 		return slotType;
+	}
+
+	boolean newTypeBinding() {
+
+		return newTypeBinding;
 	}
 
 	private CSlot add() {
@@ -82,9 +88,17 @@ class SlotTypeResolver {
 		return getFrameTypeEditor().addSlot(slotId, valueType, cardinality);
 	}
 
-	private void setAsDirect(CSlot slotType, CSource source) {
+	private void update(CSource source) {
 
-		CSlotEditor ed = getSlotTypeEditor(slotType);
+		setAsDirect(source);
+		absorbFieldAttributes();
+
+		newTypeBinding = true;
+	}
+
+	private void setAsDirect(CSource source) {
+
+		CSlotEditor ed = getSlotTypeEditor();
 
 		ed.setSource(source);
 
@@ -94,9 +108,9 @@ class SlotTypeResolver {
 		}
 	}
 
-	private void absorbFieldAttributes(CSlot slotType) {
+	private void absorbFieldAttributes() {
 
-		CSlotEditor ed = getSlotTypeEditor(slotType);
+		CSlotEditor ed = getSlotTypeEditor();
 
 		ed.absorbValueType(valueType);
 		ed.absorbCardinality(cardinality);
@@ -109,7 +123,7 @@ class SlotTypeResolver {
 		return getCBuilder().getFrameEditor(frameType);
 	}
 
-	private CSlotEditor getSlotTypeEditor(CSlot slotType) {
+	private CSlotEditor getSlotTypeEditor() {
 
 		return getCBuilder().getSlotEditor(slotType);
 	}
