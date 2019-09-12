@@ -121,4 +121,12 @@ public interface IValue extends FEntity {
 	 * @return Suitable structure-based hash-code value
 	 */
 	public int structuralHashCode();
+
+	/**
+	 * Provides a label for the value-entity, suitable for displaying to
+	 * an end-user.
+	 *
+	 * @return Display-label for value-entity
+	 */
+	public String getDisplayLabel();
 }

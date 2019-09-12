@@ -181,11 +181,6 @@ abstract class IDefiniteNumber<N extends Number> extends ITypeNumber {
 		return value.toString();
 	}
 
-	String getDisplayLabel() {
-
-		return getDescription();
-	}
-
 	Number asTypeNumber() {
 
 		return value;
