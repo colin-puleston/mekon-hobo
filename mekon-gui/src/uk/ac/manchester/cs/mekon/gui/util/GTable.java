@@ -126,13 +126,19 @@ public class GTable extends JTable {
 	public void addRow(Object... cells) {
 
 		model.addRow(cells);
-		resizeForNewRow();
+		resizeForRowsUpdate();
 	}
 
 	public void insertRow(int index, Object... cells) {
 
 		model.insertRow(index, cells);
-		resizeForNewRow();
+		resizeForRowsUpdate();
+	}
+
+	public void removeRow(int index) {
+
+		model.removeRow(index);
+		resizeForRowsUpdate();
 	}
 
 	private void setHeaderAttributes() {
@@ -203,13 +209,13 @@ public class GTable extends JTable {
 		getColumn(col).setPreferredWidth(getPreferredHeaderWidth(col));
 	}
 
-	private void resizeForNewRow() {
+	private void resizeForRowsUpdate() {
 
-		resizeColumnsForNewRow();
+		resizeColumnsForRowsUpdate();
 		setPreferredScrollableViewportSize(getPreferredSize());
 	}
 
-	private void resizeColumnsForNewRow() {
+	private void resizeColumnsForRowsUpdate() {
 
 		int row = getRowCount() - 1;
 
