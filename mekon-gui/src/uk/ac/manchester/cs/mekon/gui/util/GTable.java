@@ -129,6 +129,12 @@ public class GTable extends JTable {
 		resizeForNewRow();
 	}
 
+	public void insertRow(int index, Object... cells) {
+
+		model.insertRow(index, cells);
+		resizeForNewRow();
+	}
+
 	private void setHeaderAttributes() {
 
 		JTableHeader header = getTableHeader();
