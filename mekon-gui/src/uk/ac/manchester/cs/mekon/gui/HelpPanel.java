@@ -53,10 +53,9 @@ class HelpPanel extends JTabbedPane {
 	static final Icon iValueShape = getValueShape(EntityLevel.INSTANCE);
 	static final Icon hiddenMFrameShape = getHiddenFrameShape(EntityLevel.META);
 	static final Icon hiddenCFrameShape = getHiddenFrameShape(EntityLevel.CONCEPT);
-	static final Icon defaultSlotShape = getDefaultSlotShape();
-	static final Icon nonEditSlotShape = getNonEditSlotShape();
-	static final Icon queryOnlyEditSlotShape = getQueryOnlyEditSlotShape();
-	static final Icon fullEditSlotShape = getFullEditSlotShape();
+	static final Icon defaultEditAssertionsSlotShape = getDefaultSlotShape();
+	static final Icon nonEditAssertionsSlotShape = getNonEditSlotShape();
+	static final Icon fullEditAssertionsSlotShape = getFullEditSlotShape();
 	static final Icon inactiveSlotShape = getInactiveSlotShape();
 
 	static final Icon internalColour = getColour(CSource.INTERNAL);
@@ -76,22 +75,17 @@ class HelpPanel extends JTabbedPane {
 
 	static private Icon getDefaultSlotShape() {
 
-		return getIcons().defaultSlots.get(DEFAULT_SOURCE);
+		return getIcons().defaultEditAssertionsSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getNonEditSlotShape() {
 
-		return getIcons().nonEditSlots.get(DEFAULT_SOURCE);
-	}
-
-	static private Icon getQueryOnlyEditSlotShape() {
-
-		return getIcons().queryOnlyEditSlots.get(DEFAULT_SOURCE);
+		return getIcons().nonEditAssertionsSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getFullEditSlotShape() {
 
-		return getIcons().fullEditSlots.get(DEFAULT_SOURCE);
+		return getIcons().fullEditAssertionsSlots.get(DEFAULT_SOURCE);
 	}
 
 	static private Icon getInactiveSlotShape() {
@@ -171,7 +165,7 @@ class HelpPanel extends JTabbedPane {
 					"Instance",
 					"IFrame, INumber, IString");
 				addRow(
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					"Slot",
 					"Concept OR Instance (context dependent)",
 					"CSlot, ISlot");
@@ -283,16 +277,16 @@ class HelpPanel extends JTabbedPane {
 
 				checkAddRow(
 					cValueShape,
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					"CFrame has slot",
 					false);
 				checkAddRow(
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					mValueShape,
 					"CSlot has MFrame value-type",
 					false);
 				checkAddRow(
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					cValueShape,
 					"CSlot has CFrame / CNumber / CString value-type",
 					false);
@@ -351,24 +345,20 @@ class HelpPanel extends JTabbedPane {
 					"CFrame",
 					"Hidden");
 				addRow(
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					"CSlot",
-					"Default editable "
-					+ "(concrete-only on assertions + fully editable on queries)");
+					"Concrete-only editable on assertions"
+					+ " [query-editability not represented]");
 				addRow(
-					fullEditSlotShape,
+					fullEditAssertionsSlotShape,
 					"CSlot",
-					"Fully editable "
-					+ "(fully editable on assertions and queries)");
+					"Fully editable on assertions"
+					+ " [query-editability not represented]");
 				addRow(
-					queryOnlyEditSlotShape,
+					nonEditAssertionsSlotShape,
 					"CSlot",
-					"Query-only editable "
-					+ "(non-editable on assertions + fully editable on queries)");
-				addRow(
-					nonEditSlotShape,
-					"CSlot",
-					"Non-editable (non-editable on assertions or queries)");
+					"Non editable on assertions"
+					+ " [query-editability not represented]");
 				addRow(
 					inactiveSlotShape,
 					"CSlot",
@@ -402,14 +392,14 @@ class HelpPanel extends JTabbedPane {
 
 				addRow(
 					iValueShape,
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					"IFrame has slot");
 				addRow(
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					cValueShape,
 					"ISlot has CFrame value");
 				addRow(
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					iValueShape,
 					"ISlot has IFrame / INumber / IString value");
 			}
@@ -429,17 +419,17 @@ class HelpPanel extends JTabbedPane {
 					"Represents Attribute");
 
 				addRow(
-					defaultSlotShape,
+					defaultEditAssertionsSlotShape,
 					"ISlot",
 					"Concrete-only editable");
 				addRow(
-					fullEditSlotShape,
+					fullEditAssertionsSlotShape,
 					"ISlot",
-					"Fully-editable");
+					"Fully editable");
 				addRow(
-					nonEditSlotShape,
+					nonEditAssertionsSlotShape,
 					"ISlot",
-					"Non-editable");
+					"Non editable");
 			}
 		}
 

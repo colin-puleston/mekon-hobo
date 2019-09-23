@@ -47,10 +47,9 @@ class EntityIcons implements EntityIconConstants {
 												DATA_VALUE_CLR,
 												ENTITY_SIZE);
 
-	final SlotIcons defaultSlots = new DefaultSlotIcons();
-	final SlotIcons nonEditSlots = new NonEditSlotIcons();
-	final SlotIcons queryOnlyEditSlots = new QueryOnlyEditSlotIcons();
-	final SlotIcons fullEditSlots = new FullEditSlotIcons();
+	final SlotIcons defaultEditAssertionsSlots = new DefaultSlotIcons();
+	final SlotIcons nonEditAssertionsSlots = new NonEditSlotIcons();
+	final SlotIcons fullEditAssertionsSlots = new FullEditSlotIcons();
 	final SlotIcons inactiveSlots = new InactiveSlotIcons();
 
 	Icon get(IFrame frame) {
@@ -100,7 +99,7 @@ class EntityIcons implements EntityIconConstants {
 
 	Icon forCSlotValues() {
 
-		return defaultSlots.get(CSource.EXTERNAL);
+		return defaultEditAssertionsSlots.get(CSource.EXTERNAL);
 	}
 
 	private Icon get(CFrame frame, EntityLevel level) {
@@ -120,43 +119,34 @@ class EntityIcons implements EntityIconConstants {
 			return inactiveSlots;
 		}
 
-		switch (slot.getEditability()) {
-
-			case DEFAULT:
-				return defaultSlots;
-
-			case NONE:
-				return nonEditSlots;
-
-			case QUERY_ONLY:
-				return queryOnlyEditSlots;
-
-			case FULL:
-				return fullEditSlots;
-		}
-
-		throw new Error(
-					"Unrecognised CEditability value: "
-					+ slot.getEditability());
+		return getSlotIconsForCEditability(slot.getEditability());
 	}
 
 	private SlotIcons getISlotIcons(ISlot slot) {
 
-		switch (slot.getEditability()) {
+		return getSlotIconsForAssertionsEditability(slot.getEditability());
+	}
+
+	private SlotIcons getSlotIconsForCEditability(CEditability status) {
+
+		return getSlotIconsForAssertionsEditability(status.forAssertions());
+	}
+
+	private SlotIcons getSlotIconsForAssertionsEditability(IEditability status) {
+
+		switch (status) {
 
 			case NONE:
-				return nonEditSlots;
+				return nonEditAssertionsSlots;
 
 			case CONCRETE_ONLY:
-				return defaultSlots;
+				return defaultEditAssertionsSlots;
 
 			case FULL:
-				return fullEditSlots;
+				return fullEditAssertionsSlots;
 		}
 
-		throw new Error(
-					"Unrecognised IEditability value: "
-					+ slot.getEditability());
+		throw new Error("Unrecognised IEditability status: " + status);
 	}
 }
 
