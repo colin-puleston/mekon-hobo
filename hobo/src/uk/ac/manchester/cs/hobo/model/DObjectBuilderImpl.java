@@ -145,9 +145,19 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		getFieldSlot(field).setActivation(activation);
 	}
 
-	public void setEditability(DField<?> field, CEditability editability) {
+	public void setAllEditability(DField<?> field, IEditability editability) {
 
-		getFieldSlot(field).setEditability(editability);
+		getFieldSlot(field).setAllEditability(editability);
+	}
+
+	public void setAssertionsEditability(DField<?> field, IEditability editability) {
+
+		getFieldSlot(field).setAssertionsEditability(editability);
+	}
+
+	public void setQueriesEditability(DField<?> field, IEditability editability) {
+
+		getFieldSlot(field).setQueriesEditability(editability);
 	}
 
 	public void setUniqueTypes(DArray<?> array, boolean uniqueTypes) {

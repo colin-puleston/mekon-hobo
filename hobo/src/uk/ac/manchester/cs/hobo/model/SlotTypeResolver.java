@@ -38,7 +38,8 @@ class SlotTypeResolver {
 	private CValue<?> valueType;
 	private CCardinality cardinality;
 	private CActivation activation;
-	private CEditability editability;
+	private IEditability assertionsEditability;
+	private IEditability queriesEditability;
 
 	private CSlot slotType;
 	private boolean newTypeBinding = false;
@@ -54,7 +55,8 @@ class SlotTypeResolver {
 		valueType = field.getSlotValueType();
 		cardinality = field.getCardinality();
 		activation = fieldSlot.getActivation();
-		editability = fieldSlot.getEditability();
+		assertionsEditability = fieldSlot.getAssertionsEditability();
+		queriesEditability = fieldSlot.getQueriesEditability();
 
 		slotType = frameType.getSlots().getOrNull(slotId);
 
@@ -115,7 +117,8 @@ class SlotTypeResolver {
 		ed.absorbValueType(valueType);
 		ed.absorbCardinality(cardinality);
 		ed.absorbActivation(activation);
-		ed.absorbEditability(editability);
+		ed.absorbAssertionsEditability(assertionsEditability);
+		ed.absorbQueriesEditability(queriesEditability);
 	}
 
 	private CFrameEditor getFrameTypeEditor() {

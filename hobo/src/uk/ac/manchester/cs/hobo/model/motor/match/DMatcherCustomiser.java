@@ -60,7 +60,7 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 	/**
 	 * Checks whether the customiser can handle the specified query.
 	 *
-	 * @param instance Relevant query
+	 * @param query Relevant query
 	 * @return True if customiser can handle specified query
 	 */
 	protected abstract boolean handlesQuery(Q query);
@@ -69,7 +69,7 @@ public abstract class DMatcherCustomiser<M extends DObject, Q extends M> {
 	 * Performs any required pre-processing of the specified query
 	 * prior to use in a matching process.
 	 *
-	 * @param instance Relevant query
+	 * @param query Relevant query
 	 */
 	protected abstract void preProcessQuery(Q query);
 

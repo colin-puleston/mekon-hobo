@@ -46,7 +46,8 @@ class FieldSlot {
 	private String slotLabel = null;
 	private CIdentity slotId = null;
 	private CActivation activation = CActivation.ACTIVE;
-	private CEditability editability = null;
+	private IEditability assertionsEditability = null;
+	private IEditability queriesEditability = IEditability.FULL;
 
 	private boolean newTypeBinding = false;
 
@@ -63,7 +64,7 @@ class FieldSlot {
 
 		private void resolve() {
 
-			if (fieldName == null || editability == null) {
+			if (fieldName == null || assertionsEditability == null) {
 
 				checkClassVariables();
 				checkInitialised();
@@ -76,9 +77,9 @@ class FieldSlot {
 
 			slotId = new CIdentity(resolveSlotIdentity(), slotLabel);
 
-			if (editability == null) {
+			if (assertionsEditability == null) {
 
-				editability = CEditability.DEFAULT;
+				assertionsEditability = IEditability.CONCRETE_ONLY;
 			}
 		}
 
@@ -166,9 +167,9 @@ class FieldSlot {
 					fieldName = variable.getName();
 				}
 
-				if (editability == null) {
+				if (assertionsEditability == null) {
 
-					editability = getEditability(varIsViewer);
+					assertionsEditability = getAssertionsEditability(varIsViewer);
 				}
 
 				return true;
@@ -202,9 +203,9 @@ class FieldSlot {
 			}
 		}
 
-		private CEditability getEditability(boolean viewer) {
+		private IEditability getAssertionsEditability(boolean viewer) {
 
-			return viewer ? CEditability.QUERY_ONLY : CEditability.DEFAULT;
+			return viewer ? IEditability.NONE : IEditability.CONCRETE_ONLY;
 		}
 
 		private Class<? extends DObject> getDeclaringClass() {
@@ -248,9 +249,20 @@ class FieldSlot {
 		this.activation = activation;
 	}
 
-	void setEditability(CEditability editability) {
+	void setAllEditability(IEditability editability) {
 
-		this.editability = editability;
+		assertionsEditability = editability;
+		queriesEditability = editability;
+	}
+
+	void setAssertionsEditability(IEditability editability) {
+
+		assertionsEditability = editability;
+	}
+
+	void setQueriesEditability(IEditability editability) {
+
+		queriesEditability = editability;
 	}
 
 	DField<?> getField() {
@@ -268,9 +280,14 @@ class FieldSlot {
 		return activation;
 	}
 
-	CEditability getEditability() {
+	IEditability getAssertionsEditability() {
 
-		return editability;
+		return assertionsEditability;
+	}
+
+	IEditability getQueriesEditability() {
+
+		return queriesEditability;
 	}
 
 	ISlot resolveSlot(DObject containerObj) {

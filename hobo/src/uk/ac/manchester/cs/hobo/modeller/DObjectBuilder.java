@@ -61,10 +61,13 @@ import uk.ac.manchester.cs.hobo.model.*;
  * (via the appropriate methods) then they will be derived
  * automatically from the relevant Java variable, assuming that it
  * exists. The field-name will be taken directly from the variable
- * name, and the editability status will be derived from the variable
- * type ({@link DField} implies {@link CEditability#DEFAULT},
- * {@link DFieldViewer} implies {@link CEditability#QUERY_ONLY}).
- * The "slot-label" attribute (for which values can also be explicitly
+ * name, and the "assertions-editability" status will be derived from
+ * the variable type. For {@link DField}-represented variables the
+ * status will be the default {@link IEditability#CONCRETE_ONLY},
+ * and for {@link DFieldViewer}-represented variables the status will
+ * be {@link IEditability#NONE}. The "queries-editability" status
+ * will always will be the default {@link IEditability#FULL}. The
+ * "slot-label" attribute (for which values can also be explicitly
  * provided) will by default be set equal to the field-name.
  *
  * @author Colin Puleston
@@ -232,16 +235,46 @@ public interface DObjectBuilder {
 	public void setActivation(DField<?> field, CActivation activation);
 
 	/**
-	 * Enables the explicit specification of the "editability"
-	 * attribute for the slot associated with a particular field
-	 * that has been constructed by this fields-factory.
+	 * Enables the explicit specification of both the "assertions"
+	 * ant the "queries" components of the "editability" attribute
+	 * for the slot associated with a particular field that has been
+	 * constructed by this fields-factory.
 	 *
 	 * @param field Field whose attribute is to be set
-	 * @param editability Value for attribute
+	 * @param editability Value for both components of editability
+	 * attribute
 	 * @throws HAccessException if the field was not constructed
 	 * by this fields-factory
 	 */
-	public void setEditability(DField<?> field, CEditability editability);
+	public void setAllEditability(DField<?> field, IEditability editability);
+
+	/**
+	 * Enables the explicit specification of the "assertions"
+	 * component of the "editability" attribute for the slot
+	 * associated with a particular field that has been constructed
+	 * by this fields-factory.
+	 *
+	 * @param field Field whose attribute is to be set
+	 * @param editability Value for assertions component of editability
+	 * attribute
+	 * @throws HAccessException if the field was not constructed
+	 * by this fields-factory
+	 */
+	public void setAssertionsEditability(DField<?> field, IEditability editability);
+
+	/**
+	 * Enables the explicit specification of the "queries"
+	 * component of the "editability" attribute for the slot
+	 * associated with a particular field that has been constructed
+	 * by this fields-factory.
+	 *
+	 * @param field Field whose attribute is to be set
+	 * @param editability Value for queries component of editability
+	 * attribute
+	 * @throws HAccessException if the field was not constructed
+	 * by this fields-factory
+	 */
+	public void setQueriesEditability(DField<?> field, IEditability editability);
 
 	/**
 	 * Enables the explicit specification of the "unique-types"

@@ -121,7 +121,8 @@ public class DModelTest extends MekonTestUtils {
 			BS_SLOT_ID,
 			CCardinality.UNIQUE_TYPES,
 			getCFrame(model, FRAME_B_ID),
-			CEditability.DEFAULT);
+			IEditability.CONCRETE_ONLY,
+			IEditability.FULL);
 
 		testCSlotBuilt(
 			model,
@@ -129,7 +130,8 @@ public class DModelTest extends MekonTestUtils {
 			INT_SLOT_ID,
 			CCardinality.SINGLE_VALUE,
 			CNumber.INTEGER,
-			CEditability.QUERY_ONLY);
+			IEditability.NONE,
+			IEditability.FULL);
 
 		testCSlotBuilt(
 			model,
@@ -137,7 +139,8 @@ public class DModelTest extends MekonTestUtils {
 			B_SLOT_ID,
 			CCardinality.SINGLE_VALUE,
 			getCFrame(model, FRAME_B_ID),
-			CEditability.DEFAULT);
+			IEditability.CONCRETE_ONLY,
+			IEditability.FULL);
 	}
 
 	@Test
@@ -235,13 +238,15 @@ public class DModelTest extends MekonTestUtils {
 					String fieldName,
 					CCardinality expectedCardinality,
 					CValue<?> expectedValueType,
-					CEditability expectedEditability) {
+					IEditability expectedAssertionsEdit,
+					IEditability expectedQueriesEdit) {
 
 		CSlot slot = getCSlot(model, containerId, fieldName);
 
 		assertEquals(expectedCardinality, slot.getCardinality());
 		assertEquals(expectedValueType, slot.getValueType());
-		assertEquals(expectedEditability, slot.getEditability());
+		assertEquals(expectedAssertionsEdit, slot.getEditability().forAssertions());
+		assertEquals(expectedQueriesEdit, slot.getEditability().forQueries());
 	}
 
 	private void testLabels(
