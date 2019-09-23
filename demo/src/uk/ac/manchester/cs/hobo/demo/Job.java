@@ -124,7 +124,7 @@ public class Job extends CitizenshipObject {
 
 		if (makeHoursPerWeekAbstractEditable) {
 
-			builder.setEditability(hoursPerWeek, CEditability.FULL);
+			builder.setAssertionsEditability(hoursPerWeek, IEditability.FULL);
 		}
 	}
 

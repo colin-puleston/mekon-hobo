@@ -120,7 +120,7 @@ public abstract class ValueSummaries<SS extends DObject> extends SummarisationOb
 
 		dEditor = builder.getEditor();
 
-		builder.setEditability(getSummariesArray(), CEditability.NONE);
+		builder.setAllEditability(getSummariesArray(), IEditability.NONE);
 	}
 
 	public void initialise(DConcept<?> concept, DArray<SS> summarisedSources) {

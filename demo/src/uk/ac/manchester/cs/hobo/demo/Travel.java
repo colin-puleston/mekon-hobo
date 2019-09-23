@@ -86,7 +86,7 @@ public class Travel extends CitizenshipObject {
 
 		dEditor = builder.getEditor();
 
-		builder.setEditability(dEditor.getArray(trips), CEditability.NONE);
+		builder.setAllEditability(dEditor.getArray(trips), IEditability.NONE);
 
 		builder.addInitialiser(new Initialiser());
 	}

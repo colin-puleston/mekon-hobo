@@ -101,7 +101,7 @@ public abstract class ValueSummary extends SummarisationObject {
 
 		dEditor = builder.getEditor();
 
-		builder.setEditability(dEditor.getCell(property), CEditability.NONE);
+		builder.setAllEditability(dEditor.getCell(property), IEditability.NONE);
 	}
 
 	void setPopulator(Populator<?> populator) {

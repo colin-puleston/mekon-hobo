@@ -75,7 +75,7 @@ public class TripsOfType extends CitizenshipObject {
 
 		dEditor = builder.getEditor();
 
-		builder.setEditability(getTypeCell(), CEditability.NONE);
+		builder.setAllEditability(getTypeCell(), IEditability.NONE);
 	}
 
 	void initialise(DConcept<Trip> typeValue) {
