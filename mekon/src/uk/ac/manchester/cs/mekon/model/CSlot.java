@@ -80,9 +80,14 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 			activation = activation.getWeakest(otherActivation);
 		}
 
-		public void absorbEditability(CEditability otherEditability) {
+		public void absorbAssertionsEditability(IEditability assertionsEditability) {
 
-			editability = editability.getStrongest(otherEditability);
+			editability = editability.withStrongestAssertionsStatus(assertionsEditability);
+		}
+
+		public void absorbQueriesEditability(IEditability queriesEditability) {
+
+			editability = editability.withStrongestQueriesStatus(queriesEditability);
 		}
 	}
 
@@ -273,6 +278,21 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		}
 
 		return false;
+	}
+
+	boolean setAllEditability(IEditability status) {
+
+		return setEditability(editability.withAllStatus(status));
+	}
+
+	boolean setAssertionsEditability(IEditability status) {
+
+		return setEditability(editability.withAssertionsStatus(status));
+	}
+
+	boolean setQueriesEditability(IEditability status) {
+
+		return setEditability(editability.withQueriesStatus(status));
 	}
 
 	void remove() {

@@ -107,12 +107,12 @@ public class ISlotSpecsViaDisjunctionsTest {
 	public void test_slotAttributesUpdates() {
 
 		ta_slot2.setActivation(CActivation.INACTIVE);
-		ta_slot2.setEditability(CEditability.FULL);
+		ta_slot2.setAllEditability(IEditability.NONE);
 
 		updateContainerSlots();
 		testCardinality(SLOT2_ID, CCardinality.REPEATABLE_TYPES);
 		testSlotActivation(SLOT2_ID, CActivation.INACTIVE);
-		testSlotEditability(SLOT2_ID, CEditability.FULL);
+		testSlotEditability(SLOT2_ID, IEditability.NONE);
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {
@@ -158,9 +158,12 @@ public class ISlotSpecsViaDisjunctionsTest {
 		assertEquals(expected, testFindSlot(slotId).getType().getActivation());
 	}
 
-	private void testSlotEditability(CIdentity slotId, CEditability expected) {
+	private void testSlotEditability(CIdentity slotId, IEditability expectedAll) {
 
-		assertEquals(expected, testFindSlot(slotId).getType().getEditability());
+		CEditability cEd = testFindSlot(slotId).getType().getEditability();
+
+		assertEquals(expectedAll, cEd.forAssertions());
+		assertEquals(expectedAll, cEd.forQueries());
 	}
 
 	private ISlot testFindSlot(CIdentity slotId) {

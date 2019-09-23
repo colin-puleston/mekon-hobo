@@ -50,7 +50,7 @@ public class ISlotTest {
 
 		ISlot s = slots.create("s");
 
-		s.getType().setEditability(CEditability.NONE);
+		s.getType().setAllEditability(IEditability.NONE);
 		s.getValuesEditor();
 	}
 }

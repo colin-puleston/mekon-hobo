@@ -138,44 +138,58 @@ public class ISlotSpecsTest {
 	@Test
 	public void test_editabilityInitialisation() {
 
-		sa.setEditability(CEditability.DEFAULT);
 		initialiseContainerAndSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.DEFAULT);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.FULL);
 
-		sb.setEditability(CEditability.FULL);
-		initialiseContainerAndSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.FULL);
 
-		sc.setEditability(CEditability.NONE);
+		setSlotAllEditabilityFromDefault(sb, IEditability.NONE);
 		initialiseContainerAndSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.NONE);
+		testSlotEditability(IEditability.NONE, IEditability.NONE);
 
-		sd.setEditability(CEditability.QUERY_ONLY);
+		setSlotAllEditabilityFromDefault(sb, IEditability.CONCRETE_ONLY);
 		initialiseContainerAndSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.QUERY_ONLY);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.CONCRETE_ONLY);
 
-		sd.setEditability(CEditability.DEFAULT);
+		setSlotAllEditabilityFromDefault(sb, IEditability.FULL);
 		initialiseContainerAndSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.NONE);
+		testSlotEditability(IEditability.FULL, IEditability.FULL);
 
-		sc.setEditability(CEditability.DEFAULT);
-		initialiseContainerAndSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.FULL);
 
-		sb.setEditability(CEditability.DEFAULT);
+		setSlotAssertionsEditabilityFromDefault(sb, IEditability.NONE);
 		initialiseContainerAndSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.DEFAULT);
+		testSlotEditability(IEditability.NONE, IEditability.FULL);
+
+		setSlotAssertionsEditabilityFromDefault(sb, IEditability.CONCRETE_ONLY);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.FULL);
+
+		setSlotAssertionsEditabilityFromDefault(sb, IEditability.FULL);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(IEditability.FULL, IEditability.FULL);
+
+
+		setSlotQueriesEditabilityFromDefault(sb, IEditability.NONE);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.NONE);
+
+		setSlotQueriesEditabilityFromDefault(sb, IEditability.CONCRETE_ONLY);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.CONCRETE_ONLY);
+
+		setSlotQueriesEditabilityFromDefault(sb, IEditability.FULL);
+		initialiseContainerAndSlots(ta, tb, tc, td);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.FULL);
 	}
 
 	@Test
 	public void test_editabilityNonUpdating() {
 
 		updateContainerSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.DEFAULT);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.FULL);
 
-		sa.setEditability(CEditability.FULL);
+		sa.setAllEditability(IEditability.FULL);
 		updateContainerSlots(ta, tb, tc, td);
-		testSlotEditability(CEditability.DEFAULT);
+		testSlotEditability(IEditability.CONCRETE_ONLY, IEditability.FULL);
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {
@@ -192,6 +206,24 @@ public class ISlotSpecsTest {
 
 		initialiseContainer();
 		updateContainerSlots(containerTypes);
+	}
+
+	private void setSlotAllEditabilityFromDefault(CSlot slot, IEditability status) {
+
+		slot.setEditability(CEditability.DEFAULT);
+		slot.setAllEditability(status);
+	}
+
+	private void setSlotAssertionsEditabilityFromDefault(CSlot slot, IEditability status) {
+
+		slot.setEditability(CEditability.DEFAULT);
+		slot.setAssertionsEditability(status);
+	}
+
+	private void setSlotQueriesEditabilityFromDefault(CSlot slot, IEditability status) {
+
+		slot.setEditability(CEditability.DEFAULT);
+		slot.setQueriesEditability(status);
 	}
 
 	private void updateContainerSlots(CFrame... containerTypes) {
@@ -227,9 +259,14 @@ public class ISlotSpecsTest {
 		assertEquals(expected, testSingleSlot().getType().getActivation());
 	}
 
-	private void testSlotEditability(CEditability expected) {
+	private void testSlotEditability(
+					IEditability expectedAssertions,
+					IEditability expectedQueries) {
 
-		assertEquals(expected, testSingleSlot().getType().getEditability());
+		CEditability cEd = testSingleSlot().getType().getEditability();
+
+		assertEquals(expectedAssertions, cEd.forAssertions());
+		assertEquals(expectedQueries, cEd.forQueries());
 	}
 
 	private ISlot testSingleSlot() {

@@ -33,16 +33,6 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  */
 class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
-	static private final Map<IEditability, CEditability> editabilitiesIsToCs
-									= new HashMap<IEditability, CEditability>();
-
-	static {
-
-		editabilitiesIsToCs.put(IEditability.NONE, CEditability.NONE);
-		editabilitiesIsToCs.put(IEditability.CONCRETE_ONLY, CEditability.DEFAULT);
-		editabilitiesIsToCs.put(IEditability.FULL, CEditability.FULL);
-	}
-
 	static CSlot createFreeSlotType(
 					IFrame container,
 					CIdentity slotId,
@@ -55,7 +45,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 							valueType,
 							CCardinality.REPEATABLE_TYPES);
 
-		slotType.setEditability(CEditability.FULL);
+		slotType.setAssertionsEditability(IEditability.FULL);
 
 		return slotType;
 	}
@@ -104,7 +94,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
 		slotType.setSource(source);
 		slotType.setActivation(activation);
-		slotType.setEditability(editabilitiesIsToCs.get(editability));
+		slotType.setAssertionsEditability(editability);
 
 		return container.addSlotInternal(slotType);
 	}

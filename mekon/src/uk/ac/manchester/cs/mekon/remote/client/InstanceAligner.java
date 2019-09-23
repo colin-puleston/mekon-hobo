@@ -118,7 +118,7 @@ class InstanceAligner {
 			CValue<?> updValueType = updateSlotType.getValueType();
 			CCardinality updCardinality = updateSlotType.getCardinality();
 			CActivation updActivation = updateSlotType.getActivation();
-			CEditability updEditability = updateSlotType.getEditability();
+			IEditability updEditability = updateSlot.getEditability();
 
 			if (!masterSlotType.getValueType().equals(updValueType)) {
 
@@ -135,7 +135,7 @@ class InstanceAligner {
 				masterSlotEd.setActivation(updActivation);
 			}
 
-			if (!masterSlotType.getEditability().equals(updEditability)) {
+			if (!masterSlot.getEditability().equals(updEditability)) {
 
 				masterSlotEd.setEditability(updEditability);
 			}

@@ -80,9 +80,9 @@ public class ISlot implements IEntity {
 			return false;
 		}
 
-		public boolean setEditability(CEditability editability) {
+		public boolean setEditability(IEditability editability) {
 
-			if (type.setEditability(editability)) {
+			if (updateTypeEditability(editability)) {
 
 				pollListenersForUpdatedEditability();
 
@@ -220,6 +220,13 @@ public class ISlot implements IEntity {
 	ISlotValuesEditor getPrivilegedAccessValuesEditor() {
 
 		return new ISlotValuesEditor(values, true);
+	}
+
+	private boolean updateTypeEditability(IEditability editability) {
+
+		return querySlot()
+				? type.setQueriesEditability(editability)
+				: type.setAssertionsEditability(editability);
 	}
 
 	private boolean querySlot() {

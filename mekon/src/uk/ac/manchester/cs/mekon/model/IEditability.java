@@ -35,9 +35,10 @@ package uk.ac.manchester.cs.mekon.model;
 public enum IEditability {
 
 	/**
-	 * Slot is not editable by the client.
+	 * Slot can be given both concrete and abstract values by the
+	 * client.
 	 */
-	NONE,
+	FULL,
 
 	/**
 	 * Slot can only be given concrete values by the client.
@@ -45,10 +46,9 @@ public enum IEditability {
 	CONCRETE_ONLY,
 
 	/**
-	 * Slot can be given both concrete and abstract values by the
-	 * client.
+	 * Slot is not editable by the client.
 	 */
-	FULL;
+	NONE;
 
 	/**
 	 * Specifies whether slot is editable in any way by the client,
@@ -72,5 +72,65 @@ public enum IEditability {
 	public boolean abstractEditable() {
 
 		return this == FULL;
+	}
+
+	/**
+	 * Provides the "strongest" editability status between this and
+	 * the other specified value, for slots on assertion frames. The
+	 * strongest status is the one that will take precedence when two
+	 * competing statuses are provided for a single slot. Precedence
+	 * order for query slots, strongest first is:
+	 *
+	 * <ol>
+	 *   <li>{@link #NONE}
+	 *   <li>{@link #FULL}
+	 *   <li>{@link #CONCRETE_ONLY} (the default value, hence the
+	 *	 weakest)
+	 * </ol>
+	 *
+	 * @param other Editability status to test against this one
+	 * @return Strongest editability status for slots on assertion
+	 * frames
+	 */
+	public IEditability getAssertionsStrongest(IEditability other) {
+
+		return getStrongest(other, CONCRETE_ONLY);
+	}
+
+	/**
+	 * Provides the "strongest" editability status between this and
+	 * the other specified value, for slots on query frames. The
+	 * strongest status is the one that will take precedence when two
+	 * competing statuses are provided for a single slot. Precedence
+	 * order for query slots, strongest first is:
+	 *
+	 * <ol>
+	 *   <li>{@link #NONE}
+	 *   <li>{@link #CONCRETE_ONLY}
+	 *   <li>{@link #FULL} (the default value, hence the weakest)
+	 * </ol>
+	 *
+	 * @param other Editability status to test against this one
+	 * @return Strongest editability status for slots on query
+	 * frames
+	 */
+	public IEditability getQueriesStrongest(IEditability other) {
+
+		return getStrongest(other, FULL);
+	}
+
+	private IEditability getStrongest(IEditability other, IEditability defaultValue) {
+
+		if (other == defaultValue) {
+
+			return this;
+		}
+
+		if (this == defaultValue) {
+
+			return other;
+		}
+
+		return ordinal() > other.ordinal() ? this : other;
 	}
 }

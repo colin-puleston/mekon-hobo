@@ -75,17 +75,18 @@ public interface ISlotEditor {
 	public boolean setActivation(CActivation activation);
 
 	/**
-	 * Re-sets the editability of the slot, by resetting the
-	 * editability for the associated slot-type.
+	 * Re-sets the editability of the slot, by resetting the relevant
+	 * component ("assertions" or "queries") of the editability for the
+	 * associated slot-type.
 	 * <p>
 	 * NOTE: The associated slot-type will always be a local copy
 	 * of the instantiated slot-type, and hence any edits will only
-	 * affect the particular slot.
+	 * affect the particular instance of the slot.
 	 *
-	 * @param editability Editability to set
-	 * @return True if editability has been updated.
+	 * @param editability Assertions-editability to set
+	 * @return True if slot-type editability has been updated.
 	 */
-	public boolean setEditability(CEditability editability);
+	public boolean setEditability(IEditability editability);
 
 	/**
 	 * Updates the "fixed" value-list for the slot, so that it contains

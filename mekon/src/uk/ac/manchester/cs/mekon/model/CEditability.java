@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 /**
  * Represents the editability from the client perspective of the
  * instantiations of a particular {@link CSlot}. Covers instance
@@ -32,36 +34,75 @@ package uk.ac.manchester.cs.mekon.model;
  *
  * @author Colin Puleston
  */
-public enum CEditability {
+public class CEditability {
+
+	static private List<CEditability> editabilities = new ArrayList<CEditability>();
+
+	static private CEditability get(IEditability assertionsStatus, IEditability queriesStatus) {
+
+		for (CEditability ed : editabilities) {
+
+			if (ed.hasStatuses(assertionsStatus, queriesStatus)) {
+
+				return ed;
+			}
+		}
+
+		return new CEditability(assertionsStatus, queriesStatus);
+	}
 
 	/**
-	 * Slot has {@link IEditability#CONCRETE_ONLY} editability on
-	 * assertions, and {@link IEditability#FULL} editability on
-	 * queries, for normal slots (see {@link ISlot#getEditability}
-	 * for a discussion of the exceptional case of "disjuncts-slots").
+	 * Represents the default editability where, for normal slots,
+	 * the slot has {@link IEditability#CONCRETE_ONLY} editability
+	 * on assertions, and {@link IEditability#FULL} editability on
+	 * queries (see {@link ISlot#getEditability} for a discussion
+	 * of the exceptional case of "disjuncts-slots").
 	 */
-	DEFAULT(IEditability.CONCRETE_ONLY, IEditability.FULL),
-
-	/**
-	 * Slot has {@link IEditability#FULL} editability on both
-	 * assertions and queries.
-	 */
-	FULL(IEditability.FULL, IEditability.FULL),
-
-	/**
-	 * Slot has {@link IEditability#NONE} editability on both
-	 * assertions and queries.
-	 */
-	NONE(IEditability.NONE, IEditability.NONE),
-
-	/**
-	 * Slot has {@link IEditability#NONE} editability on assertions,
-	 * and {@link IEditability#FULL} editability on queries.
-	 */
-	QUERY_ONLY(IEditability.NONE, IEditability.FULL);
+	static public final CEditability DEFAULT = get(IEditability.CONCRETE_ONLY, IEditability.FULL);
 
 	private IEditability assertionsStatus;
 	private IEditability queriesStatus;
+
+	/**
+	 * Tests for equality between this and other specified object.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if other object is another <code>IEditability</code>
+	 * with identical "assertions" and "queries" statuses to this one
+	 */
+	public boolean equals(Object other) {
+
+		if (other == this) {
+
+			return true;
+		}
+
+		return other instanceof CEditability && equalsEditability((CEditability)other);
+	}
+
+	/**
+	 * Provides hash-code based on combination of "assertions" and
+	 * "queries" statuses.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return assertionsStatus.hashCode() + queriesStatus.hashCode();
+	}
+
+	/**
+	 * Provides string representaion combining of "assertions" and
+	 * "queries" statuses.
+	 *
+	 * @return String representation of this object
+	 */
+	public String toString() {
+
+		return CEditability.class.getSimpleName()
+				+ "(" + assertionsStatus + "(Assertions)"
+				+ "," + queriesStatus + "(Queries))";
+	}
 
 	/**
 	 * Provides the {@link IEditability} status for slots on
@@ -98,25 +139,63 @@ public enum CEditability {
 	}
 
 	/**
-	 * Provides the "strongest" editability status between this and
-	 * the other specified value. The strongest status is the one
-	 * that will take precedence when two competing statuses are
-	 * provided for a single slot. The enum values have been ordered
-	 * so that status strength is equivalent to ordinal value, with
-	 * {@link #DEFAULT} being the weakest, and {@link #QUERY_ONLY}
-	 * the strongest.
+	 * Derives the "strongest" editability status between this and
+	 * the other specified value. This will be a {@link CEditability}
+	 * whose assertions-status and queries-status will each be the
+	 * strongest for the two values (see {@link
+	 * IEditability#getAssertionsStrongest} and {@link
+	 * IEditability#getQueriesStrongest}).
 	 *
 	 * @param other Editability status to test against this one
 	 * @return Strongest editability status
 	 */
 	public CEditability getStrongest(CEditability other) {
 
-		return ordinal() > other.ordinal() ? this : other;
+		return get(
+				assertionsStatus.getAssertionsStrongest(other.assertionsStatus),
+				queriesStatus.getQueriesStrongest(other.queriesStatus));
+	}
+
+	CEditability withAllStatus(IEditability status) {
+
+		return get(status, status);
+	}
+
+	CEditability withAssertionsStatus(IEditability status) {
+
+		return get(status, queriesStatus);
+	}
+
+	CEditability withQueriesStatus(IEditability status) {
+
+		return get(assertionsStatus, status);
+	}
+
+	CEditability withStrongestAssertionsStatus(IEditability status) {
+
+		return get(assertionsStatus.getAssertionsStrongest(status), queriesStatus);
+	}
+
+	CEditability withStrongestQueriesStatus(IEditability status) {
+
+		return get(assertionsStatus, queriesStatus.getQueriesStrongest(status));
 	}
 
 	private CEditability(IEditability assertionsStatus, IEditability queriesStatus) {
 
 		this.assertionsStatus = assertionsStatus;
 		this.queriesStatus = queriesStatus;
+
+		editabilities.add(this);
+	}
+
+	private boolean equalsEditability(CEditability other) {
+
+		return hasStatuses(other.assertionsStatus, other.queriesStatus);
+	}
+
+	private boolean hasStatuses(IEditability assertions, IEditability queries) {
+
+		return assertionsStatus.equals(assertions) && queriesStatus.equals(queries);
 	}
 }

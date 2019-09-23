@@ -80,11 +80,21 @@ public interface CSlotEditor {
 	public void absorbActivation(CActivation otherActivation);
 
 	/**
-	 * Updates the editability of the slot to incorporate the specified
-	 * additional editability value. Resulting status determined via the
-	 * {@link CEditability#getStrongest} method.
+	 * Updates the "assertions" component of the editability of the slot
+	 * to incorporate the specified additional editability value. Resulting
+	 * status determined via the {@link IEditability#getStrongest} method.
 	 *
-	 * @param otherEditability Additional editability to incorporate
+	 * @param assertionsEditability Additional assertions-editability to
+	 * incorporate
 	 */
-	public void absorbEditability(CEditability otherEditability);
+	public void absorbAssertionsEditability(IEditability assertionsEditability);
+
+	/**
+	 * Updates the "queries" component of the editability of the slot
+	 * to incorporate the specified additional editability value. Resulting
+	 * status determined via the {@link IEditability#getStrongest} method.
+	 *
+	 * @param queriesEditability Additional queries-editability to incorporate
+	 */
+	public void absorbQueriesEditability(IEditability queriesEditability);
 }
