@@ -53,7 +53,8 @@ public interface OBConfigVocab {
 	static public final String CONCEPT_HIDING_FILTER_ATTR = "conceptHidingFilter";
 	static public final String FRAME_SOURCE_PROPERTIES_ATTR = "frameSources";
 	static public final String SLOT_CARDINALITY_ATTR = "cardinality";
-	static public final String SLOT_EDITABILITY_ATTR = "editability";
+	static public final String SLOT_ASSERTIONS_EDITABILITY_ATTR = "assertionsEditability";
+	static public final String SLOT_QUERIES_EDITABILITY_ATTR = "queriesEditability";
 	static public final String SLOT_SOURCES_ATTR = "slotSources";
 	static public final String FRAME_SLOTS_POLICY_ATTR = "frameSlotsPolicy";
 	static public final String ANNO_PROPERTY_URI_ATTR = "uri";

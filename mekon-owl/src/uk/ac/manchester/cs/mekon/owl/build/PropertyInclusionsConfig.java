@@ -54,7 +54,8 @@ class PropertyInclusionsConfig
 
 		attributes.setFrameSource(getFrameSources(groupNode));
 		attributes.setSlotCardinality(getSlotCardinality(groupNode));
-		attributes.setSlotEditability(getSlotEditability(groupNode));
+		attributes.setSlotAssertionsEditability(getSlotAssertionsEditability(groupNode));
+		attributes.setSlotQueriesEditability(getSlotQueriesEditability(groupNode));
 		attributes.setSlotSources(getSlotSources(groupNode));
 		attributes.setFrameSlotsPolicy(getFrameSlotsPolicy(groupNode));
 
@@ -74,12 +75,20 @@ class PropertyInclusionsConfig
 					OBPropertyAttributes.DEFAULT_CARDINALITY);
 	}
 
-	private CEditability getSlotEditability(KConfigNode groupNode) {
+	private IEditability getSlotAssertionsEditability(KConfigNode groupNode) {
 
 		return groupNode.getEnum(
-					SLOT_EDITABILITY_ATTR,
-					CEditability.class,
-					OBPropertyAttributes.DEFAULT_EDITABILITY);
+					SLOT_ASSERTIONS_EDITABILITY_ATTR,
+					IEditability.class,
+					OBPropertyAttributes.DEFAULT_ASSERTIONS_EDITABILITY);
+	}
+
+	private IEditability getSlotQueriesEditability(KConfigNode groupNode) {
+
+		return groupNode.getEnum(
+					SLOT_QUERIES_EDITABILITY_ATTR,
+					IEditability.class,
+					OBPropertyAttributes.DEFAULT_QUERIES_EDITABILITY);
 	}
 
 	private OBSlotSources getSlotSources(KConfigNode groupNode) {

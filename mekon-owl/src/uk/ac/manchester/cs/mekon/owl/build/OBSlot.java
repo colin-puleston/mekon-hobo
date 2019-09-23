@@ -99,12 +99,14 @@ class OBSlot extends OIdentified {
 			OBPropertyAttributes propAttrs = spec.getPropertyAttributes();
 
 			CCardinality cardOverride = propAttrs.getSlotCardinality();
-			CEditability editOverride = propAttrs.getSlotEditability();
+			IEditability aEditOverride = propAttrs.getSlotAssertionsEditability();
+			IEditability qEditOverride = propAttrs.getSlotQueriesEditability();
 
 			CSlotEditor slotEd = builder.getSlotEditor(slot);
 
 			slotEd.absorbCardinality(cardOverride);
-			slotEd.absorbEditability(editOverride);
+			slotEd.absorbAssertionsEditability(aEditOverride);
+			slotEd.absorbQueriesEditability(qEditOverride);
 		}
 
 		private boolean canBeFixedValue() {

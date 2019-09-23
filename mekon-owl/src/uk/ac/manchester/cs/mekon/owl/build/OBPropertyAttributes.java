@@ -36,12 +36,14 @@ import uk.ac.manchester.cs.mekon.model.*;
 public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
 	static final CCardinality DEFAULT_CARDINALITY = CCardinality.REPEATABLE_TYPES;
-	static final CEditability DEFAULT_EDITABILITY = CEditability.DEFAULT;
+	static final IEditability DEFAULT_ASSERTIONS_EDITABILITY = IEditability.CONCRETE_ONLY;
+	static final IEditability DEFAULT_QUERIES_EDITABILITY = IEditability.FULL;
 
 	private boolean frameSource = false;
 
 	private CCardinality slotCardinality = DEFAULT_CARDINALITY;
-	private CEditability slotEditability = DEFAULT_EDITABILITY;
+	private IEditability slotAssertionsEditability = DEFAULT_ASSERTIONS_EDITABILITY;
+	private IEditability slotQueriesEditability = DEFAULT_QUERIES_EDITABILITY;
 
 	private OBSlotSources slotSources = OBSlotSources.UNSPECIFIED;
 	private OBFrameSlotsPolicy frameSlotsPolicy = OBFrameSlotsPolicy.UNSPECIFIED;
@@ -73,15 +75,29 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 	}
 
 	/**
-	 * Sets the editability status for the frames-model slots that
-	 * will be generated for the property. Defaults to
-	 * {@link CEditability#DEFAULT} if method is never invoked.
+	 * Sets the "assertions" editability status for the frames-model
+	 * slots tha will be generated for the property. Defaults to
+	 * {@link IEditability#CONCRETE_ONLY} if method is never invoked.
 	 *
-	 * @param slotEditability Editability status for generated slots
+	 * @param editability Assertions-editability status for generated
+	 * slots
 	 */
-	public void setSlotEditability(CEditability slotEditability) {
+	public void setSlotAssertionsEditability(IEditability editability) {
 
-		this.slotEditability = slotEditability;
+		slotAssertionsEditability = editability;
+	}
+
+	/**
+	 * Sets the "queries" editability status for the frames-model
+	 * slots tha will be generated for the property. Defaults to
+	 * {@link IEditability#FULL} if method is never invoked.
+	 *
+	 * @param editability Queries-editability status for generated
+	 * slots
+	 */
+	public void setSlotQueriesEditability(IEditability editability) {
+
+		slotQueriesEditability = editability;
 	}
 
 	/**
@@ -117,7 +133,8 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 
 		updated.setFrameSource(frameSource || updates.frameSource());
 		updated.setSlotCardinality(updateSlotCardinalities(updates));
-		updated.setSlotEditability(updateSlotEditabilities(updates));
+		updated.setSlotAssertionsEditability(updateSlotAssertionsEditabilities(updates));
+		updated.setSlotQueriesEditability(updateSlotQueriesEditabilities(updates));
 		updated.setSlotSources(updates.getSlotSources());
 		updated.setFrameSlotsPolicy(updates.getFrameSlotsPolicy());
 
@@ -134,9 +151,14 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		return slotCardinality;
 	}
 
-	CEditability getSlotEditability() {
+	IEditability getSlotAssertionsEditability() {
 
-		return slotEditability;
+		return slotAssertionsEditability;
+	}
+
+	IEditability getSlotQueriesEditability() {
+
+		return slotQueriesEditability;
 	}
 
 	OBSlotSources getSlotSources() {
@@ -154,8 +176,17 @@ public class OBPropertyAttributes extends OBAttributes<OBPropertyAttributes> {
 		return slotCardinality.getMoreRestrictive(updates.getSlotCardinality());
 	}
 
-	private CEditability updateSlotEditabilities(OBPropertyAttributes updates) {
+	private IEditability updateSlotAssertionsEditabilities(OBPropertyAttributes updates) {
 
-		return slotEditability.getStrongest(updates.getSlotEditability());
+		return slotAssertionsEditability
+					.getAssertionsStrongest(
+						updates.getSlotAssertionsEditability());
+	}
+
+	private IEditability updateSlotQueriesEditabilities(OBPropertyAttributes updates) {
+
+		return slotQueriesEditability
+					.getQueriesStrongest(
+						updates.getSlotQueriesEditability());
 	}
 }
