@@ -126,19 +126,16 @@ public class GTable extends JTable {
 	public void addRow(Object... cells) {
 
 		model.addRow(cells);
-		resizeForRowsUpdate();
 	}
 
 	public void insertRow(int index, Object... cells) {
 
 		model.insertRow(index, cells);
-		resizeForRowsUpdate();
 	}
 
 	public void removeRow(int index) {
 
 		model.removeRow(index);
-		resizeForRowsUpdate();
 	}
 
 	private void setHeaderAttributes() {
@@ -209,41 +206,9 @@ public class GTable extends JTable {
 		getColumn(col).setPreferredWidth(getPreferredHeaderWidth(col));
 	}
 
-	private void resizeForRowsUpdate() {
-
-		resizeColumnsForRowsUpdate();
-		setPreferredScrollableViewportSize(getPreferredSize());
-	}
-
-	private void resizeColumnsForRowsUpdate() {
-
-		int row = getRowCount() - 1;
-
-		for (int col = 0 ; col < getColumnCount() ; col++) {
-
-			resizeColumnForRow(col, row);
-		}
-	}
-
-	private void resizeColumnForRow(int col, int row) {
-
-		TableColumn column = getColumn(col);
-		int cellWidth = getPreferredCellWidth(col, row);
-
-		if (cellWidth > column.getPreferredWidth()) {
-
-			column.setPreferredWidth(cellWidth);
-		}
-	}
-
 	private int getPreferredHeaderWidth(int col) {
 
 		return getPreferredWidth(getHeaderRendererComponent(col));
-	}
-
-	private int getPreferredCellWidth(int col, int row) {
-
-		return getPreferredWidth(getCellRendererComponent(col, row));
 	}
 
 	private int getPreferredWidth(Component component) {
@@ -257,11 +222,6 @@ public class GTable extends JTable {
 		Object v = getColumn(col).getHeaderValue();
 
 		return r.getTableCellRendererComponent(this, v, false, false, -1, col);
-	}
-
-	private Component getCellRendererComponent(int col, int row) {
-
-		return prepareRenderer(getCellRenderer(row, col), row, col);
 	}
 
 	private TableColumn getColumn(int index) {
