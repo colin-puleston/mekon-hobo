@@ -630,7 +630,11 @@ public abstract class IFrame implements IEntity, IValue {
 	private void completeInstantiation(boolean reinstantiation) {
 
 		type = type.toNormalisedInstanceType();
-		type.pollListenersForInstantiated(this, reinstantiation);
+
+		if (!freeInstance) {
+
+			type.pollListenersForInstantiated(this, reinstantiation);
+		}
 	}
 
 	private CFrame toExtension(Set<IFrame> visited) {

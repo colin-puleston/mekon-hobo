@@ -38,6 +38,7 @@ abstract class IFrameCopierAbstract {
 		IFrame copy = template.copyEmpty(freeInstance());
 
 		copies.put(template, copy);
+
 		initialiseCopy(template, copy);
 		copy.completeReinstantiation(false);
 

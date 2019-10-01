@@ -33,8 +33,8 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
  * the schema has been loosened in the following ways:
  * <ul>
  *   <li>No effective constraints on slot-values, other than general
- *	 value-category (i.e, {@link IFrame}, {@link CFrame}, or
- *	 {@link INumber})
+ *	 value-category (i.e, {@link IFrame}, {@link CFrame}, {@link INumber}
+ *	 or {@link IString})
  *   <li>No automatic updates to slot-sets or slot-values due to
  *	 either generic reasoning mechanisms, or custom procedures
  *	 associated with a mapped object model

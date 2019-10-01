@@ -50,6 +50,8 @@ public class FramesTestUtils {
 
 		IFrame iFrame = new IAtomicFrame(frame, function, false);
 
+		iFrame.completeInitialInstantiation();
+
 		for (CSlot slot : frame.getSlots().asList()) {
 
 			iFrame.addSlotInternal(slot);
