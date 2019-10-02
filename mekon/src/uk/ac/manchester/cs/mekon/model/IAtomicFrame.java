@@ -256,20 +256,20 @@ class IAtomicFrame extends IFrame {
 
 	void completeInitialInstantiation() {
 
-		autoUpdateEnabled = !freeInstance();
-
 		getType().initialiseAtomicInstanceSlots(this);
 
 		super.completeInitialInstantiation();
+
+		autoUpdateEnabled = !freeInstance();
 	}
 
 	Set<IUpdateOp> completeReinstantiation(boolean possibleModelUpdates) {
 
-		autoUpdateEnabled = !freeInstance();
-
 		Set<IUpdateOp> updates = checkReinitialise(possibleModelUpdates);
 
 		super.completeReinstantiation(possibleModelUpdates);
+
+		autoUpdateEnabled = !freeInstance();
 
 		return updates;
 	}
