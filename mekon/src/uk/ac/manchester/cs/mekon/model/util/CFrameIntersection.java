@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.model.util;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.util.*;
 
 /**
  * Represents an intersection of {@link CFrame} objects.
