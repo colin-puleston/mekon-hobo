@@ -34,19 +34,24 @@ public class GDialog extends JDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private JFrame findFrame(JComponent parent) {
+	static private Window findOwnerWindow(JComponent parent) {
 
-		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, parent);
+		return (Window)SwingUtilities.getAncestorOfClass(Window.class, parent);
 	}
 
-	public GDialog(JFrame frame, String title, boolean modal) {
+	static private ModalityType getModalityType(boolean modal) {
 
-		super(frame, title, modal);
+		return modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS;
+	}
+
+	public GDialog(Window ownerWindow, String title, boolean modal) {
+
+		super(ownerWindow, title, getModalityType(modal));
 	}
 
 	public GDialog(JComponent parent, String title, boolean modal) {
 
-		this(findFrame(parent), title, modal);
+		this(findOwnerWindow(parent), title, modal);
 	}
 
 	public void display(JComponent content) {
