@@ -56,7 +56,7 @@ public class IDirectMatcher implements IMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initialise(IMatcherIndexes indexes) {
+	public void initialise(IStore store, IMatcherIndexes indexes) {
 	}
 
 	/**

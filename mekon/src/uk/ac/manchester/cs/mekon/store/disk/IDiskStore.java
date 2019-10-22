@@ -185,7 +185,7 @@ class IDiskStore implements IStore {
 
 		for (IMatcher matcher : matchers) {
 
-			matcher.initialise(indexes);
+			matcher.initialise(this, indexes);
 		}
 	}
 

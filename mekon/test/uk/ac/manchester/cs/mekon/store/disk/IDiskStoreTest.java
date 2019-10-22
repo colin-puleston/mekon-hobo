@@ -61,7 +61,7 @@ public class IDiskStoreTest {
 
 		private CFrame type;
 
-		public void initialise(IMatcherIndexes indexes) {
+		public void initialise(IStore store, IMatcherIndexes indexes) {
 		}
 
 		public boolean rebuildOnStartup() {

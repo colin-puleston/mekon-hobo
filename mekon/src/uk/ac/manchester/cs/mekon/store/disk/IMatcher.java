@@ -46,10 +46,11 @@ public interface IMatcher {
 	 * Initialisation method that will be called at some point
 	 * prior to the first access of any of the other defined methods.
 	 *
+	 * @param store Instance store to which matcher is attached
 	 * @param indexes Mappings between unique instance identities
  	 * and corresponding unique index values
 	 */
-	public void initialise(IMatcherIndexes indexes);
+	public void initialise(IStore store, IMatcherIndexes indexes);
 
 	/**
 	 * Specifies whether the representations held by the matcher of
