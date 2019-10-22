@@ -108,7 +108,7 @@ public class BaseXMatcher extends NMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initialise(IMatcherIndexes indexes) {
+	public void initialise(IStore store, IMatcherIndexes indexes) {
 
 		this.indexes = indexes;
 	}
