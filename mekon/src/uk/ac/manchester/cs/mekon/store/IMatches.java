@@ -54,7 +54,10 @@ public class IMatches {
 
 		IMatches unranked = new IMatches(false);
 
-		unranked.ranks.add(new IMatchesRank(matches, 0));
+		if (!matches.isEmpty()) {
+
+			unranked.ranks.add(new IMatchesRank(matches, 0));
+		}
 
 		return unranked;
 	}
