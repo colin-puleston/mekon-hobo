@@ -133,7 +133,7 @@ public abstract class ORMatcher extends NMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initialise(IMatcherIndexes indexes) {
+	public void initialise(IStore store, IMatcherIndexes indexes) {
 	}
 
 	/**
