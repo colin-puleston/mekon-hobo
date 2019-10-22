@@ -76,12 +76,13 @@ public class DCustomMatcher implements IMatcher {
 	 * could not be performed until after the store has been created
 	 * and registered.
 	 *
+	 * @param store Instance store to which matcher is attached
 	 * @param indexes Mappings between unique instance identities
  	 * and corresponding unique index values
 	 */
-	public void initialise(IMatcherIndexes indexes) {
+	public void initialise(IStore store, IMatcherIndexes indexes) {
 
-		coreMatcher.initialise(indexes);
+		coreMatcher.initialise(store, indexes);
 		customisers.initialisePostStoreBuild();
 	}
 
