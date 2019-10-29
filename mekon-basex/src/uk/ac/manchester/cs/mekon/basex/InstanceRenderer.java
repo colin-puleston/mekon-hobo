@@ -29,12 +29,19 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
 class InstanceRenderer extends Renderer {
+
+	private BaseXMatcher matcher;
+	private NNode rootNode;
+
+	private Set<CIdentity> expandedInstanceRefs = new HashSet<CIdentity>();
+	private InstanceRefExpansionTracker refExpansions;
 
 	private abstract class FeaturesRenderer<V, F extends NFeature<V>> {
 
@@ -62,7 +69,7 @@ class InstanceRenderer extends Renderer {
 		void checkValid(F feature) {
 		}
 
-		abstract void renderValue(V value, XNode xNode);
+		abstract void renderValue(F feature, V value, XNode xNode);
 
 		private void render(F feature) {
 
@@ -72,7 +79,7 @@ class InstanceRenderer extends Renderer {
 
 			for (V value : feature.getValues()) {
 
-				renderValue(value, xNode);
+				renderValue(feature, value, xNode);
 			}
 		}
 	}
@@ -96,9 +103,9 @@ class InstanceRenderer extends Renderer {
 			return LINK_ID;
 		}
 
-		void renderValue(NNode value, XNode xNode) {
+		void renderValue(NLink feature, NNode value, XNode xNode) {
 
-			renderNode(value, xNode.addChild(NODE_ID));
+			renderValueNode(feature, value, xNode.addChild(NODE_ID));
 		}
 	}
 
@@ -116,15 +123,23 @@ class InstanceRenderer extends Renderer {
 			return NUMERIC_ID;
 		}
 
-		void renderValue(INumber value, XNode xNode) {
+		void renderValue(NNumber feature, INumber value, XNode xNode) {
 
 			xNode.addValue(VALUE_ATTR, value.asTypeNumber().toString());
 		}
 	}
 
-	XDocument render(NNode rootNode, int index) {
+	InstanceRenderer(NNode rootNode, BaseXMatcher matcher) {
 
 		checkNonCyclic(rootNode);
+
+		this.rootNode = rootNode;
+		this.matcher = matcher;
+
+		refExpansions = new InstanceRefExpansionTracker(rootNode);
+	}
+
+	XDocument render(int index) {
 
 		XDocument document = new XDocument(ROOT_ID);
 		XNode xRoot = document.getRootNode();
@@ -135,25 +150,57 @@ class InstanceRenderer extends Renderer {
 		return document;
 	}
 
+	Set<CIdentity> getExpandedInstanceRefs() {
+
+		return expandedInstanceRefs;
+	}
+
+	private void renderValueNode(NLink link, NNode node, XNode xNode) {
+
+		if (node.instanceReference()) {
+
+			checkRenderRefNode(link, node.getInstanceRef(), xNode);
+		}
+		else {
+
+			renderNode(node, xNode);
+		}
+	}
+
+	private void checkRenderRefNode(NLink link, CIdentity ref, XNode xNode) {
+
+		NNode refedNode = matcher.getFromStoreOrNull(ref);
+
+		if (refedNode != null) {
+
+			renderType(ref, xNode);
+
+			if (refExpansions.startExpansion(link, refedNode)) {
+
+				renderNode(refedNode, xNode);
+
+				refExpansions.endExpansion();
+				expandedInstanceRefs.add(ref);
+			}
+			else {
+
+				renderNodeTypes(refedNode, xNode);
+			}
+		}
+	}
+
 	private void renderNode(NNode node, XNode xNode) {
 
 		checkAtomicType(node);
 
 		renderNodeTypes(node, xNode);
-
-		new LinksRenderer(xNode).renderAll(node.getLinks());
-		new NumbersRenderer(xNode).renderAll(node.getNumbers());
+		renderNodeFeatures(node, xNode);
 	}
 
 	private void renderNodeTypes(NNode node, XNode xNode) {
 
 		renderType(node.getType(), xNode);
 		renderNodeAncestorTypes(node, xNode);
-
-		if (node.instanceReference()) {
-
-			renderType(node.getInstanceRef(), xNode);
-		}
 	}
 
 	private void renderNodeAncestorTypes(NNode node, XNode xNode) {
@@ -172,6 +219,12 @@ class InstanceRenderer extends Renderer {
 		}
 	}
 
+	private void renderNodeFeatures(NNode node, XNode xNode) {
+
+		new LinksRenderer(xNode).renderAll(node.getLinks());
+		new NumbersRenderer(xNode).renderAll(node.getNumbers());
+	}
+
 	private void renderType(CIdentity type, XNode xNode) {
 
 		renderId(type, xNode.addChild(TYPE_ID));
@@ -180,6 +233,11 @@ class InstanceRenderer extends Renderer {
 	private void renderId(CIdentity identity, XNode xNode) {
 
 		xNode.addValue(ID_ATTR, renderId(identity));
+	}
+
+	private boolean checkRenderViaInstanceRef(NLink link, NNode node) {
+
+		return false;
 	}
 
 	private void checkAtomicType(NNode node) {

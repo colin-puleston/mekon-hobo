@@ -37,31 +37,61 @@ import org.basex.query.iter.*;
 import org.basex.query.value.item.*;
 import org.basex.api.dom.*;
 
+import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
  */
 class Database {
 
-	private Context context = new Context();
-	private String databaseName;
+	static private final String TEMP_DB_NAME = "TEMP-DB";
 
-	Database(String databaseName, boolean forceNewDB) {
+	static private final String STORE_FILE_PREFIX = "INSTANCE-";
+	static private final String STORE_FILE_SUFFIX = ".xml";
 
-		this.databaseName = databaseName;
+	static Database createTempDB(BaseXConfig config) {
 
-		execute(getStartCommand(forceNewDB));
+		return new Database(TEMP_DB_NAME, getTempDBStoreDir(config), false, false);
 	}
 
-	void add(File file) {
+	static private File getTempDBStoreDir(BaseXConfig config) {
+
+		return new File(config.getStoreDirectory(), TEMP_DB_NAME);
+	}
+
+	private String databaseName;
+	private boolean persist;
+
+	private KFileStore fileStore = new KFileStore(STORE_FILE_PREFIX, STORE_FILE_SUFFIX);
+	private Context context = new Context();
+
+	Database(BaseXConfig config) {
+
+		this(
+			config.getDatabaseName(),
+			config.getStoreDirectory(),
+			config.rebuildStore(),
+			config.persistStore());
+	}
+
+	void add(XDocument instance, int index) {
+
+		File file = fileStore.getFile(index);
+
+		instance.writeToFile(file);
 
 		execute(new Add(getDatabasePath(file), file.getPath()));
 	}
 
-	void remove(File file) {
+	void remove(int index) {
+
+		File file = fileStore.getFile(index);
 
 		execute(new Delete(getDatabasePath(file)));
+
+		fileStore.removeFile(index);
 	}
 
 	List<Integer> executeQuery(String query) {
@@ -82,13 +112,13 @@ class Database {
 		}
     }
 
-	void stop(boolean persist) {
+	void stop() {
 
 		if (context != null) {
 
 			try {
 
-				execute(getStopCommand(persist));
+				execute(getStopCommand());
 			}
 			finally {
 
@@ -96,18 +126,36 @@ class Database {
 				context = null;
 			}
 		}
+
+		if (!persist) {
+
+			fileStore.clear();
+		}
 	}
 
-	private Command getStartCommand(boolean forceNewDB) {
+	private Database(String databaseName, File storeDir, boolean rebuild, boolean persist) {
 
-		return forceNewDB
-				? new CreateDB(databaseName)
-				: new Check(databaseName);
+		this.databaseName = databaseName;
+		this.persist = persist;
+
+		fileStore.setDirectory(storeDir);
+
+		if (rebuild) {
+
+			fileStore.clear();
+		}
+
+		execute(getStartCommand(rebuild));
 	}
 
-	private Command getStopCommand(boolean keepDB) {
+	private Command getStartCommand(boolean rebuild) {
 
-		return keepDB ? new Close() : new DropDB(databaseName);
+		return rebuild ? new CreateDB(databaseName) : new Check(databaseName);
+	}
+
+	private Command getStopCommand() {
+
+		return persist ? new Close() : new DropDB(databaseName);
 	}
 
 	private String getDatabasePath(File file) {
@@ -129,9 +177,7 @@ class Database {
 		}
 	}
 
-	private List<Integer> extractInstanceIndexes(
-							Iter queryResults)
-							throws QueryException {
+	private List<Integer> extractInstanceIndexes(Iter queryResults) throws QueryException {
 
 		List<Integer> indexes = new ArrayList<Integer>();
 		Set<Integer> indexSet = new HashSet<Integer>();
@@ -149,9 +195,7 @@ class Database {
 		return indexes;
     }
 
-	private Integer extractInstanceIndex(
-						Item queryResult)
-						throws QueryException {
+	private Integer extractInstanceIndex(Item queryResult) throws QueryException {
 
 		BXAttr attribute = (BXAttr)queryResult.toJava();
 

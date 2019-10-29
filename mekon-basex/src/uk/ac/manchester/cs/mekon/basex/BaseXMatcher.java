@@ -24,17 +24,15 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
-import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * <i>BaseX</i>-specific implementation of {@link IMatcher}.
@@ -43,18 +41,18 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 public class BaseXMatcher extends NMatcher {
 
-	static private final String STORE_FILE_PREFIX = "INSTANCE-";
-	static private final String STORE_FILE_SUFFIX = ".xml";
+	private IStore store = null;
 
 	private IMatcherIndexes indexes = new LocalIndexes();
-	private InstanceRenderer instanceRenderer = new InstanceRenderer();
 	private QueryRenderer queryRenderer = new QueryRenderer();
 
-	private Database database;
-	private KFileStore fileStore = new KFileStore(STORE_FILE_PREFIX, STORE_FILE_SUFFIX);
+	private Database mainDatabase;
+	private Database tempDatabase;
 
 	private boolean rebuildStore;
-	private boolean persistStore;
+
+	private InstanceRefExpansions instanceRefExpansions;
+	private Set<CIdentity> currentlyRemoving = new HashSet<CIdentity>();
 
 	/**
 	 * Constructs matcher with the default configuration (see
@@ -77,16 +75,11 @@ public class BaseXMatcher extends NMatcher {
 	public BaseXMatcher(BaseXConfig config) {
 
 		rebuildStore = config.rebuildStore();
-		persistStore = config.persistStore();
 
-		database = new Database(config.getDatabaseName(), rebuildStore);
+		mainDatabase = new Database(config);
+		tempDatabase = Database.createTempDB(config);
 
-		fileStore.setDirectory(config.getStoreDirectory());
-
-		if (rebuildStore) {
-
-			fileStore.clear();
-		}
+		instanceRefExpansions = new InstanceRefExpansions(this);
 	}
 
 	/**
@@ -110,6 +103,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void initialise(IStore store, IMatcherIndexes indexes) {
 
+		this.store = store;
 		this.indexes = indexes;
 	}
 
@@ -148,11 +142,13 @@ public class BaseXMatcher extends NMatcher {
 	public void add(NNode instance, CIdentity identity) {
 
 		int index = indexes.getIndex(identity);
-		File file = fileStore.getFile(index);
-		XDocument xDoc = instanceRenderer.render(instance, index);
+		InstanceRenderer renderer = new InstanceRenderer(instance, this);
 
-		xDoc.writeToFile(file);
-		database.add(file);
+		mainDatabase.add(renderer.render(index), index);
+
+		Set<CIdentity> expandedRefs = renderer.getExpandedInstanceRefs();
+
+		instanceRefExpansions.onAddedInstance(identity, expandedRefs);
 	}
 
 	/**
@@ -164,8 +160,11 @@ public class BaseXMatcher extends NMatcher {
 
 		int index = indexes.getIndex(identity);
 
-		database.remove(fileStore.getFile(index));
-		fileStore.removeFile(index);
+		mainDatabase.remove(index);
+
+		currentlyRemoving.add(identity);
+		instanceRefExpansions.onRemovedInstance(identity);
+		currentlyRemoving.remove(identity);
 	}
 
 	/**
@@ -179,10 +178,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public IMatches match(NNode query) {
 
-		String queryRendering = queryRenderer.render(query);
-		List<Integer> matchIndexes = database.executeQuery(queryRendering);
-
-		return IMatches.unranked(indexes.getIdentities(matchIndexes));
+		return IMatches.unranked(indexes.getIdentities(match(mainDatabase, query)));
 	}
 
 	/**
@@ -195,7 +191,13 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public boolean matches(NNode query, NNode instance) {
 
-		return query.subsumesStructure(instance);
+		tempDatabase.add(new InstanceRenderer(instance, this).render(0), 0);
+
+		boolean match = !match(tempDatabase, query).isEmpty();
+
+		tempDatabase.remove(0);
+
+		return match;
 	}
 
 	/**
@@ -204,11 +206,39 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void stop() {
 
-		database.stop(persistStore);
+		mainDatabase.stop();
+		tempDatabase.stop();
+	}
 
-		if (!persistStore) {
+	void update(CIdentity identity) {
 
-			fileStore.clear();
+		remove(identity);
+
+		NNode node = getFromStoreOrNull(identity);
+
+		if (node != null) {
+
+			add(node, identity);
 		}
+	}
+
+	NNode getFromStoreOrNull(CIdentity identity) {
+
+		if (store != null && !currentlyRemoving.contains(identity)) {
+
+			IRegenInstance regen = store.get(identity);
+
+			if (regen != null && regen.getStatus() != IRegenStatus.FULLY_INVALID) {
+
+				return toNetwork(regen.getRootFrame());
+			}
+		}
+
+		return null;
+	}
+
+	private List<Integer> match(Database database, NNode query) {
+
+		return database.executeQuery(queryRenderer.render(query));
 	}
 }

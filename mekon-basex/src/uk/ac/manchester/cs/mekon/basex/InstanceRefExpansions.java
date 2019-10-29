@@ -24,30 +24,62 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
-import uk.ac.manchester.cs.mekon.store.disk.*;
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class BaseXMatcherTest extends IMatcherTest {
+class InstanceRefExpansions {
 
-	protected IMatcher createMatcher() {
+	private BaseXMatcher matcher;
 
-		return new BaseXMatcher();
+	private Set<CIdentity> allExpandedRefs = new HashSet<CIdentity>();
+
+	private KSetMap<CIdentity, CIdentity> expandedRefsByInstances
+								= new KSetMap<CIdentity, CIdentity>();
+
+	InstanceRefExpansions(BaseXMatcher matcher) {
+
+		this.matcher = matcher;
 	}
 
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
+	void onAddedInstance(CIdentity instance, Set<CIdentity> expandedRefs) {
 
-		return false;
+		if (!expandedRefs.isEmpty()) {
+
+			if (allExpandedRefs.contains(instance)) {
+
+				onUpdatedReferencedInstance(instance);
+			}
+
+			allExpandedRefs.addAll(expandedRefs);
+
+			expandedRefsByInstances.removeAll(instance);
+			expandedRefsByInstances.addAll(instance, expandedRefs);
+		}
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+	void onRemovedInstance(CIdentity instance) {
 
-		return true;
+		if (allExpandedRefs.remove(instance)) {
+
+			onUpdatedReferencedInstance(instance);
+
+			expandedRefsByInstances.removeAll(instance);
+		}
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+	private void onUpdatedReferencedInstance(CIdentity refedInstance) {
 
-		return true;
+		for (CIdentity refingInstance : expandedRefsByInstances.keySet()) {
+
+			if (expandedRefsByInstances.getSet(refingInstance).contains(refedInstance)) {
+
+				matcher.update(refingInstance);
+			}
+		}
 	}
 }
