@@ -36,4 +36,19 @@ public class OJenaMatcherTest extends ORMatcherTest {
 
 		return new OJenaMatcher(oModel);
 	}
+
+	protected boolean handlesInstanceDisjunctionBasedQueries() {
+
+		return true;
+	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+
+		return true;
+	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+
+		return true;
+	}
 }
