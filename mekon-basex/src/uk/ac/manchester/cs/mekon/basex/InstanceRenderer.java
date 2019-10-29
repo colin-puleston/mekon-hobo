@@ -40,7 +40,6 @@ class InstanceRenderer extends Renderer {
 	private BaseXMatcher matcher;
 	private NNode rootNode;
 
-	private Set<CIdentity> expandedInstanceRefs = new HashSet<CIdentity>();
 	private InstanceRefExpansionTracker refExpansions;
 
 	private abstract class FeaturesRenderer<V, F extends NFeature<V>> {
@@ -150,11 +149,6 @@ class InstanceRenderer extends Renderer {
 		return document;
 	}
 
-	Set<CIdentity> getExpandedInstanceRefs() {
-
-		return expandedInstanceRefs;
-	}
-
 	private void renderValueNode(NLink link, NNode node, XNode xNode) {
 
 		if (node.instanceReference()) {
@@ -178,9 +172,7 @@ class InstanceRenderer extends Renderer {
 			if (refExpansions.startExpansion(link, refedNode)) {
 
 				renderNode(refedNode, xNode);
-
 				refExpansions.endExpansion();
-				expandedInstanceRefs.add(ref);
 			}
 			else {
 

@@ -136,12 +136,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void add(NNode instance, CIdentity identity) {
 
-		int index = indexes.getIndex(identity);
-		InstanceRenderer renderer = new InstanceRenderer(instance, this);
-
-		mainDatabase.add(renderer.render(index), index);
-
-		Set<CIdentity> expandedRefs = renderer.getExpandedInstanceRefs();
+		addToDatabase(mainDatabase, instance, indexes.getIndex(identity));
 	}
 
 	/**
@@ -178,7 +173,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public boolean matches(NNode query, NNode instance) {
 
-		tempDatabase.add(new InstanceRenderer(instance, this).render(0), 0);
+		addToDatabase(tempDatabase, instance, 0);
 
 		boolean match = !match(tempDatabase, query).isEmpty();
 
@@ -210,6 +205,11 @@ public class BaseXMatcher extends NMatcher {
 		}
 
 		return null;
+	}
+
+	private void addToDatabase(Database database, NNode instance, int index) {
+
+		database.add(new InstanceRenderer(instance, this).render(index), index);
 	}
 
 	private List<Integer> match(Database database, NNode query) {
