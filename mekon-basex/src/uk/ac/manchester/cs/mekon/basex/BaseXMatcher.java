@@ -51,9 +51,6 @@ public class BaseXMatcher extends NMatcher {
 
 	private boolean rebuildStore;
 
-	private InstanceRefExpansions instanceRefExpansions;
-	private Set<CIdentity> currentlyRemoving = new HashSet<CIdentity>();
-
 	/**
 	 * Constructs matcher with the default configuration (see
 	 * individual "set" methods on {@link BaseXConfig} for default
@@ -78,8 +75,6 @@ public class BaseXMatcher extends NMatcher {
 
 		mainDatabase = new Database(config);
 		tempDatabase = Database.createTempDB(config);
-
-		instanceRefExpansions = new InstanceRefExpansions(this);
 	}
 
 	/**
@@ -147,8 +142,6 @@ public class BaseXMatcher extends NMatcher {
 		mainDatabase.add(renderer.render(index), index);
 
 		Set<CIdentity> expandedRefs = renderer.getExpandedInstanceRefs();
-
-		instanceRefExpansions.onAddedInstance(identity, expandedRefs);
 	}
 
 	/**
@@ -158,13 +151,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		int index = indexes.getIndex(identity);
-
-		mainDatabase.remove(index);
-
-		currentlyRemoving.add(identity);
-		instanceRefExpansions.onRemovedInstance(identity);
-		currentlyRemoving.remove(identity);
+		mainDatabase.remove(indexes.getIndex(identity));
 	}
 
 	/**
@@ -210,21 +197,9 @@ public class BaseXMatcher extends NMatcher {
 		tempDatabase.stop();
 	}
 
-	void update(CIdentity identity) {
-
-		remove(identity);
-
-		NNode node = getFromStoreOrNull(identity);
-
-		if (node != null) {
-
-			add(node, identity);
-		}
-	}
-
 	NNode getFromStoreOrNull(CIdentity identity) {
 
-		if (store != null && !currentlyRemoving.contains(identity)) {
+		if (store != null) {
 
 			IRegenInstance regen = store.get(identity);
 
