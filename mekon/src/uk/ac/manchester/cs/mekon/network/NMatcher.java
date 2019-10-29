@@ -128,7 +128,17 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	protected abstract boolean matches(NNode query, NNode instance);
 
-	private NNode toNetwork(IFrame rootFrame) {
+	/**
+	 * Method used in converting the instance-level frames into
+	 * instantiations of the network-based representation. Can also
+	 * be used by extending classes where required.
+	 *
+	 * @param rootFrame Root-frame of instance-level frame
+	 * representation
+	 * @param instance Instance to test for matching
+	 * @return Root node of network-based representation
+	 */
+	protected NNode toNetwork(IFrame rootFrame) {
 
 		return networkCreator.createNetwork(rootFrame);
 	}

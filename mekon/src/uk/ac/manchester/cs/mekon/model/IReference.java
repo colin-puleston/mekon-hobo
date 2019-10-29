@@ -104,6 +104,11 @@ class IReference extends IFrame {
 	void autoUpdate(Set<IFrame> visited) {
 	}
 
+	void collectReferenceIds(List<CIdentity> referenceIds) {
+
+		referenceIds.add(referenceId);
+	}
+
 	String describeLocally() {
 
 		return FEntityDescriber.entityToString(this, referenceId);

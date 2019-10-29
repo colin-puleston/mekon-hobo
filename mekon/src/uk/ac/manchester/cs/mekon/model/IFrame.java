@@ -260,6 +260,28 @@ public abstract class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Removes all {@link IFrameCategory#REFERENCE} frames from the
+	 * frame/slot network emanating from this frame that represent the
+	 * references to the specified instance.
+	 *
+	 * @param referenceId Identity of instance to which all references
+	 * are to be removed
+	 */
+	public void removeReferenceId(CIdentity referenceId) {
+
+		for (ISlot slot : getSlots().asList()) {
+
+			if (slot.getValueType() instanceof CFrame) {
+
+				for (IValue value : slot.getValues().asList()) {
+
+					((IFrame)value).removeReferenceIdFromValueFrame(slot, referenceId);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Tests for equality between this and another specified object,
 	 * which will be the case if and only if the other object is the same
 	 * object as this one, or is another <code>IFrame</code> with the
@@ -478,6 +500,22 @@ public abstract class IFrame implements IEntity, IValue {
 	}
 
 	/**
+	 * Provides the identities of all instances referenced via
+	 * {@link IFrameCategory#REFERENCE} frames contained within the
+	 * frame/slot network emanating from this frame.
+	 *
+	 * @return Identities of all referenced instances
+	 */
+	public List<CIdentity> getAllReferenceIds() {
+
+		List<CIdentity> referenceIds = new ArrayList<CIdentity>();
+
+		collectReferenceIds(referenceIds);
+
+		return referenceIds;
+	}
+
+	/**
 	 * Provides the special disjuncts-slot for frames of category
 	 * {@link IFrameCategory#DISJUNCTION}.
 	 *
@@ -620,6 +658,20 @@ public abstract class IFrame implements IEntity, IValue {
 		return reference() ? getReferenceId().hashCode() : type.hashCode();
 	}
 
+	void collectReferenceIds(List<CIdentity> referenceIds) {
+
+		for (ISlot slot : getSlots().asList()) {
+
+			if (slot.getValueType() instanceof CFrame) {
+
+				for (IValue value : slot.getValues().asList()) {
+
+					((IFrame)value).collectReferenceIds(referenceIds);
+				}
+			}
+		}
+	}
+
 	abstract String describeLocally();
 
 	List<IFrameListener> copyListeners() {
@@ -681,6 +733,21 @@ public abstract class IFrame implements IEntity, IValue {
 					+ "to extension-CFrame: "
 					+ "Cycle detected at: " + this);
 
+	}
+
+	private void removeReferenceIdFromValueFrame(ISlot slot, CIdentity referenceId) {
+
+		if (reference()) {
+
+			if (getReferenceId().equals(referenceId)) {
+
+				slot.getValuesEditor().remove(this);
+			}
+		}
+		else {
+
+			removeReferenceId(referenceId);
+		}
 	}
 
 	private boolean disjunctsSubsumeDisjuncts(IFrame other) {

@@ -33,6 +33,7 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.regen.zlink.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
@@ -51,6 +52,8 @@ class IDiskStore implements IStore {
 	private Map<CIdentity, IRegenType> types = new HashMap<CIdentity, IRegenType>();
 	private InstanceIndexes indexes = new InstanceIndexes();
 
+	private KSetMap<CIdentity, CIdentity> referencingIds = new KSetMap<CIdentity, CIdentity>();
+
 	public CModel getModel() {
 
 		return model;
@@ -65,7 +68,9 @@ class IDiskStore implements IStore {
 		types.put(identity, createRegenType(instance));
 
 		fileStore.write(instance, identity, index);
-		checkAddToMatcher(instance, identity);
+
+		addToMatcher(instance, identity);
+		checkAddReferencingIds(instance, identity);
 
 		return previous;
 	}
@@ -163,10 +168,8 @@ class IDiskStore implements IStore {
 
 		initialiseMatchers();
 
-		for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
-
-			reload(storedProfile.getProfile(), storedProfile.getIndex());
-		}
+		reloadStore();
+		reloadMatchers();
 
 		indexes.reinitialiseFreeIndexes();
 	}
@@ -189,7 +192,15 @@ class IDiskStore implements IStore {
 		}
 	}
 
-	private void reload(InstanceProfile profile, int index) {
+	private void reloadStore() {
+
+		for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
+
+			reloadToStore(storedProfile.getProfile(), storedProfile.getIndex());
+		}
+	}
+
+	private void reloadToStore(InstanceProfile profile, int index) {
 
 		CIdentity identity = profile.getInstanceId();
 		IRegenType type = createRegenType(profile.getTypeId());
@@ -197,16 +208,29 @@ class IDiskStore implements IStore {
 		identities.add(identity);
 		types.put(identity, type);
 		indexes.assignIndex(identity, index);
+	}
 
-		if (type.validRootType()) {
+	private void reloadMatchers() {
 
-			IMatcher matcher = getMatcher(type.getRootType());
+		List<IMatcher> reloadableMatchers = getReloadableMatchers();
 
-			if (matcher.rebuildOnStartup()) {
+		for (CIdentity identity : getAllIdentities()) {
 
-				IRegenInstance regen = fileStore.read(identity, index, true);
+			checkReloadToMatcher(reloadableMatchers, identity);
+		}
+	}
 
-				matcher.add(regen.getRootFrame(), identity);
+	private void checkReloadToMatcher(List<IMatcher> reloadableMatchers, CIdentity identity) {
+
+		IFrame instance = getOrNull(identity, true);
+
+		if (instance != null) {
+
+			IMatcher matcher = lookForMatcher(reloadableMatchers, instance.getType());
+
+			if (matcher != null) {
+
+				matcher.add(instance, identity);
 			}
 		}
 	}
@@ -221,9 +245,16 @@ class IDiskStore implements IStore {
 			types.remove(identity);
 
 			int index = indexes.getIndex(identity);
-			CFrame type = model.getFrames().get(fileStore.readTypeId(index));
 
-			checkRemoveFromMatcher(type, identity);
+			removed = getOrNull(identity, index, false);
+
+			CFrame type = removed != null ? removed.getType() : getType(index);
+
+			removeFromMatcher(type, identity);
+
+			checkRemovingReferencedId(identity);
+			referencingIds.removeAll(identity);
+
 			fileStore.remove(index);
 			indexes.freeIndex(identity);
 		}
@@ -231,14 +262,84 @@ class IDiskStore implements IStore {
 		return removed;
 	}
 
-	private void checkAddToMatcher(IFrame instance, CIdentity identity) {
+	private void checkAddReferencingIds(IFrame instance, CIdentity identity) {
+
+		for (CIdentity refedId : instance.getAllReferenceIds()) {
+
+			referencingIds.add(refedId, identity);
+		}
+	}
+
+	private void checkRemovingReferencedId(CIdentity identity) {
+
+		for (CIdentity refingId : referencingIds.getSet(identity)) {
+
+			removeReferenceId(refingId, identity);
+		}
+	}
+
+	private void removeReferenceId(CIdentity refingId, CIdentity refedId) {
+
+		int refingIndex = indexes.getIndex(refingId);
+		IFrame refingInstance = getOrNull(refingId, refingIndex, true);
+
+		if (refingInstance != null) {
+
+			refingInstance.removeReferenceId(refedId);
+			removeFromMatcher(refingInstance.getType(), refingId);
+
+			fileStore.remove(refingIndex);
+			fileStore.write(refingInstance, refingId, refingIndex);
+
+			addToMatcher(refingInstance, refingId);
+		}
+	}
+
+	private CFrame getType(int index) {
+
+		return model.getFrames().get(fileStore.readTypeId(index));
+	}
+
+	private IFrame getOrNull(CIdentity identity, boolean freeInstance) {
+
+		return getOrNull(identity, indexes.getIndex(identity), freeInstance);
+	}
+
+	private IFrame getOrNull(CIdentity identity, int index, boolean freeInstance) {
+
+		IRegenInstance regen = fileStore.read(identity, index, freeInstance);
+
+		if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
+
+			return null;
+		}
+
+		return regen.getRootFrame();
+	}
+
+	private void addToMatcher(IFrame instance, CIdentity identity) {
 
 		getMatcher(instance).add(createFreeCopy(instance), identity);
 	}
 
-	private void checkRemoveFromMatcher(CFrame type, CIdentity identity) {
+	private void removeFromMatcher(CFrame type, CIdentity identity) {
 
 		getMatcher(type).remove(identity);
+	}
+
+	private List<IMatcher> getReloadableMatchers() {
+
+		List<IMatcher> reloadables = new ArrayList<IMatcher>();
+
+		for (IMatcher matcher : matchers) {
+
+			if (matcher.rebuildOnStartup()) {
+
+				reloadables.add(matcher);
+			}
+		}
+
+		return reloadables;
 	}
 
 	private IMatcher getMatcher(IFrame frame) {
@@ -248,15 +349,22 @@ class IDiskStore implements IStore {
 
 	private IMatcher getMatcher(CFrame frameType) {
 
-		for (IMatcher matcher : matchers) {
+		IMatcher matcher = lookForMatcher(matchers, frameType);
 
-			if (matcher.handlesType(frameType)) {
+		return matcher != null ? matcher : defaultMatcher;
+	}
 
-				return matcher;
+	private IMatcher lookForMatcher(List<IMatcher> candidates, CFrame frameType) {
+
+		for (IMatcher candidate : candidates) {
+
+			if (candidate.handlesType(frameType)) {
+
+				return candidate;
 			}
 		}
 
-		return defaultMatcher;
+		return null;
 	}
 
 	private IRegenType createRegenType(IFrame instance) {

@@ -36,6 +36,16 @@ public class NDirectMatcherTest extends IMatcherTest {
 		return new NDirectMatcher();
 	}
 
+	protected boolean handlesInstanceDisjunctionBasedQueries() {
+
+		return true;
+	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+
+		return true;
+	}
+
 	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
 
 		return false;

@@ -34,6 +34,8 @@ import static org.junit.Assert.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
 
 /**
@@ -63,6 +65,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return new CIdentity(name + "Id", name);
 	}
 
+	private IDiskStore store;
 	private IMatcher matcher;
 
 	private Map<CIdentity, IFrame> storedInstancesById = new HashMap<CIdentity, IFrame>();
@@ -80,9 +83,14 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	@Before
 	public void setUp() {
 
+		buildModel(createSectionBuilder());
+
+		store = new IDiskStore(getModel());
 		matcher = createMatcher();
 
-		buildModel(createSectionBuilder());
+		store.clear();
+		store.addMatcher(matcher);
+		store.initialisePostRegistration();
 
 		undergradTeachingJob = addUndergradTeachingJob();
 		postgradTeachingJob = addPostgradTeachingJob();
@@ -98,7 +106,8 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	@After
 	public void clearUp() {
 
-		matcher.stop();
+		store.clear();
+		store.stop();
 	}
 
 	@Test
@@ -219,13 +228,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		removeInstance(UNDERGRAD_TEACHING_JOB_ID);
 		removeInstance(POSTGRAD_TEACHING_JOB_ID);
-		removeInstance(ACADEMIC_RESEARCHING_JOB_ID);
-		removeInstance(DOCTORING_JOB_ID);
 
 		testMatching(
 			createCitizenWithJobQuery(),
-			UNDERGRAD_TEACHER_ID,
-			POSTGRAD_TEACHER_ID,
 			ACADEMIC_RESEARCHER_ID,
 			DOCTOR_ID);
 	}
@@ -293,20 +298,11 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	protected abstract IMatcher createMatcher();
 
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
+	protected abstract boolean handlesInstanceDisjunctionBasedQueries();
 
-		return true;
-	}
+	protected abstract boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking();
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
-
-		return true;
-	}
-
-	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
-
-		return true;
-	}
+	protected abstract boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking();
 
 	protected IMatcher getMatcher() {
 
@@ -541,7 +537,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private IFrame addInstance(IFrame instance, CIdentity id) {
 
-		matcher.add(instance, id);
+		store.add(instance, id);
 		storedInstancesById.put(id, instance);
 
 		return instance;
@@ -549,16 +545,16 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private void removeInstance(CIdentity id) {
 
-		matcher.remove(id);
+		store.remove(id);
 		storedInstancesById.remove(id);
 	}
 
 	private void updateInstance(IFrame instance) {
 
-		CIdentity id = createInstanceId(instance);
+		CIdentity id = getInstanceId(instance);
 
-		removeInstance(id);
-		addInstance(instance, id);
+		store.remove(id);
+		store.add(instance, id);
 	}
 
 	private void testMatching(IFrame query, CIdentity... expectedMatchIds) {
@@ -567,16 +563,16 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		testListContents(matchIds, Arrays.asList(expectedMatchIds));
 
-		for (CIdentity id : storedInstancesById.keySet()) {
+		for (CIdentity id : store.getAllIdentities()) {
 
-			IFrame instance = storedInstancesById.get(id);
-			boolean isMatch = matcher.matches(query, instance);
+			IFrame instance = store.get(id).getRootFrame();
+			boolean matches = matcher.matches(query, instance);
 
-			assertTrue(isMatch == matchIds.contains(id));
+			assertTrue(matches == matchIds.contains(id));
 		}
 	}
 
-	private CIdentity createInstanceId(IFrame instance) {
+	private CIdentity getInstanceId(IFrame instance) {
 
 		for (CIdentity id : storedInstancesById.keySet()) {
 

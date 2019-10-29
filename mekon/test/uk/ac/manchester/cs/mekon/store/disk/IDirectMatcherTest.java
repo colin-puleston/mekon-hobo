@@ -34,6 +34,16 @@ public class IDirectMatcherTest extends IMatcherTest {
 		return new IDirectMatcher();
 	}
 
+	protected boolean handlesInstanceDisjunctionBasedQueries() {
+
+		return true;
+	}
+
+	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+
+		return true;
+	}
+
 	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
 
 		return false;
