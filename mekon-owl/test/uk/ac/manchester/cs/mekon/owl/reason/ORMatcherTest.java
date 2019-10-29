@@ -94,6 +94,11 @@ public abstract class ORMatcherTest extends IMatcherTest {
 
 	protected abstract ORMatcher createMatcher(OModel oModel);
 
+	protected boolean handlesInstanceDisjunctionBasedQueries() {
+
+		return true;
+	}
+
 	private void testHandlesType(String typeId, boolean shouldHandle) {
 
 		assertTrue(getMatcher().handlesType(getCFrame(typeId)) == shouldHandle);
