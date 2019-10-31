@@ -99,6 +99,16 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
+	 * Specifies that referenced instances are not to be expanded.
+	 *
+	 * @return False since referenced instances are not to be expanded
+	 */
+	protected boolean expandInstanceRefs() {
+
+		return false;
+	}
+
+	/**
 	 */
 	protected void addToOWLStore(NNode instance, IRI iri) {
 

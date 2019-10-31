@@ -131,12 +131,6 @@ public abstract class ORMatcher extends NMatcher {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public void initialise(IStore store, IMatcherIndexes indexes) {
-	}
-
-	/**
 	 * Checks whether the matcher handles instance-level frames
 	 * of the specified type, by testing whether that type or any
 	 * of it's ancestors corresponds to a class in the OWL model.

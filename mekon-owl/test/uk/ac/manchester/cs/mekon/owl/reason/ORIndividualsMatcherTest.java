@@ -36,12 +36,12 @@ public class ORIndividualsMatcherTest extends ORMatcherTest {
 		return new ORIndividualsMatcher(oModel);
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+	protected boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking() {
 
 		return true;
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+	protected boolean handlesInstanceRefBasedQueriesWithInstanceLinking() {
 
 		return true;
 	}

@@ -104,7 +104,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 		private IRI getInstanceIRIOrNull() {
 
-			if (node.instanceReference()) {
+			if (node.instanceRef()) {
 
 				return OStoredInstanceIRIs.toIRI(node.getInstanceRef());
 			}

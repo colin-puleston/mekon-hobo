@@ -88,6 +88,16 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 	}
 
 	/**
+	 * Specifies that referenced instances are to be expanded.
+	 *
+	 * @return True since referenced instances are to be expanded
+	 */
+	protected boolean expandInstanceRefs() {
+
+		return true;
+	}
+
+	/**
 	 */
 	protected void addToOWLStore(NNode instance, IRI iri) {
 

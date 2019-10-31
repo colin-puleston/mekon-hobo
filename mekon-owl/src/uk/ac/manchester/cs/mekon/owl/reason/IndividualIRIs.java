@@ -50,7 +50,7 @@ class IndividualIRIs {
 
 	IRI getFor(NNode node) {
 
-		if (node.instanceReference()) {
+		if (node.instanceRef()) {
 
 			return OStoredInstanceIRIs.toIRI(node.getInstanceRef());
 		}

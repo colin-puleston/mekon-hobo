@@ -254,7 +254,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 	private URI checkExtractInstanceRef(NNode node) {
 
-		return node.instanceReference() ? toStoredURI(node.getInstanceRef()) : null;
+		return node.instanceRef() ? toStoredURI(node.getInstanceRef()) : null;
 	}
 
 	private URI toStoredURI(CIdentity identity) {
