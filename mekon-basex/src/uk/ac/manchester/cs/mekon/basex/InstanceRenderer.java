@@ -37,10 +37,7 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
  */
 class InstanceRenderer extends Renderer {
 
-	private BaseXMatcher matcher;
 	private NNode rootNode;
-
-	private InstanceRefExpansionTracker refExpansions;
 
 	private abstract class FeaturesRenderer<V, F extends NFeature<V>> {
 
@@ -74,7 +71,7 @@ class InstanceRenderer extends Renderer {
 
 			XNode xNode = xParent.addChild(getEntityId());
 
-			renderType(feature.getType(), xNode);
+			renderType(feature, xNode);
 
 			for (V value : feature.getValues()) {
 
@@ -124,18 +121,15 @@ class InstanceRenderer extends Renderer {
 
 		void renderValue(NNumber feature, INumber value, XNode xNode) {
 
-			xNode.addValue(VALUE_ATTR, value.asTypeNumber().toString());
+			renderNumber(value, xNode);
 		}
 	}
 
-	InstanceRenderer(NNode rootNode, BaseXMatcher matcher) {
+	InstanceRenderer(NNode rootNode) {
 
 		checkNonCyclic(rootNode);
 
 		this.rootNode = rootNode;
-		this.matcher = matcher;
-
-		refExpansions = new InstanceRefExpansionTracker(rootNode);
 	}
 
 	XDocument render(int index) {
@@ -151,9 +145,10 @@ class InstanceRenderer extends Renderer {
 
 	private void renderValueNode(NLink link, NNode node, XNode xNode) {
 
-		if (node.instanceReference()) {
+		if (node.instanceRef()) {
 
-			checkRenderRefNode(link, node.getInstanceRef(), xNode);
+			renderType(node, xNode);
+			renderType(node.getInstanceRef(), xNode);
 		}
 		else {
 
@@ -161,38 +156,13 @@ class InstanceRenderer extends Renderer {
 		}
 	}
 
-	private void checkRenderRefNode(NLink link, CIdentity ref, XNode xNode) {
-
-		NNode refedNode = matcher.getFromStoreOrNull(ref);
-
-		if (refedNode != null) {
-
-			renderType(ref, xNode);
-
-			if (refExpansions.startExpansion(link, refedNode)) {
-
-				renderNode(refedNode, xNode);
-				refExpansions.endExpansion();
-			}
-			else {
-
-				renderNodeTypes(refedNode, xNode);
-			}
-		}
-	}
-
 	private void renderNode(NNode node, XNode xNode) {
 
 		checkAtomicType(node);
 
-		renderNodeTypes(node, xNode);
-		renderNodeFeatures(node, xNode);
-	}
-
-	private void renderNodeTypes(NNode node, XNode xNode) {
-
-		renderType(node.getType(), xNode);
+		renderType(node, xNode);
 		renderNodeAncestorTypes(node, xNode);
+		renderNodeFeatures(node, xNode);
 	}
 
 	private void renderNodeAncestorTypes(NNode node, XNode xNode) {
@@ -205,7 +175,7 @@ class InstanceRenderer extends Renderer {
 
 				if (!cAncestor.isRoot()) {
 
-					renderType(cAncestor.getIdentity(), xNode);
+					renderType(cAncestor, xNode);
 				}
 			}
 		}
@@ -215,6 +185,16 @@ class InstanceRenderer extends Renderer {
 
 		new LinksRenderer(xNode).renderAll(node.getLinks());
 		new NumbersRenderer(xNode).renderAll(node.getNumbers());
+	}
+
+	private void renderType(CFrame frame, XNode xNode) {
+
+		renderType(frame.getIdentity(), xNode);
+	}
+
+	private void renderType(NEntity entity, XNode xNode) {
+
+		renderType(entity.getType(), xNode);
 	}
 
 	private void renderType(CIdentity type, XNode xNode) {
@@ -227,9 +207,11 @@ class InstanceRenderer extends Renderer {
 		xNode.addValue(ID_ATTR, renderId(identity));
 	}
 
-	private boolean checkRenderViaInstanceRef(NLink link, NNode node) {
+	private void renderNumber(INumber value, XNode xNode) {
 
-		return false;
+		checkDefiniteNumberValue(value);
+
+		xNode.addValue(VALUE_ATTR, value.asTypeNumber().toString());
 	}
 
 	private void checkAtomicType(NNode node) {

@@ -41,12 +41,12 @@ public class BaseXMatcherTest extends IMatcherTest {
 		return false;
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+	protected boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking() {
 
 		return true;
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+	protected boolean handlesInstanceRefBasedQueriesWithInstanceLinking() {
 
 		return true;
 	}

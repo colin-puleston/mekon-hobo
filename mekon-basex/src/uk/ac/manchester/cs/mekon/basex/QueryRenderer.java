@@ -250,7 +250,7 @@ class QueryRenderer extends Renderer {
 
 		private List<CIdentity> getEffectiveTypeDisjuncts(NNode node) {
 
-			if (node.instanceReference()) {
+			if (node.instanceRef()) {
 
 				return Collections.singletonList(node.getInstanceRef());
 			}

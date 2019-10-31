@@ -28,7 +28,6 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
@@ -40,8 +39,6 @@ import uk.ac.manchester.cs.mekon.config.*;
  * @author Colin Puleston
  */
 public class BaseXMatcher extends NMatcher {
-
-	private IStore store = null;
 
 	private IMatcherIndexes indexes = new LocalIndexes();
 	private QueryRenderer queryRenderer = new QueryRenderer();
@@ -98,7 +95,8 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public void initialise(IStore store, IMatcherIndexes indexes) {
 
-		this.store = store;
+		super.initialise(store, indexes);
+
 		this.indexes = indexes;
 	}
 
@@ -192,24 +190,19 @@ public class BaseXMatcher extends NMatcher {
 		tempDatabase.stop();
 	}
 
-	NNode getFromStoreOrNull(CIdentity identity) {
+	/**
+	 * Specifies that referenced instances are to be expanded.
+	 *
+	 * @return True since referenced instances are to be expanded
+	 */
+	protected boolean expandInstanceRefs() {
 
-		if (store != null) {
-
-			IRegenInstance regen = store.get(identity);
-
-			if (regen != null && regen.getStatus() != IRegenStatus.FULLY_INVALID) {
-
-				return toNetwork(regen.getRootFrame());
-			}
-		}
-
-		return null;
+		return true;
 	}
 
 	private void addToDatabase(Database database, NNode instance, int index) {
 
-		database.add(new InstanceRenderer(instance, this).render(index), index);
+		database.add(new InstanceRenderer(instance).render(index), index);
 	}
 
 	private List<Integer> match(Database database, NNode query) {
