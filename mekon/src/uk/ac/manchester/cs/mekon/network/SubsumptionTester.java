@@ -209,9 +209,9 @@ class SubsumptionTester {
 
 	private boolean nodeSubsumption(NNode node1, NNode node2) {
 
-		if (node1.instanceReference()) {
+		if (node1.instanceRef()) {
 
-			return node2.instanceReference()
+			return node2.instanceRef()
 					&& node1.getInstanceRef().equals(node2.getInstanceRef());
 		}
 

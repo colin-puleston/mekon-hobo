@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.store.disk;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -33,11 +35,13 @@ class InstanceProfile {
 
 	private CIdentity instanceId;
 	private CIdentity typeId;
+	private List<CIdentity> referenceIds;
 
-	InstanceProfile(CIdentity instanceId, CIdentity typeId) {
+	InstanceProfile(CIdentity instanceId, CIdentity typeId, List<CIdentity> referenceIds) {
 
 		this.instanceId = instanceId;
 		this.typeId = typeId;
+		this.referenceIds = referenceIds;
 	}
 
 	CIdentity getInstanceId() {
@@ -48,5 +52,10 @@ class InstanceProfile {
 	CIdentity getTypeId() {
 
 		return typeId;
+	}
+
+	List<CIdentity> getReferenceIds() {
+
+		return referenceIds;
 	}
 }

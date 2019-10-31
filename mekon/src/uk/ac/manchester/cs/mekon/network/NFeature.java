@@ -161,6 +161,22 @@ public abstract class NFeature<V> extends NEntity {
 		this.iSlot = iSlot;
 	}
 
+	NFeature<V> copy() {
+
+		NFeature<V> copy = copyNoValues();
+
+		for (V value : getValues()) {
+
+			copy.addValue(resolveCopyValue(value));
+		}
+
+		return copy;
+	}
+
+	abstract NFeature<V> copyNoValues();
+
+	abstract V resolveCopyValue(V value);
+
 	void renderAttributes(NEntityRenderer renderer) {
 
 		for (V value : values) {

@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.io.*;
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
@@ -40,6 +41,7 @@ class Serialiser {
 
 	static private final String PROFILE_ROOT_ID = "Instance";
 	static private final String PROFILE_TYPE_ID = "Type";
+	static private final String PROFILE_REFERENCES_ID = "ReferencedInstances";
 
 	private CModel model;
 	private LogFile log;
@@ -58,9 +60,17 @@ class Serialiser {
 
 		XNode rootNode = document.getRootNode();
 		XNode typeNode = rootNode.addChild(PROFILE_TYPE_ID);
+		XNode refsNode = rootNode.addChild(PROFILE_REFERENCES_ID);
 
 		renderIdentity(profile.getInstanceId(), rootNode);
 		renderIdentity(profile.getTypeId(), typeNode);
+
+		List<CIdentity> refIds = profile.getReferenceIds();
+
+		if (!refIds.isEmpty()) {
+
+			renderIdentities(refIds, refsNode);
+		}
 
 		document.writeToFile(file);
 	}
@@ -74,8 +84,12 @@ class Serialiser {
 
 		XNode rootNode = new XDocument(file).getRootNode();
 		XNode typeNode = rootNode.getChild(PROFILE_TYPE_ID);
+		XNode refsNode = rootNode.getChild(PROFILE_REFERENCES_ID);
 
-		return new InstanceProfile(parseIdentity(rootNode), parseIdentity(typeNode));
+		return new InstanceProfile(
+						parseIdentity(rootNode),
+						parseIdentity(typeNode),
+						parseIdentities(refsNode));
 	}
 
 	IRegenInstance parseInstance(CIdentity identity, File file, boolean freeInstance) {
@@ -98,8 +112,18 @@ class Serialiser {
 		CIdentitySerialiser.render(identity, node);
 	}
 
+	private void renderIdentities(List<CIdentity> identities, XNode node) {
+
+		CIdentitySerialiser.renderList(identities, node);
+	}
+
 	private CIdentity parseIdentity(XNode node) {
 
 		return CIdentitySerialiser.parse(node);
+	}
+
+	private List<CIdentity> parseIdentities(XNode node) {
+
+		return CIdentitySerialiser.parseList(node);
 	}
 }

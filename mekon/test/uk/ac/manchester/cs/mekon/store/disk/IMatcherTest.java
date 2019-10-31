@@ -204,9 +204,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	}
 
 	@Test
-	public void test_instanceReferenceBasedQueriesWithoutInstanceLinking() {
+	public void test_instanceRefBasedQueriesWithoutInstanceLinking() {
 
-		if (!handlesInstanceReferenceBasedQueriesWithoutInstanceLinking()) {
+		if (!handlesInstanceRefBasedQueriesWithoutInstanceLinking()) {
 
 			return;
 		}
@@ -236,9 +236,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	}
 
 	@Test
-	public void test_instanceReferenceBasedQueriesWithInstanceLinking() {
+	public void test_instanceRefBasedQueriesWithInstanceLinking() {
 
-		if (!handlesInstanceReferenceBasedQueriesWithInstanceLinking()) {
+		if (!handlesInstanceRefBasedQueriesWithInstanceLinking()) {
 
 			return;
 		}
@@ -300,9 +300,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	protected abstract boolean handlesInstanceDisjunctionBasedQueries();
 
-	protected abstract boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking();
+	protected abstract boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking();
 
-	protected abstract boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking();
+	protected abstract boolean handlesInstanceRefBasedQueriesWithInstanceLinking();
 
 	protected IMatcher getMatcher() {
 

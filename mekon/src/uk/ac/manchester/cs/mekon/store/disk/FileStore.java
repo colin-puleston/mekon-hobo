@@ -51,8 +51,6 @@ class FileStore {
 		return new KFileStore(filePrefix, STORE_FILE_SUFFIX);
 	}
 
-	private IDiskStore iStore;
-
 	private KFileStore profiles = createFileStore(PROFILE_FILE_PREFIX);
 	private KFileStore instances = createFileStore(INSTANCE_FILE_PREFIX);
 
@@ -77,7 +75,8 @@ class FileStore {
 	void write(IFrame instance, CIdentity identity, int index) {
 
 		CIdentity typeId = instance.getType().getIdentity();
-		InstanceProfile profile = new InstanceProfile(identity, typeId);
+		List<CIdentity> refedIds = instance.getAllReferenceIds();
+		InstanceProfile profile = new InstanceProfile(identity, typeId, refedIds);
 
 		File pFile = profiles.getFile(index);
 		File iFile = instances.getFile(index);

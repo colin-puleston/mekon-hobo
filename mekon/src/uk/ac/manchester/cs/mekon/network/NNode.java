@@ -82,6 +82,26 @@ public class NNode extends NEntity {
 	}
 
 	/**
+	 * Provides a copy of the network emanating from the node.
+	 *
+	 * @return Copy of network emanating from node
+	 */
+	public NNode copy() {
+
+		NNode copy = new NNode(getTypeDisjuncts());
+
+		copy.cFrame = cFrame;
+		copy.iFrame = iFrame;
+
+		for (NFeature<?> feature : features) {
+
+			copy.features.add(feature.copy());
+		}
+
+		return copy;
+	}
+
+	/**
 	 * Sets a disjunction type for the node.
 	 *
 	 * @param typeDisjuncts Disjuncts of type for node
@@ -172,7 +192,7 @@ public class NNode extends NEntity {
 	 * @return True if node represents reference to specific existing
 	 * instance
 	 */
-	public boolean instanceReference() {
+	public boolean instanceRef() {
 
 		return iFrame != null && iFrame.getCategory().reference();
 	}
@@ -186,7 +206,7 @@ public class NNode extends NEntity {
 	 */
 	public CIdentity getInstanceRef() {
 
-		return instanceReference() ? iFrame.getReferenceId() : null;
+		return instanceRef() ? iFrame.getReferenceId() : null;
 	}
 
 	/**
@@ -311,7 +331,7 @@ public class NNode extends NEntity {
 
 	void renderAttributes(NEntityRenderer renderer) {
 
-		if (instanceReference()) {
+		if (instanceRef()) {
 
 			renderer.addLine("INSTANCE:" + getInstanceRef());
 		}

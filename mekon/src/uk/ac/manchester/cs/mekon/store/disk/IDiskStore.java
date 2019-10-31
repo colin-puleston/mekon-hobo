@@ -66,11 +66,11 @@ class IDiskStore implements IStore {
 
 		identities.add(identity);
 		types.put(identity, createRegenType(instance));
+		addInstanceRefs(instance, identity);
 
 		fileStore.write(instance, identity, index);
 
 		addToMatcher(instance, identity);
-		checkAddReferencingIds(instance, identity);
 
 		return previous;
 	}
@@ -208,6 +208,7 @@ class IDiskStore implements IStore {
 		identities.add(identity);
 		types.put(identity, type);
 		indexes.assignIndex(identity, index);
+		addInstanceRefs(identity, profile.getReferenceIds());
 	}
 
 	private void reloadMatchers() {
@@ -220,13 +221,13 @@ class IDiskStore implements IStore {
 		}
 	}
 
-	private void checkReloadToMatcher(List<IMatcher> reloadableMatchers, CIdentity identity) {
+	private void checkReloadToMatcher(List<IMatcher> reloadables, CIdentity identity) {
 
 		IFrame instance = getOrNull(identity, true);
 
 		if (instance != null) {
 
-			IMatcher matcher = lookForMatcher(reloadableMatchers, instance.getType());
+			IMatcher matcher = lookForMatcher(reloadables, instance.getType());
 
 			if (matcher != null) {
 
@@ -251,9 +252,7 @@ class IDiskStore implements IStore {
 			CFrame type = removed != null ? removed.getType() : getType(index);
 
 			removeFromMatcher(type, identity);
-
-			checkRemovingReferencedId(identity);
-			referencingIds.removeAll(identity);
+			removeInstanceRefs(identity);
 
 			fileStore.remove(index);
 			indexes.freeIndex(identity);
@@ -262,20 +261,27 @@ class IDiskStore implements IStore {
 		return removed;
 	}
 
-	private void checkAddReferencingIds(IFrame instance, CIdentity identity) {
+	private void addInstanceRefs(IFrame instance, CIdentity identity) {
 
-		for (CIdentity refedId : instance.getAllReferenceIds()) {
+		addInstanceRefs(identity, instance.getAllReferenceIds());
+	}
+
+	private void addInstanceRefs(CIdentity identity, List<CIdentity> referenceIds) {
+
+		for (CIdentity refedId : referenceIds) {
 
 			referencingIds.add(refedId, identity);
 		}
 	}
 
-	private void checkRemovingReferencedId(CIdentity identity) {
+	private void removeInstanceRefs(CIdentity identity) {
 
 		for (CIdentity refingId : referencingIds.getSet(identity)) {
 
 			removeReferenceId(refingId, identity);
 		}
+
+		referencingIds.removeAll(identity);
 	}
 
 	private void removeReferenceId(CIdentity refingId, CIdentity refedId) {
@@ -327,6 +333,18 @@ class IDiskStore implements IStore {
 		getMatcher(type).remove(identity);
 	}
 
+	private IMatcher getMatcher(IFrame frame) {
+
+		return getMatcher(frame.getType());
+	}
+
+	private IMatcher getMatcher(CFrame frameType) {
+
+		IMatcher matcher = lookForMatcher(matchers, frameType);
+
+		return matcher != null ? matcher : defaultMatcher;
+	}
+
 	private List<IMatcher> getReloadableMatchers() {
 
 		List<IMatcher> reloadables = new ArrayList<IMatcher>();
@@ -340,18 +358,6 @@ class IDiskStore implements IStore {
 		}
 
 		return reloadables;
-	}
-
-	private IMatcher getMatcher(IFrame frame) {
-
-		return getMatcher(frame.getType());
-	}
-
-	private IMatcher getMatcher(CFrame frameType) {
-
-		IMatcher matcher = lookForMatcher(matchers, frameType);
-
-		return matcher != null ? matcher : defaultMatcher;
 	}
 
 	private IMatcher lookForMatcher(List<IMatcher> candidates, CFrame frameType) {

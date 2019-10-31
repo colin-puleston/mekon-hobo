@@ -22,11 +22,9 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.network.process;
+package uk.ac.manchester.cs.mekon.network;
 
 import java.util.*;
-
-import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * Abstract base-class for processers that visit each node and

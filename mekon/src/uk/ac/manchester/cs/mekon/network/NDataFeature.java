@@ -61,6 +61,11 @@ public abstract class NDataFeature<V> extends NFeature<V> {
 		super(type, iSlot);
 	}
 
+	V resolveCopyValue(V value) {
+
+		return value;
+	}
+
 	void renderAttribute(NEntityRenderer renderer, V value) {
 
 		renderer.addLine(value.toString());

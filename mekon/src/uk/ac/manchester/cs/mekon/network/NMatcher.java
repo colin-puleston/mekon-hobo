@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.network;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 
@@ -45,7 +46,17 @@ import uk.ac.manchester.cs.mekon.store.disk.*;
  */
 public abstract class NMatcher implements IMatcher {
 
+	private IStore store = null;
+
 	private NetworkCreator networkCreator = new NetworkCreator();
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void initialise(IStore store, IMatcherIndexes indexes) {
+
+		this.store = store;
+	}
 
 	/**
 	 * Registers a pre-processor to perform certain required
@@ -70,7 +81,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
-		add(toNetwork(instance), identity);
+		add(toExpandedNetwork(instance), identity);
 	}
 
 	/**
@@ -99,7 +110,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return matches(toNetwork(query), toNetwork(instance));
+		return matches(toNetwork(query), toExpandedNetwork(instance));
 	}
 
 	/**
@@ -129,16 +140,53 @@ public abstract class NMatcher implements IMatcher {
 	protected abstract boolean matches(NNode query, NNode instance);
 
 	/**
-	 * Method used in converting the instance-level frames into
-	 * instantiations of the network-based representation. Can also
-	 * be used by extending classes where required.
+	 * Specifies whether the instantiations of the network-based
+	 * representations that are passed to the abstract methods will
+	 * include expansions for any instances referenced from within
+	 * the network. Such expansions will not replace the original
+	 * value-nodes representing the references but will be included
+	 * via an additional value-node which will be the root-node of
+	 * the full network representation of the expanded instance.
+	 * <p>
+	 * Any instance references within the expansions will also be
+	 * expanded, other than those that will result in an
+	 * "instance-type cycle", which is defined as occuring if the type
+	 * of a value-node is equal to that of the root-node, or is
+	 * subsumed by the value-type of any slot lying on the path from
+	 * the original root-node to the value-node in question.
 	 *
-	 * @param rootFrame Root-frame of instance-level frame
-	 * representation
-	 * @param instance Instance to test for matching
-	 * @return Root node of network-based representation
+	 * @return True if referenced instances are to be expanded
 	 */
-	protected NNode toNetwork(IFrame rootFrame) {
+	protected abstract boolean expandInstanceRefs();
+
+	NNode getReferencedInstanceNodeOrNull(CIdentity instanceRef) {
+
+		if (store != null) {
+
+			IRegenInstance regen = store.get(instanceRef);
+
+			if (regen != null && regen.getStatus() != IRegenStatus.FULLY_INVALID) {
+
+				return toNetwork(regen.getRootFrame());
+			}
+		}
+
+		return null;
+	}
+
+	private NNode toExpandedNetwork(IFrame instance) {
+
+		NNode rootNode = toNetwork(instance);
+
+		if (expandInstanceRefs()) {
+
+			new InstanceRefExpander(this, rootNode);
+		}
+
+		return rootNode;
+	}
+
+	private NNode toNetwork(IFrame rootFrame) {
 
 		return networkCreator.createNetwork(rootFrame);
 	}

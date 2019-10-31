@@ -24,9 +24,12 @@
 
 package uk.ac.manchester.cs.mekon.network;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
+import uk.ac.manchester.cs.mekon.config.*;
 
 /**
  * Provides an implementation of the reasoning mechanisms defined
@@ -41,25 +44,42 @@ import uk.ac.manchester.cs.mekon.store.disk.*;
  */
 public class NDirectMatcher extends NMatcher {
 
-	static private class Core extends ISimpleMatcherCore<NNode> {
+	private Map<CFrame, InstanceGroup> instanceGroups
+					= new HashMap<CFrame, InstanceGroup>();
 
-		protected CFrame getTypeOrNull(NNode instance) {
+	private class InstanceGroup {
 
-			return instance.getCFrame();
+		private CFrame rootFrameType;
+		private Map<CIdentity, NNode> instances = new HashMap<CIdentity, NNode>();
+
+		InstanceGroup(CFrame rootFrameType) {
+
+			this.rootFrameType = rootFrameType;
 		}
 
-		protected boolean subsumesStructure(NNode query, NNode instance) {
+		void add(NNode instance, CIdentity identity) {
 
-			return query.subsumesStructure(instance);
+			instances.put(identity, instance);
 		}
-	}
 
-	private Core core = new Core();
+		boolean checkRemove(CIdentity identity) {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void initialise(IStore store, IMatcherIndexes indexes) {
+			return instances.remove(identity) != null;
+		}
+
+		void collectMatches(NNode query, List<CIdentity> matches) {
+
+			if (getFrameType(query).subsumes(rootFrameType)) {
+
+				for (Map.Entry<CIdentity, NNode> entry : instances.entrySet()) {
+
+					if (query.subsumesStructure(entry.getValue())) {
+
+						matches.add(entry.getKey());
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -91,7 +111,16 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public void add(NNode instance, CIdentity identity) {
 
-		core.add(instance, identity);
+		CFrame rootFrameType = getFrameType(instance);
+		InstanceGroup group = instanceGroups.get(rootFrameType);
+
+		if (group == null) {
+
+			group = new InstanceGroup(rootFrameType);
+			instanceGroups.put(rootFrameType, group);
+		}
+
+		group.add(instance, identity);
 	}
 
 	/**
@@ -99,7 +128,13 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		core.remove(identity);
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.checkRemove(identity)) {
+
+				break;
+			}
+		}
 	}
 
 	/**
@@ -107,7 +142,14 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public IMatches match(NNode query) {
 
-		return core.match(query);
+		List<CIdentity> matches = new ArrayList<CIdentity>();
+
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			group.collectMatches(query, matches);
+		}
+
+		return IMatches.unranked(matches);
 	}
 
 	/**
@@ -115,7 +157,7 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public boolean matches(NNode query, NNode instance) {
 
-		return core.matches(query, instance);
+		return query.subsumesStructure(instance);
 	}
 
 	/**
@@ -123,5 +165,30 @@ public class NDirectMatcher extends NMatcher {
 	 * of store.
 	 */
 	public void stop() {
+	}
+
+	/**
+	 * Specifies that referenced instances are to be expanded.
+	 *
+	 * @return True since referenced instances are to be expanded
+	 */
+	protected boolean expandInstanceRefs() {
+
+		return true;
+	}
+
+	private CFrame getFrameType(NNode node) {
+
+		CFrame type = node.getCFrame();
+
+		if (type == null) {
+
+			throw new KSystemConfigException(
+						"Cannot handle instance/query that "
+						+ "cannot provide a CFrame representation "
+						+ "of the root-entity type: " + node);
+		}
+
+		return type;
 	}
 }

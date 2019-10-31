@@ -27,30 +27,62 @@ package uk.ac.manchester.cs.mekon.network;
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
- * Represents a number-valued feature in the network-based
- * instance representation
- *
  * @author Colin Puleston
  */
-public class NNumber extends NDataFeature<INumber> {
+class InstanceRefExpander {
 
-	/**
-	 * Constructor.
-	 *
-	 * @param type Type for number-valued feature
-	 */
-	public NNumber(CIdentity type) {
+	private NMatcher matcher;
 
-		super(type, null);
+	private ExpansionAdder expansionAdder = new ExpansionAdder();
+	private InstanceRefExpansionTracker expansionTracker;
+
+	private class ExpansionAdder extends NCrawler {
+
+		protected void visit(NNode node) {
+		}
+
+		protected void visit(NLink link) {
+
+			addExpansions(link);
+		}
+
+		protected void visit(NNumber number) {
+		}
+
+		protected void visit(NString string) {
+		}
 	}
 
-	NNumber(CIdentity type, ISlot iSlot) {
+	InstanceRefExpander(NMatcher matcher, NNode rootInstance) {
 
-		super(type, iSlot);
+		this.matcher = matcher;
+
+		expansionTracker = new InstanceRefExpansionTracker(rootInstance);
+
+		expansionAdder.process(rootInstance);
 	}
 
-	NNumber copyNoValues() {
+	private void addExpansions(NLink link) {
 
-		return new NNumber(getType(), getISlot());
+		for (NNode valueNode : link.getValues()) {
+
+			if (valueNode.instanceRef()) {
+
+				addExpansion(link, valueNode.getInstanceRef());
+			}
+		}
+	}
+
+	private void addExpansion(NLink link, CIdentity instanceRef) {
+
+		NNode refedNode = matcher.getReferencedInstanceNodeOrNull(instanceRef);
+
+		if (refedNode != null && expansionTracker.startExpansion(link, refedNode)) {
+
+			link.addValue(refedNode);
+
+			expansionAdder.process(refedNode);
+			expansionTracker.endExpansion();
+		}
 	}
 }

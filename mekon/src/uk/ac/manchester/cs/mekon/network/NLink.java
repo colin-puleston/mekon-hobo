@@ -72,6 +72,20 @@ public class NLink extends NFeature<NNode> {
 		super(type, iSlot);
 	}
 
+	NLink copyNoValues() {
+
+		NLink copy = new NLink(getType(), getISlot());
+
+		copy.disjunctionLink = disjunctionLink;
+
+		return copy;
+	}
+
+	NNode resolveCopyValue(NNode value) {
+
+		return value.copy();
+	}
+
 	void renderAttribute(NEntityRenderer renderer, NNode value) {
 
 		value.render(renderer);
