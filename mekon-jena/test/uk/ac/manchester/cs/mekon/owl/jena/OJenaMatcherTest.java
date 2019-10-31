@@ -42,12 +42,12 @@ public class OJenaMatcherTest extends ORMatcherTest {
 		return true;
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithoutInstanceLinking() {
+	protected boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking() {
 
 		return true;
 	}
 
-	protected boolean handlesInstanceReferenceBasedQueriesWithInstanceLinking() {
+	protected boolean handlesInstanceRefBasedQueriesWithInstanceLinking() {
 
 		return true;
 	}
