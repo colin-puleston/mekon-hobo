@@ -44,16 +44,6 @@ public class OStardogMatcherTest extends ORMatcherTest {
 		return false;
 	}
 
-	protected boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking() {
-
-		return false;
-	}
-
-	protected boolean handlesInstanceRefBasedQueriesWithInstanceLinking() {
-
-		return false;
-	}
-
 	private OStardogConfig createConfig() {
 
 		OStardogConfig config = new OStardogConfig();
