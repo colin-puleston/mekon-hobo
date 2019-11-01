@@ -237,6 +237,12 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			createUniStudentTeacherQuery(),
 			UNDERGRAD_TEACHER_ID,
 			POSTGRAD_TEACHER_ID);
+
+		removeInstance(POSTGRAD_TEACHING_JOB_ID);
+
+		testMatching(
+			createUniStudentTeacherQuery(),
+			UNDERGRAD_TEACHER_ID);
 	}
 
 	@Test
