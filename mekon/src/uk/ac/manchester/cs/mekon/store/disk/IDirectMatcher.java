@@ -53,10 +53,14 @@ public class IDirectMatcher implements IMatcher {
 
 	private Core core = new Core();
 
+	private IMatchInstanceRefExpander instanceRefExpander = null;
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void initialise(IStore store, IMatcherIndexes indexes) {
+
+		instanceRefExpander = new IMatchInstanceRefExpander(store);
 	}
 
 	/**
@@ -88,6 +92,8 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
+		expandInstanceRefs(instance);
+
 		core.add(instance, identity);
 	}
 
@@ -112,6 +118,8 @@ public class IDirectMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
+		expandInstanceRefs(instance);
+
 		return core.matches(query, instance);
 	}
 
@@ -120,5 +128,20 @@ public class IDirectMatcher implements IMatcher {
 	 * of store.
 	 */
 	public void stop() {
+	}
+
+	private void expandInstanceRefs(IFrame instance) {
+
+		getInstanceRefExpander().expandAll(instance);
+	}
+
+	private IMatchInstanceRefExpander getInstanceRefExpander() {
+
+		if (instanceRefExpander == null) {
+
+			throw new Error("Instance-ref-expander has not been set");
+		}
+
+		return instanceRefExpander;
 	}
 }

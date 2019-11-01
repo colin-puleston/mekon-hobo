@@ -46,7 +46,7 @@ import uk.ac.manchester.cs.mekon.store.disk.*;
  */
 public abstract class NMatcher implements IMatcher {
 
-	private IStore store = null;
+	private IMatchInstanceRefExpander instanceRefExpander = null;
 
 	private NetworkCreator networkCreator = new NetworkCreator();
 
@@ -55,7 +55,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public void initialise(IStore store, IMatcherIndexes indexes) {
 
-		this.store = store;
+		instanceRefExpander = new IMatchInstanceRefExpander(store);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public void add(IFrame instance, CIdentity identity) {
 
-		add(toExpandedNetwork(instance), identity);
+		add(instanceToNetwork(instance), identity);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return match(toNetwork(query));
+		return match(queryToNetwork(query));
 	}
 
 	/**
@@ -110,7 +110,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return matches(toNetwork(query), toExpandedNetwork(instance));
+		return matches(queryToNetwork(query), instanceToNetwork(instance));
 	}
 
 	/**
@@ -143,51 +143,35 @@ public abstract class NMatcher implements IMatcher {
 	 * Specifies whether the instantiations of the network-based
 	 * representations that are passed to the abstract methods will
 	 * include expansions for any instances referenced from within
-	 * the network. Such expansions will not replace the original
-	 * value-nodes representing the references but will be included
-	 * via an additional value-node which will be the root-node of
-	 * the full network representation of the expanded instance.
-	 * <p>
-	 * Any instance references within the expansions will also be
-	 * expanded, other than those that will result in an
-	 * "instance-type cycle", which is defined as occuring if the type
-	 * of a value-node is equal to that of the root-node, or is
-	 * subsumed by the value-type of any slot lying on the path from
-	 * the original root-node to the value-node in question.
+	 * the network, with expansions derived via the
+	 * {@link IMatchInstanceRefExpander} mechanism.
 	 *
 	 * @return True if referenced instances are to be expanded
 	 */
 	protected abstract boolean expandInstanceRefs();
 
-	NNode getReferencedInstanceNodeOrNull(CIdentity instanceRef) {
-
-		if (store != null) {
-
-			IRegenInstance regen = store.get(instanceRef);
-
-			if (regen != null && regen.getStatus() != IRegenStatus.FULLY_INVALID) {
-
-				return toNetwork(regen.getRootFrame());
-			}
-		}
-
-		return null;
-	}
-
-	private NNode toExpandedNetwork(IFrame instance) {
-
-		NNode rootNode = toNetwork(instance);
+	private NNode instanceToNetwork(IFrame instance) {
 
 		if (expandInstanceRefs()) {
 
-			new InstanceRefExpander(this, rootNode);
+			getInstanceRefExpander().expandAll(instance);
 		}
 
-		return rootNode;
+		return networkCreator.createNetwork(instance);
 	}
 
-	private NNode toNetwork(IFrame rootFrame) {
+	private NNode queryToNetwork(IFrame query) {
 
-		return networkCreator.createNetwork(rootFrame);
+		return networkCreator.createNetwork(query);
+	}
+
+	private IMatchInstanceRefExpander getInstanceRefExpander() {
+
+		if (instanceRefExpander == null) {
+
+			throw new Error("Instance-ref-expander has not been set");
+		}
+
+		return instanceRefExpander;
 	}
 }

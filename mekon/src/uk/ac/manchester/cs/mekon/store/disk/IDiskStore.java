@@ -186,6 +186,8 @@ class IDiskStore implements IStore {
 
 	private void initialiseMatchers() {
 
+		defaultMatcher.initialise(this, indexes);
+
 		for (IMatcher matcher : matchers) {
 
 			matcher.initialise(this, indexes);

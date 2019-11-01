@@ -38,15 +38,5 @@ public class IDirectMatcherTest extends IMatcherTest {
 
 		return true;
 	}
-
-	protected boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking() {
-
-		return true;
-	}
-
-	protected boolean handlesInstanceRefBasedQueriesWithInstanceLinking() {
-
-		return false;
-	}
 }
 

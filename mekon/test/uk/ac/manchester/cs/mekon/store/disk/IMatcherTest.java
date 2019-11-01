@@ -206,11 +206,6 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	@Test
 	public void test_instanceRefBasedQueriesWithoutInstanceLinking() {
 
-		if (!handlesInstanceRefBasedQueriesWithoutInstanceLinking()) {
-
-			return;
-		}
-
 		testMatching(
 			createCitizenQuery(ACADEMIC_RESEARCHING_JOB_ID),
 			ACADEMIC_RESEARCHER_ID);
@@ -237,11 +232,6 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	@Test
 	public void test_instanceRefBasedQueriesWithInstanceLinking() {
-
-		if (!handlesInstanceRefBasedQueriesWithInstanceLinking()) {
-
-			return;
-		}
 
 		testMatching(
 			createUniStudentTeacherQuery(),
@@ -299,10 +289,6 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	protected abstract IMatcher createMatcher();
 
 	protected abstract boolean handlesInstanceDisjunctionBasedQueries();
-
-	protected abstract boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking();
-
-	protected abstract boolean handlesInstanceRefBasedQueriesWithInstanceLinking();
 
 	protected IMatcher getMatcher() {
 
