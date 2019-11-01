@@ -41,14 +41,4 @@ public class OJenaMatcherTest extends ORMatcherTest {
 
 		return true;
 	}
-
-	protected boolean handlesInstanceRefBasedQueriesWithoutInstanceLinking() {
-
-		return true;
-	}
-
-	protected boolean handlesInstanceRefBasedQueriesWithInstanceLinking() {
-
-		return true;
-	}
 }
