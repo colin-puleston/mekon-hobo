@@ -104,6 +104,31 @@ public abstract class KCollectionMap<K, E> {
 	}
 
 	/**
+	 * Removes the specified element from any collection in which
+	 * it is contained.
+	 *
+	 * @param element Element to be removed from relevant collections
+	 */
+	public void removeFromAll(E element) {
+
+		removeAllFromAll(Collections.<E>singleton(element));
+	}
+
+	/**
+	 * Removes the specified elements from any collections in which
+	 * they are contained.
+	 *
+	 * @param elements Elements to be removed from relevant collections
+	 */
+	public void removeAllFromAll(Collection<? extends E> elements) {
+
+		for (Collection<E> collection : map.values()) {
+
+			collection.removeAll(elements);
+		}
+	}
+
+	/**
 	 * Removes all collections from the map.
 	 */
 	public void clear() {

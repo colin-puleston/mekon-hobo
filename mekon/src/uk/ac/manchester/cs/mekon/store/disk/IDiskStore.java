@@ -284,6 +284,7 @@ class IDiskStore implements IStore {
 		}
 
 		referencingIds.removeAll(identity);
+		referencingIds.removeFromAll(identity);
 	}
 
 	private void removeReferenceId(CIdentity refingId, CIdentity refedId) {

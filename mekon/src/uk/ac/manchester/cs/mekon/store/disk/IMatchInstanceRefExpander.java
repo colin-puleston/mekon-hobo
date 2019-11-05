@@ -45,13 +45,12 @@ import uk.ac.manchester.cs.mekon.store.*;
  * <p>
  * Any instance references within the expansions will also be
  * expanded, other than those that will result in an
- * "instance-type cycle", which is defined as occuring if the type
- * of a value-frame is equal to that of the root-frame of the
- * initial instance, or is subsumed by the value-type of any slot
- * lying on the path from the initial root-frame to the
- * value-frame in question.
+ * "instance-type cycle", which is defined as occuring if the
+ * type the root-frame of a referenced instance either subsumes
+ * or is subsumed by the type of the root-frame of any directly
+ * or indirectly referencing instances.
  * <p>
- * NOTE: It is assumed that the instances that are to be exapnded
+ * NOTE: It is assumed that the instances that are to be expanded
  * will be the "free-instance" copies of the originals upon which
  * the matchers will operate (see {@link IFreeCopier}), and hence
  * will always be suitably editable.
@@ -82,12 +81,7 @@ public class IMatchInstanceRefExpander {
 	 */
 	public void expandAll(IFrame instance) {
 
-		expandAll(instance.getType(), instance);
-	}
-
-	private void expandAll(CFrame type, IFrame instance) {
-
-		expandingTypes.push(type);
+		expandingTypes.push(instance.getType());
 		expandAllFromSlots(instance);
 		expandingTypes.pop();
 	}
@@ -127,16 +121,10 @@ public class IMatchInstanceRefExpander {
 
 		IFrame refed = getFromStoreOrNull(refId);
 
-		if (refed != null) {
+		if (refed != null && canExpand(refed)) {
 
-			CFrame refType = (CFrame)slot.getValueType();
-
-			if (canExpand(refType, refed)) {
-
-				slot.getValuesEditor().add(refed);
-
-				expandAll(refType, refed);
-			}
+			slot.getValuesEditor().add(refed);
+			expandAll(refed);
 		}
 	}
 
@@ -152,16 +140,17 @@ public class IMatchInstanceRefExpander {
 		return null;
 	}
 
-	private boolean canExpand(CFrame refType, IFrame refed) {
+	private boolean canExpand(IFrame refed) {
 
-		return !refed.leadsToCycle() && !refCausesTypeCycle(refType);
+		return !refed.leadsToCycle() && !refCausesTypeCycle(refed.getType());
 	}
 
 	private boolean refCausesTypeCycle(CFrame refType) {
 
 		for (CFrame expandingType : expandingTypes) {
 
-			if (expandingType.subsumes(refType)) {
+			if (expandingType.subsumes(refType)
+				|| refType.subsumes(expandingType)) {
 
 				return true;
 			}

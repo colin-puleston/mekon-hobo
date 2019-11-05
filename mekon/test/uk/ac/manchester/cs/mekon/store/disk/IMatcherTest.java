@@ -48,6 +48,8 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	static private final CIdentity ACADEMIC_RESEARCHING_JOB_ID = createInstanceId("AcademicResearching");
 	static private final CIdentity DOCTORING_JOB_ID = createInstanceId("Doctoring");
 
+	static private final CIdentity DOCTOR_EMPLOYMENT_ID = createInstanceId("DoctorEmployment");
+
 	static private final CIdentity UNDERGRAD_TEACHER_ID = createInstanceId("UndergradTeacher");
 	static private final CIdentity POSTGRAD_TEACHER_ID = createInstanceId("PostgradTeacher");
 	static private final CIdentity ACADEMIC_RESEARCHER_ID = createInstanceId("AcademicResearcher");
@@ -75,11 +77,6 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	private IFrame academicResearchJob;
 	private IFrame doctoringJob;
 
-	private IFrame undergradTeacher;
-	private IFrame postgradTeacher;
-	private IFrame academicResearcher;
-	private IFrame doctor;
-
 	@Before
 	public void setUp() {
 
@@ -97,10 +94,12 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		academicResearchJob = addAcademicResearchJob();
 		doctoringJob = addDoctoringJob();
 
-		undergradTeacher = addUndergradTeacher();
-		postgradTeacher = addPostgradTeacher();
-		academicResearcher = addAcademicResearcher();
-		doctor = addDoctor();
+		addDoctorEmploymentViaJobRef();
+
+		addUndergradTeacherViaJobRef();
+		addPostgradTeacherViaJobRef();
+		addAcademicResearcherViaJobRef();
+		addDoctorViaEmploymentAndJobRefs();
 	}
 
 	@After
@@ -238,11 +237,19 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			UNDERGRAD_TEACHER_ID,
 			POSTGRAD_TEACHER_ID);
 
+		testMatching(
+			createDoctorQuery(),
+			DOCTOR_ID);
+
 		removeInstance(POSTGRAD_TEACHING_JOB_ID);
+		removeInstance(DOCTOR_EMPLOYMENT_ID);
 
 		testMatching(
 			createUniStudentTeacherQuery(),
 			UNDERGRAD_TEACHER_ID);
+
+		testMatching(
+			createDoctorQuery());
 	}
 
 	@Test
@@ -335,29 +342,70 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return addInstance(job, DOCTORING_JOB_ID);
 	}
 
-	private IFrame addUndergradTeacher() {
+	private IFrame addDoctorEmploymentViaJobRef() {
 
-		return addCitizen(UNDERGRAD_TEACHER_ID, UNDERGRAD_TEACHING_JOB_ID);
+		return addInstance(
+					createEmploymentViaJobRef(DOCTORING_JOB_ID),
+					DOCTOR_EMPLOYMENT_ID);
 	}
 
-	private IFrame addPostgradTeacher() {
+	private IFrame addUndergradTeacherViaJobRef() {
 
-		return addCitizen(POSTGRAD_TEACHER_ID, POSTGRAD_TEACHING_JOB_ID);
+		return addCitizenViaJobRef(UNDERGRAD_TEACHER_ID, UNDERGRAD_TEACHING_JOB_ID);
 	}
 
-	private IFrame addAcademicResearcher() {
+	private IFrame addPostgradTeacherViaJobRef() {
 
-		return addCitizen(ACADEMIC_RESEARCHER_ID, ACADEMIC_RESEARCHING_JOB_ID);
+		return addCitizenViaJobRef(POSTGRAD_TEACHER_ID, POSTGRAD_TEACHING_JOB_ID);
 	}
 
-	private IFrame addDoctor() {
+	private IFrame addAcademicResearcherViaJobRef() {
 
-		return addCitizen(DOCTOR_ID, DOCTORING_JOB_ID);
+		return addCitizenViaJobRef(ACADEMIC_RESEARCHER_ID, ACADEMIC_RESEARCHING_JOB_ID);
 	}
 
-	private IFrame addCitizen(CIdentity citizenId, CIdentity jobId) {
+	private IFrame addDoctorViaEmploymentAndJobRefs() {
 
-		return addInstance(createCitizen(jobId), citizenId);
+		return addCitizenViaEmploymentRef(DOCTOR_ID, DOCTOR_EMPLOYMENT_ID);
+	}
+
+	private IFrame addCitizenViaJobRef(CIdentity citizenId, CIdentity jobId) {
+
+		return addInstance(createCitizenViaJobRef(jobId), citizenId);
+	}
+
+	private IFrame addCitizenViaEmploymentRef(CIdentity citizenId, CIdentity employmentId) {
+
+		return addInstance(createCitizenViaEmploymentRef(employmentId), citizenId);
+	}
+
+	private IFrame createCitizenViaJobRef(CIdentity jobId) {
+
+		return createCitizen(createEmploymentViaJobRef(jobId));
+	}
+
+	private IFrame createCitizenViaEmploymentRef(CIdentity employmentId) {
+
+		return createCitizen(createRefIFrame(EMPLOYMENT, employmentId));
+	}
+
+	private IFrame createCitizen(IFrame employment) {
+
+		IFrame citizen = createIFrame(CITIZEN);
+
+		addISlotValue(citizen, EMPLOYMENT_PROPERTY, employment);
+
+		return citizen;
+	}
+
+	private IFrame createEmploymentViaJobRef(CIdentity jobId) {
+
+		IFrame employment = createIFrame(EMPLOYMENT);
+		IFrame jobRef = createRefIFrame(JOB, jobId);
+
+		addISlotValue(employment, JOBS_PROPERTY, jobRef);
+
+		return employment;
 	}
 
 	private IFrame createJob(String industryConcept, String jobTypeConcept) {
@@ -368,18 +416,6 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		addISlotValue(job, JOB_TYPE_PROPERTY, createIFrame(jobTypeConcept));
 
 		return job;
-	}
-
-	private IFrame createCitizen(CIdentity jobId) {
-
-		IFrame citizen = createIFrame(CITIZEN);
-		IFrame employment = createIFrame(EMPLOYMENT);
-		IFrame jobRef = createRefIFrame(JOB, jobId);
-
-		addISlotValue(citizen, EMPLOYMENT_PROPERTY, employment);
-		addISlotValue(employment, JOBS_PROPERTY, jobRef);
-
-		return citizen;
 	}
 
 	private void setIndustrySector(IFrame job, String sectorConcept) {
@@ -397,22 +433,22 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		updateInstance(job);
 	}
 
-	private IFrame createAcademiaQuery() {
-
-		IFrame job = createJobQuery();
-		IFrame industry = createQueryIFrame(ACADEMIA);
-
-		addISlotValue(job, INDUSTRY_PROPERTY, industry);
-
-		return job;
-	}
-
 	private IFrame createAcademicTeachingQuery() {
 
 		IFrame job = createAcademiaQuery();
 		IFrame jobType = createQueryIFrame(LECTURER);
 
 		addISlotValue(job, JOB_TYPE_PROPERTY, jobType);
+
+		return job;
+	}
+
+	private IFrame createAcademiaQuery() {
+
+		IFrame job = createJobQuery();
+		IFrame industry = createQueryIFrame(ACADEMIA);
+
+		addISlotValue(job, INDUSTRY_PROPERTY, industry);
 
 		return job;
 	}
@@ -483,9 +519,28 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return createCitizenQuery(createJobQuery());
 	}
 
+	private IFrame createDoctorQuery() {
+
+		return createCitizenQuery(DOCTOR);
+	}
+
+	private IFrame createResearcherQuery() {
+
+		return createCitizenQuery(RESEARCHER);
+	}
+
 	private IFrame createUniStudentTeacherQuery() {
 
 		return createCitizenQuery(createUniStudentTeachingQuery());
+	}
+
+	private IFrame createCitizenQuery(String jobTypeConcept) {
+
+		IFrame job = createJobQuery();
+
+		addISlotValue(job, JOB_TYPE_PROPERTY, createQueryIFrame(jobTypeConcept));
+
+		return createCitizenQuery(job);
 	}
 
 	private IFrame createCitizenQuery(CIdentity jobId) {
