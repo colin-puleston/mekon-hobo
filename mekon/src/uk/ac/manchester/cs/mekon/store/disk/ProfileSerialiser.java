@@ -28,39 +28,24 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class Serialiser {
+class ProfileSerialiser {
 
-	static private final String PROFILE_ROOT_ID = "Instance";
-	static private final String PROFILE_TYPE_ID = "Type";
-	static private final String PROFILE_REFERENCES_ID = "ReferencedInstances";
+	static private final String ROOT_ID = "Instance";
+	static private final String TYPE_ID = "Type";
+	static private final String REFERENCES_ID = "ReferencedInstances";
 
-	private CModel model;
-	private LogFile log;
+	static void render(InstanceProfile profile, File file) {
 
-	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
-
-	Serialiser(CModel model, LogFile log) {
-
-		this.model = model;
-		this.log = log;
-	}
-
-	void renderProfile(InstanceProfile profile, File file) {
-
-		XDocument document = new XDocument(PROFILE_ROOT_ID);
+		XDocument document = new XDocument(ROOT_ID);
 
 		XNode rootNode = document.getRootNode();
-		XNode typeNode = rootNode.addChild(PROFILE_TYPE_ID);
-		XNode refsNode = rootNode.addChild(PROFILE_REFERENCES_ID);
+		XNode typeNode = rootNode.addChild(TYPE_ID);
 
 		renderIdentity(profile.getInstanceId(), rootNode);
 		renderIdentity(profile.getTypeId(), typeNode);
@@ -69,60 +54,46 @@ class Serialiser {
 
 		if (!refIds.isEmpty()) {
 
-			renderIdentities(refIds, refsNode);
+			renderIdentities(refIds, rootNode.addChild(REFERENCES_ID));
 		}
 
 		document.writeToFile(file);
 	}
 
-	void renderInstance(IFrame instance, File file) {
-
-		instanceRenderer.render(new IInstanceRenderInput(instance)).writeToFile(file);
-	}
-
-	InstanceProfile parseProfile(File file) {
+	static InstanceProfile parse(File file) {
 
 		XNode rootNode = new XDocument(file).getRootNode();
-		XNode typeNode = rootNode.getChild(PROFILE_TYPE_ID);
-		XNode refsNode = rootNode.getChild(PROFILE_REFERENCES_ID);
+		XNode typeNode = rootNode.getChild(TYPE_ID);
 
 		return new InstanceProfile(
 						parseIdentity(rootNode),
 						parseIdentity(typeNode),
-						parseIdentities(refsNode));
+						parseReferenceIds(rootNode));
 	}
 
-	IRegenInstance parseInstance(CIdentity identity, File file, boolean freeInstance) {
+	static private List<CIdentity> parseReferenceIds(XNode rootNode) {
 
-		IInstanceParser parser = new IInstanceParser(model, IFrameFunction.ASSERTION);
+		XNode refsNode = rootNode.getChildOrNull(REFERENCES_ID);
 
-		parser.setFreeInstances(freeInstance);
-		parser.setPossibleModelUpdates(true);
-
-		IInstanceParseInput input = new IInstanceParseInput(new XDocument(file));
-		IRegenInstance output = parser.parse(input);
-
-		log.logParsedInstance(identity, output);
-
-		return output;
+		return refsNode != null ?  parseIdentities(refsNode) : Collections.emptyList();
 	}
 
-	private void renderIdentity(CIdentity identity, XNode node) {
+	static private void renderIdentity(CIdentity identity, XNode node) {
 
 		CIdentitySerialiser.render(identity, node);
 	}
 
-	private void renderIdentities(List<CIdentity> identities, XNode node) {
+	static private void renderIdentities(List<CIdentity> identities, XNode node) {
 
 		CIdentitySerialiser.renderList(identities, node);
 	}
 
-	private CIdentity parseIdentity(XNode node) {
+	static private CIdentity parseIdentity(XNode node) {
 
 		return CIdentitySerialiser.parse(node);
 	}
 
-	private List<CIdentity> parseIdentities(XNode node) {
+	static private List<CIdentity> parseIdentities(XNode node) {
 
 		return CIdentitySerialiser.parseList(node);
 	}
