@@ -33,7 +33,6 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.regen.zlink.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
  * @author Colin Puleston
@@ -52,7 +51,7 @@ class IDiskStore implements IStore {
 	private Map<CIdentity, IRegenType> types = new HashMap<CIdentity, IRegenType>();
 	private InstanceIndexes indexes = new InstanceIndexes();
 
-	private KSetMap<CIdentity, CIdentity> referencingIds = new KSetMap<CIdentity, CIdentity>();
+	private InstanceRefIntegrityManager refIntegrityManager;
 
 	public CModel getModel() {
 
@@ -61,23 +60,32 @@ class IDiskStore implements IStore {
 
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
+		System.out.println("\nSTART-ADD: " + identity);
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
 
 		identities.add(identity);
 		types.put(identity, createRegenType(instance));
-		addInstanceRefs(instance, identity);
 
 		fileStore.write(instance, identity, index);
 
+		refIntegrityManager.onAddedInstance(instance, identity);
 		addToMatcher(instance, identity);
 
+		System.out.println("END-ADD: " + identity);
 		return previous;
 	}
 
 	public synchronized boolean remove(CIdentity identity) {
 
-		return checkRemove(identity) != null;
+		if (checkRemove(identity) != null) {
+
+			refIntegrityManager.onRemovedInstance(identity);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public synchronized boolean clear() {
@@ -157,6 +165,7 @@ class IDiskStore implements IStore {
 		this.matchers = matchers;
 
 		fileStore = new FileStore(model, directory);
+		refIntegrityManager = new InstanceRefIntegrityManager(this);
 	}
 
 	void addMatcher(IMatcher matcher) {
@@ -182,6 +191,25 @@ class IDiskStore implements IStore {
 		}
 
 		matchers.clear();
+	}
+
+	void update(IFrame instance, CIdentity identity) {
+
+		System.out.println("START-UPDATE: " + identity);
+		int index = indexes.getIndex(identity);
+
+		removeFromMatcher(instance.getType(), identity);
+
+		fileStore.remove(index);
+		fileStore.write(instance, identity, index);
+
+		addToMatcher(instance, identity);
+		System.out.println("END-UPDATE: " + identity);
+	}
+
+	IFrame getOrNull(CIdentity identity, boolean freeInstance) {
+
+		return getOrNull(identity, indexes.getIndex(identity), freeInstance);
 	}
 
 	private void initialiseMatchers() {
@@ -210,7 +238,8 @@ class IDiskStore implements IStore {
 		identities.add(identity);
 		types.put(identity, type);
 		indexes.assignIndex(identity, index);
-		addInstanceRefs(identity, profile.getReferenceIds());
+
+		refIntegrityManager.onReloadedInstance(identity, profile);
 	}
 
 	private void reloadMatchers() {
@@ -244,6 +273,7 @@ class IDiskStore implements IStore {
 
 		if (indexes.hasIndex(identity)) {
 
+			System.out.println("START-REMOVE: " + identity);
 			identities.remove(identity);
 			types.remove(identity);
 
@@ -254,64 +284,18 @@ class IDiskStore implements IStore {
 			CFrame type = removed != null ? removed.getType() : getType(index);
 
 			removeFromMatcher(type, identity);
-			removeInstanceRefs(identity);
 
 			fileStore.remove(index);
 			indexes.freeIndex(identity);
+			System.out.println("END-REMOVE: " + identity);
 		}
 
 		return removed;
 	}
 
-	private void addInstanceRefs(IFrame instance, CIdentity identity) {
-
-		addInstanceRefs(identity, instance.getAllReferenceIds());
-	}
-
-	private void addInstanceRefs(CIdentity identity, List<CIdentity> referenceIds) {
-
-		for (CIdentity refedId : referenceIds) {
-
-			referencingIds.add(refedId, identity);
-		}
-	}
-
-	private void removeInstanceRefs(CIdentity identity) {
-
-		for (CIdentity refingId : referencingIds.getSet(identity)) {
-
-			removeReferenceId(refingId, identity);
-		}
-
-		referencingIds.removeAll(identity);
-		referencingIds.removeFromAll(identity);
-	}
-
-	private void removeReferenceId(CIdentity refingId, CIdentity refedId) {
-
-		int refingIndex = indexes.getIndex(refingId);
-		IFrame refingInstance = getOrNull(refingId, refingIndex, true);
-
-		if (refingInstance != null) {
-
-			refingInstance.removeReferenceId(refedId);
-			removeFromMatcher(refingInstance.getType(), refingId);
-
-			fileStore.remove(refingIndex);
-			fileStore.write(refingInstance, refingId, refingIndex);
-
-			addToMatcher(refingInstance, refingId);
-		}
-	}
-
 	private CFrame getType(int index) {
 
 		return model.getFrames().get(fileStore.readTypeId(index));
-	}
-
-	private IFrame getOrNull(CIdentity identity, boolean freeInstance) {
-
-		return getOrNull(identity, indexes.getIndex(identity), freeInstance);
 	}
 
 	private IFrame getOrNull(CIdentity identity, int index, boolean freeInstance) {
