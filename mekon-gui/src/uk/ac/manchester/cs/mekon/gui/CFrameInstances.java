@@ -98,7 +98,7 @@ class CFrameInstances {
 
 			IFrame query = rootFrame.instantiateQuery();
 
-			return storeActions.executeQuery(query).getAllMatches();
+			return storeActions.executeQuery(query, false).getAllMatches();
 		}
 	}
 

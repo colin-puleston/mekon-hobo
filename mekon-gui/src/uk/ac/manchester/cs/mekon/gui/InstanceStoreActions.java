@@ -106,11 +106,11 @@ class InstanceStoreActions {
 		}
 	}
 
-	IMatches executeQuery(IFrame query) {
+	IMatches executeQuery(IFrame query, boolean reportNoMatches) {
 
 		IMatches matches = getStore().match(query);
 
-		if (!matches.anyMatches()) {
+		if (reportNoMatches && !matches.anyMatches()) {
 
 			showMessage("No matches for supplied query");
 		}

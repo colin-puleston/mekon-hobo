@@ -121,7 +121,7 @@ class QueryFrame extends InstantiationFrame {
 
 	private void execute() {
 
-		IMatches matches = getStoreActions().executeQuery(getFrame());
+		IMatches matches = getStoreActions().executeQuery(getFrame(), true);
 
 		if (matches.anyMatches()) {
 
