@@ -60,7 +60,6 @@ class IDiskStore implements IStore {
 
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
-		System.out.println("\nSTART-ADD: " + identity);
 		IFrame previous = checkRemove(identity);
 		int index = indexes.assignIndex(identity);
 
@@ -72,7 +71,6 @@ class IDiskStore implements IStore {
 		refIntegrityManager.onAddedInstance(instance, identity);
 		addToMatcher(instance, identity);
 
-		System.out.println("END-ADD: " + identity);
 		return previous;
 	}
 
@@ -195,7 +193,6 @@ class IDiskStore implements IStore {
 
 	void update(IFrame instance, CIdentity identity) {
 
-		System.out.println("START-UPDATE: " + identity);
 		int index = indexes.getIndex(identity);
 
 		removeFromMatcher(instance.getType(), identity);
@@ -204,7 +201,6 @@ class IDiskStore implements IStore {
 		fileStore.write(instance, identity, index);
 
 		addToMatcher(instance, identity);
-		System.out.println("END-UPDATE: " + identity);
 	}
 
 	IFrame getOrNull(CIdentity identity, boolean freeInstance) {
@@ -273,7 +269,6 @@ class IDiskStore implements IStore {
 
 		if (indexes.hasIndex(identity)) {
 
-			System.out.println("START-REMOVE: " + identity);
 			identities.remove(identity);
 			types.remove(identity);
 
@@ -287,7 +282,6 @@ class IDiskStore implements IStore {
 
 			fileStore.remove(index);
 			indexes.freeIndex(identity);
-			System.out.println("END-REMOVE: " + identity);
 		}
 
 		return removed;
