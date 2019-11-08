@@ -57,6 +57,8 @@ class QueryRenderer extends Renderer {
 	static private final String MIN_OPERATOR = ">=";
 	static private final String MAX_OPERATOR = "<=";
 
+	static private final String STRING_VALUE_FORMAT = "%s/@value=\"%s\"";
+
 	private class OneTimeRenderer {
 
 		private StringBuilder query = new StringBuilder();
@@ -146,12 +148,32 @@ class QueryRenderer extends Renderer {
 
 			String getEntityId() {
 
-				return NUMERIC_ID;
+				return NUMBER_ID;
 			}
 
 			void addValue(String path, INumber value) {
 
 				addNumberValueComponents(path, value);
+			}
+		}
+
+		private class StringStatementsAdder
+						extends
+							FeatureStatementsAdder<String> {
+
+			StringStatementsAdder(String parentPath) {
+
+				super(parentPath);
+			}
+
+			String getEntityId() {
+
+				return STRING_ID;
+			}
+
+			void addValue(String path, String value) {
+
+				addStringValueComponent(path, value);
 			}
 		}
 
@@ -176,6 +198,7 @@ class QueryRenderer extends Renderer {
 
 			new LinkStatementsAdder(path).addForAll(node.getLinks());
 			new NumberStatementsAdder(path).addForAll(node.getNumbers());
+			new StringStatementsAdder(path).addForAll(node.getStrings());
 		}
 
 		private String addDeclarationStatement(String parentPath, String tag) {
@@ -223,6 +246,11 @@ class QueryRenderer extends Renderer {
 							INumber value) {
 
 			addWhereComponent(renderNumberValue(path, operator, value));
+		}
+
+		private void addStringValueComponent(String path, String value) {
+
+			addWhereComponent(renderStringValue(path, value));
 		}
 
 		private void addForStatement(String variable, String set) {
@@ -338,13 +366,15 @@ class QueryRenderer extends Renderer {
 		return String.format(TYPE_FORMAT, path, renderId(typeId));
 	}
 
-	private String renderNumberValue(
-						String path,
-						String operator,
-						INumber value) {
+	private String renderNumberValue(String path, String operator, INumber value) {
 
 		String valStr = value.asTypeNumber().toString();
 
 		return String.format(NUMBER_VALUE_FORMAT, path, operator, valStr);
+	}
+
+	private String renderStringValue(String path, String value) {
+
+		return String.format(STRING_VALUE_FORMAT, path, value);
 	}
 }

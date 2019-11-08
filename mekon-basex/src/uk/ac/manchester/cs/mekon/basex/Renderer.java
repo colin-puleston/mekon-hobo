@@ -40,7 +40,8 @@ abstract class Renderer {
 	static final String NODE_ID = "Node";
 	static final String TYPE_ID = "Type";
 	static final String LINK_ID = "Link";
-	static final String NUMERIC_ID = "Numeric";
+	static final String NUMBER_ID = "Number";
+	static final String STRING_ID = "String";
 
 	static final String INDEX_ATTR = "index";
 	static final String ID_ATTR = "id";

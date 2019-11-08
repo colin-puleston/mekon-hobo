@@ -116,12 +116,32 @@ class InstanceRenderer extends Renderer {
 
 		String getEntityId() {
 
-			return NUMERIC_ID;
+			return NUMBER_ID;
 		}
 
 		void renderValue(NNumber feature, INumber value, XNode xNode) {
 
 			renderNumber(value, xNode);
+		}
+	}
+
+	private class StringsRenderer
+					extends
+						FeaturesRenderer<String, NString> {
+
+		StringsRenderer(XNode xParent) {
+
+			super(xParent);
+		}
+
+		String getEntityId() {
+
+			return STRING_ID;
+		}
+
+		void renderValue(NString feature, String value, XNode xNode) {
+
+			renderString(value, xNode);
 		}
 	}
 
@@ -185,6 +205,7 @@ class InstanceRenderer extends Renderer {
 
 		new LinksRenderer(xNode).renderAll(node.getLinks());
 		new NumbersRenderer(xNode).renderAll(node.getNumbers());
+		new StringsRenderer(xNode).renderAll(node.getStrings());
 	}
 
 	private void renderType(CFrame frame, XNode xNode) {
@@ -211,7 +232,12 @@ class InstanceRenderer extends Renderer {
 
 		checkDefiniteNumberValue(value);
 
-		xNode.addValue(VALUE_ATTR, value.asTypeNumber().toString());
+		renderString(value.asTypeNumber().toString(), xNode);
+	}
+
+	private void renderString(String value, XNode xNode) {
+
+		xNode.addValue(VALUE_ATTR, value);
 	}
 
 	private void checkAtomicType(NNode node) {

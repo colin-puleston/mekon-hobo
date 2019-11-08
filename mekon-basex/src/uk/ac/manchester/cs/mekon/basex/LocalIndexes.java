@@ -39,9 +39,7 @@ class LocalIndexes extends KIndexes<CIdentity> implements IMatcherIndexes {
 
 	public int getIndex(CIdentity identity) {
 
-		Integer index = getIndexOrNull(identity);
-
-		return index != null ? index : assignIndex(identity);
+		return ensureIndex(identity);
 	}
 
 	public CIdentity getIdentity(int index) {
