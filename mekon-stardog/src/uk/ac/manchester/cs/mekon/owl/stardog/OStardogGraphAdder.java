@@ -67,7 +67,7 @@ class OStardogGraphAdder implements OTGraphAdder {
 
 		private IRI convertURI(OT_URI uri) {
 
-			return valueFactory.createIRI(uri.asURI());
+			return valueFactory.createIRI(uri.toString());
 		}
 	}
 

@@ -34,21 +34,47 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  */
 class ValueConverter {
 
-	static private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
+	static private ValueFactory valueFactory = SimpleValueFactory.getInstance();
+	static private TargetValueCreator targetValueCreator = new TargetValueCreator();
+
+	static private class TargetValueCreator extends OTValueVisitor {
+
+		private Value targetValue = null;
+
+		protected void visit(OT_URI value) {
+
+			targetValue = toIRI(value);
+		}
+
+		protected void visit(OTNumber value) {
+
+			targetValue = toLiteral(value);
+		}
+
+		protected void visit(OTString value) {
+
+			targetValue = toLiteral(value);
+		}
+
+		Value toTargetValue(OTValue value) {
+
+			visit(value);
+
+			return targetValue;
+		}
+	}
 
 	static Value convert(OTValue value) {
 
-		return value.isURI()
-				? convertURI((OT_URI)value)
-				: convertNumber((OTNumber)value);
+		return targetValueCreator.toTargetValue(value);
 	}
 
-	static private IRI convertURI(OT_URI uri) {
+	static private IRI toIRI(OT_URI uri) {
 
-		return valueFactory.createIRI(uri.asURI());
+		return valueFactory.createIRI(uri.toString());
 	}
 
-	static private Literal convertNumber(OTNumber number) {
+	static private Literal toLiteral(OTNumber number) {
 
 		if (number.isInteger()) {
 
@@ -70,6 +96,11 @@ class ValueConverter {
 			return valueFactory.createLiteral(number.asDouble());
 		}
 
-		return null;
+		throw new Error("Unrecognised number-value class: " + number.getValueType());
+	}
+
+	static private Literal toLiteral(OTString string) {
+
+		return valueFactory.createLiteral(string);
 	}
 }
