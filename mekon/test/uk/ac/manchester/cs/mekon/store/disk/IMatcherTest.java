@@ -55,12 +55,19 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	static private final CIdentity ACADEMIC_RESEARCHER_ID = createInstanceId("AcademicResearcher");
 	static private final CIdentity DOCTOR_ID = createInstanceId("Doctor");
 
+	static private final CIdentity BOB_ID = createInstanceId("Bob");
+	static private final CIdentity BOBS_LODGER_ID = createInstanceId("BobsLodger");
+
 	static private final int MIN_PAY_RATE = 10;
 	static private final int MAX_PAY_RATE = 20;
 
 	static private final int LOW_PAY_RATE = 14;
 	static private final int MID_PAY_RATE = 15;
 	static private final int HIGH_PAY_RATE = 16;
+
+	static private final IString BOB_NAME = new IString("Bob Bell");
+	static private final IString BOB_ADDRESS = new IString("66 Bob Street, Bobsville");
+	static private final IString BOBS_LODGER_NAME = new IString("Jim the lodger");
 
 	static private CIdentity createInstanceId(String name) {
 
@@ -100,6 +107,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		addPostgradTeacherViaJobRef();
 		addAcademicResearcherViaJobRef();
 		addDoctorViaEmploymentAndJobRefs();
+
+		addBobPersonal();
+		addBobsLodgerPersonal();
 	}
 
 	@After
@@ -294,6 +304,31 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			DOCTORING_JOB_ID);
 	}
 
+	@Test
+	public void test_stringBasedQueries() {
+
+		testMatching(
+			createPersonalNameQuery(BOB_NAME),
+			BOB_ID);
+
+		testMatching(
+			createPersonalNameAddressQuery(BOB_NAME, BOB_ADDRESS),
+			BOB_ID);
+
+		testMatching(
+			createPersonalNameQuery(BOBS_LODGER_NAME),
+			BOBS_LODGER_ID);
+
+		testMatching(
+			createPersonalNameAddressQuery(BOBS_LODGER_NAME, BOB_ADDRESS),
+			BOBS_LODGER_ID);
+
+		testMatching(
+			createPersonalAddressQuery(BOB_ADDRESS),
+			BOB_ID,
+			BOBS_LODGER_ID);
+	}
+
 	protected CSectionBuilder createSectionBuilder() {
 
 		return new DemoModelEmulatingSectionBuilder();
@@ -377,6 +412,26 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	private IFrame addCitizenViaEmploymentRef(CIdentity citizenId, CIdentity employmentId) {
 
 		return addInstance(createCitizenViaEmploymentRef(employmentId), citizenId);
+	}
+
+	private IFrame addBobPersonal() {
+
+		return addPersonal(BOB_ID, BOB_NAME, BOB_ADDRESS);
+	}
+
+	private IFrame addBobsLodgerPersonal() {
+
+		return addPersonal(BOBS_LODGER_ID, BOBS_LODGER_NAME, BOB_ADDRESS);
+	}
+
+	private IFrame addPersonal(CIdentity personalId, IString name, IString address) {
+
+		IFrame personal = createIFrame(PERSONAL);
+
+		addISlotValue(personal, NAME_PROPERTY, name);
+		addISlotValue(personal, ADDRESS_PROPERTY, address);
+
+		return addInstance(personal, personalId);
 	}
 
 	private IFrame createCitizenViaJobRef(CIdentity jobId) {
@@ -562,6 +617,34 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	private IFrame createCitizenQuery() {
 
 		return createQueryIFrame(CITIZEN);
+	}
+
+	private IFrame createPersonalNameQuery(IString name) {
+
+		IFrame personal = createQueryIFrame(PERSONAL);
+
+		addISlotValue(personal, NAME_PROPERTY, name);
+
+		return personal;
+	}
+
+	private IFrame createPersonalAddressQuery(IString address) {
+
+		IFrame personal = createQueryIFrame(PERSONAL);
+
+		addISlotValue(personal, ADDRESS_PROPERTY, address);
+
+		return personal;
+	}
+
+	private IFrame createPersonalNameAddressQuery(IString name, IString address) {
+
+		IFrame personal = createQueryIFrame(PERSONAL);
+
+		addISlotValue(personal, NAME_PROPERTY, name);
+		addISlotValue(personal, ADDRESS_PROPERTY, address);
+
+		return personal;
 	}
 
 	private CFrame createPostOrUndergradDisjunction() {

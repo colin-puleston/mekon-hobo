@@ -81,5 +81,7 @@ public interface DemoModelEntities {
 	static public final String PAY_RATE_PROPERTY = "hourlyPay";
 	static public final String SECTOR_PROPERTY = "sector";
 	static public final String TEACHES_PROPERTY = "teaches";
+	static public final String NAME_PROPERTY = "name";
+	static public final String ADDRESS_PROPERTY = "address";
 	static public final String LOCATION_PROPERTY = "location";
 }

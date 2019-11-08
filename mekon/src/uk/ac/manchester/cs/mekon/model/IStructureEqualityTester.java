@@ -38,9 +38,14 @@ class IStructureEqualityTester extends IStructureTester {
 		return frame1.equalsLocalStructure(frame2);
 	}
 
-	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
+	boolean typesMatch(CFrame type1, CFrame type2) {
 
 		return type1.equals(type2);
+	}
+
+	boolean numbersMatch(INumber number1, INumber number2) {
+
+		return number1.getType().equals(number2.getType());
 	}
 
 	boolean valueSlotsSizeMatch(List<ISlot> slots1, List<ISlot> slots2) {

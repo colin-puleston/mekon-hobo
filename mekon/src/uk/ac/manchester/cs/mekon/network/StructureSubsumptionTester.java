@@ -32,10 +32,11 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class SubsumptionTester {
+class StructureSubsumptionTester {
 
 	private LinksTester linksTester = new LinksTester();
 	private NumbersTester numbersTester = new NumbersTester();
+	private StringsTester stringsTester = new StringsTester();
 
 	private KSetMap<NNode, NNode> testing = new KSetMap<NNode, NNode>();
 	private KSetMap<NNode, NNode> subsumptions = new KSetMap<NNode, NNode>();
@@ -163,7 +164,7 @@ class SubsumptionTester {
 
 		boolean valueSubsumption(NNode value1, NNode value2) {
 
-			return SubsumptionTester.this.subsumption(value1, value2);
+			return StructureSubsumptionTester.this.subsumption(value1, value2);
 		}
 	}
 
@@ -177,6 +178,19 @@ class SubsumptionTester {
 		boolean valueSubsumption(INumber value1, INumber value2) {
 
 			return value1.getType().subsumes(value2.getType());
+		}
+	}
+
+	private class StringsTester extends FeaturesTester<String, NString> {
+
+		List<NString> getFeatures(NNode node) {
+
+			return node.getStrings();
+		}
+
+		boolean valueSubsumption(String value1, String value2) {
+
+			return value1.equals(value2);
 		}
 	}
 
@@ -211,13 +225,18 @@ class SubsumptionTester {
 
 		if (node1.instanceRef()) {
 
-			return node2.instanceRef()
-					&& node1.getInstanceRef().equals(node2.getInstanceRef());
+			if (!node2.instanceRef()) {
+
+				return false;
+			}
+
+			return node1.getInstanceRef().equals(node2.getInstanceRef());
 		}
 
 		return typeSubsumption(node1, node2)
 				&& linksTester.subsumptions(node1, node2)
-				&& numbersTester.subsumptions(node1, node2);
+				&& numbersTester.subsumptions(node1, node2)
+				&& stringsTester.subsumptions(node1, node2);
 	}
 
 	private boolean typeSubsumption(NNode node1, NNode node2) {

@@ -312,7 +312,7 @@ public class NNode extends NEntity {
 	 */
 	public boolean subsumesStructure(NNode other) {
 
-		return new SubsumptionTester().subsumption(this, other);
+		return new StructureSubsumptionTester().subsumption(this, other);
 	}
 
 	NNode(CFrame cFrame) {

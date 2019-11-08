@@ -108,6 +108,8 @@ public class DemoModelEmulatingSectionBuilder
 			addSlot(JOB, PAY_RATE_PROPERTY, CNumber.INTEGER);
 			addSlot(JOB, TEACHES_PROPERTY, STUDENT);
 			addSlot(INDUSTRY, SECTOR_PROPERTY, SECTOR);
+			addSlot(PERSONAL, NAME_PROPERTY, CString.SINGLETON);
+			addSlot(PERSONAL, ADDRESS_PROPERTY, CString.SINGLETON);
 		}
 	}
 

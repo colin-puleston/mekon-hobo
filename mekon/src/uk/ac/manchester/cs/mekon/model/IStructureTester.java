@@ -33,7 +33,43 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 abstract class IStructureTester {
 
+	private ValuesMatcher valuesMatcher = new ValuesMatcher();
 	private Set<IFrame[]> visited = new HashSet<IFrame[]>();
+
+	private class ValuesMatcher extends IValueVisitor {
+
+		private IValue value2 = null;
+		private boolean match = false;
+
+		protected void visit(IFrame value) {
+
+			match = match(value, (IFrame)value2);
+		}
+
+		protected void visit(INumber value) {
+
+			match = numbersMatch(value, (INumber)value2);
+		}
+
+		protected void visit(IString value) {
+
+			match = value.equals((IString)value2);
+		}
+
+		protected void visit(CFrame value) {
+
+			match = typesMatch(value, (CFrame)value2);
+		}
+
+		boolean valuesMatch(IValue value1, IValue value2) {
+
+			this.value2 = value2;
+
+			visit(value1);
+
+			return match;
+		}
+	}
 
 	boolean match(IFrame frame1, IFrame frame2) {
 
@@ -42,17 +78,14 @@ abstract class IStructureTester {
 
 	boolean valuesMatch(IValue value1, IValue value2) {
 
-		if (value1 instanceof IFrame) {
-
-			return match((IFrame)value1, (IFrame)value2);
-		}
-
-		return typesMatch(value1.getType(), value2.getType());
+		return valuesMatcher.valuesMatch(value1, value2);
 	}
 
 	abstract boolean localMatch(IFrame frame1, IFrame frame2);
 
-	abstract boolean typesMatch(CValue<?> type1, CValue<?> type2);
+	abstract boolean numbersMatch(INumber number1, INumber number2);
+
+	abstract boolean typesMatch(CFrame type1, CFrame type2);
 
 	abstract boolean valueSlotsSizeMatch(List<ISlot> slots1, List<ISlot> slots2);
 

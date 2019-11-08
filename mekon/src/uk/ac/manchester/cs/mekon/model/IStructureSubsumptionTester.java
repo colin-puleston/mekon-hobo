@@ -53,9 +53,14 @@ class IStructureSubsumptionTester extends IStructureTester {
 		return frame1.subsumesLocalStructure(frame2);
 	}
 
-	boolean typesMatch(CValue<?> type1, CValue<?> type2) {
+	boolean typesMatch(CFrame type1, CFrame type2) {
 
 		return type1.subsumes(type2);
+	}
+
+	boolean numbersMatch(INumber number1, INumber number2) {
+
+		return number1.getType().subsumes(number2.getType());
 	}
 
 	boolean valueSlotsSizeMatch(List<ISlot> slots1, List<ISlot> slots2) {
