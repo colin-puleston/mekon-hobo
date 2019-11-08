@@ -117,7 +117,7 @@ abstract class Renderer<NR extends OWLObject> {
 			throw new KModelException(
 						"Cannot handle numeric values for property: " + iri
 						+ " (since (a) not a recognised data-property, and"
-						+ " (b) indirect-numeric-property not defined");
+						+ " (b) indirect-numeric-property not defined)");
 		}
 	}
 
@@ -259,23 +259,6 @@ abstract class Renderer<NR extends OWLObject> {
 		void addOnlyValuesConstruct(Set<INumber> values) {
 
 			nodeRenderer.addValueConstruct(numberRenderer.renderOnlyValues(values));
-		}
-
-		private Set<OWLClassExpression> renderValues(Set<INumber> values) {
-
-			Set<OWLClassExpression> renderings = new HashSet<OWLClassExpression>();
-
-			for (INumber value : values) {
-
-				renderings.add(renderValue(value));
-			}
-
-			return renderings;
-		}
-
-		private OWLClassExpression renderValue(INumber value) {
-
-			return numberRenderer.renderHasValue(value);
 		}
 	}
 
