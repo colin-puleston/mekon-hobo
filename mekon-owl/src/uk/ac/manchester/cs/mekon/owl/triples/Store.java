@@ -61,7 +61,7 @@ class Store {
 
 		for (OT_URI uri : executeMatch(query)) {
 
-			matches.add(IRI.create(extractBaseURI(uri.asURI())));
+			matches.add(toIRI(uri));
 		}
 
 		return matches;
@@ -108,8 +108,8 @@ class Store {
 		return new Assertion(factory, iri.toString());
 	}
 
-	private String extractBaseURI(String uri) {
+	private IRI toIRI(OT_URI uri) {
 
-		return TriplesURIs.extractBaseURI(uri);
+		return IRI.create(TriplesURIs.extractBaseURI(uri.toString()));
 	}
 }

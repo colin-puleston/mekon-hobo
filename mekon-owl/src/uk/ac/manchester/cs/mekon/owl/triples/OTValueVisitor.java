@@ -22,38 +22,46 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.util;
-
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.disk.*;
-import uk.ac.manchester.cs.mekon.util.*;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
+ * Visitor for {@link OTValue}-derived objects.
+ *
  * @author Colin Puleston
  */
-class LocalIndexes extends KIndexes<CIdentity> implements IMatcherIndexes {
+public abstract class OTValueVisitor {
 
-	public int getIndex(CIdentity identity) {
+	/**
+	 * Causes relevant sub-class-specific visit method to be invoked.
+	 *
+	 * @param value Entity being visited.
+	 */
+	public void visit(OTValue value) {
 
-		return ensureIndex(identity);
+		value.accept(this);
 	}
 
-	public CIdentity getIdentity(int index) {
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting entity of relevant type.
+	 *
+	 * @param value Entity being visited.
+	 */
+	protected abstract void visit(OT_URI value);
 
-		return getElement(index);
-	}
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting entity of relevant type.
+	 *
+	 * @param value Entity being visited.
+	 */
+	protected abstract void visit(OTNumber value);
 
-	public List<CIdentity> getIdentities(List<Integer> indexes) {
-
-		return getElements(indexes);
-	}
-
-	protected KRuntimeException createException(String message) {
-
-		return new KSystemConfigException(message);
-	}
+	/**
+	 * Method whose implementation defines actions to be performed on
+	 * visiting entity of relevant type.
+	 *
+	 * @param value Entity being visited.
+	 */
+	protected abstract void visit(OTString value);
 }

@@ -132,12 +132,16 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 		}
 	}
 
-	ExpressionRenderer(OModel model, ORSemantics semantics) {
+	ExpressionRenderer(ReasoningModel reasoningModel) {
 
-		super(model, semantics);
+		this(reasoningModel, null);
+	}
 
-		this.model = model;
+	ExpressionRenderer(ReasoningModel reasoningModel, StringValueProxies stringValueProxies) {
 
+		super(reasoningModel, stringValueProxies);
+
+		model = reasoningModel.getModel();
 		dataFactory = model.getDataFactory();
 	}
 

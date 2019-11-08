@@ -38,7 +38,10 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 class IndividualsRenderer {
 
+	private OModel model;
+
 	private ReasoningModel reasoningModel;
+	private StringValueProxies stringValueProxies;
 
 	private Map<IRI, OWLNamedIndividual> rootIndividualsByIRI
 							= new HashMap<IRI, OWLNamedIndividual>();
@@ -55,7 +58,7 @@ class IndividualsRenderer {
 		private IRI rootIRI;
 
 		private IndividualIRIs individualIRIs;
-		private OWLDataFactory dataFactory = getModel().getDataFactory();
+		private OWLDataFactory dataFactory = model.getDataFactory();
 
 		private Map<NNode, OWLNamedIndividual> individuals
 						= new HashMap<NNode, OWLNamedIndividual>();
@@ -184,7 +187,7 @@ class IndividualsRenderer {
 
 			private void addAxiom(OWLAxiom axiom) {
 
-				getModel().addInstanceAxiom(axiom);
+				model.addInstanceAxiom(axiom);
 				axioms.add(axiom);
 			}
 
@@ -196,7 +199,7 @@ class IndividualsRenderer {
 
 		GroupRenderer(NNode rootNode, IRI rootIRI) {
 
-			super(getModel(), getSemantics());
+			super(reasoningModel, stringValueProxies);
 
 			this.rootNode = rootNode;
 			this.rootIRI = rootIRI;
@@ -233,7 +236,15 @@ class IndividualsRenderer {
 
 	IndividualsRenderer(ReasoningModel reasoningModel) {
 
+		this(reasoningModel, null);
+	}
+
+	IndividualsRenderer(ReasoningModel reasoningModel, StringValueProxies stringValueProxies) {
+
+		model = reasoningModel.getModel();
+
 		this.reasoningModel = reasoningModel;
+		this.stringValueProxies = stringValueProxies;
 	}
 
 	OWLNamedIndividual render(NNode node, IRI rootIRI) {
@@ -272,17 +283,7 @@ class IndividualsRenderer {
 
 		for (OWLAxiom axiom : axiomsByRootIndividual.remove(rootIndividual)) {
 
-			getModel().removeInstanceAxiom(axiom);
+			model.removeInstanceAxiom(axiom);
 		}
-	}
-
-	private OModel getModel() {
-
-		return reasoningModel.getModel();
-	}
-
-	private ORSemantics getSemantics() {
-
-		return reasoningModel.getSemantics();
 	}
 }

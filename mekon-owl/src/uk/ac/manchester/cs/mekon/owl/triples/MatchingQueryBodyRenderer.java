@@ -119,6 +119,15 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		return triplesNumber;
 	}
 
+	OTString renderString(String string) {
+
+		OTString triplesString = super.renderString(string);
+
+		constants.register(triplesString);
+
+		return triplesString;
+	}
+
 	abstract QueryVariable getRootTripleNode();
 
 	private OTValue renderNumberLimit(String op, OTNumber value) {

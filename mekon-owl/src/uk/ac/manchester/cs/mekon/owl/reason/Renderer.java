@@ -44,6 +44,8 @@ abstract class Renderer<NR extends OWLObject> {
 	private OWLDataFactory dataFactory;
 	private NumberRenderer indirectNumberRenderer;
 
+	private StringValueProxies stringValueProxies = null;
+
 	abstract class NodeRenderer {
 
 		private NNode node;
@@ -59,12 +61,20 @@ abstract class Renderer<NR extends OWLObject> {
 
 			for (NLink link : node.getLinks()) {
 
-				renderLinkValues(link);
+				new LinkValuesRenderer(this, link).render();
 			}
 
 			for (NNumber number : node.getNumbers()) {
 
-				renderNumberValues(number);
+				createNumberValuesRenderer(number).render();
+			}
+
+			if (stringValueProxies != null) {
+
+				for (NString string : node.getStrings()) {
+
+					new StringValuesRenderer(this, string).render();
+				}
 			}
 		}
 
@@ -90,17 +100,7 @@ abstract class Renderer<NR extends OWLObject> {
 
 		abstract void addValueConstruct(OWLClassExpression construct);
 
-		private void renderLinkValues(NLink link) {
-
-			new LinkValuesRenderer(this, link).render();
-		}
-
-		private void renderNumberValues(NNumber number) {
-
-			getNumberValuesRenderer(number).render();
-		}
-
-		private ValuesRenderer<INumber> getNumberValuesRenderer(NNumber number) {
+		private ValuesRenderer<INumber> createNumberValuesRenderer(NNumber number) {
 
 			IRI iri = NetworkIRIs.getAtomicType(number);
 
@@ -234,18 +234,16 @@ abstract class Renderer<NR extends OWLObject> {
 		}
 	}
 
-	private class DirectNumberValuesRenderer extends ValuesRenderer<INumber> {
+	private class DirectNumberValuesRenderCore {
 
 		private NodeRenderer nodeRenderer;
 		private NumberRenderer numberRenderer;
 
-		DirectNumberValuesRenderer(NodeRenderer nodeRenderer, NNumber number) {
-
-			super(number);
+		DirectNumberValuesRenderCore(NodeRenderer nodeRenderer, OWLDataProperty property) {
 
 			this.nodeRenderer = nodeRenderer;
 
-			numberRenderer = new NumberRenderer(model, getDataProperty());
+			numberRenderer = new NumberRenderer(model, property);
 		}
 
 		void addHasValuesConstructs(Set<INumber> values) {
@@ -259,6 +257,28 @@ abstract class Renderer<NR extends OWLObject> {
 		void addOnlyValuesConstruct(Set<INumber> values) {
 
 			nodeRenderer.addValueConstruct(numberRenderer.renderOnlyValues(values));
+		}
+	}
+
+	private class DirectNumberValuesRenderer extends ValuesRenderer<INumber> {
+
+		private DirectNumberValuesRenderCore core;
+
+		DirectNumberValuesRenderer(NodeRenderer nodeRenderer, NNumber number) {
+
+			super(number);
+
+			core = new DirectNumberValuesRenderCore(nodeRenderer, getDataProperty());
+		}
+
+		void addHasValuesConstructs(Set<INumber> values) {
+
+			core.addHasValuesConstructs(values);
+		}
+
+		void addOnlyValuesConstruct(Set<INumber> values) {
+
+			core.addOnlyValuesConstruct(values);
 		}
 	}
 
@@ -312,10 +332,51 @@ abstract class Renderer<NR extends OWLObject> {
 		}
 	}
 
-	Renderer(OModel model, ORSemantics semantics) {
+	private class StringValuesRenderer extends ValuesRenderer<String> {
 
-		this.model = model;
-		this.semantics = semantics;
+		private DirectNumberValuesRenderCore core;
+
+		StringValuesRenderer(NodeRenderer nodeRenderer, NString string) {
+
+			super(string);
+
+			core = new DirectNumberValuesRenderCore(nodeRenderer, getProxyProperty());
+		}
+
+		void addHasValuesConstructs(Set<String> values) {
+
+			core.addHasValuesConstructs(toProxyValues(values));
+		}
+
+		void addOnlyValuesConstruct(Set<String> values) {
+
+			core.addOnlyValuesConstruct(toProxyValues(values));
+		}
+
+		private OWLDataProperty getProxyProperty() {
+
+			return stringValueProxies.toProxyProperty(getDataProperty());
+		}
+
+		private Set<INumber> toProxyValues(Set<String> values) {
+
+			Set<INumber> proxyValues = new HashSet<INumber>();
+
+			for (String value : values) {
+
+				proxyValues.add(stringValueProxies.toProxyValue(value));
+			}
+
+			return proxyValues;
+		}
+	}
+
+	Renderer(ReasoningModel reasoningModel, StringValueProxies stringValueProxies) {
+
+		model = reasoningModel.getModel();
+		semantics = reasoningModel.getSemantics();
+
+		this.stringValueProxies = stringValueProxies;
 
 		dataFactory = model.getDataFactory();
 		indirectNumberRenderer = checkCreateIndirectNumberRenderer();

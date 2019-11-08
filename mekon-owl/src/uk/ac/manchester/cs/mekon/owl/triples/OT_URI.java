@@ -40,7 +40,7 @@ public class OT_URI extends OTValue {
 	 */
 	public OT_URI(URI uri) {
 
-		super(uri.toString());
+		super(uri);
 	}
 
 	/**
@@ -50,6 +50,21 @@ public class OT_URI extends OTValue {
 	 */
 	public OT_URI(String uri) {
 
-		super(uri);
+		super(URI.create(uri));
+	}
+
+	/**
+	 * Provides URI value.
+	 *
+	 * @return URI value
+	 */
+	public URI asURI() {
+
+		return getValueAsType(URI.class);
+	}
+
+	void accept(OTValueVisitor visitor) {
+
+		visitor.visit(this);
 	}
 }

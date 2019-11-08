@@ -34,6 +34,11 @@ class QueryVariable extends OTValue {
 		super(rendering);
 	}
 
+	void accept(OTValueVisitor visitor) {
+
+		throw new Error("Method should never be invoked!");
+	}
+
 	String getQueryRendering(OTQueryConstants constants) {
 
 		return toString();

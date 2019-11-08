@@ -150,9 +150,10 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 	private void initialise() {
 
 		ReasoningModel reasoningModel = getReasoningModel();
+		StringValueProxies stringValueProxies = getStringValueProxies();
 
-		storeRenderer = new IndividualsRenderer(reasoningModel);
-		dynamicRenderer = new IndividualsRenderer(reasoningModel);
+		storeRenderer = new IndividualsRenderer(reasoningModel, stringValueProxies);
+		dynamicRenderer = new IndividualsRenderer(reasoningModel, stringValueProxies);
 	}
 
 	private IndividualNetwork createNetwork(NNode node) {

@@ -47,6 +47,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 	private LinksRenderer linksRenderer = new LinksRenderer();
 	private NumbersRenderer numbersRenderer = new NumbersRenderer();
+	private StringsRenderer stringsRenderer = new StringsRenderer();
 
 	private int dynamicNodeCount = 0;
 
@@ -146,6 +147,16 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		}
 	}
 
+	private class StringsRenderer
+					extends
+						FeaturesRenderer<String, NString> {
+
+		void renderValue(TN subject, OT_URI predicate, String value) {
+
+			renderTriple(subject, predicate, renderString(value));
+		}
+	}
+
 	TN renderFromRoot(NNode rootNode) {
 
 		TN tripleNode = renderFrom(rootNode);
@@ -177,6 +188,11 @@ abstract class InstanceRenderer<TN extends OTValue> {
 	OTNumber renderDefiniteNumber(INumber number) {
 
 		return new OTNumber(number.asTypeNumber());
+	}
+
+	OTString renderString(String string) {
+
+		return new OTString(string);
 	}
 
 	private TN renderFrom(NNode node) {
@@ -228,6 +244,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 		linksRenderer.render(tripleNode, node.getLinks());
 		numbersRenderer.render(tripleNode, node.getNumbers());
+		stringsRenderer.render(tripleNode, node.getStrings());
 	}
 
 	private Set<OTValue> renderTypeDisjuncts(NNode node) {

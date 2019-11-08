@@ -22,38 +22,27 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl.util;
-
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.disk.*;
-import uk.ac.manchester.cs.mekon.util.*;
+package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
+ * Represents a string used as an object in a triple.
+ *
  * @author Colin Puleston
  */
-class LocalIndexes extends KIndexes<CIdentity> implements IMatcherIndexes {
+public class OTString extends OTValue {
 
-	public int getIndex(CIdentity identity) {
+	/**
+	 * Constructor.
+	 *
+	 * @param string String value
+	 */
+	public OTString(String string) {
 
-		return ensureIndex(identity);
+		super(string);
 	}
 
-	public CIdentity getIdentity(int index) {
+	void accept(OTValueVisitor visitor) {
 
-		return getElement(index);
-	}
-
-	public List<CIdentity> getIdentities(List<Integer> indexes) {
-
-		return getElements(indexes);
-	}
-
-	protected KRuntimeException createException(String message) {
-
-		return new KSystemConfigException(message);
+		visitor.visit(this);
 	}
 }

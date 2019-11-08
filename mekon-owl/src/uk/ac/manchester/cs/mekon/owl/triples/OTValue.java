@@ -25,7 +25,8 @@
 package uk.ac.manchester.cs.mekon.owl.triples;
 
 /**
- * Represents a value used in a triple, either a URI or a number.
+ * Represents a value used in a triple, either a URI, a number, or
+ * a string.
  *
  * @author Colin Puleston
  */
@@ -68,108 +69,13 @@ public abstract class OTValue {
 	}
 
 	/**
-	 * Tests whether value is a URI.
+	 * Provides the class object for the value.
 	 *
-	 * @return True if value is URI
+	 * @return Class object for value
 	 */
-	public boolean isURI() {
+	public Class<?> getValueType() {
 
-		return isValueType(String.class);
-	}
-
-	/**
-	 * Tests whether value is a integer.
-	 *
-	 * @return True if value is integer
-	 */
-	public boolean isInteger() {
-
-		return isValueType(Integer.class);
-	}
-
-	/**
-	 * Tests whether value is a long.
-	 *
-	 * @return True if value is long
-	 */
-	public boolean isLong() {
-
-		return isValueType(Long.class);
-	}
-
-	/**
-	 * Tests whether value is a float.
-	 *
-	 * @return True if value is float
-	 */
-	public boolean isFloat() {
-
-		return isValueType(Float.class);
-	}
-
-	/**
-	 * Tests whether value is a double.
-	 *
-	 * @return True if value is double
-	 */
-	public boolean isDouble() {
-
-		return isValueType(Double.class);
-	}
-
-	/**
-	 * Provides string representation of URI value.
-	 *
-	 * @return String representation of URI value
-	 * @throws ClassCastException if not a URI value
-	 */
-	public String asURI() {
-
-		return (String)value;
-	}
-
-	/**
-	 * Provides integer value.
-	 *
-	 * @return Integer value
-	 * @throws ClassCastException if not a integer value
-	 */
-	public Integer asInteger() {
-
-		return (Integer)value;
-	}
-
-	/**
-	 * Provides long value.
-	 *
-	 * @return Long value
-	 * @throws ClassCastException if not a long value
-	 */
-	public Long asLong() {
-
-		return (Long)value;
-	}
-
-	/**
-	 * Provides float value.
-	 *
-	 * @return Float value
-	 * @throws ClassCastException if not a float value
-	 */
-	public Float asFloat() {
-
-		return (Float)value;
-	}
-
-	/**
-	 * Provides double value.
-	 *
-	 * @return Double value
-	 * @throws ClassCastException if not a double value
-	 */
-	public Double asDouble() {
-
-		return (Double)value;
+		return value.getClass();
 	}
 
 	OTValue(Object value) {
@@ -177,13 +83,20 @@ public abstract class OTValue {
 		this.value = value;
 	}
 
+	abstract void accept(OTValueVisitor visitor);
+
+	boolean isValueType(Class<?> type) {
+
+		return value.getClass().equals(type);
+	}
+
+	<V>V getValueAsType(Class<V> type) {
+
+		return type.cast(value);
+	}
+
 	String getQueryRendering(OTQueryConstants constants) {
 
 		return constants.getVariableRendering(this);
-	}
-
-	private boolean isValueType(Class<?> type) {
-
-		return value.getClass().equals(type);
 	}
 }
