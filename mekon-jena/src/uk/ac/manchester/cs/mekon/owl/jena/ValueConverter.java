@@ -34,6 +34,34 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
 class ValueConverter {
 
 	private Model model;
+	private NodeCreator nodeCreator = new NodeCreator();
+
+	private class NodeCreator extends OTValueVisitor {
+
+		private RDFNode node = null;
+
+		protected void visit(OT_URI value) {
+
+			node = toResource(value);
+		}
+
+		protected void visit(OTNumber value) {
+
+			node = toTypedLiteral(value);
+		}
+
+		protected void visit(OTString value) {
+
+			node = toLiteral(value);
+		}
+
+		RDFNode toNode(OTValue value) {
+
+			visit(value);
+
+			return node;
+		}
+	}
 
 	ValueConverter(Model model) {
 
@@ -42,17 +70,15 @@ class ValueConverter {
 
 	RDFNode convert(OTValue value) {
 
-		return value.isURI()
-				? convertURI((OT_URI)value)
-				: convertNumber((OTNumber)value);
+		return nodeCreator.toNode(value);
 	}
 
-	private Resource convertURI(OT_URI uri) {
+	private Resource toResource(OT_URI uri) {
 
-		return model.createResource(uri.asURI());
+		return model.createResource(uri.toString());
 	}
 
-	private Literal convertNumber(OTNumber number) {
+	private Literal toTypedLiteral(OTNumber number) {
 
 		if (number.isInteger()) {
 
@@ -74,6 +100,11 @@ class ValueConverter {
 			return model.createTypedLiteral(number.asDouble());
 		}
 
-		return null;
+		throw new Error("Unrecognised number-value class: " + number.getValueType());
+	}
+
+	private Literal toLiteral(OTString string) {
+
+		return model.createLiteral(string.toString());
 	}
 }

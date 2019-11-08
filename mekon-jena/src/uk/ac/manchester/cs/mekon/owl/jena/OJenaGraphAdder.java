@@ -87,11 +87,11 @@ class OJenaGraphAdder implements OTGraphAdder {
 
 	private Resource convertURI(OT_URI uri) {
 
-		return model.createResource(uri.asURI());
+		return model.createResource(uri.toString());
 	}
 
 	private Property convertPredicateURI(OT_URI uri) {
 
-		return model.createProperty(uri.asURI());
+		return model.createProperty(uri.toString());
 	}
 }
