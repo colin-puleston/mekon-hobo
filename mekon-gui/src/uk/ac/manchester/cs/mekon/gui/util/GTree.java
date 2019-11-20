@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.gui.util;
 
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.event.*;
@@ -239,6 +240,23 @@ public class GTree extends JTree {
 	public boolean isEmptyTree() {
 
 		return rootNode == null || rootNode.getChildCount() == 0;
+	}
+
+	public GNode getSelectedNode() {
+
+		return (GNode)getLastSelectedPathComponent();
+	}
+
+	public List<GNode> getAllSelectedNodes() {
+
+		List<GNode> nodes = new ArrayList<GNode>();
+
+		for (TreePath path : getSelectionModel().getSelectionPaths()) {
+
+			nodes.add((GNode)path.getLastPathComponent());
+		}
+
+		return nodes;
 	}
 
 	DefaultTreeModel getTreeModel() {
