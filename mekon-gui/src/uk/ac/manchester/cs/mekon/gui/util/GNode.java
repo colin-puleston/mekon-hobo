@@ -204,6 +204,11 @@ public abstract class GNode extends GMutableTreeNode {
 		return getDisplay().getText();
 	}
 
+	public boolean isRootNode() {
+
+		return parent == null;
+	}
+
 	public GNode getParent() {
 
 		return parent;
