@@ -135,9 +135,7 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 		return concept;
 	}
 
-	private void addConceptDefinition(
-					OWLClass concept,
-					OWLClassExpression definiton) {
+	private void addConceptDefinition(OWLClass concept, OWLClassExpression definiton) {
 
 		addAxiom(getDataFactory().getOWLEquivalentClassesAxiom(concept, definiton));
 	}
