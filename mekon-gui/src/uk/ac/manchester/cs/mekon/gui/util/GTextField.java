@@ -36,6 +36,14 @@ public abstract class GTextField extends JTextField {
 
 	private class ValueEntryListener extends KeyAdapter {
 
+		public void keyTyped(KeyEvent event) {
+
+			if (!acceptKey(event)) {
+
+				event.consume();
+			}
+		}
+
 		public void keyReleased(KeyEvent event) {
 
 			onKeyEntered(event);
@@ -61,11 +69,16 @@ public abstract class GTextField extends JTextField {
 		addFocusListener(new FieldExitListener());
 	}
 
-	protected abstract void onTextEntered(String text);
+	protected boolean acceptKey(KeyEvent event) {
 
-	protected void onFieldExited(String text) {
+		return true;
 	}
 
 	protected void onKeyEntered(KeyEvent event) {
 	}
+
+	protected void onFieldExited(String text) {
+	}
+
+	protected abstract void onTextEntered(String text);
 }

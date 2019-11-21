@@ -54,12 +54,9 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 
 		private boolean checkingInput = false;
 
-		protected void onTextEntered(String text) {
+		protected void onKeyEntered(KeyEvent event) {
 
-			if (checkInput(text)) {
-
-				dispose();
-			}
+			okButton.updateEnabling();
 		}
 
 		protected void onFieldExited(String text) {
@@ -70,9 +67,12 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 			}
 		}
 
-		protected void onKeyEntered(KeyEvent event) {
+		protected void onTextEntered(String text) {
 
-			okButton.updateEnabling();
+			if (checkInput(text)) {
+
+				dispose();
+			}
 		}
 
 		V getValue() {
