@@ -93,6 +93,9 @@ class QueryFrame extends InstantiationFrame {
 
 			getStoreActions().retrieveAndDisplayInstance(entity);
 		}
+
+		protected void onSelectionCleared() {
+		}
 	}
 
 	QueryFrame(

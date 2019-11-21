@@ -46,6 +46,9 @@ abstract class CTree extends GTree {
 
 			onSelectedNode(node);
 		}
+
+		protected void onSelectionCleared() {
+		}
 	}
 
 	CTree() {
@@ -100,7 +103,7 @@ abstract class CTree extends GTree {
 
 		if (selectedCFrame != null) {
 
-			selectionListeners.poll(selectedCFrame);
+			selectionListeners.pollForSelected(selectedCFrame);
 		}
 		else {
 

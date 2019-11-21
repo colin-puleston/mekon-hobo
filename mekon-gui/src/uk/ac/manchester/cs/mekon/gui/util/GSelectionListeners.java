@@ -38,11 +38,19 @@ public class GSelectionListeners<E> {
 		listeners.add(listener);
 	}
 
-	public void poll(E entity) {
+	public void pollForSelected(E entity) {
 
 		for (GSelectionListener<E> listener : copyList()) {
 
 			listener.onSelected(entity);
+		}
+	}
+
+	public void pollForSelectionCleared() {
+
+		for (GSelectionListener<E> listener : copyList()) {
+
+			listener.onSelectionCleared();
 		}
 	}
 

@@ -48,6 +48,9 @@ class CFramesInstantiatorPanel extends CFramesComboPanel {
 
 			selectInstance(instance);
 		}
+
+		protected void onSelectionCleared() {
+		}
 	}
 
 	private class InstancesList extends GList<CIdentity> {

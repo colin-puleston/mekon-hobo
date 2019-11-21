@@ -49,7 +49,14 @@ public class GTree extends JTree {
 
 		public void valueChanged(TreeSelectionEvent event) {
 
-			nodeSelectionListeners.poll(extractLeafNode(event));
+			if (event.isAddedPath()) {
+
+				nodeSelectionListeners.pollForSelected(extractLeafNode(event));
+			}
+			else {
+
+				nodeSelectionListeners.pollForSelectionCleared();
+			}
 		}
 
 		private GNode extractLeafNode(TreeSelectionEvent event) {

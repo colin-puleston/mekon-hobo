@@ -279,8 +279,12 @@ public class GList<E> extends JList<GListElement<E>> {
 			if (entity != selectedEntity) {
 
 				selectedEntity = entity;
-				selectionListeners.poll(selectedEntity);
+				selectionListeners.pollForSelected(selectedEntity);
 			}
+		}
+		else {
+
+			selectionListeners.pollForSelectionCleared();
 		}
 	}
 

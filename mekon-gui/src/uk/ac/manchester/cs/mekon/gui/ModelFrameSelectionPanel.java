@@ -54,7 +54,7 @@ class ModelFrameSelectionPanel extends JPanel {
 
 			if (frame.getCategory().atomic()) {
 
-				reselectors.poll(frame);
+				reselectors.pollForSelected(frame);
 				showSelected(frame);
 			}
 		}

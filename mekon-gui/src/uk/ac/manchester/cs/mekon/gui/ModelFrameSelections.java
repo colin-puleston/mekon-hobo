@@ -81,7 +81,7 @@ class ModelFrameSelections {
 		current = selected;
 		lastTo = previous;
 
-		selectionListeners.poll(current);
+		selectionListeners.pollForSelected(current);
 	}
 
 	boolean canGoBack() {

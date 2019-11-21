@@ -101,6 +101,9 @@ class CFramesInstantiatorTree extends CFramesTree {
 				((InstantiatorInstanceNode)node).onSelected();
 			}
 		}
+
+		protected void onSelectionCleared() {
+		}
 	}
 
 	CFramesInstantiatorTree(CFrame rootFrame, CFrameInstances instances) {
