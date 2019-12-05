@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.ac.manchester.cs.hobo.gui;
+package uk.ac.manchester.cs.hobo.explorer;
 
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.motor.*;
@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.hobo.model.motor.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 
-import uk.ac.manchester.cs.mekon.gui.*;
+import uk.ac.manchester.cs.mekon.explorer.*;
 
 /**
  * @author Colin Puleston
