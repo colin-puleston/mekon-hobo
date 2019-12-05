@@ -78,9 +78,9 @@
 	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC -Djava.library.path=${build.lib.rel}"/>
 
 	<!-- gui main-classes -->
-	<property name="mekongui.mainclass" value="uk.ac.manchester.cs.mekon.gui.MekonModelExplorer"/>
-	<property name="mekonclientgui.mainclass" value="uk.ac.manchester.cs.mekon.gui.MekonRemoteModelExplorer"/>
-	<property name="hobogui.mainclass" value="uk.ac.manchester.cs.hobo.gui.HoboModelExplorer"/>
+	<property name="mekon-explorer.mainclass" value="uk.ac.manchester.cs.mekon.explorer.MekonModelExplorer"/>
+	<property name="mekon-client-explorer.mainclass" value="uk.ac.manchester.cs.mekon.explorer.MekonRemoteModelExplorer"/>
+	<property name="hobo-explorer.mainclass" value="uk.ac.manchester.cs.hobo.explorer.HoboModelExplorer"/>
 
 	<!-- mekon client invocation -->
 	<property name="build.mekon-client.run.name" value="mekon-client"/>
@@ -88,7 +88,7 @@
 	<property name="build.mekon-client.run.win" location="${build.client}/${build.mekon-client.run.name}.bat"/>
 	<property name="build.mekon-client.classpath.sh" value="${build.client}/*"/>
 	<property name="build.mekon-client.classpath.win" value="${build.client}/*"/>
-	<property name="build.mekon-client.java.run" value="${mekonclientgui.mainclass}"/>
+	<property name="build.mekon-client.java.run" value="${mekon-client-explorer.mainclass}"/>
 
 	<!-- mekon demo invocation -->
 	<property name="build.mekon-demo.run.name" value="mekon-demo"/>
@@ -96,7 +96,7 @@
 	<property name="build.mekon-demo.run.win" location="${build}/${build.mekon-demo.run.name}.bat"/>
 	<property name="build.mekon-demo.classpath.sh" value="${build.lib.rel}/*:${build.resource.rel}"/>
 	<property name="build.mekon-demo.classpath.win" value="${build.lib.rel}/*;${build.resource.rel}"/>
-	<property name="build.mekon-demo.java.run" value="${java.opts} ${mekongui.mainclass}"/>
+	<property name="build.mekon-demo.java.run" value="${java.opts} ${mekon-explorer.mainclass}"/>
 
 	<!-- hobo demo invocation -->
 	<property name="build.hobo-demo.run.name" value="hobo-demo"/>
@@ -104,7 +104,7 @@
 	<property name="build.hobo-demo.run.win" location="${build}/${build.hobo-demo.run.name}.bat"/>
 	<property name="build.hobo-demo.classpath.sh" value="${build.lib.rel}/*:${build.hobo-demo.classes.rel}:${build.resource.rel}"/>
 	<property name="build.hobo-demo.classpath.win" value="${build.lib.rel}/*;${build.hobo-demo.classes.rel};${build.resource.rel}"/>
-	<property name="build.hobo-demo.java.run" value="${java.opts} ${hobogui.mainclass}"/>
+	<property name="build.hobo-demo.java.run" value="${java.opts} ${hobo-explorer.mainclass}"/>
 
 	<!-- test invocation -->
 	<property name="build.test.run.name" value="test"/>
