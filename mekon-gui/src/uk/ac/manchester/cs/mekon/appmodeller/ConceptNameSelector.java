@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston

@@ -8,8 +8,8 @@ package uk.ac.manchester.cs.mekon.appmodeller;
 import java.awt.Color;
 import javax.swing.Icon;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
-import uk.ac.manchester.cs.mekon.gui.util.icon.*;
+import uk.ac.manchester.cs.mekon.gui.*;
+import uk.ac.manchester.cs.mekon.gui.icon.*;
 
 import uk.ac.manchester.cs.mekon.appmodeller.model.*;
 

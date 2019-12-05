@@ -5,7 +5,7 @@
  */
 package uk.ac.manchester.cs.mekon.appmodeller;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston

@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.app;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston

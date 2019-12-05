@@ -9,7 +9,7 @@ import java.awt.BorderLayout;
 import java.util.*;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 import uk.ac.manchester.cs.mekon.appmodeller.model.*;
 

@@ -31,7 +31,7 @@ import javax.swing.event.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston

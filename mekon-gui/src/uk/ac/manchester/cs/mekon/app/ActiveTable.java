@@ -29,7 +29,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston

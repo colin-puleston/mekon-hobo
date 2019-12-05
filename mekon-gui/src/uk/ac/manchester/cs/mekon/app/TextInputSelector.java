@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.app;
 import java.awt.*;
 import java.awt.event.*;
 
-import uk.ac.manchester.cs.mekon.gui.util.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
