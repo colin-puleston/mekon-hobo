@@ -21,7 +21,7 @@ class ModelHandler {
 	static private final String OWL_FILE_EXTN = "owl";
 	static private final String OWL_FILE_SUFFIX = "." + OWL_FILE_EXTN;
 
-	private Modeller modeller;
+	private JFrame parentFrame;
 
 	private ModelSerialiser serialiser;
 	private Model model;
@@ -43,9 +43,9 @@ class ModelHandler {
 		}
 	}
 
-	ModelHandler(Modeller modeller) {
+	ModelHandler(JFrame parentFrame) {
 
-		this.modeller = modeller;
+		this.parentFrame = parentFrame;
 
 		serialiser = new ModelSerialiser();
 		model = loadDefaultOrExit();
@@ -158,7 +158,7 @@ class ModelHandler {
 
 		JFileChooser chooser = createContentFileChooser();
 
-		if (chooser.showDialog(modeller, action) == JFileChooser.APPROVE_OPTION) {
+		if (chooser.showDialog(parentFrame, action) == JFileChooser.APPROVE_OPTION) {
 
 			return resolveContentFileSelection(chooser.getSelectedFile());
 		}
@@ -204,7 +204,7 @@ class ModelHandler {
 
 	private String createCannotStartMessage(String specificMsg) {
 
-		return "Cannot start " + Modeller.SIMPLE_TITLE + ": " + specificMsg;
+		return "Cannot start " + MekonAppModeller.SIMPLE_TITLE + ": " + specificMsg;
 	}
 
 	private String createCannotLoadContentFileMessage(String specificMsg) {

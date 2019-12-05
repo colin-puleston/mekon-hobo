@@ -16,7 +16,7 @@ import uk.ac.manchester.cs.mekon.appmodeller.model.*;
 /**
  * @author Colin Puleston
  */
-public class Modeller extends GFrame {
+public class MekonAppModeller extends GFrame {
 
 	static private final long serialVersionUID = -1;
 
@@ -122,7 +122,7 @@ public class Modeller extends GFrame {
 
 	static public void main(String[] args) {
 
-		new Modeller(getTitle(args));
+		new MekonAppModeller(getTitle(args));
 	}
 
 	static private String getTitle(String[] args) {
@@ -135,7 +135,7 @@ public class Modeller extends GFrame {
 		return String.format(COMPOUND_TITLE_FORMAT, subTitle);
 	}
 
-	public Modeller(String title) {
+	public MekonAppModeller(String title) {
 
 		super(title, FRAME_WIDTH, FRAME_HEIGHT);
 
