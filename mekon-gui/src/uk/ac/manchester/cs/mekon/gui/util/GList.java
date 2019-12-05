@@ -40,6 +40,7 @@ public class GList<E> extends JList<GListElement<E>> {
 	private LocalListModel model;
 	private E selectedEntity = null;
 
+	private List<GListListener<E>> listListeners = new ArrayList<GListListener<E>>();
 	private GSelectionListeners<E> selectionListeners = new GSelectionListeners<E>();
 
 	private class SelectionProcessor implements ListSelectionListener {
@@ -201,6 +202,11 @@ public class GList<E> extends JList<GListElement<E>> {
 		addListSelectionListener(new SelectionProcessor());
 	}
 
+	public void addListListener(GListListener<E> listListener) {
+
+		listListeners.add(listListener);
+	}
+
 	public void addSelectionListener(GSelectionListener<E> selectionListener) {
 
 		selectionListeners.add(selectionListener);
@@ -210,6 +216,8 @@ public class GList<E> extends JList<GListElement<E>> {
 
 		model.add(entity, display);
 		revalidate();
+
+		pollListListenersForAdded(entity);
 	}
 
 	public void removeEntity(E entity) {
@@ -221,6 +229,8 @@ public class GList<E> extends JList<GListElement<E>> {
 
 		model.remove(entity);
 		revalidate();
+
+		pollListListenersForRemoved(entity);
 	}
 
 	public void applyFilter(GLexicalFilter filter) {
@@ -294,5 +304,26 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			select(selectedEntity);
 		}
+	}
+
+	private void pollListListenersForAdded(E entity) {
+
+		for (GListListener<E> listener : copyListListeners()) {
+
+			listener.onAdded(entity);
+		}
+	}
+
+	private void pollListListenersForRemoved(E entity) {
+
+		for (GListListener<E> listener : copyListListeners()) {
+
+			listener.onRemoved(entity);
+		}
+	}
+
+	private List<GListListener<E>> copyListListeners() {
+
+		return new ArrayList<GListListener<E>>(listListeners);
 	}
 }
