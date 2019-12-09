@@ -27,7 +27,7 @@
 		derived entirely from the ontology, with no associated
 		Object Model.)
 	-->
-	<DirectModelSection topLevelPackage="uk.ac.manchester.cs.hobo.demo"/>
+	<DirectModelSection topLevelPackage="uk.ac.manchester.cs.hobo.demo.model"/>
 
 	<!--
 		Specification of ontology to be loaded. Can be multiple such
@@ -220,7 +220,7 @@
 	-->
 	<Mappings>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.Citizen"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Citizen"
 			externalId="http://mekon/demo.owl#Citizen">
 			<FieldMap fieldName="personal" externalId="http://mekon/demo.owl#personal"/>
 			<FieldMap fieldName="employment" externalId="http://mekon/demo.owl#employment"/>
@@ -228,42 +228,42 @@
 			<FieldMap fieldName="benefits" externalId="http://mekon/demo.owl#benefitReceived"/>
 		</ClassMap>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.Personal"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Personal"
 			externalId="http://mekon/demo.owl#Personal">
 		</ClassMap>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.Employment"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Employment"
 			externalId="http://mekon/demo.owl#Employment">
 			<FieldMap fieldName="jobs" externalId="http://mekon/demo.owl#job"/>
 			<FieldMap fieldName="jobCount" externalId="http://mekon/demo.owl#jobCount"/>
 		</ClassMap>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.Job"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Job"
 			externalId="http://mekon/demo.owl#Job">
 			<FieldMap fieldName="hourlyPay" externalId="http://mekon/demo.owl#hourlyPay"/>
 			<FieldMap fieldName="weeklyPay" externalId="http://mekon/demo.owl#weeklyPay"/>
 			<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/demo.owl#hoursPerWeek"/>
 		</ClassMap>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.Tax"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Tax"
 			externalId="http://mekon/demo.owl#Tax"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.StandardTax"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.StandardTax"
 			externalId="http://mekon/demo.owl#StandardTax"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.SuperTax"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.SuperTax"
 			externalId="http://mekon/demo.owl#SuperTax"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.Benefit"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Benefit"
 			externalId="http://mekon/demo.owl#Benefit"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.UnemploymentBenefit"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.UnemploymentBenefit"
 			externalId="http://mekon/demo.owl#UnemploymentBenefit"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.Trip"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Trip"
 			externalId="http://mekon/demo.owl#Trip"/>
 		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.summary.PropertyRef"
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.summary.PropertyRef"
 			externalId="http://mekon/demo.owl#referencableObjectProperty"/>
 	</Mappings>
 
