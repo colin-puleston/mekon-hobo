@@ -1,7 +1,7 @@
 package uk.ac.manchester.cs.hobo.model.motor.match;
 
 import uk.ac.manchester.cs.hobo.model.*;
-import uk.ac.manchester.cs.hobo.demo.*;
+import uk.ac.manchester.cs.hobo.demo.model.*;
 
 /**
  * @author Colin Puleston

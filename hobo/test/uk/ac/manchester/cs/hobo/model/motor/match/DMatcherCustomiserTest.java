@@ -16,7 +16,7 @@ import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.model.motor.*;
-import uk.ac.manchester.cs.hobo.demo.*;
+import uk.ac.manchester.cs.hobo.demo.model.*;
 
 /**
  * @author Colin Puleston
