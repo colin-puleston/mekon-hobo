@@ -22,17 +22,25 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo;
+package uk.ac.manchester.cs.hobo.demo.model;
 
+import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
+
+import uk.ac.manchester.cs.hobo.demo.model.summary.*;
 
 /**
  * @author Colin Puleston
  */
-public class CitizenshipObject extends DObjectShell {
+public class TripSummaries extends ValueSummaries<Trip> {
 
-	public CitizenshipObject(DObjectBuilder builder) {
+	public TripSummaries(DObjectBuilder builder) {
 
 		super(builder);
+	}
+
+	protected DObject getSummarised(Trip source) {
+
+		return source;
 	}
 }

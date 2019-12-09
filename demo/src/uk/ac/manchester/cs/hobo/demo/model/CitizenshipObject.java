@@ -22,16 +22,16 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.summary;
+package uk.ac.manchester.cs.hobo.demo.model;
 
 import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
  * @author Colin Puleston
  */
-public class SummarisationObject extends DObjectShell {
+public class CitizenshipObject extends DObjectShell {
 
-	public SummarisationObject(DObjectBuilder builder) {
+	public CitizenshipObject(DObjectBuilder builder) {
 
 		super(builder);
 	}
