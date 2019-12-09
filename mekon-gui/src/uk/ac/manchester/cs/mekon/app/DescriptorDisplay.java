@@ -97,11 +97,11 @@ class DescriptorDisplay {
 		}
 	}
 
-	private class AspectTypeHandler extends TypeHandler {
+	private abstract class CFrameTypeHandler extends TypeHandler {
 
 		private AspectEditManager editManager = null;
 
-		AspectTypeHandler(CFrame valueType) {
+		CFrameTypeHandler(CFrame valueType) {
 
 			super(valueType);
 
@@ -111,47 +111,77 @@ class DescriptorDisplay {
 			}
 		}
 
-		String getIdentityLabel() {
-
-			String label = super.getIdentityLabel();
-			Descriptor proxy = getProxyDescriptorOrNull();
-
-			if (proxy != null) {
-
-				label += ("-->" + getSlotLabel(proxy.getSlot()));
-			}
-
-			return label;
-		}
-
 		void checkEdit() {
 
-			if (editManager == null) {
+			if (editManager == null || !editManager.checkInvokeEdit()) {
 
-				editManager = createEditManager(addAspect());
+				IFrame aspect = getNewAspectOrNull();
+
+				if (aspect != null) {
+
+					addValue(aspect);
+
+					editManager = createEditManager(aspect);
+					editManager.checkInvokeEdit();
+
+					return;
+				}
 			}
 
-			editManager.invokeEdit();
+			editManager = null;
 		}
+
+		abstract IFrame getNewAspectOrNull();
 
 		private AspectEditManager createEditManager(IFrame aspect) {
 
 			return new AspectEditManager(aspectWindow, slot, aspect);
 		}
+	}
 
-		private IFrame addAspect() {
+	private class FixedCFrameTypeHandler extends CFrameTypeHandler {
 
-			return instantiator.addNewAspect(slot);
+		private CFrame valueType;
+
+		FixedCFrameTypeHandler(CFrame valueType) {
+
+			super(valueType);
+
+			this.valueType = valueType;
 		}
 
-		private Descriptor getProxyDescriptorOrNull() {
+		IFrame getNewAspectOrNull() {
 
-			if (editManager == null) {
+			return instantiator.instantiate(valueType);
+		}
+	}
 
-				return null;
+	private class SelectableCFrameTypeHandler extends CFrameTypeHandler {
+
+		private CFrame valueType;
+
+		SelectableCFrameTypeHandler(CFrame valueType) {
+
+			super(valueType);
+
+			this.valueType = valueType;
+		}
+
+		IFrame getNewAspectOrNull() {
+
+			FrameSelector selector = createSelector();
+
+			if (selector.display(false) == EditStatus.EDITED) {
+
+				return instantiator.instantiate(selector.getSelection());
 			}
 
-			return editManager.getDescriptors().getProxyDescriptorOrNull();
+			return null;
+		}
+
+		private FrameSelector createSelector() {
+
+			return new FrameSelector(rootWindow, valueType, false);
 		}
 	}
 
@@ -188,25 +218,25 @@ class DescriptorDisplay {
 		}
 	}
 
-	private class OptionTypeHandler extends SimpleTypeHandler<CFrame> {
+	private class MFrameTypeHandler extends SimpleTypeHandler<CFrame> {
 
-		private CFrame valueType;
+		private CFrame rootCFrame;
 
-		OptionTypeHandler(CFrame valueType) {
+		MFrameTypeHandler(MFrame valueType) {
 
 			super(valueType);
 
-			this.valueType = valueType;
+			rootCFrame = valueType.getRootCFrame();
 		}
 
 		FrameSelector createValueSelector() {
 
-			return new FrameSelector(rootWindow, valueType, abstractEdit());
+			return new FrameSelector(rootWindow, rootCFrame, abstractEdit());
 		}
 
-		IFrame selectionToValue(CFrame selection) {
+		CFrame selectionToValue(CFrame selection) {
 
-			return instantiator.instantiate(selection);
+			return selection;
 		}
 	}
 
@@ -245,11 +275,11 @@ class DescriptorDisplay {
 		}
 	}
 
-	private class NumberTypeHandler extends DataTypeHandler<INumber> {
+	private class CNumberTypeHandler extends DataTypeHandler<INumber> {
 
 		private CNumber valueType;
 
-		NumberTypeHandler(CNumber valueType) {
+		CNumberTypeHandler(CNumber valueType) {
 
 			super(valueType);
 
@@ -267,9 +297,9 @@ class DescriptorDisplay {
 		}
 	}
 
-	private class StringTypeHandler extends DataTypeHandler<IString> {
+	private class CStringTypeHandler extends DataTypeHandler<IString> {
 
-		StringTypeHandler() {
+		CStringTypeHandler() {
 
 			super(CString.SINGLETON);
 		}
@@ -284,22 +314,22 @@ class DescriptorDisplay {
 
 		protected void visit(CFrame value) {
 
-			typeHandler = createFrameValueTypeHandler(value);
+			typeHandler = createCFrameTypeHandler(value);
 		}
 
 		protected void visit(CNumber value) {
 
-			typeHandler = new NumberTypeHandler(value);
+			typeHandler = new CNumberTypeHandler(value);
 		}
 
 		protected void visit(CString value) {
 
-			typeHandler = new StringTypeHandler();
+			typeHandler = new CStringTypeHandler();
 		}
 
 		protected void visit(MFrame value) {
 
-			throw createException("Unexpected slot value-type: " + value);
+			typeHandler = new MFrameTypeHandler(value);
 		}
 
 		TypeHandlerCreator() {
@@ -307,24 +337,29 @@ class DescriptorDisplay {
 			visit(slot.getValueType());
 		}
 
-		private TypeHandler createFrameValueTypeHandler(CFrame valueType) {
+		private TypeHandler createCFrameTypeHandler(CFrame valueType) {
 
 			if (instanceRefValueType(valueType)) {
 
 				return new InstanceRefTypeHandler(valueType);
 			}
 
-			if (ValueTypeCategoriser.aspectValueType(slot)) {
+			if (fixedFrameValueType(valueType)) {
 
-				return new AspectTypeHandler(valueType);
+				return new FixedCFrameTypeHandler(valueType);
 			}
 
-			return new OptionTypeHandler(valueType);
+			return new SelectableCFrameTypeHandler(valueType);
 		}
 
 		private boolean instanceRefValueType(CFrame valueType) {
 
 			return !instantiator.queryInstance() && getController().instanceType(valueType);
+		}
+
+		private boolean fixedFrameValueType(CFrame valueType) {
+
+			return valueType.getSubs(CVisibility.EXPOSED).isEmpty();
 		}
 	}
 

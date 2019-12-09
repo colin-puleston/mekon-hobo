@@ -55,15 +55,6 @@ class Instantiator {
 		return instantiation;
 	}
 
-	IFrame addNewAspect(ISlot slot) {
-
-		IFrame aspect = instantiateAspect(slot);
-
-		slot.getValuesEditor().add(aspect);
-
-		return aspect;
-	}
-
 	IFrame instantiate(CFrame type) {
 
 		return type.instantiate(getFunction());
@@ -77,11 +68,6 @@ class Instantiator {
 	boolean queryInstance() {
 
 		return getFunction().query();
-	}
-
-	private IFrame instantiateAspect(ISlot slot) {
-
-		return instantiate((CFrame)slot.getValueType());
 	}
 
 	private IFrameFunction getFunction() {

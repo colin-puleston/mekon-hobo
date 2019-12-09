@@ -49,24 +49,14 @@ class DescriptorsList {
 		}
 	}
 
+	boolean isEmpty() {
+
+		return list.isEmpty();
+	}
+
 	List<Descriptor> getList() {
 
 		return list;
-	}
-
-	Descriptor getProxyDescriptorOrNull() {
-
-		if (list.size() == 1) {
-
-			Descriptor descriptor = list.get(0);
-
-			if (singleValued(descriptor.getSlot())) {
-
-				return descriptor;
-			}
-		}
-
-		return null;
 	}
 
 	private void addAllFor(ISlot slot) {

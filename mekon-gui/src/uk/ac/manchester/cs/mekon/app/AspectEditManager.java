@@ -48,17 +48,25 @@ class AspectEditManager  {
 		update();
 	}
 
+	boolean checkInvokeEdit() {
+
+		if (descriptors.isEmpty()) {
+
+			return false;
+		}
+
+		invokeEdit();
+
+		return true;
+	}
+
 	void invokeEdit() {
 
-		Descriptor proxy = descriptors.getProxyDescriptorOrNull();
+		EditStatus status = displayAspectDialog();
 
-		if (proxy != null) {
+		if (status == EditStatus.CLEARED || inertAspect()) {
 
-			invokeProxyDescriptorEdit(proxy);
-		}
-		else {
-
-			invokeDescriptorsTableEdit(descriptors);
+			clearAspect();
 		}
 	}
 
@@ -77,17 +85,7 @@ class AspectEditManager  {
 		new DescriptorDisplay(parentWindow, proxy).checkEdit();
 	}
 
-	private void invokeDescriptorsTableEdit(DescriptorsList descriptors) {
-
-		EditStatus status = displayAspectDialog(descriptors);
-
-		if (status == EditStatus.CLEARED || emptyAspect()) {
-
-			clearAspect();
-		}
-	}
-
-	private EditStatus displayAspectDialog(DescriptorsList descriptors) {
+	private EditStatus displayAspectDialog() {
 
 		return createAspectDialog().display(descriptors);
 	}
@@ -95,6 +93,16 @@ class AspectEditManager  {
 	private AspectDialog createAspectDialog() {
 
 		return new AspectDialog(parentWindow, this, slot);
+	}
+
+	private boolean inertAspect() {
+
+		return rootValueAspect() && emptyAspect();
+	}
+
+	private boolean rootValueAspect() {
+
+		return aspect.getType().equals(slot.getValueType());
 	}
 
 	private boolean emptyAspect() {
