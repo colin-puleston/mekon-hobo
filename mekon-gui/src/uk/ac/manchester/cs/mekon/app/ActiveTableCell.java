@@ -32,17 +32,13 @@ import java.awt.*;
 abstract class ActiveTableCell {
 
 	static final Color IDENTITY_COLOUR = Color.GRAY.darker();
-	static final Color USER_VALUE_COLOUR = Color.BLUE.darker();
-	static final Color AUTO_VALUE_COLOUR = Color.BLUE.darker();
-	static final Color NO_USER_VALUE_COLOUR = Color.GRAY;
-	static final Color NO_AUTO_VALUE_COLOUR = Color.GRAY;
+	static final Color VALUE_COLOUR = Color.BLUE.darker();
+	static final Color NO_VALUE_COLOUR = Color.GRAY;
 
 	static final int DEFAULT_FONT_STYLE = Font.PLAIN;
 	static final int IDENTITY_FONT_STYLE = Font.BOLD;
-	static final int USER_VALUE_FONT_STYLE = Font.PLAIN;
-	static final int AUTO_VALUE_FONT_STYLE = Font.PLAIN;
-	static final int NO_USER_VALUE_FONT_STYLE = Font.ITALIC;
-	static final int NO_AUTO_VALUE_FONT_STYLE = Font.ITALIC;
+	static final int VALUE_FONT_STYLE = Font.PLAIN;
+	static final int NO_VALUE_FONT_STYLE = Font.ITALIC;
 
 	static final Color DEFAULT_BACKGROUND_COLOUR = Color.WHITE;
 	static final Color AUTO_EDIT_BACKGROUND_COLOUR = mixAutoEditBackground();

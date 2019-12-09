@@ -126,6 +126,11 @@ class ValuesTester {
 		return new UserEditabilityTester().testFrom(value);
 	}
 
+	static boolean anyEffectiveNestedValues(IValue value) {
+
+		return anyNestedUserValues(value) || anyNestedTerminalValues(value);
+	}
+
 	static boolean anyNestedUserValues(IValue value) {
 
 		return new UserValuePresenceTester().testFrom(value);

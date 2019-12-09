@@ -59,6 +59,21 @@ class Descriptor {
 		valueType = slot.getValueType();
 	}
 
+	void setNewValue(IValue value) {
+
+		if (isCurrentValue()) {
+
+			removeCurrentValue();
+		}
+
+		slot.getValuesEditor().add(value);
+	}
+
+	void removeCurrentValue() {
+
+		slot.getValuesEditor().remove(currentValue);
+	}
+
 	ISlot getSlot() {
 
 		return slot;
@@ -69,8 +84,63 @@ class Descriptor {
 		return currentValue;
 	}
 
+	boolean anyUserEditability() {
+
+		return editableSlot() || anyNestedUserEditability();
+	}
+
+	boolean anyEffectiveValues() {
+
+		return anyUserValues() || anyTerminalValues();
+	}
+
+	boolean anyUserValues() {
+
+		if (!isCurrentValue()) {
+
+			return false;
+		}
+
+		return editableSlot() || anyNestedUserValues();
+	}
+
+	boolean anyTerminalValues() {
+
+		return currentTerminalValue() || anyNestedTerminalValues();
+	}
+
+	private boolean currentTerminalValue() {
+
+		return isCurrentValue() && ValuesTester.terminalValue(currentValue);
+	}
+
+	private boolean anyNestedUserEditability() {
+
+		return isCurrentValue() && ValuesTester.anyNestedUserEditability(currentValue);
+	}
+
+	private boolean anyNestedUserValues() {
+
+		return isCurrentValue() && ValuesTester.anyNestedUserValues(currentValue);
+	}
+
+	private boolean anyNestedTerminalValues() {
+
+		return isCurrentValue() && ValuesTester.anyNestedTerminalValues(currentValue);
+	}
+
+	private boolean editableSlot() {
+
+		return slot.getEditability().editable();
+	}
+
 	private Object getStateMatcher() {
 
-		return currentValue != null ? currentValue : NO_VALUE_MATCHER;
+		return isCurrentValue() ? currentValue : NO_VALUE_MATCHER;
+	}
+
+	private boolean isCurrentValue() {
+
+		return currentValue != null;
 	}
 }

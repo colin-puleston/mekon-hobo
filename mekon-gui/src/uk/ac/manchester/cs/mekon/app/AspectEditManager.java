@@ -80,14 +80,9 @@ class AspectEditManager  {
 		return descriptors;
 	}
 
-	private void invokeProxyDescriptorEdit(Descriptor proxy) {
-
-		new DescriptorDisplay(parentWindow, proxy).checkEdit();
-	}
-
 	private EditStatus displayAspectDialog() {
 
-		return createAspectDialog().display(descriptors);
+		return createAspectDialog().display(descriptors, anyUserEditability());
 	}
 
 	private AspectDialog createAspectDialog() {
@@ -95,19 +90,19 @@ class AspectEditManager  {
 		return new AspectDialog(parentWindow, this, slot);
 	}
 
+	private boolean anyUserEditability() {
+
+		return ValuesTester.anyNestedUserEditability(aspect);
+	}
+
 	private boolean inertAspect() {
 
-		return rootValueAspect() && emptyAspect();
+		return rootValueAspect() && !ValuesTester.anyEffectiveNestedValues(aspect);
 	}
 
 	private boolean rootValueAspect() {
 
 		return aspect.getType().equals(slot.getValueType());
-	}
-
-	private boolean emptyAspect() {
-
-		return !ValuesTester.anyNestedUserValues(aspect);
 	}
 
 	private void clearAspect() {

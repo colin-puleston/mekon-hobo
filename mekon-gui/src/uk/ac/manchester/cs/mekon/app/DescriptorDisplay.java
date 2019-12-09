@@ -38,6 +38,8 @@ class DescriptorDisplay {
 	private Window rootWindow;
 	private Instantiator instantiator;
 
+	private Descriptor descriptor;
+
 	private ISlot slot;
 	private IValue currentValue;
 
@@ -54,7 +56,7 @@ class DescriptorDisplay {
 
 		String getIdentityLabel() {
 
-			return getSlotLabel(slot);
+			return slot.getType().getIdentity().getLabel();
 		}
 
 		String getValueLabel() {
@@ -69,12 +71,9 @@ class DescriptorDisplay {
 			return getValueTypeLabel();
 		}
 
-		abstract void checkEdit();
+		abstract boolean active();
 
-		private boolean anyEffectiveValues() {
-
-			return anyUserValues() || anyTerminalValues();
-		}
+		abstract void performAction();
 
 		private String getNoEffectiveValueLabel() {
 
@@ -111,7 +110,12 @@ class DescriptorDisplay {
 			}
 		}
 
-		void checkEdit() {
+		boolean active() {
+
+			return anyUserEditability() || anyTerminalValues();
+		}
+
+		void performAction() {
 
 			if (editManager == null || !editManager.checkInvokeEdit()) {
 
@@ -119,16 +123,10 @@ class DescriptorDisplay {
 
 				if (aspect != null) {
 
-					addValue(aspect);
-
-					editManager = createEditManager(aspect);
-					editManager.checkInvokeEdit();
-
-					return;
+					descriptor.setNewValue(aspect);
+					createEditManager(aspect).checkInvokeEdit();
 				}
 			}
-
-			editManager = null;
 		}
 
 		abstract IFrame getNewAspectOrNull();
@@ -192,7 +190,12 @@ class DescriptorDisplay {
 			super(valueType);
 		}
 
-		void checkEdit() {
+		boolean active() {
+
+			return editableSlot();
+		}
+
+		void performAction() {
 
 			Selector<S> selector = createValueSelector();
 
@@ -203,7 +206,7 @@ class DescriptorDisplay {
 					break;
 
 				case CLEARED:
-					removeCurrentValue();
+					descriptor.removeCurrentValue();
 					break;
 			}
 		}
@@ -214,7 +217,7 @@ class DescriptorDisplay {
 
 		private void addSelectedValue(S selection) {
 
-			addValue(selectionToValue(selection));
+			descriptor.setNewValue(selectionToValue(selection));
 		}
 	}
 
@@ -231,7 +234,7 @@ class DescriptorDisplay {
 
 		FrameSelector createValueSelector() {
 
-			return new FrameSelector(rootWindow, rootCFrame, abstractEdit());
+			return new FrameSelector(rootWindow, rootCFrame, abstractEditableSlot());
 		}
 
 		CFrame selectionToValue(CFrame selection) {
@@ -253,7 +256,7 @@ class DescriptorDisplay {
 
 		InstanceRefSelector createValueSelector() {
 
-			return new InstanceRefSelector(aspectWindow, valueType, abstractEdit());
+			return new InstanceRefSelector(aspectWindow, valueType, abstractEditableSlot());
 		}
 
 		IFrame selectionToValue(IFrame selection) {
@@ -288,7 +291,7 @@ class DescriptorDisplay {
 
 		INumberSelector createValueSelector() {
 
-			if (abstractEdit()) {
+			if (abstractEditableSlot()) {
 
 				return new IndefiniteINumberSelector(rootWindow, valueType);
 			}
@@ -414,66 +417,37 @@ class DescriptorDisplay {
 
 			O getOption() {
 
-				if (anyUserEditability()) {
-
-					return anyUserValues() ? getUserValuesOption() : getNoUserValuesOption();
-				}
-
-				return anyTerminalValues() ? getAutoValuesOption() : getNoAutoValuesOption();
+				return anyEffectiveValues() ? getValuesOption() : getNoValuesOption();
 			}
 
-			abstract O getUserValuesOption();
+			abstract O getValuesOption();
 
-			abstract O getAutoValuesOption();
-
-			abstract O getNoUserValuesOption();
-
-			abstract O getNoAutoValuesOption();
+			abstract O getNoValuesOption();
 		}
 
 		private class DisplayColours extends DisplayOptions<Color> {
 
-			Color getUserValuesOption() {
+			Color getValuesOption() {
 
-				return USER_VALUE_COLOUR;
+				return VALUE_COLOUR;
 			}
 
-			Color getAutoValuesOption() {
+			Color getNoValuesOption() {
 
-				return AUTO_VALUE_COLOUR;
-			}
-
-			Color getNoUserValuesOption() {
-
-				return NO_USER_VALUE_COLOUR;
-			}
-
-			Color getNoAutoValuesOption() {
-
-				return NO_AUTO_VALUE_COLOUR;
+				return NO_VALUE_COLOUR;
 			}
 		}
 
 		private class DisplayFontStyles extends DisplayOptions<Integer> {
 
-			Integer getUserValuesOption() {
+			Integer getValuesOption() {
 
-				return USER_VALUE_FONT_STYLE;
+				return VALUE_FONT_STYLE;
 			}
 
-			Integer getAutoValuesOption() {
+			Integer getNoValuesOption() {
 
-				return AUTO_VALUE_FONT_STYLE;
-			}
-
-			Integer getNoUserValuesOption() {
-
-				return NO_USER_VALUE_FONT_STYLE;
-			}
-
-			Integer getNoAutoValuesOption() {
-
-				return NO_AUTO_VALUE_FONT_STYLE;
+				return NO_VALUE_FONT_STYLE;
 			}
 		}
 
@@ -501,13 +475,13 @@ class DescriptorDisplay {
 
 		boolean userActionable() {
 
-			return anyUserEditability();
+			return typeHandler.active();
 		}
 
 		void performCellAction() {
 
 			aspectWindow.dispose();
-			typeHandler.checkEdit();
+			typeHandler.performAction();
 			aspectWindow.displayCopy();
 		}
 	}
@@ -515,6 +489,7 @@ class DescriptorDisplay {
 	DescriptorDisplay(AspectWindow aspectWindow, Descriptor descriptor) {
 
 		this.aspectWindow = aspectWindow;
+		this.descriptor = descriptor;
 
 		rootWindow = aspectWindow.getRootWindow();
 		instantiator = aspectWindow.getInstantiator();
@@ -523,11 +498,6 @@ class DescriptorDisplay {
 		currentValue = descriptor.getCurrentValue();
 
 		new TypeHandlerCreator();
-	}
-
-	void checkEdit() {
-
-		typeHandler.checkEdit();
 	}
 
 	ActiveTableCell createIdentityCell() {
@@ -550,69 +520,24 @@ class DescriptorDisplay {
 		return currentValue;
 	}
 
-	private void addValue(IValue value) {
-
-		slot.getValuesEditor().add(value);
-	}
-
-	private void removeCurrentValue() {
-
-		slot.getValuesEditor().remove(currentValue);
-	}
-
 	private boolean anyUserEditability() {
 
-		if (editableSlot()) {
+		return descriptor.anyUserEditability();
+	}
 
-			return true;
-		}
+	private boolean anyEffectiveValues() {
 
-		return isCurrentValue() && ValuesTester.anyNestedUserEditability(currentValue);
+		return descriptor.anyEffectiveValues();
 	}
 
 	private boolean anyUserValues() {
 
-		if (!isCurrentValue()) {
-
-			return false;
-		}
-
-		if (editableSlot()) {
-
-			return true;
-		}
-
-		return ValuesTester.anyNestedUserValues(currentValue);
+		return descriptor.anyUserValues();
 	}
 
 	private boolean anyTerminalValues() {
 
-		if (!isCurrentValue()) {
-
-			return false;
-		}
-
-		if (ValuesTester.terminalValue(currentValue)) {
-
-			return true;
-		}
-
-		return ValuesTester.anyNestedTerminalValues(currentValue);
-	}
-
-	private boolean editableSlot() {
-
-		return slot.getEditability().editable();
-	}
-
-	private boolean abstractEdit() {
-
-		return slot.getEditability().abstractEditable();
-	}
-
-	private boolean multiValueSlot() {
-
-		return !slot.getType().getCardinality().singleValue();
+		return descriptor.anyTerminalValues();
 	}
 
 	private boolean isCurrentValue() {
@@ -620,9 +545,19 @@ class DescriptorDisplay {
 		return currentValue != null;
 	}
 
-	private String getSlotLabel(ISlot slot) {
+	private boolean editableSlot() {
 
-		return slot.getType().getIdentity().getLabel();
+		return slot.getEditability().editable();
+	}
+
+	private boolean abstractEditableSlot() {
+
+		return slot.getEditability().abstractEditable();
+	}
+
+	private boolean multiValueSlot() {
+
+		return !slot.getType().getCardinality().singleValue();
 	}
 
 	private Customiser getCustomiser() {
@@ -634,11 +569,5 @@ class DescriptorDisplay {
 
 		return instantiator.getController();
 	}
-
-	private RuntimeException createException(String message) {
-
-		return new RuntimeException(
-					"Descriptor error: " + slot
-					+ ": " + message);
-	}
 }
+

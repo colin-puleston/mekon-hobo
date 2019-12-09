@@ -48,9 +48,9 @@ class AspectDialog extends GDialog implements AspectWindow {
 
 		static private final long serialVersionUID = -1;
 
-		ControlPanel() {
+		ControlPanel(boolean clearRequired) {
 
-			configure(true, true, false);
+			configure(true, clearRequired, false);
 		}
 
 		void onEditComplete(EditStatus status) {
@@ -90,26 +90,21 @@ class AspectDialog extends GDialog implements AspectWindow {
 		this.editManager = editManager;
 	}
 
-	EditStatus display(DescriptorsList descriptors) {
+	EditStatus display(DescriptorsList descriptors, boolean clearRequired) {
 
-		display(createDisplay(createDescriptorsTable(descriptors)));
+		display(createDisplay(new DescriptorsTable(this, descriptors), clearRequired));
 
 		return status;
 	}
 
-	private JPanel createDisplay(DescriptorsTable descriptors) {
+	private JPanel createDisplay(DescriptorsTable table, boolean clearRequired) {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(new JScrollPane(descriptors), BorderLayout.CENTER);
-		panel.add(new ControlPanel(), BorderLayout.SOUTH);
+		panel.add(new JScrollPane(table), BorderLayout.CENTER);
+		panel.add(new ControlPanel(clearRequired), BorderLayout.SOUTH);
 
 		return panel;
-	}
-
-	private DescriptorsTable createDescriptorsTable(DescriptorsList list) {
-
-		return new DescriptorsTable(this, list);
 	}
 
 	private int getPreferredHeight() {
