@@ -20,7 +20,7 @@ public class MekonAppModeller extends GFrame {
 
 	static private final long serialVersionUID = -1;
 
-	static final String SIMPLE_TITLE = "MEKON-App Model Editor";
+	static final String SIMPLE_TITLE = "MEKON-APP Model Editor";
 
 	static private final String COMPOUND_TITLE_FORMAT = SIMPLE_TITLE + ": %s";
 
