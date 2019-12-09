@@ -81,6 +81,7 @@
 	<property name="mekon-explorer.mainclass" value="uk.ac.manchester.cs.mekon.explorer.MekonModelExplorer"/>
 	<property name="mekon-client-explorer.mainclass" value="uk.ac.manchester.cs.mekon.explorer.MekonRemoteModelExplorer"/>
 	<property name="hobo-explorer.mainclass" value="uk.ac.manchester.cs.hobo.explorer.HoboModelExplorer"/>
+	<property name="hobo-app-demo.mainclass" value="uk.ac.manchester.cs.hobo.demo.app.HoboAppDemo"/>
 
 	<!-- mekon client invocation -->
 	<property name="build.mekon-client.run.name" value="mekon-client"/>
@@ -105,6 +106,14 @@
 	<property name="build.hobo-demo.classpath.sh" value="${build.lib.rel}/*:${build.hobo-demo.classes.rel}:${build.resource.rel}"/>
 	<property name="build.hobo-demo.classpath.win" value="${build.lib.rel}/*;${build.hobo-demo.classes.rel};${build.resource.rel}"/>
 	<property name="build.hobo-demo.java.run" value="${java.opts} ${hobo-explorer.mainclass}"/>
+
+	<!-- hobo-app demo invocation -->
+	<property name="build.hobo-app-demo.run.name" value="hobo-app-demo"/>
+	<property name="build.hobo-app-demo.run.sh" location="${build}/${build.hobo-app-demo.run.name}.sh"/>
+	<property name="build.hobo-app-demo.run.win" location="${build}/${build.hobo-app-demo.run.name}.bat"/>
+	<property name="build.hobo-app-demo.classpath.sh" value="${build.lib.rel}/*:${build.hobo-app-demo.classes.rel}:${build.resource.rel}"/>
+	<property name="build.hobo-app-demo.classpath.win" value="${build.lib.rel}/*;${build.hobo-app-demo.classes.rel};${build.resource.rel}"/>
+	<property name="build.hobo-app-demo.java.run" value="${java.opts} ${hobo-app-demo.mainclass}"/>
 
 	<!-- test invocation -->
 	<property name="build.test.run.name" value="test"/>
@@ -287,7 +296,7 @@
 	</target>
 
 	<!-- hobo demo targets -->
-	<target name="hobo-demo-classes" depends="hobo-jar, resource">
+	<target name="hobo-demo-classes" depends="hobo-jar, hobo-gui-jar, resource">
 		<mkdir dir="${build.hobo-demo.classes}"/>
 		<javac srcdir="${demo.src}" classpathref="classpath" destdir="${build.hobo-demo.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -304,6 +313,8 @@
 	<target name="hobo-demo" depends="hobo-demo-jar, hobo-gui-jar, mekon-demo">
 		<echo file="${build.hobo-demo.run.sh}">java -cp ${build.hobo-demo.classpath.sh} ${build.hobo-demo.java.run}</echo>
 		<echo file="${build.hobo-demo.run.win}">java -cp ${build.hobo-demo.classpath.win} ${build.hobo-demo.java.run}</echo>
+		<echo file="${build.hobo-app-demo.run.sh}">java -cp ${build.hobo-app-demo.classpath.sh} ${build.hobo-app-demo.java.run}</echo>
+		<echo file="${build.hobo-app-demo.run.win}">java -cp ${build.hobo-app-demo.classpath.win} ${build.hobo-app-demo.java.run}</echo>
 		<chmod dir="${build}" includes="${build.hobo-demo.run.name}.sh" perm="+x"/>
 	</target>
 
