@@ -51,6 +51,18 @@ public class Model {
 		return new ArrayList<Hierarchy>(hierarchies);
 	}
 
+	public Hierarchy getHierarchy(String rootConceptName) {
+
+		Hierarchy hierarchy = hierarchiesByRootNames.get(rootConceptName);
+
+		if (hierarchy == null) {
+
+			throw new RuntimeException("Not root-concept: " + rootConceptName);
+		}
+
+		return hierarchy;
+	}
+
 	public Concept getConcept(EntityId conceptId) {
 
 		for (Hierarchy hierarchy : hierarchies) {
@@ -62,6 +74,11 @@ public class Model {
 		}
 
 		throw new RuntimeException("Cannot find concept: " + conceptId);
+	}
+
+	public EntityId getCoreId(String name) {
+
+		return getEntityId(coreNamespace, name);
 	}
 
 	public boolean isContentConcept(String name) {
@@ -79,26 +96,9 @@ public class Model {
 		return false;
 	}
 
-	EntityId getCoreId(String name) {
-
-		return getEntityId(coreNamespace, name);
-	}
-
 	EntityId getContentId(String name) {
 
 		return getEntityId(contentNamespace, name);
-	}
-
-	Hierarchy getHierarchy(String rootConceptName) {
-
-		Hierarchy hierarchy = hierarchiesByRootNames.get(rootConceptName);
-
-		if (hierarchy == null) {
-
-			throw new RuntimeException("Not root-concept: " + rootConceptName);
-		}
-
-		return hierarchy;
 	}
 
 	ConflictResolver getConflictResolver() {

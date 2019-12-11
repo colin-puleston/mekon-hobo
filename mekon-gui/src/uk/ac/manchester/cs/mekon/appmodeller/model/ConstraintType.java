@@ -5,64 +5,66 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-public class ConstraintType {
+public abstract class ConstraintType {
 
-	private EntityId focusConceptId;
+	private Concept rootSourceConcept;
+	private Concept rootTargetConcept;
 
-	private Link sourceLink;
-	private Link targetLink;
+	public Concept getRootSourceConcept() {
 
-	public ConstraintType(EntityId focusConceptId, Link sourceLink, Link targetLink) {
-
-		this.focusConceptId = focusConceptId;
-		this.sourceLink = sourceLink;
-		this.targetLink = targetLink;
+		return rootSourceConcept;
 	}
 
-	public EntityId getFocusConceptId() {
+	public Concept getRootTargetConcept() {
 
-		return focusConceptId;
+		return rootTargetConcept;
 	}
 
-	public Link getSourceLink() {
+	protected ConstraintType(Concept rootSourceConcept, Concept rootTargetConcept) {
 
-		return sourceLink;
-	}
-
-	public Link getTargetLink() {
-
-		return targetLink;
+		this.rootSourceConcept = rootSourceConcept;
+		this.rootTargetConcept = rootTargetConcept;
 	}
 
 	Constraint createRootConstraint() {
 
-		return new Constraint(this, sourceLink.getValue(), targetValueAsList());
+		return new Constraint(this, rootSourceConcept, targetValueAsList());
 	}
 
 	Constraint createConstraint(Concept sourceValue, Collection<Concept> targetValues) {
 
-		sourceLink.checkSubValue(sourceValue);
+		checkValidSourceValue(sourceValue);
 
 		for (Concept targetValue : targetValues) {
 
-			targetLink.checkSubValue(targetValue);
+			checkValidTargetValue(targetValue);
 		}
 
 		return new Constraint(this, sourceValue, targetValues);
 	}
 
-	Link deriveSubSourceLink(Concept value) {
-
-		return sourceLink.deriveSubLink(value);
-	}
-
-	Link deriveSubTargetLink(Concept value) {
-
-		return targetLink.deriveSubLink(value);
-	}
-
 	private List<Concept> targetValueAsList() {
 
-		return Collections.singletonList(targetLink.getValue());
+		return Collections.singletonList(rootTargetConcept);
+	}
+
+	private void checkValidSourceValue(Concept value) {
+
+		checkValidValue(rootSourceConcept, value, "Source");
+	}
+
+	private void checkValidTargetValue(Concept value) {
+
+		checkValidValue(rootTargetConcept, value, "Target");
+	}
+
+	private void checkValidValue(Concept root, Concept value, String function) {
+
+		if (!value.descendantOf(root)) {
+
+			throw new RuntimeException(
+						function + "-value concept \"" + value + "\""
+						+ " not a descendant-concept of \"" + root + "\"");
+		}
 	}
 }

@@ -16,24 +16,19 @@ class ContentLoader {
 
 	private Set<OWLClass> contentClasses = new HashSet<OWLClass>();
 
-	private class ConstraintLoader {
+	private abstract class ConstraintLoader {
 
-		private OWLClass focus;
-		private OWLClass focusSub;
+		private OWLClass subject;
 
-		private Set<OWLClassAxiom> focusSubAxioms;
+		private OWLObjectProperty sourceProperty = null;
+		private OWLObjectProperty targetProperty = null;
 
-		private SourceConceptExtractor sourceConceptExtractor;
-		private TargetConceptExtractor targetConceptExtractor;
+		private Set<OWLClassAxiom> subjectAxioms;
+
+		private SourceExtractor sourceExtractor;
+		private TargetExtractor targetExtractor;
 
 		private abstract class ConceptExtractor {
-
-			private OWLObjectProperty property;
-
-			ConceptExtractor(Link link) {
-
-				property = getObjectProperty(link.getPropertyId());
-			}
 
 			Concept extractOne(OWLClassExpression expr) {
 
@@ -52,6 +47,8 @@ class ContentLoader {
 				return concepts;
 			}
 
+			abstract OWLObjectProperty getProperty();
+
 			abstract Class<? extends OWLQuantifiedObjectRestriction> getRestrictionType();
 
 			abstract boolean allowUnion();
@@ -60,7 +57,7 @@ class ContentLoader {
 
 				OWLQuantifiedObjectRestriction restriction = asRestriction(expr);
 
-				if (restriction.getProperty().equals(property)) {
+				if (restriction.getProperty().equals(getProperty())) {
 
 					OWLClassExpression filler = restriction.getFiller();
 
@@ -101,27 +98,23 @@ class ContentLoader {
 			}
 		}
 
-		private class SourceConceptExtractor extends ConceptExtractor {
-
-			private OWLClass focusCls;
-
-			SourceConceptExtractor(ConstraintType type) {
-
-				super(type.getSourceLink());
-
-				focusCls = getCls(type.getFocusConceptId());
-			}
+		private class SourceExtractor extends ConceptExtractor {
 
 			Set<Concept> extractAll(OWLClassExpression expr) {
 
 				Set<OWLClassExpression> ops = asIntersection(expr).getOperands();
 
-				if (ops.remove(focusCls) && ops.size() == 1) {
+				if (ops.remove(getSubjectSuperCls()) && ops.size() == 1) {
 
 					return super.extractAll(ops.iterator().next());
 				}
 
 				throw createBadAxiomsException();
+			}
+
+			OWLObjectProperty getProperty() {
+
+				return getSourceProperty();
 			}
 
 			Class<OWLObjectSomeValuesFrom> getRestrictionType() {
@@ -140,11 +133,11 @@ class ContentLoader {
 			}
 		}
 
-		private class TargetConceptExtractor extends ConceptExtractor {
+		private class TargetExtractor extends ConceptExtractor {
 
-			TargetConceptExtractor(ConstraintType type) {
+			OWLObjectProperty getProperty() {
 
-				super(type.getTargetLink());
+				return getTargetProperty();
 			}
 
 			Class<OWLObjectAllValuesFrom> getRestrictionType() {
@@ -158,59 +151,98 @@ class ContentLoader {
 			}
 		}
 
-		ConstraintLoader(ConstraintType type, OWLClass focus, OWLClass focusSub) {
+		ConstraintLoader(OWLClass subject) {
 
-			this.focus = focus;
-			this.focusSub = focusSub;
+			this.subject = subject;
 
-			focusSubAxioms = ontology.getAxioms(focusSub);
+			subjectAxioms = ontology.getAxioms(subject);
 
-			sourceConceptExtractor = new SourceConceptExtractor(type);
-			targetConceptExtractor = new TargetConceptExtractor(type);
-
-			checkLoadConstraint(type);
+			sourceExtractor = new SourceExtractor();
+			targetExtractor = new TargetExtractor();
 		}
 
-		private void checkLoadConstraint(ConstraintType type) {
+		void checkLoad(ConstraintType type) {
 
 			Concept source = lookForSourceConcept();
 
 			if (source != null) {
 
-				Set<Concept> targets = getTargetConcepts();
-
-				if (!targets.isEmpty()) {
-
-					source.addConstraint(type, targets);
-				}
+				checkLoad(type, source);
 			}
+		}
+
+		void checkLoad(ConstraintType type, Concept source) {
+
+			Set<Concept> targets = getTargetConcepts();
+
+			if (!targets.isEmpty()) {
+
+				source.addConstraint(type, targets);
+			}
+		}
+
+		abstract OWLClass getSubjectSuperCls();
+
+		abstract EntityId getSourcePropertyId();
+
+		abstract EntityId getTargetPropertyId();
+
+		private OWLObjectProperty getSourceProperty() {
+
+			if (sourceProperty == null) {
+
+				sourceProperty = getObjectProperty(getSourcePropertyId());
+			}
+
+			return sourceProperty;
+		}
+
+		private OWLObjectProperty getTargetProperty() {
+
+			if (targetProperty == null) {
+
+				targetProperty = getObjectProperty(getTargetPropertyId());
+			}
+
+			return targetProperty;
 		}
 
 		private Concept lookForSourceConcept() {
 
-			OWLEquivalentClassesAxiom axiom = lookForSourceAxiom();
+			OWLEquivalentClassesAxiom axiom = lookForPremiseAxiom();
 
 			if (axiom == null) {
 
 				return null;
 			}
 
-			return sourceConceptExtractor.extractOne(extractSourceExpr(axiom));
+			return sourceExtractor.extractOne(extractSourceExpr(axiom));
 		}
 
 		private Set<Concept> getTargetConcepts() {
 
-			return targetConceptExtractor.extractAll(extractTargetExpr(getTargetAxiom()));
+			OWLSubClassOfAxiom axiom = lookForConsequenceAxiom();
+
+			if (axiom == null) {
+
+				return Collections.emptySet();
+			}
+
+			return targetExtractor.extractAll(extractTargetsExpr(axiom));
 		}
 
 		private OWLClassExpression extractSourceExpr(OWLEquivalentClassesAxiom axiom) {
 
-			return getOne(removeFocusSub(axiom.getClassExpressions()));
+			Set<OWLClassExpression> exprs = axiom.getClassExpressions();
+
+			exprs.remove(subject);
+
+			return getOne(exprs);
 		}
 
-		private OWLClassExpression extractTargetExpr(OWLSubClassOfAxiom axiom) {
+		private OWLClassExpression extractTargetsExpr(OWLSubClassOfAxiom axiom) {
 
-			if (axiom.getSubClass().equals(focusSub)) {
+			if (axiom.getSubClass().equals(subject)) {
 
 				return axiom.getSuperClass();
 			}
@@ -218,42 +250,36 @@ class ContentLoader {
 			throw createBadAxiomsException();
 		}
 
-		private OWLEquivalentClassesAxiom lookForSourceAxiom() {
+		private OWLEquivalentClassesAxiom lookForPremiseAxiom() {
 
-			return lookForOne(getFocusSubAxioms(OWLEquivalentClassesAxiom.class));
+			return lookForOne(getSubjectAxioms(OWLEquivalentClassesAxiom.class));
 		}
 
-		private OWLSubClassOfAxiom getTargetAxiom() {
+		private OWLSubClassOfAxiom lookForConsequenceAxiom() {
 
-			return getOne(purgeFocusSubAxioms(getFocusSubAxioms(OWLSubClassOfAxiom.class)));
-		}
+			Set<OWLSubClassOfAxiom> axioms = new HashSet<OWLSubClassOfAxiom>();
 
-		private Set<OWLSubClassOfAxiom> purgeFocusSubAxioms(Set<OWLSubClassOfAxiom> axioms) {
+			for (OWLSubClassOfAxiom axiom : getSubjectAxioms(OWLSubClassOfAxiom.class)) {
 
-			for (OWLSubClassOfAxiom axiom : new HashSet<OWLSubClassOfAxiom>(axioms)) {
+				if (consequenceAxiom(axiom)) {
 
-				if (axiom.getSuperClass().equals(focus)
-					&& axiom.getSubClass().equals(focusSub)) {
-
-					axioms.remove(axiom);
+					axioms.add(axiom);
 				}
 			}
 
-			return axioms;
+			return lookForOne(axioms);
 		}
 
-		private Set<OWLClassExpression> removeFocusSub(Set<OWLClassExpression> exprs) {
+		private boolean consequenceAxiom(OWLSubClassOfAxiom axiom) {
 
-			exprs.remove(focusSub);
-
-			return exprs;
+			return axiom.getSuperClass().containsEntityInSignature(getTargetProperty());
 		}
 
-		private <T extends OWLClassAxiom>Set<T> getFocusSubAxioms(Class<T> type) {
+		private <T extends OWLClassAxiom>Set<T> getSubjectAxioms(Class<T> type) {
 
 			Set<T> axioms = new HashSet<T>();
 
-			for (OWLClassAxiom axiom : focusSubAxioms) {
+			for (OWLClassAxiom axiom : subjectAxioms) {
 
 				if (type.isAssignableFrom(axiom.getClass())) {
 
@@ -305,7 +331,67 @@ class ContentLoader {
 
 			return new RuntimeException(
 						"Illegal set of axioms for constraint-definition class: "
-						+ focusSub);
+						+ subject);
+		}
+	}
+
+	private class SimpleConstraintLoader extends ConstraintLoader {
+
+		private SimpleConstraintType type;
+
+		SimpleConstraintLoader(SimpleConstraintType type, OWLClass sourceCls) {
+
+			super(sourceCls);
+
+			this.type = type;
+
+			checkLoad(type, getConcept(sourceCls));
+		}
+
+		OWLClass getSubjectSuperCls() {
+
+			throw new Error("Method should never be invoked!");
+		}
+
+		EntityId getSourcePropertyId() {
+
+			throw new Error("Method should never be invoked!");
+		}
+
+		EntityId getTargetPropertyId() {
+
+			return type.getLinkingPropertyId();
+		}
+	}
+
+	private class AnchoredConstraintLoader extends ConstraintLoader {
+
+		private AnchoredConstraintType type;
+		private OWLClass anchor;
+
+		AnchoredConstraintLoader(AnchoredConstraintType type, OWLClass anchor, OWLClass anchorSub) {
+
+			super(anchorSub);
+
+			this.type = type;
+			this.anchor = anchor;
+
+			checkLoad(type);
+		}
+
+		OWLClass getSubjectSuperCls() {
+
+			return anchor;
+		}
+
+		EntityId getSourcePropertyId() {
+
+			return type.getSourcePropertyId();
+		}
+
+		EntityId getTargetPropertyId() {
+
+			return type.getTargetPropertyId();
 		}
 	}
 
@@ -356,11 +442,34 @@ class ContentLoader {
 
 	private void loadConstraintsOfType(ConstraintType type) {
 
-		OWLClass focus = getCls(type.getFocusConceptId());
+		if (type instanceof SimpleConstraintType) {
 
-		for (OWLClass focusSub : getSubClasses(focus, false)) {
+			loadConstraintsOfType((SimpleConstraintType)type);
+		}
 
-			new ConstraintLoader(type, focus, focusSub);
+		if (type instanceof AnchoredConstraintType) {
+
+			loadConstraintsOfType((AnchoredConstraintType)type);
+		}
+	}
+
+	private void loadConstraintsOfType(SimpleConstraintType type) {
+
+		OWLClass rootSource = getCls(type.getRootSourceConcept());
+
+		for (OWLClass source : getSubClasses(rootSource, false)) {
+
+			new SimpleConstraintLoader(type, source);
+		}
+	}
+
+	private void loadConstraintsOfType(AnchoredConstraintType type) {
+
+		OWLClass anchor = getCls(type.getAnchorConceptId());
+
+		for (OWLClass anchorSub : getSubClasses(anchor, false)) {
+
+			new AnchoredConstraintLoader(type, anchor, anchorSub);
 		}
 	}
 
@@ -403,12 +512,7 @@ class ContentLoader {
 
 	private OWLObjectProperty getObjectProperty(EntityId id) {
 
-		return getObjectProperty(getIRI(id));
-	}
-
-	private OWLObjectProperty getObjectProperty(IRI iri) {
-
-		return ontology.getObjectProperty(iri);
+		return ontology.getObjectProperty(getIRI(id));
 	}
 
 	private IRI getIRI(EntityId id) {

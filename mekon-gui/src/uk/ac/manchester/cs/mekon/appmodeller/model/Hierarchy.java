@@ -79,19 +79,7 @@ public class Hierarchy {
 		root = new RootConcept(rootConceptId);
 	}
 
-	public void addConstraintType(
-					String focusConceptName,
-					String sourcePropertyName,
-					String targetPropertyName,
-					String targetConceptName) {
-
-		EntityId focusId = getCoreId(focusConceptName);
-		Concept targetValue = model.getHierarchy(targetConceptName).root;
-
-		Link sourceLink = new Link(getCoreId(sourcePropertyName), root);
-		Link targetLink = new Link(getCoreId(targetPropertyName), targetValue);
-
-		ConstraintType type = new ConstraintType(focusId, sourceLink, targetLink);
+	public void addConstraintType(ConstraintType type) {
 
 		constraintTypes.add(type);
 		root.addRootConstraint(type);
@@ -142,25 +130,5 @@ public class Hierarchy {
 	void deregisterConcept(Concept concept) {
 
 		conceptsById.remove(concept.getConceptId());
-	}
-
-	private ConstraintType createConstraintType(
-								String focusConceptName,
-								String sourcePropertyName,
-								String targetPropertyName,
-								String targetConceptName) {
-
-		EntityId focusId = getCoreId(focusConceptName);
-		Concept targetValue = model.getHierarchy(targetConceptName).root;
-
-		Link sourceLink = new Link(getCoreId(sourcePropertyName), root);
-		Link targetLink = new Link(getCoreId(targetPropertyName), targetValue);
-
-		return new ConstraintType(focusId, sourceLink, targetLink);
-	}
-
-	private EntityId getCoreId(String name) {
-
-		return model.getCoreId(name);
 	}
 }

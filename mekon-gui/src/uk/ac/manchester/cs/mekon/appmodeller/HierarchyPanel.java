@@ -53,6 +53,6 @@ class HierarchyPanel extends GSplitPane {
 
 	private String getConstraintPanelTitle(ConstraintType type) {
 
-		return type.getTargetLink().getValue().getConceptId().getLabel();
+		return type.getRootTargetConcept().getConceptId().getLabel();
 	}
 }

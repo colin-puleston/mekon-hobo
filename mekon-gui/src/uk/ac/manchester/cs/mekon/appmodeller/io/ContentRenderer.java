@@ -13,13 +13,70 @@ import uk.ac.manchester.cs.mekon.appmodeller.model.*;
 class ContentRenderer {
 
 	private Ontology ontology;
-	private ConstraintClassIRIs constraintClassIRIs;
+	private AnchoredConstraintClassIRIs anchoredConstraintClassIRIs;
+
+	private class ConstraintRenderer {
+
+		private Constraint constraint;
+
+		private OWLClass source;
+		private Set<OWLClass> targets;
+
+		ConstraintRenderer(Constraint constraint) {
+
+			this.constraint = constraint;
+
+			source = getCls(constraint.getSourceValue());
+			targets = getClasses(constraint.getTargetValues());
+
+			render();
+		}
+
+		private void render() {
+
+			ConstraintType type = constraint.getType();
+
+			if (type instanceof SimpleConstraintType) {
+
+				renderSimple((SimpleConstraintType)type);
+			}
+
+			if (type instanceof AnchoredConstraintType) {
+
+				renderAnchored((AnchoredConstraintType)type);
+			}
+		}
+
+		private void renderSimple(SimpleConstraintType type) {
+
+			OWLObjectProperty prop = getObjectProperty(type.getLinkingPropertyId());
+
+			ontology.addConsequenceAxiom(source, prop, targets);
+		}
+
+		private void renderAnchored(AnchoredConstraintType type) {
+
+			OWLClass anchor = getCls(type.getAnchorConceptId());
+			OWLClass anchorSub = addClass(anchor, createAnchorSubIRI(type));
+
+			OWLObjectProperty srcProp = getObjectProperty(type.getSourcePropertyId());
+			OWLObjectProperty tgtProp = getObjectProperty(type.getTargetPropertyId());
+
+			ontology.addPremiseAxiom(anchor, anchorSub, srcProp, source);
+			ontology.addConsequenceAxiom(anchorSub, tgtProp, targets);
+		}
+
+		private IRI createAnchorSubIRI(AnchoredConstraintType type) {
+
+			return anchoredConstraintClassIRIs.create(constraint, type);
+		}
+	}
 
 	ContentRenderer(Ontology ontology, String contentNamespace) {
 
 		this.ontology = ontology;
 
-		constraintClassIRIs = new ConstraintClassIRIs(contentNamespace);
+		anchoredConstraintClassIRIs = new AnchoredConstraintClassIRIs(contentNamespace);
 	}
 
 	void write(Model model, File contentFile) {
@@ -45,8 +102,16 @@ class ContentRenderer {
 
 		for (ConstraintType type : hierarchy.getConstraintTypes()) {
 
-			clearDescendantClasses(getCls(type.getFocusConceptId()));
+			if (type instanceof AnchoredConstraintType) {
+
+				clearConstraintClasses((AnchoredConstraintType)type);
+			}
 		}
+	}
+
+	private void clearConstraintClasses(AnchoredConstraintType type) {
+
+		clearDescendantClasses(getCls(type.getAnchorConceptId()));
 	}
 
 	private void clearDescendantClasses(OWLClass rootCls) {
@@ -96,42 +161,8 @@ class ContentRenderer {
 
 		for (Constraint constraint : concept.getConstraints()) {
 
-			renderConstraint(constraint);
+			new ConstraintRenderer(constraint);
 		}
-	}
-
-	private void renderConstraint(Constraint constraint) {
-
-		IRI focusSubIRI = constraintClassIRIs.generate(constraint);
-
-		OWLClass focus = getCls(constraint.getFocusConceptId());
-		OWLClass focusSub = addClass(focus, focusSubIRI);
-
-		renderConstraintSource(focus, focusSub, constraint);
-		renderConstraintTarget(focusSub, constraint);
-	}
-
-	private void renderConstraintSource(
-					OWLClass focus,
-					OWLClass focusSub,
-					Constraint constraint) {
-
-		Link link = constraint.getSourceLink();
-
-		OWLObjectProperty property = getObjectProperty(link);
-		OWLClass value = getCls(link.getValue());
-
-		ontology.addConstraintSourceAxiom(focus, focusSub, property, value);
-	}
-
-	private void renderConstraintTarget(OWLClass focusSub, Constraint constraint) {
-
-		Link typeLink = constraint.getType().getTargetLink();
-
-		OWLObjectProperty property = getObjectProperty(typeLink);
-		Set<OWLClass> values = getClasses(constraint.getTargetValues());
-
-		ontology.addConstraintTargetAxiom(focusSub, property, values);
 	}
 
 	private OWLClass addClass(OWLClass cls, IRI iri) {
@@ -164,11 +195,6 @@ class ContentRenderer {
 	private OWLClass getCls(EntityId id) {
 
 		return ontology.getClass(getIRI(id));
-	}
-
-	private OWLObjectProperty getObjectProperty(Link link) {
-
-		return getObjectProperty(link.getPropertyId());
 	}
 
 	private OWLObjectProperty getObjectProperty(EntityId id) {

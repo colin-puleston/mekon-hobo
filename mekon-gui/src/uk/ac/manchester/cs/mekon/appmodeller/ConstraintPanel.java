@@ -43,7 +43,7 @@ class ConstraintPanel extends JPanel {
 
 		Populator() {
 
-			this(getRootSourceValue());
+			this(type.getRootSourceConcept());
 		}
 
 		Populator(Concept source) {
@@ -414,7 +414,7 @@ class ConstraintPanel extends JPanel {
 
 	String getPanelTitle() {
 
-		return type.getTargetLink().getValue().getConceptId().getLabel();
+		return type.getRootTargetConcept().getConceptId().getLabel();
 	}
 
 	private void resetSourceConcept(Concept source) {
@@ -429,7 +429,7 @@ class ConstraintPanel extends JPanel {
 
 	private Populator createPopulator(Concept source) {
 
-		if (source.equals(getRootSourceValue())) {
+		if (source.equals(type.getRootSourceConcept())) {
 
 			return new RootConstraintPopulator();
 		}
@@ -442,10 +442,5 @@ class ConstraintPanel extends JPanel {
 		}
 
 		return new AncestorConstraintPopulator(source);
-	}
-
-	private Concept getRootSourceValue() {
-
-		return type.getSourceLink().getValue();
 	}
 }

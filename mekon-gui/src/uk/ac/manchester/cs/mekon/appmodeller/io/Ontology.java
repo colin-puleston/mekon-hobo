@@ -28,27 +28,24 @@ class Ontology {
 		reasoner = createReasoner();
 	}
 
-	void addConstraintSourceAxiom(
-			OWLClass focus,
-			OWLClass focusSub,
+	void addPremiseAxiom(
+			OWLClass rootSubject,
+			OWLClass subject,
 			OWLObjectProperty property,
 			OWLClass value) {
 
-		OWLObjectSomeValuesFrom some = factory.getOWLObjectSomeValuesFrom(property, value);
-		OWLObjectIntersectionOf insect = factory.getOWLObjectIntersectionOf(focus, some);
+		OWLObjectSomeValuesFrom valueRes = factory.getOWLObjectSomeValuesFrom(property, value);
+		OWLObjectIntersectionOf defn = factory.getOWLObjectIntersectionOf(rootSubject, valueRes);
 
-		addAxiom(factory.getOWLEquivalentClassesAxiom(focusSub, insect));
+		addAxiom(factory.getOWLEquivalentClassesAxiom(subject, defn));
 	}
 
-	void addConstraintTargetAxiom(
-			OWLClass focusSub,
-			OWLObjectProperty property,
-			Set<OWLClass> values) {
+	void addConsequenceAxiom(OWLClass subject, OWLObjectProperty property, Set<OWLClass> values) {
 
 		OWLClassExpression valuesExpr = getConstraintTargetValuesExpr(values);
-		OWLObjectAllValuesFrom all = factory.getOWLObjectAllValuesFrom(property, valuesExpr);
+		OWLObjectAllValuesFrom valuesRes = factory.getOWLObjectAllValuesFrom(property, valuesExpr);
 
-		addAxiom(factory.getOWLSubClassOfAxiom(focusSub, all));
+		addAxiom(factory.getOWLSubClassOfAxiom(subject, valuesRes));
 	}
 
 	OWLClass addClass(OWLClass sup, IRI iri) {

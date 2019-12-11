@@ -63,28 +63,6 @@ public class Constraint {
 		return type;
 	}
 
-	public EntityId getFocusConceptId() {
-
-		return type.getFocusConceptId();
-	}
-
-	public Link getSourceLink() {
-
-		return type.deriveSubSourceLink(sourceValue);
-	}
-
-	public Set<Link> getTargetLinks() {
-
-		Set<Link> links = new HashSet<Link>();
-
-		for (Concept value : targetValues) {
-
-			links.add(type.deriveSubTargetLink(value));
-		}
-
-		return links;
-	}
-
 	public Concept getSourceValue() {
 
 		return sourceValue;
@@ -106,7 +84,7 @@ public class Constraint {
 
 			for (Concept value2 : targetValues) {
 
-				if (!value1.equals(value2) && value1.descendantOf(value2)) {
+				if (value1 != value2 && value1.descendantOf(value2)) {
 
 					throw new RuntimeException(
 								"Conflicting target-values: "
