@@ -76,19 +76,19 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 			return citizen;
 		}
 
-		void setLocation(Citizen citizen, String location) {
+		void setLocation(Citizen citizen, CIdentity location) {
 
 			setLocation(citizen.personal.get(), location);
 		}
 
-		void addJobWithHoursPerWeek(Citizen citizen, String jobType, int hours) {
+		void addJobWithHoursPerWeek(Citizen citizen, CIdentity jobType, int hours) {
 
 			addJob(citizen, jobType).hoursPerWeek.set(hours);
 		}
 
 		void addJobWithHoursPerWeek(
 				Citizen citizen,
-				String jobType,
+				CIdentity jobType,
 				int minHours,
 				int maxHours) {
 
@@ -97,7 +97,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 			setRange(addJob(citizen, jobType).hoursPerWeek, hours);
 		}
 
-		Job addJob(Citizen citizen, String jobType) {
+		Job addJob(Citizen citizen, CIdentity jobType) {
 
 			Job job = addJob(citizen);
 
@@ -115,12 +115,12 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 			return job;
 		}
 
-		private void setLocation(Personal personal, String location) {
+		private void setLocation(Personal personal, CIdentity location) {
 
 			setCFrameSlotValue(personal.getFrame(), LOCATION_PROPERTY, location);
 		}
 
-		private void setJobType(Job job, String jobType) {
+		private void setJobType(Job job, CIdentity jobType) {
 
 			setCFrameSlotValue(job.getFrame(), JOB_TYPE_PROPERTY, jobType);
 		}
@@ -135,22 +135,19 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 			new DNumberRangeCell<Integer>(intCell).set(range);
 		}
 
-		private void setCFrameSlotValue(
-						IFrame container,
-						String slotName,
-						String valueName) {
+		private void setCFrameSlotValue(IFrame container, CIdentity slotId, CIdentity valueId) {
 
-			getSlot(container, slotName).getValuesEditor().add(getCFrame(valueName));
+			getSlot(container, slotId).getValuesEditor().add(getCFrame(valueId));
 		}
 
-		private ISlot getSlot(IFrame container, String slotName) {
+		private ISlot getSlot(IFrame container, CIdentity slotId) {
 
-			return container.getSlots().get(getDemoModelId(slotName));
+			return container.getSlots().get(slotId);
 		}
 
-		private CFrame getCFrame(String valueName) {
+		private CFrame getCFrame(CIdentity id) {
 
-			return model.getCModel().getFrames().get(getDemoModelId(valueName));
+			return model.getCModel().getFrames().get(id);
 		}
 
 		private <D extends DObject>D instantiate(Class<D> dClass) {
@@ -263,10 +260,5 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 		String id = "A" + (++storedAssertionCount);
 
 		return new CIdentity(id, id);
-	}
-
-	private CIdentity getDemoModelId(String name) {
-
-		return DemoModelBasedTest.nameToIdentity(name);
 	}
 }
