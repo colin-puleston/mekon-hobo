@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Goblin
+	coreNamespace="http://mekon/demo-core.owl"
+	contentNamespace="http://mekon/demo-content.owl"
+	contentFilename="demo-content.owl">
+
+	<Hierarchy
+		rootConcept="Gender">
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="Industry">
+		<SimpleConstraintType
+			linkingProperty="sector"
+			rootTargetConcept="IndustrySector">
+		</SimpleConstraintType>
+		<AnchoredConstraintType
+			anchorConcept="Job"
+			sourceProperty="industry"
+			targetProperty="jobType"
+			rootTargetConcept="JobType">
+		</AnchoredConstraintType>
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="IndustrySector">
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="JobType">
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="Location">
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="ResearchArea">
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="Student">
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="TravelClass">
+	</Hierarchy>
+
+	<Hierarchy
+		rootConcept="Trip">
+	</Hierarchy>
+
+</Goblin>
