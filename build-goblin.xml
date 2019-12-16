@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+
+<project name="GOBLIN" default="goblin-jar" basedir=".">
+
+	<!-- Build script for GOBLIN -->
+
+	<echo message="OS: ${os.name}"/>
+	<echo message="Java Runtime Environment version: ${java.version}"/>
+
+	<!-- sources -->
+	<property name="src.lib" value="lib/"/>
+	<property name="src.lib" value="lib"/>
+
+	<property name="src.resource" value="demo/resource"/>
+
+	<property name="goblin.src" value="goblin/src/"/>
+	<property name="mekon.src" value="mekon/src/"/>
+	<property name="mekon-gui.src" value="mekon-gui/src/"/>
+
+	<!-- build outputs -->
+	<property name="build" location="goblin-build"/>
+	<property name="build.lib.rel" value="lib" />
+	<property name="build.lib" location="${build}/${build.lib.rel}" />
+	<property name="build.resource.rel" value="resource" />
+	<property name="build.resource" location="${build}/${build.resource.rel}" />
+	<property name="build.classes" location="${build}/classes" />
+	<property name="build.classes.goblin" location="${build.classes}/goblin" />
+	<property name="build.classes.mekon" location="${build.classes}/mekon" />
+	<property name="build.classes.mekon-gui" location="${build.classes}/mekon-gui" />
+	<property name="build.goblin.jar" location="${build.lib}/goblin.jar"/>
+	<property name="build.mekon.jar" location="${build.lib}/mekon.jar"/>
+	<property name="build.mekon-gui.jar" location="${build.lib}/mekon-gui.jar"/>
+
+	<!-- goblin-demo invocation -->
+	<property name="build.classpath.sh" value="${build.lib.rel}/*:${build.classes.rel}:${build.resource.rel}"/>
+	<property name="build.classpath.win" value="${build.lib.rel}/*;${build.classes.rel};${build.resource.rel}"/>
+	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC -Djava.library.path=${build.lib.rel}"/>
+
+	<property name="goblin.mainclass" value="uk.ac.manchester.cs.goblin.Goblin"/>
+	<property name="goblin-demo.title" value="&quot;Demo Model&quot;"/>
+	<property name="goblin-demo.java.args" value="${java.opts} ${goblin.mainclass} ${goblin-demo.title}"/>
+	<property name="goblin-demo.run.name" value="goblin-demo"/>
+
+	<property name="build.goblin-demo.run.sh" location="${build}/${goblin-demo.run.name}.sh"/>
+	<property name="build.goblin-demo.run.win" location="${build}/${goblin-demo.run.name}.bat"/>
+	<property name="build.goblin-demo.classpath.sh" value="${build.lib.rel}/*:${build.resource.rel}"/>
+	<property name="build.goblin-demo.classpath.win" value="${build.lib.rel}/*;${build.resource.rel}"/>
+
+	<!-- class-path -->
+	<path id="classpath">
+		<fileset dir="${build.lib}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<!-- output dir structure -->
+	<target name="base">
+		<mkdir dir="${build.classes}"/>
+		<copy todir="${build.lib}" flatten="true">
+			<fileset dir="${src.lib}/">
+                <include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.resource}" >
+			<fileset dir="${src.resource.src}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- clean target -->
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+
+	<!-- library target -->
+	<target name="library">
+		<mkdir dir="${build.lib}"/>
+		<copy todir="${build.lib}" flatten="true">
+			<fileset dir="${src.lib}/">
+                <include name="**/*.jar"/>
+                <include name="**/*.dll"/>
+                <include name="**/*.jnilib"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- resources target -->
+	<target name="resource" depends="library">
+		<copy todir="${build.resource}" >
+			<fileset dir="${src.resource}">
+				<include name="**/*.owl"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- mekon targets -->
+	<target name="mekon" depends="library">
+		<mkdir dir="${build.classes.mekon}"/>
+		<javac srcdir="${mekon.src}" classpathref="classpath" destdir="${build.classes.mekon}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-jar" depends="mekon">
+		<jar destfile="${build.mekon.jar}">
+			<fileset dir="${build.classes.mekon}" />
+			<fileset dir="${mekon.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- mekon-gui targets -->
+	<target name="mekon-gui" depends="library">
+		<mkdir dir="${build.classes.mekon-gui}"/>
+		<javac srcdir="${mekon-gui.src}" classpathref="classpath" destdir="${build.classes.mekon-gui}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-gui-jar" depends="mekon-gui">
+		<jar destfile="${build.mekon-gui.jar}">
+			<fileset dir="${build.classes.mekon-gui}" />
+			<fileset dir="${mekon-gui.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- goblin targets -->
+	<target name="goblin" depends="mekon-jar, mekon-gui-jar">
+		<mkdir dir="${build.classes.goblin}"/>
+		<javac srcdir="${goblin.src}" classpathref="classpath" destdir="${build.classes.goblin}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="goblin-jar" depends="goblin">
+		<jar destfile="${build.goblin.jar}">
+			<fileset dir="${build.classes.goblin}" />
+			<fileset dir="${goblin.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<target name="demo" depends="goblin-jar, resource">
+		<echo file="${build.goblin-demo.run.sh}">java -cp ${build.goblin-demo.classpath.sh} ${goblin-demo.java.args}</echo>
+		<echo file="${build.goblin-demo.run.win}">java -cp ${build.goblin-demo.classpath.win} ${goblin-demo.java.args}</echo>
+		<chmod dir="${build}" includes="*.sh" perm="+x"/>
+	</target>
+
+</project>
