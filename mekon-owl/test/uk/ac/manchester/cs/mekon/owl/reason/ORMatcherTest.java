@@ -39,9 +39,9 @@ import uk.ac.manchester.cs.mekon.owl.build.*;
  */
 public abstract class ORMatcherTest extends IMatcherTest {
 
-	static private final String OWL_TYPE = JOB;
-	static private final String NON_OWL_TYPE = "NON-OWL-TYPE";
-	static private final String NON_OWL_BUT_OWL_SUBSUMED_TYPE = "NON-OWL-BUT-OWL-SUBSUMED-TYPE";
+	static private final CIdentity OWL_TYPE = JOB;
+	static private final CIdentity NON_OWL_TYPE = new CIdentity("NON-OWL-TYPE");
+	static private final CIdentity NON_OWL_BUT_OWL_SUBSUMED_TYPE = new CIdentity("NON-OWL-BUT-OWL-SUBSUMED-TYPE");
 
 	private class ORMatcherSectionBuilder extends OBSectionBuilder {
 
@@ -99,7 +99,7 @@ public abstract class ORMatcherTest extends IMatcherTest {
 		return true;
 	}
 
-	private void testHandlesType(String typeId, boolean shouldHandle) {
+	private void testHandlesType(CIdentity typeId, boolean shouldHandle) {
 
 		assertTrue(getMatcher().handlesType(getCFrame(typeId)) == shouldHandle);
 	}

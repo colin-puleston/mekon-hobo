@@ -43,10 +43,10 @@ public class ORClassifierTest extends DemoModelBasedTest {
 
 	private ORClassifier classifier;
 
-	private String[] unemployedCitizenConcepts = new String[]{UNEMPLOYED_CITIZEN};
-	private String[] employedCitizenConcepts = new String[]{EMPLOYED_CITIZEN};
-	private String[] academicJobConcepts = new String[]{ACADEMIC_JOB};
-	private String[] lecturerJobConcepts = new String[]{ACADEMIC_TEACHING_JOB, RESEARCH_JOB};
+	private CIdentity[] unemployedCitizenConcepts = new CIdentity[]{UNEMPLOYED_CITIZEN};
+	private CIdentity[] employedCitizenConcepts = new CIdentity[]{EMPLOYED_CITIZEN};
+	private CIdentity[] academicJobConcepts = new CIdentity[]{ACADEMIC_JOB};
+	private CIdentity[] lecturerJobConcepts = new CIdentity[]{ACADEMIC_TEACHING_JOB};
 
 	@Before
 	public void setUp() {
@@ -129,7 +129,7 @@ public class ORClassifierTest extends DemoModelBasedTest {
 		addISlotValue(citizen, EMPLOYMENT_PROPERTY, employ);
 		testInferredTypes(citizen, unemployedCitizenConcepts);
 
-		addISlotValue(employ, JOBS_PROPERTY, job);
+		addISlotValue(employ, JOB_PROPERTY, job);
 		testInferredTypes(citizen, employedCitizenConcepts);
 
 		testInferredTypes(job);
@@ -143,12 +143,12 @@ public class ORClassifierTest extends DemoModelBasedTest {
 
 	private void setOpenWorldSemantics() {
 
-		unemployedCitizenConcepts = new String[]{};
+		unemployedCitizenConcepts = new CIdentity[]{};
 	}
 
 	private void setClosedWorldSemanticsByMinimalInclusion() {
 
-		setSemantics(ORSemanticWorld.OPEN, JOBS_PROPERTY);
+		setSemantics(ORSemanticWorld.OPEN, JOB_PROPERTY);
 	}
 
 	private void setClosedWorldSemanticsByMinimalExclusion() {
@@ -158,31 +158,31 @@ public class ORClassifierTest extends DemoModelBasedTest {
 			getAllPropertiesThatCauseInconsistenciesIfClosed());
 	}
 
-	private String[] getAllPropertiesThatCauseInconsistenciesIfClosed() {
+	private CIdentity[] getAllPropertiesThatCauseInconsistenciesIfClosed() {
 
-		return new String[]{TAX_PROPERTY, BENEFIT_PROPERTY, TEACHES_PROPERTY};
+		return new CIdentity[]{TAX_PROPERTY, BENEFIT_PROPERTY, TEACHES_PROPERTY};
 	}
 
 	private void setSemantics(
 					ORSemanticWorld defaultWorld,
-					String... exceptionPropertyNames) {
+					CIdentity... exceptionPropertyIds) {
 
 		ORSemantics semantics = new ORSemantics();
 
 		semantics.setDefaultWorld(defaultWorld);
 
-		for (String exPropName : exceptionPropertyNames) {
+		for (CIdentity exPropId : exceptionPropertyIds) {
 
-			semantics.addExceptionProperty(nameToIdentifier(exPropName));
+			semantics.addExceptionProperty(exPropId.getIdentifier());
 		}
 
 		classifier.setSemantics(semantics);
 	}
 
-	private void testInferredTypes(IFrame iFrame, String... typeNames) {
+	private void testInferredTypes(IFrame iFrame, CIdentity... typeIds) {
 
 		Set<CFrame> infTypes = iFrame.getInferredTypes().asSet();
 
-		MekonTestUtils.testSet(infTypes, getCFrames(typeNames));
+		MekonTestUtils.testSet(infTypes, getCFrames(typeIds));
 	}
 }

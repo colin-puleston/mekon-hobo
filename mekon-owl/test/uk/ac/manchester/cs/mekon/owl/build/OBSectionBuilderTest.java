@@ -42,15 +42,6 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 public class OBSectionBuilderTest extends DemoModelBasedTest {
 
-	static private final String DOMAIN_CONCEPT = "CitizenshipConcept";
-	static private final String DATA_TYPE = "DataTypeConcept";
-	static private final String TRAVEL_CLASS = "TravelClass";
-	static private final String TRAIN_TRIP = "TrainTrip";
-
-	static private final String CITIZEN_ASPECT_PROPERTY = "citizenAspect";
-	static private final String AGE_PROPERTY = "age";
-	static private final String TRAVEL_CLASS_PROPERTY = "travelClass";
-
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
 	private OBSectionBuilder sectionBuilder;
@@ -77,50 +68,50 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(CORE_CONCEPT, FrameStatus.EXPOSED);
 		testFrameStatus(CITIZEN, FrameStatus.EXPOSED);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
-		testFrameStatus(DATA_TYPE, FrameStatus.EXPOSED);
+		testFrameStatus(CONTENT_CONCEPT, FrameStatus.EXPOSED);
 
-		testFrameSupers(CITIZEN, DOMAIN_CONCEPT);
+		testFrameSupers(CITIZEN, CORE_CONCEPT);
 		testFrameSupers(ACADEMIC_JOB, JOB);
 	}
 
 	@Test
 	public void test_frames_byGroupIncludingRoot() {
 
-		addConcepts(DOMAIN_CONCEPT);
+		addConcepts(CORE_CONCEPT);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(CORE_CONCEPT, FrameStatus.EXPOSED);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
-		testFrameStatus(DATA_TYPE, FrameStatus.ABSENT);
+		testFrameStatus(CONTENT_CONCEPT, FrameStatus.ABSENT);
 	}
 
 	@Test
 	public void test_frames_byGroupExcludingRoot() {
 
-		addConceptsExcludingRoot(DOMAIN_CONCEPT);
+		addConceptsExcludingRoot(CORE_CONCEPT);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.ABSENT);
+		testFrameStatus(CORE_CONCEPT, FrameStatus.ABSENT);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
-		testFrameStatus(DATA_TYPE, FrameStatus.ABSENT);
+		testFrameStatus(CONTENT_CONCEPT, FrameStatus.ABSENT);
 	}
 
 	@Test
 	public void test_frames_hidingCandidates_ALL() {
 
-		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.ALL);
+		addConcepts(CORE_CONCEPT, OBEntitySelection.ALL);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.HIDDEN);
+		testFrameStatus(CORE_CONCEPT, FrameStatus.HIDDEN);
 		testFrameStatus(JOB, FrameStatus.HIDDEN);
 		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
 	}
@@ -128,11 +119,11 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 	@Test
 	public void test_frames_hidingCandidates_ROOTS_ONLY() {
 
-		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.ROOTS_ONLY);
+		addConcepts(CORE_CONCEPT, OBEntitySelection.ROOTS_ONLY);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.HIDDEN);
+		testFrameStatus(CORE_CONCEPT, FrameStatus.HIDDEN);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.EXPOSED);
 	}
@@ -140,11 +131,11 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 	@Test
 	public void test_frames_hidingCandidates_NON_ROOTS_ONLY() {
 
-		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.NON_ROOTS_ONLY);
+		addConcepts(CORE_CONCEPT, OBEntitySelection.NON_ROOTS_ONLY);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(CORE_CONCEPT, FrameStatus.EXPOSED);
 		testFrameStatus(JOB, FrameStatus.HIDDEN);
 		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
 	}
@@ -152,11 +143,11 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 	@Test
 	public void test_frames_hidingCandidates_LEAFS_ONLY() {
 
-		addConcepts(DOMAIN_CONCEPT, OBEntitySelection.LEAFS_ONLY);
+		addConcepts(CORE_CONCEPT, OBEntitySelection.LEAFS_ONLY);
 
 		buildModel();
 
-		testFrameStatus(DOMAIN_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(CORE_CONCEPT, FrameStatus.EXPOSED);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
 	}
@@ -189,7 +180,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		testFrameStatus(ACADEMIC_JOB, FrameStatus.HIDDEN);
 		testFrameStatus(ACADEMIC_TEACHING_JOB, FrameStatus.HIDDEN);
 		testFrameStatus(JOB_TYPE, FrameStatus.EXPOSED);
-		testFrameStatus(SPECIALIST, FrameStatus.HIDDEN);
+		testFrameStatus(SPECIALIST, FrameStatus.EXPOSED);
 		testFrameStatus(TEACHER, FrameStatus.EXPOSED);
 	}
 
@@ -215,33 +206,33 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		buildModel();
 
 		testSlotStatus(CITIZEN, TAX_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(EMPLOYMENT, JOBS_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(EMPLOYMENT, JOB_PROPERTY, SlotStatus.PRESENT);
 		testSlotStatus(PERSONAL, AGE_PROPERTY, SlotStatus.PRESENT);
 	}
 
 	@Test
 	public void test_properties_byGroupIncludingRoot() {
 
-		addProperties(CITIZEN_ASPECT_PROPERTY);
-		addProperties(JOBS_PROPERTY);
+		addProperties(INTER_CORE_PROPERTY);
+		addProperties(JOB_TYPE_PROPERTY);
 
 		buildModel();
 
 		testSlotStatus(CITIZEN, TAX_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(EMPLOYMENT, JOBS_PROPERTY, SlotStatus.PRESENT);
+		testSlotStatus(JOB, JOB_TYPE_PROPERTY, SlotStatus.PRESENT);
 		testSlotStatus(PERSONAL, AGE_PROPERTY, SlotStatus.ABSENT);
 	}
 
 	@Test
 	public void test_properties_byGroupExcludingRoot() {
 
-		addPropertiesExcludingRoot(CITIZEN_ASPECT_PROPERTY);
-		addPropertiesExcludingRoot(JOBS_PROPERTY);
+		addPropertiesExcludingRoot(INTER_CORE_PROPERTY);
+		addPropertiesExcludingRoot(JOB_TYPE_PROPERTY);
 
 		buildModel();
 
 		testSlotStatus(CITIZEN, TAX_PROPERTY, SlotStatus.PRESENT);
-		testSlotStatus(EMPLOYMENT, JOBS_PROPERTY, SlotStatus.ABSENT);
+		testSlotStatus(JOB, JOB_TYPE_PROPERTY, SlotStatus.ABSENT);
 		testSlotStatus(PERSONAL, AGE_PROPERTY, SlotStatus.ABSENT);
 	}
 
@@ -302,7 +293,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 			getNoStructureFrameSlotValueType(ZERO_TAX));
 		testSlot(
 			EMPLOYMENT,
-			JOBS_PROPERTY,
+			JOB_PROPERTY,
 			CCardinality.REPEATABLE_TYPES,
 			getCFrame(JOB));
 		testSlot(
@@ -334,14 +325,14 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		buildModel(sectionBuilder);
 	}
 
-	private OBConceptGroup addConcepts(String rootName) {
+	private OBConceptGroup addConcepts(CIdentity rootId) {
 
-		return addConcepts(createConceptInclusions(rootName));
+		return addConcepts(createConceptInclusions(rootId));
 	}
 
-	private OBConceptGroup addConceptsExcludingRoot(String rootName) {
+	private OBConceptGroup addConceptsExcludingRoot(CIdentity rootId) {
 
-		OBConceptGroup inclusions = createConceptInclusions(rootName);
+		OBConceptGroup inclusions = createConceptInclusions(rootId);
 
 		inclusions.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
@@ -349,10 +340,10 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 	}
 
 	private OBConceptGroup addConcepts(
-								String rootName,
+								CIdentity rootId,
 								OBEntitySelection hidingCandidates) {
 
-		OBConceptGroup inclusions = createConceptInclusions(rootName);
+		OBConceptGroup inclusions = createConceptInclusions(rootId);
 
 		inclusions.getConceptHiding().setCandidates(hidingCandidates);
 
@@ -360,10 +351,10 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 	}
 
 	private OBConceptGroup addConcepts(
-								String rootName,
+								CIdentity rootId,
 								OBConceptHidingFilter hidingFilter) {
 
-		OBConceptGroup inclusions = createConceptInclusions(rootName);
+		OBConceptGroup inclusions = createConceptInclusions(rootId);
 		OBConceptHiding hiding = inclusions.getConceptHiding();
 
 		hiding.setCandidates(OBEntitySelection.ALL);
@@ -372,9 +363,9 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		return addConcepts(inclusions);
 	}
 
-	private OBConceptGroup createConceptInclusions(String rootName) {
+	private OBConceptGroup createConceptInclusions(CIdentity rootId) {
 
-		return new OBConceptGroup(nameToIRI(rootName));
+		return new OBConceptGroup(toIRI(rootId));
 	}
 
 	private OBConceptGroup addConcepts(OBConceptGroup inclusions) {
@@ -384,23 +375,23 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		return inclusions;
 	}
 
-	private OBPropertyGroup addProperties(String rootName) {
+	private OBPropertyGroup addProperties(CIdentity rootId) {
 
-		return addProperties(createPropertyInclusions(rootName));
+		return addProperties(createPropertyInclusions(rootId));
 	}
 
-	private OBPropertyGroup addPropertiesExcludingRoot(String rootName) {
+	private OBPropertyGroup addPropertiesExcludingRoot(CIdentity rootId) {
 
-		OBPropertyGroup inclusions = createPropertyInclusions(rootName);
+		OBPropertyGroup inclusions = createPropertyInclusions(rootId);
 
 		inclusions.setInclusion(OBEntitySelection.NON_ROOTS_ONLY);
 
 		return addProperties(inclusions);
 	}
 
-	private OBPropertyGroup createPropertyInclusions(String rootName) {
+	private OBPropertyGroup createPropertyInclusions(CIdentity rootId) {
 
-		return new OBPropertyGroup(nameToIRI(rootName));
+		return new OBPropertyGroup(toIRI(rootId));
 	}
 
 	private OBPropertyGroup addProperties(OBPropertyGroup inclusions) {
@@ -410,34 +401,34 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		return inclusions;
 	}
 
-	private void testFrameStatus(String name, FrameStatus expectedStatus) {
+	private void testFrameStatus(CIdentity frameId, FrameStatus expectedStatus) {
 
-		assertEquals(expectedStatus, getFrameStatus(name));
+		assertEquals(expectedStatus, getFrameStatus(frameId));
 	}
 
-	private void testFrameSupers(String subName, String... expectedSupersNames) {
+	private void testFrameSupers(CIdentity subId, CIdentity... expectedSupersIds) {
 
-		CFrame sub = getCFrame(subName);
+		CFrame sub = getCFrame(subId);
 		Set<CFrame> supers = new HashSet<CFrame>(sub.getSupers());
 
-		MekonTestUtils.testSet(supers, getCFrames(expectedSupersNames));
+		MekonTestUtils.testSet(supers, getCFrames(expectedSupersIds));
 	}
 
 	private void testSlotStatus(
-					String containerName,
-					String slotName,
+					CIdentity containerId,
+					CIdentity slotId,
 					SlotStatus expectedStatus) {
 
-		assertEquals(expectedStatus, getSlotStatus(containerName, slotName));
+		assertEquals(expectedStatus, getSlotStatus(containerId, slotId));
 	}
 
 	private void testSlot(
-					String containerName,
-					String slotName,
+					CIdentity containerId,
+					CIdentity slotId,
 					CCardinality expectedCardinality,
 					CValue<?> expectedValueType) {
 
-		CSlot slot = getSlot(containerName, slotName);
+		CSlot slot = getSlot(containerId, slotId);
 		CCardinality cardinality = slot.getCardinality();
 
 		assertEquals(expectedCardinality, cardinality);
@@ -445,23 +436,23 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 	}
 
 	private void testSlotValues(
-					String containerName,
-					String slotName,
+					CIdentity containerId,
+					CIdentity slotId,
 					List<IValue> expectedValues) {
 
-		List<IValue> values = getSlotValues(containerName, slotName);
+		List<IValue> values = getSlotValues(containerId, slotId);
 
 		MekonTestUtils.testListContents(values, expectedValues);
 	}
 
-	private FrameStatus getFrameStatus(String name) {
+	private FrameStatus getFrameStatus(CIdentity frameId) {
 
-		if (!isCFrame(name)) {
+		if (!isCFrame(frameId)) {
 
 			return FrameStatus.ABSENT;
 		}
 
-		if (getCFrame(name).hidden()) {
+		if (getCFrame(frameId).hidden()) {
 
 			return FrameStatus.HIDDEN;
 		}
@@ -469,59 +460,57 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		return FrameStatus.EXPOSED;
 	}
 
-	private SlotStatus getSlotStatus(String containerName, String slotName) {
+	private SlotStatus getSlotStatus(CIdentity containerId, CIdentity slotId) {
 
-		return isSlot(containerName, slotName)
-					? SlotStatus.PRESENT
-					: SlotStatus.ABSENT;
+		return isSlot(containerId, slotId) ? SlotStatus.PRESENT : SlotStatus.ABSENT;
 	}
 
-	private boolean isSlot(String containerName, String slotName) {
+	private boolean isSlot(CIdentity containerId, CIdentity slotId) {
 
-		return getSlots(containerName).containsValueFor(nameToIdentity(slotName));
+		return getSlots(containerId).containsValueFor(slotId);
 	}
 
-	private CSlot getSlot(String containerName, String slotName) {
+	private CSlot getSlot(CIdentity containerId, CIdentity slotId) {
 
-		return getSlots(containerName).get(nameToIdentity(slotName));
+		return getSlots(containerId).get(slotId);
 	}
 
-	private CSlots getSlots(String containerName) {
+	private CSlots getSlots(CIdentity containerId) {
 
-		return getCFrame(containerName).getSlots();
+		return getCFrame(containerId).getSlots();
 	}
 
-	private List<IValue> getSlotValues(String containerName, String slotName) {
+	private List<IValue> getSlotValues(CIdentity containerId, CIdentity slotId) {
 
-		return getSlotValues(containerName).getIValues(nameToIdentity(slotName));
+		return getSlotValues(containerId).getIValues(slotId);
 	}
 
-	private CSlotValues getSlotValues(String containerName) {
+	private CSlotValues getSlotValues(CIdentity containerId) {
 
-		return getCFrame(containerName).getSlotValues();
+		return getCFrame(containerId).getSlotValues();
 	}
 
-	private CValue<?> getNoStructureFrameSlotValueType(String frameName) {
+	private CValue<?> getNoStructureFrameSlotValueType(CIdentity frameId) {
 
-		CFrame frame = getCFrame(frameName);
+		CFrame frame = getCFrame(frameId);
 
 		return cFrameValuedSlotsEnabled ? frame.getType() : frame;
 	}
 
-	private List<IValue> getNoStructureFrameSlotFixedValues(String frameName) {
+	private List<IValue> getNoStructureFrameSlotFixedValues(CIdentity frameId) {
 
 		List<IValue> values = new ArrayList<IValue>();
 
 		if (cFrameValuedSlotsEnabled) {
 
-			values.add(getCFrame(frameName));
+			values.add(getCFrame(frameId));
 		}
 
 		return values;
 	}
 
-	static private IRI nameToIRI(String name) {
+	static private IRI toIRI(CIdentity id) {
 
-		return IRI.create(nameToIdentifier(name));
+		return IRI.create(id.getIdentifier());
 	}
 }

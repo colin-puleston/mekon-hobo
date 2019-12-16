@@ -28,30 +28,28 @@ import java.io.File;
 import java.net.URL;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.*;
 
 import uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
-public class ODemoModel {
+public class ODemoModel extends DemoModelIds {
 
 	static private final String OWL_FILE = "demo.owl";
-	static private final String NUMERIC_PROPERTY = "numericValue";
 
-	static private final Class<FaCTPlusPlusReasonerFactory>
-							REASONER_FACTORY_CLASS
-								= FaCTPlusPlusReasonerFactory.class;
+	static private final Class<? extends OWLReasonerFactory> REASONER_FACTORY_CLASS = FaCTPlusPlusReasonerFactory.class;
 
 	static public OModel create() {
 
 		OModelBuilder bldr = createBuilder();
 
-		bldr.setIndirectNumericProperty(nameToIRI(NUMERIC_PROPERTY));
+		bldr.setIndirectNumericProperty(toIRI(NUMERIC_PROPERTY));
 
 		return bldr.create(true);
 	}
@@ -59,11 +57,6 @@ public class ODemoModel {
 	static private OModelBuilder createBuilder() {
 
 		return new OModelBuilder(getSourceFile(), REASONER_FACTORY_CLASS);
-	}
-
-	static private IRI nameToIRI(String name) {
-
-		return IRI.create(DemoModelBasedTest.nameToIdentifier(name));
 	}
 
 	static private File getSourceFile() {
@@ -81,5 +74,10 @@ public class ODemoModel {
 	static private ClassLoader getClassLoader() {
 
 		return Thread.currentThread().getContextClassLoader();
+	}
+
+	static private IRI toIRI(CIdentity id) {
+
+		return IRI.create(id.getIdentifier());
 	}
 }
