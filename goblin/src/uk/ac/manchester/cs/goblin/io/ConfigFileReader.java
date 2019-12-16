@@ -11,7 +11,7 @@ import uk.ac.manchester.cs.goblin.model.*;
  */
 class ConfigFileReader {
 
-	static private final String CONFIG_FILE_NAME = "modeller.xml";
+	static private final String CONFIG_FILE_NAME = "goblin.xml";
 
 	static private final String HIERARCHY_TAG = "Hierarchy";
 	static private final String ANCHORED_CONSTRAINT_TYPE_TAG = "AnchoredConstraintType";
@@ -21,13 +21,13 @@ class ConfigFileReader {
 	static private final String CONTENT_NAMESPACE_ATTR = "contentNamespace";
 	static private final String CONTENT_FILEATTR = "contentFilename";
 
-	static private final String ROOT_CONCEPT_ATTR = "rootConceptName";
+	static private final String ROOT_CONCEPT_ATTR = "rootConcept";
 
-	static private final String FOCUS_CONCEPT_ATTR = "anchorConceptName";
-	static private final String SOURCE_PROPERTY_ATTR = "sourcePropertyName";
-	static private final String TARGET_PROPERTY_ATTR = "targetPropertyName";
-	static private final String LINKING_PROPERTY_ATTR = "linkingPropertyName";
-	static private final String ROOT_TARGET_CONCEPT_ATTR = "targetConceptName";
+	static private final String ANCHOR_CONCEPT_ATTR = "anchorConcept";
+	static private final String SOURCE_PROPERTY_ATTR = "sourceProperty";
+	static private final String TARGET_PROPERTY_ATTR = "targetProperty";
+	static private final String LINKING_PROPERTY_ATTR = "linkingProperty";
+	static private final String ROOT_TARGET_CONCEPT_ATTR = "rootTargetConcept";
 
 	static private KConfigNode loadFile() {
 
@@ -116,7 +116,7 @@ class ConfigFileReader {
 
 		ConstraintType loadType(KConfigNode node, Concept rootSrc, Concept rootTgt) {
 
-			EntityId anchor = getCoreId(node, FOCUS_CONCEPT_ATTR);
+			EntityId anchor = getCoreId(node, ANCHOR_CONCEPT_ATTR);
 
 			EntityId srcProp = getCoreId(node, SOURCE_PROPERTY_ATTR);
 			EntityId tgtProp = getCoreId(node, TARGET_PROPERTY_ATTR);
