@@ -146,17 +146,17 @@
 	<!-- debug property -->
 	<property name="debug" value="true"/>
 
-	<!-- clean -->
-	<target name="clean">
-		<delete dir="${build}"/>
-	</target>
-
 	<!-- class-path -->
 	<path id="classpath">
 		<fileset dir="${build.lib}">
 			<include name="*.jar"/>
 		</fileset>
 	</path>
+
+	<!-- clean target -->
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
 
 	<!-- library target -->
 	<target name="library">
@@ -364,7 +364,7 @@
 	</target>
 
 	<!-- hobo demo targets -->
-	<target name="hobo-demo-classes" depends="hobo-jar, hobo-explorer-jar, resource">
+	<target name="hobo-demo-classes" depends="hobo-jar, hobo-explorer-jar, hobo-app-jar, resource">
 		<mkdir dir="${build.hobo-demo.classes}"/>
 		<javac srcdir="${demo.src}" classpathref="classpath" destdir="${build.hobo-demo.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
