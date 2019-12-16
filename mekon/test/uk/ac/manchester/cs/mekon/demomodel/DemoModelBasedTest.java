@@ -34,19 +34,7 @@ import uk.ac.manchester.cs.mekon.store.disk.*;
 /**
  * @author Colin Puleston
  */
-public abstract class DemoModelBasedTest implements DemoModelEntities {
-
-	static private final String NAMESPACE = "http://mekon/demo.owl#";
-
-	static public CIdentity nameToIdentity(String name) {
-
-		return new CIdentity(nameToIdentifier(name), name);
-	}
-
-	static public String nameToIdentifier(String name) {
-
-		return NAMESPACE + name;
-	}
+public abstract class DemoModelBasedTest extends DemoModelIds {
 
 	private CModel model;
 
@@ -67,70 +55,70 @@ public abstract class DemoModelBasedTest implements DemoModelEntities {
 		return model;
 	}
 
-	public Set<CFrame> getCFrames(String... names) {
+	public Set<CFrame> getCFrames(CIdentity... ids) {
 
 		Set<CFrame> frames = new HashSet<CFrame>();
 
-		for (String name : names) {
+		for (CIdentity id : ids) {
 
-			frames.add(getCFrame(name));
+			frames.add(getCFrame(id));
 		}
 
 		return frames;
 	}
 
-	public boolean isCFrame(String name) {
+	public boolean isCFrame(CIdentity id) {
 
-		return model.getFrames().containsKey(nameToIdentifier(name));
+		return model.getFrames().containsValueFor(id);
 	}
 
-	public CFrame getCFrame(String name) {
+	public CFrame getCFrame(CIdentity id) {
 
-		return model.getFrames().get(nameToIdentifier(name));
+		return model.getFrames().get(id);
 	}
 
-	public IFrame createIFrame(String name) {
+	public IFrame createIFrame(CIdentity typeId) {
 
-		return instantiate(name, IFrameFunction.ASSERTION);
+		return instantiate(typeId, IFrameFunction.ASSERTION);
 	}
 
-	public IFrame createQueryIFrame(String name) {
+	public IFrame createQueryIFrame(CIdentity typeId) {
 
-		return instantiate(name, IFrameFunction.QUERY);
+		return instantiate(typeId, IFrameFunction.QUERY);
 	}
 
-	public IFrame createRefIFrame(String name, CIdentity refId) {
+	public IFrame createRefIFrame(CIdentity typeId, CIdentity refId) {
 
-		return instantiateRef(name, refId, IFrameFunction.ASSERTION);
+		return instantiateRef(typeId, refId, IFrameFunction.ASSERTION);
 	}
 
-	public IFrame createRefQueryIFrame(String name, CIdentity refId) {
+	public IFrame createRefQueryIFrame(CIdentity typeId, CIdentity refId) {
 
-		return instantiateRef(name, refId, IFrameFunction.QUERY);
+		return instantiateRef(typeId, refId, IFrameFunction.QUERY);
 	}
 
-	public ISlot getISlot(IFrame container, String name) {
+	public ISlot getISlot(IFrame container, CIdentity slotId) {
 
-		return container.getSlots().get(nameToIdentity(name));
+		return container.getSlots().get(slotId);
 	}
 
-	public void addISlotValue(IFrame container, String slotName, IValue value) {
+	public void addISlotValue(IFrame container, CIdentity slotId, IValue value) {
 
-		getISlot(container, slotName).getValuesEditor().add(value);
+		getISlot(container, slotId).getValuesEditor().add(value);
 	}
 
-	private IFrame instantiate(String name, IFrameFunction function) {
+	private IFrame instantiate(CIdentity typeId, IFrameFunction function) {
 
-		return getFrame(name).instantiate(function);
+		return getFrame(typeId).instantiate(function);
 	}
 
-	private IFrame instantiateRef(String name, CIdentity refId, IFrameFunction function) {
+	private IFrame instantiateRef(CIdentity typeId, CIdentity refId, IFrameFunction function) {
 
-		return getFrame(name).instantiate(refId, function);
+		return getFrame(typeId).instantiate(refId, function);
 	}
 
-	private CFrame getFrame(String name) {
+	private CFrame getFrame(CIdentity id) {
 
-		return model.getFrames().get(nameToIdentity(name));
+		return model.getFrames().get(id);
 	}
 }

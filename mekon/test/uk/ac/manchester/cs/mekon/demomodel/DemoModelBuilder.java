@@ -39,46 +39,35 @@ public class DemoModelBuilder {
 		this.builder = builder;
 	}
 
-	public CFrame addFrame(String frame) {
+	public CFrame addFrame(CIdentity frame) {
 
-		return builder.addFrame(nameToIdentity(frame), false);
+		return builder.addFrame(frame, false);
 	}
 
-	public void addSuperFrame(String sub, String sup) {
+	public void addSuperFrame(CIdentity sub, CIdentity sup) {
 
 		getFrameEditor(sub).addSuper(getFrame(sup));
 	}
 
-	public void addSlot(String container, String property, String valueType) {
+	public void addSlot(CIdentity container, CIdentity property, CIdentity valueType) {
 
 		addSlot(container, property, getFrame(valueType));
 	}
 
-	public void addSlot(String container, String property, CValue<?> valueType) {
+	public void addSlot(CIdentity container, CIdentity property, CValue<?> valueType) {
 
 		CFrameEditor contEd = getFrameEditor(container);
-		CIdentity propId = nameToIdentity(property);
 
-		contEd.addSlot(propId, valueType, CCardinality.REPEATABLE_TYPES);
+		contEd.addSlot(property, valueType, CCardinality.REPEATABLE_TYPES);
 	}
 
-	public CFrame getFrame(String name) {
+	public CFrame getFrame(CIdentity frameId) {
 
-		return builder.getFrames().get(nameToIdentity(name));
+		return builder.getFrames().get(frameId);
 	}
 
-	private CFrameEditor getFrameEditor(String frame) {
+	private CFrameEditor getFrameEditor(CIdentity frameId) {
 
-		return builder.getFrameEditor(getFrame(frame));
-	}
-
-	private CIdentity nameToIdentity(String name) {
-
-		return DemoModelBasedTest.nameToIdentity(name);
-	}
-
-	private String nameToIdentifier(String name) {
-
-		return DemoModelBasedTest.nameToIdentifier(name);
+		return builder.getFrameEditor(getFrame(frameId));
 	}
 }

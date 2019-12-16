@@ -31,9 +31,8 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  * @author Colin Puleston
  */
 public class DemoModelEmulatingSectionBuilder
-				implements
-					CSectionBuilder,
-					DemoModelEntities {
+				extends DemoModelIds
+				implements CSectionBuilder {
 
 	private class EmulationBuilder extends DemoModelBuilder {
 
@@ -102,7 +101,7 @@ public class DemoModelEmulatingSectionBuilder
 			addSlot(CITIZEN, TAX_PROPERTY, TAX);
 			addSlot(CITIZEN, BENEFIT_PROPERTY, BENEFIT);
 			addSlot(CITIZEN, EMPLOYMENT_PROPERTY, EMPLOYMENT);
-			addSlot(EMPLOYMENT, JOBS_PROPERTY, JOB);
+			addSlot(EMPLOYMENT, JOB_PROPERTY, JOB);
 			addSlot(JOB, INDUSTRY_PROPERTY, INDUSTRY);
 			addSlot(JOB, JOB_TYPE_PROPERTY, JOB_TYPE);
 			addSlot(JOB, PAY_RATE_PROPERTY, CNumber.INTEGER);

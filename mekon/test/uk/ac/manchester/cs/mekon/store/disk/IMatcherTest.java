@@ -216,11 +216,11 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	public void test_instanceRefBasedQueriesWithoutInstanceLinking() {
 
 		testMatching(
-			createCitizenQuery(ACADEMIC_RESEARCHING_JOB_ID),
+			createCitizenRefQuery(ACADEMIC_RESEARCHING_JOB_ID),
 			ACADEMIC_RESEARCHER_ID);
 
 		testMatching(
-			createCitizenQuery(DOCTORING_JOB_ID),
+			createCitizenRefQuery(DOCTORING_JOB_ID),
 			DOCTOR_ID);
 
 		testMatching(
@@ -353,7 +353,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return addAcademicTeachingJob(POSTGRAD_TEACHING_JOB_ID, POSTGRAD);
 	}
 
-	private IFrame addAcademicTeachingJob(CIdentity jobId, String studentTypeConcept) {
+	private IFrame addAcademicTeachingJob(CIdentity jobId, CIdentity studentTypeConcept) {
 
 		IFrame job = createJob(ACADEMIA, LECTURER);
 		IFrame studentType = createIFrame(studentTypeConcept);
@@ -458,12 +458,12 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		IFrame employment = createIFrame(EMPLOYMENT);
 		IFrame jobRef = createRefIFrame(JOB, jobId);
 
-		addISlotValue(employment, JOBS_PROPERTY, jobRef);
+		addISlotValue(employment, JOB_PROPERTY, jobRef);
 
 		return employment;
 	}
 
-	private IFrame createJob(String industryConcept, String jobTypeConcept) {
+	private IFrame createJob(CIdentity industryConcept, CIdentity jobTypeConcept) {
 
 		IFrame job = createIFrame(JOB);
 
@@ -473,7 +473,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return job;
 	}
 
-	private void setIndustrySector(IFrame job, String sectorConcept) {
+	private void setIndustrySector(IFrame job, CIdentity sectorConcept) {
 
 		ISlot indSlot = getISlot(job, INDUSTRY_PROPERTY);
 		IFrame industry = (IFrame)indSlot.getValues().asList().get(0);
@@ -526,7 +526,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return createStudentTeachingQuery(studentType);
 	}
 
-	private IFrame createStudentTeachingQuery(String studentTypeConcept) {
+	private IFrame createStudentTeachingQuery(CIdentity studentTypeConcept) {
 
 		return createStudentTeachingQuery(createQueryIFrame(studentTypeConcept));
 	}
@@ -589,7 +589,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return createCitizenQuery(createUniStudentTeachingQuery());
 	}
 
-	private IFrame createCitizenQuery(String jobTypeConcept) {
+	private IFrame createCitizenQuery(CIdentity jobTypeConcept) {
 
 		IFrame job = createJobQuery();
 
@@ -598,7 +598,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return createCitizenQuery(job);
 	}
 
-	private IFrame createCitizenQuery(CIdentity jobId) {
+	private IFrame createCitizenRefQuery(CIdentity jobId) {
 
 		return createCitizenQuery(createRefQueryIFrame(JOB, jobId));
 	}
@@ -609,7 +609,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		IFrame employment = createQueryIFrame(EMPLOYMENT);
 
 		addISlotValue(citizen, EMPLOYMENT_PROPERTY, employment);
-		addISlotValue(employment, JOBS_PROPERTY, job);
+		addISlotValue(employment, JOB_PROPERTY, job);
 
 		return citizen;
 	}
