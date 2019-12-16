@@ -28,8 +28,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * @author Colin Puleston
  */
@@ -149,7 +147,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			if (element == null) {
 
-				throw new KAccessException("Cannot find element for: " + entity);
+				throw new RuntimeException("Cannot find element for: " + entity);
 			}
 
 			return element;
