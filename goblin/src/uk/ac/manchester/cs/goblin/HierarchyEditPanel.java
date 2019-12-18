@@ -190,9 +190,10 @@ class HierarchyEditPanel extends JPanel {
 
 		void doConceptEdit(Concept concept) {
 
-			checkRenameConcept(concept);
+			if (checkRenameConcept(concept)) {
 
-			tree.update();
+				tree.update();
+			}
 		}
 	}
 
@@ -233,14 +234,18 @@ class HierarchyEditPanel extends JPanel {
 		}
 	}
 
-	private void checkRenameConcept(Concept concept) {
+	private boolean checkRenameConcept(Concept concept) {
 
 		String name = checkObtainNewConceptName();
 
 		if (name != null) {
 
 			concept.rename(name);
+
+			return true;
 		}
+
+		return false;
 	}
 
 	private void checkRemoveConcept(Concept concept) {
@@ -255,7 +260,7 @@ class HierarchyEditPanel extends JPanel {
 
 		String name = new ConceptNameSelector(this).getSelection();
 
-		if (name != null && model.isContentConcept(name)) {
+		if (name != null && model.contentConcept(name)) {
 
 			showConceptAlreadyExistsMessage(name);
 

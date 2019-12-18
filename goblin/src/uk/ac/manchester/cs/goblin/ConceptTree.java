@@ -109,26 +109,19 @@ abstract class ConceptTree extends GTree {
 				return "ConceptTreeNode: " + concept;
 			}
 
-			public void onConceptMoved(Concept concept) {
+			public void onChildAdded(Concept child, boolean replacement) {
 
-				remove();
-
-				ConceptTreeNode parentNode = findParentNodeFor(concept);
+				ConceptTreeNode parentNode = findParentNodeFor(child);
 
 				if (parentNode != null) {
 
-					parentNode.addChild(ConceptNode.this);
+					parentNode.addChildFor(child);
 				}
 			}
 
-			public void onConceptRemoved(Concept concept) {
+			public void onConceptRemoved(Concept concept, boolean replacing) {
 
 				remove();
-			}
-
-			public void onChildAdded(Concept child) {
-
-				addChildFor(child);
 			}
 
 			ModelUpdateTracker() {
