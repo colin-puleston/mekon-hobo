@@ -5,57 +5,32 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-public class Constraint {
+public class Constraint extends EditTarget {
 
 	private ConstraintType type;
 
-	private Concept sourceValue;
-	private Set<Concept> targetValues;
+	private ConceptTracker sourceValue;
+	private ConceptTrackerSet targetValues;
 
-	private class TargetValueRemovalHandler implements ConceptListener {
+	private class AdditionEnablingEditsInvoker extends EditsInvoker {
 
-		public void onConceptMoved(Concept concept) {
+		private EditsInvoker conflictResolvers;
+
+		AdditionEnablingEditsInvoker(ConflictResolution conflictRes) {
+
+			conflictResolvers = conflictRes.getResolvingEdits();
 		}
 
-		public void onConceptRemoved(Concept concept) {
+		void invokeEdits() {
 
-			targetValues.remove(concept);
-
-			if (targetValues.isEmpty()) {
-
-				remove();
-			}
+			checkRemoveTypeConstraint();
+			conflictResolvers.invokeEdits();
 		}
-
-		public void onChildAdded(Concept child) {
-		}
-
-		TargetValueRemovalHandler() {
-
-			for (Concept targetValue : targetValues) {
-
-				targetValue.addListener(this);
-			}
-		}
-	}
-
-	public Constraint(
-				ConstraintType type,
-				Concept sourceValue,
-				Collection<Concept> targetValues) {
-
-		this.type = type;
-		this.sourceValue = sourceValue;
-		this.targetValues = new HashSet<Concept>(targetValues);
-
-		checkTargetConflicts();
-
-		new TargetValueRemovalHandler();
 	}
 
 	public void remove() {
 
-		sourceValue.removeConstraint(Constraint.this);
+		getEditActions().performRemove(this, EditsInvoker.NO_EDITS);
 	}
 
 	public ConstraintType getType() {
@@ -65,12 +40,71 @@ public class Constraint {
 
 	public Concept getSourceValue() {
 
-		return sourceValue;
+		return sourceValue.getEntity();
 	}
 
 	public Set<Concept> getTargetValues() {
 
-		return new HashSet<Concept>(targetValues);
+		return targetValues.getEntities();
+	}
+
+	Constraint(ConstraintType type, Concept sourceValue, Collection<Concept> targetValues) {
+
+		this.type = type;
+		this.sourceValue = new ConceptTracker(sourceValue);
+		this.targetValues = new ConceptTrackerSet(getModel(), targetValues);
+
+		checkTargetConflicts(targetValues);
+	}
+
+	boolean add() {
+
+		ConflictResolution conflictRes = checkAdditionConflicts();
+
+		if (conflictRes.resolvable()) {
+
+			getEditActions().performAdd(this, conflictRes.getResolvingEdits());
+
+			return true;
+		}
+
+		return false;
+	}
+
+	void doAdd(boolean replacement) {
+
+		getSourceValue().doAddConstraint(this);
+
+		for (Concept target : getTargetValues()) {
+
+			target.addInwardConstraint(this);
+		}
+	}
+
+	void doRemove(boolean replacing) {
+
+		getSourceValue().doRemoveConstraint(this);
+
+		for (Concept target : getTargetValues()) {
+
+			target.removeInwardConstraint(this);
+		}
+	}
+
+	void removeTargetValue(Concept target) {
+
+		Set<Concept> targets = getTargetValues();
+
+		targets.remove(target);
+
+		if (targets.isEmpty()) {
+
+			remove();
+		}
+		else {
+
+			replace(new Constraint(type, getSourceValue(), targets));
+		}
 	}
 
 	boolean hasType(ConstraintType testType) {
@@ -78,7 +112,7 @@ public class Constraint {
 		return testType.equals(type);
 	}
 
-	private void checkTargetConflicts() {
+	private void checkTargetConflicts(Collection<Concept> targetValues) {
 
 		for (Concept value1 : targetValues) {
 
@@ -92,5 +126,40 @@ public class Constraint {
 				}
 			}
 		}
+	}
+
+	private void replace(Constraint replacement) {
+
+		getEditActions().performReplace(this, replacement, getTracking(), EditsInvoker.NO_EDITS);
+	}
+
+	private void checkRemoveTypeConstraint() {
+
+		Constraint constraint = getSourceValue().lookForLocalConstraint(type);
+
+		if (constraint != null) {
+
+			constraint.remove();
+		}
+	}
+
+	private EditActions getEditActions() {
+
+		return getModel().getEditActions();
+	}
+
+	private ConstraintTracking getTracking() {
+
+		return getModel().getConstraintTracking();
+	}
+
+	private ConflictResolution checkAdditionConflicts() {
+
+		return getModel().getConflictResolver().checkConstraintAddition(this);
+	}
+
+	private Model getModel() {
+
+		return getSourceValue().getModel();
 	}
 }

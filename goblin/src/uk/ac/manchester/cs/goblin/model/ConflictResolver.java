@@ -157,34 +157,49 @@ class ConflictResolver {
 		}
 	}
 
-	private abstract class ConstraintConflictsChecker {
+	private abstract class ConstraintConflictsResolver {
 
-		boolean check(List<Constraint> conflicts) {
+		private List<Constraint> conflicts;
 
-			if (!conflicts.isEmpty()) {
+		private class RemovalsInvoker extends EditsInvoker {
 
-				if (!confirmConflictRemovals(conflicts)) {
-
-					return false;
-				}
+			void invokeEdits() {
 
 				for (Constraint conflict : conflicts) {
 
 					conflict.remove();
 				}
 			}
+		}
 
-			return true;
+		void initialise(List<Constraint> conflicts) {
+
+			this.conflicts = conflicts;
+		}
+
+		ConflictResolution check() {
+
+			if (conflicts.isEmpty()) {
+
+				return ConflictResolution.NO_CONFLICTS;
+			}
+
+			if (confirmConflictRemovals(conflicts)) {
+
+				return new ConflictResolution(new RemovalsInvoker());
+			}
+
+			return ConflictResolution.NO_RESOLUTION;
 		}
 
 		abstract boolean confirmConflictRemovals(List<Constraint> conflicts);
 	}
 
-	private class ConstraintAdditionChecker extends ConstraintConflictsChecker {
+	private class ConstraintAdditionConflictsResolver extends ConstraintConflictsResolver {
 
-		boolean check(Constraint constraint) {
+		ConstraintAdditionConflictsResolver(Constraint constraint) {
 
-			return check(findAll(constraint));
+			initialise(findConflicts(constraint));
 		}
 
 		boolean confirmConflictRemovals(List<Constraint> conflicts) {
@@ -192,7 +207,7 @@ class ConflictResolver {
 			return confirmations.confirmConstraintAddition(conflicts);
 		}
 
-		private List<Constraint> findAll(Constraint constraint) {
+		private List<Constraint> findConflicts(Constraint constraint) {
 
 			List<Constraint> conflicts = new ArrayList<Constraint>();
 
@@ -203,11 +218,11 @@ class ConflictResolver {
 		}
 	}
 
-	private class ConceptMoveChecker extends ConstraintConflictsChecker {
+	private class ConceptMoveConflictsResolver extends ConstraintConflictsResolver {
 
-		boolean check(Concept moved) {
+		ConceptMoveConflictsResolver(Concept moved) {
 
-			return check(new ConceptMoveConflictsFinder(moved).conflicts);
+			initialise(new ConceptMoveConflictsFinder(moved).conflicts);
 		}
 
 		boolean confirmConflictRemovals(List<Constraint> conflicts) {
@@ -221,14 +236,14 @@ class ConflictResolver {
 		this.confirmations = confirmations;
 	}
 
-	boolean checkConstraintAddition(Constraint constraint) {
+	ConflictResolution checkConstraintAddition(Constraint constraint) {
 
-		return new ConstraintAdditionChecker().check(constraint);
+		return new ConstraintAdditionConflictsResolver(constraint).check();
 	}
 
-	boolean checkMovedConcept(Concept moved) {
+	ConflictResolution checkConceptMove(Concept moved) {
 
-		return new ConceptMoveChecker().check(moved);
+		return new ConceptMoveConflictsResolver(moved).check();
 	}
 
 	private boolean allSubsumed(Set<Concept> sups, Set<Concept> subs) {

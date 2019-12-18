@@ -31,7 +31,7 @@ public class Hierarchy {
 			throw createInvalidRootOperationException();
 		}
 
-		public boolean addConstraint(ConstraintType type, Collection<Concept> targetValues) {
+		public void addConstraint(ConstraintType type, Collection<Concept> targetValues) {
 
 			throw createInvalidRootOperationException();
 		}
@@ -61,7 +61,7 @@ public class Hierarchy {
 			super(Hierarchy.this, rootConceptId);
 		}
 
-		void removeConstraint(Constraint constraint) {
+		void doRemoveConstraint(Constraint constraint) {
 
 			throw createInvalidRootOperationException();
 		}

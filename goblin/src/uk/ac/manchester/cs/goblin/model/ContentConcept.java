@@ -5,34 +5,36 @@ package uk.ac.manchester.cs.goblin.model;
  */
 class ContentConcept extends Concept {
 
-	private Concept parent;
+	private ConceptTracker parent;
 
 	public boolean rename(String newName) {
 
-		return renameNonRoot(newName);
-	}
+		if (canRenameTo(newName)) {
 
-	public boolean move(Concept newParent) {
+			EntityId newId = getContentId(newName);
+			ContentConcept renamed = new ContentConcept(this, newId);
 
-		Concept oldParent = parent;
-
-		swapParentForMove(newParent);
-
-		if (checkMove()) {
-
-			onConceptMoved();
+			replace(renamed, EditsInvoker.NO_EDITS);
 
 			return true;
 		}
 
-		swapParentForMove(oldParent);
-
 		return false;
 	}
 
-	public void remove() {
+	public boolean move(Concept newParent) {
 
-		parent.removeChild(this);
+		Concept moved = new ContentConcept(this, newParent);
+		ConflictResolution conflictRes = checkMoveConflicts(moved);
+
+		if (conflictRes.resolvable()) {
+
+			replace(moved, conflictRes.getResolvingEdits());
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean isRoot() {
@@ -42,35 +44,52 @@ class ContentConcept extends Concept {
 
 	public Concept getParent() {
 
-		return parent;
+		return parent.getEntity();
 	}
 
 	public boolean descendantOf(Concept test) {
 
-		return parent.equals(test) || parent.descendantOf(test);
+		return getParent().equals(test) || getParent().descendantOf(test);
 	}
 
 	public Constraint getClosestAncestorConstraint(ConstraintType type) {
 
-		return parent.getClosestConstraint(type);
+		return getParent().getClosestConstraint(type);
 	}
 
 	ContentConcept(EntityId conceptId, Concept parent) {
 
 		super(parent.getHierarchy(), conceptId);
 
-		this.parent = parent;
+		this.parent = new ConceptTracker(parent);
 	}
 
-	private void swapParentForMove(Concept newParent) {
+	private ContentConcept(ContentConcept replaced, Concept parent) {
 
-		parent.removeChildForMove(this);
-		parent = newParent;
-		parent.addChildForMove(this);
+		super(replaced);
+
+		this.parent = new ConceptTracker(parent);
 	}
 
-	private boolean checkMove() {
+	private ContentConcept(ContentConcept replaced, EntityId conceptId) {
 
-		return getModel().getConflictResolver().checkMovedConcept(this);
+		super(replaced, conceptId);
+
+		parent = replaced.parent;
+	}
+
+	private boolean canRenameTo(String newName) {
+
+		return !getModel().contentConcept(newName);
+	}
+
+	private ConflictResolution checkMoveConflicts(Concept moved) {
+
+		return getModel().getConflictResolver().checkConceptMove(moved);
+	}
+
+	private EntityId getContentId(String name) {
+
+		return getModel().getContentId(name);
 	}
 }

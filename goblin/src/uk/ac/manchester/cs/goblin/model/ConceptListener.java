@@ -5,9 +5,7 @@ package uk.ac.manchester.cs.goblin.model;
  */
 public interface ConceptListener {
 
-	public void onConceptMoved(Concept concept);
+	public void onChildAdded(Concept child, boolean replacement);
 
-	public void onConceptRemoved(Concept concept);
-
-	public void onChildAdded(Concept child);
+	public void onConceptRemoved(Concept concept, boolean replacing);
 }

@@ -5,20 +5,18 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-public abstract class Concept {
+public abstract class Concept extends EditTarget {
 
 	private Hierarchy hierarchy;
 
 	private EntityId conceptId;
-	private Set<Concept> children = new HashSet<Concept>();
+	private ConceptTrackerSet children;
 
-	private Constraints constraints;
-	private Set<Constraint> inwardConstraints = new HashSet<Constraint>();
+	private ConstraintTrackerSet constraints;
+	private ConstraintTrackerSet inwardConstraints;
 
-	private List<ConceptListener> conceptListeners = new ArrayList<ConceptListener>();
-
-	private Set<ConceptConstraintsListener> constraintListeners
-							= new HashSet<ConceptConstraintsListener>();
+	private List<ConceptListener> conceptListeners;
+	private Set<ConceptConstraintsListener> constraintListeners;
 
 	public void addListener(ConceptListener listener) {
 
@@ -34,7 +32,10 @@ public abstract class Concept {
 
 	public abstract boolean move(Concept newParent);
 
-	public abstract void remove();
+	public void remove() {
+
+		getEditActions().performRemove(this, EditsInvoker.NO_EDITS);
+	}
 
 	public Concept addChild(String name) {
 
@@ -45,24 +46,14 @@ public abstract class Concept {
 
 		Concept child = new ContentConcept(id, this);
 
-		children.add(child);
-		onChildAdded(child);
+		child.add();
 
 		return child;
 	}
 
 	public boolean addConstraint(ConstraintType type, Collection<Concept> targetValues) {
 
-		Constraint constraint = type.createConstraint(this, targetValues);
-
-		if (constraints.add(constraint)) {
-
-			onConstraintAdded(constraint);
-
-			return true;
-		}
-
-		return false;
+		return type.createConstraint(this, targetValues).add();
 	}
 
 	public String toString() {
@@ -91,7 +82,7 @@ public abstract class Concept {
 
 	public Set<Concept> getChildren() {
 
-		return new HashSet<Concept>(children);
+		return children.getEntities();
 	}
 
 	public boolean subsumedBy(Concept test) {
@@ -103,17 +94,25 @@ public abstract class Concept {
 
 	public Set<Constraint> getConstraints() {
 
-		return constraints.getAll();
+		return constraints.getEntities();
 	}
 
 	public Set<Constraint> getInwardConstraints() {
 
-		return new HashSet<Constraint>(inwardConstraints);
+		return inwardConstraints.getEntities();
 	}
 
 	public Constraint lookForLocalConstraint(ConstraintType type) {
 
-		return constraints.lookFor(type);
+		for (Constraint constraint : getConstraints()) {
+
+			if (constraint.hasType(type)) {
+
+				return constraint;
+			}
+		}
+
+		return null;
 	}
 
 	public abstract Constraint getClosestAncestorConstraint(ConstraintType type);
@@ -123,41 +122,73 @@ public abstract class Concept {
 		this.hierarchy = hierarchy;
 		this.conceptId = conceptId;
 
-		constraints = new Constraints(getModel());
+		Model model = getModel();
 
-		hierarchy.registerConcept(this);
+		children = new ConceptTrackerSet(model);
+		constraints = new ConstraintTrackerSet(model);
+		inwardConstraints = new ConstraintTrackerSet(model);
+		conceptListeners = new ArrayList<ConceptListener>();
+		constraintListeners = new HashSet<ConceptConstraintsListener>();
 	}
 
-	boolean renameNonRoot(String newName) {
+	Concept(Concept replaced) {
 
-		if (canRenameTo(newName)) {
+		hierarchy = replaced.hierarchy;
+		conceptId = replaced.conceptId;
+		children = replaced.children;
+		constraints = replaced.constraints;
+		inwardConstraints = replaced.inwardConstraints;
+		conceptListeners = replaced.conceptListeners;
+		constraintListeners = replaced.constraintListeners;
+	}
 
-			hierarchy.deregisterConcept(this);
-			conceptId = getContentId(newName);
-			hierarchy.registerConcept(this);
+	Concept(Concept replaced, EntityId conceptId) {
 
-			registerModelUpdate();
+		this(replaced);
 
-			return true;
+		this.conceptId = conceptId;
+	}
+
+	void add() {
+
+		getEditActions().performAdd(this, EditsInvoker.NO_EDITS);
+	}
+
+	void replace(Concept replacement, EditsInvoker enablingEdits) {
+
+		getEditActions().performReplace(this, replacement, getTracking(), enablingEdits);
+	}
+
+	void doAdd(boolean replacement) {
+
+		getParent().doAddChild(this, replacement);
+	}
+
+	void doRemove(boolean replacing) {
+
+		if (!replacing) {
+
+			for (Constraint constraint : inwardConstraints.getEntities()) {
+
+				constraint.removeTargetValue(this);
+			}
 		}
 
-		return false;
-	}
-
-	void removeChild(Concept child) {
-
-		children.remove(child);
-		hierarchy.deregisterConcept(child);
-
-		child.onConceptRemoved();
+		getParent().doRemoveChild(this, replacing);
 	}
 
 	void addRootConstraint(ConstraintType type) {
 
-		constraints.addRoot(type);
+		constraints.add(type.createRootConstraint());
 	}
 
-	void removeConstraint(Constraint constraint) {
+	void doAddConstraint(Constraint constraint) {
+
+		constraints.add(constraint);
+		onConstraintAdded(constraint);
+	}
+
+	void doRemoveConstraint(Constraint constraint) {
 
 		constraints.remove(constraint);
 		onConstraintRemoved(constraint);
@@ -173,16 +204,6 @@ public abstract class Concept {
 		inwardConstraints.remove(constraint);
 	}
 
-	void addChildForMove(Concept child) {
-
-		children.add(child);
-	}
-
-	void removeChildForMove(Concept child) {
-
-		children.remove(child);
-	}
-
 	Hierarchy getHierarchy() {
 
 		return hierarchy;
@@ -195,33 +216,47 @@ public abstract class Concept {
 		return sub != null ? sub : getClosestAncestorConstraint(type);
 	}
 
-	void onConceptMoved() {
+	private void doAddChild(Concept child, boolean replacement) {
+
+		children.add(child);
+		onChildAdded(child, replacement);
+	}
+
+	private void doRemoveChild(Concept child, boolean replacing) {
+
+		children.remove(child);
+		child.onConceptRemoved(replacing);
+	}
+
+	private EditActions getEditActions() {
+
+		return getModel().getEditActions();
+	}
+
+	private ConceptTracking getTracking() {
+
+		return getModel().getConceptTracking();
+	}
+
+	private void onChildAdded(Concept child, boolean replacement) {
 
 		registerModelUpdate();
+		hierarchy.registerConcept(child);
 
 		for (ConceptListener listener : conceptListeners) {
 
-			listener.onConceptMoved(this);
+			listener.onChildAdded(child, replacement);
 		}
 	}
 
-	private void onChildAdded(Concept child) {
+	private void onConceptRemoved(boolean replacing) {
 
 		registerModelUpdate();
+		hierarchy.deregisterConcept(this);
 
 		for (ConceptListener listener : conceptListeners) {
 
-			listener.onChildAdded(child);
-		}
-	}
-
-	private void onConceptRemoved() {
-
-		registerModelUpdate();
-
-		for (ConceptListener listener : conceptListeners) {
-
-			listener.onConceptRemoved(this);
+			listener.onConceptRemoved(this, replacing);
 		}
 	}
 
@@ -243,11 +278,6 @@ public abstract class Concept {
 
 			listener.onConstraintRemoved(constraint);
 		}
-	}
-
-	private boolean canRenameTo(String newName) {
-
-		return !getModel().isContentConcept(newName);
 	}
 
 	private void registerModelUpdate() {

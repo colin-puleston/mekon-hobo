@@ -14,6 +14,9 @@ public class Model {
 	private List<Hierarchy> hierarchies = new ArrayList<Hierarchy>();
 	private Map<String, Hierarchy> hierarchiesByRootNames = new HashMap<String, Hierarchy>();
 
+	private EditActions editActions;
+	private ConceptTracking conceptTracking;
+	private ConstraintTracking constraintTracking;
 	private ConflictResolver conflictResolver;
 
 	private List<ModelListener> listeners = new ArrayList<ModelListener>();
@@ -23,6 +26,9 @@ public class Model {
 		this.coreNamespace = coreNamespace;
 		this.contentNamespace = contentNamespace;
 
+		editActions = new EditActions();
+		conceptTracking = new ConceptTracking();
+		constraintTracking = new ConstraintTracking();
 		conflictResolver = new ConflictResolver();
 	}
 
@@ -81,7 +87,7 @@ public class Model {
 		return getEntityId(coreNamespace, name);
 	}
 
-	public boolean isContentConcept(String name) {
+	public boolean contentConcept(String name) {
 
 		EntityId id = getContentId(name);
 
@@ -99,6 +105,21 @@ public class Model {
 	EntityId getContentId(String name) {
 
 		return getEntityId(contentNamespace, name);
+	}
+
+	EditActions getEditActions() {
+
+		return editActions;
+	}
+
+	ConceptTracking getConceptTracking() {
+
+		return conceptTracking;
+	}
+
+	ConstraintTracking getConstraintTracking() {
+
+		return constraintTracking;
 	}
 
 	ConflictResolver getConflictResolver() {
