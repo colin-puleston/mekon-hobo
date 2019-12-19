@@ -1,5 +1,7 @@
 package uk.ac.manchester.cs.goblin.model;
 
+import java.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -8,11 +10,11 @@ class ConflictResolution {
 	static final ConflictResolution NO_CONFLICTS = new ConflictResolution();
 	static final ConflictResolution NO_RESOLUTION = new ConflictResolution();
 
-	private EditsInvoker resolvingEdits;
+	private List<EditAction> resolvingEditActions;
 
-	ConflictResolution(EditsInvoker resolvingEdits) {
+	ConflictResolution(List<EditAction> resolvingEditActions) {
 
-		this.resolvingEdits = resolvingEdits;
+		this.resolvingEditActions = resolvingEditActions;
 	}
 
 	boolean resolvable() {
@@ -20,13 +22,23 @@ class ConflictResolution {
 		return this != NO_RESOLUTION;
 	}
 
-	EditsInvoker getResolvingEdits() {
+	EditAction incorporateResolvingEdits(EditAction action) {
 
-		return resolvingEdits;
+		if (resolvingEditActions.isEmpty()) {
+
+			return action;
+		}
+
+		CompoundEditAction compoundAction = new CompoundEditAction();
+
+		compoundAction.addSubActions(resolvingEditActions);
+		compoundAction.addSubAction(action);
+
+		return compoundAction;
 	}
 
 	private ConflictResolution() {
 
-		this(EditsInvoker.NO_EDITS);
+		this(Collections.emptyList());
 	}
 }

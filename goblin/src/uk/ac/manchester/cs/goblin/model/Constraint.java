@@ -12,25 +12,19 @@ public class Constraint extends EditTarget {
 	private ConceptTracker sourceValue;
 	private ConceptTrackerSet targetValues;
 
-	private class AdditionEnablingEditsInvoker extends EditsInvoker {
-
-		private EditsInvoker conflictResolvers;
-
-		AdditionEnablingEditsInvoker(ConflictResolution conflictRes) {
-
-			conflictResolvers = conflictRes.getResolvingEdits();
-		}
-
-		void invokeEdits() {
-
-			checkRemoveTypeConstraint();
-			conflictResolvers.invokeEdits();
-		}
-	}
-
 	public void remove() {
 
-		getEditActions().performRemove(this, EditsInvoker.NO_EDITS);
+		performAction(new RemoveAction(this));
+	}
+
+	public String toString() {
+
+		return getSourceValue() + " --> " + getTargetValues();
+	}
+
+	public Model getModel() {
+
+		return getSourceValue().getModel();
 	}
 
 	public ConstraintType getType() {
@@ -63,7 +57,12 @@ public class Constraint extends EditTarget {
 
 		if (conflictRes.resolvable()) {
 
-			getEditActions().performAdd(this, conflictRes.getResolvingEdits());
+			EditAction action = new AddAction(this);
+
+			action = conflictRes.incorporateResolvingEdits(action);
+			action = checkIncorporateTypeConstraintRemoval(action);
+
+			performAction(action);
 
 			return true;
 		}
@@ -130,36 +129,33 @@ public class Constraint extends EditTarget {
 
 	private void replace(Constraint replacement) {
 
-		getEditActions().performReplace(this, replacement, getTracking(), EditsInvoker.NO_EDITS);
+		performAction(new ReplaceConstraintAction(this, replacement));
 	}
 
-	private void checkRemoveTypeConstraint() {
+	private EditAction checkIncorporateTypeConstraintRemoval(EditAction action) {
 
-		Constraint constraint = getSourceValue().lookForLocalConstraint(type);
+		Constraint constraint = lookForCurrentTypeConstraint();
 
-		if (constraint != null) {
+		if (constraint == null) {
 
-			constraint.remove();
+			return action;
 		}
+
+		return new CompoundEditAction(new RemoveAction(constraint), action);
 	}
 
-	private EditActions getEditActions() {
+	private Constraint lookForCurrentTypeConstraint() {
 
-		return getModel().getEditActions();
+		return getSourceValue().lookForLocalConstraint(type);
 	}
 
-	private ConstraintTracking getTracking() {
+	private void performAction(EditAction action) {
 
-		return getModel().getConstraintTracking();
+		getModel().getEditActions().perform(action);
 	}
 
 	private ConflictResolution checkAdditionConflicts() {
 
 		return getModel().getConflictResolver().checkConstraintAddition(this);
-	}
-
-	private Model getModel() {
-
-		return getSourceValue().getModel();
 	}
 }

@@ -3,19 +3,9 @@ package uk.ac.manchester.cs.goblin.model;
 /**
  * @author Colin Puleston
  */
-class EditAction {
+abstract class EditAction {
 
-	private EditActionType type;
-	private EditTarget target;
+	abstract void perform(boolean forward);
 
-	EditAction(EditActionType type, EditTarget target) {
-
-		this.type = type;
-		this.target = target;
-	}
-
-	void perform(boolean forward) {
-
-		type.performAction(target, forward);
-	}
+	abstract AtomicEditAction<?> getFinalAtomicAction(boolean forward);
 }

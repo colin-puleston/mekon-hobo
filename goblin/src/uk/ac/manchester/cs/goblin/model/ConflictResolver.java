@@ -161,17 +161,6 @@ class ConflictResolver {
 
 		private List<Constraint> conflicts;
 
-		private class RemovalsInvoker extends EditsInvoker {
-
-			void invokeEdits() {
-
-				for (Constraint conflict : conflicts) {
-
-					conflict.remove();
-				}
-			}
-		}
-
 		void initialise(List<Constraint> conflicts) {
 
 			this.conflicts = conflicts;
@@ -186,13 +175,25 @@ class ConflictResolver {
 
 			if (confirmConflictRemovals(conflicts)) {
 
-				return new ConflictResolution(new RemovalsInvoker());
+				return new ConflictResolution(createConflictRemovalActions());
 			}
 
 			return ConflictResolution.NO_RESOLUTION;
 		}
 
 		abstract boolean confirmConflictRemovals(List<Constraint> conflicts);
+
+		private List<EditAction> createConflictRemovalActions() {
+
+			List<EditAction> actions = new ArrayList<EditAction>();
+
+			for (Constraint conflict : conflicts) {
+
+				actions.add(new RemoveAction(conflict));
+			}
+
+			return actions;
+		}
 	}
 
 	private class ConstraintAdditionConflictsResolver extends ConstraintConflictsResolver {

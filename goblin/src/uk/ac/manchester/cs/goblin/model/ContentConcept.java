@@ -11,10 +11,7 @@ class ContentConcept extends Concept {
 
 		if (canRenameTo(newName)) {
 
-			EntityId newId = getContentId(newName);
-			ContentConcept renamed = new ContentConcept(this, newId);
-
-			replace(renamed, EditsInvoker.NO_EDITS);
+			replace(new ContentConcept(this, getContentId(newName)));
 
 			return true;
 		}
@@ -24,12 +21,11 @@ class ContentConcept extends Concept {
 
 	public boolean move(Concept newParent) {
 
-		Concept moved = new ContentConcept(this, newParent);
-		ConflictResolution conflictRes = checkMoveConflicts(moved);
+		ConflictResolution conflictRes = checkMoveConflicts(newParent);
 
 		if (conflictRes.resolvable()) {
 
-			replace(moved, conflictRes.getResolvingEdits());
+			replace(new ContentConcept(this, newParent), conflictRes);
 
 			return true;
 		}
@@ -69,6 +65,8 @@ class ContentConcept extends Concept {
 		super(replaced);
 
 		this.parent = new ConceptTracker(parent);
+		System.out.println("\nNEW-PARENT: " + parent);
+		System.out.println("SET-PARENT: " + getParent());
 	}
 
 	private ContentConcept(ContentConcept replaced, EntityId conceptId) {
@@ -83,9 +81,21 @@ class ContentConcept extends Concept {
 		return !getModel().contentConcept(newName);
 	}
 
-	private ConflictResolution checkMoveConflicts(Concept moved) {
+	private ConflictResolution checkMoveConflicts(Concept newParent) {
 
-		return getModel().getConflictResolver().checkConceptMove(moved);
+		ConceptTracker saveParent = parent;
+		parent = new ConceptTracker(newParent);
+
+		ConflictResolution conflicts = checkMovedConflicts();
+
+		parent = saveParent;
+
+		return conflicts;
+	}
+
+	private ConflictResolution checkMovedConflicts() {
+
+		return getModel().getConflictResolver().checkConceptMove(this);
 	}
 
 	private EntityId getContentId(String name) {

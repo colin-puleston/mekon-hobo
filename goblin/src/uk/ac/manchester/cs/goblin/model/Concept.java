@@ -34,7 +34,7 @@ public abstract class Concept extends EditTarget {
 
 	public void remove() {
 
-		getEditActions().performRemove(this, EditsInvoker.NO_EDITS);
+		performAction(new RemoveAction(this));
 	}
 
 	public Concept addChild(String name) {
@@ -151,12 +151,19 @@ public abstract class Concept extends EditTarget {
 
 	void add() {
 
-		getEditActions().performAdd(this, EditsInvoker.NO_EDITS);
+		performAction(new AddAction(this));
 	}
 
-	void replace(Concept replacement, EditsInvoker enablingEdits) {
+	void replace(Concept replacement) {
 
-		getEditActions().performReplace(this, replacement, getTracking(), enablingEdits);
+		performAction(new ReplaceConceptAction(this, replacement));
+	}
+
+	void replace(Concept replacement, ConflictResolution conflictRes) {
+
+		EditAction action = new ReplaceConceptAction(this, replacement);
+
+		performAction(conflictRes.incorporateResolvingEdits(action));
 	}
 
 	void doAdd(boolean replacement) {
@@ -228,14 +235,9 @@ public abstract class Concept extends EditTarget {
 		child.onConceptRemoved(replacing);
 	}
 
-	private EditActions getEditActions() {
+	private void performAction(EditAction action) {
 
-		return getModel().getEditActions();
-	}
-
-	private ConceptTracking getTracking() {
-
-		return getModel().getConceptTracking();
+		getModel().getEditActions().perform(action);
 	}
 
 	private void onChildAdded(Concept child, boolean replacement) {

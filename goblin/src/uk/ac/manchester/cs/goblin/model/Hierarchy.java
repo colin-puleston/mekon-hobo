@@ -31,7 +31,7 @@ public class Hierarchy {
 			throw createInvalidRootOperationException();
 		}
 
-		public void addConstraint(ConstraintType type, Collection<Concept> targetValues) {
+		public boolean addConstraint(ConstraintType type, Collection<Concept> targetValues) {
 
 			throw createInvalidRootOperationException();
 		}
