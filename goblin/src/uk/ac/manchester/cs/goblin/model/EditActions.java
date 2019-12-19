@@ -16,14 +16,14 @@ class EditActions {
 		undos.push(action);
 	}
 
-	FinalEdit flip(boolean forward) {
+	PrimaryEdit flip(boolean forward) {
 
 		EditAction action = getStack(forward, true).pop();
 
 		action.perform(forward);
 		getStack(forward, false).push(action);
 
-		return action.getFinalAtomicAction(forward).toFinalEdit();
+		return action.getPrimaryAtomicAction(forward).toFinalEdit();
 	}
 
 	private Deque<EditAction> getStack(boolean forward, boolean froms) {
