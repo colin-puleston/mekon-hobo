@@ -104,11 +104,6 @@ abstract class ConceptTree extends GTree {
 
 		private class ModelUpdateTracker implements ConceptListener {
 
-			public String toString() {
-
-				return "ConceptTreeNode: " + concept;
-			}
-
 			public void onChildAdded(Concept child, boolean replacement) {
 
 				ConceptTreeNode parentNode = findParentNodeFor(child);

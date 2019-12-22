@@ -19,8 +19,6 @@ public class Model {
 	private ConstraintTracking constraintTracking;
 	private ConflictResolver conflictResolver;
 
-	private List<ModelListener> listeners = new ArrayList<ModelListener>();
-
 	public Model(String coreNamespace, String contentNamespace) {
 
 		this.coreNamespace = coreNamespace;
@@ -37,9 +35,34 @@ public class Model {
 		conflictResolver.setConfirmations(confirmations);
 	}
 
-	public void addListener(ModelListener listener) {
+	public void startEditTracking() {
 
-		listeners.add(listener);
+		editActions.startTracking();
+	}
+
+	public void addEditListener(ModelEditListener listener) {
+
+		editActions.addListener(listener);
+	}
+
+	public boolean canUndo() {
+
+		return editActions.canUndo();
+	}
+
+	public boolean canRedo() {
+
+		return editActions.canRedo();
+	}
+
+	public void undo() {
+
+		editActions.undo();
+	}
+
+	public void redo() {
+
+		editActions.redo();
 	}
 
 	public Hierarchy addHierarchy(String rootConceptName) {
@@ -125,14 +148,6 @@ public class Model {
 	ConflictResolver getConflictResolver() {
 
 		return conflictResolver;
-	}
-
-	void registerModelUpdate() {
-
-		for (ModelListener listener : listeners) {
-
-			listener.onModelUpdate();
-		}
 	}
 
 	private EntityId getEntityId(String namespace, String name) {

@@ -45,7 +45,7 @@ public class Constraint extends EditTarget {
 	Constraint(ConstraintType type, Concept sourceValue, Collection<Concept> targetValues) {
 
 		this.type = type;
-		this.sourceValue = new ConceptTracker(sourceValue);
+		this.sourceValue = toConceptTracker(sourceValue);
 		this.targetValues = new ConceptTrackerSet(getModel(), targetValues);
 
 		checkTargetConflicts(targetValues);
@@ -70,6 +70,18 @@ public class Constraint extends EditTarget {
 		return false;
 	}
 
+	EditAction createTargetValueRemovalEditAction(Concept target) {
+
+		Set<Concept> targets = getTargetValues();
+
+		if (targets.size() == 1) {
+
+			return new RemoveAction(this);
+		}
+
+		return new ReplaceConstraintAction(this, new Constraint(this, target));
+	}
+
 	void doAdd(boolean replacement) {
 
 		getSourceValue().doAddConstraint(this);
@@ -90,25 +102,23 @@ public class Constraint extends EditTarget {
 		}
 	}
 
-	void removeTargetValue(Concept target) {
-
-		Set<Concept> targets = getTargetValues();
-
-		targets.remove(target);
-
-		if (targets.isEmpty()) {
-
-			remove();
-		}
-		else {
-
-			replace(new Constraint(type, getSourceValue(), targets));
-		}
-	}
-
 	boolean hasType(ConstraintType testType) {
 
 		return testType.equals(type);
+	}
+
+	private Constraint(Constraint template, Concept minusTargetValue) {
+
+		type = template.type;
+		sourceValue = template.sourceValue;
+		targetValues = template.targetValues.copy();
+
+		targetValues.remove(minusTargetValue);
+	}
+
+	private ConceptTracker toConceptTracker(Concept concept) {
+
+		return concept.getModel().getConceptTracking().toTracker(concept);
 	}
 
 	private void checkTargetConflicts(Collection<Concept> targetValues) {
@@ -125,11 +135,6 @@ public class Constraint extends EditTarget {
 				}
 			}
 		}
-	}
-
-	private void replace(Constraint replacement) {
-
-		performAction(new ReplaceConstraintAction(this, replacement));
 	}
 
 	private EditAction checkIncorporateTypeConstraintRemoval(EditAction action) {

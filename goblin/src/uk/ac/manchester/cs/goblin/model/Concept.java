@@ -15,8 +15,10 @@ public abstract class Concept extends EditTarget {
 	private ConstraintTrackerSet constraints;
 	private ConstraintTrackerSet inwardConstraints;
 
-	private List<ConceptListener> conceptListeners;
-	private Set<ConceptConstraintsListener> constraintListeners;
+	private List<ConceptListener> conceptListeners
+				 		= new ArrayList<ConceptListener>();
+	private List<ConceptConstraintsListener> constraintListeners
+						= new ArrayList<ConceptConstraintsListener>();
 
 	public void addListener(ConceptListener listener) {
 
@@ -34,7 +36,14 @@ public abstract class Concept extends EditTarget {
 
 	public void remove() {
 
-		performAction(new RemoveAction(this));
+		EditAction action = new RemoveAction(this);
+
+		if (!inwardConstraints.isEmpty()) {
+
+			action = incorporateInwardTargetRemovalEdits(action);
+		}
+
+		performAction(action);
 	}
 
 	public Concept addChild(String name) {
@@ -127,19 +136,15 @@ public abstract class Concept extends EditTarget {
 		children = new ConceptTrackerSet(model);
 		constraints = new ConstraintTrackerSet(model);
 		inwardConstraints = new ConstraintTrackerSet(model);
-		conceptListeners = new ArrayList<ConceptListener>();
-		constraintListeners = new HashSet<ConceptConstraintsListener>();
 	}
 
 	Concept(Concept replaced) {
 
 		hierarchy = replaced.hierarchy;
 		conceptId = replaced.conceptId;
-		children = replaced.children;
-		constraints = replaced.constraints;
-		inwardConstraints = replaced.inwardConstraints;
-		conceptListeners = replaced.conceptListeners;
-		constraintListeners = replaced.constraintListeners;
+		children = replaced.children.copy();
+		constraints = replaced.constraints.copy();
+		inwardConstraints = replaced.inwardConstraints.copy();
 	}
 
 	Concept(Concept replaced, EntityId conceptId) {
@@ -156,7 +161,7 @@ public abstract class Concept extends EditTarget {
 
 	void replace(Concept replacement) {
 
-		performAction(new ReplaceConceptAction(this, replacement));
+		replace(replacement, ConflictResolution.NO_CONFLICTS);
 	}
 
 	void replace(Concept replacement, ConflictResolution conflictRes) {
@@ -168,20 +173,21 @@ public abstract class Concept extends EditTarget {
 
 	void doAdd(boolean replacement) {
 
-		getParent().doAddChild(this, replacement);
+		Concept parent = getParent();
+
+		parent.children.add(this);
+		parent.onChildAdded(this, replacement);
 	}
 
 	void doRemove(boolean replacing) {
 
-		if (!replacing) {
+		Concept parent = getParent();
 
-			for (Constraint constraint : inwardConstraints.getEntities()) {
+		parent.children.remove(this);
+		onConceptRemoved(replacing);
 
-				constraint.removeTargetValue(this);
-			}
-		}
-
-		getParent().doRemoveChild(this, replacing);
+		conceptListeners.clear();
+		constraintListeners.clear();
 	}
 
 	void addRootConstraint(ConstraintType type) {
@@ -223,16 +229,18 @@ public abstract class Concept extends EditTarget {
 		return sub != null ? sub : getClosestAncestorConstraint(type);
 	}
 
-	private void doAddChild(Concept child, boolean replacement) {
+	private EditAction incorporateInwardTargetRemovalEdits(EditAction action) {
 
-		children.add(child);
-		onChildAdded(child, replacement);
-	}
+		CompoundEditAction cpmd = new CompoundEditAction();
 
-	private void doRemoveChild(Concept child, boolean replacing) {
+		for (Constraint constraint : inwardConstraints.getEntities()) {
 
-		children.remove(child);
-		child.onConceptRemoved(replacing);
+			cpmd.addSubAction(constraint.createTargetValueRemovalEditAction(this));
+		}
+
+		cpmd.addSubAction(action);
+
+		return cpmd;
 	}
 
 	private void performAction(EditAction action) {
@@ -242,7 +250,6 @@ public abstract class Concept extends EditTarget {
 
 	private void onChildAdded(Concept child, boolean replacement) {
 
-		registerModelUpdate();
 		hierarchy.registerConcept(child);
 
 		for (ConceptListener listener : conceptListeners) {
@@ -253,7 +260,6 @@ public abstract class Concept extends EditTarget {
 
 	private void onConceptRemoved(boolean replacing) {
 
-		registerModelUpdate();
 		hierarchy.deregisterConcept(this);
 
 		for (ConceptListener listener : conceptListeners) {
@@ -264,8 +270,6 @@ public abstract class Concept extends EditTarget {
 
 	private void onConstraintAdded(Constraint constraint) {
 
-		registerModelUpdate();
-
 		for (ConceptConstraintsListener listener : constraintListeners) {
 
 			listener.onConstraintAdded(constraint);
@@ -274,17 +278,10 @@ public abstract class Concept extends EditTarget {
 
 	private void onConstraintRemoved(Constraint constraint) {
 
-		registerModelUpdate();
-
 		for (ConceptConstraintsListener listener : constraintListeners) {
 
 			listener.onConstraintRemoved(constraint);
 		}
-	}
-
-	private void registerModelUpdate() {
-
-		getModel().registerModelUpdate();
 	}
 
 	private EntityId getContentId(String name) {

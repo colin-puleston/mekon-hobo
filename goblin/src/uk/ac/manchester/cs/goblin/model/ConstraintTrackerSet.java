@@ -16,4 +16,14 @@ class ConstraintTrackerSet extends EntityTrackerSet<Constraint> {
 
 		super(model.getConstraintTracking(), constraints);
 	}
+
+	ConstraintTrackerSet copy() {
+
+		return new ConstraintTrackerSet(this);
+	}
+
+	private ConstraintTrackerSet(ConstraintTrackerSet template) {
+
+		super(template);
+	}
 }

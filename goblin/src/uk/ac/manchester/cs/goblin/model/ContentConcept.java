@@ -57,16 +57,14 @@ class ContentConcept extends Concept {
 
 		super(parent.getHierarchy(), conceptId);
 
-		this.parent = new ConceptTracker(parent);
+		this.parent = toConceptTracker(parent);
 	}
 
 	private ContentConcept(ContentConcept replaced, Concept parent) {
 
 		super(replaced);
 
-		this.parent = new ConceptTracker(parent);
-		System.out.println("\nNEW-PARENT: " + parent);
-		System.out.println("SET-PARENT: " + getParent());
+		this.parent = toConceptTracker(parent);
 	}
 
 	private ContentConcept(ContentConcept replaced, EntityId conceptId) {
@@ -84,7 +82,7 @@ class ContentConcept extends Concept {
 	private ConflictResolution checkMoveConflicts(Concept newParent) {
 
 		ConceptTracker saveParent = parent;
-		parent = new ConceptTracker(newParent);
+		parent = toConceptTracker(newParent);
 
 		ConflictResolution conflicts = checkMovedConflicts();
 
@@ -96,6 +94,11 @@ class ContentConcept extends Concept {
 	private ConflictResolution checkMovedConflicts() {
 
 		return getModel().getConflictResolver().checkConceptMove(this);
+	}
+
+	private ConceptTracker toConceptTracker(Concept concept) {
+
+		return getModel().getConceptTracking().toTracker(concept);
 	}
 
 	private EntityId getContentId(String name) {

@@ -28,18 +28,18 @@ class ModelHandler {
 
 	private boolean modelUpdates = false;
 
-	private List<ModelListener> modelListeners = new ArrayList<ModelListener>();
+	private List<ModelEditListener> editListeners = new ArrayList<ModelEditListener>();
 
-	private class UpdateTracker implements ModelListener {
+	private class UpdateTracker implements ModelEditListener {
 
-		public void onModelUpdate() {
+		public void onEdit() {
 
 			modelUpdates = true;
 		}
 
 		UpdateTracker() {
 
-			addModelListener(this);
+			addEditListener(this);
 		}
 	}
 
@@ -50,20 +50,15 @@ class ModelHandler {
 		serialiser = new ModelSerialiser();
 		model = loadDefaultOrExit();
 
-		model.setConfirmations(new UserConfirmations());
+		initialiseModel();
 
 		new UpdateTracker();
 	}
 
-	void addModelListener(ModelListener listener) {
+	void addEditListener(ModelEditListener listener) {
 
-		modelListeners.add(listener);
-		model.addListener(listener);
-	}
-
-	Model getModel() {
-
-		return model;
+		editListeners.add(listener);
+		model.addEditListener(listener);
 	}
 
 	void loadNew() {
@@ -74,7 +69,7 @@ class ModelHandler {
 
 		if (contentFile != null && loadFrom(contentFile)) {
 
-			copyModelListenersToNewModel();
+			copyEditListenersToNewModel();
 			modelUpdates = false;
 		}
 	}
@@ -115,6 +110,17 @@ class ModelHandler {
 		checkSaveModelUpdates();
 	}
 
+	Model getModel() {
+
+		return model;
+	}
+
+	private void initialiseModel() {
+
+		model.setConfirmations(new UserConfirmations());
+		model.startEditTracking();
+	}
+
 	private Model loadDefaultOrExit() {
 
 		try {
@@ -135,6 +141,8 @@ class ModelHandler {
 		try {
 
 			model = serialiser.loadFrom(contentFile);
+
+			initialiseModel();
 
 			return true;
 		}
@@ -217,11 +225,11 @@ class ModelHandler {
 		return "Save model to \"" + contentFile + "\": Overwrite current file?";
 	}
 
-	private void copyModelListenersToNewModel() {
+	private void copyEditListenersToNewModel() {
 
-		for (ModelListener listener : modelListeners) {
+		for (ModelEditListener listener : editListeners) {
 
-			model.addListener(listener);
+			model.addEditListener(listener);
 		}
 	}
 

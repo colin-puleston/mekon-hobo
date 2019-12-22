@@ -3,7 +3,7 @@ package uk.ac.manchester.cs.goblin.model;
 /**
  * @author Colin Puleston
  */
-public interface ModelListener {
+public interface ModelEditListener {
 
-	public void onModelUpdate();
+	public void onEdit();
 }

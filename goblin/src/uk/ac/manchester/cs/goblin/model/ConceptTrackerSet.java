@@ -16,4 +16,14 @@ class ConceptTrackerSet extends EntityTrackerSet<Concept> {
 
 		super(model.getConceptTracking(), concepts);
 	}
+
+	ConceptTrackerSet copy() {
+
+		return new ConceptTrackerSet(this);
+	}
+
+	private ConceptTrackerSet(ConceptTrackerSet template) {
+
+		super(template);
+	}
 }

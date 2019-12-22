@@ -5,17 +5,17 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-class EntityTracking<E> {
+abstract class EntityTracking<E, T extends EntityTracker<E>> {
 
-	private Map<E, EntityTracker<E>> trackersByEntity = new HashMap<E, EntityTracker<E>>();
+	private Map<E, T> trackersByEntity = new HashMap<E, T>();
 
-	EntityTracker<E> toTracker(E entity) {
+	T toTracker(E entity) {
 
-		EntityTracker<E> tracker = trackersByEntity.get(entity);
+		T tracker = trackersByEntity.get(entity);
 
 		if (tracker == null) {
 
-			tracker = new EntityTracker<E>(entity);
+			tracker = createTracker(entity);
 			trackersByEntity.put(entity, tracker);
 		}
 
@@ -24,7 +24,7 @@ class EntityTracking<E> {
 
 	void updateForReplacement(E replaced, E replacement) {
 
-		EntityTracker<E> tracker = trackersByEntity.remove(replaced);
+		T tracker = trackersByEntity.remove(replaced);
 
 		if (tracker != null) {
 
@@ -32,4 +32,6 @@ class EntityTracking<E> {
 			trackersByEntity.put(replacement, tracker);
 		}
 	}
+
+	abstract T createTracker(E entity);
 }

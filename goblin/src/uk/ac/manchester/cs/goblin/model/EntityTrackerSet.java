@@ -25,9 +25,11 @@ class EntityTrackerSet<E> {
 		}
 	}
 
-	boolean isEmpty() {
+	EntityTrackerSet(EntityTrackerSet<E> template) {
 
-		return trackers.isEmpty();
+		tracking = template.tracking;
+
+		trackers.addAll(template.trackers);
 	}
 
 	void add(E entity) {
@@ -38,6 +40,11 @@ class EntityTrackerSet<E> {
 	void remove(E entity) {
 
 		trackers.remove(tracking.toTracker(entity));
+	}
+
+	boolean isEmpty() {
+
+		return trackers.isEmpty();
 	}
 
 	Set<E> getEntities() {
