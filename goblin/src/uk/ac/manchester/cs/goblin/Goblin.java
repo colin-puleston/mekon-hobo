@@ -5,7 +5,9 @@
  */
 package uk.ac.manchester.cs.goblin;
 
-import java.awt.*;
+import java.util.*;
+
+import java.awt.BorderLayout;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -36,8 +38,48 @@ public class Goblin extends GFrame {
 	static private final int FRAME_HEIGHT = 700;
 
 	private ModelHandler modelHandler;
+	private ModelEditPanel modelEditPanel;
 
-	private JTabbedPane modelEditPanel = new JTabbedPane(JTabbedPane.LEFT);
+	private class ModelEditPanel extends HierarchiesPanel<Hierarchy> {
+
+		static private final long serialVersionUID = -1;
+
+		ModelEditPanel() {
+
+			super(JTabbedPane.LEFT);
+
+			setFont(GFonts.toMedium(getFont()));
+
+			populate();
+		}
+
+		List<Hierarchy> getSources() {
+
+			return getCurrentModel().getHierarchies();
+		}
+
+		Concept getRootConcept(Hierarchy hierarchy) {
+
+			return hierarchy.getRoot();
+		}
+
+		JComponent createComponent(Hierarchy hierarchy) {
+
+			return new HierarchyPanel(hierarchy);
+		}
+
+		void makeEditVisible(PrimaryEdit edit) {
+
+			int hierarchyIdx = makeConceptVisible(edit.getConcept());
+
+			getHierarchyPanel(hierarchyIdx).makeEditVisible(edit);
+		}
+
+		private HierarchyPanel getHierarchyPanel(int hierarchyIdx) {
+
+			return (HierarchyPanel)getComponentAt(hierarchyIdx);
+		}
+	}
 
 	private abstract class EditsEnabledButton extends GButton {
 
@@ -146,7 +188,7 @@ public class Goblin extends GFrame {
 
 		protected void doButtonThing() {
 
-			getCurrentModel().undo();
+			modelEditPanel.makeEditVisible(getCurrentModel().undo());
 		}
 
 		UndoButton() {
@@ -161,7 +203,7 @@ public class Goblin extends GFrame {
 
 		protected void doButtonThing() {
 
-			getCurrentModel().redo();
+			modelEditPanel.makeEditVisible(getCurrentModel().redo());
 		}
 
 		RedoButton() {
@@ -195,17 +237,16 @@ public class Goblin extends GFrame {
 		super(title, FRAME_WIDTH, FRAME_HEIGHT);
 
 		modelHandler = new ModelHandler(this);
+		modelEditPanel = new ModelEditPanel();
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		populateModelEditPanel();
 		display(createMainPanel());
 	}
 
 	private void displayNewModel() {
 
-		modelEditPanel.removeAll();
-		populateModelEditPanel();
+		modelEditPanel.repopulate();
 	}
 
 	private JComponent createMainPanel() {
@@ -216,18 +257,6 @@ public class Goblin extends GFrame {
 		panel.add(createExternalActionsPanel(), BorderLayout.NORTH);
 
 		return panel;
-	}
-
-	private void populateModelEditPanel() {
-
-		modelEditPanel.setFont(GFonts.toMedium(modelEditPanel.getFont()));
-
-		for (Hierarchy hierarchy : getCurrentModel().getHierarchies()) {
-
-			String title = hierarchy.getRoot().getConceptId().getLabel();
-
-			modelEditPanel.addTab(title, new HierarchyPanel(hierarchy));
-		}
 	}
 
 	private JComponent createExternalActionsPanel() {

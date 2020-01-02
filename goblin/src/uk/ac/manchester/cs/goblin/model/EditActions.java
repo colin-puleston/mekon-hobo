@@ -41,14 +41,14 @@ class EditActions {
 		return !redos.isEmpty();
 	}
 
-	void undo() {
+	PrimaryEdit undo() {
 
-		flip(false);
+		return flip(false);
 	}
 
-	void redo() {
+	PrimaryEdit redo() {
 
-		flip(true);
+		return flip(true);
 	}
 
 	private PrimaryEdit flip(boolean forward) {

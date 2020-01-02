@@ -7,15 +7,15 @@ import java.util.*;
  */
 class EntityTrackerSet<E> {
 
-	private EntityTracking<E> tracking;
+	private EntityTracking<E, ?> tracking;
 	private Set<EntityTracker<E>> trackers = new HashSet<EntityTracker<E>>();
 
-	EntityTrackerSet(EntityTracking<E> tracking) {
+	EntityTrackerSet(EntityTracking<E, ?> tracking) {
 
 		this.tracking = tracking;
 	}
 
-	EntityTrackerSet(EntityTracking<E> tracking, Collection<E> entities) {
+	EntityTrackerSet(EntityTracking<E, ?> tracking, Collection<E> entities) {
 
 		this(tracking);
 

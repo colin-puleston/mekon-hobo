@@ -114,6 +114,16 @@ abstract class ConceptTree extends GTree {
 				}
 			}
 
+			public void onConstraintAdded(Constraint constraint) {
+
+				onConstraintChange();
+			}
+
+			public void onConstraintRemoved(Constraint constraint) {
+
+				onConstraintChange();
+			}
+
 			public void onConceptRemoved(Concept concept, boolean replacing) {
 
 				remove();
@@ -174,12 +184,34 @@ abstract class ConceptTree extends GTree {
 		return extractConcept((ConceptTreeNode)getSelectedNode());
 	}
 
+	void selectConcept(Concept concept) {
+
+		ConceptTreeNode node = lookForNodeFor(concept);
+
+		if (node != null) {
+
+			setSelectionPath(node.getTreePath());
+		}
+	}
+
 	abstract ConceptCellDisplay getConceptDisplay(Concept concept);
+
+	abstract void onConstraintChange();
+
+	private ConceptTreeNode lookForNodeFor(Concept concept) {
+
+		return getConceptTreeRootNode().findDescendantNode(concept);
+	}
 
 	private ConceptTreeNode findParentNodeFor(Concept concept) {
 
-		ConceptTreeNode root = (ConceptTreeNode)getRootNode();
+		ConceptTreeNode root = getConceptTreeRootNode();
 
 		return concept.isRoot() ? root : root.findDescendantNode(concept.getParent());
+	}
+
+	private ConceptTreeNode getConceptTreeRootNode() {
+
+		return (ConceptTreeNode)getRootNode();
 	}
 }

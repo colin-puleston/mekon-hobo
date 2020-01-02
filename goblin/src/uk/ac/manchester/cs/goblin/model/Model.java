@@ -55,14 +55,14 @@ public class Model {
 		return editActions.canRedo();
 	}
 
-	public void undo() {
+	public PrimaryEdit undo() {
 
-		editActions.undo();
+		return editActions.undo();
 	}
 
-	public void redo() {
+	public PrimaryEdit redo() {
 
-		editActions.redo();
+		return editActions.redo();
 	}
 
 	public Hierarchy addHierarchy(String rootConceptName) {

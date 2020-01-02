@@ -15,19 +15,11 @@ public abstract class Concept extends EditTarget {
 	private ConstraintTrackerSet constraints;
 	private ConstraintTrackerSet inwardConstraints;
 
-	private List<ConceptListener> conceptListeners
-				 		= new ArrayList<ConceptListener>();
-	private List<ConceptConstraintsListener> constraintListeners
-						= new ArrayList<ConceptConstraintsListener>();
+	private List<ConceptListener> conceptListeners = new ArrayList<ConceptListener>();
 
 	public void addListener(ConceptListener listener) {
 
 		conceptListeners.add(listener);
-	}
-
-	public void addConstraintsListener(ConceptConstraintsListener listener) {
-
-		constraintListeners.add(listener);
 	}
 
 	public abstract boolean rename(String newName);
@@ -186,8 +178,7 @@ public abstract class Concept extends EditTarget {
 		parent.children.remove(this);
 		onConceptRemoved(replacing);
 
-		conceptListeners.clear();
-		constraintListeners.clear();
+		removeAllSubTreeListeners();
 	}
 
 	void addRootConstraint(ConstraintType type) {
@@ -248,6 +239,16 @@ public abstract class Concept extends EditTarget {
 		getModel().getEditActions().perform(action);
 	}
 
+	private void removeAllSubTreeListeners() {
+
+		conceptListeners.clear();
+
+		for (Concept sub : getChildren()) {
+
+			sub.removeAllSubTreeListeners();
+		}
+	}
+
 	private void onChildAdded(Concept child, boolean replacement) {
 
 		hierarchy.registerConcept(child);
@@ -258,19 +259,9 @@ public abstract class Concept extends EditTarget {
 		}
 	}
 
-	private void onConceptRemoved(boolean replacing) {
-
-		hierarchy.deregisterConcept(this);
-
-		for (ConceptListener listener : conceptListeners) {
-
-			listener.onConceptRemoved(this, replacing);
-		}
-	}
-
 	private void onConstraintAdded(Constraint constraint) {
 
-		for (ConceptConstraintsListener listener : constraintListeners) {
+		for (ConceptListener listener : conceptListeners) {
 
 			listener.onConstraintAdded(constraint);
 		}
@@ -278,9 +269,19 @@ public abstract class Concept extends EditTarget {
 
 	private void onConstraintRemoved(Constraint constraint) {
 
-		for (ConceptConstraintsListener listener : constraintListeners) {
+		for (ConceptListener listener : conceptListeners) {
 
 			listener.onConstraintRemoved(constraint);
+		}
+	}
+
+	private void onConceptRemoved(boolean replacing) {
+
+		hierarchy.deregisterConcept(this);
+
+		for (ConceptListener listener : conceptListeners) {
+
+			listener.onConceptRemoved(this, replacing);
 		}
 	}
 

@@ -70,7 +70,7 @@ abstract class ReplaceAction<T extends EditTarget> extends EditAction {
 		return forward ? add : remove;
 	}
 
-	abstract EntityTracking<T> getTargetTracking(T target);
+	abstract EntityTracking<T, ?> getTargetTracking(T target);
 
 	private void perform(boolean forward, Atomic first, Atomic second) {
 

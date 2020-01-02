@@ -109,7 +109,7 @@ class ConstraintPanel extends JPanel {
 
 			protected void doButtonThing() {
 
-				repopulateForAncestorConstraint(true);
+				repopulateForConstraintEdit();
 			}
 
 			ConstraintEditButton() {
@@ -125,7 +125,6 @@ class ConstraintPanel extends JPanel {
 			protected void doButtonThing() {
 
 				constraint.remove();
-				repopulateForAncestorConstraint(false);
 			}
 
 			ConstraintClearButton() {
@@ -151,14 +150,11 @@ class ConstraintPanel extends JPanel {
 			return ConceptCellDisplay.DIRECT_CONSTRAINT_TARGETS;
 		}
 
-		private void repopulateForAncestorConstraint(boolean forEditing) {
+		private void repopulateForConstraintEdit() {
 
 			AncestorConstraintPopulator populator = new AncestorConstraintPopulator(source);
 
-			if (forEditing) {
-
-				populator.initialiseTargetSelections(constraint.getTargetValues());
-			}
+			populator.initialiseTargetSelections(constraint.getTargetValues());
 
 			populator.repopulate();
 		}
@@ -281,10 +277,7 @@ class ConstraintPanel extends JPanel {
 
 			protected void doButtonThing() {
 
-				if (source.addConstraint(type, getTargetSelections())) {
-
-					resetSourceConcept(source);
-				}
+				source.addConstraint(type, getTargetSelections());
 			}
 
 			ConstraintCreateButton() {

@@ -5,6 +5,8 @@
  */
 package uk.ac.manchester.cs.goblin;
 
+import java.util.*;
+
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
@@ -21,13 +23,59 @@ class HierarchyPanel extends GSplitPane {
 	static private final String TREE_PANEL_TITLE = "Selected hierarchy";
 	static private final String CONSTRAINTS_PANEL_TITLE = "Dependent hierarchies";
 
+	private Hierarchy hierarchy;
+
+	private HierarchyEditTree hierarchyEditTree;
+	private ConstraintsPanel constraintsPanel;
+
+	private class ConstraintsPanel extends HierarchiesPanel<ConstraintType> {
+
+		static private final long serialVersionUID = -1;
+
+		ConstraintsPanel() {
+
+			super(JTabbedPane.TOP);
+
+			populate();
+		}
+
+		List<ConstraintType> getSources() {
+
+			return hierarchy.getConstraintTypes();
+		}
+
+		Concept getRootConcept(ConstraintType type) {
+
+			return type.getRootTargetConcept();
+		}
+
+		JComponent createComponent(ConstraintType type) {
+
+			return new ConstraintPanel(type, hierarchyEditTree);
+		}
+	}
+
 	HierarchyPanel(Hierarchy hierarchy) {
 
+		this.hierarchy = hierarchy;
+
 		HierarchyEditPanel treePanel = new HierarchyEditPanel(hierarchy);
-		HierarchyEditTree tree = treePanel.getTree();
+
+		hierarchyEditTree = treePanel.getTree();
+		constraintsPanel = new ConstraintsPanel();
 
 		setLeftComponent(createTreeComponent(treePanel));
-		setRightComponent(createConstraintsComponent(hierarchy, tree));
+		setRightComponent(createConstraintsComponent());
+	}
+
+	void makeEditVisible(PrimaryEdit edit) {
+
+		hierarchyEditTree.selectConcept(edit.getConcept());
+
+		if (edit.constraintEdit()) {
+
+			constraintsPanel.makeSourceVisible(edit.getConstraint().getType());
+		}
 	}
 
 	private JComponent createTreeComponent(HierarchyEditPanel treePanel) {
@@ -35,24 +83,8 @@ class HierarchyPanel extends GSplitPane {
 		return TitledPanels.create(treePanel, TREE_PANEL_TITLE);
 	}
 
-	private JComponent createConstraintsComponent(
-							Hierarchy hierarchy,
-							HierarchyEditTree tree) {
+	private JComponent createConstraintsComponent() {
 
-		JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP);
-
-		for (ConstraintType type : hierarchy.getConstraintTypes()) {
-
-			String title = getConstraintPanelTitle(type);
-
-			tabs.addTab(title, new ConstraintPanel(type, tree));
-		}
-
-		return TitledPanels.create(tabs, CONSTRAINTS_PANEL_TITLE);
-	}
-
-	private String getConstraintPanelTitle(ConstraintType type) {
-
-		return type.getRootTargetConcept().getConceptId().getLabel();
+		return TitledPanels.create(constraintsPanel, CONSTRAINTS_PANEL_TITLE);
 	}
 }

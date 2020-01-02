@@ -28,4 +28,7 @@ class ConstraintTargetsTree extends ConceptTree {
 
 		return cellDisplay;
 	}
+
+	void onConstraintChange() {
+	}
 }

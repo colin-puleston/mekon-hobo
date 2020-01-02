@@ -35,7 +35,18 @@ class HierarchyEditTree extends ConceptTree {
 				: ConceptCellDisplay.FULL_HIERARCHY_DEFAULT;
 	}
 
+	void onConstraintChange() {
+
+		reselect();
+	}
+
 	void update() {
+
+		reselect();
+		updateAllNodeDisplays();
+	}
+
+	private void reselect() {
 
 		GNode selected = getSelectedNode();
 
@@ -46,7 +57,5 @@ class HierarchyEditTree extends ConceptTree {
 			setSelectionPath(null);
 			setSelectionPath(selectedPath);
 		}
-
-		updateAllNodeDisplays();
 	}
 }

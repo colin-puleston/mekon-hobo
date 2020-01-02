@@ -30,12 +30,22 @@ public class PrimaryEdit {
 
 	public Concept getConcept() {
 
-		return (Concept)target;
+		if (conceptEdit()) {
+
+			return (Concept)target;
+		}
+
+		if (constraintEdit()) {
+
+			return getConstraint().getSourceValue();
+		}
+
+		throw new Error("Unrecognised target type: " + target.getClass());
 	}
 
 	public Constraint getConstraint() {
 
-		return (Constraint)target;
+		return constraintEdit() ? (Constraint)target : null;
 	}
 
 	PrimaryEdit(boolean addition, EditTarget target) {
