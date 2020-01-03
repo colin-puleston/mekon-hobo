@@ -29,14 +29,14 @@ abstract class AtomicEditAction<T extends EditTarget> extends EditAction {
 		}
 	}
 
-	AtomicEditAction<T> getPrimaryAtomicAction(boolean forward) {
+	AtomicEditAction<T> getFinalAtomicAction(boolean forward) {
 
 		return this;
 	}
 
-	PrimaryEdit toFinalEdit() {
+	EditLocation getEditLocation() {
 
-		return new PrimaryEdit(addAction(), target);
+		return new EditLocation(target);
 	}
 
 	abstract boolean addAction();

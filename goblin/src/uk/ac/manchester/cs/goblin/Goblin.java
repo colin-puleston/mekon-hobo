@@ -40,7 +40,7 @@ public class Goblin extends GFrame {
 	private ModelHandler modelHandler;
 	private ModelEditPanel modelEditPanel;
 
-	private class ModelEditPanel extends HierarchiesPanel<Hierarchy> {
+	private class ModelEditPanel extends ConceptTreesPanel<Hierarchy> {
 
 		static private final long serialVersionUID = -1;
 
@@ -68,11 +68,21 @@ public class Goblin extends GFrame {
 			return new HierarchyPanel(hierarchy);
 		}
 
-		void makeEditVisible(PrimaryEdit edit) {
+		void makeEditVisible(EditLocation location) {
 
-			int hierarchyIdx = makeConceptVisible(edit.getConcept());
+			int hierarchyIdx = makeHierarchyVisible(location);
 
-			getHierarchyPanel(hierarchyIdx).makeEditVisible(edit);
+			if (location.constraintEdit()) {
+
+				Constraint constraint = location.getEditedConstraint();
+
+				getHierarchyPanel(hierarchyIdx).makeConstraintVisible(constraint);
+			}
+		}
+
+		private int makeHierarchyVisible(EditLocation location) {
+
+			return makeSourceVisible(location.getPrimaryEditHierarchy().getRoot());
 		}
 
 		private HierarchyPanel getHierarchyPanel(int hierarchyIdx) {

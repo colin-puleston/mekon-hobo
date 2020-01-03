@@ -41,17 +41,17 @@ class EditActions {
 		return !redos.isEmpty();
 	}
 
-	PrimaryEdit undo() {
+	EditLocation undo() {
 
 		return flip(false);
 	}
 
-	PrimaryEdit redo() {
+	EditLocation redo() {
 
 		return flip(true);
 	}
 
-	private PrimaryEdit flip(boolean forward) {
+	private EditLocation flip(boolean forward) {
 
 		Deque<EditAction> froms = getActionStack(forward, true);
 		Deque<EditAction> tos = getActionStack(forward, false);
@@ -67,7 +67,7 @@ class EditActions {
 
 		perfom(action, forward, tos);
 
-		return action.getPrimaryAtomicAction(forward).toFinalEdit();
+		return action.getFinalAtomicAction(forward).getEditLocation();
 	}
 
 	private void perfom(EditAction action, boolean forward, Deque<EditAction> tos) {

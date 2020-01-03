@@ -213,6 +213,11 @@ public abstract class Concept extends EditTarget {
 		return hierarchy;
 	}
 
+	Hierarchy getPrimaryEditHierarchy() {
+
+		return hierarchy;
+	}
+
 	Constraint getClosestConstraint(ConstraintType type) {
 
 		Constraint sub = lookForLocalConstraint(type);

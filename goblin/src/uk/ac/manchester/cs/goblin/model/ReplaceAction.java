@@ -65,7 +65,7 @@ abstract class ReplaceAction<T extends EditTarget> extends EditAction {
 		}
 	}
 
-	AtomicEditAction<T> getPrimaryAtomicAction(boolean forward) {
+	AtomicEditAction<T> getFinalAtomicAction(boolean forward) {
 
 		return forward ? add : remove;
 	}

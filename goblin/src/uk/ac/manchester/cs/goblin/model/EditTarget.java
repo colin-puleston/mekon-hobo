@@ -8,4 +8,6 @@ abstract class EditTarget {
 	abstract void doAdd(boolean replacement);
 
 	abstract void doRemove(boolean replacing);
+
+	abstract Hierarchy getPrimaryEditHierarchy();
 }

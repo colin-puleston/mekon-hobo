@@ -15,13 +15,13 @@ import uk.ac.manchester.cs.goblin.model.*;
  * @author Colin Puleston
  */
 
-class HierarchyEditTree extends ConceptTree {
+class HierarchyTree extends ConceptTree {
 
 	static private final long serialVersionUID = -1;
 
 	private ConceptMover conceptMover;
 
-	HierarchyEditTree(Hierarchy hierarchy, ConceptMover conceptMover) {
+	HierarchyTree(Hierarchy hierarchy, ConceptMover conceptMover) {
 
 		this.conceptMover = conceptMover;
 

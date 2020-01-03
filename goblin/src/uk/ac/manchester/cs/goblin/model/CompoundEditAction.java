@@ -34,16 +34,16 @@ class CompoundEditAction extends EditAction {
 		}
 	}
 
-	AtomicEditAction<?> getPrimaryAtomicAction(boolean forward) {
+	AtomicEditAction<?> getFinalAtomicAction(boolean forward) {
 
-		EditAction finalSub = subActions.descendingIterator().next();
+		EditAction finalSub = directionIterator(!forward).next();
 
 		if (finalSub instanceof AtomicEditAction) {
 
 			return (AtomicEditAction<?>)finalSub;
 		}
 
-		return finalSub.getPrimaryAtomicAction(forward);
+		return finalSub.getFinalAtomicAction(forward);
 	}
 
 	private Iterator<EditAction> directionIterator(boolean forward) {

@@ -55,12 +55,12 @@ public class Model {
 		return editActions.canRedo();
 	}
 
-	public PrimaryEdit undo() {
+	public EditLocation undo() {
 
 		return editActions.undo();
 	}
 
-	public PrimaryEdit redo() {
+	public EditLocation redo() {
 
 		return editActions.redo();
 	}

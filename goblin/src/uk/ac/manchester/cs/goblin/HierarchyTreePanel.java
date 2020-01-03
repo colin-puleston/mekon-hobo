@@ -15,7 +15,7 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-class HierarchyEditPanel extends JPanel {
+class HierarchyTreePanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
@@ -27,7 +27,7 @@ class HierarchyEditPanel extends JPanel {
 	static private final String RENAME_LABEL = "Ren...";
 
 	private Model model;
-	private HierarchyEditTree tree;
+	private HierarchyTree tree;
 
 	private ConceptMover conceptMover = new ConceptMover();
 
@@ -197,18 +197,18 @@ class HierarchyEditPanel extends JPanel {
 		}
 	}
 
-	HierarchyEditPanel(Hierarchy hierarchy) {
+	HierarchyTreePanel(Hierarchy hierarchy) {
 
 		super(new BorderLayout());
 
 		model = hierarchy.getModel();
-		tree = new HierarchyEditTree(hierarchy, conceptMover);
+		tree = new HierarchyTree(hierarchy, conceptMover);
 
 		add(new JScrollPane(tree), BorderLayout.CENTER);
 		add(createButtonsPanel(), BorderLayout.SOUTH);
 	}
 
-	HierarchyEditTree getTree() {
+	HierarchyTree getTree() {
 
 		return tree;
 	}

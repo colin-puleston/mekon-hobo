@@ -7,5 +7,5 @@ abstract class EditAction {
 
 	abstract void perform(boolean forward);
 
-	abstract AtomicEditAction<?> getPrimaryAtomicAction(boolean forward);
+	abstract AtomicEditAction<?> getFinalAtomicAction(boolean forward);
 }

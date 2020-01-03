@@ -14,11 +14,11 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-abstract class HierarchiesPanel<S> extends JTabbedPane {
+abstract class ConceptTreesPanel<S> extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	HierarchiesPanel(int tabPlacement) {
+	ConceptTreesPanel(int tabPlacement) {
 
 		super(tabPlacement);
 	}
@@ -39,13 +39,18 @@ abstract class HierarchiesPanel<S> extends JTabbedPane {
 		populate();
 	}
 
-	int makeConceptVisible(Concept concept) {
+	void makeSourceVisible(S source) {
+
+		setSelectedIndex(getSources().indexOf(source));
+	}
+
+	int makeSourceVisible(Concept rootConcept) {
 
 		int i = 0;
 
 		for (S source : getSources()) {
 
-			if (concept.subsumedBy(getRootConcept(source))) {
+			if (getRootConcept(source).equals(rootConcept)) {
 
 				setSelectedIndex(i);
 
@@ -58,19 +63,14 @@ abstract class HierarchiesPanel<S> extends JTabbedPane {
 		return i;
 	}
 
-	void makeSourceVisible(S source) {
-
-		setSelectedIndex(getSources().indexOf(source));
-	}
-
 	abstract List<S> getSources();
 
-	abstract Concept getRootConcept(S hierarchySource);
+	abstract Concept getRootConcept(S treeSource);
 
-	abstract JComponent createComponent(S hierarchySource);
+	abstract JComponent createComponent(S treeSource);
 
-	private String getTitle(S hierarchySource) {
+	private String getTitle(S treeSource) {
 
-		return getRootConcept(hierarchySource).getConceptId().getLabel();
+		return getRootConcept(treeSource).getConceptId().getLabel();
 	}
 }

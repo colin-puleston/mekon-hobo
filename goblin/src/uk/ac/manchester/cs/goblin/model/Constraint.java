@@ -102,6 +102,11 @@ public class Constraint extends EditTarget {
 		}
 	}
 
+	Hierarchy getPrimaryEditHierarchy() {
+
+		return getSourceValue().getHierarchy();
+	}
+
 	boolean hasType(ConstraintType testType) {
 
 		return testType.equals(type);

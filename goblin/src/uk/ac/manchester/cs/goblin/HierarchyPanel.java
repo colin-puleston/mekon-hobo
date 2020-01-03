@@ -25,10 +25,10 @@ class HierarchyPanel extends GSplitPane {
 
 	private Hierarchy hierarchy;
 
-	private HierarchyEditTree hierarchyEditTree;
+	private HierarchyTree hierarchyTree;
 	private ConstraintsPanel constraintsPanel;
 
-	private class ConstraintsPanel extends HierarchiesPanel<ConstraintType> {
+	private class ConstraintsPanel extends ConceptTreesPanel<ConstraintType> {
 
 		static private final long serialVersionUID = -1;
 
@@ -51,7 +51,7 @@ class HierarchyPanel extends GSplitPane {
 
 		JComponent createComponent(ConstraintType type) {
 
-			return new ConstraintPanel(type, hierarchyEditTree);
+			return new ConstraintPanel(type, hierarchyTree);
 		}
 	}
 
@@ -59,26 +59,22 @@ class HierarchyPanel extends GSplitPane {
 
 		this.hierarchy = hierarchy;
 
-		HierarchyEditPanel treePanel = new HierarchyEditPanel(hierarchy);
+		HierarchyTreePanel treePanel = new HierarchyTreePanel(hierarchy);
 
-		hierarchyEditTree = treePanel.getTree();
+		hierarchyTree = treePanel.getTree();
 		constraintsPanel = new ConstraintsPanel();
 
 		setLeftComponent(createTreeComponent(treePanel));
 		setRightComponent(createConstraintsComponent());
 	}
 
-	void makeEditVisible(PrimaryEdit edit) {
+	void makeConstraintVisible(Constraint constraint) {
 
-		hierarchyEditTree.selectConcept(edit.getConcept());
-
-		if (edit.constraintEdit()) {
-
-			constraintsPanel.makeSourceVisible(edit.getConstraint().getType());
-		}
+		hierarchyTree.selectConcept(constraint.getSourceValue());
+		constraintsPanel.makeSourceVisible(constraint.getType());
 	}
 
-	private JComponent createTreeComponent(HierarchyEditPanel treePanel) {
+	private JComponent createTreeComponent(HierarchyTreePanel treePanel) {
 
 		return TitledPanels.create(treePanel, TREE_PANEL_TITLE);
 	}
