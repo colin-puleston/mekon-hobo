@@ -99,9 +99,7 @@ public class Goblin extends GFrame {
 
 			public void onEdit() {
 
-				Model model = getCurrentModel();
-
-				setEnabled(redoDependent() ? model.canRedo() : model.canUndo());
+				setEnabled(canDoButtonThing());
 			}
 
 			Enabler() {
@@ -119,10 +117,7 @@ public class Goblin extends GFrame {
 			new Enabler();
 		}
 
-		boolean redoDependent() {
-
-			return false;
-		}
+		abstract boolean canDoButtonThing();
 	}
 
 	private class LoadButton extends GButton {
@@ -148,7 +143,7 @@ public class Goblin extends GFrame {
 
 		protected void doButtonThing() {
 
-			if (modelHandler.checkSave()) {
+			if (modelHandler.save()) {
 
 				setEnabled(false);
 			}
@@ -157,6 +152,11 @@ public class Goblin extends GFrame {
 		SaveButton() {
 
 			super(SAVE_BUTTON_LABEL);
+		}
+
+		boolean canDoButtonThing() {
+
+			return modelHandler.unsavedEdits();
 		}
 	}
 
@@ -181,9 +181,10 @@ public class Goblin extends GFrame {
 
 		protected void doButtonThing() {
 
-			modelHandler.checkSaveOnExit();
+			if (modelHandler.checkExit()) {
 
-			dispose();
+				dispose();
+			}
 		}
 
 		ExitButton() {
@@ -198,12 +199,17 @@ public class Goblin extends GFrame {
 
 		protected void doButtonThing() {
 
-			modelEditPanel.makeEditVisible(getCurrentModel().undo());
+			modelEditPanel.makeEditVisible(modelHandler.undo());
 		}
 
 		UndoButton() {
 
 			super(UNDO_BUTTON_LABEL);
+		}
+
+		boolean canDoButtonThing() {
+
+			return getCurrentModel().canUndo();
 		}
 	}
 
@@ -213,7 +219,7 @@ public class Goblin extends GFrame {
 
 		protected void doButtonThing() {
 
-			modelEditPanel.makeEditVisible(getCurrentModel().redo());
+			modelEditPanel.makeEditVisible(modelHandler.redo());
 		}
 
 		RedoButton() {
@@ -221,9 +227,9 @@ public class Goblin extends GFrame {
 			super(REDO_BUTTON_LABEL);
 		}
 
-		boolean redoDependent() {
+		boolean canDoButtonThing() {
 
-			return true;
+			return getCurrentModel().canRedo();
 		}
 	}
 

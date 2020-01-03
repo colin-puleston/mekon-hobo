@@ -26,18 +26,19 @@ class ModelHandler {
 	private ModelSerialiser serialiser;
 	private Model model;
 
-	private boolean modelUpdates = false;
+	private int editCount = 0;
+	private int undoCount = 0;
 
 	private List<ModelEditListener> editListeners = new ArrayList<ModelEditListener>();
 
-	private class UpdateTracker implements ModelEditListener {
+	private class EditCounter implements ModelEditListener {
 
 		public void onEdit() {
 
-			modelUpdates = true;
+			editCount++;
 		}
 
-		UpdateTracker() {
+		EditCounter() {
 
 			addEditListener(this);
 		}
@@ -52,7 +53,7 @@ class ModelHandler {
 
 		initialiseModel();
 
-		new UpdateTracker();
+		new EditCounter();
 	}
 
 	void addEditListener(ModelEditListener listener) {
@@ -63,23 +64,23 @@ class ModelHandler {
 
 	void loadNew() {
 
-		checkSaveModelUpdates();
+		save();
 
 		File contentFile = checkContentFileSelection("Load");
 
 		if (contentFile != null && loadFrom(contentFile)) {
 
 			copyEditListenersToNewModel();
-			modelUpdates = false;
+			resetEditCounts();
 		}
 	}
 
-	boolean checkSave() {
+	boolean save() {
 
-		if (confirmOverwriteContentFile(serialiser.getContentFile())) {
+		if (unsavedEdits() && confirmOverwrite(serialiser.getContentFile())) {
 
 			serialiser.save(model);
-			modelUpdates = false;
+			resetEditCounts();
 
 			return true;
 		}
@@ -87,32 +88,64 @@ class ModelHandler {
 		return false;
 	}
 
-	boolean saveAs() {
+	void saveAs() {
 
 		File contentFile = checkContentFileSelection("Save");
 
 		if (contentFile != null) {
 
-			if (!contentFile.exists() || confirmOverwriteContentFile(contentFile)) {
+			if (!contentFile.exists() || confirmOverwrite(contentFile)) {
 
 				serialiser.saveAs(model, contentFile);
-				modelUpdates = false;
+				resetEditCounts();
 			}
-
-			return true;
 		}
-
-		return false;
 	}
 
-	void checkSaveOnExit() {
+	boolean checkExit() {
 
-		checkSaveModelUpdates();
+		if (unsavedEdits()) {
+
+			Confirmation confirm = confirmOverwriteAndExit(serialiser.getContentFile());
+
+			if (confirm.cancel()) {
+
+				return false;
+			}
+
+			if (confirm.yes()) {
+
+				serialiser.save(model);
+			}
+		}
+
+		return true;
+	}
+
+	EditLocation undo() {
+
+		undoCount++;
+		editCount--;
+
+		return model.undo();
+	}
+
+	EditLocation redo() {
+
+		undoCount--;
+		editCount--;
+
+		return model.redo();
 	}
 
 	Model getModel() {
 
 		return model;
+	}
+
+	boolean unsavedEdits() {
+
+		return editCount != undoCount;
 	}
 
 	private void initialiseModel() {
@@ -154,12 +187,10 @@ class ModelHandler {
 		}
 	}
 
-	private void checkSaveModelUpdates() {
+	private void resetEditCounts() {
 
-		if (modelUpdates) {
-
-			checkSave();
-		}
+		editCount = 0;
+		undoCount = 0;
 	}
 
 	private File checkContentFileSelection(String action) {
@@ -205,9 +236,16 @@ class ModelHandler {
 		InfoDisplay.inform(createCannotLoadContentFileMessage(specificMsg));
 	}
 
-	private boolean confirmOverwriteContentFile(File contentFile) {
+	private Confirmation confirmOverwriteAndExit(File contentFile) {
 
-		return InfoDisplay.checkContinue(createOverwriteContentFileMessage(contentFile));
+		return InfoDisplay.checkConfirmOrCancel(
+					"Save unsaved model?",
+					createOverwriteMessage(contentFile));
+	}
+
+	private boolean confirmOverwrite(File contentFile) {
+
+		return InfoDisplay.checkContinue(createOverwriteMessage(contentFile));
 	}
 
 	private String createCannotStartMessage(String specificMsg) {
@@ -220,7 +258,7 @@ class ModelHandler {
 		return "Cannot load content-file: " + specificMsg;
 	}
 
-	private String createOverwriteContentFileMessage(File contentFile) {
+	private String createOverwriteMessage(File contentFile) {
 
 		return "Save model to \"" + contentFile + "\": Overwrite current file?";
 	}

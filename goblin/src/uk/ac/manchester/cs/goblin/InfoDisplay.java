@@ -22,12 +22,23 @@ class InfoDisplay {
 		return obtainContinueOption(message) == JOptionPane.OK_OPTION;
 	}
 
+	static Confirmation checkConfirmOrCancel(String title, String message) {
+
+		return obtainConfirmation(title, message, JOptionPane.YES_NO_CANCEL_OPTION);
+	}
+
 	static private int obtainContinueOption(String message) {
 
-		return JOptionPane.showConfirmDialog(
-					null,
-					message,
-					"Continue?",
-					JOptionPane.OK_CANCEL_OPTION);
+		return obtainOption("Continue?", message, JOptionPane.OK_CANCEL_OPTION);
+	}
+
+	static private Confirmation obtainConfirmation(String title, String message, int options) {
+
+		return Confirmation.get(obtainOption(title, message, options));
+	}
+
+	static private int obtainOption(String title, String message, int options) {
+
+		return JOptionPane.showConfirmDialog(null, message, title, options);
 	}
 }
