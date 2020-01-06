@@ -328,21 +328,21 @@ class QueryRenderer extends Renderer {
 		return String.format(PATH_ENTITY_FORMAT, parentPath, tag);
 	}
 
-	private String renderTypes(String path, List<CIdentity> typeIds) {
+	private String renderTypes(String path, List<CIdentity> typeDisjuncts) {
 
-		return typeIds.size() == 1
-				? renderType(path, typeIds.get(0))
-				: renderMultiTypes(path, typeIds);
+		return typeDisjuncts.size() == 1
+				? renderType(path, typeDisjuncts.get(0))
+				: renderTypeDisjunction(path, typeDisjuncts);
 	}
 
-	private String renderMultiTypes(String path, List<CIdentity> typeIds) {
+	private String renderTypeDisjunction(String path, List<CIdentity> typeDisjuncts) {
 
 		StringBuilder types = new StringBuilder();
 		boolean first = true;
 
 		types.append(OPEN_BRACKET);
 
-		for (CIdentity typeId : typeIds) {
+		for (CIdentity typeDisjunct : typeDisjuncts) {
 
 			if (first) {
 
@@ -353,7 +353,7 @@ class QueryRenderer extends Renderer {
 				types.append(OR);
 			}
 
-			types.append(renderType(path, typeId));
+			types.append(renderType(path, typeDisjunct));
 		}
 
 		types.append(CLOSE_BRACKET);
@@ -361,9 +361,9 @@ class QueryRenderer extends Renderer {
 		return types.toString();
 	}
 
-	private String renderType(String path, CIdentity typeId) {
+	private String renderType(String path, CIdentity type) {
 
-		return String.format(TYPE_FORMAT, path, renderId(typeId));
+		return String.format(TYPE_FORMAT, path, renderId(type));
 	}
 
 	private String renderNumberValue(String path, String operator, INumber value) {
