@@ -3,7 +3,7 @@
  *
  * Bio Health Informatics Group
  */
-package uk.ac.manchester.cs.goblin;
+package uk.ac.manchester.cs.goblin.gui;
 
 import java.awt.Color;
 import javax.swing.Icon;
