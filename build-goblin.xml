@@ -36,7 +36,7 @@
 	<property name="build.classpath.win" value="${build.lib.rel}/*;${build.classes.rel};${build.resource.rel}"/>
 	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC -Djava.library.path=${build.lib.rel}"/>
 
-	<property name="goblin.mainclass" value="uk.ac.manchester.cs.goblin.Goblin"/>
+	<property name="goblin.mainclass" value="uk.ac.manchester.cs.goblin.gui.Goblin"/>
 	<property name="goblin-demo.title" value="&quot;Demo Model&quot;"/>
 	<property name="goblin-demo.java.args" value="${java.opts} ${goblin.mainclass} ${goblin-demo.title}"/>
 	<property name="goblin-demo.run.name" value="goblin-demo"/>
