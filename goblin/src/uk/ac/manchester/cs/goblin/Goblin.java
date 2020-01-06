@@ -8,6 +8,7 @@ package uk.ac.manchester.cs.goblin;
 import java.util.*;
 
 import java.awt.BorderLayout;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -36,6 +37,21 @@ public class Goblin extends GFrame {
 
 	static private final int FRAME_WIDTH = 1200;
 	static private final int FRAME_HEIGHT = 700;
+
+	static public void main(String[] args) {
+
+		new Goblin(getTitle(args));
+	}
+
+	static private String getTitle(String[] args) {
+
+		return args.length == 1 ? createCompoundTitle(args[0]) : SIMPLE_TITLE;
+	}
+
+	static private String createCompoundTitle(String subTitle) {
+
+		return String.format(COMPOUND_TITLE_FORMAT, subTitle);
+	}
 
 	private ModelHandler modelHandler;
 	private ModelEditPanel modelEditPanel;
@@ -233,19 +249,15 @@ public class Goblin extends GFrame {
 		}
 	}
 
-	static public void main(String[] args) {
+	private class WindowCloseListener extends WindowAdapter {
 
-		new Goblin(getTitle(args));
-	}
+		public void windowClosing(WindowEvent e) {
 
-	static private String getTitle(String[] args) {
+			if (modelHandler.checkExit()) {
 
-		return args.length == 1 ? createCompoundTitle(args[0]) : SIMPLE_TITLE;
-	}
-
-	static private String createCompoundTitle(String subTitle) {
-
-		return String.format(COMPOUND_TITLE_FORMAT, subTitle);
+				dispose();
+			}
+		}
 	}
 
 	public Goblin(String title) {
@@ -255,7 +267,8 @@ public class Goblin extends GFrame {
 		modelHandler = new ModelHandler(this);
 		modelEditPanel = new ModelEditPanel();
 
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowCloseListener());
 
 		display(createMainPanel());
 	}
