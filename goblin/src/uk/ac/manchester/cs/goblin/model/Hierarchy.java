@@ -16,7 +16,7 @@ public class Hierarchy {
 
 	private class RootConcept extends Concept {
 
-		public boolean rename(String newName) {
+		public boolean resetId(EntityIdSpec newIdSpec) {
 
 			throw createInvalidRootOperationException();
 		}

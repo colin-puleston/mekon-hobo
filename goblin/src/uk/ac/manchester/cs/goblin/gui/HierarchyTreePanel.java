@@ -24,7 +24,7 @@ class HierarchyTreePanel extends JPanel {
 	static private final String CUT_LABEL = "Mv-";
 	static private final String STOP_CUT_LABEL = "Mv!";
 	static private final String PASTE_LABEL = "Mv+";
-	static private final String RENAME_LABEL = "Ren...";
+	static private final String RESET_ID_LABEL = "Id...";
 
 	private Model model;
 	private HierarchyTree tree;
@@ -174,13 +174,13 @@ class HierarchyTreePanel extends JPanel {
 		}
 	}
 
-	private class RenameButton extends EditButton {
+	private class ResetIdButton extends EditButton {
 
 		static private final long serialVersionUID = -1;
 
-		RenameButton() {
+		ResetIdButton() {
 
-			super(RENAME_LABEL);
+			super(RESET_ID_LABEL);
 		}
 
 		boolean enableIfRootSelected() {
@@ -190,7 +190,7 @@ class HierarchyTreePanel extends JPanel {
 
 		void doConceptEdit(Concept concept) {
 
-			if (checkRenameConcept(concept)) {
+			if (checkResetConceptId(concept)) {
 
 				tree.update();
 			}
@@ -221,28 +221,39 @@ class HierarchyTreePanel extends JPanel {
 					new CutButton(),
 					new PasteButton(),
 					new StopCutButton(),
-					new RenameButton());
+					new ResetIdButton());
 	}
 
 	private void checkAddConcept(Concept parent) {
 
-		String name = checkObtainNewConceptName();
+		EntityIdSpec idSpec = checkObtainConceptIdSpec(null);
 
-		if (name != null) {
+		if (idSpec != null) {
 
-			parent.addChild(name);
+			if (model.contentConceptExists(idSpec)) {
+
+				showConceptAlreadyExistsMessage(idSpec);
+			}
+			else {
+
+				parent.addChild(idSpec);
+			}
 		}
 	}
 
-	private boolean checkRenameConcept(Concept concept) {
+	private boolean checkResetConceptId(Concept concept) {
 
-		String name = checkObtainNewConceptName();
+		EntityIdSpec currentIdSpec = concept.getConceptId().toSpec();
+		EntityIdSpec newIdSpec = checkObtainConceptIdSpec(currentIdSpec);
 
-		if (name != null) {
+		if (newIdSpec != null) {
 
-			concept.rename(name);
+			if (concept.resetId(newIdSpec)) {
 
-			return true;
+				return true;
+			}
+
+			showConceptAlreadyExistsMessage(newIdSpec);
 		}
 
 		return false;
@@ -256,23 +267,14 @@ class HierarchyTreePanel extends JPanel {
 		}
 	}
 
-	private String checkObtainNewConceptName() {
+	private EntityIdSpec checkObtainConceptIdSpec(EntityIdSpec currentIdSpec) {
 
-		String name = new ConceptNameSelector(this).getSelection();
-
-		if (name != null && model.contentConcept(name)) {
-
-			showConceptAlreadyExistsMessage(name);
-
-			return null;
-		}
-
-		return name;
+		return new ConceptIdSelector(this, currentIdSpec).getSelection();
 	}
 
-	private void showConceptAlreadyExistsMessage(String name) {
+	private void showConceptAlreadyExistsMessage(EntityIdSpec idSpec) {
 
-		InfoDisplay.inform("Concept already exists: " + name);
+		InfoDisplay.inform("Concept already exists: " + idSpec.getName());
 	}
 
 	private boolean obtainConceptRemovalConfirmation(Concept concept) {

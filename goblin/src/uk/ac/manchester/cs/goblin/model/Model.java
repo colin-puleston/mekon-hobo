@@ -1,6 +1,5 @@
 package uk.ac.manchester.cs.goblin.model;
 
-import java.net.*;
 import java.util.*;
 
 /**
@@ -12,7 +11,7 @@ public class Model {
 	private String contentNamespace;
 
 	private List<Hierarchy> hierarchies = new ArrayList<Hierarchy>();
-	private Map<String, Hierarchy> hierarchiesByRootNames = new HashMap<String, Hierarchy>();
+	private Map<EntityId, Hierarchy> hierarchiesByRootConcepts = new HashMap<EntityId, Hierarchy>();
 
 	private EditActions editActions;
 	private ConceptTracking conceptTracking;
@@ -65,12 +64,13 @@ public class Model {
 		return editActions.redo();
 	}
 
-	public Hierarchy addHierarchy(String rootConceptName) {
+	public Hierarchy addHierarchy(EntityIdSpec rootConceptIdSpec) {
 
-		Hierarchy hierarchy = new Hierarchy(this, getCoreId(rootConceptName));
+		EntityId rootConceptId = toCoreId(rootConceptIdSpec);
+		Hierarchy hierarchy = new Hierarchy(this, rootConceptId);
 
 		hierarchies.add(hierarchy);
-		hierarchiesByRootNames.put(rootConceptName, hierarchy);
+		hierarchiesByRootConcepts.put(rootConceptId, hierarchy);
 
 		return hierarchy;
 	}
@@ -80,13 +80,14 @@ public class Model {
 		return new ArrayList<Hierarchy>(hierarchies);
 	}
 
-	public Hierarchy getHierarchy(String rootConceptName) {
+	public Hierarchy getHierarchy(EntityIdSpec rootConceptIdSpec) {
 
-		Hierarchy hierarchy = hierarchiesByRootNames.get(rootConceptName);
+		EntityId rootConceptId = toCoreId(rootConceptIdSpec);
+		Hierarchy hierarchy = hierarchiesByRootConcepts.get(rootConceptId);
 
 		if (hierarchy == null) {
 
-			throw new RuntimeException("Not root-concept: " + rootConceptName);
+			throw new RuntimeException("Not root-concept: " + rootConceptId);
 		}
 
 		return hierarchy;
@@ -94,40 +95,36 @@ public class Model {
 
 	public Concept getConcept(EntityId conceptId) {
 
-		for (Hierarchy hierarchy : hierarchies) {
+		Concept concept = lookForConcept(conceptId);
 
-			if (hierarchy.hasConcept(conceptId)) {
+		if (concept != null) {
 
-				return hierarchy.getConcept(conceptId);
-			}
+			return concept;
 		}
 
 		throw new RuntimeException("Cannot find concept: " + conceptId);
 	}
 
-	public EntityId getCoreId(String name) {
+	public EntityId toCoreId(EntityIdSpec idSpec) {
 
-		return getEntityId(coreNamespace, name);
+		return idSpec.toId(coreNamespace);
 	}
 
-	public boolean contentConcept(String name) {
+	public boolean contentConceptExists(EntityIdSpec idSpec) {
 
-		EntityId id = getContentId(name);
-
-		for (Hierarchy hierarchy : hierarchies) {
-
-			if (hierarchy.hasConcept(id)) {
-
-				return true;
-			}
-		}
-
-		return false;
+		return conceptExists(toContentId(idSpec));
 	}
 
-	EntityId getContentId(String name) {
+	boolean canResetContentConceptId(Concept concept, EntityIdSpec newIdSpec) {
 
-		return getEntityId(contentNamespace, name);
+		EntityId newId = toContentId(newIdSpec);
+
+		return concept.getConceptId().equals(newId) || !conceptExists(newId);
+	}
+
+	EntityId toContentId(EntityIdSpec idSpec) {
+
+		return idSpec.toId(contentNamespace);
 	}
 
 	EditActions getEditActions() {
@@ -150,20 +147,21 @@ public class Model {
 		return conflictResolver;
 	}
 
-	private EntityId getEntityId(String namespace, String name) {
+	private Concept lookForConcept(EntityId conceptId) {
 
-		return new EntityId(getURI(namespace, name));
+		for (Hierarchy hierarchy : hierarchies) {
+
+			if (hierarchy.hasConcept(conceptId)) {
+
+				return hierarchy.getConcept(conceptId);
+			}
+		}
+
+		return null;
 	}
 
-	private URI getURI(String namespace, String name) {
+	private boolean conceptExists(EntityId conceptId) {
 
-		try {
-
-			return new URI(namespace + '#' + name);
-		}
-		catch (URISyntaxException e) {
-
-			throw new RuntimeException("Not a valid URI fragment: " + name);
-		}
+		return lookForConcept(conceptId) != null;
 	}
 }

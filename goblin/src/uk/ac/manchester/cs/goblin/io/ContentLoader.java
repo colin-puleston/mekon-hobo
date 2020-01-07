@@ -1,5 +1,6 @@
 package uk.ac.manchester.cs.goblin.io;
 
+import java.net.*;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
@@ -527,6 +528,9 @@ class ContentLoader {
 
 	private EntityId getConceptId(OWLClass cls) {
 
-		return new EntityId(cls.getIRI().toURI());
+		URI uri = cls.getIRI().toURI();
+		String label = ontology.lookForLabel(cls);
+
+		return label != null ? new EntityId(uri, label) : new EntityId(uri);
 	}
 }

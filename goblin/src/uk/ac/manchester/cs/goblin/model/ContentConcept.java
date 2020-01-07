@@ -7,11 +7,11 @@ class ContentConcept extends Concept {
 
 	private ConceptTracker parent;
 
-	public boolean rename(String newName) {
+	public boolean resetId(EntityIdSpec newIdSpec) {
 
-		if (canRenameTo(newName)) {
+		if (canResetId(newIdSpec)) {
 
-			replace(new ContentConcept(this, getContentId(newName)));
+			replace(new ContentConcept(this, toContentId(newIdSpec)));
 
 			return true;
 		}
@@ -74,9 +74,9 @@ class ContentConcept extends Concept {
 		parent = replaced.parent;
 	}
 
-	private boolean canRenameTo(String newName) {
+	private boolean canResetId(EntityIdSpec newIdSpec) {
 
-		return !getModel().contentConcept(newName);
+		return getModel().canResetContentConceptId(this, newIdSpec);
 	}
 
 	private ConflictResolution checkMoveConflicts(Concept newParent) {
@@ -101,8 +101,8 @@ class ContentConcept extends Concept {
 		return getModel().getConceptTracking().toTracker(concept);
 	}
 
-	private EntityId getContentId(String name) {
+	private EntityId toContentId(EntityIdSpec newIdSpec) {
 
-		return getModel().getContentId(name);
+		return getModel().toContentId(newIdSpec);
 	}
 }

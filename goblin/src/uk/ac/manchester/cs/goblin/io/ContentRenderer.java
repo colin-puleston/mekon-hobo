@@ -144,7 +144,7 @@ class ContentRenderer {
 
 		for (Concept sub : concept.getChildren()) {
 
-			renderHierarchyFrom(sub, addClass(cls, getIRI(sub)));
+			renderHierarchyFrom(sub, addClass(cls, sub.getConceptId()));
 		}
 	}
 
@@ -165,9 +165,18 @@ class ContentRenderer {
 		}
 	}
 
-	private OWLClass addClass(OWLClass cls, IRI iri) {
+	private OWLClass addClass(OWLClass sup, EntityId conceptId) {
 
-		return ontology.addClass(cls, iri);
+		OWLClass cls = addClass(sup, getIRI(conceptId));
+
+		ontology.addLabel(sup, conceptId.getLabel());
+
+		return cls;
+	}
+
+	private OWLClass addClass(OWLClass sup, IRI iri) {
+
+		return ontology.addClass(sup, iri);
 	}
 
 	private Set<OWLClass> getSubClasses(OWLClass cls, boolean direct) {
@@ -200,11 +209,6 @@ class ContentRenderer {
 	private OWLObjectProperty getObjectProperty(EntityId id) {
 
 		return ontology.getObjectProperty(getIRI(id));
-	}
-
-	private IRI getIRI(Concept concept) {
-
-		return getIRI(concept.getConceptId());
 	}
 
 	private IRI getIRI(EntityId id) {

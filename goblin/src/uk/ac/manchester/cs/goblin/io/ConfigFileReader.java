@@ -58,7 +58,7 @@ class ConfigFileReader {
 
 		EntityId getCoreId(KConfigNode node, String tag) {
 
-			return model.getCoreId(node.getString(tag));
+			return model.toCoreId(getEntityIdSpec(node, tag));
 		}
 
 		private void loadHierarchyTypes(KConfigNode hierarchyNode, Hierarchy hierarchy) {
@@ -76,9 +76,12 @@ class ConfigFileReader {
 
 		private Concept getRootTargetConcept(KConfigNode node) {
 
-			String conceptName = node.getString(ROOT_TARGET_CONCEPT_ATTR);
+			return model.getHierarchy(getRootTargetConceptIdSpec(node)).getRoot();
+		}
 
-			return model.getHierarchy(conceptName).getRoot();
+		private EntityIdSpec getRootTargetConceptIdSpec(KConfigNode node) {
+
+			return getEntityIdSpec(node, ROOT_TARGET_CONCEPT_ATTR);
 		}
 	}
 
@@ -151,7 +154,7 @@ class ConfigFileReader {
 
 		for (KConfigNode node : rootNode.getChildren(HIERARCHY_TAG)) {
 
-			model.addHierarchy(getRootConcept(node));
+			model.addHierarchy(getRootConceptIdSpec(node));
 		}
 	}
 
@@ -160,8 +163,13 @@ class ConfigFileReader {
 		return rootNode.getString(CORE_NAMESPACE_ATTR);
 	}
 
-	private String getRootConcept(KConfigNode hierarchyNode) {
+	private EntityIdSpec getRootConceptIdSpec(KConfigNode hierarchyNode) {
 
-		return hierarchyNode.getString(ROOT_CONCEPT_ATTR);
+		return getEntityIdSpec(hierarchyNode, ROOT_CONCEPT_ATTR);
+	}
+
+	private EntityIdSpec getEntityIdSpec(KConfigNode node, String tag) {
+
+		return EntityIdSpec.fromName(node.getString(tag));
 	}
 }

@@ -8,6 +8,8 @@ import org.semanticweb.owlapi.model.parameters.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.*;
 import org.semanticweb.owlapi.apibinding.*;
+import org.semanticweb.owlapi.search.*;
+import org.semanticweb.owlapi.vocab.*;
 import org.semanticweb.owlapi.rdf.rdfxml.renderer.*;
 
 /**
@@ -15,17 +17,25 @@ import org.semanticweb.owlapi.rdf.rdfxml.renderer.*;
  */
 class Ontology {
 
+	static private final IRI LABEL_ANNOTATION_IRI = OWLRDFVocabulary.RDFS_LABEL.getIRI();
+
 	private OWLOntologyManager manager;
-	private OWLOntology ontology;
+	private OWLOntology mainOntology;
+	private Set<OWLOntology> allOntologies;
 	private OWLDataFactory factory;
 	private OWLReasoner reasoner;
+
+	private OWLAnnotationProperty labelAnnotationProperty;
 
 	Ontology(File file) {
 
 		manager = createManager(file);
-		ontology = loadOntology(file);
+		mainOntology = loadOntology(file);
+		allOntologies = manager.getOntologies();
 		factory = manager.getOWLDataFactory();
 		reasoner = createReasoner();
+
+		labelAnnotationProperty = getLabelAnnotationProperty();
 	}
 
 	void addPremiseAxiom(
@@ -60,8 +70,17 @@ class Ontology {
 
 	void removeClass(OWLClass cls) {
 
-		manager.removeAxioms(ontology, getAxioms(cls));
-		manager.removeAxiom(ontology, factory.getOWLDeclarationAxiom(cls));
+		manager.removeAxioms(mainOntology, getAxioms(cls));
+		manager.removeAxiom(mainOntology, factory.getOWLDeclarationAxiom(cls));
+	}
+
+	void addLabel(OWLClass cls, String label) {
+
+		addAxiom(
+			factory.getOWLAnnotationAssertionAxiom(
+				labelAnnotationProperty,
+				cls.getIRI(),
+				factory.getOWLLiteral(label)));
 	}
 
 	void write(File file) {
@@ -72,7 +91,7 @@ class Ontology {
 
 			try {
 
-				new RDFXMLRenderer(ontology, writer).render();
+				new RDFXMLRenderer(mainOntology, writer).render();
 			}
 			finally {
 
@@ -87,7 +106,7 @@ class Ontology {
 
 	Set<OWLClassAxiom> getAxioms(OWLClass cls) {
 
-		return ontology.getAxioms(cls, Imports.INCLUDED);
+		return mainOntology.getAxioms(cls, Imports.INCLUDED);
 	}
 
 	Set<OWLClass> getSubClasses(OWLClass cls, boolean direct) {
@@ -101,7 +120,7 @@ class Ontology {
 
 	boolean classExists(IRI iri) {
 
-		for (OWLOntology ont : manager.getOntologies()) {
+		for (OWLOntology ont : allOntologies) {
 
 			if (ont.containsClassInSignature(iri)) {
 
@@ -120,6 +139,21 @@ class Ontology {
 	OWLObjectProperty getObjectProperty(IRI iri) {
 
 		return factory.getOWLObjectProperty(iri);
+	}
+
+	String lookForLabel(OWLClass cls) {
+
+		for (OWLAnnotation anno : getLabelAnnotations(cls)) {
+
+			OWLAnnotationValue value = anno.getValue();
+
+			if (value instanceof OWLLiteral) {
+
+				return ((OWLLiteral)value).getLiteral();
+			}
+		}
+
+		return null;
 	}
 
 	private OWLOntologyManager createManager(File file) {
@@ -150,7 +184,7 @@ class Ontology {
 
 	private OWLReasoner createReasoner() {
 
-		return new StructuralReasonerFactory().createReasoner(ontology);
+		return new StructuralReasonerFactory().createReasoner(mainOntology);
 	}
 
 	private OWLClassExpression getConstraintTargetValuesExpr(Set<OWLClass> values) {
@@ -165,6 +199,16 @@ class Ontology {
 
 	private void addAxiom(OWLAxiom axiom) {
 
-		manager.addAxiom(ontology, axiom);
+		manager.addAxiom(mainOntology, axiom);
+	}
+
+	private OWLAnnotationProperty getLabelAnnotationProperty() {
+
+		return factory.getOWLAnnotationProperty(LABEL_ANNOTATION_IRI);
+	}
+
+	private Collection<OWLAnnotation> getLabelAnnotations(OWLClass cls) {
+
+		return EntitySearcher.getAnnotations(cls, allOntologies, labelAnnotationProperty);
 	}
 }
