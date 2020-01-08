@@ -210,6 +210,14 @@ class ConceptIdSelector extends GDialog {
 		}
 	}
 
+	private class WindowCloseListener extends WindowAdapter {
+
+		public void windowClosing(WindowEvent e) {
+
+			selection = null;
+		}
+	}
+
 	ConceptIdSelector(JComponent parent, EntityIdSpec initialSelection) {
 
 		super(parent, TITLE, true);
@@ -217,6 +225,8 @@ class ConceptIdSelector extends GDialog {
 		selection = initialSelection;
 
 		okButton.setEnabled(false);
+		addWindowListener(new WindowCloseListener());
+
 		display(createDisplay());
 	}
 
