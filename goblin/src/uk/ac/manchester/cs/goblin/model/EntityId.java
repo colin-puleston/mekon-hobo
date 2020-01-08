@@ -7,11 +7,23 @@ import java.net.*;
  */
 public class EntityId {
 
+	static private final char[] URI_FINAL_SEPARATOR_CHARS = new char[]{'#', '/', ':'};
+
 	static private String getDefaultLabel(URI uri) {
 
-		String fragment = uri.getFragment();
+		String u = uri.toString();
 
-		return fragment != null ? fragment : uri.toString();
+		for (char c : URI_FINAL_SEPARATOR_CHARS) {
+
+			int i = u.lastIndexOf(c);
+
+			if (i != -1 && i != u.length() - 1) {
+
+				return u.substring(i + 1);
+			}
+		}
+
+		return u;
 	}
 
 	private URI uri;
