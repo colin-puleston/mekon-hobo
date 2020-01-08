@@ -1,54 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Goblin
-	coreNamespace="http://mekon/demo-core.owl"
 	contentNamespace="http://mekon/demo-content.owl"
 	contentFilename="demo-content.owl">
 
 	<Hierarchy
-		rootConcept="Gender">
+		rootConcept="http://mekon/demo-core.owl#Gender">
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="Industry">
+		rootConcept="http://mekon/demo-core.owl#Industry">
 		<SimpleConstraintType
-			linkingProperty="sector"
-			rootTargetConcept="IndustrySector">
+			linkingProperty="http://mekon/demo-core.owl#sector"
+			rootTargetConcept="http://mekon/demo-core.owl#IndustrySector">
 		</SimpleConstraintType>
 		<AnchoredConstraintType
-			anchorConcept="Job"
-			sourceProperty="industry"
-			targetProperty="jobType"
-			rootTargetConcept="JobType">
+			anchorConcept="http://mekon/demo-core.owl#Job"
+			sourceProperty="http://mekon/demo-core.owl#industry"
+			targetProperty="http://mekon/demo-core.owl#jobType"
+			rootTargetConcept="http://mekon/demo-core.owl#JobType">
 		</AnchoredConstraintType>
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="IndustrySector">
+		rootConcept="http://mekon/demo-core.owl#IndustrySector">
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="JobType">
+		rootConcept="http://mekon/demo-core.owl#JobType">
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="Location">
+		rootConcept="http://mekon/demo-core.owl#Location">
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="ResearchArea">
+		rootConcept="http://mekon/demo-core.owl#ResearchArea">
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="Student">
+		rootConcept="http://mekon/demo-core.owl#Student">
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="TravelClass">
+		rootConcept="http://mekon/demo-core.owl#TravelClass">
 	</Hierarchy>
 
 	<Hierarchy
-		rootConcept="Trip">
+		rootConcept="http://mekon/demo-core.owl#Trip">
 	</Hierarchy>
 
 </Goblin>
