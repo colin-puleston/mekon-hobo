@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Goblin
-	contentNamespace="http://mekon/demo-content.owl"
-	contentFilename="demo-content.owl">
+	dynamicNamespace="http://mekon/demo-dynamic.owl"
+	dynamicFilename="demo-dynamic.owl">
 
 	<Hierarchy
 		rootConcept="http://mekon/demo-core.owl#Gender">

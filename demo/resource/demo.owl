@@ -6,7 +6,7 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <owl:Ontology rdf:about="http://mekon/demo.owl">
         <owl:imports rdf:resource="http://mekon/demo-core.owl"/>
-        <owl:imports rdf:resource="http://mekon/demo-content.owl"/>
-        <owl:imports rdf:resource="http://mekon/demo-content-extn.owl"/>
+        <owl:imports rdf:resource="http://mekon/demo-dynamic.owl"/>
+        <owl:imports rdf:resource="http://mekon/demo-dynamic-extn.owl"/>
     </owl:Ontology>
 </rdf:RDF>

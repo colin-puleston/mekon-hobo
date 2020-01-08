@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<rdf:RDF xmlns="http://mekon/demo-content-extn.owl#"
-     xml:base="http://mekon/demo-content-extn.owl"
+<rdf:RDF xmlns="http://mekon/demo-dynamic-extn.owl#"
+     xml:base="http://mekon/demo-dynamic-extn.owl"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:uk="http://uk.ac.manchester.cs.bhig.mekon.kr.indirect.owl#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <owl:Ontology rdf:about="http://mekon/demo-content-extn.owl">
-        <owl:imports rdf:resource="http://mekon/demo-content.owl"/>
+    <owl:Ontology rdf:about="http://mekon/demo-dynamic-extn.owl">
+        <owl:imports rdf:resource="http://mekon/demo-dynamic.owl"/>
         <owl:imports rdf:resource="http://mekon/demo-core.owl"/>
     </owl:Ontology>
     
@@ -42,20 +42,20 @@
     
 
 
-    <!-- http://mekon/demo-content-extn.owl#AcademicTeachingJob -->
+    <!-- http://mekon/demo-dynamic-extn.owl#AcademicTeachingJob -->
 
-    <owl:Class rdf:about="http://mekon/demo-content-extn.owl#AcademicTeachingJob">
+    <owl:Class rdf:about="http://mekon/demo-dynamic-extn.owl#AcademicTeachingJob">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://mekon/demo-core.owl#Job"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://mekon/demo-core.owl#industry"/>
-                        <owl:someValuesFrom rdf:resource="http://mekon/demo-content.owl#Academia"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo-dynamic.owl#Academia"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://mekon/demo-core.owl#jobType"/>
-                        <owl:someValuesFrom rdf:resource="http://mekon/demo-content.owl#Teacher"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo-dynamic.owl#Teacher"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -64,16 +64,16 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo-core.owl#teaches"/>
-                <owl:allValuesFrom rdf:resource="http://mekon/demo-content.owl#UniversityStudent"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo-dynamic.owl#UniversityStudent"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
     
 
 
-    <!-- http://mekon/demo-content-extn.owl#ResearchJob -->
+    <!-- http://mekon/demo-dynamic-extn.owl#ResearchJob -->
 
-    <owl:Class rdf:about="http://mekon/demo-content-extn.owl#ResearchJob">
+    <owl:Class rdf:about="http://mekon/demo-dynamic-extn.owl#ResearchJob">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -83,8 +83,8 @@
                         <owl:someValuesFrom>
                             <owl:Class>
                                 <owl:unionOf rdf:parseType="Collection">
-                                    <rdf:Description rdf:about="http://mekon/demo-content.owl#ResearchLecturer"/>
-                                    <rdf:Description rdf:about="http://mekon/demo-content.owl#Researcher"/>
+                                    <rdf:Description rdf:about="http://mekon/demo-dynamic.owl#ResearchLecturer"/>
+                                    <rdf:Description rdf:about="http://mekon/demo-dynamic.owl#Researcher"/>
                                 </owl:unionOf>
                             </owl:Class>
                         </owl:someValuesFrom>
@@ -97,20 +97,20 @@
     
 
 
-    <!-- http://mekon/demo-content-extn.owl#SchoolsTeachingJob -->
+    <!-- http://mekon/demo-dynamic-extn.owl#SchoolsTeachingJob -->
 
-    <owl:Class rdf:about="http://mekon/demo-content-extn.owl#SchoolsTeachingJob">
+    <owl:Class rdf:about="http://mekon/demo-dynamic-extn.owl#SchoolsTeachingJob">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://mekon/demo-core.owl#Job"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://mekon/demo-core.owl#industry"/>
-                        <owl:someValuesFrom rdf:resource="http://mekon/demo-content.owl#Schools"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo-dynamic.owl#Schools"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://mekon/demo-core.owl#jobType"/>
-                        <owl:someValuesFrom rdf:resource="http://mekon/demo-content.owl#Teacher"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo-dynamic.owl#Teacher"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -119,23 +119,23 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo-core.owl#teaches"/>
-                <owl:allValuesFrom rdf:resource="http://mekon/demo-content.owl#SchoolStudent"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo-dynamic.owl#SchoolStudent"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
     
 
 
-    <!-- http://mekon/demo-content-extn.owl#TeachingJob -->
+    <!-- http://mekon/demo-dynamic-extn.owl#TeachingJob -->
 
-    <owl:Class rdf:about="http://mekon/demo-content-extn.owl#TeachingJob">
+    <owl:Class rdf:about="http://mekon/demo-dynamic-extn.owl#TeachingJob">
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <rdf:Description rdf:about="http://mekon/demo-core.owl#Job"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://mekon/demo-core.owl#jobType"/>
-                        <owl:someValuesFrom rdf:resource="http://mekon/demo-content.owl#Teacher"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo-dynamic.owl#Teacher"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -151,9 +151,9 @@
     
 
 
-    <!-- http://mekon/demo-content.owl#TrainTrip -->
+    <!-- http://mekon/demo-dynamic.owl#TrainTrip -->
 
-    <rdf:Description rdf:about="http://mekon/demo-content.owl#TrainTrip">
+    <rdf:Description rdf:about="http://mekon/demo-dynamic.owl#TrainTrip">
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo-core.owl#travelClass"/>

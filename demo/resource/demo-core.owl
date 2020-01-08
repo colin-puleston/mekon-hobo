@@ -390,9 +390,9 @@
     
 
 
-    <!-- http://mekon/demo-core.owl#ContentConcept -->
+    <!-- http://mekon/demo-core.owl#DynamicConcept -->
 
-    <owl:Class rdf:about="http://mekon/demo-core.owl#ContentConcept">
+    <owl:Class rdf:about="http://mekon/demo-core.owl#DynamicConcept">
         <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DemoConcept"/>
     </owl:Class>
     
@@ -493,7 +493,7 @@
     <!-- http://mekon/demo-core.owl#Gender -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#Gender">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
     </owl:Class>
     
 
@@ -553,7 +553,7 @@
     <!-- http://mekon/demo-core.owl#Industry -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#Industry">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo-core.owl#sector"/>
@@ -568,7 +568,7 @@
     <!-- http://mekon/demo-core.owl#IndustrySector -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#IndustrySector">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
     </owl:Class>
     
 
@@ -633,7 +633,7 @@
     <!-- http://mekon/demo-core.owl#JobType -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#JobType">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
     </owl:Class>
     
 
@@ -641,7 +641,7 @@
     <!-- http://mekon/demo-core.owl#Location -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#Location">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
     </owl:Class>
     
 
@@ -810,7 +810,7 @@
     <!-- http://mekon/demo-core.owl#ResearchArea -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#ResearchArea">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
     </owl:Class>
     
 
@@ -826,7 +826,7 @@
     <!-- http://mekon/demo-core.owl#Student -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#Student">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
     </owl:Class>
     
 
@@ -850,7 +850,7 @@
     <!-- http://mekon/demo-core.owl#TravelClass -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#TravelClass">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
     </owl:Class>
     
 
@@ -858,7 +858,7 @@
     <!-- http://mekon/demo-core.owl#Trip -->
 
     <owl:Class rdf:about="http://mekon/demo-core.owl#Trip">
-        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#ContentConcept"/>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo-core.owl#DynamicConcept"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://mekon/demo-core.owl#milesTravelled"/>
