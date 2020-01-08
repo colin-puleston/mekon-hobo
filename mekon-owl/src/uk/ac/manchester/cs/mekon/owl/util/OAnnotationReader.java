@@ -129,14 +129,11 @@ public class OAnnotationReader {
 
 		for (OWLAnnotation anno : getAnnotations(entity, property)) {
 
-			if (anno.getProperty().equals(property)) {
+			OWLAnnotationValue value = anno.getValue();
 
-				OWLAnnotationValue value = anno.getValue();
+			if (value instanceof OWLLiteral) {
 
-				if (value instanceof OWLLiteral) {
-
-					values.add(((OWLLiteral)value).getLiteral());
-				}
+				values.add(((OWLLiteral)value).getLiteral());
 			}
 		}
 	}
