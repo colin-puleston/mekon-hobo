@@ -1,9 +1,13 @@
 package uk.ac.manchester.cs.goblin.io;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.config.*;
+
 import uk.ac.manchester.cs.goblin.model.*;
 
 /**
@@ -17,7 +21,6 @@ class ConfigFileReader {
 	static private final String ANCHORED_CONSTRAINT_TYPE_TAG = "AnchoredConstraintType";
 	static private final String SIMPLE_CONSTRAINT_TYPE_TAG = "SimpleConstraintType";
 
-	static private final String CORE_NAMESPACE_ATTR = "coreNamespace";
 	static private final String CONTENT_NAMESPACE_ATTR = "contentNamespace";
 	static private final String CONTENT_FILEATTR = "contentFilename";
 
@@ -36,108 +39,125 @@ class ConfigFileReader {
 
 	private KConfigNode rootNode = loadFile();
 
-	private abstract class ConstraintTypesLoader {
+	private class CoreModelPopulator {
 
 		private Model model;
+		private Ontology ontology;
 
-		ConstraintTypesLoader(Model model) {
+		private abstract class ConstraintTypesLoader {
+
+			ConstraintTypesLoader() {
+
+				Iterator<Hierarchy> hierarchies = model.getHierarchies().iterator();
+
+				for (KConfigNode hierarchyNode : rootNode.getChildren(HIERARCHY_TAG)) {
+
+					loadHierarchyTypes(hierarchyNode, hierarchies.next());
+				}
+			}
+
+			abstract String getTypeTag();
+
+			abstract ConstraintType loadType(KConfigNode node, Concept rootSrc, Concept rootTgt);
+
+			private void loadHierarchyTypes(KConfigNode hierarchyNode, Hierarchy hierarchy) {
+
+				for (KConfigNode typeNode : hierarchyNode.getChildren(getTypeTag())) {
+
+					hierarchy.addConstraintType(loadType(typeNode, hierarchy));
+				}
+			}
+
+			private ConstraintType loadType(KConfigNode node, Hierarchy hierarchy) {
+
+				return loadType(node, hierarchy.getRoot(), getRootTargetConcept(node));
+			}
+		}
+
+		private class SimpleConstraintTypesLoader extends ConstraintTypesLoader {
+
+			String getTypeTag() {
+
+				return SIMPLE_CONSTRAINT_TYPE_TAG;
+			}
+
+			ConstraintType loadType(KConfigNode node, Concept rootSrc, Concept rootTgt) {
+
+				EntityId lnkProp = getPropertyId(node, LINKING_PROPERTY_ATTR);
+
+				return new SimpleConstraintType(lnkProp, rootSrc, rootTgt);
+			}
+		}
+
+		private class AnchoredConstraintTypesLoader extends ConstraintTypesLoader {
+
+			String getTypeTag() {
+
+				return ANCHORED_CONSTRAINT_TYPE_TAG;
+			}
+
+			ConstraintType loadType(KConfigNode node, Concept rootSrc, Concept rootTgt) {
+
+				EntityId anchor = getConceptId(node, ANCHOR_CONCEPT_ATTR);
+
+				EntityId srcProp = getPropertyId(node, SOURCE_PROPERTY_ATTR);
+				EntityId tgtProp = getPropertyId(node, TARGET_PROPERTY_ATTR);
+
+				return new AnchoredConstraintType(anchor, srcProp, tgtProp, rootSrc, rootTgt);
+			}
+		}
+
+		CoreModelPopulator(Model model, Ontology ontology) {
 
 			this.model = model;
+			this.ontology = ontology;
 
-			Iterator<Hierarchy> hierarchies = model.getHierarchies().iterator();
+			loadHierarchies();
 
-			for (KConfigNode hierarchyNode : rootNode.getChildren(HIERARCHY_TAG)) {
+			new SimpleConstraintTypesLoader();
+			new AnchoredConstraintTypesLoader();
+		}
 
-				loadHierarchyTypes(hierarchyNode, hierarchies.next());
+		private void loadHierarchies() {
+
+			for (KConfigNode node : rootNode.getChildren(HIERARCHY_TAG)) {
+
+				model.addHierarchy(getRootConceptId(node));
 			}
-		}
-
-		abstract String getTypeTag();
-
-		abstract ConstraintType loadType(KConfigNode node, Concept rootSrc, Concept rootTgt);
-
-		EntityId getCoreId(KConfigNode node, String tag) {
-
-			return model.toCoreId(getEntityIdSpec(node, tag));
-		}
-
-		private void loadHierarchyTypes(KConfigNode hierarchyNode, Hierarchy hierarchy) {
-
-			for (KConfigNode typeNode : hierarchyNode.getChildren(getTypeTag())) {
-
-				hierarchy.addConstraintType(loadType(typeNode, hierarchy));
-			}
-		}
-
-		private ConstraintType loadType(KConfigNode node, Hierarchy hierarchy) {
-
-			return loadType(node, hierarchy.getRoot(), getRootTargetConcept(node));
 		}
 
 		private Concept getRootTargetConcept(KConfigNode node) {
 
-			return model.getHierarchy(getRootTargetConceptIdSpec(node)).getRoot();
+			return model.getHierarchy(getRootTargetConceptId(node)).getRoot();
 		}
 
-		private EntityIdSpec getRootTargetConceptIdSpec(KConfigNode node) {
+		private EntityId getRootConceptId(KConfigNode node) {
 
-			return getEntityIdSpec(node, ROOT_TARGET_CONCEPT_ATTR);
-		}
-	}
-
-	private class SimpleConstraintTypesLoader extends ConstraintTypesLoader {
-
-		SimpleConstraintTypesLoader(Model model) {
-
-			super(model);
+			return getPropertyId(node, ROOT_CONCEPT_ATTR);
 		}
 
-		String getTypeTag() {
+		private EntityId getRootTargetConceptId(KConfigNode node) {
 
-			return SIMPLE_CONSTRAINT_TYPE_TAG;
+			return getPropertyId(node, ROOT_TARGET_CONCEPT_ATTR);
 		}
 
-		ConstraintType loadType(KConfigNode node, Concept rootSrc, Concept rootTgt) {
+		private EntityId getConceptId(KConfigNode node, String tag) {
 
-			EntityId lnkProp = getCoreId(node, LINKING_PROPERTY_ATTR);
+			URI uri = node.getURI(tag);
+			String label = lookForConceptLabel(uri);
 
-			return new SimpleConstraintType(lnkProp, rootSrc, rootTgt);
-		}
-	}
-
-	private class AnchoredConstraintTypesLoader extends ConstraintTypesLoader {
-
-		AnchoredConstraintTypesLoader(Model model) {
-
-			super(model);
+			return label != null ? new EntityId(uri, label) : new EntityId(uri);
 		}
 
-		String getTypeTag() {
+		private EntityId getPropertyId(KConfigNode node, String tag) {
 
-			return ANCHORED_CONSTRAINT_TYPE_TAG;
+			return new EntityId(node.getURI(tag));
 		}
 
-		ConstraintType loadType(KConfigNode node, Concept rootSrc, Concept rootTgt) {
+		private String lookForConceptLabel(URI uri) {
 
-			EntityId anchor = getCoreId(node, ANCHOR_CONCEPT_ATTR);
-
-			EntityId srcProp = getCoreId(node, SOURCE_PROPERTY_ATTR);
-			EntityId tgtProp = getCoreId(node, TARGET_PROPERTY_ATTR);
-
-			return new AnchoredConstraintType(anchor, srcProp, tgtProp, rootSrc, rootTgt);
+			return ontology.lookForLabel(ontology.getClass(IRI.create(uri)));
 		}
-	}
-
-	Model loadCoreModel() {
-
-		Model model = new Model(getCoreNamespace(), getContentNamespace());
-
-		loadHierarchies(model);
-
-		new SimpleConstraintTypesLoader(model);
-		new AnchoredConstraintTypesLoader(model);
-
-		return model;
 	}
 
 	File getContentFile() {
@@ -150,26 +170,12 @@ class ConfigFileReader {
 		return rootNode.getString(CONTENT_NAMESPACE_ATTR);
 	}
 
-	private void loadHierarchies(Model model) {
+	Model loadCoreModel(Ontology ontology) {
 
-		for (KConfigNode node : rootNode.getChildren(HIERARCHY_TAG)) {
+		Model model = new Model(getContentNamespace());
 
-			model.addHierarchy(getRootConceptIdSpec(node));
-		}
-	}
+		new CoreModelPopulator(model, ontology);
 
-	private String getCoreNamespace() {
-
-		return rootNode.getString(CORE_NAMESPACE_ATTR);
-	}
-
-	private EntityIdSpec getRootConceptIdSpec(KConfigNode hierarchyNode) {
-
-		return getEntityIdSpec(hierarchyNode, ROOT_CONCEPT_ATTR);
-	}
-
-	private EntityIdSpec getEntityIdSpec(KConfigNode node, String tag) {
-
-		return EntityIdSpec.fromName(node.getString(tag));
+		return model;
 	}
 }

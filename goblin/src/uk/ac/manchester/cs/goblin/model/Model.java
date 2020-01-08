@@ -7,7 +7,6 @@ import java.util.*;
  */
 public class Model {
 
-	private String coreNamespace;
 	private String contentNamespace;
 
 	private List<Hierarchy> hierarchies = new ArrayList<Hierarchy>();
@@ -18,9 +17,8 @@ public class Model {
 	private ConstraintTracking constraintTracking;
 	private ConflictResolver conflictResolver;
 
-	public Model(String coreNamespace, String contentNamespace) {
+	public Model(String contentNamespace) {
 
-		this.coreNamespace = coreNamespace;
 		this.contentNamespace = contentNamespace;
 
 		editActions = new EditActions();
@@ -64,9 +62,8 @@ public class Model {
 		return editActions.redo();
 	}
 
-	public Hierarchy addHierarchy(EntityIdSpec rootConceptIdSpec) {
+	public Hierarchy addHierarchy(EntityId rootConceptId) {
 
-		EntityId rootConceptId = toCoreId(rootConceptIdSpec);
 		Hierarchy hierarchy = new Hierarchy(this, rootConceptId);
 
 		hierarchies.add(hierarchy);
@@ -80,9 +77,8 @@ public class Model {
 		return new ArrayList<Hierarchy>(hierarchies);
 	}
 
-	public Hierarchy getHierarchy(EntityIdSpec rootConceptIdSpec) {
+	public Hierarchy getHierarchy(EntityId rootConceptId) {
 
-		EntityId rootConceptId = toCoreId(rootConceptIdSpec);
 		Hierarchy hierarchy = hierarchiesByRootConcepts.get(rootConceptId);
 
 		if (hierarchy == null) {
@@ -103,11 +99,6 @@ public class Model {
 		}
 
 		throw new RuntimeException("Cannot find concept: " + conceptId);
-	}
-
-	public EntityId toCoreId(EntityIdSpec idSpec) {
-
-		return idSpec.toId(coreNamespace);
 	}
 
 	public boolean contentConceptExists(EntityIdSpec idSpec) {

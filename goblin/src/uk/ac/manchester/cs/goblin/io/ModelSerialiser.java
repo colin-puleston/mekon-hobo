@@ -10,7 +10,7 @@ import uk.ac.manchester.cs.goblin.model.*;
 public class ModelSerialiser {
 
 	private File contentFile;
-	private Ontology ontology = null;
+	private Ontology ontology;
 
 	private ConfigFileReader cfgReader = new ConfigFileReader();
 
@@ -55,7 +55,7 @@ public class ModelSerialiser {
 
 	private Model load(Ontology ont) throws BadContentOntologyException {
 
-		Model model = cfgReader.loadCoreModel();
+		Model model = cfgReader.loadCoreModel(ont);
 
 		new ContentLoader(model, ont);
 
