@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 public class DemoModelIds {
 
 	static public final CIdentity CORE_CONCEPT = coreId("CoreConcept");
-	static public final CIdentity CONTENT_CONCEPT = coreId("ContentConcept");
+	static public final CIdentity DYNAMIC_CONCEPT = coreId("DynamicConcept");
 
 	static public final CIdentity INTER_CORE_PROPERTY = coreId("interCoreProperty");
 	static public final CIdentity NUMERIC_PROPERTY = coreId("numericValue");
@@ -70,35 +70,35 @@ public class DemoModelIds {
 	static public final CIdentity LOCATION_PROPERTY = coreId("location");
 	static public final CIdentity TRAVEL_CLASS_PROPERTY = coreId("travelClass");
 
-	static public final CIdentity SPECIALIST = contentId("Specialist");
-	static public final CIdentity ACADEMIC_JOB = contentId("AcademicJob");
-	static public final CIdentity TEACHER = contentId("Teacher");
-	static public final CIdentity LECTURER = contentId("Lecturer");
-	static public final CIdentity RESEARCHER = contentId("Researcher");
-	static public final CIdentity MEDIC = contentId("Medic");
-	static public final CIdentity DOCTOR = contentId("Doctor");
-	static public final CIdentity NURSE = contentId("Nurse");
-	static public final CIdentity PHYSIO = contentId("Physio");
+	static public final CIdentity SPECIALIST = dynamicId("Specialist");
+	static public final CIdentity ACADEMIC_JOB = dynamicId("AcademicJob");
+	static public final CIdentity TEACHER = dynamicId("Teacher");
+	static public final CIdentity LECTURER = dynamicId("Lecturer");
+	static public final CIdentity RESEARCHER = dynamicId("Researcher");
+	static public final CIdentity MEDIC = dynamicId("Medic");
+	static public final CIdentity DOCTOR = dynamicId("Doctor");
+	static public final CIdentity NURSE = dynamicId("Nurse");
+	static public final CIdentity PHYSIO = dynamicId("Physio");
 
-	static public final CIdentity ACADEMIA = contentId("Academia");
-	static public final CIdentity HEALTH = contentId("Health");
+	static public final CIdentity ACADEMIA = dynamicId("Academia");
+	static public final CIdentity HEALTH = dynamicId("Health");
 
-	static public final CIdentity PUBLIC = contentId("Public");
-	static public final CIdentity PRIVATE = contentId("Private");
+	static public final CIdentity PUBLIC = dynamicId("Public");
+	static public final CIdentity PRIVATE = dynamicId("Private");
 
-	static public final CIdentity STUDENT = contentId("Student");
-	static public final CIdentity UNI_STUDENT = contentId("UniversityStudent");
-	static public final CIdentity POSTGRAD = contentId("Postgraduate");
-	static public final CIdentity UNDERGRAD = contentId("Undergraduate");
+	static public final CIdentity STUDENT = dynamicId("Student");
+	static public final CIdentity UNI_STUDENT = dynamicId("UniversityStudent");
+	static public final CIdentity POSTGRAD = dynamicId("Postgraduate");
+	static public final CIdentity UNDERGRAD = dynamicId("Undergraduate");
 
-	static public final CIdentity EU = contentId("EU");
-	static public final CIdentity UK = contentId("UK");
-	static public final CIdentity ENGLAND = contentId("England");
+	static public final CIdentity EU = dynamicId("EU");
+	static public final CIdentity UK = dynamicId("UK");
+	static public final CIdentity ENGLAND = dynamicId("England");
 
-	static public final CIdentity TRAIN_TRIP = contentId("TrainTrip");
+	static public final CIdentity TRAIN_TRIP = dynamicId("TrainTrip");
 
-	static public final CIdentity ACADEMIC_TEACHING_JOB = contentExtnId("AcademicTeachingJob");
-	static public final CIdentity RESEARCH_JOB = contentExtnId("ResearchJob");
+	static public final CIdentity ACADEMIC_TEACHING_JOB = dynamicExtnId("AcademicTeachingJob");
+	static public final CIdentity RESEARCH_JOB = dynamicExtnId("ResearchJob");
 
 	static private final String IDENTIFIER_FORMAT = "http://mekon/demo-%s.owl#%s";
 
@@ -107,14 +107,14 @@ public class DemoModelIds {
 		return createId("core", name);
 	}
 
-	static private CIdentity contentId(String name) {
+	static private CIdentity dynamicId(String name) {
 
-		return createId("content", name);
+		return createId("dynamic", name);
 	}
 
-	static private CIdentity contentExtnId(String name) {
+	static private CIdentity dynamicExtnId(String name) {
 
-		return createId("content-extn", name);
+		return createId("dynamic-extn", name);
 	}
 
 	static private CIdentity createId(String fileSuffix, String name) {
