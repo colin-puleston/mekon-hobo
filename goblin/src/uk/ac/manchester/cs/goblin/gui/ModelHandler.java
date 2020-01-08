@@ -66,9 +66,9 @@ class ModelHandler {
 
 		save();
 
-		File contentFile = checkContentFileSelection("Load");
+		File dynamicFile = checkDynamicFileSelection("Load");
 
-		if (contentFile != null && loadFrom(contentFile)) {
+		if (dynamicFile != null && loadFrom(dynamicFile)) {
 
 			copyEditListenersToNewModel();
 			resetEditCounts();
@@ -77,7 +77,7 @@ class ModelHandler {
 
 	boolean save() {
 
-		if (unsavedEdits() && confirmOverwrite(serialiser.getContentFile())) {
+		if (unsavedEdits() && confirmOverwrite(serialiser.getDynamicFile())) {
 
 			serialiser.save(model);
 			resetEditCounts();
@@ -90,13 +90,13 @@ class ModelHandler {
 
 	void saveAs() {
 
-		File contentFile = checkContentFileSelection("Save");
+		File dynamicFile = checkDynamicFileSelection("Save");
 
-		if (contentFile != null) {
+		if (dynamicFile != null) {
 
-			if (!contentFile.exists() || confirmOverwrite(contentFile)) {
+			if (!dynamicFile.exists() || confirmOverwrite(dynamicFile)) {
 
-				serialiser.saveAs(model, contentFile);
+				serialiser.saveAs(model, dynamicFile);
 				resetEditCounts();
 			}
 		}
@@ -106,7 +106,7 @@ class ModelHandler {
 
 		if (unsavedEdits()) {
 
-			Confirmation confirm = confirmOverwriteAndExit(serialiser.getContentFile());
+			Confirmation confirm = confirmOverwriteAndExit(serialiser.getDynamicFile());
 
 			if (confirm.cancel()) {
 
@@ -160,7 +160,7 @@ class ModelHandler {
 
 			return serialiser.load();
 		}
-		catch (BadContentOntologyException e) {
+		catch (BadDynamicOntologyException e) {
 
 			System.out.println(createCannotStartMessage(e.getMessage()));
 			System.exit(0);
@@ -169,19 +169,19 @@ class ModelHandler {
 		}
 	}
 
-	private boolean loadFrom(File contentFile) {
+	private boolean loadFrom(File dynamicFile) {
 
 		try {
 
-			model = serialiser.loadFrom(contentFile);
+			model = serialiser.loadFrom(dynamicFile);
 
 			initialiseModel();
 
 			return true;
 		}
-		catch (BadContentOntologyException e) {
+		catch (BadDynamicOntologyException e) {
 
-			informCannotLoadContentFile(e.getMessage());
+			informCannotLoadDynamicFile(e.getMessage());
 
 			return false;
 		}
@@ -193,33 +193,33 @@ class ModelHandler {
 		undoCount = 0;
 	}
 
-	private File checkContentFileSelection(String action) {
+	private File checkDynamicFileSelection(String action) {
 
-		JFileChooser chooser = createContentFileChooser();
+		JFileChooser chooser = createDynamicFileChooser();
 
 		if (chooser.showDialog(parentFrame, action) == JFileChooser.APPROVE_OPTION) {
 
-			return resolveContentFileSelection(chooser.getSelectedFile());
+			return resolveDynamicFileSelection(chooser.getSelectedFile());
 		}
 
 		return null;
 	}
 
-	private JFileChooser createContentFileChooser() {
+	private JFileChooser createDynamicFileChooser() {
 
 		JFileChooser chooser = new JFileChooser(getModelDir());
 
-		chooser.setFileFilter(createContentFileFilter());
+		chooser.setFileFilter(createDynamicFileFilter());
 
 		return chooser;
 	}
 
-	private FileNameExtensionFilter createContentFileFilter() {
+	private FileNameExtensionFilter createDynamicFileFilter() {
 
-		return new FileNameExtensionFilter("New \"content\" file", OWL_FILE_EXTN);
+		return new FileNameExtensionFilter("New dynamic-ontology file", OWL_FILE_EXTN);
 	}
 
-	private File resolveContentFileSelection(File file) {
+	private File resolveDynamicFileSelection(File file) {
 
 		String name = file.getName();
 
@@ -231,21 +231,21 @@ class ModelHandler {
 		return new File(file.getParent(), name + OWL_FILE_SUFFIX);
 	}
 
-	private void informCannotLoadContentFile(String specificMsg) {
+	private void informCannotLoadDynamicFile(String specificMsg) {
 
-		InfoDisplay.inform(createCannotLoadContentFileMessage(specificMsg));
+		InfoDisplay.inform(createCannotLoadDynamicFileMessage(specificMsg));
 	}
 
-	private Confirmation confirmOverwriteAndExit(File contentFile) {
+	private Confirmation confirmOverwriteAndExit(File dynamicFile) {
 
 		return InfoDisplay.checkConfirmOrCancel(
 					"Save unsaved model?",
-					createOverwriteMessage(contentFile));
+					createOverwriteMessage(dynamicFile));
 	}
 
-	private boolean confirmOverwrite(File contentFile) {
+	private boolean confirmOverwrite(File dynamicFile) {
 
-		return InfoDisplay.checkContinue(createOverwriteMessage(contentFile));
+		return InfoDisplay.checkContinue(createOverwriteMessage(dynamicFile));
 	}
 
 	private String createCannotStartMessage(String specificMsg) {
@@ -253,14 +253,14 @@ class ModelHandler {
 		return "Cannot start " + Goblin.SIMPLE_TITLE + ": " + specificMsg;
 	}
 
-	private String createCannotLoadContentFileMessage(String specificMsg) {
+	private String createCannotLoadDynamicFileMessage(String specificMsg) {
 
-		return "Cannot load content-file: " + specificMsg;
+		return "Cannot load dynamic-ontology file: " + specificMsg;
 	}
 
-	private String createOverwriteMessage(File contentFile) {
+	private String createOverwriteMessage(File dynamicFile) {
 
-		return "Save model to \"" + contentFile + "\": Overwrite current file?";
+		return "Save model to \"" + dynamicFile + "\": Overwrite current file?";
 	}
 
 	private void copyEditListenersToNewModel() {
@@ -273,6 +273,6 @@ class ModelHandler {
 
 	private File getModelDir() {
 
-		return serialiser.getContentFile().getParentFile();
+		return serialiser.getDynamicFile().getParentFile();
 	}
 }

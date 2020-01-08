@@ -9,28 +9,28 @@ import uk.ac.manchester.cs.goblin.model.*;
  */
 public class ModelSerialiser {
 
-	private File contentFile;
+	private File dynamicFile;
 	private Ontology ontology;
 
 	private ConfigFileReader cfgReader = new ConfigFileReader();
 
 	public ModelSerialiser() {
 
-		contentFile = cfgReader.getContentFile();
-		ontology = new Ontology(contentFile);
+		dynamicFile = cfgReader.getDynamicFile();
+		ontology = new Ontology(dynamicFile);
 	}
 
-	public Model load() throws BadContentOntologyException {
+	public Model load() throws BadDynamicOntologyException {
 
 		return load(ontology);
 	}
 
-	public Model loadFrom(File file) throws BadContentOntologyException {
+	public Model loadFrom(File file) throws BadDynamicOntologyException {
 
 		Ontology ont = new Ontology(file);
 		Model model = load(ont);
 
-		contentFile = file;
+		dynamicFile = file;
 		ontology = ont;
 
 		return model;
@@ -38,32 +38,32 @@ public class ModelSerialiser {
 
 	public void save(Model model) {
 
-		new ContentRenderer(ontology, getContentNamespace()).write(model, contentFile);
+		new DynamicModelRenderer(ontology, getDynamicNamespace()).write(model, dynamicFile);
 	}
 
 	public void saveAs(Model model, File file) {
 
-		contentFile = file;
+		dynamicFile = file;
 
 		save(model);
 	}
 
-	public File getContentFile() {
+	public File getDynamicFile() {
 
-		return contentFile;
+		return dynamicFile;
 	}
 
-	private Model load(Ontology ont) throws BadContentOntologyException {
+	private Model load(Ontology ont) throws BadDynamicOntologyException {
 
 		Model model = cfgReader.loadCoreModel(ont);
 
-		new ContentLoader(model, ont);
+		new DynamicModelLoader(model, ont);
 
 		return model;
 	}
 
-	private String getContentNamespace() {
+	private String getDynamicNamespace() {
 
-		return cfgReader.getContentNamespace();
+		return cfgReader.getDynamicNamespace();
 	}
 }

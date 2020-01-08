@@ -3,15 +3,15 @@ package uk.ac.manchester.cs.goblin.model;
 /**
  * @author Colin Puleston
  */
-class ContentConcept extends Concept {
+class DynamicConcept extends Concept {
 
 	private ConceptTracker parent;
 
-	public boolean resetId(EntityIdSpec newIdSpec) {
+	public boolean resetId(DynamicId newDynamicId) {
 
-		if (canResetId(newIdSpec)) {
+		if (canResetId(newDynamicId)) {
 
-			replace(new ContentConcept(this, toContentId(newIdSpec)));
+			replace(new DynamicConcept(this, toEntityId(newDynamicId)));
 
 			return true;
 		}
@@ -25,7 +25,7 @@ class ContentConcept extends Concept {
 
 		if (conflictRes.resolvable()) {
 
-			replace(new ContentConcept(this, newParent), conflictRes);
+			replace(new DynamicConcept(this, newParent), conflictRes);
 
 			return true;
 		}
@@ -53,30 +53,30 @@ class ContentConcept extends Concept {
 		return getParent().getClosestConstraint(type);
 	}
 
-	ContentConcept(EntityId conceptId, Concept parent) {
+	DynamicConcept(EntityId conceptId, Concept parent) {
 
 		super(parent.getHierarchy(), conceptId);
 
 		this.parent = toConceptTracker(parent);
 	}
 
-	private ContentConcept(ContentConcept replaced, Concept parent) {
+	private DynamicConcept(DynamicConcept replaced, Concept parent) {
 
 		super(replaced);
 
 		this.parent = toConceptTracker(parent);
 	}
 
-	private ContentConcept(ContentConcept replaced, EntityId conceptId) {
+	private DynamicConcept(DynamicConcept replaced, EntityId conceptId) {
 
 		super(replaced, conceptId);
 
 		parent = replaced.parent;
 	}
 
-	private boolean canResetId(EntityIdSpec newIdSpec) {
+	private boolean canResetId(DynamicId newDynamicId) {
 
-		return getModel().canResetContentConceptId(this, newIdSpec);
+		return getModel().canResetDynamicConceptId(this, newDynamicId);
 	}
 
 	private ConflictResolution checkMoveConflicts(Concept newParent) {
@@ -101,8 +101,8 @@ class ContentConcept extends Concept {
 		return getModel().getConceptTracking().toTracker(concept);
 	}
 
-	private EntityId toContentId(EntityIdSpec newIdSpec) {
+	private EntityId toEntityId(DynamicId newDynamicId) {
 
-		return getModel().toContentId(newIdSpec);
+		return getModel().toEntityId(newDynamicId);
 	}
 }

@@ -22,7 +22,7 @@ public abstract class Concept extends EditTarget {
 		conceptListeners.add(listener);
 	}
 
-	public abstract boolean resetId(EntityIdSpec newIdSpec);
+	public abstract boolean resetId(DynamicId newDynamicId);
 
 	public abstract boolean move(Concept newParent);
 
@@ -38,14 +38,14 @@ public abstract class Concept extends EditTarget {
 		performAction(action);
 	}
 
-	public Concept addChild(EntityIdSpec idSpec) {
+	public Concept addChild(DynamicId dynamicId) {
 
-		return addChild(toContentId(idSpec));
+		return addChild(toEntityId(dynamicId));
 	}
 
 	public Concept addChild(EntityId id) {
 
-		Concept child = new ContentConcept(id, this);
+		Concept child = new DynamicConcept(id, this);
 
 		child.add();
 
@@ -290,8 +290,8 @@ public abstract class Concept extends EditTarget {
 		}
 	}
 
-	private EntityId toContentId(EntityIdSpec idSpec) {
+	private EntityId toEntityId(DynamicId dynamicId) {
 
-		return getModel().toContentId(idSpec);
+		return getModel().toEntityId(dynamicId);
 	}
 }

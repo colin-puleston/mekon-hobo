@@ -28,7 +28,7 @@ class ConceptIdSelector extends GDialog {
 
 	static private final Dimension WINDOW_SIZE = new Dimension(250, 150);
 
-	private EntityIdSpec selection = null;
+	private DynamicId selection = null;
 	private ControlButton okButton = new ControlButton(OK_LABEL);
 
 	private abstract class InputField extends GTextField {
@@ -71,9 +71,9 @@ class ConceptIdSelector extends GDialog {
 			return TitledPanels.create(this, title);
 		}
 
-		abstract EntityIdSpec resolveSelection(String text);
+		abstract DynamicId resolveSelection(String text);
 
-		abstract EntityIdSpec resolveSelection(String text, String otherText);
+		abstract DynamicId resolveSelection(String text, String otherText);
 
 		abstract String getTextFromSelection();
 
@@ -82,7 +82,7 @@ class ConceptIdSelector extends GDialog {
 			return selection != null && selection.independentNameAndLabel();
 		}
 
-		private EntityIdSpec resolveSelection() {
+		private DynamicId resolveSelection() {
 
 			String otherText = otherField.checkForUserText();
 
@@ -140,14 +140,14 @@ class ConceptIdSelector extends GDialog {
 			super.onKeyEntered(event);
 		}
 
-		EntityIdSpec resolveSelection(String text) {
+		DynamicId resolveSelection(String text) {
 
-			return EntityIdSpec.fromName(text);
+			return DynamicId.fromName(text);
 		}
 
-		EntityIdSpec resolveSelection(String text, String otherText) {
+		DynamicId resolveSelection(String text, String otherText) {
 
-			return new EntityIdSpec(text, otherText);
+			return new DynamicId(text, otherText);
 		}
 
 		String getTextFromSelection() {
@@ -174,14 +174,14 @@ class ConceptIdSelector extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
-		EntityIdSpec resolveSelection(String text) {
+		DynamicId resolveSelection(String text) {
 
-			return EntityIdSpec.fromLabel(text);
+			return DynamicId.fromLabel(text);
 		}
 
-		EntityIdSpec resolveSelection(String text, String otherText) {
+		DynamicId resolveSelection(String text, String otherText) {
 
-			return new EntityIdSpec(otherText, text);
+			return new DynamicId(otherText, text);
 		}
 
 		String getTextFromSelection() {
@@ -218,7 +218,7 @@ class ConceptIdSelector extends GDialog {
 		}
 	}
 
-	ConceptIdSelector(JComponent parent, EntityIdSpec initialSelection) {
+	ConceptIdSelector(JComponent parent, DynamicId initialSelection) {
 
 		super(parent, TITLE, true);
 
@@ -230,7 +230,7 @@ class ConceptIdSelector extends GDialog {
 		display(createDisplay());
 	}
 
-	EntityIdSpec getSelection() {
+	DynamicId getSelection() {
 
 		return selection;
 	}

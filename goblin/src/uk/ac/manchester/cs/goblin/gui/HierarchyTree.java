@@ -25,7 +25,7 @@ class HierarchyTree extends ConceptTree {
 
 		this.conceptMover = conceptMover;
 
-		initialise(hierarchy.getRoot());
+		initialise(hierarchy.getRootConcept());
 	}
 
 	ConceptCellDisplay getConceptDisplay(Concept concept) {

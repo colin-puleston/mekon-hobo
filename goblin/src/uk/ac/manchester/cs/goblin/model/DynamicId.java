@@ -6,16 +6,16 @@ import java.net.*;
 /**
  * @author Colin Puleston
  */
-public class EntityIdSpec {
+public class DynamicId {
 
-	static public EntityIdSpec fromName(String name) {
+	static public DynamicId fromName(String name) {
 
-		return new EntityIdSpec(name, nameToLabel(checkNonEmptyName(name)));
+		return new DynamicId(name, nameToLabel(checkNonEmptyName(name)));
 	}
 
-	static public EntityIdSpec fromLabel(String label) {
+	static public DynamicId fromLabel(String label) {
 
-		return new EntityIdSpec(labelToName(checkNonEmptyLabel(label)), label);
+		return new DynamicId(labelToName(checkNonEmptyLabel(label)), label);
 	}
 
 	static private String nameToLabel(String name) {
@@ -160,7 +160,7 @@ public class EntityIdSpec {
 	private String name;
 	private String label;
 
-	public EntityIdSpec(String name, String label) {
+	public DynamicId(String name, String label) {
 
 		this.name = encodeName(checkNonEmptyName(name));
 		this.label = checkNonEmptyLabel(label);
@@ -186,9 +186,13 @@ public class EntityIdSpec {
 		return !nameToLabel(name).equals(label);
 	}
 
-	EntityId toId(String namespace) {
+	EntityId toEntityId(String namespace) {
 
-		return new EntityId(nameToURI(namespace), label);
+		EntityId entityId = new EntityId(nameToURI(namespace), label);
+
+		entityId.setDynamicId(this);
+
+		return entityId;
 	}
 
 	private URI nameToURI(String namespace) {

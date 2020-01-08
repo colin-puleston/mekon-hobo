@@ -16,7 +16,7 @@ public class Hierarchy {
 
 	private class RootConcept extends Concept {
 
-		public boolean resetId(EntityIdSpec newIdSpec) {
+		public boolean resetId(DynamicId newDynamicId) {
 
 			throw createInvalidRootOperationException();
 		}
@@ -90,9 +90,14 @@ public class Hierarchy {
 		return model;
 	}
 
-	public Concept getRoot() {
+	public Concept getRootConcept() {
 
 		return root;
+	}
+
+	public boolean hasRootConcept(EntityId conceptId) {
+
+		return root.getConceptId().equals(conceptId);
 	}
 
 	public boolean hasConcept(EntityId conceptId) {

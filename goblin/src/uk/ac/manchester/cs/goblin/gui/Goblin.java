@@ -76,7 +76,7 @@ public class Goblin extends GFrame {
 
 		Concept getRootConcept(Hierarchy hierarchy) {
 
-			return hierarchy.getRoot();
+			return hierarchy.getRootConcept();
 		}
 
 		JComponent createComponent(Hierarchy hierarchy) {
@@ -98,7 +98,7 @@ public class Goblin extends GFrame {
 
 		private int makeHierarchyVisible(EditLocation location) {
 
-			return makeSourceVisible(location.getPrimaryEditHierarchy().getRoot());
+			return makeSourceVisible(location.getPrimaryEditHierarchy().getRootConcept());
 		}
 
 		private HierarchyPanel getHierarchyPanel(int hierarchyIdx) {

@@ -29,6 +29,8 @@ public class EntityId {
 	private URI uri;
 	private String label;
 
+	private DynamicId dynamicId = null;
+
 	public EntityId(URI uri) {
 
 		this(uri, getDefaultLabel(uri));
@@ -65,20 +67,13 @@ public class EntityId {
 		return label;
 	}
 
-	public EntityIdSpec toSpec() {
+	public DynamicId toDynamicId() {
 
-		return new EntityIdSpec(deriveName(), label);
+		return dynamicId;
 	}
 
-	public String deriveName() {
+	void setDynamicId(DynamicId dynamicId) {
 
-		String name = uri.getFragment();
-
-		if (name != null) {
-
-			return name;
-		}
-
-		throw new RuntimeException("Cannot derive name from URI with no fragment: " + uri);
+		this.dynamicId = dynamicId;
 	}
 }

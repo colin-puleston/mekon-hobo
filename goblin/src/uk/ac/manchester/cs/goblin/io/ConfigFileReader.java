@@ -21,8 +21,8 @@ class ConfigFileReader {
 	static private final String ANCHORED_CONSTRAINT_TYPE_TAG = "AnchoredConstraintType";
 	static private final String SIMPLE_CONSTRAINT_TYPE_TAG = "SimpleConstraintType";
 
-	static private final String CONTENT_NAMESPACE_ATTR = "contentNamespace";
-	static private final String CONTENT_FILEATTR = "contentFilename";
+	static private final String DYNAMIC_NAMESPACE_ATTR = "dynamicNamespace";
+	static private final String DYNAMIC_FILEATTR = "dynamicFilename";
 
 	static private final String ROOT_CONCEPT_ATTR = "rootConcept";
 
@@ -70,7 +70,7 @@ class ConfigFileReader {
 
 			private ConstraintType loadType(KConfigNode node, Hierarchy hierarchy) {
 
-				return loadType(node, hierarchy.getRoot(), getRootTargetConcept(node));
+				return loadType(node, hierarchy.getRootConcept(), getRootTargetConcept(node));
 			}
 		}
 
@@ -128,7 +128,7 @@ class ConfigFileReader {
 
 		private Concept getRootTargetConcept(KConfigNode node) {
 
-			return model.getHierarchy(getRootTargetConceptId(node)).getRoot();
+			return model.getHierarchy(getRootTargetConceptId(node)).getRootConcept();
 		}
 
 		private EntityId getRootConceptId(KConfigNode node) {
@@ -160,19 +160,19 @@ class ConfigFileReader {
 		}
 	}
 
-	File getContentFile() {
+	File getDynamicFile() {
 
-		return rootNode.getResource(CONTENT_FILEATTR, KConfigResourceFinder.FILES);
+		return rootNode.getResource(DYNAMIC_FILEATTR, KConfigResourceFinder.FILES);
 	}
 
-	String getContentNamespace() {
+	String getDynamicNamespace() {
 
-		return rootNode.getString(CONTENT_NAMESPACE_ATTR);
+		return rootNode.getString(DYNAMIC_NAMESPACE_ATTR);
 	}
 
 	Model loadCoreModel(Ontology ontology) {
 
-		Model model = new Model(getContentNamespace());
+		Model model = new Model(getDynamicNamespace());
 
 		new CoreModelPopulator(model, ontology);
 

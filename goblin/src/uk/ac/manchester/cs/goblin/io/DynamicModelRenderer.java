@@ -10,7 +10,7 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-class ContentRenderer {
+class DynamicModelRenderer {
 
 	private Ontology ontology;
 	private AnchoredConstraintClassIRIs anchoredConstraintClassIRIs;
@@ -72,28 +72,28 @@ class ContentRenderer {
 		}
 	}
 
-	ContentRenderer(Ontology ontology, String contentNamespace) {
+	DynamicModelRenderer(Ontology ontology, String dynamicNamespace) {
 
 		this.ontology = ontology;
 
-		anchoredConstraintClassIRIs = new AnchoredConstraintClassIRIs(contentNamespace);
+		anchoredConstraintClassIRIs = new AnchoredConstraintClassIRIs(dynamicNamespace);
 	}
 
-	void write(Model model, File contentFile) {
+	void write(Model model, File dynamicFile) {
 
 		clearOldHierarchies(model);
 
 		renderNewHierarchies(model);
 		renderNewConstraints(model);
 
-		ontology.write(contentFile);
+		ontology.write(dynamicFile);
 	}
 
 	private void clearOldHierarchies(Model model) {
 
 		for (Hierarchy hierarchy : model.getHierarchies()) {
 
-			clearDescendantClasses(getCls(hierarchy.getRoot()));
+			clearDescendantClasses(getCls(hierarchy.getRootConcept()));
 			clearConstraintClasses(hierarchy);
 		}
 	}
@@ -126,7 +126,7 @@ class ContentRenderer {
 
 		for (Hierarchy hierarchy : model.getHierarchies()) {
 
-			Concept root = hierarchy.getRoot();
+			Concept root = hierarchy.getRootConcept();
 
 			renderHierarchyFrom(root, getCls(root));
 		}
@@ -136,7 +136,7 @@ class ContentRenderer {
 
 		for (Hierarchy hierarchy : model.getHierarchies()) {
 
-			renderConstraintsFrom(hierarchy.getRoot());
+			renderConstraintsFrom(hierarchy.getRootConcept());
 		}
 	}
 

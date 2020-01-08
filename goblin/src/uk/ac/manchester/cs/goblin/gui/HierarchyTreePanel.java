@@ -226,34 +226,34 @@ class HierarchyTreePanel extends JPanel {
 
 	private void checkAddConcept(Concept parent) {
 
-		EntityIdSpec idSpec = checkObtainConceptIdSpec(null);
+		DynamicId id = checkObtainConceptId(null);
 
-		if (idSpec != null) {
+		if (id != null) {
 
-			if (model.contentConceptExists(idSpec)) {
+			if (model.dynamicConceptExists(id)) {
 
-				showConceptAlreadyExistsMessage(idSpec);
+				showConceptAlreadyExistsMessage(id);
 			}
 			else {
 
-				parent.addChild(idSpec);
+				parent.addChild(id);
 			}
 		}
 	}
 
 	private boolean checkResetConceptId(Concept concept) {
 
-		EntityIdSpec currentIdSpec = concept.getConceptId().toSpec();
-		EntityIdSpec newIdSpec = checkObtainConceptIdSpec(currentIdSpec);
+		DynamicId currentId = concept.getConceptId().toDynamicId();
+		DynamicId newId = checkObtainConceptId(currentId);
 
-		if (newIdSpec != null) {
+		if (newId != null) {
 
-			if (concept.resetId(newIdSpec)) {
+			if (concept.resetId(newId)) {
 
 				return true;
 			}
 
-			showConceptAlreadyExistsMessage(newIdSpec);
+			showConceptAlreadyExistsMessage(newId);
 		}
 
 		return false;
@@ -267,14 +267,14 @@ class HierarchyTreePanel extends JPanel {
 		}
 	}
 
-	private EntityIdSpec checkObtainConceptIdSpec(EntityIdSpec currentIdSpec) {
+	private DynamicId checkObtainConceptId(DynamicId currentId) {
 
-		return new ConceptIdSelector(this, currentIdSpec).getSelection();
+		return new ConceptIdSelector(this, currentId).getSelection();
 	}
 
-	private void showConceptAlreadyExistsMessage(EntityIdSpec idSpec) {
+	private void showConceptAlreadyExistsMessage(DynamicId id) {
 
-		InfoDisplay.inform("Concept already exists: " + idSpec.getName());
+		InfoDisplay.inform("Concept already exists: " + id.getName());
 	}
 
 	private boolean obtainConceptRemovalConfirmation(Concept concept) {

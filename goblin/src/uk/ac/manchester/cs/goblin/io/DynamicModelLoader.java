@@ -10,12 +10,12 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-class ContentLoader {
+class DynamicModelLoader {
 
 	private Model model;
 	private Ontology ontology;
 
-	private Set<OWLClass> contentClasses = new HashSet<OWLClass>();
+	private Set<OWLClass> dynamicClasses = new HashSet<OWLClass>();
 
 	private abstract class ConstraintLoader {
 
@@ -396,7 +396,7 @@ class ContentLoader {
 		}
 	}
 
-	ContentLoader(Model model, Ontology ontology) throws BadContentOntologyException {
+	DynamicModelLoader(Model model, Ontology ontology) throws BadDynamicOntologyException {
 
 		this.model = model;
 		this.ontology = ontology;
@@ -408,7 +408,7 @@ class ContentLoader {
 		}
 		catch (RuntimeException e) {
 
-			throw new BadContentOntologyException(e);
+			throw new BadDynamicOntologyException(e);
 		}
 	}
 
@@ -416,7 +416,7 @@ class ContentLoader {
 
 		for (Hierarchy hierarchy : model.getHierarchies()) {
 
-			Concept root = hierarchy.getRoot();
+			Concept root = hierarchy.getRootConcept();
 
 			loadConceptsFrom(root, getRootClass(root));
 		}
@@ -476,7 +476,7 @@ class ContentLoader {
 
 	private Concept addSubConcept(Concept concept, OWLClass subCls) {
 
-		if (contentClasses.add(subCls)) {
+		if (dynamicClasses.add(subCls)) {
 
 			return concept.addChild(getConceptId(subCls));
 		}

@@ -7,19 +7,18 @@ import java.util.*;
  */
 public class Model {
 
-	private String contentNamespace;
+	private String dynamicNamespace;
 
 	private List<Hierarchy> hierarchies = new ArrayList<Hierarchy>();
-	private Map<EntityId, Hierarchy> hierarchiesByRootConcepts = new HashMap<EntityId, Hierarchy>();
 
 	private EditActions editActions;
 	private ConceptTracking conceptTracking;
 	private ConstraintTracking constraintTracking;
 	private ConflictResolver conflictResolver;
 
-	public Model(String contentNamespace) {
+	public Model(String dynamicNamespace) {
 
-		this.contentNamespace = contentNamespace;
+		this.dynamicNamespace = dynamicNamespace;
 
 		editActions = new EditActions();
 		conceptTracking = new ConceptTracking();
@@ -67,7 +66,6 @@ public class Model {
 		Hierarchy hierarchy = new Hierarchy(this, rootConceptId);
 
 		hierarchies.add(hierarchy);
-		hierarchiesByRootConcepts.put(rootConceptId, hierarchy);
 
 		return hierarchy;
 	}
@@ -79,14 +77,15 @@ public class Model {
 
 	public Hierarchy getHierarchy(EntityId rootConceptId) {
 
-		Hierarchy hierarchy = hierarchiesByRootConcepts.get(rootConceptId);
+		for (Hierarchy hierarchy : hierarchies) {
 
-		if (hierarchy == null) {
+			if (hierarchy.hasRootConcept(rootConceptId)) {
 
-			throw new RuntimeException("Not root-concept: " + rootConceptId);
+				return hierarchy;
+			}
 		}
 
-		return hierarchy;
+		throw new RuntimeException("Not root-concept: " + rootConceptId);
 	}
 
 	public Concept getConcept(EntityId conceptId) {
@@ -101,21 +100,21 @@ public class Model {
 		throw new RuntimeException("Cannot find concept: " + conceptId);
 	}
 
-	public boolean contentConceptExists(EntityIdSpec idSpec) {
+	public boolean dynamicConceptExists(DynamicId dynamicId) {
 
-		return conceptExists(toContentId(idSpec));
+		return conceptExists(toEntityId(dynamicId));
 	}
 
-	boolean canResetContentConceptId(Concept concept, EntityIdSpec newIdSpec) {
+	boolean canResetDynamicConceptId(Concept concept, DynamicId newDynamicId) {
 
-		EntityId newId = toContentId(newIdSpec);
+		EntityId newId = toEntityId(newDynamicId);
 
 		return concept.getConceptId().equals(newId) || !conceptExists(newId);
 	}
 
-	EntityId toContentId(EntityIdSpec idSpec) {
+	EntityId toEntityId(DynamicId dynamicId) {
 
-		return idSpec.toId(contentNamespace);
+		return dynamicId.toEntityId(dynamicNamespace);
 	}
 
 	EditActions getEditActions() {
