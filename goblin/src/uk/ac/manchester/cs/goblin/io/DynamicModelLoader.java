@@ -529,8 +529,7 @@ class DynamicModelLoader {
 	private EntityId getConceptId(OWLClass cls) {
 
 		URI uri = cls.getIRI().toURI();
-		String label = ontology.lookForLabel(cls);
 
-		return label != null ? new EntityId(uri, label) : new EntityId(uri);
+		return model.createEntityId(uri, ontology.lookForLabel(cls));
 	}
 }

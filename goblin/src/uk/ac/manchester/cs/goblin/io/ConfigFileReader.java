@@ -144,14 +144,13 @@ class ConfigFileReader {
 		private EntityId getConceptId(KConfigNode node, String tag) {
 
 			URI uri = node.getURI(tag);
-			String label = lookForConceptLabel(uri);
 
-			return label != null ? new EntityId(uri, label) : new EntityId(uri);
+			return model.createEntityId(uri, lookForConceptLabel(uri));
 		}
 
 		private EntityId getPropertyId(KConfigNode node, String tag) {
 
-			return new EntityId(node.getURI(tag));
+			return model.createEntityId(node.getURI(tag), null);
 		}
 
 		private String lookForConceptLabel(URI uri) {

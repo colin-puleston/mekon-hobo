@@ -1,5 +1,6 @@
 package uk.ac.manchester.cs.goblin.model;
 
+import java.net.*;
 import java.util.*;
 
 /**
@@ -68,6 +69,21 @@ public class Model {
 		hierarchies.add(hierarchy);
 
 		return hierarchy;
+	}
+
+	public EntityId createEntityId(URI uri, String labelOrNull) {
+
+		if (labelOrNull != null) {
+
+			return new EntityId(uri, labelOrNull);
+		}
+
+		if (hasDynamicNamespace(uri)) {
+
+			return toEntityId(DynamicId.fromName(uri.getFragment()));
+		}
+
+		return new EntityId(uri);
 	}
 
 	public List<Hierarchy> getHierarchies() {
@@ -153,5 +169,10 @@ public class Model {
 	private boolean conceptExists(EntityId conceptId) {
 
 		return lookForConcept(conceptId) != null;
+	}
+
+	private boolean hasDynamicNamespace(URI uri) {
+
+		return uri.toString().startsWith(dynamicNamespace + '#');
 	}
 }

@@ -20,57 +20,42 @@ public class DynamicId {
 
 	static private String nameToLabel(String name) {
 
-		name = decodeName(name);
-
-		if (name.length() < 3) {
-
-			return name;
-		}
-
 		StringBuilder label = new StringBuilder();
 
-		label.append(Character.toUpperCase(name.charAt(0)));
+		name = decodeName(name);
+
+		label.append(name.charAt(0));
 
 		for (int i = 1 ; i < name.length() ; i++) {
 
-			char p = name.charAt(i - 1);
 			char c = name.charAt(i);
 
-			if (i == name.length() - 1) {
+			if (Character.isUpperCase(c)) {
 
-				if (upperCaseOrDigit(c) && !upperCaseOrDigit(p)) {
+				if (nonUpperCase(name, i - 1) || nonUpperCaseOrDigit(name, i + 1)) {
+
+					label.append(' ');
+
+					if (!isUpperCase(name, i + 1)) {
+
+						c = Character.toLowerCase(c);
+					}
+				}
+
+				label.append(c);
+			}
+			else if (Character.isDigit(c)) {
+
+				if (nonDigit(name, i - 1)) {
 
 					label.append(' ');
 				}
 
 				label.append(c);
 
-				break;
-			}
-
-			char n = name.charAt(i + 1);
-
-			if (upperCaseOrDigit(c)) {
-
-				if (upperCaseOrDigit(p)) {
-
-					label.append(c);
-
-					if (!upperCaseOrDigit(n)) {
-
-						label.append(' ');
-					}
-				}
-				else {
+				if (nonDigit(name, i + 1) && nonUpperCase(name, i + 1)) {
 
 					label.append(' ');
-
-					if (!upperCaseOrDigit(n)) {
-
-						c = Character.toLowerCase(c);
-					}
-
-					label.append(c);
 				}
 			}
 			else {
@@ -85,23 +70,13 @@ public class DynamicId {
 	static private String labelToName(String label) {
 
 		StringBuilder name = new StringBuilder();
-		boolean capitaliseNext = true;
 
 		for (String word : label.split(" ")) {
 
 			if (!word.isEmpty()) {
 
-				if (capitaliseNext) {
-
-					name.append(Character.toUpperCase(word.charAt(0)));
-					name.append(word.substring(1));
-				}
-				else {
-
-					name.append(word);
-				}
-
-				capitaliseNext = !upperCaseOrDigit(word.charAt(word.length() - 1));
+				name.append(Character.toUpperCase(word.charAt(0)));
+				name.append(word.substring(1));
 			}
 		}
 
@@ -128,11 +103,6 @@ public class DynamicId {
 		return thing;
 	}
 
-	static private boolean upperCaseOrDigit(char c) {
-
-		return Character.isUpperCase(c) || Character.isDigit(c);
-	}
-
 	static private String encodeName(String name) {
 
 		try {
@@ -155,6 +125,26 @@ public class DynamicId {
 
 			throw new Error(e);
 		}
+	}
+
+	static private boolean isUpperCase(String name, int i) {
+
+		return i < name.length() && Character.isUpperCase(name.charAt(i));
+	}
+
+	static private boolean nonUpperCaseOrDigit(String name, int i) {
+
+		return nonUpperCase(name, i) && nonDigit(name, i);
+	}
+
+	static private boolean nonUpperCase(String name, int i) {
+
+		return i < name.length() && !Character.isUpperCase(name.charAt(i));
+	}
+
+	static private boolean nonDigit(String name, int i) {
+
+		return i < name.length() && !Character.isDigit(name.charAt(i));
 	}
 
 	private String name;

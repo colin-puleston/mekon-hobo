@@ -31,17 +31,6 @@ public class EntityId {
 
 	private DynamicId dynamicId = null;
 
-	public EntityId(URI uri) {
-
-		this(uri, getDefaultLabel(uri));
-	}
-
-	public EntityId(URI uri, String label) {
-
-		this.uri = uri;
-		this.label = label;
-	}
-
 	public boolean equals(Object other) {
 
 		return other instanceof EntityId && uri.equals(((EntityId)other).uri);
@@ -70,6 +59,17 @@ public class EntityId {
 	public DynamicId toDynamicId() {
 
 		return dynamicId;
+	}
+
+	EntityId(URI uri) {
+
+		this(uri, getDefaultLabel(uri));
+	}
+
+	EntityId(URI uri, String label) {
+
+		this.uri = uri;
+		this.label = label;
 	}
 
 	void setDynamicId(DynamicId dynamicId) {
