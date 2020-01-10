@@ -145,9 +145,9 @@
     
 
 
-    <!-- http://mekon/demo-dynamic.owl#EU-NonUK -->
+    <!-- http://mekon/demo-dynamic.owl#EUOtherThanUK -->
 
-    <owl:Class rdf:about="http://mekon/demo-dynamic.owl#EU-NonUK">
+    <owl:Class rdf:about="http://mekon/demo-dynamic.owl#EUOtherThanUK">
         <rdfs:subClassOf rdf:resource="http://mekon/demo-dynamic.owl#EU"/>
     </owl:Class>
     
