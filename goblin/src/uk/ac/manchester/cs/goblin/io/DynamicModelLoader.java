@@ -210,70 +210,82 @@ class DynamicModelLoader {
 
 		private Concept lookForSourceConcept() {
 
-			OWLEquivalentClassesAxiom axiom = lookForPremiseAxiom();
+			OWLClassExpression expr = lookForSourceExpr();
 
-			if (axiom == null) {
-
-				return null;
-			}
-
-			return sourceExtractor.extractOne(extractSourceExpr(axiom));
+			return expr != null ? sourceExtractor.extractOne(expr) : null;
 		}
 
 		private Set<Concept> getTargetConcepts() {
 
-			OWLSubClassOfAxiom axiom = lookForConsequenceAxiom();
+			OWLClassExpression expr = lookForTargetsExpr();
 
-			if (axiom == null) {
-
-				return Collections.emptySet();
-			}
-
-			return targetExtractor.extractAll(extractTargetsExpr(axiom));
+			return expr != null ? targetExtractor.extractAll(expr) : Collections.emptySet();
 		}
 
-		private OWLClassExpression extractSourceExpr(OWLEquivalentClassesAxiom axiom) {
+		private OWLClassExpression lookForSourceExpr() {
 
-			Set<OWLClassExpression> exprs = axiom.getClassExpressions();
+			Set<OWLClassExpression> exprs = new HashSet<OWLClassExpression>();
 
-			exprs.remove(subject);
+			for (OWLEquivalentClassesAxiom axiom : getSubjectAxioms(OWLEquivalentClassesAxiom.class)) {
 
-			return getOne(exprs);
-		}
+				OWLClassExpression expr = lookForSourceExpr(axiom);
 
-		private OWLClassExpression extractTargetsExpr(OWLSubClassOfAxiom axiom) {
+				if (expr != null) {
 
-			if (axiom.getSubClass().equals(subject)) {
-
-				return axiom.getSuperClass();
-			}
-
-			throw createBadAxiomsException();
-		}
-
-		private OWLEquivalentClassesAxiom lookForPremiseAxiom() {
-
-			return lookForOne(getSubjectAxioms(OWLEquivalentClassesAxiom.class));
-		}
-
-		private OWLSubClassOfAxiom lookForConsequenceAxiom() {
-
-			Set<OWLSubClassOfAxiom> axioms = new HashSet<OWLSubClassOfAxiom>();
-
-			for (OWLSubClassOfAxiom axiom : getSubjectAxioms(OWLSubClassOfAxiom.class)) {
-
-				if (consequenceAxiom(axiom)) {
-
-					axioms.add(axiom);
+					exprs.add(expr);
 				}
 			}
 
-			return lookForOne(axioms);
+			return lookForOne(exprs);
 		}
 
-		private boolean consequenceAxiom(OWLSubClassOfAxiom axiom) {
+		private OWLClassExpression lookForSourceExpr(OWLEquivalentClassesAxiom axiom) {
 
-			return axiom.getSuperClass().containsEntityInSignature(getTargetProperty());
+			Set<OWLClassExpression> exprs = axiom.getClassExpressions();
+
+			if (exprs.size() == 2 && exprs.remove(subject)) {
+
+				OWLClassExpression expr = exprs.iterator().next();
+
+				if (expr.containsEntityInSignature(getSourceProperty())) {
+
+					return expr;
+				}
+			}
+
+			return null;
+		}
+
+		private OWLClassExpression lookForTargetsExpr() {
+
+			Set<OWLClassExpression> exprs = new HashSet<OWLClassExpression>();
+
+			for (OWLSubClassOfAxiom axiom : getSubjectAxioms(OWLSubClassOfAxiom.class)) {
+
+				OWLClassExpression expr = lookForTargetsExpr(axiom);
+
+				if (expr != null) {
+
+					exprs.add(expr);
+				}
+			}
+
+			return lookForOne(exprs);
+		}
+
+		private OWLClassExpression lookForTargetsExpr(OWLSubClassOfAxiom axiom) {
+
+			if (axiom.getSubClass().equals(subject)) {
+
+				OWLClassExpression sup = axiom.getSuperClass();
+
+				if (sup.containsEntityInSignature(getTargetProperty())) {
+
+					return sup;
+				}
+			}
+
+			return null;
 		}
 
 		private <T extends OWLClassAxiom>Set<T> getSubjectAxioms(Class<T> type) {
@@ -330,6 +342,7 @@ class DynamicModelLoader {
 
 		private RuntimeException createBadAxiomsException() {
 
+			new Error("XXX").printStackTrace(System.out);
 			return new RuntimeException(
 						"Illegal set of axioms for constraint-definition class: "
 						+ subject);
