@@ -46,6 +46,10 @@ public class MekonApp extends GFrame {
 	static private final int FRAME_WIDTH = 600;
 	static private final int FRAME_HEIGHT = 600;
 
+	static private final String INSTANCES_TAB_TITLE = "Instances";
+	static private final String QUERIES_TAB_TITLE = "Queries";
+	static private final String MATCHES_TAB_TITLE = "Query Matches";
+
 	static private IStore getIStore(CBuilder builder) {
 
 		return IDiskStoreManager.getBuilder(builder).build();
@@ -73,34 +77,10 @@ public class MekonApp extends GFrame {
 
 	private class InstanceTypesPanelCreator {
 
-		private Controller controller;
+		private Store appStore = new Store(store);
+		private Controller controller = new Controller(appStore, resolveCustomiser());
 
-		private List<CFrame> types;
-
-		InstanceTypesPanelCreator(List<CFrame> types) {
-
-			this.types = types;
-
-			controller = new Controller(new Store(store), resolveCustomiser());
-		}
-
-		JComponent create() {
-
-			return types.size() == 1
-					? createSingleTypePanel(types.get(0))
-					: createMultiTypesPanel();
-		}
-
-		private JPanel createSingleTypePanel(CFrame type) {
-
-			JPanel panel = createTypePanel(type);
-
-			PanelEntitler.entitle(panel, getTypePanelTitle(type));
-
-			return panel;
-		}
-
-		private JComponent createMultiTypesPanel() {
+		JComponent create(List<CFrame> types) {
 
 			JTabbedPane panel = new JTabbedPane();
 
@@ -112,20 +92,9 @@ public class MekonApp extends GFrame {
 			return panel;
 		}
 
-		private JPanel createTypePanel(CFrame type) {
+		private JComponent createTypePanel(CFrame type) {
 
-			return createTypePanel(controller.addInstanceType(type));
-		}
-
-		private JPanel createTypePanel(InstanceType instanceType) {
-
-			JPanel panel = new JPanel();
-
-			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-			panel.add(new InstancesPanel(instanceType));
-			panel.add(new QueriesPanel(instanceType));
-
-			return panel;
+			return new InstanceTypePanel(appStore, controller.addInstanceType(type));
 		}
 
 		private String getTypePanelTitle(CFrame type) {
@@ -184,9 +153,9 @@ public class MekonApp extends GFrame {
 		return panel;
 	}
 
-	public JComponent createInstanceTypesPanel(List<CFrame> types) {
+	private JComponent createInstanceTypesPanel(List<CFrame> instanceTypes) {
 
-		return new InstanceTypesPanelCreator(types).create();
+		return new InstanceTypesPanelCreator().create(instanceTypes);
 	}
 
 	private Customiser resolveCustomiser() {

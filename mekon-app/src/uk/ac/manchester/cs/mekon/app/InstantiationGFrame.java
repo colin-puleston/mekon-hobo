@@ -95,8 +95,6 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 		super(title);
 
 		this.instantiator = instantiator;
-
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
 	void display() {
@@ -105,8 +103,6 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 	}
 
 	abstract InstantiationGFrame createCopy();
-
-	abstract JComponent createMainComponent(JComponent instantiationComponent);
 
 	void addControlComponents(ControlsPanel panel) {
 
@@ -134,18 +130,16 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 
 	private JComponent createMainComponent() {
 
-		return createMainComponent(new JScrollPane(createDescriptorsTable()));
+		return new JScrollPane(createDescriptorsTable());
 	}
 
 	private JComponent createControlsComponent() {
 
-		JPanel outerPanel = new JPanel(new BorderLayout());
-		ControlsPanel innerPanel = new ControlsPanel(true);
+		ControlsPanel panel = new ControlsPanel(false);
 
-		addControlComponents(innerPanel);
-		outerPanel.add(innerPanel, BorderLayout.WEST);
+		addControlComponents(panel);
 
-		return outerPanel;
+		return panel;
 	}
 
 	private DescriptorsTable createDescriptorsTable() {

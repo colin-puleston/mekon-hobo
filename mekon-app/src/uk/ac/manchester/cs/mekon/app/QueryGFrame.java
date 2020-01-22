@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.Dimension;
-import java.awt.BorderLayout;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -41,15 +39,13 @@ class QueryGFrame extends InstantiationGFrame {
 	static private final String SUB_TITLE = "Query";
 	static private final String EXECUTE_LABEL = "Execute";
 
-	static private final Dimension WINDOW_SIZE = new Dimension(800, 500);
-
 	static private String createQueryTitle(InstanceType instanceType) {
 
 		return createTitle(instanceType, SUB_TITLE);
 	}
 
 	private InstanceType instanceType;
-	private QueryMatchesPanel matchesPanel;
+	private QueryExecutor queryExecutor;
 
 	private class ExecuteButton extends GButton {
 
@@ -57,7 +53,7 @@ class QueryGFrame extends InstantiationGFrame {
 
 		protected void doButtonThing() {
 
-			executeAndDisplayMatches();
+			execute();
 		}
 
 		ExecuteButton() {
@@ -66,34 +62,22 @@ class QueryGFrame extends InstantiationGFrame {
 		}
 	}
 
-	public Dimension getPreferredSize() {
+	QueryGFrame(InstanceType instanceType, QueryExecutor queryExecutor) {
 
-		return WINDOW_SIZE;
+		this(instanceType, instanceType.createQueryInstantiator(), queryExecutor);
 	}
 
-	QueryGFrame(InstanceType instanceType) {
+	QueryGFrame(
+		InstanceType instanceType,
+		IFrame instantiation,
+		QueryExecutor queryExecutor) {
 
-		this(instanceType, instanceType.createQueryInstantiator());
-	}
-
-	QueryGFrame(InstanceType instanceType, IFrame instantiation) {
-
-		this(instanceType, instanceType.createInstantiator(instantiation));
+		this(instanceType, instanceType.createInstantiator(instantiation), queryExecutor);
 	}
 
 	QueryGFrame createCopy() {
 
-		return new QueryGFrame(instanceType, getInstantiator());
-	}
-
-	JComponent createMainComponent(JComponent instantiationComponent) {
-
-		JPanel panel = new JPanel(new BorderLayout());
-
-		panel.add(instantiationComponent, BorderLayout.CENTER);
-		panel.add(matchesPanel, BorderLayout.EAST);
-
-		return panel;
+		return new QueryGFrame(instanceType, getInstantiator(), queryExecutor);
 	}
 
 	void addControlComponents(ControlsPanel panel) {
@@ -123,13 +107,15 @@ class QueryGFrame extends InstantiationGFrame {
 		}
 	}
 
-	private QueryGFrame(InstanceType instanceType, Instantiator instantiator) {
+	private QueryGFrame(
+				InstanceType instanceType,
+				Instantiator instantiator,
+				QueryExecutor queryExecutor) {
 
 		super(instantiator, createQueryTitle(instanceType));
 
 		this.instanceType = instanceType;
-
-		matchesPanel =  new QueryMatchesPanel(instanceType);
+		this.queryExecutor = queryExecutor;
 
 		display();
 	}
@@ -144,13 +130,10 @@ class QueryGFrame extends InstantiationGFrame {
 		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
 	}
 
-	private void executeAndDisplayMatches() {
+	private void execute() {
 
-		matchesPanel.displayIds(getStore().match(getInstantiation()));
-	}
+		dispose();
 
-	private Store getStore() {
-
-		return instanceType.getController().getStore();
+		queryExecutor.execute(getInstantiation());
 	}
 }

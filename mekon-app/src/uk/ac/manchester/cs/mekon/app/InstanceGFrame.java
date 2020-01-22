@@ -73,11 +73,6 @@ class InstanceGFrame extends InstantiationGFrame {
 		return new InstanceGFrame(instanceType, getInstantiator(), storeId);
 	}
 
-	JComponent createMainComponent(JComponent instantiationComponent) {
-
-		return instantiationComponent;
-	}
-
 	boolean directStorage() {
 
 		return true;

@@ -31,29 +31,19 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class QueryMatchesPanel extends InstantiationsPanel {
+abstract class QueryExecutor {
 
-	static private final long serialVersionUID = -1;
+	private Store store;
 
-	static final String TITLE = "Query Matches";
+	QueryExecutor(Store store) {
 
-	QueryMatchesPanel(InstanceType instanceType, List<CIdentity> matches) {
-
-		super(instanceType, new InstanceIdsList(false, matches), TITLE);
+		this.store = store;
 	}
 
-	boolean allowLoadActionOnly() {
+	void execute(IFrame query) {
 
-		return true;
+		onExecuted(query, store.match(query));
 	}
 
-	void displayInstantiator(InstanceType instanceType) {
-
-		throw new Error("Method should never be invoked!");
-	}
-
-	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
-
-		new InstanceGFrame(instanceType, instantiation, storeId);
-	}
+	abstract void onExecuted(IFrame query, List<CIdentity> matches);
 }

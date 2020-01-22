@@ -33,20 +33,24 @@ class QueriesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE = "Queries";
+	static final String TITLE = "Queries";
 
-	QueriesPanel(InstanceType instanceType) {
+	private QueryExecutor queryExecutor;
+
+	QueriesPanel(InstanceType instanceType, QueryExecutor queryExecutor) {
 
 		super(instanceType, instanceType.getQueryIdsList(), TITLE);
+
+		this.queryExecutor = queryExecutor;
 	}
 
 	void displayInstantiator(InstanceType instanceType) {
 
-		new QueryGFrame(instanceType);
+		new QueryGFrame(instanceType, queryExecutor);
 	}
 
 	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
 
-		new QueryGFrame(instanceType, instantiation);
+		new QueryGFrame(instanceType, instantiation, queryExecutor);
 	}
 }
