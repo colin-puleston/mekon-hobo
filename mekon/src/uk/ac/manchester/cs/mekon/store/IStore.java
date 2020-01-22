@@ -103,7 +103,8 @@ public interface IStore {
 	 * Retrieves an instance from the store, if still fully or
 	 * partially valid with repect to the current model, and/or info
 	 * on current validity and on any pruning that was required in
-	 * order to conform to the current model.
+	 * order to conform to the current model. Retrieved instance will
+	 * be given the default {@link IFrameFunction#ASSERTION} function.
 	 *
 	 * @param identity Unique identity of instance
 	 * @return Representation of instance-level frame representing
@@ -111,6 +112,20 @@ public interface IStore {
 	 * info, or null if no such stored instance
 	 */
 	public IRegenInstance get(CIdentity identity);
+
+	/**
+	 * Retrieves an instance from the store, if still fully or
+	 * partially valid with repect to the current model, and/or info
+	 * on current validity and on any pruning that was required in
+	 * order to conform to the current model.
+	 *
+	 * @param identity Unique identity of instance
+	 * @param function Required function of retrieved instance
+	 * @return Representation of instance-level frame representing
+	 * required instance and/or any relevant validity and pruning
+	 * info, or null if no such stored instance
+	 */
+	public IRegenInstance get(CIdentity identity, IFrameFunction function);
 
 	/**
 	 * Provides unique identities of all instances in store,

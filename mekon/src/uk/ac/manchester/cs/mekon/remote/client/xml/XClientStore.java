@@ -71,7 +71,7 @@ public abstract class XClientStore {
 			request.addParameter(instance);
 			request.addParameter(identity);
 
-			return performAssertionOrNullResponseAction(request);
+			return performInstanceOrNullResponseAction(request, instance.getFunction());
 		}
 
 		public boolean remove(CIdentity identity) {
@@ -121,11 +121,16 @@ public abstract class XClientStore {
 
 		public IRegenInstance get(CIdentity identity) {
 
+			return get(identity, IFrameFunction.ASSERTION);
+		}
+
+		public IRegenInstance get(CIdentity identity, IFrameFunction function) {
+
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET);
 
 			request.addParameter(identity);
 
-			IFrame instance = performAssertionOrNullResponseAction(request);
+			IFrame instance = performInstanceOrNullResponseAction(request, function);
 
 			if (instance == null) {
 
@@ -198,7 +203,9 @@ public abstract class XClientStore {
 		return performAction(request).getBooleanResponse();
 	}
 
-	private IFrame performAssertionOrNullResponseAction(XRequestRenderer request) {
+	private IFrame performInstanceOrNullResponseAction(
+						XRequestRenderer request,
+						IFrameFunction function) {
 
 		XResponseParser response = performAction(request);
 
@@ -207,7 +214,7 @@ public abstract class XClientStore {
 			return null;
 		}
 
-		return responseParser.parse(response.getInstanceResponseParseInput(), false);
+		return responseParser.parse(response.getInstanceResponseParseInput(), function.query());
 	}
 
 	private CIdentity performIdentityOrNullResponseAction(XRequestRenderer request) {

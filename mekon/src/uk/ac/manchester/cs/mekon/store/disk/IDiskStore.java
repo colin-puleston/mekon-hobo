@@ -113,9 +113,14 @@ class IDiskStore implements IStore {
 
 	public synchronized IRegenInstance get(CIdentity identity) {
 
+		return get(identity, IFrameFunction.ASSERTION);
+	}
+
+	public synchronized IRegenInstance get(CIdentity identity, IFrameFunction function) {
+
 		if (indexes.hasIndex(identity)) {
 
-			return fileStore.read(identity, indexes.getIndex(identity), false);
+			return fileStore.read(identity, function, indexes.getIndex(identity), false);
 		}
 
 		return null;
@@ -203,9 +208,9 @@ class IDiskStore implements IStore {
 		addToMatcher(instance, identity);
 	}
 
-	IFrame getOrNull(CIdentity identity, boolean freeInstance) {
+	IFrame getAsAssertionOrNull(CIdentity identity, boolean freeInstance) {
 
-		return getOrNull(identity, indexes.getIndex(identity), freeInstance);
+		return getAsAssertionOrNull(identity, indexes.getIndex(identity), freeInstance);
 	}
 
 	private void initialiseMatchers() {
@@ -250,7 +255,7 @@ class IDiskStore implements IStore {
 
 	private void checkReloadToMatcher(List<IMatcher> reloadables, CIdentity identity) {
 
-		IFrame instance = getOrNull(identity, true);
+		IFrame instance = getAsAssertionOrNull(identity, true);
 
 		if (instance != null) {
 
@@ -274,7 +279,7 @@ class IDiskStore implements IStore {
 
 			int index = indexes.getIndex(identity);
 
-			removed = getOrNull(identity, index, false);
+			removed = getAsAssertionOrNull(identity, index, false);
 
 			CFrame type = removed != null ? removed.getType() : getType(index);
 
@@ -292,9 +297,9 @@ class IDiskStore implements IStore {
 		return model.getFrames().get(fileStore.readTypeId(index));
 	}
 
-	private IFrame getOrNull(CIdentity identity, int index, boolean freeInstance) {
+	private IFrame getAsAssertionOrNull(CIdentity identity, int index, boolean freeInstance) {
 
-		IRegenInstance regen = fileStore.read(identity, index, freeInstance);
+		IRegenInstance regen = fileStore.read(identity, IFrameFunction.ASSERTION, index, freeInstance);
 
 		if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
 

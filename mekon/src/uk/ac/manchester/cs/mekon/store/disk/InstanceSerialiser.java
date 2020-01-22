@@ -52,9 +52,13 @@ class InstanceSerialiser {
 		renderer.render(new IInstanceRenderInput(instance)).writeToFile(file);
 	}
 
-	IRegenInstance parse(CIdentity identity, File file, boolean freeInstance) {
+	IRegenInstance parse(
+					CIdentity identity,
+					IFrameFunction function,
+					File file,
+					boolean freeInstance) {
 
-		IInstanceParser parser = new IInstanceParser(model, IFrameFunction.ASSERTION);
+		IInstanceParser parser = new IInstanceParser(model, function);
 
 		parser.setFreeInstances(freeInstance);
 		parser.setPossibleModelUpdates(true);

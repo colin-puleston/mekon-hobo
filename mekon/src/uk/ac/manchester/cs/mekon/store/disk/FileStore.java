@@ -84,11 +84,15 @@ class FileStore {
 		instanceSerialiser.render(instance, iFile);
 	}
 
-	IRegenInstance read(CIdentity identity, int index, boolean freeInstance) {
+	IRegenInstance read(
+					CIdentity identity,
+					IFrameFunction function,
+					int index,
+					boolean freeInstance) {
 
 		File iFile = instances.getFile(index);
 
-		return instanceSerialiser.parse(identity, iFile, freeInstance);
+		return instanceSerialiser.parse(identity, function, iFile, freeInstance);
 	}
 
 	CIdentity readTypeId(int index) {
