@@ -41,14 +41,10 @@ public class MekonApp extends GFrame {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String EXIT_LABEL = "EXIT";
+	static private final String EXIT_LABEL = "Exit";
 
 	static private final int FRAME_WIDTH = 600;
 	static private final int FRAME_HEIGHT = 600;
-
-	static private final String INSTANCES_TAB_TITLE = "Instances";
-	static private final String QUERIES_TAB_TITLE = "Queries";
-	static private final String MATCHES_TAB_TITLE = "Query Matches";
 
 	static private IStore getIStore(CBuilder builder) {
 

@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceGFrame extends InstantiationGFrame {
+class InstanceDialog extends InstantiationDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -52,25 +52,34 @@ class InstanceGFrame extends InstantiationGFrame {
 	private InstanceType instanceType;
 	private CIdentity storeId;
 
-	InstanceGFrame(InstanceType instanceType, CIdentity storeId) {
+	InstanceDialog(
+		JComponent parent,
+		InstanceType instanceType,
+		CIdentity storeId) {
 
 		this(
+			parent,
 			instanceType,
 			instanceType.createAssertionInstantiator(storeId),
 			storeId);
 	}
 
-	InstanceGFrame(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
+	InstanceDialog(
+		JComponent parent,
+		InstanceType instanceType,
+		IFrame instantiation,
+		CIdentity storeId) {
 
 		this(
+			parent,
 			instanceType,
 			instanceType.createInstantiator(instantiation),
 			storeId);
 	}
 
-	InstanceGFrame createCopy() {
+	InstanceDialog createCopy(JComponent parent) {
 
-		return new InstanceGFrame(instanceType, getInstantiator(), storeId);
+		return new InstanceDialog(parent, instanceType, getInstantiator(), storeId);
 	}
 
 	boolean directStorage() {
@@ -86,12 +95,13 @@ class InstanceGFrame extends InstantiationGFrame {
 		}
 	}
 
-	private InstanceGFrame(
+	private InstanceDialog(
+				JComponent parent,
 				InstanceType instanceType,
 				Instantiator instantiator,
 				CIdentity storeId) {
 
-		super(instantiator, createInstanceTitle(instanceType, storeId));
+		super(parent, instantiator, createInstanceTitle(instanceType, storeId));
 
 		this.instanceType = instanceType;
 		this.storeId = storeId;

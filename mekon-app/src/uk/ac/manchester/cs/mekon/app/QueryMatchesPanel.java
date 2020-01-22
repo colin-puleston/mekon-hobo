@@ -35,7 +35,7 @@ class QueryMatchesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static final String TITLE = "Query Matches";
+	static final String TITLE = "Matches";
 
 	QueryMatchesPanel(InstanceType instanceType, List<CIdentity> matches) {
 
@@ -54,6 +54,6 @@ class QueryMatchesPanel extends InstantiationsPanel {
 
 	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
 
-		new InstanceGFrame(instanceType, instantiation, storeId);
+		new InstanceDialog(this, instanceType, instantiation, storeId);
 	}
 }

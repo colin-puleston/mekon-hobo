@@ -46,11 +46,11 @@ class QueriesPanel extends InstantiationsPanel {
 
 	void displayInstantiator(InstanceType instanceType) {
 
-		new QueryGFrame(instanceType, queryExecutor);
+		new QueryDialog(this, instanceType, queryExecutor);
 	}
 
 	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
 
-		new QueryGFrame(instanceType, instantiation, queryExecutor);
+		new QueryDialog(this, instanceType, instantiation, queryExecutor);
 	}
 }

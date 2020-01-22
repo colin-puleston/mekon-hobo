@@ -45,13 +45,7 @@ abstract class ActiveTableCell {
 
 	static private Color mixAutoEditBackground() {
 
-		return mixColours(
-				Color.GREEN.darker(),
-				Color.LIGHT_GRAY,
-				Color.LIGHT_GRAY,
-				Color.LIGHT_GRAY,
-				Color.LIGHT_GRAY,
-				Color.LIGHT_GRAY);
+		return mixColours(Color.LIGHT_GRAY, Color.WHITE, Color.WHITE);
 	}
 
 	static private Color mixColours(Color... colours) {

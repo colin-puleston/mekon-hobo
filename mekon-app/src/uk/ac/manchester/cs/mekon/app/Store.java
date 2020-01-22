@@ -70,7 +70,7 @@ class Store {
 
 	IFrame get(CIdentity id) {
 
-		return store.get(id).getRootFrame();
+		return store.get(id, getFunction(id)).getRootFrame();
 	}
 
 	List<CIdentity> match(IFrame query) {
@@ -98,7 +98,7 @@ class Store {
 
 		for (CIdentity match : all) {
 
-			if (MekonAppStoreId.assertionId(match)) {
+			if (assertionId(match)) {
 
 				filtered.add(match);
 			}
@@ -161,8 +161,18 @@ class Store {
 		return describeFunction(id) + ": \"" + id.getLabel() + "\"";
 	}
 
+	private IFrameFunction getFunction(CIdentity id) {
+
+		return assertionId(id) ? IFrameFunction.ASSERTION : IFrameFunction.QUERY;
+	}
+
 	private String describeFunction(CIdentity id) {
 
-		return MekonAppStoreId.assertionId(id) ? "instance" : "query";
+		return assertionId(id) ? "instance" : "query";
+	}
+
+	private boolean assertionId(CIdentity id) {
+
+		return MekonAppStoreId.assertionId(id);
 	}
 }

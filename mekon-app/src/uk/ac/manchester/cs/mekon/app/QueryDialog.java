@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class QueryGFrame extends InstantiationGFrame {
+class QueryDialog extends InstantiationDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -62,22 +62,34 @@ class QueryGFrame extends InstantiationGFrame {
 		}
 	}
 
-	QueryGFrame(InstanceType instanceType, QueryExecutor queryExecutor) {
+	QueryDialog(
+		JComponent parent,
+		InstanceType instanceType,
+		QueryExecutor queryExecutor) {
 
-		this(instanceType, instanceType.createQueryInstantiator(), queryExecutor);
+		this(
+			parent,
+			instanceType,
+			instanceType.createQueryInstantiator(),
+			queryExecutor);
 	}
 
-	QueryGFrame(
+	QueryDialog(
+		JComponent parent,
 		InstanceType instanceType,
 		IFrame instantiation,
 		QueryExecutor queryExecutor) {
 
-		this(instanceType, instanceType.createInstantiator(instantiation), queryExecutor);
+		this(
+			parent,
+			instanceType,
+			instanceType.createInstantiator(instantiation),
+			queryExecutor);
 	}
 
-	QueryGFrame createCopy() {
+	QueryDialog createCopy(JComponent parent) {
 
-		return new QueryGFrame(instanceType, getInstantiator(), queryExecutor);
+		return new QueryDialog(parent, instanceType, getInstantiator(), queryExecutor);
 	}
 
 	void addControlComponents(ControlsPanel panel) {
@@ -107,12 +119,13 @@ class QueryGFrame extends InstantiationGFrame {
 		}
 	}
 
-	private QueryGFrame(
+	private QueryDialog(
+				JComponent parent,
 				InstanceType instanceType,
 				Instantiator instantiator,
 				QueryExecutor queryExecutor) {
 
-		super(instantiator, createQueryTitle(instanceType));
+		super(parent, instantiator, createQueryTitle(instanceType));
 
 		this.instanceType = instanceType;
 		this.queryExecutor = queryExecutor;
@@ -122,12 +135,7 @@ class QueryGFrame extends InstantiationGFrame {
 
 	private CIdentity checkObtainStoreId() {
 
-		return new StoreIdSelector(findOwnerFrame()).getIdSelection(IFrameFunction.QUERY);
-	}
-
-	private JFrame findOwnerFrame() {
-
-		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
+		return new StoreIdSelector(getRootWindow()).getIdSelection(IFrameFunction.QUERY);
 	}
 
 	private void execute() {

@@ -39,11 +39,14 @@ class InstanceTypePanel extends JTabbedPane {
 	static private final long serialVersionUID = -1;
 
 	static private final String DISPLAY_QUERY_LABEL = "Query...";
+	static private final String REMOVE_TAB_LABEL = "Discard";
 
 	private InstanceType instanceType;
 
 	private QueryExecutor queryExecutor;
 	private int executedQueryCount = 0;
+
+	private RemoveTabButton removeTabButton = new RemoveTabButton();
 
 	private class QueryExecutorLocal extends QueryExecutor {
 
@@ -66,7 +69,7 @@ class InstanceTypePanel extends JTabbedPane {
 
 		protected void doButtonThing() {
 
-			new QueryGFrame(instanceType, query, queryExecutor);
+			new QueryDialog(InstanceTypePanel.this, instanceType, query, queryExecutor);
 		}
 
 		DisplayQueryButton(IFrame query) {
@@ -74,6 +77,21 @@ class InstanceTypePanel extends JTabbedPane {
 			super(DISPLAY_QUERY_LABEL);
 
 			this.query = query;
+		}
+	}
+
+	private class RemoveTabButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			removeTabAt(getSelectedIndex());
+		}
+
+		RemoveTabButton() {
+
+			super(REMOVE_TAB_LABEL);
 		}
 	}
 
@@ -92,7 +110,7 @@ class InstanceTypePanel extends JTabbedPane {
 	private void addMatches(IFrame query, List<CIdentity> matches) {
 
 		addTab(getNextMatchesTabTitle(), createMatchesComponent(query, matches));
-		setSelectedIndex(executedQueryCount + 1);
+		setSelectedIndex(getTabCount() - 1);
 	}
 
 	private JComponent createMatchesComponent(IFrame query, List<CIdentity> matches) {
@@ -100,7 +118,17 @@ class InstanceTypePanel extends JTabbedPane {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		panel.add(new QueryMatchesPanel(instanceType, matches), BorderLayout.CENTER);
-		panel.add(new DisplayQueryButton(query), BorderLayout.SOUTH);
+		panel.add(createMatchesControlsComponent(query), BorderLayout.SOUTH);
+
+		return panel;
+	}
+
+	private JComponent createMatchesControlsComponent(IFrame query) {
+
+		ControlsPanel panel = new ControlsPanel(false);
+
+		panel.addControl(new DisplayQueryButton(query));
+		panel.addControl(removeTabButton);
 
 		return panel;
 	}

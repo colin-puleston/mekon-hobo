@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstantiationGFrame extends GFrame implements AspectWindow {
+abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 	static private final long serialVersionUID = -1;
 
@@ -53,6 +53,7 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 		return instanceType.getType().getIdentity().getLabel();
 	}
 
+	private JComponent parent;
 	private Instantiator instantiator;
 
 	private class StoreButton extends GButton {
@@ -77,7 +78,7 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 
 	public Window getRootWindow() {
 
-		return this;
+		return (Window)SwingUtilities.getAncestorOfClass(Window.class, this);
 	}
 
 	public Instantiator getInstantiator() {
@@ -87,13 +88,14 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 
 	public void displayCopy() {
 
-		createCopy().display();
+		createCopy(parent);
 	}
 
-	InstantiationGFrame(Instantiator instantiator, String title) {
+	InstantiationDialog(JComponent parent, Instantiator instantiator, String title) {
 
-		super(title);
+		super(parent, title, true);
 
+		this.parent = parent;
 		this.instantiator = instantiator;
 	}
 
@@ -102,7 +104,7 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 		display(createDisplay());
 	}
 
-	abstract InstantiationGFrame createCopy();
+	abstract InstantiationDialog createCopy(JComponent parent);
 
 	void addControlComponents(ControlsPanel panel) {
 

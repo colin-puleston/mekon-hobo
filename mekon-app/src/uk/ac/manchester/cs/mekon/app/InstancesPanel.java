@@ -48,13 +48,13 @@ class InstancesPanel extends InstantiationsPanel {
 
 		if (storeId != null) {
 
-			new InstanceGFrame(instanceType, storeId);
+			new InstanceDialog(this, instanceType, storeId);
 		}
 	}
 
 	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
 
-		new InstanceGFrame(instanceType, instantiation, storeId);
+		new InstanceDialog(this, instanceType, instantiation, storeId);
 	}
 
 	private CIdentity checkObtainStoreId() {
