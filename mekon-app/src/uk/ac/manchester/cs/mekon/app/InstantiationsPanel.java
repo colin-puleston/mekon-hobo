@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.BorderLayout;
+import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -32,90 +34,112 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstantiationsPanel extends ControlsPanel {
+abstract class InstantiationsPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE = "Create";
-
-	static private final String INSTANCE_BUTTON_LABEL = "Instance...";
-	static private final String QUERY_BUTTON_LABEL = "Query...";
-
-	static private final String STORE_NAME_SELECTOR_TITLE = "Enter Instance Name";
+	static private final String CREATE_LABEL = "Create...";
+	static private final String LOAD_LABEL = "Load";
+	static private final String REMOVE_LABEL = "Remove";
 
 	private InstanceType instanceType;
+	private InstanceIdsList idsList;
 
-	private class InstanceButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			CIdentity id = checkObtainStoreId();
-
-			if (id != null) {
-
-				new InstanceGFrame(instanceType, id);
-			}
-		}
-
-		InstanceButton() {
-
-			super(INSTANCE_BUTTON_LABEL);
-		}
-	}
-
-	private class QueryButton extends GButton {
+	private class CreateButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			new QueryGFrame(instanceType);
+			displayInstantiator(instanceType);
 		}
 
-		QueryButton() {
+		CreateButton() {
 
-			super(QUERY_BUTTON_LABEL);
+			super(CREATE_LABEL);
 		}
 	}
 
-	InstantiationsPanel(InstanceType instanceType) {
+	private class LoadButton extends SelectedInstanceIdActionButton {
 
-		super(false);
+		static private final long serialVersionUID = -1;
+
+		LoadButton() {
+
+			super(idsList, LOAD_LABEL);
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			loadInstantiation(storeId);
+		}
+	}
+
+	private class RemoveButton extends SelectedInstanceIdActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		RemoveButton() {
+
+			super(idsList, REMOVE_LABEL);
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			instanceType.checkRemoveInstance(storeId);
+		}
+	}
+
+	InstantiationsPanel(InstanceType instanceType, InstanceIdsList idsList, String title) {
+
+		super(new BorderLayout());
 
 		this.instanceType = instanceType;
+		this.idsList = idsList;
 
-		PanelEntitler.entitle(this, TITLE);
+		PanelEntitler.entitle(this, title);
 
-		addControl(new InstanceButton());
-		addControl(new QueryButton());
+		add(new JScrollPane(idsList), BorderLayout.CENTER);
+		add(createControlsComponent(), BorderLayout.SOUTH);
 	}
 
-	private CIdentity checkObtainStoreId() {
+	void displayIds(Collection<CIdentity> ids) {
 
-		IStringSelector selector = createStoreNameSelector();
-
-		if (selector.display(false) == EditStatus.EDITED) {
-
-			IString storeName = selector.getSelection();
-
-			if (storeName != null) {
-
-				return MekonAppStoreId.toStoreId(storeName.get());
-			}
-		}
-
-		return null;
+		idsList.update(ids);
 	}
 
-	private IStringSelector createStoreNameSelector() {
+	boolean allowLoadActionOnly() {
 
-		return new IStringSelector(findOwnerFrame(), STORE_NAME_SELECTOR_TITLE);
+		return false;
 	}
 
-	private JFrame findOwnerFrame() {
+	abstract void displayInstantiator(InstanceType instanceType);
 
-		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
+	abstract void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId);
+
+	private JComponent createControlsComponent() {
+
+		return allowLoadActionOnly() ? new LoadButton() : createFullControlsComponent();
+	}
+
+	private JComponent createFullControlsComponent() {
+
+		ControlsPanel panel = new ControlsPanel(true);
+
+		panel.addControl(new CreateButton());
+		panel.addControl(new LoadButton());
+		panel.addControl(new RemoveButton());
+
+		return panel;
+	}
+
+	private void loadInstantiation(CIdentity storeId) {
+
+		displayStored(instanceType, getStoredInstantiation(storeId), storeId);
+	}
+
+	private IFrame getStoredInstantiation(CIdentity storeId) {
+
+		return instanceType.getController().getStore().get(storeId);
 	}
 }

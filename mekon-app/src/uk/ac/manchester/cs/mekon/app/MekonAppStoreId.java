@@ -31,13 +31,38 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class MekonAppStoreId {
 
-	static public CIdentity toStoreId(String storeName) {
+	static public CIdentity toStoreId(String storeName, IFrameFunction function) {
 
-		return new CIdentity(storeName, storeName);
+		return new CIdentity(toIdentifier(storeName, function), storeName);
 	}
 
 	static public String toStoreName(CIdentity storeId) {
 
 		return storeId.getLabel();
+	}
+
+	static public boolean assertionId(CIdentity storeId) {
+
+		return functionId(storeId, IFrameFunction.ASSERTION);
+	}
+
+	static public boolean queryId(CIdentity storeId) {
+
+		return functionId(storeId, IFrameFunction.QUERY);
+	}
+
+	static public boolean functionId(CIdentity storeId, IFrameFunction function) {
+
+		return storeId.getIdentifier().startsWith(toIdentifierPrefix(function));
+	}
+
+	static private String toIdentifier(String storeName, IFrameFunction function) {
+
+		return toIdentifierPrefix(function) + storeName;
+	}
+
+	static private String toIdentifierPrefix(IFrameFunction function) {
+
+		return function.toString() + "::";
 	}
 }

@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
@@ -39,8 +37,8 @@ class InstanceType {
 
 	private CFrame type;
 
-	private List<CIdentity> instanceIds;
-	private InstanceIdsList instanceIdsList;
+	private InstanceIdsList assertionIds;
+	private InstanceIdsList queryIds;
 
 	InstanceType(Controller controller, CFrame type) {
 
@@ -48,9 +46,14 @@ class InstanceType {
 		this.type = type;
 
 		store = controller.getStore();
-		instanceIdsList = new InstanceIdsList(false);
 
-		updateInstanceIds();
+		assertionIds = new InstanceIdsList(false);
+		queryIds = new InstanceIdsList(false);
+
+		for (CIdentity storeId : store.getInstanceIds(type)) {
+
+			getInstanceIdsList(storeId).add(storeId);
+		}
 	}
 
 	Controller getController() {
@@ -63,21 +66,21 @@ class InstanceType {
 		return type;
 	}
 
-	List<CIdentity> getInstanceIds() {
+	InstanceIdsList getAssertionIdsList() {
 
-		return instanceIds;
+		return assertionIds;
 	}
 
-	InstanceIdsList getInstanceIdsList() {
+	InstanceIdsList getQueryIdsList() {
 
-		return instanceIdsList;
+		return queryIds;
 	}
 
-	boolean checkAddInstance(IFrame instance, CIdentity id) {
+	boolean checkAddInstance(IFrame instance, CIdentity storeId) {
 
-		if (store.checkAdd(instance, id)) {
+		if (store.checkAdd(instance, storeId)) {
 
-			updateInstanceIds();
+			getInstanceIdsList(storeId).add(storeId);
 
 			return true;
 		}
@@ -85,19 +88,19 @@ class InstanceType {
 		return false;
 	}
 
-	void checkRemoveInstance(CIdentity id) {
+	void checkRemoveInstance(CIdentity storeId) {
 
-		if (store.checkRemove(id)) {
+		if (store.checkRemove(storeId)) {
 
-			updateInstanceIds();
+			getInstanceIdsList(storeId).remove(storeId);
 		}
 	}
 
-	Instantiator createAssertionInstantiator(CIdentity id) {
+	Instantiator createAssertionInstantiator(CIdentity storeId) {
 
 		IFrame instance = instantiate(IFrameFunction.ASSERTION);
 
-		controller.getCustomiser().onNewInstance(instance, id);
+		controller.getCustomiser().onNewInstance(instance, storeId);
 
 		return createInstantiator(instance);
 	}
@@ -117,9 +120,8 @@ class InstanceType {
 		return type.instantiate(function);
 	}
 
-	private void updateInstanceIds() {
+	private InstanceIdsList getInstanceIdsList(CIdentity storeId) {
 
-		instanceIds = store.getInstanceIds(type);
-		instanceIdsList.update(instanceIds);
+		return MekonAppStoreId.assertionId(storeId) ? assertionIds : queryIds;
 	}
 }

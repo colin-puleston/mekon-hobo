@@ -38,6 +38,8 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 	static private final long serialVersionUID = -1;
 
 	static private final String TITLE_FORMAT = "%s %s";
+	static private final String STORE_DIRECT_LABEL = "Store";
+	static private final String STORE_INDIRECT_LABEL = STORE_DIRECT_LABEL + "...";
 
 	static private final int FRAME_WIDTH = 700;
 
@@ -52,6 +54,21 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 	}
 
 	private Instantiator instantiator;
+
+	private class StoreButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			storeInstantiation();
+		}
+
+		StoreButton() {
+
+			super(directStorage() ? STORE_DIRECT_LABEL : STORE_INDIRECT_LABEL);
+		}
+	}
 
 	public Dimension getPreferredSize() {
 
@@ -91,12 +108,19 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 
 	abstract JComponent createMainComponent(JComponent instantiationComponent);
 
-	abstract JComponent createControlsComponent();
+	void addControlComponents(ControlsPanel panel) {
+
+		panel.addControl(new StoreButton());
+	}
+
+	abstract boolean directStorage();
 
 	IFrame getInstantiation() {
 
 		return instantiator.getInstantiation();
 	}
+
+	abstract void storeInstantiation();
 
 	private JComponent createDisplay() {
 
@@ -111,6 +135,17 @@ abstract class InstantiationGFrame extends GFrame implements AspectWindow {
 	private JComponent createMainComponent() {
 
 		return createMainComponent(new JScrollPane(createDescriptorsTable()));
+	}
+
+	private JComponent createControlsComponent() {
+
+		JPanel outerPanel = new JPanel(new BorderLayout());
+		ControlsPanel innerPanel = new ControlsPanel(true);
+
+		addControlComponents(innerPanel);
+		outerPanel.add(innerPanel, BorderLayout.WEST);
+
+		return outerPanel;
 	}
 
 	private DescriptorsTable createDescriptorsTable() {

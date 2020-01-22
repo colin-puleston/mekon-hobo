@@ -24,48 +24,34 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.event.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class SelectedInstanceIdActionButton extends GButton {
+class QueryMatchesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	private InstanceIdsList idsList;
+	static private final String TITLE = "Matches";
 
-	private class Enabler implements ListSelectionListener {
+	QueryMatchesPanel(InstanceType instanceType) {
 
-		public void valueChanged(ListSelectionEvent event) {
-
-			updateEnabling();
-		}
+		super(instanceType, new InstanceIdsList(false), TITLE);
 	}
 
-	protected void doButtonThing() {
+	boolean allowLoadActionOnly() {
 
-		doInstanceThing(idsList.getSelectedId());
+		return true;
 	}
 
-	SelectedInstanceIdActionButton(InstanceIdsList idsList, String label) {
+	void displayInstantiator(InstanceType instanceType) {
 
-		super(label);
-
-		this.idsList = idsList;
-
-		idsList.addListSelectionListener(new Enabler());
-
-		updateEnabling();
+		throw new Error("Method should never be invoked!");
 	}
 
-	abstract void doInstanceThing(CIdentity storeId);
+	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
 
-	private void updateEnabling() {
-
-		setEnabled(idsList.isSelectedId());
+		new InstanceGFrame(instanceType, instantiation, storeId);
 	}
 }

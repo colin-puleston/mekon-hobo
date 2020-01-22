@@ -24,48 +24,46 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.event.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class SelectedInstanceIdActionButton extends GButton {
+class InstancesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	private InstanceIdsList idsList;
+	static private final String TITLE = "Instances";
 
-	private class Enabler implements ListSelectionListener {
+	InstancesPanel(InstanceType instanceType) {
 
-		public void valueChanged(ListSelectionEvent event) {
+		super(instanceType, instanceType.getAssertionIdsList(), TITLE);
+	}
 
-			updateEnabling();
+	void displayInstantiator(InstanceType instanceType) {
+
+		CIdentity storeId = checkObtainStoreId();
+
+		if (storeId != null) {
+
+			new InstanceGFrame(instanceType, storeId);
 		}
 	}
 
-	protected void doButtonThing() {
+	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
 
-		doInstanceThing(idsList.getSelectedId());
+		new InstanceGFrame(instanceType, instantiation, storeId);
 	}
 
-	SelectedInstanceIdActionButton(InstanceIdsList idsList, String label) {
+	private CIdentity checkObtainStoreId() {
 
-		super(label);
-
-		this.idsList = idsList;
-
-		idsList.addListSelectionListener(new Enabler());
-
-		updateEnabling();
+		return new StoreIdSelector(findOwnerFrame()).getIdSelection(IFrameFunction.ASSERTION);
 	}
 
-	abstract void doInstanceThing(CIdentity storeId);
+	private JFrame findOwnerFrame() {
 
-	private void updateEnabling() {
-
-		setEnabled(idsList.isSelectedId());
+		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
 	}
 }

@@ -43,7 +43,7 @@ public class MekonApp extends GFrame {
 
 	static private final String EXIT_LABEL = "EXIT";
 
-	static private final int FRAME_WIDTH = 500;
+	static private final int FRAME_WIDTH = 600;
 	static private final int FRAME_HEIGHT = 600;
 
 	static private IStore getIStore(CBuilder builder) {
@@ -86,12 +86,18 @@ public class MekonApp extends GFrame {
 
 		JComponent create() {
 
-			if (types.size() == 1) {
+			return types.size() == 1
+					? createSingleTypePanel(types.get(0))
+					: createMultiTypesPanel();
+		}
 
-				return createTypePanel(types.get(0));
-			}
+		private JPanel createSingleTypePanel(CFrame type) {
 
-			return createMultiTypesPanel();
+			JPanel panel = createTypePanel(type);
+
+			PanelEntitler.entitle(panel, getTypePanelTitle(type));
+
+			return panel;
 		}
 
 		private JComponent createMultiTypesPanel() {
@@ -106,9 +112,20 @@ public class MekonApp extends GFrame {
 			return panel;
 		}
 
-		private JComponent createTypePanel(CFrame type) {
+		private JPanel createTypePanel(CFrame type) {
 
-			return new InstanceTypePanel(controller.addInstanceType(type));
+			return createTypePanel(controller.addInstanceType(type));
+		}
+
+		private JPanel createTypePanel(InstanceType instanceType) {
+
+			JPanel panel = new JPanel();
+
+			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+			panel.add(new InstancesPanel(instanceType));
+			panel.add(new QueriesPanel(instanceType));
+
+			return panel;
 		}
 
 		private String getTypePanelTitle(CFrame type) {

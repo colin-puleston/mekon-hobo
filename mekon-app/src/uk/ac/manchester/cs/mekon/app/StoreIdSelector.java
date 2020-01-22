@@ -24,48 +24,36 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.event.*;
+import java.awt.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class SelectedInstanceIdActionButton extends GButton {
+class StoreIdSelector extends IStringSelector {
 
 	static private final long serialVersionUID = -1;
 
-	private InstanceIdsList idsList;
+	static private final String TITLE = "Enter Instance Name";
 
-	private class Enabler implements ListSelectionListener {
+	StoreIdSelector(Window rootWindow) {
 
-		public void valueChanged(ListSelectionEvent event) {
+		super(rootWindow, TITLE);
+	}
 
-			updateEnabling();
+	CIdentity getIdSelection(IFrameFunction function) {
+
+		if (display(false) == EditStatus.EDITED) {
+
+			IString storeName = getSelection();
+
+			if (storeName != null) {
+
+				return MekonAppStoreId.toStoreId(storeName.get(), function);
+			}
 		}
-	}
 
-	protected void doButtonThing() {
-
-		doInstanceThing(idsList.getSelectedId());
-	}
-
-	SelectedInstanceIdActionButton(InstanceIdsList idsList, String label) {
-
-		super(label);
-
-		this.idsList = idsList;
-
-		idsList.addListSelectionListener(new Enabler());
-
-		updateEnabling();
-	}
-
-	abstract void doInstanceThing(CIdentity storeId);
-
-	private void updateEnabling() {
-
-		setEnabled(idsList.isSelectedId());
+		return null;
 	}
 }

@@ -76,7 +76,7 @@ class InstanceRefSelector extends Selector<IFrame> {
 
 		instantiator = aspectWindow.getInstantiator();
 
-		idsList = new InstanceIdsList(multiSelect, getInstanceIds());
+		idsList = createIdsList();
 		idsList.addListSelectionListener(new IdsSelectionListener());
 	}
 
@@ -107,9 +107,14 @@ class InstanceRefSelector extends Selector<IFrame> {
 		return multiSelect;
 	}
 
-	private List<CIdentity> getInstanceIds() {
+	private InstanceIdsList createIdsList() {
 
-		return instantiator.getController().getInstanceType(type).getInstanceIds();
+		return getInstanceType().getAssertionIdsList().deriveList(multiSelect);
+	}
+
+	private InstanceType getInstanceType() {
+
+		return instantiator.getController().getInstanceType(type);
 	}
 
 	private List<IFrame> idSelectionsToRefs() {

@@ -24,43 +24,29 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.BorderLayout;
-import javax.swing.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class InstanceTypePanel extends JPanel {
+class QueriesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	InstanceTypePanel(InstanceType instanceType) {
+	static private final String TITLE = "Queries";
 
-		super(new BorderLayout());
+	QueriesPanel(InstanceType instanceType) {
 
-		add(createInstancesPanel(instanceType), BorderLayout.CENTER);
-		add(createInstantiationsPanel(instanceType), BorderLayout.EAST);
+		super(instanceType, instanceType.getQueryIdsList(), TITLE);
 	}
 
-	private InstanceIdsPanel createInstancesPanel(InstanceType instanceType) {
+	void displayInstantiator(InstanceType instanceType) {
 
-		InstanceIdsList idsList = instanceType.getInstanceIdsList();
-		String title = getInstancesPanelTitle(instanceType);
-
-		return new InstanceIdsPanel(instanceType, idsList, title, true);
+		new QueryGFrame(instanceType);
 	}
 
-	private JPanel createInstantiationsPanel(InstanceType instanceType) {
+	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
 
-		JPanel panel = new JPanel(new BorderLayout());
-
-		panel.add(new InstantiationsPanel(instanceType), BorderLayout.NORTH);
-
-		return panel;
-	}
-
-	private String getInstancesPanelTitle(InstanceType instanceType) {
-
-		return instanceType.getType().getIdentity().getLabel() + 's';
+		new QueryGFrame(instanceType, instantiation);
 	}
 }

@@ -75,7 +75,7 @@ class Store {
 
 	List<CIdentity> match(IFrame query) {
 
-		List<CIdentity> matches = store.match(query).getAllMatches();
+		List<CIdentity> matches = getFilteredMatches(query);
 
 		showQueryMatchesMessage(matches.size());
 
@@ -87,6 +87,26 @@ class Store {
 		return store.match(type.instantiate()).getAllMatches();
 	}
 
+	private List<CIdentity> getFilteredMatches(IFrame query) {
+
+		return filterQueryMatches(store.match(query).getAllMatches());
+	}
+
+	private List<CIdentity> filterQueryMatches(List<CIdentity> all) {
+
+		List<CIdentity> filtered = new ArrayList<CIdentity>();
+
+		for (CIdentity match : all) {
+
+			if (MekonAppStoreId.assertionId(match)) {
+
+				filtered.add(match);
+			}
+		}
+
+		return filtered;
+	}
+
 	private boolean checkInstanceStorageRequired(CIdentity id) {
 
 		return !store.contains(id) || confirmReplaceStoredInstance(id);
@@ -94,26 +114,22 @@ class Store {
 
 	private boolean confirmReplaceStoredInstance(CIdentity id) {
 
-		return obtainConfirmation(
-					"Replace stored instance: "
-					+ "\"" + id.getLabel() + "\"");
+		return obtainConfirmation("Replace stored " + describeInstance(id));
 	}
 
 	private boolean confirmRemoveStoredInstance(CIdentity id) {
 
-		return obtainConfirmation(
-					"Remove stored instance: "
-					+ "\"" + id.getLabel() + "\"");
+		return obtainConfirmation("Remove stored " + describeInstance(id));
 	}
 
 	private void showInstanceStoredMessage(CIdentity id) {
 
-		showMessage("Instance stored: \"" + id.getLabel() + "\"");
+		showMessage("Stored " + describeInstance(id));
 	}
 
 	private void showInstanceRemovedMessage(CIdentity id) {
 
-		showMessage("Instance removed from store: \"" + id.getLabel() + "\"");
+		showMessage("Removed " + describeInstance(id));
 	}
 
 	private void showQueryMatchesMessage(int count) {
@@ -138,5 +154,15 @@ class Store {
 	private void showMessage(String msg) {
 
 		JOptionPane.showMessageDialog(null, msg);
+	}
+
+	private String describeInstance(CIdentity id) {
+
+		return describeFunction(id) + ": \"" + id.getLabel() + "\"";
+	}
+
+	private String describeFunction(CIdentity id) {
+
+		return MekonAppStoreId.assertionId(id) ? "instance" : "query";
 	}
 }

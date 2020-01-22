@@ -33,11 +33,14 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceIdsList extends JList<String> {
+class InstanceIdsList extends JList<InstanceIdListElement> {
 
 	static private final long serialVersionUID = -1;
 
-	private DefaultListModel<String> model = new DefaultListModel<String>();
+	private Set<CIdentity> instanceIds = new HashSet<CIdentity>();
+
+	private DefaultListModel<InstanceIdListElement> model
+				= new DefaultListModel<InstanceIdListElement>();
 
 	InstanceIdsList(boolean multiSelect) {
 
@@ -56,16 +59,30 @@ class InstanceIdsList extends JList<String> {
 		update(instanceIds);
 	}
 
+	InstanceIdsList deriveList(boolean multiSelect) {
+
+		return new InstanceIdsList(multiSelect, instanceIds);
+	}
+
 	void update(Collection<CIdentity> instanceIds) {
 
-		model.clear();
+		this.instanceIds.addAll(instanceIds);
 
-		for (String element : getSortedElements(instanceIds)) {
+		updateList();
+	}
 
-			model.addElement(element);
-		}
+	void add(CIdentity instanceId) {
 
-		revalidate();
+		instanceIds.add(instanceId);
+
+		updateList();
+	}
+
+	void remove(CIdentity instanceId) {
+
+		instanceIds.remove(instanceId);
+
+		updateList();
 	}
 
 	boolean isSelectedId() {
@@ -89,12 +106,24 @@ class InstanceIdsList extends JList<String> {
 
 		List<CIdentity> ids = new ArrayList<CIdentity>();
 
-		for (String idValue : getSelectedValuesList()) {
+		for (InstanceIdListElement element : getSelectedValuesList()) {
 
-			ids.add(new CIdentity(idValue, idValue));
+			ids.add(element.id);
 		}
 
 		return ids;
+	}
+
+	private void updateList() {
+
+		model.clear();
+
+		for (InstanceIdListElement element : getSortedElements()) {
+
+			model.addElement(element);
+		}
+
+		revalidate();
 	}
 
 	private int getSelectionMode(boolean multiSelect) {
@@ -104,13 +133,13 @@ class InstanceIdsList extends JList<String> {
 				: ListSelectionModel.SINGLE_SELECTION;
 	}
 
-	private Set<String> getSortedElements(Collection<CIdentity> instanceIds) {
+	private Set<InstanceIdListElement> getSortedElements() {
 
-		Set<String> elements = new TreeSet<String>();
+		Set<InstanceIdListElement> elements = new TreeSet<InstanceIdListElement>();
 
 		for (CIdentity instanceId : instanceIds) {
 
-			elements.add(instanceId.getIdentifier());
+			elements.add(new InstanceIdListElement(instanceId));
 		}
 
 		return elements;

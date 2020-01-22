@@ -39,8 +39,6 @@ class QueryGFrame extends InstantiationGFrame {
 	static private final long serialVersionUID = -1;
 
 	static private final String SUB_TITLE = "Query";
-	static private final String MATCHES_TITLE = "Matches";
-
 	static private final String EXECUTE_LABEL = "Execute";
 
 	static private final Dimension WINDOW_SIZE = new Dimension(800, 500);
@@ -51,7 +49,7 @@ class QueryGFrame extends InstantiationGFrame {
 	}
 
 	private InstanceType instanceType;
-	private InstanceIdsPanel matchesPanel;
+	private QueryMatchesPanel matchesPanel;
 
 	private class ExecuteButton extends GButton {
 
@@ -78,6 +76,11 @@ class QueryGFrame extends InstantiationGFrame {
 		this(instanceType, instanceType.createQueryInstantiator());
 	}
 
+	QueryGFrame(InstanceType instanceType, IFrame instantiation) {
+
+		this(instanceType, instanceType.createInstantiator(instantiation));
+	}
+
 	QueryGFrame createCopy() {
 
 		return new QueryGFrame(instanceType, getInstantiator());
@@ -93,9 +96,31 @@ class QueryGFrame extends InstantiationGFrame {
 		return panel;
 	}
 
-	JComponent createControlsComponent() {
+	void addControlComponents(ControlsPanel panel) {
+
+		panel.addControl(new ExecuteButton());
+
+		super.addControlComponents(panel);
+	}
+
+	JComponent createExtraControlComponent() {
 
 		return new ExecuteButton();
+	}
+
+	boolean directStorage() {
+
+		return false;
+	}
+
+	void storeInstantiation() {
+
+		CIdentity storeId = checkObtainStoreId();
+
+		if (storeId != null) {
+
+			instanceType.checkAddInstance(getInstantiation(), storeId);
+		}
 	}
 
 	private QueryGFrame(InstanceType instanceType, Instantiator instantiator) {
@@ -104,14 +129,19 @@ class QueryGFrame extends InstantiationGFrame {
 
 		this.instanceType = instanceType;
 
-		matchesPanel = createMatchesPanel();
+		matchesPanel =  new QueryMatchesPanel(instanceType);
 
 		display();
 	}
 
-	private InstanceIdsPanel createMatchesPanel() {
+	private CIdentity checkObtainStoreId() {
 
-		return new InstanceIdsPanel(instanceType, MATCHES_TITLE, false);
+		return new StoreIdSelector(findOwnerFrame()).getIdSelection(IFrameFunction.QUERY);
+	}
+
+	private JFrame findOwnerFrame() {
+
+		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
 	}
 
 	private void executeAndDisplayMatches() {

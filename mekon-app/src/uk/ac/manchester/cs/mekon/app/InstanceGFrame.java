@@ -38,7 +38,6 @@ class InstanceGFrame extends InstantiationGFrame {
 	static private final long serialVersionUID = -1;
 
 	static private final String SUB_TITLE_FORMAT = "Instance (%s)";
-	static private final String STORE_BUTTON_LABEL = "Store";
 
 	static private String createInstanceTitle(InstanceType instanceType, CIdentity storeId) {
 
@@ -52,24 +51,6 @@ class InstanceGFrame extends InstantiationGFrame {
 
 	private InstanceType instanceType;
 	private CIdentity storeId;
-
-	private class StoreButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			if (instanceType.checkAddInstance(getInstantiation(), storeId)) {
-
-				dispose();
-			}
-		}
-
-		StoreButton() {
-
-			super(STORE_BUTTON_LABEL);
-		}
-	}
 
 	InstanceGFrame(InstanceType instanceType, CIdentity storeId) {
 
@@ -97,9 +78,17 @@ class InstanceGFrame extends InstantiationGFrame {
 		return instantiationComponent;
 	}
 
-	JComponent createControlsComponent() {
+	boolean directStorage() {
 
-		return new StoreButton();
+		return true;
+	}
+
+	void storeInstantiation() {
+
+		if (instanceType.checkAddInstance(getInstantiation(), storeId)) {
+
+			dispose();
+		}
 	}
 
 	private InstanceGFrame(

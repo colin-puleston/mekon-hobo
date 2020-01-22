@@ -24,48 +24,27 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.event.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class SelectedInstanceIdActionButton extends GButton {
+class InstanceIdListElement implements Comparable<InstanceIdListElement> {
 
-	static private final long serialVersionUID = -1;
+	final CIdentity id;
 
-	private InstanceIdsList idsList;
+	public String toString() {
 
-	private class Enabler implements ListSelectionListener {
-
-		public void valueChanged(ListSelectionEvent event) {
-
-			updateEnabling();
-		}
+		return id.getLabel();
 	}
 
-	protected void doButtonThing() {
+	public int compareTo(InstanceIdListElement other) {
 
-		doInstanceThing(idsList.getSelectedId());
+		return id.getLabel().compareTo(other.id.getLabel());
 	}
 
-	SelectedInstanceIdActionButton(InstanceIdsList idsList, String label) {
+	InstanceIdListElement(CIdentity id) {
 
-		super(label);
-
-		this.idsList = idsList;
-
-		idsList.addListSelectionListener(new Enabler());
-
-		updateEnabling();
-	}
-
-	abstract void doInstanceThing(CIdentity storeId);
-
-	private void updateEnabling() {
-
-		setEnabled(idsList.isSelectedId());
+		this.id = id;
 	}
 }
