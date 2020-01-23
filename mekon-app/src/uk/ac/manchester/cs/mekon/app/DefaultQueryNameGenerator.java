@@ -33,33 +33,43 @@ class DefaultQueryNameGenerator {
 
 	static private final String NAME_BODY = "QUERY-";
 
-	private int nextIndex = 1;
+	private InstanceType instanceType;
 
 	DefaultQueryNameGenerator(InstanceType instanceType) {
 
-		for (CIdentity queryId : instanceType.getQueryIdsList().getAllIds()) {
-
-			checkResetInitialIndex(queryId.getLabel());
-		}
+		this.instanceType = instanceType;
 	}
 
 	String getNext() {
 
-		return NAME_BODY + (nextIndex++);
+		return NAME_BODY + getNextIndex();
 	}
 
-	private void checkResetInitialIndex(String queryName) {
+	private int getNextIndex() {
 
-		if (queryName.startsWith(NAME_BODY)) {
+		int nextIndex = 1;
 
-			String suffix = queryName.substring(NAME_BODY.length());
-			Integer index = toIntegerOrNull(suffix);
+		for (CIdentity queryId : instanceType.getQueryIdsList().getAllIds()) {
+
+			Integer index = lookForIndex(queryId.getLabel());
 
 			if (index != null && index >= nextIndex) {
 
 				nextIndex = index + 1;
 			}
 		}
+
+		return nextIndex;
+	}
+
+	private Integer lookForIndex(String queryName) {
+
+		if (queryName.startsWith(NAME_BODY)) {
+
+			return toIntegerOrNull(queryName.substring(NAME_BODY.length()));
+		}
+
+		return null;
 	}
 
 	private Integer toIntegerOrNull(String value) {
