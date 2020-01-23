@@ -29,46 +29,48 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class QueriesPanel extends InstantiationsPanel {
+class DefaultQueryNameGenerator {
 
-	static private final long serialVersionUID = -1;
+	static private final String NAME_BODY = "QUERY-";
 
-	static final String TITLE = "Queries";
+	private int nextIndex = 1;
 
-	static private final String DEFAULT_QUERY_NAME_PREFIX = "QUERY-";
+	DefaultQueryNameGenerator(InstanceType instanceType) {
 
-	private QueryExecutor queryExecutor;
-	private DefaultQueryNameGenerator defaultQueryNames;
+		for (CIdentity queryId : instanceType.getQueryIdsList().getAllIds()) {
 
-	QueriesPanel(InstanceType instanceType, QueryExecutor queryExecutor) {
-
-		super(instanceType, instanceType.getQueryIdsList(), TITLE);
-
-		this.queryExecutor = queryExecutor;
-
-		defaultQueryNames = new DefaultQueryNameGenerator(instanceType);
+			checkResetInitialIndex(queryId.getLabel());
+		}
 	}
 
-	IFrameFunction getFunction() {
+	String getNext() {
 
-		return IFrameFunction.QUERY;
+		return NAME_BODY + (nextIndex++);
 	}
 
-	void initialiseNewIdSelector(StoreIdSelector selector) {
+	private void checkResetInitialIndex(String queryName) {
 
-		selector.setInitialStringValue(defaultQueryNames.getNext());
+		if (queryName.startsWith(NAME_BODY)) {
+
+			String suffix = queryName.substring(NAME_BODY.length());
+			Integer index = toIntegerOrNull(suffix);
+
+			if (index != null && index >= nextIndex) {
+
+				nextIndex = index + 1;
+			}
+		}
 	}
 
-	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
+	private Integer toIntegerOrNull(String value) {
 
-		new QueryDialog(this, instanceType, storeId, queryExecutor);
-	}
+		try {
 
-	void displayInstantiation(
-			InstanceType instanceType,
-			IFrame instantiation,
-			CIdentity storeId) {
+			return Integer.parseInt(value);
+		}
+		catch (NumberFormatException e) {
 
-		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutor);
+			return null;
+		}
 	}
 }

@@ -37,24 +37,31 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_FORMAT = "%s %s";
-	static private final String STORE_DIRECT_LABEL = "Store";
-	static private final String STORE_INDIRECT_LABEL = STORE_DIRECT_LABEL + "...";
+	static private final String TITLE_FORMAT = "%s %s (%s)";
+	static private final String STORE_BUTTON_LABEL = "Store";
 
 	static private final int FRAME_WIDTH = 700;
 
-	static String createTitle(InstanceType instanceType, String suffix) {
+	static private String createTitle(
+							Instantiator instantiator,
+							CIdentity storeId,
+							String functionLabel) {
 
-		return String.format(TITLE_FORMAT, getTypeLabel(instanceType), suffix);
+		String typeLabel = getTypeLabel(instantiator);
+		String idLabel = storeId.getLabel();
+
+		return String.format(TITLE_FORMAT, typeLabel, functionLabel, idLabel);
 	}
 
-	static private String getTypeLabel(InstanceType instanceType) {
+	static private String getTypeLabel(Instantiator instantiator) {
 
-		return instanceType.getType().getIdentity().getLabel();
+		return instantiator.getInstanceType().getType().getIdentity().getLabel();
 	}
 
 	private JComponent parent;
+
 	private Instantiator instantiator;
+	private CIdentity storeId;
 
 	private class StoreButton extends GButton {
 
@@ -62,12 +69,15 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 		protected void doButtonThing() {
 
-			storeInstantiation();
+			if (storeInstantiation() && disposeOnStoring()) {
+
+				dispose();
+			}
 		}
 
 		StoreButton() {
 
-			super(directStorage() ? STORE_DIRECT_LABEL : STORE_INDIRECT_LABEL);
+			super(STORE_BUTTON_LABEL);
 		}
 	}
 
@@ -88,15 +98,20 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 	public void displayCopy() {
 
-		createCopy(parent);
+		createCopy(parent, storeId);
 	}
 
-	InstantiationDialog(JComponent parent, Instantiator instantiator, String title) {
+	InstantiationDialog(
+		JComponent parent,
+		Instantiator instantiator,
+		CIdentity storeId,
+		String functionTitle) {
 
-		super(parent, title, true);
+		super(parent, createTitle(instantiator, storeId, functionTitle), true);
 
 		this.parent = parent;
 		this.instantiator = instantiator;
+		this.storeId = storeId;
 	}
 
 	void display() {
@@ -104,21 +119,29 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 		display(createDisplay());
 	}
 
-	abstract InstantiationDialog createCopy(JComponent parent);
+	abstract InstantiationDialog createCopy(JComponent parent, CIdentity storeId);
 
 	void addControlComponents(ControlsPanel panel) {
 
 		panel.addControl(new StoreButton());
 	}
 
-	abstract boolean directStorage();
+	InstanceType getInstanceType() {
+
+		return instantiator.getInstanceType();
+	}
 
 	IFrame getInstantiation() {
 
 		return instantiator.getInstantiation();
 	}
 
-	abstract void storeInstantiation();
+	CIdentity getStoreId() {
+
+		return storeId;
+	}
+
+	abstract boolean disposeOnStoring();
 
 	private JComponent createDisplay() {
 
@@ -152,6 +175,11 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 	private DescriptorsList createDescriptorsList() {
 
 		return new DescriptorsList(instantiator, getInstantiation());
+	}
+
+	private boolean storeInstantiation() {
+
+		return getInstanceType().checkAddInstance(getInstantiation(), storeId);
 	}
 
 	private int getPreferredHeight() {

@@ -42,9 +42,9 @@ class DefiniteINumberSelector extends INumberSelector {
 
 	private InputField valueField = new InputField();
 
-	DefiniteINumberSelector(Window rootWindow, CNumber type) {
+	DefiniteINumberSelector(Window rootWindow, CNumber type, boolean clearRequired) {
 
-		super(rootWindow, type, TITLE);
+		super(rootWindow, type, TITLE, clearRequired);
 	}
 
 	INumber resolveSelection(CNumber type) {

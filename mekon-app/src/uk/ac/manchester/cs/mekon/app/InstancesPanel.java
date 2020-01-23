@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -42,28 +40,16 @@ class InstancesPanel extends InstantiationsPanel {
 		super(instanceType, instanceType.getAssertionIdsList(), TITLE);
 	}
 
-	void displayInstantiator(InstanceType instanceType) {
+	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
 
-		CIdentity storeId = checkObtainStoreId();
-
-		if (storeId != null) {
-
-			new InstanceDialog(this, instanceType, storeId);
-		}
+		new InstanceDialog(this, instanceType, storeId);
 	}
 
-	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
+	void displayInstantiation(
+			InstanceType instanceType,
+			IFrame instantiation,
+			CIdentity storeId) {
 
 		new InstanceDialog(this, instanceType, instantiation, storeId);
-	}
-
-	private CIdentity checkObtainStoreId() {
-
-		return new StoreIdSelector(findOwnerFrame()).getIdSelection(IFrameFunction.ASSERTION);
-	}
-
-	private JFrame findOwnerFrame() {
-
-		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
 	}
 }

@@ -27,8 +27,6 @@ package uk.ac.manchester.cs.mekon.app;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.util.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
@@ -37,31 +35,14 @@ class InstanceDialog extends InstantiationDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String SUB_TITLE_FORMAT = "Instance (%s)";
-
-	static private String createInstanceTitle(InstanceType instanceType, CIdentity storeId) {
-
-		return createTitle(instanceType, createSubTitle(storeId));
-	}
-
-	static private String createSubTitle(CIdentity storeId) {
-
-		return String.format(SUB_TITLE_FORMAT, storeId.getLabel());
-	}
-
-	private InstanceType instanceType;
-	private CIdentity storeId;
+	static private final String FUNCTION_LABEL = "Instance";
 
 	InstanceDialog(
 		JComponent parent,
 		InstanceType instanceType,
 		CIdentity storeId) {
 
-		this(
-			parent,
-			instanceType,
-			instanceType.createAssertionInstantiator(storeId),
-			storeId);
+		this(parent, instanceType.createAssertionInstantiator(storeId), storeId);
 	}
 
 	InstanceDialog(
@@ -70,41 +51,22 @@ class InstanceDialog extends InstantiationDialog {
 		IFrame instantiation,
 		CIdentity storeId) {
 
-		this(
-			parent,
-			instanceType,
-			instanceType.createInstantiator(instantiation),
-			storeId);
+		this(parent, instanceType.createInstantiator(instantiation), storeId);
 	}
 
-	InstanceDialog createCopy(JComponent parent) {
+	InstanceDialog createCopy(JComponent parent, CIdentity storeId) {
 
-		return new InstanceDialog(parent, instanceType, getInstantiator(), storeId);
+		return new InstanceDialog(parent, getInstantiator(), storeId);
 	}
 
-	boolean directStorage() {
+	boolean disposeOnStoring() {
 
 		return true;
 	}
 
-	void storeInstantiation() {
+	private InstanceDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
 
-		if (instanceType.checkAddInstance(getInstantiation(), storeId)) {
-
-			dispose();
-		}
-	}
-
-	private InstanceDialog(
-				JComponent parent,
-				InstanceType instanceType,
-				Instantiator instantiator,
-				CIdentity storeId) {
-
-		super(parent, instantiator, createInstanceTitle(instanceType, storeId));
-
-		this.instanceType = instanceType;
-		this.storeId = storeId;
+		super(parent, instantiator, storeId, FUNCTION_LABEL);
 
 		display();
 	}

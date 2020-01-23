@@ -103,25 +103,44 @@ abstract class EditControlPanel extends JPanel {
 		}
 	}
 
-	void configure(boolean okRequired, boolean clearRequired, boolean cancelRequired) {
+	private class Populator {
 
-		boolean first = true;
+		private boolean first = true;
+
+		EditButton addButton(EditButton button) {
+
+			if (first) {
+
+				first = false;
+			}
+			else {
+
+				add(Box.createHorizontalStrut(10));
+			}
+
+			add(button);
+
+			return button;
+		}
+	}
+
+	EditControlPanel(boolean okRequired, boolean clearRequired, boolean cancelRequired) {
+
+		Populator populator = new Populator();
 
 		if (okRequired) {
 
-			okButton = addButton(new OkButton(), first);
-			first = false;
+			okButton = populator.addButton(new OkButton());
 		}
 
 		if (clearRequired) {
 
-			addButton(new ClearButton(), first);
-			first = false;
+			populator.addButton(new ClearButton());
 		}
 
 		if (cancelRequired) {
 
-			addButton(new CancelButton(), first);
+			populator.addButton(new CancelButton());
 		}
 	}
 
@@ -134,18 +153,6 @@ abstract class EditControlPanel extends JPanel {
 	}
 
 	abstract void onEditComplete(EditStatus status);
-
-	private EditButton addButton(EditButton button, boolean first) {
-
-		if (!first) {
-
-			add(Box.createHorizontalStrut(10));
-		}
-
-		add(button);
-
-		return button;
-	}
 }
 
 

@@ -35,11 +35,24 @@ class QueryMatchesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static final String TITLE = "Matches";
+	static final String TITLE_BASE = "Matches";
 
-	QueryMatchesPanel(InstanceType instanceType, List<CIdentity> matches) {
+	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
 
-		super(instanceType, new InstanceIdsList(false, false, matches), TITLE);
+	static private String createTitle(CIdentity storeId) {
+
+		return String.format(TITLE_FORMAT, storeId.getLabel());
+	}
+
+	QueryMatchesPanel(
+		InstanceType instanceType,
+		CIdentity storeId,
+		List<CIdentity> matches) {
+
+		super(
+			instanceType,
+			new InstanceIdsList(false, false, matches),
+			createTitle(storeId));
 	}
 
 	boolean allowLoadActionOnly() {
@@ -47,12 +60,15 @@ class QueryMatchesPanel extends InstantiationsPanel {
 		return true;
 	}
 
-	void displayInstantiator(InstanceType instanceType) {
+	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
 
 		throw new Error("Method should never be invoked!");
 	}
 
-	void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId) {
+	void displayInstantiation(
+			InstanceType instanceType,
+			IFrame instantiation,
+			CIdentity storeId) {
 
 		new InstanceDialog(this, instanceType, instantiation, storeId);
 	}

@@ -143,9 +143,13 @@ class FrameSelector extends Selector<CFrame> {
 		}
 	}
 
-	FrameSelector(Window rootWindow, CFrame rootFrame, boolean multiSelect) {
+	FrameSelector(
+		Window rootWindow,
+		CFrame rootFrame,
+		boolean multiSelect,
+		boolean clearRequired) {
 
-		super(rootWindow, getTitle(multiSelect));
+		super(rootWindow, getTitle(multiSelect), clearRequired);
 
 		this.multiSelect = multiSelect;
 

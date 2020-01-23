@@ -67,9 +67,13 @@ class InstanceRefSelector extends Selector<IFrame> {
 		}
 	}
 
-	InstanceRefSelector(AspectWindow aspectWindow, CFrame type, boolean multiSelect) {
+	InstanceRefSelector(
+		AspectWindow aspectWindow,
+		CFrame type,
+		boolean multiSelect,
+		boolean clearRequired) {
 
-		super(aspectWindow.getRootWindow(), getTitle(multiSelect));
+		super(aspectWindow.getRootWindow(), getTitle(multiSelect), clearRequired);
 
 		this.type = type;
 		this.multiSelect = multiSelect;

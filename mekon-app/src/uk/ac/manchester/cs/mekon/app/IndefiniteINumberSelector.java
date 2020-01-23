@@ -71,9 +71,9 @@ class IndefiniteINumberSelector extends INumberSelector {
 		}
 	}
 
-	IndefiniteINumberSelector(Window rootWindow, CNumber type) {
+	IndefiniteINumberSelector(Window rootWindow, CNumber type, boolean clearRequired) {
 
-		super(rootWindow, type, TITLE);
+		super(rootWindow, type, TITLE, clearRequired);
 
 		minField.setOtherLimit(maxField);
 	}

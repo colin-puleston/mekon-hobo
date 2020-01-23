@@ -169,7 +169,7 @@ class DescriptorDisplay {
 
 			FrameSelector selector = createSelector();
 
-			if (selector.display(false) == EditStatus.EDITED) {
+			if (selector.display() == EditStatus.EDITED) {
 
 				return instantiator.instantiate(selector.getSelection());
 			}
@@ -179,7 +179,7 @@ class DescriptorDisplay {
 
 		private FrameSelector createSelector() {
 
-			return new FrameSelector(rootWindow, valueType, false);
+			return new FrameSelector(rootWindow, valueType, false, false);
 		}
 	}
 
@@ -197,9 +197,9 @@ class DescriptorDisplay {
 
 		void performAction() {
 
-			Selector<S> selector = createValueSelector();
+			Selector<S> selector = createValueSelector(isCurrentValue());
 
-			switch (selector.display(isCurrentValue())) {
+			switch (selector.display()) {
 
 				case EDITED:
 					addSelectedValue(selector.getSelection());
@@ -211,7 +211,7 @@ class DescriptorDisplay {
 			}
 		}
 
-		abstract Selector<S> createValueSelector();
+		abstract Selector<S> createValueSelector(boolean clearRequired);
 
 		abstract IValue selectionToValue(S selection);
 
@@ -232,9 +232,11 @@ class DescriptorDisplay {
 			rootCFrame = valueType.getRootCFrame();
 		}
 
-		FrameSelector createValueSelector() {
+		FrameSelector createValueSelector(boolean clearRequired) {
 
-			return new FrameSelector(rootWindow, rootCFrame, abstractEditableSlot());
+			boolean multiSelect = abstractEditableSlot();
+
+			return new FrameSelector(rootWindow, rootCFrame, multiSelect, clearRequired);
 		}
 
 		CFrame selectionToValue(CFrame selection) {
@@ -254,9 +256,11 @@ class DescriptorDisplay {
 			this.valueType = valueType;
 		}
 
-		InstanceRefSelector createValueSelector() {
+		InstanceRefSelector createValueSelector(boolean clearRequired) {
 
-			return new InstanceRefSelector(aspectWindow, valueType, abstractEditableSlot());
+			boolean multiSelect = abstractEditableSlot();
+
+			return new InstanceRefSelector(aspectWindow, valueType, multiSelect, clearRequired);
 		}
 
 		IFrame selectionToValue(IFrame selection) {
@@ -289,14 +293,14 @@ class DescriptorDisplay {
 			this.valueType = valueType;
 		}
 
-		INumberSelector createValueSelector() {
+		INumberSelector createValueSelector(boolean clearRequired) {
 
 			if (abstractEditableSlot()) {
 
-				return new IndefiniteINumberSelector(rootWindow, valueType);
+				return new IndefiniteINumberSelector(rootWindow, valueType, clearRequired);
 			}
 
-			return new DefiniteINumberSelector(rootWindow, valueType);
+			return new DefiniteINumberSelector(rootWindow, valueType, clearRequired);
 		}
 	}
 
@@ -307,9 +311,9 @@ class DescriptorDisplay {
 			super(CString.SINGLETON);
 		}
 
-		IStringSelector createValueSelector() {
+		IStringSelector createValueSelector(boolean clearRequired) {
 
-			return new IStringSelector(rootWindow);
+			return new IStringSelector(rootWindow, clearRequired);
 		}
 	}
 

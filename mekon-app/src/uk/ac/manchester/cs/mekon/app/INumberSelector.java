@@ -41,9 +41,9 @@ abstract class INumberSelector extends TextInputSelector<INumber> {
 
 	private CNumber type;
 
-	INumberSelector(Window rootWindow, CNumber type, String title) {
+	INumberSelector(Window rootWindow, CNumber type, String title, boolean clearRequired) {
 
-		super(rootWindow, title);
+		super(rootWindow, title, clearRequired);
 
 		this.type = type;
 	}

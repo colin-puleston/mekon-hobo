@@ -24,51 +24,39 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class QueriesPanel extends InstantiationsPanel {
+class ExecutedQuery {
 
-	static private final long serialVersionUID = -1;
+	private CIdentity storeId;
+	private IFrame query;
+	private List<CIdentity> matches;
 
-	static final String TITLE = "Queries";
+	ExecutedQuery(CIdentity storeId, IFrame query, List<CIdentity> matches) {
 
-	static private final String DEFAULT_QUERY_NAME_PREFIX = "QUERY-";
-
-	private QueryExecutor queryExecutor;
-	private DefaultQueryNameGenerator defaultQueryNames;
-
-	QueriesPanel(InstanceType instanceType, QueryExecutor queryExecutor) {
-
-		super(instanceType, instanceType.getQueryIdsList(), TITLE);
-
-		this.queryExecutor = queryExecutor;
-
-		defaultQueryNames = new DefaultQueryNameGenerator(instanceType);
+		this.storeId = storeId;
+		this.query = query;
+		this.matches = matches;
 	}
 
-	IFrameFunction getFunction() {
+	CIdentity getStoreId() {
 
-		return IFrameFunction.QUERY;
+		return storeId;
 	}
 
-	void initialiseNewIdSelector(StoreIdSelector selector) {
+	IFrame getQuery() {
 
-		selector.setInitialStringValue(defaultQueryNames.getNext());
+		return query;
 	}
 
-	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
+	List<CIdentity> getMatches() {
 
-		new QueryDialog(this, instanceType, storeId, queryExecutor);
-	}
-
-	void displayInstantiation(
-			InstanceType instanceType,
-			IFrame instantiation,
-			CIdentity storeId) {
-
-		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutor);
+		return matches;
 	}
 }
+

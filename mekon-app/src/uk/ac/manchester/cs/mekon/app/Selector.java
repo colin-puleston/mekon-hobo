@@ -37,12 +37,19 @@ abstract class Selector<S> extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
-	private ControlPanel controlPanel = new ControlPanel();
+	private ControlPanel controlPanel;
 	private EditStatus status = EditStatus.CANCELLED;
 
 	private class ControlPanel extends EditControlPanel {
 
 		static private final long serialVersionUID = -1;
+
+		ControlPanel(boolean clearRequired) {
+
+			super(okRequired(), clearRequired, true);
+
+			setOkEnabled(false);
+		}
 
 		void onEditComplete(EditStatus status) {
 
@@ -52,15 +59,14 @@ abstract class Selector<S> extends GDialog {
 		}
 	}
 
-	Selector(Window rootWindow, String title) {
+	Selector(Window rootWindow, String title, boolean clearRequired) {
 
 		super(rootWindow, title, true);
+
+		controlPanel = new ControlPanel(clearRequired);
 	}
 
-	EditStatus display(boolean clearRequired) {
-
-		controlPanel.configure(okRequired(), clearRequired, true);
-		controlPanel.setOkEnabled(false);
+	EditStatus display() {
 
 		display(createDisplay());
 

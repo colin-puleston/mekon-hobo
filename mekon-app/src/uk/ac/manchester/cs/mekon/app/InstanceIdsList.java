@@ -158,6 +158,11 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 		return ids;
 	}
 
+	Set<CIdentity> getAllIds() {
+
+		return instanceIds;
+	}
+
 	private void updateList() {
 
 		model.clear();

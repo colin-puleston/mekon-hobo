@@ -55,9 +55,9 @@ class InstanceTypePanel extends JTabbedPane {
 			super(store);
 		}
 
-		void onExecuted(IFrame query, List<CIdentity> matches) {
+		void onExecuted(ExecutedQuery executedQuery) {
 
-			addMatches(query, matches);
+			addMatches(executedQuery);
 		}
 	}
 
@@ -65,18 +65,18 @@ class InstanceTypePanel extends JTabbedPane {
 
 		static private final long serialVersionUID = -1;
 
-		private IFrame query;
+		private ExecutedQuery executedQuery;
 
 		protected void doButtonThing() {
 
-			new QueryDialog(InstanceTypePanel.this, instanceType, query, queryExecutor);
+			displayQuery(executedQuery);
 		}
 
-		DisplayQueryButton(IFrame query) {
+		DisplayQueryButton(ExecutedQuery executedQuery) {
 
 			super(DISPLAY_QUERY_LABEL);
 
-			this.query = query;
+			this.executedQuery = executedQuery;
 		}
 	}
 
@@ -107,27 +107,35 @@ class InstanceTypePanel extends JTabbedPane {
 		addTab(QueriesPanel.TITLE, new QueriesPanel(instanceType, queryExecutor));
 	}
 
-	private void addMatches(IFrame query, List<CIdentity> matches) {
+	private void addMatches(ExecutedQuery executedQuery) {
 
-		addTab(getNextMatchesTabTitle(), createMatchesComponent(query, matches));
+		addTab(getNextMatchesTabTitle(), createMatchesComponent(executedQuery));
 		setSelectedIndex(getTabCount() - 1);
 	}
 
-	private JComponent createMatchesComponent(IFrame query, List<CIdentity> matches) {
+	private JComponent createMatchesComponent(ExecutedQuery executedQuery) {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(new QueryMatchesPanel(instanceType, matches), BorderLayout.CENTER);
-		panel.add(createMatchesControlsComponent(query), BorderLayout.SOUTH);
+		panel.add(createMatchesPanel(executedQuery), BorderLayout.CENTER);
+		panel.add(createMatchesControlsComponent(executedQuery), BorderLayout.SOUTH);
 
 		return panel;
 	}
 
-	private JComponent createMatchesControlsComponent(IFrame query) {
+	private JComponent createMatchesPanel(ExecutedQuery executedQuery) {
+
+		CIdentity storeId = executedQuery.getStoreId();
+		List<CIdentity> matches = executedQuery.getMatches();
+
+		return new QueryMatchesPanel(instanceType, storeId, matches);
+	}
+
+	private JComponent createMatchesControlsComponent(ExecutedQuery executedQuery) {
 
 		ControlsPanel panel = new ControlsPanel(false);
 
-		panel.addControl(new DisplayQueryButton(query));
+		panel.addControl(new DisplayQueryButton(executedQuery));
 		panel.addControl(removeTabButton);
 
 		return panel;
@@ -135,6 +143,14 @@ class InstanceTypePanel extends JTabbedPane {
 
 	private String getNextMatchesTabTitle() {
 
-		return QueryMatchesPanel.TITLE + " [" + (++executedQueryCount) + "]";
+		return QueryMatchesPanel.TITLE_BASE + " [" + (++executedQueryCount) + "]";
+	}
+
+	private void displayQuery(ExecutedQuery executedQuery) {
+
+		CIdentity storeId = executedQuery.getStoreId();
+		IFrame query = executedQuery.getQuery();
+
+		new QueryDialog(this, instanceType, query, storeId, queryExecutor);
 	}
 }

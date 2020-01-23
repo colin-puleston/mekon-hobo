@@ -39,12 +39,12 @@ class StoreIdSelector extends IStringSelector {
 
 	StoreIdSelector(Window rootWindow) {
 
-		super(rootWindow, TITLE);
+		super(rootWindow, TITLE, false);
 	}
 
 	CIdentity getIdSelection(IFrameFunction function) {
 
-		if (display(false) == EditStatus.EDITED) {
+		if (display() == EditStatus.EDITED) {
 
 			IString storeName = getSelection();
 

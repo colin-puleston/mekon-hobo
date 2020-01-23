@@ -36,15 +36,9 @@ class QueryDialog extends InstantiationDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String SUB_TITLE = "Query";
-	static private final String EXECUTE_LABEL = "Execute";
+	static private final String FUNCTION_LABEL = "Query";
+	static private final String EXECUTE_BUTTON_LABEL = "Execute";
 
-	static private String createQueryTitle(InstanceType instanceType) {
-
-		return createTitle(instanceType, SUB_TITLE);
-	}
-
-	private InstanceType instanceType;
 	private QueryExecutor queryExecutor;
 
 	private class ExecuteButton extends GButton {
@@ -53,43 +47,43 @@ class QueryDialog extends InstantiationDialog {
 
 		protected void doButtonThing() {
 
+			dispose();
 			execute();
 		}
 
 		ExecuteButton() {
 
-			super(EXECUTE_LABEL);
+			super(EXECUTE_BUTTON_LABEL);
 		}
 	}
 
 	QueryDialog(
 		JComponent parent,
 		InstanceType instanceType,
+		CIdentity storeId,
 		QueryExecutor queryExecutor) {
 
-		this(
-			parent,
-			instanceType,
-			instanceType.createQueryInstantiator(),
-			queryExecutor);
+		this(parent, instanceType.createQueryInstantiator(), storeId, queryExecutor);
 	}
 
 	QueryDialog(
 		JComponent parent,
 		InstanceType instanceType,
 		IFrame instantiation,
+		CIdentity storeId,
 		QueryExecutor queryExecutor) {
 
-		this(
-			parent,
-			instanceType,
-			instanceType.createInstantiator(instantiation),
-			queryExecutor);
+		this(parent, instanceType.createInstantiator(instantiation), storeId, queryExecutor);
 	}
 
-	QueryDialog createCopy(JComponent parent) {
+	QueryDialog createCopy(JComponent parent, CIdentity storeId) {
 
-		return new QueryDialog(parent, instanceType, getInstantiator(), queryExecutor);
+		return new QueryDialog(parent, getInstantiator(), storeId, queryExecutor);
+	}
+
+	boolean disposeOnStoring() {
+
+		return false;
 	}
 
 	void addControlComponents(ControlsPanel panel) {
@@ -99,49 +93,21 @@ class QueryDialog extends InstantiationDialog {
 		super.addControlComponents(panel);
 	}
 
-	JComponent createExtraControlComponent() {
-
-		return new ExecuteButton();
-	}
-
-	boolean directStorage() {
-
-		return false;
-	}
-
-	void storeInstantiation() {
-
-		CIdentity storeId = checkObtainStoreId();
-
-		if (storeId != null) {
-
-			instanceType.checkAddInstance(getInstantiation(), storeId);
-		}
-	}
-
 	private QueryDialog(
 				JComponent parent,
-				InstanceType instanceType,
 				Instantiator instantiator,
+				CIdentity storeId,
 				QueryExecutor queryExecutor) {
 
-		super(parent, instantiator, createQueryTitle(instanceType));
+		super(parent, instantiator, storeId, FUNCTION_LABEL);
 
-		this.instanceType = instanceType;
 		this.queryExecutor = queryExecutor;
 
 		display();
 	}
 
-	private CIdentity checkObtainStoreId() {
-
-		return new StoreIdSelector(getRootWindow()).getIdSelection(IFrameFunction.QUERY);
-	}
-
 	private void execute() {
 
-		dispose();
-
-		queryExecutor.execute(getInstantiation());
+		queryExecutor.execute(getStoreId(), getInstantiation());
 	}
 }

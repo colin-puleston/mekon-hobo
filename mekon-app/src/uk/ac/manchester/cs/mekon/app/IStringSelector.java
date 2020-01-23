@@ -39,14 +39,14 @@ class IStringSelector extends StringSelector<IString> {
 
 	private InputField valueField = new InputField();
 
-	IStringSelector(Window rootWindow) {
+	IStringSelector(Window rootWindow, boolean clearRequired) {
 
-		this(rootWindow, DEFAULT_TITLE);
+		this(rootWindow, DEFAULT_TITLE, clearRequired);
 	}
 
-	IStringSelector(Window rootWindow, String title) {
+	IStringSelector(Window rootWindow, String title, boolean clearRequired) {
 
-		super(rootWindow, title);
+		super(rootWindow, title, clearRequired);
 	}
 
 	IString convertInputValue(String text) {

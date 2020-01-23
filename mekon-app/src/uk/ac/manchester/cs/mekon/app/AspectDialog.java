@@ -50,7 +50,7 @@ class AspectDialog extends GDialog implements AspectWindow {
 
 		ControlPanel(boolean clearRequired) {
 
-			configure(true, clearRequired, false);
+			super(true, clearRequired, false);
 		}
 
 		void onEditComplete(EditStatus status) {

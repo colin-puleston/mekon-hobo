@@ -38,9 +38,15 @@ abstract class StringSelector<S> extends TextInputSelector<S> {
 
 	private InputField valueField = new InputField();
 
-	StringSelector(Window rootWindow, String title) {
+	StringSelector(Window rootWindow, String title, boolean clearRequired) {
 
-		super(rootWindow, title);
+		super(rootWindow, title, clearRequired);
+	}
+
+	void setInitialStringValue(String value) {
+
+		valueField.setText(value);
+		updateInputValidity();
 	}
 
 	S resolveSelection() {

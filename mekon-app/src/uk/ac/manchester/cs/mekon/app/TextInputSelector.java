@@ -120,9 +120,9 @@ abstract class TextInputSelector<S> extends Selector<S> {
 		}
 	}
 
-	TextInputSelector(Window rootWindow, String title) {
+	TextInputSelector(Window rootWindow, String title, boolean clearRequired) {
 
-		super(rootWindow, title);
+		super(rootWindow, title, clearRequired);
 
 		addWindowListener(new WindowCloseListener());
 	}
@@ -140,7 +140,7 @@ abstract class TextInputSelector<S> extends Selector<S> {
 
 	abstract boolean validInput();
 
-	private void updateInputValidity() {
+	void updateInputValidity() {
 
 		setValidSelection(validInput());
 	}

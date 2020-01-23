@@ -51,7 +51,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			displayInstantiator(instanceType);
+			checkInstantiate();
 		}
 
 		CreateButton() {
@@ -113,9 +113,20 @@ abstract class InstantiationsPanel extends JPanel {
 		return false;
 	}
 
-	abstract void displayInstantiator(InstanceType instanceType);
+	IFrameFunction getFunction() {
 
-	abstract void displayStored(InstanceType instanceType, IFrame instantiation, CIdentity storeId);
+		return IFrameFunction.ASSERTION;
+	}
+
+	void initialiseNewIdSelector(StoreIdSelector selector) {
+	}
+
+	abstract void displayNewInstantiation(InstanceType instanceType, CIdentity storeId);
+
+	abstract void displayInstantiation(
+					InstanceType instanceType,
+					IFrame instantiation,
+					CIdentity storeId);
 
 	private JComponent createControlsComponent() {
 
@@ -133,13 +144,37 @@ abstract class InstantiationsPanel extends JPanel {
 		return panel;
 	}
 
+	private void checkInstantiate() {
+
+		CIdentity storeId = checkObtainStoreId();
+
+		if (storeId != null) {
+
+			displayNewInstantiation(instanceType, storeId);
+		}
+	}
+
 	private void loadInstantiation(CIdentity storeId) {
 
-		displayStored(instanceType, getStoredInstantiation(storeId), storeId);
+		displayInstantiation(instanceType, getStoredInstantiation(storeId), storeId);
 	}
 
 	private IFrame getStoredInstantiation(CIdentity storeId) {
 
 		return instanceType.getController().getStore().get(storeId);
+	}
+
+	private CIdentity checkObtainStoreId() {
+
+		StoreIdSelector selector = new StoreIdSelector(findOwnerFrame());
+
+		initialiseNewIdSelector(selector);
+
+		return selector.getIdSelection(getFunction());
+	}
+
+	private JFrame findOwnerFrame() {
+
+		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
 	}
 }

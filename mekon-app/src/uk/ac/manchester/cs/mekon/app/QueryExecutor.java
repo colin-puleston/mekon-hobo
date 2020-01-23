@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -40,10 +38,10 @@ abstract class QueryExecutor {
 		this.store = store;
 	}
 
-	void execute(IFrame query) {
+	void execute(CIdentity storeId, IFrame query) {
 
-		onExecuted(query, store.match(query));
+		onExecuted(new ExecutedQuery(storeId, query, store.match(query)));
 	}
 
-	abstract void onExecuted(IFrame query, List<CIdentity> matches);
+	abstract void onExecuted(ExecutedQuery executedQuery);
 }
