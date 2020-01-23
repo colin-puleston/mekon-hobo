@@ -24,11 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
+import uk.ac.manchester.cs.mekon.gui.icon.*;
 
 /**
  * @author Colin Puleston
@@ -37,31 +40,72 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 
 	static private final long serialVersionUID = -1;
 
+	static private final Icon ASSERTION_ICON = createIcon(Color.CYAN);
+	static private final Icon QUERY_ICON = createIcon(Color.GREEN);
+
+	static private final Color SELECTION_CLR = UIManager.getColor("Tree.selectionBackground");
+
+	static private GIcon createIcon(Color clr) {
+
+		return new GIcon(new GDiamondRenderer(clr, 12));
+	}
+
+	private boolean queryInstances;
 	private Set<CIdentity> instanceIds = new HashSet<CIdentity>();
 
 	private DefaultListModel<InstanceIdListElement> model
 				= new DefaultListModel<InstanceIdListElement>();
 
-	InstanceIdsList(boolean multiSelect) {
+	private class IdsCellRenderer implements ListCellRenderer<InstanceIdListElement> {
+
+		static private final long serialVersionUID = -1;
+
+		public Component getListCellRendererComponent(
+							JList<? extends InstanceIdListElement> list,
+							InstanceIdListElement value,
+							int index,
+							boolean sel,
+							boolean hasFocus) {
+
+			JLabel label = new JLabel(value.toString());
+
+			GFonts.setLarge(label);
+			label.setIcon(queryInstances ? QUERY_ICON : ASSERTION_ICON);
+
+			if (sel) {
+
+				label.setOpaque(true);
+				label.setBackground(SELECTION_CLR);
+			}
+
+			return label;
+		}
+	}
+
+	InstanceIdsList(boolean queryInstances, boolean multiSelect) {
+
+		this.queryInstances = queryInstances;
 
 		setModel(model);
+		setCellRenderer(new IdsCellRenderer());
 
 		setSelectionMode(getSelectionMode(multiSelect));
 		setSelectedIndex(-1);
-
-		GFonts.setLarge(this);
 	}
 
-	InstanceIdsList(boolean multiSelect, Collection<CIdentity> instanceIds) {
+	InstanceIdsList(
+		boolean queryInstances,
+		boolean multiSelect,
+		Collection<CIdentity> instanceIds) {
 
-		this(multiSelect);
+		this(queryInstances, multiSelect);
 
 		update(instanceIds);
 	}
 
 	InstanceIdsList deriveList(boolean multiSelect) {
 
-		return new InstanceIdsList(multiSelect, instanceIds);
+		return new InstanceIdsList(queryInstances, multiSelect, instanceIds);
 	}
 
 	void update(Collection<CIdentity> instanceIds) {

@@ -39,7 +39,7 @@ class QueryMatchesPanel extends InstantiationsPanel {
 
 	QueryMatchesPanel(InstanceType instanceType, List<CIdentity> matches) {
 
-		super(instanceType, new InstanceIdsList(false, matches), TITLE);
+		super(instanceType, new InstanceIdsList(false, false, matches), TITLE);
 	}
 
 	boolean allowLoadActionOnly() {

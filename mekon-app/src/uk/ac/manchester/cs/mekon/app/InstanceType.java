@@ -47,8 +47,8 @@ class InstanceType {
 
 		store = controller.getStore();
 
-		assertionIds = new InstanceIdsList(false);
-		queryIds = new InstanceIdsList(false);
+		assertionIds = new InstanceIdsList(false, false);
+		queryIds = new InstanceIdsList(true, false);
 
 		for (CIdentity storeId : store.getInstanceIds(type)) {
 
