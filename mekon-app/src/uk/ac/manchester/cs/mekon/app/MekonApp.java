@@ -68,6 +68,8 @@ public class MekonApp extends GFrame {
 		ExitButton() {
 
 			super(EXIT_LABEL);
+
+			setFont(GFonts.toLarge(getFont()));
 		}
 	}
 
