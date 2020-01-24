@@ -33,8 +33,7 @@ class QueriesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static final String TITLE = "Queries";
-
+	static private final String TITLE = "Queries";
 	static private final String DEFAULT_QUERY_NAME_PREFIX = "QUERY-";
 
 	private QueryExecutor queryExecutor;

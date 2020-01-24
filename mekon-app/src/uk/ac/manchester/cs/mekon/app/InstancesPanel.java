@@ -33,7 +33,7 @@ class InstancesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static final String TITLE = "Instances";
+	static private final String TITLE = "Instances";
 
 	InstancesPanel(InstanceType instanceType) {
 

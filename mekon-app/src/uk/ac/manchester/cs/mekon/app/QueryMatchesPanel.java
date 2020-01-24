@@ -35,8 +35,7 @@ class QueryMatchesPanel extends InstantiationsPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static final String TITLE_BASE = "Matches";
-
+	static private final String TITLE_BASE = "Matches";
 	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
 
 	static private String createTitle(CIdentity storeId) {
@@ -44,15 +43,21 @@ class QueryMatchesPanel extends InstantiationsPanel {
 		return String.format(TITLE_FORMAT, storeId.getLabel());
 	}
 
-	QueryMatchesPanel(
-		InstanceType instanceType,
-		CIdentity storeId,
-		List<CIdentity> matches) {
+	QueryMatchesPanel(InstanceType instanceType) {
 
-		super(
-			instanceType,
-			new InstanceIdsList(false, false, matches),
-			createTitle(storeId));
+		super(instanceType, new InstanceIdsList(false, false), TITLE_BASE);
+	}
+
+	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
+
+		setTitle(createTitle(queryStoreId));
+		displayIds(matchIds);
+	}
+
+	void clear() {
+
+		setTitle(TITLE_BASE);
+		clearIds();
 	}
 
 	boolean allowLoadActionOnly() {

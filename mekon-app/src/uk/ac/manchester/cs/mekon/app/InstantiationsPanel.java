@@ -97,15 +97,25 @@ abstract class InstantiationsPanel extends JPanel {
 		this.instanceType = instanceType;
 		this.idsList = idsList;
 
-		PanelEntitler.entitle(this, title);
+		setTitle(title);
 
 		add(new JScrollPane(idsList), BorderLayout.CENTER);
 		add(createControlsComponent(), BorderLayout.SOUTH);
 	}
 
+	void setTitle(String title) {
+
+		PanelEntitler.entitle(this, title);
+	}
+
 	void displayIds(Collection<CIdentity> ids) {
 
 		idsList.update(ids);
+	}
+
+	void clearIds() {
+
+		idsList.clear();
 	}
 
 	boolean allowLoadActionOnly() {

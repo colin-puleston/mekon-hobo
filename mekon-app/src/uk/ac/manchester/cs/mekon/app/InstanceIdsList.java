@@ -129,6 +129,30 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 		updateList();
 	}
 
+	void clear() {
+
+		instanceIds.clear();
+
+		updateList();
+	}
+
+	void selectId(CIdentity id) {
+
+		Enumeration<InstanceIdListElement> elements = model.elements();
+
+		while (elements.hasMoreElements()) {
+
+			InstanceIdListElement element = elements.nextElement();
+
+			if (element.id.equals(id)) {
+
+				setSelectedValue(element, true);
+
+				break;
+			}
+		}
+	}
+
 	boolean isSelectedId() {
 
 		return getSelectedValue() != null;

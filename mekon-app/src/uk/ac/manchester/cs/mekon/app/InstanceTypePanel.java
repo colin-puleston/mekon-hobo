@@ -24,12 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.BorderLayout;
-import java.util.*;
 import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
@@ -38,15 +33,13 @@ class InstanceTypePanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String DISPLAY_QUERY_LABEL = "Query...";
-	static private final String REMOVE_TAB_LABEL = "Discard";
+	static private final String INSTANCES_TITLE = "Instances";
+	static private final String QUERIES_TITLE = "Queries";
+	static private final String EXECUTED_QUERIES_TITLE = "Query Results";
 
 	private InstanceType instanceType;
 
-	private QueryExecutor queryExecutor;
-	private int executedQueryCount = 0;
-
-	private RemoveTabButton removeTabButton = new RemoveTabButton();
+	private ExecutedQueriesPanel executedQueriesPanel;
 
 	private class QueryExecutorLocal extends QueryExecutor {
 
@@ -57,41 +50,8 @@ class InstanceTypePanel extends JTabbedPane {
 
 		void onExecuted(ExecutedQuery executedQuery) {
 
-			addMatches(executedQuery);
-		}
-	}
-
-	private class DisplayQueryButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		private ExecutedQuery executedQuery;
-
-		protected void doButtonThing() {
-
-			displayQuery(executedQuery);
-		}
-
-		DisplayQueryButton(ExecutedQuery executedQuery) {
-
-			super(DISPLAY_QUERY_LABEL);
-
-			this.executedQuery = executedQuery;
-		}
-	}
-
-	private class RemoveTabButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			removeTabAt(getSelectedIndex());
-		}
-
-		RemoveTabButton() {
-
-			super(REMOVE_TAB_LABEL);
+			setSelectedIndex(getTabCount() - 1);
+			executedQueriesPanel.add(executedQuery);
 		}
 	}
 
@@ -101,56 +61,12 @@ class InstanceTypePanel extends JTabbedPane {
 
 		this.instanceType = instanceType;
 
-		queryExecutor = new QueryExecutorLocal(store);
+		QueryExecutor queryExecutor = new QueryExecutorLocal(store);
 
-		addTab(InstancesPanel.TITLE, new InstancesPanel(instanceType));
-		addTab(QueriesPanel.TITLE, new QueriesPanel(instanceType, queryExecutor));
-	}
+		executedQueriesPanel = new ExecutedQueriesPanel(instanceType, queryExecutor);
 
-	private void addMatches(ExecutedQuery executedQuery) {
-
-		addTab(getNextMatchesTabTitle(), createMatchesComponent(executedQuery));
-		setSelectedIndex(getTabCount() - 1);
-	}
-
-	private JComponent createMatchesComponent(ExecutedQuery executedQuery) {
-
-		JPanel panel = new JPanel(new BorderLayout());
-
-		panel.add(createMatchesPanel(executedQuery), BorderLayout.CENTER);
-		panel.add(createMatchesControlsComponent(executedQuery), BorderLayout.SOUTH);
-
-		return panel;
-	}
-
-	private JComponent createMatchesPanel(ExecutedQuery executedQuery) {
-
-		CIdentity storeId = executedQuery.getStoreId();
-		List<CIdentity> matches = executedQuery.getMatches();
-
-		return new QueryMatchesPanel(instanceType, storeId, matches);
-	}
-
-	private JComponent createMatchesControlsComponent(ExecutedQuery executedQuery) {
-
-		ControlsPanel panel = new ControlsPanel(false);
-
-		panel.addControl(new DisplayQueryButton(executedQuery));
-		panel.addControl(removeTabButton);
-
-		return panel;
-	}
-
-	private String getNextMatchesTabTitle() {
-
-		return QueryMatchesPanel.TITLE_BASE + " [" + (++executedQueryCount) + "]";
-	}
-
-	private void displayQuery(ExecutedQuery executedQuery) {
-
-		CIdentity storeId = executedQuery.getStoreId();
-		IFrame query = executedQuery.getQuery();
-
-		new QueryDialog(this, instanceType, query, storeId, queryExecutor);
+		addTab(INSTANCES_TITLE, new InstancesPanel(instanceType));
+		addTab(QUERIES_TITLE, new QueriesPanel(instanceType, queryExecutor));
+		addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
 	}
 }
