@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.util.*;
 import javax.swing.*;
@@ -41,6 +42,8 @@ abstract class InstantiationsPanel extends JPanel {
 	static private final String CREATE_LABEL = "Create...";
 	static private final String LOAD_LABEL = "Load";
 	static private final String REMOVE_LABEL = "Remove";
+
+	static private final int WIDTH = 200;
 
 	private InstanceType instanceType;
 	private InstanceIdsList idsList;
@@ -88,6 +91,11 @@ abstract class InstantiationsPanel extends JPanel {
 
 			instanceType.checkRemoveInstance(storeId);
 		}
+	}
+
+	public Dimension getPreferredSize() {
+
+		return new Dimension(WIDTH, (int)super.getPreferredSize().getHeight());
 	}
 
 	InstantiationsPanel(InstanceType instanceType, InstanceIdsList idsList, String title) {

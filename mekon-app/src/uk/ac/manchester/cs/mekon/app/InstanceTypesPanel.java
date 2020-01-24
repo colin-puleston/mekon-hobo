@@ -24,52 +24,38 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.util.*;
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class InstanceTypePanel extends JTabbedPane {
+class InstanceTypesPanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String INSTANCES_TITLE = "Instances";
-	static private final String QUERIES_TITLE = "Queries";
-	static private final String EXECUTED_QUERIES_TITLE = "Query Results";
+	InstanceTypesPanel(Store store, Controller controller, List<CFrame> types) {
 
-	private InstanceType instanceType;
+		setFont(GFonts.toLarge(getFont()));
 
-	private ExecutedQueriesPanel executedQueriesPanel;
+		for (CFrame type : types) {
 
-	private class QueryExecutorLocal extends QueryExecutor {
-
-		QueryExecutorLocal(Store store) {
-
-			super(store);
-		}
-
-		void onExecuted(ExecutedQuery executedQuery) {
-
-			setSelectedIndex(getTabCount() - 1);
-			executedQueriesPanel.add(executedQuery);
+			addTypeTab(store, controller, type);
 		}
 	}
 
-	InstanceTypePanel(Store store, InstanceType instanceType) {
+	private void addTypeTab(Store store, Controller controller, CFrame type) {
 
-		super(JTabbedPane.LEFT);
+		InstanceType instanceType = controller.addInstanceType(type);
 
-		this.instanceType = instanceType;
+		addTab(getTypeTitle(type), new InstanceTypePanel(store, instanceType));
+	}
 
-		QueryExecutor queryExecutor = new QueryExecutorLocal(store);
+	private String getTypeTitle(CFrame type) {
 
-		executedQueriesPanel = new ExecutedQueriesPanel(instanceType, queryExecutor);
-
-		setFont(GFonts.toMedium(getFont()));
-		addTab(INSTANCES_TITLE, new InstancesPanel(instanceType));
-		addTab(QUERIES_TITLE, new QueriesPanel(instanceType, queryExecutor));
-		addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
+		return type.getDisplayLabel() + 's';
 	}
 }

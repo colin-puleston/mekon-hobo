@@ -43,7 +43,7 @@ public class MekonApp extends GFrame {
 
 	static private final String EXIT_LABEL = "Exit";
 
-	static private final int FRAME_WIDTH = 750;
+	static private final int FRAME_WIDTH = 700;
 	static private final int FRAME_HEIGHT = 600;
 
 	static private IStore getIStore(CBuilder builder) {
@@ -121,22 +121,12 @@ public class MekonApp extends GFrame {
 		return panel;
 	}
 
-	private JComponent createInstanceTypesPanel(List<CFrame> types) {
-
-		JTabbedPane panel = new JTabbedPane();
+	private JComponent createInstanceTypesPanel(List<CFrame> instanceTypes) {
 
 		Store appStore = new Store(store);
 		Controller controller = new Controller(appStore, resolveCustomiser());
 
-		for (CFrame type : types) {
-
-			String title = type.getDisplayLabel() + 's';
-			InstanceType instanceType = controller.addInstanceType(type);
-
-			panel.addTab(title, new InstanceTypePanel(appStore, instanceType));
-		}
-
-		return panel;
+		return new InstanceTypesPanel(appStore, controller, instanceTypes);
 	}
 
 	private Customiser resolveCustomiser() {
