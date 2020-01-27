@@ -53,7 +53,7 @@ class QueriesPanel extends InstantiationsPanel {
 		return IFrameFunction.QUERY;
 	}
 
-	void initialiseNewIdSelector(StoreIdSelector selector) {
+	void initialiseNewIdSelector(StoreIdSelector selector, CIdentity oldStoreId) {
 
 		selector.setInitialStringValue(defaultQueryNames.getNext());
 	}

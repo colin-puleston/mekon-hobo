@@ -152,7 +152,12 @@ abstract class InstantiationsPanel extends JPanel {
 		return IFrameFunction.ASSERTION;
 	}
 
-	void initialiseNewIdSelector(StoreIdSelector selector) {
+	void initialiseNewIdSelector(StoreIdSelector selector, CIdentity oldStoreId) {
+
+		if (oldStoreId != null) {
+
+			selector.setInitialValue(oldStoreId);
+		}
 	}
 
 	abstract void displayNewInstantiation(InstanceType instanceType, CIdentity storeId);
@@ -181,7 +186,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void checkInstantiate() {
 
-		CIdentity storeId = checkObtainStoreId();
+		CIdentity storeId = checkObtainStoreId(null);
 
 		if (storeId != null) {
 
@@ -191,7 +196,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void checkRename(CIdentity storeId) {
 
-		CIdentity newStoreId = checkObtainStoreId();
+		CIdentity newStoreId = checkObtainStoreId(storeId);
 
 		if (newStoreId != null) {
 
@@ -216,11 +221,11 @@ abstract class InstantiationsPanel extends JPanel {
 		return instanceType.getController().getStore().get(storeId);
 	}
 
-	private CIdentity checkObtainStoreId() {
+	private CIdentity checkObtainStoreId(CIdentity oldStoreId) {
 
 		StoreIdSelector selector = new StoreIdSelector(findOwnerFrame());
 
-		initialiseNewIdSelector(selector);
+		initialiseNewIdSelector(selector, oldStoreId);
 
 		return selector.getIdSelection(getFunction());
 	}

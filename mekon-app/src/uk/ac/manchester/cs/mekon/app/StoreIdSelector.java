@@ -42,6 +42,11 @@ class StoreIdSelector extends IStringSelector {
 		super(rootWindow, TITLE, false);
 	}
 
+	void setInitialValue(CIdentity storeId) {
+
+		setInitialStringValue(MekonAppStoreId.toStoreName(storeId));
+	}
+
 	CIdentity getIdSelection(IFrameFunction function) {
 
 		if (display() == EditStatus.EDITED) {
