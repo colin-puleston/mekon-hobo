@@ -68,6 +68,27 @@ class Store {
 		return false;
 	}
 
+	IFrame checkRemoveToRename(CIdentity id, CIdentity newId) {
+
+		if (confirmRenameStoredInstance(id, newId)) {
+
+			IFrame instance = get(id);
+
+			store.remove(id);
+
+			return instance;
+		}
+
+		return null;
+	}
+
+	void addRenamed(IFrame instance, CIdentity id, CIdentity newId) {
+
+		store.add(instance, newId);
+
+		showInstanceRenamedMessage(id, newId);
+	}
+
 	IFrame get(CIdentity id) {
 
 		return store.get(id, getFunction(id)).getRootFrame();
@@ -122,6 +143,13 @@ class Store {
 		return obtainConfirmation("Remove stored " + describeInstance(id));
 	}
 
+	private boolean confirmRenameStoredInstance(CIdentity id, CIdentity newId) {
+
+		return obtainConfirmation(
+					"Rename stored " + describeInstance(id)
+					+ " to " + nameInstance(newId));
+	}
+
 	private void showInstanceStoredMessage(CIdentity id) {
 
 		showMessage("Stored " + describeInstance(id));
@@ -130,6 +158,13 @@ class Store {
 	private void showInstanceRemovedMessage(CIdentity id) {
 
 		showMessage("Removed " + describeInstance(id));
+	}
+
+	private void showInstanceRenamedMessage(CIdentity id, CIdentity newId) {
+
+		showMessage(
+			"Renamed " + describeInstance(id)
+			+ " to " + nameInstance(newId));
 	}
 
 	private void showQueryMatchesMessage(int count) {
@@ -158,7 +193,12 @@ class Store {
 
 	private String describeInstance(CIdentity id) {
 
-		return describeFunction(id) + ": \"" + id.getLabel() + "\"";
+		return describeFunction(id) + " " + nameInstance(id);
+	}
+
+	private String nameInstance(CIdentity id) {
+
+		return "\"" + id.getLabel() + "\"";
 	}
 
 	private IFrameFunction getFunction(CIdentity id) {

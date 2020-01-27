@@ -51,7 +51,7 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 	}
 
 	private boolean queryInstances;
-	private Set<CIdentity> instanceIds = new HashSet<CIdentity>();
+	private Set<CIdentity> ids = new HashSet<CIdentity>();
 
 	private DefaultListModel<InstanceIdListElement> model
 				= new DefaultListModel<InstanceIdListElement>();
@@ -96,42 +96,50 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 	InstanceIdsList(
 		boolean queryInstances,
 		boolean multiSelect,
-		Collection<CIdentity> instanceIds) {
+		Collection<CIdentity> ids) {
 
 		this(queryInstances, multiSelect);
 
-		update(instanceIds);
+		update(ids);
 	}
 
 	InstanceIdsList deriveList(boolean multiSelect) {
 
-		return new InstanceIdsList(queryInstances, multiSelect, instanceIds);
+		return new InstanceIdsList(queryInstances, multiSelect, ids);
 	}
 
-	void update(Collection<CIdentity> instanceIds) {
+	void update(Collection<CIdentity> ids) {
 
-		this.instanceIds.addAll(instanceIds);
+		this.ids.addAll(ids);
 
 		updateList();
 	}
 
-	void add(CIdentity instanceId) {
+	void add(CIdentity id) {
 
-		instanceIds.add(instanceId);
+		ids.add(id);
 
 		updateList();
 	}
 
-	void remove(CIdentity instanceId) {
+	void remove(CIdentity id) {
 
-		instanceIds.remove(instanceId);
+		ids.remove(id);
+
+		updateList();
+	}
+
+	void replace(CIdentity id, CIdentity newId) {
+
+		ids.remove(id);
+		ids.add(newId);
 
 		updateList();
 	}
 
 	void clear() {
 
-		instanceIds.clear();
+		ids.clear();
 
 		updateList();
 	}
@@ -160,31 +168,31 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 
 	CIdentity getSelectedId() {
 
-		List<CIdentity> ids = getSelectedIds();
+		List<CIdentity> selectedIds = getSelectedIds();
 
-		if (ids.size() == 1) {
+		if (selectedIds.size() == 1) {
 
-			return ids.get(0);
+			return selectedIds.get(0);
 		}
 
-		throw new Error("Expected single selection, found: " + ids.size());
+		throw new Error("Expected single selection, found: " + selectedIds.size());
 	}
 
 	List<CIdentity> getSelectedIds() {
 
-		List<CIdentity> ids = new ArrayList<CIdentity>();
+		List<CIdentity> selectedIds = new ArrayList<CIdentity>();
 
 		for (InstanceIdListElement element : getSelectedValuesList()) {
 
-			ids.add(element.id);
+			selectedIds.add(element.id);
 		}
 
-		return ids;
+		return selectedIds;
 	}
 
 	Set<CIdentity> getAllIds() {
 
-		return instanceIds;
+		return ids;
 	}
 
 	private void updateList() {
@@ -210,9 +218,9 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 
 		Set<InstanceIdListElement> elements = new TreeSet<InstanceIdListElement>();
 
-		for (CIdentity instanceId : instanceIds) {
+		for (CIdentity id : ids) {
 
-			elements.add(new InstanceIdListElement(instanceId));
+			elements.add(new InstanceIdListElement(id));
 		}
 
 		return elements;

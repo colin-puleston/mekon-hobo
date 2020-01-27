@@ -35,7 +35,7 @@ class StoreIdSelector extends IStringSelector {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE = "Enter Instance Name";
+	static private final String TITLE = "Enter New Instance Name";
 
 	StoreIdSelector(Window rootWindow) {
 

@@ -108,6 +108,14 @@ public class DefaultCustomiser implements Customiser {
 		return instance;
 	}
 
+	public IFrame onRenamingInstance(
+					IFrame instance,
+					CIdentity storeId,
+					CIdentity newStoreId) {
+
+		return instance;
+	}
+
 	private IFrame loadFromStore(CIdentity frameId) {
 
 		return store.get(frameId).getRootFrame();

@@ -33,6 +33,8 @@ import uk.ac.manchester.cs.mekon.store.*;
 class InstanceType {
 
 	private Controller controller;
+	private Customiser customiser;
+
 	private Store store;
 
 	private CFrame type;
@@ -45,6 +47,7 @@ class InstanceType {
 		this.controller = controller;
 		this.type = type;
 
+		customiser = controller.getCustomiser();
 		store = controller.getStore();
 
 		assertionIds = new InstanceIdsList(false, false);
@@ -96,11 +99,28 @@ class InstanceType {
 		}
 	}
 
+	void checkRenameInstance(CIdentity storeId, CIdentity newStoreId) {
+
+		IFrame instance = store.checkRemoveToRename(storeId, newStoreId);
+
+		if (instance != null) {
+
+			if (assertionId(storeId)) {
+
+				instance = customiser.onRenamingInstance(instance, storeId, newStoreId);
+			}
+
+			store.addRenamed(instance, storeId, newStoreId);
+
+			getInstanceIdsList(storeId).replace(storeId, newStoreId);
+		}
+	}
+
 	Instantiator createAssertionInstantiator(CIdentity storeId) {
 
 		IFrame instance = instantiate(IFrameFunction.ASSERTION);
 
-		controller.getCustomiser().onNewInstance(instance, storeId);
+		instance = customiser.onNewInstance(instance, storeId);
 
 		return createInstantiator(instance);
 	}
@@ -122,6 +142,11 @@ class InstanceType {
 
 	private InstanceIdsList getInstanceIdsList(CIdentity storeId) {
 
-		return MekonAppStoreId.assertionId(storeId) ? assertionIds : queryIds;
+		return assertionId(storeId) ? assertionIds : queryIds;
+	}
+
+	private boolean assertionId(CIdentity id) {
+
+		return MekonAppStoreId.assertionId(id);
 	}
 }

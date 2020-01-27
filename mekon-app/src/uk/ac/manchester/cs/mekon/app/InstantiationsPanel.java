@@ -41,6 +41,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	static private final String CREATE_LABEL = "Create...";
 	static private final String LOAD_LABEL = "Load";
+	static private final String RENAME_LABEL = "Rename...";
 	static private final String REMOVE_LABEL = "Remove";
 
 	static private final int WIDTH = 200;
@@ -75,6 +76,21 @@ abstract class InstantiationsPanel extends JPanel {
 		void doInstanceThing(CIdentity storeId) {
 
 			loadInstantiation(storeId);
+		}
+	}
+
+	private class RenameButton extends SelectedInstanceIdActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		RenameButton() {
+
+			super(idsList, RENAME_LABEL);
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			checkRename(storeId);
 		}
 	}
 
@@ -157,6 +173,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		panel.addControl(new CreateButton());
 		panel.addControl(new LoadButton());
+		panel.addControl(new RenameButton());
 		panel.addControl(new RemoveButton());
 
 		return panel;
@@ -169,6 +186,23 @@ abstract class InstantiationsPanel extends JPanel {
 		if (storeId != null) {
 
 			displayNewInstantiation(instanceType, storeId);
+		}
+	}
+
+	private void checkRename(CIdentity storeId) {
+
+		CIdentity newStoreId = checkObtainStoreId();
+
+		if (newStoreId != null) {
+
+			if (newStoreId.equals(storeId)) {
+
+				showMessage("Supplied name identical to current name");
+			}
+			else {
+
+				instanceType.checkRenameInstance(storeId, newStoreId);
+			}
 		}
 	}
 
@@ -189,6 +223,11 @@ abstract class InstantiationsPanel extends JPanel {
 		initialiseNewIdSelector(selector);
 
 		return selector.getIdSelection(getFunction());
+	}
+
+	private void showMessage(String msg) {
+
+		JOptionPane.showMessageDialog(null, msg);
 	}
 
 	private JFrame findOwnerFrame() {

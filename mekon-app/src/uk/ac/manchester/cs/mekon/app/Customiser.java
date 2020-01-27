@@ -38,4 +38,9 @@ public interface Customiser {
 	public boolean hiddenSlot(IFrame frame, ISlot slot);
 
 	public IFrame onNewInstance(IFrame instance, CIdentity storeId);
+
+	public IFrame onRenamingInstance(
+					IFrame instance,
+					CIdentity storeId,
+					CIdentity newStoreId);
 }
