@@ -79,6 +79,11 @@ class Descriptor {
 		return slot;
 	}
 
+	boolean multiValueSlot() {
+
+		return !slot.getType().getCardinality().singleValue();
+	}
+
 	IValue getCurrentValue() {
 
 		return currentValue;

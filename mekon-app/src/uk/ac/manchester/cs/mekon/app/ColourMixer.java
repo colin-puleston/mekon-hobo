@@ -29,26 +29,21 @@ import java.awt.*;
 /**
  * @author Colin Puleston
  */
-abstract class ActiveTableCell {
+class ColourMixer {
 
-	public String toString() {
+	static Color mix(Color... colours) {
 
-		return getLabel();
-	}
+		int r = 0;
+		int g = 0;
+		int b = 0;
 
-	abstract String getLabel();
+		for (Color c : colours) {
 
-	abstract Color getForeground();
+			r += c.getRed() / colours.length;
+			g += c.getGreen() / colours.length;
+			b += c.getBlue() / colours.length;
+		}
 
-	abstract Color getBackground();
-
-	abstract int getFontStyle();
-
-	boolean userActionable() {
-
-		return false;
-	}
-
-	void performCellAction() {
+		return new Color(r, g, b);
 	}
 }

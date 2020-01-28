@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class DescriptorDisplay {
+abstract class DescriptorDisplay {
 
 	private AspectWindow aspectWindow;
 
@@ -66,11 +66,6 @@ class DescriptorDisplay {
 					: getNoEffectiveValueLabel();
 		}
 
-		String getIneffectiveValueLabel() {
-
-			return getValueTypeLabel();
-		}
-
 		abstract boolean active();
 
 		abstract void performAction();
@@ -98,16 +93,9 @@ class DescriptorDisplay {
 
 	private abstract class CFrameTypeHandler extends TypeHandler {
 
-		private AspectEditManager editManager = null;
-
 		CFrameTypeHandler(CFrame valueType) {
 
 			super(valueType);
-
-			if (currentValue != null) {
-
-				editManager = createEditManager((IFrame)currentValue);
-			}
 		}
 
 		boolean active() {
@@ -117,24 +105,32 @@ class DescriptorDisplay {
 
 		void performAction() {
 
-			if (editManager == null || !editManager.checkInvokeEdit()) {
+			IFrame aspect = null;
+			DescriptorsList descriptors = null;
 
-				IFrame aspect = getNewAspectOrNull();
+			if (currentValue != null) {
 
-				if (aspect != null) {
-
-					descriptor.setNewValue(aspect);
-					createEditManager(aspect).checkInvokeEdit();
-				}
+				aspect = (IFrame)currentValue;
+				descriptors = new DescriptorsList(instantiator, aspect);
 			}
+
+			if (aspect == null || descriptors.isEmpty()) {
+
+				aspect = getNewAspectOrNull();
+
+				if (aspect == null) {
+
+					return;
+				}
+
+				descriptor.setNewValue(aspect);
+				descriptors = new DescriptorsList(instantiator, aspect);
+			}
+
+			onAspectActionPerformed(aspect, descriptors);
 		}
 
 		abstract IFrame getNewAspectOrNull();
-
-		private AspectEditManager createEditManager(IFrame aspect) {
-
-			return new AspectEditManager(aspectWindow, slot, aspect);
-		}
 	}
 
 	private class FixedCFrameTypeHandler extends CFrameTypeHandler {
@@ -370,126 +366,6 @@ class DescriptorDisplay {
 		}
 	}
 
-	private class IdentityCell extends ActiveTableCell {
-
-		String getLabel() {
-
-			String label = typeHandler.getIdentityLabel();
-
-			if (multiValueSlot()) {
-
-				label += getArraySuffix();
-			}
-
-			return label;
-		}
-
-		Color getForeground() {
-
-			return IDENTITY_COLOUR;
-		}
-
-		int getFontStyle() {
-
-			return IDENTITY_FONT_STYLE;
-		}
-
-		private String getArraySuffix() {
-
-			return " [" + (getValueIndex() + 1) + "]";
-		}
-
-		private int getValueIndex() {
-
-			ISlotValues values = slot.getValues();
-
-			if (currentValue == null) {
-
-				return values.size();
-			}
-
-			return values.asList().indexOf(currentValue);
-		}
-	}
-
-	private class ValueCell extends ActiveTableCell {
-
-		private DisplayColours colours = new DisplayColours();
-		private DisplayFontStyles fontStyles = new DisplayFontStyles();
-
-		private abstract class DisplayOptions<O> {
-
-			O getOption() {
-
-				return anyEffectiveValues() ? getValuesOption() : getNoValuesOption();
-			}
-
-			abstract O getValuesOption();
-
-			abstract O getNoValuesOption();
-		}
-
-		private class DisplayColours extends DisplayOptions<Color> {
-
-			Color getValuesOption() {
-
-				return VALUE_COLOUR;
-			}
-
-			Color getNoValuesOption() {
-
-				return NO_VALUE_COLOUR;
-			}
-		}
-
-		private class DisplayFontStyles extends DisplayOptions<Integer> {
-
-			Integer getValuesOption() {
-
-				return VALUE_FONT_STYLE;
-			}
-
-			Integer getNoValuesOption() {
-
-				return NO_VALUE_FONT_STYLE;
-			}
-		}
-
-		String getLabel() {
-
-			return typeHandler.getValueLabel();
-		}
-
-		Color getForeground() {
-
-			return colours.getOption();
-		}
-
-		Color getBackground() {
-
-			return anyUserEditability()
-					? DEFAULT_BACKGROUND_COLOUR
-					: AUTO_EDIT_BACKGROUND_COLOUR;
-		}
-
-		int getFontStyle() {
-
-			return fontStyles.getOption();
-		}
-
-		boolean userActionable() {
-
-			return typeHandler.active();
-		}
-
-		void performCellAction() {
-
-			aspectWindow.dispose();
-			typeHandler.performAction();
-			aspectWindow.displayCopy();
-		}
-	}
-
 	DescriptorDisplay(AspectWindow aspectWindow, Descriptor descriptor) {
 
 		this.aspectWindow = aspectWindow;
@@ -504,24 +380,60 @@ class DescriptorDisplay {
 		new TypeHandlerCreator();
 	}
 
-	ActiveTableCell createIdentityCell() {
-
-		return new IdentityCell();
-	}
-
-	ActiveTableCell createValueCell() {
-
-		return new ValueCell();
-	}
-
 	ISlot getSlot() {
 
 		return slot;
 	}
 
+	boolean active() {
+
+		return typeHandler.active();
+	}
+
 	IValue getCurrentValue() {
 
 		return currentValue;
+	}
+
+	String getIdentityLabel() {
+
+		String label = typeHandler.getIdentityLabel();
+
+		if (descriptor.multiValueSlot()) {
+
+			label += getIdentityLabelArraySuffix();
+		}
+
+		return label;
+	}
+
+	String getValueLabel() {
+
+		return typeHandler.getValueLabel();
+	}
+
+	void performAction() {
+
+		typeHandler.performAction();
+	}
+
+	abstract void onAspectActionPerformed(IFrame aspect, DescriptorsList descriptors);
+
+	private String getIdentityLabelArraySuffix() {
+
+		return " [" + (getValueIndex() + 1) + "]";
+	}
+
+	private int getValueIndex() {
+
+		ISlotValues values = slot.getValues();
+
+		if (currentValue == null) {
+
+			return values.size();
+		}
+
+		return values.asList().indexOf(currentValue);
 	}
 
 	private boolean anyUserEditability() {
@@ -557,11 +469,6 @@ class DescriptorDisplay {
 	private boolean abstractEditableSlot() {
 
 		return slot.getEditability().abstractEditable();
-	}
-
-	private boolean multiValueSlot() {
-
-		return !slot.getType().getCardinality().singleValue();
 	}
 
 	private Customiser getCustomiser() {

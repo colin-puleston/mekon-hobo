@@ -24,6 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * @author Colin Puleston
  */
@@ -33,8 +37,164 @@ class DescriptorsTable extends ActiveTable {
 
 	static private final String[] TITLES = new String[]{"Attribute", "Value"};
 
+	static final Color IDENTITY_COLOUR = Color.GRAY.darker();
+	static final Color VALUE_COLOUR = Color.BLUE.darker();
+	static final Color NO_VALUE_COLOUR = Color.GRAY;
+
+	static final int DEFAULT_FONT_STYLE = Font.PLAIN;
+	static final int IDENTITY_FONT_STYLE = Font.BOLD;
+	static final int VALUE_FONT_STYLE = Font.PLAIN;
+	static final int NO_VALUE_FONT_STYLE = Font.ITALIC;
+
+	static final Color DEFAULT_BACKGROUND_COLOUR = Color.WHITE;
+	static final Color AUTO_EDIT_BACKGROUND_COLOUR = mixAutoEditBackground();
+
+	static private DisplayColours colours = new DisplayColours();
+	static private DisplayFontStyles fontStyles = new DisplayFontStyles();
+
+	static private abstract class DisplayOptions<O> {
+
+		O getOption(Descriptor descriptor) {
+
+			return descriptor.anyEffectiveValues()
+					? getValuesOption()
+					: getNoValuesOption();
+		}
+
+		abstract O getValuesOption();
+
+		abstract O getNoValuesOption();
+	}
+
+	static private class DisplayColours extends DisplayOptions<Color> {
+
+		Color getValuesOption() {
+
+			return VALUE_COLOUR;
+		}
+
+		Color getNoValuesOption() {
+
+			return NO_VALUE_COLOUR;
+		}
+	}
+
+	static private class DisplayFontStyles extends DisplayOptions<Integer> {
+
+		Integer getValuesOption() {
+
+			return VALUE_FONT_STYLE;
+		}
+
+		Integer getNoValuesOption() {
+
+			return NO_VALUE_FONT_STYLE;
+		}
+	}
+
+	static private Color mixAutoEditBackground() {
+
+		return ColourMixer.mix(Color.LIGHT_GRAY, Color.WHITE, Color.WHITE);
+	}
+
 	private AspectWindow aspectWindow;
 	private DescriptorsList list;
+
+	private class IdentityCell extends ActiveTableCell {
+
+		private Descriptor descriptor;
+		private DescriptorDisplay display;
+
+		IdentityCell(Descriptor descriptor, DescriptorDisplay display) {
+
+			this.descriptor = descriptor;
+			this.display = display;
+		}
+
+		String getLabel() {
+
+			return display.getIdentityLabel();
+		}
+
+		Color getForeground() {
+
+			return IDENTITY_COLOUR;
+		}
+
+		Color getBackground() {
+
+			return DEFAULT_BACKGROUND_COLOUR;
+		}
+
+		int getFontStyle() {
+
+			return IDENTITY_FONT_STYLE;
+		}
+	}
+
+	private class ValueCell extends ActiveTableCell {
+
+		private Descriptor descriptor;
+		private DescriptorDisplay display;
+
+		ValueCell(Descriptor descriptor, DescriptorDisplay display) {
+
+			this.descriptor = descriptor;
+			this.display = display;
+		}
+
+		String getLabel() {
+
+			return display.getValueLabel();
+		}
+
+		Color getForeground() {
+
+			return colours.getOption(descriptor);
+		}
+
+		Color getBackground() {
+
+			return descriptor.anyUserEditability()
+					? DEFAULT_BACKGROUND_COLOUR
+					: AUTO_EDIT_BACKGROUND_COLOUR;
+		}
+
+		int getFontStyle() {
+
+			return fontStyles.getOption(descriptor);
+		}
+
+		boolean userActionable() {
+
+			return display.active();
+		}
+
+		void performCellAction() {
+
+			aspectWindow.dispose();
+			display.performAction();
+			aspectWindow.displayCopy();
+		}
+	}
+
+	private class DescriptorCellDisplay extends DescriptorDisplay {
+
+		DescriptorCellDisplay(Descriptor descriptor) {
+
+			super(aspectWindow, descriptor);
+		}
+
+		void onAspectActionPerformed(IFrame aspect, DescriptorsList descriptors) {
+
+			createEditManager(aspect, descriptors).invokeEdit();
+		}
+
+		private AspectEditManager createEditManager(IFrame aspect, DescriptorsList descriptors) {
+
+			return new AspectEditManager(aspectWindow, getSlot(), aspect, descriptors);
+		}
+	}
 
 	DescriptorsTable(AspectWindow aspectWindow, DescriptorsList list) {
 
@@ -57,15 +217,10 @@ class DescriptorsTable extends ActiveTable {
 
 	private Object[] toRow(Descriptor descriptor) {
 
-		DescriptorDisplay display = createDisplay(descriptor);
+		DescriptorDisplay display = new DescriptorCellDisplay(descriptor);
 
 		return new ActiveTableCell[] {
-					display.createIdentityCell(),
-					display.createValueCell()};
-	}
-
-	private DescriptorDisplay createDisplay(Descriptor descriptor) {
-
-		return new DescriptorDisplay(aspectWindow, descriptor);
+					new IdentityCell(descriptor, display),
+					new ValueCell(descriptor, display)};
 	}
 }

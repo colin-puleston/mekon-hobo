@@ -39,25 +39,16 @@ class AspectEditManager  {
 
 	private DescriptorsList descriptors;
 
-	AspectEditManager(AspectWindow parentWindow, ISlot slot, IFrame aspect) {
+	AspectEditManager(
+		AspectWindow parentWindow,
+		ISlot slot,
+		IFrame aspect,
+		DescriptorsList descriptors) {
 
 		this.parentWindow = parentWindow;
 		this.slot = slot;
 		this.aspect = aspect;
-
-		update();
-	}
-
-	boolean checkInvokeEdit() {
-
-		if (descriptors.isEmpty()) {
-
-			return false;
-		}
-
-		invokeEdit();
-
-		return true;
+		this.descriptors = descriptors;
 	}
 
 	void invokeEdit() {
@@ -117,6 +108,14 @@ class AspectEditManager  {
 		}
 	}
 
+	private void clearUserValues(IFrame fromFrame) {
+
+		for (ISlot slot : fromFrame.getSlots().activesAsList()) {
+
+			clearUserValues(slot);
+		}
+	}
+
 	private void clearUserValues(ISlot fromSlot) {
 
 		if (fromSlot.getEditability().editable()) {
@@ -125,21 +124,18 @@ class AspectEditManager  {
 		}
 		else {
 
-			if (fromSlot.getValueType() instanceof CFrame) {
-
-				for (IValue value : fromSlot.getValues().asList()) {
-
-					clearUserValues((IFrame)value);
-				}
-			}
+			clearNestedUserValues(fromSlot);
 		}
 	}
 
-	private void clearUserValues(IFrame fromFrame) {
+	private void clearNestedUserValues(ISlot fromSlot) {
 
-		for (ISlot slot : fromFrame.getSlots().activesAsList()) {
+		if (fromSlot.getValueType() instanceof CFrame) {
 
-			clearUserValues(slot);
+			for (IValue value : fromSlot.getValues().asList()) {
+
+				clearUserValues((IFrame)value);
+			}
 		}
 	}
 }
