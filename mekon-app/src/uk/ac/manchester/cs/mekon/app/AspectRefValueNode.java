@@ -24,59 +24,29 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-class Instantiator {
+class AspectRefValueNode extends InstantiationNode {
 
-	private InstanceType instanceType;
-	private IFrame instantiation;
+	private String label;
 
-	Instantiator(InstanceType instanceType, IFrame instantiation) {
+	AspectRefValueNode(InstantiationTree tree, Descriptor parentDescriptor) {
 
-		this.instanceType = instanceType;
-		this.instantiation = instantiation;
+		super(tree);
+
+		label = parentDescriptor.getValueLabel();
 	}
 
-	Controller getController() {
+	String getDisplayLabel() {
 
-		return instanceType.getController();
+		return label;
 	}
 
-	InstanceType getInstanceType() {
+	Icon getIcon() {
 
-		return instanceType;
-	}
-
-	IFrame getInstantiation() {
-
-		return instantiation;
-	}
-
-	IFrame instantiate(CFrame type) {
-
-		return type.instantiate(getFunction());
-	}
-
-	IFrame instantiateRef(CFrame type, CIdentity refId) {
-
-		return type.instantiate(refId, getFunction());
-	}
-
-	boolean aspectRefType(CFrame type) {
-
-		return !queryInstance() && getController().instanceType(type);
-	}
-
-	boolean queryInstance() {
-
-		return getFunction().query();
-	}
-
-	private IFrameFunction getFunction() {
-
-		return instantiation.getFunction();
+		return queryInstance() ? MekonAppIcons.QUERY_REF : MekonAppIcons.ASSERTION_REF;
 	}
 }

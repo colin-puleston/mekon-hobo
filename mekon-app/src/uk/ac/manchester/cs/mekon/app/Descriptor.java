@@ -33,6 +33,8 @@ class Descriptor {
 
 	static private final Object NO_VALUE_MATCHER = new String("NO-VALUE");
 
+	private Instantiator instantiator;
+
 	private ISlot slot;
 	private CValue<?> valueType;
 	private IValue currentValue;
@@ -51,8 +53,9 @@ class Descriptor {
 		return slot.hashCode() + valueType.hashCode() + getStateMatcher().hashCode();
 	}
 
-	Descriptor(ISlot slot, IValue currentValue) {
+	Descriptor(Instantiator instantiator, ISlot slot, IValue currentValue) {
 
+		this.instantiator = instantiator;
 		this.slot = slot;
 		this.currentValue = currentValue;
 
@@ -65,6 +68,8 @@ class Descriptor {
 
 			removeCurrentValue();
 		}
+
+		currentValue = value;
 
 		slot.getValuesEditor().add(value);
 	}
@@ -79,14 +84,39 @@ class Descriptor {
 		return slot;
 	}
 
-	boolean multiValueSlot() {
+	boolean directAspectType() {
 
-		return !slot.getType().getCardinality().singleValue();
+		return aspectType(false);
+	}
+
+	boolean aspectRefType() {
+
+		return aspectType(true);
+	}
+
+	boolean valueType(Class<? extends CValue<?>> testValueType) {
+
+		return testValueType.isAssignableFrom(valueType.getClass());
+	}
+
+	boolean isCurrentValue() {
+
+		return currentValue != null;
 	}
 
 	IValue getCurrentValue() {
 
 		return currentValue;
+	}
+
+	boolean active() {
+
+		if (directAspectType()) {
+
+			return anyUserEditability() || anyTerminalValues();
+		}
+
+		return editableSlot();
 	}
 
 	boolean anyUserEditability() {
@@ -99,7 +129,73 @@ class Descriptor {
 		return anyUserValues() || anyTerminalValues();
 	}
 
-	boolean anyUserValues() {
+	String getIdentityLabel() {
+
+		String label = slot.getType().getIdentity().getLabel();
+
+		if (!slot.getType().getCardinality().singleValue()) {
+
+			label += getIdentityLabelArraySuffix();
+		}
+
+		return label;
+	}
+
+	String getValueLabel() {
+
+		return anyEffectiveValues()
+				? getCurrentValueLabel()
+				: getNoEffectiveValueLabel();
+	}
+
+	private boolean aspectType(boolean aspectRef) {
+
+		if (valueType(CFrame.class)) {
+
+			return instantiator.aspectRefType((CFrame)valueType) == aspectRef;
+		}
+
+		return false;
+	}
+
+	private String getIdentityLabelArraySuffix() {
+
+		return " [" + (getValueIndex() + 1) + "]";
+	}
+
+	private int getValueIndex() {
+
+		ISlotValues values = slot.getValues();
+
+		if (currentValue == null) {
+
+			return values.size();
+		}
+
+		return values.asList().indexOf(currentValue);
+	}
+
+	private String getNoEffectiveValueLabel() {
+
+		return "[" + getNoEffectiveValuesDescription() + "]";
+	}
+
+	private String getNoEffectiveValuesDescription() {
+
+		return isCurrentValue() ? getCurrentValueLabel() : getValueTypeLabel();
+	}
+
+	private String getValueTypeLabel() {
+
+		return getCustomiser().getDisplayLabel(valueType);
+	}
+
+	private String getCurrentValueLabel() {
+
+		return getCustomiser().getDisplayLabel(currentValue);
+	}
+
+	private boolean anyUserValues() {
 
 		if (!isCurrentValue()) {
 
@@ -109,7 +205,7 @@ class Descriptor {
 		return editableSlot() || anyNestedUserValues();
 	}
 
-	boolean anyTerminalValues() {
+	private boolean anyTerminalValues() {
 
 		return currentTerminalValue() || anyNestedTerminalValues();
 	}
@@ -144,8 +240,8 @@ class Descriptor {
 		return isCurrentValue() ? currentValue : NO_VALUE_MATCHER;
 	}
 
-	private boolean isCurrentValue() {
+	private Customiser getCustomiser() {
 
-		return currentValue != null;
+		return instantiator.getController().getCustomiser();
 	}
 }

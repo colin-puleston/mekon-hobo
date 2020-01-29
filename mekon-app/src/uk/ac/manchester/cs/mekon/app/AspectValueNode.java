@@ -24,59 +24,67 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class Instantiator {
+class AspectValueNode extends InstantiationNode {
 
-	private InstanceType instanceType;
-	private IFrame instantiation;
+	private String label;
+	private DescriptorsList aspectDescriptors;
 
-	Instantiator(InstanceType instanceType, IFrame instantiation) {
+	protected void addInitialChildren() {
 
-		this.instanceType = instanceType;
-		this.instantiation = instantiation;
+		InstantiationTree tree = getInstantiationTree();
+
+		for (Descriptor descriptor : aspectDescriptors.getList()) {
+
+			addChild(new DescriptorNode(tree, descriptor));
+		}
 	}
 
-	Controller getController() {
+	protected boolean autoExpand() {
 
-		return instanceType.getController();
+		return true;
 	}
 
-	InstanceType getInstanceType() {
+	protected boolean orderedChildren() {
 
-		return instanceType;
+		return false;
 	}
 
-	IFrame getInstantiation() {
+	AspectValueNode(InstantiationTree tree, IFrame topLevelAspect) {
 
-		return instantiation;
+		this(tree, "", topLevelAspect);
 	}
 
-	IFrame instantiate(CFrame type) {
+	AspectValueNode(InstantiationTree tree, Descriptor parentDescriptor) {
 
-		return type.instantiate(getFunction());
+		this(
+			tree,
+			parentDescriptor.getValueLabel(),
+			(IFrame)parentDescriptor.getCurrentValue());
 	}
 
-	IFrame instantiateRef(CFrame type, CIdentity refId) {
+	String getDisplayLabel() {
 
-		return type.instantiate(refId, getFunction());
+		return label;
 	}
 
-	boolean aspectRefType(CFrame type) {
+	Icon getIcon() {
 
-		return !queryInstance() && getController().instanceType(type);
+		return queryInstance() ? MekonAppIcons.QUERY_TYPE : MekonAppIcons.ASSERTION_TYPE;
 	}
 
-	boolean queryInstance() {
+	private AspectValueNode(InstantiationTree tree, String label, IFrame aspect) {
 
-		return getFunction().query();
-	}
+		super(tree);
 
-	private IFrameFunction getFunction() {
+		this.label = label;
 
-		return instantiation.getFunction();
+		aspectDescriptors = new DescriptorsList(getInstantiator(), aspect);
 	}
 }

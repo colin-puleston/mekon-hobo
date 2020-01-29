@@ -100,20 +100,79 @@ class DescriptorsTable extends ActiveTable {
 	private AspectWindow aspectWindow;
 	private DescriptorsList list;
 
+	private class AspectDescriptorEditor extends DescriptorEditor {
+
+		private Descriptor descriptor;
+
+		AspectDescriptorEditor(Descriptor descriptor) {
+
+			super(aspectWindow, descriptor);
+
+			this.descriptor = descriptor;
+		}
+
+		void performEditAction() {
+
+			IFrame aspect = getAspectValue();
+			DescriptorsList aspectDescriptors = null;
+
+			if (aspect != null) {
+
+				aspectDescriptors = getAspectDescriptors(aspect);
+			}
+
+			if (aspect == null || aspectDescriptors.isEmpty()) {
+
+				super.performEditAction();
+
+				aspect = getAspectValue();
+
+				if (aspect == null) {
+
+					return;
+				}
+
+				aspectDescriptors = getAspectDescriptors(aspect);
+			}
+
+			if (!aspectDescriptors.isEmpty()) {
+
+				createEditManager(aspect, aspectDescriptors).invokeEdit();
+			}
+		}
+
+		private IFrame getAspectValue() {
+
+			return (IFrame)descriptor.getCurrentValue();
+		}
+
+		private DescriptorsList getAspectDescriptors(IFrame aspect) {
+
+			return new DescriptorsList(aspectWindow.getInstantiator(), aspect);
+		}
+
+		private AspectEditManager createEditManager(
+									IFrame aspect,
+									DescriptorsList aspectDescriptors) {
+
+			ISlot slot = descriptor.getSlot();
+
+			return new AspectEditManager(aspectWindow, slot, aspect, aspectDescriptors);
+		}
+	}
+
 	private class IdentityCell extends ActiveTableCell {
 
 		private Descriptor descriptor;
-		private DescriptorDisplay display;
 
-		IdentityCell(Descriptor descriptor, DescriptorDisplay display) {
+		IdentityCell(Descriptor descriptor) {
 
 			this.descriptor = descriptor;
-			this.display = display;
 		}
 
 		String getLabel() {
 
-			return display.getIdentityLabel();
+			return descriptor.getIdentityLabel();
 		}
 
 		Color getForeground() {
@@ -135,17 +194,15 @@ class DescriptorsTable extends ActiveTable {
 	private class ValueCell extends ActiveTableCell {
 
 		private Descriptor descriptor;
-		private DescriptorDisplay display;
 
-		ValueCell(Descriptor descriptor, DescriptorDisplay display) {
+		ValueCell(Descriptor descriptor) {
 
 			this.descriptor = descriptor;
-			this.display = display;
 		}
 
 		String getLabel() {
 
-			return display.getValueLabel();
+			return descriptor.getValueLabel();
 		}
 
 		Color getForeground() {
@@ -167,32 +224,21 @@ class DescriptorsTable extends ActiveTable {
 
 		boolean userActionable() {
 
-			return display.active();
+			return descriptor.active();
 		}
 
 		void performCellAction() {
 
 			aspectWindow.dispose();
-			display.performAction();
+			createEditor().performEditAction();
 			aspectWindow.displayCopy();
 		}
-	}
 
-	private class DescriptorCellDisplay extends DescriptorDisplay {
+		private DescriptorEditor createEditor() {
 
-		DescriptorCellDisplay(Descriptor descriptor) {
-
-			super(aspectWindow, descriptor);
-		}
-
-		void onAspectActionPerformed(IFrame aspect, DescriptorsList descriptors) {
-
-			createEditManager(aspect, descriptors).invokeEdit();
-		}
-
-		private AspectEditManager createEditManager(IFrame aspect, DescriptorsList descriptors) {
-
-			return new AspectEditManager(aspectWindow, getSlot(), aspect, descriptors);
+			return descriptor.directAspectType()
+					? new AspectDescriptorEditor(descriptor)
+					: new DescriptorEditor(aspectWindow, descriptor);
 		}
 	}
 
@@ -217,10 +263,6 @@ class DescriptorsTable extends ActiveTable {
 
 	private Object[] toRow(Descriptor descriptor) {
 
-		DescriptorDisplay display = new DescriptorCellDisplay(descriptor);
-
-		return new ActiveTableCell[] {
-					new IdentityCell(descriptor, display),
-					new ValueCell(descriptor, display)};
+		return new ActiveTableCell[] {new IdentityCell(descriptor), new ValueCell(descriptor)};
 	}
 }

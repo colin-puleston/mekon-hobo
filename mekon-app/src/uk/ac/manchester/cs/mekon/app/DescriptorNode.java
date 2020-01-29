@@ -24,59 +24,68 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class Instantiator {
+class DescriptorNode extends InstantiationNode {
 
-	private InstanceType instanceType;
-	private IFrame instantiation;
+	private Descriptor descriptor;
+	private DescriptorEditor editor;
 
-	Instantiator(InstanceType instanceType, IFrame instantiation) {
+	protected void addInitialChildren() {
 
-		this.instanceType = instanceType;
-		this.instantiation = instantiation;
+		if (hasValue()) {
+
+			addChild(createValueNode());
+		}
 	}
 
-	Controller getController() {
+	DescriptorNode(InstantiationTree tree, Descriptor descriptor) {
 
-		return instanceType.getController();
+		super(tree);
+
+		this.descriptor = descriptor;
+
+		editor = new DescriptorEditor(getAspectWindow(), descriptor);
 	}
 
-	InstanceType getInstanceType() {
+	String getDisplayLabel() {
 
-		return instanceType;
+		return descriptor.getIdentityLabel();
 	}
 
-	IFrame getInstantiation() {
+	Icon getIcon() {
 
-		return instantiation;
+		return hasValue()
+				? MekonAppIcons.VALUED_DESCRIPTOR
+				: MekonAppIcons.EMPTY_DESCRIPTOR;
 	}
 
-	IFrame instantiate(CFrame type) {
+	private InstantiationNode createValueNode() {
 
-		return type.instantiate(getFunction());
+		InstantiationTree tree = getInstantiationTree();
+
+		if (descriptor.directAspectType()) {
+
+			return new AspectValueNode(tree, descriptor);
+		}
+
+		if (descriptor.aspectRefType()) {
+
+			return new AspectRefValueNode(tree, descriptor);
+		}
+
+		return new ValueNode(tree, descriptor);
 	}
 
-	IFrame instantiateRef(CFrame type, CIdentity refId) {
+	private boolean hasValue() {
 
-		return type.instantiate(refId, getFunction());
-	}
-
-	boolean aspectRefType(CFrame type) {
-
-		return !queryInstance() && getController().instanceType(type);
-	}
-
-	boolean queryInstance() {
-
-		return getFunction().query();
-	}
-
-	private IFrameFunction getFunction() {
-
-		return instantiation.getFunction();
+		return descriptor.getCurrentValue() != null;
 	}
 }

@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.Window;
 import java.awt.Dimension;
 import java.util.*;
 import javax.swing.*;
@@ -68,17 +69,17 @@ class InstanceRefSelector extends Selector<IFrame> {
 	}
 
 	InstanceRefSelector(
-		AspectWindow aspectWindow,
+		Window rootWindow,
+		Instantiator instantiator,
 		CFrame type,
 		boolean multiSelect,
 		boolean clearRequired) {
 
-		super(aspectWindow.getRootWindow(), getTitle(multiSelect), clearRequired);
+		super(rootWindow, getTitle(multiSelect), clearRequired);
 
+		this.instantiator = instantiator;
 		this.type = type;
 		this.multiSelect = multiSelect;
-
-		instantiator = aspectWindow.getInstantiator();
 
 		idsList = createIdsList();
 		idsList.addListSelectionListener(new IdsSelectionListener());

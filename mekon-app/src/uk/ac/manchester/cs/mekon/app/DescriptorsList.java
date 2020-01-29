@@ -33,18 +33,17 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class DescriptorsList {
 
-	private Customiser customiser;
 	private List<Descriptor> list = new ArrayList<Descriptor>();
 
 	DescriptorsList(Instantiator instantiator, IFrame aspect) {
 
-		customiser = instantiator.getController().getCustomiser();
+		Customiser customiser = instantiator.getController().getCustomiser();
 
 		for (ISlot slot : aspect.getSlots().activesAsList()) {
 
 			if (!customiser.hiddenSlot(aspect, slot)) {
 
-				addAllFor(slot);
+				addAllFor(instantiator, slot);
 			}
 		}
 	}
@@ -59,24 +58,24 @@ class DescriptorsList {
 		return list;
 	}
 
-	private void addAllFor(ISlot slot) {
+	private void addAllFor(Instantiator instantiator, ISlot slot) {
 
 		ISlotValues values = slot.getValues();
 
 		for (IValue value : values.asList()) {
 
-			addFor(slot, value);
+			addFor(instantiator, slot, value);
 		}
 
 		if (values.isEmpty() || (editable(slot) && !singleValued(slot))) {
 
-			addFor(slot, null);
+			addFor(instantiator, slot, null);
 		}
 	}
 
-	private void addFor(ISlot slot, IValue value) {
+	private void addFor(Instantiator instantiator, ISlot slot, IValue value) {
 
-		list.add(new Descriptor(slot, value));
+		list.add(new Descriptor(instantiator, slot, value));
 	}
 
 	private boolean singleValued(ISlot slot) {

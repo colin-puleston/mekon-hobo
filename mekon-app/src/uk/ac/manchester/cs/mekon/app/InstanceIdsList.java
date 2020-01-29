@@ -40,8 +40,8 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Icon ASSERTION_ICON = createIcon(Color.CYAN);
-	static private final Icon QUERY_ICON = createIcon(Color.GREEN);
+	static private final Icon ASSERTION_ICON = MekonAppIcons.ASSERTION_REF;
+	static private final Icon QUERY_ICON = MekonAppIcons.QUERY_REF;
 
 	static private final Color SELECTION_CLR = UIManager.getColor("Tree.selectionBackground");
 

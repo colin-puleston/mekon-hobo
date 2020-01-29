@@ -24,59 +24,62 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class Instantiator {
+abstract class InstantiationNode extends GNode {
 
-	private InstanceType instanceType;
-	private IFrame instantiation;
+	private InstantiationTree tree;
 
-	Instantiator(InstanceType instanceType, IFrame instantiation) {
+	protected boolean autoExpand() {
 
-		this.instanceType = instanceType;
-		this.instantiation = instantiation;
+		return true;
 	}
 
-	Controller getController() {
+	protected boolean orderedChildren() {
 
-		return instanceType.getController();
+		return false;
 	}
 
-	InstanceType getInstanceType() {
+	protected GCellDisplay getDisplay() {
 
-		return instanceType;
+		return new GCellDisplay(getDisplayLabel(), getIcon());
 	}
 
-	IFrame getInstantiation() {
+	InstantiationNode(InstantiationTree tree) {
 
-		return instantiation;
+		super(tree);
+
+		this.tree = tree;
 	}
 
-	IFrame instantiate(CFrame type) {
+	InstantiationTree getInstantiationTree() {
 
-		return type.instantiate(getFunction());
+		return tree;
 	}
 
-	IFrame instantiateRef(CFrame type, CIdentity refId) {
+	AspectWindow getAspectWindow() {
 
-		return type.instantiate(refId, getFunction());
+		return tree.getAspectWindow();
 	}
 
-	boolean aspectRefType(CFrame type) {
+	Instantiator getInstantiator() {
 
-		return !queryInstance() && getController().instanceType(type);
+		return tree.getInstantiator();
 	}
 
 	boolean queryInstance() {
 
-		return getFunction().query();
+		return getInstantiator().queryInstance();
 	}
 
-	private IFrameFunction getFunction() {
+	abstract String getDisplayLabel();
 
-		return instantiation.getFunction();
-	}
+	abstract Icon getIcon();
 }
