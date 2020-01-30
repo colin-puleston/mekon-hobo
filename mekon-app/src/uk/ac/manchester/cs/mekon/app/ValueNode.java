@@ -53,7 +53,7 @@ class ValueNode extends InstantiationNode {
 	Icon getIcon() {
 
 		return queryInstantiation()
-				? MekonAppIcons.QUERY_TYPE
-				: MekonAppIcons.ASSERTION_TYPE;
+				? MekonAppIcons.QUERY_VALUE
+				: MekonAppIcons.ASSERTION_VALUE;
 	}
 }

@@ -34,20 +34,20 @@ import uk.ac.manchester.cs.mekon.gui.icon.*;
  */
 class MekonAppIcons {
 
-	static private final Color ASSERTION_FRAME_CLR = Color.CYAN;
-	static private final Color QUERY_FRAME_CLR = Color.GREEN;
-	static private final Color DATA_CLR = Color.BLACK;
+	static private final Color ASSERTION_CLR = Color.CYAN;
+	static private final Color QUERY_CLR = Color.GREEN;
+
 	static private final Color AUTO_DESCRIPTOR_CLR = Color.GRAY;
 	static private final Color USER_DESCRIPTOR_CLR = Color.LIGHT_GRAY;
 	static private final Color EMPTY_DESCRIPTOR_CLR = Color.WHITE;
 
-	static final Icon ASSERTION_TYPE = createInstanceTypeIcon(ASSERTION_FRAME_CLR);
-	static final Icon QUERY_TYPE = createInstanceTypeIcon(QUERY_FRAME_CLR);
+	static private final int ICON_DIMENSION = 12;
 
-	static final Icon ASSERTION_REF = createInstanceRefIcon(ASSERTION_FRAME_CLR);
-	static final Icon QUERY_REF = createInstanceRefIcon(QUERY_FRAME_CLR);
+	static final Icon ASSERTION_VALUE = createInstanceTypeIcon(ASSERTION_CLR);
+	static final Icon QUERY_VALUE = createInstanceTypeIcon(QUERY_CLR);
 
-	static final Icon DATA_VALUE = createDataValueIcon();
+	static final Icon ASSERTION_REF = createInstanceRefIcon(ASSERTION_CLR);
+	static final Icon QUERY_REF = createInstanceRefIcon(QUERY_CLR);
 
 	static final Icon AUTO_DESCRIPTOR = createDescrptorIcon(AUTO_DESCRIPTOR_CLR);
 	static final Icon USER_DESCRIPTOR = createDescrptorIcon(USER_DESCRIPTOR_CLR);
@@ -55,17 +55,12 @@ class MekonAppIcons {
 
 	static private GIcon createInstanceTypeIcon(Color clr) {
 
-		return new GIcon(new GOvalRenderer(clr, 12));
+		return new GIcon(new GOvalRenderer(clr, ICON_DIMENSION));
 	}
 
 	static private GIcon createInstanceRefIcon(Color clr) {
 
-		return new GIcon(new GDiamondRenderer(clr, 12));
-	}
-
-	static private GIcon createDataValueIcon() {
-
-		return new GIcon(new GRectangleRenderer(DATA_CLR, 10));
+		return new GIcon(new GDiamondRenderer(clr, ICON_DIMENSION));
 	}
 
 	static private GIcon createDescrptorIcon(Color clr) {
@@ -75,6 +70,10 @@ class MekonAppIcons {
 
 	static private GIconRenderer createDescrptorRenderer(Color clr) {
 
-		return new GTriangleRenderer(GTriangleRenderer.Type.RIGHTWARD, clr, 12, 12);
+		return new GTriangleRenderer(
+						GTriangleRenderer.Type.RIGHTWARD,
+						clr,
+						ICON_DIMENSION,
+						ICON_DIMENSION);
 	}
 }
