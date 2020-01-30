@@ -53,7 +53,7 @@ public abstract class GNode extends GMutableTreeNode {
 	private class ChildList extends GCellDisplaySortedList<GNode> {
 
 		private boolean replacing = false;
-		private Integer nextIndex = null;
+		private Integer replacingIndex = null;
 
 		ChildList() {
 
@@ -75,25 +75,20 @@ public abstract class GNode extends GMutableTreeNode {
 			return replacing;
 		}
 
-		void performAddition(GNode child) {
+		int performAddition(GNode child, int index) {
 
-			if (nextIndex != null) {
+			index = resolveIndex(index);
 
-				insert(child, nextIndex);
+			insert(child, index);
 
-				nextIndex = null;
-			}
-			else {
-
-				add(child);
-			}
+			return index;
 		}
 
 		void performRemoval(GNode child) {
 
 			if (replacing) {
 
-				nextIndex = asList().indexOf(child);
+				replacingIndex = indexOf(child);
 			}
 
 			remove(child);
@@ -110,6 +105,39 @@ public abstract class GNode extends GMutableTreeNode {
 
 			return node.getDisplay();
 		}
+
+		private int resolveIndex(int index) {
+
+			if (replacingIndex != null) {
+
+				return resolveReplacingIndex(index);
+			}
+
+			if (index == -1) {
+
+				return size();
+			}
+
+			if (orderedChildren()) {
+
+				throw new RuntimeException("Cannot specify index for ordered GNode children");
+			}
+
+			return index;
+		}
+
+		private int resolveReplacingIndex(int index) {
+
+			if (index != -1) {
+
+				throw new RuntimeException("Cannot specify index for GNode replacement");
+			}
+
+			index = replacingIndex;
+			replacingIndex = null;
+
+			return index;
+		}
 	}
 
 	public GNode(GTree tree) {
@@ -119,13 +147,18 @@ public abstract class GNode extends GMutableTreeNode {
 
 	public void addChild(GNode child) {
 
+		addChild(child, -1);
+	}
+
+	public void addChild(GNode child, int index) {
+
 		child.parent = this;
 
-		getChildList().performAddition(child);
+		index = getChildList().performAddition(child, index);
 
 		if (initialised) {
 
-			getTreeModel().nodesWereInserted(this, getIndexAsArray(child));
+			getTreeModel().nodesWereInserted(this, new int[]{index});
 			tree.updateAllNodeDisplays();
 
 			if (child.autoExpand()) {
@@ -149,6 +182,11 @@ public abstract class GNode extends GMutableTreeNode {
 
 			parent.removeChild(this);
 		}
+	}
+
+	public void removeChild(int index) {
+
+		removeChild(childList.get(index));
 	}
 
 	public void checkExpanded() {
@@ -364,11 +402,6 @@ public abstract class GNode extends GMutableTreeNode {
 	private DefaultTreeModel getTreeModel() {
 
 		return tree.getTreeModel();
-	}
-
-	private int[] getIndexAsArray(GNode child) {
-
-		return new int[]{getIndex(child)};
 	}
 
 	private int[] getAllIndicesAsArray() {

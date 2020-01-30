@@ -50,7 +50,7 @@ abstract class GCellDisplaySortedList<E>  {
 
 	private class Elements {
 
-		private List<E> list = new ArrayList<E>();
+		final List<E> list = new ArrayList<E>();
 
 		void add(E element, int index) {
 
@@ -105,8 +105,6 @@ abstract class GCellDisplaySortedList<E>  {
 
 		List<E> asList() {
 
-			List<E> list = super.asList();
-
 			if (!upToDate) {
 
 				list.addAll(sorted);
@@ -118,7 +116,7 @@ abstract class GCellDisplaySortedList<E>  {
 
 		private Collection<E> edit() {
 
-			super.asList().clear();
+			list.clear();
 			upToDate = false;
 
 			return sorted;
@@ -164,9 +162,19 @@ abstract class GCellDisplaySortedList<E>  {
 		return elements.view().size();
 	}
 
+	E get(int index) {
+
+		return elements.asList().get(index);
+	}
+
+	int indexOf(E element) {
+
+		return elements.asList().indexOf(element);
+	}
+
 	List<E> asList() {
 
-		return elements.asList();
+		return new ArrayList<E>(elements.asList());
 	}
 
 	int compareOrdered(E first, E second) {

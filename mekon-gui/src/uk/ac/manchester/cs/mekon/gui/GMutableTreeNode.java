@@ -45,9 +45,9 @@ public abstract class GMutableTreeNode implements MutableTreeNode {
 		return true;
 	}
 
-	public TreeNode getChildAt(int childIndex) {
+	public TreeNode getChildAt(int index) {
 
-		return ensureChildren().get(childIndex);
+		return ensureChildren().get(index);
 	}
 
 	public int getChildCount() {
