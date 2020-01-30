@@ -28,7 +28,6 @@ import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -46,11 +45,6 @@ abstract class InstantiationNode extends GNode {
 	protected boolean orderedChildren() {
 
 		return false;
-	}
-
-	protected GCellDisplay getDisplay() {
-
-		return new GCellDisplay(getDisplayLabel(), getIcon());
 	}
 
 	InstantiationNode(InstantiationTree tree) {
@@ -79,8 +73,4 @@ abstract class InstantiationNode extends GNode {
 
 		return getInstantiator().queryInstantiation();
 	}
-
-	abstract String getDisplayLabel();
-
-	abstract Icon getIcon();
 }

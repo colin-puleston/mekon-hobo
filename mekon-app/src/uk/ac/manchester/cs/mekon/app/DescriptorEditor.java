@@ -284,7 +284,7 @@ class DescriptorEditor {
 
 	private boolean isCurrentValue() {
 
-		return descriptor.getCurrentValue() != null;
+		return descriptor.isCurrentValue();
 	}
 
 	private boolean abstractEditableSlot() {

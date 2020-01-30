@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -48,12 +49,16 @@ class DescriptorNode extends InstantiationNode {
 		}
 	}
 
-	protected void addInitialChildren() {
+	protected GCellDisplay getDisplay() {
 
-		if (hasValue()) {
+		GCellDisplay display = getCoreDisplay();
 
-			addChild(createValueNode());
+		if (isValue()) {
+
+			display.setModifier(getValueDisplay());
 		}
+
+		return display;
 	}
 
 	protected GNodeAction getPositiveAction1() {
@@ -70,24 +75,38 @@ class DescriptorNode extends InstantiationNode {
 		editAction = editable() ? new EditAction() : GNodeAction.INERT_ACTION;
 	}
 
-	String getDisplayLabel() {
+	Icon getAssertionValueIcon() {
 
-		return descriptor.getIdentityLabel();
+		return MekonAppIcons.ASSERTION_VALUE;
 	}
 
-	Icon getIcon() {
+	Icon getQueryValueIcon() {
 
-		if (hasValue()) {
+		return MekonAppIcons.QUERY_VALUE;
+	}
 
-			if (editable()) {
+	private GCellDisplay getCoreDisplay() {
 
-				return MekonAppIcons.USER_DESCRIPTOR;
-			}
+		return new GCellDisplay(descriptor.getIdentityLabel(), getIcon());
+	}
 
-			return MekonAppIcons.AUTO_DESCRIPTOR;
-		}
+	private GCellDisplay getValueDisplay() {
 
-		return MekonAppIcons.EMPTY_DESCRIPTOR;
+		GCellDisplay display = new GCellDisplay(descriptor.getValueLabel());
+
+		display.setFontStyle(editable() ? Font.BOLD : (Font.BOLD | Font.ITALIC));
+
+		return display;
+	}
+
+	private Icon getIcon() {
+
+		return isValue() ? getValueIcon() : MekonAppIcons.NO_VALUE;
+	}
+
+	private Icon getValueIcon() {
+
+		return queryInstantiation() ? getQueryValueIcon() : getAssertionValueIcon();
 	}
 
 	private DescriptorEditor createEditor() {
@@ -95,30 +114,13 @@ class DescriptorNode extends InstantiationNode {
 		return new DescriptorEditor(getRootWindow(), getInstantiator(), descriptor);
 	}
 
-	private InstantiationNode createValueNode() {
-
-		InstantiationTree tree = getInstantiationTree();
-
-		if (descriptor.instanceRefType()) {
-
-			return new InstanceRefValueNode(tree, descriptor);
-		}
-
-		if (descriptor.valueType(CFrame.class)) {
-
-			return new IFrameValueNode(tree, descriptor);
-		}
-
-		return new ValueNode(tree, descriptor);
-	}
-
 	private boolean editable() {
 
 		return descriptor.getSlot().getEditability().editable();
 	}
 
-	private boolean hasValue() {
+	private boolean isValue() {
 
-		return descriptor.getCurrentValue() != null;
+		return descriptor.isCurrentValue();
 	}
 }

@@ -29,31 +29,20 @@ import javax.swing.*;
 /**
  * @author Colin Puleston
  */
-class ValueNode extends InstantiationNode {
+class InstanceRefValuedDescriptorNode extends DescriptorNode {
 
-	private String label = "";
+	InstanceRefValuedDescriptorNode(InstantiationTree tree, Descriptor descriptor) {
 
-	ValueNode(InstantiationTree tree) {
-
-		super(tree);
+		super(tree, descriptor);
 	}
 
-	ValueNode(InstantiationTree tree, Descriptor descriptor) {
+	Icon getAssertionValueIcon() {
 
-		super(tree);
-
-		label = descriptor.getValueLabel();
+		return MekonAppIcons.ASSERTION_REF;
 	}
 
-	String getDisplayLabel() {
+	Icon getQueryValueIcon() {
 
-		return label;
-	}
-
-	Icon getIcon() {
-
-		return queryInstantiation()
-				? MekonAppIcons.QUERY_VALUE
-				: MekonAppIcons.ASSERTION_VALUE;
+		return MekonAppIcons.QUERY_REF;
 	}
 }

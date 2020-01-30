@@ -34,26 +34,21 @@ import uk.ac.manchester.cs.mekon.gui.icon.*;
  */
 class MekonAppIcons {
 
-	static private final Color ASSERTION_CLR = Color.CYAN;
-	static private final Color QUERY_CLR = Color.GREEN;
-
-	static private final Color AUTO_DESCRIPTOR_CLR = Color.GRAY;
-	static private final Color USER_DESCRIPTOR_CLR = Color.LIGHT_GRAY;
-	static private final Color EMPTY_DESCRIPTOR_CLR = Color.WHITE;
+	static private final Color ASSERTION_VALUE_CLR = Color.CYAN;
+	static private final Color QUERY_VALUE_CLR = Color.GREEN;
+	static private final Color NO_VALUE_CLR = Color.WHITE;
 
 	static private final int ICON_DIMENSION = 12;
 
-	static final Icon ASSERTION_VALUE = createInstanceTypeIcon(ASSERTION_CLR);
-	static final Icon QUERY_VALUE = createInstanceTypeIcon(QUERY_CLR);
+	static final Icon ASSERTION_VALUE = createDefaultValueIcon(ASSERTION_VALUE_CLR);
+	static final Icon QUERY_VALUE = createDefaultValueIcon(QUERY_VALUE_CLR);
 
-	static final Icon ASSERTION_REF = createInstanceRefIcon(ASSERTION_CLR);
-	static final Icon QUERY_REF = createInstanceRefIcon(QUERY_CLR);
+	static final Icon ASSERTION_REF = createInstanceRefIcon(ASSERTION_VALUE_CLR);
+	static final Icon QUERY_REF = createInstanceRefIcon(QUERY_VALUE_CLR);
 
-	static final Icon AUTO_DESCRIPTOR = createDescrptorIcon(AUTO_DESCRIPTOR_CLR);
-	static final Icon USER_DESCRIPTOR = createDescrptorIcon(USER_DESCRIPTOR_CLR);
-	static final Icon EMPTY_DESCRIPTOR = createDescrptorIcon(EMPTY_DESCRIPTOR_CLR);
+	static final Icon NO_VALUE = createDescrptorIcon(NO_VALUE_CLR);
 
-	static private GIcon createInstanceTypeIcon(Color clr) {
+	static private GIcon createDefaultValueIcon(Color clr) {
 
 		return new GIcon(new GOvalRenderer(clr, ICON_DIMENSION));
 	}

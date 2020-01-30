@@ -28,26 +28,27 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class IFrameValueNode extends ValueNode {
+class DescriptorChildNodes {
 
-	private DescriptorsList aspectDescriptors;
+	private InstantiationNode parentNode;
+	private DescriptorsList descriptors;
+
 	private UpdateRelayer updateRelayer = new UpdateRelayer();
 
-	private class ChildNodesUpdater {
+	private class Updater {
 
 		private List<Descriptor> oldDescriptors;
 		private List<Descriptor> newDescriptors;
 
-		ChildNodesUpdater() {
+		Updater() {
 
-			oldDescriptors = aspectDescriptors.getList();
-			aspectDescriptors.update();
-			newDescriptors = aspectDescriptors.getList();
+			oldDescriptors = descriptors.getList();
+			descriptors.update();
+			newDescriptors = descriptors.getList();
 
 			if (!newDescriptors.equals(oldDescriptors)) {
 
@@ -64,7 +65,7 @@ class IFrameValueNode extends ValueNode {
 
 				if (!newDescriptors.contains(descriptor)) {
 
-					removeChild(childIdx--);
+					removeFromParentNode(childIdx--);
 				}
 
 				childIdx++;
@@ -79,7 +80,7 @@ class IFrameValueNode extends ValueNode {
 
 				if (!oldDescriptors.contains(descriptor)) {
 
-					addChild(descriptor, childIdx);
+					addToParentNode(descriptor, childIdx);
 				}
 
 				childIdx++;
@@ -93,27 +94,27 @@ class IFrameValueNode extends ValueNode {
 
 		public void onUpdatedValueType(CValue<?> valueType) {
 
-			new ChildNodesUpdater();
+			new Updater();
 		}
 
 		public void onUpdatedCardinality(CCardinality cardinality) {
 
-			new ChildNodesUpdater();
+			new Updater();
 		}
 
 		public void onUpdatedActivation(CActivation activation) {
 
-			new ChildNodesUpdater();
+			new Updater();
 		}
 
 		public void onUpdatedEditability(CEditability editability) {
 
-			new ChildNodesUpdater();
+			new Updater();
 		}
 
 		public void onUpdated() {
 
-			new ChildNodesUpdater();
+			new Updater();
 		}
 
 		void checkAddTo(ISlot slot) {
@@ -126,48 +127,48 @@ class IFrameValueNode extends ValueNode {
 		}
 	}
 
-	protected void addInitialChildren() {
+	DescriptorChildNodes(InstantiationNode parentNode, IFrame aspect) {
 
-		for (Descriptor descriptor : aspectDescriptors.getList()) {
+		this.parentNode = parentNode;
 
-			addChild(descriptor);
+		descriptors = new DescriptorsList(parentNode.getInstantiator(), aspect);
+	}
+
+	void addInitialChildren() {
+
+		for (Descriptor descriptor : descriptors.getList()) {
+
+			addToParentNode(descriptor, -1);
 		}
 	}
 
-	IFrameValueNode(InstantiationTree tree, IFrame topLevelAspect) {
+	private void addToParentNode(Descriptor descriptor, int index) {
 
-		super(tree);
+		DescriptorNode node = createDescriptorNode(descriptor);
 
-		createAspectDescriptors(topLevelAspect);
-	}
-
-	IFrameValueNode(InstantiationTree tree, Descriptor descriptor) {
-
-		super(tree, descriptor);
-
-		createAspectDescriptors((IFrame)descriptor.getCurrentValue());
-	}
-
-	private void createAspectDescriptors(IFrame aspect) {
-
-		aspectDescriptors = new DescriptorsList(getInstantiator(), aspect);
-	}
-
-	private void addChild(Descriptor descriptor) {
-
-		addChild(descriptor, -1);
-	}
-
-	private void addChild(Descriptor descriptor, int index) {
-
-		DescriptorNode child = createDescriptorNode(descriptor);
-
-		addChild(child, index);
+		parentNode.addChild(node, index);
 		updateRelayer.checkAddTo(descriptor.getSlot());
+	}
+
+	private void removeFromParentNode(int index) {
+
+		parentNode.removeChild(index);
 	}
 
 	private DescriptorNode createDescriptorNode(Descriptor descriptor) {
 
-		return new DescriptorNode(getInstantiationTree(), descriptor);
+		InstantiationTree tree = parentNode.getInstantiationTree();
+
+		if (descriptor.instanceRefType()) {
+
+			return new InstanceRefValuedDescriptorNode(tree, descriptor);
+		}
+
+		if (descriptor.valueType(CFrame.class) && descriptor.isCurrentValue()) {
+
+			return new IFrameValuedDescriptorNode(tree, descriptor);
+		}
+
+		return new DescriptorNode(tree, descriptor);
 	}
 }
