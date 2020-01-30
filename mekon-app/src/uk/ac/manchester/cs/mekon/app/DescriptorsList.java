@@ -33,19 +33,24 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class DescriptorsList {
 
+	private Instantiator instantiator;
+	private IFrame aspect;
+
 	private List<Descriptor> list = new ArrayList<Descriptor>();
 
 	DescriptorsList(Instantiator instantiator, IFrame aspect) {
 
-		Customiser customiser = instantiator.getController().getCustomiser();
+		this.instantiator = instantiator;
+		this.aspect = aspect;
 
-		for (ISlot slot : aspect.getSlots().activesAsList()) {
+		populate();
+	}
 
-			if (!customiser.hiddenSlot(aspect, slot)) {
+	void update() {
 
-				addAllFor(instantiator, slot);
-			}
-		}
+		list.clear();
+
+		populate();
 	}
 
 	boolean isEmpty() {
@@ -55,36 +60,60 @@ class DescriptorsList {
 
 	List<Descriptor> getList() {
 
-		return list;
+		return new ArrayList<Descriptor>(list);
 	}
 
-	private void addAllFor(Instantiator instantiator, ISlot slot) {
+	private void populate() {
 
-		ISlotValues values = slot.getValues();
+		for (ISlot slot : aspect.getSlots().activesAsList()) {
 
-		for (IValue value : values.asList()) {
+			if (!hidden(slot) && (editable(slot) || hasValues(slot))) {
 
-			addFor(instantiator, slot, value);
-		}
-
-		if (values.isEmpty() || (editable(slot) && !singleValued(slot))) {
-
-			addFor(instantiator, slot, null);
+				addAllFor(slot);
+			}
 		}
 	}
 
-	private void addFor(Instantiator instantiator, ISlot slot, IValue value) {
+	private void addAllFor(ISlot slot) {
+
+		for (IValue value : slot.getValues().asList()) {
+
+			addFor(slot, value);
+		}
+
+		if (editable(slot) && (multiValued(slot) || !hasValues(slot))) {
+
+			addFor(slot, null);
+		}
+	}
+
+	private void addFor(ISlot slot, IValue value) {
 
 		list.add(new Descriptor(instantiator, slot, value));
 	}
 
-	private boolean singleValued(ISlot slot) {
+	private boolean hidden(ISlot slot) {
 
-		return slot.getType().getCardinality().singleValue();
+		return getCustomiser().hiddenSlot(aspect, slot);
+	}
+
+	private boolean multiValued(ISlot slot) {
+
+		return !slot.getType().getCardinality().singleValue();
 	}
 
 	private boolean editable(ISlot slot) {
 
 		return slot.getEditability().editable();
+	}
+
+	private boolean hasValues(ISlot slot) {
+
+		return !slot.getValues().isEmpty();
+	}
+
+	private Customiser getCustomiser() {
+
+		return instantiator.getController().getCustomiser();
 	}
 }

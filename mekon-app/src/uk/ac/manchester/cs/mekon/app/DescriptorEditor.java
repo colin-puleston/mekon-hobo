@@ -244,12 +244,12 @@ class DescriptorEditor {
 
 		private TypeHandler createCFrameTypeHandler(CFrame valueType) {
 
-			if (instantiator.aspectRefType(valueType)) {
+			if (instantiator.instanceRefType(valueType)) {
 
 				return new InstanceRefTypeHandler(valueType);
 			}
 
-			if (fixedFrameValueType(valueType)) {
+			if (fixedCFrameValueType(valueType)) {
 
 				return new FixedCFrameTypeHandler(valueType);
 			}
@@ -257,18 +257,17 @@ class DescriptorEditor {
 			return new SelectableCFrameTypeHandler(valueType);
 		}
 
-		private boolean fixedFrameValueType(CFrame valueType) {
+		private boolean fixedCFrameValueType(CFrame valueType) {
 
 			return valueType.getSubs(CVisibility.EXPOSED).isEmpty();
 		}
 	}
 
-	DescriptorEditor(AspectWindow aspectWindow, Descriptor descriptor) {
+	DescriptorEditor(Window rootWindow, Instantiator instantiator, Descriptor descriptor) {
 
+		this.rootWindow = rootWindow;
+		this.instantiator = instantiator;
 		this.descriptor = descriptor;
-
-		rootWindow = aspectWindow.getRootWindow();
-		instantiator = aspectWindow.getInstantiator();
 
 		new TypeHandlerCreator();
 	}

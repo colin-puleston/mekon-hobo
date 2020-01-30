@@ -65,12 +65,12 @@ class Instantiator {
 		return type.instantiate(refId, getFunction());
 	}
 
-	boolean aspectRefType(CFrame type) {
+	boolean instanceRefType(CFrame type) {
 
-		return !queryInstance() && getController().instanceType(type);
+		return !queryInstantiation() && getController().instanceType(type);
 	}
 
-	boolean queryInstance() {
+	boolean queryInstantiation() {
 
 		return getFunction().query();
 	}

@@ -36,7 +36,17 @@ import uk.ac.manchester.cs.mekon.gui.*;
 class DescriptorNode extends InstantiationNode {
 
 	private Descriptor descriptor;
-	private DescriptorEditor editor;
+	private GNodeAction editAction;
+
+	private class EditAction extends GNodeAction {
+
+		private DescriptorEditor editor = createEditor();
+
+		protected void perform() {
+
+			editor.performEditAction();
+		}
+	}
 
 	protected void addInitialChildren() {
 
@@ -46,13 +56,18 @@ class DescriptorNode extends InstantiationNode {
 		}
 	}
 
+	protected GNodeAction getPositiveAction1() {
+
+		return editAction;
+	}
+
 	DescriptorNode(InstantiationTree tree, Descriptor descriptor) {
 
 		super(tree);
 
 		this.descriptor = descriptor;
 
-		editor = new DescriptorEditor(getAspectWindow(), descriptor);
+		editAction = editable() ? new EditAction() : GNodeAction.INERT_ACTION;
 	}
 
 	String getDisplayLabel() {
@@ -62,26 +77,44 @@ class DescriptorNode extends InstantiationNode {
 
 	Icon getIcon() {
 
-		return hasValue()
-				? MekonAppIcons.VALUED_DESCRIPTOR
-				: MekonAppIcons.EMPTY_DESCRIPTOR;
+		if (hasValue()) {
+
+			if (editable()) {
+
+				return MekonAppIcons.USER_DESCRIPTOR;
+			}
+
+			return MekonAppIcons.AUTO_DESCRIPTOR;
+		}
+
+		return MekonAppIcons.EMPTY_DESCRIPTOR;
+	}
+
+	private DescriptorEditor createEditor() {
+
+		return new DescriptorEditor(getRootWindow(), getInstantiator(), descriptor);
 	}
 
 	private InstantiationNode createValueNode() {
 
 		InstantiationTree tree = getInstantiationTree();
 
-		if (descriptor.directAspectType()) {
+		if (descriptor.instanceRefType()) {
 
-			return new AspectValueNode(tree, descriptor);
+			return new InstanceRefValueNode(tree, descriptor);
 		}
 
-		if (descriptor.aspectRefType()) {
+		if (descriptor.valueType(CFrame.class)) {
 
-			return new AspectRefValueNode(tree, descriptor);
+			return new IFrameValueNode(tree, descriptor);
 		}
 
 		return new ValueNode(tree, descriptor);
+	}
+
+	private boolean editable() {
+
+		return descriptor.getSlot().getEditability().editable();
 	}
 
 	private boolean hasValue() {

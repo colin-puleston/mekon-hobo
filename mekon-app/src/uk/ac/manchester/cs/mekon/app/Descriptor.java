@@ -69,8 +69,6 @@ class Descriptor {
 			removeCurrentValue();
 		}
 
-		currentValue = value;
-
 		slot.getValuesEditor().add(value);
 	}
 
@@ -84,19 +82,19 @@ class Descriptor {
 		return slot;
 	}
 
-	boolean directAspectType() {
+	boolean instanceRefType() {
 
-		return aspectType(false);
+		return categoryCFrameType(true);
 	}
 
-	boolean aspectRefType() {
+	boolean nonInstanceRefCFrameType() {
 
-		return aspectType(true);
+		return categoryCFrameType(false);
 	}
 
-	boolean valueType(Class<? extends CValue<?>> testValueType) {
+	boolean valueType(Class<? extends CValue<?>> testType) {
 
-		return testValueType.isAssignableFrom(valueType.getClass());
+		return testType.isAssignableFrom(valueType.getClass());
 	}
 
 	boolean isCurrentValue() {
@@ -111,7 +109,7 @@ class Descriptor {
 
 	boolean active() {
 
-		if (directAspectType()) {
+		if (nonInstanceRefCFrameType()) {
 
 			return anyUserEditability() || anyTerminalValues();
 		}
@@ -148,11 +146,11 @@ class Descriptor {
 				: getNoEffectiveValueLabel();
 	}
 
-	private boolean aspectType(boolean aspectRef) {
+	private boolean categoryCFrameType(boolean aspectRef) {
 
 		if (valueType(CFrame.class)) {
 
-			return instantiator.aspectRefType((CFrame)valueType) == aspectRef;
+			return instantiator.instanceRefType((CFrame)valueType) == aspectRef;
 		}
 
 		return false;

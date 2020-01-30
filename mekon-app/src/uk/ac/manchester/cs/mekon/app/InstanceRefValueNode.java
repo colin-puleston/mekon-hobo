@@ -26,65 +26,20 @@ package uk.ac.manchester.cs.mekon.app;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
  * @author Colin Puleston
  */
-class AspectValueNode extends InstantiationNode {
+class InstanceRefValueNode extends ValueNode {
 
-	private String label;
-	private DescriptorsList aspectDescriptors;
+	InstanceRefValueNode(InstantiationTree tree, Descriptor descriptor) {
 
-	protected void addInitialChildren() {
-
-		InstantiationTree tree = getInstantiationTree();
-
-		for (Descriptor descriptor : aspectDescriptors.getList()) {
-
-			addChild(new DescriptorNode(tree, descriptor));
-		}
-	}
-
-	protected boolean autoExpand() {
-
-		return true;
-	}
-
-	protected boolean orderedChildren() {
-
-		return false;
-	}
-
-	AspectValueNode(InstantiationTree tree, IFrame topLevelAspect) {
-
-		this(tree, "", topLevelAspect);
-	}
-
-	AspectValueNode(InstantiationTree tree, Descriptor parentDescriptor) {
-
-		this(
-			tree,
-			parentDescriptor.getValueLabel(),
-			(IFrame)parentDescriptor.getCurrentValue());
-	}
-
-	String getDisplayLabel() {
-
-		return label;
+		super(tree, descriptor);
 	}
 
 	Icon getIcon() {
 
-		return queryInstance() ? MekonAppIcons.QUERY_TYPE : MekonAppIcons.ASSERTION_TYPE;
-	}
-
-	private AspectValueNode(InstantiationTree tree, String label, IFrame aspect) {
-
-		super(tree);
-
-		this.label = label;
-
-		aspectDescriptors = new DescriptorsList(getInstantiator(), aspect);
+		return queryInstantiation()
+				? MekonAppIcons.QUERY_REF
+				: MekonAppIcons.ASSERTION_REF;
 	}
 }

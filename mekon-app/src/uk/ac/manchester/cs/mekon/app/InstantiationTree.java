@@ -24,8 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import uk.ac.manchester.cs.mekon.model.*;
+import java.awt.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -35,25 +36,31 @@ class InstantiationTree extends GTree {
 
 	static private final long serialVersionUID = -1;
 
-	private AspectWindow aspectWindow;
+	private Window rootWindow;
+	private Instantiator instantiator;
 
-	InstantiationTree(AspectWindow aspectWindow, IFrame topLevelAspect) {
+	InstantiationTree(
+		Window rootWindow,
+		Instantiator instantiator,
+		IFrame topLevelAspect) {
 
-		this.aspectWindow = aspectWindow;
+		this.rootWindow = rootWindow;
+		this.instantiator = instantiator;
 
 		setRootVisible(false);
 		setShowsRootHandles(true);
+		setActiveTree();
 
-		initialise(new AspectValueNode(this, topLevelAspect));
+		initialise(new IFrameValueNode(this, topLevelAspect));
 	}
 
-	AspectWindow getAspectWindow() {
+	Window getRootWindow() {
 
-		return aspectWindow;
+		return rootWindow;
 	}
 
 	Instantiator getInstantiator() {
 
-		return aspectWindow.getInstantiator();
+		return instantiator;
 	}
 }

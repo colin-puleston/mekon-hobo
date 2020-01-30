@@ -31,13 +31,18 @@ import javax.swing.*;
  */
 class ValueNode extends InstantiationNode {
 
-	private String label;
+	private String label = "";
 
-	ValueNode(InstantiationTree tree, Descriptor parentDescriptor) {
+	ValueNode(InstantiationTree tree) {
+
+		super(tree);
+	}
+
+	ValueNode(InstantiationTree tree, Descriptor descriptor) {
 
 		super(tree);
 
-		label = parentDescriptor.getValueLabel();
+		label = descriptor.getValueLabel();
 	}
 
 	String getDisplayLabel() {
@@ -47,6 +52,8 @@ class ValueNode extends InstantiationNode {
 
 	Icon getIcon() {
 
-		return MekonAppIcons.DATA_VALUE;
+		return queryInstantiation()
+				? MekonAppIcons.QUERY_TYPE
+				: MekonAppIcons.ASSERTION_TYPE;
 	}
 }

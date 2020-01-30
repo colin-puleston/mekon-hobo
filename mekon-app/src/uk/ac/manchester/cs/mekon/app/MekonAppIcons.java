@@ -36,8 +36,9 @@ class MekonAppIcons {
 
 	static private final Color ASSERTION_FRAME_CLR = Color.CYAN;
 	static private final Color QUERY_FRAME_CLR = Color.GREEN;
-	static private final Color DATA_VALUE_CLR = Color.GRAY;
-	static private final Color VALUED_DESCRIPTOR_CLR = Color.BLACK;
+	static private final Color DATA_CLR = Color.BLACK;
+	static private final Color AUTO_DESCRIPTOR_CLR = Color.GRAY;
+	static private final Color USER_DESCRIPTOR_CLR = Color.LIGHT_GRAY;
 	static private final Color EMPTY_DESCRIPTOR_CLR = Color.WHITE;
 
 	static final Icon ASSERTION_TYPE = createInstanceTypeIcon(ASSERTION_FRAME_CLR);
@@ -48,7 +49,8 @@ class MekonAppIcons {
 
 	static final Icon DATA_VALUE = createDataValueIcon();
 
-	static final Icon VALUED_DESCRIPTOR = createDescrptorIcon(VALUED_DESCRIPTOR_CLR);
+	static final Icon AUTO_DESCRIPTOR = createDescrptorIcon(AUTO_DESCRIPTOR_CLR);
+	static final Icon USER_DESCRIPTOR = createDescrptorIcon(USER_DESCRIPTOR_CLR);
 	static final Icon EMPTY_DESCRIPTOR = createDescrptorIcon(EMPTY_DESCRIPTOR_CLR);
 
 	static private GIcon createInstanceTypeIcon(Color clr) {
@@ -63,7 +65,7 @@ class MekonAppIcons {
 
 	static private GIcon createDataValueIcon() {
 
-		return new GIcon(new GRectangleRenderer(DATA_VALUE_CLR, 10));
+		return new GIcon(new GRectangleRenderer(DATA_CLR, 10));
 	}
 
 	static private GIcon createDescrptorIcon(Color clr) {

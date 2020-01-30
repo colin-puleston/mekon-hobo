@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -64,9 +65,9 @@ abstract class InstantiationNode extends GNode {
 		return tree;
 	}
 
-	AspectWindow getAspectWindow() {
+	Window getRootWindow() {
 
-		return tree.getAspectWindow();
+		return tree.getRootWindow();
 	}
 
 	Instantiator getInstantiator() {
@@ -74,9 +75,9 @@ abstract class InstantiationNode extends GNode {
 		return tree.getInstantiator();
 	}
 
-	boolean queryInstance() {
+	boolean queryInstantiation() {
 
-		return getInstantiator().queryInstance();
+		return getInstantiator().queryInstantiation();
 	}
 
 	abstract String getDisplayLabel();

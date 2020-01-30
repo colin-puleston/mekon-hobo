@@ -98,6 +98,10 @@ class DescriptorsTable extends ActiveTable {
 	}
 
 	private AspectWindow aspectWindow;
+
+	private Window rootWindow;
+	private Instantiator instantiator;
+
 	private DescriptorsList list;
 
 	private class AspectDescriptorEditor extends DescriptorEditor {
@@ -106,7 +110,7 @@ class DescriptorsTable extends ActiveTable {
 
 		AspectDescriptorEditor(Descriptor descriptor) {
 
-			super(aspectWindow, descriptor);
+			super(rootWindow, instantiator, descriptor);
 
 			this.descriptor = descriptor;
 		}
@@ -118,7 +122,7 @@ class DescriptorsTable extends ActiveTable {
 
 			if (aspect != null) {
 
-				aspectDescriptors = getAspectDescriptors(aspect);
+				aspectDescriptors = createAspectDescriptors(aspect);
 			}
 
 			if (aspect == null || aspectDescriptors.isEmpty()) {
@@ -132,7 +136,7 @@ class DescriptorsTable extends ActiveTable {
 					return;
 				}
 
-				aspectDescriptors = getAspectDescriptors(aspect);
+				aspectDescriptors = createAspectDescriptors(aspect);
 			}
 
 			if (!aspectDescriptors.isEmpty()) {
@@ -146,9 +150,9 @@ class DescriptorsTable extends ActiveTable {
 			return (IFrame)descriptor.getCurrentValue();
 		}
 
-		private DescriptorsList getAspectDescriptors(IFrame aspect) {
+		private DescriptorsList createAspectDescriptors(IFrame aspect) {
 
-			return new DescriptorsList(aspectWindow.getInstantiator(), aspect);
+			return new DescriptorsList(instantiator, aspect);
 		}
 
 		private AspectEditManager createEditManager(
@@ -236,9 +240,9 @@ class DescriptorsTable extends ActiveTable {
 
 		private DescriptorEditor createEditor() {
 
-			return descriptor.directAspectType()
+			return descriptor.nonInstanceRefCFrameType()
 					? new AspectDescriptorEditor(descriptor)
-					: new DescriptorEditor(aspectWindow, descriptor);
+					: new DescriptorEditor(rootWindow, instantiator, descriptor);
 		}
 	}
 
@@ -248,6 +252,9 @@ class DescriptorsTable extends ActiveTable {
 
 		this.aspectWindow = aspectWindow;
 		this.list = list;
+
+		rootWindow = aspectWindow.getRootWindow();
+		instantiator = aspectWindow.getInstantiator();
 
 		addRows();
 		setPreferredScrollableViewportSize(getPreferredSize());
@@ -263,6 +270,8 @@ class DescriptorsTable extends ActiveTable {
 
 	private Object[] toRow(Descriptor descriptor) {
 
-		return new ActiveTableCell[] {new IdentityCell(descriptor), new ValueCell(descriptor)};
+		return new ActiveTableCell[]{
+					new IdentityCell(descriptor),
+					new ValueCell(descriptor)};
 	}
 }

@@ -40,7 +40,7 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 	static private final String TITLE_FORMAT = "%s %s (%s)";
 	static private final String STORE_BUTTON_LABEL = "Store";
 
-	static private final int FRAME_WIDTH = 700;
+	static private final int FRAME_WIDTH = 600;
 
 	static private String createTitle(
 							Instantiator instantiator,
@@ -155,7 +155,8 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 	private JComponent createMainComponent() {
 
-		return new JScrollPane(createDescriptorsTable());
+		return new JScrollPane(new InstantiationTree(this, instantiator, getInstantiation()));
+		//return new JScrollPane(createDescriptorsTable());
 	}
 
 	private JComponent createControlsComponent() {
