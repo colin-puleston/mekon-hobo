@@ -215,7 +215,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 
 	boolean addIFrameDisjunctActionRequired() {
 
-		return queryInstance() && abstractEditableSlot();
+		return queryInstantiation() && abstractEditableSlot();
 	}
 
 	CFrame getValueType() {
@@ -245,7 +245,7 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 					tree,
 					getRootCFrame(),
 					instances,
-					getInstanceFunction())
+					getInstantiationFunction())
 						.getInstantiationOrNull();
 	}
 
@@ -286,12 +286,12 @@ class IFrameSlotNode extends FFrameSlotNode<IFrame> {
 		return type.instantiate(slot.getContainer().getFunction());
 	}
 
-	private boolean queryInstance() {
+	private boolean queryInstantiation() {
 
-		return getInstanceFunction().query();
+		return getInstantiationFunction().query();
 	}
 
-	private IFrameFunction getInstanceFunction() {
+	private IFrameFunction getInstantiationFunction() {
 
 		return slot.getContainer().getFunction();
 	}
