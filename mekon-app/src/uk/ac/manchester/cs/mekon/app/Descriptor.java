@@ -37,7 +37,7 @@ class Descriptor {
 
 	private ISlot slot;
 	private CValue<?> valueType;
-	private IValue currentValue;
+	private IValue value;
 
 	public boolean equals(Object other) {
 
@@ -53,28 +53,13 @@ class Descriptor {
 		return slot.hashCode() + valueType.hashCode() + getStateMatcher().hashCode();
 	}
 
-	Descriptor(Instantiator instantiator, ISlot slot, IValue currentValue) {
+	Descriptor(Instantiator instantiator, ISlot slot, IValue value) {
 
 		this.instantiator = instantiator;
 		this.slot = slot;
-		this.currentValue = currentValue;
+		this.value = value;
 
 		valueType = slot.getValueType();
-	}
-
-	void setNewValue(IValue value) {
-
-		if (isCurrentValue()) {
-
-			removeCurrentValue();
-		}
-
-		slot.getValuesEditor().add(value);
-	}
-
-	void removeCurrentValue() {
-
-		slot.getValuesEditor().remove(currentValue);
 	}
 
 	ISlot getSlot() {
@@ -82,14 +67,14 @@ class Descriptor {
 		return slot;
 	}
 
+	boolean aspectType() {
+
+		return categoryCFrameType(false);
+	}
+
 	boolean instanceRefType() {
 
 		return categoryCFrameType(true);
-	}
-
-	boolean nonInstanceRefCFrameType() {
-
-		return categoryCFrameType(false);
 	}
 
 	boolean valueType(Class<? extends CValue<?>> testType) {
@@ -97,19 +82,19 @@ class Descriptor {
 		return testType.isAssignableFrom(valueType.getClass());
 	}
 
-	boolean isCurrentValue() {
+	boolean hasValue() {
 
-		return currentValue != null;
+		return value != null;
 	}
 
-	IValue getCurrentValue() {
+	IValue getValue() {
 
-		return currentValue;
+		return value;
 	}
 
 	boolean active() {
 
-		if (nonInstanceRefCFrameType()) {
+		if (aspectType()) {
 
 			return anyUserEditability() || anyTerminalValues();
 		}
@@ -141,9 +126,7 @@ class Descriptor {
 
 	String getValueLabel() {
 
-		return anyEffectiveValues()
-				? getCurrentValueLabel()
-				: getNoEffectiveValueLabel();
+		return anyEffectiveValues() ? getActualValueLabel() : getNoEffectiveValueLabel();
 	}
 
 	private boolean categoryCFrameType(boolean aspectRef) {
@@ -165,12 +148,12 @@ class Descriptor {
 
 		ISlotValues values = slot.getValues();
 
-		if (currentValue == null) {
+		if (value == null) {
 
 			return values.size();
 		}
 
-		return values.asList().indexOf(currentValue);
+		return values.asList().indexOf(value);
 	}
 
 	private String getNoEffectiveValueLabel() {
@@ -180,7 +163,7 @@ class Descriptor {
 
 	private String getNoEffectiveValuesDescription() {
 
-		return isCurrentValue() ? getCurrentValueLabel() : getValueTypeLabel();
+		return hasValue() ? getActualValueLabel() : getValueTypeLabel();
 	}
 
 	private String getValueTypeLabel() {
@@ -188,14 +171,14 @@ class Descriptor {
 		return getCustomiser().getDisplayLabel(valueType);
 	}
 
-	private String getCurrentValueLabel() {
+	private String getActualValueLabel() {
 
-		return getCustomiser().getDisplayLabel(currentValue);
+		return getCustomiser().getDisplayLabel(value);
 	}
 
 	private boolean anyUserValues() {
 
-		if (!isCurrentValue()) {
+		if (!hasValue()) {
 
 			return false;
 		}
@@ -210,22 +193,22 @@ class Descriptor {
 
 	private boolean currentTerminalValue() {
 
-		return isCurrentValue() && ValuesTester.terminalValue(currentValue);
+		return hasValue() && ValuesTester.terminalValue(value);
 	}
 
 	private boolean anyNestedUserEditability() {
 
-		return isCurrentValue() && ValuesTester.anyNestedUserEditability(currentValue);
+		return hasValue() && ValuesTester.anyNestedUserEditability(value);
 	}
 
 	private boolean anyNestedUserValues() {
 
-		return isCurrentValue() && ValuesTester.anyNestedUserValues(currentValue);
+		return hasValue() && ValuesTester.anyNestedUserValues(value);
 	}
 
 	private boolean anyNestedTerminalValues() {
 
-		return isCurrentValue() && ValuesTester.anyNestedTerminalValues(currentValue);
+		return hasValue() && ValuesTester.anyNestedTerminalValues(value);
 	}
 
 	private boolean editableSlot() {
@@ -235,7 +218,7 @@ class Descriptor {
 
 	private Object getStateMatcher() {
 
-		return isCurrentValue() ? currentValue : NO_VALUE_MATCHER;
+		return hasValue() ? value : NO_VALUE_MATCHER;
 	}
 
 	private Customiser getCustomiser() {

@@ -24,25 +24,24 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class InstanceRefValuedDescriptorNode extends DescriptorNode {
+class AspectValuedDescriptorNode extends DescriptorNode {
 
-	InstanceRefValuedDescriptorNode(InstantiationTree tree, Descriptor descriptor) {
+	private DescriptorChildNodes childNodes;
+
+	protected void addInitialChildren() {
+
+		childNodes.addInitialChildren();
+	}
+
+	AspectValuedDescriptorNode(InstantiationTree tree, Descriptor descriptor) {
 
 		super(tree, descriptor);
-	}
 
-	Icon getAssertionValueIcon() {
-
-		return MekonAppIcons.ASSERTION_REF;
-	}
-
-	Icon getQueryValueIcon() {
-
-		return MekonAppIcons.QUERY_REF;
+		childNodes = new DescriptorChildNodes(this, (IFrame)descriptor.getValue());
 	}
 }

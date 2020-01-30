@@ -159,14 +159,9 @@ class DescriptorChildNodes {
 
 		InstantiationTree tree = parentNode.getInstantiationTree();
 
-		if (descriptor.instanceRefType()) {
+		if (descriptor.aspectType() && descriptor.hasValue()) {
 
-			return new InstanceRefValuedDescriptorNode(tree, descriptor);
-		}
-
-		if (descriptor.valueType(CFrame.class) && descriptor.isCurrentValue()) {
-
-			return new IFrameValuedDescriptorNode(tree, descriptor);
+			return new AspectValuedDescriptorNode(tree, descriptor);
 		}
 
 		return new DescriptorNode(tree, descriptor);

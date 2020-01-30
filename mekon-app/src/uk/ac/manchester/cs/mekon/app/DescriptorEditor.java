@@ -53,7 +53,7 @@ class DescriptorEditor {
 
 			if (aspect != null) {
 
-				descriptor.setNewValue(aspect);
+				addValue(aspect);
 			}
 		}
 
@@ -106,7 +106,7 @@ class DescriptorEditor {
 
 		void performEditAction() {
 
-			Selector<S> selector = createValueSelector(isCurrentValue());
+			Selector<S> selector = createValueSelector(descriptor.hasValue());
 
 			switch (selector.display()) {
 
@@ -115,7 +115,7 @@ class DescriptorEditor {
 					break;
 
 				case CLEARED:
-					descriptor.removeCurrentValue();
+					removeValue();
 					break;
 			}
 		}
@@ -126,7 +126,7 @@ class DescriptorEditor {
 
 		private void addSelectedValue(S selection) {
 
-			descriptor.setNewValue(selectionToValue(selection));
+			addValue(selectionToValue(selection));
 		}
 	}
 
@@ -282,9 +282,24 @@ class DescriptorEditor {
 		typeHandler.performEditAction();
 	}
 
-	private boolean isCurrentValue() {
+	private void addValue(IValue value) {
 
-		return descriptor.isCurrentValue();
+		if (descriptor.hasValue()) {
+
+			removeValue();
+		}
+
+		getValuesEditor().add(value);
+	}
+
+	private void removeValue() {
+
+		getValuesEditor().remove(descriptor.getValue());
+	}
+
+	private ISlotValuesEditor getValuesEditor() {
+
+		return descriptor.getSlot().getValuesEditor();
 	}
 
 	private boolean abstractEditableSlot() {

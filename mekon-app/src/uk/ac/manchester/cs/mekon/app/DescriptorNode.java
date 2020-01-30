@@ -53,7 +53,7 @@ class DescriptorNode extends InstantiationNode {
 
 		GCellDisplay display = getCoreDisplay();
 
-		if (isValue()) {
+		if (descriptor.hasValue()) {
 
 			display.setModifier(getValueDisplay());
 		}
@@ -75,14 +75,19 @@ class DescriptorNode extends InstantiationNode {
 		editAction = editable() ? new EditAction() : GNodeAction.INERT_ACTION;
 	}
 
-	Icon getAssertionValueIcon() {
+	Icon getValueIcon() {
+
+		if (descriptor.instanceRefType()) {
+
+			return MekonAppIcons.ASSERTION_REF;
+		}
+
+		if (queryInstantiation()) {
+
+			return MekonAppIcons.QUERY_VALUE;
+		}
 
 		return MekonAppIcons.ASSERTION_VALUE;
-	}
-
-	Icon getQueryValueIcon() {
-
-		return MekonAppIcons.QUERY_VALUE;
 	}
 
 	private GCellDisplay getCoreDisplay() {
@@ -101,12 +106,7 @@ class DescriptorNode extends InstantiationNode {
 
 	private Icon getIcon() {
 
-		return isValue() ? getValueIcon() : MekonAppIcons.NO_VALUE;
-	}
-
-	private Icon getValueIcon() {
-
-		return queryInstantiation() ? getQueryValueIcon() : getAssertionValueIcon();
+		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.NO_VALUE;
 	}
 
 	private DescriptorEditor createEditor() {
@@ -117,10 +117,5 @@ class DescriptorNode extends InstantiationNode {
 	private boolean editable() {
 
 		return descriptor.getSlot().getEditability().editable();
-	}
-
-	private boolean isValue() {
-
-		return descriptor.isCurrentValue();
 	}
 }

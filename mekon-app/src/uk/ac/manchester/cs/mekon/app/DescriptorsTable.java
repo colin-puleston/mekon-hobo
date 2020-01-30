@@ -147,7 +147,7 @@ class DescriptorsTable extends ActiveTable {
 
 		private IFrame getAspectValue() {
 
-			return (IFrame)descriptor.getCurrentValue();
+			return (IFrame)descriptor.getValue();
 		}
 
 		private DescriptorsList createAspectDescriptors(IFrame aspect) {
@@ -240,7 +240,7 @@ class DescriptorsTable extends ActiveTable {
 
 		private DescriptorEditor createEditor() {
 
-			return descriptor.nonInstanceRefCFrameType()
+			return descriptor.aspectType()
 					? new AspectDescriptorEditor(descriptor)
 					: new DescriptorEditor(rootWindow, instantiator, descriptor);
 		}
