@@ -162,10 +162,10 @@ abstract class InstantiationsPanel extends JPanel {
 
 	abstract void displayNewInstantiation(InstanceType instanceType, CIdentity storeId);
 
-	abstract void displayInstantiation(
-					InstanceType instanceType,
-					IFrame instantiation,
-					CIdentity storeId);
+	abstract void displayLoadedInstantiation(
+						InstanceType instanceType,
+						IFrame instantiation,
+						CIdentity storeId);
 
 	private JComponent createControlsComponent() {
 
@@ -213,7 +213,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void loadInstantiation(CIdentity storeId) {
 
-		displayInstantiation(instanceType, getStoredInstantiation(storeId), storeId);
+		displayLoadedInstantiation(instanceType, getStoredInstantiation(storeId), storeId);
 	}
 
 	private IFrame getStoredInstantiation(CIdentity storeId) {

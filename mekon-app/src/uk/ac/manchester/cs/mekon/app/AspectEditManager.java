@@ -63,7 +63,7 @@ class AspectEditManager  {
 
 	void update() {
 
-		descriptors = new DescriptorsList(parentWindow.getInstantiator(), aspect);
+		descriptors = new DescriptorsList(parentWindow.getInstantiator(), aspect, false);
 	}
 
 	DescriptorsList getDescriptors() {

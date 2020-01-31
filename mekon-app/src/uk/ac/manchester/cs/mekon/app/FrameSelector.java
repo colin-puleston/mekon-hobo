@@ -149,7 +149,7 @@ class FrameSelector extends Selector<CFrame> {
 		boolean multiSelect,
 		boolean clearRequired) {
 
-		super(rootWindow, getTitle(multiSelect), clearRequired);
+		super(rootWindow, getTitle(multiSelect), multiSelect, clearRequired);
 
 		this.multiSelect = multiSelect;
 
@@ -169,10 +169,5 @@ class FrameSelector extends Selector<CFrame> {
 	Dimension getWindowSize() {
 
 		return WINDOW_SIZE;
-	}
-
-	boolean okRequired() {
-
-		return multiSelect;
 	}
 }

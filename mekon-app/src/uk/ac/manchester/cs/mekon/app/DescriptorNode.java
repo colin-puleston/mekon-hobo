@@ -39,13 +39,36 @@ class DescriptorNode extends InstantiationNode {
 	private Descriptor descriptor;
 	private GNodeAction editAction;
 
-	private class EditAction extends GNodeAction {
+	private boolean editActive = true;
 
-		private DescriptorEditor editor = createEditor();
+	private abstract class EditActiveAction extends GNodeAction {
 
 		protected void perform() {
 
+			if (!viewOnly()) {
+
+				performEditActiveAction();
+			}
+		}
+
+		abstract void performEditActiveAction();
+	}
+
+	private class EditAction extends EditActiveAction {
+
+		private DescriptorEditor editor = createEditor();
+
+		void performEditActiveAction() {
+
 			editor.performEditAction();
+		}
+	}
+
+	private class NoEditAction extends EditActiveAction {
+
+		void performEditActiveAction() {
+
+			JOptionPane.showMessageDialog(null, "Automatically derived value!");
 		}
 	}
 
@@ -72,7 +95,7 @@ class DescriptorNode extends InstantiationNode {
 
 		this.descriptor = descriptor;
 
-		editAction = editable() ? new EditAction() : GNodeAction.INERT_ACTION;
+		editAction = editable() ? new EditAction() : new NoEditAction();
 	}
 
 	Icon getValueIcon() {

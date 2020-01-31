@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -38,7 +39,9 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 	static private final long serialVersionUID = -1;
 
 	static private final String TITLE_FORMAT = "%s %s (%s)";
+
 	static private final String STORE_BUTTON_LABEL = "Store";
+	static private final String MODE_SELECTOR_LABEL = "View only";
 
 	static private final int FRAME_WIDTH = 600;
 
@@ -62,6 +65,26 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 	private Instantiator instantiator;
 	private CIdentity storeId;
+
+	private InstantiationTree instantiationTree;
+
+	private class ModeSelector extends JCheckBox implements ActionListener {
+
+		static private final long serialVersionUID = -1;
+
+		public void actionPerformed(ActionEvent event) {
+
+			instantiationTree.setViewOnly(isSelected());
+		}
+
+		ModeSelector() {
+
+			super(MODE_SELECTOR_LABEL);
+
+			setSelected(instantiationTree.viewOnly());
+			addActionListener(this);
+		}
+	}
 
 	private class StoreButton extends GButton {
 
@@ -105,13 +128,16 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 		JComponent parent,
 		Instantiator instantiator,
 		CIdentity storeId,
-		String functionTitle) {
+		String functionTitle,
+		boolean startAsViewOnly) {
 
 		super(parent, createTitle(instantiator, storeId, functionTitle), true);
 
 		this.parent = parent;
 		this.instantiator = instantiator;
 		this.storeId = storeId;
+
+		instantiationTree = new InstantiationTree(this, instantiator, startAsViewOnly);
 	}
 
 	void display() {
@@ -147,16 +173,11 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(createMainComponent(), BorderLayout.CENTER);
+		panel.add(new ModeSelector(), BorderLayout.NORTH);
+		panel.add(new JScrollPane(instantiationTree), BorderLayout.CENTER);
 		panel.add(createControlsComponent(), BorderLayout.SOUTH);
 
 		return panel;
-	}
-
-	private JComponent createMainComponent() {
-
-		return new JScrollPane(new InstantiationTree(this, instantiator, getInstantiation()));
-		//return new JScrollPane(createDescriptorsTable());
 	}
 
 	private JComponent createControlsComponent() {
@@ -166,16 +187,6 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 		addControlComponents(panel);
 
 		return panel;
-	}
-
-	private DescriptorsTable createDescriptorsTable() {
-
-		return new DescriptorsTable(this, createDescriptorsList());
-	}
-
-	private DescriptorsList createDescriptorsList() {
-
-		return new DescriptorsList(instantiator, getInstantiation());
 	}
 
 	private boolean storeInstantiation() {

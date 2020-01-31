@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.awt.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -45,64 +46,7 @@ class DescriptorEditor {
 		abstract void performEditAction();
 	}
 
-	private abstract class CFrameTypeHandler extends TypeHandler {
-
-		void performEditAction() {
-
-			IFrame aspect = getNewAspectOrNull();
-
-			if (aspect != null) {
-
-				addValue(aspect);
-			}
-		}
-
-		abstract IFrame getNewAspectOrNull();
-	}
-
-	private class FixedCFrameTypeHandler extends CFrameTypeHandler {
-
-		private CFrame valueType;
-
-		FixedCFrameTypeHandler(CFrame valueType) {
-
-			this.valueType = valueType;
-		}
-
-		IFrame getNewAspectOrNull() {
-
-			return instantiator.instantiate(valueType);
-		}
-	}
-
-	private class SelectableCFrameTypeHandler extends CFrameTypeHandler {
-
-		private CFrame valueType;
-
-		SelectableCFrameTypeHandler(CFrame valueType) {
-
-			this.valueType = valueType;
-		}
-
-		IFrame getNewAspectOrNull() {
-
-			FrameSelector selector = createSelector();
-
-			if (selector.display() == EditStatus.EDITED) {
-
-				return instantiator.instantiate(selector.getSelection());
-			}
-
-			return null;
-		}
-
-		private FrameSelector createSelector() {
-
-			return new FrameSelector(rootWindow, valueType, false, false);
-		}
-	}
-
-	private abstract class SimpleTypeHandler<S> extends TypeHandler {
+	private abstract class SelectableTypeHandler<S> extends TypeHandler {
 
 		void performEditAction() {
 
@@ -130,13 +74,47 @@ class DescriptorEditor {
 		}
 	}
 
-	private class MFrameTypeHandler extends SimpleTypeHandler<CFrame> {
+	private class FixedCFrameTypeHandler extends TypeHandler {
+
+		private CFrame valueType;
+
+		FixedCFrameTypeHandler(CFrame valueType) {
+
+			this.valueType = valueType;
+		}
+
+		void performEditAction() {
+
+			if (descriptor.hasValue()) {
+
+				if (obtainRemoveValueConfirmationOption() == JOptionPane.OK_OPTION) {
+
+					removeValue();
+				}
+			}
+			else {
+
+				addValue(instantiator.instantiate(valueType));
+			}
+		}
+
+		private int obtainRemoveValueConfirmationOption() {
+
+			return JOptionPane.showConfirmDialog(
+						null,
+						"Clear value?",
+						"Clearing selected value",
+						JOptionPane.OK_CANCEL_OPTION);
+		}
+	}
+
+	private abstract class SelectableFrameTypeHandler extends SelectableTypeHandler<CFrame> {
 
 		private CFrame rootCFrame;
 
-		MFrameTypeHandler(MFrame valueType) {
+		SelectableFrameTypeHandler(CFrame rootCFrame) {
 
-			rootCFrame = valueType.getRootCFrame();
+			this.rootCFrame = rootCFrame;
 		}
 
 		FrameSelector createValueSelector(boolean clearRequired) {
@@ -145,6 +123,27 @@ class DescriptorEditor {
 
 			return new FrameSelector(rootWindow, rootCFrame, multiSelect, clearRequired);
 		}
+	}
+
+	private class SelectableCFrameTypeHandler extends SelectableFrameTypeHandler {
+
+		SelectableCFrameTypeHandler(CFrame valueType) {
+
+			super(valueType);
+		}
+
+		IFrame selectionToValue(CFrame selection) {
+
+			return instantiator.instantiate(selection);
+		}
+	}
+
+	private class MFrameTypeHandler extends SelectableFrameTypeHandler {
+
+		MFrameTypeHandler(MFrame valueType) {
+
+			super(valueType.getRootCFrame());
+		}
 
 		CFrame selectionToValue(CFrame selection) {
 
@@ -152,7 +151,7 @@ class DescriptorEditor {
 		}
 	}
 
-	private class InstanceRefTypeHandler extends SimpleTypeHandler<IFrame> {
+	private class InstanceRefTypeHandler extends SelectableTypeHandler<IFrame> {
 
 		private CFrame valueType;
 
@@ -179,7 +178,7 @@ class DescriptorEditor {
 		}
 	}
 
-	private abstract class DataTypeHandler<V extends IValue> extends SimpleTypeHandler<V> {
+	private abstract class DataTypeHandler<V extends IDataValue> extends SelectableTypeHandler<V> {
 
 		V selectionToValue(V selection) {
 

@@ -44,10 +44,22 @@ class RootInstantiationNode extends InstantiationNode {
 		return GCellDisplay.NO_DISPLAY;
 	}
 
-	RootInstantiationNode(InstantiationTree tree, IFrame topLevelAspect) {
+	RootInstantiationNode(InstantiationTree tree) {
 
 		super(tree);
 
-		childNodes = new DescriptorChildNodes(this, topLevelAspect);
+		childNodes = new DescriptorChildNodes(this, getInstantiation());
+	}
+
+	void update() {
+
+		childNodes.update();
+
+		super.update();
+	}
+
+	private IFrame getInstantiation() {
+
+		return getInstantiator().getInstantiation();
 	}
 }

@@ -42,14 +42,14 @@ class InstancesPanel extends InstantiationsPanel {
 
 	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
 
-		new InstanceDialog(this, instanceType, storeId);
+		new InstanceDialog(this, instanceType, storeId, false);
 	}
 
-	void displayInstantiation(
+	void displayLoadedInstantiation(
 			InstanceType instanceType,
 			IFrame instantiation,
 			CIdentity storeId) {
 
-		new InstanceDialog(this, instanceType, instantiation, storeId);
+		new InstanceDialog(this, instanceType, instantiation, storeId, true);
 	}
 }

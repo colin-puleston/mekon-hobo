@@ -34,8 +34,8 @@ import uk.ac.manchester.cs.mekon.gui.icon.*;
  */
 class MekonAppIcons {
 
-	static private final Color ASSERTION_VALUE_CLR = Color.CYAN;
-	static private final Color QUERY_VALUE_CLR = Color.GREEN;
+	static private final Color ASSERTION_VALUE_CLR = new Color(158,202,225);
+	static private final Color QUERY_VALUE_CLR = new Color(161,217,155);
 	static private final Color NO_VALUE_CLR = Color.WHITE;
 
 	static private final int ICON_DIMENSION = 12;

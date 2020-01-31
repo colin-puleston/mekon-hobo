@@ -152,7 +152,7 @@ class DescriptorsTable extends ActiveTable {
 
 		private DescriptorsList createAspectDescriptors(IFrame aspect) {
 
-			return new DescriptorsList(instantiator, aspect);
+			return new DescriptorsList(instantiator, aspect, false);
 		}
 
 		private AspectEditManager createEditManager(
@@ -258,6 +258,11 @@ class DescriptorsTable extends ActiveTable {
 
 		addRows();
 		setPreferredScrollableViewportSize(getPreferredSize());
+	}
+
+	DescriptorsTable(AspectWindow aspectWindow, Instantiator instantiator, IFrame aspect) {
+
+		this(aspectWindow, new DescriptorsList(instantiator, aspect, false));
 	}
 
 	private void addRows() {

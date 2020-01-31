@@ -54,6 +54,14 @@ abstract class InstantiationNode extends GNode {
 		this.tree = tree;
 	}
 
+	void update() {
+
+		for (GNode child : getChildren()) {
+
+			((InstantiationNode)child).update();
+		}
+	}
+
 	InstantiationTree getInstantiationTree() {
 
 		return tree;
@@ -72,5 +80,10 @@ abstract class InstantiationNode extends GNode {
 	boolean queryInstantiation() {
 
 		return getInstantiator().queryInstantiation();
+	}
+
+	boolean viewOnly() {
+
+		return tree.viewOnly();
 	}
 }

@@ -40,23 +40,33 @@ class InstanceDialog extends InstantiationDialog {
 	InstanceDialog(
 		JComponent parent,
 		InstanceType instanceType,
-		CIdentity storeId) {
+		CIdentity storeId,
+		boolean startAsViewOnly) {
 
-		this(parent, instanceType.createAssertionInstantiator(storeId), storeId);
+		this(
+			parent,
+			instanceType.createAssertionInstantiator(storeId),
+			storeId,
+			startAsViewOnly);
 	}
 
 	InstanceDialog(
 		JComponent parent,
 		InstanceType instanceType,
 		IFrame instantiation,
-		CIdentity storeId) {
+		CIdentity storeId,
+		boolean startAsViewOnly) {
 
-		this(parent, instanceType.createInstantiator(instantiation), storeId);
+		this(
+			parent,
+			instanceType.createInstantiator(instantiation),
+			storeId,
+			startAsViewOnly);
 	}
 
 	InstanceDialog createCopy(JComponent parent, CIdentity storeId) {
 
-		return new InstanceDialog(parent, getInstantiator(), storeId);
+		return new InstanceDialog(parent, getInstantiator(), storeId, false);
 	}
 
 	boolean disposeOnStoring() {
@@ -64,9 +74,13 @@ class InstanceDialog extends InstantiationDialog {
 		return true;
 	}
 
-	private InstanceDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
+	private InstanceDialog(
+				JComponent parent,
+				Instantiator instantiator,
+				CIdentity storeId,
+				boolean startAsViewOnly) {
 
-		super(parent, instantiator, storeId, FUNCTION_LABEL);
+		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
 
 		display();
 	}

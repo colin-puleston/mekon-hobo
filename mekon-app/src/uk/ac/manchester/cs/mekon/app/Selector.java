@@ -44,9 +44,9 @@ abstract class Selector<S> extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
-		ControlPanel(boolean clearRequired) {
+		ControlPanel(boolean okRequired, boolean clearRequired) {
 
-			super(okRequired(), clearRequired, true);
+			super(okRequired, clearRequired, true);
 
 			setOkEnabled(false);
 		}
@@ -59,11 +59,11 @@ abstract class Selector<S> extends GDialog {
 		}
 	}
 
-	Selector(Window rootWindow, String title, boolean clearRequired) {
+	Selector(Window rootWindow, String title, boolean okRequired, boolean clearRequired) {
 
 		super(rootWindow, title, true);
 
-		controlPanel = new ControlPanel(clearRequired);
+		controlPanel = new ControlPanel(okRequired, clearRequired);
 	}
 
 	EditStatus display() {
@@ -76,8 +76,6 @@ abstract class Selector<S> extends GDialog {
 	abstract S getSelection();
 
 	abstract JComponent getInputComponent();
-
-	abstract boolean okRequired();
 
 	abstract Dimension getWindowSize();
 

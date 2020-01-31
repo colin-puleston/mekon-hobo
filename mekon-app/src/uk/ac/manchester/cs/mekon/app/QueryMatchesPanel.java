@@ -70,11 +70,11 @@ class QueryMatchesPanel extends InstantiationsPanel {
 		throw new Error("Method should never be invoked!");
 	}
 
-	void displayInstantiation(
+	void displayLoadedInstantiation(
 			InstanceType instanceType,
 			IFrame instantiation,
 			CIdentity storeId) {
 
-		new InstanceDialog(this, instanceType, instantiation, storeId);
+		new InstanceDialog(this, instanceType, instantiation, storeId, true);
 	}
 }

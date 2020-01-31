@@ -38,19 +38,19 @@ class DescriptorsList {
 
 	private List<Descriptor> list = new ArrayList<Descriptor>();
 
-	DescriptorsList(Instantiator instantiator, IFrame aspect) {
+	DescriptorsList(Instantiator instantiator, IFrame aspect, boolean withValuesOnly) {
 
 		this.instantiator = instantiator;
 		this.aspect = aspect;
 
-		populate();
+		populate(withValuesOnly);
 	}
 
-	void update() {
+	void update(boolean withValuesOnly) {
 
 		list.clear();
 
-		populate();
+		populate(withValuesOnly);
 	}
 
 	boolean isEmpty() {
@@ -63,25 +63,25 @@ class DescriptorsList {
 		return new ArrayList<Descriptor>(list);
 	}
 
-	private void populate() {
+	private void populate(boolean withValuesOnly) {
 
 		for (ISlot slot : aspect.getSlots().activesAsList()) {
 
 			if (!hidden(slot) && (editable(slot) || hasValues(slot))) {
 
-				addAllFor(slot);
+				addAllFor(slot, withValuesOnly);
 			}
 		}
 	}
 
-	private void addAllFor(ISlot slot) {
+	private void addAllFor(ISlot slot, boolean withValuesOnly) {
 
 		for (IValue value : slot.getValues().asList()) {
 
 			addFor(slot, value);
 		}
 
-		if (editable(slot) && (multiValued(slot) || !hasValues(slot))) {
+		if (!withValuesOnly && editable(slot) && (multiValued(slot) || !hasValues(slot))) {
 
 			addFor(slot, null);
 		}

@@ -44,4 +44,11 @@ class AspectValuedDescriptorNode extends DescriptorNode {
 
 		childNodes = new DescriptorChildNodes(this, (IFrame)descriptor.getValue());
 	}
+
+	void update() {
+
+		childNodes.update();
+
+		super.update();
+	}
 }

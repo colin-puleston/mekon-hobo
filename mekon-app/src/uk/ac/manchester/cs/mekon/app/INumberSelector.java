@@ -43,7 +43,7 @@ abstract class INumberSelector extends TextInputSelector<INumber> {
 
 	INumberSelector(Window rootWindow, CNumber type, String title, boolean clearRequired) {
 
-		super(rootWindow, title, clearRequired);
+		super(rootWindow, title, true, clearRequired);
 
 		this.type = type;
 	}
@@ -54,11 +54,6 @@ abstract class INumberSelector extends TextInputSelector<INumber> {
 	}
 
 	abstract INumber resolveSelection(CNumber type);
-
-	boolean okRequired() {
-
-		return true;
-	}
 
 	boolean validInputText(String text) {
 

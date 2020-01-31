@@ -75,7 +75,7 @@ class InstanceRefSelector extends Selector<IFrame> {
 		boolean multiSelect,
 		boolean clearRequired) {
 
-		super(rootWindow, getTitle(multiSelect), clearRequired);
+		super(rootWindow, getTitle(multiSelect), multiSelect, clearRequired);
 
 		this.instantiator = instantiator;
 		this.type = type;
@@ -105,11 +105,6 @@ class InstanceRefSelector extends Selector<IFrame> {
 	Dimension getWindowSize() {
 
 		return WINDOW_SIZE;
-	}
-
-	boolean okRequired() {
-
-		return multiSelect;
 	}
 
 	private InstanceIdsList createIdsList() {

@@ -47,7 +47,7 @@ class DescriptorChildNodes {
 		Updater() {
 
 			oldDescriptors = descriptors.getList();
-			descriptors.update();
+			descriptors.update(viewOnly());
 			newDescriptors = descriptors.getList();
 
 			if (!newDescriptors.equals(oldDescriptors)) {
@@ -131,7 +131,12 @@ class DescriptorChildNodes {
 
 		this.parentNode = parentNode;
 
-		descriptors = new DescriptorsList(parentNode.getInstantiator(), aspect);
+		descriptors = new DescriptorsList(getInstantiator(), aspect, viewOnly());
+	}
+
+	void update() {
+
+		new Updater();
 	}
 
 	void addInitialChildren() {
@@ -165,5 +170,15 @@ class DescriptorChildNodes {
 		}
 
 		return new DescriptorNode(tree, descriptor);
+	}
+
+	private Instantiator getInstantiator() {
+
+		return parentNode.getInstantiator();
+	}
+
+	private boolean viewOnly() {
+
+		return parentNode.viewOnly();
 	}
 }

@@ -60,14 +60,14 @@ class QueriesPanel extends InstantiationsPanel {
 
 	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
 
-		new QueryDialog(this, instanceType, storeId, queryExecutor);
+		new QueryDialog(this, instanceType, storeId, queryExecutor, false);
 	}
 
-	void displayInstantiation(
+	void displayLoadedInstantiation(
 			InstanceType instanceType,
 			IFrame instantiation,
 			CIdentity storeId) {
 
-		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutor);
+		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutor, true);
 	}
 }

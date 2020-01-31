@@ -165,6 +165,6 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayQuery(CIdentity storeId, IFrame query) {
 
-		new QueryDialog(this, instanceType, query, storeId, queryExecutor);
+		new QueryDialog(this, instanceType, query, storeId, queryExecutor, true);
 	}
 }

@@ -61,9 +61,15 @@ class QueryDialog extends InstantiationDialog {
 		JComponent parent,
 		InstanceType instanceType,
 		CIdentity storeId,
-		QueryExecutor queryExecutor) {
+		QueryExecutor queryExecutor,
+		boolean startAsViewOnly) {
 
-		this(parent, instanceType.createQueryInstantiator(), storeId, queryExecutor);
+		this(
+			parent,
+			instanceType.createQueryInstantiator(),
+			storeId,
+			queryExecutor,
+			startAsViewOnly);
 	}
 
 	QueryDialog(
@@ -71,14 +77,20 @@ class QueryDialog extends InstantiationDialog {
 		InstanceType instanceType,
 		IFrame instantiation,
 		CIdentity storeId,
-		QueryExecutor queryExecutor) {
+		QueryExecutor queryExecutor,
+		boolean startAsViewOnly) {
 
-		this(parent, instanceType.createInstantiator(instantiation), storeId, queryExecutor);
+		this(
+			parent,
+			instanceType.createInstantiator(instantiation),
+			storeId,
+			queryExecutor,
+			startAsViewOnly);
 	}
 
 	QueryDialog createCopy(JComponent parent, CIdentity storeId) {
 
-		return new QueryDialog(parent, getInstantiator(), storeId, queryExecutor);
+		return new QueryDialog(parent, getInstantiator(), storeId, queryExecutor, false);
 	}
 
 	boolean disposeOnStoring() {
@@ -97,9 +109,10 @@ class QueryDialog extends InstantiationDialog {
 				JComponent parent,
 				Instantiator instantiator,
 				CIdentity storeId,
-				QueryExecutor queryExecutor) {
+				QueryExecutor queryExecutor,
+				boolean startAsViewOnly) {
 
-		super(parent, instantiator, storeId, FUNCTION_LABEL);
+		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
 
 		this.queryExecutor = queryExecutor;
 

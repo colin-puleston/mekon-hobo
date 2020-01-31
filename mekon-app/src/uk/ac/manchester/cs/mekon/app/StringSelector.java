@@ -40,7 +40,7 @@ abstract class StringSelector<S> extends TextInputSelector<S> {
 
 	StringSelector(Window rootWindow, String title, boolean clearRequired) {
 
-		super(rootWindow, title, clearRequired);
+		super(rootWindow, title, true, clearRequired);
 	}
 
 	void setInitialStringValue(String value) {
@@ -57,11 +57,6 @@ abstract class StringSelector<S> extends TextInputSelector<S> {
 	JComponent getInputComponent() {
 
 		return valueField;
-	}
-
-	boolean okRequired() {
-
-		return true;
 	}
 
 	Dimension getWindowSize() {
