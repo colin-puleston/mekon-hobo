@@ -100,7 +100,7 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 
 		this(queryInstances, multiSelect);
 
-		update(ids);
+		addAll(ids);
 	}
 
 	InstanceIdsList deriveList(boolean multiSelect) {
@@ -110,14 +110,21 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 
 	void update(Collection<CIdentity> ids) {
 
-		this.ids.addAll(ids);
+		this.ids.clear();
 
-		updateList();
+		addAll(ids);
 	}
 
 	void add(CIdentity id) {
 
 		ids.add(id);
+
+		updateList();
+	}
+
+	void addAll(Collection<CIdentity> ids) {
+
+		this.ids.addAll(ids);
 
 		updateList();
 	}
