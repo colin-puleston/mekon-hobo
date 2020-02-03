@@ -49,6 +49,8 @@ abstract class InstantiationsPanel extends JPanel {
 	private InstanceType instanceType;
 	private InstanceIdsList idsList;
 
+	private Store store;
+
 	private class CreateButton extends GButton {
 
 		static private final long serialVersionUID = -1;
@@ -121,6 +123,8 @@ abstract class InstantiationsPanel extends JPanel {
 		this.instanceType = instanceType;
 		this.idsList = idsList;
 
+		store = instanceType.getController().getStore();
+
 		setTitle(title);
 
 		add(new JScrollPane(idsList), BorderLayout.CENTER);
@@ -147,17 +151,21 @@ abstract class InstantiationsPanel extends JPanel {
 		return false;
 	}
 
-	IFrameFunction getFunction() {
+	StoreIdSelector createIdSelector(CIdentity oldStoreId) {
 
-		return IFrameFunction.ASSERTION;
-	}
-
-	void initialiseNewIdSelector(StoreIdSelector selector, CIdentity oldStoreId) {
+		StoreIdSelector selector = createIdSelector(IFrameFunction.ASSERTION);
 
 		if (oldStoreId != null) {
 
 			selector.setInitialValue(oldStoreId);
 		}
+
+		return selector;
+	}
+
+	StoreIdSelector createIdSelector(IFrameFunction function) {
+
+		return new StoreIdSelector(findOwnerFrame(), store, function);
 	}
 
 	abstract void displayNewInstantiation(InstanceType instanceType, CIdentity storeId);
@@ -213,21 +221,12 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void loadInstantiation(CIdentity storeId) {
 
-		displayLoadedInstantiation(instanceType, getStoredInstantiation(storeId), storeId);
-	}
-
-	private IFrame getStoredInstantiation(CIdentity storeId) {
-
-		return instanceType.getController().getStore().get(storeId);
+		displayLoadedInstantiation(instanceType, store.get(storeId), storeId);
 	}
 
 	private CIdentity checkObtainStoreId(CIdentity oldStoreId) {
 
-		StoreIdSelector selector = new StoreIdSelector(findOwnerFrame());
-
-		initialiseNewIdSelector(selector, oldStoreId);
-
-		return selector.getIdSelection(getFunction());
+		return createIdSelector(oldStoreId).getIdSelection();
 	}
 
 	private void showMessage(String msg) {

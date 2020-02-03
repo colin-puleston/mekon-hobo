@@ -24,22 +24,47 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
+import java.awt.Window;
+import java.util.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class StoreIdSelector extends IStringSelector {
+class StoreIdSelector extends StringSelector<String> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE = "Enter New Instance Name";
+	static private final String TITLE_FORMAT = "Enter New %s Name";
 
-	StoreIdSelector(Window rootWindow) {
+	static private String createTitle(IFrameFunction function) {
 
-		super(rootWindow, TITLE, false);
+		return String.format(TITLE_FORMAT, describeFunction(function));
+	}
+
+	static private String describeFunction(IFrameFunction function) {
+
+		return function == IFrameFunction.QUERY ? "Query" : "Instance";
+	}
+
+	private Store store;
+	private IFrameFunction function;
+
+	private Set<CIdentity> inMemoryIds = new HashSet<CIdentity>();
+
+	StoreIdSelector(Window rootWindow, Store store, IFrameFunction function) {
+
+		super(rootWindow, createTitle(function), false);
+
+		this.store = store;
+		this.function = function;
+	}
+
+	void setInMemoryIds(Collection<CIdentity> inMemoryIds) {
+
+		this.inMemoryIds.addAll(inMemoryIds);
 	}
 
 	void setInitialValue(CIdentity storeId) {
@@ -47,18 +72,65 @@ class StoreIdSelector extends IStringSelector {
 		setInitialStringValue(MekonAppStoreId.toStoreName(storeId));
 	}
 
-	CIdentity getIdSelection(IFrameFunction function) {
+	CIdentity getIdSelection() {
 
 		if (display() == EditStatus.EDITED) {
 
-			IString storeName = getSelection();
+			String storeName = getSelection();
 
 			if (storeName != null) {
 
-				return MekonAppStoreId.toStoreId(storeName.get(), function);
+				return storeNameToId(storeName);
 			}
 		}
 
 		return null;
+	}
+
+	String convertInputValue(String text) {
+
+		return text;
+	}
+
+	boolean emptyValue(String value) {
+
+		return value.length() == 0;
+	}
+
+	boolean validInputText(String text) {
+
+		return super.validInputText(text) && checkUniqueStoreName(text);
+	}
+
+	private boolean checkUniqueStoreName(String storeName) {
+
+		if (idExists(storeNameToId(storeName))) {
+
+			showMessage(getStoreNameExistsMessage(storeName));
+
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean idExists(CIdentity id) {
+
+		return inMemoryIds.contains(id) || store.contains(id);
+	}
+
+	private CIdentity storeNameToId(String storeName) {
+
+		return MekonAppStoreId.toStoreId(storeName, function);
+	}
+
+	private String getStoreNameExistsMessage(String storeName) {
+
+		return describeFunction(function) + " \"" + storeName + "\" already exists";
+	}
+
+	private void showMessage(String msg) {
+
+		JOptionPane.showMessageDialog(null, msg);
 	}
 }

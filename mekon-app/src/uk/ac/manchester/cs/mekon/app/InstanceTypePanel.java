@@ -43,9 +43,9 @@ class InstanceTypePanel extends JTabbedPane {
 
 	private ExecutedQueriesPanel executedQueriesPanel;
 
-	private class QueryExecutorLocal extends QueryExecutor {
+	private class QueryExecutionsLocal extends QueryExecutions {
 
-		QueryExecutorLocal(Store store) {
+		QueryExecutionsLocal(Store store) {
 
 			super(store);
 		}
@@ -63,13 +63,13 @@ class InstanceTypePanel extends JTabbedPane {
 
 		this.instanceType = instanceType;
 
-		QueryExecutor queryExecutor = new QueryExecutorLocal(store);
+		QueryExecutions queryExecutions = new QueryExecutionsLocal(store);
 
-		executedQueriesPanel = new ExecutedQueriesPanel(instanceType, queryExecutor);
+		executedQueriesPanel = new ExecutedQueriesPanel(instanceType, queryExecutions);
 
 		setFont(GFonts.toMedium(getFont()));
 		addTab(INSTANCES_TITLE, new InstancesPanel(instanceType));
-		addTab(QUERIES_TITLE, new QueriesPanel(instanceType, queryExecutor));
+		addTab(QUERIES_TITLE, new QueriesPanel(instanceType, queryExecutions));
 		addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
 	}
 }

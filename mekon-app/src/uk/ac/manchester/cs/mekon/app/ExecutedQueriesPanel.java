@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.awt.BorderLayout;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -44,12 +43,10 @@ class ExecutedQueriesPanel extends JPanel {
 	static private final String DISCARD_QUERY_LABEL = "Discard";
 
 	private InstanceType instanceType;
-	private QueryExecutor queryExecutor;
+	private QueryExecutions queryExecutions;
 
 	private InstanceIdsList querySelectorList = new InstanceIdsList(true, false);
 	private QueryMatchesPanel matchesPanel;
-
-	private Map<CIdentity, ExecutedQuery> queriesByStoreId = new HashMap<CIdentity, ExecutedQuery>();
 
 	private class DisplayQueryButton extends SelectedInstanceIdActionButton {
 
@@ -62,7 +59,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			displayQuery(storeId, queriesByStoreId.get(storeId).getQuery());
+			displayQuery(storeId, queryExecutions.getExecuted(storeId).getQuery());
 		}
 	}
 
@@ -77,8 +74,8 @@ class ExecutedQueriesPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
+			queryExecutions.discardExecuted(storeId);
 			querySelectorList.remove(storeId);
-			queriesByStoreId.remove(storeId);
 		}
 	}
 
@@ -98,10 +95,10 @@ class ExecutedQueriesPanel extends JPanel {
 		}
 	}
 
-	ExecutedQueriesPanel(InstanceType instanceType, QueryExecutor queryExecutor) {
+	ExecutedQueriesPanel(InstanceType instanceType, QueryExecutions queryExecutions) {
 
 		this.instanceType = instanceType;
-		this.queryExecutor = queryExecutor;
+		this.queryExecutions = queryExecutions;
 
 		matchesPanel = new QueryMatchesPanel(instanceType);
 
@@ -115,8 +112,6 @@ class ExecutedQueriesPanel extends JPanel {
 	void add(ExecutedQuery executedQuery) {
 
 		CIdentity storeId = executedQuery.getStoreId();
-
-		queriesByStoreId.put(storeId, executedQuery);
 
 		querySelectorList.add(storeId);
 		querySelectorList.selectId(storeId);
@@ -158,13 +153,13 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayMatches(CIdentity storeId) {
 
-		ExecutedQuery execQuery = queriesByStoreId.get(storeId);
+		ExecutedQuery execQuery = queryExecutions.getExecuted(storeId);
 
 		matchesPanel.displayMatches(storeId, execQuery.getMatches());
 	}
 
 	private void displayQuery(CIdentity storeId, IFrame query) {
 
-		new QueryDialog(this, instanceType, query, storeId, queryExecutor, true);
+		new QueryDialog(this, instanceType, query, storeId, queryExecutions, true);
 	}
 }

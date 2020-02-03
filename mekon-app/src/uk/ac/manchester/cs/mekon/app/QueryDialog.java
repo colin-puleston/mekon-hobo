@@ -39,7 +39,7 @@ class QueryDialog extends InstantiationDialog {
 	static private final String FUNCTION_LABEL = "Query";
 	static private final String EXECUTE_BUTTON_LABEL = "Execute";
 
-	private QueryExecutor queryExecutor;
+	private QueryExecutions queryExecutions;
 
 	private class ExecuteButton extends GButton {
 
@@ -61,14 +61,14 @@ class QueryDialog extends InstantiationDialog {
 		JComponent parent,
 		InstanceType instanceType,
 		CIdentity storeId,
-		QueryExecutor queryExecutor,
+		QueryExecutions queryExecutions,
 		boolean startAsViewOnly) {
 
 		this(
 			parent,
 			instanceType.createQueryInstantiator(),
 			storeId,
-			queryExecutor,
+			queryExecutions,
 			startAsViewOnly);
 	}
 
@@ -77,20 +77,20 @@ class QueryDialog extends InstantiationDialog {
 		InstanceType instanceType,
 		IFrame instantiation,
 		CIdentity storeId,
-		QueryExecutor queryExecutor,
+		QueryExecutions queryExecutions,
 		boolean startAsViewOnly) {
 
 		this(
 			parent,
 			instanceType.createInstantiator(instantiation),
 			storeId,
-			queryExecutor,
+			queryExecutions,
 			startAsViewOnly);
 	}
 
 	QueryDialog createCopy(JComponent parent, CIdentity storeId) {
 
-		return new QueryDialog(parent, getInstantiator(), storeId, queryExecutor, false);
+		return new QueryDialog(parent, getInstantiator(), storeId, queryExecutions, false);
 	}
 
 	boolean disposeOnStoring() {
@@ -109,18 +109,18 @@ class QueryDialog extends InstantiationDialog {
 				JComponent parent,
 				Instantiator instantiator,
 				CIdentity storeId,
-				QueryExecutor queryExecutor,
+				QueryExecutions queryExecutions,
 				boolean startAsViewOnly) {
 
 		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
 
-		this.queryExecutor = queryExecutor;
+		this.queryExecutions = queryExecutions;
 
 		display();
 	}
 
 	private void execute() {
 
-		queryExecutor.execute(getStoreId(), getInstantiation());
+		queryExecutions.execute(getStoreId(), getInstantiation());
 	}
 }

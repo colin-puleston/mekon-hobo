@@ -24,23 +24,51 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class QueryExecutor {
+abstract class QueryExecutions {
 
 	private Store store;
+	private Map<CIdentity, ExecutedQuery> byStoreId = new HashMap<CIdentity, ExecutedQuery>();
 
-	QueryExecutor(Store store) {
+	QueryExecutions(Store store) {
 
 		this.store = store;
 	}
 
 	void execute(CIdentity storeId, IFrame query) {
 
-		onExecuted(new ExecutedQuery(storeId, query, store.match(query)));
+		List<CIdentity> matches = store.match(query);
+		ExecutedQuery exec = new ExecutedQuery(storeId, query, matches);
+
+		byStoreId.put(storeId, exec);
+
+		onExecuted(exec);
+	}
+
+	void discardExecuted(CIdentity storeId) {
+
+		byStoreId.remove(storeId);
+	}
+
+	boolean executed(CIdentity storeId) {
+
+		return byStoreId.containsKey(storeId);
+	}
+
+	ExecutedQuery getExecuted(CIdentity storeId) {
+
+		return byStoreId.get(storeId);
+	}
+
+	Set<CIdentity> getAllExecuteds() {
+
+		return byStoreId.keySet();
 	}
 
 	abstract void onExecuted(ExecutedQuery executedQuery);

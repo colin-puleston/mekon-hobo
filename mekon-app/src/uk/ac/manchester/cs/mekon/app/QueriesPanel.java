@@ -36,31 +36,39 @@ class QueriesPanel extends InstantiationsPanel {
 	static private final String TITLE = "Queries";
 	static private final String DEFAULT_QUERY_NAME_PREFIX = "QUERY-";
 
-	private QueryExecutor queryExecutor;
+	private QueryExecutions queryExecutions;
 	private DefaultQueryNameGenerator defaultQueryNames;
 
-	QueriesPanel(InstanceType instanceType, QueryExecutor queryExecutor) {
+	QueriesPanel(InstanceType instanceType, QueryExecutions queryExecutions) {
 
 		super(instanceType, instanceType.getQueryIdsList(), TITLE);
 
-		this.queryExecutor = queryExecutor;
+		this.queryExecutions = queryExecutions;
 
 		defaultQueryNames = new DefaultQueryNameGenerator(instanceType);
 	}
 
-	IFrameFunction getFunction() {
+	StoreIdSelector createIdSelector(CIdentity oldStoreId) {
 
-		return IFrameFunction.QUERY;
-	}
+		StoreIdSelector selector = createIdSelector(IFrameFunction.QUERY);
 
-	void initialiseNewIdSelector(StoreIdSelector selector, CIdentity oldStoreId) {
+		selector.setInMemoryIds(queryExecutions.getAllExecuteds());
 
-		selector.setInitialStringValue(defaultQueryNames.getNext());
+		if (oldStoreId != null && !generatedQueryId(oldStoreId)) {
+
+			selector.setInitialValue(oldStoreId);
+		}
+		else {
+
+			selector.setInitialStringValue(defaultQueryNames.getNext());
+		}
+
+		return selector;
 	}
 
 	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
 
-		new QueryDialog(this, instanceType, storeId, queryExecutor, false);
+		new QueryDialog(this, instanceType, storeId, queryExecutions, false);
 	}
 
 	void displayLoadedInstantiation(
@@ -68,6 +76,11 @@ class QueriesPanel extends InstantiationsPanel {
 			IFrame instantiation,
 			CIdentity storeId) {
 
-		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutor, true);
+		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutions, true);
+	}
+
+	private boolean generatedQueryId(CIdentity storeId) {
+
+		return DefaultQueryNameGenerator.generatedNameFormat(storeId.getLabel());
 	}
 }

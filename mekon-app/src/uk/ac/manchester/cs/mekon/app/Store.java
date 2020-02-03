@@ -89,6 +89,11 @@ class Store {
 		showInstanceRenamedMessage(id, newId);
 	}
 
+	boolean contains(CIdentity id) {
+
+		return store.contains(id);
+	}
+
 	IFrame get(CIdentity id) {
 
 		return store.get(id, getFunction(id)).getRootFrame();

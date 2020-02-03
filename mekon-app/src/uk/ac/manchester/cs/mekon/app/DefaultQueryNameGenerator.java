@@ -33,6 +33,33 @@ class DefaultQueryNameGenerator {
 
 	static private final String NAME_BODY = "QUERY-";
 
+	static boolean generatedNameFormat(String queryName) {
+
+		return lookForIndex(queryName) != null;
+	}
+
+	static private Integer lookForIndex(String queryName) {
+
+		if (queryName.startsWith(NAME_BODY)) {
+
+			return toIntegerOrNull(queryName.substring(NAME_BODY.length()));
+		}
+
+		return null;
+	}
+
+	static private Integer toIntegerOrNull(String value) {
+
+		try {
+
+			return Integer.parseInt(value);
+		}
+		catch (NumberFormatException e) {
+
+			return null;
+		}
+	}
+
 	private InstanceType instanceType;
 
 	DefaultQueryNameGenerator(InstanceType instanceType) {
@@ -60,27 +87,5 @@ class DefaultQueryNameGenerator {
 		}
 
 		return nextIndex;
-	}
-
-	private Integer lookForIndex(String queryName) {
-
-		if (queryName.startsWith(NAME_BODY)) {
-
-			return toIntegerOrNull(queryName.substring(NAME_BODY.length()));
-		}
-
-		return null;
-	}
-
-	private Integer toIntegerOrNull(String value) {
-
-		try {
-
-			return Integer.parseInt(value);
-		}
-		catch (NumberFormatException e) {
-
-			return null;
-		}
 	}
 }
