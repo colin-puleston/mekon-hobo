@@ -196,6 +196,11 @@ class CExtension extends CExpression {
 		registerAsReferencerOfSlotValues();
 	}
 
+	IReasoner getIReasoner() {
+
+		return extendedFrame.getIReasoner();
+	}
+
 	List<CAtomicFrame> asAtomicDisjuncts() {
 
 		return extendedFrame.asAtomicDisjuncts();
@@ -209,9 +214,9 @@ class CExtension extends CExpression {
 					+ this);
 	}
 
-	IReasoner getIReasoner() {
+	boolean structuredDescendants() {
 
-		return extendedFrame.getIReasoner();
+		return false;
 	}
 
 	CFrame toNormalisedInstanceType() {

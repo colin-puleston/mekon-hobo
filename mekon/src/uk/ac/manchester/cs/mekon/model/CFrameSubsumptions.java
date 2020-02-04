@@ -52,7 +52,7 @@ class CFrameSubsumptions {
 
 		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
-			return current.getModelSupers().getAll();
+			return current.getAtomicSupers().getAll();
 		}
 
 		CrawlMode process(CAtomicFrame current) {
@@ -172,7 +172,7 @@ class CFrameSubsumptions {
 								CAtomicFrame current,
 								CVisibility visibility) {
 
-			return current.getModelSupers().getAll(visibility);
+			return current.getAtomicSupers().getAll(visibility);
 		}
 	}
 
@@ -205,7 +205,25 @@ class CFrameSubsumptions {
 								CAtomicFrame current,
 								CVisibility visibility) {
 
-			return current.getModelSubs().getAll(visibility);
+			return current.getAtomicSubs().getAll(visibility);
+		}
+	}
+
+	private class StructuredDescendantsChecker extends CHierarchyCrawler {
+
+		boolean anyFound() {
+
+			return processLinked(frame) == CrawlMode.DONE_ALL;
+		}
+
+		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
+
+			return current.getAtomicSupers().getAll();
+		}
+
+		CrawlMode process(CAtomicFrame current) {
+
+			return current.structured() ? CrawlMode.DONE_ALL : CrawlMode.CRAWL;
 		}
 	}
 
@@ -237,7 +255,7 @@ class CFrameSubsumptions {
 			return true;
 		}
 
-		if (testSubsumer.getModelSubs().getAll().isEmpty()) {
+		if (testSubsumer.getAtomicSubs().getAll().isEmpty()) {
 
 			return false;
 		}
@@ -258,5 +276,10 @@ class CFrameSubsumptions {
 	List<CAtomicFrame> getDescendants(CVisibility visibility) {
 
 		return new DescendantsFinder(visibility).getAll();
+	}
+
+	boolean structuredDescendants() {
+
+		return new StructuredDescendantsChecker().anyFound();
 	}
 }

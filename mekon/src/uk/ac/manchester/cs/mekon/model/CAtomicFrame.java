@@ -446,12 +446,12 @@ class CAtomicFrame extends CFrame {
 		return asSingletonList();
 	}
 
-	CAtomicFrames getModelSupers() {
+	CAtomicFrames getAtomicSupers() {
 
 		return supers;
 	}
 
-	CAtomicFrames getModelSubs() {
+	CAtomicFrames getAtomicSubs() {
 
 		return subs;
 	}
@@ -464,6 +464,11 @@ class CAtomicFrame extends CFrame {
 	boolean atomicFrameSubsumption(CAtomicFrame testSubsumed) {
 
 		return testSubsumed.subsumptions.isSubsumer(this);
+	}
+
+	boolean structuredDescendants() {
+
+		return subsumptions.structuredDescendants();
 	}
 
 	private void addLinksToSuper(CAtomicFrame sup) {

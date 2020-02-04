@@ -530,6 +530,19 @@ public abstract class CFrame
 	}
 
 	/**
+	 * Tests whether this frame or any of it's ancestor-frames or
+	 * descendant-frames either have attached concept-level slots or
+	 * provide default slot-values.
+	 *
+	 * @return True if structured frame or if any structured ancestors
+	 * or descendants
+	 */
+	public boolean structureInHierarchy() {
+
+		return structured() || structuredAncestors() || structuredDescendants();
+	}
+
+	/**
 	 * Provides all concept-level slots attached to the frame (whose
 	 * instantiations will be attached to instantiations of the frame).
 	 *
@@ -709,6 +722,8 @@ public abstract class CFrame
 		return !getSlots().isEmpty() || getSlotValues().valuesDefined();
 	}
 
+	abstract boolean structuredDescendants();
+
 	CExtension extend(String label, CSlotValues slotValues, boolean concrete) {
 
 		CExtension extn = new CExtension(label, asAtomicFrame(), slotValues, concrete);
@@ -757,6 +772,11 @@ public abstract class CFrame
 		}
 
 		return false;
+	}
+
+	private boolean structuredAncestors() {
+
+		return !getStructuredAncestors().isEmpty();
 	}
 
 	private IFrame instantiate(IFrameCategory category, IFrameFunction function) {

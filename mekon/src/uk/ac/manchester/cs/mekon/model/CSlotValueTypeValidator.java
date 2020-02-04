@@ -70,7 +70,7 @@ class CSlotValueTypeValidator extends CHierarchyCrawler {
 
 	List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
-		return current.getModelSupers().getAll();
+		return current.getAtomicSupers().getAll();
 	}
 
 	CrawlMode process(CAtomicFrame current) {

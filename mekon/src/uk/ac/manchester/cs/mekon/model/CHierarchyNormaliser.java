@@ -42,14 +42,14 @@ class CHierarchyNormaliser {
 			this.frame = frame;
 			this.visibility = visibility;
 
-			supers = frame.getModelSupers().getAll(visibility);
+			supers = frame.getAtomicSupers().getAll(visibility);
 
 			processLinked(new ArrayList<CAtomicFrame>(supers));
 		}
 
 		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
-			return current.getModelSupers().getAll(visibility);
+			return current.getAtomicSupers().getAll(visibility);
 		}
 
 		CrawlMode process(CAtomicFrame current) {
@@ -76,12 +76,12 @@ class CHierarchyNormaliser {
 
 		List<CAtomicFrame> getDirectlyLinked(CAtomicFrame current) {
 
-			return current.getModelSupers().getAll(CVisibility.HIDDEN);
+			return current.getAtomicSupers().getAll(CVisibility.HIDDEN);
 		}
 
 		CrawlMode process(CAtomicFrame current) {
 
-			for (CAtomicFrame sup : current.getModelSupers().getAll(CVisibility.EXPOSED)) {
+			for (CAtomicFrame sup : current.getAtomicSupers().getAll(CVisibility.EXPOSED)) {
 
 				exposed.ensureLinksToSuper(sup);
 			}

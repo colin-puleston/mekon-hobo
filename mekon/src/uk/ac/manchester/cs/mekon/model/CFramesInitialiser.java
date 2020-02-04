@@ -56,73 +56,61 @@ class CFramesInitialiser {
 
 	private class SubsumptionCompleter extends Processor {
 
-		private Ancestors ancestors = new Ancestors();
+		private AllAncestors ancestors = new AllAncestors();
 		private StructuredAncestors structuredAncestors = new StructuredAncestors();
 
-		private abstract class Subsumptions {
+		private abstract class SelectedAncestors {
 
-			private Map<List<CAtomicFrame>, List<CAtomicFrame>> directToAll
+			private Map<List<CAtomicFrame>, List<CAtomicFrame>> directToSelections
 						= new HashMap<List<CAtomicFrame>, List<CAtomicFrame>>();
 
 			void process(CAtomicFrame frame) {
 
-				setAll(frame.getSubsumptions(), getAll(frame));
+				setSelections(frame.getSubsumptions(), getSelections(frame));
 			}
 
-			abstract List<CAtomicFrame> getDirect(CAtomicFrame frame);
+			abstract List<CAtomicFrame> findSelections(CFrameSubsumptions subsumptions);
 
-			abstract List<CAtomicFrame> findAll(CFrameSubsumptions subsumptions);
+			abstract void setSelections(CFrameSubsumptions subsumptions, List<CAtomicFrame> selections);
 
-			abstract void setAll(CFrameSubsumptions subsumptions, List<CAtomicFrame> all);
+			private List<CAtomicFrame> getSelections(CAtomicFrame frame) {
 
-			private List<CAtomicFrame> getAll(CAtomicFrame frame) {
+				List<CAtomicFrame> direct = frame.getAtomicSupers().getAll();
+				List<CAtomicFrame> selections = directToSelections.get(direct);
 
-				List<CAtomicFrame> direct = getDirect(frame);
-				List<CAtomicFrame> all = directToAll.get(direct);
+				if (selections == null) {
 
-				if (all == null) {
-
-					all = findAll(frame.getSubsumptions());
-					directToAll.put(direct, all);
+					selections = findSelections(frame.getSubsumptions());
+					directToSelections.put(direct, selections);
 				}
 
-				return all;
+				return selections;
 			}
 		}
 
-		private class Ancestors extends Subsumptions {
+		private class AllAncestors extends SelectedAncestors {
 
-			List<CAtomicFrame> getDirect(CAtomicFrame frame) {
-
-				return frame.getModelSupers().getAll();
-			}
-
-			List<CAtomicFrame> findAll(CFrameSubsumptions subsumptions) {
+			List<CAtomicFrame> findSelections(CFrameSubsumptions subsumptions) {
 
 				return subsumptions.getAncestors(CVisibility.ALL);
 			}
 
-			void setAll(CFrameSubsumptions subsumptions, List<CAtomicFrame> all) {
+			void setSelections(CFrameSubsumptions subsumptions, List<CAtomicFrame> selections) {
 
-				subsumptions.setAncestors(all);
+				subsumptions.setAncestors(selections);
 			}
 		}
 
-		private class StructuredAncestors extends Subsumptions {
+		private class StructuredAncestors extends SelectedAncestors {
 
-			List<CAtomicFrame> getDirect(CAtomicFrame frame) {
-
-				return frame.getModelSupers().getAll();
-			}
-
-			List<CAtomicFrame> findAll(CFrameSubsumptions subsumptions) {
+			List<CAtomicFrame> findSelections(CFrameSubsumptions subsumptions) {
 
 				return subsumptions.getStructuredAncestors();
 			}
 
-			void setAll(CFrameSubsumptions subsumptions, List<CAtomicFrame> all) {
+			void setSelections(CFrameSubsumptions subsumptions, List<CAtomicFrame> selections) {
 
-				subsumptions.setStructuredAncestors(all);
+				subsumptions.setStructuredAncestors(selections);
 			}
 		}
 

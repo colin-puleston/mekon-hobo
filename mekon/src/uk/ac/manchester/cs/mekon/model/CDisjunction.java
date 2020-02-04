@@ -247,10 +247,15 @@ class CDisjunction extends CExpression {
 
 	void registerReferencingSlot(CSlot slot) {
 
-		for (CFrame disjunct : disjuncts) {
+		for (CAtomicFrame disjunct : disjuncts) {
 
 			disjunct.registerReferencingSlot(slot);
 		}
+	}
+
+	IReasoner getIReasoner() {
+
+		return IReasonerDefault.get();
 	}
 
 	List<CAtomicFrame> asAtomicDisjuncts() {
@@ -258,9 +263,17 @@ class CDisjunction extends CExpression {
 		return disjuncts;
 	}
 
-	IReasoner getIReasoner() {
+	boolean structuredDescendants() {
 
-		return IReasonerDefault.get();
+		for (CAtomicFrame disjunct : disjuncts) {
+
+			if (disjunct.structuredDescendants()) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	String getExpressionTypeName() {
@@ -277,7 +290,7 @@ class CDisjunction extends CExpression {
 
 		StringBuilder bldr = new StringBuilder();
 
-		for (CFrame disjunct : disjuncts) {
+		for (CAtomicFrame disjunct : disjuncts) {
 
 			if (bldr.length() != 0) {
 
