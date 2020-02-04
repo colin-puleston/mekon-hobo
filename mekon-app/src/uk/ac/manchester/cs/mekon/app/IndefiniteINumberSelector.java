@@ -41,7 +41,7 @@ class IndefiniteINumberSelector extends INumberSelector {
 	static private final String MIN_VALUE_LABEL = "Minimum";
 	static private final String MAX_VALUE_LABEL = "Maximum";
 
-	static private final Dimension WINDOW_SIZE = new Dimension(250, 150);
+	static private final Dimension WINDOW_SIZE = new Dimension(300, 150);
 
 	private LimitField minField = new LimitField();
 	private LimitField maxField = new LimitField();
@@ -121,6 +121,11 @@ class IndefiniteINumberSelector extends INumberSelector {
 	boolean validInput() {
 
 		return !invalidRange();
+	}
+
+	boolean multipleInputFields() {
+
+		return true;
 	}
 
 	private JComponent createLimitComponent(String label, LimitField field) {

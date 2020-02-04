@@ -50,7 +50,7 @@ abstract class TextInputSelector<S> extends Selector<S> {
 
 		protected void onFieldExited(String text) {
 
-			if (!windowClosing) {
+			if (multipleInputFields() && !windowClosing) {
 
 				checkInput(text);
 			}
@@ -143,6 +143,11 @@ abstract class TextInputSelector<S> extends Selector<S> {
 	abstract S convertInputValue(String text);
 
 	abstract boolean validInput();
+
+	boolean multipleInputFields() {
+
+		return false;
+	}
 
 	void updateInputValidity() {
 

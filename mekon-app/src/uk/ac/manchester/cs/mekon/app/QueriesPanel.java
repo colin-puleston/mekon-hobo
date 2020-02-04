@@ -34,36 +34,19 @@ class QueriesPanel extends InstantiationsPanel {
 	static private final long serialVersionUID = -1;
 
 	static private final String TITLE = "Queries";
-	static private final String DEFAULT_QUERY_NAME_PREFIX = "QUERY-";
 
 	private QueryExecutions queryExecutions;
-	private DefaultQueryNameGenerator defaultQueryNames;
 
 	QueriesPanel(InstanceType instanceType, QueryExecutions queryExecutions) {
 
 		super(instanceType, instanceType.getQueryIdsList(), TITLE);
 
 		this.queryExecutions = queryExecutions;
-
-		defaultQueryNames = new DefaultQueryNameGenerator(instanceType);
 	}
 
-	StoreIdSelector createIdSelector(CIdentity oldStoreId) {
+	CIdentity checkObtainStoreId(StoreIdSelections storeIdSelections, CIdentity oldId) {
 
-		StoreIdSelector selector = createIdSelector(IFrameFunction.QUERY);
-
-		selector.setInMemoryIds(queryExecutions.getAllExecuteds());
-
-		if (oldStoreId != null && !generatedQueryId(oldStoreId)) {
-
-			selector.setInitialValue(oldStoreId);
-		}
-		else {
-
-			selector.setInitialStringValue(defaultQueryNames.getNext());
-		}
-
-		return selector;
+		return storeIdSelections.checkObtainForQuery(queryExecutions, oldId);
 	}
 
 	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
@@ -77,10 +60,5 @@ class QueriesPanel extends InstantiationsPanel {
 			CIdentity storeId) {
 
 		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutions, true);
-	}
-
-	private boolean generatedQueryId(CIdentity storeId) {
-
-		return DefaultQueryNameGenerator.generatedNameFormat(storeId.getLabel());
 	}
 }

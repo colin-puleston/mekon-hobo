@@ -113,6 +113,11 @@ class Store {
 		return store.match(type.instantiate()).getAllMatches();
 	}
 
+	List<CIdentity> getAllInstanceIds() {
+
+		return store.getAllIdentities();
+	}
+
 	private List<CIdentity> getFilteredMatches(IFrame query) {
 
 		return filterQueryMatches(store.match(query).getAllMatches());

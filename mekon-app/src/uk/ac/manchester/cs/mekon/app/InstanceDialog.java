@@ -69,6 +69,11 @@ class InstanceDialog extends InstantiationDialog {
 		return new InstanceDialog(parent, getInstantiator(), storeId, false);
 	}
 
+	CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId) {
+
+		return idSelections.checkObtainForAssertion(oldId);
+	}
+
 	boolean disposeOnStoring() {
 
 		return true;

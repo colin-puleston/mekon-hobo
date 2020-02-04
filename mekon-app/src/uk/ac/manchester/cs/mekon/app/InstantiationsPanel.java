@@ -50,6 +50,7 @@ abstract class InstantiationsPanel extends JPanel {
 	private InstanceIdsList idsList;
 
 	private Store store;
+	private StoreIdSelections storeIdSelections;
 
 	private class CreateButton extends GButton {
 
@@ -123,7 +124,10 @@ abstract class InstantiationsPanel extends JPanel {
 		this.instanceType = instanceType;
 		this.idsList = idsList;
 
-		store = instanceType.getController().getStore();
+		Controller controller = instanceType.getController();
+
+		store = controller.getStore();
+		storeIdSelections = new StoreIdSelections(this, controller);
 
 		setTitle(title);
 
@@ -151,21 +155,9 @@ abstract class InstantiationsPanel extends JPanel {
 		return false;
 	}
 
-	StoreIdSelector createIdSelector(CIdentity oldStoreId) {
+	CIdentity checkObtainStoreId(StoreIdSelections storeIdSelections, CIdentity oldId) {
 
-		StoreIdSelector selector = createIdSelector(IFrameFunction.ASSERTION);
-
-		if (oldStoreId != null) {
-
-			selector.setInitialValue(oldStoreId);
-		}
-
-		return selector;
-	}
-
-	StoreIdSelector createIdSelector(IFrameFunction function) {
-
-		return new StoreIdSelector(findOwnerFrame(), store, function);
+		return storeIdSelections.checkObtainForAssertion(oldId);
 	}
 
 	abstract void displayNewInstantiation(InstanceType instanceType, CIdentity storeId);
@@ -194,7 +186,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void checkInstantiate() {
 
-		CIdentity storeId = checkObtainStoreId(null);
+		CIdentity storeId = checkObtainStoreId(storeIdSelections, null);
 
 		if (storeId != null) {
 
@@ -204,7 +196,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void checkRename(CIdentity storeId) {
 
-		CIdentity newStoreId = checkObtainStoreId(storeId);
+		CIdentity newStoreId = checkObtainStoreId(storeIdSelections, storeId);
 
 		if (newStoreId != null) {
 
@@ -224,18 +216,8 @@ abstract class InstantiationsPanel extends JPanel {
 		displayLoadedInstantiation(instanceType, store.get(storeId), storeId);
 	}
 
-	private CIdentity checkObtainStoreId(CIdentity oldStoreId) {
-
-		return createIdSelector(oldStoreId).getIdSelection();
-	}
-
 	private void showMessage(String msg) {
 
 		JOptionPane.showMessageDialog(null, msg);
-	}
-
-	private JFrame findOwnerFrame() {
-
-		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, this);
 	}
 }

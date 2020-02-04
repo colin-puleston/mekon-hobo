@@ -125,10 +125,12 @@ public class MekonApp extends GFrame {
 
 	private JComponent createInstanceTypesPanel(List<CFrame> instanceTypes) {
 
-		Store appStore = new Store(store);
-		Controller controller = new Controller(appStore, resolveCustomiser());
+		return new InstanceTypesPanel(createController(), instanceTypes);
+	}
 
-		return new InstanceTypesPanel(appStore, controller, instanceTypes);
+	private Controller createController() {
+
+		return new Controller(new Store(store), resolveCustomiser());
 	}
 
 	private Customiser resolveCustomiser() {

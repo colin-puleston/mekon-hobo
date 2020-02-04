@@ -37,9 +37,11 @@ class InstanceTypesPanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	InstanceTypesPanel(Store store, Controller controller, List<CFrame> types) {
+	InstanceTypesPanel(Controller controller, List<CFrame> types) {
 
 		setFont(GFonts.toLarge(getFont()));
+
+		Store store = controller.getStore();
 
 		for (CFrame type : types) {
 

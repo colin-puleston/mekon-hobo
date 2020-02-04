@@ -36,12 +36,16 @@ class Controller {
 	private Store store;
 	private Customiser customiser;
 
+	private QueryNameDefaults queryNameDefaults;
+
 	private Map<CFrame, InstanceType> instanceTypes = new HashMap<CFrame, InstanceType>();
 
 	Controller(Store store, Customiser customiser) {
 
 		this.store = store;
 		this.customiser = customiser;
+
+		queryNameDefaults = new QueryNameDefaults(store);
 	}
 
 	InstanceType addInstanceType(CFrame type) {
@@ -61,6 +65,11 @@ class Controller {
 	Customiser getCustomiser() {
 
 		return customiser;
+	}
+
+	QueryNameDefaults getQueryNameDefaults() {
+
+		return queryNameDefaults;
 	}
 
 	boolean instanceType(CFrame type) {

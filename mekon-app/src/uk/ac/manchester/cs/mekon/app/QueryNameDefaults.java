@@ -29,11 +29,11 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class DefaultQueryNameGenerator {
+class QueryNameDefaults {
 
 	static private final String NAME_BODY = "QUERY-";
 
-	static boolean generatedNameFormat(String queryName) {
+	static boolean defaultNameFormat(String queryName) {
 
 		return lookForIndex(queryName) != null;
 	}
@@ -60,11 +60,11 @@ class DefaultQueryNameGenerator {
 		}
 	}
 
-	private InstanceType instanceType;
+	private Store store;
 
-	DefaultQueryNameGenerator(InstanceType instanceType) {
+	QueryNameDefaults(Store store) {
 
-		this.instanceType = instanceType;
+		this.store = store;
 	}
 
 	String getNext() {
@@ -76,7 +76,7 @@ class DefaultQueryNameGenerator {
 
 		int nextIndex = 1;
 
-		for (CIdentity queryId : instanceType.getQueryIdsList().getAllIds()) {
+		for (CIdentity queryId : store.getAllInstanceIds()) {
 
 			Integer index = lookForIndex(queryId.getLabel());
 

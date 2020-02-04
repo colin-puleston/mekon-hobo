@@ -41,6 +41,8 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 	static private final String TITLE_FORMAT = "%s %s (%s)";
 
 	static private final String STORE_BUTTON_LABEL = "Store";
+	static private final String STORE_AS_BUTTON_LABEL = "Store As...";
+
 	static private final String MODE_SELECTOR_LABEL = "View only";
 
 	static private final int FRAME_WIDTH = 600;
@@ -92,15 +94,27 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 		protected void doButtonThing() {
 
-			if (storeInstantiation() && disposeOnStoring()) {
-
-				dispose();
-			}
+			perfomStoreAction(storeId);
 		}
 
 		StoreButton() {
 
 			super(STORE_BUTTON_LABEL);
+		}
+	}
+
+	private class StoreAsButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			perfomStoreAsAction();
+		}
+
+		StoreAsButton() {
+
+			super(STORE_AS_BUTTON_LABEL);
 		}
 	}
 
@@ -150,7 +164,18 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 	void addControlComponents(ControlsPanel panel) {
 
 		panel.addControl(new StoreButton());
+		panel.addControl(new StoreAsButton());
 	}
+/*
+	JComponent createControlsComponent() {
+
+		ControlsPanel panel = new ControlsPanel(true);
+
+		panel.addControl(new StoreButton());
+		panel.addControl(new StoreAsButton());
+
+		return panel;
+	}*/
 
 	InstanceType getInstanceType() {
 
@@ -167,6 +192,8 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 		return storeId;
 	}
 
+	abstract CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId);
+
 	abstract boolean disposeOnStoring();
 
 	private JComponent createDisplay() {
@@ -182,20 +209,48 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 	private JComponent createControlsComponent() {
 
-		ControlsPanel panel = new ControlsPanel(false);
+		ControlsPanel panel = new ControlsPanel(true);
 
 		addControlComponents(panel);
 
 		return panel;
 	}
 
-	private boolean storeInstantiation() {
+	private void perfomStoreAsAction() {
 
-		return getInstanceType().checkAddInstance(getInstantiation(), storeId);
+		CIdentity newStoreId = checkObtainNewStoreId();
+
+		if (newStoreId != null) {
+
+			perfomStoreAction(newStoreId);
+		}
+	}
+
+	private void perfomStoreAction(CIdentity actionStoreId) {
+
+		if (storeInstantiation(actionStoreId) && disposeOnStoring()) {
+
+			dispose();
+		}
+	}
+
+	private boolean storeInstantiation(CIdentity asStoreId) {
+
+		return getInstanceType().checkAddInstance(getInstantiation(), asStoreId);
+	}
+
+	private CIdentity checkObtainNewStoreId() {
+
+		return checkObtainNewStoreId(new StoreIdSelections(this, getController()), storeId);
 	}
 
 	private int getPreferredHeight() {
 
 		return (int)super.getPreferredSize().getHeight();
+	}
+
+	private Controller getController() {
+
+		return getInstanceType().getController();
 	}
 }
