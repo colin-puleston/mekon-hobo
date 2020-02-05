@@ -33,6 +33,8 @@ class Descriptor {
 
 	static private final Object NO_VALUE_MATCHER = new String("NO-VALUE");
 
+	static private final String NO_EFFECTIVE_VALUE_DEFAULT_LABEL = " - ";
+
 	private Instantiator instantiator;
 
 	private ISlot slot;
@@ -158,7 +160,14 @@ class Descriptor {
 
 	private String getNoEffectiveValueLabel() {
 
-		return "[" + getNoEffectiveValuesDescription() + "]";
+		String description = getNoEffectiveValuesDescription();
+
+		if (description.isEmpty()) {
+
+			description = NO_EFFECTIVE_VALUE_DEFAULT_LABEL;
+		}
+
+		return "[" + description + "]";
 	}
 
 	private String getNoEffectiveValuesDescription() {

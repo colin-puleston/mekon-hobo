@@ -130,16 +130,16 @@ public class MekonApp extends GFrame {
 
 	private Controller createController() {
 
-		return new Controller(new Store(store), resolveCustomiser());
+		ensureCustomiser();
+
+		return new Controller(new Store(store, customiser), customiser);
 	}
 
-	private Customiser resolveCustomiser() {
+	private void ensureCustomiser() {
 
 		if (customiser == null) {
 
 			customiser = new DefaultCustomiser(store);
 		}
-
-		return customiser;
 	}
 }

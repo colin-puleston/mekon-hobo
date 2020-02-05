@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.app;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -37,7 +38,8 @@ class DescriptorChildNodes {
 	private InstantiationNode parentNode;
 	private DescriptorsList descriptors;
 
-	private UpdateRelayer updateRelayer = new UpdateRelayer();
+	private SlotUpdateRelayer slotUpdateRelayer;
+	private ValueUpdateRelayer valueUpdateRelayer;
 
 	private class Updater {
 
@@ -88,9 +90,22 @@ class DescriptorChildNodes {
 		}
 	}
 
-	private class UpdateRelayer implements ISlotListener, KUpdateListener {
+	private abstract class UpdateRelayer {
 
 		private Set<ISlot> targetSlots = new HashSet<ISlot>();
+
+		void checkAddTo(ISlot slot) {
+
+			if (targetSlots.add(slot)) {
+
+				addTo(slot);
+			}
+		}
+
+		abstract void addTo(ISlot slot);
+	}
+
+	private class SlotUpdateRelayer extends UpdateRelayer implements ISlotListener {
 
 		public void onUpdatedValueType(CValue<?> valueType) {
 
@@ -112,18 +127,42 @@ class DescriptorChildNodes {
 			new Updater();
 		}
 
+		void addTo(ISlot slot) {
+
+			slot.addListener(this);
+		}
+	}
+
+	private class ValueUpdateRelayer extends UpdateRelayer implements KUpdateListener {
+
+		private class Propagator extends ISlotUpdateListenerPropagator {
+
+			protected boolean targetSlot(ISlot slot) {
+
+				return true;
+			}
+
+			Propagator(IFrame aspect) {
+
+				super(ValueUpdateRelayer.this);
+
+				propagateFrom(aspect);
+			}
+		}
+
 		public void onUpdated() {
 
 			new Updater();
 		}
 
-		void checkAddTo(ISlot slot) {
+		ValueUpdateRelayer(IFrame aspect) {
 
-			if (targetSlots.add(slot)) {
+			new Propagator(aspect);
+		}
 
-				slot.addListener(this);
-				slot.getValues().addUpdateListener(this);
-			}
+		void addTo(ISlot slot) {
+
+			slot.getValues().addUpdateListener(this);
 		}
 	}
 
@@ -132,6 +171,9 @@ class DescriptorChildNodes {
 		this.parentNode = parentNode;
 
 		descriptors = new DescriptorsList(getInstantiator(), aspect, viewOnly());
+
+		slotUpdateRelayer = new SlotUpdateRelayer();
+		valueUpdateRelayer = new ValueUpdateRelayer(aspect);
 	}
 
 	void update() {
@@ -152,7 +194,11 @@ class DescriptorChildNodes {
 		DescriptorNode node = createDescriptorNode(descriptor);
 
 		parentNode.addChild(node, index);
-		updateRelayer.checkAddTo(descriptor.getSlot());
+
+		ISlot slot = descriptor.getSlot();
+
+		slotUpdateRelayer.checkAddTo(slot);
+		valueUpdateRelayer.checkAddTo(slot);
 	}
 
 	private void removeFromParentNode(int index) {

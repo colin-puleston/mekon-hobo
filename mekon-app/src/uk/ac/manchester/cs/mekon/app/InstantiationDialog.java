@@ -166,16 +166,6 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 		panel.addControl(new StoreButton());
 		panel.addControl(new StoreAsButton());
 	}
-/*
-	JComponent createControlsComponent() {
-
-		ControlsPanel panel = new ControlsPanel(true);
-
-		panel.addControl(new StoreButton());
-		panel.addControl(new StoreAsButton());
-
-		return panel;
-	}*/
 
 	InstanceType getInstanceType() {
 
@@ -226,17 +216,19 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 		}
 	}
 
-	private void perfomStoreAction(CIdentity actionStoreId) {
+	private void perfomStoreAction(CIdentity storeAsId) {
 
-		if (storeInstantiation(actionStoreId) && disposeOnStoring()) {
+		if (storeInstantiation(storeAsId) && disposeOnStoring()) {
 
 			dispose();
 		}
 	}
 
-	private boolean storeInstantiation(CIdentity asStoreId) {
+	private boolean storeInstantiation(CIdentity storeAsId) {
 
-		return getInstanceType().checkAddInstance(getInstantiation(), asStoreId);
+		boolean asNewId = !storeAsId.equals(storeId);
+
+		return getInstanceType().checkAddInstance(getInstantiation(), storeAsId, asNewId);
 	}
 
 	private CIdentity checkObtainNewStoreId() {

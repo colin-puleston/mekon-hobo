@@ -36,18 +36,25 @@ import uk.ac.manchester.cs.mekon.store.*;
 class Store {
 
 	private IStore store;
+	private Customiser customiser;
 
-	Store(IStore store) {
+	Store(IStore store, Customiser customiser) {
 
 		this.store = store;
+		this.customiser = customiser;
 	}
 
-	boolean checkAdd(IFrame instance, CIdentity id) {
+	boolean checkAdd(IFrame instance, CIdentity id, boolean asNewId) {
 
-		if (checkInstanceStorageRequired(id)) {
+		if (!store.contains(id) || confirmReplace(id)) {
+
+			if (asNewId) {
+
+				instance = customiser.onNewInstance(instance, id);
+			}
 
 			store.add(instance, id);
-			showInstanceStoredMessage(id);
+			showStoredMessage(id);
 
 			return true;
 		}
@@ -57,10 +64,10 @@ class Store {
 
 	boolean checkRemove(CIdentity id) {
 
-		if (confirmRemoveStoredInstance(id)) {
+		if (confirmRemove(id)) {
 
 			store.remove(id);
-			showInstanceRemovedMessage(id);
+			showRemovedMessage(id);
 
 			return true;
 		}
@@ -68,25 +75,26 @@ class Store {
 		return false;
 	}
 
-	IFrame checkRemoveToRename(CIdentity id, CIdentity newId) {
+	boolean checkRename(CIdentity id, CIdentity newId) {
 
-		if (confirmRenameStoredInstance(id, newId)) {
+		if (confirmRename(id, newId)) {
 
 			IFrame instance = get(id);
 
-			store.remove(id);
+			if (assertionId(id)) {
 
-			return instance;
+				instance = customiser.onRenamingInstance(instance, id, newId);
+			}
+
+			store.remove(id);
+			store.add(instance, newId);
+
+			showRenamedMessage(id, newId);
+
+			return true;
 		}
 
-		return null;
-	}
-
-	void addRenamed(IFrame instance, CIdentity id, CIdentity newId) {
-
-		store.add(instance, newId);
-
-		showInstanceRenamedMessage(id, newId);
+		return false;
 	}
 
 	boolean contains(CIdentity id) {
@@ -101,7 +109,7 @@ class Store {
 
 	List<CIdentity> match(IFrame query) {
 
-		List<CIdentity> matches = getFilteredMatches(query);
+		List<CIdentity> matches = getAssertionMatches(query);
 
 		showQueryMatchesMessage(matches.size());
 
@@ -118,59 +126,54 @@ class Store {
 		return store.getAllIdentities();
 	}
 
-	private List<CIdentity> getFilteredMatches(IFrame query) {
+	private List<CIdentity> getAssertionMatches(IFrame query) {
 
-		return filterQueryMatches(store.match(query).getAllMatches());
+		return extractAssertions(store.match(query).getAllMatches());
 	}
 
-	private List<CIdentity> filterQueryMatches(List<CIdentity> all) {
+	private List<CIdentity> extractAssertions(List<CIdentity> all) {
 
-		List<CIdentity> filtered = new ArrayList<CIdentity>();
+		List<CIdentity> assertions = new ArrayList<CIdentity>();
 
 		for (CIdentity match : all) {
 
 			if (assertionId(match)) {
 
-				filtered.add(match);
+				assertions.add(match);
 			}
 		}
 
-		return filtered;
+		return assertions;
 	}
 
-	private boolean checkInstanceStorageRequired(CIdentity id) {
-
-		return !store.contains(id) || confirmReplaceStoredInstance(id);
-	}
-
-	private boolean confirmReplaceStoredInstance(CIdentity id) {
+	private boolean confirmReplace(CIdentity id) {
 
 		return obtainConfirmation("Replace stored " + describeInstance(id));
 	}
 
-	private boolean confirmRemoveStoredInstance(CIdentity id) {
+	private boolean confirmRemove(CIdentity id) {
 
 		return obtainConfirmation("Remove stored " + describeInstance(id));
 	}
 
-	private boolean confirmRenameStoredInstance(CIdentity id, CIdentity newId) {
+	private boolean confirmRename(CIdentity id, CIdentity newId) {
 
 		return obtainConfirmation(
 					"Rename stored " + describeInstance(id)
 					+ " to " + nameInstance(newId));
 	}
 
-	private void showInstanceStoredMessage(CIdentity id) {
+	private void showStoredMessage(CIdentity id) {
 
 		showMessage("Stored " + describeInstance(id));
 	}
 
-	private void showInstanceRemovedMessage(CIdentity id) {
+	private void showRemovedMessage(CIdentity id) {
 
 		showMessage("Removed " + describeInstance(id));
 	}
 
-	private void showInstanceRenamedMessage(CIdentity id, CIdentity newId) {
+	private void showRenamedMessage(CIdentity id, CIdentity newId) {
 
 		showMessage(
 			"Renamed " + describeInstance(id)

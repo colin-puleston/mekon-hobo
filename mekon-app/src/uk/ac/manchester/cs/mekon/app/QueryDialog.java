@@ -66,7 +66,7 @@ class QueryDialog extends InstantiationDialog {
 
 		this(
 			parent,
-			instanceType.createQueryInstantiator(),
+			instanceType.createNewQuery(storeId),
 			storeId,
 			queryExecutions,
 			startAsViewOnly);
@@ -82,7 +82,7 @@ class QueryDialog extends InstantiationDialog {
 
 		this(
 			parent,
-			instanceType.createInstantiator(instantiation),
+			instanceType.recreateInstantiator(instantiation),
 			storeId,
 			queryExecutions,
 			startAsViewOnly);

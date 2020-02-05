@@ -45,7 +45,7 @@ class InstanceDialog extends InstantiationDialog {
 
 		this(
 			parent,
-			instanceType.createAssertionInstantiator(storeId),
+			instanceType.createNewAssertion(storeId),
 			storeId,
 			startAsViewOnly);
 	}
@@ -59,7 +59,7 @@ class InstanceDialog extends InstantiationDialog {
 
 		this(
 			parent,
-			instanceType.createInstantiator(instantiation),
+			instanceType.recreateInstantiator(instantiation),
 			storeId,
 			startAsViewOnly);
 	}

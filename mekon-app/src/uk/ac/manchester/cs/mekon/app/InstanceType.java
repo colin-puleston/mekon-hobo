@@ -79,9 +79,9 @@ class InstanceType {
 		return queryIds;
 	}
 
-	boolean checkAddInstance(IFrame instance, CIdentity storeId) {
+	boolean checkAddInstance(IFrame instance, CIdentity storeId, boolean asNewId) {
 
-		if (store.checkAdd(instance, storeId)) {
+		if (store.checkAdd(instance, storeId, asNewId)) {
 
 			getInstanceIdsList(storeId).add(storeId);
 
@@ -101,43 +101,34 @@ class InstanceType {
 
 	void checkRenameInstance(CIdentity storeId, CIdentity newStoreId) {
 
-		IFrame instance = store.checkRemoveToRename(storeId, newStoreId);
-
-		if (instance != null) {
-
-			if (assertionId(storeId)) {
-
-				instance = customiser.onRenamingInstance(instance, storeId, newStoreId);
-			}
-
-			store.addRenamed(instance, storeId, newStoreId);
+		if (store.checkRename(storeId, newStoreId)) {
 
 			getInstanceIdsList(storeId).replace(storeId, newStoreId);
 		}
 	}
 
-	Instantiator createAssertionInstantiator(CIdentity storeId) {
+	Instantiator createNewAssertion(CIdentity storeId) {
 
-		IFrame instance = instantiate(IFrameFunction.ASSERTION);
-
-		instance = customiser.onNewInstance(instance, storeId);
-
-		return createInstantiator(instance);
+		return createNewInstantiation(IFrameFunction.ASSERTION, storeId);
 	}
 
-	Instantiator createQueryInstantiator() {
+	Instantiator createNewQuery(CIdentity storeId) {
 
-		return createInstantiator(instantiate(IFrameFunction.QUERY));
+		return createNewInstantiation(IFrameFunction.QUERY, storeId);
 	}
 
-	Instantiator createInstantiator(IFrame instantiation) {
+	Instantiator recreateInstantiator(IFrame instantiation) {
 
 		return new Instantiator(this, instantiation);
 	}
 
-	private IFrame instantiate(IFrameFunction function) {
+	private Instantiator createNewInstantiation(IFrameFunction function, CIdentity storeId) {
 
-		return type.instantiate(function);
+		IFrame instantiation = type.instantiate(function);
+
+		instantiation = customiser.onNewInstance(instantiation, storeId);
+
+		return new Instantiator(this, instantiation);
 	}
 
 	private InstanceIdsList getInstanceIdsList(CIdentity storeId) {

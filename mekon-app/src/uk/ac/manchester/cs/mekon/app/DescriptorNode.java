@@ -122,9 +122,21 @@ class DescriptorNode extends InstantiationNode {
 
 		GCellDisplay display = new GCellDisplay(descriptor.getValueLabel());
 
-		display.setFontStyle(editable() ? Font.BOLD : (Font.BOLD | Font.ITALIC));
+		display.setFontStyle(getValueFont());
 
 		return display;
+	}
+
+	private int getValueFont() {
+
+		int font = descriptor.hasValue() ? Font.BOLD : Font.PLAIN;
+
+		if (!editable()) {
+
+			font |= Font.ITALIC;
+		}
+
+		return font;
 	}
 
 	private Icon getIcon() {
