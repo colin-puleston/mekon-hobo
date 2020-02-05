@@ -50,18 +50,26 @@ class DescriptorEditor {
 
 		void performEditAction() {
 
-			Selector<S> selector = createValueSelector(descriptor.hasValue());
+			if (checkSelectable()) {
 
-			switch (selector.display()) {
+				Selector<S> selector = createValueSelector(descriptor.hasValue());
 
-				case EDITED:
-					addSelectedValue(selector.getSelection());
-					break;
+				switch (selector.display()) {
 
-				case CLEARED:
-					removeValue();
-					break;
+					case EDITED:
+						addSelectedValue(selector.getSelection());
+						break;
+
+					case CLEARED:
+						removeValue();
+						break;
+				}
 			}
+		}
+
+		boolean checkSelectable() {
+
+			return true;
 		}
 
 		abstract Selector<S> createValueSelector(boolean clearRequired);
@@ -160,6 +168,18 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
+		boolean checkSelectable() {
+
+			if (anyRefSelections()) {
+
+				return true;
+			}
+
+			showNoSelectionsMessage();
+
+			return false;
+		}
+
 		InstanceRefSelector createValueSelector(boolean clearRequired) {
 
 			boolean multiSelect = abstractEditableSlot();
@@ -175,6 +195,23 @@ class DescriptorEditor {
 		IFrame selectionToValue(IFrame selection) {
 
 			return selection;
+		}
+
+		private boolean anyRefSelections() {
+
+			return !getRefedInstanceType().getAssertionIdsList().isEmpty();
+		}
+
+		private InstanceType getRefedInstanceType() {
+
+			return instantiator.getController().getInstanceType(valueType);
+		}
+
+		private void showNoSelectionsMessage() {
+
+			JOptionPane.showMessageDialog(
+				null,
+				"No " + valueType.getDisplayLabel() + " instances currently available!");
 		}
 	}
 

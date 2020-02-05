@@ -197,6 +197,11 @@ class InstanceIdsList extends JList<InstanceIdListElement> {
 		return selectedIds;
 	}
 
+	boolean isEmpty() {
+
+		return ids.isEmpty();
+	}
+
 	Set<CIdentity> getAllIds() {
 
 		return ids;
