@@ -38,19 +38,19 @@ class DescriptorsList {
 
 	private List<Descriptor> list = new ArrayList<Descriptor>();
 
-	DescriptorsList(Instantiator instantiator, IFrame aspect, boolean withValuesOnly) {
+	DescriptorsList(Instantiator instantiator, IFrame aspect, boolean viewOnly) {
 
 		this.instantiator = instantiator;
 		this.aspect = aspect;
 
-		populate(withValuesOnly);
+		populate(viewOnly);
 	}
 
-	void update(boolean withValuesOnly) {
+	void update(boolean viewOnly) {
 
 		list.clear();
 
-		populate(withValuesOnly);
+		populate(viewOnly);
 	}
 
 	boolean isEmpty() {
@@ -63,33 +63,38 @@ class DescriptorsList {
 		return new ArrayList<Descriptor>(list);
 	}
 
-	private void populate(boolean withValuesOnly) {
+	private void populate(boolean viewOnly) {
 
 		for (ISlot slot : aspect.getSlots().activesAsList()) {
 
 			if (!hidden(slot) && (editable(slot) || hasValues(slot))) {
 
-				addAllFor(slot, withValuesOnly);
+				addAllFor(slot, viewOnly);
 			}
 		}
 	}
 
-	private void addAllFor(ISlot slot, boolean withValuesOnly) {
+	private void addAllFor(ISlot slot, boolean viewOnly) {
 
 		for (IValue value : slot.getValues().asList()) {
 
-			addFor(slot, value);
+			Descriptor descriptor = createFor(slot, value);
+
+			if (!viewOnly || descriptor.anyEffectiveValues()) {
+
+				list.add(descriptor);
+			}
 		}
 
-		if (!withValuesOnly && editable(slot) && (multiValued(slot) || !hasValues(slot))) {
+		if (!viewOnly && editable(slot) && (multiValued(slot) || !hasValues(slot))) {
 
-			addFor(slot, null);
+			list.add(createFor(slot, null));
 		}
 	}
 
-	private void addFor(ISlot slot, IValue value) {
+	private Descriptor createFor(ISlot slot, IValue value) {
 
-		list.add(new Descriptor(instantiator, slot, value));
+		return new Descriptor(instantiator, slot, value);
 	}
 
 	private boolean hidden(ISlot slot) {
