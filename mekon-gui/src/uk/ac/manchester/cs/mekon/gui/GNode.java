@@ -75,13 +75,9 @@ public abstract class GNode extends GMutableTreeNode {
 			return replacing;
 		}
 
-		int performAddition(GNode child, int index) {
+		void performAddition(GNode child, int index) {
 
-			index = resolveIndex(index);
-
-			insert(child, index);
-
-			return index;
+			insert(child, resolveIndex(index));
 		}
 
 		void performRemoval(GNode child) {
@@ -154,17 +150,18 @@ public abstract class GNode extends GMutableTreeNode {
 
 		child.parent = this;
 
-		index = getChildList().performAddition(child, index);
+		getChildList().performAddition(child, index);
 
 		if (initialised) {
 
-			getTreeModel().nodesWereInserted(this, new int[]{index});
-			tree.updateAllNodeDisplays();
+			getTreeModel().nodesWereInserted(this, new int[]{getIndex(child)});
 
 			if (child.autoExpand()) {
 
 				child.checkExpanded();
 			}
+
+			tree.updateAllNodeDisplays();
 		}
 	}
 
