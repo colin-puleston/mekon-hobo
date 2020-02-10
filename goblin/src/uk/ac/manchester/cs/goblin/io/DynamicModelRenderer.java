@@ -169,7 +169,7 @@ class DynamicModelRenderer {
 
 		OWLClass cls = addClass(sup, getIRI(conceptId));
 
-		ontology.addLabel(sup, conceptId.getLabel());
+		ontology.addLabel(cls, conceptId.getLabel());
 
 		return cls;
 	}

@@ -73,17 +73,12 @@ public class Model {
 
 	public EntityId createEntityId(URI uri, String labelOrNull) {
 
-		if (labelOrNull != null) {
-
-			return new EntityId(uri, labelOrNull);
-		}
-
 		if (hasDynamicNamespace(uri)) {
 
-			return toEntityId(DynamicId.fromName(uri.getFragment()));
+			return toEntityId(createDynamicId(uri, labelOrNull));
 		}
 
-		return new EntityId(uri);
+		return new EntityId(uri, labelOrNull);
 	}
 
 	public List<Hierarchy> getHierarchies() {
@@ -174,5 +169,14 @@ public class Model {
 	private boolean hasDynamicNamespace(URI uri) {
 
 		return uri.toString().startsWith(dynamicNamespace + '#');
+	}
+
+	private DynamicId createDynamicId(URI uri, String labelOrNull) {
+
+		String name = uri.getFragment();
+
+		return labelOrNull != null
+					? new DynamicId(name, labelOrNull)
+					: DynamicId.fromName(name);
 	}
 }

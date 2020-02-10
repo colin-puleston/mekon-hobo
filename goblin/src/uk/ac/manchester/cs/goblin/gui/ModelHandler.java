@@ -216,7 +216,7 @@ class ModelHandler {
 
 	private FileNameExtensionFilter createDynamicFileFilter() {
 
-		return new FileNameExtensionFilter("New dynamic-ontology file", OWL_FILE_EXTN);
+		return new FileNameExtensionFilter("OWL ontology file", OWL_FILE_EXTN);
 	}
 
 	private File resolveDynamicFileSelection(File file) {

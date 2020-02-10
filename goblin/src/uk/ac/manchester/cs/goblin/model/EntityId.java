@@ -9,23 +9,6 @@ public class EntityId {
 
 	static private final char[] URI_FINAL_SEPARATOR_CHARS = new char[]{'#', '/', ':'};
 
-	static private String getDefaultLabel(URI uri) {
-
-		String u = uri.toString();
-
-		for (char c : URI_FINAL_SEPARATOR_CHARS) {
-
-			int i = u.lastIndexOf(c);
-
-			if (i != -1 && i != u.length() - 1) {
-
-				return u.substring(i + 1);
-			}
-		}
-
-		return u;
-	}
-
 	private URI uri;
 	private String label;
 
@@ -61,19 +44,37 @@ public class EntityId {
 		return dynamicId;
 	}
 
-	EntityId(URI uri) {
-
-		this(uri, getDefaultLabel(uri));
-	}
-
-	EntityId(URI uri, String label) {
+	EntityId(URI uri, String labelOrNull) {
 
 		this.uri = uri;
-		this.label = label;
+
+		label = resolveLabel(labelOrNull);
 	}
 
 	void setDynamicId(DynamicId dynamicId) {
 
 		this.dynamicId = dynamicId;
+	}
+
+	private String resolveLabel(String labelOrNull) {
+
+		return labelOrNull == null ? createDefaultLabel() : labelOrNull;
+	}
+
+	private String createDefaultLabel() {
+
+		String u = uri.toString();
+
+		for (char c : URI_FINAL_SEPARATOR_CHARS) {
+
+			int i = u.lastIndexOf(c);
+
+			if (i != -1 && i != u.length() - 1) {
+
+				return u.substring(i + 1);
+			}
+		}
+
+		return u;
 	}
 }
