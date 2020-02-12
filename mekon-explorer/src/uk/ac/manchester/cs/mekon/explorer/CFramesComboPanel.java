@@ -55,7 +55,7 @@ class CFramesComboPanel extends JTabbedPane {
 
 			if (getSelectedComponent() == panel) {
 
-				panel.setFocusToFilterField();
+				panel.setFocusToFilterPanel();
 			}
 		}
 
