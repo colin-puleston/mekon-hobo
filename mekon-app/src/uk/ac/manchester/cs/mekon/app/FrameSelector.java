@@ -50,7 +50,7 @@ class FrameSelector extends Selector<CFrame> {
 
 	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
 
-	static private final Color LEXICAL_MATCH_BACKGROUND_CLR = Color.LIGHT_GRAY;
+	static private final Color LEXICAL_MATCH_BACKGROUND_CLR = new Color(255,237,160);
 
 	static private String getTitle(boolean multiSelect) {
 

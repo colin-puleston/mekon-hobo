@@ -127,9 +127,10 @@ class DescriptorEditor {
 
 		FrameSelector createValueSelector(boolean clearRequired) {
 
+			boolean query = instantiator.queryInstantiation();
 			boolean multiSelect = abstractEditableSlot();
 
-			return new FrameSelector(rootWindow, rootCFrame, multiSelect, clearRequired);
+			return new FrameSelector(rootWindow, rootCFrame, query, multiSelect, clearRequired);
 		}
 	}
 
