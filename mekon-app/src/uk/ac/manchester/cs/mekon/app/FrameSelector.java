@@ -27,6 +27,8 @@ package uk.ac.manchester.cs.mekon.app;
 import java.util.*;
 import java.awt.Window;
 import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -42,22 +44,128 @@ class FrameSelector extends Selector<CFrame> {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String FILTER_PANEL_TITLE = "Filter";
 	static private final String SINGLE_SELECT_TITLE = "Select option";
 	static private final String MULTI_SELECT_TITLE = SINGLE_SELECT_TITLE + "(s)";
 
-	static private final Dimension WINDOW_SIZE = new Dimension(300, 300);
+	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
+
+	static private final Color LEXICAL_MATCH_BACKGROUND_CLR = Color.LIGHT_GRAY;
 
 	static private String getTitle(boolean multiSelect) {
 
 		return multiSelect ? MULTI_SELECT_TITLE : SINGLE_SELECT_TITLE;
 	}
 
-	private boolean multiSelect;
+	private CFrame rootFrame;
+
 	private FrameTree tree;
+
+	private FramesFilter inactiveFilter = new InactiveFramesFilter();
+	private FramesFilter currentFilter = inactiveFilter;
+
+	private abstract class FramesFilter {
+
+		abstract boolean lexicalMatch(CFrame frame);
+
+		abstract boolean displayInTree(CFrame frame);
+	}
+
+	private class InactiveFramesFilter extends FramesFilter {
+
+		boolean lexicalMatch(CFrame frame) {
+
+			return false;
+		}
+
+		boolean displayInTree(CFrame frame) {
+
+			return true;
+		}
+	}
+
+	private class ActiveFramesFilter extends FramesFilter {
+
+		private GLexicalFilter lexicalFilter;
+		private Set<CFrame> displayInTrees = new HashSet<CFrame>();
+
+		ActiveFramesFilter(GLexicalFilter lexicalFilter) {
+
+			this.lexicalFilter = lexicalFilter;
+
+			initialiseFromDescendants(rootFrame);
+		}
+
+		boolean lexicalMatch(CFrame frame) {
+
+			return lexicalFilter.pass(frame.getIdentity().getLabel());
+		}
+
+		boolean displayInTree(CFrame frame) {
+
+			return displayInTrees.contains(frame);
+		}
+
+		private boolean initialiseFromDescendants(CFrame current) {
+
+			boolean anyLexicalPasses = false;
+
+			for (CFrame sub : current.getSubs(CVisibility.EXPOSED)) {
+
+				anyLexicalPasses |= initialiseFrom(sub);
+			}
+
+			return anyLexicalPasses;
+		}
+
+		private boolean initialiseFrom(CFrame current) {
+
+			boolean lexicalMatch = lexicalMatch(current);
+			boolean anyDescendantLexicalPasses = initialiseFromDescendants(current);
+
+			if (lexicalMatch(current) || anyDescendantLexicalPasses) {
+
+				displayInTrees.add(current);
+
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	private class FramesFilterPanel extends GFilterPanel {
+
+		static private final long serialVersionUID = -1;
+
+		protected void applyFilter(GLexicalFilter filter) {
+
+			setFramesFilter(new ActiveFramesFilter(filter));
+		}
+
+		protected void clearFilter() {
+
+			setFramesFilter(inactiveFilter);
+		}
+
+		FramesFilterPanel() {
+
+			PanelEntitler.entitle(this, FILTER_PANEL_TITLE);
+		}
+
+		private void setFramesFilter(FramesFilter filter) {
+
+			currentFilter = filter;
+
+			tree.reinitialise();
+		}
+	}
 
 	private class FrameTree extends GTree {
 
 		static private final long serialVersionUID = -1;
+
+		private Icon icon;
 
 		private class FrameNode extends GNode {
 
@@ -67,13 +175,23 @@ class FrameSelector extends Selector<CFrame> {
 
 				for (CFrame subFrame : frame.getSubs()) {
 
-					addChild(new FrameNode(subFrame));
+					if (currentFilter.displayInTree(subFrame)) {
+
+						addChild(new FrameNode(subFrame));
+					}
 				}
 			}
 
 			protected GCellDisplay getDisplay() {
 
-				return new GCellDisplay(frame.getDisplayLabel());
+				GCellDisplay display = new GCellDisplay(frame.getDisplayLabel(), icon);
+
+				if (currentFilter.lexicalMatch(frame)) {
+
+					display.setBackgroundColour(LEXICAL_MATCH_BACKGROUND_CLR);
+				}
+
+				return display;
 			}
 
 			FrameNode(CFrame frame) {
@@ -104,12 +222,12 @@ class FrameSelector extends Selector<CFrame> {
 			}
 		}
 
-		FrameTree(CFrame rootFrame) {
+		FrameTree(boolean forQuery, boolean multiSelect) {
+
+			icon = getIcon(forQuery);
 
 			setRootVisible(false);
 			setShowsRootHandles(true);
-
-			initialise(new FrameNode(rootFrame));
 
 			if (multiSelect) {
 
@@ -119,6 +237,8 @@ class FrameSelector extends Selector<CFrame> {
 
 				addMouseListener(new SingleSelectDisposer());
 			}
+
+			initialise(new FrameNode(rootFrame));
 		}
 
 		List<CFrame> getSelections() {
@@ -141,19 +261,25 @@ class FrameSelector extends Selector<CFrame> {
 
 			return ((FrameNode)path.getLastPathComponent()).frame;
 		}
+
+		private Icon getIcon(boolean forQuery) {
+
+			return forQuery ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
+		}
 	}
 
 	FrameSelector(
 		Window rootWindow,
 		CFrame rootFrame,
+		boolean forQuery,
 		boolean multiSelect,
 		boolean clearRequired) {
 
 		super(rootWindow, getTitle(multiSelect), multiSelect, clearRequired);
 
-		this.multiSelect = multiSelect;
+		this.rootFrame = rootFrame;
 
-		tree = new FrameTree(rootFrame);
+		tree = new FrameTree(forQuery, multiSelect);
 	}
 
 	CFrame getSelection() {
@@ -163,7 +289,12 @@ class FrameSelector extends Selector<CFrame> {
 
 	JComponent getInputComponent() {
 
-		return new JScrollPane(tree);
+		JPanel panel = new JPanel(new BorderLayout());
+
+		panel.add(new JScrollPane(tree), BorderLayout.CENTER);
+		panel.add(new FramesFilterPanel(), BorderLayout.SOUTH);
+
+		return panel;
 	}
 
 	Dimension getWindowSize() {
