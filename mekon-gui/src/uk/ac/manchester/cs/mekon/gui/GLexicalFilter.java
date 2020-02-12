@@ -47,7 +47,7 @@ public class GLexicalFilter {
 		}
 	}
 
-	boolean pass(String label) {
+	public boolean pass(String label) {
 
 		return filter == null || filter.matcher(normaliseCase(label)).matches();
 	}

@@ -25,45 +25,71 @@
 package uk.ac.manchester.cs.mekon.gui;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-public class GListPanel<E> extends JPanel {
+public abstract class GFilterPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	private GList<E> list;
-	private ListFilterPanel filterPanel = new ListFilterPanel();
+	static private final String START_ONLY_TITLE = "begins with";
 
-	private class ListFilterPanel extends GFilterPanel {
+	private JTextField filterField = new JTextField();
+	private JCheckBox startOnlyBox = new JCheckBox(START_ONLY_TITLE);
 
-		static private final long serialVersionUID = -1;
+	private class FilterListener extends KeyAdapter {
 
-		protected void applyFilter(GLexicalFilter filter) {
+		public void keyReleased(KeyEvent event) {
 
-			list.applyFilter(filter);
-		}
-
-		protected void clearFilter() {
-
-			list.clearFilter();
+			update();
 		}
 	}
 
-	public GListPanel(GList<E> list) {
+	private class StartOnlyListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent event) {
+
+			update();
+		}
+	}
+
+	public GFilterPanel() {
 
 		super(new BorderLayout());
 
-		this.list = list;
+		add(filterField, BorderLayout.CENTER);
+		add(startOnlyBox, BorderLayout.EAST);
 
-		add(new JScrollPane(list), BorderLayout.CENTER);
-		add(filterPanel, BorderLayout.SOUTH);
+		filterField.addKeyListener(new FilterListener());
+		startOnlyBox.addActionListener(new StartOnlyListener());
+		startOnlyBox.setSelected(true);
 	}
 
-	public void setFocusToFilterPanel() {
+	public void setFocusToFilterField() {
 
-		filterPanel.setFocusToFilterField();
+		filterField.requestFocusInWindow();
+	}
+
+	protected abstract void applyFilter(GLexicalFilter filter);
+
+	protected abstract void clearFilter();
+
+	private void update() {
+
+		String filter = filterField.getText();
+
+		if (!filter.isEmpty()) {
+
+			boolean startOnly = startOnlyBox.isSelected();
+
+			applyFilter(new GLexicalFilter(filter, startOnly));
+		}
+		else {
+
+			clearFilter();
+		}
 	}
 }
