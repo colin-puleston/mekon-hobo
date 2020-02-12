@@ -64,8 +64,9 @@ public abstract class GFilterPanel extends JPanel {
 		add(startOnlyBox, BorderLayout.EAST);
 
 		filterField.addKeyListener(new FilterListener());
+
 		startOnlyBox.addActionListener(new StartOnlyListener());
-		startOnlyBox.setSelected(true);
+		startOnlyBox.setSelected(false);
 	}
 
 	public void setFocusToFilterField() {

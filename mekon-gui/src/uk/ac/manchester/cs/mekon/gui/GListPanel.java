@@ -60,6 +60,8 @@ public class GListPanel<E> extends JPanel {
 
 		add(new JScrollPane(list), BorderLayout.CENTER);
 		add(filterPanel, BorderLayout.SOUTH);
+
+		setFocusToFilterPanel();
 	}
 
 	public void setFocusToFilterPanel() {

@@ -353,6 +353,16 @@ public abstract class GNode extends GMutableTreeNode {
 		}
 	}
 
+	void reinitialiseSubTree() {
+
+		clearChildren();
+
+		childList = null;
+		initialised = false;
+
+		initialiseSubTree();
+	}
+
 	void updateSubTreeNodeDisplays() {
 
 		updateNodeDisplay();

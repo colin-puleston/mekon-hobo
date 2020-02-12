@@ -221,12 +221,18 @@ public class GTree extends JTree {
 	public void initialise(GNode rootNode) {
 
 		this.rootNode = rootNode;
+
 		treeModel = new DefaultTreeModel(rootNode);
 
 		setModel(treeModel);
 		GCellRenderers.get().set(this);
 
 		rootNode.initialiseSubTree();
+	}
+
+	public void reinitialise() {
+
+		rootNode.reinitialiseSubTree();
 	}
 
 	public void addNodeSelectionListener(GSelectionListener<GNode> nodeSelectionListener) {
