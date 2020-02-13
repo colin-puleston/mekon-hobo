@@ -103,7 +103,7 @@ public class IInstanceParser extends ISerialiser {
 
 					if (addedValue != null) {
 
-						slot.getValuesEditor().add(addedValue);
+						getValuesEditor(slot).add(addedValue);
 					}
 					else {
 
@@ -231,14 +231,17 @@ public class IInstanceParser extends ISerialiser {
 
 			private List<V> getValueSpecsList(XNode valueNode) {
 
-				return valueNode.getBoolean(FIXED_VALUE_STATUS_ATTR)
-						? fixedValueSpecs
-						: assertedValueSpecs;
+				return fixedValueNode(valueNode) ? fixedValueSpecs : assertedValueSpecs;
+			}
+
+			private boolean fixedValueNode(XNode valueNode) {
+
+				return valueNode.getBoolean(FIXED_VALUE_STATUS_ATTR);
 			}
 
 			private void processFixedValueSpecs() {
 
-				getSlotEditor().updateFixedValues(getValues(fixedValueSpecs));
+				getSlotEditor(slot).updateFixedValues(getValues(fixedValueSpecs));
 			}
 
 			private void processAssertedValueSpecs() {
@@ -269,7 +272,7 @@ public class IInstanceParser extends ISerialiser {
 
 				if (!validNonNewValues.isEmpty()) {
 
-					getValuesEditor().update(validNonNewValues);
+					getValuesEditor(slot).update(validNonNewValues);
 				}
 			}
 
@@ -318,16 +321,6 @@ public class IInstanceParser extends ISerialiser {
 			private IEditability getEditability() {
 
 				return slotNode.getEnum(EDITABILITY_ATTR, IEditability.class);
-			}
-
-			private ISlotEditor getSlotEditor() {
-
-				return iEditor.getSlotEditor(slot);
-			}
-
-			private ISlotValuesEditor getValuesEditor() {
-
-				return iEditor.getSlotValuesEditor(slot);
 			}
 		}
 
@@ -1048,5 +1041,15 @@ public class IInstanceParser extends ISerialiser {
 	private CIdentity parseIdentity(XNode node) {
 
 		return CIdentitySerialiser.parse(node);
+	}
+
+	private ISlotEditor getSlotEditor(ISlot slot) {
+
+		return iEditor.getSlotEditor(slot);
+	}
+
+	private ISlotValuesEditor getValuesEditor(ISlot slot) {
+
+		return iEditor.getSlotValuesEditor(slot);
 	}
 }

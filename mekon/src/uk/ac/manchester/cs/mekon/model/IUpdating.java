@@ -39,7 +39,7 @@ public class IUpdating {
 
 	static private final Set<IUpdateOp> NO_OPS = Collections.<IUpdateOp>emptySet();
 
-	private CModel model;
+	private IEditor iEditor;
 
 	private boolean autoUpdate = true;
 	private Set<IUpdateOp> defaultOps = IUpdateOp.valuesAsSet();
@@ -80,7 +80,7 @@ public class IUpdating {
 
 	IUpdating(CModel model) {
 
-		this.model = model;
+		iEditor = model.getIEditor();
 	}
 
 	void setAutoUpdate(boolean autoUpdate) {
@@ -122,29 +122,31 @@ public class IUpdating {
 
 	Set<IUpdateOp> update(IFrame instance) {
 
-		return update(instance, getDefaultOps());
+		return update(instance, defaultOps);
 	}
 
 	Set<IUpdateOp> update(IFrame instance, Set<IUpdateOp> ops) {
 
-		ops = purgeOpsForQuery(instance, ops);
+		ops = copyOpsAndPurgeForQuery(instance, ops);
 
 		if (ops.isEmpty()) {
 
 			return NO_OPS;
 		}
 
-		IReasoner reasoner = instance.getType().getIReasoner();
-
-		return reasoner.updateFrame(model.getIEditor(), instance, ops);
+		return getIReasoner(instance).updateFrame(iEditor, instance, ops);
 	}
 
 	Set<IUpdateOp> reinitialise(IFrame instance) {
 
-		IReasoner reasoner = instance.getType().getIReasoner();
-		Set<IUpdateOp> ops = getDefaultOps();
+		Set<IUpdateOp> ops = copyOpsAndPurgeForQuery(instance, defaultOps);
 
-		return reasoner.reinitialiseFrame(model.getIEditor(), instance, ops);
+		if (ops.isEmpty()) {
+
+			return NO_OPS;
+		}
+
+		return getIReasoner(instance).reinitialiseFrame(iEditor, instance, ops);
 	}
 
 	private Set<IUpdateOp> removeDefaultOps(Set<IUpdateOp> ops) {
@@ -156,7 +158,7 @@ public class IUpdating {
 		return nonDefaultOps;
 	}
 
-	private Set<IUpdateOp> purgeOpsForQuery(IFrame instance, Set<IUpdateOp> ops) {
+	private Set<IUpdateOp> copyOpsAndPurgeForQuery(IFrame instance, Set<IUpdateOp> ops) {
 
 		Set<IUpdateOp> purgedOps = new HashSet<IUpdateOp>(ops);
 
@@ -166,6 +168,11 @@ public class IUpdating {
 		}
 
 		return purgedOps;
+	}
+
+	private IReasoner getIReasoner(IFrame instance) {
+
+		return instance.getType().getIReasoner();
 	}
 }
 
