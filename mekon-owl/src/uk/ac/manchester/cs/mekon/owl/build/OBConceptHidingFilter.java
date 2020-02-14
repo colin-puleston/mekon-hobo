@@ -63,8 +63,8 @@ public enum OBConceptHidingFilter {
 	},
 
 	/**
-	 * Represents a filter that allows only "defined" concepts and
-	 * their descendants to be hidden.
+	 * Represents a filter that allows only "defined" concepts with no
+	 * no non-defined descendants to be hidden.
 	 */
 	DEFINIED_SUB_TREES_ONLY {
 
