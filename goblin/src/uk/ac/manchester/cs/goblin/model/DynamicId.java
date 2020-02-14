@@ -3,6 +3,8 @@ package uk.ac.manchester.cs.goblin.model;
 import java.io.*;
 import java.net.*;
 
+import uk.ac.manchester.cs.mekon.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -10,77 +12,22 @@ public class DynamicId {
 
 	static public DynamicId fromName(String name) {
 
-		return new DynamicId(name, nameToLabel(checkNonEmptyName(name)));
+		return new DynamicId(name, nameToLabel(name));
 	}
 
 	static public DynamicId fromLabel(String label) {
 
-		return new DynamicId(labelToName(checkNonEmptyLabel(label)), label);
+		return new DynamicId(labelToName(label), label);
 	}
 
 	static private String nameToLabel(String name) {
 
-		StringBuilder label = new StringBuilder();
-
-		name = decodeName(name);
-
-		label.append(name.charAt(0));
-
-		for (int i = 1 ; i < name.length() ; i++) {
-
-			char c = name.charAt(i);
-
-			if (Character.isUpperCase(c)) {
-
-				if (nonUpperCase(name, i - 1) || nonUpperCaseOrDigit(name, i + 1)) {
-
-					label.append(' ');
-
-					if (!isUpperCase(name, i + 1)) {
-
-						c = Character.toLowerCase(c);
-					}
-				}
-
-				label.append(c);
-			}
-			else if (Character.isDigit(c)) {
-
-				if (nonDigit(name, i - 1)) {
-
-					label.append(' ');
-				}
-
-				label.append(c);
-
-				if (nonDigit(name, i + 1) && nonUpperCase(name, i + 1)) {
-
-					label.append(' ');
-				}
-			}
-			else {
-
-				label.append(c);
-			}
-		}
-
-		return label.toString();
+		return KLabel.create(decodeName(checkNonEmptyName(name)));
 	}
 
 	static private String labelToName(String label) {
 
-		StringBuilder name = new StringBuilder();
-
-		for (String word : label.split(" ")) {
-
-			if (!word.isEmpty()) {
-
-				name.append(Character.toUpperCase(word.charAt(0)));
-				name.append(word.substring(1));
-			}
-		}
-
-		return encodeName(name.toString());
+		return KLabel.recreateName(encodeName(checkNonEmptyLabel(label)));
 	}
 
 	static private String checkNonEmptyName(String name) {
@@ -125,26 +72,6 @@ public class DynamicId {
 
 			throw new Error(e);
 		}
-	}
-
-	static private boolean isUpperCase(String name, int i) {
-
-		return i < name.length() && Character.isUpperCase(name.charAt(i));
-	}
-
-	static private boolean nonUpperCaseOrDigit(String name, int i) {
-
-		return nonUpperCase(name, i) && nonDigit(name, i);
-	}
-
-	static private boolean nonUpperCase(String name, int i) {
-
-		return i < name.length() && !Character.isUpperCase(name.charAt(i));
-	}
-
-	static private boolean nonDigit(String name, int i) {
-
-		return i < name.length() && !Character.isDigit(name.charAt(i));
 	}
 
 	private String name;
