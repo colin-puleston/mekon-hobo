@@ -80,16 +80,14 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 	 * for the specified named OWL object.
 	 *
 	 * @param object Object for which label is required
-	 * @return generated label
+	 * @return Generated label
 	 */
 	static public String createDefaultLabel(OWLNamedObject object) {
 
 		IRI iri = object.getIRI();
-		String frag = iri.toURI().getFragment();
+		String fragment = iri.toURI().getFragment();
 
-		return frag != null
-				? KLabel.create(frag, object instanceof OWLClass)
-				: iri.toString();
+		return fragment != null ? KLabel.create(fragment) : iri.toString();
 	}
 
 	static private List<String> getIdentifierComponents(OWLNamedObject object) {
