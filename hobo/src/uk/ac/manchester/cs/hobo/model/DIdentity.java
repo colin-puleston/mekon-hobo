@@ -42,7 +42,7 @@ public class DIdentity extends CIdentity {
 
 	static String createLabel(String fieldName) {
 
-		return KLabel.create(fieldName, false);
+		return KLabel.create(fieldName);
 	}
 
 	/**
