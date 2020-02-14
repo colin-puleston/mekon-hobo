@@ -27,10 +27,8 @@ package uk.ac.manchester.cs.mekon.util;
 /**
  * Utility class that heuristically converts concept-names or
  * property-names, which may be in "camel-back" notation, into
- * versions that are hopefully suitable for being displayed to
- * an end-user. Will produce either "concept-format" labels
- * (begining with upper-case) or "property-format" (begining
- * with lower-case).
+ * versions intended to be suitable for being displayed to an
+ * end-user.
  *
  * @author Colin Puleston
  */
@@ -39,84 +37,108 @@ public class KLabel {
 	/**
 	 * Creates an end-user format label from a class-name.
 	 *
-	 * @param sourceClass Class from whose name the label is
-	 * to be generated
-	 * @return generated label
+	 * @param sourceClass Class from whose name the label is to be
+	 * generated
+	 * @return Generated label
 	 */
 	static public String create(Class<?> sourceClass) {
 
-		return create(sourceClass.getSimpleName(), true);
+		return create(sourceClass.getSimpleName());
 	}
 
 	/**
 	 * Creates an end-user format label.
 	 *
 	 * @param name Entity-name from which label is to be generated
-	 * @param conceptFormat True if label is to be in concept-format
-	 * rather than property-format.
-	 * @return generated label
+	 * @return Generated label
 	 */
-	static public String create(String name, boolean conceptFormat) {
-
-		return new KLabel(conceptFormat).create(name);
-	}
-
-	private boolean conceptFormat;
-
-	private KLabel(boolean conceptFormat) {
-
-		this.conceptFormat = conceptFormat;
-	}
-
-	private String create(String name) {
+	static public String create(String name) {
 
 		StringBuilder label = new StringBuilder();
 
-		for (int i = 0 ; i < name.length() ; i++) {
+		label.append(name.charAt(0));
 
-			label.append(toLabelChars(name, i));
+		for (int i = 1 ; i < name.length() ; i++) {
+
+			char c = name.charAt(i);
+
+			if (Character.isUpperCase(c)) {
+
+				if (nonUpperCase(name, i - 1) || nonUpperCaseOrDigit(name, i + 1)) {
+
+					label.append(' ');
+
+					if (!isUpperCase(name, i + 1)) {
+
+						c = Character.toLowerCase(c);
+					}
+				}
+
+				label.append(c);
+			}
+			else if (Character.isDigit(c)) {
+
+				if (nonDigit(name, i - 1)) {
+
+					label.append(' ');
+				}
+
+				label.append(c);
+
+				if (nonDigit(name, i + 1) && nonUpperCase(name, i + 1)) {
+
+					label.append(' ');
+				}
+			}
+			else {
+
+				label.append(c);
+			}
 		}
 
 		return label.toString();
 	}
 
-	private String toLabelChars(String name, int index) {
+	/**
+	 * Attempts to recreate the entity-name from which end-user format
+	 * label was generated.
+	 *
+	 * @param label Entity-name from which label is to be generated
+	 * @return Regenerated entity-name
+	 */
+	static public String recreateName(String label) {
 
-		String insert = "";
-		char c = name.charAt(index);
+		StringBuilder name = new StringBuilder();
 
-		if (index == 0) {
+		for (String word : label.split(" ")) {
 
-			if (conceptFormat) {
+			if (!word.isEmpty()) {
 
-				c = Character.toUpperCase(c);
-			}
-		}
-		else {
-
-			if (nextWordStartChar(c, name.charAt(index - 1))) {
-
-				insert = "-";
-
-				if (nextWordStartCharToLower(name, index)) {
-
-					c = Character.toLowerCase(c);
-				}
+				name.append(Character.toUpperCase(word.charAt(0)));
+				name.append(word.substring(1));
 			}
 		}
 
-		return insert + c;
+		return name.toString();
 	}
 
-	private boolean nextWordStartChar(char current, int last) {
+	static private boolean isUpperCase(String name, int i) {
 
-		return Character.isUpperCase(current) && Character.isLowerCase(last);
+		return i < name.length() && Character.isUpperCase(name.charAt(i));
 	}
 
-	private boolean nextWordStartCharToLower(String name, int index) {
+	static private boolean nonUpperCaseOrDigit(String name, int i) {
 
-		int ni = index + 1;
+		return nonUpperCase(name, i) && nonDigit(name, i);
+	}
 
-		return ni < name.length() && Character.isLowerCase(name.charAt(ni));
+	static private boolean nonUpperCase(String name, int i) {
+
+		return i < name.length() && !Character.isUpperCase(name.charAt(i));
+	}
+
+	static private boolean nonDigit(String name, int i) {
+
+		return i < name.length() && !Character.isDigit(name.charAt(i));
 	}
 }
