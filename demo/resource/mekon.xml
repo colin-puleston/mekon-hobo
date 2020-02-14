@@ -168,7 +168,7 @@
 					rootURI="http://mekon/demo-core.owl#DemoConcept"
 					inclusion="ALL"
 					conceptHidingCandidates="ALL"
-					conceptHidingFilter="DEFINIED_SUB_TREES_ONLY"/>
+					conceptHidingFilter="DEFINIED_CONCEPTS_ONLY"/>
 			</ConceptInclusion>
 
 			<PropertyInclusion>
