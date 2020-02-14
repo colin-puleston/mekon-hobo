@@ -81,45 +81,12 @@ class DynamicModelRenderer {
 
 	void write(Model model, File dynamicFile) {
 
-		clearOldHierarchies(model);
+		ontology.removeAllClasses();
 
 		renderNewHierarchies(model);
 		renderNewConstraints(model);
 
 		ontology.write(dynamicFile);
-	}
-
-	private void clearOldHierarchies(Model model) {
-
-		for (Hierarchy hierarchy : model.getHierarchies()) {
-
-			clearDescendantClasses(getCls(hierarchy.getRootConcept()));
-			clearConstraintClasses(hierarchy);
-		}
-	}
-
-	private void clearConstraintClasses(Hierarchy hierarchy) {
-
-		for (ConstraintType type : hierarchy.getConstraintTypes()) {
-
-			if (type instanceof AnchoredConstraintType) {
-
-				clearConstraintClasses((AnchoredConstraintType)type);
-			}
-		}
-	}
-
-	private void clearConstraintClasses(AnchoredConstraintType type) {
-
-		clearDescendantClasses(getCls(type.getAnchorConceptId()));
-	}
-
-	private void clearDescendantClasses(OWLClass rootCls) {
-
-		for (OWLClass subCls : getSubClasses(rootCls, false)) {
-
-			ontology.removeClass(subCls);
-		}
 	}
 
 	private void renderNewHierarchies(Model model) {

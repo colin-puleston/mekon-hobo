@@ -68,19 +68,30 @@ class Ontology {
 		return cls;
 	}
 
-	void removeClass(OWLClass cls) {
-
-		manager.removeAxioms(mainOntology, getAxioms(cls));
-		manager.removeAxiom(mainOntology, factory.getOWLDeclarationAxiom(cls));
-	}
-
 	void addLabel(OWLClass cls, String label) {
 
-		addAxiom(
-			factory.getOWLAnnotationAssertionAxiom(
-				labelAnnotationProperty,
-				cls.getIRI(),
-				factory.getOWLLiteral(label)));
+		addAxiom(createLabelAxiom(cls, label));
+	}
+
+	void removeAllClasses() {
+
+		for (OWLClass cls : mainOntology.getClassesInSignature()) {
+
+			removeClass(cls);
+		}
+	}
+
+	void removeClass(OWLClass cls) {
+
+		removeAxioms(getAxioms(cls));
+		removeAxiom(factory.getOWLDeclarationAxiom(cls));
+
+		String label = lookForLabel(cls);
+
+		if (label != null) {
+
+			removeAxiom(createLabelAxiom(cls, label));
+		}
 	}
 
 	void write(File file) {
@@ -197,9 +208,27 @@ class Ontology {
 		return factory.getOWLObjectUnionOf(values);
 	}
 
+	private OWLAxiom createLabelAxiom(OWLEntity entity, String label) {
+
+		return factory.getOWLAnnotationAssertionAxiom(
+					labelAnnotationProperty,
+					entity.getIRI(),
+					factory.getOWLLiteral(label));
+	}
+
 	private void addAxiom(OWLAxiom axiom) {
 
 		manager.addAxiom(mainOntology, axiom);
+	}
+
+	private void removeAxiom(OWLAxiom axiom) {
+
+		manager.removeAxiom(mainOntology, axiom);
+	}
+
+	private void removeAxioms(Set<? extends OWLAxiom> axioms) {
+
+		manager.removeAxioms(mainOntology, axioms);
 	}
 
 	private OWLAnnotationProperty getLabelAnnotationProperty() {
