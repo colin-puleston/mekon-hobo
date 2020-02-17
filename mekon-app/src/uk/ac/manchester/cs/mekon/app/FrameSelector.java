@@ -60,104 +60,35 @@ class FrameSelector extends Selector<CFrame> {
 	private CFrame rootFrame;
 
 	private FrameTree tree;
+	private FilterPanel filterPanel = new FilterPanel();
 
-	private FramesFilter inactiveFilter = new InactiveFramesFilter();
-	private FramesFilter currentFilter = inactiveFilter;
-
-	private abstract class FramesFilter {
-
-		abstract boolean lexicalMatch(CFrame frame);
-
-		abstract boolean displayInTree(CFrame frame);
-	}
-
-	private class InactiveFramesFilter extends FramesFilter {
-
-		boolean lexicalMatch(CFrame frame) {
-
-			return false;
-		}
-
-		boolean displayInTree(CFrame frame) {
-
-			return true;
-		}
-	}
-
-	private class ActiveFramesFilter extends FramesFilter {
-
-		private GLexicalFilter lexicalFilter;
-		private Set<CFrame> displayInTrees = new HashSet<CFrame>();
-
-		ActiveFramesFilter(GLexicalFilter lexicalFilter) {
-
-			this.lexicalFilter = lexicalFilter;
-
-			initialiseFromDescendants(rootFrame);
-		}
-
-		boolean lexicalMatch(CFrame frame) {
-
-			return lexicalFilter.pass(frame.getIdentity().getLabel());
-		}
-
-		boolean displayInTree(CFrame frame) {
-
-			return displayInTrees.contains(frame);
-		}
-
-		private boolean initialiseFromDescendants(CFrame current) {
-
-			boolean anyLexicalPasses = false;
-
-			for (CFrame sub : current.getSubs(CVisibility.EXPOSED)) {
-
-				anyLexicalPasses |= initialiseFrom(sub);
-			}
-
-			return anyLexicalPasses;
-		}
-
-		private boolean initialiseFrom(CFrame current) {
-
-			boolean lexicalMatch = lexicalMatch(current);
-			boolean anyDescendantLexicalPasses = initialiseFromDescendants(current);
-
-			if (lexicalMatch(current) || anyDescendantLexicalPasses) {
-
-				displayInTrees.add(current);
-
-				return true;
-			}
-
-			return false;
-		}
-	}
-
-	private class FramesFilterPanel extends GFilterPanel {
+	private class FilterPanel extends GTreeFilterPanel<CFrame> {
 
 		static private final long serialVersionUID = -1;
 
-		protected void applyFilter(GLexicalFilter filter) {
-
-			setFramesFilter(new ActiveFramesFilter(filter));
-		}
-
-		protected void clearFilter() {
-
-			setFramesFilter(inactiveFilter);
-		}
-
-		FramesFilterPanel() {
-
-			PanelEntitler.entitle(this, FILTER_PANEL_TITLE);
-		}
-
-		private void setFramesFilter(FramesFilter filter) {
-
-			currentFilter = filter;
+		protected void reinitialiseTree() {
 
 			tree.reinitialise();
+		}
+
+		protected CFrame getRootNode() {
+
+			return rootFrame;
+		}
+
+		protected Collection<CFrame> getChildNodes(CFrame parent) {
+
+			return parent.getSubs(CVisibility.EXPOSED);
+		}
+
+		protected String getNodeLabel(CFrame node) {
+
+			return node.getIdentity().getLabel();
+		}
+
+		FilterPanel() {
+
+			PanelEntitler.entitle(this, FILTER_PANEL_TITLE);
 		}
 	}
 
@@ -175,7 +106,7 @@ class FrameSelector extends Selector<CFrame> {
 
 				for (CFrame subFrame : frame.getSubs()) {
 
-					if (currentFilter.displayInTree(subFrame)) {
+					if (filterPanel.requiredInTree(subFrame)) {
 
 						addChild(new FrameNode(subFrame));
 					}
@@ -186,7 +117,7 @@ class FrameSelector extends Selector<CFrame> {
 
 				GCellDisplay display = new GCellDisplay(frame.getDisplayLabel(), icon);
 
-				if (currentFilter.lexicalMatch(frame)) {
+				if (filterPanel.passesFilter(frame)) {
 
 					display.setBackgroundColour(LEXICAL_MATCH_BACKGROUND_CLR);
 				}
@@ -292,7 +223,7 @@ class FrameSelector extends Selector<CFrame> {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		panel.add(new JScrollPane(tree), BorderLayout.CENTER);
-		panel.add(new FramesFilterPanel(), BorderLayout.SOUTH);
+		panel.add(filterPanel, BorderLayout.SOUTH);
 
 		return panel;
 	}
