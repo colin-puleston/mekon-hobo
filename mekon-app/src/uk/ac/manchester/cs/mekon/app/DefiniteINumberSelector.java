@@ -42,9 +42,9 @@ class DefiniteINumberSelector extends INumberSelector {
 
 	private InputField valueField = new InputField();
 
-	DefiniteINumberSelector(Window rootWindow, CNumber type, boolean clearRequired) {
+	DefiniteINumberSelector(JComponent parent, CNumber type, boolean clearRequired) {
 
-		super(rootWindow, type, TITLE, clearRequired);
+		super(parent, type, TITLE, clearRequired);
 	}
 
 	INumber resolveSelection(CNumber type) {

@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -39,14 +39,14 @@ class IStringSelector extends StringSelector<IString> {
 
 	private InputField valueField = new InputField();
 
-	IStringSelector(Window rootWindow, boolean clearRequired) {
+	IStringSelector(JComponent parent, boolean clearRequired) {
 
-		this(rootWindow, DEFAULT_TITLE, clearRequired);
+		this(parent, DEFAULT_TITLE, clearRequired);
 	}
 
-	IStringSelector(Window rootWindow, String title, boolean clearRequired) {
+	IStringSelector(JComponent parent, String title, boolean clearRequired) {
 
-		super(rootWindow, title, clearRequired);
+		super(parent, title, clearRequired);
 	}
 
 	IString convertInputValue(String text) {

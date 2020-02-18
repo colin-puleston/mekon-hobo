@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -41,9 +40,9 @@ abstract class INumberSelector extends TextInputSelector<INumber> {
 
 	private CNumber type;
 
-	INumberSelector(Window rootWindow, CNumber type, String title, boolean clearRequired) {
+	INumberSelector(JComponent parent, CNumber type, String title, boolean clearRequired) {
 
-		super(rootWindow, title, true, clearRequired);
+		super(parent, title, true, clearRequired);
 
 		this.type = type;
 	}

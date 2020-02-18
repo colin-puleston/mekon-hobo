@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.Window;
 import java.util.*;
 import javax.swing.*;
 
@@ -54,9 +53,9 @@ class StoreIdSelector extends StringSelector<String> {
 
 	private Set<CIdentity> inMemoryIds = new HashSet<CIdentity>();
 
-	StoreIdSelector(Window rootWindow, Store store, IFrameFunction function) {
+	StoreIdSelector(JComponent parent, Store store, IFrameFunction function) {
 
-		super(rootWindow, createTitle(function), false);
+		super(parent, createTitle(function), false);
 
 		this.store = store;
 		this.function = function;

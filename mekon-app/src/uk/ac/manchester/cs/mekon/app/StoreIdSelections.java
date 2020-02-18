@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -34,22 +33,12 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class StoreIdSelections {
 
-	static private JFrame findOwnerFrame(JComponent component) {
-
-		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, component);
-	}
-
-	private Window ownerWindow;
+	private JComponent parent;
 	private Controller controller;
 
-	StoreIdSelections(JComponent component, Controller controller) {
+	StoreIdSelections(JComponent parent, Controller controller) {
 
-		this(findOwnerFrame(component), controller);
-	}
-
-	StoreIdSelections(Window ownerWindow, Controller controller) {
-
-		this.ownerWindow = ownerWindow;
+		this.parent = parent;
 		this.controller = controller;
 	}
 
@@ -85,7 +74,7 @@ class StoreIdSelections {
 
 	private StoreIdSelector createIdSelector(IFrameFunction function) {
 
-		return new StoreIdSelector(ownerWindow, getStore(), function);
+		return new StoreIdSelector(parent, getStore(), function);
 	}
 
 	private Store getStore() {

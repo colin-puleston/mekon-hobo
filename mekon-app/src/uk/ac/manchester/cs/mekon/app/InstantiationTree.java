@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
-
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -35,15 +33,13 @@ class InstantiationTree extends GTree {
 
 	static private final long serialVersionUID = -1;
 
-	private Window rootWindow;
 	private Instantiator instantiator;
 
 	private RootInstantiationNode rootNode;
 	private boolean viewOnly;
 
-	InstantiationTree(Window rootWindow, Instantiator instantiator, boolean viewOnly) {
+	InstantiationTree(Instantiator instantiator, boolean viewOnly) {
 
-		this.rootWindow = rootWindow;
 		this.instantiator = instantiator;
 		this.viewOnly = viewOnly;
 
@@ -66,11 +62,6 @@ class InstantiationTree extends GTree {
 	boolean viewOnly() {
 
 		return viewOnly;
-	}
-
-	Window getRootWindow() {
-
-		return rootWindow;
 	}
 
 	Instantiator getInstantiator() {
