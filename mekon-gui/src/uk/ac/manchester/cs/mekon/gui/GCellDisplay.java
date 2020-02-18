@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Component;
@@ -152,16 +153,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	private void collectComponents(List<Component> components, boolean selected) {
 
-		if (icon != null && backgroundColour != null) {
-
-			components.add(new JLabel(icon));
-			components.add(createSeparator(false));
-			components.add(createBasicLabel(false));
-		}
-		else {
-
-			components.add(createLabel(selected));
-		}
+		components.add(createLabel(selected));
 
 		if (modifier != null) {
 
@@ -172,17 +164,9 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	private JLabel createLabel(boolean selected) {
 
-		JLabel label = createBasicLabel(selected);
-
-		label.setIcon(icon);
-
-		return label;
-	}
-
-	private JLabel createBasicLabel(boolean selected) {
-
 		JLabel label = new JLabel();
 
+		label.setIcon(icon);
 		label.setText(text);
 		label.setFont(deriveFont(label.getFont()));
 		label.setForeground(textColour);
