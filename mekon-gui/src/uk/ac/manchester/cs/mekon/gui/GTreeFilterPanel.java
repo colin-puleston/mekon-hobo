@@ -65,7 +65,7 @@ public abstract class GTreeFilterPanel<N> extends GFilterPanel {
 
 			this.lexicalFilter = lexicalFilter;
 
-			initialiseFromDescendants(getRootNode());
+			initialiseFrom(getRootNodes());
 		}
 
 		boolean passesFilter(N node) {
@@ -78,28 +78,28 @@ public abstract class GTreeFilterPanel<N> extends GFilterPanel {
 			return displayInTrees.contains(node);
 		}
 
-		private boolean initialiseFromDescendants(N current) {
+		private boolean initialiseFrom(N node) {
 
-			boolean anyLexicalPasses = false;
+			if (initialiseFrom(getChildNodes(node)) || passesFilter(node)) {
 
-			for (N child : getChildNodes(current)) {
-
-				anyLexicalPasses |= initialiseFrom(child);
-			}
-
-			return anyLexicalPasses;
-		}
-
-		private boolean initialiseFrom(N current) {
-
-			if (initialiseFromDescendants(current) || passesFilter(current)) {
-
-				displayInTrees.add(current);
+				displayInTrees.add(node);
 
 				return true;
 			}
 
 			return false;
+		}
+
+		private boolean initialiseFrom(Collection<N> nodes) {
+
+			boolean anyFilterPasses = false;
+
+			for (N node : nodes) {
+
+				anyFilterPasses |= initialiseFrom(node);
+			}
+
+			return anyFilterPasses;
 		}
 	}
 
@@ -125,7 +125,7 @@ public abstract class GTreeFilterPanel<N> extends GFilterPanel {
 
 	protected abstract void reinitialiseTree();
 
-	protected abstract N getRootNode();
+	protected abstract Collection<N> getRootNodes();
 
 	protected abstract Collection<N> getChildNodes(N parent);
 
