@@ -92,55 +92,7 @@ class Instantiator {
 
 	private void checkInitialiseSlot(ISlot slot) {
 
-		if (editable(slot) && singleValued(slot)) {
-
-			IValue value = getInitialSlotValueOrNull(slot.getValueType());
-
-			if (value != null) {
-
-				slot.getValuesEditor().add(value);
-			}
-		}
-	}
-
-	private IValue getInitialSlotValueOrNull(CValue<?> valueType) {
-
-		if (valueType instanceof MFrame) {
-
-			return ((MFrame)valueType).getRootCFrame();
-		}
-
-		if (valueType instanceof CFrame) {
-
-			return getInitialSlotValueOrNull((CFrame)valueType);
-		}
-
-		return null;
-	}
-
-	private IValue getInitialSlotValueOrNull(CFrame valueType) {
-
-		if (!instanceRefType(valueType) && valueType.getSubs().isEmpty()) {
-
-			IFrame frame = instantiate(valueType);
-
-			if (frame.getSlots().isEmpty()) {
-
-				return frame;
-			}
-		}
-
-		return null;
-	}
-
-	private boolean editable(ISlot slot) {
-
-		return slot.getEditability().editable();
-	}
-
-	private boolean singleValued(ISlot slot) {
-
-		return slot.getType().getCardinality().singleValue();
+		new AutoValueProvider(this, slot).checkProvide();
 	}
 
 	private IFrameFunction getFunction() {

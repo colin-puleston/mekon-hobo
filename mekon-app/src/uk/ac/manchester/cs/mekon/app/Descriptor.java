@@ -40,6 +40,7 @@ class Descriptor {
 	private ISlot slot;
 	private CValue<?> valueType;
 	private IValue value;
+	private boolean inferredValue;
 
 	public boolean equals(Object other) {
 
@@ -62,6 +63,7 @@ class Descriptor {
 		this.value = value;
 
 		valueType = slot.getValueType();
+		inferredValue = inferredValue();
 	}
 
 	ISlot getSlot() {
@@ -101,12 +103,17 @@ class Descriptor {
 			return anyUserEditability() || anyTerminalValues();
 		}
 
-		return editableSlot();
+		return userEditable();
+	}
+
+	boolean userEditable() {
+
+		return editableSlot() && !inferredValue;
 	}
 
 	boolean anyUserEditability() {
 
-		return editableSlot() || anyNestedUserEditability();
+		return userEditable() || anyNestedUserEditability();
 	}
 
 	boolean anyEffectiveValues() {
@@ -185,6 +192,26 @@ class Descriptor {
 		return getCustomiser().getDisplayLabel(value);
 	}
 
+	private boolean inferredValue() {
+
+		if (!hasValue()) {
+
+			return false;
+		}
+
+		return reasonerProvidedValue() || appProvidedValue();
+	}
+
+	private boolean reasonerProvidedValue() {
+
+		return slot.getValues().getFixedValues().contains(value);
+	}
+
+	private boolean appProvidedValue() {
+
+		return new AutoValueProvider(instantiator, slot).canProvide();
+	}
+
 	private boolean anyUserValues() {
 
 		if (!hasValue()) {
@@ -192,7 +219,7 @@ class Descriptor {
 			return false;
 		}
 
-		return editableSlot() || anyNestedUserValues();
+		return userEditable() || anyNestedUserValues();
 	}
 
 	private boolean anyTerminalValues() {
@@ -220,14 +247,14 @@ class Descriptor {
 		return hasValue() && ValuesTester.anyNestedTerminalValues(value);
 	}
 
-	private boolean editableSlot() {
-
-		return slot.getEditability().editable();
-	}
-
 	private Object getStateMatcher() {
 
 		return hasValue() ? value : NO_VALUE_MATCHER;
+	}
+
+	private boolean editableSlot() {
+
+		return slot.getEditability().editable();
 	}
 
 	private Customiser getCustomiser() {

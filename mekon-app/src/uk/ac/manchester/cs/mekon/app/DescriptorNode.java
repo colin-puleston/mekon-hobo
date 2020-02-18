@@ -36,6 +36,8 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 class DescriptorNode extends InstantiationNode {
 
+	static private final Color NON_EDITABLE_BACKGROUND_CLR = new Color(220,220,200);
+
 	private Descriptor descriptor;
 	private GNodeAction editAction;
 
@@ -122,21 +124,14 @@ class DescriptorNode extends InstantiationNode {
 
 		GCellDisplay display = new GCellDisplay(descriptor.getValueLabel());
 
-		display.setFontStyle(getValueFont());
-
-		return display;
-	}
-
-	private int getValueFont() {
-
-		int font = descriptor.hasValue() ? Font.BOLD : Font.PLAIN;
+		display.setFontStyle(Font.BOLD);
 
 		if (!editable()) {
 
-			font |= Font.ITALIC;
+			display.setBackgroundColour(NON_EDITABLE_BACKGROUND_CLR);
 		}
 
-		return font;
+		return display;
 	}
 
 	private Icon getIcon() {
@@ -151,6 +146,6 @@ class DescriptorNode extends InstantiationNode {
 
 	private boolean editable() {
 
-		return descriptor.getSlot().getEditability().editable();
+		return descriptor.userEditable();
 	}
 }

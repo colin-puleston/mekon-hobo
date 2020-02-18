@@ -210,9 +210,14 @@ class DescriptorEditor {
 
 		private void showNoSelectionsMessage() {
 
-			JOptionPane.showMessageDialog(
-				null,
-				"No " + valueType.getDisplayLabel() + " instances currently available!");
+			JOptionPane.showMessageDialog(null, getNoSelectionsMessage());
+		}
+
+		private String getNoSelectionsMessage() {
+
+			return "No "
+					+ "\"" + valueType.getDisplayLabel() + "\""
+					+ " instances currently available!";
 		}
 	}
 

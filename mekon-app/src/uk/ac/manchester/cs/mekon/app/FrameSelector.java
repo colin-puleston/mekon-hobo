@@ -71,9 +71,9 @@ class FrameSelector extends Selector<CFrame> {
 			tree.reinitialise();
 		}
 
-		protected CFrame getRootNode() {
+		protected Collection<CFrame> getRootNodes() {
 
-			return rootFrame;
+			return getChildNodes(rootFrame);
 		}
 
 		protected Collection<CFrame> getChildNodes(CFrame parent) {
