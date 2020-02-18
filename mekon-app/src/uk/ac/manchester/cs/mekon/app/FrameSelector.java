@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.util.*;
-import java.awt.Window;
 import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.BorderLayout;
@@ -200,13 +199,13 @@ class FrameSelector extends Selector<CFrame> {
 	}
 
 	FrameSelector(
-		Window rootWindow,
+		JComponent parent,
 		CFrame rootFrame,
 		boolean forQuery,
 		boolean multiSelect,
 		boolean clearRequired) {
 
-		super(rootWindow, getTitle(multiSelect), multiSelect, clearRequired);
+		super(parent, getTitle(multiSelect), multiSelect, clearRequired);
 
 		this.rootFrame = rootFrame;
 

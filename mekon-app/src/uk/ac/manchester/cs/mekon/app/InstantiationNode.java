@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -65,11 +64,6 @@ abstract class InstantiationNode extends GNode {
 	InstantiationTree getInstantiationTree() {
 
 		return tree;
-	}
-
-	Window getRootWindow() {
-
-		return tree.getRootWindow();
 	}
 
 	Instantiator getInstantiator() {

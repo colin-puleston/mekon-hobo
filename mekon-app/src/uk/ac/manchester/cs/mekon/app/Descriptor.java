@@ -71,14 +71,14 @@ class Descriptor {
 		return slot;
 	}
 
-	boolean aspectType() {
+	boolean structuredType() {
 
-		return categoryCFrameType(false);
+		return cFrameValueType(false);
 	}
 
 	boolean instanceRefType() {
 
-		return categoryCFrameType(true);
+		return cFrameValueType(true);
 	}
 
 	boolean valueType(Class<? extends CValue<?>> testType) {
@@ -98,7 +98,7 @@ class Descriptor {
 
 	boolean active() {
 
-		if (aspectType()) {
+		if (structuredType()) {
 
 			return anyUserEditability() || anyTerminalValues();
 		}
@@ -138,11 +138,11 @@ class Descriptor {
 		return anyEffectiveValues() ? getActualValueLabel() : getNoEffectiveValueLabel();
 	}
 
-	private boolean categoryCFrameType(boolean aspectRef) {
+	private boolean cFrameValueType(boolean instanceRef) {
 
 		if (valueType(CFrame.class)) {
 
-			return instantiator.instanceRefType((CFrame)valueType) == aspectRef;
+			return instantiator.instanceRefType((CFrame)valueType) == instanceRef;
 		}
 
 		return false;

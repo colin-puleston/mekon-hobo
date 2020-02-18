@@ -35,7 +35,7 @@ public interface Customiser {
 
 	public String getDisplayLabel(IValue value);
 
-	public boolean hiddenSlot(IFrame frame, ISlot slot);
+	public boolean hiddenSlot(ISlot slot);
 
 	public IFrame onNewInstance(IFrame instance, CIdentity storeId);
 

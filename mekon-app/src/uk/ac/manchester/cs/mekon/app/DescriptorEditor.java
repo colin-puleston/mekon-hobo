@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -34,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class DescriptorEditor {
 
-	private Window rootWindow;
+	private JComponent parent;
 	private Instantiator instantiator;
 
 	private Descriptor descriptor;
@@ -130,7 +129,7 @@ class DescriptorEditor {
 			boolean query = instantiator.queryInstantiation();
 			boolean multiSelect = abstractEditableSlot();
 
-			return new FrameSelector(rootWindow, rootCFrame, query, multiSelect, clearRequired);
+			return new FrameSelector(parent, rootCFrame, query, multiSelect, clearRequired);
 		}
 	}
 
@@ -186,7 +185,7 @@ class DescriptorEditor {
 			boolean multiSelect = abstractEditableSlot();
 
 			return new InstanceRefSelector(
-							rootWindow,
+							parent,
 							instantiator,
 							valueType,
 							multiSelect,
@@ -242,10 +241,10 @@ class DescriptorEditor {
 
 			if (abstractEditableSlot()) {
 
-				return new IndefiniteINumberSelector(rootWindow, valueType, clearRequired);
+				return new IndefiniteINumberSelector(parent, valueType, clearRequired);
 			}
 
-			return new DefiniteINumberSelector(rootWindow, valueType, clearRequired);
+			return new DefiniteINumberSelector(parent, valueType, clearRequired);
 		}
 	}
 
@@ -253,7 +252,7 @@ class DescriptorEditor {
 
 		IStringSelector createValueSelector(boolean clearRequired) {
 
-			return new IStringSelector(rootWindow, clearRequired);
+			return new IStringSelector(parent, clearRequired);
 		}
 	}
 
@@ -305,9 +304,9 @@ class DescriptorEditor {
 		}
 	}
 
-	DescriptorEditor(Window rootWindow, Instantiator instantiator, Descriptor descriptor) {
+	DescriptorEditor(JComponent parent, Instantiator instantiator, Descriptor descriptor) {
 
-		this.rootWindow = rootWindow;
+		this.parent = parent;
 		this.instantiator = instantiator;
 		this.descriptor = descriptor;
 

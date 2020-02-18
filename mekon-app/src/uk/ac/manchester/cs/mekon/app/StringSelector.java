@@ -38,9 +38,9 @@ abstract class StringSelector<S> extends TextInputSelector<S> {
 
 	private InputField valueField = new InputField();
 
-	StringSelector(Window rootWindow, String title, boolean clearRequired) {
+	StringSelector(JComponent parent, String title, boolean clearRequired) {
 
-		super(rootWindow, title, true, clearRequired);
+		super(parent, title, true, clearRequired);
 	}
 
 	void setInitialStringValue(String value) {

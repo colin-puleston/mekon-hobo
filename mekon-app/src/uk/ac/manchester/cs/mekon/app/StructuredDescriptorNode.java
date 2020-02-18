@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class AspectValuedDescriptorNode extends DescriptorNode {
+class StructuredDescriptorNode extends DescriptorNode {
 
 	private DescriptorChildNodes childNodes;
 
@@ -38,7 +38,7 @@ class AspectValuedDescriptorNode extends DescriptorNode {
 		childNodes.addInitialChildren();
 	}
 
-	AspectValuedDescriptorNode(InstantiationTree tree, Descriptor descriptor) {
+	StructuredDescriptorNode(InstantiationTree tree, Descriptor descriptor) {
 
 		super(tree, descriptor);
 

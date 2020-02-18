@@ -98,7 +98,7 @@ public class DefaultCustomiser implements Customiser {
 		return label.toString();
 	}
 
-	public boolean hiddenSlot(IFrame frame, ISlot slot) {
+	public boolean hiddenSlot(ISlot slot) {
 
 		return false;
 	}

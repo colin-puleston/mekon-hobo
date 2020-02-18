@@ -24,8 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
 import java.awt.event.*;
+
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 
@@ -121,12 +122,12 @@ abstract class TextInputSelector<S> extends Selector<S> {
 	}
 
 	TextInputSelector(
-		Window rootWindow,
+		JComponent parent,
 		String title,
 		boolean okRequired,
 		boolean clearRequired) {
 
-		super(rootWindow, title, okRequired, clearRequired);
+		super(parent, title, okRequired, clearRequired);
 
 		addWindowListener(new WindowCloseListener());
 	}

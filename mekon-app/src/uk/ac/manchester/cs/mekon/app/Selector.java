@@ -59,9 +59,9 @@ abstract class Selector<S> extends GDialog {
 		}
 	}
 
-	Selector(Window rootWindow, String title, boolean okRequired, boolean clearRequired) {
+	Selector(JComponent parent, String title, boolean okRequired, boolean clearRequired) {
 
-		super(rootWindow, title, true);
+		super(parent, title, true);
 
 		controlPanel = new ControlPanel(okRequired, clearRequired);
 	}

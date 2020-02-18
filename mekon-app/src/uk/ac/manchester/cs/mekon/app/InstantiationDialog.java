@@ -107,7 +107,7 @@ abstract class InstantiationDialog extends GDialog {
 
 		protected void doButtonThing() {
 
-			perfomStoreAsAction();
+			perfomStoreAsAction(this);
 		}
 
 		StoreAsButton() {
@@ -133,7 +133,7 @@ abstract class InstantiationDialog extends GDialog {
 		this.instantiator = instantiator;
 		this.storeId = storeId;
 
-		instantiationTree = new InstantiationTree(this, instantiator, startAsViewOnly);
+		instantiationTree = new InstantiationTree(instantiator, startAsViewOnly);
 	}
 
 	void display() {
@@ -186,9 +186,9 @@ abstract class InstantiationDialog extends GDialog {
 		return panel;
 	}
 
-	private void perfomStoreAsAction() {
+	private void perfomStoreAsAction(JComponent parent) {
 
-		CIdentity newStoreId = checkObtainNewStoreId();
+		CIdentity newStoreId = checkObtainNewStoreId(parent);
 
 		if (newStoreId != null) {
 
@@ -211,9 +211,9 @@ abstract class InstantiationDialog extends GDialog {
 		return getInstanceType().checkAddInstance(getInstantiation(), storeAsId, asNewId);
 	}
 
-	private CIdentity checkObtainNewStoreId() {
+	private CIdentity checkObtainNewStoreId(JComponent parent) {
 
-		return checkObtainNewStoreId(new StoreIdSelections(this, getController()), storeId);
+		return checkObtainNewStoreId(new StoreIdSelections(parent, getController()), storeId);
 	}
 
 	private int getPreferredHeight() {

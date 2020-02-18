@@ -34,14 +34,14 @@ import uk.ac.manchester.cs.mekon.model.*;
 class DescriptorsList {
 
 	private Instantiator instantiator;
-	private IFrame aspect;
+	private IFrame container;
 
 	private List<Descriptor> list = new ArrayList<Descriptor>();
 
-	DescriptorsList(Instantiator instantiator, IFrame aspect, boolean viewOnly) {
+	DescriptorsList(Instantiator instantiator, IFrame container, boolean viewOnly) {
 
 		this.instantiator = instantiator;
-		this.aspect = aspect;
+		this.container = container;
 
 		populate(viewOnly);
 	}
@@ -65,7 +65,7 @@ class DescriptorsList {
 
 	private void populate(boolean viewOnly) {
 
-		for (ISlot slot : aspect.getSlots().activesAsList()) {
+		for (ISlot slot : container.getSlots().activesAsList()) {
 
 			if (!hidden(slot) && (editable(slot) || hasValues(slot))) {
 
@@ -99,7 +99,7 @@ class DescriptorsList {
 
 	private boolean hidden(ISlot slot) {
 
-		return getCustomiser().hiddenSlot(aspect, slot);
+		return getCustomiser().hiddenSlot(slot);
 	}
 
 	private boolean multiValued(ISlot slot) {

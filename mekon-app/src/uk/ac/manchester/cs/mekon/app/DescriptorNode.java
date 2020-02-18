@@ -141,7 +141,7 @@ class DescriptorNode extends InstantiationNode {
 
 	private DescriptorEditor createEditor() {
 
-		return new DescriptorEditor(getRootWindow(), getInstantiator(), descriptor);
+		return new DescriptorEditor(getInstantiationTree(), getInstantiator(), descriptor);
 	}
 
 	private boolean editable() {

@@ -142,11 +142,11 @@ class DescriptorChildNodes {
 				return true;
 			}
 
-			Propagator(IFrame aspect) {
+			Propagator(IFrame container) {
 
 				super(ValueUpdateRelayer.this);
 
-				propagateFrom(aspect);
+				propagateFrom(container);
 			}
 		}
 
@@ -155,9 +155,9 @@ class DescriptorChildNodes {
 			new Updater();
 		}
 
-		ValueUpdateRelayer(IFrame aspect) {
+		ValueUpdateRelayer(IFrame container) {
 
-			new Propagator(aspect);
+			new Propagator(container);
 		}
 
 		void addTo(ISlot slot) {
@@ -166,14 +166,14 @@ class DescriptorChildNodes {
 		}
 	}
 
-	DescriptorChildNodes(InstantiationNode parentNode, IFrame aspect) {
+	DescriptorChildNodes(InstantiationNode parentNode, IFrame container) {
 
 		this.parentNode = parentNode;
 
-		descriptors = new DescriptorsList(getInstantiator(), aspect, viewOnly());
+		descriptors = new DescriptorsList(getInstantiator(), container, viewOnly());
 
 		slotUpdateRelayer = new SlotUpdateRelayer();
-		valueUpdateRelayer = new ValueUpdateRelayer(aspect);
+		valueUpdateRelayer = new ValueUpdateRelayer(container);
 	}
 
 	void update() {
@@ -210,9 +210,9 @@ class DescriptorChildNodes {
 
 		InstantiationTree tree = parentNode.getInstantiationTree();
 
-		if (descriptor.aspectType() && descriptor.hasValue()) {
+		if (descriptor.structuredType() && descriptor.hasValue()) {
 
-			return new AspectValuedDescriptorNode(tree, descriptor);
+			return new StructuredDescriptorNode(tree, descriptor);
 		}
 
 		return new DescriptorNode(tree, descriptor);
