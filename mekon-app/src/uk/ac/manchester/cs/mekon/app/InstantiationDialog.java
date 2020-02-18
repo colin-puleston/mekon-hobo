@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstantiationDialog extends GDialog implements AspectWindow {
+abstract class InstantiationDialog extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -62,8 +62,6 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 		return instantiator.getInstanceType().getType().getIdentity().getLabel();
 	}
-
-	private JComponent parent;
 
 	private Instantiator instantiator;
 	private CIdentity storeId;
@@ -123,21 +121,6 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 		return new Dimension(FRAME_WIDTH, getPreferredHeight());
 	}
 
-	public Window getRootWindow() {
-
-		return (Window)SwingUtilities.getAncestorOfClass(Window.class, this);
-	}
-
-	public Instantiator getInstantiator() {
-
-		return instantiator;
-	}
-
-	public void displayCopy() {
-
-		createCopy(parent, storeId);
-	}
-
 	InstantiationDialog(
 		JComponent parent,
 		Instantiator instantiator,
@@ -147,7 +130,6 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 		super(parent, createTitle(instantiator, storeId, functionTitle), true);
 
-		this.parent = parent;
 		this.instantiator = instantiator;
 		this.storeId = storeId;
 
@@ -158,8 +140,6 @@ abstract class InstantiationDialog extends GDialog implements AspectWindow {
 
 		display(createDisplay());
 	}
-
-	abstract InstantiationDialog createCopy(JComponent parent, CIdentity storeId);
 
 	void addControlComponents(ControlsPanel panel) {
 

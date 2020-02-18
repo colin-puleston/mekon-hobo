@@ -88,11 +88,6 @@ class QueryDialog extends InstantiationDialog {
 			startAsViewOnly);
 	}
 
-	QueryDialog createCopy(JComponent parent, CIdentity storeId) {
-
-		return new QueryDialog(parent, getInstantiator(), storeId, queryExecutions, false);
-	}
-
 	CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId) {
 
 		return idSelections.checkObtainForAssertion(oldId);
@@ -109,16 +104,6 @@ class QueryDialog extends InstantiationDialog {
 
 		super.addControlComponents(panel);
 	}
-/*
-	JComponent createControlsComponent() {
-
-		ControlsPanel panel = new ControlsPanel(false);
-
-		panel.addControl(new ExecuteButton());
-		panel.addControl(super.createControlsComponent());
-
-		return panel;
-	}*/
 
 	private QueryDialog(
 				JComponent parent,

@@ -64,11 +64,6 @@ class InstanceDialog extends InstantiationDialog {
 			startAsViewOnly);
 	}
 
-	InstanceDialog createCopy(JComponent parent, CIdentity storeId) {
-
-		return new InstanceDialog(parent, getInstantiator(), storeId, false);
-	}
-
 	CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId) {
 
 		return idSelections.checkObtainForAssertion(oldId);
