@@ -80,6 +80,7 @@ class ConstraintPanel extends JPanel {
 
 		void populate() {
 
+			add(new ConceptTreeSelectorPanel(targetsTree), BorderLayout.NORTH);
 			add(new JScrollPane(targetsTree), BorderLayout.CENTER);
 		}
 
@@ -104,7 +105,7 @@ class ConstraintPanel extends JPanel {
 
 		ConceptCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGETS;
+			return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGET;
 		}
 	}
 
@@ -114,7 +115,7 @@ class ConstraintPanel extends JPanel {
 
 		ConceptCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.DIRECT_CONSTRAINT_TARGETS;
+			return ConceptCellDisplay.DIRECT_CONSTRAINT_TARGET;
 		}
 	}
 
@@ -166,7 +167,7 @@ class ConstraintPanel extends JPanel {
 
 		ConceptCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.DIRECT_CONSTRAINT_TARGETS;
+			return ConceptCellDisplay.DIRECT_CONSTRAINT_TARGET;
 		}
 
 		private void repopulateForConstraintEdit() {
@@ -232,7 +233,7 @@ class ConstraintPanel extends JPanel {
 
 			private GCellDisplay createCellDisplay(Concept target) {
 
-				return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGETS.getFor(target);
+				return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGET.getFor(target);
 			}
 		}
 
@@ -328,7 +329,7 @@ class ConstraintPanel extends JPanel {
 
 		ConceptCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGETS;
+			return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGET;
 		}
 
 		private JPanel createConstraintCreationPanel() {

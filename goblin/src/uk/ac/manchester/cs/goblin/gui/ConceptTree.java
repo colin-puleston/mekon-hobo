@@ -34,7 +34,6 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-
 abstract class ConceptTree extends GTree {
 
 	static private final long serialVersionUID = -1;
@@ -48,6 +47,8 @@ abstract class ConceptTree extends GTree {
 
 		return selectedNode != null ? selectedNode.getConcept() : null;
 	}
+
+	private Set<Concept> rootConcepts;
 
 	private abstract class ConceptTreeNode extends GNode {
 
@@ -65,7 +66,10 @@ abstract class ConceptTree extends GTree {
 
 			for (Concept concept : concepts) {
 
-				addChildFor(concept);
+				if (requiredConcept(concept)) {
+
+					addChildFor(concept);
+				}
 			}
 		}
 
@@ -196,6 +200,13 @@ abstract class ConceptTree extends GTree {
 	void initialise(Set<Concept> rootConcepts) {
 
 		initialise(new RootNode(rootConcepts));
+
+		this.rootConcepts = rootConcepts;
+	}
+
+	Set<Concept> getRootConcepts() {
+
+		return rootConcepts;
 	}
 
 	Concept getSelectedConcept() {
@@ -211,6 +222,11 @@ abstract class ConceptTree extends GTree {
 
 			setSelectionPath(node.getTreePath());
 		}
+	}
+
+	boolean requiredConcept(Concept concept) {
+
+		return true;
 	}
 
 	abstract ConceptCellDisplay getConceptDisplay(Concept concept);

@@ -37,23 +37,37 @@ import uk.ac.manchester.cs.goblin.model.*;
  */
 enum ConceptCellDisplay {
 
-	FULL_HIERARCHY_DEFAULT(Color.CYAN),
-	FULL_HIERARCHY_MOVE_SUBJECT(Color.GRAY.brighter()),
-	DIRECT_CONSTRAINT_TARGETS(Color.GREEN),
-	INDIRECT_CONSTRAINT_TARGETS(Color.YELLOW);
+	DEFAULT(Color.CYAN, false),
+	MOVE_SUBJECT(Color.GRAY.brighter(), false),
+	DIRECT_CONSTRAINT_TARGET(Color.GREEN, false),
+	INDIRECT_CONSTRAINT_TARGET(Color.YELLOW, false),
+	SELECTABLE(Color.GRAY, false),
+	SELECTION(Color.GRAY, true);
 
 	static private final int ICON_SIZE = 12;
+	static private final Color SELECTED_BACKGROUND_CLR = new Color(255,237,160);
 
 	private Icon icon;
+	private boolean selected;
 
 	GCellDisplay getFor(Concept concept) {
 
-		return new GCellDisplay(concept.getConceptId().getLabel(), icon);
+		String label = concept.getConceptId().getLabel();
+		GCellDisplay display = new GCellDisplay(label, icon);
+
+		if (selected) {
+
+			display.setBackgroundColour(SELECTED_BACKGROUND_CLR);
+		}
+
+		return display;
 	}
 
-	ConceptCellDisplay(Color clr) {
+	ConceptCellDisplay(Color clr, boolean selected) {
 
 		icon = createIcon(clr);
+
+		this.selected = selected;
 	}
 
 	private GIcon createIcon(Color clr) {

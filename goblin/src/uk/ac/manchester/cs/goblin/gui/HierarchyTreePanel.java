@@ -223,6 +223,7 @@ class HierarchyTreePanel extends JPanel {
 		model = hierarchy.getModel();
 		tree = new HierarchyTree(hierarchy, conceptMover);
 
+		add(new ConceptTreeSelectorPanel(tree), BorderLayout.NORTH);
 		add(new JScrollPane(tree), BorderLayout.CENTER);
 		add(createButtonsPanel(), BorderLayout.SOUTH);
 	}

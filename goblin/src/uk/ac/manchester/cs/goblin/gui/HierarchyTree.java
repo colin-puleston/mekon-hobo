@@ -49,8 +49,8 @@ class HierarchyTree extends ConceptTree {
 	ConceptCellDisplay getConceptDisplay(Concept concept) {
 
 		return conceptMover.movingConcept(concept)
-				? ConceptCellDisplay.FULL_HIERARCHY_MOVE_SUBJECT
-				: ConceptCellDisplay.FULL_HIERARCHY_DEFAULT;
+					? ConceptCellDisplay.MOVE_SUBJECT
+					: ConceptCellDisplay.DEFAULT;
 	}
 
 	void onConstraintChange() {
