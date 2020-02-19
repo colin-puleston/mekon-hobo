@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.hobo.demo.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.hobo.app.*;
 
 import uk.ac.manchester.cs.hobo.demo.model.*;
@@ -33,21 +31,15 @@ import uk.ac.manchester.cs.hobo.demo.model.*;
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo extends HoboApp {
-
-	static private final long serialVersionUID = -1;
-
-	static private final String TITLE = "HOBO-APP: Demo";
+public class HoboAppDemo {
 
 	static public void main(String[] args) throws Exception {
 
-		new HoboAppDemo();
-	}
+		HoboApp app = new HoboApp();
 
-	public HoboAppDemo() {
+		app.configureFromFile();
+		app.addInstanceClass(Travel.class);
 
-		super(TITLE);
-
-		display(Arrays.asList(Citizen.class, Travel.class));
+		app.display();
 	}
 }
