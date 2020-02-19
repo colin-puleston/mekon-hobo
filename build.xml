@@ -122,8 +122,8 @@
 	<property name="build.hobo-app-demo.run.name" value="hobo-app-demo"/>
 	<property name="build.hobo-app-demo.run.sh" location="${build}/${build.hobo-app-demo.run.name}.sh"/>
 	<property name="build.hobo-app-demo.run.win" location="${build}/${build.hobo-app-demo.run.name}.bat"/>
-	<property name="build.hobo-app-demo.classpath.sh" value="${build.lib.rel}/*:${build.hobo-app-demo.classes.rel}:${build.resource.rel}"/>
-	<property name="build.hobo-app-demo.classpath.win" value="${build.lib.rel}/*;${build.hobo-app-demo.classes.rel};${build.resource.rel}"/>
+	<property name="build.hobo-app-demo.classpath.sh" value="${build.lib.rel}/*:${build.resource.rel}"/>
+	<property name="build.hobo-app-demo.classpath.win" value="${build.lib.rel}/*;${build.resource.rel}"/>
 	<property name="build.hobo-app-demo.java.run" value="${java.opts} ${hobo-app-demo.mainclass}"/>
 
 	<!-- test invocation -->
