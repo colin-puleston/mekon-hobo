@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.goblin.gui;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
@@ -45,6 +46,13 @@ class HierarchyTreePanel extends JPanel {
 	static private final String PASTE_LABEL = "Mv+";
 	static private final String RESET_ID_LABEL = "Id...";
 
+	static private final int ADD_TRIGGER_KEY = KeyEvent.VK_ADD;
+	static private final int REMOVE_TRIGGER_KEY = KeyEvent.VK_DELETE;
+	static private final int CUT_TRIGGER_KEY = KeyEvent.VK_X;
+	static private final int STOP_CUT_TRIGGER_KEY = KeyEvent.VK_ESCAPE;
+	static private final int PASTE_TRIGGER_KEY = KeyEvent.VK_V;
+	static private final int RESET_ID_TRIGGER_KEY = KeyEvent.VK_I;
+
 	private Model model;
 	private HierarchyTree tree;
 
@@ -54,14 +62,74 @@ class HierarchyTreePanel extends JPanel {
 
 		static private final long serialVersionUID = -1;
 
+		private class TriggerKeyListener extends KeyAdapter {
+
+			private int triggerKey;
+			private boolean ctrlDown = false;
+
+			public void keyPressed(KeyEvent event) {
+
+				if (event.getKeyCode() == KeyEvent.VK_CONTROL) {
+
+					ctrlDown = true;
+				}
+			}
+
+			public void keyReleased(KeyEvent event) {
+
+				int key = event.getKeyCode();
+
+				if (key == KeyEvent.VK_CONTROL) {
+
+					ctrlDown = false;
+				}
+				else {
+
+					if (isEnabled() && editTriggerable(key) && matchesTriggerKey(key)) {
+
+						doButtonThing();
+					}
+				}
+			}
+
+			TriggerKeyListener(int triggerKey) {
+
+				this.triggerKey = triggerKey;
+
+				tree.addKeyListener(this);
+			}
+
+			private boolean editTriggerable(int key) {
+
+				return ctrlDown || key == KeyEvent.VK_ESCAPE;
+			}
+
+			private boolean matchesTriggerKey(int key) {
+
+				return toUpper(key) == triggerKey || toLower(key) == triggerKey;
+			}
+
+			private int toUpper(int key) {
+
+				return (int)Character.toUpperCase((char)key);
+			}
+
+			private int toLower(int key) {
+
+				return (int)Character.toLowerCase((char)key);
+			}
+		}
+
 		protected void doButtonThing() {
 
 			doConceptEdit(tree.getSelectedConcept());
 		}
 
-		EditButton(String label) {
+		EditButton(String label, int triggerKey) {
 
 			super(label, tree);
+
+			new TriggerKeyListener(triggerKey);
 		}
 
 		boolean enableOnSelectedConcept(Concept selection) {
@@ -93,7 +161,7 @@ class HierarchyTreePanel extends JPanel {
 
 		AddButton() {
 
-			super(ADD_LABEL);
+			super(ADD_LABEL, ADD_TRIGGER_KEY);
 		}
 
 		void doConceptEdit(Concept concept) {
@@ -108,7 +176,7 @@ class HierarchyTreePanel extends JPanel {
 
 		RemoveButton() {
 
-			super(REMOVE_LABEL);
+			super(REMOVE_LABEL, REMOVE_TRIGGER_KEY);
 		}
 
 		boolean enableIfRootSelected() {
@@ -128,7 +196,7 @@ class HierarchyTreePanel extends JPanel {
 
 		CutButton() {
 
-			super(CUT_LABEL);
+			super(CUT_LABEL, CUT_TRIGGER_KEY);
 		}
 
 		boolean enableIfRootSelected() {
@@ -150,7 +218,7 @@ class HierarchyTreePanel extends JPanel {
 
 		StopCutButton() {
 
-			super(STOP_CUT_LABEL);
+			super(STOP_CUT_LABEL, STOP_CUT_TRIGGER_KEY);
 		}
 
 		boolean enableOnNoSelection() {
@@ -177,7 +245,7 @@ class HierarchyTreePanel extends JPanel {
 
 		PasteButton() {
 
-			super(PASTE_LABEL);
+			super(PASTE_LABEL, PASTE_TRIGGER_KEY);
 		}
 
 		boolean enableForMoveInProgress(Concept selection) {
@@ -199,7 +267,7 @@ class HierarchyTreePanel extends JPanel {
 
 		ResetIdButton() {
 
-			super(RESET_ID_LABEL);
+			super(RESET_ID_LABEL, RESET_ID_TRIGGER_KEY);
 		}
 
 		boolean enableIfRootSelected() {
