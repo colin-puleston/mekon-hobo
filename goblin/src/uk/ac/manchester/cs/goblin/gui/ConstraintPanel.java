@@ -243,7 +243,7 @@ class ConstraintPanel extends JPanel {
 
 			protected void doButtonThing() {
 
-				addTargetSelection(targetsTree.getSelectedConcept());
+				addTargetSelections(targetsTree.getAllSelectedConcepts());
 				setEnabled(false);
 			}
 
@@ -357,6 +357,14 @@ class ConstraintPanel extends JPanel {
 			return ControlsPanel.horizontal(
 						new TargetAddButton(),
 						new TargetRemoveButton());
+		}
+
+		private void addTargetSelections(List<Concept> newSelections) {
+
+			for (Concept newSelection : newSelections) {
+
+				addTargetSelection(newSelection);
+			}
 		}
 
 		private void addTargetSelection(Concept newSelection) {

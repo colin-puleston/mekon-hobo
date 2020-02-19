@@ -24,6 +24,12 @@
 
 package uk.ac.manchester.cs.goblin.gui;
 
+import java.util.*;
+
+import javax.swing.tree.*;
+
+import uk.ac.manchester.cs.mekon.gui.*;
+
 import uk.ac.manchester.cs.goblin.model.*;
 
 /**
@@ -35,9 +41,53 @@ class ConstraintTargetsTree extends ConceptTree {
 
 	private ConceptCellDisplay cellDisplay;
 
+	private class SelectionsPruner extends GSelectionListener<GNode> {
+
+		protected void onSelected(GNode node) {
+
+			pruneSelections(extractConcept(node));
+		}
+
+		protected void onSelectionCleared() {
+		}
+
+		SelectionsPruner() {
+
+			addNodeSelectionListener(this);
+		}
+
+		private void pruneSelections(Concept latest) {
+
+			List<Concept> prePruning = getAllSelectedConcepts();
+			List<Concept> postPruning = new ArrayList<Concept>(prePruning);
+
+			for (Concept selection : prePruning) {
+
+				if (latest != selection && conflict(latest, selection)) {
+
+					postPruning.remove(selection);
+				}
+			}
+
+			if (postPruning.size() != prePruning.size()) {
+
+				selectConcepts(postPruning);
+			}
+		}
+
+		private boolean conflict(Concept concept1, Concept concept2) {
+
+			return concept1.descendantOf(concept2) || concept2.descendantOf(concept1);
+		}
+	}
+
 	ConstraintTargetsTree(Constraint constraint, ConceptCellDisplay cellDisplay) {
 
 		this.cellDisplay = cellDisplay;
+
+		getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+
+		new SelectionsPruner();
 
 		initialise(constraint.getTargetValues());
 	}

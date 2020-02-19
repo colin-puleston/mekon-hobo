@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.goblin.gui;
 
 import java.util.*;
 import javax.swing.*;
+import javax.swing.tree.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 
@@ -211,7 +212,19 @@ abstract class ConceptTree extends GTree {
 
 	Concept getSelectedConcept() {
 
-		return extractConcept((ConceptTreeNode)getSelectedNode());
+		return extractConcept(getSelectedNode());
+	}
+
+	List<Concept> getAllSelectedConcepts() {
+
+		List<Concept> selectedConcepts = new ArrayList<Concept>();
+
+		for (GNode node : getAllSelectedNodes()) {
+
+			selectedConcepts.add(extractConcept(node));
+		}
+
+		return selectedConcepts;
 	}
 
 	void selectConcept(Concept concept) {
@@ -222,6 +235,23 @@ abstract class ConceptTree extends GTree {
 
 			setSelectionPath(node.getTreePath());
 		}
+	}
+
+	void selectConcepts(Collection<Concept> concepts) {
+
+		List<TreePath> paths = new ArrayList<TreePath>();
+
+		for (Concept concept : concepts) {
+
+			ConceptTreeNode node = lookForNodeFor(concept);
+
+			if (node != null) {
+
+				paths.add(node.getTreePath());
+			}
+		}
+
+		setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
 	}
 
 	boolean requiredConcept(Concept concept) {
