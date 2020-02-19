@@ -24,14 +24,16 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.BorderLayout;
+import java.io.*;
 import java.util.*;
+import java.awt.BorderLayout;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -46,6 +48,31 @@ public class MekonApp extends GFrame {
 	static private final int FRAME_WIDTH = 700;
 	static private final int FRAME_HEIGHT = 600;
 
+	static private final String CONFIG_FILE_NAME = "mekon-app.xml";
+
+	static public void main(String[] args) {
+
+		MekonApp app = new MekonApp();
+
+		if (args.length == 0) {
+
+			app.configureFromFile();
+		}
+		else {
+
+			app.configureFromFile(getConfigFile(args[0]));
+		}
+
+		app.display();
+	}
+
+	static private KConfigFile getConfigFile(String nameOrPath) {
+
+		File file = new File(nameOrPath);
+
+		return file.exists() ? new KConfigFile(file) : new KConfigFile(nameOrPath);
+	}
+
 	static private IStore getIStore(CBuilder builder) {
 
 		return IDiskStoreManager.getBuilder(builder).build();
@@ -53,6 +80,8 @@ public class MekonApp extends GFrame {
 
 	private CModel model;
 	private IStore store;
+
+	private List<CFrame> instanceTypes = new ArrayList<CFrame>();
 
 	private Customiser customiser = null;
 
@@ -73,19 +102,19 @@ public class MekonApp extends GFrame {
 		}
 	}
 
-	public MekonApp(String title) {
+	public MekonApp() {
 
-		this(title, CManager.createBuilder());
+		this(CManager.createBuilder());
 	}
 
-	public MekonApp(String title, CBuilder builder) {
+	public MekonApp(CBuilder builder) {
 
-		this(title, builder.build(), getIStore(builder));
+		this(builder.build(), getIStore(builder));
 	}
 
-	public MekonApp(String title, CModel model, IStore store) {
+	public MekonApp(CModel model, IStore store) {
 
-		super(title, FRAME_WIDTH, FRAME_HEIGHT);
+		super(FRAME_WIDTH, FRAME_HEIGHT);
 
 		this.model = model;
 		this.store = store;
@@ -98,9 +127,36 @@ public class MekonApp extends GFrame {
 		this.customiser = customiser;
 	}
 
-	public void display(List<CFrame> instanceTypes) {
+	public void configureFromFile() {
 
-		display(createMainPanel(instanceTypes));
+		new MekonAppConfig(this);
+	}
+
+	public void configureFromFile(KConfigFile configFile) {
+
+		new MekonAppConfig(this, configFile);
+	}
+
+	public void addInstanceType(CFrame instanceType) {
+
+		instanceTypes.add(instanceType);
+	}
+
+	public void addInstanceTypes(List<CFrame> instanceTypes) {
+
+		this.instanceTypes.addAll(instanceTypes);
+	}
+
+	public void display() {
+
+		if (instanceTypes.isEmpty()) {
+
+			displayNoInstancesMessage();
+		}
+		else {
+
+			display(createMainPanel());
+		}
 	}
 
 	public CModel getModel() {
@@ -113,17 +169,17 @@ public class MekonApp extends GFrame {
 		return store;
 	}
 
-	private JPanel createMainPanel(List<CFrame> instanceTypes) {
+	private JPanel createMainPanel() {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(createInstanceTypesPanel(instanceTypes), BorderLayout.CENTER);
+		panel.add(createInstanceTypesPanel(), BorderLayout.CENTER);
 		panel.add(new ExitButton(), BorderLayout.SOUTH);
 
 		return panel;
 	}
 
-	private JComponent createInstanceTypesPanel(List<CFrame> instanceTypes) {
+	private JComponent createInstanceTypesPanel() {
 
 		return new InstanceTypesPanel(createController(), instanceTypes);
 	}
@@ -141,5 +197,10 @@ public class MekonApp extends GFrame {
 
 			customiser = new DefaultCustomiser(store);
 		}
+	}
+
+	private void displayNoInstancesMessage() {
+
+		System.err.println("\nMEKON-APP CONFIG ERROR: No instance-types have been specified");
 	}
 }
