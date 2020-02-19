@@ -33,16 +33,24 @@ public class GFrame extends JFrame {
 
 	static private final long serialVersionUID = -1;
 
+	public GFrame() {
+	}
+
 	public GFrame(String title) {
 
 		super(title);
 	}
 
-	public GFrame(String title, int width, int height) {
-
-		super(title);
+	public GFrame(int width, int height) {
 
 		setPreferredSize(new Dimension(width, height));
+	}
+
+	public GFrame(String title, int width, int height) {
+
+		this(width, height);
+
+		setTitle(title);
 	}
 
 	public void display(JComponent content) {
