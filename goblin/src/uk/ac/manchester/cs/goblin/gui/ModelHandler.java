@@ -181,7 +181,7 @@ class ModelHandler {
 		}
 		catch (BadDynamicOntologyException e) {
 
-			System.out.println(createCannotStartMessage(e.getMessage()));
+			System.err.println(createCannotStartMessage(e.getMessage()));
 			System.exit(0);
 
 			return null;
