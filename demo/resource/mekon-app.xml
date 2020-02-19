@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<MekonApp title="HOBO-App: Demo">
+	<InstanceType uri="http://mekon/demo-core.owl#Citizen"/>
+</MekonApp>
