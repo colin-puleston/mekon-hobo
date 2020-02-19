@@ -61,8 +61,8 @@ public class DModelTest extends MekonTestUtils {
 	static private String B_SLOT_ID = B_CELL_VAR_NAME;
 	static private String INT_SLOT_ID = INT_EXTERNAL_ID;
 
-	static private String CLASS_A_DERIVED_LABEL = "Class-A";
-	static private String INT_CELL_DERIVED_LABEL = "int-cell";
+	static private String CLASS_A_DERIVED_LABEL = "Class a";
+	static private String INT_CELL_DERIVED_LABEL = "int cell";
 	static private String A_EXTERNAL_LABEL = A_EXTERNAL_ID;
 	static private String INT_EXTERNAL_LABEL = INT_EXTERNAL_ID;
 
