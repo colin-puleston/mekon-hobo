@@ -38,7 +38,9 @@ import uk.ac.manchester.cs.hobo.model.motor.*;
 /**
  * @author Colin Puleston
  */
-public class HoboApp {
+public class HoboApp extends MekonApp {
+
+	static private final long serialVersionUID = -1;
 
 	static private IStore getIStore(DBuilder builder) {
 
@@ -46,43 +48,37 @@ public class HoboApp {
 	}
 
 	private DModel model;
-	private MekonApp mekonApp;
 
-	public HoboApp(String title) {
+	public HoboApp() {
 
-		this(title, DManager.createBuilder());
+		this(DManager.createBuilder());
 	}
 
-	public HoboApp(String title, DBuilder builder) {
+	public HoboApp(DBuilder builder) {
 
-		this(title, builder.build(), getIStore(builder));
+		this(builder.build(), getIStore(builder));
 	}
 
-	public HoboApp(String title, DModel model, IStore store) {
+	public HoboApp(DModel model, IStore store) {
+
+		super(model.getCModel(), store);
 
 		this.model = model;
-
-		mekonApp = new MekonApp(title, model.getCModel(), store);
 	}
 
-	public void setCustomiser(Customiser customiser) {
+	public void addInstanceClass(Class<? extends DObject> instanceType) {
 
-		mekonApp.setCustomiser(customiser);
+		addInstanceType(toFrame(instanceType));
 	}
 
-	public void display(List<Class<? extends DObject>> instanceClasses) {
+	public void addInstanceClasses(List<Class<? extends DObject>> instanceTypes) {
 
-		mekonApp.display(toFrames(instanceClasses));
+		addInstanceTypes(toFrames(instanceTypes));
 	}
 
-	public DModel getModel() {
+	public DModel getDModel() {
 
 		return model;
-	}
-
-	public IStore getStore() {
-
-		return mekonApp.getStore();
 	}
 
 	private List<CFrame> toFrames(List<Class<? extends DObject>> dClasses) {
