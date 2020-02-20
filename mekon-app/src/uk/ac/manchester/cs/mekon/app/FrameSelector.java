@@ -91,7 +91,7 @@ class FrameSelector extends Selector<CFrame> {
 		}
 	}
 
-	private class FrameTree extends GTree {
+	private class FrameTree extends GSelectorTree {
 
 		static private final long serialVersionUID = -1;
 
@@ -153,6 +153,8 @@ class FrameSelector extends Selector<CFrame> {
 		}
 
 		FrameTree(boolean forQuery, boolean multiSelect) {
+
+			super(multiSelect);
 
 			icon = getIcon(forQuery);
 

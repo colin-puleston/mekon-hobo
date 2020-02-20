@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstantiationTree extends GTree {
+class InstantiationTree extends GActionTree {
 
 	static private final long serialVersionUID = -1;
 
@@ -47,7 +47,6 @@ class InstantiationTree extends GTree {
 
 		setRootVisible(false);
 		setShowsRootHandles(true);
-		setActiveTree();
 
 		initialise(rootNode);
 	}
