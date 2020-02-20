@@ -52,6 +52,8 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 
 		SelectorTree() {
 
+			super(false);
+
 			initialise(rootConcepts);
 		}
 

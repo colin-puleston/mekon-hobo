@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.goblin.gui;
 
 import java.util.*;
 
-import javax.swing.tree.*;
-
 import uk.ac.manchester.cs.mekon.gui.*;
 
 import uk.ac.manchester.cs.goblin.model.*;
@@ -83,9 +81,9 @@ class ConstraintTargetsTree extends ConceptTree {
 
 	ConstraintTargetsTree(Constraint constraint, ConceptCellDisplay cellDisplay) {
 
-		this.cellDisplay = cellDisplay;
+		super(true);
 
-		getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		this.cellDisplay = cellDisplay;
 
 		new SelectionsPruner();
 

@@ -41,6 +41,8 @@ class HierarchyTree extends ConceptTree {
 
 	HierarchyTree(Hierarchy hierarchy, ConceptMover conceptMover) {
 
+		super(false);
+
 		this.conceptMover = conceptMover;
 
 		initialise(hierarchy.getRootConcept());

@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-abstract class ConceptTree extends GTree {
+abstract class ConceptTree extends GSelectorTree {
 
 	static private final long serialVersionUID = -1;
 
@@ -187,7 +187,9 @@ abstract class ConceptTree extends GTree {
 		}
 	}
 
-	ConceptTree() {
+	ConceptTree(boolean multiSelect) {
+
+		super(multiSelect);
 
 		setRootVisible(false);
 		setShowsRootHandles(true);
