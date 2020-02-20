@@ -410,7 +410,7 @@ class ConstraintPanel extends JPanel {
 			resetSourceConcept(sourcesTree.getSelectedConcept());
 		}
 
-		protected void onSelectionCleared() {
+		protected void onDeselected(GNode node) {
 
 			clearSourceConcept();
 		}

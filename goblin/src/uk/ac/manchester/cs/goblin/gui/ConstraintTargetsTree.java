@@ -48,7 +48,7 @@ class ConstraintTargetsTree extends ConceptTree {
 			pruneSelections(extractConcept(node));
 		}
 
-		protected void onSelectionCleared() {
+		protected void onDeselected(GNode node) {
 		}
 
 		SelectionsPruner() {

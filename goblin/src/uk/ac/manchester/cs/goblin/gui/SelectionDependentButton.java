@@ -40,7 +40,7 @@ abstract class SelectionDependentButton<E> extends GButton {
 			setEnabled(enableOnSelection(entity));
 		}
 
-		protected void onSelectionCleared() {
+		protected void onDeselected(E entity) {
 
 			setEnabled(enableOnNoSelection());
 		}

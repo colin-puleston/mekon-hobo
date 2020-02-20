@@ -110,7 +110,7 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 			onSelection(tree.getSelectedConcept());
 		}
 
-		protected void onSelectionCleared() {
+		protected void onDeselected(GNode node) {
 		}
 
 		ConceptSelectionListener() {
