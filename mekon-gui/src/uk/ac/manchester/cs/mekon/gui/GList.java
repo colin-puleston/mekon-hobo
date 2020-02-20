@@ -300,7 +300,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 		currentSelections.clear();
 
-		for (E selection : removedSelections) {
+		for (E selection : currentSelections) {
 
 			selectionListeners.pollForDeselected(selection);
 		}
