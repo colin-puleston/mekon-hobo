@@ -158,6 +158,7 @@ class CFrameAnnotationsTree extends CTree {
 
 		initialise(new RootNode(frame.getAnnotations()));
 
+		setNonVisibleSelection();
 		addSelectionListener(reselectionListener);
 	}
 

@@ -45,10 +45,12 @@ class CFrameUsagePanel extends GVerticalPanel {
 
 		UsageTree(CFrame rootFrame) {
 
-			addUsageTree(this);
+			initialise(rootFrame);
+
+			setNonVisibleSelection();
 			addSelectionListener(reselectionListener);
 
-			initialise(rootFrame);
+			addUsageTree(this);
 		}
 
 		void addCFrameChildren(CFrameNode parent) {

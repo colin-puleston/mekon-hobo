@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class CTree extends GTree {
+abstract class CTree extends GSelectorTree {
 
 	static private final long serialVersionUID = -1;
 
@@ -52,6 +52,8 @@ abstract class CTree extends GTree {
 	}
 
 	CTree() {
+
+		super(false);
 
 		addNodeSelectionListener(new NodeSelectionListener());
 	}
