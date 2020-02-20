@@ -33,6 +33,6 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 abstract class CFrameSelectionListener extends GSelectionListener<CFrame> {
 
-	protected void onSelectionCleared() {
+	protected void onDeselected(CFrame frame) {
 	}
 }

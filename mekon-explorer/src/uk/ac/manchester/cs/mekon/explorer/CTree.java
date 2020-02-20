@@ -47,7 +47,7 @@ abstract class CTree extends GTree {
 			onSelectedNode(node);
 		}
 
-		protected void onSelectionCleared() {
+		protected void onDeselected(GNode node) {
 		}
 	}
 

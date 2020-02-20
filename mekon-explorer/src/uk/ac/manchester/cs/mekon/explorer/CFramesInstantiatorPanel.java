@@ -49,7 +49,7 @@ class CFramesInstantiatorPanel extends CFramesComboPanel {
 			selectInstance(instance);
 		}
 
-		protected void onSelectionCleared() {
+		protected void onDeselected(CIdentity instance) {
 		}
 	}
 

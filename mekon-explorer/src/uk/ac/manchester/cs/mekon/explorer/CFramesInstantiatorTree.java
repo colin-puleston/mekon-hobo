@@ -102,7 +102,7 @@ class CFramesInstantiatorTree extends CFramesTree {
 			}
 		}
 
-		protected void onSelectionCleared() {
+		protected void onDeselected(GNode node) {
 		}
 	}
 
