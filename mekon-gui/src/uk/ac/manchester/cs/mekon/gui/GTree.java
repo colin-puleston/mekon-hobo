@@ -24,202 +24,22 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import javax.swing.event.*;
 
 /**
  * @author Colin Puleston
  */
-public class GTree extends JTree {
+public abstract class GTree extends JTree {
 
 	static private final long serialVersionUID = -1;
 
 	private DefaultTreeModel treeModel = null;
 	private GNode rootNode = null;
 
-	private ActionInvoker positiveActionInvoker = new PositiveActionInvoker();
-	private ActionInvoker negativeActionInvoker = new NegativeActionInvoker();
+	public GTree(boolean multiSelect) {
 
-	private GSelectionListeners<GNode> nodeSelectionListeners = new GSelectionListeners<GNode>();
-
-	private class SelectionListener implements TreeSelectionListener {
-
-		public void valueChanged(TreeSelectionEvent event) {
-
-			GNode node = extractLeafNode(event);
-
-			if (event.isAddedPath()) {
-
-				nodeSelectionListeners.pollForSelected(node);
-			}
-			else {
-
-				nodeSelectionListeners.pollForDeselected(node);
-			}
-		}
-
-		private GNode extractLeafNode(TreeSelectionEvent event) {
-
-			return (GNode)event.getPath().getLastPathComponent();
-		}
-	}
-
-	private abstract class ActionInvoker {
-
-		void checkInvokeOn(GNode node, MouseEvent event) {
-
-			GNodeAction action = getNodeAction(node, event);
-
-			if (action.active()) {
-
-				action.perform();
-			}
-		}
-
-		abstract GNodeAction getNodeAction1(GNode node);
-
-		abstract GNodeAction getNodeAction2(GNode node);
-
-		abstract GNodeAction getNodeAction3(GNode node);
-
-		private GNodeAction getNodeAction(GNode node, MouseEvent event) {
-
-			if (event.isAltDown()) {
-
-				return getNodeAction2(node);
-			}
-
-			if (event.isShiftDown()) {
-
-				return getNodeAction3(node);
-			}
-
-			return getNodeAction1(node);
-		}
-	}
-
-	private class PositiveActionInvoker extends ActionInvoker {
-
-		GNodeAction getNodeAction1(GNode node) {
-
-			return node.getPositiveAction1();
-		}
-
-		GNodeAction getNodeAction2(GNode node) {
-
-			return node.getPositiveAction2();
-		}
-
-		GNodeAction getNodeAction3(GNode node) {
-
-			return node.getPositiveAction3();
-		}
-	}
-
-	private class NegativeActionInvoker extends ActionInvoker {
-
-		GNodeAction getNodeAction1(GNode node) {
-
-			return node.getNegativeAction1();
-		}
-
-		GNodeAction getNodeAction2(GNode node) {
-
-			return node.getNegativeAction2();
-		}
-
-		GNodeAction getNodeAction3(GNode node) {
-
-			return node.getNegativeAction3();
-		}
-	}
-
-	private class TreeClickMonitor extends MouseAdapter {
-
-		TreeClickMonitor() {
-
-			addMouseListener(this);
-		}
-	}
-
-	private class DeselectionClickMonitor extends TreeClickMonitor {
-
-		public void mouseClicked(MouseEvent event) {
-
-			clearSelection();
-		}
-	}
-
-	private class ActiveTreeClickMonitor extends TreeClickMonitor {
-
-		public void mouseClicked(MouseEvent event) {
-
-			TreePath path = findTreePath(event);
-
-			if (path != null) {
-
-				processClick(getLeafNode(path), event);
-			}
-		}
-
-		private void processClick(GNode node, MouseEvent event) {
-
-			clearSelection();
-
-			ActionInvoker actionInvoker = getSelectedActionInvoker(event);
-
-			if (actionInvoker != null) {
-
-				actionInvoker.checkInvokeOn(node, event);
-			}
-		}
-
-		private ActionInvoker getSelectedActionInvoker(MouseEvent event) {
-
-			int button = event.getButton();
-
-			if (button == MouseEvent.BUTTON3 || event.isControlDown()) {
-
-				return negativeActionInvoker;
-			}
-
-			if (button == MouseEvent.BUTTON1) {
-
-				return positiveActionInvoker;
-			}
-
-			return null;
-		}
-
-		private TreePath findTreePath(MouseEvent event) {
-
-			return getPathForLocation(event.getX(), event.getY());
-		}
-
-		private GNode getLeafNode(TreePath path) {
-
-			return GNode.cast(path.getLastPathComponent());
-		}
-	}
-
-	public GTree() {
-
-		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-		addTreeSelectionListener(new SelectionListener());
-	}
-
-	public void setActiveTree() {
-
-		new ActiveTreeClickMonitor();
-	}
-
-	public void setNonVisibleSelection() {
-
-		new DeselectionClickMonitor();
+		getSelectionModel().setSelectionMode(getSelectionMode(multiSelect));
 	}
 
 	public void initialise(GNode rootNode) {
@@ -239,11 +59,6 @@ public class GTree extends JTree {
 		rootNode.reinitialiseSubTree();
 	}
 
-	public void addNodeSelectionListener(GSelectionListener<GNode> nodeSelectionListener) {
-
-		nodeSelectionListeners.add(nodeSelectionListener);
-	}
-
 	public void updateAllNodeDisplays() {
 
 		rootNode.updateSubTreeNodeDisplays();
@@ -259,25 +74,15 @@ public class GTree extends JTree {
 		return rootNode == null || rootNode.getChildCount() == 0;
 	}
 
-	public GNode getSelectedNode() {
-
-		return (GNode)getLastSelectedPathComponent();
-	}
-
-	public List<GNode> getAllSelectedNodes() {
-
-		List<GNode> nodes = new ArrayList<GNode>();
-
-		for (TreePath path : getSelectionModel().getSelectionPaths()) {
-
-			nodes.add((GNode)path.getLastPathComponent());
-		}
-
-		return nodes;
-	}
-
 	DefaultTreeModel getTreeModel() {
 
 		return treeModel;
+	}
+
+	private int getSelectionMode(boolean multiSelect) {
+
+		return multiSelect
+				? TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION
+				: TreeSelectionModel.SINGLE_TREE_SELECTION;
 	}
 }
