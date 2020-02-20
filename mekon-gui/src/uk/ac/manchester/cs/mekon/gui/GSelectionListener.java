@@ -31,5 +31,5 @@ public abstract class GSelectionListener<E> {
 
 	protected abstract void onSelected(E entity);
 
-	protected abstract void onSelectionCleared();
+	protected abstract void onDeselected(E entity);
 }

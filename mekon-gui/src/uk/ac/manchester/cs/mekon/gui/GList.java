@@ -36,7 +36,7 @@ public class GList<E> extends JList<GListElement<E>> {
 	static private final long serialVersionUID = -1;
 
 	private LocalListModel model;
-	private E selectedEntity = null;
+	private List<E> currentSelections = new ArrayList<E>();
 
 	private List<GListListener<E>> listListeners = new ArrayList<GListListener<E>>();
 	private GSelectionListeners<E> selectionListeners = new GSelectionListeners<E>();
@@ -47,7 +47,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			if (!event.getValueIsAdjusting()) {
 
-				checkUpdateSelection();
+				updateSelections();
 			}
 		}
 	}
@@ -119,9 +119,9 @@ public class GList<E> extends JList<GListElement<E>> {
 		void applyFilter(GLexicalFilter filter) {
 
 			super.clear();
-			addElements(filter);
 
-			checkRestoreSelection();
+			addElements(filter);
+			restoreSelections();
 		}
 
 		DisplayList getDisplayList() {
@@ -131,14 +131,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 		List<E> getEntityList() {
 
-			List<E> entities = new ArrayList<E>();
-
-			for (GListElement<E> element : displayList.asList()) {
-
-				entities.add(element.getEntity());
-			}
-
-			return entities;
+			return extractEntities(displayList.asList());
 		}
 
 		GListElement<E> getElement(E entity) {
@@ -220,10 +213,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 	public void removeEntity(E entity) {
 
-		if (selectedEntity == entity) {
-
-			selectedEntity = null;
-		}
+		currentSelections.remove(entity);
 
 		model.remove(entity);
 		revalidate();
@@ -248,7 +238,7 @@ public class GList<E> extends JList<GListElement<E>> {
 		model.clear();
 		revalidate();
 
-		selectedEntity = null;
+		currentSelections.clear();
 	}
 
 	public void select(E entity) {
@@ -273,35 +263,75 @@ public class GList<E> extends JList<GListElement<E>> {
 
 	public E getSelectedEntity() {
 
-		return selectedEntity;
+		return currentSelections.isEmpty() ? null : currentSelections.get(0);
 	}
 
-	private void checkUpdateSelection() {
+	public List<E> getSelectedEntities() {
 
-		GListElement<E> selection = getSelectedValue();
+		return new ArrayList<E>(currentSelections);
+	}
 
-		if (selection != null) {
+	private void updateSelections() {
 
-			E entity = selection.getEntity();
+		List<E> newSelections = extractEntities(getSelectedValuesList());
+		List<E> addedSelections = new ArrayList<E>(newSelections);
+		List<E> removedSelections = new ArrayList<E>(currentSelections);
 
-			if (entity != selectedEntity) {
+		addedSelections.removeAll(currentSelections);
+		removedSelections.removeAll(newSelections);
 
-				selectedEntity = entity;
-				selectionListeners.pollForSelected(selectedEntity);
-			}
-		}
-		else {
+		currentSelections = newSelections;
 
-			selectionListeners.pollForSelectionCleared();
+		pollForAddedSelections(removedSelections);
+		pollForAddedSelections(addedSelections);
+	}
+
+	private void restoreSelections() {
+
+		for (E selection : currentSelections) {
+
+			select(selection);
 		}
 	}
 
-	private void checkRestoreSelection() {
+	private void clearSelections() {
 
-		if (selectedEntity != null) {
+		List<E> clearedSelections = new ArrayList<E>(currentSelections);
 
-			select(selectedEntity);
+		currentSelections.clear();
+
+		for (E selection : removedSelections) {
+
+			selectionListeners.pollForDeselected(selection);
 		}
+	}
+
+	private void pollForAddedSelections(List<E> entities) {
+
+		for (E entity : entities) {
+
+			selectionListeners.pollForSelected(entity);
+		}
+	}
+
+	private void pollForRemovedSelections(List<E> entities) {
+
+		for (E entity : entities) {
+
+			selectionListeners.pollForDeselected(entity);
+		}
+	}
+
+	private List<E> extractEntities(List<GListElement<E>> elements) {
+
+		List<E> entities = new ArrayList<E>();
+
+		for (GListElement<E> element : elements) {
+
+			entities.add(element.getEntity());
+		}
+
+		return entities;
 	}
 
 	private void pollListListenersForAdded(E entity) {

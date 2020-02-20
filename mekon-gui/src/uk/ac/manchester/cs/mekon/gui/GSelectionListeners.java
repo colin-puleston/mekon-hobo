@@ -46,11 +46,11 @@ public class GSelectionListeners<E> {
 		}
 	}
 
-	public void pollForSelectionCleared() {
+	public void pollForDeselected(E entity) {
 
 		for (GSelectionListener<E> listener : copyList()) {
 
-			listener.onSelectionCleared();
+			listener.onDeselected(entity);
 		}
 	}
 
