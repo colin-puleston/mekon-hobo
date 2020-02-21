@@ -54,14 +54,14 @@ class CFramesList extends GList<CFrame> {
 
 	CFramesList(List<CFrame> frames) {
 
-		super(true);
+		super(false, true);
 
 		addFrames(frames);
 	}
 
 	CFramesList(CFrame rootFrame, CVisibility visibility, boolean includeRoot) {
 
-		super(true);
+		super(false, true);
 
 		if (includeRoot) {
 

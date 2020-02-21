@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.explorer;
 
 import java.util.*;
-import javax.swing.tree.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.util.*;
@@ -126,11 +125,26 @@ class CFramesTree extends CTree {
 
 	void select(CFrame frame) {
 
-		List<CFrameNode> frameNodes = ensureFrameNodesIfAny(frame);
+		CFrameNode selection = null;
 
-		if (!frameNodes.isEmpty() && !selectFirstVisible(frameNodes)) {
+		for (CFrameNode node : ensureFrameNodesIfAny(frame)) {
 
-			selectFirst(frameNodes);
+			if (isVisible(node.getTreePath())) {
+
+				selection = node;
+
+				break;
+			}
+
+			if (selection == null) {
+
+				selection = node;
+			}
+		}
+
+		if (selection != null) {
+
+			selection.select();
 		}
 	}
 
@@ -173,38 +187,5 @@ class CFramesTree extends CTree {
 	private CFrame getFirstSuper(CFrame frame) {
 
 		return frame.getSupers().get(0);
-	}
-
-	private boolean selectFirstVisible(List<CFrameNode> frameNodes) {
-
-		for (CFrameNode node : frameNodes) {
-
-			TreePath path = node.getTreePath();
-
-			if (isVisible(path)) {
-
-				selectAndEnsureRowVisible(path);
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private void selectFirst(List<CFrameNode> frameNodes) {
-
-		for (CFrameNode node : frameNodes) {
-
-			selectAndEnsureRowVisible(node.getTreePath());
-
-			break;
-		}
-	}
-
-	private void selectAndEnsureRowVisible(TreePath path) {
-
-		setSelectionPath(path);
-		scrollRowToVisible(getSelectionRows()[0]);
 	}
 }

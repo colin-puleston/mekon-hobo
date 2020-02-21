@@ -175,7 +175,7 @@ class QueryFrame extends InstantiationFrame {
 
 	private GList<CIdentity> createMatchesList(IMatches matches) {
 
-		GList<CIdentity> list = new GList<CIdentity>(!matches.ranked());
+		GList<CIdentity> list = new GList<CIdentity>(false, !matches.ranked());
 
 		list.addSelectionListener(new MatchDisplayer());
 

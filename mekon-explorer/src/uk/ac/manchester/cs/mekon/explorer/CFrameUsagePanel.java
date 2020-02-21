@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.mekon.explorer;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -159,14 +158,14 @@ class CFrameUsagePanel extends GVerticalPanel {
 
 	private void addUsageTree(UsageTree tree) {
 
-		addComponent(wrapInInertScroller(wrapInVerticalPanel(tree)));
+		addComponent(createUsageTreeComponent(tree));
 	}
 
-	private GVerticalPanel wrapInVerticalPanel(JComponent component) {
+	private JComponent createUsageTreeComponent(UsageTree tree) {
 
 		GVerticalPanel panel = new GVerticalPanel(true);
 
-		panel.addComponent(component);
+		panel.addComponent(wrapInInertScroller(tree));
 
 		return panel;
 	}

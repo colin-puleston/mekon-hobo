@@ -59,7 +59,7 @@ class CFramesInstantiatorPanel extends CFramesComboPanel {
 
 		InstancesList() {
 
-			super(true);
+			super(false, true);
 
 			for (CIdentity instance : instances.getAllForRootFrame()) {
 
