@@ -28,7 +28,6 @@ import java.awt.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
@@ -103,24 +102,33 @@ class ConceptTreeSelectorPanel extends JPanel {
 
 		static private final long serialVersionUID = -1;
 
-		private class ConceptList extends GList<Concept> implements ListSelectionListener {
+		private class ConceptList extends GList<Concept> {
 
 			static private final long serialVersionUID = -1;
 
-			public void valueChanged(ListSelectionEvent event) {
+			private class TargetTreeConceptSelector extends GSelectionListener<Concept> {
 
-				if (!event.getValueIsAdjusting()) {
+				protected void onSelected(Concept concept) {
 
-					selectInTargetTree(getSelectedEntity());
+					selectInTargetTree(concept);
+				}
+
+				protected void onDeselected(Concept concept) {
+				}
+
+				TargetTreeConceptSelector() {
+
+					addSelectionListener(this);
 				}
 			}
 
 			ConceptList() {
 
-				super(true);
+				super(false, true);
 
 				populate(targetTree.getRootConcepts());
-				addListSelectionListener(this);
+
+				new TargetTreeConceptSelector();
 			}
 
 			private void populate(Set<Concept> concepts) {

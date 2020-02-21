@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.goblin.gui;
 
-import javax.swing.tree.*;
-
 import uk.ac.manchester.cs.mekon.gui.*;
 
 import uk.ac.manchester.cs.goblin.model.*;
@@ -72,10 +70,8 @@ class HierarchyTree extends ConceptTree {
 
 		if (selected != null) {
 
-			TreePath selectedPath = selected.getTreePath();
-
 			setSelectionPath(null);
-			setSelectionPath(selectedPath);
+			selected.select();
 		}
 	}
 }

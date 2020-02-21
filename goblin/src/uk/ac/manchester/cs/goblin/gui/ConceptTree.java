@@ -235,13 +235,13 @@ abstract class ConceptTree extends GSelectorTree {
 
 		if (node != null) {
 
-			setSelectionPath(node.getTreePath());
+			node.select();
 		}
 	}
 
 	void selectConcepts(Collection<Concept> concepts) {
 
-		List<TreePath> paths = new ArrayList<TreePath>();
+		List<ConceptTreeNode> nodes = new ArrayList<ConceptTreeNode>();
 
 		for (Concept concept : concepts) {
 
@@ -249,11 +249,11 @@ abstract class ConceptTree extends GSelectorTree {
 
 			if (node != null) {
 
-				paths.add(node.getTreePath());
+				nodes.add(node);
 			}
 		}
 
-		setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+		selectAll(nodes);
 	}
 
 	boolean requiredConcept(Concept concept) {

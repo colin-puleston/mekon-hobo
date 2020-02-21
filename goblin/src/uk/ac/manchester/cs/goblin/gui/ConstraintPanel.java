@@ -45,8 +45,8 @@ class ConstraintPanel extends JPanel {
 	static private final String EDIT_CONSTRAINT_LABEL = "Edit...";
 	static private final String CLEAR_CONSTRAINT_LABEL = "Clear";
 
-	static private final String ADD_TARGET_LABEL = "Add target";
-	static private final String REMOVE_TARGET_LABEL = "Del target";
+	static private final String ADD_TARGETS_LABEL = "Add target(s)";
+	static private final String REMOVE_TARGETS_LABEL = "Del target(s)";
 	static private final String CREATE_CONSTRAINT_LABEL = "Create";
 
 	private ConstraintType type;
@@ -215,7 +215,7 @@ class ConstraintPanel extends JPanel {
 
 			TargetSelectionsList() {
 
-				super(true);
+				super(true, true);
 			}
 
 			void initialise(Set<Concept> targets) {
@@ -249,7 +249,7 @@ class ConstraintPanel extends JPanel {
 
 			TargetAddButton() {
 
-				super(ADD_TARGET_LABEL, targetsTree);
+				super(ADD_TARGETS_LABEL, targetsTree);
 			}
 
 			boolean enableOnSelectedConcept(Concept selection) {
@@ -264,12 +264,12 @@ class ConstraintPanel extends JPanel {
 
 			protected void doButtonThing() {
 
-				removeTargetSelection(targetSelectionsList.getSelectedEntity());
+				removeTargetSelections(targetSelectionsList.getSelectedEntities());
 			}
 
 			TargetRemoveButton() {
 
-				super(REMOVE_TARGET_LABEL, targetSelectionsList);
+				super(REMOVE_TARGETS_LABEL, targetSelectionsList);
 			}
 		}
 
@@ -378,6 +378,14 @@ class ConstraintPanel extends JPanel {
 			}
 
 			targetSelectionsList.addEntity(newSelection);
+		}
+
+		private void removeTargetSelections(List<Concept> selections) {
+
+			for (Concept selection : selections) {
+
+				removeTargetSelection(selection);
+			}
 		}
 
 		private void removeTargetSelection(Concept selection) {
