@@ -88,6 +88,7 @@
 			</Semantics>
 		</OWLClassifier>
 
+		<!--
 		<OWLMatcher
 			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORConceptsMatcher"
 			reasoningType="DL"
@@ -99,7 +100,6 @@
 			<InstancePersistence fileName="demo-owl-instances.owl"/>
 		</OWLMatcher>
 
-		<!--
 		<OWLMatcher
 			matcher="uk.ac.manchester.cs.mekon.owl.reason.ORIndividualsMatcher"
 			reasoningType="DL"
@@ -201,12 +201,10 @@
 		provided and, where appropriate, should be listed in order
 		of precedence.
 	-->
-	<!--
 	<GeneralMatcher
 		matcher="uk.ac.manchester.cs.mekon.basex.BaseXMatcher">
 		<BaseXMatcher/>
 	</GeneralMatcher>
-	-->
 
 	<!--
 		Mappings between Java classes/fields from the Object Model
