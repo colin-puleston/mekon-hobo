@@ -75,6 +75,7 @@ public class GList<E> extends JList<GListElement<E>> {
 		public void clear() {
 
 			super.clear();
+
 			displayList.clear();
 		}
 
@@ -122,11 +123,6 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			addElements(filter);
 			restoreSelections();
-		}
-
-		DisplayList getDisplayList() {
-
-			return displayList;
 		}
 
 		List<E> getEntityList() {
@@ -181,15 +177,16 @@ public class GList<E> extends JList<GListElement<E>> {
 		}
 	}
 
-	public GList(boolean orderAlphabetically) {
+	public GList(boolean multiSelect, boolean orderAlphabetically) {
 
 		model = new LocalListModel(orderAlphabetically);
 
 		setModel(model);
+		setSelectionMode(getSelectionMode(multiSelect));
+		setSelectedIndex(-1);
 
 		GCellRenderers.get().set(this);
-		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		setSelectedIndex(-1);
+
 		addListSelectionListener(new SelectionProcessor());
 	}
 
@@ -246,6 +243,16 @@ public class GList<E> extends JList<GListElement<E>> {
 		setSelectedValue(model.getElement(entity), true);
 	}
 
+	public boolean anyElements() {
+
+		return model.getSize() != 0;
+	}
+
+	public boolean anySelections() {
+
+		return !currentSelections.isEmpty();
+	}
+
 	public List<E> getEntityList() {
 
 		return model.getEntityList();
@@ -261,6 +268,11 @@ public class GList<E> extends JList<GListElement<E>> {
 		return getEntityList().contains(entity);
 	}
 
+	public boolean selectedEntity(E entity) {
+
+		return currentSelections.contains(entity);
+	}
+
 	public E getSelectedEntity() {
 
 		return currentSelections.isEmpty() ? null : currentSelections.get(0);
@@ -269,6 +281,13 @@ public class GList<E> extends JList<GListElement<E>> {
 	public List<E> getSelectedEntities() {
 
 		return new ArrayList<E>(currentSelections);
+	}
+
+	private int getSelectionMode(boolean multiSelect) {
+
+		return multiSelect
+				? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
+				: ListSelectionModel.SINGLE_SELECTION;
 	}
 
 	private void updateSelections() {

@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
+import java.util.*;
+
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -59,6 +61,19 @@ public abstract class GTree extends JTree {
 		rootNode.reinitialiseSubTree();
 	}
 
+	public void selectAll(Collection<? extends GNode> nodes) {
+
+		if (nodes.isEmpty()) {
+
+			setSelectionPath(null);
+		}
+		else {
+
+			setSelectionPaths(getTreePaths(nodes));
+			scrollRowToVisible(getSelectionRows()[0]);
+		}
+	}
+
 	public void updateAllNodeDisplays() {
 
 		rootNode.updateSubTreeNodeDisplays();
@@ -77,6 +92,19 @@ public abstract class GTree extends JTree {
 	DefaultTreeModel getTreeModel() {
 
 		return treeModel;
+	}
+
+	private TreePath[] getTreePaths(Collection<? extends GNode> nodes) {
+
+		TreePath[] paths = new TreePath[nodes.size()];
+		int i = 0;
+
+		for (GNode node : nodes) {
+
+			paths[i++] = node.getTreePath();
+		}
+
+		return paths;
 	}
 
 	private int getSelectionMode(boolean multiSelect) {

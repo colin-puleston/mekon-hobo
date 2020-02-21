@@ -209,6 +209,11 @@ public abstract class GNode extends GMutableTreeNode {
 		tree.collapsePath(getTreePath());
 	}
 
+	public void select() {
+
+		tree.selectAll(Collections.singletonList(this));
+	}
+
 	public void updateNodeDisplay() {
 
 		getTreeModel().nodeChanged(this);
