@@ -26,9 +26,9 @@ package uk.ac.manchester.cs.mekon.app;
 
 import java.awt.BorderLayout;
 import javax.swing.*;
-import javax.swing.event.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
@@ -75,23 +75,25 @@ class ExecutedQueriesPanel extends JPanel {
 		void doInstanceThing(CIdentity storeId) {
 
 			queryExecutions.discardExecuted(storeId);
-			querySelectorList.remove(storeId);
+			querySelectorList.removeEntity(storeId);
 		}
 	}
 
-	private class MatchesDisplayUpdater implements ListSelectionListener {
+	private class MatchesDisplayUpdater extends GSelectionListener<CIdentity> {
 
-		public void valueChanged(ListSelectionEvent event) {
+		protected void onSelected(CIdentity storeId) {
 
-			if (!event.getValueIsAdjusting()) {
+			displayMatches(storeId);
+		}
 
-				updateMatchesDisplay();
-			}
+		protected void onDeselected(CIdentity storeId) {
+
+			matchesPanel.clear();
 		}
 
 		MatchesDisplayUpdater() {
 
-			querySelectorList.addListSelectionListener(this);
+			querySelectorList.addSelectionListener(this);
 		}
 	}
 
@@ -113,8 +115,8 @@ class ExecutedQueriesPanel extends JPanel {
 
 		CIdentity storeId = executedQuery.getStoreId();
 
-		querySelectorList.add(storeId);
-		querySelectorList.selectId(storeId);
+		querySelectorList.addEntity(storeId);
+		querySelectorList.select(storeId);
 	}
 
 	private JComponent createQuerySelectorPanel() {
@@ -137,18 +139,6 @@ class ExecutedQueriesPanel extends JPanel {
 		panel.addControl(new DiscardQueryButton());
 
 		return panel;
-	}
-
-	private void updateMatchesDisplay() {
-
-		if (querySelectorList.isSelectedId()) {
-
-			displayMatches(querySelectorList.getSelectedId());
-		}
-		else {
-
-			matchesPanel.clear();
-		}
 	}
 
 	private void displayMatches(CIdentity storeId) {

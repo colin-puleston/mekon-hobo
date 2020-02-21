@@ -25,19 +25,11 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
  */
 public class DefaultCustomiser implements Customiser {
-
-	private IStore store;
-
-	public DefaultCustomiser(IStore store) {
-
-		this.store = store;
-	}
 
 	public String getDisplayLabel(CValue<?> valueType) {
 
@@ -78,7 +70,7 @@ public class DefaultCustomiser implements Customiser {
 
 	public String getReferenceFrameDisplayLabel(IFrame reference) {
 
-		return getAtomicFrameDisplayLabel(loadFromStore(reference.getReferenceId()));
+		return reference.getDisplayLabel();
 	}
 
 	public String getDisjunctionFrameDisplayLabel(IFrame disjunction) {
@@ -114,10 +106,5 @@ public class DefaultCustomiser implements Customiser {
 					CIdentity newStoreId) {
 
 		return instance;
-	}
-
-	private IFrame loadFromStore(CIdentity frameId) {
-
-		return store.get(frameId).getRootFrame();
 	}
 }

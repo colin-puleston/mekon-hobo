@@ -199,7 +199,7 @@ class DescriptorEditor {
 
 		private boolean anyRefSelections() {
 
-			return !getRefedInstanceType().getAssertionIdsList().isEmpty();
+			return getRefedInstanceType().getAssertionIdsList().anyElements();
 		}
 
 		private InstanceType getRefedInstanceType() {

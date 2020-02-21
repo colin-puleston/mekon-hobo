@@ -195,7 +195,7 @@ public class MekonApp extends GFrame {
 
 		if (customiser == null) {
 
-			customiser = new DefaultCustomiser(store);
+			customiser = new DefaultCustomiser();
 		}
 	}
 

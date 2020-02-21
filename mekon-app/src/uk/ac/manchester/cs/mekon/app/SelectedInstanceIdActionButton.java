@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.event.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
@@ -38,9 +36,19 @@ abstract class SelectedInstanceIdActionButton extends GButton {
 
 	private InstanceIdsList idsList;
 
-	private class Enabler implements ListSelectionListener {
+	private class Enabler extends GSelectionListener<CIdentity> {
 
-		public void valueChanged(ListSelectionEvent event) {
+		protected void onSelected(CIdentity storeId) {
+
+			updateEnabling();
+		}
+
+		protected void onDeselected(CIdentity storeId) {
+		}
+
+		Enabler() {
+
+			idsList.addSelectionListener(this);
 
 			updateEnabling();
 		}
@@ -48,7 +56,7 @@ abstract class SelectedInstanceIdActionButton extends GButton {
 
 	protected void doButtonThing() {
 
-		doInstanceThing(idsList.getSelectedId());
+		doInstanceThing(idsList.getSelectedEntity());
 	}
 
 	SelectedInstanceIdActionButton(InstanceIdsList idsList, String label) {
@@ -57,15 +65,13 @@ abstract class SelectedInstanceIdActionButton extends GButton {
 
 		this.idsList = idsList;
 
-		idsList.addListSelectionListener(new Enabler());
-
-		updateEnabling();
+		new Enabler();
 	}
 
 	abstract void doInstanceThing(CIdentity storeId);
 
 	private void updateEnabling() {
 
-		setEnabled(idsList.isSelectedId());
+		setEnabled(idsList.anySelections());
 	}
 }

@@ -27,10 +27,8 @@ package uk.ac.manchester.cs.mekon.app;
 import java.awt.Dimension;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -56,14 +54,19 @@ class InstanceRefSelector extends Selector<IFrame> {
 
 	private InstanceIdsList idsList;
 
-	private class IdsSelectionListener implements ListSelectionListener {
+	private class IdsSelectionListener extends GSelectionListener<CIdentity> {
 
-		public void valueChanged(ListSelectionEvent event) {
+		protected void onSelected(CIdentity storeId) {
 
-			if (!event.getValueIsAdjusting()) {
+			onIdSelected();
+		}
 
-				onIdSelected();
-			}
+		protected void onDeselected(CIdentity storeId) {
+		}
+
+		IdsSelectionListener() {
+
+			idsList.addSelectionListener(this);
 		}
 	}
 
@@ -81,7 +84,8 @@ class InstanceRefSelector extends Selector<IFrame> {
 		this.multiSelect = multiSelect;
 
 		idsList = createIdsList();
-		idsList.addListSelectionListener(new IdsSelectionListener());
+
+		new IdsSelectionListener();
 	}
 
 	IFrame getSelection() {
@@ -120,7 +124,7 @@ class InstanceRefSelector extends Selector<IFrame> {
 
 		List<IFrame> refs = new ArrayList<IFrame>();
 
-		for (CIdentity id : idsList.getSelectedIds()) {
+		for (CIdentity id : idsList.getSelectedEntities()) {
 
 			refs.add(instantiator.instantiateRef(type, id));
 		}

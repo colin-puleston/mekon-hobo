@@ -55,7 +55,7 @@ class InstanceType {
 
 		for (CIdentity storeId : store.getInstanceIds(type)) {
 
-			getInstanceIdsList(storeId).add(storeId);
+			getInstanceIdsList(storeId).addEntity(storeId);
 		}
 	}
 
@@ -83,7 +83,7 @@ class InstanceType {
 
 		if (store.checkAdd(instance, storeId, asNewId)) {
 
-			getInstanceIdsList(storeId).add(storeId);
+			getInstanceIdsList(storeId).checkAddEntity(storeId);
 
 			return true;
 		}
@@ -95,7 +95,7 @@ class InstanceType {
 
 		if (store.checkRemove(storeId)) {
 
-			getInstanceIdsList(storeId).remove(storeId);
+			getInstanceIdsList(storeId).removeEntity(storeId);
 		}
 	}
 
@@ -103,7 +103,7 @@ class InstanceType {
 
 		if (store.checkRename(storeId, newStoreId)) {
 
-			getInstanceIdsList(storeId).replace(storeId, newStoreId);
+			getInstanceIdsList(storeId).replaceEntity(storeId, newStoreId);
 		}
 	}
 

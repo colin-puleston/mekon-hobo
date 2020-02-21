@@ -147,7 +147,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	void clearIds() {
 
-		idsList.clear();
+		idsList.clearList();
 	}
 
 	boolean allowLoadActionOnly() {
