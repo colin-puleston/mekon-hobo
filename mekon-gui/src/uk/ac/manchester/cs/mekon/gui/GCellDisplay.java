@@ -184,17 +184,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	private Color getLabelBackground(boolean selected) {
 
-		if (backgroundColour != null) {
-
-			return backgroundColour;
-		}
-
-		if (selected) {
-
-			return getSelectionBackground();
-		}
-
-		return null;
+		return selected ? getSelectionBackground() : backgroundColour;
 	}
 
 	private Component createSeparator(boolean selected) {
