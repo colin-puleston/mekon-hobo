@@ -28,10 +28,7 @@ import java.util.*;
 import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.BorderLayout;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.event.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
@@ -39,7 +36,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class FrameSelector extends Selector<CFrame> {
+abstract class FrameSelector extends Selector<CFrame> {
 
 	static private final long serialVersionUID = -1;
 
@@ -57,17 +54,87 @@ class FrameSelector extends Selector<CFrame> {
 	}
 
 	private CFrame rootFrame;
+	private boolean forQuery;
 
-	private FrameTree tree;
-	private FilterPanel filterPanel = new FilterPanel();
+	private OptionsTree optionsTree = new OptionsTree();
+	private OptionsFilterPanel optionsFilterPanel = new OptionsFilterPanel();
 
-	private class FilterPanel extends GTreeFilterPanel<CFrame> {
+	private class OptionsTree extends GActionTree {
+
+		static private final long serialVersionUID = -1;
+
+		private class FrameNode extends GNode {
+
+			private CFrame frame;
+
+			private class SelectionAction extends GNodeAction {
+
+				protected void perform() {
+
+					onSelection(frame);
+				}
+			}
+
+			protected void addInitialChildren() {
+
+				for (CFrame subFrame : frame.getSubs()) {
+
+					if (optionsFilterPanel.requiredInTree(subFrame)) {
+
+						addChild(new FrameNode(subFrame));
+					}
+				}
+			}
+
+			protected GNodeAction getPositiveAction1() {
+
+				return new SelectionAction();
+			}
+
+			protected GCellDisplay getDisplay() {
+
+				GCellDisplay display = getFrameCellDisplay(frame);
+
+				if (optionsFilterPanel.passesFilter(frame)) {
+
+					display.setBackgroundColour(LEXICAL_MATCH_BACKGROUND_CLR);
+				}
+
+				return display;
+			}
+
+			FrameNode(CFrame frame) {
+
+				super(OptionsTree.this);
+
+				this.frame = frame;
+			}
+		}
+
+		OptionsTree() {
+
+			setRootVisible(false);
+			setShowsRootHandles(true);
+		}
+
+		void initialise() {
+
+			initialise(new FrameNode(rootFrame));
+		}
+
+		CFrame getSelection() {
+
+			return ((FrameNode)getSelectedNode()).frame;
+		}
+	}
+
+	private class OptionsFilterPanel extends GTreeFilterPanel<CFrame> {
 
 		static private final long serialVersionUID = -1;
 
 		protected void reinitialiseTree() {
 
-			tree.reinitialise();
+			optionsTree.reinitialise();
 		}
 
 		protected Collection<CFrame> getRootNodes() {
@@ -85,118 +152,9 @@ class FrameSelector extends Selector<CFrame> {
 			return node.getIdentity().getLabel();
 		}
 
-		FilterPanel() {
+		OptionsFilterPanel() {
 
 			PanelEntitler.entitle(this, FILTER_PANEL_TITLE);
-		}
-	}
-
-	private class FrameTree extends GSelectorTree {
-
-		static private final long serialVersionUID = -1;
-
-		private Icon icon;
-
-		private class FrameNode extends GNode {
-
-			final CFrame frame;
-
-			protected void addInitialChildren() {
-
-				for (CFrame subFrame : frame.getSubs()) {
-
-					if (filterPanel.requiredInTree(subFrame)) {
-
-						addChild(new FrameNode(subFrame));
-					}
-				}
-			}
-
-			protected GCellDisplay getDisplay() {
-
-				GCellDisplay display = new GCellDisplay(frame.getDisplayLabel(), icon);
-
-				if (filterPanel.passesFilter(frame)) {
-
-					display.setBackgroundColour(LEXICAL_MATCH_BACKGROUND_CLR);
-				}
-
-				return display;
-			}
-
-			FrameNode(CFrame frame) {
-
-				super(FrameTree.this);
-
-				this.frame = frame;
-			}
-		}
-
-		private class SingleSelectDisposer extends MouseAdapter {
-
-			public void mouseReleased(MouseEvent event) {
-
-				if (getSelectionCount() != 0) {
-
-					setCompletedSelection();
-					dispose();
-				}
-			}
-		}
-
-		private class MultiSelectSelectionNotifier implements TreeSelectionListener {
-
-			public void valueChanged(TreeSelectionEvent event) {
-
-				setValidSelection(true);
-			}
-		}
-
-		FrameTree(boolean forQuery, boolean multiSelect) {
-
-			super(multiSelect);
-
-			icon = getIcon(forQuery);
-
-			setRootVisible(false);
-			setShowsRootHandles(true);
-
-			if (multiSelect) {
-
-				addTreeSelectionListener(new MultiSelectSelectionNotifier());
-			}
-			else {
-
-				addMouseListener(new SingleSelectDisposer());
-			}
-
-			initialise(new FrameNode(rootFrame));
-		}
-
-		List<CFrame> getSelections() {
-
-			List<CFrame> frames = new ArrayList<CFrame>();
-			TreePath[] paths = getSelectionPaths();
-
-			if (paths != null) {
-
-				for (TreePath path : paths) {
-
-					frames.add(getFrame(path));
-				}
-			}
-
-			return frames;
-		}
-
-		private CFrame getFrame(TreePath path) {
-
-			return ((FrameNode)path.getLastPathComponent()).frame;
-		}
-
-		private Icon getIcon(boolean forQuery) {
-
-			return forQuery ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
 		}
 	}
 
@@ -210,27 +168,35 @@ class FrameSelector extends Selector<CFrame> {
 		super(parent, getTitle(multiSelect), multiSelect, clearRequired);
 
 		this.rootFrame = rootFrame;
+		this.forQuery = forQuery;
 
-		tree = new FrameTree(forQuery, multiSelect);
-	}
-
-	CFrame getSelection() {
-
-		return CFrame.resolveDisjunction(tree.getSelections());
-	}
-
-	JComponent getInputComponent() {
-
-		JPanel panel = new JPanel(new BorderLayout());
-
-		panel.add(new JScrollPane(tree), BorderLayout.CENTER);
-		panel.add(filterPanel, BorderLayout.SOUTH);
-
-		return panel;
+		optionsTree.initialise();
 	}
 
 	Dimension getWindowSize() {
 
 		return WINDOW_SIZE;
+	}
+
+	abstract void onSelection(CFrame selected);
+
+	JPanel createSelectorPanel() {
+
+		JPanel panel = new JPanel(new BorderLayout());
+
+		panel.add(new JScrollPane(optionsTree), BorderLayout.CENTER);
+		panel.add(optionsFilterPanel, BorderLayout.SOUTH);
+
+		return panel;
+	}
+
+	GCellDisplay getFrameCellDisplay(CFrame frame) {
+
+		return new GCellDisplay(frame.getDisplayLabel(), getFrameIcon());
+	}
+
+	private Icon getFrameIcon() {
+
+		return forQuery ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
 	}
 }

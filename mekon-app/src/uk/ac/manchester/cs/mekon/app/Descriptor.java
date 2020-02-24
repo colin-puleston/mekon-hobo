@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -133,9 +135,29 @@ class Descriptor {
 		return label;
 	}
 
-	String getValueLabel() {
+	List<String> getValueDisjunctLabels() {
 
-		return anyEffectiveValues() ? getActualValueLabel() : getNoEffectiveValueLabel();
+		if (hasValue()) {
+
+			if (value instanceof CFrame) {
+
+				return getFrameValueDisjunctLabels((CFrame)value);
+			}
+
+			if (value instanceof IFrame) {
+
+				IFrame frameValue = (IFrame)value;
+
+				if (frameValue.getSlots().isEmpty()) {
+
+					return getFrameValueDisjunctLabels(frameValue.getType());
+				}
+			}
+
+			return Collections.singletonList(getAtomicValueLabel(value));
+		}
+
+		return Collections.singletonList(getValueTypeLabel());
 	}
 
 	private boolean cFrameValueType(boolean instanceRef) {
@@ -165,21 +187,16 @@ class Descriptor {
 		return values.asList().indexOf(value);
 	}
 
-	private String getNoEffectiveValueLabel() {
+	private List<String> getFrameValueDisjunctLabels(CFrame frame) {
 
-		String description = getNoEffectiveValuesDescription();
+		List<String> labels = new ArrayList<String>();
 
-		if (description.isEmpty()) {
+		for (CFrame disjunct : frame.asDisjuncts()) {
 
-			description = NO_EFFECTIVE_VALUE_DEFAULT_LABEL;
+			labels.add(getAtomicValueLabel(disjunct));
 		}
 
-		return "[" + description + "]";
-	}
-
-	private String getNoEffectiveValuesDescription() {
-
-		return hasValue() ? getActualValueLabel() : getValueTypeLabel();
+		return labels;
 	}
 
 	private String getValueTypeLabel() {
@@ -187,9 +204,9 @@ class Descriptor {
 		return getCustomiser().getDisplayLabel(valueType);
 	}
 
-	private String getActualValueLabel() {
+	private String getAtomicValueLabel(IValue atomicValue) {
 
-		return getCustomiser().getDisplayLabel(value);
+		return getCustomiser().getDisplayLabel(atomicValue);
 	}
 
 	private boolean inferredValue() {

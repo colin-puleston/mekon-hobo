@@ -127,9 +127,13 @@ class DescriptorEditor {
 		FrameSelector createValueSelector(boolean clearRequired) {
 
 			boolean query = instantiator.queryInstantiation();
-			boolean multiSelect = abstractEditableSlot();
 
-			return new FrameSelector(parent, rootCFrame, query, multiSelect, clearRequired);
+			if (abstractEditableSlot()) {
+
+				return new DisjunctionFrameSelector(parent, rootCFrame, query, clearRequired);
+			}
+
+			return new AtomicFrameSelector(parent, rootCFrame, query, clearRequired);
 		}
 	}
 
@@ -182,13 +186,11 @@ class DescriptorEditor {
 
 		InstanceRefSelector createValueSelector(boolean clearRequired) {
 
-			boolean multiSelect = abstractEditableSlot();
-
 			return new InstanceRefSelector(
 							parent,
 							instantiator,
 							valueType,
-							multiSelect,
+							abstractEditableSlot(),
 							clearRequired);
 		}
 

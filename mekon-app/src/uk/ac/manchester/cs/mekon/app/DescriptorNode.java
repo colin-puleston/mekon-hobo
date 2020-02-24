@@ -24,11 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -36,10 +34,8 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 class DescriptorNode extends InstantiationNode {
 
-	static private final Color NON_EDITABLE_BACKGROUND_CLR = new Color(220,220,200);
-
-	private Descriptor descriptor;
 	private GNodeAction editAction;
+	private GCellDisplay display;
 
 	private boolean editActive = true;
 
@@ -58,7 +54,12 @@ class DescriptorNode extends InstantiationNode {
 
 	private class EditAction extends EditActiveAction {
 
-		private DescriptorEditor editor = createEditor();
+		private DescriptorEditor editor;
+
+		EditAction(Descriptor descriptor) {
+
+			editor = createEditor(descriptor);
+		}
 
 		void performEditActiveAction() {
 
@@ -76,13 +77,6 @@ class DescriptorNode extends InstantiationNode {
 
 	protected GCellDisplay getDisplay() {
 
-		GCellDisplay display = getCoreDisplay();
-
-		if (descriptor.hasValue()) {
-
-			display.setModifier(getValueDisplay());
-		}
-
 		return display;
 	}
 
@@ -95,57 +89,22 @@ class DescriptorNode extends InstantiationNode {
 
 		super(tree);
 
-		this.descriptor = descriptor;
-
-		editAction = editable() ? new EditAction() : new NoEditAction();
+		editAction = createEditAction(descriptor);
+		display = createDisplay(descriptor);
 	}
 
-	Icon getValueIcon() {
+	private GNodeAction createEditAction(Descriptor descriptor) {
 
-		if (descriptor.instanceRefType()) {
-
-			return MekonAppIcons.ASSERTION_REF;
-		}
-
-		if (queryInstantiation()) {
-
-			return MekonAppIcons.QUERY_VALUE;
-		}
-
-		return MekonAppIcons.ASSERTION_VALUE;
+		return descriptor.userEditable() ? new EditAction(descriptor) : new NoEditAction();
 	}
 
-	private GCellDisplay getCoreDisplay() {
+	private GCellDisplay createDisplay(Descriptor descriptor) {
 
-		return new GCellDisplay(descriptor.getIdentityLabel(), getIcon());
+		return new DescriptorCellDisplay(descriptor, queryInstantiation()).create();
 	}
 
-	private GCellDisplay getValueDisplay() {
-
-		GCellDisplay display = new GCellDisplay(descriptor.getValueLabel());
-
-		display.setFontStyle(Font.BOLD);
-
-		if (!editable()) {
-
-			display.setBackgroundColour(NON_EDITABLE_BACKGROUND_CLR);
-		}
-
-		return display;
-	}
-
-	private Icon getIcon() {
-
-		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.NO_VALUE;
-	}
-
-	private DescriptorEditor createEditor() {
+	private DescriptorEditor createEditor(Descriptor descriptor) {
 
 		return new DescriptorEditor(getInstantiationTree(), getInstantiator(), descriptor);
-	}
-
-	private boolean editable() {
-
-		return descriptor.userEditable();
 	}
 }
