@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.gui;
 
-import java.util.*;
 import java.awt.event.*;
 
 import javax.swing.tree.*;
@@ -84,22 +83,5 @@ public class GSelectorTree extends GTree {
 	public void addNodeSelectionListener(GSelectionListener<GNode> nodeSelectionListener) {
 
 		nodeSelectionListeners.add(nodeSelectionListener);
-	}
-
-	public GNode getSelectedNode() {
-
-		return (GNode)getLastSelectedPathComponent();
-	}
-
-	public List<GNode> getAllSelectedNodes() {
-
-		List<GNode> nodes = new ArrayList<GNode>();
-
-		for (TreePath path : getSelectionModel().getSelectionPaths()) {
-
-			nodes.add((GNode)path.getLastPathComponent());
-		}
-
-		return nodes;
 	}
 }

@@ -89,6 +89,23 @@ public abstract class GTree extends JTree {
 		return rootNode == null || rootNode.getChildCount() == 0;
 	}
 
+	public GNode getSelectedNode() {
+
+		return (GNode)getLastSelectedPathComponent();
+	}
+
+	public List<GNode> getAllSelectedNodes() {
+
+		List<GNode> nodes = new ArrayList<GNode>();
+
+		for (TreePath path : getSelectionModel().getSelectionPaths()) {
+
+			nodes.add((GNode)path.getLastPathComponent());
+		}
+
+		return nodes;
+	}
+
 	DefaultTreeModel getTreeModel() {
 
 		return treeModel;
