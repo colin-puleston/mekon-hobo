@@ -301,15 +301,22 @@ public class GList<E> extends JList<GListElement<E>> {
 
 		currentSelections = newSelections;
 
-		pollForAddedSelections(removedSelections);
+		pollForRemovedSelections(removedSelections);
 		pollForAddedSelections(addedSelections);
 	}
 
 	private void restoreSelections() {
 
-		for (E selection : currentSelections) {
+		for (E selection : new ArrayList<E>(currentSelections)) {
 
-			select(selection);
+			if (containsEntity(selection)) {
+
+				select(selection);
+			}
+			else {
+
+				currentSelections.remove(selection);
+			}
 		}
 	}
 
@@ -323,6 +330,18 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			selectionListeners.pollForDeselected(selection);
 		}
+	}
+
+	private List<E> extractEntities(List<GListElement<E>> elements) {
+
+		List<E> entities = new ArrayList<E>();
+
+		for (GListElement<E> element : elements) {
+
+			entities.add(element.getEntity());
+		}
+
+		return entities;
 	}
 
 	private void pollForAddedSelections(List<E> entities) {
@@ -339,18 +358,6 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			selectionListeners.pollForDeselected(entity);
 		}
-	}
-
-	private List<E> extractEntities(List<GListElement<E>> elements) {
-
-		List<E> entities = new ArrayList<E>();
-
-		for (GListElement<E> element : elements) {
-
-			entities.add(element.getEntity());
-		}
-
-		return entities;
 	}
 
 	private void pollListListenersForAdded(E entity) {
