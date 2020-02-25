@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.util.*;
-import java.awt.BorderLayout;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -34,52 +33,11 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class DisjunctionInstanceRefSelector extends InstanceRefSelector {
+class DisjunctionInstanceRefSelector extends DisjunctionEntitySelector<IFrame> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String SELECTIONS_TITLE = "Selected options / de-select";
-
-	private SelectionsList selectedIdsList = new SelectionsList();
-
-	private class SelectionsList extends GList<CIdentity> {
-
-		static private final long serialVersionUID = -1;
-
-		private class Deselector extends GSelectionListener<CIdentity> {
-
-			protected void onSelected(CIdentity refId) {
-
-				removeEntity(refId);
-				setValidSelection(anyElements());
-			}
-
-			protected void onDeselected(CIdentity refId) {
-			}
-		}
-
-		SelectionsList() {
-
-			super(false, false);
-
-			addSelectionListener(new Deselector());
-		}
-
-		void checkAdd(CIdentity newSelection) {
-
-			if (!containsEntity(newSelection)) {
-
-				addSelection(newSelection);
-
-				setValidSelection(true);
-			}
-		}
-
-		private void addSelection(CIdentity selection) {
-
-			addEntity(selection, getRefCellDisplay(selection));
-		}
-	}
+	private InstanceRefSelectionOptions selectionOptions;
 
 	DisjunctionInstanceRefSelector(
 		JComponent parent,
@@ -87,55 +45,28 @@ class DisjunctionInstanceRefSelector extends InstanceRefSelector {
 		CFrame type,
 		boolean clearRequired) {
 
-		super(parent, instantiator, type, true, clearRequired);
+		super(parent, clearRequired);
+
+		selectionOptions = new InstanceRefSelectionOptions(this, instantiator, type);
 	}
 
 	IFrame getSelection() {
 
-		List<IFrame> refs = selectedIdsToRefs();
+		List<IFrame> sels = getDisjunctSelections();
 
-		if (refs.isEmpty()) {
-
-			throw new Error("No current selections!");
-		}
-
-		return refs.size() == 1 ? refs.get(0) : IFrame.createDisjunction(refs);
+		return sels.size() == 1 ? sels.get(0) : IFrame.createDisjunction(sels);
 	}
 
-	JComponent getInputComponent() {
+	JComponent createOptionsComponent() {
 
-		JPanel panel = new JPanel(new BorderLayout());
-
-		panel.add(createSelectorPanel(), BorderLayout.CENTER);
-		panel.add(createSelectionsPanel(), BorderLayout.SOUTH);
-
-		return panel;
+		return selectionOptions.createOptionsComponent();
 	}
 
-	void onSelection(CIdentity selectedRefId) {
+	GCellDisplay getEntityCellDisplay(IFrame entity) {
 
-		selectedIdsList.checkAdd(selectedRefId);
+		return selectionOptions.getRefIdCellDisplay(entity.getReferenceId());
 	}
 
-	private JPanel createSelectionsPanel() {
-
-		JPanel panel = new JPanel(new BorderLayout());
-
-		PanelEntitler.entitle(panel, SELECTIONS_TITLE);
-		panel.add(new JScrollPane(selectedIdsList));
-
-		return panel;
-	}
-
-	private List<IFrame> selectedIdsToRefs() {
-
-		List<IFrame> refs = new ArrayList<IFrame>();
-
-		for (CIdentity refId : selectedIdsList.getEntityList()) {
-
-			refs.add(createRef(refId));
-		}
-
-		return refs;
+	void removeSelectionConflicts(GList<IFrame> selectionsList, IFrame newSelection) {
 	}
 }

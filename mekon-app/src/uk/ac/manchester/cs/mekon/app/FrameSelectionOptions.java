@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.util.*;
-import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.BorderLayout;
 import javax.swing.*;
@@ -36,22 +35,11 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class FrameSelector extends Selector<CFrame> {
-
-	static private final long serialVersionUID = -1;
+class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 
 	static private final String FILTER_PANEL_TITLE = "Filter";
-	static private final String SINGLE_SELECT_TITLE = "Select option";
-	static private final String MULTI_SELECT_TITLE = SINGLE_SELECT_TITLE + "(s)";
-
-	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
 
 	static private final Color LEXICAL_MATCH_BACKGROUND_CLR = new Color(255,237,160);
-
-	static private String getTitle(boolean multiSelect) {
-
-		return multiSelect ? MULTI_SELECT_TITLE : SINGLE_SELECT_TITLE;
-	}
 
 	private CFrame rootFrame;
 	private boolean forQuery;
@@ -71,7 +59,7 @@ abstract class FrameSelector extends Selector<CFrame> {
 
 				protected void perform() {
 
-					onSelection(frame);
+					onSelectedOption(frame);
 				}
 			}
 
@@ -158,14 +146,12 @@ abstract class FrameSelector extends Selector<CFrame> {
 		}
 	}
 
-	FrameSelector(
-		JComponent parent,
+	FrameSelectionOptions(
+		EntitySelector<CFrame> selector,
 		CFrame rootFrame,
-		boolean forQuery,
-		boolean multiSelect,
-		boolean clearRequired) {
+		boolean forQuery) {
 
-		super(parent, getTitle(multiSelect), multiSelect, clearRequired);
+		super(selector);
 
 		this.rootFrame = rootFrame;
 		this.forQuery = forQuery;
@@ -173,14 +159,7 @@ abstract class FrameSelector extends Selector<CFrame> {
 		optionsTree.initialise();
 	}
 
-	Dimension getWindowSize() {
-
-		return WINDOW_SIZE;
-	}
-
-	abstract void onSelection(CFrame selected);
-
-	JPanel createSelectorPanel() {
+	JComponent createOptionsComponent() {
 
 		JPanel panel = new JPanel(new BorderLayout());
 

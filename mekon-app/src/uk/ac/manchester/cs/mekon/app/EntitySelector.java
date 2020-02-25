@@ -24,82 +24,39 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.util.*;
+import java.awt.Dimension;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class InstanceIdsList extends GList<CIdentity> {
+abstract class EntitySelector<E> extends Selector<E> {
 
 	static private final long serialVersionUID = -1;
 
-	private boolean queryInstances;
-	private boolean multiSelect;
+	static private final String SINGLE_SELECT_TITLE = "Select option";
+	static private final String MULTI_SELECT_TITLE = SINGLE_SELECT_TITLE + "(s)";
 
-	InstanceIdsList(boolean queryInstances, boolean multiSelect) {
+	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
 
-		super(multiSelect, true);
+	static private String getTitle(boolean multiSelect) {
 
-		this.queryInstances = queryInstances;
-		this.multiSelect = multiSelect;
+		return multiSelect ? MULTI_SELECT_TITLE : SINGLE_SELECT_TITLE;
 	}
 
-	InstanceIdsList(boolean queryInstances, boolean multiSelect, Collection<CIdentity> ids) {
+	EntitySelector(JComponent parent, boolean multiSelect, boolean clearRequired) {
 
-		this(queryInstances, multiSelect);
-
-		addEntities(ids);
+		super(parent, getTitle(multiSelect), multiSelect, clearRequired);
 	}
 
-	InstanceIdsList deriveList(boolean multiSelect) {
+	Dimension getWindowSize() {
 
-		return new InstanceIdsList(queryInstances, multiSelect, getEntityList());
+		return WINDOW_SIZE;
 	}
 
-	void update(Collection<CIdentity> ids) {
+	abstract JComponent createOptionsComponent();
 
-		clearList();
-		addEntities(ids);
-	}
-
-	void addEntity(CIdentity id) {
-
-		addEntity(id, getCellDisplay(id));
-	}
-
-	void checkAddEntity(CIdentity id) {
-
-		if (!containsEntity(id)) {
-
-			addEntity(id);
-		}
-	}
-
-	void replaceEntity(CIdentity id, CIdentity newId) {
-
-		removeEntity(id);
-		addEntity(newId);
-	}
-
-	GCellDisplay getCellDisplay(CIdentity id) {
-
-		return new GCellDisplay(id.getLabel(), getIcon());
-	}
-
-	private void addEntities(Collection<CIdentity> ids) {
-
-		for (CIdentity id : ids) {
-
-			addEntity(id);
-		}
-	}
-
-	private Icon getIcon() {
-
-		return queryInstances ? MekonAppIcons.QUERY_REF : MekonAppIcons.ASSERTION_REF;
-	}
+	abstract void onSelectedOption(E selected);
 }

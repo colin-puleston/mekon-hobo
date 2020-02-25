@@ -31,11 +31,11 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class AtomicFrameSelector extends FrameSelector {
+class AtomicFrameSelector extends AtomicEntitySelector<CFrame> {
 
 	static private final long serialVersionUID = -1;
 
-	private CFrame selection = null;
+	private FrameSelectionOptions selectionOptions;
 
 	AtomicFrameSelector(
 		JComponent parent,
@@ -43,24 +43,13 @@ class AtomicFrameSelector extends FrameSelector {
 		boolean forQuery,
 		boolean clearRequired) {
 
-		super(parent, rootFrame, forQuery, false, clearRequired);
+		super(parent, clearRequired);
+
+		selectionOptions = new FrameSelectionOptions(this, rootFrame, forQuery);
 	}
 
-	CFrame getSelection() {
+	JComponent createOptionsComponent() {
 
-		return selection;
-	}
-
-	JComponent getInputComponent() {
-
-		return createSelectorPanel();
-	}
-
-	void onSelection(CFrame selected) {
-
-		selection = selected;
-
-		setCompletedSelection();
-		dispose();
+		return selectionOptions.createOptionsComponent();
 	}
 }

@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.Dimension;
-import java.awt.BorderLayout;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -34,30 +32,18 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceRefSelector extends Selector<IFrame> {
-
-	static private final long serialVersionUID = -1;
-
-	static private final String SINGLE_SELECT_TITLE = "Select option";
-	static private final String MULTI_SELECT_TITLE = SINGLE_SELECT_TITLE + "(s)";
-
-	static private final Dimension WINDOW_SIZE = new Dimension(300, 200);
-
-	static private String getTitle(boolean multiSelect) {
-
-		return multiSelect ? MULTI_SELECT_TITLE : SINGLE_SELECT_TITLE;
-	}
+class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private Instantiator instantiator;
 	private CFrame type;
 
-	private InstanceIdsList refIdsList;
+	private InstanceIdsList refIdOptionsList;
 
 	private class IdsSelectionListener extends GSelectionListener<CIdentity> {
 
 		protected void onSelected(CIdentity refId) {
 
-			onSelection(refId);
+			onSelectedOption(createRef(refId));
 		}
 
 		protected void onDeselected(CIdentity refId) {
@@ -65,55 +51,36 @@ abstract class InstanceRefSelector extends Selector<IFrame> {
 
 		IdsSelectionListener() {
 
-			refIdsList.addSelectionListener(this);
+			refIdOptionsList.addSelectionListener(this);
 		}
 	}
 
-	InstanceRefSelector(
-		JComponent parent,
+	InstanceRefSelectionOptions(
+		EntitySelector<IFrame> selector,
 		Instantiator instantiator,
-		CFrame type,
-		boolean multiSelect,
-		boolean clearRequired) {
+		CFrame type) {
 
-		super(parent, getTitle(multiSelect), multiSelect, clearRequired);
+		super(selector);
 
 		this.instantiator = instantiator;
 		this.type = type;
 
-		refIdsList = createRefIdsList();
+		refIdOptionsList = createRefIdOptionsList();
 
 		new IdsSelectionListener();
 	}
 
-	JComponent getInputComponent() {
+	JComponent createOptionsComponent() {
 
-		return new JScrollPane(refIdsList);
+		return new GListPanel<CIdentity>(refIdOptionsList);
 	}
 
-	Dimension getWindowSize() {
+	GCellDisplay getRefIdCellDisplay(CIdentity refId) {
 
-		return WINDOW_SIZE;
+		return refIdOptionsList.getCellDisplay(refId);
 	}
 
-	abstract void onSelection(CIdentity selectedRefId);
-
-	JPanel createSelectorPanel() {
-
-		return new GListPanel<CIdentity>(refIdsList);
-	}
-
-	GCellDisplay getRefCellDisplay(CIdentity refId) {
-
-		return refIdsList.getCellDisplay(refId);
-	}
-
-	IFrame createRef(CIdentity refId) {
-
-		return instantiator.instantiateRef(type, refId);
-	}
-
-	private InstanceIdsList createRefIdsList() {
+	private InstanceIdsList createRefIdOptionsList() {
 
 		return getInstanceType().getAssertionIdsList().deriveList(false);
 	}
@@ -121,5 +88,10 @@ abstract class InstanceRefSelector extends Selector<IFrame> {
 	private InstanceType getInstanceType() {
 
 		return instantiator.getController().getInstanceType(type);
+	}
+
+	private IFrame createRef(CIdentity refId) {
+
+		return instantiator.instantiateRef(type, refId);
 	}
 }

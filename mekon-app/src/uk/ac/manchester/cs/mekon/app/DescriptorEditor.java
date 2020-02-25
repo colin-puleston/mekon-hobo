@@ -124,7 +124,7 @@ class DescriptorEditor {
 			this.rootCFrame = rootCFrame;
 		}
 
-		FrameSelector createValueSelector(boolean clearRequired) {
+		Selector<CFrame> createValueSelector(boolean clearRequired) {
 
 			boolean query = instantiator.queryInstantiation();
 
@@ -184,7 +184,7 @@ class DescriptorEditor {
 			return false;
 		}
 
-		InstanceRefSelector createValueSelector(boolean clearRequired) {
+		Selector<IFrame> createValueSelector(boolean clearRequired) {
 
 			if (abstractEditableSlot()) {
 

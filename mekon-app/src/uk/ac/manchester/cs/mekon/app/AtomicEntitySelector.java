@@ -26,52 +26,35 @@ package uk.ac.manchester.cs.mekon.app;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
-
 /**
  * @author Colin Puleston
  */
-class DisjunctionFrameSelector extends DisjunctionEntitySelector<CFrame> {
+abstract class AtomicEntitySelector<E> extends EntitySelector<E> {
 
 	static private final long serialVersionUID = -1;
 
-	private FrameSelectionOptions selectionOptions;
+	private E selection = null;
 
-	DisjunctionFrameSelector(
-		JComponent parent,
-		CFrame rootFrame,
-		boolean forQuery,
-		boolean clearRequired) {
+	E getSelection() {
 
-		super(parent, clearRequired);
-
-		selectionOptions = new FrameSelectionOptions(this, rootFrame, forQuery);
+		return selection;
 	}
 
-	CFrame getSelection() {
+	AtomicEntitySelector(JComponent parent, boolean clearRequired) {
 
-		return CFrame.resolveDisjunction(getDisjunctSelections());
+		super(parent, false, clearRequired);
 	}
 
-	JComponent createOptionsComponent() {
+	JComponent getInputComponent() {
 
-		return selectionOptions.createOptionsComponent();
+		return createOptionsComponent();
 	}
 
-	GCellDisplay getEntityCellDisplay(CFrame entity) {
+	void onSelectedOption(E selected) {
 
-		return selectionOptions.getFrameCellDisplay(entity);
-	}
+		selection = selected;
 
-	void removeSelectionConflicts(GList<CFrame> selectionsList, CFrame newSelection) {
-
-		for (CFrame sel : selectionsList.getEntityList()) {
-
-			if (newSelection.subsumes(sel) || sel.subsumes(newSelection)) {
-
-				selectionsList.removeEntity(sel);
-			}
-		}
+		setCompletedSelection();
+		dispose();
 	}
 }

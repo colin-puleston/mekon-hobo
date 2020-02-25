@@ -31,11 +31,11 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class AtomicInstanceRefSelector extends InstanceRefSelector {
+class AtomicInstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	static private final long serialVersionUID = -1;
 
-	private CIdentity idSelection = null;
+	private InstanceRefSelectionOptions selectionOptions;
 
 	AtomicInstanceRefSelector(
 		JComponent parent,
@@ -43,24 +43,13 @@ class AtomicInstanceRefSelector extends InstanceRefSelector {
 		CFrame type,
 		boolean clearRequired) {
 
-		super(parent, instantiator, type, false, clearRequired);
+		super(parent, clearRequired);
+
+		selectionOptions = new InstanceRefSelectionOptions(this, instantiator, type);
 	}
 
-	IFrame getSelection() {
+	JComponent createOptionsComponent() {
 
-		return createRef(idSelection);
-	}
-
-	JComponent getInputComponent() {
-
-		return createSelectorPanel();
-	}
-
-	void onSelection(CIdentity selectedRefId) {
-
-		idSelection = selectedRefId;
-
-		setCompletedSelection();
-		dispose();
+		return selectionOptions.createOptionsComponent();
 	}
 }
