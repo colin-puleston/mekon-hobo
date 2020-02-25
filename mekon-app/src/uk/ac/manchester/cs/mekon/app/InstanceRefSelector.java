@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.awt.Dimension;
-import java.util.*;
+import java.awt.BorderLayout;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceRefSelector extends Selector<IFrame> {
+abstract class InstanceRefSelector extends Selector<IFrame> {
 
 	static private final long serialVersionUID = -1;
 
@@ -50,23 +50,22 @@ class InstanceRefSelector extends Selector<IFrame> {
 
 	private Instantiator instantiator;
 	private CFrame type;
-	private boolean multiSelect;
 
-	private InstanceIdsList idsList;
+	private InstanceIdsList refIdsList;
 
 	private class IdsSelectionListener extends GSelectionListener<CIdentity> {
 
-		protected void onSelected(CIdentity storeId) {
+		protected void onSelected(CIdentity refId) {
 
-			onIdSelected();
+			onSelection(refId);
 		}
 
-		protected void onDeselected(CIdentity storeId) {
+		protected void onDeselected(CIdentity refId) {
 		}
 
 		IdsSelectionListener() {
 
-			idsList.addSelectionListener(this);
+			refIdsList.addSelectionListener(this);
 		}
 	}
 
@@ -81,28 +80,15 @@ class InstanceRefSelector extends Selector<IFrame> {
 
 		this.instantiator = instantiator;
 		this.type = type;
-		this.multiSelect = multiSelect;
 
-		idsList = createIdsList();
+		refIdsList = createRefIdsList();
 
 		new IdsSelectionListener();
 	}
 
-	IFrame getSelection() {
-
-		List<IFrame> refs = idSelectionsToRefs();
-
-		if (refs.isEmpty()) {
-
-			throw new Error("No current selections!");
-		}
-
-		return refs.size() == 1 ? refs.get(0) : IFrame.createDisjunction(refs);
-	}
-
 	JComponent getInputComponent() {
 
-		return new JScrollPane(idsList);
+		return new JScrollPane(refIdsList);
 	}
 
 	Dimension getWindowSize() {
@@ -110,38 +96,30 @@ class InstanceRefSelector extends Selector<IFrame> {
 		return WINDOW_SIZE;
 	}
 
-	private InstanceIdsList createIdsList() {
+	abstract void onSelection(CIdentity selectedRefId);
 
-		return getInstanceType().getAssertionIdsList().deriveList(multiSelect);
+	JPanel createSelectorPanel() {
+
+		return new GListPanel<CIdentity>(refIdsList);
+	}
+
+	GCellDisplay getRefCellDisplay(CIdentity refId) {
+
+		return refIdsList.getCellDisplay(refId);
+	}
+
+	IFrame createRef(CIdentity refId) {
+
+		return instantiator.instantiateRef(type, refId);
+	}
+
+	private InstanceIdsList createRefIdsList() {
+
+		return getInstanceType().getAssertionIdsList().deriveList(false);
 	}
 
 	private InstanceType getInstanceType() {
 
 		return instantiator.getController().getInstanceType(type);
-	}
-
-	private List<IFrame> idSelectionsToRefs() {
-
-		List<IFrame> refs = new ArrayList<IFrame>();
-
-		for (CIdentity id : idsList.getSelectedEntities()) {
-
-			refs.add(instantiator.instantiateRef(type, id));
-		}
-
-		return refs;
-	}
-
-	private void onIdSelected() {
-
-		if (multiSelect) {
-
-			setValidSelection(true);
-		}
-		else {
-
-			setCompletedSelection();
-			dispose();
-		}
 	}
 }

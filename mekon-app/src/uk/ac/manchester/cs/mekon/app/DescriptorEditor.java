@@ -186,11 +186,19 @@ class DescriptorEditor {
 
 		InstanceRefSelector createValueSelector(boolean clearRequired) {
 
-			return new InstanceRefSelector(
+			if (abstractEditableSlot()) {
+
+				return new DisjunctionInstanceRefSelector(
+								parent,
+								instantiator,
+								valueType,
+								clearRequired);
+			}
+
+			return new AtomicInstanceRefSelector(
 							parent,
 							instantiator,
 							valueType,
-							abstractEditableSlot(),
 							clearRequired);
 		}
 

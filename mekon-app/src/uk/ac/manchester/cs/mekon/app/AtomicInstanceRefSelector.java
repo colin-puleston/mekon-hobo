@@ -24,82 +24,43 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class InstanceIdsList extends GList<CIdentity> {
+class AtomicInstanceRefSelector extends InstanceRefSelector {
 
 	static private final long serialVersionUID = -1;
 
-	private boolean queryInstances;
-	private boolean multiSelect;
+	private CIdentity idSelection = null;
 
-	InstanceIdsList(boolean queryInstances, boolean multiSelect) {
+	AtomicInstanceRefSelector(
+		JComponent parent,
+		Instantiator instantiator,
+		CFrame type,
+		boolean clearRequired) {
 
-		super(multiSelect, true);
-
-		this.queryInstances = queryInstances;
-		this.multiSelect = multiSelect;
+		super(parent, instantiator, type, false, clearRequired);
 	}
 
-	InstanceIdsList(boolean queryInstances, boolean multiSelect, Collection<CIdentity> ids) {
+	IFrame getSelection() {
 
-		this(queryInstances, multiSelect);
-
-		addEntities(ids);
+		return createRef(idSelection);
 	}
 
-	InstanceIdsList deriveList(boolean multiSelect) {
+	JComponent getInputComponent() {
 
-		return new InstanceIdsList(queryInstances, multiSelect, getEntityList());
+		return createSelectorPanel();
 	}
 
-	void update(Collection<CIdentity> ids) {
+	void onSelection(CIdentity selectedRefId) {
 
-		clearList();
-		addEntities(ids);
-	}
+		idSelection = selectedRefId;
 
-	void addEntity(CIdentity id) {
-
-		addEntity(id, getCellDisplay(id));
-	}
-
-	void checkAddEntity(CIdentity id) {
-
-		if (!containsEntity(id)) {
-
-			addEntity(id);
-		}
-	}
-
-	void replaceEntity(CIdentity id, CIdentity newId) {
-
-		removeEntity(id);
-		addEntity(newId);
-	}
-
-	GCellDisplay getCellDisplay(CIdentity id) {
-
-		return new GCellDisplay(id.getLabel(), getIcon());
-	}
-
-	private void addEntities(Collection<CIdentity> ids) {
-
-		for (CIdentity id : ids) {
-
-			addEntity(id);
-		}
-	}
-
-	private Icon getIcon() {
-
-		return queryInstances ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
+		setCompletedSelection();
+		dispose();
 	}
 }
