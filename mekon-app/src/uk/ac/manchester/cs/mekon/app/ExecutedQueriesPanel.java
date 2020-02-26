@@ -125,7 +125,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 		PanelEntitler.entitle(panel, QUERY_SELECTOR_TITLE);
 
-		panel.add(new JScrollPane(querySelectorList), BorderLayout.CENTER);
+		panel.add(new GListPanel<CIdentity>(querySelectorList), BorderLayout.CENTER);
 		panel.add(createQuerySelectorControlsComponent(), BorderLayout.SOUTH);
 
 		return panel;

@@ -131,7 +131,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		setTitle(title);
 
-		add(new JScrollPane(idsList), BorderLayout.CENTER);
+		add(new GListPanel<CIdentity>(idsList), BorderLayout.CENTER);
 		add(createControlsComponent(), BorderLayout.SOUTH);
 	}
 

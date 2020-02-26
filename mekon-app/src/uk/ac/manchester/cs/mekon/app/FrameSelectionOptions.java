@@ -37,8 +37,6 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 
-	static private final String FILTER_PANEL_TITLE = "Filter";
-
 	static private final Color LEXICAL_MATCH_BACKGROUND_CLR = new Color(255,237,160);
 
 	private CFrame rootFrame;
@@ -138,11 +136,6 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 		protected String getNodeLabel(CFrame node) {
 
 			return node.getIdentity().getLabel();
-		}
-
-		OptionsFilterPanel() {
-
-			PanelEntitler.entitle(this, FILTER_PANEL_TITLE);
 		}
 	}
 
