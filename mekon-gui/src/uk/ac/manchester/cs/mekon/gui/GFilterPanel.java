@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 /**
  * @author Colin Puleston
@@ -35,6 +36,7 @@ public abstract class GFilterPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String PANEL_TITLE = "Filter";
 	static private final String START_ONLY_TITLE = "begins with";
 
 	private JTextField filterField = new JTextField();
@@ -59,6 +61,8 @@ public abstract class GFilterPanel extends JPanel {
 	public GFilterPanel() {
 
 		super(new BorderLayout());
+
+		setBorder(new TitledBorder(PANEL_TITLE));
 
 		add(filterField, BorderLayout.CENTER);
 		add(startOnlyBox, BorderLayout.EAST);
