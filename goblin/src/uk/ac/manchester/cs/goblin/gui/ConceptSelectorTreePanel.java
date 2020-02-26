@@ -39,8 +39,6 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String FILTER_PANEL_TITLE = "Filter";
-
 	private Set<Concept> rootConcepts;
 
 	private SelectorTree tree;
@@ -97,11 +95,6 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 		protected String getNodeLabel(Concept node) {
 
 			return node.getConceptId().getLabel();
-		}
-
-		FilterPanel() {
-
-			TitledPanels.setTitle(this, FILTER_PANEL_TITLE);
 		}
 	}
 
