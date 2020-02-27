@@ -46,24 +46,24 @@ class MekonAppIcons {
 	static final Icon ASSERTION_REF = createInstanceRefIcon(ASSERTION_VALUE_CLR);
 	static final Icon QUERY_REF = createInstanceRefIcon(QUERY_VALUE_CLR);
 
-	static final Icon NO_VALUE = createDescrptorIcon(NO_VALUE_CLR);
+	static final Icon NO_VALUE = createDescriptorIcon(NO_VALUE_CLR);
 
 	static private GIcon createDefaultValueIcon(Color clr) {
-
-		return new GIcon(new GOvalRenderer(clr, ICON_DIMENSION));
-	}
-
-	static private GIcon createInstanceRefIcon(Color clr) {
 
 		return new GIcon(new GDiamondRenderer(clr, ICON_DIMENSION));
 	}
 
-	static private GIcon createDescrptorIcon(Color clr) {
+	static private GIcon createInstanceRefIcon(Color clr) {
 
-		return new GIcon(createDescrptorRenderer(clr));
+		return new GIcon(new GOvalRenderer(clr, ICON_DIMENSION));
 	}
 
-	static private GIconRenderer createDescrptorRenderer(Color clr) {
+	static private GIcon createDescriptorIcon(Color clr) {
+
+		return new GIcon(createDescriptorRenderer(clr));
+	}
+
+	static private GIconRenderer createDescriptorRenderer(Color clr) {
 
 		return new GTriangleRenderer(
 						GTriangleRenderer.Type.RIGHTWARD,
