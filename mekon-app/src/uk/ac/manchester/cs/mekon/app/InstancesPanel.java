@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
  * @author Colin Puleston
  */
@@ -37,19 +35,6 @@ class InstancesPanel extends InstantiationsPanel {
 
 	InstancesPanel(InstanceType instanceType) {
 
-		super(instanceType, instanceType.getAssertionIdsList(), TITLE);
-	}
-
-	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
-
-		new InstanceDialog(this, instanceType, storeId, false);
-	}
-
-	void displayLoadedInstantiation(
-			InstanceType instanceType,
-			IFrame instantiation,
-			CIdentity storeId) {
-
-		new InstanceDialog(this, instanceType, instantiation, storeId, true);
+		super(instanceType, instanceType.getRootAssertionIdsList(), TITLE);
 	}
 }

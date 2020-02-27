@@ -39,6 +39,8 @@ class InstanceTypesPanel extends JTabbedPane {
 
 	InstanceTypesPanel(Controller controller, List<CFrame> types) {
 
+		super(JTabbedPane.LEFT);
+
 		setFont(GFonts.toLarge(getFont()));
 
 		Store store = controller.getStore();

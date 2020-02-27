@@ -209,7 +209,7 @@ class DescriptorEditor {
 
 		private boolean anyRefSelections() {
 
-			return getRefedInstanceType().getAssertionIdsList().anyElements();
+			return getRefedInstanceType().createAssertionIdsList(valueType).anyElements();
 		}
 
 		private InstanceType getRefedInstanceType() {

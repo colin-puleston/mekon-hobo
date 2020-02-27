@@ -48,11 +48,11 @@ class Controller {
 		queryNameDefaults = new QueryNameDefaults(store);
 	}
 
-	InstanceType addInstanceType(CFrame type) {
+	InstanceType addInstanceType(CFrame rootType) {
 
-		InstanceType instanceType = new InstanceType(this, type);
+		InstanceType instanceType = new InstanceType(this, rootType);
 
-		instanceTypes.put(type, instanceType);
+		instanceTypes.put(rootType, instanceType);
 
 		return instanceType;
 	}
@@ -74,11 +74,31 @@ class Controller {
 
 	boolean instanceType(CFrame type) {
 
-		return instanceTypes.keySet().contains(type);
+		return getInstanceTypeRootOrNull(type) != null;
 	}
 
 	InstanceType getInstanceType(CFrame type) {
 
-		return instanceTypes.get(type);
+		CFrame rootType = getInstanceTypeRootOrNull(type);
+
+		if (rootType == null) {
+
+			throw new Error("Cannot find instance-type for type: " + type);
+		}
+
+		return instanceTypes.get(rootType);
+	}
+
+	private CFrame getInstanceTypeRootOrNull(CFrame type) {
+
+		for (CFrame rootType : instanceTypes.keySet()) {
+
+			if (rootType.subsumes(type)) {
+
+				return rootType;
+			}
+		}
+
+		return null;
 	}
 }

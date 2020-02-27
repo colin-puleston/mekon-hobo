@@ -45,8 +45,8 @@ class InstantiationTree extends GActionTree {
 
 		rootNode = new RootInstantiationNode(this);
 
-		setRootVisible(false);
-		setShowsRootHandles(true);
+		setRootVisible(true);
+		setShowsRootHandles(false);
 
 		initialise(rootNode);
 	}

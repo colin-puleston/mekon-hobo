@@ -59,33 +59,16 @@ class QueryDialog extends InstantiationDialog {
 
 	QueryDialog(
 		JComponent parent,
-		InstanceType instanceType,
+		Instantiator instantiator,
 		CIdentity storeId,
 		QueryExecutions queryExecutions,
 		boolean startAsViewOnly) {
 
-		this(
-			parent,
-			instanceType.createNewQuery(storeId),
-			storeId,
-			queryExecutions,
-			startAsViewOnly);
-	}
+		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
 
-	QueryDialog(
-		JComponent parent,
-		InstanceType instanceType,
-		IFrame instantiation,
-		CIdentity storeId,
-		QueryExecutions queryExecutions,
-		boolean startAsViewOnly) {
+		this.queryExecutions = queryExecutions;
 
-		this(
-			parent,
-			instanceType.recreateInstantiator(instantiation),
-			storeId,
-			queryExecutions,
-			startAsViewOnly);
+		display();
 	}
 
 	CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId) {
@@ -103,20 +86,6 @@ class QueryDialog extends InstantiationDialog {
 		panel.addControl(new ExecuteButton());
 
 		super.addControlComponents(panel);
-	}
-
-	private QueryDialog(
-				JComponent parent,
-				Instantiator instantiator,
-				CIdentity storeId,
-				QueryExecutions queryExecutions,
-				boolean startAsViewOnly) {
-
-		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
-
-		this.queryExecutions = queryExecutions;
-
-		display();
 	}
 
 	private void execute() {

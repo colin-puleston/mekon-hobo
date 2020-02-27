@@ -37,33 +37,31 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String SUB_TYPE_ENHANCED_LABEL_FORMAT = "[%s] %s";
+
+	private InstanceType instanceType;
 	private boolean queryInstances;
-	private boolean multiSelect;
 
-	InstanceIdsList(boolean queryInstances, boolean multiSelect) {
+	InstanceIdsList(InstanceType instanceType, boolean queryInstances) {
 
-		super(multiSelect, true);
+		super(false, true);
 
+		this.instanceType = instanceType;
 		this.queryInstances = queryInstances;
-		this.multiSelect = multiSelect;
-	}
-
-	InstanceIdsList(boolean queryInstances, boolean multiSelect, Collection<CIdentity> ids) {
-
-		this(queryInstances, multiSelect);
-
-		addEntities(ids);
-	}
-
-	InstanceIdsList deriveList(boolean multiSelect) {
-
-		return new InstanceIdsList(queryInstances, multiSelect, getEntityList());
 	}
 
 	void update(Collection<CIdentity> ids) {
 
 		clearList();
 		addEntities(ids);
+	}
+
+	void addEntities(Collection<CIdentity> ids) {
+
+		for (CIdentity id : ids) {
+
+			addEntity(id);
+		}
 	}
 
 	void addEntity(CIdentity id) {
@@ -87,15 +85,26 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	GCellDisplay getCellDisplay(CIdentity id) {
 
-		return new GCellDisplay(id.getLabel(), getIcon());
+		return new GCellDisplay(getLabel(id), getIcon());
 	}
 
-	private void addEntities(Collection<CIdentity> ids) {
+	private String getLabel(CIdentity id) {
 
-		for (CIdentity id : ids) {
+		String instLabel = id.getLabel();
 
-			addEntity(id);
+		if (instanceType.hasSubTypes()) {
+
+			String subTypeLabel = getSubTypeLabel(id);
+
+			return String.format(SUB_TYPE_ENHANCED_LABEL_FORMAT, subTypeLabel, instLabel);
 		}
+
+		return instLabel;
+	}
+
+	private String getSubTypeLabel(CIdentity id) {
+
+		return instanceType.getInstanceType(id).getIdentity().getLabel();
 	}
 
 	private Icon getIcon() {

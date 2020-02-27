@@ -45,7 +45,7 @@ class ExecutedQueriesPanel extends JPanel {
 	private InstanceType instanceType;
 	private QueryExecutions queryExecutions;
 
-	private InstanceIdsList querySelectorList = new InstanceIdsList(true, false);
+	private InstanceIdsList querySelectorList;
 	private QueryMatchesPanel matchesPanel;
 
 	private class DisplayQueryButton extends SelectedInstanceIdActionButton {
@@ -102,6 +102,7 @@ class ExecutedQueriesPanel extends JPanel {
 		this.instanceType = instanceType;
 		this.queryExecutions = queryExecutions;
 
+		querySelectorList = new InstanceIdsList(instanceType, true);
 		matchesPanel = new QueryMatchesPanel(instanceType);
 
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -150,6 +151,8 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayQuery(CIdentity storeId, IFrame query) {
 
-		new QueryDialog(this, instanceType, query, storeId, queryExecutions, true);
+		Instantiator instantiator = instanceType.createInstantiator(query);
+
+		new QueryDialog(this, instantiator, storeId, queryExecutions, true);
 	}
 }

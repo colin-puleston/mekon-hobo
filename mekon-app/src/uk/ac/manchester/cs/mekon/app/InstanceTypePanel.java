@@ -59,7 +59,7 @@ class InstanceTypePanel extends JTabbedPane {
 
 	InstanceTypePanel(Store store, InstanceType instanceType) {
 
-		super(JTabbedPane.LEFT);
+		super(JTabbedPane.TOP);
 
 		this.instanceType = instanceType;
 

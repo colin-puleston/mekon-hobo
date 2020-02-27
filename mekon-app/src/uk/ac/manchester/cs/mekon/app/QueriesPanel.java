@@ -39,9 +39,14 @@ class QueriesPanel extends InstantiationsPanel {
 
 	QueriesPanel(InstanceType instanceType, QueryExecutions queryExecutions) {
 
-		super(instanceType, instanceType.getQueryIdsList(), TITLE);
+		super(instanceType, instanceType.getRootQueryIdsList(), TITLE);
 
 		this.queryExecutions = queryExecutions;
+	}
+
+	IFrameFunction getInstantiationsFunction() {
+
+		return IFrameFunction.QUERY;
 	}
 
 	CIdentity checkObtainStoreId(StoreIdSelections storeIdSelections, CIdentity oldId) {
@@ -49,16 +54,8 @@ class QueriesPanel extends InstantiationsPanel {
 		return storeIdSelections.checkObtainForQuery(queryExecutions, oldId);
 	}
 
-	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
+	void displayInstantiation(Instantiator instantiator, CIdentity storeId, boolean reloaded) {
 
-		new QueryDialog(this, instanceType, storeId, queryExecutions, false);
-	}
-
-	void displayLoadedInstantiation(
-			InstanceType instanceType,
-			IFrame instantiation,
-			CIdentity storeId) {
-
-		new QueryDialog(this, instanceType, instantiation, storeId, queryExecutions, true);
+		new QueryDialog(this, instantiator, storeId, queryExecutions, reloaded);
 	}
 }

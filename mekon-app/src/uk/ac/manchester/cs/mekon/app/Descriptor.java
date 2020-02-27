@@ -146,11 +146,11 @@ class Descriptor {
 
 			if (value instanceof IFrame) {
 
-				IFrame frameValue = (IFrame)value;
+				IFrame frame = (IFrame)value;
 
-				if (frameValue.getSlots().isEmpty()) {
+				if (!frame.getCategory().reference() && frame.getSlots().isEmpty()) {
 
-					return getFrameValueDisjunctLabels(frameValue.getType());
+					return getFrameValueDisjunctLabels(frame.getType());
 				}
 			}
 

@@ -45,7 +45,7 @@ class QueryMatchesPanel extends InstantiationsPanel {
 
 	QueryMatchesPanel(InstanceType instanceType) {
 
-		super(instanceType, new InstanceIdsList(false, false), TITLE_BASE);
+		super(instanceType, new InstanceIdsList(instanceType, false), TITLE_BASE);
 	}
 
 	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
@@ -63,18 +63,5 @@ class QueryMatchesPanel extends InstantiationsPanel {
 	boolean allowLoadActionOnly() {
 
 		return true;
-	}
-
-	void displayNewInstantiation(InstanceType instanceType, CIdentity storeId) {
-
-		throw new Error("Method should never be invoked!");
-	}
-
-	void displayLoadedInstantiation(
-			InstanceType instanceType,
-			IFrame instantiation,
-			CIdentity storeId) {
-
-		new InstanceDialog(this, instanceType, instantiation, storeId, true);
 	}
 }

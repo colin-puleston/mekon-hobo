@@ -150,6 +150,11 @@ abstract class InstantiationsPanel extends JPanel {
 		idsList.clearList();
 	}
 
+	IFrameFunction getInstantiationsFunction() {
+
+		return IFrameFunction.ASSERTION;
+	}
+
 	boolean allowLoadActionOnly() {
 
 		return false;
@@ -160,12 +165,10 @@ abstract class InstantiationsPanel extends JPanel {
 		return storeIdSelections.checkObtainForAssertion(oldId);
 	}
 
-	abstract void displayNewInstantiation(InstanceType instanceType, CIdentity storeId);
+	void displayInstantiation(Instantiator instantiator, CIdentity storeId, boolean reloaded) {
 
-	abstract void displayLoadedInstantiation(
-						InstanceType instanceType,
-						IFrame instantiation,
-						CIdentity storeId);
+		new InstanceDialog(this, instantiator, storeId, reloaded);
+	}
 
 	private JComponent createControlsComponent() {
 
@@ -190,8 +193,18 @@ abstract class InstantiationsPanel extends JPanel {
 
 		if (storeId != null) {
 
-			displayNewInstantiation(instanceType, storeId);
+			CFrame type = checkDetermineInstantiationType();
+
+			if (type != null) {
+
+				displayNewInstantiation(type, storeId);
+			}
 		}
+	}
+
+	private void loadInstantiation(CIdentity storeId) {
+
+		displayLoadedInstantiation(store.get(storeId), storeId);
 	}
 
 	private void checkRename(CIdentity storeId) {
@@ -211,9 +224,43 @@ abstract class InstantiationsPanel extends JPanel {
 		}
 	}
 
-	private void loadInstantiation(CIdentity storeId) {
+	private CFrame checkDetermineInstantiationType() {
 
-		displayLoadedInstantiation(instanceType, store.get(storeId), storeId);
+		return instanceType.hasSubTypes()
+					? checkObtainSubInstantiationType()
+					: instanceType.getRootType();
+	}
+
+	private CFrame checkObtainSubInstantiationType() {
+
+		AtomicFrameSelector selector = createInstantiationTypeSelector();
+
+		selector.display();
+
+		return selector.getSelection();
+	}
+
+	private AtomicFrameSelector createInstantiationTypeSelector() {
+
+		CFrame rootType = instanceType.getRootType();
+		boolean queryInstantiation = getInstantiationsFunction().query();
+
+		return new AtomicFrameSelector(this, rootType, queryInstantiation, false);
+	}
+
+	private void displayNewInstantiation(CFrame type, CIdentity storeId) {
+
+		displayInstantiation(createInstantiator(type, storeId), storeId, false);
+	}
+
+	private void displayLoadedInstantiation(IFrame instantiation, CIdentity storeId) {
+
+		displayInstantiation(instanceType.createInstantiator(instantiation), storeId, true);
+	}
+
+	private Instantiator createInstantiator(CFrame type, CIdentity storeId) {
+
+		return instanceType.createInstantiator(type, getInstantiationsFunction(), storeId);
 	}
 
 	private void showMessage(String msg) {

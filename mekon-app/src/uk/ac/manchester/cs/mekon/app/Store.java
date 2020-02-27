@@ -107,6 +107,11 @@ class Store {
 		return store.get(id, getFunction(id)).getRootFrame();
 	}
 
+	CFrame getType(CIdentity id) {
+
+		return getCFrame(store.getType(id).getRootTypeId());
+	}
+
 	List<CIdentity> match(IFrame query) {
 
 		List<CIdentity> matches = getAssertionMatches(query);
@@ -212,6 +217,11 @@ class Store {
 	private String nameInstance(CIdentity id) {
 
 		return "\"" + id.getLabel() + "\"";
+	}
+
+	private CFrame getCFrame(CIdentity id) {
+
+		return store.getModel().getFrames().get(id);
 	}
 
 	private IFrameFunction getFunction(CIdentity id) {

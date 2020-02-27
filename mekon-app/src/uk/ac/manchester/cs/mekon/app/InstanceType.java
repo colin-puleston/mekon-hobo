@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
@@ -37,26 +39,112 @@ class InstanceType {
 
 	private Store store;
 
-	private CFrame type;
+	private CFrame rootType;
 
-	private InstanceIdsList assertionIds;
-	private InstanceIdsList queryIds;
+	private InstanceTypes instanceTypes;
 
-	InstanceType(Controller controller, CFrame type) {
+	private InstanceIdsList rootAssertionIds;
+	private InstanceIdsList rootQueryIds;
+
+	private abstract class InstanceTypes {
+
+		void onAddedInstance(CIdentity storeId) {
+		}
+
+		void onRemovedInstance(CIdentity storeId) {
+		}
+
+		void onReplacedInstance(CIdentity storeId, CIdentity newStoreId) {
+		}
+
+		abstract CFrame getType(CIdentity storeId);
+	}
+
+	private class RootOnlyInstanceTypes extends InstanceTypes {
+
+		CFrame getType(CIdentity storeId) {
+
+			return rootType;
+		}
+	}
+
+	private class InstanceSubTypes extends InstanceTypes {
+
+		private Map<CIdentity, CFrame> subTypes = new HashMap<CIdentity, CFrame>();
+
+		void onAddedInstance(CIdentity storeId) {
+
+			CFrame type = store.getType(storeId);
+
+			if (!type.equals(rootType)) {
+
+				subTypes.put(storeId, type);
+			}
+		}
+
+		void onRemovedInstance(CIdentity storeId) {
+
+			subTypes.remove(storeId);
+		}
+
+		void onReplacedInstance(CIdentity storeId, CIdentity newStoreId) {
+
+			CFrame type = subTypes.remove(storeId);
+
+			if (type != null) {
+
+				subTypes.put(newStoreId, type);
+			}
+		}
+
+		CFrame getType(CIdentity storeId) {
+
+			CFrame type = subTypes.get(storeId);
+
+			return type != null ? type : rootType;
+		}
+	}
+
+	InstanceType(Controller controller, CFrame rootType) {
 
 		this.controller = controller;
-		this.type = type;
+		this.rootType = rootType;
 
 		customiser = controller.getCustomiser();
 		store = controller.getStore();
 
-		assertionIds = new InstanceIdsList(false, false);
-		queryIds = new InstanceIdsList(true, false);
+		instanceTypes = createInstanceTypes();
 
-		for (CIdentity storeId : store.getInstanceIds(type)) {
+		rootAssertionIds = new InstanceIdsList(this, false);
+		rootQueryIds = new InstanceIdsList(this, true);
 
+		for (CIdentity storeId : store.getInstanceIds(rootType)) {
+
+			instanceTypes.onAddedInstance(storeId);
 			getInstanceIdsList(storeId).addEntity(storeId);
 		}
+	}
+
+	InstanceIdsList createAssertionIdsList(CFrame type) {
+
+		InstanceIdsList typeAssertIds = new InstanceIdsList(this, false);
+
+		if (type.equals(rootType)) {
+
+			typeAssertIds.addEntities(rootAssertionIds.getEntityList());
+		}
+		else {
+
+			for (CIdentity storeId : store.getInstanceIds(type)) {
+
+				if (assertionId(storeId)) {
+
+					typeAssertIds.addEntity(storeId);
+				}
+			}
+		}
+
+		return typeAssertIds;
 	}
 
 	Controller getController() {
@@ -64,25 +152,36 @@ class InstanceType {
 		return controller;
 	}
 
-	CFrame getType() {
+	CFrame getRootType() {
 
-		return type;
+		return rootType;
 	}
 
-	InstanceIdsList getAssertionIdsList() {
+	boolean hasSubTypes() {
 
-		return assertionIds;
+		return !rootType.getSubs(CVisibility.EXPOSED).isEmpty();
 	}
 
-	InstanceIdsList getQueryIdsList() {
+	CFrame getInstanceType(CIdentity storeId) {
 
-		return queryIds;
+		return instanceTypes.getType(storeId);
+	}
+
+	InstanceIdsList getRootAssertionIdsList() {
+
+		return rootAssertionIds;
+	}
+
+	InstanceIdsList getRootQueryIdsList() {
+
+		return rootQueryIds;
 	}
 
 	boolean checkAddInstance(IFrame instance, CIdentity storeId, boolean asNewId) {
 
 		if (store.checkAdd(instance, storeId, asNewId)) {
 
+			instanceTypes.onAddedInstance(storeId);
 			getInstanceIdsList(storeId).checkAddEntity(storeId);
 
 			return true;
@@ -95,6 +194,7 @@ class InstanceType {
 
 		if (store.checkRemove(storeId)) {
 
+			instanceTypes.onRemovedInstance(storeId);
 			getInstanceIdsList(storeId).removeEntity(storeId);
 		}
 	}
@@ -103,37 +203,36 @@ class InstanceType {
 
 		if (store.checkRename(storeId, newStoreId)) {
 
+			instanceTypes.onReplacedInstance(storeId, newStoreId);
 			getInstanceIdsList(storeId).replaceEntity(storeId, newStoreId);
 		}
 	}
 
-	Instantiator createNewAssertion(CIdentity storeId) {
+	Instantiator createInstantiator(
+					CFrame instantiationType,
+					IFrameFunction function,
+					CIdentity storeId) {
 
-		return createNewInstantiation(IFrameFunction.ASSERTION, storeId);
-	}
-
-	Instantiator createNewQuery(CIdentity storeId) {
-
-		return createNewInstantiation(IFrameFunction.QUERY, storeId);
-	}
-
-	Instantiator recreateInstantiator(IFrame instantiation) {
-
-		return new Instantiator(this, instantiation);
-	}
-
-	private Instantiator createNewInstantiation(IFrameFunction function, CIdentity storeId) {
-
-		IFrame instantiation = type.instantiate(function);
+		IFrame instantiation = instantiationType.instantiate(function);
 
 		instantiation = customiser.onNewInstance(instantiation, storeId);
 
+		return createInstantiator(instantiation);
+	}
+
+	Instantiator createInstantiator(IFrame instantiation) {
+
 		return new Instantiator(this, instantiation);
+	}
+
+	private InstanceTypes createInstanceTypes() {
+
+		return hasSubTypes() ? new InstanceSubTypes() : new RootOnlyInstanceTypes();
 	}
 
 	private InstanceIdsList getInstanceIdsList(CIdentity storeId) {
 
-		return assertionId(storeId) ? assertionIds : queryIds;
+		return assertionId(storeId) ? rootAssertionIds : rootQueryIds;
 	}
 
 	private boolean assertionId(CIdentity id) {

@@ -82,7 +82,7 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private InstanceIdsList createRefIdOptionsList() {
 
-		return getInstanceType().getAssertionIdsList().deriveList(false);
+		return getInstanceType().createAssertionIdsList(type);
 	}
 
 	private InstanceType getInstanceType() {

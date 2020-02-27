@@ -39,29 +39,13 @@ class InstanceDialog extends InstantiationDialog {
 
 	InstanceDialog(
 		JComponent parent,
-		InstanceType instanceType,
+		Instantiator instantiator,
 		CIdentity storeId,
 		boolean startAsViewOnly) {
 
-		this(
-			parent,
-			instanceType.createNewAssertion(storeId),
-			storeId,
-			startAsViewOnly);
-	}
+		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
 
-	InstanceDialog(
-		JComponent parent,
-		InstanceType instanceType,
-		IFrame instantiation,
-		CIdentity storeId,
-		boolean startAsViewOnly) {
-
-		this(
-			parent,
-			instanceType.recreateInstantiator(instantiation),
-			storeId,
-			startAsViewOnly);
+		display();
 	}
 
 	CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId) {
@@ -72,16 +56,5 @@ class InstanceDialog extends InstantiationDialog {
 	boolean disposeOnStoring() {
 
 		return true;
-	}
-
-	private InstanceDialog(
-				JComponent parent,
-				Instantiator instantiator,
-				CIdentity storeId,
-				boolean startAsViewOnly) {
-
-		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
-
-		display();
 	}
 }

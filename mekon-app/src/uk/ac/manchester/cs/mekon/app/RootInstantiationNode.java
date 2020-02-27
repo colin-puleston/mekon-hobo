@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
@@ -41,7 +43,7 @@ class RootInstantiationNode extends InstantiationNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return GCellDisplay.NO_DISPLAY;
+		return new GCellDisplay(getDisplayLabel(), getIcon());
 	}
 
 	RootInstantiationNode(InstantiationTree tree) {
@@ -56,6 +58,18 @@ class RootInstantiationNode extends InstantiationNode {
 		childNodes.update();
 
 		super.update();
+	}
+
+	private String getDisplayLabel() {
+
+		return getInstantiator().getInstantiation().getDisplayLabel();
+	}
+
+	private Icon getIcon() {
+
+		return queryInstantiation()
+					? MekonAppIcons.QUERY_VALUE
+					: MekonAppIcons.ASSERTION_VALUE;
 	}
 
 	private IFrame getInstantiation() {
