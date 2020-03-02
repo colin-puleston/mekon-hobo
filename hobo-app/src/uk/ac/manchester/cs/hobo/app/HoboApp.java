@@ -42,6 +42,11 @@ public class HoboApp extends MekonApp {
 
 	static private final long serialVersionUID = -1;
 
+	static public void main(String[] args) {
+
+		configureAndDisplay(new HoboApp(), args);
+	}
+
 	static private IStore getIStore(DBuilder builder) {
 
 		return IDiskStoreManager.getBuilder(builder.getCBuilder()).build();
@@ -66,14 +71,14 @@ public class HoboApp extends MekonApp {
 		this.model = model;
 	}
 
-	public void addInstanceClass(Class<? extends DObject> instanceType) {
+	public void addDirectInstanceGroup(Class<? extends DObject> rootClass) {
 
-		addInstanceType(toFrame(instanceType));
+		addInstanceGroup(toFrame(rootClass));
 	}
 
-	public void addInstanceClasses(List<Class<? extends DObject>> instanceTypes) {
+	public void addDirectInstanceGroups(List<Class<? extends DObject>> rootClasses) {
 
-		addInstanceTypes(toFrames(instanceTypes));
+		addInstanceGroups(toFrames(rootClasses));
 	}
 
 	public DModel getDModel() {
