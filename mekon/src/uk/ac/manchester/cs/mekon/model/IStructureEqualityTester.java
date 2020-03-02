@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class IStructureEqualityTester extends IStructureTester {
+class IStructureEqualityTester extends IStructureMatchTester {
 
 	boolean localMatch(IFrame frame1, IFrame frame2) {
 

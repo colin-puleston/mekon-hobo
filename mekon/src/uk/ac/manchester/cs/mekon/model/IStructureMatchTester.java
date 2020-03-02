@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-abstract class IStructureTester {
+abstract class IStructureMatchTester {
 
 	private ValuesMatcher valuesMatcher = new ValuesMatcher();
 	private Set<IFrame[]> visited = new HashSet<IFrame[]>();

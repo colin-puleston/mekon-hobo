@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.util.*;
 /**
  * @author Colin Puleston
  */
-class IStructureSubsumptionTester extends IStructureTester {
+class IStructureSubsumptionTester extends IStructureMatchTester {
 
 	boolean match(IFrame frame1, IFrame frame2) {
 

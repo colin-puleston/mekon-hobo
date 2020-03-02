@@ -34,6 +34,11 @@ class IReference extends IFrame {
 	private CIdentity referenceId = null;
 	private ISlots slots = new ISlots();
 
+	public int hashCode() {
+
+		return referenceId.hashCode();
+	}
+
 	public String getDisplayLabel() {
 
 		return getType().getDisplayLabel() + " [REF:" + referenceId.getLabel() + "]";
@@ -104,6 +109,41 @@ class IReference extends IFrame {
 	void autoUpdate(Set<IFrame> visited) {
 	}
 
+	boolean equals(IFrame other) {
+
+		return equalsRef(other);
+	}
+
+	boolean subsumes(IFrame other) {
+
+		return equalsRef(other);
+	}
+
+	boolean equalsStructure(IFrame other) {
+
+		return equalsRef(other);
+	}
+
+	boolean subsumesStructure(IFrame other) {
+
+		return equalsRef(other);
+	}
+
+	boolean equalsLocalStructure(IFrame other) {
+
+		return equalsRef(other);
+	}
+
+	boolean subsumesLocalStructure(IFrame other) {
+
+		return equalsRef(other);
+	}
+
+	int localHashCode() {
+
+		return referenceId.hashCode();
+	}
+
 	void collectReferenceIds(List<CIdentity> referenceIds) {
 
 		referenceIds.add(referenceId);
@@ -122,5 +162,15 @@ class IReference extends IFrame {
 		slotType.setAssertionsEditability(IEditability.NONE);
 
 		return slotType;
+	}
+
+	private boolean equalsRef(IFrame other) {
+
+		return other instanceof IReference && equalRefs((IReference)other);
+	}
+
+	private boolean equalRefs(IReference other) {
+
+		return referenceId.equals(other.referenceId);
 	}
 }
