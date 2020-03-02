@@ -209,12 +209,12 @@ class DescriptorEditor {
 
 		private boolean anyRefSelections() {
 
-			return getRefedInstanceType().createAssertionIdsList(valueType).anyElements();
+			return getRefedInstanceGroup().createAssertionIdsList(valueType).anyElements();
 		}
 
-		private InstanceType getRefedInstanceType() {
+		private InstanceGroup getRefedInstanceGroup() {
 
-			return instantiator.getController().getInstanceType(valueType);
+			return instantiator.getController().getInstanceGroup(valueType);
 		}
 
 		private void showNoSelectionsMessage() {

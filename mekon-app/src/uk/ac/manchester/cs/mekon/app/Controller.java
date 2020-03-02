@@ -38,7 +38,7 @@ class Controller {
 
 	private QueryNameDefaults queryNameDefaults;
 
-	private Map<CFrame, InstanceType> instanceTypes = new HashMap<CFrame, InstanceType>();
+	private Set<InstanceGroup> instanceGroups = new HashSet<InstanceGroup>();
 
 	Controller(Store store, Customiser customiser) {
 
@@ -48,13 +48,13 @@ class Controller {
 		queryNameDefaults = new QueryNameDefaults(store);
 	}
 
-	InstanceType addInstanceType(CFrame rootType) {
+	InstanceGroup addInstanceGroup(CFrame rootType) {
 
-		InstanceType instanceType = new InstanceType(this, rootType);
+		InstanceGroup group = new InstanceGroup(this, rootType);
 
-		instanceTypes.put(rootType, instanceType);
+		instanceGroups.add(group);
 
-		return instanceType;
+		return group;
 	}
 
 	Store getStore() {
@@ -72,30 +72,30 @@ class Controller {
 		return queryNameDefaults;
 	}
 
-	boolean instanceType(CFrame type) {
+	boolean instanceGroupType(CFrame type) {
 
-		return getInstanceTypeRootOrNull(type) != null;
+		return getInstanceGroupOrNull(type) != null;
 	}
 
-	InstanceType getInstanceType(CFrame type) {
+	InstanceGroup getInstanceGroup(CFrame type) {
 
-		CFrame rootType = getInstanceTypeRootOrNull(type);
+		InstanceGroup group = getInstanceGroupOrNull(type);
 
-		if (rootType == null) {
+		if (group == null) {
 
-			throw new Error("Cannot find instance-type for type: " + type);
+			throw new Error("Cannot find instance-group for type: " + type);
 		}
 
-		return instanceTypes.get(rootType);
+		return group;
 	}
 
-	private CFrame getInstanceTypeRootOrNull(CFrame type) {
+	private InstanceGroup getInstanceGroupOrNull(CFrame type) {
 
-		for (CFrame rootType : instanceTypes.keySet()) {
+		for (InstanceGroup group : instanceGroups) {
 
-			if (rootType.subsumes(type)) {
+			if (group.getRootType().subsumes(type)) {
 
-				return rootType;
+				return group;
 			}
 		}
 

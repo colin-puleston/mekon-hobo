@@ -31,23 +31,23 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class Instantiator {
 
-	private InstanceType instanceType;
+	private InstanceGroup instanceGroup;
 	private IFrame instantiation;
 
-	Instantiator(InstanceType instanceType, IFrame instantiation) {
+	Instantiator(InstanceGroup instanceGroup, IFrame instantiation) {
 
-		this.instanceType = instanceType;
+		this.instanceGroup = instanceGroup;
 		this.instantiation = instantiation;
 	}
 
 	Controller getController() {
 
-		return instanceType.getController();
+		return instanceGroup.getController();
 	}
 
-	InstanceType getInstanceType() {
+	InstanceGroup getInstanceGroup() {
 
-		return instanceType;
+		return instanceGroup;
 	}
 
 	IFrame getInstantiation() {
@@ -74,7 +74,7 @@ class Instantiator {
 
 	boolean instanceRefType(CFrame type) {
 
-		return !queryInstantiation() && getController().instanceType(type);
+		return !queryInstantiation() && getController().instanceGroupType(type);
 	}
 
 	boolean queryInstantiation() {

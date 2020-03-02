@@ -39,14 +39,14 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	static private final String SUB_TYPE_ENHANCED_LABEL_FORMAT = "[%s] %s";
 
-	private InstanceType instanceType;
+	private InstanceGroup instanceGroup;
 	private boolean queryInstances;
 
-	InstanceIdsList(InstanceType instanceType, boolean queryInstances) {
+	InstanceIdsList(InstanceGroup instanceGroup, boolean queryInstances) {
 
 		super(false, true);
 
-		this.instanceType = instanceType;
+		this.instanceGroup = instanceGroup;
 		this.queryInstances = queryInstances;
 	}
 
@@ -92,19 +92,19 @@ class InstanceIdsList extends GList<CIdentity> {
 
 		String instLabel = id.getLabel();
 
-		if (instanceType.hasSubTypes()) {
+		if (instanceGroup.hasSubTypes()) {
 
-			String subTypeLabel = getSubTypeLabel(id);
+			String typeLabel = getTypeLabel(id);
 
-			return String.format(SUB_TYPE_ENHANCED_LABEL_FORMAT, subTypeLabel, instLabel);
+			return String.format(SUB_TYPE_ENHANCED_LABEL_FORMAT, typeLabel, instLabel);
 		}
 
 		return instLabel;
 	}
 
-	private String getSubTypeLabel(CIdentity id) {
+	private String getTypeLabel(CIdentity id) {
 
-		return instanceType.getInstanceType(id).getIdentity().getLabel();
+		return instanceGroup.getInstanceType(id).getIdentity().getLabel();
 	}
 
 	private Icon getIcon() {

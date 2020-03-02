@@ -147,9 +147,9 @@ abstract class InstantiationDialog extends GDialog {
 		panel.addControl(new StoreAsButton());
 	}
 
-	InstanceType getInstanceType() {
+	InstanceGroup getInstanceGroup() {
 
-		return instantiator.getInstanceType();
+		return instantiator.getInstanceGroup();
 	}
 
 	IFrame getInstantiation() {
@@ -208,7 +208,7 @@ abstract class InstantiationDialog extends GDialog {
 
 		boolean asNewId = !storeAsId.equals(storeId);
 
-		return getInstanceType().checkAddInstance(getInstantiation(), storeAsId, asNewId);
+		return getInstanceGroup().checkAddInstance(getInstantiation(), storeAsId, asNewId);
 	}
 
 	private CIdentity checkObtainNewStoreId(JComponent parent) {
@@ -223,6 +223,6 @@ abstract class InstantiationDialog extends GDialog {
 
 	private Controller getController() {
 
-		return getInstanceType().getController();
+		return instantiator.getController();
 	}
 }

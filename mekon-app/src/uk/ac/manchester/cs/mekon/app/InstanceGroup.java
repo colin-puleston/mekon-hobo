@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.store.*;
 /**
  * @author Colin Puleston
  */
-class InstanceType {
+class InstanceGroup {
 
 	private Controller controller;
 	private Customiser customiser;
@@ -40,7 +40,6 @@ class InstanceType {
 	private Store store;
 
 	private CFrame rootType;
-
 	private InstanceTypes instanceTypes;
 
 	private InstanceIdsList rootAssertionIds;
@@ -105,7 +104,7 @@ class InstanceType {
 		}
 	}
 
-	InstanceType(Controller controller, CFrame rootType) {
+	InstanceGroup(Controller controller, CFrame rootType) {
 
 		this.controller = controller;
 		this.rootType = rootType;

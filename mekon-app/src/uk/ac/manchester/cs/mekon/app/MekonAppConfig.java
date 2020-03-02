@@ -36,10 +36,10 @@ class MekonAppConfig {
 
 	static private final String CONFIG_FILE_NAME = "mekon-app.xml";
 
-	static private final String TITLE_ATTR = "title";
-	static private final String URI_ATTR = "uri";
+	static private final String INSTANCE_GROUP_ID = "InstanceGroup";
 
-	static private final String INSTANCE_TYPE_ID = "InstanceType";
+	static private final String TITLE_ATTR = "title";
+	static private final String INSTANCE_GROUP_ROOT_ATTR = "rootType";
 
 	private MekonApp app;
 	private KConfigNode rootNode;
@@ -56,7 +56,7 @@ class MekonAppConfig {
 		rootNode = configFile.getRootNode();
 
 		checkReadTitle();
-		readInstanceTypes();
+		readInstanceGroups();
 	}
 
 	private void checkReadTitle() {
@@ -69,21 +69,21 @@ class MekonAppConfig {
 		}
 	}
 
-	private void readInstanceTypes() {
+	private void readInstanceGroups() {
 
-		for (KConfigNode typeNode : rootNode.getChildren(INSTANCE_TYPE_ID)) {
+		for (KConfigNode typeNode : rootNode.getChildren(INSTANCE_GROUP_ID)) {
 
-			app.addInstanceType(getInstanceType(typeNode));
+			app.addInstanceGroup(getInstanceGroup(typeNode));
 		}
 	}
 
-	private CFrame getInstanceType(KConfigNode node) {
+	private CFrame getInstanceGroup(KConfigNode node) {
 
-		return app.getModel().getFrames().get(getInstanceId(node));
+		return app.getModel().getFrames().get(getInstanceGroupRootId(node));
 	}
 
-	private CIdentity getInstanceId(KConfigNode node) {
+	private CIdentity getInstanceGroupRootId(KConfigNode node) {
 
-		return new CIdentity(node.getURI(URI_ATTR).toString());
+		return new CIdentity(node.getURI(INSTANCE_GROUP_ROOT_ATTR).toString());
 	}
 }

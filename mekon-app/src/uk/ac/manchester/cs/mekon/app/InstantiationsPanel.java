@@ -46,7 +46,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	static private final int WIDTH = 200;
 
-	private InstanceType instanceType;
+	private InstanceGroup instanceGroup;
 	private InstanceIdsList idsList;
 
 	private Store store;
@@ -108,7 +108,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			instanceType.checkRemoveInstance(storeId);
+			instanceGroup.checkRemoveInstance(storeId);
 		}
 	}
 
@@ -117,14 +117,14 @@ abstract class InstantiationsPanel extends JPanel {
 		return new Dimension(WIDTH, (int)super.getPreferredSize().getHeight());
 	}
 
-	InstantiationsPanel(InstanceType instanceType, InstanceIdsList idsList, String title) {
+	InstantiationsPanel(InstanceGroup instanceGroup, InstanceIdsList idsList, String title) {
 
 		super(new BorderLayout());
 
-		this.instanceType = instanceType;
+		this.instanceGroup = instanceGroup;
 		this.idsList = idsList;
 
-		Controller controller = instanceType.getController();
+		Controller controller = instanceGroup.getController();
 
 		store = controller.getStore();
 		storeIdSelections = new StoreIdSelections(this, controller);
@@ -219,16 +219,16 @@ abstract class InstantiationsPanel extends JPanel {
 			}
 			else {
 
-				instanceType.checkRenameInstance(storeId, newStoreId);
+				instanceGroup.checkRenameInstance(storeId, newStoreId);
 			}
 		}
 	}
 
 	private CFrame checkDetermineInstantiationType() {
 
-		return instanceType.hasSubTypes()
+		return instanceGroup.hasSubTypes()
 					? checkObtainSubInstantiationType()
-					: instanceType.getRootType();
+					: instanceGroup.getRootType();
 	}
 
 	private CFrame checkObtainSubInstantiationType() {
@@ -242,7 +242,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private AtomicFrameSelector createInstantiationTypeSelector() {
 
-		CFrame rootType = instanceType.getRootType();
+		CFrame rootType = instanceGroup.getRootType();
 		boolean queryInstantiation = getInstantiationsFunction().query();
 
 		return new AtomicFrameSelector(this, rootType, queryInstantiation, false);
@@ -255,12 +255,12 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void displayLoadedInstantiation(IFrame instantiation, CIdentity storeId) {
 
-		displayInstantiation(instanceType.createInstantiator(instantiation), storeId, true);
+		displayInstantiation(instanceGroup.createInstantiator(instantiation), storeId, true);
 	}
 
 	private Instantiator createInstantiator(CFrame type, CIdentity storeId) {
 
-		return instanceType.createInstantiator(type, getInstantiationsFunction(), storeId);
+		return instanceGroup.createInstantiator(type, getInstantiationsFunction(), storeId);
 	}
 
 	private void showMessage(String msg) {

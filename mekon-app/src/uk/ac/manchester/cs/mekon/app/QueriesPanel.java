@@ -37,9 +37,9 @@ class QueriesPanel extends InstantiationsPanel {
 
 	private QueryExecutions queryExecutions;
 
-	QueriesPanel(InstanceType instanceType, QueryExecutions queryExecutions) {
+	QueriesPanel(InstanceGroup instanceGroup, QueryExecutions queryExecutions) {
 
-		super(instanceType, instanceType.getRootQueryIdsList(), TITLE);
+		super(instanceGroup, instanceGroup.getRootQueryIdsList(), TITLE);
 
 		this.queryExecutions = queryExecutions;
 	}

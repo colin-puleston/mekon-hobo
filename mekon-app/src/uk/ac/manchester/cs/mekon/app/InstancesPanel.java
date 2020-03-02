@@ -33,8 +33,8 @@ class InstancesPanel extends InstantiationsPanel {
 
 	static private final String TITLE = "Instances";
 
-	InstancesPanel(InstanceType instanceType) {
+	InstancesPanel(InstanceGroup instanceGroup) {
 
-		super(instanceType, instanceType.getRootAssertionIdsList(), TITLE);
+		super(instanceGroup, instanceGroup.getRootAssertionIdsList(), TITLE);
 	}
 }

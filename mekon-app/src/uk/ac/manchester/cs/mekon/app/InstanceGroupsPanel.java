@@ -33,11 +33,11 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceTypesPanel extends JTabbedPane {
+class InstanceGroupsPanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	InstanceTypesPanel(Controller controller, List<CFrame> types) {
+	InstanceGroupsPanel(Controller controller, List<CFrame> rootTypes) {
 
 		super(JTabbedPane.LEFT);
 
@@ -45,21 +45,21 @@ class InstanceTypesPanel extends JTabbedPane {
 
 		Store store = controller.getStore();
 
-		for (CFrame type : types) {
+		for (CFrame rootType : rootTypes) {
 
-			addTypeTab(store, controller, type);
+			addGroupTab(store, controller, rootType);
 		}
 	}
 
-	private void addTypeTab(Store store, Controller controller, CFrame type) {
+	private void addGroupTab(Store store, Controller controller, CFrame rootType) {
 
-		InstanceType instanceType = controller.addInstanceType(type);
+		InstanceGroup group = controller.addInstanceGroup(rootType);
 
-		addTab(getTypeTitle(type), new InstanceTypePanel(store, instanceType));
+		addTab(getGroupTitle(rootType), new InstanceGroupPanel(store, group));
 	}
 
-	private String getTypeTitle(CFrame type) {
+	private String getGroupTitle(CFrame rootType) {
 
-		return type.getDisplayLabel() + 's';
+		return rootType.getDisplayLabel() + 's';
 	}
 }

@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceTypePanel extends JTabbedPane {
+class InstanceGroupPanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
@@ -39,8 +39,7 @@ class InstanceTypePanel extends JTabbedPane {
 	static private final String QUERIES_TITLE = "Queries";
 	static private final String EXECUTED_QUERIES_TITLE = "Query Results";
 
-	private InstanceType instanceType;
-
+	private InstanceGroup group;
 	private ExecutedQueriesPanel executedQueriesPanel;
 
 	private class QueryExecutionsLocal extends QueryExecutions {
@@ -57,19 +56,19 @@ class InstanceTypePanel extends JTabbedPane {
 		}
 	}
 
-	InstanceTypePanel(Store store, InstanceType instanceType) {
+	InstanceGroupPanel(Store store, InstanceGroup group) {
 
 		super(JTabbedPane.TOP);
 
-		this.instanceType = instanceType;
+		this.group = group;
 
 		QueryExecutions queryExecutions = new QueryExecutionsLocal(store);
 
-		executedQueriesPanel = new ExecutedQueriesPanel(instanceType, queryExecutions);
+		executedQueriesPanel = new ExecutedQueriesPanel(group, queryExecutions);
 
 		setFont(GFonts.toMedium(getFont()));
-		addTab(INSTANCES_TITLE, new InstancesPanel(instanceType));
-		addTab(QUERIES_TITLE, new QueriesPanel(instanceType, queryExecutions));
+		addTab(INSTANCES_TITLE, new InstancesPanel(group));
+		addTab(QUERIES_TITLE, new QueriesPanel(group, queryExecutions));
 		addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
 	}
 }

@@ -43,9 +43,9 @@ class QueryMatchesPanel extends InstantiationsPanel {
 		return String.format(TITLE_FORMAT, storeId.getLabel());
 	}
 
-	QueryMatchesPanel(InstanceType instanceType) {
+	QueryMatchesPanel(InstanceGroup instanceGroup) {
 
-		super(instanceType, new InstanceIdsList(instanceType, false), TITLE_BASE);
+		super(instanceGroup, new InstanceIdsList(instanceGroup, false), TITLE_BASE);
 	}
 
 	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {

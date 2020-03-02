@@ -42,7 +42,7 @@ class ExecutedQueriesPanel extends JPanel {
 	static private final String DISPLAY_QUERY_LABEL = "View...";
 	static private final String DISCARD_QUERY_LABEL = "Discard";
 
-	private InstanceType instanceType;
+	private InstanceGroup instanceGroup;
 	private QueryExecutions queryExecutions;
 
 	private InstanceIdsList querySelectorList;
@@ -97,13 +97,13 @@ class ExecutedQueriesPanel extends JPanel {
 		}
 	}
 
-	ExecutedQueriesPanel(InstanceType instanceType, QueryExecutions queryExecutions) {
+	ExecutedQueriesPanel(InstanceGroup instanceGroup, QueryExecutions queryExecutions) {
 
-		this.instanceType = instanceType;
+		this.instanceGroup = instanceGroup;
 		this.queryExecutions = queryExecutions;
 
-		querySelectorList = new InstanceIdsList(instanceType, true);
-		matchesPanel = new QueryMatchesPanel(instanceType);
+		querySelectorList = new InstanceIdsList(instanceGroup, true);
+		matchesPanel = new QueryMatchesPanel(instanceGroup);
 
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		add(createQuerySelectorPanel());
@@ -151,7 +151,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayQuery(CIdentity storeId, IFrame query) {
 
-		Instantiator instantiator = instanceType.createInstantiator(query);
+		Instantiator instantiator = instanceGroup.createInstantiator(query);
 
 		new QueryDialog(this, instantiator, storeId, queryExecutions, true);
 	}

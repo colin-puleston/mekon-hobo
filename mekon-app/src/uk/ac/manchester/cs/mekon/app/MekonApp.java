@@ -52,7 +52,10 @@ public class MekonApp extends GFrame {
 
 	static public void main(String[] args) {
 
-		MekonApp app = new MekonApp();
+		configureAndDisplay(new MekonApp(), args);
+	}
+
+	static protected void configureAndDisplay(MekonApp app, String[] args) {
 
 		if (args.length == 0) {
 
@@ -81,7 +84,7 @@ public class MekonApp extends GFrame {
 	private CModel model;
 	private IStore store;
 
-	private List<CFrame> instanceTypes = new ArrayList<CFrame>();
+	private List<CFrame> instanceGroupRootTypes = new ArrayList<CFrame>();
 
 	private Customiser customiser = null;
 
@@ -137,21 +140,21 @@ public class MekonApp extends GFrame {
 		new MekonAppConfig(this, configFile);
 	}
 
-	public void addInstanceType(CFrame instanceType) {
+	public void addInstanceGroup(CFrame rootType) {
 
-		instanceTypes.add(instanceType);
+		instanceGroupRootTypes.add(rootType);
 	}
 
-	public void addInstanceTypes(List<CFrame> instanceTypes) {
+	public void addInstanceGroups(List<CFrame> rootTypes) {
 
-		this.instanceTypes.addAll(instanceTypes);
+		this.instanceGroupRootTypes.addAll(rootTypes);
 	}
 
 	public void display() {
 
-		if (instanceTypes.isEmpty()) {
+		if (instanceGroupRootTypes.isEmpty()) {
 
-			displayNoInstancesMessage();
+			displayConfigError("No instance-groups have been specified");
 		}
 		else {
 
@@ -173,15 +176,15 @@ public class MekonApp extends GFrame {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(createInstanceTypesPanel(), BorderLayout.CENTER);
+		panel.add(createInstanceGroupsPanel(), BorderLayout.CENTER);
 		panel.add(new ExitButton(), BorderLayout.SOUTH);
 
 		return panel;
 	}
 
-	private JComponent createInstanceTypesPanel() {
+	private JComponent createInstanceGroupsPanel() {
 
-		return new InstanceTypesPanel(createController(), instanceTypes);
+		return new InstanceGroupsPanel(createController(), instanceGroupRootTypes);
 	}
 
 	private Controller createController() {
@@ -199,8 +202,8 @@ public class MekonApp extends GFrame {
 		}
 	}
 
-	private void displayNoInstancesMessage() {
+	private void displayConfigError(String message) {
 
-		System.err.println("\nMEKON-APP CONFIG ERROR: No instance-types have been specified");
+		System.err.println("MEKON-APP CONFIG ERROR: " + message);
 	}
 }
