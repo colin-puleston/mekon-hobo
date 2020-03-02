@@ -54,15 +54,18 @@ class OBSlot extends OIdentified {
 
 		void checkCreate(CFrame container) {
 
-			if (canBeFixedValue()) {
-
-				addSlotValue(container);
-			}
-			else {
+			if (OBSlot.this == topLevelSlot || !spec.valueRequired()) {
 
 				if (valueType.canBeSlotValueType()) {
 
 					addOrUpdateSlot(container);
+				}
+			}
+			else {
+
+				if (valueTypeCanProvideFixedValue()) {
+
+					addSlotValue(container);
 				}
 			}
 		}
@@ -107,13 +110,6 @@ class OBSlot extends OIdentified {
 			slotEd.absorbCardinality(cardOverride);
 			slotEd.absorbAssertionsEditability(aEditOverride);
 			slotEd.absorbQueriesEditability(qEditOverride);
-		}
-
-		private boolean canBeFixedValue() {
-
-			return OBSlot.this != topLevelSlot
-						&& spec.valueRequired()
-						&& valueTypeCanProvideFixedValue();
 		}
 
 		private boolean valueTypeCanProvideFixedValue() {
