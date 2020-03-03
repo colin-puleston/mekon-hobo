@@ -169,7 +169,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 			for (GListElement<E> element : displayList.asList()) {
 
-				if (filter == null || filter.pass(element.getText())) {
+				if (filter == null || filter.pass(element.getFilterText())) {
 
 					addElement(element);
 				}

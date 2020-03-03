@@ -41,6 +41,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 	static private final int SEPARATOR_WIDTH = 5;
 
 	private String text;
+	private String filterText;
 	private Color textColour = null;
 	private Color backgroundColour = null;
 	private int fontStyle = Font.PLAIN;
@@ -50,9 +51,10 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 	public GCellDisplay(GCellDisplay template) {
 
-		this(template.text);
-
+		text = template.text;
+		filterText = template.filterText;
 		textColour = template.textColour;
+		backgroundColour = template.backgroundColour;
 		fontStyle = template.fontStyle;
 		icon = template.icon;
 	}
@@ -60,11 +62,14 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 	public GCellDisplay(String text) {
 
 		this.text = text;
+
+		filterText = text;
 	}
 
 	public GCellDisplay(String text, Icon icon) {
 
-		this.text = text;
+		this(text);
+
 		this.icon = icon;
 	}
 
@@ -83,6 +88,11 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 	public void setText(String text) {
 
 		this.text = text;
+	}
+
+	public void setFilterText(String filterText) {
+
+		this.filterText = filterText;
 	}
 
 	public void setTextColour(Color textColour) {
@@ -108,6 +118,11 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 	public String getText() {
 
 		return text;
+	}
+
+	public String getFilterText() {
+
+		return filterText;
 	}
 
 	public Color getTextColour() {
