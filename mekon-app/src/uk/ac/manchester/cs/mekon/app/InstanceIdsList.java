@@ -37,7 +37,7 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String SUB_TYPE_ENHANCED_LABEL_FORMAT = "[%s] %s";
+	static private final String TYPE_ENHANCED_LABEL_FORMAT = "[%s] %s";
 
 	private InstanceGroup instanceGroup;
 	private boolean queryInstances;
@@ -85,21 +85,26 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	GCellDisplay getCellDisplay(CIdentity id) {
 
-		return new GCellDisplay(getLabel(id), getIcon());
-	}
-
-	private String getLabel(CIdentity id) {
-
-		String instLabel = id.getLabel();
-
 		if (instanceGroup.hasSubTypes()) {
 
-			String typeLabel = getTypeLabel(id);
-
-			return String.format(SUB_TYPE_ENHANCED_LABEL_FORMAT, typeLabel, instLabel);
+			return createTypeEnhancedCellDisplay(id);
 		}
 
-		return instLabel;
+		return new GCellDisplay(id.getLabel(), getIcon());
+	}
+
+	private GCellDisplay createTypeEnhancedCellDisplay(CIdentity id) {
+
+		GCellDisplay display = new GCellDisplay(createTypeEnhancedLabel(id), getIcon());
+
+		display.setFilterText(id.getLabel());
+
+		return display;
+	}
+
+	private String createTypeEnhancedLabel(CIdentity id) {
+
+		return String.format(TYPE_ENHANCED_LABEL_FORMAT, getTypeLabel(id), id.getLabel());
 	}
 
 	private String getTypeLabel(CIdentity id) {
