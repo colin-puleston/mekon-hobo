@@ -62,7 +62,7 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 		protected void onSelected(CIdentity refId) {
 
-			onSelectedOption(createRef(refId));
+			onSelectedRefId(refId);
 		}
 
 		protected void onDeselected(CIdentity refId) {
@@ -104,52 +104,22 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private void checkInstantiateNewInstance(JComponent parent) {
 
-		CFrame type = createTypeDeterminator(parent).checkDetermineType();
+		CIdentity refId = createInstantiationOps(parent).checkDisplayNew();
 
-		if (type != null) {
+		if (refId != null) {
 
-			CIdentity storeId = checkObtainStoreId(parent);
-
-			if (storeId != null) {
-
-				InstanceDialog dialog = displayNewInstanceDialog(parent, type, storeId);
-
-				if (dialog.instantiationStored()) {
-
-					onSelectedOption(createRef(dialog.getStoreId()));
-				}
-			}
+			onSelectedRefId(refId);
 		}
 	}
 
-	private InstantiationTypeDeterminator createTypeDeterminator(JComponent parent) {
+	private InstantiationOps createInstantiationOps(JComponent parent) {
 
-		return new InstantiationTypeDeterminator(
-						parent,
-						instanceGroup,
-						IFrameFunction.ASSERTION);
+		return new InstantiationOps(parent, instanceGroup, IFrameFunction.ASSERTION);
 	}
 
-	private CIdentity checkObtainStoreId(JComponent parent) {
+	private void onSelectedRefId(CIdentity refId) {
 
-		Controller controller = instanceGroup.getController();
-
-		return new StoreIdSelections(parent, controller).checkObtainForAssertion(null);
-	}
-
-	private InstanceDialog displayNewInstanceDialog(
-								JComponent parent,
-								CFrame type,
-								CIdentity storeId) {
-
-		Instantiator instantiator = createNewInstantiator(type, storeId);
-
-		return new InstanceDialog(parent, instantiator, storeId, false);
-	}
-
-	private Instantiator createNewInstantiator(CFrame type, CIdentity storeId) {
-
-		return instanceGroup.createInstantiator(type, IFrameFunction.ASSERTION, storeId);
+		onSelectedOption(createRef(refId));
 	}
 
 	private IFrame createRef(CIdentity refId) {

@@ -45,6 +45,8 @@ class InstanceGroup {
 	private InstanceIdsList rootAssertionIds;
 	private InstanceIdsList rootQueryIds;
 
+	private QueryExecutions queryExecutions;
+
 	private abstract class InstanceTypes {
 
 		void onAddedInstance(CIdentity storeId) {
@@ -117,6 +119,8 @@ class InstanceGroup {
 		rootAssertionIds = new InstanceIdsList(this, false);
 		rootQueryIds = new InstanceIdsList(this, true);
 
+		queryExecutions = new QueryExecutions(store);
+
 		for (CIdentity storeId : store.getInstanceIds(rootType)) {
 
 			instanceTypes.onAddedInstance(storeId);
@@ -174,6 +178,11 @@ class InstanceGroup {
 	InstanceIdsList getRootQueryIdsList() {
 
 		return rootQueryIds;
+	}
+
+	QueryExecutions getQueryExecutions() {
+
+		return queryExecutions;
 	}
 
 	boolean checkAddInstance(IFrame instance, CIdentity storeId, boolean asNewId) {

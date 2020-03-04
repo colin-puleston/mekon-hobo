@@ -35,27 +35,13 @@ class QueriesPanel extends InstantiationsPanel {
 
 	static private final String TITLE = "Queries";
 
-	private QueryExecutions queryExecutions;
-
-	QueriesPanel(InstanceGroup instanceGroup, QueryExecutions queryExecutions) {
+	QueriesPanel(InstanceGroup instanceGroup) {
 
 		super(instanceGroup, instanceGroup.getRootQueryIdsList(), TITLE);
-
-		this.queryExecutions = queryExecutions;
 	}
 
 	IFrameFunction getInstantiationsFunction() {
 
 		return IFrameFunction.QUERY;
-	}
-
-	CIdentity checkObtainStoreId(StoreIdSelections storeIdSelections, CIdentity oldId) {
-
-		return storeIdSelections.checkObtainForQuery(queryExecutions, oldId);
-	}
-
-	void displayInstantiation(Instantiator instantiator, CIdentity storeId, boolean reloaded) {
-
-		new QueryDialog(this, instantiator, storeId, queryExecutions, reloaded);
 	}
 }

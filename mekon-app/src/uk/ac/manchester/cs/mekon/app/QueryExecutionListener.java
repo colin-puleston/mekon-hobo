@@ -24,50 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
  * @author Colin Puleston
  */
-class InstantiationTypeDeterminator {
+abstract class QueryExecutionListener {
 
-	private JComponent parent;
-	private InstanceGroup instanceGroup;
-	private IFrameFunction function;
-
-	InstantiationTypeDeterminator(
-		JComponent parent,
-		InstanceGroup instanceGroup,
-		IFrameFunction function) {
-
-		this.parent = parent;
-		this.instanceGroup = instanceGroup;
-		this.function = function;
-	}
-
-	CFrame checkDetermineType() {
-
-		return instanceGroup.hasSubTypes() ? checkObtainSubType() : getRootType();
-	}
-
-	private CFrame checkObtainSubType() {
-
-		AtomicFrameSelector selector = createTypeSelector();
-
-		selector.display();
-
-		return selector.getSelection();
-	}
-
-	private AtomicFrameSelector createTypeSelector() {
-
-		return new AtomicFrameSelector(parent, getRootType(), function.query(), false);
-	}
-
-	private CFrame getRootType() {
-
-		return instanceGroup.getRootType();
-	}
+	abstract void onExecuted(ExecutedQuery executedQuery);
 }

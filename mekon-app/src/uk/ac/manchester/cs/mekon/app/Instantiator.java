@@ -77,6 +77,11 @@ class Instantiator {
 		return !queryInstantiation() && getController().instanceGroupType(type);
 	}
 
+	IFrameFunction getFunction() {
+
+		return instantiation.getFunction();
+	}
+
 	boolean queryInstantiation() {
 
 		return getFunction().query();
@@ -93,10 +98,5 @@ class Instantiator {
 	private void checkInitialiseSlot(ISlot slot) {
 
 		new AutoValueProvider(this, slot).checkProvide();
-	}
-
-	private IFrameFunction getFunction() {
-
-		return instantiation.getFunction();
 	}
 }

@@ -61,19 +61,13 @@ class QueryDialog extends InstantiationDialog {
 		JComponent parent,
 		Instantiator instantiator,
 		CIdentity storeId,
-		QueryExecutions queryExecutions,
 		boolean startAsViewOnly) {
 
 		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
 
-		this.queryExecutions = queryExecutions;
+		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
 
 		display();
-	}
-
-	CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId) {
-
-		return idSelections.checkObtainForAssertion(oldId);
 	}
 
 	boolean disposeOnStoring() {

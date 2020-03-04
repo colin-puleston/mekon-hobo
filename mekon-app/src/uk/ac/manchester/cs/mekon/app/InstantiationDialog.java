@@ -169,8 +169,6 @@ abstract class InstantiationDialog extends GDialog {
 		return instantiationStored;
 	}
 
-	abstract CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId);
-
 	abstract boolean disposeOnStoring();
 
 	private JComponent createDisplay() {
@@ -226,16 +224,16 @@ abstract class InstantiationDialog extends GDialog {
 
 	private CIdentity checkObtainNewStoreId(JComponent parent) {
 
-		return checkObtainNewStoreId(new StoreIdSelections(parent, getController()), storeId);
+		return createInstantiationOps(parent).checkObtainNewStoreId();
+	}
+
+	private InstantiationOps createInstantiationOps(JComponent parent) {
+
+		return new InstantiationOps(parent, getInstanceGroup(), instantiator.getFunction());
 	}
 
 	private int getPreferredHeight() {
 
 		return (int)super.getPreferredSize().getHeight();
-	}
-
-	private Controller getController() {
-
-		return instantiator.getController();
 	}
 }

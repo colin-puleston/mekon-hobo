@@ -31,14 +31,21 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-abstract class QueryExecutions {
+class QueryExecutions {
 
 	private Store store;
+
 	private Map<CIdentity, ExecutedQuery> byStoreId = new HashMap<CIdentity, ExecutedQuery>();
+	private List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
 
 	QueryExecutions(Store store) {
 
 		this.store = store;
+	}
+
+	void addListener(QueryExecutionListener listener) {
+
+		listeners.add(listener);
 	}
 
 	void execute(CIdentity storeId, IFrame query) {
@@ -48,7 +55,7 @@ abstract class QueryExecutions {
 
 		byStoreId.put(storeId, exec);
 
-		onExecuted(exec);
+		pollListenersForExecution(exec);
 	}
 
 	void discardExecuted(CIdentity storeId) {
@@ -71,5 +78,11 @@ abstract class QueryExecutions {
 		return byStoreId.keySet();
 	}
 
-	abstract void onExecuted(ExecutedQuery executedQuery);
+	private void pollListenersForExecution(ExecutedQuery exec) {
+
+		for (QueryExecutionListener listener : listeners) {
+
+			listener.onExecuted(exec);
+		}
+	}
 }

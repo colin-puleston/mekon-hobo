@@ -49,9 +49,7 @@ abstract class InstantiationsPanel extends JPanel {
 	private InstanceGroup instanceGroup;
 	private InstanceIdsList idsList;
 
-	private Store store;
-	private StoreIdSelections storeIdSelections;
-	private InstantiationTypeDeterminator typeDeterminator;
+	private InstantiationOps instantiationOps;
 
 	private class CreateButton extends GButton {
 
@@ -59,7 +57,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			checkInstantiate();
+			instantiationOps.checkDisplayNew();
 		}
 
 		CreateButton() {
@@ -79,7 +77,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			loadInstantiation(storeId);
+			instantiationOps.displayReloaded(storeId);
 		}
 	}
 
@@ -94,7 +92,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			checkRename(storeId);
+			instantiationOps.checkRename(storeId);
 		}
 	}
 
@@ -125,11 +123,7 @@ abstract class InstantiationsPanel extends JPanel {
 		this.instanceGroup = instanceGroup;
 		this.idsList = idsList;
 
-		Controller controller = instanceGroup.getController();
-
-		store = controller.getStore();
-		storeIdSelections = new StoreIdSelections(this, controller);
-		typeDeterminator = createTypeDeterminator();
+		instantiationOps = createInstantiationOps();
 
 		setTitle(title);
 
@@ -162,14 +156,9 @@ abstract class InstantiationsPanel extends JPanel {
 		return false;
 	}
 
-	CIdentity checkObtainStoreId(StoreIdSelections storeIdSelections, CIdentity oldId) {
+	private InstantiationOps createInstantiationOps() {
 
-		return storeIdSelections.checkObtainForAssertion(oldId);
-	}
-
-	void displayInstantiation(Instantiator instantiator, CIdentity storeId, boolean reloaded) {
-
-		new InstanceDialog(this, instantiator, storeId, reloaded);
+		return new InstantiationOps(this, instanceGroup, getInstantiationsFunction());
 	}
 
 	private JComponent createControlsComponent() {
@@ -187,69 +176,5 @@ abstract class InstantiationsPanel extends JPanel {
 		panel.addControl(new RemoveButton());
 
 		return panel;
-	}
-
-	private void checkInstantiate() {
-
-		CFrame type = typeDeterminator.checkDetermineType();
-
-		if (type != null) {
-
-			CIdentity storeId = checkObtainStoreId(storeIdSelections, null);
-
-			if (storeId != null) {
-
-				displayNewInstantiation(type, storeId);
-			}
-		}
-	}
-
-	private void loadInstantiation(CIdentity storeId) {
-
-		displayLoadedInstantiation(store.get(storeId), storeId);
-	}
-
-	private void checkRename(CIdentity storeId) {
-
-		CIdentity newStoreId = checkObtainStoreId(storeIdSelections, storeId);
-
-		if (newStoreId != null) {
-
-			if (newStoreId.equals(storeId)) {
-
-				showMessage("Supplied name identical to current name");
-			}
-			else {
-
-				instanceGroup.checkRenameInstance(storeId, newStoreId);
-			}
-		}
-	}
-
-	private InstantiationTypeDeterminator createTypeDeterminator() {
-
-		IFrameFunction function = getInstantiationsFunction();
-
-		return new InstantiationTypeDeterminator(this, instanceGroup, function);
-	}
-
-	private void displayNewInstantiation(CFrame type, CIdentity storeId) {
-
-		displayInstantiation(createInstantiator(type, storeId), storeId, false);
-	}
-
-	private void displayLoadedInstantiation(IFrame instantiation, CIdentity storeId) {
-
-		displayInstantiation(instanceGroup.createInstantiator(instantiation), storeId, true);
-	}
-
-	private Instantiator createInstantiator(CFrame type, CIdentity storeId) {
-
-		return instanceGroup.createInstantiator(type, getInstantiationsFunction(), storeId);
-	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
 	}
 }

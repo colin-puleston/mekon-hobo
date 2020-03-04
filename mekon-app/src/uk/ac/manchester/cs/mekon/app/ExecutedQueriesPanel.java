@@ -97,11 +97,11 @@ class ExecutedQueriesPanel extends JPanel {
 		}
 	}
 
-	ExecutedQueriesPanel(InstanceGroup instanceGroup, QueryExecutions queryExecutions) {
+	ExecutedQueriesPanel(InstanceGroup instanceGroup) {
 
 		this.instanceGroup = instanceGroup;
-		this.queryExecutions = queryExecutions;
 
+		queryExecutions = instanceGroup.getQueryExecutions();
 		querySelectorList = new InstanceIdsList(instanceGroup, true);
 		matchesPanel = new QueryMatchesPanel(instanceGroup);
 
@@ -153,6 +153,6 @@ class ExecutedQueriesPanel extends JPanel {
 
 		Instantiator instantiator = instanceGroup.createInstantiator(query);
 
-		new QueryDialog(this, instantiator, storeId, queryExecutions, true);
+		new QueryDialog(this, instantiator, storeId, true);
 	}
 }

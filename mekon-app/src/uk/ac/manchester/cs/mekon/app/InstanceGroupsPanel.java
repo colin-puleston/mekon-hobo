@@ -43,19 +43,17 @@ class InstanceGroupsPanel extends JTabbedPane {
 
 		setFont(GFonts.toLarge(getFont()));
 
-		Store store = controller.getStore();
-
 		for (CFrame rootType : rootTypes) {
 
-			addGroupTab(store, controller, rootType);
+			addGroupTab(controller, rootType);
 		}
 	}
 
-	private void addGroupTab(Store store, Controller controller, CFrame rootType) {
+	private void addGroupTab(Controller controller, CFrame rootType) {
 
 		InstanceGroup group = controller.addInstanceGroup(rootType);
 
-		addTab(getGroupTitle(rootType), new InstanceGroupPanel(store, group));
+		addTab(getGroupTitle(rootType), new InstanceGroupPanel(group));
 	}
 
 	private String getGroupTitle(CFrame rootType) {

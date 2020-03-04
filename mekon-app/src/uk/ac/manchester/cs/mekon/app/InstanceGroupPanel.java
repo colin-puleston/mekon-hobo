@@ -39,14 +39,13 @@ class InstanceGroupPanel extends JTabbedPane {
 	static private final String QUERIES_TITLE = "Queries";
 	static private final String EXECUTED_QUERIES_TITLE = "Query Results";
 
-	private InstanceGroup group;
 	private ExecutedQueriesPanel executedQueriesPanel;
 
-	private class QueryExecutionsLocal extends QueryExecutions {
+	private class QueryMatchesDisplayer extends QueryExecutionListener {
 
-		QueryExecutionsLocal(Store store) {
+		QueryMatchesDisplayer(InstanceGroup group) {
 
-			super(store);
+			group.getQueryExecutions().addListener(this);
 		}
 
 		void onExecuted(ExecutedQuery executedQuery) {
@@ -56,19 +55,17 @@ class InstanceGroupPanel extends JTabbedPane {
 		}
 	}
 
-	InstanceGroupPanel(Store store, InstanceGroup group) {
+	InstanceGroupPanel(InstanceGroup group) {
 
 		super(JTabbedPane.TOP);
 
-		this.group = group;
-
-		QueryExecutions queryExecutions = new QueryExecutionsLocal(store);
-
-		executedQueriesPanel = new ExecutedQueriesPanel(group, queryExecutions);
+		executedQueriesPanel = new ExecutedQueriesPanel(group);
 
 		setFont(GFonts.toMedium(getFont()));
 		addTab(INSTANCES_TITLE, new InstancesPanel(group));
-		addTab(QUERIES_TITLE, new QueriesPanel(group, queryExecutions));
+		addTab(QUERIES_TITLE, new QueriesPanel(group));
 		addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
+
+		new QueryMatchesDisplayer(group);
 	}
 }
