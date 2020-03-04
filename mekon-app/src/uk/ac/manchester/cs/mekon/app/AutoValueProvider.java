@@ -99,7 +99,7 @@ class AutoValueProvider {
 
 	private boolean autoIFrameValueType(CFrame type) {
 
-		return !instantiator.instanceRefType(type) && leafVisibleFrame(type);
+		return leafVisibleFrame(type) && !instantiator.instanceRefValuedSlot(slot);
 	}
 
 	private boolean leafVisibleFrame(CFrame type) {

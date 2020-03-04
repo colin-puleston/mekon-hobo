@@ -72,9 +72,19 @@ class Instantiator {
 		return type.instantiate(refId, getFunction());
 	}
 
-	boolean instanceRefType(CFrame type) {
+	boolean instanceRefValuedSlot(ISlot slot) {
 
-		return !queryInstantiation() && getController().instanceGroupType(type);
+		if (!slot.getEditability().abstractEditable()) {
+
+			CValue<?> valueType = slot.getValueType();
+
+			if (valueType instanceof CFrame) {
+
+				return getController().instanceGroupType((CFrame)valueType);
+			}
+		}
+
+		return false;
 	}
 
 	IFrameFunction getFunction() {

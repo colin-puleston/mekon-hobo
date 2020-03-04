@@ -75,15 +75,15 @@ class Descriptor {
 
 	boolean structuredType() {
 
-		return cFrameValueType(false);
+		return hasValueType(CFrame.class) && !instanceRefType();
 	}
 
 	boolean instanceRefType() {
 
-		return cFrameValueType(true);
+		return instantiator.instanceRefValuedSlot(slot);
 	}
 
-	boolean valueType(Class<? extends CValue<?>> testType) {
+	boolean hasValueType(Class<? extends CValue<?>> testType) {
 
 		return testType.isAssignableFrom(valueType.getClass());
 	}
@@ -158,16 +158,6 @@ class Descriptor {
 		}
 
 		return Collections.singletonList(getValueTypeLabel());
-	}
-
-	private boolean cFrameValueType(boolean instanceRef) {
-
-		if (valueType(CFrame.class)) {
-
-			return instantiator.instanceRefType((CFrame)valueType) == instanceRef;
-		}
-
-		return false;
 	}
 
 	private String getIdentityLabelArraySuffix() {
@@ -276,6 +266,11 @@ class Descriptor {
 
 	private Customiser getCustomiser() {
 
-		return instantiator.getController().getCustomiser();
+		return getController().getCustomiser();
+	}
+
+	private Controller getController() {
+
+		return instantiator.getController();
 	}
 }

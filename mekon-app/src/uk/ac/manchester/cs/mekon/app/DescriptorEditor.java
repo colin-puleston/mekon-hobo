@@ -49,26 +49,18 @@ class DescriptorEditor {
 
 		void performEditAction() {
 
-			if (checkSelectable()) {
+			Selector<S> selector = createValueSelector(descriptor.hasValue());
 
-				Selector<S> selector = createValueSelector(descriptor.hasValue());
+			switch (selector.display()) {
 
-				switch (selector.display()) {
+				case EDITED:
+					addSelectedValue(selector.getSelection());
+					break;
 
-					case EDITED:
-						addSelectedValue(selector.getSelection());
-						break;
-
-					case CLEARED:
-						removeValue();
-						break;
-				}
+				case CLEARED:
+					removeValue();
+					break;
 			}
-		}
-
-		boolean checkSelectable() {
-
-			return true;
 		}
 
 		abstract Selector<S> createValueSelector(boolean clearRequired);
@@ -172,28 +164,7 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		boolean checkSelectable() {
-
-			if (anyRefSelections()) {
-
-				return true;
-			}
-
-			showNoSelectionsMessage();
-
-			return false;
-		}
-
 		Selector<IFrame> createValueSelector(boolean clearRequired) {
-
-			if (abstractEditableSlot()) {
-
-				return new DisjunctionInstanceRefSelector(
-								parent,
-								instantiator,
-								valueType,
-								clearRequired);
-			}
 
 			return new AtomicInstanceRefSelector(
 							parent,
@@ -205,28 +176,6 @@ class DescriptorEditor {
 		IFrame selectionToValue(IFrame selection) {
 
 			return selection;
-		}
-
-		private boolean anyRefSelections() {
-
-			return getRefedInstanceGroup().createAssertionIdsList(valueType).anyElements();
-		}
-
-		private InstanceGroup getRefedInstanceGroup() {
-
-			return instantiator.getController().getInstanceGroup(valueType);
-		}
-
-		private void showNoSelectionsMessage() {
-
-			JOptionPane.showMessageDialog(null, getNoSelectionsMessage());
-		}
-
-		private String getNoSelectionsMessage() {
-
-			return "No "
-					+ "\"" + valueType.getDisplayLabel() + "\""
-					+ " instances currently available!";
 		}
 	}
 
@@ -295,7 +244,7 @@ class DescriptorEditor {
 
 		private TypeHandler createCFrameTypeHandler(CFrame valueType) {
 
-			if (instantiator.instanceRefType(valueType)) {
+			if (descriptor.instanceRefType()) {
 
 				return new InstanceRefTypeHandler(valueType);
 			}
