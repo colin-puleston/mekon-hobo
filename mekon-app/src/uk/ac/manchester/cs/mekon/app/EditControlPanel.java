@@ -115,7 +115,7 @@ abstract class EditControlPanel extends JPanel {
 			}
 			else {
 
-				add(Box.createHorizontalStrut(10));
+				addSeparator();
 			}
 
 			add(button);
@@ -152,7 +152,18 @@ abstract class EditControlPanel extends JPanel {
 		}
 	}
 
+	void addExtraButton(GButton button) {
+
+		addSeparator();
+		add(button);
+	}
+
 	abstract void onEditComplete(EditStatus status);
+
+	void addSeparator() {
+
+		add(Box.createHorizontalStrut(10));
+	}
 }
 
 

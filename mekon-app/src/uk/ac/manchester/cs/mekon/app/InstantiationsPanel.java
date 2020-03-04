@@ -51,6 +51,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private Store store;
 	private StoreIdSelections storeIdSelections;
+	private InstantiationTypeDeterminator typeDeterminator;
 
 	private class CreateButton extends GButton {
 
@@ -128,6 +129,7 @@ abstract class InstantiationsPanel extends JPanel {
 
 		store = controller.getStore();
 		storeIdSelections = new StoreIdSelections(this, controller);
+		typeDeterminator = createTypeDeterminator();
 
 		setTitle(title);
 
@@ -189,13 +191,13 @@ abstract class InstantiationsPanel extends JPanel {
 
 	private void checkInstantiate() {
 
-		CIdentity storeId = checkObtainStoreId(storeIdSelections, null);
+		CFrame type = typeDeterminator.checkDetermineType();
 
-		if (storeId != null) {
+		if (type != null) {
 
-			CFrame type = checkDetermineInstantiationType();
+			CIdentity storeId = checkObtainStoreId(storeIdSelections, null);
 
-			if (type != null) {
+			if (storeId != null) {
 
 				displayNewInstantiation(type, storeId);
 			}
@@ -224,28 +226,11 @@ abstract class InstantiationsPanel extends JPanel {
 		}
 	}
 
-	private CFrame checkDetermineInstantiationType() {
+	private InstantiationTypeDeterminator createTypeDeterminator() {
 
-		return instanceGroup.hasSubTypes()
-					? checkObtainSubInstantiationType()
-					: instanceGroup.getRootType();
-	}
+		IFrameFunction function = getInstantiationsFunction();
 
-	private CFrame checkObtainSubInstantiationType() {
-
-		AtomicFrameSelector selector = createInstantiationTypeSelector();
-
-		selector.display();
-
-		return selector.getSelection();
-	}
-
-	private AtomicFrameSelector createInstantiationTypeSelector() {
-
-		CFrame rootType = instanceGroup.getRootType();
-		boolean queryInstantiation = getInstantiationsFunction().query();
-
-		return new AtomicFrameSelector(this, rootType, queryInstantiation, false);
+		return new InstantiationTypeDeterminator(this, instanceGroup, function);
 	}
 
 	private void displayNewInstantiation(CFrame type, CIdentity storeId) {

@@ -75,6 +75,11 @@ abstract class Selector<S> extends GDialog {
 
 	abstract S getSelection();
 
+	EditControlPanel getControlPanel() {
+
+		return controlPanel;
+	}
+
 	abstract JComponent getInputComponent();
 
 	abstract Dimension getWindowSize();

@@ -68,6 +68,8 @@ abstract class InstantiationDialog extends GDialog {
 
 	private InstantiationTree instantiationTree;
 
+	private boolean instantiationStored = false;
+
 	private class ModeSelector extends JCheckBox implements ActionListener {
 
 		static private final long serialVersionUID = -1;
@@ -162,6 +164,11 @@ abstract class InstantiationDialog extends GDialog {
 		return storeId;
 	}
 
+	boolean instantiationStored() {
+
+		return instantiationStored;
+	}
+
 	abstract CIdentity checkObtainNewStoreId(StoreIdSelections idSelections, CIdentity oldId);
 
 	abstract boolean disposeOnStoring();
@@ -198,9 +205,15 @@ abstract class InstantiationDialog extends GDialog {
 
 	private void perfomStoreAction(CIdentity storeAsId) {
 
-		if (storeInstantiation(storeAsId) && disposeOnStoring()) {
+		if (storeInstantiation(storeAsId)) {
 
-			dispose();
+			storeId = storeAsId;
+			instantiationStored = true;
+
+			if (disposeOnStoring()) {
+
+				dispose();
+			}
 		}
 	}
 

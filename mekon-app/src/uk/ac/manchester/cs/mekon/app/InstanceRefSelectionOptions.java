@@ -34,10 +34,29 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
+	static private final String CREATE_LABEL = "Create new...";
+
 	private Instantiator instantiator;
+	private InstanceGroup instanceGroup;
+
 	private CFrame type;
 
 	private InstanceIdsList refIdOptionsList;
+
+	private class CreateButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			checkInstantiateNewInstance(this);
+		}
+
+		CreateButton() {
+
+			super(CREATE_LABEL);
+		}
+	}
 
 	private class IdsSelectionListener extends GSelectionListener<CIdentity> {
 
@@ -65,9 +84,12 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 		this.instantiator = instantiator;
 		this.type = type;
 
-		refIdOptionsList = createRefIdOptionsList();
+		instanceGroup = instantiator.getController().getInstanceGroup(type);
+		refIdOptionsList = instanceGroup.createAssertionIdsList(type);
 
 		new IdsSelectionListener();
+
+		selector.getControlPanel().addExtraButton(new CreateButton());
 	}
 
 	JComponent createOptionsComponent() {
@@ -80,14 +102,54 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 		return refIdOptionsList.getCellDisplay(refId);
 	}
 
-	private InstanceIdsList createRefIdOptionsList() {
+	private void checkInstantiateNewInstance(JComponent parent) {
 
-		return getInstanceGroup().createAssertionIdsList(type);
+		CFrame type = createTypeDeterminator(parent).checkDetermineType();
+
+		if (type != null) {
+
+			CIdentity storeId = checkObtainStoreId(parent);
+
+			if (storeId != null) {
+
+				InstanceDialog dialog = displayNewInstanceDialog(parent, type, storeId);
+
+				if (dialog.instantiationStored()) {
+
+					onSelectedOption(createRef(dialog.getStoreId()));
+				}
+			}
+		}
 	}
 
-	private InstanceGroup getInstanceGroup() {
+	private InstantiationTypeDeterminator createTypeDeterminator(JComponent parent) {
 
-		return instantiator.getController().getInstanceGroup(type);
+		return new InstantiationTypeDeterminator(
+						parent,
+						instanceGroup,
+						IFrameFunction.ASSERTION);
+	}
+
+	private CIdentity checkObtainStoreId(JComponent parent) {
+
+		Controller controller = instanceGroup.getController();
+
+		return new StoreIdSelections(parent, controller).checkObtainForAssertion(null);
+	}
+
+	private InstanceDialog displayNewInstanceDialog(
+								JComponent parent,
+								CFrame type,
+								CIdentity storeId) {
+
+		Instantiator instantiator = createNewInstantiator(type, storeId);
+
+		return new InstanceDialog(parent, instantiator, storeId, false);
+	}
+
+	private Instantiator createNewInstantiator(CFrame type, CIdentity storeId) {
+
+		return instanceGroup.createInstantiator(type, IFrameFunction.ASSERTION, storeId);
 	}
 
 	private IFrame createRef(CIdentity refId) {
