@@ -250,6 +250,11 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		return new ArrayList<CFrame>(slotValueReferencingFrames);
 	}
 
+	CCardinality checkRestrictCardinalityForValueType(CCardinality cardinality) {
+
+		return cardinality;
+	}
+
 	abstract CValue<?> update(CValue<?> other);
 
 	abstract void acceptVisitor(CValueVisitor visitor) throws Exception;

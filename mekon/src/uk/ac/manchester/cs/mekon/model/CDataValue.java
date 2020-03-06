@@ -50,5 +50,10 @@ public abstract class CDataValue
 		return getDataValueDescription();
 	}
 
+	CCardinality checkRestrictCardinalityForValueType(CCardinality cardinality) {
+
+		return CCardinality.SINGLE_VALUE;
+	}
+
 	abstract String getDataValueDescription();
 }

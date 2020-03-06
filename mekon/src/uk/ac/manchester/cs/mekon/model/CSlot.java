@@ -57,6 +57,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 
 		public void absorbCardinality(CCardinality otherCardinality) {
 
+			otherCardinality = checkRestrictCardinality(otherCardinality);
 			cardinality = cardinality.getMoreRestrictive(otherCardinality);
 		}
 
@@ -208,7 +209,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		this.container = container;
 		this.identity = identity;
 		this.valueType = valueType;
-		this.cardinality = cardinality;
+		this.cardinality = checkRestrictCardinality(cardinality);
 	}
 
 	CSlot copy() {
@@ -245,6 +246,8 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	}
 
 	boolean setCardinality(CCardinality cardinality) {
+
+		cardinality = checkRestrictCardinality(cardinality);
 
 		if (cardinality != this.cardinality) {
 
@@ -298,5 +301,10 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	void remove() {
 
 		container.getSlots().remove(this);
+	}
+
+	private CCardinality checkRestrictCardinality(CCardinality cardinality) {
+
+		return valueType.checkRestrictCardinalityForValueType(cardinality);
 	}
 }
