@@ -166,9 +166,11 @@ public abstract class OBEntities
 
 	boolean containsAllInSignature(OWLClassExpression expression) {
 
+		Set<E> all = getAll();
+
 		for (E entity : extractAll(expression)) {
 
-			if (!getAll().contains(entity)) {
+			if (!all.contains(entity)) {
 
 				return false;
 			}

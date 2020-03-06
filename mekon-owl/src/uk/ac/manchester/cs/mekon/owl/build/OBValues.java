@@ -37,6 +37,14 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
  */
 class OBValues {
 
+	static private final Set<OWL2Datatype> STRING_SOURCE_DATATYPES = new HashSet<OWL2Datatype>();
+
+	static {
+
+		STRING_SOURCE_DATATYPES.add(OWL2Datatype.XSD_STRING);
+		STRING_SOURCE_DATATYPES.add(OWL2Datatype.RDF_PLAIN_LITERAL);
+	}
+
 	private OBFrames frames;
 	private OBSlots slots;
 	private OBNumbers numbers;
@@ -186,6 +194,6 @@ class OBValues {
 
 	private boolean stringDatatype(OWLDatatype datatype) {
 
-		return datatype.getBuiltInDatatype() == OWL2Datatype.XSD_STRING;
+		return STRING_SOURCE_DATATYPES.contains(datatype.getBuiltInDatatype());
 	}
 }
