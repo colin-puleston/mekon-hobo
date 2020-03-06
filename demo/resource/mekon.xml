@@ -179,6 +179,9 @@
 					rootURI="http://mekon/demo-core.owl#referencableObjectProperty"
 					inclusion="ALL"
 					frameSources="TRUE"/>
+				<Group
+					rootURI="http://mekon/demo-core.owl#demoDataProperty"
+					inclusion="NON_ROOTS_ONLY"/>
 			</PropertyInclusion>
 
 			<AnnotationInclusion>
