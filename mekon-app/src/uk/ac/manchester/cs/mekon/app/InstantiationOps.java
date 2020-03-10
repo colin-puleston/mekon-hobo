@@ -53,7 +53,12 @@ class InstantiationOps {
 
 	CIdentity checkDisplayNew() {
 
-		CFrame type = checkDetermineType();
+		return checkDisplayNew(instanceGroup.getRootType());
+	}
+
+	CIdentity checkDisplayNew(CFrame rootType) {
+
+		CFrame type = checkDetermineType(rootType);
 
 		if (type != null) {
 
@@ -95,23 +100,28 @@ class InstantiationOps {
 		return checkObtainStoreId(null);
 	}
 
-	private CFrame checkDetermineType() {
+	private CFrame checkDetermineType(CFrame rootType) {
 
-		return instanceGroup.hasSubTypes() ? checkObtainSubType() : getRootType();
+		return hasSubTypes(rootType) ? checkObtainSubType(rootType) : rootType;
 	}
 
-	private CFrame checkObtainSubType() {
+	private boolean hasSubTypes(CFrame rootType) {
 
-		AtomicFrameSelector selector = createTypeSelector();
+		return !rootType.getSubs(CVisibility.EXPOSED).isEmpty();
+	}
+
+	private CFrame checkObtainSubType(CFrame rootType) {
+
+		AtomicFrameSelector selector = createTypeSelector(rootType);
 
 		selector.display();
 
 		return selector.getSelection();
 	}
 
-	private AtomicFrameSelector createTypeSelector() {
+	private AtomicFrameSelector createTypeSelector(CFrame rootType) {
 
-		return new AtomicFrameSelector(parent, getRootType(), function.query(), false);
+		return new AtomicFrameSelector(parent, rootType, function.query(), false);
 	}
 
 	private CIdentity checkObtainStoreId(CIdentity defaultId) {
@@ -203,11 +213,6 @@ class InstantiationOps {
 	private Store getStore() {
 
 		return getController().getStore();
-	}
-
-	private CFrame getRootType() {
-
-		return instanceGroup.getRootType();
 	}
 
 	private String getNextQueryNameDefault() {

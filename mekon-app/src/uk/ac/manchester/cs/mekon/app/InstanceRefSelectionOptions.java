@@ -104,7 +104,7 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private void checkInstantiateNewInstance(JComponent parent) {
 
-		CIdentity refId = createInstantiationOps(parent).checkDisplayNew();
+		CIdentity refId = createInstantiationOps(parent).checkDisplayNew(type);
 
 		if (refId != null) {
 
