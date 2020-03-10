@@ -32,7 +32,7 @@ import javax.swing.tree.*;
 /**
  * @author Colin Puleston
  */
-public abstract class GTree extends JTree {
+public class GTree extends JTree {
 
 	static private final long serialVersionUID = -1;
 
