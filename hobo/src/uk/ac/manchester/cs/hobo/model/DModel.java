@@ -281,9 +281,7 @@ public class DModel {
 
 		if (initialiser == null) {
 
-			throw new Error(
-						"Cannot perform operation: "
-						+ "Build has completed");
+			throw new Error("Cannot perform operation: Build has completed");
 		}
 
 		return initialiser;

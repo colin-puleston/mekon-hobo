@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import java.lang.reflect.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -60,6 +61,112 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		public <V>DArray<V> getArray(DArrayViewer<V> viewer) {
 
 			return viewer.getField();
+		}
+	}
+
+	private class SlotTypeReorderer {
+
+		private Set<CFrame> processedAncestorFrameTypes = new HashSet<CFrame>();
+
+		SlotTypeReorderer() {
+
+			CFrame frameType = frame.getType();
+
+			if (!abstractDClassFor(frameType)) {
+
+				reorderFrom(frameType);
+			}
+		}
+
+		private void reorderFrom(CFrame frameType) {
+
+			reorder(frameType);
+			reorderDependentAncestors(frameType);
+		}
+
+		private void reorderDependentAncestors(CFrame frameType) {
+
+			for (CFrame supFrameType : frameType.getSupers()) {
+
+				if (processedAncestorFrameTypes.add(supFrameType)) {
+
+					reorderFromDependentAncestor(supFrameType);
+				}
+			}
+		}
+
+		private void reorderFromDependentAncestor(CFrame frameType) {
+
+			if (model.hasBoundClass(frameType)) {
+
+				if (abstractDClassFor(frameType)) {
+
+					reorderFrom(frameType);
+				}
+			}
+			else {
+
+				reorderDependentAncestors(frameType);
+			}
+		}
+
+		private void reorder(CFrame frameType) {
+
+			List<CSlot> oldOrder = frameType.getSlots().asList();
+			List<CSlot> nonDirectsOrder = new ArrayList<CSlot>(oldOrder);
+			List<CSlot> newOrder = new ArrayList<CSlot>();
+
+			for (DField<?> field : fields) {
+
+				CIdentity slotId = field.getSlot().getType().getIdentity();
+				CSlot slotType = lookForSlotType(nonDirectsOrder, slotId);
+
+				if (slotType != null) {
+
+					nonDirectsOrder.remove(slotType);
+					newOrder.add(slotType);
+				}
+			}
+
+			newOrder.addAll(nonDirectsOrder);
+
+			if (!newOrder.equals(oldOrder)) {
+
+				reorder(newOrder);
+			}
+		}
+
+		private CSlot lookForSlotType(List<CSlot> types, CIdentity slotId) {
+
+			for (CSlot type : types) {
+
+				if (type.getIdentity().equals(slotId)) {
+
+					return type;
+				}
+			}
+
+			return null;
+		}
+
+		private void reorder(CFrame frameType, List<CSlot> newOrder) {
+
+			getFrameTypeEditor(frameType).reorderSlots(newOrder);
+		}
+
+		private CFrameEditor getFrameTypeEditor(CFrame frameType) {
+
+			return model.getInitialiser().getCBuilder().getFrameEditor(frameType);
+		}
+
+		private boolean abstractDClassFor(CFrame frameType) {
+
+			return abstractClass(model.getDClass(frameType));
+		}
+
+		private boolean abstractClass(Class<? extends DObject> dClass) {
+
+			return Modifier.isAbstract(dClass.getModifiers());
 		}
 	}
 
@@ -203,19 +310,14 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	void configureFields(DObject containerObj) {
 
-		boolean newSlotTypeBindings = false;
-
 		for (DField<?> field : fields) {
 
-			FieldSlot fieldSlot = getFieldSlot(field);
-
-			field.setSlot(fieldSlot.resolveSlot(containerObj));
-			newSlotTypeBindings |= fieldSlot.newTypeBinding();
+			field.setSlot(getFieldSlot(field).resolveSlot(containerObj));
 		}
 
-		if (newSlotTypeBindings) {
+		if (!model.initialised()) {
 
-			reorderSlotTypes();
+			new SlotTypeReorderer();
 		}
 	}
 
@@ -225,40 +327,6 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 			initialiser.initialise();
 		}
-	}
-
-	private void reorderSlotTypes() {
-
-		List<CSlot> oldOrder = frame.getType().getSlots().asList();
-		List<CSlot> newOrder = new ArrayList<CSlot>();
-
-		for (DField<?> field : fields) {
-
-			CIdentity slotId = field.getSlot().getType().getIdentity();
-			CSlot slotType = lookForSlotType(oldOrder, slotId);
-
-			if (slotType != null) {
-
-				oldOrder.remove(slotType);
-				newOrder.add(slotType);
-			}
-		}
-
-		newOrder.addAll(oldOrder);
-		getFrameTypeEditor().reorderSlots(newOrder);
-	}
-
-	private CSlot lookForSlotType(List<CSlot> types, CIdentity slotId) {
-
-		for (CSlot type : types) {
-
-			if (type.getIdentity().equals(slotId)) {
-
-				return type;
-			}
-		}
-
-		return null;
 	}
 
 	private <D extends DObject>DCell<DConcept<D>> createConceptCell(Class<D> valueClass) {
@@ -331,10 +399,5 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		}
 
 		return model.getFrame(dClass);
-	}
-
-	private CFrameEditor getFrameTypeEditor() {
-
-		return model.getInitialiser().getCBuilder().getFrameEditor(frame.getType());
 	}
 }
