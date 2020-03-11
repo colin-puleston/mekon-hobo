@@ -132,7 +132,7 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 			if (!newOrder.equals(oldOrder)) {
 
-				reorder(newOrder);
+				reorder(frameType, newOrder);
 			}
 		}
 
