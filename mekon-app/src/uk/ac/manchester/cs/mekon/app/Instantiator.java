@@ -32,12 +32,12 @@ import uk.ac.manchester.cs.mekon.model.*;
 class Instantiator {
 
 	private InstanceGroup instanceGroup;
-	private IFrame instantiation;
+	private IFrame instance;
 
-	Instantiator(InstanceGroup instanceGroup, IFrame instantiation) {
+	Instantiator(InstanceGroup instanceGroup, IFrame instance) {
 
 		this.instanceGroup = instanceGroup;
-		this.instantiation = instantiation;
+		this.instance = instance;
 	}
 
 	Controller getController() {
@@ -50,16 +50,16 @@ class Instantiator {
 		return instanceGroup;
 	}
 
-	IFrame getInstantiation() {
+	IFrame getInstance() {
 
-		return instantiation;
+		return instance;
 	}
 
 	IFrame instantiate(CFrame type) {
 
 		IFrame instance = type.instantiate(getFunction());
 
-		if (!queryInstantiation()) {
+		if (!queryInstance()) {
 
 			checkInitialiseSlots(instance);
 		}
@@ -89,10 +89,10 @@ class Instantiator {
 
 	IFrameFunction getFunction() {
 
-		return instantiation.getFunction();
+		return instance.getFunction();
 	}
 
-	boolean queryInstantiation() {
+	boolean queryInstance() {
 
 		return getFunction().query();
 	}

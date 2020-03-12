@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class QueriesPanel extends InstantiationsPanel {
+class QueriesPanel extends InstancesPanel {
 
 	static private final long serialVersionUID = -1;
 
@@ -40,7 +40,7 @@ class QueriesPanel extends InstantiationsPanel {
 		super(instanceGroup, instanceGroup.getRootQueryIdsList(), TITLE);
 	}
 
-	IFrameFunction getInstantiationsFunction() {
+	IFrameFunction getInstancesFunction() {
 
 		return IFrameFunction.QUERY;
 	}

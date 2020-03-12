@@ -24,60 +24,47 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class InstantiationNode extends GNode {
+class InstanceTree extends GActionTree {
 
-	private InstantiationTree tree;
+	static private final long serialVersionUID = -1;
 
-	protected boolean autoExpand() {
+	private Instantiator instantiator;
 
-		return true;
+	private RootInstanceNode rootNode;
+	private boolean viewOnly;
+
+	InstanceTree(Instantiator instantiator, boolean viewOnly) {
+
+		this.instantiator = instantiator;
+		this.viewOnly = viewOnly;
+
+		rootNode = new RootInstanceNode(this);
+
+		setRootVisible(true);
+		setShowsRootHandles(false);
+
+		initialise(rootNode);
 	}
 
-	protected boolean orderedChildren() {
+	void setViewOnly(boolean value) {
 
-		return false;
-	}
+		viewOnly = value;
 
-	InstantiationNode(InstantiationTree tree) {
-
-		super(tree);
-
-		this.tree = tree;
-	}
-
-	void update() {
-
-		for (GNode child : getChildren()) {
-
-			((InstantiationNode)child).update();
-		}
-	}
-
-	InstantiationTree getInstantiationTree() {
-
-		return tree;
-	}
-
-	Instantiator getInstantiator() {
-
-		return tree.getInstantiator();
-	}
-
-	boolean queryInstantiation() {
-
-		return getInstantiator().queryInstantiation();
+		rootNode.update();
 	}
 
 	boolean viewOnly() {
 
-		return tree.viewOnly();
+		return viewOnly;
+	}
+
+	Instantiator getInstantiator() {
+
+		return instantiator;
 	}
 }

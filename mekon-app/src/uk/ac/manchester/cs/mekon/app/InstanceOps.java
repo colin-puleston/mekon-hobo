@@ -31,15 +31,13 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class InstantiationOps {
+class InstanceOps {
 
 	private JComponent parent;
 	private InstanceGroup instanceGroup;
 	private IFrameFunction function;
 
-	private Store store;
-
-	InstantiationOps(
+	InstanceOps(
 		JComponent parent,
 		InstanceGroup instanceGroup,
 		IFrameFunction function) {
@@ -47,8 +45,6 @@ class InstantiationOps {
 		this.parent = parent;
 		this.instanceGroup = instanceGroup;
 		this.function = function;
-
-		store = instanceGroup.getController().getStore();
 	}
 
 	CIdentity checkDisplayNew() {
@@ -66,7 +62,7 @@ class InstantiationOps {
 
 			if (storeId != null) {
 
-				return displayDialog(createInstantiator(type, storeId), storeId, false);
+				return displayDialog(createInstance(type, storeId), storeId, false);
 			}
 		}
 
@@ -75,7 +71,7 @@ class InstantiationOps {
 
 	CIdentity displayReloaded(CIdentity storeId) {
 
-		return displayDialog(recreateInstantiator(store.get(storeId)), storeId, true);
+		return displayDialog(reloadInstance(storeId), storeId, true);
 	}
 
 	void checkRename(CIdentity storeId) {
@@ -177,42 +173,46 @@ class InstantiationOps {
 							CIdentity storeId,
 							boolean reloaded) {
 
-		InstantiationDialog dialog = createDialog(instantiator, storeId, reloaded);
+		InstanceDialog dialog = createDialog(instantiator, storeId, reloaded);
 
-		return dialog.instantiationStored() ? dialog.getStoreId() : null;
+		return dialog.instanceStored() ? dialog.getStoreId() : null;
 	}
 
-	private InstantiationDialog createDialog(
-									Instantiator instantiator,
-									CIdentity storeId,
-									boolean reloaded) {
+	private InstanceDialog createDialog(
+								Instantiator instantiator,
+								CIdentity storeId,
+								boolean reloaded) {
 
 		if (function.assertion()) {
 
-			return new InstanceDialog(parent, instantiator, storeId, reloaded);
+			return new AssertionDialog(parent, instantiator, storeId, reloaded);
 		}
 
 		return new QueryDialog(parent, instantiator, storeId, reloaded);
 	}
 
-	private Instantiator createInstantiator(CFrame type, CIdentity storeId) {
+	private Instantiator createInstance(CFrame type, CIdentity storeId) {
 
-		return instanceGroup.createInstantiator(type, function, storeId);
+		IFrame instance = type.instantiate(function);
+
+		instance = getCustomiser().onNewInstance(instance, storeId);
+
+		return createInstantiator(instance);
 	}
 
-	private Instantiator recreateInstantiator(IFrame instantiation) {
+	private Instantiator reloadInstance(CIdentity storeId) {
 
-		return instanceGroup.createInstantiator(instantiation);
+		return createInstantiator(getStore().get(storeId));
+	}
+
+	private Instantiator createInstantiator(IFrame instance) {
+
+		return new Instantiator(instanceGroup, instance);
 	}
 
 	private void showMessage(String msg) {
 
 		JOptionPane.showMessageDialog(null, msg);
-	}
-
-	private Store getStore() {
-
-		return getController().getStore();
 	}
 
 	private String getNextQueryNameDefault() {
@@ -223,6 +223,16 @@ class InstantiationOps {
 	private boolean hasDefaultQueryFormat(CIdentity id) {
 
 		return QueryNameDefaults.defaultNameFormat(id.getLabel());
+	}
+
+	private Store getStore() {
+
+		return getController().getStore();
+	}
+
+	private Customiser getCustomiser() {
+
+		return getController().getCustomiser();
 	}
 
 	private Controller getController() {

@@ -24,47 +24,17 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import uk.ac.manchester.cs.mekon.gui.*;
-
 /**
  * @author Colin Puleston
  */
-class InstantiationTree extends GActionTree {
+class AssertionsPanel extends InstancesPanel {
 
 	static private final long serialVersionUID = -1;
 
-	private Instantiator instantiator;
+	static private final String TITLE = "Instances";
 
-	private RootInstantiationNode rootNode;
-	private boolean viewOnly;
+	AssertionsPanel(InstanceGroup instanceGroup) {
 
-	InstantiationTree(Instantiator instantiator, boolean viewOnly) {
-
-		this.instantiator = instantiator;
-		this.viewOnly = viewOnly;
-
-		rootNode = new RootInstantiationNode(this);
-
-		setRootVisible(true);
-		setShowsRootHandles(false);
-
-		initialise(rootNode);
-	}
-
-	void setViewOnly(boolean value) {
-
-		viewOnly = value;
-
-		rootNode.update();
-	}
-
-	boolean viewOnly() {
-
-		return viewOnly;
-	}
-
-	Instantiator getInstantiator() {
-
-		return instantiator;
+		super(instanceGroup, instanceGroup.getRootAssertionIdsList(), TITLE);
 	}
 }

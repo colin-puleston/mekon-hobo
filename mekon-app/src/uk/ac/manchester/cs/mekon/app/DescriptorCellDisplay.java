@@ -39,12 +39,12 @@ class DescriptorCellDisplay {
 	static private final String OR_LABEL = "or";
 
 	private Descriptor descriptor;
-	private boolean queryInstantiation;
+	private boolean queryInstance;
 
-	DescriptorCellDisplay(Descriptor descriptor, boolean queryInstantiation) {
+	DescriptorCellDisplay(Descriptor descriptor, boolean queryInstance) {
 
 		this.descriptor = descriptor;
-		this.queryInstantiation = queryInstantiation;
+		this.queryInstance = queryInstance;
 	}
 
 	GCellDisplay create() {
@@ -124,7 +124,7 @@ class DescriptorCellDisplay {
 			return MekonAppIcons.ASSERTION_REF;
 		}
 
-		if (queryInstantiation) {
+		if (queryInstance) {
 
 			return MekonAppIcons.QUERY_VALUE;
 		}

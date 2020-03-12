@@ -24,44 +24,60 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.util.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryMatchesPanel extends InstancesPanel {
+abstract class InstanceNode extends GNode {
 
-	static private final long serialVersionUID = -1;
+	private InstanceTree tree;
 
-	static private final String TITLE_BASE = "Matches";
-	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
-
-	static private String createTitle(CIdentity storeId) {
-
-		return String.format(TITLE_FORMAT, storeId.getLabel());
-	}
-
-	QueryMatchesPanel(InstanceGroup instanceGroup) {
-
-		super(instanceGroup, new InstanceIdsList(instanceGroup, false), TITLE_BASE);
-	}
-
-	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
-
-		setTitle(createTitle(queryStoreId));
-		displayIds(matchIds);
-	}
-
-	void clear() {
-
-		setTitle(TITLE_BASE);
-		clearIds();
-	}
-
-	boolean allowLoadActionOnly() {
+	protected boolean autoExpand() {
 
 		return true;
+	}
+
+	protected boolean orderedChildren() {
+
+		return false;
+	}
+
+	InstanceNode(InstanceTree tree) {
+
+		super(tree);
+
+		this.tree = tree;
+	}
+
+	void update() {
+
+		for (GNode child : getChildren()) {
+
+			((InstanceNode)child).update();
+		}
+	}
+
+	InstanceTree getInstanceTree() {
+
+		return tree;
+	}
+
+	Instantiator getInstantiator() {
+
+		return tree.getInstantiator();
+	}
+
+	boolean queryInstance() {
+
+		return getInstantiator().queryInstance();
+	}
+
+	boolean viewOnly() {
+
+		return tree.viewOnly();
 	}
 }

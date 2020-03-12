@@ -38,7 +38,7 @@ class StructuredDescriptorNode extends DescriptorNode {
 		childNodes.addInitialChildren();
 	}
 
-	StructuredDescriptorNode(InstantiationTree tree, Descriptor descriptor) {
+	StructuredDescriptorNode(InstanceTree tree, Descriptor descriptor) {
 
 		super(tree, descriptor);
 

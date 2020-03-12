@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.util.*;
  */
 class DescriptorChildNodes {
 
-	private InstantiationNode parentNode;
+	private InstanceNode parentNode;
 	private DescriptorsList descriptors;
 
 	private SlotUpdateRelayer slotUpdateRelayer;
@@ -166,7 +166,7 @@ class DescriptorChildNodes {
 		}
 	}
 
-	DescriptorChildNodes(InstantiationNode parentNode, IFrame container) {
+	DescriptorChildNodes(InstanceNode parentNode, IFrame container) {
 
 		this.parentNode = parentNode;
 
@@ -208,7 +208,7 @@ class DescriptorChildNodes {
 
 	private DescriptorNode createDescriptorNode(Descriptor descriptor) {
 
-		InstantiationTree tree = parentNode.getInstantiationTree();
+		InstanceTree tree = parentNode.getInstanceTree();
 
 		if (descriptor.structuredType() && descriptor.hasValue()) {
 

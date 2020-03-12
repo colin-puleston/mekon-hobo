@@ -24,44 +24,54 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.util.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryMatchesPanel extends InstancesPanel {
+class RootInstanceNode extends InstanceNode {
 
-	static private final long serialVersionUID = -1;
+	private DescriptorChildNodes childNodes;
 
-	static private final String TITLE_BASE = "Matches";
-	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
+	protected void addInitialChildren() {
 
-	static private String createTitle(CIdentity storeId) {
-
-		return String.format(TITLE_FORMAT, storeId.getLabel());
+		childNodes.addInitialChildren();
 	}
 
-	QueryMatchesPanel(InstanceGroup instanceGroup) {
+	protected GCellDisplay getDisplay() {
 
-		super(instanceGroup, new InstanceIdsList(instanceGroup, false), TITLE_BASE);
+		return new GCellDisplay(getDisplayLabel(), getIcon());
 	}
 
-	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
+	RootInstanceNode(InstanceTree tree) {
 
-		setTitle(createTitle(queryStoreId));
-		displayIds(matchIds);
+		super(tree);
+
+		childNodes = new DescriptorChildNodes(this, getInstance());
 	}
 
-	void clear() {
+	void update() {
 
-		setTitle(TITLE_BASE);
-		clearIds();
+		childNodes.update();
+
+		super.update();
 	}
 
-	boolean allowLoadActionOnly() {
+	private String getDisplayLabel() {
 
-		return true;
+		return getInstance().getDisplayLabel();
+	}
+
+	private Icon getIcon() {
+
+		return queryInstance() ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
+	}
+
+	private IFrame getInstance() {
+
+		return getInstantiator().getInstance();
 	}
 }

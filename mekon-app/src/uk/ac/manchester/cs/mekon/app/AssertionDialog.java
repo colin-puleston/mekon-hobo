@@ -27,53 +27,29 @@ package uk.ac.manchester.cs.mekon.app;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class RootInstantiationNode extends InstantiationNode {
+class AssertionDialog extends InstanceDialog {
 
-	private DescriptorChildNodes childNodes;
+	static private final long serialVersionUID = -1;
 
-	protected void addInitialChildren() {
+	static private final String FUNCTION_LABEL = "Instance";
 
-		childNodes.addInitialChildren();
+	AssertionDialog(
+		JComponent parent,
+		Instantiator instantiator,
+		CIdentity storeId,
+		boolean startAsViewOnly) {
+
+		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
+
+		display();
 	}
 
-	protected GCellDisplay getDisplay() {
+	boolean disposeOnStoring() {
 
-		return new GCellDisplay(getDisplayLabel(), getIcon());
-	}
-
-	RootInstantiationNode(InstantiationTree tree) {
-
-		super(tree);
-
-		childNodes = new DescriptorChildNodes(this, getInstantiation());
-	}
-
-	void update() {
-
-		childNodes.update();
-
-		super.update();
-	}
-
-	private String getDisplayLabel() {
-
-		return getInstantiator().getInstantiation().getDisplayLabel();
-	}
-
-	private Icon getIcon() {
-
-		return queryInstantiation()
-					? MekonAppIcons.QUERY_VALUE
-					: MekonAppIcons.ASSERTION_VALUE;
-	}
-
-	private IFrame getInstantiation() {
-
-		return getInstantiator().getInstantiation();
+		return true;
 	}
 }

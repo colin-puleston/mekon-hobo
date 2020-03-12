@@ -24,17 +24,157 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.util.*;
+import javax.swing.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.*;
+
 /**
  * @author Colin Puleston
  */
-class InstancesPanel extends InstantiationsPanel {
+abstract class InstancesPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE = "Instances";
+	static private final String CREATE_LABEL = "Create...";
+	static private final String LOAD_LABEL = "Load";
+	static private final String RENAME_LABEL = "Rename...";
+	static private final String REMOVE_LABEL = "Remove";
 
-	InstancesPanel(InstanceGroup instanceGroup) {
+	static private final int WIDTH = 200;
 
-		super(instanceGroup, instanceGroup.getRootAssertionIdsList(), TITLE);
+	private InstanceGroup instanceGroup;
+	private InstanceIdsList idsList;
+
+	private InstanceOps instanceOps;
+
+	private class CreateButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			instanceOps.checkDisplayNew();
+		}
+
+		CreateButton() {
+
+			super(CREATE_LABEL);
+		}
+	}
+
+	private class LoadButton extends SelectedInstanceIdActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		LoadButton() {
+
+			super(idsList, LOAD_LABEL);
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			instanceOps.displayReloaded(storeId);
+		}
+	}
+
+	private class RenameButton extends SelectedInstanceIdActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		RenameButton() {
+
+			super(idsList, RENAME_LABEL);
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			instanceOps.checkRename(storeId);
+		}
+	}
+
+	private class RemoveButton extends SelectedInstanceIdActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		RemoveButton() {
+
+			super(idsList, REMOVE_LABEL);
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			instanceGroup.checkRemoveInstance(storeId);
+		}
+	}
+
+	public Dimension getPreferredSize() {
+
+		return new Dimension(WIDTH, (int)super.getPreferredSize().getHeight());
+	}
+
+	InstancesPanel(InstanceGroup instanceGroup, InstanceIdsList idsList, String title) {
+
+		super(new BorderLayout());
+
+		this.instanceGroup = instanceGroup;
+		this.idsList = idsList;
+
+		instanceOps = createInstanceOps();
+
+		setTitle(title);
+
+		add(new GListPanel<CIdentity>(idsList), BorderLayout.CENTER);
+		add(createControlsComponent(), BorderLayout.SOUTH);
+	}
+
+	void setTitle(String title) {
+
+		PanelEntitler.entitle(this, title);
+	}
+
+	void displayIds(Collection<CIdentity> ids) {
+
+		idsList.update(ids);
+	}
+
+	void clearIds() {
+
+		idsList.clearList();
+	}
+
+	IFrameFunction getInstancesFunction() {
+
+		return IFrameFunction.ASSERTION;
+	}
+
+	boolean allowLoadActionOnly() {
+
+		return false;
+	}
+
+	private InstanceOps createInstanceOps() {
+
+		return new InstanceOps(this, instanceGroup, getInstancesFunction());
+	}
+
+	private JComponent createControlsComponent() {
+
+		return allowLoadActionOnly() ? new LoadButton() : createFullControlsComponent();
+	}
+
+	private JComponent createFullControlsComponent() {
+
+		ControlsPanel panel = new ControlsPanel(true);
+
+		panel.addControl(new CreateButton());
+		panel.addControl(new LoadButton());
+		panel.addControl(new RenameButton());
+		panel.addControl(new RemoveButton());
+
+		return panel;
 	}
 }

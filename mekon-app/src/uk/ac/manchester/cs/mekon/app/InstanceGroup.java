@@ -35,8 +35,6 @@ import uk.ac.manchester.cs.mekon.store.*;
 class InstanceGroup {
 
 	private Controller controller;
-	private Customiser customiser;
-
 	private Store store;
 
 	private CFrame rootType;
@@ -111,7 +109,6 @@ class InstanceGroup {
 		this.controller = controller;
 		this.rootType = rootType;
 
-		customiser = controller.getCustomiser();
 		store = controller.getStore();
 
 		instanceTypes = createInstanceTypes();
@@ -214,23 +211,6 @@ class InstanceGroup {
 			instanceTypes.onReplacedInstance(storeId, newStoreId);
 			getInstanceIdsList(storeId).replaceEntity(storeId, newStoreId);
 		}
-	}
-
-	Instantiator createInstantiator(
-					CFrame instantiationType,
-					IFrameFunction function,
-					CIdentity storeId) {
-
-		IFrame instantiation = instantiationType.instantiate(function);
-
-		instantiation = customiser.onNewInstance(instantiation, storeId);
-
-		return createInstantiator(instantiation);
-	}
-
-	Instantiator createInstantiator(IFrame instantiation) {
-
-		return new Instantiator(this, instantiation);
 	}
 
 	private InstanceTypes createInstanceTypes() {

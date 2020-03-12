@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class QueryDialog extends InstantiationDialog {
+class QueryDialog extends InstanceDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -84,6 +84,6 @@ class QueryDialog extends InstantiationDialog {
 
 	private void execute() {
 
-		queryExecutions.execute(getStoreId(), getInstantiation());
+		queryExecutions.execute(getStoreId(), getInstance());
 	}
 }

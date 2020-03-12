@@ -151,8 +151,6 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayQuery(CIdentity storeId, IFrame query) {
 
-		Instantiator instantiator = instanceGroup.createInstantiator(query);
-
-		new QueryDialog(this, instantiator, storeId, true);
+		new QueryDialog(this, new Instantiator(instanceGroup, query), storeId, true);
 	}
 }

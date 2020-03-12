@@ -35,7 +35,7 @@ class InstanceGroupPanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String INSTANCES_TITLE = "Instances";
+	static private final String ASSERTIONS_TITLE = "Instances";
 	static private final String QUERIES_TITLE = "Queries";
 	static private final String EXECUTED_QUERIES_TITLE = "Query Results";
 
@@ -62,7 +62,7 @@ class InstanceGroupPanel extends JTabbedPane {
 		executedQueriesPanel = new ExecutedQueriesPanel(group);
 
 		setFont(GFonts.toMedium(getFont()));
-		addTab(INSTANCES_TITLE, new InstancesPanel(group));
+		addTab(ASSERTIONS_TITLE, new AssertionsPanel(group));
 		addTab(QUERIES_TITLE, new QueriesPanel(group));
 		addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
 

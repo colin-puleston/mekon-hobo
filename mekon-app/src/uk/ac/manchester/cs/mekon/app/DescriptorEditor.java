@@ -118,7 +118,7 @@ class DescriptorEditor {
 
 		Selector<CFrame> createValueSelector(boolean clearRequired) {
 
-			boolean query = instantiator.queryInstantiation();
+			boolean query = instantiator.queryInstance();
 
 			if (abstractEditableSlot()) {
 

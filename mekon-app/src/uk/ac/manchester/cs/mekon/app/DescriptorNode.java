@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-class DescriptorNode extends InstantiationNode {
+class DescriptorNode extends InstanceNode {
 
 	private GNodeAction editAction;
 	private GCellDisplay display;
@@ -85,7 +85,7 @@ class DescriptorNode extends InstantiationNode {
 		return editAction;
 	}
 
-	DescriptorNode(InstantiationTree tree, Descriptor descriptor) {
+	DescriptorNode(InstanceTree tree, Descriptor descriptor) {
 
 		super(tree);
 
@@ -100,11 +100,11 @@ class DescriptorNode extends InstantiationNode {
 
 	private GCellDisplay createDisplay(Descriptor descriptor) {
 
-		return new DescriptorCellDisplay(descriptor, queryInstantiation()).create();
+		return new DescriptorCellDisplay(descriptor, queryInstance()).create();
 	}
 
 	private DescriptorEditor createEditor(Descriptor descriptor) {
 
-		return new DescriptorEditor(getInstantiationTree(), getInstantiator(), descriptor);
+		return new DescriptorEditor(getInstanceTree(), getInstantiator(), descriptor);
 	}
 }
