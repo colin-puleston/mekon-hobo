@@ -36,16 +36,12 @@ class Controller {
 	private Store store;
 	private Customiser customiser;
 
-	private QueryNameDefaults queryNameDefaults;
-
 	private Set<InstanceGroup> instanceGroups = new HashSet<InstanceGroup>();
 
 	Controller(Store store, Customiser customiser) {
 
 		this.store = store;
 		this.customiser = customiser;
-
-		queryNameDefaults = new QueryNameDefaults(store);
 	}
 
 	InstanceGroup addInstanceGroup(CFrame rootType) {
@@ -65,11 +61,6 @@ class Controller {
 	Customiser getCustomiser() {
 
 		return customiser;
-	}
-
-	QueryNameDefaults getQueryNameDefaults() {
-
-		return queryNameDefaults;
 	}
 
 	boolean instanceGroupType(CFrame type) {

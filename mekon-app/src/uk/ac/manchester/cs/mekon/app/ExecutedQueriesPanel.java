@@ -116,7 +116,8 @@ class ExecutedQueriesPanel extends JPanel {
 
 		CIdentity storeId = executedQuery.getStoreId();
 
-		querySelectorList.addEntity(storeId);
+		querySelectorList.checkAddEntity(storeId);
+		querySelectorList.clearSelection();
 		querySelectorList.select(storeId);
 	}
 
@@ -151,6 +152,6 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayQuery(CIdentity storeId, IFrame query) {
 
-		new QueryDialog(this, new Instantiator(instanceGroup, query), storeId, true);
+		new QueryDialog(this, new Instantiator(instanceGroup, storeId, query), storeId, true);
 	}
 }

@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -37,6 +38,9 @@ class InstanceOps {
 	private InstanceGroup instanceGroup;
 	private IFrameFunction function;
 
+	private Store store;
+	private Customiser customiser;
+
 	InstanceOps(
 		JComponent parent,
 		InstanceGroup instanceGroup,
@@ -45,20 +49,25 @@ class InstanceOps {
 		this.parent = parent;
 		this.instanceGroup = instanceGroup;
 		this.function = function;
+
+		Controller controller = instanceGroup.getController();
+
+		store = controller.getStore();
+		customiser = controller.getCustomiser();
 	}
 
 	CIdentity checkDisplayNew() {
 
-		return checkDisplayNew(instanceGroup.getRootType());
+		return checkDisplayNew(instanceGroup.getRootType(), null);
 	}
 
-	CIdentity checkDisplayNew(CFrame rootType) {
+	CIdentity checkDisplayNew(CFrame rootType, CIdentity refingId) {
 
 		CFrame type = checkDetermineType(rootType);
 
 		if (type != null) {
 
-			CIdentity storeId = checkObtainNewStoreId();
+			CIdentity storeId = checkObtainStoreId(type, refingId, null);
 
 			if (storeId != null) {
 
@@ -76,7 +85,8 @@ class InstanceOps {
 
 	void checkRename(CIdentity storeId) {
 
-		CIdentity newStoreId = checkObtainStoreId(storeId);
+		CFrame type = store.getType(storeId);
+		CIdentity newStoreId = checkObtainStoreId(type, null, storeId);
 
 		if (newStoreId != null) {
 
@@ -91,9 +101,9 @@ class InstanceOps {
 		}
 	}
 
-	CIdentity checkObtainNewStoreId() {
+	CIdentity checkObtainNewStoreId(CFrame type) {
 
-		return checkObtainStoreId(null);
+		return checkObtainStoreId(type, null, null);
 	}
 
 	private CFrame checkDetermineType(CFrame rootType) {
@@ -120,17 +130,22 @@ class InstanceOps {
 		return new AtomicFrameSelector(parent, rootType, function.query(), false);
 	}
 
-	private CIdentity checkObtainStoreId(CIdentity defaultId) {
+	private CIdentity checkObtainStoreId(CFrame type, CIdentity refingId, CIdentity defaultId) {
 
 		StoreIdSelector selector = createStoreIdSelector();
 
-		if (function.assertion()) {
+		if (function.query()) {
 
-			configureIdSelectorForAssertion(selector, defaultId);
+			selector.setInMemoryIds(getExecutedQueryIds());
+		}
+
+		if (defaultId != null) {
+
+			selector.setInitialValue(defaultId);
 		}
 		else {
 
-			configureIdSelectorForQuery(selector, defaultId);
+			selector.setInitialStringValue(getNextInstanceNameDefault(type, refingId));
 		}
 
 		return selector.getIdSelection();
@@ -138,34 +153,7 @@ class InstanceOps {
 
 	private StoreIdSelector createStoreIdSelector() {
 
-		return new StoreIdSelector(parent, getStore(), function);
-	}
-
-	private void configureIdSelectorForAssertion(StoreIdSelector selector, CIdentity defaultId) {
-
-		if (defaultId != null) {
-
-			selector.setInitialValue(defaultId);
-		}
-	}
-
-	private void configureIdSelectorForQuery(StoreIdSelector selector, CIdentity defaultId) {
-
-		setInMemoryQueryIds(selector);
-
-		if (defaultId != null && !hasDefaultQueryFormat(defaultId)) {
-
-			selector.setInitialValue(defaultId);
-		}
-		else {
-
-			selector.setInitialStringValue(getNextQueryNameDefault());
-		}
-	}
-
-	private void setInMemoryQueryIds(StoreIdSelector selector) {
-
-		selector.setInMemoryIds(instanceGroup.getQueryExecutions().getAllExecuteds());
+		return new StoreIdSelector(parent, store, function);
 	}
 
 	private CIdentity displayDialog(
@@ -195,19 +183,19 @@ class InstanceOps {
 
 		IFrame instance = type.instantiate(function);
 
-		instance = getCustomiser().onNewInstance(instance, storeId);
+		instance = customiser.onNewInstance(instance, storeId);
 
-		return createInstantiator(instance);
+		return createInstantiator(storeId, instance);
 	}
 
 	private Instantiator reloadInstance(CIdentity storeId) {
 
-		return createInstantiator(getStore().get(storeId));
+		return createInstantiator(storeId, store.get(storeId));
 	}
 
-	private Instantiator createInstantiator(IFrame instance) {
+	private Instantiator createInstantiator(CIdentity storeId, IFrame instance) {
 
-		return new Instantiator(instanceGroup, instance);
+		return new Instantiator(instanceGroup, storeId, instance);
 	}
 
 	private void showMessage(String msg) {
@@ -215,28 +203,29 @@ class InstanceOps {
 		JOptionPane.showMessageDialog(null, msg);
 	}
 
-	private String getNextQueryNameDefault() {
+	private String getNextInstanceNameDefault(CFrame type, CIdentity refingId) {
 
-		return getController().getQueryNameDefaults().getNext();
+		return function.query()
+				? getNextQueryNameDefault(type)
+				: getNextAssertionNameDefault(type, refingId);
 	}
 
-	private boolean hasDefaultQueryFormat(CIdentity id) {
+	private String getNextAssertionNameDefault(CFrame type, CIdentity refingId) {
 
-		return QueryNameDefaults.defaultNameFormat(id.getLabel());
+		AssertionNameDefaults defaults = customiser.getAssertionNameDefaults();
+
+		return refingId != null
+					? defaults.getNextReferenced(type, refingId)
+					: defaults.getNextBase(type);
 	}
 
-	private Store getStore() {
+	private String getNextQueryNameDefault(CFrame type) {
 
-		return getController().getStore();
+		return customiser.getQueryNameDefaults().getNext(type, getExecutedQueryIds());
 	}
 
-	private Customiser getCustomiser() {
+	private Set<CIdentity> getExecutedQueryIds() {
 
-		return getController().getCustomiser();
-	}
-
-	private Controller getController() {
-
-		return instanceGroup.getController();
+		return instanceGroup.getQueryExecutions().getAllExecuteds();
 	}
 }

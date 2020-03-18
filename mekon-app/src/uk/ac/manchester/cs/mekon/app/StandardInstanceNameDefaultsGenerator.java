@@ -27,11 +27,76 @@ package uk.ac.manchester.cs.mekon.app;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
  */
-public interface QueryNameDefaults {
+class StandardInstanceNameDefaultsGenerator {
 
-	public String getNext(CFrame queryType, Set<CIdentity> executedQueryIds);
+	private IStore store;
+
+	StandardInstanceNameDefaultsGenerator(IStore store) {
+
+		this.store = store;
+	}
+
+	String getNext(String nameBody) {
+
+		return getNext(nameBody, Collections.emptySet());
+	}
+
+	String getNext(String nameBody, Set<CIdentity> inMemoryIds) {
+
+		return nameBody + getNextIndex(nameBody, inMemoryIds);
+	}
+
+	private int getNextIndex(String nameBody, Set<CIdentity> inMemoryIds) {
+
+		int nextIndex = 1;
+
+		for (CIdentity storeId : getAllCurrentIds(inMemoryIds)) {
+
+			Integer index = lookForIndex(nameBody, storeId.getLabel());
+
+			if (index != null && index >= nextIndex) {
+
+				nextIndex = index + 1;
+			}
+		}
+
+		return nextIndex;
+	}
+
+	private Set<CIdentity> getAllCurrentIds(Set<CIdentity> inMemoryIds) {
+
+		Set<CIdentity> all = new HashSet<CIdentity>();
+
+		all.addAll(store.getAllIdentities());
+		all.addAll(inMemoryIds);
+
+		return all;
+	}
+
+	private Integer lookForIndex(String nameBody, String label) {
+
+		if (label.startsWith(nameBody)) {
+
+			return toIntegerOrNull(label.substring(nameBody.length()));
+		}
+
+		return null;
+	}
+
+	private Integer toIntegerOrNull(String value) {
+
+		try {
+
+			return Integer.parseInt(value);
+		}
+		catch (NumberFormatException e) {
+
+			return null;
+		}
+	}
 }

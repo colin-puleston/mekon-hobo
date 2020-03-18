@@ -189,17 +189,12 @@ public class MekonApp extends GFrame {
 
 	private Controller createController() {
 
-		ensureCustomiser();
-
-		return new Controller(new Store(store, customiser), customiser);
-	}
-
-	private void ensureCustomiser() {
-
 		if (customiser == null) {
 
-			customiser = new DefaultCustomiser();
+			customiser = new DefaultCustomiser(store);
 		}
+
+		return new Controller(new Store(store, customiser), customiser);
 	}
 
 	private void displayConfigError(String message) {

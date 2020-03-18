@@ -27,11 +27,34 @@ package uk.ac.manchester.cs.mekon.app;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
  */
-public interface QueryNameDefaults {
+public class StandardQueryNameDefaults implements QueryNameDefaults {
 
-	public String getNext(CFrame queryType, Set<CIdentity> executedQueryIds);
+	static private final String NAME_BODY_FORMAT = "%s-QUERY-";
+
+	private StandardInstanceNameDefaultsGenerator generator;
+
+	public StandardQueryNameDefaults(IStore store) {
+
+		generator = new StandardInstanceNameDefaultsGenerator(store);
+	}
+
+	public String getNext(CFrame queryType, Set<CIdentity> executedQueryIds) {
+
+		return generator.getNext(createNameBody(queryType), executedQueryIds);
+	}
+
+	private String createNameBody(CFrame queryType) {
+
+		return String.format(NAME_BODY_FORMAT, toNameSection(queryType));
+	}
+
+	private String toNameSection(CFrame queryType) {
+
+		return queryType.getIdentity().getLabel();
+	}
 }

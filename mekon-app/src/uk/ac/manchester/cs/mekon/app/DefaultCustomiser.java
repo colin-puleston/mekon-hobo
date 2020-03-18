@@ -25,11 +25,15 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
  */
 public class DefaultCustomiser implements Customiser {
+
+	private AssertionNameDefaults assertionNameDefaults;
+	private QueryNameDefaults queryNameDefaults;
 
 	public String getDisplayLabel(CValue<?> valueType) {
 
@@ -106,5 +110,21 @@ public class DefaultCustomiser implements Customiser {
 					CIdentity newStoreId) {
 
 		return instance;
+	}
+
+	public AssertionNameDefaults getAssertionNameDefaults() {
+
+		return assertionNameDefaults;
+	}
+
+	public QueryNameDefaults getQueryNameDefaults() {
+
+		return queryNameDefaults;
+	}
+
+	protected DefaultCustomiser(IStore store) {
+
+		assertionNameDefaults = new StandardAssertionNameDefaults(store);
+		queryNameDefaults = new StandardQueryNameDefaults(store);
 	}
 }

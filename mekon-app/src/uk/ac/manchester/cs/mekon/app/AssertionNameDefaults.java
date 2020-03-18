@@ -24,14 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public interface QueryNameDefaults {
+public interface AssertionNameDefaults {
 
-	public String getNext(CFrame queryType, Set<CIdentity> executedQueryIds);
+	public String getNextBase(CFrame assertionType);
+
+	public String getNextReferenced(CFrame assertionType, CIdentity refingId);
 }

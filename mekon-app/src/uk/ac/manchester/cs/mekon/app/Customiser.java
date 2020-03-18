@@ -43,4 +43,8 @@ public interface Customiser {
 					IFrame instance,
 					CIdentity storeId,
 					CIdentity newStoreId);
+
+	public AssertionNameDefaults getAssertionNameDefaults();
+
+	public QueryNameDefaults getQueryNameDefaults();
 }

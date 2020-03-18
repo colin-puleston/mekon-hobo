@@ -32,11 +32,14 @@ import uk.ac.manchester.cs.mekon.model.*;
 class Instantiator {
 
 	private InstanceGroup instanceGroup;
+
+	private CIdentity storeId;
 	private IFrame instance;
 
-	Instantiator(InstanceGroup instanceGroup, IFrame instance) {
+	Instantiator(InstanceGroup instanceGroup, CIdentity storeId, IFrame instance) {
 
 		this.instanceGroup = instanceGroup;
+		this.storeId = storeId;
 		this.instance = instance;
 	}
 
@@ -48,6 +51,11 @@ class Instantiator {
 	InstanceGroup getInstanceGroup() {
 
 		return instanceGroup;
+	}
+
+	CIdentity getStoreId() {
+
+		return storeId;
 	}
 
 	IFrame getInstance() {

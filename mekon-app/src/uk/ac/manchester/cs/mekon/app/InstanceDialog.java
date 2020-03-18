@@ -224,12 +224,17 @@ abstract class InstanceDialog extends GDialog {
 
 	private CIdentity checkObtainNewStoreId(JComponent parent) {
 
-		return createInstanceOps(parent).checkObtainNewStoreId();
+		return createInstanceOps(parent).checkObtainNewStoreId(getInstanceType());
 	}
 
 	private InstanceOps createInstanceOps(JComponent parent) {
 
 		return new InstanceOps(parent, getInstanceGroup(), instantiator.getFunction());
+	}
+
+	private CFrame getInstanceType() {
+
+		return getInstance().getType();
 	}
 
 	private int getPreferredHeight() {
