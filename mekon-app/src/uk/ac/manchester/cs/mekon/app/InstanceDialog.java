@@ -70,21 +70,29 @@ abstract class InstanceDialog extends GDialog {
 
 	private boolean instanceStored = false;
 
-	private class ModeSelector extends JCheckBox implements ActionListener {
+	private class ViewOnlySelector extends JCheckBox implements ActionListener {
 
 		static private final long serialVersionUID = -1;
 
 		public void actionPerformed(ActionEvent event) {
 
-			instanceTree.setViewOnly(isSelected());
+			setViewOnly(isSelected());
 		}
 
-		ModeSelector() {
+		ViewOnlySelector(boolean allowEdits) {
 
 			super(MODE_SELECTOR_LABEL);
 
 			setSelected(instanceTree.viewOnly());
-			addActionListener(this);
+
+			if (allowEdits) {
+
+				addActionListener(this);
+			}
+			else {
+
+				setEnabled(false);
+			}
 		}
 	}
 
@@ -127,20 +135,24 @@ abstract class InstanceDialog extends GDialog {
 		JComponent parent,
 		Instantiator instantiator,
 		CIdentity storeId,
-		String functionTitle,
-		boolean startAsViewOnly) {
+		String functionTitle) {
 
 		super(parent, createTitle(instantiator, storeId, functionTitle), true);
 
 		this.instantiator = instantiator;
 		this.storeId = storeId;
 
-		instanceTree = new InstanceTree(instantiator, startAsViewOnly);
+		instanceTree = new InstanceTree(instantiator);
 	}
 
-	void display() {
+	void display(boolean startAsViewOnly) {
 
-		display(createDisplay());
+		display(true, startAsViewOnly);
+	}
+
+	void displayAsViewOnly() {
+
+		display(false, true);
 	}
 
 	void addControlComponents(ControlsPanel panel) {
@@ -171,13 +183,24 @@ abstract class InstanceDialog extends GDialog {
 
 	abstract boolean disposeOnStoring();
 
-	private JComponent createDisplay() {
+	private void display(boolean allowEdits, boolean startAsViewOnly) {
+
+		setViewOnly(startAsViewOnly);
+
+		display(createDisplay(allowEdits));
+	}
+
+	private JComponent createDisplay(boolean allowEdits) {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(new ModeSelector(), BorderLayout.NORTH);
+		panel.add(new ViewOnlySelector(allowEdits), BorderLayout.NORTH);
 		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
-		panel.add(createControlsComponent(), BorderLayout.SOUTH);
+
+		if (allowEdits) {
+
+			panel.add(createControlsComponent(), BorderLayout.SOUTH);
+		}
 
 		return panel;
 	}
@@ -189,6 +212,11 @@ abstract class InstanceDialog extends GDialog {
 		addControlComponents(panel);
 
 		return panel;
+	}
+
+	private void setViewOnly(boolean value) {
+
+		instanceTree.setViewOnly(value);
 	}
 
 	private void perfomStoreAsAction(JComponent parent) {

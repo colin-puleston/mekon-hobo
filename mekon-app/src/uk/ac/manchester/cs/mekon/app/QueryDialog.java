@@ -57,17 +57,11 @@ class QueryDialog extends InstanceDialog {
 		}
 	}
 
-	QueryDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		CIdentity storeId,
-		boolean startAsViewOnly) {
+	QueryDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
 
-		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
+		super(parent, instantiator, storeId, FUNCTION_LABEL);
 
 		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
-
-		display();
 	}
 
 	boolean disposeOnStoring() {

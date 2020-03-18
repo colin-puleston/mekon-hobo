@@ -37,15 +37,9 @@ class AssertionDialog extends InstanceDialog {
 
 	static private final String FUNCTION_LABEL = "Instance";
 
-	AssertionDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		CIdentity storeId,
-		boolean startAsViewOnly) {
+	AssertionDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
 
-		super(parent, instantiator, storeId, FUNCTION_LABEL, startAsViewOnly);
-
-		display();
+		super(parent, instantiator, storeId, FUNCTION_LABEL);
 	}
 
 	boolean disposeOnStoring() {

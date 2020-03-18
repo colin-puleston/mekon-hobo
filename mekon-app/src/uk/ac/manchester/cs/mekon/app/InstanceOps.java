@@ -157,26 +157,25 @@ class InstanceOps {
 	}
 
 	private CIdentity displayDialog(
-							Instantiator instantiator,
-							CIdentity storeId,
-							boolean reloaded) {
+						Instantiator instantiator,
+						CIdentity storeId,
+						boolean reloaded) {
 
-		InstanceDialog dialog = createDialog(instantiator, storeId, reloaded);
+		InstanceDialog dialog = createDialog(instantiator, storeId);
+
+		dialog.display(reloaded);
 
 		return dialog.instanceStored() ? dialog.getStoreId() : null;
 	}
 
-	private InstanceDialog createDialog(
-								Instantiator instantiator,
-								CIdentity storeId,
-								boolean reloaded) {
+	private InstanceDialog createDialog(Instantiator instantiator, CIdentity storeId) {
 
 		if (function.assertion()) {
 
-			return new AssertionDialog(parent, instantiator, storeId, reloaded);
+			return new AssertionDialog(parent, instantiator, storeId);
 		}
 
-		return new QueryDialog(parent, instantiator, storeId, reloaded);
+		return new QueryDialog(parent, instantiator, storeId);
 	}
 
 	private Instantiator createInstance(CFrame type, CIdentity storeId) {

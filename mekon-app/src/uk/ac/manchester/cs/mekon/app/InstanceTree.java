@@ -36,12 +36,11 @@ class InstanceTree extends GActionTree {
 	private Instantiator instantiator;
 
 	private RootInstanceNode rootNode;
-	private boolean viewOnly;
+	private boolean viewOnly = false;
 
-	InstanceTree(Instantiator instantiator, boolean viewOnly) {
+	InstanceTree(Instantiator instantiator) {
 
 		this.instantiator = instantiator;
-		this.viewOnly = viewOnly;
 
 		rootNode = new RootInstanceNode(this);
 
@@ -53,9 +52,12 @@ class InstanceTree extends GActionTree {
 
 	void setViewOnly(boolean value) {
 
-		viewOnly = value;
+		if (value != viewOnly) {
 
-		rootNode.update();
+			viewOnly = value;
+
+			rootNode.update();
+		}
 	}
 
 	boolean viewOnly() {
