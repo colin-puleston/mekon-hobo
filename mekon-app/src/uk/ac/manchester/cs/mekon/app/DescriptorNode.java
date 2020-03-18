@@ -34,10 +34,10 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 class DescriptorNode extends InstanceNode {
 
-	private GNodeAction editAction;
-	private GCellDisplay display;
+	private Descriptor descriptor;
 
-	private boolean editActive = true;
+	private GNodeAction editAction;
+	private DescriptorEditor editor;
 
 	private abstract class EditActiveAction extends GNodeAction {
 
@@ -54,16 +54,12 @@ class DescriptorNode extends InstanceNode {
 
 	private class EditAction extends EditActiveAction {
 
-		private DescriptorEditor editor;
-
-		EditAction(Descriptor descriptor) {
-
-			editor = createEditor(descriptor);
-		}
-
 		void performEditActiveAction() {
 
-			editor.performEditAction();
+			if (editor.performEditAction()) {
+
+				getInstanceTree().updateAllNodeDisplays();
+			}
 		}
 	}
 
@@ -77,7 +73,7 @@ class DescriptorNode extends InstanceNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return display;
+		return new DescriptorCellDisplay(descriptor, queryInstance()).create();
 	}
 
 	protected GNodeAction getPositiveAction1() {
@@ -89,21 +85,18 @@ class DescriptorNode extends InstanceNode {
 
 		super(tree);
 
-		editAction = createEditAction(descriptor);
-		display = createDisplay(descriptor);
+		this.descriptor = descriptor;
+
+		editAction = createEditAction();
+		editor = createEditor();
 	}
 
-	private GNodeAction createEditAction(Descriptor descriptor) {
+	private GNodeAction createEditAction() {
 
-		return descriptor.userEditable() ? new EditAction(descriptor) : new NoEditAction();
+		return descriptor.userEditable() ? new EditAction() : new NoEditAction();
 	}
 
-	private GCellDisplay createDisplay(Descriptor descriptor) {
-
-		return new DescriptorCellDisplay(descriptor, queryInstance()).create();
-	}
-
-	private DescriptorEditor createEditor(Descriptor descriptor) {
+	private DescriptorEditor createEditor() {
 
 		return new DescriptorEditor(getInstanceTree(), getInstantiator(), descriptor);
 	}

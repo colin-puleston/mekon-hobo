@@ -42,12 +42,12 @@ class DescriptorEditor {
 
 	private abstract class TypeHandler {
 
-		abstract void performEditAction();
+		abstract boolean performEditAction();
 	}
 
 	private abstract class SelectableTypeHandler<S> extends TypeHandler {
 
-		void performEditAction() {
+		boolean performEditAction() {
 
 			Selector<S> selector = createValueSelector(descriptor.hasValue());
 
@@ -60,7 +60,12 @@ class DescriptorEditor {
 				case CLEARED:
 					removeValue();
 					break;
+
+				case CANCELLED:
+					return false;
 			}
+
+			return true;
 		}
 
 		abstract Selector<S> createValueSelector(boolean clearRequired);
@@ -82,19 +87,28 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		void performEditAction() {
+		boolean performEditAction() {
 
 			if (descriptor.hasValue()) {
 
-				if (obtainRemoveValueConfirmationOption() == JOptionPane.OK_OPTION) {
-
-					removeValue();
-				}
+				return checkRemoveValue();
 			}
-			else {
 
-				addValue(instantiator.instantiate(valueType));
+			addValue(instantiator.instantiate(valueType));
+
+			return true;
+		}
+
+		private boolean checkRemoveValue() {
+
+			if (obtainRemoveValueConfirmationOption() == JOptionPane.OK_OPTION) {
+
+				removeValue();
+
+				return true;
 			}
+
+			return false;
 		}
 
 		private int obtainRemoveValueConfirmationOption() {
@@ -277,9 +291,9 @@ class DescriptorEditor {
 		return descriptor;
 	}
 
-	void performEditAction() {
+	boolean performEditAction() {
 
-		typeHandler.performEditAction();
+		return typeHandler.performEditAction();
 	}
 
 	private void addValue(IValue value) {
