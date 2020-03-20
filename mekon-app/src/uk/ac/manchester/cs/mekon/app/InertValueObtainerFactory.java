@@ -24,48 +24,25 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.*;
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class DefiniteINumberSelector extends INumberSelector {
+class InertValueObtainerFactory implements ValueObtainerFactory {
 
-	static private final long serialVersionUID = -1;
+	static final InertValueObtainerFactory SINGLETON = new InertValueObtainerFactory();
 
-	static private final String TITLE = "Enter Value";
+	public boolean handles(ISlot slot) {
 
-	static private final Dimension WINDOW_SIZE = new Dimension(250, 70);
-
-	private InputField valueField = new InputField();
-
-	DefiniteINumberSelector(JComponent parent, CNumber type, boolean clearRequired) {
-
-		super(parent, type, TITLE, clearRequired);
+		return false;
 	}
 
-	INumber resolveSelection(CNumber type) {
+	public ValueObtainer createFor(ISlot slot) {
 
-		return valueField.getValue();
+		throw new RuntimeException("Cannot handle values for slot: " + slot);
 	}
 
-	JComponent getInputComponent() {
-
-		return valueField;
-	}
-
-	Dimension getWindowSize() {
-
-		return WINDOW_SIZE;
-	}
-
-	boolean validInput() {
-
-		return validNumberValueText(valueField.getText());
+	private InertValueObtainerFactory() {
 	}
 }
-
-

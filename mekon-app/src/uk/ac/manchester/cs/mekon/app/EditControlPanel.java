@@ -69,7 +69,7 @@ abstract class EditControlPanel extends JPanel {
 
 		EditStatus getEditStatus() {
 
-			return EditStatus.EDITED;
+			return EditStatus.INPUTTED;
 		}
 	}
 

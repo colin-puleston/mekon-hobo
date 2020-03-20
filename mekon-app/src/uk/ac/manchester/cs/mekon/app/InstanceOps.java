@@ -122,7 +122,7 @@ class InstanceOps {
 
 		selector.display();
 
-		return selector.getSelection();
+		return selector.getInput();
 	}
 
 	private AtomicFrameSelector createTypeSelector(CFrame rootType) {
@@ -132,28 +132,28 @@ class InstanceOps {
 
 	private CIdentity checkObtainStoreId(CFrame type, CIdentity refingId, CIdentity defaultId) {
 
-		StoreIdSelector selector = createStoreIdSelector();
+		StoreIdInputter inputter = createStoreIdInputter();
 
 		if (function.query()) {
 
-			selector.setInMemoryIds(getExecutedQueryIds());
+			inputter.setInMemoryIds(getExecutedQueryIds());
 		}
 
 		if (defaultId != null) {
 
-			selector.setInitialValue(defaultId);
+			inputter.setInitialValue(defaultId);
 		}
 		else {
 
-			selector.setInitialStringValue(getNextInstanceNameDefault(type, refingId));
+			inputter.setInitialStringValue(getNextInstanceNameDefault(type, refingId));
 		}
 
-		return selector.getIdSelection();
+		return inputter.getIdInput();
 	}
 
-	private StoreIdSelector createStoreIdSelector() {
+	private StoreIdInputter createStoreIdInputter() {
 
-		return new StoreIdSelector(parent, store, function);
+		return new StoreIdInputter(parent, store, function);
 	}
 
 	private CIdentity displayDialog(

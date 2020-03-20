@@ -28,12 +28,13 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class TextInputSelector<S> extends Selector<S> {
+abstract class TextInputDialog<I> extends InputDialog<I> {
 
 	static private final long serialVersionUID = -1;
 
@@ -65,7 +66,7 @@ abstract class TextInputSelector<S> extends Selector<S> {
 			}
 		}
 
-		S getValue() {
+		I getValue() {
 
 			return convertInputValue(getText());
 		}
@@ -121,7 +122,12 @@ abstract class TextInputSelector<S> extends Selector<S> {
 		}
 	}
 
-	TextInputSelector(
+	protected I getInput() {
+
+		return resolveInput();
+	}
+
+	TextInputDialog(
 		JComponent parent,
 		String title,
 		boolean okRequired,
@@ -132,16 +138,11 @@ abstract class TextInputSelector<S> extends Selector<S> {
 		addWindowListener(new WindowCloseListener());
 	}
 
-	S getSelection() {
-
-		return resolveSelection();
-	}
-
-	abstract S resolveSelection();
+	abstract I resolveInput();
 
 	abstract boolean validInputText(String text);
 
-	abstract S convertInputValue(String text);
+	abstract I convertInputValue(String text);
 
 	abstract boolean validInput();
 

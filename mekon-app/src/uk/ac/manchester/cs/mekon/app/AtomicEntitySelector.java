@@ -35,19 +35,19 @@ abstract class AtomicEntitySelector<E> extends EntitySelector<E> {
 
 	private E selection = null;
 
-	E getSelection() {
+	protected E getInput() {
 
 		return selection;
+	}
+
+	protected JComponent getInputComponent() {
+
+		return createOptionsComponent();
 	}
 
 	AtomicEntitySelector(JComponent parent, boolean clearRequired) {
 
 		super(parent, false, clearRequired);
-	}
-
-	JComponent getInputComponent() {
-
-		return createOptionsComponent();
 	}
 
 	void onSelectedOption(E selected) {

@@ -89,7 +89,7 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 		new IdsSelectionListener();
 
-		selector.getControlPanel().addExtraButton(new CreateButton());
+		selector.addExtraControlButton(new CreateButton());
 	}
 
 	JComponent createOptionsComponent() {

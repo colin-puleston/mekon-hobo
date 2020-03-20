@@ -82,12 +82,7 @@ abstract class DisjunctionEntitySelector<E> extends EntitySelector<E> {
 		}
 	}
 
-	DisjunctionEntitySelector(JComponent parent, boolean clearRequired) {
-
-		super(parent, true, clearRequired);
-	}
-
-	JComponent getInputComponent() {
+	protected JComponent getInputComponent() {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
@@ -95,6 +90,11 @@ abstract class DisjunctionEntitySelector<E> extends EntitySelector<E> {
 		panel.add(createSelectionsPanel(), BorderLayout.SOUTH);
 
 		return panel;
+	}
+
+	DisjunctionEntitySelector(JComponent parent, boolean clearRequired) {
+
+		super(parent, true, clearRequired);
 	}
 
 	void onSelectedOption(E selected) {

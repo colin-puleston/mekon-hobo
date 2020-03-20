@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class Selector<S> extends GDialog {
+public abstract class InputDialog<I> extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -53,17 +53,42 @@ abstract class Selector<S> extends GDialog {
 
 		void onEditComplete(EditStatus status) {
 
-			Selector.this.status = status;
+			InputDialog.this.status = status;
 
 			dispose();
 		}
 	}
 
-	Selector(JComponent parent, String title, boolean okRequired, boolean clearRequired) {
+	protected InputDialog(
+				JComponent parent,
+				String title,
+				boolean okRequired,
+				boolean clearRequired) {
 
 		super(parent, title, true);
 
 		controlPanel = new ControlPanel(okRequired, clearRequired);
+	}
+
+	protected abstract I getInput();
+
+	protected abstract JComponent getInputComponent();
+
+	protected abstract Dimension getWindowSize();
+
+	protected void addExtraControlButton(GButton button) {
+
+		controlPanel.addExtraButton(button);
+	}
+
+	protected void setValidSelection(boolean valid) {
+
+		controlPanel.setOkEnabled(valid);
+	}
+
+	protected void setCompletedSelection() {
+
+		status = EditStatus.INPUTTED;
 	}
 
 	EditStatus display() {
@@ -71,27 +96,6 @@ abstract class Selector<S> extends GDialog {
 		display(createDisplay());
 
 		return status;
-	}
-
-	abstract S getSelection();
-
-	EditControlPanel getControlPanel() {
-
-		return controlPanel;
-	}
-
-	abstract JComponent getInputComponent();
-
-	abstract Dimension getWindowSize();
-
-	void setValidSelection(boolean valid) {
-
-		controlPanel.setOkEnabled(valid);
-	}
-
-	void setCompletedSelection() {
-
-		status = EditStatus.EDITED;
 	}
 
 	private JComponent createDisplay() {

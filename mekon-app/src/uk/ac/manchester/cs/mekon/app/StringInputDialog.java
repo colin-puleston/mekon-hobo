@@ -24,80 +24,57 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.*;
 import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class INumberSelector extends TextInputSelector<INumber> {
+abstract class StringInputDialog<I> extends TextInputDialog<I> {
 
 	static private final long serialVersionUID = -1;
 
-	static final INumber NO_VALUE = new INumber(0);
-	static final INumber INVALID_VALUE = new INumber(0);
+	static private final Dimension WINDOW_SIZE = new Dimension(250, 70);
 
-	private CNumber type;
+	private InputField valueField = new InputField();
 
-	INumberSelector(JComponent parent, CNumber type, String title, boolean clearRequired) {
+	protected JComponent getInputComponent() {
+
+		return valueField;
+	}
+
+	protected Dimension getWindowSize() {
+
+		return WINDOW_SIZE;
+	}
+
+	StringInputDialog(JComponent parent, String title, boolean clearRequired) {
 
 		super(parent, title, true, clearRequired);
-
-		this.type = type;
 	}
 
-	INumber resolveSelection() {
+	void setInitialStringValue(String value) {
 
-		return resolveSelection(type);
+		valueField.setText(value);
+		updateInputValidity();
 	}
 
-	abstract INumber resolveSelection(CNumber type);
+	I resolveInput() {
+
+		return valueField.getValue();
+	}
 
 	boolean validInputText(String text) {
 
-		return validInputValue(parseValue(text, true));
+		return !text.isEmpty();
 	}
 
-	INumber convertInputValue(String text) {
+	boolean validInput() {
 
-		return parseValue(text, false);
+		return !emptyValue(valueField.getValue());
 	}
 
-	boolean validNumberValueText(String text) {
-
-		return type.validNumberValue(text);
-	}
-
-	private INumber parseValue(String text, boolean showErrorIfInvalid) {
-
-		if (text.length() == 0) {
-
-			return NO_VALUE;
-		}
-
-		if (validNumberValueText(text)) {
-
-			return new INumber(getNumberType(), text);
-		}
-
-		if (showErrorIfInvalid) {
-
-			JOptionPane.showMessageDialog(null, "Invalid Input!");
-		}
-
-		return INVALID_VALUE;
-	}
-
-	private boolean validInputValue(INumber value) {
-
-		return value != NO_VALUE && value != INVALID_VALUE;
-	}
-
-	private Class<? extends Number> getNumberType() {
-
-		return type.getNumberType();
-	}
+	abstract boolean emptyValue(I value);
 }
 
 

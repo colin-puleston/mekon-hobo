@@ -38,6 +38,11 @@ class DisjunctionFrameSelector extends DisjunctionEntitySelector<CFrame> {
 
 	private FrameSelectionOptions selectionOptions;
 
+	protected CFrame getInput() {
+
+		return CFrame.resolveDisjunction(getDisjunctSelections());
+	}
+
 	DisjunctionFrameSelector(
 		JComponent parent,
 		CFrame rootFrame,
@@ -47,11 +52,6 @@ class DisjunctionFrameSelector extends DisjunctionEntitySelector<CFrame> {
 		super(parent, clearRequired);
 
 		selectionOptions = new FrameSelectionOptions(this, rootFrame, forQuery);
-	}
-
-	CFrame getSelection() {
-
-		return CFrame.resolveDisjunction(getDisjunctSelections());
 	}
 
 	JComponent createOptionsComponent() {

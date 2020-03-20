@@ -27,4 +27,4 @@ package uk.ac.manchester.cs.mekon.app;
 /**
  * @author Colin Puleston
  */
-enum EditStatus {EDITED, CLEARED, CANCELLED, NONE};
+public enum EditStatus {INPUTTED, CLEARED, CANCELLED, NONE};

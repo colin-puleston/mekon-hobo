@@ -35,6 +35,34 @@ public class DefaultCustomiser implements Customiser {
 	private AssertionNameDefaults assertionNameDefaults;
 	private QueryNameDefaults queryNameDefaults;
 
+	public AssertionNameDefaults getAssertionNameDefaults() {
+
+		return assertionNameDefaults;
+	}
+
+	public QueryNameDefaults getQueryNameDefaults() {
+
+		return queryNameDefaults;
+	}
+
+	public IFrame onNewInstance(IFrame instance, CIdentity storeId) {
+
+		return instance;
+	}
+
+	public IFrame onRenamingInstance(
+					IFrame instance,
+					CIdentity storeId,
+					CIdentity newStoreId) {
+
+		return instance;
+	}
+
+	public ValueObtainerFactory getValueObtainerFactory() {
+
+		return InertValueObtainerFactory.SINGLETON;
+	}
+
 	public String getDisplayLabel(CValue<?> valueType) {
 
 		return valueType.getDisplayLabel();
@@ -97,29 +125,6 @@ public class DefaultCustomiser implements Customiser {
 	public boolean hiddenSlot(ISlot slot) {
 
 		return false;
-	}
-
-	public IFrame onNewInstance(IFrame instance, CIdentity storeId) {
-
-		return instance;
-	}
-
-	public IFrame onRenamingInstance(
-					IFrame instance,
-					CIdentity storeId,
-					CIdentity newStoreId) {
-
-		return instance;
-	}
-
-	public AssertionNameDefaults getAssertionNameDefaults() {
-
-		return assertionNameDefaults;
-	}
-
-	public QueryNameDefaults getQueryNameDefaults() {
-
-		return queryNameDefaults;
 	}
 
 	protected DefaultCustomiser(IStore store) {

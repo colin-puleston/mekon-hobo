@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class StoreIdSelector extends StringSelector<String> {
+class StoreIdInputter extends StringInputDialog<String> {
 
 	static private final long serialVersionUID = -1;
 
@@ -53,7 +53,7 @@ class StoreIdSelector extends StringSelector<String> {
 
 	private Set<CIdentity> inMemoryIds = new HashSet<CIdentity>();
 
-	StoreIdSelector(JComponent parent, Store store, IFrameFunction function) {
+	StoreIdInputter(JComponent parent, Store store, IFrameFunction function) {
 
 		super(parent, createTitle(function), false);
 
@@ -71,11 +71,11 @@ class StoreIdSelector extends StringSelector<String> {
 		setInitialStringValue(MekonAppStoreId.toStoreName(storeId));
 	}
 
-	CIdentity getIdSelection() {
+	CIdentity getIdInput() {
 
-		if (display() == EditStatus.EDITED) {
+		if (display() == EditStatus.INPUTTED) {
 
-			String storeName = getSelection();
+			String storeName = getInput();
 
 			if (storeName != null) {
 

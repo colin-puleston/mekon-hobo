@@ -27,54 +27,45 @@ package uk.ac.manchester.cs.mekon.app;
 import java.awt.*;
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * @author Colin Puleston
  */
-abstract class StringSelector<S> extends TextInputSelector<S> {
+class DefiniteINumberInputter extends INumberInputter {
 
 	static private final long serialVersionUID = -1;
+
+	static private final String TITLE = "Enter Value";
 
 	static private final Dimension WINDOW_SIZE = new Dimension(250, 70);
 
 	private InputField valueField = new InputField();
 
-	StringSelector(JComponent parent, String title, boolean clearRequired) {
-
-		super(parent, title, true, clearRequired);
-	}
-
-	void setInitialStringValue(String value) {
-
-		valueField.setText(value);
-		updateInputValidity();
-	}
-
-	S resolveSelection() {
-
-		return valueField.getValue();
-	}
-
-	JComponent getInputComponent() {
+	protected JComponent getInputComponent() {
 
 		return valueField;
 	}
 
-	Dimension getWindowSize() {
+	protected Dimension getWindowSize() {
 
 		return WINDOW_SIZE;
 	}
 
-	boolean validInputText(String text) {
+	DefiniteINumberInputter(JComponent parent, CNumber type, boolean clearRequired) {
 
-		return !text.isEmpty();
+		super(parent, type, TITLE, clearRequired);
+	}
+
+	INumber resolveInput(CNumber type) {
+
+		return valueField.getValue();
 	}
 
 	boolean validInput() {
 
-		return !emptyValue(valueField.getValue());
+		return validNumberValueText(valueField.getText());
 	}
-
-	abstract boolean emptyValue(S value);
 }
 
 

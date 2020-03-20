@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class IStringSelector extends StringSelector<IString> {
+class IStringInputter extends StringInputDialog<IString> {
 
 	static private final long serialVersionUID = -1;
 
@@ -39,12 +39,12 @@ class IStringSelector extends StringSelector<IString> {
 
 	private InputField valueField = new InputField();
 
-	IStringSelector(JComponent parent, boolean clearRequired) {
+	IStringInputter(JComponent parent, boolean clearRequired) {
 
 		this(parent, DEFAULT_TITLE, clearRequired);
 	}
 
-	IStringSelector(JComponent parent, String title, boolean clearRequired) {
+	IStringInputter(JComponent parent, String title, boolean clearRequired) {
 
 		super(parent, title, clearRequired);
 	}

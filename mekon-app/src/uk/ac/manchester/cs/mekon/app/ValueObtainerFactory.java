@@ -29,24 +29,9 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public interface Customiser {
+public interface ValueObtainerFactory {
 
-	public AssertionNameDefaults getAssertionNameDefaults();
+	public boolean handles(ISlot slot);
 
-	public QueryNameDefaults getQueryNameDefaults();
-
-	public IFrame onNewInstance(IFrame instance, CIdentity storeId);
-
-	public IFrame onRenamingInstance(
-					IFrame instance,
-					CIdentity storeId,
-					CIdentity newStoreId);
-
-	public ValueObtainerFactory getValueObtainerFactory();
-
-	public String getDisplayLabel(CValue<?> valueType);
-
-	public String getDisplayLabel(IValue value);
-
-	public boolean hiddenSlot(ISlot slot);
+	public ValueObtainer createFor(ISlot slot);
 }

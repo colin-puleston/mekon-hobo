@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class IndefiniteINumberSelector extends INumberSelector {
+class IndefiniteINumberInputter extends INumberInputter {
 
 	static private final long serialVersionUID = -1;
 
@@ -71,14 +71,31 @@ class IndefiniteINumberSelector extends INumberSelector {
 		}
 	}
 
-	IndefiniteINumberSelector(JComponent parent, CNumber type, boolean clearRequired) {
+	protected JComponent getInputComponent() {
+
+		JPanel panel = new JPanel();
+
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+		panel.add(createLimitComponent(MIN_VALUE_LABEL, minField));
+		panel.add(createLimitComponent(MAX_VALUE_LABEL, maxField));
+
+		return panel;
+	}
+
+	protected Dimension getWindowSize() {
+
+		return WINDOW_SIZE;
+	}
+
+	IndefiniteINumberInputter(JComponent parent, CNumber type, boolean clearRequired) {
 
 		super(parent, type, TITLE, clearRequired);
 
 		minField.setOtherLimit(maxField);
 	}
 
-	INumber resolveSelection(CNumber type) {
+	INumber resolveInput(CNumber type) {
 
 		INumber min = getMin();
 		INumber max = getMax();
@@ -99,23 +116,6 @@ class IndefiniteINumberSelector extends INumberSelector {
 		}
 
 		return CNumber.range(type.getNumberType(), min, max).asINumber();
-	}
-
-	JComponent getInputComponent() {
-
-		JPanel panel = new JPanel();
-
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-		panel.add(createLimitComponent(MIN_VALUE_LABEL, minField));
-		panel.add(createLimitComponent(MAX_VALUE_LABEL, maxField));
-
-		return panel;
-	}
-
-	Dimension getWindowSize() {
-
-		return WINDOW_SIZE;
 	}
 
 	boolean validInput() {

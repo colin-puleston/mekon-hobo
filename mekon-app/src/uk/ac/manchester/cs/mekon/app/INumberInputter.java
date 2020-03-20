@@ -24,39 +24,80 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import java.awt.Dimension;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.gui.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class EntitySelector<E> extends InputDialog<E> {
+abstract class INumberInputter extends TextInputDialog<INumber> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String SINGLE_SELECT_TITLE = "Select option";
-	static private final String MULTI_SELECT_TITLE = SINGLE_SELECT_TITLE + "(s)";
+	static final INumber NO_VALUE = new INumber(0);
+	static final INumber INVALID_VALUE = new INumber(0);
 
-	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
+	private CNumber type;
 
-	static private String getTitle(boolean multiSelect) {
+	INumberInputter(JComponent parent, CNumber type, String title, boolean clearRequired) {
 
-		return multiSelect ? MULTI_SELECT_TITLE : SINGLE_SELECT_TITLE;
+		super(parent, title, true, clearRequired);
+
+		this.type = type;
 	}
 
-	protected Dimension getWindowSize() {
+	INumber resolveInput() {
 
-		return WINDOW_SIZE;
+		return resolveInput(type);
 	}
 
-	EntitySelector(JComponent parent, boolean multiSelect, boolean clearRequired) {
+	abstract INumber resolveInput(CNumber type);
 
-		super(parent, getTitle(multiSelect), multiSelect, clearRequired);
+	boolean validInputText(String text) {
+
+		return validInputValue(parseValue(text, true));
 	}
 
-	abstract JComponent createOptionsComponent();
+	INumber convertInputValue(String text) {
 
-	abstract void onSelectedOption(E selected);
+		return parseValue(text, false);
+	}
+
+	boolean validNumberValueText(String text) {
+
+		return type.validNumberValue(text);
+	}
+
+	private INumber parseValue(String text, boolean showErrorIfInvalid) {
+
+		if (text.length() == 0) {
+
+			return NO_VALUE;
+		}
+
+		if (validNumberValueText(text)) {
+
+			return new INumber(getNumberType(), text);
+		}
+
+		if (showErrorIfInvalid) {
+
+			JOptionPane.showMessageDialog(null, "Invalid Input!");
+		}
+
+		return INVALID_VALUE;
+	}
+
+	private boolean validInputValue(INumber value) {
+
+		return value != NO_VALUE && value != INVALID_VALUE;
+	}
+
+	private Class<? extends Number> getNumberType() {
+
+		return type.getNumberType();
+	}
 }
+
+

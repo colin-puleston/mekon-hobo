@@ -37,24 +37,20 @@ class DescriptorEditor {
 	private Instantiator instantiator;
 
 	private Descriptor descriptor;
+	private ISlot slot;
 
 	private TypeHandler typeHandler;
 
 	private abstract class TypeHandler {
 
-		abstract boolean performEditAction();
-	}
-
-	private abstract class SelectableTypeHandler<S> extends TypeHandler {
-
 		boolean performEditAction() {
 
-			Selector<S> selector = createValueSelector(descriptor.hasValue());
+			ValueObtainer obtainer = getValueObtainer();
 
-			switch (selector.display()) {
+			switch (obtainer.getEditStatus()) {
 
-				case EDITED:
-					addSelectedValue(selector.getSelection());
+				case INPUTTED:
+					addValue(obtainer.getValue());
 					break;
 
 				case CLEARED:
@@ -68,47 +64,96 @@ class DescriptorEditor {
 			return true;
 		}
 
-		abstract Selector<S> createValueSelector(boolean clearRequired);
+		abstract ValueObtainer getValueObtainer();
+	}
 
-		abstract IValue selectionToValue(S selection);
+	private class CustomTypeHandler extends TypeHandler {
 
-		private void addSelectedValue(S selection) {
+		private ValueObtainerFactory customValueObtainerFactory;
 
-			addValue(selectionToValue(selection));
+		CustomTypeHandler(ValueObtainerFactory customValueObtainer) {
+
+			this.customValueObtainerFactory = customValueObtainerFactory;
 		}
+
+		ValueObtainer getValueObtainer() {
+
+			return customValueObtainerFactory.createFor(slot);
+		}
+	}
+
+	private abstract class InputTypeHandler<I> extends TypeHandler {
+
+		private class InputValueObtainer implements ValueObtainer {
+
+			private InputDialog<I> inputterDialog;
+
+			public EditStatus getEditStatus() {
+
+				return inputterDialog.display();
+			}
+
+			public IValue getValue() {
+
+				return inputToValue(inputterDialog.getInput());
+			}
+
+			InputValueObtainer() {
+
+				inputterDialog = createInputDialog(descriptor.hasValue());
+			}
+		}
+
+		ValueObtainer getValueObtainer() {
+
+			return new InputValueObtainer();
+		}
+
+		abstract InputDialog<I> createInputDialog(boolean clearRequired);
+
+		abstract IValue inputToValue(I input);
 	}
 
 	private class FixedCFrameTypeHandler extends TypeHandler {
 
 		private CFrame valueType;
 
+		private class FixedValueObtainer implements ValueObtainer {
+
+			public EditStatus getEditStatus() {
+
+				if (descriptor.hasValue()) {
+
+					if (obtainRemoveValueConfirmation()) {
+
+						return EditStatus.CLEARED;
+					}
+
+					return EditStatus.CANCELLED;
+				}
+
+				return EditStatus.INPUTTED;
+			}
+
+			public IValue getValue() {
+
+				return instantiator.instantiate(valueType);
+			}
+		}
+
 		FixedCFrameTypeHandler(CFrame valueType) {
 
 			this.valueType = valueType;
 		}
 
-		boolean performEditAction() {
+		ValueObtainer getValueObtainer() {
 
-			if (descriptor.hasValue()) {
-
-				return checkRemoveValue();
-			}
-
-			addValue(instantiator.instantiate(valueType));
-
-			return true;
+			return new FixedValueObtainer();
 		}
 
-		private boolean checkRemoveValue() {
+		private boolean obtainRemoveValueConfirmation() {
 
-			if (obtainRemoveValueConfirmationOption() == JOptionPane.OK_OPTION) {
-
-				removeValue();
-
-				return true;
-			}
-
-			return false;
+			return obtainRemoveValueConfirmationOption() == JOptionPane.OK_OPTION;
 		}
 
 		private int obtainRemoveValueConfirmationOption() {
@@ -121,16 +166,16 @@ class DescriptorEditor {
 		}
 	}
 
-	private abstract class SelectableFrameTypeHandler extends SelectableTypeHandler<CFrame> {
+	private abstract class InputFrameTypeHandler extends InputTypeHandler<CFrame> {
 
 		private CFrame rootCFrame;
 
-		SelectableFrameTypeHandler(CFrame rootCFrame) {
+		InputFrameTypeHandler(CFrame rootCFrame) {
 
 			this.rootCFrame = rootCFrame;
 		}
 
-		Selector<CFrame> createValueSelector(boolean clearRequired) {
+		InputDialog<CFrame> createInputDialog(boolean clearRequired) {
 
 			boolean query = instantiator.queryInstance();
 
@@ -143,33 +188,33 @@ class DescriptorEditor {
 		}
 	}
 
-	private class SelectableCFrameTypeHandler extends SelectableFrameTypeHandler {
+	private class InputCFrameTypeHandler extends InputFrameTypeHandler {
 
-		SelectableCFrameTypeHandler(CFrame valueType) {
+		InputCFrameTypeHandler(CFrame valueType) {
 
 			super(valueType);
 		}
 
-		IFrame selectionToValue(CFrame selection) {
+		IFrame inputToValue(CFrame input) {
 
-			return instantiator.instantiate(selection);
+			return instantiator.instantiate(input);
 		}
 	}
 
-	private class MFrameTypeHandler extends SelectableFrameTypeHandler {
+	private class MFrameTypeHandler extends InputFrameTypeHandler {
 
 		MFrameTypeHandler(MFrame valueType) {
 
 			super(valueType.getRootCFrame());
 		}
 
-		CFrame selectionToValue(CFrame selection) {
+		CFrame inputToValue(CFrame input) {
 
-			return selection;
+			return input;
 		}
 	}
 
-	private class InstanceRefTypeHandler extends SelectableTypeHandler<IFrame> {
+	private class InstanceRefTypeHandler extends InputTypeHandler<IFrame> {
 
 		private CFrame valueType;
 
@@ -178,7 +223,7 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		Selector<IFrame> createValueSelector(boolean clearRequired) {
+		InputDialog<IFrame> createInputDialog(boolean clearRequired) {
 
 			return new AtomicInstanceRefSelector(
 							parent,
@@ -187,17 +232,17 @@ class DescriptorEditor {
 							clearRequired);
 		}
 
-		IFrame selectionToValue(IFrame selection) {
+		IFrame inputToValue(IFrame input) {
 
-			return selection;
+			return input;
 		}
 	}
 
-	private abstract class DataTypeHandler<V extends IDataValue> extends SelectableTypeHandler<V> {
+	private abstract class DataTypeHandler<V extends IDataValue> extends InputTypeHandler<V> {
 
-		V selectionToValue(V selection) {
+		V inputToValue(V input) {
 
-			return selection;
+			return input;
 		}
 	}
 
@@ -210,26 +255,26 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		INumberSelector createValueSelector(boolean clearRequired) {
+		INumberInputter createInputDialog(boolean clearRequired) {
 
 			if (abstractEditableSlot()) {
 
-				return new IndefiniteINumberSelector(parent, valueType, clearRequired);
+				return new IndefiniteINumberInputter(parent, valueType, clearRequired);
 			}
 
-			return new DefiniteINumberSelector(parent, valueType, clearRequired);
+			return new DefiniteINumberInputter(parent, valueType, clearRequired);
 		}
 	}
 
 	private class CStringTypeHandler extends DataTypeHandler<IString> {
 
-		IStringSelector createValueSelector(boolean clearRequired) {
+		IStringInputter createInputDialog(boolean clearRequired) {
 
-			return new IStringSelector(parent, clearRequired);
+			return new IStringInputter(parent, clearRequired);
 		}
 	}
 
-	private class TypeHandlerCreator extends CValueVisitor {
+	private class StandardTypeHandlerCreator extends CValueVisitor {
 
 		protected void visit(CFrame value) {
 
@@ -251,9 +296,9 @@ class DescriptorEditor {
 			typeHandler = new MFrameTypeHandler(value);
 		}
 
-		TypeHandlerCreator() {
+		StandardTypeHandlerCreator() {
 
-			visit(descriptor.getSlot().getValueType());
+			visit(slot.getValueType());
 		}
 
 		private TypeHandler createCFrameTypeHandler(CFrame valueType) {
@@ -268,7 +313,7 @@ class DescriptorEditor {
 				return new FixedCFrameTypeHandler(valueType);
 			}
 
-			return new SelectableCFrameTypeHandler(valueType);
+			return new InputCFrameTypeHandler(valueType);
 		}
 
 		private boolean fixedCFrameValueType(CFrame valueType) {
@@ -283,7 +328,14 @@ class DescriptorEditor {
 		this.instantiator = instantiator;
 		this.descriptor = descriptor;
 
-		new TypeHandlerCreator();
+		slot = descriptor.getSlot();
+
+		checkSetCustomTypeHandler();
+
+		if (typeHandler == null) {
+
+			new StandardTypeHandlerCreator();
+		}
 	}
 
 	Descriptor getDescriptor() {
@@ -294,6 +346,21 @@ class DescriptorEditor {
 	boolean performEditAction() {
 
 		return typeHandler.performEditAction();
+	}
+
+	private void checkSetCustomTypeHandler() {
+
+		ValueObtainerFactory valuesFactory = getCustomValueObtainerFactory();
+
+		if (valuesFactory.handles(slot)) {
+
+			typeHandler = new CustomTypeHandler(valuesFactory);
+		}
+	}
+
+	private ValueObtainerFactory getCustomValueObtainerFactory() {
+
+		return getCustomiser().getValueObtainerFactory();
 	}
 
 	private void addValue(IValue value) {
@@ -313,11 +380,16 @@ class DescriptorEditor {
 
 	private ISlotValuesEditor getValuesEditor() {
 
-		return descriptor.getSlot().getValuesEditor();
+		return slot.getValuesEditor();
 	}
 
 	private boolean abstractEditableSlot() {
 
-		return descriptor.getSlot().getEditability().abstractEditable();
+		return slot.getEditability().abstractEditable();
+	}
+
+	private Customiser getCustomiser() {
+
+		return instantiator.getController().getCustomiser();
 	}
 }
