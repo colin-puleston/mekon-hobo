@@ -38,7 +38,7 @@ class DisjunctionFrameSelector extends DisjunctionEntitySelector<CFrame> {
 
 	private FrameSelectionOptions selectionOptions;
 
-	protected CFrame getInput() {
+	public CFrame getInput() {
 
 		return CFrame.resolveDisjunction(getDisjunctSelections());
 	}

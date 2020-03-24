@@ -28,11 +28,12 @@ import java.awt.Dimension;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
+import uk.ac.manchester.cs.mekon.gui.inputter.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class EntitySelector<E> extends InputDialog<E> {
+abstract class EntitySelector<E> extends Inputter<E> {
 
 	static private final long serialVersionUID = -1;
 

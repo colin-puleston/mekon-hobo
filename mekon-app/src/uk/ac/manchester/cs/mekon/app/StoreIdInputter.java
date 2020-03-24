@@ -28,11 +28,12 @@ import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.inputter.*;
 
 /**
  * @author Colin Puleston
  */
-class StoreIdInputter extends StringInputDialog<String> {
+class StoreIdInputter extends SimpleTextInputter<String> {
 
 	static private final long serialVersionUID = -1;
 
@@ -52,6 +53,21 @@ class StoreIdInputter extends StringInputDialog<String> {
 	private IFrameFunction function;
 
 	private Set<CIdentity> inMemoryIds = new HashSet<CIdentity>();
+
+	protected String convertInputValue(String text) {
+
+		return text;
+	}
+
+	protected boolean emptyValue(String value) {
+
+		return value.length() == 0;
+	}
+
+	protected boolean validInputText(String text) {
+
+		return super.validInputText(text) && checkUniqueStoreName(text);
+	}
 
 	StoreIdInputter(JComponent parent, Store store, IFrameFunction function) {
 
@@ -84,21 +100,6 @@ class StoreIdInputter extends StringInputDialog<String> {
 		}
 
 		return null;
-	}
-
-	String convertInputValue(String text) {
-
-		return text;
-	}
-
-	boolean emptyValue(String value) {
-
-		return value.length() == 0;
-	}
-
-	boolean validInputText(String text) {
-
-		return super.validInputText(text) && checkUniqueStoreName(text);
 	}
 
 	private boolean checkUniqueStoreName(String storeName) {

@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.app;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.inputter.*;
 
 /**
  * @author Colin Puleston
@@ -86,21 +87,21 @@ class DescriptorEditor {
 
 		private class InputValueObtainer implements ValueObtainer {
 
-			private InputDialog<I> inputterDialog;
+			private Inputter<I> inputter;
 
 			public EditStatus getEditStatus() {
 
-				return inputterDialog.display();
+				return inputter.display();
 			}
 
 			public IValue getValue() {
 
-				return inputToValue(inputterDialog.getInput());
+				return inputToValue(inputter.getInput());
 			}
 
 			InputValueObtainer() {
 
-				inputterDialog = createInputDialog(descriptor.hasValue());
+				inputter = createInputter(descriptor.hasValue());
 			}
 		}
 
@@ -109,7 +110,7 @@ class DescriptorEditor {
 			return new InputValueObtainer();
 		}
 
-		abstract InputDialog<I> createInputDialog(boolean clearRequired);
+		abstract Inputter<I> createInputter(boolean clearRequired);
 
 		abstract IValue inputToValue(I input);
 	}
@@ -175,7 +176,7 @@ class DescriptorEditor {
 			this.rootCFrame = rootCFrame;
 		}
 
-		InputDialog<CFrame> createInputDialog(boolean clearRequired) {
+		Inputter<CFrame> createInputter(boolean clearRequired) {
 
 			boolean query = instantiator.queryInstance();
 
@@ -223,7 +224,7 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		InputDialog<IFrame> createInputDialog(boolean clearRequired) {
+		Inputter<IFrame> createInputter(boolean clearRequired) {
 
 			return new AtomicInstanceRefSelector(
 							parent,
@@ -255,7 +256,7 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		INumberInputter createInputDialog(boolean clearRequired) {
+		INumberInputter createInputter(boolean clearRequired) {
 
 			if (abstractEditableSlot()) {
 
@@ -268,7 +269,7 @@ class DescriptorEditor {
 
 	private class CStringTypeHandler extends DataTypeHandler<IString> {
 
-		IStringInputter createInputDialog(boolean clearRequired) {
+		IStringInputter createInputter(boolean clearRequired) {
 
 			return new IStringInputter(parent, clearRequired);
 		}

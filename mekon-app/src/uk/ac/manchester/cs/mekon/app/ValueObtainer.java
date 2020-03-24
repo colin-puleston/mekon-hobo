@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.inputter.*;
 
 /**
  * @author Colin Puleston

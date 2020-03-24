@@ -35,7 +35,7 @@ abstract class AtomicEntitySelector<E> extends EntitySelector<E> {
 
 	private E selection = null;
 
-	protected E getInput() {
+	public E getInput() {
 
 		return selection;
 	}
