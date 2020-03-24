@@ -88,12 +88,12 @@ public abstract class InputDialog<I> extends GDialog {
 		controlPanel.addExtraButton(button);
 	}
 
-	protected void setValidSelection(boolean valid) {
+	protected void setValidInput(boolean valid) {
 
 		controlPanel.setOkEnabled(valid);
 	}
 
-	protected void setCompletedSelection() {
+	protected void setCompletedInput() {
 
 		status = EditStatus.INPUTTED;
 	}

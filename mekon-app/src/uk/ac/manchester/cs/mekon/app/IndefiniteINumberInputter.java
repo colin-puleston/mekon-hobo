@@ -72,6 +72,16 @@ class IndefiniteINumberInputter extends INumberInputter {
 			conflictingFields.add(conflictingField);
 			conflictingField.conflictingFields.add(this);
 		}
+
+		boolean hasValue() {
+
+			return getValue() != NO_VALUE;
+		}
+
+		boolean invalidValue() {
+
+			return getValue() == INVALID_VALUE;
+		}
 	}
 
 	private class LimitField extends ConstraintField {
@@ -86,7 +96,7 @@ class IndefiniteINumberInputter extends INumberInputter {
 			otherLimit.otherLimit = this;
 		}
 
-		boolean checkConsistentSelection() {
+		boolean checkConsistentInput() {
 
 			if (invalidRange()) {
 
@@ -128,62 +138,27 @@ class IndefiniteINumberInputter extends INumberInputter {
 
 	INumber resolveInput(CNumber type) {
 
-		INumber exact = exactField.getValue();
-
-		if (exact == INVALID_VALUE) {
+		if (!anyValidValues()) {
 
 			return NO_VALUE;
 		}
 
-		if (exact != NO_VALUE) {
+		if (exactField.hasValue()) {
 
-			return exact;
+			return exactField.getValue();
 		}
 
-		INumber min = getMin();
-		INumber max = getMax();
-
-		if (min == NO_VALUE && max == NO_VALUE) {
+		if (invalidRange()) {
 
 			return NO_VALUE;
 		}
 
-		if (invalidRange(min, max)) {
-
-			return NO_VALUE;
-		}
-
-		if (min == NO_VALUE) {
-
-			min = type.getMin();
-		}
-
-		if (max == NO_VALUE) {
-
-			max = type.getMax();
-		}
-
-		return CNumber.range(type.getNumberType(), min, max).asINumber();
+		return resolveValidRange(type);
 	}
 
 	boolean validInput() {
 
-		INumber exact = exactField.getValue();
-
-		if (exact != NO_VALUE) {
-
-			return exact != INVALID_VALUE;
-		}
-
-		INumber min = getMin();
-		INumber max = getMax();
-
-		if (min == NO_VALUE && max == NO_VALUE) {
-
-			return false;
-		}
-
-		return !invalidRange(min, max);
+		return anyValidValues() && !invalidRange();
 	}
 
 	boolean multipleInputFields() {
@@ -203,28 +178,44 @@ class IndefiniteINumberInputter extends INumberInputter {
 
 	private boolean invalidRange() {
 
-		return invalidRange(getMin(), getMax());
-	}
+		if (minField.hasValue() && maxField.hasValue()) {
 
-	private boolean invalidRange(INumber min, INumber max) {
-
-		if (min == INVALID_VALUE || max == INVALID_VALUE) {
-
-			return true;
+			return minField.getValue().moreThan(maxField.getValue());
 		}
 
-		return min != NO_VALUE && max != NO_VALUE && min.moreThan(max);
+		return false;
 	}
 
-	private INumber getMin() {
+	private boolean anyValidValues() {
 
-		return minField.getValue();
+		return anyValues() && !anyInvalidValues();
 	}
 
-	private INumber getMax() {
+	private boolean anyValues() {
 
-		return maxField.getValue();
+		return exactField.hasValue() || minField.hasValue() || maxField.hasValue();
+	}
+
+	private boolean anyInvalidValues() {
+
+		return exactField.invalidValue() || minField.invalidValue() || maxField.invalidValue();
+	}
+
+	private INumber resolveValidRange(CNumber type) {
+
+		INumber min = minField.getValue();
+		INumber max = maxField.getValue();
+
+		if (min == NO_VALUE) {
+
+			min = type.getMin();
+		}
+
+		if (max == NO_VALUE) {
+
+			max = type.getMax();
+		}
+
+		return CNumber.range(type.getNumberType(), min, max).asINumber();
 	}
 }
-
-

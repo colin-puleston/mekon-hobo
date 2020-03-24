@@ -51,7 +51,7 @@ abstract class DisjunctionEntitySelector<E> extends EntitySelector<E> {
 			protected void onSelected(E frame) {
 
 				removeEntity(frame);
-				setValidSelection(anyElements());
+				setValidInput(anyElements());
 			}
 
 			protected void onDeselected(E frame) {
@@ -72,7 +72,7 @@ abstract class DisjunctionEntitySelector<E> extends EntitySelector<E> {
 				removeSelectionConflicts(this, newSelection);
 				addSelection(newSelection);
 
-				setValidSelection(true);
+				setValidInput(true);
 			}
 		}
 

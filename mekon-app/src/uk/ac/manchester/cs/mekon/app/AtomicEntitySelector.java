@@ -54,7 +54,7 @@ abstract class AtomicEntitySelector<E> extends EntitySelector<E> {
 
 		selection = selected;
 
-		setCompletedSelection();
+		setCompletedInput();
 		dispose();
 	}
 }

@@ -76,7 +76,7 @@ abstract class TextInputDialog<I> extends InputDialog<I> {
 			setText("");
 		}
 
-		boolean checkConsistentSelection() {
+		boolean checkConsistentInput() {
 
 			return true;
 		}
@@ -91,9 +91,9 @@ abstract class TextInputDialog<I> extends InputDialog<I> {
 
 				if (validInputText(text)) {
 
-					if (checkConsistentSelection()) {
+					if (checkConsistentInput()) {
 
-						setCompletedSelection();
+						setCompletedInput();
 
 						ok = true;
 					}
@@ -153,7 +153,7 @@ abstract class TextInputDialog<I> extends InputDialog<I> {
 
 	void updateInputValidity() {
 
-		setValidSelection(validInput());
+		setValidInput(validInput());
 	}
 }
 
