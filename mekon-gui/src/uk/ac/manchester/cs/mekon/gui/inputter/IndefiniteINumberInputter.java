@@ -108,9 +108,9 @@ public class IndefiniteINumberInputter extends INumberInputter {
 		}
 	}
 
-	public IndefiniteINumberInputter(JComponent parent, CNumber type, boolean clearRequired) {
+	public IndefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
 
-		super(parent, type, TITLE, clearRequired);
+		super(parent, type, TITLE, canClear);
 
 		exactField.setIncompatible(minField);
 		exactField.setIncompatible(maxField);

@@ -124,21 +124,21 @@ abstract class EditControlPanel extends JPanel {
 		}
 	}
 
-	EditControlPanel(boolean okRequired, boolean clearRequired, boolean cancelRequired) {
+	EditControlPanel(boolean canOk, boolean canClear, boolean canCancel) {
 
 		Populator populator = new Populator();
 
-		if (okRequired) {
+		if (canOk) {
 
 			okButton = populator.addButton(new OkButton());
 		}
 
-		if (clearRequired) {
+		if (canClear) {
 
 			populator.addButton(new ClearButton());
 		}
 
-		if (cancelRequired) {
+		if (canCancel) {
 
 			populator.addButton(new CancelButton());
 		}

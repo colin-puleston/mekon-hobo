@@ -42,9 +42,9 @@ public class DefiniteINumberInputter extends INumberInputter {
 
 	private InputField valueField = new InputField();
 
-	public DefiniteINumberInputter(JComponent parent, CNumber type, boolean clearRequired) {
+	public DefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
 
-		super(parent, type, TITLE, clearRequired);
+		super(parent, type, TITLE, canClear);
 	}
 
 	protected JComponent getInputComponent() {

@@ -126,9 +126,9 @@ public abstract class TextInputter<I> extends Inputter<I> {
 		return resolveInput();
 	}
 
-	protected TextInputter(JComponent parent, String title, boolean okRequired, boolean clearRequired) {
+	protected TextInputter(JComponent parent, String title, boolean canOk, boolean canClear) {
 
-		super(parent, title, okRequired, clearRequired);
+		super(parent, title, canOk, canClear);
 
 		addWindowListener(new WindowCloseListener());
 	}

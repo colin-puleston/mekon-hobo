@@ -44,9 +44,9 @@ public abstract class Inputter<I> extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
-		ControlPanel(boolean okRequired, boolean clearRequired) {
+		ControlPanel(boolean canOk, boolean canClear) {
 
-			super(okRequired, clearRequired, true);
+			super(canOk, canClear, true);
 
 			setOkEnabled(false);
 		}
@@ -83,15 +83,11 @@ public abstract class Inputter<I> extends GDialog {
 
 	public abstract I getInput();
 
-	protected Inputter(
-				JComponent parent,
-				String title,
-				boolean okRequired,
-				boolean clearRequired) {
+	protected Inputter(JComponent parent, String title, boolean canOk, boolean canClear) {
 
 		super(parent, title, true);
 
-		controlPanel = new ControlPanel(okRequired, clearRequired);
+		controlPanel = new ControlPanel(canOk, canClear);
 	}
 
 	protected abstract JComponent getInputComponent();

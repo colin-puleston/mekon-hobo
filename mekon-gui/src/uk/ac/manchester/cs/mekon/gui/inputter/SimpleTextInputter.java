@@ -44,9 +44,9 @@ public abstract class SimpleTextInputter<I> extends TextInputter<I> {
 		updateInputValidity();
 	}
 
-	protected SimpleTextInputter(JComponent parent, String title, boolean clearRequired) {
+	protected SimpleTextInputter(JComponent parent, String title, boolean canClear) {
 
-		super(parent, title, true, clearRequired);
+		super(parent, title, true, canClear);
 	}
 
 	protected JComponent getInputComponent() {

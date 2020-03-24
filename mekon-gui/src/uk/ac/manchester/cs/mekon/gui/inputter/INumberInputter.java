@@ -40,13 +40,9 @@ public abstract class INumberInputter extends TextInputter<INumber> {
 
 	private CNumber type;
 
-	protected INumberInputter(
-					JComponent parent,
-					CNumber type,
-					String title,
-					boolean clearRequired) {
+	protected INumberInputter(JComponent parent, CNumber type, String title, boolean canClear) {
 
-		super(parent, title, true, clearRequired);
+		super(parent, title, true, canClear);
 
 		this.type = type;
 	}

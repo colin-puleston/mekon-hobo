@@ -39,14 +39,14 @@ public class IStringInputter extends SimpleTextInputter<IString> {
 
 	private InputField valueField = new InputField();
 
-	public IStringInputter(JComponent parent, boolean clearRequired) {
+	public IStringInputter(JComponent parent, boolean canClear) {
 
-		this(parent, DEFAULT_TITLE, clearRequired);
+		this(parent, DEFAULT_TITLE, canClear);
 	}
 
-	public IStringInputter(JComponent parent, String title, boolean clearRequired) {
+	public IStringInputter(JComponent parent, String title, boolean canClear) {
 
-		super(parent, title, clearRequired);
+		super(parent, title, canClear);
 	}
 
 	protected IString convertInputValue(String text) {
