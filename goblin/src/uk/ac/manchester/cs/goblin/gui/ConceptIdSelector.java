@@ -57,7 +57,7 @@ class ConceptIdSelector extends GDialog {
 		private InputField otherField = null;
 		private boolean userEdited = false;
 
-		protected void onKeyEntered(KeyEvent event) {
+		protected void onCharEntered(char enteredChar) {
 
 			selection = resolveSelection();
 			userEdited = anyText();
@@ -137,17 +137,12 @@ class ConceptIdSelector extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
-		protected boolean acceptKey(KeyEvent event) {
+		protected boolean acceptChar(char testChar) {
 
-			if (event.isActionKey()) {
-
-				return true;
-			}
-
-			return validURIFragment(getText() + event.getKeyChar());
+			return validURIFragment(getText() + testChar);
 		}
 
-		protected void onKeyEntered(KeyEvent event) {
+		protected void onCharEntered(char enteredChar) {
 
 			String text = getText();
 
@@ -156,7 +151,7 @@ class ConceptIdSelector extends GDialog {
 				setText(text.toUpperCase());
 			}
 
-			super.onKeyEntered(event);
+			super.onCharEntered(enteredChar);
 		}
 
 		DynamicId resolveSelection(String text) {
