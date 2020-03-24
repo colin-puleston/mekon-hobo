@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.explorer;
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
+import uk.ac.manchester.cs.mekon.gui.inputter.*;
 
 /**
  * @author Colin Puleston
@@ -69,16 +70,18 @@ class INumberSlotNode extends ISlotNode {
 
 	IValue checkObtainValue() {
 
-		return createSelector().getSelectionOrNull();
+		INumberInputter inputter = createInputter();
+
+		return inputter.display() == EditStatus.INPUTTED ? inputter.getInput() : null;
 	}
 
-	private INumberSelector createSelector() {
+	private INumberInputter createInputter() {
 
 		CNumber valueType = (CNumber)slot.getValueType();
 
 		return abstractEditableSlot()
-				? new IndefiniteINumberSelector(tree, valueType)
-				: new DefiniteINumberSelector(tree, valueType);
+				? new IndefiniteINumberInputter(tree, valueType, false)
+				: new DefiniteINumberInputter(tree, valueType, false);
 	}
 
 	private boolean abstractEditableSlot() {

@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.explorer;
 import uk.ac.manchester.cs.mekon.model.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
+import uk.ac.manchester.cs.mekon.gui.inputter.*;
 
 /**
  * @author Colin Puleston
@@ -67,6 +68,8 @@ class IStringSlotNode extends ISlotNode {
 
 	IValue checkObtainValue() {
 
-		return new IStringSelector(tree).getSelectionOrNull();
+		IStringInputter inputter = new IStringInputter(tree, false);
+
+		return inputter.display() == EditStatus.INPUTTED ? inputter.getInput() : null;
 	}
 }
