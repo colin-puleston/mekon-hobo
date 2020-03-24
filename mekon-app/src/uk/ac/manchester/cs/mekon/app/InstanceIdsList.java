@@ -53,34 +53,34 @@ class InstanceIdsList extends GList<CIdentity> {
 	void update(Collection<CIdentity> ids) {
 
 		clearList();
-		addEntities(ids);
+		addIds(ids);
 	}
 
-	void addEntities(Collection<CIdentity> ids) {
+	void addIds(Collection<CIdentity> ids) {
 
 		for (CIdentity id : ids) {
 
-			addEntity(id);
+			addId(id);
 		}
 	}
 
-	void addEntity(CIdentity id) {
+	void addId(CIdentity id) {
 
 		addEntity(id, getCellDisplay(id));
 	}
 
-	void checkAddEntity(CIdentity id) {
+	void checkAddId(CIdentity id) {
 
 		if (!containsEntity(id)) {
 
-			addEntity(id);
+			addId(id);
 		}
 	}
 
-	void replaceEntity(CIdentity id, CIdentity newId) {
+	void replaceId(CIdentity id, CIdentity newId) {
 
 		removeEntity(id);
-		addEntity(newId);
+		addId(newId);
 	}
 
 	GCellDisplay getCellDisplay(CIdentity id) {

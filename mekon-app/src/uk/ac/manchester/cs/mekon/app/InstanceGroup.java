@@ -121,7 +121,7 @@ class InstanceGroup {
 		for (CIdentity storeId : store.getInstanceIds(rootType)) {
 
 			instanceTypes.onAddedInstance(storeId);
-			getInstanceIdsList(storeId).addEntity(storeId);
+			getInstanceIdsList(storeId).addId(storeId);
 		}
 	}
 
@@ -131,7 +131,7 @@ class InstanceGroup {
 
 		if (type.equals(rootType)) {
 
-			typeAssertIds.addEntities(rootAssertionIds.getEntityList());
+			typeAssertIds.addIds(rootAssertionIds.getEntityList());
 		}
 		else {
 
@@ -139,7 +139,7 @@ class InstanceGroup {
 
 				if (assertionId(storeId)) {
 
-					typeAssertIds.addEntity(storeId);
+					typeAssertIds.addId(storeId);
 				}
 			}
 		}
@@ -187,7 +187,7 @@ class InstanceGroup {
 		if (store.checkAdd(instance, storeId, asNewId)) {
 
 			instanceTypes.onAddedInstance(storeId);
-			getInstanceIdsList(storeId).checkAddEntity(storeId);
+			getInstanceIdsList(storeId).checkAddId(storeId);
 
 			return true;
 		}
@@ -209,7 +209,7 @@ class InstanceGroup {
 		if (store.checkRename(storeId, newStoreId)) {
 
 			instanceTypes.onReplacedInstance(storeId, newStoreId);
-			getInstanceIdsList(storeId).replaceEntity(storeId, newStoreId);
+			getInstanceIdsList(storeId).replaceId(storeId, newStoreId);
 		}
 	}
 

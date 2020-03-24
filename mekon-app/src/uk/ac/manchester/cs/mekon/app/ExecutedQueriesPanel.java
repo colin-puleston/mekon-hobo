@@ -116,7 +116,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 		CIdentity storeId = executedQuery.getStoreId();
 
-		querySelectorList.checkAddEntity(storeId);
+		querySelectorList.checkAddId(storeId);
 		querySelectorList.clearSelection();
 		querySelectorList.select(storeId);
 	}

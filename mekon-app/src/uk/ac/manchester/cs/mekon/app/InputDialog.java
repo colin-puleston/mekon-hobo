@@ -59,6 +59,13 @@ public abstract class InputDialog<I> extends GDialog {
 		}
 	}
 
+	public EditStatus display() {
+
+		display(createDisplay());
+
+		return status;
+	}
+
 	protected InputDialog(
 				JComponent parent,
 				String title,
@@ -89,13 +96,6 @@ public abstract class InputDialog<I> extends GDialog {
 	protected void setCompletedSelection() {
 
 		status = EditStatus.INPUTTED;
-	}
-
-	EditStatus display() {
-
-		display(createDisplay());
-
-		return status;
 	}
 
 	private JComponent createDisplay() {

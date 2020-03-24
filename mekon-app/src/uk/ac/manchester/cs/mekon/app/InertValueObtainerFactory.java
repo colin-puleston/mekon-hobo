@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -38,7 +40,7 @@ class InertValueObtainerFactory implements ValueObtainerFactory {
 		return false;
 	}
 
-	public ValueObtainer createFor(ISlot slot) {
+	public ValueObtainer createFor(JComponent parent, ISlot slot) {
 
 		throw new RuntimeException("Cannot handle values for slot: " + slot);
 	}

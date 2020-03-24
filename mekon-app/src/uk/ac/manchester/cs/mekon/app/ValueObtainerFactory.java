@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -33,5 +35,5 @@ public interface ValueObtainerFactory {
 
 	public boolean handles(ISlot slot);
 
-	public ValueObtainer createFor(ISlot slot);
+	public ValueObtainer createFor(JComponent parent, ISlot slot);
 }

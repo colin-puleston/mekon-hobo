@@ -71,14 +71,14 @@ class DescriptorEditor {
 
 		private ValueObtainerFactory customValueObtainerFactory;
 
-		CustomTypeHandler(ValueObtainerFactory customValueObtainer) {
+		CustomTypeHandler(ValueObtainerFactory customValueObtainerFactory) {
 
 			this.customValueObtainerFactory = customValueObtainerFactory;
 		}
 
 		ValueObtainer getValueObtainer() {
 
-			return customValueObtainerFactory.createFor(slot);
+			return customValueObtainerFactory.createFor(parent, slot);
 		}
 	}
 
