@@ -25,6 +25,8 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -38,15 +40,41 @@ class IndefiniteINumberInputter extends INumberInputter {
 	static private final long serialVersionUID = -1;
 
 	static private final String TITLE = "Enter Limits";
+
+	static private final String EXACT_VALUE_LABEL = "Exact";
 	static private final String MIN_VALUE_LABEL = "Minimum";
 	static private final String MAX_VALUE_LABEL = "Maximum";
 
-	static private final Dimension WINDOW_SIZE = new Dimension(300, 150);
+	static private final Dimension WINDOW_SIZE = new Dimension(300, 200);
 
+	private ConstraintField exactField = new ConstraintField();
 	private LimitField minField = new LimitField();
 	private LimitField maxField = new LimitField();
 
-	private class LimitField extends InputField {
+	private class ConstraintField extends InputField {
+
+		static private final long serialVersionUID = -1;
+
+		private Set<ConstraintField> conflictingFields = new HashSet<ConstraintField>();
+
+		protected void onKeyEntered(KeyEvent event) {
+
+			for (ConstraintField field : conflictingFields) {
+
+				field.clear();
+			}
+
+			super.onKeyEntered(event);
+		}
+
+		void setConflict(ConstraintField conflictingField) {
+
+			conflictingFields.add(conflictingField);
+			conflictingField.conflictingFields.add(this);
+		}
+	}
+
+	private class LimitField extends ConstraintField {
 
 		static private final long serialVersionUID = -1;
 
@@ -77,8 +105,9 @@ class IndefiniteINumberInputter extends INumberInputter {
 
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		panel.add(createLimitComponent(MIN_VALUE_LABEL, minField));
-		panel.add(createLimitComponent(MAX_VALUE_LABEL, maxField));
+		panel.add(createFieldComponent(EXACT_VALUE_LABEL, exactField));
+		panel.add(createFieldComponent(MIN_VALUE_LABEL, minField));
+		panel.add(createFieldComponent(MAX_VALUE_LABEL, maxField));
 
 		return panel;
 	}
@@ -92,13 +121,32 @@ class IndefiniteINumberInputter extends INumberInputter {
 
 		super(parent, type, TITLE, clearRequired);
 
+		exactField.setConflict(minField);
+		exactField.setConflict(maxField);
 		minField.setOtherLimit(maxField);
 	}
 
 	INumber resolveInput(CNumber type) {
 
+		INumber exact = exactField.getValue();
+
+		if (exact == INVALID_VALUE) {
+
+			return NO_VALUE;
+		}
+
+		if (exact != NO_VALUE) {
+
+			return exact;
+		}
+
 		INumber min = getMin();
 		INumber max = getMax();
+
+		if (min == NO_VALUE && max == NO_VALUE) {
+
+			return NO_VALUE;
+		}
 
 		if (invalidRange(min, max)) {
 
@@ -120,7 +168,22 @@ class IndefiniteINumberInputter extends INumberInputter {
 
 	boolean validInput() {
 
-		return !invalidRange();
+		INumber exact = exactField.getValue();
+
+		if (exact != NO_VALUE) {
+
+			return exact != INVALID_VALUE;
+		}
+
+		INumber min = getMin();
+		INumber max = getMax();
+
+		if (min == NO_VALUE && max == NO_VALUE) {
+
+			return false;
+		}
+
+		return !invalidRange(min, max);
 	}
 
 	boolean multipleInputFields() {
@@ -128,7 +191,7 @@ class IndefiniteINumberInputter extends INumberInputter {
 		return true;
 	}
 
-	private JComponent createLimitComponent(String label, LimitField field) {
+	private JComponent createFieldComponent(String label, ConstraintField field) {
 
 		JPanel panel = new JPanel(new GridLayout(1, 1));
 
