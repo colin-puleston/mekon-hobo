@@ -200,6 +200,11 @@ public class GList<E> extends JList<GListElement<E>> {
 		selectionListeners.add(selectionListener);
 	}
 
+	public void addEntity(E entity) {
+
+		addEntity(entity, new GCellDisplay(entity.toString()));
+	}
+
 	public void addEntity(E entity, GCellDisplay display) {
 
 		model.add(entity, display);
