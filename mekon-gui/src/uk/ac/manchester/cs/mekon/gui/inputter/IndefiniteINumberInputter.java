@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -55,22 +54,22 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 		static private final long serialVersionUID = -1;
 
-		private Set<ConstraintField> conflictingFields = new HashSet<ConstraintField>();
+		private Set<ConstraintField> incompatibleFields = new HashSet<ConstraintField>();
 
-		protected void onKeyEntered(KeyEvent event) {
+		protected void onCharEntered(char enteredChar) {
 
-			for (ConstraintField field : conflictingFields) {
+			for (ConstraintField field : incompatibleFields) {
 
 				field.clear();
 			}
 
-			super.onKeyEntered(event);
+			super.onCharEntered(enteredChar);
 		}
 
-		void setConflict(ConstraintField conflictingField) {
+		void setIncompatible(ConstraintField incompatibleField) {
 
-			conflictingFields.add(conflictingField);
-			conflictingField.conflictingFields.add(this);
+			incompatibleFields.add(incompatibleField);
+			incompatibleField.incompatibleFields.add(this);
 		}
 
 		boolean hasValue() {
@@ -113,8 +112,8 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 		super(parent, type, TITLE, clearRequired);
 
-		exactField.setConflict(minField);
-		exactField.setConflict(maxField);
+		exactField.setIncompatible(minField);
+		exactField.setIncompatible(maxField);
 		minField.setOtherLimit(maxField);
 	}
 

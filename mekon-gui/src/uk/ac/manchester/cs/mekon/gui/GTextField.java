@@ -34,11 +34,19 @@ public abstract class GTextField extends JTextField {
 
 	static private final long serialVersionUID = -1;
 
+	private class MouseClickListener extends MouseAdapter {
+
+		public void mouseClicked(MouseEvent event) {
+
+			onMouseClicked();
+		}
+	}
+
 	private class ValueEntryListener extends KeyAdapter {
 
 		public void keyTyped(KeyEvent event) {
 
-			if (!acceptKey(event)) {
+			if (!event.isActionKey() && !acceptChar(event.getKeyChar())) {
 
 				event.consume();
 			}
@@ -46,11 +54,16 @@ public abstract class GTextField extends JTextField {
 
 		public void keyReleased(KeyEvent event) {
 
-			onKeyEntered(event);
-
 			if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 
 				onTextEntered(getText());
+			}
+			else {
+
+				if (!event.isActionKey()) {
+
+					onCharEntered(event.getKeyChar());
+				}
 			}
 		}
 	}
@@ -65,16 +78,20 @@ public abstract class GTextField extends JTextField {
 
 	public GTextField() {
 
+		addMouseListener(new MouseClickListener());
 		addKeyListener(new ValueEntryListener());
 		addFocusListener(new FieldExitListener());
 	}
 
-	protected boolean acceptKey(KeyEvent event) {
+	protected boolean acceptChar(char testChar) {
 
 		return true;
 	}
 
-	protected void onKeyEntered(KeyEvent event) {
+	protected void onMouseClicked() {
+	}
+
+	protected void onCharEntered(char enteredChar) {
 	}
 
 	protected void onFieldExited(String text) {

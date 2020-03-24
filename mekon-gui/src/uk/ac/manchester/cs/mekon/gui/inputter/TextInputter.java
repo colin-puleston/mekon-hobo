@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
 import java.awt.event.*;
-
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -45,7 +44,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 		static private final long serialVersionUID = -1;
 
-		protected void onKeyEntered(KeyEvent event) {
+		protected void onCharEntered(char enteredChar) {
 
 			updateInputValidity();
 		}
