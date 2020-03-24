@@ -51,15 +51,15 @@ class IndefiniteINumberSelector extends INumberSelector {
 	private LimitField minField = new LimitField();
 	private LimitField maxField = new LimitField();
 
-	private class ComponentField extends InputField {
+	private class ComponentField extends DefaultInputField {
 
 		static private final long serialVersionUID = -1;
 
-		private Set<InputField> conflictingFields = new HashSet<InputField>();
+		private Set<ComponentField> conflictingFields = new HashSet<ComponentField>();
 
 		protected void onKeyEntered(KeyEvent event) {
 
-			for (InputField field : conflictingFields) {
+			for (ComponentField field : conflictingFields) {
 
 				field.clear();
 			}
@@ -78,19 +78,19 @@ class IndefiniteINumberSelector extends INumberSelector {
 
 		static private final long serialVersionUID = -1;
 
-		private LimitField otherLimitField = null;
+		private LimitField otherLimit = null;
 
-		void setOtherLimit(LimitField otherLimitField) {
+		void setOtherLimit(LimitField otherLimit) {
 
-			this.otherLimitField = otherLimitField;
-			otherLimitField.otherLimitField = this;
+			this.otherLimit = otherLimit;
+			otherLimit.otherLimit = this;
 		}
 
 		boolean checkCompatibleSelection() {
 
 			if (invalidRange()) {
 
-				otherLimitField.clear();
+				otherLimit.clear();
 				onTextUpdate();
 
 				return false;
@@ -100,11 +100,11 @@ class IndefiniteINumberSelector extends INumberSelector {
 		}
 	}
 
-	private class IndefiniteValueDisplay extends JPanel {
+	private class IndefiniteValuePanel extends JPanel {
 
 		static private final long serialVersionUID = -1;
 
-		IndefiniteValueDisplay() {
+		IndefiniteValuePanel() {
 
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -131,7 +131,7 @@ class IndefiniteINumberSelector extends INumberSelector {
 			maxField.clear();
 		}
 
-		private void addField(String label, InputField field) {
+		private void addField(String label, ComponentField field) {
 
 			JPanel panel = new JPanel(new GridLayout(1, 1));
 
@@ -142,18 +142,18 @@ class IndefiniteINumberSelector extends INumberSelector {
 		}
 	}
 
-	private class IndefiniteValueSelector extends ValueSelector {
+	private class IndefiniteValueDisplay extends DataValueSelectorDisplay<INumber> {
 
-		private IndefiniteValueDisplay display;
+		private IndefiniteValuePanel panel;
 
-		IndefiniteValueSelector() {
+		IndefiniteValueDisplay() {
 
-			display = new IndefiniteValueDisplay();
+			panel = new IndefiniteValuePanel();
 		}
 
 		JComponent getDisplay() {
 
-			return display;
+			return panel;
 		}
 
 		Dimension getDisplaySize() {
@@ -163,12 +163,12 @@ class IndefiniteINumberSelector extends INumberSelector {
 
 		INumber getValue() {
 
-			return display.getValue();
+			return panel.getValue();
 		}
 
 		void clear() {
 
-			display.clear();
+			panel.clear();
 		}
 	}
 
@@ -178,7 +178,7 @@ class IndefiniteINumberSelector extends INumberSelector {
 
 		this.type = type;
 
-		initialise(new IndefiniteValueSelector());
+		initialise(new IndefiniteValueDisplay());
 	}
 
 	private INumber getRangeValue() {

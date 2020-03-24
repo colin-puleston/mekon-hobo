@@ -44,99 +44,47 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 	static private final String OK_BUTTON_LABEL = "Ok";
 	static private final String CANCEL_BUTTON_LABEL = "Cancel";
 
-	private ValueSelector valueSelector = null;
+	private DataValueSelectorDisplay<V> display = null;
 	private OkButton okButton = new OkButton();
 	private boolean windowClosing = false;
 
-	class InputField extends GTextField {
+	class DefaultInputField extends DataValueField<V> {
 
 		static private final long serialVersionUID = -1;
 
-		private boolean checkingInput = false;
-
-		protected void onKeyEntered(KeyEvent event) {
+		void updateForKeyEntered() {
 
 			okButton.updateEnabling();
 		}
 
-		protected void onFieldExited(String text) {
+		V parseValue(String text, boolean showErrorIfInvalid) {
 
-			if (!windowClosing) {
-
-				checkInput(text);
-			}
+			return IDataValueSelector.this.parseValue(text, showErrorIfInvalid);
 		}
 
-		protected void onTextEntered(String text) {
+		boolean validValue(V value) {
 
-			if (checkInput(text)) {
-
-				dispose();
-			}
+			return IDataValueSelector.this.validValue(value);
 		}
 
-		V getValue() {
+		void disposeWindow() {
 
-			return parseValue(getText(), false);
+			dispose();
 		}
 
-		void clear() {
+		boolean windowClosing() {
 
-			setText("");
-		}
-
-		boolean checkCompatibleSelection() {
-
-			return true;
-		}
-
-		private boolean checkInput(String text) {
-
-			boolean ok = false;
-
-			if (!checkingInput) {
-
-				checkingInput = true;
-
-				if (validValue(parseValue(text, true))) {
-
-					ok = checkCompatibleSelection();
-				}
-				else {
-
-					clear();
-				}
-
-				checkingInput = false;
-			}
-
-			return ok;
+			return windowClosing;
 		}
 	}
 
-	abstract class ValueSelector {
+	private class DefaultDisplay extends DataValueSelectorDisplay<V> {
 
-		boolean currentValidValue() {
+		private DefaultInputField inputField;
 
-			return validValue(getValue());
-		}
+		DefaultDisplay() {
 
-		abstract JComponent getDisplay();
-
-		abstract Dimension getDisplaySize();
-
-		abstract V getValue();
-
-		abstract void clear();
-	}
-
-	class DefaultValueSelector extends ValueSelector {
-
-		private InputField inputField;
-
-		DefaultValueSelector() {
-
-			inputField = new InputField();
+			inputField = new DefaultInputField();
 		}
 
 		JComponent getDisplay() {
@@ -174,7 +122,7 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 
 		protected void doButtonThing() {
 
-			if (valueSelector.currentValidValue()) {
+			if (currentValidValue()) {
 
 				dispose();
 			}
@@ -190,7 +138,7 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 
 		void updateEnabling() {
 
-			setEnabled(valueSelector.currentValidValue());
+			setEnabled(currentValidValue());
 		}
 	}
 
@@ -200,7 +148,7 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 
 		protected void doButtonThing() {
 
-			valueSelector.clear();
+			display.clear();
 			dispose();
 		}
 
@@ -219,12 +167,12 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 
 	void initialise() {
 
-		initialise(new DefaultValueSelector());
+		initialise(new DefaultDisplay());
 	}
 
-	void initialise(ValueSelector valueSelector) {
+	void initialise(DataValueSelectorDisplay<V> display) {
 
-		this.valueSelector = valueSelector;
+		this.display = display;
 
 		addWindowListener(new WindowCloseListener());
 		display(createDisplay());
@@ -232,7 +180,7 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 
 	V getSelectionOrNull() {
 
-		V value = valueSelector.getValue();
+		V value = display.getValue();
 
 		return validValue(value) ? value : null;
 	}
@@ -258,9 +206,9 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 		JPanel panel = new JPanel();
 
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		panel.add(valueSelector.getDisplay());
+		panel.add(display.getDisplay());
 		panel.add(createButtonsComponent());
-		panel.setPreferredSize(valueSelector.getDisplaySize());
+		panel.setPreferredSize(display.getDisplaySize());
 
 		return panel;
 	}
@@ -297,5 +245,9 @@ abstract class IDataValueSelector<V extends IValue> extends GDialog {
 
 		return getInvalidValueObject();
 	}
-}
 
+	private boolean currentValidValue() {
+
+		return validValue(display.getValue());
+	}
+}
