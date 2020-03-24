@@ -110,7 +110,7 @@ class DescriptorEditor {
 			return new InputValueObtainer();
 		}
 
-		abstract Inputter<I> createInputter(boolean clearRequired);
+		abstract Inputter<I> createInputter(boolean canClear);
 
 		abstract IValue inputToValue(I input);
 	}
@@ -176,16 +176,16 @@ class DescriptorEditor {
 			this.rootCFrame = rootCFrame;
 		}
 
-		Inputter<CFrame> createInputter(boolean clearRequired) {
+		Inputter<CFrame> createInputter(boolean canClear) {
 
 			boolean query = instantiator.queryInstance();
 
 			if (abstractEditableSlot()) {
 
-				return new DisjunctionFrameSelector(parent, rootCFrame, query, clearRequired);
+				return new DisjunctionFrameSelector(parent, rootCFrame, query, canClear);
 			}
 
-			return new AtomicFrameSelector(parent, rootCFrame, query, clearRequired);
+			return new AtomicFrameSelector(parent, rootCFrame, query, canClear);
 		}
 	}
 
@@ -224,13 +224,13 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		Inputter<IFrame> createInputter(boolean clearRequired) {
+		Inputter<IFrame> createInputter(boolean canClear) {
 
 			return new AtomicInstanceRefSelector(
 							parent,
 							instantiator,
 							valueType,
-							clearRequired);
+							canClear);
 		}
 
 		IFrame inputToValue(IFrame input) {
@@ -256,22 +256,22 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
-		INumberInputter createInputter(boolean clearRequired) {
+		INumberInputter createInputter(boolean canClear) {
 
 			if (abstractEditableSlot()) {
 
-				return new IndefiniteINumberInputter(parent, valueType, clearRequired);
+				return new IndefiniteINumberInputter(parent, valueType, canClear);
 			}
 
-			return new DefiniteINumberInputter(parent, valueType, clearRequired);
+			return new DefiniteINumberInputter(parent, valueType, canClear);
 		}
 	}
 
 	private class CStringTypeHandler extends DataTypeHandler<IString> {
 
-		IStringInputter createInputter(boolean clearRequired) {
+		IStringInputter createInputter(boolean canClear) {
 
-			return new IStringInputter(parent, clearRequired);
+			return new IStringInputter(parent, canClear);
 		}
 	}
 

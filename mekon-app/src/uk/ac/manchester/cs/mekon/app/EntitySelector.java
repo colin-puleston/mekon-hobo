@@ -52,9 +52,9 @@ abstract class EntitySelector<E> extends Inputter<E> {
 		return WINDOW_SIZE;
 	}
 
-	EntitySelector(JComponent parent, boolean multiSelect, boolean clearRequired) {
+	EntitySelector(JComponent parent, boolean multiSelect, boolean canClear) {
 
-		super(parent, getTitle(multiSelect), multiSelect, clearRequired);
+		super(parent, getTitle(multiSelect), multiSelect, canClear);
 	}
 
 	abstract JComponent createOptionsComponent();

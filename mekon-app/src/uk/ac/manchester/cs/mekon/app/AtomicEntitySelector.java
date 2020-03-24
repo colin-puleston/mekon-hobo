@@ -45,9 +45,9 @@ abstract class AtomicEntitySelector<E> extends EntitySelector<E> {
 		return createOptionsComponent();
 	}
 
-	AtomicEntitySelector(JComponent parent, boolean clearRequired) {
+	AtomicEntitySelector(JComponent parent, boolean canClear) {
 
-		super(parent, false, clearRequired);
+		super(parent, false, canClear);
 	}
 
 	void onSelectedOption(E selected) {

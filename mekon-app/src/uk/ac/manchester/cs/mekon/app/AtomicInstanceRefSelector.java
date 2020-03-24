@@ -41,9 +41,9 @@ class AtomicInstanceRefSelector extends AtomicEntitySelector<IFrame> {
 		JComponent parent,
 		Instantiator instantiator,
 		CFrame type,
-		boolean clearRequired) {
+		boolean canClear) {
 
-		super(parent, clearRequired);
+		super(parent, canClear);
 
 		selectionOptions = new InstanceRefSelectionOptions(this, instantiator, type);
 	}
