@@ -89,13 +89,7 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 		private LimitField otherLimit = null;
 
-		void setOtherLimit(LimitField otherLimit) {
-
-			this.otherLimit = otherLimit;
-			otherLimit.otherLimit = this;
-		}
-
-		boolean checkConsistentInput() {
+		protected boolean checkConsistentInput() {
 
 			if (invalidRange()) {
 
@@ -105,6 +99,12 @@ public class IndefiniteINumberInputter extends INumberInputter {
 			}
 
 			return true;
+		}
+
+		void setOtherLimit(LimitField otherLimit) {
+
+			this.otherLimit = otherLimit;
+			otherLimit.otherLimit = this;
 		}
 	}
 

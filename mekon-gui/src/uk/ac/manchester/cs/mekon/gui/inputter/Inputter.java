@@ -69,9 +69,11 @@ public abstract class Inputter<I> extends GDialog {
 		controlPanel.setOkEnabled(valid);
 	}
 
-	public void setCompletedInput() {
+	public void exitOnCompletedInput() {
 
 		status = EditStatus.INPUTTED;
+
+		dispose();
 	}
 
 	public EditStatus display() {

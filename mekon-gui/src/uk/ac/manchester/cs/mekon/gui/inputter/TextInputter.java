@@ -61,21 +61,21 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			if (checkInput(text)) {
 
-				dispose();
+				exitOnCompletedInput();
 			}
 		}
 
-		I getValue() {
+		protected I getValue() {
 
 			return convertInputValue(getText());
 		}
 
-		void clear() {
+		protected void clear() {
 
 			setText("");
 		}
 
-		boolean checkConsistentInput() {
+		protected boolean checkConsistentInput() {
 
 			return true;
 		}
@@ -87,29 +87,30 @@ public abstract class TextInputter<I> extends Inputter<I> {
 			if (!checkingInput) {
 
 				checkingInput = true;
-
-				if (validInputText(text)) {
-
-					if (checkConsistentInput()) {
-
-						setCompletedInput();
-
-						ok = true;
-					}
-					else {
-
-						updateInputValidity();
-					}
-				}
-				else {
-
-					clear();
-				}
-
+				ok = performInputCheck(text);
 				checkingInput = false;
 			}
 
 			return ok;
+		}
+
+		private boolean performInputCheck(String text) {
+
+			if (validInputText(text)) {
+
+				if (checkConsistentInput()) {
+
+					return true;
+				}
+
+				setValidInput(false);
+			}
+			else {
+
+				clear();
+			}
+
+			return false;
 		}
 	}
 
