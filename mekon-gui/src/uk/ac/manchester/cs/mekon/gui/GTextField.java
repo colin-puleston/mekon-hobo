@@ -44,7 +44,7 @@ public abstract class GTextField extends JTextField {
 
 	private class ValueEntryListener extends KeyAdapter {
 
-		public void keyPressed(KeyEvent event) {
+		public void keyTyped(KeyEvent event) {
 
 			if (!keyInputEnabled() || !acceptKey(event)) {
 
