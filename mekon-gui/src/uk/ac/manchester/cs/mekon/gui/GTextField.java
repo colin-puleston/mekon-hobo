@@ -44,9 +44,9 @@ public abstract class GTextField extends JTextField {
 
 	private class ValueEntryListener extends KeyAdapter {
 
-		public void keyTyped(KeyEvent event) {
+		public void keyPressed(KeyEvent event) {
 
-			if (!event.isActionKey() && !acceptChar(event.getKeyChar())) {
+			if (!keyInputEnabled() || !acceptKey(event)) {
 
 				event.consume();
 			}
@@ -66,6 +66,11 @@ public abstract class GTextField extends JTextField {
 				}
 			}
 		}
+
+		private boolean acceptKey(KeyEvent event) {
+
+			return event.isActionKey() || acceptChar(event.getKeyChar());
+		}
 	}
 
 	private class FieldExitListener extends FocusAdapter {
@@ -81,6 +86,11 @@ public abstract class GTextField extends JTextField {
 		addMouseListener(new MouseClickListener());
 		addKeyListener(new ValueEntryListener());
 		addFocusListener(new FieldExitListener());
+	}
+
+	protected boolean keyInputEnabled() {
+
+		return true;
 	}
 
 	protected boolean acceptChar(char testChar) {
