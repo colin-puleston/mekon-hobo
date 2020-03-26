@@ -37,12 +37,40 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 	static private final long serialVersionUID = -1;
 
+	private CustomTextInputter customTextInputter = null;
+
 	private boolean checkingInput = false;
 	private boolean windowClosing = false;
 
-	class InputField extends GTextField {
+	protected abstract class CustomTextInputter {
+
+		protected abstract String performCustomTextEntry(InputField field);
+	}
+
+	protected class InputField extends GTextField {
 
 		static private final long serialVersionUID = -1;
+
+		protected boolean keyInputEnabled() {
+
+			return !customTextInput();
+		}
+
+		protected void onMouseClicked() {
+
+			if (customTextInput()) {
+
+				String text = customTextInputter.performCustomTextEntry(this);
+
+				if (text != null) {
+
+					setText(text);
+					onCustomTextEntered(text);
+
+					setValidInput(!text.isEmpty());
+				}
+			}
+		}
 
 		protected void onCharEntered(char enteredChar) {
 
@@ -51,7 +79,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 		protected void onFieldExited(String text) {
 
-			if (multipleInputFields() && !windowClosing) {
+			if (!customTextInput() && multipleInputFields() && !windowClosing) {
 
 				checkInput(text);
 			}
@@ -59,10 +87,15 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 		protected void onTextEntered(String text) {
 
-			if (checkInput(text)) {
+			if (!customTextInput() && checkInput(text)) {
 
 				exitOnCompletedInput();
 			}
+		}
+
+		protected void onCustomTextEntered(String text) {
+
+			checkConsistentInput();
 		}
 
 		protected I getValue() {
@@ -134,6 +167,11 @@ public abstract class TextInputter<I> extends Inputter<I> {
 		addWindowListener(new WindowCloseListener());
 	}
 
+	protected void setCustomTextInputter(CustomTextInputter inputter) {
+
+		customTextInputter = inputter;
+	}
+
 	protected abstract I resolveInput();
 
 	protected abstract boolean validInputText(String text);
@@ -150,6 +188,11 @@ public abstract class TextInputter<I> extends Inputter<I> {
 	protected void updateInputValidity() {
 
 		setValidInput(validInput());
+	}
+
+	protected boolean customTextInput() {
+
+		return customTextInputter != null;
 	}
 }
 

@@ -35,8 +35,8 @@ public abstract class INumberInputter extends TextInputter<INumber> {
 
 	static private final long serialVersionUID = -1;
 
-	static final INumber NO_VALUE = new INumber(0);
-	static final INumber INVALID_VALUE = new INumber(0);
+	static protected final INumber NO_VALUE = new INumber(0);
+	static protected final INumber INVALID_VALUE = new INumber(0);
 
 	private CNumber type;
 

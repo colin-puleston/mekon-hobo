@@ -58,12 +58,19 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 		protected void onCharEntered(char enteredChar) {
 
-			for (ConstraintField field : incompatibleFields) {
-
-				field.clear();
-			}
+			clearIncompatibleFields();
 
 			super.onCharEntered(enteredChar);
+		}
+
+		protected void onCustomTextEntered(String text) {
+
+			if (!text.isEmpty()) {
+
+				clearIncompatibleFields();
+			}
+
+			super.onCustomTextEntered(text);
 		}
 
 		void setIncompatible(ConstraintField incompatibleField) {
@@ -80,6 +87,14 @@ public class IndefiniteINumberInputter extends INumberInputter {
 		boolean invalidValue() {
 
 			return getValue() == INVALID_VALUE;
+		}
+
+		private void clearIncompatibleFields() {
+
+			for (ConstraintField field : incompatibleFields) {
+
+				field.clear();
+			}
 		}
 	}
 
