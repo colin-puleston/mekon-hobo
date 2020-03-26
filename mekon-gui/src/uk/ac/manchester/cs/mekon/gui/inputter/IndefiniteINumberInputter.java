@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
 import java.awt.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -54,31 +53,6 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 		static private final long serialVersionUID = -1;
 
-		private Set<ConstraintField> incompatibleFields = new HashSet<ConstraintField>();
-
-		protected void onCharEntered(char enteredChar) {
-
-			clearIncompatibleFields();
-
-			super.onCharEntered(enteredChar);
-		}
-
-		protected void onCustomTextEntered(String text) {
-
-			if (!text.isEmpty()) {
-
-				clearIncompatibleFields();
-			}
-
-			super.onCustomTextEntered(text);
-		}
-
-		void setIncompatible(ConstraintField incompatibleField) {
-
-			incompatibleFields.add(incompatibleField);
-			incompatibleField.incompatibleFields.add(this);
-		}
-
 		boolean hasValue() {
 
 			return getValue() != NO_VALUE;
@@ -87,14 +61,6 @@ public class IndefiniteINumberInputter extends INumberInputter {
 		boolean invalidValue() {
 
 			return getValue() == INVALID_VALUE;
-		}
-
-		private void clearIncompatibleFields() {
-
-			for (ConstraintField field : incompatibleFields) {
-
-				field.clear();
-			}
 		}
 	}
 
@@ -127,8 +93,9 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 		super(parent, type, TITLE, canClear);
 
-		exactField.setIncompatible(minField);
-		exactField.setIncompatible(maxField);
+		exactField.setIncompatibleField(minField);
+		exactField.setIncompatibleField(maxField);
+
 		minField.setOtherLimit(maxField);
 	}
 

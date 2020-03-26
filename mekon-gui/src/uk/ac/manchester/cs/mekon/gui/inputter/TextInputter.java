@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -51,6 +52,8 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 		static private final long serialVersionUID = -1;
 
+		private Set<InputField> incompatibleFields = new HashSet<InputField>();
+
 		protected boolean keyInputEnabled() {
 
 			return !customTextInput();
@@ -60,20 +63,13 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			if (customTextInput()) {
 
-				String text = customTextInputter.performCustomTextEntry(this);
-
-				if (text != null) {
-
-					setText(text);
-					onCustomTextEntered(text);
-
-					setValidInput(!text.isEmpty());
-				}
+				performCustomTextEntry();
 			}
 		}
 
 		protected void onCharEntered(char enteredChar) {
 
+			clearIncompatibleFields();
 			updateInputValidity();
 		}
 
@@ -93,11 +89,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 			}
 		}
 
-		protected void onCustomTextEntered(String text) {
-
-			checkConsistentInput();
-		}
-
 		protected I getValue() {
 
 			return convertInputValue(getText());
@@ -111,6 +102,40 @@ public abstract class TextInputter<I> extends Inputter<I> {
 		protected boolean checkConsistentInput() {
 
 			return true;
+		}
+
+		protected void setIncompatibleField(InputField incompatibleField) {
+
+			incompatibleFields.add(incompatibleField);
+			incompatibleField.incompatibleFields.add(this);
+		}
+
+		private void performCustomTextEntry() {
+
+			String text = customTextInputter.performCustomTextEntry(this);
+
+			if (text != null) {
+
+				boolean valueEntered = !text.isEmpty();
+
+				if (valueEntered) {
+
+					clearIncompatibleFields();
+				}
+
+				setText(text);
+
+				checkConsistentInput();
+				setValidInput(valueEntered);
+			}
+		}
+
+		private void clearIncompatibleFields() {
+
+			for (InputField field : incompatibleFields) {
+
+				field.clear();
+			}
 		}
 
 		private boolean checkInput(String text) {
