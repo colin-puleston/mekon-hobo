@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.goblin.gui;
 
-import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -137,11 +136,6 @@ class ConceptIdSelector extends GDialog {
 
 		static private final long serialVersionUID = -1;
 
-		protected boolean acceptChar(char testChar) {
-
-			return validURIFragment(getText() + testChar);
-		}
-
 		protected void onCharEntered(char enteredChar) {
 
 			String text = getText();
@@ -167,20 +161,6 @@ class ConceptIdSelector extends GDialog {
 		String getTextFromSelection() {
 
 			return selection.getName();
-		}
-
-		private boolean validURIFragment(String name) {
-
-			try {
-
-				new URI(name);
-
-				return true;
-			}
-			catch (URISyntaxException e) {
-
-				return false;
-			}
 		}
 	}
 
