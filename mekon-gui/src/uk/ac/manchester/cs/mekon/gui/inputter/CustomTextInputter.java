@@ -24,35 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
-import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
  * @author Colin Puleston
  */
-public class DefiniteINumberInputter extends INumberInputter {
+public interface CustomTextInputter<I> {
 
-	static private final long serialVersionUID = -1;
-
-	static private final String TITLE = "Enter Value";
-
-	private NumberInputHandler inputHandler = new NumberInputHandler(this);
-
-	public DefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
-
-		super(parent, type, TITLE, canClear);
-	}
-
-	protected INumber resolveInput(CNumber type) {
-
-		return inputHandler.getValue();
-	}
-
-	protected boolean validInput() {
-
-		return validNumberValueText(inputHandler.getValueAsText());
-	}
+	public String performCustomInput(TextInputHandler<I> handler);
 }
-
-

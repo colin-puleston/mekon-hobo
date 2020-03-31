@@ -24,35 +24,30 @@
 
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class DefiniteINumberInputter extends INumberInputter {
+public class NumberInputHandler extends TextInputHandler<INumber> {
 
-	static private final long serialVersionUID = -1;
+	public NumberInputHandler(INumberInputter inputter) {
 
-	static private final String TITLE = "Enter Value";
-
-	private NumberInputHandler inputHandler = new NumberInputHandler(this);
-
-	public DefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
-
-		super(parent, type, TITLE, canClear);
+		super(inputter);
 	}
 
-	protected INumber resolveInput(CNumber type) {
+	public NumberInputHandler(String title, INumberInputter inputter) {
 
-		return inputHandler.getValue();
+		super(title, inputter);
 	}
 
-	protected boolean validInput() {
+	public boolean hasValue() {
 
-		return validNumberValueText(inputHandler.getValueAsText());
+		return getValue() != INumberInputter.NO_VALUE;
+	}
+
+	public boolean invalidValue() {
+
+		return getValue() == INumberInputter.INVALID_VALUE;
 	}
 }
-
-

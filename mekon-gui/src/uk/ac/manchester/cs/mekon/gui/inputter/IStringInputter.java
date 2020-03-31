@@ -37,8 +37,6 @@ public class IStringInputter extends SimpleTextInputter<IString> {
 
 	static private final String DEFAULT_TITLE = "Enter Value";
 
-	private InputField valueField = new InputField();
-
 	public IStringInputter(JComponent parent, boolean canClear) {
 
 		this(parent, DEFAULT_TITLE, canClear);

@@ -24,11 +24,12 @@
 
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -38,21 +39,61 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 	static private final long serialVersionUID = -1;
 
-	private CustomTextInputter customTextInputter = null;
+	static private final int WINDOW_WIDTH = 300;
+	static private final int WINDOW_HEIGHT_BASE = 40;
+	static private final int PLAIN_INPUT_HEIGHT = 30;
+	static private final int TITLED_INPUT_HEIGHT = 60;
+
+	private JPanel inputFieldsPanel = new JPanel();
+
+	private int inputFieldCount = 0;
+	private int windowHeight = WINDOW_HEIGHT_BASE;
+
+	private CustomTextInputter<I> customTextInputter = null;
 
 	private boolean checkingInput = false;
 	private boolean windowClosing = false;
 
-	protected abstract class CustomTextInputter {
-
-		protected abstract String performCustomTextEntry(InputField field);
-	}
-
-	protected class InputField extends GTextField {
+	private class InputField extends GTextField {
 
 		static private final long serialVersionUID = -1;
 
-		private Set<InputField> incompatibleFields = new HashSet<InputField>();
+		private TextInputHandler<I> inputHandler;
+
+		private class Proxy extends InputFieldProxy<I> {
+
+			private JComponent component;
+
+			Proxy(JComponent component) {
+
+				this.component = component;
+			}
+
+			void setValueAsText(String text) {
+
+				setText(text);
+			}
+
+			void clearValue() {
+
+				setText("");
+			}
+
+			I getValue() {
+
+				return convertInputValue(getText());
+			}
+
+			String getValueAsText() {
+
+				return getText();
+			}
+
+			JComponent getFieldComponent() {
+
+				return component;
+			}
+		}
 
 		protected boolean keyInputEnabled() {
 
@@ -63,19 +104,20 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			if (customTextInput()) {
 
-				performCustomTextEntry();
+				performCustomInput();
 			}
 		}
 
 		protected void onCharEntered(char enteredChar) {
 
-			clearIncompatibleFields();
+			inputHandler.clearIncompatibleFields();
+
 			updateInputValidity();
 		}
 
 		protected void onFieldExited(String text) {
 
-			if (!customTextInput() && multipleInputFields() && !windowClosing) {
+			if (!customTextInput() && inputFieldCount > 1 && !windowClosing) {
 
 				checkInput(text);
 			}
@@ -89,30 +131,19 @@ public abstract class TextInputter<I> extends Inputter<I> {
 			}
 		}
 
-		protected I getValue() {
+		InputField(TextInputHandler<I> inputHandler) {
 
-			return convertInputValue(getText());
+			this.inputHandler = inputHandler;
 		}
 
-		protected void clear() {
+		InputFieldProxy<I> createProxy(JComponent component) {
 
-			setText("");
+			return new Proxy(component);
 		}
 
-		protected boolean checkConsistentInput() {
+		private void performCustomInput() {
 
-			return true;
-		}
-
-		protected void setIncompatibleField(InputField incompatibleField) {
-
-			incompatibleFields.add(incompatibleField);
-			incompatibleField.incompatibleFields.add(this);
-		}
-
-		private void performCustomTextEntry() {
-
-			String text = customTextInputter.performCustomTextEntry(this);
+			String text = customTextInputter.performCustomInput(inputHandler);
 
 			if (text != null) {
 
@@ -120,21 +151,13 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 				if (valueEntered) {
 
-					clearIncompatibleFields();
+					inputHandler.clearIncompatibleFields();
 				}
 
 				setText(text);
 
-				checkConsistentInput();
+				inputHandler.checkConsistentInput();
 				setValidInput(valueEntered);
-			}
-		}
-
-		private void clearIncompatibleFields() {
-
-			for (InputField field : incompatibleFields) {
-
-				field.clear();
 			}
 		}
 
@@ -156,7 +179,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			if (validInputText(text)) {
 
-				if (checkConsistentInput()) {
+				if (inputHandler.checkConsistentInput()) {
 
 					return true;
 				}
@@ -165,7 +188,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 			}
 			else {
 
-				clear();
+				setText("");
 			}
 
 			return false;
@@ -189,12 +212,24 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 		super(parent, title, canOk, canClear);
 
+		inputFieldsPanel.setLayout(new BoxLayout(inputFieldsPanel, BoxLayout.Y_AXIS));
+
 		addWindowListener(new WindowCloseListener());
 	}
 
-	protected void setCustomTextInputter(CustomTextInputter inputter) {
+	protected void setCustomTextInputter(CustomTextInputter<I> inputter) {
 
 		customTextInputter = inputter;
+	}
+
+	protected JComponent getInputComponent() {
+
+		return inputFieldsPanel;
+	}
+
+	protected Dimension getWindowSize() {
+
+		return new Dimension(WINDOW_WIDTH, windowHeight);
 	}
 
 	protected abstract I resolveInput();
@@ -205,11 +240,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 	protected abstract boolean validInput();
 
-	protected boolean multipleInputFields() {
-
-		return false;
-	}
-
 	protected void updateInputValidity() {
 
 		setValidInput(validInput());
@@ -218,6 +248,44 @@ public abstract class TextInputter<I> extends Inputter<I> {
 	protected boolean customTextInput() {
 
 		return customTextInputter != null;
+	}
+
+	InputFieldProxy<I> addInputField(TextInputHandler<I> inputHandler) {
+
+		InputField field = new InputField(inputHandler);
+
+		return addInputField(field, field, PLAIN_INPUT_HEIGHT);
+	}
+
+	InputFieldProxy<I> addInputField(String title, TextInputHandler<I> inputHandler) {
+
+		InputField field = new InputField(inputHandler);
+		JComponent component = createTitledFieldComponent(title, field);
+
+		return addInputField(field, component, TITLED_INPUT_HEIGHT);
+	}
+
+	private InputFieldProxy<I> addInputField(
+									InputField field,
+									JComponent component,
+									int componentHeight) {
+
+		inputFieldsPanel.add(component);
+
+		inputFieldCount++;
+		windowHeight += componentHeight;
+
+		return field.createProxy(component);
+	}
+
+	private JComponent createTitledFieldComponent(String title, InputField field) {
+
+		JPanel panel = new JPanel(new GridLayout(1, 1));
+
+		panel.setBorder(new TitledBorder(title));
+		panel.add(field);
+
+		return panel;
 	}
 }
 

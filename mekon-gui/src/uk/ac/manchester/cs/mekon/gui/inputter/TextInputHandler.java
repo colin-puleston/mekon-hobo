@@ -24,35 +24,69 @@
 
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
+import java.util.*;
 import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class DefiniteINumberInputter extends INumberInputter {
+public class TextInputHandler<I> {
 
-	static private final long serialVersionUID = -1;
+	private InputFieldProxy<I> field;
 
-	static private final String TITLE = "Enter Value";
+	private Set<TextInputHandler<I>> incompatibles = new HashSet<TextInputHandler<I>>();
 
-	private NumberInputHandler inputHandler = new NumberInputHandler(this);
+	public TextInputHandler(TextInputter<I> inputter) {
 
-	public DefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
-
-		super(parent, type, TITLE, canClear);
+		field = inputter.addInputField(this);
 	}
 
-	protected INumber resolveInput(CNumber type) {
+	public TextInputHandler(String title, TextInputter<I> inputter) {
 
-		return inputHandler.getValue();
+		field = inputter.addInputField(title, this);
 	}
 
-	protected boolean validInput() {
+	public void setValueAsText(String text) {
 
-		return validNumberValueText(inputHandler.getValueAsText());
+		field.setValueAsText(text);
+	}
+
+	public void clearValue() {
+
+		field.clearValue();
+	}
+
+	public I getValue() {
+
+		return field.getValue();
+	}
+
+	public String getValueAsText() {
+
+		return field.getValueAsText();
+	}
+
+	public JComponent getFieldComponent() {
+
+		return field.getFieldComponent();
+	}
+
+	public void setIncompatibleField(TextInputHandler<I> incompatible) {
+
+		incompatibles.add(incompatible);
+		incompatible.incompatibles.add(this);
+	}
+
+	protected boolean checkConsistentInput() {
+
+		return true;
+	}
+
+	void clearIncompatibleFields() {
+
+		for (TextInputHandler<I> incompatible : incompatibles) {
+
+			incompatible.clearValue();
+		}
 	}
 }
-
-

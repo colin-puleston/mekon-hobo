@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
-import java.awt.*;
 import javax.swing.*;
 
 /**
@@ -34,13 +33,12 @@ public abstract class SimpleTextInputter<I> extends TextInputter<I> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final Dimension WINDOW_SIZE = new Dimension(250, 70);
-
-	private InputField valueField = new InputField();
+	private TextInputHandler<I> inputHandler = new TextInputHandler<I>(this);
 
 	public void setInitialStringValue(String value) {
 
-		valueField.setText(value);
+		inputHandler.setValueAsText(value);
+
 		updateInputValidity();
 	}
 
@@ -49,19 +47,9 @@ public abstract class SimpleTextInputter<I> extends TextInputter<I> {
 		super(parent, title, true, canClear);
 	}
 
-	protected JComponent getInputComponent() {
-
-		return valueField;
-	}
-
-	protected Dimension getWindowSize() {
-
-		return WINDOW_SIZE;
-	}
-
 	protected I resolveInput() {
 
-		return valueField.getValue();
+		return inputHandler.getValue();
 	}
 
 	protected boolean validInputText(String text) {
@@ -71,7 +59,7 @@ public abstract class SimpleTextInputter<I> extends TextInputter<I> {
 
 	protected boolean validInput() {
 
-		return !emptyValue(valueField.getValue());
+		return !emptyValue(inputHandler.getValue());
 	}
 
 	protected abstract boolean emptyValue(I value);

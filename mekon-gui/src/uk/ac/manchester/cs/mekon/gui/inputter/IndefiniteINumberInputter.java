@@ -24,9 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.gui.inputter;
 
-import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 
@@ -43,38 +41,22 @@ public class IndefiniteINumberInputter extends INumberInputter {
 	static private final String MIN_VALUE_LABEL = "Minimum";
 	static private final String MAX_VALUE_LABEL = "Maximum";
 
-	static private final Dimension WINDOW_SIZE = new Dimension(300, 200);
+	private NumberInputHandler exactHandler = new NumberInputHandler(EXACT_VALUE_LABEL, this);
 
-	private ConstraintField exactField = new ConstraintField();
-	private LimitField minField = new LimitField();
-	private LimitField maxField = new LimitField();
+	private LimitInputHandler minHandler = new LimitInputHandler(MIN_VALUE_LABEL);
+	private LimitInputHandler maxHandler = new LimitInputHandler(MAX_VALUE_LABEL);
 
-	private class ConstraintField extends InputField {
-
-		static private final long serialVersionUID = -1;
-
-		boolean hasValue() {
-
-			return getValue() != NO_VALUE;
-		}
-
-		boolean invalidValue() {
-
-			return getValue() == INVALID_VALUE;
-		}
-	}
-
-	private class LimitField extends ConstraintField {
+	private class LimitInputHandler extends NumberInputHandler {
 
 		static private final long serialVersionUID = -1;
 
-		private LimitField otherLimit = null;
+		private LimitInputHandler otherLimit = null;
 
 		protected boolean checkConsistentInput() {
 
 			if (invalidRange()) {
 
-				otherLimit.clear();
+				otherLimit.clearValue();
 
 				return false;
 			}
@@ -82,7 +64,12 @@ public class IndefiniteINumberInputter extends INumberInputter {
 			return true;
 		}
 
-		void setOtherLimit(LimitField otherLimit) {
+		LimitInputHandler(String title) {
+
+			super(title, IndefiniteINumberInputter.this);
+		}
+
+		void setOtherLimit(LimitInputHandler otherLimit) {
 
 			this.otherLimit = otherLimit;
 			otherLimit.otherLimit = this;
@@ -93,28 +80,10 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 		super(parent, type, TITLE, canClear);
 
-		exactField.setIncompatibleField(minField);
-		exactField.setIncompatibleField(maxField);
+		exactHandler.setIncompatibleField(minHandler);
+		exactHandler.setIncompatibleField(maxHandler);
 
-		minField.setOtherLimit(maxField);
-	}
-
-	protected JComponent getInputComponent() {
-
-		JPanel panel = new JPanel();
-
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-		panel.add(createFieldComponent(EXACT_VALUE_LABEL, exactField));
-		panel.add(createFieldComponent(MIN_VALUE_LABEL, minField));
-		panel.add(createFieldComponent(MAX_VALUE_LABEL, maxField));
-
-		return panel;
-	}
-
-	protected Dimension getWindowSize() {
-
-		return WINDOW_SIZE;
+		minHandler.setOtherLimit(maxHandler);
 	}
 
 	protected INumber resolveInput(CNumber type) {
@@ -124,9 +93,9 @@ public class IndefiniteINumberInputter extends INumberInputter {
 			return NO_VALUE;
 		}
 
-		if (exactField.hasValue()) {
+		if (exactHandler.hasValue()) {
 
-			return exactField.getValue();
+			return exactHandler.getValue();
 		}
 
 		if (invalidRange()) {
@@ -142,26 +111,16 @@ public class IndefiniteINumberInputter extends INumberInputter {
 		return anyValidValues() && !invalidRange();
 	}
 
-	protected boolean multipleInputFields() {
+	protected boolean multipleInputHandlers() {
 
 		return true;
 	}
 
-	private JComponent createFieldComponent(String label, ConstraintField field) {
-
-		JPanel panel = new JPanel(new GridLayout(1, 1));
-
-		panel.setBorder(new TitledBorder(label + ":"));
-		panel.add(field);
-
-		return panel;
-	}
-
 	private boolean invalidRange() {
 
-		if (minField.hasValue() && maxField.hasValue()) {
+		if (minHandler.hasValue() && maxHandler.hasValue()) {
 
-			return minField.getValue().moreThan(maxField.getValue());
+			return minHandler.getValue().moreThan(maxHandler.getValue());
 		}
 
 		return false;
@@ -174,18 +133,18 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 	private boolean anyValues() {
 
-		return exactField.hasValue() || minField.hasValue() || maxField.hasValue();
+		return exactHandler.hasValue() || minHandler.hasValue() || maxHandler.hasValue();
 	}
 
 	private boolean anyInvalidValues() {
 
-		return exactField.invalidValue() || minField.invalidValue() || maxField.invalidValue();
+		return exactHandler.invalidValue() || minHandler.invalidValue() || maxHandler.invalidValue();
 	}
 
 	private INumber resolveValidRange(CNumber type) {
 
-		INumber min = minField.getValue();
-		INumber max = maxField.getValue();
+		INumber min = minHandler.getValue();
+		INumber max = maxHandler.getValue();
 
 		if (min == NO_VALUE) {
 
