@@ -46,7 +46,7 @@ public abstract class Inputter<I> extends GDialog {
 
 		ControlPanel(boolean canOk, boolean canClear) {
 
-			super(canOk, canClear, true);
+			super(canOk, canClear);
 
 			setOkEnabled(false);
 		}
