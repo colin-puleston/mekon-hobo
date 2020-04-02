@@ -95,6 +95,17 @@ public abstract class TextInputter<I> extends Inputter<I> {
 			}
 		}
 
+		private class CustomInputFieldFocusRemover extends FocusAdapter {
+
+			public void focusGained(FocusEvent e) {
+
+				if (customTextInput()) {
+
+					getRootPane().requestFocus();
+				}
+			}
+		}
+
 		protected boolean keyInputEnabled() {
 
 			return !customTextInput();
@@ -134,6 +145,8 @@ public abstract class TextInputter<I> extends Inputter<I> {
 		InputField(TextInputHandler<I> inputHandler) {
 
 			this.inputHandler = inputHandler;
+
+			addFocusListener(new CustomInputFieldFocusRemover());
 		}
 
 		InputFieldProxy<I> createProxy(JComponent component) {
