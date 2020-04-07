@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
-	static private final String CREATE_LABEL = "Create new...";
+	static private final String CREATE_LABEL_FORMAT = "Create new %s...";
 
 	private Instantiator instantiator;
 	private InstanceGroup instanceGroup;
@@ -54,7 +54,7 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 		CreateButton() {
 
-			super(CREATE_LABEL);
+			super(String.format(CREATE_LABEL_FORMAT, EntitySelector.getTitleName(type)));
 		}
 	}
 

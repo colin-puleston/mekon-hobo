@@ -92,9 +92,9 @@ abstract class DisjunctionEntitySelector<E> extends EntitySelector<E> {
 		return panel;
 	}
 
-	DisjunctionEntitySelector(JComponent parent, boolean canClear) {
+	DisjunctionEntitySelector(JComponent parent, String typeName, boolean canClear) {
 
-		super(parent, true, canClear);
+		super(parent, typeName, true, canClear);
 	}
 
 	void onSelectedOption(E selected) {

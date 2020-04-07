@@ -27,6 +27,8 @@ package uk.ac.manchester.cs.mekon.app;
 import java.awt.Dimension;
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 import uk.ac.manchester.cs.mekon.gui.*;
 import uk.ac.manchester.cs.mekon.gui.inputter.*;
 
@@ -37,14 +39,21 @@ abstract class EntitySelector<E> extends Inputter<E> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String SINGLE_SELECT_TITLE = "Select option";
-	static private final String MULTI_SELECT_TITLE = SINGLE_SELECT_TITLE + "(s)";
+	static private final String SINGLE_SELECT_TITLE_FORMAT = "Select %s option";
+	static private final String MULTI_SELECT_TITLE_FORMAT = "%s + (s)";
 
 	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
 
-	static private String getTitle(boolean multiSelect) {
+	static String getTitleName(CFrame frameType) {
 
-		return multiSelect ? MULTI_SELECT_TITLE : SINGLE_SELECT_TITLE;
+		return frameType.getIdentity().getLabel().toLowerCase();
+	}
+
+	static private String getTitle(String typeName, boolean multiSelect) {
+
+		String title = String.format(SINGLE_SELECT_TITLE_FORMAT, typeName);
+
+		return multiSelect ? String.format(MULTI_SELECT_TITLE_FORMAT, title) : title;
 	}
 
 	protected Dimension getWindowSize() {
@@ -52,9 +61,9 @@ abstract class EntitySelector<E> extends Inputter<E> {
 		return WINDOW_SIZE;
 	}
 
-	EntitySelector(JComponent parent, boolean multiSelect, boolean canClear) {
+	EntitySelector(JComponent parent, String typeName, boolean multiSelect, boolean canClear) {
 
-		super(parent, getTitle(multiSelect), multiSelect, canClear);
+		super(parent, getTitle(typeName, multiSelect), multiSelect, canClear);
 	}
 
 	abstract JComponent createOptionsComponent();

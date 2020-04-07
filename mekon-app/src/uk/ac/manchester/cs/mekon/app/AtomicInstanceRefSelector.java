@@ -43,7 +43,7 @@ class AtomicInstanceRefSelector extends AtomicEntitySelector<IFrame> {
 		CFrame type,
 		boolean canClear) {
 
-		super(parent, canClear);
+		super(parent, getTitleName(type), canClear);
 
 		selectionOptions = new InstanceRefSelectionOptions(this, instantiator, type);
 	}
