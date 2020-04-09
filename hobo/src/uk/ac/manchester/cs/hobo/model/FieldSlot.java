@@ -112,7 +112,7 @@ class FieldSlot {
 				throw new HAccessException(
 							name
 							+ " has not been specified "
-							+ " for a field on object: "
+							+ "for a field on object: "
 							+ containerObj);
 			}
 		}
