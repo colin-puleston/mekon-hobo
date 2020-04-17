@@ -53,11 +53,11 @@ class InstanceGroupsPanel extends JTabbedPane {
 
 		InstanceGroup group = controller.addInstanceGroup(rootType);
 
-		addTab(getGroupTitle(rootType), new InstanceGroupPanel(group));
+		addTab(getGroupTitle(controller, rootType), new InstanceGroupPanel(group));
 	}
 
-	private String getGroupTitle(CFrame rootType) {
+	private String getGroupTitle(Controller controller, CFrame rootType) {
 
-		return rootType.getDisplayLabel() + 's';
+		return controller.getCustomiser().getTypeDisplayLabel(rootType);
 	}
 }

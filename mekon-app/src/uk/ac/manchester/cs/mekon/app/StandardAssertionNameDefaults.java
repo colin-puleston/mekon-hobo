@@ -37,12 +37,15 @@ public class StandardAssertionNameDefaults implements AssertionNameDefaults {
 	static private final String BASIC_NAME_BODY_FORMAT = "%s-";
 	static private final String COMPOUND_NAME_BODY_FORMAT = "%s->%s";
 
+	private Customiser customiser;
 	private StandardInstanceNameDefaultsGenerator generator;
 
 	private boolean baseNamesEnabled = false;
 	private boolean referencedNamesEnabled = false;
 
-	public StandardAssertionNameDefaults(IStore store) {
+	public StandardAssertionNameDefaults(IStore store, Customiser customiser) {
+
+		this.customiser = customiser;
 
 		generator = new StandardInstanceNameDefaultsGenerator(store);
 	}
@@ -91,6 +94,6 @@ public class StandardAssertionNameDefaults implements AssertionNameDefaults {
 
 	private String toNameSection(CFrame assertionType) {
 
-		return assertionType.getIdentity().getLabel();
+		return customiser.getTypeDisplayLabel(assertionType);
 	}
 }

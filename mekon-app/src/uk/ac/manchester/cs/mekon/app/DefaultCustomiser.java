@@ -45,6 +45,16 @@ public class DefaultCustomiser implements Customiser {
 		return queryNameDefaults;
 	}
 
+	public SimpleQueriesConfig getSimpleQueriesConfig() {
+
+		return InertSimpleQueriesConfig.SINGLETON;
+	}
+
+	public ValueObtainerFactory getValueObtainerFactory() {
+
+		return InertValueObtainerFactory.SINGLETON;
+	}
+
 	public IFrame onNewInstance(IFrame instance, CIdentity storeId) {
 
 		return instance;
@@ -58,17 +68,12 @@ public class DefaultCustomiser implements Customiser {
 		return instance;
 	}
 
-	public ValueObtainerFactory getValueObtainerFactory() {
+	public String getTypeDisplayLabel(CValue<?> type) {
 
-		return InertValueObtainerFactory.SINGLETON;
+		return type.getDisplayLabel();
 	}
 
-	public String getDisplayLabel(CValue<?> valueType) {
-
-		return valueType.getDisplayLabel();
-	}
-
-	public String getDisplayLabel(IValue value) {
+	public String getValueDisplayLabel(IValue value) {
 
 		if (value instanceof IFrame) {
 
@@ -129,7 +134,7 @@ public class DefaultCustomiser implements Customiser {
 
 	protected DefaultCustomiser(IStore store) {
 
-		assertionNameDefaults = new StandardAssertionNameDefaults(store);
-		queryNameDefaults = new StandardQueryNameDefaults(store);
+		assertionNameDefaults = new StandardAssertionNameDefaults(store, this);
+		queryNameDefaults = new StandardQueryNameDefaults(store, this);
 	}
 }

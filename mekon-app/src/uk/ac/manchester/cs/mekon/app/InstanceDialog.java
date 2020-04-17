@@ -60,7 +60,9 @@ abstract class InstanceDialog extends GDialog {
 
 	static private String getTypeLabel(Instantiator instantiator) {
 
-		return instantiator.getInstance().getType().getIdentity().getLabel();
+		Customiser customiser = instantiator.getController().getCustomiser();
+
+		return customiser.getValueDisplayLabel(instantiator.getInstance());
 	}
 
 	private Instantiator instantiator;

@@ -191,12 +191,12 @@ class Descriptor {
 
 	private String getValueTypeLabel() {
 
-		return getCustomiser().getDisplayLabel(valueType);
+		return getCustomiser().getTypeDisplayLabel(valueType);
 	}
 
 	private String getAtomicValueLabel(IValue atomicValue) {
 
-		return getCustomiser().getDisplayLabel(atomicValue);
+		return getCustomiser().getValueDisplayLabel(atomicValue);
 	}
 
 	private boolean inferredValue() {

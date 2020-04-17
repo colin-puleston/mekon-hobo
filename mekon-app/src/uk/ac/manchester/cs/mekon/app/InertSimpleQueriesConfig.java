@@ -27,58 +27,29 @@ package uk.ac.manchester.cs.mekon.app;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class RootInstanceNode extends InstanceNode {
+class InertSimpleQueriesConfig implements SimpleQueriesConfig {
 
-	private GCellDisplay display;
-	private DescriptorChildNodes childNodes;
+	static final InertSimpleQueriesConfig SINGLETON = new InertSimpleQueriesConfig();
 
-	protected void addInitialChildren() {
+	public boolean simpleQueriesFor(CFrame executableType) {
 
-		childNodes.addInitialChildren();
+		return false;
 	}
 
-	protected GCellDisplay getDisplay() {
+	public CFrame toSimpleQueryType(CFrame executableType) {
 
-		return display;
+		throw new RuntimeException("Cannot handle executable-type: " + executableType);
 	}
 
-	RootInstanceNode(InstanceTree tree) {
+	public IFrame toExecutable(IFrame simpleQuery) {
 
-		super(tree);
-
-		display = new GCellDisplay(getDisplayLabel(), getIcon());
-		childNodes = new DescriptorChildNodes(this, getInstance());
+		throw new RuntimeException("Cannot handle simple-query type: " + simpleQuery.getType());
 	}
 
-	void update() {
-
-		childNodes.update();
-
-		super.update();
-	}
-
-	private String getDisplayLabel() {
-
-		return getCustomiser().getValueDisplayLabel(getInstance());
-	}
-
-	private Customiser getCustomiser() {
-
-		return getInstantiator().getController().getCustomiser();
-	}
-
-	private Icon getIcon() {
-
-		return queryInstance() ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
-	}
-
-	private IFrame getInstance() {
-
-		return getInstantiator().getInstance();
+	private InertSimpleQueriesConfig() {
 	}
 }

@@ -34,13 +34,15 @@ import uk.ac.manchester.cs.mekon.model.*;
 class QueryExecutions {
 
 	private Store store;
+	private SimpleQueriesConfig simpleQueriesConfig;
 
 	private Map<CIdentity, ExecutedQuery> byStoreId = new HashMap<CIdentity, ExecutedQuery>();
 	private List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
 
-	QueryExecutions(Store store) {
+	QueryExecutions(Controller controller) {
 
-		this.store = store;
+		store = controller.getStore();
+		simpleQueriesConfig = controller.getCustomiser().getSimpleQueriesConfig();
 	}
 
 	void addListener(QueryExecutionListener listener) {
@@ -50,7 +52,7 @@ class QueryExecutions {
 
 	void execute(CIdentity storeId, IFrame query) {
 
-		List<CIdentity> matches = store.match(query);
+		List<CIdentity> matches = store.match(resolveExecutable(query));
 		ExecutedQuery exec = new ExecutedQuery(storeId, query, matches);
 
 		byStoreId.put(storeId, exec);
@@ -76,6 +78,16 @@ class QueryExecutions {
 	Set<CIdentity> getAllExecuteds() {
 
 		return byStoreId.keySet();
+	}
+
+	private IFrame resolveExecutable(IFrame query) {
+
+		if (simpleQueriesConfig.simpleQueriesFor(query.getType())) {
+
+			return simpleQueriesConfig.toExecutable(query);
+		}
+
+		return query;
 	}
 
 	private void pollListenersForExecution(ExecutedQuery exec) {

@@ -56,9 +56,14 @@ class InstanceOps {
 		customiser = controller.getCustomiser();
 	}
 
+	boolean simpleInstancesEnabled() {
+
+		return function.query() && instanceGroup.simpleQueriesEnabled();
+	}
+
 	CIdentity checkDisplayNew() {
 
-		return checkDisplayNew(instanceGroup.getRootType(), null);
+		return checkDisplayNew(getRootType(), null);
 	}
 
 	CIdentity checkDisplayNew(CFrame rootType, CIdentity refingId) {
@@ -76,6 +81,11 @@ class InstanceOps {
 		}
 
 		return null;
+	}
+
+	CIdentity checkDisplayNewSimple() {
+
+		return checkDisplayNew(instanceGroup.getSimpleQueriesRootType(), null);
 	}
 
 	CIdentity displayReloaded(CIdentity storeId) {
@@ -226,5 +236,10 @@ class InstanceOps {
 	private Set<CIdentity> getExecutedQueryIds() {
 
 		return instanceGroup.getQueryExecutions().getAllExecuteds();
+	}
+
+	private CFrame getRootType() {
+
+		return instanceGroup.getRootType();
 	}
 }

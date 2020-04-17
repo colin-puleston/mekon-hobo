@@ -40,6 +40,7 @@ abstract class InstancesPanel extends JPanel {
 	static private final long serialVersionUID = -1;
 
 	static private final String CREATE_LABEL = "Create...";
+	static private final String CREATE_SIMPLE_LABEL = "Create simple...";
 	static private final String LOAD_LABEL = "Load";
 	static private final String RENAME_LABEL = "Rename...";
 	static private final String REMOVE_LABEL = "Remove";
@@ -63,6 +64,21 @@ abstract class InstancesPanel extends JPanel {
 		CreateButton() {
 
 			super(CREATE_LABEL);
+		}
+	}
+
+	private class CreateSimpleButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			instanceOps.checkDisplayNewSimple();
+		}
+
+		CreateSimpleButton() {
+
+			super(CREATE_SIMPLE_LABEL);
 		}
 	}
 
@@ -171,6 +187,12 @@ abstract class InstancesPanel extends JPanel {
 		ControlsPanel panel = new ControlsPanel(true);
 
 		panel.addControl(new CreateButton());
+
+		if (instanceOps.simpleInstancesEnabled()) {
+
+			panel.addControl(new CreateSimpleButton());
+		}
+
 		panel.addControl(new LoadButton());
 		panel.addControl(new RenameButton());
 		panel.addControl(new RemoveButton());

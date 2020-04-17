@@ -38,6 +38,7 @@ class InstanceGroup {
 	private Store store;
 
 	private CFrame rootType;
+	private CFrame simpleQueriesRootType;
 	private InstanceTypes instanceTypes;
 
 	private InstanceIdsList rootAssertionIds;
@@ -110,18 +111,19 @@ class InstanceGroup {
 		this.rootType = rootType;
 
 		store = controller.getStore();
-
+		simpleQueriesRootType = getSimpleQueriesRootTypeOrNull();
 		instanceTypes = createInstanceTypes();
 
 		rootAssertionIds = new InstanceIdsList(this, false);
 		rootQueryIds = new InstanceIdsList(this, true);
 
-		queryExecutions = new QueryExecutions(store);
+		queryExecutions = new QueryExecutions(controller);
 
-		for (CIdentity storeId : store.getInstanceIds(rootType)) {
+		loadInstanceIds(rootType);
 
-			instanceTypes.onAddedInstance(storeId);
-			getInstanceIdsList(storeId).addId(storeId);
+		if (simpleQueriesRootType != null) {
+
+			loadInstanceIds(simpleQueriesRootType);
 		}
 	}
 
@@ -160,6 +162,21 @@ class InstanceGroup {
 	boolean hasSubTypes() {
 
 		return !rootType.getSubs(CVisibility.EXPOSED).isEmpty();
+	}
+
+	boolean simpleQueriesEnabled() {
+
+		return simpleQueriesRootType != null;
+	}
+
+	CFrame getSimpleQueriesRootType() {
+
+		if (simpleQueriesRootType == null) {
+
+			throw new Error("Should never happen!");
+		}
+
+		return simpleQueriesRootType;
 	}
 
 	CFrame getInstanceType(CIdentity storeId) {
@@ -211,6 +228,27 @@ class InstanceGroup {
 			instanceTypes.onReplacedInstance(storeId, newStoreId);
 			getInstanceIdsList(storeId).replaceId(storeId, newStoreId);
 		}
+	}
+
+	private void loadInstanceIds(CFrame loadRootType) {
+
+		for (CIdentity storeId : store.getInstanceIds(loadRootType)) {
+
+			instanceTypes.onAddedInstance(storeId);
+			getInstanceIdsList(storeId).addId(storeId);
+		}
+	}
+
+	private CFrame getSimpleQueriesRootTypeOrNull() {
+
+		SimpleQueriesConfig cfg = getSimpleQueriesConfig();
+
+		return cfg.simpleQueriesFor(rootType) ? cfg.toSimpleQueryType(rootType) : null;
+	}
+
+	private SimpleQueriesConfig getSimpleQueriesConfig() {
+
+		return controller.getCustomiser().getSimpleQueriesConfig();
 	}
 
 	private InstanceTypes createInstanceTypes() {

@@ -24,61 +24,16 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class RootInstanceNode extends InstanceNode {
+public interface SimpleQueriesConfig {
 
-	private GCellDisplay display;
-	private DescriptorChildNodes childNodes;
+	public boolean simpleQueriesFor(CFrame executableType);
 
-	protected void addInitialChildren() {
+	public CFrame toSimpleQueryType(CFrame executableType);
 
-		childNodes.addInitialChildren();
-	}
-
-	protected GCellDisplay getDisplay() {
-
-		return display;
-	}
-
-	RootInstanceNode(InstanceTree tree) {
-
-		super(tree);
-
-		display = new GCellDisplay(getDisplayLabel(), getIcon());
-		childNodes = new DescriptorChildNodes(this, getInstance());
-	}
-
-	void update() {
-
-		childNodes.update();
-
-		super.update();
-	}
-
-	private String getDisplayLabel() {
-
-		return getCustomiser().getValueDisplayLabel(getInstance());
-	}
-
-	private Customiser getCustomiser() {
-
-		return getInstantiator().getController().getCustomiser();
-	}
-
-	private Icon getIcon() {
-
-		return queryInstance() ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
-	}
-
-	private IFrame getInstance() {
-
-		return getInstantiator().getInstance();
-	}
+	public IFrame toExecutable(IFrame simpleQuery);
 }

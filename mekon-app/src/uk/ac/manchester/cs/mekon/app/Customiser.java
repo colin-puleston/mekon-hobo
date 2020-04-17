@@ -35,6 +35,10 @@ public interface Customiser {
 
 	public QueryNameDefaults getQueryNameDefaults();
 
+	public SimpleQueriesConfig getSimpleQueriesConfig();
+
+	public ValueObtainerFactory getValueObtainerFactory();
+
 	public IFrame onNewInstance(IFrame instance, CIdentity storeId);
 
 	public IFrame onRenamingInstance(
@@ -42,11 +46,9 @@ public interface Customiser {
 					CIdentity storeId,
 					CIdentity newStoreId);
 
-	public ValueObtainerFactory getValueObtainerFactory();
+	public String getTypeDisplayLabel(CValue<?> type);
 
-	public String getDisplayLabel(CValue<?> valueType);
-
-	public String getDisplayLabel(IValue value);
+	public String getValueDisplayLabel(IValue value);
 
 	public boolean hiddenSlot(ISlot slot);
 }

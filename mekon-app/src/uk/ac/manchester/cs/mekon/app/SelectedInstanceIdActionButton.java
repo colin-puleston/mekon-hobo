@@ -36,7 +36,7 @@ abstract class SelectedInstanceIdActionButton extends GButton {
 
 	private InstanceIdsList idsList;
 
-	private class Enabler extends GSelectionListener<CIdentity> {
+	private class SelectionBasedEnablingUpdater extends GSelectionListener<CIdentity> {
 
 		protected void onSelected(CIdentity storeId) {
 
@@ -46,11 +46,25 @@ abstract class SelectedInstanceIdActionButton extends GButton {
 		protected void onDeselected(CIdentity storeId) {
 		}
 
-		Enabler() {
+		SelectionBasedEnablingUpdater() {
 
 			idsList.addSelectionListener(this);
+		}
+	}
 
-			updateEnabling();
+	private class RemovalBasedDisabler extends GListListener<CIdentity> {
+
+		protected void onAdded(CIdentity entity) {
+		}
+
+		protected void onRemoved(CIdentity entity) {
+
+			setEnabled(false);
+		}
+
+		RemovalBasedDisabler() {
+
+			idsList.addListListener(this);
 		}
 	}
 
@@ -65,7 +79,10 @@ abstract class SelectedInstanceIdActionButton extends GButton {
 
 		this.idsList = idsList;
 
-		new Enabler();
+		updateEnabling();
+
+		new SelectionBasedEnablingUpdater();
+		new RemovalBasedDisabler();
 	}
 
 	abstract void doInstanceThing(CIdentity storeId);

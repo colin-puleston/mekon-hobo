@@ -36,9 +36,12 @@ public class StandardQueryNameDefaults implements QueryNameDefaults {
 
 	static private final String NAME_BODY_FORMAT = "%s-QUERY-";
 
+	private Customiser customiser;
 	private StandardInstanceNameDefaultsGenerator generator;
 
-	public StandardQueryNameDefaults(IStore store) {
+	public StandardQueryNameDefaults(IStore store, Customiser customiser) {
+
+		this.customiser = customiser;
 
 		generator = new StandardInstanceNameDefaultsGenerator(store);
 	}
@@ -55,6 +58,6 @@ public class StandardQueryNameDefaults implements QueryNameDefaults {
 
 	private String toNameSection(CFrame queryType) {
 
-		return queryType.getIdentity().getLabel();
+		return customiser.getTypeDisplayLabel(queryType);
 	}
 }
