@@ -47,7 +47,7 @@ abstract class EditControlPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			onEditComplete(getEditStatus());
+			onEditTerminationSelection(getEditStatus());
 		}
 
 		EditButton(String label) {
@@ -155,7 +155,7 @@ abstract class EditControlPanel extends JPanel {
 		add(button);
 	}
 
-	abstract void onEditComplete(EditStatus status);
+	abstract void onEditTerminationSelection(EditStatus status);
 
 	void addSeparator() {
 

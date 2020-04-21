@@ -49,7 +49,7 @@ public class DefiniteINumberInputter extends INumberInputter {
 		return inputHandler.getValue();
 	}
 
-	protected boolean validInput() {
+	protected boolean validCurrentInput() {
 
 		return validNumberValueText(inputHandler.getValueAsText());
 	}

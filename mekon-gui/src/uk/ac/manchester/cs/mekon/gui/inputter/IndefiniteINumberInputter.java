@@ -106,7 +106,7 @@ public class IndefiniteINumberInputter extends INumberInputter {
 		return resolveValidRange(type);
 	}
 
-	protected boolean validInput() {
+	protected boolean validCurrentInput() {
 
 		return anyValidValues() && !invalidRange();
 	}

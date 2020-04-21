@@ -51,11 +51,14 @@ public abstract class Inputter<I> extends GDialog {
 			setOkEnabled(false);
 		}
 
-		void onEditComplete(EditStatus status) {
+		void onEditTerminationSelection(EditStatus status) {
 
-			Inputter.this.status = status;
+			if (status != EditStatus.INPUTTED || validCompletedInput()) {
 
-			dispose();
+				Inputter.this.status = status;
+
+				dispose();
+			}
 		}
 	}
 
@@ -95,6 +98,11 @@ public abstract class Inputter<I> extends GDialog {
 	protected abstract JComponent getInputComponent();
 
 	protected abstract Dimension getWindowSize();
+
+	protected boolean validCompletedInput() {
+
+		return true;
+	}
 
 	private JComponent createDisplay() {
 

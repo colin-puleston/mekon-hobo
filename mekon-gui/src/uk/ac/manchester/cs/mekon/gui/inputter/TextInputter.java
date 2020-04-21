@@ -251,11 +251,11 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 	protected abstract I convertInputValue(String text);
 
-	protected abstract boolean validInput();
+	protected abstract boolean validCurrentInput();
 
 	protected void updateInputValidity() {
 
-		setValidInput(validInput());
+		setValidInput(validCurrentInput());
 	}
 
 	protected boolean customTextInput() {
