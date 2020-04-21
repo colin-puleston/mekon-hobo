@@ -39,71 +39,13 @@ class InstanceGroup {
 
 	private CFrame rootType;
 	private CFrame simpleQueriesRootType;
-	private InstanceTypes instanceTypes;
+
+	private Map<CIdentity, CFrame> instancesToNonRootTypes = new HashMap<CIdentity, CFrame>();
 
 	private InstanceIdsList rootAssertionIds;
 	private InstanceIdsList rootQueryIds;
 
 	private QueryExecutions queryExecutions;
-
-	private abstract class InstanceTypes {
-
-		void onAddedInstance(CIdentity storeId) {
-		}
-
-		void onRemovedInstance(CIdentity storeId) {
-		}
-
-		void onReplacedInstance(CIdentity storeId, CIdentity newStoreId) {
-		}
-
-		abstract CFrame getType(CIdentity storeId);
-	}
-
-	private class RootOnlyInstanceTypes extends InstanceTypes {
-
-		CFrame getType(CIdentity storeId) {
-
-			return rootType;
-		}
-	}
-
-	private class InstanceSubTypes extends InstanceTypes {
-
-		private Map<CIdentity, CFrame> subTypes = new HashMap<CIdentity, CFrame>();
-
-		void onAddedInstance(CIdentity storeId) {
-
-			CFrame type = store.getType(storeId);
-
-			if (!type.equals(rootType)) {
-
-				subTypes.put(storeId, type);
-			}
-		}
-
-		void onRemovedInstance(CIdentity storeId) {
-
-			subTypes.remove(storeId);
-		}
-
-		void onReplacedInstance(CIdentity storeId, CIdentity newStoreId) {
-
-			CFrame type = subTypes.remove(storeId);
-
-			if (type != null) {
-
-				subTypes.put(newStoreId, type);
-			}
-		}
-
-		CFrame getType(CIdentity storeId) {
-
-			CFrame type = subTypes.get(storeId);
-
-			return type != null ? type : rootType;
-		}
-	}
 
 	InstanceGroup(Controller controller, CFrame rootType) {
 
@@ -112,12 +54,11 @@ class InstanceGroup {
 
 		store = controller.getStore();
 		simpleQueriesRootType = getSimpleQueriesRootTypeOrNull();
-		instanceTypes = createInstanceTypes();
 
 		rootAssertionIds = new InstanceIdsList(this, false);
 		rootQueryIds = new InstanceIdsList(this, true);
 
-		queryExecutions = new QueryExecutions(controller);
+		queryExecutions = new QueryExecutions(controller, this);
 
 		loadInstanceIds(rootType);
 
@@ -159,11 +100,6 @@ class InstanceGroup {
 		return rootType;
 	}
 
-	boolean hasSubTypes() {
-
-		return !rootType.getSubs(CVisibility.EXPOSED).isEmpty();
-	}
-
 	boolean simpleQueriesEnabled() {
 
 		return simpleQueriesRootType != null;
@@ -179,9 +115,21 @@ class InstanceGroup {
 		return simpleQueriesRootType;
 	}
 
+	boolean includesInstancesOfType(CFrame type) {
+
+		return rootType.subsumes(type) || includesSimpleQueriesOfType(type);
+	}
+
+	boolean includesSimpleQueriesOfType(CFrame type) {
+
+		return simpleQueriesEnabled() && simpleQueriesRootType.subsumes(type);
+	}
+
 	CFrame getInstanceType(CIdentity storeId) {
 
-		return instanceTypes.getType(storeId);
+		CFrame type = instancesToNonRootTypes.get(storeId);
+
+		return type != null ? type : rootType;
 	}
 
 	InstanceIdsList getRootAssertionIdsList() {
@@ -203,7 +151,7 @@ class InstanceGroup {
 
 		if (store.checkAdd(instance, storeId, asNewId)) {
 
-			instanceTypes.onAddedInstance(storeId);
+			updateTypesForAddition(storeId);
 			getInstanceIdsList(storeId).checkAddId(storeId);
 
 			return true;
@@ -216,7 +164,7 @@ class InstanceGroup {
 
 		if (store.checkRemove(storeId)) {
 
-			instanceTypes.onRemovedInstance(storeId);
+			updateTypesForRemoval(storeId);
 			getInstanceIdsList(storeId).removeEntity(storeId);
 		}
 	}
@@ -225,7 +173,7 @@ class InstanceGroup {
 
 		if (store.checkRename(storeId, newStoreId)) {
 
-			instanceTypes.onReplacedInstance(storeId, newStoreId);
+			updateTypesForReplacement(storeId, newStoreId);
 			getInstanceIdsList(storeId).replaceId(storeId, newStoreId);
 		}
 	}
@@ -234,8 +182,33 @@ class InstanceGroup {
 
 		for (CIdentity storeId : store.getInstanceIds(loadRootType)) {
 
-			instanceTypes.onAddedInstance(storeId);
+			updateTypesForAddition(storeId);
 			getInstanceIdsList(storeId).addId(storeId);
+		}
+	}
+
+	private void updateTypesForAddition(CIdentity storeId) {
+
+		CFrame type = store.getType(storeId);
+
+		if (!type.equals(rootType)) {
+
+			instancesToNonRootTypes.put(storeId, type);
+		}
+	}
+
+	private void updateTypesForRemoval(CIdentity storeId) {
+
+		instancesToNonRootTypes.remove(storeId);
+	}
+
+	private void updateTypesForReplacement(CIdentity storeId, CIdentity newStoreId) {
+
+		CFrame type = instancesToNonRootTypes.remove(storeId);
+
+		if (type != null) {
+
+			instancesToNonRootTypes.put(newStoreId, type);
 		}
 	}
 
@@ -249,11 +222,6 @@ class InstanceGroup {
 	private SimpleQueriesConfig getSimpleQueriesConfig() {
 
 		return controller.getCustomiser().getSimpleQueriesConfig();
-	}
-
-	private InstanceTypes createInstanceTypes() {
-
-		return hasSubTypes() ? new InstanceSubTypes() : new RootOnlyInstanceTypes();
 	}
 
 	private InstanceIdsList getInstanceIdsList(CIdentity storeId) {

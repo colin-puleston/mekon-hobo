@@ -36,10 +36,14 @@ class QueryExecutions {
 	private Store store;
 	private SimpleQueriesConfig simpleQueriesConfig;
 
+	private InstanceGroup instanceGroup;
+
 	private Map<CIdentity, ExecutedQuery> byStoreId = new HashMap<CIdentity, ExecutedQuery>();
 	private List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
 
-	QueryExecutions(Controller controller) {
+	QueryExecutions(Controller controller, InstanceGroup instanceGroup) {
+
+		this.instanceGroup = instanceGroup;
 
 		store = controller.getStore();
 		simpleQueriesConfig = controller.getCustomiser().getSimpleQueriesConfig();
@@ -82,7 +86,7 @@ class QueryExecutions {
 
 	private IFrame resolveExecutable(IFrame query) {
 
-		if (simpleQueriesConfig.simpleQueriesFor(query.getType())) {
+		if (instanceGroup.includesSimpleQueriesOfType(query.getType())) {
 
 			return simpleQueriesConfig.toExecutable(query);
 		}

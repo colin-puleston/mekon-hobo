@@ -84,7 +84,7 @@ class Controller {
 
 		for (InstanceGroup group : instanceGroups) {
 
-			if (group.getRootType().subsumes(type)) {
+			if (group.includesInstancesOfType(type)) {
 
 				return group;
 			}

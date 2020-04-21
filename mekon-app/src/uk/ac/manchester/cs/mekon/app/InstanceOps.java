@@ -63,7 +63,7 @@ class InstanceOps {
 
 	CIdentity checkDisplayNew() {
 
-		return checkDisplayNew(getRootType(), null);
+		return checkDisplayNew(instanceGroup.getRootType(), null);
 	}
 
 	CIdentity checkDisplayNew(CFrame rootType, CIdentity refingId) {
@@ -236,10 +236,5 @@ class InstanceOps {
 	private Set<CIdentity> getExecutedQueryIds() {
 
 		return instanceGroup.getQueryExecutions().getAllExecuteds();
-	}
-
-	private CFrame getRootType() {
-
-		return instanceGroup.getRootType();
 	}
 }

@@ -85,7 +85,7 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	GCellDisplay getCellDisplay(CIdentity id) {
 
-		if (instanceGroup.hasSubTypes()) {
+		if (displayTypes()) {
 
 			return createTypeEnhancedCellDisplay(id);
 		}
@@ -115,5 +115,10 @@ class InstanceIdsList extends GList<CIdentity> {
 	private Icon getIcon() {
 
 		return queryInstances ? MekonAppIcons.QUERY_REF : MekonAppIcons.ASSERTION_REF;
+	}
+
+	private boolean displayTypes() {
+
+		return !instanceGroup.getRootType().getSubs(CVisibility.EXPOSED).isEmpty();
 	}
 }
