@@ -148,9 +148,14 @@ class Descriptor {
 
 				IFrame frame = (IFrame)value;
 
-				if (!frame.getCategory().reference() && frame.getSlots().isEmpty()) {
+				if (!frame.getCategory().reference()) {
 
-					return getFrameValueDisjunctLabels(frame.getType());
+					CFrame frameType = frame.getType();
+
+					if (frameType.asDisjuncts().size() > 1) {
+
+						return getFrameValueDisjunctLabels(frameType);
+					}
 				}
 			}
 
