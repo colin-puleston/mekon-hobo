@@ -52,6 +52,7 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 	private Store store;
 	private IFrameFunction function;
 
+	private CIdentity replacingStoreId = null;
 	private Set<CIdentity> inMemoryIds = new HashSet<CIdentity>();
 
 	protected String convertInputValue(String text) {
@@ -66,7 +67,7 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 
 	protected boolean validInputText(String text) {
 
-		return super.validInputText(text) && checkUniqueStoreName(text);
+		return super.validInputText(text) && checkValidStoreName(text);
 	}
 
 	StoreIdInputter(JComponent parent, Store store, IFrameFunction function) {
@@ -82,9 +83,11 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		this.inMemoryIds.addAll(inMemoryIds);
 	}
 
-	void setInitialValue(CIdentity storeId) {
+	void setReplacingIdValue(CIdentity replacingStoreId) {
 
-		setInitialStringValue(MekonAppStoreId.toStoreName(storeId));
+		this.replacingStoreId = replacingStoreId;
+
+		setInitialStringValue(MekonAppStoreId.toStoreName(replacingStoreId));
 	}
 
 	CIdentity getIdInput() {
@@ -102,9 +105,18 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		return null;
 	}
 
-	private boolean checkUniqueStoreName(String storeName) {
+	private boolean checkValidStoreName(String storeName) {
 
-		if (idExists(storeNameToId(storeName))) {
+		CIdentity storeId = storeNameToId(storeName);
+
+		if (storeId.equals(replacingStoreId)) {
+
+			showMessage("Supplied name identical to current name");
+
+			return false;
+		}
+
+		if (idExists(storeId)) {
 
 			showMessage(getStoreNameExistsMessage(storeName));
 

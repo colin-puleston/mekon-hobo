@@ -81,20 +81,12 @@ abstract class InstanceDialog extends GDialog {
 			setViewOnly(isSelected());
 		}
 
-		ViewOnlySelector(boolean allowEdits) {
+		ViewOnlySelector() {
 
 			super(MODE_SELECTOR_LABEL);
 
 			setSelected(instanceTree.viewOnly());
-
-			if (allowEdits) {
-
-				addActionListener(this);
-			}
-			else {
-
-				setEnabled(false);
-			}
+			addActionListener(this);
 		}
 	}
 
@@ -147,20 +139,14 @@ abstract class InstanceDialog extends GDialog {
 		instanceTree = new InstanceTree(instantiator);
 	}
 
-	void display(boolean startAsViewOnly) {
+	void display(boolean startAsViewOnly, boolean enableDefaultStore) {
 
-		display(true, startAsViewOnly);
+		setViewOnly(startAsViewOnly);
+
+		display(createDisplay(enableDefaultStore));
 	}
 
-	void displayAsViewOnly() {
-
-		display(false, true);
-	}
-
-	void addControlComponents(ControlsPanel panel) {
-
-		panel.addControl(new StoreButton());
-		panel.addControl(new StoreAsButton());
+	void addExtraControlComponents(ControlsPanel panel) {
 	}
 
 	InstanceGroup getInstanceGroup() {
@@ -185,33 +171,28 @@ abstract class InstanceDialog extends GDialog {
 
 	abstract boolean disposeOnStoring();
 
-	private void display(boolean allowEdits, boolean startAsViewOnly) {
-
-		setViewOnly(startAsViewOnly);
-
-		display(createDisplay(allowEdits));
-	}
-
-	private JComponent createDisplay(boolean allowEdits) {
+	private JComponent createDisplay(boolean enableDefaultStore) {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(new ViewOnlySelector(allowEdits), BorderLayout.NORTH);
+		panel.add(new ViewOnlySelector(), BorderLayout.NORTH);
 		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
-
-		if (allowEdits) {
-
-			panel.add(createControlsComponent(), BorderLayout.SOUTH);
-		}
+		panel.add(createControlsComponent(enableDefaultStore), BorderLayout.SOUTH);
 
 		return panel;
 	}
 
-	private JComponent createControlsComponent() {
+	private JComponent createControlsComponent(boolean enableDefaultStore) {
 
 		ControlsPanel panel = new ControlsPanel(true);
 
-		addControlComponents(panel);
+		if (enableDefaultStore) {
+
+			panel.addControl(new StoreButton());
+		}
+
+		panel.addControl(new StoreAsButton());
+		addExtraControlComponents(panel);
 
 		return panel;
 	}

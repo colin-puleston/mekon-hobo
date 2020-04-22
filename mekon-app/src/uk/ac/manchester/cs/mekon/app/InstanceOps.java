@@ -100,14 +100,7 @@ class InstanceOps {
 
 		if (newStoreId != null) {
 
-			if (newStoreId.equals(storeId)) {
-
-				showMessage("Supplied name identical to current name");
-			}
-			else {
-
-				instanceGroup.checkRenameInstance(storeId, newStoreId);
-			}
+			instanceGroup.checkRenameInstance(storeId, newStoreId);
 		}
 	}
 
@@ -140,18 +133,18 @@ class InstanceOps {
 		return new AtomicFrameSelector(parent, rootType, function.query(), false);
 	}
 
-	private CIdentity checkObtainStoreId(CFrame type, CIdentity refingId, CIdentity defaultId) {
+	private CIdentity checkObtainStoreId(CFrame type, CIdentity refingId, CIdentity replacingId) {
 
-		StoreIdInputter inputter = createStoreIdInputter();
+		StoreIdInputter inputter = new StoreIdInputter(parent, store, function);
 
 		if (function.query()) {
 
 			inputter.setInMemoryIds(getExecutedQueryIds());
 		}
 
-		if (defaultId != null) {
+		if (replacingId != null) {
 
-			inputter.setInitialValue(defaultId);
+			inputter.setReplacingIdValue(replacingId);
 		}
 		else {
 
@@ -161,11 +154,6 @@ class InstanceOps {
 		return inputter.getIdInput();
 	}
 
-	private StoreIdInputter createStoreIdInputter() {
-
-		return new StoreIdInputter(parent, store, function);
-	}
-
 	private CIdentity displayDialog(
 						Instantiator instantiator,
 						CIdentity storeId,
@@ -173,7 +161,7 @@ class InstanceOps {
 
 		InstanceDialog dialog = createDialog(instantiator, storeId);
 
-		dialog.display(reloaded);
+		dialog.display(reloaded, true);
 
 		return dialog.instanceStored() ? dialog.getStoreId() : null;
 	}
@@ -205,11 +193,6 @@ class InstanceOps {
 	private Instantiator createInstantiator(CIdentity storeId, IFrame instance) {
 
 		return new Instantiator(instanceGroup, storeId, instance);
-	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
 	}
 
 	private String getNextInstanceNameDefault(CFrame type, CIdentity refingId) {

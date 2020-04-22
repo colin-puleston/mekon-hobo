@@ -69,11 +69,9 @@ class QueryDialog extends InstanceDialog {
 		return false;
 	}
 
-	void addControlComponents(ControlsPanel panel) {
+	void addExtraControlComponents(ControlsPanel panel) {
 
 		panel.addControl(new ExecuteButton());
-
-		super.addControlComponents(panel);
 	}
 
 	private void execute() {

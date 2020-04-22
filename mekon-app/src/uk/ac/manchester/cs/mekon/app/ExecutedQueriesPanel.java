@@ -152,7 +152,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayQuery(CIdentity storeId, IFrame query) {
 
-		createQueryDialog(storeId, query).displayAsViewOnly();
+		createQueryDialog(storeId, query).display(true, false);
 	}
 
 	private QueryDialog createQueryDialog(CIdentity storeId, IFrame query) {
