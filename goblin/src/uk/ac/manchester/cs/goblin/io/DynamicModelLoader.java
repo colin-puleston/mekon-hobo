@@ -95,7 +95,7 @@ class DynamicModelLoader {
 
 			private OWLQuantifiedObjectRestriction asRestriction(OWLClassExpression expr) {
 
-				return asType(expr, OWLQuantifiedObjectRestriction.class);
+				return asType(expr, getRestrictionType());
 			}
 		}
 
