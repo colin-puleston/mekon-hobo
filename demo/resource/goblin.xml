@@ -12,13 +12,15 @@
 		rootConcept="http://mekon/demo-core.owl#Industry">
 		<SimpleConstraintType
 			linkingProperty="http://mekon/demo-core.owl#sector"
-			rootTargetConcept="http://mekon/demo-core.owl#IndustrySector">
+			rootTargetConcept="http://mekon/demo-core.owl#IndustrySector"
+			semantics="ALL">
 		</SimpleConstraintType>
 		<AnchoredConstraintType
 			anchorConcept="http://mekon/demo-core.owl#Job"
 			sourceProperty="http://mekon/demo-core.owl#industry"
 			targetProperty="http://mekon/demo-core.owl#jobType"
-			rootTargetConcept="http://mekon/demo-core.owl#JobType">
+			rootTargetConcept="http://mekon/demo-core.owl#JobType"
+			semantics="ALL">
 		</AnchoredConstraintType>
 	</Hierarchy>
 
