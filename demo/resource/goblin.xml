@@ -11,11 +11,13 @@
 	<Hierarchy
 		rootConcept="http://mekon/demo-core.owl#Industry">
 		<SimpleConstraintType
+			name="industry sector"
 			linkingProperty="http://mekon/demo-core.owl#sector"
 			rootTargetConcept="http://mekon/demo-core.owl#IndustrySector"
 			semantics="ALL">
 		</SimpleConstraintType>
 		<AnchoredConstraintType
+			name="industry type"
 			anchorConcept="http://mekon/demo-core.owl#Job"
 			sourceProperty="http://mekon/demo-core.owl#industry"
 			targetProperty="http://mekon/demo-core.owl#jobType"
