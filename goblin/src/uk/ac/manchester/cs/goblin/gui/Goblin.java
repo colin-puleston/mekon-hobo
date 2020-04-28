@@ -93,6 +93,11 @@ public class Goblin extends GFrame {
 			return getCurrentModel().getHierarchies();
 		}
 
+		String getTitle(Hierarchy hierarchy) {
+
+			return hierarchy.getRootConcept().getConceptId().getLabel();
+		}
+
 		Concept getRootConcept(Hierarchy hierarchy) {
 
 			return hierarchy.getRootConcept();

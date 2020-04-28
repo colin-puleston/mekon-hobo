@@ -84,12 +84,9 @@ abstract class ConceptTreesPanel<S> extends JTabbedPane {
 
 	abstract List<S> getSources();
 
+	abstract String getTitle(S treeSource);
+
 	abstract Concept getRootConcept(S treeSource);
 
 	abstract JComponent createComponent(S treeSource);
-
-	private String getTitle(S treeSource) {
-
-		return getRootConcept(treeSource).getConceptId().getLabel();
-	}
 }

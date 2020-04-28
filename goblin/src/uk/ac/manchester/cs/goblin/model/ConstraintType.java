@@ -7,9 +7,15 @@ import java.util.*;
  */
 public abstract class ConstraintType {
 
+	private String name;
 	private Concept rootSourceConcept;
 	private Concept rootTargetConcept;
 	private ConstraintSemantics semantics;
+
+	public String getName() {
+
+		return name;
+	}
 
 	public Concept getRootSourceConcept() {
 
@@ -27,10 +33,12 @@ public abstract class ConstraintType {
 	}
 
 	protected ConstraintType(
+				String name,
 				Concept rootSourceConcept,
 				Concept rootTargetConcept,
 				ConstraintSemantics semantics) {
 
+		this.name = name;
 		this.rootSourceConcept = rootSourceConcept;
 		this.rootTargetConcept = rootTargetConcept;
 		this.semantics = semantics;

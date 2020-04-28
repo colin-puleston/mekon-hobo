@@ -63,6 +63,11 @@ class HierarchyPanel extends GSplitPane {
 			return hierarchy.getConstraintTypes();
 		}
 
+		String getTitle(ConstraintType type) {
+
+			return type.getName();
+		}
+
 		Concept getRootConcept(ConstraintType type) {
 
 			return type.getRootTargetConcept();

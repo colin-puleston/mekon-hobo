@@ -222,11 +222,11 @@ class ConstraintPanel extends JPanel {
 
 				for (Concept target : targets) {
 
-					addEntity(target);
+					addTarget(target);
 				}
 			}
 
-			void addEntity(Concept target) {
+			void addTarget(Concept target) {
 
 				addEntity(target, createCellDisplay(target));
 			}
@@ -377,7 +377,7 @@ class ConstraintPanel extends JPanel {
 				}
 			}
 
-			targetSelectionsList.addEntity(newSelection);
+			targetSelectionsList.addTarget(newSelection);
 		}
 
 		private void removeTargetSelections(List<Concept> selections) {

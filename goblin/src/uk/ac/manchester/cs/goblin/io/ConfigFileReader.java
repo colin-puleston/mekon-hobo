@@ -26,6 +26,7 @@ class ConfigFileReader {
 
 	static private final String ROOT_CONCEPT_ATTR = "rootConcept";
 
+	static private final String CONSTRAINT_TYPE_NAME_ATTR = "name";
 	static private final String ANCHOR_CONCEPT_ATTR = "anchorConcept";
 	static private final String SOURCE_PROPERTY_ATTR = "sourceProperty";
 	static private final String TARGET_PROPERTY_ATTR = "targetProperty";
@@ -61,6 +62,7 @@ class ConfigFileReader {
 
 			abstract ConstraintType loadType(
 										KConfigNode node,
+										String name,
 										Concept rootSrc,
 										Concept rootTgt,
 										ConstraintSemantics semantics);
@@ -77,6 +79,7 @@ class ConfigFileReader {
 
 				return loadType(
 							node,
+							getConstraintTypeName(node),
 							hierarchy.getRootConcept(),
 							getRootTargetConcept(node),
 							getConstraintSemantics(node));
@@ -92,13 +95,14 @@ class ConfigFileReader {
 
 			ConstraintType loadType(
 								KConfigNode node,
+								String name,
 								Concept rootSrc,
 								Concept rootTgt,
 								ConstraintSemantics semantics) {
 
 				EntityId lnkProp = getPropertyId(node, LINKING_PROPERTY_ATTR);
 
-				return new SimpleConstraintType(lnkProp, rootSrc, rootTgt, semantics);
+				return new SimpleConstraintType(name, lnkProp, rootSrc, rootTgt, semantics);
 			}
 		}
 
@@ -111,6 +115,7 @@ class ConfigFileReader {
 
 			ConstraintType loadType(
 								KConfigNode node,
+								String name,
 								Concept rootSrc,
 								Concept rootTgt,
 								ConstraintSemantics semantics) {
@@ -120,7 +125,7 @@ class ConfigFileReader {
 				EntityId srcProp = getPropertyId(node, SOURCE_PROPERTY_ATTR);
 				EntityId tgtProp = getPropertyId(node, TARGET_PROPERTY_ATTR);
 
-				return new AnchoredConstraintType(anchor, srcProp, tgtProp, rootSrc, rootTgt, semantics);
+				return new AnchoredConstraintType(name, anchor, srcProp, tgtProp, rootSrc, rootTgt, semantics);
 			}
 		}
 
@@ -143,14 +148,19 @@ class ConfigFileReader {
 			}
 		}
 
-		private Concept getRootTargetConcept(KConfigNode node) {
-
-			return model.getHierarchy(getRootTargetConceptId(node)).getRootConcept();
-		}
-
 		private EntityId getRootConceptId(KConfigNode node) {
 
 			return getPropertyId(node, ROOT_CONCEPT_ATTR);
+		}
+
+		private String getConstraintTypeName(KConfigNode node) {
+
+			return node.getString(CONSTRAINT_TYPE_NAME_ATTR);
+		}
+
+		private Concept getRootTargetConcept(KConfigNode node) {
+
+			return model.getHierarchy(getRootTargetConceptId(node)).getRootConcept();
 		}
 
 		private EntityId getRootTargetConceptId(KConfigNode node) {
