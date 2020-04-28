@@ -44,18 +44,28 @@ class Ontology {
 			OWLObjectProperty property,
 			OWLClass value) {
 
-		OWLObjectSomeValuesFrom valueRes = factory.getOWLObjectSomeValuesFrom(property, value);
-		OWLObjectIntersectionOf defn = factory.getOWLObjectIntersectionOf(rootSubject, valueRes);
-
-		addAxiom(factory.getOWLEquivalentClassesAxiom(subject, defn));
+		addAxiom(getEquivalenceAxiom(subject, getPremiseDefnExpr(rootSubject, property, value)));
 	}
 
-	void addConsequenceAxiom(OWLClass subject, OWLObjectProperty property, Set<OWLClass> values) {
+	void addAllConsequenceAxiom(
+			OWLClass subject,
+			OWLObjectProperty property,
+			Set<OWLClass> values) {
 
-		OWLClassExpression valuesExpr = getConstraintTargetValuesExpr(values);
-		OWLObjectAllValuesFrom valuesRes = factory.getOWLObjectAllValuesFrom(property, valuesExpr);
+		OWLClassExpression valuesExpr = getAllConsequenceValuesExpr(values);
 
-		addAxiom(factory.getOWLSubClassOfAxiom(subject, valuesRes));
+		addAxiom(getSubClassAxiom(subject, getAllValuesFrom(property, valuesExpr)));
+	}
+
+	void addSomeConsequenceAxioms(
+			OWLClass subject,
+			OWLObjectProperty property,
+			Set<OWLClass> values) {
+
+		for (OWLClass value : values) {
+
+			addAxiom(getSubClassAxiom(subject, getSomeValuesFrom(property, value)));
+		}
 	}
 
 	OWLClass addClass(OWLClass sup, IRI iri) {
@@ -63,7 +73,7 @@ class Ontology {
 		OWLClass cls = getClass(iri);
 
 		addAxiom(factory.getOWLDeclarationAxiom(cls));
-		addAxiom(factory.getOWLSubClassOfAxiom(cls, sup));
+		addAxiom(getSubClassAxiom(cls, sup));
 
 		return cls;
 	}
@@ -198,7 +208,17 @@ class Ontology {
 		return new StructuralReasonerFactory().createReasoner(mainOntology);
 	}
 
-	private OWLClassExpression getConstraintTargetValuesExpr(Set<OWLClass> values) {
+	private OWLObjectIntersectionOf getPremiseDefnExpr(
+										OWLClass rootSubject,
+										OWLObjectProperty property,
+										OWLClass value) {
+
+		OWLObjectSomeValuesFrom valueRes = getSomeValuesFrom(property, value);
+
+		return factory.getOWLObjectIntersectionOf(rootSubject, valueRes);
+	}
+
+	private OWLClassExpression getAllConsequenceValuesExpr(Set<OWLClass> values) {
 
 		if (values.size() == 1) {
 
@@ -206,6 +226,34 @@ class Ontology {
 		}
 
 		return factory.getOWLObjectUnionOf(values);
+	}
+
+	private OWLObjectAllValuesFrom getAllValuesFrom(
+										OWLObjectProperty property,
+										OWLClassExpression filler) {
+
+		return factory.getOWLObjectAllValuesFrom(property, filler);
+	}
+
+	private OWLObjectSomeValuesFrom getSomeValuesFrom(
+										OWLObjectProperty property,
+										OWLClassExpression filler) {
+
+		return factory.getOWLObjectSomeValuesFrom(property, filler);
+	}
+
+	private OWLSubClassOfAxiom getSubClassAxiom(
+									OWLClassExpression sub,
+									OWLClassExpression sup) {
+
+		return factory.getOWLSubClassOfAxiom(sub, sup);
+	}
+
+	private OWLEquivalentClassesAxiom getEquivalenceAxiom(
+											OWLClassExpression expr1,
+											OWLClassExpression expr2) {
+
+		return factory.getOWLEquivalentClassesAxiom(expr1, expr2);
 	}
 
 	private OWLAxiom createLabelAxiom(OWLEntity entity, String label) {

@@ -9,6 +9,7 @@ public abstract class ConstraintType {
 
 	private Concept rootSourceConcept;
 	private Concept rootTargetConcept;
+	private ConstraintSemantics semantics;
 
 	public Concept getRootSourceConcept() {
 
@@ -20,10 +21,19 @@ public abstract class ConstraintType {
 		return rootTargetConcept;
 	}
 
-	protected ConstraintType(Concept rootSourceConcept, Concept rootTargetConcept) {
+	public ConstraintSemantics getSemantics() {
+
+		return semantics;
+	}
+
+	protected ConstraintType(
+				Concept rootSourceConcept,
+				Concept rootTargetConcept,
+				ConstraintSemantics semantics) {
 
 		this.rootSourceConcept = rootSourceConcept;
 		this.rootTargetConcept = rootTargetConcept;
+		this.semantics = semantics;
 	}
 
 	Constraint createRootConstraint() {

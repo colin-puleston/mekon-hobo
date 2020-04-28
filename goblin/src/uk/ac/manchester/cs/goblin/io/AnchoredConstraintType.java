@@ -17,9 +17,10 @@ class AnchoredConstraintType extends ConstraintType {
 		EntityId sourcePropertyId,
 		EntityId targetPropertyId,
 		Concept rootSourceConcept,
-		Concept rootTargetConcept) {
+		Concept rootTargetConcept,
+		ConstraintSemantics semantics) {
 
-		super(rootSourceConcept, rootTargetConcept);
+		super(rootSourceConcept, rootTargetConcept, semantics);
 
 		this.anchorConceptId = anchorConceptId;
 		this.sourcePropertyId = sourcePropertyId;

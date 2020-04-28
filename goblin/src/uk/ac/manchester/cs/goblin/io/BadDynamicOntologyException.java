@@ -10,5 +10,7 @@ public class BadDynamicOntologyException extends Exception {
 	BadDynamicOntologyException(RuntimeException origin) {
 
 		super("Bad dynamic-ontology: " + origin.getMessage());
+
+		origin.printStackTrace();
 	}
 }

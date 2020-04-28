@@ -12,9 +12,10 @@ class SimpleConstraintType extends ConstraintType {
 	SimpleConstraintType(
 		EntityId linkingPropertyId,
 		Concept rootSourceConcept,
-		Concept rootTargetConcept) {
+		Concept rootTargetConcept,
+		ConstraintSemantics semantics) {
 
-		super(rootSourceConcept, rootTargetConcept);
+		super(rootSourceConcept, rootTargetConcept, semantics);
 
 		this.linkingPropertyId = linkingPropertyId;
 	}

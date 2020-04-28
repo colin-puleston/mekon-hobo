@@ -51,7 +51,7 @@ class DynamicModelRenderer {
 
 			OWLObjectProperty prop = getObjectProperty(type.getLinkingPropertyId());
 
-			ontology.addConsequenceAxiom(source, prop, targets);
+			addConsequenceAxiom(source, prop, targets);
 		}
 
 		private void renderAnchored(AnchoredConstraintType type) {
@@ -63,7 +63,25 @@ class DynamicModelRenderer {
 			OWLObjectProperty tgtProp = getObjectProperty(type.getTargetPropertyId());
 
 			ontology.addPremiseAxiom(anchor, anchorSub, srcProp, source);
-			ontology.addConsequenceAxiom(anchorSub, tgtProp, targets);
+			addConsequenceAxiom(anchorSub, tgtProp, targets);
+		}
+
+		private void addConsequenceAxiom(
+						OWLClass subject,
+						OWLObjectProperty property,
+						Set<OWLClass> values) {
+
+			ConstraintSemantics semantics = constraint.getType().getSemantics();
+
+			if (semantics.includesSome()) {
+
+				ontology.addSomeConsequenceAxioms(subject, property, values);
+			}
+
+			if (semantics.includesAll()) {
+
+				ontology.addAllConsequenceAxiom(subject, property, values);
+			}
 		}
 
 		private IRI createAnchorSubIRI(AnchoredConstraintType type) {
