@@ -153,31 +153,19 @@ class DynamicModelLoader {
 			}
 		}
 
-		<T extends OWLClassAxiom>Set<T> getSubjectAxioms(Class<T> type) {
+		<T extends OWLClassAxiom>Set<T> getSubjectAxioms(Class<T> axiomCls) {
 
 			Set<T> axioms = new HashSet<T>();
 
 			for (OWLClassAxiom axiom : subjectAxioms) {
 
-				if (type.isAssignableFrom(axiom.getClass())) {
+				if (axiomCls.isAssignableFrom(axiom.getClass())) {
 
-					axioms.add(type.cast(axiom));
+					axioms.add(axiomCls.cast(axiom));
 				}
 			}
 
 			return axioms;
-		}
-
-		<E>E getOne(Set<E> elements) {
-
-			E element = lookForOne(elements);
-
-			if (element == null) {
-
-				throw createBadAxiomsException();
-			}
-
-			return element;
 		}
 
 		<E>E lookForOne(Set<E> elements) {
@@ -285,6 +273,18 @@ class DynamicModelLoader {
 
 			return null;
 		}
+
+		private <E>E getOne(Set<E> elements) {
+
+			E element = lookForOne(elements);
+
+			if (element == null) {
+
+				throw createBadAxiomsException();
+			}
+
+			return element;
+		}
 	}
 
 	private class SimpleConstraintLoader extends ConstraintLoader {
@@ -298,8 +298,6 @@ class DynamicModelLoader {
 	}
 
 	private class AnchoredConstraintLoader extends ConstraintLoader {
-
-		private AnchoredConstraintType type;
 
 		private OWLClass anchor;
 		private OWLClass anchorSub;
@@ -348,7 +346,6 @@ class DynamicModelLoader {
 
 			super(type, anchorSub, type.getTargetPropertyId());
 
-			this.type = type;
 			this.anchor = anchor;
 			this.anchorSub = anchorSub;
 
