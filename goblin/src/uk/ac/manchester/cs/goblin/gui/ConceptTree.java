@@ -320,7 +320,7 @@ abstract class ConceptTree extends GSelectorTree {
 
 	boolean showConstraint(Constraint constraint) {
 
-		throw new Error("Method should never be invoked!");
+		return false;
 	}
 
 	Set<Concept> getRootConcepts() {
