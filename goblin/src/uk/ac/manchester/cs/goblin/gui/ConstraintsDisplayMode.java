@@ -24,54 +24,10 @@
 
 package uk.ac.manchester.cs.goblin.gui;
 
-import java.awt.Color;
-import javax.swing.Icon;
-
-import uk.ac.manchester.cs.mekon.gui.*;
-import uk.ac.manchester.cs.mekon.gui.icon.*;
-
-import uk.ac.manchester.cs.goblin.model.*;
-
 /**
  * @author Colin Puleston
  */
-enum ConceptCellDisplay {
+enum ConstraintsDisplayMode {
 
-	DEFAULT(Color.CYAN, false),
-	MOVE_SUBJECT(Color.GRAY.brighter(), false),
-	DIRECT_CONSTRAINT_TARGET(Color.GREEN, false),
-	INDIRECT_CONSTRAINT_TARGET(Color.YELLOW, false),
-	SELECTABLE(Color.GRAY, false),
-	SELECTION(Color.GRAY, true);
-
-	static private final int ICON_SIZE = 12;
-	static private final Color SELECTED_BACKGROUND_CLR = new Color(255,237,160);
-
-	private Icon icon;
-	private boolean selected;
-
-	GCellDisplay getFor(Concept concept) {
-
-		String label = concept.getConceptId().getLabel();
-		GCellDisplay display = new GCellDisplay(label, icon);
-
-		if (selected) {
-
-			display.setBackgroundColour(SELECTED_BACKGROUND_CLR);
-		}
-
-		return display;
-	}
-
-	ConceptCellDisplay(Color clr, boolean selected) {
-
-		icon = createIcon(clr);
-
-		this.selected = selected;
-	}
-
-	private GIcon createIcon(Color clr) {
-
-		return new GIcon(new GOvalRenderer(clr, ICON_SIZE));
-	}
+	NONE, EDIT_TYPE_ONLY, ALL;
 }

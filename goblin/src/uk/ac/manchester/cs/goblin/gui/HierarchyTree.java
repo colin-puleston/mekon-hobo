@@ -37,6 +37,9 @@ class HierarchyTree extends ConceptTree {
 
 	private ConceptMover conceptMover;
 
+	private ConstraintsDisplayMode constraintsDisplayMode = ConstraintsDisplayMode.NONE;
+	private ConstraintType constraintTypeSelection = null;
+
 	HierarchyTree(Hierarchy hierarchy, ConceptMover conceptMover) {
 
 		super(false);
@@ -46,11 +49,37 @@ class HierarchyTree extends ConceptTree {
 		initialise(hierarchy.getRootConcept());
 	}
 
-	ConceptCellDisplay getConceptDisplay(Concept concept) {
+	GCellDisplay getConceptDisplay(Concept concept) {
 
-		return conceptMover.movingConcept(concept)
-					? ConceptCellDisplay.MOVE_SUBJECT
-					: ConceptCellDisplay.DEFAULT;
+		return getGoblinCellDisplay(concept).forConcept(concept);
+	}
+
+	void setConstraintsDisplayMode(ConstraintsDisplayMode mode) {
+
+		constraintsDisplayMode = mode;
+
+		redisplayConstraints();
+	}
+
+	void setConstraintTypeSelection(ConstraintType selection) {
+
+		constraintTypeSelection = selection;
+
+		redisplayConstraints();
+	}
+
+	boolean showConstraint(Constraint constraint) {
+
+		switch (constraintsDisplayMode) {
+
+			case NONE:
+				return false;
+
+			case ALL:
+				return true;
+		}
+
+		return constraint.getType() == constraintTypeSelection;
 	}
 
 	void onConstraintChange() {
@@ -62,6 +91,13 @@ class HierarchyTree extends ConceptTree {
 
 		reselect();
 		updateAllNodeDisplays();
+	}
+
+	private GoblinCellDisplay getGoblinCellDisplay(Concept concept) {
+
+		return conceptMover.movingConcept(concept)
+					? GoblinCellDisplay.CONCEPTS_MOVE_SUBJECT
+					: GoblinCellDisplay.CONCEPTS_DEFAULT;
 	}
 
 	private void reselect() {

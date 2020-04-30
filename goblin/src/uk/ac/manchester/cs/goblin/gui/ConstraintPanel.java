@@ -96,16 +96,16 @@ class ConstraintPanel extends JPanel {
 			add(component, BorderLayout.SOUTH);
 		}
 
-		abstract ConceptCellDisplay getCellDisplay();
+		abstract GoblinCellDisplay getCellDisplay();
 	}
 
 	private class DefaultPopulator extends Populator {
 
 		static private final long serialVersionUID = -1;
 
-		ConceptCellDisplay getCellDisplay() {
+		GoblinCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGET;
+			return GoblinCellDisplay.CONSTRAINTS_INDIRECT_TARGET;
 		}
 	}
 
@@ -113,9 +113,9 @@ class ConstraintPanel extends JPanel {
 
 		static private final long serialVersionUID = -1;
 
-		ConceptCellDisplay getCellDisplay() {
+		GoblinCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.DIRECT_CONSTRAINT_TARGET;
+			return GoblinCellDisplay.CONSTRAINTS_DIRECT_TARGET;
 		}
 	}
 
@@ -165,9 +165,9 @@ class ConstraintPanel extends JPanel {
 			addSecondaryComponent(createConstraintUpdatePanel());
 		}
 
-		ConceptCellDisplay getCellDisplay() {
+		GoblinCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.DIRECT_CONSTRAINT_TARGET;
+			return GoblinCellDisplay.CONSTRAINTS_DIRECT_TARGET;
 		}
 
 		private void repopulateForConstraintEdit() {
@@ -233,7 +233,7 @@ class ConstraintPanel extends JPanel {
 
 			private GCellDisplay createCellDisplay(Concept target) {
 
-				return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGET.getFor(target);
+				return GoblinCellDisplay.CONSTRAINTS_INDIRECT_TARGET.forConcept(target);
 			}
 		}
 
@@ -327,9 +327,9 @@ class ConstraintPanel extends JPanel {
 			targetSelectionsList.initialise(targets);
 		}
 
-		ConceptCellDisplay getCellDisplay() {
+		GoblinCellDisplay getCellDisplay() {
 
-			return ConceptCellDisplay.INDIRECT_CONSTRAINT_TARGET;
+			return GoblinCellDisplay.CONSTRAINTS_INDIRECT_TARGET;
 		}
 
 		private JPanel createConstraintCreationPanel() {
@@ -415,7 +415,12 @@ class ConstraintPanel extends JPanel {
 
 		protected void onSelected(GNode node) {
 
-			resetSourceConcept(sourcesTree.getSelectedConcept());
+			Concept selected = sourcesTree.getSelectedConcept();
+
+			if (selected != null) {
+
+				resetSourceConcept(selected);
+			}
 		}
 
 		protected void onDeselected(GNode node) {

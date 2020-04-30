@@ -37,7 +37,7 @@ class ConstraintTargetsTree extends ConceptTree {
 
 	static private final long serialVersionUID = -1;
 
-	private ConceptCellDisplay cellDisplay;
+	private GoblinCellDisplay cellDisplay;
 
 	private class SelectionsPruner extends GSelectionListener<GNode> {
 
@@ -79,7 +79,7 @@ class ConstraintTargetsTree extends ConceptTree {
 		}
 	}
 
-	ConstraintTargetsTree(Constraint constraint, ConceptCellDisplay cellDisplay) {
+	ConstraintTargetsTree(Constraint constraint, GoblinCellDisplay cellDisplay) {
 
 		super(true);
 
@@ -90,9 +90,9 @@ class ConstraintTargetsTree extends ConceptTree {
 		initialise(constraint.getTargetValues());
 	}
 
-	ConceptCellDisplay getConceptDisplay(Concept concept) {
+	GCellDisplay getConceptDisplay(Concept concept) {
 
-		return cellDisplay;
+		return cellDisplay.forConcept(concept);
 	}
 
 	void onConstraintChange() {

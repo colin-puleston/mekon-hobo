@@ -46,7 +46,7 @@ abstract class ConceptTree extends GSelectorTree {
 
 	static private Concept extractConcept(ConceptTreeNode selectedNode) {
 
-		return selectedNode != null ? selectedNode.getConcept() : null;
+		return selectedNode != null ? selectedNode.getConceptOrNull() : null;
 	}
 
 	private Set<Concept> rootConcepts;
@@ -61,6 +61,28 @@ abstract class ConceptTree extends GSelectorTree {
 		ConceptTreeNode() {
 
 			super(ConceptTree.this);
+		}
+
+		void redisplayAllConstraints(boolean parentWasCollapsed) {
+
+			boolean wasCollapsed = collapsed();
+
+			for (GNode child : getChildren()) {
+
+				((ConceptTreeNode)child).redisplayAllConstraints(wasCollapsed);
+			}
+
+			boolean hasConstraintChildren = redisplayConstraints();
+
+			if (parentWasCollapsed || (wasCollapsed && !hasConstraintChildren)) {
+
+				collapse();
+			}
+		}
+
+		boolean redisplayConstraints() {
+
+			return false;
 		}
 
 		void addChildrenFor(Set<Concept> concepts) {
@@ -79,17 +101,23 @@ abstract class ConceptTree extends GSelectorTree {
 			addChild(new ConceptNode(concept));
 		}
 
-		abstract Concept getConcept();
+		Concept getConceptOrNull() {
+
+			return null;
+		}
 
 		ConceptNode findDescendantNode(Concept forConcept) {
 
 			for (GNode child : getChildren()) {
 
-				ConceptNode found = ((ConceptNode)child).findNode(forConcept);
+				if (child instanceof ConceptNode) {
 
-				if (found != null) {
+					ConceptNode found = ((ConceptNode)child).findNode(forConcept);
 
-					return found;
+					if (found != null) {
+
+						return found;
+					}
 				}
 			}
 
@@ -114,11 +142,6 @@ abstract class ConceptTree extends GSelectorTree {
 		RootNode(Set<Concept> rootConcepts) {
 
 			this.rootConcepts = rootConcepts;
-		}
-
-		Concept getConcept() {
-
-			throw new Error("Cannot get concept from root node!");
 		}
 	}
 
@@ -162,11 +185,25 @@ abstract class ConceptTree extends GSelectorTree {
 		protected void addInitialChildren() {
 
 			addChildrenFor(concept.getChildren());
+			addConstraintChildren();
+		}
+
+		protected int compareChildrenPriorToLabelCompare(GNode first, GNode second) {
+
+			boolean firstIsConcept = first instanceof ConceptNode;
+			boolean secondIsConcept = second instanceof ConceptNode;
+
+			if (firstIsConcept == secondIsConcept) {
+
+				return 0;
+			}
+
+			return firstIsConcept ? -1 : 1;
 		}
 
 		protected GCellDisplay getDisplay() {
 
-			return getConceptDisplay(concept).getFor(concept);
+			return getConceptDisplay(concept);
 		}
 
 		ConceptNode(Concept concept) {
@@ -176,7 +213,12 @@ abstract class ConceptTree extends GSelectorTree {
 			new ModelUpdateTracker();
 		}
 
-		Concept getConcept() {
+		boolean redisplayConstraints() {
+
+			return addConstraintChildren();
+		}
+
+		Concept getConceptOrNull() {
 
 			return concept;
 		}
@@ -184,6 +226,70 @@ abstract class ConceptTree extends GSelectorTree {
 		ConceptNode findNode(Concept forConcept) {
 
 			return concept.equals(forConcept) ? this : findDescendantNode(forConcept);
+		}
+
+		private boolean addConstraintChildren() {
+
+			boolean anyAdded = false;
+
+			for (Constraint constraint : concept.getConstraints()) {
+
+				if (showConstraint(constraint)) {
+
+					addChild(new ConstraintNode(this, constraint));
+
+					anyAdded = true;
+				}
+			}
+
+			return anyAdded;
+		}
+	}
+
+	private class ConstraintNode extends ConceptTreeNode {
+
+		private GCellDisplay display;
+
+		private class Deselector extends GSelectionListener<GNode> {
+
+			private ConceptNode parentNode;
+
+			protected void onSelected(GNode node) {
+
+				if (node == ConstraintNode.this) {
+
+					parentNode.select();
+				}
+			}
+
+			protected void onDeselected(GNode node) {
+			}
+
+			Deselector(ConceptNode parentNode) {
+
+				this.parentNode = parentNode;
+
+				addNodeSelectionListener(this);
+			}
+		}
+
+		protected GCellDisplay getDisplay() {
+
+			return display;
+		}
+
+		ConstraintNode(ConceptNode parentNode, Constraint constraint) {
+
+			display = GoblinCellDisplay.CONCEPTS_CONSTRAINT.forConstraint(constraint);
+
+			new Deselector(parentNode);
+		}
+
+		boolean redisplayConstraints() {
+
+			remove();
+
+			return false;
 		}
 	}
 
@@ -205,6 +311,16 @@ abstract class ConceptTree extends GSelectorTree {
 		initialise(new RootNode(rootConcepts));
 
 		this.rootConcepts = rootConcepts;
+	}
+
+	void redisplayConstraints() {
+
+		getConceptTreeRootNode().redisplayAllConstraints(false);
+	}
+
+	boolean showConstraint(Constraint constraint) {
+
+		throw new Error("Method should never be invoked!");
 	}
 
 	Set<Concept> getRootConcepts() {
@@ -261,7 +377,7 @@ abstract class ConceptTree extends GSelectorTree {
 		return true;
 	}
 
-	abstract ConceptCellDisplay getConceptDisplay(Concept concept);
+	abstract GCellDisplay getConceptDisplay(Concept concept);
 
 	abstract void onConstraintChange();
 

@@ -44,7 +44,9 @@ abstract class ConceptTreeSelectionDependentButton extends SelectionDependentBut
 
 	boolean enableOnSelection(GNode selection) {
 
-		return enableOnSelectedConcept(ConceptTree.extractConcept(selection));
+		Concept concept = ConceptTree.extractConcept(selection);
+
+		return concept != null && enableOnSelectedConcept(concept);
 	}
 
 	boolean enableOnSelectedConcept(Concept selection) {

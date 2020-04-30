@@ -60,11 +60,11 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 			return filterPanel.requiredInTree(concept);
 		}
 
-		ConceptCellDisplay getConceptDisplay(Concept concept) {
+		GCellDisplay getConceptDisplay(Concept concept) {
 
-			return filterPanel.passesFilter(concept)
-						? ConceptCellDisplay.SELECTION
-						: ConceptCellDisplay.SELECTABLE;
+			boolean highlight = filterPanel.passesFilter(concept);
+
+			return GoblinCellDisplay.CONCEPT_SELECTOR.forConcept(concept, highlight);
 		}
 
 		void onConstraintChange() {
@@ -102,7 +102,12 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 
 		protected void onSelected(GNode node) {
 
-			onSelection(tree.getSelectedConcept());
+			Concept selected = tree.getSelectedConcept();
+
+			if (selected != null) {
+
+				onSelection(selected);
+			}
 		}
 
 		protected void onDeselected(GNode node) {

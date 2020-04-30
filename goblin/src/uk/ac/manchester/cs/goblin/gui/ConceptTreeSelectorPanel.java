@@ -142,7 +142,7 @@ class ConceptTreeSelectorPanel extends JPanel {
 
 			private GCellDisplay getCellDisplay(Concept concept) {
 
-				return ConceptCellDisplay.SELECTABLE.getFor(concept);
+				return GoblinCellDisplay.CONCEPT_SELECTOR.forConcept(concept);
 			}
 		}
 

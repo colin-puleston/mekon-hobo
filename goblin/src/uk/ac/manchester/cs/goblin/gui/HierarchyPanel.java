@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.goblin.gui;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 
@@ -40,12 +41,32 @@ class HierarchyPanel extends GSplitPane {
 	static private final long serialVersionUID = -1;
 
 	static private final String TREE_PANEL_TITLE = "Selected hierarchy";
-	static private final String CONSTRAINTS_PANEL_TITLE = "Dependent hierarchies";
+	static private final String CONSTRAINTS_PANEL_TITLE = "Constraints editor";
 
 	private Hierarchy hierarchy;
 
 	private HierarchyTree hierarchyTree;
 	private ConstraintsPanel constraintsPanel;
+
+	private class ConstraintTypeSelectionRelayer implements ChangeListener {
+
+		public void stateChanged(ChangeEvent e) {
+
+			relaySelection(constraintsPanel.getSelectedIndex());
+		}
+
+		ConstraintTypeSelectionRelayer() {
+
+			constraintsPanel.addChangeListener(this);
+
+			relaySelection(0);
+		}
+
+		private void relaySelection(int index) {
+
+			hierarchyTree.setConstraintTypeSelection(getConstraintType(index));
+		}
+	}
 
 	private class ConstraintsPanel extends ConceptTreesPanel<ConstraintType> {
 
@@ -88,6 +109,11 @@ class HierarchyPanel extends GSplitPane {
 		hierarchyTree = treePanel.getTree();
 		constraintsPanel = new ConstraintsPanel();
 
+		if (hierarchy.isConstrained()) {
+
+			new ConstraintTypeSelectionRelayer();
+		}
+
 		setLeftComponent(createTreeComponent(treePanel));
 		setRightComponent(createConstraintsComponent());
 	}
@@ -106,5 +132,10 @@ class HierarchyPanel extends GSplitPane {
 	private JComponent createConstraintsComponent() {
 
 		return TitledPanels.create(constraintsPanel, CONSTRAINTS_PANEL_TITLE);
+	}
+
+	private ConstraintType getConstraintType(int index) {
+
+		return hierarchy.getConstraintTypes().get(index);
 	}
 }

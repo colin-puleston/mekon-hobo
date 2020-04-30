@@ -24,7 +24,8 @@
 
 package uk.ac.manchester.cs.goblin.gui;
 
-import java.awt.*;
+import java.util.*;
+import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -38,6 +39,10 @@ import uk.ac.manchester.cs.goblin.model.*;
 class HierarchyTreePanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
+
+	static private final String NO_CONSTRAINTS_LABEL = "Show no constraints";
+	static private final String EDIT_TYPE_CONSTRAINTS_LABEL = "Show current edit type constraints";
+	static private final String ALL_CONSTRAINTS_LABEL = "Show all constraints";
 
 	static private final String ADD_LABEL = "Add...";
 	static private final String REMOVE_LABEL = "Del";
@@ -57,6 +62,52 @@ class HierarchyTreePanel extends JPanel {
 	private HierarchyTree tree;
 
 	private ConceptMover conceptMover = new ConceptMover();
+
+	private class DisplayModeSelector extends JComboBox<Object> {
+
+		static private final long serialVersionUID = -1;
+
+		private class Option {
+
+			private ConstraintsDisplayMode mode;
+			private String label;
+
+			public String toString() {
+
+				return label;
+			}
+
+			Option(ConstraintsDisplayMode mode, String label) {
+
+				this.mode = mode;
+				this.label = label;
+
+				addItem(this);
+			}
+
+			void setOptionMode() {
+
+				tree.setConstraintsDisplayMode(mode);
+			}
+		}
+
+		private class SelectionListener implements ItemListener {
+
+			public void itemStateChanged(ItemEvent event) {
+
+				((Option)event.getItem()).setOptionMode();
+			}
+		}
+
+		DisplayModeSelector() {
+
+			new Option(ConstraintsDisplayMode.NONE, NO_CONSTRAINTS_LABEL);
+			new Option(ConstraintsDisplayMode.EDIT_TYPE_ONLY, EDIT_TYPE_CONSTRAINTS_LABEL);
+			new Option(ConstraintsDisplayMode.ALL, ALL_CONSTRAINTS_LABEL);
+
+			addItemListener(new SelectionListener());
+		}
+	}
 
 	private abstract class EditButton extends ConceptTreeSelectionDependentButton {
 
@@ -122,7 +173,12 @@ class HierarchyTreePanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			doConceptEdit(tree.getSelectedConcept());
+			Concept selected = tree.getSelectedConcept();
+
+			if (selected != null) {
+
+				doConceptEdit(selected);
+			}
 		}
 
 		EditButton(String label, int triggerKey) {
@@ -291,7 +347,7 @@ class HierarchyTreePanel extends JPanel {
 		model = hierarchy.getModel();
 		tree = new HierarchyTree(hierarchy, conceptMover);
 
-		add(new ConceptTreeSelectorPanel(tree), BorderLayout.NORTH);
+		add(createUpperPanel(hierarchy), BorderLayout.NORTH);
 		add(new JScrollPane(tree), BorderLayout.CENTER);
 		add(createButtonsPanel(), BorderLayout.SOUTH);
 	}
@@ -299,6 +355,21 @@ class HierarchyTreePanel extends JPanel {
 	HierarchyTree getTree() {
 
 		return tree;
+	}
+
+	private JComponent createUpperPanel(Hierarchy hierarchy) {
+
+		if (hierarchy.isConstrained()) {
+
+			JPanel panel = new JPanel(new BorderLayout());
+
+			panel.add(new DisplayModeSelector(), BorderLayout.WEST);
+			panel.add(new ConceptTreeSelectorPanel(tree), BorderLayout.EAST);
+
+			return panel;
+		}
+
+		return new ConceptTreeSelectorPanel(tree);
 	}
 
 	private JComponent createButtonsPanel() {
