@@ -63,27 +63,15 @@ abstract class ConceptTree extends GSelectorTree {
 			super(ConceptTree.this);
 		}
 
-		void redisplayAllConstraints(boolean parentWasCollapsed) {
-
-			boolean wasCollapsed = collapsed();
+		void redisplayAllConstraintsOnDescendants(boolean modeChanged, boolean wasCollapsed) {
 
 			for (GNode child : getChildren()) {
 
-				((ConceptTreeNode)child).redisplayAllConstraints(wasCollapsed);
-			}
-
-			boolean hasConstraintChildren = redisplayConstraints();
-
-			if (parentWasCollapsed || (wasCollapsed && !hasConstraintChildren)) {
-
-				collapse();
+				((ConceptTreeNode)child).redisplayAllConstraints(modeChanged, wasCollapsed);
 			}
 		}
 
-		boolean redisplayConstraints() {
-
-			return false;
-		}
+		abstract void redisplayAllConstraints(boolean modeChanged, boolean parentWasCollapsed);
 
 		void addChildrenFor(Set<Concept> concepts) {
 
@@ -143,11 +131,22 @@ abstract class ConceptTree extends GSelectorTree {
 
 			this.rootConcepts = rootConcepts;
 		}
+
+		void redisplayAllConstraints(boolean modeChanged) {
+
+			redisplayAllConstraintsOnDescendants(modeChanged, false);
+		}
+
+		void redisplayAllConstraints(boolean modeChanged, boolean parentWasCollapsed) {
+
+			throw new Error("Method should never be invoked!");
+		}
 	}
 
 	private class ConceptNode extends ConceptTreeNode {
 
 		private Concept concept;
+		private Set<Constraint> displayedConstraints = new HashSet<Constraint>();
 
 		private class ModelUpdateTracker implements ConceptListener {
 
@@ -182,6 +181,51 @@ abstract class ConceptTree extends GSelectorTree {
 			}
 		}
 
+		private class ConstraintRedisplayer {
+
+			private boolean modeChanged;
+			private boolean parentWasCollapsed;
+			private boolean wasCollapsed = collapsed();
+
+			private Set<Constraint> oldDisplayedConstraints = displayedConstraints;
+
+			ConstraintRedisplayer(boolean modeChanged, boolean parentWasCollapsed) {
+
+				this.modeChanged = modeChanged;
+				this.parentWasCollapsed = parentWasCollapsed;
+
+				displayedConstraints = new HashSet<Constraint>();
+
+				redisplayAllConstraintsOnDescendants(modeChanged, wasCollapsed);
+				addConstraintChildren();
+
+				if (requireRecollapse()) {
+
+					collapse();
+				}
+			}
+
+			private boolean requireRecollapse() {
+
+				if (parentWasCollapsed) {
+
+					return true;
+				}
+
+				if (!wasCollapsed) {
+
+					return false;
+				}
+
+				if (modeChanged) {
+
+					return displayedConstraints.isEmpty();
+				}
+
+				return displayedConstraints.equals(oldDisplayedConstraints);
+			}
+		}
+
 		protected void addInitialChildren() {
 
 			addChildrenFor(concept.getChildren());
@@ -213,9 +257,9 @@ abstract class ConceptTree extends GSelectorTree {
 			new ModelUpdateTracker();
 		}
 
-		boolean redisplayConstraints() {
+		void redisplayAllConstraints(boolean modeChanged, boolean parentWasCollapsed) {
 
-			return addConstraintChildren();
+			new ConstraintRedisplayer(modeChanged, parentWasCollapsed);
 		}
 
 		Concept getConceptOrNull() {
@@ -228,9 +272,7 @@ abstract class ConceptTree extends GSelectorTree {
 			return concept.equals(forConcept) ? this : findDescendantNode(forConcept);
 		}
 
-		private boolean addConstraintChildren() {
-
-			boolean anyAdded = false;
+		private void addConstraintChildren() {
 
 			for (Constraint constraint : concept.getConstraints()) {
 
@@ -238,11 +280,9 @@ abstract class ConceptTree extends GSelectorTree {
 
 					addChild(new ConstraintNode(this, constraint));
 
-					anyAdded = true;
+					displayedConstraints.add(constraint);
 				}
 			}
-
-			return anyAdded;
 		}
 	}
 
@@ -285,11 +325,9 @@ abstract class ConceptTree extends GSelectorTree {
 			new Deselector(parentNode);
 		}
 
-		boolean redisplayConstraints() {
+		void redisplayAllConstraints(boolean modeChanged, boolean parentWasCollapsed) {
 
 			remove();
-
-			return false;
 		}
 	}
 
@@ -313,7 +351,12 @@ abstract class ConceptTree extends GSelectorTree {
 		this.rootConcepts = rootConcepts;
 	}
 
-	void redisplayConstraints() {
+	void redisplayForConstraintsDisplayModeChange() {
+
+		getConceptTreeRootNode().redisplayAllConstraints(true);
+	}
+
+	void redisplayForConstraintsEdit() {
 
 		getConceptTreeRootNode().redisplayAllConstraints(false);
 	}
@@ -393,8 +436,8 @@ abstract class ConceptTree extends GSelectorTree {
 		return concept.isRoot() ? root : root.findDescendantNode(concept.getParent());
 	}
 
-	private ConceptTreeNode getConceptTreeRootNode() {
+	private RootNode getConceptTreeRootNode() {
 
-		return (ConceptTreeNode)getRootNode();
+		return (RootNode)getRootNode();
 	}
 }

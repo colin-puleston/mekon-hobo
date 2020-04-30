@@ -50,6 +50,7 @@ class ConstraintPanel extends JPanel {
 	static private final String CREATE_CONSTRAINT_LABEL = "Create";
 
 	private ConstraintType type;
+	private ConceptTree sourcesTree;
 
 	private abstract class Populator {
 
@@ -145,6 +146,7 @@ class ConstraintPanel extends JPanel {
 			protected void doButtonThing() {
 
 				constraint.remove();
+				sourcesTree.redisplayForConstraintsEdit();
 			}
 
 			ConstraintClearButton() {
@@ -298,6 +300,7 @@ class ConstraintPanel extends JPanel {
 			protected void doButtonThing() {
 
 				source.addConstraint(type, getTargetSelections());
+				sourcesTree.redisplayForConstraintsEdit();
 			}
 
 			ConstraintCreateButton() {
@@ -411,8 +414,6 @@ class ConstraintPanel extends JPanel {
 
 	private class SourceConceptTracker extends GSelectionListener<GNode> {
 
-		private ConceptTree sourcesTree;
-
 		protected void onSelected(GNode node) {
 
 			Concept selected = sourcesTree.getSelectedConcept();
@@ -427,13 +428,6 @@ class ConstraintPanel extends JPanel {
 
 			clearSourceConcept();
 		}
-
-		SourceConceptTracker(ConceptTree sourcesTree) {
-
-			this.sourcesTree = sourcesTree;
-
-			sourcesTree.addNodeSelectionListener(this);
-		}
 	}
 
 	ConstraintPanel(ConstraintType type, ConceptTree sourcesTree) {
@@ -441,9 +435,11 @@ class ConstraintPanel extends JPanel {
 		super(new BorderLayout());
 
 		this.type = type;
+		this.sourcesTree = sourcesTree;
 
 		new DefaultPopulator().populate();
-		new SourceConceptTracker(sourcesTree);
+
+		sourcesTree.addNodeSelectionListener(new SourceConceptTracker());
 	}
 
 	String getPanelTitle() {
