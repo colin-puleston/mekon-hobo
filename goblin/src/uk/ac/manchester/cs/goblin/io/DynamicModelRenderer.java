@@ -71,16 +71,15 @@ class DynamicModelRenderer {
 						OWLObjectProperty property,
 						Set<OWLClass> values) {
 
-			ConstraintSemantics semantics = constraint.getType().getSemantics();
+			ConstraintSemantics semantics = constraint.getSemantics();
 
-			if (semantics.includesSome()) {
-
-				ontology.addSomeConsequenceAxioms(subject, property, values);
-			}
-
-			if (semantics.includesAll()) {
+			if (constraint.getSemantics().validValues()) {
 
 				ontology.addAllConsequenceAxiom(subject, property, values);
+			}
+			else {
+
+				ontology.addSomeConsequenceAxioms(subject, property, values);
 			}
 		}
 

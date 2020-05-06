@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-public class Constraint extends EditTarget {
+public abstract class Constraint extends EditTarget {
 
 	private ConstraintType type;
 
@@ -42,6 +42,30 @@ public class Constraint extends EditTarget {
 		return targetValues.getEntities();
 	}
 
+	public Concept getTargetValue() {
+
+		Set<Concept> targets = getTargetValues();
+
+		if (targets.size() == 1) {
+
+			return targets.iterator().next();
+		}
+
+		throw new RuntimeException("Expected exactly 1 value, found " + targets.size());
+	}
+
+	public boolean hasSemantics(ConstraintSemantics semantics) {
+
+		return getSemantics() == semantics;
+	}
+
+	public abstract ConstraintSemantics getSemantics();
+
+	Constraint(ConstraintType type, Concept sourceValue, Concept targetValue) {
+
+		this(type, sourceValue, Collections.singletonList(targetValue));
+	}
+
 	Constraint(ConstraintType type, Concept sourceValue, Collection<Concept> targetValues) {
 
 		this.type = type;
@@ -49,6 +73,15 @@ public class Constraint extends EditTarget {
 		this.targetValues = new ConceptTrackerSet(getModel(), targetValues);
 
 		checkTargetConflicts(targetValues);
+	}
+
+	Constraint(Constraint template, Concept minusTargetValue) {
+
+		type = template.type;
+		sourceValue = template.sourceValue;
+		targetValues = template.targetValues.copy();
+
+		targetValues.remove(minusTargetValue);
 	}
 
 	boolean add() {
@@ -60,7 +93,7 @@ public class Constraint extends EditTarget {
 			EditAction action = new AddAction(this);
 
 			action = conflictRes.incorporateResolvingEdits(action);
-			action = checkIncorporateTypeConstraintRemoval(action);
+			action = checkIncorporateValidValuesConstraintRemoval(action);
 
 			performAction(action);
 
@@ -70,17 +103,7 @@ public class Constraint extends EditTarget {
 		return false;
 	}
 
-	EditAction createTargetValueRemovalEditAction(Concept target) {
-
-		Set<Concept> targets = getTargetValues();
-
-		if (targets.size() == 1) {
-
-			return new RemoveAction(this);
-		}
-
-		return new ReplaceConstraintAction(this, new Constraint(this, target));
-	}
+	abstract EditAction createTargetValueRemovalEditAction(Concept target);
 
 	void doAdd(boolean replacement) {
 
@@ -112,15 +135,6 @@ public class Constraint extends EditTarget {
 		return testType.equals(type);
 	}
 
-	private Constraint(Constraint template, Concept minusTargetValue) {
-
-		type = template.type;
-		sourceValue = template.sourceValue;
-		targetValues = template.targetValues.copy();
-
-		targetValues.remove(minusTargetValue);
-	}
-
 	private ConceptTracker toConceptTracker(Concept concept) {
 
 		return concept.getModel().getConceptTracking().toTracker(concept);
@@ -142,21 +156,24 @@ public class Constraint extends EditTarget {
 		}
 	}
 
-	private EditAction checkIncorporateTypeConstraintRemoval(EditAction action) {
+	private EditAction checkIncorporateValidValuesConstraintRemoval(EditAction action) {
 
-		Constraint constraint = lookForCurrentTypeConstraint();
+		if (getSemantics().validValues()) {
 
-		if (constraint == null) {
+			Constraint validValues = lookForValidValuesTypeConstraint();
 
-			return action;
+			if (validValues != null) {
+
+				return new CompoundEditAction(new RemoveAction(validValues), action);
+			}
 		}
 
-		return new CompoundEditAction(new RemoveAction(constraint), action);
+		return action;
 	}
 
-	private Constraint lookForCurrentTypeConstraint() {
+	private Constraint lookForValidValuesTypeConstraint() {
 
-		return getSourceValue().lookForLocalConstraint(type);
+		return getSourceValue().lookForValidValuesConstraint(type);
 	}
 
 	private void performAction(EditAction action) {

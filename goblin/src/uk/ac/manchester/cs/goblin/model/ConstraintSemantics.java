@@ -1,24 +1,41 @@
 package uk.ac.manchester.cs.goblin.model;
 
+import java.util.*;
+
 /**
  * @author Colin Puleston
  */
 public enum ConstraintSemantics {
 
-	SOME, ALL, SOME_AND_ALL;
+	VALID_VALUES, IMPLIED_VALUE;
 
-	public boolean includesSome() {
+	public boolean validValues() {
 
-		return this != ALL;
+		return this == VALID_VALUES;
 	}
 
-	public boolean includesAll() {
+	public boolean impliedValue() {
 
-		return this != SOME;
+		return this == IMPLIED_VALUE;
 	}
 
-	public boolean someAndAll() {
+	public String getDisplayLabel() {
 
-		return this == SOME_AND_ALL;
+		return "\'" + toString().toLowerCase().replaceAll("_", "-") + "\'";
+	}
+
+	public List<Constraint> select(Collection<Constraint> candidates) {
+
+		List<Constraint> selections = new ArrayList<Constraint>();
+
+		for (Constraint candidate : candidates) {
+
+			if (candidate.hasSemantics(this)) {
+
+				selections.add(candidate);
+			}
+		}
+
+		return selections;
 	}
 }

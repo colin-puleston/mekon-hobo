@@ -43,6 +43,8 @@ class HierarchyPanel extends GSplitPane {
 	static private final String TREE_PANEL_TITLE = "Selected hierarchy";
 	static private final String CONSTRAINTS_PANEL_TITLE = "Constraints editor";
 
+	static private final String CONSTRAINT_PANEL_TITLE_FORMAT = "%s constraints";
+
 	private Hierarchy hierarchy;
 
 	private HierarchyTree hierarchyTree;
@@ -74,7 +76,9 @@ class HierarchyPanel extends GSplitPane {
 
 		ConstraintsPanel() {
 
-			super(JTabbedPane.TOP);
+			super(JTabbedPane.LEFT);
+
+			setFont(GFonts.toMedium(getFont()));
 
 			populate();
 		}
@@ -96,7 +100,42 @@ class HierarchyPanel extends GSplitPane {
 
 		JComponent createComponent(ConstraintType type) {
 
-			return new ConstraintPanel(type, hierarchyTree);
+			JTabbedPane tabs = new JTabbedPane();
+
+			String onlyTitle = checkPanelTitle(type, ConstraintSemantics.VALID_VALUES);
+			String hasTitle = checkPanelTitle(type, ConstraintSemantics.IMPLIED_VALUE);
+
+			if (onlyTitle != null) {
+
+				tabs.addTab(onlyTitle, createValidValuesPanel(type));
+			}
+
+			if (hasTitle != null) {
+
+				tabs.addTab(hasTitle, createImpliedValuePanel(type));
+			}
+
+			return tabs;
+		}
+
+		private String checkPanelTitle(ConstraintType type, ConstraintSemantics semantics) {
+
+			if (!type.semanticsEnabled(semantics)) {
+
+				return null;
+			}
+
+			return String.format(CONSTRAINT_PANEL_TITLE_FORMAT, semantics.getDisplayLabel());
+		}
+
+		private ConstraintPanel createValidValuesPanel(ConstraintType type) {
+
+			return new ConstraintPanel(type, ConstraintSemantics.VALID_VALUES, hierarchyTree);
+		}
+
+		private ConstraintPanel createImpliedValuePanel(ConstraintType type) {
+
+			return new ConstraintPanel(type, ConstraintSemantics.IMPLIED_VALUE, hierarchyTree);
 		}
 	}
 

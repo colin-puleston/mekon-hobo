@@ -7,6 +7,19 @@ import java.util.*;
  */
 public abstract class Concept extends EditTarget {
 
+	static public boolean allSubsumed(Set<Concept> testSubsumers, Set<Concept> testSubsumeds) {
+
+		for (Concept testSubsumed : testSubsumeds) {
+
+			if (!testSubsumed.subsumedByAny(testSubsumers)) {
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private Hierarchy hierarchy;
 
 	private EntityId conceptId;
@@ -16,6 +29,107 @@ public abstract class Concept extends EditTarget {
 	private ConstraintTrackerSet inwardConstraints;
 
 	private List<ConceptListener> conceptListeners = new ArrayList<ConceptListener>();
+
+	private class ConstraintsSelector {
+
+		private ConstraintType type;
+
+		ConstraintsSelector(ConstraintType type) {
+
+			this.type = type;
+		}
+
+		boolean anyMatches() {
+
+			return !select(true).isEmpty();
+		}
+
+		Set<Constraint> selectAll() {
+
+			return select(false);
+		}
+
+		Constraint selectOneOrZero() {
+
+			Set<Constraint> selections = select(true);
+
+			return selections.isEmpty() ? null : selections.iterator().next();
+		}
+
+		boolean specificsMatch(Constraint constraint) {
+
+			return true;
+		}
+
+		private Set<Constraint> select(boolean maxOne) {
+
+			Set<Constraint> selections = new HashSet<Constraint>();
+
+			for (Constraint candidate : getConstraints()) {
+
+				if (candidate.hasType(type) && specificsMatch(candidate)) {
+
+					selections.add(candidate);
+
+					if (maxOne) {
+
+						break;
+					}
+				}
+			}
+
+			return selections;
+		}
+	}
+
+	private class ValidValuesConstraintSelector extends ConstraintsSelector {
+
+		ValidValuesConstraintSelector(ConstraintType type) {
+
+			super(type);
+		}
+
+		boolean specificsMatch(Constraint constraint) {
+
+			return constraint.getSemantics().validValues();
+		}
+	}
+
+	private class ImpliedValueConstraintsSelector extends ConstraintsSelector {
+
+		ImpliedValueConstraintsSelector(ConstraintType type) {
+
+			super(type);
+		}
+
+		boolean specificsMatch(Constraint constraint) {
+
+			return constraint.getSemantics().impliedValue();
+		}
+	}
+
+	private class ConstraintMatchesFinder extends ImpliedValueConstraintsSelector {
+
+		private ConstraintSemantics semantics;
+		private Set<Concept> targetValues;
+
+		ConstraintMatchesFinder(
+			ConstraintType type,
+			ConstraintSemantics semantics,
+			Collection<Concept> targetValues) {
+
+			super(type);
+
+			this.semantics = semantics;
+			this.targetValues = new HashSet<Concept>(targetValues);
+		}
+
+		boolean specificsMatch(Constraint constraint) {
+
+			return constraint.hasSemantics(semantics)
+					&& constraint.getTargetValues().equals(targetValues);
+		}
+	}
 
 	public void addListener(ConceptListener listener) {
 
@@ -52,9 +166,24 @@ public abstract class Concept extends EditTarget {
 		return child;
 	}
 
-	public boolean addConstraint(ConstraintType type, Collection<Concept> targetValues) {
+	public boolean addValidValuesConstraint(ConstraintType type, Collection<Concept> targetValues) {
 
-		return type.createConstraint(this, targetValues).add();
+		if (constraintExists(type, ConstraintSemantics.VALID_VALUES, targetValues)) {
+
+			return false;
+		}
+
+		return type.createValidValues(this, targetValues).add();
+	}
+
+	public boolean addImpliedValueConstraint(ConstraintType type, Concept targetValue) {
+
+		if (constraintExists(type, ConstraintSemantics.IMPLIED_VALUE, targetValue)) {
+
+			return false;
+		}
+
+		return type.createImpliedValue(this, targetValue).add();
 	}
 
 	public String toString() {
@@ -65,6 +194,11 @@ public abstract class Concept extends EditTarget {
 	public Model getModel() {
 
 		return hierarchy.getModel();
+	}
+
+	public Hierarchy getHierarchy() {
+
+		return hierarchy;
 	}
 
 	public EntityId getConceptId() {
@@ -81,42 +215,82 @@ public abstract class Concept extends EditTarget {
 
 	public abstract Concept getParent();
 
+	public abstract Set<Concept> getParents();
+
 	public Set<Concept> getChildren() {
 
 		return children.getEntities();
 	}
 
-	public boolean subsumedBy(Concept test) {
+	public boolean subsumedBy(Concept testSubsumer) {
 
-		return equals(test) || descendantOf(test);
+		return equals(testSubsumer) || descendantOf(testSubsumer);
 	}
 
-	public abstract boolean descendantOf(Concept test);
+	public boolean subsumedByAny(Set<Concept> testSubsumers) {
+
+		for (Concept testSubsumer : testSubsumers) {
+
+			if (subsumedBy(testSubsumer)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public abstract boolean descendantOf(Concept testAncestor);
 
 	public Set<Constraint> getConstraints() {
 
 		return constraints.getEntities();
 	}
 
+	public Set<Constraint> getConstraints(ConstraintType type) {
+
+		return new ConstraintsSelector(type).selectAll();
+	}
+
+	public Constraint lookForValidValuesConstraint(ConstraintType type) {
+
+		return new ValidValuesConstraintSelector(type).selectOneOrZero();
+	}
+
+	public Set<Constraint> getImpliedValueConstraints(ConstraintType type) {
+
+		return new ImpliedValueConstraintsSelector(type).selectAll();
+	}
+
+	public Constraint getClosestValidValuesConstraint(ConstraintType type) {
+
+		Constraint sub = lookForValidValuesConstraint(type);
+
+		return sub != null ? sub : getClosestAncestorValidValuesConstraint(type);
+	}
+
+	public abstract Constraint getClosestAncestorValidValuesConstraint(ConstraintType type);
+
+	public boolean constraintExists(
+						ConstraintType type,
+						ConstraintSemantics semantics,
+						Concept targetValue) {
+
+		return constraintExists(type, semantics, Collections.singleton(targetValue));
+	}
+
+	public boolean constraintExists(
+						ConstraintType type,
+						ConstraintSemantics semantics,
+						Collection<Concept> targetValues) {
+
+		return new ConstraintMatchesFinder(type, semantics, targetValues).anyMatches();
+	}
+
 	public Set<Constraint> getInwardConstraints() {
 
 		return inwardConstraints.getEntities();
 	}
-
-	public Constraint lookForLocalConstraint(ConstraintType type) {
-
-		for (Constraint constraint : getConstraints()) {
-
-			if (constraint.hasType(type)) {
-
-				return constraint;
-			}
-		}
-
-		return null;
-	}
-
-	public abstract Constraint getClosestAncestorConstraint(ConstraintType type);
 
 	Concept(Hierarchy hierarchy, EntityId conceptId) {
 
@@ -208,21 +382,9 @@ public abstract class Concept extends EditTarget {
 		inwardConstraints.remove(constraint);
 	}
 
-	Hierarchy getHierarchy() {
-
-		return hierarchy;
-	}
-
 	Hierarchy getPrimaryEditHierarchy() {
 
 		return hierarchy;
-	}
-
-	Constraint getClosestConstraint(ConstraintType type) {
-
-		Constraint sub = lookForLocalConstraint(type);
-
-		return sub != null ? sub : getClosestAncestorConstraint(type);
 	}
 
 	private EditAction incorporateInwardTargetRemovalEdits(EditAction action) {

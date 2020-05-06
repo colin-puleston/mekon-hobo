@@ -1,5 +1,7 @@
 package uk.ac.manchester.cs.goblin.model;
 
+import java.util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -43,14 +45,19 @@ class DynamicConcept extends Concept {
 		return parent.getEntity();
 	}
 
-	public boolean descendantOf(Concept test) {
+	public Set<Concept> getParents() {
 
-		return getParent().equals(test) || getParent().descendantOf(test);
+		return Collections.singleton(getParent());
 	}
 
-	public Constraint getClosestAncestorConstraint(ConstraintType type) {
+	public boolean descendantOf(Concept testAncestor) {
 
-		return getParent().getClosestConstraint(type);
+		return getParent().equals(testAncestor) || getParent().descendantOf(testAncestor);
+	}
+
+	public Constraint getClosestAncestorValidValuesConstraint(ConstraintType type) {
+
+		return getParent().getClosestValidValuesConstraint(type);
 	}
 
 	DynamicConcept(EntityId conceptId, Concept parent) {

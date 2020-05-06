@@ -46,12 +46,17 @@ public class Hierarchy {
 			throw createInvalidRootOperationException();
 		}
 
-		public boolean descendantOf(Concept test) {
+		public Set<Concept> getParents() {
+
+			return Collections.emptySet();
+		}
+
+		public boolean descendantOf(Concept testAncestor) {
 
 			return false;
 		}
 
-		public Constraint getClosestAncestorConstraint(ConstraintType type) {
+		public Constraint getClosestAncestorValidValuesConstraint(ConstraintType type) {
 
 			throw createInvalidRootOperationException();
 		}

@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.goblin.gui;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.*;
-import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.gui.*;
 import uk.ac.manchester.cs.mekon.gui.icon.*;
@@ -39,19 +38,48 @@ import uk.ac.manchester.cs.goblin.model.*;
  */
 enum GoblinCellDisplay {
 
-	CONCEPTS_DEFAULT(Color.CYAN, false),
-	CONCEPTS_MOVE_SUBJECT(Color.GRAY.brighter(), false),
-	CONCEPTS_CONSTRAINT(Color.GREEN, true),
-	CONSTRAINTS_DIRECT_TARGET(Color.GREEN, false),
-	CONSTRAINTS_INDIRECT_TARGET(Color.YELLOW, false),
-	CONCEPT_SELECTOR(Color.GRAY, false);
+	CONCEPTS_DEFAULT(largeCircle(Color.CYAN)),
+	CONCEPTS_MOVE_SUBJECT(largeCircle(Color.GRAY.brighter())),
+	CONCEPTS_CONSTRAINT_GROUP(mediumCircle(Color.GREEN)),
+	CONCEPTS_CONSTRAINT_IMPLIED_TARGET(mediumCircle(Color.GREEN.darker())),
+	CONSTRAINTS_POTENTIAL_TARGET(largeCircle(Color.YELLOW)),
+	CONSTRAINTS_VALID_TARGET(largeCircle(Color.GREEN)),
+	CONSTRAINTS_IMPLIED_TARGET(largeCircle(Color.GREEN), smallCircle(Color.GREEN.darker())),
+	CONCEPT_SELECTOR(largeCircle(Color.GRAY));
 
-	static private final int STANDARD_ICON_SIZE = 12;
-	static private final int SMALL_ICON_SIZE = 10;
+	static private final int LARGE_ICON_SIZE = 12;
+	static private final int MEDIUM_ICON_SIZE = 8;
+	static private final int SMALL_ICON_SIZE = 6;
 
 	static private final Color HIGHLIGHTED_BACKGROUND_CLR = new Color(255,237,160);
 
-	private Icon icon;
+	static private GIconRenderer largeCircle(Color clr) {
+
+		return new GOvalRenderer(clr, LARGE_ICON_SIZE);
+	}
+
+	static private GIconRenderer mediumCircle(Color clr) {
+
+		return reducedCircle(clr, MEDIUM_ICON_SIZE);
+	}
+
+	static private GIconRenderer smallCircle(Color clr) {
+
+		return reducedCircle(clr, SMALL_ICON_SIZE);
+	}
+
+	static private GIconRenderer reducedCircle(Color clr, int size) {
+
+		GIconRenderer r = new GOvalRenderer(clr, size);
+		int offset = (LARGE_ICON_SIZE - size) / 2;
+
+		r.setXOffset(offset);
+		r.setYOffset(offset);
+
+		return r;
+	}
+
+	private GIcon icon = new GIcon();
 
 	GCellDisplay forConcept(Concept concept) {
 
@@ -74,44 +102,45 @@ enum GoblinCellDisplay {
 		return display;
 	}
 
-	GCellDisplay forConstraint(Constraint constraint) {
+	GCellDisplay forConstraints(ConstraintGroup group) {
 
-		GCellDisplay display = new GCellDisplay(constraint.getType().getName(), icon);
+		GCellDisplay display = new GCellDisplay(group.getTypeName(), icon);
+		Set<Concept> validValueTargets = group.getValidValuesTargets();
 
 		display.setFontStyle(Font.ITALIC);
-		display.setModifier(forConstraintTargets(constraint));
+
+		if (!validValueTargets.isEmpty()) {
+
+			display.setModifier(forValidValuesConstraintTargets(validValueTargets));
+		}
 
 		return display;
 	}
 
-	private GoblinCellDisplay(Color clr, boolean smallIcon) {
+	private GoblinCellDisplay(GIconRenderer... renderers) {
 
-		icon = createIcon(clr, smallIcon);
+		for (GIconRenderer renderer : renderers) {
+
+			icon.addRenderer(renderer);
+		}
 	}
 
-	private GIcon createIcon(Color clr, boolean smallIcon) {
+	private GCellDisplay forValidValuesConstraintTargets(Set<Concept> targets) {
 
-		int iconSize = smallIcon ? SMALL_ICON_SIZE : STANDARD_ICON_SIZE;
-
-		return new GIcon(new GOvalRenderer(clr, iconSize));
-	}
-
-	private GCellDisplay forConstraintTargets(Constraint constraint) {
-
-		GCellDisplay display = new GCellDisplay(createConstraintTargetsLabel(constraint));
+		GCellDisplay display = new GCellDisplay(getConceptSetLabel(targets));
 
 		display.setFontStyle(Font.BOLD | Font.ITALIC);
 
 		return display;
 	}
 
-	private String createConstraintTargetsLabel(Constraint constraint) {
+	private String getConceptSetLabel(Set<Concept> concepts) {
 
 		SortedSet<String> labels = new TreeSet<String>();
 
-		for (Concept target : constraint.getTargetValues()) {
+		for (Concept concept : concepts) {
 
-			labels.add(target.getConceptId().getLabel());
+			labels.add(concept.getConceptId().getLabel());
 		}
 
 		return stripListBrackets(labels.toString());

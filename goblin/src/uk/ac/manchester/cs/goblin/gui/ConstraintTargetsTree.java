@@ -33,11 +33,9 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-class ConstraintTargetsTree extends ConceptTree {
+abstract class ConstraintTargetsTree extends ConceptTree {
 
 	static private final long serialVersionUID = -1;
-
-	private GoblinCellDisplay cellDisplay;
 
 	private class SelectionsPruner extends GSelectionListener<GNode> {
 
@@ -79,20 +77,16 @@ class ConstraintTargetsTree extends ConceptTree {
 		}
 	}
 
-	ConstraintTargetsTree(Constraint constraint, GoblinCellDisplay cellDisplay) {
+	ConstraintTargetsTree() {
 
 		super(true);
 
-		this.cellDisplay = cellDisplay;
-
 		new SelectionsPruner();
-
-		initialise(constraint.getTargetValues());
 	}
 
-	GCellDisplay getConceptDisplay(Concept concept) {
+	void initialise(Constraint constraint) {
 
-		return cellDisplay.forConcept(concept);
+		initialise(constraint.getTargetValues());
 	}
 
 	void onConstraintChange() {

@@ -11,37 +11,32 @@ class ConflictResolver {
 
 	private abstract class ConflictFinder {
 
-		private ConstraintType type;
-
-		private Concept source;
-		private Set<Concept> targets;
+		final Constraint subject;
 
 		private List<Constraint> conflicts = new ArrayList<Constraint>();
 
-		ConflictFinder(Constraint constraint) {
+		ConflictFinder(Constraint subject) {
 
-			type = constraint.getType();
-			source = constraint.getSourceValue();
-			targets = constraint.getTargetValues();
+			this.subject = subject;
 		}
 
 		boolean any() {
 
-			findFromLinkedConcepts(source);
-
-			return !conflicts.isEmpty();
+			return !findAll().isEmpty();
 		}
 
 		List<Constraint> findAll() {
 
-			findFromLinkedConcepts(source);
+			findFromLinkedConcepts(subject.getSourceValue());
 
 			return conflicts;
 		}
 
 		abstract Set<Concept> getLinkedConcepts(Concept current);
 
-		abstract boolean targetSubsumptionsOk(Set<Concept> targets, Set<Concept> testTargets);
+		abstract Constraint getAncestorConstraint(Constraint candidate);
+
+		abstract Constraint getDescendantConstraint(Constraint candidate);
 
 		private void findFromLinkedConcepts(Concept current) {
 
@@ -53,29 +48,33 @@ class ConflictResolver {
 
 		private void findFrom(Concept current) {
 
-			Constraint test = current.lookForLocalConstraint(type);
+			for (Constraint candidate : current.getConstraints(subject.getType())) {
 
-			if (test != null) {
+				if (conflicts(candidate)) {
 
-				if (!conflictingTargets(test.getTargetValues())) {
-
-					return;
+					conflicts.add(candidate);
 				}
-
-				conflicts.add(test);
 			}
 
 			findFromLinkedConcepts(current);
 		}
 
-		private boolean conflictingTargets(Set<Concept> testTargets) {
+		private boolean conflicts(Constraint candidate) {
 
-			if (targets.equals(testTargets)) {
+			Constraint anc = getAncestorConstraint(candidate);
+			Constraint dec = getDescendantConstraint(candidate);
 
-				return true;
+			if (anc.getSemantics().impliedValue()) {
+
+				if (dec.getSemantics().impliedValue()) {
+
+					return anc.getTargetValue().subsumedBy(dec.getTargetValue());
+				}
+
+				return false;
 			}
 
-			return !targetSubsumptionsOk(targets, testTargets);
+			return !Concept.allSubsumed(anc.getTargetValues(), dec.getTargetValues());
 		}
 	}
 
@@ -88,12 +87,17 @@ class ConflictResolver {
 
 		Set<Concept> getLinkedConcepts(Concept current) {
 
-			return Collections.singleton(current.getParent());
+			return current.getParents();
 		}
 
-		boolean targetSubsumptionsOk(Set<Concept> targets, Set<Concept> testTargets) {
+		Constraint getAncestorConstraint(Constraint candidate) {
 
-			return allSubsumed(testTargets, targets);
+			return candidate;
+		}
+
+		Constraint getDescendantConstraint(Constraint candidate) {
+
+			return subject;
 		}
 	}
 
@@ -109,9 +113,14 @@ class ConflictResolver {
 			return current.getChildren();
 		}
 
-		boolean targetSubsumptionsOk(Set<Concept> targets, Set<Concept> testTargets) {
+		Constraint getAncestorConstraint(Constraint candidate) {
 
-			return allSubsumed(targets, testTargets);
+			return subject;
+		}
+
+		Constraint getDescendantConstraint(Constraint candidate) {
+
+			return candidate;
 		}
 	}
 
@@ -245,31 +254,5 @@ class ConflictResolver {
 	ConflictResolution checkConceptMove(Concept moved) {
 
 		return new ConceptMoveConflictsResolver(moved).check();
-	}
-
-	private boolean allSubsumed(Set<Concept> sups, Set<Concept> subs) {
-
-		for (Concept sub : subs) {
-
-			if (!subsumedByAny(sups, sub)) {
-
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private boolean subsumedByAny(Set<Concept> sups, Concept sub) {
-
-		for (Concept sup : sups) {
-
-			if (sub.subsumedBy(sup)) {
-
-				return true;
-			}
-		}
-
-		return false;
 	}
 }

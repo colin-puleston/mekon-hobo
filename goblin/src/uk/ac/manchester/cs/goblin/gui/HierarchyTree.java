@@ -68,7 +68,7 @@ class HierarchyTree extends ConceptTree {
 		redisplayForConstraintsDisplayModeChange();
 	}
 
-	boolean showConstraint(Constraint constraint) {
+	boolean showConstraints(ConstraintType type) {
 
 		switch (constraintsDisplayMode) {
 
@@ -79,7 +79,7 @@ class HierarchyTree extends ConceptTree {
 				return true;
 		}
 
-		return constraint.getType() == constraintTypeSelection;
+		return type == constraintTypeSelection;
 	}
 
 	void onConstraintChange() {

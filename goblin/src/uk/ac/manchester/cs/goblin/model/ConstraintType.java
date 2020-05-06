@@ -10,7 +10,14 @@ public abstract class ConstraintType {
 	private String name;
 	private Concept rootSourceConcept;
 	private Concept rootTargetConcept;
-	private ConstraintSemantics semantics;
+
+	private Set<ConstraintSemantics> enabledSemantics
+				= Collections.singleton(ConstraintSemantics.VALID_VALUES);
+
+	public void setEnabledSemantics(Set<ConstraintSemantics> enabledSemantics) {
+
+		this.enabledSemantics = new HashSet<ConstraintSemantics>(enabledSemantics);
+	}
 
 	public String getName() {
 
@@ -27,56 +34,54 @@ public abstract class ConstraintType {
 		return rootTargetConcept;
 	}
 
-	public ConstraintSemantics getSemantics() {
+	public boolean semanticsEnabled(ConstraintSemantics semantics) {
 
-		return semantics;
+		return enabledSemantics.contains(semantics);
 	}
 
-	protected ConstraintType(
-				String name,
-				Concept rootSourceConcept,
-				Concept rootTargetConcept,
-				ConstraintSemantics semantics) {
+	protected ConstraintType(String name, Concept rootSourceConcept, Concept rootTargetConcept) {
 
 		this.name = name;
 		this.rootSourceConcept = rootSourceConcept;
 		this.rootTargetConcept = rootTargetConcept;
-		this.semantics = semantics;
 	}
 
 	Constraint createRootConstraint() {
 
-		return new Constraint(this, rootSourceConcept, targetValueAsList());
+		return new ValidValuesConstraint(this, rootSourceConcept, rootTargetConcept);
 	}
 
-	Constraint createConstraint(Concept sourceValue, Collection<Concept> targetValues) {
+	Constraint createValidValues(Concept sourceValue, Collection<Concept> targetValues) {
 
-		checkValidSourceValue(sourceValue);
+		validateSourceValue(sourceValue);
 
 		for (Concept targetValue : targetValues) {
 
-			checkValidTargetValue(targetValue);
+			validateTargetValue(targetValue);
 		}
 
-		return new Constraint(this, sourceValue, targetValues);
+		return new ValidValuesConstraint(this, sourceValue, targetValues);
 	}
 
-	private List<Concept> targetValueAsList() {
+	Constraint createImpliedValue(Concept sourceValue, Concept targetValue) {
 
-		return Collections.singletonList(rootTargetConcept);
+		validateSourceValue(sourceValue);
+		validateTargetValue(targetValue);
+
+		return new ImpliedValueConstraint(this, sourceValue, targetValue);
 	}
 
-	private void checkValidSourceValue(Concept value) {
+	private void validateSourceValue(Concept value) {
 
-		checkValidValue(rootSourceConcept, value, "Source");
+		validateValue(rootSourceConcept, value, "Source");
 	}
 
-	private void checkValidTargetValue(Concept value) {
+	private void validateTargetValue(Concept value) {
 
-		checkValidValue(rootTargetConcept, value, "Target");
+		validateValue(rootTargetConcept, value, "Target");
 	}
 
-	private void checkValidValue(Concept root, Concept value, String function) {
+	private void validateValue(Concept root, Concept value, String function) {
 
 		if (!value.descendantOf(root)) {
 

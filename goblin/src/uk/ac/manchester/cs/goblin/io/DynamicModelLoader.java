@@ -26,8 +26,8 @@ class DynamicModelLoader {
 
 		private Set<OWLClassAxiom> subjectAxioms;
 
-		private TargetExtractor someTargetExtractor;
 		private TargetExtractor allTargetExtractor;
+		private TargetExtractor someTargetExtractor;
 
 		abstract class ConceptExtractor {
 
@@ -115,19 +115,19 @@ class DynamicModelLoader {
 			}
 		}
 
-		private class SomeTargetExtractor extends TargetExtractor {
-
-			Class<OWLObjectSomeValuesFrom> getRestrictionType() {
-
-				return OWLObjectSomeValuesFrom.class;
-			}
-		}
-
 		private class AllTargetExtractor extends TargetExtractor {
 
 			Class<OWLObjectAllValuesFrom> getRestrictionType() {
 
 				return OWLObjectAllValuesFrom.class;
+			}
+		}
+
+		private class SomeTargetExtractor extends TargetExtractor {
+
+			Class<OWLObjectSomeValuesFrom> getRestrictionType() {
+
+				return OWLObjectSomeValuesFrom.class;
 			}
 		}
 
@@ -139,17 +139,25 @@ class DynamicModelLoader {
 			targetProperty = getObjectProperty(targetPropertyId);
 			subjectAxioms = ontology.getAxioms(subject);
 
-			someTargetExtractor = new SomeTargetExtractor();
 			allTargetExtractor = new AllTargetExtractor();
+			someTargetExtractor = new SomeTargetExtractor();
 		}
 
 		void checkLoad(Concept source) {
 
-			Set<Concept> targets = getTargetConcepts();
+			Set<OWLClassExpression> targetExprs = lookForTargetsExprs();
 
-			if (!targets.isEmpty()) {
+			if (!targetExprs.isEmpty()) {
 
-				source.addConstraint(type, targets);
+				if (type.semanticsEnabled(ConstraintSemantics.VALID_VALUES)) {
+
+					checkLoadValidValuesConstraint(source, targetExprs);
+				}
+
+				if (type.semanticsEnabled(ConstraintSemantics.IMPLIED_VALUE)) {
+
+					checkLoadImpliedValueConstraints(source, targetExprs);
+				}
 			}
 		}
 
@@ -185,29 +193,41 @@ class DynamicModelLoader {
 						+ subject);
 		}
 
-		private Set<Concept> getTargetConcepts() {
+		private void checkLoadValidValuesConstraint(
+						Concept source,
+						Set<OWLClassExpression> targetExprs) {
 
-			Set<OWLClassExpression> exprs = lookForTargetsExprs();
+			Set<Concept> targets = extractAllTargetConcepts(targetExprs);
 
-			if (exprs.isEmpty()) {
+			if (!targets.isEmpty()) {
 
-				return Collections.emptySet();
+				source.addValidValuesConstraint(type, targets);
+			}
+		}
+
+		private void checkLoadImpliedValueConstraints(
+						Concept source,
+						Set<OWLClassExpression> targetExprs) {
+
+			for (Concept target : extractSomeTargetConcepts(targetExprs)) {
+
+				source.addImpliedValueConstraint(type, target);
+			}
+		}
+
+		private Set<Concept> extractAllTargetConcepts(Set<OWLClassExpression> exprs) {
+
+			for (OWLClassExpression expr : exprs) {
+
+				Set<Concept> targets = allTargetExtractor.extractAll(expr);
+
+				if (!targets.isEmpty()) {
+
+					return targets;
+				}
 			}
 
-			Set<Concept> someTargets = extractSomeTargetConcepts(exprs);
-			Set<Concept> allTargets = extractAllTargetConcepts(exprs);
-
-			if (someTargets.isEmpty()) {
-
-				return allTargets;
-			}
-
-			if (allTargets.isEmpty() || someTargets.equals(allTargets)) {
-
-				return someTargets;
-			}
-
-			throw createBadAxiomsException();
+			return Collections.emptySet();
 		}
 
 		private Set<Concept> extractSomeTargetConcepts(Set<OWLClassExpression> exprs) {
@@ -225,21 +245,6 @@ class DynamicModelLoader {
 			}
 
 			return targets;
-		}
-
-		private Set<Concept> extractAllTargetConcepts(Set<OWLClassExpression> exprs) {
-
-			for (OWLClassExpression expr : exprs) {
-
-				Set<Concept> targets = allTargetExtractor.extractAll(expr);
-
-				if (!targets.isEmpty()) {
-
-					return targets;
-				}
-			}
-
-			return Collections.emptySet();
 		}
 
 		private Set<OWLClassExpression> lookForTargetsExprs() {

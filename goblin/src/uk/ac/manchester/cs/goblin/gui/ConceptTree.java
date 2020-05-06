@@ -146,7 +146,7 @@ abstract class ConceptTree extends GSelectorTree {
 	private class ConceptNode extends ConceptTreeNode {
 
 		private Concept concept;
-		private Set<Constraint> displayedConstraints = new HashSet<Constraint>();
+		private Set<ConstraintGroup> displayedConstraints = new HashSet<ConstraintGroup>();
 
 		private class ModelUpdateTracker implements ConceptListener {
 
@@ -187,14 +187,14 @@ abstract class ConceptTree extends GSelectorTree {
 			private boolean parentWasCollapsed;
 			private boolean wasCollapsed = collapsed();
 
-			private Set<Constraint> oldDisplayedConstraints = displayedConstraints;
+			private Set<ConstraintGroup> oldDisplayedConstraints = displayedConstraints;
 
 			ConstraintRedisplayer(boolean modeChanged, boolean parentWasCollapsed) {
 
 				this.modeChanged = modeChanged;
 				this.parentWasCollapsed = parentWasCollapsed;
 
-				displayedConstraints = new HashSet<Constraint>();
+				displayedConstraints = new HashSet<ConstraintGroup>();
 
 				redisplayAllConstraintsOnDescendants(modeChanged, wasCollapsed);
 				addConstraintChildren();
@@ -274,21 +274,28 @@ abstract class ConceptTree extends GSelectorTree {
 
 		private void addConstraintChildren() {
 
-			for (Constraint constraint : concept.getConstraints()) {
+			System.out.println("ADD-FOR: " + concept);
+			for (ConstraintType type : concept.getHierarchy().getConstraintTypes()) {
 
-				if (showConstraint(constraint)) {
+				System.out.println("TYPE: " + type);
+				if (showConstraints(type)) {
 
-					addChild(new ConstraintNode(this, constraint));
+					ConstraintGroup group = new ConstraintGroup(concept, type);
 
-					displayedConstraints.add(constraint);
+					System.out.println("SHOW-ANY: " + group.anyConstraints());
+					if (group.anyConstraints()) {
+
+						addChild(new ConstraintGroupNode(this, group));
+						displayedConstraints.add(group);
+					}
 				}
 			}
 		}
 	}
 
-	private class ConstraintNode extends ConceptTreeNode {
+	private class ConstraintGroupNode extends ConceptTreeNode {
 
-		private GCellDisplay display;
+		private ConstraintGroup group;
 
 		private class Deselector extends GSelectionListener<GNode> {
 
@@ -296,7 +303,7 @@ abstract class ConceptTree extends GSelectorTree {
 
 			protected void onSelected(GNode node) {
 
-				if (node == ConstraintNode.this) {
+				if (node == ConstraintGroupNode.this) {
 
 					parentNode.select();
 				}
@@ -313,14 +320,22 @@ abstract class ConceptTree extends GSelectorTree {
 			}
 		}
 
-		protected GCellDisplay getDisplay() {
+		protected void addInitialChildren() {
 
-			return display;
+			for (Concept target : group.getImpliedValueTargets()) {
+
+				addChild(new ImpliedValueConstraintTargetNode(target));
+			}
 		}
 
-		ConstraintNode(ConceptNode parentNode, Constraint constraint) {
+		protected GCellDisplay getDisplay() {
 
-			display = GoblinCellDisplay.CONCEPTS_CONSTRAINT.forConstraint(constraint);
+			return GoblinCellDisplay.CONCEPTS_CONSTRAINT_GROUP.forConstraints(group);
+		}
+
+		ConstraintGroupNode(ConceptNode parentNode, ConstraintGroup group) {
+
+			this.group = group;
 
 			new Deselector(parentNode);
 		}
@@ -328,6 +343,24 @@ abstract class ConceptTree extends GSelectorTree {
 		void redisplayAllConstraints(boolean modeChanged, boolean parentWasCollapsed) {
 
 			remove();
+		}
+	}
+
+	private class ImpliedValueConstraintTargetNode extends ConceptTreeNode {
+
+		private GCellDisplay display;
+
+		protected GCellDisplay getDisplay() {
+
+			return display;
+		}
+
+		ImpliedValueConstraintTargetNode(Concept target) {
+
+			display = GoblinCellDisplay.CONCEPTS_CONSTRAINT_IMPLIED_TARGET.forConcept(target);
+		}
+
+		void redisplayAllConstraints(boolean modeChanged, boolean parentWasCollapsed) {
 		}
 	}
 
@@ -361,7 +394,7 @@ abstract class ConceptTree extends GSelectorTree {
 		getConceptTreeRootNode().redisplayAllConstraints(false);
 	}
 
-	boolean showConstraint(Constraint constraint) {
+	boolean showConstraints(ConstraintType type) {
 
 		return false;
 	}

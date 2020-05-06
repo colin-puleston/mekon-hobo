@@ -32,7 +32,7 @@ class ConfigFileReader {
 	static private final String TARGET_PROPERTY_ATTR = "targetProperty";
 	static private final String LINKING_PROPERTY_ATTR = "linkingProperty";
 	static private final String ROOT_TARGET_CONCEPT_ATTR = "rootTargetConcept";
-	static private final String CONSTRAINT_SEMANTICS_ATTR = "semantics";
+	static private final String SEMANTICS_ENABLED_ATTR = "semanticsEnabled";
 
 	static private KConfigNode loadFile() {
 
@@ -60,12 +60,11 @@ class ConfigFileReader {
 
 			abstract String getTypeTag();
 
-			abstract ConstraintType loadType(
+			abstract ConstraintType loadSpecificType(
 										KConfigNode node,
 										String name,
 										Concept rootSrc,
-										Concept rootTgt,
-										ConstraintSemantics semantics);
+										Concept rootTgt);
 
 			private void loadHierarchyTypes(KConfigNode hierarchyNode, Hierarchy hierarchy) {
 
@@ -77,12 +76,19 @@ class ConfigFileReader {
 
 			private ConstraintType loadType(KConfigNode node, Hierarchy hierarchy) {
 
-				return loadType(
-							node,
-							getConstraintTypeName(node),
-							hierarchy.getRootConcept(),
-							getRootTargetConcept(node),
-							getConstraintSemantics(node));
+				String name = getConstraintTypeName(node);
+				Concept rootSrc = hierarchy.getRootConcept();
+				Concept rootTgt = getRootTargetConcept(node);
+
+				ConstraintType type = loadSpecificType(node, name, rootSrc, rootTgt);
+				ConstraintSemanticsEnabling semEnabling = getSemanticsEnablingOrNull(node);
+
+				if (semEnabling != null) {
+
+					type.setEnabledSemantics(semEnabling.getEnabledSet());
+				}
+
+				return type;
 			}
 		}
 
@@ -93,16 +99,11 @@ class ConfigFileReader {
 				return SIMPLE_CONSTRAINT_TYPE_TAG;
 			}
 
-			ConstraintType loadType(
-								KConfigNode node,
-								String name,
-								Concept rootSrc,
-								Concept rootTgt,
-								ConstraintSemantics semantics) {
+			ConstraintType loadSpecificType(KConfigNode node, String name, Concept rootSrc, Concept rootTgt) {
 
 				EntityId lnkProp = getPropertyId(node, LINKING_PROPERTY_ATTR);
 
-				return new SimpleConstraintType(name, lnkProp, rootSrc, rootTgt, semantics);
+				return new SimpleConstraintType(name, lnkProp, rootSrc, rootTgt);
 			}
 		}
 
@@ -113,19 +114,14 @@ class ConfigFileReader {
 				return ANCHORED_CONSTRAINT_TYPE_TAG;
 			}
 
-			ConstraintType loadType(
-								KConfigNode node,
-								String name,
-								Concept rootSrc,
-								Concept rootTgt,
-								ConstraintSemantics semantics) {
+			ConstraintType loadSpecificType(KConfigNode node, String name, Concept rootSrc, Concept rootTgt) {
 
 				EntityId anchor = getConceptId(node, ANCHOR_CONCEPT_ATTR);
 
 				EntityId srcProp = getPropertyId(node, SOURCE_PROPERTY_ATTR);
 				EntityId tgtProp = getPropertyId(node, TARGET_PROPERTY_ATTR);
 
-				return new AnchoredConstraintType(name, anchor, srcProp, tgtProp, rootSrc, rootTgt, semantics);
+				return new AnchoredConstraintType(name, anchor, srcProp, tgtProp, rootSrc, rootTgt);
 			}
 		}
 
@@ -168,9 +164,9 @@ class ConfigFileReader {
 			return getPropertyId(node, ROOT_TARGET_CONCEPT_ATTR);
 		}
 
-		private ConstraintSemantics getConstraintSemantics(KConfigNode node) {
+		private ConstraintSemanticsEnabling getSemanticsEnablingOrNull(KConfigNode node) {
 
-			return node.getEnum(CONSTRAINT_SEMANTICS_ATTR, ConstraintSemantics.class);
+			return node.getEnum(SEMANTICS_ENABLED_ATTR, ConstraintSemanticsEnabling.class, null);
 		}
 
 		private EntityId getConceptId(KConfigNode node, String tag) {

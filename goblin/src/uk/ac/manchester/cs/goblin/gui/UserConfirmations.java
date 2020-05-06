@@ -42,9 +42,8 @@ class UserConfirmations implements Confirmations {
 
 		ConstraintsRemovalsInfo(List<Constraint> removals) {
 
-			info.append("Invalidated/redundant constraints will be removed:\n\n");
-			addRemovals(removals);
-			info.append("\n");
+			checkAddForSemanticsType(ConstraintSemantics.VALID_VALUES, removals);
+			checkAddForSemanticsType(ConstraintSemantics.IMPLIED_VALUE, removals);
 		}
 
 		String get() {
@@ -52,12 +51,29 @@ class UserConfirmations implements Confirmations {
 			return info.toString();
 		}
 
-		private void addRemovals(List<Constraint> removals) {
+		private void checkAddForSemanticsType(
+						ConstraintSemantics semantics,
+						List<Constraint> allRemovals) {
 
-			for (Constraint removal : removals) {
+			List<Constraint> typeRemovals = semantics.select(allRemovals);
 
-				addRemoval(removal);
+			if (!typeRemovals.isEmpty()) {
+
+				checkSemanticsTypeHeader(semantics);
+
+				for (Constraint removal : typeRemovals) {
+
+					addRemoval(removal);
+				}
 			}
+		}
+
+		private void checkSemanticsTypeHeader(ConstraintSemantics semantics) {
+
+			info.append(
+				"Conflicting "
+				+ semantics.getDisplayLabel()
+				+ " constraints will be removed:\n\n");
 		}
 
 		private void addRemoval(Constraint removal) {
