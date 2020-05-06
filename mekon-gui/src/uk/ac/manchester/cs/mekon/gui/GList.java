@@ -215,12 +215,17 @@ public class GList<E> extends JList<GListElement<E>> {
 
 	public void removeEntity(E entity) {
 
-		currentSelections.remove(entity);
+		boolean wasSelected = currentSelections.remove(entity);
 
 		model.remove(entity);
 		revalidate();
 
 		pollListListenersForRemoved(entity);
+
+		if (wasSelected) {
+
+			selectionListeners.pollForDeselected(entity);
+		}
 	}
 
 	public void applyFilter(GLexicalFilter filter) {
@@ -237,10 +242,20 @@ public class GList<E> extends JList<GListElement<E>> {
 
 	public void clearList() {
 
+		List<E> entities = getEntityList();
+		List<E> selections = getSelectedEntities();
+
 		model.clear();
 		revalidate();
 
 		currentSelections.clear();
+
+		for (E entity : entities) {
+
+			pollListListenersForRemoved(entity);
+		}
+
+		pollForRemovedSelections(selections);
 	}
 
 	public void select(E entity) {
@@ -330,11 +345,7 @@ public class GList<E> extends JList<GListElement<E>> {
 		List<E> clearedSelections = new ArrayList<E>(currentSelections);
 
 		currentSelections.clear();
-
-		for (E selection : currentSelections) {
-
-			selectionListeners.pollForDeselected(selection);
-		}
+		pollForRemovedSelections(currentSelections);
 	}
 
 	private List<E> extractEntities(List<GListElement<E>> elements) {
