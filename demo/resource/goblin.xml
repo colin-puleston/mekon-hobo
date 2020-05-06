@@ -14,7 +14,7 @@
 			name="industry sector"
 			linkingProperty="http://mekon/demo-core.owl#sector"
 			rootTargetConcept="http://mekon/demo-core.owl#IndustrySector"
-			semantics="ALL">
+			semanticsEnabled="IMPLIED_VALUES_ONLY">
 		</SimpleConstraintType>
 		<AnchoredConstraintType
 			name="industry type"
@@ -22,7 +22,7 @@
 			sourceProperty="http://mekon/demo-core.owl#industry"
 			targetProperty="http://mekon/demo-core.owl#jobType"
 			rootTargetConcept="http://mekon/demo-core.owl#JobType"
-			semantics="ALL">
+			semanticsEnabled="VALID_VALUES_AND_IMPLIED_VALUES">
 		</AnchoredConstraintType>
 	</Hierarchy>
 
