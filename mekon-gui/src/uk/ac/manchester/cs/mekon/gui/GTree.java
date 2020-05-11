@@ -94,7 +94,7 @@ public class GTree extends JTree {
 		return (GNode)getLastSelectedPathComponent();
 	}
 
-	public List<GNode> getAllSelectedNodes() {
+	public List<GNode> getSelectedNodes() {
 
 		List<GNode> nodes = new ArrayList<GNode>();
 

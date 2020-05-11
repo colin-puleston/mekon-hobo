@@ -125,7 +125,7 @@ public class GList<E> extends JList<GListElement<E>> {
 			restoreSelections();
 		}
 
-		List<E> getEntityList() {
+		List<E> getEntities() {
 
 			return extractEntities(displayList.asList());
 		}
@@ -242,7 +242,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 	public void clearList() {
 
-		List<E> entities = getEntityList();
+		List<E> entities = getEntities();
 		List<E> selections = getSelectedEntities();
 
 		model.clear();
@@ -273,19 +273,19 @@ public class GList<E> extends JList<GListElement<E>> {
 		return !currentSelections.isEmpty();
 	}
 
-	public List<E> getEntityList() {
+	public List<E> getEntities() {
 
-		return model.getEntityList();
+		return model.getEntities();
 	}
 
 	public E getEntity(int index) {
 
-		return getEntityList().get(index);
+		return getEntities().get(index);
 	}
 
 	public boolean containsEntity(E entity) {
 
-		return getEntityList().contains(entity);
+		return getEntities().contains(entity);
 	}
 
 	public boolean selectedEntity(E entity) {
