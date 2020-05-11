@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.app;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -72,13 +71,13 @@ abstract class InstanceDialog extends GDialog {
 
 	private boolean instanceStored = false;
 
-	private class ViewOnlySelector extends JCheckBox implements ActionListener {
+	private class ViewOnlySelector extends GCheckBox {
 
 		static private final long serialVersionUID = -1;
 
-		public void actionPerformed(ActionEvent event) {
+		protected void onSelectionUpdate(boolean selected) {
 
-			setViewOnly(isSelected());
+			setViewOnly(selected);
 		}
 
 		ViewOnlySelector() {
@@ -86,7 +85,6 @@ abstract class InstanceDialog extends GDialog {
 			super(MODE_SELECTOR_LABEL);
 
 			setSelected(instanceTree.viewOnly());
-			addActionListener(this);
 		}
 	}
 
