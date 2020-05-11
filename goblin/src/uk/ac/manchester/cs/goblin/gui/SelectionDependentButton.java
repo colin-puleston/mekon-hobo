@@ -62,6 +62,11 @@ abstract class SelectionDependentButton<S, A> extends GButton {
 
 	abstract List<A> getActiveSelections();
 
+	void updateEnabling() {
+
+		setEnabled(enableOnCurrentActiveSelections());
+	}
+
 	boolean enableOnActiveSelections(List<A> selections) {
 
 		return true;
@@ -70,11 +75,6 @@ abstract class SelectionDependentButton<S, A> extends GButton {
 	boolean enableOnNoActiveSelections() {
 
 		return false;
-	}
-
-	private void updateEnabling() {
-
-		setEnabled(enableOnCurrentActiveSelections());
 	}
 
 	private boolean enableOnCurrentActiveSelections() {

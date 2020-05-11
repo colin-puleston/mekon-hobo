@@ -200,6 +200,22 @@ class ConstraintGroupPanel extends JPanel {
 
 			static private final long serialVersionUID = -1;
 
+			private class SelectionsRemovalEnablingUpdater extends GListListener<Concept> {
+
+				protected void onAdded(Concept entity) {
+				}
+
+				protected void onRemoved(Concept entity) {
+
+					updateEnabling();
+				}
+
+				SelectionsRemovalEnablingUpdater() {
+
+					targetSelectionsList.addListListener(this);
+				}
+			}
+
 			protected void doButtonThing() {
 
 				addTargetSelections(targetsTree.getAllSelectedConcepts());
@@ -209,6 +225,8 @@ class ConstraintGroupPanel extends JPanel {
 			TargetAddButton() {
 
 				super(ADD_TARGETS_LABEL, targetsTree);
+
+				new SelectionsRemovalEnablingUpdater();
 			}
 
 			boolean enableOnActiveSelections(List<Concept> selections) {
