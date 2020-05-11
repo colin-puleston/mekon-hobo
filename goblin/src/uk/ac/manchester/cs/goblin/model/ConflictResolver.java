@@ -13,11 +13,14 @@ class ConflictResolver {
 
 		final Constraint subject;
 
+		private ConstraintType type;
 		private List<Constraint> conflicts = new ArrayList<Constraint>();
 
 		ConflictFinder(Constraint subject) {
 
 			this.subject = subject;
+
+			type = subject.getType();
 		}
 
 		boolean any() {
@@ -48,7 +51,7 @@ class ConflictResolver {
 
 		private void findFrom(Concept current) {
 
-			for (Constraint candidate : current.getConstraints(subject.getType())) {
+			for (Constraint candidate : current.getConstraints(type)) {
 
 				if (conflicts(candidate)) {
 
@@ -67,6 +70,11 @@ class ConflictResolver {
 			if (anc.getSemantics().impliedValue()) {
 
 				if (dec.getSemantics().impliedValue()) {
+
+					if (type.singleValue()) {
+
+						return !dec.getTargetValue().descendantOf(anc.getTargetValue());
+					}
 
 					return anc.getTargetValue().subsumedBy(dec.getTargetValue());
 				}
@@ -221,10 +229,36 @@ class ConflictResolver {
 
 			List<Constraint> conflicts = new ArrayList<Constraint>();
 
+			Constraint localConflict = lookForLocalConflict(constraint);
+
+			if (localConflict != null) {
+
+				conflicts.add(localConflict);
+			}
+
 			conflicts.addAll(new UpwardsConflictFinder(constraint).findAll());
 			conflicts.addAll(new DownwardsConflictFinder(constraint).findAll());
 
 			return conflicts;
+		}
+
+		private Constraint lookForLocalConflict(Constraint constraint) {
+
+			ConstraintType type = constraint.getType();
+
+			if (type.singleValue()) {
+
+				Concept source = constraint.getSourceValue();
+
+				if (constraint.getSemantics().impliedValue()) {
+
+					return source.lookForValidValuesConstraint(type);
+				}
+
+				return source.lookForImpliedValueConstraint(type);
+			}
+
+			return null;
 		}
 	}
 

@@ -19,4 +19,9 @@ class ImpliedValueConstraint extends Constraint {
 
 		return new RemoveAction(this);
 	}
+
+	boolean singleConstraintOfTypeAndSemanticsPerConcept() {
+
+		return getType().singleValue();
+	}
 }

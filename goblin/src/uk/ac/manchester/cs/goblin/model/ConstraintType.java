@@ -41,6 +41,11 @@ public abstract class ConstraintType {
 		return rootTargetConcept;
 	}
 
+	public boolean singleValue() {
+
+		return cardinalityType.singleValue();
+	}
+
 	public boolean semanticsOption(ConstraintSemantics semantics) {
 
 		return semanticsOptions.contains(semantics);

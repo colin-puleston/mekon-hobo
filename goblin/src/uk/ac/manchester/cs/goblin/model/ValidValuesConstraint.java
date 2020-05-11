@@ -37,6 +37,11 @@ class ValidValuesConstraint extends Constraint {
 		return new ReplaceConstraintAction(this, new ValidValuesConstraint(this, target));
 	}
 
+	boolean singleConstraintOfTypeAndSemanticsPerConcept() {
+
+		return true;
+	}
+
 	private ValidValuesConstraint(ValidValuesConstraint template, Concept minusTargetValue) {
 
 		super(template, minusTargetValue);

@@ -64,6 +64,11 @@ class ConstraintGroupPanel extends JPanel {
 
 			static private final long serialVersionUID = -1;
 
+			TargetsTree() {
+
+				super(!singleTargetSelection());
+			}
+
 			GCellDisplay getConceptDisplay(Concept concept) {
 
 				return getCellDisplay(concept).forConcept(concept);
@@ -114,6 +119,11 @@ class ConstraintGroupPanel extends JPanel {
 
 		abstract Constraint getValidValuesConstraint();
 
+		boolean singleTargetSelection() {
+
+			return false;
+		}
+
 		GoblinCellDisplay getCellDisplay(Concept concept) {
 
 			return GoblinCellDisplay.CONSTRAINTS_VALID_TARGET;
@@ -132,6 +142,11 @@ class ConstraintGroupPanel extends JPanel {
 		Constraint getValidValuesConstraint() {
 
 			return source.lookForValidValuesConstraint(type);
+		}
+
+		boolean singleTargetSelection() {
+
+			return false;
 		}
 	}
 
@@ -165,6 +180,11 @@ class ConstraintGroupPanel extends JPanel {
 			void addTarget(Concept target) {
 
 				if (!containsEntity(target)) {
+
+					if (singleTargetSelection()) {
+
+						clearList();
+					}
 
 					addEntity(target, createCellDisplay(target));
 				}
@@ -484,6 +504,7 @@ class ConstraintGroupPanel extends JPanel {
 				super(SHOW_POTENTIAL_VALIDS_LABEL);
 
 				setSelected(false);
+				setEnabled(localValidValues != null);
 			}
 		}
 
@@ -550,6 +571,11 @@ class ConstraintGroupPanel extends JPanel {
 		Constraint getValidValuesConstraint() {
 
 			return validValues;
+		}
+
+		boolean singleTargetSelection() {
+
+			return type.singleValue();
 		}
 
 		void applyEdits(Concept source, List<Concept> targets) {

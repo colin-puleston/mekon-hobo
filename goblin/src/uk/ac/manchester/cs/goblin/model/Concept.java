@@ -30,44 +30,51 @@ public abstract class Concept extends EditTarget {
 
 	private List<ConceptListener> conceptListeners = new ArrayList<ConceptListener>();
 
-	private class ConstraintsSelector {
+	private class ConstraintMatcher {
 
 		private ConstraintType type;
+		private ConstraintSemantics semantics = null;
+		private Set<Concept> targetValues = null;
 
-		ConstraintsSelector(ConstraintType type) {
+		ConstraintMatcher(ConstraintType type) {
 
 			this.type = type;
 		}
 
+		void setMatchSemantics(ConstraintSemantics semantics) {
+
+			this.semantics = semantics;
+		}
+
+		void setMatchTargetValues(Collection<Concept> targetValues) {
+
+			this.targetValues = new HashSet<Concept>(targetValues);
+		}
+
 		boolean anyMatches() {
 
-			return !select(true).isEmpty();
+			return !findMatches(true).isEmpty();
 		}
 
-		Set<Constraint> selectAll() {
+		Set<Constraint> getAll() {
 
-			return select(false);
+			return findMatches(false);
 		}
 
-		Constraint selectOneOrZero() {
+		Constraint getOneOrZero() {
 
-			Set<Constraint> selections = select(true);
+			Set<Constraint> matches = findMatches(true);
 
-			return selections.isEmpty() ? null : selections.iterator().next();
+			return matches.isEmpty() ? null : matches.iterator().next();
 		}
 
-		boolean specificsMatch(Constraint constraint) {
-
-			return true;
-		}
-
-		private Set<Constraint> select(boolean maxOne) {
+		private Set<Constraint> findMatches(boolean maxOne) {
 
 			Set<Constraint> selections = new HashSet<Constraint>();
 
 			for (Constraint candidate : getConstraints()) {
 
-				if (candidate.hasType(type) && specificsMatch(candidate)) {
+				if (match(candidate)) {
 
 					selections.add(candidate);
 
@@ -80,54 +87,22 @@ public abstract class Concept extends EditTarget {
 
 			return selections;
 		}
-	}
 
-	private class ValidValuesConstraintSelector extends ConstraintsSelector {
+		private boolean match(Constraint candidate) {
 
-		ValidValuesConstraintSelector(ConstraintType type) {
-
-			super(type);
+			return candidate.hasType(type)
+					&& checkSemanticsMatch(candidate)
+					&& checkTargetValuesMatch(candidate);
 		}
 
-		boolean specificsMatch(Constraint constraint) {
+		private boolean checkSemanticsMatch(Constraint candidate) {
 
-			return constraint.getSemantics().validValues();
-		}
-	}
-
-	private class ImpliedValueConstraintsSelector extends ConstraintsSelector {
-
-		ImpliedValueConstraintsSelector(ConstraintType type) {
-
-			super(type);
+			return semantics == null || candidate.hasSemantics(semantics);
 		}
 
-		boolean specificsMatch(Constraint constraint) {
+		private boolean checkTargetValuesMatch(Constraint candidate) {
 
-			return constraint.getSemantics().impliedValue();
-		}
-	}
-
-	private class ConstraintMatchesFinder extends ImpliedValueConstraintsSelector {
-
-		private ConstraintSemantics semantics;
-		private Set<Concept> targetValues;
-
-		ConstraintMatchesFinder(
-			ConstraintType type,
-			ConstraintSemantics semantics,
-			Collection<Concept> targetValues) {
-
-			super(type);
-
-			this.semantics = semantics;
-			this.targetValues = new HashSet<Concept>(targetValues);
-		}
-
-		boolean specificsMatch(Constraint constraint) {
-
-			return constraint.hasSemantics(semantics)
-					&& constraint.getTargetValues().equals(targetValues);
+			return targetValues == null || candidate.getTargetValues().equals(targetValues);
 		}
 	}
 
@@ -249,17 +224,35 @@ public abstract class Concept extends EditTarget {
 
 	public Set<Constraint> getConstraints(ConstraintType type) {
 
-		return new ConstraintsSelector(type).selectAll();
+		return new ConstraintMatcher(type).getAll();
+	}
+
+	public Constraint lookForConstraint(ConstraintType type, ConstraintSemantics semantics) {
+
+		ConstraintMatcher matcher = new ConstraintMatcher(type);
+
+		matcher.setMatchSemantics(semantics);
+
+		return matcher.getOneOrZero();
 	}
 
 	public Constraint lookForValidValuesConstraint(ConstraintType type) {
 
-		return new ValidValuesConstraintSelector(type).selectOneOrZero();
+		return lookForConstraint(type, ConstraintSemantics.VALID_VALUES);
+	}
+
+	public Constraint lookForImpliedValueConstraint(ConstraintType type) {
+
+		return lookForConstraint(type, ConstraintSemantics.IMPLIED_VALUE);
 	}
 
 	public Set<Constraint> getImpliedValueConstraints(ConstraintType type) {
 
-		return new ImpliedValueConstraintsSelector(type).selectAll();
+		ConstraintMatcher matcher = new ConstraintMatcher(type);
+
+		matcher.setMatchSemantics(ConstraintSemantics.IMPLIED_VALUE);
+
+		return matcher.getAll();
 	}
 
 	public Constraint getClosestValidValuesConstraint(ConstraintType type) {
@@ -284,7 +277,12 @@ public abstract class Concept extends EditTarget {
 						ConstraintSemantics semantics,
 						Collection<Concept> targetValues) {
 
-		return new ConstraintMatchesFinder(type, semantics, targetValues).anyMatches();
+		ConstraintMatcher matcher = new ConstraintMatcher(type);
+
+		matcher.setMatchSemantics(semantics);
+		matcher.setMatchTargetValues(targetValues);
+
+		return matcher.anyMatches();
 	}
 
 	public Set<Constraint> getInwardConstraints() {

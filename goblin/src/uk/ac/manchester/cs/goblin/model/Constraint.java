@@ -93,7 +93,7 @@ public abstract class Constraint extends EditTarget {
 			EditAction action = new AddAction(this);
 
 			action = conflictRes.incorporateResolvingEdits(action);
-			action = checkIncorporateValidValuesConstraintRemoval(action);
+			action = checkIncorporateConstraintRemoval(action);
 
 			performAction(action);
 
@@ -135,6 +135,8 @@ public abstract class Constraint extends EditTarget {
 		return testType.equals(type);
 	}
 
+	abstract boolean singleConstraintOfTypeAndSemanticsPerConcept();
+
 	private ConceptTracker toConceptTracker(Concept concept) {
 
 		return concept.getModel().getConceptTracking().toTracker(concept);
@@ -156,24 +158,24 @@ public abstract class Constraint extends EditTarget {
 		}
 	}
 
-	private EditAction checkIncorporateValidValuesConstraintRemoval(EditAction action) {
+	private EditAction checkIncorporateConstraintRemoval(EditAction action) {
 
-		if (getSemantics().validValues()) {
+		if (singleConstraintOfTypeAndSemanticsPerConcept()) {
 
-			Constraint validValues = lookForValidValuesTypeConstraint();
+			Constraint constraint = lookForTypeAndSemanticsConstraint();
 
-			if (validValues != null) {
+			if (constraint != null) {
 
-				return new CompoundEditAction(new RemoveAction(validValues), action);
+				return new CompoundEditAction(new RemoveAction(constraint), action);
 			}
 		}
 
 		return action;
 	}
 
-	private Constraint lookForValidValuesTypeConstraint() {
+	private Constraint lookForTypeAndSemanticsConstraint() {
 
-		return getSourceValue().lookForValidValuesConstraint(type);
+		return getSourceValue().lookForConstraint(type, getSemantics());
 	}
 
 	private void performAction(EditAction action) {

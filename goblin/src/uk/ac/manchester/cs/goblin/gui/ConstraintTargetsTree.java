@@ -77,9 +77,9 @@ abstract class ConstraintTargetsTree extends ConceptTree {
 		}
 	}
 
-	ConstraintTargetsTree() {
+	ConstraintTargetsTree(boolean multiSelect) {
 
-		super(true);
+		super(multiSelect);
 
 		new SelectionsPruner();
 	}
