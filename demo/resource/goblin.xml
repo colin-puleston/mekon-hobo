@@ -14,15 +14,18 @@
 			name="industry sector"
 			linkingProperty="http://mekon/demo-core.owl#sector"
 			rootTargetConcept="http://mekon/demo-core.owl#IndustrySector"
-			semanticsEnabled="IMPLIED_VALUES_ONLY">
+			cardinalityType="SINGLE_VALUE">
+			<SemanticsOption semantics="IMPLIED_VALUE"/>
 		</SimpleConstraintType>
 		<AnchoredConstraintType
-			name="industry type"
+			name="job type"
 			anchorConcept="http://mekon/demo-core.owl#Job"
 			sourceProperty="http://mekon/demo-core.owl#industry"
 			targetProperty="http://mekon/demo-core.owl#jobType"
 			rootTargetConcept="http://mekon/demo-core.owl#JobType"
-			semanticsEnabled="VALID_VALUES_AND_IMPLIED_VALUES">
+			cardinalityType="SINGLE_VALUE">
+			<SemanticsOption semantics="VALID_VALUES"/>
+			<SemanticsOption semantics="IMPLIED_VALUE"/>
 		</AnchoredConstraintType>
 	</Hierarchy>
 
