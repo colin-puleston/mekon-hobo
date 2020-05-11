@@ -108,7 +108,7 @@ abstract class DisjunctionEntitySelector<E> extends EntitySelector<E> {
 
 	List<E> getDisjunctSelections() {
 
-		return selectionsList.getEntityList();
+		return selectionsList.getEntities();
 	}
 
 	private JPanel createSelectionsPanel() {

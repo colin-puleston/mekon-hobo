@@ -74,7 +74,7 @@ class InstanceGroup {
 
 		if (type.equals(rootType)) {
 
-			typeAssertIds.addIds(rootAssertionIds.getEntityList());
+			typeAssertIds.addIds(rootAssertionIds.getEntities());
 		}
 		else {
 

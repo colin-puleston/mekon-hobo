@@ -66,7 +66,7 @@ class DisjunctionFrameSelector extends DisjunctionEntitySelector<CFrame> {
 
 	void removeSelectionConflicts(GList<CFrame> selectionsList, CFrame newSelection) {
 
-		for (CFrame sel : selectionsList.getEntityList()) {
+		for (CFrame sel : selectionsList.getEntities()) {
 
 			if (newSelection.subsumes(sel) || sel.subsumes(newSelection)) {
 
