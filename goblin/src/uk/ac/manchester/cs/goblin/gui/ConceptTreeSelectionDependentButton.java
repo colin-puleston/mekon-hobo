@@ -52,6 +52,6 @@ abstract class ConceptTreeSelectionDependentButton
 
 	List<Concept> getActiveSelections() {
 
-		return ConceptTree.extractConcepts(tree.getAllSelectedNodes());
+		return ConceptTree.extractConcepts(tree.getSelectedNodes());
 	}
 }

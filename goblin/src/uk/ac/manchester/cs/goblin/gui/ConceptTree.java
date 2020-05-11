@@ -439,7 +439,7 @@ abstract class ConceptTree extends GSelectorTree {
 
 		List<Concept> selectedConcepts = new ArrayList<Concept>();
 
-		for (GNode node : getAllSelectedNodes()) {
+		for (GNode node : getSelectedNodes()) {
 
 			selectedConcepts.add(extractConcept(node));
 		}

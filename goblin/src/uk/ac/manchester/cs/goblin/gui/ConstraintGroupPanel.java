@@ -445,7 +445,7 @@ class ConstraintGroupPanel extends JPanel {
 
 		private List<Concept> getTargetSelections() {
 
-			return targetSelectionsList.getEntityList();
+			return targetSelectionsList.getEntities();
 		}
 
 		private boolean selectionTarget(Concept concept) {
