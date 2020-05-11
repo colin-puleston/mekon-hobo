@@ -40,9 +40,9 @@ class HierarchyTreePanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String NO_CONSTRAINTS_LABEL = "Show no constraints";
-	static private final String EDIT_TYPE_CONSTRAINTS_LABEL = "Show current edit type constraints";
-	static private final String ALL_CONSTRAINTS_LABEL = "Show all constraints";
+	static private final String NO_CONSTRAINTS_LABEL = "Hide constraints";
+	static private final String EDIT_TYPE_CONSTRAINTS_LABEL = "Show constraints: Current edit type";
+	static private final String ALL_CONSTRAINTS_LABEL = "Show constraints: All";
 
 	static private final String ADD_LABEL = "Add...";
 	static private final String REMOVE_LABEL = "Del";
@@ -63,49 +63,37 @@ class HierarchyTreePanel extends JPanel {
 
 	private ConceptMover conceptMover = new ConceptMover();
 
-	private class DisplayModeSelector extends JComboBox<Object> {
+	private class DisplayModeSelector extends GSelectorBox<ConstraintsDisplayMode> {
 
 		static private final long serialVersionUID = -1;
 
-		private class Option {
+		protected void onSelection(ConstraintsDisplayMode mode) {
 
-			private ConstraintsDisplayMode mode;
-			private String label;
-
-			public String toString() {
-
-				return label;
-			}
-
-			Option(ConstraintsDisplayMode mode, String label) {
-
-				this.mode = mode;
-				this.label = label;
-
-				addItem(this);
-			}
-
-			void setOptionMode() {
-
-				tree.setConstraintsDisplayMode(mode);
-			}
-		}
-
-		private class SelectionListener implements ItemListener {
-
-			public void itemStateChanged(ItemEvent event) {
-
-				((Option)event.getItem()).setOptionMode();
-			}
+			tree.setConstraintsDisplayMode(mode);
 		}
 
 		DisplayModeSelector() {
 
-			new Option(ConstraintsDisplayMode.NONE, NO_CONSTRAINTS_LABEL);
-			new Option(ConstraintsDisplayMode.EDIT_TYPE_ONLY, EDIT_TYPE_CONSTRAINTS_LABEL);
-			new Option(ConstraintsDisplayMode.ALL, ALL_CONSTRAINTS_LABEL);
+			addOption(NO_CONSTRAINTS_LABEL, ConstraintsDisplayMode.NONE);
+			addOption(EDIT_TYPE_CONSTRAINTS_LABEL, ConstraintsDisplayMode.EDIT_TYPE_ONLY);
+			addOption(ALL_CONSTRAINTS_LABEL, ConstraintsDisplayMode.ALL);
 
-			addItemListener(new SelectionListener());
+			activate();
+		}
+	}
+
+	private class TreeSelectorPanel extends ConceptTreeSelectorPanel {
+
+		static private final long serialVersionUID = -1;
+
+		TreeSelectorPanel() {
+
+			super(tree);
+		}
+
+		GCellDisplay getSelectorsCellDisplay(Concept concept, boolean highlight) {
+
+			return GoblinCellDisplay.CONCEPTS_DEFAULT.forConcept(concept, highlight);
 		}
 	}
 
@@ -364,12 +352,12 @@ class HierarchyTreePanel extends JPanel {
 			JPanel panel = new JPanel(new BorderLayout());
 
 			panel.add(new DisplayModeSelector(), BorderLayout.WEST);
-			panel.add(new ConceptTreeSelectorPanel(tree), BorderLayout.EAST);
+			panel.add(new TreeSelectorPanel(), BorderLayout.EAST);
 
 			return panel;
 		}
 
-		return new ConceptTreeSelectorPanel(tree);
+		return new TreeSelectorPanel();
 	}
 
 	private JComponent createButtonsPanel() {

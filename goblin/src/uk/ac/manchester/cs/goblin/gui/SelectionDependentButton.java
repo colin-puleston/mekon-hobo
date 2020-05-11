@@ -24,25 +24,27 @@
 
 package uk.ac.manchester.cs.goblin.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class SelectionDependentButton<E> extends GButton {
+abstract class SelectionDependentButton<S, A> extends GButton {
 
 	static private final long serialVersionUID = -1;
 
-	private class Enabler extends GSelectionListener<E> {
+	private class Enabler extends GSelectionListener<S> {
 
-		protected void onSelected(E entity) {
+		protected void onSelected(S entity) {
 
-			setEnabled(enableOnSelection(entity));
+			updateEnabling();
 		}
 
-		protected void onDeselected(E entity) {
+		protected void onDeselected(S entity) {
 
-			setEnabled(enableOnNoSelection());
+			updateEnabling();
 		}
 	}
 
@@ -50,18 +52,37 @@ abstract class SelectionDependentButton<E> extends GButton {
 
 		super(label);
 
-		setEnabled(enableOnNoSelection());
+		setEnabled(enableOnNoActiveSelections());
 	}
 
-	GSelectionListener<E> initialise() {
+	GSelectionListener<S> initialise() {
 
 		return new Enabler();
 	}
 
-	abstract boolean enableOnSelection(E entity);
+	abstract List<A> getActiveSelections();
 
-	boolean enableOnNoSelection() {
+	boolean enableOnActiveSelections(List<A> selections) {
+
+		return true;
+	}
+
+	boolean enableOnNoActiveSelections() {
 
 		return false;
+	}
+
+	private void updateEnabling() {
+
+		setEnabled(enableOnCurrentActiveSelections());
+	}
+
+	private boolean enableOnCurrentActiveSelections() {
+
+		List<A> selections = getActiveSelections();
+
+		return selections.isEmpty()
+					? enableOnNoActiveSelections()
+					: enableOnActiveSelections(selections);
 	}
 }

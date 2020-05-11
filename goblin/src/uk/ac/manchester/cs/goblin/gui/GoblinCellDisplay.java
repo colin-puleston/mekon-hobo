@@ -38,20 +38,41 @@ import uk.ac.manchester.cs.goblin.model.*;
  */
 enum GoblinCellDisplay {
 
-	CONCEPTS_DEFAULT(largeCircle(Color.CYAN)),
-	CONCEPTS_MOVE_SUBJECT(largeCircle(Color.GRAY.brighter())),
-	CONCEPTS_CONSTRAINT_GROUP(mediumCircle(Color.GREEN)),
-	CONCEPTS_CONSTRAINT_IMPLIED_TARGET(mediumCircle(Color.GREEN.darker())),
-	CONSTRAINTS_POTENTIAL_TARGET(largeCircle(Color.YELLOW)),
-	CONSTRAINTS_VALID_TARGET(largeCircle(Color.GREEN)),
-	CONSTRAINTS_IMPLIED_TARGET(largeCircle(Color.GREEN), smallCircle(Color.GREEN.darker())),
-	CONCEPT_SELECTOR(largeCircle(Color.GRAY));
+	CONCEPTS_DEFAULT(
+		largeCircle(ConceptColor.DEFAULT)),
+	CONCEPTS_MOVE_SUBJECT(
+		largeCircle(ConceptColor.MOVE_SUBJECT)),
+	CONCEPTS_CONSTRAINT_GROUP(
+		mediumCircle(ConstraintColor.VALID_TARGET)),
+	CONCEPTS_CONSTRAINT_IMPLIED_TARGET(
+		mediumCircle(ConstraintColor.IMPLIED_TARGET)),
+
+	CONSTRAINTS_POTENTIAL_TARGET(
+		largeCircle(ConstraintColor.POTENTIAL_TARGET)),
+	CONSTRAINTS_VALID_TARGET(
+		largeCircle(ConstraintColor.VALID_TARGET)),
+	CONSTRAINTS_IMPLIED_TARGET(
+		largeCircle(ConstraintColor.VALID_TARGET),
+		smallCircle(ConstraintColor.IMPLIED_TARGET));
 
 	static private final int LARGE_ICON_SIZE = 12;
 	static private final int MEDIUM_ICON_SIZE = 8;
 	static private final int SMALL_ICON_SIZE = 6;
 
 	static private final Color HIGHLIGHTED_BACKGROUND_CLR = new Color(255,237,160);
+
+	static private class ConceptColor {
+
+		static final Color DEFAULT = Color.CYAN;
+		static final Color MOVE_SUBJECT = Color.GRAY.brighter();
+	}
+
+	static private class ConstraintColor {
+
+		static final Color POTENTIAL_TARGET = Color.YELLOW;
+		static final Color VALID_TARGET = Color.GREEN;
+		static final Color IMPLIED_TARGET = Color.GREEN.darker();
+	}
 
 	static private GIconRenderer largeCircle(Color clr) {
 
@@ -143,11 +164,6 @@ enum GoblinCellDisplay {
 			labels.add(concept.getConceptId().getLabel());
 		}
 
-		return stripListBrackets(labels.toString());
-	}
-
-	private String stripListBrackets(String list) {
-
-		return list.substring(1, list.length() - 1);
+		return labels.toString();
 	}
 }

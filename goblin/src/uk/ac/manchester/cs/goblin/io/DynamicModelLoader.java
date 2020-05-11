@@ -149,12 +149,12 @@ class DynamicModelLoader {
 
 			if (!targetExprs.isEmpty()) {
 
-				if (type.semanticsEnabled(ConstraintSemantics.VALID_VALUES)) {
+				if (type.semanticsOption(ConstraintSemantics.VALID_VALUES)) {
 
 					checkLoadValidValuesConstraint(source, targetExprs);
 				}
 
-				if (type.semanticsEnabled(ConstraintSemantics.IMPLIED_VALUE)) {
+				if (type.semanticsOption(ConstraintSemantics.IMPLIED_VALUE)) {
 
 					checkLoadImpliedValueConstraints(source, targetExprs);
 				}

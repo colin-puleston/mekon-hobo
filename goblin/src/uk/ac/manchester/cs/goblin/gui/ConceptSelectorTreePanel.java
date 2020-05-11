@@ -62,9 +62,7 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 
 		GCellDisplay getConceptDisplay(Concept concept) {
 
-			boolean highlight = filterPanel.passesFilter(concept);
-
-			return GoblinCellDisplay.CONCEPT_SELECTOR.forConcept(concept, highlight);
+			return getSelectorCellDisplay(concept, filterPanel.passesFilter(concept));
 		}
 
 		void onConstraintChange() {
@@ -137,6 +135,8 @@ abstract class ConceptSelectorTreePanel extends JPanel {
 
 		new ConceptSelectionListener();
 	}
+
+	abstract GCellDisplay getSelectorCellDisplay(Concept concept, boolean highlight);
 
 	abstract void onSelection(Concept selected);
 }

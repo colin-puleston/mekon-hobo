@@ -24,24 +24,30 @@
 
 package uk.ac.manchester.cs.goblin.gui;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class ListSelectionDependentButton<E> extends SelectionDependentButton<E> {
+abstract class ListSelectionDependentButton<E> extends SelectionDependentButton<E, E> {
 
 	static private final long serialVersionUID = -1;
+
+	private GList<E> list;
 
 	ListSelectionDependentButton(String label, GList<E> list) {
 
 		super(label);
 
+		this.list = list;
+
 		list.addSelectionListener(initialise());
 	}
 
-	boolean enableOnSelection(E entity) {
+	List<E> getActiveSelections() {
 
-		return true;
+		return list.getSelectedEntities();
 	}
 }

@@ -20,6 +20,7 @@ class ConfigFileReader {
 	static private final String HIERARCHY_TAG = "Hierarchy";
 	static private final String ANCHORED_CONSTRAINT_TYPE_TAG = "AnchoredConstraintType";
 	static private final String SIMPLE_CONSTRAINT_TYPE_TAG = "SimpleConstraintType";
+	static private final String SEMANTICS_OPTION_TAG = "SemanticsOption";
 
 	static private final String DYNAMIC_NAMESPACE_ATTR = "dynamicNamespace";
 	static private final String DYNAMIC_FILE_ATTR = "dynamicFilename";
@@ -32,7 +33,8 @@ class ConfigFileReader {
 	static private final String TARGET_PROPERTY_ATTR = "targetProperty";
 	static private final String LINKING_PROPERTY_ATTR = "linkingProperty";
 	static private final String ROOT_TARGET_CONCEPT_ATTR = "rootTargetConcept";
-	static private final String SEMANTICS_ENABLED_ATTR = "semanticsEnabled";
+	static private final String CARDINALITY_TYPE_ATTR = "cardinalityType";
+	static private final String SEMANTICS_OPTION_ATTR = "semantics";
 
 	static private KConfigNode loadFile() {
 
@@ -81,14 +83,33 @@ class ConfigFileReader {
 				Concept rootTgt = getRootTargetConcept(node);
 
 				ConstraintType type = loadSpecificType(node, name, rootSrc, rootTgt);
-				ConstraintSemanticsEnabling semEnabling = getSemanticsEnablingOrNull(node);
 
-				if (semEnabling != null) {
+				CardinalityType cardinalityType = getCardinalityTypeOrNull(node);
+				Set<ConstraintSemantics> semanticsOpts = getSemanticsOptions(node);
 
-					type.setEnabledSemantics(semEnabling.getEnabledSet());
+				if (cardinalityType != null) {
+
+					type.setCardinalityType(cardinalityType);
+				}
+
+				if (!semanticsOpts.isEmpty()) {
+
+					type.setSemanticsOptions(semanticsOpts);
 				}
 
 				return type;
+			}
+
+			private Set<ConstraintSemantics> getSemanticsOptions(KConfigNode allNode) {
+
+				Set<ConstraintSemantics> options = new HashSet<ConstraintSemantics>();
+
+				for (KConfigNode oneNode : allNode.getChildren(SEMANTICS_OPTION_TAG)) {
+
+					options.add(getSemanticsOption(oneNode));
+				}
+
+				return options;
 			}
 		}
 
@@ -164,9 +185,14 @@ class ConfigFileReader {
 			return getPropertyId(node, ROOT_TARGET_CONCEPT_ATTR);
 		}
 
-		private ConstraintSemanticsEnabling getSemanticsEnablingOrNull(KConfigNode node) {
+		private CardinalityType getCardinalityTypeOrNull(KConfigNode node) {
 
-			return node.getEnum(SEMANTICS_ENABLED_ATTR, ConstraintSemanticsEnabling.class, null);
+			return node.getEnum(CARDINALITY_TYPE_ATTR, CardinalityType.class, null);
+		}
+
+		private ConstraintSemantics getSemanticsOption(KConfigNode node) {
+
+			return node.getEnum(SEMANTICS_OPTION_ATTR, ConstraintSemantics.class);
 		}
 
 		private EntityId getConceptId(KConfigNode node, String tag) {

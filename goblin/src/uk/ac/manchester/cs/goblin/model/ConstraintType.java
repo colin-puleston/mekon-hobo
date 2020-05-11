@@ -11,12 +11,19 @@ public abstract class ConstraintType {
 	private Concept rootSourceConcept;
 	private Concept rootTargetConcept;
 
-	private Set<ConstraintSemantics> enabledSemantics
+	private CardinalityType cardinalityType = CardinalityType.SINGLE_VALUE;
+
+	private Set<ConstraintSemantics> semanticsOptions
 				= Collections.singleton(ConstraintSemantics.VALID_VALUES);
 
-	public void setEnabledSemantics(Set<ConstraintSemantics> enabledSemantics) {
+	public void setCardinalityType(CardinalityType cardinalityType) {
 
-		this.enabledSemantics = new HashSet<ConstraintSemantics>(enabledSemantics);
+		this.cardinalityType = cardinalityType;
+	}
+
+	public void setSemanticsOptions(Set<ConstraintSemantics> semanticsOptions) {
+
+		this.semanticsOptions = new HashSet<ConstraintSemantics>(semanticsOptions);
 	}
 
 	public String getName() {
@@ -34,9 +41,9 @@ public abstract class ConstraintType {
 		return rootTargetConcept;
 	}
 
-	public boolean semanticsEnabled(ConstraintSemantics semantics) {
+	public boolean semanticsOption(ConstraintSemantics semantics) {
 
-		return enabledSemantics.contains(semantics);
+		return semanticsOptions.contains(semantics);
 	}
 
 	protected ConstraintType(String name, Concept rootSourceConcept, Concept rootTargetConcept) {

@@ -37,14 +37,14 @@ import uk.ac.manchester.cs.goblin.model.*;
 /**
  * @author Colin Puleston
  */
-class ConceptTreeSelectorPanel extends JPanel {
+abstract class ConceptTreeSelectorPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
 	static private final String DIALOG_TITLE = "Select Concept";
 
-	static private final String LIST_SEARCH_BUTTON_LABEL = "List Search...";
-	static private final String TREE_SEARCH_BUTTON_LABEL = "Tree Search...";
+	static private final String LIST_SEARCH_BUTTON_LABEL = "List?";
+	static private final String TREE_SEARCH_BUTTON_LABEL = "Tree?";
 
 	static private final Dimension LIST_SEARCH_DIALOG_SIZE = new Dimension(300, 400);
 	static private final Dimension TREE_SEARCH_DIALOG_SIZE = new Dimension(400, 400);
@@ -135,14 +135,9 @@ class ConceptTreeSelectorPanel extends JPanel {
 
 				for (Concept concept : concepts) {
 
-					addEntity(concept, getCellDisplay(concept));
+					addEntity(concept, getSelectorsCellDisplay(concept, false));
 					populate(concept.getChildren());
 				}
-			}
-
-			private GCellDisplay getCellDisplay(Concept concept) {
-
-				return GoblinCellDisplay.CONCEPT_SELECTOR.forConcept(concept);
 			}
 		}
 
@@ -168,6 +163,11 @@ class ConceptTreeSelectorPanel extends JPanel {
 			SearchTreePanel() {
 
 				super(targetTree.getRootConcepts());
+			}
+
+			GCellDisplay getSelectorCellDisplay(Concept concept, boolean highlight) {
+
+				return getSelectorsCellDisplay(concept, highlight);
 			}
 
 			void onSelection(Concept selected) {
@@ -196,6 +196,8 @@ class ConceptTreeSelectorPanel extends JPanel {
 		setBorder(LineBorder.createGrayLineBorder());
 		add(createButtonsPanel(), BorderLayout.EAST);
 	}
+
+	abstract GCellDisplay getSelectorsCellDisplay(Concept concept, boolean highlight);
 
 	private JPanel createButtonsPanel() {
 

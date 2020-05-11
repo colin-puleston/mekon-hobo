@@ -102,17 +102,17 @@ class HierarchyPanel extends GSplitPane {
 
 			JTabbedPane tabs = new JTabbedPane();
 
-			String onlyTitle = checkPanelTitle(type, ConstraintSemantics.VALID_VALUES);
-			String hasTitle = checkPanelTitle(type, ConstraintSemantics.IMPLIED_VALUE);
+			String validsTitle = checkPanelTitle(type, ConstraintSemantics.VALID_VALUES);
+			String impliedsTitle = checkPanelTitle(type, ConstraintSemantics.IMPLIED_VALUE);
 
-			if (onlyTitle != null) {
+			if (validsTitle != null) {
 
-				tabs.addTab(onlyTitle, createValidValuesPanel(type));
+				tabs.addTab(validsTitle, createValidValuesPanel(type));
 			}
 
-			if (hasTitle != null) {
+			if (impliedsTitle != null) {
 
-				tabs.addTab(hasTitle, createImpliedValuePanel(type));
+				tabs.addTab(impliedsTitle, createImpliedValuesPanel(type));
 			}
 
 			return tabs;
@@ -120,7 +120,7 @@ class HierarchyPanel extends GSplitPane {
 
 		private String checkPanelTitle(ConstraintType type, ConstraintSemantics semantics) {
 
-			if (!type.semanticsEnabled(semantics)) {
+			if (!type.semanticsOption(semantics)) {
 
 				return null;
 			}
@@ -128,14 +128,21 @@ class HierarchyPanel extends GSplitPane {
 			return String.format(CONSTRAINT_PANEL_TITLE_FORMAT, semantics.getDisplayLabel());
 		}
 
-		private ConstraintPanel createValidValuesPanel(ConstraintType type) {
+		private ConstraintGroupPanel createValidValuesPanel(ConstraintType type) {
 
-			return new ConstraintPanel(type, ConstraintSemantics.VALID_VALUES, hierarchyTree);
+			return createGroupPanel(type, ConstraintSemantics.VALID_VALUES);
 		}
 
-		private ConstraintPanel createImpliedValuePanel(ConstraintType type) {
+		private ConstraintGroupPanel createImpliedValuesPanel(ConstraintType type) {
 
-			return new ConstraintPanel(type, ConstraintSemantics.IMPLIED_VALUE, hierarchyTree);
+			return createGroupPanel(type, ConstraintSemantics.IMPLIED_VALUE);
+		}
+
+		private ConstraintGroupPanel createGroupPanel(
+										ConstraintType type,
+										ConstraintSemantics semantics) {
+
+			return new ConstraintGroupPanel(type, semantics, hierarchyTree);
 		}
 	}
 

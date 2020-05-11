@@ -28,29 +28,30 @@ import uk.ac.manchester.cs.mekon.gui.*;
 
 import uk.ac.manchester.cs.goblin.model.*;
 
+import java.util.*;
+
 /**
  * @author Colin Puleston
  */
-abstract class ConceptTreeSelectionDependentButton extends SelectionDependentButton<GNode> {
+abstract class ConceptTreeSelectionDependentButton
+					extends
+						SelectionDependentButton<GNode, Concept> {
 
 	static private final long serialVersionUID = -1;
+
+	private ConceptTree tree;
 
 	ConceptTreeSelectionDependentButton(String label, ConceptTree tree) {
 
 		super(label);
 
+		this.tree = tree;
+
 		tree.addNodeSelectionListener(initialise());
 	}
 
-	boolean enableOnSelection(GNode selection) {
+	List<Concept> getActiveSelections() {
 
-		Concept concept = ConceptTree.extractConcept(selection);
-
-		return concept != null && enableOnSelectedConcept(concept);
-	}
-
-	boolean enableOnSelectedConcept(Concept selection) {
-
-		return true;
+		return ConceptTree.extractConcepts(tree.getAllSelectedNodes());
 	}
 }

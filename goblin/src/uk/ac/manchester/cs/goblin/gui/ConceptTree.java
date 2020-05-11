@@ -39,14 +39,31 @@ abstract class ConceptTree extends GSelectorTree {
 
 	static private final long serialVersionUID = -1;
 
-	static Concept extractConcept(GNode selectedNode) {
+	static List<Concept> extractConcepts(Collection<GNode> nodes) {
 
-		return extractConcept((ConceptTreeNode)selectedNode);
+		List<Concept> concepts = new ArrayList<Concept>();
+
+		for (GNode node : nodes) {
+
+			Concept concept = extractConcept(node);
+
+			if (concept != null) {
+
+				concepts.add(concept);
+			}
+		}
+
+		return concepts;
 	}
 
-	static private Concept extractConcept(ConceptTreeNode selectedNode) {
+	static Concept extractConcept(GNode node) {
 
-		return selectedNode != null ? selectedNode.getConceptOrNull() : null;
+		return extractConcept((ConceptTreeNode)node);
+	}
+
+	static private Concept extractConcept(ConceptTreeNode node) {
+
+		return node != null ? node.getConceptOrNull() : null;
 	}
 
 	private Set<Concept> rootConcepts;
@@ -274,15 +291,12 @@ abstract class ConceptTree extends GSelectorTree {
 
 		private void addConstraintChildren() {
 
-			System.out.println("ADD-FOR: " + concept);
 			for (ConstraintType type : concept.getHierarchy().getConstraintTypes()) {
 
-				System.out.println("TYPE: " + type);
 				if (showConstraints(type)) {
 
 					ConstraintGroup group = new ConstraintGroup(concept, type);
 
-					System.out.println("SHOW-ANY: " + group.anyConstraints());
 					if (group.anyConstraints()) {
 
 						addChild(new ConstraintGroupNode(this, group));
@@ -293,38 +307,47 @@ abstract class ConceptTree extends GSelectorTree {
 		}
 	}
 
-	private class ConstraintGroupNode extends ConceptTreeNode {
-
-		private ConstraintGroup group;
+	private abstract class ConstraintsNode extends ConceptTreeNode {
 
 		private class Deselector extends GSelectionListener<GNode> {
 
-			private ConceptNode parentNode;
+			private ConceptNode sourceConceptNode;
 
 			protected void onSelected(GNode node) {
 
-				if (node == ConstraintGroupNode.this) {
+				if (node == ConstraintsNode.this) {
 
-					parentNode.select();
+					sourceConceptNode.select();
 				}
 			}
 
 			protected void onDeselected(GNode node) {
 			}
 
-			Deselector(ConceptNode parentNode) {
+			Deselector(ConceptNode sourceConceptNode) {
 
-				this.parentNode = parentNode;
+				this.sourceConceptNode = sourceConceptNode;
 
 				addNodeSelectionListener(this);
 			}
 		}
 
+		ConstraintsNode(ConceptNode parentNode) {
+
+			new Deselector(parentNode);
+		}
+	}
+
+	private class ConstraintGroupNode extends ConstraintsNode {
+
+		private ConceptNode sourceConceptNode;
+		private ConstraintGroup group;
+
 		protected void addInitialChildren() {
 
 			for (Concept target : group.getImpliedValueTargets()) {
 
-				addChild(new ImpliedValueConstraintTargetNode(target));
+				addChild(new ImpliedValueConstraintTargetNode(sourceConceptNode, target));
 			}
 		}
 
@@ -333,11 +356,12 @@ abstract class ConceptTree extends GSelectorTree {
 			return GoblinCellDisplay.CONCEPTS_CONSTRAINT_GROUP.forConstraints(group);
 		}
 
-		ConstraintGroupNode(ConceptNode parentNode, ConstraintGroup group) {
+		ConstraintGroupNode(ConceptNode sourceConceptNode, ConstraintGroup group) {
 
+			super(sourceConceptNode);
+
+			this.sourceConceptNode = sourceConceptNode;
 			this.group = group;
-
-			new Deselector(parentNode);
 		}
 
 		void redisplayAllConstraints(boolean modeChanged, boolean parentWasCollapsed) {
@@ -346,7 +370,7 @@ abstract class ConceptTree extends GSelectorTree {
 		}
 	}
 
-	private class ImpliedValueConstraintTargetNode extends ConceptTreeNode {
+	private class ImpliedValueConstraintTargetNode extends ConstraintsNode {
 
 		private GCellDisplay display;
 
@@ -355,7 +379,9 @@ abstract class ConceptTree extends GSelectorTree {
 			return display;
 		}
 
-		ImpliedValueConstraintTargetNode(Concept target) {
+		ImpliedValueConstraintTargetNode(ConceptNode sourceConceptNode, Concept target) {
+
+			super(sourceConceptNode);
 
 			display = GoblinCellDisplay.CONCEPTS_CONSTRAINT_IMPLIED_TARGET.forConcept(target);
 		}
