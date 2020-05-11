@@ -40,21 +40,30 @@ public abstract class GFilterPanel extends JPanel {
 	static private final String START_ONLY_TITLE = "begins with";
 
 	private JTextField filterField = new JTextField();
-	private JCheckBox startOnlyBox = new JCheckBox(START_ONLY_TITLE);
+	private StartOnlyBox startOnlyBox = new StartOnlyBox();
 
 	private class FilterListener extends KeyAdapter {
 
 		public void keyReleased(KeyEvent event) {
 
-			update();
+			updateFiltering(startOnlyBox.isSelected());
 		}
 	}
 
-	private class StartOnlyListener implements ActionListener {
+	private class StartOnlyBox extends GCheckBox {
 
-		public void actionPerformed(ActionEvent event) {
+		static private final long serialVersionUID = -1;
 
-			update();
+		protected void onSelectionUpdate(boolean selected) {
+
+			updateFiltering(selected);
+		}
+
+		StartOnlyBox() {
+
+			super(START_ONLY_TITLE);
+
+			setSelected(false);
 		}
 	}
 
@@ -68,9 +77,6 @@ public abstract class GFilterPanel extends JPanel {
 		add(startOnlyBox, BorderLayout.EAST);
 
 		filterField.addKeyListener(new FilterListener());
-
-		startOnlyBox.addActionListener(new StartOnlyListener());
-		startOnlyBox.setSelected(false);
 	}
 
 	public void setFocusToFilterField() {
@@ -82,13 +88,11 @@ public abstract class GFilterPanel extends JPanel {
 
 	protected abstract void clearFilter();
 
-	private void update() {
+	private void updateFiltering(boolean startOnly) {
 
 		String filter = filterField.getText();
 
 		if (!filter.isEmpty()) {
-
-			boolean startOnly = startOnlyBox.isSelected();
 
 			applyFilter(new GLexicalFilter(filter, startOnly));
 		}
