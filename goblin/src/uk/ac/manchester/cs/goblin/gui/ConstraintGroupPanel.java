@@ -155,9 +155,8 @@ class ConstraintGroupPanel extends JPanel {
 		static private final long serialVersionUID = -1;
 
 		private Set<Concept> currentTargets = new HashSet<Concept>();
-		private Map<Concept, Constraint> currentImpliedValuesByTarget
-											= new HashMap<Concept, Constraint>();
 
+		private ConstraintTargetsDisplay targetsDisplay = null;
 		private TargetSelectionsList targetSelectionsList = new TargetSelectionsList();
 
 		private class TargetSelectionsList extends GList<Concept> {
@@ -361,50 +360,24 @@ class ConstraintGroupPanel extends JPanel {
 
 				currentTargets.addAll(constraint.getTargetValues());
 			}
+		}
 
-			for (Constraint constraint : source.getImpliedValueConstraints(type)) {
+		void initialiseEditPanel() {
 
-				currentImpliedValuesByTarget.put(constraint.getTargetValue(), constraint);
-			}
+			targetsDisplay = createTargetsDisplay();
+			targetSelectionsList.addTargets(currentTargets);
 		}
 
 		void populate() {
 
 			super.populate();
 
-			targetSelectionsList.addTargets(currentTargets);
-
 			add(createActionsPanel(), BorderLayout.SOUTH);
 		}
 
 		GoblinCellDisplay getCellDisplay(Concept concept) {
 
-			if (!validTargetConcept(concept)) {
-
-				return GoblinCellDisplay.CONSTRAINTS_POTENTIAL_TARGET;
-			}
-
-			if (currentImpliedValueTarget(concept)) {
-
-				return GoblinCellDisplay.CONSTRAINTS_IMPLIED_TARGET;
-			}
-
-			return GoblinCellDisplay.CONSTRAINTS_VALID_TARGET;
-		}
-
-		Set<Concept> getCurrentImpliedValueTargets() {
-
-			return currentImpliedValuesByTarget.keySet();
-		}
-
-		boolean currentImpliedValueTarget(Concept target) {
-
-			return getCurrentImpliedValueTargets().contains(target);
-		}
-
-		Constraint getCurrentImpliedValue(Concept target) {
-
-			return currentImpliedValuesByTarget.get(target);
+			return targetsDisplay.getCellDisplay(concept);
 		}
 
 		abstract void applyEdits(Concept source, List<Concept> targets);
@@ -435,6 +408,14 @@ class ConstraintGroupPanel extends JPanel {
 						new TargetAddButton(),
 						new TargetRemoveButton(),
 						new TargetsClearButton());
+		}
+
+		private ConstraintTargetsDisplay createTargetsDisplay() {
+
+			Constraint validValues = getValidValuesConstraint();
+			Set<Constraint> impliedValues = source.getImpliedValueConstraints(type);
+
+			return new ConstraintTargetsDisplay(validValues, impliedValues);
 		}
 
 		private List<Constraint> getEditConstraints() {
@@ -532,6 +513,8 @@ class ConstraintGroupPanel extends JPanel {
 
 			potentialValidValues = source.getClosestAncestorValidValuesConstraint(type);
 			localValidValues = source.lookForValidValuesConstraint(type);
+
+			initialiseEditPanel();
 		}
 
 		JComponent createTargetsTreeHeaderPanel() {
@@ -578,12 +561,21 @@ class ConstraintGroupPanel extends JPanel {
 	private class ImpliedValueEditPanelPopulator extends EditPanelPopulator {
 
 		private Constraint validValues;
+		private Map<Concept, Constraint> impliedValuesByTarget
+								= new HashMap<Concept, Constraint>();
 
 		ImpliedValueEditPanelPopulator(Concept source) {
 
 			super(source);
 
 			validValues = source.getClosestValidValuesConstraint(type);
+
+			for (Constraint constraint : source.getImpliedValueConstraints(type)) {
+
+				impliedValuesByTarget.put(constraint.getTargetValue(), constraint);
+			}
+
+			initialiseEditPanel();
 		}
 
 		Constraint getValidValuesConstraint() {
@@ -598,17 +590,17 @@ class ConstraintGroupPanel extends JPanel {
 
 		void applyEdits(Concept source, List<Concept> targets) {
 
-			for (Concept target : getCurrentImpliedValueTargets()) {
+			for (Concept target : impliedValuesByTarget.keySet()) {
 
 				if (!targets.contains(target)) {
 
-					getCurrentImpliedValue(target).remove();
+					impliedValuesByTarget.get(target).remove();
 				}
 			}
 
 			for (Concept target : targets) {
 
-				if (!currentImpliedValueTarget(target)) {
+				if (!impliedValuesByTarget.keySet().contains(target)) {
 
 					source.addImpliedValueConstraint(type, target);
 				}
