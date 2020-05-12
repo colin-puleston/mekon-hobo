@@ -6,7 +6,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.xdoc.*;
 
 import uk.ac.manchester.cs.goblin.model.*;
 
@@ -36,12 +36,7 @@ class ConfigFileReader {
 	static private final String CARDINALITY_TYPE_ATTR = "cardinalityType";
 	static private final String SEMANTICS_OPTION_ATTR = "semantics";
 
-	static private KConfigNode loadFile() {
-
-		return new KConfigFile(CONFIG_FILE_NAME).getRootNode();
-	}
-
-	private KConfigNode rootNode = loadFile();
+	private XNode rootNode;
 
 	private class CoreModelPopulator {
 
@@ -54,7 +49,7 @@ class ConfigFileReader {
 
 				Iterator<Hierarchy> hierarchies = model.getHierarchies().iterator();
 
-				for (KConfigNode hierarchyNode : rootNode.getChildren(HIERARCHY_TAG)) {
+				for (XNode hierarchyNode : rootNode.getChildren(HIERARCHY_TAG)) {
 
 					loadHierarchyTypes(hierarchyNode, hierarchies.next());
 				}
@@ -63,20 +58,20 @@ class ConfigFileReader {
 			abstract String getTypeTag();
 
 			abstract ConstraintType loadSpecificType(
-										KConfigNode node,
+										XNode node,
 										String name,
 										Concept rootSrc,
 										Concept rootTgt);
 
-			private void loadHierarchyTypes(KConfigNode hierarchyNode, Hierarchy hierarchy) {
+			private void loadHierarchyTypes(XNode hierarchyNode, Hierarchy hierarchy) {
 
-				for (KConfigNode typeNode : hierarchyNode.getChildren(getTypeTag())) {
+				for (XNode typeNode : hierarchyNode.getChildren(getTypeTag())) {
 
 					hierarchy.addConstraintType(loadType(typeNode, hierarchy));
 				}
 			}
 
-			private ConstraintType loadType(KConfigNode node, Hierarchy hierarchy) {
+			private ConstraintType loadType(XNode node, Hierarchy hierarchy) {
 
 				String name = getConstraintTypeName(node);
 				Concept rootSrc = hierarchy.getRootConcept();
@@ -100,11 +95,11 @@ class ConfigFileReader {
 				return type;
 			}
 
-			private Set<ConstraintSemantics> getSemanticsOptions(KConfigNode allNode) {
+			private Set<ConstraintSemantics> getSemanticsOptions(XNode allNode) {
 
 				Set<ConstraintSemantics> options = new HashSet<ConstraintSemantics>();
 
-				for (KConfigNode oneNode : allNode.getChildren(SEMANTICS_OPTION_TAG)) {
+				for (XNode oneNode : allNode.getChildren(SEMANTICS_OPTION_TAG)) {
 
 					options.add(getSemanticsOption(oneNode));
 				}
@@ -120,7 +115,7 @@ class ConfigFileReader {
 				return SIMPLE_CONSTRAINT_TYPE_TAG;
 			}
 
-			ConstraintType loadSpecificType(KConfigNode node, String name, Concept rootSrc, Concept rootTgt) {
+			ConstraintType loadSpecificType(XNode node, String name, Concept rootSrc, Concept rootTgt) {
 
 				EntityId lnkProp = getPropertyId(node, LINKING_PROPERTY_ATTR);
 
@@ -135,7 +130,7 @@ class ConfigFileReader {
 				return ANCHORED_CONSTRAINT_TYPE_TAG;
 			}
 
-			ConstraintType loadSpecificType(KConfigNode node, String name, Concept rootSrc, Concept rootTgt) {
+			ConstraintType loadSpecificType(XNode node, String name, Concept rootSrc, Concept rootTgt) {
 
 				EntityId anchor = getConceptId(node, ANCHOR_CONCEPT_ATTR);
 
@@ -159,50 +154,50 @@ class ConfigFileReader {
 
 		private void loadHierarchies() {
 
-			for (KConfigNode node : rootNode.getChildren(HIERARCHY_TAG)) {
+			for (XNode node : rootNode.getChildren(HIERARCHY_TAG)) {
 
 				model.addHierarchy(getRootConceptId(node));
 			}
 		}
 
-		private EntityId getRootConceptId(KConfigNode node) {
+		private EntityId getRootConceptId(XNode node) {
 
 			return getPropertyId(node, ROOT_CONCEPT_ATTR);
 		}
 
-		private String getConstraintTypeName(KConfigNode node) {
+		private String getConstraintTypeName(XNode node) {
 
 			return node.getString(CONSTRAINT_TYPE_NAME_ATTR);
 		}
 
-		private Concept getRootTargetConcept(KConfigNode node) {
+		private Concept getRootTargetConcept(XNode node) {
 
 			return model.getHierarchy(getRootTargetConceptId(node)).getRootConcept();
 		}
 
-		private EntityId getRootTargetConceptId(KConfigNode node) {
+		private EntityId getRootTargetConceptId(XNode node) {
 
 			return getPropertyId(node, ROOT_TARGET_CONCEPT_ATTR);
 		}
 
-		private CardinalityType getCardinalityTypeOrNull(KConfigNode node) {
+		private CardinalityType getCardinalityTypeOrNull(XNode node) {
 
 			return node.getEnum(CARDINALITY_TYPE_ATTR, CardinalityType.class, null);
 		}
 
-		private ConstraintSemantics getSemanticsOption(KConfigNode node) {
+		private ConstraintSemantics getSemanticsOption(XNode node) {
 
 			return node.getEnum(SEMANTICS_OPTION_ATTR, ConstraintSemantics.class);
 		}
 
-		private EntityId getConceptId(KConfigNode node, String tag) {
+		private EntityId getConceptId(XNode node, String tag) {
 
 			URI uri = node.getURI(tag);
 
 			return model.createEntityId(uri, lookForConceptLabel(uri));
 		}
 
-		private EntityId getPropertyId(KConfigNode node, String tag) {
+		private EntityId getPropertyId(XNode node, String tag) {
 
 			return model.createEntityId(node.getURI(tag), null);
 		}
@@ -213,9 +208,14 @@ class ConfigFileReader {
 		}
 	}
 
+	ConfigFileReader() {
+
+		rootNode = new XDocument(findFile(CONFIG_FILE_NAME)).getRootNode();
+	}
+
 	File getDynamicFile() {
 
-		return rootNode.getResource(DYNAMIC_FILE_ATTR, KConfigResourceFinder.FILES);
+		return findFile(rootNode.getString(DYNAMIC_FILE_ATTR));
 	}
 
 	String getDynamicNamespace() {
@@ -230,5 +230,10 @@ class ConfigFileReader {
 		new CoreModelPopulator(model, ontology);
 
 		return model;
+	}
+
+	private File findFile(String path) {
+
+		return ClasspathFileFinder.findFile(path);
 	}
 }
