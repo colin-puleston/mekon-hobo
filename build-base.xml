@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project name="MEKON/HOBO BASE" default="base" basedir=".">
+
+	<!-- common properties -->
+	<include file="build-properties.xml"/>
+
+	<!-- clean target -->
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+
+	<!-- base target -->
+	<target name="base">
+		<mkdir dir="${build.lib}"/>
+		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${build.resource}"/>
+		<mkdir dir="${build.client}"/>
+	</target>
+
+</project>

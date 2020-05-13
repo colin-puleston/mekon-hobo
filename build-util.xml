@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<project name="MEKON-UTIL" default="all" basedir=".">
+
+	<!-- Build script for MEKON-UTIL -->
+	<echo message="OS: ${os.name}"/>
+	<echo message="Java Runtime Environment version: ${java.version}"/>
+
+	<!-- common properties -->
+	<include file="build-properties.xml"/>
+
+	<!-- build structure -->
+	<property name="build.classes.mekon-util" location="${build.classes}/mekon-util" />
+
+	<!-- sources -->
+	<property name="mekon-util.src" value="mekon-util/src/"/>
+
+	<!-- output jar -->
+	<property name="build.mekon-util.jar" location="${build.lib}/mekon-util.jar"/>
+
+	<!-- clean target -->
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+
+	<!-- base target -->
+	<target name="base">
+		<subant target="base">
+			<fileset dir="." includes="build-base.xml"/>
+        </subant>
+		<mkdir dir="${build.classes.mekon-util}"/>
+	</target>
+
+	<!-- mekon-util target -->
+	<target name="mekon-util" depends="base">
+		<javac srcdir="${mekon-util.src}" destdir="${build.classes.mekon-util}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<!-- mekon-util-jar target -->
+	<target name="all" depends="mekon-util">
+		<jar destfile="${build.mekon-util.jar}">
+			<fileset dir="${build.classes.mekon-util}" />
+			<fileset dir="${mekon-util.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+</project>

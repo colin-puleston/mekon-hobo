@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<project name="MEKON PLUGINS" default="all" basedir=".">
+
+	<!-- Build script for MEKON PLUGINS -->
+	<echo message="OS: ${os.name}"/>
+	<echo message="Java Runtime Environment version: ${java.version}"/>
+
+	<!-- common properties -->
+	<include file="build-properties.xml"/>
+
+	<!-- sources -->
+	<property name="mekon-owl.src" value="mekon-owl/src/"/>
+	<property name="mekon-basex.src" value="mekon-basex/src/"/>
+	<property name="mekon-jena.src" value="mekon-jena/src/"/>
+
+	<!-- output classes -->
+	<property name="build.classes.mekon-owl" location="${build.classes}/mekon-owl" />
+	<property name="build.classes.mekon-basex" location="${build.classes}/mekon-basex" />
+	<property name="build.classes.mekon-jena" location="${build.classes}/mekon-jena" />
+
+	<!-- output jars -->
+	<property name="build.mekon-owl.jar" location="${build.lib}/mekon-owl.jar"/>
+	<property name="build.mekon-basex.jar" location="${build.lib}/mekon-basex.jar"/>
+	<property name="build.mekon-jena.jar" location="${build.lib}/mekon-jena.jar"/>
+	<property name="build.mekon-gui.jar" location="${build.lib}/mekon-gui.jar"/>
+
+	<!-- clean target -->
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+
+	<!-- base target -->
+	<target name="base">
+		<subant target="all">
+			<fileset dir="." includes="build-core.xml"/>
+        </subant>
+	</target>
+
+	<!-- mekon-owl targets -->
+	<target name="mekon-owl" depends="base">
+		<mkdir dir="${build.classes.mekon-owl}"/>
+		<javac srcdir="${mekon-owl.src}" classpathref="classpath" destdir="${build.classes.mekon-owl}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-owl-jar" depends="mekon-owl">
+		<jar destfile="${build.mekon-owl.jar}">
+			<fileset dir="${build.classes.mekon-owl}" />
+			<fileset dir="${mekon-owl.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- mekon-basex targets -->
+	<target name="mekon-basex" depends="base">
+		<mkdir dir="${build.classes.mekon-basex}"/>
+		<javac srcdir="${mekon-basex.src}" classpathref="classpath" destdir="${build.classes.mekon-basex}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-basex-jar" depends="mekon-basex">
+		<jar destfile="${build.mekon-basex.jar}">
+			<fileset dir="${build.classes.mekon-basex}" />
+			<fileset dir="${mekon-basex.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- mekon-jena targets -->
+	<target name="mekon-jena" depends="base">
+		<mkdir dir="${build.classes.mekon-jena}"/>
+		<javac srcdir="${mekon-jena.src}" classpathref="classpath" destdir="${build.classes.mekon-jena}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-jena-jar" depends="mekon-jena">
+		<jar destfile="${build.mekon-jena.jar}">
+			<fileset dir="${build.classes.mekon-jena}" />
+			<fileset dir="${mekon-jena.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- mekon plugin jars targets -->
+	<target name="all" depends="mekon-owl-jar, mekon-basex-jar, mekon-jena-jar">
+	</target>
+
+</project>

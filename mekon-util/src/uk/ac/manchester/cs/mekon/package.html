@@ -1,0 +1,100 @@
+<HTML>
+<BODY>
+Root package for the MEKON framework, which contains all MEKON-specific exception classes, as well as providing the general overview documentation for the framework.
+
+<H1>MEKON Overview</H1>
+
+<b>MEKON</b> is a framework for the creation of ontology-driven applications, wherein a set of externally represented ontologies, or ontology-like <b>knowledge sources</b>, together with associated <b>reasoning mechanisms</b>, are accessed via a generic in-memory <b>frames model (FM)</b> and automatically mutating instantiations of that model.
+<p>
+For a general overview of the MEKON framework and related software see <a href="http://code.google.com/p/mekon/" target="_blank">mekon-hobo project website</a>.
+
+<H1>MEKON Packages</H1>
+
+<H3>MEKON APIs</H3>
+
+The <b>Model API:</b> provides the client representation of the FM.
+<p>
+The <b>Mechanism API:</b> provides the mechanisms for building and configuring the MEKON models. Incorporates the MEKON plug-ins API (or SPI - Service Provider Interface) that is used by providers of the following types of plug-in:
+<ul>
+  <li><b>Model-section builders:</b> Responsible for building sections of the FM derived from external knowledge sources of specific types
+  <li><b>Reasoners:</b> Responsible for dynamic updating of model-instantiations based on reasoning mechanisms associated with external knowledge sources of specific types
+</ul>
+
+See below for further details on each of these APIs.
+
+<H3>MEKON Class/Interface Naming Conventions</H3>
+
+Within the MEKON API packages, the following single-character class-name prefixes are used to distinguish the broad category into which a class or interface falls:
+<ul>
+  <li><b>I:</b> Instance-level entities
+  <li><b>C:</b> Concept-level entities
+  <li><b>M:</b> Meta-level entities
+  <li><b>F:</b> Non-level-specific entities
+</ul>
+
+The following prefixes are used within the other MEKON packages (see below for details):
+<ul>
+  <li><b>N:</b> Alternative node/link network representation
+  <li><b>K:</b> General/utility classes
+  <li><b>Z:</b> Internal MEKON linking package
+</ul>
+
+<H3>Model API</H3>
+
+<i>Package:</i> {@link uk.ac.manchester.cs.mekon.model}
+<p>
+Models are loaded into the API as a concept-level {@link uk.ac.manchester.cs.mekon.model.CFrame}/{@link uk.ac.manchester.cs.mekon.model.CSlot} network. Individual model-instantiations can then by created by the client in the form of instance-level {@link uk.ac.manchester.cs.mekon.model.IFrame}/{@link uk.ac.manchester.cs.mekon.model.ISlot} networks.
+<p>
+The instance-level networks are dynamic in that any client-provided value-updates for slots on a particular frame may trigger automatic updates to the slot-set for that frame. These updates can be of the following types:
+<ul>
+  <li>Addition/removal of slots
+  <li>Updates to value-constraints for particular slots
+  <li>Addition/removal of inferred values for particular slots
+</ul>
+Such updates will be provided either by generic reasoning mechanisms associated with the external knowledge sources, or by procedural mechanisms associated with the OM.
+
+<H3>Mechanism API</H3>
+
+<i>Package:</i> {@link uk.ac.manchester.cs.mekon.model.motor}
+<p>
+The {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder} class is responsible for building the FM, which involves the following steps:
+<ul>
+  <li>Registration of set of section-builder plugins, one for each ontology
+  <li>Invocation of registered section-builder plugins
+  <li>Return of resulting {@link uk.ac.manchester.cs.mekon.model.CModel} object
+</ul>
+The section-builder plugins are instances of specific extensions of {@link uk.ac.manchester.cs.mekon.model.motor.CSectionBuilder}, with each such extension being responsible for loading ontologies of a specific type. The section-builders will use mechanisms accessible from {@link uk.ac.manchester.cs.mekon.model.motor.CBuilder} to create and register an appropriate set of FM entities. The section-builders are also responsible for providing reasoning plugins, in the form of specific implementations of {@link uk.ac.manchester.cs.mekon.model.motor.IReasoner}, and attaching them to appropriate frames, over whose instantiations they will perform any required reasoning.
+<p>
+The registration of the section-builder plugins can be done either via the API or via the MEKON configuration system.
+
+<H3>Model/Mechanism Dependencies</H3>
+
+The model and mechanism packages, in addition to providing the respective APIs, also collectively provide the implementations for those APIs. This involves circular dependencies between the two packages at the implementation level, though at the API level the dependencies are strictly one way - from mechanism to model. Hence we have:
+<p>
+<b>API dependencies:</b>
+<ul>
+  <li>Mechanism ==> Model
+</ul>
+<b>Implementation dependencies:</b>
+<ul>
+  <li>Mechanism &lt;==> Model
+</ul>
+
+<H3>General/Utility Packages</H3>
+
+In addition to the main API packages, MEKON provides the following general/utility packages:
+<ul>
+  <li><b>Exceptions:</b> {@link uk.ac.manchester.cs.mekon}
+  <li><b>Configuration-Related:</b> {@link uk.ac.manchester.cs.mekon.config}
+  <li><b>Network Representation:</b> {@link uk.ac.manchester.cs.mekon.network} (provides a simple light-weight node/link representation, for use by specific classification and query-matching plugins)
+  <li><b>General Utilities:</b> {@link uk.ac.manchester.cs.mekon.util}
+</ul>
+
+<H3>Internal MEKON Linking Package</H3>
+
+<i>Package:</i> {@link uk.ac.manchester.cs.mekon.model.zlink}
+<p>
+This package provides internal MEKON under-the-hood access of the {@link uk.ac.manchester.cs.mekon.model} package, and is not relevant to either the client or the plugin code.
+
+</BODY>
+</HTML>

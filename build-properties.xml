@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<project name="MEKON/HOBO COMMON PROPERTIES" basedir=".">
+
+	<!-- source structure -->
+	<property name="src.lib" value="lib/"/>
+
+	<!-- build structure -->
+	<property name="build" location="build"/>
+	<property name="build.lib.rel" value="lib" />
+	<property name="build.lib" location="${build}/${build.lib.rel}" />
+	<property name="build.resource.rel" value="resource" />
+	<property name="build.resource" location="${build}/${build.resource.rel}" />
+	<property name="build.classes" location="${build}/classes" />
+	<property name="build.test.rel" value="test" />
+	<property name="build.test.classes.rel" value="${build.test.rel}/classes" />
+	<property name="build.test.classes" location="${build}/${build.test.classes.rel}" />
+	<property name="build.client.rel" value="client" />
+	<property name="build.client" location="${build}/${build.client.rel}" />
+
+	<!-- debug property -->
+	<property name="debug" value="true"/>
+
+	<!-- java options -->
+	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC -Djava.library.path=${build.lib.rel}"/>
+
+	<!-- class-path -->
+	<path id="classpath">
+		<fileset dir="${build.lib}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+</project>
