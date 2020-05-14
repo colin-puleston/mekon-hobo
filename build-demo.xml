@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+
+<project name="MEKON/HOBO DEMO" default="all" basedir=".">
+
+	<!-- Build script for MEKON/HOBO DEMO -->
+	<echo message="OS: ${os.name}"/>
+	<echo message="Java Runtime Environment version: ${java.version}"/>
+
+	<!-- common properties -->
+	<include file="build-properties.xml"/>
+
+	<!-- sources -->
+	<property name="demo" value="demo"/>
+	<property name="demo.src" value="${demo}/src"/>
+	<property name="demo.resource" value="${demo}/resource"/>
+
+	<!-- output demo classes -->
+	<property name="build.demo.rel" value="demo" />
+	<property name="build.demo.classes.rel" value="${build.demo.rel}/classes" />
+	<property name="build.demo.classes" location="${build}/${build.demo.classes.rel}" />
+
+	<!-- output jars -->
+	<property name="build.hobo-demo.jar" location="${build.lib}/hobo-demo.jar"/>
+
+	<!-- gui main-classes -->
+	<property name="mekon-explorer.mainclass" value="uk.ac.manchester.cs.mekon.explorer.MekonModelExplorer"/>
+	<property name="mekon-client-demo-explorer.mainclass" value="uk.ac.manchester.cs.mekon.explorer.MekonRemoteModelExplorer"/>
+	<property name="hobo-explorer.mainclass" value="uk.ac.manchester.cs.hobo.explorer.HoboModelExplorer"/>
+	<property name="hobo-app-demo.mainclass" value="uk.ac.manchester.cs.hobo.demo.app.HoboAppDemo"/>
+
+	<!-- mekon-explorer demo invocation -->
+	<property name="build.mekon-demo.run.name" value="mekon-demo"/>
+	<property name="build.mekon-demo.run.sh" location="${build}/${build.mekon-demo.run.name}.sh"/>
+	<property name="build.mekon-demo.run.win" location="${build}/${build.mekon-demo.run.name}.bat"/>
+	<property name="build.mekon-demo.classpath.sh" value="${build.lib.rel}/*:${build.resource.rel}"/>
+	<property name="build.mekon-demo.classpath.win" value="${build.lib.rel}/*;${build.resource.rel}"/>
+	<property name="build.mekon-demo.java.run" value="${java.opts} ${mekon-explorer.mainclass}"/>
+
+	<!-- mekon-explorer-client demo invocation -->
+	<property name="build.mekon-client-demo.run.name" value="mekon-client-demo"/>
+	<property name="build.mekon-client-demo.run.sh" location="${build}/${build.mekon-client-demo.run.name}.sh"/>
+	<property name="build.mekon-client-demo.run.win" location="${build}/${build.mekon-client-demo.run.name}.bat"/>
+	<property name="build.mekon-client-demo.classpath.sh" value="${build.client}/*"/>
+	<property name="build.mekon-client-demo.classpath.win" value="${build.client}/*"/>
+	<property name="build.mekon-client-demo.java.run" value="${mekon-client-demo-explorer.mainclass}"/>
+
+	<!-- hobo-explorer demo invocation -->
+	<property name="build.hobo-demo.run.name" value="hobo-demo"/>
+	<property name="build.hobo-demo.run.sh" location="${build}/${build.hobo-demo.run.name}.sh"/>
+	<property name="build.hobo-demo.run.win" location="${build}/${build.hobo-demo.run.name}.bat"/>
+	<property name="build.hobo-demo.classpath.sh" value="${build.lib.rel}/*:${build.demo.classes.rel}:${build.resource.rel}"/>
+	<property name="build.hobo-demo.classpath.win" value="${build.lib.rel}/*;${build.demo.classes.rel};${build.resource.rel}"/>
+	<property name="build.hobo-demo.java.run" value="${java.opts} ${hobo-explorer.mainclass}"/>
+
+	<!-- hobo-app demo invocation -->
+	<property name="build.hobo-app-demo.run.name" value="hobo-app-demo"/>
+	<property name="build.hobo-app-demo.run.sh" location="${build}/${build.hobo-app-demo.run.name}.sh"/>
+	<property name="build.hobo-app-demo.run.win" location="${build}/${build.hobo-app-demo.run.name}.bat"/>
+	<property name="build.hobo-app-demo.classpath.sh" value="${build.lib.rel}/*:${build.resource.rel}"/>
+	<property name="build.hobo-app-demo.classpath.win" value="${build.lib.rel}/*;${build.resource.rel}"/>
+	<property name="build.hobo-app-demo.java.run" value="${java.opts} ${hobo-app-demo.mainclass}"/>
+
+	<!-- clean target -->
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+
+	<!-- base target -->
+	<target name="base">
+		<subant target="all">
+			<fileset dir="." includes="build-plugins.xml"/>
+        </subant>
+		<copy todir="${build.resource}" >
+			<fileset dir="${demo.resource}">
+				<include name="**/*.owl"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- mekon demo targets -->
+	<target name="mekon-demo" depends="base">
+		<echo file="${build.mekon-demo.run.sh}">java -cp ${build.mekon-demo.classpath.sh} ${build.mekon-demo.java.run}</echo>
+		<echo file="${build.mekon-demo.run.win}">java -cp ${build.mekon-demo.classpath.win} ${build.mekon-demo.java.run}</echo>
+		<chmod dir="${build}" includes="${build.mekon-demo.run.name}.sh" perm="+x"/>
+	</target>
+
+	<!-- mekon client-demo targets -->
+	<target name="mekon-client-demo" depends="base">
+		<echo file="${build.mekon-client-demo.run.sh}">java -cp ${build.mekon-client-demo.classpath.sh} ${build.mekon-client-demo.java.run} $1</echo>
+		<echo file="${build.mekon-client-demo.run.win}">java -cp ${build.mekon-client-demo.classpath.win} ${build.mekon-client-demo.java.run} %1</echo>
+		<chmod dir="${build.client}" includes="${build.mekon-client-demo.run.name}.sh" perm="+x"/>
+	</target>
+
+	<!-- hobo demo targets -->
+	<target name="hobo-demo-classes" depends="base">
+		<mkdir dir="${build.demo.classes}"/>
+		<javac srcdir="${demo.src}" classpathref="classpath" destdir="${build.demo.classes}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="hobo-demo-jar" depends="hobo-demo-classes">
+		<jar destfile="${build.hobo-demo.jar}">
+			<fileset dir="${build.demo.classes}" />
+			<fileset dir="${demo.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<target name="hobo-demo" depends="hobo-demo-jar, mekon-demo">
+		<echo file="${build.hobo-demo.run.sh}">java -cp ${build.hobo-demo.classpath.sh} ${build.hobo-demo.java.run}</echo>
+		<echo file="${build.hobo-demo.run.win}">java -cp ${build.hobo-demo.classpath.win} ${build.hobo-demo.java.run}</echo>
+		<chmod dir="${build}" includes="${build.hobo-demo.run.name}.sh" perm="+x"/>
+	</target>
+
+	<target name="hobo-app-demo" depends="hobo-demo-jar, mekon-demo">
+		<echo file="${build.hobo-app-demo.run.sh}">java -cp ${build.hobo-app-demo.classpath.sh} ${build.hobo-app-demo.java.run}</echo>
+		<echo file="${build.hobo-app-demo.run.win}">java -cp ${build.hobo-app-demo.classpath.win} ${build.hobo-app-demo.java.run}</echo>
+		<chmod dir="${build}" includes="${build.hobo-app-demo.run.name}.sh" perm="+x"/>
+	</target>
+
+	<!-- hobo-demo jar target -->
+	<target name="all" depends="mekon-demo, mekon-client-demo, hobo-demo, hobo-app-demo">
+	</target>
+
+</project>
