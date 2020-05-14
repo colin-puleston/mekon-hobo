@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+
+<project name="MEKON/HOBO CORE" default="all" basedir=".">
+
+	<!-- Build script for MEKON/HOBO CORE -->
+	<echo message="OS: ${os.name}"/>
+	<echo message="Java Runtime Environment version: ${java.version}"/>
+
+	<!-- common properties -->
+	<include file="build-properties.xml"/>
+
+	<!-- sources -->
+	<property name="mekon.src" value="mekon/src/"/>
+	<property name="mekon-gui.src" value="mekon-gui/src/"/>
+	<property name="hobo.src" value="hobo/src/"/>
+	<property name="hobo-gui.src" value="hobo-gui/src/"/>
+
+	<!-- output classes -->
+	<property name="build.classes.mekon" location="${build.classes}/mekon" />
+	<property name="build.classes.mekon-gui" location="${build.classes}/mekon-gui" />
+	<property name="build.classes.hobo" location="${build.classes}/hobo" />
+	<property name="build.classes.hobo-gui" location="${build.classes}/hobo-gui" />
+
+	<!-- output jars -->
+	<property name="build.mekon.jar" location="${build.lib}/mekon.jar"/>
+	<property name="build.mekon-gui.jar" location="${build.lib}/mekon-gui.jar"/>
+	<property name="build.hobo.jar" location="${build.lib}/hobo.jar"/>
+	<property name="build.hobo-gui.jar" location="${build.lib}/hobo-gui.jar"/>
+
+	<!-- referenced output jars -->
+	<property name="build.mekon-util.jar" location="${build.lib}/mekon-util.jar"/>
+
+	<!-- clean target -->
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+
+	<!-- base target -->
+	<target name="base">
+		<subant target="all">
+			<fileset dir="." includes="build-util.xml"/>
+        </subant>
+		<copy todir="${build.lib}" flatten="true">
+			<fileset dir="${src.lib}/">
+                <include name="**/*.jar"/>
+                <include name="**/*.dll"/>
+                <include name="**/*.jnilib"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- core mekon targets -->
+	<target name="mekon" depends="base">
+		<mkdir dir="${build.classes.mekon}"/>
+		<javac srcdir="${mekon.src}" classpathref="classpath" destdir="${build.classes.mekon}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-jar" depends="mekon">
+		<jar destfile="${build.mekon.jar}">
+			<fileset dir="${build.classes.mekon}" />
+			<fileset dir="${mekon.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- mekon-gui targets -->
+	<target name="mekon-gui">
+		<mkdir dir="${build.classes.mekon-gui}"/>
+		<javac srcdir="${mekon-gui.src}" classpathref="classpath" destdir="${build.classes.mekon-gui}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-gui-jar" depends="mekon-gui">
+		<jar destfile="${build.mekon-gui.jar}">
+			<fileset dir="${build.classes.mekon-gui}" />
+			<fileset dir="${mekon-gui.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- mekon client targets -->
+	<target name="mekon-client" depends="mekon-gui-jar">
+		<copy file="${build.mekon.jar}" todir="${build.client}"/>
+		<copy file="${build.mekon-util.jar}" todir="${build.client}"/>
+		<copy file="${build.mekon-gui.jar}" todir="${build.client}"/>
+	</target>
+
+	<!-- hobo targets -->
+	<target name="hobo" depends="mekon-jar">
+		<mkdir dir="${build.classes.hobo}"/>
+		<javac srcdir="${hobo.src}" classpathref="classpath" destdir="${build.classes.hobo}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="hobo-jar" depends="hobo">
+		<jar destfile="${build.hobo.jar}">
+			<fileset dir="${build.classes.hobo}" />
+			<fileset dir="${hobo.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- hobo-gui targets -->
+	<target name="hobo-gui" depends="hobo-jar, mekon-gui-jar">
+		<mkdir dir="${build.classes.hobo-gui}"/>
+		<javac srcdir="${hobo-gui.src}" classpathref="classpath" destdir="${build.classes.hobo-gui}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="hobo-gui-jar" depends="hobo-gui">
+		<jar destfile="${build.hobo-gui.jar}">
+			<fileset dir="${build.classes.hobo-gui}" />
+			<fileset dir="${hobo-gui.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
+	<!-- all mekon/hobo jars + client dir target -->
+	<target name="all" depends="mekon-jar, mekon-gui-jar, hobo-jar, hobo-gui-jar, mekon-client">
+	</target>
+
+</project>
