@@ -79,6 +79,12 @@ public class GTree extends JTree {
 		rootNode.updateSubTreeNodeDisplays();
 	}
 
+	public boolean multiSelect() {
+
+		return getSelectionModel().getSelectionMode()
+				== TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION;
+	}
+
 	public GNode getRootNode() {
 
 		return rootNode;
