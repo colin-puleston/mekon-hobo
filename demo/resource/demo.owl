@@ -1,12 +1,1769 @@
 <?xml version="1.0"?>
-
 <rdf:RDF xmlns="http://mekon/demo.owl#"
      xml:base="http://mekon/demo.owl"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-    <owl:Ontology rdf:about="http://mekon/demo.owl">
-        <owl:imports rdf:resource="http://mekon/demo-core.owl"/>
-        <owl:imports rdf:resource="http://mekon/demo-dynamic.owl"/>
-        <owl:imports rdf:resource="http://mekon/demo-dynamic-extn.owl"/>
-    </owl:Ontology>
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://mekon/demo.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#maxQualifiedCardinality -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#maxQualifiedCardinality"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://mekon/demo.owl#age -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#age">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#quantityProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#benefitReceived -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#benefitReceived">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interCoreProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Benefit"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#children -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#children">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#quantityProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#coreToContentProperty -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#coreToContentProperty">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#demoObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#demoObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#demoObjectProperty">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#employment -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#employment">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interCoreProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Employment"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#gender -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#gender">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#coreToContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Gender"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#hourlyPay -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#hourlyPay">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#quantityProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#HourlyPayQuantity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#hoursPerWeek -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#hoursPerWeek">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#quantityProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#HoursPerWeekQuantity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#industry -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#industry">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#coreToContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Industry"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#interContentProperty -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#interContentProperty">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#demoObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#interCoreProperty -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#interCoreProperty">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#demoObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#job -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#job">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interCoreProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Job"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#jobCount -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#jobCount">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#quantityProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#jobType -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#jobType">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#coreToContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#JobType"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#location -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#location">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#coreToContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Location"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#milesTravelled -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#milesTravelled">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#refedInterContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#personal -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#personal">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interCoreProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Personal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#quantityProperty -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#quantityProperty">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#demoObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#refedInterContentProperty -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#refedInterContentProperty">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interContentProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#researchArea -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#researchArea">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#coreToContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#ResearchArea"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#sector -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#sector">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#taxPaid -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#taxPaid">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interCoreProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Tax"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#teaches -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#teaches">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#coreToContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#Student"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#travelClass -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#travelClass">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#coreToContentProperty"/>
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#refedInterContentProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#TravelClass"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#weeklyPay -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#weeklyPay">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#quantityProperty"/>
+        <rdfs:range rdf:resource="http://mekon/demo.owl#WeeklyPayQuantity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://mekon/demo.owl#address -->
+
+    <owl:DatatypeProperty rdf:about="http://mekon/demo.owl#address">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#stringValue"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#demoDataProperty -->
+
+    <owl:DatatypeProperty rdf:about="http://mekon/demo.owl#demoDataProperty"/>
+    
+
+
+    <!-- http://mekon/demo.owl#name -->
+
+    <owl:DatatypeProperty rdf:about="http://mekon/demo.owl#name">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#stringValue"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#numericValue -->
+
+    <owl:DatatypeProperty rdf:about="http://mekon/demo.owl#numericValue">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#demoDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://mekon/demo.owl#stringValue -->
+
+    <owl:DatatypeProperty rdf:about="http://mekon/demo.owl#stringValue">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#demoDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://mekon/demo.owl#Academia -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Academia">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Education"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#AcademicJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#AcademicJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Academia"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Generalist"/>
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Lecturer"/>
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Researcher"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#AcademicTeachingJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#AcademicTeachingJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Academia"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Teacher"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#teaches"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#UniversityStudent"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Accountant -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Accountant">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Generalist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Arts -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Arts">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ResearchArea"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Banker -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Banker">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Specialist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Benefit -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Benefit">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CoreConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#BicycleTrip -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#BicycleTrip">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#RoadTrip"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#BusTrip -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#BusTrip">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#RoadTrip"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#CarTrip -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#CarTrip">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#RoadTrip"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#ChildBenefit -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#ChildBenefit">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Benefit"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Citizen -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Citizen">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CoreConcept"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#benefitReceived"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#Benefit"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#employment"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Employment"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#personal"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Personal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Tax"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#CivilEngineering -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#CivilEngineering">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Engineering"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Clerical -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Clerical">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Generalist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#ContentConcept -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#ContentConcept">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DemoConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#CoreConcept -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#CoreConcept">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DemoConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#DataTypeConcept -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#DataTypeConcept">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DemoConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#DemoConcept -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#DemoConcept"/>
+    
+
+
+    <!-- http://mekon/demo.owl#Doctor -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Doctor">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Medic"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#EU -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#EU">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Location"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#EUOtherThanUK -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#EUOtherThanUK">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#EU"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Education -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Education">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#EmployedCitizen -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#EmployedCitizen">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Citizen"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#employment"/>
+                        <owl:someValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://mekon/demo.owl#Employment"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://mekon/demo.owl#job"/>
+                                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Job"/>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Citizen"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#NonZeroTax"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Employment -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Employment">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CoreConcept"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#job"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#Job"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobCount"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Engineer -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Engineer">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Specialist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Engineering -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Engineering">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#EngineeringJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#EngineeringJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Engineering"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Engineer"/>
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Generalist"/>
+                            <rdf:Description rdf:about="http://mekon/demo.owl#SkilledManual"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#England -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#England">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#UK"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Female -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Female">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Gender"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Finance -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Finance">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#sector"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Private"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#FinancialJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#FinancialJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Finance"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Banker"/>
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Generalist"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#FirstClass -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#FirstClass">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#TravelClass"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#FloatQuantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#FloatQuantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Quantity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#numericValue"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Gender -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Gender">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Generalist -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Generalist">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#JobType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Government -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Government">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#sector"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Public"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Health -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Health">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#HealthJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#HealthJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Health"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Generalist"/>
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Medic"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#HeavyEngineering -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#HeavyEngineering">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Engineering"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#HourlyPayQuantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#HourlyPayQuantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#numericValue"/>
+                <owl:someValuesFrom>
+                    <rdfs:Datatype>
+                        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                        <owl:withRestrictions rdf:parseType="Collection">
+                            <rdf:Description>
+                                <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</xsd:minInclusive>
+                            </rdf:Description>
+                            <rdf:Description>
+                                <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</xsd:maxInclusive>
+                            </rdf:Description>
+                        </owl:withRestrictions>
+                    </rdfs:Datatype>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#HoursPerWeekQuantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#HoursPerWeekQuantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#numericValue"/>
+                <owl:someValuesFrom>
+                    <rdfs:Datatype>
+                        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                        <owl:withRestrictions rdf:parseType="Collection">
+                            <rdf:Description>
+                                <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</xsd:minInclusive>
+                            </rdf:Description>
+                            <rdf:Description>
+                                <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</xsd:maxInclusive>
+                            </rdf:Description>
+                        </owl:withRestrictions>
+                    </rdfs:Datatype>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Humanities -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Humanities">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ResearchArea"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Industry -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Industry">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#sector"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#IndustrySector -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#IndustrySector">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#IntegerQuantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#IntegerQuantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Quantity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#numericValue"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Job -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Job">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CoreConcept"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#hourlyPay"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#HourlyPayQuantity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#hoursPerWeek"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#HoursPerWeekQuantity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Industry"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#JobType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#weeklyPay"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#WeeklyPayQuantity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#JobType -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#JobType">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#JuniorManagement -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#JuniorManagement">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Management"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Lecturer -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Lecturer">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Teacher"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#LightEngineering -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#LightEngineering">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Engineering"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Location -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Location">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Male -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Male">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Gender"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Management -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Management">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Generalist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Medic -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Medic">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Specialist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#MiddleManagement -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#MiddleManagement">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Management"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#NonEU -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#NonEU">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Location"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#NonNegativeFloatQuantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#NonNegativeFloatQuantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#FloatQuantity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#numericValue"/>
+                <owl:someValuesFrom>
+                    <rdfs:Datatype>
+                        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+                        <owl:withRestrictions rdf:parseType="Collection">
+                            <rdf:Description>
+                                <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.0</xsd:minInclusive>
+                            </rdf:Description>
+                        </owl:withRestrictions>
+                    </rdfs:Datatype>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#NonNegativeIntegerQuantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#NonNegativeIntegerQuantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#IntegerQuantity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#numericValue"/>
+                <owl:someValuesFrom>
+                    <rdfs:Datatype>
+                        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                        <owl:withRestrictions rdf:parseType="Collection">
+                            <rdf:Description>
+                                <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</xsd:minInclusive>
+                            </rdf:Description>
+                        </owl:withRestrictions>
+                    </rdfs:Datatype>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#NonZeroTax -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#NonZeroTax">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Tax"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#NorthernIreland -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#NorthernIreland">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#UK"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Nurse -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Nurse">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Medic"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#ParentCitizen -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#ParentCitizen">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Citizen"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#personal"/>
+                        <owl:someValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://mekon/demo.owl#Personal"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://mekon/demo.owl#children"/>
+                                        <owl:someValuesFrom>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://mekon/demo.owl#numericValue"/>
+                                                <owl:someValuesFrom>
+                                                    <rdfs:Datatype>
+                                                        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                                        <owl:withRestrictions rdf:parseType="Collection">
+                                                            <rdf:Description>
+                                                                <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</xsd:minExclusive>
+                                                            </rdf:Description>
+                                                        </owl:withRestrictions>
+                                                    </rdfs:Datatype>
+                                                </owl:someValuesFrom>
+                                            </owl:Restriction>
+                                        </owl:someValuesFrom>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Citizen"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#benefitReceived"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#ChildBenefit"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Personal -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Personal">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CoreConcept"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#age"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#children"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#gender"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Gender"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#location"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Location"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#address"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#name"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Physio -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Physio">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Medic"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#PlaneTrip -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#PlaneTrip">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Trip"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#PoliticalJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#PoliticalJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Politics"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#Politician"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Politician -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Politician">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Specialist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Politics -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Politics">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Industry"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#sector"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Public"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Postgraduate -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Postgraduate">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#UniversityStudent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#PrimarySchoolStudent -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#PrimarySchoolStudent">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#SchoolStudent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Private -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Private">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Public -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Public">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#IndustrySector"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Quantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Quantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#DataTypeConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#ResearchArea -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#ResearchArea">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#ResearchJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#ResearchJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                        <owl:someValuesFrom>
+                            <owl:Class>
+                                <owl:unionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://mekon/demo.owl#ResearchLecturer"/>
+                                    <rdf:Description rdf:about="http://mekon/demo.owl#Researcher"/>
+                                </owl:unionOf>
+                            </owl:Class>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#researchArea"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#ResearchArea"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#ResearchLecturer -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#ResearchLecturer">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Lecturer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Researcher -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Researcher">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Specialist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#RoadTrip -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#RoadTrip">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Trip"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SchoolStudent -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SchoolStudent">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Student"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Schools -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Schools">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Education"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SchoolsJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SchoolsJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Schools"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Generalist"/>
+                            <rdf:Description rdf:about="http://mekon/demo.owl#Teacher"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SchoolsTeachingJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SchoolsTeachingJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#industry"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Schools"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Teacher"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#teaches"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#SchoolStudent"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Science -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Science">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ResearchArea"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Scotland -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Scotland">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#UK"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SecondClass -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SecondClass">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#TravelClass"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SecondarySchoolStudent -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SecondarySchoolStudent">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#SchoolStudent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SeniorManagement -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SeniorManagement">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Management"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SkilledManual -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SkilledManual">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Specialist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SocialScience -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SocialScience">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ResearchArea"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Specialist -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Specialist">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#JobType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#StandardTax -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#StandardTax">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#NonZeroTax"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Student -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Student">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#SuperTax -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#SuperTax">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#NonZeroTax"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Tax -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Tax">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CoreConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Teacher -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Teacher">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Specialist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#TeachingJob -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#TeachingJob">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Job"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#jobType"/>
+                        <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Teacher"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Job"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#teaches"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#Student"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#TrainTrip -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#TrainTrip">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Trip"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#travelClass"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#TravelClass"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#TravelClass -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#TravelClass">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Trip -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Trip">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#ContentConcept"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#milesTravelled"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#UK -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#UK">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#EU"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Undergraduate -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Undergraduate">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#UniversityStudent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#UnemployedCitizen -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#UnemployedCitizen">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://mekon/demo.owl#Citizen"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://mekon/demo.owl#employment"/>
+                        <owl:someValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://mekon/demo.owl#Employment"/>
+                                    <owl:Class>
+                                        <owl:complementOf>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://mekon/demo.owl#job"/>
+                                                <owl:someValuesFrom rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+                                            </owl:Restriction>
+                                        </owl:complementOf>
+                                    </owl:Class>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Citizen"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#benefitReceived"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#UnemploymentBenefit"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
+                <owl:someValuesFrom rdf:resource="http://mekon/demo.owl#ZeroTax"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
+                <owl:allValuesFrom rdf:resource="http://mekon/demo.owl#ZeroTax"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#UnemploymentBenefit -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#UnemploymentBenefit">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Benefit"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#UniversityStudent -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#UniversityStudent">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Student"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#UnskilledManual -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#UnskilledManual">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Generalist"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Wales -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Wales">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#UK"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#WeeklyPayQuantity -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#WeeklyPayQuantity">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#NonNegativeIntegerQuantity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#ZeroTax -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#ZeroTax">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#Tax"/>
+    </owl:Class>
+    <rdf:Description>
+        <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+    </rdf:Description>
+    <rdf:Description>
+        <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+    </rdf:Description>
 </rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
+
