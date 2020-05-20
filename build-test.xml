@@ -28,8 +28,8 @@
 			uk.ac.manchester.cs.mekon.basex.MekonBaseXTestSuite
 			uk.ac.manchester.cs.mekon.owl.jena.MekonJenaTestSuite
 			uk.ac.manchester.cs.hobo.HoboTestSuite"/>
-	<property name="build.test.classpath.sh" value="${build.lib.rel}/*:${build.test.classes.rel}:${build.hobo-demo.classes.rel}:${build.resource.rel}"/>
-	<property name="build.test.classpath.win" value="${build.lib.rel}/*;${build.test.classes.rel};${build.hobo-demo.classes.rel};${build.resource.rel}"/>
+	<property name="build.test.classpath.sh" value="${build.lib.rel}/*:${build.test.classes.rel}:${build.demo.classes.rel}:${build.resource.rel}"/>
+	<property name="build.test.classpath.win" value="${build.lib.rel}/*;${build.test.classes.rel};${build.demo.classes.rel};${build.resource.rel}"/>
 	<property name="build.test.java.run" value="${java.opts} ${junit.mainclass} ${test.testsuites}"/>
 
 	<!-- clean target -->

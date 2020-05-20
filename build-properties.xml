@@ -12,11 +12,14 @@
 	<property name="build.resource.rel" value="resource" />
 	<property name="build.resource" location="${build}/${build.resource.rel}" />
 	<property name="build.classes" location="${build}/classes" />
+	<property name="build.client.rel" value="client" />
+	<property name="build.client" location="${build}/${build.client.rel}" />
+	<property name="build.demo.rel" value="demo" />
+	<property name="build.demo.classes.rel" value="${build.demo.rel}/classes" />
+	<property name="build.demo.classes" location="${build}/${build.demo.classes.rel}" />
 	<property name="build.test.rel" value="test" />
 	<property name="build.test.classes.rel" value="${build.test.rel}/classes" />
 	<property name="build.test.classes" location="${build}/${build.test.classes.rel}" />
-	<property name="build.client.rel" value="client" />
-	<property name="build.client" location="${build}/${build.client.rel}" />
 
 	<!-- debug property -->
 	<property name="debug" value="true"/>

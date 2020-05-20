@@ -14,11 +14,6 @@
 	<property name="demo.src" value="${demo}/src"/>
 	<property name="demo.resource" value="${demo}/resource"/>
 
-	<!-- output demo classes -->
-	<property name="build.demo.rel" value="demo" />
-	<property name="build.demo.classes.rel" value="${build.demo.rel}/classes" />
-	<property name="build.demo.classes" location="${build}/${build.demo.classes.rel}" />
-
 	<!-- output jars -->
 	<property name="build.hobo-demo.jar" location="${build.lib}/hobo-demo.jar"/>
 
