@@ -72,7 +72,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		testFrameStatus(CITIZEN, FrameStatus.EXPOSED);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
-		testFrameStatus(DYNAMIC_CONCEPT, FrameStatus.EXPOSED);
+		testFrameStatus(CONTENT_CONCEPT, FrameStatus.EXPOSED);
 
 		testFrameSupers(CITIZEN, CORE_CONCEPT);
 		testFrameSupers(ACADEMIC_JOB, JOB);
@@ -88,7 +88,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		testFrameStatus(CORE_CONCEPT, FrameStatus.EXPOSED);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
-		testFrameStatus(DYNAMIC_CONCEPT, FrameStatus.ABSENT);
+		testFrameStatus(CONTENT_CONCEPT, FrameStatus.ABSENT);
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 		testFrameStatus(CORE_CONCEPT, FrameStatus.ABSENT);
 		testFrameStatus(JOB, FrameStatus.EXPOSED);
 		testFrameStatus(ACADEMIC_JOB, FrameStatus.EXPOSED);
-		testFrameStatus(DYNAMIC_CONCEPT, FrameStatus.ABSENT);
+		testFrameStatus(CONTENT_CONCEPT, FrameStatus.ABSENT);
 	}
 
 	@Test
