@@ -74,6 +74,17 @@ public class GTree extends JTree {
 		}
 	}
 
+	public void reselectSelected() {
+
+		GNode selected = getSelectedNode();
+
+		if (selected != null) {
+
+			setSelectionPath(null);
+			selected.select();
+		}
+	}
+
 	public void updateAllNodeDisplays() {
 
 		rootNode.updateSubTreeNodeDisplays();
