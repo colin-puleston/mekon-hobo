@@ -92,13 +92,13 @@ public abstract class GFilterPanel extends JPanel {
 
 		String filter = filterField.getText();
 
-		if (!filter.isEmpty()) {
+		if (filter.isEmpty()) {
 
-			applyFilter(new GLexicalFilter(filter, startOnly));
+			clearFilter();
 		}
 		else {
 
-			clearFilter();
+			applyFilter(new GLexicalFilter(filter, startOnly));
 		}
 	}
 }

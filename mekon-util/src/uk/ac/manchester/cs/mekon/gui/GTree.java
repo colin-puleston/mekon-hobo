@@ -61,6 +61,16 @@ public class GTree extends JTree {
 		rootNode.reinitialiseSubTree();
 	}
 
+	public void expandAll() {
+
+		rootNode.expandAll();
+	}
+
+	public void collapseAll() {
+
+		rootNode.collapseAll();
+	}
+
 	public void selectAll(Collection<? extends GNode> nodes) {
 
 		if (nodes.isEmpty()) {
