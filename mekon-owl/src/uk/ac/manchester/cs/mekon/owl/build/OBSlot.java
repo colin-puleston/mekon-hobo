@@ -196,7 +196,7 @@ class OBSlot extends OIdentified {
 			return CCardinality.SINGLE_VALUE;
 		}
 
-		if (valueStructureAllowedIfTopLevelSlot()) {
+		if (repeatValuesAllowedIfTopLevelSlot()) {
 
 			return CCardinality.REPEATABLE_TYPES;
 		}
@@ -212,9 +212,19 @@ class OBSlot extends OIdentified {
 				return false;
 
 			case CFRAME_VALUED_IF_NO_STRUCTURE:
-				return valueType.valueStructureAllowedIfSlotValueType();
+				return valueType.valueStructurePossibleIfSlotValueType();
 		}
 
 		return true;
+	}
+
+	private boolean repeatValuesAllowedIfTopLevelSlot() {
+
+		if (spec.getFrameSlotsPolicy() == OBFrameSlotsPolicy.CFRAME_VALUED_ONLY) {
+
+			return false;
+		}
+
+		return valueType.valueStructurePossibleIfSlotValueType();
 	}
 }

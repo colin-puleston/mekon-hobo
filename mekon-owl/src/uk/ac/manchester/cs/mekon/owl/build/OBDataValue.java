@@ -42,7 +42,7 @@ abstract class OBDataValue<CV extends CValue<?>> extends OBValue<CV> {
 		return false;
 	}
 
-	boolean valueStructureAllowedIfSlotValueType() {
+	boolean valueStructurePossibleIfSlotValueType() {
 
 		return false;
 	}

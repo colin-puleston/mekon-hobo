@@ -51,11 +51,11 @@ class OBDisjunctionFrame extends OBFrame {
 		return false;
 	}
 
-	boolean valueStructureAllowedIfSlotValueType() {
+	boolean valueStructurePossibleIfSlotValueType() {
 
 		for (OBAtomicFrame disjunct : disjuncts) {
 
-			if (disjunct.valueStructureAllowedIfSlotValueType()) {
+			if (disjunct.valueStructurePossibleIfSlotValueType()) {
 
 				return true;
 			}

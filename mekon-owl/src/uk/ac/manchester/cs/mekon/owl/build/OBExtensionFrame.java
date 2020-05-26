@@ -54,7 +54,7 @@ class OBExtensionFrame extends OBFrame {
 		return !valueStructureAllowed;
 	}
 
-	boolean valueStructureAllowedIfSlotValueType() {
+	boolean valueStructurePossibleIfSlotValueType() {
 
 		return true;
 	}

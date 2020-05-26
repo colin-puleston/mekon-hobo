@@ -136,7 +136,7 @@ class OBAtomicFrame extends OBFrame {
 		return !hidden && cValue instanceof MFrame;
 	}
 
-	boolean valueStructureAllowedIfSlotValueType() {
+	boolean valueStructurePossibleIfSlotValueType() {
 
 		return anySlots(new HashSet<OBAtomicFrame>(), false)
 				|| anySlotsViaLinks(new HashSet<OBAtomicFrame>(), true);
