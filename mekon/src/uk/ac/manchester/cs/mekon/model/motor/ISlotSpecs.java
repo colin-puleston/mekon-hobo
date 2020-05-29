@@ -230,7 +230,7 @@ public class ISlotSpecs {
 			}
 			else {
 
-				absorbSimpleType(frameType);
+				absorbAtomicType(frameType);
 			}
 		}
 	}
@@ -245,7 +245,7 @@ public class ISlotSpecs {
 		}
 	}
 
-	private void absorbSimpleType(CFrame frameType) {
+	private void absorbAtomicType(CFrame frameType) {
 
 		absorbSlotTypes(frameType);
 		absorbFixedValues(frameType);

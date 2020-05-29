@@ -52,7 +52,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 
 		public void resetLabel(String newLabel) {
 
-			identity = identity.deriveIdentity(newLabel);
+			identity.resetLabel(newLabel);
 		}
 
 		public void absorbCardinality(CCardinality otherCardinality) {
@@ -207,7 +207,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		CCardinality cardinality) {
 
 		this.container = container;
-		this.identity = identity;
+		this.identity = getModel().resolveSlotIdentity(identity);
 		this.valueType = valueType;
 		this.cardinality = checkRestrictCardinality(cardinality);
 	}

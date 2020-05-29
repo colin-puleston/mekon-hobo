@@ -49,6 +49,7 @@ public class CModel implements CAnnotatable {
 
 	private CFrame rootFrame = new CRootFrame(this);
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
+	private Map<String, CIdentity> slotIdentitiesByIdentifiers = new HashMap<String, CIdentity>();
 
 	private CAnnotations annotations = new CAnnotations(this);
 	private CSlotAnnotations slotAnnotations = new CSlotAnnotations();
@@ -158,6 +159,20 @@ public class CModel implements CAnnotatable {
 		buildListeners.onFrameRemoved(frame);
 
 		return true;
+	}
+
+	CIdentity resolveSlotIdentity(CIdentity id) {
+
+		String identifier = id.getIdentifier();
+		CIdentity resolvedId = slotIdentitiesByIdentifiers.get(identifier);
+
+		if (resolvedId == null) {
+
+			resolvedId = id.copy();
+			slotIdentitiesByIdentifiers.put(identifier, resolvedId);
+		}
+
+		return resolvedId;
 	}
 
 	void startInitialisation() {

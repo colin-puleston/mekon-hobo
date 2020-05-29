@@ -201,6 +201,16 @@ public class CIdentity {
 		return new CIdentity(identifierComponents, newLabel);
 	}
 
+	CIdentity copy() {
+
+		return new CIdentity(identifierComponents, label);
+	}
+
+	void resetLabel(String newLabel) {
+
+		label = newLabel;
+	}
+
 	String toInnerString() {
 
 		return getIdentifier() + "(" + label + ")";
