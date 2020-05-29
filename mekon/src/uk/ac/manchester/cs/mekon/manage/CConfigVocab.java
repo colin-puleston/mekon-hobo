@@ -38,7 +38,7 @@ public interface CConfigVocab {
 	static public final String GENERAL_MATCHER_ID = "GeneralMatcher";
 
 	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
-	static public final String ISTORE_DIRECTORY_ATTR = "instanceStoreDirectory";
+	static public final String STORE_DIRECTORY_ATTR = "storeDirectory";
 	static public final String SECTION_BLDER_CLASS_ATTR = "builder";
 	static public final String AUTO_UPDATE_ATTR = "autoUpdate";
 	static public final String UPDATE_INFERREDS_ATTR = "inferredTypes";

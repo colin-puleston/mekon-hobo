@@ -143,7 +143,7 @@ class CConfig implements CConfigVocab {
 
 	private File getIStoreDirectoryOrNull() {
 
-		return rootNode.getResource(ISTORE_DIRECTORY_ATTR, KConfigResourceFinder.DIRS, null);
+		return rootNode.getResource(STORE_DIRECTORY_ATTR, KConfigResourceFinder.DIRS, null);
 	}
 
 	private File getConfigFileDir() {
