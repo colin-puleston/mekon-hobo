@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <MekonApp title="HOBO-App: Demo">
-	<InstanceGroup rootType="http://mekon/demo-core.owl#Citizen"/>
+	<InstanceGroup rootType="http://mekon/demo.owl#Citizen"/>
 </MekonApp>
