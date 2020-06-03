@@ -43,12 +43,20 @@ class MekonAppIcons {
 	static final Icon ASSERTION_VALUE = createDefaultValueIcon(ASSERTION_VALUE_CLR);
 	static final Icon QUERY_VALUE = createDefaultValueIcon(QUERY_VALUE_CLR);
 
+	static final Icon ASSERTION_ARRAY = createArrayIcon(ASSERTION_VALUE_CLR);
+	static final Icon QUERY_ARRAY = createArrayIcon(QUERY_VALUE_CLR);
+
 	static final Icon ASSERTION_REF = createInstanceRefIcon(ASSERTION_VALUE_CLR);
 	static final Icon QUERY_REF = createInstanceRefIcon(QUERY_VALUE_CLR);
 
-	static final Icon NO_VALUE = createDescriptorIcon(NO_VALUE_CLR);
+	static final Icon NO_VALUE = createNoValueIcon(NO_VALUE_CLR);
 
 	static private GIcon createDefaultValueIcon(Color clr) {
+
+		return new GIcon(new GDiamondRenderer(clr, ICON_DIMENSION));
+	}
+
+	static private GIcon createArrayIcon(Color clr) {
 
 		return new GIcon(new GDiamondRenderer(clr, ICON_DIMENSION));
 	}
@@ -58,12 +66,12 @@ class MekonAppIcons {
 		return new GIcon(new GOvalRenderer(clr, ICON_DIMENSION));
 	}
 
-	static private GIcon createDescriptorIcon(Color clr) {
+	static private GIcon createNoValueIcon(Color clr) {
 
-		return new GIcon(createDescriptorRenderer(clr));
+		return new GIcon(createNoValueRenderer(clr));
 	}
 
-	static private GIconRenderer createDescriptorRenderer(Color clr) {
+	static private GIconRenderer createNoValueRenderer(Color clr) {
 
 		return new GTriangleRenderer(
 						GTriangleRenderer.Type.RIGHTWARD,

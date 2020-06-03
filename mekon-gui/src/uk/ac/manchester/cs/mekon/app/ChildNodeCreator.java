@@ -24,68 +24,35 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
-import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.gui.*;
-
 /**
  * @author Colin Puleston
  */
-abstract class InstanceNode extends GNode {
+class ChildNodeCreator {
 
 	private InstanceTree tree;
 
-	protected boolean autoExpand() {
-
-		return true;
-	}
-
-	protected boolean orderedChildren() {
-
-		return false;
-	}
-
-	InstanceNode(InstanceTree tree) {
-
-		super(tree);
+	ChildNodeCreator(InstanceTree tree) {
 
 		this.tree = tree;
 	}
 
-	void initialise() {
+	InstanceNode createFor(SlotDescriptors slotDescriptors) {
 
-		for (GNode child : getChildren()) {
+		if (slotDescriptors.populatedMultiValueSlot()) {
 
-			child.expand();
+			return new DescriptorArrayNode(tree, slotDescriptors);
 		}
+
+		return createFor(slotDescriptors.getSingleDescriptor());
 	}
 
-	void update() {
+	DescriptorNode createFor(Descriptor descriptor) {
 
-		for (GNode child : getChildren()) {
+		if (descriptor.structuredType() && descriptor.hasValue()) {
 
-			((InstanceNode)child).update();
+			return new StructuredDescriptorNode(tree, descriptor);
 		}
-	}
 
-	InstanceTree getInstanceTree() {
-
-		return tree;
-	}
-
-	Instantiator getInstantiator() {
-
-		return tree.getInstantiator();
-	}
-
-	boolean queryInstance() {
-
-		return getInstantiator().queryInstance();
-	}
-
-	boolean viewOnly() {
-
-		return tree.viewOnly();
+		return new DescriptorNode(tree, descriptor);
 	}
 }

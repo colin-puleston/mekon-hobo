@@ -36,57 +36,76 @@ import uk.ac.manchester.cs.mekon.util.*;
 class DescriptorChildNodes {
 
 	private InstanceNode parentNode;
-	private DescriptorsList descriptors;
+
+	private IFrame container;
+	private FrameDescriptors frameDescriptors;
+
+	private ChildNodeCreator childNodeCreator;
 
 	private SlotUpdateRelayer slotUpdateRelayer;
 	private ValueUpdateRelayer valueUpdateRelayer;
 
 	private class Updater {
 
-		private List<Descriptor> oldDescriptors;
-		private List<Descriptor> newDescriptors;
+		private FrameDescriptors oldFrameDescriptors = frameDescriptors;
+
+		private List<SlotDescriptors> oldDescriptorsBySlot;
+		private List<SlotDescriptors> newDescriptorsBySlot;
 
 		Updater() {
 
-			oldDescriptors = descriptors.getList();
-			descriptors.update(viewOnly());
-			newDescriptors = descriptors.getList();
+			frameDescriptors = createFrameDescriptors();
 
-			if (!newDescriptors.equals(oldDescriptors)) {
+			if (!frameDescriptors.equalDescriptors(oldFrameDescriptors)) {
 
-				removeOldChildNodes();
-				addNewChildNodes();
+				oldDescriptorsBySlot = oldFrameDescriptors.getDescriptorsBySlot();
+				newDescriptorsBySlot = frameDescriptors.getDescriptorsBySlot();
+
+				removeOldChildren();
+				addNewAndUpdateArrayChildren();
 			}
 		}
 
-		private void removeOldChildNodes() {
+		private void removeOldChildren() {
 
 			int childIdx = 0;
 
-			for (Descriptor descriptor : oldDescriptors) {
+			for (SlotDescriptors slotDescriptors : oldDescriptorsBySlot) {
 
-				if (!newDescriptors.contains(descriptor)) {
+				if (!newDescriptorsBySlot.contains(slotDescriptors)) {
 
-					removeFromParentNode(childIdx--);
+					parentNode.removeChild(childIdx--);
 				}
 
 				childIdx++;
 			}
 		}
 
-		private void addNewChildNodes() {
+		private void addNewAndUpdateArrayChildren() {
 
 			int childIdx = 0;
 
-			for (Descriptor descriptor : newDescriptors) {
+			for (SlotDescriptors slotDescriptors : newDescriptorsBySlot) {
 
-				if (!oldDescriptors.contains(descriptor)) {
+				if (!oldDescriptorsBySlot.contains(slotDescriptors)) {
 
-					addToParentNode(descriptor, childIdx);
+					addChild(slotDescriptors, childIdx);
+				}
+				else {
+
+					if (slotDescriptors.populatedMultiValueSlot()) {
+
+						updateArrayChild(slotDescriptors, childIdx);
+					}
 				}
 
 				childIdx++;
 			}
+		}
+
+		private void updateArrayChild(SlotDescriptors slotDescriptors, int childIdx) {
+
+			((DescriptorArrayNode)parentNode.getChildAt(childIdx)).update(slotDescriptors);
 		}
 	}
 
@@ -169,8 +188,10 @@ class DescriptorChildNodes {
 	DescriptorChildNodes(InstanceNode parentNode, IFrame container) {
 
 		this.parentNode = parentNode;
+		this.container = container;
 
-		descriptors = new DescriptorsList(getInstantiator(), container, viewOnly());
+		frameDescriptors = createFrameDescriptors();
+		childNodeCreator = new ChildNodeCreator(parentNode.getInstanceTree());
 
 		slotUpdateRelayer = new SlotUpdateRelayer();
 		valueUpdateRelayer = new ValueUpdateRelayer(container);
@@ -183,39 +204,28 @@ class DescriptorChildNodes {
 
 	void addInitialChildren() {
 
-		for (Descriptor descriptor : descriptors.getList()) {
+		for (SlotDescriptors slotDescriptors : frameDescriptors.getDescriptorsBySlot()) {
 
-			addToParentNode(descriptor, -1);
+			addChild(slotDescriptors, -1);
 		}
 	}
 
-	private void addToParentNode(Descriptor descriptor, int index) {
+	private void addChild(SlotDescriptors slotDescriptors, int index) {
 
-		DescriptorNode node = createDescriptorNode(descriptor);
+		InstanceNode child = childNodeCreator.createFor(slotDescriptors);
 
-		parentNode.addChild(node, index);
+		parentNode.addChild(child, index);
+		child.initialise();
 
-		ISlot slot = descriptor.getSlot();
+		ISlot slot = slotDescriptors.getSlot();
 
 		slotUpdateRelayer.checkAddTo(slot);
 		valueUpdateRelayer.checkAddTo(slot);
 	}
 
-	private void removeFromParentNode(int index) {
+	private FrameDescriptors createFrameDescriptors() {
 
-		parentNode.removeChild(index);
-	}
-
-	private DescriptorNode createDescriptorNode(Descriptor descriptor) {
-
-		InstanceTree tree = parentNode.getInstanceTree();
-
-		if (descriptor.structuredType() && descriptor.hasValue()) {
-
-			return new StructuredDescriptorNode(tree, descriptor);
-		}
-
-		return new DescriptorNode(tree, descriptor);
+		return new FrameDescriptors(getInstantiator(), container, viewOnly());
 	}
 
 	private Instantiator getInstantiator() {
