@@ -69,7 +69,7 @@ class CConfig implements CConfigVocab {
 	void configure(CBuilder builder) {
 
 		setQueriesEnabling(builder);
-		setIStoreDirectory(builder);
+		setStoreDirectory(builder);
 		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
 		loadGeneralMatchers(builder);
@@ -80,10 +80,10 @@ class CConfig implements CConfigVocab {
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
 	}
 
-	private void setIStoreDirectory(CBuilder builder) {
+	private void setStoreDirectory(CBuilder builder) {
 
 		IDiskStoreBuilder storeBldr = IDiskStoreManager.getBuilder(builder);
-		File dir = getIStoreDirectoryOrNull();
+		File dir = getStoreDirectoryOrNull();
 
 		if (dir != null) {
 
@@ -141,9 +141,16 @@ class CConfig implements CConfigVocab {
 		builder.addSectionBuilder(adder);
 	}
 
-	private File getIStoreDirectoryOrNull() {
+	private File getStoreDirectoryOrNull() {
 
-		return rootNode.getResource(STORE_DIRECTORY_ATTR, KConfigResourceFinder.DIRS, null);
+		File dir = getStoreDirectoryOrNull(new KConfigResourceFinder(true));
+
+		return dir != null ? dir : getStoreDirectoryOrNull(KConfigResourceFinder.DIRS);
+	}
+
+	private File getStoreDirectoryOrNull(KConfigResourceFinder finder) {
+
+		return rootNode.getResource(STORE_DIRECTORY_ATTR, finder, null);
 	}
 
 	private File getConfigFileDir() {
