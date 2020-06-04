@@ -299,45 +299,6 @@ public class KConfigNode {
 
 	/**
 	 * Provides a <code>File</code> object derived from the value
-	 * of the specified attribute, representing an existing file or
-	 * directory that can be located directly on the file-system.
-	 *
-	 * @param id Identifier of relevant attribute
-	 * @param mustExist True if file or directory must currently exist
-	 * @return Relevant <code>File</code> object
-	 * @throws XDocumentException if no value for specified attribute
-	 * @throws KSystemConfigException if value found for specified
-	 * attribute and mustExist is true but file or directory does not
-	 * exist at relevant location
-	 */
-	public File getFile(String id, boolean mustExist) {
-
-		return lookForFile(getString(id), mustExist);
-	}
-
-	/**
-	 * Provides a <code>File</code> object derived from the value
-	 * of the specified attribute, representing an existing file or
-	 * directory that can be located directly on the file-system.
-	 *
-	 * @param id Identifier of relevant attribute
-	 * @param defaultValue Value to return if no value for attribute
-	 * @param mustExist True if file or directory must currently exist
-	 * @return Relevant <code>File</code> object, or null if no
-	 * value for specified attribute
-	 * @throws KSystemConfigException if value found for specified
-	 * attribute and mustExist is true but file or directory does not
-	 * exist at relevant location
-	 */
-	public File getFile(String id, File defaultValue, boolean mustExist) {
-
-		String path = getNonEmptyStringOrNull(id);
-
-		return path != null ? lookForFile(path, mustExist) : defaultValue;
-	}
-
-	/**
-	 * Provides a <code>File</code> object derived from the value
 	 * of the specified attribute, representing an existing resource
 	 * (file or directory) that can be located from the class-path.
 	 *
@@ -388,26 +349,6 @@ public class KConfigNode {
 	private KConfigNode createConfigNode(XNode xNode) {
 
 		return new KConfigNode(configFile, xNode);
-	}
-
-	private File lookForFile(String path, boolean mustExist) {
-
-		if (path != null) {
-
-			File file = new File(path);
-
-			if (mustExist) {
-
-				if (!file.exists()) {
-
-					throw new KSystemConfigException("Cannot find file or directory: " + path);
-				}
-			}
-
-			return file;
-		}
-
-		return null;
 	}
 
 	private String getNonEmptyStringOrNull(String id) {

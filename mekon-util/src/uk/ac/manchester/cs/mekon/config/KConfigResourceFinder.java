@@ -41,14 +41,14 @@ public class KConfigResourceFinder {
 	 * class-path.
 	 */
 	static public final KConfigResourceFinder FILES
-						= new KConfigResourceFinder(false);
+						= new KConfigResourceFinder(null, false);
 
 	/**
 	 * Finder for locating directories relative to some location on
 	 * the class-path.
 	 */
 	static public final KConfigResourceFinder DIRS
-						= new KConfigResourceFinder(true);
+						= new KConfigResourceFinder(null, true);
 
 	private FileFinder fileFinder;
 	private boolean expectDir;
@@ -93,6 +93,17 @@ public class KConfigResourceFinder {
 
 	/**
 	 * Constructs finder for locating resources with paths relative
+	 * to the current directory.
+	 *
+	 * @param expectDir True if resource should be a directory
+	 */
+	public KConfigResourceFinder(boolean expectDir) {
+
+		this(new File("."), expectDir);
+	}
+
+	/**
+	 * Constructs finder for locating resources with paths relative
 	 * to the specified base-directory.
 	 *
 	 * @param baseDir Base-directory for required resources
@@ -100,7 +111,7 @@ public class KConfigResourceFinder {
 	 */
 	public KConfigResourceFinder(File baseDir, boolean expectDir) {
 
-		fileFinder = new BaseDirFileFinder(baseDir);
+		fileFinder = createFileFinder(baseDir);
 
 		this.expectDir = expectDir;
 	}
@@ -161,11 +172,9 @@ public class KConfigResourceFinder {
 		return file != null && requiredResource(file) ? file : null;
 	}
 
-	private KConfigResourceFinder(boolean expectDir) {
+	private FileFinder createFileFinder(File baseDir) {
 
-		fileFinder = new ClassPathFileFinder();
-
-		this.expectDir = expectDir;
+		return baseDir != null ? new BaseDirFileFinder(baseDir) : new ClassPathFileFinder();
 	}
 
 	private boolean requiredResource(File file) {
