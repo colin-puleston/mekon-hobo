@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.app;
 
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
@@ -63,9 +64,26 @@ class InstanceGroupPanel extends JTabbedPane {
 
 		setFont(GFonts.toMedium(getFont()));
 		addTab(ASSERTIONS_TITLE, new AssertionsPanel(group));
-		addTab(QUERIES_TITLE, new QueriesPanel(group));
-		addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
 
-		new QueryMatchesDisplayer(group);
+		if (editableQueries(group)) {
+
+			addTab(QUERIES_TITLE, new QueriesPanel(group));
+			addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
+
+			new QueryMatchesDisplayer(group);
+		}
+	}
+
+	private boolean editableQueries(InstanceGroup group) {
+
+		Controller controller = group.getController();
+		IFrame testQuery = instantiateRootTypeQuery(group);
+
+		return Instantiator.editableInstance(controller, testQuery);
+	}
+
+	private IFrame instantiateRootTypeQuery(InstanceGroup group) {
+
+		return group.getRootType().instantiate(IFrameFunction.QUERY);
 	}
 }

@@ -61,12 +61,12 @@ class InstanceOps {
 		return function.query() && instanceGroup.simpleQueriesEnabled();
 	}
 
-	CIdentity checkDisplayNew() {
+	CIdentity checkCreate() {
 
-		return checkDisplayNew(instanceGroup.getRootType(), null);
+		return checkCreate(instanceGroup.getRootType(), null);
 	}
 
-	CIdentity checkDisplayNew(CFrame rootType, CIdentity refingId) {
+	CIdentity checkCreate(CFrame rootType, CIdentity refingId) {
 
 		CFrame type = checkDetermineType(rootType);
 
@@ -76,21 +76,21 @@ class InstanceOps {
 
 			if (storeId != null) {
 
-				return displayDialog(createInstance(type, storeId), storeId, false);
+				return createInstance(type, storeId);
 			}
 		}
 
 		return null;
 	}
 
-	CIdentity checkDisplayNewSimple() {
+	CIdentity checkCreateSimple() {
 
-		return checkDisplayNew(instanceGroup.getSimpleQueriesRootType(), null);
+		return checkCreate(instanceGroup.getSimpleQueriesRootType(), null);
 	}
 
 	CIdentity displayReloaded(CIdentity storeId) {
 
-		return displayDialog(reloadInstance(storeId), storeId, true);
+		return display(reloadInstance(storeId), storeId, true);
 	}
 
 	void checkRename(CIdentity storeId) {
@@ -107,6 +107,29 @@ class InstanceOps {
 	CIdentity checkObtainNewStoreId(CFrame type) {
 
 		return checkObtainStoreId(type, null, null);
+	}
+
+	private CIdentity createInstance(CFrame type, CIdentity storeId) {
+
+		IFrame instance = instantiateInstance(type, storeId);
+		Instantiator instantiator = createInstantiator(storeId, instance);
+
+		return display(instantiator, storeId, false);
+	}
+
+	private Instantiator reloadInstance(CIdentity storeId) {
+
+		return createInstantiator(storeId, store.get(storeId));
+	}
+
+	private IFrame instantiateInstance(CFrame type, CIdentity storeId) {
+
+		return customiser.onNewInstance(type.instantiate(function), storeId);
+	}
+
+	private Instantiator createInstantiator(CIdentity storeId, IFrame instance) {
+
+		return new Instantiator(instanceGroup, storeId, instance);
 	}
 
 	private CFrame checkDetermineType(CFrame rootType) {
@@ -154,10 +177,7 @@ class InstanceOps {
 		return inputter.getIdInput();
 	}
 
-	private CIdentity displayDialog(
-						Instantiator instantiator,
-						CIdentity storeId,
-						boolean reloaded) {
+	private CIdentity display(Instantiator instantiator, CIdentity storeId, boolean reloaded) {
 
 		InstanceDialog dialog = createDialog(instantiator, storeId);
 
@@ -174,25 +194,6 @@ class InstanceOps {
 		}
 
 		return new QueryDialog(parent, instantiator, storeId);
-	}
-
-	private Instantiator createInstance(CFrame type, CIdentity storeId) {
-
-		IFrame instance = type.instantiate(function);
-
-		instance = customiser.onNewInstance(instance, storeId);
-
-		return createInstantiator(storeId, instance);
-	}
-
-	private Instantiator reloadInstance(CIdentity storeId) {
-
-		return createInstantiator(storeId, store.get(storeId));
-	}
-
-	private Instantiator createInstantiator(CIdentity storeId, IFrame instance) {
-
-		return new Instantiator(instanceGroup, storeId, instance);
 	}
 
 	private String getNextInstanceNameDefault(CFrame type, CIdentity refingId) {

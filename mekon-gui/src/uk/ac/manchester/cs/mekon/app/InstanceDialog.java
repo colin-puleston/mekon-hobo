@@ -173,7 +173,11 @@ abstract class InstanceDialog extends GDialog {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(new ViewOnlySelector(), BorderLayout.NORTH);
+		if (instantiator.editableInstance()) {
+
+			panel.add(new ViewOnlySelector(), BorderLayout.NORTH);
+		}
+
 		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
 		panel.add(createControlsComponent(enableDefaultStore), BorderLayout.SOUTH);
 

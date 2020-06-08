@@ -58,7 +58,7 @@ abstract class InstancesPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			instanceOps.checkDisplayNew();
+			instanceOps.checkCreate();
 		}
 
 		CreateButton() {
@@ -73,7 +73,7 @@ abstract class InstancesPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			instanceOps.checkDisplayNewSimple();
+			instanceOps.checkCreateSimple();
 		}
 
 		CreateSimpleButton() {
