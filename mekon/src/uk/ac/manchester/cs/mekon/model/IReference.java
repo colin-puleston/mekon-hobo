@@ -41,7 +41,7 @@ class IReference extends IFrame {
 
 	public String getDisplayLabel() {
 
-		return getType().getDisplayLabel() + " >>> " + referenceId.getLabel();
+		return getType().getDisplayLabel() + " >> " + referenceId.getLabel();
 	}
 
 	public IFrameCategory getCategory() {
