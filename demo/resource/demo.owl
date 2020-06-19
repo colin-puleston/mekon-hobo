@@ -248,6 +248,14 @@
     
 
 
+    <!-- http://mekon/demo.owl#travel -->
+
+    <owl:ObjectProperty rdf:about="http://mekon/demo.owl#travel">
+        <rdfs:subPropertyOf rdf:resource="http://mekon/demo.owl#interCoreProperty"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://mekon/demo.owl#travelClass -->
 
     <owl:ObjectProperty rdf:about="http://mekon/demo.owl#travelClass">
@@ -491,6 +499,13 @@
                 <owl:onProperty rdf:resource="http://mekon/demo.owl#taxPaid"/>
                 <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
                 <owl:onClass rdf:resource="http://mekon/demo.owl#Tax"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://mekon/demo.owl#travel"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://mekon/demo.owl#Travel"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -1616,6 +1631,14 @@
                 <owl:onClass rdf:resource="http://mekon/demo.owl#TravelClass"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://mekon/demo.owl#Travel -->
+
+    <owl:Class rdf:about="http://mekon/demo.owl#Travel">
+        <rdfs:subClassOf rdf:resource="http://mekon/demo.owl#CoreConcept"/>
     </owl:Class>
     
 

@@ -221,6 +221,7 @@
 			<FieldMap fieldName="employment" externalId="http://mekon/demo.owl#employment"/>
 			<FieldMap fieldName="tax" externalId="http://mekon/demo.owl#taxPaid"/>
 			<FieldMap fieldName="benefits" externalId="http://mekon/demo.owl#benefitReceived"/>
+			<FieldMap fieldName="travel" externalId="http://mekon/demo.owl#travel"/>
 		</ClassMap>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.model.Personal"
@@ -254,6 +255,10 @@
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.model.UnemploymentBenefit"
 			externalId="http://mekon/demo.owl#UnemploymentBenefit"/>
+		<ClassMap
+			javaClass="uk.ac.manchester.cs.hobo.demo.model.Travel"
+			externalId="http://mekon/demo.owl#Travel">
+		</ClassMap>
 		<ClassMap
 			javaClass="uk.ac.manchester.cs.hobo.demo.model.Trip"
 			externalId="http://mekon/demo.owl#Trip"/>
