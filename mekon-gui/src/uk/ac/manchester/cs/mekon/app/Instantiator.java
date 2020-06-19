@@ -92,34 +92,12 @@ class Instantiator {
 
 	IFrame instantiate(CFrame type) {
 
-		IFrame instance = type.instantiate(getFunction());
-
-		if (!queryInstance()) {
-
-			checkInitialiseSlots(instance);
-		}
-
-		return instance;
+		return type.instantiate(getFunction());
 	}
 
 	IFrame instantiateRef(CFrame type, CIdentity refId) {
 
 		return type.instantiate(refId, getFunction());
-	}
-
-	boolean instanceRefValuedSlot(ISlot slot) {
-
-		if (!slot.getEditability().abstractEditable()) {
-
-			CValue<?> valueType = slot.getValueType();
-
-			if (valueType instanceof CFrame) {
-
-				return getController().instanceGroupType((CFrame)valueType);
-			}
-		}
-
-		return false;
 	}
 
 	IFrameFunction getFunction() {
@@ -132,16 +110,15 @@ class Instantiator {
 		return getFunction().query();
 	}
 
-	private void checkInitialiseSlots(IFrame instance) {
+	boolean instanceGroupLinkSlot(ISlot slot) {
 
-		for (ISlot slot : instance.getSlots().asList()) {
+		CValue<?> valueType = slot.getValueType();
 
-			checkInitialiseSlot(slot);
+		if (valueType instanceof CFrame) {
+
+			return getController().instanceGroupType((CFrame)valueType);
 		}
-	}
 
-	private void checkInitialiseSlot(ISlot slot) {
-
-		new AutoValueProvider(this, slot).checkProvide();
+		return false;
 	}
 }

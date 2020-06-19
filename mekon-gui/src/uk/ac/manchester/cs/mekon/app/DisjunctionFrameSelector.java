@@ -49,7 +49,7 @@ class DisjunctionFrameSelector extends DisjunctionEntitySelector<CFrame> {
 		boolean forQuery,
 		boolean canClear) {
 
-		super(parent, getTitleName(rootFrame), canClear);
+		super(parent, getTypeName(rootFrame), canClear);
 
 		selectionOptions = new FrameSelectionOptions(this, rootFrame, forQuery);
 	}

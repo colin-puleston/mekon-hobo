@@ -119,17 +119,12 @@ class DescriptorCellDisplay {
 
 	private Icon getValueIcon() {
 
-		if (descriptor.instanceRefType()) {
+		if (descriptor.hasInstanceRefValue()) {
 
-			return MekonAppIcons.ASSERTION_REF;
+			return queryInstance ? MekonAppIcons.QUERY_REF : MekonAppIcons.ASSERTION_REF;
 		}
 
-		if (queryInstance) {
-
-			return MekonAppIcons.QUERY_VALUE;
-		}
-
-		return MekonAppIcons.ASSERTION_VALUE;
+		return queryInstance ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
 	}
 
 	private boolean editable() {

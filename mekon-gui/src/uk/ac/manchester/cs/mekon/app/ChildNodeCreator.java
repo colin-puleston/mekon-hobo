@@ -48,7 +48,7 @@ class ChildNodeCreator {
 
 	DescriptorNode createFor(Descriptor descriptor) {
 
-		if (descriptor.structuredType() && descriptor.hasValue()) {
+		if (descriptor.hasStructuredValue()) {
 
 			return new StructuredDescriptorNode(tree, descriptor);
 		}

@@ -34,35 +34,16 @@ import uk.ac.manchester.cs.mekon.gui.*;
  */
 class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
-	static private final String CREATE_LABEL_FORMAT = "Create new %s...";
-
 	private Instantiator instantiator;
-	private InstanceGroup instanceGroup;
-
 	private CFrame type;
 
 	private InstanceIdsList refIdOptionsList;
-
-	private class CreateButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			checkInstantiateNewInstance(this);
-		}
-
-		CreateButton() {
-
-			super(String.format(CREATE_LABEL_FORMAT, EntitySelector.getTitleName(type)));
-		}
-	}
 
 	private class IdsSelectionListener extends GSelectionListener<CIdentity> {
 
 		protected void onSelected(CIdentity refId) {
 
-			onSelectedRefId(refId);
+			onSelectedOption(createRef(refId));
 		}
 
 		protected void onDeselected(CIdentity refId) {
@@ -84,12 +65,9 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 		this.instantiator = instantiator;
 		this.type = type;
 
-		instanceGroup = instantiator.getController().getInstanceGroup(type);
-		refIdOptionsList = instanceGroup.createAssertionIdsList(type);
+		refIdOptionsList = createOptionsList();
 
 		new IdsSelectionListener();
-
-		selector.addExtraControlButton(new CreateButton());
 	}
 
 	JComponent createOptionsComponent() {
@@ -102,25 +80,14 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 		return refIdOptionsList.getCellDisplay(refId);
 	}
 
-	private void checkInstantiateNewInstance(JComponent parent) {
+	private InstanceIdsList createOptionsList() {
 
-		CIdentity refingId = instantiator.getStoreId();
-		CIdentity refId = createInstanceOps(parent).checkCreate(type, refingId);
-
-		if (refId != null) {
-
-			onSelectedRefId(refId);
-		}
+		return getInstanceGroup().createAssertionIdsList(type);
 	}
 
-	private InstanceOps createInstanceOps(JComponent parent) {
+	private InstanceGroup getInstanceGroup() {
 
-		return new InstanceOps(parent, instanceGroup, IFrameFunction.ASSERTION);
-	}
-
-	private void onSelectedRefId(CIdentity refId) {
-
-		onSelectedOption(createRef(refId));
+		return instantiator.getController().getInstanceGroup(type);
 	}
 
 	private IFrame createRef(CIdentity refId) {

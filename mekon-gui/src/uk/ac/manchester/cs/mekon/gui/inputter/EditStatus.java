@@ -27,4 +27,4 @@ package uk.ac.manchester.cs.mekon.gui.inputter;
 /**
  * @author Colin Puleston
  */
-public enum EditStatus {INPUTTED, CLEARED, CANCELLED, NONE};
+public enum EditStatus {INPUTTED, CLEARED, CANCELLED};

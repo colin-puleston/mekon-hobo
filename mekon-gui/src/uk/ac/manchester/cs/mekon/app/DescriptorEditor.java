@@ -59,13 +59,18 @@ class DescriptorEditor {
 					break;
 
 				case CANCELLED:
-					return false;
+					return handleCancelledEdit();
 			}
 
 			return true;
 		}
 
 		abstract ValueObtainer getValueObtainer();
+
+		boolean handleCancelledEdit() {
+
+			return false;
+		}
 	}
 
 	private class CustomTypeHandler extends TypeHandler {
@@ -215,27 +220,87 @@ class DescriptorEditor {
 		}
 	}
 
-	private class InstanceRefTypeHandler extends InputTypeHandler<IFrame> {
+	private class InstanceGroupLinkCFrameTypeHandler extends InputTypeHandler<IFrame> {
 
 		private CFrame valueType;
+		private InstanceRefSelector refSelector = null;
 
-		InstanceRefTypeHandler(CFrame valueType) {
+		InstanceGroupLinkCFrameTypeHandler(CFrame valueType) {
 
 			this.valueType = valueType;
 		}
 
 		Inputter<IFrame> createInputter(boolean canClear) {
 
-			return new AtomicInstanceRefSelector(
-							parent,
-							instantiator,
-							valueType,
-							canClear);
+			refSelector = new InstanceRefSelector(
+									parent,
+									instantiator,
+									valueType,
+									canClear,
+									abstractEditableSlot());
+
+			return refSelector;
 		}
 
 		IFrame inputToValue(IFrame input) {
 
 			return input;
+		}
+
+		boolean handleCancelledEdit() {
+
+			if (refSelector.alternativeEditSelected()) {
+
+				if (abstractEditableSlot()) {
+
+					return performAlternativeAbstractEdit();
+				}
+
+				return checkCreateAndAddRefInstance();
+			}
+
+			return false;
+		}
+
+		private boolean performAlternativeAbstractEdit() {
+
+			if (fixedValueType(valueType)) {
+
+				addValue(instantiator.instantiate(valueType));
+
+				return true;
+			}
+
+			return new InputCFrameTypeHandler(valueType).performEditAction();
+		}
+
+		private boolean checkCreateAndAddRefInstance() {
+
+			CIdentity refId = checkCreateRefInstance();
+
+			if (refId != null) {
+
+				addValue(instantiator.instantiateRef(valueType, refId));
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private CIdentity checkCreateRefInstance() {
+
+			return createInstanceOps().checkCreate(valueType, instantiator.getStoreId());
+		}
+
+		private InstanceOps createInstanceOps() {
+
+			return new InstanceOps(parent, getInstanceGroup(), IFrameFunction.ASSERTION);
+		}
+
+		private InstanceGroup getInstanceGroup() {
+
+			return getController().getInstanceGroup(valueType);
 		}
 	}
 
@@ -304,22 +369,17 @@ class DescriptorEditor {
 
 		private TypeHandler createCFrameTypeHandler(CFrame valueType) {
 
-			if (descriptor.instanceRefType()) {
+			if (descriptor.instanceGroupLink()) {
 
-				return new InstanceRefTypeHandler(valueType);
+				return new InstanceGroupLinkCFrameTypeHandler(valueType);
 			}
 
-			if (fixedCFrameValueType(valueType)) {
+			if (fixedValueType(valueType)) {
 
 				return new FixedCFrameTypeHandler(valueType);
 			}
 
 			return new InputCFrameTypeHandler(valueType);
-		}
-
-		private boolean fixedCFrameValueType(CFrame valueType) {
-
-			return valueType.getSubs(CVisibility.EXPOSED).isEmpty();
 		}
 	}
 
@@ -389,8 +449,18 @@ class DescriptorEditor {
 		return slot.getEditability().abstractEditable();
 	}
 
+	private boolean fixedValueType(CFrame valueType) {
+
+		return valueType.getSubs(CVisibility.EXPOSED).isEmpty();
+	}
+
 	private Customiser getCustomiser() {
 
-		return instantiator.getController().getCustomiser();
+		return getController().getCustomiser();
+	}
+
+	private Controller getController() {
+
+		return instantiator.getController();
 	}
 }

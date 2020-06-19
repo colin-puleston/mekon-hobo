@@ -42,7 +42,7 @@ class Descriptor {
 	private ISlot slot;
 	private CValue<?> valueType;
 	private IValue value;
-	private boolean inferredValue;
+	private boolean hasInferredValue;
 
 	public boolean equals(Object other) {
 
@@ -65,7 +65,7 @@ class Descriptor {
 		this.value = value;
 
 		valueType = slot.getValueType();
-		inferredValue = inferredValue();
+		hasInferredValue = hasValue() && reasonerProvidedValue();
 	}
 
 	ISlot getSlot() {
@@ -73,14 +73,9 @@ class Descriptor {
 		return slot;
 	}
 
-	boolean structuredType() {
+	boolean instanceGroupLink() {
 
-		return hasValueType(CFrame.class) && !instanceRefType();
-	}
-
-	boolean instanceRefType() {
-
-		return instantiator.instanceRefValuedSlot(slot);
+		return instantiator.instanceGroupLinkSlot(slot);
 	}
 
 	boolean hasValueType(Class<? extends CValue<?>> testType) {
@@ -93,6 +88,16 @@ class Descriptor {
 		return value != null;
 	}
 
+	boolean hasStructuredValue() {
+
+		return hasIFrameValue(IFrameCategory.ATOMIC);
+	}
+
+	boolean hasInstanceRefValue() {
+
+		return hasIFrameValue(IFrameCategory.REFERENCE);
+	}
+
 	IValue getValue() {
 
 		return value;
@@ -100,7 +105,7 @@ class Descriptor {
 
 	boolean active() {
 
-		if (structuredType()) {
+		if (hasStructuredValue()) {
 
 			return anyUserEditability() || anyTerminalValues();
 		}
@@ -110,7 +115,7 @@ class Descriptor {
 
 	boolean userEditable() {
 
-		return editableSlot() && !inferredValue;
+		return editableSlot() && !hasInferredValue;
 	}
 
 	boolean anyUserEditability() {
@@ -204,24 +209,14 @@ class Descriptor {
 		return getCustomiser().getValueDisplayLabel(atomicValue);
 	}
 
-	private boolean inferredValue() {
-
-		if (!hasValue()) {
-
-			return false;
-		}
-
-		return reasonerProvidedValue() || appProvidedValue();
-	}
-
 	private boolean reasonerProvidedValue() {
 
 		return slot.getValues().getFixedValues().contains(value);
 	}
 
-	private boolean appProvidedValue() {
+	private boolean hasIFrameValue(IFrameCategory category) {
 
-		return new AutoValueProvider(instantiator, slot).canProvide();
+		return value instanceof IFrame && ((IFrame)value).getCategory() == category;
 	}
 
 	private boolean anyUserValues() {

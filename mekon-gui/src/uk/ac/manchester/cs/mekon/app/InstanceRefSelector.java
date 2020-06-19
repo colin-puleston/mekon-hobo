@@ -24,32 +24,76 @@
 
 package uk.ac.manchester.cs.mekon.app;
 
+import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class AtomicInstanceRefSelector extends AtomicEntitySelector<IFrame> {
+class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String CREATE_LABEL_FORMAT = "Create %s";
+	static private final String DESCRIBE_LABEL_FORMAT = "Describe %s";
+
 	private InstanceRefSelectionOptions selectionOptions;
 
-	AtomicInstanceRefSelector(
+	private boolean alternativeEditSelected = false;
+
+	private class AlternativeEditSelectButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			alternativeEditSelected = true;
+
+			dispose();
+		}
+
+		AlternativeEditSelectButton(CFrame type, boolean abstractEdit) {
+
+			super(getAlternativeEditSelectLabel(type, abstractEdit));
+		}
+	}
+
+	InstanceRefSelector(
 		JComponent parent,
 		Instantiator instantiator,
 		CFrame type,
-		boolean canClear) {
+		boolean canClear,
+		boolean abstractEdit) {
 
-		super(parent, getTitleName(type), canClear);
+		super(parent, getTypeName(type), canClear);
 
 		selectionOptions = new InstanceRefSelectionOptions(this, instantiator, type);
+
+		addExtraControlButton(new AlternativeEditSelectButton(type, abstractEdit));
+	}
+
+	boolean alternativeEditSelected() {
+
+		return alternativeEditSelected;
 	}
 
 	JComponent createOptionsComponent() {
 
 		return selectionOptions.createOptionsComponent();
+	}
+
+	private String getAlternativeEditSelectLabel(CFrame type, boolean abstractEdit) {
+
+		String format = getAlternativeEditSelectLabelFormat(abstractEdit);
+
+		return String.format(format, getTypeName(type));
+	}
+
+	private String getAlternativeEditSelectLabelFormat(boolean abstractEdit) {
+
+		return abstractEdit ? DESCRIBE_LABEL_FORMAT : CREATE_LABEL_FORMAT;
 	}
 }

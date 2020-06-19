@@ -44,7 +44,7 @@ abstract class EntitySelector<E> extends Inputter<E> {
 
 	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
 
-	static String getTitleName(CFrame frameType) {
+	static String getTypeName(CFrame frameType) {
 
 		return frameType.getIdentity().getLabel().toLowerCase();
 	}
