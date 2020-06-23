@@ -227,24 +227,20 @@ class IDiskStore implements IStore {
 
 		for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
 
-			checkReloadToStore(storedProfile.getProfile(), storedProfile.getIndex());
+			reloadToStore(storedProfile.getProfile(), storedProfile.getIndex());
 		}
 	}
 
-	private void checkReloadToStore(InstanceProfile profile, int index) {
+	private void reloadToStore(InstanceProfile profile, int index) {
 
+		CIdentity identity = profile.getInstanceId();
 		IRegenType type = createRegenType(profile.getTypeId());
 
-		if (type.validRootType()) {
+		identities.add(identity);
+		types.put(identity, type);
+		indexes.assignIndex(identity, index);
 
-			CIdentity identity = profile.getInstanceId();
-
-			identities.add(identity);
-			types.put(identity, type);
-			indexes.assignIndex(identity, index);
-
-			refIntegrityManager.onReloadedInstance(identity, profile);
-		}
+		refIntegrityManager.onReloadedInstance(identity, profile);
 	}
 
 	private void reloadMatchers() {
