@@ -22,32 +22,48 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.regen;
+package uk.ac.manchester.cs.mekon.store.motor;
 
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.zlink.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
- * Represents a specific {@link IFrame}/{@link ISlot} network that
- * has been regenerated from a serialized form, and hence may
- * be partially or fully invalid with repect to the current model.
+ * Implementation of {@link IRegenInstance} representing instance
+ * network that is fully or partially valid with respect to the
+ * current model.
  *
  * @author Colin Puleston
  */
-public class IRegenInstance {
+public class IRegenValidInstance implements IRegenInstance {
 
-	static {
+	private IFrame rootFrame;
+	private List<IRegenPath> prunedPaths = new ArrayList<IRegenPath>();
 
-		ZIRegenAccessor.set(new ZIRegenAccessorImpl());
+	/**
+	 * Constructor.
+	 *
+	 * @param rootFrame Root-frame of network
+	 */
+	public IRegenValidInstance(IFrame rootFrame) {
+
+		this.rootFrame = rootFrame;
 	}
 
-	private CIdentity rootTypeId;
-	private IFrame rootFrame;
+	/**
+	 * Adds a path that has been pruned from the network as a result
+	 * of updates to the model since the instance was serialised.
+	 *
+	 * @param slot Relevant slot for pruned slot-path, or slot to
+	 * which value attached for pruned value-path
+	 * @param value Relevant value if pruned value-path, or null otherwise
+	 * @param path String-based representation of pruned path
+	 */
+	public void addPrunedPath(ISlot slot, IValue value, List<String> path) {
 
-	private IRegenStatus status;
-	private List<IRegenPath> prunedPaths = new ArrayList<IRegenPath>();
+		prunedPaths.add(new IRegenPathImpl(slot, value, path));
+	}
 
 	/**
 	 * Provides root-frame type identity, which may or may not represent
@@ -57,7 +73,7 @@ public class IRegenInstance {
 	 */
 	public CIdentity getRootTypeId() {
 
-		return rootTypeId;
+		return rootFrame.getType().getIdentity();
 	}
 
 	/**
@@ -72,13 +88,15 @@ public class IRegenInstance {
 	}
 
 	/**
-	 * Provides the status of the instance with repect to the current model.
+	 * Provides the status of the instance with respect to the current model.
 	 *
-	 * @return Status with repect to current model
+	 * @return Status with respect to current model
 	 */
 	public IRegenStatus getStatus() {
 
-		return status;
+		return prunedPaths.isEmpty()
+				? IRegenStatus.FULLY_VALID
+				: IRegenStatus.PARTIALLY_VALID;
 	}
 
 	/**
@@ -114,30 +132,6 @@ public class IRegenInstance {
 	public List<IRegenPath> getPrunedValuePaths() {
 
 		return selectPrunedPaths(false);
-	}
-
-	IRegenInstance(CIdentity rootTypeId, IFrame rootFrame, List<IRegenPath> prunedPaths) {
-
-		this.rootTypeId = rootTypeId;
-		this.rootFrame = rootFrame;
-		this.prunedPaths = prunedPaths;
-
-		status = determineStatus();
-	}
-
-	private IRegenStatus determineStatus() {
-
-		if (rootFrame == null) {
-
-			return IRegenStatus.FULLY_INVALID;
-		}
-
-		if (prunedPaths.isEmpty()) {
-
-			return IRegenStatus.FULLY_VALID;
-		}
-
-		return IRegenStatus.PARTIALLY_VALID;
 	}
 
 	private List<IRegenPath> selectPrunedPaths(boolean slotPaths) {

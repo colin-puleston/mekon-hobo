@@ -70,8 +70,6 @@ public abstract class XClientModel {
 
 		abstract RModelActionType getActionType();
 
-		abstract boolean query();
-
 		void customiseRenderInput(IInstanceRenderInput input) {
 		}
 
@@ -86,7 +84,7 @@ public abstract class XClientModel {
 
 		private IFrame parseInstance(XResponseParser response) {
 
-			return responseParser.parse(createParseInput(response), query());
+			return responseParser.parse(createParseInput(response));
 		}
 
 		private IInstanceRenderInput createRenderInput(IFrame masterRoot) {
@@ -132,11 +130,6 @@ public abstract class XClientModel {
 
 			return RModelActionType.INITIALISE_ASSERTION;
 		}
-
-		boolean query() {
-
-			return false;
-		}
 	}
 
 	private class QueryInitAction extends InstanceAction {
@@ -144,11 +137,6 @@ public abstract class XClientModel {
 		RModelActionType getActionType() {
 
 			return RModelActionType.INITIALISE_QUERY;
-		}
-
-		boolean query() {
-
-			return true;
 		}
 	}
 
@@ -178,11 +166,6 @@ public abstract class XClientModel {
 
 			return RModelActionType.UPDATE_ASSERTION;
 		}
-
-		boolean query() {
-
-			return false;
-		}
 	}
 
 	private class QueryUpdateAction extends InstanceUpdateAction {
@@ -195,11 +178,6 @@ public abstract class XClientModel {
 		RModelActionType getActionType() {
 
 			return RModelActionType.UPDATE_QUERY;
-		}
-
-		boolean query() {
-
-			return true;
 		}
 	}
 

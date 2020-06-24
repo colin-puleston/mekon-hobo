@@ -55,12 +55,10 @@ class ModelActions extends ServerActions<RModelActionType> {
 		void perform(XRequestParser request, XResponseRenderer response) {
 
 			IInstanceParseInput input = request.getInstanceParameterParseInput(0);
-			CFrame type = parameterParser.parseRootType(input, query());
+			CFrame type = parameterParser.parseRootType(input);
 
 			response.setInstanceResponse(type.instantiate());
 		}
-
-		abstract boolean query();
 	}
 
 	private class InitialiseAssertionAction extends InitialiseInstanceAction {
@@ -68,11 +66,6 @@ class ModelActions extends ServerActions<RModelActionType> {
 		RModelActionType getActionType() {
 
 			return RModelActionType.INITIALISE_ASSERTION;
-		}
-
-		boolean query() {
-
-			return false;
 		}
 	}
 
@@ -82,11 +75,6 @@ class ModelActions extends ServerActions<RModelActionType> {
 
 			return RModelActionType.INITIALISE_QUERY;
 		}
-
-		boolean query() {
-
-			return true;
-		}
 	}
 
 	private abstract class UpdateInstanceAction extends Action {
@@ -94,14 +82,12 @@ class ModelActions extends ServerActions<RModelActionType> {
 		void perform(XRequestParser request, XResponseRenderer response) {
 
 			IInstanceParseInput parseInput = request.getInstanceParameterParseInput(0);
-			IFrame inAndOut = parameterParser.parse(parseInput, query());
+			IFrame inAndOut = parameterParser.parse(parseInput);
 			IInstanceRenderInput renderInput = new IInstanceRenderInput(inAndOut);
 
 			renderInput.setFrameXDocIds(parseInput.getFrameXDocIds());
 			response.setInstanceResponse(renderInput);
 		}
-
-		abstract boolean query();
 	}
 
 	private class UpdateAssertionAction extends UpdateInstanceAction {
@@ -110,11 +96,6 @@ class ModelActions extends ServerActions<RModelActionType> {
 
 			return RModelActionType.UPDATE_ASSERTION;
 		}
-
-		boolean query() {
-
-			return false;
-		}
 	}
 
 	private class UpdateQueryAction extends UpdateInstanceAction {
@@ -122,11 +103,6 @@ class ModelActions extends ServerActions<RModelActionType> {
 		RModelActionType getActionType() {
 
 			return RModelActionType.UPDATE_QUERY;
-		}
-
-		boolean query() {
-
-			return true;
 		}
 	}
 

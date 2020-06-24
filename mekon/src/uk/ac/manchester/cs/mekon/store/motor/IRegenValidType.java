@@ -22,48 +22,53 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store.disk;
-
-import java.io.*;
+package uk.ac.manchester.cs.mekon.store.motor;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
+ * Implementation of {@link IRegenType} representing the type
+ * of the root-frame of instance network that is fully or
+ * partially valid with respect to the current model.
+ *
  * @author Colin Puleston
  */
-class InstanceSerialiser {
+public class IRegenValidType implements IRegenType {
 
-	private CModel model;
-	private LogFile log;
+	private CFrame rootType;
 
-	private IInstanceRenderer renderer = new IInstanceRenderer();
+	/**
+	 * Constructor.
+	 *
+	 * @param rootType Type of root-frame of network
+	 */
+	public IRegenValidType(CFrame rootType) {
 
-	InstanceSerialiser(CModel model, LogFile log) {
-
-		this.model = model;
-		this.log = log;
+		this.rootType = rootType;
 	}
 
-	void render(IFrame instance, File file) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean validRootType() {
 
-		renderer.render(new IInstanceRenderInput(instance)).writeToFile(file);
+		return true;
 	}
 
-	IRegenInstance parse(CIdentity identity, File file, boolean freeInstance) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public CIdentity getRootTypeId() {
 
-		IInstanceParser parser = new IInstanceParser(model);
+		return rootType.getIdentity();
+	}
 
-		parser.setFreeInstances(freeInstance);
-		parser.setPossibleModelUpdates(true);
+	/**
+	 * {@inheritDoc}
+	 */
+	public CFrame getRootType() {
 
-		IInstanceParseInput input = new IInstanceParseInput(new XDocument(file));
-		IRegenInstance output = parser.parse(input);
-
-		log.logParsedInstance(identity, output);
-
-		return output;
+		return rootType;
 	}
 }

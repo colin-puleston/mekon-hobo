@@ -22,48 +22,41 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store.disk;
-
-import java.io.*;
+package uk.ac.manchester.cs.mekon.store;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
+ * Represents the type of the root-frame of a specific
+ * {@link IFrame}/{@link ISlot} network that has been regenerated from
+ * a serialized form, and hence may be partially or fully invalid with
+ * respect to the current model.
+ *
  * @author Colin Puleston
  */
-class InstanceSerialiser {
+public interface IRegenType {
 
-	private CModel model;
-	private LogFile log;
+	/**
+	 * Specifies whether root-frame type represents a currently
+	 * valid {@link CFrame}.
+	 *
+	 * @return True if currently valid root-frame type
+	 */
+	public boolean validRootType();
 
-	private IInstanceRenderer renderer = new IInstanceRenderer();
+	/**
+	 * Provides root-frame type identity, which may or may not represent
+	 * a currently valid {@link CFrame}.
+	 *
+	 * @return Root-frame type identity
+	 */
+	public CIdentity getRootTypeId();
 
-	InstanceSerialiser(CModel model, LogFile log) {
-
-		this.model = model;
-		this.log = log;
-	}
-
-	void render(IFrame instance, File file) {
-
-		renderer.render(new IInstanceRenderInput(instance)).writeToFile(file);
-	}
-
-	IRegenInstance parse(CIdentity identity, File file, boolean freeInstance) {
-
-		IInstanceParser parser = new IInstanceParser(model);
-
-		parser.setFreeInstances(freeInstance);
-		parser.setPossibleModelUpdates(true);
-
-		IInstanceParseInput input = new IInstanceParseInput(new XDocument(file));
-		IRegenInstance output = parser.parse(input);
-
-		log.logParsedInstance(identity, output);
-
-		return output;
-	}
+	/**
+	 * Provides type of root-frame, if applicable.
+	 *
+	 * @return Type of root-frame, or null if root-frame type no longer
+	 * valid
+	 */
+	public CFrame getRootType();
 }

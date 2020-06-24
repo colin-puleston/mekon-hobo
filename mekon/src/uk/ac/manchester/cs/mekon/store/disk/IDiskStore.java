@@ -30,16 +30,13 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
-import uk.ac.manchester.cs.mekon.model.regen.zlink.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
  * @author Colin Puleston
  */
 class IDiskStore implements IStore {
-
-	static private final ZIRegenAccessor regenAccessor = ZIRegenAccessor.get();
 
 	private CModel model;
 
@@ -51,11 +48,81 @@ class IDiskStore implements IStore {
 	private Map<CIdentity, IRegenType> types = new HashMap<CIdentity, IRegenType>();
 	private InstanceIndexes indexes = new InstanceIndexes();
 
+	private IStoreActiveRegenReport regenReport = new IStoreActiveRegenReport();
 	private InstanceRefIntegrityManager refIntegrityManager;
 
-	public CModel getModel() {
+	private class Reloader {
 
-		return model;
+		private List<IMatcher> reloadableMatchers = initialiseMatchers();
+
+		Reloader() {
+
+			reloadStore();
+			processInstances();
+
+			indexes.reinitialiseFreeIndexes();
+		}
+
+		private void reloadStore() {
+
+			for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
+
+				reloadToStore(storedProfile.getProfile(), storedProfile.getIndex());
+			}
+		}
+
+		private void reloadToStore(InstanceProfile profile, int index) {
+
+			CIdentity identity = profile.getInstanceId();
+			IRegenType type = createRegenType(profile.getTypeId());
+
+			identities.add(identity);
+			types.put(identity, type);
+			indexes.assignIndex(identity, index);
+
+			refIntegrityManager.onReloadedInstance(identity, profile);
+		}
+
+		private void processInstances() {
+
+			for (CIdentity identity : getAllIdentities()) {
+
+				IFrame instance = checkRegen(identity);
+
+				if (instance != null) {
+
+					checkAddToMatcher(instance, identity);
+				}
+			}
+		}
+
+		private IFrame checkRegen(CIdentity identity) {
+
+			IRegenInstance regen = regen(identity, true);
+
+			switch (regen.getStatus()) {
+
+				case FULLY_INVALID:
+					regenReport.addFullyInvalidRegenId(identity);
+					return null;
+
+				case PARTIALLY_VALID:
+					regenReport.addPartiallyValidRegenId(identity);
+					break;
+			}
+
+			return regen.getRootFrame();
+		}
+
+		private void checkAddToMatcher(IFrame instance, CIdentity identity) {
+
+			IMatcher matcher = lookForMatcher(reloadableMatchers, instance.getType());
+
+			if (matcher != null) {
+
+				matcher.add(instance, identity);
+			}
+		}
 	}
 
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
@@ -101,6 +168,16 @@ class IDiskStore implements IStore {
 		return true;
 	}
 
+	public CModel getModel() {
+
+		return model;
+	}
+
+	public IStoreRegenReport getRegenReport() {
+
+		return regenReport;
+	}
+
 	public synchronized boolean contains(CIdentity identity) {
 
 		return indexes.hasIndex(identity);
@@ -113,14 +190,9 @@ class IDiskStore implements IStore {
 
 	public synchronized IRegenInstance get(CIdentity identity) {
 
-		return get(identity, IFrameFunction.ASSERTION);
-	}
-
-	public synchronized IRegenInstance get(CIdentity identity, IFrameFunction function) {
-
 		if (indexes.hasIndex(identity)) {
 
-			return fileStore.read(identity, function, indexes.getIndex(identity), false);
+			return fileStore.read(identity, indexes.getIndex(identity), false);
 		}
 
 		return null;
@@ -178,12 +250,7 @@ class IDiskStore implements IStore {
 
 	void initialisePostRegistration() {
 
-		initialiseMatchers();
-
-		reloadStore();
-		reloadMatchers();
-
-		indexes.reinitialiseFreeIndexes();
+		new Reloader();
 	}
 
 	void stop() {
@@ -208,64 +275,28 @@ class IDiskStore implements IStore {
 		addToMatcher(instance, identity);
 	}
 
-	IFrame getAsAssertionOrNull(CIdentity identity, boolean freeInstance) {
+	IFrame regenOrNull(CIdentity identity, boolean freeInstance) {
 
-		return getAsAssertionOrNull(identity, indexes.getIndex(identity), freeInstance);
+		return regenOrNull(identity, indexes.getIndex(identity), freeInstance);
 	}
 
-	private void initialiseMatchers() {
+	private List<IMatcher> initialiseMatchers() {
+
+		List<IMatcher> reloadables = new ArrayList<IMatcher>();
 
 		defaultMatcher.initialise(this, indexes);
 
 		for (IMatcher matcher : matchers) {
 
 			matcher.initialise(this, indexes);
-		}
-	}
 
-	private void reloadStore() {
+			if (matcher.rebuildOnStartup()) {
 
-		for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
-
-			reloadToStore(storedProfile.getProfile(), storedProfile.getIndex());
-		}
-	}
-
-	private void reloadToStore(InstanceProfile profile, int index) {
-
-		CIdentity identity = profile.getInstanceId();
-		IRegenType type = createRegenType(profile.getTypeId());
-
-		identities.add(identity);
-		types.put(identity, type);
-		indexes.assignIndex(identity, index);
-
-		refIntegrityManager.onReloadedInstance(identity, profile);
-	}
-
-	private void reloadMatchers() {
-
-		List<IMatcher> reloadableMatchers = getReloadableMatchers();
-
-		for (CIdentity identity : getAllIdentities()) {
-
-			checkReloadToMatcher(reloadableMatchers, identity);
-		}
-	}
-
-	private void checkReloadToMatcher(List<IMatcher> reloadables, CIdentity identity) {
-
-		IFrame instance = getAsAssertionOrNull(identity, true);
-
-		if (instance != null) {
-
-			IMatcher matcher = lookForMatcher(reloadables, instance.getType());
-
-			if (matcher != null) {
-
-				matcher.add(instance, identity);
+				reloadables.add(matcher);
 			}
 		}
+
+		return reloadables;
 	}
 
 	private IFrame checkRemove(CIdentity identity) {
@@ -279,7 +310,7 @@ class IDiskStore implements IStore {
 
 			int index = indexes.getIndex(identity);
 
-			removed = getAsAssertionOrNull(identity, index, false);
+			removed = regenOrNull(identity, index, false);
 
 			CFrame type = removed != null ? removed.getType() : getType(index);
 
@@ -297,9 +328,9 @@ class IDiskStore implements IStore {
 		return model.getFrames().get(fileStore.readTypeId(index));
 	}
 
-	private IFrame getAsAssertionOrNull(CIdentity identity, int index, boolean freeInstance) {
+	private IFrame regenOrNull(CIdentity identity, int index, boolean freeInstance) {
 
-		IRegenInstance regen = fileStore.read(identity, IFrameFunction.ASSERTION, index, freeInstance);
+		IRegenInstance regen = regen(identity, index, freeInstance);
 
 		if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
 
@@ -307,6 +338,16 @@ class IDiskStore implements IStore {
 		}
 
 		return regen.getRootFrame();
+	}
+
+	private IRegenInstance regen(CIdentity identity, boolean freeInstance) {
+
+		return fileStore.read(identity, indexes.getIndex(identity), freeInstance);
+	}
+
+	private IRegenInstance regen(CIdentity identity, int index, boolean freeInstance) {
+
+		return fileStore.read(identity, index, freeInstance);
 	}
 
 	private void addToMatcher(IFrame instance, CIdentity identity) {
@@ -331,21 +372,6 @@ class IDiskStore implements IStore {
 		return matcher != null ? matcher : defaultMatcher;
 	}
 
-	private List<IMatcher> getReloadableMatchers() {
-
-		List<IMatcher> reloadables = new ArrayList<IMatcher>();
-
-		for (IMatcher matcher : matchers) {
-
-			if (matcher.rebuildOnStartup()) {
-
-				reloadables.add(matcher);
-			}
-		}
-
-		return reloadables;
-	}
-
 	private IMatcher lookForMatcher(List<IMatcher> candidates, CFrame frameType) {
 
 		for (IMatcher candidate : candidates) {
@@ -361,16 +387,14 @@ class IDiskStore implements IStore {
 
 	private IRegenType createRegenType(IFrame instance) {
 
-		CFrame type = instance.getType();
-
-		return regenAccessor.createRegenType(type.getIdentity(), type);
+		return new IRegenValidType(instance.getType());
 	}
 
 	private IRegenType createRegenType(CIdentity typeId) {
 
 		CFrame type = model.getFrames().getOrNull(typeId);
 
-		return regenAccessor.createRegenType(typeId, type);
+		return type != null ? new IRegenValidType(type) : new IRegenInvalidType(typeId);
 	}
 
 	private IFrame createFreeCopy(IFrame instance) {

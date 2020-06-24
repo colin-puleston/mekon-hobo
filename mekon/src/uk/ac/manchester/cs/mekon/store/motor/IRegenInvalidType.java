@@ -22,34 +22,53 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.regen;
-
-import java.util.*;
+package uk.ac.manchester.cs.mekon.store.motor;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.motor.*;
-import uk.ac.manchester.cs.mekon.model.regen.zlink.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
+ * Implementation of {@link IRegenType} representing the type
+ * of the root-frame of instance network that is fully invalid
+ * with respect to the current model.
+ *
  * @author Colin Puleston
  */
-class ZIRegenAccessorImpl extends ZIRegenAccessor {
+public class IRegenInvalidType implements IRegenType {
 
-	public IRegenType createRegenType(CIdentity rootTypeId, CFrame rootType) {
+	private CIdentity rootTypeId;
 
-		return new IRegenType(rootTypeId, rootType);
+	/**
+	 * Constructor.
+	 *
+	 * @param rootType Type of root-frame of network
+	 */
+	public IRegenInvalidType(CIdentity rootTypeId) {
+
+		this.rootTypeId = rootTypeId;
 	}
 
-	public IRegenInstance createRegenInstance(
-								CIdentity rootTypeId,
-								IFrame rootFrame,
-								List<IRegenPath> prunedPaths) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean validRootType() {
 
-		return new IRegenInstance(rootTypeId, rootFrame, prunedPaths);
+		return false;
 	}
 
-	public IRegenPath createRegenPath(ISlot slot, IValue value, List<String> path) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public CIdentity getRootTypeId() {
 
-		return new IRegenPath(slot, value, path);
+		return rootTypeId;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public CFrame getRootType() {
+
+		return null;
 	}
 }

@@ -28,10 +28,10 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
-import uk.ac.manchester.cs.mekon.model.regen.motor.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
+import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
@@ -65,13 +65,14 @@ public class IInstanceParser extends ISerialiser {
 
 	private CModel model;
 	private IEditor iEditor;
-	private IFrameFunction frameFunction;
 	private boolean freeInstances = false;
 	private boolean possibleModelUpdates = false;
 
 	private class OneTimeParser {
 
 		private XNode containerNode;
+
+		private IFrameFunction function;
 
 		private Map<String, IFrame> framesByXDocId;
 		private Map<String, XNode> frameNodesByXDocId = new HashMap<String, XNode>();
@@ -559,6 +560,7 @@ public class IInstanceParser extends ISerialiser {
 		OneTimeParser(IInstanceParseInput input) {
 
 			containerNode = resolveContainerNode(input);
+			function = parseInstanceFunction();
 			framesByXDocId = input.getFramesByXDocId();
 		}
 
@@ -587,8 +589,16 @@ public class IInstanceParser extends ISerialiser {
 			CFrame rootType = parseCFrame(getRootTypeNode());
 
 			return validFrameType(rootType)
-					? IRegenTypeBuilder.createValid(rootType)
-					: IRegenTypeBuilder.createInvalid(rootType.getIdentity());
+					? new IRegenValidType(rootType)
+					: new IRegenInvalidType(rootType.getIdentity());
+		}
+
+		private IFrameFunction parseInstanceFunction() {
+
+			return containerNode.getEnum(
+						INSTANCE_FUNCTION_ATTR,
+						IFrameFunction.class,
+						IFrameFunction.ASSERTION);
 		}
 
 		private IFrame resolveIFrame(XNode node) {
@@ -761,12 +771,12 @@ public class IInstanceParser extends ISerialiser {
 
 		private IFrame createAtomicFrame(CFrame frameType) {
 
-			return instantiator.createAtomicFrame(frameType, frameFunction, freeInstances);
+			return instantiator.createAtomicFrame(frameType, function, freeInstances);
 		}
 
 		private IFrame createReferenceFrame(CFrame frameType, CIdentity refId) {
 
-			return instantiator.createReferenceFrame(frameType, refId, frameFunction, freeInstances);
+			return instantiator.createReferenceFrame(frameType, refId, function, freeInstances);
 		}
 
 		private CFrame getCFrame(CIdentity id) {
@@ -939,12 +949,10 @@ public class IInstanceParser extends ISerialiser {
 	 * Constructor
 	 *
 	 * @param model Relevant model
-	 * @param frameFunction Function of frames to be parsed
 	 */
-	public IInstanceParser(CModel model, IFrameFunction frameFunction) {
+	public IInstanceParser(CModel model) {
 
 		this.model = model;
- 		this.frameFunction = frameFunction;
 
 		iEditor = ZCModelAccessor.get().getIEditor(model);
 	}

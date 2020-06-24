@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.remote.server.xml;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.server.*;
@@ -216,6 +215,6 @@ class StoreActions extends ServerActions<RStoreActionType> {
 
 		IInstanceParseInput input = request.getInstanceParameterParseInput(index);
 
-		return parameterParser.parse(input, query);
+		return parameterParser.parse(input);
 	}
 }

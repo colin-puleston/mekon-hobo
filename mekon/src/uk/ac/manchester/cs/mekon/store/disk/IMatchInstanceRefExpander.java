@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 /**

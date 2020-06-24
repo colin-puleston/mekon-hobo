@@ -22,59 +22,54 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.regen;
+package uk.ac.manchester.cs.mekon.store.motor;
+
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
- * Represents the type of the root-frame of a specific
- * {@link IFrame}/{@link ISlot} network that has been regenerated from
- * a serialized form, and hence may be partially or fully invalid with
- * repect to the current model.
+ * Implementation of {@link IStoreRegenReport} providing empty report.
  *
  * @author Colin Puleston
  */
-public class IRegenType {
+public class IStoreEmptyRegenReport implements IStoreRegenReport {
 
-	private CIdentity rootTypeId;
-	private CFrame rootType;
+	static public final IStoreRegenReport SINGLETON = new IStoreEmptyRegenReport(){};
 
 	/**
-	 * Specifies whether root-frame type represents a currently
-	 * valid {@link CFrame}.
-	 *
-	 * @return True if currently valid root-frame type
+	 * {@inheritDoc}
 	 */
-	public boolean validRootType() {
+	public boolean fullyInvalidRegens() {
 
-		return rootType != null;
+		return false;
 	}
 
 	/**
-	 * Provides root-frame type identity, which may or may not represent
-	 * a currently valid {@link CFrame}.
-	 *
-	 * @return Root-frame type identity
+	 * {@inheritDoc}
 	 */
-	public CIdentity getRootTypeId() {
+	public boolean partiallyValidRegens() {
 
-		return rootTypeId;
+		return false;
 	}
 
 	/**
-	 * Provides type of root-frame, if applicable.
-	 *
-	 * @return Type of root-frame, or null if root-frame type no longer
-	 * valid
+	 * {@inheritDoc}
 	 */
-	public CFrame getRootType() {
+	public List<CIdentity> getFullyInvalidIds() {
 
-		return rootType;
+		return Collections.emptyList();
 	}
 
-	IRegenType(CIdentity rootTypeId, CFrame rootType) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<CIdentity> getPartiallyValidIds() {
 
-		this.rootTypeId = rootTypeId;
-		this.rootType = rootType;
+		return Collections.emptyList();
+	}
+
+	private IStoreEmptyRegenReport() {
 	}
 }

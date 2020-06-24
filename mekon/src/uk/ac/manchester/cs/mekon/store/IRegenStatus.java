@@ -22,45 +22,33 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.regen.motor;
+package uk.ac.manchester.cs.mekon.store;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
-import uk.ac.manchester.cs.mekon.model.regen.zlink.*;
-import uk.ac.manchester.cs.mekon.util.*;
 
 /**
- * Builder for {@link IRegenType} object.
+ * Represents the status of a specific {@link IFrame}/{@link ISlot}
+ * network that has been regenerated from a serialized form.
+ *
+ * @author Colin Puleston
  */
-public class IRegenTypeBuilder {
-
-	static private final ZIRegenAccessor regenAccessor = ZIRegenAccessor.get();
+public enum IRegenStatus {
 
 	/**
-	 * Creates a regenerated-instance type representation.
-	 *
-	 * @param rootType Type of root-frame of network
-	 * @return Created regenerated-type representation
+	 * All components still valid with respect to the current model.
 	 */
-	static public IRegenType createValid(CFrame rootType) {
-
-		return create(rootType.getIdentity(), rootType);
-	}
+	FULLY_VALID,
 
 	/**
-	 * Creates a regenerated-instance type representation.
-	 *
-	 * @param rootTypeId Specification of no-longer valid type of
-	 * root-frame of network
-	 * @return Created regenerated-type representation
+	 * Some non-root components no longer valid with respect to the
+	 * current model, hence instance has been regenerated in pruned
+	 * form.
 	 */
-	static public IRegenType createInvalid(CIdentity rootTypeId) {
+	PARTIALLY_VALID,
 
-		return create(rootTypeId, null);
-	}
-
-	static private IRegenType create(CIdentity rootTypeId, CFrame rootType) {
-
-		return regenAccessor.createRegenType(rootTypeId, rootType);
-	}
+	/**
+	 * Root frame-type no longer valid with respect to the current
+	 * model, hence instance could not be regenerated in any form.
+	 */
+	FULLY_INVALID;
 }

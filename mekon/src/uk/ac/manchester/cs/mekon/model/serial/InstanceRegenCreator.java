@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.mekon.model.serial;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
-import uk.ac.manchester.cs.mekon.model.regen.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 class InstanceRegenCreator {
@@ -132,29 +132,24 @@ class InstanceRegenCreator {
 
 	IRegenInstance createValid(IFrame rootFrame) {
 
-		IRegenInstanceBuilder builder = new IRegenInstanceBuilder();
-
-		addPrunedPaths(rootFrame, builder);
-
-		return builder.createValid(rootFrame);
-	}
-
-	IRegenInstance createInvalid(CIdentity rootTypeId) {
-
-		return new IRegenInstanceBuilder().createInvalid(rootTypeId);
-	}
-
-	private void addPrunedPaths(IFrame rootFrame, IRegenInstanceBuilder builder) {
+		IRegenValidInstance regen = new IRegenValidInstance(rootFrame);
 
 		new PrunedPathCandidateRemover().processAll(rootFrame);
 
 		for (List<String> path : prunedPathCandidates) {
 
-			addPrunedPath(builder, path);
+			addPrunedPath(regen, path);
 		}
+
+		return new IRegenValidInstance(rootFrame);
 	}
 
-	private void addPrunedPath(IRegenInstanceBuilder builder, List<String> path) {
+	IRegenInstance createInvalid(CIdentity rootTypeId) {
+
+		return new IRegenInvalidInstance(rootTypeId);
+	}
+
+	private void addPrunedPath(IRegenValidInstance regen, List<String> path) {
 
 		ISlot slot = slotsByPath.get(path);
 		IValue value = null;
@@ -165,7 +160,7 @@ class InstanceRegenCreator {
 			value = valuesByPath.get(path);
 		}
 
-		builder.addPrunedPath(slot, value, path);
+		regen.addPrunedPath(slot, value, path);
 	}
 
 	private List<String> getParentPath(List<String> path) {

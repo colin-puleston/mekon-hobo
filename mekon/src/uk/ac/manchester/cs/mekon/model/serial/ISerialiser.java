@@ -45,6 +45,7 @@ abstract class ISerialiser extends FSerialiser {
 
 	static final String IVALUES_UPDATE_ID = "IValuesUpdate";
 
+	static final String INSTANCE_FUNCTION_ATTR = "function";
 	static final String IFRAME_XDOC_ID_ATTR = "xid";
 	static final String IFRAME_XDOC_ID_REF_ATTR = "xidRef";
 	static final String NUMBER_TYPE_ATTR = "numberType";

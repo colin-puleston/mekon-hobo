@@ -28,7 +28,7 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -84,15 +84,11 @@ class FileStore {
 		instanceSerialiser.render(instance, iFile);
 	}
 
-	IRegenInstance read(
-					CIdentity identity,
-					IFrameFunction function,
-					int index,
-					boolean freeInstance) {
+	IRegenInstance read(CIdentity identity, int index, boolean freeInstance) {
 
 		File iFile = instances.getFile(index);
 
-		return instanceSerialiser.parse(identity, function, iFile, freeInstance);
+		return instanceSerialiser.parse(identity, iFile, freeInstance);
 	}
 
 	CIdentity readTypeId(int index) {

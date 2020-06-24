@@ -29,7 +29,7 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
@@ -102,7 +102,7 @@ public class IInstanceSerialiseTest {
 
 	private IRegenInstance parse(XDocument rendering) {
 
-		IInstanceParser parser = new IInstanceParser(model.model, getFunction());
+		IInstanceParser parser = new IInstanceParser(model.model);
 
 		parser.setFreeInstances(freeInstances);
 

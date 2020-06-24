@@ -25,8 +25,8 @@
 package uk.ac.manchester.cs.mekon.remote.util;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * Wrapper round {@link IInstanceParser} for use by the MEKON remote
@@ -37,8 +37,7 @@ import uk.ac.manchester.cs.mekon.model.serial.*;
  */
 public abstract class RInstanceParser {
 
-	private IInstanceParser assertionParser;
-	private IInstanceParser queryParser;
+	private IInstanceParser wrappedParser;
 
 	/**
 	 * Constructor
@@ -47,21 +46,18 @@ public abstract class RInstanceParser {
 	 */
 	public RInstanceParser(CModel model) {
 
-		assertionParser = new IInstanceParser(model, IFrameFunction.ASSERTION);
-		queryParser = new IInstanceParser(model, IFrameFunction.QUERY);
+		wrappedParser = new IInstanceParser(model);
 	}
 
 	/**
 	 * Parses serialised frame/slot network.
 	 *
 	 * @param input Input to parsing process
-	 * @param query True if input represents query, false if input
-	 * represents assertion
 	 * @return Root-frame of resulting network
 	 */
-	public IFrame parse(IInstanceParseInput input, boolean query) {
+	public IFrame parse(IInstanceParseInput input) {
 
-		IRegenInstance output = getParser(query).parse(input);
+		IRegenInstance output = wrappedParser.parse(input);
 
 		checkParsedInstance(output);
 
@@ -73,13 +69,11 @@ public abstract class RInstanceParser {
 	 * network.
 	 *
 	 * @param input Input to parsing process
-	 * @param query True if input represents query, false if input
-	 * represents assertion
 	 * @return Resulting root-frame type
 	 */
-	public CFrame parseRootType(IInstanceParseInput input, boolean query) {
+	public CFrame parseRootType(IInstanceParseInput input) {
 
-		IRegenType output = getParser(query).parseRootType(input);
+		IRegenType output = wrappedParser.parseRootType(input);
 
 		checkParsedType(output);
 
@@ -95,28 +89,16 @@ public abstract class RInstanceParser {
 	 */
 	protected abstract RuntimeException createException(String message);
 
-	private IInstanceParser getParser(boolean query) {
-
-		return query ? queryParser : assertionParser;
-	}
-
 	private void checkParsedInstance(IRegenInstance output) {
 
 		switch (output.getStatus()) {
 
 			case FULLY_INVALID:
-
-				throw createException(
-							"Invalid root-frame type in instance serialization: "
-							+ output.getRootTypeId());
+				throw createInvalidTypeException(output.getRootTypeId());
 
 			case PARTIALLY_VALID:
-
 				reportInvalidInstanceComponents(output);
-
-				throw createException(
-							"Invalid components in instance serialization "
-							+ "(See console for details)");
+				throw createInvalidComponentsException();
 		}
 	}
 
@@ -124,21 +106,41 @@ public abstract class RInstanceParser {
 
 		if (!output.validRootType()) {
 
-			throw createException(
-						"Invalid root-frame type in instance serialization: "
-						+ output.getRootTypeId());
+			throw createInvalidTypeException(output.getRootTypeId());
 		}
+	}
+
+	private RuntimeException createInvalidTypeException(CIdentity type) {
+
+		return createException(
+					"Invalid root-frame type in instance serialization: "
+					+ type);
+	}
+
+	private RuntimeException createInvalidComponentsException() {
+
+		return createException(
+					"Invalid components in instance serialization "
+					+ "(See console for details)");
 	}
 
 	private void reportInvalidInstanceComponents(IRegenInstance output) {
 
-		System.out.println(
-			"INSTANCE SERIALIZATION ERROR: "
-			+ "Invalid components in serialization...");
+		reportErrorStart("Invalid components in serialization...");
 
 		for (IRegenPath path : output.getAllPrunedPaths()) {
 
-			System.out.println(path.toString());
+			reportErrorLine(path);
 		}
+	}
+
+	private void reportErrorStart(String message) {
+
+		reportErrorLine("INSTANCE SERIALIZATION ERROR: " + message);
+	}
+
+	private void reportErrorLine(Object source) {
+
+		System.out.println(source.toString());
 	}
 }

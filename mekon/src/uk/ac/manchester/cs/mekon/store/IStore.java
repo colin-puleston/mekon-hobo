@@ -28,7 +28,6 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames
@@ -42,13 +41,6 @@ import uk.ac.manchester.cs.mekon.model.regen.*;
  * @author Colin Puleston
  */
 public interface IStore {
-
-	/**
-	 * Provides the model with which the store is associated.
-	 *
-	 * @return Model with which store is associated
-	 */
-	public CModel getModel();
 
 	/**
 	 * Adds an instance to the store, possibly replacing an existing
@@ -81,6 +73,21 @@ public interface IStore {
 	public boolean clear();
 
 	/**
+	 * Provides the model with which the store is associated.
+	 *
+	 * @return Model with which store is associated
+	 */
+	public CModel getModel();
+
+	/**
+	 * Provides report of any issues encountered during regeneration
+	 * stored instances.
+	 *
+	 * @return Store regeneration report
+	 */
+	public IStoreRegenReport getRegenReport();
+
+	/**
 	 * Checks whether store contains a particular instance.
 	 *
 	 * @param identity Unique identity of instance to check for
@@ -101,10 +108,9 @@ public interface IStore {
 
 	/**
 	 * Retrieves an instance from the store, if still fully or
-	 * partially valid with repect to the current model, and/or info
+	 * partially valid with respect to the current model, and/or info
 	 * on current validity and on any pruning that was required in
-	 * order to conform to the current model. Retrieved instance will
-	 * be given the default {@link IFrameFunction#ASSERTION} function.
+	 * order to conform to the current model.
 	 *
 	 * @param identity Unique identity of instance
 	 * @return Representation of instance-level frame representing
@@ -112,20 +118,6 @@ public interface IStore {
 	 * info, or null if no such stored instance
 	 */
 	public IRegenInstance get(CIdentity identity);
-
-	/**
-	 * Retrieves an instance from the store, if still fully or
-	 * partially valid with repect to the current model, and/or info
-	 * on current validity and on any pruning that was required in
-	 * order to conform to the current model.
-	 *
-	 * @param identity Unique identity of instance
-	 * @param function Required function of retrieved instance
-	 * @return Representation of instance-level frame representing
-	 * required instance and/or any relevant validity and pruning
-	 * info, or null if no such stored instance
-	 */
-	public IRegenInstance get(CIdentity identity, IFrameFunction function);
 
 	/**
 	 * Provides unique identities of all instances in store,

@@ -128,7 +128,15 @@ public class IInstanceRenderer extends ISerialiser {
 			frameXDocIds = new IFrameXDocIds(input.getFrameXDocIds());
 			valuesUpdate = input.getValuesUpdate();
 
-			renderAtomicIFrame(input.getRootFrame(), containerNode, true);
+			IFrame rootFrame = input.getRootFrame();
+
+			renderInstanceFunction(rootFrame.getFunction());
+			renderAtomicIFrame(rootFrame, containerNode, true);
+		}
+
+		private void renderInstanceFunction(IFrameFunction function) {
+
+			containerNode.addValue(INSTANCE_FUNCTION_ATTR, function);
 		}
 
 		private XNode renderIFrame(IFrame frame, XNode parentNode) {

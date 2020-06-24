@@ -22,33 +22,78 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.regen;
+package uk.ac.manchester.cs.mekon.store.motor;
+
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
- * Represents the status of a specific {@link IFrame}/{@link ISlot}
- * network that has been regenerated from a serialized form.
+ * Implementation of {@link IRegenInstance} representing instance
+ * network that is fully invalid with respect to the current model.
  *
  * @author Colin Puleston
  */
-public enum IRegenStatus {
+public class IRegenInvalidInstance implements IRegenInstance {
+
+	private CIdentity rootTypeId;
 
 	/**
-	 * All components still valid with repect to the current model.
+	 * Constructor.
+	 *
+	 * @param rootTypeId No-longer valid type of root-frame of network
 	 */
-	FULLY_VALID,
+	public IRegenInvalidInstance(CIdentity rootTypeId) {
+
+		this.rootTypeId = rootTypeId;
+	}
 
 	/**
-	 * Some non-root components no longer valid with repect to the
-	 * current model, hence instance has been regenerated in pruned
-	 * form.
+	 * {@inheritDoc}
 	 */
-	PARTIALLY_VALID,
+	public CIdentity getRootTypeId() {
+
+		return rootTypeId;
+	}
 
 	/**
-	 * Root frame-type no longer valid with repect to the current
-	 * model, hence instance could not be regenerated in any form.
+	 * {@inheritDoc}
 	 */
-	FULLY_INVALID;
+	public IFrame getRootFrame() {
+
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IRegenStatus getStatus() {
+
+		return IRegenStatus.FULLY_INVALID;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<IRegenPath> getAllPrunedPaths() {
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<IRegenPath> getPrunedSlotPaths() {
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<IRegenPath> getPrunedValuePaths() {
+
+		return Collections.emptyList();
+	}
 }

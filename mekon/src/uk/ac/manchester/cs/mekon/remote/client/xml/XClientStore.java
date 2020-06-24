@@ -27,9 +27,8 @@ package uk.ac.manchester.cs.mekon.remote.client.xml;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
-import uk.ac.manchester.cs.mekon.model.regen.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
@@ -59,11 +58,6 @@ public abstract class XClientStore {
 
 	private class XClientIStore implements IStore {
 
-		public CModel getModel() {
-
-			return model;
-		}
-
 		public IFrame add(IFrame instance, CIdentity identity) {
 
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.ADD);
@@ -71,7 +65,7 @@ public abstract class XClientStore {
 			request.addParameter(instance);
 			request.addParameter(identity);
 
-			return performInstanceOrNullResponseAction(request, instance.getFunction());
+			return performInstanceOrNullResponseAction(request);
 		}
 
 		public boolean remove(CIdentity identity) {
@@ -88,6 +82,16 @@ public abstract class XClientStore {
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.CLEAR);
 
 			return performBooleanResponseAction(request);
+		}
+
+		public CModel getModel() {
+
+			return model;
+		}
+
+		public IStoreRegenReport getRegenReport() {
+
+			return IStoreEmptyRegenReport.SINGLETON;
 		}
 
 		public boolean contains(CIdentity identity) {
@@ -114,30 +118,23 @@ public abstract class XClientStore {
 
 			CFrame type = model.getFrames().getOrNull(typeId);
 
-			return type != null
-					? IRegenTypeBuilder.createValid(type)
-					: IRegenTypeBuilder.createInvalid(typeId);
+			return type != null ? new IRegenValidType(type) : new IRegenInvalidType(typeId);
 		}
 
 		public IRegenInstance get(CIdentity identity) {
-
-			return get(identity, IFrameFunction.ASSERTION);
-		}
-
-		public IRegenInstance get(CIdentity identity, IFrameFunction function) {
 
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.GET);
 
 			request.addParameter(identity);
 
-			IFrame instance = performInstanceOrNullResponseAction(request, function);
+			IFrame instance = performInstanceOrNullResponseAction(request);
 
 			if (instance == null) {
 
 				return null;
 			}
 
-			return new IRegenInstanceBuilder().createValid(instance);
+			return new IRegenValidInstance(instance);
 		}
 
 		public List<CIdentity> getAllIdentities() {
@@ -203,9 +200,7 @@ public abstract class XClientStore {
 		return performAction(request).getBooleanResponse();
 	}
 
-	private IFrame performInstanceOrNullResponseAction(
-						XRequestRenderer request,
-						IFrameFunction function) {
+	private IFrame performInstanceOrNullResponseAction(XRequestRenderer request) {
 
 		XResponseParser response = performAction(request);
 
@@ -214,7 +209,7 @@ public abstract class XClientStore {
 			return null;
 		}
 
-		return responseParser.parse(response.getInstanceResponseParseInput(), function.query());
+		return responseParser.parse(response.getInstanceResponseParseInput());
 	}
 
 	private CIdentity performIdentityOrNullResponseAction(XRequestRenderer request) {

@@ -81,7 +81,7 @@ class InstanceRefIntegrityManager {
 
 	private void removeReferenceId(CIdentity refingId, CIdentity refedId) {
 
-		IFrame refingInstance = store.getAsAssertionOrNull(refingId, false);
+		IFrame refingInstance = store.regenOrNull(refingId, false);
 
 		if (refingInstance != null) {
 

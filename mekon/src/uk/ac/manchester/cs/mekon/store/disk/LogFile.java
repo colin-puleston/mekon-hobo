@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.io.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.regen.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
@@ -82,7 +82,7 @@ class LogFile {
 		private void logInvalid() {
 
 			logError(
-				"Cannot re-load: Invalid root-frame type: "
+				"Cannot re-load: Invalid root-frame-type: "
 				+ output.getRootTypeId());
 		}
 
