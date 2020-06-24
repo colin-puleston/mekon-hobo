@@ -104,7 +104,7 @@ class Store {
 
 	IFrame get(CIdentity id) {
 
-		return store.get(id, getFunction(id)).getRootFrame();
+		return store.get(id).getRootFrame();
 	}
 
 	CFrame getType(CIdentity id) {
@@ -222,11 +222,6 @@ class Store {
 	private CFrame getCFrame(CIdentity id) {
 
 		return store.getModel().getFrames().get(id);
-	}
-
-	private IFrameFunction getFunction(CIdentity id) {
-
-		return assertionId(id) ? IFrameFunction.ASSERTION : IFrameFunction.QUERY;
 	}
 
 	private String describeFunction(CIdentity id) {
