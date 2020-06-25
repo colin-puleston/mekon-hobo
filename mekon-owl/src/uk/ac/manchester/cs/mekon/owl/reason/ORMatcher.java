@@ -31,6 +31,7 @@ import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -185,7 +186,7 @@ public abstract class ORMatcher extends NMatcher {
 
 		List<IRI> iris = matchInOWLStore(query);
 
-		return IMatches.unranked(instanceIRIs.getMappedIds(iris));
+		return new IUnrankedMatches(instanceIRIs.getMappedIds(iris));
 	}
 
 	/**
