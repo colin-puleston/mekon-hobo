@@ -29,6 +29,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.config.*;
@@ -158,7 +159,7 @@ public class BaseXMatcher extends NMatcher {
 	 */
 	public IMatches match(NNode query) {
 
-		return IMatches.unranked(indexes.getIdentities(match(mainDatabase, query)));
+		return new IUnrankedMatches(indexes.getIdentities(match(mainDatabase, query)));
 	}
 
 	/**
