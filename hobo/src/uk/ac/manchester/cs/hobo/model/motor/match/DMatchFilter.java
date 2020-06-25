@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
 
@@ -75,27 +76,30 @@ public abstract class DMatchFilter<M extends DObject> {
 
 	private IMatches filterRanked(IMatches matches) {
 
+		IRankedMatches filteredMatches = new IRankedMatches();
 		List<IMatchesRank> filteredRanks = new ArrayList<IMatchesRank>();
 
 		for (IMatchesRank rank : matches.getRanks()) {
 
-			filteredRanks.add(filterRank(rank));
+			checkAddFilteredRank(filteredMatches, rank);
 		}
 
-		return IMatches.ranked(filteredRanks);
+		return filteredMatches;
 	}
 
-	private IMatchesRank filterRank(IMatchesRank rank) {
+	private void checkAddFilteredRank(IRankedMatches matches, IMatchesRank rank) {
 
 		List<CIdentity> filteredMatches = filter(rank.getMatches());
-		int rankingValue = rank.getRankingValue();
 
-		return new IMatchesRank(filteredMatches, rankingValue);
+		if (!filteredMatches.isEmpty()) {
+
+			matches.addRank(filteredMatches, rank.getRankingValue());
+		}
 	}
 
 	private IMatches filterUnranked(IMatches matches) {
 
-		return IMatches.unranked(filter(matches.getAllMatches()));
+		return new IUnrankedMatches(filter(matches.getAllMatches()));
 	}
 
 	private List<CIdentity> filter(List<CIdentity> all) {
