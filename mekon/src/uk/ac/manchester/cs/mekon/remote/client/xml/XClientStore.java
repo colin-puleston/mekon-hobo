@@ -91,7 +91,7 @@ public abstract class XClientStore {
 
 		public IStoreRegenReport getRegenReport() {
 
-			return IStoreEmptyRegenReport.SINGLETON;
+			return IStoreInertRegenReport.SINGLETON;
 		}
 
 		public boolean contains(CIdentity identity) {

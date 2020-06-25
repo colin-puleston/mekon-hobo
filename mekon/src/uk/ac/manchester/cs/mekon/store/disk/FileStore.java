@@ -54,7 +54,7 @@ class FileStore {
 	private KFileStore profiles = createFileStore(PROFILE_FILE_PREFIX);
 	private KFileStore instances = createFileStore(INSTANCE_FILE_PREFIX);
 
-	private LogFile log;
+	private LogFile logFile;
 	private InstanceSerialiser instanceSerialiser;
 
 	FileStore(CModel model, File directory) {
@@ -64,8 +64,8 @@ class FileStore {
 			directory = new File(DEFAULT_STORE_DIR_NAME);
 		}
 
-		log = new LogFile(directory);
-		instanceSerialiser = new InstanceSerialiser(model, log);
+		logFile = new LogFile(directory);
+		instanceSerialiser = new InstanceSerialiser(model);
 
 		profiles.setDirectory(directory);
 		instances.setDirectory(directory);
@@ -84,11 +84,17 @@ class FileStore {
 		instanceSerialiser.render(instance, iFile);
 	}
 
-	IRegenInstance read(CIdentity identity, int index, boolean freeInstance) {
+	IRegenInstance read(CIdentity identity, int index, boolean freeInstance, boolean log) {
 
 		File iFile = instances.getFile(index);
+		IRegenInstance output = instanceSerialiser.parse(identity, iFile, freeInstance);
 
-		return instanceSerialiser.parse(identity, iFile, freeInstance);
+		if (log) {
+
+			logFile.logParsedInstance(identity, output);
+		}
+
+		return output;
 	}
 
 	CIdentity readTypeId(int index) {
@@ -123,5 +129,10 @@ class FileStore {
 		}
 
 		return storedProfiles;
+	}
+
+	LogFile getLogFile() {
+
+		return logFile;
 	}
 }

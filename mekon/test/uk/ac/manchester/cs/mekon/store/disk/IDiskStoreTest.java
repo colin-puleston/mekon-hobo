@@ -35,6 +35,7 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 
 /**
  * @author Colin Puleston
@@ -87,7 +88,7 @@ public class IDiskStoreTest {
 
 			assertTrue(query.equalsStructure(this.query));
 
-			return IMatches.unranked(getInstanceIdentityAsList());
+			return new IUnrankedMatches(getInstanceIdentityAsList());
 		}
 
 		public boolean matches(IFrame query, IFrame instance) {

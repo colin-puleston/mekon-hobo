@@ -66,10 +66,7 @@ public class IRegenValidInstance implements IRegenInstance {
 	}
 
 	/**
-	 * Provides root-frame type identity, which may or may not represent
-	 * a currently valid {@link CFrame} (see {@link #getStatus}).
-	 *
-	 * @return Root-frame type identity
+	 * {@inheritDoc}
 	 */
 	public CIdentity getRootTypeId() {
 
@@ -77,10 +74,7 @@ public class IRegenValidInstance implements IRegenInstance {
 	}
 
 	/**
-	 * Provides root-frame of fully or partially valid network.
-	 *
-	 * @return Root-frame of network, or null if root-frame type no longer
-	 * valid
+	 * {@inheritDoc}
 	 */
 	public IFrame getRootFrame() {
 
@@ -88,9 +82,7 @@ public class IRegenValidInstance implements IRegenInstance {
 	}
 
 	/**
-	 * Provides the status of the instance with respect to the current model.
-	 *
-	 * @return Status with respect to current model
+	 * {@inheritDoc}
 	 */
 	public IRegenStatus getStatus() {
 
@@ -100,11 +92,7 @@ public class IRegenValidInstance implements IRegenInstance {
 	}
 
 	/**
-	 * Provides list of any slots or slot-values that have been pruned from
-	 * the network as a result of updates to the model since the instance was
-	 * serialised.
-	 *
-	 * @return List of any pruned slots and slot-values
+	 * {@inheritDoc}
 	 */
 	public List<IRegenPath> getAllPrunedPaths() {
 
@@ -112,10 +100,7 @@ public class IRegenValidInstance implements IRegenInstance {
 	}
 
 	/**
-	 * Provides list of any slots that have been pruned from the network as
-	 * a result of updates to the model since the instance was serialised.
-	 *
-	 * @return List of any pruned slots
+	 * {@inheritDoc}
 	 */
 	public List<IRegenPath> getPrunedSlotPaths() {
 
@@ -123,11 +108,7 @@ public class IRegenValidInstance implements IRegenInstance {
 	}
 
 	/**
-	 * Provides list of any slot-values that have been pruned from the
-	 * network as a result of updates to the model since the instance was
-	 * serialised.
-	 *
-	 * @return List of any pruned slot-values
+	 * {@inheritDoc}
 	 */
 	public List<IRegenPath> getPrunedValuePaths() {
 

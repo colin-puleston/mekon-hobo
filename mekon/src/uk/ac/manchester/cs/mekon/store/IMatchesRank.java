@@ -36,45 +36,14 @@ import uk.ac.manchester.cs.mekon.model.*;
  *
  * @author Colin Puleston
  */
-public class IMatchesRank implements Comparable<IMatchesRank> {
-
-	private List<CIdentity> matches;
-	private int rankingValue;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param matches Identities of all instances in rank
-	 * @param rankingValue Ranking-value associated with matches in
-	 * rank
-	 */
-	public IMatchesRank(List<CIdentity> matches, int rankingValue) {
-
-		this.matches = new ArrayList<CIdentity>(matches);
-		this.rankingValue = rankingValue;
-	}
-
-	/**
-	 * Comparator that orders ranks by ranking-value, highest first.
-	 *
-	 * @param other Other rank to compare against
-	 * @return ranking-value of other rank minus ranking-value of this
-	 * rank
-	 */
-	public int compareTo(IMatchesRank other) {
-
-		return other.rankingValue - rankingValue;
-	}
+public interface IMatchesRank {
 
 	/**
 	 * Provides the identities of all instances in rank.
 	 *
 	 * @return Identities of all instances in rank
 	 */
-	public List<CIdentity> getMatches() {
-
-		return new ArrayList<CIdentity>(matches);
-	}
+	public List<CIdentity> getMatches();
 
 	/**
 	 * Provides the ranking-value associated with the matches in
@@ -82,8 +51,5 @@ public class IMatchesRank implements Comparable<IMatchesRank> {
 	 *
 	 * @return Ranking-value associated with matches in rank
 	 */
-	public int getRankingValue() {
-
-		return rankingValue;
-	}
+	public int getRankingValue();
 }

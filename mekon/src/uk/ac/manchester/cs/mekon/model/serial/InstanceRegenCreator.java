@@ -141,7 +141,7 @@ class InstanceRegenCreator {
 			addPrunedPath(regen, path);
 		}
 
-		return new IRegenValidInstance(rootFrame);
+		return regen;
 	}
 
 	IRegenInstance createInvalid(CIdentity rootTypeId) {

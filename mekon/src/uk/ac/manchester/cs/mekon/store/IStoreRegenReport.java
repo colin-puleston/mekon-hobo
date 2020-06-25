@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.store;
 
+import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -69,4 +70,13 @@ public interface IStoreRegenReport {
 	 * @return Identities of all partially valid instances networks
 	 */
 	public List<CIdentity> getPartiallyValidIds();
+
+	/**
+	 * Provides the location of a log-file providing additional
+	 * regeneration information, if such a file is available on
+	 * the local file-system.
+	 *
+	 * @return Location of log-file, or null if not available
+	 */
+	public File getLogFileOrNull();
 }

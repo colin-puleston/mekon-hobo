@@ -28,6 +28,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.config.*;
 
 /**
@@ -132,7 +133,7 @@ public abstract class ISimpleMatcherCore<I> {
 			group.collectMatches(query, matches);
 		}
 
-		return IMatches.unranked(matches);
+		return new IUnrankedMatches(matches);
 	}
 
 	/**

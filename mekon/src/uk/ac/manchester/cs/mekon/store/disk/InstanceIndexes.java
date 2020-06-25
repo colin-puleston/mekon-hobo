@@ -30,6 +30,7 @@ import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.util.*;
 
 /**
@@ -59,26 +60,25 @@ class InstanceIndexes extends KIndexes<CIdentity> implements IMatcherIndexes {
 			return ensureOriginalLabelsInRankedMatches(matches);
 		}
 
-		return IMatches.unranked(ensureOriginalLabels(matches.getAllMatches()));
+		return new IUnrankedMatches(ensureOriginalLabels(matches.getAllMatches()));
 	}
 
 	private IMatches ensureOriginalLabelsInRankedMatches(IMatches matches) {
 
+		IRankedMatches updatedMatches = new IRankedMatches();
 		List<IMatchesRank> updatedRanks = new ArrayList<IMatchesRank>();
 
 		for (IMatchesRank rank : matches.getRanks()) {
 
-			updatedRanks.add(ensureOriginalLabelsInMatchesRank(rank));
+			addRankWithOriginalLabels(updatedMatches, rank);
 		}
 
-		return IMatches.ranked(updatedRanks);
+		return updatedMatches;
 	}
 
-	private IMatchesRank ensureOriginalLabelsInMatchesRank(IMatchesRank rank) {
+	private void addRankWithOriginalLabels(IRankedMatches matches, IMatchesRank rank) {
 
-		List<CIdentity> updatedIds = ensureOriginalLabels(rank.getMatches());
-
-		return new IMatchesRank(updatedIds, rank.getRankingValue());
+		matches.addRank(ensureOriginalLabels(rank.getMatches()), rank.getRankingValue());
 	}
 
 	private List<CIdentity> ensureOriginalLabels(List<CIdentity> ids) {

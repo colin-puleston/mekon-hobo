@@ -22,53 +22,64 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store;
+package uk.ac.manchester.cs.mekon.store.motor;
 
+import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
- * Represents the results of an instance-matching query executed
- * via an {@link IStore} object. The set of results can optionally
- * be ranked to reflect some measure of the degree to which each
- * result matches the query.
+ * Implementation of {@link IStoreRegenReport} for case where no
+ * store regeneration information is available.
  *
  * @author Colin Puleston
  */
-public interface IMatches {
+public class IStoreInertRegenReport implements IStoreRegenReport {
+
+	static public final IStoreRegenReport SINGLETON = new IStoreInertRegenReport(){};
 
 	/**
-	 * Specifies whether matches are ranked.
-	 *
-	 * @return True if matches are ranked
+	 * {@inheritDoc}
 	 */
-	public boolean ranked();
+	public boolean fullyInvalidRegens() {
+
+		return false;
+	}
 
 	/**
-	 * Specifies whether any matches have been found.
-	 *
-	 * @return True if matches found
+	 * {@inheritDoc}
 	 */
-	public boolean anyMatches();
+	public boolean partiallyValidRegens() {
+
+		return false;
+	}
 
 	/**
-	 * Provides a list of all instances that match the relevant
-	 * query. If the matches have been ranked then those with a
-	 * greater ranking-value will appear earlier in the list.
-	 *
-	 * @return Identities of all relevant instances
+	 * {@inheritDoc}
 	 */
-	public List<CIdentity> getAllMatches();
+	public List<CIdentity> getFullyInvalidIds() {
+
+		return Collections.emptyList();
+	}
 
 	/**
-	 * Provides a list of the ranks of matches ordered by
-	 * ranking-value, highest first. If the matches are not ranked
-	 * then they will be provided as a single rank with a
-	 * ranking-value of zero.
-	 *
-	 * @return Ranks of matches ordered by ranking-value, highest
-	 * first
+	 * {@inheritDoc}
 	 */
-	public List<IMatchesRank> getRanks();
+	public List<CIdentity> getPartiallyValidIds() {
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public File getLogFileOrNull() {
+
+		return null;
+	}
+
+	private IStoreInertRegenReport() {
+	}
 }

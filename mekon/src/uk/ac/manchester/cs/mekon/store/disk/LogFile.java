@@ -59,8 +59,6 @@ class LogFile {
 
 		private void log() {
 
-			startLog();
-
 			switch (output.getStatus()) {
 
 				case FULLY_INVALID:
@@ -73,37 +71,33 @@ class LogFile {
 			}
 		}
 
-		private void startLog() {
-
-			logLine(0, "\nLOADING INSTANCE: \"" + identity.getIdentifier() + "\"");
-			logLine(1, "STATUS: " + getStatusString());
-		}
-
 		private void logInvalid() {
 
-			logError(
-				"Cannot re-load: Invalid root-frame-type: "
-				+ output.getRootTypeId());
+			startWarningLog("Invalid root-frame-type: " + output.getRootTypeId());
+			endWarningLog("Instance cannot be loaded");
 		}
 
 		private void logPruned() {
 
-			logWarning("Removed invalid components...");
+			startWarningLog("Invalid components...");
 
 			for (IRegenPath path : output.getAllPrunedPaths()) {
 
 				logLine(2, path.toString());
 			}
+
+			endWarningLog("Instance will be prunned on loading");
 		}
 
-		private void logError(String message) {
+		private void startWarningLog(String message) {
 
-			logLine(1, "ERROR: " + message);
+			logLine(0, "\nWARNING: \"" + identity.getIdentifier() + "\"");
+			logLine(1, message);
 		}
 
-		private void logWarning(String message) {
+		private void endWarningLog(String message) {
 
-			logLine(1, "WARNING: " + message);
+			logLine(1, message);
 		}
 
 		private void logLine(int tabs, String message) {
@@ -132,6 +126,11 @@ class LogFile {
 	LogFile(File directory) {
 
 		file = new File(directory, FILE_NAME);
+	}
+
+	File getFile() {
+
+		return file;
 	}
 
 	void logParsedInstance(CIdentity identity, IRegenInstance output) {

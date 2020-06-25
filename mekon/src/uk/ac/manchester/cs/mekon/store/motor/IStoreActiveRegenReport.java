@@ -24,20 +24,44 @@
 
 package uk.ac.manchester.cs.mekon.store.motor;
 
+import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 /**
- * Default implementation of {@link IStoreRegenReport}.
+ * Implementation of {@link IStoreRegenReport} for case where
+ * store regeneration information is available.
  *
  * @author Colin Puleston
  */
 public class IStoreActiveRegenReport implements IStoreRegenReport {
 
+	private File logFile;
+
 	private List<CIdentity> fullyInvalidIds = new ArrayList<CIdentity>();
 	private List<CIdentity> partiallyValidIds = new ArrayList<CIdentity>();
+
+	/**
+	 * Constructor for case where no log-file providing additional
+	 * regeneration information is available
+	 */
+	public IStoreActiveRegenReport() {
+
+		this(null);
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param logFile Location of log-file providing additional
+	 * regeneration information
+	 */
+	public IStoreActiveRegenReport(File logFile) {
+
+		this.logFile = logFile;
+	}
 
 	/**
 	 * Registers an instance network that is now fully invalid
@@ -91,5 +115,13 @@ public class IStoreActiveRegenReport implements IStoreRegenReport {
 	public List<CIdentity> getPartiallyValidIds() {
 
 		return new ArrayList<CIdentity>(partiallyValidIds);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public File getLogFileOrNull() {
+
+		return logFile;
 	}
 }

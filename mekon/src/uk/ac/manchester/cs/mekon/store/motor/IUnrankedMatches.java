@@ -30,18 +30,50 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 /**
- * Implementation of {@link IStoreRegenReport} providing empty report.
+ * Implementation of {@link IMatches} representing unranked set of
+ * matches.
  *
  * @author Colin Puleston
  */
-public class IStoreEmptyRegenReport implements IStoreRegenReport {
+public class IUnrankedMatches implements IMatches {
 
-	static public final IStoreRegenReport SINGLETON = new IStoreEmptyRegenReport(){};
+	private List<CIdentity> matches = new ArrayList<CIdentity>();
+	private List<IMatchesRank> ranks;
+
+	private class SingleRank implements IMatchesRank {
+
+		public List<CIdentity> getMatches() {
+
+			return new ArrayList<CIdentity>(matches);
+		}
+
+		public int getRankingValue() {
+
+			return 0;
+		}
+
+		List<IMatchesRank> asRankList() {
+
+			return Collections.singletonList(this);
+		}
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param matches Identities of matching instances
+	 */
+	public IUnrankedMatches(List<CIdentity> matches) {
+
+		this.matches.addAll(matches);
+
+		ranks = asZeroOrOneRanks();
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean fullyInvalidRegens() {
+	public boolean ranked() {
 
 		return false;
 	}
@@ -49,27 +81,29 @@ public class IStoreEmptyRegenReport implements IStoreRegenReport {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean partiallyValidRegens() {
+	public boolean anyMatches() {
 
-		return false;
+		return !matches.isEmpty();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<CIdentity> getFullyInvalidIds() {
+	public List<CIdentity> getAllMatches() {
 
-		return Collections.emptyList();
+		return new ArrayList<CIdentity>(matches);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<CIdentity> getPartiallyValidIds() {
+	public List<IMatchesRank> getRanks() {
 
-		return Collections.emptyList();
+		return ranks;
 	}
 
-	private IStoreEmptyRegenReport() {
+	private List<IMatchesRank> asZeroOrOneRanks() {
+
+		return matches.isEmpty() ? Collections.emptyList() : new SingleRank().asRankList();
 	}
 }

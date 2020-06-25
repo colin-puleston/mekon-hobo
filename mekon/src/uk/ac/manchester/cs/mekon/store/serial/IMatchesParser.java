@@ -29,6 +29,7 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.xdoc.*;
 
 /**
@@ -72,26 +73,19 @@ public class IMatchesParser extends IMatchesSerialiser {
 
 	static private IMatches parseUnranked(XNode node) {
 
-		return IMatches.unranked(parseMatchIds(node.getChild(RANK_ID)));
+		return new IUnrankedMatches(parseMatchIds(node.getChild(RANK_ID)));
 	}
 
 	static private IMatches parseRanked(XNode node) {
 
-		List<IMatchesRank> ranks = new ArrayList<IMatchesRank>();
+		IRankedMatches matches = new IRankedMatches();
 
 		for (XNode rankNode : node.getChildren(RANK_ID)) {
 
-			ranks.add(parseRank(rankNode));
+			matches.addRank(parseMatchIds(rankNode), rankNode.getInteger(RANK_VALUE_ATTR));
 		}
 
-		return IMatches.ranked(ranks);
-	}
-
-	static private IMatchesRank parseRank(XNode node) {
-
-		int rankValue = node.getInteger(RANK_VALUE_ATTR);
-
-		return new IMatchesRank(parseMatchIds(node), rankValue);
+		return matches;
 	}
 
 	static private List<CIdentity> parseMatchIds(XNode node) {

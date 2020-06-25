@@ -48,8 +48,10 @@ class IDiskStore implements IStore {
 	private Map<CIdentity, IRegenType> types = new HashMap<CIdentity, IRegenType>();
 	private InstanceIndexes indexes = new InstanceIndexes();
 
-	private IStoreActiveRegenReport regenReport = new IStoreActiveRegenReport();
+	private IStoreActiveRegenReport regenReport;
 	private InstanceRefIntegrityManager refIntegrityManager;
+
+	private boolean loaded = false;
 
 	private class Reloader {
 
@@ -190,12 +192,7 @@ class IDiskStore implements IStore {
 
 	public synchronized IRegenInstance get(CIdentity identity) {
 
-		if (indexes.hasIndex(identity)) {
-
-			return fileStore.read(identity, indexes.getIndex(identity), false);
-		}
-
-		return null;
+		return indexes.hasIndex(identity) ? regen(identity, false) : null;
 	}
 
 	public synchronized List<CIdentity> getAllIdentities() {
@@ -240,6 +237,7 @@ class IDiskStore implements IStore {
 		this.matchers = matchers;
 
 		fileStore = new FileStore(model, directory);
+		regenReport = new IStoreActiveRegenReport(fileStore.getLogFile().getFile());
 		refIntegrityManager = new InstanceRefIntegrityManager(this);
 	}
 
@@ -251,6 +249,8 @@ class IDiskStore implements IStore {
 	void initialisePostRegistration() {
 
 		new Reloader();
+
+		loaded = true;
 	}
 
 	void stop() {
@@ -342,12 +342,12 @@ class IDiskStore implements IStore {
 
 	private IRegenInstance regen(CIdentity identity, boolean freeInstance) {
 
-		return fileStore.read(identity, indexes.getIndex(identity), freeInstance);
+		return regen(identity, indexes.getIndex(identity), freeInstance);
 	}
 
 	private IRegenInstance regen(CIdentity identity, int index, boolean freeInstance) {
 
-		return fileStore.read(identity, index, freeInstance);
+		return fileStore.read(identity, index, freeInstance, !loaded);
 	}
 
 	private void addToMatcher(IFrame instance, CIdentity identity) {

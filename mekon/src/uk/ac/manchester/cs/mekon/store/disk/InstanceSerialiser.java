@@ -37,14 +37,11 @@ import uk.ac.manchester.cs.mekon.xdoc.*;
 class InstanceSerialiser {
 
 	private CModel model;
-	private LogFile log;
-
 	private IInstanceRenderer renderer = new IInstanceRenderer();
 
-	InstanceSerialiser(CModel model, LogFile log) {
+	InstanceSerialiser(CModel model) {
 
 		this.model = model;
-		this.log = log;
 	}
 
 	void render(IFrame instance, File file) {
@@ -60,10 +57,7 @@ class InstanceSerialiser {
 		parser.setPossibleModelUpdates(true);
 
 		IInstanceParseInput input = new IInstanceParseInput(new XDocument(file));
-		IRegenInstance output = parser.parse(input);
 
-		log.logParsedInstance(identity, output);
-
-		return output;
+		return parser.parse(input);
 	}
 }
