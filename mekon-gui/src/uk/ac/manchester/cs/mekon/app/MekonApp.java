@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.app;
 import java.io.*;
 import java.util.*;
 import java.awt.BorderLayout;
+import java.awt.event.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.manage.*;
@@ -105,6 +106,14 @@ public class MekonApp extends GFrame {
 		}
 	}
 
+	private class StoreRegenCheckInvoker extends WindowAdapter {
+
+		public void windowOpened(WindowEvent e) {
+
+			new StoreRegenChecker(store);
+		}
+	}
+
 	public MekonApp() {
 
 		this(CManager.createBuilder());
@@ -123,6 +132,8 @@ public class MekonApp extends GFrame {
 		this.store = store;
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+		addWindowListener(new StoreRegenCheckInvoker());
 	}
 
 	public void setCustomiser(Customiser customiser) {
