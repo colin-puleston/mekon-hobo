@@ -34,13 +34,6 @@ import uk.ac.manchester.cs.mekon.*;
 public interface DCellView<V> extends DFieldView<V> {
 
 	/**
-	 * Specifies whether field currently has a value.
-	 *
-	 * @return True if field has current value
-	 */
-	public boolean isSet();
-
-	/**
 	 * Retrieves current value of the field.
 	 *
 	 * @return Current value

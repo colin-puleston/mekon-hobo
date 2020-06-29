@@ -47,14 +47,6 @@ public class DCell<V> extends DField<V> implements DCellView<V> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isSet() {
-
-		return !getAll().isEmpty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public V get() {
 
 		if (!isSet()) {

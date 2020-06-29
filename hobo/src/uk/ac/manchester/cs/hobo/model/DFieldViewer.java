@@ -75,6 +75,14 @@ public class DFieldViewer<V, F extends DField<V>> implements DFieldView<V> {
 	/**
 	 * {@inheritDoc}
 	 */
+	public boolean isSet() {
+
+		return getField().isSet();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean hasValue(V value) {
 
 		return field.hasValue(value);

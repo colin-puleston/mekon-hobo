@@ -69,6 +69,13 @@ public interface DFieldView<V> {
 	public void removeValuesListener(KValuesListener<V> listener);
 
 	/**
+	 * Specifies whether field currently has any value(s).
+	 *
+	 * @return True if field has current value(s)
+	 */
+	public boolean isSet();
+
+	/**
 	 * Tests whether field currently has the specified value.
 	 *
 	 * @param value Value to test for

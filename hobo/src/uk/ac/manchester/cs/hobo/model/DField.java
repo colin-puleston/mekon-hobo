@@ -162,6 +162,14 @@ public abstract class DField<V> implements DFieldView<V> {
 	/**
 	 * {@inheritDoc}
 	 */
+	public boolean isSet() {
+
+		return !getAll().isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean hasValue(V value) {
 
 		return getSlotValues().contains(toSlotValue(value));

@@ -38,14 +38,6 @@ public class DCellViewer<V>
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isSet() {
-
-		return getField().isSet();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public V get() {
 
 		return getField().get();
