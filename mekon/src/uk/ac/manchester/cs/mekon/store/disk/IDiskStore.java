@@ -53,27 +53,48 @@ class IDiskStore implements IStore {
 
 	private boolean loaded = false;
 
-	private class Reloader {
+	private class Initialiser {
 
-		private List<IMatcher> reloadableMatchers = initialiseMatchers();
+		private List<IMatcher> reloadableMatchers = new ArrayList<IMatcher>();
 
-		Reloader() {
+		Initialiser() {
 
-			reloadStore();
-			processInstances();
+			initialiseMatchers();
+			reloadInstances();
+			processReloadedInstances();
 
 			indexes.reinitialiseFreeIndexes();
 		}
 
-		private void reloadStore() {
+		private void initialiseMatchers() {
 
-			for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
+			initialiseMatcher(defaultMatcher);
 
-				reloadToStore(storedProfile.getProfile(), storedProfile.getIndex());
+			for (IMatcher matcher : matchers) {
+
+				initialiseMatcher(matcher);
+
+				if (matcher.rebuildOnStartup()) {
+
+					reloadableMatchers.add(matcher);
+				}
 			}
 		}
 
-		private void reloadToStore(InstanceProfile profile, int index) {
+		private void initialiseMatcher(IMatcher matcher) {
+
+			matcher.initialise(IDiskStore.this, indexes);
+		}
+
+		private void reloadInstances() {
+
+			for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
+
+				reloadInstance(storedProfile.getProfile(), storedProfile.getIndex());
+			}
+		}
+
+		private void reloadInstance(InstanceProfile profile, int index) {
 
 			CIdentity identity = profile.getInstanceId();
 			IRegenType type = createRegenType(profile.getTypeId());
@@ -85,11 +106,11 @@ class IDiskStore implements IStore {
 			refIntegrityManager.onReloadedInstance(identity, profile);
 		}
 
-		private void processInstances() {
+		private void processReloadedInstances() {
 
 			for (CIdentity identity : getAllIdentities()) {
 
-				IFrame instance = checkRegen(identity);
+				IFrame instance = checkRegenInstance(identity);
 
 				if (instance != null) {
 
@@ -98,7 +119,7 @@ class IDiskStore implements IStore {
 			}
 		}
 
-		private IFrame checkRegen(CIdentity identity) {
+		private IFrame checkRegenInstance(CIdentity identity) {
 
 			IRegenInstance regen = regen(identity, true);
 
@@ -248,7 +269,7 @@ class IDiskStore implements IStore {
 
 	void initialisePostRegistration() {
 
-		new Reloader();
+		new Initialiser();
 
 		loaded = true;
 	}
@@ -280,52 +301,28 @@ class IDiskStore implements IStore {
 		return regenOrNull(identity, indexes.getIndex(identity), freeInstance);
 	}
 
-	private List<IMatcher> initialiseMatchers() {
-
-		List<IMatcher> reloadables = new ArrayList<IMatcher>();
-
-		defaultMatcher.initialise(this, indexes);
-
-		for (IMatcher matcher : matchers) {
-
-			matcher.initialise(this, indexes);
-
-			if (matcher.rebuildOnStartup()) {
-
-				reloadables.add(matcher);
-			}
-		}
-
-		return reloadables;
-	}
-
 	private IFrame checkRemove(CIdentity identity) {
 
-		IFrame removed = null;
+		if (!indexes.hasIndex(identity)) {
 
-		if (indexes.hasIndex(identity)) {
-
-			identities.remove(identity);
-			types.remove(identity);
-
-			int index = indexes.getIndex(identity);
-
-			removed = regenOrNull(identity, index, false);
-
-			CFrame type = removed != null ? removed.getType() : getType(index);
-
-			removeFromMatcher(type, identity);
-
-			fileStore.remove(index);
-			indexes.freeIndex(identity);
+			return null;
 		}
 
+		identities.remove(identity);
+		types.remove(identity);
+
+		int index = indexes.getIndex(identity);
+		IFrame removed = regenOrNull(identity, index, false);
+
+		if (removed != null) {
+
+			removeFromMatcher(removed.getType(), identity);
+		}
+
+		fileStore.remove(index);
+		indexes.freeIndex(identity);
+
 		return removed;
-	}
-
-	private CFrame getType(int index) {
-
-		return model.getFrames().get(fileStore.readTypeId(index));
 	}
 
 	private IFrame regenOrNull(CIdentity identity, int index, boolean freeInstance) {
@@ -400,5 +397,10 @@ class IDiskStore implements IStore {
 	private IFrame createFreeCopy(IFrame instance) {
 
 		return IFreeCopier.get().createFreeCopy(instance);
+	}
+
+	private CFrame getTypeOrNull(int index) {
+
+		return model.getFrames().getOrNull(fileStore.readTypeId(index));
 	}
 }
