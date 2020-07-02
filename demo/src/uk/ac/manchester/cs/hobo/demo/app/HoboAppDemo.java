@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.demo.app;
 
-import uk.ac.manchester.cs.hobo.app.*;
+import uk.ac.manchester.cs.hobo.gui.app.*;
 
 import uk.ac.manchester.cs.hobo.demo.model.*;
 
