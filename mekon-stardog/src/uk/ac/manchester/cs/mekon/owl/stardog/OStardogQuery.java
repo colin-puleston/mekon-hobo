@@ -33,7 +33,7 @@ import org.openrdf.query.QueryEvaluationException;
 
 import com.complexible.stardog.api.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
 /**

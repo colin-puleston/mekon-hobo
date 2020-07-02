@@ -24,11 +24,11 @@
 
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
+import uk.ac.manchester.cs.mekon_util.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * <i>Stardog</i>-specific extension of {@link OTMatcher}.

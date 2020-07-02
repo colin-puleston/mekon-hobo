@@ -37,7 +37,7 @@ import com.complexible.stardog.api.*;
 import com.complexible.stardog.api.admin.*;
 import com.complexible.stardog.protocols.snarl.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**

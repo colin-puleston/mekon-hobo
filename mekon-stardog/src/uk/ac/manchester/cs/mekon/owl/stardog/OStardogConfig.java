@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * Represents the configuration for a {@link OStardogMatcher}.
