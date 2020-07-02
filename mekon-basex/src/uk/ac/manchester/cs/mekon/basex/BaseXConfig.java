@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.basex;
 
 import java.io.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * Represents the configuration for a {@link BaseXMatcher}.

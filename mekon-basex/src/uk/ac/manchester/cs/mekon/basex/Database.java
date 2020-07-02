@@ -37,9 +37,9 @@ import org.basex.query.iter.*;
 import org.basex.query.value.item.*;
 import org.basex.api.dom.*;
 
-import uk.ac.manchester.cs.mekon.xdoc.*;
-import uk.ac.manchester.cs.mekon.config.*;
-import uk.ac.manchester.cs.mekon.util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * @author Colin Puleston
