@@ -21,27 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.ac.manchester.cs.hobo.explorer;
+package uk.ac.manchester.cs.hobo.gui.explorer;
 
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.motor.*;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
-import uk.ac.manchester.cs.mekon.explorer.*;
+import uk.ac.manchester.cs.mekon.gui.explorer.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboModelExplorer {
+public class HoboRemoteTestModelExplorer {
 
 	static public void main(String[] args) {
 
 		DBuilder dBuilder = DManager.createBuilder();
 		CBuilder cBuilder = dBuilder.getCBuilder();
-		CModel cModel = dBuilder.build().getCModel();
 
-		MekonModelExplorer.createWithDiskStore(cModel, cBuilder);
+		CModel cModel = dBuilder.build().getCModel();
+		IStore iStore = IDiskStoreManager.getBuilder(cBuilder).build();
+
+		new MekonRemoteTestModelExplorer(cModel, iStore);
 	}
 }

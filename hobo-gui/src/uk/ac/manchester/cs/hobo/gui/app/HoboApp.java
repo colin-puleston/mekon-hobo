@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.app;
+package uk.ac.manchester.cs.hobo.gui.app;
 
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.app.*;
+import uk.ac.manchester.cs.mekon.gui.app.*;
 
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.*;
