@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * Visitor for visiting the sets of current-values for specific
  * {@link ISlot} objects.

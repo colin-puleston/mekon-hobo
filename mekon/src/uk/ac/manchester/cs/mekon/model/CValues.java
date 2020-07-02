@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Utility class that takes a {@link Collection} of {@link CValue}

@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.model.serial;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * Represents the input-data for a specific {@link IFrame}/{@link ISlot}

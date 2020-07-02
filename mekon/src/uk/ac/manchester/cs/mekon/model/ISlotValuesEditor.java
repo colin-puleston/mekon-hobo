@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Enables the editing of the current set of values for a specific

@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.remote.xml;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * XML-based serialiser used by the MEKON remote access

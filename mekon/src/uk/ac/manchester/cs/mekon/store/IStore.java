@@ -26,8 +26,8 @@ package uk.ac.manchester.cs.mekon.store;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Represents an instance-store associated with a MEKON Frames

@@ -31,11 +31,11 @@ import org.junit.Before;
 import org.junit.After;
 import static org.junit.Assert.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
+import uk.ac.manchester.cs.mekon.test_util.*;
 
 /**
  * @author Colin Puleston

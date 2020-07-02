@@ -26,8 +26,8 @@ package uk.ac.manchester.cs.mekon.model.motor;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Provides mechanisms for editing a specific {@link CFrame} object.

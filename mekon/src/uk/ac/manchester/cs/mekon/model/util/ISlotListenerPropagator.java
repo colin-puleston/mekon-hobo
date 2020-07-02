@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.mekon.model.util;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.util.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Responsible for propagating a specified listener to

@@ -24,8 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model.util;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Builder for a {@link CHierarchy} object.

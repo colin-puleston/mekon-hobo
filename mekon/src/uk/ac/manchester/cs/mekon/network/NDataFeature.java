@@ -24,8 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.network;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Represents a data-valued feature in the network-based instance

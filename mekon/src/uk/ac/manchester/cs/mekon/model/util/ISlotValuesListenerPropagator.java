@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.mekon.model.util;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.util.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Propagator for {@link KValuesListener}s.

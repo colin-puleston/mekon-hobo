@@ -26,10 +26,10 @@ package uk.ac.manchester.cs.mekon.model.serial;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * Renderer for the standard XML serialisation of MEKON instances as

@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * Represents a numeric-type, defined via a primitive Java
  * <code>Number</code> type and specific numeric range.

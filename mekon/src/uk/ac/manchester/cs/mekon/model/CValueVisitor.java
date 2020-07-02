@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.*;
-
 /**
  * Visitor for {@link CValue} objects.
  *

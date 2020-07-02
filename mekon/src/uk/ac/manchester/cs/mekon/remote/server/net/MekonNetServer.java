@@ -27,11 +27,11 @@ package uk.ac.manchester.cs.mekon.remote.server.net;
 import java.io.*;
 import javax.servlet.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.manage.*;
-import uk.ac.manchester.cs.mekon.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
+import uk.ac.manchester.cs.mekon_util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * Servlet that provides access to a server-side version of the MEKON

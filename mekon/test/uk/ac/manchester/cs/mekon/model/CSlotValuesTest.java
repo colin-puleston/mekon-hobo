@@ -29,7 +29,7 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.test_util.*;
 
 /**
  * @author Colin Puleston
