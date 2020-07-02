@@ -29,10 +29,10 @@ import java.io.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.ontology.*;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
+import uk.ac.manchester.cs.mekon_util.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * <i>Jena</i>-specific extension of {@link OTMatcher}.
