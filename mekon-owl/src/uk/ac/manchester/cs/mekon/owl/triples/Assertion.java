@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import java.net.*;
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * @author Colin Puleston

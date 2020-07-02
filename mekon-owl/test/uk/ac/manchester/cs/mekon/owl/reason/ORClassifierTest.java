@@ -29,12 +29,12 @@ import java.util.*;
 import org.junit.Test;
 import org.junit.Before;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
+import uk.ac.manchester.cs.mekon.test_util.*;
 
 /**
  * @author Colin Puleston

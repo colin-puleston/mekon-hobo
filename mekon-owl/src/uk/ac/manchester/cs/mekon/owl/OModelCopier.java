@@ -29,7 +29,7 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Responsible for copying the model represented by an {@link OModel}

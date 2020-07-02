@@ -30,9 +30,10 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
-import uk.ac.manchester.cs.mekon.*;
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
+import uk.ac.manchester.cs.mekon_util.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * Responsible for creating an {@link OModel} object representing a

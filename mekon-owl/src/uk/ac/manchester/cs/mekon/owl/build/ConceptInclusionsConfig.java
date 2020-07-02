@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon.owl.build;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.config.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * @author Colin Puleston
