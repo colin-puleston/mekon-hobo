@@ -25,7 +25,7 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.util.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Represents the identity for a frames-based entity derived

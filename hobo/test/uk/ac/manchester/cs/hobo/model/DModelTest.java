@@ -29,9 +29,9 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.test_util.*;
 
 import uk.ac.manchester.cs.hobo.manage.*;
 import uk.ac.manchester.cs.hobo.model.testmodel.*;

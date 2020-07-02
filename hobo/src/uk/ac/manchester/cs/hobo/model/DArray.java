@@ -26,8 +26,8 @@ package uk.ac.manchester.cs.hobo.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Represents a multi-valued field in the Object Model (OM).

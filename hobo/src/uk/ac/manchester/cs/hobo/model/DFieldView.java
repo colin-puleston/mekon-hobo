@@ -27,7 +27,7 @@ package uk.ac.manchester.cs.hobo.model;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.util.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * Common interface for both {@link DField} and {@link DFieldViewer}.

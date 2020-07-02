@@ -24,7 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.model.zlink;
 
-import uk.ac.manchester.cs.mekon.util.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.model.motor.*;
