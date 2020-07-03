@@ -47,8 +47,8 @@ public class MekonStoreCleaner extends GFrame {
 	static private final String MAIN_TITLE = "Mekon Store Cleaner";
 	static private final String INVALIDS_TITLE = "Invalid instances (types)";
 	static private final String PART_VALIDS_TITLE = "Partially valid instances";
-	static private final String CLEAN_INVALIDS_LABEL = "Remove all";
-	static private final String CLEAN_PART_VALIDS_LABEL = "Prune all";
+	static private final String CLEAN_INVALIDS_LABEL = "Remove";
+	static private final String CLEAN_PART_VALIDS_LABEL = "Prune";
 	static private final String VIEW_LOG_LABEL = "View log file...";
 
 	static private final int FRAME_WIDTH = 500;
@@ -57,7 +57,7 @@ public class MekonStoreCleaner extends GFrame {
 	static private final Icon VALID_ICON = createIcon(Color.GREEN.darker());
 	static private final Icon INVALID_ICON = createIcon(Color.RED.darker());
 	static private final Icon PART_VALID_ICON = createIcon(Color.YELLOW.darker());
-	static private final Icon REMOVED_ICON = createIcon(Color.GRAY);
+	static private final Icon REMOVED_ICON = createIcon(Color.WHITE);
 
 	static public void main(String[] args) {
 
@@ -106,9 +106,14 @@ public class MekonStoreCleaner extends GFrame {
 			return label;
 		}
 
-		Icon getIcon(boolean cleaned) {
+		Icon getPreCleanIcon() {
 
-			return cleaned ? REMOVED_ICON : INVALID_ICON;
+			return INVALID_ICON;
+		}
+
+		Icon getPostCleanIcon() {
+
+			return REMOVED_ICON;
 		}
 
 		void performCleanOp(CIdentity instanceId) {
@@ -151,9 +156,14 @@ public class MekonStoreCleaner extends GFrame {
 			return instanceId.getLabel();
 		}
 
-		Icon getIcon(boolean cleaned) {
+		Icon getPreCleanIcon() {
 
-			return cleaned ? VALID_ICON : PART_VALID_ICON;
+			return PART_VALID_ICON;
+		}
+
+		Icon getPostCleanIcon() {
+
+			return VALID_ICON;
 		}
 
 		String getCleaningDoneDescriber() {

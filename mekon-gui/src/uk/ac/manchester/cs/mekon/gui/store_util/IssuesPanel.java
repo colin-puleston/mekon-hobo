@@ -40,25 +40,208 @@ abstract class IssuesPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String CLEAN_ALL_LABEL = "All";
+	static private final String CLEAN_SELECTIONS_LABEL = "Selections";
+
 	private GList<CIdentity> instanceIdsList = new GList<CIdentity>(true, true);
 
-	private class CleanButton extends GButton {
+	private Set<CIdentity> allInstanceIds = new HashSet<CIdentity>();
+	private Set<CIdentity> cleanedInstanceIds = new HashSet<CIdentity>();
+
+	private abstract class Populator {
+
+		Populator() {
+
+			for (CIdentity instanceId : allInstanceIds) {
+
+				instanceIdsList.addEntity(instanceId, createCellDisplay(instanceId));
+			}
+		}
+
+		abstract Icon getIcon(CIdentity instanceId);
+
+		private GCellDisplay createCellDisplay(CIdentity instanceId) {
+
+			return new GCellDisplay(getListLabel(instanceId), getIcon(instanceId));
+		}
+	}
+
+	private class PreCleanPopulator extends Populator {
+
+		Icon getIcon(CIdentity instanceId) {
+
+			return getPreCleanIcon();
+		}
+	}
+
+	private class PostCleanPopulator extends Populator {
+
+		Icon getIcon(CIdentity instanceId) {
+
+			return cleaned(instanceId) ? getPostCleanIcon() : getPreCleanIcon();
+		}
+	}
+
+	private abstract class Cleaner {
+
+		private int cleanedCount = 0;
+
+		void performClean() {
+
+			performCleanOps();
+			repopulate();
+			reportCleanComplete();
+		}
+
+		abstract boolean cleanSelected(CIdentity instanceId);
+
+		private void performCleanOps() {
+
+			for (CIdentity instanceId : allInstanceIds) {
+
+				if (!cleaned(instanceId) && cleanSelected(instanceId)) {
+
+					performCleanOp(instanceId);
+					cleanedInstanceIds.add(instanceId);
+
+					cleanedCount++;
+				}
+			}
+		}
+
+		private void repopulate() {
+
+			instanceIdsList.clearList();
+
+			new PostCleanPopulator();
+		}
+
+		private void reportCleanComplete() {
+
+			JOptionPane.showMessageDialog(
+				null,
+				"Completed cleaning operation: "
+				+ cleanedCount
+				+ " instances "
+				+ getCleaningDoneDescriber());
+		}
+	}
+
+	private class AllCleaner extends Cleaner {
+
+		boolean cleanSelected(CIdentity instanceId) {
+
+			return true;
+		}
+	}
+
+	private class SelectionsCleaner extends Cleaner {
+
+		private List<CIdentity> selectedInstanceIds = getSelectedInstanceIds();
+
+		boolean cleanSelected(CIdentity instanceId) {
+
+			return selectedInstanceIds.contains(instanceId);
+		}
+	}
+
+	private abstract class CleanButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
+		private CleanButton otherButton = null;
+
 		protected void doButtonThing() {
 
-			performClean();
-			updateInstanceIdsList();
+			createCleaner().performClean();
 
-			setEnabled(false);
+			updateEnabling();
+			otherButton.updateEnabling();
 		}
 
-		CleanButton() {
+		CleanButton(String label) {
 
-			super(getCleanLabel());
+			super(label);
+		}
+
+		void setOtherButton(CleanButton otherButton) {
+
+			this.otherButton = otherButton;
+		}
+
+		void updateEnabling() {
+
+			setEnabled(anyToClean());
+		}
+
+		abstract boolean anyToClean();
+
+		abstract Cleaner createCleaner();
+	}
+
+	private class CleanAllButton extends CleanButton {
+
+		static private final long serialVersionUID = -1;
+
+		CleanAllButton() {
+
+			super(CLEAN_ALL_LABEL);
 
 			setEnabled(anyInstanceIds());
+		}
+
+		boolean anyToClean() {
+
+			return !allInstanceIds.equals(cleanedInstanceIds);
+		}
+
+		Cleaner createCleaner() {
+
+			return new AllCleaner();
+		}
+	}
+
+	private class CleanSelectionsButton extends CleanButton {
+
+		static private final long serialVersionUID = -1;
+
+		private class Enabler extends GSelectionListener<CIdentity> {
+
+			protected void onSelected(CIdentity instanceId) {
+
+				updateEnabling();
+			}
+
+			protected void onDeselected(CIdentity instanceId) {
+
+				updateEnabling();
+			}
+		}
+
+		CleanSelectionsButton() {
+
+			super(CLEAN_SELECTIONS_LABEL);
+
+			setEnabled(false);
+
+			if (anyInstanceIds()) {
+
+				instanceIdsList.addSelectionListener(new Enabler());
+			}
+		}
+
+		boolean anyToClean() {
+
+			List<CIdentity> selecteds = getSelectedInstanceIds();
+
+			selecteds.removeAll(cleanedInstanceIds);
+
+			return !selecteds.isEmpty();
+		}
+
+		Cleaner createCleaner() {
+
+			return new SelectionsCleaner();
 		}
 	}
 
@@ -69,7 +252,10 @@ abstract class IssuesPanel extends JPanel {
 
 	void display(String title, List<CIdentity> instanceIds) {
 
-		addInstanceIds(instanceIds, false);
+		allInstanceIds.addAll(instanceIds);
+
+		new PreCleanPopulator();
+
 		add(createMainPanel(title));
 	}
 
@@ -77,7 +263,9 @@ abstract class IssuesPanel extends JPanel {
 
 	abstract String getListLabel(CIdentity instanceId);
 
-	abstract Icon getIcon(boolean cleaned);
+	abstract Icon getPreCleanIcon();
+
+	abstract Icon getPostCleanIcon();
 
 	abstract void performCleanOp(CIdentity instanceId);
 
@@ -89,64 +277,50 @@ abstract class IssuesPanel extends JPanel {
 
 		panel.setBorder(new TitledBorder(title));
 		panel.add(new JScrollPane(instanceIdsList), BorderLayout.CENTER);
-		panel.add(new CleanButton(), BorderLayout.SOUTH);
+		panel.add(createButtonsPanel(), BorderLayout.SOUTH);
 
 		return panel;
 	}
 
-	private void performClean() {
+	private JComponent createButtonsPanel() {
 
-		for (CIdentity instanceId : getInstanceIds()) {
+		JPanel panel = new JPanel();
 
-			performCleanOp(instanceId);
-		}
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		panel.setBorder(new TitledBorder(getCleanLabel()));
 
-		reportCleanComplete();
+		CleanButton allButton = new CleanAllButton();
+		CleanButton selsButton = new CleanSelectionsButton();
+
+		allButton.setOtherButton(selsButton);
+		selsButton.setOtherButton(allButton);
+
+		addButton(panel, allButton);
+		addButton(panel, selsButton);
+
+		return panel;
 	}
 
-	private void updateInstanceIdsList() {
+	private void addButton(JPanel panel, GButton button) {
 
-		List<CIdentity> instanceIds = getInstanceIds();
+		JPanel buttonPanel = new JPanel(new BorderLayout());
 
-		instanceIdsList.clearList();
-		addInstanceIds(instanceIds, true);
+		buttonPanel.add(button, BorderLayout.CENTER);
+		panel.add(buttonPanel);
 	}
 
-	private void addInstanceIds(List<CIdentity> instanceIds, boolean cleaned) {
+	private boolean cleaned(CIdentity instanceId) {
 
-		for (CIdentity instanceId : instanceIds) {
-
-			instanceIdsList.addEntity(instanceId, createCellDisplay(instanceId, cleaned));
-		}
-	}
-
-	private GCellDisplay createCellDisplay(CIdentity instanceId, boolean cleaned) {
-
-		return new GCellDisplay(getListLabel(instanceId), getIcon(cleaned));
-	}
-
-	private void reportCleanComplete() {
-
-		JOptionPane.showMessageDialog(
-			null,
-			"Completed cleaning operation: "
-			+ instanceIdCount()
-			+ " instances "
-			+ getCleaningDoneDescriber());
-	}
-
-	private int instanceIdCount() {
-
-		return getInstanceIds().size();
+		return cleanedInstanceIds.contains(instanceId);
 	}
 
 	private boolean anyInstanceIds() {
 
-		return !getInstanceIds().isEmpty();
+		return !allInstanceIds.isEmpty();
 	}
 
-	private List<CIdentity> getInstanceIds() {
+	private List<CIdentity> getSelectedInstanceIds() {
 
-		return instanceIdsList.getEntities();
+		return instanceIdsList.getSelectedEntities();
 	}
 }

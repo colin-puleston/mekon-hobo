@@ -78,7 +78,7 @@ class LogFileDialog extends GDialog {
 
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		panel.setBorder(new TitledBorder(FILE_LOCATION_TITLE));
-		panel.add(createPathComponent(file), BorderLayout.CENTER);
+		panel.add(createPathComponent(file));
 
 		return panel;
 	}
