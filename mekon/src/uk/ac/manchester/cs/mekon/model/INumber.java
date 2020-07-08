@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
+
 /**
  * Represents a numeric-value, with the actual value being represented
  * by a primitive Java <code>Number</code> value of some type.
@@ -43,22 +45,24 @@ public class INumber extends IDataValue {
 	static public final INumber MINUS_INFINITY = new INumber(new IMinusInfinity());
 
 	/**
-	 * Constructs object representing the specified numeric-range
-	 * with the specified primitive Java <code>Number</code> type.
-	 * Unless the minimum and maximum values are equal then the
-	 * constructed object will represent an {@link INumber#indefinite}
-	 * value.
+	 * Constructs object representing the specified numeric-range.
+	 * The number-type will be derived from the specified limit-values,
+	 * which must have identical number-types, or one of which must
+	 * represent an infinite value, and hence will not have a specific
+	 * number-type. If both limits represent infinite values then an
+	 * exception will be thrown. Unless the minimum and maximum values
+	 * are equal then the constructed object will represent an {@link
+	 * INumber#indefinite} value.
 	 *
-	 * @param numberType Required primitive Java <code>Number</code> type
-	 * @param min Minimnum range value
-	 * @param max Maximnum range value
+	 * @param min Minimnum value
+	 * @param max Maximnum value
+	 * @throws KModelException if minimnum value is greater than
+	 * maximnum  value, or if minimnum and maximnum values have
+	 * incompatible number-types
 	 */
-	static public INumber range(
-							Class<? extends Number> numberType,
-							INumber min,
-							INumber max) {
+	static public INumber range(INumber min, INumber max) {
 
-		return new CNumber(numberType, min, max).asINumber();
+		return CNumberFactory.range(min, max).asINumber();
 	}
 
 	static INumber indefiniteRange(CNumber range) {

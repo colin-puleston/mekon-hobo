@@ -662,7 +662,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private INumber createRangeAsINumber(int min, int max) {
 
-		return INumber.range(Integer.class, new INumber(min), new INumber(max));
+		return INumber.range(new INumber(min), new INumber(max));
 	}
 
 	private IFrame createIDisjunction(IFrame... disjuncts) {
