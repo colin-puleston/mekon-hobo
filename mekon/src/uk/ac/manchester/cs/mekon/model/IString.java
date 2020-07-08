@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
+
 /**
  * Represents a string-value, with the actual value being represented
  * by a primitive Java <code>String</code> value.
@@ -38,16 +40,6 @@ public class IString extends IDataValue {
 	static public final IString EMPTY_STRING = new IString("");
 
 	private String value;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param value String-value to be represented
-	 */
-	public IString(String value) {
-
-		this.value = value;
-	}
 
 	/**
 	 * Tests for equality between this and other specified object,
@@ -74,14 +66,15 @@ public class IString extends IDataValue {
 	}
 
 	/**
-	 * Provides the type of the value-entity, which will always be the
-	 * {@link CString#SINGLETON} object.
+	 * Provides the type of the string value, which will always be the
+	 * {@link CString#UNCONSTRAINED} object (though this will not always
+	 * be the type from which the value was instantiated).
 	 *
-	 * @return Type of value-entity
+	 * @return Type of string value
 	 */
 	public CString getType() {
 
-		return CString.SINGLETON;
+		return CStringFactory.FREE;
 	}
 
 	/**
@@ -96,8 +89,8 @@ public class IString extends IDataValue {
 
 	/**
 	 * Tests whether this value-entity subsumes another specified
-	 * value-entity, which will be the case if and only if the
-	 * value-entities are equal, as determined via the {@link #equals}
+	 * value-entity, if and only if the other value-entity is another
+	 * <code>IString</code> object, as determined via the {@link #equals}
 	 * method.
 	 *
 	 * @param other Other value-entity to test for subsumption
@@ -116,6 +109,11 @@ public class IString extends IDataValue {
 	public String get() {
 
 		return value;
+	}
+
+	IString(String value) {
+
+		this.value = value;
 	}
 
 	String getDataValueDescription() {

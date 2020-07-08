@@ -97,9 +97,9 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
-	 * Stipulates that this meta-leval frame does define specific
-	 * constraints on the value-entities that it defines (the
-	 * constraints being that the value-entities must be
+	 * Stipulates that this meta-level frame does define specific
+	 * constraints on the concept-level frames that it defines (the
+	 * constraints being that the concept-level frames must be
 	 * concept-level frames subsumed by the root concept-level
 	 * frame).
 	 *
@@ -111,10 +111,10 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
-	 * Provides the unconstrained version of this value-type-entity,
+	 * Provides the unconstrained version of this meta-level frame,
 	 * which will be the root meta-level frame.
 	 *
-	 * @return Unconstrained version of this value-type-entity
+	 * @return Unconstrained version of this meta-level frame
 	 */
 	public MFrame toUnconstrained() {
 
@@ -122,7 +122,7 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
-	 * Stipulates that this meta-leval frame does define a default
+	 * Stipulates that this meta-level frame does define a default
 	 * value-entity, which will be the root concept-level frame.
 	 *
 	 * @return True always
@@ -133,7 +133,7 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
-	 * Stipulates that this meta-leval frame defines only a single
+	 * Stipulates that this meta-level frame defines only a single
 	 * possible value if and only if it's root concept-level frame
 	 * has no sub-frames with visibility status of
 	 * {@link CVisibility#EXPOSED}.

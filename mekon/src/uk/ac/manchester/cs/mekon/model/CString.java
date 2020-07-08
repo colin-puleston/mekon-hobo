@@ -24,17 +24,19 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon_util.*;
+
 /**
- * Represents the singleton string value-type.
+ * Represents a string value-type, which optionally may come with
+ * specific value constraints.
  *
  * @author Colin Puleston
  */
 public class CString extends CDataValue<IString> {
 
-	/**
-	 * Singleton string value-type object.
-	 */
-	static public final CString SINGLETON = new CString();
+	private CStringFormat format;
+	private CStringValidator validator;
 
 	/**
 	 * {@inheritDoc}
@@ -45,29 +47,32 @@ public class CString extends CDataValue<IString> {
 	}
 
 	/**
-	 * Stipulates that the string value-type is never constrained.
+	 * Stipulates that this string value-type defines specific
+	 * constraints on the string values that it defines if and only
+	 * if it does not have format {@link CStringFormat#FREE} (see
+	 * {@link #getFormat}.
 	 *
-	 * @return False always.
+	 * @return True if constraints defined on string values
 	 */
 	public boolean constrained() {
 
-		return false;
+		return format != CStringFormat.FREE;
 	}
 
 	/**
-	 * Provides the unconstrained version of this value-type-entity,
-	 * which will simply be this singleton string-type itself.
+	 * Provides the unconstrained version of this string value-type,
+	 * which will always be the singleton value {@link #UNCONSTRAINED}.
 	 *
-	 * @return Unconstrained version of this value-type-entity
+	 * @return Unconstrained version of this string value-type
 	 */
 	public CString toUnconstrained() {
 
-		return this;
+		return CStringFactory.FREE;
 	}
 
 	/**
-	 * Stipulates that the string value-type is never defines a
-	 * default value-entity.
+	 * Stipulates that the string value-type never defines a default
+	 * string value.
 	 *
 	 * @return False always.
 	 */
@@ -77,8 +82,8 @@ public class CString extends CDataValue<IString> {
 	}
 
 	/**
-	 * Stipulates that the string value-type is never defines only
-	 * a single possible value.
+	 * Stipulates that the string value-type never defines only a
+	 * single possible value.
 	 *
 	 * @return False always.
 	 */
@@ -90,9 +95,9 @@ public class CString extends CDataValue<IString> {
 	/**
 	 * Tests whether this value-type-entity subsumes another
 	 * specified value-type-entity, which will be the case if and
-	 * only if the other value-type-entity is a <code>CString</code>
-	 * object (which since this is a singleton class, will mean that
-	 * it is actually the same object as this one).
+	 * only if this string value-type has format
+	 * {@link CStringFormat.FREE} and the other value-type-entity
+	 * is a <code>CString</code>, which can have any format.
 	 *
 	 * @param other Other value-type-entity to test for subsumption
 	 * @return True if this value-type-entity subsumes other
@@ -100,7 +105,65 @@ public class CString extends CDataValue<IString> {
 	 */
 	public boolean subsumes(CValue<?> other) {
 
-		return other instanceof CString;
+		return other instanceof CString && format == CStringFormat.FREE;
+	}
+
+	/**
+	 * Provides the required format for the content of the string
+	 * values that the string value-type defines.
+	 *
+	 * @return Required format for defined string values
+	 */
+	public CStringFormat getFormat() {
+
+		return format;
+	}
+
+	/**
+	 * Provides description of the criteria by which values are
+	 * deemed valid for the string value-type.
+	 *
+	 * @return Description of relevant validity criteria
+	 */
+	public String describeValidityCriteria() {
+
+		return validator.describeValidityCriteria();
+	}
+
+	/**
+	 * Test whether specified text represents a valid value for
+	 * the string value-type.
+	 *
+	 * @param text Text to test for validity
+	 * @return True if supplied text represents valid value
+	 */
+	public boolean validValueText(String text) {
+
+		return validator.validValueText(text);
+	}
+
+	/**
+	 * Creates instantiation of the string value-type.
+	 *
+	 * @param text Text representing required value
+	 * @return Instantiation containing supplied text
+	 * @throws KAccessException if supplied text does not represent
+	 * valid value for string value-type
+	 */
+	public IString instantiate(String text) {
+
+		if (validValueText(text)) {
+
+			return new IString(text);
+		}
+
+		throw new KAccessException("Invalid value text: " + text);
+	}
+
+	CString(CStringFormat format, CStringValidator validator) {
+
+		this.format = format;
+		this.validator = validator;
 	}
 
 	CValue<?> update(CValue<?> other) {
@@ -120,14 +183,11 @@ public class CString extends CDataValue<IString> {
 
 	boolean validTypeValue(IString value) {
 
-		return true;
+		return validValueText(value.get());
 	}
 
 	String getDataValueDescription() {
 
 		return String.class.getSimpleName();
-	}
-
-	private CString() {
 	}
 }

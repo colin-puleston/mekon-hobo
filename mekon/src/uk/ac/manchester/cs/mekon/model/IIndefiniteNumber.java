@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon_util.*;
 
 /**
@@ -76,7 +77,7 @@ class IIndefiniteNumber extends ITypeNumber {
 		INumber min = adoptMin ? type.getMin() : valueType.getMin();
 		INumber max = adoptMax ? type.getMax() : valueType.getMax();
 
-		return CNumber.range(min, max);
+		return CNumberFactory.range(min, max);
 	}
 
 	String getDescription() {

@@ -42,6 +42,30 @@ public class INumber extends IDataValue {
 	 */
 	static public final INumber MINUS_INFINITY = new INumber(new IMinusInfinity());
 
+	/**
+	 * Constructs object representing the specified numeric-range
+	 * with the specified primitive Java <code>Number</code> type.
+	 * Unless the minimum and maximum values are equal then the
+	 * constructed object will represent an {@link INumber#indefinite}
+	 * value.
+	 *
+	 * @param numberType Required primitive Java <code>Number</code> type
+	 * @param min Minimnum range value
+	 * @param max Maximnum range value
+	 */
+	static public INumber range(
+							Class<? extends Number> numberType,
+							INumber min,
+							INumber max) {
+
+		return new CNumber(numberType, min, max).asINumber();
+	}
+
+	static INumber indefiniteRange(CNumber range) {
+
+		return new INumber(new IIndefiniteNumber(range));
+	}
+
 	private ITypeNumber typeNumber;
 
 	/**
@@ -59,12 +83,12 @@ public class INumber extends IDataValue {
 	 * Constructs object representing the specified numeric-value
 	 * with the specified primitive Java <code>Number</code> type.
 	 *
-	 * @param type Required primitive Java <code>Number</code> type
+	 * @param numberType Required primitive Java <code>Number</code> type
 	 * @param value String version of numeric-value to be represented
 	 */
-	public INumber(Class<? extends Number> type, String value) {
+	public INumber(Class<? extends Number> numberType, String value) {
 
-		this(IDefiniteNumberCreator.get().create(type, value));
+		this(IDefiniteNumberCreator.get().create(numberType, value));
 	}
 
 	/**
@@ -392,11 +416,6 @@ public class INumber extends IDataValue {
 	public Double asDouble() {
 
 		return typeNumber.asDouble();
-	}
-
-	INumber(CNumber valueType) {
-
-		typeNumber = new IIndefiniteNumber(valueType);
 	}
 
 	CNumber normaliseValueTypeTo(CNumber type) {

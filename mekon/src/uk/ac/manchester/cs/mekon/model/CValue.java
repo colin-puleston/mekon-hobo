@@ -93,14 +93,12 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	 */
 	public <T extends CValue<?>>T castAs(Class<T> type) {
 
-		if (!type.isAssignableFrom(getClass())) {
+		if (type.isAssignableFrom(getClass())) {
 
-			throw new KAccessException(
-						"Cannot cast: " + this
-						+ " as type: " + type);
+			return type.cast(this);
 		}
 
-		return type.cast(this);
+		throw new KAccessException("Cannot cast: " + this + " as type: " + type);
 	}
 
 	/**

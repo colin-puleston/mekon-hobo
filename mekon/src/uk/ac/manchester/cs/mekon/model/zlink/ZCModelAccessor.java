@@ -82,6 +82,29 @@ public abstract class ZCModelAccessor {
 	public abstract CBuilder createBuilder(CModel model);
 
 	/**
+	 * Creates a {@link CNumber} object.
+	 *
+	 * @param numberType Relevant number-type
+	 * @param min Minimnum value for defined number values
+	 * @param max Maximnum value for defined number values
+	 * @return Created object
+	 */
+	public abstract CNumber createCNumber(
+								Class<? extends Number> numberType,
+								INumber min,
+								INumber max);
+
+	/**
+	 * Creates a {@link CString} object with value constraints.
+	 *
+	 * @param format Required format for defined string values
+	 * @param validator Required validator on defined
+	 * string values
+	 * @return Created object
+	 */
+	public abstract CString createCString(CStringFormat format, CStringValidator validator);
+
+	/**
 	 * Retrieves the model being built by the specified builder.
 	 *
 	 * @param builder Relevant builder

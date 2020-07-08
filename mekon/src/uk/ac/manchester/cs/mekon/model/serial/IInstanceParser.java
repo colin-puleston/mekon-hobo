@@ -33,6 +33,7 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * Parser for the standard XML serialisation of MEKON instances as
@@ -452,7 +453,7 @@ public class IInstanceParser extends ISerialiser {
 
 				XNode valueTypeNode = slotNode.getChild(CNUMBER_ID);
 
-				return CNumber.unconstrained(getNumberType(valueTypeNode));
+				return CNumberFactory.unconstrained(getNumberType(valueTypeNode));
 			}
 
 			XNode resolveValueSpec(XNode valueNode) {
@@ -528,12 +529,12 @@ public class IInstanceParser extends ISerialiser {
 
 			CValue<?> getValueType(XNode valueTypeNode) {
 
-				return CString.SINGLETON;
+				return parseCString(valueTypeNode);
 			}
 
 			CValue<?> getDefaultValueType(XNode slotNode) {
 
-				return CString.SINGLETON;
+				return CStringFactory.FREE;
 			}
 
 			IValue resolveValueSpec(XNode valueNode) {
@@ -703,7 +704,7 @@ public class IInstanceParser extends ISerialiser {
 
 		private IString parseIString(XNode node) {
 
-			return new IString(node.getString(STRING_VALUE_ATTR));
+			return CStringFactory.FREE.instantiate(node.getString(STRING_VALUE_ATTR));
 		}
 
 		private MFrame parseMFrame(XNode node) {
@@ -755,7 +756,19 @@ public class IInstanceParser extends ISerialiser {
 				max = parseDefiniteINumber(numberType, node, NUMBER_MAX_ATTR);
 			}
 
-			return CNumber.range(numberType, min, max);
+			return CNumberFactory.range(numberType, min, max);
+		}
+
+		private CString parseCString(XNode node) {
+
+			CStringFormat format = getCStringFormat(node);
+
+			if (format == CStringFormat.CUSTOM) {
+
+				return CStringFactory.custom(getCStringValidatorClass(node));
+			}
+
+			return CStringFactory.standard(format);
 		}
 
 		private void parseISlot(IFrame container, XNode slotNode) {
@@ -796,6 +809,16 @@ public class IInstanceParser extends ISerialiser {
 			}
 
 			return frame;
+		}
+
+		private CStringFormat getCStringFormat(XNode node) {
+
+			return node.getEnum(STRING_FORMAT_ATTR, CStringFormat.class, CStringFormat.FREE);
+		}
+
+		private Class<? extends CStringValidator> getCStringValidatorClass(XNode node) {
+
+			return loadClass(node.getString(STRING_VALIDATOR_CLASS_ATTR), CStringValidator.class);
 		}
 
 		private boolean validFrame(IFrame frame) {
@@ -1059,5 +1082,10 @@ public class IInstanceParser extends ISerialiser {
 	private ISlotValuesEditor getValuesEditor(ISlot slot) {
 
 		return iEditor.getSlotValuesEditor(slot);
+	}
+
+	private <T>Class<? extends T> loadClass(String className, Class<T> type) {
+
+		return new KConfigClassLoader(className).load(type);
 	}
 }

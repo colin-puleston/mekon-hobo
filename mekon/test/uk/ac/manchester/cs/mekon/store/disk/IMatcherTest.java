@@ -65,13 +65,18 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	static private final int MID_PAY_RATE = 15;
 	static private final int HIGH_PAY_RATE = 16;
 
-	static private final IString BOB_NAME = new IString("Bob Bell");
-	static private final IString BOB_ADDRESS = new IString("66 Bob Street, Bobsville");
-	static private final IString BOBS_LODGER_NAME = new IString("Jim the lodger");
+	static private final IString BOB_NAME = createIString("Bob Bell");
+	static private final IString BOB_ADDRESS = createIString("66 Bob Street, Bobsville");
+	static private final IString BOBS_LODGER_NAME = createIString("Jim the lodger");
 
 	static private CIdentity createInstanceId(String name) {
 
 		return new CIdentity(name + "Id", name);
+	}
+
+	static private IString createIString(String value) {
+
+		return CStringFactory.FREE.instantiate(value);
 	}
 
 	private IDiskStore store;
@@ -657,7 +662,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private INumber createRangeAsINumber(int min, int max) {
 
-		return CNumber.range(min, max).asINumber();
+		return INumber.range(Integer.class, new INumber(min), new INumber(max));
 	}
 
 	private IFrame createIDisjunction(IFrame... disjuncts) {

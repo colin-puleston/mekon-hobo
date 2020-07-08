@@ -232,7 +232,7 @@ public class TestInstances {
 		tex = createFrameType("EX");
 		tey = createFrameType("EY");
 
-		tn = CNumber.range(1, 10);
+		tn = CNumberFactory.range(1, 10);
 
 		sab = slotTypes.create(ta, "sab", tb);
 		sac = slotTypes.create(ta, "sac", tc);

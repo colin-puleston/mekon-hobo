@@ -27,6 +27,8 @@ package uk.ac.manchester.cs.mekon.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
+
 /**
  * @author Colin Puleston
  */
@@ -69,12 +71,12 @@ public class CNumberTest extends CValueTest<CNumber> {
 
 	private CNumber getNumber() {
 
-		return CNumber.INTEGER;
+		return CNumberFactory.INTEGER;
 	}
 
 	private CNumber getNumber(Integer min, Integer max) {
 
-		return CNumber.range(min, max);
+		return CNumberFactory.range(min, max);
 	}
 
 	private void testIntersecting(CNumber n1, CNumber n2) {

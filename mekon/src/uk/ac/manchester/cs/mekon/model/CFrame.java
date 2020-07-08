@@ -204,9 +204,9 @@ public abstract class CFrame
 
 	/**
 	 * Stipulates that this frame does define specific constraints
-	 * on the value-entities that it defines (the constraints being
-	 * that the value-entities must be instantiations of this frame
-	 * or some descendant-frame).
+	 * on the instance-level frames that it defines (the constraints
+	 * being that the instance-level frames must be instantiations
+	 * of this frame or some descendant-frame).
 	 *
 	 * @return True always.
 	 */
@@ -216,10 +216,10 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Provides the unconstrained version of this value-type-entity,
+	 * Provides the unconstrained version of this concept-level frame,
 	 * which will be the root concept-level frame.
 	 *
-	 * @return Unconstrained version of this value-type-entity
+	 * @return Unconstrained version of this concept-level frame
 	 */
 	public CFrame toUnconstrained() {
 
@@ -560,7 +560,7 @@ public abstract class CFrame
 	public abstract CSlotValues getSlotValues();
 
 	/**
-	 * Stipulates that this concept-leval frame does define a default
+	 * Stipulates that this concept-level frame does define a default
 	 * value-entity, which will be a direct instantiation of the
 	 * frame with no slot-values being set.
 	 *
@@ -572,7 +572,7 @@ public abstract class CFrame
 	}
 
 	/**
-	 * Stipulates that this concept-leval frame defines only a single
+	 * Stipulates that this concept-level frame defines only a single
 	 * possible value if and only if it has no sub-frames with
 	 * visibility status of {@link CVisibility#EXPOSED}.
 	 *
