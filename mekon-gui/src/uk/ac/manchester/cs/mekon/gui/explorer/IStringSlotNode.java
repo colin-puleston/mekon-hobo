@@ -68,7 +68,8 @@ class IStringSlotNode extends ISlotNode {
 
 	IValue checkObtainValue() {
 
-		IStringInputter inputter = new IStringInputter(tree, false);
+		CString valueType = (CString)getISlot().getValueType();
+		IStringInputter inputter = new IStringInputter(tree, valueType, false);
 
 		return inputter.display() == EditStatus.INPUTTED ? inputter.getInput() : null;
 	}

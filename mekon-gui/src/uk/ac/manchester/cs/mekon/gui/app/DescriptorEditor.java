@@ -334,9 +334,16 @@ class DescriptorEditor {
 
 	private class CStringTypeHandler extends DataTypeHandler<IString> {
 
+		private CString valueType;
+
+		CStringTypeHandler(CString valueType) {
+
+			this.valueType = valueType;
+		}
+
 		IStringInputter createInputter(boolean canClear) {
 
-			return new IStringInputter(parent, canClear);
+			return new IStringInputter(parent, valueType, canClear);
 		}
 	}
 
@@ -354,7 +361,7 @@ class DescriptorEditor {
 
 		protected void visit(CString value) {
 
-			typeHandler = new CStringTypeHandler();
+			typeHandler = new CStringTypeHandler(value);
 		}
 
 		protected void visit(MFrame value) {

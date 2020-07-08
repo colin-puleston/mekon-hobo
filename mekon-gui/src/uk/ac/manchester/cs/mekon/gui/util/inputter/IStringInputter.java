@@ -35,26 +35,40 @@ public class IStringInputter extends SimpleTextInputter<IString> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String DEFAULT_TITLE = "Enter Value";
+	static private final String DEFAULT_TITLE_FORMAT = "Enter Value: %";
 
-	public IStringInputter(JComponent parent, boolean canClear) {
+	static private String createDefaultTitle(CString type) {
 
-		this(parent, DEFAULT_TITLE, canClear);
+		return String.format(DEFAULT_TITLE_FORMAT, type.describeValidityCriteria());
 	}
 
-	public IStringInputter(JComponent parent, String title, boolean canClear) {
+	private CString type;
+
+	public IStringInputter(JComponent parent, CString type, boolean canClear) {
+
+		this(parent, createDefaultTitle(type), type, canClear);
+	}
+
+	public IStringInputter(JComponent parent, String title, CString type, boolean canClear) {
 
 		super(parent, title, canClear);
+
+		this.type = type;
 	}
 
 	protected IString convertInputValue(String text) {
 
-		return new IString(text);
+		return type.instantiate(text);
 	}
 
 	protected boolean emptyValue(IString value) {
 
 		return value.get().length() == 0;
+	}
+
+	protected boolean validInputText(String text) {
+
+		return super.validInputText(text) && type.validValueText(text);
 	}
 }
 

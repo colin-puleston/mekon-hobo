@@ -156,6 +156,6 @@ public class IndefiniteINumberInputter extends INumberInputter {
 			max = type.getMax();
 		}
 
-		return CNumber.range(type.getNumberType(), min, max).asINumber();
+		return INumber.range(type.getNumberType(), min, max);
 	}
 }
