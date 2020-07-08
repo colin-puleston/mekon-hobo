@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
 
@@ -153,12 +154,12 @@ class OBNumbers {
 
 		CNumber getUnconstrainedRange() {
 
-			return CNumber.INTEGER;
+			return CNumberFactory.INTEGER;
 		}
 
 		CNumber createRange(Integer min, Integer max) {
 
-			return CNumber.range(min, max);
+			return CNumberFactory.range(min, max);
 		}
 	}
 
@@ -176,12 +177,12 @@ class OBNumbers {
 
 		CNumber getUnconstrainedRange() {
 
-			return CNumber.LONG;
+			return CNumberFactory.LONG;
 		}
 
 		CNumber createRange(Long min, Long max) {
 
-			return CNumber.range(min, max);
+			return CNumberFactory.range(min, max);
 		}
 	}
 
@@ -199,12 +200,12 @@ class OBNumbers {
 
 		CNumber getUnconstrainedRange() {
 
-			return CNumber.FLOAT;
+			return CNumberFactory.FLOAT;
 		}
 
 		CNumber createRange(Float min, Float max) {
 
-			return CNumber.range(min, max);
+			return CNumberFactory.range(min, max);
 		}
 	}
 
@@ -222,12 +223,12 @@ class OBNumbers {
 
 		CNumber getUnconstrainedRange() {
 
-			return CNumber.DOUBLE;
+			return CNumberFactory.DOUBLE;
 		}
 
 		CNumber createRange(Double min, Double max) {
 
-			return CNumber.range(min, max);
+			return CNumberFactory.range(min, max);
 		}
 	}
 

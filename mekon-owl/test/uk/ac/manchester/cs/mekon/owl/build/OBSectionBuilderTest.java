@@ -33,9 +33,10 @@ import static org.junit.Assert.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.demomodel.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.test_util.*;
+import uk.ac.manchester.cs.mekon.demomodel.*;
 
 /**
  * @author Colin Puleston
@@ -305,7 +306,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 			PERSONAL,
 			AGE_PROPERTY,
 			CCardinality.SINGLE_VALUE,
-			CNumber.min(0));
+			CNumberFactory.min(0));
 	}
 
 	private void testSlotValues() {
