@@ -169,20 +169,30 @@ public interface DObjectBuilder {
 
 	/**
 	 * Creates a single-valued OM field with number-type values,
-	 * with specified value-constraints.
+	 * with specified range-constraints.
 	 *
 	 * @param <N> Value-type of number-cell
-	 * @param range Specific value-constraints
+	 * @param range Range-constraints of number-cell
 	 * @return Created field
 	 */
 	public <N extends Number>DCell<N> addNumberCell(DNumberRange<N> range);
 
 	/**
-	 * Creates a single-valued OM field with string-type values.
+	 * Creates a single-valued OM field with unconstrained string-type
+	 * values.
 	 *
 	 * @return Created field
 	 */
 	public DCell<String> addStringCell();
+
+	/**
+	 * Creates a single-valued OM field with string-type values.
+	 *
+	 * @param constraints Object providing constraints on string-cell
+	 * value
+	 * @return Created field
+	 */
+	public DCell<String> addStringCell(CString constraints);
 
 	/**
 	 * Enables the explicit specification of the "container-class"

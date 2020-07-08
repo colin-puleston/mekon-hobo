@@ -227,7 +227,12 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	public DCell<String> addStringCell() {
 
-		return addField(new DCell<String>(model, DStringValueType.SINGLETON));
+		return addStringCell(DStringValueType.UNCONSTRAINED);
+	}
+
+	public DCell<String> addStringCell(CString constraints) {
+
+		return addField(new DCell<String>(model, new DStringValueType(constraints)));
 	}
 
 	public void setContainerClass(
@@ -367,6 +372,11 @@ class DObjectBuilderImpl implements DObjectBuilder {
 	private <D extends DObject>DValueType<DConcept<D>> createConceptValueType(Class<D> valueClass) {
 
 		return new DConceptValueType<D>(model, valueClass, getCFrame(valueClass));
+	}
+
+	private DCell<String> addStringCell(DStringValueType valueType) {
+
+		return addField(new DCell<String>(model, valueType));
 	}
 
 	private <F extends DField<?>>F addField(F field) {

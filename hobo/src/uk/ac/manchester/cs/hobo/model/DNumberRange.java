@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * Represents a numeric range.
@@ -37,25 +38,25 @@ public class DNumberRange<N extends Number> {
 	 * Represents an unconstrained integer-range.
 	 */
 	static public final DNumberRange<Integer> INTEGER
-							= createInteger(CNumber.INTEGER);
+							= createInteger(CNumberFactory.INTEGER);
 
 	/**
 	 * Represents an unconstrained long-range.
 	 */
 	static public final DNumberRange<Long> LONG
-							= createLong(CNumber.LONG);
+							= createLong(CNumberFactory.LONG);
 
 	/**
 	 * Represents an unconstrained float-range.
 	 */
 	static public final DNumberRange<Float> FLOAT
-							= createFloat(CNumber.FLOAT);
+							= createFloat(CNumberFactory.FLOAT);
 
 	/**
 	 * Represents an unconstrained double-range.
 	 */
 	static public final DNumberRange<Double> DOUBLE
-							= createDouble(CNumber.DOUBLE);
+							= createDouble(CNumberFactory.DOUBLE);
 
 	/**
 	 * Creates a integer-range with the specified limits.
@@ -66,7 +67,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> range(Integer min, Integer max) {
 
-		return createInteger(CNumber.range(min, max));
+		return createInteger(CNumberFactory.range(min, max));
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> range(Long min, Long max) {
 
-		return createLong(CNumber.range(min, max));
+		return createLong(CNumberFactory.range(min, max));
 	}
 
 	/**
@@ -90,7 +91,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> range(Float min, Float max) {
 
-		return createFloat(CNumber.range(min, max));
+		return createFloat(CNumberFactory.range(min, max));
 	}
 
 	/**
@@ -102,7 +103,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> range(Double min, Double max) {
 
-		return createDouble(CNumber.range(min, max));
+		return createDouble(CNumberFactory.range(min, max));
 	}
 
 	/**
@@ -113,7 +114,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> min(Integer min) {
 
-		return createInteger(CNumber.min(min));
+		return createInteger(CNumberFactory.min(min));
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> min(Long min) {
 
-		return createLong(CNumber.min(min));
+		return createLong(CNumberFactory.min(min));
 	}
 
 
@@ -136,7 +137,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> min(Float min) {
 
-		return createFloat(CNumber.min(min));
+		return createFloat(CNumberFactory.min(min));
 	}
 
 
@@ -148,7 +149,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> min(Double min) {
 
-		return createDouble(CNumber.min(min));
+		return createDouble(CNumberFactory.min(min));
 	}
 
 	/**
@@ -159,7 +160,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> max(Integer max) {
 
-		return createInteger(CNumber.max(max));
+		return createInteger(CNumberFactory.max(max));
 	}
 
 	/**
@@ -170,7 +171,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> max(Long max) {
 
-		return createLong(CNumber.max(max));
+		return createLong(CNumberFactory.max(max));
 	}
 
 	/**
@@ -181,7 +182,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> max(Float max) {
 
-		return createFloat(CNumber.max(max));
+		return createFloat(CNumberFactory.max(max));
 	}
 
 	/**
@@ -192,7 +193,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> max(Double max) {
 
-		return createDouble(CNumber.max(max));
+		return createDouble(CNumberFactory.max(max));
 	}
 
 	/**
@@ -203,7 +204,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Integer> exact(Integer exact) {
 
-		return createInteger(CNumber.exact(exact));
+		return createInteger(CNumberFactory.exact(exact));
 	}
 
 	/**
@@ -214,7 +215,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Long> exact(Long exact) {
 
-		return createLong(CNumber.exact(exact));
+		return createLong(CNumberFactory.exact(exact));
 	}
 
 	/**
@@ -225,7 +226,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Float> exact(Float exact) {
 
-		return createFloat(CNumber.exact(exact));
+		return createFloat(CNumberFactory.exact(exact));
 	}
 
 	/**
@@ -236,7 +237,7 @@ public class DNumberRange<N extends Number> {
 	 */
 	static public DNumberRange<Double> exact(Double exact) {
 
-		return createDouble(CNumber.exact(exact));
+		return createDouble(CNumberFactory.exact(exact));
 	}
 
 	static private DNumberRange<Integer> createInteger(CNumber cNumber) {

@@ -25,22 +25,30 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
  */
 class DStringValueType extends DValueType<String> {
 
-	static final DStringValueType SINGLETON = new DStringValueType();
+	static final DStringValueType UNCONSTRAINED = new DStringValueType(CStringFactory.FREE);
+
+	private CString slotValueType;
+
+	DStringValueType(CString slotValueType) {
+
+		this.slotValueType = slotValueType;
+	}
 
 	CString getSlotValueType() {
 
-		return CString.SINGLETON;
+		return slotValueType;
 	}
 
 	IValue toSlotValue(String value) {
 
-		return new IString(value);
+		return slotValueType.instantiate(value);
 	}
 
 	String toFieldValue(IValue value) {
@@ -56,8 +64,5 @@ class DStringValueType extends DValueType<String> {
 	CCardinality getDefaultCardinalityForArrays() {
 
 		throw new Error("Method should never be invoked!");
-	}
-
-	private DStringValueType() {
 	}
 }
