@@ -150,12 +150,11 @@ public class IndefiniteINumberInputter extends INumberInputter {
 
 			min = type.getMin();
 		}
-
-		if (max == NO_VALUE) {
+		else if (max == NO_VALUE) {
 
 			max = type.getMax();
 		}
 
-		return INumber.range(type.getNumberType(), min, max);
+		return INumber.range(min, max);
 	}
 }
