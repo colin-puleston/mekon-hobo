@@ -62,16 +62,7 @@ class StandardCStrings {
 
 		public boolean validValueText(String text) {
 
-			try {
-
-				new URI(text);
-
-				return true;
-			}
-			catch (URISyntaxException e) {
-
-				return false;
-			}
+			return validURIText(text);
 		}
 	}
 
@@ -84,16 +75,7 @@ class StandardCStrings {
 
 		public boolean validValueText(String text) {
 
-			try {
-
-				new URL(text);
-
-				return true;
-			}
-			catch (MalformedURLException e) {
-
-				return false;
-			}
+			return validURLText(text);
 		}
 	}
 
@@ -136,5 +118,33 @@ class StandardCStrings {
 	private CString create(CStringFormat format, CStringValidator validator) {
 
 		return ZCModelAccessor.get().createCString(format, validator);
+	}
+
+	private boolean validURIText(String text) {
+
+		try {
+
+			new URI(text);
+
+			return true;
+		}
+		catch (URISyntaxException e) {
+
+			return false;
+		}
+	}
+
+	private boolean validURLText(String text) {
+
+		try {
+
+			new URL(text);
+
+			return validURIText(text);
+		}
+		catch (MalformedURLException e) {
+
+			return false;
+		}
 	}
 }
