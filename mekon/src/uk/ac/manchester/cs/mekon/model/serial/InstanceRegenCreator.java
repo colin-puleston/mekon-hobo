@@ -43,7 +43,9 @@ class InstanceRegenCreator {
 
 		void processAll(IFrame rootFrame) {
 
-			processFromSlots(rootFrame, new ArrayList<String>());
+			processFromSlots(
+				rootFrame,
+				extendPathWithId(new ArrayList<String>(), rootFrame));
 		}
 
 		abstract void processSlot(ISlot slot, List<String> path);
@@ -172,7 +174,7 @@ class InstanceRegenCreator {
 
 		if (value instanceof IFrame) {
 
-			return extendPathWithId(path, ((IFrame)value).getType());
+			return extendPathWithId(path, (IFrame)value);
 		}
 
 		if (value instanceof CFrame) {
@@ -181,6 +183,11 @@ class InstanceRegenCreator {
 		}
 
 		return extendPathWithString(path, value.toString());
+	}
+
+	private List<String> extendPathWithId(List<String> path, IFrame next) {
+
+		return extendPathWithId(path, next.getType());
 	}
 
 	private List<String> extendPathWithId(List<String> path, CIdentified next) {

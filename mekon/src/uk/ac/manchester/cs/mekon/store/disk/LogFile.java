@@ -73,7 +73,9 @@ class LogFile {
 
 		private void logInvalid() {
 
-			startWarningLog("Invalid root-frame-type: " + output.getRootTypeId());
+			String rootLabel = output.getRootTypeId().getLabel();
+
+			startWarningLog("Invalid root-frame-type: \"" + rootLabel + "\"");
 			endWarningLog("Instance cannot be loaded");
 		}
 

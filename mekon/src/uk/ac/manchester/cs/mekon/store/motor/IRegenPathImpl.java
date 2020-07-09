@@ -56,7 +56,7 @@ class IRegenPathImpl implements IRegenPath {
 
 	public String toString() {
 
-		return getPathTypePrefix() + pathToString();
+		return getPathTypePrefix() + "\"" + pathToString() + "\"";
 	}
 
 	public String pathToString() {
