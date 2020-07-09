@@ -35,7 +35,7 @@ public class IStringInputter extends SimpleTextInputter<IString> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String DEFAULT_TITLE_FORMAT = "Enter Value: %";
+	static private final String DEFAULT_TITLE_FORMAT = "Enter Value: %s";
 
 	static private String createDefaultTitle(CString type) {
 
@@ -58,17 +58,12 @@ public class IStringInputter extends SimpleTextInputter<IString> {
 
 	protected IString convertInputValue(String text) {
 
-		return type.instantiate(text);
+		return type.validValueText(text) ? type.instantiate(text) : IString.EMPTY_STRING;
 	}
 
 	protected boolean emptyValue(IString value) {
 
 		return value.get().length() == 0;
-	}
-
-	protected boolean validInputText(String text) {
-
-		return super.validInputText(text) && type.validValueText(text);
 	}
 }
 
