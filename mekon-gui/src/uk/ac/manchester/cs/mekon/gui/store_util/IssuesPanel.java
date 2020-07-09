@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.gui.store_util;
 
 import java.util.*;
+import java.awt.Dimension;
 import java.awt.BorderLayout;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -42,6 +43,9 @@ abstract class IssuesPanel extends JPanel {
 
 	static private final String CLEAN_ALL_LABEL = "All";
 	static private final String CLEAN_SELECTIONS_LABEL = "Selections";
+
+	static private final int WIDTH = 300;
+	static private final int HEIGHT = 400;
 
 	private GList<CIdentity> instanceIdsList = new GList<CIdentity>(true, true);
 
@@ -243,6 +247,11 @@ abstract class IssuesPanel extends JPanel {
 
 			return new SelectionsCleaner();
 		}
+	}
+
+	public Dimension getPreferredSize() {
+
+		return new Dimension(WIDTH, HEIGHT);
 	}
 
 	IssuesPanel() {

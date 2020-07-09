@@ -51,13 +51,10 @@ public class MekonStoreCleaner extends GFrame {
 	static private final String CLEAN_PART_VALIDS_LABEL = "Prune";
 	static private final String VIEW_LOG_LABEL = "View log file...";
 
-	static private final int FRAME_WIDTH = 500;
-	static private final int FRAME_HEIGHT = 500;
-
 	static private final Icon VALID_ICON = createIcon(Color.GREEN.darker());
 	static private final Icon INVALID_ICON = createIcon(Color.RED.darker());
 	static private final Icon PART_VALID_ICON = createIcon(Color.YELLOW.darker());
-	static private final Icon REMOVED_ICON = createIcon(Color.WHITE);
+	static private final Icon REMOVED_ICON = createIcon(Color.GRAY.brighter());
 
 	static public void main(String[] args) {
 
@@ -206,7 +203,7 @@ public class MekonStoreCleaner extends GFrame {
 
 	public MekonStoreCleaner(IStore store) {
 
-		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
+		super(MAIN_TITLE);
 
 		this.store = store;
 

@@ -66,10 +66,9 @@ class LogFileDialog extends GDialog {
 
 		JTextArea area = new JTextArea();
 
-		setAreaFont(area);
 		readContents(area, file);
 
-		return new JScrollPane(area);
+		return createTextComponent(area);
 	}
 
 	private JComponent createLocationComponent(File file) {
@@ -85,7 +84,10 @@ class LogFileDialog extends GDialog {
 
 	private JComponent createPathComponent(File file) {
 
-		JTextArea area = new JTextArea(file.getPath());
+		return createTextComponent(new JTextArea(file.getPath()));
+	}
+
+	private JComponent createTextComponent(JTextArea area) {
 
 		setAreaFont(area);
 		area.setEditable(false);
