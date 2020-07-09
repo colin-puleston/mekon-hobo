@@ -140,6 +140,9 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		return icon;
 	}
 
+	protected void onLabelAdded(JLabel label) {
+	}
+
 	JComponent createComponent(boolean selected) {
 
 		List<Component> components = new ArrayList<Component>();
@@ -193,6 +196,8 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 			label.setOpaque(true);
 			label.setBackground(background);
 		}
+
+		onLabelAdded(label);
 
 		return label;
 	}
