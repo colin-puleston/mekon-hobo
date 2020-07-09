@@ -88,4 +88,7 @@ abstract class InstanceNode extends GNode {
 
 		return tree.viewOnly();
 	}
+
+	void onMousePresenceUpdate(boolean present) {
+	}
 }

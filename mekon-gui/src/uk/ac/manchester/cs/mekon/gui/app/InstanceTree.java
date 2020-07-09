@@ -24,6 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.gui.app;
 
+import java.awt.event.*;
+import javax.swing.tree.*;
+
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -38,6 +41,32 @@ class InstanceTree extends GActionTree {
 	private RootInstanceNode rootNode;
 	private boolean viewOnly = false;
 
+	private class MouseLocator extends MouseMotionAdapter {
+
+		private InstanceNode location = null;
+
+		public void mouseMoved(MouseEvent event) {
+
+			if (location != null) {
+
+				location.onMousePresenceUpdate(false);
+			}
+
+			TreePath path = getPathForLocation(event.getX(), event.getY());
+
+			if (path != null) {
+
+				location = (InstanceNode)path.getLastPathComponent();
+
+				location.onMousePresenceUpdate(true);
+			}
+			else {
+
+				location = null;
+			}
+		}
+	}
+
 	InstanceTree(Instantiator instantiator) {
 
 		this.instantiator = instantiator;
@@ -46,6 +75,8 @@ class InstanceTree extends GActionTree {
 
 		setRootVisible(true);
 		setShowsRootHandles(false);
+
+		addMouseMotionListener(new MouseLocator());
 
 		initialise(rootNode);
 	}

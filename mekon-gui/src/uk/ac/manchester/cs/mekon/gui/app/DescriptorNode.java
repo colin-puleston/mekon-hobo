@@ -77,7 +77,7 @@ class DescriptorNode extends InstanceNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return new DescriptorCellDisplay(descriptor, queryInstance(), viewOnly()).create();
+		return new DescriptorCellDisplay(descriptor, queryInstance()).create();
 	}
 
 	protected GNodeAction getPositiveAction1() {

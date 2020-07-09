@@ -35,22 +35,34 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 class DescriptorCellDisplay {
 
 	static private final Color NON_EDITABLE_BACKGROUND_CLR = new Color(220,220,200);
-	static private final Color URL_VALUE_CLR = Color.BLUE;
 
 	static private final String OR_LABEL = "or";
 
 	private Descriptor descriptor;
 	private boolean queryInstance;
-	private boolean viewOnlyMode;
 
-	DescriptorCellDisplay(
-		Descriptor descriptor,
-		boolean queryInstance,
-		boolean viewOnlyMode) {
+	private class MonitoredCellDisplay extends GCellDisplay {
+
+		protected void onLabelAdded(JLabel label) {
+
+			DescriptorCellDisplay.this.onLabelAdded(label);
+		}
+
+		MonitoredCellDisplay(String text) {
+
+			super(text);
+		}
+
+		MonitoredCellDisplay(String text, Icon icon) {
+
+			super(text, icon);
+		}
+	}
+
+	DescriptorCellDisplay(Descriptor descriptor, boolean queryInstance) {
 
 		this.descriptor = descriptor;
 		this.queryInstance = queryInstance;
-		this.viewOnlyMode = viewOnlyMode;
 	}
 
 	GCellDisplay create() {
@@ -65,9 +77,12 @@ class DescriptorCellDisplay {
 		return display;
 	}
 
+	void onLabelAdded(JLabel label) {
+	}
+
 	private GCellDisplay createForId() {
 
-		return new GCellDisplay(descriptor.getIdentityLabel(), getIcon());
+		return new MonitoredCellDisplay(descriptor.getIdentityLabel(), getIcon());
 	}
 
 	private GCellDisplay createForValue() {
@@ -103,17 +118,12 @@ class DescriptorCellDisplay {
 
 		comp.setFontStyle(Font.BOLD);
 
-		if (viewOnlyMode && descriptor.hasURLValue()) {
-
-			comp.setTextColour(URL_VALUE_CLR);
-		}
-
 		return comp;
 	}
 
 	private GCellDisplay createValueComponent(String label) {
 
-		GCellDisplay comp = new GCellDisplay(label);
+		GCellDisplay comp = new MonitoredCellDisplay(label);
 
 		if (!editable()) {
 

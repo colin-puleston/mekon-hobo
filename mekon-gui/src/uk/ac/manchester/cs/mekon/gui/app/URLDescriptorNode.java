@@ -27,21 +27,57 @@ package uk.ac.manchester.cs.mekon.gui.app;
 import java.io.*;
 import java.net.*;
 import java.awt.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
 class URLDescriptorNode extends DescriptorNode {
 
+	static private final Color SELECTABLE_URL_CLR = Color.BLUE;
+	static private final Color SELECTED_URL_CLR = Color.CYAN;
+
+	private Descriptor descriptor;
 	private URI url;
+
+	private boolean mousePresent = false;
+
+	private class CellDisplay extends DescriptorCellDisplay {
+
+		CellDisplay() {
+
+			super(descriptor, queryInstance());
+		}
+
+		void onLabelAdded(JLabel label) {
+
+			if (viewOnly() && urlLabel(label)) {
+
+				label.setForeground(mousePresent ? SELECTED_URL_CLR : SELECTABLE_URL_CLR);
+			}
+		}
+
+		private boolean urlLabel(JLabel label) {
+
+			return label.getText().equals(url.toString());
+		}
+	}
+
+	protected GCellDisplay getDisplay() {
+
+		return new CellDisplay().create();
+	}
 
 	URLDescriptorNode(InstanceTree tree, Descriptor descriptor) {
 
 		super(tree, descriptor);
 
-		url = extractURIOrNull(descriptor);
+		this.descriptor = descriptor;
+
+		url = extractURLOrNull();
 	}
 
 	void performViewAction() {
@@ -59,7 +95,17 @@ class URLDescriptorNode extends DescriptorNode {
 		}
 	}
 
-	private URI extractURIOrNull(Descriptor descriptor) {
+	void onMousePresenceUpdate(boolean present) {
+
+		if (viewOnly()) {
+
+			mousePresent = present;
+
+			updateNodeDisplay();
+		}
+	}
+
+	private URI extractURLOrNull() {
 
 		if (descriptor.hasValue()) {
 
