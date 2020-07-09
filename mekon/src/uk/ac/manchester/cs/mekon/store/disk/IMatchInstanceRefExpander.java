@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 /**
@@ -118,7 +119,7 @@ public class IMatchInstanceRefExpander {
 
 	private void checkExpand(ISlot slot, CIdentity refId) {
 
-		IFrame refed = getFromStoreOrNull(refId);
+		IFrame refed = getFromStoreAndFreeCopyOrNull(refId);
 
 		if (refed != null && canExpand(refed)) {
 
@@ -127,13 +128,13 @@ public class IMatchInstanceRefExpander {
 		}
 	}
 
-	private IFrame getFromStoreOrNull(CIdentity instanceRef) {
+	private IFrame getFromStoreAndFreeCopyOrNull(CIdentity instanceRef) {
 
 		IRegenInstance regen = store.get(instanceRef);
 
 		if (regen != null && regen.getStatus() != IRegenStatus.FULLY_INVALID) {
 
-			return regen.getRootFrame();
+			return IFreeCopier.get().createFreeCopy(regen.getRootFrame());
 		}
 
 		return null;

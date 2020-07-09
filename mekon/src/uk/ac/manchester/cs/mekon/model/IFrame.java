@@ -824,7 +824,7 @@ public abstract class IFrame implements IEntity, IValue {
 
 		referencer.validateAsReferencingFrame();
 
-		if (function != referencer.function) {
+		if (!freeInstance && function != referencer.function) {
 
 			throw new KAccessException(
 						"Cannot add " + function + " frame: " + this
