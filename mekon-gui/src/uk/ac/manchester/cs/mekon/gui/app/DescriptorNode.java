@@ -36,25 +36,29 @@ class DescriptorNode extends InstanceNode {
 
 	private Descriptor descriptor;
 
-	private GNodeAction editAction;
+	private GNodeAction action;
 	private DescriptorEditor editor;
 
-	private abstract class EditActiveAction extends GNodeAction {
+	private abstract class DescriptorAction extends GNodeAction {
 
 		protected void perform() {
 
-			if (!viewOnly()) {
+			if (viewOnly()) {
 
-				performEditActiveAction();
+				performViewAction();
+			}
+			else {
+
+				performEditAction();
 			}
 		}
 
-		abstract void performEditActiveAction();
+		abstract void performEditAction();
 	}
 
-	private class EditAction extends EditActiveAction {
+	private class UserEditAction extends DescriptorAction {
 
-		void performEditActiveAction() {
+		void performEditAction() {
 
 			if (editor.performEditAction()) {
 
@@ -63,9 +67,9 @@ class DescriptorNode extends InstanceNode {
 		}
 	}
 
-	private class NoEditAction extends EditActiveAction {
+	private class AutoEditAction extends DescriptorAction {
 
-		void performEditActiveAction() {
+		void performEditAction() {
 
 			JOptionPane.showMessageDialog(null, "Automatically derived value!");
 		}
@@ -73,12 +77,12 @@ class DescriptorNode extends InstanceNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return new DescriptorCellDisplay(descriptor, queryInstance()).create();
+		return new DescriptorCellDisplay(descriptor, queryInstance(), viewOnly()).create();
 	}
 
 	protected GNodeAction getPositiveAction1() {
 
-		return editAction;
+		return action;
 	}
 
 	DescriptorNode(InstanceTree tree, Descriptor descriptor) {
@@ -87,13 +91,16 @@ class DescriptorNode extends InstanceNode {
 
 		this.descriptor = descriptor;
 
-		editAction = createEditAction();
+		action = createAction();
 		editor = createEditor();
 	}
 
-	private GNodeAction createEditAction() {
+	void performViewAction() {
+	}
 
-		return descriptor.userEditable() ? new EditAction() : new NoEditAction();
+	private GNodeAction createAction() {
+
+		return descriptor.userEditable() ? new UserEditAction() : new AutoEditAction();
 	}
 
 	private DescriptorEditor createEditor() {

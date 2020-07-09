@@ -24,40 +24,50 @@
 
 package uk.ac.manchester.cs.mekon.gui.app;
 
+import java.io.*;
+import java.net.*;
+import java.awt.*;
+
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * @author Colin Puleston
  */
-class ChildNodeCreator {
+class URLDescriptorNode extends DescriptorNode {
 
-	private InstanceTree tree;
+	private URI url;
 
-	ChildNodeCreator(InstanceTree tree) {
+	URLDescriptorNode(InstanceTree tree, Descriptor descriptor) {
 
-		this.tree = tree;
+		super(tree, descriptor);
+
+		url = extractURIOrNull(descriptor);
 	}
 
-	InstanceNode createFor(SlotDescriptors slotDescriptors) {
+	void performViewAction() {
 
-		if (slotDescriptors.populatedMultiValueSlot()) {
+		if (url != null) {
 
-			return new DescriptorArrayNode(tree, slotDescriptors);
+			try {
+
+				Desktop.getDesktop().browse(url);
+			}
+			catch (IOException e) {
+
+				System.out.println("DESKTOP ACCESS ERROR: " + e.getMessage());
+			}
 		}
-
-		return createFor(slotDescriptors.getSingleDescriptor());
 	}
 
-	DescriptorNode createFor(Descriptor descriptor) {
+	private URI extractURIOrNull(Descriptor descriptor) {
 
-		if (descriptor.hasStructuredValue()) {
+		if (descriptor.hasValue()) {
 
-			return new StructuredDescriptorNode(tree, descriptor);
+			IString value = (IString)descriptor.getValue();
+
+			return URI.create(value.get());
 		}
 
-		if (descriptor.hasURLValue()) {
-
-			return new URLDescriptorNode(tree, descriptor);
-		}
-
-		return new DescriptorNode(tree, descriptor);
+		return null;
 	}
 }

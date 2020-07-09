@@ -35,16 +35,22 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 class DescriptorCellDisplay {
 
 	static private final Color NON_EDITABLE_BACKGROUND_CLR = new Color(220,220,200);
+	static private final Color URL_VALUE_CLR = Color.BLUE;
 
 	static private final String OR_LABEL = "or";
 
 	private Descriptor descriptor;
 	private boolean queryInstance;
+	private boolean viewOnlyMode;
 
-	DescriptorCellDisplay(Descriptor descriptor, boolean queryInstance) {
+	DescriptorCellDisplay(
+		Descriptor descriptor,
+		boolean queryInstance,
+		boolean viewOnlyMode) {
 
 		this.descriptor = descriptor;
 		this.queryInstance = queryInstance;
+		this.viewOnlyMode = viewOnlyMode;
 	}
 
 	GCellDisplay create() {
@@ -96,6 +102,11 @@ class DescriptorCellDisplay {
 		GCellDisplay comp = createValueComponent(label);
 
 		comp.setFontStyle(Font.BOLD);
+
+		if (viewOnlyMode && descriptor.hasURLValue()) {
+
+			comp.setTextColour(URL_VALUE_CLR);
+		}
 
 		return comp;
 	}

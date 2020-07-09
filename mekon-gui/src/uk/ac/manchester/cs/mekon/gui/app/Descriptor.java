@@ -98,6 +98,11 @@ class Descriptor {
 		return hasIFrameValue(IFrameCategory.REFERENCE);
 	}
 
+	boolean hasURLValue() {
+
+		return hasStringFormatValue(CStringFormat.URL_VALUE);
+	}
+
 	IValue getValue() {
 
 		return value;
@@ -217,6 +222,11 @@ class Descriptor {
 	private boolean hasIFrameValue(IFrameCategory category) {
 
 		return value instanceof IFrame && ((IFrame)value).getCategory() == category;
+	}
+
+	private boolean hasStringFormatValue(CStringFormat format) {
+
+		return valueType instanceof CString && ((CString)valueType).getFormat() == format;
 	}
 
 	private boolean anyUserValues() {
