@@ -62,7 +62,7 @@ class URLDescriptorNode extends DescriptorNode {
 
 		private boolean urlLabel(JLabel label) {
 
-			return label.getText().equals(url.toString());
+			return url != null && label.getText().equals(url.toString());
 		}
 	}
 
