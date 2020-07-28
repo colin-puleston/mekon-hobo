@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.gui.app;
 
-import java.net.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
@@ -84,6 +82,6 @@ class MekonAppConfig {
 
 	private CIdentity getInstanceGroupRootId(KConfigNode node) {
 
-		return new CIdentity(node.getURI(INSTANCE_GROUP_ROOT_ATTR).toString());
+		return new CIdentity(node.getString(INSTANCE_GROUP_ROOT_ATTR));
 	}
 }
