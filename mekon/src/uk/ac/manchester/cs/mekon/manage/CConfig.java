@@ -43,19 +43,19 @@ class CConfig implements CConfigVocab {
 	static {
 
 		updateOpsByAttr.put(
-			UPDATE_INFERREDS_ATTR,
+			INSTANCE_UPDATE_INFERREDS_ATTR,
 			IUpdateOp.INFERRED_TYPES);
 
 		updateOpsByAttr.put(
-			UPDATE_SUGGESTEDS_ATTR,
+			INSTANCE_UPDATE_SUGGESTEDS_ATTR,
 			IUpdateOp.SUGGESTED_TYPES);
 
 		updateOpsByAttr.put(
-			UPDATE_SLOTS_ATTR,
+			INSTANCE_UPDATE_SLOTS_ATTR,
 			IUpdateOp.SLOTS);
 
 		updateOpsByAttr.put(
-			UPDATE_SLOT_VALUES_ATTR,
+			INSTANCE_UPDATE_SLOT_VALUES_ATTR,
 			IUpdateOp.SLOT_VALUES);
 	}
 
@@ -69,7 +69,7 @@ class CConfig implements CConfigVocab {
 	void configure(CBuilder builder) {
 
 		setQueriesEnabling(builder);
-		setStoreDirectory(builder);
+		setDiskStoreStructure(builder);
 		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
 		loadGeneralMatchers(builder);
@@ -80,18 +80,45 @@ class CConfig implements CConfigVocab {
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
 	}
 
-	private void setStoreDirectory(CBuilder builder) {
+	private void setDiskStoreStructure(CBuilder builder) {
 
 		IDiskStoreBuilder storeBldr = IDiskStoreManager.getBuilder(builder);
-		File dir = getStoreDirectoryOrNull();
+		KConfigNode node = rootNode.getChildOrNull(INSTANCE_DISK_STORE_ID);
 
-		if (dir != null) {
+		if (node != null) {
 
-			storeBldr.setStoreDirectory(dir);
+			File dir = getDiskStoreDirOrNull(node);
+
+			if (dir != null) {
+
+				storeBldr.setStoreDirectory(dir);
+			}
+			else {
+
+				setDefaultDiskStoreDir(storeBldr);
+			}
+
+			setDiskSubStoreStructure(storeBldr, node);
 		}
 		else {
 
-			storeBldr.setDefaultNamedStoreDirectory(getConfigFileDir());
+			setDefaultDiskStoreDir(storeBldr);
+		}
+	}
+
+	private void setDefaultDiskStoreDir(IDiskStoreBuilder storeBldr) {
+
+		storeBldr.setDefaultNamedStoreDirectory(getConfigFileDir());
+	}
+
+	private void setDiskSubStoreStructure(IDiskStoreBuilder storeBldr, KConfigNode node) {
+
+		for (KConfigNode subStoreNode : node.getChildren(INSTANCE_DISK_SUB_STORE_ID)) {
+
+			String dirName = subStoreNode.getString(INSTANCE_DISK_DIR_NAME_ATTR);
+			List<CIdentity> rootTypes = getDiskSubStoreGroupRootTypes(subStoreNode);
+
+			storeBldr.addSubStoreDirectory(dirName, rootTypes);
 		}
 	}
 
@@ -99,8 +126,8 @@ class CConfig implements CConfigVocab {
 
 		KConfigNode node = rootNode.getChild(INSTANCE_UPDATING_ID);
 
-		builder.setAutoUpdate(node.getBoolean(AUTO_UPDATE_ATTR));
-		setUpdateOpEnabling(builder, node.getChild(DEFAULT_UPDATE_OPS_ID));
+		builder.setAutoUpdate(node.getBoolean(INSTANCE_AUTO_UPDATE_ATTR));
+		setUpdateOpEnabling(builder, node.getChild(INSTANCE_UPDATE_DEFAULT_OPS_ID));
 	}
 
 	private void setUpdateOpEnabling(CBuilder builder, KConfigNode opsNode) {
@@ -141,21 +168,33 @@ class CConfig implements CConfigVocab {
 		builder.addSectionBuilder(adder);
 	}
 
-	private File getStoreDirectoryOrNull() {
+	private File getDiskStoreDirOrNull(KConfigNode node) {
 
-		File dir = getStoreDirectoryOrNull(new KConfigResourceFinder(true));
+		File dir = getDiskStoreDirOrNull(node, new KConfigResourceFinder(true));
 
-		return dir != null ? dir : getStoreDirectoryOrNull(KConfigResourceFinder.DIRS);
+		return dir != null ? dir : getDiskStoreDirOrNull(node, KConfigResourceFinder.DIRS);
 	}
 
-	private File getStoreDirectoryOrNull(KConfigResourceFinder finder) {
+	private File getDiskStoreDirOrNull(KConfigNode node, KConfigResourceFinder finder) {
 
-		return rootNode.getResource(STORE_DIRECTORY_ATTR, finder, null);
+		return node.getResource(INSTANCE_DISK_STORE_DIR_ATTR, finder, null);
 	}
 
-	private File getConfigFileDir() {
+	private List<CIdentity> getDiskSubStoreGroupRootTypes(KConfigNode node) {
 
-		return rootNode.getConfigFile().getFile().getParentFile();
+		List<CIdentity> rootTypes = new ArrayList<CIdentity>();
+
+		for (KConfigNode groupNode : node.getChildren(INSTANCE_DISK_GROUP_ID)) {
+
+			rootTypes.add(getDiskSubStoreGroupRootType(groupNode));
+		}
+
+		return rootTypes;
+	}
+
+	private CIdentity getDiskSubStoreGroupRootType(KConfigNode node) {
+
+		return new CIdentity(node.getString(INSTANCE_DISK_GROUP_ROOT_TYPE_ATTR));
 	}
 
 	private CSectionBuilder createSectionBuilder(KConfigNode sectionNode) {
@@ -180,5 +219,10 @@ class CConfig implements CConfigVocab {
 	private Class<? extends IMatcher> getGeneralMatcherClass(KConfigNode matcherNode) {
 
 		return matcherNode.getClass(GENERAL_MATCHER_CLASS_ATTR, IMatcher.class);
+	}
+
+	private File getConfigFileDir() {
+
+		return rootNode.getConfigFile().getFile().getParentFile();
 	}
 }

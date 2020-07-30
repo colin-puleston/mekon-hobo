@@ -37,9 +37,16 @@ import uk.ac.manchester.cs.mekon.store.motor.*;
  */
 class IDiskStore implements IStore {
 
+	static private StoreStructure buildDefaultStructure(CModel model) {
+
+		return new StoreStructureBuilder().build(model);
+	}
+
 	private CModel model;
 
-	private FileStore fileStore;
+	private StoreSerialiser serialiser;
+	private LogFile logFile;
+
 	private List<IMatcher> matchers;
 	private IDirectMatcher defaultMatcher = new IDirectMatcher();
 
@@ -87,7 +94,7 @@ class IDiskStore implements IStore {
 
 		private void reloadInstances() {
 
-			for (StoredProfile storedProfile : fileStore.getStoredProfiles()) {
+			for (StoredProfile storedProfile : serialiser.resolveStoredProfiles()) {
 
 				reloadInstance(storedProfile.getProfile(), storedProfile.getIndex());
 			}
@@ -155,7 +162,7 @@ class IDiskStore implements IStore {
 		identities.add(identity);
 		types.put(identity, createRegenType(instance));
 
-		fileStore.write(instance, identity, index);
+		serialiser.write(instance, identity, index);
 
 		refIntegrityManager.onAddedInstance(instance, identity);
 		addToMatcher(instance, identity);
@@ -248,16 +255,17 @@ class IDiskStore implements IStore {
 
 	IDiskStore(CModel model) {
 
-		this(model, new ArrayList<IMatcher>(), null);
+		this(model, new ArrayList<IMatcher>(), buildDefaultStructure(model));
 	}
 
-	IDiskStore(CModel model, List<IMatcher> matchers, File directory) {
+	IDiskStore(CModel model, List<IMatcher> matchers, StoreStructure structure) {
 
 		this.model = model;
 		this.matchers = matchers;
 
-		fileStore = new FileStore(model, directory);
-		regenReport = new IStoreActiveRegenReport(fileStore.getLogFile().getFile());
+		serialiser = new StoreSerialiser(model, structure);
+		logFile = new LogFile(structure.getMainDirectory());
+		regenReport = new IStoreActiveRegenReport(logFile.getFile());
 		refIntegrityManager = new InstanceRefIntegrityManager(this);
 	}
 
@@ -289,8 +297,8 @@ class IDiskStore implements IStore {
 
 		removeFromMatcher(instance.getType(), identity);
 
-		fileStore.remove(index);
-		fileStore.write(instance, identity, index);
+		serialiser.remove(index);
+		serialiser.write(instance, identity, index);
 
 		addToMatcher(instance, identity);
 	}
@@ -318,7 +326,7 @@ class IDiskStore implements IStore {
 			removeFromMatcher(removed.getType(), identity);
 		}
 
-		fileStore.remove(index);
+		serialiser.remove(index);
 		indexes.freeIndex(identity);
 
 		return removed;
@@ -343,7 +351,14 @@ class IDiskStore implements IStore {
 
 	private IRegenInstance regen(CIdentity identity, int index, boolean freeInstance) {
 
-		return fileStore.read(identity, index, freeInstance, !loaded);
+		IRegenInstance regen = serialiser.read(identity, index, freeInstance);
+
+		if (!loaded) {
+
+			logFile.logParsedInstance(identity, regen);
+		}
+
+		return regen;
 	}
 
 	private void addToMatcher(IFrame instance, CIdentity identity) {
@@ -400,6 +415,6 @@ class IDiskStore implements IStore {
 
 	private CFrame getTypeOrNull(int index) {
 
-		return model.getFrames().getOrNull(fileStore.readTypeId(index));
+		return model.getFrames().getOrNull(serialiser.readTypeId(index));
 	}
 }

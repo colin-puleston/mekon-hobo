@@ -45,19 +45,20 @@ public class IDiskStoreBuilder {
 	}
 
 	private CModel model;
-	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
-	private File directory = null;
+	private StoreStructureBuilder structureBldr = new StoreStructureBuilder();
+	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
 	/**
 	 * Sets the directory for instance-store serialisation.
-	 * Defaults to the current directory.
+	 * Defaults to the default-named directory within the current
+	 * directory.
 	 *
 	 * @param directory Relevant serialisation directory
 	 */
 	public void setStoreDirectory(File directory) {
 
-		this.directory = directory;
+		structureBldr.setMainDirectory(directory);
 	}
 
 	/**
@@ -69,7 +70,35 @@ public class IDiskStoreBuilder {
 	 */
 	public void setDefaultNamedStoreDirectory(File parentDir) {
 
-		directory = FileStore.getDefaultNamedDirectory(parentDir);
+		structureBldr.setDefaultNamedMainDirectory(parentDir);
+	}
+
+	/**
+	 * Adds a sub-directory within the main directory for
+	 * instance-store serialisation, within which instances of the
+	 * specified types will be stored.
+	 *
+	 * @param name Name of sub-directory
+	 * @param rootTypes Root-types of instances to be stored in
+	 * sub-directory
+	 */
+	public void addSubStoreDirectory(String name, Collection<CIdentity> rootTypes) {
+
+		structureBldr.addSubDirectory(name, rootTypes);
+	}
+
+	/**
+	 * Adds a sub-directory within the main directory for
+	 * instance-store serialisation, within which instances of the
+	 * specified types will be stored.
+	 *
+	 * @param name Name of sub-directory
+	 * @param rootTypes Root-types of instances to be stored in
+	 * sub-directory
+	 */
+	public void addSubStoreDirectory(String name, CIdentity... rootTypes) {
+
+		structureBldr.addSubDirectory(name, Arrays.asList(rootTypes));
 	}
 
 	/**
@@ -118,6 +147,16 @@ public class IDiskStoreBuilder {
 	}
 
 	/**
+	 * Provides the directory for instance-store serialisation.
+	 *
+	 * @return Relevant serialisation directory
+	 */
+	public File getStoreDirectory() {
+
+		return structureBldr.getMainDirectory();
+	}
+
+	/**
 	 * Provides all matchers that have been registered.
 	 *
 	 * @return All registered matchers
@@ -135,7 +174,7 @@ public class IDiskStoreBuilder {
 	 */
 	public IStore build() {
 
-		IDiskStore store = new IDiskStore(model, matchers, directory);
+		IDiskStore store = new IDiskStore(model, matchers, buildStructure());
 
 		StoreRegister.add(store);
 		store.initialisePostRegistration();
@@ -146,5 +185,10 @@ public class IDiskStoreBuilder {
 	IDiskStoreBuilder(CModel model) {
 
 		this.model = model;
+	}
+
+	private StoreStructure buildStructure() {
+
+		return structureBldr.build(model);
 	}
 }
