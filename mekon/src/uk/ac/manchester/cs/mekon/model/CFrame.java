@@ -98,8 +98,8 @@ public abstract class CFrame
 	 * @param disjuncts Relevant disjuncts
 	 * @return Created disjunction-frame, or single atomic-frame if
 	 * disjuncts resolve to one
-	 * @return throws KAccessException if disjunct-list is empty or
-	 * if any of the disjuncts are extension-frames
+	 * @throws KAccessException if disjunct-list is empty or if any
+	 * of the disjuncts are extension-frames
 	 */
 	public static CFrame resolveDisjunction(Collection<CFrame> disjuncts) {
 
@@ -117,8 +117,8 @@ public abstract class CFrame
 	 * @param disjuncts Relevant disjuncts
 	 * @return Created disjunction-frame, or single atomic-frame if
 	 * disjuncts resolve to one
-	 * @return throws KAccessException if disjunct-list is empty or
-	 * if any of the disjuncts are extension-frames
+	 * @throws KAccessException if disjunct-list is empty or if any of
+	 * the disjuncts are extension-frames
 	 */
 	public static CFrame resolveDisjunction(
 							String label,
