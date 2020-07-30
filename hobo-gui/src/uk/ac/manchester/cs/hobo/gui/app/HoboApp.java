@@ -71,14 +71,18 @@ public class HoboApp extends MekonApp {
 		this.model = model;
 	}
 
-	public void addDirectInstanceGroup(Class<? extends DObject> rootClass) {
+	public void addDirectInstanceGroup(
+					Class<? extends DObject> rootClass,
+					boolean editable) {
 
-		addInstanceGroup(toFrame(rootClass));
+		addInstanceGroup(toFrame(rootClass), editable);
 	}
 
-	public void addDirectInstanceGroups(List<Class<? extends DObject>> rootClasses) {
+	public void addDirectInstanceGroups(
+					List<Class<? extends DObject>> rootClasses,
+					boolean editable) {
 
-		addInstanceGroups(toFrames(rootClasses));
+		addInstanceGroups(toFrames(rootClasses), editable);
 	}
 
 	public DModel getDModel() {
