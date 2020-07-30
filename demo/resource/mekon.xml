@@ -6,6 +6,25 @@
 	queriesEnabled="TRUE">
 
 	<!--
+		Specification of disk-based instance store structure.
+		Main store directory to be specified sub-directory of
+		directory in which this config file is located, with
+		instances of specified types stored in specific named
+		sub-directories of main store directory.
+	-->
+	<InstanceDiskStore
+		directory="instance-store">
+		<SubStore
+			directoryName="citizen">
+			<InstanceGroup rootType="http://mekon/demo.owl#Citizen"/>
+		</SubStore>
+		<SubStore
+			directoryName="travel">
+			<InstanceGroup rootType="http://mekon/demo.owl#Travel"/>
+		</SubStore>
+	</InstanceDiskStore>
+
+	<!--
 		Specification of types of reasoning-related update
 		operations to be performed on instance-level frames.
 	-->
