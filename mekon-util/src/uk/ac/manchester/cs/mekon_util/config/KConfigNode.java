@@ -337,7 +337,7 @@ public class KConfigNode {
 
 		String path = getNonEmptyStringOrNull(id);
 
-		return path != null ? finder.getResource(path) : defaultValue;
+		return path != null ? finder.lookForResource(path) : defaultValue;
 	}
 
 	KConfigNode(KConfigFile configFile, XNode xNode) {
