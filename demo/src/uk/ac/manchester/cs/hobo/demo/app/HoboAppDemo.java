@@ -38,7 +38,7 @@ public class HoboAppDemo {
 		HoboApp app = new HoboApp();
 
 		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class);
+		app.addDirectInstanceGroup(Travel.class, true);
 
 		app.display();
 	}
