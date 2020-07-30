@@ -64,14 +64,23 @@ class QueryDialog extends InstanceDialog {
 		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
 	}
 
+	ControlsPanel checkCreateControlsPanel(boolean enableDefaultStore) {
+
+		ControlsPanel panel = super.checkCreateControlsPanel(enableDefaultStore);
+
+		if (panel == null) {
+
+			panel = new ControlsPanel(true);
+		}
+
+		panel.addControl(new ExecuteButton());
+
+		return panel;
+	}
+
 	boolean disposeOnStoring() {
 
 		return false;
-	}
-
-	void addExtraControlComponents(ControlsPanel panel) {
-
-		panel.addControl(new ExecuteButton());
 	}
 
 	private void execute() {

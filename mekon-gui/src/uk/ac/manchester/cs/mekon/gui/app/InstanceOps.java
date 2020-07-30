@@ -56,6 +56,11 @@ class InstanceOps {
 		customiser = controller.getCustomiser();
 	}
 
+	boolean instanceCreationEnabled() {
+
+		return function.query() || instanceGroup.editable();
+	}
+
 	boolean simpleInstancesEnabled() {
 
 		return function.query() && instanceGroup.simpleQueriesEnabled();

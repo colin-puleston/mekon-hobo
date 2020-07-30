@@ -144,7 +144,23 @@ abstract class InstanceDialog extends GDialog {
 		display(createDisplay(enableDefaultStore));
 	}
 
-	void addExtraControlComponents(ControlsPanel panel) {
+	ControlsPanel checkCreateControlsPanel(boolean enableDefaultStore) {
+
+		if (!getInstanceGroup().editable()) {
+
+			return null;
+		}
+
+		ControlsPanel panel = new ControlsPanel(true);
+
+		if (enableDefaultStore) {
+
+			panel.addControl(new StoreButton());
+		}
+
+		panel.addControl(new StoreAsButton());
+
+		return panel;
 	}
 
 	InstanceGroup getInstanceGroup() {
@@ -172,6 +188,7 @@ abstract class InstanceDialog extends GDialog {
 	private JComponent createDisplay(boolean enableDefaultStore) {
 
 		JPanel panel = new JPanel(new BorderLayout());
+		ControlsPanel controls = checkCreateControlsPanel(enableDefaultStore);
 
 		if (instantiator.editableInstance()) {
 
@@ -179,22 +196,11 @@ abstract class InstanceDialog extends GDialog {
 		}
 
 		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
-		panel.add(createControlsComponent(enableDefaultStore), BorderLayout.SOUTH);
 
-		return panel;
-	}
+		if (controls != null) {
 
-	private JComponent createControlsComponent(boolean enableDefaultStore) {
-
-		ControlsPanel panel = new ControlsPanel(true);
-
-		if (enableDefaultStore) {
-
-			panel.addControl(new StoreButton());
+			panel.add(controls, BorderLayout.SOUTH);
 		}
-
-		panel.addControl(new StoreAsButton());
-		addExtraControlComponents(panel);
 
 		return panel;
 	}

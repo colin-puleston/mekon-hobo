@@ -42,18 +42,23 @@ class InstanceGroup {
 
 	private Map<CIdentity, CFrame> instancesToNonRootTypes = new HashMap<CIdentity, CFrame>();
 
+	private boolean editable;
+	private boolean queriesEnabled;
+
 	private InstanceIdsList rootAssertionIds;
 	private InstanceIdsList rootQueryIds;
 
 	private QueryExecutions queryExecutions;
 
-	InstanceGroup(Controller controller, CFrame rootType) {
+	InstanceGroup(Controller controller, CFrame rootType, boolean editable) {
 
 		this.controller = controller;
 		this.rootType = rootType;
+		this.editable = editable;
 
 		store = controller.getStore();
 		simpleQueriesRootType = getSimpleQueriesRootTypeOrNull();
+		queriesEnabled = testQueriesEnabled();
 
 		rootAssertionIds = new InstanceIdsList(this, false);
 		rootQueryIds = new InstanceIdsList(this, true);
@@ -98,6 +103,16 @@ class InstanceGroup {
 	CFrame getRootType() {
 
 		return rootType;
+	}
+
+	boolean editable() {
+
+		return editable;
+	}
+
+	boolean queriesEnabled() {
+
+		return queriesEnabled;
 	}
 
 	boolean simpleQueriesEnabled() {
@@ -210,6 +225,11 @@ class InstanceGroup {
 
 			instancesToNonRootTypes.put(newStoreId, type);
 		}
+	}
+
+	private boolean testQueriesEnabled() {
+
+		return controller.anyEditableSlots(rootType.instantiate(IFrameFunction.QUERY));
 	}
 
 	private CFrame getSimpleQueriesRootTypeOrNull() {

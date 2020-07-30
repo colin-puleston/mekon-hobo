@@ -85,7 +85,7 @@ public class MekonApp extends GFrame {
 	private CModel model;
 	private IStore store;
 
-	private List<CFrame> instanceGroupRootTypes = new ArrayList<CFrame>();
+	private List<InstanceGroupSpec> instanceGroupSpecs = new ArrayList<InstanceGroupSpec>();
 
 	private Customiser customiser = null;
 
@@ -151,19 +151,22 @@ public class MekonApp extends GFrame {
 		new MekonAppConfig(this, configFile);
 	}
 
-	public void addInstanceGroup(CFrame rootType) {
+	public void addInstanceGroup(CFrame rootType, boolean editable) {
 
-		instanceGroupRootTypes.add(rootType);
+		instanceGroupSpecs.add(new InstanceGroupSpec(rootType, editable));
 	}
 
-	public void addInstanceGroups(List<CFrame> rootTypes) {
+	public void addInstanceGroups(List<CFrame> rootTypes, boolean editable) {
 
-		this.instanceGroupRootTypes.addAll(rootTypes);
+		for (CFrame rootType : rootTypes) {
+
+			addInstanceGroup(rootType, editable);
+		}
 	}
 
 	public void display() {
 
-		if (instanceGroupRootTypes.isEmpty()) {
+		if (instanceGroupSpecs.isEmpty()) {
 
 			displayConfigError("No instance-groups have been specified");
 		}
@@ -195,7 +198,7 @@ public class MekonApp extends GFrame {
 
 	private JComponent createInstanceGroupsPanel() {
 
-		return new InstanceGroupsPanel(createController(), instanceGroupRootTypes);
+		return new InstanceGroupsPanel(createController(), instanceGroupSpecs);
 	}
 
 	private Controller createController() {

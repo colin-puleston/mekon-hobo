@@ -44,9 +44,9 @@ class Controller {
 		this.customiser = customiser;
 	}
 
-	InstanceGroup addInstanceGroup(CFrame rootType) {
+	InstanceGroup addInstanceGroup(InstanceGroupSpec spec) {
 
-		InstanceGroup group = new InstanceGroup(this, rootType);
+		InstanceGroup group = spec.createGroup(this);
 
 		instanceGroups.add(group);
 
@@ -80,6 +80,19 @@ class Controller {
 		return group;
 	}
 
+	boolean anyEditableSlots(IFrame instance) {
+
+		for (ISlot slot : instance.getSlots().asList()) {
+
+			if (editableSlot(slot)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private InstanceGroup getInstanceGroupOrNull(CFrame type) {
 
 		for (InstanceGroup group : instanceGroups) {
@@ -91,5 +104,12 @@ class Controller {
 		}
 
 		return null;
+	}
+
+	private boolean editableSlot(ISlot slot) {
+
+		return !customiser.hiddenSlot(slot)
+				&& slot.getType().getActivation().active()
+				&& slot.getEditability().editable();
 	}
 }

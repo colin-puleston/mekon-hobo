@@ -186,7 +186,10 @@ abstract class InstancesPanel extends JPanel {
 
 		ControlsPanel panel = new ControlsPanel(true);
 
-		panel.addControl(new CreateButton());
+		if (instanceOps.instanceCreationEnabled()) {
+
+			panel.addControl(new CreateButton());
+		}
 
 		if (instanceOps.simpleInstancesEnabled()) {
 
@@ -194,8 +197,12 @@ abstract class InstancesPanel extends JPanel {
 		}
 
 		panel.addControl(new LoadButton());
-		panel.addControl(new RenameButton());
-		panel.addControl(new RemoveButton());
+
+		if (instanceGroup.editable()) {
+
+			panel.addControl(new RenameButton());
+			panel.addControl(new RemoveButton());
+		}
 
 		return panel;
 	}

@@ -31,28 +31,6 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class Instantiator {
 
-	static boolean editableInstance(Controller controller, IFrame instance) {
-
-		Customiser customiser = controller.getCustomiser();
-
-		for (ISlot slot : instance.getSlots().asList()) {
-
-			if (editableSlot(customiser, slot)) {
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	static private boolean editableSlot(Customiser customiser, ISlot slot) {
-
-		return !customiser.hiddenSlot(slot)
-				&& slot.getType().getActivation().active()
-				&& slot.getEditability().editable();
-	}
-
 	private InstanceGroup instanceGroup;
 
 	private CIdentity storeId;
@@ -87,7 +65,7 @@ class Instantiator {
 
 	boolean editableInstance() {
 
-		return editableInstance(getController(), instance);
+		return anyEditableSlots() && (queryInstance() || instanceGroup.editable());
 	}
 
 	IFrame instantiate(CFrame type) {
@@ -120,5 +98,10 @@ class Instantiator {
 		}
 
 		return false;
+	}
+
+	private boolean anyEditableSlots() {
+
+		return getController().anyEditableSlots(instance);
 	}
 }

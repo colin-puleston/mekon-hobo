@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.gui.app;
 import java.util.*;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -37,27 +36,25 @@ class InstanceGroupsPanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	InstanceGroupsPanel(Controller controller, List<CFrame> rootTypes) {
+	InstanceGroupsPanel(Controller controller, List<InstanceGroupSpec> groupSpecs) {
 
 		super(JTabbedPane.LEFT);
 
 		setFont(GFonts.toLarge(getFont()));
 
-		for (CFrame rootType : rootTypes) {
+		for (InstanceGroupSpec groupSpec : groupSpecs) {
 
-			addGroupTab(controller, rootType);
+			addGroupTab(controller, controller.addInstanceGroup(groupSpec));
 		}
 	}
 
-	private void addGroupTab(Controller controller, CFrame rootType) {
+	private void addGroupTab(Controller controller, InstanceGroup group) {
 
-		InstanceGroup group = controller.addInstanceGroup(rootType);
-
-		addTab(getGroupTitle(controller, rootType), new InstanceGroupPanel(group));
+		addTab(getGroupTitle(controller, group), new InstanceGroupPanel(group));
 	}
 
-	private String getGroupTitle(Controller controller, CFrame rootType) {
+	private String getGroupTitle(Controller controller, InstanceGroup group) {
 
-		return controller.getCustomiser().getTypeDisplayLabel(rootType);
+		return controller.getCustomiser().getTypeDisplayLabel(group.getRootType());
 	}
 }
