@@ -138,8 +138,7 @@ class OBAtomicFrame extends OBFrame {
 
 	boolean valueStructurePossibleIfSlotValueType() {
 
-		return anySlots(new HashSet<OBAtomicFrame>(), false)
-				|| anySlotsViaLinks(new HashSet<OBAtomicFrame>(), true);
+		return anySlots(false) || anySlotsViaLinks(true);
 	}
 
 	OWLEntity getSourceEntity() {
@@ -162,6 +161,16 @@ class OBAtomicFrame extends OBFrame {
 		current = checkFindTopLevelSlotOnThis(current);
 
 		return findTopLevelSlotViaSupers(current);
+	}
+
+	private boolean anySlots(boolean lookUp) {
+
+		return anySlots(new HashSet<OBAtomicFrame>(), lookUp);
+	}
+
+	private boolean anySlotsViaLinks(boolean lookUp) {
+
+		return anySlotsViaLinks(new HashSet<OBAtomicFrame>(), lookUp);
 	}
 
 	private boolean anySlots(Set<OBAtomicFrame> visited, boolean lookUp) {
