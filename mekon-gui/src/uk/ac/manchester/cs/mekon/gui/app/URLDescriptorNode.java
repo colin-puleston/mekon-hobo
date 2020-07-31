@@ -54,15 +54,29 @@ class URLDescriptorNode extends DescriptorNode {
 
 		void onLabelAdded(JLabel label) {
 
-			if (viewOnly() && urlLabel(label)) {
+			String text = label.getText();
 
-				label.setForeground(mousePresent ? SELECTED_URL_CLR : SELECTABLE_URL_CLR);
+			if (displayAsURL(text)) {
+
+				label.setText(abreviateURL(text));
+
+				if (viewOnly()) {
+
+					label.setForeground(mousePresent ? SELECTED_URL_CLR : SELECTABLE_URL_CLR);
+				}
 			}
 		}
 
-		private boolean urlLabel(JLabel label) {
+		private boolean displayAsURL(String text) {
 
-			return url != null && label.getText().equals(url.toString());
+			return url != null && text.equals(url.toString());
+		}
+
+		private String abreviateURL(String text) {
+
+			int last = text.replace("//", "  ").indexOf('/');
+
+			return last != -1 ? (text.substring(0, last + 1) + "...") : text;
 		}
 	}
 
