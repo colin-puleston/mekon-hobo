@@ -38,6 +38,7 @@ class MekonAppConfig {
 
 	static private final String TITLE_ATTR = "title";
 	static private final String INSTANCE_GROUP_ROOT_ATTR = "rootType";
+	static private final String INSTANCE_GROUP_EDIT_ATTR = "editable";
 
 	private MekonApp app;
 	private KConfigNode rootNode;
@@ -71,7 +72,9 @@ class MekonAppConfig {
 
 		for (KConfigNode typeNode : rootNode.getChildren(INSTANCE_GROUP_ID)) {
 
-			app.addInstanceGroup(getInstanceGroup(typeNode));
+			app.addInstanceGroup(
+				getInstanceGroup(typeNode),
+				editableInstanceGroup(typeNode));
 		}
 	}
 
@@ -83,5 +86,10 @@ class MekonAppConfig {
 	private CIdentity getInstanceGroupRootId(KConfigNode node) {
 
 		return new CIdentity(node.getString(INSTANCE_GROUP_ROOT_ATTR));
+	}
+
+	private boolean editableInstanceGroup(KConfigNode node) {
+
+		return node.getBoolean(INSTANCE_GROUP_EDIT_ATTR, false);
 	}
 }

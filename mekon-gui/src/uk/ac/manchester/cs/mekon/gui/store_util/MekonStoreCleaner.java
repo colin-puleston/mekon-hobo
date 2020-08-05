@@ -260,7 +260,6 @@ public class MekonStoreCleaner extends GFrame {
 
 		JOptionPane.showMessageDialog(
 			null,
-			"No issues detected. "
-			+ "All instance data is compatible with current model");
+			"No data/model compatiblity or internal data consistency issues detected");
 	}
 }

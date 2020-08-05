@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.gui.app;
 
 import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -127,6 +128,27 @@ abstract class InstancesPanel extends JPanel {
 		}
 	}
 
+	private class ClickBasedLoadInvoker extends MouseAdapter {
+
+		public void mouseClicked(MouseEvent e) {
+
+			if (e.getClickCount() == 2) {
+
+				instanceOps.displayReloaded(getClickedStoreId(e));
+			}
+		}
+
+		ClickBasedLoadInvoker() {
+
+			idsList.addMouseListener(this);
+		}
+
+		private CIdentity getClickedStoreId(MouseEvent e) {
+
+			return idsList.getEntity(idsList.locationToIndex(e.getPoint()));
+		}
+	}
+
 	public Dimension getPreferredSize() {
 
 		return new Dimension(WIDTH, (int)super.getPreferredSize().getHeight());
@@ -145,6 +167,8 @@ abstract class InstancesPanel extends JPanel {
 
 		add(new GListPanel<CIdentity>(idsList), BorderLayout.CENTER);
 		add(createControlsComponent(), BorderLayout.SOUTH);
+
+		new ClickBasedLoadInvoker();
 	}
 
 	void setTitle(String title) {
