@@ -74,31 +74,43 @@ public class IDiskStoreBuilder {
 	}
 
 	/**
-	 * Adds a sub-directory within the main directory for
-	 * instance-store serialisation, within which instances of the
-	 * specified types will be stored.
+	 * Adds a sub-component of the main instance-store, within
+	 * which instances of the specified types will be stored.
+	 * The sub-component can optionally be divided between {@link
+	 * IFrameFunction#ASSERTION} and {@link IFrameFunction#QUERY}
+	 * directories.
 	 *
-	 * @param name Name of sub-directory
+	 * @param name Name of sub-store, which provides name of
+	 * relevant sub-directory for unified store, or base-name of
+	 * sub-directories for function-split store
+	 * @param splitByFunction True if sub-store is to divided
+	 * between assertion and query directories
 	 * @param rootTypes Root-types of instances to be stored in
-	 * sub-directory
+	 * sub-store
 	 */
-	public void addSubStoreDirectory(String name, Collection<CIdentity> rootTypes) {
+	public void addSubStore(
+					String name,
+					boolean splitByFunction,
+					Collection<CIdentity> rootTypes) {
 
-		structureBldr.addSubDirectory(name, rootTypes);
+		structureBldr.addSubStore(name, splitByFunction, rootTypes);
 	}
 
 	/**
-	 * Adds a sub-directory within the main directory for
-	 * instance-store serialisation, within which instances of the
-	 * specified types will be stored.
-	 *
-	 * @param name Name of sub-directory
+	 * @param name Name of sub-store, which provides name of
+	 * relevant sub-directory for unified store, or base-name of
+	 * sub-directories for function-split store
+	 * @param splitByFunction True if sub-store is to divided
+	 * between assertion and query directories
 	 * @param rootTypes Root-types of instances to be stored in
-	 * sub-directory
+	 * sub-store
 	 */
-	public void addSubStoreDirectory(String name, CIdentity... rootTypes) {
+	public void addSubStore(
+					String name,
+					boolean splitByFunction,
+					CIdentity... rootTypes) {
 
-		structureBldr.addSubDirectory(name, Arrays.asList(rootTypes));
+		addSubStore(name, splitByFunction, Arrays.asList(rootTypes));
 	}
 
 	/**

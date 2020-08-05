@@ -98,7 +98,7 @@ class CConfig implements CConfigVocab {
 				setDefaultDiskStoreDir(storeBldr);
 			}
 
-			setDiskSubStoreStructure(storeBldr, node);
+			addDiskSubStores(storeBldr, node);
 		}
 		else {
 
@@ -111,15 +111,20 @@ class CConfig implements CConfigVocab {
 		storeBldr.setDefaultNamedStoreDirectory(getConfigFileDir());
 	}
 
-	private void setDiskSubStoreStructure(IDiskStoreBuilder storeBldr, KConfigNode node) {
+	private void addDiskSubStores(IDiskStoreBuilder storeBldr, KConfigNode node) {
 
-		for (KConfigNode subStoreNode : node.getChildren(INSTANCE_DISK_SUB_STORE_ID)) {
+		for (KConfigNode subStoreNode : node.getChildren(INSTANCE_DISK_SUBSTORE_ID)) {
 
-			String dirName = subStoreNode.getString(INSTANCE_DISK_DIR_NAME_ATTR);
-			List<CIdentity> rootTypes = getDiskSubStoreGroupRootTypes(subStoreNode);
-
-			storeBldr.addSubStoreDirectory(dirName, rootTypes);
+			addDiskSubStore(storeBldr, subStoreNode);
 		}
+	}
+
+	private void addDiskSubStore(IDiskStoreBuilder storeBldr, KConfigNode node) {
+
+		String name = node.getString(INSTANCE_DISK_SUBSTORE_NAME_ATTR);
+		boolean split = node.getBoolean(INSTANCE_DISK_SUBSTORE_SPLIT_ATTR, false);
+
+		storeBldr.addSubStore(name, split, getDiskSubStoreGroupRootTypes(node));
 	}
 
 	private void setInstanceUpdating(CBuilder builder) {

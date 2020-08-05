@@ -34,12 +34,65 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class StoreStructure {
 
+	static private final String QUERY_SUBDIR_NAME_SUFFIX = "-queries";
+
 	private CModel model;
 
 	private File mainDirectory;
 
-	private Set<String> subDirNames = new HashSet<String>();
-	private Map<CFrame, String> rootTypesToSubDirNames = new HashMap<CFrame, String>();
+	private List<SubStore> subStores = new ArrayList<SubStore>();
+	private Set<String> subStoreNames = new HashSet<String>();
+
+	private class SubStore {
+
+		private String name;
+		private List<CFrame> rootTypes = new ArrayList<CFrame>();
+		private boolean splitByFunction;
+
+		SubStore(
+			String name,
+			boolean splitByFunction,
+			Collection<CIdentity> rootTypeIds) {
+
+			this.name = name;
+			this.splitByFunction = splitByFunction;
+
+			for (CIdentity rootTypeId : rootTypeIds) {
+
+				rootTypes.add(getFrameType(rootTypeId));
+			}
+
+			subStoreNames.add(name);
+
+			if (splitByFunction) {
+
+				subStoreNames.add(getQueriesSubDirName());
+			}
+		}
+
+		boolean handlesType(CFrame type) {
+
+			for (CFrame rootType : rootTypes) {
+
+				if (rootType.subsumes(type)) {
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		String getSubDirName(IFrameFunction function) {
+
+			return splitByFunction && function.query() ? getQueriesSubDirName() : name;
+		}
+
+		private String getQueriesSubDirName() {
+
+			return name + QUERY_SUBDIR_NAME_SUFFIX;
+		}
+	}
 
 	StoreStructure(CModel model, File mainDirectory) {
 
@@ -47,14 +100,12 @@ class StoreStructure {
 		this.mainDirectory = mainDirectory;
 	}
 
-	void addSubDirectory(String name, Collection<CIdentity> rootTypes) {
+	void addSubStore(
+			String name,
+			boolean splitByFunction,
+			Collection<CIdentity> rootTypes) {
 
-		subDirNames.add(name);
-
-		for (CIdentity rootType : rootTypes) {
-
-			rootTypesToSubDirNames.put(getFrame(rootType), name);
-		}
+		subStores.add(new SubStore(name, splitByFunction, rootTypes));
 	}
 
 	File getMainDirectory() {
@@ -62,18 +113,18 @@ class StoreStructure {
 		return mainDirectory;
 	}
 
-	Set<String> getSubDirectoryNames() {
+	Set<String> getSubStoreNames() {
 
-		return subDirNames;
+		return subStoreNames;
 	}
 
-	String getSubDirectoryNameOrNull(CFrame type) {
+	String lookForSubStoreName(CFrame type, IFrameFunction function) {
 
-		for (CFrame rootType : rootTypesToSubDirNames.keySet()) {
+		for (SubStore subStore : subStores) {
 
-			if (rootType.subsumes(type)) {
+			if (subStore.handlesType(type)) {
 
-				return rootTypesToSubDirNames.get(rootType);
+				return subStore.getSubDirName(function);
 			}
 		}
 
@@ -85,7 +136,7 @@ class StoreStructure {
 		return new File(mainDirectory, name);
 	}
 
-	private CFrame getFrame(CIdentity identity) {
+	private CFrame getFrameType(CIdentity identity) {
 
 		return model.getFrames().get(identity);
 	}

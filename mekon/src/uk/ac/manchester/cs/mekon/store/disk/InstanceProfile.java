@@ -36,12 +36,25 @@ class InstanceProfile {
 	private CIdentity instanceId;
 	private CIdentity typeId;
 	private List<CIdentity> referenceIds;
+	private IFrameFunction function;
 
-	InstanceProfile(CIdentity instanceId, CIdentity typeId, List<CIdentity> referenceIds) {
+	private int index = -1;
+
+	InstanceProfile(
+		CIdentity instanceId,
+		CIdentity typeId,
+		List<CIdentity> referenceIds,
+		IFrameFunction function) {
 
 		this.instanceId = instanceId;
 		this.typeId = typeId;
 		this.referenceIds = referenceIds;
+		this.function = function;
+	}
+
+	void setIndex(int index) {
+
+		this.index = index;
 	}
 
 	CIdentity getInstanceId() {
@@ -57,5 +70,20 @@ class InstanceProfile {
 	List<CIdentity> getReferenceIds() {
 
 		return referenceIds;
+	}
+
+	IFrameFunction getFunction() {
+
+		return function;
+	}
+
+	int getIndex() {
+
+		if (index == -1) {
+
+			throw new Error("Index has not been set");
+		}
+
+		return index;
 	}
 }

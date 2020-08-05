@@ -206,7 +206,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 		CCardinality cardinality) {
 
 		this.container = container;
-		this.identity = getModel().resolveSlotIdentity(identity);
+		this.identity = getModel().resolveSlotIdentity(container, identity);
 		this.valueType = valueType;
 		this.cardinality = checkRestrictCardinality(cardinality);
 	}

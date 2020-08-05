@@ -37,9 +37,29 @@ class StoreStructureBuilder {
 	static private final String DEFAULT_STORE_DIR_NAME = "mekon-store";
 
 	private File mainDirectory = new File(DEFAULT_STORE_DIR_NAME);
+	private List<SubStore> subStores = new ArrayList<SubStore>();
 
-	private Map<String, Collection<CIdentity>> subDirNamesToRootTypes
-							= new HashMap<String, Collection<CIdentity>>();
+	private class SubStore {
+
+		private String name;
+		private boolean splitByFunction;
+		private Collection<CIdentity> rootTypes;
+
+		SubStore(
+			String name,
+			boolean splitByFunction,
+			Collection<CIdentity> rootTypes) {
+
+			this.name = name;
+			this.splitByFunction = splitByFunction;
+			this.rootTypes = rootTypes;
+		}
+
+		void addToStructure(StoreStructure structure) {
+
+			structure.addSubStore(name, splitByFunction, rootTypes);
+		}
+	}
 
 	void setMainDirectory(File mainDirectory) {
 
@@ -51,9 +71,12 @@ class StoreStructureBuilder {
 		mainDirectory = new File(parentDir, DEFAULT_STORE_DIR_NAME);
 	}
 
-	void addSubDirectory(String name, Collection<CIdentity> rootTypes) {
+	void addSubStore(
+			String name,
+			boolean splitByFunction,
+			Collection<CIdentity> rootTypes) {
 
-		subDirNamesToRootTypes.put(name, rootTypes);
+		subStores.add(new SubStore(name, splitByFunction, rootTypes));
 	}
 
 	File getMainDirectory() {
@@ -65,9 +88,9 @@ class StoreStructureBuilder {
 
 		StoreStructure structure = new StoreStructure(model, mainDirectory);
 
-		for (String name : subDirNamesToRootTypes.keySet()) {
+		for (SubStore subStore : subStores) {
 
-			structure.addSubDirectory(name, subDirNamesToRootTypes.get(name));
+			subStore.addToStructure(structure);
 		}
 
 		return structure;

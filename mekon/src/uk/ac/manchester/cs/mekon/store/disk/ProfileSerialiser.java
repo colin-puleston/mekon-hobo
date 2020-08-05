@@ -40,6 +40,8 @@ class ProfileSerialiser {
 	static private final String TYPE_ID = "Type";
 	static private final String REFERENCES_ID = "ReferencedInstances";
 
+	static final private String FUNCTION_ATTR = "function";
+
 	static void render(InstanceProfile profile, File file) {
 
 		XDocument document = new XDocument(ROOT_ID);
@@ -57,6 +59,8 @@ class ProfileSerialiser {
 			renderIdentities(refIds, rootNode.addChild(REFERENCES_ID));
 		}
 
+		rootNode.addValue(FUNCTION_ATTR, profile.getFunction());
+
 		document.writeToFile(file);
 	}
 
@@ -68,7 +72,8 @@ class ProfileSerialiser {
 		return new InstanceProfile(
 						parseIdentity(rootNode),
 						parseIdentity(typeNode),
-						parseReferenceIds(rootNode));
+						parseReferenceIds(rootNode),
+						parseFunction(rootNode));
 	}
 
 	static private List<CIdentity> parseReferenceIds(XNode rootNode) {
@@ -76,6 +81,11 @@ class ProfileSerialiser {
 		XNode refsNode = rootNode.getChildOrNull(REFERENCES_ID);
 
 		return refsNode != null ?  parseIdentities(refsNode) : Collections.emptyList();
+	}
+
+	static private IFrameFunction parseFunction(XNode rootNode) {
+
+		return rootNode.getEnum(FUNCTION_ATTR, IFrameFunction.class, IFrameFunction.ASSERTION);
 	}
 
 	static private void renderIdentity(CIdentity identity, XNode node) {
