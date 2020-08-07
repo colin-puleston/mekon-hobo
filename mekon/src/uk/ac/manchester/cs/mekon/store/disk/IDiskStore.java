@@ -37,17 +37,12 @@ import uk.ac.manchester.cs.mekon.store.motor.*;
  */
 class IDiskStore implements IStore {
 
-	static private StoreStructure buildDefaultStructure(CModel model) {
-
-		return new StoreStructureBuilder().build(model);
-	}
-
 	private CModel model;
 
 	private StoreSerialiser serialiser;
 	private LogFile logFile;
 
-	private List<IMatcher> matchers;
+	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 	private IDirectMatcher defaultMatcher = new IDirectMatcher();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
@@ -255,18 +250,22 @@ class IDiskStore implements IStore {
 
 	IDiskStore(CModel model) {
 
-		this(model, new ArrayList<IMatcher>(), buildDefaultStructure(model));
+		this(model, new StoreStructureBuilder().build(model));
 	}
 
-	IDiskStore(CModel model, List<IMatcher> matchers, StoreStructure structure) {
+	IDiskStore(CModel model, StoreStructure structure) {
 
 		this.model = model;
-		this.matchers = matchers;
 
 		serialiser = new StoreSerialiser(model, structure);
 		logFile = new LogFile(structure.getMainDirectory());
 		regenReport = new IStoreActiveRegenReport(logFile.getFile());
 		refIntegrityManager = new InstanceRefIntegrityManager(this);
+	}
+
+	void addMatchers(Collection<IMatcher> matchers) {
+
+		this.matchers.addAll(matchers);
 	}
 
 	void addMatcher(IMatcher matcher) {

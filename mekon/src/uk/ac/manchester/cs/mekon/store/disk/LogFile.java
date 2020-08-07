@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.io.*;
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
@@ -36,17 +37,16 @@ import uk.ac.manchester.cs.mekon_util.config.*;
  */
 class LogFile {
 
-	static private final String FILE_NAME = "LOG.log";
+	static final String FILE_NAME = "LOG.log";
 
 	private File file;
-	private boolean started = false;
 
 	private class ParsedInstanceLogger {
 
 		private CIdentity identity;
 		private IRegenInstance output;
 
-		private PrintWriter writer = createWriter();
+		private PrintWriter writer = createWriter(true);
 
 		ParsedInstanceLogger(CIdentity identity, IRegenInstance output) {
 
@@ -128,6 +128,8 @@ class LogFile {
 	LogFile(File directory) {
 
 		file = new File(directory, FILE_NAME);
+
+		writeFileHeader();
 	}
 
 	File getFile() {
@@ -140,13 +142,19 @@ class LogFile {
 		new ParsedInstanceLogger(identity, output);
 	}
 
-	private PrintWriter createWriter() {
+	private void writeFileHeader() {
+
+		PrintWriter writer = createWriter(false);
+
+		writer.println("MEKON INSTANCE-STORE LOG: " + Calendar.getInstance().getTime());
+		writer.println("\n");
+
+		writer.close();
+	}
+
+	private PrintWriter createWriter(boolean append) {
 
 		try {
-
-			boolean append = started;
-
-			started = true;
 
 			return new PrintWriter(new BufferedWriter(new FileWriter(file, append)));
 		}

@@ -24,250 +24,69 @@
 
 package uk.ac.manchester.cs.mekon.store.disk;
 
-import java.util.*;
+import java.io.*;
 
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
-import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon.test_util.*;
 
 /**
  * @author Colin Puleston
  */
 public class IDiskStoreTest {
 
-	static private final CIdentity FIRST_ID = new CIdentity("First");
-	static private final CIdentity SECOND_ID = new CIdentity("Second");
-
-	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
-	private TestInstances instances = model.createTestInstances();
+	final TestCModel model = new TestCModel();
+	final TestCFrames frames = model.cFrames;
+	final TestInstances instances = model.createTestInstances();
 
 	private IDiskStore store;
-
-	private IFrame first = null;
-	private IFrame second = null;
-
-	private class TestMatcher implements IMatcher {
-
-		final IFrame instance;
-		final IFrame query;
-
-		private CFrame type;
-
-		public void initialise(IStore store, IMatcherIndexes indexes) {
-		}
-
-		public boolean rebuildOnStartup() {
-
-			return true;
-		}
-
-		public boolean handlesType(CFrame type) {
-
-			return type == this.type;
-		}
-
-		public void add(IFrame instance, CIdentity identity) {
-
-			assertTrue(instance.equalsStructure(this.instance));
-		}
-
-		public void remove(CIdentity identity) {
-
-			assertTrue(identity.equals(type.getIdentity()));
-		}
-
-		public IMatches match(IFrame query) {
-
-			assertTrue(query.equalsStructure(this.query));
-
-			return new IUnrankedMatches(getInstanceIdentityAsList());
-		}
-
-		public boolean matches(IFrame query, IFrame instance) {
-
-			assertTrue(query.equalsStructure(this.query));
-			assertTrue(instance.equalsStructure(this.instance));
-
-			return true;
-		}
-
-		public void stop() {
-		}
-
-		TestMatcher(String typeName) {
-
-			type = frames.create(typeName);
-			instance = type.instantiate();
-			query = type.instantiateQuery();
-
-			store.addMatcher(this);
-		}
-
-		void addMatcherInstanceToStore() {
-
-			store.add(instance, getInstanceIdentity());
-		}
-
-		void removeMatcherInstanceFromStore() {
-
-			store.remove(getInstanceIdentity());
-		}
-
-		void checkQueriesToStoreDirectedToMatcher() {
-
-			List<CIdentity> matchIds = getInstanceIdentityAsList();
-
-			assertTrue(store.match(query).getAllMatches().equals(matchIds));
-			assertTrue(store.matches(query, instance));
-		}
-
-		private List<CIdentity> getInstanceIdentityAsList() {
-
-			return Collections.singletonList(getInstanceIdentity());
-		}
-
-		private CIdentity getInstanceIdentity() {
-
-			return type.getIdentity();
-		}
-	}
-
-	@Before
-	public void setUp() {
-
-		createStore();
-		store.clear();
-	}
+	private File storeDir;
 
 	@After
 	public void clearUp() {
 
-		store.clear();
+		if (store != null) {
+
+			store.clear();
+			deleteStructure(storeDir);
+		}
 	}
 
-	@Test
-	public void test_storeAndRemove() {
+	IDiskStore createStore() {
 
-		testStore();
-		testRemove();
+		return createStore(createStructure(new StoreStructureBuilder()));
 	}
 
-	@Test
-	public void test_storeAndRetrieve() {
+	IDiskStore createStore(StoreStructure structure) {
 
-		testStore();
-		testRetrieve();
-	}
-
-	@Test
-	public void test_storeReloadAndRetrieve() {
-
-		testStore();
-		createStore();
-		testRetrieve();
-	}
-
-	@Test
-	public void test_matching() {
-
-		model.setQueriesEnabled(true);
-
-		TestMatcher matcherA = new TestMatcher("A");
-		TestMatcher matcherB = new TestMatcher("B");
-
-		matcherA.addMatcherInstanceToStore();
-		matcherB.addMatcherInstanceToStore();
-
-		matcherA.checkQueriesToStoreDirectedToMatcher();
-		matcherB.checkQueriesToStoreDirectedToMatcher();
-
-		matcherA.removeMatcherInstanceFromStore();
-		matcherB.removeMatcherInstanceFromStore();
-	}
-
-	private void createStore() {
-
-		store = new IDiskStore(model.model);
+		store = new IDiskStore(model.model, structure);
+		storeDir = structure.getMainDirectory();
 
 		store.initialisePostRegistration();
+
+		return store;
 	}
 
-	private void testStore() {
+	StoreStructure createStructure(StoreStructureBuilder builder) {
 
-		first = createAndStoreInstance(FIRST_ID);
-		second = createAndStoreInstance(SECOND_ID);
-
-		testStoredIds(FIRST_ID, SECOND_ID);
+		return builder.build(model.model);
 	}
 
-	private void testRemove() {
+	private void deleteStructure(File file) {
 
-		testStoredIds(FIRST_ID, SECOND_ID);
-		store.remove(FIRST_ID);
-		testStoredIds(SECOND_ID);
-		store.remove(SECOND_ID);
-		testStoredIds();
+		if (file.isDirectory()) {
+
+			deleteNestedStructure(file);
+		}
+
+		file.delete();
 	}
 
-	private void testRetrieve() {
+	private void deleteNestedStructure(File dir) {
 
-		testRetrieve(first, FIRST_ID);
-		testRetrieve(second, SECOND_ID);
+		for (File file : dir.listFiles()) {
 
-		store.remove(FIRST_ID);
-		testStoredIds(SECOND_ID);
-
-		store.remove(SECOND_ID);
-		testStoredIds();
-	}
-
-	private IFrame createAndStoreInstance(CIdentity id) {
-
-		IFrame instance = createInstance(id);
-
-		store.add(instance, id);
-
-		return instance;
-	}
-
-	private IFrame createInstance(CIdentity id) {
-
-		instances.setTypesPrefix(id.getIdentifier() + "Type");
-
-		return instances.getBasic();
-	}
-
-	private void testStoredIds(CIdentity... expectedIds) {
-
-		testListContents(store.getAllIdentities(), Arrays.asList(expectedIds));
-	}
-
-	private void testRetrieve(IFrame original, CIdentity id) {
-
-		assertTrue(store.contains(id));
-
-		IRegenInstance regen = store.get(id);
-		IFrame retrieved = regen.getRootFrame();
-
-		assertTrue(store.contains(id));
-
-		assertEquals(original.getType().getIdentity(), regen.getRootTypeId());
-		assertEquals(IRegenStatus.FULLY_VALID, regen.getStatus());
-
-		assertTrue(retrieved.equalsStructure(original));
-		assertFalse(retrieved == original);
-	}
-
-	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
-
-		MekonTestUtils.testListContents(got, expected);
+			deleteStructure(file);
+		}
 	}
 }

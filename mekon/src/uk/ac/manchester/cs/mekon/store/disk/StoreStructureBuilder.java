@@ -34,9 +34,12 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class StoreStructureBuilder {
 
-	static private final String DEFAULT_STORE_DIR_NAME = "mekon-store";
+	static private File getDefaultNamedMainDirectory(File parentDir) {
 
-	private File mainDirectory = new File(DEFAULT_STORE_DIR_NAME);
+		return new File(parentDir, StoreStructure.DEFAULT_STORE_DIR_NAME);
+	}
+
+	private File mainDirectory = getDefaultNamedMainDirectory(new File("."));
 	private List<SubStore> subStores = new ArrayList<SubStore>();
 
 	private class SubStore {
@@ -68,7 +71,7 @@ class StoreStructureBuilder {
 
 	void setDefaultNamedMainDirectory(File parentDir) {
 
-		mainDirectory = new File(parentDir, DEFAULT_STORE_DIR_NAME);
+		mainDirectory = getDefaultNamedMainDirectory(parentDir);
 	}
 
 	void addSubStore(

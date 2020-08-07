@@ -186,8 +186,9 @@ public class IDiskStoreBuilder {
 	 */
 	public IStore build() {
 
-		IDiskStore store = new IDiskStore(model, matchers, buildStructure());
+		IDiskStore store = new IDiskStore(model, buildStructure());
 
+		store.addMatchers(matchers);
 		StoreRegister.add(store);
 		store.initialisePostRegistration();
 

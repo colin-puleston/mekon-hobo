@@ -24,76 +24,19 @@
 
 package uk.ac.manchester.cs.mekon.store.disk;
 
-import java.io.*;
-
-import uk.ac.manchester.cs.mekon_util.*;
-
 /**
  * @author Colin Puleston
  */
-class StoreDirectory implements StoreNames {
+interface StoreNames {
 
-	private File directory;
+	static final String DEFAULT_STORE_DIR_NAME = "mekon-store";
 
-	private KFileStore profiles;
-	private KFileStore instances;
+	static final String PROFILE_FILE_PREFIX = "PROFILE-";
+	static final String INSTANCE_FILE_PREFIX = "INSTANCE-";
+	static final String STORE_FILE_SUFFIX = ".xml";
 
-	StoreDirectory(File directory) {
+	static String queriesSubDirName(String subStoreName) {
 
-		this.directory = directory;
-
-		profiles = createFileStore(PROFILE_FILE_PREFIX);
-		instances = createFileStore(INSTANCE_FILE_PREFIX);
-	}
-
-	void remove(int index) {
-
-		profiles.removeFile(index);
-		instances.removeFile(index);
-	}
-
-	void clear() {
-
-		profiles.clear();
-		instances.clear();
-	}
-
-	boolean contains(int index) {
-
-		return profiles.getFile(index).exists();
-	}
-
-	File getDirectory() {
-
-		return directory;
-	}
-
-	File getProfileFile(int index) {
-
-		return profiles.getFile(index);
-	}
-
-	File getInstanceFile(int index) {
-
-		return instances.getFile(index);
-	}
-
-	File[] getAllProfileFiles() {
-
-		return profiles.getAllFiles();
-	}
-
-	int getProfileFileIndex(File profileFile) {
-
-		return profiles.getIndex(profileFile);
-	}
-
-	private KFileStore createFileStore(String filePrefix) {
-
-		KFileStore fileStore = new KFileStore(filePrefix, STORE_FILE_SUFFIX);
-
-		fileStore.setDirectory(directory);
-
-		return fileStore;
+		return subStoreName + "-queries";
 	}
 }
