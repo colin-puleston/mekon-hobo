@@ -141,7 +141,6 @@ public class ISlotDoctor extends EntityDoctor {
 		super(slotId);
 
 		containerIds.add(rootContainerId);
-		System.out.println("START-IDS: " + containerIds);
 	}
 
 	public void setNewMFrameValueType(CIdentity newTypeId) {
@@ -180,7 +179,6 @@ public class ISlotDoctor extends EntityDoctor {
 
 			containerIds.add(type.getIdentity().getIdentifier());
 		}
-		System.out.println("UPDATED-IDS: " + containerIds);
 	}
 
 	boolean checkDoctor(XNode entityNode) {
@@ -205,8 +203,6 @@ public class ISlotDoctor extends EntityDoctor {
 
 	XNode getEntityIdNodeOrNull(XNode entityNode) {
 
-		System.out.println("CHECK-ID: " + getContainerId(entityNode));
-		System.out.println("  MATCH: " + containerIdMatch(entityNode));
 		return containerIdMatch(entityNode) ? entityNode.getChild(CSLOT_ID) : null;
 	}
 

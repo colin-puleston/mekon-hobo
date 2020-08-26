@@ -62,7 +62,6 @@ public abstract class EntityDoctor implements FSerialiserVocab {
 
 		if (idNode != null && entityId.equals(lookForId(idNode))) {
 
-			System.out.println("  SLOT-MATCH: " + entityId);
 			entityNodeDoctor.doctor(entityNode);
 			entityIdNodeDoctor.doctor(idNode);
 
