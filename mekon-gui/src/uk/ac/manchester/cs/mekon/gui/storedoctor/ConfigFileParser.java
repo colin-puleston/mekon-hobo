@@ -157,7 +157,7 @@ class ConfigFileParser extends FSerialiser {
 
 			if (mFrameNode != null) {
 
-				doc.setNewMFrameValueType(parseIdentity(mFrameNode));
+				doc.setNewMFrameValueType(parseMFrameAsDisjunctIds(mFrameNode));
 
 				return;
 			}
@@ -166,7 +166,7 @@ class ConfigFileParser extends FSerialiser {
 
 			if (cFrameNode != null) {
 
-				doc.setNewCFrameValueType(parseIdentity(cFrameNode));
+				doc.setNewCFrameValueType(parseCFrameAsDisjunctIds(cFrameNode));
 
 				return;
 			}

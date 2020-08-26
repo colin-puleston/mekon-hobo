@@ -77,16 +77,16 @@ public class ISlotDoctor extends EntityDoctor {
 
 	private abstract class FrameValueTypeDoctor extends ValueTypeDoctor {
 
-		private CIdentity newTypeId;
+		final List<CIdentity> newTypeDisjunctIds = new ArrayList<CIdentity>();
 
 		FrameValueTypeDoctor(CIdentity newTypeId) {
 
-			this.newTypeId = newTypeId;
+			newTypeDisjunctIds.add(newTypeId);
 		}
 
-		void renderNewType(XNode typeNode) {
+		FrameValueTypeDoctor(Collection<CIdentity> newTypeDisjunctIds) {
 
-			FSerialiser.renderIdentity(newTypeId, typeNode);
+			this.newTypeDisjunctIds.addAll(newTypeDisjunctIds);
 		}
 	}
 
@@ -97,9 +97,19 @@ public class ISlotDoctor extends EntityDoctor {
 			super(newTypeId);
 		}
 
+		MFrameValueTypeDoctor(Collection<CIdentity> newTypeDisjunctIds) {
+
+			super(newTypeDisjunctIds);
+		}
+
 		String getXMLTag() {
 
 			return MFRAME_ID;
+		}
+
+		void renderNewType(XNode typeNode) {
+
+			FSerialiser.renderMFrame(newTypeDisjunctIds, typeNode);
 		}
 	}
 
@@ -110,9 +120,19 @@ public class ISlotDoctor extends EntityDoctor {
 			super(newTypeId);
 		}
 
+		CFrameValueTypeDoctor(Collection<CIdentity> newTypeDisjunctIds) {
+
+			super(newTypeDisjunctIds);
+		}
+
 		String getXMLTag() {
 
-			return MFRAME_ID;
+			return CFRAME_ID;
+		}
+
+		void renderNewType(XNode typeNode) {
+
+			FSerialiser.renderCFrame(newTypeDisjunctIds, typeNode);
 		}
 	}
 
@@ -143,21 +163,6 @@ public class ISlotDoctor extends EntityDoctor {
 		containerIds.add(rootContainerId);
 	}
 
-	public void setNewMFrameValueType(CIdentity newTypeId) {
-
-		valueTypeDoctor = new MFrameValueTypeDoctor(newTypeId);
-	}
-
-	public void setNewCFrameValueType(CIdentity newTypeId) {
-
-		valueTypeDoctor = new CFrameValueTypeDoctor(newTypeId);
-	}
-
-	public void setNewCNumberValueType(CNumber newType) {
-
-		valueTypeDoctor = new CNumberValueTypeDoctor(newType);
-	}
-
 	public void setNewCardinality(CCardinality value) {
 
 		entityIdNodeDoctor.addNewValue(CARDINALITY_ATTR, value);
@@ -171,6 +176,31 @@ public class ISlotDoctor extends EntityDoctor {
 	public void setNewEditability(IEditability value) {
 
 		entityNodeDoctor.addNewValue(EDITABILITY_ATTR, value);
+	}
+
+	public void setNewMFrameValueType(CIdentity newTypeId) {
+
+		valueTypeDoctor = new MFrameValueTypeDoctor(newTypeId);
+	}
+
+	public void setNewMFrameValueType(Collection<CIdentity> newTypeDisjunctIds) {
+
+		valueTypeDoctor = new MFrameValueTypeDoctor(newTypeDisjunctIds);
+	}
+
+	public void setNewCFrameValueType(CIdentity newTypeId) {
+
+		valueTypeDoctor = new CFrameValueTypeDoctor(newTypeId);
+	}
+
+	public void setNewCFrameValueType(Collection<CIdentity> newTypeDisjunctIds) {
+
+		valueTypeDoctor = new CFrameValueTypeDoctor(newTypeDisjunctIds);
+	}
+
+	public void setNewCNumberValueType(CNumber newType) {
+
+		valueTypeDoctor = new CNumberValueTypeDoctor(newType);
 	}
 
 	void setModel(CModel model) {
