@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public class IInstanceRenderer extends ISerialiser {
+public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 
 	private boolean renderAsTree = false;
 
@@ -118,7 +118,7 @@ public class IInstanceRenderer extends ISerialiser {
 
 			private void renderFixedStatus(XNode valueNode) {
 
-				valueNode.addValue(FIXED_VALUE_STATUS_ATTR, fixedValues);
+				valueNode.setValue(FIXED_VALUE_STATUS_ATTR, fixedValues);
 			}
 		}
 
@@ -137,7 +137,7 @@ public class IInstanceRenderer extends ISerialiser {
 
 		private void renderInstanceFunction(IFrameFunction function) {
 
-			containerNode.addValue(INSTANCE_FUNCTION_ATTR, function);
+			containerNode.setValue(INSTANCE_FUNCTION_ATTR, function);
 		}
 
 		private XNode renderIFrame(IFrame frame, XNode parentNode) {
@@ -203,7 +203,7 @@ public class IInstanceRenderer extends ISerialiser {
 
 			XNode node = parentNode.addChild(IFRAME_ID);
 
-			node.addValue(xidTag, xid);
+			node.setValue(xidTag, xid);
 
 			return node;
 		}
@@ -251,25 +251,12 @@ public class IInstanceRenderer extends ISerialiser {
 
 		private void renderCNumber(CNumber number, XNode parentNode) {
 
-			XNode node = parentNode.addChild(CNUMBER_ID);
-
-			renderNumberType(number, node);
-			renderNumberRange(number, node);
+			FSerialiser.renderCNumber(number, parentNode.addChild(CNUMBER_ID));
 		}
 
 		private void renderCString(CString string, XNode parentNode) {
 
-			XNode node = parentNode.addChild(CSTRING_ID);
-			CStringFormat format = string.getFormat();
-
-			node.addValue(STRING_FORMAT_ATTR, format);
-
-			if (format == CStringFormat.CUSTOM) {
-
-				node.addValue(
-					STRING_VALIDATOR_CLASS_ATTR,
-					CStringFactory.getCustomValidatorClass(string));
-			}
+			FSerialiser.renderCString(string, parentNode.addChild(CSTRING_ID));
 		}
 
 		private void renderIReference(CIdentity reference, XNode parentNode) {
@@ -281,43 +268,18 @@ public class IInstanceRenderer extends ISerialiser {
 
 			XNode node = parentNode.addChild(INUMBER_ID);
 
-			if (number.indefinite()) {
-
-				renderNumberRange(number.getType(), node);
-			}
-			else {
-
-				node.addValue(NUMBER_VALUE_ATTR, number.asTypeNumber());
-			}
+			FSerialiser.renderINumber(number, node);
 
 			return node;
 		}
 
-		private XNode renderIString(IString number, XNode parentNode) {
+		private XNode renderIString(IString string, XNode parentNode) {
 
 			XNode node = parentNode.addChild(ISTRING_ID);
 
-			node.addValue(STRING_VALUE_ATTR, number.get());
+			FSerialiser.renderIString(string, node);
 
 			return node;
-		}
-
-		private void renderNumberType(CNumber number, XNode node) {
-
-			renderClassId(number.getNumberType(), node, NUMBER_TYPE_ATTR);
-		}
-
-		private void renderNumberRange(CNumber number, XNode node) {
-
-			if (number.hasMin()) {
-
-				node.addValue(NUMBER_MIN_ATTR, number.getMin().asTypeNumber());
-			}
-
-			if (number.hasMax()) {
-
-				node.addValue(NUMBER_MAX_ATTR, number.getMax().asTypeNumber());
-			}
 		}
 
 		private void renderISlot(ISlot slot, XNode parentNode) {
@@ -327,7 +289,7 @@ public class IInstanceRenderer extends ISerialiser {
 			renderCSlot(slot.getType(), node);
 			new ISlotValueTypeRenderer(slot, node);
 
-			node.addValue(EDITABILITY_ATTR, slot.getEditability());
+			node.setValue(EDITABILITY_ATTR, slot.getEditability());
 
 			if (!slot.getValues().isEmpty()) {
 
@@ -346,9 +308,9 @@ public class IInstanceRenderer extends ISerialiser {
 
 			renderIdentity(slot, node);
 
-			node.addValue(SOURCE_ATTR, slot.getSource());
-			node.addValue(CARDINALITY_ATTR, slot.getCardinality());
-			node.addValue(ACTIVATION_ATTR, slot.getActivation());
+			node.setValue(SOURCE_ATTR, slot.getSource());
+			node.setValue(CARDINALITY_ATTR, slot.getCardinality());
+			node.setValue(ACTIVATION_ATTR, slot.getActivation());
 		}
 
 		private void renderISlotValues(ISlot slot, XNode slotNode) {
@@ -366,7 +328,7 @@ public class IInstanceRenderer extends ISerialiser {
 
 			if (valuesUpdate.addition()) {
 
-				node.addValue(ADDED_VALUE_INDEX_ATTR, valuesUpdate.getAddedValueIndex());
+				node.setValue(ADDED_VALUE_INDEX_ATTR, valuesUpdate.getAddedValueIndex());
 			}
 		}
 	}
@@ -417,16 +379,6 @@ public class IInstanceRenderer extends ISerialiser {
 		checkNonCyclicIfRenderingAsTree(frame);
 
 		new OneTimeRenderer(input, containerNode);
-	}
-
-	private void renderIdentity(CIdentified identified, XNode node) {
-
-		CIdentitySerialiser.render(identified, node);
-	}
-
-	private void renderIdentity(CIdentity identity, XNode node) {
-
-		CIdentitySerialiser.render(identity, node);
 	}
 
 	private void checkAtomicRootFrame(IFrame frame) {

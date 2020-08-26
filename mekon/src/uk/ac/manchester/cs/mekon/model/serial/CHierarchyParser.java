@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public class CHierarchyParser extends CSerialiser {
+public class CHierarchyParser extends FSerialiser {
 
 	private class OneTimeParser {
 
@@ -99,10 +99,5 @@ public class CHierarchyParser extends CSerialiser {
 	public CHierarchy parse(XNode parentNode) {
 
 		return new OneTimeParser().parse(parentNode.getChild(CFRAME_ID));
-	}
-
-	private CIdentity parseIdentity(XNode node) {
-
-		return CIdentitySerialiser.parse(node);
 	}
 }

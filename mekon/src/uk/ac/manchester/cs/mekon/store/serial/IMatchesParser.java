@@ -90,11 +90,6 @@ public class IMatchesParser extends IMatchesSerialiser {
 
 	static private List<CIdentity> parseMatchIds(XNode node) {
 
-		return CIdentitySerialiser.parseList(node, MATCH_ID);
-	}
-
-	static private CIdentity parseIdentity(XNode node) {
-
-		return CIdentitySerialiser.parse(node);
+		return FSerialiser.parseIdentities(node, MATCH_ID);
 	}
 }

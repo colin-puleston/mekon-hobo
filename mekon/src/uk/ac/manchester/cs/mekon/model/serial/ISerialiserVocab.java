@@ -25,12 +25,24 @@
 package uk.ac.manchester.cs.mekon.model.serial;
 
 /**
+ * Vocabulary for the standard XML serialisation of MEKON
+ * instances. Extends {@link FSerialiserVocab} in order to
+ * incorporate vocabulary for the standard XML serialisation
+ * of frames model entities.
+ *
  * @author Colin Puleston
  */
-abstract class CSerialiser extends FSerialiser {
+public interface ISerialiserVocab extends FSerialiserVocab {
 
-	static final String ANNOTATION_ID = "CAnnotation";
+	static public final String ITREE_ID = "ITree";
+	static public final String IGRAPH_ID = "IGraph";
 
-	static final String ANNOTATION_KEY_ATTR = "key";
-	static final String ANNOTATION_VALUE_ATTR =  "value";
+	static public final String IVALUES_UPDATE_ID = "IValuesUpdate";
+
+	static public final String INSTANCE_FUNCTION_ATTR = "function";
+	static public final String IFRAME_XDOC_ID_ATTR = "xid";
+	static public final String IFRAME_XDOC_ID_REF_ATTR = "xidRef";
+	static public final String FIXED_VALUE_STATUS_ATTR = "fixedValue";
+
+	static public final String ADDED_VALUE_INDEX_ATTR = "addedValueIndex";
 }

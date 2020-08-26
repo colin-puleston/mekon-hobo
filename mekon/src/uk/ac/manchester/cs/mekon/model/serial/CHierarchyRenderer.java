@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public class CHierarchyRenderer extends CSerialiser {
+public class CHierarchyRenderer extends FSerialiser {
 
 	private CVisibility visibilityFilter = CVisibility.ALL;
 	private Set<Object> annotationKeys = new HashSet<Object>();
@@ -129,14 +129,9 @@ public class CHierarchyRenderer extends CSerialiser {
 
 			XNode node = parentNode.addChild(ANNOTATION_ID);
 
-			node.addValue(ANNOTATION_KEY_ATTR, key);
-			node.addValue(ANNOTATION_VALUE_ATTR, value);
+			node.setValue(ANNOTATION_KEY_ATTR, key);
+			node.setValue(ANNOTATION_VALUE_ATTR, value);
 		}
-	}
-
-	private void renderIdentity(CIdentified identified, XNode node) {
-
-		CIdentitySerialiser.render(identified, node);
 	}
 
 	private boolean requireAnnotations(Object key) {

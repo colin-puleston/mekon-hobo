@@ -57,7 +57,7 @@ class XRequestParser extends XPackageSerialiser implements XRequestVocab {
 
 	CIdentity getIdentityParameter(int index) {
 
-		return CIdentitySerialiser.parse(getParameterNode(index));
+		return FSerialiser.parseIdentity(getParameterNode(index));
 	}
 
 	IInstanceParseInput getInstanceParameterParseInput(int index) {

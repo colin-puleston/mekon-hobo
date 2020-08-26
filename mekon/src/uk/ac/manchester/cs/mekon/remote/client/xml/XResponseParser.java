@@ -66,12 +66,12 @@ class XResponseParser extends XPackageSerialiser implements XResponseVocab {
 
 	CIdentity getIdentityResponse() {
 
-		return CIdentitySerialiser.parse(getStructuredResponseNode());
+		return FSerialiser.parseIdentity(getStructuredResponseNode());
 	}
 
 	List<CIdentity> getIdentitiesResponse() {
 
-		return CIdentitySerialiser.parseList(getStructuredResponseNode());
+		return FSerialiser.parseIdentities(getStructuredResponseNode());
 	}
 
 	IMatches getMatchesResponse() {

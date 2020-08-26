@@ -33,7 +33,6 @@ import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * Parser for the standard XML serialisation of MEKON instances as
@@ -47,22 +46,9 @@ import uk.ac.manchester.cs.mekon_util.config.*;
  *
  * @author Colin Puleston
  */
-public class IInstanceParser extends ISerialiser {
-
-	static private final String IDENTIFIER_ATTR = CIdentitySerialiser.IDENTIFIER_ATTR;
+public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 
 	static private IRelaxedInstantiator instantiator = IRelaxedInstantiator.get();
-
-	static private Set<Class<? extends Number>> numberTypes
-						= new HashSet<Class<? extends Number>>();
-
-	static {
-
-		numberTypes.add(Integer.class);
-		numberTypes.add(Long.class);
-		numberTypes.add(Float.class);
-		numberTypes.add(Double.class);
-	}
 
 	private CModel model;
 	private IEditor iEditor;
@@ -446,14 +432,14 @@ public class IInstanceParser extends ISerialiser {
 
 			CValue<?> getValueType(XNode valueTypeNode) {
 
-				return parseCNumber(getNumberType(valueTypeNode), valueTypeNode);
+				return parseCNumber(valueTypeNode);
 			}
 
 			CValue<?> getDefaultValueType(XNode slotNode) {
 
 				XNode valueTypeNode = slotNode.getChild(CNUMBER_ID);
 
-				return CNumberFactory.unconstrained(getNumberType(valueTypeNode));
+				return parseCNumber(valueTypeNode).toUnconstrained();
 			}
 
 			XNode resolveValueSpec(XNode valueNode) {
@@ -474,24 +460,6 @@ public class IInstanceParser extends ISerialiser {
 			String valueAsString(IValue value) {
 
 				return ((INumber)value).toString();
-			}
-
-			private Class<? extends Number> getNumberType(XNode typeNode) {
-
-				return getNumberType(typeNode.getString(NUMBER_TYPE_ATTR));
-			}
-
-			private Class<? extends Number> getNumberType(String className) {
-
-				for (Class<? extends Number> numberType : numberTypes) {
-
-					if (numberType.getSimpleName().equals(className)) {
-
-						return numberType;
-					}
-				}
-
-				throw new XDocumentException("Unrecognised number class: " + className);
 			}
 
 			private CNumber getValueType(ISlot slot) {
@@ -685,28 +653,6 @@ public class IInstanceParser extends ISerialiser {
 			return IFrame.createDisjunction(disjuncts);
 		}
 
-		private INumber parseINumber(CNumber valueType, XNode node) {
-
-			Class<? extends Number> numberType = valueType.getNumberType();
-
-			return node.hasAttribute(NUMBER_VALUE_ATTR)
-					? parseDefiniteINumber(numberType, node, NUMBER_VALUE_ATTR)
-					: parseCNumber(numberType, node).asINumber();
-		}
-
-		private INumber parseDefiniteINumber(
-							Class<? extends Number> numberType,
-							XNode node,
-							String attrName) {
-
-			return new INumber(numberType, node.getString(attrName));
-		}
-
-		private IString parseIString(XNode node) {
-
-			return CStringFactory.FREE.instantiate(node.getString(STRING_VALUE_ATTR));
-		}
-
 		private MFrame parseMFrame(XNode node) {
 
 			return parseCFrame(node, MFRAME_ID).getType();
@@ -739,36 +685,6 @@ public class IInstanceParser extends ISerialiser {
 		private CFrame parseAtomicCFrame(XNode node) {
 
 			return getCFrame(parseIdentity(node));
-		}
-
-		private CNumber parseCNumber(Class<? extends Number> numberType, XNode node) {
-
-			INumber min = INumber.MINUS_INFINITY;
-			INumber max = INumber.PLUS_INFINITY;
-
-			if (node.hasAttribute(NUMBER_MIN_ATTR)) {
-
-				min = parseDefiniteINumber(numberType, node, NUMBER_MIN_ATTR);
-			}
-
-			if (node.hasAttribute(NUMBER_MAX_ATTR)) {
-
-				max = parseDefiniteINumber(numberType, node, NUMBER_MAX_ATTR);
-			}
-
-			return CNumberFactory.range(numberType, min, max);
-		}
-
-		private CString parseCString(XNode node) {
-
-			CStringFormat format = getCStringFormat(node);
-
-			if (format == CStringFormat.CUSTOM) {
-
-				return CStringFactory.custom(getCStringValidatorClass(node));
-			}
-
-			return CStringFactory.standard(format);
 		}
 
 		private void parseISlot(IFrame container, XNode slotNode) {
@@ -809,16 +725,6 @@ public class IInstanceParser extends ISerialiser {
 			}
 
 			return frame;
-		}
-
-		private CStringFormat getCStringFormat(XNode node) {
-
-			return node.getEnum(STRING_FORMAT_ATTR, CStringFormat.class, CStringFormat.FREE);
-		}
-
-		private Class<? extends CStringValidator> getCStringValidatorClass(XNode node) {
-
-			return loadClass(node.getString(STRING_VALIDATOR_CLASS_ATTR), CStringValidator.class);
 		}
 
 		private boolean validFrame(IFrame frame) {
@@ -1069,11 +975,6 @@ public class IInstanceParser extends ISerialiser {
 					+ " node at top-level");
 	}
 
-	private CIdentity parseIdentity(XNode node) {
-
-		return CIdentitySerialiser.parse(node);
-	}
-
 	private ISlotEditor getSlotEditor(ISlot slot) {
 
 		return iEditor.getSlotEditor(slot);
@@ -1082,10 +983,5 @@ public class IInstanceParser extends ISerialiser {
 	private ISlotValuesEditor getValuesEditor(ISlot slot) {
 
 		return iEditor.getSlotValuesEditor(slot);
-	}
-
-	private <T>Class<? extends T> loadClass(String className, Class<T> type) {
-
-		return new KConfigClassLoader(className).load(type);
 	}
 }

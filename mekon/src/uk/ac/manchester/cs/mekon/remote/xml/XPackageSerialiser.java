@@ -88,7 +88,7 @@ public abstract class XPackageSerialiser {
 	 */
 	protected void addTopLevelAttribute(String id, Object value) {
 
-		getRootNode().addValue(id, value);
+		getRootNode().setValue(id, value);
 	}
 
 	/**

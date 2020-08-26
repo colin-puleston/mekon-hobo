@@ -88,13 +88,13 @@ class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
 		}
 		else {
 
-			CIdentitySerialiser.render(identity, addStructuredResponseNode());
+			FSerialiser.renderIdentity(identity, addStructuredResponseNode());
 		}
 	}
 
 	void setIdentitiesResponse(List<CIdentity> identities) {
 
-		CIdentitySerialiser.renderList(identities, addStructuredResponseNode());
+		FSerialiser.renderIdentities(identities, addStructuredResponseNode());
 	}
 
 	void setMatchesResponse(IMatches matches) {

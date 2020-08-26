@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 /**
  * @author Colin Puleston
  */
-class ProfileSerialiser {
+class ProfileSerialiser extends FSerialiser {
 
 	static private final String ROOT_ID = "Instance";
 	static private final String TYPE_ID = "Type";
@@ -59,7 +59,7 @@ class ProfileSerialiser {
 			renderIdentities(refIds, rootNode.addChild(REFERENCES_ID));
 		}
 
-		rootNode.addValue(FUNCTION_ATTR, profile.getFunction());
+		rootNode.setValue(FUNCTION_ATTR, profile.getFunction());
 
 		document.writeToFile(file);
 	}
@@ -86,25 +86,5 @@ class ProfileSerialiser {
 	static private IFrameFunction parseFunction(XNode rootNode) {
 
 		return rootNode.getEnum(FUNCTION_ATTR, IFrameFunction.class, IFrameFunction.ASSERTION);
-	}
-
-	static private void renderIdentity(CIdentity identity, XNode node) {
-
-		CIdentitySerialiser.render(identity, node);
-	}
-
-	static private void renderIdentities(List<CIdentity> identities, XNode node) {
-
-		CIdentitySerialiser.renderList(identities, node);
-	}
-
-	static private CIdentity parseIdentity(XNode node) {
-
-		return CIdentitySerialiser.parse(node);
-	}
-
-	static private List<CIdentity> parseIdentities(XNode node) {
-
-		return CIdentitySerialiser.parseList(node);
 	}
 }

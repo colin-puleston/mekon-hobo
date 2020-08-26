@@ -68,7 +68,7 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 
 	static private void renderToNode(IMatches matches, XNode node) {
 
-		node.addValue(RANKED_ATTR, matches.ranked());
+		node.setValue(RANKED_ATTR, matches.ranked());
 
 		for (IMatchesRank rank : matches.getRanks()) {
 
@@ -78,17 +78,17 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 
 	static private void renderRank(IMatchesRank rank, XNode node) {
 
-		node.addValue(RANK_VALUE_ATTR, rank.getRankingValue());
+		node.setValue(RANK_VALUE_ATTR, rank.getRankingValue());
 		renderMatchIds(rank.getMatches(), node);
 	}
 
 	static private void renderMatchIds(List<CIdentity> matches, XNode node) {
 
-		CIdentitySerialiser.renderList(matches, node, MATCH_ID);
+		FSerialiser.renderIdentities(matches, node, MATCH_ID);
 	}
 
 	static private void renderIdentity(CIdentity identity, XNode node) {
 
-		CIdentitySerialiser.render(identity, node);
+		FSerialiser.renderIdentity(identity, node);
 	}
 }

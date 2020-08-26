@@ -49,7 +49,7 @@ class XRequestRenderer extends XPackageSerialiser implements XRequestVocab {
 
 	void addParameter(CIdentity identity) {
 
-		CIdentitySerialiser.render(identity, addParameterNode());
+		FSerialiser.renderIdentity(identity, addParameterNode());
 	}
 
 	void addParameter(IFrame instance) {
