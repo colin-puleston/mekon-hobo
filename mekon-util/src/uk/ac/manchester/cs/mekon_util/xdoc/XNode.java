@@ -37,8 +37,11 @@ import org.w3c.dom.*;
 public class XNode {
 
 	private XDocument document;
-	private Element element;
+
+	private XNode parent;
 	private List<XNode> children = new ArrayList<XNode>();
+
+	private Element element;
 
 	/**
 	 * Adds a child-node with the specified identifier.
@@ -49,23 +52,49 @@ public class XNode {
 	public XNode addChild(String id) {
 
 		Element childEl = document.createElement(id);
-		XNode child = new XNode(document, childEl);
+		XNode child = new XNode(this, childEl);
 
-		element.appendChild(childEl);
 		children.add(child);
+		element.appendChild(childEl);
 
 		return child;
 	}
 
 	/**
-	 * Adds a value for the specified attribute.
+	 * Removes specified child-node.
+	 *
+	 * @param child Child-node to be removed
+	 * @throws XDocumentException if supplied node is not a child-node
+	 */
+	public void removeChild(XNode child) {
+
+		if (!children.remove(child)) {
+
+			throw createAccessException("Supplied node is not a child-node");
+		}
+
+		element.removeChild(child.element);
+	}
+
+	/**
+	 * Sets the value for the specified attribute.
 	 *
 	 * @param id Identifier of relevant attribute
-	 * @param value Value to be added
+	 * @param value Value to be set
 	 */
-	public void addValue(String id, Object value) {
+	public void setValue(String id, Object value) {
 
 		element.setAttribute(id, value.toString());
+	}
+
+	/**
+	 * Removes value of the specified attribute.
+	 *
+	 * @param id Identifier of relevant attribute
+	 */
+	public void removeValue(String id) {
+
+		element.removeAttribute(id);
 	}
 
 	/**
@@ -76,6 +105,44 @@ public class XNode {
 	public String getId() {
 
 		return element.getTagName();
+	}
+
+	/**
+	 * Tests whether node has the specified identifier.
+	 *
+	 * @param id Identifier to test for
+	 * @return True if node has specified identifier
+	 */
+	public boolean hasId(String id) {
+
+		return getId().equals(id);
+	}
+
+	/**
+	 * Specifies whether this is the root-node of the document.
+	 *
+	 * @return True if root-node
+	 */
+	public boolean rootNode() {
+
+		return parent == null;
+	}
+
+	/**
+	 * Provides the parent-node for non-document-root-nodes.
+	 *
+	 * @return Parent-node of this node
+	 * @throws XDocumentException if this is the root-node of
+	 * the document
+	 */
+	public XNode getParent() {
+
+		if (parent == null) {
+
+			throw createAccessException("Cannot provide parent of root-node");
+		}
+
+		return parent;
 	}
 
 	/**
@@ -126,9 +193,17 @@ public class XNode {
 			return found.get(0);
 		}
 
-		throw createAccessException(
-				"Found multiple instances of "
-				+ "\"" + id + "\"");
+		throw createAccessException("Found multiple instances of " + "\"" + id + "\"");
+	}
+
+	/**
+	 * Provides an ordered list of all child-nodes.
+	 *
+	 * @return Ordered list of all child-nodes
+	 */
+	public List<XNode> getAllChildren() {
+
+		return new ArrayList<XNode>(children);
 	}
 
 	/**
@@ -136,7 +211,7 @@ public class XNode {
 	 * identifier.
 	 *
 	 * @param id Identifier for required child-nodes
-	 * @return Ordered list of child-nodes
+	 * @return Ordered list of required child-nodes
 	 */
 	public List<XNode> getChildren(String id) {
 
@@ -325,25 +400,42 @@ public class XNode {
 
 	XNode(XDocument document, Element element) {
 
-		this.document = document;
-		this.element = element;
+		this(document, null, element);
 
-		setChildren();
+		addAllDescendants();
 	}
 
-	private void setChildren() {
+	private XNode(XNode parent, Element element) {
+
+		this(parent.document, parent, element);
+	}
+
+	private XNode(XDocument document, XNode parent, Element element) {
+
+		this.document = document;
+		this.element = element;
+		this.parent = parent;
+	}
+
+	private void addAllDescendants() {
 
 		NodeList childNodes = element.getChildNodes();
 
 		for (int i = 0 ; i < childNodes.getLength() ; i++) {
 
-			Node node = childNodes.item(i);
+			XNode child = checkCreateChild(childNodes.item(i));
 
-			if (node instanceof Element) {
+			if (child != null) {
 
-				children.add(new XNode(document, (Element)node));
+				children.add(child);
+				child.addAllDescendants();
 			}
 		}
+	}
+
+	private XNode checkCreateChild(Node node) {
+
+		return node instanceof Element ? new XNode(this, (Element)node) : null;
 	}
 
 	private String getStringOrNull(String id) {
@@ -357,9 +449,7 @@ public class XNode {
 
 		if (thing == null) {
 
-			throw createAccessException(
-					"Cannot find " + desc + " "
-					+ "\"" + id + "\"");
+			throw createAccessException("Cannot find " + desc + " " + "\"" + id + "\"");
 		}
 
 		return thing;
