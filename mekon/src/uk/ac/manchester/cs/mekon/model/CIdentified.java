@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.util.*;
+
 /**
  * Represents an entity in the Frames Model (FM) that is
  * identified via a directly attached {@link CIdentity}
@@ -32,6 +34,25 @@ package uk.ac.manchester.cs.mekon.model;
  * @author Colin Puleston
  */
 public interface CIdentified extends CEntity {
+
+	/**
+	 * Provides the identities of a set of identified entities.
+	 *
+	 * @param identifieds Entities whose identities are required
+	 * @return Identities of specified entities
+	 */
+	static public List<CIdentity> extractIdentities(
+									Collection<? extends CIdentified> identifieds) {
+
+		List<CIdentity> identities = new ArrayList<CIdentity>();
+
+		for (CIdentified identified : identifieds) {
+
+			identities.add(identified.getIdentity());
+		}
+
+		return identities;
+	}
 
 	/**
 	 * Provides the identity for the entity.

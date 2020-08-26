@@ -70,7 +70,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Renders an identity to a configuration file node.
+	 * Renders an identity to an XML node.
 	 *
 	 * @param identity Identity to render
 	 * @param node Node to render to
@@ -82,7 +82,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Renders an identity to a configuration file node.
+	 * Renders an identity to an XML node.
 	 *
 	 * @param identified Identified object whose identity is to be
 	 * rendered
@@ -99,7 +99,7 @@ public class FSerialiser implements FSerialiserVocab {
 	 * @param identities Identities to render
 	 * @return Rendered document
 	 */
-	static public XDocument renderIdentities(List<CIdentity> identities) {
+	static public XDocument renderIdentities(Collection<CIdentity> identities) {
 
 		XDocument document = new XDocument(IDENTITIES_LIST_ID);
 
@@ -110,25 +110,30 @@ public class FSerialiser implements FSerialiserVocab {
 
 	/**
 	 * Renders a list of identities to a set of specifically-created
-	 * configuration file nodes, using standard tag for created nodes.
+	 * XML nodes, using standard tag for created nodes.
 	 *
 	 * @param identities Identities to be be rendered
 	 * @param parentNode Parent of nodes to be created
 	 */
-	static public void renderIdentities(List<CIdentity> identities, XNode parentNode) {
+	static public void renderIdentities(
+							Collection<CIdentity> identities,
+							XNode parentNode) {
 
 		renderIdentities(identities, parentNode, IDENTITY_ID);
 	}
 
 	/**
 	 * Renders a list of identities to a set of specifically-created
-	 * configuration file nodes, using specified tag for created nodes.
+	 * XML nodes, using specified tag for created nodes.
 	 *
 	 * @param identities Identities to be be rendered
 	 * @param parentNode Parent of nodes to be created
 	 * @param tag Tag for created nodes
 	 */
-	static public void renderIdentities(List<CIdentity> identities, XNode parentNode, String tag) {
+	static public void renderIdentities(
+							Collection<CIdentity> identities,
+							XNode parentNode,
+							String tag) {
 
 		for (CIdentity identity : identities) {
 
@@ -137,7 +142,75 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Renders a concept-level number to a configuration file node.
+	 * Renders a meta-level frame, of either {@link
+	 * IFrameCategory#ATOMIC} or {@link IFrameCategory#DISJUNCTION}
+	 * category, to an XML node.
+	 *
+	 * @param frame Meta-level frame to render
+	 * @param node Node to render to
+	 */
+	static public void renderMFrame(MFrame frame, XNode node) {
+
+		renderCFrame(frame.getRootCFrame(), node.addChild(CFRAME_ID));
+	}
+
+	/**
+	 * Renders a meta-level frame, of either {@link
+	 * IFrameCategory#ATOMIC} or {@link IFrameCategory#DISJUNCTION}
+	 * category, represented via a set of one-or-more disjunct-frame
+	 * identities, to an XML node.
+	 *
+	 * @param disjunctIds Set of one-or-more disjunct-frame identities
+	 * @param node Node to render to
+	 */
+	static public void renderMFrame(Collection<CIdentity> disjunctIds, XNode node) {
+
+		renderCFrame(disjunctIds, node.addChild(CFRAME_ID));
+	}
+
+	/**
+	 * Renders a concept-level frame, of either {@link
+	 * IFrameCategory#ATOMIC} or {@link IFrameCategory#DISJUNCTION}
+	 * category, to an XML node.
+	 *
+	 * @param frame Concept-level frame to render
+	 * @param node Node to render to
+	 */
+	static public void renderCFrame(CFrame frame, XNode node) {
+
+		if (frame.getCategory().disjunction()) {
+
+			renderIdentities(getDisjunctIds(frame), node, CFRAME_ID);
+		}
+		else {
+
+			renderIdentity(frame, node);
+		}
+	}
+
+	/**
+	 * Renders a concept-level frame, of either {@link
+	 * IFrameCategory#ATOMIC} or {@link IFrameCategory#DISJUNCTION}
+	 * category, represented via a set of one-or-more disjunct-frame
+	 * identities, to an XML node.
+	 *
+	 * @param disjunctIds Set of one-or-more disjunct-frame identities
+	 * @param node Node to render to
+	 */
+	static public void renderCFrame(Collection<CIdentity> disjunctIds, XNode node) {
+
+		if (disjunctIds.size() == 1) {
+
+			renderIdentity(disjunctIds.iterator().next(), node);
+		}
+		else {
+
+			renderIdentities(disjunctIds, node, CFRAME_ID);
+		}
+	}
+
+	/**
+	 * Renders a concept-level number to an XML node.
 	 *
 	 * @param number Concept-level number to render
 	 * @param node Node to render to
@@ -149,7 +222,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Renders an instance-level number to a configuration file node.
+	 * Renders an instance-level number to an XML node.
 	 *
 	 * @param number Instance-level number to render
 	 * @param node Node to render to
@@ -167,7 +240,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Renders a concept-level string to a configuration file node.
+	 * Renders a concept-level string to an XML node.
 	 *
 	 * @param string Concept-level string to render
 	 * @param node Node to render to
@@ -210,7 +283,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Parses an identity from a configuration file node.
+	 * Parses an identity from a XML node.
 	 *
 	 * @param node Node to parse from
 	 * @return parsed identity
@@ -235,7 +308,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Parses a list of identities from a set of configuration file nodes
+	 * Parses a list of identities from a set of XML nodes
 	 * with standard tag.
 	 *
 	 * @param parentNode Parent of relevant nodes
@@ -247,7 +320,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Parses a list of identities from a set of configuration file nodes
+	 * Parses a list of identities from a set of XML nodes
 	 * with specified tag.
 	 *
 	 * @param parentNode Parent of relevant nodes
@@ -267,7 +340,40 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Parses a concept-level number from a configuration file node.
+	 * Parses a meta-level frame, of either {@link
+	 * IFrameCategory#ATOMIC} or {@link IFrameCategory#DISJUNCTION}
+	 * category, from an XML node, providing the result as a set of
+	 * one-or-more disjunct-frame identities.
+	 *
+	 * @param node Node to parse from
+	 * @return parsed set of one-or-more disjunct-frame identities
+	 */
+	static public List<CIdentity> parseMFrameAsDisjunctIds(XNode node) {
+
+		return parseCFrameAsDisjunctIds(node.getChild(CFRAME_ID));
+	}
+
+	/**
+	 * Parses a concept-level frame, of either {@link
+	 * IFrameCategory#ATOMIC} or {@link IFrameCategory#DISJUNCTION}
+	 * category, from an XML node, providing the result as a set of
+	 * one-or-more disjunct-frame identities.
+	 *
+	 * @param node Node to parse from
+	 * @return parsed set of one-or-more disjunct-frame identities
+	 */
+	static public List<CIdentity> parseCFrameAsDisjunctIds(XNode node) {
+
+		if (node.hasAttribute(IDENTIFIER_ATTR)) {
+
+			return Collections.singletonList(parseIdentity(node));
+		}
+
+		return parseIdentities(node, CFRAME_ID);
+	}
+
+	/**
+	 * Parses a concept-level number from a XML node.
 	 *
 	 * @param node Node to parse from
 	 * @return parsed concept-level number
@@ -278,7 +384,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Parses an instance-level number from a configuration file node.
+	 * Parses an instance-level number from a XML node.
 	 *
 	 * @param type Type of number to be parsed
 	 * @param node Node to parse from
@@ -294,7 +400,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Parses a concept-level string from a configuration file node.
+	 * Parses a concept-level string from a XML node.
 	 *
 	 * @param node Node to parse from
 	 * @return parsed concept-level string
@@ -312,7 +418,7 @@ public class FSerialiser implements FSerialiserVocab {
 	}
 
 	/**
-	 * Parses an instance-level string value from a configuration file node.
+	 * Parses an instance-level string value from a XML node.
 	 *
 	 * @param node Node to parse from
 	 * @return parsed string value
@@ -374,6 +480,11 @@ public class FSerialiser implements FSerialiserVocab {
 								String attrName) {
 
 		return new INumber(numberType, node.getString(attrName));
+	}
+
+	static private List<CIdentity> getDisjunctIds(CFrame disjunctionFrame) {
+
+		return CIdentified.extractIdentities(disjunctionFrame.getSubs());
 	}
 
 	static private String getPublicClassId(Class<?> leafClass) {

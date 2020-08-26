@@ -220,33 +220,18 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 			return node;
 		}
 
-		private XNode renderCFrame(CFrame frame, XNode parentNode) {
-
-			return renderCFrame(frame, parentNode, CFRAME_ID);
-		}
-
-		private XNode renderCFrame(CFrame frame, XNode parentNode, String tag) {
-
-			XNode node = parentNode.addChild(tag);
-
-			if (frame.getCategory().disjunction()) {
-
-				for (CFrame disjunct : frame.getSubs()) {
-
-					renderIdentity(disjunct, node.addChild(tag));
-				}
-			}
-			else {
-
-				renderIdentity(frame, node);
-			}
-
-			return node;
-		}
-
 		private void renderMFrame(MFrame frame, XNode parentNode) {
 
-			renderCFrame(frame.getRootCFrame(), parentNode, MFRAME_ID);
+			FSerialiser.renderMFrame(frame, parentNode.addChild(MFRAME_ID));
+		}
+
+		private XNode renderCFrame(CFrame frame, XNode parentNode) {
+
+			XNode node = parentNode.addChild(CFRAME_ID);
+
+			FSerialiser.renderCFrame(frame, node);
+
+			return node;
 		}
 
 		private void renderCNumber(CNumber number, XNode parentNode) {

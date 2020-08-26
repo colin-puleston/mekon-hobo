@@ -655,36 +655,24 @@ public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 
 		private MFrame parseMFrame(XNode node) {
 
-			return parseCFrame(node, MFRAME_ID).getType();
+			return resolveCFrame(parseMFrameAsDisjunctIds(node)).getType();
 		}
 
 		private CFrame parseCFrame(XNode node) {
 
-			return parseCFrame(node, CFRAME_ID);
+			return resolveCFrame(parseCFrameAsDisjunctIds(node));
 		}
 
-		private CFrame parseCFrame(XNode node, String disjunctTag) {
-
-			return node.hasAttribute(IDENTIFIER_ATTR)
-					? parseAtomicCFrame(node)
-					: parseDisjunctionCFrame(node, disjunctTag);
-		}
-
-		private CFrame parseDisjunctionCFrame(XNode node, String disjunctTag) {
+		private CFrame resolveCFrame(List<CIdentity> disjunctIds) {
 
 			List<CFrame> disjuncts = new ArrayList<CFrame>();
 
-			for (XNode disjunctNode : node.getChildren(disjunctTag)) {
+			for (CIdentity disjunctId : disjunctIds) {
 
-				disjuncts.add(parseAtomicCFrame(disjunctNode));
+				disjuncts.add(getCFrame(disjunctId));
 			}
 
 			return CFrame.resolveDisjunction(disjuncts);
-		}
-
-		private CFrame parseAtomicCFrame(XNode node) {
-
-			return getCFrame(parseIdentity(node));
 		}
 
 		private void parseISlot(IFrame container, XNode slotNode) {
