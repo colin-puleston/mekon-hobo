@@ -157,7 +157,7 @@ class InstanceRenderer extends Renderer {
 		XDocument document = new XDocument(ROOT_ID);
 		XNode xRoot = document.getRootNode();
 
-		xRoot.addValue(INDEX_ATTR, index);
+		xRoot.setValue(INDEX_ATTR, index);
 		renderNode(rootNode, xRoot.addChild(NODE_ID));
 
 		return document;
@@ -225,7 +225,7 @@ class InstanceRenderer extends Renderer {
 
 	private void renderId(CIdentity identity, XNode xNode) {
 
-		xNode.addValue(ID_ATTR, renderId(identity));
+		xNode.setValue(ID_ATTR, renderId(identity));
 	}
 
 	private void renderNumber(INumber value, XNode xNode) {
@@ -237,7 +237,7 @@ class InstanceRenderer extends Renderer {
 
 	private void renderString(String value, XNode xNode) {
 
-		xNode.addValue(VALUE_ATTR, value);
+		xNode.setValue(VALUE_ATTR, value);
 	}
 
 	private void checkAtomicType(NNode node) {
