@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.gui.store_util;
+package uk.ac.manchester.cs.mekon.gui.storecleaner;
 
 import java.io.*;
 import java.awt.*;
