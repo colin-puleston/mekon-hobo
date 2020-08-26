@@ -25,7 +25,9 @@
 package uk.ac.manchester.cs.mekon.gui.storedoctor;
 
 import java.io.*;
+import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
@@ -34,14 +36,26 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 public class InstanceDoctor {
 
+	private List<EntityDoctor> entityDoctors = new ArrayList<EntityDoctor>();
+
 	private KListMap<String, EntityDoctor> entityDoctorsByXMLTag
-								 = new KListMap<String, EntityDoctor>();
+								= new KListMap<String, EntityDoctor>();
 
 	void addEntityDoctor(EntityDoctor entityDoctor) {
+
+		entityDoctors.add(entityDoctor);
 
 		for (String tag : entityDoctor.getXMLTags()) {
 
 			entityDoctorsByXMLTag.add(tag, entityDoctor);
+		}
+	}
+
+	void setModel(CModel model) {
+
+		for (EntityDoctor entityDoctor : entityDoctors) {
+
+			entityDoctor.setModel(model);
 		}
 	}
 

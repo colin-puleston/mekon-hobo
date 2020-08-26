@@ -97,9 +97,14 @@ public class MekonStoreDoctor {
 		run();
 	}
 
-	public void setMekonModel(File mekonConfigFile) {
+	public void setModel(CModel model) {
 
-		model = CManager.createBuilder(new KConfigFile(mekonConfigFile)).build();
+		this.model = model;
+	}
+
+	public void setModel(File mekonConfigFile) {
+
+		setModel(CManager.createBuilder(new KConfigFile(mekonConfigFile)).build());
 	}
 
 	public void addEntityDoctor(EntityDoctor entityDoctor) {
@@ -116,6 +121,11 @@ public class MekonStoreDoctor {
 	}
 
 	private void run() {
+
+		if (model != null) {
+
+			instanceDoctor.setModel(model);
+		}
 
 		for (File file : getAllInstanceFiles()) {
 

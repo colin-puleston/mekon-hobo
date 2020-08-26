@@ -44,7 +44,7 @@ public class ISlotDoctor extends EntityDoctor {
 		valueTypeTags.add(CNUMBER_ID);
 	}
 
-	private String frameId;
+	private List<String> containerIds = new ArrayList<String>();
 	private ValueTypeDoctor valueTypeDoctor = null;
 
 	private abstract class ValueTypeDoctor extends NodeDoctor {
@@ -136,11 +136,12 @@ public class ISlotDoctor extends EntityDoctor {
 		}
 	}
 
-	public ISlotDoctor(String frameId, String slotId) {
+	public ISlotDoctor(String rootContainerId, String slotId) {
 
 		super(slotId);
 
-		this.frameId = frameId;
+		containerIds.add(rootContainerId);
+		System.out.println("START-IDS: " + containerIds);
 	}
 
 	public void setNewMFrameValueType(CIdentity newTypeId) {
@@ -173,6 +174,15 @@ public class ISlotDoctor extends EntityDoctor {
 		entityNodeDoctor.addNewValue(EDITABILITY_ATTR, value);
 	}
 
+	void setModel(CModel model) {
+
+		for (CFrame type : getDescendantContainerTypes(model)) {
+
+			containerIds.add(type.getIdentity().getIdentifier());
+		}
+		System.out.println("UPDATED-IDS: " + containerIds);
+	}
+
 	boolean checkDoctor(XNode entityNode) {
 
 		if (super.checkDoctor(entityNode)) {
@@ -195,16 +205,33 @@ public class ISlotDoctor extends EntityDoctor {
 
 	XNode getEntityIdNodeOrNull(XNode entityNode) {
 
-		return frameIdMatch(entityNode) ? entityNode.getChild(CSLOT_ID) : null;
+		System.out.println("CHECK-ID: " + getContainerId(entityNode));
+		System.out.println("  MATCH: " + containerIdMatch(entityNode));
+		return containerIdMatch(entityNode) ? entityNode.getChild(CSLOT_ID) : null;
 	}
 
-	private boolean frameIdMatch(XNode entityNode) {
+	private List<CFrame> getDescendantContainerTypes(CModel model) {
 
-		return idMatch(getFrameTypeNode(entityNode), frameId);
+		return model.getFrames().get(getRootContainerIdentity()).getDescendants();
 	}
 
-	private XNode getFrameTypeNode(XNode entityNode) {
+	private CIdentity getRootContainerIdentity() {
 
-		return entityNode.getParent().getChild(CFRAME_ID);
+		return new CIdentity(containerIds.get(0));
+	}
+
+	private boolean containerIdMatch(XNode slotNode) {
+
+		return containerIds.contains(getContainerId(slotNode));
+	}
+
+	private String getContainerId(XNode slotNode) {
+
+		return getId(getContainerTypeNode(slotNode));
+	}
+
+	private XNode getContainerTypeNode(XNode slotNode) {
+
+		return slotNode.getParent().getChild(CFRAME_ID);
 	}
 }

@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.gui.storedoctor;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
@@ -52,12 +53,16 @@ public abstract class EntityDoctor implements FSerialiserVocab {
 		this.entityId = entityId;
 	}
 
+	void setModel(CModel model) {
+	}
+
 	boolean checkDoctor(XNode entityNode) {
 
 		XNode idNode = getEntityIdNodeOrNull(entityNode);
 
-		if (idNode != null && idMatch(idNode, entityId)) {
+		if (idNode != null && entityId.equals(lookForId(idNode))) {
 
+			System.out.println("  SLOT-MATCH: " + entityId);
 			entityNodeDoctor.doctor(entityNode);
 			entityIdNodeDoctor.doctor(idNode);
 
@@ -67,9 +72,14 @@ public abstract class EntityDoctor implements FSerialiserVocab {
 		return false;
 	}
 
-	boolean idMatch(XNode node, String testId) {
+	String getId(XNode node) {
 
-		return testId.equals(node.getString(IDENTIFIER_ATTR, null));
+		return node.getString(IDENTIFIER_ATTR);
+	}
+
+	String lookForId(XNode node) {
+
+		return node.getString(IDENTIFIER_ATTR, null);
 	}
 
 	abstract String[] getXMLTags();

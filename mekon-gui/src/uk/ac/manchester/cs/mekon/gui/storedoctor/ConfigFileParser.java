@@ -41,6 +41,7 @@ class ConfigFileParser extends FSerialiser {
 
 	static private final String CFRAME_DOCTOR_ID = "CFrameDoctor";
 	static private final String ISLOT_DOCTOR_ID = "ISlotDoctor";
+	static private final String ROOT_CONTAINER_TYPE_ID = "RootContainerType";
 	static private final String UPDATES_ID = "Updates";
 	static private final String VALUE_TYPE_UPDATE_ID = "ValueType";
 
@@ -114,7 +115,7 @@ class ConfigFileParser extends FSerialiser {
 
 		ISlotDoctor create(XNode docNode, String id) {
 
-			return new ISlotDoctor(getFrameId(docNode), id);
+			return new ISlotDoctor(getRootContainerId(docNode), id);
 		}
 
 		void parseUpdates(ISlotDoctor doc, XNode updNode) {
@@ -180,9 +181,9 @@ class ConfigFileParser extends FSerialiser {
 			}
 		}
 
-		private String getFrameId(XNode docNode) {
+		private String getRootContainerId(XNode docNode) {
 
-			return docNode.getChild(IFRAME_ID).getString(IDENTIFIER_ATTR);
+			return docNode.getChild(ROOT_CONTAINER_TYPE_ID).getString(IDENTIFIER_ATTR);
 		}
 
 		private CIdentity getIdentity(XNode node) {
@@ -197,17 +198,26 @@ class ConfigFileParser extends FSerialiser {
 
 		rootNode = new XDocument(configFile).getRootNode();
 
-		doctor.setStoreDir(getStoreDir());
-
-		File mekonConfigFile = lookForMekonConfigFile();
-
-		if (mekonConfigFile != null) {
-
-			doctor.setMekonModel(mekonConfigFile);
-		}
+		setStoreDir();
+		checkSetModel();
 
 		new CFrameDoctorParser();
 		new ISlotDoctorParser();
+	}
+
+	private void setStoreDir() {
+
+		doctor.setStoreDir(getStoreDir());
+	}
+
+	private void checkSetModel() {
+
+		File mekonCfgFile = lookForMekonConfigFile();
+
+		if (mekonCfgFile != null) {
+
+			doctor.setModel(mekonCfgFile);
+		}
 	}
 
 	private File getStoreDir() {
