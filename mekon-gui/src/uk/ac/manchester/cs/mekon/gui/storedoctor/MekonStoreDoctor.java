@@ -28,16 +28,12 @@ import java.io.*;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * @author Colin Puleston
  */
 public class MekonStoreDoctor {
-
-	static final String INSTANCE_FILE_PREFIX = "INSTANCE-";
-	static final String INSTANCE_FILE_SUFFIX = ".xml";
 
 	static public void main(String[] args) {
 
@@ -86,6 +82,8 @@ public class MekonStoreDoctor {
 	}
 
 	private File storeDir = null;
+	private boolean includeSubDirs = true;
+
 	private CModel model = null;
 
 	private InstanceDoctor instanceDoctor = new InstanceDoctor();
@@ -95,6 +93,11 @@ public class MekonStoreDoctor {
 		this.storeDir = storeDir;
 
 		run();
+	}
+
+	public void setIncludeSubDirs(boolean include) {
+
+		includeSubDirs = include;
 	}
 
 	public void setModel(CModel model) {
@@ -127,9 +130,17 @@ public class MekonStoreDoctor {
 			instanceDoctor.setModel(model);
 		}
 
-		for (File file : getAllInstanceFiles()) {
+		instanceDoctor.run(storeDir);
 
-			instanceDoctor.checkDoctor(file);
+		if (includeSubDirs) {
+
+			for (File subStoreDir : storeDir.listFiles()) {
+
+				if (subStoreDir.isDirectory()) {
+
+					instanceDoctor.run(subStoreDir);
+				}
+			}
 		}
 	}
 
@@ -143,14 +154,5 @@ public class MekonStoreDoctor {
 		}
 
 		return true;
-	}
-
-	private File[] getAllInstanceFiles() {
-
-		KFileStore store = new KFileStore(INSTANCE_FILE_PREFIX, INSTANCE_FILE_SUFFIX);
-
-		store.setDirectory(storeDir);
-
-		return store.getAllFiles();
 	}
 }

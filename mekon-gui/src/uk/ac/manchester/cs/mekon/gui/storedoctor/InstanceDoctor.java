@@ -28,7 +28,6 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -36,19 +35,106 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 public class InstanceDoctor {
 
+	private int doctoredInstanceCount = 0;
+
 	private List<EntityDoctor> entityDoctors = new ArrayList<EntityDoctor>();
 
-	private KListMap<String, EntityDoctor> entityDoctorsByXMLTag
-								= new KListMap<String, EntityDoctor>();
+	private class EntityDoctoring {
+
+		private EntityDoctor doctor;
+		private int doctoringsCount;
+
+		EntityDoctoring(EntityDoctor doctor) {
+
+			this.doctor = doctor;
+		}
+
+		boolean checkDoctor(XNode node) {
+
+			if (doctor.checkDoctor(node)) {
+
+				doctoringsCount++;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		void checkReportDoctorings() {
+
+			if (doctoringsCount != 0) {
+
+				Reporter.reportDoctoredEntities(doctor.getEntityTypeName(), doctoringsCount);
+			}
+		}
+	}
+
+	private class InstanceDoctorings {
+
+		private String instanceName;
+
+		private boolean doctoredEntities = false;
+		private List<EntityDoctoring> entityDoctorings = new ArrayList<EntityDoctoring>();
+
+		InstanceDoctorings(String instanceName) {
+
+			this.instanceName = instanceName;
+
+			for (EntityDoctor entDoc : entityDoctors) {
+
+				entityDoctorings.add(new EntityDoctoring(entDoc));
+			}
+		}
+
+		boolean checkDoctor(XNode rootNode) {
+
+			checkDoctorFrom(rootNode);
+
+			if (doctoredEntities) {
+
+				reportDoctorings();
+			}
+
+			return doctoredEntities;
+		}
+
+		private void checkDoctorFrom(XNode node) {
+
+			for (XNode child : node.getAllChildren()) {
+
+				checkDoctorEntity(child);
+				checkDoctorFrom(child);
+			}
+		}
+
+		private void checkDoctorEntity(XNode node) {
+
+			for (EntityDoctoring entDoc : entityDoctorings) {
+
+				if (entDoc.checkDoctor(node)) {
+
+					doctoredEntities = true;
+				}
+			}
+		}
+
+		private void reportDoctorings() {
+
+			Reporter.startReportDoctoredInstance(instanceName);
+
+			for (EntityDoctoring entDoc : entityDoctorings) {
+
+				entDoc.checkReportDoctorings();
+			}
+
+			Reporter.endReportDoctoredInstance();
+		}
+	}
 
 	void addEntityDoctor(EntityDoctor entityDoctor) {
 
 		entityDoctors.add(entityDoctor);
-
-		for (String tag : entityDoctor.getXMLTags()) {
-
-			entityDoctorsByXMLTag.add(tag, entityDoctor);
-		}
 	}
 
 	void setModel(CModel model) {
@@ -59,38 +145,36 @@ public class InstanceDoctor {
 		}
 	}
 
-	void checkDoctor(File file) {
+	void run(File storeDir) {
 
-		XDocument doc = new XDocument(file);
+		Reporter.startReport(storeDir);
 
-		if (checkDoctorFrom(doc.getRootNode())) {
+		checkDoctorInstances(new StoreFiles(storeDir));
 
-			doc.writeToFile(file);
+		Reporter.endReport(storeDir, doctoredInstanceCount);
+	}
+
+	private void checkDoctorInstances(StoreFiles files) {
+
+		for (File profileFile : files.getAllProfileFiles()) {
+
+			String instanceName = files.getInstanceName(profileFile);
+			File instanceFile = files.getInstanceFile(profileFile);
+
+			checkDoctorInstance(instanceName, instanceFile);
 		}
 	}
 
-	private boolean checkDoctorFrom(XNode node) {
+	private void checkDoctorInstance(String instanceName, File instanceFile) {
 
-		boolean doctored = false;
+		XDocument document = new XDocument(instanceFile);
+		XNode rootNode = document.getRootNode();
 
-		for (XNode child : node.getAllChildren()) {
+		if (new InstanceDoctorings(instanceName).checkDoctor(rootNode)) {
 
-			doctored |= checkDoctor(child);
-			doctored |= checkDoctorFrom(child);
+			document.writeToFile(instanceFile);
+
+			doctoredInstanceCount++;
 		}
-
-		return doctored;
-	}
-
-	private boolean checkDoctor(XNode node) {
-
-		boolean doctored = false;
-
-		for (EntityDoctor entDoc : entityDoctorsByXMLTag.getList(node.getId())) {
-
-			doctored |= entDoc.checkDoctor(node);
-		}
-
-		return doctored;
 	}
 }

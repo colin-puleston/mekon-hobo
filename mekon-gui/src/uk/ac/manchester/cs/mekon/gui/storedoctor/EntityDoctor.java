@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.gui.storedoctor;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
@@ -56,7 +58,28 @@ public abstract class EntityDoctor implements FSerialiserVocab {
 	void setModel(CModel model) {
 	}
 
-	boolean checkDoctor(XNode entityNode) {
+	boolean checkDoctor(XNode node) {
+
+		return getXMLTags().contains(node.getId()) && checkDoctorEntity(node);
+	}
+
+	String getId(XNode node) {
+
+		return node.getString(IDENTIFIER_ATTR);
+	}
+
+	String lookForId(XNode node) {
+
+		return node.getString(IDENTIFIER_ATTR, null);
+	}
+
+	abstract List<String> getXMLTags();
+
+	abstract String getEntityTypeName();
+
+	abstract XNode getEntityIdNodeOrNull(XNode entityNode);
+
+	private boolean checkDoctorEntity(XNode entityNode) {
 
 		XNode idNode = getEntityIdNodeOrNull(entityNode);
 
@@ -70,18 +93,4 @@ public abstract class EntityDoctor implements FSerialiserVocab {
 
 		return false;
 	}
-
-	String getId(XNode node) {
-
-		return node.getString(IDENTIFIER_ATTR);
-	}
-
-	String lookForId(XNode node) {
-
-		return node.getString(IDENTIFIER_ATTR, null);
-	}
-
-	abstract String[] getXMLTags();
-
-	abstract XNode getEntityIdNodeOrNull(XNode entityNode);
 }

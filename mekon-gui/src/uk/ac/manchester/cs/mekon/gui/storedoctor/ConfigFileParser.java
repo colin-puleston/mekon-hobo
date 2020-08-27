@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 class ConfigFileParser extends FSerialiser {
 
 	static private final String STORE_DIR_ATTR = "storeDirectory";
+	static private final String INCLUDE_SUB_DIRS_ATTR = "includeSubDirectories";
 	static private final String MEKON_CONFIG_FILE_ATTR = "mekonConfigFile";
 
 	static private final String CFRAME_DOCTOR_ID = "CFrameDoctor";
@@ -199,6 +200,7 @@ class ConfigFileParser extends FSerialiser {
 		rootNode = new XDocument(configFile).getRootNode();
 
 		setStoreDir();
+		checkSetIncludeSubDirs();
 		checkSetModel();
 
 		new CFrameDoctorParser();
@@ -208,6 +210,16 @@ class ConfigFileParser extends FSerialiser {
 	private void setStoreDir() {
 
 		doctor.setStoreDir(getStoreDir());
+	}
+
+	private void checkSetIncludeSubDirs() {
+
+		Boolean include = rootNode.getBoolean(INCLUDE_SUB_DIRS_ATTR, null);
+
+		if (include != null) {
+
+			doctor.setIncludeSubDirs(include);
+		}
 	}
 
 	private void checkSetModel() {

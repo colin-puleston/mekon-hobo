@@ -24,37 +24,65 @@
 
 package uk.ac.manchester.cs.mekon.gui.storedoctor;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import java.io.*;
 
 /**
  * @author Colin Puleston
  */
-public class CFrameDoctor extends EntityDoctor {
+class Reporter {
 
-	static private final List<String> XML_TAGS = Arrays.asList(
-													new String[]{
-														CFRAME_ID,
-														MFRAME_ID});
+	static private final String TAB = "  ";
 
-	public CFrameDoctor(String frameId) {
+	static void startReport(File storeDir) {
 
-		super(frameId);
+		reportGap();
+		reportBookendInfo("Start...", "Processing", storeDir);
+		reportGap();
 	}
 
-	List<String> getXMLTags() {
+	static void endReport(File storeDir, int doctoredInstanceCount) {
 
-		return XML_TAGS;
+		reportBookendInfo("Complete!", "Processed", storeDir);
+		report(TAB + "Doctored " + doctoredInstanceCount + " instance(s)");
+		reportGap();
 	}
 
-	String getEntityTypeName() {
+	static void startReportDoctoredInstance(String instanceName) {
 
-		return CFRAME_ID;
+		reportInstanceInfo("DOCTORED INSTANCE [" + instanceName + "]");
 	}
 
-	XNode getEntityIdNodeOrNull(XNode entityNode) {
+	static void reportDoctoredEntities(String entityType, int doctoringsCount) {
 
-		return entityNode;
+		reportInstanceInfo(TAB + entityType + " Updates: " + doctoringsCount);
+	}
+
+	static void endReportDoctoredInstance() {
+
+		reportGap();
+	}
+
+	static private void reportBookendInfo(
+							String processIntro,
+							String storeDirIntro,
+							File storeDir) {
+
+		report("MEKON STORE-DOCTOR: " + processIntro);
+		report(TAB + storeDirIntro + " [" + storeDir.getAbsolutePath() + "]");
+	}
+
+	static private void reportInstanceInfo(String info) {
+
+		report(">> " + info);
+	}
+
+	static private void reportGap() {
+
+		report("");
+	}
+
+	static private void report(String line) {
+
+		System.out.println(line);
 	}
 }

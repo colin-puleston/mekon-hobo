@@ -226,9 +226,14 @@ public class ISlotDoctor extends EntityDoctor {
 		return false;
 	}
 
-	String[] getXMLTags() {
+	List<String> getXMLTags() {
 
-		return new String[]{ISLOT_ID};
+		return Collections.singletonList(ISLOT_ID);
+	}
+
+	String getEntityTypeName() {
+
+		return ISLOT_ID;
 	}
 
 	XNode getEntityIdNodeOrNull(XNode entityNode) {

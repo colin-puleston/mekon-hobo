@@ -24,37 +24,46 @@
 
 package uk.ac.manchester.cs.mekon.gui.storedoctor;
 
-import java.util.*;
+import java.io.*;
 
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
+import uk.ac.manchester.cs.mekon_util.*;
 
 /**
  * @author Colin Puleston
  */
-public class CFrameDoctor extends EntityDoctor {
+class StoreFiles implements IDiskStoreNames {
 
-	static private final List<String> XML_TAGS = Arrays.asList(
-													new String[]{
-														CFRAME_ID,
-														MFRAME_ID});
+	private KFileStore profileFiles;
+	private KFileStore instanceFiles;
 
-	public CFrameDoctor(String frameId) {
+	StoreFiles(File storeDir) {
 
-		super(frameId);
+		profileFiles = getFileStore(storeDir, PROFILE_FILE_PREFIX);
+		instanceFiles = getFileStore(storeDir, INSTANCE_FILE_PREFIX);
 	}
 
-	List<String> getXMLTags() {
+	File[] getAllProfileFiles() {
 
-		return XML_TAGS;
+		return profileFiles.getAllFiles();
 	}
 
-	String getEntityTypeName() {
+	String getInstanceName(File profileFile) {
 
-		return CFRAME_ID;
+		return IDiskStoreUtil.readInstanceIdentity(profileFile).getLabel();
 	}
 
-	XNode getEntityIdNodeOrNull(XNode entityNode) {
+	File getInstanceFile(File profileFile) {
 
-		return entityNode;
+		return instanceFiles.getFile(profileFiles.getIndex(profileFile));
+	}
+
+	private KFileStore getFileStore(File storeDir, String filePrefix) {
+
+		KFileStore store = new KFileStore(filePrefix, STORE_FILE_SUFFIX);
+
+		store.setDirectory(storeDir);
+
+		return store;
 	}
 }
