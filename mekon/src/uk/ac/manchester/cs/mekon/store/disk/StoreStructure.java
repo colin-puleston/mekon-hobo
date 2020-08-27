@@ -97,7 +97,7 @@ class StoreStructure {
 
 		private String getQueriesSubDirName() {
 
-			return StoreNames.queriesSubDirName(name);
+			return IDiskStoreNames.queriesSubDirName(name);
 		}
 	}
 

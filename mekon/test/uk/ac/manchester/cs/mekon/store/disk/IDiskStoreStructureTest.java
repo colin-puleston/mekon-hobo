@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public class IDiskStoreStructureTest extends IDiskStoreTest implements StoreNames {
+public class IDiskStoreStructureTest extends IDiskStoreTest implements IDiskStoreNames {
 
 	static private final File TEST_DIR = new File("test-store");
 	static private final File DEFAULT_DIR = new File(DEFAULT_STORE_DIR_NAME);
@@ -225,7 +225,7 @@ public class IDiskStoreStructureTest extends IDiskStoreTest implements StoreName
 
 	private void testQueriesSubStoreDirectory(String subStoreName, int expectInstances) {
 
-		testSubStoreDirectory(StoreNames.queriesSubDirName(subStoreName), expectInstances);
+		testSubStoreDirectory(IDiskStoreNames.queriesSubDirName(subStoreName), expectInstances);
 	}
 
 	private void testStoreFiles(File dir, int expectInstances, boolean expectLog) {

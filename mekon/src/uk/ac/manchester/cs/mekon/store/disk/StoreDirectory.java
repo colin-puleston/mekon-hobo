@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon_util.*;
 /**
  * @author Colin Puleston
  */
-class StoreDirectory implements StoreNames {
+class StoreDirectory implements IDiskStoreNames {
 
 	private File directory;
 

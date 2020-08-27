@@ -25,15 +25,18 @@
 package uk.ac.manchester.cs.mekon.store.disk;
 
 /**
+ * Defines file and directory names used by the disk-based
+ * instance-store implementation.
+ *
  * @author Colin Puleston
  */
-interface StoreNames {
+public interface IDiskStoreNames {
 
-	static final String DEFAULT_STORE_DIR_NAME = "mekon-store";
+	static public final String DEFAULT_STORE_DIR_NAME = "mekon-store";
 
-	static final String PROFILE_FILE_PREFIX = "PROFILE-";
-	static final String INSTANCE_FILE_PREFIX = "INSTANCE-";
-	static final String STORE_FILE_SUFFIX = ".xml";
+	static public final String PROFILE_FILE_PREFIX = "PROFILE-";
+	static public final String INSTANCE_FILE_PREFIX = "INSTANCE-";
+	static public final String STORE_FILE_SUFFIX = ".xml";
 
 	static String queriesSubDirName(String subStoreName) {
 
