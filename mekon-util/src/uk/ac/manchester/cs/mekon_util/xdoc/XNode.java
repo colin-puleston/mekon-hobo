@@ -290,7 +290,7 @@ public class XNode {
 	 * @throws XDocumentException if value does not represent a
 	 * valid boolean
 	 */
-	public Boolean getBoolean(String id, boolean defaultValue) {
+	public Boolean getBoolean(String id, Boolean defaultValue) {
 
 		String value = getStringOrNull(id);
 

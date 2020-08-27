@@ -157,7 +157,7 @@ public class KConfigNode {
 	 * @throws XDocumentException if value does not represent a
 	 * valid boolean
 	 */
-	public Boolean getBoolean(String id, boolean defaultValue) {
+	public Boolean getBoolean(String id, Boolean defaultValue) {
 
 		return xNode.getBoolean(id, defaultValue);
 	}
