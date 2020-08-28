@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,39 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.storedoctor;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+public class CFrameDoctor extends EntityDoctor {
 
-	static public void main(String[] args) throws Exception {
+	static private final List<String> XML_TAGS = Arrays.asList(
+													new String[]{
+														CFRAME_ID,
+														MFRAME_ID});
 
-		HoboApp app = new HoboApp();
+	public CFrameDoctor(String frameId) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		super(frameId);
+	}
 
-		app.display();
+	List<String> getXMLTags() {
+
+		return XML_TAGS;
+	}
+
+	String getEntityTypeName() {
+
+		return CFRAME_ID;
+	}
+
+	XNode getEntityIdNodeOrNull(XNode entityNode) {
+
+		return entityNode;
 	}
 }

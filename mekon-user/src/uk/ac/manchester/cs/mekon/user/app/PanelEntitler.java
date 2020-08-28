@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,34 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class PanelEntitler {
 
-	static public void main(String[] args) throws Exception {
+	static void entitle(JPanel panel, String title) {
 
-		HoboApp app = new HoboApp();
+		panel.setBorder(createBorder(title));
+	}
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	static private TitledBorder createBorder(String title) {
 
-		app.display();
+		TitledBorder border = new TitledBorder(title);
+		Font font = border.getTitleFont();
+
+		if (font != null) {
+
+			border.setTitleFont(GFonts.toMedium(font));
+		}
+
+		return border;
 	}
 }

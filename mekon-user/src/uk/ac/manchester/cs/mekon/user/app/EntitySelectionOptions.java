@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,26 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+abstract class EntitySelectionOptions<E> {
 
-	static public void main(String[] args) throws Exception {
+	private EntitySelector<E> selector;
 
-		HoboApp app = new HoboApp();
+	EntitySelectionOptions(EntitySelector<E> selector) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		this.selector = selector;
+	}
 
-		app.display();
+	abstract JComponent createOptionsComponent();
+
+	void onSelectedOption(E selected) {
+
+		selector.onSelectedOption(selected);
 	}
 }

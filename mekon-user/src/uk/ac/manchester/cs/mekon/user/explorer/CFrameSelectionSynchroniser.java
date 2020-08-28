@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,56 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class CFrameSelectionSynchroniser {
 
-	static public void main(String[] args) throws Exception {
+	private List<ComponentSynchroniser> synchronisers = new ArrayList<ComponentSynchroniser>();
+	private boolean synchronising = false;
 
-		HoboApp app = new HoboApp();
+	private class ComponentSynchroniser extends CFrameSelectionListener {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		private CFrameSelectionRelay relay;
 
-		app.display();
+		protected void onSelected(CFrame frame) {
+
+			if (!synchronising) {
+
+				synchronising = true;
+				synchronise(frame);
+				synchronising = false;
+			}
+		}
+
+		ComponentSynchroniser(CFrameSelectionRelay relay) {
+
+			this.relay = relay;
+
+			synchronisers.add(this);
+			relay.addUpdateListener(this);
+		}
+
+		private void synchronise(CFrame selection) {
+
+			for (ComponentSynchroniser synchroniser : synchronisers) {
+
+				if (synchroniser != this) {
+
+					synchroniser.relay.update(selection);
+				}
+			}
+		}
+	}
+
+	void add(CFrameSelectionRelay relay) {
+
+		new ComponentSynchroniser(relay);
 	}
 }

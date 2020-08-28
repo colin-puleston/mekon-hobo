@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,45 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import java.awt.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+enum NodeTextDisplay {
 
-	static public void main(String[] args) throws Exception {
+	VALUE(Font.BOLD),
+	SLOT(Font.PLAIN),
+	DISJUNCTS_SLOT(Font.BOLD | Font.ITALIC),
+	SLOT_VALUE_TYPE_MODIFIER(Color.orange.darker(), Font.PLAIN),
+	SLOT_CARDINALITY_MODIFIER(Color.orange.darker().darker(), Font.PLAIN),
+	SLOT_VALUES(Font.ITALIC),
+	ANNOTATION_KEY(Font.BOLD | Font.ITALIC),
+	ANNOTATION_VALUE(Font.ITALIC);
 
-		HoboApp app = new HoboApp();
+	private Color colour;
+	private int style;
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	Color getColour() {
 
-		app.display();
+		return colour;
+	}
+
+	int getStyle() {
+
+		return style;
+	}
+
+	private NodeTextDisplay(int style) {
+
+		this(Color.darkGray.darker(), style);
+	}
+
+	private NodeTextDisplay(Color colour, int style) {
+
+		this.colour = colour;
+		this.style = style;
 	}
 }

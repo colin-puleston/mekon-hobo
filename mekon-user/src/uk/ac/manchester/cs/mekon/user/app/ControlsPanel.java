@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,39 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class ControlsPanel extends JPanel {
 
-	static public void main(String[] args) throws Exception {
+	static private final long serialVersionUID = -1;
 
-		HoboApp app = new HoboApp();
+	ControlsPanel(boolean horizontal) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		setLayout(new BoxLayout(this, getAxis(horizontal)));
+	}
 
-		app.display();
+	void addControl(JComponent control) {
+
+		add(createControlPanel(control));
+	}
+
+	private int getAxis(boolean horizontal) {
+
+		return horizontal ? BoxLayout.X_AXIS : BoxLayout.Y_AXIS;
+	}
+
+	private JComponent createControlPanel(JComponent control) {
+
+		JPanel panel = new JPanel(new BorderLayout());
+
+		panel.add(control, BorderLayout.CENTER);
+
+		return panel;
 	}
 }

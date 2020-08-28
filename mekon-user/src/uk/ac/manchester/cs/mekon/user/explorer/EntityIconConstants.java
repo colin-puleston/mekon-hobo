@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,31 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.awt.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+interface EntityIconConstants {
 
-	static public void main(String[] args) throws Exception {
+	static final Color INTERNAL_SOURCE_CLR = Color.blue;
+	static final Color EXTERNAL_SOURCE_CLR = Color.red;
+	static final Color UNSPECIFIED_SOURCE_CLR = Color.gray;
+	static final Color DATA_VALUE_CLR = Color.green.darker().darker();
+	static final Color HIDDEN_FRAME_MARKER_CLR = Color.darkGray.darker();
+	static final Color CURBED_SLOT_MARKER_CLR = Color.darkGray.darker();
+	static final Color FREED_SLOT_MARKER_CLR = Color.white;
 
-		HoboApp app = new HoboApp();
-
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
-
-		app.display();
-	}
+	static final int ENTITY_INNER_SIZE = 8;
+	static final int ENTITY_RIM_SIZE = 3;
+	static final int ENTITY_SIZE = ENTITY_INNER_SIZE + (ENTITY_RIM_SIZE * 2);
+	static final int HIDDEN_FRAME_MARKER_WIDTH = ENTITY_SIZE;
+	static final int HIDDEN_FRAME_MARKER_HEIGHT = 4;
+	static final int CURBED_SLOT_MARKER_WIDTH = 4;
+	static final int CURBED_SLOT_MARKER_HEIGHT = ENTITY_SIZE;
+	static final int FREED_SLOT_MARKER_SIZE = 8;
 }

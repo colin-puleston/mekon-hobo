@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,52 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class SlotLabelModifiers {
 
-	static public void main(String[] args) throws Exception {
+	static String forCardinality(CSlot cSlot) {
 
-		HoboApp app = new HoboApp();
+		CCardinality cardinality = cSlot.getCardinality();
+		boolean onePossibleValue = cSlot.getValueType().onePossibleValue();
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		return forCardinality(cardinality, onePossibleValue);
+	}
 
-		app.display();
+	static String forCardinality(
+					CCardinality cardinality,
+					boolean onePossibleValue) {
+
+		switch (cardinality) {
+
+			case SINGLE_VALUE:
+				return "[x]";
+
+			case UNIQUE_TYPES:
+				return "[x,y,z]";
+
+			case REPEATABLE_TYPES:
+				return onePossibleValue ? "[x,x,x]" : "[x,y,y]";
+		}
+
+		throw new Error("Unrecognised cardinality value: " + cardinality);
+	}
+
+	static String forValueType(CSlot cSlot) {
+
+		CValue<?> valueType = cSlot.getValueType();
+		boolean conceptValued = valueType instanceof MFrame;
+
+		return forValueType(valueType.getDisplayLabel(), conceptValued);
+	}
+
+	static String forValueType(String valueType, boolean conceptValued) {
+
+		return conceptValued ? "(" + valueType + ")" : "<" + valueType + ">";
 	}
 }

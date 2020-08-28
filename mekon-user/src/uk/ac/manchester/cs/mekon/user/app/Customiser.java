@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,33 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+public interface Customiser {
 
-	static public void main(String[] args) throws Exception {
+	public AssertionNameDefaults getAssertionNameDefaults();
 
-		HoboApp app = new HoboApp();
+	public QueryNameDefaults getQueryNameDefaults();
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	public SimpleQueriesConfig getSimpleQueriesConfig();
 
-		app.display();
-	}
+	public ValueObtainerFactory getValueObtainerFactory();
+
+	public IFrame onNewInstance(IFrame instance, CIdentity storeId);
+
+	public IFrame onRenamingInstance(
+					IFrame instance,
+					CIdentity storeId,
+					CIdentity newStoreId);
+
+	public String getTypeDisplayLabel(CValue<?> type);
+
+	public String getValueDisplayLabel(IValue value);
+
+	public boolean hiddenSlot(ISlot slot);
 }

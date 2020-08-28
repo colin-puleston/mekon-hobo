@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,14 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
-
-	static public void main(String[] args) throws Exception {
-
-		HoboApp app = new HoboApp();
-
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
-
-		app.display();
-	}
+class CFrameSelectionListeners extends GSelectionListeners<CFrame> {
 }

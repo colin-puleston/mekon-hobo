@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,37 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class CFrameAdditionSelector extends CFrameSelector {
 
-	static public void main(String[] args) throws Exception {
+	static private final long serialVersionUID = -1;
 
-		HoboApp app = new HoboApp();
+	private CFrame rootFrame;
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	CFrameAdditionSelector(JComponent parent, String selectionRole, CFrame rootFrame) {
 
-		app.display();
+		super(parent, selectionRole);
+
+		this.rootFrame = rootFrame;
+	}
+
+	JComponent resolveSelectorPanel(CFrameSelectionListener selectorListener) {
+
+		boolean showRoot = rootFrame.getCategory().atomic();
+		CFramesComboPanel combo = new CFramesComboPanel(rootFrame, CVisibility.EXPOSED, showRoot);
+
+		combo.addDefaultTree();
+		combo.addDefaultList();
+		combo.addSelectionListener(selectorListener);
+
+		return combo;
 	}
 }

@@ -23,7 +23,7 @@
 	<property name="build.mekon-owl.jar" location="${build.lib}/mekon-owl.jar"/>
 	<property name="build.mekon-basex.jar" location="${build.lib}/mekon-basex.jar"/>
 	<property name="build.mekon-jena.jar" location="${build.lib}/mekon-jena.jar"/>
-	<property name="build.mekon-gui.jar" location="${build.lib}/mekon-gui.jar"/>
+	<property name="build.mekon-user.jar" location="${build.lib}/mekon-user.jar"/>
 
 	<!-- clean target -->
 	<target name="clean">

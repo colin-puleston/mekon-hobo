@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,29 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class InertValueObtainerFactory implements ValueObtainerFactory {
 
-	static public void main(String[] args) throws Exception {
+	static final InertValueObtainerFactory SINGLETON = new InertValueObtainerFactory();
 
-		HoboApp app = new HoboApp();
+	public boolean handles(ISlot slot) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		return false;
+	}
 
-		app.display();
+	public ValueObtainer createFor(JComponent parent, ISlot slot) {
+
+		throw new RuntimeException("Cannot handle values for slot: " + slot);
+	}
+
+	private InertValueObtainerFactory() {
 	}
 }

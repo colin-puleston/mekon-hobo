@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,52 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.util.gui.inputter;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+public abstract class SimpleTextInputter<I> extends TextInputter<I> {
 
-	static public void main(String[] args) throws Exception {
+	static private final long serialVersionUID = -1;
 
-		HoboApp app = new HoboApp();
+	private TextInputHandler<I> inputHandler = new TextInputHandler<I>(this);
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	public void setInitialStringValue(String value) {
 
-		app.display();
+		inputHandler.setValueAsText(value);
+
+		updateInputValidity();
 	}
+
+	protected SimpleTextInputter(JComponent parent, String title, boolean canClear) {
+
+		super(parent, title, true, canClear);
+	}
+
+	protected I resolveInput() {
+
+		return inputHandler.getValue();
+	}
+
+	protected boolean validInputText(String text) {
+
+		return !text.isEmpty();
+	}
+
+	protected boolean validCurrentInput() {
+
+		return !emptyValue(inputHandler.getValue());
+	}
+
+	protected boolean validCompletedInput() {
+
+		return validInputText(inputHandler.getValueAsText());
+	}
+
+	protected abstract boolean emptyValue(I value);
 }
+
+

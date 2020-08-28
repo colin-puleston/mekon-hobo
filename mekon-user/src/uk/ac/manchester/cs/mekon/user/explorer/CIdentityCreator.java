@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,62 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.net.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class CIdentityCreator {
 
-	static public void main(String[] args) throws Exception {
+	static CIdentity createOrNull(String identifier) {
 
-		HoboApp app = new HoboApp();
+		if (identifier.length() == 0) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+			showMessage("Instance name required!");
 
-		app.display();
+			return null;
+		}
+
+		return new CIdentity(identifier, getLabel(identifier));
+	}
+
+	static private String getLabel(String identifier) {
+
+		URI uri = asURIOrNull(identifier);
+
+		if (uri != null && uri.isAbsolute()) {
+
+			String frag = uri.getFragment();
+
+			if (frag != null) {
+
+				return frag;
+			}
+		}
+
+		return identifier;
+	}
+
+	static private URI asURIOrNull(String identifier) {
+
+		try {
+
+			return new URI(identifier);
+		}
+		catch (URISyntaxException e) {
+
+			return null;
+		}
+	}
+
+	static private void showMessage(String msg) {
+
+		JOptionPane.showMessageDialog(null, msg);
 	}
 }
+

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,42 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.awt.*;
+import java.util.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.icon.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class EntityIconsByLevel {
 
-	static public void main(String[] args) throws Exception {
+	private Map<EntityLevel, Icon> icons = new HashMap<EntityLevel, Icon>();
 
-		HoboApp app = new HoboApp();
+	EntityIconsByLevel(Color clr, int size) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		add(EntityLevel.INSTANCE, clr, size);
+		add(EntityLevel.CONCEPT, clr, size);
+		add(EntityLevel.META, clr, size);
+	}
 
-		app.display();
+	Icon get(EntityLevel level) {
+
+		return icons.get(level);
+	}
+
+	private void add(EntityLevel level, Color clr, int size) {
+
+		icons.put(level, create(level, clr, size));
+	}
+
+	private GIcon create(EntityLevel level, Color clr, int size) {
+
+		return new GIcon(EntityRenderersByLevel.create(level, clr, size));
 	}
 }
+
+

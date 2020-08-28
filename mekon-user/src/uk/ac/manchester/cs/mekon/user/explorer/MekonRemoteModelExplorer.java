@@ -1,7 +1,7 @@
-/*
+/**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-package uk.ac.manchester.cs.hobo.demo.app;
+import java.net.*;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.remote.client.net.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+public class MekonRemoteModelExplorer {
 
-	static public void main(String[] args) throws Exception {
+	static public void main(String[] args) {
 
-		HoboApp app = new HoboApp();
+		URL serverURL = getServerURLFromArgs(args);
+		MekonNetClient client = new MekonNetClient(serverURL);
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		new MekonModelExplorer(client.getCModel(), client.getIStore());
+	}
 
-		app.display();
+	static private URL getServerURLFromArgs(String[] args) {
+
+		if (args.length != 1) {
+
+			exitForInputError("Expected single argument specifying server URL");
+		}
+
+		try {
+
+			return new URL(args[0]);
+		}
+		catch (MalformedURLException e) {
+
+			exitForInputError(e.getMessage());
+
+			return null;
+		}
+	}
+
+	static private void exitForInputError(String message) {
+
+		System.out.println("INPUT ERROR: " + message);
+		System.exit(0);
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,57 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.awt.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
+
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class CIdentitySelector extends GDialog {
 
-	static public void main(String[] args) throws Exception {
+	static private final long serialVersionUID = -1;
 
-		HoboApp app = new HoboApp();
+	static private final Dimension WINDOW_SIZE = new Dimension(250, 70);
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	private CIdentity selection = null;
 
-		app.display();
+	private class InputField extends GTextField {
+
+		static private final long serialVersionUID = -1;
+
+		protected void onTextEntered(String text) {
+
+			checkSelect(text);
+		}
+	}
+
+	CIdentitySelector(JComponent parent, String label) {
+
+		super(parent, label, true);
+
+		setPreferredSize(WINDOW_SIZE);
+		display(new InputField());
+	}
+
+	CIdentity getSelectionOrNull() {
+
+		return selection;
+	}
+
+	private void checkSelect(String text) {
+
+		selection = CIdentityCreator.createOrNull(text);
+
+		if (selection != null) {
+
+			dispose();
+		}
 	}
 }
+

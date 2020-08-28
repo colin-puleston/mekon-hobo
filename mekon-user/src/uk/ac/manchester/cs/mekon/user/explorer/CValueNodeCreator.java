@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,49 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class CValueNodeCreator extends CValueVisitor {
 
-	static public void main(String[] args) throws Exception {
+	private CTree tree;
+	private GNode created = null;
 
-		HoboApp app = new HoboApp();
+	protected void visit(CFrame value) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		created = new CFrameNode(tree, value);
+	}
 
-		app.display();
+	protected void visit(CNumber value) {
+
+		created = new CNumberNode(tree, value);
+	}
+
+	protected void visit(CString value) {
+
+		created = new CStringNode(tree, value);
+	}
+
+	protected void visit(MFrame value) {
+
+		created = new MFrameNode(tree, value);
+	}
+
+	CValueNodeCreator(CTree tree) {
+
+		this.tree = tree;
+	}
+
+	GNode create(CValue<?> value) {
+
+		visit(value);
+
+		return created;
 	}
 }

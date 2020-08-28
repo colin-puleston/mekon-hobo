@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,60 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class MFrameNode extends GNode {
 
-	static public void main(String[] args) throws Exception {
+	private CTree tree;
+	private MFrame frame;
 
-		HoboApp app = new HoboApp();
+	protected void addInitialChildren() {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		CFrame cFrame = frame.getRootCFrame();
 
-		app.display();
+		for (CFrame cFrameSub : cFrame.getSubs(CVisibility.EXPOSED)) {
+
+			MFrame sub = cFrameSub.getType();
+
+			if (tree.requiredCValue(sub)) {
+
+				addChild(new MFrameNode(tree, sub));
+			}
+		}
+	}
+
+	protected boolean autoExpand() {
+
+		return false;
+	}
+
+	protected boolean orderedChildren() {
+
+		return true;
+	}
+
+	protected GCellDisplay getDisplay() {
+
+		return EntityDisplays.get().get(frame);
+	}
+
+	MFrameNode(CTree tree, MFrame frame) {
+
+		super(tree);
+
+		this.tree = tree;
+		this.frame = frame;
+	}
+
+	MFrame getMFrame() {
+
+		return frame;
 	}
 }

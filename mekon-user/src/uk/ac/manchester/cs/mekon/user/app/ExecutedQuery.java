@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,41 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class ExecutedQuery {
 
-	static public void main(String[] args) throws Exception {
+	private CIdentity storeId;
+	private IFrame query;
+	private List<CIdentity> matches;
 
-		HoboApp app = new HoboApp();
+	ExecutedQuery(CIdentity storeId, IFrame query, List<CIdentity> matches) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		this.storeId = storeId;
+		this.query = query;
+		this.matches = matches;
+	}
 
-		app.display();
+	CIdentity getStoreId() {
+
+		return storeId;
+	}
+
+	IFrame getQuery() {
+
+		return query;
+	}
+
+	List<CIdentity> getMatches() {
+
+		return matches;
 	}
 }
+

@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,47 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+public class MekonAppStoreId {
 
-	static public void main(String[] args) throws Exception {
+	static public CIdentity toStoreId(String storeName, IFrameFunction function) {
 
-		HoboApp app = new HoboApp();
+		return new CIdentity(toIdentifier(storeName, function), storeName);
+	}
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	static public String toStoreName(CIdentity storeId) {
 
-		app.display();
+		return storeId.getLabel();
+	}
+
+	static public boolean assertionId(CIdentity storeId) {
+
+		return functionId(storeId, IFrameFunction.ASSERTION);
+	}
+
+	static public boolean queryId(CIdentity storeId) {
+
+		return functionId(storeId, IFrameFunction.QUERY);
+	}
+
+	static public boolean functionId(CIdentity storeId, IFrameFunction function) {
+
+		return storeId.getIdentifier().startsWith(toIdentifierPrefix(function));
+	}
+
+	static private String toIdentifier(String storeName, IFrameFunction function) {
+
+		return toIdentifierPrefix(function) + storeName;
+	}
+
+	static private String toIdentifierPrefix(IFrameFunction function) {
+
+		return function.toString() + "::";
 	}
 }

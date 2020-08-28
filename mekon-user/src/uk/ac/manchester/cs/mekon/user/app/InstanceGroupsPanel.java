@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,39 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.util.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class InstanceGroupsPanel extends JTabbedPane {
 
-	static public void main(String[] args) throws Exception {
+	static private final long serialVersionUID = -1;
 
-		HoboApp app = new HoboApp();
+	InstanceGroupsPanel(Controller controller, List<InstanceGroupSpec> groupSpecs) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		super(JTabbedPane.LEFT);
 
-		app.display();
+		setFont(GFonts.toLarge(getFont()));
+
+		for (InstanceGroupSpec groupSpec : groupSpecs) {
+
+			addGroupTab(controller, controller.addInstanceGroup(groupSpec));
+		}
+	}
+
+	private void addGroupTab(Controller controller, InstanceGroup group) {
+
+		addTab(getGroupTitle(controller, group), new InstanceGroupPanel(group));
+	}
+
+	private String getGroupTitle(Controller controller, InstanceGroup group) {
+
+		return controller.getCustomiser().getTypeDisplayLabel(group.getRootType());
 	}
 }

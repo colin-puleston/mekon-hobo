@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,46 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class QueryMatchesPanel extends InstancesPanel {
 
-	static public void main(String[] args) throws Exception {
+	static private final long serialVersionUID = -1;
 
-		HoboApp app = new HoboApp();
+	static private final String TITLE_BASE = "Matches";
+	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+	static private String createTitle(CIdentity storeId) {
 
-		app.display();
+		return String.format(TITLE_FORMAT, storeId.getLabel());
+	}
+
+	QueryMatchesPanel(InstanceGroup instanceGroup) {
+
+		super(instanceGroup, new InstanceIdsList(instanceGroup, false), TITLE_BASE);
+	}
+
+	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
+
+		setTitle(createTitle(queryStoreId));
+		displayIds(matchIds);
+	}
+
+	void clear() {
+
+		setTitle(TITLE_BASE);
+		clearIds();
+	}
+
+	boolean allowLoadActionOnly() {
+
+		return true;
 	}
 }

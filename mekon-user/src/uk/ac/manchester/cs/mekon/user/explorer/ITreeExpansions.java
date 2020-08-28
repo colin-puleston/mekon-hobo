@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,77 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import java.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class ITreeExpansions {
 
-	static public void main(String[] args) throws Exception {
+	private INode rootNode;
+	private Set<INode> expandeds = new HashSet<INode>();
 
-		HoboApp app = new HoboApp();
+	ITreeExpansions(INode rootNode) {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		this.rootNode = rootNode;
+	}
 
-		app.display();
+	void update(INode updated) {
+
+		expandeds.clear();
+		expandeds.add(updated);
+
+		addExpandeds(rootNode);
+	}
+
+	void restore() {
+
+		restoreCollapseds(rootNode);
+	}
+
+	private void addExpandeds(INode current) {
+
+		if (current.expanded()) {
+
+			expandeds.add(current);
+
+			for (INode child : current.getIChildren()) {
+
+				addExpandeds(child);
+			}
+		}
+	}
+
+	private void restoreCollapseds(INode current) {
+
+		if (current.expanded()) {
+
+			if (expandeds.contains(current)) {
+
+				for (INode child : current.getIChildren()) {
+
+					restoreCollapseds(child);
+				}
+			}
+			else {
+
+				collapseDescendantsLowestFirst(current);
+				current.collapse();
+			}
+		}
+	}
+
+	private void collapseDescendantsLowestFirst(INode node) {
+
+		for (INode child : node.getIChildren()) {
+
+			if (node.expanded()) {
+
+				collapseDescendantsLowestFirst(child);
+				node.collapse();
+			}
+		}
 	}
 }

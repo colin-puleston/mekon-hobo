@@ -4,7 +4,7 @@
  * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -22,24 +22,73 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+abstract class InstanceNode extends GNode {
 
-	static public void main(String[] args) throws Exception {
+	private InstanceTree tree;
 
-		HoboApp app = new HoboApp();
+	protected boolean autoExpand() {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		return true;
+	}
 
-		app.display();
+	protected boolean orderedChildren() {
+
+		return false;
+	}
+
+	InstanceNode(InstanceTree tree) {
+
+		super(tree);
+
+		this.tree = tree;
+	}
+
+	void initialise() {
+
+		for (GNode child : getChildren()) {
+
+			child.expand();
+		}
+	}
+
+	void update() {
+
+		for (GNode child : getChildren()) {
+
+			((InstanceNode)child).update();
+		}
+	}
+
+	InstanceTree getInstanceTree() {
+
+		return tree;
+	}
+
+	Instantiator getInstantiator() {
+
+		return tree.getInstantiator();
+	}
+
+	boolean queryInstance() {
+
+		return getInstantiator().queryInstance();
+	}
+
+	boolean viewOnly() {
+
+		return tree.viewOnly();
+	}
+
+	void onMousePresenceUpdate(boolean present) {
 	}
 }

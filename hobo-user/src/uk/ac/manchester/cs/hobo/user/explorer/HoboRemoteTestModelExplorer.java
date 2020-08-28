@@ -1,7 +1,7 @@
-/*
+/**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package uk.ac.manchester.cs.hobo.user.explorer;
 
-package uk.ac.manchester.cs.hobo.demo.app;
+import uk.ac.manchester.cs.hobo.manage.*;
+import uk.ac.manchester.cs.hobo.model.motor.*;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
+import uk.ac.manchester.cs.mekon.manage.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon.user.explorer.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+public class HoboRemoteTestModelExplorer {
 
-	static public void main(String[] args) throws Exception {
+	static public void main(String[] args) {
 
-		HoboApp app = new HoboApp();
+		DBuilder dBuilder = DManager.createBuilder();
+		CBuilder cBuilder = dBuilder.getCBuilder();
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		CModel cModel = dBuilder.build().getCModel();
+		IStore iStore = IDiskStoreManager.getBuilder(cBuilder).build();
 
-		app.display();
+		new MekonRemoteTestModelExplorer(cModel, iStore);
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 University of Manchester
+ * Copyright (c) 2014 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,39 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.demo.app;
+package uk.ac.manchester.cs.mekon.user.explorer;
 
-import uk.ac.manchester.cs.hobo.user.app.*;
-
-import uk.ac.manchester.cs.hobo.demo.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.icon.*;
 
 /**
  * @author Colin Puleston
  */
-public class HoboAppDemo {
+class FullEditSlotIcons extends SlotIcons {
 
-	static public void main(String[] args) throws Exception {
+	static private final int MARKER_X_OFFSET = ENTITY_SIZE;
+	static private final int MARKER_Y_OFFSET = (ENTITY_SIZE - FREED_SLOT_MARKER_SIZE) / 2;
 
-		HoboApp app = new HoboApp();
+	private GIconRenderer createMarkerRenderer() {
 
-		app.configureFromFile();
-		app.addDirectInstanceGroup(Travel.class, true);
+		GIconRenderer r = new GOvalRenderer(
+								FREED_SLOT_MARKER_CLR,
+								FREED_SLOT_MARKER_SIZE);
 
-		app.display();
+		r.setXOffset(MARKER_X_OFFSET);
+		r.setYOffset(MARKER_Y_OFFSET);
+
+		return r;
+	}
+
+	private GIconRenderer markerRenderer = createMarkerRenderer();
+
+	FullEditSlotIcons() {
+
+		initialise();
+	}
+
+	void addExtraRenderers(GIcon icon) {
+
+		icon.addRenderer(markerRenderer);
 	}
 }

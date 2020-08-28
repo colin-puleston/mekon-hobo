@@ -18,9 +18,9 @@
 	<property name="build.hobo-demo.jar" location="${build.lib}/hobo-demo.jar"/>
 
 	<!-- gui main-classes -->
-	<property name="mekon-explorer.mainclass" value="uk.ac.manchester.cs.mekon.gui.explorer.MekonModelExplorer"/>
-	<property name="mekon-client-demo-explorer.mainclass" value="uk.ac.manchester.cs.mekon.gui.explorer.MekonRemoteModelExplorer"/>
-	<property name="hobo-explorer.mainclass" value="uk.ac.manchester.cs.hobo.gui.explorer.HoboModelExplorer"/>
+	<property name="mekon-explorer.mainclass" value="uk.ac.manchester.cs.mekon.user.explorer.MekonModelExplorer"/>
+	<property name="mekon-client-demo-explorer.mainclass" value="uk.ac.manchester.cs.mekon.user.explorer.MekonRemoteModelExplorer"/>
+	<property name="hobo-explorer.mainclass" value="uk.ac.manchester.cs.hobo.user.explorer.HoboModelExplorer"/>
 	<property name="hobo-app-demo.mainclass" value="uk.ac.manchester.cs.hobo.demo.app.HoboAppDemo"/>
 
 	<!-- mekon-explorer demo invocation -->
