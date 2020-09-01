@@ -56,7 +56,7 @@ class IRegenPathImpl implements IRegenPath {
 
 	public String toString() {
 
-		return getPathTypePrefix() + "\"" + pathToString() + "\"";
+		return getPathTypePrefix() + ": \"" + pathToString() + "\"";
 	}
 
 	public String pathToString() {
@@ -120,6 +120,6 @@ class IRegenPathImpl implements IRegenPath {
 
 	private String getPathTypePrefix() {
 
-		return slot != null ?  "SLOT:  " : "VALUE: ";
+		return value != null ?  "VALUE" : "SLOT";
 	}
 }
