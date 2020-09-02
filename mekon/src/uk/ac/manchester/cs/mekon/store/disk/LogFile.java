@@ -41,23 +41,22 @@ class LogFile {
 
 	private File file;
 
-	private class ParsedInstanceLogger {
+	private class ParsedInstanceWarningLogger {
 
 		private CIdentity identity;
 		private IRegenInstance output;
 
-		private PrintWriter writer = createWriter(true);
+		private PrintWriter writer = null;
 
-		ParsedInstanceLogger(CIdentity identity, IRegenInstance output) {
+		ParsedInstanceWarningLogger(CIdentity identity, IRegenInstance output) {
 
 			this.identity = identity;
 			this.output = output;
 
-			log();
-			writer.close();
+			checkLogWarning();
 		}
 
-		private void log() {
+		private void checkLogWarning() {
 
 			switch (output.getStatus()) {
 
@@ -93,6 +92,8 @@ class LogFile {
 
 		private void startWarningLog(String message) {
 
+			writer = createWriter(true);
+
 			logLine(0, "\nWARNING: \"" + identity.getIdentifier() + "\"");
 			logLine(1, message);
 		}
@@ -100,6 +101,8 @@ class LogFile {
 		private void endWarningLog(String message) {
 
 			logLine(1, message);
+
+			writer.close();
 		}
 
 		private void logLine(int tabs, String message) {
@@ -118,11 +121,6 @@ class LogFile {
 
 			return tabs.toString();
 		}
-
-		private String getStatusString() {
-
-			return output.getStatus().toString().toLowerCase().replace("_", "-");
-		}
 	}
 
 	LogFile(File directory) {
@@ -139,7 +137,7 @@ class LogFile {
 
 	void logParsedInstance(CIdentity identity, IRegenInstance output) {
 
-		new ParsedInstanceLogger(identity, output);
+		new ParsedInstanceWarningLogger(identity, output);
 	}
 
 	private void writeFileHeader() {

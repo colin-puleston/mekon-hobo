@@ -52,39 +52,18 @@ class IDiskStore implements IStore {
 	private IStoreActiveRegenReport regenReport;
 	private InstanceRefIntegrityManager refIntegrityManager;
 
-	private boolean loaded = false;
-
 	private class Initialiser {
 
 		private List<IMatcher> reloadableMatchers = new ArrayList<IMatcher>();
 
 		Initialiser() {
 
-			initialiseMatchers();
 			reloadInstances();
-			processReloadedInstances();
+			logInstanceRegens();
+			initialiseMatchers();
+			populateMatchers();
 
 			indexes.reinitialiseFreeIndexes();
-		}
-
-		private void initialiseMatchers() {
-
-			initialiseMatcher(defaultMatcher);
-
-			for (IMatcher matcher : matchers) {
-
-				initialiseMatcher(matcher);
-
-				if (matcher.rebuildOnStartup()) {
-
-					reloadableMatchers.add(matcher);
-				}
-			}
-		}
-
-		private void initialiseMatcher(IMatcher matcher) {
-
-			matcher.initialise(IDiskStore.this, indexes);
 		}
 
 		private void reloadInstances() {
@@ -107,35 +86,63 @@ class IDiskStore implements IStore {
 			refIntegrityManager.onReloadedInstance(identity, profile);
 		}
 
-		private void processReloadedInstances() {
+		private void logInstanceRegens() {
 
 			for (CIdentity identity : getAllIdentities()) {
 
-				IFrame instance = checkRegenInstance(identity);
+				logInstanceRegen(identity);
+			}
+		}
+
+		private void logInstanceRegen(CIdentity identity) {
+
+			IRegenInstance regen = regen(identity, false);
+
+			logFile.logParsedInstance(identity, regen);
+
+			switch (regen.getStatus()) {
+
+				case FULLY_INVALID:
+					regenReport.addFullyInvalidRegenId(identity);
+					break;
+
+				case PARTIALLY_VALID:
+					regenReport.addPartiallyValidRegenId(identity);
+					break;
+			}
+		}
+
+		private void initialiseMatchers() {
+
+			initialiseMatcher(defaultMatcher);
+
+			for (IMatcher matcher : matchers) {
+
+				initialiseMatcher(matcher);
+
+				if (matcher.rebuildOnStartup()) {
+
+					reloadableMatchers.add(matcher);
+				}
+			}
+		}
+
+		private void initialiseMatcher(IMatcher matcher) {
+
+			matcher.initialise(IDiskStore.this, indexes);
+		}
+
+		private void populateMatchers() {
+
+			for (CIdentity identity : getAllIdentities()) {
+
+				IFrame instance = regenOrNull(identity, true);
 
 				if (instance != null) {
 
 					checkAddToMatcher(instance, identity);
 				}
 			}
-		}
-
-		private IFrame checkRegenInstance(CIdentity identity) {
-
-			IRegenInstance regen = regen(identity, true);
-
-			switch (regen.getStatus()) {
-
-				case FULLY_INVALID:
-					regenReport.addFullyInvalidRegenId(identity);
-					return null;
-
-				case PARTIALLY_VALID:
-					regenReport.addPartiallyValidRegenId(identity);
-					break;
-			}
-
-			return regen.getRootFrame();
 		}
 
 		private void checkAddToMatcher(IFrame instance, CIdentity identity) {
@@ -276,8 +283,6 @@ class IDiskStore implements IStore {
 	void initialisePostRegistration() {
 
 		new Initialiser();
-
-		loaded = true;
 	}
 
 	void stop() {
@@ -304,7 +309,9 @@ class IDiskStore implements IStore {
 
 	IFrame regenOrNull(CIdentity identity, boolean freeInstance) {
 
-		return regenOrNull(identity, indexes.getIndex(identity), freeInstance);
+		Integer index = indexes.getIndexOrNull(identity);
+
+		return index != null ? regenOrNull(identity, index, freeInstance) : null;
 	}
 
 	private IFrame checkRemove(CIdentity identity) {
@@ -350,14 +357,7 @@ class IDiskStore implements IStore {
 
 	private IRegenInstance regen(CIdentity identity, int index, boolean freeInstance) {
 
-		IRegenInstance regen = serialiser.read(identity, index, freeInstance);
-
-		if (!loaded) {
-
-			logFile.logParsedInstance(identity, regen);
-		}
-
-		return regen;
+		return serialiser.read(identity, index, freeInstance);
 	}
 
 	private void addToMatcher(IFrame instance, CIdentity identity) {

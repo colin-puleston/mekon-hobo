@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
 
 /**
@@ -59,7 +58,7 @@ import uk.ac.manchester.cs.mekon.store.*;
  */
 public class IMatchInstanceRefExpander {
 
-	private IStore store;
+	private IDiskStore store;
 	private Deque<CFrame> expandingTypes = new ArrayDeque<CFrame>();
 
 	/**
@@ -70,7 +69,7 @@ public class IMatchInstanceRefExpander {
 	 */
 	public IMatchInstanceRefExpander(IStore store) {
 
-		this.store = store;
+		this.store = toDiskStore(store);
 	}
 
 	/**
@@ -84,6 +83,16 @@ public class IMatchInstanceRefExpander {
 		expandingTypes.push(instance.getType());
 		expandAllFromSlots(instance);
 		expandingTypes.pop();
+	}
+
+	private IDiskStore toDiskStore(IStore store) {
+
+		if (store instanceof IDiskStore) {
+
+			return (IDiskStore)store;
+		}
+
+		return StoreRegister.get(store.getModel());
 	}
 
 	private void expandAllFromSlots(IFrame frame) {
@@ -119,25 +128,13 @@ public class IMatchInstanceRefExpander {
 
 	private void checkExpand(ISlot slot, CIdentity refId) {
 
-		IFrame refed = getFromStoreAndFreeCopyOrNull(refId);
+		IFrame refed = store.regenOrNull(refId, true);
 
 		if (refed != null && canExpand(refed)) {
 
 			slot.getValuesEditor().add(refed);
 			expandAll(refed);
 		}
-	}
-
-	private IFrame getFromStoreAndFreeCopyOrNull(CIdentity instanceRef) {
-
-		IRegenInstance regen = store.get(instanceRef);
-
-		if (regen != null && regen.getStatus() != IRegenStatus.FULLY_INVALID) {
-
-			return IFreeCopier.get().createFreeCopy(regen.getRootFrame());
-		}
-
-		return null;
 	}
 
 	private boolean canExpand(IFrame refed) {
