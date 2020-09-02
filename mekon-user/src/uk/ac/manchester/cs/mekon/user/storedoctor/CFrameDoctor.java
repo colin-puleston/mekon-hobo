@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.user.storedoctor;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -33,14 +35,47 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 public class CFrameDoctor extends EntityDoctor {
 
-	static private final List<String> XML_TAGS = Arrays.asList(
-													new String[]{
-														CFRAME_ID,
-														MFRAME_ID});
+	static private final List<String> XML_TAGS = Arrays.asList(CFRAME_ID, MFRAME_ID);
+
+	private String frameId;
+
+	private String newFrameId = null;
+	private String newFrameLabel = null;
 
 	public CFrameDoctor(String frameId) {
 
 		super(frameId);
+
+		this.frameId = frameId;
+	}
+
+	public void setNewId(String value) {
+
+		super.setNewId(value);
+
+		newFrameId = value;
+	}
+
+	public void setNewLabel(String value) {
+
+		super.setNewLabel(value);
+
+		newFrameLabel = value;
+	}
+
+	IInstanceProfile checkDoctorProfile(IInstanceProfile profile) {
+
+		if (newFrameId != null || newFrameLabel != null) {
+
+			CIdentity typeIdentity = profile.getTypeIdentity();
+
+			if (typeIdentity.getIdentifier().equals(frameId)) {
+
+				return profile.updateType(getNewIdentity(typeIdentity.getLabel()));
+			}
+		}
+
+		return null;
 	}
 
 	List<String> getXMLTags() {
@@ -56,5 +91,13 @@ public class CFrameDoctor extends EntityDoctor {
 	XNode getEntityIdNodeOrNull(XNode entityNode) {
 
 		return entityNode;
+	}
+
+	private CIdentity getNewIdentity(String oldLabel) {
+
+		String id = newFrameId != null ? newFrameId : frameId;
+		String label = newFrameLabel != null ? newFrameLabel : oldLabel;
+
+		return new CIdentity(id, label);
 	}
 }

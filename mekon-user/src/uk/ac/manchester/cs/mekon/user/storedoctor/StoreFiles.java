@@ -48,11 +48,6 @@ class StoreFiles implements IDiskStoreNames {
 		return profileFiles.getAllFiles();
 	}
 
-	String getInstanceName(File profileFile) {
-
-		return IDiskStoreUtil.readInstanceIdentity(profileFile).getLabel();
-	}
-
 	File getInstanceFile(File profileFile) {
 
 		return instanceFiles.getFile(profileFiles.getIndex(profileFile));

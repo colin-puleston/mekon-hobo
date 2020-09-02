@@ -211,9 +211,9 @@ public class ISlotDoctor extends EntityDoctor {
 		}
 	}
 
-	boolean checkDoctor(XNode entityNode) {
+	boolean checkDoctorNode(XNode entityNode) {
 
-		if (super.checkDoctor(entityNode)) {
+		if (super.checkDoctorNode(entityNode)) {
 
 			if (valueTypeDoctor != null) {
 
