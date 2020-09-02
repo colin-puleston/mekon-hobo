@@ -89,16 +89,16 @@ class IDiskStore implements IStore {
 
 		private void reloadInstances() {
 
-			for (InstanceProfile profile : serialiser.resolveStoredProfiles()) {
+			for (IInstanceProfile profile : serialiser.resolveStoredProfiles()) {
 
 				reloadInstance(profile);
 			}
 		}
 
-		private void reloadInstance(InstanceProfile profile) {
+		private void reloadInstance(IInstanceProfile profile) {
 
-			CIdentity identity = profile.getInstanceId();
-			IRegenType type = createRegenType(profile.getTypeId());
+			CIdentity identity = profile.getInstanceIdentity();
+			IRegenType type = createRegenType(profile.getTypeIdentity());
 
 			identities.add(identity);
 			types.put(identity, type);

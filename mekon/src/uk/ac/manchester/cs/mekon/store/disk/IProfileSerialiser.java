@@ -32,27 +32,30 @@ import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
+ * Provides XML serialisation of instance profile information
+ * for the disk-based instance-store.
+ *
  * @author Colin Puleston
  */
-class ProfileSerialiser extends FSerialiser {
+public class IProfileSerialiser extends FSerialiser implements IProfileSerialiserVocab {
 
-	static private final String ROOT_ID = "Instance";
-	static private final String TYPE_ID = "Type";
-	static private final String REFERENCES_ID = "ReferencedInstances";
-
-	static final private String FUNCTION_ATTR = "function";
-
-	static void render(InstanceProfile profile, File file) {
+	/**
+	 * Renders instance-profile information to file.
+	 *
+	 * @param profile instance-profile information to be rendered
+	 * @param file File to render to
+	 */
+	static public void render(IInstanceProfile profile, File file) {
 
 		XDocument document = new XDocument(ROOT_ID);
 
 		XNode rootNode = document.getRootNode();
 		XNode typeNode = rootNode.addChild(TYPE_ID);
 
-		renderIdentity(profile.getInstanceId(), rootNode);
-		renderIdentity(profile.getTypeId(), typeNode);
+		renderIdentity(profile.getInstanceIdentity(), rootNode);
+		renderIdentity(profile.getTypeIdentity(), typeNode);
 
-		List<CIdentity> refIds = profile.getReferenceIds();
+		List<CIdentity> refIds = profile.getReferenceIdentites();
 
 		if (!refIds.isEmpty()) {
 
@@ -64,12 +67,18 @@ class ProfileSerialiser extends FSerialiser {
 		document.writeToFile(file);
 	}
 
-	static InstanceProfile parse(File file) {
+	/**
+	 * Parses instance-profile information from file.
+	 *
+	 * @param file File to parse from
+	 * @return parsed instance-profile information
+	 */
+	static public IInstanceProfile parse(File file) {
 
 		XNode rootNode = new XDocument(file).getRootNode();
 		XNode typeNode = rootNode.getChild(TYPE_ID);
 
-		return new InstanceProfile(
+		return new IInstanceProfile(
 						parseIdentity(rootNode),
 						parseIdentity(typeNode),
 						parseReferenceIds(rootNode),

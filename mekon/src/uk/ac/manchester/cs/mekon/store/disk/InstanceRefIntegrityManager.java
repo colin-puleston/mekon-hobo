@@ -55,9 +55,9 @@ class InstanceRefIntegrityManager {
 		addInstanceRefs(identity, instance.getAllReferenceIds());
 	}
 
-	void onReloadedInstance(CIdentity identity, InstanceProfile profile) {
+	void onReloadedInstance(CIdentity identity, IInstanceProfile profile) {
 
-		addInstanceRefs(identity, profile.getReferenceIds());
+		addInstanceRefs(identity, profile.getReferenceIdentites());
 	}
 
 	void onRemovedInstance(CIdentity identity) {

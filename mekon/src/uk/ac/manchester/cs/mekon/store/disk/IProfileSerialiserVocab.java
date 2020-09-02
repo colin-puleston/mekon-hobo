@@ -24,27 +24,18 @@
 
 package uk.ac.manchester.cs.mekon.store.disk;
 
-import java.io.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
- * Utilities for tools that require under-the-hood access of
- * the disk-based instance-store.
+ * Vocabulary for the XML serialisation of instance profile
+ * information as represented by the disk-based instance-store
+ * within instance-profile files.
  *
  * @author Colin Puleston
  */
-public class IDiskStoreUtil {
+public interface IProfileSerialiserVocab {
 
-	/**
-	 * Retrieves the identity of an instance from the relevant
-	 * instance-profile file.
-	 *
-	 * @param profileFile Relevant profile file
-	 * @return required instance identity
-	 */
-	static public CIdentity readInstanceIdentity(File profileFile) {
+	static public final String ROOT_ID = "Instance";
+	static public final String TYPE_ID = "Type";
+	static public final String REFERENCES_ID = "ReferencedInstances";
 
-		return ProfileSerialiser.parse(profileFile).getInstanceId();
-	}
+	static public final String FUNCTION_ATTR = "function";
 }

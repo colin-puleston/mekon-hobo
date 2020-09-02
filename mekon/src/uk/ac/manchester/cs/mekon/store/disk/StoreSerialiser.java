@@ -63,13 +63,13 @@ class StoreSerialiser {
 
 	void write(IFrame instance, CIdentity identity, int index) {
 
-		InstanceProfile profile = createProfile(instance, identity);
+		IInstanceProfile profile = createProfile(instance, identity);
 		StoreDirectory storeDir = selectStoreDirectory(instance);
 
 		File pFile = storeDir.getProfileFile(index);
 		File iFile = storeDir.getInstanceFile(index);
 
-		ProfileSerialiser.render(profile, pFile);
+		IProfileSerialiser.render(profile, pFile);
 		instanceSerialiser.render(instance, iFile);
 	}
 
@@ -84,7 +84,7 @@ class StoreSerialiser {
 
 		File pFile = selectStoreDirectory(index).getProfileFile(index);
 
-		return ProfileSerialiser.parse(pFile).getTypeId();
+		return IProfileSerialiser.parse(pFile).getTypeIdentity();
 	}
 
 	void remove(int index) {
@@ -100,16 +100,16 @@ class StoreSerialiser {
 		}
 	}
 
-	List<InstanceProfile> resolveStoredProfiles() {
+	List<IInstanceProfile> resolveStoredProfiles() {
 
-		List<InstanceProfile> profiles = new ArrayList<InstanceProfile>();
+		List<IInstanceProfile> profiles = new ArrayList<IInstanceProfile>();
 		Set<Integer> resolvedIndices = new HashSet<Integer>();
 
 		for (StoreDirectory dir : allDirectories) {
 
 			for (File pFile : dir.getAllProfileFiles()) {
 
-				InstanceProfile profile = resolveStoredProfile(dir, pFile);
+				IInstanceProfile profile = resolveStoredProfile(dir, pFile);
 
 				if (resolvedIndices.add(profile.getIndex())) {
 
@@ -135,18 +135,18 @@ class StoreSerialiser {
 		return serialiser;
 	}
 
-	private InstanceProfile createProfile(IFrame instance, CIdentity identity) {
+	private IInstanceProfile createProfile(IFrame instance, CIdentity identity) {
 
 		CIdentity typeId = instance.getType().getIdentity();
 		List<CIdentity> refedIds = instance.getAllReferenceIds();
 		IFrameFunction function = instance.getFunction();
 
-		return new InstanceProfile(identity, typeId, refedIds, function);
+		return new IInstanceProfile(identity, typeId, refedIds, function);
 	}
 
-	private InstanceProfile resolveStoredProfile(StoreDirectory dir, File pFile) {
+	private IInstanceProfile resolveStoredProfile(StoreDirectory dir, File pFile) {
 
-		InstanceProfile profile = ProfileSerialiser.parse(pFile);
+		IInstanceProfile profile = IProfileSerialiser.parse(pFile);
 		int index = dir.getProfileFileIndex(pFile);
 
 		profile.setIndex(index);
@@ -188,9 +188,9 @@ class StoreSerialiser {
 		return selectStoreDirectory(instance.getType(), instance.getFunction());
 	}
 
-	private StoreDirectory selectStoreDirectory(InstanceProfile profile) {
+	private StoreDirectory selectStoreDirectory(IInstanceProfile profile) {
 
-		CFrame type = getFrameType(profile.getTypeId());
+		CFrame type = getFrameType(profile.getTypeIdentity());
 
 		return selectStoreDirectory(type, profile.getFunction());
 	}
