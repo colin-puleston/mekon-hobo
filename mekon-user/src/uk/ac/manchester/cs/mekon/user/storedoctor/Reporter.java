@@ -52,9 +52,9 @@ class Reporter {
 		reportInstanceInfo("DOCTORED INSTANCE [" + instanceName + "]");
 	}
 
-	static void reportDoctoredEntities(String entityType, int doctoringsCount) {
+	static void reportEntityDoctorings(EntityDoctor doctor, int doctoringsCount) {
 
-		reportInstanceInfo(TAB + entityType + " Updates: " + doctoringsCount);
+		reportInstanceInfo(TAB + createEntityDoctoringsMsg(doctor, doctoringsCount));
 	}
 
 	static void endReportDoctoredInstance() {
@@ -84,5 +84,17 @@ class Reporter {
 	static private void report(String line) {
 
 		System.out.println(line);
+	}
+
+	static String createEntityDoctoringsMsg(EntityDoctor doctor, int doctoringsCount) {
+
+		StringBuilder msg = new StringBuilder();
+
+		msg.append("ENTITY: ");
+		msg.append(doctor.getEntityTypeName());
+		msg.append("[" + doctor.getEntityDescription() + "]");
+		msg.append(" (" + doctoringsCount + " updates)");
+
+		return msg.toString();
 	}
 }

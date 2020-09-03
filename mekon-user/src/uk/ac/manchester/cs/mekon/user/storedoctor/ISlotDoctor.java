@@ -44,6 +44,8 @@ public class ISlotDoctor extends EntityDoctor {
 		valueTypeTags.add(CNUMBER_ID);
 	}
 
+	private String slotId;
+
 	private List<String> containerIds = new ArrayList<String>();
 	private ValueTypeDoctor valueTypeDoctor = null;
 
@@ -160,6 +162,8 @@ public class ISlotDoctor extends EntityDoctor {
 
 		super(slotId);
 
+		this.slotId = slotId;
+
 		containerIds.add(rootContainerId);
 	}
 
@@ -236,6 +240,11 @@ public class ISlotDoctor extends EntityDoctor {
 		return ISLOT_ID;
 	}
 
+	String getEntityDescription() {
+
+		return getRootContainerId() + "-->" + slotId;
+	}
+
 	XNode getEntityIdNodeOrNull(XNode entityNode) {
 
 		return containerIdMatch(entityNode) ? entityNode.getChild(CSLOT_ID) : null;
@@ -243,12 +252,14 @@ public class ISlotDoctor extends EntityDoctor {
 
 	private List<CFrame> getDescendantContainerTypes(CModel model) {
 
-		return model.getFrames().get(getRootContainerIdentity()).getDescendants();
+		CIdentity rootContIdentity = new CIdentity(getRootContainerId());
+
+		return model.getFrames().get(rootContIdentity).getDescendants();
 	}
 
-	private CIdentity getRootContainerIdentity() {
+	private String getRootContainerId() {
 
-		return new CIdentity(containerIds.get(0));
+		return containerIds.get(0);
 	}
 
 	private boolean containerIdMatch(XNode slotNode) {

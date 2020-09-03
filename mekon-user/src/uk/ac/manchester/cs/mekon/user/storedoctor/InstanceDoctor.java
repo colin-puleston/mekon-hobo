@@ -66,7 +66,7 @@ public class InstanceDoctor {
 
 			if (doctoringsCount != 0) {
 
-				Reporter.reportDoctoredEntities(doctor.getEntityTypeName(), doctoringsCount);
+				Reporter.reportEntityDoctorings(doctor, doctoringsCount);
 			}
 		}
 	}

@@ -88,6 +88,11 @@ public class CFrameDoctor extends EntityDoctor {
 		return CFRAME_ID;
 	}
 
+	String getEntityDescription() {
+
+		return frameId;
+	}
+
 	XNode getEntityIdNodeOrNull(XNode entityNode) {
 
 		return entityNode;

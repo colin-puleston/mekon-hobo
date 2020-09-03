@@ -83,6 +83,8 @@ public abstract class EntityDoctor implements FSerialiserVocab {
 
 	abstract String getEntityTypeName();
 
+	abstract String getEntityDescription();
+
 	abstract XNode getEntityIdNodeOrNull(XNode entityNode);
 
 	private boolean checkDoctorEntityNode(XNode entityNode) {
