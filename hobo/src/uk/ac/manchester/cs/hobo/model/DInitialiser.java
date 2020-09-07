@@ -108,7 +108,7 @@ class DInitialiser {
 						DClassMap classMap,
 						Class<? extends DObject> dClass) {
 
-		CFrame frame = getFrame(getFrameId(classMap, dClass));
+		CFrame frame = getFrame(classMap.getExternalId());
 		DBinding binding = bindings.add(dClass, frame);
 		CFrameEditor frameEditor = getFrameEditor(frame);
 
@@ -190,15 +190,6 @@ class DInitialiser {
 		CFrame sup = superBinding.getFrame();
 
 		getFrameEditor(frame).addSuper(sup);
-	}
-
-	private String getFrameId(
-						DClassMap classMap,
-						Class<? extends DObject> dClass) {
-
-		return classMap.mappedClass()
-					? classMap.getExternalId()
-					: dClass.getName();
 	}
 
 	private CFrame getFrame(String id) {

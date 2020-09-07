@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.manage;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
@@ -54,14 +56,12 @@ class DConfig implements DConfigVocab {
 		modelMap.setLabelsFromDirectClasses(labelsFromDirectClasses());
 		modelMap.setLabelsFromDirectFields(labelsFromDirectFields());
 
-		loadClassMaps(modelMap);
-	}
+		KConfigNode mapsNode = rootNode.getChildOrNull(MAPPINGS_ID);
 
-	private void loadDirectPackages(DBuilder builder) {
+		if (mapsNode != null) {
 
-		for (KConfigNode clusterNode : rootNode.getChildren(DIRECT_SECTION_ID)) {
-
-			loadDirectPackages(builder, clusterNode);
+			loadClassMappers(modelMap, mapsNode);
+			loadClassMaps(modelMap, mapsNode);
 		}
 	}
 
@@ -75,25 +75,71 @@ class DConfig implements DConfigVocab {
 		return rootNode.getBoolean(DIRECT_FIELD_LABELS_ATTR, false);
 	}
 
-	private void loadClassMaps(DModelMap modelMap) {
+	private void loadClassMappers(DModelMap modelMap, KConfigNode mapsNode) {
 
-		KConfigNode mapsNode = rootNode.getChildOrNull(MAPPINGS_ID);
+		for (KConfigNode mapperNode : mapsNode.getChildren(CLASS_MAPPER_ID)) {
 
-		if (mapsNode != null) {
+			loadClassMapper(modelMap, mapperNode);
+		}
+	}
 
-			for (KConfigNode classMapNode : mapsNode.getChildren(CLASS_MAP_ID)) {
+	private void loadClassMapper(DModelMap modelMap, KConfigNode mapperNode) {
 
-				loadClassMap(modelMap, classMapNode);
-			}
+		DClassMapper mapper = modelMap.addClassMapper(getClassMappingPackages(mapperNode));
+
+		String idPfx = mapperNode.getString(CLASS_MAPPER_ID_PREFIX_ATTR, null);
+		String classIdPfx = mapperNode.getString(CLASS_MAPPER_CLASS_ID_PREFIX_ATTR, null);
+		String fieldIdPfx = mapperNode.getString(CLASS_MAPPER_FIELD_ID_PREFIX_ATTR, null);
+
+		if (idPfx != null) {
+
+			mapper.setIdsPrefix(idPfx);
+		}
+
+		if (classIdPfx != null) {
+
+			mapper.setClassIdsPrefix(classIdPfx);
+		}
+
+		if (fieldIdPfx != null) {
+
+			mapper.setFieldIdsPrefix(fieldIdPfx);
+		}
+
+		KConfigNode cfIdsNode = mapperNode.getChildOrNull(CLASS_MAPPER_COMPOUND_FIELD_IDS_ID);
+
+		if (cfIdsNode != null) {
+
+			mapper.setCompoundFieldIds(cfIdsNode.getString(CLASS_MAPPER_ID_SEPARATOR_ATTR));
+		}
+	}
+
+	private List<String> getClassMappingPackages(KConfigNode mapperNode) {
+
+		List<String> packages = new ArrayList<String>();
+
+		for (KConfigNode pkgNode : mapperNode.getChildren(CLASS_MAPPER_PACKAGE_ID)) {
+
+			packages.add(pkgNode.getString(CLASS_MAPPER_PACKAGE_ATTR));
+		}
+
+		return packages;
+	}
+
+	private void loadClassMaps(DModelMap modelMap, KConfigNode classMapsNode) {
+
+		for (KConfigNode classMapNode : classMapsNode.getChildren(CLASS_MAP_ID)) {
+
+			loadClassMap(modelMap, classMapNode);
 		}
 	}
 
 	private void loadClassMap(DModelMap modelMap, KConfigNode classMapNode) {
 
 		Class<? extends DObject> dClass = loadMappedDClass(classMapNode);
-		String frameId = classMapNode.getString(EXTERNAL_ID_ATTR, null);
+		String extnId = classMapNode.getString(CLASS_MAP_EXTERNAL_ID_ATTR);
 
-		loadFieldMaps(modelMap.addClassMap(dClass, frameId), classMapNode);
+		loadFieldMaps(modelMap.addClassMap(dClass, extnId), classMapNode);
 	}
 
 	private Class<? extends DObject> loadMappedDClass(KConfigNode classMapNode) {
@@ -111,14 +157,22 @@ class DConfig implements DConfigVocab {
 
 	private void loadFieldMap(DClassMap classMap, KConfigNode fieldMapNode) {
 
-		String fieldName = fieldMapNode.getString(FIELD_MAP_FIELD_ATTR);
-		String slotId = fieldMapNode.getString(EXTERNAL_ID_ATTR);
+		String fieldName = fieldMapNode.getString(FIELD_MAP_FIELD_NAME_ATTR);
+		String slotId = fieldMapNode.getString(FIELD_MAP_EXTERNAL_ID_ATTR);
 
 		classMap.addFieldMap(fieldName, slotId);
 	}
 
-	private void loadDirectPackages(DBuilder builder, KConfigNode clusterNode) {
+	private void loadDirectPackages(DBuilder builder) {
 
-		builder.addDClasses(clusterNode.getString(TOP_LEVEL_PKG_ATTR));
+		for (KConfigNode sectionNode : rootNode.getChildren(DIRECT_SECTION_ID)) {
+
+			loadDirectPackages(builder, sectionNode);
+		}
+	}
+
+	private void loadDirectPackages(DBuilder builder, KConfigNode sectionNode) {
+
+		builder.addDClasses(sectionNode.getString(TOP_LEVEL_PACKAGE_ATTR));
 	}
 }

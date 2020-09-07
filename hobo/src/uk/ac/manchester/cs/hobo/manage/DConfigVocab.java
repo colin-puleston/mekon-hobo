@@ -36,11 +36,20 @@ public interface DConfigVocab {
 	static public final String MAPPINGS_ID = "Mappings";
 	static public final String CLASS_MAP_ID = "ClassMap";
 	static public final String FIELD_MAP_ID = "FieldMap";
+	static public final String CLASS_MAPPER_ID = "ClassMapper";
+	static public final String CLASS_MAPPER_PACKAGE_ID = "MappingPackage";
+	static public final String CLASS_MAPPER_COMPOUND_FIELD_IDS_ID = "CompoundFieldIds";
 
 	static public final String DIRECT_CLASS_LABELS_ATTR = "labelsFromDirectClasses";
 	static public final String DIRECT_FIELD_LABELS_ATTR = "labelsFromDirectFields";
-	static public final String TOP_LEVEL_PKG_ATTR = "topLevelPackage";
+	static public final String TOP_LEVEL_PACKAGE_ATTR = "topLevelPackage";
 	static public final String CLASS_MAP_CLASS_ATTR = "javaClass";
-	static public final String FIELD_MAP_FIELD_ATTR = "fieldName";
-	static public final String EXTERNAL_ID_ATTR = "externalId";
+	static public final String CLASS_MAP_EXTERNAL_ID_ATTR = "externalId";
+	static public final String FIELD_MAP_FIELD_NAME_ATTR = "fieldName";
+	static public final String FIELD_MAP_EXTERNAL_ID_ATTR = "externalId";
+	static public final String CLASS_MAPPER_PACKAGE_ATTR = "package";
+	static public final String CLASS_MAPPER_ID_SEPARATOR_ATTR = "separator";
+	static public final String CLASS_MAPPER_ID_PREFIX_ATTR = "externalIdsPrefix";
+	static public final String CLASS_MAPPER_CLASS_ID_PREFIX_ATTR = "externalClassIdsPrefix";
+	static public final String CLASS_MAPPER_FIELD_ID_PREFIX_ATTR = "externalFieldIdsPrefix";
 }

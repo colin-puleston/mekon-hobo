@@ -30,9 +30,9 @@ import uk.ac.manchester.cs.hobo.model.*;
 
 /**
  * Represents a set of mappings between an Object Model (OM)
- * class (a {@link DObject}-derived class) and entities in one or
- * more external sources. Mappings can involve either the OM class
- * itself or certain fields on the OM class (or both).
+ * class (a {@link DObject}-derived class) and entities in one
+ * or more external sources. Mappings will involve the OM class
+ * itself and optionally selected fields on the OM class.
  *
  * @author Colin Puleston
  */
@@ -67,25 +67,14 @@ public class DClassMap {
 
 	/**
 	 * Provides the identifier for the entity from the external source
-	 * that is mapped to the OM class, if applicable.
+	 * that is mapped to the OM class.
 	 *
 	 * @return Identifier for entity from external source mapped to
-	 * OM class, of null if no such mapping
+	 * OM class
 	 */
 	public String getExternalId() {
 
-		return externalId != null ? externalId : dClass.getName();
-	}
-
-	/**
-	 * Specifies whether the OM class itself is mapped to an entity
-	 * from the external source.
-	 *
-	 * @return True if OM class mapped to entity from external source
-	 */
-	public boolean mappedClass() {
-
-		return externalId != null;
+		return externalId;
 	}
 
 	/**
