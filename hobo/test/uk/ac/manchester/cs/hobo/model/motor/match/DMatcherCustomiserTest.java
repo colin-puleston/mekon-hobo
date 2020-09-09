@@ -25,11 +25,8 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 
 	static private final String DEMO_PACKAGE_NAME = Citizen.class.getPackage().getName();
 
-	final CitizenInstantiator assertions
-				= new CitizenInstantiator(IFrameFunction.ASSERTION);
-
-	final CitizenInstantiator queries
-				= new CitizenInstantiator(IFrameFunction.QUERY);
+	final CitizenInstantiator assertions = new CitizenInstantiator(IFrameFunction.ASSERTION);
+	final CitizenInstantiator queries = new CitizenInstantiator(IFrameFunction.QUERY);
 
 	private DModel model;
 	private IStore store;
