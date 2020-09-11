@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public class IDiskStoreTest {
+public abstract class IDiskStoreTest {
 
 	final TestCModel model = new TestCModel();
 	final TestCFrames frames = model.cFrames;
