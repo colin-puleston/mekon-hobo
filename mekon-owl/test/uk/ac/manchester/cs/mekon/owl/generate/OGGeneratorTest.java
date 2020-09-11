@@ -56,16 +56,61 @@ public class OGGeneratorTest {
 	private CIdentifieds<CFrame> inputFrames;
 	private CIdentifieds<CFrame> regenFrames;
 
+	private class RegenId {
+
+		private String identifier;
+
+		RegenId(CIdentity inputIdentity) {
+
+			this(inputIdentity.getIdentifier());
+		}
+
+		RegenId(CIdentified inputIdentified) {
+
+			this(inputIdentified.getIdentity());
+		}
+
+		String getIdentifier() {
+
+			return identifier;
+		}
+
+		CIdentity getIdentity() {
+
+			return new CIdentity(identifier);
+		}
+
+		IRI getIRI() {
+
+			return IRI.create(identifier);
+		}
+
+		private RegenId(String inputIdentifier) {
+
+			identifier = toRegenIdentifier(inputIdentifier);
+		}
+
+		private String toRegenIdentifier(String inputIdentifier) {
+
+			return TEST_NAMESPACE + '#' + getIRIFragment(inputIdentifier);
+		}
+
+		private String getIRIFragment(String iri) {
+
+			return IRI.create(iri).toURI().getFragment();
+		}
+	}
+
 	private class TestIRIGenerator implements IRIGenerator {
 
 		public IRI generateForFrame(CFrame frame) {
 
-			return generateTestIRI(frame);
+			return new RegenId(frame).getIRI();
 		}
 
 		public IRI generateForSlot(CFrame frame, CIdentity slotId) {
 
-			return generateTestIRI(slotId);
+			return new RegenId(slotId).getIRI();
 		}
 	}
 
@@ -145,7 +190,7 @@ public class OGGeneratorTest {
 
 		private CFrame getRegenFrameOrNull() {
 
-			return regenFrames.getOrNull(generateTestIdentifier(inputFrame));
+			return regenFrames.getOrNull(new RegenId(inputFrame).getIdentifier());
 		}
 	}
 
@@ -241,7 +286,7 @@ public class OGGeneratorTest {
 
 		private CSlot getRegenSlotOrNull() {
 
-			return regenFrame.getSlots().getOrNull(generateTestIdentifier(inputSlot));
+			return regenFrame.getSlots().getOrNull(new RegenId(inputSlot).getIdentifier());
 		}
 
 		private Set<String> disjunctIdsAsSet(CFrame frame, boolean toRegens) {
@@ -284,7 +329,7 @@ public class OGGeneratorTest {
 
 		private void testSlotValuesRegen(CIdentity inputSlotId) {
 
-			CIdentity regenSlotId = generateTestIdentity(inputSlotId);
+			CIdentity regenSlotId = new RegenId(inputSlotId).getIdentity();
 
 			Set<String> inputs = frameSlotValueIdsAsSet(inputFrame, inputSlotId, true);
 			Set<String> regens = frameSlotValueIdsAsSet(regenFrame, regenSlotId, false);
@@ -384,6 +429,8 @@ public class OGGeneratorTest {
 
 			new SlotRegenTester(inputFrame, inputSlot, regenFrame).fullTest();
 		}
+
+		assertEquals(inputFrame.getSlots().size(), regenFrame.getSlots().size());
 	}
 
 	private Set<String> identifiersAsSet(List<CIdentity> identities, boolean toRegens) {
@@ -412,54 +459,12 @@ public class OGGeneratorTest {
 
 	private String getIdentifier(CIdentity identity, boolean toRegen) {
 
-		String id = identity.getIdentifier();
-
-		return toRegen ? generateTestIdentifier(id) : id;
+		return toRegen ? new RegenId(identity).getIdentifier() : identity.getIdentifier();
 	}
 
 	private String getLabel(CIdentified identified) {
 
 		return identified.getIdentity().getLabel();
-	}
-
-	private CIdentity generateTestIdentity(CIdentity inputId) {
-
-		return new CIdentity(generateTestIdentifier(inputId));
-	}
-
-	private String generateTestIdentifier(CIdentified input) {
-
-		return generateTestIdentifier(input.getIdentity());
-	}
-
-	private String generateTestIdentifier(CIdentity inputId) {
-
-		return generateTestIdentifier(inputId.getIdentifier());
-	}
-
-	private String generateTestIdentifier(String inputId) {
-
-		return generateTestIRI(inputId).toString();
-	}
-
-	private IRI generateTestIRI(CIdentified input) {
-
-		return generateTestIRI(input.getIdentity());
-	}
-
-	private IRI generateTestIRI(CIdentity inputId) {
-
-		return generateTestIRI(inputId.getIdentifier());
-	}
-
-	private IRI generateTestIRI(String inputId) {
-
-		return IRI.create(TEST_NAMESPACE + '#' + generateTestIRIFragment(inputId));
-	}
-
-	private String generateTestIRIFragment(String inputId) {
-
-		return IRI.create(inputId).toURI().getFragment();
 	}
 
 	private String describeFrame(CFrame frame) {
