@@ -31,11 +31,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public class DDisjunctionCellTest
-				extends
-					AbstractDCellTest
-						<DObject,
-						DDisjunction<DObject>> {
+public class DDisjunctionCellTest extends AbstractDCellTest<DObject, DDisjunction<DObject>> {
 
 	private CFrame rootFrame = frameTypes.create("ROOT");
 

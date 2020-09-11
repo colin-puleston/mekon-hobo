@@ -29,11 +29,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public class DNumberRangeCellTest
-				extends
-					AbstractDCellTest
-						<Integer,
-						DNumberRange<Integer>> {
+public class DNumberRangeCellTest extends AbstractDCellTest<Integer, DNumberRange<Integer>> {
 
 	DCell<Integer> createSourceCell() {
 
