@@ -30,6 +30,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import uk.ac.manchester.cs.mekon.owl.build.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
+import uk.ac.manchester.cs.mekon.owl.generate.*;
 
 /**
  * @author Colin Puleston
@@ -39,6 +40,7 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 	OBSectionBuilderTest.class,
 	ORClassifierTest.class,
 	ORConceptsMatcherTest.class,
-	ORIndividualsMatcherTest.class})
+	ORIndividualsMatcherTest.class,
+	OGGeneratorTest.class})
 public class MekonOWLTestSuite {
 }

@@ -22,63 +22,65 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.owl;
-
-import java.io.File;
-import java.net.URL;
+package uk.ac.manchester.cs.mekon.owl.util;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
-
-import uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.demomodel.*;
-import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
+ * Responsible for rendering concrete MEKON {@link INumber}
+ * objects representing exact numeric values into OWL
+ * {@link OWLLiteral} objects.
+ *
  * @author Colin Puleston
  */
-public class ODemoModel extends DemoModelIds {
+public class OExactNumberRenderer {
 
-	static public final File OWL_FILE = getFileFromClasspath("demo.owl");
-	static public final File RESOURCE_DIR = OWL_FILE.getParentFile();
+	private OWLDataFactory dataFactory;
 
-	static private final Class<? extends OWLReasonerFactory> REASONER_FACTORY_CLASS = FaCTPlusPlusReasonerFactory.class;
+	/**
+	 * Constructor.
+	 *
+	 * @param dataFactory Relevant OWL data-factory
+	 */
+	public OExactNumberRenderer(OWLDataFactory dataFactory) {
 
-	static public OModel create() {
-
-		OModelBuilder bldr = createBuilder();
-
-		bldr.setIndirectNumericProperty(toIRI(NUMERIC_PROPERTY));
-
-		return bldr.create(true);
+		this.dataFactory = dataFactory;
 	}
 
-	static private OModelBuilder createBuilder() {
+	/**
+	 * Performs rendering operation.
+	 *
+	 * @param number Number-value to be rendered
+	 * @return Rendering of supplied number-value
+	 */
+	public OWLLiteral render(INumber number) {
 
-		return new OModelBuilder(OWL_FILE, REASONER_FACTORY_CLASS);
-	}
+		Class<? extends Number> type = number.getNumberType();
 
-	static private File getFileFromClasspath(String name) {
+		if (type == Integer.class) {
 
-		URL url = getClassLoader().getResource(name);
-
-		if (url == null) {
-
-			throw new RuntimeException("Cannot access file: " + name);
+			return dataFactory.getOWLLiteral(number.asInteger());
 		}
 
-		return new File(url.getFile());
-	}
+		if (type == Long.class) {
 
-	static private ClassLoader getClassLoader() {
+			long lValue = number.asLong();
 
-		return Thread.currentThread().getContextClassLoader();
-	}
+			return dataFactory.getOWLLiteral((int)lValue);
+		}
 
-	static private IRI toIRI(CIdentity id) {
+		if (type == Float.class) {
 
-		return IRI.create(id.getIdentifier());
+			return dataFactory.getOWLLiteral(number.asFloat());
+		}
+
+		if (type == Double.class) {
+
+			return dataFactory.getOWLLiteral(number.asDouble());
+		}
+
+		throw new Error("Cannot handle number-type: " + type);
 	}
 }

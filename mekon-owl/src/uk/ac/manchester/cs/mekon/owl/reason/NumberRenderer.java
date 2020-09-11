@@ -27,10 +27,10 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.vocab.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * @author Colin Puleston
@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.owl.*;
 class NumberRenderer {
 
 	private OWLDataFactory dataFactory;
-	private OWLDataProperty property = null;
+	private OWLDataProperty property;
 
 	NumberRenderer(OModel model, OWLDataProperty property) {
 
@@ -61,7 +61,7 @@ class NumberRenderer {
 
 	private OWLClassExpression renderHasExactValue(INumber value) {
 
-		return dataFactory.getOWLDataHasValue(property, renderLiteral(value));
+		return dataFactory.getOWLDataHasValue(property, renderExact(value));
 	}
 
 	private OWLClassExpression renderOnlyExactValues(Set<INumber> values) {
@@ -77,7 +77,7 @@ class NumberRenderer {
 
 		for (INumber value : values) {
 
-			literals.add(renderLiteral(value));
+			literals.add(renderExact(value));
 		}
 
 		return dataFactory.getOWLDataOneOf(literals);
@@ -111,94 +111,12 @@ class NumberRenderer {
 
 	private OWLDataRange renderRange(INumber value) {
 
-		CNumber range = value.getType();
-		OWLDatatype datatype = renderDatatype(range);
-		Set<OWLFacetRestriction> rangeFacets = renderRangeFacets(range);
-
-		return dataFactory.getOWLDatatypeRestriction(datatype, rangeFacets);
+		return new ONumberRangeRenderer(dataFactory).render(value.getType());
 	}
 
-	private OWLDatatype renderDatatype(CNumber range) {
+	private OWLLiteral renderExact(INumber value) {
 
-		Class<? extends Number> type = range.getNumberType();
-
-		if (type == Integer.class) {
-
-			return renderDatatype(OWL2Datatype.XSD_INTEGER);
-		}
-
-		if (type == Long.class) {
-
-			return renderDatatype(OWL2Datatype.XSD_LONG);
-		}
-
-		if (type == Float.class) {
-
-			return renderDatatype(OWL2Datatype.XSD_FLOAT);
-		}
-
-		if (type == Double.class) {
-
-			return renderDatatype(OWL2Datatype.XSD_DOUBLE);
-		}
-
-		throw new KModelException("Cannot handle number-type: " + type);
-	}
-
-	private Set<OWLFacetRestriction> renderRangeFacets(CNumber range) {
-
-		Set<OWLFacetRestriction> facets = new HashSet<OWLFacetRestriction>();
-
-		if (range.hasMin()) {
-
-			facets.add(renderRangeFacet(OWLFacet.MIN_INCLUSIVE, range.getMin()));
-		}
-
-		if (range.hasMax()) {
-
-			facets.add(renderRangeFacet(OWLFacet.MAX_INCLUSIVE, range.getMax()));
-		}
-
-		return facets;
-	}
-
-	private OWLDatatype renderDatatype(OWL2Datatype owl2Datatype) {
-
-		return dataFactory.getOWLDatatype(owl2Datatype.getIRI());
-	}
-
-	private OWLFacetRestriction renderRangeFacet(OWLFacet facet, INumber value) {
-
-		return dataFactory.getOWLFacetRestriction(facet, renderLiteral(value));
-	}
-
-	private OWLLiteral renderLiteral(INumber value) {
-
-		Class<? extends Number> type = value.getNumberType();
-
-		if (type == Integer.class) {
-
-			return dataFactory.getOWLLiteral(value.asInteger());
-		}
-
-		if (type == Long.class) {
-
-			long lValue = value.asLong();
-
-			return dataFactory.getOWLLiteral((int)lValue);
-		}
-
-		if (type == Float.class) {
-
-			return dataFactory.getOWLLiteral(value.asFloat());
-		}
-
-		if (type == Double.class) {
-
-			return dataFactory.getOWLLiteral(value.asDouble());
-		}
-
-		throw new KModelException("Cannot handle number-type: " + type);
+		return new OExactNumberRenderer(dataFactory).render(value);
 	}
 
 	private boolean anyIndefiniteValues(Set<INumber> values) {
