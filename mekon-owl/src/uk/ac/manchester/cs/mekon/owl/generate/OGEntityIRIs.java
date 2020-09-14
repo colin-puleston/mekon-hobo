@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.owl.generate;
 
+import java.util.*;
+
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -31,9 +33,13 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public interface IRIGenerator {
+public interface OGEntityIRIs {
 
-	public IRI generateForFrame(CFrame frame);
+	public IRI forFrameConcept(CFrame frame);
 
-	public IRI generateForSlot(CFrame frame, CIdentity slotId);
+	public Set<IRI> forFrameConceptExtraParents(CFrame frame);
+
+	public IRI forSlotProperty(CFrame frame, CIdentity slotId);
+
+	public IRI forSlotPropertyParentOrNull(CFrame frame, CIdentity slotId);
 }

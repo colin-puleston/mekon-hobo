@@ -50,8 +50,14 @@ public class OGGeneratorTest {
 	static private final String TEST_NAMESPACE = "http://" + TEST_FILENAME;
 	static private final File TEST_FILE = new File(ODemoModel.RESOURCE_DIR, TEST_FILENAME);
 	static private final IRI TEST_ONTOLOGY_IRI = IRI.create(TEST_NAMESPACE);
+	static private final IRI TEST_ROOT_CONCEPT_IRI = getTestEntityIRI("TestRoot");
 
 	static private final IRI LABEL_ANNOTATION_IRI = OWLRDFVocabulary.RDFS_LABEL.getIRI();
+
+	static private IRI getTestEntityIRI(String fragment) {
+
+		return IRI.create(TEST_NAMESPACE + '#' + fragment);
+	}
 
 	private CIdentifieds<CFrame> inputFrames;
 	private CIdentifieds<CFrame> regenFrames;
@@ -85,6 +91,11 @@ public class OGGeneratorTest {
 			return IRI.create(identifier);
 		}
 
+		String getIRIFragment() {
+
+			return getIRIFragment(getIRI());
+		}
+
 		private RegenId(String inputIdentifier) {
 
 			identifier = toRegenIdentifier(inputIdentifier);
@@ -92,25 +103,45 @@ public class OGGeneratorTest {
 
 		private String toRegenIdentifier(String inputIdentifier) {
 
-			return TEST_NAMESPACE + '#' + getIRIFragment(inputIdentifier);
+			return getTestEntityIRI(getIRIFragment(inputIdentifier)).toString();
 		}
 
 		private String getIRIFragment(String iri) {
 
-			return IRI.create(iri).toURI().getFragment();
+			return getIRIFragment(IRI.create(iri));
+		}
+
+		private String getIRIFragment(IRI iri) {
+
+			return iri.toURI().getFragment();
 		}
 	}
 
-	private class TestIRIGenerator implements IRIGenerator {
+	private class TestEntityIRIs implements OGEntityIRIs {
 
-		public IRI generateForFrame(CFrame frame) {
+		public IRI forFrameConcept(CFrame frame) {
 
 			return new RegenId(frame).getIRI();
 		}
 
-		public IRI generateForSlot(CFrame frame, CIdentity slotId) {
+		public Set<IRI> forFrameConceptExtraParents(CFrame frame) {
+
+			return isSubRootFrame(frame)
+					? Collections.singleton(TEST_ROOT_CONCEPT_IRI)
+					: Collections.emptySet();
+		}
+
+		public IRI forSlotProperty(CFrame frame, CIdentity slotId) {
 
 			return new RegenId(slotId).getIRI();
+		}
+
+		public IRI forSlotPropertyParentOrNull(CFrame frame, CIdentity slotId) {
+
+			CFrame subRoot = findAncestorSubRootFrame(frame);
+			String subRootName = new RegenId(subRoot).getIRIFragment();
+
+			return getTestEntityIRI(subRootName + "_property");
 		}
 	}
 
@@ -173,6 +204,13 @@ public class OGGeneratorTest {
 			regenFrame = getRegenFrameOrNull();
 		}
 
+		void fullTest() {
+
+			super.fullTest();
+
+			testSuperFrameGeneratedIfRoot();
+		}
+
 		CFrame getInputEntity() {
 
 			return inputFrame;
@@ -191,6 +229,19 @@ public class OGGeneratorTest {
 		private CFrame getRegenFrameOrNull() {
 
 			return regenFrames.getOrNull(new RegenId(inputFrame).getIdentifier());
+		}
+
+		private void testSuperFrameGeneratedIfRoot() {
+
+			if (inputFrame.isRoot()) {
+
+				assertTrue(isSubRootFrame(regenFrame));
+
+				CFrame regenFrameSup = regenFrame.getSupers().get(0);
+				String regenFrameSupId = regenFrameSup.getIdentity().getIdentifier();
+
+				assertEquals(regenFrameSupId, TEST_ROOT_CONCEPT_IRI.toString());
+			}
 		}
 	}
 
@@ -400,7 +451,7 @@ public class OGGeneratorTest {
 			new FrameRegenTester(inputFrame).fullTest();
 		}
 
-		assertEquals(inputFrames.size(), regenFrames.size());
+		assertEquals(inputFrames.size() + 1, regenFrames.size());
 	}
 
 	@Test
@@ -477,6 +528,25 @@ public class OGGeneratorTest {
 		return "slot " + getLabel(frame) + "-->" + slotId.getLabel();
 	}
 
+	private CFrame findAncestorSubRootFrame(CFrame current) {
+
+		if (current.isRoot()) {
+
+			throw new Error("Unexpected root-frame!");
+		}
+
+		CFrame sup = current.getSupers().get(0);
+
+		return isSubRootFrame(sup) ? sup : findAncestorSubRootFrame(sup);
+	}
+
+	private boolean isSubRootFrame(CFrame frame) {
+
+		List<CFrame> sups = frame.getSupers();
+
+		return sups.size() == 1 && sups.get(0).isRoot();
+	}
+
 	private String createAttrRegenFailMsg(
 						String inputDesc,
 						Object input,
@@ -495,7 +565,7 @@ public class OGGeneratorTest {
 
 	private void generateOntology(CModel inputModel) {
 
-		OGGenerator generator = new OGGenerator(TEST_ONTOLOGY_IRI, new TestIRIGenerator());
+		OGGenerator generator = new OGGenerator(TEST_ONTOLOGY_IRI, new TestEntityIRIs());
 
 		generator.generate(inputModel);
 		generator.save(TEST_FILE);

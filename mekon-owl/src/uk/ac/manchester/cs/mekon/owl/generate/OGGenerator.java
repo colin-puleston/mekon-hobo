@@ -59,37 +59,72 @@ public class OGGenerator {
 	private OWLOntology ontology;
 	private OWLDataFactory dataFactory;
 
-	private IRIGenerator iriGenerator;
+	private OGEntityIRIs entityIRIs;
 	private ONumberRangeRenderer numberRangeRenderer;
 	private OWLDataRange stringDataType;
 	private OWLAnnotationProperty labelAnnotationProperty;
 
+	private ConceptResolver concepts = new ConceptResolver();
 	private ObjectPropertyResolver objectProperties = new ObjectPropertyResolver();
 	private DataPropertyResolver dataProperties = new DataPropertyResolver();
 
-	private abstract class PropertyResolver<P extends OWLProperty> {
+	private Set<IRI> propertiesWithSupers = new HashSet<IRI>();
 
-		private Map<IRI, P> propertiesByIRI = new HashMap<IRI, P>();
+	private abstract class EntityResolver<E extends OWLEntity> {
 
-		P resolve(IRI iri, CIdentity sourceId) {
+		private Map<IRI, E> entitiesByIRI = new HashMap<IRI, E>();
 
-			P property = propertiesByIRI.get(iri);
+		E resolve(IRI iri) {
 
-			if (property == null) {
-
-				property = create(iri);
-
-				addEntity(property, sourceId);
-				propertiesByIRI.put(iri, property);
-			}
-
-			return property;
+			return resolve(iri, null);
 		}
 
-		abstract P create(IRI iri);
+		E resolve(IRI iri, CIdentity sourceId) {
+
+			E entity = entitiesByIRI.get(iri);
+
+			if (entity == null) {
+
+				entity = create(iri);
+
+				add(entity, sourceId);
+				entitiesByIRI.put(iri, entity);
+			}
+
+			return entity;
+		}
+
+		abstract E create(IRI iri);
+
+		private void add(E entity, CIdentity sourceId) {
+
+			addAxiom(dataFactory.getOWLDeclarationAxiom(entity));
+
+			if (sourceId != null) {
+
+				addAxiom(createLabelAxiom(entity, sourceId.getLabel()));
+			}
+		}
+
+		private OWLAxiom createLabelAxiom(E entity, String label) {
+
+			return dataFactory
+					.getOWLAnnotationAssertionAxiom(
+						labelAnnotationProperty,
+						entity.getIRI(),
+						dataFactory.getOWLLiteral(label));
+		}
 	}
 
-	private class ObjectPropertyResolver extends PropertyResolver<OWLObjectProperty> {
+	private class ConceptResolver extends EntityResolver<OWLClass> {
+
+		OWLClass create(IRI iri) {
+
+			return dataFactory.getOWLClass(iri);
+		}
+	}
+
+	private class ObjectPropertyResolver extends EntityResolver<OWLObjectProperty> {
 
 		OWLObjectProperty create(IRI iri) {
 
@@ -97,7 +132,7 @@ public class OGGenerator {
 		}
 	}
 
-	private class DataPropertyResolver extends PropertyResolver<OWLDataProperty> {
+	private class DataPropertyResolver extends EntityResolver<OWLDataProperty> {
 
 		OWLDataProperty create(IRI iri) {
 
@@ -109,27 +144,135 @@ public class OGGenerator {
 
 		private OWLClass concept;
 		private IRI propertyIRI;
+		private IRI superPropertyIRI;
 
 		private CIdentity slotId;
 
+		private ObjectRestrictions objectRestrictions = new ObjectRestrictions();
+		private DataRestrictions dataRestrictions = new DataRestrictions();
+
+		private abstract class TypeRestrictions<P extends OWLProperty, F> {
+
+			void generate(F filler) {
+
+				P property = resolveProperty(propertyIRI);
+
+				if (superPropertyIRI != null && propertiesWithSupers.add(propertyIRI)) {
+
+					addSuperProperty(property, resolveProperty(superPropertyIRI));
+				}
+
+				addRestriction(createRestriction(property, filler));
+			}
+
+			abstract EntityResolver<P> getPropertyResolver();
+
+			abstract OWLAxiom createSubPropertyAxiom(P sub, P sup);
+
+			abstract OWLRestriction createRestriction(P property, F filler);
+
+			private P resolveProperty(IRI iri) {
+
+				return getPropertyResolver().resolve(iri, slotId);
+			}
+
+			private void addSuperProperty(P sub, P sup) {
+
+				addAxiom(createSubPropertyAxiom(sub, sup));
+			}
+
+			private void addRestriction(OWLRestriction restriction) {
+
+				addSubClassAxiom(concept, restriction);
+			}
+		}
+
+		private class ObjectRestrictions extends TypeRestrictions<OWLObjectProperty, OWLClassExpression> {
+
+			void generate(CFrame value) {
+
+				generate(toFillerExpression(value));
+			}
+
+			EntityResolver<OWLObjectProperty> getPropertyResolver() {
+
+				return objectProperties;
+			}
+
+			OWLAxiom createSubPropertyAxiom(OWLObjectProperty sub, OWLObjectProperty sup) {
+
+				return dataFactory.getOWLSubObjectPropertyOfAxiom(sub, sup);
+			}
+
+			OWLRestriction createRestriction(OWLObjectProperty property, OWLClassExpression filler) {
+
+				return createObjectRestriction(property, filler);
+			}
+
+			private OWLClassExpression toFillerExpression(CFrame frame) {
+
+				return frame.getCategory().disjunction() ? toUnion(frame) : resolveConcept(frame);
+			}
+
+			private OWLObjectUnionOf toUnion(CFrame frame) {
+
+				Set<OWLClassExpression> operands = new HashSet<OWLClassExpression>();
+
+				for (CFrame disjunct : frame.asDisjuncts()) {
+
+					operands.add(resolveConcept(disjunct));
+				}
+
+				return dataFactory.getOWLObjectUnionOf(operands);
+			}
+		}
+
+		private class DataRestrictions extends TypeRestrictions<OWLDataProperty, OWLDataRange> {
+
+			void generate(CNumber value) {
+
+				generate(numberRangeRenderer.render(value));
+			}
+
+			void generate(CString value) {
+
+				generate(stringDataType);
+			}
+
+			EntityResolver<OWLDataProperty> getPropertyResolver() {
+
+				return dataProperties;
+			}
+
+			OWLAxiom createSubPropertyAxiom(OWLDataProperty sub, OWLDataProperty sup) {
+
+				return dataFactory.getOWLSubDataPropertyOfAxiom(sub, sup);
+			}
+
+			OWLRestriction createRestriction(OWLDataProperty property, OWLDataRange filler) {
+
+				return createDataRestriction(property, filler);
+			}
+		}
+
 		protected void visit(CFrame value) {
 
-			generateForFrameValued(value);
+			objectRestrictions.generate(value);
 		}
 
 		protected void visit(CNumber value) {
 
-			generateForDataValued(numberRangeRenderer.render(value));
+			dataRestrictions.generate(numberRangeRenderer.render(value));
 		}
 
 		protected void visit(CString value) {
 
-			generateForDataValued(stringDataType);
+			dataRestrictions.generate(stringDataType);
 		}
 
 		protected void visit(MFrame value) {
 
-			generateForFrameValued(value.getRootCFrame());
+			objectRestrictions.generate(value.getRootCFrame());
 		}
 
 		RestrictionGenerator(OWLClass concept, CFrame frame, CIdentity slotId) {
@@ -137,7 +280,8 @@ public class OGGenerator {
 			this.concept = concept;
 			this.slotId = slotId;
 
-			propertyIRI = iriGenerator.generateForSlot(frame, slotId);
+			propertyIRI = entityIRIs.forSlotProperty(frame, slotId);
+			superPropertyIRI = entityIRIs.forSlotPropertyParentOrNull(frame, slotId);
 		}
 
 		void generate(CValue<?> slotValue) {
@@ -152,50 +296,6 @@ public class OGGenerator {
 		abstract OWLRestriction createDataRestriction(
 									OWLDataProperty property,
 									OWLDataRange filler);
-
-		private void generateForFrameValued(CFrame value) {
-
-			OWLClassExpression filler = getFillerExpression(value);
-
-			addRestriction(createObjectRestriction(resolveObjectProperty(), filler));
-		}
-
-		private void generateForDataValued(OWLDataRange filler) {
-
-			addRestriction(createDataRestriction(resolveDataProperty(), filler));
-		}
-
-		private OWLObjectProperty resolveObjectProperty() {
-
-			return objectProperties.resolve(propertyIRI, slotId);
-		}
-
-		private OWLDataProperty resolveDataProperty() {
-
-			return dataProperties.resolve(propertyIRI, slotId);
-		}
-
-		private OWLClassExpression getFillerExpression(CFrame frame) {
-
-			return frame.getCategory().disjunction() ? toUnion(frame) : getConcept(frame);
-		}
-
-		private OWLObjectUnionOf toUnion(CFrame frame) {
-
-			Set<OWLClassExpression> operands = new HashSet<OWLClassExpression>();
-
-			for (CFrame disjunct : frame.asDisjuncts()) {
-
-				operands.add(getConcept(disjunct));
-			}
-
-			return dataFactory.getOWLObjectUnionOf(operands);
-		}
-
-		private void addRestriction(OWLRestriction restriction) {
-
-			addSubClassAxiom(concept, restriction);
-		}
 	}
 
 	private class SlotRestrictionGenerator extends RestrictionGenerator {
@@ -256,15 +356,15 @@ public class OGGenerator {
 		}
 	}
 
-	public OGGenerator(IRI ontologyIRI, IRIGenerator iriGenerator) {
+	public OGGenerator(IRI ontologyIRI, OGEntityIRIs entityIRIs) {
 
-		this(createOntology(ontologyIRI), iriGenerator);
+		this(createOntology(ontologyIRI), entityIRIs);
 	}
 
-	public OGGenerator(OWLOntology ontology, IRIGenerator iriGenerator) {
+	public OGGenerator(OWLOntology ontology, OGEntityIRIs entityIRIs) {
 
 		this.ontology = ontology;
-		this.iriGenerator = iriGenerator;
+		this.entityIRIs = entityIRIs;
 
 		dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
 		numberRangeRenderer = new ONumberRangeRenderer(dataFactory);
@@ -315,7 +415,12 @@ public class OGGenerator {
 
 		for (CFrame frame : mekonModel.getFrames().asList()) {
 
-			addEntity(getConcept(frame), frame.getIdentity());
+			OWLClass concept = resolveConcept(frame);
+
+			for (IRI parentIRI : entityIRIs.forFrameConceptExtraParents(frame)) {
+
+				addSubClassAxiom(concept, concepts.resolve(parentIRI));
+			}
 		}
 	}
 
@@ -323,7 +428,7 @@ public class OGGenerator {
 
 		for (CFrame frame : mekonModel.getFrames().asList()) {
 
-			OWLClass concept = getConcept(frame);
+			OWLClass concept = resolveConcept(frame);
 
 			generateForSubLinks(frame, concept);
 			generateForSlots(frame, concept);
@@ -335,7 +440,7 @@ public class OGGenerator {
 
 		for (CFrame sub : frame.getSubs()) {
 
-			addAxiom(dataFactory.getOWLSubClassOfAxiom(getConcept(sub), concept));
+			addSubClassAxiom(resolveConcept(sub), concept);
 		}
 	}
 
@@ -360,34 +465,9 @@ public class OGGenerator {
 		}
 	}
 
-	private OWLClass getConcept(CFrame frame) {
+	private OWLClass resolveConcept(CFrame frame) {
 
-		return dataFactory.getOWLClass(iriGenerator.generateForFrame(frame));
-	}
-
-	private void addEntity(OWLEntity entity, CIdentity sourceId) {
-
-		addDeclarationAxiom(entity);
-		addEntityLabel(entity, sourceId);
-	}
-
-	private void addEntityLabel(OWLEntity entity, CIdentity sourceId) {
-
-		addAxiom(createLabelAxiom(entity, sourceId.getLabel()));
-	}
-
-	private OWLAxiom createLabelAxiom(OWLEntity entity, String label) {
-
-		return dataFactory
-				.getOWLAnnotationAssertionAxiom(
-					labelAnnotationProperty,
-					entity.getIRI(),
-					dataFactory.getOWLLiteral(label));
-	}
-
-	private void addDeclarationAxiom(OWLEntity entity) {
-
-		addAxiom(dataFactory.getOWLDeclarationAxiom(entity));
+		return concepts.resolve(entityIRIs.forFrameConcept(frame), frame.getIdentity());
 	}
 
 	private void addSubClassAxiom(OWLClassExpression sub, OWLClassExpression sup) {
