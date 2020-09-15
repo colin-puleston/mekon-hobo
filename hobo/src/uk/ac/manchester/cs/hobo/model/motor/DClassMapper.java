@@ -31,17 +31,17 @@ import uk.ac.manchester.cs.hobo.model.*;
 
 /**
  * Generates a set of mappings between the Object Model (OM)
- * classes ({@link DObject}-derived classes) from a set of
- * one or more packages, plus any OM fields attached to those
- * classes, and entities in one or more external sources.
+ * classes ({@link DObject}-derived classes) from a set of one
+ * or more packages, plus any OM fields attached to those classes,
+ * and entities in one or more external sources.
  * <p>
- * The generated external-identifier for a mapped class will
- * be the simple class-name, with optionally a specified
- * general prefix string attached. The generated
- * external-identifier for a mapped field will consist of the
- * field-name, optionally preceded by the relevant simple
- * class-name, plus a suitable separater, and with optionally
- * a specified general prefix string attached.
+ * The generated external-identifier for a mapped class will be
+ * the simple class-name, optionally with a specified general
+ * prefix string attached. The generated external-identifier for
+ * a mapped field will consist of the field-name, optionally
+ * preceded by either or both of (1) a specified general prefix
+ * string, and (2) the simple class-name of the class on which
+ * the field is located followed by a suitable separator string.
  *
  * @author Colin Puleston
  */
@@ -85,7 +85,7 @@ public class DClassMapper {
 
 		private String createClassId() {
 
-			return classIdsPrefix + getClassName();
+			return classIdsPrefix + dClass.getSimpleName();
 		}
 
 		private String createFieldId(String fieldName) {
@@ -96,27 +96,12 @@ public class DClassMapper {
 
 			if (compoundFieldIdSeparator != null) {
 
-				id.append(getClassName());
-				id.append(compoundFieldIdSeparator);
+				id.append(dClass.getSimpleName() + compoundFieldIdSeparator);
 			}
 
 			id.append(fieldName);
 
 			return id.toString();
-		}
-
-		private String getClassName() {
-
-			return dClass.getSimpleName();
-		}
-
-		private boolean mappableField(Field field) {
-
-			int mods = field.getModifiers();
-
-			return !Modifier.isStatic(mods)
-					&& Modifier.isPublic(mods)
-					&& Modifier.isFinal(mods);
 		}
 	}
 
@@ -184,5 +169,12 @@ public class DClassMapper {
 	private boolean mappingSubject(Class<? extends DObject> dClass) {
 
 		return mappingPackages.contains(dClass.getPackage().getName());
+	}
+
+	private boolean mappableField(Field field) {
+
+		int m = field.getModifiers();
+
+		return !Modifier.isStatic(m) && Modifier.isPublic(m) && Modifier.isFinal(m);
 	}
 }

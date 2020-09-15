@@ -45,18 +45,14 @@ import uk.ac.manchester.cs.hobo.model.testmodel.mapper_package.*;
 public class DModelTest extends MekonTestUtils {
 
 	static private String A_EXTERNAL_ID = "A-External";
-	static private String A_EXTERNAL_LABEL = A_EXTERNAL_ID;
+	static private String A_EXTERNAL_LABEL = A_EXTERNAL_ID + "-label";
 	static private String INT_EXTERNAL_ID = "int-external";
-	static private String INT_EXTERNAL_LABEL = INT_EXTERNAL_ID;
+	static private String INT_EXTERNAL_LABEL = INT_EXTERNAL_ID + "-label";
 
-	static private String INTERFACE_R_ID = InterfaceR.class.getName();
-	static private String CLASS_A_ID = ClassA.class.getName();
-	static private String CLASS_AX_ID = ClassAX.class.getName();
-	static private String CLASS_B_ID = ClassB.class.getName();
-	static private String FRAME_R_ID = INTERFACE_R_ID;
+	static private String FRAME_R_ID = InterfaceR.class.getName();
 	static private String FRAME_A_ID = A_EXTERNAL_ID;
-	static private String FRAME_AX_ID = CLASS_AX_ID;
-	static private String FRAME_B_ID = CLASS_B_ID;
+	static private String FRAME_AX_ID = ClassAX.class.getName();
+	static private String FRAME_B_ID = ClassB.class.getName();
 
 	static private String BS_ARRAY_NAME = "bsArray";
 	static private String B_CELL_NAME = "bCell";
@@ -69,16 +65,15 @@ public class DModelTest extends MekonTestUtils {
 	static private String INT_CELL_DERIVED_LABEL = "int cell";
 
 	static private String MAPPPER_PACKAGE = getTestModelMapperPackageName();
-	static private String MAPPPER_FRAMES_PREFIX = "mapper-frames#";
-	static private String MAPPPER_SLOTS_PREFIX = "mapper-slots#";
+	static private String MAPPPER_FRAME_IDS_PREFIX = "mapper-frames#";
+	static private String MAPPPER_SLOT_IDS_PREFIX = "mapper-slots#";
+	static private String MAPPPER_SLOT_IDS_SEPARATOR = "_";
 
-	static private String MAPPPER_CLASS_C_ID = MapperClassC.class.getName();
-	static private String MAPPPER_CLASS_D_ID = MapperClassD.class.getName();
 	static private String MAPPPER_FRAME_C_ID = getMapperFrameId(MapperClassC.class);
+	static private String MAPPPER_FRAME_CX_ID = getMapperFrameId(MapperClassCX.class);
 	static private String MAPPPER_FRAME_D_ID = getMapperFrameId(MapperClassD.class);
 
-	static private String MAPPPER_CELL_NAME = "mapperDCell";
-	static private String MAPPPER_D_SLOT_ID = getMapperSlotId(MAPPPER_CELL_NAME);
+	static private String MAPPPER_D_SLOT_ID = getMapperSlotId(MapperClassC.class, "mapperDCell");
 
 	static private IValue[] INITIAL_BS_SLOT_VALUES = new IValue[0];
 	static private IValue[] INITIAL_B_SLOT_VALUES = new IValue[0];
@@ -97,12 +92,15 @@ public class DModelTest extends MekonTestUtils {
 
 	static private String getMapperFrameId(Class<?> mapperClass) {
 
-		return MAPPPER_FRAMES_PREFIX + mapperClass.getSimpleName();
+		return MAPPPER_FRAME_IDS_PREFIX + mapperClass.getSimpleName();
 	}
 
-	static private String getMapperSlotId(String fieldName) {
+	static private String getMapperSlotId(Class<?> mapperClass, String fieldName) {
 
-		return MAPPPER_SLOTS_PREFIX + fieldName;
+		return MAPPPER_SLOT_IDS_PREFIX
+				+ mapperClass.getSimpleName()
+				+ MAPPPER_SLOT_IDS_SEPARATOR
+				+ fieldName;
 	}
 
 	private class ExternalSectionBuilder implements CSectionBuilder {
@@ -114,50 +112,81 @@ public class DModelTest extends MekonTestUtils {
 
 		public void build(CBuilder builder) {
 
-			CIdentity frameAId = new CIdentity(A_EXTERNAL_ID, A_EXTERNAL_LABEL);
-			CIdentity frameCId = new CIdentity(MAPPPER_FRAME_C_ID);
-			CIdentity frameDId = new CIdentity(MAPPPER_FRAME_D_ID);
-
-			CFrame frameA = builder.addFrame(frameAId, false);
-			CFrame frameC = builder.addFrame(frameCId, false);
-			CFrame frameD = builder.addFrame(frameDId, false);
-
-			CFrameEditor frameAEd = builder.getFrameEditor(frameA);
-			CFrameEditor frameCEd = builder.getFrameEditor(frameC);
-
-			CIdentity intSlotId = new CIdentity(INT_EXTERNAL_ID, INT_EXTERNAL_LABEL);
-			CIdentity mapperSlotId = new CIdentity(MAPPPER_D_SLOT_ID);
-
-			frameAEd.addSlot(intSlotId, CNumberFactory.INTEGER, CCardinality.REPEATABLE_TYPES);
-			frameCEd.addSlot(mapperSlotId, frameD, CCardinality.SINGLE_VALUE);
+			buildManuallyMappedFrames(builder);
+			buildAutoMappedFrames(builder);
 		}
 
-		public CFrameEditor addFrame(CBuilder builder, CIdentity id) {
+		private void buildManuallyMappedFrames(CBuilder builder) {
+
+			CIdentity frameAId = new CIdentity(A_EXTERNAL_ID, A_EXTERNAL_LABEL);
+			CFrame frameA = builder.addFrame(frameAId, false);
+			CFrameEditor frameAEd = builder.getFrameEditor(frameA);
+
+			CIdentity intSlotId = new CIdentity(INT_EXTERNAL_ID, INT_EXTERNAL_LABEL);
+
+			frameAEd.addSlot(intSlotId, CNumberFactory.INTEGER, CCardinality.REPEATABLE_TYPES);
+		}
+
+		private void buildAutoMappedFrames(CBuilder builder) {
+
+			CIdentity frameCId = new CIdentity(MAPPPER_FRAME_C_ID);
+			CIdentity frameDId = new CIdentity(MAPPPER_FRAME_D_ID);
+			CIdentity frameCXId = new CIdentity(MAPPPER_FRAME_CX_ID);
+
+			CFrame frameC = builder.addFrame(frameCId, false);
+			CFrame frameD = builder.addFrame(frameDId, false);
+			CFrame frameCX = builder.addFrame(frameCXId, false);
+
+			CFrameEditor frameCEd = builder.getFrameEditor(frameC);
+			CFrameEditor frameCXEd = builder.getFrameEditor(frameCX);
+
+			CIdentity dSlotId = new CIdentity(MAPPPER_D_SLOT_ID);
+
+			frameCEd.addSlot(dSlotId, frameD, CCardinality.SINGLE_VALUE);
+		}
+
+		private CFrameEditor addFrame(CBuilder builder, CIdentity id) {
 
 			return builder.getFrameEditor(builder.addFrame(id, false));
 		}
 	}
 
 	@Test
-	public void test_framesBuiltForDObjects() {
+	public void test_framesBuiltForDObjects_general() {
 
 		DModel model = createModel(true);
 
-		testCFrameCount(model, 6);
+		testCFrameCount(model, 7);
+	}
+
+	@Test
+	public void test_framesBuiltForDObjects_manualClassMappings() {
+
+		DModel model = createModel(true);
 
 		testCFrameBuilt(model, FRAME_R_ID);
 		testCFrameBuilt(model, FRAME_A_ID);
 		testCFrameBuilt(model, FRAME_AX_ID);
 		testCFrameBuilt(model, FRAME_B_ID);
-		testCFrameBuilt(model, MAPPPER_FRAME_C_ID);
-		testCFrameBuilt(model, MAPPPER_FRAME_D_ID);
 
 		testCFrameSuperAdded(model, FRAME_A_ID, FRAME_R_ID);
 		testCFrameSuperAdded(model, FRAME_AX_ID, FRAME_A_ID);
 	}
 
 	@Test
-	public void test_slotsBuiltForDFields() {
+	public void test_framesBuiltForDObjects_autoClassMappings() {
+
+		DModel model = createModel(true);
+
+		testCFrameBuilt(model, MAPPPER_FRAME_C_ID);
+		testCFrameBuilt(model, MAPPPER_FRAME_D_ID);
+		testCFrameBuilt(model, MAPPPER_FRAME_CX_ID);
+
+		testCFrameSuperAdded(model, MAPPPER_FRAME_CX_ID, MAPPPER_FRAME_C_ID);
+	}
+
+	@Test
+	public void test_slotsBuiltForDFields_manualClassMappings() {
 
 		DModel model = createModel(true);
 
@@ -192,6 +221,16 @@ public class DModelTest extends MekonTestUtils {
 			getCFrame(model, FRAME_B_ID),
 			IEditability.CONCRETE_ONLY,
 			IEditability.FULL);
+	}
+
+	@Test
+	public void test_slotsBuiltForDFields_autoClassMappings() {
+
+		DModel model = createModel(true);
+
+		testCSlotCount(model, MAPPPER_FRAME_C_ID, 1);
+		testCSlotCount(model, MAPPPER_FRAME_CX_ID, 0);
+		testCSlotCount(model, MAPPPER_FRAME_D_ID, 0);
 
 		testCSlotBuilt(
 			model,
@@ -204,6 +243,38 @@ public class DModelTest extends MekonTestUtils {
 	}
 
 	@Test
+	public void test_instantiateDObjects_manualClassMappings() {
+
+		DModel model = createModel(true);
+
+		ClassA aObject = instantiate(model, ClassA.class);
+		ClassAX axObject = instantiate(model, ClassAX.class);
+		ClassB bObject = instantiate(model, ClassB.class);
+
+		testDObjectIFrameMapping(aObject, FRAME_A_ID);
+		testDObjectIFrameMapping(axObject, FRAME_AX_ID);
+		testDObjectIFrameMapping(bObject, FRAME_B_ID);
+
+		testDFieldISlotValues(aObject.bsArray, INITIAL_BS_SLOT_VALUES);
+		testDFieldISlotValues(aObject.intCell, INITIAL_INT_SLOT_VALUES);
+		testDFieldISlotValues(axObject.bCell, INITIAL_B_SLOT_VALUES);
+	}
+
+	@Test
+	public void test_instantiateDObjects_autoClassMappings() {
+
+		DModel model = createModel(true);
+
+		MapperClassC cObject = instantiate(model, MapperClassC.class);
+		MapperClassD dObject = instantiate(model, MapperClassD.class);
+
+		testDObjectIFrameMapping(cObject, MAPPPER_FRAME_C_ID);
+		testDObjectIFrameMapping(dObject, MAPPPER_FRAME_D_ID);
+
+		testDFieldISlotValues(cObject.mapperDCell, INITIAL_MAPPPER_D_SLOT_VALUES);
+	}
+
+	@Test
 	public void test_labelsFromDirectModel() {
 
 		testLabels(true, CLASS_A_DERIVED_LABEL, INT_CELL_DERIVED_LABEL);
@@ -213,29 +284,6 @@ public class DModelTest extends MekonTestUtils {
 	public void test_labelsFromExternalModel() {
 
 		testLabels(false, A_EXTERNAL_LABEL, INT_EXTERNAL_LABEL);
-	}
-
-	@Test
-	public void test_instantiateDObjects() {
-
-		DModel model = createModel(true);
-
-		ClassA aObject = instantiate(model, ClassA.class);
-		ClassAX axObject = instantiate(model, ClassAX.class);
-		ClassB bObject = instantiate(model, ClassB.class);
-		MapperClassC cObject = instantiate(model, MapperClassC.class);
-		MapperClassD dObject = instantiate(model, MapperClassD.class);
-
-		testDObjectIFrameMapping(aObject, FRAME_A_ID);
-		testDObjectIFrameMapping(axObject, FRAME_AX_ID);
-		testDObjectIFrameMapping(bObject, FRAME_B_ID);
-		testDObjectIFrameMapping(cObject, MAPPPER_FRAME_C_ID);
-		testDObjectIFrameMapping(dObject, MAPPPER_FRAME_D_ID);
-
-		testDFieldISlotValues(aObject.bsArray, INITIAL_BS_SLOT_VALUES);
-		testDFieldISlotValues(aObject.intCell, INITIAL_INT_SLOT_VALUES);
-		testDFieldISlotValues(axObject.bCell, INITIAL_B_SLOT_VALUES);
-		testDFieldISlotValues(cObject.mapperDCell, INITIAL_MAPPPER_D_SLOT_VALUES);
 	}
 
 	private DModel createModel(boolean labelsFromDirectModel) {
@@ -263,8 +311,9 @@ public class DModelTest extends MekonTestUtils {
 
 		DClassMapper classesCDMapper = map.addClassMapper(MAPPPER_PACKAGE);
 
-		classesCDMapper.setClassIdsPrefix(MAPPPER_FRAMES_PREFIX);
-		classesCDMapper.setFieldIdsPrefix(MAPPPER_SLOTS_PREFIX);
+		classesCDMapper.setClassIdsPrefix(MAPPPER_FRAME_IDS_PREFIX);
+		classesCDMapper.setFieldIdsPrefix(MAPPPER_SLOT_IDS_PREFIX);
+		classesCDMapper.setCompoundFieldIds(MAPPPER_SLOT_IDS_SEPARATOR);
 	}
 
 	private <D extends DObject>D instantiate(DModel model, Class<D> dClass) {
