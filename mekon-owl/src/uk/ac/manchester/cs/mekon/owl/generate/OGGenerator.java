@@ -79,7 +79,7 @@ public class OGGenerator {
 			return resolve(iri, null);
 		}
 
-		E resolve(IRI iri, CIdentity sourceId) {
+		E resolve(IRI iri, CIdentified source) {
 
 			E entity = entitiesByIRI.get(iri);
 
@@ -87,7 +87,7 @@ public class OGGenerator {
 
 				entity = create(iri);
 
-				add(entity, sourceId);
+				add(entity, source);
 				entitiesByIRI.put(iri, entity);
 			}
 
@@ -96,13 +96,13 @@ public class OGGenerator {
 
 		abstract E create(IRI iri);
 
-		private void add(E entity, CIdentity sourceId) {
+		private void add(E entity, CIdentified source) {
 
 			addAxiom(dataFactory.getOWLDeclarationAxiom(entity));
 
-			if (sourceId != null) {
+			if (source != null) {
 
-				addAxiom(createLabelAxiom(entity, sourceId.getLabel()));
+				addAxiom(createLabelAxiom(entity, source.getIdentity().getLabel()));
 			}
 		}
 
@@ -146,7 +146,7 @@ public class OGGenerator {
 		private IRI propertyIRI;
 		private IRI superPropertyIRI;
 
-		private CIdentity slotId;
+		private CSlot slot;
 
 		private ObjectRestrictions objectRestrictions = new ObjectRestrictions();
 		private DataRestrictions dataRestrictions = new DataRestrictions();
@@ -173,7 +173,7 @@ public class OGGenerator {
 
 			private P resolveProperty(IRI iri) {
 
-				return getPropertyResolver().resolve(iri, slotId);
+				return getPropertyResolver().resolve(iri, slot);
 			}
 
 			private void addSuperProperty(P sub, P sup) {
@@ -275,13 +275,13 @@ public class OGGenerator {
 			objectRestrictions.generate(value.getRootCFrame());
 		}
 
-		RestrictionGenerator(OWLClass concept, CFrame frame, CIdentity slotId) {
+		RestrictionGenerator(OWLClass concept, CSlot slot) {
 
 			this.concept = concept;
-			this.slotId = slotId;
+			this.slot = slot;
 
-			propertyIRI = entityIRIs.forSlotProperty(frame, slotId);
-			superPropertyIRI = entityIRIs.forSlotPropertyParentOrNull(frame, slotId);
+			propertyIRI = entityIRIs.forSlotProperty(slot);
+			superPropertyIRI = entityIRIs.forSlotPropertyParentOrNull(slot);
 		}
 
 		void generate(CValue<?> slotValue) {
@@ -302,9 +302,9 @@ public class OGGenerator {
 
 		private boolean singleValued;
 
-		SlotRestrictionGenerator(OWLClass concept, CFrame frame, CSlot slot) {
+		SlotRestrictionGenerator(OWLClass concept, CSlot slot) {
 
-			super(concept, frame, slot.getIdentity());
+			super(concept, slot);
 
 			singleValued = slot.getCardinality().singleValue();
 
@@ -330,15 +330,11 @@ public class OGGenerator {
 
 	private class SlotValuesRestrictionGenerator extends RestrictionGenerator {
 
-		SlotValuesRestrictionGenerator(
-			OWLClass concept,
-			CFrame frame,
-			CIdentity slotId,
-			CValue<?> slotValue) {
+		SlotValuesRestrictionGenerator(OWLClass concept, CSlot slot, CValue<?> value) {
 
-			super(concept, frame, slotId);
+			super(concept, slot);
 
-			generate(slotValue);
+			generate(value);
 		}
 
 		OWLRestriction createObjectRestriction(
@@ -448,7 +444,7 @@ public class OGGenerator {
 
 		for (CSlot slot : frame.getSlots().asList()) {
 
-			new SlotRestrictionGenerator(concept, frame, slot);
+			new SlotRestrictionGenerator(concept, slot);
 		}
 	}
 
@@ -458,16 +454,53 @@ public class OGGenerator {
 
 		for (CIdentity slotId : values.getSlotIdentities()) {
 
-			for (CValue<?> slotValue : values.getValues(slotId)) {
+			for (CValue<?> value : values.getValues(slotId)) {
 
-				new SlotValuesRestrictionGenerator(concept, frame, slotId, slotValue);
+				CSlot slot = findSlot(frame, slotId);
+
+				new SlotValuesRestrictionGenerator(concept, slot, value);
 			}
 		}
 	}
 
+	private CSlot findSlot(CFrame leafFrame, CIdentity slotId) {
+
+		CSlot slot = findSlot(leafFrame, slotId, new HashSet<CFrame>());
+
+		if (slot != null) {
+
+			return slot;
+		}
+
+		throw new Error("Cannot find required slot: " + slotId);
+	}
+
+	private CSlot findSlot(CFrame current, CIdentity slotId, Set<CFrame> visited) {
+
+		CSlot slot = current.getSlots().getOrNull(slotId);
+
+		if (slot == null) {
+
+			for (CFrame sup : current.getSupers()) {
+
+				if (visited.add(sup)) {
+
+					slot = findSlot(sup, slotId, visited);
+
+					if (slot != null) {
+
+						break;
+					}
+				}
+			}
+		}
+
+		return slot;
+	}
+
 	private OWLClass resolveConcept(CFrame frame) {
 
-		return concepts.resolve(entityIRIs.forFrameConcept(frame), frame.getIdentity());
+		return concepts.resolve(entityIRIs.forFrameConcept(frame), frame);
 	}
 
 	private void addSubClassAxiom(OWLClassExpression sub, OWLClassExpression sup) {

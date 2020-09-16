@@ -39,7 +39,7 @@ public interface OGEntityIRIs {
 
 	public Set<IRI> forFrameConceptExtraParents(CFrame frame);
 
-	public IRI forSlotProperty(CFrame frame, CIdentity slotId);
+	public IRI forSlotProperty(CSlot slot);
 
-	public IRI forSlotPropertyParentOrNull(CFrame frame, CIdentity slotId);
+	public IRI forSlotPropertyParentOrNull(CSlot slot);
 }

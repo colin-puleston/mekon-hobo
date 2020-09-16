@@ -131,14 +131,14 @@ public class OGGeneratorTest {
 					: Collections.emptySet();
 		}
 
-		public IRI forSlotProperty(CFrame frame, CIdentity slotId) {
+		public IRI forSlotProperty(CSlot slot) {
 
-			return new RegenId(slotId).getIRI();
+			return new RegenId(slot).getIRI();
 		}
 
-		public IRI forSlotPropertyParentOrNull(CFrame frame, CIdentity slotId) {
+		public IRI forSlotPropertyParentOrNull(CSlot slot) {
 
-			CFrame subRoot = findAncestorSubRootFrame(frame);
+			CFrame subRoot = findAncestorSubRootFrame(slot.getContainer());
 			String subRootName = new RegenId(subRoot).getIRIFragment();
 
 			return getTestEntityIRI(subRootName + "_property");
