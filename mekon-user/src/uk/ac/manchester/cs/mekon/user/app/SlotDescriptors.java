@@ -50,11 +50,15 @@ class SlotDescriptors {
 
 			populatedMultiValueSlot = multiValueSlot() && slotHasValues();
 
-			addForAnyValues();
-			checkAddForValueEntry();
+			addForCurrentValues();
+
+			if (valueEntryDescriptorRequired()) {
+
+				addForValueEntry();
+			}
 		}
 
-		private void addForAnyValues() {
+		private void addForCurrentValues() {
 
 			for (IValue value : slot.getValues().asList()) {
 
@@ -67,17 +71,34 @@ class SlotDescriptors {
 			}
 		}
 
-		private void checkAddForValueEntry() {
+		private void addForValueEntry() {
 
-			if (!viewOnly && editableSlot() && (multiValueSlot() || !slotHasValues())) {
-
-				descriptors.add(createForValue(null));
-			}
+			descriptors.add(createForValue(null));
 		}
 
 		private Descriptor createForValue(IValue value) {
 
 			return new Descriptor(instantiator, slot, value);
+		}
+
+		private boolean valueEntryDescriptorRequired() {
+
+			if (viewOnly || !editableSlot()) {
+
+				return false;
+			}
+
+			if (!slotHasValues()) {
+
+				return true;
+			}
+
+			if (multiValueSlot() && !onlyOneValueAvailable()) {
+
+				return true;
+			}
+
+			return false;
 		}
 
 		private boolean multiValueSlot() {
@@ -88,6 +109,43 @@ class SlotDescriptors {
 		private boolean editableSlot() {
 
 			return slot.getEditability().editable();
+		}
+
+		private boolean onlyOneValueAvailable() {
+
+			CValue<?> valueType = slot.getValueType();
+
+			if (valueType instanceof CFrame) {
+
+				return onlyOneValueAvailable((CFrame)valueType);
+			}
+
+			if (valueType instanceof MFrame) {
+
+				return onlyOneValueAvailable((MFrame)valueType);
+			}
+
+			return false;
+		}
+
+		private boolean onlyOneValueAvailable(CFrame valueType) {
+
+			return fixedValueType(valueType) && !structuredValues(valueType);
+		}
+
+		private boolean onlyOneValueAvailable(MFrame valueType) {
+
+			return fixedValueType(valueType.getRootCFrame());
+		}
+
+		private boolean fixedValueType(CFrame valueType) {
+
+			return valueType.getSubs(CVisibility.EXPOSED).isEmpty();
+		}
+
+		private boolean structuredValues(CFrame valueType) {
+
+			return !instantiator.instantiate(valueType).getSlots().isEmpty();
 		}
 
 		private boolean slotHasValues() {
