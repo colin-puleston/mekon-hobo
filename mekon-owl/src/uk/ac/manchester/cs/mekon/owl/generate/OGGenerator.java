@@ -59,7 +59,7 @@ public class OGGenerator {
 	private OWLOntology ontology;
 	private OWLDataFactory dataFactory;
 
-	private OGEntityIRIs entityIRIs;
+	private OGEntityGenerator entityGenerator;
 	private ONumberRangeRenderer numberRangeRenderer;
 	private OWLDataRange stringDataType;
 	private OWLAnnotationProperty labelAnnotationProperty;
@@ -68,7 +68,8 @@ public class OGGenerator {
 	private ObjectPropertyResolver objectProperties = new ObjectPropertyResolver();
 	private DataPropertyResolver dataProperties = new DataPropertyResolver();
 
-	private Set<IRI> propertiesWithSupers = new HashSet<IRI>();
+	private Set<OWLClass> conceptsWithExtraSupers = new HashSet<OWLClass>();
+	private Set<OWLProperty> propertiesWithSupers = new HashSet<OWLProperty>();
 
 	private abstract class EntityResolver<E extends OWLEntity> {
 
@@ -143,10 +144,9 @@ public class OGGenerator {
 	private abstract class RestrictionGenerator extends CValueVisitor {
 
 		private OWLClass concept;
-		private IRI propertyIRI;
-		private IRI superPropertyIRI;
-
 		private CSlot slot;
+
+		private OGPropertyProfile propertyProfile;
 
 		private ObjectRestrictions objectRestrictions = new ObjectRestrictions();
 		private DataRestrictions dataRestrictions = new DataRestrictions();
@@ -155,13 +155,10 @@ public class OGGenerator {
 
 			void generate(F filler) {
 
+				IRI propertyIRI = propertyProfile.getIRI();
 				P property = resolveProperty(propertyIRI);
 
-				if (superPropertyIRI != null && propertiesWithSupers.add(propertyIRI)) {
-
-					addSuperProperty(property, resolveProperty(superPropertyIRI));
-				}
-
+				addAncestorProperties(property);
 				addRestriction(createRestriction(property, filler));
 			}
 
@@ -170,6 +167,24 @@ public class OGGenerator {
 			abstract OWLAxiom createSubPropertyAxiom(P sub, P sup);
 
 			abstract OWLRestriction createRestriction(P property, F filler);
+
+			private void addAncestorProperties(P property) {
+
+				if (!propertiesWithSupers.add(property)) {
+
+					return;
+				}
+
+				IRI superPropIRI = propertyProfile.getAncestorIRIOrNull(property.getIRI());
+
+				if (superPropIRI != null) {
+
+					P superProperty = resolveProperty(superPropIRI);
+
+					addSuperProperty(property, superProperty);
+					addAncestorProperties(superProperty);
+				}
+			}
 
 			private P resolveProperty(IRI iri) {
 
@@ -280,8 +295,7 @@ public class OGGenerator {
 			this.concept = concept;
 			this.slot = slot;
 
-			propertyIRI = entityIRIs.forSlotProperty(slot);
-			superPropertyIRI = entityIRIs.forSlotPropertyParentOrNull(slot);
+			propertyProfile = entityGenerator.getPropertyProfile(slot);
 		}
 
 		void generate(CValue<?> slotValue) {
@@ -352,15 +366,15 @@ public class OGGenerator {
 		}
 	}
 
-	public OGGenerator(IRI ontologyIRI, OGEntityIRIs entityIRIs) {
+	public OGGenerator(IRI ontologyIRI, OGEntityGenerator entityGenerator) {
 
-		this(createOntology(ontologyIRI), entityIRIs);
+		this(createOntology(ontologyIRI), entityGenerator);
 	}
 
-	public OGGenerator(OWLOntology ontology, OGEntityIRIs entityIRIs) {
+	public OGGenerator(OWLOntology ontology, OGEntityGenerator entityGenerator) {
 
 		this.ontology = ontology;
-		this.entityIRIs = entityIRIs;
+		this.entityGenerator = entityGenerator;
 
 		dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
 		numberRangeRenderer = new ONumberRangeRenderer(dataFactory);
@@ -411,12 +425,9 @@ public class OGGenerator {
 
 		for (CFrame frame : mekonModel.getFrames().asList()) {
 
-			OWLClass concept = resolveConcept(frame);
+			OGConceptProfile profile = entityGenerator.getConceptProfile(frame);
 
-			for (IRI parentIRI : entityIRIs.forFrameConceptExtraParents(frame)) {
-
-				addSubClassAxiom(concept, concepts.resolve(parentIRI));
-			}
+			addExtraAncestorConcepts(profile, resolveConcept(profile, frame));
 		}
 	}
 
@@ -463,6 +474,22 @@ public class OGGenerator {
 		}
 	}
 
+	private void addExtraAncestorConcepts(OGConceptProfile profile, OWLClass concept) {
+
+		if (!conceptsWithExtraSupers.add(concept)) {
+
+			return;
+		}
+
+		for (IRI superConceptIRI : profile.getExtraAncestorIRIs(concept.getIRI())) {
+
+			OWLClass superConcept = concepts.resolve(superConceptIRI);
+
+			addSubClassAxiom(concept, superConcept);
+			addExtraAncestorConcepts(profile, superConcept);
+		}
+	}
+
 	private CSlot findSlot(CFrame leafFrame, CIdentity slotId) {
 
 		CSlot slot = findSlot(leafFrame, slotId, new HashSet<CFrame>());
@@ -500,7 +527,12 @@ public class OGGenerator {
 
 	private OWLClass resolveConcept(CFrame frame) {
 
-		return concepts.resolve(entityIRIs.forFrameConcept(frame), frame);
+		return resolveConcept(entityGenerator.getConceptProfile(frame), frame);
+	}
+
+	private OWLClass resolveConcept(OGConceptProfile conceptProfile, CFrame frame) {
+
+		return concepts.resolve(conceptProfile.getIRI(), frame);
 	}
 
 	private void addSubClassAxiom(OWLClassExpression sub, OWLClassExpression sup) {

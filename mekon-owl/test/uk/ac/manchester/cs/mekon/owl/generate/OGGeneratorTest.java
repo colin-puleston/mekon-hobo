@@ -117,31 +117,90 @@ public class OGGeneratorTest {
 		}
 	}
 
-	private class TestEntityIRIs implements OGEntityIRIs {
+	private abstract class TestEntityProfile implements OGEntityProfile {
 
-		public IRI forFrameConcept(CFrame frame) {
+		private IRI iri;
 
-			return new RegenId(frame).getIRI();
+		public IRI getIRI() {
+
+			return iri;
 		}
 
-		public Set<IRI> forFrameConceptExtraParents(CFrame frame) {
+		TestEntityProfile(CIdentified identified) {
 
-			return isSubRootFrame(frame)
-					? Collections.singleton(TEST_ROOT_CONCEPT_IRI)
-					: Collections.emptySet();
+			iri = new RegenId(identified).getIRI();
 		}
 
-		public IRI forSlotProperty(CSlot slot) {
+		boolean hasIRI(IRI testIRI) {
 
-			return new RegenId(slot).getIRI();
+			return testIRI.equals(iri);
+		}
+	}
+
+	private class TestConceptProfile extends TestEntityProfile implements OGConceptProfile {
+
+		private CFrame frame;
+
+		public Set<IRI> getExtraAncestorIRIs(IRI directChildIRI) {
+
+			if (hasIRI(directChildIRI) && subRootFrame(frame)) {
+
+				return Collections.singleton(TEST_ROOT_CONCEPT_IRI);
+			}
+
+			return Collections.emptySet();
 		}
 
-		public IRI forSlotPropertyParentOrNull(CSlot slot) {
+		TestConceptProfile(CFrame frame) {
 
-			CFrame subRoot = findAncestorSubRootFrame(slot.getContainer());
-			String subRootName = new RegenId(subRoot).getIRIFragment();
+			super(frame);
 
-			return getTestEntityIRI(subRootName + "_property");
+			this.frame = frame;
+		}
+	}
+
+	private class TestPropertyProfile extends TestEntityProfile implements OGPropertyProfile {
+
+		private CSlot slot;
+
+		public IRI getAncestorIRIOrNull(IRI directChildIRI) {
+
+			return hasIRI(directChildIRI) ? createSuperPropertyIRI() : null;
+		}
+
+		TestPropertyProfile(CSlot slot) {
+
+			super(slot);
+
+			this.slot = slot;
+		}
+
+		private IRI createSuperPropertyIRI() {
+
+			return getTestEntityIRI(getSubRootName() + "_property");
+		}
+
+		private String getSubRootName() {
+
+			return new RegenId(getSubRoot()).getIRIFragment();
+		}
+
+		private CFrame getSubRoot() {
+
+			return findAncestorSubRootFrame(slot.getContainer());
+		}
+	}
+
+	private class TestEntityGenerator implements OGEntityGenerator {
+
+		public OGConceptProfile getConceptProfile(CFrame frame) {
+
+			return new TestConceptProfile(frame);
+		}
+
+		public OGPropertyProfile getPropertyProfile(CSlot slot) {
+
+			return new TestPropertyProfile(slot);
 		}
 	}
 
@@ -235,7 +294,7 @@ public class OGGeneratorTest {
 
 			if (inputFrame.isRoot()) {
 
-				assertTrue(isSubRootFrame(regenFrame));
+				assertTrue(subRootFrame(regenFrame));
 
 				CFrame regenFrameSup = regenFrame.getSupers().get(0);
 				String regenFrameSupId = regenFrameSup.getIdentity().getIdentifier();
@@ -537,10 +596,10 @@ public class OGGeneratorTest {
 
 		CFrame sup = current.getSupers().get(0);
 
-		return isSubRootFrame(sup) ? sup : findAncestorSubRootFrame(sup);
+		return subRootFrame(sup) ? sup : findAncestorSubRootFrame(sup);
 	}
 
-	private boolean isSubRootFrame(CFrame frame) {
+	private boolean subRootFrame(CFrame frame) {
 
 		List<CFrame> sups = frame.getSupers();
 
@@ -565,7 +624,7 @@ public class OGGeneratorTest {
 
 	private void generateOntology(CModel inputModel) {
 
-		OGGenerator generator = new OGGenerator(TEST_ONTOLOGY_IRI, new TestEntityIRIs());
+		OGGenerator generator = new OGGenerator(TEST_ONTOLOGY_IRI, new TestEntityGenerator());
 
 		generator.generate(inputModel);
 		generator.save(TEST_FILE);
