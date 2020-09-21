@@ -47,12 +47,52 @@ import uk.ac.manchester.cs.hobo.model.*;
  */
 public class DClassMapper {
 
-	private Set<String> mappingPackages = new HashSet<String>();
+	private Set<PackageMapper> packageMappers = new HashSet<PackageMapper>();
 
 	private String classIdsPrefix = "";
 	private String fieldIdsPrefix = "";
 
 	private String compoundFieldIdSeparator = null;
+
+	private abstract class PackageMapper {
+
+		final String basePackageName;
+
+		PackageMapper(String basePackageName) {
+
+			this.basePackageName = basePackageName;
+
+			packageMappers.add(this);
+		}
+
+		abstract boolean mappingSubject(String packageName);
+	}
+
+	private class SinglePackageMapper extends PackageMapper {
+
+		SinglePackageMapper(String packageName) {
+
+			super(packageName);
+		}
+
+		boolean mappingSubject(String packageName) {
+
+			return packageName.equals(basePackageName);
+		}
+	}
+
+	private class PackageGroupMapper extends PackageMapper {
+
+		PackageGroupMapper(String basePackageName) {
+
+			super(basePackageName);
+		}
+
+		boolean mappingSubject(String packageName) {
+
+			return packageName.startsWith(basePackageName);
+		}
+	}
 
 	private class MapGenerator {
 
@@ -106,6 +146,28 @@ public class DClassMapper {
 	}
 
 	/**
+	 * Adds an OM package for whose classes mappings are to be
+	 * generated
+	 *
+	 * @param packageName Name of relevant OM package
+	 */
+	public void addPackage(String packageName) {
+
+		new SinglePackageMapper(packageName);
+	}
+
+	/**
+	 * Adds a group of OM packages for whose classes mappings are to be
+	 * generated.
+	 *
+	 * @param basePackageName Base-name of relevant OM packages
+	 */
+	public void addPackageGroup(String basePackageName) {
+
+		new PackageGroupMapper(basePackageName);
+	}
+
+	/**
 	 * Sets a prefix to form part of the external-identififiers
 	 * for both the mapped classes and mapped fields.
 	 *
@@ -156,9 +218,7 @@ public class DClassMapper {
 		compoundFieldIdSeparator = separator;
 	}
 
-	DClassMapper(Collection<String> mappingPackages) {
-
-		this.mappingPackages.addAll(mappingPackages);
+	DClassMapper() {
 	}
 
 	DClassMap checkGenerateMap(Class<? extends DObject> dClass) {
@@ -168,7 +228,17 @@ public class DClassMapper {
 
 	private boolean mappingSubject(Class<? extends DObject> dClass) {
 
-		return mappingPackages.contains(dClass.getPackage().getName());
+		String packageName = dClass.getPackage().getName();
+
+		for (PackageMapper packageMapper : packageMappers) {
+
+			if (packageMapper.mappingSubject(packageName)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private boolean mappableField(Field field) {

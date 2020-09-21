@@ -97,35 +97,16 @@ public class DModelMap {
 	}
 
 	/**
-	 * Adds an object for generating a set of mappings between the
-	 * OM classes from a specific package, plus any OM fields attached
-	 * to those classes, and entities in one or more  external sources.
-	 * The returned object can be used to further configure the mapping
-	 * creation process.
+	 * Adds an object for generating a set of mappings between a set
+	 * of OM classes, plus any OM fields attached to those classes,
+	 * and entities in one or more external sources. The returned
+	 * object should be used to configure the mapping creation process.
 	 *
-	 * @param mappingPackage Name of OM package for whose classes
-	 * mappings are to be generated
-	 * @return Resulting class-mapper object
+	 * @return Class-mapper object to be configured
 	 */
-	public DClassMapper addClassMapper(String mappingPackage) {
+	public DClassMapper addClassMapper() {
 
-		return addClassMapper(Arrays.asList(mappingPackage));
-	}
-
-	/**
-	 * Adds an object for generating a set of mappings between the
-	 * OM classes from a set of one or more packages, plus any OM
-	 * fields attached to those classes, and entities in one or more
-	 * external sources. The returned object can be used to further
-	 * configure the mapping creation process.
-	 *
-	 * @param mappingPackages Names of OM packages for whose classes
-	 * mappings are to be generated
-	 * @return Resulting class-mapper object
-	 */
-	public DClassMapper addClassMapper(Collection<String> mappingPackages) {
-
-		DClassMapper mapper = new DClassMapper(mappingPackages);
+		DClassMapper mapper = new DClassMapper();
 
 		classMappers.add(mapper);
 

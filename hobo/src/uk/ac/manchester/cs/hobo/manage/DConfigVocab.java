@@ -38,6 +38,7 @@ public interface DConfigVocab {
 	static public final String FIELD_MAP_ID = "FieldMap";
 	static public final String CLASS_MAPPER_ID = "ClassMapper";
 	static public final String CLASS_MAPPER_PACKAGE_ID = "MappingPackage";
+	static public final String CLASS_MAPPER_PACKAGE_GROUP_ID = "MappingPackageGroup";
 	static public final String CLASS_MAPPER_COMPOUND_FIELD_IDS_ID = "CompoundFieldIds";
 
 	static public final String DIRECT_CLASS_LABELS_ATTR = "labelsFromDirectClasses";
@@ -48,6 +49,7 @@ public interface DConfigVocab {
 	static public final String FIELD_MAP_FIELD_NAME_ATTR = "fieldName";
 	static public final String FIELD_MAP_EXTERNAL_ID_ATTR = "externalId";
 	static public final String CLASS_MAPPER_PACKAGE_ATTR = "package";
+	static public final String CLASS_MAPPER_BASE_PACKAGE_ATTR = "topLevelPackage";
 	static public final String CLASS_MAPPER_ID_SEPARATOR_ATTR = "separator";
 	static public final String CLASS_MAPPER_ID_PREFIX_ATTR = "externalIdsPrefix";
 	static public final String CLASS_MAPPER_CLASS_ID_PREFIX_ATTR = "externalClassIdsPrefix";

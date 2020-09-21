@@ -61,8 +61,8 @@ public interface DBuilder {
 	public void addDClass(Class<? extends DObject> dClass);
 
 	/**
-	 * Registers OM all {@link DObject}-derived classes in the
-	 * specified group of packages.
+	 * Registers all {@link DObject}-derived classes in the specified
+	 * group of packages.
 	 *
 	 * @param basePackageName Base-name for packages to be registered
 	 */

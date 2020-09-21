@@ -85,7 +85,31 @@ class DConfig implements DConfigVocab {
 
 	private void loadClassMapper(DModelMap modelMap, KConfigNode mapperNode) {
 
-		DClassMapper mapper = modelMap.addClassMapper(getClassMappingPackages(mapperNode));
+		DClassMapper mapper = modelMap.addClassMapper();
+
+		addClassMappingSinglePackages(mapper, mapperNode);
+		addClassMappingPackageGroups(mapper, mapperNode);
+
+		setClassMappingExternalIdConfig(mapper, mapperNode);
+	}
+
+	private void addClassMappingSinglePackages(DClassMapper mapper, KConfigNode mapperNode) {
+
+		for (KConfigNode pkgNode : mapperNode.getChildren(CLASS_MAPPER_PACKAGE_ID)) {
+
+			mapper.addPackage(pkgNode.getString(CLASS_MAPPER_PACKAGE_ATTR));
+		}
+	}
+
+	private void addClassMappingPackageGroups(DClassMapper mapper, KConfigNode mapperNode) {
+
+		for (KConfigNode pkgNode : mapperNode.getChildren(CLASS_MAPPER_PACKAGE_GROUP_ID)) {
+
+			mapper.addPackageGroup(pkgNode.getString(CLASS_MAPPER_BASE_PACKAGE_ATTR));
+		}
+	}
+
+	private void setClassMappingExternalIdConfig(DClassMapper mapper, KConfigNode mapperNode) {
 
 		String idPfx = mapperNode.getString(CLASS_MAPPER_ID_PREFIX_ATTR, null);
 		String classIdPfx = mapperNode.getString(CLASS_MAPPER_CLASS_ID_PREFIX_ATTR, null);
@@ -112,18 +136,6 @@ class DConfig implements DConfigVocab {
 
 			mapper.setCompoundFieldIds(cfIdsNode.getString(CLASS_MAPPER_ID_SEPARATOR_ATTR));
 		}
-	}
-
-	private List<String> getClassMappingPackages(KConfigNode mapperNode) {
-
-		List<String> packages = new ArrayList<String>();
-
-		for (KConfigNode pkgNode : mapperNode.getChildren(CLASS_MAPPER_PACKAGE_ID)) {
-
-			packages.add(pkgNode.getString(CLASS_MAPPER_PACKAGE_ATTR));
-		}
-
-		return packages;
 	}
 
 	private void loadClassMaps(DModelMap modelMap, KConfigNode classMapsNode) {
