@@ -309,7 +309,9 @@ public class DModelTest extends MekonTestUtils {
 
 		classAMap.addFieldMap(INT_CELL_NAME, INT_EXTERNAL_ID);
 
-		DClassMapper classesCDMapper = map.addClassMapper(MAPPPER_PACKAGE);
+		DClassMapper classesCDMapper = map.addClassMapper();
+
+		classesCDMapper.addPackage(MAPPPER_PACKAGE);
 
 		classesCDMapper.setClassIdsPrefix(MAPPPER_FRAME_IDS_PREFIX);
 		classesCDMapper.setFieldIdsPrefix(MAPPPER_SLOT_IDS_PREFIX);
