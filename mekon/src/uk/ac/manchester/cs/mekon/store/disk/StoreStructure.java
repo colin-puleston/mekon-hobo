@@ -66,7 +66,7 @@ class StoreStructure {
 
 			for (CIdentity rootTypeId : rootTypeIds) {
 
-				rootTypes.add(getFrameType(rootTypeId));
+				checkAddRootType(rootTypeId);
 			}
 
 			subStoreNames.add(name);
@@ -93,6 +93,16 @@ class StoreStructure {
 		String getSubDirName(IFrameFunction function) {
 
 			return splitByFunction && function.query() ? getQueriesSubDirName() : name;
+		}
+
+		private void checkAddRootType(CIdentity rootTypeId) {
+
+			CFrame rootType = model.getFrames().getOrNull(rootTypeId);
+
+			if (rootType != null) {
+
+				rootTypes.add(rootType);
+			}
 		}
 
 		private String getQueriesSubDirName() {
@@ -141,10 +151,5 @@ class StoreStructure {
 	File getSubDirectory(String name) {
 
 		return new File(mainDirectory, name);
-	}
-
-	private CFrame getFrameType(CIdentity identity) {
-
-		return model.getFrames().get(identity);
 	}
 }

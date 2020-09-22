@@ -111,7 +111,7 @@ class StoreSerialiser {
 
 				IInstanceProfile profile = resolveStoredProfile(dir, pFile);
 
-				if (resolvedIndices.add(profile.getIndex())) {
+				if (profile != null && resolvedIndices.add(profile.getIndex())) {
 
 					profiles.add(profile);
 				}
@@ -147,11 +147,17 @@ class StoreSerialiser {
 	private IInstanceProfile resolveStoredProfile(StoreDirectory dir, File pFile) {
 
 		IInstanceProfile profile = IProfileSerialiser.parse(pFile);
+		CFrame type = model.getFrames().getOrNull(profile.getTypeIdentity());
+
+		if (type == null) {
+
+			return null;
+		}
+
+		StoreDirectory typeDir = selectStoreDirectory(type, profile.getFunction());
 		int index = dir.getProfileFileIndex(pFile);
 
 		profile.setIndex(index);
-
-		StoreDirectory typeDir = selectStoreDirectory(profile);
 
 		if (typeDir != dir) {
 
@@ -188,13 +194,6 @@ class StoreSerialiser {
 		return selectStoreDirectory(instance.getType(), instance.getFunction());
 	}
 
-	private StoreDirectory selectStoreDirectory(IInstanceProfile profile) {
-
-		CFrame type = getFrameType(profile.getTypeIdentity());
-
-		return selectStoreDirectory(type, profile.getFunction());
-	}
-
 	private StoreDirectory selectStoreDirectory(CFrame type, IFrameFunction function) {
 
 		String subStoreName = structure.lookForSubStoreName(type, function);
@@ -213,10 +212,5 @@ class StoreSerialiser {
 		}
 
 		return mainDirectory;
-	}
-
-	private CFrame getFrameType(CIdentity identity) {
-
-		return model.getFrames().get(identity);
 	}
 }
