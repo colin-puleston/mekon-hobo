@@ -39,6 +39,31 @@ public class CString extends CDataValue<IString> {
 	private CStringValidator validator;
 
 	/**
+	 * Tests for equality between this and other specified object,
+	 * which will hold if and only if the other object is another
+	 * <code>CString</code> with same required format as this one
+	 * (see {@link #getFormat}.
+	 *
+	 * @param other Object to test for equality with this one
+	 * @return true if objects are equal
+	 */
+	public boolean equals(Object other) {
+
+		return other instanceof CString && validator.equals(((CString)other).validator);
+	}
+
+	/**
+	 * Provides hash-code based on the required format for the string
+	 * (see {@link #getFormat}.
+	 *
+	 * @return hash-code for this object
+	 */
+	public int hashCode() {
+
+		return format.hashCode();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public Class<IString> getValueType() {
@@ -168,7 +193,7 @@ public class CString extends CDataValue<IString> {
 
 	CValue<?> update(CValue<?> other) {
 
-		return this;
+		return other instanceof CString ? updateCString((CString)other) : null;
 	}
 
 	void acceptVisitor(CValueVisitor visitor) throws Exception {
@@ -189,5 +214,17 @@ public class CString extends CDataValue<IString> {
 	String getDataValueDescription() {
 
 		return String.class.getSimpleName();
+	}
+
+	private CString updateCString(CString other) {
+
+		CStringFormat combinedFormat = format.combineWith(other.format);
+
+		if (combinedFormat == null) {
+
+			return equals(other) ? this : null;
+		}
+
+		return combinedFormat == format ? this : other;
 	}
 }

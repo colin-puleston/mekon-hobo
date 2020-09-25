@@ -56,4 +56,29 @@ public enum CStringFormat {
 	 * unspecified custom mechanism.
 	 */
 	CUSTOM;
+
+	/**
+	 * Combines this with another specified format. If neither
+	 * format is {@link #CUSTOM} then returns the one with the
+	 * greatest ordinal value, since the non-{@link #CUSTOM}
+	 * format-values are arranged so that earlier values subsume
+	 * later values. If only one of the formats is {@link #CUSTOM},
+	 * then returns {@link #CUSTOM}, which is always assumed to
+	 * take precedence over other formats. If both formats are
+	 * {@link #CUSTOM} then returns null to indicate that any
+	 * resolution needs to be sorted out elsewhere.
+	 *
+	 * @param other Format with which to combine this one
+	 * @return Combined format, or null if both values are
+	 * {@link #CUSTOM}
+	 */
+	public CStringFormat combineWith(CStringFormat other) {
+
+		if (this == CUSTOM && other == CUSTOM) {
+
+			return null;
+		}
+
+		return ordinal() < other.ordinal() ? other : this;
+	}
 }
