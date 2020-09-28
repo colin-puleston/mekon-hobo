@@ -84,11 +84,11 @@ public class OStardogConfig implements OStardogConfigVocab {
 	}
 
 	/**
-	 * Sets whether the BaseX store should be completely rebuilt
+	 * Sets whether the store should be completely rebuilt
 	 * from the main MEKON instance store on start-up. Defaults to
 	 * true.
 	 *
-	 * @param rebuildStore True if BaseX store should be rebuilt
+	 * @param rebuildStore True if store should be rebuilt
 	 */
 	public void setRebuildStore(boolean rebuildStore) {
 
@@ -96,10 +96,10 @@ public class OStardogConfig implements OStardogConfigVocab {
 	}
 
 	/**
-	 * Sets whether the BaseX store should persist after the matcher
+	 * Sets whether the store should persist after the matcher
 	 * is destroyed. Defaults to false.
 	 *
-	 * @param persistStore True if BaseX store should persist
+	 * @param persistStore True if store should persist
 	 */
 	public void setPersistStore(boolean persistStore) {
 
