@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class DStringValueType extends DValueType<String> {
 
-	static final DStringValueType UNCONSTRAINED = new DStringValueType(CString.FREE_VALUE);
+	static final DStringValueType UNCONSTRAINED = new DStringValueType(CString.FREE);
 
 	private CString slotValueType;
 
