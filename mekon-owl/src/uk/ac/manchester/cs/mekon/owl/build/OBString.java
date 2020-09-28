@@ -35,7 +35,7 @@ class OBString extends OBDataValue<CString> {
 
 	CString ensureCStructure() {
 
-		return CString.FREE_VALUE;
+		return CString.FREE;
 	}
 
 	CValue<?> resolveToCSlotValueType(
