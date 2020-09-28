@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -33,60 +32,27 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceDialog extends GDialog {
+abstract class InstanceDialog extends InstanceSectionDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_FORMAT = "%s %s (%s)";
+	static private final String TITLE_FORMAT = "%s (%s)";
 
 	static private final String STORE_BUTTON_LABEL = "Store";
 	static private final String STORE_AS_BUTTON_LABEL = "Store As...";
 
-	static private final String MODE_SELECTOR_LABEL = "View only";
+	static private String createTitle(Instantiator instantiator, CIdentity storeId) {
 
-	static private final int FRAME_WIDTH = 600;
-
-	static private String createTitle(
-							Instantiator instantiator,
-							CIdentity storeId,
-							String functionLabel) {
-
-		String typeLabel = getTypeLabel(instantiator);
-		String idLabel = storeId.getLabel();
-
-		return String.format(TITLE_FORMAT, typeLabel, functionLabel, idLabel);
+		return String.format(
+					TITLE_FORMAT,
+					createSectionTitle(instantiator),
+					storeId.getLabel());
 	}
 
-	static private String getTypeLabel(Instantiator instantiator) {
-
-		Customiser customiser = instantiator.getController().getCustomiser();
-
-		return customiser.getValueDisplayLabel(instantiator.getInstance());
-	}
-
-	private Instantiator instantiator;
 	private CIdentity storeId;
-
-	private InstanceTree instanceTree;
+	private boolean allowStoreOverwrite = true;
 
 	private boolean instanceStored = false;
-
-	private class ViewOnlySelector extends GCheckBox {
-
-		static private final long serialVersionUID = -1;
-
-		protected void onSelectionUpdate(boolean selected) {
-
-			setViewOnly(selected);
-		}
-
-		ViewOnlySelector() {
-
-			super(MODE_SELECTOR_LABEL);
-
-			setSelected(instanceTree.viewOnly());
-		}
-	}
 
 	private class StoreButton extends GButton {
 
@@ -118,33 +84,23 @@ abstract class InstanceDialog extends GDialog {
 		}
 	}
 
-	public Dimension getPreferredSize() {
+	InstanceDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
 
-		return new Dimension(FRAME_WIDTH, getPreferredHeight());
-	}
+		super(
+			parent,
+			instantiator,
+			instantiator.getInstance(),
+			createTitle(instantiator, storeId));
 
-	InstanceDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		CIdentity storeId,
-		String functionTitle) {
-
-		super(parent, createTitle(instantiator, storeId, functionTitle), true);
-
-		this.instantiator = instantiator;
 		this.storeId = storeId;
-
-		instanceTree = new InstanceTree(instantiator);
 	}
 
-	void display(boolean startAsViewOnly, boolean enableDefaultStore) {
+	void setAllowStoreOverwrite(boolean value) {
 
-		setViewOnly(startAsViewOnly);
-
-		display(createDisplay(enableDefaultStore));
+		allowStoreOverwrite = value;
 	}
 
-	ControlsPanel checkCreateControlsPanel(boolean enableDefaultStore) {
+	ControlsPanel checkCreateControlsPanel() {
 
 		if (!getInstanceGroup().editable()) {
 
@@ -153,7 +109,7 @@ abstract class InstanceDialog extends GDialog {
 
 		ControlsPanel panel = new ControlsPanel(true);
 
-		if (enableDefaultStore) {
+		if (allowStoreOverwrite) {
 
 			panel.addControl(new StoreButton());
 		}
@@ -165,12 +121,12 @@ abstract class InstanceDialog extends GDialog {
 
 	InstanceGroup getInstanceGroup() {
 
-		return instantiator.getInstanceGroup();
+		return getInstantiator().getInstanceGroup();
 	}
 
 	IFrame getInstance() {
 
-		return instantiator.getInstance();
+		return getInstantiator().getInstance();
 	}
 
 	CIdentity getStoreId() {
@@ -184,31 +140,6 @@ abstract class InstanceDialog extends GDialog {
 	}
 
 	abstract boolean disposeOnStoring();
-
-	private JComponent createDisplay(boolean enableDefaultStore) {
-
-		JPanel panel = new JPanel(new BorderLayout());
-		ControlsPanel controls = checkCreateControlsPanel(enableDefaultStore);
-
-		if (instantiator.editableInstance()) {
-
-			panel.add(new ViewOnlySelector(), BorderLayout.NORTH);
-		}
-
-		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
-
-		if (controls != null) {
-
-			panel.add(controls, BorderLayout.SOUTH);
-		}
-
-		return panel;
-	}
-
-	private void setViewOnly(boolean value) {
-
-		instanceTree.setViewOnly(value);
-	}
 
 	private void perfomStoreAsAction(JComponent parent) {
 
@@ -243,21 +174,11 @@ abstract class InstanceDialog extends GDialog {
 
 	private CIdentity checkObtainNewStoreId(JComponent parent) {
 
-		return createInstanceOps(parent).checkObtainNewStoreId(getInstanceType());
+		return createInstanceOps(parent).checkObtainNewStoreId(getInstance().getType());
 	}
 
 	private InstanceOps createInstanceOps(JComponent parent) {
 
-		return new InstanceOps(parent, getInstanceGroup(), instantiator.getFunction());
-	}
-
-	private CFrame getInstanceType() {
-
-		return getInstance().getType();
-	}
-
-	private int getPreferredHeight() {
-
-		return (int)super.getPreferredSize().getHeight();
+		return new InstanceOps(parent, getInstanceGroup(), getInstantiator().getFunction());
 	}
 }

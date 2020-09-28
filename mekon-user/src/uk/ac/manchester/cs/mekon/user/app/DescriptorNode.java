@@ -96,6 +96,11 @@ class DescriptorNode extends InstanceNode {
 	}
 
 	void performViewAction() {
+
+		if (descriptor.hasStructuredValue()) {
+
+			displayIFrameValueStructureDialog((IFrame)descriptor.getValue());
+		}
 	}
 
 	private GNodeAction createAction() {
@@ -106,5 +111,15 @@ class DescriptorNode extends InstanceNode {
 	private DescriptorEditor createEditor() {
 
 		return new DescriptorEditor(getInstanceTree(), getInstantiator(), descriptor);
+	}
+
+	private void displayIFrameValueStructureDialog(IFrame value) {
+
+		createIFrameValueStructureDialog(value).display(true);
+	}
+
+	private InstanceSubSectionDialog createIFrameValueStructureDialog(IFrame value) {
+
+		return new InstanceSubSectionDialog(getInstanceTree(), getInstantiator(), value);
 	}
 }

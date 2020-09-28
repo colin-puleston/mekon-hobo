@@ -35,11 +35,9 @@ class AssertionDialog extends InstanceDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String FUNCTION_LABEL = "Instance";
-
 	AssertionDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
 
-		super(parent, instantiator, storeId, FUNCTION_LABEL);
+		super(parent, instantiator, storeId);
 	}
 
 	boolean disposeOnStoring() {

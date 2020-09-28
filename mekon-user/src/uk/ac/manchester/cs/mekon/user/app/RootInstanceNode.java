@@ -34,6 +34,8 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class RootInstanceNode extends InstanceNode {
 
+	private IFrame rootFrame;
+
 	private GCellDisplay display;
 	private DescriptorChildNodes childNodes;
 
@@ -47,12 +49,14 @@ class RootInstanceNode extends InstanceNode {
 		return display;
 	}
 
-	RootInstanceNode(InstanceTree tree) {
+	RootInstanceNode(InstanceTree tree, IFrame rootFrame) {
 
 		super(tree);
 
+		this.rootFrame = rootFrame;
+
 		display = new GCellDisplay(getDisplayLabel(), getIcon());
-		childNodes = new DescriptorChildNodes(this, getInstance());
+		childNodes = new DescriptorChildNodes(this, rootFrame);
 	}
 
 	void update() {
@@ -64,7 +68,7 @@ class RootInstanceNode extends InstanceNode {
 
 	private String getDisplayLabel() {
 
-		return getCustomiser().getValueDisplayLabel(getInstance());
+		return getCustomiser().getValueDisplayLabel(rootFrame);
 	}
 
 	private Customiser getCustomiser() {
@@ -75,10 +79,5 @@ class RootInstanceNode extends InstanceNode {
 	private Icon getIcon() {
 
 		return queryInstance() ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
-	}
-
-	private IFrame getInstance() {
-
-		return getInstantiator().getInstance();
 	}
 }

@@ -46,6 +46,23 @@ class DescriptorEditor {
 
 		boolean performEditAction() {
 
+			return checkDisplayValueStructureDialog() || performValueEdit();
+		}
+
+		boolean checkDisplayValueStructureDialog() {
+
+			return false;
+		}
+
+		abstract ValueObtainer getValueObtainer();
+
+		boolean handleCancelledEdit() {
+
+			return false;
+		}
+
+		private boolean performValueEdit() {
+
 			ValueObtainer obtainer = getValueObtainer();
 
 			switch (obtainer.getEditStatus()) {
@@ -63,13 +80,6 @@ class DescriptorEditor {
 			}
 
 			return true;
-		}
-
-		abstract ValueObtainer getValueObtainer();
-
-		boolean handleCancelledEdit() {
-
-			return false;
 		}
 	}
 
@@ -152,6 +162,11 @@ class DescriptorEditor {
 			this.valueType = valueType;
 		}
 
+		boolean checkDisplayValueStructureDialog() {
+
+			return checkDisplayIFrameValueStructureDialog();
+		}
+
 		ValueObtainer getValueObtainer() {
 
 			return new FixedValueObtainer();
@@ -172,11 +187,11 @@ class DescriptorEditor {
 		}
 	}
 
-	private abstract class InputFrameTypeHandler extends InputTypeHandler<CFrame> {
+	private abstract class SelectableFrameTypeHandler extends InputTypeHandler<CFrame> {
 
 		private CFrame rootCFrame;
 
-		InputFrameTypeHandler(CFrame rootCFrame) {
+		SelectableFrameTypeHandler(CFrame rootCFrame) {
 
 			this.rootCFrame = rootCFrame;
 		}
@@ -194,11 +209,16 @@ class DescriptorEditor {
 		}
 	}
 
-	private class InputCFrameTypeHandler extends InputFrameTypeHandler {
+	private class SelectableCFrameTypeHandler extends SelectableFrameTypeHandler {
 
-		InputCFrameTypeHandler(CFrame valueType) {
+		SelectableCFrameTypeHandler(CFrame valueType) {
 
 			super(valueType);
+		}
+
+		boolean checkDisplayValueStructureDialog() {
+
+			return checkDisplayIFrameValueStructureDialog();
 		}
 
 		IFrame inputToValue(CFrame input) {
@@ -207,7 +227,7 @@ class DescriptorEditor {
 		}
 	}
 
-	private class MFrameTypeHandler extends InputFrameTypeHandler {
+	private class MFrameTypeHandler extends SelectableFrameTypeHandler {
 
 		MFrameTypeHandler(MFrame valueType) {
 
@@ -271,7 +291,7 @@ class DescriptorEditor {
 				return true;
 			}
 
-			return new InputCFrameTypeHandler(valueType).performEditAction();
+			return new SelectableCFrameTypeHandler(valueType).performEditAction();
 		}
 
 		private boolean checkCreateAndAddRefInstance() {
@@ -386,7 +406,7 @@ class DescriptorEditor {
 				return new FixedCFrameTypeHandler(valueType);
 			}
 
-			return new InputCFrameTypeHandler(valueType);
+			return new SelectableCFrameTypeHandler(valueType);
 		}
 	}
 
@@ -429,6 +449,40 @@ class DescriptorEditor {
 	private ValueObtainerFactory getCustomValueObtainerFactory() {
 
 		return getCustomiser().getValueObtainerFactory();
+	}
+
+	private boolean checkDisplayIFrameValueStructureDialog() {
+
+		if (descriptor.hasStructuredValue()) {
+
+			return displayIFrameValueStructureDialog((IFrame)descriptor.getValue());
+		}
+
+		return false;
+	}
+
+	private boolean displayIFrameValueStructureDialog(IFrame value) {
+
+		InstanceSubSectionDialog dialog = createIFrameValueStructureDialog(value);
+
+		dialog.display(false);
+
+		if (dialog.replaceSelected()) {
+
+			return false;
+		}
+
+		if (dialog.clearSelected()) {
+
+			removeValue();
+		}
+
+		return true;
+	}
+
+	private InstanceSubSectionDialog createIFrameValueStructureDialog(IFrame value) {
+
+		return new InstanceSubSectionDialog(parent, instantiator, value);
 	}
 
 	private void addValue(IValue value) {

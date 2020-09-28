@@ -32,58 +32,93 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class QueryDialog extends InstanceDialog {
+class InstanceSubSectionDialog extends InstanceSectionDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String EXECUTE_BUTTON_LABEL = "Execute";
+	static private final String OK_BUTTON_LABEL = "Ok";
+	static private final String CLEAR_BUTTON_LABEL = "Clear";
+	static private final String REPLACE_BUTTON_LABEL = "Replace...";
 
-	private QueryExecutions queryExecutions;
+	private boolean clearSelected = false;
+	private boolean replaceSelected = false;
 
-	private class ExecuteButton extends GButton {
+	private class OkButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
 			dispose();
-			execute();
 		}
 
-		ExecuteButton() {
+		OkButton() {
 
-			super(EXECUTE_BUTTON_LABEL);
+			super(OK_BUTTON_LABEL);
 		}
 	}
 
-	QueryDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
+	private class ClearButton extends GButton {
 
-		super(parent, instantiator, storeId);
+		static private final long serialVersionUID = -1;
 
-		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
-	}
+		protected void doButtonThing() {
 
-	ControlsPanel checkCreateControlsPanel( ) {
+			clearSelected = true;
 
-		ControlsPanel panel = super.checkCreateControlsPanel();
-
-		if (panel == null) {
-
-			panel = new ControlsPanel(true);
+			dispose();
 		}
 
-		panel.addControl(new ExecuteButton());
+		ClearButton() {
+
+			super(CLEAR_BUTTON_LABEL);
+		}
+	}
+
+	private class ReplaceButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			replaceSelected = true;
+
+			dispose();
+		}
+
+		ReplaceButton() {
+
+			super(REPLACE_BUTTON_LABEL);
+		}
+	}
+
+	InstanceSubSectionDialog(JComponent parent, Instantiator instantiator, IFrame rootFrame) {
+
+		super(
+			parent,
+			instantiator,
+			rootFrame,
+			createSectionTitle(instantiator));
+	}
+
+	boolean clearSelected() {
+
+		return clearSelected;
+	}
+
+	boolean replaceSelected() {
+
+		return replaceSelected;
+	}
+
+	ControlsPanel checkCreateControlsPanel() {
+
+		ControlsPanel panel = new ControlsPanel(true);
+
+		panel.addControl(new OkButton());
+		panel.addControl(new ClearButton());
+		panel.addControl(new ReplaceButton());
 
 		return panel;
-	}
-
-	boolean disposeOnStoring() {
-
-		return false;
-	}
-
-	private void execute() {
-
-		queryExecutions.execute(getStoreId(), getInstance());
 	}
 }

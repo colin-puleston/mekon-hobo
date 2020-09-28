@@ -186,7 +186,7 @@ class InstanceOps {
 
 		InstanceDialog dialog = createDialog(instantiator, storeId);
 
-		dialog.display(reloaded, true);
+		dialog.display(reloaded);
 
 		return dialog.instanceStored() ? dialog.getStoreId() : null;
 	}

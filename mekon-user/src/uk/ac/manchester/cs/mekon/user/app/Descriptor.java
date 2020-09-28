@@ -90,12 +90,14 @@ class Descriptor {
 
 	boolean hasStructuredValue() {
 
-		return hasIFrameValue(IFrameCategory.ATOMIC);
+		IFrame frame = checkForIFrameValue(IFrameCategory.ATOMIC);
+
+		return frame != null && !frame.getSlots().isEmpty();
 	}
 
 	boolean hasInstanceRefValue() {
 
-		return hasIFrameValue(IFrameCategory.REFERENCE);
+		return checkForIFrameValue(IFrameCategory.REFERENCE) != null;
 	}
 
 	boolean hasURLValue() {
@@ -219,9 +221,19 @@ class Descriptor {
 		return slot.getValues().getFixedValues().contains(value);
 	}
 
-	private boolean hasIFrameValue(IFrameCategory category) {
+	private IFrame checkForIFrameValue(IFrameCategory category) {
 
-		return value instanceof IFrame && ((IFrame)value).getCategory() == category;
+		if (value instanceof IFrame) {
+
+			IFrame frame = (IFrame)value;
+
+			if (frame.getCategory() == category) {
+
+				return frame;
+			}
+		}
+
+		return null;
 	}
 
 	private boolean anyUserValues() {

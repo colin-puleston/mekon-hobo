@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.user.app;
 import java.awt.event.*;
 import javax.swing.tree.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -67,11 +68,11 @@ class InstanceTree extends GActionTree {
 		}
 	}
 
-	InstanceTree(Instantiator instantiator) {
+	InstanceTree(Instantiator instantiator, IFrame rootFrame) {
 
 		this.instantiator = instantiator;
 
-		rootNode = new RootInstanceNode(this);
+		rootNode = new RootInstanceNode(this, rootFrame);
 
 		setRootVisible(true);
 		setShowsRootHandles(false);
