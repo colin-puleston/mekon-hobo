@@ -421,7 +421,7 @@ public class FSerialiser implements FSerialiserVocab {
 	 */
 	static public IString parseIString(XNode node) {
 
-		return CString.FREE_VALUE.instantiate(node.getString(STRING_VALUE_ATTR));
+		return CString.FREE.instantiate(node.getString(STRING_VALUE_ATTR));
 	}
 
 	static private void renderNumberType(CNumber number, XNode node) {
@@ -515,7 +515,7 @@ public class FSerialiser implements FSerialiserVocab {
 
 	static private CStringFormat getCStringFormat(XNode node) {
 
-		return node.getEnum(STRING_FORMAT_ATTR, CStringFormat.class, CStringFormat.FREE_VALUE);
+		return node.getEnum(STRING_FORMAT_ATTR, CStringFormat.class, CStringFormat.FREE);
 	}
 
 	static private Class<? extends CStringConfig> getCustomCStringConfigClass(XNode node) {

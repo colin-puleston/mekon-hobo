@@ -39,9 +39,9 @@ public class CString extends CDataValue<IString> {
 
 	/**
 	 * Singleton object defining string values with format
-	 * {@link CStringFormat.FREE_VALUE}
+	 * {@link CStringFormat.FREE}
 	 */
-	static public final CString FREE_VALUE = new FreeFormatConfig().string;
+	static public final CString FREE = new FreeFormatConfig().string;
 
 	/**
 	 * Singleton object defining string values with format
@@ -116,7 +116,7 @@ public class CString extends CDataValue<IString> {
 
 		CStringFormat getFormat() {
 
-			return CStringFormat.FREE_VALUE;
+			return CStringFormat.FREE;
 		}
 
 		boolean subsumes(CString other) {
@@ -185,14 +185,14 @@ public class CString extends CDataValue<IString> {
 	/**
 	 * Stipulates that this string value-type defines specific
 	 * constraints on the string values that it defines if and only
-	 * if it does not have format {@link CStringFormat#FREE_VALUE} (see
+	 * if it does not have format {@link CStringFormat#FREE} (see
 	 * {@link #getFormat}.
 	 *
 	 * @return True if constraints defined on string values
 	 */
 	public boolean constrained() {
 
-		return format != CStringFormat.FREE_VALUE;
+		return format != CStringFormat.FREE;
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class CString extends CDataValue<IString> {
 	 */
 	public CString toUnconstrained() {
 
-		return FREE_VALUE;
+		return FREE;
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class CString extends CDataValue<IString> {
 	 * Tests whether this value-type-entity subsumes another
 	 * specified value-type-entity, which will be the case if and
 	 * only if this string value-type has format
-	 * {@link CStringFormat.FREE_VALUE} and the other value-type-entity
+	 * {@link CStringFormat.FREE} and the other value-type-entity
 	 * is a <code>CString</code>, which can have any format.
 	 *
 	 * @param other Other value-type-entity to test for subsumption
@@ -241,7 +241,7 @@ public class CString extends CDataValue<IString> {
 	 */
 	public boolean subsumes(CValue<?> other) {
 
-		return other instanceof CString && format == CStringFormat.FREE_VALUE;
+		return other instanceof CString && format == CStringFormat.FREE;
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class CString extends CDataValue<IString> {
 	/**
 	 * Combines this format with another specified format, if
 	 * possible. Where both formats are of the provided singleton
-	 * format-values ({@link #FREE_VALUE}, {@link #URI_VALUE} and
+	 * format-values ({@link #FREE}, {@link #URI_VALUE} and
 	 * {@link #URL_VALUE}) then the later-defined value will
 	 * be returned, since the values are ordered so that later
 	 * values are restrictions of earlier values.

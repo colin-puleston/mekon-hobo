@@ -502,7 +502,7 @@ public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 
 			CValue<?> getDefaultValueType(XNode slotNode) {
 
-				return CString.FREE_VALUE;
+				return CString.FREE;
 			}
 
 			IValue resolveValueSpec(XNode valueNode) {

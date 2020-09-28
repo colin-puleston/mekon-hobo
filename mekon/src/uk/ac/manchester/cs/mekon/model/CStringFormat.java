@@ -40,11 +40,11 @@ public enum CStringFormat {
 	/**
 	 * Instantiations may contain any string values.
 	 */
-	FREE_VALUE {
+	FREE {
 
 		public CString getStandardValueType() {
 
-			return CString.FREE_VALUE;
+			return CString.FREE;
 		}
 	},
 

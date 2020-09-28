@@ -72,7 +72,7 @@ public class IString extends IDataValue {
 	 */
 	public CString getType() {
 
-		return CString.FREE_VALUE;
+		return CString.FREE;
 	}
 
 	/**
