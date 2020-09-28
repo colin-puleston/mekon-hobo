@@ -25,14 +25,13 @@
 package uk.ac.manchester.cs.hobo.model;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
  */
 class DStringValueType extends DValueType<String> {
 
-	static final DStringValueType UNCONSTRAINED = new DStringValueType(CStringFactory.FREE);
+	static final DStringValueType UNCONSTRAINED = new DStringValueType(CString.FREE_VALUE);
 
 	private CString slotValueType;
 
