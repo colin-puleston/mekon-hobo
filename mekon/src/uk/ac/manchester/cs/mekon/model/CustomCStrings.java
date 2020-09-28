@@ -22,59 +22,60 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model.motor;
+package uk.ac.manchester.cs.mekon.model;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
+
+/**
+ * @author Colin Puleston
+ */
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
- * Factory for {@link CString} objects.
- *
  * @author Colin Puleston
  */
 class CustomCStrings {
 
-	private Map<Class<? extends CStringValidator>, CString> byValidatorClass
-						= new HashMap<Class<? extends CStringValidator>, CString>();
+	static private Map<Class<? extends CStringConfig>, CString> byConfigClass
+						= new HashMap<Class<? extends CStringConfig>, CString>();
 
-	CString resolve(Class<? extends CStringValidator> validatorClass) {
+	static CString resolve(Class<? extends CStringConfig> configClass) {
 
-		CString valueType = byValidatorClass.get(validatorClass);
+		CString valueType = byConfigClass.get(configClass);
 
 		if (valueType == null) {
 
-			valueType = create(createValidator(validatorClass));
+			valueType = create(configClass);
 
-			byValidatorClass.put(validatorClass, valueType);
+			byConfigClass.put(configClass, valueType);
 		}
 
 		return valueType;
 	}
 
-	Class<? extends CStringValidator> getValidatorClass(CString valueType) {
+	static Class<? extends CStringConfig> getConfigClass(CString valueType) {
 
-		for (Class<? extends CStringValidator> valClass : byValidatorClass.keySet()) {
+		for (Class<? extends CStringConfig> configClass : byConfigClass.keySet()) {
 
-			if (byValidatorClass.get(valClass).equals(valueType)) {
+			if (byConfigClass.get(configClass).equals(valueType)) {
 
-				return valClass;
+				return configClass;
 			}
 		}
 
 		throw new KAccessException("Not a registered custom CString object: " + valueType);
 	}
 
-	private CString create(CStringValidator validator) {
+	static private CString create(Class<? extends CStringConfig> configClass) {
 
-		return ZCModelAccessor.get().createCString(CStringFormat.CUSTOM, validator);
+		return new CString(CStringFormat.CUSTOM, createConfig(configClass));
 	}
 
-	private CStringValidator createValidator(Class<? extends CStringValidator> cls) {
+	static private CStringConfig createConfig(Class<? extends CStringConfig> configClass) {
 
-		return new KConfigObjectConstructor<CStringValidator>(cls).construct();
+		return new KConfigObjectConstructor<CStringConfig>(configClass).construct();
 	}
 }

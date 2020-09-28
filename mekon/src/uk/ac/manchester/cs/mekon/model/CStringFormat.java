@@ -26,6 +26,8 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.net.*;
 
+import uk.ac.manchester.cs.mekon_util.*;
+
 /**
  * Represents the required format for the content of instantiations
  * of a specific string value-type, as represented by a {@link CString}
@@ -38,47 +40,56 @@ public enum CStringFormat {
 	/**
 	 * Instantiations may contain any string values.
 	 */
-	FREE,
+	FREE_VALUE {
+
+		public CString getStandardValueType() {
+
+			return CString.FREE_VALUE;
+		}
+	},
 
 	/**
 	 * Instantiations must represent valid URI values.
 	 */
-	URI_VALUE,
+	URI_VALUE {
+
+		public CString getStandardValueType() {
+
+			return CString.URI_VALUE;
+		}
+	},
 
 	/**
 	 * Instantiations must represent valid URL values.
 	 */
-	URL_VALUE,
+	URL_VALUE {
+
+		public CString getStandardValueType() {
+
+			return CString.URL_VALUE;
+		}
+	},
 
 	/**
 	 * Instantiations must represent specific types of string
 	 * values, with value validity check being defined via some
 	 * unspecified custom mechanism.
 	 */
-	CUSTOM;
+	CUSTOM {
+
+		public CString getStandardValueType() {
+
+			throw new KAccessException("Cannot invoke method for custom format");
+		}
+	};
 
 	/**
-	 * Combines this with another specified format. If neither
-	 * format is {@link #CUSTOM} then returns the one with the
-	 * greatest ordinal value, since the non-{@link #CUSTOM}
-	 * format-values are arranged so that earlier values subsume
-	 * later values. If only one of the formats is {@link #CUSTOM},
-	 * then returns {@link #CUSTOM}, which is always assumed to
-	 * take precedence over other formats. If both formats are
-	 * {@link #CUSTOM} then returns null to indicate that any
-	 * resolution needs to be sorted out elsewhere.
+	 * Gives the singleton object provided by {@link CString}
+	 * representing the standard string value-type that has this
+	 * format.
 	 *
-	 * @param other Format with which to combine this one
-	 * @return Combined format, or null if both values are
-	 * {@link #CUSTOM}
+	 * @return Singleton object representing relevant value-type
+	 * @throws KAccessException if this value is {@link #CUSTOM}
 	 */
-	public CStringFormat combineWith(CStringFormat other) {
-
-		if (this == CUSTOM && other == CUSTOM) {
-
-			return null;
-		}
-
-		return ordinal() < other.ordinal() ? other : this;
-	}
+	public abstract CString getStandardValueType();
 }

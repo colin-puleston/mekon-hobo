@@ -24,28 +24,40 @@
 
 package uk.ac.manchester.cs.mekon.model.motor;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
- * Provides validation for instantiations of specifics string
- * value-types, as represented by a {@link CString} object.
+ * Provides format-specific configuration for {@link CString}
+ * objects.
  *
  * @author Colin Puleston
  */
-public interface CStringValidator {
+public interface CStringConfig {
 
 	/**
-	 * Provides description of the criteria by which values are
-	 * deemed valid for the string value-type.
+	 * Provides implementation for {@link CString#describeValidityCriteria}
+	 * method.
 	 *
 	 * @return Description of relevant validity criteria
 	 */
 	public String describeValidityCriteria();
 
 	/**
-	 * Test whether specified text represents a valid value for
-	 * the string value-type.
+	 * Provides implementation for {@link CString#validValueText}
+	 * method.
 	 *
 	 * @param text Text to test for validity
 	 * @return True if supplied text represents valid value
 	 */
 	public boolean validValueText(String text);
+
+	/**
+	 * Provides implementation for {@link CString#combineWith}
+	 * method.
+	 *
+	 * @param other Format with which to combine this one
+	 * @return Combined format, or null if formats cannot be
+	 * combined
+	 */
+	public abstract CString combineWith(CString other);
 }

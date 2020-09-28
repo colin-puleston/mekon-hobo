@@ -53,9 +53,14 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 		return new CNumber(numberType, min, max);
 	}
 
-	public CString createCString(CStringFormat format, CStringValidator validator) {
+	public CString resolveCustomCString(Class<? extends CStringConfig> configClass) {
 
-		return new CString(format, validator);
+		return CustomCStrings.resolve(configClass);
+	}
+
+	public Class<? extends CStringConfig> getCustomCStringConfigClass(CString string) {
+
+		return CustomCStrings.getConfigClass(string);
 	}
 
 	public CModel getModel(CBuilder builder) {

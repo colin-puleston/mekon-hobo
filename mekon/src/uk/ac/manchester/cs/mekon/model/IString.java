@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon.model.motor.*;
-
 /**
  * Represents a string-value, with the actual value being represented
  * by a primitive Java <code>String</code> value.
@@ -74,7 +72,7 @@ public class IString extends IDataValue {
 	 */
 	public CString getType() {
 
-		return CStringFactory.FREE;
+		return CString.FREE_VALUE;
 	}
 
 	/**

@@ -29,6 +29,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.zlink.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
@@ -253,9 +254,7 @@ public class FSerialiser implements FSerialiserVocab {
 
 		if (format == CStringFormat.CUSTOM) {
 
-			node.setValue(
-				STRING_VALIDATOR_CLASS_ATTR,
-				CStringFactory.getCustomValidatorClass(string));
+			node.setValue(STRING_CUSTOM_CONFIG_CLASS_ATTR, string.getClass());
 		}
 	}
 
@@ -409,12 +408,9 @@ public class FSerialiser implements FSerialiserVocab {
 
 		CStringFormat format = getCStringFormat(node);
 
-		if (format == CStringFormat.CUSTOM) {
-
-			return CStringFactory.custom(getCStringValidatorClass(node));
-		}
-
-		return CStringFactory.standard(format);
+		return format == CStringFormat.CUSTOM
+					? parseCustomCString(node)
+					: format.getStandardValueType();
 	}
 
 	/**
@@ -425,7 +421,7 @@ public class FSerialiser implements FSerialiserVocab {
 	 */
 	static public IString parseIString(XNode node) {
 
-		return CStringFactory.FREE.instantiate(node.getString(STRING_VALUE_ATTR));
+		return CString.FREE_VALUE.instantiate(node.getString(STRING_VALUE_ATTR));
 	}
 
 	static private void renderNumberType(CNumber number, XNode node) {
@@ -449,6 +445,13 @@ public class FSerialiser implements FSerialiserVocab {
 	static private void renderClassId(Class<?> leafClass, XNode node, String attr) {
 
 		node.setValue(attr, getPublicClassId(leafClass));
+	}
+
+	static private CString parseCustomCString(XNode node) {
+
+		Class<? extends CStringConfig> configCls = getCustomCStringConfigClass(node);
+
+		return ZCModelAccessor.get().resolveCustomCString(configCls);
 	}
 
 	static private CNumber parseCNumber(Class<? extends Number> numberType, XNode node) {
@@ -512,12 +515,12 @@ public class FSerialiser implements FSerialiserVocab {
 
 	static private CStringFormat getCStringFormat(XNode node) {
 
-		return node.getEnum(STRING_FORMAT_ATTR, CStringFormat.class, CStringFormat.FREE);
+		return node.getEnum(STRING_FORMAT_ATTR, CStringFormat.class, CStringFormat.FREE_VALUE);
 	}
 
-	static private Class<? extends CStringValidator> getCStringValidatorClass(XNode node) {
+	static private Class<? extends CStringConfig> getCustomCStringConfigClass(XNode node) {
 
-		return loadClass(node.getString(STRING_VALIDATOR_CLASS_ATTR), CStringValidator.class);
+		return loadClass(node.getString(STRING_CUSTOM_CONFIG_CLASS_ATTR), CStringConfig.class);
 	}
 
 	static private <T>Class<? extends T> loadClass(String className, Class<T> type) {

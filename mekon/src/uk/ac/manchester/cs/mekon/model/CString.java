@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
+import java.net.*;
+
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon_util.*;
 
@@ -35,33 +37,142 @@ import uk.ac.manchester.cs.mekon_util.*;
  */
 public class CString extends CDataValue<IString> {
 
+	/**
+	 * Singleton object defining string values with format
+	 * {@link CStringFormat.FREE_VALUE}
+	 */
+	static public final CString FREE_VALUE = new FreeFormatConfig().string;
+
+	/**
+	 * Singleton object defining string values with format
+	 * {@link CStringFormat.URI_VALUE}
+	 */
+	static public final CString URI_VALUE = new URIFormatConfig().string;
+
+	/**
+	 * Singleton object defining string values with format
+	 * {@link CStringFormat.URL_VALUE}
+	 */
+	static public final CString URL_VALUE = new URLFormatConfig().string;
+
+	static private boolean validURIText(String text) {
+
+		try {
+
+			new URI(text);
+
+			return true;
+		}
+		catch (URISyntaxException e) {
+
+			return false;
+		}
+	}
+
+	static private boolean validURLText(String text) {
+
+		try {
+
+			new URL(text);
+
+			return validURIText(text);
+		}
+		catch (MalformedURLException e) {
+
+			return false;
+		}
+	}
+
+	static private abstract class StandardFormatConfig implements CStringConfig {
+
+		final CString string = new CString(getFormat(), this);
+
+		public CString combineWith(CString other) {
+
+			if (other.format == CStringFormat.CUSTOM) {
+
+				return other.combineWith(string);
+			}
+
+			return subsumes(other) ? other : string;
+		}
+
+		abstract CStringFormat getFormat();
+
+		abstract boolean subsumes(CString other);
+	}
+
+	static private class FreeFormatConfig extends StandardFormatConfig {
+
+		public String describeValidityCriteria() {
+
+			return "Any string value";
+		}
+
+		public boolean validValueText(String text) {
+
+			return true;
+		}
+
+		CStringFormat getFormat() {
+
+			return CStringFormat.FREE_VALUE;
+		}
+
+		boolean subsumes(CString other) {
+
+			return true;
+		}
+	}
+
+	static private class URIFormatConfig extends StandardFormatConfig {
+
+		public String describeValidityCriteria() {
+
+			return "URI value";
+		}
+
+		public boolean validValueText(String text) {
+
+			return validURIText(text);
+		}
+
+		CStringFormat getFormat() {
+
+			return CStringFormat.URI_VALUE;
+		}
+
+		boolean subsumes(CString other) {
+
+			return other.config instanceof URLFormatConfig;
+		}
+	}
+
+	static private class URLFormatConfig extends StandardFormatConfig {
+
+		public String describeValidityCriteria() {
+
+			return "URL value";
+		}
+
+		public boolean validValueText(String text) {
+
+			return validURLText(text);
+		}
+
+		CStringFormat getFormat() {
+
+			return CStringFormat.URL_VALUE;
+		}
+
+		boolean subsumes(CString other) {
+
+			return false;
+		}
+	}
+
 	private CStringFormat format;
-	private CStringValidator validator;
-
-	/**
-	 * Tests for equality between this and other specified object,
-	 * which will hold if and only if the other object is another
-	 * <code>CString</code> with same required format as this one
-	 * (see {@link #getFormat}.
-	 *
-	 * @param other Object to test for equality with this one
-	 * @return true if objects are equal
-	 */
-	public boolean equals(Object other) {
-
-		return other instanceof CString && validator.equals(((CString)other).validator);
-	}
-
-	/**
-	 * Provides hash-code based on the required format for the string
-	 * (see {@link #getFormat}.
-	 *
-	 * @return hash-code for this object
-	 */
-	public int hashCode() {
-
-		return format.hashCode();
-	}
+	private CStringConfig config;
 
 	/**
 	 * {@inheritDoc}
@@ -74,14 +185,14 @@ public class CString extends CDataValue<IString> {
 	/**
 	 * Stipulates that this string value-type defines specific
 	 * constraints on the string values that it defines if and only
-	 * if it does not have format {@link CStringFormat#FREE} (see
+	 * if it does not have format {@link CStringFormat#FREE_VALUE} (see
 	 * {@link #getFormat}.
 	 *
 	 * @return True if constraints defined on string values
 	 */
 	public boolean constrained() {
 
-		return format != CStringFormat.FREE;
+		return format != CStringFormat.FREE_VALUE;
 	}
 
 	/**
@@ -92,7 +203,7 @@ public class CString extends CDataValue<IString> {
 	 */
 	public CString toUnconstrained() {
 
-		return CStringFactory.FREE;
+		return FREE_VALUE;
 	}
 
 	/**
@@ -121,7 +232,7 @@ public class CString extends CDataValue<IString> {
 	 * Tests whether this value-type-entity subsumes another
 	 * specified value-type-entity, which will be the case if and
 	 * only if this string value-type has format
-	 * {@link CStringFormat.FREE} and the other value-type-entity
+	 * {@link CStringFormat.FREE_VALUE} and the other value-type-entity
 	 * is a <code>CString</code>, which can have any format.
 	 *
 	 * @param other Other value-type-entity to test for subsumption
@@ -130,7 +241,7 @@ public class CString extends CDataValue<IString> {
 	 */
 	public boolean subsumes(CValue<?> other) {
 
-		return other instanceof CString && format == CStringFormat.FREE;
+		return other instanceof CString && format == CStringFormat.FREE_VALUE;
 	}
 
 	/**
@@ -152,7 +263,7 @@ public class CString extends CDataValue<IString> {
 	 */
 	public String describeValidityCriteria() {
 
-		return validator.describeValidityCriteria();
+		return config.describeValidityCriteria();
 	}
 
 	/**
@@ -164,7 +275,24 @@ public class CString extends CDataValue<IString> {
 	 */
 	public boolean validValueText(String text) {
 
-		return validator.validValueText(text);
+		return config.validValueText(text);
+	}
+
+	/**
+	 * Combines this format with another specified format, if
+	 * possible. Where both formats are of the provided singleton
+	 * format-values ({@link #FREE_VALUE}, {@link #URI_VALUE} and
+	 * {@link #URL_VALUE}) then the later-defined value will
+	 * be returned, since the values are ordered so that later
+	 * values are restrictions of earlier values.
+	 *
+	 * @param other Format with which to combine this one
+	 * @return Combined format, or null if formats cannot be
+	 * combined
+	 */
+	public CString combineWith(CString other) {
+
+		return config.combineWith(other);
 	}
 
 	/**
@@ -185,15 +313,15 @@ public class CString extends CDataValue<IString> {
 		throw new KAccessException("Invalid value text: " + text);
 	}
 
-	CString(CStringFormat format, CStringValidator validator) {
+	CString(CStringFormat format, CStringConfig config) {
 
 		this.format = format;
-		this.validator = validator;
+		this.config = config;
 	}
 
 	CValue<?> update(CValue<?> other) {
 
-		return other instanceof CString ? updateCString((CString)other) : null;
+		return other instanceof CString ? combineWith((CString)other) : null;
 	}
 
 	void acceptVisitor(CValueVisitor visitor) throws Exception {
@@ -214,17 +342,5 @@ public class CString extends CDataValue<IString> {
 	String getDataValueDescription() {
 
 		return String.class.getSimpleName();
-	}
-
-	private CString updateCString(CString other) {
-
-		CStringFormat combinedFormat = format.combineWith(other.format);
-
-		if (combinedFormat == null) {
-
-			return equals(other) ? this : null;
-		}
-
-		return combinedFormat == format ? this : other;
 	}
 }

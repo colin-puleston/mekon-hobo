@@ -95,14 +95,24 @@ public abstract class ZCModelAccessor {
 								INumber max);
 
 	/**
-	 * Creates a {@link CString} object with value constraints.
+	 * Provides a {@link CString} object with specified custom
+	 * configuration.
 	 *
-	 * @param format Required format for defined string values
-	 * @param validator Required validator on defined
-	 * string values
+	 * @param configClass Class of configuration object for required
+	 * object
 	 * @return Created object
 	 */
-	public abstract CString createCString(CStringFormat format, CStringValidator validator);
+	public abstract CString resolveCustomCString(Class<? extends CStringConfig> configClass);
+
+	/**
+	 * Provides the class of the configuration object for the
+	 * specified {@link CString} object with custom configuration.
+	 *
+	 * @param string String value-type object whose custom
+	 * configuration class is required
+	 * @return Required custom configuration class
+	 */
+	public abstract Class<? extends CStringConfig> getCustomCStringConfigClass(CString string);
 
 	/**
 	 * Retrieves the model being built by the specified builder.

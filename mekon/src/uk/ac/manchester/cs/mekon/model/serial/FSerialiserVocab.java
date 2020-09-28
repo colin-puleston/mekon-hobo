@@ -59,7 +59,7 @@ public interface FSerialiserVocab {
 	static public final String NUMBER_MAX_ATTR = "max";
 	static public final String NUMBER_VALUE_ATTR = "value";
 	static public final String STRING_FORMAT_ATTR = "format";
-	static public final String STRING_VALIDATOR_CLASS_ATTR = "validatorClass";
+	static public final String STRING_CUSTOM_CONFIG_CLASS_ATTR = "customConfigClass";
 	static public final String STRING_VALUE_ATTR = "value";
 	static public final String SOURCE_ATTR = "source";
 	static public final String CARDINALITY_ATTR = "cardinality";

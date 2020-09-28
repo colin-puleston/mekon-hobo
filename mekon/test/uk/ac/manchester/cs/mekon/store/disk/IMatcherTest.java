@@ -76,7 +76,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	static private IString createIString(String value) {
 
-		return CStringFactory.FREE.instantiate(value);
+		return CString.FREE_VALUE.instantiate(value);
 	}
 
 	private IDiskStore store;
