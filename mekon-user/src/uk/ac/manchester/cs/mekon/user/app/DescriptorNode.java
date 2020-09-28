@@ -99,7 +99,7 @@ class DescriptorNode extends InstanceNode {
 
 		if (descriptor.hasStructuredValue()) {
 
-			displayIFrameValueStructureDialog((IFrame)descriptor.getValue());
+			displayInstanceSubSectionDialog((IFrame)descriptor.getValue());
 		}
 	}
 
@@ -113,12 +113,12 @@ class DescriptorNode extends InstanceNode {
 		return new DescriptorEditor(getInstanceTree(), getInstantiator(), descriptor);
 	}
 
-	private void displayIFrameValueStructureDialog(IFrame value) {
+	private void displayInstanceSubSectionDialog(IFrame value) {
 
-		createIFrameValueStructureDialog(value).display(true);
+		createInstanceSubSectionDialog(value).display(true);
 	}
 
-	private InstanceSubSectionDialog createIFrameValueStructureDialog(IFrame value) {
+	private InstanceSubSectionDialog createInstanceSubSectionDialog(IFrame value) {
 
 		return new InstanceSubSectionDialog(getInstanceTree(), getInstantiator(), value);
 	}

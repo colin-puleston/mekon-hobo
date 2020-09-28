@@ -164,7 +164,7 @@ class DescriptorEditor {
 
 		boolean checkDisplayValueStructureDialog() {
 
-			return checkDisplayIFrameValueStructureDialog();
+			return checkDisplayInstanceSubSectionDialog();
 		}
 
 		ValueObtainer getValueObtainer() {
@@ -218,7 +218,7 @@ class DescriptorEditor {
 
 		boolean checkDisplayValueStructureDialog() {
 
-			return checkDisplayIFrameValueStructureDialog();
+			return checkDisplayInstanceSubSectionDialog();
 		}
 
 		IFrame inputToValue(CFrame input) {
@@ -451,19 +451,19 @@ class DescriptorEditor {
 		return getCustomiser().getValueObtainerFactory();
 	}
 
-	private boolean checkDisplayIFrameValueStructureDialog() {
+	private boolean checkDisplayInstanceSubSectionDialog() {
 
 		if (descriptor.hasStructuredValue()) {
 
-			return displayIFrameValueStructureDialog((IFrame)descriptor.getValue());
+			return displayInstanceSubSectionDialog((IFrame)descriptor.getValue());
 		}
 
 		return false;
 	}
 
-	private boolean displayIFrameValueStructureDialog(IFrame value) {
+	private boolean displayInstanceSubSectionDialog(IFrame value) {
 
-		InstanceSubSectionDialog dialog = createIFrameValueStructureDialog(value);
+		InstanceSubSectionDialog dialog = createInstanceSubSectionDialog(value);
 
 		dialog.display(false);
 
@@ -480,7 +480,7 @@ class DescriptorEditor {
 		return true;
 	}
 
-	private InstanceSubSectionDialog createIFrameValueStructureDialog(IFrame value) {
+	private InstanceSubSectionDialog createInstanceSubSectionDialog(IFrame value) {
 
 		return new InstanceSubSectionDialog(parent, instantiator, value);
 	}
