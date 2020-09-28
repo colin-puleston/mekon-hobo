@@ -90,6 +90,6 @@ class MekonAppConfig {
 
 	private boolean editableInstanceGroup(KConfigNode node) {
 
-		return node.getBoolean(INSTANCE_GROUP_EDIT_ATTR, false);
+		return node.getBoolean(INSTANCE_GROUP_EDIT_ATTR, true);
 	}
 }
