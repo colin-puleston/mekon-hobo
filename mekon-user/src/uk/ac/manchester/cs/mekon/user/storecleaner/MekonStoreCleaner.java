@@ -26,7 +26,8 @@ package uk.ac.manchester.cs.mekon.user.storecleaner;
 
 import java.io.*;
 import java.util.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -71,7 +72,9 @@ public class MekonStoreCleaner extends GFrame {
 	}
 
 	private IStore store;
-	private IStoreRegenReport regenReport;
+
+	private List<CIdentity> fullyInvalidIds;
+	private List<CIdentity> partiallyValidIds;
 
 	private class FullyInvalidsPanel extends IssuesPanel {
 
@@ -81,7 +84,7 @@ public class MekonStoreCleaner extends GFrame {
 
 		FullyInvalidsPanel() {
 
-			display(INVALIDS_TITLE, regenReport.getFullyInvalidIds());
+			display(INVALIDS_TITLE, fullyInvalidIds);
 		}
 
 		String getCleanLabel() {
@@ -140,7 +143,7 @@ public class MekonStoreCleaner extends GFrame {
 
 		PartiallyValidsPanel() {
 
-			display(PART_VALIDS_TITLE, regenReport.getPartiallyValidIds());
+			display(PART_VALIDS_TITLE, partiallyValidIds);
 		}
 
 		String getCleanLabel() {
@@ -178,16 +181,18 @@ public class MekonStoreCleaner extends GFrame {
 
 		static private final long serialVersionUID = -1;
 
-		private File logFile = regenReport.getLogFileOrNull();
+		private File logFile;
 
 		protected void doButtonThing() {
 
 			new LogFileDialog(this, logFile);
 		}
 
-		ViewLogButton() {
+		ViewLogButton(IStoreRegenReport regenReport) {
 
 			super(VIEW_LOG_LABEL);
+
+			logFile = regenReport.getLogFileOrNull();
 
 			setEnabled(logFile != null);
 		}
@@ -207,20 +212,25 @@ public class MekonStoreCleaner extends GFrame {
 
 		this.store = store;
 
-		regenReport = store.getRegenReport();
+		IStoreRegenReport regenReport = store.getRegenReport();
+
+		fullyInvalidIds = regenReport.getFullyInvalidIds();
+		partiallyValidIds = regenReport.getPartiallyValidIds();
+
+		resaveValidInstances();
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		addWindowListener(new InitialCheckInvoker());
 
-		display(createMainPanel());
+		display(createMainPanel(regenReport));
 	}
 
-	private JPanel createMainPanel() {
+	private JPanel createMainPanel(IStoreRegenReport regenReport) {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
 		panel.add(createIssuesPanel(), BorderLayout.CENTER);
-		panel.add(new ViewLogButton(), BorderLayout.SOUTH);
+		panel.add(new ViewLogButton(regenReport), BorderLayout.SOUTH);
 
 		return panel;
 	}
@@ -237,23 +247,44 @@ public class MekonStoreCleaner extends GFrame {
 		return panel;
 	}
 
+	private void resaveValidInstances() {
+
+		for (CIdentity identity : store.getAllIdentities()) {
+
+			if (valid(identity)) {
+
+				store.add(store.get(identity).getRootFrame(), identity);
+			}
+		}
+	}
+
 	private void performInitialCheck() {
 
-		if (!fullyInvalids() && !partiallyValids()) {
+		if (allValid()) {
 
 			reportNoIssues();
 			dispose();
 		}
 	}
 
-	private boolean fullyInvalids() {
+	private boolean allValid() {
 
-		return regenReport.fullyInvalidRegens();
+		return fullyInvalidIds.isEmpty() && partiallyValidIds.isEmpty();
 	}
 
-	private boolean partiallyValids() {
+	private boolean valid(CIdentity identity) {
 
-		return regenReport.partiallyValidRegens();
+		return !fullyInvalid(identity) && !partiallyValid(identity);
+	}
+
+	private boolean fullyInvalid(CIdentity identity) {
+
+		return fullyInvalidIds.contains(identity);
+	}
+
+	private boolean partiallyValid(CIdentity identity) {
+
+		return partiallyValidIds.contains(identity);
 	}
 
 	private void reportNoIssues() {
