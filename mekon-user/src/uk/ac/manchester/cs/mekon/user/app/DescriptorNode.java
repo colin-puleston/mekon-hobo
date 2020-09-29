@@ -97,10 +97,7 @@ class DescriptorNode extends InstanceNode {
 
 	void performViewAction() {
 
-		if (descriptor.hasStructuredValue()) {
-
-			displayInstanceSubSectionDialog((IFrame)descriptor.getValue());
-		}
+		createInstanceSubSectionHandler().checkDisplay(true);
 	}
 
 	private GNodeAction createAction() {
@@ -113,13 +110,8 @@ class DescriptorNode extends InstanceNode {
 		return new DescriptorEditor(getInstanceTree(), getInstantiator(), descriptor);
 	}
 
-	private void displayInstanceSubSectionDialog(IFrame value) {
+	private InstanceSubSectionHandler createInstanceSubSectionHandler() {
 
-		createInstanceSubSectionDialog(value).display(true);
-	}
-
-	private InstanceSubSectionDialog createInstanceSubSectionDialog(IFrame value) {
-
-		return new InstanceSubSectionDialog(getInstanceTree(), getInstantiator(), value);
+		return new InstanceSubSectionHandler(getInstanceTree(), getInstantiator(), descriptor);
 	}
 }

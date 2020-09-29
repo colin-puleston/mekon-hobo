@@ -75,13 +75,15 @@ abstract class InstanceSectionDialog extends GDialog {
 		protected void onSelectionUpdate(boolean selected) {
 
 			instanceTree.setViewOnly(selected);
+
+			onViewOnlyUpdated();
 		}
 
 		ViewOnlySelector() {
 
 			super(MODE_SELECTOR_LABEL);
 
-			setSelected(instanceTree.viewOnly());
+			setSelected(viewOnly());
 		}
 	}
 
@@ -113,6 +115,14 @@ abstract class InstanceSectionDialog extends GDialog {
 	Instantiator getInstantiator() {
 
 		return instantiator;
+	}
+
+	boolean viewOnly() {
+
+		return instanceTree.viewOnly();
+	}
+
+	void onViewOnlyUpdated() {
 	}
 
 	abstract ControlsPanel checkCreateControlsPanel();

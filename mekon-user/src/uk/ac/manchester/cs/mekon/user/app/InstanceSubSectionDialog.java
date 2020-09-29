@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.util.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -43,6 +44,8 @@ class InstanceSubSectionDialog extends InstanceSectionDialog {
 	private boolean clearSelected = false;
 	private boolean replaceSelected = false;
 
+	private List<EditButton> editButtons = new ArrayList<EditButton>();
+
 	private class OkButton extends GButton {
 
 		static private final long serialVersionUID = -1;
@@ -58,7 +61,25 @@ class InstanceSubSectionDialog extends InstanceSectionDialog {
 		}
 	}
 
-	private class ClearButton extends GButton {
+	private abstract class EditButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		EditButton(String label) {
+
+			super(label);
+
+			editButtons.add(this);
+			updateEnabling();
+		}
+
+		void updateEnabling() {
+
+			setEnabled(!viewOnly());
+		}
+	}
+
+	private class ClearButton extends EditButton {
 
 		static private final long serialVersionUID = -1;
 
@@ -75,7 +96,7 @@ class InstanceSubSectionDialog extends InstanceSectionDialog {
 		}
 	}
 
-	private class ReplaceButton extends GButton {
+	private class ReplaceButton extends EditButton {
 
 		static private final long serialVersionUID = -1;
 
@@ -92,7 +113,10 @@ class InstanceSubSectionDialog extends InstanceSectionDialog {
 		}
 	}
 
-	InstanceSubSectionDialog(JComponent parent, Instantiator instantiator, IFrame rootFrame) {
+	InstanceSubSectionDialog(
+		JComponent parent,
+		Instantiator instantiator,
+		IFrame rootFrame) {
 
 		super(
 			parent,
@@ -111,7 +135,20 @@ class InstanceSubSectionDialog extends InstanceSectionDialog {
 		return replaceSelected;
 	}
 
+	void onViewOnlyUpdated() {
+
+		for (EditButton editButton : editButtons) {
+
+			editButton.updateEnabling();
+		}
+	}
+
 	ControlsPanel checkCreateControlsPanel() {
+
+		if (!getInstantiator().editableInstance()) {
+
+			return null;
+		}
 
 		ControlsPanel panel = new ControlsPanel(true);
 

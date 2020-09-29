@@ -24,70 +24,78 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class RootInstanceNode extends InstanceNode {
+class InstanceSubSectionHandler {
 
-	private IFrame rootFrame;
+	private JComponent parent;
+	private Instantiator instantiator;
 
-	private GCellDisplay display;
-	private DescriptorChildNodes childNodes;
+	private IFrame rootFrame = null;
+	private ISlot containerSlot = null;
 
-	protected void addInitialChildren() {
+	private boolean replaceSelected = false;
 
-		childNodes.addInitialChildren();
+	InstanceSubSectionHandler(
+		JComponent parent,
+		Instantiator instantiator,
+		Descriptor descriptor) {
+
+		this.parent = parent;
+		this.instantiator = instantiator;
+
+		if (descriptor.hasStructuredValue()) {
+
+			rootFrame = (IFrame)descriptor.getValue();
+			containerSlot = descriptor.getSlot();
+		}
 	}
 
-	protected GCellDisplay getDisplay() {
+	boolean checkDisplay(boolean startAsViewOnly) {
 
-		return display;
+		if (rootFrame != null) {
+
+			displayDialog(startAsViewOnly);
+
+			return true;
+		}
+
+		return false;
 	}
 
-	RootInstanceNode(InstanceTree tree, IFrame rootFrame) {
+	boolean replaceSelected() {
 
-		super(tree);
-
-		this.rootFrame = rootFrame;
-
-		display = createCellDisplay();
-		childNodes = new DescriptorChildNodes(this, rootFrame);
+		return replaceSelected;
 	}
 
-	void update() {
+	private void displayDialog(boolean startAsViewOnly) {
 
-		childNodes.update();
+		InstanceSubSectionDialog dialog = createDialog();
 
-		super.update();
+		dialog.display(startAsViewOnly);
+
+		if (dialog.clearSelected()) {
+
+			removeValue();
+		}
+		else if (dialog.replaceSelected()) {
+
+			replaceSelected = true;
+		}
 	}
 
-	private GCellDisplay createCellDisplay() {
+	private InstanceSubSectionDialog createDialog() {
 
-		GCellDisplay display = new GCellDisplay(getDisplayLabel(), getIcon());
-
-		display.setFontStyle(Font.BOLD);
-
-		return display;
+		return new InstanceSubSectionDialog(parent, instantiator, rootFrame);
 	}
 
-	private String getDisplayLabel() {
+	private void removeValue() {
 
-		return getCustomiser().getValueDisplayLabel(rootFrame);
-	}
-
-	private Customiser getCustomiser() {
-
-		return getInstantiator().getController().getCustomiser();
-	}
-
-	private Icon getIcon() {
-
-		return queryInstance() ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
+		containerSlot.getValuesEditor().remove(rootFrame);
 	}
 }
