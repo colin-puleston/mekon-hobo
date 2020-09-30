@@ -116,13 +116,15 @@ class InstanceSubSectionDialog extends InstanceSectionDialog {
 	InstanceSubSectionDialog(
 		JComponent parent,
 		Instantiator instantiator,
-		IFrame rootFrame) {
+		IFrame rootFrame,
+		boolean startAsViewOnly) {
 
 		super(
 			parent,
 			instantiator,
 			rootFrame,
-			createSectionTitle(instantiator));
+			createSectionTitle(instantiator),
+			startAsViewOnly);
 	}
 
 	boolean clearSelected() {

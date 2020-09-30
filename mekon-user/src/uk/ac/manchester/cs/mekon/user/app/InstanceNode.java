@@ -53,20 +53,33 @@ abstract class InstanceNode extends GNode {
 		this.tree = tree;
 	}
 
-	void initialise() {
+	void initialiseExpansion() {
 
 		for (GNode child : getChildren()) {
 
-			child.expand();
+			((InstanceNode)child).initialiseExpansion();
+		}
+
+		if (getNodeLevel() > 0) {
+
+			collapse();
 		}
 	}
 
-	void update() {
+	void updateFrom() {
 
-		for (GNode child : getChildren()) {
+		boolean wasCollapsed = collapsed();
 
-			((InstanceNode)child).update();
+		updateChildList();
+		updateIndividualChildren();
+
+		if (wasCollapsed) {
+
+			collapse();
 		}
+	}
+
+	void updateChildList() {
 	}
 
 	InstanceTree getInstanceTree() {
@@ -90,5 +103,13 @@ abstract class InstanceNode extends GNode {
 	}
 
 	void onMousePresenceUpdate(boolean present) {
+	}
+
+	private void updateIndividualChildren() {
+
+		for (GNode child : getChildren()) {
+
+			((InstanceNode)child).updateFrom();
+		}
 	}
 }

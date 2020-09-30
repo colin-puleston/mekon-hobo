@@ -75,9 +75,9 @@ class InstanceSubSectionHandler {
 
 	private void displayDialog(boolean startAsViewOnly) {
 
-		InstanceSubSectionDialog dialog = createDialog();
+		InstanceSubSectionDialog dialog = createDialog(startAsViewOnly);
 
-		dialog.display(startAsViewOnly);
+		dialog.display();
 
 		if (dialog.clearSelected()) {
 
@@ -89,9 +89,9 @@ class InstanceSubSectionHandler {
 		}
 	}
 
-	private InstanceSubSectionDialog createDialog() {
+	private InstanceSubSectionDialog createDialog(boolean startAsViewOnly) {
 
-		return new InstanceSubSectionDialog(parent, instantiator, rootFrame);
+		return new InstanceSubSectionDialog(parent, instantiator, rootFrame, startAsViewOnly);
 	}
 
 	private void removeValue() {

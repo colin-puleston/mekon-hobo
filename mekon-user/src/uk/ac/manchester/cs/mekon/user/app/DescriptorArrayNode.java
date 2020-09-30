@@ -65,10 +65,17 @@ class DescriptorArrayNode extends InstanceNode {
 
 		if (!slotDescriptors.equalDescriptors(newSlotDescriptors)) {
 
+			boolean wasCollapsed = collapsed();
+
 			removeOldChildren(newSlotDescriptors);
 			addNewChildren(newSlotDescriptors);
 
 			slotDescriptors = newSlotDescriptors;
+
+			if (wasCollapsed) {
+
+				collapse();
+			}
 		}
 	}
 

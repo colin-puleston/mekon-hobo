@@ -155,12 +155,14 @@ class ExecutedQueriesPanel extends JPanel {
 		QueryDialog dialog = createQueryDialog(storeId, query);
 
 		dialog.setAllowStoreOverwrite(false);
-		dialog.display(true);
+		dialog.display();
 	}
 
 	private QueryDialog createQueryDialog(CIdentity storeId, IFrame query) {
 
-		return new QueryDialog(this, createQueryInstantiator(storeId, query), storeId);
+		Instantiator instantiator = createQueryInstantiator(storeId, query);
+
+		return new QueryDialog(this, instantiator, storeId, true);
 	}
 
 	private Instantiator createQueryInstantiator(CIdentity storeId, IFrame query) {

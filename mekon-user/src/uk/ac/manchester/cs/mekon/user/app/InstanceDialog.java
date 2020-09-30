@@ -84,13 +84,18 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 		}
 	}
 
-	InstanceDialog(JComponent parent, Instantiator instantiator, CIdentity storeId) {
+	InstanceDialog(
+		JComponent parent,
+		Instantiator instantiator,
+		CIdentity storeId,
+		boolean startAsViewOnly) {
 
 		super(
 			parent,
 			instantiator,
 			instantiator.getInstance(),
-			createTitle(instantiator, storeId));
+			createTitle(instantiator, storeId),
+			startAsViewOnly);
 
 		this.storeId = storeId;
 	}

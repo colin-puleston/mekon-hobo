@@ -45,10 +45,8 @@ class StructuredDescriptorNode extends DescriptorNode {
 		childNodes = new DescriptorChildNodes(this, (IFrame)descriptor.getValue());
 	}
 
-	void update() {
+	void updateChildList() {
 
 		childNodes.update();
-
-		super.update();
 	}
 }

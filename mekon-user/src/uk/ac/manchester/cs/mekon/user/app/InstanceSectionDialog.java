@@ -96,18 +96,17 @@ abstract class InstanceSectionDialog extends GDialog {
 		JComponent parent,
 		Instantiator instantiator,
 		IFrame rootFrame,
-		String title) {
+		String title,
+		boolean startAsViewOnly) {
 
 		super(parent, title, true);
 
 		this.instantiator = instantiator;
 
-		instanceTree = new InstanceTree(instantiator, rootFrame);
+		instanceTree = new InstanceTree(instantiator, rootFrame, startAsViewOnly);
 	}
 
-	void display(boolean startAsViewOnly) {
-
-		instanceTree.setViewOnly(startAsViewOnly);
+	void display() {
 
 		display(createDisplay());
 	}

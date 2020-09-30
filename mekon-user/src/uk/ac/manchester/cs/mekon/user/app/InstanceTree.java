@@ -68,10 +68,11 @@ class InstanceTree extends GActionTree {
 		}
 	}
 
-	InstanceTree(Instantiator instantiator, IFrame rootFrame) {
+	InstanceTree(Instantiator instantiator, IFrame rootFrame, boolean startAsViewOnly) {
 
 		this.instantiator = instantiator;
 
+		viewOnly = startAsViewOnly;
 		rootNode = new RootInstanceNode(this, rootFrame);
 
 		setRootVisible(true);
@@ -80,6 +81,8 @@ class InstanceTree extends GActionTree {
 		addMouseMotionListener(new MouseLocator());
 
 		initialise(rootNode);
+
+		rootNode.initialiseExpansion();
 	}
 
 	void setViewOnly(boolean value) {
@@ -88,7 +91,7 @@ class InstanceTree extends GActionTree {
 
 			viewOnly = value;
 
-			rootNode.update();
+			rootNode.updateFrom();
 		}
 	}
 

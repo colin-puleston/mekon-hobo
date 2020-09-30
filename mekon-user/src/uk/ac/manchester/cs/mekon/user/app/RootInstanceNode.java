@@ -60,11 +60,9 @@ class RootInstanceNode extends InstanceNode {
 		childNodes = new DescriptorChildNodes(this, rootFrame);
 	}
 
-	void update() {
+	void updateChildList() {
 
 		childNodes.update();
-
-		super.update();
 	}
 
 	private GCellDisplay createCellDisplay() {

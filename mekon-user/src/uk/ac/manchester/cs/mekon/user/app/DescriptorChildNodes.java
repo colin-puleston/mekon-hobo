@@ -215,7 +215,6 @@ class DescriptorChildNodes {
 		InstanceNode child = childNodeCreator.createFor(slotDescriptors);
 
 		parentNode.addChild(child, index);
-		child.initialise();
 
 		ISlot slot = slotDescriptors.getSlot();
 
