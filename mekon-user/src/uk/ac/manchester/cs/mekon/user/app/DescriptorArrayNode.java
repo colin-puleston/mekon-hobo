@@ -121,6 +121,6 @@ class DescriptorArrayNode extends InstanceNode {
 
 	private Icon getIcon() {
 
-		return queryInstance() ? MekonAppIcons.QUERY_ARRAY : MekonAppIcons.ASSERTION_ARRAY;
+		return MekonAppIcons.ARRAY_ICONS.get(queryInstance(), false);
 	}
 }

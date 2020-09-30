@@ -86,6 +86,6 @@ class RootInstanceNode extends InstanceNode {
 
 	private Icon getIcon() {
 
-		return queryInstance() ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
+		return MekonAppIcons.VALUE_ICONS.get(queryInstance(), false);
 	}
 }

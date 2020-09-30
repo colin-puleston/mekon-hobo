@@ -34,40 +34,33 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class DescriptorCellDisplay {
 
-	static private final Color NON_EDITABLE_BACKGROUND_CLR = new Color(220,220,200);
+	static private final String OR_LABEL = "OR";
 
-	static private final String OR_LABEL = "or";
-
+	private DescriptorNode node;
 	private Descriptor descriptor;
-	private boolean queryInstance;
 
-	private class MonitoredCellDisplay extends GCellDisplay {
+	private class IdentityCellDisplay extends GCellDisplay {
 
 		protected void onLabelAdded(JLabel label) {
 
-			DescriptorCellDisplay.this.onLabelAdded(label);
+			onIdentityLabelAdded(label);
 		}
 
-		MonitoredCellDisplay(String text) {
-
-			super(text);
-		}
-
-		MonitoredCellDisplay(String text, Icon icon) {
+		IdentityCellDisplay(String text, Icon icon) {
 
 			super(text, icon);
 		}
 	}
 
-	DescriptorCellDisplay(Descriptor descriptor, boolean queryInstance) {
+	DescriptorCellDisplay(DescriptorNode node, Descriptor descriptor) {
 
+		this.node = node;
 		this.descriptor = descriptor;
-		this.queryInstance = queryInstance;
 	}
 
 	GCellDisplay create() {
 
-		GCellDisplay display = createForId();
+		GCellDisplay display = createForIdentity();
 
 		if (descriptor.hasValue()) {
 
@@ -77,12 +70,12 @@ class DescriptorCellDisplay {
 		return display;
 	}
 
-	void onLabelAdded(JLabel label) {
+	void onIdentityLabelAdded(JLabel label) {
 	}
 
-	private GCellDisplay createForId() {
+	private GCellDisplay createForIdentity() {
 
-		return new MonitoredCellDisplay(descriptor.getIdentityLabel(), getIcon());
+		return new IdentityCellDisplay(descriptor.getIdentityLabel(), getIcon());
 	}
 
 	private GCellDisplay createForValue() {
@@ -99,7 +92,7 @@ class DescriptorCellDisplay {
 			}
 			else {
 
-				GCellDisplay or = createValueComponent(OR_LABEL);
+				GCellDisplay or = createSyntaxComponent(OR_LABEL);
 				GCellDisplay value = createDisjunctComponent(label);
 
 				previous.setModifier(or);
@@ -114,42 +107,51 @@ class DescriptorCellDisplay {
 
 	private GCellDisplay createDisjunctComponent(String label) {
 
-		GCellDisplay comp = createValueComponent(label);
+		GCellDisplay comp = new GCellDisplay(label);
 
 		comp.setFontStyle(Font.BOLD);
 
 		return comp;
 	}
 
-	private GCellDisplay createValueComponent(String label) {
+	private GCellDisplay createSyntaxComponent(String label) {
 
-		GCellDisplay comp = new MonitoredCellDisplay(label);
+		GCellDisplay comp = new GCellDisplay(label);
 
-		if (!editable()) {
-
-			comp.setBackgroundColour(NON_EDITABLE_BACKGROUND_CLR);
-		}
+		comp.setFontStyle(Font.ITALIC);
 
 		return comp;
 	}
 
 	private Icon getIcon() {
 
-		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.NO_VALUE;
+		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.VALUE_ENTRY;
 	}
 
 	private Icon getValueIcon() {
 
-		if (descriptor.hasInstanceRefValue()) {
+		return getValueIcons().get(query(), editable());
+	}
 
-			return queryInstance ? MekonAppIcons.QUERY_REF : MekonAppIcons.ASSERTION_REF;
-		}
+	private MekonAppIcons.TreeIcons getValueIcons() {
 
-		return queryInstance ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
+		return descriptor.hasInstanceRefValue()
+				? MekonAppIcons.REF_ICONS
+				: MekonAppIcons.VALUE_ICONS;
+	}
+
+	private boolean query() {
+
+		return getInstanceTree().getInstantiator().queryInstance();
 	}
 
 	private boolean editable() {
 
-		return descriptor.userEditable();
+		return descriptor.userEditable() && !getInstanceTree().viewOnly();
+	}
+
+	private InstanceTree getInstanceTree() {
+
+		return node.getInstanceTree();
 	}
 }

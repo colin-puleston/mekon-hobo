@@ -169,6 +169,6 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 
 	private Icon getFrameIcon() {
 
-		return forQuery ? MekonAppIcons.QUERY_VALUE : MekonAppIcons.ASSERTION_VALUE;
+		return MekonAppIcons.VALUE_ICONS.get(forQuery, false);
 	}
 }

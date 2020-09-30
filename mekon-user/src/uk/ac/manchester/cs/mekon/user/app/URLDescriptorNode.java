@@ -49,10 +49,10 @@ class URLDescriptorNode extends DescriptorNode {
 
 		CellDisplay() {
 
-			super(descriptor, queryInstance());
+			super(URLDescriptorNode.this, descriptor);
 		}
 
-		void onLabelAdded(JLabel label) {
+		void onIdentityLabelAdded(JLabel label) {
 
 			String text = label.getText();
 

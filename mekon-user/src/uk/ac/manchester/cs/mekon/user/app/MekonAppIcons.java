@@ -34,49 +34,115 @@ import uk.ac.manchester.cs.mekon_util.gui.icon.*;
  */
 class MekonAppIcons {
 
-	static private final Color ASSERTION_VALUE_CLR = new Color(49,130,189);
-	static private final Color QUERY_VALUE_CLR = new Color(49,163,84);
-	static private final Color NO_VALUE_CLR = Color.WHITE;
+	static private final Color ASSERT_CLR = new Color(49,130,189);
+	static private final Color QUERY_CLR = new Color(49,163,84);
+	static private final Color VALUE_ENTRY_CLR = Color.WHITE;
 
-	static private final int ICON_DIMENSION = 12;
+	static private final int DIMENSION = 12;
 
-	static final Icon ASSERTION_VALUE = createDefaultValueIcon(ASSERTION_VALUE_CLR);
-	static final Icon QUERY_VALUE = createDefaultValueIcon(QUERY_VALUE_CLR);
+	static final Icon ASSERT = createListIcon(ASSERT_CLR);
+	static final Icon QUERY = createListIcon(QUERY_CLR);
 
-	static final Icon ASSERTION_ARRAY = createArrayIcon(ASSERTION_VALUE_CLR);
-	static final Icon QUERY_ARRAY = createArrayIcon(QUERY_VALUE_CLR);
+	static final TreeIcons VALUE_ICONS = new ValueIcons();
+	static final TreeIcons ARRAY_ICONS = new ArrayIcons();
+	static final TreeIcons REF_ICONS = new RefIcons();
 
-	static final Icon ASSERTION_REF = createInstanceRefIcon(ASSERTION_VALUE_CLR);
-	static final Icon QUERY_REF = createInstanceRefIcon(QUERY_VALUE_CLR);
+	static final Icon VALUE_ENTRY = createValueEntryIcon();
 
-	static final Icon NO_VALUE = createNoValueIcon(NO_VALUE_CLR);
+	static abstract class TreeIcons {
 
-	static private GIcon createDefaultValueIcon(Color clr) {
+		private FunctionIcons editIcons = new FunctionIcons(true);
+		private FunctionIcons noEditIcons = new FunctionIcons(false);
 
-		return new GIcon(new GDiamondRenderer(clr, ICON_DIMENSION));
+		private class FunctionIcons {
+
+			private Icon assertIcon;
+			private Icon queryIcon;
+
+			FunctionIcons(boolean edit) {
+
+				assertIcon = createIcon(edit, ASSERT_CLR);
+				queryIcon = createIcon(edit, QUERY_CLR);
+			}
+
+			Icon get(boolean query) {
+
+				return query ? queryIcon : assertIcon;
+			}
+		}
+
+		Icon get(boolean query, boolean edit) {
+
+			return (edit ? editIcons : noEditIcons).get(query);
+		}
+
+		abstract GIconRenderer createValueRenderer(Color clr);
+
+		private Icon createIcon(boolean edit, Color clr) {
+
+			return edit ? createEditIcon(clr) : createNoEditIcon(clr);
+		}
+
+		private GIcon createEditIcon(Color clr) {
+
+			GIconRenderer valueRenderer = createValueRenderer(clr);
+
+			valueRenderer.setXOffset(DIMENSION);
+
+			return new GIcon(createValueEntryRenderer(), valueRenderer);
+		}
+
+		private GIcon createNoEditIcon(Color clr) {
+
+			return new GIcon(createValueRenderer(clr));
+		}
 	}
 
-	static private GIcon createArrayIcon(Color clr) {
+	static private class ValueIcons extends TreeIcons {
 
-		return new GIcon(new GDiamondRenderer(clr, ICON_DIMENSION));
+		GIconRenderer createValueRenderer(Color clr) {
+
+			return new GDiamondRenderer(clr, DIMENSION);
+		}
 	}
 
-	static private GIcon createInstanceRefIcon(Color clr) {
+	static private class ArrayIcons extends TreeIcons {
 
-		return new GIcon(new GOvalRenderer(clr, ICON_DIMENSION));
+		GIconRenderer createValueRenderer(Color clr) {
+
+			return new GDiamondRenderer(clr, DIMENSION);
+		}
 	}
 
-	static private GIcon createNoValueIcon(Color clr) {
+	static private class RefIcons extends TreeIcons {
 
-		return new GIcon(createNoValueRenderer(clr));
+		GIconRenderer createValueRenderer(Color clr) {
+
+			return createRightTriangleRenderer(clr);
+		}
 	}
 
-	static private GIconRenderer createNoValueRenderer(Color clr) {
+	static private GIcon createListIcon(Color clr) {
+
+		return new GIcon(new GOvalRenderer(clr, DIMENSION));
+	}
+
+	static private GIcon createValueEntryIcon() {
+
+		return new GIcon(createValueEntryRenderer());
+	}
+
+	static private GIconRenderer createValueEntryRenderer() {
+
+		return createRightTriangleRenderer(VALUE_ENTRY_CLR);
+	}
+
+	static private GIconRenderer createRightTriangleRenderer(Color clr) {
 
 		return new GTriangleRenderer(
 						GTriangleRenderer.Type.RIGHTWARD,
 						clr,
-						ICON_DIMENSION,
-						ICON_DIMENSION);
+						DIMENSION,
+						DIMENSION);
 	}
 }
