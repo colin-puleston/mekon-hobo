@@ -34,7 +34,14 @@ public abstract class GSelectorBox<V> extends JComboBox<Object> {
 
 	public void activate() {
 
-		addItemListener(new SelectionListener());
+		if (valuesByLabel.size() > 1) {
+
+			addItemListener(new SelectionListener());
+		}
+		else {
+
+			setEnabled(false);
+		}
 	}
 
 	protected abstract void onSelection(V value);

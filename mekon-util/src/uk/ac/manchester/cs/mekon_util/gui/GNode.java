@@ -281,6 +281,26 @@ public abstract class GNode extends GMutableTreeNode {
 				: Collections.<GNode>emptyList();
 	}
 
+	public <C extends GNode>List<C> getChildren(Class<C> childClass) {
+
+		List<C> selectedChildren = new ArrayList<C>();
+
+		for (GNode child : getChildren()) {
+
+			if (childClass.isAssignableFrom(child.getClass())) {
+
+				selectedChildren.add(childClass.cast(child));
+			}
+		}
+
+		return selectedChildren;
+	}
+
+	public int indexInSiblings() {
+
+		return isRootNode() ? -1 : parent.getIndex(this);
+	}
+
 	public GTree getTree() {
 
 		return tree;
@@ -309,6 +329,9 @@ public abstract class GNode extends GMutableTreeNode {
 	}
 
 	protected void addInitialChildren() {
+	}
+
+	protected void onChildrenInitialised() {
 	}
 
 	protected boolean orderedChildren() {
@@ -375,6 +398,8 @@ public abstract class GNode extends GMutableTreeNode {
 
 				child.initialiseSubTree();
 			}
+
+			onChildrenInitialised();
 		}
 	}
 

@@ -47,7 +47,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 	private int fontStyle = Font.PLAIN;
 	private Icon icon = null;
 
-	private GCellDisplay modifier = null;
+	private List<GCellDisplay> modifiers = new ArrayList<GCellDisplay>();
 
 	public GCellDisplay(GCellDisplay template) {
 
@@ -80,9 +80,9 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 		return c != 0 ? c : text.compareTo(other.text);
 	}
 
-	public void setModifier(GCellDisplay modifier) {
+	public void addModifier(GCellDisplay modifier) {
 
-		this.modifier = modifier;
+		modifiers.add(modifier);
 	}
 
 	public void setText(String text) {
@@ -173,7 +173,7 @@ public class GCellDisplay implements Comparable<GCellDisplay> {
 
 		components.add(createLabel(selected));
 
-		if (modifier != null) {
+		for (GCellDisplay modifier : modifiers) {
 
 			components.add(createSeparator(selected));
 			modifier.collectComponents(components, selected);
