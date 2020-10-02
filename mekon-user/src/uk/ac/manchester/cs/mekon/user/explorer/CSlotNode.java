@@ -46,7 +46,7 @@ class CSlotNode extends GNode {
 		GCellDisplay main = EntityDisplays.get().get(slot);
 		GCellDisplay card = EntityDisplays.get().forSlotCardinalityModifier(slot);
 
-		main.setModifier(card);
+		main.addModifier(card);
 
 		return main;
 	}

@@ -56,13 +56,6 @@ abstract class INode extends GNode {
 
 	List<INode> getIChildren() {
 
-		List<INode> iChildren = new ArrayList<INode>();
-
-		for (GNode child : getChildren()) {
-
-			iChildren.add((INode)child);
-		}
-
-		return iChildren;
+		return getChildren(INode.class);
 	}
 }

@@ -143,8 +143,8 @@ class ITreeNodeDisplays {
 		GCellDisplay valueType = displays.forSlotValueTypeModifier(slot);
 		GCellDisplay cardinality = displays.forSlotCardinalityModifier(slot);
 
-		main.setModifier(valueType);
-		valueType.setModifier(cardinality);
+		main.addModifier(valueType);
+		main.addModifier(cardinality);
 
 		new Highlighter(slotNode, main, valueType);
 
