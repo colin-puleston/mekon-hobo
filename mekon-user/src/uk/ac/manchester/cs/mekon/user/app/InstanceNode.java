@@ -55,9 +55,9 @@ abstract class InstanceNode extends GNode {
 
 	void initialiseExpansion() {
 
-		for (GNode child : getChildren()) {
+		for (InstanceNode child : getChildren(InstanceNode.class)) {
 
-			((InstanceNode)child).initialiseExpansion();
+			child.initialiseExpansion();
 		}
 
 		if (getNodeLevel() > 0) {
@@ -82,6 +82,9 @@ abstract class InstanceNode extends GNode {
 	void updateChildList() {
 	}
 
+	void checkUpdateArray(SlotDescriptors newSlotDescriptors) {
+	}
+
 	InstanceTree getInstanceTree() {
 
 		return tree;
@@ -102,14 +105,19 @@ abstract class InstanceNode extends GNode {
 		return tree.viewOnly();
 	}
 
+	boolean showQuerySemantics() {
+
+		return queryInstance() && tree.showQuerySemantics();
+	}
+
 	void onMousePresenceUpdate(boolean present) {
 	}
 
 	private void updateIndividualChildren() {
 
-		for (GNode child : getChildren()) {
+		for (InstanceNode child : getChildren(InstanceNode.class)) {
 
-			((InstanceNode)child).updateFrom();
+			child.updateFrom();
 		}
 	}
 }

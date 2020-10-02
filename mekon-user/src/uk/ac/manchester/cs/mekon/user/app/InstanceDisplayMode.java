@@ -24,74 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.awt.*;
-import javax.swing.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon_util.gui.*;
-
 /**
  * @author Colin Puleston
  */
-class RootInstanceNode extends InstanceNode {
-
-	private IFrame rootFrame;
-	private DescriptorChildNodes childNodes;
-
-	private class CellDisplay extends InstanceCellDisplay {
-
-		CellDisplay() {
-
-			super(RootInstanceNode.this);
-		}
-
-		GCellDisplay createDefault() {
-
-			return createForValue(getDisplayLabel());
-		}
-
-		Icon getIcon() {
-
-			return MekonAppIcons.VALUE_ICONS.get(queryInstance(), false);
-		}
-
-		boolean editableSlot() {
-
-			return false;
-		}
-
-		private String getDisplayLabel() {
-
-			return getCustomiser().getValueDisplayLabel(rootFrame);
-		}
-
-		private Customiser getCustomiser() {
-
-			return getInstantiator().getController().getCustomiser();
-		}
-	}
-
-	protected void addInitialChildren() {
-
-		childNodes.addInitialChildren();
-	}
-
-	protected GCellDisplay getDisplay() {
-
-		return new CellDisplay().create();
-	}
-
-	RootInstanceNode(InstanceTree tree, IFrame rootFrame) {
-
-		super(tree);
-
-		this.rootFrame = rootFrame;
-
-		childNodes = new DescriptorChildNodes(this, rootFrame);
-	}
-
-	void updateChildList() {
-
-		childNodes.update();
-	}
-}
+enum InstanceDisplayMode {EDIT, VIEW, SEMANTICS};

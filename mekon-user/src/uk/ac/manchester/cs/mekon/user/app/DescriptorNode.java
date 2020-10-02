@@ -97,7 +97,12 @@ class DescriptorNode extends InstanceNode {
 
 	void performViewAction() {
 
-		createInstanceSubSectionHandler().checkDisplay(true);
+		createInstanceSubSectionHandler().checkDisplay(getInstanceTree().getMode());
+	}
+
+	Descriptor getDescriptor() {
+
+		return descriptor;
 	}
 
 	private GNodeAction createAction() {

@@ -95,7 +95,7 @@ class InstanceOps {
 
 	CIdentity displayReloaded(CIdentity storeId) {
 
-		return display(reloadInstance(storeId), storeId, true);
+		return display(reloadInstance(storeId), storeId, InstanceDisplayMode.VIEW);
 	}
 
 	void checkRename(CIdentity storeId) {
@@ -119,7 +119,7 @@ class InstanceOps {
 		IFrame instance = instantiateInstance(type, storeId);
 		Instantiator instantiator = createInstantiator(storeId, instance);
 
-		return display(instantiator, storeId, false);
+		return display(instantiator, storeId, InstanceDisplayMode.EDIT);
 	}
 
 	private Instantiator reloadInstance(CIdentity storeId) {
@@ -182,9 +182,12 @@ class InstanceOps {
 		return inputter.getIdInput();
 	}
 
-	private CIdentity display(Instantiator instantiator, CIdentity storeId, boolean reloaded) {
+	private CIdentity display(
+						Instantiator instantiator,
+						CIdentity storeId,
+						InstanceDisplayMode startMode) {
 
-		InstanceDialog dialog = createDialog(instantiator, storeId, reloaded);
+		InstanceDialog dialog = createDialog(instantiator, storeId, startMode);
 
 		dialog.display();
 
@@ -194,14 +197,14 @@ class InstanceOps {
 	private InstanceDialog createDialog(
 								Instantiator instantiator,
 								CIdentity storeId,
-								boolean startAsViewOnly) {
+								InstanceDisplayMode startMode) {
 
 		if (function.assertion()) {
 
-			return new AssertionDialog(parent, instantiator, storeId, startAsViewOnly);
+			return new AssertionDialog(parent, instantiator, storeId, startMode);
 		}
 
-		return new QueryDialog(parent, instantiator, storeId, startAsViewOnly);
+		return new QueryDialog(parent, instantiator, storeId, startMode);
 	}
 
 	private String getNextInstanceNameDefault(CFrame type, CIdentity refingId) {

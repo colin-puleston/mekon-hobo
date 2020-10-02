@@ -455,7 +455,7 @@ class DescriptorEditor {
 
 		InstanceSubSectionHandler handler = createInstanceSubSectionHandler();
 
-		return handler.checkDisplay(false) && !handler.replaceSelected();
+		return handler.checkDisplay(InstanceDisplayMode.EDIT) && !handler.replaceSelected();
 	}
 
 	private InstanceSubSectionHandler createInstanceSubSectionHandler() {

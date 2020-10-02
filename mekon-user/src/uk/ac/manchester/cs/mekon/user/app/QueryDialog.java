@@ -60,9 +60,9 @@ class QueryDialog extends InstanceDialog {
 		JComponent parent,
 		Instantiator instantiator,
 		CIdentity storeId,
-		boolean startAsViewOnly) {
+		InstanceDisplayMode startMode) {
 
-		super(parent, instantiator, storeId, startAsViewOnly);
+		super(parent, instantiator, storeId, startMode);
 
 		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
 	}

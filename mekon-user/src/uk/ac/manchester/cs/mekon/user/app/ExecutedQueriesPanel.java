@@ -162,7 +162,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 		Instantiator instantiator = createQueryInstantiator(storeId, query);
 
-		return new QueryDialog(this, instantiator, storeId, true);
+		return new QueryDialog(this, instantiator, storeId, InstanceDisplayMode.VIEW);
 	}
 
 	private Instantiator createQueryInstantiator(CIdentity storeId, IFrame query) {

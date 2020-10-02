@@ -40,7 +40,7 @@ class InstanceTree extends GActionTree {
 	private Instantiator instantiator;
 
 	private RootInstanceNode rootNode;
-	private boolean viewOnly = false;
+	private InstanceDisplayMode mode;
 
 	private class MouseLocator extends MouseMotionAdapter {
 
@@ -68,11 +68,11 @@ class InstanceTree extends GActionTree {
 		}
 	}
 
-	InstanceTree(Instantiator instantiator, IFrame rootFrame, boolean startAsViewOnly) {
+	InstanceTree(Instantiator instantiator, IFrame rootFrame, InstanceDisplayMode startMode) {
 
 		this.instantiator = instantiator;
 
-		viewOnly = startAsViewOnly;
+		mode = startMode;
 		rootNode = new RootInstanceNode(this, rootFrame);
 
 		setRootVisible(true);
@@ -85,23 +85,39 @@ class InstanceTree extends GActionTree {
 		rootNode.initialiseExpansion();
 	}
 
-	void setViewOnly(boolean value) {
+	void setMode(InstanceDisplayMode newMode) {
 
-		if (value != viewOnly) {
+		if (newMode != mode) {
 
-			viewOnly = value;
+			mode = newMode;
 
-			rootNode.updateFrom();
+			updateTree();
 		}
+	}
+
+	InstanceDisplayMode getMode() {
+
+		return mode;
 	}
 
 	boolean viewOnly() {
 
-		return viewOnly;
+		return mode != InstanceDisplayMode.EDIT;
+	}
+
+	boolean showQuerySemantics() {
+
+		return mode == InstanceDisplayMode.SEMANTICS;
 	}
 
 	Instantiator getInstantiator() {
 
 		return instantiator;
+	}
+
+	private void updateTree() {
+
+		rootNode.updateFrom();
+		updateAllNodeDisplays();
 	}
 }

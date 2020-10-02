@@ -41,8 +41,6 @@ abstract class InstanceSectionDialog extends GDialog {
 	static private final String ASSERTION_FUNCTION_LABEL = "Instance";
 	static private final String QUERY_FUNCTION_LABEL = "Query";
 
-	static private final String MODE_SELECTOR_LABEL = "View only";
-
 	static private final int FRAME_WIDTH = 600;
 
 	static String createSectionTitle(Instantiator instantiator) {
@@ -68,25 +66,6 @@ abstract class InstanceSectionDialog extends GDialog {
 	private Instantiator instantiator;
 	private InstanceTree instanceTree;
 
-	private class ViewOnlySelector extends GCheckBox {
-
-		static private final long serialVersionUID = -1;
-
-		protected void onSelectionUpdate(boolean selected) {
-
-			instanceTree.setViewOnly(selected);
-
-			onViewOnlyUpdated();
-		}
-
-		ViewOnlySelector() {
-
-			super(MODE_SELECTOR_LABEL);
-
-			setSelected(viewOnly());
-		}
-	}
-
 	public Dimension getPreferredSize() {
 
 		return new Dimension(FRAME_WIDTH, getPreferredHeight());
@@ -97,13 +76,13 @@ abstract class InstanceSectionDialog extends GDialog {
 		Instantiator instantiator,
 		IFrame rootFrame,
 		String title,
-		boolean startAsViewOnly) {
+		InstanceDisplayMode startMode) {
 
 		super(parent, title, true);
 
 		this.instantiator = instantiator;
 
-		instanceTree = new InstanceTree(instantiator, rootFrame, startAsViewOnly);
+		instanceTree = new InstanceTree(instantiator, rootFrame, startMode);
 	}
 
 	void display() {
@@ -131,17 +110,22 @@ abstract class InstanceSectionDialog extends GDialog {
 		JPanel panel = new JPanel(new BorderLayout());
 		ControlsPanel controls = checkCreateControlsPanel();
 
-		if (instantiator.editableInstance()) {
-
-			panel.add(new ViewOnlySelector(), BorderLayout.NORTH);
-		}
-
+		panel.add(createModeSelectorComponent(), BorderLayout.NORTH);
 		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
 
 		if (controls != null) {
 
 			panel.add(controls, BorderLayout.SOUTH);
 		}
+
+		return panel;
+	}
+
+	private JComponent createModeSelectorComponent() {
+
+		JPanel panel = new JPanel(new BorderLayout());
+
+		panel.add(new InstanceDisplayModeSelector(instanceTree), BorderLayout.WEST);
 
 		return panel;
 	}

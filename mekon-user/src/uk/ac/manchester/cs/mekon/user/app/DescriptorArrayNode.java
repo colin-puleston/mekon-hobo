@@ -34,9 +34,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 class DescriptorArrayNode extends InstanceNode {
 
 	private SlotDescriptors slotDescriptors;
-
 	private ChildNodeCreator childNodeCreator;
-	private GCellDisplay display;
 
 	protected void addInitialChildren() {
 
@@ -48,7 +46,7 @@ class DescriptorArrayNode extends InstanceNode {
 
 	protected GCellDisplay getDisplay() {
 
-		return display;
+		return new GCellDisplay(getDisplayLabel(), getIcon());
 	}
 
 	DescriptorArrayNode(InstanceTree tree, SlotDescriptors slotDescriptors) {
@@ -58,10 +56,9 @@ class DescriptorArrayNode extends InstanceNode {
 		this.slotDescriptors = slotDescriptors;
 
 		childNodeCreator = new ChildNodeCreator(tree);
-		display = new GCellDisplay(getDisplayLabel(), getIcon());
 	}
 
-	void update(SlotDescriptors newSlotDescriptors) {
+	void checkUpdateArray(SlotDescriptors newSlotDescriptors) {
 
 		if (!slotDescriptors.equalDescriptors(newSlotDescriptors)) {
 

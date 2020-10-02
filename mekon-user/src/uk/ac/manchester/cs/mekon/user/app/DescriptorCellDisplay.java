@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.awt.*;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon_util.gui.*;
@@ -32,11 +31,8 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class DescriptorCellDisplay {
+class DescriptorCellDisplay extends InstanceCellDisplay {
 
-	static private final String OR_LABEL = "OR";
-
-	private DescriptorNode node;
 	private Descriptor descriptor;
 
 	private class IdentityCellDisplay extends GCellDisplay {
@@ -46,28 +42,39 @@ class DescriptorCellDisplay {
 			onIdentityLabelAdded(label);
 		}
 
-		IdentityCellDisplay(String text, Icon icon) {
+		IdentityCellDisplay() {
 
-			super(text, icon);
+			super(descriptor.getIdentityLabel(!showQuerySemantics()));
 		}
 	}
 
 	DescriptorCellDisplay(DescriptorNode node, Descriptor descriptor) {
 
-		this.node = node;
+		super(node);
+
 		this.descriptor = descriptor;
 	}
 
-	GCellDisplay create() {
+	GCellDisplay createDefault() {
 
 		GCellDisplay display = createForIdentity();
 
 		if (descriptor.hasValue()) {
 
-			display.setModifier(createForValue());
+			display.addModifier(createForValue());
 		}
 
 		return display;
+	}
+
+	Icon getIcon() {
+
+		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.VALUE_ENTRY;
+	}
+
+	boolean editableSlot() {
+
+		return descriptor.userEditable();
 	}
 
 	void onIdentityLabelAdded(JLabel label) {
@@ -75,57 +82,12 @@ class DescriptorCellDisplay {
 
 	private GCellDisplay createForIdentity() {
 
-		return new IdentityCellDisplay(descriptor.getIdentityLabel(), getIcon());
+		return new IdentityCellDisplay();
 	}
 
 	private GCellDisplay createForValue() {
 
-		GCellDisplay first = null;
-		GCellDisplay previous = null;
-
-		for (String label : descriptor.getValueDisjunctLabels()) {
-
-			if (first == null) {
-
-				first = createDisjunctComponent(label);
-				previous = first;
-			}
-			else {
-
-				GCellDisplay or = createSyntaxComponent(OR_LABEL);
-				GCellDisplay value = createDisjunctComponent(label);
-
-				previous.setModifier(or);
-				or.setModifier(value);
-
-				previous = value;
-			}
-		}
-
-		return first;
-	}
-
-	private GCellDisplay createDisjunctComponent(String label) {
-
-		GCellDisplay comp = new GCellDisplay(label);
-
-		comp.setFontStyle(Font.BOLD);
-
-		return comp;
-	}
-
-	private GCellDisplay createSyntaxComponent(String label) {
-
-		GCellDisplay comp = new GCellDisplay(label);
-
-		comp.setFontStyle(Font.ITALIC);
-
-		return comp;
-	}
-
-	private Icon getIcon() {
-
-		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.VALUE_ENTRY;
+		return createForValue(descriptor.getValueDisjunctLabels());
 	}
 
 	private Icon getValueIcon() {
@@ -138,20 +100,5 @@ class DescriptorCellDisplay {
 		return descriptor.hasInstanceRefValue()
 				? MekonAppIcons.REF_ICONS
 				: MekonAppIcons.VALUE_ICONS;
-	}
-
-	private boolean query() {
-
-		return getInstanceTree().getInstantiator().queryInstance();
-	}
-
-	private boolean editable() {
-
-		return descriptor.userEditable() && !getInstanceTree().viewOnly();
-	}
-
-	private InstanceTree getInstanceTree() {
-
-		return node.getInstanceTree();
 	}
 }

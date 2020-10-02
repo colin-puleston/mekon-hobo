@@ -135,13 +135,13 @@ class Descriptor {
 		return anyUserValues() || anyTerminalValues();
 	}
 
-	String getIdentityLabel() {
+	String getIdentityLabel(boolean includeArrayIndex) {
 
 		String label = slot.getType().getIdentity().getLabel();
 
-		if (!slot.getType().getCardinality().singleValue()) {
+		if (includeArrayIndex && multiValuedSlot()) {
 
-			label += getIdentityLabelArraySuffix();
+			label += getIdentityLabelArrayIndexSuffix();
 		}
 
 		return label;
@@ -177,7 +177,7 @@ class Descriptor {
 		return Collections.singletonList(getValueTypeLabel());
 	}
 
-	private String getIdentityLabelArraySuffix() {
+	private String getIdentityLabelArrayIndexSuffix() {
 
 		return " [" + (getValueIndex() + 1) + "]";
 	}
@@ -279,6 +279,11 @@ class Descriptor {
 	private boolean editableSlot() {
 
 		return slot.getEditability().editable();
+	}
+
+	private boolean multiValuedSlot() {
+
+		return !slot.getType().getCardinality().singleValue();
 	}
 
 	private Customiser getCustomiser() {

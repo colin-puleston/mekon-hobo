@@ -56,11 +56,11 @@ class InstanceSubSectionHandler {
 		}
 	}
 
-	boolean checkDisplay(boolean startAsViewOnly) {
+	boolean checkDisplay(InstanceDisplayMode startMode) {
 
 		if (rootFrame != null) {
 
-			displayDialog(startAsViewOnly);
+			displayDialog(startMode);
 
 			return true;
 		}
@@ -73,9 +73,9 @@ class InstanceSubSectionHandler {
 		return replaceSelected;
 	}
 
-	private void displayDialog(boolean startAsViewOnly) {
+	private void displayDialog(InstanceDisplayMode startMode) {
 
-		InstanceSubSectionDialog dialog = createDialog(startAsViewOnly);
+		InstanceSubSectionDialog dialog = createDialog(startMode);
 
 		dialog.display();
 
@@ -89,9 +89,9 @@ class InstanceSubSectionHandler {
 		}
 	}
 
-	private InstanceSubSectionDialog createDialog(boolean startAsViewOnly) {
+	private InstanceSubSectionDialog createDialog(InstanceDisplayMode startMode) {
 
-		return new InstanceSubSectionDialog(parent, instantiator, rootFrame, startAsViewOnly);
+		return new InstanceSubSectionDialog(parent, instantiator, rootFrame, startMode);
 	}
 
 	private void removeValue() {

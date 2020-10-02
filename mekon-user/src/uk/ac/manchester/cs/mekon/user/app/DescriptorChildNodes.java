@@ -93,19 +93,11 @@ class DescriptorChildNodes {
 				}
 				else {
 
-					if (slotDescriptors.populatedMultiValueSlot()) {
-
-						updateArrayChild(slotDescriptors, childIdx);
-					}
+					getChild(childIdx).checkUpdateArray(slotDescriptors);
 				}
 
 				childIdx++;
 			}
-		}
-
-		private void updateArrayChild(SlotDescriptors slotDescriptors, int childIdx) {
-
-			((DescriptorArrayNode)parentNode.getChildAt(childIdx)).update(slotDescriptors);
 		}
 	}
 
@@ -220,6 +212,11 @@ class DescriptorChildNodes {
 
 		slotUpdateRelayer.checkAddTo(slot);
 		valueUpdateRelayer.checkAddTo(slot);
+	}
+
+	private InstanceNode getChild(int index) {
+
+		return (InstanceNode)parentNode.getChildAt(index);
 	}
 
 	private FrameDescriptors createFrameDescriptors() {
