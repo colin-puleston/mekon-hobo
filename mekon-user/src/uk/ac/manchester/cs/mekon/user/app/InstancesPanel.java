@@ -145,7 +145,7 @@ abstract class InstancesPanel extends JPanel {
 
 		private CIdentity getClickedStoreId(MouseEvent e) {
 
-			return idsList.getEntity(idsList.locationToIndex(e.getPoint()));
+			return idsList.getDisplayedEntity(idsList.locationToIndex(e.getPoint()));
 		}
 	}
 

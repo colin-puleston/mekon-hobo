@@ -39,8 +39,8 @@ abstract class InstanceCellDisplay {
 	static private final String QUERY_ROOT_SEMANTICS_PREFIX = "FIND ALL instances of";
 	static private final String OR_SEMANTICS_PREFIX = "OR";
 
-	static private final String SINGLE_SLOT_SEMANTICS_SUFFIX = "with VALUE >>";
-	static private final String MULTI_SLOT_SEMANTICS_SUFFIX = "with ALL VALUES >>";
+	static private final String SINGLE_SLOT_SEMANTICS_SUFFIX = "with value...";
+	static private final String MULTI_SLOT_SEMANTICS_SUFFIX = "with ALL values...";
 
 	static private final int VALUE_FONT_STYLE = Font.BOLD;
 	static private final Color SEMANTICS_TEXT_COLOR = Color.GREEN.darker().darker();
@@ -56,29 +56,12 @@ abstract class InstanceCellDisplay {
 
 		GCellDisplay display = createDefault();
 
-		return showQuerySemantics() ? addQuerySemantics(display) : addIcon(display);
+		return node.showQuerySemantics() ? addQuerySemantics(display) : addIcon(display);
 	}
 
 	abstract GCellDisplay createDefault();
 
 	abstract Icon getIcon();
-
-	abstract boolean editableSlot();
-
-	boolean editable() {
-
-		return editableSlot() && !viewOnly();
-	}
-
-	boolean query() {
-
-		return getInstanceTree().getInstantiator().queryInstance();
-	}
-
-	boolean showQuerySemantics() {
-
-		return node.showQuerySemantics();
-	}
 
 	GCellDisplay createForValue(String label) {
 
@@ -148,7 +131,7 @@ abstract class InstanceCellDisplay {
 
 	private String getQueryPrefix() {
 
-		return node.isRootNode() ? QUERY_ROOT_SEMANTICS_PREFIX : null;
+		return node.isRootNode() && !isSubTree() ? QUERY_ROOT_SEMANTICS_PREFIX : null;
 	}
 
 	private String getQuerySuffix() {
@@ -168,13 +151,8 @@ abstract class InstanceCellDisplay {
 		return MULTI_SLOT_SEMANTICS_SUFFIX;
 	}
 
-	private boolean viewOnly() {
+	private boolean isSubTree() {
 
-		return getInstanceTree().viewOnly();
-	}
-
-	private InstanceTree getInstanceTree() {
-
-		return node.getInstanceTree();
+		return node.getInstanceTree().isSubTree();
 	}
 }

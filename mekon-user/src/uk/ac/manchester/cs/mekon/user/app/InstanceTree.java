@@ -40,6 +40,8 @@ class InstanceTree extends GActionTree {
 	private Instantiator instantiator;
 
 	private RootInstanceNode rootNode;
+	private boolean isSubTree;
+
 	private InstanceDisplayMode mode;
 
 	private class MouseLocator extends MouseMotionAdapter {
@@ -74,6 +76,7 @@ class InstanceTree extends GActionTree {
 
 		mode = startMode;
 		rootNode = new RootInstanceNode(this, rootFrame);
+		isSubTree = isSubTree(rootFrame);
 
 		setRootVisible(true);
 		setShowsRootHandles(false);
@@ -100,6 +103,11 @@ class InstanceTree extends GActionTree {
 		return mode;
 	}
 
+	boolean isSubTree() {
+
+		return isSubTree;
+	}
+
 	boolean viewOnly() {
 
 		return mode != InstanceDisplayMode.EDIT;
@@ -115,9 +123,19 @@ class InstanceTree extends GActionTree {
 		return instantiator;
 	}
 
+	private boolean isSubTree(IFrame rootFrame) {
+
+		return !rootFrame.getType().equals(getInstanceGroupRootType());
+	}
+
 	private void updateTree() {
 
 		rootNode.updateFrom();
 		updateAllNodeDisplays();
+	}
+
+	private CFrame getInstanceGroupRootType() {
+
+		return instantiator.getInstanceGroup().getRootType();
 	}
 }

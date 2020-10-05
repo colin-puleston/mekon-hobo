@@ -33,6 +33,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class DescriptorCellDisplay extends InstanceCellDisplay {
 
+	private DescriptorNode node;
 	private Descriptor descriptor;
 
 	private class IdentityCellDisplay extends GCellDisplay {
@@ -44,7 +45,7 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 
 		IdentityCellDisplay() {
 
-			super(descriptor.getIdentityLabel(!showQuerySemantics()));
+			super(descriptor.getIdentityLabel(!query()));
 		}
 	}
 
@@ -52,12 +53,13 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 
 		super(node);
 
+		this.node = node;
 		this.descriptor = descriptor;
 	}
 
 	GCellDisplay createDefault() {
 
-		GCellDisplay display = createForIdentity();
+		GCellDisplay display = new IdentityCellDisplay();
 
 		if (descriptor.hasValue()) {
 
@@ -72,17 +74,7 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.VALUE_ENTRY;
 	}
 
-	boolean editableSlot() {
-
-		return descriptor.userEditable();
-	}
-
 	void onIdentityLabelAdded(JLabel label) {
-	}
-
-	private GCellDisplay createForIdentity() {
-
-		return new IdentityCellDisplay();
 	}
 
 	private GCellDisplay createForValue() {
@@ -100,5 +92,20 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 		return descriptor.hasInstanceRefValue()
 				? MekonAppIcons.REF_ICONS
 				: MekonAppIcons.VALUE_ICONS;
+	}
+
+	private boolean editable() {
+
+		return descriptor.userEditable() && !getInstanceTree().viewOnly();
+	}
+
+	private boolean query() {
+
+		return getInstanceTree().getInstantiator().queryInstance();
+	}
+
+	private InstanceTree getInstanceTree() {
+
+		return node.getInstanceTree();
 	}
 }
