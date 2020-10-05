@@ -303,6 +303,11 @@ public class GList<E> extends JList<GListElement<E>> {
 		return new ArrayList<E>(currentSelections);
 	}
 
+	public E getDisplayedEntity(int index) {
+
+		return model.getElementAt(index).getEntity();
+	}
+
 	private int getSelectionMode(boolean multiSelect) {
 
 		return multiSelect
