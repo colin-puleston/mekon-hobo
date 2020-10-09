@@ -26,8 +26,6 @@ package uk.ac.manchester.cs.mekon.user.app;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-
 /**
  * @author Colin Puleston
  */
@@ -38,10 +36,9 @@ class AssertionDialog extends InstanceDialog {
 	AssertionDialog(
 		JComponent parent,
 		Instantiator instantiator,
-		CIdentity storeId,
 		InstanceDisplayMode startMode) {
 
-		super(parent, instantiator, storeId, startMode);
+		super(parent, instantiator, startMode);
 	}
 
 	boolean disposeOnStoring() {

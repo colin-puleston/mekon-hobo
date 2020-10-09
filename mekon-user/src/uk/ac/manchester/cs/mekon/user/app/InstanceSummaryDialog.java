@@ -32,29 +32,51 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceSubSectionDialog extends InstanceTreeDialog {
+class InstanceSummaryDialog extends InstanceTreeDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_SUFFIX = "Sub-Section";
+	static private final String TITLE_FORMAT = "%s %s";
+	static private final String ASSERTION_SUMMARY_LABEL = "Summary";
+	static private final String QUERY_SUMMARY_LABEL = "Short-form";
 
 	static private final String OK_BUTTON_LABEL = "Ok";
-	static private final String CLEAR_BUTTON_LABEL = "Clear";
-	static private final String REPLACE_BUTTON_LABEL = "Replace...";
+	static private final String CANCEL_BUTTON_LABEL = "Cancel";
 
-	static private String createSubSectionTitle(Instantiator instantiator) {
+	static private String createSummaryTitle(Instantiator instantiator) {
 
-		return createInstanceTitle(instantiator, TITLE_SUFFIX);
+		String suffix = InstanceSummaryHandler.getSummaryLabel(instantiator);
+
+		return createInstanceTitle(instantiator, suffix);
 	}
 
-	private boolean clearSelected = false;
-	private boolean replaceSelected = false;
+	private boolean fixedMode;
 
-	private class OkButton extends GButton {
+	private boolean summaryEdited = false;
+	private boolean summaryEditOk = false;
+
+	private abstract class SummaryEditButton extends EditButton {
+
+		static private final long serialVersionUID = -1;
+
+		SummaryEditButton(String label) {
+
+			super(label);
+		}
+
+		boolean enableButton() {
+
+			return super.enableButton() && summaryEdited;
+		}
+	}
+
+	private class OkButton extends SummaryEditButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
+
+			summaryEditOk = true;
 
 			dispose();
 		}
@@ -65,67 +87,59 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 		}
 	}
 
-	private class ClearButton extends EditButton {
+	private class CancelButton extends SummaryEditButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			clearSelected = true;
-
 			dispose();
 		}
 
-		ClearButton() {
+		CancelButton() {
 
-			super(CLEAR_BUTTON_LABEL);
+			super(CANCEL_BUTTON_LABEL);
 		}
 	}
 
-	private class ReplaceButton extends EditButton {
+	private class SummaryEditListener extends EditListener {
 
-		static private final long serialVersionUID = -1;
+		void onTreeEdited() {
 
-		protected void doButtonThing() {
-
-			replaceSelected = true;
-
-			dispose();
-		}
-
-		ReplaceButton() {
-
-			super(REPLACE_BUTTON_LABEL);
+			summaryEdited = true;
 		}
 	}
 
-	InstanceSubSectionDialog(
-		JComponent parent,
+	InstanceSummaryDialog(
+		InstanceTree sourceTree,
 		Instantiator instantiator,
-		IFrame rootFrame,
-		InstanceDisplayMode startMode) {
+		IFrame rootSummaryFrame) {
 
 		super(
-			parent,
+			sourceTree,
 			instantiator,
-			rootFrame,
-			createSubSectionTitle(instantiator),
-			startMode);
+			rootSummaryFrame,
+			createSummaryTitle(instantiator),
+			sourceTree.getMode());
+
+		fixedMode = rootSummaryFrame.getFunction().assertion();
+
+		addEditListener(new SummaryEditListener());
 	}
 
-	boolean clearSelected() {
+	boolean summaryEditOk() {
 
-		return clearSelected;
+		return summaryEditOk;
 	}
 
-	boolean replaceSelected() {
+	boolean fixedMode() {
 
-		return replaceSelected;
+		return fixedMode;
 	}
 
 	ControlsPanel checkCreateControlsPanel() {
 
-		if (!getInstantiator().editableInstance()) {
+		if (!getInstantiator().editableSummary()) {
 
 			return null;
 		}
@@ -133,8 +147,7 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 		ControlsPanel panel = new ControlsPanel(true);
 
 		panel.addControl(new OkButton());
-		panel.addControl(new ClearButton());
-		panel.addControl(new ReplaceButton());
+		panel.addControl(new CancelButton());
 
 		return panel;
 	}

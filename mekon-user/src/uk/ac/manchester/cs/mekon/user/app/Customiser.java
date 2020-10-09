@@ -35,7 +35,7 @@ public interface Customiser {
 
 	public QueryNameDefaults getQueryNameDefaults();
 
-	public SimpleQueriesConfig getSimpleQueriesConfig();
+	public InstanceSummariser getInstanceSummariser();
 
 	public ValueObtainerFactory getValueObtainerFactory();
 

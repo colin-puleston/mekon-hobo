@@ -24,65 +24,59 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryExecutions {
+class InstanceSummaryHandler {
 
-	private Store store;
+	static private final String ASSERTION_SUMMARY_LABEL = "Summary";
+	static private final String QUERY_SUMMARY_LABEL = "Short-form";
 
-	private Map<CIdentity, ExecutedQuery> byStoreId = new HashMap<CIdentity, ExecutedQuery>();
-	private List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
+	static String getSummaryLabel(Instantiator instantiator) {
 
-	QueryExecutions(Store store) {
-
-		this.store = store;
+		return instantiator.queryInstance() ? QUERY_SUMMARY_LABEL : ASSERTION_SUMMARY_LABEL;
 	}
 
-	void addListener(QueryExecutionListener listener) {
+	private Instantiator instantiator;
+	private InstanceTree sourceTree;
 
-		listeners.add(listener);
+	private IFrame instance;
+	private InstanceSummariser summariser;
+
+	InstanceSummaryHandler(Instantiator instantiator, InstanceTree sourceTree) {
+
+		this.instantiator = instantiator;
+		this.sourceTree = sourceTree;
+
+		instance = instantiator.getInstance();
+		summariser = getSummariser();
 	}
 
-	void execute(CIdentity storeId, IFrame query) {
+	boolean summaryEnabled() {
 
-		List<CIdentity> matches = store.match(query);
-		ExecutedQuery exec = new ExecutedQuery(storeId, query, matches);
-
-		byStoreId.put(storeId, exec);
-
-		pollListenersForExecution(exec);
+		return instance.getFunction().assertion()
+				|| summariser.reversiblySummarisable(instance);
 	}
 
-	void discardExecuted(CIdentity storeId) {
+	IFrame displaySummary() {
 
-		byStoreId.remove(storeId);
+		IFrame summary = summariser.toSummary(instance);
+		InstanceSummaryDialog dialog = createDialog(summary);
+
+		dialog.display();
+
+		return dialog.summaryEditOk() ? summariser.toInstance(summary) : null;
 	}
 
-	boolean executed(CIdentity storeId) {
+	private InstanceSummaryDialog createDialog(IFrame summary) {
 
-		return byStoreId.containsKey(storeId);
+		return new InstanceSummaryDialog(sourceTree, instantiator, summary);
 	}
 
-	ExecutedQuery getExecuted(CIdentity storeId) {
+	private InstanceSummariser getSummariser() {
 
-		return byStoreId.get(storeId);
-	}
-
-	Set<CIdentity> getAllExecuteds() {
-
-		return byStoreId.keySet();
-	}
-
-	private void pollListenersForExecution(ExecutedQuery exec) {
-
-		for (QueryExecutionListener listener : listeners) {
-
-			listener.onExecuted(exec);
-		}
+		return instantiator.getController().getCustomiser().getInstanceSummariser();
 	}
 }

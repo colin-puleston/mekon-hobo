@@ -42,8 +42,8 @@ class ExecutedQueriesPanel extends JPanel {
 	static private final String DISPLAY_QUERY_LABEL = "View...";
 	static private final String DISCARD_QUERY_LABEL = "Discard";
 
-	private InstanceGroup instanceGroup;
 	private QueryExecutions queryExecutions;
+	private InstanceOps instanceOps;
 
 	private InstanceIdsList querySelectorList;
 	private QueryMatchesPanel matchesPanel;
@@ -59,7 +59,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			displayQuery(storeId, queryExecutions.getExecuted(storeId).getQuery());
+			displayExecutedQuery(storeId);
 		}
 	}
 
@@ -99,9 +99,9 @@ class ExecutedQueriesPanel extends JPanel {
 
 	ExecutedQueriesPanel(InstanceGroup instanceGroup) {
 
-		this.instanceGroup = instanceGroup;
-
 		queryExecutions = instanceGroup.getQueryExecutions();
+		instanceOps = createInstanceOps(instanceGroup);
+
 		querySelectorList = new InstanceIdsList(instanceGroup, true);
 		matchesPanel = new QueryMatchesPanel(instanceGroup);
 
@@ -150,23 +150,15 @@ class ExecutedQueriesPanel extends JPanel {
 		matchesPanel.displayMatches(storeId, execQuery.getMatches());
 	}
 
-	private void displayQuery(CIdentity storeId, IFrame query) {
+	private void displayExecutedQuery(CIdentity storeId) {
 
-		QueryDialog dialog = createQueryDialog(storeId, query);
+		IFrame query = queryExecutions.getExecuted(storeId).getQuery();
 
-		dialog.setAllowStoreOverwrite(false);
-		dialog.display();
+		instanceOps.display(storeId, query, InstanceDisplayMode.VIEW, false);
 	}
 
-	private QueryDialog createQueryDialog(CIdentity storeId, IFrame query) {
+	private InstanceOps createInstanceOps(InstanceGroup instanceGroup) {
 
-		Instantiator instantiator = createQueryInstantiator(storeId, query);
-
-		return new QueryDialog(this, instantiator, storeId, InstanceDisplayMode.VIEW);
-	}
-
-	private Instantiator createQueryInstantiator(CIdentity storeId, IFrame query) {
-
-		return new Instantiator(instanceGroup, storeId, query);
+		return new InstanceOps(this, instanceGroup, IFrameFunction.QUERY);
 	}
 }

@@ -24,32 +24,20 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class InertSimpleQueriesConfig implements SimpleQueriesConfig {
+public interface InstanceSummariser {
 
-	static final InertSimpleQueriesConfig SINGLETON = new InertSimpleQueriesConfig();
+	public boolean summariesFor(CFrame instanceType);
 
-	public boolean simpleQueriesFor(CFrame executableType) {
+	public CFrame toSummaryType(CFrame instanceType);
 
-		return false;
-	}
+	public IFrame toSummary(IFrame instance);
 
-	public CFrame toSimpleQueryType(CFrame executableType) {
+	public IFrame toInstance(IFrame summary);
 
-		throw new RuntimeException("Cannot handle executable-type: " + executableType);
-	}
-
-	public IFrame toExecutable(IFrame simpleQuery) {
-
-		throw new RuntimeException("Cannot handle simple-query type: " + simpleQuery.getType());
-	}
-
-	private InertSimpleQueriesConfig() {
-	}
+	public boolean reversiblySummarisable(IFrame instance);
 }

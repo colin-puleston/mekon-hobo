@@ -61,11 +61,6 @@ class InstanceOps {
 		return function.query() || instanceGroup.editable();
 	}
 
-	boolean simpleInstancesEnabled() {
-
-		return function.query() && instanceGroup.simpleQueriesEnabled();
-	}
-
 	CIdentity checkCreate() {
 
 		return checkCreate(instanceGroup.getRootType(), null);
@@ -88,14 +83,18 @@ class InstanceOps {
 		return null;
 	}
 
-	CIdentity checkCreateSimple() {
+	void displayReloaded(CIdentity storeId) {
 
-		return checkCreate(instanceGroup.getSimpleQueriesRootType(), null);
+		display(reloadInstance(storeId), InstanceDisplayMode.VIEW, true);
 	}
 
-	CIdentity displayReloaded(CIdentity storeId) {
+	void display(
+			CIdentity storeId,
+			IFrame instance,
+			InstanceDisplayMode mode,
+			boolean allowStoreOverwrite) {
 
-		return display(reloadInstance(storeId), storeId, InstanceDisplayMode.VIEW);
+		display(createInstantiator(storeId, instance), mode, allowStoreOverwrite);
 	}
 
 	void checkRename(CIdentity storeId) {
@@ -119,7 +118,7 @@ class InstanceOps {
 		IFrame instance = instantiateInstance(type, storeId);
 		Instantiator instantiator = createInstantiator(storeId, instance);
 
-		return display(instantiator, storeId, InstanceDisplayMode.EDIT);
+		return display(instantiator, InstanceDisplayMode.EDIT, true);
 	}
 
 	private Instantiator reloadInstance(CIdentity storeId) {
@@ -184,11 +183,12 @@ class InstanceOps {
 
 	private CIdentity display(
 						Instantiator instantiator,
-						CIdentity storeId,
-						InstanceDisplayMode startMode) {
+						InstanceDisplayMode startMode,
+						boolean allowStoreOverwrite) {
 
-		InstanceDialog dialog = createDialog(instantiator, storeId, startMode);
+		InstanceDialog dialog = createDialog(instantiator, startMode);
 
+		dialog.setAllowStoreOverwrite(allowStoreOverwrite);
 		dialog.display();
 
 		return dialog.instanceStored() ? dialog.getStoreId() : null;
@@ -196,15 +196,14 @@ class InstanceOps {
 
 	private InstanceDialog createDialog(
 								Instantiator instantiator,
-								CIdentity storeId,
 								InstanceDisplayMode startMode) {
 
 		if (function.assertion()) {
 
-			return new AssertionDialog(parent, instantiator, storeId, startMode);
+			return new AssertionDialog(parent, instantiator, startMode);
 		}
 
-		return new QueryDialog(parent, instantiator, storeId, startMode);
+		return new QueryDialog(parent, instantiator, startMode);
 	}
 
 	private String getNextInstanceNameDefault(CFrame type, CIdentity refingId) {

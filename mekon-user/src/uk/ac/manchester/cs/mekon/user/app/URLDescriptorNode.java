@@ -37,39 +37,33 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class URLDescriptorNode extends DescriptorNode {
 
-	static private final Color SELECTABLE_URL_CLR = Color.BLUE;
-	static private final Color SELECTED_URL_CLR = Color.CYAN;
+	static private final Color SELECTABLE_VALUE_CLR = Color.BLUE;
+	static private final Color SELECTED_VALUE_CLR = Color.CYAN;
+
+	static private final int VALUE_FONT_STYLE = Font.BOLD;
 
 	private Descriptor descriptor;
 	private URI url;
 
 	private boolean mousePresent = false;
 
-	private class CellDisplay extends DescriptorCellDisplay {
+	private class ValueCellDisplay extends GCellDisplay {
 
-		CellDisplay() {
+		protected void onLabelAdded(JLabel label) {
 
-			super(URLDescriptorNode.this, descriptor);
-		}
+			label.setText(abreviateURL(label.getText()));
 
-		void onIdentityLabelAdded(JLabel label) {
+			if (viewOnly()) {
 
-			String text = label.getText();
-
-			if (displayAsURL(text)) {
-
-				label.setText(abreviateURL(text));
-
-				if (viewOnly()) {
-
-					label.setForeground(mousePresent ? SELECTED_URL_CLR : SELECTABLE_URL_CLR);
-				}
+				label.setForeground(getValueColour());
 			}
 		}
 
-		private boolean displayAsURL(String text) {
+		ValueCellDisplay(String label) {
 
-			return url != null && text.equals(url.toString());
+			super(label);
+
+			setFontStyle(VALUE_FONT_STYLE);
 		}
 
 		private String abreviateURL(String text) {
@@ -78,11 +72,29 @@ class URLDescriptorNode extends DescriptorNode {
 
 			return last != -1 ? (text.substring(0, last + 1) + "...") : text;
 		}
+
+		private Color getValueColour() {
+
+			return mousePresent ? SELECTED_VALUE_CLR : SELECTABLE_VALUE_CLR;
+		}
+	}
+
+	private class URLCellDisplay extends DescriptorCellDisplay {
+
+		URLCellDisplay() {
+
+			super(URLDescriptorNode.this, descriptor);
+		}
+
+		GCellDisplay createForValue(String label) {
+
+			return new ValueCellDisplay(label);
+		}
 	}
 
 	protected GCellDisplay getDisplay() {
 
-		return new CellDisplay().create();
+		return new URLCellDisplay().create();
 	}
 
 	URLDescriptorNode(InstanceTree tree, Descriptor descriptor) {

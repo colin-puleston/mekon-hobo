@@ -32,22 +32,22 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceDialog extends InstanceSectionDialog {
+abstract class InstanceDialog extends InstanceTreeDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_FORMAT = "%s (%s)";
-
 	static private final String STORE_BUTTON_LABEL = "Store";
 	static private final String STORE_AS_BUTTON_LABEL = "Store As...";
+	static private final String SUMMARY_BUTTON_LABEL_FORMAT = "%s...";
 
-	static private String createTitle(Instantiator instantiator, CIdentity storeId) {
+	static private String createSummaryButtonLabel(Instantiator instantiator) {
 
 		return String.format(
-					TITLE_FORMAT,
-					createSectionTitle(instantiator),
-					storeId.getLabel());
+					SUMMARY_BUTTON_LABEL_FORMAT,
+					InstanceSummaryHandler.getSummaryLabel(instantiator));
 	}
+
+	private Instantiator instantiator;
 
 	private CIdentity storeId;
 	private boolean allowStoreOverwrite = true;
@@ -75,7 +75,7 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 
 		protected void doButtonThing() {
 
-			perfomStoreAsAction(this);
+			perfomStoreAsAction();
 		}
 
 		StoreAsButton() {
@@ -84,20 +84,66 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 		}
 	}
 
+	private class SummaryButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		private InstanceSummaryHandler summaryHandler;
+
+		private class Enabler extends EditListener {
+
+			Enabler() {
+
+				updateEnabling();
+				addEditListener(this);
+			}
+
+			void onTreeEdited() {
+
+				updateEnabling();
+			}
+
+			private void updateEnabling() {
+
+				setEnabled(summaryHandler.summaryEnabled());
+			}
+		}
+
+		protected void doButtonThing() {
+
+			IFrame updatedInstance = summaryHandler.displaySummary();
+
+			if (updatedInstance != null) {
+
+				updateInstance(updatedInstance);
+			}
+		}
+
+		SummaryButton() {
+
+			super(createSummaryButtonLabel(instantiator));
+
+			summaryHandler = new InstanceSummaryHandler(instantiator, getTree());
+
+			new Enabler();
+		}
+	}
+
 	InstanceDialog(
 		JComponent parent,
 		Instantiator instantiator,
-		CIdentity storeId,
 		InstanceDisplayMode startMode) {
 
 		super(
 			parent,
 			instantiator,
 			instantiator.getInstance(),
-			createTitle(instantiator, storeId),
+			createInstanceTitle(instantiator),
 			startMode);
 
-		this.storeId = storeId;
+		this.instantiator = instantiator;
+
+		storeId = instantiator.getStoreId();
 	}
 
 	void setAllowStoreOverwrite(boolean value) {
@@ -107,7 +153,7 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 
 	ControlsPanel checkCreateControlsPanel() {
 
-		if (!getInstanceGroup().editable()) {
+		if (!instantiator.editableInstance()) {
 
 			return null;
 		}
@@ -121,17 +167,22 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 
 		panel.addControl(new StoreAsButton());
 
+		if (getInstanceGroup().summariesEnabled()) {
+
+			panel.addControl(new SummaryButton());
+		}
+
 		return panel;
 	}
 
 	InstanceGroup getInstanceGroup() {
 
-		return getInstantiator().getInstanceGroup();
+		return instantiator.getInstanceGroup();
 	}
 
 	IFrame getInstance() {
 
-		return getInstantiator().getInstance();
+		return instantiator.getInstance();
 	}
 
 	CIdentity getStoreId() {
@@ -146,9 +197,9 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 
 	abstract boolean disposeOnStoring();
 
-	private void perfomStoreAsAction(JComponent parent) {
+	private void perfomStoreAsAction() {
 
-		CIdentity newStoreId = checkObtainNewStoreId(parent);
+		CIdentity newStoreId = checkObtainNewStoreId();
 
 		if (newStoreId != null) {
 
@@ -170,6 +221,13 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 		}
 	}
 
+	private void updateInstance(IFrame updatedInstance) {
+
+		dispose();
+
+		createInstanceOps().display(storeId, updatedInstance, getMode(), allowStoreOverwrite);
+	}
+
 	private boolean storeInstance(CIdentity storeAsId) {
 
 		boolean asNewId = !storeAsId.equals(storeId);
@@ -177,13 +235,13 @@ abstract class InstanceDialog extends InstanceSectionDialog {
 		return getInstanceGroup().checkAddInstance(getInstance(), storeAsId, asNewId);
 	}
 
-	private CIdentity checkObtainNewStoreId(JComponent parent) {
+	private CIdentity checkObtainNewStoreId() {
 
-		return createInstanceOps(parent).checkObtainNewStoreId(getInstance().getType());
+		return createInstanceOps().checkObtainNewStoreId(getInstance().getType());
 	}
 
-	private InstanceOps createInstanceOps(JComponent parent) {
+	private InstanceOps createInstanceOps() {
 
-		return new InstanceOps(parent, getInstanceGroup(), getInstantiator().getFunction());
+		return new InstanceOps(getTree(), getInstanceGroup(), instantiator.getFunction());
 	}
 }

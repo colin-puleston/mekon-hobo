@@ -24,7 +24,9 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.awt.*;
+import java.util.*;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
@@ -33,29 +35,38 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceSectionDialog extends GDialog {
+abstract class InstanceTreeDialog extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_FORMAT = "%s %s";
+	static private final String TITLE_FORMAT = "%s %s (%s)";
+	static private final String SUFFIXED_TITLE_FORMAT = "%s %s";
+
 	static private final String ASSERTION_FUNCTION_LABEL = "Instance";
 	static private final String QUERY_FUNCTION_LABEL = "Query";
 
 	static private final int FRAME_WIDTH = 600;
 
-	static String createSectionTitle(Instantiator instantiator) {
+	static String createInstanceTitle(Instantiator instantiator) {
 
 		return String.format(
 					TITLE_FORMAT,
 					getTypeLabel(instantiator),
-					getFunctionLabel(instantiator));
+					getFunctionLabel(instantiator),
+					instantiator.getStoreId().getLabel());
+	}
+
+	static String createInstanceTitle(Instantiator instantiator, String suffix) {
+
+		return String.format(
+					SUFFIXED_TITLE_FORMAT,
+					createInstanceTitle(instantiator),
+					suffix);
 	}
 
 	static private String getTypeLabel(Instantiator instantiator) {
 
-		Customiser customiser = instantiator.getController().getCustomiser();
-
-		return customiser.getValueDisplayLabel(instantiator.getInstance());
+		return instantiator.getInstance().getType().getIdentity().getLabel();
 	}
 
 	static private String getFunctionLabel(Instantiator instantiator) {
@@ -66,12 +77,67 @@ abstract class InstanceSectionDialog extends GDialog {
 	private Instantiator instantiator;
 	private InstanceTree instanceTree;
 
+	private List<EditButton> editButtons = new ArrayList<EditButton>();
+
+	abstract class EditListener extends GTreeListener {
+
+		protected void onNodeAdded(GNode node) {
+
+			onTreeEdited();
+		}
+
+		protected void onNodeRemoved(GNode node) {
+
+			onTreeEdited();
+		}
+
+		abstract void onTreeEdited();
+	}
+
+	abstract class EditButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		EditButton(String label) {
+
+			super(label);
+
+			editButtons.add(this);
+			updateEnabling();
+		}
+
+		void updateEnabling() {
+
+			setEnabled(enableButton());
+		}
+
+		boolean enableButton() {
+
+			return !viewOnly();
+		}
+	}
+
+	private class ModeSelector extends InstanceDisplayModeSelector {
+
+		static private final long serialVersionUID = -1;
+
+		ModeSelector() {
+
+			super(instanceTree);
+		}
+
+		void onModeUpdate() {
+
+			updateEditButtonEnabling();
+		}
+	}
+
 	public Dimension getPreferredSize() {
 
 		return new Dimension(FRAME_WIDTH, getPreferredHeight());
 	}
 
-	InstanceSectionDialog(
+	InstanceTreeDialog(
 		JComponent parent,
 		Instantiator instantiator,
 		IFrame rootFrame,
@@ -85,6 +151,11 @@ abstract class InstanceSectionDialog extends GDialog {
 		instanceTree = new InstanceTree(instantiator, rootFrame, startMode);
 	}
 
+	void addEditListener(EditListener editListener) {
+
+		instanceTree.addTreeListener(editListener);
+	}
+
 	void display() {
 
 		display(createDisplay());
@@ -95,12 +166,24 @@ abstract class InstanceSectionDialog extends GDialog {
 		return instantiator;
 	}
 
+	InstanceTree getTree() {
+
+		return instanceTree;
+	}
+
+	InstanceDisplayMode getMode() {
+
+		return instanceTree.getMode();
+	}
+
 	boolean viewOnly() {
 
 		return instanceTree.viewOnly();
 	}
 
-	void onViewOnlyUpdated() {
+	boolean fixedMode() {
+
+		return false;
 	}
 
 	abstract ControlsPanel checkCreateControlsPanel();
@@ -108,9 +191,15 @@ abstract class InstanceSectionDialog extends GDialog {
 	private JComponent createDisplay() {
 
 		JPanel panel = new JPanel(new BorderLayout());
-		ControlsPanel controls = checkCreateControlsPanel();
 
-		panel.add(createModeSelectorComponent(), BorderLayout.NORTH);
+		ControlsPanel controls = checkCreateControlsPanel();
+		JPanel modeSelector = checkCreateModeSelectorPanel();
+
+		if (modeSelector != null) {
+
+			panel.add(modeSelector, BorderLayout.NORTH);
+		}
+
 		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
 
 		if (controls != null) {
@@ -121,13 +210,33 @@ abstract class InstanceSectionDialog extends GDialog {
 		return panel;
 	}
 
-	private JComponent createModeSelectorComponent() {
+	private JPanel checkCreateModeSelectorPanel() {
+
+		if (fixedMode()) {
+
+			return null;
+		}
+
+		ModeSelector modeSelector = new ModeSelector();
+
+		if (modeSelector.singleMode()) {
+
+			return null;
+		}
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(new InstanceDisplayModeSelector(instanceTree), BorderLayout.WEST);
+		panel.add(modeSelector, BorderLayout.WEST);
 
 		return panel;
+	}
+
+	private void updateEditButtonEnabling() {
+
+		for (EditButton editButton : editButtons) {
+
+			editButton.updateEnabling();
+		}
 	}
 
 	private int getPreferredHeight() {

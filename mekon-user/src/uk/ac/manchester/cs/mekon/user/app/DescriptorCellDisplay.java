@@ -36,19 +36,6 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 	private DescriptorNode node;
 	private Descriptor descriptor;
 
-	private class IdentityCellDisplay extends GCellDisplay {
-
-		protected void onLabelAdded(JLabel label) {
-
-			onIdentityLabelAdded(label);
-		}
-
-		IdentityCellDisplay() {
-
-			super(descriptor.getIdentityLabel(!query()));
-		}
-	}
-
 	DescriptorCellDisplay(DescriptorNode node, Descriptor descriptor) {
 
 		super(node);
@@ -59,7 +46,7 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 
 	GCellDisplay createDefault() {
 
-		GCellDisplay display = new IdentityCellDisplay();
+		GCellDisplay display = new GCellDisplay(getIdentityLabel());
 
 		if (descriptor.hasValue()) {
 
@@ -74,12 +61,14 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 		return descriptor.hasValue() ? getValueIcon() : MekonAppIcons.VALUE_ENTRY;
 	}
 
-	void onIdentityLabelAdded(JLabel label) {
-	}
-
 	private GCellDisplay createForValue() {
 
 		return createForValue(descriptor.getValueDisjunctLabels());
+	}
+
+	private String getIdentityLabel() {
+
+		return descriptor.getIdentityLabel(!node.showQuerySemantics());
 	}
 
 	private Icon getValueIcon() {

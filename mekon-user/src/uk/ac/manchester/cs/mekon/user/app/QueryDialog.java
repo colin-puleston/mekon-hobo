@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.mekon.user.app;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -59,10 +58,9 @@ class QueryDialog extends InstanceDialog {
 	QueryDialog(
 		JComponent parent,
 		Instantiator instantiator,
-		CIdentity storeId,
 		InstanceDisplayMode startMode) {
 
-		super(parent, instantiator, storeId, startMode);
+		super(parent, instantiator, startMode);
 
 		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
 	}

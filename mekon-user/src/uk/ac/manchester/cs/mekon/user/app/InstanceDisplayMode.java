@@ -27,4 +27,4 @@ package uk.ac.manchester.cs.mekon.user.app;
 /**
  * @author Colin Puleston
  */
-enum InstanceDisplayMode {EDIT, VIEW, SEMANTICS};
+enum InstanceDisplayMode {EDIT, VIEW, SEMANTICS}

@@ -30,7 +30,7 @@ import javax.swing.*;
 /**
  * @author Colin Puleston
  */
-class InstanceDisplayModeSelector extends JPanel {
+abstract class InstanceDisplayModeSelector extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
@@ -55,6 +55,8 @@ class InstanceDisplayModeSelector extends JPanel {
 
 				selected.setSelected(false);
 				selected = this;
+
+				onModeUpdate();
 			}
 			else {
 
@@ -86,10 +88,12 @@ class InstanceDisplayModeSelector extends JPanel {
 		populate(instanceTree.getInstantiator());
 	}
 
-	boolean multipleModes() {
+	boolean singleMode() {
 
-		return getComponentCount() > 1;
+		return getComponentCount() == 1;
 	}
+
+	abstract void onModeUpdate();
 
 	private void populate(Instantiator instantiator) {
 

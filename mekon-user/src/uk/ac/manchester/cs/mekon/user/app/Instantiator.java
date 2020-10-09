@@ -68,6 +68,11 @@ class Instantiator {
 		return anyEditableSlots() && (queryInstance() || instanceGroup.editable());
 	}
 
+	boolean editableSummary() {
+
+		return anyEditableSlots() && queryInstance();
+	}
+
 	IFrame instantiate(CFrame type) {
 
 		return type.instantiate(getFunction());

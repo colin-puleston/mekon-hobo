@@ -38,7 +38,7 @@ class InstanceGroup {
 	private Store store;
 
 	private CFrame rootType;
-	private CFrame simpleQueriesRootType;
+	private CFrame summariesRootType;
 
 	private Map<CIdentity, CFrame> instancesToNonRootTypes = new HashMap<CIdentity, CFrame>();
 
@@ -57,20 +57,16 @@ class InstanceGroup {
 		this.editable = editable;
 
 		store = controller.getStore();
-		simpleQueriesRootType = getSimpleQueriesRootTypeOrNull();
+
+		summariesRootType = getSummariesRootTypeOrNull();
 		queriesEnabled = testQueriesEnabled();
 
 		rootAssertionIds = new InstanceIdsList(this, false);
 		rootQueryIds = new InstanceIdsList(this, true);
 
-		queryExecutions = new QueryExecutions(controller, this);
+		queryExecutions = new QueryExecutions(store);
 
-		loadInstanceIds(rootType);
-
-		if (simpleQueriesRootType != null) {
-
-			loadInstanceIds(simpleQueriesRootType);
-		}
+		loadInstanceIds();
 	}
 
 	InstanceIdsList createAssertionIdsList(CFrame type) {
@@ -115,29 +111,14 @@ class InstanceGroup {
 		return queriesEnabled;
 	}
 
-	boolean simpleQueriesEnabled() {
+	boolean summariesEnabled() {
 
-		return simpleQueriesRootType != null;
-	}
-
-	CFrame getSimpleQueriesRootType() {
-
-		if (simpleQueriesRootType == null) {
-
-			throw new Error("Should never happen!");
-		}
-
-		return simpleQueriesRootType;
+		return summariesRootType != null;
 	}
 
 	boolean includesInstancesOfType(CFrame type) {
 
-		return rootType.subsumes(type) || includesSimpleQueriesOfType(type);
-	}
-
-	boolean includesSimpleQueriesOfType(CFrame type) {
-
-		return simpleQueriesEnabled() && simpleQueriesRootType.subsumes(type);
+		return rootType.subsumes(type) || includesSummariesOfType(type);
 	}
 
 	CFrame getInstanceType(CIdentity storeId) {
@@ -193,9 +174,9 @@ class InstanceGroup {
 		}
 	}
 
-	private void loadInstanceIds(CFrame loadRootType) {
+	private void loadInstanceIds() {
 
-		for (CIdentity storeId : store.getInstanceIds(loadRootType)) {
+		for (CIdentity storeId : store.getInstanceIds(rootType)) {
 
 			updateTypesForAddition(storeId);
 			getInstanceIdsList(storeId).addId(storeId);
@@ -232,16 +213,21 @@ class InstanceGroup {
 		return controller.anyEditableSlots(rootType.instantiate(IFrameFunction.QUERY));
 	}
 
-	private CFrame getSimpleQueriesRootTypeOrNull() {
+	private CFrame getSummariesRootTypeOrNull() {
 
-		SimpleQueriesConfig cfg = getSimpleQueriesConfig();
+		InstanceSummariser sm = getInstanceSummariser();
 
-		return cfg.simpleQueriesFor(rootType) ? cfg.toSimpleQueryType(rootType) : null;
+		return sm.summariesFor(rootType) ? sm.toSummaryType(rootType) : null;
 	}
 
-	private SimpleQueriesConfig getSimpleQueriesConfig() {
+	private boolean includesSummariesOfType(CFrame type) {
 
-		return controller.getCustomiser().getSimpleQueriesConfig();
+		return summariesEnabled() && summariesRootType.subsumes(type);
+	}
+
+	private InstanceSummariser getInstanceSummariser() {
+
+		return controller.getCustomiser().getInstanceSummariser();
 	}
 
 	private InstanceIdsList getInstanceIdsList(CIdentity storeId) {

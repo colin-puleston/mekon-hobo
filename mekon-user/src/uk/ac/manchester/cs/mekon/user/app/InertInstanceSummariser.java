@@ -24,16 +24,52 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import javax.swing.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public interface SimpleQueriesConfig {
+class InertInstanceSummariser implements InstanceSummariser {
 
-	public boolean simpleQueriesFor(CFrame executableType);
+	static final InertInstanceSummariser SINGLETON = new InertInstanceSummariser();
 
-	public CFrame toSimpleQueryType(CFrame executableType);
+	public boolean summariesFor(CFrame instanceType) {
 
-	public IFrame toExecutable(IFrame simpleQuery);
+		return false;
+	}
+
+	public CFrame toSummaryType(CFrame instanceType) {
+
+		throw createNoSummariesException(instanceType);
+	}
+
+	public IFrame toSummary(IFrame instance) {
+
+		throw createNoSummariesException(instance.getType());
+	}
+
+	public IFrame toInstance(IFrame summary) {
+
+		throw createNotSummaryTypeException(summary.getType());
+	}
+
+	public boolean reversiblySummarisable(IFrame instance) {
+
+		throw createNoSummariesException(instance.getType());
+	}
+
+	private InertInstanceSummariser() {
+	}
+
+	private RuntimeException createNoSummariesException(CFrame instanceType) {
+
+		return new RuntimeException("No summaries for instance type: " + instanceType);
+	}
+
+	private RuntimeException createNotSummaryTypeException(CFrame summaryType) {
+
+		return new RuntimeException("Summary type not recognised: " + summaryType);
+	}
 }

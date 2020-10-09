@@ -45,9 +45,9 @@ public class DefaultCustomiser implements Customiser {
 		return queryNameDefaults;
 	}
 
-	public SimpleQueriesConfig getSimpleQueriesConfig() {
+	public InstanceSummariser getInstanceSummariser() {
 
-		return InertSimpleQueriesConfig.SINGLETON;
+		return InertInstanceSummariser.SINGLETON;
 	}
 
 	public ValueObtainerFactory getValueObtainerFactory() {
