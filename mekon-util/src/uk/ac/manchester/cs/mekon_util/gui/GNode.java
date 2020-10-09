@@ -163,6 +163,8 @@ public abstract class GNode extends GMutableTreeNode {
 
 			tree.updateAllNodeDisplays();
 		}
+
+		tree.registerNodeAdded(child);
 	}
 
 	public void clearChildren() {
@@ -438,7 +440,9 @@ public abstract class GNode extends GMutableTreeNode {
 		getChildList().performRemoval(child);
 
 		getTreeModel().nodesWereRemoved(this, oldIndex, oldChild);
+
 		tree.updateAllNodeDisplays();
+		tree.registerNodeRemoved(child);
 	}
 
 	private ChildList getChildList() {

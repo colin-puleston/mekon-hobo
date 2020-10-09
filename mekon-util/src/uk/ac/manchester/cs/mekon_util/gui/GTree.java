@@ -39,9 +39,16 @@ public class GTree extends JTree {
 	private DefaultTreeModel treeModel = null;
 	private GNode rootNode = null;
 
+	private List<GTreeListener> treeListeners = new ArrayList<GTreeListener>();
+
 	public GTree(boolean multiSelect) {
 
 		getSelectionModel().setSelectionMode(getSelectionMode(multiSelect));
+	}
+
+	public void addTreeListener(GTreeListener treeListener) {
+
+		treeListeners.add(treeListener);
 	}
 
 	public void initialise(GNode rootNode) {
@@ -133,6 +140,22 @@ public class GTree extends JTree {
 		return nodes;
 	}
 
+	void registerNodeAdded(GNode node) {
+
+		for (GTreeListener listener : copyTreeListeners()) {
+
+			listener.onNodeAdded(node);
+		}
+	}
+
+	void registerNodeRemoved(GNode node) {
+
+		for (GTreeListener listener : copyTreeListeners()) {
+
+			listener.onNodeRemoved(node);
+		}
+	}
+
 	DefaultTreeModel getTreeModel() {
 
 		return treeModel;
@@ -156,5 +179,10 @@ public class GTree extends JTree {
 		return multiSelect
 				? TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION
 				: TreeSelectionModel.SINGLE_TREE_SELECTION;
+	}
+
+	private List<GTreeListener> copyTreeListeners() {
+
+		return new ArrayList<GTreeListener>(treeListeners);
 	}
 }
