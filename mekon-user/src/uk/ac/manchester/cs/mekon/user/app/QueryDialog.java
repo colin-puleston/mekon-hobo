@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.user.app;
 
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -35,9 +36,85 @@ class QueryDialog extends InstanceDialog {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String TO_COMPRESSED_BUTTON_LABEL = "Compressed...";
+	static private final String TO_EXPANDED_BUTTON_LABEL = "Expanded...";
 	static private final String EXECUTE_BUTTON_LABEL = "Execute";
 
+	static private IFrame determineActiveRootFrame(Instantiator instantiator) {
+
+		IFrame defaultRootFrame = instantiator.getInstance();
+		InstanceSummariser summariser = getSummariser(instantiator);
+
+		if (summariser.reversiblySummarisable(defaultRootFrame)) {
+
+			return summariser.toSummary(defaultRootFrame);
+		}
+
+		return defaultRootFrame;
+	}
+
+	static private InstanceSummariser getSummariser(Instantiator instantiator) {
+
+		return instantiator.getController().getCustomiser().getInstanceSummariser();
+	}
+
+	private JComponent parent;
+
+	private IFrame rootFrame;
+
+	private InstanceSummariser summariser;
 	private QueryExecutions queryExecutions;
+
+	private class ToCompressedButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		private class Enabler extends EditListener {
+
+			Enabler() {
+
+				updateEnabling();
+				addEditListener(this);
+			}
+
+			void onTreeEdited() {
+
+				updateEnabling();
+			}
+
+			private void updateEnabling() {
+
+				setEnabled(compressible());
+			}
+		}
+
+		protected void doButtonThing() {
+
+			switchToCompressedDisplay();
+		}
+
+		ToCompressedButton() {
+
+			super(TO_COMPRESSED_BUTTON_LABEL);
+
+			new Enabler();
+		}
+	}
+
+	private class ToExpandedButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			switchToExpandedDisplay();
+		}
+
+		ToExpandedButton() {
+
+			super(TO_EXPANDED_BUTTON_LABEL);
+		}
+	}
 
 	private class ExecuteButton extends GButton {
 
@@ -45,7 +122,6 @@ class QueryDialog extends InstanceDialog {
 
 		protected void doButtonThing() {
 
-			dispose();
 			execute();
 		}
 
@@ -60,9 +136,7 @@ class QueryDialog extends InstanceDialog {
 		Instantiator instantiator,
 		InstanceDisplayMode startMode) {
 
-		super(parent, instantiator, startMode);
-
-		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
+		this(parent, instantiator, determineActiveRootFrame(instantiator), startMode);
 	}
 
 	ControlsPanel checkCreateControlsPanel( ) {
@@ -76,7 +150,24 @@ class QueryDialog extends InstanceDialog {
 
 		panel.addControl(new ExecuteButton());
 
+		if (displayingCompressed()) {
+
+			panel.addControl(new ToExpandedButton());
+		}
+		else {
+
+			if (getInstanceGroup().summariesEnabled()) {
+
+				panel.addControl(new ToCompressedButton());
+			}
+		}
+
 		return panel;
+	}
+
+	IFrame resolveInstanceForStoring() {
+
+		return resolveToExpanded();
 	}
 
 	boolean disposeOnStoring() {
@@ -84,8 +175,68 @@ class QueryDialog extends InstanceDialog {
 		return false;
 	}
 
+	private QueryDialog(
+				JComponent parent,
+				Instantiator instantiator,
+				IFrame rootFrame,
+				InstanceDisplayMode startMode) {
+
+		super(parent, instantiator, rootFrame, startMode);
+
+		this.parent = parent;
+		this.rootFrame = rootFrame;
+
+		summariser = getSummariser(instantiator);
+	}
+
+	private void switchToCompressedDisplay() {
+
+		switchDisplay(getInstantiator(), compressExpanded());
+	}
+
+	private void switchToExpandedDisplay() {
+
+		IFrame expanded = expandCompressed();
+
+		switchDisplay(getInstantiator().deriveInstantiator(expanded), expanded);
+	}
+
+	private void switchDisplay(Instantiator newInstantiator, IFrame newRootFrame) {
+
+		dispose();
+
+		new QueryDialog(parent, newInstantiator, newRootFrame, getMode()).display();
+	}
+
 	private void execute() {
 
-		queryExecutions.execute(getStoreId(), getInstance());
+		dispose();
+
+		queryExecutions.execute(getStoreId(), resolveToExpanded());
+	}
+
+	private IFrame resolveToExpanded() {
+
+		return displayingCompressed() ? expandCompressed() : rootFrame;
+	}
+
+	private IFrame expandCompressed() {
+
+		return summariser.toInstance(rootFrame);
+	}
+
+	private IFrame compressExpanded() {
+
+		return summariser.toSummary(rootFrame);
+	}
+
+	private boolean compressible() {
+
+		return summariser.reversiblySummarisable(rootFrame);
+	}
+
+	private boolean displayingCompressed() {
+
+		return rootFrame != getInstance();
 	}
 }

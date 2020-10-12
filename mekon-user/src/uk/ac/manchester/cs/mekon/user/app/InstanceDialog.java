@@ -38,14 +38,6 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 	static private final String STORE_BUTTON_LABEL = "Store";
 	static private final String STORE_AS_BUTTON_LABEL = "Store As...";
-	static private final String SUMMARY_BUTTON_LABEL_FORMAT = "%s...";
-
-	static private String createSummaryButtonLabel(Instantiator instantiator) {
-
-		return String.format(
-					SUMMARY_BUTTON_LABEL_FORMAT,
-					InstanceSummaryHandler.getSummaryLabel(instantiator));
-	}
 
 	private Instantiator instantiator;
 
@@ -84,62 +76,21 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		}
 	}
 
-	private class SummaryButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		private InstanceSummaryHandler summaryHandler;
-
-		private class Enabler extends EditListener {
-
-			Enabler() {
-
-				updateEnabling();
-				addEditListener(this);
-			}
-
-			void onTreeEdited() {
-
-				updateEnabling();
-			}
-
-			private void updateEnabling() {
-
-				setEnabled(summaryHandler.summaryEnabled());
-			}
-		}
-
-		protected void doButtonThing() {
-
-			IFrame updatedInstance = summaryHandler.displaySummary();
-
-			if (updatedInstance != null) {
-
-				updateInstance(updatedInstance);
-			}
-		}
-
-		SummaryButton() {
-
-			super(createSummaryButtonLabel(instantiator));
-
-			summaryHandler = new InstanceSummaryHandler(instantiator, getTree());
-
-			new Enabler();
-		}
-	}
-
 	InstanceDialog(
 		JComponent parent,
 		Instantiator instantiator,
 		InstanceDisplayMode startMode) {
 
-		super(
-			parent,
-			instantiator,
-			instantiator.getInstance(),
-			createInstanceTitle(instantiator),
-			startMode);
+		this(parent, instantiator, instantiator.getInstance(), startMode);
+	}
+
+	InstanceDialog(
+		JComponent parent,
+		Instantiator instantiator,
+		IFrame rootFrame,
+		InstanceDisplayMode startMode) {
+
+		super(parent, instantiator, rootFrame, startMode);
 
 		this.instantiator = instantiator;
 
@@ -167,11 +118,6 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 		panel.addControl(new StoreAsButton());
 
-		if (getInstanceGroup().summariesEnabled()) {
-
-			panel.addControl(new SummaryButton());
-		}
-
 		return panel;
 	}
 
@@ -194,6 +140,8 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 		return instanceStored;
 	}
+
+	abstract IFrame resolveInstanceForStoring();
 
 	abstract boolean disposeOnStoring();
 
@@ -230,9 +178,10 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 	private boolean storeInstance(CIdentity storeAsId) {
 
+		IFrame instanceToStore = resolveInstanceForStoring();
 		boolean asNewId = !storeAsId.equals(storeId);
 
-		return getInstanceGroup().checkAddInstance(getInstance(), storeAsId, asNewId);
+		return getInstanceGroup().checkAddInstance(instanceToStore, storeAsId, asNewId);
 	}
 
 	private CIdentity checkObtainNewStoreId() {

@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceTreeDialog extends GDialog {
+class InstanceTreeDialog extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -47,21 +47,20 @@ abstract class InstanceTreeDialog extends GDialog {
 
 	static private final int FRAME_WIDTH = 600;
 
-	static String createInstanceTitle(Instantiator instantiator) {
+	static String createTitle(Instantiator instantiator, String suffix) {
 
-		return String.format(
-					TITLE_FORMAT,
-					getTypeLabel(instantiator),
-					getFunctionLabel(instantiator),
-					instantiator.getStoreId().getLabel());
-	}
+		String type = getTypeLabel(instantiator);
+		String function = getFunctionLabel(instantiator);
+		String storeId = instantiator.getStoreId().getLabel();
 
-	static String createInstanceTitle(Instantiator instantiator, String suffix) {
+		String title = String.format(TITLE_FORMAT, type, function, storeId);
 
-		return String.format(
-					SUFFIXED_TITLE_FORMAT,
-					createInstanceTitle(instantiator),
-					suffix);
+		if (suffix == null) {
+
+			return title;
+		}
+
+		return String.format(SUFFIXED_TITLE_FORMAT, title, suffix);
 	}
 
 	static private String getTypeLabel(Instantiator instantiator) {
@@ -141,10 +140,19 @@ abstract class InstanceTreeDialog extends GDialog {
 		JComponent parent,
 		Instantiator instantiator,
 		IFrame rootFrame,
-		String title,
 		InstanceDisplayMode startMode) {
 
-		super(parent, title, true);
+		this(parent, instantiator, rootFrame, startMode, null);
+	}
+
+	InstanceTreeDialog(
+		JComponent parent,
+		Instantiator instantiator,
+		IFrame rootFrame,
+		InstanceDisplayMode startMode,
+		String titleSuffix) {
+
+		super(parent, createTitle(instantiator, titleSuffix), true);
 
 		this.instantiator = instantiator;
 
@@ -186,7 +194,10 @@ abstract class InstanceTreeDialog extends GDialog {
 		return false;
 	}
 
-	abstract ControlsPanel checkCreateControlsPanel();
+	ControlsPanel checkCreateControlsPanel() {
+
+		return null;
+	}
 
 	private JComponent createDisplay() {
 

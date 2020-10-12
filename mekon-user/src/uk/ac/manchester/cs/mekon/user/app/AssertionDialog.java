@@ -26,12 +26,33 @@ package uk.ac.manchester.cs.mekon.user.app;
 
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
+
 /**
  * @author Colin Puleston
  */
 class AssertionDialog extends InstanceDialog {
 
 	static private final long serialVersionUID = -1;
+
+	static private final String SHOW_SUMMARY_BUTTON_LABEL = "Summary...";
+	static private final String SUMMARY_DIALOG_TITLE_SUFFIX = "Summary";
+
+	private class ShowSummaryButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			createSummaryDialog().display();
+		}
+
+		ShowSummaryButton() {
+
+			super(SHOW_SUMMARY_BUTTON_LABEL);
+		}
+	}
 
 	AssertionDialog(
 		JComponent parent,
@@ -41,8 +62,50 @@ class AssertionDialog extends InstanceDialog {
 		super(parent, instantiator, startMode);
 	}
 
+	ControlsPanel checkCreateControlsPanel( ) {
+
+		ControlsPanel panel = super.checkCreateControlsPanel();
+
+		if (panel == null) {
+
+			panel = new ControlsPanel(true);
+		}
+
+		if (getInstanceGroup().summariesEnabled()) {
+
+			panel.addControl(new ShowSummaryButton());
+		}
+
+		return panel;
+	}
+
+	IFrame resolveInstanceForStoring() {
+
+		return getInstance();
+	}
+
 	boolean disposeOnStoring() {
 
 		return true;
+	}
+
+	private InstanceTreeDialog createSummaryDialog() {
+
+		return new InstanceTreeDialog(
+						getTree(),
+						getInstantiator(),
+						getRootSummaryFrame(),
+						InstanceDisplayMode.VIEW,
+						SUMMARY_DIALOG_TITLE_SUFFIX);
+	}
+
+	private IFrame getRootSummaryFrame() {
+
+		return getSummariser().toSummary(getInstance());
+	}
+
+	private InstanceSummariser getSummariser() {
+
+		return getInstantiator().getController().getCustomiser().getInstanceSummariser();
 	}
 }

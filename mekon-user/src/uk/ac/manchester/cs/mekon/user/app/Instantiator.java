@@ -43,6 +43,16 @@ class Instantiator {
 		this.instance = instance;
 	}
 
+	Instantiator deriveInstantiator(IFrame currentInstance) {
+
+		if (currentInstance == instance) {
+
+			return this;
+		}
+
+		return new Instantiator(instanceGroup, storeId, currentInstance);
+	}
+
 	Controller getController() {
 
 		return instanceGroup.getController();

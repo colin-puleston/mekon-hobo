@@ -42,11 +42,6 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 	static private final String CLEAR_BUTTON_LABEL = "Clear";
 	static private final String REPLACE_BUTTON_LABEL = "Replace...";
 
-	static private String createSubSectionTitle(Instantiator instantiator) {
-
-		return createInstanceTitle(instantiator, TITLE_SUFFIX);
-	}
-
 	private boolean clearSelected = false;
 	private boolean replaceSelected = false;
 
@@ -105,12 +100,7 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 		IFrame rootFrame,
 		InstanceDisplayMode startMode) {
 
-		super(
-			parent,
-			instantiator,
-			rootFrame,
-			createSubSectionTitle(instantiator),
-			startMode);
+		super(parent, instantiator, rootFrame, startMode, TITLE_SUFFIX);
 	}
 
 	boolean clearSelected() {
