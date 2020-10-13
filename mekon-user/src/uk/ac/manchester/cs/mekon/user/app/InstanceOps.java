@@ -157,7 +157,7 @@ class InstanceOps {
 
 	private AtomicFrameSelector createTypeSelector(CFrame rootType) {
 
-		return new AtomicFrameSelector(parent, rootType, function.query(), false);
+		return new AtomicFrameSelector(parent, rootType, function.query(), false, customiser);
 	}
 
 	private CIdentity checkObtainStoreId(CFrame type, CIdentity refingId, CIdentity replacingId) {

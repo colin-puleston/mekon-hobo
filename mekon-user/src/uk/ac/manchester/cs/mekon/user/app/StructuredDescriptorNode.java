@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -35,47 +33,6 @@ class StructuredDescriptorNode extends DescriptorNode {
 
 	private DescriptorChildNodes childNodes;
 
-	private List<ArrayNodeReplacement> arrayNodeReplacements
-							= new ArrayList<ArrayNodeReplacement>();
-
-	private class ArrayNodeReplacement {
-
-		private DescriptorArrayNode arrayNode;
-		private List<DescriptorNode> elementNodes;
-
-		ArrayNodeReplacement(DescriptorArrayNode arrayNode) {
-
-			this.arrayNode = arrayNode;
-
-			elementNodes = arrayNode.getChildren(DescriptorNode.class);
-
-			replace();
-			arrayNodeReplacements.add(this);
-		}
-
-		void restore() {
-
-			addChild(arrayNode, getIndex(elementNodes.get(0)));
-			transferElementNodes(arrayNode, 0);
-		}
-
-		private void replace() {
-
-			transferElementNodes(StructuredDescriptorNode.this, getIndex(arrayNode));
-			arrayNode.remove();
-		}
-
-		private void transferElementNodes(InstanceNode newParentNode, int index) {
-
-			for (DescriptorNode elementNode : elementNodes) {
-
-				elementNode.remove();
-
-				newParentNode.addChild(elementNode, index++);
-			}
-		}
-	}
-
 	protected void addInitialChildren() {
 
 		childNodes.addInitialChildren();
@@ -83,7 +40,7 @@ class StructuredDescriptorNode extends DescriptorNode {
 
 	protected void onChildrenInitialised() {
 
-		checkArrayNodesReplace();
+		childNodes.onChildrenInitialised();
 	}
 
 	StructuredDescriptorNode(InstanceTree tree, Descriptor descriptor) {
@@ -95,29 +52,6 @@ class StructuredDescriptorNode extends DescriptorNode {
 
 	void updateChildList() {
 
-		checkArrayNodesRestore();
 		childNodes.update();
-		checkArrayNodesReplace();
-	}
-
-	private void checkArrayNodesReplace() {
-
-		if (showQuerySemantics()) {
-
-			for (DescriptorArrayNode arrayNode : getChildren(DescriptorArrayNode.class)) {
-
-				new ArrayNodeReplacement(arrayNode);
-			}
-		}
-	}
-
-	private void checkArrayNodesRestore() {
-
-		for (ArrayNodeReplacement replacement : arrayNodeReplacements) {
-
-			replacement.restore();
-		}
-
-		arrayNodeReplacements.clear();
 	}
 }

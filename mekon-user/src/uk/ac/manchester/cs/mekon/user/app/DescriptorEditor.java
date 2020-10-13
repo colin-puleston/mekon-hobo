@@ -199,13 +199,14 @@ class DescriptorEditor {
 		Inputter<CFrame> createInputter(boolean canClear) {
 
 			boolean query = instantiator.queryInstance();
+			Customiser cust = getCustomiser();
 
 			if (abstractEditableSlot()) {
 
-				return new DisjunctionFrameSelector(parent, rootCFrame, query, canClear);
+				return new DisjunctionFrameSelector(parent, rootCFrame, query, canClear, cust);
 			}
 
-			return new AtomicFrameSelector(parent, rootCFrame, query, canClear);
+			return new AtomicFrameSelector(parent, rootCFrame, query, canClear, cust);
 		}
 	}
 

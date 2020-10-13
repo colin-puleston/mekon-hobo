@@ -76,6 +76,11 @@ class RootInstanceNode extends InstanceNode {
 		childNodes.addInitialChildren();
 	}
 
+	protected void onChildrenInitialised() {
+
+		childNodes.onChildrenInitialised();
+	}
+
 	protected GCellDisplay getDisplay() {
 
 		return new CellDisplay().create();

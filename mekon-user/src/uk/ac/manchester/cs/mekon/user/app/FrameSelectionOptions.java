@@ -42,6 +42,8 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 	private CFrame rootFrame;
 	private boolean forQuery;
 
+	private Customiser customiser;
+
 	private OptionsTree optionsTree = new OptionsTree();
 	private OptionsFilterPanel optionsFilterPanel = new OptionsFilterPanel();
 
@@ -142,12 +144,14 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 	FrameSelectionOptions(
 		EntitySelector<CFrame> selector,
 		CFrame rootFrame,
-		boolean forQuery) {
+		boolean forQuery,
+		Customiser customiser) {
 
 		super(selector);
 
 		this.rootFrame = rootFrame;
 		this.forQuery = forQuery;
+		this.customiser = customiser;
 
 		optionsTree.initialise();
 	}
@@ -164,7 +168,12 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 
 	GCellDisplay getFrameCellDisplay(CFrame frame) {
 
-		return new GCellDisplay(frame.getDisplayLabel(), getFrameIcon());
+		return new GCellDisplay(getDisplayLabel(frame), getFrameIcon());
+	}
+
+	private String getDisplayLabel(CFrame frame) {
+
+		return customiser.getTypeDisplayLabel(frame);
 	}
 
 	private Icon getFrameIcon() {

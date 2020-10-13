@@ -191,7 +191,7 @@ class InstanceTreeDialog extends GDialog {
 
 	boolean fixedMode() {
 
-		return false;
+		return instantiator.assertionInstance() && !instantiator.editableInstance();
 	}
 
 	ControlsPanel checkCreateControlsPanel() {
@@ -228,16 +228,9 @@ class InstanceTreeDialog extends GDialog {
 			return null;
 		}
 
-		ModeSelector modeSelector = new ModeSelector();
-
-		if (modeSelector.singleMode()) {
-
-			return null;
-		}
-
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(modeSelector, BorderLayout.WEST);
+		panel.add(new ModeSelector(), BorderLayout.WEST);
 
 		return panel;
 	}

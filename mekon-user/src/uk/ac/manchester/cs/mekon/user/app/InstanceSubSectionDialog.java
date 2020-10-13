@@ -42,6 +42,8 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 	static private final String CLEAR_BUTTON_LABEL = "Clear";
 	static private final String REPLACE_BUTTON_LABEL = "Replace...";
 
+	private boolean enableReplace;
+
 	private boolean clearSelected = false;
 	private boolean replaceSelected = false;
 
@@ -98,9 +100,12 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 		JComponent parent,
 		Instantiator instantiator,
 		IFrame rootFrame,
-		InstanceDisplayMode startMode) {
+		InstanceDisplayMode startMode,
+		boolean enableReplace) {
 
 		super(parent, instantiator, rootFrame, startMode, TITLE_SUFFIX);
+
+		this.enableReplace = enableReplace;
 	}
 
 	boolean clearSelected() {
@@ -124,7 +129,11 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 
 		panel.addControl(new OkButton());
 		panel.addControl(new ClearButton());
-		panel.addControl(new ReplaceButton());
+
+		if (enableReplace) {
+
+			panel.addControl(new ReplaceButton());
+		}
 
 		return panel;
 	}

@@ -43,14 +43,23 @@ class QueryDialog extends InstanceDialog {
 	static private IFrame determineActiveRootFrame(Instantiator instantiator) {
 
 		IFrame defaultRootFrame = instantiator.getInstance();
-		InstanceSummariser summariser = getSummariser(instantiator);
 
-		if (summariser.reversiblySummarisable(defaultRootFrame)) {
+		if (summariesEnabled(instantiator)) {
 
-			return summariser.toSummary(defaultRootFrame);
+			InstanceSummariser summariser = getSummariser(instantiator);
+
+			if (summariser.reversiblySummarisable(defaultRootFrame)) {
+
+				return summariser.toSummary(defaultRootFrame);
+			}
 		}
 
 		return defaultRootFrame;
+	}
+
+	static private boolean summariesEnabled(Instantiator instantiator) {
+
+		return instantiator.getInstanceGroup().summariesEnabled();
 	}
 
 	static private InstanceSummariser getSummariser(Instantiator instantiator) {

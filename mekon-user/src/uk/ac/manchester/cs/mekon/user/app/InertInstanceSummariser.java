@@ -57,7 +57,7 @@ class InertInstanceSummariser implements InstanceSummariser {
 
 	public boolean reversiblySummarisable(IFrame instance) {
 
-		throw createNoSummariesException(instance.getType());
+		return false;
 	}
 
 	private InertInstanceSummariser() {

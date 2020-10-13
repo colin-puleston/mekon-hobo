@@ -91,11 +91,26 @@ class InstanceSubSectionHandler {
 
 	private InstanceSubSectionDialog createDialog(InstanceDisplayMode startMode) {
 
-		return new InstanceSubSectionDialog(parent, instantiator, rootFrame, startMode);
+		return new InstanceSubSectionDialog(
+						parent,
+						instantiator,
+						rootFrame,
+						startMode,
+						replacableValue());
 	}
 
 	private void removeValue() {
 
 		containerSlot.getValuesEditor().remove(rootFrame);
+	}
+
+	private boolean replacableValue() {
+
+		return !getSlotValueTypeFrame().getSubs(CVisibility.EXPOSED).isEmpty();
+	}
+
+	private CFrame getSlotValueTypeFrame() {
+
+		return (CFrame)containerSlot.getValueType();
 	}
 }

@@ -278,7 +278,9 @@ class Descriptor {
 
 	private boolean editableSlot() {
 
-		return slot.getEditability().editable();
+		return !getCustomiser().hiddenSlot(slot)
+				&& slot.getType().getActivation().active()
+				&& slot.getEditability().editable();
 	}
 
 	private boolean multiValuedSlot() {

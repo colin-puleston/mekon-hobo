@@ -41,11 +41,12 @@ class AtomicFrameSelector extends AtomicEntitySelector<CFrame> {
 		JComponent parent,
 		CFrame rootFrame,
 		boolean forQuery,
-		boolean canClear) {
+		boolean canClear,
+		Customiser customiser) {
 
 		super(parent, getTypeName(rootFrame), canClear);
 
-		selectionOptions = new FrameSelectionOptions(this, rootFrame, forQuery);
+		selectionOptions = new FrameSelectionOptions(this, rootFrame, forQuery, customiser);
 	}
 
 	JComponent createOptionsComponent() {

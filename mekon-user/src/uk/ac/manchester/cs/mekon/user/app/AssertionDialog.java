@@ -39,13 +39,35 @@ class AssertionDialog extends InstanceDialog {
 	static private final String SHOW_SUMMARY_BUTTON_LABEL = "Summary...";
 	static private final String SUMMARY_DIALOG_TITLE_SUFFIX = "Summary";
 
+	private class SummaryDialog extends InstanceTreeDialog {
+
+		static private final long serialVersionUID = -1;
+
+		SummaryDialog(JComponent parent, Instantiator instantiator) {
+
+			super(
+				parent,
+				instantiator,
+				getRootSummaryFrame(),
+				InstanceDisplayMode.VIEW,
+				SUMMARY_DIALOG_TITLE_SUFFIX);
+
+			display();
+		}
+
+		boolean fixedMode() {
+
+			return true;
+		}
+	}
+
 	private class ShowSummaryButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			createSummaryDialog().display();
+			new SummaryDialog(getTree(), getInstantiator());
 		}
 
 		ShowSummaryButton() {
@@ -87,16 +109,6 @@ class AssertionDialog extends InstanceDialog {
 	boolean disposeOnStoring() {
 
 		return true;
-	}
-
-	private InstanceTreeDialog createSummaryDialog() {
-
-		return new InstanceTreeDialog(
-						getTree(),
-						getInstantiator(),
-						getRootSummaryFrame(),
-						InstanceDisplayMode.VIEW,
-						SUMMARY_DIALOG_TITLE_SUFFIX);
 	}
 
 	private IFrame getRootSummaryFrame() {

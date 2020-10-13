@@ -88,11 +88,6 @@ abstract class InstanceDisplayModeSelector extends JPanel {
 		populate(instanceTree.getInstantiator());
 	}
 
-	boolean singleMode() {
-
-		return getComponentCount() == 1;
-	}
-
 	abstract void onModeUpdate();
 
 	private void populate(Instantiator instantiator) {

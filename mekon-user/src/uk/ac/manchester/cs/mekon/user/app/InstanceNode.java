@@ -60,7 +60,7 @@ abstract class InstanceNode extends GNode {
 			child.initialiseExpansion();
 		}
 
-		if (getNodeLevel() > 0) {
+		if (!queryInstance() && getNodeLevel() > 0) {
 
 			collapse();
 		}

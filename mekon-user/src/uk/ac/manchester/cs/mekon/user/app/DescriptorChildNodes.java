@@ -45,6 +45,8 @@ class DescriptorChildNodes {
 	private SlotUpdateRelayer slotUpdateRelayer;
 	private ValueUpdateRelayer valueUpdateRelayer;
 
+	private ArrayNodeReplacements arrayNodeReplacements;
+
 	private class Updater {
 
 		private FrameDescriptors oldFrameDescriptors = frameDescriptors;
@@ -187,11 +189,17 @@ class DescriptorChildNodes {
 
 		slotUpdateRelayer = new SlotUpdateRelayer();
 		valueUpdateRelayer = new ValueUpdateRelayer(container);
+
+		arrayNodeReplacements = new ArrayNodeReplacements(parentNode);
 	}
 
 	void update() {
 
+		arrayNodeReplacements.checkRestore();
+
 		new Updater();
+
+		arrayNodeReplacements.checkReplace();
 	}
 
 	void addInitialChildren() {
@@ -200,6 +208,11 @@ class DescriptorChildNodes {
 
 			addChild(slotDescriptors, -1);
 		}
+	}
+
+	void onChildrenInitialised() {
+
+		arrayNodeReplacements.checkReplace();
 	}
 
 	private void addChild(SlotDescriptors slotDescriptors, int index) {
