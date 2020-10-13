@@ -102,7 +102,7 @@ public class DefaultCustomiser implements Customiser {
 
 	public String getAtomicFrameDisplayLabel(IFrame frame) {
 
-		return frame.getDisplayLabel();
+		return getTypeDisplayLabel(frame.getType());
 	}
 
 	public String getReferenceFrameDisplayLabel(IFrame reference) {

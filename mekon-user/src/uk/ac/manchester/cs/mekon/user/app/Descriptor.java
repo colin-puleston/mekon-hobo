@@ -174,7 +174,7 @@ class Descriptor {
 			return Collections.singletonList(getAtomicValueLabel(value));
 		}
 
-		return Collections.singletonList(getValueTypeLabel());
+		return Collections.singletonList(getTypeLabel(valueType));
 	}
 
 	private String getIdentityLabelArrayIndexSuffix() {
@@ -200,15 +200,15 @@ class Descriptor {
 
 		for (CFrame disjunct : frame.asDisjuncts()) {
 
-			labels.add(getAtomicValueLabel(disjunct));
+			labels.add(getTypeLabel(disjunct));
 		}
 
 		return labels;
 	}
 
-	private String getValueTypeLabel() {
+	private String getTypeLabel(CValue<?> type) {
 
-		return getCustomiser().getTypeDisplayLabel(valueType);
+		return getCustomiser().getTypeDisplayLabel(type);
 	}
 
 	private String getAtomicValueLabel(IValue atomicValue) {
