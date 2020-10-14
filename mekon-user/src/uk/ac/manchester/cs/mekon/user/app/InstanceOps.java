@@ -203,7 +203,7 @@ class InstanceOps {
 			return new AssertionDialog(parent, instantiator, startMode);
 		}
 
-		return new QueryDialog(parent, instantiator, startMode);
+		return QueryDialog.create(parent, instantiator, startMode);
 	}
 
 	private String getNextInstanceNameDefault(CFrame type, CIdentity refingId) {

@@ -81,16 +81,17 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		Instantiator instantiator,
 		InstanceDisplayMode startMode) {
 
-		this(parent, instantiator, instantiator.getInstance(), startMode);
+		this(parent, instantiator, instantiator.getInstance(), startMode, null);
 	}
 
 	InstanceDialog(
 		JComponent parent,
 		Instantiator instantiator,
 		IFrame rootFrame,
-		InstanceDisplayMode startMode) {
+		InstanceDisplayMode startMode,
+		String titleSuffix) {
 
-		super(parent, instantiator, rootFrame, startMode);
+		super(parent, instantiator, rootFrame, startMode, titleSuffix);
 
 		this.instantiator = instantiator;
 

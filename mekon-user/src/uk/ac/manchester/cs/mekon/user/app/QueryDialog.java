@@ -36,35 +36,87 @@ class QueryDialog extends InstanceDialog {
 
 	static private final long serialVersionUID = -1;
 
+	static private final String COMPRESSED_VIEW_TITLE_SUFFIX = "COMPRESSED VIEW";
+
 	static private final String TO_COMPRESSED_BUTTON_LABEL = "Compressed...";
 	static private final String TO_EXPANDED_BUTTON_LABEL = "Expanded...";
 	static private final String EXECUTE_BUTTON_LABEL = "Execute";
 
-	static private IFrame determineActiveRootFrame(Instantiator instantiator) {
+	static private class Creator {
 
-		IFrame defaultRootFrame = instantiator.getInstance();
+		private Instantiator instantiator;
+		private InstanceSummariser summariser;
 
-		if (summariesEnabled(instantiator)) {
+		private IFrame rootFrame;
 
-			InstanceSummariser summariser = getSummariser(instantiator);
+		Creator(Instantiator instantiator) {
 
-			if (summariser.reversiblySummarisable(defaultRootFrame)) {
-
-				return summariser.toSummary(defaultRootFrame);
-			}
+			this(instantiator, null);
 		}
 
-		return defaultRootFrame;
+		Creator(Instantiator instantiator, IFrame requiredRootFrame) {
+
+			this.instantiator = instantiator;
+
+			summariser = getSummariser();
+			rootFrame = resolveRootFrame(requiredRootFrame);
+		}
+
+		QueryDialog create(JComponent parent, InstanceDisplayMode startMode) {
+
+			return new QueryDialog(
+							parent,
+							instantiator,
+							summariser,
+							rootFrame,
+							startMode,
+							getTitleSuffix());
+		}
+
+		private IFrame resolveRootFrame(IFrame requiredRoot) {
+
+			if (requiredRoot != null) {
+
+				return requiredRoot;
+			}
+
+			IFrame expandedRoot = instantiator.getInstance();
+
+			if (summariesEnabled() && summariser.reversiblySummarisable(expandedRoot)) {
+
+				return summariser.toSummary(expandedRoot);
+			}
+
+			return expandedRoot;
+		}
+
+		private String getTitleSuffix() {
+
+			return displayCompressed() ? COMPRESSED_VIEW_TITLE_SUFFIX : null;
+		}
+
+		private boolean displayCompressed() {
+
+			return rootFrame != instantiator.getInstance();
+		}
+
+		private boolean summariesEnabled() {
+
+			return instantiator.getInstanceGroup().summariesEnabled();
+		}
+
+		private InstanceSummariser getSummariser() {
+
+			return instantiator.getController().getCustomiser().getInstanceSummariser();
+		}
 	}
 
-	static private boolean summariesEnabled(Instantiator instantiator) {
+	static QueryDialog create(
+						JComponent parent,
+						Instantiator instantiator,
+						InstanceDisplayMode startMode) {
 
-		return instantiator.getInstanceGroup().summariesEnabled();
-	}
-
-	static private InstanceSummariser getSummariser(Instantiator instantiator) {
-
-		return instantiator.getController().getCustomiser().getInstanceSummariser();
+		return new Creator(instantiator).create(parent, startMode);
 	}
 
 	private JComponent parent;
@@ -140,14 +192,6 @@ class QueryDialog extends InstanceDialog {
 		}
 	}
 
-	QueryDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		InstanceDisplayMode startMode) {
-
-		this(parent, instantiator, determineActiveRootFrame(instantiator), startMode);
-	}
-
 	ControlsPanel checkCreateControlsPanel( ) {
 
 		ControlsPanel panel = super.checkCreateControlsPanel();
@@ -187,15 +231,17 @@ class QueryDialog extends InstanceDialog {
 	private QueryDialog(
 				JComponent parent,
 				Instantiator instantiator,
+				InstanceSummariser summariser,
 				IFrame rootFrame,
-				InstanceDisplayMode startMode) {
+				InstanceDisplayMode startMode,
+				String titleSuffix) {
 
-		super(parent, instantiator, rootFrame, startMode);
+		super(parent, instantiator, rootFrame, startMode, titleSuffix);
 
 		this.parent = parent;
+		this.summariser = summariser;
 		this.rootFrame = rootFrame;
 
-		summariser = getSummariser(instantiator);
 		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
 	}
 
@@ -215,7 +261,7 @@ class QueryDialog extends InstanceDialog {
 
 		dispose();
 
-		new QueryDialog(parent, newInstantiator, newRootFrame, getMode()).display();
+		new Creator(newInstantiator, newRootFrame).create(parent, getMode()).display();
 	}
 
 	private void execute() {

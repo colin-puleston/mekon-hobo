@@ -140,15 +140,6 @@ class InstanceTreeDialog extends GDialog {
 		JComponent parent,
 		Instantiator instantiator,
 		IFrame rootFrame,
-		InstanceDisplayMode startMode) {
-
-		this(parent, instantiator, rootFrame, startMode, null);
-	}
-
-	InstanceTreeDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		IFrame rootFrame,
 		InstanceDisplayMode startMode,
 		String titleSuffix) {
 
