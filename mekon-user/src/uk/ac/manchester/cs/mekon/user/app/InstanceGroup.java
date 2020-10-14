@@ -58,7 +58,7 @@ class InstanceGroup {
 
 		store = controller.getStore();
 
-		summariesRootType = getSummariesRootTypeOrNull();
+		summariesRootType = checkForSummariesRootType();
 		queriesEnabled = testQueriesEnabled();
 
 		rootAssertionIds = new InstanceIdsList(this, false);
@@ -99,6 +99,11 @@ class InstanceGroup {
 	CFrame getRootType() {
 
 		return rootType;
+	}
+
+	CFrame getSummariesRootTypeOrNull() {
+
+		return summariesRootType;
 	}
 
 	boolean editable() {
@@ -213,7 +218,7 @@ class InstanceGroup {
 		return controller.anyEditableSlots(rootType.instantiate(IFrameFunction.QUERY));
 	}
 
-	private CFrame getSummariesRootTypeOrNull() {
+	private CFrame checkForSummariesRootType() {
 
 		InstanceSummariser sm = getInstanceSummariser();
 

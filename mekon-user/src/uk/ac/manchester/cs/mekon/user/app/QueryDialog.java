@@ -196,6 +196,7 @@ class QueryDialog extends InstanceDialog {
 		this.rootFrame = rootFrame;
 
 		summariser = getSummariser(instantiator);
+		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
 	}
 
 	private void switchToCompressedDisplay() {

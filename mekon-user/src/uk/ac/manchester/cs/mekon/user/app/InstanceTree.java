@@ -76,7 +76,7 @@ class InstanceTree extends GActionTree {
 
 		mode = startMode;
 		rootNode = new RootInstanceNode(this, rootFrame);
-		isSubTree = isSubTree(rootFrame);
+		isSubTree = !isGroupRootType(rootFrame.getType());
 
 		setRootVisible(true);
 		setShowsRootHandles(false);
@@ -123,19 +123,17 @@ class InstanceTree extends GActionTree {
 		return instantiator;
 	}
 
-	private boolean isSubTree(IFrame rootFrame) {
-
-		return !rootFrame.getType().equals(getInstanceGroupRootType());
-	}
-
 	private void updateTree() {
 
 		rootNode.updateFrom();
 		updateAllNodeDisplays();
 	}
 
-	private CFrame getInstanceGroupRootType() {
+	private boolean isGroupRootType(CFrame rootFrameType) {
 
-		return instantiator.getInstanceGroup().getRootType();
+		InstanceGroup group = instantiator.getInstanceGroup();
+
+		return rootFrameType.equals(group.getRootType())
+				|| rootFrameType.equals(group.getSummariesRootTypeOrNull());
 	}
 }
