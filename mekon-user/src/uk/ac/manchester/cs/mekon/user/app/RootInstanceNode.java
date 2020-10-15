@@ -38,6 +38,8 @@ class RootInstanceNode extends InstanceNode {
 	private IFrame rootFrame;
 	private DescriptorChildNodes childNodes;
 
+	private ExpandAllAction expandAllAction = new ExpandAllAction();
+
 	private class CellDisplay extends InstanceCellDisplay {
 
 		CellDisplay() {
@@ -71,6 +73,14 @@ class RootInstanceNode extends InstanceNode {
 		}
 	}
 
+	private class ExpandAllAction extends GNodeAction {
+
+		protected void perform() {
+
+			getTree().expandAll();
+		}
+	}
+
 	protected void addInitialChildren() {
 
 		childNodes.addInitialChildren();
@@ -84,6 +94,11 @@ class RootInstanceNode extends InstanceNode {
 	protected GCellDisplay getDisplay() {
 
 		return new CellDisplay().create();
+	}
+
+	protected GNodeAction getPositiveAction1() {
+
+		return expandAllAction;
 	}
 
 	RootInstanceNode(InstanceTree tree, IFrame rootFrame) {

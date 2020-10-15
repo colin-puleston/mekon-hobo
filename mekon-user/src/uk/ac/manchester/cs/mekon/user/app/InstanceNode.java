@@ -60,7 +60,7 @@ abstract class InstanceNode extends GNode {
 			child.initialiseExpansion();
 		}
 
-		if (!queryInstance() && getNodeLevel() > 0) {
+		if (!initialExpansionRequired()) {
 
 			collapse();
 		}
@@ -116,6 +116,11 @@ abstract class InstanceNode extends GNode {
 	}
 
 	void onMousePresenceUpdate(boolean present) {
+	}
+
+	private boolean initialExpansionRequired() {
+
+		return queryInstance() || summaryInstance() || getNodeLevel() <= 1;
 	}
 
 	private void updateIndividualChildren() {
