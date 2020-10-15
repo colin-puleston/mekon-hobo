@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon.user.util.gui.inputter.*;
  */
 class DescriptorEditor {
 
-	private JComponent parent;
+	private InstanceTree instanceTree;
 	private Instantiator instantiator;
 
 	private Descriptor descriptor;
@@ -94,7 +94,7 @@ class DescriptorEditor {
 
 		ValueObtainer getValueObtainer() {
 
-			return customValueObtainerFactory.createFor(parent, slot);
+			return customValueObtainerFactory.createFor(instanceTree, slot);
 		}
 	}
 
@@ -203,10 +203,10 @@ class DescriptorEditor {
 
 			if (abstractEditableSlot()) {
 
-				return new DisjunctionFrameSelector(parent, rootCFrame, query, canClear, cust);
+				return new DisjunctionFrameSelector(instanceTree, rootCFrame, query, canClear, cust);
 			}
 
-			return new AtomicFrameSelector(parent, rootCFrame, query, canClear, cust);
+			return new AtomicFrameSelector(instanceTree, rootCFrame, query, canClear, cust);
 		}
 	}
 
@@ -254,7 +254,7 @@ class DescriptorEditor {
 		Inputter<IFrame> createInputter(boolean canClear) {
 
 			refSelector = new InstanceRefSelector(
-									parent,
+									instanceTree,
 									instantiator,
 									valueType,
 									canClear,
@@ -316,7 +316,7 @@ class DescriptorEditor {
 
 		private InstanceOps createInstanceOps() {
 
-			return new InstanceOps(parent, getInstanceGroup(), IFrameFunction.ASSERTION);
+			return new InstanceOps(instanceTree, getInstanceGroup(), IFrameFunction.ASSERTION);
 		}
 
 		private InstanceGroup getInstanceGroup() {
@@ -346,10 +346,10 @@ class DescriptorEditor {
 
 			if (abstractEditableSlot()) {
 
-				return new IndefiniteINumberInputter(parent, valueType, canClear);
+				return new IndefiniteINumberInputter(instanceTree, valueType, canClear);
 			}
 
-			return new DefiniteINumberInputter(parent, valueType, canClear);
+			return new DefiniteINumberInputter(instanceTree, valueType, canClear);
 		}
 	}
 
@@ -364,7 +364,7 @@ class DescriptorEditor {
 
 		IStringInputter createInputter(boolean canClear) {
 
-			return new IStringInputter(parent, valueType, canClear);
+			return new IStringInputter(instanceTree, valueType, canClear);
 		}
 	}
 
@@ -411,12 +411,12 @@ class DescriptorEditor {
 		}
 	}
 
-	DescriptorEditor(JComponent parent, Instantiator instantiator, Descriptor descriptor) {
+	DescriptorEditor(InstanceTree instanceTree, Descriptor descriptor) {
 
-		this.parent = parent;
-		this.instantiator = instantiator;
+		this.instanceTree = instanceTree;
 		this.descriptor = descriptor;
 
+		instantiator = instanceTree.getInstantiator();
 		slot = descriptor.getSlot();
 
 		checkSetCustomTypeHandler();
@@ -456,12 +456,12 @@ class DescriptorEditor {
 
 		InstanceSubSectionHandler handler = createInstanceSubSectionHandler();
 
-		return handler.checkDisplay(InstanceDisplayMode.EDIT) && !handler.replaceSelected();
+		return handler.checkDisplay() && !handler.replaceSelected();
 	}
 
 	private InstanceSubSectionHandler createInstanceSubSectionHandler() {
 
-		return new InstanceSubSectionHandler(parent, instantiator, descriptor);
+		return new InstanceSubSectionHandler(instanceTree, descriptor);
 	}
 
 	private void addValue(IValue value) {

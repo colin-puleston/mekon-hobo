@@ -45,14 +45,9 @@ class AssertionDialog extends InstanceDialog {
 
 		SummaryDialog(JComponent parent, Instantiator instantiator) {
 
-			super(
-				parent,
-				instantiator,
-				getRootSummaryFrame(),
-				InstanceDisplayMode.VIEW,
-				SUMMARY_DIALOG_TITLE_SUFFIX);
+			super(parent, instantiator, SUMMARY_DIALOG_TITLE_SUFFIX);
 
-			display();
+			initialise(getRootSummaryFrame(), true, InstanceDisplayMode.VIEW);
 		}
 
 		boolean fixedMode() {
@@ -67,7 +62,7 @@ class AssertionDialog extends InstanceDialog {
 
 		protected void doButtonThing() {
 
-			new SummaryDialog(getTree(), getInstantiator());
+			new SummaryDialog(getTree(), getInstantiator()).display();
 		}
 
 		ShowSummaryButton() {
@@ -81,7 +76,9 @@ class AssertionDialog extends InstanceDialog {
 		Instantiator instantiator,
 		InstanceDisplayMode startMode) {
 
-		super(parent, instantiator, startMode);
+		super(parent, instantiator, null);
+
+		initialise(false, startMode);
 	}
 
 	ControlsPanel checkCreateControlsPanel( ) {

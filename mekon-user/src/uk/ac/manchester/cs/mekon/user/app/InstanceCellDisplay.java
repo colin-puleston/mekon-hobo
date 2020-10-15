@@ -131,7 +131,7 @@ abstract class InstanceCellDisplay {
 
 	private String getQueryPrefix() {
 
-		return node.isRootNode() && !isSubTree() ? QUERY_ROOT_SEMANTICS_PREFIX : null;
+		return node.isRootNode() && !instanceSubSection() ? QUERY_ROOT_SEMANTICS_PREFIX : null;
 	}
 
 	private String getQuerySuffix() {
@@ -151,8 +151,8 @@ abstract class InstanceCellDisplay {
 		return MULTI_SLOT_SEMANTICS_SUFFIX;
 	}
 
-	private boolean isSubTree() {
+	private boolean instanceSubSection() {
 
-		return node.getInstanceTree().isSubTree();
+		return node.getInstanceTree().instanceSubSection();
 	}
 }

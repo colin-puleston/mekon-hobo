@@ -36,18 +36,20 @@ class MekonAppIcons {
 
 	static private final Color ASSERT_CLR = new Color(49,130,189);
 	static private final Color QUERY_CLR = new Color(49,163,84);
+	static private final Color ASSERT_SUMMARY_CLR = new Color(158,202,225);
+	static private final Color QUERY_SUMMARY_CLR = new Color(161,217,155);
 	static private final Color VALUE_ENTRY_CLR = Color.WHITE;
 
 	static private final int DIMENSION = 12;
-
-	static final Icon ASSERT = createListIcon(ASSERT_CLR);
-	static final Icon QUERY = createListIcon(QUERY_CLR);
 
 	static final TreeIcons VALUE_ICONS = new ValueIcons();
 	static final TreeIcons ARRAY_ICONS = new ArrayIcons();
 	static final TreeIcons REF_ICONS = new RefIcons();
 
 	static final Icon VALUE_ENTRY = createValueEntryIcon();
+
+	static private final Icon ASSERT_LIST_ICON = createListIcon(ASSERT_CLR);
+	static private final Icon QUERY_LIST_ICON = createListIcon(QUERY_CLR);
 
 	static abstract class TreeIcons {
 
@@ -59,24 +61,55 @@ class MekonAppIcons {
 			private Icon assertIcon;
 			private Icon queryIcon;
 
+			private Icon assertSummaryIcon;
+			private Icon querySummaryIcon;
+
 			FunctionIcons(boolean edit) {
 
 				assertIcon = createIcon(edit, ASSERT_CLR);
 				queryIcon = createIcon(edit, QUERY_CLR);
+
+				assertSummaryIcon = createIcon(edit, ASSERT_SUMMARY_CLR);
+				querySummaryIcon = createIcon(edit, QUERY_SUMMARY_CLR);
 			}
 
-			Icon get(boolean query) {
+			Icon get(boolean query, boolean summary) {
+
+				if (summary) {
+
+					return query ? querySummaryIcon : assertSummaryIcon;
+				}
 
 				return query ? queryIcon : assertIcon;
 			}
+
+			Icon get(InstanceNode node) {
+
+				if (node.summaryInstance()) {
+
+					return node.queryInstance() ? querySummaryIcon : assertSummaryIcon;
+				}
+
+				return node.queryInstance() ? queryIcon : assertIcon;
+			}
 		}
 
-		Icon get(boolean query, boolean edit) {
+		Icon forTree(InstanceNode node, boolean edit) {
 
-			return (edit ? editIcons : noEditIcons).get(query);
+			return get(node.queryInstance(), node.summaryInstance(), edit);
+		}
+
+		Icon forSelector(boolean query) {
+
+			return get(query, false, false);
 		}
 
 		abstract GIconRenderer createValueRenderer(Color clr);
+
+		private Icon get(boolean query, boolean summary, boolean edit) {
+
+			return (edit ? editIcons : noEditIcons).get(query, summary);
+		}
 
 		private Icon createIcon(boolean edit, Color clr) {
 
@@ -120,6 +153,11 @@ class MekonAppIcons {
 
 			return createRightTriangleRenderer(clr);
 		}
+	}
+
+	static Icon getListIcon(boolean query) {
+
+		return query ? QUERY_LIST_ICON : ASSERT_LIST_ICON;
 	}
 
 	static private GIcon createListIcon(Color clr) {

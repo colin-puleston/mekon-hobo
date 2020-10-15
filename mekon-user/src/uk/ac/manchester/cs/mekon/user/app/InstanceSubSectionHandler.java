@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -33,21 +31,16 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class InstanceSubSectionHandler {
 
-	private JComponent parent;
-	private Instantiator instantiator;
+	private InstanceTree instanceTree;
 
 	private IFrame rootFrame = null;
 	private ISlot containerSlot = null;
 
 	private boolean replaceSelected = false;
 
-	InstanceSubSectionHandler(
-		JComponent parent,
-		Instantiator instantiator,
-		Descriptor descriptor) {
+	InstanceSubSectionHandler(InstanceTree instanceTree, Descriptor descriptor) {
 
-		this.parent = parent;
-		this.instantiator = instantiator;
+		this.instanceTree = instanceTree;
 
 		if (descriptor.hasStructuredValue()) {
 
@@ -56,11 +49,11 @@ class InstanceSubSectionHandler {
 		}
 	}
 
-	boolean checkDisplay(InstanceDisplayMode startMode) {
+	boolean checkDisplay() {
 
 		if (rootFrame != null) {
 
-			displayDialog(startMode);
+			displayDialog();
 
 			return true;
 		}
@@ -73,9 +66,9 @@ class InstanceSubSectionHandler {
 		return replaceSelected;
 	}
 
-	private void displayDialog(InstanceDisplayMode startMode) {
+	private void displayDialog() {
 
-		InstanceSubSectionDialog dialog = createDialog(startMode);
+		InstanceSubSectionDialog dialog = createDialog();
 
 		dialog.display();
 
@@ -89,14 +82,9 @@ class InstanceSubSectionHandler {
 		}
 	}
 
-	private InstanceSubSectionDialog createDialog(InstanceDisplayMode startMode) {
+	private InstanceSubSectionDialog createDialog() {
 
-		return new InstanceSubSectionDialog(
-						parent,
-						instantiator,
-						rootFrame,
-						startMode,
-						replacableValue());
+		return new InstanceSubSectionDialog(instanceTree, rootFrame, replacableValue());
 	}
 
 	private void removeValue() {

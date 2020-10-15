@@ -73,7 +73,7 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 
 	private Icon getValueIcon() {
 
-		return getValueIcons().get(query(), editable());
+		return getValueIcons().forTree(node, editable());
 	}
 
 	private MekonAppIcons.TreeIcons getValueIcons() {
@@ -85,16 +85,11 @@ class DescriptorCellDisplay extends InstanceCellDisplay {
 
 	private boolean editable() {
 
-		return descriptor.userEditable() && !getInstanceTree().viewOnly();
+		return descriptor.userEditable() && !viewOnly();
 	}
 
-	private boolean query() {
+	private boolean viewOnly() {
 
-		return getInstanceTree().getInstantiator().queryInstance();
-	}
-
-	private InstanceTree getInstanceTree() {
-
-		return node.getInstanceTree();
+		return node.getInstanceTree().viewOnly();
 	}
 }

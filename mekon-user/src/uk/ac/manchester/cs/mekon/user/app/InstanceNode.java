@@ -100,6 +100,11 @@ abstract class InstanceNode extends GNode {
 		return getInstantiator().queryInstance();
 	}
 
+	boolean summaryInstance() {
+
+		return tree.summaryInstance();
+	}
+
 	boolean viewOnly() {
 
 		return tree.viewOnly();

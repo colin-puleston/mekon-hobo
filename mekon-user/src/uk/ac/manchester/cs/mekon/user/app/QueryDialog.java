@@ -236,13 +236,15 @@ class QueryDialog extends InstanceDialog {
 				InstanceDisplayMode startMode,
 				String titleSuffix) {
 
-		super(parent, instantiator, rootFrame, startMode, titleSuffix);
+		super(parent, instantiator, titleSuffix);
 
 		this.parent = parent;
 		this.summariser = summariser;
 		this.rootFrame = rootFrame;
 
 		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
+
+		initialise(rootFrame, displayingCompressed(), startMode);
 	}
 
 	private void switchToCompressedDisplay() {

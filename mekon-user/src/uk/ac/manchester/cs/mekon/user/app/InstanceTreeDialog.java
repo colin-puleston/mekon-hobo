@@ -74,7 +74,7 @@ class InstanceTreeDialog extends GDialog {
 	}
 
 	private Instantiator instantiator;
-	private InstanceTree instanceTree;
+	private InstanceTree tree = null;
 
 	private List<EditButton> editButtons = new ArrayList<EditButton>();
 
@@ -122,7 +122,7 @@ class InstanceTreeDialog extends GDialog {
 
 		ModeSelector() {
 
-			super(instanceTree);
+			super(tree);
 		}
 
 		void onModeUpdate() {
@@ -136,23 +136,26 @@ class InstanceTreeDialog extends GDialog {
 		return new Dimension(FRAME_WIDTH, getPreferredHeight());
 	}
 
-	InstanceTreeDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		IFrame rootFrame,
-		InstanceDisplayMode startMode,
-		String titleSuffix) {
+	InstanceTreeDialog(JComponent parent, Instantiator instantiator, String titleSuffix) {
 
 		super(parent, createTitle(instantiator, titleSuffix), true);
 
 		this.instantiator = instantiator;
+	}
 
-		instanceTree = new InstanceTree(instantiator, rootFrame, startMode);
+	void initialise(boolean summaryInstance, InstanceDisplayMode startMode) {
+
+		initialise(instantiator.getInstance(), summaryInstance, startMode);
+	}
+
+	void initialise(IFrame rootFrame, boolean summaryInstance, InstanceDisplayMode startMode) {
+
+		tree = new InstanceTree(instantiator, rootFrame, summaryInstance, startMode);
 	}
 
 	void addEditListener(EditListener editListener) {
 
-		instanceTree.addTreeListener(editListener);
+		tree.addTreeListener(editListener);
 	}
 
 	void display() {
@@ -167,17 +170,17 @@ class InstanceTreeDialog extends GDialog {
 
 	InstanceTree getTree() {
 
-		return instanceTree;
+		return tree;
 	}
 
 	InstanceDisplayMode getMode() {
 
-		return instanceTree.getMode();
+		return tree.getMode();
 	}
 
 	boolean viewOnly() {
 
-		return instanceTree.viewOnly();
+		return tree.viewOnly();
 	}
 
 	boolean fixedMode() {
@@ -202,7 +205,7 @@ class InstanceTreeDialog extends GDialog {
 			panel.add(modeSelector, BorderLayout.NORTH);
 		}
 
-		panel.add(new JScrollPane(instanceTree), BorderLayout.CENTER);
+		panel.add(new JScrollPane(tree), BorderLayout.CENTER);
 
 		if (controls != null) {
 

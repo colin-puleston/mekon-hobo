@@ -106,6 +106,11 @@ class InstanceGroup {
 		return summariesRootType;
 	}
 
+	boolean groupRootType(CFrame type) {
+
+		return type.equals(rootType) || type.equals(summariesRootType);
+	}
+
 	boolean editable() {
 
 		return editable;

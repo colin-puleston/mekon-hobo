@@ -114,7 +114,7 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	private Icon getIcon() {
 
-		return queryInstances ? MekonAppIcons.QUERY : MekonAppIcons.ASSERT;
+		return MekonAppIcons.getListIcon(queryInstances);
 	}
 
 	private boolean displayTypes() {

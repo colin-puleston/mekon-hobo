@@ -38,9 +38,10 @@ class InstanceTree extends GActionTree {
 	static private final long serialVersionUID = -1;
 
 	private Instantiator instantiator;
-
 	private RootInstanceNode rootNode;
-	private boolean isSubTree;
+
+	private boolean summaryInstance;
+	private boolean instanceSubSection;
 
 	private InstanceDisplayMode mode;
 
@@ -70,13 +71,18 @@ class InstanceTree extends GActionTree {
 		}
 	}
 
-	InstanceTree(Instantiator instantiator, IFrame rootFrame, InstanceDisplayMode startMode) {
+	InstanceTree(
+		Instantiator instantiator,
+		IFrame rootFrame,
+		boolean summaryInstance,
+		InstanceDisplayMode startMode) {
 
 		this.instantiator = instantiator;
+		this.summaryInstance = summaryInstance;
 
 		mode = startMode;
 		rootNode = new RootInstanceNode(this, rootFrame);
-		isSubTree = !isGroupRootType(rootFrame.getType());
+		instanceSubSection = instanceSubSection(rootFrame);
 
 		setRootVisible(true);
 		setShowsRootHandles(false);
@@ -98,14 +104,14 @@ class InstanceTree extends GActionTree {
 		}
 	}
 
-	InstanceDisplayMode getMode() {
+	boolean summaryInstance() {
 
-		return mode;
+		return summaryInstance;
 	}
 
-	boolean isSubTree() {
+	boolean instanceSubSection() {
 
-		return isSubTree;
+		return instanceSubSection;
 	}
 
 	boolean viewOnly() {
@@ -116,6 +122,11 @@ class InstanceTree extends GActionTree {
 	boolean showQuerySemantics() {
 
 		return mode == InstanceDisplayMode.SEMANTICS;
+	}
+
+	InstanceDisplayMode getMode() {
+
+		return mode;
 	}
 
 	Instantiator getInstantiator() {
@@ -129,11 +140,8 @@ class InstanceTree extends GActionTree {
 		updateAllNodeDisplays();
 	}
 
-	private boolean isGroupRootType(CFrame rootFrameType) {
+	private boolean instanceSubSection(IFrame rootFrame) {
 
-		InstanceGroup group = instantiator.getInstanceGroup();
-
-		return rootFrameType.equals(group.getRootType())
-				|| rootFrameType.equals(group.getSummariesRootTypeOrNull());
+		return !instantiator.getInstanceGroup().groupRootType(rootFrame.getType());
 	}
 }

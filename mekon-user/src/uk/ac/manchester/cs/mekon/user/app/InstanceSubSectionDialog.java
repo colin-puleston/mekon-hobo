@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import javax.swing.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
@@ -96,16 +94,13 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 		}
 	}
 
-	InstanceSubSectionDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		IFrame rootFrame,
-		InstanceDisplayMode startMode,
-		boolean enableReplace) {
+	InstanceSubSectionDialog(InstanceTree parentTree, IFrame rootFrame, boolean enableReplace) {
 
-		super(parent, instantiator, rootFrame, startMode, TITLE_SUFFIX);
+		super(parentTree, parentTree.getInstantiator(), TITLE_SUFFIX);
 
 		this.enableReplace = enableReplace;
+
+		initialise(rootFrame, parentTree.summaryInstance(), parentTree.getMode());
 	}
 
 	boolean clearSelected() {

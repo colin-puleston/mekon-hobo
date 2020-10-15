@@ -52,7 +52,7 @@ class RootInstanceNode extends InstanceNode {
 
 		Icon getIcon() {
 
-			return MekonAppIcons.VALUE_ICONS.get(queryInstance(), false);
+			return MekonAppIcons.VALUE_ICONS.forTree(RootInstanceNode.this, false);
 		}
 
 		boolean editableSlot() {
