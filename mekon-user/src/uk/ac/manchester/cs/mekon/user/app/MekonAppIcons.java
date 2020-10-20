@@ -40,7 +40,8 @@ class MekonAppIcons {
 	static private final Color QUERY_SUMMARY_CLR = new Color(161,217,155);
 	static private final Color VALUE_ENTRY_CLR = Color.WHITE;
 
-	static private final int DIMENSION = 12;
+	static private final int LIST_ICON_DIMENSION = 10;
+	static private final int TREE_ICON_DIMENSION = 12;
 
 	static final TreeIcons VALUE_ICONS = new ValueIcons();
 	static final TreeIcons ARRAY_ICONS = new ArrayIcons();
@@ -120,7 +121,7 @@ class MekonAppIcons {
 
 			GIconRenderer valueRenderer = createValueRenderer(clr);
 
-			valueRenderer.setXOffset(DIMENSION);
+			valueRenderer.setXOffset(TREE_ICON_DIMENSION);
 
 			return new GIcon(createValueEntryRenderer(), valueRenderer);
 		}
@@ -135,7 +136,7 @@ class MekonAppIcons {
 
 		GIconRenderer createValueRenderer(Color clr) {
 
-			return new GDiamondRenderer(clr, DIMENSION);
+			return new GDiamondRenderer(clr, TREE_ICON_DIMENSION);
 		}
 	}
 
@@ -143,7 +144,7 @@ class MekonAppIcons {
 
 		GIconRenderer createValueRenderer(Color clr) {
 
-			return new GDiamondRenderer(clr, DIMENSION);
+			return new GDiamondRenderer(clr, TREE_ICON_DIMENSION);
 		}
 	}
 
@@ -151,7 +152,7 @@ class MekonAppIcons {
 
 		GIconRenderer createValueRenderer(Color clr) {
 
-			return createRightTriangleRenderer(clr);
+			return createRightTriangleRenderer(clr, TREE_ICON_DIMENSION);
 		}
 	}
 
@@ -162,7 +163,7 @@ class MekonAppIcons {
 
 	static private GIcon createListIcon(Color clr) {
 
-		return new GIcon(new GOvalRenderer(clr, DIMENSION));
+		return new GIcon(new GOvalRenderer(clr, LIST_ICON_DIMENSION));
 	}
 
 	static private GIcon createValueEntryIcon() {
@@ -172,15 +173,11 @@ class MekonAppIcons {
 
 	static private GIconRenderer createValueEntryRenderer() {
 
-		return createRightTriangleRenderer(VALUE_ENTRY_CLR);
+		return createRightTriangleRenderer(VALUE_ENTRY_CLR, TREE_ICON_DIMENSION);
 	}
 
-	static private GIconRenderer createRightTriangleRenderer(Color clr) {
+	static private GIconRenderer createRightTriangleRenderer(Color clr, int dim) {
 
-		return new GTriangleRenderer(
-						GTriangleRenderer.Type.RIGHTWARD,
-						clr,
-						DIMENSION,
-						DIMENSION);
+		return new GTriangleRenderer(GTriangleRenderer.Type.RIGHTWARD, clr, dim, dim);
 	}
 }
