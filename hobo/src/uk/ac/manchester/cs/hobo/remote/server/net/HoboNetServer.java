@@ -24,10 +24,14 @@
 
 package uk.ac.manchester.cs.hobo.remote.server.net;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.server.net.*;
+import uk.ac.manchester.cs.mekon.remote.server.xml.*;
 
 import uk.ac.manchester.cs.hobo.manage.*;
+import uk.ac.manchester.cs.hobo.model.motor.*;
 
 /**
  * Represents a server-side version of the MEKON frames model, with a
@@ -45,8 +49,18 @@ public class HoboNetServer extends MekonNetServer {
 
 	/**
 	 */
-	protected CModel createModel() {
+	protected XServer createXServer() {
 
-		return DManager.createBuilder().build().getCModel();
+		DBuilder dBuilder = DManager.createBuilder();
+		XServer server = new XServer(dBuilder.build().getCModel());
+
+		server.setStore(createStore(dBuilder));
+
+		return server;
+	}
+
+	private IStore createStore(DBuilder dBuilder) {
+
+		return IDiskStoreManager.getBuilder(dBuilder.getCBuilder()).build();
 	}
 }
