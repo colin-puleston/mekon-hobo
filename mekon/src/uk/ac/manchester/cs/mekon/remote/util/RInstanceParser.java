@@ -91,14 +91,9 @@ public abstract class RInstanceParser {
 
 	private void checkParsedInstance(IRegenInstance output) {
 
-		switch (output.getStatus()) {
+		if (output.getStatus() == IRegenStatus.FULLY_INVALID) {
 
-			case FULLY_INVALID:
-				throw createInvalidTypeException(output.getRootTypeId());
-
-			case PARTIALLY_VALID:
-				reportInvalidInstanceComponents(output);
-				throw createInvalidComponentsException();
+			throw createInvalidTypeException(output.getRootTypeId());
 		}
 	}
 
@@ -115,32 +110,5 @@ public abstract class RInstanceParser {
 		return createException(
 					"Invalid root-frame type in instance serialization: "
 					+ type);
-	}
-
-	private RuntimeException createInvalidComponentsException() {
-
-		return createException(
-					"Invalid components in instance serialization "
-					+ "(See console for details)");
-	}
-
-	private void reportInvalidInstanceComponents(IRegenInstance output) {
-
-		reportErrorStart("Invalid components in serialization...");
-
-		for (IRegenPath path : output.getAllPrunedPaths()) {
-
-			reportErrorLine(path);
-		}
-	}
-
-	private void reportErrorStart(String message) {
-
-		reportErrorLine("INSTANCE SERIALIZATION ERROR: " + message);
-	}
-
-	private void reportErrorLine(Object source) {
-
-		System.out.println(source.toString());
 	}
 }

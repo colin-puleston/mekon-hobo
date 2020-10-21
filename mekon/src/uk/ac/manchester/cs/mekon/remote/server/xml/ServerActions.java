@@ -78,7 +78,7 @@ abstract class ServerActions<T extends Enum<T>> {
 		}
 
 		throw new RServerException(
-					"Unrecognised server action: "
+					"Unrecognised server action type: "
 					+ "\"" + getActionCategory() + ":" + type + "\"");
 	}
 }

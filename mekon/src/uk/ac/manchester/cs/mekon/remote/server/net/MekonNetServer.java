@@ -27,8 +27,10 @@ package uk.ac.manchester.cs.mekon.remote.server.net;
 import java.io.*;
 import javax.servlet.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.manage.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
 import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
@@ -54,7 +56,7 @@ public class MekonNetServer extends GenericServlet {
 
 		try {
 
-			server = new XServer(createModel());
+			server = createXServer();
 		}
 		catch (KRuntimeException e) {
 
@@ -83,9 +85,14 @@ public class MekonNetServer extends GenericServlet {
 	public void destroy() {
 	}
 
-	protected CModel createModel() {
+	protected XServer createXServer() {
 
-		return CManager.createBuilder().build();
+		CBuilder cBuilder = CManager.createBuilder();
+		XServer server = new XServer(cBuilder.build());
+
+		server.setStore(createStore(cBuilder));
+
+		return server;
 	}
 
 	private InputStream getInputStream(ServletRequest request) throws IOException {
@@ -96,6 +103,11 @@ public class MekonNetServer extends GenericServlet {
 	private OutputStream getOutputStream(ServletResponse response) throws IOException {
 
 		return new BufferedOutputStream(response.getOutputStream());
+	}
+
+	private IStore createStore(CBuilder cBuilder) {
+
+		return IDiskStoreManager.getBuilder(cBuilder).build();
 	}
 
 	private void setLibraryPath() {
