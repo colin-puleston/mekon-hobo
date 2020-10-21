@@ -79,6 +79,7 @@ public class IMatchesRenderer extends IMatchesSerialiser {
 	static private void renderRank(IMatchesRank rank, XNode node) {
 
 		node.setValue(RANK_VALUE_ATTR, rank.getRankingValue());
+
 		renderMatchIds(rank.getMatches(), node);
 	}
 

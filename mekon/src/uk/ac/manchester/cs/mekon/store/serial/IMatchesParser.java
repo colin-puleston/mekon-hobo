@@ -66,21 +66,26 @@ public class IMatchesParser extends IMatchesSerialiser {
 
 	static private IMatches parseFromNode(XNode node) {
 
-		boolean ranked = node.getBoolean(RANKED_ATTR);
+		List<XNode> rankNodes = node.getChildren(RANK_ID);
 
-		return ranked ? parseRanked(node) : parseUnranked(node);
+		if (rankNodes.isEmpty()) {
+
+			return INoMatches.SINGLETON;
+		}
+
+		if (node.getBoolean(RANKED_ATTR)) {
+
+			parseRanked(rankNodes);
+		}
+
+		return new IUnrankedMatches(parseMatchIds(rankNodes.get(0)));
 	}
 
-	static private IMatches parseUnranked(XNode node) {
-
-		return new IUnrankedMatches(parseMatchIds(node.getChild(RANK_ID)));
-	}
-
-	static private IMatches parseRanked(XNode node) {
+	static private IMatches parseRanked(List<XNode> rankNodes) {
 
 		IRankedMatches matches = new IRankedMatches();
 
-		for (XNode rankNode : node.getChildren(RANK_ID)) {
+		for (XNode rankNode : rankNodes) {
 
 			matches.addRank(parseMatchIds(rankNode), rankNode.getInteger(RANK_VALUE_ATTR));
 		}
