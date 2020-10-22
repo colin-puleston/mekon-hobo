@@ -151,6 +151,11 @@ public class MekonApp extends GFrame {
 		new MekonAppConfig(this, configFile);
 	}
 
+	public void addInstanceGroup(CIdentity rootTypeId, boolean editable) {
+
+		addInstanceGroup(model.getFrames().get(rootTypeId), editable);
+	}
+
 	public void addInstanceGroup(CFrame rootType, boolean editable) {
 
 		instanceGroupSpecs.add(new InstanceGroupSpec(rootType, editable));
