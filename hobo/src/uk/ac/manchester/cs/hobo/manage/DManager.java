@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.hobo.manage;
 
 import uk.ac.manchester.cs.mekon.manage.*;
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
@@ -107,12 +108,24 @@ public class DManager {
 	 * Creates model-builder based on the supplied pre-populated
 	 * frames-based MEKON model-builder.
 	 *
-	 * @param model Relevant frames-based model-builder
+	 * @param cBuilder Relevant frames-based model-builder
 	 * @return Resulting direct model-builder
 	 */
 	static public DBuilder createBuilder(CBuilder cBuilder) {
 
 		return modelAccessor.createBuilder(cBuilder);
+	}
+
+	/**
+	 * Creates model-builder based on the builder associated with the
+	 * supplied frames-based MEKON model.
+	 *
+	 * @param cModel Relevant frames-based model
+	 * @return Resulting direct model-builder
+	 */
+	static public DBuilder createBuilder(CModel cModel) {
+
+		return modelAccessor.createBuilder(CManager.getBuilder(cModel));
 	}
 
 	/**
