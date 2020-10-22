@@ -46,6 +46,8 @@ public class CModel implements CAnnotatable {
 		ZCModelAccessor.set(new ZCModelAccessorImpl());
 	}
 
+	private CBuilder builder;
+
 	private CFrame rootFrame = new CRootFrame(this);
 	private CIdentifiedsLocal<CFrame> frames = new CIdentifiedsLocal<CFrame>();
 	private CSlotIdentities slotIdentities = new CSlotIdentities();
@@ -130,6 +132,8 @@ public class CModel implements CAnnotatable {
 	}
 
 	CModel() {
+
+		builder = new CBuilderImpl(this);
 	}
 
 	void setQueriesEnabled(boolean enabled) {
@@ -190,6 +194,11 @@ public class CModel implements CAnnotatable {
 	boolean initialised() {
 
 		return initialised;
+	}
+
+	CBuilder getBuilder() {
+
+		return builder;
 	}
 
 	IEditor getIEditor() {

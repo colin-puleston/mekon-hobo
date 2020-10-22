@@ -43,148 +43,42 @@ public abstract class ZCModelAccessor {
 	static private KSingleton<ZCModelAccessor> singleton
 							= new KSingleton<ZCModelAccessor>();
 
-	/**
-	 * Sets the singleton accessor object.
-	 *
-	 * @param accessor Accessor to set as singleton
-	 */
 	static public synchronized void set(ZCModelAccessor accessor) {
 
 		singleton.set(accessor);
 	}
 
-	/**
-	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link CModel} class is initialised, since it is the static
-	 * initialisation method on that class that sets the singleton
-	 * accessor, via the {@link #set} method.
-	 *
-	 * @return Singleton accessor object
-	 */
 	static public ZCModelAccessor get() {
 
 		return singleton.get(CModel.class);
 	}
 
-	/**
-	 * Creates an empty model.
-	 *
-	 * @return Created empty model
-	 */
-	public abstract CModel createModel();
+	public abstract CBuilder createBuilder();
 
-	/**
-	 * Creates a builder for the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return Created builder
-	 */
-	public abstract CBuilder createBuilder(CModel model);
+	public abstract CModel getModel(CBuilder builder);
 
-	/**
-	 * Creates a {@link CNumber} object.
-	 *
-	 * @param numberType Relevant number-type
-	 * @param min Minimnum value for defined number values
-	 * @param max Maximnum value for defined number values
-	 * @return Created object
-	 */
+	public abstract CBuilder getBuilder(CModel model);
+
 	public abstract CNumber createCNumber(
 								Class<? extends Number> numberType,
 								INumber min,
 								INumber max);
 
-	/**
-	 * Provides a {@link CString} object with specified custom
-	 * configuration.
-	 *
-	 * @param configClass Class of configuration object for required
-	 * object
-	 * @return Created object
-	 */
 	public abstract CString resolveCustomCString(Class<? extends CStringConfig> configClass);
 
-	/**
-	 * Provides the class of the configuration object for the
-	 * specified {@link CString} object with custom configuration.
-	 *
-	 * @param string String value-type object whose custom
-	 * configuration class is required
-	 * @return Required custom configuration class
-	 */
 	public abstract Class<? extends CStringConfig> getCustomCStringConfigClass(CString string);
 
-	/**
-	 * Retrieves the model being built by the specified builder.
-	 *
-	 * @param builder Relevant builder
-	 * @return Model being built
-	 */
-	public abstract CModel getModel(CBuilder builder);
-
-	/**
-	 * Provides an instantiation editor for the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return Instantiation editor for model
-	 */
 	public abstract IEditor getIEditor(CModel model);
 
-	/**
-	 * Provides a free-copier object applicable to any model.
-	 *
-	 * @return Free-copier object for any model
-	 */
 	public abstract IFreeCopier getFreeCopier();
 
-	/**
-	 * Provides a relaxed-instantiator object applicable to any model.
-	 *
-	 * @return Relaxed-instantiator object for any model
-	 */
 	public abstract IRelaxedInstantiator getRelaxedInstantiator();
 
-	/**
-	 * Checks whether frame is a "free-instance" (see {@link IFreeCopier})
-	 *
-	 * @param frame Frame to check
-	 * @return True if frame is free-instance
-	 */
 	public abstract boolean freeInstance(IFrame frame);
 
-	/**
-	 * Maps an object from an external domain-specific Object Model
-	 * (OM) to an instance-level frame in a MEKON frames-model
-	 * instantiation.
-	 *
-	 * @param frame Frame to which object is to be mapped
-	 * @param mappedObject Object to be mapped
-	 */
 	public abstract void setMappedObject(IFrame frame, Object mappedObject);
 
-	/**
-	 * Retrieves an object from an external domain-specific Object
-	 * Model (OM) that is mapped to an instance-level in a MEKON
-	 * frames-model instantiation.
-	 *
-	 * @param frame Frame from which mapped object is to be retrieved
-	 * @return Mapped object, or null if frame does not have a mapped
-	 * object
-	 */
 	public abstract Object getMappedObject(IFrame frame);
 
-	/**
-	 * Adds a slot with an activation status of {@link
-	 * CActivation#INACTIVE} to a frame of category {@link
-	 * IFrameCategory#REFERENCE}. Enables the addition of slots that
-	 * are required for mappings to fields on objects from an external
-	 * domain-specific Object Model (OM). The added slot will be
-	 * permenantly deactivated, since in general slots are not relevant
-	 * to the representation of reference-frames.
-	 *
-	 * @param frame Reference-frame to which slot is to be added
-	 * @param slotType Type for slot to be added
-	 * @return Added slot
-	 */
 	public abstract ISlot addReferenceFrameMappingSlot(IFrame frame, CSlot slotType);
 }

@@ -53,7 +53,7 @@ public class CManager {
 	 */
 	static public CBuilder createEmptyBuilder() {
 
-		return modelAccessor.createBuilder(modelAccessor.createModel());
+		return modelAccessor.createBuilder();
 	}
 
 	/**
@@ -109,6 +109,17 @@ public class CManager {
 	static public void configureBuilder(CBuilder builder, KConfigFile configFile) {
 
 		createConfig(configFile).configure(builder);
+	}
+
+	/**
+	 * Retrieves the model-builder for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Model-builder for specified model
+	 */
+	static public CBuilder getBuilder(CModel model) {
+
+		return modelAccessor.getBuilder(model);
 	}
 
 	static private CConfig createConfig(KConfigFile configFile) {

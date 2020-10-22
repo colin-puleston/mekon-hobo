@@ -35,14 +35,19 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 	private IFreeCopier freeCopier = new IFreeCopierImpl();
 	private IRelaxedInstantiator relaxedInstantiator = new IRelaxedInstantiatorImpl();
 
-	public CModel createModel() {
+	public CBuilder createBuilder() {
 
-		return new CModel();
+		return new CModel().getBuilder();
 	}
 
-	public CBuilder createBuilder(CModel model) {
+	public CModel getModel(CBuilder builder) {
 
-		return new CBuilderImpl(model);
+		return ((CBuilderImpl)builder).getModel();
+	}
+
+	public CBuilder getBuilder(CModel model) {
+
+		return model.getBuilder();
 	}
 
 	public CNumber createCNumber(
@@ -61,11 +66,6 @@ class ZCModelAccessorImpl extends ZCModelAccessor {
 	public Class<? extends CStringConfig> getCustomCStringConfigClass(CString string) {
 
 		return CustomCStrings.getConfigClass(string);
-	}
-
-	public CModel getModel(CBuilder builder) {
-
-		return ((CBuilderImpl)builder).getModel();
 	}
 
 	public IEditor getIEditor(CModel model) {

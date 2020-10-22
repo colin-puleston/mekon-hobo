@@ -44,59 +44,21 @@ public abstract class ZIDiskStoreAccessor {
 	static private KSingleton<ZIDiskStoreAccessor> singleton
 							= new KSingleton<ZIDiskStoreAccessor>();
 
-	/**
-	 * Sets the singleton accessor object.
-	 *
-	 * @param accessor Accessor to set as singleton
-	 */
 	static public synchronized void set(ZIDiskStoreAccessor accessor) {
 
 		singleton.set(accessor);
 	}
 
-	/**
-	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link IDiskStoreBuilder} class is initialised, since it is the
-	 * static initialisation method on that class that sets the
-	 * singleton accessor, via the {@link #set} method.
-	 *
-	 * @return Singleton accessor object
-	 */
 	static public ZIDiskStoreAccessor get() {
 
 		return singleton.get(IDiskStoreBuilder.class);
 	}
 
-	/**
-	 * Provides the instance-store builder for the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return Instance-store builder for model
-	 */
 	public abstract IDiskStoreBuilder getStoreBuilder(CModel model);
 
-	/**
-	 * Provides the instance-store for the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return Instance-store for model
-	 */
 	public abstract IStore getStore(CModel model);
 
-	/**
-	 * Checks whether an instance-store has been registered for
-	 * the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return True if instance-store is registered for model
-	 */
 	public abstract boolean storeFor(CModel model);
 
-	/**
-	 * Performs any necessary instance-store clear-ups after all
-	 * access of specified model has terminated.
-	 *
-	 * @param model Relevant model
-	 */
 	public abstract void checkStopStore(CModel model);
 }
