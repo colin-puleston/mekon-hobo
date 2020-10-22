@@ -27,8 +27,8 @@ package uk.ac.manchester.cs.hobo.manage;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
+import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.model.motor.*;
 import uk.ac.manchester.cs.hobo.model.zlink.*;
 
@@ -46,6 +46,8 @@ import uk.ac.manchester.cs.hobo.model.zlink.*;
  */
 public class DManager {
 
+	static private final ZDModelAccessor modelAccessor = ZDModelAccessor.get();
+
 	/**
 	 * Creates model-builder to build model for which the
 	 * specification of both the externally-sourced model section(s)
@@ -56,9 +58,7 @@ public class DManager {
 	 */
 	static public DBuilder createEmptyBuilder() {
 
-		ZDModelAccessor accessor = ZDModelAccessor.get();
-
-		return accessor.createBuilder(accessor.createModel());
+		return modelAccessor.createBuilder();
 	}
 
 	/**
@@ -101,6 +101,29 @@ public class DManager {
 		createConfig(configFile).configure(dBuilder);
 
 		return dBuilder;
+	}
+
+	/**
+	 * Creates model-builder based on the supplied pre-populated
+	 * frames-based MEKON model-builder.
+	 *
+	 * @param model Relevant frames-based model-builder
+	 * @return Resulting direct model-builder
+	 */
+	static public DBuilder createBuilder(CBuilder cBuilder) {
+
+		return modelAccessor.createBuilder(cBuilder);
+	}
+
+	/**
+	 * Retrieves the model-builder for the specified model.
+	 *
+	 * @param model Relevant model
+	 * @return Model-builder for specified model
+	 */
+	static public DBuilder getBuilder(DModel model) {
+
+		return modelAccessor.getBuilder(model);
 	}
 
 	static private DConfig createConfig(KConfigFile configFile) {

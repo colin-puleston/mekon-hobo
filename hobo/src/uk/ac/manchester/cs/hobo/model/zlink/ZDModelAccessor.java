@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.hobo.model.zlink;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon_util.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
@@ -43,41 +44,21 @@ public abstract class ZDModelAccessor {
 	static private KSingleton<ZDModelAccessor> singleton
 							= new KSingleton<ZDModelAccessor>();
 
-	/**
-	 * Sets the singleton accessor object.
-	 *
-	 * @param accessor Accessor to set as singleton
-	 */
 	static public synchronized void set(ZDModelAccessor accessor) {
 
 		singleton.set(accessor);
 	}
 
-	/**
-	 * Retrieves the singleton accessor object. Ensures that the
-	 * {@link DModel} class is initialised, since it is the static
-	 * initialisation method on that class that sets the singleton
-	 * accessor, via the {@link #set} method.
-	 *
-	 * @return Singleton accessor object
-	 */
 	static public ZDModelAccessor get() {
 
 		return singleton.get(DModel.class);
 	}
 
-	/**
-	 * Creates an empty model.
-	 *
-	 * @return Created empty model
-	 */
-	public abstract DModel createModel();
+	public abstract DBuilder createBuilder();
 
-	/**
-	 * Creates a builder for the specified model.
-	 *
-	 * @param model Relevant model
-	 * @return Created builder
-	 */
-	public abstract DBuilder createBuilder(DModel model);
+	public abstract DBuilder createBuilder(CBuilder cBuilder);
+
+	public abstract DModel getModel(DBuilder builder);
+
+	public abstract DBuilder getBuilder(DModel model);
 }

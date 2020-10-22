@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import uk.ac.manchester.cs.mekon.model.motor.*;
+
 import uk.ac.manchester.cs.hobo.model.motor.*;
 import uk.ac.manchester.cs.hobo.model.zlink.*;
 
@@ -32,13 +34,23 @@ import uk.ac.manchester.cs.hobo.model.zlink.*;
  */
 class ZDModelAccessorImpl extends ZDModelAccessor {
 
-	public DModel createModel() {
+	public DBuilder createBuilder() {
 
-		return new DModel();
+		return new DModel().getBuilder();
 	}
 
-	public DBuilder createBuilder(DModel model) {
+	public DBuilder createBuilder(CBuilder cBuilder) {
 
-		return new DBuilderImpl(model);
+		return new DModel(cBuilder).getBuilder();
+	}
+
+	public DModel getModel(DBuilder builder) {
+
+		return ((DBuilderImpl)builder).getModel();
+	}
+
+	public DBuilder getBuilder(DModel model) {
+
+		return model.getBuilder();
 	}
 }

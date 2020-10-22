@@ -36,7 +36,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
  */
 class DInstantiator {
 
-	private ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
+	static private final ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
 
 	private DModel model;
 

@@ -61,7 +61,7 @@ class DBuilderImpl implements DBuilder {
 
 	public void addDClass(Class<? extends DObject> dClass) {
 
-		getInitialiser().addDClass(dClass);
+		model.getInitialiser().addDClass(dClass);
 	}
 
 	public void addDClasses(String basePackageName) {
@@ -90,12 +90,16 @@ class DBuilderImpl implements DBuilder {
 		return modelMap;
 	}
 
-	DBuilderImpl(DModel model) {
+	DBuilderImpl(CBuilder cBuilder, DModel model, DModelMap modelMap) {
 
+		this.cBuilder = cBuilder;
 		this.model = model;
+		this.modelMap = modelMap;
+	}
 
-		cBuilder = getInitialiser().getCBuilder();
-		modelMap = getInitialiser().getModelMap();
+	DModel getModel() {
+
+		return model;
 	}
 
 	private List<Class<? extends DObject>> loadDClasses(String basePackageName) {
@@ -106,10 +110,5 @@ class DBuilderImpl implements DBuilder {
 	private Class<? extends DObject> loadDClass(String dClassName) {
 
 		return new KConfigClassLoader(dClassName).load(DObject.class);
-	}
-
-	private DInitialiser getInitialiser() {
-
-		return model.getInitialiser();
 	}
 }

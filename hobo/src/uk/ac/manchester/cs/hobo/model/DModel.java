@@ -68,9 +68,11 @@ public class DModel {
 		ZDModelAccessor.set(new ZDModelAccessorImpl());
 	}
 
-	private CModel cModel;
-	private ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
+	static private final ZCModelAccessor mekonAccessor = ZCModelAccessor.get();
 
+	private CModel cModel;
+
+	private DBuilder builder;
 	private DInitialiser initialiser;
 	private DBindings bindings = new DBindings();
 
@@ -257,11 +259,17 @@ public class DModel {
 
 	DModel() {
 
-		cModel = mekonAccessor.createModel();
+		this(mekonAccessor.createBuilder());
+	}
 
-		CBuilder cBuilder = mekonAccessor.createBuilder(cModel);
+	DModel(CBuilder cBuilder) {
 
-		initialiser = new DInitialiser(cBuilder, bindings);
+		DModelMap modelMap = new DModelMap();
+
+		cModel = mekonAccessor.getModel(cBuilder);
+
+		builder = new DBuilderImpl(cBuilder, this, modelMap);
+		initialiser = new DInitialiser(cBuilder, bindings, modelMap);
 
 		new IFrameMapper(this, cBuilder);
 	}
@@ -275,6 +283,11 @@ public class DModel {
 	boolean initialised() {
 
 		return initialiser == null;
+	}
+
+	DBuilder getBuilder() {
+
+		return builder;
 	}
 
 	DInitialiser getInitialiser() {

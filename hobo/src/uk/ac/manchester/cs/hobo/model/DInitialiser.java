@@ -37,15 +37,16 @@ class DInitialiser {
 
 	private CBuilder cBuilder;
 	private DBindings bindings;
-	private DModelMap modelMap = new DModelMap();
+	private DModelMap modelMap;
 
 	private Set<Class<? extends DObject>> dClasses
 				= new HashSet<Class<? extends DObject>>();
 
-	DInitialiser(CBuilder cBuilder, DBindings bindings) {
+	DInitialiser(CBuilder cBuilder, DBindings bindings, DModelMap modelMap) {
 
 		this.cBuilder = cBuilder;
 		this.bindings = bindings;
+		this.modelMap = modelMap;
 	}
 
 	void addDClass(Class<? extends DObject> dClass) {
