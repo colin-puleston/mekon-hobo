@@ -10,10 +10,12 @@
 	<include file="build-properties.xml"/>
 
 	<property name="mekon.test" value="mekon/test/"/>
+	<property name="mekon-user.test" value="mekon-user/test/"/>
 	<property name="mekon-owl.test" value="mekon-owl/test/"/>
 	<property name="mekon-basex.test" value="mekon-basex/test/"/>
 	<property name="mekon-jena.test" value="mekon-jena/test/"/>
 	<property name="hobo.test" value="hobo/test/"/>
+	<property name="hobo-user.test" value="hobo-user/test/"/>
 
 	<!-- test invocation -->
 	<property name="build.test.run.name" value="test"/>
@@ -52,6 +54,12 @@
 		</javac>
 	</target>
 
+	<target name="mekon-user-test" depends="mekon-test">
+		<javac srcdir="${mekon-user.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
 	<target name="mekon-owl-test" depends="mekon-test">
 		<javac srcdir="${mekon-owl.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
@@ -76,7 +84,13 @@
 		</javac>
 	</target>
 
-	<target name="all" depends="hobo-test, mekon-test, mekon-owl-test, mekon-basex-test, mekon-jena-test">
+	<target name="hobo-user-test" depends="hobo-test, mekon-user-test">
+		<javac srcdir="${hobo-user.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="all" depends="mekon-test, mekon-user-test, mekon-owl-test, mekon-basex-test, mekon-jena-test, hobo-test, hobo-user-test">
 		<echo file="${build.test.run.sh}">java -cp ${build.test.classpath.sh} ${build.test.java.run}</echo>
 		<echo file="${build.test.run.win}">java -cp ${build.test.classpath.win} ${build.test.java.run}</echo>
 		<chmod dir="${build}" includes="${build.tesy.run.name}.sh" perm="+x"/>
