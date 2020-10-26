@@ -255,7 +255,7 @@ class InstanceAligner {
 
 	private void alignFrom(IFrame master, IFrame update) {
 
-		if (alignedMasters.add(master)) {
+		if (master.getCategory().atomic() && alignedMasters.add(master)) {
 
 			new IFrameAligner(master, update).align();
 		}
@@ -263,6 +263,9 @@ class InstanceAligner {
 
 	private void initialise(IFrame master, IFrame update) {
 
-		new IFrameAligner(master, update).initialise();
+		if (master.getCategory().atomic()) {
+
+			new IFrameAligner(master, update).initialise();
+		}
 	}
 }

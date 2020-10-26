@@ -855,6 +855,6 @@ public abstract class IFrame implements IEntity, IValue {
 
 	private KAccessException createCategoryException(String msgPrefix) {
 
-		return createCategoryException(msgPrefix + " " + getCategory() + " frame: " + this);
+		return new KAccessException(msgPrefix + " " + getCategory() + " frame: " + this);
 	}
 }
