@@ -43,9 +43,9 @@ public class HoboRemoteTestModelExplorer {
 		DBuilder dBuilder = DManager.createBuilder();
 		CBuilder cBuilder = dBuilder.getCBuilder();
 
-		CModel cModel = dBuilder.build().getCModel();
-		IStore iStore = IDiskStoreManager.getBuilder(cBuilder).build();
+		CModel serverModel = dBuilder.build().getCModel();
+		IStore serverStore = IDiskStoreManager.getBuilder(cBuilder).build();
 
-		new MekonRemoteTestModelExplorer(cModel, iStore);
+		new MekonRemoteTestModelExplorer(serverModel, serverStore);
 	}
 }
