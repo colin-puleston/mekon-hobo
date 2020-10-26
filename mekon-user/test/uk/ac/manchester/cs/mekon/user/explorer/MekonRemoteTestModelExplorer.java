@@ -27,9 +27,7 @@ import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon.remote.client.xml.*;
-import uk.ac.manchester.cs.mekon.remote.server.xml.*;
+import uk.ac.manchester.cs.mekon.remote.*;
 
 /**
  * @author Colin Puleston
@@ -40,62 +38,18 @@ public class MekonRemoteTestModelExplorer {
 
 		CBuilder builder = CManager.createBuilder();
 
-		new MekonRemoteTestModelExplorer(builder.build(), createStore(builder));
+		new MekonRemoteTestModelExplorer(builder.build(), createServerStore(builder));
 	}
 
-	static private IStore createStore(CBuilder builder) {
+	static private IStore createServerStore(CBuilder builder) {
 
 		return IDiskStoreManager.getBuilder(builder).build();
 	}
 
-	private XServer server;
+	public MekonRemoteTestModelExplorer(CModel serverModel, IStore serverStore) {
 
-	private class LocalXClientModel extends XClientModel {
+		MekonRemoteTestModel model = new MekonRemoteTestModel(serverModel, serverStore);
 
-		protected XDocument performActionOnServer(XDocument request) {
-
-			return server.performAction(request);
-		}
-	}
-
-	private class LocalXClientStore extends XClientStore {
-
-		protected XDocument performActionOnServer(XDocument request) {
-
-			return server.performAction(request);
-		}
-
-		LocalXClientStore(CModel model) {
-
-			super(model);
-		}
-	}
-
-	public MekonRemoteTestModelExplorer(CModel model) {
-
-		server = new XServer(model);
-
-		new MekonModelExplorer(createClientModel());
-	}
-
-	public MekonRemoteTestModelExplorer(CModel model, IStore store) {
-
-		server = new XServer(model);
-
-		server.setStore(store);
-
-		CModel clientModel = createClientModel();
-
-		new MekonModelExplorer(clientModel, createClientStore(clientModel));
-	}
-
-	private CModel createClientModel() {
-
-		return new LocalXClientModel().getCModel();
-	}
-
-	private IStore createClientStore(CModel clientModel) {
-
-		return new LocalXClientStore(clientModel).getIStore();
+		new MekonModelExplorer(model.clientModel, model.clientStore);
 	}
 }
