@@ -185,6 +185,7 @@ class StoreActions extends ServerActions<RStoreActionType> {
 		new RemoveAction();
 		new ClearsAction();
 		new ContainsAction();
+		new GetTypeAction();
 		new GetAction();
 		new GetIdsAction();
 		new MatchAction();
