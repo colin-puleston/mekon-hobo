@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.mekon_util.*;
 class CBuilderImpl implements CBuilder {
 
 	private CModel model;
+
 	private List<CSectionBuilder> sectionBuilders = new ArrayList<CSectionBuilder>();
 
 	public void setQueriesEnabled(boolean enabled) {
@@ -76,11 +77,11 @@ class CBuilderImpl implements CBuilder {
 
 	public void removeSectionBuilders(Class<? extends CSectionBuilder> type) {
 
-		for (CSectionBuilder bldr : new ArrayList<CSectionBuilder>(sectionBuilders)) {
+		for (CSectionBuilder sectionBuilder : copySectionBuilders()) {
 
-			if (type.isAssignableFrom(bldr.getClass())) {
+			if (type.isAssignableFrom(sectionBuilder.getClass())) {
 
-				sectionBuilders.remove(bldr);
+				sectionBuilders.remove(sectionBuilder);
 			}
 		}
 	}
@@ -207,19 +208,19 @@ class CBuilderImpl implements CBuilder {
 
 	private void buildSections() {
 
-		boolean initialBuild = initialBuild();
+		for (CSectionBuilder sectionBuilder : copySectionBuilders()) {
 
-		for (CSectionBuilder sectionBuilder : sectionBuilders) {
+			sectionBuilder.build(this);
 
-			if (initialBuild || sectionBuilder.supportsIncrementalBuild()) {
+			if (!sectionBuilder.supportsIncrementalBuild()) {
 
-				sectionBuilder.build(this);
+				sectionBuilders.remove(sectionBuilder);
 			}
 		}
 	}
 
-	private boolean initialBuild() {
+	private List<CSectionBuilder> copySectionBuilders() {
 
-		return model.getRootFrame().getSubs().isEmpty();
+		return new ArrayList<CSectionBuilder>(sectionBuilders);
 	}
 }
