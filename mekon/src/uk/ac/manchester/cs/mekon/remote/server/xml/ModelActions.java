@@ -55,9 +55,11 @@ class ModelActions extends ServerActions<RModelActionType> {
 		void perform(XRequestParser request, XResponseRenderer response) {
 
 			IInstanceParseInput input = request.getInstanceParameterParseInput(0);
-			CFrame type = parameterParser.parseRootType(input);
 
-			response.setInstanceResponse(type.instantiate());
+			CFrame type = parameterParser.parseRootType(input);
+			IFrameFunction function = parameterParser.parseFunction(input);
+
+			response.setInstanceResponse(type.instantiate(function));
 		}
 	}
 

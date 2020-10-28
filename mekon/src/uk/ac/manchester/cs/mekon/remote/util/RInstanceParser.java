@@ -81,6 +81,18 @@ public abstract class RInstanceParser {
 	}
 
 	/**
+	 * Parses only the function of the instance represented by the serialised
+	 * frame/slot network.
+	 *
+	 * @param input Input to parsing process
+	 * @return Resulting instance function
+	 */
+	public IFrameFunction parseFunction(IInstanceParseInput input) {
+
+		return wrappedParser.parseFunction(input);
+	}
+
+	/**
 	 * Creates exception of appropriate type for either client-side
 	 * or server-side, to be thrown when parsing problem is detected.
 	 *

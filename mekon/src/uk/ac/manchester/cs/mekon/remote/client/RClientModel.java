@@ -99,11 +99,14 @@ public abstract class RClientModel {
 
 		public void onInstantiated(IFrame instance, boolean reinstantiation) {
 
-			new ISlotInitialiser(instance);
+			if (instance.getCategory().atomic()) {
 
-			if (!reinstantiation) {
+				new ISlotInitialiser(instance);
 
-				initAction.checkPerform(instance);
+				if (!reinstantiation) {
+
+					initAction.checkPerform(instance);
+				}
 			}
 		}
 

@@ -529,7 +529,7 @@ public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 		OneTimeParser(IInstanceParseInput input) {
 
 			containerNode = resolveContainerNode(input);
-			function = parseInstanceFunction();
+			function = parseFunction();
 			framesByXDocId = input.getFramesByXDocId();
 		}
 
@@ -562,7 +562,7 @@ public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 					: new IRegenInvalidType(rootType.getIdentity());
 		}
 
-		private IFrameFunction parseInstanceFunction() {
+		IFrameFunction parseFunction() {
 
 			return containerNode.getEnum(
 						INSTANCE_FUNCTION_ATTR,
@@ -918,6 +918,18 @@ public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 	public IRegenType parseRootType(IInstanceParseInput input) {
 
 		return new OneTimeParser(input).parseRootType();
+	}
+
+	/**
+	 * Parses only the function of the instance represented by the serialised
+	 * frame/slot network.
+	 *
+	 * @param input Input to parsing process
+	 * @return Resulting instance function
+	 */
+	public IFrameFunction parseFunction(IInstanceParseInput input) {
+
+		return new OneTimeParser(input).parseFunction();
 	}
 
 	private CFrame getRootCFrame() {

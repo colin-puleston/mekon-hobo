@@ -143,7 +143,7 @@ class InstanceAligner {
 
 		private void updateSlotValues(ISlot slot) {
 
-			new IValuesAligner(slot, getUpdateSlot(slot)).align();
+			alignFromSlot(slot, getUpdateSlot(slot));
 		}
 
 		private ISlot getUpdateSlot(ISlot masterSlot) {
@@ -208,35 +208,17 @@ class InstanceAligner {
 			return getAlignedValueDefault(updateValue);
 		}
 
+		private IValue getAlignedFrameValue(IFrame updateValue) {
+
+			return getAlignedFrame(updateValue);
+		}
+
 		private IValue getAlignedValueDefault(IValue updateValue) {
 
 			List<IValue> masterVals = master.getValues().asList();
 			int masterIndex = masterVals.indexOf(updateValue);
 
 			return masterIndex != -1 ? masterVals.get(masterIndex) : updateValue;
-		}
-
-		private IValue getAlignedFrameValue(IFrame updateFrame) {
-
-			IFrame masterFrame = updatesToMasters.get(updateFrame);
-
-			if (masterFrame == null) {
-
-				masterFrame = createNewMasterFrame(updateFrame);
-			}
-
-			alignFrom(masterFrame, updateFrame);
-
-			return masterFrame;
-		}
-
-		private IFrame createNewMasterFrame(IFrame updateFrame) {
-
-			IFrame masterFrame = updateFrame.getType().instantiate();
-
-			initialise(masterFrame, updateFrame);
-
-			return masterFrame;
 		}
 	}
 
@@ -250,22 +232,59 @@ class InstanceAligner {
 
 	void align(IFrame masterRoot) {
 
-		alignFrom(masterRoot, updateRoot);
+		alignFromFrame(masterRoot, updateRoot);
 	}
 
-	private void alignFrom(IFrame master, IFrame update) {
+	private IFrame getAlignedFrame(IFrame update) {
 
-		if (master.getCategory().atomic() && alignedMasters.add(master)) {
+		IFrame master = updatesToMasters.get(update);
 
-			new IFrameAligner(master, update).align();
+		if (master == null) {
+
+			master = createNewMasterFrame(update);
+		}
+
+		alignFromFrame(master, update);
+
+		return master;
+	}
+
+	private IFrame createNewMasterFrame(IFrame update) {
+
+		CFrame type = update.getType();
+		IFrameFunction function = updateRoot.getFunction();
+
+		if (update.getCategory().disjunction()) {
+
+			return type.instantiateDisjunction();
+		}
+
+		IFrame master = type.instantiate(function);
+
+		new IFrameAligner(master, update).initialise();
+
+		return master;
+	}
+
+	private void alignFromFrame(IFrame master, IFrame update) {
+
+		IFrameCategory category = master.getCategory();
+
+		if (!category.reference() && alignedMasters.add(master)) {
+
+			if (category.disjunction()) {
+
+				alignFromSlot(master.getDisjunctsSlot(), update.getDisjunctsSlot());
+			}
+			else {
+
+				new IFrameAligner(master, update).align();
+			}
 		}
 	}
 
-	private void initialise(IFrame master, IFrame update) {
+	private void alignFromSlot(ISlot master, ISlot update) {
 
-		if (master.getCategory().atomic()) {
-
-			new IFrameAligner(master, update).initialise();
-		}
+		new IValuesAligner(master, update).align();
 	}
 }
