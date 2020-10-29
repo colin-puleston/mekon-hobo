@@ -38,8 +38,8 @@ abstract class DFieldTest {
 	final DModel model = new DModel(){};
 
 	final TestCModel testCModel = new TestCModel(model.getCModel());
-	final TestCFrames frameTypes = testCModel.cFrames;
-	final TestIFrames frames = testCModel.iFrameQueries;
+	final TestCFrames frameTypes = testCModel.serverCFrames;
+	final TestIFrames frames = testCModel.createQueryIFrames();
 	final TestDFields fields = new TestDFields(model, frames);
 
 	DObject createDObject(String frameTypeName) {

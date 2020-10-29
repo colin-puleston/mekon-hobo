@@ -39,11 +39,6 @@ public class DDisjunctionCellTest extends AbstractDCellTest<DObject, DDisjunctio
 	private DObject b = createObjectWithSubRootType("B");
 	private DObject c = createObjectWithSubRootType("C");
 
-	public DDisjunctionCellTest() {
-
-		testCModel.setQueriesEnabled(true);
-	}
-
 	DCell<DObject> createSourceCell() {
 
 		return fields.createDObjectCell(rootFrame);
