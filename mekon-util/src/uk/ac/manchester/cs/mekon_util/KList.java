@@ -249,6 +249,7 @@ public abstract class KList<V> {
 
 		if (addNewValue(value)) {
 
+			pollListenersForAdded(value);
 			pollListenersForUpdate();
 
 			return true;
@@ -302,22 +303,23 @@ public abstract class KList<V> {
 	 */
 	protected List<V> addAllValues(Collection<V> values) {
 
-		List<V> additions = new ArrayList<V>();
+		List<V> addedValues = new ArrayList<V>();
 
 		for (V value : values) {
 
 			if (addNewValue(value)) {
 
-				additions.add(value);
+				addedValues.add(value);
 			}
 		}
 
-		if (!additions.isEmpty()) {
+		if (!addedValues.isEmpty()) {
 
+			pollListenersForAdded(addedValues);
 			pollListenersForUpdate();
 		}
 
-		return additions;
+		return addedValues;
 	}
 
 	/**
@@ -332,6 +334,7 @@ public abstract class KList<V> {
 
 		if (index != -1) {
 
+			pollListenersForRemoved(value);
 			pollListenersForUpdate();
 		}
 
@@ -381,10 +384,13 @@ public abstract class KList<V> {
 	 */
 	protected void updateValues(List<V> latestValues) {
 
-		boolean removals = removeOldValues(latestValues);
-		boolean additions = addNewValues(latestValues);
+		List<V> removedValues = removeOldValues(latestValues);
+		List<V> addedValues = addNewValues(latestValues);
 
-		if (additions || removals) {
+		pollListenersForAdded(addedValues);
+		pollListenersForRemoved(removedValues);
+
+		if (!addedValues.isEmpty() || !removedValues.isEmpty()) {
 
 			pollListenersForUpdate();
 		}
@@ -412,39 +418,35 @@ public abstract class KList<V> {
 		values.addAll(reorderedValues);
 	}
 
-	private boolean addNewValues(List<V> latestValues) {
+	private List<V> addNewValues(List<V> latestValues) {
 
-		boolean additions = false;
-		List<V> previousValues = new ArrayList<V>(values);
+		List<V> newValues = new ArrayList<V>(latestValues);
 
-		for (V value : latestValues) {
+		newValues.removeAll(values);
 
-			if (!previousValues.contains(value)) {
+		for (V value : newValues) {
 
-				addNewValue(value);
-
-				additions = true;
-			}
+			addNewValue(value);
 		}
 
-		return additions;
+		return newValues;
 	}
 
-	private boolean removeOldValues(List<V> latestValues) {
+	private List<V> removeOldValues(List<V> latestValues) {
 
-		boolean removals = false;
+		List<V> oldValues = new ArrayList<V>(values);
 
-		for (V value : new ArrayList<V>(values)) {
+		oldValues.removeAll(latestValues);
+
+		for (V value : oldValues) {
 
 			if (!latestValues.contains(value)) {
 
 				removeOldValue(value);
-
-				removals = true;
 			}
 		}
 
-		return removals;
+		return oldValues;
 	}
 
 	private boolean addNewValue(V value) {
@@ -452,7 +454,6 @@ public abstract class KList<V> {
 		if (valueFinder.add(value)) {
 
 			values.add(value);
-			pollListenersForAdded(value);
 
 			return true;
 		}
@@ -467,7 +468,6 @@ public abstract class KList<V> {
 			int index = values.indexOf(value);
 
 			values.remove(value);
-			pollListenersForRemoved(value);
 
 			return index;
 		}
@@ -488,11 +488,27 @@ public abstract class KList<V> {
 		}
 	}
 
+	private void pollListenersForAdded(List<V> values) {
+
+		for (V value : values) {
+
+			pollListenersForAdded(value);
+		}
+	}
+
 	private void pollListenersForAdded(V value) {
 
 		for (KValuesListener<V> listener : copyListeners(valuesListeners)) {
 
 			listener.onAdded(value);
+		}
+	}
+
+	private void pollListenersForRemoved(List<V> values) {
+
+		for (V value : values) {
+
+			pollListenersForRemoved(value);
 		}
 	}
 
