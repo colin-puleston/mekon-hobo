@@ -30,7 +30,6 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 /**
  * @author Colin Puleston
  */
-
 class IFrameMapper implements CFrameListener {
 
 	private DModel model;
@@ -62,7 +61,10 @@ class IFrameMapper implements CFrameListener {
 
 	public void onInstantiated(IFrame instance, boolean reinstantiation) {
 
-		model.getDObject(instance);
+		if (instance.getCategory().atomic()) {
+
+			model.getDObject(instance);
+		}
 	}
 
 	IFrameMapper(DModel model, CBuilder cBuilder) {
