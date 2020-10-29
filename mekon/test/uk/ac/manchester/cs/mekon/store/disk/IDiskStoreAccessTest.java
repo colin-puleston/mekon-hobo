@@ -26,24 +26,27 @@ package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.util.*;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon.test_util.*;
 
 /**
  * @author Colin Puleston
  */
-public class IDiskStoreAccessTest extends IDiskStoreTest {
+public class IDiskStoreAccessTest extends IStoreAccessTest {
 
 	static private final CIdentity FIRST_ID = new CIdentity("First");
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
 
+	private TestCModel model = new TestCModel();
+	private TestInstances testInstances = new TestInstances(model);
+
 	private IDiskStore store;
+	private TestDiskStoreHandler storeHandler;
 
 	private IFrame first = null;
 	private IFrame second = null;
@@ -98,7 +101,7 @@ public class IDiskStoreAccessTest extends IDiskStoreTest {
 
 		TestMatcher(String typeName) {
 
-			type = frames.create(typeName);
+			type = model.serverCFrames.create(typeName);
 			instance = type.instantiate();
 			query = type.instantiateQuery();
 
@@ -134,39 +137,14 @@ public class IDiskStoreAccessTest extends IDiskStoreTest {
 		}
 	}
 
-	@Before
-	public void setUp() {
+	@After
+	public void clearUp() {
 
-		store = createStore();
-		store.clear();
-	}
-
-	@Test
-	public void test_storeAndRemove() {
-
-		testStore();
-		testRemove();
-	}
-
-	@Test
-	public void test_storeAndRetrieve() {
-
-		testStore();
-		testRetrieve();
-	}
-
-	@Test
-	public void test_storeReloadAndRetrieve() {
-
-		testStore();
-		store = createStore();
-		testRetrieve();
+		storeHandler.clearUp();
 	}
 
 	@Test
 	public void test_matching() {
-
-		model.setQueriesEnabled(true);
 
 		TestMatcher matcherA = new TestMatcher("A");
 		TestMatcher matcherB = new TestMatcher("B");
@@ -181,74 +159,21 @@ public class IDiskStoreAccessTest extends IDiskStoreTest {
 		matcherB.removeMatcherInstanceFromStore();
 	}
 
-	private void testStore() {
+	protected IStore createStore() {
 
-		first = createAndStoreInstance(FIRST_ID);
-		second = createAndStoreInstance(SECOND_ID);
+		storeHandler = new TestDiskStoreHandler(model.serverModel);
+		store = storeHandler.createStore();
 
-		testStoredIds(FIRST_ID, SECOND_ID);
+		return store;
 	}
 
-	private void testRemove() {
+	protected TestInstances resolveCurrentTestInstances() {
 
-		testStoredIds(FIRST_ID, SECOND_ID);
-		store.remove(FIRST_ID);
-		testStoredIds(SECOND_ID);
-		store.remove(SECOND_ID);
-		testStoredIds();
+		return testInstances;
 	}
 
-	private void testRetrieve() {
+	protected boolean canTestReload() {
 
-		testRetrieve(first, FIRST_ID);
-		testRetrieve(second, SECOND_ID);
-
-		store.remove(FIRST_ID);
-		testStoredIds(SECOND_ID);
-
-		store.remove(SECOND_ID);
-		testStoredIds();
-	}
-
-	private IFrame createAndStoreInstance(CIdentity id) {
-
-		IFrame instance = createInstance(id);
-
-		store.add(instance, id);
-
-		return instance;
-	}
-
-	private IFrame createInstance(CIdentity id) {
-
-		instances.setTypesPrefix(id.getIdentifier() + "Type");
-
-		return instances.getBasic();
-	}
-
-	private void testStoredIds(CIdentity... expectedIds) {
-
-		testListContents(store.getAllIdentities(), Arrays.asList(expectedIds));
-	}
-
-	private void testRetrieve(IFrame original, CIdentity id) {
-
-		assertTrue(store.contains(id));
-
-		IRegenInstance regen = store.get(id);
-		IFrame retrieved = regen.getRootFrame();
-
-		assertTrue(store.contains(id));
-
-		assertEquals(original.getType().getIdentity(), regen.getRootTypeId());
-		assertEquals(IRegenStatus.FULLY_VALID, regen.getStatus());
-
-		assertTrue(retrieved.equalsStructure(original));
-		assertFalse(retrieved == original);
-	}
-
-	private <E>void testListContents(List<? extends E> got, List<? extends E> expected) {
-
-		MekonTestUtils.testListContents(got, expected);
+		return true;
 	}
 }

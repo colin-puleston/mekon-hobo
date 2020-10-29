@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 public class CExtensionTest extends CValueTest<CFrame> {
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
+	private TestCFrames frames = model.serverCFrames;
 	private TestCSlots slots = frames.repeatTypesSlots;
 
 	private CAtomicFrame a = frames.create("A");

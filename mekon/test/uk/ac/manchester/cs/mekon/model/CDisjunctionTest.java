@@ -39,7 +39,7 @@ public class CDisjunctionTest extends CValueTest<CFrame> {
 	static private final List<CFrame> NO_CFRAMES = Collections.emptyList();
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
+	private TestCFrames frames = model.serverCFrames;
 
 	private CFrame a = frames.create("A");
 	private CFrame b = frames.create("B");

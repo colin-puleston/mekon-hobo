@@ -42,17 +42,17 @@ public class TestCModel {
 		return model;
 	}
 
-	public final CModel model;
-	public final IReasoner iReasoner;
-	public final IEditor iEditor;
+	public final CModel serverModel;
+	public final TestCFrames serverCFrames;
 
-	public final TestCFrames cFrames;
-	public final TestIFrames iFrameAssertions;
-	public final TestIFrames iFrameQueries;
+	public final IReasoner iReasoner;
+
+	private CModel clientModel;
+	private TestCFrames clientCFrames;
 
 	public TestCModel() {
 
-		this(createEmptyModel(), null);
+		this(createEmptyModel());
 	}
 
 	public TestCModel(IReasoner iReasoner) {
@@ -62,33 +62,57 @@ public class TestCModel {
 
 	public TestCModel(CModel model) {
 
-		this(model, null);
+		this(model, (IReasoner)null);
 	}
 
-	public void setQueriesEnabled(boolean enabled) {
+	public TestCModel(CModel model, IReasoner iReasoner) {
 
-		model.setQueriesEnabled(enabled);
-	}
+		serverModel = model;
+		clientModel = model;
 
-	public void normaliseCFramesHierarchy() {
-
-		new CHierarchyNormaliser(model);
-	}
-
-	public TestInstances createTestInstances() {
-
-		return new TestInstances(cFrames);
-	}
-
-	private TestCModel(CModel model, IReasoner iReasoner) {
-
-		this.model = model;
 		this.iReasoner = iReasoner;
 
-		iEditor = model.getIEditor();
+		serverCFrames = new TestCFrames(serverModel, iReasoner);
+		clientCFrames = serverCFrames;
 
-		cFrames = new TestCFrames(model, iReasoner);
-		iFrameAssertions = new TestIFrames(cFrames, IFrameFunction.ASSERTION);
-		iFrameQueries = new TestIFrames(cFrames, IFrameFunction.QUERY);
+		serverModel.setQueriesEnabled(true);
+		clientModel.setQueriesEnabled(true);
+	}
+
+	public void setClientModel(CModel clientModel) {
+
+		this.clientModel = clientModel;
+
+		clientCFrames = new TestCFrames(clientModel, null);
+	}
+
+	public TestIFrames createAssertionIFrames() {
+
+		return new TestIFrames(clientCFrames, IFrameFunction.ASSERTION);
+	}
+
+	public TestIFrames createQueryIFrames() {
+
+		return new TestIFrames(clientCFrames, IFrameFunction.QUERY);
+	}
+
+	public boolean remoteModel() {
+
+		return clientCFrames != serverCFrames;
+	}
+
+	public CModel getClientModel() {
+
+		return clientModel;
+	}
+
+	public TestCFrames getClientCFrames() {
+
+		return clientCFrames;
+	}
+
+	public IEditor getIEditor() {
+
+		return clientModel.getIEditor();
 	}
 }

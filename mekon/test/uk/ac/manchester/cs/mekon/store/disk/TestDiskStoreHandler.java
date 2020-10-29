@@ -26,30 +26,21 @@ package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.io.*;
 
-import org.junit.After;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public abstract class IDiskStoreTest {
+class TestDiskStoreHandler {
 
-	final TestCModel model = new TestCModel();
-	final TestCFrames frames = model.cFrames;
-	final TestInstances instances = model.createTestInstances();
-
+	private CModel model;
 	private IDiskStore store;
+
 	private File storeDir;
 
-	@After
-	public void clearUp() {
+	TestDiskStoreHandler(CModel model) {
 
-		if (store != null) {
-
-			store.clear();
-			deleteStructure(storeDir);
-		}
+		this.model = model;
 	}
 
 	IDiskStore createStore() {
@@ -59,7 +50,7 @@ public abstract class IDiskStoreTest {
 
 	IDiskStore createStore(StoreStructure structure) {
 
-		store = new IDiskStore(model.model, structure);
+		store = new IDiskStore(model, structure);
 		storeDir = structure.getMainDirectory();
 
 		store.initialisePostRegistration();
@@ -69,7 +60,16 @@ public abstract class IDiskStoreTest {
 
 	StoreStructure createStructure(StoreStructureBuilder builder) {
 
-		return builder.build(model.model);
+		return builder.build(model);
+	}
+
+	void clearUp() {
+
+		if (store != null) {
+
+			store.clear();
+			deleteStructure(storeDir);
+		}
 	}
 
 	private void deleteStructure(File file) {

@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.test_util.*;
 public class CSlotValuesTest {
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
+	private TestCFrames frames = model.serverCFrames;
 	private TestCSlots slots = frames.repeatTypesSlots;
 
 	private CAtomicFrame container = frames.create("CONTAINER");

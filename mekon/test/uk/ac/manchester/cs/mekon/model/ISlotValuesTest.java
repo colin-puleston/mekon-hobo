@@ -40,8 +40,8 @@ public class ISlotValuesTest {
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frameTypes = model.cFrames;
-	private TestIFrames frames = model.iFrameAssertions;
+	private TestCFrames frameTypes = model.getClientCFrames();
+	private TestIFrames frames = model.createAssertionIFrames();
 
 	private TestISlots repeatTypesSlots = frames.repeatTypesSlots;
 	private TestISlots uniqueTypesSlots = frames.uniqueTypesSlots;

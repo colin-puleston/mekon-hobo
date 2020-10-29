@@ -32,6 +32,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
+import uk.ac.manchester.cs.mekon.remote.*;
 import uk.ac.manchester.cs.mekon.network.*;
 
 /**
@@ -56,7 +57,9 @@ import uk.ac.manchester.cs.mekon.network.*;
 	ISlotSpecsViaDisjunctionsTest.class,
 	IDiskStoreAccessTest.class,
 	IDiskStoreStructureTest.class,
+	RemoteIStoreAccessTest.class,
 	IInstanceSerialiseTest.class,
+	IMatcherWithRemoteModelTest.class,
 	IDirectMatcherTest.class,
 	NDirectMatcherTest.class})
 public class MekonTestSuite {

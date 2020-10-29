@@ -79,7 +79,9 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		return CString.FREE.instantiate(value);
 	}
 
-	private IDiskStore store;
+	private IStore clientStore;
+	private IDiskStore serverStore;
+
 	private IMatcher matcher;
 
 	private Map<CIdentity, IFrame> storedInstancesById = new HashMap<CIdentity, IFrame>();
@@ -94,12 +96,14 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		buildModel(createSectionBuilder());
 
-		store = new IDiskStore(getModel());
+		clientStore = getClientStore();
+		serverStore = (IDiskStore)getServerStore();
+
 		matcher = createMatcher();
 
-		store.clear();
-		store.addMatcher(matcher);
-		store.initialisePostRegistration();
+		serverStore.clear();
+		serverStore.addMatcher(matcher);
+		serverStore.initialisePostRegistration();
 
 		undergradTeachingJob = addUndergradTeachingJob();
 		postgradTeachingJob = addPostgradTeachingJob();
@@ -120,8 +124,8 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	@After
 	public void clearUp() {
 
-		store.clear();
-		store.stop();
+		serverStore.clear();
+		serverStore.stop();
 	}
 
 	@Test
@@ -672,7 +676,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private IFrame addInstance(IFrame instance, CIdentity id) {
 
-		store.add(instance, id);
+		clientStore.add(instance, id);
 		storedInstancesById.put(id, instance);
 
 		return instance;
@@ -680,7 +684,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	private void removeInstance(CIdentity id) {
 
-		store.remove(id);
+		clientStore.remove(id);
 		storedInstancesById.remove(id);
 	}
 
@@ -688,20 +692,20 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		CIdentity id = getInstanceId(instance);
 
-		store.remove(id);
-		store.add(instance, id);
+		clientStore.remove(id);
+		clientStore.add(instance, id);
 	}
 
 	private void testMatching(IFrame query, CIdentity... expectedMatchIds) {
 
-		List<CIdentity> matchIds = matcher.match(query).getAllMatches();
+		List<CIdentity> matchIds = clientStore.match(query).getAllMatches();
 
 		testListContents(matchIds, Arrays.asList(expectedMatchIds));
 
-		for (CIdentity id : store.getAllIdentities()) {
+		for (CIdentity id : clientStore.getAllIdentities()) {
 
-			IFrame instance = store.get(id).getRootFrame();
-			boolean matches = matcher.matches(query, instance);
+			IFrame instance = clientStore.get(id).getRootFrame();
+			boolean matches = clientStore.matches(query, instance);
 
 			assertTrue(matches == matchIds.contains(id));
 		}

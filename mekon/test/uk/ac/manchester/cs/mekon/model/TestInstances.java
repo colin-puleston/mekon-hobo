@@ -33,8 +33,10 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
  */
 public class TestInstances {
 
-	private TestCFrames frameTypes;
-	private TestCSlots slotTypes;
+	private TestCModel model;
+
+	private TestCFrames serverFrameTypes;
+	private TestCSlots serverSlotTypes;
 
 	private String typesPrefix = "";
 	private IFrameFunction function = IFrameFunction.ASSERTION;
@@ -97,7 +99,7 @@ public class TestInstances {
 		DynamicSlotInsertionReasoner() {
 
 			valueType = createFrameType("Insert-value");
-			slotType = slotTypes.create("insert-slot", valueType);
+			slotType = serverSlotTypes.create("insert-slot", valueType);
 
 			ta.asAtomicFrame().setIReasoner(this);
 		}
@@ -185,6 +187,40 @@ public class TestInstances {
 		}
 	}
 
+	public TestInstances(TestCModel model) {
+
+		this.model = model;
+
+		serverFrameTypes = model.serverCFrames;
+		serverSlotTypes = serverFrameTypes.repeatTypesSlots;
+
+		ta = createFrameType("A");
+		tb = createFrameType("B");
+		tc = createFrameType("C");
+		td = createFrameType("D");
+		te = createFrameType("E");
+
+		tcx = createFrameType("CX");
+		tcy = createFrameType("CY");
+		tex = createFrameType("EX");
+		tey = createFrameType("EY");
+
+		tn = CNumberFactory.range(1, 10);
+
+		sab = serverSlotTypes.create(ta, "sab", tb);
+		sac = serverSlotTypes.create(ta, "sac", tc);
+
+		sbd = serverSlotTypes.create(tb, "sbd", td);
+		sbe = serverSlotTypes.create(tb, "sbe", te.getType());
+		sbn = serverSlotTypes.create(tb, "sbn", tn);
+
+		addSuperFrameType(tcx, tc);
+		addSuperFrameType(tcy, tc);
+
+		addSuperFrameType(tex, te);
+		addSuperFrameType(tey, te);
+	}
+
 	public void setTypesPrefix(String value) {
 
 		typesPrefix = value;
@@ -215,42 +251,9 @@ public class TestInstances {
 		return new AbstractSubsumerInstanceCreator().get();
 	}
 
-	TestInstances(TestCFrames frameTypes) {
-
-		this.frameTypes = frameTypes;
-
-		slotTypes = frameTypes.repeatTypesSlots;
-
-		ta = createFrameType("A");
-		tb = createFrameType("B");
-		tc = createFrameType("C");
-		td = createFrameType("D");
-		te = createFrameType("E");
-
-		tcx = createFrameType("CX");
-		tcy = createFrameType("CY");
-		tex = createFrameType("EX");
-		tey = createFrameType("EY");
-
-		tn = CNumberFactory.range(1, 10);
-
-		sab = slotTypes.create(ta, "sab", tb);
-		sac = slotTypes.create(ta, "sac", tc);
-
-		sbd = slotTypes.create(tb, "sbd", td);
-		sbe = slotTypes.create(tb, "sbe", te.getType());
-		sbn = slotTypes.create(tb, "sbn", tn);
-
-		addSuperFrameType(tcx, tc);
-		addSuperFrameType(tcy, tc);
-
-		addSuperFrameType(tex, te);
-		addSuperFrameType(tey, te);
-	}
-
 	private CFrame createFrameType(String name) {
 
-		return frameTypes.create(typesPrefix + name);
+		return serverFrameTypes.create(typesPrefix + name);
 	}
 
 	private CFrame createDisjunctionType(CFrame... disjuncts) {
@@ -263,25 +266,56 @@ public class TestInstances {
 		FramesTestUtils.addSuperFrame(sub, sup);
 	}
 
+	private IFrame createFrame(CFrame serverType) {
+
+		return FramesTestUtils.createIFrame(toClientType(serverType), function);
+	}
+
+	private IFrame createReferenceFrame(CFrame serverType, String ref) {
+
+		return new IReference(
+						toClientType(serverType),
+						new CIdentity(ref, ref),
+						function,
+						false);
+	}
+
 	private IFrame createDisjunction(IFrame... disjuncts) {
 
 		return FramesTestUtils.createIDisjunction(disjuncts);
 	}
 
-	private IFrame createFrame(CFrame type) {
+	private void setSlotValues(
+					IFrame container,
+					CSlot serverType,
+					IValue... serverValues) {
 
-		return FramesTestUtils.instantiateCFrame(type, function);
+		ISlot slot = container.getSlots().get(serverType.getIdentity());
+		ISlotValuesEditor valuesEd = slot.getValuesEditor();
+
+		for (IValue serverValue : serverValues) {
+
+			valuesEd.add(toClientValue(serverValue));
+		}
 	}
 
-	private IFrame createReferenceFrame(CFrame type, String ref) {
+	private IValue toClientValue(IValue serverValue) {
 
-		return new IReference(type, new CIdentity(ref, ref), function, false);
+		if (serverValue instanceof CFrame) {
+
+			return toClientType((CFrame)serverValue);
+		}
+
+		return serverValue;
 	}
 
-	private void setSlotValues(IFrame container, CSlot type, IValue... values) {
+	private CFrame toClientType(CFrame serverType) {
 
-		ISlot slot = container.getSlots().get(type.getIdentity());
+		if (model.remoteModel()) {
 
-		slot.getValuesEditor().update(Arrays.asList(values));
+			return model.getClientCFrames().get(serverType.getIdentity());
+		}
+
+		return serverType;
 	}
 }

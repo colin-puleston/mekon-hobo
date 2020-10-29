@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.test_util.*;
 public class MostSpecificCFramesTest {
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
+	private TestCFrames frames = model.serverCFrames;
 
 	private CFrame fa = frames.create("FA");
 	private CFrame fax = frames.create("FAX");

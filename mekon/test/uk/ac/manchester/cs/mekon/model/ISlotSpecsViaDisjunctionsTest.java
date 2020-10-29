@@ -42,8 +42,8 @@ public class ISlotSpecsViaDisjunctionsTest {
 	static private final CIdentity SLOT3_ID = new CIdentity("SLOT-3");
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frameTypes = model.cFrames;
-	private TestIFrames frames = model.iFrameAssertions;
+	private TestCFrames frameTypes = model.getClientCFrames();
+	private TestIFrames frames = model.createAssertionIFrames();
 
 	private TestCSlots repeatTypesSlotTypes = frameTypes.repeatTypesSlots;
 	private TestCSlots singleValueSlotTypes = frameTypes.singleValueSlots;
@@ -122,7 +122,7 @@ public class ISlotSpecsViaDisjunctionsTest {
 
 	private void updateContainerSlots() {
 
-		ISlotSpecs specs = new ISlotSpecs(model.iEditor);
+		ISlotSpecs specs = new ISlotSpecs(model.getIEditor());
 
 		specs.absorb(createDisjunction(td, te));
 		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);

@@ -40,7 +40,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 	static private final List<CFrame> NO_CFRAMES = Collections.emptyList();
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
+	private TestCFrames frames = model.serverCFrames;
 	private TestCSlots slots = frames.repeatTypesSlots;
 
 	@Test
@@ -61,7 +61,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		testList(c.getSupers(), Arrays.asList(b));
 		testList(c.getSubs(), NO_CFRAMES);
 
-		model.model.removeFrame(b.asAtomicFrame());
+		model.serverModel.removeFrame(b.asAtomicFrame());
 
 		testList(getModelFrames(), Arrays.asList(a, c));
 		testList(a.getSupers(), getRootFrameAsList());
@@ -193,7 +193,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(e2, e1);
 		addSuperFrame(e3, e2);
 
-		model.normaliseCFramesHierarchy();
+		normaliseHierarchy();
 
 		testSupers(e2, Arrays.asList(e1));
 		testSupers(e3, Arrays.asList(e2));
@@ -214,7 +214,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(h2, h1);
 		addSuperFrame(h3, h2);
 
-		model.normaliseCFramesHierarchy();
+		normaliseHierarchy();
 
 		testSupers(h2, Arrays.asList(h1));
 		testSupers(h3, Arrays.asList(h2));
@@ -247,7 +247,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(eb1, h3);
 		addSuperFrame(eb2, eb1);
 
-		model.normaliseCFramesHierarchy();
+		normaliseHierarchy();
 
 		testSupers(er, getRootFrameAsList());
 		testSupers(ea1, Arrays.asList(er));
@@ -277,7 +277,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(eb1, h1);
 		addSuperFrame(eb2, h2);
 
-		model.normaliseCFramesHierarchy();
+		normaliseHierarchy();
 
 		testSupers(er, getRootFrameAsList());
 		testSupers(ea1, Arrays.asList(er));
@@ -305,7 +305,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 		addSuperFrame(eb1, h1);
 		addSuperFrame(eb1, h2);
 
-		model.normaliseCFramesHierarchy();
+		normaliseHierarchy();
 
 		testSupers(er, getRootFrameAsList());
 		testSupers(ea1, Arrays.asList(er));
@@ -330,6 +330,11 @@ public class CFrameTest extends CValueTest<CFrame> {
 	private void addSuperFrame(CFrame sub, CFrame sup) {
 
 		FramesTestUtils.addSuperFrame(sub, sup);
+	}
+
+	private void normaliseHierarchy() {
+
+		new CHierarchyNormaliser(model.serverModel);
 	}
 
 	private void testSupers(CFrame frame, List<CFrame> expected) {
@@ -380,7 +385,7 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private List<CFrame> getModelFrames() {
 
-		return model.model.getFrames().asList();
+		return model.serverModel.getFrames().asList();
 	}
 
 	private <E>void testList(List<? extends E> got, List<? extends E> expected) {
@@ -395,6 +400,6 @@ public class CFrameTest extends CValueTest<CFrame> {
 
 	private List<CFrame> getRootFrameAsList() {
 
-		return Arrays.asList(model.model.getRootFrame());
+		return Arrays.asList(model.serverModel.getRootFrame());
 	}
 }

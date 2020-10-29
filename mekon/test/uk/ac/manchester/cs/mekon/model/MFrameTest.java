@@ -32,7 +32,7 @@ import org.junit.Test;
 public class MFrameTest extends CValueTest<MFrame> {
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
+	private TestCFrames frames = model.serverCFrames;
 	private TestCSlots slots = frames.repeatTypesSlots;
 
 	@Test

@@ -38,8 +38,8 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 public class IInstanceSerialiseTest {
 
 	private TestCModel model = new TestCModel();
-	private TestISlots slots = model.iFrameAssertions.repeatTypesSlots;
-	private TestInstances instances = model.createTestInstances();
+	private TestISlots slots = model.createAssertionIFrames().repeatTypesSlots;
+	private TestInstances instances = new TestInstances(model);
 
 	private boolean freeInstances = false;
 	private boolean renderAsTree = false;
@@ -86,8 +86,6 @@ public class IInstanceSerialiseTest {
 
 	private void testRenderAndParse() {
 
-		model.setQueriesEnabled(includeAbstractValues);
-
 		IFrame original = createTestInstance();
 		IRegenInstance parseOut = parse(render(original));
 
@@ -102,7 +100,7 @@ public class IInstanceSerialiseTest {
 
 	private IRegenInstance parse(XDocument rendering) {
 
-		IInstanceParser parser = new IInstanceParser(model.model);
+		IInstanceParser parser = new IInstanceParser(model.serverModel);
 
 		parser.setFreeInstances(freeInstances);
 

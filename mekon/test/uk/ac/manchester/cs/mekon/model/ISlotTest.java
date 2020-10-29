@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon_util.*;
 public class ISlotTest {
 
 	private TestCModel model = new TestCModel();
-	private TestISlots slots = model.iFrameAssertions.repeatTypesSlots;
+	private TestISlots slots = model.createAssertionIFrames().repeatTypesSlots;
 
 	@Test(expected = KAccessException.class)
 	public void test_getValuesEditor_failsForInactiveSlot() {

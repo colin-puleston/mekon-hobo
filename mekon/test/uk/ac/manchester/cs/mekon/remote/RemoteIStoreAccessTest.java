@@ -22,56 +22,46 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.remote;
 
-import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
  */
-public class TestCFrames {
+public class RemoteIStoreAccessTest extends IStoreAccessTest {
 
-	public final TestCSlots repeatTypesSlots;
-	public final TestCSlots uniqueTypesSlots;
-	public final TestCSlots singleValueSlots;
+	private CModel serverModel = new TestCModel().serverModel;
 
-	private CModel model;
-	private IReasoner iReasoner;
+	private TestInstances testInstances;
 
-	public CAtomicFrame create(String name) {
+	protected IStore createStore() {
 
-		return create(name, false);
+		TestCModel testModel = createTestModelAndInstances();
+		MekonRemoteTestModel remoteModel = new MekonRemoteTestModel(serverModel);
+
+		testModel.setClientModel(remoteModel.clientModel);
+
+		return remoteModel.clientStore;
 	}
 
-	public CAtomicFrame createHidden(String name) {
+	protected TestInstances resolveCurrentTestInstances() {
 
-		return create(name, true);
+		return testInstances;
 	}
 
-	public CAtomicFrame create(String name, boolean hidden) {
+	protected boolean canTestReload() {
 
-		CAtomicFrame frame = model.addFrame(new CIdentity(name, name), hidden);
-
-		if (iReasoner != null) {
-
-			frame.setIReasoner(iReasoner);
-		}
-
-		return frame;
+		return false;
 	}
 
-	public CFrame get(CIdentity identity) {
+	private TestCModel createTestModelAndInstances() {
 
-		return model.getFrames().get(identity);
-	}
+		TestCModel testModel = new TestCModel(serverModel);
 
-	TestCFrames(CModel model, IReasoner iReasoner) {
+		testInstances = new TestInstances(testModel);
 
-		this.model = model;
-		this.iReasoner = iReasoner;
-
-		repeatTypesSlots = new TestCSlots(this, CCardinality.REPEATABLE_TYPES);
-		uniqueTypesSlots = new TestCSlots(this, CCardinality.UNIQUE_TYPES);
-		singleValueSlots = new TestCSlots(this, CCardinality.SINGLE_VALUE);
+		return testModel;
 	}
 }

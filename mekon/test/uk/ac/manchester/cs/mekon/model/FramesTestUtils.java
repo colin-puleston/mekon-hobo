@@ -41,12 +41,12 @@ public class FramesTestUtils {
 		return CFrame.resolveDisjunction(Arrays.asList(disjuncts));
 	}
 
-	static public IFrame instantiateCFrame(CFrame frame) {
+	static public IFrame createIFrame(CFrame frame) {
 
-		return instantiateCFrame(frame, IFrameFunction.ASSERTION);
+		return createIFrame(frame, IFrameFunction.ASSERTION);
 	}
 
-	static public IFrame instantiateCFrame(CFrame frame, IFrameFunction function) {
+	static public IFrame createIFrame(CFrame frame, IFrameFunction function) {
 
 		IFrame iFrame = new IAtomicFrame(frame, function, false);
 

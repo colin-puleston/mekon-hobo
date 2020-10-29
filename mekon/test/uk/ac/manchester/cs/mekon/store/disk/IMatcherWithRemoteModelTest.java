@@ -22,56 +22,15 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
-
-import uk.ac.manchester.cs.mekon.model.motor.*;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 /**
  * @author Colin Puleston
  */
-public class TestCFrames {
+public class IMatcherWithRemoteModelTest extends IDirectMatcherTest {
 
-	public final TestCSlots repeatTypesSlots;
-	public final TestCSlots uniqueTypesSlots;
-	public final TestCSlots singleValueSlots;
+	protected boolean testingRemoteModel() {
 
-	private CModel model;
-	private IReasoner iReasoner;
-
-	public CAtomicFrame create(String name) {
-
-		return create(name, false);
-	}
-
-	public CAtomicFrame createHidden(String name) {
-
-		return create(name, true);
-	}
-
-	public CAtomicFrame create(String name, boolean hidden) {
-
-		CAtomicFrame frame = model.addFrame(new CIdentity(name, name), hidden);
-
-		if (iReasoner != null) {
-
-			frame.setIReasoner(iReasoner);
-		}
-
-		return frame;
-	}
-
-	public CFrame get(CIdentity identity) {
-
-		return model.getFrames().get(identity);
-	}
-
-	TestCFrames(CModel model, IReasoner iReasoner) {
-
-		this.model = model;
-		this.iReasoner = iReasoner;
-
-		repeatTypesSlots = new TestCSlots(this, CCardinality.REPEATABLE_TYPES);
-		uniqueTypesSlots = new TestCSlots(this, CCardinality.UNIQUE_TYPES);
-		singleValueSlots = new TestCSlots(this, CCardinality.SINGLE_VALUE);
+		return true;
 	}
 }

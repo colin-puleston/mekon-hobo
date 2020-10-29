@@ -23,6 +23,7 @@
  */
 package uk.ac.manchester.cs.mekon.remote;
 
+import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
@@ -58,6 +59,11 @@ public class MekonRemoteTestModel {
 
 			super(model);
 		}
+	}
+
+	public MekonRemoteTestModel(CModel model) {
+
+		this(model, IDiskStoreManager.getBuilder(model).build());
 	}
 
 	public MekonRemoteTestModel(CModel model, IStore store) {

@@ -27,16 +27,18 @@ package uk.ac.manchester.cs.mekon.store.disk;
 import java.io.*;
 import java.util.*;
 
+import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
  */
-public class IDiskStoreStructureTest extends IDiskStoreTest implements IDiskStoreNames {
+public class IDiskStoreStructureTest implements IDiskStoreNames {
 
 	static private final File TEST_DIR = new File("test-store");
 	static private final File DEFAULT_DIR = new File(DEFAULT_STORE_DIR_NAME);
@@ -46,11 +48,13 @@ public class IDiskStoreStructureTest extends IDiskStoreTest implements IDiskStor
 	static private final String SUBSTORE_B_NAME = "substore-B";
 
 	private IDiskStore store;
+	private TestDiskStoreHandler storeHandler;
+
 	private StoreStructure structure;
 	private StoreStructureBuilder structureBuilder = new StoreStructureBuilder();
 
-	private CFrame typeA = frames.create("Type-A");
-	private CFrame typeB = frames.create("Type-B");
+	private CFrame typeA;
+	private CFrame typeB;
 
 	private class StoreFileCounter {
 
@@ -79,10 +83,22 @@ public class IDiskStoreStructureTest extends IDiskStoreTest implements IDiskStor
 		}
 	}
 
+	@Before
+	public void setUp() {
+
+		TestCModel model = new TestCModel();
+		TestCFrames cFrames = model.serverCFrames;
+
+		storeHandler = new TestDiskStoreHandler(model.serverModel);
+
+		typeA = cFrames.create("Type-A");
+		typeB = cFrames.create("Type-B");
+	}
+
 	@After
 	public void clearUp() {
 
-		super.clearUp();
+		storeHandler.clearUp();
 
 		TEST_DIR.delete();
 	}
@@ -162,6 +178,11 @@ public class IDiskStoreStructureTest extends IDiskStoreTest implements IDiskStor
 		testMainStoreDirectory(DEFAULT_DIR, 4);
 	}
 
+	protected IStore getStore() {
+
+		return store;
+	}
+
 	private void startNewStructure() {
 
 		structureBuilder = new StoreStructureBuilder();
@@ -180,8 +201,10 @@ public class IDiskStoreStructureTest extends IDiskStoreTest implements IDiskStor
 
 	private void initialiseStore() {
 
-		structure = createStructure(structureBuilder);
-		store = createStore(structure);
+		structure = storeHandler.createStructure(structureBuilder);
+		store = storeHandler.createStore(structure);
+
+		store.clear();
 
 		addInstance(typeA, "A-ASSERT", IFrameFunction.ASSERTION);
 		addInstance(typeA, "A-QUERY", IFrameFunction.QUERY);
@@ -191,7 +214,7 @@ public class IDiskStoreStructureTest extends IDiskStoreTest implements IDiskStor
 
 	private void addInstance(CFrame type, String instanceId, IFrameFunction function) {
 
-		store.add(FramesTestUtils.instantiateCFrame(type, function), new CIdentity(instanceId));
+		store.add(FramesTestUtils.createIFrame(type, function), new CIdentity(instanceId));
 	}
 
 	private void testNonSplitSubStoreStructure() {

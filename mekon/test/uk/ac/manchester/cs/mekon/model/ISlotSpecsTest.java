@@ -40,8 +40,8 @@ public class ISlotSpecsTest {
 	static private final CIdentity SLOT_ID = new CIdentity("SLOT", "SLOT");
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frameTypes = model.cFrames;
-	private TestIFrames frames = model.iFrameAssertions;
+	private TestCFrames frameTypes = model.getClientCFrames();
+	private TestIFrames frames = model.createAssertionIFrames();
 
 	private TestCSlots repeatTypesSlotTypes = frameTypes.repeatTypesSlots;
 	private TestCSlots uniqueTypesSlotTypes = frameTypes.uniqueTypesSlots;
@@ -228,7 +228,7 @@ public class ISlotSpecsTest {
 
 	private void updateContainerSlots(CFrame... containerTypes) {
 
-		ISlotSpecs specs = new ISlotSpecs(model.iEditor);
+		ISlotSpecs specs = new ISlotSpecs(model.getIEditor());
 
 		specs.absorbAll(Arrays.asList(containerTypes));
 		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);

@@ -29,14 +29,19 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.store.disk.*;
+import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.remote.*;
 
 /**
  * @author Colin Puleston
  */
 public abstract class DemoModelBasedTest extends DemoModelIds {
 
-	private CModel model;
+	private CModel clientModel;
+	private IStore clientStore;
+
+	private CModel serverModel;
+	private IStore serverStore;
 
 	public CBuilder buildModel(CSectionBuilder sectionBuilder) {
 
@@ -45,14 +50,43 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 		cBuilder.setQueriesEnabled(true);
 		cBuilder.addSectionBuilder(sectionBuilder);
 
-		model = cBuilder.build();
+		serverModel = cBuilder.build();
+		serverStore = IDiskStoreManager.getBuilder(cBuilder).build();
+
+		if (testingRemoteModel()) {
+
+			MekonRemoteTestModel remote = new MekonRemoteTestModel(serverModel, serverStore);
+
+			clientModel = remote.clientModel;
+			clientStore = remote.clientStore;
+		}
+		else {
+
+			clientModel = serverModel;
+			clientStore = serverStore;
+		}
 
 		return cBuilder;
 	}
 
-	public CModel getModel() {
+	public CModel getClientModel() {
 
-		return model;
+		return clientModel;
+	}
+
+	public CModel getServerModel() {
+
+		return serverModel;
+	}
+
+	public IStore getClientStore() {
+
+		return clientStore;
+	}
+
+	public IStore getServerStore() {
+
+		return serverStore;
 	}
 
 	public Set<CFrame> getCFrames(CIdentity... ids) {
@@ -69,12 +103,12 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 
 	public boolean isCFrame(CIdentity id) {
 
-		return model.getFrames().containsValueFor(id);
+		return clientModel.getFrames().containsValueFor(id);
 	}
 
 	public CFrame getCFrame(CIdentity id) {
 
-		return model.getFrames().get(id);
+		return clientModel.getFrames().get(id);
 	}
 
 	public IFrame createIFrame(CIdentity typeId) {
@@ -107,6 +141,11 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 		getISlot(container, slotId).getValuesEditor().add(value);
 	}
 
+	protected boolean testingRemoteModel() {
+
+		return false;
+	}
+
 	private IFrame instantiate(CIdentity typeId, IFrameFunction function) {
 
 		return getFrame(typeId).instantiate(function);
@@ -119,6 +158,6 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 
 	private CFrame getFrame(CIdentity id) {
 
-		return model.getFrames().get(id);
+		return clientModel.getFrames().get(id);
 	}
 }

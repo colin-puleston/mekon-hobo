@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon.test_util.*;
 public class CSlotTest {
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frames = model.cFrames;
+	private TestCFrames frames = model.serverCFrames;
 
 	private TestCSlots repeatTypesSlots = frames.repeatTypesSlots;
 	private TestCSlots uniqueTypesSlots = frames.uniqueTypesSlots;
@@ -61,7 +61,7 @@ public class CSlotTest {
 
 		testList(a.getSlots().asList(), Arrays.asList(s1, s2, s3, s4));
 
-		model.model.removeFrame(v1);
+		model.serverModel.removeFrame(v1);
 		a.removeSlot(s3);
 
 		testList(a.getSlots().asList(), Arrays.asList(s2, s4));

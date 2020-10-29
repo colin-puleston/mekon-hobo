@@ -43,10 +43,10 @@ public class IFrameTest {
 	private MonitorIReasoner monitorIReasoner = new MonitorIReasoner();
 
 	private TestCModel model = new TestCModel(monitorIReasoner);
-	private TestCFrames frameTypes = model.cFrames;
-	private TestIFrames frames = model.iFrameAssertions;
+	private TestCFrames frameTypes = model.serverCFrames;
+	private TestIFrames frames = model.createAssertionIFrames();
 	private TestISlots slots = frames.repeatTypesSlots;
-	private TestInstances instances = model.createTestInstances();
+	private TestInstances instances = new TestInstances(model);
 
 	private class CFrameListMonitor implements KValuesListener<CFrame> {
 
@@ -144,7 +144,6 @@ public class IFrameTest {
 	@Test
 	public void test_subsumption_withAbstractValues() {
 
-		model.setQueriesEnabled(true);
 		instances.setFunction(IFrameFunction.QUERY);
 
 		testSubsumption(instances.getAbstractSubsumer(), instances.getBasic());
