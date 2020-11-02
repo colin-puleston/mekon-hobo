@@ -32,36 +32,29 @@ import uk.ac.manchester.cs.mekon.store.*;
  */
 public class RemoteIStoreAccessTest extends IStoreAccessTest {
 
-	private CModel serverModel = new TestCModel().serverModel;
+	private TestCModel testModel;
+	private MekonRemoteTestModel remoteModel;
 
-	private TestInstances testInstances;
+	protected TestCModel createTestModel() {
+
+		testModel = new TestCModel();
+
+		return testModel;
+	}
 
 	protected IStore createStore() {
 
-		TestCModel testModel = createTestModelAndInstances();
-		MekonRemoteTestModel remoteModel = new MekonRemoteTestModel(serverModel);
+		remoteModel = new MekonRemoteTestModel(testModel.serverModel);
 
 		testModel.setClientModel(remoteModel.clientModel);
 
 		return remoteModel.clientStore;
 	}
 
-	protected TestInstances resolveCurrentTestInstances() {
+	protected IStore resetStore() {
 
-		return testInstances;
-	}
+		remoteModel.resetServerStore();
 
-	protected boolean canTestReload() {
-
-		return false;
-	}
-
-	private TestCModel createTestModelAndInstances() {
-
-		TestCModel testModel = new TestCModel(serverModel);
-
-		testInstances = new TestInstances(testModel);
-
-		return testModel;
+		return remoteModel.clientStore;
 	}
 }

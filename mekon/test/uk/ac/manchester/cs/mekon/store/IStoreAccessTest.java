@@ -51,7 +51,9 @@ public abstract class IStoreAccessTest {
 	@Before
 	public void setUp() {
 
-		initialiseAll();
+		instances = new TestInstances(createTestModel());
+		store = createStore();
+
 		store.clear();
 	}
 
@@ -72,25 +74,16 @@ public abstract class IStoreAccessTest {
 	@Test
 	public void test_storeReloadAndRetrieve() {
 
-		if (canTestReload()) {
-
-			testStore();
-			initialiseAll();
-			testRetrieve();
-		}
+		testStore();
+		store = resetStore();
+		testRetrieve();
 	}
+
+	protected abstract TestCModel createTestModel();
 
 	protected abstract IStore createStore();
 
-	protected abstract TestInstances resolveCurrentTestInstances();
-
-	protected abstract boolean canTestReload();
-
-	private void initialiseAll() {
-
-		store = createStore();
-		instances = resolveCurrentTestInstances();
-	}
+	protected abstract IStore resetStore();
 
 	private void testStore() {
 

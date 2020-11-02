@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.remote.server.xml;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
@@ -51,7 +49,8 @@ public class XServer {
 
 	private CModel model;
 
-	private List<ServerActions<?>> allActions = new ArrayList<ServerActions<?>>();
+	private ModelActions modelActions;
+	private StoreActions storeActions = null;
 
 	/**
 	 * Constructor.
@@ -62,7 +61,7 @@ public class XServer {
 
 		this.model = model;
 
-		allActions.add(new ModelActions(model));
+		modelActions = new ModelActions(model);
 	}
 
 	/**
@@ -72,7 +71,7 @@ public class XServer {
 	 */
 	public void setStore(IStore store) {
 
-		allActions.add(new StoreActions(store));
+		storeActions = new StoreActions(store);
 	}
 
 	/**
@@ -87,12 +86,14 @@ public class XServer {
 		XRequestParser request = new XRequestParser(requestDoc);
 		XResponseRenderer response = new XResponseRenderer();
 
-		for (ServerActions<?> actions : allActions) {
+		if (modelActions.checkPerformAction(request, response)) {
 
-			if (actions.checkPerformAction(request, response)) {
+			return response.getDocument();
+		}
 
-				return response.getDocument();
-			}
+		if (storeActions != null && storeActions.checkPerformAction(request, response)) {
+
+			return response.getDocument();
 		}
 
 		throw new RServerException(

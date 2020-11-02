@@ -42,11 +42,10 @@ public class IDiskStoreAccessTest extends IStoreAccessTest {
 	static private final CIdentity FIRST_ID = new CIdentity("First");
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
 
-	private TestCModel model = new TestCModel();
-	private TestInstances testInstances = new TestInstances(model);
+	private TestCModel model;
+	private TestDiskStoreHandler storeHandler;
 
 	private IDiskStore store;
-	private TestDiskStoreHandler storeHandler;
 
 	private IFrame first = null;
 	private IFrame second = null;
@@ -159,21 +158,23 @@ public class IDiskStoreAccessTest extends IStoreAccessTest {
 		matcherB.removeMatcherInstanceFromStore();
 	}
 
+	protected TestCModel createTestModel() {
+
+		model = new TestCModel();
+		storeHandler = new TestDiskStoreHandler(model.serverModel);
+
+		return model;
+	}
+
 	protected IStore createStore() {
 
-		storeHandler = new TestDiskStoreHandler(model.serverModel);
 		store = storeHandler.createStore();
 
 		return store;
 	}
 
-	protected TestInstances resolveCurrentTestInstances() {
+	protected IStore resetStore() {
 
-		return testInstances;
-	}
-
-	protected boolean canTestReload() {
-
-		return true;
+		return createStore();
 	}
 }

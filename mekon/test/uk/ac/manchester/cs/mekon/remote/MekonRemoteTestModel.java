@@ -38,6 +38,7 @@ public class MekonRemoteTestModel {
 	public final CModel clientModel;
 	public final IStore clientStore;
 
+	private CModel serverModel;
 	private XServer server;
 
 	private class LocalXClientModel extends XClientModel {
@@ -61,19 +62,32 @@ public class MekonRemoteTestModel {
 		}
 	}
 
-	public MekonRemoteTestModel(CModel model) {
+	public MekonRemoteTestModel(CModel serverModel) {
 
-		this(model, IDiskStoreManager.getBuilder(model).build());
+		this(serverModel, IDiskStoreManager.getBuilder(serverModel).build());
 	}
 
-	public MekonRemoteTestModel(CModel model, IStore store) {
+	public MekonRemoteTestModel(CModel serverModel, IStore serverStore) {
 
-		server = new XServer(model);
+		this.serverModel = serverModel;
 
-		server.setStore(store);
+		server = new XServer(serverModel);
+		server.setStore(serverStore);
 
 		clientModel = createClientModel();
 		clientStore = createClientStore();
+	}
+
+	public IStore resetServerStore() {
+
+		return resetServerStore(IDiskStoreManager.getBuilder(serverModel).build());
+	}
+
+	public IStore resetServerStore(IStore serverStore) {
+
+		server.setStore(serverStore);
+
+		return serverStore;
 	}
 
 	private CModel createClientModel() {
