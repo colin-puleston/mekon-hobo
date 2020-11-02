@@ -87,11 +87,11 @@ class CConfig implements CConfigVocab {
 
 		if (node != null) {
 
-			File dir = getDiskStoreDirOrNull(node);
+			String dirName = getDiskStoreDirNameOrNull(node);
 
-			if (dir != null) {
+			if (dirName != null) {
 
-				storeBldr.setStoreDirectory(dir);
+				storeBldr.setStoreDirectory(getDiskStoreDir(dirName));
 			}
 			else {
 
@@ -173,16 +173,22 @@ class CConfig implements CConfigVocab {
 		builder.addSectionBuilder(adder);
 	}
 
-	private File getDiskStoreDirOrNull(KConfigNode node) {
+	private String getDiskStoreDirNameOrNull(KConfigNode node) {
 
-		File dir = getDiskStoreDirOrNull(node, new KConfigResourceFinder(true));
-
-		return dir != null ? dir : getDiskStoreDirOrNull(node, KConfigResourceFinder.DIRS);
+		return node.getString(INSTANCE_DISK_STORE_DIR_ATTR, null);
 	}
 
-	private File getDiskStoreDirOrNull(KConfigNode node, KConfigResourceFinder finder) {
+	private File getDiskStoreDir(String dirName) {
 
-		return node.getResource(INSTANCE_DISK_STORE_DIR_ATTR, finder, null);
+		File parentDir = getConfigFileDir();
+		File dir = lookForDiskStoreDirOnClassPath(dirName);
+
+		return dir != null ? dir : new File(parentDir, dirName);
+	}
+
+	private File lookForDiskStoreDirOnClassPath(String dirName) {
+
+		return KConfigResourceFinder.DIRS.lookForResource(dirName);
 	}
 
 	private List<CIdentity> getDiskSubStoreGroupRootTypes(KConfigNode node) {

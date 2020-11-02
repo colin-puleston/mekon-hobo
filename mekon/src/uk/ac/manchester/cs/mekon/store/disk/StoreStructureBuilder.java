@@ -36,7 +36,7 @@ class StoreStructureBuilder {
 
 	static private File getDefaultNamedMainDirectory(File parentDir) {
 
-		return new File(parentDir, StoreStructure.DEFAULT_STORE_DIR_NAME);
+		return new File(parentDir, IDiskStoreNames.DEFAULT_STORE_DIR_NAME);
 	}
 
 	private File mainDirectory = getDefaultNamedMainDirectory(new File("."));

@@ -34,13 +34,9 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class StoreStructure {
 
-	static final String DEFAULT_STORE_DIR_NAME = "mekon-store";
+	static private String getQueriesSubDirName(String subStoreName) {
 
-	static private final String QUERY_SUBDIR_NAME_SUFFIX = "-queries";
-
-	static String getQueriesSubDirName(String subStoreName) {
-
-		return subStoreName + QUERY_SUBDIR_NAME_SUFFIX;
+		return subStoreName + IDiskStoreNames.QUERY_SUBDIR_NAME_SUFFIX;
 	}
 
 	private CModel model;

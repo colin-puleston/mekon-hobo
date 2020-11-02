@@ -33,6 +33,7 @@ package uk.ac.manchester.cs.mekon.store.disk;
 public interface IDiskStoreNames {
 
 	static public final String DEFAULT_STORE_DIR_NAME = "mekon-store";
+	static public final String QUERY_SUBDIR_NAME_SUFFIX = "-queries";
 
 	static public final String PROFILE_FILE_PREFIX = "PROFILE-";
 	static public final String INSTANCE_FILE_PREFIX = "INSTANCE-";
