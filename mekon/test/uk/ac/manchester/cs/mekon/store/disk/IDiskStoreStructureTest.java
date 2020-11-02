@@ -47,8 +47,10 @@ public class IDiskStoreStructureTest implements IDiskStoreNames {
 	static private final String SUBSTORE_A_NAME = "substore-A";
 	static private final String SUBSTORE_B_NAME = "substore-B";
 
+	private CModel model;
 	private IDiskStore store;
-	private TestDiskStoreHandler storeHandler;
+
+	private File storeDir;
 
 	private StoreStructure structure;
 	private StoreStructureBuilder structureBuilder = new StoreStructureBuilder();
@@ -86,10 +88,10 @@ public class IDiskStoreStructureTest implements IDiskStoreNames {
 	@Before
 	public void setUp() {
 
-		TestCModel model = new TestCModel();
-		TestCFrames cFrames = model.serverCFrames;
+		TestCModel testModel = new TestCModel();
+		TestCFrames cFrames = testModel.serverCFrames;
 
-		storeHandler = new TestDiskStoreHandler(model.serverModel);
+		model = testModel.serverModel;
 
 		typeA = cFrames.create("Type-A");
 		typeB = cFrames.create("Type-B");
@@ -98,7 +100,11 @@ public class IDiskStoreStructureTest implements IDiskStoreNames {
 	@After
 	public void clearUp() {
 
-		storeHandler.clearUp();
+		if (store != null) {
+
+			store.clear();
+			deleteStructure(storeDir);
+		}
 
 		TEST_DIR.delete();
 	}
@@ -201,9 +207,11 @@ public class IDiskStoreStructureTest implements IDiskStoreNames {
 
 	private void initialiseStore() {
 
-		structure = storeHandler.createStructure(structureBuilder);
-		store = storeHandler.createStore(structure);
+		structure = structureBuilder.build(model);
+		store = new IDiskStore(model, structure);
+		storeDir = structure.getMainDirectory();
 
+		store.initialisePostRegistration();
 		store.clear();
 
 		addInstance(typeA, "A-ASSERT", IFrameFunction.ASSERTION);
@@ -235,10 +243,8 @@ public class IDiskStoreStructureTest implements IDiskStoreNames {
 
 	private void testMainStoreDirectory(File expectDir, int expectInstances) {
 
-		File dir = structure.getMainDirectory();
-
-		assertEquals(getCanonicalPath(expectDir), getCanonicalPath(dir));
-		testStoreFiles(dir, expectInstances, true);
+		assertEquals(getCanonicalPath(expectDir), getCanonicalPath(storeDir));
+		testStoreFiles(storeDir, expectInstances, true);
 	}
 
 	private void testSubStoreDirectory(String subStoreName, int expectInstances) {
@@ -258,6 +264,24 @@ public class IDiskStoreStructureTest implements IDiskStoreNames {
 		assertEquals(expectInstances, fileCounter.profiles);
 		assertEquals(expectInstances, fileCounter.instances);
 		assertEquals(fileCounter.log, expectLog);
+	}
+
+	private void deleteStructure(File file) {
+
+		if (file.isDirectory()) {
+
+			deleteNestedStructure(file);
+		}
+
+		file.delete();
+	}
+
+	private void deleteNestedStructure(File dir) {
+
+		for (File file : dir.listFiles()) {
+
+			deleteStructure(file);
+		}
 	}
 
 	private String getCanonicalPath(File dir) {

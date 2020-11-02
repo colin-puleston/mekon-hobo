@@ -26,7 +26,6 @@ package uk.ac.manchester.cs.mekon.store.disk;
 
 import java.util.*;
 
-import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -43,8 +42,6 @@ public class IDiskStoreAccessTest extends IStoreAccessTest {
 	static private final CIdentity SECOND_ID = new CIdentity("Second");
 
 	private TestCModel model;
-	private TestDiskStoreHandler storeHandler;
-
 	private IDiskStore store;
 
 	private IFrame first = null;
@@ -136,12 +133,6 @@ public class IDiskStoreAccessTest extends IStoreAccessTest {
 		}
 	}
 
-	@After
-	public void clearUp() {
-
-		storeHandler.clearUp();
-	}
-
 	@Test
 	public void test_matching() {
 
@@ -161,14 +152,15 @@ public class IDiskStoreAccessTest extends IStoreAccessTest {
 	protected TestCModel createTestModel() {
 
 		model = new TestCModel();
-		storeHandler = new TestDiskStoreHandler(model.serverModel);
 
 		return model;
 	}
 
 	protected IStore createStore() {
 
-		store = storeHandler.createStore();
+		store = new IDiskStore(model.serverModel);
+
+		store.initialisePostRegistration();
 
 		return store;
 	}
