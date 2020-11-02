@@ -51,6 +51,7 @@ import uk.ac.manchester.cs.mekon.network.*;
 	CSourceTest.class,
 	MostSpecificCFramesTest.class,
 	IFrameTest.class,
+	IFrameTestRemoteModel.class,
 	ISlotTest.class,
 	ISlotValuesTest.class,
 	ISlotSpecsTest.class,

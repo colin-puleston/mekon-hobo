@@ -88,12 +88,12 @@ public class TestCModel {
 
 	public TestIFrames createAssertionIFrames() {
 
-		return new TestIFrames(clientCFrames, IFrameFunction.ASSERTION);
+		return new TestIFrames(serverCFrames, IFrameFunction.ASSERTION);
 	}
 
 	public TestIFrames createQueryIFrames() {
 
-		return new TestIFrames(clientCFrames, IFrameFunction.QUERY);
+		return new TestIFrames(serverCFrames, IFrameFunction.QUERY);
 	}
 
 	public boolean remoteModel() {

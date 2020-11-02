@@ -27,9 +27,11 @@ package uk.ac.manchester.cs.mekon.model;
 import java.util.*;
 
 import org.junit.Test;
+import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.remote.*;
 import uk.ac.manchester.cs.mekon.test_util.*;
 import uk.ac.manchester.cs.mekon_util.*;
 
@@ -42,11 +44,11 @@ public class IFrameTest {
 
 	private MonitorIReasoner monitorIReasoner = new MonitorIReasoner();
 
-	private TestCModel model = new TestCModel(monitorIReasoner);
-	private TestCFrames frameTypes = model.serverCFrames;
-	private TestIFrames frames = model.createAssertionIFrames();
-	private TestISlots slots = frames.repeatTypesSlots;
-	private TestInstances instances = new TestInstances(model);
+	private TestCFrames frameTypes;
+	private TestIFrames frames;
+	private TestISlots slots;
+
+	private TestInstances instances;
 
 	private class CFrameListMonitor implements KValuesListener<CFrame> {
 
@@ -65,6 +67,23 @@ public class IFrameTest {
 
 		public void onCleared(List<CFrame> values) {
 		}
+	}
+
+	@Before
+	public void setUp() {
+
+		TestCModel model = new TestCModel(monitorIReasoner);
+
+		instances = new TestInstances(model);
+
+		if (testingRemoteModel()) {
+
+			model.setClientModel(createRemoteClientModel(model.serverModel));
+		}
+
+		frameTypes = model.serverCFrames;
+		frames = model.createAssertionIFrames();
+		slots = frames.repeatTypesSlots;
 	}
 
 	@Test
@@ -149,6 +168,16 @@ public class IFrameTest {
 		testSubsumption(instances.getAbstractSubsumer(), instances.getBasic());
 	}
 
+	boolean testingRemoteModel() {
+
+		return false;
+	}
+
+	private CModel createRemoteClientModel(CModel serverModel) {
+
+		return new MekonRemoteTestModel(serverModel).clientModel;
+	}
+
 	private void testSubsumption(IFrame subsumer, IFrame subsumed) {
 
 		assertFalse(subsumer == subsumed);
@@ -168,7 +197,7 @@ public class IFrameTest {
 		assertTrue(original.structuralHashCode() == copy.structuralHashCode());
 	}
 
-	public void testUpdateSlotValue(
+	private void testUpdateSlotValue(
 					IFrame container,
 					String slotName,
 					IFrame newValue,

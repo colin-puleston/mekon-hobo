@@ -31,22 +31,16 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 /**
  * @author Colin Puleston
  */
-class MonitorIReasoner implements IReasoner {
+class MonitorIReasoner extends IReasonerDefault {
 
 	List<IFrame> initialiseds = new ArrayList<IFrame>();
 	List<IFrame> updateds = new ArrayList<IFrame>();
 
 	public void initialiseFrame(IEditor iEditor, IFrame frame) {
 
+		super.initialiseFrame(iEditor, frame);
+
 		initialiseds.add(frame);
-	}
-
-	public Set<IUpdateOp> reinitialiseFrame(
-							IEditor iEditor,
-							IFrame frame,
-							Set<IUpdateOp> ops) {
-
-		return Collections.<IUpdateOp>emptySet();
 	}
 
 	public Set<IUpdateOp> updateFrame(
