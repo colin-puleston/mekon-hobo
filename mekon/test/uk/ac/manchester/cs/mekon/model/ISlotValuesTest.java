@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.model;
 
 import java.util.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -39,32 +40,40 @@ public class ISlotValuesTest {
 
 	static private final List<IValue> NO_IVALUES = Collections.emptyList();
 
-	private TestCModel model = new TestCModel();
-	private TestCFrames frameTypes = model.getClientCFrames();
-	private TestIFrames frames = model.createAssertionIFrames();
+	private TestIFrames frames;
 
-	private TestISlots repeatTypesSlots = frames.repeatTypesSlots;
-	private TestISlots uniqueTypesSlots = frames.uniqueTypesSlots;
-	private TestISlots singleValueSlots = frames.singleValueSlots;
+	private CFrame r;
+	private CFrame a;
+	private CFrame b;
+	private CFrame c;
+	private CFrame cx;
 
-	private CFrame r = frameTypes.create("ROOT");
-	private CFrame a = frameTypes.create("A");
-	private CFrame b = frameTypes.create("B");
-	private CFrame c = frameTypes.create("C");
-	private CFrame cx = frameTypes.create("CX");
+	@Before
+	public void setUp() {
 
-	public ISlotValuesTest() {
+		TestCModel model = new TestCModel();
+		TestCFrames frameTypes = model.serverCFrames;
+
+		model.setClientModel(resolveClientModel(model.serverModel));
+
+		r = frameTypes.create("ROOT");
+		a = frameTypes.create("A");
+		b = frameTypes.create("B");
+		c = frameTypes.create("C");
+		cx = frameTypes.create("CX");
 
 		addSuperFrame(a, r);
 		addSuperFrame(b, r);
 		addSuperFrame(c, r);
 		addSuperFrame(cx, c);
+
+		frames = model.createAssertionIFrames();
 	}
 
 	@Test
 	public void test_addRemoveValues_singleValueCardinality() {
 
-		ISlotValues values = createSlotValues(singleValueSlots);
+		ISlotValues values = createSlotValues(frames.singleValueSlots);
 
 		testAdd(values, a, iValues(a));
 		testAdd(values, b, iValues(b));
@@ -74,19 +83,19 @@ public class ISlotValuesTest {
 	@Test
 	public void test_addRemoveValues_uniqueTypesCardinality() {
 
-		testAddRemoveValues_multiValued(uniqueTypesSlots);
+		testAddRemoveValues_multiValued(frames.uniqueTypesSlots);
 	}
 
 	@Test
 	public void test_addRemoveValues_repeatTypesCardinality() {
 
-		testAddRemoveValues_multiValued(repeatTypesSlots);
+		testAddRemoveValues_multiValued(frames.repeatTypesSlots);
 	}
 
 	@Test
 	public void test_updateValues_singleValueCardinality() {
 
-		ISlotValues values = createSlotValues(singleValueSlots);
+		ISlotValues values = createSlotValues(frames.singleValueSlots);
 
 		testUpdate(values, iValues(a), iValues(a));
 		testUpdate(values, iValues(b), iValues(b));
@@ -96,19 +105,19 @@ public class ISlotValuesTest {
 	@Test
 	public void test_updateValues_uniqueTypesCardinality() {
 
-		testUpdateValues_multiValued(uniqueTypesSlots);
+		testUpdateValues_multiValued(frames.uniqueTypesSlots);
 	}
 
 	@Test
 	public void test_updateValues_repeatTypesCardinality() {
 
-		testUpdateValues_multiValued(repeatTypesSlots);
+		testUpdateValues_multiValued(frames.repeatTypesSlots);
 	}
 
 	@Test
 	public void test_updateFixeds_singleValueCardinality() {
 
-		ISlotValues values = createSlotValues(singleValueSlots);
+		ISlotValues values = createSlotValues(frames.singleValueSlots);
 
 		testUpdate(values, iValues(c), iValues(c));
 
@@ -121,25 +130,25 @@ public class ISlotValuesTest {
 	@Test(expected = KModelException.class)
 	public void test_updateFixedsFails_singleValueCardinality() {
 
-		createSlotValues(singleValueSlots).updateFixedValues(iValues(a, b));
+		createSlotValues(frames.singleValueSlots).updateFixedValues(iValues(a, b));
 	}
 
 	@Test
 	public void test_updateFixeds_uniqueTypesCardinality() {
 
-		testUpdateFixeds_multiValued(uniqueTypesSlots);
+		testUpdateFixeds_multiValued(frames.uniqueTypesSlots);
 	}
 
 	@Test
 	public void test_updateFixeds_repeatTypesCardinality() {
 
-		testUpdateFixeds_multiValued(repeatTypesSlots);
+		testUpdateFixeds_multiValued(frames.repeatTypesSlots);
 	}
 
 	@Test(expected = KAccessException.class)
 	public void test_illegalUpdateFails() {
 
-		ISlotValues values = createSlotValues(repeatTypesSlots);
+		ISlotValues values = createSlotValues(frames.repeatTypesSlots);
 
 		values.addAssertedValue(frames.create("IllegalValue"), false);
 	}
@@ -147,10 +156,15 @@ public class ISlotValuesTest {
 	@Test(expected = KAccessException.class)
 	public void test_abstractUpdateFailsForAssertion() {
 
-		ISlotValues values = createSlotValues(repeatTypesSlots);
+		ISlotValues values = createSlotValues(frames.repeatTypesSlots);
 		IValue abstractVal = CFrame.resolveDisjunction(cFrames(a, b, c));
 
 		values.addAssertedValue(abstractVal, false);
+	}
+
+	protected CModel resolveClientModel(CModel serverModel) {
+
+		return serverModel;
 	}
 
 	private void addSuperFrame(CFrame sub, CFrame sup) {
@@ -167,7 +181,7 @@ public class ISlotValuesTest {
 		testRemove(values, a, iValues(b));
 		testAdd(values, c, iValues(b, c));
 
-		if (slots == uniqueTypesSlots) {
+		if (slots == frames.uniqueTypesSlots) {
 
 			testAdd(values, cx, iValues(b, cx));
 		}

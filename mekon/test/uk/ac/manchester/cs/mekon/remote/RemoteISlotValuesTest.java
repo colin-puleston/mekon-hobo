@@ -22,15 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.store.disk;
+package uk.ac.manchester.cs.mekon.remote;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class IMatcherWithRemoteModelTest extends IDirectMatcherTest {
+public class RemoteISlotValuesTest extends ISlotValuesTest {
 
-	protected boolean testingRemoteModel() {
+	protected CModel resolveClientModel(CModel serverModel) {
 
-		return true;
+		return new MekonRemoteTestModel(serverModel).clientModel;
 	}
 }

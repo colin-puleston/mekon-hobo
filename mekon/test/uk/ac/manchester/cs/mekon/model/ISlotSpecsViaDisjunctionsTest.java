@@ -42,7 +42,7 @@ public class ISlotSpecsViaDisjunctionsTest {
 	static private final CIdentity SLOT3_ID = new CIdentity("SLOT-3");
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frameTypes = model.getClientCFrames();
+	private TestCFrames frameTypes = model.serverCFrames;
 	private TestIFrames frames = model.createAssertionIFrames();
 
 	private TestCSlots repeatTypesSlotTypes = frameTypes.repeatTypesSlots;

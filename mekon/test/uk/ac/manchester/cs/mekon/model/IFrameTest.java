@@ -31,7 +31,6 @@ import org.junit.Before;
 import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.remote.*;
 import uk.ac.manchester.cs.mekon.test_util.*;
 import uk.ac.manchester.cs.mekon_util.*;
 
@@ -76,10 +75,7 @@ public class IFrameTest {
 
 		instances = new TestInstances(model);
 
-		if (testingRemoteModel()) {
-
-			model.setClientModel(createRemoteClientModel(model.serverModel));
-		}
+		model.setClientModel(resolveClientModel(model.serverModel));
 
 		frameTypes = model.serverCFrames;
 		frames = model.createAssertionIFrames();
@@ -168,14 +164,9 @@ public class IFrameTest {
 		testSubsumption(instances.getAbstractSubsumer(), instances.getBasic());
 	}
 
-	boolean testingRemoteModel() {
+	protected CModel resolveClientModel(CModel serverModel) {
 
-		return false;
-	}
-
-	private CModel createRemoteClientModel(CModel serverModel) {
-
-		return new MekonRemoteTestModel(serverModel).clientModel;
+		return serverModel;
 	}
 
 	private void testSubsumption(IFrame subsumer, IFrame subsumed) {

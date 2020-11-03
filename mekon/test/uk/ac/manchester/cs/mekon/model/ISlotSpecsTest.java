@@ -40,7 +40,7 @@ public class ISlotSpecsTest {
 	static private final CIdentity SLOT_ID = new CIdentity("SLOT", "SLOT");
 
 	private TestCModel model = new TestCModel();
-	private TestCFrames frameTypes = model.getClientCFrames();
+	private TestCFrames frameTypes = model.serverCFrames;
 	private TestIFrames frames = model.createAssertionIFrames();
 
 	private TestCSlots repeatTypesSlotTypes = frameTypes.repeatTypesSlots;

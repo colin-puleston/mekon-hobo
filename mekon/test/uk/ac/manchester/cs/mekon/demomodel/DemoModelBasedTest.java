@@ -30,18 +30,17 @@ import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.remote.*;
 
 /**
  * @author Colin Puleston
  */
 public abstract class DemoModelBasedTest extends DemoModelIds {
 
-	private CModel clientModel;
-	private IStore clientStore;
-
 	private CModel serverModel;
 	private IStore serverStore;
+
+	private CModel clientModel = null;
+	private IStore clientStore = null;
 
 	public CBuilder buildModel(CSectionBuilder sectionBuilder) {
 
@@ -53,25 +52,7 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 		serverModel = cBuilder.build();
 		serverStore = IDiskStoreManager.getBuilder(cBuilder).build();
 
-		if (testingRemoteModel()) {
-
-			MekonRemoteTestModel remote = new MekonRemoteTestModel(serverModel, serverStore);
-
-			clientModel = remote.clientModel;
-			clientStore = remote.clientStore;
-		}
-		else {
-
-			clientModel = serverModel;
-			clientStore = serverStore;
-		}
-
 		return cBuilder;
-	}
-
-	public CModel getClientModel() {
-
-		return clientModel;
 	}
 
 	public CModel getServerModel() {
@@ -79,14 +60,29 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 		return serverModel;
 	}
 
-	public IStore getClientStore() {
-
-		return clientStore;
-	}
-
 	public IStore getServerStore() {
 
 		return serverStore;
+	}
+
+	public CModel getClientModel() {
+
+		if (clientModel == null) {
+
+			clientModel = resolveClientModel(serverModel, serverStore);
+		}
+
+		return clientModel;
+	}
+
+	public IStore getClientStore() {
+
+		if (clientStore == null) {
+
+			clientStore = resolveClientStore(serverModel, serverStore);
+		}
+
+		return clientStore;
 	}
 
 	public Set<CFrame> getCFrames(CIdentity... ids) {
@@ -103,12 +99,12 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 
 	public boolean isCFrame(CIdentity id) {
 
-		return clientModel.getFrames().containsValueFor(id);
+		return getClientModel().getFrames().containsValueFor(id);
 	}
 
 	public CFrame getCFrame(CIdentity id) {
 
-		return clientModel.getFrames().get(id);
+		return getClientModel().getFrames().get(id);
 	}
 
 	public IFrame createIFrame(CIdentity typeId) {
@@ -141,23 +137,28 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 		getISlot(container, slotId).getValuesEditor().add(value);
 	}
 
-	protected boolean testingRemoteModel() {
+	protected CModel resolveClientModel(CModel serverModel, IStore serverStore) {
 
-		return false;
+		return serverModel;
+	}
+
+	protected IStore resolveClientStore(CModel serverModel, IStore serverStore) {
+
+		return serverStore;
 	}
 
 	private IFrame instantiate(CIdentity typeId, IFrameFunction function) {
 
-		return getFrame(typeId).instantiate(function);
+		return getClientFrame(typeId).instantiate(function);
 	}
 
 	private IFrame instantiateRef(CIdentity typeId, CIdentity refId, IFrameFunction function) {
 
-		return getFrame(typeId).instantiate(refId, function);
+		return getClientFrame(typeId).instantiate(refId, function);
 	}
 
-	private CFrame getFrame(CIdentity id) {
+	private CFrame getClientFrame(CIdentity id) {
 
-		return clientModel.getFrames().get(id);
+		return getClientModel().getFrames().get(id);
 	}
 }

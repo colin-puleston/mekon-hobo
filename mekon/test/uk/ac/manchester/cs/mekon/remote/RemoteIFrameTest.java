@@ -22,15 +22,17 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.model;
+package uk.ac.manchester.cs.mekon.remote;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-public class IFrameTestRemoteModel extends IFrameTest {
+public class RemoteIFrameTest extends IFrameTest {
 
-	boolean testingRemoteModel() {
+	protected CModel resolveClientModel(CModel serverModel) {
 
-		return true;
+		return new MekonRemoteTestModel(serverModel).clientModel;
 	}
 }

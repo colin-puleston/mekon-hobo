@@ -311,6 +311,18 @@ public class TestInstances {
 
 	private CFrame toClientType(CFrame serverType) {
 
+		List<CFrame> clientDisjuncts = new ArrayList<CFrame>();
+
+		for (CFrame serverDisjunct : serverType.asDisjuncts()) {
+
+			clientDisjuncts.add(atomicToClientType(serverDisjunct));
+		}
+
+		return CFrame.resolveDisjunction(clientDisjuncts);
+	}
+
+	private CFrame atomicToClientType(CFrame serverType) {
+
 		if (model.remoteModel()) {
 
 			return model.getClientCFrames().get(serverType.getIdentity());

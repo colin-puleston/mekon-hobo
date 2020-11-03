@@ -81,9 +81,12 @@ public class TestCModel {
 
 	public void setClientModel(CModel clientModel) {
 
-		this.clientModel = clientModel;
+		if (clientModel != this.clientModel) {
 
-		clientCFrames = new TestCFrames(clientModel, null);
+			this.clientModel = clientModel;
+
+			clientCFrames = new TestCFrames(clientModel, null);
+		}
 	}
 
 	public TestIFrames createAssertionIFrames() {

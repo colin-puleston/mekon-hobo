@@ -51,17 +51,18 @@ import uk.ac.manchester.cs.mekon.network.*;
 	CSourceTest.class,
 	MostSpecificCFramesTest.class,
 	IFrameTest.class,
-	IFrameTestRemoteModel.class,
 	ISlotTest.class,
 	ISlotValuesTest.class,
 	ISlotSpecsTest.class,
 	ISlotSpecsViaDisjunctionsTest.class,
 	IDiskStoreAccessTest.class,
 	IDiskStoreStructureTest.class,
-	RemoteIStoreAccessTest.class,
 	IInstanceSerialiseTest.class,
-	IMatcherWithRemoteModelTest.class,
 	IDirectMatcherTest.class,
-	NDirectMatcherTest.class})
+	NDirectMatcherTest.class,
+	RemoteIFrameTest.class,
+	RemoteISlotValuesTest.class,
+	RemoteIStoreAccessTest.class,
+	RemoteIMatcherTest.class})
 public class MekonTestSuite {
 }
