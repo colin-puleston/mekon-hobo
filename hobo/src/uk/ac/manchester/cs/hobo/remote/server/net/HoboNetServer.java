@@ -52,11 +52,11 @@ public class HoboNetServer extends MekonNetServer {
 	protected XServer createXServer() {
 
 		DBuilder dBuilder = DManager.createBuilder();
-		XServer server = new XServer(dBuilder.build().getCModel());
+		XServer xServer = new XServer(dBuilder.build().getCModel());
 
-		server.setStore(createStore(dBuilder));
+		xServer.setStore(createStore(dBuilder));
 
-		return server;
+		return xServer;
 	}
 
 	private IStore createStore(DBuilder dBuilder) {
