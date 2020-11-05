@@ -24,15 +24,11 @@
 
 package uk.ac.manchester.cs.mekon.remote.server.net;
 
-import java.io.*;
-import javax.servlet.*;
-
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
-import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -44,74 +40,40 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public class MekonNetServer extends GenericServlet {
+public class MekonNetServer extends NetServer {
 
 	static private final long serialVersionUID = -1;
 
-	private XServer server = null;
+	private XServer xServer = null;
 
-	public void init() throws ServletException {
+	/**
+	 */
+	protected void initNetServer() {
 
-		setLibraryPath();
-
-		try {
-
-			server = createXServer();
-		}
-		catch (KRuntimeException e) {
-
-			throw new ServletException(e);
-		}
+		xServer = createXServer();
 	}
 
-	public void service(
-					ServletRequest request,
-					ServletResponse response)
-					throws ServletException, IOException {
+	/**
+	 */
+	protected XDocument performAction(XDocument request) {
 
-		try {
-
-			XDocument requestDoc = new XDocument(getInputStream(request));
-			XDocument responseDoc = server.performAction(requestDoc);
-
-			responseDoc.writeToOutput(getOutputStream(response));
-		}
-		catch (KRuntimeException e) {
-
-			throw new ServletException(e);
-		}
+		return xServer.performAction(request);
 	}
 
-	public void destroy() {
-	}
-
+	/**
+	 */
 	protected XServer createXServer() {
 
 		CBuilder cBuilder = CManager.createBuilder();
-		XServer server = new XServer(cBuilder.build());
+		XServer xServer = new XServer(cBuilder.build());
 
-		server.setStore(createStore(cBuilder));
+		xServer.setStore(createStore(cBuilder));
 
-		return server;
-	}
-
-	private InputStream getInputStream(ServletRequest request) throws IOException {
-
-		return new BufferedInputStream(request.getInputStream());
-	}
-
-	private OutputStream getOutputStream(ServletResponse response) throws IOException {
-
-		return new BufferedOutputStream(response.getOutputStream());
+		return xServer;
 	}
 
 	private IStore createStore(CBuilder cBuilder) {
 
 		return IDiskStoreManager.getBuilder(cBuilder).build();
-	}
-
-	private void setLibraryPath() {
-
-		LibraryPathHandler.setLibraryPath(getServletContext());
 	}
 }

@@ -39,7 +39,7 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
  * all client/server interaction being via XML-based representations
  * of specific actions.
  * <p>
- * Both this class and {@link XClientModel} are designed to be used
+ * Both this class and {@link XClientStore} are designed to be used
  * in combination with the companion XML-based server class,
  * <code>XServer</code>. All encoding and decoding of the action
  * requests and responses is handled by this set of client/server
