@@ -30,80 +30,46 @@ import javax.swing.*;
 /**
  * @author Colin Puleston
  */
-public abstract class GTextField extends JTextField {
+abstract class GTextEntryListener extends KeyAdapter {
 
-	static private final long serialVersionUID = -1;
+	public void keyTyped(KeyEvent event) {
 
-	private class MouseClickListener extends MouseAdapter {
+		if (!keyInputEnabled() || !acceptKey(event)) {
 
-		public void mouseClicked(MouseEvent event) {
-
-			onMouseClicked();
+			event.consume();
 		}
 	}
 
-	private class FieldExitListener extends FocusAdapter {
+	public void keyReleased(KeyEvent event) {
 
-		public void focusLost(FocusEvent e) {
+		if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 
-			onFieldExited(getText());
+			onTextEntered();
+		}
+		else {
+
+			if (!event.isActionKey()) {
+
+				onCharEntered(event.getKeyChar());
+			}
 		}
 	}
 
-	private class EntryListener extends GTextEntryListener {
+	GTextEntryListener(JTextField field) {
 
-		EntryListener() {
-
-			super(GTextField.this);
-		}
-
-		boolean keyInputEnabled() {
-
-			return GTextField.this.keyInputEnabled();
-		}
-
-		boolean acceptChar(char testChar) {
-
-			return GTextField.this.acceptChar(testChar);
-		}
-
-		void onCharEntered(char enteredChar) {
-
-			GTextField.this.onCharEntered(enteredChar);
-		}
-
-		void onTextEntered() {
-
-			GTextField.this.onTextEntered(getText());
-		}
+		field.addKeyListener(this);
 	}
 
-	public GTextField() {
+	abstract boolean keyInputEnabled();
 
-		addMouseListener(new MouseClickListener());
-		addFocusListener(new FieldExitListener());
+	abstract boolean acceptChar(char testChar);
 
-		new EntryListener();
+	abstract void onCharEntered(char enteredChar);
+
+	abstract void onTextEntered();
+
+	private boolean acceptKey(KeyEvent event) {
+
+		return event.isActionKey() || acceptChar(event.getKeyChar());
 	}
-
-	protected boolean keyInputEnabled() {
-
-		return true;
-	}
-
-	protected boolean acceptChar(char testChar) {
-
-		return true;
-	}
-
-	protected void onMouseClicked() {
-	}
-
-	protected void onCharEntered(char enteredChar) {
-	}
-
-	protected void onFieldExited(String text) {
-	}
-
-	protected abstract void onTextEntered(String text);
 }

@@ -24,86 +24,50 @@
 
 package uk.ac.manchester.cs.mekon_util.gui;
 
-import java.awt.event.*;
 import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-public abstract class GTextField extends JTextField {
+public abstract class GPasswordField extends JPasswordField {
 
 	static private final long serialVersionUID = -1;
-
-	private class MouseClickListener extends MouseAdapter {
-
-		public void mouseClicked(MouseEvent event) {
-
-			onMouseClicked();
-		}
-	}
-
-	private class FieldExitListener extends FocusAdapter {
-
-		public void focusLost(FocusEvent e) {
-
-			onFieldExited(getText());
-		}
-	}
 
 	private class EntryListener extends GTextEntryListener {
 
 		EntryListener() {
 
-			super(GTextField.this);
+			super(GPasswordField.this);
 		}
 
 		boolean keyInputEnabled() {
 
-			return GTextField.this.keyInputEnabled();
+			return true;
 		}
 
 		boolean acceptChar(char testChar) {
 
-			return GTextField.this.acceptChar(testChar);
+			return true;
 		}
 
 		void onCharEntered(char enteredChar) {
 
-			GTextField.this.onCharEntered(enteredChar);
+			GPasswordField.this.onCharEntered(enteredChar);
 		}
 
 		void onTextEntered() {
 
-			GTextField.this.onTextEntered(getText());
+			onPasswordEntered(getPassword());
 		}
 	}
 
-	public GTextField() {
-
-		addMouseListener(new MouseClickListener());
-		addFocusListener(new FieldExitListener());
+	public GPasswordField() {
 
 		new EntryListener();
-	}
-
-	protected boolean keyInputEnabled() {
-
-		return true;
-	}
-
-	protected boolean acceptChar(char testChar) {
-
-		return true;
-	}
-
-	protected void onMouseClicked() {
 	}
 
 	protected void onCharEntered(char enteredChar) {
 	}
 
-	protected void onFieldExited(String text) {
-	}
-
-	protected abstract void onTextEntered(String text);
+	protected abstract void onPasswordEntered(char[] password);
 }
