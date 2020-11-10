@@ -47,7 +47,7 @@ public abstract class LoginServer extends NetServer {
 	protected XDocument performAction(XDocument request) {
 
 		UserId userId = UserSerialiser.parseId(request);
-		Role role = loginManager.processLogin(userId);
+		Role role = loginManager.checkLogin(userId);
 
 		return RoleSerialiser.render(role);
 	}

@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 /**
  * @author Colin Puleston
  */
-abstract class AdminEntityFile<E> {
+abstract class AdminEntityFile<E, K> {
 
 	private XNode rootNode;
 
@@ -41,25 +41,25 @@ abstract class AdminEntityFile<E> {
 		rootNode = readDocument(adminDirectory, filename).getRootNode();
 	}
 
-	Map<String, E> parseAll() {
+	Map<K, E> parseAll() {
 
-		Map<String, E> entitiesByName = new HashMap<String, E>();
+		Map<K, E> entityMap = new HashMap<K, E>();
 
 		for (XNode entityNode : rootNode.getChildren(getEntityTag())) {
 
 			E entity = parseEntity(entityNode);
 
-			entitiesByName.put(getEntityName(entity), entity);
+			entityMap.put(getEntityMapKey(entity), entity);
 		}
 
-		return entitiesByName;
+		return entityMap;
 	}
 
 	abstract String getEntityTag();
 
 	abstract E parseEntity(XNode entityNode);
 
-	abstract String getEntityName(E entity);
+	abstract K getEntityMapKey(E entity);
 
 	private XDocument readDocument(File adminDirectory, String filename) {
 

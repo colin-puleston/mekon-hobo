@@ -42,7 +42,7 @@ public class LoginClient {
 		connection = new NetConnection(serverURL);
 	}
 
-	public Role processLogin(UserId userId) {
+	public Role checkLogin(UserId userId) {
 
 		XDocument request = UserSerialiser.renderId(userId);
 		XDocument response = connection.performActionOnServer(request);

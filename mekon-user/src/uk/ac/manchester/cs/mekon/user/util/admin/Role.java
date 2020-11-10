@@ -33,8 +33,24 @@ import uk.ac.manchester.cs.mekon_util.*;
  */
 public class Role {
 
-	static public final Role SUPER_USER = new Role("SUPER-USER");
-	static public final Role INVALID_USER = new Role("INVALID-USER");
+	static private Map<String, Role> specialsByName = new HashMap<String, Role>();
+
+	static public final Role ADMIN = createSpecial("ADMIN");
+	static public final Role INVALID_USER = createSpecial("INVALID-USER");
+
+	static Role lookForSpecial(String name) {
+
+		return specialsByName.get(name);
+	}
+
+	static private Role createSpecial(String name) {
+
+		Role role = new Role(name);
+
+		specialsByName.put(name, role);
+
+		return role;
+	}
 
 	private String roleName;
 
@@ -88,6 +104,6 @@ public class Role {
 
 	private boolean allAccess() {
 
-		return this == SUPER_USER;
+		return this == ADMIN;
 	}
 }

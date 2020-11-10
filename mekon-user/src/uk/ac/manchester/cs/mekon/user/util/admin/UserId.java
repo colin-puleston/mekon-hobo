@@ -38,6 +38,16 @@ public class UserId {
 		this.password = password;
 	}
 
+	public boolean equals(Object other) {
+
+		return other instanceof UserId && equalsUserId((UserId)other);
+	}
+
+	public int hashCode() {
+
+		return name.hashCode() + password.hashCode();
+	}
+
 	public String getName() {
 
 		return name;
@@ -46,5 +56,10 @@ public class UserId {
 	public String getPassword() {
 
 		return password;
+	}
+
+	private boolean equalsUserId(UserId other) {
+
+		return name.equals(other.name) && password.equals(other.password);
 	}
 }

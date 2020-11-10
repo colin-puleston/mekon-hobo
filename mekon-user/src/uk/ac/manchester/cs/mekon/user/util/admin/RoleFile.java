@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 /**
  * @author Colin Puleston
  */
-class RoleFile extends AdminEntityFile<Role> {
+class RoleFile extends AdminEntityFile<Role, String> {
 
 	static private final String FILE_NAME = "roles.xml";
 
@@ -50,7 +50,7 @@ class RoleFile extends AdminEntityFile<Role> {
 		return RoleSerialiser.parse(entityNode);
 	}
 
-	String getEntityName(Role entity) {
+	String getEntityMapKey(Role entity) {
 
 		return entity.getRoleName();
 	}

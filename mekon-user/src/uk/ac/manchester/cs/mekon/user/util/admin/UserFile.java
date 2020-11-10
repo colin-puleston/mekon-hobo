@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 /**
  * @author Colin Puleston
  */
-class UserFile extends AdminEntityFile<User> {
+class UserFile extends AdminEntityFile<User, UserId> {
 
 	static private final String FILE_NAME = "users.xml";
 
@@ -50,8 +50,8 @@ class UserFile extends AdminEntityFile<User> {
 		return UserSerialiser.parse(entityNode);
 	}
 
-	String getEntityName(User entity) {
+	UserId getEntityMapKey(User entity) {
 
-		return entity.getId().getName();
+		return entity.getId();
 	}
 }

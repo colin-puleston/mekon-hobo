@@ -32,18 +32,18 @@ import java.util.*;
  */
 public class LoginManager {
 
-	private Map<String, User> usersByName;
+	private Map<UserId, User> usersById;
 	private Map<String, Role> rolesByName;
 
 	public LoginManager(File adminDirectory) {
 
-		usersByName = new UserFile(adminDirectory).parseAll();
+		usersById = new UserFile(adminDirectory).parseAll();
 		rolesByName = new RoleFile(adminDirectory).parseAll();
 	}
 
-	public Role processLogin(UserId userId) {
+	public Role checkLogin(UserId userId) {
 
-		User user = usersByName.get(userId.getName());
+		User user = usersById.get(userId);
 
 		if (user != null) {
 
@@ -65,11 +65,13 @@ public class LoginManager {
 		String userId = user.getId().getName();
 		String roleName = user.getRoleName();
 
-		reportAdminError(
+		reportAdminConfigError(
 			"Cannot find role: \"" + roleName + "\""
 			+ " (specified for user \"" + userId + "\")");
 	}
 
-	private void reportAdminError(String message) {
+	private void reportAdminConfigError(String message) {
+
+		System.out.println("ADMIN CONFIG ERROR: " + message);
 	}
 }

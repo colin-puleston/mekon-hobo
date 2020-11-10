@@ -36,7 +36,7 @@ public class RoleSerialiser {
 	static private final String ACCESSIBLE_AREA_TAG = "AccessibleArea";
 
 	static private final String ROLE_NAME_ATTR = "name";
-	static private final String AREA_NAME_ATTR = "name";
+	static private final String AREA_ID_ATTR = "id";
 	static private final String AREA_WRITABLE_ATTR = "writable";
 
 	static public XDocument render(Role role) {
@@ -65,11 +65,17 @@ public class RoleSerialiser {
 
 	static Role parse(XNode roleNode) {
 
-		Role role = new Role(roleNode.getString(ROLE_NAME_ATTR));
+		String name = roleNode.getString(ROLE_NAME_ATTR);
+		Role role = Role.lookForSpecial(name);
 
-		for (XNode areaNode : roleNode.getChildren(ACCESSIBLE_AREA_TAG)) {
+		if (role == null) {
 
-			parseTypeAccess(role, areaNode);
+			role = new Role(name);
+
+			for (XNode areaNode : roleNode.getChildren(ACCESSIBLE_AREA_TAG)) {
+
+				parseTypeAccess(role, areaNode);
+			}
 		}
 
 		return role;
@@ -79,13 +85,13 @@ public class RoleSerialiser {
 
 		XNode areaNode = roleNode.addChild(ACCESSIBLE_AREA_TAG);
 
-		areaNode.setValue(AREA_NAME_ATTR, area);
+		areaNode.setValue(AREA_ID_ATTR, area);
 		areaNode.setValue(AREA_WRITABLE_ATTR, role.writableArea(area));
 	}
 
 	static private void parseTypeAccess(Role role, XNode areaNode) {
 
-		String area = areaNode.getString(AREA_NAME_ATTR);
+		String area = areaNode.getString(AREA_ID_ATTR);
 		boolean writable = areaNode.getBoolean(AREA_WRITABLE_ATTR);
 
 		role.addAccess(area, writable);
