@@ -31,7 +31,7 @@ import java.util.*;
 public class KProxyPassword {
 
 	static private final int PROXY_LENGTH = 10;
-	static private final int PROXY_DIGITS_LENGTH = PROXY_LENGTH * 2;
+	static private final int NUMBERS_LENGTH = PROXY_LENGTH * 2;
 
 	static private List<Character> PROXY_CHARS = new ArrayList<Character>();
 
@@ -57,8 +57,8 @@ public class KProxyPassword {
 		BProxyPassword bCreator = new BProxyPassword(args[0]);
 
 		System.out.println("\nINPUT: " + args[0]);
-		System.out.println("PROXY-A: " + String.valueOf(aCreator.getProxy()));
-		System.out.println("PROXY-B: " + String.valueOf(bCreator.getProxy()));
+		System.out.println("PROXY-A: " + aCreator.getProxy());
+		System.out.println("PROXY-B: " + bCreator.getProxy());
 	}
 
 	static {
@@ -78,8 +78,6 @@ public class KProxyPassword {
 
 	private char[] password;
 
-	private List<Integer> customiserDigits;
-
 	KProxyPassword(String password) {
 
 		this(password.toCharArray());
@@ -88,121 +86,137 @@ public class KProxyPassword {
 	KProxyPassword(char[] password) {
 
 		this.password = password;
-
-		customiserDigits = toDigits(getCustomiserChars());
-
-		jiggleDigits(customiserDigits);
 	}
 
-	public char[] getProxy() {
+	public String getProxy() {
 
-		List<Integer> digits = toDigits(password);
-
-		customiseProxyDigits(digits);
-		jiggleDigits(digits);
-
-		digits = normaliseProxyDigits(digits);
-
-		jiggleDigits(digits);
-
-		return proxyDigitsToProxy(digits);
+		return String.valueOf(getProxyChars());
 	}
 
-	private void customiseProxyDigits(List<Integer> digits) {
+	public char[] getProxyChars() {
 
-		for (int i = 0 ; i < digits.size() ; i++) {
+		List<Integer> numbers = toNumbers(password);
 
-			int ci = i % customiserDigits.size();
+		numbers = combineNumbers(numbers, getCustomiserNumbers());
+		numbers = extendProxyNumbers(numbers);
+		numbers = contractProxyNumbers(numbers);
 
-			digits.set(i, (digits.get(i) + customiserDigits.get(ci)) % 10);
-		}
+		jiggleNumbers(numbers);
+
+		return proxyNumbersToProxy(numbers);
 	}
 
-	private List<Integer> normaliseProxyDigits(List<Integer> digits) {
+	private List<Integer> extendProxyNumbers(List<Integer> numbers) {
 
-		if (digits.size() < PROXY_DIGITS_LENGTH) {
+		if (numbers.size() < NUMBERS_LENGTH) {
 
-			digits.addAll(customiserDigits);
-			jiggleDigits(digits);
+			List<Integer> extras = new ArrayList<Integer>(numbers);
+
+			while (numbers.size() < NUMBERS_LENGTH) {
+
+				jiggleNumbers(extras);
+				numbers.addAll(extras);
+			}
 		}
 
-		return digits.subList(0, PROXY_DIGITS_LENGTH);
+		return numbers;
 	}
 
-	private char[] proxyDigitsToProxy(List<Integer> digits) {
+	private List<Integer> contractProxyNumbers(List<Integer> numbers) {
+
+		return numbers.size() > NUMBERS_LENGTH
+				? numbers.subList(0, NUMBERS_LENGTH)
+				: numbers;
+	}
+
+	private char[] proxyNumbersToProxy(List<Integer> numbers) {
 
 		char[] proxy = new char[PROXY_LENGTH];
 
-		for (int i = 0 ; i < digits.size() ; i += 2) {
+		for (int i = 0 ; i < PROXY_LENGTH ; i++) {
 
-			int tens = digits.get(i) * 10;
-			int units = digits.get(i + 1);
-
-			proxy[i/2] = PROXY_CHARS.get((tens + units) % PROXY_CHARS.size());
+			proxy[i] = PROXY_CHARS.get(numbers.get(i));
 		}
 
 		return proxy;
 	}
 
-	private void jiggleDigits(List<Integer> digits) {
+	private List<Integer> toNumbers(char[] chars) {
 
-		List<Integer> startDigits = new ArrayList<Integer>(digits);
-
-		for (int i = 0 ; i < startDigits.size() ; i++) {
-
-			jiggleDigits(digits, startDigits.get(i) % digits.size());
-		}
-	}
-
-	private void jiggleDigits(List<Integer> digits, int jigglerIdx) {
-
-		for (int i = 0 ; i < digits.size() ; i++) {
-
-			int current = digits.get(i);
-			int jiggler = digits.get(jigglerIdx);
-
-			digits.set(i, (current + jiggler) % 10);
-
-			jigglerIdx = (jigglerIdx + jiggler) % digits.size();
-		}
-	}
-
-	private List<Integer> toDigits(char[] chars) {
-
-		List<Integer> digits = new ArrayList<Integer>();
+		List<Integer> numbers = new ArrayList<Integer>();
 
 		for (char c : chars) {
 
-			digits.addAll(toDigits(c));
+			numbers.add(toNumber(c));
 		}
 
-		return digits;
+		return numbers;
 	}
 
-	private List<Integer> toDigits(char c) {
+	private Integer toNumber(char c) {
 
-		int i = PROXY_CHARS.indexOf(c);
+		int number = PROXY_CHARS.indexOf(c);
 
-		return toDigits(i == -1 ? (int)c : i);
+		if (number == -1) {
+
+			number = (int)c;
+
+			while (number > PROXY_CHARS.size()) {
+
+				number /= 2;
+			}
+		}
+
+		return number;
 	}
 
-	private List<Integer> toDigits(int i) {
+	private void jiggleNumbers(List<Integer> numbers) {
 
-		LinkedList<Integer> digits = new LinkedList<Integer>();
+		List<Integer> startNumbers = new ArrayList<Integer>(numbers);
 
-		while (i > 0) {
+		for (int i = 0 ; i < startNumbers.size() ; i++) {
 
-			digits.addFirst(i % 10);
+			jiggleNumbers(numbers, startNumbers.get(i) % numbers.size());
+		}
+	}
 
-			i = i / 10;
+	private void jiggleNumbers(List<Integer> numbers, int jigglerIdx) {
+
+		for (int i = 0 ; i < numbers.size() ; i++) {
+
+			int current = numbers.get(i);
+			int jiggler = numbers.get(jigglerIdx);
+
+			numbers.set(i, combineNumbers(current, jiggler));
+
+			jigglerIdx = (jigglerIdx + jiggler) % numbers.size();
+		}
+	}
+
+	private List<Integer> combineNumbers(List<Integer> ns1, List<Integer> ns2) {
+
+		List<Integer> combined = new ArrayList<Integer>();
+		int combinedSize = ns1.size() > ns2.size() ? ns1.size() : ns2.size();
+
+		for (int i = 0 ; i < combinedSize ; i++) {
+
+			int n1 = ns1.get(i % ns1.size());
+			int n2 = ns2.get(i % ns2.size());
+
+			combined.add(combineNumbers(n1, n2));
 		}
 
-		while (digits.size() < 2) {
+		return combined;
+	}
 
-			digits.addFirst(0);
-		}
+	private int combineNumbers(int n1, int n2) {
 
-		return digits;
+		return (n1 + n2) % PROXY_CHARS.size();
+	}
+
+	private List<Integer> getCustomiserNumbers() {
+
+		return toNumbers(getCustomiserChars());
 	}
 
 	private char[] getCustomiserChars() {
