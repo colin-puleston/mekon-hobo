@@ -40,9 +40,19 @@ class RoleFile extends AdminEntityFile<Role, String> {
 		super(adminDirectory, FILE_NAME);
 	}
 
+	String getRootTag() {
+
+		return RoleSerialiser.ROOT_TAG;
+	}
+
 	String getEntityTag() {
 
 		return RoleSerialiser.ROLE_TAG;
+	}
+
+	void renderEntity(Role entity, XNode entityNode) {
+
+		RoleSerialiser.render(entity, entityNode);
 	}
 
 	Role parseEntity(XNode entityNode) {

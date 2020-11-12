@@ -31,10 +31,12 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 public class UserSerialiser {
 
+	static final String ROOT_TAG = "Users";
 	static final String USER_TAG = "User";
 
 	static private final String NAME_ATTR = "name";
 	static private final String PASSWORD_ATTR = "password";
+	static private final String NEW_PASSWORD_ATTR = "newPassword";
 	static private final String ROLE_ATTR = "role";
 
 	static public XDocument renderId(UserId userId) {
@@ -62,6 +64,13 @@ public class UserSerialiser {
 
 		userNode.setValue(NAME_ATTR, userId.getName());
 		userNode.setValue(PASSWORD_ATTR, userId.getPassword());
+
+		if (userId instanceof UserIdUpdate) {
+
+			UserIdUpdate userIdUpd = (UserIdUpdate)userId;
+
+			userNode.setValue(NEW_PASSWORD_ATTR, userIdUpd.getNewPassword());
+		}
 	}
 
 	static User parse(XNode userNode) {
@@ -71,6 +80,12 @@ public class UserSerialiser {
 
 	static UserId parseId(XNode userNode) {
 
-		return new UserId(userNode.getString(NAME_ATTR), userNode.getString(PASSWORD_ATTR));
+		String name = userNode.getString(NAME_ATTR);
+		String password = userNode.getString(PASSWORD_ATTR);
+		String newPassword = userNode.getString(NEW_PASSWORD_ATTR, null);
+
+		UserId userId = new UserId(name, password);
+
+		return newPassword != null ? userId.toUpdate(newPassword) : userId;
 	}
 }

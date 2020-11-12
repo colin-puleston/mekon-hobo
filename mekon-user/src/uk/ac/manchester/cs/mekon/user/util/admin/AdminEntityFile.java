@@ -34,35 +34,64 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 abstract class AdminEntityFile<E, K> {
 
-	private XNode rootNode;
+	private File file;
+	private Map<K, E> entityMap = new HashMap<K, E>();
 
 	AdminEntityFile(File adminDirectory, String filename) {
 
-		rootNode = readDocument(adminDirectory, filename).getRootNode();
+		file = new File(adminDirectory, filename);
+
+		parseFile();
 	}
 
-	Map<K, E> parseAll() {
+	E getEntity(K key) {
 
-		Map<K, E> entityMap = new HashMap<K, E>();
-
-		for (XNode entityNode : rootNode.getChildren(getEntityTag())) {
-
-			E entity = parseEntity(entityNode);
-
-			entityMap.put(getEntityMapKey(entity), entity);
-		}
-
-		return entityMap;
+		return entityMap.get(key);
 	}
+
+	void replaceEntity(E oldEntity, E newEntity) {
+
+		entityMap.remove(getEntityMapKey(oldEntity));
+		addEntity(newEntity);
+
+		renderFile();
+	}
+
+	abstract String getRootTag();
 
 	abstract String getEntityTag();
+
+	abstract void renderEntity(E entity, XNode entityNode);
 
 	abstract E parseEntity(XNode entityNode);
 
 	abstract K getEntityMapKey(E entity);
 
-	private XDocument readDocument(File adminDirectory, String filename) {
+	private void addEntity(E entity) {
 
-		return new XDocument(new File(adminDirectory, filename));
+		entityMap.put(getEntityMapKey(entity), entity);
+	}
+
+	private void renderFile() {
+
+		XDocument doc = new XDocument(getRootTag());
+		XNode rootNode = doc.getRootNode();
+
+		for (K key : entityMap.keySet()) {
+
+			renderEntity(entityMap.get(key), rootNode.addChild(getEntityTag()));
+		}
+
+		doc.writeToFile(file);
+	}
+
+	private void parseFile() {
+
+		XNode rootNode = new XDocument(file).getRootNode();
+
+		for (XNode entityNode : rootNode.getChildren(getEntityTag())) {
+
+			addEntity(parseEntity(entityNode));
+		}
 	}
 }

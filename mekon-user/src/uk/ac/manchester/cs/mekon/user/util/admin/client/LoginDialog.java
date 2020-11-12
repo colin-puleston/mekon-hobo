@@ -24,222 +24,94 @@
 
 package uk.ac.manchester.cs.mekon.user.util.admin.client;
 
-import java.net.*;
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
 
 import uk.ac.manchester.cs.mekon.user.util.admin.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
+import uk.ac.manchester.cs.mekon_util.misc.*;
 
 /**
  * @author Colin Puleston
  */
-public class LoginDialog extends GDialog {
+public class LoginDialog extends EntryDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_FORMAT = "%s: Login";
+	static private final String ENTRY_TYPE_TITLE = "Login";
 
 	static private final String USERNAME_LABEL = "Username";
 	static private final String PASSWORD_LABEL = "Password";
 
-	static private final String OK_BUTTON_LABEL = "Ok";
-	static private final String CANCEL_BUTTON_LABEL = "Cancel";
+	static private final String REGISTER_BUTTON_LABEL = "Register...";
 
-	static private final Dimension WINDOW_SIZE = new Dimension(300, 200);
+	static private final int WINDOW_HEIGHT = 180;
 
-	private LoginClient loginClient;
+	private EntryTextField usernameField = new EntryTextField();
+	private EntryPasswordField passwordField = new EntryPasswordField();
 
-	private Role loggedInRole = Role.INVALID_USER;
-
-	private UsernameField usernameField = new UsernameField();
-	private PasswordField passwordField = new PasswordField();
-
-	private OkButton okButton = new OkButton();
-
-	private class UsernameField extends GTextField {
-
-		static private final long serialVersionUID = -1;
-
-		protected void onCharEntered(char enteredChar) {
-
-			okButton.updateEnabling();
-		}
-
-		protected void onTextEntered(String text) {
-
-			checkPerformLogin();
-		}
-	}
-
-	private class PasswordField extends GPasswordField {
-
-		static private final long serialVersionUID = -1;
-
-		protected void onCharEntered(char enteredChar) {
-
-			okButton.updateEnabling();
-		}
-
-		protected void onPasswordEntered(char[] password) {
-
-			checkPerformLogin();
-		}
-	}
-
-	private class OkButton extends GButton {
+	private class RegisterButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
 		protected void doButtonThing() {
 
-			checkPerformLogin();
-		}
-
-		OkButton() {
-
-			super(OK_BUTTON_LABEL);
-
-			setEnabled(false);
-		}
-
-		void updateEnabling() {
-
-			setEnabled(populatedInputFields());
-		}
-	}
-
-	private class CancelButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			loggedInRole = Role.INVALID_USER;
-
+			checkRegister();
 			dispose();
 		}
 
-		CancelButton() {
+		RegisterButton() {
 
-			super(CANCEL_BUTTON_LABEL);
+			super(REGISTER_BUTTON_LABEL);
 		}
 	}
 
-	private class WindowCloseListener extends WindowAdapter {
+	public LoginDialog(
+			LoginClient loginClient,
+			KProxyPasswords proxyPasswords,
+			String appName) {
 
-		public void windowClosing(WindowEvent e) {
-
-			dispose();
-		}
+		this(null, loginClient, proxyPasswords, appName);
 	}
 
-	public LoginDialog(JComponent parent, URL serverURL, String targetName) {
+	public LoginDialog(
+			JComponent parent,
+			LoginClient loginClient,
+			KProxyPasswords proxyPasswords,
+			String appName) {
 
-		super(parent, String.format(TITLE_FORMAT, targetName), true);
-
-		loginClient = new LoginClient(serverURL);
-
-		setPreferredSize(WINDOW_SIZE);
-		addWindowListener(new WindowCloseListener());
+		super(parent, loginClient, proxyPasswords, appName, ENTRY_TYPE_TITLE);
 	}
 
-	public boolean checkLogin() {
+	public Role checkLogin() {
 
-		display(createMainPanel());
-
-		return loggedInRole != Role.INVALID_USER;
+		return checkEntry();
 	}
 
-	public Role getLoggedInRole() {
+	void addFields(JPanel panel) {
 
-		return loggedInRole;
+		addField(panel, usernameField, USERNAME_LABEL);
+		addField(panel, passwordField, PASSWORD_LABEL);
 	}
 
-	private JPanel createMainPanel() {
+	void addExtraButtons(JPanel panel) {
 
-		JPanel panel = new JPanel(new BorderLayout());
+		super.addExtraButtons(panel);
 
-		panel.add(createLoginFieldsPanel(), BorderLayout.CENTER);
-		panel.add(createButtonsPanel(), BorderLayout.SOUTH);
-
-		return panel;
+		addExtraButton(panel, new RegisterButton());
 	}
 
-	private JPanel createLoginFieldsPanel() {
+	int getWindowHeight() {
 
-		JPanel panel = new JPanel();
-
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-		panel.add(createLoginComponent(usernameField, USERNAME_LABEL));
-		panel.add(createLoginComponent(passwordField, PASSWORD_LABEL));
-
-		return panel;
+		return WINDOW_HEIGHT;
 	}
 
-	private JPanel createButtonsPanel() {
+	UserId createUserId() {
 
-		JPanel panel = new JPanel();
-
-		panel.add(okButton);
-		panel.add(Box.createHorizontalStrut(10));
-		panel.add(new CancelButton());
-
-		return panel;
+		return new UserId(usernameField.getText(), passwordField.getProxyPassword());
 	}
 
-	private JComponent createLoginComponent(JTextField field, String title) {
+	private void checkRegister() {
 
-		JPanel panel = new JPanel(new GridLayout(1, 1));
-
-		panel.setBorder(new TitledBorder(title));
-		panel.add(field);
-
-		return panel;
-	}
-
-	private void checkPerformLogin() {
-
-		if (populatedInputFields()) {
-
-			loggedInRole = loginClient.checkLogin(createUserId());
-
-			if (loggedInRole == Role.INVALID_USER) {
-
-				showMessage("Login failed!");
-			}
-			else {
-
-				dispose();
-			}
-		}
-	}
-
-	private UserId createUserId() {
-
-		return new UserId(getUsernameInput(), getPasswordInput());
-	}
-
-	private boolean populatedInputFields() {
-
-		return !getUsernameInput().isEmpty() && !getPasswordInput().isEmpty();
-	}
-
-	private String getUsernameInput() {
-
-		return usernameField.getText();
-	}
-
-	private String getPasswordInput() {
-
-		return String.valueOf(passwordField.getPassword());
-	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
+		setLoggedInRole(new RegisterDialog(this).checkEntry());
 	}
 }

@@ -47,4 +47,9 @@ public class User {
 
 		return roleName;
 	}
+
+	User update(UserIdUpdate idUpdate) {
+
+		return new User(idUpdate.createUpdate(), roleName);
+	}
 }

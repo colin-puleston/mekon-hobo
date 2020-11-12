@@ -32,22 +32,22 @@ import java.util.*;
  */
 public class LoginManager {
 
-	private Map<UserId, User> usersById;
-	private Map<String, Role> rolesByName;
+	private UserFile userFile;
+	private RoleFile roleFile;
 
 	public LoginManager(File adminDirectory) {
 
-		usersById = new UserFile(adminDirectory).parseAll();
-		rolesByName = new RoleFile(adminDirectory).parseAll();
+		userFile = new UserFile(adminDirectory);
+		roleFile = new RoleFile(adminDirectory);
 	}
 
-	public Role checkLogin(UserId userId) {
+	public synchronized Role checkLogin(UserId userId) {
 
-		User user = usersById.get(userId);
+		User user = resolveUser(userId);
 
 		if (user != null) {
 
-			Role role = rolesByName.get(user.getRoleName());
+			Role role = roleFile.getEntity(user.getRoleName());
 
 			if (role != null) {
 
@@ -58,6 +58,22 @@ public class LoginManager {
 		}
 
 		return Role.INVALID_USER;
+	}
+
+	private User resolveUser(UserId userId) {
+
+		User user = userFile.getEntity(userId);
+
+		if (user != null && userId instanceof UserIdUpdate) {
+
+			User newUser = user.update((UserIdUpdate)userId);
+
+			userFile.replaceEntity(user, newUser);
+
+			user = newUser;
+		}
+
+		return user;
 	}
 
 	private void reportUserRoleError(User user) {

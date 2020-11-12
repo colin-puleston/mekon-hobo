@@ -24,44 +24,27 @@
 
 package uk.ac.manchester.cs.mekon.user.util.admin;
 
-import java.io.*;
-
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
-
 /**
  * @author Colin Puleston
  */
-class UserFile extends AdminEntityFile<User, UserId> {
+public class UserIdUpdate extends UserId {
 
-	static private final String FILE_NAME = "users.xml";
+	private String newPassword;
 
-	UserFile(File adminDirectory) {
+	public UserIdUpdate(String name, String currentPassword, String newPassword) {
 
-		super(adminDirectory, FILE_NAME);
+		super(name, currentPassword);
+
+		this.newPassword = newPassword;
 	}
 
-	String getRootTag() {
+	public String getNewPassword() {
 
-		return UserSerialiser.ROOT_TAG;
+		return newPassword;
 	}
 
-	String getEntityTag() {
+	UserId createUpdate() {
 
-		return UserSerialiser.USER_TAG;
-	}
-
-	void renderEntity(User entity, XNode entityNode) {
-
-		UserSerialiser.render(entity, entityNode);
-	}
-
-	User parseEntity(XNode entityNode) {
-
-		return UserSerialiser.parse(entityNode);
-	}
-
-	UserId getEntityMapKey(User entity) {
-
-		return entity.getId();
+		return new UserId(getName(), newPassword);
 	}
 }

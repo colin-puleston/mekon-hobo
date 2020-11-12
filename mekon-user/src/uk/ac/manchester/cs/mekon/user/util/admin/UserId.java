@@ -58,6 +58,11 @@ public class UserId {
 		return password;
 	}
 
+	UserIdUpdate toUpdate(String newPassword) {
+
+		return new UserIdUpdate(name, password, newPassword);
+	}
+
 	private boolean equalsUserId(UserId other) {
 
 		return name.equals(other.name) && password.equals(other.password);

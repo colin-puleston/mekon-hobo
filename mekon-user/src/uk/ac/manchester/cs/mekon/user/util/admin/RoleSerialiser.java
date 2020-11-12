@@ -31,6 +31,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 public class RoleSerialiser {
 
+	static final String ROOT_TAG = "Roles";
 	static final String ROLE_TAG = "Role";
 
 	static private final String ACCESSIBLE_AREA_TAG = "AccessibleArea";
