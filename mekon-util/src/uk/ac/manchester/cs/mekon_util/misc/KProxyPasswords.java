@@ -35,16 +35,6 @@ public class KProxyPasswords {
 
 	static private List<Character> PROXY_CHARS = new ArrayList<Character>();
 
-	static public void main(String[] args) {
-
-		KProxyPasswords proxiesA = new KProxyPasswords("ProxiesA");
-		KProxyPasswords proxiesB = new KProxyPasswords("ProxiesB");
-
-		System.out.println("\nINPUT: " + args[0]);
-		System.out.println("PROXY-A: " + proxiesA.toProxy(args[0]));
-		System.out.println("PROXY-B: " + proxiesB.toProxy(args[0]));
-	}
-
 	static {
 
 		addProxyChars('0','9');
