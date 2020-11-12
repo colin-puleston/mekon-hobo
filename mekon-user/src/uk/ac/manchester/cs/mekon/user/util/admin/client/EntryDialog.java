@@ -48,7 +48,7 @@ abstract class EntryDialog extends GDialog {
 	static private final String OK_BUTTON_LABEL = "Ok";
 	static private final String CANCEL_BUTTON_LABEL = "Cancel";
 
-	static private final int WINDOW_WIDTH = 400;
+	static private final int WINDOW_WIDTH = 350;
 
 	private JComponent parent;
 
@@ -56,7 +56,7 @@ abstract class EntryDialog extends GDialog {
 	private KProxyPasswords proxyPasswords;
 	private String appName;
 
-	private Role loggedInRole = Role.INVALID_USER;
+	private Role loggedInRole = Role.NO_ACCESS;
 
 	private List<JTextField> fields = new ArrayList<JTextField>();
 	private OkButton okButton = new OkButton();
@@ -90,26 +90,14 @@ abstract class EntryDialog extends GDialog {
 			checkPerformLogin();
 		}
 
+		String getPasswordInput() {
+
+			return String.valueOf(getPassword());
+		}
+
 		String getProxyPassword() {
 
 			return proxyPasswords.toProxy(getPassword());
-		}
-
-		boolean passwordsMatch(EntryPasswordField other) {
-
-			return getPasswordText().equals(other.getPasswordText());
-		}
-
-		boolean passwordLengthOk(int min, int max) {
-
-			int len = getPasswordText().length();
-
-			return len >= min && len <= max;
-		}
-
-		private String getPasswordText() {
-
-			return String.valueOf(getPassword());
 		}
 	}
 
@@ -141,7 +129,7 @@ abstract class EntryDialog extends GDialog {
 
 		protected void doButtonThing() {
 
-			loggedInRole = Role.INVALID_USER;
+			loggedInRole = Role.NO_ACCESS;
 
 			dispose();
 		}
@@ -275,7 +263,7 @@ abstract class EntryDialog extends GDialog {
 
 			loggedInRole = loginClient.checkLogin(createUserId());
 
-			if (loggedInRole == Role.INVALID_USER) {
+			if (loggedInRole == Role.NO_ACCESS) {
 
 				showMessage("Login failed!");
 			}

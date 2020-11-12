@@ -44,10 +44,12 @@ public class LoginDialog extends EntryDialog {
 
 	static private final String REGISTER_BUTTON_LABEL = "Register...";
 
-	static private final int WINDOW_HEIGHT = 180;
+	static private final int WINDOW_HEIGHT = 190;
 
 	private EntryTextField usernameField = new EntryTextField();
 	private EntryPasswordField passwordField = new EntryPasswordField();
+
+	private NewPasswordChecker newPasswordChecker = new NewPasswordChecker();
 
 	private class RegisterButton extends GButton {
 
@@ -82,6 +84,11 @@ public class LoginDialog extends EntryDialog {
 		super(parent, loginClient, proxyPasswords, appName, ENTRY_TYPE_TITLE);
 	}
 
+	public void setValidPasswordLength(int min, int max) {
+
+		newPasswordChecker.setValidLength(min, max);
+	}
+
 	public Role checkLogin() {
 
 		return checkEntry();
@@ -112,6 +119,6 @@ public class LoginDialog extends EntryDialog {
 
 	private void checkRegister() {
 
-		setLoggedInRole(new RegisterDialog(this).checkEntry());
+		setLoggedInRole(new RegisterDialog(this, newPasswordChecker).checkEntry());
 	}
 }

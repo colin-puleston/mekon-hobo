@@ -27,39 +27,10 @@ package uk.ac.manchester.cs.mekon.user.util.admin;
 /**
  * @author Colin Puleston
  */
-public class UserId {
+class NewUserId extends UserId {
 
-	private String name;
-	private String password;
+	NewUserId(String name, String regToken) {
 
-	public UserId(String name, String password) {
-
-		this.name = name;
-		this.password = password;
-	}
-
-	public boolean equals(Object other) {
-
-		return other instanceof UserId && equalsUserId((UserId)other);
-	}
-
-	public int hashCode() {
-
-		return name.hashCode() + password.hashCode();
-	}
-
-	public String getName() {
-
-		return name;
-	}
-
-	public String getPassword() {
-
-		return password;
-	}
-
-	private boolean equalsUserId(UserId other) {
-
-		return name.equals(other.name) && password.equals(other.password);
+		super(name, regToken);
 	}
 }

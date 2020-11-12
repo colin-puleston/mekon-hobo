@@ -47,7 +47,7 @@ public class LoginManager {
 
 		if (user != null) {
 
-			Role role = roleFile.getEntity(user.getRoleName());
+			Role role = lookForRole(user.getRoleName());
 
 			if (role != null) {
 
@@ -57,7 +57,14 @@ public class LoginManager {
 			reportUserRoleError(user);
 		}
 
-		return Role.INVALID_USER;
+		return Role.NO_ACCESS;
+	}
+
+	private Role lookForRole(String name) {
+
+		Role role = Role.lookForSpecial(name);
+
+		return role != null ? role : roleFile.getEntity(name);
 	}
 
 	private User resolveUser(UserId userId) {

@@ -35,20 +35,12 @@ class RegisterDialog extends EntryDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final int MIN_PASSWORD_LENGTH = 8;
-	static private final int MAX_PASSWORD_LENGTH = 20;
-
 	static private final String ENTRY_TYPE_TITLE = "Register";
 
-	static private final String PASSWORD_LENGTH_MSG
-									= "" + MIN_PASSWORD_LENGTH
-									+ " - " + MAX_PASSWORD_LENGTH
-									+ " characters";
-
 	static private final String USERNAME_LABEL = "Username";
-	static private final String REG_TOKEN_LABEL = "Registration token";
-	static private final String PASSWORD_1_LABEL = "Select password (" + PASSWORD_LENGTH_MSG + ")";
-	static private final String PASSWORD_2_LABEL = "Confirm password";
+	static private final String REG_TOKEN_LABEL = "Registration Token";
+	static private final String PASSWORD_1_LABEL_FORMAT = "Select Password (%s)";
+	static private final String PASSWORD_2_LABEL = "Confirm Password";
 
 	static private final int WINDOW_HEIGHT = 300;
 
@@ -57,16 +49,20 @@ class RegisterDialog extends EntryDialog {
 	private EntryPasswordField password1Field = new EntryPasswordField();
 	private EntryPasswordField password2Field = new EntryPasswordField();
 
-	RegisterDialog(LoginDialog parentDialog) {
+	private NewPasswordChecker newPasswordChecker;
+
+	RegisterDialog(LoginDialog parentDialog, NewPasswordChecker newPasswordChecker) {
 
 		super(parentDialog, ENTRY_TYPE_TITLE);
+
+		this.newPasswordChecker = newPasswordChecker;
 	}
 
 	void addFields(JPanel panel) {
 
 		addField(panel, usernameField, USERNAME_LABEL);
 		addField(panel, regTokenField, REG_TOKEN_LABEL);
-		addField(panel, password1Field, PASSWORD_1_LABEL);
+		addField(panel, password1Field, getPassword1Label());
 		addField(panel, password2Field, PASSWORD_2_LABEL);
 	}
 
@@ -77,7 +73,7 @@ class RegisterDialog extends EntryDialog {
 
 	boolean checkCanPerformLogin() {
 
-		return super.checkCanPerformLogin() && checkPasswordsMatch();
+		return super.checkCanPerformLogin() && checkPasswordInput();
 	}
 
 	UserId createUserId() {
@@ -88,9 +84,19 @@ class RegisterDialog extends EntryDialog {
 					password1Field.getProxyPassword());
 	}
 
-	private boolean checkPasswordsMatch() {
+	private String getPassword1Label() {
 
-		if (checkIdenticalPasswords() && checkPasswordLength()) {
+		String validLenDesc = newPasswordChecker.getValidLengthDescription();
+
+		return String.format(PASSWORD_1_LABEL_FORMAT, validLenDesc);
+	}
+
+	private boolean checkPasswordInput() {
+
+		String input1 = password1Field.getPasswordInput();
+		String input2 = password2Field.getPasswordInput();
+
+		if (newPasswordChecker.check(input1, input2)) {
 
 			return true;
 		}
@@ -99,39 +105,5 @@ class RegisterDialog extends EntryDialog {
 		password2Field.setText("");
 
 		return false;
-	}
-
-	private boolean checkIdenticalPasswords() {
-
-		if (password1Field.passwordsMatch(password2Field)) {
-
-			return true;
-		}
-
-		showInvalidPasswordInputMessage("Passwords are not identical!");
-
-		return false;
-	}
-
-	private boolean checkPasswordLength() {
-
-		if (password1Field.passwordLengthOk(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH)) {
-
-			return true;
-		}
-
-		showInvalidPasswordInputMessage("Password must contain " + PASSWORD_LENGTH_MSG);
-
-		return false;
-	}
-
-	private void showInvalidPasswordInputMessage(String msg) {
-
-		showMessage("Invalid password input: " + msg);
-	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
 	}
 }

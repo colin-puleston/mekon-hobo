@@ -36,7 +36,9 @@ public class Role {
 	static private Map<String, Role> specialsByName = new HashMap<String, Role>();
 
 	static public final Role ADMIN = createSpecial("ADMIN");
-	static public final Role INVALID_USER = createSpecial("INVALID-USER");
+	static public final Role GENERAL_EDIT = createSpecial("GENERAL-EDIT");
+	static public final Role GENERAL_ACCESS = createSpecial("GENERAL-ACCESS");
+	static public final Role NO_ACCESS = createSpecial("NO-ACCESS");
 
 	static Role lookForSpecial(String name) {
 
@@ -62,19 +64,14 @@ public class Role {
 		return roleName;
 	}
 
-	public boolean anyAccess() {
-
-		return allAccess() || !accessibleAreas.isEmpty();
-	}
-
 	public boolean accessibleArea(String area) {
 
-		return allAccess() || accessibleAreas.contains(area);
+		return allAreasAccessible() || accessibleAreas.contains(area);
 	}
 
 	public boolean writableArea(String area) {
 
-		return allAccess() || writableAreas.contains(area);
+		return allAreasWritable() || writableAreas.contains(area);
 	}
 
 	public List<String> getAccessibleAreas() {
@@ -102,8 +99,13 @@ public class Role {
 		}
 	}
 
-	private boolean allAccess() {
+	private boolean allAreasAccessible() {
 
-		return this == ADMIN;
+		return allAreasWritable() || this == GENERAL_ACCESS;
+	}
+
+	private boolean allAreasWritable() {
+
+		return this == ADMIN || this == GENERAL_EDIT;
 	}
 }

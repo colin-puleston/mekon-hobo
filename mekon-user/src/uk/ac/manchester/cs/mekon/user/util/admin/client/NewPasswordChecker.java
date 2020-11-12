@@ -22,44 +22,67 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.user.util.admin;
+package uk.ac.manchester.cs.mekon.user.util.admin.client;
+
+import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-public class UserId {
+class NewPasswordChecker {
 
-	private String name;
-	private String password;
+	static private final int MIN_LENGTH_DEFAULT = 8;
+	static private final int MAX_LENGTH_DEFAULT = 20;
 
-	public UserId(String name, String password) {
+	static private final String VALID_LENGTH_DESCRIPTION_FORMAT = "%d - %d characters";
 
-		this.name = name;
-		this.password = password;
+	private int minLength = MIN_LENGTH_DEFAULT;
+	private int maxLength = MAX_LENGTH_DEFAULT;
+
+	void setValidLength(int min, int max) {
+
+		minLength = min;
+		maxLength = max;
 	}
 
-	public boolean equals(Object other) {
+	boolean check(String input1, String input2) {
 
-		return other instanceof UserId && equalsUserId((UserId)other);
+		if (!input1.equals(input2)) {
+
+			showInvalidInputMessage("Passwords are not identical!");
+
+			return false;
+		}
+
+		if (!validLength(input1)) {
+
+			showInvalidInputMessage("Password must contain " + getValidLengthDescription());
+
+			return false;
+		}
+
+		return true;
 	}
 
-	public int hashCode() {
+	String getValidLengthDescription() {
 
-		return name.hashCode() + password.hashCode();
+		return String.format(VALID_LENGTH_DESCRIPTION_FORMAT, minLength, maxLength);
 	}
 
-	public String getName() {
+	private boolean validLength(String input) {
 
-		return name;
+		int length = input.length();
+
+		return length >= minLength && length <= maxLength;
 	}
 
-	public String getPassword() {
+	private void showInvalidInputMessage(String msg) {
 
-		return password;
+		showMessage("Invalid Password Input: " + msg);
 	}
 
-	private boolean equalsUserId(UserId other) {
+	private void showMessage(String msg) {
 
-		return name.equals(other.name) && password.equals(other.password);
+		JOptionPane.showMessageDialog(null, msg);
 	}
 }

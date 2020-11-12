@@ -37,6 +37,7 @@ public class UserSerialiser {
 	static private final String NAME_ATTR = "name";
 	static private final String PASSWORD_ATTR = "password";
 	static private final String NEW_PASSWORD_ATTR = "newPassword";
+	static private final String REG_TOKEN_ATTR = "regToken";
 	static private final String ROLE_ATTR = "role";
 
 	static public XDocument renderId(UserId userId) {
@@ -63,13 +64,21 @@ public class UserSerialiser {
 	static void renderId(UserId userId, XNode userNode) {
 
 		userNode.setValue(NAME_ATTR, userId.getName());
-		userNode.setValue(PASSWORD_ATTR, userId.getPassword());
 
-		if (userId instanceof UserIdUpdate) {
+		if (userId instanceof NewUserId) {
 
-			UserIdUpdate userIdUpd = (UserIdUpdate)userId;
+			userNode.setValue(REG_TOKEN_ATTR, userId.getPassword());
+		}
+		else {
 
-			userNode.setValue(NEW_PASSWORD_ATTR, userIdUpd.getNewPassword());
+			userNode.setValue(PASSWORD_ATTR, userId.getPassword());
+
+			if (userId instanceof UserIdUpdate) {
+
+				UserIdUpdate userIdUpd = (UserIdUpdate)userId;
+
+				userNode.setValue(NEW_PASSWORD_ATTR, userIdUpd.getNewPassword());
+			}
 		}
 	}
 
@@ -81,11 +90,21 @@ public class UserSerialiser {
 	static UserId parseId(XNode userNode) {
 
 		String name = userNode.getString(NAME_ATTR);
+		String regToken = userNode.getString(REG_TOKEN_ATTR, null);
+
+		if (regToken != null) {
+
+			return new NewUserId(name, regToken);
+		}
+
 		String password = userNode.getString(PASSWORD_ATTR);
 		String newPassword = userNode.getString(NEW_PASSWORD_ATTR, null);
 
-		UserId userId = new UserId(name, password);
+		if (newPassword != null) {
 
-		return newPassword != null ? userId.toUpdate(newPassword) : userId;
+			return new UserIdUpdate(name, password, newPassword);
+		}
+
+		return new UserId(name, password);
 	}
 }
