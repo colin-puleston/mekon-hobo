@@ -28,37 +28,21 @@ import java.util.*;
 /**
  * @author Colin Puleston
  */
-public class KProxyPassword {
+public class KProxyPasswords {
 
 	static private final int PROXY_LENGTH = 10;
 	static private final int NUMBERS_LENGTH = PROXY_LENGTH * 2;
 
 	static private List<Character> PROXY_CHARS = new ArrayList<Character>();
 
-	static private class AProxyPassword extends KProxyPassword {
-
-		AProxyPassword(String password) {
-
-			super(password);
-		}
-	}
-
-	static private class BProxyPassword extends KProxyPassword {
-
-		BProxyPassword(String password) {
-
-			super(password);
-		}
-	}
-
 	static public void main(String[] args) {
 
-		AProxyPassword aCreator = new AProxyPassword(args[0]);
-		BProxyPassword bCreator = new BProxyPassword(args[0]);
+		KProxyPasswords proxiesA = new KProxyPasswords("ProxiesA");
+		KProxyPasswords proxiesB = new KProxyPasswords("ProxiesB");
 
 		System.out.println("\nINPUT: " + args[0]);
-		System.out.println("PROXY-A: " + aCreator.getProxy());
-		System.out.println("PROXY-B: " + bCreator.getProxy());
+		System.out.println("PROXY-A: " + proxiesA.toProxy(args[0]));
+		System.out.println("PROXY-B: " + proxiesB.toProxy(args[0]));
 	}
 
 	static {
@@ -76,28 +60,33 @@ public class KProxyPassword {
 		}
 	}
 
-	private char[] password;
+	private List<Integer> customiserNumbers;
 
-	KProxyPassword(String password) {
+	public KProxyPasswords(int customiser) {
 
-		this(password.toCharArray());
+		this(Integer.toString(customiser));
 	}
 
-	KProxyPassword(char[] password) {
+	public KProxyPasswords(String customiser) {
 
-		this.password = password;
+		customiserNumbers = toNumbers(customiser.toCharArray());
 	}
 
-	public String getProxy() {
+	public String toProxy(String password) {
 
-		return String.valueOf(getProxyChars());
+		return toProxy(password.toCharArray());
 	}
 
-	public char[] getProxyChars() {
+	public String toProxy(char[] password) {
+
+		return String.valueOf(toProxyChars(password));
+	}
+
+	public char[] toProxyChars(char[] password) {
 
 		List<Integer> numbers = toNumbers(password);
 
-		numbers = combineNumbers(numbers, getCustomiserNumbers());
+		numbers = combineNumbers(numbers, customiserNumbers);
 		numbers = extendProxyNumbers(numbers);
 		numbers = contractProxyNumbers(numbers);
 
@@ -212,15 +201,5 @@ public class KProxyPassword {
 	private int combineNumbers(int n1, int n2) {
 
 		return (n1 + n2) % PROXY_CHARS.size();
-	}
-
-	private List<Integer> getCustomiserNumbers() {
-
-		return toNumbers(getCustomiserChars());
-	}
-
-	private char[] getCustomiserChars() {
-
-		return getClass().getSimpleName().toCharArray();
 	}
 }
