@@ -33,7 +33,7 @@
 
 	<!-- mekon-util target -->
 	<target name="mekon-util" depends="base">
-		<javac srcdir="${mekon-util.src}" destdir="${build.classes.mekon-util}" debug="${debug}">
+		<javac srcdir="${mekon-util.src}" classpathref="classpath" destdir="${build.classes.mekon-util}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>

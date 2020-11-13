@@ -16,6 +16,13 @@
 		<mkdir dir="${build.classes}"/>
 		<mkdir dir="${build.resource}"/>
 		<mkdir dir="${build.client}"/>
+		<copy todir="${build.lib}" flatten="true">
+			<fileset dir="${src.lib}/">
+                <include name="**/*.jar"/>
+                <include name="**/*.dll"/>
+                <include name="**/*.jnilib"/>
+			</fileset>
+		</copy>
 	</target>
 
 </project>

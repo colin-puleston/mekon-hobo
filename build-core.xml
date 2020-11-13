@@ -40,13 +40,6 @@
 		<subant target="all">
 			<fileset dir="." includes="build-util.xml"/>
         </subant>
-		<copy todir="${build.lib}" flatten="true">
-			<fileset dir="${src.lib}/">
-                <include name="**/*.jar"/>
-                <include name="**/*.dll"/>
-                <include name="**/*.jnilib"/>
-			</fileset>
-		</copy>
 	</target>
 
 	<!-- core mekon targets -->
