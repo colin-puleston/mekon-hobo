@@ -25,8 +25,9 @@
 package uk.ac.manchester.cs.mekon.remote.client;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon_util.remote.server.*;
+import uk.ac.manchester.cs.mekon_util.remote.client.*;
 
 /**
  * Wrapper round {@link IInstanceParser} used by the client-side
@@ -53,7 +54,7 @@ public class RClientInstanceParser extends RInstanceParser {
 	 * @param message Error message
 	 * @return Resulting exception
 	 */
-	protected RuntimeException createException(String message) {
+	protected RServerAccessException createException(String message) {
 
 		return new RServerAccessException(message);
 	}

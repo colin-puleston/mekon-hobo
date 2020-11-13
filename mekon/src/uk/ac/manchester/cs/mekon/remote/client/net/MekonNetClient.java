@@ -30,6 +30,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
+import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
 
 /**
  * Represents a client-side version of the MEKON frames model and an
@@ -45,7 +46,7 @@ public class MekonNetClient {
 	private CModel model;
 	private IStore store;
 
-	private NetConnection connection;
+	private RNetConnection connection;
 
 	private class NetClientModel extends XClientModel {
 
@@ -76,7 +77,7 @@ public class MekonNetClient {
 	 */
 	public MekonNetClient(URL serverURL) {
 
-		connection = new NetConnection(serverURL);
+		connection = new RNetConnection(serverURL);
 
 		model = new NetClientModel().getCModel();
 		store = new NetClientStore().getIStore();

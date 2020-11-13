@@ -30,6 +30,7 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.remote.server.net.*;
 
 /**
  * Servlet that provides access to a server-side version of the MEKON
@@ -40,7 +41,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public class MekonNetServer extends NetServer {
+public class MekonNetServer extends RNetServer {
 
 	static private final long serialVersionUID = -1;
 
