@@ -22,35 +22,44 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon_util.remote.admin.server;
-
-import java.io.*;
-
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.remote.server.net.*;
-import uk.ac.manchester.cs.mekon_util.remote.admin.*;
+package uk.ac.manchester.cs.mekon_util.remote.admin;
 
 /**
  * @author Colin Puleston
  */
-public abstract class RLoginServer extends RNetServer {
+public class RUserEditResult {
 
-	static private final long serialVersionUID = -1;
+	static RUserEditResult additionOk(String regToken) {
 
-	private RLoginManager loginManager;
-
-	protected void initNetServer() {
-
-		loginManager = new RLoginManager(getAdminDirectory());
+		return new RUserEditResult(RUserEditResultType.ADDITION_OK, regToken);
 	}
 
-	protected XDocument performAction(XDocument request) {
+	static RUserEditResult fixedTypeResult(RUserEditResultType resultType) {
 
-		RUserId userId = RUserSerialiser.parseId(request);
-		RRole role = loginManager.checkLogin(userId);
-
-		return RRoleSerialiser.render(role);
+		return new RUserEditResult(resultType, null);
 	}
 
-	protected abstract File getAdminDirectory();
+	private RUserEditResultType resultType;
+	private String regToken;
+
+	public boolean editOk() {
+
+		return resultType.editOk();
+	}
+
+	public RUserEditResultType getResultType() {
+
+		return resultType;
+	}
+
+	public String getRegistrationToken() {
+
+		return regToken;
+	}
+
+	private RUserEditResult(RUserEditResultType resultType, String regToken) {
+
+		this.resultType = resultType;
+		this.regToken = regToken;
+	}
 }

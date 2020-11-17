@@ -24,46 +24,56 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class NewUserId extends UserId {
+public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 
-	static private final String REG_TOKEN_FORMAT = "%s:%s";
-	static private final int REG_TOKEN_SUFFIX_LENGTH = 6;
+	static private final String ROOT_TAG = "AdminRequest";
+	static private final String LOGIN_ID_TAG = "LoginId";
+	static private final String USER_EDIT_TAG = "UserEdit";
 
-	static private String createRegistrationToken(String name) {
+	static private final String ACTION_TYPE_ATTR = "actionType";
 
-		return String.format(REG_TOKEN_FORMAT, createRegistrationTokenSuffix());
+	public RAdminRequestSerialiser() {
+
+		super(ROOT_TAG);
 	}
 
-	static private String createRegistrationTokenSuffix() {
+	public RAdminRequestSerialiser(XDocument document) {
 
-		StringBuilder suffix = new StringBuilder();
-		Random digits = new Random();
-
-		while (suffix.length() < REG_TOKEN_SUFFIX_LENGTH) {
-
-			suffix.append(digits.nextInt());
-		}
-
-		return suffix.toString();
+		super(document);
 	}
 
-	NewUserId(String name) {
+	public void renderActionType(RAdminActionType actionType) {
 
-		super(name, createRegistrationToken(name));
+		getRootNode().setValue(ACTION_TYPE_ATTR, actionType);
 	}
 
-	NewUserId(String name, String regToken) {
+	public void renderLoginIdParameter(RLoginId userId) {
 
-		super(name, regToken);
+		UserSerialiser.renderLoginId(userId, addParameterNode(LOGIN_ID_TAG));
 	}
 
-	String getRegistrationToken() {
+	public void renderUserEditParameter(RUserEdit edit) {
 
-		return getPassword();
+		UserEditSerialiser.renderEdit(edit, addParameterNode(USER_EDIT_TAG));
+	}
+
+	public RAdminActionType parseActionType() {
+
+		return getRootNode().getEnum(ACTION_TYPE_ATTR, RAdminActionType.class);
+	}
+
+	public RLoginId parseLoginIdParameter() {
+
+		return UserSerialiser.parseLoginId(getParameterNode(LOGIN_ID_TAG));
+	}
+
+	public RUserEdit parseUserEditParameter() {
+
+		return UserEditSerialiser.parseEdit(getParameterNode(USER_EDIT_TAG));
 	}
 }

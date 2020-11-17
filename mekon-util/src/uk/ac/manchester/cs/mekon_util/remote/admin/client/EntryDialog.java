@@ -208,7 +208,7 @@ abstract class EntryDialog extends GDialog {
 		return allFieldsPopulated();
 	}
 
-	abstract RUserId createUserId();
+	abstract RLoginId createLoginId();
 
 	void setLoggedInRole(RRole role) {
 
@@ -261,7 +261,7 @@ abstract class EntryDialog extends GDialog {
 
 		if (checkCanPerformLogin()) {
 
-			loggedInRole = loginClient.checkLogin(createUserId());
+			loggedInRole = loginClient.checkLogin(createLoginId());
 
 			if (loggedInRole == RRole.NO_ACCESS) {
 

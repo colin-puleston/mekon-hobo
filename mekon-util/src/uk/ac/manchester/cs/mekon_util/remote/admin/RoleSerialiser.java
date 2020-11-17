@@ -25,15 +25,11 @@
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 
 /**
  * @author Colin Puleston
  */
-public class RRoleSerialiser {
-
-	static final String ROOT_TAG = "Roles";
-	static final String ROLE_TAG = "Role";
+class RoleSerialiser {
 
 	static private final String ACCESSIBLE_AREA_TAG = "AccessibleArea";
 
@@ -41,21 +37,7 @@ public class RRoleSerialiser {
 	static private final String AREA_ID_ATTR = "id";
 	static private final String AREA_WRITABLE_ATTR = "writable";
 
-	static public XDocument render(RRole role) {
-
-		XDocument document = new XDocument(ROLE_TAG);
-
-		render(role, document.getRootNode());
-
-		return document;
-	}
-
-	static public RRole parse(XDocument document) {
-
-		return parse(document.getRootNode());
-	}
-
-	static public void render(RRole role, XNode roleNode) {
+	static void render(RRole role, XNode roleNode) {
 
 		roleNode.setValue(ROLE_NAME_ATTR, role.getRoleName());
 
@@ -65,7 +47,7 @@ public class RRoleSerialiser {
 		}
 	}
 
-	static public RRole parse(XNode roleNode) {
+	static RRole parse(XNode roleNode) {
 
 		String name = roleNode.getString(ROLE_NAME_ATTR);
 		RRole role = RRole.lookForSpecial(name);

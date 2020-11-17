@@ -37,16 +37,89 @@ public class RLoginClient {
 
 	private RNetConnection connection;
 
+	private LoginAction loginAction = new LoginAction();
+	private UserEditAction userEditAction = new UserEditAction();
+
+	private abstract class ServerAction<I, O> {
+
+		O perform(I input) {
+
+			XDocument request = renderRequest(input);
+			XDocument response = connection.performActionOnServer(request);
+
+			return parseResponse(response);
+		}
+
+		abstract RAdminActionType getActionType();
+
+		abstract void renderInputParameter(RAdminRequestSerialiser renderer, I input);
+
+		abstract O parseOutputParameter(RAdminResponseSerialiser parser);
+
+		private XDocument renderRequest(I input) {
+
+			RAdminRequestSerialiser renderer = new RAdminRequestSerialiser();
+
+			renderer.renderActionType(getActionType());
+			renderInputParameter(renderer, input);
+
+			return renderer.getDocument();
+		}
+
+		private O parseResponse(XDocument response) {
+
+			return parseOutputParameter(new RAdminResponseSerialiser(response));
+		}
+	}
+
+	private class LoginAction extends ServerAction<RLoginId, RRole> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.USER_LOGIN;
+		}
+
+		void renderInputParameter(RAdminRequestSerialiser renderer, RLoginId input) {
+
+			renderer.renderLoginIdParameter(input);
+		}
+
+		RRole parseOutputParameter(RAdminResponseSerialiser parser) {
+
+			return parser.parseRoleParameter();
+		}
+	}
+
+	private class UserEditAction extends ServerAction<RUserEdit, RUserEditResult> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.USER_EDIT;
+		}
+
+		void renderInputParameter(RAdminRequestSerialiser renderer, RUserEdit input) {
+
+			renderer.renderUserEditParameter(input);
+		}
+
+		RUserEditResult parseOutputParameter(RAdminResponseSerialiser parser) {
+
+			return parser.parseUserEditResultParameter();
+		}
+	}
+
 	public RLoginClient(URL serverURL) {
 
 		connection = new RNetConnection(serverURL);
 	}
 
-	public RRole checkLogin(RUserId userId) {
+	public RRole checkLogin(RLoginId userId) {
 
-		XDocument request = RUserSerialiser.renderId(userId);
-		XDocument response = connection.performActionOnServer(request);
+		return loginAction.perform(userId);
+	}
 
-		return RRoleSerialiser.parse(response);
+	public RUserEditResult performUserEdit(RUserEdit userEdit) {
+
+		return userEditAction.perform(userEdit);
 	}
 }

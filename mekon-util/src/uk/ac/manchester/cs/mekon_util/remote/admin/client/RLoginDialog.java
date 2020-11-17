@@ -112,9 +112,9 @@ public class RLoginDialog extends EntryDialog {
 		return WINDOW_HEIGHT;
 	}
 
-	RUserId createUserId() {
+	RLoginId createLoginId() {
 
-		return new RUserId(usernameField.getText(), passwordField.getProxyPassword());
+		return new RLoginId(usernameField.getText(), passwordField.getProxyPassword());
 	}
 
 	private void checkRegister() {

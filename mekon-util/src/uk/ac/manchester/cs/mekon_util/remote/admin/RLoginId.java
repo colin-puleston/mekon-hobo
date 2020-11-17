@@ -24,46 +24,62 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.util.*;
-
 /**
  * @author Colin Puleston
  */
-class NewUserId extends UserId {
+public class RLoginId {
 
-	static private final String REG_TOKEN_FORMAT = "%s:%s";
-	static private final int REG_TOKEN_SUFFIX_LENGTH = 6;
+	private UserId userId;
+	private String newPassword;
 
-	static private String createRegistrationToken(String name) {
+	public RLoginId(String name, String currentPassword) {
 
-		return String.format(REG_TOKEN_FORMAT, createRegistrationTokenSuffix());
+		this(name, currentPassword, null);
 	}
 
-	static private String createRegistrationTokenSuffix() {
+	public RLoginId(String name, String currentPassword, String newPassword) {
 
-		StringBuilder suffix = new StringBuilder();
-		Random digits = new Random();
+		this(new UserId(name, currentPassword), newPassword);
+	}
 
-		while (suffix.length() < REG_TOKEN_SUFFIX_LENGTH) {
+	public String getName() {
 
-			suffix.append(digits.nextInt());
+		return userId.getName();
+	}
+
+	public String getPassword() {
+
+		return userId.getPassword();
+	}
+
+	public boolean newPassword() {
+
+		return newPassword != null;
+	}
+
+	public String getNewPassword() {
+
+		if (newPassword == null) {
+
+			throw new Error("New password has not been set!");
 		}
 
-		return suffix.toString();
+		return newPassword;
 	}
 
-	NewUserId(String name) {
+	RLoginId(UserId userId, String newPassword) {
 
-		super(name, createRegistrationToken(name));
+		this.userId = userId;
+		this.newPassword = newPassword;
 	}
 
-	NewUserId(String name, String regToken) {
+	UserId getUserId() {
 
-		super(name, regToken);
+		return userId;
 	}
 
-	String getRegistrationToken() {
+	User checkUpdateUser(User user) {
 
-		return getPassword();
+		return newPassword != null ? user.updatePassword(newPassword) : null;
 	}
 }

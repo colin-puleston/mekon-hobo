@@ -35,6 +35,9 @@ class RoleFile extends AdminEntityFile<RRole, String> {
 
 	static private final String FILE_NAME = "roles.xml";
 
+	static private final String ROOT_TAG = "Roles";
+	static private final String ROLE_TAG = "Role";
+
 	RoleFile(File adminDirectory) {
 
 		super(adminDirectory, FILE_NAME);
@@ -42,23 +45,22 @@ class RoleFile extends AdminEntityFile<RRole, String> {
 
 	String getRootTag() {
 
-		return RRoleSerialiser.ROOT_TAG;
+		return ROOT_TAG;
 	}
 
 	String getEntityTag() {
 
-		return RRoleSerialiser.ROLE_TAG;
+		return ROLE_TAG;
 	}
 
 	void renderEntity(RRole entity, XNode entityNode) {
 
-		RRoleSerialiser.render(entity, entityNode);
+		RoleSerialiser.render(entity, entityNode);
 	}
 
 	RRole parseEntity(XNode entityNode) {
 
-		System.out.println("PARSED-ROLE: " + RRoleSerialiser.parse(entityNode).getRoleName());
-		return RRoleSerialiser.parse(entityNode);
+		return RoleSerialiser.parse(entityNode);
 	}
 
 	String getEntityMapKey(RRole entity) {

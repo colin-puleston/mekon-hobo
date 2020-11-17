@@ -76,9 +76,9 @@ class RegisterDialog extends EntryDialog {
 		return super.checkCanPerformLogin() && checkPasswordInput();
 	}
 
-	RUserId createUserId() {
+	RLoginId createLoginId() {
 
-		return new RUserIdUpdate(
+		return new RLoginId(
 					usernameField.getText(),
 					regTokenField.getText(),
 					password1Field.getProxyPassword());

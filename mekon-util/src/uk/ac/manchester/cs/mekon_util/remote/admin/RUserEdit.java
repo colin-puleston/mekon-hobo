@@ -24,46 +24,47 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.util.*;
-
 /**
  * @author Colin Puleston
  */
-class NewUserId extends UserId {
+public class RUserEdit {
 
-	static private final String REG_TOKEN_FORMAT = "%s:%s";
-	static private final int REG_TOKEN_SUFFIX_LENGTH = 6;
+	static public RUserEdit addition(String userName, String roleName) {
 
-	static private String createRegistrationToken(String name) {
-
-		return String.format(REG_TOKEN_FORMAT, createRegistrationTokenSuffix());
+		return new RUserEdit(userName, roleName);
 	}
 
-	static private String createRegistrationTokenSuffix() {
+	static public RUserEdit removal(String userName) {
 
-		StringBuilder suffix = new StringBuilder();
-		Random digits = new Random();
-
-		while (suffix.length() < REG_TOKEN_SUFFIX_LENGTH) {
-
-			suffix.append(digits.nextInt());
-		}
-
-		return suffix.toString();
+		return new RUserEdit(userName, null);
 	}
 
-	NewUserId(String name) {
+	private String userName;
+	private String roleName;
 
-		super(name, createRegistrationToken(name));
+	public boolean additionEdit() {
+
+		return roleName != null;
 	}
 
-	NewUserId(String name, String regToken) {
+	public boolean removalEdit() {
 
-		super(name, regToken);
+		return roleName == null;
 	}
 
-	String getRegistrationToken() {
+	public String getUserName() {
 
-		return getPassword();
+		return userName;
+	}
+
+	public String getRoleName() {
+
+		return roleName;
+	}
+
+	private RUserEdit(String userName, String roleName) {
+
+		this.userName = userName;
+		this.roleName = roleName;
 	}
 }

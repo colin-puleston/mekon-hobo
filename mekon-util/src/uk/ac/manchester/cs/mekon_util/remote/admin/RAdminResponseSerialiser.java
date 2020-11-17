@@ -24,27 +24,46 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
+
 /**
  * @author Colin Puleston
  */
-public class RUserIdUpdate extends RUserId {
+public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 
-	private String newPassword;
+	static private final String ROOT_TAG = "AdminResponse";
+	static private final String ROLE_TAG = "Role";
+	static private final String USER_EDIT_RESULT_TAG = "UserEditResult";
 
-	public RUserIdUpdate(String name, String currentPassword, String newPassword) {
+	private XNode rootNode;
 
-		super(name, currentPassword);
+	public RAdminResponseSerialiser() {
 
-		this.newPassword = newPassword;
+		super(ROOT_TAG);
 	}
 
-	public String getNewPassword() {
+	public RAdminResponseSerialiser(XDocument document) {
 
-		return newPassword;
+		super(document);
 	}
 
-	RUserId createUpdate() {
+	public void renderRoleParameter(RRole role) {
 
-		return new RUserId(getName(), newPassword);
+		RoleSerialiser.render(role, addParameterNode(ROLE_TAG));
+	}
+
+	public void renderUserEditResultParameter(RUserEditResult edit) {
+
+		UserEditSerialiser.renderResult(edit, addParameterNode(USER_EDIT_RESULT_TAG));
+	}
+
+	public RRole parseRoleParameter() {
+
+		return RoleSerialiser.parse(getParameterNode(ROLE_TAG));
+	}
+
+	public RUserEditResult parseUserEditResultParameter() {
+
+		return UserEditSerialiser.parseResult(getParameterNode(USER_EDIT_RESULT_TAG));
 	}
 }

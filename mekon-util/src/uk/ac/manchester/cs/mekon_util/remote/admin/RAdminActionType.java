@@ -24,46 +24,11 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.util.*;
-
 /**
  * @author Colin Puleston
  */
-class NewUserId extends UserId {
+public enum RAdminActionType {
 
-	static private final String REG_TOKEN_FORMAT = "%s:%s";
-	static private final int REG_TOKEN_SUFFIX_LENGTH = 6;
-
-	static private String createRegistrationToken(String name) {
-
-		return String.format(REG_TOKEN_FORMAT, createRegistrationTokenSuffix());
-	}
-
-	static private String createRegistrationTokenSuffix() {
-
-		StringBuilder suffix = new StringBuilder();
-		Random digits = new Random();
-
-		while (suffix.length() < REG_TOKEN_SUFFIX_LENGTH) {
-
-			suffix.append(digits.nextInt());
-		}
-
-		return suffix.toString();
-	}
-
-	NewUserId(String name) {
-
-		super(name, createRegistrationToken(name));
-	}
-
-	NewUserId(String name, String regToken) {
-
-		super(name, regToken);
-	}
-
-	String getRegistrationToken() {
-
-		return getPassword();
-	}
+	USER_EDIT,
+	USER_LOGIN
 }

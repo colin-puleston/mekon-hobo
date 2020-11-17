@@ -29,16 +29,16 @@ package uk.ac.manchester.cs.mekon_util.remote.admin;
  */
 class User {
 
-	private RUserId id;
+	private UserId id;
 	private String roleName;
 
-	User(RUserId id, String roleName) {
+	User(UserId id, String roleName) {
 
 		this.id = id;
 		this.roleName = roleName;
 	}
 
-	RUserId getId() {
+	UserId getId() {
 
 		return id;
 	}
@@ -48,8 +48,8 @@ class User {
 		return roleName;
 	}
 
-	User update(RUserIdUpdate idUpdate) {
+	User updatePassword(String newPassword) {
 
-		return new User(idUpdate.createUpdate(), roleName);
+		return new User(id.updatePassword(newPassword), roleName);
 	}
 }

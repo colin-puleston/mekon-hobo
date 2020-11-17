@@ -27,39 +27,42 @@ package uk.ac.manchester.cs.mekon_util.remote.admin;
 /**
  * @author Colin Puleston
  */
-public class RUserId {
+public enum RUserEditResultType {
 
-	private String name;
-	private String password;
+	ADDITION_OK(false),
+	REMOVAL_OK(true),
 
-	public RUserId(String name, String password) {
+	ADDITION_ERROR_EXISTING_USER(true),
+	ADDITION_ERROR_INVALID_ROLE(true),
+	REMOVAL_ERROR_NOT_USER(true);
 
-		this.name = name;
-		this.password = password;
+	private RUserEditResult fixedTypeResult;
+
+	boolean editOk() {
+
+		return this == ADDITION_OK || this == REMOVAL_OK;
 	}
 
-	public boolean equals(Object other) {
+	boolean fixedResultType() {
 
-		return other instanceof RUserId && equalsUserId((RUserId)other);
+		return fixedTypeResult != null;
 	}
 
-	public int hashCode() {
+	RUserEditResult getFixedTypeResult() {
 
-		return name.hashCode() + password.hashCode();
+		if (fixedTypeResult == null) {
+
+			throw new Error("Not a fixed result-type: " + this);
+		}
+
+		return fixedTypeResult;
 	}
 
-	public String getName() {
+	private RUserEditResultType(boolean fixedResultType) {
 
-		return name;
-	}
+		if (fixedResultType) {
 
-	public String getPassword() {
-
-		return password;
-	}
-
-	private boolean equalsUserId(RUserId other) {
-
-		return name.equals(other.name) && password.equals(other.password);
+			fixedTypeResult = RUserEditResult.fixedTypeResult(this);
+		}
 	}
 }

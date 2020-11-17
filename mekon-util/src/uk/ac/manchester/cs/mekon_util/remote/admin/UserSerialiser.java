@@ -25,15 +25,11 @@
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 
 /**
  * @author Colin Puleston
  */
-public class RUserSerialiser {
-
-	static final String ROOT_TAG = "Users";
-	static final String USER_TAG = "User";
+class UserSerialiser {
 
 	static private final String NAME_ATTR = "name";
 	static private final String PASSWORD_ATTR = "password";
@@ -41,71 +37,57 @@ public class RUserSerialiser {
 	static private final String REG_TOKEN_ATTR = "regToken";
 	static private final String ROLE_ATTR = "role";
 
-	static public XDocument renderId(RUserId userId) {
-
-		XDocument document = new XDocument(USER_TAG);
-
-		renderId(userId, document.getRootNode());
-
-		return document;
-	}
-
-	static public RUserId parseId(XDocument document) {
-
-		return parseId(document.getRootNode());
-	}
-
-	static public void render(User user, XNode userNode) {
+	static void render(User user, XNode userNode) {
 
 		userNode.setValue(ROLE_ATTR, user.getRoleName());
 
 		renderId(user.getId(), userNode);
 	}
 
-	static public void renderId(RUserId userId, XNode userNode) {
+	static void renderId(UserId userId, XNode idNode) {
 
-		userNode.setValue(NAME_ATTR, userId.getName());
+		idNode.setValue(NAME_ATTR, userId.getName());
+		idNode.setValue(getIdPasswordTag(userId), userId.getPassword());
+	}
 
-		if (userId instanceof NewUserId) {
+	static void renderLoginId(RLoginId loginId, XNode idNode) {
 
-			userNode.setValue(REG_TOKEN_ATTR, userId.getPassword());
-		}
-		else {
+		renderId(loginId.getUserId(), idNode);
 
-			userNode.setValue(PASSWORD_ATTR, userId.getPassword());
+		if (loginId.newPassword()) {
 
-			if (userId instanceof RUserIdUpdate) {
-
-				RUserIdUpdate userIdUpd = (RUserIdUpdate)userId;
-
-				userNode.setValue(NEW_PASSWORD_ATTR, userIdUpd.getNewPassword());
-			}
+			idNode.setValue(NEW_PASSWORD_ATTR, loginId.getNewPassword());
 		}
 	}
 
-	static public User parse(XNode userNode) {
+	static User parse(XNode userNode) {
 
 		return new User(parseId(userNode), userNode.getString(ROLE_ATTR));
 	}
 
-	static RUserId parseId(XNode userNode) {
+	static UserId parseId(XNode idNode) {
 
-		String name = userNode.getString(NAME_ATTR);
-		String regToken = userNode.getString(REG_TOKEN_ATTR, null);
+		String name = idNode.getString(NAME_ATTR);
+		String regToken = idNode.getString(REG_TOKEN_ATTR, null);
 
 		if (regToken != null) {
 
 			return new NewUserId(name, regToken);
 		}
 
-		String password = userNode.getString(PASSWORD_ATTR);
-		String newPassword = userNode.getString(NEW_PASSWORD_ATTR, null);
+		return new UserId(name, idNode.getString(PASSWORD_ATTR));
+	}
 
-		if (newPassword != null) {
+	static RLoginId parseLoginId(XNode idNode) {
 
-			return new RUserIdUpdate(name, password, newPassword);
-		}
+		UserId userId = parseId(idNode);
+		String newPassword = idNode.getString(NEW_PASSWORD_ATTR, null);
 
-		return new RUserId(name, password);
+		return new RLoginId(userId, newPassword);
+	}
+
+	static private String getIdPasswordTag(UserId userId) {
+
+		return userId instanceof NewUserId ? REG_TOKEN_ATTR : PASSWORD_ATTR;
 	}
 }

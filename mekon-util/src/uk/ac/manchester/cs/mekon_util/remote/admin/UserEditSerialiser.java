@@ -24,65 +24,60 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.io.*;
-
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class UserFile extends AdminEntityFile<User, UserId> {
+class UserEditSerialiser {
 
-	static private final String FILE_NAME = "users.xml";
+	static private final String USERNAME_ATTR = "username";
+	static private final String ROLE_ATTR = "role";
 
-	static private final String ROOT_TAG = "Users";
-	static private final String USER_TAG = "User";
+	static private final String RESULT_TYPE_ATTR = "resultType";
+	static private final String REG_TOKEN_ATTR = "regToken";
 
-	UserFile(File adminDirectory) {
+	static void renderEdit(RUserEdit edit, XNode editNode) {
 
-		super(adminDirectory, FILE_NAME);
+		editNode.setValue(USERNAME_ATTR, edit.getUserName());
+
+		if (edit.additionEdit()) {
+
+			editNode.setValue(ROLE_ATTR, edit.getRoleName());
+		}
 	}
 
-	UserId lookForUser(String name) {
+	static void renderResult(RUserEditResult result, XNode resultNode) {
 
-		for (UserId userId : getKeys()) {
+		RUserEditResultType type = result.getResultType();
 
-			if (name.equals(userId.getName())) {
+		resultNode.setValue(RESULT_TYPE_ATTR, type);
 
-				return userId;
-			}
+		if (type == RUserEditResultType.ADDITION_OK) {
+
+			resultNode.setValue(REG_TOKEN_ATTR, type);
+		}
+	}
+
+	static RUserEdit parseEdit(XNode editNode) {
+
+		String username = editNode.getString(USERNAME_ATTR);
+		String role = editNode.getString(ROLE_ATTR, null);
+
+		return role != null
+				? RUserEdit.addition(username, role)
+				: RUserEdit.removal(username);
+	}
+
+	static RUserEditResult parseResult(XNode resultNode) {
+
+		RUserEditResultType type = resultNode.getEnum(RESULT_TYPE_ATTR, RUserEditResultType.class);
+
+		if (type == RUserEditResultType.ADDITION_OK) {
+
+			return RUserEditResult.additionOk(resultNode.getString(REG_TOKEN_ATTR));
 		}
 
-		return null;
-	}
-
-	boolean containsUser(String name) {
-
-		return lookForUser(name) != null;
-	}
-
-	String getRootTag() {
-
-		return ROOT_TAG;
-	}
-
-	String getEntityTag() {
-
-		return USER_TAG;
-	}
-
-	void renderEntity(User entity, XNode entityNode) {
-
-		UserSerialiser.render(entity, entityNode);
-	}
-
-	User parseEntity(XNode entityNode) {
-
-		return UserSerialiser.parse(entityNode);
-	}
-
-	UserId getEntityMapKey(User entity) {
-
-		return entity.getId();
+		return type.getFixedTypeResult();
 	}
 }

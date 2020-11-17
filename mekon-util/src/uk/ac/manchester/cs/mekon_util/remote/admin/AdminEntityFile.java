@@ -44,17 +44,41 @@ abstract class AdminEntityFile<E, K> {
 		parseFile();
 	}
 
-	E getEntity(K key) {
+	void addEntity(E entity) {
+
+		addToEntityMap(entity);
+
+		renderFile();
+	}
+
+	void removeEntity(K key) {
+
+		entityMap.remove(key);
+
+		renderFile();
+	}
+
+	void replaceEntity(K oldKey, E newEntity) {
+
+		entityMap.remove(oldKey);
+		addToEntityMap(newEntity);
+
+		renderFile();
+	}
+
+	Set<K> getKeys() {
+
+		return entityMap.keySet();
+	}
+
+	E lookForEntity(K key) {
 
 		return entityMap.get(key);
 	}
 
-	void replaceEntity(E oldEntity, E newEntity) {
+	boolean containsEntity(K key) {
 
-		entityMap.remove(getEntityMapKey(oldEntity));
-		addEntity(newEntity);
-
-		renderFile();
+		return entityMap.get(key) != null;
 	}
 
 	abstract String getRootTag();
@@ -67,7 +91,7 @@ abstract class AdminEntityFile<E, K> {
 
 	abstract K getEntityMapKey(E entity);
 
-	private void addEntity(E entity) {
+	private void addToEntityMap(E entity) {
 
 		entityMap.put(getEntityMapKey(entity), entity);
 	}

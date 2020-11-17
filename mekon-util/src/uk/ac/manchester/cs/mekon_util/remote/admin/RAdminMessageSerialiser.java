@@ -24,46 +24,42 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class NewUserId extends UserId {
+public abstract class RAdminMessageSerialiser {
 
-	static private final String REG_TOKEN_FORMAT = "%s:%s";
-	static private final int REG_TOKEN_SUFFIX_LENGTH = 6;
+	private XDocument document;
 
-	static private String createRegistrationToken(String name) {
+	public XDocument getDocument() {
 
-		return String.format(REG_TOKEN_FORMAT, createRegistrationTokenSuffix());
+		return document;
 	}
 
-	static private String createRegistrationTokenSuffix() {
+	RAdminMessageSerialiser(String rootTag) {
 
-		StringBuilder suffix = new StringBuilder();
-		Random digits = new Random();
-
-		while (suffix.length() < REG_TOKEN_SUFFIX_LENGTH) {
-
-			suffix.append(digits.nextInt());
-		}
-
-		return suffix.toString();
+		this(new XDocument(rootTag));
 	}
 
-	NewUserId(String name) {
+	RAdminMessageSerialiser(XDocument document) {
 
-		super(name, createRegistrationToken(name));
+		this.document = document;
 	}
 
-	NewUserId(String name, String regToken) {
+	XNode addParameterNode(String tag) {
 
-		super(name, regToken);
+		return getRootNode().addChild(tag);
 	}
 
-	String getRegistrationToken() {
+	XNode getParameterNode(String tag) {
 
-		return getPassword();
+		return getRootNode().getChild(tag);
+	}
+
+	XNode getRootNode() {
+
+		return document.getRootNode();
 	}
 }

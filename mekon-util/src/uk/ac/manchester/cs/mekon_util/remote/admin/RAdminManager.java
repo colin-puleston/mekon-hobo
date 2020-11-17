@@ -25,25 +25,24 @@
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
 import java.io.*;
-import java.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class RLoginManager {
+public class RAdminManager {
 
 	private UserFile userFile;
 	private RoleFile roleFile;
 
-	public RLoginManager(File adminDirectory) {
+	public RAdminManager(File adminDirectory) {
 
 		userFile = new UserFile(adminDirectory);
 		roleFile = new RoleFile(adminDirectory);
 	}
 
-	public synchronized RRole checkLogin(RUserId userId) {
+	public synchronized RRole checkLogin(RLoginId loginId) {
 
-		User user = resolveUser(userId);
+		User user = resolveUser(loginId);
 
 		if (user != null) {
 
@@ -60,24 +59,71 @@ public class RLoginManager {
 		return RRole.NO_ACCESS;
 	}
 
+	public synchronized RUserEditResult performUserEdit(RUserEdit edit) {
+
+		String userName = edit.getUserName();
+
+		return edit.additionEdit()
+				? addUser(userName, edit.getRoleName())
+				: removeUser(userName);
+	}
+
+	private RUserEditResult addUser(String userName, String roleName) {
+
+		if (userFile.containsUser(userName)) {
+
+			return RUserEditResultType.ADDITION_ERROR_EXISTING_USER.getFixedTypeResult();
+		}
+
+		if (!roleFile.containsEntity(roleName)) {
+
+			return RUserEditResultType.ADDITION_ERROR_INVALID_ROLE.getFixedTypeResult();
+		}
+
+		NewUserId userId = new NewUserId(userName);
+		User user = new User(userId, roleName);
+
+		userFile.addEntity(user);
+
+		return RUserEditResult.additionOk(userId.getRegistrationToken());
+	}
+
+	private RUserEditResult removeUser(String name) {
+
+		UserId userId = userFile.lookForUser(name);
+
+		if (userId == null) {
+
+			return RUserEditResultType.REMOVAL_ERROR_NOT_USER.getFixedTypeResult();
+		}
+
+		userFile.removeEntity(userId);
+
+		return RUserEditResultType.REMOVAL_OK.getFixedTypeResult();
+	}
+
 	private RRole lookForRole(String name) {
 
 		RRole role = RRole.lookForSpecial(name);
 
-		return role != null ? role : roleFile.getEntity(name);
+		return role != null ? role : roleFile.lookForEntity(name);
 	}
 
-	private User resolveUser(RUserId userId) {
+	private User resolveUser(RLoginId loginId) {
 
-		User user = userFile.getEntity(userId);
+		UserId userId = loginId.getUserId();
+		User user = userFile.lookForEntity(userId);
 
-		if (user != null && userId instanceof RUserIdUpdate) {
+		if (user != null) {
 
-			User newUser = user.update((RUserIdUpdate)userId);
+			User newUser = loginId.checkUpdateUser(user);
 
-			userFile.replaceEntity(user, newUser);
+			if (newUser != null) {
 
-			user = newUser;
+				userFile.replaceEntity(userId, newUser);
+
+				user = newUser;
+			}
 		}
 
 		return user;

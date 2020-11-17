@@ -24,46 +24,52 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.util.*;
-
 /**
  * @author Colin Puleston
  */
-class NewUserId extends UserId {
+class UserId {
 
-	static private final String REG_TOKEN_FORMAT = "%s:%s";
-	static private final int REG_TOKEN_SUFFIX_LENGTH = 6;
+	private String name;
+	private String password;
 
-	static private String createRegistrationToken(String name) {
+	public boolean equals(Object other) {
 
-		return String.format(REG_TOKEN_FORMAT, createRegistrationTokenSuffix());
+		return other instanceof UserId && equalsUserId((UserId)other);
 	}
 
-	static private String createRegistrationTokenSuffix() {
+	public int hashCode() {
 
-		StringBuilder suffix = new StringBuilder();
-		Random digits = new Random();
-
-		while (suffix.length() < REG_TOKEN_SUFFIX_LENGTH) {
-
-			suffix.append(digits.nextInt());
-		}
-
-		return suffix.toString();
+		return name.hashCode() + password.hashCode();
 	}
 
-	NewUserId(String name) {
+	UserId(String name, String password) {
 
-		super(name, createRegistrationToken(name));
+		this.name = name;
+		this.password = password;
 	}
 
-	NewUserId(String name, String regToken) {
+	String getName() {
 
-		super(name, regToken);
+		return name;
 	}
 
-	String getRegistrationToken() {
+	String getPassword() {
 
-		return getPassword();
+		return password;
+	}
+
+	UserId(UserId templateId) {
+
+		this(templateId.name, templateId.password);
+	}
+
+	UserId updatePassword(String newPassword) {
+
+		return new UserId(name, newPassword);
+	}
+
+	private boolean equalsUserId(UserId other) {
+
+		return name.equals(other.name) && password.equals(other.password);
 	}
 }
