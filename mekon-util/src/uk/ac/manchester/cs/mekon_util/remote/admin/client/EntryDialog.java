@@ -52,7 +52,7 @@ abstract class EntryDialog extends GDialog {
 
 	private JComponent parent;
 
-	private RLoginClient loginClient;
+	private RAdminClient adminClient;
 	private KProxyPasswords proxyPasswords;
 	private String appName;
 
@@ -152,7 +152,7 @@ abstract class EntryDialog extends GDialog {
 
 		this(
 			parentDialog.parent,
-			parentDialog.loginClient,
+			parentDialog.adminClient,
 			parentDialog.proxyPasswords,
 			parentDialog.appName,
 			entryType);
@@ -160,7 +160,7 @@ abstract class EntryDialog extends GDialog {
 
 	EntryDialog(
 		JComponent parent,
-		RLoginClient loginClient,
+		RAdminClient adminClient,
 		KProxyPasswords proxyPasswords,
 		String appName,
 		String entryType) {
@@ -168,7 +168,7 @@ abstract class EntryDialog extends GDialog {
 		super(parent, String.format(TITLE_FORMAT, appName, entryType), true);
 
 		this.parent = parent;
-		this.loginClient = loginClient;
+		this.adminClient = adminClient;
 		this.proxyPasswords = proxyPasswords;
 		this.appName = appName;
 
@@ -261,7 +261,7 @@ abstract class EntryDialog extends GDialog {
 
 		if (checkCanPerformLogin()) {
 
-			loggedInRole = loginClient.checkLogin(createLoginId());
+			loggedInRole = adminClient.checkLogin(createLoginId());
 
 			if (loggedInRole == RRole.NO_ACCESS) {
 

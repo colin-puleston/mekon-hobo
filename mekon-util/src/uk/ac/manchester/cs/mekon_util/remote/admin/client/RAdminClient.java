@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 /**
  * @author Colin Puleston
  */
-public class RLoginClient {
+public class RAdminClient {
 
 	private RNetConnection connection;
 
@@ -148,7 +148,7 @@ public class RLoginClient {
 		}
 	}
 
-	public RLoginClient(URL serverURL) {
+	public RAdminClient(URL serverURL) {
 
 		connection = new RNetConnection(serverURL);
 	}

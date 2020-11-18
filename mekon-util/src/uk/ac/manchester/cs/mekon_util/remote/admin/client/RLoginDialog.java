@@ -68,20 +68,20 @@ public class RLoginDialog extends EntryDialog {
 	}
 
 	public RLoginDialog(
-			RLoginClient loginClient,
+			RAdminClient adminClient,
 			KProxyPasswords proxyPasswords,
 			String appName) {
 
-		this(null, loginClient, proxyPasswords, appName);
+		this(null, adminClient, proxyPasswords, appName);
 	}
 
 	public RLoginDialog(
 			JComponent parent,
-			RLoginClient loginClient,
+			RAdminClient adminClient,
 			KProxyPasswords proxyPasswords,
 			String appName) {
 
-		super(parent, loginClient, proxyPasswords, appName, ENTRY_TYPE_TITLE);
+		super(parent, adminClient, proxyPasswords, appName, ENTRY_TYPE_TITLE);
 	}
 
 	public void setValidPasswordLength(int min, int max) {
