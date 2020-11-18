@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -31,28 +33,32 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 class UserSerialiser {
 
+	static private final String PROFILE_TAG = "Profile";
+
 	static private final String NAME_ATTR = "name";
 	static private final String PASSWORD_ATTR = "password";
 	static private final String NEW_PASSWORD_ATTR = "newPassword";
-	static private final String REG_TOKEN_ATTR = "regToken";
+	static private final String REG_TOKEN_ATTR = "registrationToken";
 	static private final String ROLE_ATTR = "role";
 
-	static void render(User user, XNode userNode) {
+	static void renderProfiles(List<RUserProfile> profiles, XNode profilesNode) {
+
+		for (RUserProfile profile : profiles) {
+
+			renderProfile(profile, profilesNode.addChild(PROFILE_TAG));
+		}
+	}
+
+	static void renderUser(User user, XNode userNode) {
 
 		userNode.setValue(ROLE_ATTR, user.getRoleName());
 
-		renderId(user.getId(), userNode);
-	}
-
-	static void renderId(UserId userId, XNode idNode) {
-
-		idNode.setValue(NAME_ATTR, userId.getName());
-		idNode.setValue(getIdPasswordTag(userId), userId.getPassword());
+		renderUserId(user.getId(), userNode);
 	}
 
 	static void renderLoginId(RLoginId loginId, XNode idNode) {
 
-		renderId(loginId.getUserId(), idNode);
+		renderUserId(loginId.getUserId(), idNode);
 
 		if (loginId.newPassword()) {
 
@@ -60,12 +66,58 @@ class UserSerialiser {
 		}
 	}
 
-	static User parse(XNode userNode) {
+	static List<RUserProfile> parseProfiles(XNode profilesNode) {
 
-		return new User(parseId(userNode), userNode.getString(ROLE_ATTR));
+		List<RUserProfile> profiles = new ArrayList<RUserProfile>();
+
+		for (XNode profileNode : profilesNode.getChildren(PROFILE_TAG)) {
+
+			profiles.add(parseProfile(profileNode));
+		}
+
+		return profiles;
 	}
 
-	static UserId parseId(XNode idNode) {
+	static User parseUser(XNode userNode) {
+
+		return new User(parseUserId(userNode), userNode.getString(ROLE_ATTR));
+	}
+
+	static RLoginId parseLoginId(XNode idNode) {
+
+		UserId userId = parseUserId(idNode);
+		String newPassword = idNode.getString(NEW_PASSWORD_ATTR, null);
+
+		return new RLoginId(userId, newPassword);
+	}
+
+	static private void renderProfile(RUserProfile profile, XNode profileNode) {
+
+		profileNode.setValue(NAME_ATTR, profile.getName());
+		profileNode.setValue(ROLE_ATTR, profile.getRoleName());
+
+		if (!profile.registered()) {
+
+			profileNode.setValue(NAME_ATTR, profile.getName());
+		}
+	}
+
+	static private void renderUserId(UserId userId, XNode idNode) {
+
+		idNode.setValue(NAME_ATTR, userId.getName());
+		idNode.setValue(getIdPasswordTag(userId), userId.getPassword());
+	}
+
+	static private RUserProfile parseProfile(XNode profileNode) {
+
+		String name = profileNode.getString(NAME_ATTR);
+		String roleName = profileNode.getString(ROLE_ATTR);
+		String regToken = profileNode.getString(REG_TOKEN_ATTR, null);
+
+		return new RUserProfile(name, roleName, regToken);
+	}
+
+	static private UserId parseUserId(XNode idNode) {
 
 		String name = idNode.getString(NAME_ATTR);
 		String regToken = idNode.getString(REG_TOKEN_ATTR, null);
@@ -76,14 +128,6 @@ class UserSerialiser {
 		}
 
 		return new UserId(name, idNode.getString(PASSWORD_ATTR));
-	}
-
-	static RLoginId parseLoginId(XNode idNode) {
-
-		UserId userId = parseId(idNode);
-		String newPassword = idNode.getString(NEW_PASSWORD_ATTR, null);
-
-		return new RLoginId(userId, newPassword);
 	}
 
 	static private String getIdPasswordTag(UserId userId) {

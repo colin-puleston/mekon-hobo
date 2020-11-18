@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
 import java.io.*;
+import java.util.*;
 
 /**
  * @author Colin Puleston
@@ -38,6 +39,25 @@ public class RAdminManager {
 
 		userFile = new UserFile(adminDirectory);
 		roleFile = new RoleFile(adminDirectory);
+	}
+
+	public synchronized List<String> getRoleNames() {
+
+		return roleFile.getKeys();
+	}
+
+	public synchronized List<RUserProfile> getUserProfiles() {
+
+		return userFile.extractProfiles();
+	}
+
+	public synchronized RUserEditResult editUsers(RUserEdit edit) {
+
+		String userName = edit.getUserName();
+
+		return edit.additionEdit()
+				? addUser(userName, edit.getRoleName())
+				: removeUser(userName);
 	}
 
 	public synchronized RRole checkLogin(RLoginId loginId) {
@@ -57,15 +77,6 @@ public class RAdminManager {
 		}
 
 		return RRole.NO_ACCESS;
-	}
-
-	public synchronized RUserEditResult performUserEdit(RUserEdit edit) {
-
-		String userName = edit.getUserName();
-
-		return edit.additionEdit()
-				? addUser(userName, edit.getRoleName())
-				: removeUser(userName);
 	}
 
 	private RUserEditResult addUser(String userName, String roleName) {
@@ -120,7 +131,7 @@ public class RAdminManager {
 
 			if (newUser != null) {
 
-				userFile.replaceEntity(userId, newUser);
+				userFile.replaceEntity(user, newUser);
 
 				user = newUser;
 			}

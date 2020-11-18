@@ -29,6 +29,8 @@ package uk.ac.manchester.cs.mekon_util.remote.admin;
  */
 public enum RAdminActionType {
 
-	USER_EDIT,
-	USER_LOGIN
+	GET_ROLES_NAMES,
+	GET_USER_PROFILES,
+	EDIT_USERS,
+	CHECK_LOGIN
 }

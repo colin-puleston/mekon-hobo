@@ -58,6 +58,11 @@ class UserId {
 		return password;
 	}
 
+	String getRegistrationToken() {
+
+		return null;
+	}
+
 	UserId(UserId templateId) {
 
 		this(templateId.name, templateId.password);

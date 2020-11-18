@@ -52,4 +52,9 @@ class User {
 
 		return new User(id.updatePassword(newPassword), roleName);
 	}
+
+	RUserProfile extractProfile() {
+
+		return new RUserProfile(id.getName(), roleName, id.getRegistrationToken());
+	}
 }

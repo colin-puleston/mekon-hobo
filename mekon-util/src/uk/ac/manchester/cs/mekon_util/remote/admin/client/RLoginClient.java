@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon_util.remote.admin.client;
 
 import java.net.*;
+import java.util.*;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
@@ -37,12 +38,14 @@ public class RLoginClient {
 
 	private RNetConnection connection;
 
-	private LoginAction loginAction = new LoginAction();
-	private UserEditAction userEditAction = new UserEditAction();
+	private LoginChecks loginChecks = new LoginChecks();
+	private UserEdits userEdits = new UserEdits();
+	private RoleNameRetrievals roleNameRetrievals = new RoleNameRetrievals();
+	private UserProfileRetrievals userProfileRetrievals = new UserProfileRetrievals();
 
-	private abstract class ServerAction<I, O> {
+	private abstract class ServerActions<I, O> {
 
-		O perform(I input) {
+		O performAction(I input) {
 
 			XDocument request = renderRequest(input);
 			XDocument response = connection.performActionOnServer(request);
@@ -52,59 +55,96 @@ public class RLoginClient {
 
 		abstract RAdminActionType getActionType();
 
-		abstract void renderInputParameter(RAdminRequestSerialiser renderer, I input);
+		abstract void renderInput(RAdminRequestSerialiser renderer, I input);
 
-		abstract O parseOutputParameter(RAdminResponseSerialiser parser);
+		abstract O parseOutput(RAdminResponseSerialiser parser);
 
 		private XDocument renderRequest(I input) {
 
 			RAdminRequestSerialiser renderer = new RAdminRequestSerialiser();
 
 			renderer.renderActionType(getActionType());
-			renderInputParameter(renderer, input);
+			renderInput(renderer, input);
 
 			return renderer.getDocument();
 		}
 
 		private O parseResponse(XDocument response) {
 
-			return parseOutputParameter(new RAdminResponseSerialiser(response));
+			return parseOutput(new RAdminResponseSerialiser(response));
 		}
 	}
 
-	private class LoginAction extends ServerAction<RLoginId, RRole> {
+	private abstract class InputFreeServerActions<O> extends ServerActions<Object, O> {
 
-		RAdminActionType getActionType() {
+		O performAction() {
 
-			return RAdminActionType.USER_LOGIN;
+			return performAction(null);
 		}
 
-		void renderInputParameter(RAdminRequestSerialiser renderer, RLoginId input) {
-
-			renderer.renderLoginIdParameter(input);
-		}
-
-		RRole parseOutputParameter(RAdminResponseSerialiser parser) {
-
-			return parser.parseRoleParameter();
+		void renderInput(RAdminRequestSerialiser renderer, Object input) {
 		}
 	}
 
-	private class UserEditAction extends ServerAction<RUserEdit, RUserEditResult> {
+	private class RoleNameRetrievals extends InputFreeServerActions<List<String>> {
 
 		RAdminActionType getActionType() {
 
-			return RAdminActionType.USER_EDIT;
+			return RAdminActionType.GET_ROLES_NAMES;
 		}
 
-		void renderInputParameter(RAdminRequestSerialiser renderer, RUserEdit input) {
+		List<String> parseOutput(RAdminResponseSerialiser parser) {
+
+			return parser.parseRoleNameParameters();
+		}
+	}
+
+	private class UserProfileRetrievals extends InputFreeServerActions<List<RUserProfile>> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.GET_USER_PROFILES;
+		}
+
+		List<RUserProfile> parseOutput(RAdminResponseSerialiser parser) {
+
+			return parser.parseUserProfileParameters();
+		}
+	}
+
+	private class UserEdits extends ServerActions<RUserEdit, RUserEditResult> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.EDIT_USERS;
+		}
+
+		void renderInput(RAdminRequestSerialiser renderer, RUserEdit input) {
 
 			renderer.renderUserEditParameter(input);
 		}
 
-		RUserEditResult parseOutputParameter(RAdminResponseSerialiser parser) {
+		RUserEditResult parseOutput(RAdminResponseSerialiser parser) {
 
 			return parser.parseUserEditResultParameter();
+		}
+	}
+
+	private class LoginChecks extends ServerActions<RLoginId, RRole> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.CHECK_LOGIN;
+		}
+
+		void renderInput(RAdminRequestSerialiser renderer, RLoginId input) {
+
+			renderer.renderLoginIdParameter(input);
+		}
+
+		RRole parseOutput(RAdminResponseSerialiser parser) {
+
+			return parser.parseRoleParameter();
 		}
 	}
 
@@ -113,13 +153,23 @@ public class RLoginClient {
 		connection = new RNetConnection(serverURL);
 	}
 
-	public RRole checkLogin(RLoginId userId) {
+	public List<String> getRoleNames() {
 
-		return loginAction.perform(userId);
+		return roleNameRetrievals.performAction();
 	}
 
-	public RUserEditResult performUserEdit(RUserEdit userEdit) {
+	public List<RUserProfile> getUserProfiles() {
 
-		return userEditAction.perform(userEdit);
+		return userProfileRetrievals.performAction();
+	}
+
+	public RUserEditResult editUsers(RUserEdit userEdit) {
+
+		return userEdits.performAction(userEdit);
+	}
+
+	public RRole checkLogin(RLoginId userId) {
+
+		return loginChecks.performAction(userId);
 	}
 }

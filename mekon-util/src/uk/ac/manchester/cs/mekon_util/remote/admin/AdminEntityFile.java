@@ -35,6 +35,10 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 abstract class AdminEntityFile<E, K> {
 
 	private File file;
+
+	private List<K> keys = new ArrayList<K>();
+	private List<E> entities = new ArrayList<E>();
+
 	private Map<K, E> entityMap = new HashMap<K, E>();
 
 	AdminEntityFile(File adminDirectory, String filename) {
@@ -46,29 +50,32 @@ abstract class AdminEntityFile<E, K> {
 
 	void addEntity(E entity) {
 
-		addToEntityMap(entity);
-
+		addToStructures(entity);
 		renderFile();
 	}
 
 	void removeEntity(K key) {
 
-		entityMap.remove(key);
+		removeFromStructures(entityMap.get(key));
+		renderFile();
+	}
+
+	void replaceEntity(E oldEntity, E newEntity) {
+
+		removeFromStructures(oldEntity);
+		addToStructures(newEntity);
 
 		renderFile();
 	}
 
-	void replaceEntity(K oldKey, E newEntity) {
+	List<K> getKeys() {
 
-		entityMap.remove(oldKey);
-		addToEntityMap(newEntity);
-
-		renderFile();
+		return keys;
 	}
 
-	Set<K> getKeys() {
+	List<E> getEntities() {
 
-		return entityMap.keySet();
+		return entities;
 	}
 
 	E lookForEntity(K key) {
@@ -89,11 +96,24 @@ abstract class AdminEntityFile<E, K> {
 
 	abstract E parseEntity(XNode entityNode);
 
-	abstract K getEntityMapKey(E entity);
+	abstract K getEntityKey(E entity);
 
-	private void addToEntityMap(E entity) {
+	private void addToStructures(E entity) {
 
-		entityMap.put(getEntityMapKey(entity), entity);
+		K key = getEntityKey(entity);
+
+		keys.add(key);
+		entities.add(entity);
+		entityMap.put(key, entity);
+	}
+
+	private void removeFromStructures(E entity) {
+
+		K key = getEntityKey(entity);
+
+		keys.remove(key);
+ 		entities.remove(entity);
+		entityMap.remove(key);
 	}
 
 	private void renderFile() {
@@ -101,9 +121,9 @@ abstract class AdminEntityFile<E, K> {
 		XDocument doc = new XDocument(getRootTag());
 		XNode rootNode = doc.getRootNode();
 
-		for (K key : entityMap.keySet()) {
+		for (E entity : entities) {
 
-			renderEntity(entityMap.get(key), rootNode.addChild(getEntityTag()));
+			renderEntity(entity, rootNode.addChild(getEntityTag()));
 		}
 
 		doc.writeToFile(file);

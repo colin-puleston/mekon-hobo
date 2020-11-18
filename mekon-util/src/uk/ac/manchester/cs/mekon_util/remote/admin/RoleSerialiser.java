@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -31,13 +33,14 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 class RoleSerialiser {
 
+	static private final String ROLE_NAME_TAG = "RoleName";
 	static private final String ACCESSIBLE_AREA_TAG = "AccessibleArea";
 
 	static private final String ROLE_NAME_ATTR = "name";
 	static private final String AREA_ID_ATTR = "id";
 	static private final String AREA_WRITABLE_ATTR = "writable";
 
-	static void render(RRole role, XNode roleNode) {
+	static void renderRole(RRole role, XNode roleNode) {
 
 		roleNode.setValue(ROLE_NAME_ATTR, role.getRoleName());
 
@@ -47,7 +50,15 @@ class RoleSerialiser {
 		}
 	}
 
-	static RRole parse(XNode roleNode) {
+	static void renderRoleNames(List<String> roleNames, XNode namesNode) {
+
+		for (String name : roleNames) {
+
+			namesNode.addChild(ROLE_NAME_TAG).setValue(ROLE_NAME_ATTR, name);
+		}
+	}
+
+	static RRole parseRole(XNode roleNode) {
 
 		String name = roleNode.getString(ROLE_NAME_ATTR);
 		RRole role = RRole.lookForSpecial(name);
@@ -63,6 +74,18 @@ class RoleSerialiser {
 		}
 
 		return role;
+	}
+
+	static List<String> parseRoleNames(XNode namesNode) {
+
+		List<String> names = new ArrayList<String>();
+
+		for (XNode nameNode : namesNode.getChildren(ROLE_NAME_TAG)) {
+
+			names.add(nameNode.getString(ROLE_NAME_ATTR));
+		}
+
+		return names;
 	}
 
 	static private void renderTypeAccess(RRole role, String area, XNode roleNode) {

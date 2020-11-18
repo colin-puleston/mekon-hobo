@@ -24,78 +24,44 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import java.io.*;
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
-
 /**
  * @author Colin Puleston
  */
-class UserFile extends AdminEntityFile<User, UserId> {
+public class RUserProfile {
 
-	static private final String FILE_NAME = "users.xml";
+	private String name;
+	private String roleName;
+	private String regToken;
 
-	static private final String ROOT_TAG = "Users";
-	static private final String USER_TAG = "User";
+	public String getName() {
 
-	UserFile(File adminDirectory) {
-
-		super(adminDirectory, FILE_NAME);
+		return name;
 	}
 
-	List<RUserProfile> extractProfiles() {
+	String getRoleName() {
 
-		List<RUserProfile> profiles = new ArrayList<RUserProfile>();
+		return roleName;
+	}
 
-		for (User user : getEntities()) {
+	public String getRegistrationToken() {
 
-			profiles.add(user.extractProfile());
+		if (regToken == null) {
+
+			throw new Error("User has already registered!");
 		}
 
-		return profiles;
+		return regToken;
 	}
 
-	UserId lookForUser(String name) {
+	public boolean registered() {
 
-		for (UserId userId : getKeys()) {
-
-			if (name.equals(userId.getName())) {
-
-				return userId;
-			}
-		}
-
-		return null;
+		return regToken != null;
 	}
 
-	boolean containsUser(String name) {
+	RUserProfile(String name, String roleName, String regToken) {
 
-		return lookForUser(name) != null;
-	}
-
-	String getRootTag() {
-
-		return ROOT_TAG;
-	}
-
-	String getEntityTag() {
-
-		return USER_TAG;
-	}
-
-	void renderEntity(User entity, XNode entityNode) {
-
-		UserSerialiser.renderUser(entity, entityNode);
-	}
-
-	User parseEntity(XNode entityNode) {
-
-		return UserSerialiser.parseUser(entityNode);
-	}
-
-	UserId getEntityKey(User entity) {
-
-		return entity.getId();
+		this.name = name;
+		this.roleName = roleName;
+		this.regToken = regToken;
 	}
 }

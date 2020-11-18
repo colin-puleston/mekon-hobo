@@ -31,19 +31,19 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 class UserEditSerialiser {
 
-	static private final String USERNAME_ATTR = "username";
-	static private final String ROLE_ATTR = "role";
+	static private final String USER_NAME_ATTR = "userName";
+	static private final String ROLE_NAME_ATTR = "roleName";
 
 	static private final String RESULT_TYPE_ATTR = "resultType";
-	static private final String REG_TOKEN_ATTR = "regToken";
+	static private final String REG_TOKEN_ATTR = "registrationToken";
 
 	static void renderEdit(RUserEdit edit, XNode editNode) {
 
-		editNode.setValue(USERNAME_ATTR, edit.getUserName());
+		editNode.setValue(USER_NAME_ATTR, edit.getUserName());
 
 		if (edit.additionEdit()) {
 
-			editNode.setValue(ROLE_ATTR, edit.getRoleName());
+			editNode.setValue(ROLE_NAME_ATTR, edit.getRoleName());
 		}
 	}
 
@@ -61,12 +61,12 @@ class UserEditSerialiser {
 
 	static RUserEdit parseEdit(XNode editNode) {
 
-		String username = editNode.getString(USERNAME_ATTR);
-		String role = editNode.getString(ROLE_ATTR, null);
+		String userName = editNode.getString(USER_NAME_ATTR);
+		String roleName = editNode.getString(ROLE_NAME_ATTR, null);
 
-		return role != null
-				? RUserEdit.addition(username, role)
-				: RUserEdit.removal(username);
+		return roleName != null
+				? RUserEdit.addition(userName, roleName)
+				: RUserEdit.removal(userName);
 	}
 
 	static RUserEditResult parseResult(XNode resultNode) {

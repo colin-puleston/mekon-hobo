@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -32,8 +34,10 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 
 	static private final String ROOT_TAG = "AdminResponse";
-	static private final String ROLE_TAG = "Role";
+	static private final String ROLE_NAMES_TAG = "RoleNames";
+	static private final String USER_PROFILES_TAG = "UserProfiles";
 	static private final String USER_EDIT_RESULT_TAG = "UserEditResult";
+	static private final String ROLE_TAG = "Role";
 
 	private XNode rootNode;
 
@@ -47,9 +51,14 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 		super(document);
 	}
 
-	public void renderRoleParameter(RRole role) {
+	public void renderRoleNameParameters(List<String> roleNames) {
 
-		RoleSerialiser.render(role, addParameterNode(ROLE_TAG));
+		RoleSerialiser.renderRoleNames(roleNames, addParameterNode(ROLE_NAMES_TAG));
+	}
+
+	public void renderUserProfileParameters(List<RUserProfile> userProfiles) {
+
+		UserSerialiser.renderProfiles(userProfiles, addParameterNode(USER_PROFILES_TAG));
 	}
 
 	public void renderUserEditResultParameter(RUserEditResult edit) {
@@ -57,13 +66,28 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 		UserEditSerialiser.renderResult(edit, addParameterNode(USER_EDIT_RESULT_TAG));
 	}
 
-	public RRole parseRoleParameter() {
+	public void renderRoleParameter(RRole role) {
 
-		return RoleSerialiser.parse(getParameterNode(ROLE_TAG));
+		RoleSerialiser.renderRole(role, addParameterNode(ROLE_TAG));
+	}
+
+	public List<String> parseRoleNameParameters() {
+
+		return RoleSerialiser.parseRoleNames(getParameterNode(ROLE_NAMES_TAG));
+	}
+
+	public List<RUserProfile> parseUserProfileParameters() {
+
+		return UserSerialiser.parseProfiles(getParameterNode(USER_PROFILES_TAG));
 	}
 
 	public RUserEditResult parseUserEditResultParameter() {
 
 		return UserEditSerialiser.parseResult(getParameterNode(USER_EDIT_RESULT_TAG));
+	}
+
+	public RRole parseRoleParameter() {
+
+		return RoleSerialiser.parseRole(getParameterNode(ROLE_TAG));
 	}
 }

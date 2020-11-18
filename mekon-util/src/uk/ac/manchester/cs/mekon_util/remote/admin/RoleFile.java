@@ -55,15 +55,15 @@ class RoleFile extends AdminEntityFile<RRole, String> {
 
 	void renderEntity(RRole entity, XNode entityNode) {
 
-		RoleSerialiser.render(entity, entityNode);
+		RoleSerialiser.renderRole(entity, entityNode);
 	}
 
 	RRole parseEntity(XNode entityNode) {
 
-		return RoleSerialiser.parse(entityNode);
+		return RoleSerialiser.parseRole(entityNode);
 	}
 
-	String getEntityMapKey(RRole entity) {
+	String getEntityKey(RRole entity) {
 
 		return entity.getRoleName();
 	}

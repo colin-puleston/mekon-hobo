@@ -40,50 +40,134 @@ public abstract class RAdminServer extends RNetServer {
 
 	private RAdminManager adminManager;
 
-	private Map<RAdminActionType, ServerAction<?, ?>> serverActions
-					= new HashMap<RAdminActionType, ServerAction<?, ?>>();
+	private Map<RAdminActionType, Actions<?>> allActions
+					= new HashMap<RAdminActionType, Actions<?>>();
 
-	private abstract class ServerAction<I, O> {
+	private abstract class Actions<O> {
 
-		ServerAction(RAdminActionType actionType) {
+		Actions(RAdminActionType actionType) {
 
-			serverActions.put(actionType, this);
+			allActions.put(actionType, this);
 		}
 
-		XDocument perform(RAdminRequestSerialiser requestParser) {
+		abstract XDocument performAction(RAdminRequestSerialiser requestParser);
 
-			return renderResponse(performAction(parseInputParameter(requestParser)));
-		}
+		abstract void renderOutput(RAdminResponseSerialiser renderer, O output);
 
-		abstract I parseInputParameter(RAdminRequestSerialiser parser);
-
-		abstract void renderOutputParameter(RAdminResponseSerialiser renderer, O output);
-
-		abstract O performAction(I input);
-
-		private XDocument renderResponse(O output) {
+		XDocument renderResponse(O output) {
 
 			RAdminResponseSerialiser renderer = new RAdminResponseSerialiser();
 
-			renderOutputParameter(renderer, output);
+			renderOutput(renderer, output);
 
 			return renderer.getDocument();
 		}
 	}
 
-	private class LoginAction extends ServerAction<RLoginId, RRole> {
+	private abstract class InputFreeActions<O> extends Actions<O> {
 
-		LoginAction() {
+		InputFreeActions(RAdminActionType actionType) {
 
-			super(RAdminActionType.USER_LOGIN);
+			super(actionType);
 		}
 
-		RLoginId parseInputParameter(RAdminRequestSerialiser parser) {
+		XDocument performAction(RAdminRequestSerialiser requestParser) {
+
+			return renderResponse(performAction());
+		}
+
+		abstract O performAction();
+	}
+
+	private abstract class InputDrivenActions<I, O> extends Actions<O> {
+
+		InputDrivenActions(RAdminActionType actionType) {
+
+			super(actionType);
+		}
+
+		XDocument performAction(RAdminRequestSerialiser requestParser) {
+
+			return renderResponse(performAction(parseInput(requestParser)));
+		}
+
+		abstract I parseInput(RAdminRequestSerialiser parser);
+
+		abstract O performAction(I input);
+	}
+
+	private class RoleNameRetrievals extends InputFreeActions<List<String>> {
+
+		RoleNameRetrievals() {
+
+			super(RAdminActionType.GET_ROLES_NAMES);
+		}
+
+		void renderOutput(RAdminResponseSerialiser renderer, List<String> output) {
+
+			renderer.renderRoleNameParameters(output);
+		}
+
+		List<String> performAction() {
+
+			return adminManager.getRoleNames();
+		}
+	}
+
+	private class UserProfileRetrievals extends InputFreeActions<List<RUserProfile>> {
+
+		UserProfileRetrievals() {
+
+			super(RAdminActionType.GET_USER_PROFILES);
+		}
+
+		void renderOutput(RAdminResponseSerialiser renderer, List<RUserProfile> output) {
+
+			renderer.renderUserProfileParameters(output);
+		}
+
+		List<RUserProfile> performAction() {
+
+			return adminManager.getUserProfiles();
+		}
+	}
+
+	private class UsersEdits extends InputDrivenActions<RUserEdit, RUserEditResult> {
+
+		UsersEdits() {
+
+			super(RAdminActionType.EDIT_USERS);
+		}
+
+		RUserEdit parseInput(RAdminRequestSerialiser parser) {
+
+			return parser.parseUserEditParameter();
+		}
+
+		void renderOutput(RAdminResponseSerialiser renderer, RUserEditResult output) {
+
+			renderer.renderUserEditResultParameter(output);
+		}
+
+		RUserEditResult performAction(RUserEdit input) {
+
+			return adminManager.editUsers(input);
+		}
+	}
+
+	private class LoginChecks extends InputDrivenActions<RLoginId, RRole> {
+
+		LoginChecks() {
+
+			super(RAdminActionType.CHECK_LOGIN);
+		}
+
+		RLoginId parseInput(RAdminRequestSerialiser parser) {
 
 			return parser.parseLoginIdParameter();
 		}
 
-		void renderOutputParameter(RAdminResponseSerialiser renderer, RRole output) {
+		void renderOutput(RAdminResponseSerialiser renderer, RRole output) {
 
 			renderer.renderRoleParameter(output);
 		}
@@ -94,35 +178,14 @@ public abstract class RAdminServer extends RNetServer {
 		}
 	}
 
-	private class UserEditAction extends ServerAction<RUserEdit, RUserEditResult> {
-
-		UserEditAction() {
-
-			super(RAdminActionType.USER_EDIT);
-		}
-
-		RUserEdit parseInputParameter(RAdminRequestSerialiser parser) {
-
-			return parser.parseUserEditParameter();
-		}
-
-		void renderOutputParameter(RAdminResponseSerialiser renderer, RUserEditResult output) {
-
-			renderer.renderUserEditResultParameter(output);
-		}
-
-		RUserEditResult performAction(RUserEdit input) {
-
-			return adminManager.performUserEdit(input);
-		}
-	}
-
 	protected void initNetServer() {
 
 		adminManager = new RAdminManager(getAdminDirectory());
 
-		new LoginAction();
-		new UserEditAction();
+		new RoleNameRetrievals();
+		new UserProfileRetrievals();
+		new UsersEdits();
+		new LoginChecks();
 	}
 
 	protected XDocument performAction(XDocument request) {
@@ -130,20 +193,20 @@ public abstract class RAdminServer extends RNetServer {
 		RAdminRequestSerialiser requestParser = new RAdminRequestSerialiser(request);
 		RAdminActionType actionType = requestParser.parseActionType();
 
-		return getAction(actionType).perform(requestParser);
+		return getActions(actionType).performAction(requestParser);
 	}
 
 	protected abstract File getAdminDirectory();
 
-	private ServerAction<?, ?> getAction(RAdminActionType actionType) {
+	private Actions<?> getActions(RAdminActionType actionType) {
 
-		ServerAction<?, ?> action = serverActions.get(actionType);
+		Actions<?> actions = allActions.get(actionType);
 
-		if (action == null) {
+		if (actions == null) {
 
 			throw new XDocumentException("Unrecognised action-type: " + actionType);
 		}
 
-		return action;
+		return actions;
 	}
 }
