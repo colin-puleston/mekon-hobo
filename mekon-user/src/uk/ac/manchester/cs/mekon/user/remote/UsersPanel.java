@@ -102,7 +102,7 @@ class UsersPanel extends JPanel {
 
 		void deleteUser() {
 
-			if (editUsers(RUserEdit.removal(name)).editOk()) {
+			if (updateUsers(RUserUpdate.removal(name)).editOk()) {
 
 				userHandlers.remove(this);
 				updateTable();
@@ -270,7 +270,7 @@ class UsersPanel extends JPanel {
 			String name = dialog.getUserName();
 			String role = dialog.getRoleName();
 
-			RUserEditResult result = editUsers(RUserEdit.addition(name, role));
+			RUserUpdateResult result = updateUsers(RUserUpdate.addition(name, role));
 
 			if (result.editOk()) {
 
@@ -281,9 +281,9 @@ class UsersPanel extends JPanel {
 		}
 	}
 
-	private RUserEditResult editUsers(RUserEdit edit) {
+	private RUserUpdateResult updateUsers(RUserUpdate update) {
 
-		RUserEditResult result = adminClient.editUsers(edit);
+		RUserUpdateResult result = adminClient.updateUsers(update);
 
 		if (!result.editOk()) {
 
