@@ -29,18 +29,20 @@ package uk.ac.manchester.cs.mekon_util.remote.admin;
  */
 public enum RUserUpdateResultType {
 
-	ADDITION_OK(false),
-	REMOVAL_OK(true),
+	ADDITION_OK(true, false),
+	EDIT_OK(true, true),
+	REMOVAL_OK(true, true),
 
-	ADDITION_ERROR_EXISTING_USER(true),
-	ADDITION_ERROR_INVALID_ROLE(true),
-	REMOVAL_ERROR_INVALID_USER(true);
+	INVALID_ROLE_ERROR(false, true),
+	INVALID_USER_ERROR(false, true),
+	EXISTING_USER_ERROR(false, true);
 
+	private boolean updateOk;
 	private RUserUpdateResult fixedTypeResult;
 
-	boolean editOk() {
+	boolean updateOk() {
 
-		return this == ADDITION_OK || this == REMOVAL_OK;
+		return updateOk;
 	}
 
 	boolean fixedResultType() {
@@ -58,11 +60,13 @@ public enum RUserUpdateResultType {
 		return fixedTypeResult;
 	}
 
-	private RUserUpdateResultType(boolean fixedResultType) {
+	private RUserUpdateResultType(boolean updateOk, boolean fixedResultType) {
+
+		this.updateOk = updateOk;
 
 		if (fixedResultType) {
 
-			fixedTypeResult = RUserUpdateResult.fixedTypeResult(this);
+			fixedTypeResult = RUserUpdateResult.fixedType(this);
 		}
 	}
 }

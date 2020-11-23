@@ -33,6 +33,18 @@ public class RUserProfile {
 	private String roleName;
 	private String regToken;
 
+	public RUserProfile(String name, String roleName) {
+
+		this(name, roleName, null);
+	}
+
+	public RUserProfile(String name, String roleName, String regToken) {
+
+		this.name = name;
+		this.roleName = roleName;
+		this.regToken = regToken;
+	}
+
 	public String getName() {
 
 		return name;
@@ -61,12 +73,5 @@ public class RUserProfile {
 	public boolean unregistered() {
 
 		return regToken != null;
-	}
-
-	RUserProfile(String name, String roleName, String regToken) {
-
-		this.name = name;
-		this.roleName = roleName;
-		this.regToken = regToken;
 	}
 }

@@ -34,22 +34,22 @@ public class RUserUpdateResult {
 		return new RUserUpdateResult(RUserUpdateResultType.ADDITION_OK, regToken);
 	}
 
-	static RUserUpdateResult fixedTypeResult(RUserUpdateResultType resultType) {
+	static RUserUpdateResult fixedType(RUserUpdateResultType type) {
 
-		return new RUserUpdateResult(resultType, null);
+		return new RUserUpdateResult(type, null);
 	}
 
-	private RUserUpdateResultType resultType;
+	private RUserUpdateResultType type;
 	private String regToken;
 
-	public boolean editOk() {
+	public boolean updateOk() {
 
-		return resultType.editOk();
+		return type.updateOk();
 	}
 
-	public RUserUpdateResultType getResultType() {
+	public RUserUpdateResultType getType() {
 
-		return resultType;
+		return type;
 	}
 
 	public String getRegistrationToken() {
@@ -57,9 +57,9 @@ public class RUserUpdateResult {
 		return regToken;
 	}
 
-	private RUserUpdateResult(RUserUpdateResultType resultType, String regToken) {
+	private RUserUpdateResult(RUserUpdateResultType type, String regToken) {
 
-		this.resultType = resultType;
+		this.type = type;
 		this.regToken = regToken;
 	}
 }

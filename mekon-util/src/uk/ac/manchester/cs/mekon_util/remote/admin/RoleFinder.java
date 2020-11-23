@@ -24,56 +24,39 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import java.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
+class RoleFinder {
 
-	static private final String ROOT_TAG = "AdminRequest";
-	static private final String LOGIN_ID_TAG = "LoginId";
-	static private final String USER_UPDATE_TAG = "UserUpdate";
+	private final RoleFile roleFile;
 
-	static private final String ACTION_TYPE_ATTR = "actionType";
+	RoleFinder(RoleFile roleFile) {
 
-	public RAdminRequestSerialiser() {
-
-		super(ROOT_TAG);
+		this.roleFile = roleFile;
 	}
 
-	public RAdminRequestSerialiser(XDocument document) {
+	boolean isRole(String roleName) {
 
-		super(document);
+		return lookForRole(roleName) != null;
 	}
 
-	public void renderActionType(RAdminActionType actionType) {
+	RRole lookForRole(String roleName) {
 
-		getRootNode().setValue(ACTION_TYPE_ATTR, actionType);
+		RRole role = RRole.SPECIALS_BY_NAME.get(roleName);
+
+		return role != null ? role : roleFile.lookForEntity(roleName);
 	}
 
-	public void renderLoginIdParameter(RLoginId userId) {
+	List<String> getRoleNames() {
 
-		UserSerialiser.renderLoginId(userId, addParameterNode(LOGIN_ID_TAG));
-	}
+		List<String> roles = new ArrayList<String>();
 
-	public void renderUserUpdateParameter(RUserUpdate update) {
+		roles.addAll(RRole.SPECIAL_NAMES);
+		roles.addAll(roleFile.getKeys());
 
-		UserUpdateSerialiser.renderUpdate(update, addParameterNode(USER_UPDATE_TAG));
-	}
-
-	public RAdminActionType parseActionType() {
-
-		return getRootNode().getEnum(ACTION_TYPE_ATTR, RAdminActionType.class);
-	}
-
-	public RLoginId parseLoginIdParameter() {
-
-		return UserSerialiser.parseLoginId(getParameterNode(LOGIN_ID_TAG));
-	}
-
-	public RUserUpdate parseUserUpdateParameter() {
-
-		return UserUpdateSerialiser.parseUpdate(getParameterNode(USER_UPDATE_TAG));
+		return roles;
 	}
 }

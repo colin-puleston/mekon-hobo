@@ -31,25 +31,29 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 class UserUpdateSerialiser {
 
+	static private final String UPDATE_TYPE_ATTR = "updateType";
 	static private final String USER_NAME_ATTR = "userName";
 	static private final String ROLE_NAME_ATTR = "roleName";
 
 	static private final String RESULT_TYPE_ATTR = "resultType";
 	static private final String REG_TOKEN_ATTR = "registrationToken";
 
-	static void renderEdit(RUserUpdate update, XNode editNode) {
+	static void renderUpdate(RUserUpdate update, XNode updateNode) {
 
-		editNode.setValue(USER_NAME_ATTR, update.getUserName());
+		RUserUpdateType type = update.getType();
 
-		if (update.additionUpdate()) {
+		updateNode.setValue(UPDATE_TYPE_ATTR, type);
+		updateNode.setValue(USER_NAME_ATTR, update.getUserName());
 
-			editNode.setValue(ROLE_NAME_ATTR, update.getRoleName());
+		if (type != RUserUpdateType.REMOVAL) {
+
+			updateNode.setValue(ROLE_NAME_ATTR, update.getRoleName());
 		}
 	}
 
 	static void renderResult(RUserUpdateResult result, XNode resultNode) {
 
-		RUserUpdateResultType type = result.getResultType();
+		RUserUpdateResultType type = result.getType();
 
 		resultNode.setValue(RESULT_TYPE_ATTR, type);
 
@@ -59,14 +63,14 @@ class UserUpdateSerialiser {
 		}
 	}
 
-	static RUserUpdate parseEdit(XNode editNode) {
+	static RUserUpdate parseUpdate(XNode updateNode) {
 
-		String userName = editNode.getString(USER_NAME_ATTR);
-		String roleName = editNode.getString(ROLE_NAME_ATTR, null);
+		RUserUpdateType type = updateNode.getEnum(UPDATE_TYPE_ATTR, RUserUpdateType.class);
 
-		return roleName != null
-				? RUserUpdate.addition(userName, roleName)
-				: RUserUpdate.removal(userName);
+		String userName = updateNode.getString(USER_NAME_ATTR);
+		String roleName = updateNode.getString(ROLE_NAME_ATTR, null);
+
+		return new RUserUpdate(type, userName, roleName);
 	}
 
 	static RUserUpdateResult parseResult(XNode resultNode) {

@@ -56,22 +56,21 @@ class UserFile extends AdminEntityFile<User, UserId> {
 		return profiles;
 	}
 
-	UserId lookForUser(String name) {
-
-		for (UserId userId : getKeys()) {
-
-			if (name.equals(userId.getName())) {
-
-				return userId;
-			}
-		}
-
-		return null;
-	}
-
 	boolean containsUser(String name) {
 
 		return lookForUser(name) != null;
+	}
+
+	UserId getUserId(String name) {
+
+		UserId userId = lookForUser(name);
+
+		if (userId == null) {
+
+			throw new Error("Cannot find user: " + name);
+		}
+
+		return userId;
 	}
 
 	String getRootTag() {
@@ -97,5 +96,18 @@ class UserFile extends AdminEntityFile<User, UserId> {
 	UserId getEntityKey(User entity) {
 
 		return entity.getId();
+	}
+
+	private UserId lookForUser(String name) {
+
+		for (UserId userId : getKeys()) {
+
+			if (name.equals(userId.getName())) {
+
+				return userId;
+			}
+		}
+
+		return null;
 	}
 }

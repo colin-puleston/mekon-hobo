@@ -33,22 +33,17 @@ import java.util.*;
 public class RAdminManager {
 
 	private UserFile userFile;
-	private RoleFile roleFile;
+	private RoleFinder roleFinder;
 
 	public RAdminManager(File adminDirectory) {
 
 		userFile = new UserFile(adminDirectory);
-		roleFile = new RoleFile(adminDirectory);
+		roleFinder = new RoleFinder(new RoleFile(adminDirectory));
 	}
 
 	public synchronized List<String> getRoleNames() {
 
-		List<String> roles = new ArrayList<String>();
-
-		roles.addAll(RRole.SPECIAL_NAMES);
-		roles.addAll(roleFile.getKeys());
-
-		return roles;
+		return roleFinder.getRoleNames();
 	}
 
 	public synchronized List<RUserProfile> getUserProfiles() {
@@ -58,11 +53,7 @@ public class RAdminManager {
 
 	public synchronized RUserUpdateResult updateUsers(RUserUpdate update) {
 
-		String userName = update.getUserName();
-
-		return update.additionUpdate()
-				? addUser(userName, update.getRoleName())
-				: removeUser(userName);
+		return update.performUpdate(roleFinder, userFile);
 	}
 
 	public synchronized RRole checkLogin(RLoginId loginId) {
@@ -71,7 +62,7 @@ public class RAdminManager {
 
 		if (user != null) {
 
-			RRole role = lookForRole(user.getRoleName());
+			RRole role = roleFinder.lookForRole(user.getRoleName());
 
 			if (role != null) {
 
@@ -82,47 +73,6 @@ public class RAdminManager {
 		}
 
 		return RRole.NO_ACCESS;
-	}
-
-	private RUserUpdateResult addUser(String userName, String roleName) {
-
-		if (userFile.containsUser(userName)) {
-
-			return RUserUpdateResultType.ADDITION_ERROR_EXISTING_USER.getFixedTypeResult();
-		}
-
-		if (lookForRole(roleName) == null) {
-
-			return RUserUpdateResultType.ADDITION_ERROR_INVALID_ROLE.getFixedTypeResult();
-		}
-
-		NewUserId userId = new NewUserId(userName);
-		User user = new User(userId, roleName);
-
-		userFile.addEntity(user);
-
-		return RUserUpdateResult.additionOk(userId.getRegistrationToken());
-	}
-
-	private RUserUpdateResult removeUser(String name) {
-
-		UserId userId = userFile.lookForUser(name);
-
-		if (userId == null) {
-
-			return RUserUpdateResultType.REMOVAL_ERROR_INVALID_USER.getFixedTypeResult();
-		}
-
-		userFile.removeEntity(userId);
-
-		return RUserUpdateResultType.REMOVAL_OK.getFixedTypeResult();
-	}
-
-	private RRole lookForRole(String name) {
-
-		RRole role = RRole.SPECIALS_BY_NAME.get(name);
-
-		return role != null ? role : roleFile.lookForEntity(name);
 	}
 
 	private User resolveUser(RLoginId loginId) {
@@ -147,12 +97,12 @@ public class RAdminManager {
 
 	private void reportUserRoleError(User user) {
 
-		String userId = user.getId().getName();
+		String userName = user.getId().getName();
 		String roleName = user.getRoleName();
 
 		reportAdminConfigError(
 			"Cannot find role: \"" + roleName + "\""
-			+ " (specified for user \"" + userId + "\")");
+			+ " (specified for user \"" + userName + "\")");
 	}
 
 	private void reportAdminConfigError(String message) {

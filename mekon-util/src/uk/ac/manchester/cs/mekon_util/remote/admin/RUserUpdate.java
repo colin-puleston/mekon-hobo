@@ -31,25 +31,27 @@ public class RUserUpdate {
 
 	static public RUserUpdate addition(String userName, String roleName) {
 
-		return new RUserUpdate(userName, roleName);
+		return new RUserUpdate(RUserUpdateType.ADDITION, userName, roleName);
+	}
+
+	static public RUserUpdate edit(String userName, String roleName) {
+
+		return new RUserUpdate(RUserUpdateType.EDIT, userName, roleName);
 	}
 
 	static public RUserUpdate removal(String userName) {
 
-		return new RUserUpdate(userName, null);
+		return new RUserUpdate(RUserUpdateType.REMOVAL, userName, null);
 	}
+
+	private RUserUpdateType type;
 
 	private String userName;
 	private String roleName;
 
-	public boolean additionUpdate() {
+	public RUserUpdateType getType() {
 
-		return roleName != null;
-	}
-
-	public boolean removalUpdate() {
-
-		return roleName == null;
+		return type;
 	}
 
 	public String getUserName() {
@@ -62,9 +64,79 @@ public class RUserUpdate {
 		return roleName;
 	}
 
-	private RUserUpdate(String userName, String roleName) {
+	RUserUpdate(RUserUpdateType type, String userName, String roleName) {
 
+		this.type = type;
 		this.userName = userName;
 		this.roleName = roleName;
+	}
+
+	RUserUpdateResult performUpdate(RoleFinder roleFinder, UserFile userFile) {
+
+		RUserUpdateResultType errorType = validateUpdate(roleFinder, userFile);
+
+		if (errorType != null) {
+
+			return errorType.getFixedTypeResult();
+		}
+
+		return type.performUpdate(userFile, this);
+	}
+
+	RUserUpdateResult performAddition(UserFile userFile) {
+
+		NewUserId userId = new NewUserId(userName);
+		User user = new User(userId, roleName);
+
+		userFile.addEntity(user);
+
+		return RUserUpdateResult.additionOk(userId.getRegistrationToken());
+	}
+
+	RUserUpdateResult performEdit(UserFile userFile) {
+
+		UserId userId = userFile.getUserId(userName);
+
+		userFile.removeEntity(userId);
+		userFile.addEntity(new User(userId, roleName));
+
+		return RUserUpdateResultType.EDIT_OK.getFixedTypeResult();
+	}
+
+	RUserUpdateResult performRemoval(UserFile userFile) {
+
+		UserId userId = userFile.getUserId(userName);
+
+		userFile.removeEntity(userId);
+
+		return RUserUpdateResultType.REMOVAL_OK.getFixedTypeResult();
+	}
+
+	private RUserUpdateResultType validateUpdate(RoleFinder roleFinder, UserFile userFile) {
+
+		if (type.forExistingUser()) {
+
+			if (!userFile.containsUser(userName)) {
+
+				return RUserUpdateResultType.INVALID_USER_ERROR;
+			}
+		}
+		else {
+
+			if (userFile.containsUser(userName)) {
+
+				return RUserUpdateResultType.EXISTING_USER_ERROR;
+			}
+		}
+
+		if (type.includesRole()) {
+
+			if (!roleFinder.isRole(roleName)) {
+
+				return RUserUpdateResultType.INVALID_ROLE_ERROR;
+			}
+		}
+
+		return null;
 	}
 }

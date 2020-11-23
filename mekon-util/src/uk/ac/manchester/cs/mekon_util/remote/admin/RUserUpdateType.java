@@ -24,56 +24,68 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
-
 /**
  * @author Colin Puleston
  */
-public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
+public enum RUserUpdateType {
 
-	static private final String ROOT_TAG = "AdminRequest";
-	static private final String LOGIN_ID_TAG = "LoginId";
-	static private final String USER_UPDATE_TAG = "UserUpdate";
+	ADDITION {
 
-	static private final String ACTION_TYPE_ATTR = "actionType";
+		boolean includesRole() {
 
-	public RAdminRequestSerialiser() {
+			return true;
+		}
 
-		super(ROOT_TAG);
-	}
+		boolean forExistingUser() {
 
-	public RAdminRequestSerialiser(XDocument document) {
+			return false;
+		}
 
-		super(document);
-	}
+		RUserUpdateResult performUpdate(UserFile userFile, RUserUpdate update) {
 
-	public void renderActionType(RAdminActionType actionType) {
+			return update.performAddition(userFile);
+		}
+	},
 
-		getRootNode().setValue(ACTION_TYPE_ATTR, actionType);
-	}
+	EDIT {
 
-	public void renderLoginIdParameter(RLoginId userId) {
+		boolean includesRole() {
 
-		UserSerialiser.renderLoginId(userId, addParameterNode(LOGIN_ID_TAG));
-	}
+			return true;
+		}
 
-	public void renderUserUpdateParameter(RUserUpdate update) {
+		boolean forExistingUser() {
 
-		UserUpdateSerialiser.renderUpdate(update, addParameterNode(USER_UPDATE_TAG));
-	}
+			return true;
+		}
 
-	public RAdminActionType parseActionType() {
+		RUserUpdateResult performUpdate(UserFile userFile, RUserUpdate update) {
 
-		return getRootNode().getEnum(ACTION_TYPE_ATTR, RAdminActionType.class);
-	}
+			return update.performEdit(userFile);
+		}
+	},
 
-	public RLoginId parseLoginIdParameter() {
+	REMOVAL {
 
-		return UserSerialiser.parseLoginId(getParameterNode(LOGIN_ID_TAG));
-	}
+		boolean includesRole() {
 
-	public RUserUpdate parseUserUpdateParameter() {
+			return false;
+		}
 
-		return UserUpdateSerialiser.parseUpdate(getParameterNode(USER_UPDATE_TAG));
-	}
+		boolean forExistingUser() {
+
+			return true;
+		}
+
+		RUserUpdateResult performUpdate(UserFile userFile, RUserUpdate update) {
+
+			return update.performRemoval(userFile);
+		}
+	};
+
+	abstract boolean includesRole();
+
+	abstract boolean forExistingUser();
+
+	abstract RUserUpdateResult performUpdate(UserFile userFile, RUserUpdate update);
 }
