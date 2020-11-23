@@ -51,8 +51,8 @@ class UserDetailsDialog extends GDialog {
 
 	static private final Dimension WINDOW_SIZE = new Dimension(250, 200);
 
-	private String userName = null;
-	private String roleName = null;
+	private String selectedUserName = null;
+	private String selectedRoleName = null;
 
 	private OkButton okButton = new OkButton();
 
@@ -62,21 +62,25 @@ class UserDetailsDialog extends GDialog {
 
 		protected void onCharEntered(char enteredChar) {
 
-			userName = getText();
+			selectedUserName = getText();
 
 			okButton.updateEnabling();
 		}
 
 		protected void onTextEntered(String text) {
 
-			userName = text;
+			selectedUserName = text;
 
 			okButton.updateEnabling();
 		}
 
-		NameField(boolean newUser) {
+		NameField() {
 
-			setEnabled(newUser);
+			if (selectedUserName != null) {
+
+				setText(selectedUserName);
+				setEnabled(false);
+			}
 		}
 	}
 
@@ -88,7 +92,7 @@ class UserDetailsDialog extends GDialog {
 
 		protected void onSelection(String value) {
 
-			roleName = value;
+			selectedRoleName = value;
 
 			removeItem(NO_SELECTION_VALUE);
 			okButton.updateEnabling();
@@ -131,8 +135,8 @@ class UserDetailsDialog extends GDialog {
 
 		protected void doButtonThing() {
 
-			userName = null;
-			roleName = null;
+			selectedUserName = null;
+			selectedRoleName = null;
 
 			dispose();
 		}
@@ -143,57 +147,52 @@ class UserDetailsDialog extends GDialog {
 		}
 	}
 
-	UserDetailsDialog(JComponent parent, List<String> roleNames, boolean newUser) {
+	UserDetailsDialog(JComponent parent) {
 
 		super(parent, TITLE, true);
 
 		setPreferredSize(WINDOW_SIZE);
-
-		display(createMainPanel(roleNames, newUser));
 	}
 
-	void setUserName(String userName) {
+	void setFixedUserName(String fixedUserName) {
 
-		this.userName = userName;
+		selectedUserName = fixedUserName;
 	}
 
-	void setRoleName(String roleName) {
+	String getSelectedUserName() {
 
-		this.roleName = roleName;
+		return selectedUserName;
 	}
 
-	String getUserName() {
+	String getSelectedRoleName() {
 
-		return userName;
+		return selectedRoleName;
 	}
 
-	String getRoleName() {
+	boolean display(List<String> roleNames) {
 
-		return roleName;
+		display(createMainPanel(roleNames));
+
+		return detailsOk();
 	}
 
-	boolean detailsOk() {
-
-		return userName != null && roleName != null;
-	}
-
-	private JPanel createMainPanel(List<String> roleNames, boolean newUser) {
+	private JPanel createMainPanel(List<String> roleNames) {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(createDetailsPanel(roleNames, newUser), BorderLayout.CENTER);
+		panel.add(createDetailsPanel(roleNames), BorderLayout.CENTER);
 		panel.add(createButtonsPanel(), BorderLayout.SOUTH);
 
 		return panel;
 	}
 
-	private JPanel createDetailsPanel(List<String> roleNames, boolean newUser) {
+	private JPanel createDetailsPanel(List<String> roleNames) {
 
 		JPanel panel = new JPanel();
 
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		panel.add(createTitledPanel(NAME_LABEL, new NameField(newUser)));
+		panel.add(createTitledPanel(NAME_LABEL, new NameField()));
 		panel.add(createTitledPanel(USER_ROLE_LABEL, new RoleSelector(roleNames)));
 
 		return panel;
@@ -218,5 +217,10 @@ class UserDetailsDialog extends GDialog {
 		panel.add(component);
 
 		return panel;
+	}
+
+	private boolean detailsOk() {
+
+		return selectedUserName != null && selectedRoleName != null;
 	}
 }

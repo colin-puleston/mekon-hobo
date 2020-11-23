@@ -48,26 +48,28 @@ class UsersPanel extends JPanel {
 	static private final String REG_STATUS_TITLE = "Status (Registration Token)";
 
 	static private final String REGISTERED_STATUS_LABEL = "Registered";
-	static private final String UNREGISTERED_STATUS_LABEL_FORMAT = "Unregistered (%s)";
+	static private final String UNREGISTERED_STATUS_LABEL_FORMAT = "Not Registered (%s)";
 
 	static private final String ADD_BUTTON_LABEL = "Add...";
 	static private final String EDIT_BUTTON_LABEL = "Edit...";
 	static private final String DELETE_BUTTON_LABEL = "Delete";
 
 	static private final Color USER_NAME_TEXT_CLR = Color.BLUE;
-	static private final Color ROLE_NAME_TEXT_CLR = Color.CYAN.darker();
+	static private final Color ROLE_NAME_TEXT_CLR = Color.RED;
 	static private final Color REGISTERED_STATUS_TEXT_CLR = Color.GREEN.darker();
-	static private final Color UNREGISTERED_STATUS_TEXT_CLR = Color.RED;
+	static private final Color UNREGISTERED_STATUS_TEXT_CLR = Color.ORANGE.darker();
 
 	static private final Color SELECTED_ROW_CLR = Color.LIGHT_GRAY;
 
 	private RAdminClient adminClient;
-	private List<String> roleNames;
+	private UserUpdates userUpdates;
 
 	private GTable table = new GTable();
 	private int selectedRow = -1;
 
 	private List<UserHandler> userHandlers = new ArrayList<UserHandler>();
+	private List<SelectionDependentButton> selectionDependentButtons
+								= new ArrayList<SelectionDependentButton>();
 
 	private class UserHandler implements Comparable<UserHandler> {
 
@@ -98,13 +100,23 @@ class UsersPanel extends JPanel {
 		}
 
 		void editUser() {
+
+			String newRole = userUpdates.checkEditRole(name, role);
+
+			if (newRole != null) {
+
+				role = newRole;
+
+				updateTable();
+			}
 		}
 
 		void deleteUser() {
 
-			if (updateUsers(RUserUpdate.removal(name)).editOk()) {
+			if (userUpdates.checkRemoveUser(name)) {
 
 				userHandlers.remove(this);
+
 				updateTable();
 			}
 		}
@@ -200,7 +212,26 @@ class UsersPanel extends JPanel {
 		}
 	}
 
-	private class EditButton extends GButton {
+	private abstract class SelectionDependentButton extends GButton {
+
+		static private final long serialVersionUID = -1;
+
+		SelectionDependentButton(String title) {
+
+			super(title);
+
+			selectionDependentButtons.add(this);
+
+			setEnabled(false);
+		}
+
+		void updateEnabling() {
+
+			setEnabled(selectedRow != -1);
+		}
+	}
+
+	private class EditButton extends SelectionDependentButton {
 
 		static private final long serialVersionUID = -1;
 
@@ -215,7 +246,7 @@ class UsersPanel extends JPanel {
 		}
 	}
 
-	private class DeleteButton extends GButton {
+	private class DeleteButton extends SelectionDependentButton {
 
 		static private final long serialVersionUID = -1;
 
@@ -236,7 +267,7 @@ class UsersPanel extends JPanel {
 
 		this.adminClient = adminClient;
 
-		roleNames = adminClient.getRoleNames();
+		userUpdates = new UserUpdates(this, adminClient);
 
 		add(new JScrollPane(table), BorderLayout.CENTER);
 		add(createButtonsPanel(), BorderLayout.SOUTH);
@@ -261,38 +292,6 @@ class UsersPanel extends JPanel {
 		return panel;
 	}
 
-	private void addUser() {
-
-		UserDetailsDialog dialog = displayDetailsDialog(true);
-
-		if (dialog.detailsOk()) {
-
-			String name = dialog.getUserName();
-			String role = dialog.getRoleName();
-
-			RUserUpdateResult result = updateUsers(RUserUpdate.addition(name, role));
-
-			if (result.editOk()) {
-
-				String regToken = result.getRegistrationToken();
-
-				addUserHandler(new UserHandler(name, role, regToken));
-			}
-		}
-	}
-
-	private RUserUpdateResult updateUsers(RUserUpdate update) {
-
-		RUserUpdateResult result = adminClient.updateUsers(update);
-
-		if (!result.editOk()) {
-
-			showMessage("Operation failed: " + result.getResultType());
-		}
-
-		return result;
-	}
-
 	private void updateFromServer() {
 
 		for (RUserProfile profile : adminClient.getUserProfiles()) {
@@ -304,12 +303,17 @@ class UsersPanel extends JPanel {
 		updateTable();
 	}
 
-	private void addUserHandler(UserHandler handler) {
+	private void addUser() {
 
-		userHandlers.add(handler);
+		RUserProfile profile = userUpdates.checkAddUser();
 
-		sortUserHandlers();
-		updateTable();
+		if (profile != null) {
+
+			userHandlers.add(new UserHandler(profile));
+
+			sortUserHandlers();
+			updateTable();
+		}
 	}
 
 	private void sortUserHandlers() {
@@ -328,11 +332,16 @@ class UsersPanel extends JPanel {
 
 			userHandler.addToTable();
 		}
+
+		updateButtonEnabling();
 	}
 
-	private UserDetailsDialog displayDetailsDialog(boolean newUser) {
+	private void updateButtonEnabling() {
 
-		return new UserDetailsDialog(this, roleNames, newUser);
+		for (SelectionDependentButton button : selectionDependentButtons) {
+
+			button.updateEnabling();
+		}
 	}
 
 	private String getRegTokenText(RUserProfile profile) {
