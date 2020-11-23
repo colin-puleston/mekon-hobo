@@ -42,7 +42,7 @@ public enum RStoreActionType {
 	REMOVE,
 
 	/**
-	 * Specifies an store clear action
+	 * Specifies a store clear action
 	 */
 	CLEAR,
 
@@ -67,12 +67,12 @@ public enum RStoreActionType {
 	GET_IDS,
 
 	/**
-	 * Specifies an query-matching instance retrieval action
+	 * Specifies a query-matching instance retrieval action
 	 */
 	MATCH,
 
 	/**
-	 * Specifies an query/instance match test
+	 * Specifies a query/instance match test
 	 */
 	MATCHES
 }
