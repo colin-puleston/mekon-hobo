@@ -61,7 +61,7 @@ class RoleSerialiser {
 	static RRole parseRole(XNode roleNode) {
 
 		String name = roleNode.getString(ROLE_NAME_ATTR);
-		RRole role = RRole.lookForSpecial(name);
+		RRole role = RRole.SPECIALS_BY_NAME.get(name);
 
 		if (role == null) {
 

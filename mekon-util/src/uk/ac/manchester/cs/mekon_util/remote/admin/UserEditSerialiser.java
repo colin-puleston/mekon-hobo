@@ -55,7 +55,7 @@ class UserEditSerialiser {
 
 		if (type == RUserEditResultType.ADDITION_OK) {
 
-			resultNode.setValue(REG_TOKEN_ATTR, type);
+			resultNode.setValue(REG_TOKEN_ATTR, result.getRegistrationToken());
 		}
 	}
 

@@ -38,7 +38,7 @@ public class RUserProfile {
 		return name;
 	}
 
-	String getRoleName() {
+	public String getRoleName() {
 
 		return roleName;
 	}
@@ -54,6 +54,11 @@ public class RUserProfile {
 	}
 
 	public boolean registered() {
+
+		return regToken == null;
+	}
+
+	public boolean unregistered() {
 
 		return regToken != null;
 	}

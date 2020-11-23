@@ -203,6 +203,11 @@ abstract class EntryDialog extends GDialog {
 
 	abstract int getWindowHeight();
 
+	boolean administratorLoginOnly() {
+
+		return false;
+	}
+
 	boolean checkCanPerformLogin() {
 
 		return allFieldsPopulated();
@@ -268,6 +273,13 @@ abstract class EntryDialog extends GDialog {
 				showMessage("Login failed!");
 			}
 			else {
+
+				if (administratorLoginOnly() && loggedInRole != RRole.ADMIN) {
+
+					loggedInRole = RRole.NO_ACCESS;
+
+					showMessage("Administrator login failed!");
+				}
 
 				dispose();
 			}

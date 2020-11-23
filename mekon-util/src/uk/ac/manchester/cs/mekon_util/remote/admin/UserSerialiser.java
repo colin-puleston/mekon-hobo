@@ -96,9 +96,9 @@ class UserSerialiser {
 		profileNode.setValue(NAME_ATTR, profile.getName());
 		profileNode.setValue(ROLE_ATTR, profile.getRoleName());
 
-		if (!profile.registered()) {
+		if (profile.unregistered()) {
 
-			profileNode.setValue(NAME_ATTR, profile.getName());
+			profileNode.setValue(REG_TOKEN_ATTR, profile.getRegistrationToken());
 		}
 	}
 

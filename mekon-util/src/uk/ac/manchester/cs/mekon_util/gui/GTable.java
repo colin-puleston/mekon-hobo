@@ -138,6 +138,14 @@ public class GTable extends JTable {
 		model.removeRow(index);
 	}
 
+	public void removeAllRows() {
+
+		while (getRowCount() > 0) {
+
+			removeRow(0);
+		}
+	}
+
 	private void setHeaderAttributes() {
 
 		JTableHeader header = getTableHeader();

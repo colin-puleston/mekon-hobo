@@ -31,10 +31,10 @@ import java.util.*;
  */
 class NewUserId extends UserId {
 
-	static private final String REG_TOKEN_FORMAT = "%s:%s";
+	static private final String REG_TOKEN_FORMAT = "REG-%s";
 	static private final int REG_TOKEN_SUFFIX_LENGTH = 6;
 
-	static private String createRegistrationToken(String name) {
+	static private String createRegistrationToken() {
 
 		return String.format(REG_TOKEN_FORMAT, createRegistrationTokenSuffix());
 	}
@@ -46,7 +46,7 @@ class NewUserId extends UserId {
 
 		while (suffix.length() < REG_TOKEN_SUFFIX_LENGTH) {
 
-			suffix.append(digits.nextInt());
+			suffix.append(digits.nextInt(10));
 		}
 
 		return suffix.toString();
@@ -54,7 +54,7 @@ class NewUserId extends UserId {
 
 	NewUserId(String name) {
 
-		super(name, createRegistrationToken(name));
+		super(name, createRegistrationToken());
 	}
 
 	NewUserId(String name, String regToken) {

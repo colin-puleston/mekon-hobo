@@ -33,23 +33,20 @@ import uk.ac.manchester.cs.mekon_util.*;
  */
 public class RRole {
 
-	static private Map<String, RRole> specialsByName = new HashMap<String, RRole>();
+	static final List<String> SPECIAL_NAMES = new ArrayList<String>();
+	static final Map<String, RRole> SPECIALS_BY_NAME = new HashMap<String, RRole>();
 
+	static public final RRole NO_ACCESS = createSpecial("NO-ACCESS");
 	static public final RRole ADMIN = createSpecial("ADMIN");
 	static public final RRole GENERAL_EDIT = createSpecial("GENERAL-EDIT");
 	static public final RRole GENERAL_ACCESS = createSpecial("GENERAL-ACCESS");
-	static public final RRole NO_ACCESS = createSpecial("NO-ACCESS");
-
-	static RRole lookForSpecial(String name) {
-
-		return specialsByName.get(name);
-	}
 
 	static private RRole createSpecial(String name) {
 
 		RRole role = new RRole(name);
 
-		specialsByName.put(name, role);
+		SPECIAL_NAMES.add(name);
+		SPECIALS_BY_NAME.put(name, role);
 
 		return role;
 	}

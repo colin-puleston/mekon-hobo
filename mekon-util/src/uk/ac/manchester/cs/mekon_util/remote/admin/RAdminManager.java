@@ -43,7 +43,12 @@ public class RAdminManager {
 
 	public synchronized List<String> getRoleNames() {
 
-		return roleFile.getKeys();
+		List<String> roles = new ArrayList<String>();
+
+		roles.addAll(RRole.SPECIAL_NAMES);
+		roles.addAll(roleFile.getKeys());
+
+		return roles;
 	}
 
 	public synchronized List<RUserProfile> getUserProfiles() {
@@ -86,7 +91,7 @@ public class RAdminManager {
 			return RUserEditResultType.ADDITION_ERROR_EXISTING_USER.getFixedTypeResult();
 		}
 
-		if (!roleFile.containsEntity(roleName)) {
+		if (lookForRole(roleName) == null) {
 
 			return RUserEditResultType.ADDITION_ERROR_INVALID_ROLE.getFixedTypeResult();
 		}
@@ -115,7 +120,7 @@ public class RAdminManager {
 
 	private RRole lookForRole(String name) {
 
-		RRole role = RRole.lookForSpecial(name);
+		RRole role = RRole.SPECIALS_BY_NAME.get(name);
 
 		return role != null ? role : roleFile.lookForEntity(name);
 	}

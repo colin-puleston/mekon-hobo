@@ -1,10 +1,10 @@
-/**
+/*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 University of Manchester
+ * Copyright (c) 2019 University of Manchester
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this software and associated documentation files the "Software", to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -21,51 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.ac.manchester.cs.mekon_util.gui;
 
-import java.awt.*;
-import java.awt.event.*;
+package uk.ac.manchester.cs.mekon_util.remote.admin.client;
+
 import javax.swing.*;
+
+import uk.ac.manchester.cs.mekon_util.misc.*;
+import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 
 /**
  * @author Colin Puleston
  */
-public abstract class GButton extends JButton implements ActionListener {
+public class RAdministratorLoginDialog extends RLoginDialog {
 
 	static private final long serialVersionUID = -1;
 
-	public GButton(String label) {
+	public RAdministratorLoginDialog(
+				RAdminClient adminClient,
+				KProxyPasswords proxyPasswords,
+				String appName) {
 
-		super(label);
-
-		GFonts.setMedium(this);
-		addActionListener(this);
+		super(null, adminClient, proxyPasswords, appName);
 	}
 
-	public void actionPerformed(ActionEvent event) {
+	public RAdministratorLoginDialog(
+				JComponent parent,
+				RAdminClient adminClient,
+				KProxyPasswords proxyPasswords,
+				String appName) {
 
-		doButtonThing();
+		super(parent, adminClient, proxyPasswords, appName);
 	}
 
-	public void setNoMargin() {
+	boolean administratorLoginOnly() {
 
-		setMargin(0);
+		return true;
 	}
-
-	public void setMargin(int size) {
-
-		setMargin(new Insets(size, size, size, size));
-	}
-
-	public void setSmallFont() {
-
-		GFonts.setSmall(this);
-	}
-
-	public void setLargeFont() {
-
-		GFonts.setLarge(this);
-	}
-
-	protected abstract void doButtonThing();
 }
