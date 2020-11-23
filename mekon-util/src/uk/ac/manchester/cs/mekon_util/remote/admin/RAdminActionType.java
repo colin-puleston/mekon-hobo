@@ -31,6 +31,6 @@ public enum RAdminActionType {
 
 	GET_ROLES_NAMES,
 	GET_USER_PROFILES,
-	EDIT_USERS,
+	UPDATE_USERS,
 	CHECK_LOGIN
 }

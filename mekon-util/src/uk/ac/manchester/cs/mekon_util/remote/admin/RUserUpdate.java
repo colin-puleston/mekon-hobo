@@ -27,27 +27,27 @@ package uk.ac.manchester.cs.mekon_util.remote.admin;
 /**
  * @author Colin Puleston
  */
-public class RUserEdit {
+public class RUserUpdate {
 
-	static public RUserEdit addition(String userName, String roleName) {
+	static public RUserUpdate addition(String userName, String roleName) {
 
-		return new RUserEdit(userName, roleName);
+		return new RUserUpdate(userName, roleName);
 	}
 
-	static public RUserEdit removal(String userName) {
+	static public RUserUpdate removal(String userName) {
 
-		return new RUserEdit(userName, null);
+		return new RUserUpdate(userName, null);
 	}
 
 	private String userName;
 	private String roleName;
 
-	public boolean additionEdit() {
+	public boolean additionUpdate() {
 
 		return roleName != null;
 	}
 
-	public boolean removalEdit() {
+	public boolean removalUpdate() {
 
 		return roleName == null;
 	}
@@ -62,7 +62,7 @@ public class RUserEdit {
 		return roleName;
 	}
 
-	private RUserEdit(String userName, String roleName) {
+	private RUserUpdate(String userName, String roleName) {
 
 		this.userName = userName;
 		this.roleName = roleName;

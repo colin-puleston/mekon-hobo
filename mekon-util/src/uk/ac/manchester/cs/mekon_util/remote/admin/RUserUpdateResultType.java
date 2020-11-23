@@ -27,39 +27,42 @@ package uk.ac.manchester.cs.mekon_util.remote.admin;
 /**
  * @author Colin Puleston
  */
-public class RUserEditResult {
+public enum RUserUpdateResultType {
 
-	static RUserEditResult additionOk(String regToken) {
+	ADDITION_OK(false),
+	REMOVAL_OK(true),
 
-		return new RUserEditResult(RUserEditResultType.ADDITION_OK, regToken);
+	ADDITION_ERROR_EXISTING_USER(true),
+	ADDITION_ERROR_INVALID_ROLE(true),
+	REMOVAL_ERROR_INVALID_USER(true);
+
+	private RUserUpdateResult fixedTypeResult;
+
+	boolean editOk() {
+
+		return this == ADDITION_OK || this == REMOVAL_OK;
 	}
 
-	static RUserEditResult fixedTypeResult(RUserEditResultType resultType) {
+	boolean fixedResultType() {
 
-		return new RUserEditResult(resultType, null);
+		return fixedTypeResult != null;
 	}
 
-	private RUserEditResultType resultType;
-	private String regToken;
+	RUserUpdateResult getFixedTypeResult() {
 
-	public boolean editOk() {
+		if (fixedTypeResult == null) {
 
-		return resultType.editOk();
+			throw new Error("Not a fixed result-type: " + this);
+		}
+
+		return fixedTypeResult;
 	}
 
-	public RUserEditResultType getResultType() {
+	private RUserUpdateResultType(boolean fixedResultType) {
 
-		return resultType;
-	}
+		if (fixedResultType) {
 
-	public String getRegistrationToken() {
-
-		return regToken;
-	}
-
-	private RUserEditResult(RUserEditResultType resultType, String regToken) {
-
-		this.resultType = resultType;
-		this.regToken = regToken;
+			fixedTypeResult = RUserUpdateResult.fixedTypeResult(this);
+		}
 	}
 }

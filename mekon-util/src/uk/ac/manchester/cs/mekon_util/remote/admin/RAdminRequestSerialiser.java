@@ -33,7 +33,7 @@ public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 
 	static private final String ROOT_TAG = "AdminRequest";
 	static private final String LOGIN_ID_TAG = "LoginId";
-	static private final String USER_EDIT_TAG = "UserEdit";
+	static private final String USER_UPDATE_TAG = "UserUpdate";
 
 	static private final String ACTION_TYPE_ATTR = "actionType";
 
@@ -57,9 +57,9 @@ public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 		UserSerialiser.renderLoginId(userId, addParameterNode(LOGIN_ID_TAG));
 	}
 
-	public void renderUserEditParameter(RUserEdit edit) {
+	public void renderUserUpdateParameter(RUserUpdate update) {
 
-		UserEditSerialiser.renderEdit(edit, addParameterNode(USER_EDIT_TAG));
+		UserUpdateSerialiser.renderEdit(update, addParameterNode(USER_UPDATE_TAG));
 	}
 
 	public RAdminActionType parseActionType() {
@@ -72,8 +72,8 @@ public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 		return UserSerialiser.parseLoginId(getParameterNode(LOGIN_ID_TAG));
 	}
 
-	public RUserEdit parseUserEditParameter() {
+	public RUserUpdate parseUserUpdateParameter() {
 
-		return UserEditSerialiser.parseEdit(getParameterNode(USER_EDIT_TAG));
+		return UserUpdateSerialiser.parseEdit(getParameterNode(USER_UPDATE_TAG));
 	}
 }

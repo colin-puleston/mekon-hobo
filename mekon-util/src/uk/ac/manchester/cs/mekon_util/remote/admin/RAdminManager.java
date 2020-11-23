@@ -56,12 +56,12 @@ public class RAdminManager {
 		return userFile.extractProfiles();
 	}
 
-	public synchronized RUserEditResult editUsers(RUserEdit edit) {
+	public synchronized RUserUpdateResult updateUsers(RUserUpdate update) {
 
-		String userName = edit.getUserName();
+		String userName = update.getUserName();
 
-		return edit.additionEdit()
-				? addUser(userName, edit.getRoleName())
+		return update.additionUpdate()
+				? addUser(userName, update.getRoleName())
 				: removeUser(userName);
 	}
 
@@ -84,16 +84,16 @@ public class RAdminManager {
 		return RRole.NO_ACCESS;
 	}
 
-	private RUserEditResult addUser(String userName, String roleName) {
+	private RUserUpdateResult addUser(String userName, String roleName) {
 
 		if (userFile.containsUser(userName)) {
 
-			return RUserEditResultType.ADDITION_ERROR_EXISTING_USER.getFixedTypeResult();
+			return RUserUpdateResultType.ADDITION_ERROR_EXISTING_USER.getFixedTypeResult();
 		}
 
 		if (lookForRole(roleName) == null) {
 
-			return RUserEditResultType.ADDITION_ERROR_INVALID_ROLE.getFixedTypeResult();
+			return RUserUpdateResultType.ADDITION_ERROR_INVALID_ROLE.getFixedTypeResult();
 		}
 
 		NewUserId userId = new NewUserId(userName);
@@ -101,21 +101,21 @@ public class RAdminManager {
 
 		userFile.addEntity(user);
 
-		return RUserEditResult.additionOk(userId.getRegistrationToken());
+		return RUserUpdateResult.additionOk(userId.getRegistrationToken());
 	}
 
-	private RUserEditResult removeUser(String name) {
+	private RUserUpdateResult removeUser(String name) {
 
 		UserId userId = userFile.lookForUser(name);
 
 		if (userId == null) {
 
-			return RUserEditResultType.REMOVAL_ERROR_NOT_USER.getFixedTypeResult();
+			return RUserUpdateResultType.REMOVAL_ERROR_INVALID_USER.getFixedTypeResult();
 		}
 
 		userFile.removeEntity(userId);
 
-		return RUserEditResultType.REMOVAL_OK.getFixedTypeResult();
+		return RUserUpdateResultType.REMOVAL_OK.getFixedTypeResult();
 	}
 
 	private RRole lookForRole(String name) {

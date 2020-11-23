@@ -132,26 +132,26 @@ public abstract class RAdminServer extends RNetServer {
 		}
 	}
 
-	private class UsersEdits extends InputDrivenActions<RUserEdit, RUserEditResult> {
+	private class UsersEdits extends InputDrivenActions<RUserUpdate, RUserUpdateResult> {
 
 		UsersEdits() {
 
-			super(RAdminActionType.EDIT_USERS);
+			super(RAdminActionType.UPDATE_USERS);
 		}
 
-		RUserEdit parseInput(RAdminRequestSerialiser parser) {
+		RUserUpdate parseInput(RAdminRequestSerialiser parser) {
 
-			return parser.parseUserEditParameter();
+			return parser.parseUserUpdateParameter();
 		}
 
-		void renderOutput(RAdminResponseSerialiser renderer, RUserEditResult output) {
+		void renderOutput(RAdminResponseSerialiser renderer, RUserUpdateResult output) {
 
-			renderer.renderUserEditResultParameter(output);
+			renderer.renderUserUpdateResultParameter(output);
 		}
 
-		RUserEditResult performAction(RUserEdit input) {
+		RUserUpdateResult performAction(RUserUpdate input) {
 
-			return adminManager.editUsers(input);
+			return adminManager.updateUsers(input);
 		}
 	}
 

@@ -39,7 +39,7 @@ public class RAdminClient {
 	private RNetConnection connection;
 
 	private LoginChecks loginChecks = new LoginChecks();
-	private UserEdits userEdits = new UserEdits();
+	private UserUpdates userUpdates = new UserUpdates();
 	private RoleNameRetrievals roleNameRetrievals = new RoleNameRetrievals();
 	private UserProfileRetrievals userProfileRetrievals = new UserProfileRetrievals();
 
@@ -112,21 +112,21 @@ public class RAdminClient {
 		}
 	}
 
-	private class UserEdits extends ServerActions<RUserEdit, RUserEditResult> {
+	private class UserUpdates extends ServerActions<RUserUpdate, RUserUpdateResult> {
 
 		RAdminActionType getActionType() {
 
-			return RAdminActionType.EDIT_USERS;
+			return RAdminActionType.UPDATE_USERS;
 		}
 
-		void renderInput(RAdminRequestSerialiser renderer, RUserEdit input) {
+		void renderInput(RAdminRequestSerialiser renderer, RUserUpdate input) {
 
-			renderer.renderUserEditParameter(input);
+			renderer.renderUserUpdateParameter(input);
 		}
 
-		RUserEditResult parseOutput(RAdminResponseSerialiser parser) {
+		RUserUpdateResult parseOutput(RAdminResponseSerialiser parser) {
 
-			return parser.parseUserEditResultParameter();
+			return parser.parseUserUpdateResultParameter();
 		}
 	}
 
@@ -163,9 +163,9 @@ public class RAdminClient {
 		return userProfileRetrievals.performAction();
 	}
 
-	public RUserEditResult editUsers(RUserEdit userEdit) {
+	public RUserUpdateResult updateUsers(RUserUpdate update) {
 
-		return userEdits.performAction(userEdit);
+		return userUpdates.performAction(update);
 	}
 
 	public RRole checkLogin(RLoginId userId) {

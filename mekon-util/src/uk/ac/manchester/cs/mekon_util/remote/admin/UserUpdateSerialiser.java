@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 /**
  * @author Colin Puleston
  */
-class UserEditSerialiser {
+class UserUpdateSerialiser {
 
 	static private final String USER_NAME_ATTR = "userName";
 	static private final String ROLE_NAME_ATTR = "roleName";
@@ -37,45 +37,45 @@ class UserEditSerialiser {
 	static private final String RESULT_TYPE_ATTR = "resultType";
 	static private final String REG_TOKEN_ATTR = "registrationToken";
 
-	static void renderEdit(RUserEdit edit, XNode editNode) {
+	static void renderEdit(RUserUpdate update, XNode editNode) {
 
-		editNode.setValue(USER_NAME_ATTR, edit.getUserName());
+		editNode.setValue(USER_NAME_ATTR, update.getUserName());
 
-		if (edit.additionEdit()) {
+		if (update.additionUpdate()) {
 
-			editNode.setValue(ROLE_NAME_ATTR, edit.getRoleName());
+			editNode.setValue(ROLE_NAME_ATTR, update.getRoleName());
 		}
 	}
 
-	static void renderResult(RUserEditResult result, XNode resultNode) {
+	static void renderResult(RUserUpdateResult result, XNode resultNode) {
 
-		RUserEditResultType type = result.getResultType();
+		RUserUpdateResultType type = result.getResultType();
 
 		resultNode.setValue(RESULT_TYPE_ATTR, type);
 
-		if (type == RUserEditResultType.ADDITION_OK) {
+		if (type == RUserUpdateResultType.ADDITION_OK) {
 
 			resultNode.setValue(REG_TOKEN_ATTR, result.getRegistrationToken());
 		}
 	}
 
-	static RUserEdit parseEdit(XNode editNode) {
+	static RUserUpdate parseEdit(XNode editNode) {
 
 		String userName = editNode.getString(USER_NAME_ATTR);
 		String roleName = editNode.getString(ROLE_NAME_ATTR, null);
 
 		return roleName != null
-				? RUserEdit.addition(userName, roleName)
-				: RUserEdit.removal(userName);
+				? RUserUpdate.addition(userName, roleName)
+				: RUserUpdate.removal(userName);
 	}
 
-	static RUserEditResult parseResult(XNode resultNode) {
+	static RUserUpdateResult parseResult(XNode resultNode) {
 
-		RUserEditResultType type = resultNode.getEnum(RESULT_TYPE_ATTR, RUserEditResultType.class);
+		RUserUpdateResultType type = resultNode.getEnum(RESULT_TYPE_ATTR, RUserUpdateResultType.class);
 
-		if (type == RUserEditResultType.ADDITION_OK) {
+		if (type == RUserUpdateResultType.ADDITION_OK) {
 
-			return RUserEditResult.additionOk(resultNode.getString(REG_TOKEN_ATTR));
+			return RUserUpdateResult.additionOk(resultNode.getString(REG_TOKEN_ATTR));
 		}
 
 		return type.getFixedTypeResult();
