@@ -45,6 +45,11 @@ public class RUserProfile {
 		this.regToken = regToken;
 	}
 
+	public RUserProfile deriveProfileWithRole(String newRoleName) {
+
+		return new RUserProfile(name, newRoleName, regToken);
+	}
+
 	public String getName() {
 
 		return name;
