@@ -84,7 +84,7 @@ public class XNode {
 	 */
 	public void setValue(String id, Object value) {
 
-		element.setAttribute(id, value.toString());
+		element.setAttribute(id, valueToString(value));
 	}
 
 	/**
@@ -436,6 +436,11 @@ public class XNode {
 	private XNode checkCreateChild(Node node) {
 
 		return node instanceof Element ? new XNode(this, (Element)node) : null;
+	}
+
+	private String valueToString(Object value) {
+
+		return value instanceof Enum ? ((Enum<?>)value).name() : value.toString();
 	}
 
 	private String getStringOrNull(String id) {

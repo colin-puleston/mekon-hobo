@@ -40,6 +40,11 @@ public enum RUserUpdateResultType {
 	private boolean updateOk;
 	private RUserUpdateResult fixedTypeResult;
 
+	public String toString() {
+
+		return name().replace("_ERROR", "").replace('_', ' ');
+	}
+
 	boolean updateOk() {
 
 		return updateOk;
