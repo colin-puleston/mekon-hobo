@@ -87,9 +87,14 @@ abstract class UserManager {
 
 	synchronized void updateFromServer() {
 
-		profiles = adminClient.getUserProfiles();
+		List<RUserProfile> serverProfiles = adminClient.getUserProfiles();
 
-		onUpdate(true);
+		if (!profileSetsEqual(profiles, serverProfiles)) {
+
+			profiles = serverProfiles;
+
+			onUpdate(true);
+		}
 	}
 
 	synchronized void addUser() {
@@ -169,8 +174,13 @@ abstract class UserManager {
 		profiles.addAll(sorter);
 	}
 
-	private String getRegTokenText(RUserProfile profile) {
+	private boolean profileSetsEqual(List<RUserProfile> list1, List<RUserProfile> list2) {
 
-		return profile.registered() ? "" : profile.getRegistrationToken();
+		return profilesAsSet(list1).equals(profilesAsSet(list2));
+	}
+
+	private Set<RUserProfile> profilesAsSet(List<RUserProfile> list) {
+
+		return new HashSet<RUserProfile>(list);
 	}
 }

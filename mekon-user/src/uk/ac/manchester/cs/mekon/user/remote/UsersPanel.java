@@ -78,7 +78,7 @@ class UsersPanel extends JPanel {
 
 		void onUpdate() {
 
-			updateTable();
+			updateDisplay();
 		}
 	}
 
@@ -136,7 +136,7 @@ class UsersPanel extends JPanel {
 				if (selectedRow != wasSelectedRow) {
 
 					processingUpdate = true;
-					updateTable();
+					updateDisplay();
 					processingUpdate = false;
 				}
 			}
@@ -241,6 +241,12 @@ class UsersPanel extends JPanel {
 		return panel;
 	}
 
+	private synchronized void updateDisplay() {
+
+		updateTable();
+		updateButtonEnabling();
+	}
+
 	private void updateTable() {
 
 		table.removeAllRows();
@@ -249,8 +255,6 @@ class UsersPanel extends JPanel {
 
 			new TableRow(profile);
 		}
-
-		updateButtonEnabling();
 	}
 
 	private void updateButtonEnabling() {
