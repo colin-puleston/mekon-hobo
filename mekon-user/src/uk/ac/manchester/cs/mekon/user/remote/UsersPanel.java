@@ -61,79 +61,51 @@ class UsersPanel extends JPanel {
 
 	static private final Color SELECTED_ROW_CLR = Color.LIGHT_GRAY;
 
-	private RAdminClient adminClient;
-	private UserUpdates userUpdates;
-
 	private GTable table = new GTable();
 	private int selectedRow = -1;
 
-	private List<UserHandler> userHandlers = new ArrayList<UserHandler>();
+	private UserManager userManager;
+
 	private List<SelectionDependentButton> selectionDependentButtons
 								= new ArrayList<SelectionDependentButton>();
 
-	private class UserHandler implements Comparable<UserHandler> {
+	private class UserManagerLocal extends UserManager {
 
-		private String name;
-		private String role;
-		private String regToken;
+		UserManagerLocal(RAdminClient adminClient) {
 
-		public int compareTo(UserHandler other) {
-
-			return name.compareTo(other.name);
+			super(adminClient, new UserUpdates(UsersPanel.this, adminClient));
 		}
 
-		UserHandler(RUserProfile profile) {
+		void onUpdate() {
 
-			this(profile.getName(), profile.getRoleName(), getRegTokenText(profile));
+			updateTable();
 		}
+	}
 
-		UserHandler(String name, String role, String regToken) {
+	private class TableRow {
 
-			this.name = name;
-			this.role = role;
-			this.regToken = regToken;
-		}
+		private RUserProfile profile;
 
-		void addToTable() {
+		TableRow(RUserProfile profile) {
+
+			this.profile = profile;
 
 			table.addRow(createNameLabel(), createRoleLabel(), createStatusLabel());
 		}
 
-		void editUser() {
-
-			String newRole = userUpdates.checkEditRole(name, role);
-
-			if (newRole != null) {
-
-				role = newRole;
-
-				updateTable();
-			}
-		}
-
-		void deleteUser() {
-
-			if (userUpdates.checkRemoveUser(name)) {
-
-				userHandlers.remove(this);
-
-				updateTable();
-			}
-		}
-
 		private JLabel createNameLabel() {
 
-			return createLabel(name, USER_NAME_TEXT_CLR);
+			return createLabel(profile.getName(), USER_NAME_TEXT_CLR);
 		}
 
 		private JLabel createRoleLabel() {
 
-			return createLabel(role, ROLE_NAME_TEXT_CLR);
+			return createLabel(profile.getRoleName(), ROLE_NAME_TEXT_CLR);
 		}
 
 		private JLabel createStatusLabel() {
 
-			if (registered()) {
+			if (profile.registered()) {
 
 				return createLabel(REGISTERED_STATUS_LABEL, REGISTERED_STATUS_TEXT_CLR);
 			}
@@ -141,32 +113,11 @@ class UsersPanel extends JPanel {
 			return createLabel(getUnregisteredStatusText(), UNREGISTERED_STATUS_TEXT_CLR);
 		}
 
-		private JLabel createLabel(String text, Color clr) {
-
-			JLabel label = new JLabel(text);
-
-			GFonts.setLarge(label);
-
-			label.setForeground(clr);
-			label.setFont(label.getFont().deriveFont(Font.BOLD));
-
-			if (table.getRowCount() == selectedRow) {
-
-				label.setOpaque(true);
-				label.setBackground(SELECTED_ROW_CLR);
-			}
-
-			return label;
-		}
-
 		private String getUnregisteredStatusText() {
 
+			String regToken = profile.getRegistrationToken();
+
 			return String.format(UNREGISTERED_STATUS_LABEL_FORMAT, regToken);
-		}
-
-		private boolean registered() {
-
-			return regToken.length() == 0;
 		}
 	}
 
@@ -203,7 +154,7 @@ class UsersPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			addUser();
+			userManager.addUser();
 		}
 
 		AddButton() {
@@ -237,7 +188,7 @@ class UsersPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			getSelectedUserHandler().editUser();
+			userManager.editUser(selectedRow);
 		}
 
 		EditButton() {
@@ -252,7 +203,7 @@ class UsersPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			getSelectedUserHandler().deleteUser();
+			userManager.deleteUser(selectedRow);
 		}
 
 		DeleteButton() {
@@ -265,16 +216,14 @@ class UsersPanel extends JPanel {
 
 		super(new BorderLayout());
 
-		this.adminClient = adminClient;
-
-		userUpdates = new UserUpdates(this, adminClient);
+		userManager = new UserManagerLocal(adminClient);
 
 		add(new JScrollPane(table), BorderLayout.CENTER);
 		add(createButtonsPanel(), BorderLayout.SOUTH);
 
 		table.addColumns(USERS_TITLE, ROLES_TITLE, REG_STATUS_TITLE);
 
-		updateFromServer();
+		userManager.updateFromServer();
 
 		new RowSelectionListener();
 	}
@@ -292,45 +241,13 @@ class UsersPanel extends JPanel {
 		return panel;
 	}
 
-	private void updateFromServer() {
-
-		for (RUserProfile profile : adminClient.getUserProfiles()) {
-
-			userHandlers.add(new UserHandler(profile));
-		}
-
-		sortUserHandlers();
-		updateTable();
-	}
-
-	private void addUser() {
-
-		RUserProfile profile = userUpdates.checkAddUser();
-
-		if (profile != null) {
-
-			userHandlers.add(new UserHandler(profile));
-
-			sortUserHandlers();
-			updateTable();
-		}
-	}
-
-	private void sortUserHandlers() {
-
-		TreeSet<UserHandler> sorter = new TreeSet<UserHandler>(userHandlers);
-
-		userHandlers.clear();
-		userHandlers.addAll(sorter);
-	}
-
 	private void updateTable() {
 
 		table.removeAllRows();
 
-		for (UserHandler userHandler : userHandlers) {
+		for (RUserProfile profile : userManager.getProfiles()) {
 
-			userHandler.addToTable();
+			new TableRow(profile);
 		}
 
 		updateButtonEnabling();
@@ -344,18 +261,21 @@ class UsersPanel extends JPanel {
 		}
 	}
 
-	private String getRegTokenText(RUserProfile profile) {
+	private JLabel createLabel(String text, Color clr) {
 
-		return profile.registered() ? "" : profile.getRegistrationToken();
-	}
+		JLabel label = new JLabel(text);
 
-	private UserHandler getSelectedUserHandler() {
+		GFonts.setLarge(label);
 
-		return userHandlers.get(selectedRow);
-	}
+		label.setForeground(clr);
+		label.setFont(label.getFont().deriveFont(Font.BOLD));
 
-	private void showMessage(String msg) {
+		if (table.getRowCount() == selectedRow) {
 
-		JOptionPane.showMessageDialog(null, msg);
+			label.setOpaque(true);
+			label.setBackground(SELECTED_ROW_CLR);
+		}
+
+		return label;
 	}
 }
