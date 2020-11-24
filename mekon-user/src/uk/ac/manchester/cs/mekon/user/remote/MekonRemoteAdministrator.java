@@ -62,7 +62,7 @@ public class MekonRemoteAdministrator extends GFrame {
 
 	private boolean attemptLogin(KProxyPasswords proxyPasswords) {
 
-		return createLoginDialog(proxyPasswords).checkLogin() != RRole.NO_ACCESS;
+		return createLoginDialog(proxyPasswords).checkLogin() != RLoginResult.LOGIN_FAILED;
 	}
 
 	private RLoginDialog createLoginDialog(KProxyPasswords proxyPasswords) {
