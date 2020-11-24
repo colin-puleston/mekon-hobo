@@ -50,6 +50,16 @@ public class RUserProfile {
 		return new RUserProfile(name, newRoleName, regToken);
 	}
 
+	public boolean equals(Object other) {
+
+		return other instanceof RUserProfile && equalsProfile((RUserProfile)other);
+	}
+
+	public int hashCode() {
+
+		return name.hashCode() + roleName.hashCode() + regTokenComparator().hashCode();
+	}
+
 	public String getName() {
 
 		return name;
@@ -78,5 +88,17 @@ public class RUserProfile {
 	public boolean unregistered() {
 
 		return regToken != null;
+	}
+
+	private boolean equalsProfile(RUserProfile other) {
+
+		return name.equals(other.name)
+				&& roleName.equals(other.roleName)
+				&& regTokenComparator().equals(other.regTokenComparator());
+	}
+
+	private String regTokenComparator() {
+
+		return regToken == null ? "" : regToken;
 	}
 }
