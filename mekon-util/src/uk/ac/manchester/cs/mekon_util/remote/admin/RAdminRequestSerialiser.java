@@ -52,12 +52,12 @@ public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 		getRootNode().setValue(ACTION_TYPE_ATTR, actionType);
 	}
 
-	public void renderLoginIdParameter(RLoginId userId) {
+	public void renderLoginId(RLoginId userId) {
 
 		UserSerialiser.renderLoginId(userId, addParameterNode(LOGIN_ID_TAG));
 	}
 
-	public void renderUserUpdateParameter(RUserUpdate update) {
+	public void renderUserUpdate(RUserUpdate update) {
 
 		UserUpdateSerialiser.renderUpdate(update, addParameterNode(USER_UPDATE_TAG));
 	}
@@ -67,12 +67,12 @@ public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 		return getRootNode().getEnum(ACTION_TYPE_ATTR, RAdminActionType.class);
 	}
 
-	public RLoginId parseLoginIdParameter() {
+	public RLoginId parseLoginId() {
 
 		return UserSerialiser.parseLoginId(getParameterNode(LOGIN_ID_TAG));
 	}
 
-	public RUserUpdate parseUserUpdateParameter() {
+	public RUserUpdate parseUserUpdate() {
 
 		return UserUpdateSerialiser.parseUpdate(getParameterNode(USER_UPDATE_TAG));
 	}

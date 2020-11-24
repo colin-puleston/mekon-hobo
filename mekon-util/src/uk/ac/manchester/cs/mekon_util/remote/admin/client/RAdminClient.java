@@ -95,7 +95,7 @@ public class RAdminClient {
 
 		List<String> parseOutput(RAdminResponseSerialiser parser) {
 
-			return parser.parseRoleNameParameters();
+			return parser.parseRoleNames();
 		}
 	}
 
@@ -108,7 +108,7 @@ public class RAdminClient {
 
 		List<RUserProfile> parseOutput(RAdminResponseSerialiser parser) {
 
-			return parser.parseUserProfileParameters();
+			return parser.parseUserProfiles();
 		}
 	}
 
@@ -121,16 +121,16 @@ public class RAdminClient {
 
 		void renderInput(RAdminRequestSerialiser renderer, RUserUpdate input) {
 
-			renderer.renderUserUpdateParameter(input);
+			renderer.renderUserUpdate(input);
 		}
 
 		RUserUpdateResult parseOutput(RAdminResponseSerialiser parser) {
 
-			return parser.parseUserUpdateResultParameter();
+			return parser.parseUserUpdateResult();
 		}
 	}
 
-	private class LoginChecks extends ServerActions<RLoginId, RRole> {
+	private class LoginChecks extends ServerActions<RLoginId, RLoginResult> {
 
 		RAdminActionType getActionType() {
 
@@ -139,12 +139,12 @@ public class RAdminClient {
 
 		void renderInput(RAdminRequestSerialiser renderer, RLoginId input) {
 
-			renderer.renderLoginIdParameter(input);
+			renderer.renderLoginId(input);
 		}
 
-		RRole parseOutput(RAdminResponseSerialiser parser) {
+		RLoginResult parseOutput(RAdminResponseSerialiser parser) {
 
-			return parser.parseRoleParameter();
+			return parser.parseLoginResult();
 		}
 	}
 
@@ -168,7 +168,7 @@ public class RAdminClient {
 		return userUpdates.performAction(update);
 	}
 
-	public RRole checkLogin(RLoginId userId) {
+	public RLoginResult checkLogin(RLoginId userId) {
 
 		return loginChecks.performAction(userId);
 	}

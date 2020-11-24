@@ -36,7 +36,6 @@ public class RRole {
 	static final List<String> SPECIAL_NAMES = new ArrayList<String>();
 	static final Map<String, RRole> SPECIALS_BY_NAME = new HashMap<String, RRole>();
 
-	static public final RRole NO_ACCESS = createSpecial("NO-ACCESS");
 	static public final RRole ADMIN = createSpecial("ADMIN");
 	static public final RRole GENERAL_EDIT = createSpecial("GENERAL-EDIT");
 	static public final RRole GENERAL_ACCESS = createSpecial("GENERAL-ACCESS");

@@ -51,42 +51,60 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 		super(document);
 	}
 
-	public void renderRoleNameParameters(List<String> roleNames) {
+	public void renderRoleNames(List<String> roleNames) {
 
 		RoleSerialiser.renderRoleNames(roleNames, addParameterNode(ROLE_NAMES_TAG));
 	}
 
-	public void renderUserProfileParameters(List<RUserProfile> userProfiles) {
+	public void renderUserProfiles(List<RUserProfile> userProfiles) {
 
 		UserSerialiser.renderProfiles(userProfiles, addParameterNode(USER_PROFILES_TAG));
 	}
 
-	public void renderUserUpdateResultParameter(RUserUpdateResult update) {
+	public void renderUserUpdateResult(RUserUpdateResult update) {
 
 		UserUpdateSerialiser.renderResult(update, addParameterNode(USER_UPDATE_RESULT_TAG));
 	}
 
-	public void renderRoleParameter(RRole role) {
+	public void renderLoginResult(RLoginResult result) {
 
-		RoleSerialiser.renderRole(role, addParameterNode(ROLE_TAG));
+		if (result.loginOk()) {
+
+			renderRole(result.getRole());
+		}
 	}
 
-	public List<String> parseRoleNameParameters() {
+	public List<String> parseRoleNames() {
 
 		return RoleSerialiser.parseRoleNames(getParameterNode(ROLE_NAMES_TAG));
 	}
 
-	public List<RUserProfile> parseUserProfileParameters() {
+	public List<RUserProfile> parseUserProfiles() {
 
 		return UserSerialiser.parseProfiles(getParameterNode(USER_PROFILES_TAG));
 	}
 
-	public RUserUpdateResult parseUserUpdateResultParameter() {
+	public RUserUpdateResult parseUserUpdateResult() {
 
 		return UserUpdateSerialiser.parseResult(getParameterNode(USER_UPDATE_RESULT_TAG));
 	}
 
-	public RRole parseRoleParameter() {
+	public RLoginResult parseLoginResult() {
+
+		if (isParameterNode(ROLE_TAG)) {
+
+			return new RLoginResult(parseRole());
+		}
+
+		return RLoginResult.LOGIN_FAILED;
+	}
+
+	private void renderRole(RRole role) {
+
+		RoleSerialiser.renderRole(role, addParameterNode(ROLE_TAG));
+	}
+
+	private RRole parseRole() {
 
 		return RoleSerialiser.parseRole(getParameterNode(ROLE_TAG));
 	}

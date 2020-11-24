@@ -105,7 +105,7 @@ public abstract class RAdminServer extends RNetServer {
 
 		void renderOutput(RAdminResponseSerialiser renderer, List<String> output) {
 
-			renderer.renderRoleNameParameters(output);
+			renderer.renderRoleNames(output);
 		}
 
 		List<String> performAction() {
@@ -123,7 +123,7 @@ public abstract class RAdminServer extends RNetServer {
 
 		void renderOutput(RAdminResponseSerialiser renderer, List<RUserProfile> output) {
 
-			renderer.renderUserProfileParameters(output);
+			renderer.renderUserProfiles(output);
 		}
 
 		List<RUserProfile> performAction() {
@@ -141,12 +141,12 @@ public abstract class RAdminServer extends RNetServer {
 
 		RUserUpdate parseInput(RAdminRequestSerialiser parser) {
 
-			return parser.parseUserUpdateParameter();
+			return parser.parseUserUpdate();
 		}
 
 		void renderOutput(RAdminResponseSerialiser renderer, RUserUpdateResult output) {
 
-			renderer.renderUserUpdateResultParameter(output);
+			renderer.renderUserUpdateResult(output);
 		}
 
 		RUserUpdateResult performAction(RUserUpdate input) {
@@ -155,7 +155,7 @@ public abstract class RAdminServer extends RNetServer {
 		}
 	}
 
-	private class LoginChecks extends InputDrivenActions<RLoginId, RRole> {
+	private class LoginChecks extends InputDrivenActions<RLoginId, RLoginResult> {
 
 		LoginChecks() {
 
@@ -164,15 +164,15 @@ public abstract class RAdminServer extends RNetServer {
 
 		RLoginId parseInput(RAdminRequestSerialiser parser) {
 
-			return parser.parseLoginIdParameter();
+			return parser.parseLoginId();
 		}
 
-		void renderOutput(RAdminResponseSerialiser renderer, RRole output) {
+		void renderOutput(RAdminResponseSerialiser renderer, RLoginResult output) {
 
-			renderer.renderRoleParameter(output);
+			renderer.renderLoginResult(output);
 		}
 
-		RRole performAction(RLoginId input) {
+		RLoginResult performAction(RLoginId input) {
 
 			return adminManager.checkLogin(input);
 		}

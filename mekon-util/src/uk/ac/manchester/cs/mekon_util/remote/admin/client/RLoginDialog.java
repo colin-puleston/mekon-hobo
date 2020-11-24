@@ -89,7 +89,7 @@ public class RLoginDialog extends EntryDialog {
 		newPasswordChecker.setValidLength(min, max);
 	}
 
-	public RRole checkLogin() {
+	public RLoginResult checkLogin() {
 
 		return checkEntry();
 	}
@@ -119,6 +119,6 @@ public class RLoginDialog extends EntryDialog {
 
 	private void checkRegister() {
 
-		setLoggedInRole(new RegisterDialog(this, newPasswordChecker).checkEntry());
+		setLoginResult(new RegisterDialog(this, newPasswordChecker).checkEntry());
 	}
 }

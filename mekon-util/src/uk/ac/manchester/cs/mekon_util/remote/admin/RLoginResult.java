@@ -24,47 +24,27 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
-
 /**
  * @author Colin Puleston
  */
-public abstract class RAdminMessageSerialiser {
+public class RLoginResult {
 
-	private XDocument document;
+	static public final RLoginResult LOGIN_FAILED = new RLoginResult(null);
 
-	public XDocument getDocument() {
+	private RRole role;
 
-		return document;
+	public boolean loginOk() {
+
+		return role != null;
 	}
 
-	RAdminMessageSerialiser(String rootTag) {
+	public RRole getRole() {
 
-		this(new XDocument(rootTag));
+		return role;
 	}
 
-	RAdminMessageSerialiser(XDocument document) {
+	RLoginResult(RRole role) {
 
-		this.document = document;
-	}
-
-	XNode addParameterNode(String tag) {
-
-		return getRootNode().addChild(tag);
-	}
-
-	boolean isParameterNode(String tag) {
-
-		return getRootNode().hasChild(tag);
-	}
-
-	XNode getParameterNode(String tag) {
-
-		return getRootNode().getChild(tag);
-	}
-
-	XNode getRootNode() {
-
-		return document.getRootNode();
+		this.role = role;
 	}
 }

@@ -56,7 +56,7 @@ abstract class EntryDialog extends GDialog {
 	private KProxyPasswords proxyPasswords;
 	private String appName;
 
-	private RRole loggedInRole = RRole.NO_ACCESS;
+	private RLoginResult loginResult = RLoginResult.LOGIN_FAILED;
 
 	private List<JTextField> fields = new ArrayList<JTextField>();
 	private OkButton okButton = new OkButton();
@@ -129,7 +129,7 @@ abstract class EntryDialog extends GDialog {
 
 		protected void doButtonThing() {
 
-			loggedInRole = RRole.NO_ACCESS;
+			loginResult = RLoginResult.LOGIN_FAILED;
 
 			dispose();
 		}
@@ -176,11 +176,11 @@ abstract class EntryDialog extends GDialog {
 		addWindowListener(new WindowCloseListener());
 	}
 
-	RRole checkEntry() {
+	RLoginResult checkEntry() {
 
 		display(createMainPanel());
 
-		return loggedInRole;
+		return loginResult;
 	}
 
 	abstract void addFields(JPanel panel);
@@ -215,9 +215,9 @@ abstract class EntryDialog extends GDialog {
 
 	abstract RLoginId createLoginId();
 
-	void setLoggedInRole(RRole role) {
+	void setLoginResult(RLoginResult loginResult) {
 
-		loggedInRole = role;
+		this.loginResult = loginResult;
 	}
 
 	private JPanel createMainPanel() {
@@ -264,26 +264,38 @@ abstract class EntryDialog extends GDialog {
 
 	private void checkPerformLogin() {
 
-		if (checkCanPerformLogin()) {
+		if (checkCanPerformLogin() && performLogin()) {
 
-			loggedInRole = adminClient.checkLogin(createLoginId());
-
-			if (loggedInRole == RRole.NO_ACCESS) {
-
-				showMessage("Login failed!");
-			}
-			else {
-
-				if (administratorLoginOnly() && loggedInRole != RRole.ADMIN) {
-
-					loggedInRole = RRole.NO_ACCESS;
-
-					showMessage("Administrator login failed!");
-				}
-
-				dispose();
-			}
+			dispose();
 		}
+	}
+
+	private boolean performLogin() {
+
+		loginResult = adminClient.checkLogin(createLoginId());
+
+		if (loginResult.loginOk()) {
+
+			if (!administratorLoginFail()) {
+
+				return true;
+			}
+
+			loginResult = RLoginResult.LOGIN_FAILED;
+
+			showMessage("Administrator login failed!");
+		}
+		else {
+
+			showMessage("Login failed!");
+		}
+
+		return false;
+	}
+
+	private boolean administratorLoginFail() {
+
+		return administratorLoginOnly() && loginResult.getRole() != RRole.ADMIN;
 	}
 
 	private boolean allFieldsPopulated() {

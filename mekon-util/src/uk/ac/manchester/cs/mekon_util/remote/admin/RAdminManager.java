@@ -56,7 +56,7 @@ public class RAdminManager {
 		return update.performUpdate(roleFinder, userFile);
 	}
 
-	public synchronized RRole checkLogin(RLoginId loginId) {
+	public synchronized RLoginResult checkLogin(RLoginId loginId) {
 
 		User user = resolveUser(loginId);
 
@@ -66,13 +66,13 @@ public class RAdminManager {
 
 			if (role != null) {
 
-				return role;
+				return new RLoginResult(role);
 			}
 
 			reportUserRoleError(user);
 		}
 
-		return RRole.NO_ACCESS;
+		return RLoginResult.LOGIN_FAILED;
 	}
 
 	private User resolveUser(RLoginId loginId) {
