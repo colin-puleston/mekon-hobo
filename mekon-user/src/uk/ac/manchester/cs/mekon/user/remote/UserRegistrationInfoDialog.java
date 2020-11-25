@@ -24,49 +24,58 @@
 
 package uk.ac.manchester.cs.mekon.user.remote;
 
-import java.net.*;
+import java.awt.*;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon_util.remote.admin.*;
-import uk.ac.manchester.cs.mekon_util.remote.admin.client.*;
-import uk.ac.manchester.cs.mekon_util.misc.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
+
+import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 
 /**
  * @author Colin Puleston
  */
-public class MekonRemoteAdministrator extends GFrame {
+class UserRegistrationInfoDialog extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE = "Mekon Remote Administrator";
+	static private final String MAIN_TITLE = "Registration Info";
 
-	static private final int FRAME_WIDTH = 550;
-	static private final int FRAME_HEIGHT = 300;
+	static private final String NAME_TITLE = "Name";
+	static private final String ROLE_TITLE = "Role";
+	static private final String REG_TOKEN_TITLE = "Registration Token";
 
-	private RAdminClient adminClient;
+	static private final Dimension WINDOW_SIZE = new Dimension(250, 130);
 
-	public MekonRemoteAdministrator(URL serverURL, KProxyPasswords proxyPasswords) {
+	UserRegistrationInfoDialog(JComponent parent, RUserProfile profile) {
 
-		super(TITLE, FRAME_WIDTH, FRAME_HEIGHT);
+		super(parent, MAIN_TITLE, true);
 
-		adminClient = new RAdminClient(serverURL);
+		setPreferredSize(WINDOW_SIZE);
 
-		if (attemptLogin(proxyPasswords)) {
-
-			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-			display(new UsersPanel(adminClient));
-		}
+		display(new JScrollPane(createInfoArea(profile)));
 	}
 
-	private boolean attemptLogin(KProxyPasswords proxyPasswords) {
+	private JTextArea createInfoArea(RUserProfile profile) {
 
-		return createLoginDialog(proxyPasswords).checkLogin() != RLoginResult.LOGIN_FAILED;
+		JTextArea area = new JTextArea();
+
+		configureInfoArea(area);
+
+		addInfoLine(area, NAME_TITLE, profile.getName());
+		addInfoLine(area, ROLE_TITLE, profile.getRoleName());
+		addInfoLine(area, REG_TOKEN_TITLE, profile.getRegistrationToken());
+
+		return area;
 	}
 
-	private RLoginDialog createLoginDialog(KProxyPasswords proxyPasswords) {
+	private void configureInfoArea(JTextArea area) {
 
-		return new RAdministratorLoginDialog(adminClient, proxyPasswords, TITLE);
+		area.setEditable(false);
+		area.setFont(GFonts.toMedium(area.getFont()));
+	}
+
+	private void addInfoLine(JTextArea area, String title, String value) {
+
+		area.append(title + ": \"" + value + "\"\n");
 	}
 }

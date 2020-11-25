@@ -124,6 +124,11 @@ abstract class UserManager {
 		return profiles;
 	}
 
+	synchronized RUserProfile getProfile(int index) {
+
+		return profiles.get(index);
+	}
+
 	abstract void onUpdate();
 
 	private void editUser(RUserProfile profile) {

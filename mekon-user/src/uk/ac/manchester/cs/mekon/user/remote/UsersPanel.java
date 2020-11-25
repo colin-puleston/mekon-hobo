@@ -45,14 +45,15 @@ class UsersPanel extends JPanel {
 
 	static private final String USERS_TITLE = "User";
 	static private final String ROLES_TITLE = "Role";
-	static private final String REG_STATUS_TITLE = "Status (Registration Token)";
+	static private final String REG_STATUS_TITLE = "Status";
 
 	static private final String REGISTERED_STATUS_LABEL = "Registered";
-	static private final String UNREGISTERED_STATUS_LABEL_FORMAT = "Not Registered (%s)";
+	static private final String UNREGISTERED_STATUS_LABEL = "Not Registered";
 
 	static private final String ADD_BUTTON_LABEL = "Add...";
 	static private final String EDIT_BUTTON_LABEL = "Edit...";
 	static private final String DELETE_BUTTON_LABEL = "Delete";
+	static private final String REG_INFO_BUTTON_LABEL = "Registration Info...";
 
 	static private final Color USER_NAME_TEXT_CLR = Color.BLUE;
 	static private final Color ROLE_NAME_TEXT_CLR = Color.RED;
@@ -110,14 +111,7 @@ class UsersPanel extends JPanel {
 				return createLabel(REGISTERED_STATUS_LABEL, REGISTERED_STATUS_TEXT_CLR);
 			}
 
-			return createLabel(getUnregisteredStatusText(), UNREGISTERED_STATUS_TEXT_CLR);
-		}
-
-		private String getUnregisteredStatusText() {
-
-			String regToken = profile.getRegistrationToken();
-
-			return String.format(UNREGISTERED_STATUS_LABEL_FORMAT, regToken);
+			return createLabel(UNREGISTERED_STATUS_LABEL, UNREGISTERED_STATUS_TEXT_CLR);
 		}
 	}
 
@@ -178,7 +172,12 @@ class UsersPanel extends JPanel {
 
 		void updateEnabling() {
 
-			setEnabled(selectedRow != -1);
+			setEnabled(enableButton());
+		}
+
+		boolean enableButton() {
+
+			return selectedRow != -1;
 		}
 	}
 
@@ -212,6 +211,26 @@ class UsersPanel extends JPanel {
 		}
 	}
 
+	private class RegistrationInfoButton extends SelectionDependentButton {
+
+		static private final long serialVersionUID = -1;
+
+		protected void doButtonThing() {
+
+			showRegistrationInfo(getSelectedProfile());
+		}
+
+		RegistrationInfoButton() {
+
+			super(REG_INFO_BUTTON_LABEL);
+		}
+
+		boolean enableButton() {
+
+			return super.enableButton() && getSelectedProfile().unregistered();
+		}
+	}
+
 	UsersPanel(RAdminClient adminClient) {
 
 		super(new BorderLayout());
@@ -230,6 +249,16 @@ class UsersPanel extends JPanel {
 
 	private JPanel createButtonsPanel() {
 
+		JPanel panel = new JPanel(new BorderLayout());
+
+		panel.add(createUpdateButtonsPanel(), BorderLayout.WEST);
+		panel.add(createRegistrationInfoButtonPanel(), BorderLayout.EAST);
+
+		return panel;
+	}
+
+	private JPanel createUpdateButtonsPanel() {
+
 		JPanel panel = new JPanel();
 
 		panel.add(new AddButton());
@@ -237,6 +266,15 @@ class UsersPanel extends JPanel {
 		panel.add(new EditButton());
 		panel.add(Box.createHorizontalStrut(10));
 		panel.add(new DeleteButton());
+
+		return panel;
+	}
+
+	private JPanel createRegistrationInfoButtonPanel() {
+
+		JPanel panel = new JPanel();
+
+		panel.add(new RegistrationInfoButton());
 
 		return panel;
 	}
@@ -265,6 +303,11 @@ class UsersPanel extends JPanel {
 		}
 	}
 
+	private void showRegistrationInfo(RUserProfile profile) {
+
+		new UserRegistrationInfoDialog(this, profile);
+	}
+
 	private JLabel createLabel(String text, Color clr) {
 
 		JLabel label = new JLabel(text);
@@ -281,5 +324,10 @@ class UsersPanel extends JPanel {
 		}
 
 		return label;
+	}
+
+	private RUserProfile getSelectedProfile() {
+
+		return userManager.getProfile(selectedRow);
 	}
 }
