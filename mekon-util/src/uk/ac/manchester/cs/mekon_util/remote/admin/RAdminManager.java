@@ -35,6 +35,8 @@ public class RAdminManager {
 	private UserFile userFile;
 	private RoleFinder roleFinder;
 
+	private LockManager lockManager = new LockManager();
+
 	public RAdminManager(File adminDirectory) {
 
 		userFile = new UserFile(adminDirectory);
@@ -73,6 +75,16 @@ public class RAdminManager {
 		}
 
 		return RLoginResult.LOGIN_FAILED;
+	}
+
+	public synchronized RLockingResult requestLock(RLock lock) {
+
+		return lockManager.requestLock(lock);
+	}
+
+	public synchronized void releaseLock(String resourceId) {
+
+		lockManager.releaseLock(resourceId);
 	}
 
 	private User resolveUser(RLoginId loginId) {

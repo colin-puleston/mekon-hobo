@@ -38,6 +38,7 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 	static private final String USER_PROFILES_TAG = "UserProfiles";
 	static private final String USER_UPDATE_RESULT_TAG = "UserUpdateResult";
 	static private final String ROLE_TAG = "Role";
+	static private final String LOCKING_RESULT_TAG = "LockingResult";
 
 	private XNode rootNode;
 
@@ -74,6 +75,13 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 		}
 	}
 
+	public void renderLockingResult(RLockingResult result) {
+
+		LockingSerialiser.renderLockingResult(
+			result,
+			addParameterNode(LOCKING_RESULT_TAG));
+	}
+
 	public List<String> parseRoleNames() {
 
 		return RoleSerialiser.parseRoleNames(getParameterNode(ROLE_NAMES_TAG));
@@ -97,6 +105,12 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 		}
 
 		return RLoginResult.LOGIN_FAILED;
+	}
+
+	public RLockingResult parseLockingResult() {
+
+		return LockingSerialiser.parseLockingResult(
+					addParameterNode(LOCKING_RESULT_TAG));
 	}
 
 	private void renderRole(RRole role) {

@@ -24,64 +24,53 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import uk.ac.manchester.cs.mekon_util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-public class RLoginId {
+class LockingSerialiser {
 
-	private UserId userId;
-	private String newPassword;
+	static private final String OWNER_NAME_ATTR = "ownerName";
+	static private final String RESOURCE_ID_ATTR = "resourceId";
 
-	public RLoginId(String name, String currentPassword) {
+	static void renderLock(RLock lock, XNode node) {
 
-		this(name, currentPassword, null);
+		node.setValue(OWNER_NAME_ATTR, lock.getOwnerName());
+		node.setValue(RESOURCE_ID_ATTR, lock.getResourceId());
 	}
 
-	public RLoginId(String name, String currentPassword, String newPassword) {
+	static void renderLockingResult(RLockingResult result, XNode node) {
 
-		this(new UserId(name, currentPassword), newPassword);
-	}
+		if (!result.lockObtained()) {
 
-	public String getName() {
-
-		return userId.getName();
-	}
-
-	public String getPassword() {
-
-		return userId.getPassword();
-	}
-
-	public boolean newPassword() {
-
-		return newPassword != null;
-	}
-
-	public String getNewPassword() {
-
-		if (newPassword == null) {
-
-			throw new KAccessException("New password has not been set!");
+			node.setValue(OWNER_NAME_ATTR, result.getCurrentOwnerName());
 		}
-
-		return newPassword;
 	}
 
-	RLoginId(UserId userId, String newPassword) {
+	static void renderLockResourceId(String resourceId, XNode node) {
 
-		this.userId = userId;
-		this.newPassword = newPassword;
+		node.setValue(RESOURCE_ID_ATTR, resourceId);
 	}
 
-	UserId getUserId() {
+	static RLock parseLock(XNode node) {
 
-		return userId;
+		return new RLock(
+					node.getString(OWNER_NAME_ATTR),
+					node.getString(RESOURCE_ID_ATTR));
 	}
 
-	User checkUpdateUser(User user) {
+	static RLockingResult parseLockingResult(XNode node) {
 
-		return newPassword != null ? user.updatePassword(newPassword) : null;
+		String currentOwner = node.getString(OWNER_NAME_ATTR, null);
+
+		return currentOwner != null
+					? RLockingResult.currentlyLocked(currentOwner)
+					: RLockingResult.LOCK_OBTAINED;
+	}
+
+	static String parseLockResourceId(XNode node) {
+
+		return node.getString(RESOURCE_ID_ATTR);
 	}
 }

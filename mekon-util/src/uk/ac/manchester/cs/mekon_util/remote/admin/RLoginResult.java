@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
+import uk.ac.manchester.cs.mekon_util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -39,6 +41,11 @@ public class RLoginResult {
 	}
 
 	public RRole getRole() {
+
+		if (role == null) {
+
+			throw new KAccessException("Failed login - no role assigned!");
+		}
 
 		return role;
 	}

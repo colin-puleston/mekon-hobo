@@ -24,64 +24,32 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import uk.ac.manchester.cs.mekon_util.*;
+import java.util.*;
 
 /**
  * @author Colin Puleston
  */
-public class RLoginId {
+class LockManager {
 
-	private UserId userId;
-	private String newPassword;
+	private Map<String, RLock> locksByResourceId = new HashMap<String, RLock>();
 
-	public RLoginId(String name, String currentPassword) {
+	RLockingResult requestLock(RLock lock) {
 
-		this(name, currentPassword, null);
-	}
+		String resourceId = lock.getResourceId();
+		RLock currentLock = locksByResourceId.get(resourceId);
 
-	public RLoginId(String name, String currentPassword, String newPassword) {
+		if (currentLock != null) {
 
-		this(new UserId(name, currentPassword), newPassword);
-	}
-
-	public String getName() {
-
-		return userId.getName();
-	}
-
-	public String getPassword() {
-
-		return userId.getPassword();
-	}
-
-	public boolean newPassword() {
-
-		return newPassword != null;
-	}
-
-	public String getNewPassword() {
-
-		if (newPassword == null) {
-
-			throw new KAccessException("New password has not been set!");
+			return RLockingResult.currentlyLocked(currentLock.getOwnerName());
 		}
 
-		return newPassword;
+		locksByResourceId.put(resourceId, lock);
+
+		return RLockingResult.LOCK_OBTAINED;
 	}
 
-	RLoginId(UserId userId, String newPassword) {
+	void releaseLock(String resourceId) {
 
-		this.userId = userId;
-		this.newPassword = newPassword;
-	}
-
-	UserId getUserId() {
-
-		return userId;
-	}
-
-	User checkUpdateUser(User user) {
-
-		return newPassword != null ? user.updatePassword(newPassword) : null;
+		locksByResourceId.remove(resourceId);
 	}
 }

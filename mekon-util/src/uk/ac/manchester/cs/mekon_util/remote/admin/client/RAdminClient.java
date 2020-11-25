@@ -38,10 +38,12 @@ public class RAdminClient {
 
 	private RNetConnection connection;
 
-	private LoginChecks loginChecks = new LoginChecks();
-	private UserUpdates userUpdates = new UserUpdates();
 	private RoleNameRetrievals roleNameRetrievals = new RoleNameRetrievals();
 	private UserProfileRetrievals userProfileRetrievals = new UserProfileRetrievals();
+	private UserUpdates userUpdates = new UserUpdates();
+	private LoginChecks loginChecks = new LoginChecks();
+	private LockRequests lockRequests = new LockRequests();
+	private LockReleases lockReleases = new LockReleases();
 
 	private abstract class ServerActions<I, O> {
 
@@ -75,7 +77,15 @@ public class RAdminClient {
 		}
 	}
 
-	private abstract class InputFreeServerActions<O> extends ServerActions<Object, O> {
+	private abstract class InputOnlyServerActions<I> extends ServerActions<I, Object> {
+
+		Object parseOutput(RAdminResponseSerialiser parser) {
+
+			return null;
+		}
+	}
+
+	private abstract class OutputOnlyServerActions<O> extends ServerActions<Object, O> {
 
 		O performAction() {
 
@@ -86,11 +96,11 @@ public class RAdminClient {
 		}
 	}
 
-	private class RoleNameRetrievals extends InputFreeServerActions<List<String>> {
+	private class RoleNameRetrievals extends OutputOnlyServerActions<List<String>> {
 
 		RAdminActionType getActionType() {
 
-			return RAdminActionType.GET_ROLES_NAMES;
+			return RAdminActionType.ROLE_NAME_RETRIEVAL;
 		}
 
 		List<String> parseOutput(RAdminResponseSerialiser parser) {
@@ -99,11 +109,11 @@ public class RAdminClient {
 		}
 	}
 
-	private class UserProfileRetrievals extends InputFreeServerActions<List<RUserProfile>> {
+	private class UserProfileRetrievals extends OutputOnlyServerActions<List<RUserProfile>> {
 
 		RAdminActionType getActionType() {
 
-			return RAdminActionType.GET_USER_PROFILES;
+			return RAdminActionType.USER_PROFILE_RETRIEVAL;
 		}
 
 		List<RUserProfile> parseOutput(RAdminResponseSerialiser parser) {
@@ -116,7 +126,7 @@ public class RAdminClient {
 
 		RAdminActionType getActionType() {
 
-			return RAdminActionType.UPDATE_USERS;
+			return RAdminActionType.USER_UPDATE;
 		}
 
 		void renderInput(RAdminRequestSerialiser renderer, RUserUpdate input) {
@@ -134,7 +144,7 @@ public class RAdminClient {
 
 		RAdminActionType getActionType() {
 
-			return RAdminActionType.CHECK_LOGIN;
+			return RAdminActionType.LOGIN_CHECK;
 		}
 
 		void renderInput(RAdminRequestSerialiser renderer, RLoginId input) {
@@ -145,6 +155,37 @@ public class RAdminClient {
 		RLoginResult parseOutput(RAdminResponseSerialiser parser) {
 
 			return parser.parseLoginResult();
+		}
+	}
+
+	private class LockRequests extends ServerActions<RLock, RLockingResult> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.LOCK_REQUEST;
+		}
+
+		void renderInput(RAdminRequestSerialiser renderer, RLock input) {
+
+			renderer.renderLock(input);
+		}
+
+		RLockingResult parseOutput(RAdminResponseSerialiser parser) {
+
+			return parser.parseLockingResult();
+		}
+	}
+
+	private class LockReleases extends InputOnlyServerActions<String> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.LOCK_RELEASE;
+		}
+
+		void renderInput(RAdminRequestSerialiser renderer, String input) {
+
+			renderer.renderLockRelease(input);
 		}
 	}
 
@@ -171,5 +212,15 @@ public class RAdminClient {
 	public RLoginResult checkLogin(RLoginId userId) {
 
 		return loginChecks.performAction(userId);
+	}
+
+	public RLockingResult requestLock(RLock lock) {
+
+		return lockRequests.performAction(lock);
+	}
+
+	public void releaseLock(String resourceId) {
+
+		lockReleases.performAction(resourceId);
 	}
 }

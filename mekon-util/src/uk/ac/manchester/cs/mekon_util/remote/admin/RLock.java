@@ -24,64 +24,27 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
-import uk.ac.manchester.cs.mekon_util.*;
-
 /**
  * @author Colin Puleston
  */
-public class RLoginId {
+public class RLock {
 
-	private UserId userId;
-	private String newPassword;
+	private String ownerName;
+	private String resourceId;
 
-	public RLoginId(String name, String currentPassword) {
+	public RLock(String ownerName, String resourceId) {
 
-		this(name, currentPassword, null);
+		this.ownerName = ownerName;
+		this.resourceId = resourceId;
 	}
 
-	public RLoginId(String name, String currentPassword, String newPassword) {
+	public String getOwnerName() {
 
-		this(new UserId(name, currentPassword), newPassword);
+		return ownerName;
 	}
 
-	public String getName() {
+	public String getResourceId() {
 
-		return userId.getName();
-	}
-
-	public String getPassword() {
-
-		return userId.getPassword();
-	}
-
-	public boolean newPassword() {
-
-		return newPassword != null;
-	}
-
-	public String getNewPassword() {
-
-		if (newPassword == null) {
-
-			throw new KAccessException("New password has not been set!");
-		}
-
-		return newPassword;
-	}
-
-	RLoginId(UserId userId, String newPassword) {
-
-		this.userId = userId;
-		this.newPassword = newPassword;
-	}
-
-	UserId getUserId() {
-
-		return userId;
-	}
-
-	User checkUpdateUser(User user) {
-
-		return newPassword != null ? user.updatePassword(newPassword) : null;
+		return resourceId;
 	}
 }

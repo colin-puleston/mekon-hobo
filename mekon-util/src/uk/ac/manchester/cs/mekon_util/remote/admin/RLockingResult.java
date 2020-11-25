@@ -29,59 +29,34 @@ import uk.ac.manchester.cs.mekon_util.*;
 /**
  * @author Colin Puleston
  */
-public class RLoginId {
+public class RLockingResult {
 
-	private UserId userId;
-	private String newPassword;
+	static final RLockingResult LOCK_OBTAINED = new RLockingResult(null);
 
-	public RLoginId(String name, String currentPassword) {
+	static public RLockingResult currentlyLocked(String currentOwnerName) {
 
-		this(name, currentPassword, null);
+		return new RLockingResult(currentOwnerName);
 	}
 
-	public RLoginId(String name, String currentPassword, String newPassword) {
+	private String currentOwnerName;
 
-		this(new UserId(name, currentPassword), newPassword);
+	public boolean lockObtained() {
+
+		return currentOwnerName == null;
 	}
 
-	public String getName() {
+	public String getCurrentOwnerName() {
 
-		return userId.getName();
-	}
+		if (currentOwnerName == null) {
 
-	public String getPassword() {
-
-		return userId.getPassword();
-	}
-
-	public boolean newPassword() {
-
-		return newPassword != null;
-	}
-
-	public String getNewPassword() {
-
-		if (newPassword == null) {
-
-			throw new KAccessException("New password has not been set!");
+			throw new KAccessException("No current owner!");
 		}
 
-		return newPassword;
+		return currentOwnerName;
 	}
 
-	RLoginId(UserId userId, String newPassword) {
+	private RLockingResult(String currentOwnerName) {
 
-		this.userId = userId;
-		this.newPassword = newPassword;
-	}
-
-	UserId getUserId() {
-
-		return userId;
-	}
-
-	User checkUpdateUser(User user) {
-
-		return newPassword != null ? user.updatePassword(newPassword) : null;
+		this.currentOwnerName = currentOwnerName;
 	}
 }

@@ -45,10 +45,12 @@ public abstract class RAdminServer extends RNetServer {
 
 	private abstract class Actions<O> {
 
-		Actions(RAdminActionType actionType) {
+		Actions() {
 
-			allActions.put(actionType, this);
+			allActions.put(getActionType(), this);
 		}
+
+		abstract RAdminActionType getActionType();
 
 		abstract XDocument performAction(RAdminRequestSerialiser requestParser);
 
@@ -64,27 +66,17 @@ public abstract class RAdminServer extends RNetServer {
 		}
 	}
 
-	private abstract class InputFreeActions<O> extends Actions<O> {
-
-		InputFreeActions(RAdminActionType actionType) {
-
-			super(actionType);
-		}
+	private abstract class OutputOnlyActions<O> extends Actions<O> {
 
 		XDocument performAction(RAdminRequestSerialiser requestParser) {
 
-			return renderResponse(performAction());
+			return renderResponse(performOutputOnlyAction());
 		}
 
-		abstract O performAction();
+		abstract O performOutputOnlyAction();
 	}
 
 	private abstract class InputDrivenActions<I, O> extends Actions<O> {
-
-		InputDrivenActions(RAdminActionType actionType) {
-
-			super(actionType);
-		}
 
 		XDocument performAction(RAdminRequestSerialiser requestParser) {
 
@@ -96,11 +88,26 @@ public abstract class RAdminServer extends RNetServer {
 		abstract O performAction(I input);
 	}
 
-	private class RoleNameRetrievals extends InputFreeActions<List<String>> {
+	private abstract class InputOnlyActions<I> extends InputDrivenActions<I, Object> {
 
-		RoleNameRetrievals() {
+		Object performAction(String input) {
 
-			super(RAdminActionType.GET_ROLES_NAMES);
+			performInputOnlyAction(input);
+
+			return null;
+		}
+
+		void renderOutput(RAdminResponseSerialiser renderer, Object output) {
+		}
+
+		abstract void performInputOnlyAction(String input);
+	}
+
+	private class RoleNameRetrievals extends OutputOnlyActions<List<String>> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.ROLE_NAME_RETRIEVAL;
 		}
 
 		void renderOutput(RAdminResponseSerialiser renderer, List<String> output) {
@@ -108,17 +115,17 @@ public abstract class RAdminServer extends RNetServer {
 			renderer.renderRoleNames(output);
 		}
 
-		List<String> performAction() {
+		List<String> performOutputOnlyAction() {
 
 			return adminManager.getRoleNames();
 		}
 	}
 
-	private class UserProfileRetrievals extends InputFreeActions<List<RUserProfile>> {
+	private class UserProfileRetrievals extends OutputOnlyActions<List<RUserProfile>> {
 
-		UserProfileRetrievals() {
+		RAdminActionType getActionType() {
 
-			super(RAdminActionType.GET_USER_PROFILES);
+			return RAdminActionType.USER_PROFILE_RETRIEVAL;
 		}
 
 		void renderOutput(RAdminResponseSerialiser renderer, List<RUserProfile> output) {
@@ -126,17 +133,17 @@ public abstract class RAdminServer extends RNetServer {
 			renderer.renderUserProfiles(output);
 		}
 
-		List<RUserProfile> performAction() {
+		List<RUserProfile> performOutputOnlyAction() {
 
 			return adminManager.getUserProfiles();
 		}
 	}
 
-	private class UsersEdits extends InputDrivenActions<RUserUpdate, RUserUpdateResult> {
+	private class UserUpdates extends InputDrivenActions<RUserUpdate, RUserUpdateResult> {
 
-		UsersEdits() {
+		RAdminActionType getActionType() {
 
-			super(RAdminActionType.UPDATE_USERS);
+			return RAdminActionType.USER_UPDATE;
 		}
 
 		RUserUpdate parseInput(RAdminRequestSerialiser parser) {
@@ -157,9 +164,9 @@ public abstract class RAdminServer extends RNetServer {
 
 	private class LoginChecks extends InputDrivenActions<RLoginId, RLoginResult> {
 
-		LoginChecks() {
+		RAdminActionType getActionType() {
 
-			super(RAdminActionType.CHECK_LOGIN);
+			return RAdminActionType.LOGIN_CHECK;
 		}
 
 		RLoginId parseInput(RAdminRequestSerialiser parser) {
@@ -178,14 +185,57 @@ public abstract class RAdminServer extends RNetServer {
 		}
 	}
 
+	private class LockRequests extends InputDrivenActions<RLock, RLockingResult> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.LOCK_REQUEST;
+		}
+
+		RLock parseInput(RAdminRequestSerialiser parser) {
+
+			return parser.parseLock();
+		}
+
+		void renderOutput(RAdminResponseSerialiser renderer, RLockingResult output) {
+
+			renderer.renderLockingResult(output);
+		}
+
+		RLockingResult performAction(RLock input) {
+
+			return adminManager.requestLock(input);
+		}
+	}
+
+	private class LockReleases extends InputOnlyActions<String> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.LOCK_RELEASE;
+		}
+
+		String parseInput(RAdminRequestSerialiser parser) {
+
+			return parser.parseLockRelease();
+		}
+
+		void performInputOnlyAction(String input) {
+
+			adminManager.releaseLock(input);
+		}
+	}
+
 	protected void initNetServer() {
 
 		adminManager = new RAdminManager(getAdminDirectory());
 
 		new RoleNameRetrievals();
 		new UserProfileRetrievals();
-		new UsersEdits();
+		new UserUpdates();
 		new LoginChecks();
+		new LockRequests();
+		new LockReleases();
 	}
 
 	protected XDocument performAction(XDocument request) {

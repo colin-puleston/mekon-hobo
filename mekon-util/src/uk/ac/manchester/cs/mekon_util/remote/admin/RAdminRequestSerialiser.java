@@ -32,8 +32,10 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 
 	static private final String ROOT_TAG = "AdminRequest";
-	static private final String LOGIN_ID_TAG = "LoginId";
 	static private final String USER_UPDATE_TAG = "UserUpdate";
+	static private final String LOGIN_ID_TAG = "LoginId";
+	static private final String LOCK_TAG = "Lock";
+	static private final String LOCK_RELEASE_TAG = "LockRelease";
 
 	static private final String ACTION_TYPE_ATTR = "actionType";
 
@@ -52,14 +54,24 @@ public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 		getRootNode().setValue(ACTION_TYPE_ATTR, actionType);
 	}
 
+	public void renderUserUpdate(RUserUpdate update) {
+
+		UserUpdateSerialiser.renderUpdate(update, addParameterNode(USER_UPDATE_TAG));
+	}
+
 	public void renderLoginId(RLoginId userId) {
 
 		UserSerialiser.renderLoginId(userId, addParameterNode(LOGIN_ID_TAG));
 	}
 
-	public void renderUserUpdate(RUserUpdate update) {
+	public void renderLock(RLock lock) {
 
-		UserUpdateSerialiser.renderUpdate(update, addParameterNode(USER_UPDATE_TAG));
+		LockingSerialiser.renderLock(lock, addParameterNode(LOCK_TAG));
+	}
+
+	public void renderLockRelease(String resourceId) {
+
+		LockingSerialiser.renderLockResourceId(resourceId, addParameterNode(LOCK_RELEASE_TAG));
 	}
 
 	public RAdminActionType parseActionType() {
@@ -67,13 +79,23 @@ public class RAdminRequestSerialiser extends RAdminMessageSerialiser {
 		return getRootNode().getEnum(ACTION_TYPE_ATTR, RAdminActionType.class);
 	}
 
+	public RUserUpdate parseUserUpdate() {
+
+		return UserUpdateSerialiser.parseUpdate(getParameterNode(USER_UPDATE_TAG));
+	}
+
 	public RLoginId parseLoginId() {
 
 		return UserSerialiser.parseLoginId(getParameterNode(LOGIN_ID_TAG));
 	}
 
-	public RUserUpdate parseUserUpdate() {
+	public RLock parseLock() {
 
-		return UserUpdateSerialiser.parseUpdate(getParameterNode(USER_UPDATE_TAG));
+		return LockingSerialiser.parseLock(getParameterNode(LOCK_TAG));
+	}
+
+	public String parseLockRelease() {
+
+		return LockingSerialiser.parseLockResourceId(getParameterNode(LOCK_RELEASE_TAG));
 	}
 }

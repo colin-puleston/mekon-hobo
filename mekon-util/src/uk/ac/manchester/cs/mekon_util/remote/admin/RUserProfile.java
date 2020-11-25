@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
+import uk.ac.manchester.cs.mekon_util.*;
+
 /**
  * @author Colin Puleston
  */
@@ -74,7 +76,7 @@ public class RUserProfile {
 
 		if (regToken == null) {
 
-			throw new Error("User has already registered!");
+			throw new KAccessException("User has already registered!");
 		}
 
 		return regToken;
