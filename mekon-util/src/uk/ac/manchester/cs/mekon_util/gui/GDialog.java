@@ -44,6 +44,11 @@ public class GDialog extends JDialog {
 		return modal ? ModalityType.APPLICATION_MODAL : ModalityType.MODELESS;
 	}
 
+	public GDialog(String title, boolean modal) {
+
+		this((Window)null, title, modal);
+	}
+
 	public GDialog(Window ownerWindow, String title, boolean modal) {
 
 		super(ownerWindow, title, getModalityType(modal));

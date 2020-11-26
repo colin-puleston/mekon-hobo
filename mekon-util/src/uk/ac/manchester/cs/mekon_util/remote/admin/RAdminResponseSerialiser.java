@@ -110,7 +110,7 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 	public RLockingResult parseLockingResult() {
 
 		return LockingSerialiser.parseLockingResult(
-					addParameterNode(LOCKING_RESULT_TAG));
+					getParameterNode(LOCKING_RESULT_TAG));
 	}
 
 	private void renderRole(RRole role) {

@@ -94,6 +94,11 @@ public class RLoginDialog extends EntryDialog {
 		return checkEntry();
 	}
 
+	public String getUserName() {
+
+		return usernameField.getText();
+	}
+
 	void addFields(JPanel panel) {
 
 		addField(panel, usernameField, USERNAME_LABEL);
