@@ -131,7 +131,7 @@ public class MekonApp extends GFrame {
 		this.model = model;
 		this.store = store;
 
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		addWindowListener(new StoreRegenCheckInvoker());
 	}

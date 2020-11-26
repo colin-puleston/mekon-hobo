@@ -54,7 +54,7 @@ public class MekonRemoteAdministrator extends GFrame {
 
 		if (attemptLogin(proxyPasswords)) {
 
-			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 			display(new UsersPanel(adminClient));
 		}
