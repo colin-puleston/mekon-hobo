@@ -50,8 +50,6 @@ public interface IStore {
 	 * @param identity Unique identity for instance
 	 * @return Existing instance that was replaced, or null if not
 	 * applicable
-	 * @throws KAccessException if instance frame does not have function
-	 * {@link IFrameFunction#ASSERTION}
 	 */
 	public IFrame add(IFrame instance, CIdentity identity);
 
