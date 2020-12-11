@@ -219,7 +219,7 @@ public class MekonStoreCleaner extends GFrame {
 
 		resaveValidInstances();
 
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		addWindowListener(new InitialCheckInvoker());
 
 		display(createMainPanel(regenReport));

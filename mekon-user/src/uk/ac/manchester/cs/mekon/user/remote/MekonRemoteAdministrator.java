@@ -27,9 +27,7 @@ package uk.ac.manchester.cs.mekon.user.remote;
 import java.net.*;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.client.*;
-import uk.ac.manchester.cs.mekon_util.misc.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -44,29 +42,17 @@ public class MekonRemoteAdministrator extends GFrame {
 	static private final int FRAME_WIDTH = 550;
 	static private final int FRAME_HEIGHT = 300;
 
-	private RAdminClient adminClient;
+	public MekonRemoteAdministrator(URL serverURL) {
 
-	public MekonRemoteAdministrator(URL serverURL, KProxyPasswords proxyPasswords) {
+		this(new RAdminClient(serverURL));
+	}
+
+	public MekonRemoteAdministrator(RAdminClient adminClient) {
 
 		super(TITLE, FRAME_WIDTH, FRAME_HEIGHT);
 
-		adminClient = new RAdminClient(serverURL);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		if (attemptLogin(proxyPasswords)) {
-
-			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
-			display(new UsersPanel(adminClient));
-		}
-	}
-
-	private boolean attemptLogin(KProxyPasswords proxyPasswords) {
-
-		return createLoginDialog(proxyPasswords).checkLogin() != RLoginResult.LOGIN_FAILED;
-	}
-
-	private RLoginDialog createLoginDialog(KProxyPasswords proxyPasswords) {
-
-		return new RAdministratorLoginDialog(adminClient, proxyPasswords, TITLE);
+		display(new UsersPanel(adminClient));
 	}
 }
