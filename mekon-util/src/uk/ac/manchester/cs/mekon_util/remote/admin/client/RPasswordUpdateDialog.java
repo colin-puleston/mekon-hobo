@@ -26,40 +26,48 @@ package uk.ac.manchester.cs.mekon_util.remote.admin.client;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon_util.gui.*;
 import uk.ac.manchester.cs.mekon_util.misc.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 
 /**
  * @author Colin Puleston
  */
-public class RLoginDialog extends RLoginActionDialog {
+public class RPasswordUpdateDialog extends RLoginUpdateDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String ACTION_TYPE_TITLE = "Login";
+	static private final String ACTION_TYPE_TITLE = "Password Update";
 
-	static private final String PASSWORD_LABEL = "Password";
+	static private final String PASSWORD_LABEL = "Current password";
+	static private final String NEW_PASSWORD_DESCRIPTION = "new password";
 
 	private LoginPasswordField passwordField = new LoginPasswordField();
 
-	public RLoginDialog(
-			RAdminClient adminClient,
-			KProxyPasswords proxyPasswords,
-			String appName) {
+	public RPasswordUpdateDialog(
+				RAdminClient adminClient,
+				KProxyPasswords proxyPasswords,
+				String appName) {
 
 		super(adminClient, proxyPasswords, appName, ACTION_TYPE_TITLE);
 	}
 
-	void addFields(JPanel panel) {
-
-		super.addFields(panel);
+	void addValidationField(JPanel panel) {
 
 		addField(panel, passwordField, PASSWORD_LABEL);
 	}
 
-	RLoginId createLoginId(String username) {
+	String getNewPasswordDescription() {
 
-		return new RLoginId(username, passwordField.getProxyPassword());
+		return NEW_PASSWORD_DESCRIPTION;
+	}
+
+	RLoginId createLoginId(String username, String newPassword) {
+
+		return new RLoginId(username, passwordField.getProxyPassword(), newPassword);
+	}
+
+	void checkShowLoginSuccessMessage() {
+
+		showMessage("Password updated for user \"" + getUserName() + "\"");
 	}
 }

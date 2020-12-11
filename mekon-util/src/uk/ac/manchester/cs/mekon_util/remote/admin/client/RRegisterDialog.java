@@ -32,29 +32,42 @@ import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 /**
  * @author Colin Puleston
  */
-public class RAdministratorLoginDialog extends RLoginDialog {
+public class RRegisterDialog extends RLoginUpdateDialog {
 
 	static private final long serialVersionUID = -1;
 
-	public RAdministratorLoginDialog(
+	static private final String ACTION_TYPE_TITLE = "User Registration";
+
+	static private final String REG_TOKEN_LABEL = "Registration token";
+	static private final String NEW_PASSWORD_DESCRIPTION = "password";
+
+	private LoginTextField regTokenField = new LoginTextField();
+
+	public RRegisterDialog(
 				RAdminClient adminClient,
 				KProxyPasswords proxyPasswords,
 				String appName) {
 
-		super(null, adminClient, proxyPasswords, appName);
+		super(adminClient, proxyPasswords, appName, ACTION_TYPE_TITLE);
 	}
 
-	public RAdministratorLoginDialog(
-				JComponent parent,
-				RAdminClient adminClient,
-				KProxyPasswords proxyPasswords,
-				String appName) {
+	void addValidationField(JPanel panel) {
 
-		super(parent, adminClient, proxyPasswords, appName);
+		addField(panel, regTokenField, REG_TOKEN_LABEL);
 	}
 
-	boolean administratorLoginOnly() {
+	String getNewPasswordDescription() {
 
-		return true;
+		return NEW_PASSWORD_DESCRIPTION;
+	}
+
+	RLoginId createLoginId(String username, String newPassword) {
+
+		return new RLoginId(username, regTokenField.getText(), newPassword);
+	}
+
+	void checkShowLoginSuccessMessage() {
+
+		showMessage("Registered user \"" + getUserName() + "\"");
 	}
 }

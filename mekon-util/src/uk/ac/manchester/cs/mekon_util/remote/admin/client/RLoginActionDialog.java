@@ -39,29 +39,34 @@ import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 /**
  * @author Colin Puleston
  */
-abstract class EntryDialog extends GDialog {
+abstract class RLoginActionDialog extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
 	static private final String TITLE_FORMAT = "%s: %s";
 
+	static private final String USERNAME_LABEL = "Username";
+
 	static private final String OK_BUTTON_LABEL = "Ok";
 	static private final String CANCEL_BUTTON_LABEL = "Cancel";
 
 	static private final int WINDOW_WIDTH = 350;
-
-	private JComponent parent;
+	static private final int WINDOW_BASE_HEIGHT = 80;
+	static private final int FIELD_HEIGHT = 55;
 
 	private RAdminClient adminClient;
 	private KProxyPasswords proxyPasswords;
-	private String appName;
+
+	private boolean administratorLoginOnly = false;
 
 	private RLoginResult loginResult = RLoginResult.LOGIN_FAILED;
 
 	private List<JTextField> fields = new ArrayList<JTextField>();
+	private LoginTextField usernameField = new LoginTextField();
+
 	private OkButton okButton = new OkButton();
 
-	class EntryTextField extends GTextField {
+	class LoginTextField extends GTextField {
 
 		static private final long serialVersionUID = -1;
 
@@ -72,11 +77,11 @@ abstract class EntryDialog extends GDialog {
 
 		protected void onTextEntered(String text) {
 
-			checkPerformLogin();
+			checkAttemptLogin();
 		}
 	}
 
-	class EntryPasswordField extends GPasswordField {
+	class LoginPasswordField extends GPasswordField {
 
 		static private final long serialVersionUID = -1;
 
@@ -87,7 +92,7 @@ abstract class EntryDialog extends GDialog {
 
 		protected void onPasswordEntered(char[] password) {
 
-			checkPerformLogin();
+			checkAttemptLogin();
 		}
 
 		String getPasswordInput() {
@@ -107,7 +112,7 @@ abstract class EntryDialog extends GDialog {
 
 		protected void doButtonThing() {
 
-			checkPerformLogin();
+			checkAttemptLogin();
 		}
 
 		OkButton() {
@@ -148,44 +153,43 @@ abstract class EntryDialog extends GDialog {
 		}
 	}
 
-	EntryDialog(EntryDialog parentDialog, String entryType) {
+	public void setAdministratorLoginOnly(boolean value) {
 
-		this(
-			parentDialog.parent,
-			parentDialog.adminClient,
-			parentDialog.proxyPasswords,
-			parentDialog.appName,
-			entryType);
+		administratorLoginOnly = value;
 	}
 
-	EntryDialog(
-		JComponent parent,
+	public RLoginResult checkLoginAction() {
+
+		JPanel mainPanel = createMainPanel();
+
+		setPreferredSize(getWindowSize());
+		display(mainPanel);
+
+		return loginResult;
+	}
+
+	public String getUserName() {
+
+		return usernameField.getText();
+	}
+
+	RLoginActionDialog(
 		RAdminClient adminClient,
 		KProxyPasswords proxyPasswords,
 		String appName,
 		String entryType) {
 
-		super(parent, String.format(TITLE_FORMAT, appName, entryType), true);
+		super(String.format(TITLE_FORMAT, appName, entryType), true);
 
-		this.parent = parent;
 		this.adminClient = adminClient;
 		this.proxyPasswords = proxyPasswords;
-		this.appName = appName;
 
-		setPreferredSize(new Dimension(WINDOW_WIDTH, getWindowHeight()));
 		addWindowListener(new WindowCloseListener());
 	}
 
-	RLoginResult checkEntry() {
+	void addFields(JPanel panel) {
 
-		display(createMainPanel());
-
-		return loginResult;
-	}
-
-	abstract void addFields(JPanel panel);
-
-	void addExtraButtons(JPanel panel) {
+		addField(panel, usernameField, USERNAME_LABEL);
 	}
 
 	void addField(JPanel panel, JTextField field, String title) {
@@ -195,29 +199,19 @@ abstract class EntryDialog extends GDialog {
 		fields.add(field);
 	}
 
-	void addExtraButton(JPanel panel, GButton button) {
-
-		panel.add(Box.createHorizontalStrut(10));
-		panel.add(button);
-	}
-
-	abstract int getWindowHeight();
-
-	boolean administratorLoginOnly() {
-
-		return false;
-	}
-
-	boolean checkCanPerformLogin() {
+	boolean checkCanAttemptLogin() {
 
 		return allFieldsPopulated();
 	}
 
-	abstract RLoginId createLoginId();
+	abstract RLoginId createLoginId(String username);
 
-	void setLoginResult(RLoginResult loginResult) {
+	void checkShowLoginSuccessMessage() {
+	}
 
-		this.loginResult = loginResult;
+	void showMessage(String msg) {
+
+		JOptionPane.showMessageDialog(null, msg);
 	}
 
 	private JPanel createMainPanel() {
@@ -245,9 +239,8 @@ abstract class EntryDialog extends GDialog {
 		JPanel panel = new JPanel();
 
 		panel.add(okButton);
-
-		addExtraButton(panel, new CancelButton());
-		addExtraButtons(panel);
+		panel.add(Box.createHorizontalStrut(10));
+		panel.add(new CancelButton());
 
 		return panel;
 	}
@@ -262,21 +255,33 @@ abstract class EntryDialog extends GDialog {
 		return panel;
 	}
 
-	private void checkPerformLogin() {
+	private Dimension getWindowSize() {
 
-		if (checkCanPerformLogin() && performLogin()) {
+		return new Dimension(WINDOW_WIDTH, getWindowHeight());
+	}
+
+	private int getWindowHeight() {
+
+		return WINDOW_BASE_HEIGHT + (FIELD_HEIGHT * fields.size());
+	}
+
+	private void checkAttemptLogin() {
+
+		if (checkCanAttemptLogin() && attemptLogin()) {
 
 			dispose();
 		}
 	}
 
-	private boolean performLogin() {
+	private boolean attemptLogin() {
 
 		loginResult = adminClient.checkLogin(createLoginId());
 
 		if (loginResult.loginOk()) {
 
 			if (!administratorLoginFail()) {
+
+				checkShowLoginSuccessMessage();
 
 				return true;
 			}
@@ -293,9 +298,14 @@ abstract class EntryDialog extends GDialog {
 		return false;
 	}
 
+	private RLoginId createLoginId() {
+
+		return createLoginId(usernameField.getText());
+	}
+
 	private boolean administratorLoginFail() {
 
-		return administratorLoginOnly() && loginResult.getRole() != RRole.ADMIN;
+		return administratorLoginOnly && loginResult.getRole() != RRole.ADMIN;
 	}
 
 	private boolean allFieldsPopulated() {
@@ -309,10 +319,5 @@ abstract class EntryDialog extends GDialog {
 		}
 
 		return true;
-	}
-
-	private void showMessage(String msg) {
-
-		JOptionPane.showMessageDialog(null, msg);
 	}
 }
