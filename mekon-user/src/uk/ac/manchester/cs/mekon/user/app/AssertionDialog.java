@@ -90,7 +90,7 @@ class AssertionDialog extends InstanceDialog {
 			panel = new ControlsPanel(true);
 		}
 
-		if (getInstanceGroup().summariesEnabled()) {
+		if (getGroup().summariesEnabled()) {
 
 			panel.addControl(new ShowSummaryButton());
 		}
@@ -115,6 +115,6 @@ class AssertionDialog extends InstanceDialog {
 
 	private InstanceSummariser getSummariser() {
 
-		return getInstantiator().getController().getCustomiser().getInstanceSummariser();
+		return getInstantiator().getCustomiser().getInstanceSummariser();
 	}
 }

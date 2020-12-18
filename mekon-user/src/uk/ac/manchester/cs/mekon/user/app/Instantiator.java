@@ -31,16 +31,19 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class Instantiator {
 
-	private InstanceGroup instanceGroup;
+	private InstanceGroup group;
+	private InstanceSubGroup subGroup;
 
 	private CIdentity storeId;
 	private IFrame instance;
 
-	Instantiator(InstanceGroup instanceGroup, CIdentity storeId, IFrame instance) {
+	Instantiator(InstanceSubGroup subGroup, CIdentity storeId, IFrame instance) {
 
-		this.instanceGroup = instanceGroup;
+		this.subGroup = subGroup;
 		this.storeId = storeId;
 		this.instance = instance;
+
+		group = subGroup.getGroup();
 	}
 
 	Instantiator deriveInstantiator(IFrame currentInstance) {
@@ -50,17 +53,27 @@ class Instantiator {
 			return this;
 		}
 
-		return new Instantiator(instanceGroup, storeId, currentInstance);
+		return new Instantiator(subGroup, storeId, currentInstance);
 	}
 
 	Controller getController() {
 
-		return instanceGroup.getController();
+		return group.getController();
 	}
 
-	InstanceGroup getInstanceGroup() {
+	Customiser getCustomiser() {
 
-		return instanceGroup;
+		return getController().getCustomiser();
+	}
+
+	InstanceGroup getGroup() {
+
+		return group;
+	}
+
+	InstanceSubGroup getSubGroup() {
+
+		return subGroup;
 	}
 
 	CIdentity getStoreId() {
@@ -75,7 +88,7 @@ class Instantiator {
 
 	boolean editableInstance() {
 
-		return anyEditableSlots() && (queryInstance() || instanceGroup.editable());
+		return anyEditableSlots() && (queryInstance() || group.editable());
 	}
 
 	IFrame instantiate(CFrame type) {

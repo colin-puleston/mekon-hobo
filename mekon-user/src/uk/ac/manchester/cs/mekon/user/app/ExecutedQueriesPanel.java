@@ -42,8 +42,10 @@ class ExecutedQueriesPanel extends JPanel {
 	static private final String DISPLAY_QUERY_LABEL = "View...";
 	static private final String DISCARD_QUERY_LABEL = "Discard";
 
+	private InstanceGroup group;
+
 	private QueryExecutions queryExecutions;
-	private InstanceOps instanceOps;
+	private InstanceSubGroup instanceDisplayOps;
 
 	private InstanceIdsList querySelectorList;
 	private QueryMatchesPanel matchesPanel;
@@ -97,13 +99,14 @@ class ExecutedQueriesPanel extends JPanel {
 		}
 	}
 
-	ExecutedQueriesPanel(InstanceGroup instanceGroup) {
+	ExecutedQueriesPanel(InstanceGroup group) {
 
-		queryExecutions = instanceGroup.getQueryExecutions();
-		instanceOps = createInstanceOps(instanceGroup);
+		this.group = group;
 
-		querySelectorList = new InstanceIdsList(instanceGroup, true);
-		matchesPanel = new QueryMatchesPanel(instanceGroup);
+		queryExecutions = group.getQueryExecutions();
+
+		querySelectorList = new InstanceIdsList(group, true);
+		matchesPanel = new QueryMatchesPanel(group);
 
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		add(createQuerySelectorPanel());
@@ -152,13 +155,11 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayExecutedQuery(CIdentity storeId) {
 
-		IFrame query = queryExecutions.getExecuted(storeId).getQuery();
+		ExecutedQuery executed = queryExecutions.getExecuted(storeId);
 
-		instanceOps.display(storeId, query, InstanceDisplayMode.VIEW, false);
-	}
+		IFrame query = executed.getQuery();
+ 		InstanceSubGroup subGroup = executed.getSubGroup();
 
-	private InstanceOps createInstanceOps(InstanceGroup instanceGroup) {
-
-		return new InstanceOps(this, instanceGroup, IFrameFunction.QUERY);
+		new InstanceDisplayOps(this, subGroup).displayExecutedQuery(storeId, query);
 	}
 }

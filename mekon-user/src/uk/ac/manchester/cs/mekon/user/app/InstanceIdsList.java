@@ -39,15 +39,16 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	static private final String TYPE_ENHANCED_LABEL_FORMAT = "[%s] %s";
 
-	private InstanceGroup instanceGroup;
-	private boolean queryInstances;
+	private InstanceGroup group;
+	private Icon icon;
 
-	InstanceIdsList(InstanceGroup instanceGroup, boolean queryInstances) {
+	InstanceIdsList(InstanceGroup group, boolean queryInstances) {
 
 		super(false, true);
 
-		this.instanceGroup = instanceGroup;
-		this.queryInstances = queryInstances;
+		this.group = group;
+
+		icon = MekonAppIcons.getListIcon(queryInstances);
 	}
 
 	void update(Collection<CIdentity> ids) {
@@ -90,12 +91,12 @@ class InstanceIdsList extends GList<CIdentity> {
 			return createTypeEnhancedCellDisplay(id);
 		}
 
-		return new GCellDisplay(id.getLabel(), getIcon());
+		return new GCellDisplay(id.getLabel(), icon);
 	}
 
 	private GCellDisplay createTypeEnhancedCellDisplay(CIdentity id) {
 
-		GCellDisplay display = new GCellDisplay(createTypeEnhancedLabel(id), getIcon());
+		GCellDisplay display = new GCellDisplay(createTypeEnhancedLabel(id), icon);
 
 		display.setFilterText(id.getLabel());
 
@@ -109,16 +110,11 @@ class InstanceIdsList extends GList<CIdentity> {
 
 	private String getTypeLabel(CIdentity id) {
 
-		return instanceGroup.getInstanceType(id).getIdentity().getLabel();
-	}
-
-	private Icon getIcon() {
-
-		return MekonAppIcons.getListIcon(queryInstances);
+		return group.getType(id).getIdentity().getLabel();
 	}
 
 	private boolean displayTypes() {
 
-		return !instanceGroup.getRootType().getSubs(CVisibility.EXPOSED).isEmpty();
+		return !group.getRootType().getSubs(CVisibility.EXPOSED).isEmpty();
 	}
 }

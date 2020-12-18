@@ -33,7 +33,9 @@ public interface Customiser {
 
 	public AssertionNameDefaults getAssertionNameDefaults();
 
-	public QueryNameDefaults getQueryNameDefaults();
+	public QueryNameDefaults getCentralQueryNameDefaults();
+
+	public QueryNameDefaults getLocalQueryNameDefaults();
 
 	public InstanceSummariser getInstanceSummariser();
 
@@ -41,7 +43,10 @@ public interface Customiser {
 
 	public IFrame onNewInstance(IFrame instance, CIdentity storeId);
 
-	public IFrame onRenamingInstance(IFrame instance, CIdentity storeId, CIdentity newStoreId);
+	public IFrame onRenamingInstance(
+						IFrame instance,
+						CIdentity storeId,
+						CIdentity newStoreId);
 
 	public String getTypeDisplayLabel(CValue<?> type);
 

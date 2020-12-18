@@ -34,15 +34,24 @@ import uk.ac.manchester.cs.mekon.store.*;
  */
 public class StandardQueryNameDefaults implements QueryNameDefaults {
 
-	static private final String NAME_BODY_FORMAT = "%s-QUERY-";
+	static private final String MAIN_SPECIFIER = "QUERY";
+	static private final String LOCAL_SPECIFIER = "MyQUERY";
+
+	static private final String NAME_BODY_FORMAT = "%s-%s-";
 
 	private Customiser customiser;
+
+	private String locationSpecifier;
 	private StandardInstanceNameDefaultsGenerator generator;
 
-	public StandardQueryNameDefaults(IStore store, Customiser customiser) {
+	public StandardQueryNameDefaults(
+				IStore store,
+				Customiser customiser,
+				boolean localQueries) {
 
 		this.customiser = customiser;
 
+		locationSpecifier = localQueries ? LOCAL_SPECIFIER : MAIN_SPECIFIER;
 		generator = new StandardInstanceNameDefaultsGenerator(store);
 	}
 
@@ -53,11 +62,8 @@ public class StandardQueryNameDefaults implements QueryNameDefaults {
 
 	private String createNameBody(CFrame queryType) {
 
-		return String.format(NAME_BODY_FORMAT, toNameSection(queryType));
-	}
+		String typeLabel = customiser.getTypeDisplayLabel(queryType);
 
-	private String toNameSection(CFrame queryType) {
-
-		return customiser.getTypeDisplayLabel(queryType);
+		return String.format(NAME_BODY_FORMAT, typeLabel, locationSpecifier);
 	}
 }

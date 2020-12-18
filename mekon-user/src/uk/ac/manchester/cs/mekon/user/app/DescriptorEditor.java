@@ -311,15 +311,17 @@ class DescriptorEditor {
 
 		private CIdentity checkCreateRefInstance() {
 
-			return createInstanceOps().checkCreate(valueType, instantiator.getStoreId());
+			InstanceDisplayOps displayOps = createInstanceDisplayOps();
+
+			return displayOps.checkCreateAndDisplay(valueType, instantiator.getStoreId());
 		}
 
-		private InstanceOps createInstanceOps() {
+		private InstanceDisplayOps createInstanceDisplayOps() {
 
-			return new InstanceOps(instanceTree, getInstanceGroup(), IFrameFunction.ASSERTION);
+			return new InstanceDisplayOps(instanceTree, instantiator.getSubGroup());
 		}
 
-		private InstanceGroup getInstanceGroup() {
+		private InstanceGroup getGroup() {
 
 			return getController().getInstanceGroup(valueType);
 		}
@@ -496,7 +498,7 @@ class DescriptorEditor {
 
 	private Customiser getCustomiser() {
 
-		return getController().getCustomiser();
+		return instantiator.getCustomiser();
 	}
 
 	private Controller getController() {

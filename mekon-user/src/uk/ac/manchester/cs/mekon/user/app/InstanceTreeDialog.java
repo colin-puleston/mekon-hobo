@@ -168,6 +168,16 @@ class InstanceTreeDialog extends GDialog {
 		return instantiator;
 	}
 
+	InstanceSubGroup getSubGroup() {
+
+		return instantiator.getSubGroup();
+	}
+
+	InstanceGroup getGroup() {
+
+		return instantiator.getGroup();
+	}
+
 	InstanceTree getTree() {
 
 		return tree;

@@ -142,6 +142,6 @@ class InstanceTree extends GActionTree {
 
 	private boolean instanceSubSection(IFrame rootFrame) {
 
-		return !instantiator.getInstanceGroup().groupRootType(rootFrame.getType());
+		return !instantiator.getGroup().groupRootType(rootFrame.getType());
 	}
 }

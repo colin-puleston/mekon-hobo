@@ -89,11 +89,8 @@ public class StandardAssertionNameDefaults implements AssertionNameDefaults {
 
 	private String createBasicNameBody(CFrame assertionType) {
 
-		return String.format(BASIC_NAME_BODY_FORMAT, toNameSection(assertionType));
-	}
+		String typeLabel = customiser.getTypeDisplayLabel(assertionType);
 
-	private String toNameSection(CFrame assertionType) {
-
-		return customiser.getTypeDisplayLabel(assertionType);
+		return String.format(BASIC_NAME_BODY_FORMAT, typeLabel);
 	}
 }

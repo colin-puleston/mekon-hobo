@@ -36,8 +36,15 @@ class InstanceGroupPanel extends JTabbedPane {
 	static private final long serialVersionUID = -1;
 
 	static private final String ASSERTIONS_TITLE = "Instances";
-	static private final String QUERIES_TITLE = "Queries";
+	static private final String BASE_QUERIES_TITLE = "Queries";
+	static private final String CENTRAL_QUERIES_TITLE = createQueriesTitle("Central");
+	static private final String LOCAL_QUERIES_TITLE = createQueriesTitle("Local");
 	static private final String EXECUTED_QUERIES_TITLE = "Query Results";
+
+	static private final String createQueriesTitle(String qualifier) {
+
+		return BASE_QUERIES_TITLE + " (" + qualifier + ")";
+	}
 
 	private ExecutedQueriesPanel executedQueriesPanel;
 
@@ -62,14 +69,29 @@ class InstanceGroupPanel extends JTabbedPane {
 		executedQueriesPanel = new ExecutedQueriesPanel(group);
 
 		setFont(GFonts.toMedium(getFont()));
-		addTab(ASSERTIONS_TITLE, new AssertionsPanel(group));
+
+		addSubGroupTab(group.getAssertionSubGroup(), ASSERTIONS_TITLE);
 
 		if (group.queriesEnabled()) {
 
-			addTab(QUERIES_TITLE, new QueriesPanel(group));
+			if (group.isLocalQueriesSubGroup()) {
+
+				addSubGroupTab(group.getCentralQuerySubGroup(), CENTRAL_QUERIES_TITLE);
+				addSubGroupTab(group.getLocalQuerySubGroup(), LOCAL_QUERIES_TITLE);
+			}
+			else {
+
+				addSubGroupTab(group.getCentralQuerySubGroup(), BASE_QUERIES_TITLE);
+			}
+
 			addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
 
 			new QueryMatchesDisplayer(group);
 		}
+	}
+
+	private void addSubGroupTab(InstanceSubGroup subGroup, String title) {
+
+		addTab(title, new InstanceSubGroupPanel(subGroup, title));
 	}
 }

@@ -24,55 +24,25 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryMatchesPanel extends InstancesPanel {
+class CentralQuerySubGroup extends QuerySubGroup {
 
-	static private final long serialVersionUID = -1;
+	CentralQuerySubGroup(InstanceGroup group) {
 
-	static private final String TITLE_BASE = "Matches";
-	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
-
-	static private String createTitle(CIdentity storeId) {
-
-		return String.format(TITLE_FORMAT, storeId.getLabel());
+		super(group);
 	}
 
-	private InstanceGroup group;
+	boolean subGroupInstance(CIdentity storeId) {
 
-	QueryMatchesPanel(InstanceGroup group) {
-
-		super(group, new InstanceIdsList(group, false), TITLE_BASE);
-
-		this.group = group;
-
-		initialise();
+		return MekonAppStoreId.queryId(storeId);
 	}
 
-	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
+	QueryNameDefaults getNameDefaults(Customiser customiser) {
 
-		setTitle(createTitle(queryStoreId));
-		displayIds(matchIds);
-	}
-
-	void clear() {
-
-		setTitle(TITLE_BASE);
-		clearIds();
-	}
-
-	void reloadAndDisplay(CIdentity storeId) {
-
-		createDisplayOps(storeId).reloadAndDisplay(storeId);
-	}
-
-	private InstanceDisplayOps createDisplayOps(CIdentity storeId) {
-
-		return new InstanceDisplayOps(this, group.getSubGroupContaining(storeId));
+		return customiser.getCentralQueryNameDefaults();
 	}
 }

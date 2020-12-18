@@ -83,7 +83,9 @@ public class MekonApp extends GFrame {
 	}
 
 	private CModel model;
-	private IStore store;
+
+	private IStore centralStore;
+	private IStore localQueriesStore = null;
 
 	private List<InstanceGroupSpec> instanceGroupSpecs = new ArrayList<InstanceGroupSpec>();
 
@@ -108,9 +110,18 @@ public class MekonApp extends GFrame {
 
 	private class StoreRegenCheckInvoker extends WindowAdapter {
 
+		private IStore store;
+
 		public void windowOpened(WindowEvent e) {
 
 			new StoreRegenChecker(store);
+		}
+
+		StoreRegenCheckInvoker(IStore store) {
+
+			this.store = store;
+
+			addWindowListener(this);
 		}
 	}
 
@@ -124,21 +135,39 @@ public class MekonApp extends GFrame {
 		this(builder.build(), getIStore(builder));
 	}
 
-	public MekonApp(CModel model, IStore store) {
+	public MekonApp(CModel model, IStore centralStore) {
 
 		super(FRAME_WIDTH, FRAME_HEIGHT);
 
 		this.model = model;
-		this.store = store;
+		this.centralStore = centralStore;
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+	}
 
-		addWindowListener(new StoreRegenCheckInvoker());
+	public void setLocalQueriesStore(IStore localQueriesStore) {
+
+		this.localQueriesStore = localQueriesStore;
 	}
 
 	public void setCustomiser(Customiser customiser) {
 
 		this.customiser = customiser;
+	}
+
+	public void enableCentralStoreRegenChecks() {
+
+		new StoreRegenCheckInvoker(centralStore);
+	}
+
+	public void enableLocalQueriesStoreRegenChecks() {
+
+		if (localQueriesStore == null) {
+
+			throw new RuntimeException("Local-queries store has not been set!");
+		}
+
+		new StoreRegenCheckInvoker(localQueriesStore);
 	}
 
 	public void configureFromFile() {
@@ -186,9 +215,9 @@ public class MekonApp extends GFrame {
 		return model;
 	}
 
-	public IStore getStore() {
+	public IStore getCentralStore() {
 
-		return store;
+		return centralStore;
 	}
 
 	private JPanel createMainPanel() {
@@ -210,10 +239,27 @@ public class MekonApp extends GFrame {
 
 		if (customiser == null) {
 
-			customiser = new DefaultCustomiser(store);
+			customiser = createDefaultCustomiser();
 		}
 
-		return new Controller(new Store(store, customiser), customiser);
+		Controller controller = new Controller(wrapStore(centralStore), customiser);
+
+		if (localQueriesStore != null) {
+
+			controller.setLocalQueriesStore(wrapStore(localQueriesStore));
+		}
+
+		return controller;
+	}
+
+	private Customiser createDefaultCustomiser() {
+
+		return new DefaultCustomiser(centralStore, localQueriesStore);
+	}
+
+	private Store wrapStore(IStore iStore) {
+
+		return new Store(iStore, customiser);
 	}
 
 	private void displayConfigError(String message) {

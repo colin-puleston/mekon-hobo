@@ -33,13 +33,19 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class ExecutedQuery {
 
+	private InstanceSubGroup subGroup;
 	private CIdentity storeId;
 	private IFrame query;
 	private List<CIdentity> matches;
 
-	ExecutedQuery(CIdentity storeId, IFrame query, List<CIdentity> matches) {
+	ExecutedQuery(
+		CIdentity storeId,
+		IFrame query,
+		InstanceSubGroup subGroup,
+		List<CIdentity> matches) {
 
 		this.storeId = storeId;
+		this.subGroup = subGroup;
 		this.query = query;
 		this.matches = matches;
 	}
@@ -52,6 +58,11 @@ class ExecutedQuery {
 	IFrame getQuery() {
 
 		return query;
+	}
+
+	InstanceSubGroup getSubGroup() {
+
+		return subGroup;
 	}
 
 	List<CIdentity> getMatches() {

@@ -33,14 +33,14 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class QueryExecutions {
 
-	private Store store;
+	private Store centralStore;
 
 	private Map<CIdentity, ExecutedQuery> byStoreId = new HashMap<CIdentity, ExecutedQuery>();
 	private List<QueryExecutionListener> listeners = new ArrayList<QueryExecutionListener>();
 
-	QueryExecutions(Store store) {
+	QueryExecutions(Store centralStore) {
 
-		this.store = store;
+		this.centralStore = centralStore;
 	}
 
 	void addListener(QueryExecutionListener listener) {
@@ -48,10 +48,10 @@ class QueryExecutions {
 		listeners.add(listener);
 	}
 
-	void execute(CIdentity storeId, IFrame query) {
+	void execute(CIdentity storeId, IFrame query, InstanceSubGroup subGroup) {
 
-		List<CIdentity> matches = store.match(query);
-		ExecutedQuery exec = new ExecutedQuery(storeId, query, matches);
+		List<CIdentity> matches = centralStore.match(query);
+		ExecutedQuery exec = new ExecutedQuery(storeId, query, subGroup, matches);
 
 		byStoreId.put(storeId, exec);
 

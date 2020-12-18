@@ -33,16 +33,22 @@ import uk.ac.manchester.cs.mekon.store.*;
 public class DefaultCustomiser implements Customiser {
 
 	private AssertionNameDefaults assertionNameDefaults;
-	private QueryNameDefaults queryNameDefaults;
+	private QueryNameDefaults centralQueryNameDefaults;
+	private QueryNameDefaults localQueryNameDefaults;
 
 	public AssertionNameDefaults getAssertionNameDefaults() {
 
 		return assertionNameDefaults;
 	}
 
-	public QueryNameDefaults getQueryNameDefaults() {
+	public QueryNameDefaults getCentralQueryNameDefaults() {
 
-		return queryNameDefaults;
+		return centralQueryNameDefaults;
+	}
+
+	public QueryNameDefaults getLocalQueryNameDefaults() {
+
+		return localQueryNameDefaults;
 	}
 
 	public InstanceSummariser getInstanceSummariser() {
@@ -132,9 +138,15 @@ public class DefaultCustomiser implements Customiser {
 		return false;
 	}
 
-	protected DefaultCustomiser(IStore store) {
+	protected DefaultCustomiser(IStore centralStore) {
 
-		assertionNameDefaults = new StandardAssertionNameDefaults(store, this);
-		queryNameDefaults = new StandardQueryNameDefaults(store, this);
+		this(centralStore, null);
+	}
+
+	protected DefaultCustomiser(IStore centralStore, IStore localQueriesStore) {
+
+		assertionNameDefaults = new StandardAssertionNameDefaults(centralStore, this);
+		centralQueryNameDefaults = new StandardQueryNameDefaults(centralStore, this, false);
+		localQueryNameDefaults = new StandardQueryNameDefaults(localQueriesStore, this, true);
 	}
 }

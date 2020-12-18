@@ -24,55 +24,56 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryMatchesPanel extends InstancesPanel {
+class InstanceSubGroupPanel extends InstancesPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_BASE = "Matches";
-	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
+	private InstanceSubGroup subGroup;
+	private InstanceDisplayOps displayOps;
 
-	static private String createTitle(CIdentity storeId) {
+	InstanceSubGroupPanel(InstanceSubGroup subGroup, String title) {
 
-		return String.format(TITLE_FORMAT, storeId.getLabel());
-	}
+		super(subGroup.getGroup(), subGroup.getRootInstanceIdsList(), title);
 
-	private InstanceGroup group;
+		this.subGroup = subGroup;
 
-	QueryMatchesPanel(InstanceGroup group) {
-
-		super(group, new InstanceIdsList(group, false), TITLE_BASE);
-
-		this.group = group;
+		displayOps = new InstanceDisplayOps(this, subGroup);
 
 		initialise();
 	}
 
-	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
+	boolean canCreate() {
 
-		setTitle(createTitle(queryStoreId));
-		displayIds(matchIds);
+		return subGroup.instanceCreationEnabled();
 	}
 
-	void clear() {
+	boolean canEdit() {
 
-		setTitle(TITLE_BASE);
-		clearIds();
+		return subGroup.editable();
+	}
+
+	void checkCreateAndDisplay() {
+
+		displayOps.checkCreateAndDisplay();
 	}
 
 	void reloadAndDisplay(CIdentity storeId) {
 
-		createDisplayOps(storeId).reloadAndDisplay(storeId);
+		displayOps.reloadAndDisplay(storeId);
 	}
 
-	private InstanceDisplayOps createDisplayOps(CIdentity storeId) {
+	void checkRename(CIdentity storeId) {
 
-		return new InstanceDisplayOps(this, group.getSubGroupContaining(storeId));
+		displayOps.checkRename(storeId);
+	}
+
+	void checkRemove(CIdentity storeId) {
+
+		subGroup.checkRemove(storeId);
 	}
 }

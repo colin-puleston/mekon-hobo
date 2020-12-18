@@ -109,11 +109,6 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		return panel;
 	}
 
-	InstanceGroup getInstanceGroup() {
-
-		return instantiator.getInstanceGroup();
-	}
-
 	IFrame getInstance() {
 
 		return instantiator.getInstance();
@@ -157,28 +152,21 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		}
 	}
 
-	private void updateInstance(IFrame updatedInstance) {
-
-		dispose();
-
-		createInstanceOps().display(storeId, updatedInstance, getMode(), allowStoreOverwrite);
-	}
-
 	private boolean storeInstance(CIdentity storeAsId) {
 
 		IFrame instanceToStore = resolveInstanceForStoring();
 		boolean asNewId = !storeAsId.equals(storeId);
 
-		return getInstanceGroup().checkAddInstance(instanceToStore, storeAsId, asNewId);
+		return getSubGroup().checkAdd(instanceToStore, storeAsId, asNewId);
 	}
 
 	private CIdentity checkObtainNewStoreId() {
 
-		return createInstanceOps().checkObtainNewStoreId(getInstance().getType());
+		return createDisplayOps().checkObtainNewStoreId(getInstance().getType());
 	}
 
-	private InstanceOps createInstanceOps() {
+	private InstanceDisplayOps createDisplayOps() {
 
-		return new InstanceOps(getTree(), getInstanceGroup(), instantiator.getFunction());
+		return new InstanceDisplayOps(getTree(), getSubGroup());
 	}
 }

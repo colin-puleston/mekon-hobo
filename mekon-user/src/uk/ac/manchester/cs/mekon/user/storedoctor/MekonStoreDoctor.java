@@ -61,7 +61,7 @@ public class MekonStoreDoctor {
 
 		if (args.length == 0) {
 
-			System.out.println("ERROR: Must provide config-file argument");
+			showError("Must provide config-file argument");
 
 			return null;
 		}
@@ -73,12 +73,17 @@ public class MekonStoreDoctor {
 
 		if (!configFile.exists()) {
 
-			System.out.println("ERROR: Invalid config-file path: " + configFile);
+			showError("Invalid config-file path: " + configFile);
 
 			return false;
 		}
 
 		return true;
+	}
+
+	static private void showError(String message) {
+
+		System.out.println("STORE-DOCTOR ERROR: " + message);
 	}
 
 	private File storeDir = null;
@@ -148,7 +153,7 @@ public class MekonStoreDoctor {
 
 		if (!storeDir.exists()) {
 
-			System.out.println("ERROR: Invalid store-directory path: " + storeDir);
+			showError("Invalid store-directory path: " + storeDir);
 
 			return false;
 		}

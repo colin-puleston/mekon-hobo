@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon.user.app;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.*;
 
 /**
  * @author Colin Puleston
@@ -35,20 +34,20 @@ import uk.ac.manchester.cs.mekon.store.*;
 class InstanceGroup {
 
 	private Controller controller;
-	private Store store;
 
 	private CFrame rootType;
 	private CFrame summariesRootType;
 
-	private Map<CIdentity, CFrame> instancesToNonRootTypes = new HashMap<CIdentity, CFrame>();
-
 	private boolean editable;
 	private boolean queriesEnabled;
 
-	private InstanceIdsList rootAssertionIds;
-	private InstanceIdsList rootQueryIds;
+	private AssertionSubGroup assertionSubGroup;
+	private CentralQuerySubGroup centralQuerySubGroup;
+	private LocalQuerySubGroup localQuerySubGroup = null;
 
 	private QueryExecutions queryExecutions;
+
+	private Map<CIdentity, CFrame> instancesToNonRootTypes = new HashMap<CIdentity, CFrame>();
 
 	InstanceGroup(Controller controller, CFrame rootType, boolean editable) {
 
@@ -56,44 +55,28 @@ class InstanceGroup {
 		this.rootType = rootType;
 		this.editable = editable;
 
-		store = controller.getStore();
-
 		summariesRootType = checkForSummariesRootType();
 		queriesEnabled = testQueriesEnabled();
 
-		rootAssertionIds = new InstanceIdsList(this, false);
-		rootQueryIds = new InstanceIdsList(this, true);
+		queryExecutions = new QueryExecutions(controller.getCentralStore());
 
-		queryExecutions = new QueryExecutions(store);
+		assertionSubGroup = new AssertionSubGroup(this);
+		centralQuerySubGroup = new CentralQuerySubGroup(this);
 
-		loadInstanceIds();
-	}
+		if (controller.isLocalQueriesStore()) {
 
-	InstanceIdsList createAssertionIdsList(CFrame type) {
-
-		InstanceIdsList typeAssertIds = new InstanceIdsList(this, false);
-
-		if (type.equals(rootType)) {
-
-			typeAssertIds.addIds(rootAssertionIds.getEntities());
+			localQuerySubGroup = new LocalQuerySubGroup(this);
 		}
-		else {
-
-			for (CIdentity storeId : store.getInstanceIds(type)) {
-
-				if (assertionId(storeId)) {
-
-					typeAssertIds.addId(storeId);
-				}
-			}
-		}
-
-		return typeAssertIds;
 	}
 
 	Controller getController() {
 
 		return controller;
+	}
+
+	Customiser getCustomiser() {
+
+		return controller.getCustomiser();
 	}
 
 	CFrame getRootType() {
@@ -131,21 +114,44 @@ class InstanceGroup {
 		return rootType.subsumes(type) || includesSummariesOfType(type);
 	}
 
-	CFrame getInstanceType(CIdentity storeId) {
+	InstanceSubGroup getSubGroupContaining(CIdentity storeId) {
 
-		CFrame type = instancesToNonRootTypes.get(storeId);
+		if (assertionSubGroup.contains(storeId)) {
 
-		return type != null ? type : rootType;
+			return assertionSubGroup;
+		}
+
+		if (centralQuerySubGroup.contains(storeId)) {
+
+			return centralQuerySubGroup;
+		}
+
+		return getLocalQuerySubGroup();
 	}
 
-	InstanceIdsList getRootAssertionIdsList() {
+	InstanceSubGroup getAssertionSubGroup() {
 
-		return rootAssertionIds;
+		return assertionSubGroup;
 	}
 
-	InstanceIdsList getRootQueryIdsList() {
+	InstanceSubGroup getCentralQuerySubGroup() {
 
-		return rootQueryIds;
+		return centralQuerySubGroup;
+	}
+
+	InstanceSubGroup getLocalQuerySubGroup() {
+
+		if (localQuerySubGroup == null) {
+
+			throw new Error("Local-query sub-group not set!");
+		}
+
+		return localQuerySubGroup;
+	}
+
+	boolean isLocalQueriesSubGroup() {
+
+		return localQuerySubGroup != null;
 	}
 
 	QueryExecutions getQueryExecutions() {
@@ -153,49 +159,7 @@ class InstanceGroup {
 		return queryExecutions;
 	}
 
-	boolean checkAddInstance(IFrame instance, CIdentity storeId, boolean asNewId) {
-
-		if (store.checkAdd(instance, storeId, asNewId)) {
-
-			updateTypesForAddition(storeId);
-			getInstanceIdsList(storeId).checkAddId(storeId);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	void checkRemoveInstance(CIdentity storeId) {
-
-		if (store.checkRemove(storeId)) {
-
-			updateTypesForRemoval(storeId);
-			getInstanceIdsList(storeId).removeEntity(storeId);
-		}
-	}
-
-	void checkRenameInstance(CIdentity storeId, CIdentity newStoreId) {
-
-		if (store.checkRename(storeId, newStoreId)) {
-
-			updateTypesForReplacement(storeId, newStoreId);
-			getInstanceIdsList(storeId).replaceId(storeId, newStoreId);
-		}
-	}
-
-	private void loadInstanceIds() {
-
-		for (CIdentity storeId : store.getInstanceIds(rootType)) {
-
-			updateTypesForAddition(storeId);
-			getInstanceIdsList(storeId).addId(storeId);
-		}
-	}
-
-	private void updateTypesForAddition(CIdentity storeId) {
-
-		CFrame type = store.getType(storeId);
+	void onAddition(CIdentity storeId, CFrame type) {
 
 		if (!type.equals(rootType)) {
 
@@ -203,12 +167,12 @@ class InstanceGroup {
 		}
 	}
 
-	private void updateTypesForRemoval(CIdentity storeId) {
+	void onRemoval(CIdentity storeId) {
 
 		instancesToNonRootTypes.remove(storeId);
 	}
 
-	private void updateTypesForReplacement(CIdentity storeId, CIdentity newStoreId) {
+	void onReplacement(CIdentity storeId, CIdentity newStoreId) {
 
 		CFrame type = instancesToNonRootTypes.remove(storeId);
 
@@ -216,6 +180,13 @@ class InstanceGroup {
 
 			instancesToNonRootTypes.put(newStoreId, type);
 		}
+	}
+
+	CFrame getType(CIdentity storeId) {
+
+		CFrame type = instancesToNonRootTypes.get(storeId);
+
+		return type != null ? type : rootType;
 	}
 
 	private boolean testQueriesEnabled() {
@@ -237,16 +208,6 @@ class InstanceGroup {
 
 	private InstanceSummariser getInstanceSummariser() {
 
-		return controller.getCustomiser().getInstanceSummariser();
-	}
-
-	private InstanceIdsList getInstanceIdsList(CIdentity storeId) {
-
-		return assertionId(storeId) ? rootAssertionIds : rootQueryIds;
-	}
-
-	private boolean assertionId(CIdentity id) {
-
-		return MekonAppStoreId.assertionId(id);
+		return getCustomiser().getInstanceSummariser();
 	}
 }

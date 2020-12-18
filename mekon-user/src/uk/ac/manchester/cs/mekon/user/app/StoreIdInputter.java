@@ -49,7 +49,7 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		return function == IFrameFunction.QUERY ? "Query" : "Instance";
 	}
 
-	private Store store;
+	private Controller controller;
 	private IFrameFunction function;
 
 	private CIdentity replacingStoreId = null;
@@ -70,11 +70,11 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		return super.validInputText(text) && checkValidStoreName(text);
 	}
 
-	StoreIdInputter(JComponent parent, Store store, IFrameFunction function) {
+	StoreIdInputter(JComponent parent, Controller controller, IFrameFunction function) {
 
 		super(parent, createTitle(function), false);
 
-		this.store = store;
+		this.controller = controller;
 		this.function = function;
 	}
 
@@ -116,7 +116,7 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 			return false;
 		}
 
-		if (idExists(storeId)) {
+		if (inMemoryIds.contains(storeId) || idStored(storeId)) {
 
 			showMessage(getStoreNameExistsMessage(storeName));
 
@@ -126,9 +126,17 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		return true;
 	}
 
-	private boolean idExists(CIdentity id) {
+	private boolean idStored(CIdentity storeId) {
 
-		return inMemoryIds.contains(id) || store.contains(id);
+		for (Store store : controller.getAllStores()) {
+
+			if (store.contains(storeId)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private CIdentity storeNameToId(String storeName) {

@@ -64,12 +64,7 @@ class RootInstanceNode extends InstanceNode {
 
 		private String getDisplayLabel() {
 
-			return getCustomiser().getValueDisplayLabel(rootFrame);
-		}
-
-		private Customiser getCustomiser() {
-
-			return getInstantiator().getController().getCustomiser();
+			return getInstantiator().getCustomiser().getValueDisplayLabel(rootFrame);
 		}
 	}
 

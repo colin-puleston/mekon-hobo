@@ -29,19 +29,28 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class QueriesPanel extends InstancesPanel {
+abstract class QuerySubGroup extends InstanceSubGroup {
 
-	static private final long serialVersionUID = -1;
+	private QueryExecutions executions;
+	private QueryNameDefaults nameDefaults;
 
-	static private final String TITLE = "Queries";
+	QuerySubGroup(InstanceGroup group) {
 
-	QueriesPanel(InstanceGroup instanceGroup) {
+		super(group);
 
-		super(instanceGroup, instanceGroup.getRootQueryIdsList(), TITLE);
+		executions = group.getQueryExecutions();
+		nameDefaults = getNameDefaults(group.getCustomiser());
 	}
 
-	IFrameFunction getInstancesFunction() {
+	IFrameFunction getFunction() {
 
 		return IFrameFunction.QUERY;
 	}
+
+	String createInstanceNameDefault(CFrame type, CIdentity refingId) {
+
+		return nameDefaults.getNext(type, executions.getAllExecuteds());
+	}
+
+	abstract QueryNameDefaults getNameDefaults(Customiser customiser);
 }

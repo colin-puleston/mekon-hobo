@@ -80,7 +80,7 @@ class FrameDescriptors {
 
 		private boolean hiddenSlot(ISlot slot) {
 
-			return instantiator.getController().getCustomiser().hiddenSlot(slot);
+			return instantiator.getCustomiser().hiddenSlot(slot);
 		}
 	}
 

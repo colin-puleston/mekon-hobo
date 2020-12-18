@@ -33,15 +33,22 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class Controller {
 
-	private Store store;
+	private Store centralStore;
+	private Store localQueriesStore = null;
+
 	private Customiser customiser;
 
 	private Set<InstanceGroup> instanceGroups = new HashSet<InstanceGroup>();
 
-	Controller(Store store, Customiser customiser) {
+	Controller(Store centralStore, Customiser customiser) {
 
-		this.store = store;
+		this.centralStore = centralStore;
 		this.customiser = customiser;
+	}
+
+	void setLocalQueriesStore(Store localQueriesStore) {
+
+		this.localQueriesStore = localQueriesStore;
 	}
 
 	InstanceGroup addInstanceGroup(InstanceGroupSpec spec) {
@@ -53,9 +60,38 @@ class Controller {
 		return group;
 	}
 
-	Store getStore() {
+	Store getCentralStore() {
 
-		return store;
+		return centralStore;
+	}
+
+	Store getLocalQueriesStore() {
+
+		if (localQueriesStore == null) {
+
+			throw new Error("Local-queries store has not been set!");
+		}
+
+		return localQueriesStore;
+	}
+
+	List<Store> getAllStores() {
+
+		List<Store> allStores = new ArrayList<Store>();
+
+		allStores.add(centralStore);
+
+		if (localQueriesStore != null) {
+
+			allStores.add(localQueriesStore);
+		}
+
+		return allStores;
+	}
+
+	boolean isLocalQueriesStore() {
+
+		return localQueriesStore != null;
 	}
 
 	Customiser getCustomiser() {

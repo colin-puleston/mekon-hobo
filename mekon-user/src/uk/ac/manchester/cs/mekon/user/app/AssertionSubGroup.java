@@ -24,17 +24,41 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * @author Colin Puleston
  */
-class AssertionsPanel extends InstancesPanel {
+class AssertionSubGroup extends InstanceSubGroup {
 
-	static private final long serialVersionUID = -1;
+	private AssertionNameDefaults nameDefaults;
 
-	static private final String TITLE = "Instances";
+	AssertionSubGroup(InstanceGroup group) {
 
-	AssertionsPanel(InstanceGroup instanceGroup) {
+		super(group);
 
-		super(instanceGroup, instanceGroup.getRootAssertionIdsList(), TITLE);
+		nameDefaults = group.getCustomiser().getAssertionNameDefaults();
+	}
+
+	IFrameFunction getFunction() {
+
+		return IFrameFunction.ASSERTION;
+	}
+
+	boolean instanceCreationEnabled() {
+
+		return getGroup().editable();
+	}
+
+	boolean subGroupInstance(CIdentity storeId) {
+
+		return MekonAppStoreId.assertionId(storeId);
+	}
+
+	String createInstanceNameDefault(CFrame type, CIdentity refingId) {
+
+		return refingId != null
+				? nameDefaults.getNextReferenced(type, refingId)
+				: nameDefaults.getNextBase(type);
 	}
 }

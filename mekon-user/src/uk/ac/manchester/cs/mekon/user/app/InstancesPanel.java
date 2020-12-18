@@ -47,10 +47,8 @@ abstract class InstancesPanel extends JPanel {
 
 	static private final int WIDTH = 200;
 
-	private InstanceGroup instanceGroup;
+	private InstanceGroup group;
 	private InstanceIdsList idsList;
-
-	private InstanceOps instanceOps;
 
 	private class CreateButton extends GButton {
 
@@ -58,7 +56,7 @@ abstract class InstancesPanel extends JPanel {
 
 		protected void doButtonThing() {
 
-			instanceOps.checkCreate();
+			checkCreateAndDisplay();
 		}
 
 		CreateButton() {
@@ -78,7 +76,7 @@ abstract class InstancesPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			instanceOps.displayReloaded(storeId);
+			reloadAndDisplay(storeId);
 		}
 	}
 
@@ -93,7 +91,7 @@ abstract class InstancesPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			instanceOps.checkRename(storeId);
+			checkRename(storeId);
 		}
 	}
 
@@ -108,7 +106,7 @@ abstract class InstancesPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			instanceGroup.checkRemoveInstance(storeId);
+			checkRemove(storeId);
 		}
 	}
 
@@ -118,7 +116,7 @@ abstract class InstancesPanel extends JPanel {
 
 			if (e.getClickCount() == 2) {
 
-				instanceOps.displayReloaded(getClickedStoreId(e));
+				reloadAndDisplay(getClickedStoreId(e));
 			}
 		}
 
@@ -138,16 +136,17 @@ abstract class InstancesPanel extends JPanel {
 		return new Dimension(WIDTH, (int)super.getPreferredSize().getHeight());
 	}
 
-	InstancesPanel(InstanceGroup instanceGroup, InstanceIdsList idsList, String title) {
+	InstancesPanel(InstanceGroup group, InstanceIdsList idsList, String title) {
 
 		super(new BorderLayout());
 
-		this.instanceGroup = instanceGroup;
+		this.group = group;
 		this.idsList = idsList;
 
-		instanceOps = createInstanceOps();
-
 		setTitle(title);
+	}
+
+	void initialise() {
 
 		add(new GListPanel<CIdentity>(idsList), BorderLayout.CENTER);
 		add(createControlsComponent(), BorderLayout.SOUTH);
@@ -170,38 +169,50 @@ abstract class InstancesPanel extends JPanel {
 		idsList.clearList();
 	}
 
-	IFrameFunction getInstancesFunction() {
-
-		return IFrameFunction.ASSERTION;
-	}
-
-	boolean allowLoadActionOnly() {
+	boolean canCreate() {
 
 		return false;
 	}
 
-	private InstanceOps createInstanceOps() {
+	boolean canEdit() {
 
-		return new InstanceOps(this, instanceGroup, getInstancesFunction());
+		return false;
+	}
+
+	void checkCreateAndDisplay() {
+
+		throw new Error("Method should never be invoked!");
+	}
+
+	abstract void reloadAndDisplay(CIdentity storeId);
+
+	void checkRename(CIdentity storeId) {
+
+		throw new Error("Method should never be invoked!");
+	}
+
+	void checkRemove(CIdentity storeId) {
+
+		throw new Error("Method should never be invoked!");
 	}
 
 	private JComponent createControlsComponent() {
 
-		return allowLoadActionOnly() ? new LoadButton() : createFullControlsComponent();
+		return canCreate() ? createFullControlsComponent() : new LoadButton();
 	}
 
 	private JComponent createFullControlsComponent() {
 
 		ControlsPanel panel = new ControlsPanel(true);
 
-		if (instanceOps.instanceCreationEnabled()) {
+		if (canCreate()) {
 
 			panel.addControl(new CreateButton());
 		}
 
 		panel.addControl(new LoadButton());
 
-		if (instanceGroup.editable()) {
+		if (canEdit()) {
 
 			panel.addControl(new RenameButton());
 			panel.addControl(new RemoveButton());

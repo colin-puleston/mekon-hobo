@@ -102,12 +102,12 @@ class QueryDialog extends InstanceDialog {
 
 		private boolean summariesEnabled() {
 
-			return instantiator.getInstanceGroup().summariesEnabled();
+			return instantiator.getGroup().summariesEnabled();
 		}
 
 		private InstanceSummariser getSummariser() {
 
-			return instantiator.getController().getCustomiser().getInstanceSummariser();
+			return instantiator.getCustomiser().getInstanceSummariser();
 		}
 	}
 
@@ -209,7 +209,7 @@ class QueryDialog extends InstanceDialog {
 		}
 		else {
 
-			if (getInstanceGroup().summariesEnabled()) {
+			if (getGroup().summariesEnabled()) {
 
 				panel.addControl(new ToCompressedButton());
 			}
@@ -242,7 +242,7 @@ class QueryDialog extends InstanceDialog {
 		this.summariser = summariser;
 		this.rootFrame = rootFrame;
 
-		queryExecutions = instantiator.getInstanceGroup().getQueryExecutions();
+		queryExecutions = instantiator.getGroup().getQueryExecutions();
 
 		initialise(rootFrame, displayingCompressed(), startMode);
 	}
@@ -270,7 +270,7 @@ class QueryDialog extends InstanceDialog {
 
 		dispose();
 
-		queryExecutions.execute(getStoreId(), resolveToExpanded());
+		queryExecutions.execute(getStoreId(), resolveToExpanded(), getSubGroup());
 	}
 
 	private IFrame resolveToExpanded() {
