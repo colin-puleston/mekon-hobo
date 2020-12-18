@@ -281,7 +281,7 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 				renderISlotValues(slot, node);
 			}
 
-			if (slot == valuesUpdate.getSlot()) {
+			if (valuesUpdate != null && slot == valuesUpdate.getSlot()) {
 
 				renderISlotValuesUpdate(slot, node);
 			}

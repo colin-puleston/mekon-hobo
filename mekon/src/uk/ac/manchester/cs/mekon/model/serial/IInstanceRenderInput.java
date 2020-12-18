@@ -57,8 +57,8 @@ public class IInstanceRenderInput {
 	 * Registers the latest client-update operation prior to the network
 	 * being rendered.
 	 * <p>
-	 * NOTE: This information should be provided when sending information
-	 * to the server for automatic-update.
+	 * NOTE: This information, if applicable, should be provided when sending
+	 * information to the server for automatic-update.
 	 *
 	 * @param valuesUpdate Latest client-update operation
 	 */

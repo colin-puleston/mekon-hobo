@@ -142,9 +142,9 @@ public abstract class XClientModel {
 
 	private abstract class InstanceUpdateAction extends InstanceAction {
 
-		private IValuesUpdate clientUpdate;
+		private IValuesUpdate clientUpdate = null;
 
-		InstanceUpdateAction(IValuesUpdate clientUpdate) {
+		void setClientUpdate(IValuesUpdate clientUpdate) {
 
 			this.clientUpdate = clientUpdate;
 		}
@@ -157,11 +157,6 @@ public abstract class XClientModel {
 
 	private class AssertionUpdateAction extends InstanceUpdateAction {
 
-		AssertionUpdateAction(IValuesUpdate clientUpdate) {
-
-			super(clientUpdate);
-		}
-
 		RModelActionType getActionType() {
 
 			return RModelActionType.UPDATE_ASSERTION;
@@ -169,11 +164,6 @@ public abstract class XClientModel {
 	}
 
 	private class QueryUpdateAction extends InstanceUpdateAction {
-
-		QueryUpdateAction(IValuesUpdate clientUpdate) {
-
-			super(clientUpdate);
-		}
 
 		RModelActionType getActionType() {
 
@@ -188,9 +178,18 @@ public abstract class XClientModel {
 			return getInitAction(frame).perform(frame);
 		}
 
+		protected RUpdates updateOnServer(IFrame rootFrame) {
+
+			return getUpdateAction(rootFrame).perform(rootFrame);
+		}
+
 		protected RUpdates updateOnServer(IFrame rootFrame, IValuesUpdate clientUpdate) {
 
-			return getUpdateAction(rootFrame, clientUpdate).perform(rootFrame);
+			InstanceUpdateAction action = getUpdateAction(rootFrame);
+
+			action.setClientUpdate(clientUpdate);
+
+			return action.perform(rootFrame);
 		}
 
 		XRClientModel() {
@@ -250,11 +249,9 @@ public abstract class XClientModel {
 		return query(frame) ? new QueryInitAction() : new AssertionInitAction();
 	}
 
-	private InstanceAction getUpdateAction(IFrame frame, IValuesUpdate update) {
+	private InstanceUpdateAction getUpdateAction(IFrame frame) {
 
-		return query(frame)
-				? new QueryUpdateAction(update)
-				: new AssertionUpdateAction(update);
+		return query(frame) ? new QueryUpdateAction() : new AssertionUpdateAction();
 	}
 
 	private boolean query(IFrame frame) {

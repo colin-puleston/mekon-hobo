@@ -67,11 +67,19 @@ public abstract class RClientModel {
 		}
 	}
 
-	private class InstanceInitAction extends InstanceAction {
+	private class InstanceCreateInitAction extends InstanceAction {
 
 		RUpdates performOnServer(IFrame frame) {
 
 			return initialiseOnServer(frame);
+		}
+	}
+
+	private class InstanceReloadInitAction extends InstanceAction {
+
+		RUpdates performOnServer(IFrame frame) {
+
+			return updateOnServer(frame);
 		}
 	}
 
@@ -92,7 +100,8 @@ public abstract class RClientModel {
 
 	private class IFrameInitialiser implements CFrameListener {
 
-		private InstanceInitAction initAction = new InstanceInitAction();
+		private InstanceCreateInitAction createInitAction = new InstanceCreateInitAction();
+		private InstanceReloadInitAction reloadInitAction = new InstanceReloadInitAction();
 
 		public void onExtended(CFrame extension) {
 		}
@@ -101,12 +110,9 @@ public abstract class RClientModel {
 
 			if (instance.getCategory().atomic()) {
 
+				getInitAction(reinstantiation).checkPerform(instance);
+
 				new ISlotInitialiser(instance);
-
-				if (!reinstantiation) {
-
-					initAction.checkPerform(instance);
-				}
 			}
 		}
 
@@ -116,6 +122,11 @@ public abstract class RClientModel {
 
 				frame.addListener(this);
 			}
+		}
+
+		private InstanceAction getInitAction(boolean reinstantiation) {
+
+			return reinstantiation ? reloadInitAction : createInitAction;
 		}
 	}
 
@@ -225,6 +236,15 @@ public abstract class RClientModel {
 	 * @return Results of initialisation process
 	 */
 	protected abstract RUpdates initialiseOnServer(IFrame rootFrame);
+
+	/**
+	 * Sends an instance-level frame/slot network that has been reloaded
+	 * from a client-side store to be automatically updated on the server.
+	 *
+	 * @param rootFrame Root-frame of frame/slot network
+	 * @return Results of update process
+	 */
+	protected abstract RUpdates updateOnServer(IFrame rootFrame);
 
 	/**
 	 * Sends an instance-level frame/slot network to be automatically
