@@ -98,35 +98,32 @@ public abstract class RClientModel {
 		}
 	}
 
-	private class IFrameInitialiser implements CFrameListener {
+	private class IFrameInitialisingReasoner implements IReasoner {
 
 		private InstanceCreateInitAction createInitAction = new InstanceCreateInitAction();
 		private InstanceReloadInitAction reloadInitAction = new InstanceReloadInitAction();
 
-		public void onExtended(CFrame extension) {
+		public void initialiseFrame(IEditor iEditor, IFrame frame) {
+
+			createInitAction.checkPerform(frame);
 		}
 
-		public void onInstantiated(IFrame instance, boolean reinstantiation) {
+		public Set<IUpdateOp> reinitialiseFrame(
+								IEditor iEditor,
+								IFrame frame,
+								Set<IUpdateOp> ops) {
 
-			if (instance.getCategory().atomic()) {
+			reloadInitAction.checkPerform(frame);
 
-				getInitAction(reinstantiation).checkPerform(instance);
-
-				new ISlotInitialiser(instance);
-			}
+			return Collections.<IUpdateOp>emptySet();
 		}
 
-		IFrameInitialiser() {
+		public Set<IUpdateOp> updateFrame(
+								IEditor iEditor,
+								IFrame frame,
+								Set<IUpdateOp> ops) {
 
-			for (CFrame frame : cModel.getFrames().asList()) {
-
-				frame.addListener(this);
-			}
-		}
-
-		private InstanceAction getInitAction(boolean reinstantiation) {
-
-			return reinstantiation ? reloadInitAction : createInitAction;
+			return Collections.<IUpdateOp>emptySet();
 		}
 	}
 
@@ -214,8 +211,6 @@ public abstract class RClientModel {
 
 		cModel = cBuilder.build();
 		iEditor = cBuilder.getIEditor();
-
-		new IFrameInitialiser();
 	}
 
 	/**
@@ -262,9 +257,14 @@ public abstract class RClientModel {
 		CBuilder cBuilder = CManager.createEmptyBuilder();
 
 		cBuilder.setQueriesEnabled(true);
-		cBuilder.addSectionBuilder(new RClientSectionBuilder(hierarchy));
+		cBuilder.addSectionBuilder(createSectionBuilder(hierarchy));
 
 		return cBuilder;
+	}
+
+	private RClientSectionBuilder createSectionBuilder(CHierarchy hierarchy) {
+
+		return new RClientSectionBuilder(hierarchy, new IFrameInitialisingReasoner());
 	}
 
 	private IFrame findRootFrame(IFrame start) {

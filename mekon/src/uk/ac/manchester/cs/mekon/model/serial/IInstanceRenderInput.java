@@ -99,7 +99,17 @@ public class IInstanceRenderInput {
 		return rootFrame;
 	}
 
+	boolean includesValuesUpdate() {
+
+		return valuesUpdate != null;
+	}
+
 	IValuesUpdate getValuesUpdate() {
+
+		if (valuesUpdate == null) {
+
+			throw new Error("Values-update has not been set!");
+		}
 
 		return valuesUpdate;
 	}

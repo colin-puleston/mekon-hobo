@@ -34,6 +34,7 @@ import uk.ac.manchester.cs.mekon.model.util.*;
 class RClientSectionBuilder implements CSectionBuilder {
 
 	private CHierarchy hierarchy;
+	private IReasoner clientReasoner;
 
 	private class HierarchyBuilder {
 
@@ -60,12 +61,21 @@ class RClientSectionBuilder implements CSectionBuilder {
 
 			if (subRoot == null) {
 
-				subRoot = builder.addFrame(subRootId, false);
+				subRoot = addFrame(subRootId);
 
 				addSubTree(subRoot);
 			}
 
 			return subRoot;
+		}
+
+		private CFrame addFrame(CIdentity identity) {
+
+			CFrame frame = builder.addFrame(identity, false);
+
+			builder.setIReasoner(frame, clientReasoner);
+
+			return frame;
 		}
 
 		private void addSubFrame(CFrame sup, CFrame sub) {
@@ -84,8 +94,9 @@ class RClientSectionBuilder implements CSectionBuilder {
 		new HierarchyBuilder(builder);
 	}
 
-	RClientSectionBuilder(CHierarchy hierarchy) {
+	RClientSectionBuilder(CHierarchy hierarchy, IReasoner clientReasoner) {
 
 		this.hierarchy = hierarchy;
+		this.clientReasoner = clientReasoner;
 	}
 }

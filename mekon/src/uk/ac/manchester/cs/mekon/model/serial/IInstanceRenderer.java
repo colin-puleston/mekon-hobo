@@ -44,9 +44,9 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 
 	private class OneTimeRenderer {
 
+		private IInstanceRenderInput input;
 		private XNode containerNode;
 		private IFrameXDocIds frameXDocIds;
-		private IValuesUpdate valuesUpdate;
 
 		private class ISlotValueTypeRenderer extends CValueVisitor {
 
@@ -124,10 +124,10 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 
 		OneTimeRenderer(IInstanceRenderInput input, XNode containerNode) {
 
+			this.input = input;
 			this.containerNode = containerNode;
 
 			frameXDocIds = new IFrameXDocIds(input.getFrameXDocIds());
-			valuesUpdate = input.getValuesUpdate();
 
 			IFrame rootFrame = input.getRootFrame();
 
@@ -281,10 +281,7 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 				renderISlotValues(slot, node);
 			}
 
-			if (valuesUpdate != null && slot == valuesUpdate.getSlot()) {
-
-				renderISlotValuesUpdate(slot, node);
-			}
+			checkRenderISlotValuesUpdate(slot, node);
 		}
 
 		private void renderCSlot(CSlot slot, XNode parentNode) {
@@ -307,13 +304,29 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 			new ISlotValuesRenderer(slotValues.getAssertedValues(), node, false);
 		}
 
-		private void renderISlotValuesUpdate(ISlot slot, XNode slotNode) {
+		private void checkRenderISlotValuesUpdate(ISlot slot, XNode slotNode) {
+
+			if (input.includesValuesUpdate()) {
+
+				IValuesUpdate update = input.getValuesUpdate();
+
+				if (update.getSlot() == slot) {
+
+					renderISlotValuesUpdate(slot, slotNode, update);
+				}
+			}
+		}
+
+		private void renderISlotValuesUpdate(
+						ISlot slot,
+						XNode slotNode,
+						IValuesUpdate update) {
 
 			XNode node = slotNode.addChild(IVALUES_UPDATE_ID);
 
-			if (valuesUpdate.addition()) {
+			if (update.addition()) {
 
-				node.setValue(ADDED_VALUE_INDEX_ATTR, valuesUpdate.getAddedValueIndex());
+				node.setValue(ADDED_VALUE_INDEX_ATTR, update.getAddedValueIndex());
 			}
 		}
 	}

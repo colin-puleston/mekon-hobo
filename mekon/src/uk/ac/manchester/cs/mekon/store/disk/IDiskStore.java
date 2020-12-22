@@ -46,7 +46,7 @@ class IDiskStore implements IStore {
 	private IDirectMatcher defaultMatcher = new IDirectMatcher();
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
-	private Map<CIdentity, IRegenType> types = new HashMap<CIdentity, IRegenType>();
+	private Map<CIdentity, IRegenType> regenTypes = new HashMap<CIdentity, IRegenType>();
 	private InstanceIndexes indexes = new InstanceIndexes();
 
 	private IStoreActiveRegenReport regenReport;
@@ -54,16 +54,34 @@ class IDiskStore implements IStore {
 
 	private class Initialiser {
 
-		private List<IMatcher> reloadableMatchers = new ArrayList<IMatcher>();
+		private List<IMatcher> rebuildingMatchers = new ArrayList<IMatcher>();
 
 		Initialiser() {
 
-			reloadInstances();
-			logInstanceRegens();
 			initialiseMatchers();
-			populateMatchers();
+			reloadInstances();
 
 			indexes.reinitialiseFreeIndexes();
+		}
+
+		private void initialiseMatchers() {
+
+			initialiseMatcher(defaultMatcher);
+
+			for (IMatcher matcher : matchers) {
+
+				initialiseMatcher(matcher);
+			}
+		}
+
+		private void initialiseMatcher(IMatcher matcher) {
+
+			matcher.initialise(IDiskStore.this, indexes);
+
+			if (matcher.rebuildOnStartup()) {
+
+				rebuildingMatchers.add(matcher);
+			}
 		}
 
 		private void reloadInstances() {
@@ -77,26 +95,27 @@ class IDiskStore implements IStore {
 		private void reloadInstance(IInstanceProfile profile) {
 
 			CIdentity identity = profile.getInstanceIdentity();
-			IRegenType type = createRegenType(profile.getTypeIdentity());
+			IRegenType regenType = createRegenType(profile.getTypeIdentity());
+			int index = profile.getIndex();
 
+			indexes.assignIndex(identity, index);
 			identities.add(identity);
-			types.put(identity, type);
-			indexes.assignIndex(identity, profile.getIndex());
+			regenTypes.put(identity, regenType);
 
 			refIntegrityManager.onReloadedInstance(identity, profile);
-		}
 
-		private void logInstanceRegens() {
+			IMatcher matcher = lookForRebuildingMatcher(regenType);
+			IRegenInstance regen = load(identity, index, matcher == null);
 
-			for (CIdentity identity : getAllIdentities()) {
+			logRegen(identity, regen);
 
-				logInstanceRegen(identity);
+			if (matcher != null) {
+
+				matcher.add(regen.getRootFrame(), identity);
 			}
 		}
 
-		private void logInstanceRegen(CIdentity identity) {
-
-			IRegenInstance regen = regen(identity, false);
+		private void logRegen(CIdentity identity, IRegenInstance regen) {
 
 			logFile.logParsedInstance(identity, regen);
 
@@ -104,7 +123,7 @@ class IDiskStore implements IStore {
 
 				case FULLY_INVALID:
 					regenReport.addFullyInvalidRegenId(identity);
-					break;
+					return;
 
 				case PARTIALLY_VALID:
 					regenReport.addPartiallyValidRegenId(identity);
@@ -112,47 +131,14 @@ class IDiskStore implements IStore {
 			}
 		}
 
-		private void initialiseMatchers() {
+		private IMatcher lookForRebuildingMatcher(IRegenType regenType) {
 
-			initialiseMatcher(defaultMatcher);
+			if (!regenType.validRootType()) {
 
-			for (IMatcher matcher : matchers) {
-
-				initialiseMatcher(matcher);
-
-				if (matcher.rebuildOnStartup()) {
-
-					reloadableMatchers.add(matcher);
-				}
+				return null;
 			}
-		}
 
-		private void initialiseMatcher(IMatcher matcher) {
-
-			matcher.initialise(IDiskStore.this, indexes);
-		}
-
-		private void populateMatchers() {
-
-			for (CIdentity identity : getAllIdentities()) {
-
-				IFrame instance = regenOrNull(identity, true);
-
-				if (instance != null) {
-
-					checkAddToMatcher(instance, identity);
-				}
-			}
-		}
-
-		private void checkAddToMatcher(IFrame instance, CIdentity identity) {
-
-			IMatcher matcher = lookForMatcher(reloadableMatchers, instance.getType());
-
-			if (matcher != null) {
-
-				matcher.add(instance, identity);
-			}
+			return lookForMatcher(rebuildingMatchers, regenType.getRootType());
 		}
 	}
 
@@ -162,7 +148,7 @@ class IDiskStore implements IStore {
 		int index = indexes.assignIndex(identity);
 
 		identities.add(identity);
-		types.put(identity, createRegenType(instance));
+		regenTypes.put(identity, createRegenType(instance));
 
 		serialiser.write(instance, identity, index);
 
@@ -216,12 +202,12 @@ class IDiskStore implements IStore {
 
 	public synchronized IRegenType getType(CIdentity identity) {
 
-		return types.get(identity);
+		return regenTypes.get(identity);
 	}
 
 	public synchronized IRegenInstance get(CIdentity identity) {
 
-		return indexes.hasIndex(identity) ? regen(identity, false) : null;
+		return indexes.hasIndex(identity) ? load(identity, false) : null;
 	}
 
 	public synchronized List<CIdentity> getAllIdentities() {
@@ -322,7 +308,7 @@ class IDiskStore implements IStore {
 		}
 
 		identities.remove(identity);
-		types.remove(identity);
+		regenTypes.remove(identity);
 
 		int index = indexes.getIndex(identity);
 		IFrame removed = regenOrNull(identity, index, false);
@@ -340,7 +326,7 @@ class IDiskStore implements IStore {
 
 	private IFrame regenOrNull(CIdentity identity, int index, boolean freeInstance) {
 
-		IRegenInstance regen = regen(identity, index, freeInstance);
+		IRegenInstance regen = load(identity, index, freeInstance);
 
 		if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
 
@@ -350,12 +336,12 @@ class IDiskStore implements IStore {
 		return regen.getRootFrame();
 	}
 
-	private IRegenInstance regen(CIdentity identity, boolean freeInstance) {
+	private IRegenInstance load(CIdentity identity, boolean freeInstance) {
 
-		return regen(identity, indexes.getIndex(identity), freeInstance);
+		return load(identity, indexes.getIndex(identity), freeInstance);
 	}
 
-	private IRegenInstance regen(CIdentity identity, int index, boolean freeInstance) {
+	private IRegenInstance load(CIdentity identity, int index, boolean freeInstance) {
 
 		return serialiser.read(identity, index, freeInstance);
 	}
@@ -375,18 +361,18 @@ class IDiskStore implements IStore {
 		return getMatcher(frame.getType());
 	}
 
-	private IMatcher getMatcher(CFrame frameType) {
+	private IMatcher getMatcher(CFrame type) {
 
-		IMatcher matcher = lookForMatcher(matchers, frameType);
+		IMatcher matcher = lookForMatcher(matchers, type);
 
 		return matcher != null ? matcher : defaultMatcher;
 	}
 
-	private IMatcher lookForMatcher(List<IMatcher> candidates, CFrame frameType) {
+	private IMatcher lookForMatcher(List<IMatcher> candidates, CFrame type) {
 
 		for (IMatcher candidate : candidates) {
 
-			if (candidate.handlesType(frameType)) {
+			if (candidate.handlesType(type)) {
 
 				return candidate;
 			}

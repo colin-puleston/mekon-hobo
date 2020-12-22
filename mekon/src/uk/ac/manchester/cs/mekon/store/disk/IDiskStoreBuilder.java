@@ -97,6 +97,12 @@ public class IDiskStoreBuilder {
 	}
 
 	/**
+	 * Adds a sub-component of the main instance-store, within
+	 * which instances of the specified types will be stored.
+	 * The sub-component can optionally be divided between {@link
+	 * IFrameFunction#ASSERTION} and {@link IFrameFunction#QUERY}
+	 * directories.
+	 *
 	 * @param name Name of sub-store, which provides name of
 	 * relevant sub-directory for unified store, or base-name of
 	 * sub-directories for function-split store
