@@ -123,7 +123,7 @@ class Store {
 
 	List<CIdentity> getInstanceIds(CFrame type) {
 
-		return store.match(type.instantiate()).getAllMatches();
+		return store.match(type.instantiateQuery()).getAllMatches();
 	}
 
 	List<CIdentity> getAllInstanceIds() {
