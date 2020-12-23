@@ -127,33 +127,6 @@ public abstract class RClientModel {
 		}
 	}
 
-	private class ISlotInitialiser implements IFrameListener {
-
-		public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates) {
-		}
-
-		public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates) {
-		}
-
-		public void onSlotAdded(ISlot slot) {
-
-			new IFrameUpdater(slot);
-		}
-
-		public void onSlotRemoved(ISlot slot) {
-		}
-
-		ISlotInitialiser(IFrame container) {
-
-			for (ISlot slot : container.getSlots().asList()) {
-
-				new IFrameUpdater(slot);
-			}
-
-			container.addListener(this);
-		}
-	}
-
 	private class IFrameUpdater implements KValuesListener<IValue> {
 
 		private ISlot slot;
