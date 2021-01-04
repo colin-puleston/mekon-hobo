@@ -136,14 +136,14 @@ class IDiskStore implements IStore {
 			}
 		}
 
-		private IMatcher lookForRebuildingMatcher(IRegen regen) {
+		private IMatcher lookForRebuildingMatcher(IRegenInstance regen) {
 
 			if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
 
 				return null;
 			}
 
-			return lookForMatcher(rebuildingMatchers, regenType.getRootType());
+			return lookForMatcher(rebuildingMatchers, regen.getRootFrame().getType());
 		}
 	}
 
