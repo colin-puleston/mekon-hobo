@@ -31,9 +31,12 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class LocalQuerySubGroup extends QuerySubGroup {
 
-	LocalQuerySubGroup(InstanceGroup group) {
+	LocalQuerySubGroup(InstanceGroup group, CentralQuerySubGroup centralQuerySubGroup) {
 
 		super(group);
+
+		setAlternativeSubGroup(centralQuerySubGroup);
+		centralQuerySubGroup.setAlternativeSubGroup(this);
 	}
 
 	boolean editable() {

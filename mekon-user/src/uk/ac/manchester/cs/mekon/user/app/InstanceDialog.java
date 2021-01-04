@@ -37,7 +37,14 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 	static private final long serialVersionUID = -1;
 
 	static private final String STORE_BUTTON_LABEL = "Store";
-	static private final String STORE_AS_BUTTON_LABEL = "Store As...";
+	static private final String STORE_AS_DEFAULT_BUTTON_LABEL = "Store As...";
+	static private final String STORE_AS_CENTRAL_BUTTON_LABEL = "Store As (Central)...";
+	static private final String STORE_AS_LOCAL_BUTTON_LABEL = "Store As (Local)...";
+
+	static private String getAlternativeStoreAsLabel(boolean centralStore) {
+
+		return centralStore ? STORE_AS_CENTRAL_BUTTON_LABEL : STORE_AS_LOCAL_BUTTON_LABEL;
+	}
 
 	private Instantiator instantiator;
 
@@ -52,7 +59,7 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 		protected void doButtonThing() {
 
-			perfomStoreAction(storeId);
+			perfomStoreAction(getDefaultSubGroup(), storeId);
 		}
 
 		StoreButton() {
@@ -65,14 +72,28 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 		static private final long serialVersionUID = -1;
 
+		private InstanceSubGroup targetSubGroup;
+
 		protected void doButtonThing() {
 
-			perfomStoreAsAction();
+			perfomStoreAsAction(targetSubGroup);
 		}
 
 		StoreAsButton() {
 
-			super(STORE_AS_BUTTON_LABEL);
+			this(getDefaultSubGroup(), STORE_AS_DEFAULT_BUTTON_LABEL);
+		}
+
+		StoreAsButton(InstanceSubGroup altSubGroup) {
+
+			this(altSubGroup, getAlternativeStoreAsLabel(centralSubGroup(altSubGroup)));
+		}
+
+		private StoreAsButton(InstanceSubGroup targetSubGroup, String label) {
+
+			super(label);
+
+			this.targetSubGroup = targetSubGroup;
 		}
 	}
 
@@ -90,23 +111,9 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		allowStoreOverwrite = value;
 	}
 
-	ControlsPanel checkCreateControlsPanel() {
+	InstanceSubGroup getDefaultSubGroup() {
 
-		if (!instantiator.editableInstance()) {
-
-			return null;
-		}
-
-		ControlsPanel panel = new ControlsPanel(true);
-
-		if (allowStoreOverwrite) {
-
-			panel.addControl(new StoreButton());
-		}
-
-		panel.addControl(new StoreAsButton());
-
-		return panel;
+		return instantiator.getSubGroup();
 	}
 
 	IFrame getInstance() {
@@ -124,23 +131,58 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		return instanceStored;
 	}
 
+	ControlsPanel checkCreateControlsPanel() {
+
+		if (!instantiator.editableInstance()) {
+
+			return null;
+		}
+
+		ControlsPanel panel = new ControlsPanel(true);
+
+		InstanceSubGroup subGroup = getDefaultSubGroup();
+		InstanceSubGroup altSubGroup = subGroup.getAlternativeSubGroupOrNull();
+
+		if (subGroup.editable()) {
+
+			if (allowStoreOverwrite) {
+
+				panel.addControl(new StoreButton());
+			}
+
+			panel.addControl(new StoreAsButton());
+		}
+
+		if (altSubGroup != null && altSubGroup.editable()) {
+
+			panel.addControl(new StoreAsButton(altSubGroup));
+		}
+
+		return panel;
+	}
+
+	boolean centralSubGroup(InstanceSubGroup alternativeSubGroup) {
+
+		throw new Error("Method should never be invoked!");
+	}
+
 	abstract IFrame resolveInstanceForStoring();
 
 	abstract boolean disposeOnStoring();
 
-	private void perfomStoreAsAction() {
+	private void perfomStoreAsAction(InstanceSubGroup targetSubGroup) {
 
-		CIdentity newStoreId = checkObtainNewStoreId();
+		CIdentity newStoreId = checkObtainNewStoreId(targetSubGroup);
 
 		if (newStoreId != null) {
 
-			perfomStoreAction(newStoreId);
+			perfomStoreAction(targetSubGroup, newStoreId);
 		}
 	}
 
-	private void perfomStoreAction(CIdentity storeAsId) {
+	private void perfomStoreAction(InstanceSubGroup targetSubGroup, CIdentity storeAsId) {
 
-		if (storeInstance(storeAsId)) {
+		if (storeInstance(targetSubGroup, storeAsId)) {
 
 			storeId = storeAsId;
 			instanceStored = true;
@@ -152,21 +194,21 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		}
 	}
 
-	private boolean storeInstance(CIdentity storeAsId) {
+	private boolean storeInstance(InstanceSubGroup targetSubGroup, CIdentity storeAsId) {
 
 		IFrame instanceToStore = resolveInstanceForStoring();
 		boolean asNewId = !storeAsId.equals(storeId);
 
-		return getSubGroup().checkAdd(instanceToStore, storeAsId, asNewId);
+		return targetSubGroup.checkAdd(instanceToStore, storeAsId, asNewId);
 	}
 
-	private CIdentity checkObtainNewStoreId() {
+	private CIdentity checkObtainNewStoreId(InstanceSubGroup targetSubGroup) {
 
-		return createDisplayOps().checkObtainNewStoreId(getInstance().getType());
+		return createDisplayOps(targetSubGroup).checkObtainNewStoreId(getInstance().getType());
 	}
 
-	private InstanceDisplayOps createDisplayOps() {
+	private InstanceDisplayOps createDisplayOps(InstanceSubGroup targetSubGroup) {
 
-		return new InstanceDisplayOps(getTree(), getSubGroup());
+		return new InstanceDisplayOps(getTree(), targetSubGroup);
 	}
 }

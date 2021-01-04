@@ -40,6 +40,11 @@ class AssertionSubGroup extends InstanceSubGroup {
 		nameDefaults = group.getCustomiser().getAssertionNameDefaults();
 	}
 
+	InstanceSubGroup getAlternativeSubGroupOrNull() {
+
+		return null;
+	}
+
 	IFrameFunction getFunction() {
 
 		return IFrameFunction.ASSERTION;
@@ -47,7 +52,7 @@ class AssertionSubGroup extends InstanceSubGroup {
 
 	boolean instanceCreationEnabled() {
 
-		return getGroup().editable();
+		return editable();
 	}
 
 	boolean subGroupInstance(CIdentity storeId) {

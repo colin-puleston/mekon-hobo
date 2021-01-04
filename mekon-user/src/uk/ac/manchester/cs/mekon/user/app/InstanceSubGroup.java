@@ -56,6 +56,8 @@ abstract class InstanceSubGroup {
 		return group;
 	}
 
+	abstract InstanceSubGroup getAlternativeSubGroupOrNull();
+
 	InstanceIdsList getRootInstanceIdsList() {
 
 		return rootInstanceIds;
@@ -137,10 +139,7 @@ abstract class InstanceSubGroup {
 
 	abstract IFrameFunction getFunction();
 
-	boolean instanceCreationEnabled() {
-
-		return true;
-	}
+	abstract boolean instanceCreationEnabled();
 
 	abstract boolean subGroupInstance(CIdentity storeId);
 

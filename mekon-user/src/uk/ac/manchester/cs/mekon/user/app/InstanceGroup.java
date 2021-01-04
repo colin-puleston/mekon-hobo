@@ -65,7 +65,7 @@ class InstanceGroup {
 
 		if (controller.isLocalQueriesStore()) {
 
-			localQuerySubGroup = new LocalQuerySubGroup(this);
+			localQuerySubGroup = new LocalQuerySubGroup(this, centralQuerySubGroup);
 		}
 	}
 

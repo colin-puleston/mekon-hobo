@@ -85,12 +85,12 @@ class AssertionDialog extends InstanceDialog {
 
 		ControlsPanel panel = super.checkCreateControlsPanel();
 
-		if (panel == null) {
-
-			panel = new ControlsPanel(true);
-		}
-
 		if (getGroup().summariesEnabled()) {
+
+			if (panel == null) {
+
+				panel = new ControlsPanel(true);
+			}
 
 			panel.addControl(new ShowSummaryButton());
 		}

@@ -34,6 +34,8 @@ abstract class QuerySubGroup extends InstanceSubGroup {
 	private QueryExecutions executions;
 	private QueryNameDefaults nameDefaults;
 
+	private QuerySubGroup alternativeSubGroup = null;
+
 	QuerySubGroup(InstanceGroup group) {
 
 		super(group);
@@ -42,9 +44,24 @@ abstract class QuerySubGroup extends InstanceSubGroup {
 		nameDefaults = getNameDefaults(group.getCustomiser());
 	}
 
+	void setAlternativeSubGroup(QuerySubGroup alternativeSubGroup) {
+
+		this.alternativeSubGroup = alternativeSubGroup;
+	}
+
+	InstanceSubGroup getAlternativeSubGroupOrNull() {
+
+		return alternativeSubGroup;
+	}
+
 	IFrameFunction getFunction() {
 
 		return IFrameFunction.QUERY;
+	}
+
+	boolean instanceCreationEnabled() {
+
+		return true;
 	}
 
 	String createInstanceNameDefault(CFrame type, CIdentity refingId) {

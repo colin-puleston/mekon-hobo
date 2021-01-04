@@ -218,6 +218,11 @@ class QueryDialog extends InstanceDialog {
 		return panel;
 	}
 
+	boolean centralSubGroup(InstanceSubGroup alternativeSubGroup) {
+
+		return alternativeSubGroup instanceof CentralQuerySubGroup;
+	}
+
 	IFrame resolveInstanceForStoring() {
 
 		return resolveToExpanded();
@@ -270,7 +275,7 @@ class QueryDialog extends InstanceDialog {
 
 		dispose();
 
-		queryExecutions.execute(getStoreId(), resolveToExpanded(), getSubGroup());
+		queryExecutions.execute(getStoreId(), resolveToExpanded(), getDefaultSubGroup());
 	}
 
 	private IFrame resolveToExpanded() {
