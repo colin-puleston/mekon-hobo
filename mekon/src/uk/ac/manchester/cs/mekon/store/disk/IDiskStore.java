@@ -104,15 +104,10 @@ class IDiskStore implements IStore {
 
 			refIntegrityManager.onReloadedInstance(identity, profile);
 
-			IMatcher matcher = lookForRebuildingMatcher(regenType);
-			IRegenInstance regen = load(identity, index, matcher == null);
+			IRegenInstance regen = load(identity, index, false);
 
 			logRegen(identity, regen);
-
-			if (matcher != null) {
-
-				matcher.add(regen.getRootFrame(), identity);
-			}
+			checkAddToRebuildingMatcher(identity, regen);
 		}
 
 		private void logRegen(CIdentity identity, IRegenInstance regen) {
@@ -131,9 +126,19 @@ class IDiskStore implements IStore {
 			}
 		}
 
-		private IMatcher lookForRebuildingMatcher(IRegenType regenType) {
+		private void checkAddToRebuildingMatcher(CIdentity identity, IRegenInstance regen) {
 
-			if (!regenType.validRootType()) {
+			IMatcher matcher = lookForRebuildingMatcher(regen);
+
+			if (matcher != null) {
+
+				matcher.add(createFreeCopy(regen.getRootFrame()), identity);
+			}
+		}
+
+		private IMatcher lookForRebuildingMatcher(IRegen regen) {
+
+			if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
 
 				return null;
 			}

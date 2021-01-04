@@ -73,7 +73,7 @@ public class IMatchInstanceRefExpander {
 	}
 
 	/**
-	 * Performs the recusive reference-expansion process on the
+	 * Performs the recursive reference-expansion process on the
 	 * supplied instance.
 	 *
 	 * @param instance Instance whose references are to be expanded
