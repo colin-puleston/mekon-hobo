@@ -137,6 +137,8 @@ class InstanceTree extends GActionTree {
 	private void updateTree() {
 
 		rootNode.updateFrom();
+		rootNode.expand();
+
 		updateAllNodeDisplays();
 	}
 
