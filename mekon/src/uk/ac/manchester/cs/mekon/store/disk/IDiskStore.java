@@ -66,12 +66,12 @@ class IDiskStore implements IStore {
 
 		private void initialiseMatchers() {
 
-			initialiseMatcher(defaultMatcher);
-
 			for (IMatcher matcher : matchers) {
 
 				initialiseMatcher(matcher);
 			}
+
+			initialiseMatcher(defaultMatcher);
 		}
 
 		private void initialiseMatcher(IMatcher matcher) {
