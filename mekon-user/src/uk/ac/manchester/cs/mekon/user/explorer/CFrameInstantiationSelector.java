@@ -70,7 +70,7 @@ class CFrameInstantiationSelector extends CFrameSelector {
 		CIdentity instance = instantiatorPanel.getInstanceOrNull();
 
 		return instance != null
-					? frame.instantiate(instance, instanceFunction)
+					? frame.instantiateReference(instance, instanceFunction)
 					: frame.instantiate(instanceFunction);
 	}
 }
