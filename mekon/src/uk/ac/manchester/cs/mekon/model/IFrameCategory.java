@@ -34,35 +34,17 @@ public enum IFrameCategory {
 	/**
 	 * Frame is an atomic-frame.
 	 */
-	ATOMIC {
-
-		IFrame createCategoryFrame(CFrame type, IFrameFunction function) {
-
-			return new IAtomicFrame(type, function, false);
-		}
-	},
+	ATOMIC,
 
 	/**
 	 * Frame is a disjunction-frame.
 	 */
-	DISJUNCTION {
-
-		IFrame createCategoryFrame(CFrame type, IFrameFunction function) {
-
-			return new IDisjunction(type, function, false);
-		}
-	},
+	DISJUNCTION,
 
 	/**
 	 * Frame is a reference-frame.
 	 */
-	REFERENCE {
-
-		IFrame createCategoryFrame(CFrame type, IFrameFunction function) {
-
-			return new IReference(type, function, false);
-		}
-	};
+	REFERENCE;
 
 	/**
 	 * States whether frame is of category {@link #ATOMIC}.
@@ -93,6 +75,4 @@ public enum IFrameCategory {
 
 		return this == REFERENCE;
 	}
-
-	abstract IFrame createCategoryFrame(CFrame type, IFrameFunction function);
 }

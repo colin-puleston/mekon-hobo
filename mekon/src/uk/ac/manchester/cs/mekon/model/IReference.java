@@ -69,27 +69,15 @@ class IReference extends IFrame {
 		return false;
 	}
 
-	IReference(CFrame type, IFrameFunction function, boolean freeInstance) {
-
-		super(type, function, freeInstance);
-	}
-
 	IReference(
 		CFrame type,
 		CIdentity referenceId,
 		IFrameFunction function,
 		boolean freeInstance) {
 
-		this(type, function, freeInstance);
+		super(type, function, freeInstance);
 
 		this.referenceId = referenceId;
-	}
-
-	void completeInitialInstantiation(CIdentity referenceId) {
-
-		this.referenceId = referenceId;
-
-		completeInitialInstantiation();
 	}
 
 	ISlot addSlotInternal(CSlot slotType) {

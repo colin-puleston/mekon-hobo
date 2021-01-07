@@ -132,6 +132,63 @@ public abstract class CFrame
 	private CAnnotations annotations = new CAnnotations(this);
 	private List<CFrameListener> listeners = new ArrayList<CFrameListener>();
 
+	private abstract class Instantiator {
+
+		IFrame instantiate(IFrameFunction function) {
+
+			checkInstantiable(function);
+
+			IFrame instance = createCategoryFrame(function);
+
+			instance.completeInitialInstantiation();
+
+			return instance;
+		}
+
+		abstract IFrame createCategoryFrame(IFrameFunction function);
+
+		private void checkInstantiable(IFrameFunction function) {
+
+			function.checkInstantiable(getModel());
+		}
+	}
+
+	private class AtomicFrameInstantiator extends Instantiator {
+
+		IFrame createCategoryFrame(IFrameFunction function) {
+
+			return new IAtomicFrame(CFrame.this, function, false);
+		}
+	}
+
+	private class ReferenceInstantiator extends Instantiator {
+
+		private CIdentity referenceId;
+
+		ReferenceInstantiator(CIdentity referenceId) {
+
+			this.referenceId = referenceId;
+		}
+
+		IFrame createCategoryFrame(IFrameFunction function) {
+
+			return new IReference(CFrame.this, referenceId, function, false);
+		}
+	}
+
+	private class DisjunctionInstantiator extends Instantiator {
+
+		IFrame instantiate() {
+
+			return instantiate(IFrameFunction.QUERY);
+		}
+
+		IFrame createCategoryFrame(IFrameFunction function) {
+
+			return new IDisjunction(CFrame.this, false);
+		}
+	}
+
 	/**
 	 * Adds a frame-listener to the frame.
 	 *
@@ -614,7 +671,7 @@ public abstract class CFrame
 	 */
 	public IFrame instantiate(IFrameFunction function) {
 
-		return instantiate(IFrameCategory.ATOMIC, function);
+		return new AtomicFrameInstantiator().instantiate(function);
 	}
 
 	/**
@@ -637,9 +694,9 @@ public abstract class CFrame
 	 * @param referenceId Identity of referenced instance
 	 * @return Atomic-assertion instantiation of frame
 	 */
-	public IFrame instantiate(CIdentity referenceId) {
+	public IFrame instantiateReference(CIdentity referenceId) {
 
-		return instantiate(referenceId, IFrameFunction.ASSERTION);
+		return instantiateReference(referenceId, IFrameFunction.ASSERTION);
 	}
 
 	/**
@@ -650,13 +707,9 @@ public abstract class CFrame
 	 * @param function Required function of frame
 	 * @return Atomic instantiation of frame with required function
 	 */
-	public IFrame instantiate(CIdentity referenceId, IFrameFunction function) {
+	public IFrame instantiateReference(CIdentity referenceId, IFrameFunction function) {
 
-		IFrame instance = beginInstantiation(IFrameCategory.REFERENCE, function);
-
-		((IReference)instance).completeInitialInstantiation(referenceId);
-
-		return instance;
+		return new ReferenceInstantiator(referenceId).instantiate(function);
 	}
 
 	/**
@@ -667,9 +720,9 @@ public abstract class CFrame
 	 * @param referenceId Identity of referenced instance
 	 * @return Atomic-query instantiation of frame
 	 */
-	public IFrame instantiateQuery(CIdentity referenceId) {
+	public IFrame instantiateQueryReference(CIdentity referenceId) {
 
-		return instantiate(referenceId, IFrameFunction.QUERY);
+		return instantiateReference(referenceId, IFrameFunction.QUERY);
 	}
 
 	/**
@@ -682,7 +735,7 @@ public abstract class CFrame
 	 */
 	public IFrame instantiateDisjunction() {
 
-		return instantiate(IFrameCategory.DISJUNCTION, IFrameFunction.QUERY);
+		return new DisjunctionInstantiator().instantiate();
 	}
 
 	CFrame() {
@@ -738,7 +791,7 @@ public abstract class CFrame
 		return this;
 	}
 
-	void initialiseAtomicInstanceSlots(IAtomicFrame instance) {
+	void initialiseInstanceSlots(IFrame instance) {
 
 		getIReasoner().initialiseFrame(getIEditor(), instance);
 	}
@@ -779,25 +832,7 @@ public abstract class CFrame
 		return !getStructuredAncestors().isEmpty();
 	}
 
-	private IFrame instantiate(IFrameCategory category, IFrameFunction function) {
-
-		IFrame instance = beginInstantiation(category, function);
-
-		instance.completeInitialInstantiation();
-
-		return instance;
-	}
-
-	private IFrame beginInstantiation(IFrameCategory category, IFrameFunction function) {
-
-		function.checkInstantiable(getModel());
-
-		return category.createCategoryFrame(this, function);
-	}
-
-	private List<CFrame> checkStartListWithThis(
-							List<CFrame> list,
-							CVisibility visibility) {
+	private List<CFrame> checkStartListWithThis(List<CFrame> list, CVisibility visibility) {
 
 		if (visibility.coversHiddenStatus(hidden())) {
 

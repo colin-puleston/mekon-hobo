@@ -255,7 +255,7 @@ class IAtomicFrame extends IFrame {
 
 	void completeInitialInstantiation() {
 
-		getType().initialiseAtomicInstanceSlots(this);
+		initialiseSlots();
 
 		super.completeInitialInstantiation();
 

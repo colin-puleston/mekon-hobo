@@ -78,9 +78,9 @@ class IDisjunction extends IFrame {
 		return disjuncts.size() == 1 ? disjuncts.get(0) : this;
 	}
 
-	IDisjunction(CFrame type, IFrameFunction function, boolean freeInstance) {
+	IDisjunction(CFrame type, boolean freeInstance) {
 
-		super(type, function, freeInstance);
+		super(type, IFrameFunction.QUERY, freeInstance);
 
 		disjunctsSlot = new IDisjunctsSlot(this);
 	}
@@ -100,7 +100,7 @@ class IDisjunction extends IFrame {
 
 	IFrame copyEmpty(boolean freeInstance) {
 
-		return new IDisjunction(getType(), getFunction(), freeInstance);
+		return new IDisjunction(getType(), freeInstance);
 	}
 
 	void autoUpdate(Set<IFrame> visited) {

@@ -154,7 +154,7 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 
 	private IFrame instantiateRef(CIdentity typeId, CIdentity refId, IFrameFunction function) {
 
-		return getClientFrame(typeId).instantiate(refId, function);
+		return getClientFrame(typeId).instantiateReference(refId, function);
 	}
 
 	private CFrame getClientFrame(CIdentity id) {

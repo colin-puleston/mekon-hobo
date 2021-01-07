@@ -39,7 +39,7 @@ public class TestIFrames {
 	public IFrame create(String typeName) {
 
 		CFrame type = types.create(typeName);
-		IFrame instance = IFrameCategory.ATOMIC.createCategoryFrame(type, function);
+		IFrame instance = new IAtomicFrame(type, function, false);
 
 		instance.completeInitialInstantiation();
 
