@@ -319,9 +319,22 @@ class FieldSlot {
 
 	private ISlot addReferenceFrameSlot(IFrame frame) {
 
-		CSlot slotType = getFrameType().getSlots().get(slotId);
+		CSlot slotType = getReferenceFrameSlotType();
 
 		return ZCModelAccessor.get().addReferenceFrameMappingSlot(frame, slotType);
+	}
+
+	private CSlot getReferenceFrameSlotType() {
+
+		CFrame frameType = getBindingFrameType();
+		CSlot slotType = frameType.getSlots().getOrNull(slotId);
+
+		return slotType != null ? slotType : getAtomicFrameSlotType(frameType);
+	}
+
+	private CSlot getAtomicFrameSlotType(CFrame frameType) {
+
+		return frameType.instantiate().getSlots().get(slotId).getType();
 	}
 
 	private ISlot initialiseAtomicFrameSlot(IFrame frame) {
@@ -331,14 +344,19 @@ class FieldSlot {
 
 	private CSlot resolveSlotType() {
 
-		SlotTypeResolver resolver = new SlotTypeResolver(model, getFrameType(), this);
+		SlotTypeResolver resolver = createSlotTypeResolver();
 
 		newTypeBinding = resolver.newTypeBinding();
 
 		return resolver.getSlotType();
 	}
 
-	private CFrame getFrameType() {
+	private SlotTypeResolver createSlotTypeResolver() {
+
+		return new SlotTypeResolver(model, getBindingFrameType(), this);
+	}
+
+	private CFrame getBindingFrameType() {
 
 		return getBinding().getFrame();
 	}

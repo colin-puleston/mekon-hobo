@@ -342,15 +342,13 @@ public class DModelTest extends MekonTestUtils {
 		CFrame expectedSup = getCFrame(model, expectedSupId);
 		List<CFrame> sups = getCFrame(model, subId).getSupers();
 
-		assertTrue("Unexpected number of super-frames: " + sups.size(), sups.size() == 1);
+		assertTrue("Expected exactly 1 super-frame, found: " + sups.size(), sups.size() == 1);
 		assertTrue("Expected super-frame not found", sups.contains(expectedSup));
 	}
 
 	private void testCSlotCount(DModel model, String containerId, int expected) {
 
-		int got = getCFrame(model, containerId).getSlots().size();
-
-		assertTrue("Unexpected number of slots: " + got, got == expected);
+		assertEquals(expected, getCFrame(model, containerId).getSlots().size());
 	}
 
 	private void testCSlotBuilt(
