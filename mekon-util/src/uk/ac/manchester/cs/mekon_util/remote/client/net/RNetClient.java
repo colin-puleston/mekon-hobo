@@ -31,30 +31,60 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon_util.remote.client.*;
 
 /**
- * Represents the client-side of a network connection via which
- * server-side actions can be specified and performed.
+ * Represents a network client, via which server-side actions
+ * can be specified and performed.
  *
  * @author Colin Puleston
  */
-public class RNetConnection {
+public class RNetClient {
+
+	static private final int CONNECT_TIMEOUT = 20000;
+	static private final int READ_TIMEOUT = 60000;
+
+	static class DefaultExceptionHandler implements RNetClientExceptionHandler {
+
+		public XDocument handle(RConnectionException exception) {
+
+			throw exception;
+		}
+
+		public XDocument handle(RServerAccessException exception) {
+
+			throw exception;
+		}
+	}
 
 	private URL serverURL;
+	private RNetClientExceptionHandler exceptionHandler = new DefaultExceptionHandler();
 
 	/**
 	 * Constructor.
 	 *
 	 * @param serverURL URL providing access to server
 	 */
-	public RNetConnection(URL serverURL) {
+	public RNetClient(URL serverURL) {
 
 		this.serverURL = serverURL;
 	}
 
 	/**
-	 * Accesses the server to perform a particular model-related action.
+	 * Sets handler for any runtime-exceptions resulting from
+	 * server-access operations. By default all such exceptions will
+	 * simply be thrown/re-thrown, without any other actions being
+	 * performed.
 	 *
-	 * @param requestDoc Document representing specification of required
-	 * action
+	 * @param exceptionHandler Relevant exception-handler
+	 */
+	public void setExceptionHandler(RNetClientExceptionHandler exceptionHandler) {
+
+		this.exceptionHandler = exceptionHandler;
+	}
+
+	/**
+	 * Accesses the server to perform a specific action.
+	 *
+	 * @param requestDoc Document representing specification of
+	 * required action
 	 * @return Document representing output produced by action
 	 */
 	public XDocument performActionOnServer(XDocument request) {
@@ -69,7 +99,11 @@ public class RNetConnection {
 		}
 		catch (IOException e) {
 
-			throw new RServerAccessException(e);
+			return exceptionHandler.handle(new RConnectionException(e));
+		}
+		catch (RServerAccessException e) {
+
+			return exceptionHandler.handle(e);
 		}
 	}
 
@@ -79,6 +113,8 @@ public class RNetConnection {
 
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
+		connection.setConnectTimeout(CONNECT_TIMEOUT);
+		connection.setReadTimeout(READ_TIMEOUT);
 
 		connection.connect();
 

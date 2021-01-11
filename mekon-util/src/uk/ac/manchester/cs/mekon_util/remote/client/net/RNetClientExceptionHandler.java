@@ -22,35 +22,38 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon_util.remote.server;
+package uk.ac.manchester.cs.mekon_util.remote.client.net;
+
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.remote.client.*;
 
 /**
- * Exception thrown on the server when an error has occured
- * during a remote access operation.
+ * Handles runtime-exceptions caused by client access of a
+ * network connection. Each handling method will result, possibly
+ * after some other action(s), such as user notification, in one
+ * of the following actions being performed (a) throwing of the
+ * provided exception (b) throwing of some other runtime-exception,
+ * (c) system exit, or (d) return of a document, or null value,
+ * signifying to the invoking application that an exception
+ * occurred and the action was not performed.
  *
  * @author Colin Puleston
  */
-public class RServerException extends RuntimeException {
-
-	static private final long serialVersionUID = -1;
+public interface RNetClientExceptionHandler {
 
 	/**
-	 * Constructor.
+	 * Handles network-connection exception.
 	 *
-	 * @param exception Wrapped exception
+	 * @param exception Exception to be handled
+	 * @return document, or null value, to be handled by application
 	 */
-	public RServerException(Exception exception) {
-
-		super(exception);
-	}
+	public XDocument handle(RConnectionException exception);
 
 	/**
-	 * Constructor.
+	 * Handles server-access exception.
 	 *
-	 * @param message Error message
+	 * @param exception Exception to be handled
+	 * @return document, or null value, to be handled by application
 	 */
-	public RServerException(String message) {
-
-		super(message);
-	}
+	public XDocument handle(RServerAccessException exception);
 }

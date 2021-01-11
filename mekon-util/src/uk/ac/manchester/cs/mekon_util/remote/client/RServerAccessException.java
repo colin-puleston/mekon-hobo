@@ -26,7 +26,7 @@ package uk.ac.manchester.cs.mekon_util.remote.client;
 
 /**
  * Exception thrown by the client when an error has occured
- * on the server during a MEKON remote access operation.
+ * on the server during a remote access operation.
  *
  * @author Colin Puleston
  */

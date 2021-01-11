@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin.client;
 
-import java.net.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
@@ -36,7 +35,7 @@ import uk.ac.manchester.cs.mekon_util.remote.admin.*;
  */
 public class RAdminClient {
 
-	private RNetConnection connection;
+	private RNetClient netClient;
 
 	private RoleNameRetrievals roleNameRetrievals = new RoleNameRetrievals();
 	private UserProfileRetrievals userProfileRetrievals = new UserProfileRetrievals();
@@ -50,7 +49,7 @@ public class RAdminClient {
 		O performAction(I input) {
 
 			XDocument request = renderRequest(input);
-			XDocument response = connection.performActionOnServer(request);
+			XDocument response = netClient.performActionOnServer(request);
 
 			return parseResponse(response);
 		}
@@ -189,9 +188,9 @@ public class RAdminClient {
 		}
 	}
 
-	public RAdminClient(URL serverURL) {
+	public RAdminClient(RNetClient netClient) {
 
-		connection = new RNetConnection(serverURL);
+		this.netClient = netClient;
 	}
 
 	public List<String> getRoleNames() {

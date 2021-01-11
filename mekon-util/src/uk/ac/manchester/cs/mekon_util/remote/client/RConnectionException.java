@@ -22,15 +22,15 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon_util.remote.server;
+package uk.ac.manchester.cs.mekon_util.remote.client;
 
 /**
- * Exception thrown on the server when an error has occured
- * during a remote access operation.
+ * Exception thrown by the client when a server-connection
+ * error has occured during a remote access operation.
  *
  * @author Colin Puleston
  */
-public class RServerException extends RuntimeException {
+public class RConnectionException extends RuntimeException {
 
 	static private final long serialVersionUID = -1;
 
@@ -39,7 +39,7 @@ public class RServerException extends RuntimeException {
 	 *
 	 * @param exception Wrapped exception
 	 */
-	public RServerException(Exception exception) {
+	public RConnectionException(Exception exception) {
 
 		super(exception);
 	}
@@ -49,7 +49,7 @@ public class RServerException extends RuntimeException {
 	 *
 	 * @param message Error message
 	 */
-	public RServerException(String message) {
+	public RConnectionException(String message) {
 
 		super(message);
 	}
