@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.remote.client.net;
 
-import java.net.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
@@ -46,13 +44,13 @@ public class MekonNetClient {
 	private CModel model;
 	private IStore store;
 
-	private RNetConnection connection;
+	private RNetClient netClient;
 
 	private class NetClientModel extends XClientModel {
 
 		protected XDocument performActionOnServer(XDocument request) {
 
-			return connection.performActionOnServer(request);
+			return netClient.performActionOnServer(request);
 		}
 	}
 
@@ -60,7 +58,7 @@ public class MekonNetClient {
 
 		protected XDocument performActionOnServer(XDocument request) {
 
-			return connection.performActionOnServer(request);
+			return netClient.performActionOnServer(request);
 		}
 
 		NetClientStore() {
@@ -72,12 +70,12 @@ public class MekonNetClient {
 	/**
 	 * Constructor.
 	 *
-	 * @param serverURL URL providing access to relevant instance of
+	 * @param netClient Entity providing access to relevant instance of
 	 * <code>MekonNetServer</code> running on server
 	 */
-	public MekonNetClient(URL serverURL) {
+	public MekonNetClient(RNetClient netClient) {
 
-		connection = new RNetConnection(serverURL);
+		this.netClient = netClient;
 
 		model = new NetClientModel().getCModel();
 		store = new NetClientStore().getIStore();
