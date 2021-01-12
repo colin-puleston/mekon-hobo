@@ -97,20 +97,15 @@ public class DModelMap {
 	}
 
 	/**
-	 * Adds an object for generating a set of mappings between a set
-	 * of OM classes, plus any OM fields attached to those classes,
-	 * and entities in one or more external sources. The returned
-	 * object should be used to configure the mapping creation process.
+	 * Adds a class-mapper object that will generate mappings between
+	 * a set of OM classes, plus selected fields attached to those
+	 * classes, and entities in one or more external sources.
 	 *
-	 * @return Class-mapper object to be configured
+	 * @param mapper Class-mapper to be added
 	 */
-	public DClassMapper addClassMapper() {
-
-		DClassMapper mapper = new DClassMapper();
+	public void addClassMapper(DClassMapper mapper) {
 
 		classMappers.add(mapper);
-
-		return mapper;
 	}
 
 	/**

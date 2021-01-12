@@ -64,11 +64,6 @@ public class DModelTest extends MekonTestUtils {
 	static private String CLASS_A_DERIVED_LABEL = "Class a";
 	static private String INT_CELL_DERIVED_LABEL = "int cell";
 
-	static private String MAPPPER_PACKAGE = getTestModelMapperPackageName();
-	static private String MAPPPER_FRAME_IDS_PREFIX = "mapper-frames#";
-	static private String MAPPPER_SLOT_IDS_PREFIX = "mapper-slots#";
-	static private String MAPPPER_SLOT_IDS_SEPARATOR = "_";
-
 	static private String MAPPPER_FRAME_C_ID = getMapperFrameId(MapperClassC.class);
 	static private String MAPPPER_FRAME_CX_ID = getMapperFrameId(MapperClassCX.class);
 	static private String MAPPPER_FRAME_D_ID = getMapperFrameId(MapperClassD.class);
@@ -92,15 +87,12 @@ public class DModelTest extends MekonTestUtils {
 
 	static private String getMapperFrameId(Class<?> mapperClass) {
 
-		return MAPPPER_FRAME_IDS_PREFIX + mapperClass.getSimpleName();
+		return "mapper-frames#" + mapperClass.getSimpleName();
 	}
 
 	static private String getMapperSlotId(Class<?> mapperClass, String fieldName) {
 
-		return MAPPPER_SLOT_IDS_PREFIX
-				+ mapperClass.getSimpleName()
-				+ MAPPPER_SLOT_IDS_SEPARATOR
-				+ fieldName;
+		return "mapper-slots#" + mapperClass.getSimpleName() + "_" + fieldName;
 	}
 
 	private class ExternalSectionBuilder implements CSectionBuilder {
@@ -148,6 +140,26 @@ public class DModelTest extends MekonTestUtils {
 		private CFrameEditor addFrame(CBuilder builder, CIdentity id) {
 
 			return builder.getFrameEditor(builder.addFrame(id, false));
+		}
+	}
+
+	private class TestClassMapper extends DClassMapper {
+
+		protected String getClassExternalId(Class<? extends DObject> dClass) {
+
+			return getMapperFrameId(dClass);
+		}
+
+		protected String getFieldExternalId(
+							Class<? extends DObject> dClass,
+							String fieldName) {
+
+			return getMapperSlotId(dClass, fieldName);
+		}
+
+		TestClassMapper() {
+
+			addPackage(getTestModelMapperPackageName());
 		}
 	}
 
@@ -309,13 +321,7 @@ public class DModelTest extends MekonTestUtils {
 
 		classAMap.addFieldMap(INT_CELL_NAME, INT_EXTERNAL_ID);
 
-		DClassMapper classesCDMapper = map.addClassMapper();
-
-		classesCDMapper.addPackage(MAPPPER_PACKAGE);
-
-		classesCDMapper.setClassIdsPrefix(MAPPPER_FRAME_IDS_PREFIX);
-		classesCDMapper.setFieldIdsPrefix(MAPPPER_SLOT_IDS_PREFIX);
-		classesCDMapper.setCompoundFieldIds(MAPPPER_SLOT_IDS_SEPARATOR);
+		map.addClassMapper(new TestClassMapper());
 	}
 
 	private <D extends DObject>D instantiate(DModel model, Class<D> dClass) {

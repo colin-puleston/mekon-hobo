@@ -48,10 +48,7 @@ public interface DConfigVocab {
 	static public final String CLASS_MAP_EXTERNAL_ID_ATTR = "externalId";
 	static public final String FIELD_MAP_FIELD_NAME_ATTR = "fieldName";
 	static public final String FIELD_MAP_EXTERNAL_ID_ATTR = "externalId";
+	static public final String CLASS_MAPPER_CLASS_ATTR = "mapperClass";
 	static public final String CLASS_MAPPER_PACKAGE_ATTR = "package";
 	static public final String CLASS_MAPPER_BASE_PACKAGE_ATTR = "topLevelPackage";
-	static public final String CLASS_MAPPER_ID_SEPARATOR_ATTR = "separator";
-	static public final String CLASS_MAPPER_ID_PREFIX_ATTR = "externalIdsPrefix";
-	static public final String CLASS_MAPPER_CLASS_ID_PREFIX_ATTR = "externalClassIdsPrefix";
-	static public final String CLASS_MAPPER_FIELD_ID_PREFIX_ATTR = "externalFieldIdsPrefix";
 }

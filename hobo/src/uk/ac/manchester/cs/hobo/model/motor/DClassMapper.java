@@ -35,24 +35,15 @@ import uk.ac.manchester.cs.hobo.model.*;
  * or more packages, plus any OM fields attached to those classes,
  * and entities in one or more external sources.
  * <p>
- * The generated external-identifier for a mapped class will be
- * the simple class-name, optionally with a specified general
- * prefix string attached. The generated external-identifier for
- * a mapped field will consist of the field-name, optionally
- * preceded by either or both of (1) a specified general prefix
- * string, and (2) the simple class-name of the class on which
- * the field is located followed by a suitable separator string.
+ * This is an abstract class whose concrete extensions will implement
+ * methods to generate external-identifiers for the classes and
+ * fields that are being mapped.
  *
  * @author Colin Puleston
  */
-public class DClassMapper {
+public abstract class DClassMapper {
 
 	private Set<PackageMapper> packageMappers = new HashSet<PackageMapper>();
-
-	private String classIdsPrefix = "";
-	private String fieldIdsPrefix = "";
-
-	private String compoundFieldIdSeparator = null;
 
 	private abstract class PackageMapper {
 
@@ -94,57 +85,6 @@ public class DClassMapper {
 		}
 	}
 
-	private class MapGenerator {
-
-		private Class<? extends DObject> dClass;
-
-		MapGenerator(Class<? extends DObject> dClass) {
-
-			this.dClass = dClass;
-		}
-
-		DClassMap generate() {
-
-			DClassMap classMap = new DClassMap(dClass, createClassId());
-
-			for (Field field : dClass.getDeclaredFields()) {
-
-				if (mappableField(field)) {
-
-					addFieldMap(classMap, field.getName());
-				}
-			}
-
-			return classMap;
-		}
-
-		private void addFieldMap(DClassMap classMap, String fieldName) {
-
-			classMap.addFieldMap(fieldName, createFieldId(fieldName));
-		}
-
-		private String createClassId() {
-
-			return classIdsPrefix + dClass.getSimpleName();
-		}
-
-		private String createFieldId(String fieldName) {
-
-			StringBuilder id = new StringBuilder();
-
-			id.append(fieldIdsPrefix);
-
-			if (compoundFieldIdSeparator != null) {
-
-				id.append(dClass.getSimpleName() + compoundFieldIdSeparator);
-			}
-
-			id.append(fieldName);
-
-			return id.toString();
-		}
-	}
-
 	/**
 	 * Adds an OM package for whose classes mappings are to be
 	 * generated
@@ -168,62 +108,49 @@ public class DClassMapper {
 	}
 
 	/**
-	 * Sets a prefix to form part of the external-identififiers
-	 * for both the mapped classes and mapped fields.
+	 * Provides the external-identifier that is to be mapped to a
+	 * specified OM class.
 	 *
-	 * @param prefix Prefix for external-identifiers of mapped
-	 * classes and fields
+	 * @param dClass OM class for which identifier is required
+	 * @return external-identifier to be mapped to specified OM class
 	 */
-	public void setIdsPrefix(String prefix) {
-
-		classIdsPrefix = prefix;
-		fieldIdsPrefix = prefix;
-	}
+	protected abstract String getClassExternalId(Class<? extends DObject> dClass);
 
 	/**
-	 * Sets a prefix to form part of the external-identififiers
-	 * for the mapped classes.
+	 * Provides the external-identifier that is to be mapped to a
+	 * specified OM field.
 	 *
-	 * @param prefix Prefix for external-identifiers of mapped
-	 * classes
+	 * @param dClass OM class containing field for which identifier is
+	 * required
+	 * @param fieldName Name of OM field for which identifier is required
+	 * @return external-identifier to be mapped to specified OM field
 	 */
-	public void setClassIdsPrefix(String prefix) {
-
-		classIdsPrefix = prefix;
-	}
-
-	/**
-	 * Sets a prefix to form part of the external-identififiers
-	 * for the mapped fields.
-	 *
-	 * @param prefix Prefix for external-identifiers of mapped
-	 * fields
-	 */
-	public void setFieldIdsPrefix(String prefix) {
-
-		fieldIdsPrefix = prefix;
-	}
-
-	/**
-	 * Used to specify that the main body of the generated
-	 * external-identifiers for mapped fields will be compound,
-	 * consisting of the field-name, preceded by the relevant
-	 * simple class-name, plus the specified separater string.
-	 *
-	 * @param separator Separater string to use in creating
-	 * compound external-identifiers for mapped fields
-	 */
-	public void setCompoundFieldIds(String separator) {
-
-		compoundFieldIdSeparator = separator;
-	}
-
-	DClassMapper() {
-	}
+	protected abstract String getFieldExternalId(
+								Class<? extends DObject> dClass,
+								String fieldName);
 
 	DClassMap checkGenerateMap(Class<? extends DObject> dClass) {
 
-		return mappingSubject(dClass) ? new MapGenerator(dClass).generate() : null;
+		return mappingSubject(dClass) ? generateMap(dClass) : null;
+	}
+
+	private Class<? extends DObject> dClass;
+
+	private DClassMap generateMap(Class<? extends DObject> dClass) {
+
+		DClassMap classMap = new DClassMap(dClass, getClassExternalId(dClass));
+
+		for (Field field : dClass.getDeclaredFields()) {
+
+			if (mappableField(field)) {
+
+				String fieldName = field.getName();
+
+				classMap.addFieldMap(fieldName, getFieldExternalId(dClass, fieldName));
+			}
+		}
+
+		return classMap;
 	}
 
 	private boolean mappingSubject(Class<? extends DObject> dClass) {

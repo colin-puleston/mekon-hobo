@@ -79,18 +79,30 @@ class DConfig implements DConfigVocab {
 
 		for (KConfigNode mapperNode : mapsNode.getChildren(CLASS_MAPPER_ID)) {
 
-			loadClassMapper(modelMap, mapperNode);
+			modelMap.addClassMapper(loadClassMapper(mapperNode));
 		}
 	}
 
-	private void loadClassMapper(DModelMap modelMap, KConfigNode mapperNode) {
+	private DClassMapper loadClassMapper(KConfigNode mapperNode) {
 
-		DClassMapper mapper = modelMap.addClassMapper();
+		DClassMapper mapper = createClassMapper(mapperNode);
 
 		addClassMappingSinglePackages(mapper, mapperNode);
 		addClassMappingPackageGroups(mapper, mapperNode);
 
-		setClassMappingExternalIdConfig(mapper, mapperNode);
+		return mapper;
+	}
+
+	private DClassMapper createClassMapper(KConfigNode mapperNode) {
+
+		Class<? extends DClassMapper> cls = getClassMapperClass(mapperNode);
+
+		return new KConfigObjectConstructor<DClassMapper>(cls).construct();
+	}
+
+	static private Class<? extends DClassMapper> getClassMapperClass(KConfigNode mapperNode) {
+
+		return mapperNode.getClass(CLASS_MAPPER_CLASS_ATTR, DClassMapper.class);
 	}
 
 	private void addClassMappingSinglePackages(DClassMapper mapper, KConfigNode mapperNode) {
@@ -106,35 +118,6 @@ class DConfig implements DConfigVocab {
 		for (KConfigNode pkgNode : mapperNode.getChildren(CLASS_MAPPER_PACKAGE_GROUP_ID)) {
 
 			mapper.addPackageGroup(pkgNode.getString(CLASS_MAPPER_BASE_PACKAGE_ATTR));
-		}
-	}
-
-	private void setClassMappingExternalIdConfig(DClassMapper mapper, KConfigNode mapperNode) {
-
-		String idPfx = mapperNode.getString(CLASS_MAPPER_ID_PREFIX_ATTR, null);
-		String classIdPfx = mapperNode.getString(CLASS_MAPPER_CLASS_ID_PREFIX_ATTR, null);
-		String fieldIdPfx = mapperNode.getString(CLASS_MAPPER_FIELD_ID_PREFIX_ATTR, null);
-
-		if (idPfx != null) {
-
-			mapper.setIdsPrefix(idPfx);
-		}
-
-		if (classIdPfx != null) {
-
-			mapper.setClassIdsPrefix(classIdPfx);
-		}
-
-		if (fieldIdPfx != null) {
-
-			mapper.setFieldIdsPrefix(fieldIdPfx);
-		}
-
-		KConfigNode cfIdsNode = mapperNode.getChildOrNull(CLASS_MAPPER_COMPOUND_FIELD_IDS_ID);
-
-		if (cfIdsNode != null) {
-
-			mapper.setCompoundFieldIds(cfIdsNode.getString(CLASS_MAPPER_ID_SEPARATOR_ATTR));
 		}
 	}
 
