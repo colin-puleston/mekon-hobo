@@ -38,6 +38,16 @@ public class RLock {
 		this.resourceId = resourceId;
 	}
 
+	public boolean equals(Object other) {
+
+		return other instanceof RLock && equalsLock((RLock)other);
+	}
+
+	public int hashCode() {
+
+		return ownerName.hashCode() + resourceId.hashCode();
+	}
+
 	public String getOwnerName() {
 
 		return ownerName;
@@ -46,5 +56,10 @@ public class RLock {
 	public String getResourceId() {
 
 		return resourceId;
+	}
+
+	private boolean equalsLock(RLock other) {
+
+		return ownerName.equals(other.ownerName) && resourceId.equals(other.resourceId);
 	}
 }

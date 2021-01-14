@@ -39,6 +39,7 @@ public class RAdminClient {
 
 	private RoleNameRetrievals roleNameRetrievals = new RoleNameRetrievals();
 	private UserProfileRetrievals userProfileRetrievals = new UserProfileRetrievals();
+	private ActiveLockRetrievals activeLockRetrievals = new ActiveLockRetrievals();
 	private UserUpdates userUpdates = new UserUpdates();
 	private LoginChecks loginChecks = new LoginChecks();
 	private LockRequests lockRequests = new LockRequests();
@@ -118,6 +119,19 @@ public class RAdminClient {
 		List<RUserProfile> parseOutput(RAdminResponseSerialiser parser) {
 
 			return parser.parseUserProfiles();
+		}
+	}
+
+	private class ActiveLockRetrievals extends OutputOnlyServerActions<List<RLock>> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.ACTIVE_LOCK_RETRIEVAL;
+		}
+
+		List<RLock> parseOutput(RAdminResponseSerialiser parser) {
+
+			return parser.parseActiveLocks();
 		}
 	}
 
@@ -201,6 +215,11 @@ public class RAdminClient {
 	public List<RUserProfile> getUserProfiles() {
 
 		return userProfileRetrievals.performAction();
+	}
+
+	public List<RLock> getActiveLocks() {
+
+		return activeLockRetrievals.performAction();
 	}
 
 	public RUserUpdateResult updateUsers(RUserUpdate update) {

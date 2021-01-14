@@ -53,6 +53,11 @@ public class RAdminManager {
 		return userFile.extractProfiles();
 	}
 
+	public List<RLock> getActiveLocks() {
+
+		return lockManager.getActiveLocks();
+	}
+
 	public synchronized RUserUpdateResult updateUsers(RUserUpdate update) {
 
 		return update.performUpdate(roleFinder, userFile);

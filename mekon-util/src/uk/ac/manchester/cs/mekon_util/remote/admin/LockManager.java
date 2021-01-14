@@ -31,25 +31,47 @@ import java.util.*;
  */
 class LockManager {
 
-	private Map<String, RLock> locksByResourceId = new HashMap<String, RLock>();
+	private List<RLock> activeLocks = new ArrayList<RLock>();
 
 	RLockingResult requestLock(RLock lock) {
 
-		String resourceId = lock.getResourceId();
-		RLock currentLock = locksByResourceId.get(resourceId);
+		RLock activeLock = lookForActiveLock(lock.getResourceId());
 
-		if (currentLock != null) {
+		if (activeLock != null) {
 
-			return RLockingResult.currentlyLocked(currentLock.getOwnerName());
+			return RLockingResult.currentlyLocked(activeLock.getOwnerName());
 		}
 
-		locksByResourceId.put(resourceId, lock);
+		activeLocks.add(lock);
 
 		return RLockingResult.LOCK_OBTAINED;
 	}
 
 	void releaseLock(String resourceId) {
 
-		locksByResourceId.remove(resourceId);
+		RLock lock = lookForActiveLock(resourceId);
+
+		if (lock != null) {
+
+			activeLocks.remove(lock);
+		}
+	}
+
+	List<RLock> getActiveLocks() {
+
+		return new ArrayList<RLock>(activeLocks);
+	}
+
+	private RLock lookForActiveLock(String resourceId) {
+
+		for (RLock lock : activeLocks) {
+
+			if (lock.getResourceId().equals(resourceId)) {
+
+				return lock;
+			}
+		}
+
+		return null;
 	}
 }

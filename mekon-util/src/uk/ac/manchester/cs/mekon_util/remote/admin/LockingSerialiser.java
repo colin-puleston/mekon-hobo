@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon_util.remote.admin;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -31,46 +33,68 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 class LockingSerialiser {
 
+	static private final String LOCK_TAG = "lock";
+
 	static private final String OWNER_NAME_ATTR = "ownerName";
 	static private final String RESOURCE_ID_ATTR = "resourceId";
 
-	static void renderLock(RLock lock, XNode node) {
+	static void renderLocks(List<RLock> locks, XNode locksNode) {
 
-		node.setValue(OWNER_NAME_ATTR, lock.getOwnerName());
-		node.setValue(RESOURCE_ID_ATTR, lock.getResourceId());
-	}
+		for (RLock lock : locks) {
 
-	static void renderLockingResult(RLockingResult result, XNode node) {
-
-		if (!result.lockObtained()) {
-
-			node.setValue(OWNER_NAME_ATTR, result.getCurrentOwnerName());
+			renderLock(lock, locksNode.addChild(LOCK_TAG));
 		}
 	}
 
-	static void renderLockResourceId(String resourceId, XNode node) {
+	static void renderLock(RLock lock, XNode lockNode) {
 
-		node.setValue(RESOURCE_ID_ATTR, resourceId);
+		lockNode.setValue(OWNER_NAME_ATTR, lock.getOwnerName());
+		lockNode.setValue(RESOURCE_ID_ATTR, lock.getResourceId());
 	}
 
-	static RLock parseLock(XNode node) {
+	static void renderLockingResult(RLockingResult result, XNode resultNode) {
+
+		if (!result.lockObtained()) {
+
+			resultNode.setValue(OWNER_NAME_ATTR, result.getCurrentOwnerName());
+		}
+	}
+
+	static void renderLockResourceId(String resourceId, XNode idNode) {
+
+		idNode.setValue(RESOURCE_ID_ATTR, resourceId);
+	}
+
+	static List<RLock> parseLocks(XNode locksNode) {
+
+		List<RLock> locks = new ArrayList<RLock>();
+
+		for (XNode lockNode : locksNode.getChildren(LOCK_TAG)) {
+
+			locks.add(parseLock(lockNode));
+		}
+
+		return locks;
+	}
+
+	static RLock parseLock(XNode lockNode) {
 
 		return new RLock(
-					node.getString(OWNER_NAME_ATTR),
-					node.getString(RESOURCE_ID_ATTR));
+					lockNode.getString(OWNER_NAME_ATTR),
+					lockNode.getString(RESOURCE_ID_ATTR));
 	}
 
-	static RLockingResult parseLockingResult(XNode node) {
+	static RLockingResult parseLockingResult(XNode resultNode) {
 
-		String currentOwner = node.getString(OWNER_NAME_ATTR, null);
+		String currentOwner = resultNode.getString(OWNER_NAME_ATTR, null);
 
 		return currentOwner != null
 					? RLockingResult.currentlyLocked(currentOwner)
 					: RLockingResult.LOCK_OBTAINED;
 	}
 
-	static String parseLockResourceId(XNode node) {
+	static String parseLockResourceId(XNode idNode) {
 
-		return node.getString(RESOURCE_ID_ATTR);
+		return idNode.getString(RESOURCE_ID_ATTR);
 	}
 }

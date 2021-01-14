@@ -139,6 +139,24 @@ public abstract class RAdminServer extends RNetServer {
 		}
 	}
 
+	private class ActiveLockRetrievals extends OutputOnlyActions<List<RLock>> {
+
+		RAdminActionType getActionType() {
+
+			return RAdminActionType.ACTIVE_LOCK_RETRIEVAL;
+		}
+
+		void renderOutput(RAdminResponseSerialiser renderer, List<RLock> output) {
+
+			renderer.renderActiveLocks(output);
+		}
+
+		List<RLock> performOutputOnlyAction() {
+
+			return adminManager.getActiveLocks();
+		}
+	}
+
 	private class UserUpdates extends InputDrivenActions<RUserUpdate, RUserUpdateResult> {
 
 		RAdminActionType getActionType() {
@@ -232,6 +250,7 @@ public abstract class RAdminServer extends RNetServer {
 
 		new RoleNameRetrievals();
 		new UserProfileRetrievals();
+		new ActiveLockRetrievals();
 		new UserUpdates();
 		new LoginChecks();
 		new LockRequests();

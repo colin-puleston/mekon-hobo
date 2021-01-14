@@ -36,6 +36,7 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 	static private final String ROOT_TAG = "AdminResponse";
 	static private final String ROLE_NAMES_TAG = "RoleNames";
 	static private final String USER_PROFILES_TAG = "UserProfiles";
+	static private final String ACTIVE_LOCKS_TAG = "ActiveLocks";
 	static private final String USER_UPDATE_RESULT_TAG = "UserUpdateResult";
 	static private final String ROLE_TAG = "Role";
 	static private final String LOCKING_RESULT_TAG = "LockingResult";
@@ -60,6 +61,11 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 	public void renderUserProfiles(List<RUserProfile> userProfiles) {
 
 		UserSerialiser.renderProfiles(userProfiles, addParameterNode(USER_PROFILES_TAG));
+	}
+
+	public void renderActiveLocks(List<RLock> activeLocks) {
+
+		LockingSerialiser.renderLocks(activeLocks, addParameterNode(ACTIVE_LOCKS_TAG));
 	}
 
 	public void renderUserUpdateResult(RUserUpdateResult update) {
@@ -92,6 +98,11 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 		return UserSerialiser.parseProfiles(getParameterNode(USER_PROFILES_TAG));
 	}
 
+	public List<RLock> parseActiveLocks() {
+
+		return LockingSerialiser.parseLocks(getParameterNode(ACTIVE_LOCKS_TAG));
+	}
+
 	public RUserUpdateResult parseUserUpdateResult() {
 
 		return UserUpdateSerialiser.parseResult(getParameterNode(USER_UPDATE_RESULT_TAG));
@@ -109,8 +120,7 @@ public class RAdminResponseSerialiser extends RAdminMessageSerialiser {
 
 	public RLockingResult parseLockingResult() {
 
-		return LockingSerialiser.parseLockingResult(
-					getParameterNode(LOCKING_RESULT_TAG));
+		return LockingSerialiser.parseLockingResult(getParameterNode(LOCKING_RESULT_TAG));
 	}
 
 	private void renderRole(RRole role) {
