@@ -24,49 +24,62 @@
 
 package uk.ac.manchester.cs.mekon.user.remote;
 
-import java.net.*;
+import java.awt.Color;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
+import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.client.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class MekonRemoteAdministrator extends GFrame {
+class LocksPanel extends EntitiesPanel<RLock> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String MAIN_TITLE = "Mekon Remote Administrator";
+	static private final String RESOURCES_TITLE = "Resource";
+	static private final String OWNERS_TITLE = "Owner";
 
-	static private final String USERS_TAB_TITLE = "Users";
-	static private final String LOCKS_TAB_TITLE = "Locks";
+	static private final Color RESOURCE_TEXT_CLR = Color.BLACK;
+	static private final Color OWNER_TEXT_CLR = Color.BLUE;
 
-	static private final int FRAME_WIDTH = 550;
-	static private final int FRAME_HEIGHT = 300;
+	LocksPanel(RAdminClient adminClient) {
 
-	public MekonRemoteAdministrator(URL serverURL) {
-
-		this(new RAdminClient(new RNetClient(serverURL)));
+		initialise(new LockManager(this, adminClient));
 	}
 
-	public MekonRemoteAdministrator(RAdminClient adminClient) {
+	JPanel createUpdateButtonsPanel() {
 
-		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
+		JPanel panel = new JPanel();
 
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		display(createDisplayPanel(adminClient));
-	}
-
-	private JComponent createDisplayPanel(RAdminClient adminClient) {
-
-		JTabbedPane panel = new JTabbedPane();
-
-		panel.addTab(USERS_TAB_TITLE, new UsersPanel(adminClient));
-		panel.addTab(LOCKS_TAB_TITLE, new LocksPanel(adminClient));
+		panel.add(new DeleteButton());
 
 		return panel;
+	}
+
+	JPanel checkCreateCustomButtonsPanel() {
+
+		return null;
+	}
+
+	void addTableColumns(GTable table) {
+
+		table.addColumns(RESOURCES_TITLE, OWNERS_TITLE);
+	}
+
+	void addTableRow(GTable table, RLock lock) {
+
+		table.addRow(createResourceLabel(lock), createOwnerLabel(lock));
+	}
+
+	private JLabel createOwnerLabel(RLock lock) {
+
+		return createTableLabel(lock.getOwnerName(), OWNER_TEXT_CLR);
+	}
+
+	private JLabel createResourceLabel(RLock lock) {
+
+		return createTableLabel(lock.getResourceId(), RESOURCE_TEXT_CLR);
 	}
 }

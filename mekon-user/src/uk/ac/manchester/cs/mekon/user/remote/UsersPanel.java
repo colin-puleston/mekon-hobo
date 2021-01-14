@@ -25,12 +25,7 @@
 package uk.ac.manchester.cs.mekon.user.remote;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.BorderLayout;
-import java.util.*;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
 
 import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.client.*;
@@ -39,7 +34,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class UsersPanel extends JPanel {
+class UsersPanel extends EntitiesPanel<RUserProfile> {
 
 	static private final long serialVersionUID = -1;
 
@@ -47,217 +42,46 @@ class UsersPanel extends JPanel {
 	static private final String ROLES_TITLE = "Role";
 	static private final String REG_STATUS_TITLE = "Status";
 
-	static private final String REGISTERED_STATUS_LABEL = "Registered";
-	static private final String UNREGISTERED_STATUS_LABEL = "Not Registered";
+	static private final String REGISTERED_LABEL = "Registered";
+	static private final String UNREGISTERED_LABEL = "Not Registered";
 
-	static private final String ADD_BUTTON_LABEL = "Add...";
-	static private final String EDIT_BUTTON_LABEL = "Edit...";
-	static private final String DELETE_BUTTON_LABEL = "Delete";
 	static private final String REG_INFO_BUTTON_LABEL = "Registration Info...";
 
 	static private final Color USER_NAME_TEXT_CLR = Color.BLUE;
 	static private final Color ROLE_NAME_TEXT_CLR = Color.RED;
-	static private final Color REGISTERED_STATUS_TEXT_CLR = Color.GREEN.darker();
-	static private final Color UNREGISTERED_STATUS_TEXT_CLR = Color.ORANGE.darker();
-
-	static private final Color SELECTED_ROW_CLR = Color.LIGHT_GRAY;
-
-	private GTable table = new GTable();
-	private int selectedRow = -1;
+	static private final Color REGISTERED_TEXT_CLR = Color.GREEN.darker();
+	static private final Color UNREGISTERED_TEXT_CLR = Color.ORANGE.darker();
 
 	private UserManager userManager;
-
-	private List<SelectionDependentButton> selectionDependentButtons
-								= new ArrayList<SelectionDependentButton>();
-
-	private class UserManagerLocal extends UserManager {
-
-		UserManagerLocal(RAdminClient adminClient) {
-
-			super(adminClient, new UserUpdates(UsersPanel.this, adminClient));
-		}
-
-		void onUpdate() {
-
-			updateDisplay();
-		}
-	}
-
-	private class TableRow {
-
-		private RUserProfile profile;
-
-		TableRow(RUserProfile profile) {
-
-			this.profile = profile;
-
-			table.addRow(createNameLabel(), createRoleLabel(), createStatusLabel());
-		}
-
-		private JLabel createNameLabel() {
-
-			return createLabel(profile.getName(), USER_NAME_TEXT_CLR);
-		}
-
-		private JLabel createRoleLabel() {
-
-			return createLabel(profile.getRoleName(), ROLE_NAME_TEXT_CLR);
-		}
-
-		private JLabel createStatusLabel() {
-
-			if (profile.registered()) {
-
-				return createLabel(REGISTERED_STATUS_LABEL, REGISTERED_STATUS_TEXT_CLR);
-			}
-
-			return createLabel(UNREGISTERED_STATUS_LABEL, UNREGISTERED_STATUS_TEXT_CLR);
-		}
-	}
-
-	private class RowSelectionListener implements ListSelectionListener {
-
-		private boolean processingUpdate = false;
-
-		public void valueChanged(ListSelectionEvent e) {
-
-			if (!e.getValueIsAdjusting() && !processingUpdate) {
-
-				int wasSelectedRow = selectedRow;
-
-				selectedRow = table.getSelectedRow();
-
-				if (selectedRow != wasSelectedRow) {
-
-					processingUpdate = true;
-					updateDisplay();
-					processingUpdate = false;
-				}
-			}
-		}
-
-		RowSelectionListener() {
-
-			table.getSelectionModel().addListSelectionListener(this);
-		}
-	}
-
-	private class AddButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			userManager.addUser();
-		}
-
-		AddButton() {
-
-			super(ADD_BUTTON_LABEL);
-		}
-	}
-
-	private abstract class SelectionDependentButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		SelectionDependentButton(String title) {
-
-			super(title);
-
-			selectionDependentButtons.add(this);
-
-			setEnabled(false);
-		}
-
-		void updateEnabling() {
-
-			setEnabled(enableButton());
-		}
-
-		boolean enableButton() {
-
-			return selectedRow != -1;
-		}
-	}
-
-	private class EditButton extends SelectionDependentButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			userManager.editUser(selectedRow);
-		}
-
-		EditButton() {
-
-			super(EDIT_BUTTON_LABEL);
-		}
-	}
-
-	private class DeleteButton extends SelectionDependentButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			userManager.deleteUser(selectedRow);
-		}
-
-		DeleteButton() {
-
-			super(DELETE_BUTTON_LABEL);
-		}
-	}
 
 	private class RegistrationInfoButton extends SelectionDependentButton {
 
 		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			showRegistrationInfo(getSelectedProfile());
-		}
 
 		RegistrationInfoButton() {
 
 			super(REG_INFO_BUTTON_LABEL);
 		}
 
-		boolean enableButton() {
+		boolean enableButtonOnSelection(RUserProfile entity) {
 
-			return super.enableButton() && getSelectedProfile().unregistered();
+			return entity.unregistered();
+		}
+
+		void performEntityAction(RUserProfile entity) {
+
+			showRegistrationInfo(entity);
 		}
 	}
 
 	UsersPanel(RAdminClient adminClient) {
 
-		super(new BorderLayout());
+		userManager = new UserManager(this, adminClient);
 
-		userManager = new UserManagerLocal(adminClient);
-
-		add(new JScrollPane(table), BorderLayout.CENTER);
-		add(createButtonsPanel(), BorderLayout.SOUTH);
-
-		table.addColumns(USERS_TITLE, ROLES_TITLE, REG_STATUS_TITLE);
-
-		userManager.updateFromServer();
-
-		new RowSelectionListener();
+		initialise(userManager);
 	}
 
-	private JPanel createButtonsPanel() {
-
-		JPanel panel = new JPanel(new BorderLayout());
-
-		panel.add(createUpdateButtonsPanel(), BorderLayout.WEST);
-		panel.add(createRegistrationInfoButtonPanel(), BorderLayout.EAST);
-
-		return panel;
-	}
-
-	private JPanel createUpdateButtonsPanel() {
+	JPanel createUpdateButtonsPanel() {
 
 		JPanel panel = new JPanel();
 
@@ -270,7 +94,7 @@ class UsersPanel extends JPanel {
 		return panel;
 	}
 
-	private JPanel createRegistrationInfoButtonPanel() {
+	JPanel checkCreateCustomButtonsPanel() {
 
 		JPanel panel = new JPanel();
 
@@ -279,55 +103,41 @@ class UsersPanel extends JPanel {
 		return panel;
 	}
 
-	private synchronized void updateDisplay() {
+	void addTableColumns(GTable table) {
 
-		updateTable();
-		updateButtonEnabling();
+		table.addColumns(USERS_TITLE, ROLES_TITLE, REG_STATUS_TITLE);
 	}
 
-	private void updateTable() {
+	void addTableRow(GTable table, RUserProfile profile) {
 
-		table.removeAllRows();
-
-		for (RUserProfile profile : userManager.getProfiles()) {
-
-			new TableRow(profile);
-		}
+		table.addRow(
+			createNameLabel(profile),
+			createRoleLabel(profile),
+			createStatusLabel(profile));
 	}
 
-	private void updateButtonEnabling() {
+	private JLabel createNameLabel(RUserProfile profile) {
 
-		for (SelectionDependentButton button : selectionDependentButtons) {
+		return createTableLabel(profile.getName(), USER_NAME_TEXT_CLR);
+	}
 
-			button.updateEnabling();
+	private JLabel createRoleLabel(RUserProfile profile) {
+
+		return createTableLabel(profile.getRoleName(), ROLE_NAME_TEXT_CLR);
+	}
+
+	private JLabel createStatusLabel(RUserProfile profile) {
+
+		if (profile.registered()) {
+
+			return createTableLabel(REGISTERED_LABEL, REGISTERED_TEXT_CLR);
 		}
+
+		return createTableLabel(UNREGISTERED_LABEL, UNREGISTERED_TEXT_CLR);
 	}
 
 	private void showRegistrationInfo(RUserProfile profile) {
 
 		new UserRegistrationInfoDialog(this, profile);
-	}
-
-	private JLabel createLabel(String text, Color clr) {
-
-		JLabel label = new JLabel(text);
-
-		GFonts.setLarge(label);
-
-		label.setForeground(clr);
-		label.setFont(label.getFont().deriveFont(Font.BOLD));
-
-		if (table.getRowCount() == selectedRow) {
-
-			label.setOpaque(true);
-			label.setBackground(SELECTED_ROW_CLR);
-		}
-
-		return label;
-	}
-
-	private RUserProfile getSelectedProfile() {
-
-		return userManager.getProfile(selectedRow);
 	}
 }

@@ -24,49 +24,54 @@
 
 package uk.ac.manchester.cs.mekon.user.remote;
 
-import java.net.*;
-import javax.swing.*;
+import java.util.*;
 
-import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
+import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.client.*;
-import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-public class MekonRemoteAdministrator extends GFrame {
+class LockManager extends EntityManager<RLock> {
 
-	static private final long serialVersionUID = -1;
+	private RAdminClient adminClient;
 
-	static private final String MAIN_TITLE = "Mekon Remote Administrator";
+	LockManager(LocksPanel panel, RAdminClient adminClient) {
 
-	static private final String USERS_TAB_TITLE = "Users";
-	static private final String LOCKS_TAB_TITLE = "Locks";
+		super(panel);
 
-	static private final int FRAME_WIDTH = 550;
-	static private final int FRAME_HEIGHT = 300;
-
-	public MekonRemoteAdministrator(URL serverURL) {
-
-		this(new RAdminClient(new RNetClient(serverURL)));
+		this.adminClient = adminClient;
 	}
 
-	public MekonRemoteAdministrator(RAdminClient adminClient) {
+	RLock addServerEntity() {
 
-		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
-
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		display(createDisplayPanel(adminClient));
+		throw new Error("Method should never be invoked!");
 	}
 
-	private JComponent createDisplayPanel(RAdminClient adminClient) {
+	RLock editServerEntity(RLock lock) {
 
-		JTabbedPane panel = new JTabbedPane();
+		throw new Error("Method should never be invoked!");
+	}
 
-		panel.addTab(USERS_TAB_TITLE, new UsersPanel(adminClient));
-		panel.addTab(LOCKS_TAB_TITLE, new LocksPanel(adminClient));
+	boolean deleteServerEntity(RLock lock) {
 
-		return panel;
+		adminClient.releaseLock(lock.getResourceId());
+
+		return true;
+	}
+
+	List<RLock> getServerEntities() {
+
+		return adminClient.getActiveLocks();
+	}
+
+	String describe(RLock lock) {
+
+		return "lock for resource \"" + lock.getResourceId() + "\"";
+	}
+
+	String getSorterName(RLock lock) {
+
+		return lock.getResourceId();
 	}
 }

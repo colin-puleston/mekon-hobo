@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.user.remote;
 
 import java.util.*;
+import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.client.*;
@@ -32,160 +33,104 @@ import uk.ac.manchester.cs.mekon_util.remote.admin.client.*;
 /**
  * @author Colin Puleston
  */
-abstract class UserManager {
+class UserManager extends EntityManager<RUserProfile> {
+
+	private UsersPanel panel;
 
 	private RAdminClient adminClient;
-	private UserUpdates userUpdates;
+	private List<String> roleNames;
 
-	private List<RUserProfile> profiles = new ArrayList<RUserProfile>();
-	private ProfileComparator profileComparator = new ProfileComparator();
+	UserManager(UsersPanel panel, RAdminClient adminClient) {
 
-	private class ProfileComparator implements Comparator<RUserProfile> {
+		super(panel);
 
-		public int compare(RUserProfile first, RUserProfile second) {
-
-			return first.getName().compareTo(second.getName());
-		}
-	}
-
-	private class UpdateProcess implements Runnable {
-
-		public void run() {
-
-			while (true) {
-
-				waitABit();
-				updateFromServer();
-			}
-		}
-
-		UpdateProcess() {
-
-			new Thread(this).start();
-		}
-
-		private void waitABit() {
-
-			try {
-
-				Thread.sleep(10000);
-			}
-			catch (InterruptedException e) {
-
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	UserManager(RAdminClient adminClient, UserUpdates userUpdates) {
-
+		this.panel = panel;
 		this.adminClient = adminClient;
-		this.userUpdates = userUpdates;
 
-		new UpdateProcess();
+		roleNames = adminClient.getRoleNames();
 	}
 
-	synchronized void updateFromServer() {
+	RUserProfile addServerEntity() {
 
-		List<RUserProfile> serverProfiles = adminClient.getUserProfiles();
+		UserDetailsDialog dialog = new UserDetailsDialog(panel);
 
-		if (!profileSetsEqual(profiles, serverProfiles)) {
+		if (dialog.display(roleNames)) {
 
-			profiles = serverProfiles;
+			String name = dialog.getSelectedUserName();
+			String role = dialog.getSelectedRoleName();
 
-			onUpdate(true);
+			RUserUpdateResult result = performUpdate(RUserUpdate.addition(name, role));
+
+			if (result.updateOk()) {
+
+				return new RUserProfile(name, role, result.getRegistrationToken());
+			}
 		}
+
+		return null;
 	}
 
-	synchronized void addUser() {
-
-		RUserProfile profile = userUpdates.checkAddUser();
-
-		if (profile != null) {
-
-			profiles.add(profile);
-
-			onUpdate(true);
-		}
-	}
-
-	synchronized void editUser(int index) {
-
-		editUser(profiles.get(index));
-	}
-
-	synchronized void deleteUser(int index) {
-
-		deleteUser(profiles.get(index));
-	}
-
-	synchronized List<RUserProfile> getProfiles() {
-
-		return profiles;
-	}
-
-	synchronized RUserProfile getProfile(int index) {
-
-		return profiles.get(index);
-	}
-
-	abstract void onUpdate();
-
-	private void editUser(RUserProfile profile) {
+	RUserProfile editServerEntity(RUserProfile profile) {
 
 		String name = profile.getName();
 		String role = profile.getRoleName();
 
-		String newRole = userUpdates.checkEditRole(name, role);
+		UserDetailsDialog dialog = new UserDetailsDialog(panel);
 
-		if (newRole != null) {
+		dialog.setFixedUserName(name);
 
-			profiles.remove(profile);
-			profiles.add(profile.deriveProfileWithRole(newRole));
+		if (dialog.display(roleNames)) {
 
-			onUpdate(true);
+			String newRole = dialog.getSelectedRoleName();
+
+			if (!newRole.equals(role)) {
+
+				if (performUpdate(RUserUpdate.edit(name, newRole)).updateOk()) {
+
+					return profile.deriveProfileWithRole(newRole);
+				}
+			}
 		}
+
+		return null;
 	}
 
-	private void deleteUser(RUserProfile profile) {
+	boolean deleteServerEntity(RUserProfile profile) {
 
 		String name = profile.getName();
 
-		if (userUpdates.checkRemoveUser(name)) {
+		return performUpdate(RUserUpdate.removal(name)).updateOk();
+	}
 
-			profiles.remove(profile);
+	List<RUserProfile> getServerEntities() {
 
-			onUpdate(false);
+		return adminClient.getUserProfiles();
+	}
+
+	String describe(RUserProfile profile) {
+
+		return "user \"" + profile.getName() + "\"";
+	}
+
+	String getSorterName(RUserProfile profile) {
+
+		return profile.getName();
+	}
+
+	private RUserUpdateResult performUpdate(RUserUpdate update) {
+
+		RUserUpdateResult result = adminClient.updateUsers(update);
+
+		if (!result.updateOk()) {
+
+			showMessage("Operation failed: " + result.getType());
 		}
+
+		return result;
 	}
 
-	private void onUpdate(boolean sort) {
+	private void showMessage(String msg) {
 
-		if (sort) {
-
-			sortProfiles();
-		}
-
-		onUpdate();
-	}
-
-	private void sortProfiles() {
-
-		TreeSet<RUserProfile> sorter = new TreeSet<RUserProfile>(profileComparator);
-
-		sorter.addAll(profiles);
-
-		profiles.clear();
-		profiles.addAll(sorter);
-	}
-
-	private boolean profileSetsEqual(List<RUserProfile> list1, List<RUserProfile> list2) {
-
-		return profilesAsSet(list1).equals(profilesAsSet(list2));
-	}
-
-	private Set<RUserProfile> profilesAsSet(List<RUserProfile> list) {
-
-		return new HashSet<RUserProfile>(list);
+		JOptionPane.showMessageDialog(null, msg);
 	}
 }
