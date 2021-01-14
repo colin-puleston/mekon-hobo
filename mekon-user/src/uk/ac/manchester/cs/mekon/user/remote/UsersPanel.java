@@ -81,26 +81,18 @@ class UsersPanel extends EntitiesPanel<RUserProfile> {
 		initialise(userManager);
 	}
 
-	JPanel createUpdateButtonsPanel() {
-
-		JPanel panel = new JPanel();
+	void populateUpdateButtonsPanel(JPanel panel) {
 
 		panel.add(new AddButton());
 		panel.add(Box.createHorizontalStrut(10));
 		panel.add(new EditButton());
 		panel.add(Box.createHorizontalStrut(10));
 		panel.add(new DeleteButton());
-
-		return panel;
 	}
 
-	JPanel checkCreateCustomButtonsPanel() {
-
-		JPanel panel = new JPanel();
+	void populateCustomButtonsPanel(JPanel panel) {
 
 		panel.add(new RegistrationInfoButton());
-
-		return panel;
 	}
 
 	void addTableColumns(GTable table) {

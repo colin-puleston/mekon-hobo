@@ -49,18 +49,12 @@ class LocksPanel extends EntitiesPanel<RLock> {
 		initialise(new LockManager(this, adminClient));
 	}
 
-	JPanel createUpdateButtonsPanel() {
-
-		JPanel panel = new JPanel();
+	void populateUpdateButtonsPanel(JPanel panel) {
 
 		panel.add(new DeleteButton());
-
-		return panel;
 	}
 
-	JPanel checkCreateCustomButtonsPanel() {
-
-		return null;
+	void populateCustomButtonsPanel(JPanel panel) {
 	}
 
 	void addTableColumns(GTable table) {

@@ -194,9 +194,9 @@ abstract class EntitiesPanel<E> extends JPanel {
 
 	abstract void addTableRow(GTable table, E entity);
 
-	abstract JPanel createUpdateButtonsPanel();
+	abstract void populateUpdateButtonsPanel(JPanel panel);
 
-	abstract JPanel checkCreateCustomButtonsPanel();
+	abstract void populateCustomButtonsPanel(JPanel panel);
 
 	JLabel createTableLabel(String text, Color clr) {
 
@@ -219,14 +219,27 @@ abstract class EntitiesPanel<E> extends JPanel {
 	private JPanel createButtonsPanel() {
 
 		JPanel panel = new JPanel(new BorderLayout());
-		JPanel customButtons = checkCreateCustomButtonsPanel();
 
 		panel.add(createUpdateButtonsPanel(), BorderLayout.WEST);
+		panel.add(createCustomButtonsPanel(), BorderLayout.EAST);
 
-		if (customButtons != null) {
+		return panel;
+	}
 
-			panel.add(customButtons, BorderLayout.EAST);
-		}
+	private JPanel createUpdateButtonsPanel() {
+
+		JPanel panel = new JPanel();
+
+		populateUpdateButtonsPanel(panel);
+
+		return panel;
+	}
+
+	private JPanel createCustomButtonsPanel() {
+
+		JPanel panel = new JPanel();
+
+		populateCustomButtonsPanel(panel);
 
 		return panel;
 	}
