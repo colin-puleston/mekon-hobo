@@ -71,6 +71,11 @@ class IFrameMapper implements CFrameListener {
 
 		this.model = model;
 
+		for (CFrame frame : model.getCModel().getFrames().asList()) {
+
+			frame.addListener(this);
+		}
+
 		cBuilder.addListener(new MapperAdder());
 	}
 }
