@@ -93,7 +93,7 @@ public class DModel {
 	 * @param frame Frame for which binding is required
 	 * @return True if required binding exists
 	 */
-	public boolean hasBoundClass(CFrame frame) {
+	public boolean hasDClass(CFrame frame) {
 
 		return bindings.isBound(frame);
 	}

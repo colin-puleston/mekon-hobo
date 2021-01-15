@@ -97,7 +97,7 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 		private void reorderFromDependentAncestor(CFrame frameType) {
 
-			if (model.hasBoundClass(frameType)) {
+			if (model.hasDClass(frameType)) {
 
 				if (abstractDClassFor(frameType)) {
 
