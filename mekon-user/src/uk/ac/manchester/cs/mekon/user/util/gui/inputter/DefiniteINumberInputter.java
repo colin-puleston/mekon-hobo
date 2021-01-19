@@ -35,13 +35,26 @@ public class DefiniteINumberInputter extends INumberInputter {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE = "Enter Value";
+	static private final String TITLE_FORMAT = "Enter Value (%s - %s)";
+
+	static private final String createTitle(CNumber type) {
+
+		String min = limitToString(type.getMin(), INumber.MINUS_INFINITY);
+		String max = limitToString(type.getMax(), INumber.PLUS_INFINITY);
+
+		return String.format(TITLE_FORMAT, min, max);
+	}
+
+	static private String limitToString(INumber limit, INumber absLimit) {
+
+		return limit.equals(absLimit) ? "?" : limit.getDisplayLabel();
+	}
 
 	private NumberInputHandler inputHandler = new NumberInputHandler(this);
 
 	public DefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
 
-		super(parent, type, TITLE, canClear);
+		super(parent, type, createTitle(type), canClear);
 	}
 
 	protected INumber resolveInput(CNumber type) {
