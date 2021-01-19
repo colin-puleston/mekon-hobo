@@ -104,9 +104,11 @@ public class ISlotSpecs {
 	 */
 	public void absorb(CFrame frameType) {
 
-		for (CFrame ancType : frameType.getStructuredAncestors()) {
+		List<CFrame> structuredAncTypes = frameType.getStructuredAncestors();
 
-			absorbType(ancType);
+		for (int i = structuredAncTypes.size() - 1 ; i >= 0 ; i--) {
+
+			absorbType(structuredAncTypes.get(i));
 		}
 
 		absorbType(frameType);
