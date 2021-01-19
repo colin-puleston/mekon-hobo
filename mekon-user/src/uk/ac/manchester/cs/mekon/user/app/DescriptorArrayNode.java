@@ -113,7 +113,7 @@ class DescriptorArrayNode extends InstanceNode {
 
 	private String getDisplayLabel() {
 
-		return slotDescriptors.getSlot().getType().getIdentity().getLabel() + " [...]";
+		return DescriptorLabels.forArrayHeader(slotDescriptors.getSlot());
 	}
 
 	private Icon getIcon() {

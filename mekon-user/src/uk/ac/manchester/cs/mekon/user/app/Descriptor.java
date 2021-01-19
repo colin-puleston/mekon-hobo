@@ -135,16 +135,19 @@ class Descriptor {
 		return anyUserValues() || anyTerminalValues();
 	}
 
-	String getIdentityLabel(boolean includeArrayIndex) {
+	String getIdentityLabel(boolean arrayIndicesOnly) {
 
-		String label = slot.getType().getIdentity().getLabel();
+		if (arrayIndicesOnly && multiValuedSlot()) {
 
-		if (includeArrayIndex && multiValuedSlot()) {
+			if (slot.getValues().isEmpty()) {
 
-			label += getIdentityLabelArrayIndexSuffix();
+				return DescriptorLabels.forArrayHeader(slot);
+			}
+
+			return DescriptorLabels.forArrayElement(getValueIndex() + 1);
 		}
 
-		return label;
+		return DescriptorLabels.forSimple(slot);
 	}
 
 	List<String> getValueDisjunctLabels() {
@@ -175,11 +178,6 @@ class Descriptor {
 		}
 
 		return Collections.singletonList(getTypeLabel(valueType));
-	}
-
-	private String getIdentityLabelArrayIndexSuffix() {
-
-		return " [" + (getValueIndex() + 1) + "]";
 	}
 
 	private int getValueIndex() {
