@@ -71,8 +71,9 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		SlotTypeReorderer() {
 
 			CFrame frameType = frame.getType();
+			Class<? extends DObject> dClass = getDClassOrNull(frameType);
 
-			if (!abstractDClassFor(frameType)) {
+			if (dClass == null || !abstractDClass(dClass)) {
 
 				reorderFrom(frameType);
 			}
@@ -97,9 +98,11 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 		private void reorderFromDependentAncestor(CFrame frameType) {
 
-			if (model.hasDClass(frameType)) {
+			Class<? extends DObject> dClass = getDClassOrNull(frameType);
 
-				if (abstractDClassFor(frameType)) {
+			if (dClass != null) {
+
+				if (abstractDClass(dClass)) {
 
 					reorderFrom(frameType);
 				}
@@ -159,12 +162,12 @@ class DObjectBuilderImpl implements DObjectBuilder {
 			return model.getInitialiser().getCBuilder().getFrameEditor(frameType);
 		}
 
-		private boolean abstractDClassFor(CFrame frameType) {
+		private Class<? extends DObject> getDClassOrNull(CFrame frameType) {
 
-			return abstractClass(model.getDClass(frameType));
+			return model.hasDClass(frameType) ? model.getDClass(frameType) : null;
 		}
 
-		private boolean abstractClass(Class<? extends DObject> dClass) {
+		private boolean abstractDClass(Class<? extends DObject> dClass) {
 
 			return Modifier.isAbstract(dClass.getModifiers());
 		}

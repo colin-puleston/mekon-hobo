@@ -246,7 +246,7 @@ public interface DObjectBuilder {
 
 	/**
 	 * Enables the explicit specification of both the "assertions"
-	 * ant the "queries" components of the "editability" attribute
+	 * and the "queries" components of the "editability" attribute
 	 * for the slot associated with a particular field that has been
 	 * constructed by this fields-factory.
 	 *
