@@ -42,17 +42,17 @@ public abstract class RClientModel {
 	private CModel cModel;
 	private IEditor iEditor;
 
-	private boolean performingInstanceAction = false;
+	private Deque<IFrame> actionSubjectStack = new ArrayDeque<IFrame>();
 
 	private abstract class InstanceAction {
 
 		void checkPerform(IFrame frame) {
 
-			if (!performingInstanceAction) {
+			if (!actionSubjectStack.contains(frame)) {
 
-				performingInstanceAction = true;
+				actionSubjectStack.push(frame);
 				perform(frame);
-				performingInstanceAction = false;
+				actionSubjectStack.pop();
 			}
 		}
 
@@ -98,35 +98,6 @@ public abstract class RClientModel {
 		}
 	}
 
-	private class IFrameInitialisingReasoner implements IReasoner {
-
-		private InstanceCreateInitAction createInitAction = new InstanceCreateInitAction();
-		private InstanceReloadInitAction reloadInitAction = new InstanceReloadInitAction();
-
-		public void initialiseFrame(IEditor iEditor, IFrame frame) {
-
-			createInitAction.checkPerform(frame);
-		}
-
-		public Set<IUpdateOp> reinitialiseFrame(
-								IEditor iEditor,
-								IFrame frame,
-								Set<IUpdateOp> ops) {
-
-			reloadInitAction.checkPerform(frame);
-
-			return Collections.<IUpdateOp>emptySet();
-		}
-
-		public Set<IUpdateOp> updateFrame(
-								IEditor iEditor,
-								IFrame frame,
-								Set<IUpdateOp> ops) {
-
-			return Collections.<IUpdateOp>emptySet();
-		}
-	}
-
 	private class IFrameUpdater implements KValuesListener<IValue> {
 
 		private ISlot slot;
@@ -169,6 +140,71 @@ public abstract class RClientModel {
 		private void checkUpdate(InstanceUpdateAction action) {
 
 			action.checkPerform(slot.getContainer());
+		}
+	}
+
+	private class ISlotInitialiser implements IFrameListener {
+
+		public void onUpdatedInferredTypes(CIdentifieds<CFrame> updates) {
+		}
+
+		public void onUpdatedSuggestedTypes(CIdentifieds<CFrame> updates) {
+		}
+
+		public void onSlotAdded(ISlot slot) {
+
+			new IFrameUpdater(slot);
+		}
+
+		public void onSlotRemoved(ISlot slot) {
+		}
+
+		ISlotInitialiser(IFrame container) {
+
+			for (ISlot slot : container.getSlots().asList()) {
+
+				new IFrameUpdater(slot);
+			}
+
+			container.addListener(this);
+		}
+	}
+
+	private class IFrameInitialisingReasoner implements IReasoner {
+
+		private InstanceCreateInitAction createInitAction = new InstanceCreateInitAction();
+		private InstanceReloadInitAction reloadInitAction = new InstanceReloadInitAction();
+
+		public void initialiseFrame(IEditor iEditor, IFrame frame) {
+
+			initialise(frame, createInitAction);
+
+			new ISlotInitialiser(frame);
+		}
+
+		public Set<IUpdateOp> reinitialiseFrame(
+								IEditor iEditor,
+								IFrame frame,
+								Set<IUpdateOp> ops) {
+
+			initialise(frame, reloadInitAction);
+
+			return Collections.<IUpdateOp>emptySet();
+		}
+
+		public Set<IUpdateOp> updateFrame(
+								IEditor iEditor,
+								IFrame frame,
+								Set<IUpdateOp> ops) {
+
+			return Collections.<IUpdateOp>emptySet();
+		}
+
+		private void initialise(IFrame frame, InstanceAction initAction) {
+
+			initAction.checkPerform(frame);
+
+			new ISlotInitialiser(frame);
 		}
 	}
 
