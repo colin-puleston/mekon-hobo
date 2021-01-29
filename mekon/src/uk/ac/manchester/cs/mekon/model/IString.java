@@ -65,8 +65,8 @@ public class IString extends IDataValue {
 
 	/**
 	 * Provides the type of the string value, which will always be the
-	 * {@link CString#UNCONSTRAINED} object (though this will not always
-	 * be the type from which the value was instantiated).
+	 * {@link CString#FREE} object (though this will not always be the
+	 * type from which the value was instantiated).
 	 *
 	 * @return Type of string value
 	 */

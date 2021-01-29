@@ -41,7 +41,7 @@ public class IRegenInvalidType implements IRegenType {
 	/**
 	 * Constructor.
 	 *
-	 * @param rootType Type of root-frame of network
+	 * @param rootTypeId Identity of type of root-frame of network
 	 */
 	public IRegenInvalidType(CIdentity rootTypeId) {
 

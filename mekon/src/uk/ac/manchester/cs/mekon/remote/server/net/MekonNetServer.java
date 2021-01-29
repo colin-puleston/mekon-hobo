@@ -48,6 +48,8 @@ public class MekonNetServer extends RNetServer {
 	private XServer xServer = null;
 
 	/**
+	 * Invokes {@link #createXServer} method to create the {@link
+	 * XServer} object that will handle the server operations.
 	 */
 	protected void initNetServer() {
 
@@ -55,6 +57,7 @@ public class MekonNetServer extends RNetServer {
 	}
 
 	/**
+	 * {@inheritDoc}
 	 */
 	protected XDocument performAction(XDocument request) {
 
@@ -62,6 +65,12 @@ public class MekonNetServer extends RNetServer {
 	}
 
 	/**
+	 * Creates the object that will handle the server operations.
+	 * The default implementation utilises both a MEKON model and a
+	 * disk-based instance-store, each specified via a configuration
+	 * file located somewhere on the classpath.
+	 *
+	 * @return Created object for handling server operations
 	 */
 	protected XServer createXServer() {
 

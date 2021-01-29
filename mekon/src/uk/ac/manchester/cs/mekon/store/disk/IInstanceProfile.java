@@ -49,6 +49,7 @@ public class IInstanceProfile {
 	 *
 	 * @param newTypeIdentity Identity of instance-type to set
 	 * for created object
+	 * @return Created profile object with updated instance-type
 	 */
 	public IInstanceProfile updateType(CIdentity newTypeIdentity) {
 

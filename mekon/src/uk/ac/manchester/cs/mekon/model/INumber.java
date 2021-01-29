@@ -56,6 +56,7 @@ public class INumber extends IDataValue {
 	 *
 	 * @param min Minimnum value
 	 * @param max Maximnum value
+	 * @return Constructed object representing required range
 	 * @throws KModelException if minimnum value is greater than
 	 * maximnum  value, or if minimnum and maximnum values have
 	 * incompatible number-types

@@ -39,19 +39,19 @@ public class CString extends CDataValue<IString> {
 
 	/**
 	 * Singleton object defining string values with format
-	 * {@link CStringFormat.FREE}
+	 * {@link CStringFormat#FREE}
 	 */
 	static public final CString FREE = new FreeFormatConfig().string;
 
 	/**
 	 * Singleton object defining string values with format
-	 * {@link CStringFormat.URI_VALUE}
+	 * {@link CStringFormat#URI_VALUE}
 	 */
 	static public final CString URI_VALUE = new URIFormatConfig().string;
 
 	/**
 	 * Singleton object defining string values with format
-	 * {@link CStringFormat.URL_VALUE}
+	 * {@link CStringFormat#URL_VALUE}
 	 */
 	static public final CString URL_VALUE = new URLFormatConfig().string;
 
@@ -197,7 +197,7 @@ public class CString extends CDataValue<IString> {
 
 	/**
 	 * Provides the unconstrained version of this string value-type,
-	 * which will always be the singleton value {@link #UNCONSTRAINED}.
+	 * which will always be the singleton value {@link #FREE}.
 	 *
 	 * @return Unconstrained version of this string value-type
 	 */
@@ -232,7 +232,7 @@ public class CString extends CDataValue<IString> {
 	 * Tests whether this value-type-entity subsumes another
 	 * specified value-type-entity, which will be the case if and
 	 * only if this string value-type has format
-	 * {@link CStringFormat.FREE} and the other value-type-entity
+	 * {@link CStringFormat#FREE} and the other value-type-entity
 	 * is a <code>CString</code>, which can have any format.
 	 *
 	 * @param other Other value-type-entity to test for subsumption
