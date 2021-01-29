@@ -83,8 +83,8 @@ public class RNetClient {
 	/**
 	 * Accesses the server to perform a specific action.
 	 *
-	 * @param requestDoc Document representing specification of
-	 * required action
+	 * @param request Document representing specification of required
+	 * action
 	 * @return Document representing output produced by action
 	 */
 	public XDocument performActionOnServer(XDocument request) {
