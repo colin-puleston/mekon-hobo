@@ -133,11 +133,6 @@ public class DefaultCustomiser implements Customiser {
 		return label.toString();
 	}
 
-	public boolean hiddenSlot(ISlot slot) {
-
-		return false;
-	}
-
 	protected DefaultCustomiser(IStore centralStore) {
 
 		this(centralStore, null);

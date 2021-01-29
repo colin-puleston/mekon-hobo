@@ -122,7 +122,7 @@ class Descriptor {
 
 	boolean userEditable() {
 
-		return editableSlot() && !hasInferredValue;
+		return exposedSlot() && editableSlot() && !hasInferredValue;
 	}
 
 	boolean anyUserEditability() {
@@ -274,11 +274,14 @@ class Descriptor {
 		return hasValue() ? value : NO_VALUE_MATCHER;
 	}
 
+	private boolean exposedSlot() {
+
+		return slot.getType().getActivation().activeExposed();
+	}
+
 	private boolean editableSlot() {
 
-		return !getCustomiser().hiddenSlot(slot)
-				&& slot.getType().getActivation().active()
-				&& slot.getEditability().editable();
+		return slot.getEditability().editable();
 	}
 
 	private boolean multiValuedSlot() {

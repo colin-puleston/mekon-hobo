@@ -51,6 +51,4 @@ public interface Customiser {
 	public String getTypeDisplayLabel(CValue<?> type);
 
 	public String getValueDisplayLabel(IValue value);
-
-	public boolean hiddenSlot(ISlot slot);
 }

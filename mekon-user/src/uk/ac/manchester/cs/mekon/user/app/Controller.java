@@ -116,11 +116,11 @@ class Controller {
 		return group;
 	}
 
-	boolean anyEditableSlots(IFrame instance) {
+	boolean anyUserEditableSlots(IFrame instance) {
 
 		for (ISlot slot : instance.getSlots().asList()) {
 
-			if (editableSlot(slot)) {
+			if (userEditableSlot(slot)) {
 
 				return true;
 			}
@@ -142,10 +142,18 @@ class Controller {
 		return null;
 	}
 
+	private boolean userEditableSlot(ISlot slot) {
+
+		return exposedSlot(slot) && editableSlot(slot);
+	}
+
+	private boolean exposedSlot(ISlot slot) {
+
+		return slot.getType().getActivation().activeExposed();
+	}
+
 	private boolean editableSlot(ISlot slot) {
 
-		return !customiser.hiddenSlot(slot)
-				&& slot.getType().getActivation().active()
-				&& slot.getEditability().editable();
+		return slot.getEditability().editable();
 	}
 }

@@ -53,9 +53,9 @@ class FrameDescriptors {
 
 		private void populate() {
 
-			for (ISlot slot : frame.getSlots().activesAsList()) {
+			for (ISlot slot : frame.getSlots().asList()) {
 
-				if (!hiddenSlot(slot)) {
+				if (slot.getType().getActivation().activeExposed()) {
 
 					checkAddForSlot(slot);
 				}
@@ -76,11 +76,6 @@ class FrameDescriptors {
 		private SlotDescriptors createSlotDescriptors(ISlot slot) {
 
 			return new SlotDescriptors(instantiator, slot, viewOnly);
-		}
-
-		private boolean hiddenSlot(ISlot slot) {
-
-			return instantiator.getCustomiser().hiddenSlot(slot);
 		}
 	}
 

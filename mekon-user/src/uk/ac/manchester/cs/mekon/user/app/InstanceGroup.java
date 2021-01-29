@@ -191,7 +191,7 @@ class InstanceGroup {
 
 	private boolean testQueriesEnabled() {
 
-		return controller.anyEditableSlots(rootType.instantiate(IFrameFunction.QUERY));
+		return controller.anyUserEditableSlots(rootType.instantiate(IFrameFunction.QUERY));
 	}
 
 	private CFrame checkForSummariesRootType() {

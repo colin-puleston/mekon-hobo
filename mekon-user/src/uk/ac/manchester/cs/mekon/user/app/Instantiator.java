@@ -88,7 +88,7 @@ class Instantiator {
 
 	boolean editableInstance() {
 
-		return anyEditableSlots() && (queryInstance() || group.editable());
+		return anyUserEditableSlots() && (queryInstance() || group.editable());
 	}
 
 	IFrame instantiate(CFrame type) {
@@ -128,8 +128,8 @@ class Instantiator {
 		return false;
 	}
 
-	private boolean anyEditableSlots() {
+	private boolean anyUserEditableSlots() {
 
-		return getController().anyEditableSlots(instance);
+		return getController().anyUserEditableSlots(instance);
 	}
 }
