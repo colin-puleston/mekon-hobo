@@ -136,9 +136,9 @@ public abstract class DField<V> implements DFieldView<V> {
 	}
 
 	/**
-	 * Specifies whether the field is "active". If the field is not
-	 * active then it cannot have any values set either by the model
-	 * or the client.
+	 * Specifies whether the field is "active" (either "exposed" or
+	 * "hidden"). If the field is not active then it cannot have any
+	 * values set either by the model or the client.
 	 *
 	 * @return True if field is active
 	 */

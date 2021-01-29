@@ -45,7 +45,7 @@ class FieldSlot {
 	private String fieldName = null;
 	private String slotLabel = null;
 	private CIdentity slotId = null;
-	private CActivation activation = CActivation.ACTIVE;
+	private CActivation activation = CActivation.ACTIVE_EXPOSED;
 	private IEditability assertionsEditability = null;
 	private IEditability queriesEditability = IEditability.FULL;
 
