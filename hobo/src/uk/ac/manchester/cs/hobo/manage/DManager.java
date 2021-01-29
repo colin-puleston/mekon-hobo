@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.hobo.manage;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 import uk.ac.manchester.cs.hobo.model.*;

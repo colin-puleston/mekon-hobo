@@ -48,6 +48,13 @@ public class HoboNetServer extends MekonNetServer {
 	static private final long serialVersionUID = -1;
 
 	/**
+	 * Creates the object that will handle the server operations.
+	 * Overrides the default implementation to provide an object
+	 * that utilises both a HOBO model and a disk-based instance-store,
+	 * each specified via a configuration file located somewhere on
+	 * the classpath.
+	 *
+	 * @return Created object for handling server operations
 	 */
 	protected XServer createXServer() {
 
