@@ -38,8 +38,8 @@ import java.util.*;
 public abstract class FSlots<S> extends FIdentifiables<S> {
 
 	/**
-	 * Provides list of currently active slots (see {@link
-	 * CSlot#getActivation}.
+	 * Provides list of currently "active" slots, either
+	 * "exposed" or "hidden" (see {@link CSlot#getActivation}).
 	 *
 	 * @return List of currently active slots
 	 */
@@ -49,8 +49,8 @@ public abstract class FSlots<S> extends FIdentifiables<S> {
 	}
 
 	/**
-	 * Provides set of currently active slots (see {@link
-	 * CSlot#getActivation}.
+	 * Provides set of currently "active" slots, either
+	 * "exposed" or "hidden" (see {@link CSlot#getActivation}).
 	 *
 	 * @return Set of currently active slots
 	 */

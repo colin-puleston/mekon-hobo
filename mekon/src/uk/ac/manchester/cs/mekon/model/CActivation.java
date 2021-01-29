@@ -25,16 +25,21 @@
 package uk.ac.manchester.cs.mekon.model;
 
 /**
- * Represents the activation, or otherwise, of a slot.
+ * Represents the activation status of a slot.
  *
  * @author Colin Puleston
  */
 public enum CActivation {
 
 	/**
-	 * Slot is active.
+	 * Slot is active and exposed to end-users.
 	 */
-	ACTIVE,
+	ACTIVE_EXPOSED,
+
+	/**
+	 * Slot is active but hidden from end-users.
+	 */
+	ACTIVE_HIDDEN,
 
 	/**
 	 * Slot is inactive.
@@ -42,19 +47,41 @@ public enum CActivation {
 	INACTIVE;
 
 	/**
-	 * Specifies whether this is the {@link #ACTIVE} value.
+	 * Specifies whether this is either the {@link #ACTIVE_EXPOSED}
+	 * or {@link #ACTIVE_HIDDEN} value.
 	 *
-	 * @return True if this is active value
+	 * @return True if this is an active value, either exposed or
+	 * hidden
 	 */
 	public boolean active() {
 
-		return this == ACTIVE;
+		return !inactive();
+	}
+
+	/**
+	 * Specifies whether this is the {@link #ACTIVE_EXPOSED} value.
+	 *
+	 * @return True if this is an active value
+	 */
+	public boolean activeExposed() {
+
+		return this == ACTIVE_EXPOSED;
+	}
+
+	/**
+	 * Specifies whether this is the {@link #ACTIVE_HIDDEN} value.
+	 *
+	 * @return True if this is an active value
+	 */
+	public boolean activeHidden() {
+
+		return this == ACTIVE_HIDDEN;
 	}
 
 	/**
 	 * Specifies whether this is the {@link #INACTIVE} value.
 	 *
-	 * @return True if this is inactive value
+	 * @return True if this is the inactive value
 	 */
 	public boolean inactive() {
 
@@ -62,26 +89,30 @@ public enum CActivation {
 	}
 
 	/**
-	 * Provides the weakest activation between this and the other
-	 * specified activation.
-	 *
-	 * @param other Other activation to test against
-	 * @return True if this is the weakest of the two
-	 */
-	public CActivation getWeakest(CActivation other) {
-
-		return this == INACTIVE || other == INACTIVE ? INACTIVE : ACTIVE;
-	}
-
-	/**
 	 * Provides the strongest activation between this and the other
-	 * specified activation.
+	 * specified activation, with {@link #ACTIVE_EXPOSED} value being
+	 * the strongest, followed by {@link #ACTIVE_HIDDEN}, then {@link
+	 * #INACTIVE}.
 	 *
 	 * @param other Other activation to test against
 	 * @return True if this is the strongest of the two
 	 */
 	public CActivation getStrongest(CActivation other) {
 
-		return this == ACTIVE || other == ACTIVE ? ACTIVE : INACTIVE;
+		return ordinal() < other.ordinal() ? this : other;
+	}
+
+	/**
+	 * Provides the weakest activation between this and the other
+	 * specified activation, with {@link #INACTIVE} value being the
+	 * weakest, followed by {@link #ACTIVE_HIDDEN}, then {@link
+	 * #ACTIVE_EXPOSED}.
+	 *
+	 * @param other Other activation to test against
+	 * @return True if this is the weakest of the two
+	 */
+	public CActivation getWeakest(CActivation other) {
+
+		return ordinal() > other.ordinal() ? this : other;
 	}
 }

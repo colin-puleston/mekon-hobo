@@ -39,7 +39,7 @@ public class CSlot implements CIdentified, CSourced, CAnnotatable {
 	private CSource source = CSource.EXTERNAL;
 	private CValue<?> valueType;
 	private CCardinality cardinality;
-	private CActivation activation = CActivation.ACTIVE;
+	private CActivation activation = CActivation.ACTIVE_EXPOSED;
 	private CEditability editability = CEditability.DEFAULT;
 
 	private class Editor implements CSlotEditor {
