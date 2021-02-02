@@ -183,7 +183,7 @@ public class GList<E> extends JList<GListElement<E>> {
 
 		setModel(model);
 		setSelectionMode(getSelectionMode(multiSelect));
-		setSelectedIndex(-1);
+		clearSelection();
 
 		GCellRenderers.get().set(this);
 
