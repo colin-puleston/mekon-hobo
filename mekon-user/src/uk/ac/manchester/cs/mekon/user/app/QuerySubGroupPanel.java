@@ -24,12 +24,43 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import uk.ac.manchester.cs.mekon.model.*;
+
 /**
  * @author Colin Puleston
  */
-abstract class QueryExecutionListener {
+class QuerySubGroupPanel extends InstanceSubGroupPanel {
 
-	abstract void onExecuted(ExecutedQuery executedQuery);
+	static private final long serialVersionUID = -1;
 
-	abstract void onDiscarded(ExecutedQuery executedQuery);
+	private QueryExecutions queryExecutions;
+
+	private class ExecutionsChangeDrivenDeselector extends QueryExecutionListener {
+
+		void onExecuted(ExecutedQuery executedQuery) {
+
+			clearSelection();
+		}
+
+		void onDiscarded(ExecutedQuery executedQuery) {
+
+			clearSelection();
+		}
+	}
+
+	QuerySubGroupPanel(InstanceSubGroup subGroup, String title) {
+
+		super(subGroup, title);
+
+		queryExecutions = subGroup.getGroup().getQueryExecutions();
+
+		initialise();
+
+		queryExecutions.addListener(new ExecutionsChangeDrivenDeselector());
+	}
+
+	boolean instanceActionsEnabled(CIdentity storeId) {
+
+		return !queryExecutions.executed(storeId);
+	}
 }

@@ -55,12 +55,12 @@ class QueryExecutions {
 
 		byStoreId.put(storeId, exec);
 
-		pollListenersForExecution(exec);
+		pollListenersForExecuted(exec);
 	}
 
 	void discardExecuted(CIdentity storeId) {
 
-		byStoreId.remove(storeId);
+		pollListenersForDiscarded(byStoreId.remove(storeId));
 	}
 
 	boolean executed(CIdentity storeId) {
@@ -78,11 +78,19 @@ class QueryExecutions {
 		return byStoreId.keySet();
 	}
 
-	private void pollListenersForExecution(ExecutedQuery exec) {
+	private void pollListenersForExecuted(ExecutedQuery exec) {
 
 		for (QueryExecutionListener listener : listeners) {
 
 			listener.onExecuted(exec);
+		}
+	}
+
+	private void pollListenersForDiscarded(ExecutedQuery exec) {
+
+		for (QueryExecutionListener listener : listeners) {
+
+			listener.onDiscarded(exec);
 		}
 	}
 }

@@ -24,71 +24,17 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon_util.gui.*;
-
 /**
  * @author Colin Puleston
  */
-abstract class SelectedInstanceIdActionButton extends GButton {
+class AssertionSubGroupPanel extends InstanceSubGroupPanel {
 
 	static private final long serialVersionUID = -1;
 
-	private InstanceIdsList idsList;
+	AssertionSubGroupPanel(InstanceSubGroup subGroup, String title) {
 
-	private class SelectionBasedEnablingUpdater extends GSelectionListener<CIdentity> {
+		super(subGroup, title);
 
-		protected void onSelected(CIdentity storeId) {
-
-			updateEnabling();
-		}
-
-		protected void onDeselected(CIdentity storeId) {
-		}
-
-		SelectionBasedEnablingUpdater() {
-
-			idsList.addSelectionListener(this);
-		}
-	}
-
-	private class RemovalBasedDisabler extends GListListener<CIdentity> {
-
-		protected void onAdded(CIdentity entity) {
-		}
-
-		protected void onRemoved(CIdentity entity) {
-
-			setEnabled(false);
-		}
-
-		RemovalBasedDisabler() {
-
-			idsList.addListListener(this);
-		}
-	}
-
-	protected void doButtonThing() {
-
-		doInstanceThing(idsList.getSelectedEntity());
-	}
-
-	SelectedInstanceIdActionButton(InstanceIdsList idsList, String label) {
-
-		super(label);
-
-		this.idsList = idsList;
-
-		updateEnabling();
-
-		new SelectionBasedEnablingUpdater();
-		new RemovalBasedDisabler();
-	}
-
-	abstract void doInstanceThing(CIdentity storeId);
-
-	private void updateEnabling() {
-
-		setEnabled(idsList.anySelections());
+		initialise();
 	}
 }

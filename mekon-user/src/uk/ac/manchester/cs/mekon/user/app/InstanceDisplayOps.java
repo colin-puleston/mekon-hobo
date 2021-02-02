@@ -39,46 +39,32 @@ class InstanceDisplayOps {
 	private InstanceGroup group;
 	private InstanceSubGroup subGroup;
 
-	private class InstanceDisplayer {
+	private abstract class InstanceDisplayer {
 
 		private CIdentity storeId;
-		private InstanceDisplayMode startMode = InstanceDisplayMode.VIEW;
-		private boolean allowStoreOverwrite = true;
 
 		InstanceDisplayer(CIdentity storeId) {
 
 			this.storeId = storeId;
 		}
 
-		void setStartInEditMode() {
-
-			startMode = InstanceDisplayMode.EDIT;
-		}
-
-		void setDisallowStoreOverwrite() {
-
-			allowStoreOverwrite = false;
-		}
-
-		CIdentity createAndDisplay(CFrame type) {
-
-			return display(instantiate(type));
-		}
-
-		CIdentity reloadAndDisplay() {
-
-			return display(subGroup.get(storeId));
-		}
-
 		CIdentity display(IFrame instance) {
 
 			InstanceDialog dialog = createDialog(instance);
 
-			dialog.setAllowStoreOverwrite(allowStoreOverwrite);
+			if (disableEdit()) {
+
+				dialog.disableEdit();
+			}
+
 			dialog.display();
 
 			return dialog.instanceStored() ? dialog.getStoreId() : null;
 		}
+
+		abstract InstanceDisplayMode startMode();
+
+		abstract boolean disableEdit();
 
 		private InstanceDialog createDialog(IFrame instance) {
 
@@ -86,25 +72,73 @@ class InstanceDisplayOps {
 
 			if (assertion()) {
 
-				return new AssertionDialog(parent, instantiator, startMode);
+				return new AssertionDialog(parent, instantiator, startMode());
 			}
 
-			return QueryDialog.create(parent, instantiator, startMode);
-		}
-
-		private IFrame instantiate(CFrame type) {
-
-			return customise(type.instantiate(getFunction()));
-		}
-
-		private IFrame customise(IFrame instance) {
-
-			return getCustomiser().onNewInstance(instance, storeId);
+			return QueryDialog.create(parent, instantiator, startMode());
 		}
 
 		private Instantiator createInstantiator(IFrame instance) {
 
 			return new Instantiator(subGroup, storeId, instance);
+		}
+	}
+
+	private class CreatedInstanceDisplayer extends InstanceDisplayer {
+
+		CreatedInstanceDisplayer(CIdentity storeId) {
+
+			super(storeId);
+		}
+
+		InstanceDisplayMode startMode() {
+
+			return InstanceDisplayMode.EDIT;
+		}
+
+		boolean disableEdit() {
+
+			return false;
+		}
+	}
+
+	private class LoadedInstanceDisplayer extends InstanceDisplayer {
+
+		LoadedInstanceDisplayer(CIdentity storeId) {
+
+			super(storeId);
+		}
+
+		InstanceDisplayMode startMode() {
+
+			return InstanceDisplayMode.VIEW;
+		}
+
+		boolean disableEdit() {
+
+			return false;
+		}
+	}
+
+	private class ExecutedQueryDisplayer extends InstanceDisplayer {
+
+		private boolean copy;
+
+		ExecutedQueryDisplayer(CIdentity storeId, boolean copy) {
+
+			super(storeId);
+
+			this.copy = copy;
+		}
+
+		InstanceDisplayMode startMode() {
+
+			return InstanceDisplayMode.VIEW;
+		}
+
+		boolean disableEdit() {
+
+			return !copy;
 		}
 	}
 
@@ -138,17 +172,46 @@ class InstanceDisplayOps {
 		return null;
 	}
 
-	void reloadAndDisplay(CIdentity storeId) {
+	void loadAndDisplay(CIdentity storeId, boolean asCopy) {
 
-		new InstanceDisplayer(storeId).reloadAndDisplay();
+		IFrame instance = subGroup.get(storeId);
+
+		if (asCopy) {
+
+			storeId = checkResolveAsCopy(instance);
+		}
+
+		if (storeId != null) {
+
+			new LoadedInstanceDisplayer(storeId).display(instance);
+		}
 	}
 
-	void displayExecutedQuery(CIdentity storeId, IFrame instance) {
+	void displayExecutedQuery(CIdentity storeId, IFrame query) {
 
-		InstanceDisplayer displayer = new InstanceDisplayer(storeId);
+		new ExecutedQueryDisplayer(storeId, false).display(query);
+	}
 
-		displayer.setDisallowStoreOverwrite();
-		displayer.display(instance);
+	void copyExecutedQueryAndDisplay(IFrame query) {
+
+		CIdentity storeId = checkResolveAsCopy(query);
+
+		if (storeId != null) {
+
+			new ExecutedQueryDisplayer(storeId, true).display(query);
+		}
+	}
+
+	private CIdentity checkResolveAsCopy(IFrame instance) {
+
+		CIdentity storeId = checkObtainNewStoreId(instance.getType());
+
+		if (storeId != null) {
+
+			customise(instance, storeId);
+		}
+
+		return storeId;
 	}
 
 	boolean checkRename(CIdentity storeId) {
@@ -165,11 +228,7 @@ class InstanceDisplayOps {
 
 	private CIdentity createAndDisplay(CFrame type, CIdentity storeId) {
 
-		InstanceDisplayer displayer = new InstanceDisplayer(storeId);
-
-		displayer.setStartInEditMode();
-
-		return displayer.createAndDisplay(type);
+		return new CreatedInstanceDisplayer(storeId).display(instantiate(type, storeId));
 	}
 
 	private CFrame checkDetermineType(CFrame rootType) {
@@ -225,6 +284,16 @@ class InstanceDisplayOps {
 	private Set<CIdentity> getExecutedQueryIds() {
 
 		return group.getQueryExecutions().getAllExecuteds();
+	}
+
+	private IFrame instantiate(CFrame type, CIdentity storeId) {
+
+		return customise(type.instantiate(getFunction()), storeId);
+	}
+
+	private IFrame customise(IFrame instance, CIdentity storeId) {
+
+		return getCustomiser().onNewInstance(instance, storeId);
 	}
 
 	private boolean assertion() {

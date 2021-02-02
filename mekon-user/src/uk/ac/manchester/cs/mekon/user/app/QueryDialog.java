@@ -268,7 +268,15 @@ class QueryDialog extends InstanceDialog {
 
 		dispose();
 
-		new Creator(newInstantiator, newRootFrame).create(parent, getMode()).display();
+		Creator creator = new Creator(newInstantiator, newRootFrame);
+		QueryDialog switched = creator.create(parent, getMode());
+
+		if (editDisabled()) {
+
+			switched.disableEdit();
+		}
+
+		switched.display();
 	}
 
 	private void execute() {

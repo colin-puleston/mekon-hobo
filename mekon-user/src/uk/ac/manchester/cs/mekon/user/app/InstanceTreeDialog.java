@@ -76,6 +76,8 @@ class InstanceTreeDialog extends GDialog {
 	private Instantiator instantiator;
 	private InstanceTree tree = null;
 
+	private boolean editDisabled = false;
+
 	private List<EditButton> editButtons = new ArrayList<EditButton>();
 
 	abstract class EditListener extends GTreeListener {
@@ -122,7 +124,7 @@ class InstanceTreeDialog extends GDialog {
 
 		ModeSelector() {
 
-			super(tree);
+			super(tree, getSelectableDisplayModes());
 		}
 
 		void onModeUpdate() {
@@ -153,6 +155,11 @@ class InstanceTreeDialog extends GDialog {
 		tree = new InstanceTree(instantiator, rootFrame, summaryInstance, startMode);
 	}
 
+	void disableEdit() {
+
+		editDisabled = true;
+	}
+
 	void addEditListener(EditListener editListener) {
 
 		tree.addTreeListener(editListener);
@@ -178,6 +185,21 @@ class InstanceTreeDialog extends GDialog {
 		return tree;
 	}
 
+	boolean editDisabled() {
+
+		return editDisabled;
+	}
+
+	boolean editAllowed() {
+
+		return !editDisabled() && instantiator.editableInstance();
+	}
+
+	boolean fixedMode() {
+
+		return getSelectableDisplayModes().size() == 1;
+	}
+
 	InstanceDisplayMode getMode() {
 
 		return tree.getMode();
@@ -186,11 +208,6 @@ class InstanceTreeDialog extends GDialog {
 	boolean viewOnly() {
 
 		return tree.viewOnly();
-	}
-
-	boolean fixedMode() {
-
-		return instantiator.assertionInstance() && !instantiator.editableInstance();
 	}
 
 	ControlsPanel checkCreateControlsPanel() {
@@ -232,6 +249,25 @@ class InstanceTreeDialog extends GDialog {
 		panel.add(new ModeSelector(), BorderLayout.WEST);
 
 		return panel;
+	}
+
+	private List<InstanceDisplayMode> getSelectableDisplayModes() {
+
+		List<InstanceDisplayMode> modes = new ArrayList<InstanceDisplayMode>();
+
+		if (editAllowed()) {
+
+			modes.add(InstanceDisplayMode.EDIT);
+		}
+
+		modes.add(InstanceDisplayMode.VIEW);
+
+		if (instantiator.queryInstance()) {
+
+			modes.add(InstanceDisplayMode.SEMANTICS);
+		}
+
+		return modes;
 	}
 
 	private void updateEditButtonEnabling() {

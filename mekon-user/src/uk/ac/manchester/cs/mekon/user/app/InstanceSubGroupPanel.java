@@ -29,7 +29,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class InstanceSubGroupPanel extends InstancesPanel {
+abstract class InstanceSubGroupPanel extends InstancesPanel {
 
 	static private final long serialVersionUID = -1;
 
@@ -43,8 +43,6 @@ class InstanceSubGroupPanel extends InstancesPanel {
 		this.subGroup = subGroup;
 
 		displayOps = new InstanceDisplayOps(this, subGroup);
-
-		initialise();
 	}
 
 	boolean canCreate() {
@@ -62,9 +60,9 @@ class InstanceSubGroupPanel extends InstancesPanel {
 		displayOps.checkCreateAndDisplay();
 	}
 
-	void reloadAndDisplay(CIdentity storeId) {
+	void loadAndDisplay(CIdentity storeId, boolean asCopy) {
 
-		displayOps.reloadAndDisplay(storeId);
+		displayOps.loadAndDisplay(storeId, asCopy);
 	}
 
 	void checkRename(CIdentity storeId) {

@@ -60,6 +60,9 @@ class InstanceGroupPanel extends JTabbedPane {
 			setSelectedIndex(getTabCount() - 1);
 			executedQueriesPanel.add(executedQuery);
 		}
+
+		void onDiscarded(ExecutedQuery executedQuery) {
+		}
 	}
 
 	InstanceGroupPanel(InstanceGroup group) {
@@ -70,18 +73,18 @@ class InstanceGroupPanel extends JTabbedPane {
 
 		setFont(GFonts.toMedium(getFont()));
 
-		addSubGroupTab(group.getAssertionSubGroup(), ASSERTIONS_TITLE);
+		addAssertionsTab(group.getAssertionSubGroup(), ASSERTIONS_TITLE);
 
 		if (group.queriesEnabled()) {
 
 			if (group.isLocalQueriesSubGroup()) {
 
-				addSubGroupTab(group.getCentralQuerySubGroup(), CENTRAL_QUERIES_TITLE);
-				addSubGroupTab(group.getLocalQuerySubGroup(), LOCAL_QUERIES_TITLE);
+				addQueriesTab(group.getCentralQuerySubGroup(), CENTRAL_QUERIES_TITLE);
+				addQueriesTab(group.getLocalQuerySubGroup(), LOCAL_QUERIES_TITLE);
 			}
 			else {
 
-				addSubGroupTab(group.getCentralQuerySubGroup(), BASE_QUERIES_TITLE);
+				addQueriesTab(group.getCentralQuerySubGroup(), BASE_QUERIES_TITLE);
 			}
 
 			addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
@@ -90,8 +93,13 @@ class InstanceGroupPanel extends JTabbedPane {
 		}
 	}
 
-	private void addSubGroupTab(InstanceSubGroup subGroup, String title) {
+	private void addAssertionsTab(InstanceSubGroup subGroup, String title) {
 
-		addTab(title, new InstanceSubGroupPanel(subGroup, title));
+		addTab(title, new AssertionSubGroupPanel(subGroup, title));
+	}
+
+	private void addQueriesTab(InstanceSubGroup subGroup, String title) {
+
+		addTab(title, new QuerySubGroupPanel(subGroup, title));
 	}
 }

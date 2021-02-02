@@ -24,55 +24,78 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.util.*;
-
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryMatchesPanel extends InstancesPanel {
+abstract class SelectedInstanceActionButton extends GButton {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_BASE = "Matches";
-	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
+	private InstanceIdsList idsList;
 
-	static private String createTitle(CIdentity storeId) {
+	private class SelectionBasedEnablingUpdater extends GSelectionListener<CIdentity> {
 
-		return String.format(TITLE_FORMAT, storeId.getLabel());
+		protected void onSelected(CIdentity storeId) {
+
+			updateEnabling();
+		}
+
+		protected void onDeselected(CIdentity storeId) {
+
+			updateEnabling();
+		}
+
+		SelectionBasedEnablingUpdater() {
+
+			idsList.addSelectionListener(this);
+		}
 	}
 
-	private InstanceGroup group;
+	private class RemovalBasedDisabler extends GListListener<CIdentity> {
 
-	QueryMatchesPanel(InstanceGroup group) {
+		protected void onAdded(CIdentity entity) {
+		}
 
-		super(group, new InstanceIdsList(group, false), TITLE_BASE);
+		protected void onRemoved(CIdentity entity) {
 
-		this.group = group;
+			setEnabled(false);
+		}
 
-		initialise();
+		RemovalBasedDisabler() {
+
+			idsList.addListListener(this);
+		}
 	}
 
-	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
+	protected void doButtonThing() {
 
-		setTitle(createTitle(queryStoreId));
-		displayIds(matchIds);
+		doInstanceThing(idsList.getSelectedEntity());
 	}
 
-	void clear() {
+	SelectedInstanceActionButton(InstanceIdsList idsList, String label) {
 
-		setTitle(TITLE_BASE);
-		clearIds();
+		super(label);
+
+		this.idsList = idsList;
+
+		updateEnabling();
+
+		new SelectionBasedEnablingUpdater();
+		new RemovalBasedDisabler();
 	}
 
-	void loadAndDisplay(CIdentity storeId, boolean asCopy) {
+	boolean enableIfSelection() {
 
-		createDisplayOps(storeId).loadAndDisplay(storeId, asCopy);
+		return true;
 	}
 
-	private InstanceDisplayOps createDisplayOps(CIdentity storeId) {
+	abstract void doInstanceThing(CIdentity storeId);
 
-		return new InstanceDisplayOps(this, group.getSubGroupContaining(storeId));
+	private void updateEnabling() {
+
+		setEnabled(enableIfSelection() && idsList.anySelections());
 	}
 }

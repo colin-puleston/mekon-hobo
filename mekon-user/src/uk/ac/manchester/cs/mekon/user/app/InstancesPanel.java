@@ -41,6 +41,7 @@ abstract class InstancesPanel extends JPanel {
 	static private final long serialVersionUID = -1;
 
 	static private final String CREATE_LABEL = "Create...";
+	static private final String COPY_LABEL = "Copy...";
 	static private final String LOAD_LABEL = "Load";
 	static private final String RENAME_LABEL = "Rename...";
 	static private final String REMOVE_LABEL = "Remove";
@@ -49,6 +50,21 @@ abstract class InstancesPanel extends JPanel {
 
 	private InstanceGroup group;
 	private InstanceIdsList idsList;
+
+	private abstract class CurrentInstanceActionButton extends SelectedInstanceActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		CurrentInstanceActionButton(String label) {
+
+			super(idsList, label);
+		}
+
+		boolean enableIfSelection() {
+
+			return instanceActionsEnabled(idsList.getSelectedEntity());
+		}
+	}
 
 	private class CreateButton extends GButton {
 
@@ -65,28 +81,43 @@ abstract class InstancesPanel extends JPanel {
 		}
 	}
 
-	private class LoadButton extends SelectedInstanceIdActionButton {
+	private class CopyButton extends CurrentInstanceActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		CopyButton() {
+
+			super(COPY_LABEL);
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			loadAndDisplay(storeId, true);
+		}
+	}
+
+	private class LoadButton extends CurrentInstanceActionButton {
 
 		static private final long serialVersionUID = -1;
 
 		LoadButton() {
 
-			super(idsList, LOAD_LABEL);
+			super(LOAD_LABEL);
 		}
 
 		void doInstanceThing(CIdentity storeId) {
 
-			reloadAndDisplay(storeId);
+			loadAndDisplay(storeId, false);
 		}
 	}
 
-	private class RenameButton extends SelectedInstanceIdActionButton {
+	private class RenameButton extends CurrentInstanceActionButton {
 
 		static private final long serialVersionUID = -1;
 
 		RenameButton() {
 
-			super(idsList, RENAME_LABEL);
+			super(RENAME_LABEL);
 		}
 
 		void doInstanceThing(CIdentity storeId) {
@@ -95,13 +126,13 @@ abstract class InstancesPanel extends JPanel {
 		}
 	}
 
-	private class RemoveButton extends SelectedInstanceIdActionButton {
+	private class RemoveButton extends CurrentInstanceActionButton {
 
 		static private final long serialVersionUID = -1;
 
 		RemoveButton() {
 
-			super(idsList, REMOVE_LABEL);
+			super(REMOVE_LABEL);
 		}
 
 		void doInstanceThing(CIdentity storeId) {
@@ -116,7 +147,7 @@ abstract class InstancesPanel extends JPanel {
 
 			if (e.getClickCount() == 2) {
 
-				reloadAndDisplay(getClickedStoreId(e));
+				loadAndDisplay(getClickedStoreId(e), false);
 			}
 		}
 
@@ -169,6 +200,11 @@ abstract class InstancesPanel extends JPanel {
 		idsList.clearList();
 	}
 
+	void clearSelection() {
+
+		idsList.clearSelection();
+	}
+
 	boolean canCreate() {
 
 		return false;
@@ -184,7 +220,7 @@ abstract class InstancesPanel extends JPanel {
 		throw new Error("Method should never be invoked!");
 	}
 
-	abstract void reloadAndDisplay(CIdentity storeId);
+	abstract void loadAndDisplay(CIdentity storeId, boolean asCopy);
 
 	void checkRename(CIdentity storeId) {
 
@@ -194,6 +230,11 @@ abstract class InstancesPanel extends JPanel {
 	void checkRemove(CIdentity storeId) {
 
 		throw new Error("Method should never be invoked!");
+	}
+
+	boolean instanceActionsEnabled(CIdentity storeId) {
+
+		return true;
 	}
 
 	private JComponent createControlsComponent() {
@@ -208,6 +249,7 @@ abstract class InstancesPanel extends JPanel {
 		if (canCreate()) {
 
 			panel.addControl(new CreateButton());
+			panel.addControl(new CopyButton());
 		}
 
 		panel.addControl(new LoadButton());

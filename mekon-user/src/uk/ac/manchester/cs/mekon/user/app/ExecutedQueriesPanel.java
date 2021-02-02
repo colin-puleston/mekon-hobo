@@ -40,6 +40,7 @@ class ExecutedQueriesPanel extends JPanel {
 	static private final String QUERY_SELECTOR_TITLE = "Executed Queries";
 
 	static private final String DISPLAY_QUERY_LABEL = "View...";
+	static private final String COPY_QUERY_LABEL = "Copy...";
 	static private final String DISCARD_QUERY_LABEL = "Discard";
 
 	private InstanceGroup group;
@@ -50,22 +51,74 @@ class ExecutedQueriesPanel extends JPanel {
 	private InstanceIdsList querySelectorList;
 	private QueryMatchesPanel matchesPanel;
 
-	private class DisplayQueryButton extends SelectedInstanceIdActionButton {
+	private abstract class QueryAction {
+
+		void perform(CIdentity storeId) {
+
+			ExecutedQuery executed = queryExecutions.getExecuted(storeId);
+
+			perform(createSubGroupDisplayOps(executed), storeId, executed.getQuery());
+		}
+
+		abstract void perform(InstanceDisplayOps ops, CIdentity storeId, IFrame query);
+	}
+
+	private class QueryDisplayAction extends QueryAction {
+
+		void perform(InstanceDisplayOps ops, CIdentity storeId, IFrame query) {
+
+			ops.displayExecutedQuery(storeId, query);
+		}
+	}
+
+	private class QueryCopyAction extends QueryAction {
+
+		void perform(InstanceDisplayOps ops, CIdentity storeId, IFrame query) {
+
+			ops.copyExecutedQueryAndDisplay(query);
+		}
+	}
+
+	private abstract class QueryActionButton extends SelectedInstanceActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		private QueryAction action;
+
+		QueryActionButton(QueryAction action, String title) {
+
+			super(querySelectorList, title);
+
+			this.action = action;
+		}
+
+		void doInstanceThing(CIdentity storeId) {
+
+			action.perform(storeId);
+		}
+	}
+
+	private class DisplayQueryButton extends QueryActionButton {
 
 		static private final long serialVersionUID = -1;
 
 		DisplayQueryButton() {
 
-			super(querySelectorList, DISPLAY_QUERY_LABEL);
-		}
-
-		void doInstanceThing(CIdentity storeId) {
-
-			displayExecutedQuery(storeId);
+			super(new QueryDisplayAction(), DISPLAY_QUERY_LABEL);
 		}
 	}
 
-	private class DiscardQueryButton extends SelectedInstanceIdActionButton {
+	private class CopyQueryButton extends QueryActionButton {
+
+		static private final long serialVersionUID = -1;
+
+		CopyQueryButton() {
+
+			super(new QueryCopyAction(), COPY_QUERY_LABEL);
+		}
+	}
+
+	private class DiscardQueryButton extends SelectedInstanceActionButton {
 
 		static private final long serialVersionUID = -1;
 
@@ -141,6 +194,7 @@ class ExecutedQueriesPanel extends JPanel {
 		ControlsPanel panel = new ControlsPanel(true);
 
 		panel.addControl(new DisplayQueryButton());
+		panel.addControl(new CopyQueryButton());
 		panel.addControl(new DiscardQueryButton());
 
 		return panel;
@@ -153,13 +207,8 @@ class ExecutedQueriesPanel extends JPanel {
 		matchesPanel.displayMatches(storeId, execQuery.getMatches());
 	}
 
-	private void displayExecutedQuery(CIdentity storeId) {
+	private InstanceDisplayOps createSubGroupDisplayOps(ExecutedQuery executed) {
 
-		ExecutedQuery executed = queryExecutions.getExecuted(storeId);
-
-		IFrame query = executed.getQuery();
- 		InstanceSubGroup subGroup = executed.getSubGroup();
-
-		new InstanceDisplayOps(this, subGroup).displayExecutedQuery(storeId, query);
+		return new InstanceDisplayOps(this, executed.getSubGroup());
 	}
 }

@@ -49,8 +49,6 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 	private Instantiator instantiator;
 
 	private CIdentity storeId;
-	private boolean allowStoreOverwrite = true;
-
 	private boolean instanceStored = false;
 
 	private class StoreButton extends GButton {
@@ -106,11 +104,6 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		storeId = instantiator.getStoreId();
 	}
 
-	void setAllowStoreOverwrite(boolean value) {
-
-		allowStoreOverwrite = value;
-	}
-
 	InstanceSubGroup getDefaultSubGroup() {
 
 		return instantiator.getSubGroup();
@@ -133,7 +126,7 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 	ControlsPanel checkCreateControlsPanel() {
 
-		if (!instantiator.editableInstance()) {
+		if (!editAllowed()) {
 
 			return null;
 		}
@@ -145,11 +138,7 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 		if (subGroup.editable()) {
 
-			if (allowStoreOverwrite) {
-
-				panel.addControl(new StoreButton());
-			}
-
+			panel.addControl(new StoreButton());
 			panel.addControl(new StoreAsButton());
 		}
 

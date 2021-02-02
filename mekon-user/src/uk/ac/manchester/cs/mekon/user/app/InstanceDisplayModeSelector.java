@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -34,9 +35,15 @@ abstract class InstanceDisplayModeSelector extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String EDIT_MODE_LABEL = "Edit";
-	static private final String VIEW_MODE_LABEL = "View";
-	static private final String SEMANTICS_MODE_LABEL = "Semantic view";
+	static private final Map<InstanceDisplayMode, String> MODE_LABELS
+								= new HashMap<InstanceDisplayMode, String>();
+
+	static {
+
+		MODE_LABELS.put(InstanceDisplayMode.EDIT, "Edit");
+		MODE_LABELS.put(InstanceDisplayMode.VIEW, "View");
+		MODE_LABELS.put(InstanceDisplayMode.SEMANTICS, "Semantic view");
+	}
 
 	private InstanceTree instanceTree;
 	private ModeButton selected = null;
@@ -64,9 +71,9 @@ abstract class InstanceDisplayModeSelector extends JPanel {
 			}
 		}
 
-		ModeButton(InstanceDisplayMode mode, String label) {
+		ModeButton(InstanceDisplayMode mode) {
 
-			super(label, startMode(mode));
+			super(MODE_LABELS.get(mode), startMode(mode));
 
 			this.mode = mode;
 
@@ -81,29 +88,19 @@ abstract class InstanceDisplayModeSelector extends JPanel {
 		}
 	}
 
-	InstanceDisplayModeSelector(InstanceTree instanceTree) {
+	InstanceDisplayModeSelector(
+		InstanceTree instanceTree,
+		List<InstanceDisplayMode> selectableModes) {
 
 		this.instanceTree = instanceTree;
 
-		populate(instanceTree.getInstantiator());
+		for (InstanceDisplayMode mode : selectableModes) {
+
+			new ModeButton(mode);
+		}
 	}
 
 	abstract void onModeUpdate();
-
-	private void populate(Instantiator instantiator) {
-
-		if (instantiator.editableInstance()) {
-
-			new ModeButton(InstanceDisplayMode.EDIT, EDIT_MODE_LABEL);
-		}
-
-		new ModeButton(InstanceDisplayMode.VIEW, VIEW_MODE_LABEL);
-
-		if (instantiator.queryInstance()) {
-
-			new ModeButton(InstanceDisplayMode.SEMANTICS, SEMANTICS_MODE_LABEL);
-		}
-	}
 
 	private boolean startMode(InstanceDisplayMode mode) {
 

@@ -78,6 +78,11 @@ abstract class InstanceSubGroup {
 		return idsList;
 	}
 
+	boolean queryInstances() {
+
+		return getFunction().query();
+	}
+
 	boolean editable() {
 
 		return group.editable();
@@ -148,10 +153,5 @@ abstract class InstanceSubGroup {
 	private void onAddition(CIdentity storeId) {
 
 		group.onAddition(storeId, targetStore.getType(storeId));
-	}
-
-	private boolean queryInstances() {
-
-		return getFunction().query();
 	}
 }
