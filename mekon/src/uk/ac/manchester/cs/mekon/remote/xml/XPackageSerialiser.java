@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon.remote.xml;
 
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.remote.util.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -35,9 +36,220 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public abstract class XPackageSerialiser {
+public abstract class XPackageSerialiser implements XRequestVocab, XResponseVocab {
 
 	private XDocument document;
+	private XNode rootNode;
+
+	/**
+	 * Provides rendering for action requests.
+	 */
+	public class RequestRenderer {
+
+		/**
+		 * Adds an attribute representing the initial startup-time
+		 * of the client making an action request. Used to invalidate
+		 * client if server is restarted.
+		 *
+		 * @param time Client startup-time, or -1 if no expiry check
+		 * required
+		 */
+		public void setClientExpiryCheckTime(long time) {
+
+			rootNode.setValue(CLIENT_EXPIRY_CHECK_TIME_ATTR, time);
+		}
+
+		/**
+		 * Adds an attribute representing the general category of an
+		 * action request.
+		 *
+		 * @param category General category of action request
+		 */
+		public void setActionCategory(RActionCategory category) {
+
+			rootNode.setValue(ACTION_CATEGORY_ATTR, category);
+		}
+
+		/**
+		 * Adds an attribute representing the specific type of an
+		 * action request.
+		 *
+		 * @param type Specific type of action request
+		 */
+		public void setActionType(Enum<?> type) {
+
+			rootNode.setValue(ACTION_TYPE_ATTR, type);
+		}
+
+		/**
+		 * Adds a node for representing a parameter for an action request.
+		 *
+		 * @return Added node for representing action request parameter
+		 */
+		public XNode addParameterNode() {
+
+			return rootNode.addChild(PARAMETER_ID);
+		}
+	}
+
+	/**
+	 * Provides parsing for action requests.
+	 */
+	public class RequestParser {
+
+		/**
+		 * Retrieves value of attribute representing the initial startup
+		 * time of the client making an action request. Used to invalidate
+		 * client if server is restarted.
+		 *
+		 * @return client startup-time, or -1 if no expiry check required
+		 * @throws XDocumentException if value for attribute exists but
+		 * is not of correct type
+		 */
+		public long getClientExpiryCheckTime() {
+
+			return rootNode.getLong(CLIENT_EXPIRY_CHECK_TIME_ATTR, -1);
+		}
+
+		/**
+		 * Retrieves value of attribute representing the general category
+		 * of an action request.
+		 *
+		 * @return General category of action request
+		 * @throws XDocumentException if no value for attribute, or if
+		 * value does is not of correct type
+		 */
+		public RActionCategory getActionCategory() {
+
+			return rootNode.getEnum(ACTION_CATEGORY_ATTR, RActionCategory.class);
+		}
+
+		/**
+		 * Retrieves value of attribute representing the specific type of
+		 * an action request.
+		 *
+		 * @return Specific type of action request
+		 * @throws XDocumentException if no value for attribute, or if
+		 * value does is not of correct type
+		 */
+		public <E extends Enum<E>>E getActionType(Class<E> type) {
+
+			return rootNode.getEnum(ACTION_TYPE_ATTR, type);
+		}
+
+		/**
+		 * Retrieves node representing a parameter for an action request.
+		 *
+		 * @return Node representing action request parameter
+		 * @throws XDocumentException if relevant node does not exist
+		 */
+		public XNode getParameterNode(int index) {
+
+			return getTopLevelNode(PARAMETER_ID, index);
+		}
+	}
+
+	/**
+	 * Provides rendering for action responses.
+	 */
+	public class ResponseRenderer {
+
+		/**
+		 * Adds an attribute with a value denoting that the current client
+		 * session is no longer valid.
+		 */
+		public void setInvalidatedClient() {
+
+			rootNode.setValue(INVALIDATED_CLIENT_ATTR, true);
+		}
+
+		/**
+		 * Adds an attribute representing a boolean response to an action
+		 * request.
+		 *
+		 * @param value Boolean response value to action request
+		 */
+		public void setBooleanResponse(boolean value) {
+
+			rootNode.setValue(BOOLEAN_RESPONSE_ATTR, value);
+		}
+
+		/**
+		 * Adds a node for representing a structured response to an action
+		 * request.
+		 *
+		 * @return Added node for representing structured response to action
+		 * request
+		 */
+		public XNode addStructuredNode() {
+
+			return rootNode.addChild(STRUCTURED_RESPONSE_ID);
+		}
+
+		/**
+		 * Adds a node representing a null response to an action request.
+		 *
+		 * @return Added node representing null response to action
+		 * request
+		 */
+		public void setNullResponse() {
+
+			rootNode.addChild(NULL_RESPONSE_ID);
+		}
+	}
+
+	/**
+	 * Provides parsing for action responses.
+	 */
+	public class ResponseParser {
+
+		/**
+		 * Retrieves value of attribute, if present, denoting whether the
+		 * current client is no longer valid.
+		 *
+		 * @return value of attribute if present, false otherwise
+		 */
+		public boolean invalidatedClient() {
+
+			return rootNode.getBoolean(INVALIDATED_CLIENT_ATTR, false);
+		}
+
+		/**
+		 * Retrieves value of attribute representing a boolean response to
+		 * an action request.
+		 *
+		 * @return boolean response value to action request
+		 * @throws XDocumentException if no value for attribute, or if
+		 * value does is not of correct type
+		 */
+		public boolean getBooleanResponse() {
+
+			return rootNode.getBoolean(BOOLEAN_RESPONSE_ATTR);
+		}
+
+		/**
+		 * Retrieves node representing a structured response to an action
+		 * request.
+		 *
+		 * @return Node representing structured response to action request
+		 * @throws XDocumentException if relevant node does not exist
+		 */
+		public XNode getStructuredNode() {
+
+			return rootNode.getChild(STRUCTURED_RESPONSE_ID);
+		}
+
+		/**
+		 * Tests for existance of node representing a null response to an
+		 * action request.
+		 *
+		 * @return True if null response node exists
+		 */
+		public boolean isNullResponse() {
+
+			return rootNode.hasChild(NULL_RESPONSE_ID);
+		}
+	}
 
 	/**
 	 * Provides the XML document being rendered or parsed.
@@ -67,41 +279,13 @@ public abstract class XPackageSerialiser {
 	protected XPackageSerialiser(XDocument document) {
 
 		this.document = document;
+
+		rootNode = document.getRootNode();
 	}
 
-	/**
-	 * Adds a sub-node to the root-node
-	 *
-	 * @param id Identifier for node to be added
-	 * @return Added node
-	 */
-	protected XNode addTopLevelNode(String id) {
+	private XNode getTopLevelNode(String id, int index) {
 
-		return getRootNode().addChild(id);
-	}
-
-	/**
-	 * Adds an attribute to the root-node
-	 *
-	 * @param id Name of attribute to add
-	 * @param value Value for attribute
-	 */
-	protected void addTopLevelAttribute(String id, Object value) {
-
-		getRootNode().setValue(id, value);
-	}
-
-	/**
-	 * Retrieves a sub-node of the root-node.
-	 *
-	 * @param id Identifier for node to retrieved
-	 * @param index Index within set of nodes with relevant identifier
-	 * @return Retrieved node
-	 * @throws XDocumentException If no such node
-	 */
-	protected XNode getTopLevelNode(String id, int index) {
-
-		List<XNode> nodes = getTopLevelNodes(id);
+		List<XNode> nodes = rootNode.getChildren(id);
 
 		if (nodes.size() > index) {
 
@@ -109,69 +293,5 @@ public abstract class XPackageSerialiser {
 		}
 
 		throw new XDocumentException("Cannot find entity: " + id + "[" + index + "]");
-	}
-
-	/**
-	 * Retrieves a sub-node of the root-node.
-	 *
-	 * @param id Identifier for node to retrieved
-	 * @return Retrieved node
-	 * @throws XDocumentException If no such node, or multiple nodes
-	 * with specified identifier
-	 */
-	protected XNode getTopLevelNode(String id) {
-
-		return getRootNode().getChild(id);
-	}
-
-	/**
-	 * Tests whether specified node os a sub-node of the root-node
-	 *
-	 * @param id Identifier for node to test
-	 * @return True if sub-node of root-node
-	 */
-	protected boolean isTopLevelNode(String id) {
-
-		return getRootNode().getChildOrNull(id) != null;
-	}
-
-	/**
-	 * Retrieves a boolean attribute value of the root-node.
-	 *
-	 * @param id Identifier for relevant attribute
-	 * @return Retrieved boolean value
-	 * @throws XDocumentException if no value for attribute, or if
-	 * value does not represent a valid boolean
-	 */
-	protected boolean getTopLevelBoolean(String id) {
-
-		return getRootNode().getBoolean(id);
-	}
-
-	/**
-	 * Provides a <code>Enum</code> object of the specified type,
-	 * derived from an attribute value of the root-node.
-	 *
-	 * @param <E> Generic version of type
-	 * @param id Identifier for relevant attribute
-	 * @param type Type of <code>Enum</code> to create
-	 * @return Relevant <code>Enum</code> object
-	 * @throws XDocumentException if no value for attribute, or if
-	 * value does not represent a valid <code>Enum</code> value of the
-	 * required type
-	 */
-	protected <E extends Enum<E>>E getTopLevelEnum(String id, Class<E> type) {
-
-		return getRootNode().getEnum(id, type);
-	}
-
-	private List<XNode> getTopLevelNodes(String id) {
-
-		return getRootNode().getChildren(id);
-	}
-
-	private XNode getRootNode() {
-
-		return document.getRootNode();
 	}
 }

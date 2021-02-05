@@ -36,5 +36,6 @@ public interface XResponseVocab {
 	static public final String STRUCTURED_RESPONSE_ID = "StructuredResponse";
 	static public final String NULL_RESPONSE_ID = "NullResponse";
 
+	static public final String INVALIDATED_CLIENT_ATTR = "invalidatedClient";
 	static public final String BOOLEAN_RESPONSE_ATTR = "booleanResponse";
 }

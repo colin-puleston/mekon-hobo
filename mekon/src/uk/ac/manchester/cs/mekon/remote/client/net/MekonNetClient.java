@@ -26,8 +26,9 @@ package uk.ac.manchester.cs.mekon.remote.client.net;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.remote.client.*;
 import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
 
 /**
@@ -41,16 +42,26 @@ import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
  */
 public class MekonNetClient {
 
-	private CModel model;
-	private IStore store;
-
 	private RNetClient netClient;
+
+	private NetClientModel clientModel;
+	private NetClientStore clientStore;
 
 	private class NetClientModel extends XClientModel {
 
 		protected XDocument performActionOnServer(XDocument request) {
 
 			return netClient.performActionOnServer(request);
+		}
+
+		protected XDocument handleServerAccessException(RServerAccessException exception) {
+
+			return netClient.handleServerAccessException(exception);
+		}
+
+		NetClientModel(boolean expireOnServerRestart) {
+
+			super(expireOnServerRestart);
 		}
 	}
 
@@ -61,9 +72,14 @@ public class MekonNetClient {
 			return netClient.performActionOnServer(request);
 		}
 
-		NetClientStore() {
+		protected XDocument handleServerAccessException(RServerAccessException exception) {
 
-			super(model);
+			return netClient.handleServerAccessException(exception);
+		}
+
+		NetClientStore(boolean expireOnServerRestart) {
+
+			super(getCModel(), expireOnServerRestart);
 		}
 	}
 
@@ -72,13 +88,15 @@ public class MekonNetClient {
 	 *
 	 * @param netClient Entity providing access to relevant instance of
 	 * <code>MekonNetServer</code> running on server
+	 * @param expireOnServerRestart true if client should become invalid
+	 * if server is restarted whilst client is running
 	 */
-	public MekonNetClient(RNetClient netClient) {
+	public MekonNetClient(RNetClient netClient, boolean expireOnServerRestart) {
 
 		this.netClient = netClient;
 
-		model = new NetClientModel().getCModel();
-		store = new NetClientStore().getIStore();
+		clientModel = new NetClientModel(expireOnServerRestart);
+		clientStore = new NetClientStore(expireOnServerRestart);
 	}
 
 	/**
@@ -88,7 +106,7 @@ public class MekonNetClient {
 	 */
 	public CModel getCModel() {
 
-		return model;
+		return clientModel.getCModel();
 	}
 
 	/**
@@ -98,6 +116,6 @@ public class MekonNetClient {
 	 */
 	public IStore getIStore() {
 
-		return store;
+		return clientStore.getIStore();
 	}
 }

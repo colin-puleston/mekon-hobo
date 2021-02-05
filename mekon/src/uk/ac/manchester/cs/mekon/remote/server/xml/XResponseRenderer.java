@@ -30,14 +30,15 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.serial.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
+class XResponseRenderer extends XPackageSerialiser {
 
+	private ResponseRenderer structureRenderer = new ResponseRenderer();
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
 	XResponseRenderer() {
@@ -45,9 +46,14 @@ class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
 		super(RESPONSE_ROOT_ID);
 	}
 
+	void setInvalidatedClient() {
+
+		structureRenderer.setInvalidatedClient();
+	}
+
 	void setBooleanResponse(boolean value) {
 
-		addTopLevelAttribute(BOOLEAN_RESPONSE_ATTR, value);
+		structureRenderer.setBooleanResponse(value);
 	}
 
 	void setHierarchyResponse(CFrame rootFrame) {
@@ -55,7 +61,7 @@ class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
 		CHierarchyRenderer renderer = new CHierarchyRenderer();
 
 		renderer.setVisibilityFilter(CVisibility.EXPOSED);
-		renderer.render(rootFrame, addStructuredResponseNode());
+		renderer.render(rootFrame, addStructuredNode());
 	}
 
 	void setInstanceResponse(IFrame instance) {
@@ -65,14 +71,14 @@ class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
 
 	void setInstanceResponse(IInstanceRenderInput instance) {
 
-		instanceRenderer.render(instance, addStructuredResponseNode());
+		instanceRenderer.render(instance, addStructuredNode());
 	}
 
 	void setInstanceOrNullResponse(IFrame instance) {
 
 		if (instance == null) {
 
-			addNullResponseNode();
+			structureRenderer.setNullResponse();
 		}
 		else {
 
@@ -84,31 +90,26 @@ class XResponseRenderer extends XPackageSerialiser implements XResponseVocab {
 
 		if (identity == null) {
 
-			addNullResponseNode();
+			structureRenderer.setNullResponse();
 		}
 		else {
 
-			FSerialiser.renderIdentity(identity, addStructuredResponseNode());
+			FSerialiser.renderIdentity(identity, addStructuredNode());
 		}
 	}
 
 	void setIdentitiesResponse(List<CIdentity> identities) {
 
-		FSerialiser.renderIdentities(identities, addStructuredResponseNode());
+		FSerialiser.renderIdentities(identities, addStructuredNode());
 	}
 
 	void setMatchesResponse(IMatches matches) {
 
-		IMatchesRenderer.render(matches, addStructuredResponseNode());
+		IMatchesRenderer.render(matches, addStructuredNode());
 	}
 
-	private XNode addStructuredResponseNode() {
+	private XNode addStructuredNode() {
 
-		return addTopLevelNode(STRUCTURED_RESPONSE_ID);
-	}
-
-	private void addNullResponseNode() {
-
-		addTopLevelNode(NULL_RESPONSE_ID);
+		return structureRenderer.addStructuredNode();
 	}
 }

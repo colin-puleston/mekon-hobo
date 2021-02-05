@@ -31,56 +31,63 @@ import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.serial.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class XResponseParser extends XPackageSerialiser implements XResponseVocab {
+class XResponseParser extends XPackageSerialiser {
+
+	private ResponseParser structureParser = new ResponseParser();
 
 	XResponseParser(XDocument document) {
 
 		super(document);
 	}
 
-	boolean isNullResponse() {
+	boolean invalidatedClient() {
 
-		return isTopLevelNode(NULL_RESPONSE_ID);
+		return structureParser.invalidatedClient();
 	}
 
 	boolean getBooleanResponse() {
 
-		return getTopLevelBoolean(BOOLEAN_RESPONSE_ATTR);
+		return structureParser.getBooleanResponse();
+	}
+
+	boolean isNullResponse() {
+
+		return structureParser.isNullResponse();
 	}
 
 	CHierarchy getHierarchyResponse() {
 
-		return new CHierarchyParser().parse(getStructuredResponseNode());
+		return new CHierarchyParser().parse(getStructuredNode());
 	}
 
 	IInstanceParseInput getInstanceResponseParseInput() {
 
-		return new IInstanceParseInput(getStructuredResponseNode());
+		return new IInstanceParseInput(getStructuredNode());
 	}
 
 	CIdentity getIdentityResponse() {
 
-		return FSerialiser.parseIdentity(getStructuredResponseNode());
+		return FSerialiser.parseIdentity(getStructuredNode());
 	}
 
 	List<CIdentity> getIdentitiesResponse() {
 
-		return FSerialiser.parseIdentities(getStructuredResponseNode());
+		return FSerialiser.parseIdentities(getStructuredNode());
 	}
 
 	IMatches getMatchesResponse() {
 
-		return IMatchesParser.parse(getStructuredResponseNode());
+		return IMatchesParser.parse(getStructuredNode());
 	}
 
-	private XNode getStructuredResponseNode() {
+	private XNode getStructuredNode() {
 
-		return getTopLevelNode(STRUCTURED_RESPONSE_ID);
+		return structureParser.getStructuredNode();
 	}
 }

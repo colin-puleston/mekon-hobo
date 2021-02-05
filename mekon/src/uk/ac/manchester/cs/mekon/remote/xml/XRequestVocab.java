@@ -35,6 +35,7 @@ public interface XRequestVocab {
 	static public final String REQUEST_ROOT_ID = "MekonActionRequest";
 	static public final String PARAMETER_ID = "Parameter";
 
+	static public final String CLIENT_EXPIRY_CHECK_TIME_ATTR = "clientExpiryCheckTime";
 	static public final String ACTION_CATEGORY_ATTR = "actionCategory";
 	static public final String ACTION_TYPE_ATTR = "actionType";
 }

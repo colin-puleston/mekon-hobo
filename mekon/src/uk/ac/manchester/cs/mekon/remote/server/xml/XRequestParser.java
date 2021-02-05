@@ -26,52 +26,49 @@ package uk.ac.manchester.cs.mekon.remote.server.xml;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class XRequestParser extends XPackageSerialiser implements XRequestVocab {
+class XRequestParser extends XPackageSerialiser {
+
+	private RequestParser structureParser = new RequestParser();
 
 	XRequestParser(XDocument document) {
 
 		super(document);
 	}
 
+	long getClientExpiryCheckTime() {
+
+		return structureParser.getClientExpiryCheckTime();
+	}
+
 	RActionCategory getActionCategory() {
 
-		return getTopLevelEnum(ACTION_CATEGORY_ATTR, RActionCategory.class);
+		return structureParser.getActionCategory();
 	}
 
 	RModelActionType getModelActionType() {
 
-		return getActionType(RModelActionType.class);
+		return structureParser.getActionType(RModelActionType.class);
 	}
 
 	RStoreActionType getStoreActionType() {
 
-		return getActionType(RStoreActionType.class);
+		return structureParser.getActionType(RStoreActionType.class);
 	}
 
 	CIdentity getIdentityParameter(int index) {
 
-		return FSerialiser.parseIdentity(getParameterNode(index));
+		return FSerialiser.parseIdentity(structureParser.getParameterNode(index));
 	}
 
 	IInstanceParseInput getInstanceParameterParseInput(int index) {
 
-		return new IInstanceParseInput(getParameterNode(index));
-	}
-
-	private <E extends Enum<E>>E getActionType(Class<E> type) {
-
-		return getTopLevelEnum(ACTION_TYPE_ATTR, type);
-	}
-
-	private XNode getParameterNode(int index) {
-
-		return getTopLevelNode(PARAMETER_ID, index);
+		return new IInstanceParseInput(structureParser.getParameterNode(index));
 	}
 }

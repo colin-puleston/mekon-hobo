@@ -29,10 +29,10 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.model.util.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * Represents a client-side version of the MEKON frames model, with
@@ -49,10 +49,9 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
  *
  * @author Colin Puleston
  */
-public abstract class XClientModel {
+public abstract class XClientModel extends XClientEntity {
 
 	private CModel model;
-
 	private RClientInstanceParser responseParser;
 
 	private abstract class InstanceAction {
@@ -210,21 +209,17 @@ public abstract class XClientModel {
 
 	/**
 	 * Constructor.
+	 *
+	 * @param expireOnServerRestart true if client should become invalid
+	 * if server is restarted whilst client is running
 	 */
-	protected XClientModel() {
+	protected XClientModel(boolean expireOnServerRestart) {
+
+		super(expireOnServerRestart);
 
 		model = new XRClientModel().getCModel();
 		responseParser = new RClientInstanceParser(model);
 	}
-
-	/**
-	 * Accesses the server to perform a particular model-related action.
-	 *
-	 * @param requestDoc Document representing specification of required
-	 * action
-	 * @return Document representing output produced by action
-	 */
-	protected abstract XDocument performActionOnServer(XDocument requestDoc);
 
 	private CHierarchy getHierarchy() {
 
@@ -234,14 +229,6 @@ public abstract class XClientModel {
 	private XRequestRenderer getHierarchyRequest() {
 
 		return new XRequestRenderer(RModelActionType.GET_FRAME_HIERARCHY);
-	}
-
-	private XResponseParser performAction(XRequestRenderer request) {
-
-		XDocument requestDoc = request.getDocument();
-		XDocument responseDoc = performActionOnServer(requestDoc);
-
-		return new XResponseParser(responseDoc);
 	}
 
 	private InstanceAction getInitAction(IFrame frame) {

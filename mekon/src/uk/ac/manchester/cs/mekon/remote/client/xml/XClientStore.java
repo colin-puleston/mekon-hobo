@@ -29,10 +29,10 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.client.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * Represents a client-side version of the MEKON instance store, with
@@ -49,7 +49,7 @@ import uk.ac.manchester.cs.mekon.remote.util.*;
  *
  * @author Colin Puleston
  */
-public abstract class XClientStore {
+public abstract class XClientStore extends XClientEntity {
 
 	private CModel model;
 	private IStore store = new XClientIStore();
@@ -178,22 +178,17 @@ public abstract class XClientStore {
 	 * Constructor.
 	 *
 	 * @param model Client-side model associated with the store
+	 * @param expireOnServerRestart true if client should become invalid
+	 * if server is restarted whilst client is running
 	 */
-	protected XClientStore(CModel model) {
+	protected XClientStore(CModel model, boolean expireOnServerRestart) {
+
+		super(expireOnServerRestart);
 
 		this.model = model;
 
 		responseParser = new RClientInstanceParser(model);
 	}
-
-	/**
-	 * Accesses the server to perform a particular store-related action.
-	 *
-	 * @param requestDoc Document representing specification of required
-	 * action
-	 * @return Document representing output produced by action
-	 */
-	protected abstract XDocument performActionOnServer(XDocument requestDoc);
 
 	private boolean performBooleanResponseAction(XRequestRenderer request) {
 
@@ -227,10 +222,5 @@ public abstract class XClientStore {
 	private IMatches performMatchesResponseAction(XRequestRenderer request) {
 
 		return performAction(request).getMatchesResponse();
-	}
-
-	private XResponseParser performAction(XRequestRenderer request) {
-
-		return new XResponseParser(performActionOnServer(request.getDocument()));
 	}
 }

@@ -53,6 +53,8 @@ public class XServer {
 	private ModelActions modelActions;
 	private StoreActions storeActions = null;
 
+	private long serverStartupTime = System.currentTimeMillis();
+
 	/**
 	 * Constructor.
 	 *
@@ -87,12 +89,7 @@ public class XServer {
 		XRequestParser request = new XRequestParser(requestDoc);
 		XResponseRenderer response = new XResponseRenderer();
 
-		if (modelActions.checkPerformAction(request, response)) {
-
-			return response.getDocument();
-		}
-
-		if (storeActions != null && storeActions.checkPerformAction(request, response)) {
+		if (performAction(request, response)) {
 
 			return response.getDocument();
 		}
@@ -100,5 +97,39 @@ public class XServer {
 		throw new RServerException(
 					"Unrecognised server action category: "
 					+ "\"" + request.getActionCategory() + "\"");
+	}
+
+	private boolean performAction(XRequestParser request, XResponseRenderer response) {
+
+		if (checkExpiredClient(request, response)) {
+
+			return true;
+		}
+
+		if (modelActions.checkPerformAction(request, response)) {
+
+			return true;
+		}
+
+		if (storeActions != null && storeActions.checkPerformAction(request, response)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean checkExpiredClient(XRequestParser request, XResponseRenderer response) {
+
+		long time = request.getClientExpiryCheckTime();
+
+		if (time != -1 && time < serverStartupTime) {
+
+			response.setInvalidatedClient();
+
+			return true;
+		}
+
+		return false;
 	}
 }

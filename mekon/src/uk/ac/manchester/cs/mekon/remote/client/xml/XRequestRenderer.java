@@ -27,14 +27,15 @@ package uk.ac.manchester.cs.mekon.remote.client.xml;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.serial.*;
 import uk.ac.manchester.cs.mekon.remote.util.*;
-import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon.remote.xml.*;
+import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
  * @author Colin Puleston
  */
-class XRequestRenderer extends XPackageSerialiser implements XRequestVocab {
+class XRequestRenderer extends XPackageSerialiser {
 
+	private RequestRenderer structureRenderer = new RequestRenderer();
 	private IInstanceRenderer instanceRenderer = new IInstanceRenderer();
 
 	XRequestRenderer(RModelActionType actionType) {
@@ -45,6 +46,11 @@ class XRequestRenderer extends XPackageSerialiser implements XRequestVocab {
 	XRequestRenderer(RStoreActionType actionType) {
 
 		this(RActionCategory.STORE, actionType);
+	}
+
+	void setClientExpiryCheckTime(long time) {
+
+		structureRenderer.setClientExpiryCheckTime(time);
 	}
 
 	void addParameter(CIdentity identity) {
@@ -66,12 +72,12 @@ class XRequestRenderer extends XPackageSerialiser implements XRequestVocab {
 
 		super(REQUEST_ROOT_ID);
 
-		addTopLevelAttribute(ACTION_CATEGORY_ATTR, actionCategory);
-		addTopLevelAttribute(ACTION_TYPE_ATTR, actionType);
+		structureRenderer.setActionCategory(actionCategory);
+		structureRenderer.setActionType(actionType);
 	}
 
 	private XNode addParameterNode() {
 
-		return addTopLevelNode(PARAMETER_ID);
+		return structureRenderer.addParameterNode();
 	}
 }
