@@ -107,6 +107,20 @@ public class RNetClient {
 		}
 	}
 
+	/**
+	 * Uses the net-clients exception-handler (see {@link
+	 * #setExceptionHandler}) to handle a client-generated server-access
+	 * exception.
+	 *
+	 * @param exception Exception to be handled
+	 * @return document, or null value, to be handled by application
+	 * (assuming no exception is thrown, or system exited)
+	 */
+	public XDocument handleServerAccessException(RServerAccessException exception) {
+
+		return exceptionHandler.handle(exception);
+	}
+
 	private URLConnection connect() throws IOException {
 
 		URLConnection connection = serverURL.openConnection();

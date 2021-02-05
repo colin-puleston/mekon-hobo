@@ -329,6 +329,37 @@ public class XNode {
 	}
 
 	/**
+	 * Provides an long value derived from the value of the
+	 * specified attribute.
+	 *
+	 * @param id Identifier of relevant attribute
+	 * @return Relevant long value
+	 * @throws XDocumentException if no value for attribute, or if
+	 * value does not represent a valid long
+	 */
+	public long getLong(String id) {
+
+		return toLong(getString(id));
+	}
+
+	/**
+	 * Provides a long value derived from the value of the
+	 * specified attribute.
+	 *
+	 * @param id Identifier of relevant attribute
+	 * @param defaultValue Value to return if no value for attribute
+	 * @return Relevant long value
+	 * @throws XDocumentException if value does not represent a valid
+	 * long
+	 */
+	public long getLong(String id, int defaultValue) {
+
+		String value = getStringOrNull(id);
+
+		return value != null ? toLong(value) : defaultValue;
+	}
+
+	/**
 	 * Provides a <code>Enum</code> object of the specified type,
 	 * derived from the value of the specified attribute.
 	 *
@@ -486,6 +517,18 @@ public class XNode {
 		catch (NumberFormatException e) {
 
 			throw createValueTypeException(value, "integer");
+		}
+	}
+
+	private long toLong(String value) {
+
+		try {
+
+			return Long.parseLong(value);
+		}
+		catch (NumberFormatException e) {
+
+			throw createValueTypeException(value, "long");
 		}
 	}
 

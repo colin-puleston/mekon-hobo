@@ -46,6 +46,7 @@ public interface RNetClientExceptionHandler {
 	 *
 	 * @param exception Exception to be handled
 	 * @return document, or null value, to be handled by application
+	 * (assuming no exception is thrown, or system exited)
 	 */
 	public XDocument handle(RConnectionException exception);
 
@@ -54,6 +55,7 @@ public interface RNetClientExceptionHandler {
 	 *
 	 * @param exception Exception to be handled
 	 * @return document, or null value, to be handled by application
+	 * (assuming no exception is thrown, or system exited)
 	 */
 	public XDocument handle(RServerAccessException exception);
 }
