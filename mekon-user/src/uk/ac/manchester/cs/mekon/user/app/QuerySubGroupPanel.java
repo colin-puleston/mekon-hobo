@@ -39,12 +39,12 @@ class QuerySubGroupPanel extends InstanceSubGroupPanel {
 
 		void onExecuted(ExecutedQuery executedQuery) {
 
-			clearSelection();
+			updateDisplay();
 		}
 
 		void onDiscarded(ExecutedQuery executedQuery) {
 
-			clearSelection();
+			updateDisplay();
 		}
 	}
 

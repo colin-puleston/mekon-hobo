@@ -64,6 +64,11 @@ abstract class QuerySubGroup extends InstanceSubGroup {
 		return true;
 	}
 
+	InstanceIdsList createEmptyIdsList() {
+
+		return new QuerySubGroupIdsList(getGroup());
+	}
+
 	String createInstanceNameDefault(CFrame type, CIdentity refingId) {
 
 		return nameDefaults.getNext(type, executions.getAllExecuteds());

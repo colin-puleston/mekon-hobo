@@ -24,55 +24,22 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
+import javax.swing.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryMatchesPanel extends InstancesPanel {
+class AssertionIdsList extends InstanceIdsList {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String TITLE_BASE = "Matches";
-	static private final String TITLE_FORMAT = TITLE_BASE + " (%s)";
+	AssertionIdsList(InstanceGroup group) {
 
-	static private String createTitle(CIdentity storeId) {
-
-		return String.format(TITLE_FORMAT, storeId.getLabel());
+		super(group);
 	}
 
-	private InstanceGroup group;
+	Icon getInstanceIcon() {
 
-	QueryMatchesPanel(InstanceGroup group) {
-
-		super(group, new AssertionIdsList(group), TITLE_BASE);
-
-		this.group = group;
-
-		initialise();
-	}
-
-	void displayMatches(CIdentity queryStoreId, Collection<CIdentity> matchIds) {
-
-		setTitle(createTitle(queryStoreId));
-		displayIds(matchIds);
-	}
-
-	void clear() {
-
-		setTitle(TITLE_BASE);
-		clearIds();
-	}
-
-	void loadAndDisplay(CIdentity storeId, boolean asCopy) {
-
-		createDisplayOps(storeId).loadAndDisplay(storeId, asCopy);
-	}
-
-	private InstanceDisplayOps createDisplayOps(CIdentity storeId) {
-
-		return new InstanceDisplayOps(this, group.getSubGroupContaining(storeId));
+		return MekonAppIcons.ASSERT_LIST;
 	}
 }

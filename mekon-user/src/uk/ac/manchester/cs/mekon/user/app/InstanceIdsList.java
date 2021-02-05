@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -33,28 +34,30 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceIdsList extends GList<CIdentity> {
+abstract class InstanceIdsList extends GList<CIdentity> {
 
 	static private final long serialVersionUID = -1;
 
 	static private final String TYPE_ENHANCED_LABEL_FORMAT = "[%s] %s";
 
 	private InstanceGroup group;
-	private Icon icon;
 
-	InstanceIdsList(InstanceGroup group, boolean queryInstances) {
+	InstanceIdsList(InstanceGroup group) {
 
 		super(false, true);
 
 		this.group = group;
-
-		icon = MekonAppIcons.getListIcon(queryInstances);
 	}
 
 	void update(Collection<CIdentity> ids) {
 
 		clearList();
 		addIds(ids);
+	}
+
+	void updateDisplay() {
+
+		update(getEntities());
 	}
 
 	void addIds(Collection<CIdentity> ids) {
@@ -91,14 +94,33 @@ class InstanceIdsList extends GList<CIdentity> {
 			return createTypeEnhancedCellDisplay(id);
 		}
 
-		return new GCellDisplay(id.getLabel(), icon);
+		return createCellDisplay(id, id.getLabel());
+	}
+
+	abstract Icon getInstanceIcon();
+
+	boolean displayInstanceInBold(CIdentity id) {
+
+		return false;
 	}
 
 	private GCellDisplay createTypeEnhancedCellDisplay(CIdentity id) {
 
-		GCellDisplay display = new GCellDisplay(createTypeEnhancedLabel(id), icon);
+		GCellDisplay display = createCellDisplay(id, createTypeEnhancedLabel(id));
 
 		display.setFilterText(id.getLabel());
+
+		return display;
+	}
+
+	private GCellDisplay createCellDisplay(CIdentity id, String label) {
+
+		GCellDisplay display = new GCellDisplay(label, getInstanceIcon());
+
+		if (displayInstanceInBold(id)) {
+
+			display.setFontStyle(Font.BOLD);
+		}
 
 		return display;
 	}

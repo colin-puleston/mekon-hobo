@@ -55,6 +55,11 @@ class AssertionSubGroup extends InstanceSubGroup {
 		return editable();
 	}
 
+	InstanceIdsList createEmptyIdsList() {
+
+		return new AssertionIdsList(getGroup());
+	}
+
 	boolean subGroupInstance(CIdentity storeId) {
 
 		return MekonAppStoreId.assertionId(storeId);

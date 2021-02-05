@@ -45,7 +45,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private InstanceGroup group;
 
-	private QueryExecutions queryExecutions;
+	private QueryExecutions executions;
 	private InstanceSubGroup instanceDisplayOps;
 
 	private InstanceIdsList querySelectorList;
@@ -55,7 +55,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 		void perform(CIdentity storeId) {
 
-			ExecutedQuery executed = queryExecutions.getExecuted(storeId);
+			ExecutedQuery executed = executions.getExecuted(storeId);
 
 			perform(createSubGroupDisplayOps(executed), storeId, executed.getQuery());
 		}
@@ -129,7 +129,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 		void doInstanceThing(CIdentity storeId) {
 
-			queryExecutions.discardExecuted(storeId);
+			executions.discardExecuted(storeId);
 			querySelectorList.removeEntity(storeId);
 		}
 	}
@@ -156,9 +156,9 @@ class ExecutedQueriesPanel extends JPanel {
 
 		this.group = group;
 
-		queryExecutions = group.getQueryExecutions();
+		executions = group.getQueryExecutions();
 
-		querySelectorList = new InstanceIdsList(group, true);
+		querySelectorList = new QueryIdsList(group);
 		matchesPanel = new QueryMatchesPanel(group);
 
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -202,7 +202,7 @@ class ExecutedQueriesPanel extends JPanel {
 
 	private void displayMatches(CIdentity storeId) {
 
-		ExecutedQuery execQuery = queryExecutions.getExecuted(storeId);
+		ExecutedQuery execQuery = executions.getExecuted(storeId);
 
 		matchesPanel.displayMatches(storeId, execQuery.getMatches());
 	}

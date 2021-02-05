@@ -65,7 +65,7 @@ abstract class InstanceSubGroup {
 
 	InstanceIdsList createInstanceIdsList(CFrame type) {
 
-		InstanceIdsList idsList = new InstanceIdsList(group, queryInstances());
+		InstanceIdsList idsList = createEmptyIdsList();
 
 		for (CIdentity storeId : targetStore.getInstanceIds(type)) {
 
@@ -76,11 +76,6 @@ abstract class InstanceSubGroup {
 		}
 
 		return idsList;
-	}
-
-	boolean queryInstances() {
-
-		return getFunction().query();
 	}
 
 	boolean editable() {
@@ -145,6 +140,8 @@ abstract class InstanceSubGroup {
 	abstract IFrameFunction getFunction();
 
 	abstract boolean instanceCreationEnabled();
+
+	abstract InstanceIdsList createEmptyIdsList();
 
 	abstract boolean subGroupInstance(CIdentity storeId);
 

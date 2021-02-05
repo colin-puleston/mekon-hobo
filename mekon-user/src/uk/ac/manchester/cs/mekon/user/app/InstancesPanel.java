@@ -200,9 +200,9 @@ abstract class InstancesPanel extends JPanel {
 		idsList.clearList();
 	}
 
-	void clearSelection() {
+	void updateDisplay() {
 
-		idsList.clearSelection();
+		idsList.updateDisplay();
 	}
 
 	boolean canCreate() {

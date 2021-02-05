@@ -49,8 +49,8 @@ class MekonAppIcons {
 
 	static final Icon VALUE_ENTRY = createValueEntryIcon();
 
-	static private final Icon ASSERT_LIST_ICON = createListIcon(ASSERT_CLR);
-	static private final Icon QUERY_LIST_ICON = createListIcon(QUERY_CLR);
+	static final Icon ASSERT_LIST = createListIcon(ASSERT_CLR);
+	static final Icon QUERY_LIST = createListIcon(QUERY_CLR);
 
 	static abstract class TreeIcons {
 
@@ -123,7 +123,7 @@ class MekonAppIcons {
 
 			valueRenderer.setXOffset(TREE_ICON_DIMENSION);
 
-			return new GIcon(createValueEntryRenderer(), valueRenderer);
+			return new GIcon(createValueEntryIconRenderer(), valueRenderer);
 		}
 
 		private GIcon createNoEditIcon(Color clr) {
@@ -156,11 +156,6 @@ class MekonAppIcons {
 		}
 	}
 
-	static Icon getListIcon(boolean query) {
-
-		return query ? QUERY_LIST_ICON : ASSERT_LIST_ICON;
-	}
-
 	static private GIcon createListIcon(Color clr) {
 
 		return new GIcon(new GOvalRenderer(clr, LIST_ICON_DIMENSION));
@@ -168,10 +163,10 @@ class MekonAppIcons {
 
 	static private GIcon createValueEntryIcon() {
 
-		return new GIcon(createValueEntryRenderer());
+		return new GIcon(createValueEntryIconRenderer());
 	}
 
-	static private GIconRenderer createValueEntryRenderer() {
+	static private GIconRenderer createValueEntryIconRenderer() {
 
 		return createRightTriangleRenderer(VALUE_ENTRY_CLR, TREE_ICON_DIMENSION);
 	}
