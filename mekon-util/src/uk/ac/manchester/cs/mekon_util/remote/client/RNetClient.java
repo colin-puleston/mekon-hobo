@@ -38,9 +38,6 @@ import uk.ac.manchester.cs.mekon_util.remote.*;
  */
 public class RNetClient implements RNetVocab {
 
-	static private final int CONNECT_TIMEOUT = 20000;
-	static private final int READ_TIMEOUT = 60000;
-
 	/**
 	 * Creates object and invokes {@link #initialiseServer} method,
 	 * interpreting first argument as the required server URL.
@@ -62,7 +59,7 @@ public class RNetClient implements RNetVocab {
 		}
 	}
 
-	static class DefaultExceptionHandler implements RNetClientExceptionHandler {
+	static class DefaultExceptionHandler implements RClientExceptionHandler {
 
 		public XDocument handle(RConnectionException exception) {
 
@@ -76,7 +73,11 @@ public class RNetClient implements RNetVocab {
 	}
 
 	private URL serverURL;
-	private RNetClientExceptionHandler exceptionHandler = new DefaultExceptionHandler();
+
+	private RClientExceptionHandler exceptionHandler = new DefaultExceptionHandler();
+
+	private int connectTimeoutInMillis = 0;
+	private int readTimeoutInMillis = 0;
 
 	/**
 	 * Constructor.
@@ -89,6 +90,28 @@ public class RNetClient implements RNetVocab {
 	}
 
 	/**
+	 * Sets a value for connect timeout. By default these will be no
+	 * connect timeout.
+	 *
+	 * @param timeInSeconds Required connect timeout value in seconds
+	 */
+	public void setConnectTimeout(int timeInSeconds) {
+
+		connectTimeoutInMillis = timeInSeconds * 1000;
+	}
+
+	/**
+	 * Sets a value for read timeout. By default these will be no read
+	 * timeout.
+	 *
+	 * @param timeInSeconds Required read timeout value in seconds
+	 */
+	public void setReadTimeout(int timeInSeconds) {
+
+		readTimeoutInMillis = timeInSeconds * 1000;
+	}
+
+	/**
 	 * Sets handler for any runtime-exceptions resulting from
 	 * server-access operations. By default all such exceptions will
 	 * simply be thrown/re-thrown, without any other actions being
@@ -96,7 +119,7 @@ public class RNetClient implements RNetVocab {
 	 *
 	 * @param exceptionHandler Relevant exception-handler
 	 */
-	public void setExceptionHandler(RNetClientExceptionHandler exceptionHandler) {
+	public void setExceptionHandler(RClientExceptionHandler exceptionHandler) {
 
 		this.exceptionHandler = exceptionHandler;
 	}
@@ -162,8 +185,8 @@ public class RNetClient implements RNetVocab {
 
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
-		connection.setConnectTimeout(CONNECT_TIMEOUT);
-		connection.setReadTimeout(READ_TIMEOUT);
+		connection.setConnectTimeout(connectTimeoutInMillis);
+		connection.setReadTimeout(readTimeoutInMillis);
 
 		connection.connect();
 

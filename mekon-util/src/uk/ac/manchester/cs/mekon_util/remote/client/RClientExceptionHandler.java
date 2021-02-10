@@ -38,7 +38,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public interface RNetClientExceptionHandler {
+public interface RClientExceptionHandler {
 
 	/**
 	 * Handles network-connection exception.
