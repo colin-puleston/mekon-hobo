@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.client.net;
+package uk.ac.manchester.cs.mekon.remote.client;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
@@ -35,11 +35,11 @@ import uk.ac.manchester.cs.mekon_util.remote.client.*;
  * associated instance store.
  * <p>
  * This class is designed to be used in combination with the companion
- * server class, <code>MekonNetServer</code>.
+ * server class, <code>RMekonServer</code>.
  *
  * @author Colin Puleston
  */
-public class MekonNetClient {
+public class RMekonClient {
 
 	private RNetClient netClient;
 
@@ -86,11 +86,11 @@ public class MekonNetClient {
 	 * Constructor.
 	 *
 	 * @param netClient Entity providing access to relevant instance of
-	 * <code>MekonNetServer</code> running on server
+	 * <code>RMekonServer</code> running on server
 	 * @param expireOnServerRestart true if client should become invalid
 	 * if server is restarted whilst client is running
 	 */
-	public MekonNetClient(RNetClient netClient, boolean expireOnServerRestart) {
+	public RMekonClient(RNetClient netClient, boolean expireOnServerRestart) {
 
 		this.netClient = netClient;
 

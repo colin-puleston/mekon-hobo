@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.remote.server.net;
+package uk.ac.manchester.cs.mekon.remote.server;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
@@ -37,11 +37,11 @@ import uk.ac.manchester.cs.mekon_util.remote.server.*;
  * frames model and an associated instance store.
  * <p>
  * This class is designed to be used in combination with the companion
- * client class, <code>MekonNetClient</code>.
+ * client class, <code>RMekonClient</code>.
  *
  * @author Colin Puleston
  */
-public class MekonNetServer extends RNetServer {
+public class RMekonServer extends RNetServer {
 
 	static private final long serialVersionUID = -1;
 
