@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon.model.motor.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.remote.server.net.*;
+import uk.ac.manchester.cs.mekon_util.remote.server.*;
 
 /**
  * Servlet that provides access to a server-side version of the MEKON

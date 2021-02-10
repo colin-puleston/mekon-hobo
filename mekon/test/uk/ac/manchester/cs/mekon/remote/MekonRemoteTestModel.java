@@ -47,6 +47,11 @@ public class MekonRemoteTestModel {
 
 			return server.performAction(request);
 		}
+
+		LocalXClientModel( ) {
+
+			super(false);
+		}
 	}
 
 	private class LocalXClientStore extends XClientStore {
@@ -58,7 +63,7 @@ public class MekonRemoteTestModel {
 
 		LocalXClientStore(CModel model) {
 
-			super(model);
+			super(model, false);
 		}
 	}
 

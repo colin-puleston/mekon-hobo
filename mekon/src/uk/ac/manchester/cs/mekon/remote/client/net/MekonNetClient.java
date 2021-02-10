@@ -29,7 +29,6 @@ import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.remote.client.xml.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon_util.remote.client.*;
-import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
 
 /**
  * Represents a client-side version of the MEKON frames model and an
