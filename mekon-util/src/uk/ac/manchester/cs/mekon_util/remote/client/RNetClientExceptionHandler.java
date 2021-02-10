@@ -22,10 +22,9 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon_util.remote.client.net;
+package uk.ac.manchester.cs.mekon_util.remote.client;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.remote.client.*;
 
 /**
  * Handles runtime-exceptions caused by client access of a

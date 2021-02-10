@@ -28,7 +28,7 @@ import java.io.*;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.remote.server.net.*;
+import uk.ac.manchester.cs.mekon_util.remote.server.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 
 /**

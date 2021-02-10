@@ -22,14 +22,13 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon_util.remote.client.net;
+package uk.ac.manchester.cs.mekon_util.remote.client;
 
 import java.io.*;
 import java.net.*;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 import uk.ac.manchester.cs.mekon_util.remote.*;
-import uk.ac.manchester.cs.mekon_util.remote.client.*;
 
 /**
  * Represents a network client, via which server-side actions

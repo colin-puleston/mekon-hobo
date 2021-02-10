@@ -27,7 +27,8 @@ package uk.ac.manchester.cs.mekon_util.remote.admin.client;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
-import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
+import uk.ac.manchester.cs.mekon_util.remote.*;
+import uk.ac.manchester.cs.mekon_util.remote.client.*;
 import uk.ac.manchester.cs.mekon_util.remote.admin.*;
 
 /**

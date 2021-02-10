@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon_util.remote.server.net;
+package uk.ac.manchester.cs.mekon_util.remote.server;
 
 import java.io.*;
 import javax.servlet.*;

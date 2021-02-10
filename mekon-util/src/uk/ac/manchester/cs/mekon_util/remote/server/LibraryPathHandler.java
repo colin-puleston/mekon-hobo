@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon_util.remote.server.net;
+package uk.ac.manchester.cs.mekon_util.remote.server;
 
 import java.lang.reflect.*;
 import javax.servlet.*;
-
-import uk.ac.manchester.cs.mekon_util.remote.server.*;
 
 /**
  * @author Colin Puleston
