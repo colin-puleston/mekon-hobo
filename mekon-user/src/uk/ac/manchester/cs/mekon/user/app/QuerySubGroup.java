@@ -31,6 +31,8 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 abstract class QuerySubGroup extends InstanceSubGroup {
 
+	static private final String SUB_GROUP_BASE_NAME = "Queries";
+
 	private QueryExecutions executions;
 	private QueryNameDefaults nameDefaults;
 
@@ -49,6 +51,18 @@ abstract class QuerySubGroup extends InstanceSubGroup {
 		this.alternativeSubGroup = alternativeSubGroup;
 	}
 
+	String getSubGroupBaseName() {
+
+		return SUB_GROUP_BASE_NAME;
+	}
+
+	abstract String getSubGroupNameQualifier();
+
+	boolean hasAlternativeSubGroup() {
+
+		return alternativeSubGroup != null;
+	}
+
 	InstanceSubGroup getAlternativeSubGroupOrNull() {
 
 		return alternativeSubGroup;
@@ -57,11 +71,6 @@ abstract class QuerySubGroup extends InstanceSubGroup {
 	IFrameFunction getFunction() {
 
 		return IFrameFunction.QUERY;
-	}
-
-	boolean instanceCreationEnabled() {
-
-		return true;
 	}
 
 	InstanceIdsList createEmptyIdsList() {

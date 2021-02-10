@@ -218,11 +218,6 @@ class QueryDialog extends InstanceDialog {
 		return panel;
 	}
 
-	boolean centralSubGroup(InstanceSubGroup alternativeSubGroup) {
-
-		return alternativeSubGroup instanceof CentralQuerySubGroup;
-	}
-
 	IFrame resolveInstanceForStoring() {
 
 		return resolveToExpanded();

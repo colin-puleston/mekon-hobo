@@ -35,16 +35,7 @@ class InstanceGroupPanel extends JTabbedPane {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String ASSERTIONS_TITLE = "Instances";
-	static private final String BASE_QUERIES_TITLE = "Queries";
-	static private final String CENTRAL_QUERIES_TITLE = createQueriesTitle("Central");
-	static private final String LOCAL_QUERIES_TITLE = createQueriesTitle("Local");
 	static private final String EXECUTED_QUERIES_TITLE = "Query Results";
-
-	static private final String createQueriesTitle(String qualifier) {
-
-		return BASE_QUERIES_TITLE + " (" + qualifier + ")";
-	}
 
 	private ExecutedQueriesPanel executedQueriesPanel;
 
@@ -73,18 +64,18 @@ class InstanceGroupPanel extends JTabbedPane {
 
 		setFont(GFonts.toMedium(getFont()));
 
-		addAssertionsTab(group.getAssertionSubGroup(), ASSERTIONS_TITLE);
+		addAssertionsTab(group.getAssertionSubGroup());
 
 		if (group.queriesEnabled()) {
 
 			if (group.isLocalQueriesSubGroup()) {
 
-				addQueriesTab(group.getCentralQuerySubGroup(), CENTRAL_QUERIES_TITLE);
-				addQueriesTab(group.getLocalQuerySubGroup(), LOCAL_QUERIES_TITLE);
+				addQueriesTab(group.getCentralQuerySubGroup(), true);
+				addQueriesTab(group.getLocalQuerySubGroup(), true);
 			}
 			else {
 
-				addQueriesTab(group.getCentralQuerySubGroup(), BASE_QUERIES_TITLE);
+				addQueriesTab(group.getCentralQuerySubGroup(), false);
 			}
 
 			addTab(EXECUTED_QUERIES_TITLE, executedQueriesPanel);
@@ -93,12 +84,16 @@ class InstanceGroupPanel extends JTabbedPane {
 		}
 	}
 
-	private void addAssertionsTab(InstanceSubGroup subGroup, String title) {
+	private void addAssertionsTab(InstanceSubGroup subGroup) {
+
+		String title = subGroup.getSubGroupName(false);
 
 		addTab(title, new AssertionSubGroupPanel(subGroup, title));
 	}
 
-	private void addQueriesTab(InstanceSubGroup subGroup, String title) {
+	private void addQueriesTab(InstanceSubGroup subGroup, boolean qualified) {
+
+		String title = subGroup.getSubGroupName(qualified);
 
 		addTab(title, new QuerySubGroupPanel(subGroup, title));
 	}

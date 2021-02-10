@@ -38,12 +38,21 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 	static private final String STORE_BUTTON_LABEL = "Store";
 	static private final String STORE_AS_DEFAULT_BUTTON_LABEL = "Store As...";
-	static private final String STORE_AS_CENTRAL_BUTTON_LABEL = "Store As (Central)...";
-	static private final String STORE_AS_LOCAL_BUTTON_LABEL = "Store As (Local)...";
+	static private final String STORE_AS_QUALIFIED_BUTTON_LABEL_FORMAT = "Store As (%s)...";
 
-	static private String getAlternativeStoreAsLabel(boolean centralStore) {
+	static private String getStoreAsButtonLabel(InstanceSubGroup targetSubGroup, boolean qualify) {
 
-		return centralStore ? STORE_AS_CENTRAL_BUTTON_LABEL : STORE_AS_LOCAL_BUTTON_LABEL;
+		if (qualify) {
+
+			String qualifier = targetSubGroup.getSubGroupNameQualifier();
+
+			if (!qualifier.isEmpty()) {
+
+				return String.format(STORE_AS_QUALIFIED_BUTTON_LABEL_FORMAT, qualifier);
+			}
+		}
+
+		return STORE_AS_DEFAULT_BUTTON_LABEL;
 	}
 
 	private Instantiator instantiator;
@@ -77,19 +86,9 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 			perfomStoreAsAction(targetSubGroup);
 		}
 
-		StoreAsButton() {
+		StoreAsButton(InstanceSubGroup targetSubGroup, boolean qualifyLabel) {
 
-			this(getDefaultSubGroup(), STORE_AS_DEFAULT_BUTTON_LABEL);
-		}
-
-		StoreAsButton(InstanceSubGroup altSubGroup) {
-
-			this(altSubGroup, getAlternativeStoreAsLabel(centralSubGroup(altSubGroup)));
-		}
-
-		private StoreAsButton(InstanceSubGroup targetSubGroup, String label) {
-
-			super(label);
+			super(getStoreAsButtonLabel(targetSubGroup, qualifyLabel));
 
 			this.targetSubGroup = targetSubGroup;
 		}
@@ -136,15 +135,17 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		InstanceSubGroup subGroup = getDefaultSubGroup();
 		InstanceSubGroup altSubGroup = subGroup.getAlternativeSubGroupOrNull();
 
+		boolean altSubGroupEditable = altSubGroup != null && altSubGroup.editable();
+
 		if (subGroup.editable()) {
 
 			panel.addControl(new StoreButton());
-			panel.addControl(new StoreAsButton());
+			panel.addControl(new StoreAsButton(subGroup, altSubGroup != null));
 		}
 
-		if (altSubGroup != null && altSubGroup.editable()) {
+		if (altSubGroupEditable) {
 
-			panel.addControl(new StoreAsButton(altSubGroup));
+			panel.addControl(new StoreAsButton(altSubGroup, true));
 		}
 
 		return panel;

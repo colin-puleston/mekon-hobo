@@ -31,6 +31,8 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 abstract class InstanceSubGroup {
 
+	static private final String SUB_GROUP_QUALIFIED_NAME_FORMAT = "%s (%s)";
+
 	private InstanceGroup group;
 	private Store targetStore;
 
@@ -56,6 +58,30 @@ abstract class InstanceSubGroup {
 		return group;
 	}
 
+	String getSubGroupName(boolean qualified) {
+
+		String name = getSubGroupBaseName();
+
+		if (qualified) {
+
+			String qualifier = getSubGroupNameQualifier();
+
+			if (!qualifier.isEmpty()) {
+
+				return String.format(SUB_GROUP_QUALIFIED_NAME_FORMAT, name, qualifier);
+			}
+		}
+
+		return name;
+	}
+
+	abstract String getSubGroupBaseName();
+
+	String getSubGroupNameQualifier() {
+
+		return "";
+	}
+
 	abstract InstanceSubGroup getAlternativeSubGroupOrNull();
 
 	InstanceIdsList getRootInstanceIdsList() {
@@ -76,11 +102,6 @@ abstract class InstanceSubGroup {
 		}
 
 		return idsList;
-	}
-
-	boolean editable() {
-
-		return group.editable();
 	}
 
 	boolean checkAdd(IFrame instance, CIdentity storeId, boolean asNewId) {
@@ -120,6 +141,11 @@ abstract class InstanceSubGroup {
 		}
 
 		return false;
+	}
+
+	boolean editable() {
+
+		return group.editable();
 	}
 
 	boolean contains(CIdentity storeId) {

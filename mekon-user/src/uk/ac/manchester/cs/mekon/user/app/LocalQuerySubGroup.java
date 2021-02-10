@@ -31,12 +31,19 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class LocalQuerySubGroup extends QuerySubGroup {
 
+	static private final String SUB_GROUP_NAME_QUALIFIER = "Local";
+
 	LocalQuerySubGroup(InstanceGroup group, CentralQuerySubGroup centralQuerySubGroup) {
 
 		super(group);
 
 		setAlternativeSubGroup(centralQuerySubGroup);
 		centralQuerySubGroup.setAlternativeSubGroup(this);
+	}
+
+	String getSubGroupNameQualifier() {
+
+		return SUB_GROUP_NAME_QUALIFIER;
 	}
 
 	boolean editable() {
@@ -47,6 +54,11 @@ class LocalQuerySubGroup extends QuerySubGroup {
 	Store getTargetStore() {
 
 		return getGroup().getController().getLocalQueriesStore();
+	}
+
+	boolean instanceCreationEnabled() {
+
+		return true;
 	}
 
 	boolean subGroupInstance(CIdentity storeId) {

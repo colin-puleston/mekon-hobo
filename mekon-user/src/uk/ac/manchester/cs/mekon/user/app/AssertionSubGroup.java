@@ -31,6 +31,8 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class AssertionSubGroup extends InstanceSubGroup {
 
+	static private final String SUB_GROUP_NAME = "Instances";
+
 	private AssertionNameDefaults nameDefaults;
 
 	AssertionSubGroup(InstanceGroup group) {
@@ -38,6 +40,11 @@ class AssertionSubGroup extends InstanceSubGroup {
 		super(group);
 
 		nameDefaults = group.getCustomiser().getAssertionNameDefaults();
+	}
+
+	String getSubGroupBaseName() {
+
+		return SUB_GROUP_NAME;
 	}
 
 	InstanceSubGroup getAlternativeSubGroupOrNull() {

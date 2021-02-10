@@ -31,9 +31,21 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class CentralQuerySubGroup extends QuerySubGroup {
 
+	static private final String SUB_GROUP_NAME_QUALIFIER = "Central";
+
 	CentralQuerySubGroup(InstanceGroup group) {
 
 		super(group);
+	}
+
+	String getSubGroupNameQualifier() {
+
+		return SUB_GROUP_NAME_QUALIFIER;
+	}
+
+	boolean instanceCreationEnabled() {
+
+		return editable() || !hasAlternativeSubGroup();
 	}
 
 	boolean subGroupInstance(CIdentity storeId) {
