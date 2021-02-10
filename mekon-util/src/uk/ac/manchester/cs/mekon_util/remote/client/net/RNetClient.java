@@ -28,6 +28,7 @@ import java.io.*;
 import java.net.*;
 
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
+import uk.ac.manchester.cs.mekon_util.remote.*;
 import uk.ac.manchester.cs.mekon_util.remote.client.*;
 
 /**
@@ -36,10 +37,31 @@ import uk.ac.manchester.cs.mekon_util.remote.client.*;
  *
  * @author Colin Puleston
  */
-public class RNetClient {
+public class RNetClient implements RNetVocab {
 
 	static private final int CONNECT_TIMEOUT = 20000;
 	static private final int READ_TIMEOUT = 60000;
+
+	/**
+	 * Creates object and invokes {@link #initialiseServer} method,
+	 * interpreting first argument as the required server URL.
+	 *
+	 * @param args Expects single argument representing URL providing
+	 * access to server
+	 * @throws MalformedURLException if first argument exists but
+	 * does not represent a valid URL
+	 */
+	static public void main(String[] args) throws MalformedURLException {
+
+		if (args.length != 0) {
+
+			new RNetClient(new URL(args[0])).initialiseServer();
+		}
+		else {
+
+			System.out.println("No URL argument found");
+		}
+	}
 
 	static class DefaultExceptionHandler implements RNetClientExceptionHandler {
 
@@ -81,11 +103,25 @@ public class RNetClient {
 	}
 
 	/**
+	 * Accesses the server to perform any required initialisations.
+	 *
+	 * @return Document containing single root-node if initialisation
+	 * successful, or document, or null value, produced by exception
+	 * handler if relevant
+	 */
+	public XDocument initialiseServer() {
+
+		return performActionOnServer(new XDocument(SERVER_INIT_REQUEST_ID));
+	}
+
+	/**
 	 * Accesses the server to perform a specific action.
 	 *
 	 * @param request Document representing specification of required
 	 * action
-	 * @return Document representing output produced by action
+	 * @return Document representing output produced by action, or
+	 * document, or null value, produced by exception handler if
+	 * relevant
 	 */
 	public XDocument performActionOnServer(XDocument request) {
 

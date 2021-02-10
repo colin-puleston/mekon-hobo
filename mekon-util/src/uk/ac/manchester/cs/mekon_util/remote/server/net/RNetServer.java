@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon_util.remote.server.net;
 import java.io.*;
 import javax.servlet.*;
 
+import uk.ac.manchester.cs.mekon_util.remote.*;
 import uk.ac.manchester.cs.mekon_util.xdoc.*;
 
 /**
@@ -35,7 +36,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  *
  * @author Colin Puleston
  */
-public abstract class RNetServer extends GenericServlet {
+public abstract class RNetServer extends GenericServlet implements RNetVocab {
 
 	static private final long serialVersionUID = -1;
 
@@ -65,7 +66,7 @@ public abstract class RNetServer extends GenericServlet {
 		try {
 
 			XDocument requestDoc = new XDocument(getInputStream(request));
-			XDocument responseDoc = performAction(requestDoc);
+			XDocument responseDoc = confirmInitOrPerformAction(requestDoc);
 
 			responseDoc.writeToOutput(getOutputStream(response));
 		}
@@ -93,6 +94,16 @@ public abstract class RNetServer extends GenericServlet {
 	 * @return Document representing output produced by action
 	 */
 	protected abstract XDocument performAction(XDocument request);
+
+	private XDocument confirmInitOrPerformAction(XDocument request) {
+
+		if (request.getRootNode().hasId(SERVER_INIT_REQUEST_ID)) {
+
+			return new XDocument(SERVER_INIT_OK_RESPONSE_ID);
+		}
+
+		return performAction(request);
+	}
 
 	private InputStream getInputStream(ServletRequest request) throws IOException {
 
