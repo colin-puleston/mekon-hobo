@@ -27,7 +27,7 @@ import java.net.*;
 
 import uk.ac.manchester.cs.mekon.remote.client.net.*;
 
-import uk.ac.manchester.cs.mekon_util.remote.client.net.*;
+import uk.ac.manchester.cs.mekon_util.remote.client.*;
 
 /**
  * @author Colin Puleston
@@ -37,7 +37,7 @@ public class MekonRemoteModelExplorer {
 	static public void main(String[] args) {
 
 		URL serverURL = getServerURLFromArgs(args);
-		MekonNetClient client = new MekonNetClient(new RNetClient(serverURL));
+		MekonNetClient client = new MekonNetClient(new RNetClient(serverURL), false);
 
 		new MekonModelExplorer(client.getCModel(), client.getIStore());
 	}
