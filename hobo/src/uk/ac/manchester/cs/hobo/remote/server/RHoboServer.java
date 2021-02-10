@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.remote.server.net;
+package uk.ac.manchester.cs.hobo.remote.server;
 
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.remote.server.net.*;
+import uk.ac.manchester.cs.mekon.remote.server.*;
 import uk.ac.manchester.cs.mekon.remote.server.xml.*;
 
 import uk.ac.manchester.cs.hobo.manage.*;
@@ -37,13 +37,13 @@ import uk.ac.manchester.cs.hobo.model.motor.*;
  * Represents a server-side version of the MEKON frames model, with a
  * bound HOBO object model, and an associated instance store.
  * <p>
- * This class is an extension of {@link MekonNetServer}, which is
+ * This class is an extension of {@link RMekonServer}, which is
  * designed to be used in combination with the companion server class,
- * <code>MekonNetClient</code>.
+ * <code>RMekonClient</code>.
  *
  * @author Colin Puleston
  */
-public class HoboNetServer extends MekonNetServer {
+public class RHoboServer extends RMekonServer {
 
 	static private final long serialVersionUID = -1;
 
