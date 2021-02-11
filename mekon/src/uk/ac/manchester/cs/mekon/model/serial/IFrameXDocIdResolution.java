@@ -24,75 +24,27 @@
 
 package uk.ac.manchester.cs.mekon.model.serial;
 
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon_util.*;
-
 /**
  * @author Colin Puleston
  */
-class IFrameXDocIds {
+class IFrameXDocIdResolution {
 
-	static private final String ID_FORMAT = "xid-%s";
+	private String id;
+	private boolean newFrame;
 
-	private Map<IFrame, String> ids;
-	private Set<IFrame> assignedFrames = new HashSet<IFrame>();
+	IFrameXDocIdResolution(String id, boolean newFrame) {
 
-	IFrameXDocIds(Map<IFrame, String> ids) {
-
-		this.ids = ids;
+		this.id = id;
+		this.newFrame = newFrame;
 	}
 
-	String get(IFrame frame) {
-
-		String id = ids.get(frame);
-
-		if (id != null) {
-
-			return id;
-		}
-
-		throw new KAccessException(
-					"Update value-frame not part of"
-					+ " instance being rendered: " + frame);
-	}
-
-	IFrameXDocIdResolution resolve(IFrame frame) {
-
-		String id = ids.get(frame);
-
-		if (id == null) {
-
-			id = createNew(frame);
-
-			ids.put(frame, id);
-		}
-
-		return new IFrameXDocIdResolution(id, assignedFrames.add(frame));
-	}
-
-	private String createNew(IFrame frame) {
-
-		String id = null;
-
-		for (int i = 0 ; id == null ; i++) {
-
-			id = tryCreateNew(i);
-		}
+	String getId() {
 
 		return id;
 	}
 
-	private String tryCreateNew(int index) {
+	boolean newFrame() {
 
-		String id = create(index);
-
-		return ids.containsKey(id) ? null : id;
-	}
-
-	private String create(int index) {
-
-		return String.format(ID_FORMAT, ids.size() + index);
+		return newFrame;
 	}
 }

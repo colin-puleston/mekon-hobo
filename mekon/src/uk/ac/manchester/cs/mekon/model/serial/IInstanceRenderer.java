@@ -48,6 +48,93 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 		private XNode containerNode;
 		private IFrameXDocIds frameXDocIds;
 
+		private class IFrameRenderer {
+
+			private IFrame frame;
+			private XNode parentNode;
+
+			private IFrameXDocIdResolution xidResolution;
+
+			IFrameRenderer(IFrame frame, XNode parentNode) {
+
+				this.frame = frame;
+				this.parentNode = parentNode;
+
+				xidResolution = frameXDocIds.resolve(frame);
+			}
+
+			XNode render(boolean direct) {
+
+				if (frame.getCategory().disjunction()) {
+
+					return renderDisjunction();
+				}
+
+				if (direct) {
+
+					return renderNonDisjunctionDirect();
+				}
+
+				return renderNonDisjunctionIndirect();
+			}
+
+			private XNode renderNonDisjunctionDirect() {
+
+				XNode node = renderCommon(IFRAME_XDOC_ID_ATTR);
+
+				renderCFrame(frame.getType(), node);
+
+				if (frame.getCategory().reference()) {
+
+					renderIReference(frame.getReferenceId(), node);
+				}
+				else {
+
+					for (ISlot slot : frame.getSlots().asList()) {
+
+						renderISlot(slot, node);
+					}
+				}
+
+				return node;
+			}
+
+			private XNode renderNonDisjunctionIndirect() {
+
+				XNode localNode = renderCommon(IFRAME_XDOC_ID_REF_ATTR);
+
+				if (xidResolution.newFrame()) {
+
+					parentNode = containerNode;
+
+					renderNonDisjunctionDirect();
+				}
+
+				return localNode;
+			}
+
+			private XNode renderDisjunction() {
+
+				XNode node = renderCommon(IFRAME_XDOC_ID_ATTR);
+
+				for (IFrame disjunct : frame.asDisjuncts()) {
+
+					renderNonRootIFrame(disjunct, node);
+				}
+
+				return node;
+			}
+
+			private XNode renderCommon(String xidTag) {
+
+				XNode node = parentNode.addChild(IFRAME_ID);
+
+				node.setValue(xidTag, xidResolution.getId());
+
+				return node;
+			}
+		}
+
 		private class ISlotValueTypeRenderer extends CValueVisitor {
 
 			private XNode slotNode;
@@ -87,7 +174,7 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 
 			protected void visit(IFrame value) {
 
-				renderFixedStatus(renderIFrame(value, valuesNode));
+				renderFixedStatus(renderNonRootIFrame(value, valuesNode));
 			}
 
 			protected void visit(INumber value) {
@@ -132,7 +219,7 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 			IFrame rootFrame = input.getRootFrame();
 
 			renderInstanceFunction(rootFrame.getFunction());
-			renderAtomicIFrame(rootFrame, containerNode, true);
+			renderRootIFrame(rootFrame);
 		}
 
 		private void renderInstanceFunction(IFrameFunction function) {
@@ -140,84 +227,19 @@ public class IInstanceRenderer extends FSerialiser implements ISerialiserVocab {
 			containerNode.setValue(INSTANCE_FUNCTION_ATTR, function);
 		}
 
-		private XNode renderIFrame(IFrame frame, XNode parentNode) {
+		private XNode renderRootIFrame(IFrame rootFrame) {
 
-			if (frame.getCategory().disjunction()) {
-
-				return renderDisjunctionIFrame(frame, parentNode);
-			}
-
-			return renderAtomicIFrame(frame, parentNode, renderAsTree);
+			return renderIFrame(rootFrame, containerNode, true);
 		}
 
-		private XNode renderAtomicIFrame(IFrame frame, XNode parentNode, boolean direct) {
+		private XNode renderNonRootIFrame(IFrame frame, XNode parentNode) {
 
-			IFrameXDocIds.Resolution xidRes = frameXDocIds.resolve(frame);
-
-			if (direct) {
-
-				return renderAtomicIFrameDirect(frame, parentNode, xidRes.getId());
-			}
-
-			return renderAtomicIFrameIndirect(frame, parentNode, xidRes);
+			return renderIFrame(frame, parentNode, renderAsTree);
 		}
 
-		private XNode renderAtomicIFrameDirect(IFrame frame, XNode parentNode, String xid) {
+		private XNode renderIFrame(IFrame frame, XNode parentNode, boolean direct) {
 
-			XNode node = renderAtomicIFrameCommon(parentNode, xid, IFRAME_XDOC_ID_ATTR);
-
-			renderCFrame(frame.getType(), node);
-
-			if (frame.getCategory().reference()) {
-
-				renderIReference(frame.getReferenceId(), node);
-			}
-			else {
-
-				for (ISlot slot : frame.getSlots().asList()) {
-
-					renderISlot(slot, node);
-				}
-			}
-
-			return node;
-		}
-
-		private XNode renderAtomicIFrameIndirect(
-						IFrame frame,
-						XNode parentNode,
-						IFrameXDocIds.Resolution xidRes) {
-
-			String xid = xidRes.getId();
-			XNode localNode = renderAtomicIFrameCommon(parentNode, xid, IFRAME_XDOC_ID_REF_ATTR);
-
-			if (xidRes.newFrame()) {
-
-				renderAtomicIFrameDirect(frame, containerNode, xid);
-			}
-
-			return localNode;
-		}
-
-		private XNode renderAtomicIFrameCommon(XNode parentNode, String xid, String xidTag) {
-
-			XNode node = parentNode.addChild(IFRAME_ID);
-
-			node.setValue(xidTag, xid);
-
-			return node;
-		}
-
-		private XNode renderDisjunctionIFrame(IFrame frame, XNode parentNode) {
-
-			XNode node = parentNode.addChild(IFRAME_ID);
-
-			for (IFrame disjunct : frame.asDisjuncts()) {
-
-				renderIFrame(disjunct, node);
-			}
-
-			return node;
+			return new IFrameRenderer(frame, parentNode).render(direct);
 		}
 
 		private void renderMFrame(MFrame frame, XNode parentNode) {

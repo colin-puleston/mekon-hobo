@@ -636,7 +636,7 @@ public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 
 		private IFrame parseReferenceIFrame(CFrame frameType, XNode node) {
 
-			XNode refNode = node.getChildOrNull(IREFERENCE_ID);
+			XNode refNode = node.getChild(IREFERENCE_ID);
 
 			return createReferenceFrame(frameType, parseIdentity(refNode));
 		}
