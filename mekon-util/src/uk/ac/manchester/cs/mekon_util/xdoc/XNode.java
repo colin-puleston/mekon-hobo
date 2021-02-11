@@ -98,6 +98,16 @@ public class XNode {
 	}
 
 	/**
+	 * Provides the document to which the node is attached.
+	 *
+	 * @return Document to which node is attached
+	 */
+	public XDocument getDocument() {
+
+		return document;
+	}
+
+	/**
 	 * Provides the identifier for the node.
 	 *
 	 * @return Identifier for node
