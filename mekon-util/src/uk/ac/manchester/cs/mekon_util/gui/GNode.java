@@ -279,7 +279,7 @@ public abstract class GNode extends GMutableTreeNode {
 	public List<GNode> getChildren() {
 
 		return childList != null
-				? childList.asList()
+				? getChildList().asList()
 				: Collections.<GNode>emptyList();
 	}
 
@@ -296,6 +296,11 @@ public abstract class GNode extends GMutableTreeNode {
 		}
 
 		return selectedChildren;
+	}
+
+	public List<GNode> ensureChildren() {
+
+		return getChildList().asList();
 	}
 
 	public int indexInSiblings() {
@@ -423,11 +428,6 @@ public abstract class GNode extends GMutableTreeNode {
 
 			child.updateSubTreeNodeDisplays();
 		}
-	}
-
-	List<GNode> ensureChildren() {
-
-		return getChildList().asList();
 	}
 
 	private void removeChild(GNode child) {
