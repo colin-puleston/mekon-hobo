@@ -68,6 +68,8 @@ class AssertionDialog extends InstanceDialog {
 		ShowSummaryButton() {
 
 			super(SHOW_SUMMARY_BUTTON_LABEL);
+
+			setBackground(MekonAppIcons.ASSERT_SUMMARY_CLR);
 		}
 	}
 
@@ -81,21 +83,9 @@ class AssertionDialog extends InstanceDialog {
 		initialise(false, startMode);
 	}
 
-	ControlsPanel checkCreateControlsPanel( ) {
+	GButton checkCreateAlternativeViewButton() {
 
-		ControlsPanel panel = super.checkCreateControlsPanel();
-
-		if (getGroup().summariesEnabled()) {
-
-			if (panel == null) {
-
-				panel = new ControlsPanel(true);
-			}
-
-			panel.addControl(new ShowSummaryButton());
-		}
-
-		return panel;
+		return getGroup().summariesEnabled() ? new ShowSummaryButton() : null;
 	}
 
 	IFrame resolveInstanceForStoring() {

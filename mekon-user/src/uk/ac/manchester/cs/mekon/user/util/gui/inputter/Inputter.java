@@ -95,6 +95,11 @@ public abstract class Inputter<I> extends GDialog {
 		controlPanel = new ControlPanel(canOk, canClear);
 	}
 
+	protected JComponent getHeaderComponentOrNull() {
+
+		return null;
+	}
+
 	protected abstract JComponent getInputComponent();
 
 	protected abstract Dimension getWindowSize();
@@ -106,12 +111,18 @@ public abstract class Inputter<I> extends GDialog {
 
 	private JComponent createDisplay() {
 
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setPreferredSize(getWindowSize());
-		panel.add(getInputComponent());
-		panel.add(controlPanel);
+		panel.add(getInputComponent(), BorderLayout.CENTER);
+		panel.add(controlPanel, BorderLayout.SOUTH);
+
+		JComponent header = getHeaderComponentOrNull();
+
+		if (header != null) {
+
+			panel.add(header, BorderLayout.NORTH);
+		}
 
 		return panel;
 	}

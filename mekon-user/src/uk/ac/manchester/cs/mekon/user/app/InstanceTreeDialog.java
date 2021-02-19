@@ -215,16 +215,21 @@ class InstanceTreeDialog extends GDialog {
 		return null;
 	}
 
+	GButton checkCreateAlternativeViewButton() {
+
+		return null;
+	}
+
 	private JComponent createDisplay() {
 
 		JPanel panel = new JPanel(new BorderLayout());
 
+		JPanel header = checkCreateHeaderPanel();
 		ControlsPanel controls = checkCreateControlsPanel();
-		JPanel modeSelector = checkCreateModeSelectorPanel();
 
-		if (modeSelector != null) {
+		if (header != null) {
 
-			panel.add(modeSelector, BorderLayout.NORTH);
+			panel.add(header, BorderLayout.NORTH);
 		}
 
 		panel.add(new JScrollPane(tree), BorderLayout.CENTER);
@@ -237,16 +242,27 @@ class InstanceTreeDialog extends GDialog {
 		return panel;
 	}
 
-	private JPanel checkCreateModeSelectorPanel() {
+	private JPanel checkCreateHeaderPanel() {
 
-		if (fixedMode()) {
+		ModeSelector modeSelector = fixedMode() ? null : new ModeSelector();
+		GButton altViewButton = checkCreateAlternativeViewButton();
+
+		if (modeSelector == null && altViewButton == null) {
 
 			return null;
 		}
 
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(new ModeSelector(), BorderLayout.WEST);
+		if (modeSelector != null) {
+
+			panel.add(modeSelector, BorderLayout.WEST);
+		}
+
+		if (altViewButton != null) {
+
+			panel.add(altViewButton, BorderLayout.EAST);
+		}
 
 		return panel;
 	}

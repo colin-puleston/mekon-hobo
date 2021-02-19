@@ -97,7 +97,7 @@ class DescriptorNode extends InstanceNode {
 
 	void performViewAction() {
 
-		createInstanceSubSectionHandler().checkDisplay();
+		InstanceSubSectionHandler.checkDisplay(getInstanceTree(), descriptor);
 	}
 
 	Descriptor getDescriptor() {
@@ -113,10 +113,5 @@ class DescriptorNode extends InstanceNode {
 	private DescriptorEditor createEditor() {
 
 		return new DescriptorEditor(getInstanceTree(), descriptor);
-	}
-
-	private InstanceSubSectionHandler createInstanceSubSectionHandler() {
-
-		return new InstanceSubSectionHandler(getInstanceTree(), descriptor);
 	}
 }

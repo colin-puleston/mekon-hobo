@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private Instantiator instantiator;
-	private CFrame type;
+	private CFrame selectionType;
 
 	private InstanceIdsList refIdOptionsList;
 
@@ -58,12 +58,12 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 	InstanceRefSelectionOptions(
 		EntitySelector<IFrame> selector,
 		Instantiator instantiator,
-		CFrame type) {
+		CFrame selectionType) {
 
 		super(selector);
 
 		this.instantiator = instantiator;
-		this.type = type;
+		this.selectionType = selectionType;
 
 		refIdOptionsList = createOptionsList();
 
@@ -82,16 +82,36 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private InstanceIdsList createOptionsList() {
 
-		return getGroup().getAssertionSubGroup().createInstanceIdsList(type);
+		CFrame standardType = resolveStandardType();
+		InstanceGroup group = getGroup(standardType);
+
+		return group.getAssertionSubGroup().createInstanceIdsList(standardType);
 	}
 
-	private InstanceGroup getGroup() {
+	private InstanceGroup getGroup(CFrame standardType) {
 
-		return instantiator.getController().getInstanceGroup(type);
+		return instantiator.getController().getInstanceGroup(standardType);
+	}
+
+	private CFrame resolveStandardType() {
+
+		InstanceSummariser summariser = getSummariser();
+
+		if (summariser.summaryType(selectionType)) {
+
+			return summariser.toInstanceType(selectionType);
+		}
+
+		return selectionType;
+	}
+
+	private InstanceSummariser getSummariser() {
+
+		return instantiator.getCustomiser().getInstanceSummariser();
 	}
 
 	private IFrame createRef(CIdentity refId) {
 
-		return instantiator.instantiateRef(type, refId);
+		return instantiator.instantiateRef(selectionType, refId);
 	}
 }

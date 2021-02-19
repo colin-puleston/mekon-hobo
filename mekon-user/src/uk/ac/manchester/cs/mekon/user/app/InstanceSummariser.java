@@ -33,9 +33,13 @@ public interface InstanceSummariser {
 
 	public boolean summariesFor(CFrame instanceType);
 
+	public boolean summaryType(CFrame instanceType);
+
 	public CFrame toSummaryType(CFrame instanceType);
 
 	public IFrame toSummary(IFrame instance);
+
+	public CFrame toInstanceType(CFrame summaryType);
 
 	public IFrame toInstance(IFrame summary);
 

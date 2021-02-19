@@ -98,7 +98,7 @@ class Instantiator {
 
 	IFrame instantiateRef(CFrame type, CIdentity refId) {
 
-		return type.instantiateReference(refId, getFunction());
+		return type.instantiateRef(refId, getFunction());
 	}
 
 	IFrameFunction getFunction() {

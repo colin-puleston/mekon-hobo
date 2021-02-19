@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -31,74 +33,87 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class InstanceSubSectionHandler {
 
-	private InstanceTree instanceTree;
+	static private class Displayer {
 
-	private IFrame rootFrame = null;
-	private ISlot containerSlot = null;
+		private InstanceTree instanceTree;
 
-	private boolean replaceSelected = false;
+		private IFrame rootFrame;
+		private ISlot containerSlot;
 
-	InstanceSubSectionHandler(InstanceTree instanceTree, Descriptor descriptor) {
+		Displayer(
+			InstanceTree instanceTree,
+			IFrame rootFrame,
+			ISlot containerSlot) {
 
-		this.instanceTree = instanceTree;
+			this.instanceTree = instanceTree;
+			this.rootFrame = rootFrame;
+			this.containerSlot = containerSlot;
+		}
 
-		if (descriptor.hasStructuredValue()) {
+		boolean display() {
 
-			rootFrame = (IFrame)descriptor.getValue();
-			containerSlot = descriptor.getSlot();
+			InstanceSubSectionDialog dialog = createDialog();
+
+			dialog.display();
+
+			if (dialog.replaceSelected()) {
+
+				return false;
+			}
+
+			if (dialog.clearSelected()) {
+
+				removeValue();
+			}
+
+			return true;
+		}
+
+		private InstanceSubSectionDialog createDialog() {
+
+			return new InstanceSubSectionDialog(instanceTree, rootFrame, replacableValue());
+		}
+
+		private void removeValue() {
+
+			containerSlot.getValuesEditor().remove(rootFrame);
+		}
+
+		private boolean replacableValue() {
+
+			return !getSlotValueTypeFrame().getSubs(CVisibility.EXPOSED).isEmpty();
+		}
+
+		private CFrame getSlotValueTypeFrame() {
+
+			return (CFrame)containerSlot.getValueType();
 		}
 	}
 
-	boolean checkDisplay() {
+	static boolean checkDisplay(InstanceTree instanceTree, ISlot containerSlot) {
 
-		if (rootFrame != null) {
+		List<IValue> values = containerSlot.getValues().asList();
 
-			displayDialog();
+		if (values.size() == 1) {
 
-			return true;
+			IFrame rootFrame = (IFrame)values.get(0);
+
+			return new Displayer(instanceTree, rootFrame, containerSlot).display();
 		}
 
 		return false;
 	}
 
-	boolean replaceSelected() {
+	static boolean checkDisplay(InstanceTree instanceTree, Descriptor descriptor) {
 
-		return replaceSelected;
-	}
+		if (descriptor.hasStructuredValue()) {
 
-	private void displayDialog() {
+			IFrame rootFrame = (IFrame)descriptor.getValue();
+			ISlot containerSlot = descriptor.getSlot();
 
-		InstanceSubSectionDialog dialog = createDialog();
-
-		dialog.display();
-
-		if (dialog.clearSelected()) {
-
-			removeValue();
+			return new Displayer(instanceTree, rootFrame, containerSlot).display();
 		}
-		else if (dialog.replaceSelected()) {
 
-			replaceSelected = true;
-		}
-	}
-
-	private InstanceSubSectionDialog createDialog() {
-
-		return new InstanceSubSectionDialog(instanceTree, rootFrame, replacableValue());
-	}
-
-	private void removeValue() {
-
-		containerSlot.getValuesEditor().remove(rootFrame);
-	}
-
-	private boolean replacableValue() {
-
-		return !getSlotValueTypeFrame().getSubs(CVisibility.EXPOSED).isEmpty();
-	}
-
-	private CFrame getSlotValueTypeFrame() {
-
-		return (CFrame)containerSlot.getValueType();
+		return false;
 	}
 }

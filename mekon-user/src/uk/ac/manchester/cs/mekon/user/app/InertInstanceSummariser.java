@@ -40,6 +40,11 @@ class InertInstanceSummariser implements InstanceSummariser {
 		return false;
 	}
 
+	public boolean summaryType(CFrame instanceType) {
+
+		return false;
+	}
+
 	public CFrame toSummaryType(CFrame instanceType) {
 
 		throw createNoSummariesException(instanceType);
@@ -48,6 +53,11 @@ class InertInstanceSummariser implements InstanceSummariser {
 	public IFrame toSummary(IFrame instance) {
 
 		throw createNoSummariesException(instance.getType());
+	}
+
+	public CFrame toInstanceType(CFrame summaryType) {
+
+		throw createNotSummaryTypeException(summaryType);
 	}
 
 	public IFrame toInstance(IFrame summary) {

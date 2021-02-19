@@ -274,7 +274,7 @@ class DescriptorEditor {
 
 				if (abstractEditableSlot()) {
 
-					return performAlternativeAbstractEdit();
+					return checkPerformAlternativeAbstractEdit();
 				}
 
 				return checkCreateAndAddRefInstance();
@@ -283,7 +283,19 @@ class DescriptorEditor {
 			return false;
 		}
 
-		private boolean performAlternativeAbstractEdit() {
+		private boolean checkPerformAlternativeAbstractEdit() {
+
+			if (startPerformAlternativeAbstractEdit()) {
+
+				InstanceSubSectionHandler.checkDisplay(instanceTree, slot);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private boolean startPerformAlternativeAbstractEdit() {
 
 			if (fixedValueType(valueType)) {
 
@@ -456,14 +468,7 @@ class DescriptorEditor {
 
 	private boolean checkDisplayInstanceSubSection() {
 
-		InstanceSubSectionHandler handler = createInstanceSubSectionHandler();
-
-		return handler.checkDisplay() && !handler.replaceSelected();
-	}
-
-	private InstanceSubSectionHandler createInstanceSubSectionHandler() {
-
-		return new InstanceSubSectionHandler(instanceTree, descriptor);
+		return InstanceSubSectionHandler.checkDisplay(instanceTree, descriptor);
 	}
 
 	private void addValue(IValue value) {

@@ -158,6 +158,8 @@ class QueryDialog extends InstanceDialog {
 
 			super(TO_COMPRESSED_BUTTON_LABEL);
 
+			setBackground(MekonAppIcons.QUERY_SUMMARY_CLR);
+
 			new Enabler();
 		}
 	}
@@ -174,6 +176,8 @@ class QueryDialog extends InstanceDialog {
 		ToExpandedButton() {
 
 			super(TO_EXPANDED_BUTTON_LABEL);
+
+			setBackground(MekonAppIcons.QUERY_CLR);
 		}
 	}
 
@@ -203,19 +207,17 @@ class QueryDialog extends InstanceDialog {
 
 		panel.addControl(new ExecuteButton());
 
+		return panel;
+	}
+
+	GButton checkCreateAlternativeViewButton() {
+
 		if (displayingCompressed()) {
 
-			panel.addControl(new ToExpandedButton());
-		}
-		else {
-
-			if (getGroup().summariesEnabled()) {
-
-				panel.addControl(new ToCompressedButton());
-			}
+			return new ToExpandedButton();
 		}
 
-		return panel;
+		return getGroup().summariesEnabled() ? new ToCompressedButton() : null;
 	}
 
 	IFrame resolveInstanceForStoring() {

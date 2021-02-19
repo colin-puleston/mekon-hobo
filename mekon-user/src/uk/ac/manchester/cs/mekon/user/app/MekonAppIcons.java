@@ -34,14 +34,14 @@ import uk.ac.manchester.cs.mekon_util.gui.icon.*;
  */
 class MekonAppIcons {
 
-	static private final Color ASSERT_CLR = new Color(49,130,189);
-	static private final Color QUERY_CLR = new Color(49,163,84);
-	static private final Color ASSERT_SUMMARY_CLR = new Color(158,202,225);
-	static private final Color QUERY_SUMMARY_CLR = new Color(161,217,155);
-	static private final Color VALUE_ENTRY_CLR = Color.WHITE;
-
 	static private final int LIST_ICON_DIMENSION = 10;
 	static private final int TREE_ICON_DIMENSION = 12;
+
+	static final Color ASSERT_CLR = new Color(49,130,189);
+	static final Color QUERY_CLR = new Color(49,163,84);
+	static final Color ASSERT_SUMMARY_CLR = new Color(158,202,225);
+	static final Color QUERY_SUMMARY_CLR = new Color(161,217,155);
+	static final Color VALUE_ENTRY_CLR = Color.WHITE;
 
 	static final TreeIcons VALUE_ICONS = new ValueIcons();
 	static final TreeIcons ARRAY_ICONS = new ArrayIcons();

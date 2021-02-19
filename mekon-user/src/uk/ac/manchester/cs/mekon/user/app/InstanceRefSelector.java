@@ -37,14 +37,15 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String CREATE_LABEL_FORMAT = "Create %s";
-	static private final String DESCRIBE_LABEL_FORMAT = "Describe %s";
+	static private final String CREATE_LABEL_FORMAT = "Create %s...";
+	static private final String DESCRIBE_LABEL_FORMAT = "Describe %s...";
 
-	private InstanceRefSelectionOptions selectionOptions;
+	private Instantiator instantiator;
+	private CFrame type;
 
 	private boolean alternativeEditSelected = false;
 
-	private class AlternativeEditSelectButton extends GButton {
+	private class AlternativeEditButton extends GButton {
 
 		static private final long serialVersionUID = -1;
 
@@ -55,9 +56,11 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 			dispose();
 		}
 
-		AlternativeEditSelectButton(CFrame type, boolean abstractEdit) {
+		AlternativeEditButton(boolean abstractEdit) {
 
-			super(getAlternativeEditSelectLabel(type, abstractEdit));
+			super(getAltEditLabel(abstractEdit));
+
+			setBackground(getAltEditColour());
 		}
 	}
 
@@ -70,9 +73,10 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 		super(parent, getTypeName(type), canClear);
 
-		selectionOptions = new InstanceRefSelectionOptions(this, instantiator, type);
+		this.instantiator = instantiator;
+		this.type = type;
 
-		addExtraControlButton(new AlternativeEditSelectButton(type, abstractEdit));
+		addExtraControlButton(new AlternativeEditButton(abstractEdit));
 	}
 
 	boolean alternativeEditSelected() {
@@ -82,18 +86,43 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	JComponent createOptionsComponent() {
 
-		return selectionOptions.createOptionsComponent();
+		return createOptions().createOptionsComponent();
 	}
 
-	private String getAlternativeEditSelectLabel(CFrame type, boolean abstractEdit) {
+	private InstanceRefSelectionOptions createOptions() {
 
-		String format = getAlternativeEditSelectLabelFormat(abstractEdit);
+		return new InstanceRefSelectionOptions(this, instantiator, type);
+	}
+
+	private String getAltEditLabel(boolean abstractEdit) {
+
+		String format = getAltEditLabelFormat(abstractEdit);
 
 		return String.format(format, getTypeName(type));
 	}
 
-	private String getAlternativeEditSelectLabelFormat(boolean abstractEdit) {
+	private String getAltEditLabelFormat(boolean abstractEdit) {
 
 		return abstractEdit ? DESCRIBE_LABEL_FORMAT : CREATE_LABEL_FORMAT;
+	}
+
+	private Color getAltEditColour() {
+
+		if (instantiator.assertionInstance()) {
+
+			return MekonAppIcons.ASSERT_CLR;
+		}
+
+		return summaryType() ? MekonAppIcons.QUERY_SUMMARY_CLR : MekonAppIcons.QUERY_CLR;
+	}
+
+	private boolean summaryType() {
+
+		return getSummariser().summaryType(type);
+	}
+
+	private InstanceSummariser getSummariser() {
+
+		return instantiator.getCustomiser().getInstanceSummariser();
 	}
 }
