@@ -694,9 +694,9 @@ public abstract class CFrame
 	 * @param referenceId Identity of referenced instance
 	 * @return Atomic-assertion instantiation of frame
 	 */
-	public IFrame instantiateReference(CIdentity referenceId) {
+	public IFrame instantiateRef(CIdentity referenceId) {
 
-		return instantiateReference(referenceId, IFrameFunction.ASSERTION);
+		return instantiateRef(referenceId, IFrameFunction.ASSERTION);
 	}
 
 	/**
@@ -707,7 +707,7 @@ public abstract class CFrame
 	 * @param function Required function of frame
 	 * @return Atomic instantiation of frame with required function
 	 */
-	public IFrame instantiateReference(CIdentity referenceId, IFrameFunction function) {
+	public IFrame instantiateRef(CIdentity referenceId, IFrameFunction function) {
 
 		return new ReferenceInstantiator(referenceId).instantiate(function);
 	}
@@ -720,9 +720,9 @@ public abstract class CFrame
 	 * @param referenceId Identity of referenced instance
 	 * @return Atomic-query instantiation of frame
 	 */
-	public IFrame instantiateQueryReference(CIdentity referenceId) {
+	public IFrame instantiateQueryRef(CIdentity referenceId) {
 
-		return instantiateReference(referenceId, IFrameFunction.QUERY);
+		return instantiateRef(referenceId, IFrameFunction.QUERY);
 	}
 
 	/**
