@@ -197,6 +197,49 @@ public class DConcept<D extends DObject> {
 	}
 
 	/**
+	 * Instantiates the concept as an instance of the OM class that
+	 * defines the general type for the concept, and set's the category
+	 * of the associated frame to be {@link IFrameCategory#REFERENCE},
+	 * and the function to be {@link IFrameFunction#ASSERTION}.
+	 *
+	 * @param referenceId Identity of referenced instance
+	 * @return Appropriate instantiation of concept
+	 */
+	public D instantiateRef(CIdentity referenceId) {
+
+		return instantiateRef(referenceId, IFrameFunction.ASSERTION);
+	}
+
+	/**
+	 * Instantiates the concept as an instance of the OM class that
+	 * defines the general type for the concept, and set's the category
+	 * of the associated frame to be {@link IFrameCategory#REFERENCE},
+	 * and function as specified.
+	 *
+	 * @param referenceId Identity of referenced instance
+	 * @param function Required function of frame
+	 * @return Atomic instantiation of frame with required function
+	 */
+	public D instantiateRef(CIdentity referenceId, IFrameFunction function) {
+
+		return model.getDObject(frame.instantiateRef(referenceId, function), dClass);
+	}
+
+	/**
+	 * Instantiates the concept as an instance of the OM class that
+	 * defines the general type for the concept, and set's the category
+	 * of the associated frame to be {@link IFrameCategory#REFERENCE},
+	 * and the function to be {@link IFrameFunction#QUERRY}.
+	 *
+	 * @param referenceId Identity of referenced instance
+	 * @return Appropriate instantiation of concept
+	 */
+	public D instantiateQueryRef(CIdentity referenceId) {
+
+		return instantiateRef(referenceId, IFrameFunction.QUERY);
+	}
+
+	/**
 	 * Creates a new object representing the same concept but with
 	 * a different OM class defining the general type for the
 	 * represented concept.
