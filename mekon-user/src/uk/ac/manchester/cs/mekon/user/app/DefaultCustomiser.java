@@ -93,30 +93,27 @@ public class DefaultCustomiser implements Customiser {
 
 		IFrameCategory category = frame.getCategory();
 
-		if (category.reference()) {
-
-			return getReferenceFrameDisplayLabel(frame);
-		}
-
 		if (category.disjunction()) {
 
 			return getDisjunctionFrameDisplayLabel(frame);
 		}
 
-		return getAtomicFrameDisplayLabel(frame);
+		return frame.getDisplayLabel();
 	}
 
-	public String getAtomicFrameDisplayLabel(IFrame frame) {
+	protected DefaultCustomiser(IStore centralStore) {
 
-		return getTypeDisplayLabel(frame.getType());
+		this(centralStore, null);
 	}
 
-	public String getReferenceFrameDisplayLabel(IFrame reference) {
+	protected DefaultCustomiser(IStore centralStore, IStore localQueriesStore) {
 
-		return reference.getDisplayLabel();
+		assertionNameDefaults = new StandardAssertionNameDefaults(centralStore, this);
+		centralQueryNameDefaults = new StandardQueryNameDefaults(centralStore, this, false);
+		localQueryNameDefaults = new StandardQueryNameDefaults(localQueriesStore, this, true);
 	}
 
-	public String getDisjunctionFrameDisplayLabel(IFrame disjunction) {
+	private String getDisjunctionFrameDisplayLabel(IFrame disjunction) {
 
 		StringBuilder label = new StringBuilder();
 
@@ -131,17 +128,5 @@ public class DefaultCustomiser implements Customiser {
 		}
 
 		return label.toString();
-	}
-
-	protected DefaultCustomiser(IStore centralStore) {
-
-		this(centralStore, null);
-	}
-
-	protected DefaultCustomiser(IStore centralStore, IStore localQueriesStore) {
-
-		assertionNameDefaults = new StandardAssertionNameDefaults(centralStore, this);
-		centralQueryNameDefaults = new StandardQueryNameDefaults(centralStore, this, false);
-		localQueryNameDefaults = new StandardQueryNameDefaults(localQueriesStore, this, true);
 	}
 }
