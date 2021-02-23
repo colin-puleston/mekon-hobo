@@ -36,15 +36,17 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 class ConfigFileParser extends FSerialiser {
 
-	static private final String STORE_DIR_ATTR = "storeDirectory";
-	static private final String INCLUDE_SUB_DIRS_ATTR = "includeSubDirectories";
-	static private final String MEKON_CONFIG_FILE_ATTR = "mekonConfigFile";
-
+	static private final String STORE_DIR_ID = "StoreDirectory";
+	static private final String MEKON_CONFIG_FILE_ID = "MekonConfigFile";
 	static private final String CFRAME_DOCTOR_ID = "CFrameDoctor";
 	static private final String ISLOT_DOCTOR_ID = "ISlotDoctor";
 	static private final String ROOT_CONTAINER_TYPE_ID = "RootContainerType";
 	static private final String UPDATES_ID = "Updates";
 	static private final String VALUE_TYPE_UPDATE_ID = "ValueType";
+
+	static private final String RESOURCE_PATH_ATTR = "path";
+	static private final String PATH_FROM_CLASSPATH_ATTR = "pathFromClasspath";
+	static private final String INCLUDE_SUB_DIRS_ATTR = "includeSubDirectories";
 
 	private MekonStoreDoctor doctor;
 	private XNode rootNode;
@@ -199,27 +201,20 @@ class ConfigFileParser extends FSerialiser {
 
 		rootNode = new XDocument(configFile).getRootNode();
 
-		setStoreDir();
-		checkSetIncludeSubDirs();
+		setStoreDirs();
 		checkSetModel();
 
 		new CFrameDoctorParser();
 		new ISlotDoctorParser();
 	}
 
-	private void setStoreDir() {
+	private void setStoreDirs() {
 
-		doctor.setStoreDir(getStoreDir());
-	}
+		XNode dirsNode = rootNode.getChild(STORE_DIR_ID);
+		boolean includeSubs = dirsNode.getBoolean(INCLUDE_SUB_DIRS_ATTR, true);
 
-	private void checkSetIncludeSubDirs() {
-
-		Boolean include = rootNode.getBoolean(INCLUDE_SUB_DIRS_ATTR, null);
-
-		if (include != null) {
-
-			doctor.setIncludeSubDirs(include);
-		}
+		doctor.setStoreDir(getResource(dirsNode, true));
+		doctor.setIncludeSubDirs(includeSubs);
 	}
 
 	private void checkSetModel() {
@@ -232,20 +227,28 @@ class ConfigFileParser extends FSerialiser {
 		}
 	}
 
-	private File getStoreDir() {
-
-		return getFileOrDir(rootNode.getString(STORE_DIR_ATTR), true);
-	}
-
 	private File lookForMekonConfigFile() {
 
-		String path = rootNode.getString(MEKON_CONFIG_FILE_ATTR, null);
+		XNode fileNode = rootNode.getChildOrNull(MEKON_CONFIG_FILE_ID);
 
-		return path != null ? getFileOrDir(path, false) : null;
+		return fileNode != null ? getResource(fileNode, false) : null;
 	}
 
-	private File getFileOrDir(String path, boolean expectDir) {
+	private File getResource(XNode node, boolean expectDir) {
 
-		return new KConfigResourceFinder(expectDir).getResource(path);
+		String path = node.getString(RESOURCE_PATH_ATTR);
+		boolean fromClasspath = node.getBoolean(PATH_FROM_CLASSPATH_ATTR);
+
+		return getResourceFinder(fromClasspath, expectDir).getResource(path);
+	}
+
+	private KConfigResourceFinder getResourceFinder(boolean fromClasspath, boolean expectDir) {
+
+		if (fromClasspath) {
+
+			return expectDir ? KConfigResourceFinder.DIRS : KConfigResourceFinder.FILES;
+		}
+
+		return new KConfigResourceFinder(expectDir);
 	}
 }
