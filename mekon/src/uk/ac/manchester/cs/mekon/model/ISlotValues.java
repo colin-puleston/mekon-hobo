@@ -364,8 +364,8 @@ public class ISlotValues extends KList<IValue> {
 
 			throw createInvalidValueException(
 				value,
-				"cannot set abstract values for slots "
-				+ "of this type on assertion-instances");
+				"cannot set abstract values for non-abstract slot: "
+				+ slot);
 		}
 	}
 
