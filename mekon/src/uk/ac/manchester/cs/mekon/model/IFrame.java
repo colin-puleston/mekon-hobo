@@ -555,7 +555,7 @@ public abstract class IFrame implements IEntity, IValue {
 
 		List<CIdentity> referenceIds = new ArrayList<CIdentity>();
 
-		collectReferenceIds(referenceIds);
+		collectReferenceIds(referenceIds, new HashSet<IFrame>());
 
 		return referenceIds;
 	}
@@ -728,7 +728,7 @@ public abstract class IFrame implements IEntity, IValue {
 		return type.hashCode();
 	}
 
-	void collectReferenceIds(List<CIdentity> referenceIds) {
+	void collectReferenceIds(List<CIdentity> referenceIds, Set<IFrame> visited) {
 
 		for (ISlot slot : getSlots().asList()) {
 
@@ -736,7 +736,12 @@ public abstract class IFrame implements IEntity, IValue {
 
 				for (IValue value : slot.getValues().asList()) {
 
-					((IFrame)value).collectReferenceIds(referenceIds);
+					IFrame frame = (IFrame)value;
+
+					if (visited.add(frame)) {
+
+						frame.collectReferenceIds(referenceIds, visited);
+					}
 				}
 			}
 		}

@@ -51,7 +51,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 public abstract class XClientStore extends XClientEntity {
 
-	private CModel model;
+	private XClientModel clientModel;
 	private IStore store = new XClientIStore();
 
 	private RClientInstanceParser responseParser;
@@ -86,7 +86,7 @@ public abstract class XClientStore extends XClientEntity {
 
 		public CModel getModel() {
 
-			return model;
+			return clientModel.getCModel();
 		}
 
 		public IStoreRegenReport getRegenReport() {
@@ -116,7 +116,7 @@ public abstract class XClientStore extends XClientEntity {
 				return null;
 			}
 
-			CFrame type = model.getFrames().getOrNull(typeId);
+			CFrame type = getModel().getFrames().getOrNull(typeId);
 
 			return type != null ? new IRegenValidType(type) : new IRegenInvalidType(typeId);
 		}
@@ -133,6 +133,8 @@ public abstract class XClientStore extends XClientEntity {
 
 				return null;
 			}
+
+			clientModel.initialiseReloadedInstance(instance);
 
 			return new IRegenValidInstance(instance);
 		}
@@ -177,17 +179,17 @@ public abstract class XClientStore extends XClientEntity {
 	/**
 	 * Constructor.
 	 *
-	 * @param model Client-side model associated with the store
+	 * @param clientModel Client-side model associated with the store
 	 * @param expireOnServerRestart true if client should become invalid
 	 * if server is restarted whilst client is running
 	 */
-	protected XClientStore(CModel model, boolean expireOnServerRestart) {
+	protected XClientStore(XClientModel clientModel, boolean expireOnServerRestart) {
 
 		super(expireOnServerRestart);
 
-		this.model = model;
+		this.clientModel = clientModel;
 
-		responseParser = new RClientInstanceParser(model);
+		responseParser = new RClientInstanceParser(clientModel.getCModel());
 	}
 
 	private boolean performBooleanResponseAction(XRequestRenderer request) {

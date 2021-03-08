@@ -150,7 +150,7 @@ public class ISlotValuesTest {
 
 		ISlotValues values = createSlotValues(frames.repeatTypesSlots);
 
-		values.addAssertedValue(frames.create("IllegalValue"), false);
+		values.addAssertedValue(frames.create("IllegalValue"));
 	}
 
 	@Test(expected = KAccessException.class)
@@ -159,7 +159,7 @@ public class ISlotValuesTest {
 		ISlotValues values = createSlotValues(frames.repeatTypesSlots);
 		IValue abstractVal = CFrame.resolveDisjunction(cFrames(a, b, c));
 
-		values.addAssertedValue(abstractVal, false);
+		values.addAssertedValue(abstractVal);
 	}
 
 	protected CModel resolveClientModel(CModel serverModel) {
@@ -228,7 +228,7 @@ public class ISlotValuesTest {
 					IValue value,
 					List<IValue> expectedValues) {
 
-		slotValues.addAssertedValue(value, false);
+		slotValues.addAssertedValue(value);
 		testValues(slotValues, expectedValues);
 	}
 
@@ -246,7 +246,7 @@ public class ISlotValuesTest {
 					List<IValue> values,
 					List<IValue> expectedValues) {
 
-		slotValues.updateAssertedValues(values, false);
+		slotValues.updateAssertedValues(values);
 		testTypes(slotValues, expectedValues);
 	}
 

@@ -94,7 +94,7 @@ public class ISlot implements IEntity {
 
 		public boolean setAssertedValues(List<IValue> assertedValues) {
 
-			return values.updateAssertedValues(assertedValues, true);
+			return values.updateAssertedValues(assertedValues);
 		}
 
 		public boolean updateFixedValues(List<IValue> fixedValues) {
@@ -203,7 +203,7 @@ public class ISlot implements IEntity {
 			getEditability().editable(),
 			"non-editable");
 
-		return new ISlotValuesEditor(values, false);
+		return new ISlotValuesEditor(values);
 	}
 
 	ISlot(CSlot type, IFrame container) {
@@ -219,7 +219,7 @@ public class ISlot implements IEntity {
 
 	ISlotValuesEditor getPrivilegedAccessValuesEditor() {
 
-		return new ISlotValuesEditor(values, true);
+		return new ISlotValuesEditor(values);
 	}
 
 	private boolean updateTypeEditability(IEditability editability) {

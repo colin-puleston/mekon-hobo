@@ -51,7 +51,7 @@ import uk.ac.manchester.cs.mekon_util.xdoc.*;
  */
 public abstract class XClientModel extends XClientEntity {
 
-	private CModel model;
+	private RClientModel rClientModel;
 	private RClientInstanceParser responseParser;
 
 	private abstract class InstanceAction {
@@ -204,7 +204,7 @@ public abstract class XClientModel extends XClientEntity {
 	 */
 	public CModel getCModel() {
 
-		return model;
+		return rClientModel.getCModel();
 	}
 
 	/**
@@ -217,8 +217,13 @@ public abstract class XClientModel extends XClientEntity {
 
 		super(expireOnServerRestart);
 
-		model = new XRClientModel().getCModel();
-		responseParser = new RClientInstanceParser(model);
+		rClientModel = new XRClientModel();
+		responseParser = new RClientInstanceParser(getCModel());
+	}
+
+	void initialiseReloadedInstance(IFrame rootFrame) {
+
+		rClientModel.initialiseReloadedInstance(rootFrame);
 	}
 
 	private CHierarchy getHierarchy() {

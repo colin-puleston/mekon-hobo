@@ -78,7 +78,7 @@ public class RMekonClient {
 
 		NetClientStore(boolean expireOnServerRestart) {
 
-			super(getCModel(), expireOnServerRestart);
+			super(clientModel, expireOnServerRestart);
 		}
 	}
 

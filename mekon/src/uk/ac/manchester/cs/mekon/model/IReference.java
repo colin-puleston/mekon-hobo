@@ -132,9 +132,12 @@ class IReference extends IFrame {
 		return referenceId.hashCode();
 	}
 
-	void collectReferenceIds(List<CIdentity> referenceIds) {
+	void collectReferenceIds(List<CIdentity> referenceIds, Set<IFrame> visited) {
 
-		referenceIds.add(referenceId);
+		if (!referenceIds.contains(referenceId)) {
+
+			referenceIds.add(referenceId);
+		}
 	}
 
 	String describeLocally() {

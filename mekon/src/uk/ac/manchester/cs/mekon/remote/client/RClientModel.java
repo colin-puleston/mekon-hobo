@@ -178,8 +178,6 @@ public abstract class RClientModel {
 		public void initialiseFrame(IEditor iEditor, IFrame frame) {
 
 			initialise(frame, createInitAction);
-
-			new ISlotInitialiser(frame);
 		}
 
 		public Set<IUpdateOp> reinitialiseFrame(
@@ -220,6 +218,17 @@ public abstract class RClientModel {
 
 		cModel = cBuilder.build();
 		iEditor = cBuilder.getIEditor();
+	}
+
+	/**
+	 * Performs required initialisations on instance-level frame/slot
+	 * network retrieved from store.
+	 *
+	 * @param rootFrame Root-frame of frame/slot network
+	 */
+	public void initialiseReloadedInstance(IFrame rootFrame) {
+
+		new ISlotInitialiser(rootFrame);
 	}
 
 	/**

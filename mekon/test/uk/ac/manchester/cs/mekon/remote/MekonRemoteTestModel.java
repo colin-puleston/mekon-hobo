@@ -48,7 +48,7 @@ public class MekonRemoteTestModel {
 			return server.performAction(request);
 		}
 
-		LocalXClientModel( ) {
+		LocalXClientModel() {
 
 			super(false);
 		}
@@ -61,9 +61,9 @@ public class MekonRemoteTestModel {
 			return server.performAction(request);
 		}
 
-		LocalXClientStore(CModel model) {
+		LocalXClientStore() {
 
-			super(model, false);
+			super(xClientModel, false);
 		}
 	}
 
@@ -79,8 +79,10 @@ public class MekonRemoteTestModel {
 		server = new XServer(serverModel);
 		server.setStore(serverStore);
 
-		clientModel = createClientModel();
-		clientStore = createClientStore();
+		XClientModel xClientModel = new LocalXClientModel().getCModel();
+
+		clientModel = xClientModel.getCModel();
+		clientStore = new LocalXClientStore(xClientModel).getIStore();
 	}
 
 	public IStore resetServerStore() {
@@ -93,15 +95,5 @@ public class MekonRemoteTestModel {
 		server.setStore(serverStore);
 
 		return serverStore;
-	}
-
-	private CModel createClientModel() {
-
-		return new LocalXClientModel().getCModel();
-	}
-
-	private IStore createClientStore() {
-
-		return new LocalXClientStore(clientModel).getIStore();
 	}
 }

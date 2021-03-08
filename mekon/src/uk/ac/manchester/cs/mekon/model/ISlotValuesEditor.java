@@ -37,7 +37,6 @@ import uk.ac.manchester.cs.mekon_util.*;
 public class ISlotValuesEditor {
 
 	private ISlotValues slotValues;
-	private boolean privilegedAccess;
 
 	/**
 	 * Adds the specified value to the "asserted" value-list, if
@@ -49,7 +48,7 @@ public class ISlotValuesEditor {
 	 */
 	public boolean add(IValue value) {
 
-		return slotValues.addAssertedValue(value, privilegedAccess);
+		return slotValues.addAssertedValue(value);
 	}
 
 	/**
@@ -63,7 +62,7 @@ public class ISlotValuesEditor {
 	 */
 	public List<IValue> addAll(Collection<? extends IValue> values) {
 
-		return slotValues.addAssertedValues(values, privilegedAccess);
+		return slotValues.addAssertedValues(values);
 	}
 
 	/**
@@ -130,12 +129,11 @@ public class ISlotValuesEditor {
 	 */
 	public void update(Collection<? extends IValue> latestValues) {
 
-		slotValues.updateAssertedValues(latestValues, privilegedAccess);
+		slotValues.updateAssertedValues(latestValues);
 	}
 
-	ISlotValuesEditor(ISlotValues slotValues, boolean privilegedAccess) {
+	ISlotValuesEditor(ISlotValues slotValues) {
 
 		this.slotValues = slotValues;
-		this.privilegedAccess = privilegedAccess;
 	}
 }
