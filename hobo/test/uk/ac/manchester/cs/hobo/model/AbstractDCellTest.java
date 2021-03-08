@@ -108,13 +108,13 @@ public abstract class AbstractDCellTest<SV, DV> extends DFieldTest {
 	private void testSourceCellValue(DCell<SV> cell, SV expectValue) {
 
 		assertTrue("Source-cell value should be set", cell.isSet());
-		assertEquals("Unexpected source-cell value", cell.get(), expectValue);
+		assertEquals("Unexpected source-cell value", expectValue, cell.get());
 	}
 
 	private void testDerivedCellValue(DCell<DV> cell, DV expectValue) {
 
 		assertTrue("Derived-cell value should be set", cell.isSet());
-		assertEquals("Unexpected derived-cell value", cell.get(), expectValue);
+		assertEquals("Unexpected derived-cell value", expectValue, cell.get());
 	}
 
 	private void testSlotValueViaSourceValue(DCell<SV> cell, SV expectValue) {
