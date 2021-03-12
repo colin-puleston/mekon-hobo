@@ -213,7 +213,7 @@ public class OBAnnotations {
 
 	void checkAnnotateFrame(CBuilder builder, CFrame frame, OWLEntity owlEntity) {
 
-		CAnnotationsEditor editor = getFrameAnnosEditor(builder, frame);
+		CAnnotationsEditor editor = builder.getFrameAnnotationsEditor(frame);
 
 		if (owlEntity instanceof OWLClass) {
 
@@ -227,19 +227,10 @@ public class OBAnnotations {
 
 	void checkAnnotateSlotSet(CBuilder builder, OWLProperty owlProperty) {
 
-		CAnnotationsEditor editor = getSlotAnnosEditor(builder, owlProperty);
+		CIdentity slotId = toSlotId(owlProperty);
+		CAnnotationsEditor editor = builder.getSlotAnnotationsEditor(slotId);
 
 		new PropertyAnnotationsWriter(editor).checkAnnotate(owlProperty);
-	}
-
-	private CAnnotationsEditor getFrameAnnosEditor(CBuilder builder, CFrame frame) {
-
-		return builder.getAnnotationsEditor(frame.getAnnotations());
-	}
-
-	private CAnnotationsEditor getSlotAnnosEditor(CBuilder builder, OWLProperty owlProperty) {
-
-		return builder.getSlotAnnotationsEditor(toSlotId(owlProperty));
 	}
 
 	private CIdentity toSlotId(OWLProperty owlProperty) {
