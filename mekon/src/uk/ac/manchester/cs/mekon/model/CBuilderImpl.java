@@ -167,9 +167,14 @@ class CBuilderImpl implements CBuilder {
 		return slot.createEditor();
 	}
 
-	public CAnnotationsEditor getAnnotationsEditor(CAnnotations annotations) {
+	public CAnnotationsEditor getModelAnnotationsEditor() {
 
-		return annotations.createEditor();
+		return model.getAnnotations().createEditor();
+	}
+
+	public CAnnotationsEditor getFrameAnnotationsEditor(CFrame frame) {
+
+		return frame.getAnnotations().createEditor();
 	}
 
 	public CAnnotationsEditor getSlotAnnotationsEditor(CIdentity slotId) {

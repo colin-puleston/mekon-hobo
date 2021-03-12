@@ -198,12 +198,19 @@ public interface CBuilder {
 	public CSlotEditor getSlotEditor(CSlot slot);
 
 	/**
-	 * Provides an editor for the specified annotations.
+	 * Provides an editor for annotations on the model itself.
 	 *
-	 * @param annotations Annotations for which editor is required
-	 * @return Editor for specified annotations
+	 * @return Editor for model annotations
 	 */
-	public CAnnotationsEditor getAnnotationsEditor(CAnnotations annotations);
+	public CAnnotationsEditor getModelAnnotationsEditor();
+
+	/**
+	 * Provides an editor for annotations on the specified frame.
+	 *
+	 * @param frame Frame for which editor is required
+	 * @return Editor for relevant frame annotations
+	 */
+	public CAnnotationsEditor getFrameAnnotationsEditor(CFrame frame);
 
 	/**
 	 * Provides an editor for annotations on the specified slot-set.
