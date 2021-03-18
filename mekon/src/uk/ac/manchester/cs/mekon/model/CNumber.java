@@ -95,7 +95,7 @@ public class CNumber extends CDataValue<INumber> {
 	/**
 	 * Provides the unconstrained version of this numeric value-type,
 	 * which will be a numeric value-type with the same number-type but no
-	 * minimnum or maximnum values.
+	 * minimum or maximum values.
 	 *
 	 * @return Unconstrained version of this numeric value-type
 	 */
@@ -165,7 +165,7 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
-	 * Specifies whether a minimnum value has been defined for the
+	 * Specifies whether a minimum value has been defined for the
 	 * numeric value-type.
 	 *
 	 * @return True if min value defined
@@ -176,7 +176,7 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
-	 * Specifies whether a maximnum value has been defined for the
+	 * Specifies whether a maximum value has been defined for the
 	 * numeric value-type.
 	 *
 	 * @return True if max value defined
@@ -187,11 +187,11 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
-	 * Provides the minimnum value for the numeric value-type (if no
-	 * minimnum value has been defined this will be
+	 * Provides the minimum value for the numeric value-type (if no
+	 * minimum value has been defined this will be
 	 * {@link INumber#MINUS_INFINITY}).
 	 *
-	 * @return Minimnum value for the numeric value-type
+	 * @return Minimum value for the numeric value-type
 	 */
 	public INumber getMin() {
 
@@ -199,11 +199,11 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
-	 * Provides the maximnum value for the numeric value-type (if no
-	 * maximnum value has been defined this will be
+	 * Provides the maximum value for the numeric value-type (if no
+	 * maximum value has been defined this will be
 	 * {@link INumber#PLUS_INFINITY}).
 	 *
-	 * @return Maximnum value for the numeric value-type
+	 * @return Maximum value for the numeric value-type
 	 */
 	public INumber getMax() {
 

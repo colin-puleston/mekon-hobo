@@ -74,8 +74,8 @@ public class CNumberFactory {
 	/**
 	 * Creates an integer value-type with the specified limits.
 	 *
-	 * @param min Minimnum value for integer value-type
-	 * @param max Maximnum value for integer value-type
+	 * @param min Minimum value for integer value-type
+	 * @param max Maximum value for integer value-type
 	 * @return Created integer value-type
 	 */
 	static public CNumber range(Integer min, Integer max) {
@@ -86,8 +86,8 @@ public class CNumberFactory {
 	/**
 	 * Creates a long value-type with the specified limits.
 	 *
-	 * @param min Minimnum value for long value-type
-	 * @param max Maximnum value for long value-type
+	 * @param min Minimum value for long value-type
+	 * @param max Maximum value for long value-type
 	 * @return Created long value-type
 	 */
 	static public CNumber range(Long min, Long max) {
@@ -98,8 +98,8 @@ public class CNumberFactory {
 	/**
 	 * Creates a float value-type with the specified limits.
 	 *
-	 * @param min Minimnum value for float value-type
-	 * @param max Maximnum value for float value-type
+	 * @param min Minimum value for float value-type
+	 * @param max Maximum value for float value-type
 	 * @return Created float value-type
 	 */
 	static public CNumber range(Float min, Float max) {
@@ -110,8 +110,8 @@ public class CNumberFactory {
 	/**
 	 * Creates a double value-type with the specified limits.
 	 *
-	 * @param min Minimnum value for double value-type
-	 * @param max Maximnum value for double value-type
+	 * @param min Minimum value for double value-type
+	 * @param max Maximum value for double value-type
 	 * @return Created double value-type
 	 */
 	static public CNumber range(Double min, Double max) {
@@ -127,11 +127,11 @@ public class CNumberFactory {
 	 * number-type. If both limits represent infinite values then an
 	 * exception will be thrown.
 	 *
-	 * @param min Minimnum value for value-type
-	 * @param max Maximnum value for value-type
+	 * @param min Minimum value for value-type
+	 * @param max Maximum value for value-type
 	 * @return Created value-type
-	 * @throws KModelException if minimnum value is greater than
-	 * maximnum  value, or if minimnum and maximnum values have
+	 * @throws KModelException if minimum value is greater than
+	 * maximum  value, or if minimum and maximum values have
 	 * incompatible number-types
 	 */
 	static public CNumber range(INumber min, INumber max) {
@@ -143,11 +143,11 @@ public class CNumberFactory {
 	 * Creates a numeric value-type with the specified limits.
 	 *
 	 * @param numberType Relevant number-type
-	 * @param min Minimnum value for value-type
-	 * @param max Maximnum value for value-type
+	 * @param min Minimum value for value-type
+	 * @param max Maximum value for value-type
 	 * @return Created value-type
-	 * @throws KModelException if minimnum value is greater than maximnum
-	 * value, or if minimnum or maximnum value does not have specified
+	 * @throws KModelException if minimum value is greater than maximum
+	 * value, or if minimum or maximum value does not have specified
 	 * number-type
 	 */
 	static public CNumber range(
@@ -164,7 +164,7 @@ public class CNumberFactory {
 	/**
 	 * Creates an integer value-type with the specified minimum value.
 	 *
-	 * @param min Minimnum value for integer value-type
+	 * @param min Minimum value for integer value-type
 	 * @return Created integer value-type
 	 */
 	static public CNumber min(Integer min) {
@@ -175,7 +175,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a long value-type with the specified minimum value.
 	 *
-	 * @param min Minimnum value for long value-type
+	 * @param min Minimum value for long value-type
 	 * @return Created long value-type
 	 */
 	static public CNumber min(Long min) {
@@ -186,7 +186,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a float value-type with the specified minimum value.
 	 *
-	 * @param min Minimnum value for float value-type
+	 * @param min Minimum value for float value-type
 	 * @return Created float value-type
 	 */
 	static public CNumber min(Float min) {
@@ -197,7 +197,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a double value-type with the specified minimum value.
 	 *
-	 * @param min Minimnum value for double value-type
+	 * @param min Minimum value for double value-type
 	 * @return Created double value-type
 	 */
 	static public CNumber min(Double min) {
@@ -208,7 +208,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a numeric value-type with the specified minimum value.
 	 *
-	 * @param min Minimnum value for value-type
+	 * @param min Minimum value for value-type
 	 * @return Created value-type
 	 */
 	static public CNumber min(INumber min) {
@@ -219,7 +219,7 @@ public class CNumberFactory {
 	/**
 	 * Creates an integer value-type with the specified maximum value.
 	 *
-	 * @param max Maximnum value for integer value-type
+	 * @param max Maximum value for integer value-type
 	 * @return Created integer value-type
 	 */
 	static public CNumber max(Integer max) {
@@ -230,7 +230,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a long value-type with the specified maximum value.
 	 *
-	 * @param max Maximnum value for long value-type
+	 * @param max Maximum value for long value-type
 	 * @return Created long value-type
 	 */
 	static public CNumber max(Long max) {
@@ -241,7 +241,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a float value-type with the specified maximum value.
 	 *
-	 * @param max Maximnum value for float value-type
+	 * @param max Maximum value for float value-type
 	 * @return Created float value-type
 	 */
 	static public CNumber max(Float max) {
@@ -252,7 +252,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a double value-type with the specified maximum value.
 	 *
-	 * @param max Maximnum value for double value-type
+	 * @param max Maximum value for double value-type
 	 * @return Created double value-type
 	 */
 	static public CNumber max(Double max) {
@@ -263,7 +263,7 @@ public class CNumberFactory {
 	/**
 	 * Creates a numeric value-type with the specified maximum value.
 	 *
-	 * @param max Maximnum value for value-type
+	 * @param max Maximum value for value-type
 	 * @return Created value-type
 	 */
 	static public CNumber max(INumber max) {

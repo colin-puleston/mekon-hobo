@@ -54,11 +54,11 @@ public class INumber extends IDataValue {
 	 * are equal then the constructed object will represent an {@link
 	 * INumber#indefinite} value.
 	 *
-	 * @param min Minimnum value
-	 * @param max Maximnum value
+	 * @param min Minimum value
+	 * @param max Maximum value
 	 * @return Constructed object representing required range
-	 * @throws KModelException if minimnum value is greater than
-	 * maximnum  value, or if minimnum and maximnum values have
+	 * @throws KModelException if minimum value is greater than
+	 * maximum  value, or if minimum and maximum values have
 	 * incompatible number-types
 	 */
 	static public INumber range(INumber min, INumber max) {
