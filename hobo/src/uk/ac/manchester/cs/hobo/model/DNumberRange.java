@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.model;
 
+import uk.ac.manchester.cs.hobo.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 
@@ -61,8 +63,8 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a integer-range with the specified limits.
 	 *
-	 * @param min Minimnum value for range
-	 * @param max Maximnum value for range
+	 * @param min Minimum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Integer> range(Integer min, Integer max) {
@@ -73,8 +75,8 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a long-range with the specified limits.
 	 *
-	 * @param min Minimnum value for range
-	 * @param max Maximnum value for range
+	 * @param min Minimum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Long> range(Long min, Long max) {
@@ -85,8 +87,8 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a float-range with the specified limits.
 	 *
-	 * @param min Minimnum value for range
-	 * @param max Maximnum value for range
+	 * @param min Minimum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Float> range(Float min, Float max) {
@@ -97,8 +99,8 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a double-range with the specified limits.
 	 *
-	 * @param min Minimnum value for range
-	 * @param max Maximnum value for range
+	 * @param min Minimum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Double> range(Double min, Double max) {
@@ -109,7 +111,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a integer-range with the specified minimum value.
 	 *
-	 * @param min Minimnum value for range
+	 * @param min Minimum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Integer> min(Integer min) {
@@ -120,7 +122,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a long-range with the specified minimum value.
 	 *
-	 * @param min Minimnum value for range
+	 * @param min Minimum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Long> min(Long min) {
@@ -132,7 +134,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a float-range with the specified minimum value.
 	 *
-	 * @param min Minimnum value for range
+	 * @param min Minimum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Float> min(Float min) {
@@ -144,7 +146,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a double-range with the specified minimum value.
 	 *
-	 * @param min Minimnum value for range
+	 * @param min Minimum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Double> min(Double min) {
@@ -155,7 +157,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a integer-range with the specified maximum value.
 	 *
-	 * @param max Maximnum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Integer> max(Integer max) {
@@ -166,7 +168,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a long-range with the specified maximum value.
 	 *
-	 * @param max Maximnum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Long> max(Long max) {
@@ -177,7 +179,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a float-range with the specified maximum value.
 	 *
-	 * @param max Maximnum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Float> max(Float max) {
@@ -188,7 +190,7 @@ public class DNumberRange<N extends Number> {
 	/**
 	 * Creates a double-range with the specified maximum value.
 	 *
-	 * @param max Maximnum value for range
+	 * @param max Maximum value for range
 	 * @return Created range
 	 */
 	static public DNumberRange<Double> max(Double max) {
@@ -264,6 +266,28 @@ public class DNumberRange<N extends Number> {
 	private CNumber cNumber;
 
 	/**
+	 * Constructs range from the Frames Model (FM) representation.
+	 *
+	 * @param numberType Primitive Java <code>Number</code> type for
+	 * range
+	 * @param cNumber FM representation of range
+	 * @throws HAccessException if specified number-type and number-type
+	 * from specified FM range not equal
+	 */
+	public DNumberRange(Class<N> numberType, CNumber cNumber) {
+
+		this.numberType = numberType;
+		this.cNumber = cNumber;
+
+		if (cNumber.getNumberType() != numberType) {
+
+			throw new HAccessException(
+						"CNumber number-type does not equal "
+						+ "specified number-type");
+		}
+	}
+
+	/**
 	 * Tests for equality between this and other specified object.
 	 *
 	 * @param other Object to test for equality with this one
@@ -307,7 +331,11 @@ public class DNumberRange<N extends Number> {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Provides a description of the range, intended to provide
+	 * information to the software developer, and not suitable for
+	 * displaying to an end-user.
+	 *
+	 * @return Development-level description of range
 	 */
 	public String toString() {
 
@@ -315,7 +343,29 @@ public class DNumberRange<N extends Number> {
 	}
 
 	/**
-	 * Specifies whether a minimnum value is defined.
+	 * Provides a label for the range, suitable for displaying to
+	 * an end-user.
+	 *
+	 * @return Display-label for range
+	 */
+	public String getDisplayLabel() {
+
+		return cNumber.getDisplayLabel();
+	}
+
+	/**
+	 * Specifies whether object represents an exact value, with equal
+	 * min and max values.
+	 *
+	 * @return True if exact value
+	 */
+	public boolean exactValue() {
+
+		return cNumber.exactValue();
+	}
+
+	/**
+	 * Specifies whether a minimum value is defined.
 	 *
 	 * @return True if min value defined
 	 */
@@ -325,7 +375,7 @@ public class DNumberRange<N extends Number> {
 	}
 
 	/**
-	 * Specifies whether a maximnum value is defined.
+	 * Specifies whether a maximum value is defined.
 	 *
 	 * @return True if max value defined
 	 */
@@ -335,9 +385,25 @@ public class DNumberRange<N extends Number> {
 	}
 
 	/**
-	 * Provides the minimnum value, if defined.
+	 * Provides the exact value defined by the object, if applicable.
 	 *
-	 * @return Minimnum value, or null in not defined
+	 * @return Exact value
+	 * @throws HAccessException if not an exact value
+	 */
+	public N getExactValue() {
+
+		if (exactValue()) {
+
+			return getMin();
+		}
+
+		throw new HAccessException("Range-value not an exact value: " + this);
+	}
+
+	/**
+	 * Provides the minimum value, if defined.
+	 *
+	 * @return Minimum value, or null in not defined
 	 */
 	public N getMin() {
 
@@ -345,9 +411,9 @@ public class DNumberRange<N extends Number> {
 	}
 
 	/**
-	 * Provides the maximnum value, if defined.
+	 * Provides the maximum value, if defined.
 	 *
-	 * @return Maximnum value, or null in not defined
+	 * @return Maximum value, or null in not defined
 	 */
 	public N getMax() {
 
@@ -362,12 +428,6 @@ public class DNumberRange<N extends Number> {
 	public CNumber asCNumber() {
 
 		return cNumber;
-	}
-
-	DNumberRange(Class<N> numberType, CNumber cNumber) {
-
-		this.numberType = numberType;
-		this.cNumber = cNumber;
 	}
 
 	private N toLimitValue(INumber iValue) {
