@@ -94,7 +94,7 @@ class IRelaxedInstantiatorImpl extends IRelaxedInstantiator {
 
 		slotType.setSource(source);
 		slotType.setActivation(activation);
-		slotType.setAssertionsEditability(editability);
+		slotType.setAllEditability(editability);
 
 		return container.addSlotInternal(slotType);
 	}

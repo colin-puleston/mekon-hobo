@@ -150,7 +150,6 @@ class IReference extends IFrame {
 		slotType = slotType.copy();
 
 		slotType.setActivation(CActivation.INACTIVE);
-		slotType.setAssertionsEditability(IEditability.NONE);
 
 		return slotType;
 	}
