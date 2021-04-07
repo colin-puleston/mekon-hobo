@@ -41,8 +41,8 @@ class Descriptor {
 
 	private ISlot slot;
 	private CValue<?> valueType;
-	private IValue value;
-	private boolean hasInferredValue;
+	private IValue value = null;
+	private boolean hasInferredValue = false;
 
 	public boolean equals(Object other) {
 
@@ -58,14 +58,21 @@ class Descriptor {
 		return slot.hashCode() + valueType.hashCode() + getStateMatcher().hashCode();
 	}
 
-	Descriptor(Instantiator instantiator, ISlot slot, IValue value) {
+	Descriptor(Instantiator instantiator, ISlot slot) {
 
 		this.instantiator = instantiator;
 		this.slot = slot;
-		this.value = value;
 
 		valueType = slot.getValueType();
-		hasInferredValue = hasValue() && reasonerProvidedValue();
+	}
+
+	Descriptor(Instantiator instantiator, ISlot slot, IValue value) {
+
+		this(instantiator, slot);
+
+		this.value = value;
+
+		hasInferredValue = slot.getValues().getFixedValues().contains(value);
 	}
 
 	ISlot getSlot() {
@@ -212,11 +219,6 @@ class Descriptor {
 	private String getAtomicValueLabel(IValue atomicValue) {
 
 		return getCustomiser().getValueDisplayLabel(atomicValue);
-	}
-
-	private boolean reasonerProvidedValue() {
-
-		return slot.getValues().getFixedValues().contains(value);
 	}
 
 	private IFrame checkForIFrameValue(IFrameCategory category) {

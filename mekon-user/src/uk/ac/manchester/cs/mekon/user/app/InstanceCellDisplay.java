@@ -36,11 +36,11 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 abstract class InstanceCellDisplay {
 
-	static private final String QUERY_ROOT_SEMANTICS_PREFIX = "FIND ALL instances of";
-	static private final String OR_SEMANTICS_PREFIX = "OR";
-
-	static private final String SINGLE_SLOT_SEMANTICS_SUFFIX = "with value...";
-	static private final String MULTI_SLOT_SEMANTICS_SUFFIX = "with ALL values...";
+	static private final String SEMANTICS_START_PREFIX = "FIND ALL INSTANCES OF";
+	static private final String SEMANTICS_AND_START_PREFIX = "WITH";
+	static private final String SEMANTICS_AND_CONTINUE_PREFIX = " AND";
+	static private final String SEMANTICS_OR_PREFIX = "OR";
+	static private final String SEMANTICS_MODIFIERS_INTRO_SUFFIX = ">>";
 
 	static private final int VALUE_FONT_STYLE = Font.BOLD;
 	static private final Color SEMANTICS_TEXT_COLOR = Color.GREEN.darker().darker();
@@ -84,7 +84,7 @@ abstract class InstanceCellDisplay {
 			}
 			else {
 
-				display.addModifier(createSemanticsComponent(OR_SEMANTICS_PREFIX));
+				display.addModifier(createSemanticsComponent(SEMANTICS_OR_PREFIX));
 				display.addModifier(createForValue(label));
 			}
 		}
@@ -101,8 +101,8 @@ abstract class InstanceCellDisplay {
 
 	private GCellDisplay addQuerySemantics(GCellDisplay display) {
 
-		String prefix = getQueryPrefix();
-		String suffix = getQuerySuffix();
+		String prefix = getQuerySemanticsLinePrefixOrNull();
+		String suffix = getQuerySemanticsLineSuffixOrNull();
 
 		if (prefix != null) {
 
@@ -129,26 +129,29 @@ abstract class InstanceCellDisplay {
 		return display;
 	}
 
-	private String getQueryPrefix() {
+	private String getQuerySemanticsLinePrefixOrNull() {
 
-		return node.isRootNode() && !instanceSubSection() ? QUERY_ROOT_SEMANTICS_PREFIX : null;
+		if (node.isRootNode()) {
+
+			if (instanceSubSection()) {
+
+				return null;
+			}
+
+			return SEMANTICS_START_PREFIX;
+		}
+
+		if (node.indexInSiblings() == 0) {
+
+			return SEMANTICS_AND_START_PREFIX;
+		}
+
+		return SEMANTICS_AND_CONTINUE_PREFIX;
 	}
 
-	private String getQuerySuffix() {
+	private String getQuerySemanticsLineSuffixOrNull() {
 
-		int childCount = node.getChildCount();
-
-		if (childCount == 0) {
-
-			return null;
-		}
-
-		if (childCount == 1) {
-
-			return SINGLE_SLOT_SEMANTICS_SUFFIX;
-		}
-
-		return MULTI_SLOT_SEMANTICS_SUFFIX;
+		return node.getChildCount() != 0 ? SEMANTICS_MODIFIERS_INTRO_SUFFIX : null;
 	}
 
 	private boolean instanceSubSection() {

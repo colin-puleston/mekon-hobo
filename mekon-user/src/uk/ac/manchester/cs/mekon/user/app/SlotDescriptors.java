@@ -51,18 +51,14 @@ class SlotDescriptors {
 			populatedMultiValueSlot = multiValueSlot() && slotHasValues();
 
 			addForCurrentValues();
-
-			if (valueEntryDescriptorRequired()) {
-
-				addForValueEntry();
-			}
+			checkAddForValueEntry();
 		}
 
 		private void addForCurrentValues() {
 
 			for (IValue value : slot.getValues().asList()) {
 
-				Descriptor descriptor = createForValue(value);
+				Descriptor descriptor = new Descriptor(instantiator, slot, value);
 
 				if (!viewOnly || descriptor.anyEffectiveValues()) {
 
@@ -71,14 +67,12 @@ class SlotDescriptors {
 			}
 		}
 
-		private void addForValueEntry() {
+		private void checkAddForValueEntry() {
 
-			descriptors.add(createForValue(null));
-		}
+			if (valueEntryDescriptorRequired()) {
 
-		private Descriptor createForValue(IValue value) {
-
-			return new Descriptor(instantiator, slot, value);
+				descriptors.add(new Descriptor(instantiator, slot));
+			}
 		}
 
 		private boolean valueEntryDescriptorRequired() {
