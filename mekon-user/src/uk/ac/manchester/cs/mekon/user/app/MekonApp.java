@@ -85,7 +85,7 @@ public class MekonApp extends GFrame {
 	private CModel model;
 
 	private IStore centralStore;
-	private IStore localQueriesStore = null;
+	private IStore localQueryStore = null;
 
 	private List<InstanceGroupSpec> instanceGroupSpecs = new ArrayList<InstanceGroupSpec>();
 
@@ -145,9 +145,9 @@ public class MekonApp extends GFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
-	public void setLocalQueriesStore(IStore localQueriesStore) {
+	public void setLocalQueryStore(IStore localQueryStore) {
 
-		this.localQueriesStore = localQueriesStore;
+		this.localQueryStore = localQueryStore;
 	}
 
 	public void setCustomiser(Customiser customiser) {
@@ -160,14 +160,14 @@ public class MekonApp extends GFrame {
 		new StoreRegenCheckInvoker(centralStore);
 	}
 
-	public void enableLocalQueriesStoreRegenChecks() {
+	public void enableLocalQueryStoreRegenChecks() {
 
-		if (localQueriesStore == null) {
+		if (localQueryStore == null) {
 
-			throw new RuntimeException("Local-queries store has not been set!");
+			throw new RuntimeException("Local-query store has not been set!");
 		}
 
-		new StoreRegenCheckInvoker(localQueriesStore);
+		new StoreRegenCheckInvoker(localQueryStore);
 	}
 
 	public void configureFromFile() {
@@ -244,9 +244,9 @@ public class MekonApp extends GFrame {
 
 		Controller controller = new Controller(wrapStore(centralStore), customiser);
 
-		if (localQueriesStore != null) {
+		if (localQueryStore != null) {
 
-			controller.setLocalQueriesStore(wrapStore(localQueriesStore));
+			controller.setLocalQueryStore(wrapStore(localQueryStore));
 		}
 
 		return controller;
@@ -254,7 +254,7 @@ public class MekonApp extends GFrame {
 
 	private Customiser createDefaultCustomiser() {
 
-		return new DefaultCustomiser(centralStore, localQueriesStore);
+		return new DefaultCustomiser(centralStore, localQueryStore);
 	}
 
 	private Store wrapStore(IStore iStore) {

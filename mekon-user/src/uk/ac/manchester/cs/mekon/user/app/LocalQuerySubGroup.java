@@ -53,7 +53,7 @@ class LocalQuerySubGroup extends QuerySubGroup {
 
 	Store getTargetStore() {
 
-		return getGroup().getController().getLocalQueriesStore();
+		return getGroup().getController().getLocalQueryStore();
 	}
 
 	boolean instanceCreationEnabled() {

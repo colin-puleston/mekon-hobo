@@ -106,11 +106,11 @@ public class DefaultCustomiser implements Customiser {
 		this(centralStore, null);
 	}
 
-	protected DefaultCustomiser(IStore centralStore, IStore localQueriesStore) {
+	protected DefaultCustomiser(IStore centralStore, IStore localQueryStore) {
 
 		assertionNameDefaults = new StandardAssertionNameDefaults(centralStore, this);
 		centralQueryNameDefaults = new StandardQueryNameDefaults(centralStore, this, false);
-		localQueryNameDefaults = new StandardQueryNameDefaults(localQueriesStore, this, true);
+		localQueryNameDefaults = new StandardQueryNameDefaults(localQueryStore, this, true);
 	}
 
 	private String getDisjunctionFrameDisplayLabel(IFrame disjunction) {

@@ -63,7 +63,7 @@ class InstanceGroup {
 		assertionSubGroup = new AssertionSubGroup(this);
 		centralQuerySubGroup = new CentralQuerySubGroup(this);
 
-		if (controller.isLocalQueriesStore()) {
+		if (controller.isLocalQueryStore()) {
 
 			localQuerySubGroup = new LocalQuerySubGroup(this, centralQuerySubGroup);
 		}

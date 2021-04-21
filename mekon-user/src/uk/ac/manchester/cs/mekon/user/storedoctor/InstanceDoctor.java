@@ -150,6 +150,7 @@ public class InstanceDoctor {
 
 		Reporter.startReport(storeDir);
 
+		doctoredInstanceCount = 0;
 		checkDoctorInstances(new StoreFiles(storeDir));
 
 		Reporter.endReport(storeDir, doctoredInstanceCount);
