@@ -48,11 +48,11 @@ public class MekonStoreDoctor {
 		}
 	}
 
-	static private MekonStoreDoctor createFromConfig(File configFile) {
+	static public MekonStoreDoctor createFromConfig(File configFile) {
 
 		MekonStoreDoctor doctor = new MekonStoreDoctor();
 
-		new ConfigFileParser(doctor, configFile);
+		doctor.readConfigFile(configFile);
 
 		return doctor;
 	}
@@ -96,8 +96,11 @@ public class MekonStoreDoctor {
 	public MekonStoreDoctor(File storeDir) {
 
 		this.storeDir = storeDir;
+	}
 
-		run();
+	public void readConfigFile(File configFile) {
+
+		new ConfigFileParser(this, configFile);
 	}
 
 	public void setIncludeSubDirs(boolean include) {
@@ -120,15 +123,7 @@ public class MekonStoreDoctor {
 		instanceDoctor.addEntityDoctor(entityDoctor);
 	}
 
-	void setStoreDir(File storeDir) {
-
-		this.storeDir = storeDir;
-	}
-
-	private MekonStoreDoctor() {
-	}
-
-	private void run() {
+	public void run() {
 
 		if (model != null) {
 
@@ -147,6 +142,14 @@ public class MekonStoreDoctor {
 				}
 			}
 		}
+	}
+
+	void setStoreDir(File storeDir) {
+
+		this.storeDir = storeDir;
+	}
+
+	private MekonStoreDoctor() {
 	}
 
 	private boolean checkConfigFile() {
