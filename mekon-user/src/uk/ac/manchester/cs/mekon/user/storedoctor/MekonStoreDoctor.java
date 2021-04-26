@@ -43,18 +43,9 @@ public class MekonStoreDoctor {
 
 			if (checkConfigFile(configFile)) {
 
-				createFromConfig(configFile).run();
+				new MekonStoreDoctor(configFile).run();
 			}
 		}
-	}
-
-	static public MekonStoreDoctor createFromConfig(File configFile) {
-
-		MekonStoreDoctor doctor = new MekonStoreDoctor();
-
-		doctor.readConfigFile(configFile);
-
-		return doctor;
 	}
 
 	static private File lookForConfigFileArg(String[] args) {
@@ -93,14 +84,15 @@ public class MekonStoreDoctor {
 
 	private InstanceDoctor instanceDoctor = new InstanceDoctor();
 
-	public MekonStoreDoctor(File storeDir) {
-
-		this.storeDir = storeDir;
-	}
-
-	public void readConfigFile(File configFile) {
+	public MekonStoreDoctor(File configFile) {
 
 		new ConfigFileParser(this, configFile);
+	}
+
+	public MekonStoreDoctor(File storeDir, boolean includeSubDirs) {
+
+		this.storeDir = storeDir;
+		this.includeSubDirs = includeSubDirs;
 	}
 
 	public void setIncludeSubDirs(boolean include) {
@@ -147,9 +139,6 @@ public class MekonStoreDoctor {
 	void setStoreDir(File storeDir) {
 
 		this.storeDir = storeDir;
-	}
-
-	private MekonStoreDoctor() {
 	}
 
 	private boolean checkConfigFile() {
