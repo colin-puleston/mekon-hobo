@@ -160,11 +160,9 @@ public abstract class GNode extends GMutableTreeNode {
 
 				child.checkExpanded();
 			}
-
-			tree.updateAllNodeDisplays();
 		}
 
-		tree.registerNodeAdded(child);
+		tree.registerNodeAdded(child, initialised);
 	}
 
 	public void clearChildren() {
@@ -441,7 +439,6 @@ public abstract class GNode extends GMutableTreeNode {
 
 		getTreeModel().nodesWereRemoved(this, oldIndex, oldChild);
 
-		tree.updateAllNodeDisplays();
 		tree.registerNodeRemoved(child);
 	}
 

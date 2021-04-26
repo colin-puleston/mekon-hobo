@@ -41,6 +41,8 @@ public class GTree extends JTree {
 
 	private List<GTreeListener> treeListeners = new ArrayList<GTreeListener>();
 
+	private boolean doingCompoundUpdate = false;
+
 	public GTree(boolean multiSelect) {
 
 		getSelectionModel().setSelectionMode(getSelectionMode(multiSelect));
@@ -102,6 +104,18 @@ public class GTree extends JTree {
 		}
 	}
 
+	public void startCompoundUpdate() {
+
+		doingCompoundUpdate = true;
+	}
+
+	public void endCompoundUpdate() {
+
+		doingCompoundUpdate = false;
+
+		updateAllNodeDisplays();
+	}
+
 	public void updateAllNodeDisplays() {
 
 		rootNode.updateSubTreeNodeDisplays();
@@ -140,7 +154,12 @@ public class GTree extends JTree {
 		return nodes;
 	}
 
-	void registerNodeAdded(GNode node) {
+	void registerNodeAdded(GNode node, boolean parentInitialised) {
+
+		if (parentInitialised) {
+
+			checkDisplayUpdateOnNodeChange();
+		}
 
 		for (GTreeListener listener : copyTreeListeners()) {
 
@@ -149,6 +168,8 @@ public class GTree extends JTree {
 	}
 
 	void registerNodeRemoved(GNode node) {
+
+		checkDisplayUpdateOnNodeChange();
 
 		for (GTreeListener listener : copyTreeListeners()) {
 
@@ -159,6 +180,14 @@ public class GTree extends JTree {
 	DefaultTreeModel getTreeModel() {
 
 		return treeModel;
+	}
+
+	private void checkDisplayUpdateOnNodeChange() {
+
+		if (!doingCompoundUpdate) {
+
+			updateAllNodeDisplays();
+		}
 	}
 
 	private TreePath[] getTreePaths(Collection<? extends GNode> nodes) {
