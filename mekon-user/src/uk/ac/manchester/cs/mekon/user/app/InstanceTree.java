@@ -44,6 +44,7 @@ class InstanceTree extends GActionTree {
 	private boolean instanceSubSection;
 
 	private InstanceDisplayMode mode;
+	private boolean updatingTree = false;
 
 	private class MouseLocator extends MouseMotionAdapter {
 
@@ -134,12 +135,21 @@ class InstanceTree extends GActionTree {
 		return instantiator;
 	}
 
+	boolean updatingTree() {
+
+		return updatingTree;
+	}
+
 	private void updateTree() {
+
+		updatingTree = true;
+		startCompoundUpdate();
 
 		rootNode.updateFrom();
 		rootNode.expand();
 
-		updateAllNodeDisplays();
+		updatingTree = false;
+		endCompoundUpdate();
 	}
 
 	private boolean instanceSubSection(IFrame rootFrame) {

@@ -122,22 +122,22 @@ class DescriptorChildNodes {
 
 		public void onUpdatedValueType(CValue<?> valueType) {
 
-			new Updater();
+			checkRelayUpdate();
 		}
 
 		public void onUpdatedCardinality(CCardinality cardinality) {
 
-			new Updater();
+			checkRelayUpdate();
 		}
 
 		public void onUpdatedActivation(CActivation activation) {
 
-			new Updater();
+			checkRelayUpdate();
 		}
 
 		public void onUpdatedEditability(CEditability editability) {
 
-			new Updater();
+			checkRelayUpdate();
 		}
 
 		void addTo(ISlot slot) {
@@ -165,7 +165,7 @@ class DescriptorChildNodes {
 
 		public void onUpdated() {
 
-			new Updater();
+			checkRelayUpdate();
 		}
 
 		ValueUpdateRelayer(IFrame container) {
@@ -213,6 +213,14 @@ class DescriptorChildNodes {
 	void onChildrenInitialised() {
 
 		arrayNodeReplacements.checkReplace();
+	}
+
+	private void checkRelayUpdate() {
+
+		if (!parentNode.getInstanceTree().updatingTree()) {
+
+			new Updater();
+		}
 	}
 
 	private void addChild(SlotDescriptors slotDescriptors, int index) {
