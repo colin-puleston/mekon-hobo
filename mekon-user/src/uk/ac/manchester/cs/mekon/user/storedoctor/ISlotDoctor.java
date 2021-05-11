@@ -264,12 +264,28 @@ public class ISlotDoctor extends EntityDoctor {
 
 	private boolean containerIdMatch(XNode slotNode) {
 
-		return containerIds.contains(getContainerId(slotNode));
+		XNode containerTypeNode = getContainerTypeNode(slotNode);
+		String containerId = lookForId(containerTypeNode);
+
+		if (containerId != null) {
+
+			return containerIds.contains(containerId);
+		}
+
+		return containerTypeDisjunctIdsMatch(containerTypeNode);
 	}
 
-	private String getContainerId(XNode slotNode) {
+	private boolean containerTypeDisjunctIdsMatch(XNode containerTypeNode) {
 
-		return getId(getContainerTypeNode(slotNode));
+		for (XNode disjunctNode : containerTypeNode.getChildren(CFRAME_ID)) {
+
+			if (!containerIds.contains(getId(disjunctNode))) {
+
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private XNode getContainerTypeNode(XNode slotNode) {
