@@ -56,43 +56,39 @@ public class KLabel {
 
 		StringBuilder label = new StringBuilder();
 
-		label.append(name.charAt(0));
+		for (int i = 0 ; i < name.length() ; i++) {
 
-		for (int i = 1 ; i < name.length() ; i++) {
+			Character c = name.charAt(i);
+			Character p = getPreviousOrNull(name, i);
+			Character n = getNextOrNull(name, i);
 
-			char c = name.charAt(i);
-
-			if (Character.isUpperCase(c)) {
-
-				if (nonUpperCase(name, i - 1) || nonUpperCaseOrDigit(name, i + 1)) {
-
-					label.append(' ');
-
-					if (!isUpperCase(name, i + 1)) {
-
-						c = Character.toLowerCase(c);
-					}
-				}
+			if (lowerCase(c) || dash(c) || dash(p) || underscore(p)) {
 
 				label.append(c);
 			}
-			else if (Character.isDigit(c)) {
+			else if (underscore(c)) {
 
-				if (nonDigit(name, i - 1)) {
+				label.append(' ');
+			}
+			else if (lowerCase(p)) {
 
-					label.append(' ');
+				label.append(' ');
+
+				if (lowerCase(n)) {
+
+					c = Character.toLowerCase(c);
 				}
 
 				label.append(c);
-
-				if (nonDigit(name, i + 1) && nonUpperCase(name, i + 1)) {
-
-					label.append(' ');
-				}
 			}
 			else {
 
 				label.append(c);
+
+				if (lowerCase(n) && (upperCase(p) || digit(p))) {
+
+					label.append(' ');
+				}
 			}
 		}
 
@@ -122,23 +118,38 @@ public class KLabel {
 		return name.toString();
 	}
 
-	static private boolean isUpperCase(String name, int i) {
+	static private Character getPreviousOrNull(String name, int i) {
 
-		return i < name.length() && Character.isUpperCase(name.charAt(i));
+		return i > 0 ? name.charAt(i - 1) : null;
 	}
 
-	static private boolean nonUpperCaseOrDigit(String name, int i) {
+	static private Character getNextOrNull(String name, int i) {
 
-		return nonUpperCase(name, i) && nonDigit(name, i);
+		return i < name.length() - 1 ? name.charAt(i + 1) : null;
 	}
 
-	static private boolean nonUpperCase(String name, int i) {
+	static private boolean lowerCase(Character c) {
 
-		return i < name.length() && !Character.isUpperCase(name.charAt(i));
+		return c != null && Character.isLowerCase(c);
 	}
 
-	static private boolean nonDigit(String name, int i) {
+	static private boolean upperCase(Character c) {
 
-		return i < name.length() && !Character.isDigit(name.charAt(i));
+		return c != null && Character.isUpperCase(c);
+	}
+
+	static private boolean digit(Character c) {
+
+		return c != null && Character.isDigit(c);
+	}
+
+	static private boolean dash(Character c) {
+
+		return c != null && c == '-';
+	}
+
+	static private boolean underscore(Character c) {
+
+		return c != null && c == '_';
 	}
 }
