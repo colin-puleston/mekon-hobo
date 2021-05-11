@@ -195,15 +195,7 @@ public class ISlot implements IEntity {
 	 */
 	public ISlotValuesEditor getValuesEditor() {
 
-		checkExternalValuesEditorAccess(
-			type.getActivation().active(),
-			"inactive");
-
-		checkExternalValuesEditorAccess(
-			getEditability().editable(),
-			"non-editable");
-
-		return new ISlotValuesEditor(values);
+		return getValuesEditor(false);
 	}
 
 	ISlot(CSlot type, IFrame container) {
@@ -217,7 +209,18 @@ public class ISlot implements IEntity {
 		return new Editor();
 	}
 
-	ISlotValuesEditor getPrivilegedAccessValuesEditor() {
+	ISlotValuesEditor getValuesEditor(boolean internalEdit) {
+
+		checkExternalValuesEditorAccess(
+			type.getActivation().active(),
+			"inactive");
+
+		if (!internalEdit) {
+
+			checkExternalValuesEditorAccess(
+				getEditability().editable(),
+				"non-editable");
+		}
 
 		return new ISlotValuesEditor(values);
 	}

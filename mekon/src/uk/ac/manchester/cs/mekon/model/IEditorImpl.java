@@ -47,7 +47,7 @@ class IEditorImpl implements IEditor {
 
 	public ISlotValuesEditor getSlotValuesEditor(ISlot slot) {
 
-		return slot.getPrivilegedAccessValuesEditor();
+		return slot.getValuesEditor(true);
 	}
 
 	public CFrame getDynamicFrameSlotValueType(CFrame superType, List<CFrame> subTypes) {
