@@ -329,7 +329,7 @@ public class OBSectionBuilder implements CSectionBuilder {
 
 		for (OBAtomicFrame frame : frames.getAll()) {
 
-			frame.ensureCStructure(builder, annotations);
+			frame.ensureCFrame(builder, annotations);
 		}
 	}
 

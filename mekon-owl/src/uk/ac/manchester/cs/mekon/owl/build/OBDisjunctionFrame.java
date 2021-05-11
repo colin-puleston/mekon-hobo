@@ -43,10 +43,18 @@ class OBDisjunctionFrame extends OBFrame {
 
 	boolean canBeSlotValueType() {
 
+		for (OBAtomicFrame disjunct : disjuncts) {
+
+			if (!disjunct.canBeSlotValueType()) {
+
+				return false;
+			}
+		}
+
 		return true;
 	}
 
-	boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed) {
+	boolean canHaveFixedSlotValuesIfTopLevelValueType() {
 
 		return false;
 	}
@@ -64,13 +72,13 @@ class OBDisjunctionFrame extends OBFrame {
 		return false;
 	}
 
-	CFrame ensureCStructure(CBuilder builder, OBAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
 		List<CFrame> cDisjuncts = new ArrayList<CFrame>();
 
 		for (OBAtomicFrame disjunct : disjuncts) {
 
-			cDisjuncts.add(disjunct.ensureCStructure(builder, annotations));
+			cDisjuncts.add(disjunct.ensureCFrame(builder, annotations));
 		}
 
 		return CFrame.resolveDisjunction(cDisjuncts);

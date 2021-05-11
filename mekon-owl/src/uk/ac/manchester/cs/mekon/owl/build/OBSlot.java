@@ -43,7 +43,6 @@ class OBSlot extends OIdentified {
 		private CBuilder builder;
 		private OBSlot topLevelSlot;
 		private OBAnnotations annotations;
-		private CValue<?> cValue = null;
 
 		CStructureCreator(CBuilder builder, OBSlot topLevelSlot, OBAnnotations annotations) {
 
@@ -63,7 +62,7 @@ class OBSlot extends OIdentified {
 			}
 			else {
 
-				if (valueTypeCanProvideFixedValue()) {
+				if (topLevelSlot.valueType.canHaveFixedSlotValuesIfTopLevelValueType()) {
 
 					addSlotValue(container);
 				}
@@ -72,7 +71,7 @@ class OBSlot extends OIdentified {
 
 		void create(CExtender container) {
 
-			container.addSlotValue(getIdentity(), getCValue());
+			container.addSlotValue(getIdentity(), ensureCValue());
 		}
 
 		private void addOrUpdateSlot(CFrame container) {
@@ -89,50 +88,14 @@ class OBSlot extends OIdentified {
 
 		private CSlot addSlot(CFrame container) {
 
-			return getEditor(container).addSlot(getIdentity(), getCValue(), getCardinality());
+			CCardinality cardinality = topLevelSlot.getCardinalityIfTopLevelSlot();
+
+			return getEditor(container).addSlot(getIdentity(), ensureCValue(), cardinality);
 		}
 
 		private void addSlotValue(CFrame container) {
 
-			getEditor(container).addSlotValue(getIdentity(), getCValue());
-		}
-
-		private void absorbSlotOverrides(CSlot slot) {
-
-			OBPropertyAttributes propAttrs = spec.getPropertyAttributes();
-
-			CCardinality cardOverride = propAttrs.getSlotCardinality();
-			IEditability aEditOverride = propAttrs.getSlotAssertionsEditability();
-			IEditability qEditOverride = propAttrs.getSlotQueriesEditability();
-
-			CSlotEditor slotEd = builder.getSlotEditor(slot);
-
-			slotEd.absorbCardinality(cardOverride);
-			slotEd.absorbAssertionsEditability(aEditOverride);
-			slotEd.absorbQueriesEditability(qEditOverride);
-		}
-
-		private boolean valueTypeCanProvideFixedValue() {
-
-			return valueType
-					.canBeFixedSlotValue(
-						getCValue(),
-						valueStructureAllowed());
-		}
-
-		private CCardinality getCardinality() {
-
-			return topLevelSlot.getCardinalityIfTopLevelSlot();
-		}
-
-		private CValue<?> getCValue() {
-
-			if (cValue == null) {
-
-				cValue = ensureCValue();
-			}
-
-			return cValue;
+			getEditor(container).addSlotValue(getIdentity(), ensureCValue());
 		}
 
 		private CValue<?> ensureCValue() {
@@ -141,13 +104,18 @@ class OBSlot extends OIdentified {
 						.ensureCSlotValueType(
 							builder,
 							annotations,
-							topLevelSlot.valueType,
-							valueStructureAllowed());
+							spec,
+							topLevelSlot.valueType);
 		}
 
-		private boolean valueStructureAllowed() {
+		private void absorbSlotOverrides(CSlot slot) {
 
-			return topLevelSlot.valueStructureAllowedIfTopLevelSlot();
+			CSlotEditor slotEd = builder.getSlotEditor(slot);
+			OBPropertyAttributes overrides = spec.getPropertyAttributes();
+
+			slotEd.absorbCardinality(overrides.getSlotCardinality());
+			slotEd.absorbAssertionsEditability(overrides.getSlotAssertionsEditability());
+			slotEd.absorbQueriesEditability(overrides.getSlotQueriesEditability());
 		}
 
 		private CFrameEditor getEditor(CFrame container) {
@@ -191,40 +159,6 @@ class OBSlot extends OIdentified {
 
 	private CCardinality getCardinalityIfTopLevelSlot() {
 
-		if (spec.singleValued()) {
-
-			return CCardinality.SINGLE_VALUE;
-		}
-
-		if (repeatValuesAllowedIfTopLevelSlot()) {
-
-			return CCardinality.REPEATABLE_TYPES;
-		}
-
-		return CCardinality.UNIQUE_TYPES;
-	}
-
-	private boolean valueStructureAllowedIfTopLevelSlot() {
-
-		switch (spec.getFrameSlotsPolicy()) {
-
-			case CFRAME_VALUED_ONLY:
-				return false;
-
-			case CFRAME_VALUED_IF_NO_STRUCTURE:
-				return valueType.valueStructurePossibleIfSlotValueType();
-		}
-
-		return true;
-	}
-
-	private boolean repeatValuesAllowedIfTopLevelSlot() {
-
-		if (spec.getFrameSlotsPolicy() == OBFrameSlotsPolicy.CFRAME_VALUED_ONLY) {
-
-			return false;
-		}
-
-		return valueType.valueStructurePossibleIfSlotValueType();
+		return valueType.getCardinalityIfTopLevelValueType(spec);
 	}
 }

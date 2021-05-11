@@ -42,11 +42,62 @@ abstract class OBFrame extends OBValue<CFrame> {
 		super(sourceEntity, label);
 	}
 
-	CValue<?> resolveToCSlotValueType(
-					CFrame cValue,
-					OBValue<?> topLevelValueType,
-					boolean valueStructureAllowed) {
+	CValue<?> ensureCSlotValueType(
+					CBuilder builder,
+					OBAnnotations annotations,
+					OBSlotSpec slotSpec,
+					OBValue<?> topLevelValueType) {
 
-		return valueStructureAllowed ? cValue : cValue.getType();
+		CFrame cFrame = ensureCFrame(builder, annotations);
+
+		if (valueStructureAllowed(slotSpec, (OBFrame)topLevelValueType)) {
+
+			return cFrame;
+		}
+
+		return cFrame.getType();
+	}
+
+	CCardinality getCardinalityIfTopLevelValueType(OBSlotSpec slotSpec) {
+
+		if (slotSpec.singleValued()) {
+
+			return CCardinality.SINGLE_VALUE;
+		}
+
+		if (repeatValuesAllowedIfTopLevelValueType(slotSpec)) {
+
+			return CCardinality.REPEATABLE_TYPES;
+		}
+
+		return CCardinality.UNIQUE_TYPES;
+	}
+
+	abstract CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations);
+
+	abstract boolean valueStructurePossibleIfSlotValueType();
+
+	private boolean valueStructureAllowed(OBSlotSpec slotSpec, OBFrame topLevelValueType) {
+
+		switch (slotSpec.getFrameSlotsPolicy()) {
+
+			case CFRAME_VALUED_ONLY:
+				return false;
+
+			case IFRAME_VALUED_ONLY:
+				return true;
+		}
+
+		return topLevelValueType.valueStructurePossibleIfSlotValueType();
+	}
+
+	private boolean repeatValuesAllowedIfTopLevelValueType(OBSlotSpec slotSpec) {
+
+		if (slotSpec.getFrameSlotsPolicy() == OBFrameSlotsPolicy.CFRAME_VALUED_ONLY) {
+
+			return false;
+		}
+
+		return valueStructurePossibleIfSlotValueType();
 	}
 }

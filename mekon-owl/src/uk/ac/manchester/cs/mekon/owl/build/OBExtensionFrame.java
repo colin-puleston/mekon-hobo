@@ -49,9 +49,9 @@ class OBExtensionFrame extends OBFrame {
 		return false;
 	}
 
-	boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed) {
+	boolean canHaveFixedSlotValuesIfTopLevelValueType() {
 
-		return !valueStructureAllowed;
+		return !valueStructurePossibleIfSlotValueType();
 	}
 
 	boolean valueStructurePossibleIfSlotValueType() {
@@ -59,7 +59,7 @@ class OBExtensionFrame extends OBFrame {
 		return true;
 	}
 
-	CFrame ensureCStructure(CBuilder builder, OBAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
 		CFrame baseCFrame = ensureBaseCFrame(builder, annotations);
 		CExtender extender = new CExtender(baseCFrame);
@@ -76,6 +76,6 @@ class OBExtensionFrame extends OBFrame {
 
 	private CFrame ensureBaseCFrame(CBuilder builder, OBAnnotations annotations) {
 
-		return baseFrame.ensureCStructure(builder, annotations);
+		return baseFrame.ensureCFrame(builder, annotations);
 	}
 }

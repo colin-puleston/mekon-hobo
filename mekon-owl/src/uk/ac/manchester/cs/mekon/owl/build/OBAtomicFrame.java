@@ -80,7 +80,7 @@ class OBAtomicFrame extends OBFrame {
 
 			for (OBAtomicFrame subFrame : subFrames) {
 
-				CFrame cSubFrame = subFrame.ensureCStructure(builder, annotations);
+				CFrame cSubFrame = subFrame.ensureCFrame(builder, annotations);
 
 				getCFrameEditor(cSubFrame).addSuper(cFrame);
 			}
@@ -131,9 +131,9 @@ class OBAtomicFrame extends OBFrame {
 		return !hidden;
 	}
 
-	boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed) {
+	boolean canHaveFixedSlotValuesIfTopLevelValueType() {
 
-		return !hidden && cValue instanceof MFrame;
+		return !hidden && !valueStructurePossibleIfSlotValueType();
 	}
 
 	boolean valueStructurePossibleIfSlotValueType() {
@@ -146,7 +146,7 @@ class OBAtomicFrame extends OBFrame {
 		return sourceEntity;
 	}
 
-	CFrame ensureCStructure(CBuilder builder, OBAnnotations annotations) {
+	CFrame ensureCFrame(CBuilder builder, OBAnnotations annotations) {
 
 		if (cFrame == null) {
 

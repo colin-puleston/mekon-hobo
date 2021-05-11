@@ -25,7 +25,6 @@
 package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
@@ -37,32 +36,13 @@ abstract class OBDataValue<CV extends CValue<?>> extends OBValue<CV> {
 		return true;
 	}
 
-	boolean canBeFixedSlotValue(CValue<?> cValue, boolean valueStructureAllowed) {
+	boolean canHaveFixedSlotValuesIfTopLevelValueType() {
 
 		return false;
 	}
 
-	boolean valueStructurePossibleIfSlotValueType() {
+	CCardinality getCardinalityIfTopLevelValueType(OBSlotSpec slotSpec) {
 
-		return false;
+		return CCardinality.SINGLE_VALUE;
 	}
-
-	CV ensureCStructure(CBuilder builder, OBAnnotations annotations) {
-
-		return ensureCStructure();
-	}
-
-	CValue<?> resolveToCSlotValueType(
-					CV cValue,
-					OBValue<?> topLevelValueType,
-					boolean valueStructureAllowed) {
-
-		return resolveToCSlotValueType(cValue, topLevelValueType);
-	}
-
-	abstract CV ensureCStructure();
-
-	abstract CValue<?> resolveToCSlotValueType(
-							CV cValue,
-							OBValue<?> topLevelValueType);
 }

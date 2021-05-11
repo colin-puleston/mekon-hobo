@@ -114,7 +114,7 @@ public class OBAnnotations {
 
 		private CFrame createMekonDefinition(OBExtensionFrame defnBldr) {
 
-			return defnBldr.ensureCStructure(builder, OBAnnotations.this);
+			return defnBldr.ensureCFrame(builder, OBAnnotations.this);
 		}
 
 		private boolean annotateWithDefinitions() {

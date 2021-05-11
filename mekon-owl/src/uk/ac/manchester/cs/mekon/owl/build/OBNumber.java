@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
@@ -38,17 +39,14 @@ class OBNumber extends OBDataValue<CNumber> {
 		this.cNumber = cNumber;
 	}
 
-	CNumber ensureCStructure() {
-
-		return cNumber;
-	}
-
-	CValue<?> resolveToCSlotValueType(
-					CNumber cValue,
+	CValue<?> ensureCSlotValueType(
+					CBuilder builder,
+					OBAnnotations annotations,
+					OBSlotSpec slotSpec,
 					OBValue<?> topLevelValueType) {
 
 		OBNumber topLevelNumber = (OBNumber)topLevelValueType;
 
-		return cValue.getIntersection(topLevelNumber.cNumber);
+		return cNumber.getIntersection(topLevelNumber.cNumber);
 	}
 }

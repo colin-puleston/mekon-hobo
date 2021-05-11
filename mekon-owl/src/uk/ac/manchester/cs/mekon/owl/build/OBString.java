@@ -25,6 +25,7 @@
 package uk.ac.manchester.cs.mekon.owl.build;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
  * @author Colin Puleston
@@ -33,16 +34,13 @@ class OBString extends OBDataValue<CString> {
 
 	static final OBString SINGLETON = new OBString();
 
-	CString ensureCStructure() {
-
-		return CString.FREE;
-	}
-
-	CValue<?> resolveToCSlotValueType(
-					CString cValue,
+	CValue<?> ensureCSlotValueType(
+					CBuilder builder,
+					OBAnnotations annotations,
+					OBSlotSpec slotSpec,
 					OBValue<?> topLevelValueType) {
 
-		return cValue;
+		return CString.FREE;
 	}
 
 	private OBString( ) {

@@ -500,14 +500,10 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 
 	private List<IValue> getNoStructureFrameSlotFixedValues(CIdentity frameId) {
 
-		List<IValue> values = new ArrayList<IValue>();
+		CFrame frame = getCFrame(frameId);
+		IValue value = cFrameValuedSlotsEnabled ? frame : frame.instantiate();
 
-		if (cFrameValuedSlotsEnabled) {
-
-			values.add(getCFrame(frameId));
-		}
-
-		return values;
+		return Collections.singletonList(value);
 	}
 
 	static private IRI toIRI(CIdentity id) {
