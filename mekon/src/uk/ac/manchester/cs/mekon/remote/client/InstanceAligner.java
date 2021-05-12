@@ -102,7 +102,7 @@ class InstanceAligner {
 
 		private void updateSlotValues() {
 
-			for (ISlot slot : master.getSlots().asList()) {
+			for (ISlot slot : master.getSlots().activesAsList()) {
 
 				updateSlotValues(slot);
 			}

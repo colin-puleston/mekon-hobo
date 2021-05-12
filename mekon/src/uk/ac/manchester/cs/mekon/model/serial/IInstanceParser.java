@@ -155,14 +155,17 @@ public class IInstanceParser extends FSerialiser implements ISerialiserVocab {
 
 			void processValueSpecs() {
 
-				if (!fixedValueSpecs.isEmpty()) {
+				if (getActivation().active()) {
 
-					processFixedValueSpecs();
-				}
+					if (!fixedValueSpecs.isEmpty()) {
 
-				if (!assertedValueSpecs.isEmpty()) {
+						processFixedValueSpecs();
+					}
 
-					processAssertedValueSpecs();
+					if (!assertedValueSpecs.isEmpty()) {
+
+						processAssertedValueSpecs();
+					}
 				}
 			}
 

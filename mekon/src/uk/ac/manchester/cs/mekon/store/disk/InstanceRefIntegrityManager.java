@@ -92,7 +92,7 @@ class InstanceRefIntegrityManager {
 
 	private void removeAllReferenceId(IFrame frame, CIdentity refId) {
 
-		for (ISlot slot : frame.getSlots().asList()) {
+		for (ISlot slot : frame.getSlots().activesAsList()) {
 
 			if (slot.getValueType() instanceof CFrame) {
 
