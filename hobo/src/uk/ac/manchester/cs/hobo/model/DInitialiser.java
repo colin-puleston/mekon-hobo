@@ -105,9 +105,7 @@ class DInitialiser {
 		return bindings.add(dClass, frame);
 	}
 
-	private DBinding bindMappedClass(
-						DClassMap classMap,
-						Class<? extends DObject> dClass) {
+	private DBinding bindMappedClass(DClassMap classMap, Class<? extends DObject> dClass) {
 
 		CFrame frame = getFrame(classMap.getExternalId());
 		DBinding binding = bindings.add(dClass, frame);
