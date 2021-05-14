@@ -67,18 +67,12 @@ public class TestInstances {
 
 		private boolean slotInserted = true;
 
-		public Set<IUpdateOp> reinitialiseFrame(
-								IEditor iEditor,
-								IFrame frame,
-								Set<IUpdateOp> ops) {
+		public Set<IUpdateOp> reinitialise(IFrame frame, IEditor iEditor, Set<IUpdateOp> ops) {
 
 			return Collections.<IUpdateOp>emptySet();
 		}
 
-		public Set<IUpdateOp> updateFrame(
-								IEditor iEditor,
-								IFrame frame,
-								Set<IUpdateOp> ops) {
+		public Set<IUpdateOp> update(IFrame frame, IEditor iEditor, Set<IUpdateOp> ops) {
 
 			ISlots slots = frame.getSlots();
 

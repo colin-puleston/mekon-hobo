@@ -207,17 +207,6 @@ public class CString extends CDataValue<IString> {
 	}
 
 	/**
-	 * Stipulates that the string value-type never defines a default
-	 * string value.
-	 *
-	 * @return False always.
-	 */
-	public boolean hasDefaultValue() {
-
-		return false;
-	}
-
-	/**
 	 * Stipulates that the string value-type never defines only a
 	 * single possible value.
 	 *
@@ -329,7 +318,7 @@ public class CString extends CDataValue<IString> {
 		visitor.visit(this);
 	}
 
-	IString getDefaultValueOrNull() {
+	IString getDefaultValueOrNull(IFrameFunction function) {
 
 		return null;
 	}

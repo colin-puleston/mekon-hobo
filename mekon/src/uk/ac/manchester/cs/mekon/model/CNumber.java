@@ -105,18 +105,6 @@ public class CNumber extends CDataValue<INumber> {
 	}
 
 	/**
-	 * Stipulates that this numeric value-type does define a default
-	 * number value, which will be the value that is provided by the
-	 * {@link #asINumber} method.
-	 *
-	 * @return True always
-	 */
-	public boolean hasDefaultValue() {
-
-		return true;
-	}
-
-	/**
 	 * Stipulates that this numeric value-type defines only a single
 	 * possible value if and only if it represents an exact value
 	 * (see {@link #exactValue}). If so then that exact value will
@@ -327,7 +315,7 @@ public class CNumber extends CDataValue<INumber> {
 		visitor.visit(this);
 	}
 
-	INumber getDefaultValueOrNull() {
+	INumber getDefaultValueOrNull(IFrameFunction function) {
 
 		return asINumber();
 	}

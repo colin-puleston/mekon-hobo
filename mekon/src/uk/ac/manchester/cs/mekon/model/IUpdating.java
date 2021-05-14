@@ -29,15 +29,21 @@ import java.util.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
 
 /**
- * Represents configuration information concerning the nature
- * of the updates to be performed on instance-level frames as
- * the result of reasoning.
+ * Represents configuration for the types of update to be
+ * performed on instance-level frames as the result of reasoning.
  *
  * @author Colin Puleston
  */
 public class IUpdating {
 
 	static private final Set<IUpdateOp> NO_OPS = Collections.<IUpdateOp>emptySet();
+	static private final Set<IUpdateOp> INITIALISATION_OPS = new HashSet<IUpdateOp>();
+
+	static {
+
+		INITIALISATION_OPS.add(IUpdateOp.SLOTS);
+		INITIALISATION_OPS.add(IUpdateOp.SLOT_VALUES);
+	}
 
 	private IEditor iEditor;
 
@@ -100,6 +106,35 @@ public class IUpdating {
 		}
 	}
 
+	void initialise(IFrame instance) {
+
+		boolean initSlotValues = slotValuesOpApplicable(instance);
+
+		getIReasoner(instance).initialise(instance, iEditor, initSlotValues);
+	}
+
+	Set<IUpdateOp> reinitialise(IFrame instance) {
+
+		return update(instance, getMaximalReinitialisationOps(instance));
+	}
+
+	Set<IUpdateOp> update(IFrame instance) {
+
+		return update(instance, defaultOps);
+	}
+
+	Set<IUpdateOp> update(IFrame instance, Set<IUpdateOp> ops) {
+
+		ops = purgeUpdateOps(instance, ops);
+
+		if (ops.isEmpty()) {
+
+			return NO_OPS;
+		}
+
+		return getIReasoner(instance).update(instance, iEditor, ops);
+	}
+
 	Set<IUpdateOp> checkAutoUpdate(IFrame instance) {
 
 		return autoUpdate ? update(instance) : NO_OPS;
@@ -120,54 +155,44 @@ public class IUpdating {
 		return update(instance, ops);
 	}
 
-	Set<IUpdateOp> update(IFrame instance) {
+	private Set<IUpdateOp> getMaximalReinitialisationOps(IFrame instance) {
 
-		return update(instance, defaultOps);
-	}
+		Set<IUpdateOp> ops = new HashSet<IUpdateOp>(defaultOps);
 
-	Set<IUpdateOp> update(IFrame instance, Set<IUpdateOp> ops) {
+		ops.add(IUpdateOp.SLOTS);
 
-		ops = copyOpsAndPurgeForQuery(instance, ops);
+		if (slotValuesOpApplicable(instance)) {
 
-		if (ops.isEmpty()) {
-
-			return NO_OPS;
+			ops.add(IUpdateOp.SLOT_VALUES);
 		}
 
-		return getIReasoner(instance).updateFrame(iEditor, instance, ops);
+		return ops;
 	}
 
-	Set<IUpdateOp> reinitialise(IFrame instance) {
+	private Set<IUpdateOp> purgeUpdateOps(IFrame instance, Set<IUpdateOp> ops) {
 
-		Set<IUpdateOp> ops = copyOpsAndPurgeForQuery(instance, defaultOps);
+		ops = new HashSet<IUpdateOp>(defaultOps);
 
-		if (ops.isEmpty()) {
+		if (!slotValuesOpApplicable(instance)) {
 
-			return NO_OPS;
+			ops.remove(IUpdateOp.SLOT_VALUES);
 		}
 
-		return getIReasoner(instance).reinitialiseFrame(iEditor, instance, ops);
+		return ops;
+	}
+
+	private boolean slotValuesOpApplicable(IFrame instance) {
+
+		return instance.getCategory().atomic() && instance.getFunction().assertion();
 	}
 
 	private Set<IUpdateOp> removeDefaultOps(Set<IUpdateOp> ops) {
 
-		Set<IUpdateOp> nonDefaultOps = new HashSet<IUpdateOp>(ops);
+		ops = new HashSet<IUpdateOp>(ops);
 
-		nonDefaultOps.removeAll(defaultOps);
+		ops.removeAll(defaultOps);
 
-		return nonDefaultOps;
-	}
-
-	private Set<IUpdateOp> copyOpsAndPurgeForQuery(IFrame instance, Set<IUpdateOp> ops) {
-
-		Set<IUpdateOp> purgedOps = new HashSet<IUpdateOp>(ops);
-
-		if (instance.getFunction().query()) {
-
-			purgedOps.remove(IUpdateOp.SLOT_VALUES);
-		}
-
-		return purgedOps;
+		return ops;
 	}
 
 	private IReasoner getIReasoner(IFrame instance) {

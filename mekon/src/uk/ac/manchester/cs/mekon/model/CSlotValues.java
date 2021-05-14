@@ -137,17 +137,18 @@ public class CSlotValues {
 	 *
 	 * @param slotId Identity of slot for which default
 	 * value-instantiations are required
+	 * @param function Required function of values (if applicable)
 	 * @return Relevant set of default value-instantiations
 	 * @throws KAccessException if it is not possible to obtain default
 	 * value-instantiations for any of the relevent fixed values
 	 */
-	public List<IValue> getIValues(CIdentity slotId) {
+	public List<IValue> getIValues(CIdentity slotId, IFrameFunction function) {
 
 		List<IValue> iValues = new ArrayList<IValue>();
 
 		for (CValue<?> value : getValues(slotId)) {
 
-			iValues.add(value.getDefaultValue());
+			iValues.add(value.getDefaultValue(function));
 		}
 
 		return iValues;

@@ -103,7 +103,7 @@ public abstract class IClassifier extends IReasonerDefault {
 
 				ISlotSpecs specs = createSlotSpecs(inferreds);
 				ISlotOps ops = ISlotOps.get(doSlots, doSlotValues);
-				ISlotOps enactedOps = specs.update(frame, ops);
+				ISlotOps enactedOps = specs.update(ops);
 
 				enactedUpdateOps.addAll(enactedOps.asUpdateOps());
 			}
@@ -129,7 +129,7 @@ public abstract class IClassifier extends IReasonerDefault {
 
 		private ISlotSpecs createSlotSpecs(List<CFrame> inferredsUpdates) {
 
-			ISlotSpecs specs = new ISlotSpecs(iEditor, frame.getType());
+			ISlotSpecs specs = new ISlotSpecs(frame, iEditor);
 
 			specs.absorbAll(inferredsUpdates);
 
@@ -155,25 +155,15 @@ public abstract class IClassifier extends IReasonerDefault {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Set<IUpdateOp> reinitialiseFrame(
-							IEditor iEditor,
-							IFrame frame,
-							Set<IUpdateOp> ops) {
+	public Set<IUpdateOp> reinitialise(IFrame frame, IEditor iEditor, Set<IUpdateOp> ops) {
 
-		Set<IUpdateOp> allOps = new HashSet<IUpdateOp>(ops);
-
-		allOps.add(IUpdateOp.SLOTS);
-
-		return updateFrame(iEditor, frame, allOps);
+		return update(frame, iEditor, ops);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Set<IUpdateOp> updateFrame(
-							IEditor iEditor,
-							IFrame frame,
-							Set<IUpdateOp> ops) {
+	public Set<IUpdateOp> update(IFrame frame, IEditor iEditor, Set<IUpdateOp> ops) {
 
 		return new Updater(iEditor, frame, ops).update();
 	}

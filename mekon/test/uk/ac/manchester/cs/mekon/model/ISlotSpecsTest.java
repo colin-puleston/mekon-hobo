@@ -228,10 +228,10 @@ public class ISlotSpecsTest {
 
 	private void updateContainerSlots(CFrame... containerTypes) {
 
-		ISlotSpecs specs = new ISlotSpecs(model.getIEditor());
+		ISlotSpecs specs = new ISlotSpecs(iContainer, model.getIEditor());
 
 		specs.absorbAll(Arrays.asList(containerTypes));
-		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);
+		specs.update(ISlotOps.SLOTS_AND_VALUES);
 	}
 
 	private void testSlotValueType(CFrame rootValue) {

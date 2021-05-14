@@ -630,11 +630,6 @@ public abstract class IFrame implements IEntity, IValue {
 		return Collections.<IUpdateOp>emptySet();
 	}
 
-	void initialiseSlots() {
-
-		type.initialiseInstanceSlots(this);
-	}
-
 	ISlot addSlotInternal(CSlot slotType) {
 
 		throw createCategoryAdditionException("slot");

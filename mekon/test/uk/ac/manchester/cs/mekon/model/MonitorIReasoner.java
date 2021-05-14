@@ -36,17 +36,14 @@ class MonitorIReasoner extends IReasonerDefault {
 	List<IFrame> initialiseds = new ArrayList<IFrame>();
 	List<IFrame> updateds = new ArrayList<IFrame>();
 
-	public void initialiseFrame(IEditor iEditor, IFrame frame) {
+	public void initialise(IFrame frame, IEditor iEditor, boolean initSlotValues) {
 
-		super.initialiseFrame(iEditor, frame);
+		super.initialise(frame, iEditor, initSlotValues);
 
 		initialiseds.add(frame);
 	}
 
-	public Set<IUpdateOp> updateFrame(
-							IEditor iEditor,
-							IFrame frame,
-							Set<IUpdateOp> ops) {
+	public Set<IUpdateOp> update( IFrame frame, IEditor iEditor, Set<IUpdateOp> ops) {
 
 		updateds.add(frame);
 

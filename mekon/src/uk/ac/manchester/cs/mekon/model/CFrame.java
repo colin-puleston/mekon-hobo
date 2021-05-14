@@ -617,18 +617,6 @@ public abstract class CFrame
 	public abstract CSlotValues getSlotValues();
 
 	/**
-	 * Stipulates that this concept-level frame does define a default
-	 * value-entity, which will be a direct instantiation of the
-	 * frame with no slot-values being set.
-	 *
-	 * @return True always
-	 */
-	public boolean hasDefaultValue() {
-
-		return true;
-	}
-
-	/**
 	 * Stipulates that this concept-level frame defines only a single
 	 * possible value if and only if it has no sub-frames with
 	 * visibility status of {@link CVisibility#EXPOSED}.
@@ -791,14 +779,11 @@ public abstract class CFrame
 		return this;
 	}
 
-	void initialiseInstanceSlots(IFrame instance) {
+	IFrame getDefaultValueOrNull(IFrameFunction function) {
 
-		getIReasoner().initialiseFrame(getIEditor(), instance);
-	}
+		IFrame instance = instantiate(function);
 
-	IFrame getDefaultValueOrNull() {
-
-		return instantiate();
+		return instance.getSlots().isEmpty() ? instance : null;
 	}
 
 	boolean validTypeValue(IFrame value) {

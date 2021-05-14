@@ -125,14 +125,6 @@ public abstract class CValue<V extends IValue> implements FEntity {
 	public abstract CValue<?> toUnconstrained();
 
 	/**
-	 * Specifies whether this value-type-entity comes with a default
-	 * value.
-	 *
-	 * @return True if default value
-	 */
-	public abstract boolean hasDefaultValue();
-
-	/**
 	 * Specifies whether this value-type-entity defines only a single
 	 * possible value.
 	 *
@@ -287,9 +279,9 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		return null;
 	}
 
-	V getDefaultValue() {
+	V getDefaultValue(IFrameFunction function) {
 
-		V value = getDefaultValueOrNull();
+		V value = getDefaultValueOrNull(function);
 
 		if (value == null) {
 
@@ -299,7 +291,7 @@ public abstract class CValue<V extends IValue> implements FEntity {
 		return value;
 	}
 
-	abstract V getDefaultValueOrNull();
+	abstract V getDefaultValueOrNull(IFrameFunction function);
 
 	abstract boolean validTypeValue(V value);
 }

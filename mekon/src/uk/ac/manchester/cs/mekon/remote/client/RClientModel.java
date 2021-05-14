@@ -175,25 +175,19 @@ public abstract class RClientModel {
 		private InstanceCreateInitAction createInitAction = new InstanceCreateInitAction();
 		private InstanceReloadInitAction reloadInitAction = new InstanceReloadInitAction();
 
-		public void initialiseFrame(IEditor iEditor, IFrame frame) {
+		public void initialise(IFrame frame, IEditor iEditor, boolean initSlotValues) {
 
 			initialise(frame, createInitAction);
 		}
 
-		public Set<IUpdateOp> reinitialiseFrame(
-								IEditor iEditor,
-								IFrame frame,
-								Set<IUpdateOp> ops) {
+		public Set<IUpdateOp> reinitialise(IFrame frame, IEditor iEditor, Set<IUpdateOp> ops) {
 
 			initialise(frame, reloadInitAction);
 
 			return Collections.<IUpdateOp>emptySet();
 		}
 
-		public Set<IUpdateOp> updateFrame(
-								IEditor iEditor,
-								IFrame frame,
-								Set<IUpdateOp> ops) {
+		public Set<IUpdateOp> update(IFrame frame, IEditor iEditor, Set<IUpdateOp> ops) {
 
 			return Collections.<IUpdateOp>emptySet();
 		}

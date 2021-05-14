@@ -122,17 +122,6 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 	}
 
 	/**
-	 * Stipulates that this meta-level frame does define a default
-	 * value-entity, which will be the root concept-level frame.
-	 *
-	 * @return True always
-	 */
-	public boolean hasDefaultValue() {
-
-		return true;
-	}
-
-	/**
 	 * Stipulates that this meta-level frame defines only a single
 	 * possible value if and only if it's root concept-level frame
 	 * has no sub-frames with visibility status of
@@ -193,7 +182,7 @@ public class MFrame extends CValue<CFrame> implements MEntity {
 		visitor.visit(this);
 	}
 
-	CFrame getDefaultValueOrNull() {
+	CFrame getDefaultValueOrNull(IFrameFunction function) {
 
 		return rootCFrame;
 	}

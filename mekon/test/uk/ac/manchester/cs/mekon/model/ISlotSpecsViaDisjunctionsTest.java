@@ -122,10 +122,10 @@ public class ISlotSpecsViaDisjunctionsTest {
 
 	private void updateContainerSlots() {
 
-		ISlotSpecs specs = new ISlotSpecs(model.getIEditor());
+		ISlotSpecs specs = new ISlotSpecs(iContainer, model.getIEditor());
 
 		specs.absorb(createDisjunction(td, te));
-		specs.update(iContainer, ISlotOps.SLOTS_AND_VALUES);
+		specs.update(ISlotOps.SLOTS_AND_VALUES);
 	}
 
 	private void testSlotCount(int expected) {
