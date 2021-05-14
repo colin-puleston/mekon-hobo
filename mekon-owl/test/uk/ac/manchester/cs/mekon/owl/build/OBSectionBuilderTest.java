@@ -483,7 +483,7 @@ public class OBSectionBuilderTest extends DemoModelBasedTest {
 
 	private List<IValue> getSlotValues(CIdentity containerId, CIdentity slotId) {
 
-		return getSlotValues(containerId).getIValues(slotId);
+		return getSlotValues(containerId).getIValues(slotId, IFrameFunction.ASSERTION);
 	}
 
 	private CSlotValues getSlotValues(CIdentity containerId) {
