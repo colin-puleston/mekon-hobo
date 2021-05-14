@@ -163,7 +163,7 @@ public class DModelTest extends MekonTestUtils {
 		}
 	}
 
-	//@Test
+	@Test
 	public void test_framesBuiltForDObjects_general() {
 
 		DModel model = createModel(true);
@@ -171,7 +171,7 @@ public class DModelTest extends MekonTestUtils {
 		testCFrameCount(model, 7);
 	}
 
-	//@Test
+	@Test
 	public void test_framesBuiltForDObjects_manualClassMappings() {
 
 		DModel model = createModel(true);
@@ -185,7 +185,7 @@ public class DModelTest extends MekonTestUtils {
 		testCFrameSuperAdded(model, FRAME_AX_ID, FRAME_A_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_framesBuiltForDObjects_autoClassMappings() {
 
 		DModel model = createModel(true);
@@ -197,7 +197,7 @@ public class DModelTest extends MekonTestUtils {
 		testCFrameSuperAdded(model, MAPPPER_FRAME_CX_ID, MAPPPER_FRAME_C_ID);
 	}
 
-	//@Test
+	@Test
 	public void test_slotsBuiltForDFields_manualClassMappings() {
 
 		DModel model = createModel(true);
@@ -235,7 +235,7 @@ public class DModelTest extends MekonTestUtils {
 			IEditability.FULL);
 	}
 
-	//@Test
+	@Test
 	public void test_slotsBuiltForDFields_autoClassMappings() {
 
 		DModel model = createModel(true);
@@ -254,7 +254,7 @@ public class DModelTest extends MekonTestUtils {
 			IEditability.FULL);
 	}
 
-	//@Test
+	@Test
 	public void test_instantiateDObjects_manualClassMappings() {
 
 		DModel model = createModel(true);
@@ -272,7 +272,7 @@ public class DModelTest extends MekonTestUtils {
 		testDFieldISlotValues(axObject.bCell, INITIAL_B_SLOT_VALUES);
 	}
 
-	//@Test
+	@Test
 	public void test_instantiateDObjects_autoClassMappings() {
 
 		DModel model = createModel(true);
@@ -292,7 +292,7 @@ public class DModelTest extends MekonTestUtils {
 		testLabels(true, CLASS_A_DERIVED_LABEL, INT_CELL_DERIVED_LABEL);
 	}
 
-	//@Test
+	@Test
 	public void test_labelsFromExternalModel() {
 
 		testLabels(false, A_EXTERNAL_LABEL, INT_EXTERNAL_LABEL);
