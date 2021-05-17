@@ -94,29 +94,20 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 
 		List<String> components = new ArrayList<String>();
 
-		IRI iriObj = object.getIRI();
+		IRI iri = object.getIRI();
+		String namespace = iri.getNamespace();
 
-		String iri = iriObj.toString();
-		String fragment = iriObj.toURI().getFragment();
+		if (namespace != null) {
 
-		if (fragment != null) {
-
-			components.add(getNamespace(iri, fragment));
-			components.add(fragment);
+			components.add(resolveNamespace(namespace));
+			components.add(getFragment(iri, namespace));
 		}
 		else {
 
-			components.add(iri);
+			components.add(iri.toString());
 		}
 
 		return components;
-	}
-
-	static private String getNamespace(String iri, String fragment) {
-
-		int length = iri.length() - fragment.length();
-
-		return resolveNamespace(iri.substring(0, length));
 	}
 
 	static private String resolveNamespace(String namespace) {
@@ -131,6 +122,11 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 		}
 
 		return found;
+	}
+
+	static private String getFragment(IRI iri, String namespace) {
+
+		return iri.toString().substring(namespace.length());
 	}
 
 	/**
@@ -156,6 +152,7 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 	public OIdentity(OWLNamedObject object, String label) {
 
 		super(getIdentifierComponents(object), label);
+		System.out.println("ID: " + this);
 	}
 
 	/**
