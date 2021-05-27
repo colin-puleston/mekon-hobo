@@ -152,7 +152,6 @@ public class OIdentity extends CIdentity implements Comparable<OIdentity> {
 	public OIdentity(OWLNamedObject object, String label) {
 
 		super(getIdentifierComponents(object), label);
-		System.out.println("ID: " + this);
 	}
 
 	/**
