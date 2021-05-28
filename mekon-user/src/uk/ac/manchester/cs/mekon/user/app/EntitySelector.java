@@ -40,7 +40,7 @@ abstract class EntitySelector<E> extends Inputter<E> {
 	static private final long serialVersionUID = -1;
 
 	static private final String SINGLE_SELECT_TITLE_FORMAT = "Select %s option";
-	static private final String MULTI_SELECT_TITLE_FORMAT = "%s + (s)";
+	static private final String MULTI_SELECT_TITLE_FORMAT = SINGLE_SELECT_TITLE_FORMAT + "(s)";
 
 	static private final Dimension WINDOW_SIZE = new Dimension(500, 500);
 
@@ -51,9 +51,12 @@ abstract class EntitySelector<E> extends Inputter<E> {
 
 	static private String getTitle(String typeName, boolean multiSelect) {
 
-		String title = String.format(SINGLE_SELECT_TITLE_FORMAT, typeName);
+		return String.format(getTitleFormat(multiSelect), typeName);
+	}
 
-		return multiSelect ? String.format(MULTI_SELECT_TITLE_FORMAT, title) : title;
+	static private String getTitleFormat(boolean multiSelect) {
+
+		return multiSelect ? MULTI_SELECT_TITLE_FORMAT : SINGLE_SELECT_TITLE_FORMAT;
 	}
 
 	protected Dimension getWindowSize() {
