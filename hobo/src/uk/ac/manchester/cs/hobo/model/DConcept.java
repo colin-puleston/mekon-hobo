@@ -229,7 +229,7 @@ public class DConcept<D extends DObject> {
 	 * Instantiates the concept as an instance of the OM class that
 	 * defines the general type for the concept, and set's the category
 	 * of the associated frame to be {@link IFrameCategory#REFERENCE},
-	 * and the function to be {@link IFrameFunction#QUERRY}.
+	 * and the function to be {@link IFrameFunction#QUERY}.
 	 *
 	 * @param referenceId Identity of referenced instance
 	 * @return Appropriate instantiation of concept
