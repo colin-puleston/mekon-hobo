@@ -5,7 +5,7 @@ uk.ac.manchester.cs.hobo.model.motor
 uk.ac.manchester.cs.hobo.model.motor.match
 uk.ac.manchester.cs.hobo.model.zlink
 uk.ac.manchester.cs.hobo.modeller
-uk.ac.manchester.cs.hobo.remote.server.net
+uk.ac.manchester.cs.hobo.remote.server
 uk.ac.manchester.cs.mekon.manage
 uk.ac.manchester.cs.mekon.model
 uk.ac.manchester.cs.mekon.model.motor
@@ -21,10 +21,8 @@ uk.ac.manchester.cs.mekon.owl.reason
 uk.ac.manchester.cs.mekon.owl.triples
 uk.ac.manchester.cs.mekon.owl.util
 uk.ac.manchester.cs.mekon.remote.client
-uk.ac.manchester.cs.mekon.remote.client.net
 uk.ac.manchester.cs.mekon.remote.client.xml
 uk.ac.manchester.cs.mekon.remote.server
-uk.ac.manchester.cs.mekon.remote.server.net
 uk.ac.manchester.cs.mekon.remote.server.xml
 uk.ac.manchester.cs.mekon.remote.util
 uk.ac.manchester.cs.mekon.remote.xml
@@ -33,16 +31,3 @@ uk.ac.manchester.cs.mekon.store.disk
 uk.ac.manchester.cs.mekon.store.disk.zlink
 uk.ac.manchester.cs.mekon.store.motor
 uk.ac.manchester.cs.mekon.store.serial
-uk.ac.manchester.cs.mekon_util
-uk.ac.manchester.cs.mekon_util.config
-uk.ac.manchester.cs.mekon_util.gui
-uk.ac.manchester.cs.mekon_util.gui.icon
-uk.ac.manchester.cs.mekon_util.misc
-uk.ac.manchester.cs.mekon_util.remote.admin
-uk.ac.manchester.cs.mekon_util.remote.admin.client
-uk.ac.manchester.cs.mekon_util.remote.admin.server
-uk.ac.manchester.cs.mekon_util.remote.client
-uk.ac.manchester.cs.mekon_util.remote.client.net
-uk.ac.manchester.cs.mekon_util.remote.server
-uk.ac.manchester.cs.mekon_util.remote.server.net
-uk.ac.manchester.cs.mekon_util.xdoc
