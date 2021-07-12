@@ -128,6 +128,8 @@ public abstract class XPackageSerialiser implements XRequestVocab, XResponseVoca
 		 * Retrieves value of attribute representing the specific type of
 		 * an action request.
 		 *
+		 * @param <E> Generic version of type
+		 * @param type Type of <code>Enum</code> to create
 		 * @return Specific type of action request
 		 * @throws XDocumentException if no value for attribute, or if
 		 * value does is not of correct type
@@ -140,6 +142,7 @@ public abstract class XPackageSerialiser implements XRequestVocab, XResponseVoca
 		/**
 		 * Retrieves node representing a parameter for an action request.
 		 *
+		 * @param index Index of required node, as child of top-level node
 		 * @return Node representing action request parameter
 		 * @throws XDocumentException if relevant node does not exist
 		 */
@@ -188,9 +191,6 @@ public abstract class XPackageSerialiser implements XRequestVocab, XResponseVoca
 
 		/**
 		 * Adds a node representing a null response to an action request.
-		 *
-		 * @return Added node representing null response to action
-		 * request
 		 */
 		public void setNullResponse() {
 
