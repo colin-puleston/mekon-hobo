@@ -85,7 +85,7 @@ public class RMekonClient {
 	/**
 	 * Constructor.
 	 *
-	 * @param netClient Entity providing access to relevant instance of
+	 * @param netClient Object for accessing the relevant instance of
 	 * <code>RMekonServer</code> running on server
 	 * @param expireOnServerRestart true if client should become invalid
 	 * if server is restarted whilst client is running
@@ -96,6 +96,17 @@ public class RMekonClient {
 
 		clientModel = new NetClientModel(expireOnServerRestart);
 		clientStore = new NetClientStore(expireOnServerRestart);
+	}
+
+	/**
+	 * Provides the object for accessing the relevant instance of
+	 * <code>RMekonServer</code> running on server.
+	 *
+	 * @return Server access object
+	 */
+	public RNetClient getNetClient() {
+
+		return netClient;
 	}
 
 	/**
