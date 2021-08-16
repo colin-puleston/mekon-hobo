@@ -13,16 +13,19 @@
 	<property name="mekon-owl.src" value="mekon-owl/src/"/>
 	<property name="mekon-basex.src" value="mekon-basex/src/"/>
 	<property name="mekon-jena.src" value="mekon-jena/src/"/>
+	<property name="mekon-stardog.src" value="mekon-stardog/src/"/>
 
 	<!-- output classes -->
 	<property name="build.classes.mekon-owl" location="${build.classes}/mekon-owl" />
 	<property name="build.classes.mekon-basex" location="${build.classes}/mekon-basex" />
 	<property name="build.classes.mekon-jena" location="${build.classes}/mekon-jena" />
+	<property name="build.classes.mekon-stardog" location="${build.classes}/mekon-stardog" />
 
 	<!-- output jars -->
 	<property name="build.mekon-owl.jar" location="${build.lib}/mekon-owl.jar"/>
 	<property name="build.mekon-basex.jar" location="${build.lib}/mekon-basex.jar"/>
 	<property name="build.mekon-jena.jar" location="${build.lib}/mekon-jena.jar"/>
+	<property name="build.mekon-stardog.jar" location="${build.lib}/mekon-stardog.jar"/>
 	<property name="build.mekon-user.jar" location="${build.lib}/mekon-user.jar"/>
 
 	<!-- clean target -->
@@ -82,8 +85,23 @@
 		</jar>
 	</target>
 
+	<!-- mekon-stardog targets -->
+	<target name="mekon-stardog" depends="base">
+		<mkdir dir="${build.classes.mekon-stardog}"/>
+		<javac srcdir="${mekon-stardog.src}" classpathref="classpath" destdir="${build.classes.mekon-stardog}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-stardog-jar" depends="mekon-stardog">
+		<jar destfile="${build.mekon-stardog.jar}">
+			<fileset dir="${build.classes.mekon-stardog}" />
+			<fileset dir="${mekon-stardog.src}" includes="**/*.java"/>
+		</jar>
+	</target>
+
 	<!-- mekon plugin jars targets -->
-	<target name="all" depends="mekon-owl-jar, mekon-basex-jar, mekon-jena-jar">
+	<target name="all" depends="mekon-owl-jar, mekon-basex-jar, mekon-jena-jar, mekon-stardog-jar">
 	</target>
 
 </project>
