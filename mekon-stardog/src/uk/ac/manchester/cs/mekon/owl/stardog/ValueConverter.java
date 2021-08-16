@@ -24,8 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.stardog;
 
-import org.openrdf.model.*;
-import org.openrdf.model.impl.*;
+import com.stardog.stark.*;
 
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
@@ -34,7 +33,6 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  */
 class ValueConverter {
 
-	static private ValueFactory valueFactory = SimpleValueFactory.getInstance();
 	static private TargetValueCreator targetValueCreator = new TargetValueCreator();
 
 	static private class TargetValueCreator extends OTValueVisitor {
@@ -71,29 +69,29 @@ class ValueConverter {
 
 	static private IRI toIRI(OT_URI uri) {
 
-		return valueFactory.createIRI(uri.toString());
+		return Values.iri(uri.toString());
 	}
 
 	static private Literal toLiteral(OTNumber number) {
 
 		if (number.isInteger()) {
 
-			return valueFactory.createLiteral(number.asInteger());
+			return Values.literal(number.asInteger());
 		}
 
 		if (number.isLong()) {
 
-			return valueFactory.createLiteral(number.asLong());
+			return Values.literal(number.asLong());
 		}
 
 		if (number.isFloat()) {
 
-			return valueFactory.createLiteral(number.asFloat());
+			return Values.literal(number.asFloat());
 		}
 
 		if (number.isDouble()) {
 
-			return valueFactory.createLiteral(number.asDouble());
+			return Values.literal(number.asDouble());
 		}
 
 		throw new Error("Unrecognised number-value class: " + number.getValueType());
@@ -101,6 +99,6 @@ class ValueConverter {
 
 	static private Literal toLiteral(OTString string) {
 
-		return valueFactory.createLiteral(string);
+		return Values.literal(string.toString());
 	}
 }

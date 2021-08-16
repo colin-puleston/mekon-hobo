@@ -26,10 +26,9 @@ package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import java.util.*;
 
-import org.openrdf.model.*;
-import org.openrdf.model.impl.*;
-
 import com.complexible.stardog.api.*;
+
+import com.stardog.stark.*;
 
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
@@ -37,8 +36,6 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  * @author Colin Puleston
  */
 class OStardogGraphRemover implements OTGraphRemover {
-
-	static private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
 	private Connection connection;
 	private IRI context;
@@ -61,7 +58,7 @@ class OStardogGraphRemover implements OTGraphRemover {
 
 		this.connection = connection;
 
-		context = valueFactory.createIRI(contextURI);
+		context = Values.iri(contextURI);
 	}
 
 	private Iterator<Statement> getAllTriples() {

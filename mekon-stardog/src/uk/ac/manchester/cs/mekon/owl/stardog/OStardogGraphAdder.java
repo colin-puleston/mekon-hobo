@@ -26,10 +26,9 @@ package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import java.util.*;
 
-import org.openrdf.model.*;
-import org.openrdf.model.impl.*;
-
 import com.complexible.stardog.api.*;
+
+import com.stardog.stark.*;
 
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 
@@ -37,8 +36,6 @@ import uk.ac.manchester.cs.mekon.owl.triples.*;
  * @author Colin Puleston
  */
 class OStardogGraphAdder implements OTGraphAdder {
-
-	static private final ValueFactory valueFactory = SimpleValueFactory.getInstance();
 
 	private Connection connection;
 	private IRI context;
@@ -67,7 +64,7 @@ class OStardogGraphAdder implements OTGraphAdder {
 
 		private IRI convertURI(OT_URI uri) {
 
-			return valueFactory.createIRI(uri.toString());
+			return Values.iri(uri.toString());
 		}
 	}
 
@@ -92,6 +89,6 @@ class OStardogGraphAdder implements OTGraphAdder {
 
 		this.connection = connection;
 
-		context = valueFactory.createIRI(contextURI);
+		context = Values.iri(contextURI);
 	}
 }

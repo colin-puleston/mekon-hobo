@@ -26,12 +26,11 @@ package uk.ac.manchester.cs.mekon.owl.stardog;
 
 import java.util.*;
 
-import org.openrdf.model.*;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.query.QueryEvaluationException;
-
 import com.complexible.stardog.api.*;
+
+import com.stardog.stark.IRI;
+import com.stardog.stark.query.SelectQueryResult;
+import com.stardog.stark.query.BindingSet;
 
 import uk.ac.manchester.cs.mekon_util.config.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
@@ -75,17 +74,17 @@ class OStardogQuery implements OTQuery {
 		}
 	}
 
-	private class UpdateExecutor extends Executor<Boolean> {
+	private class UpdateExecutor extends Executor<Void> {
 
-		Query<Boolean> create(String query) {
+		Query<Void> create(String query) {
 
 			return connection.update(query);
 		}
 	}
 
-	private class SelectExecutor extends Executor<TupleQueryResult> {
+	private class SelectExecutor extends Executor<SelectQueryResult> {
 
-		Query<TupleQueryResult> create(String query) {
+		Query<SelectQueryResult> create(String query) {
 
 			return connection.select(query);
 		}
@@ -109,7 +108,7 @@ class OStardogQuery implements OTQuery {
 	public List<OT_URI> executeSelect(String query, OTQueryConstants constants) {
 
 		List<OT_URI> bindings = new ArrayList<OT_URI>();
-		TupleQueryResult result = new SelectExecutor().execute(query, constants);
+		SelectQueryResult result = new SelectExecutor().execute(query, constants);
 
 		while (result.hasNext()) {
 
@@ -128,7 +127,7 @@ class OStardogQuery implements OTQuery {
 
 	private OT_URI getSingleBoundURI(BindingSet bindings) {
 
-		IRI boundURI = (IRI)bindings.iterator().next().getValue();
+		IRI boundURI = (IRI)bindings.iterator().next().value();
 
 		return new OT_URI(boundURI.toString());
 	}

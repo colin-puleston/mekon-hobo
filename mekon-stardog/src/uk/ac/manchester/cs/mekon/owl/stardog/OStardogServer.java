@@ -27,15 +27,13 @@ package uk.ac.manchester.cs.mekon.owl.stardog;
 import java.io.*;
 import java.nio.file.*;
 
-import org.openrdf.rio.*;
-
 import com.complexible.common.base.*;
-import com.complexible.common.protocols.server.*;
 
 import com.complexible.stardog.*;
 import com.complexible.stardog.api.*;
 import com.complexible.stardog.api.admin.*;
-import com.complexible.stardog.protocols.snarl.*;
+
+import com.stardog.stark.*;
 
 import uk.ac.manchester.cs.mekon_util.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
@@ -48,7 +46,7 @@ class OStardogServer {
 	static private final String USERNAME = "admin";
 	static private final String PASSWORD = "admin";
 
-	private Server server;
+	private Stardog server;
 	private Connection connection;
 
 	private String databaseName;
@@ -57,7 +55,7 @@ class OStardogServer {
 
 		this.databaseName = databaseName;
 
-		server = startServer();
+		server = Stardog.builder().create();
 		connection = startDatabase(forceNewDB);
 
 		loadModel(model);
@@ -77,26 +75,11 @@ class OStardogServer {
 				removeDatabase();
 			}
 
-			server.stop();
 			connection.close();
+			server.shutdown();
 
-			server = null;
 			connection = null;
-		}
-	}
-
-	private Server startServer() {
-
-		try {
-
-			return Stardog
-					 .buildServer()
-					 .bind(SNARLProtocolConstants.EMBEDDED_ADDRESS)
-					 .start();
-		}
-		catch (ServerException e) {
-
-			throw new KSystemConfigException(e);
+			server = null;
 		}
 	}
 
@@ -121,7 +104,7 @@ class OStardogServer {
 
 		if (!exists) {
 
-			admin.disk(databaseName).create();
+			admin.newDatabase(databaseName).create();
 		}
 
 		admin.close();
@@ -158,7 +141,7 @@ class OStardogServer {
 		Path path = Paths.get(file.toURI());
 
 		connection.begin();
-		connection.add().io().format(RDFFormat.RDFXML).file(path);
+		connection.add().io().file(path);
 		connection.commit();
 
 		file.delete();
