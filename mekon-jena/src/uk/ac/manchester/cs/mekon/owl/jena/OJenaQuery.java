@@ -55,9 +55,9 @@ class OJenaQuery implements OTQuery {
 		return result;
 	}
 
-	public List<OT_URI> executeSelect(String query, OTQueryConstants constants) {
+	public Set<OT_URI> executeSelect(String query, OTQueryConstants constants) {
 
-		List<OT_URI> bindings = new ArrayList<OT_URI>();
+		Set<OT_URI> bindings = new HashSet<OT_URI>();
 		QueryExecution exec = createExecution(query, constants);
 		ResultSet results = exec.execSelect();
 
