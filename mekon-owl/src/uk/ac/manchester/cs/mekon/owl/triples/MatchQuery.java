@@ -53,7 +53,7 @@ class MatchQuery extends SpecificQuery {
 		super(factory);
 	}
 
-	List<OT_URI> execute(NNode query) {
+	Set<OT_URI> execute(NNode query) {
 
 		return executeSelect(ROOT_NODE_VARIABLE, renderQueryBody(query));
 	}

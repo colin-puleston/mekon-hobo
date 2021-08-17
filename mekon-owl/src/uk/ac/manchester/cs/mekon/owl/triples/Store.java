@@ -93,7 +93,7 @@ class Store {
 		remove(iri);
 	}
 
-	private List<OT_URI> executeMatch(NNode query) {
+	private Set<OT_URI> executeMatch(NNode query) {
 
 		return new MatchQuery(factory).execute(query);
 	}

@@ -59,5 +59,5 @@ public interface OTQuery {
 	 * @param constants Constants for query.
 	 * @return Result of query execution
 	 */
-	public List<OT_URI> executeSelect(String query, OTQueryConstants constants);
+	public Set<OT_URI> executeSelect(String query, OTQueryConstants constants);
 }

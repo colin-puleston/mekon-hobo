@@ -81,7 +81,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 			if (feature.disjunctionLink()) {
 
-				renderUnion(subject, predicate, renderValues(feature));
+				checkRenderValueDisjunction(subject, predicate, feature);
 			}
 			else {
 
@@ -93,18 +93,6 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 			renderTriple(subject, predicate, renderFrom(value));
 		}
-
-		private Set<OTValue> renderValues(NLink link) {
-
-			Set<OTValue> tripleValues = new HashSet<OTValue>();
-
-			for (NNode value : link.getValues()) {
-
-				tripleValues.add(renderFrom(value));
-			}
-
-			return tripleValues;
-		}
 	}
 
 	private class NumbersRenderer
@@ -115,35 +103,12 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 			if (value.indefinite()) {
 
-				renderRange(subject, predicate, value.getType());
+				checkRenderNumberRange(subject, predicate, value.getType());
 			}
 			else {
 
 				renderTriple(subject, predicate, renderDefiniteNumber(value));
 			}
-		}
-
-		private void renderRange(TN subject, OT_URI predicate, CNumber range) {
-
-			if (range.hasMin()) {
-
-				renderTriple(subject, predicate, renderMin(range.getMin()));
-			}
-
-			if (range.hasMax()) {
-
-				renderTriple(subject, predicate, renderMax(range.getMax()));
-			}
-		}
-
-		private OTValue renderMin(INumber min) {
-
-			return renderNumberMin(renderDefiniteNumber(min));
-		}
-
-		private OTValue renderMax(INumber max) {
-
-			return renderNumberMax(renderDefiniteNumber(max));
 		}
 	}
 
@@ -166,17 +131,31 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		return tripleNode;
 	}
 
+	TN renderFrom(NNode node) {
+
+		TN tripleNode = renderNode(node);
+
+		if (typeRenderingRequired(node)) {
+
+			renderType(node, tripleNode);
+		}
+
+		renderFeatureValues(node, tripleNode);
+
+		return tripleNode;
+	}
+
 	abstract TN renderDynamicNode(int index);
 
 	abstract TN renderInstanceRefNode(URI refURI);
 
-	abstract OTValue renderNumberMin(OTNumber value);
-
-	abstract OTValue renderNumberMax(OTNumber value);
-
 	abstract void renderTriple(TN subject, OT_URI predicate, OTValue object);
 
-	abstract void renderUnion(TN subject, OT_URI predicate, Set<OTValue> objects);
+	abstract void checkRenderDisjunctionType(TN subject, OT_URI predicate, NNode node);
+
+	abstract void checkRenderValueDisjunction(TN subject, OT_URI predicate, NLink link);
+
+	abstract void checkRenderNumberRange(TN subject, OT_URI predicate, CNumber range);
 
 	abstract boolean typeRenderingRequired(NNode node);
 
@@ -193,20 +172,6 @@ abstract class InstanceRenderer<TN extends OTValue> {
 	OTString renderString(String string) {
 
 		return new OTString(string);
-	}
-
-	private TN renderFrom(NNode node) {
-
-		TN tripleNode = renderNode(node);
-
-		if (typeRenderingRequired(node)) {
-
-			renderType(node, tripleNode);
-		}
-
-		renderFeatureValues(node, tripleNode);
-
-		return tripleNode;
 	}
 
 	private TN renderNode(NNode node) {
@@ -236,7 +201,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		}
 		else {
 
-			renderUnion(tripleNode, typePredicate, renderTypeDisjuncts(node));
+			checkRenderDisjunctionType(tripleNode, typePredicate, node);
 		}
 	}
 
@@ -247,26 +212,9 @@ abstract class InstanceRenderer<TN extends OTValue> {
 		stringsRenderer.render(tripleNode, node.getStrings());
 	}
 
-	private Set<OTValue> renderTypeDisjuncts(NNode node) {
-
-		Set<OTValue> objects = new HashSet<OTValue>();
-
-		for (IRI typeDisjunctIRI : NetworkIRIs.getTypeDisjuncts(node)) {
-
-			objects.add(renderURI(typeDisjunctIRI));
-		}
-
-		return objects;
-	}
-
 	private OT_URI renderAtomicType(NEntity entity) {
 
-		return renderURI(NetworkIRIs.getAtomicType(entity));
-	}
-
-	private OT_URI renderURI(IRI iri) {
-
-		return renderURI(iri.toString());
+		return renderURI(NetworkIRIs.getAtomicType(entity).toString());
 	}
 
 	private URI checkExtractInstanceRef(NNode node) {

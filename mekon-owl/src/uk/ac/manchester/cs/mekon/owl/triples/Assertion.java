@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import java.net.*;
 import java.util.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon_util.*;
 
@@ -59,41 +60,23 @@ class Assertion {
 			return new OT_URI(refURI);
 		}
 
-		OTValue renderNumberMin(OTNumber value) {
-
-			throw createIndefiniteNumberException();
-		}
-
-		OTValue renderNumberMax(OTNumber value) {
-
-			throw createIndefiniteNumberException();
-		}
-
 		void renderTriple(OT_URI subject, OT_URI predicate, OTValue object) {
 
 			adder.addToGraph(subject, predicate, object);
 		}
 
-		void renderUnion(OT_URI subject, OT_URI predicate, Set<OTValue> objects) {
+		void checkRenderDisjunctionType(OT_URI subject, OT_URI predicate, NNode node) {
+		}
 
-			throw createBadConstructException("nodes with disjunction types");
+		void checkRenderValueDisjunction(OT_URI subject, OT_URI predicate, NLink link) {
+		}
+
+		void checkRenderNumberRange(OT_URI subject, OT_URI predicate, CNumber range) {
 		}
 
 		boolean typeRenderingRequired(NNode node) {
 
 			return true;
-		}
-
-		private KAccessException createIndefiniteNumberException() {
-
-			return createBadConstructException("indefinite number-values");
-		}
-
-		private KAccessException createBadConstructException(String construct) {
-
-			return new KAccessException(
-							"Cannot store instances containing "
-							+ construct);
 		}
 	}
 

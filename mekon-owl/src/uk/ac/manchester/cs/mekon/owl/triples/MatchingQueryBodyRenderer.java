@@ -27,8 +27,11 @@ package uk.ac.manchester.cs.mekon.owl.triples;
 import java.net.*;
 import java.util.*;
 
+import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.network.*;
+import uk.ac.manchester.cs.mekon.owl.reason.*;
 
 /**
  * @author Colin Puleston
@@ -76,24 +79,32 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		return new QueryVariable(constants.register(new OT_URI(refURI)));
 	}
 
-	OTValue renderNumberMin(OTNumber value) {
-
-		return renderNumberLimit(MIN_OPERATOR, value);
-	}
-
-	OTValue renderNumberMax(OTNumber value) {
-
-		return renderNumberLimit(MAX_OPERATOR, value);
-	}
-
 	void renderTriple(QueryVariable subject, OT_URI predicate, OTValue object) {
 
 		statements.append(getSimpleTripleString(subject, predicate, object));
 	}
 
-	void renderUnion(QueryVariable subject, OT_URI predicate, Set<OTValue> objects) {
+	void checkRenderDisjunctionType(QueryVariable subject, OT_URI predicate, NNode node) {
 
-		statements.append(getUnionString(subject, predicate, objects));
+		renderUnion(subject, predicate, renderTypeDisjuncts(node));
+	}
+
+	void checkRenderValueDisjunction(QueryVariable subject, OT_URI predicate, NLink link) {
+
+		renderUnion(subject, predicate, renderLinkValues(link));
+	}
+
+	void checkRenderNumberRange(QueryVariable subject, OT_URI predicate, CNumber range) {
+
+		if (range.hasMin()) {
+
+			renderTriple(subject, predicate, renderMin(range.getMin()));
+		}
+
+		if (range.hasMax()) {
+
+			renderTriple(subject, predicate, renderMax(range.getMax()));
+		}
 	}
 
 	boolean typeRenderingRequired(NNode node) {
@@ -130,13 +141,62 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 
 	abstract QueryVariable getRootTripleNode();
 
-	private OTValue renderNumberLimit(String op, OTNumber value) {
+	private void renderUnion(QueryVariable subject, OT_URI predicate, Set<OTValue> objects) {
+
+		statements.append(getUnionString(subject, predicate, objects));
+	}
+
+	private Set<OTValue> renderTypeDisjuncts(NNode node) {
+
+		Set<OTValue> objects = new HashSet<OTValue>();
+
+		for (IRI typeDisjunctIRI : NetworkIRIs.getTypeDisjuncts(node)) {
+
+			objects.add(renderURI(typeDisjunctIRI.toString()));
+		}
+
+		return objects;
+	}
+
+	private Set<OTValue> renderLinkValues(NLink link) {
+
+		Set<OTValue> tripleValues = new HashSet<OTValue>();
+
+		for (NNode value : link.getValues()) {
+
+			tripleValues.add(renderFrom(value));
+		}
+
+		return tripleValues;
+	}
+
+	private OTValue renderMin(INumber value) {
+
+		return renderNumberLimit(MIN_OPERATOR, value);
+	}
+
+	private OTValue renderMax(INumber value) {
+
+		return renderNumberLimit(MAX_OPERATOR, value);
+	}
+
+	private OTValue renderNumberLimit(String op, INumber value) {
 
 		String var = getNextLimitVariable();
 
-		filters.append(getLimitFilterString(var, op, renderValue(value)));
+		filters.append(getLimitFilterString(var, op, renderDefiniteNumberValue(value)));
 
 		return new QueryVariable(var);
+	}
+
+	private String renderDefiniteNumberValue(INumber value) {
+
+		return renderValue(renderDefiniteNumber(value));
+	}
+
+	private String renderValue(OTValue value) {
+
+		return value.getQueryRendering(constants);
 	}
 
 	private String getUnionString(
@@ -208,10 +268,5 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 	private String getNextLimitVariable() {
 
 		return String.format(LIMIT_VARIABLE_FORMAT, limitCount++);
-	}
-
-	private String renderValue(OTValue value) {
-
-		return value.getQueryRendering(constants);
 	}
 }

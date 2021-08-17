@@ -54,7 +54,7 @@ abstract class SpecificQuery {
 		return query.executeAsk(renderAsk(queryBody), constants);
 	}
 
-	List<OT_URI> executeSelect(String variable, String queryBody) {
+	Set<OT_URI> executeSelect(String variable, String queryBody) {
 
 		return query.executeSelect(renderSelect(variable, queryBody), constants);
 	}
