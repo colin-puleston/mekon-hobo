@@ -27,15 +27,10 @@ package uk.ac.manchester.cs.mekon.owl.stardog;
 import java.io.*;
 import java.nio.file.*;
 
-import com.complexible.common.base.*;
-
 import com.complexible.stardog.*;
 import com.complexible.stardog.api.*;
 import com.complexible.stardog.api.admin.*;
 
-import com.stardog.stark.*;
-
-import uk.ac.manchester.cs.mekon_util.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -122,7 +117,7 @@ class OStardogServer {
 
 		return ConnectionConfiguration
 				.to(databaseName)
-				.credentials(PASSWORD, PASSWORD)
+				.credentials(USERNAME, PASSWORD)
 				.reasoning(true)
 				.connect();
 	}

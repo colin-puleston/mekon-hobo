@@ -105,9 +105,9 @@ class OStardogQuery implements OTQuery {
 		new UpdateExecutor().execute(query, constants);
 	}
 
-	public List<OT_URI> executeSelect(String query, OTQueryConstants constants) {
+	public Set<OT_URI> executeSelect(String query, OTQueryConstants constants) {
 
-		List<OT_URI> bindings = new ArrayList<OT_URI>();
+		Set<OT_URI> bindings = new HashSet<OT_URI>();
 		SelectQueryResult result = new SelectExecutor().execute(query, constants);
 
 		while (result.hasNext()) {
