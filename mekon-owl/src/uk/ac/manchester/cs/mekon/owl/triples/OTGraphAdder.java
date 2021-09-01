@@ -40,10 +40,8 @@ public interface OTGraphAdder {
 	 */
 	public void addToGraph(OT_URI subject, OT_URI predicate, OTValue object);
 
-
 	/**
 	 * Adds the graph to triple store.
 	 */
 	public void addGraphToStore();
-
 }

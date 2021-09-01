@@ -107,11 +107,6 @@ abstract class MatchingQueryBodyRenderer extends InstanceRenderer<QueryVariable>
 		}
 	}
 
-	boolean typeRenderingRequired(NNode node) {
-
-		return !node.instanceRef();
-	}
-
 	OT_URI renderURI(String uri) {
 
 		OT_URI triplesURI = super.renderURI(uri);

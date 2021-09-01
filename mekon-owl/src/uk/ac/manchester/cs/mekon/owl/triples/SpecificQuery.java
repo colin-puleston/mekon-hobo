@@ -34,8 +34,6 @@ abstract class SpecificQuery {
 	static private final String ASK_FORMAT = "ASK {%s}";
 	static private final String SELECT_FORMAT = "SELECT %s {%s}";
 
-	static private final String NAMED_GRAPH_WRAPPER_FORMAT = "GRAPH ?g {%s}";
-
 	private OTQuery query;
 	private OTQueryConstants constants = new OTQueryConstants();
 
@@ -61,21 +59,11 @@ abstract class SpecificQuery {
 
 	private String renderAsk(String queryBody) {
 
-		return String.format(ASK_FORMAT, resolveBody(queryBody));
+		return String.format(ASK_FORMAT, queryBody);
 	}
 
 	private String renderSelect(String variable, String queryBody) {
 
-		return String.format(SELECT_FORMAT, variable, resolveBody(queryBody));
-	}
-
-	private String resolveBody(String queryBody) {
-
-		return query.namedGraphs() ? wrapForNamedGraphs(queryBody) : queryBody;
-	}
-
-	private String wrapForNamedGraphs(String queryBody) {
-
-		return String.format(NAMED_GRAPH_WRAPPER_FORMAT, queryBody);
+		return String.format(SELECT_FORMAT, variable, queryBody);
 	}
 }

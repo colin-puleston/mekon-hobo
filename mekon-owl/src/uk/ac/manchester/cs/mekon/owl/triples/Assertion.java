@@ -73,11 +73,6 @@ class Assertion {
 
 		void checkRenderNumberRange(OT_URI subject, OT_URI predicate, CNumber range) {
 		}
-
-		boolean typeRenderingRequired(NNode node) {
-
-			return true;
-		}
 	}
 
 	Assertion(OTFactory factory, String baseURI) {

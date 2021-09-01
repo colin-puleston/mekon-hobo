@@ -135,7 +135,7 @@ abstract class InstanceRenderer<TN extends OTValue> {
 
 		TN tripleNode = renderNode(node);
 
-		if (typeRenderingRequired(node)) {
+		if (!node.instanceRef()) {
 
 			renderType(node, tripleNode);
 		}
@@ -156,8 +156,6 @@ abstract class InstanceRenderer<TN extends OTValue> {
 	abstract void checkRenderValueDisjunction(TN subject, OT_URI predicate, NLink link);
 
 	abstract void checkRenderNumberRange(TN subject, OT_URI predicate, CNumber range);
-
-	abstract boolean typeRenderingRequired(NNode node);
 
 	OT_URI renderURI(String uri) {
 
