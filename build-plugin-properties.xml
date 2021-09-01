@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<project name="MEKON PLUGIN PROPERTIES">
+
+	<!-- mekon-basex build activation property -->
+	<!--
+	<property name="mekon-basex.active" value="true"/>
+	-->
+
+	<!-- mekon-jena build activation property -->
+	<!--
+	<property name="mekon-jena.active" value="true"/>
+	-->
+
+	<!-- mekon-stardog build activation property -->
+	<property name="mekon-stardog.active" value="true"/>
+	<!--
+	-->
+
+</project>

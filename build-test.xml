@@ -9,11 +9,15 @@
 	<!-- common properties -->
 	<include file="build-properties.xml"/>
 
+	<!-- conditional plugin properties -->
+	<include file="build-plugin-properties.xml"/>
+
 	<property name="mekon.test" value="mekon/test/"/>
 	<property name="mekon-user.test" value="mekon-user/test/"/>
 	<property name="mekon-owl.test" value="mekon-owl/test/"/>
 	<property name="mekon-basex.test" value="mekon-basex/test/"/>
 	<property name="mekon-jena.test" value="mekon-jena/test/"/>
+	<property name="mekon-stardog.test" value="mekon-stardog/test/"/>
 	<property name="hobo.test" value="hobo/test/"/>
 	<property name="hobo-user.test" value="hobo-user/test/"/>
 
@@ -23,13 +27,39 @@
 	<property name="build.test.run.win" location="${build}/${build.test.run.name}.bat"/>
 
 	<property name="junit.mainclass" value="org.junit.runner.JUnitCore"/>
-	<property name="test.testsuites"
-		value=
-			"uk.ac.manchester.cs.mekon.MekonTestSuite
+
+	<property
+		name="test.testsuites.core"
+		value="
+			uk.ac.manchester.cs.mekon.MekonTestSuite
 			uk.ac.manchester.cs.mekon.owl.MekonOWLTestSuite
-			uk.ac.manchester.cs.mekon.basex.MekonBaseXTestSuite
-			uk.ac.manchester.cs.mekon.owl.jena.MekonJenaTestSuite
 			uk.ac.manchester.cs.hobo.HoboTestSuite"/>
+
+    <condition
+    	property="test.testsuites.basex"
+    	value="uk.ac.manchester.cs.mekon.owl.MekonBaseXTestSuite"
+		else="">
+        <isset property="mekon-basex.active"/>
+    </condition>
+
+    <condition
+    	property="test.testsuites.jena"
+    	value="uk.ac.manchester.cs.mekon.owl.jena.MekonJenaTestSuite"
+		else="">
+        <isset property="mekon-jena.active"/>
+    </condition>
+
+    <condition
+    	property="test.testsuites.stardog"
+    	value="uk.ac.manchester.cs.mekon.owl.stardog.MekonStardogTestSuite"
+		else="">
+        <isset property="mekon-stardog.active"/>
+    </condition>
+
+	<property
+		name="test.testsuites"
+		value="${test.testsuites.core} ${test.testsuites.basex} ${test.testsuites.jena} ${test.testsuites.stardog}"/>
+
 	<property name="build.test.classpath.sh" value="${build.lib.rel}/*:${build.test.classes.rel}:${build.demo.classes.rel}:${build.resource.rel}"/>
 	<property name="build.test.classpath.win" value="${build.lib.rel}/*;${build.test.classes.rel};${build.demo.classes.rel};${build.resource.rel}"/>
 	<property name="build.test.java.run" value="${java.opts} ${junit.mainclass} ${test.testsuites}"/>
@@ -66,14 +96,20 @@
 		</javac>
 	</target>
 
-	<target name="mekon-basex-test" depends="mekon-test">
+	<target name="mekon-basex-test" if="mekon-basex.active" depends="mekon-test">
 		<javac srcdir="${mekon-basex.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
 
-	<target name="mekon-jena-test" depends="mekon-test">
+	<target name="mekon-jena-test" if="mekon-jena.active" depends="mekon-test">
 		<javac srcdir="${mekon-jena.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="mekon-stardog-test" if="mekon-stardog.active" depends="mekon-test">
+		<javac srcdir="${mekon-stardog.test}" classpathref="classpath" destdir="${build.test.classes}" debug="${debug}">
 			<compilerarg value="-Xlint"/>
 		</javac>
 	</target>
@@ -90,7 +126,7 @@
 		</javac>
 	</target>
 
-	<target name="all" depends="mekon-test, mekon-user-test, mekon-owl-test, mekon-basex-test, mekon-jena-test, hobo-test, hobo-user-test">
+	<target name="all" depends="mekon-test, mekon-user-test, mekon-owl-test, mekon-basex-test, mekon-jena-test, mekon-stardog-test, hobo-test, hobo-user-test">
 		<echo file="${build.test.run.sh}">java -cp ${build.test.classpath.sh} ${build.test.java.run}</echo>
 		<echo file="${build.test.run.win}">java -cp ${build.test.classpath.win} ${build.test.java.run}</echo>
 		<chmod dir="${build}" includes="${build.tesy.run.name}.sh" perm="+x"/>
