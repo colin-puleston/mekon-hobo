@@ -40,11 +40,6 @@ class OJenaQuery implements OTQuery {
 
 	private ValueConverter valueConverter;
 
-	public boolean namedGraphs() {
-
-		return false;
-	}
-
 	public boolean executeAsk(String query, OTQueryConstants constants) {
 
 		QueryExecution exec = createExecution(query, constants);
