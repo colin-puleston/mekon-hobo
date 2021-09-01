@@ -114,7 +114,7 @@ public class MekonModelExplorer extends GFrame {
 
 		private CModel model;
 
-		public void windowClosing(WindowEvent e) {
+		public void windowClosed(WindowEvent e) {
 
 			IDiskStoreManager.checkStopStore(model);
 		}
