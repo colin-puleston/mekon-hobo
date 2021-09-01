@@ -90,11 +90,6 @@ class OStardogQuery implements OTQuery {
 		}
 	}
 
-	public boolean namedGraphs() {
-
-		return true;
-	}
-
 	public boolean executeAsk(String query, OTQueryConstants constants) {
 
 		return new AskExecutor().execute(query, constants);

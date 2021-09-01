@@ -108,7 +108,7 @@ public class OStardogMatcher extends OTMatcher {
 	 * Specifies that a rebuild is required if and only if the
 	 * matcher is configured to require a rebuild.
 	 *
-	 * @return true as rebuild required
+	 * @return true if rebuild required
 	 */
 	public boolean rebuildOnStartup() {
 

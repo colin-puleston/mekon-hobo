@@ -30,6 +30,9 @@ import java.nio.file.*;
 import com.complexible.stardog.*;
 import com.complexible.stardog.api.*;
 import com.complexible.stardog.api.admin.*;
+import com.complexible.stardog.db.*;
+
+import com.stardog.stark.io.*;
 
 import uk.ac.manchester.cs.mekon.owl.*;
 
@@ -99,7 +102,10 @@ class OStardogServer {
 
 		if (!exists) {
 
-			admin.newDatabase(databaseName).create();
+			admin
+				.newDatabase(databaseName)
+				.set(DatabaseOptions.QUERY_ALL_GRAPHS, true)
+				.create();
 		}
 
 		admin.close();
@@ -136,7 +142,7 @@ class OStardogServer {
 		Path path = Paths.get(file.toURI());
 
 		connection.begin();
-		connection.add().io().file(path);
+		connection.add().io().format(RDFFormats.RDFXML).file(path);
 		connection.commit();
 
 		file.delete();
