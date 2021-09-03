@@ -194,24 +194,14 @@ class InstanceDisplayOps {
 
 	void copyExecutedQueryAndDisplay(IFrame query) {
 
+		query = query.copy();
+
 		CIdentity storeId = checkResolveAsCopy(query);
 
 		if (storeId != null) {
 
 			new ExecutedQueryDisplayer(storeId, true).display(query);
 		}
-	}
-
-	private CIdentity checkResolveAsCopy(IFrame instance) {
-
-		CIdentity storeId = checkObtainNewStoreId(instance.getType());
-
-		if (storeId != null) {
-
-			customise(instance, storeId);
-		}
-
-		return storeId;
 	}
 
 	boolean checkRename(CIdentity storeId) {
@@ -229,6 +219,18 @@ class InstanceDisplayOps {
 	private CIdentity createAndDisplay(CFrame type, CIdentity storeId) {
 
 		return new CreatedInstanceDisplayer(storeId).display(instantiate(type, storeId));
+	}
+
+	private CIdentity checkResolveAsCopy(IFrame instance) {
+
+		CIdentity storeId = checkObtainNewStoreId(instance.getType());
+
+		if (storeId != null) {
+
+			customise(instance, storeId);
+		}
+
+		return storeId;
 	}
 
 	private CFrame checkDetermineType(CFrame rootType) {
