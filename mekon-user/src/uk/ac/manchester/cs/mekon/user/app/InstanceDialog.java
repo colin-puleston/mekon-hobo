@@ -36,9 +36,9 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 	static private final long serialVersionUID = -1;
 
-	static private final String STORE_BUTTON_LABEL = "Store";
-	static private final String STORE_AS_DEFAULT_BUTTON_LABEL = "Store As...";
-	static private final String STORE_AS_QUALIFIED_BUTTON_LABEL_FORMAT = "Store As (%s)...";
+	static private final String STORE_BUTTON_LABEL = "Save";
+	static private final String STORE_AS_DEFAULT_BUTTON_LABEL = "Save As...";
+	static private final String STORE_AS_QUALIFIED_BUTTON_LABEL_FORMAT = "Save As (%s)...";
 
 	static private String getStoreAsButtonLabel(InstanceSubGroup targetSubGroup, boolean qualify) {
 
