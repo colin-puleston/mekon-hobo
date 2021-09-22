@@ -3,9 +3,7 @@
 <project name="MEKON PLUGIN PROPERTIES">
 
 	<!-- mekon-basex build activation property -->
-	<!--
 	<property name="mekon-basex.active" value="true"/>
-	-->
 
 	<!-- mekon-jena build activation property -->
 	<!--
@@ -13,8 +11,8 @@
 	-->
 
 	<!-- mekon-stardog build activation property -->
-	<property name="mekon-stardog.active" value="true"/>
 	<!--
+	<property name="mekon-stardog.active" value="true"/>
 	-->
 
 </project>
