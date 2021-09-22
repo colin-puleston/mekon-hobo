@@ -159,14 +159,30 @@ public abstract class RClientModel {
 		public void onSlotRemoved(ISlot slot) {
 		}
 
-		ISlotInitialiser(IFrame container) {
+		ISlotInitialiser(IFrame container, boolean reloaded) {
+
+			if (reloaded) {
+
+				initialseReloadedStructure(container);
+			}
+
+			container.addListener(this);
+		}
+
+		private void initialseReloadedStructure(IFrame container) {
 
 			for (ISlot slot : container.getSlots().asList()) {
 
 				new IFrameUpdater(slot);
-			}
 
-			container.addListener(this);
+				if (slot.getValueType() instanceof CFrame) {
+
+					for (IValue value : slot.getValues().asList()) {
+
+						new ISlotInitialiser((IFrame)value, true);
+					}
+				}
+			}
 		}
 	}
 
@@ -196,7 +212,7 @@ public abstract class RClientModel {
 
 			initAction.checkPerform(frame);
 
-			new ISlotInitialiser(frame);
+			new ISlotInitialiser(frame, false);
 		}
 	}
 
@@ -222,7 +238,7 @@ public abstract class RClientModel {
 	 */
 	public void initialiseReloadedInstance(IFrame rootFrame) {
 
-		new ISlotInitialiser(rootFrame);
+		new ISlotInitialiser(rootFrame, true);
 	}
 
 	/**
