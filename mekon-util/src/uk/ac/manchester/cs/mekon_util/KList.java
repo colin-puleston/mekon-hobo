@@ -114,6 +114,27 @@ public abstract class KList<V> {
 	}
 
 	/**
+	 * Retrieves all current general-update listeners.
+	 *
+	 * @return All current general-update listeners
+	 */
+	public List<KUpdateListener> getUpdateListeners() {
+
+		return copyListeners(updateListeners);
+	}
+
+	/**
+	 * Retrieves all current listeners for specific types of list-value
+	 * updates.
+	 *
+	 * @return All current values listeners
+	 */
+	public List<KValuesListener<V>> getValuesListeners() {
+
+		return copyListeners(valuesListeners);
+	}
+
+	/**
 	 * Specifies the current size of the list.
 	 *
 	 * @return Size of list
@@ -482,7 +503,7 @@ public abstract class KList<V> {
 
 	private void pollListenersForUpdate() {
 
-		for (KUpdateListener listener : copyListeners(updateListeners)) {
+		for (KUpdateListener listener : getUpdateListeners()) {
 
 			listener.onUpdated();
 		}
@@ -498,7 +519,7 @@ public abstract class KList<V> {
 
 	private void pollListenersForAdded(V value) {
 
-		for (KValuesListener<V> listener : copyListeners(valuesListeners)) {
+		for (KValuesListener<V> listener : getValuesListeners()) {
 
 			listener.onAdded(value);
 		}
@@ -514,7 +535,7 @@ public abstract class KList<V> {
 
 	private void pollListenersForRemoved(V value) {
 
-		for (KValuesListener<V> listener : copyListeners(valuesListeners)) {
+		for (KValuesListener<V> listener : getValuesListeners()) {
 
 			listener.onRemoved(value);
 		}
@@ -522,7 +543,7 @@ public abstract class KList<V> {
 
 	private void pollListenersForCleared(List<V> values) {
 
-		for (KValuesListener<V> listener : copyListeners(valuesListeners)) {
+		for (KValuesListener<V> listener : getValuesListeners()) {
 
 			listener.onCleared(values);
 		}
