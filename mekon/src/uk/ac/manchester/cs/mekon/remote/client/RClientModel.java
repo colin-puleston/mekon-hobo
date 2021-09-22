@@ -161,26 +161,26 @@ public abstract class RClientModel {
 
 		ISlotInitialiser(IFrame container, boolean reloaded) {
 
-			if (reloaded) {
+			for (ISlot slot : container.getSlots().asList()) {
 
-				initialseReloadedStructure(container);
+				new IFrameUpdater(slot);
+
+				if (reloaded) {
+
+					checkInitialseReloadedStructure(slot);
+				}
 			}
 
 			container.addListener(this);
 		}
 
-		private void initialseReloadedStructure(IFrame container) {
+		private void checkInitialseReloadedStructure(ISlot slot) {
 
-			for (ISlot slot : container.getSlots().asList()) {
+			if (slot.getValueType() instanceof CFrame) {
 
-				new IFrameUpdater(slot);
+				for (IValue value : slot.getValues().asList()) {
 
-				if (slot.getValueType() instanceof CFrame) {
-
-					for (IValue value : slot.getValues().asList()) {
-
-						new ISlotInitialiser((IFrame)value, true);
-					}
+					new ISlotInitialiser((IFrame)value, true);
 				}
 			}
 		}
