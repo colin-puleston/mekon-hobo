@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class HelpPanel extends JTabbedPane {
 
-	static final long serialVersionUID = -1;
+	static private final long serialVersionUID = -1;
 
 	static private final EntityLevel DEFAULT_LEVEL = EntityLevel.CONCEPT;
 	static private final CSource DEFAULT_SOURCE = CSource.UNSPECIFIED;
