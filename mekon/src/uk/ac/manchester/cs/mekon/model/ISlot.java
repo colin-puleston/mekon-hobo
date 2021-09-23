@@ -70,6 +70,11 @@ public class ISlot implements IEntity {
 
 		public boolean setActivation(CActivation activation) {
 
+			if (activation.inactive() && type.getActivation().active()) {
+
+				values.clearAllFixedAndAssertedValues();
+			}
+
 			if (type.setActivation(activation)) {
 
 				pollListenersForUpdatedActiveStatus();
