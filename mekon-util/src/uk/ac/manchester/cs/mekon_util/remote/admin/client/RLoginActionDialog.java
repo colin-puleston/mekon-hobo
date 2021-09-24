@@ -27,7 +27,6 @@ package uk.ac.manchester.cs.mekon_util.remote.admin.client;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -145,14 +144,6 @@ abstract class RLoginActionDialog extends GDialog {
 		}
 	}
 
-	private class WindowCloseListener extends WindowAdapter {
-
-		public void windowClosing(WindowEvent e) {
-
-			dispose();
-		}
-	}
-
 	public void setAdministratorLoginOnly(boolean value) {
 
 		administratorLoginOnly = value;
@@ -184,7 +175,7 @@ abstract class RLoginActionDialog extends GDialog {
 		this.adminClient = adminClient;
 		this.proxyPasswords = proxyPasswords;
 
-		addWindowListener(new WindowCloseListener());
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
 	void addFields(JPanel panel) {
