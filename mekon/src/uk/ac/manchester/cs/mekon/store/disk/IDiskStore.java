@@ -54,8 +54,6 @@ class IDiskStore implements IStore {
 
 	private class Initialiser {
 
-		private List<IMatcher> rebuildingMatchers = new ArrayList<IMatcher>();
-
 		Initialiser() {
 
 			initialiseMatchers();
@@ -77,11 +75,6 @@ class IDiskStore implements IStore {
 		private void initialiseMatcher(IMatcher matcher) {
 
 			matcher.initialise(IDiskStore.this, indexes);
-
-			if (matcher.rebuildOnStartup()) {
-
-				rebuildingMatchers.add(matcher);
-			}
 		}
 
 		private void reloadInstances() {
@@ -107,7 +100,11 @@ class IDiskStore implements IStore {
 			IRegenInstance regen = load(identity, index, false);
 
 			logRegen(identity, regen);
-			checkAddToRebuildingMatcher(identity, regen);
+
+			if (regen.getStatus() != IRegenStatus.FULLY_INVALID) {
+
+				addToMatcher(identity, regen.getRootFrame());
+			}
 		}
 
 		private void logRegen(CIdentity identity, IRegenInstance regen) {
@@ -126,24 +123,9 @@ class IDiskStore implements IStore {
 			}
 		}
 
-		private void checkAddToRebuildingMatcher(CIdentity identity, IRegenInstance regen) {
+		private void addToMatcher(CIdentity identity, IFrame instance) {
 
-			IMatcher matcher = lookForRebuildingMatcher(regen);
-
-			if (matcher != null) {
-
-				matcher.add(createFreeCopy(regen.getRootFrame()), identity);
-			}
-		}
-
-		private IMatcher lookForRebuildingMatcher(IRegenInstance regen) {
-
-			if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
-
-				return null;
-			}
-
-			return lookForMatcher(rebuildingMatchers, regen.getRootFrame().getType());
+			getMatcher(instance).add(createFreeCopy(instance), identity);
 		}
 	}
 
@@ -368,22 +350,15 @@ class IDiskStore implements IStore {
 
 	private IMatcher getMatcher(CFrame type) {
 
-		IMatcher matcher = lookForMatcher(matchers, type);
+		for (IMatcher matcher : matchers) {
 
-		return matcher != null ? matcher : defaultMatcher;
-	}
+			if (matcher.handlesType(type)) {
 
-	private IMatcher lookForMatcher(List<IMatcher> candidates, CFrame type) {
-
-		for (IMatcher candidate : candidates) {
-
-			if (candidate.handlesType(type)) {
-
-				return candidate;
+				return matcher;
 			}
 		}
 
-		return null;
+		return defaultMatcher;
 	}
 
 	private IRegenType createRegenType(IFrame instance) {

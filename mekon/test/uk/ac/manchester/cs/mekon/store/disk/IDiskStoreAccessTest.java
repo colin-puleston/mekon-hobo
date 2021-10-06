@@ -57,11 +57,6 @@ public class IDiskStoreAccessTest extends IStoreAccessTest {
 		public void initialise(IStore store, IMatcherIndexes indexes) {
 		}
 
-		public boolean rebuildOnStartup() {
-
-			return true;
-		}
-
 		public boolean handlesType(CFrame type) {
 
 			return type == this.type;

@@ -64,17 +64,6 @@ public class IDirectMatcher implements IMatcher {
 	}
 
 	/**
-	 * Always returns true since a rebuild is always required on
-	 * startup.
-	 *
-	 * @return true as rebuild required
-	 */
-	public boolean rebuildOnStartup() {
-
-		return true;
-	}
-
-	/**
 	 * Returns true indicating that the matcher handles any type of
 	 * instance-level frame. This method should be overriden if
 	 * more specific behaviour is required.

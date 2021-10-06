@@ -53,15 +53,6 @@ public interface IMatcher {
 	public void initialise(IStore store, IMatcherIndexes indexes);
 
 	/**
-	 * Specifies whether the representations held by the matcher of
-	 * any persistently stored instances needs to be rebuilt on
-	 * start-up.
-	 *
-	 * @return true as rebuild required
-	 */
-	public boolean rebuildOnStartup();
-
-	/**
 	 * Checks whether the matcher handles instance-level frames
 	 * of the specified type.
 	 *
