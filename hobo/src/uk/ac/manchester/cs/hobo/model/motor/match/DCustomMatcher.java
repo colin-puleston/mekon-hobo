@@ -71,7 +71,7 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
-	 * Invokes the corresponding method on the the core-matcher,
+	 * Invokes the corresponding method on the core-matcher,
 	 * and performs initialisations specific to this class that
 	 * could not be performed until after the store has been created
 	 * and registered.
@@ -84,17 +84,6 @@ public class DCustomMatcher implements IMatcher {
 
 		coreMatcher.initialise(store, indexes);
 		customisers.initialisePostStoreBuild();
-	}
-
-	/**
-	 * Invokes the corresponding method the core-matcher to determine
-	 * whether a rebuild is required.
-	 *
-	 * @return true as rebuild required
-	 */
-	public boolean rebuildOnStartup() {
-
-		return coreMatcher.rebuildOnStartup();
 	}
 
 	/**
@@ -111,7 +100,7 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
-	 * Invokes the corresponding method the core-matcher to add
+	 * Invokes the corresponding method on the core-matcher to add
 	 * the specified instance.
 	 *
 	 * @param instance Instance to be added
@@ -123,7 +112,7 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
-	 * Invokes the corresponding method the core-matcher to remove
+	 * Invokes the corresponding method on the core-matcher to remove
 	 * the specified instance.
 	 *
 	 * @param identity Unique identity of instance to be removed
@@ -169,7 +158,7 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
-	 * Invokes the corresponding method on the the core-matcher.
+	 * Invokes the corresponding method on the core-matcher.
 	 */
 	public void stop() {
 
