@@ -73,17 +73,6 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 	}
 
 	/**
-	 * Always returns true since a rebuild will always occur on
-	 * startup.
-	 *
-	 * @return true as rebuild required
-	 */
-	public boolean rebuildOnStartup() {
-
-		return true;
-	}
-
-	/**
 	 * Stores the OWL constructs representing the instances to file,
 	 * if applicable (See #setPersistentInstances).
 	 */
