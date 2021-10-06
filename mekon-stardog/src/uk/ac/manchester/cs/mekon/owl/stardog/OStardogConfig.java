@@ -35,7 +35,6 @@ import uk.ac.manchester.cs.mekon_util.config.*;
 public class OStardogConfig implements OStardogConfigVocab {
 
 	private String databaseName = "MEKON";
-	private boolean rebuildStore = true;
 	private boolean persistStore = false;
 
 	private class ConfigNodeBasedInitialiser {
@@ -47,18 +46,12 @@ public class OStardogConfig implements OStardogConfigVocab {
 			configNode = parentConfigNode.getChild(MATCHER_ROOT_ID);
 
 			databaseName = getDatabaseName();
-			rebuildStore = getRebuildStore();
 			persistStore = getPersistStore();
 		}
 
 		private String getDatabaseName() {
 
 			return configNode.getString(DATABASE_NAME_ATTR, databaseName);
-		}
-
-		private boolean getRebuildStore() {
-
-			return configNode.getBoolean(REBUILD_STORE_ATTR, rebuildStore);
 		}
 
 		private boolean getPersistStore() {
@@ -84,18 +77,6 @@ public class OStardogConfig implements OStardogConfigVocab {
 	}
 
 	/**
-	 * Sets whether the store should be completely rebuilt
-	 * from the main MEKON instance store on start-up. Defaults to
-	 * true.
-	 *
-	 * @param rebuildStore True if store should be rebuilt
-	 */
-	public void setRebuildStore(boolean rebuildStore) {
-
-		this.rebuildStore = rebuildStore;
-	}
-
-	/**
 	 * Sets whether the store should persist after the matcher
 	 * is destroyed. Defaults to false.
 	 *
@@ -114,11 +95,6 @@ public class OStardogConfig implements OStardogConfigVocab {
 	String getDatabaseName() {
 
 		return databaseName;
-	}
-
-	boolean rebuildStore() {
-
-		return rebuildStore;
 	}
 
 	boolean persistStore() {

@@ -39,7 +39,6 @@ public class OStardogMatcher extends OTMatcher {
 
 	private OStardogServer server = null;
 
-	private boolean rebuildStore;
 	private boolean persistStore;
 
 	/**
@@ -105,17 +104,6 @@ public class OStardogMatcher extends OTMatcher {
 	}
 
 	/**
-	 * Specifies that a rebuild is required if and only if the
-	 * matcher is configured to require a rebuild.
-	 *
-	 * @return true if rebuild required
-	 */
-	public boolean rebuildOnStartup() {
-
-		return rebuildStore;
-	}
-
-	/**
 	 * Closes the connection to the database and stops the Stardog server,
 	 * and, unless the matcher is configured to persist the database, removes
 	 * it.
@@ -132,7 +120,6 @@ public class OStardogMatcher extends OTMatcher {
 
 	private void initialise(OStardogConfig config) {
 
-		rebuildStore = config.rebuildStore();
 		persistStore = config.persistStore();
 
 		server = createServer(config.getDatabaseName());
@@ -142,6 +129,6 @@ public class OStardogMatcher extends OTMatcher {
 
 	private OStardogServer createServer(String databaseName) {
 
-		return new OStardogServer(getModel(), databaseName, rebuildStore);
+		return new OStardogServer(getModel(), databaseName);
 	}
 }

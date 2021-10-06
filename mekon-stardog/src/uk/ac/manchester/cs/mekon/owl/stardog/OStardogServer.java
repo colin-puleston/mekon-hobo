@@ -49,12 +49,12 @@ class OStardogServer {
 
 	private String databaseName;
 
-	OStardogServer(OModel model, String databaseName, boolean forceNewDB) {
+	OStardogServer(OModel model, String databaseName) {
 
 		this.databaseName = databaseName;
 
 		server = Stardog.builder().create();
-		connection = startDatabase(forceNewDB);
+		connection = startDatabase();
 
 		loadModel(model);
 	}
@@ -81,32 +81,26 @@ class OStardogServer {
 		}
 	}
 
-	private Connection startDatabase(boolean forceNewDB) {
+	private Connection startDatabase() {
 
-		ensureDatabase(forceNewDB);
+		createDatabase();
 
 		return connectToDatabase();
 	}
 
-	private void ensureDatabase(boolean forceNewDB) {
+	private void createDatabase() {
 
 		AdminConnection admin = connectForAdmin();
-		boolean exists = admin.list().contains(databaseName);
 
-		if (exists && forceNewDB) {
+		if (admin.list().contains(databaseName)) {
 
 			admin.drop(databaseName);
-
-			exists = false;
 		}
 
-		if (!exists) {
-
-			admin
-				.newDatabase(databaseName)
-				.set(DatabaseOptions.QUERY_ALL_GRAPHS, true)
-				.create();
-		}
+		admin
+			.newDatabase(databaseName)
+			.set(DatabaseOptions.QUERY_ALL_GRAPHS, true)
+			.create();
 
 		admin.close();
 	}
