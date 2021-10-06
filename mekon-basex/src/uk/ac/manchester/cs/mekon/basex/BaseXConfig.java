@@ -45,7 +45,6 @@ public class BaseXConfig implements BaseXConfigVocab {
 
 	private String databaseName = "MEKON";
 	private File storeDirectory = getDefaultStoreDir(".");
-	private boolean rebuildStore = true;
 	private boolean persistStore = false;
 
 	private class ConfigNodeBasedInitialiser {
@@ -58,7 +57,6 @@ public class BaseXConfig implements BaseXConfigVocab {
 
 			databaseName = getDatabaseName();
 			storeDirectory = getStoreDirectory();
-			rebuildStore = getRebuildStore();
 			persistStore = getPersistStore();
 		}
 
@@ -73,11 +71,6 @@ public class BaseXConfig implements BaseXConfigVocab {
 		private String getDatabaseName() {
 
 			return configNode.getString(DATABASE_NAME_ATTR, databaseName);
-		}
-
-		private boolean getRebuildStore() {
-
-			return configNode.getBoolean(REBUILD_STORE_ATTR, rebuildStore);
 		}
 
 		private boolean getPersistStore() {
@@ -124,18 +117,6 @@ public class BaseXConfig implements BaseXConfigVocab {
 	}
 
 	/**
-	 * Sets whether the store should be completely rebuilt
-	 * from the main MEKON instance store on start-up. Defaults to
-	 * true.
-	 *
-	 * @param rebuildStore True if store should be rebuilt
-	 */
-	public void setRebuildStore(boolean rebuildStore) {
-
-		this.rebuildStore = rebuildStore;
-	}
-
-	/**
 	 * Sets whether the store should persist after the matcher
 	 * is destroyed. Defaults to false.
 	 *
@@ -159,11 +140,6 @@ public class BaseXConfig implements BaseXConfigVocab {
 	File getStoreDirectory() {
 
 		return storeDirectory;
-	}
-
-	boolean rebuildStore() {
-
-		return rebuildStore;
 	}
 
 	boolean persistStore() {

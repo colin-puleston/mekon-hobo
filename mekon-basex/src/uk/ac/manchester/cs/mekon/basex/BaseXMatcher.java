@@ -47,8 +47,6 @@ public class BaseXMatcher extends NMatcher {
 	private Database mainDatabase;
 	private Database tempDatabase;
 
-	private boolean rebuildStore;
-
 	/**
 	 * Constructs matcher with the default configuration (see
 	 * individual "set" methods on {@link BaseXConfig} for default
@@ -68,8 +66,6 @@ public class BaseXMatcher extends NMatcher {
 	 * @param config Configuration for matcher
 	 */
 	public BaseXMatcher(BaseXConfig config) {
-
-		rebuildStore = config.rebuildStore();
 
 		mainDatabase = new Database(config);
 		tempDatabase = Database.createTempDB(config);
@@ -99,17 +95,6 @@ public class BaseXMatcher extends NMatcher {
 		super.initialise(store, indexes);
 
 		this.indexes = indexes;
-	}
-
-	/**
-	 * Specifies that a rebuild is required if and only if the
-	 * matcher is configured to require a rebuild.
-	 *
-	 * @return true as rebuild required
-	 */
-	public boolean rebuildOnStartup() {
-
-		return rebuildStore;
 	}
 
 	/**

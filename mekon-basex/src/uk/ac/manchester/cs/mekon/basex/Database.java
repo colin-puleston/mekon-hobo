@@ -53,7 +53,7 @@ class Database {
 
 	static Database createTempDB(BaseXConfig config) {
 
-		return new Database(TEMP_DB_NAME, getTempDBStoreDir(config), false, false);
+		return new Database(TEMP_DB_NAME, getTempDBStoreDir(config), false);
 	}
 
 	static private File getTempDBStoreDir(BaseXConfig config) {
@@ -72,7 +72,6 @@ class Database {
 		this(
 			config.getDatabaseName(),
 			config.getStoreDirectory(),
-			config.rebuildStore(),
 			config.persistStore());
 	}
 
@@ -133,24 +132,15 @@ class Database {
 		}
 	}
 
-	private Database(String databaseName, File storeDir, boolean rebuild, boolean persist) {
+	private Database(String databaseName, File storeDir, boolean persist) {
 
 		this.databaseName = databaseName;
 		this.persist = persist;
 
 		fileStore.setDirectory(storeDir);
+		fileStore.clear();
 
-		if (rebuild) {
-
-			fileStore.clear();
-		}
-
-		execute(getStartCommand(rebuild));
-	}
-
-	private Command getStartCommand(boolean rebuild) {
-
-		return rebuild ? new CreateDB(databaseName) : new Check(databaseName);
+		execute(new CreateDB(databaseName));
 	}
 
 	private Command getStopCommand() {
