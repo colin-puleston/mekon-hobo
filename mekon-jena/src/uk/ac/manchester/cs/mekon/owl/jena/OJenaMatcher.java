@@ -91,17 +91,6 @@ public class OJenaMatcher extends OTMatcher {
 	}
 
 	/**
-	 * Always returns true since a rebuild is always required on
-	 * startup.
-	 *
-	 * @return true as rebuild required
-	 */
-	public boolean rebuildOnStartup() {
-
-		return true;
-	}
-
-	/**
 	 * Does nothing since no clear-ups are required for this type
 	 * of store.
 	 */

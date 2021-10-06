@@ -12,3 +12,7 @@ the "build-plugin-properties.xml" ANT build config file, i.e.
     <property name="mekon-jena.active" value="true"/>
     -->
 
+NOTE: The required dependencies for the mekon-jena plug-in are
+incompatible with those for the mekon-stardog plug-in, so these
+two plug-ins cannot be built and used together in a single
+installation
