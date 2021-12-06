@@ -37,9 +37,9 @@ import uk.ac.manchester.cs.mekon.owl.*;
  */
 abstract class Renderer<NR extends OWLObject> {
 
-	private OModel model;
-	private ORSemantics semantics;
+	private ReasoningModel reasoningModel;
 
+	private OModel model;
 	private OWLDataFactory dataFactory;
 	private NumberRenderer indirectNumberRenderer;
 
@@ -160,7 +160,12 @@ abstract class Renderer<NR extends OWLObject> {
 
 		private boolean closedWorldSemantics() {
 
-			return semantics.getWorld(model, getFeatureIRI()).closed();
+			return getSemantics().getWorld(model, getFeatureIRI()).closed();
+		}
+
+		private ORSemantics getSemantics() {
+
+			return reasoningModel.getSemantics();
 		}
 
 		private IRI getFeatureIRI() {
@@ -372,11 +377,10 @@ abstract class Renderer<NR extends OWLObject> {
 
 	Renderer(ReasoningModel reasoningModel, StringValueProxies stringValueProxies) {
 
-		model = reasoningModel.getModel();
-		semantics = reasoningModel.getSemantics();
-
+		this.reasoningModel = reasoningModel;
 		this.stringValueProxies = stringValueProxies;
 
+		model = reasoningModel.getModel();
 		dataFactory = model.getDataFactory();
 		indirectNumberRenderer = checkCreateIndirectNumberRenderer();
 	}

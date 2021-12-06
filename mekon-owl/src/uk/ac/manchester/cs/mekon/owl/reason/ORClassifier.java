@@ -79,7 +79,9 @@ public class ORClassifier extends NClassifier {
 
 	private ReasoningModel reasoningModel;
 
+	private ExpressionRenderer expressionRenderer;
 	private IndividualsRenderer individualsRenderer;
+
 	private ODynamicInstanceIRIs individualRootIRIs = new ODynamicInstanceIRIs();
 
 	private boolean forceIndividualBasedClassification = false;
@@ -128,6 +130,8 @@ public class ORClassifier extends NClassifier {
 	public ORClassifier(OModel model) {
 
 		reasoningModel = new ReasoningModel(model);
+
+		expressionRenderer = new ExpressionRenderer(reasoningModel, false);
 		individualsRenderer = new IndividualsRenderer(reasoningModel);
 	}
 
@@ -225,7 +229,7 @@ public class ORClassifier extends NClassifier {
 			return createIndividualNetwork(instance);
 		}
 
-		return new ConceptExpression(reasoningModel, instance);
+		return new ConceptExpression(getModel(), expressionRenderer, instance);
 	}
 
 	private IndividualNetwork createIndividualNetwork(NNode instance) {

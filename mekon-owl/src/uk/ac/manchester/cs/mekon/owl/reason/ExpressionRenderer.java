@@ -43,6 +43,8 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 	private ArrayDeque<NNode> nodeStack = new ArrayDeque<NNode>();
 
+	private boolean individualsQuery;
+
 	private class NodeToExpressionRenderer extends NodeRenderer {
 
 		private NNode node;
@@ -113,16 +115,30 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 		private OWLClassExpression renderInstanceRef(IRI iri) {
 
-			OWLNamedIndividual ind = createIndividual(iri);
+			if (individualsQuery) {
+
+				return renderIndividualInstanceRef(iri);
+			}
+
+			return renderConceptInstanceRef(iri);
+		}
+
+		private OWLClassExpression renderConceptInstanceRef(IRI iri) {
+
+			OWLClass concept = dataFactory.getOWLClass(iri);
+
+			addAxiom(dataFactory.getOWLDeclarationAxiom(concept));
+
+			return concept;
+		}
+
+		private OWLClassExpression renderIndividualInstanceRef(IRI iri) {
+
+			OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(iri);
 
 			addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
 
 			return dataFactory.getOWLObjectOneOf(ind);
-		}
-
-		private OWLNamedIndividual createIndividual(IRI iri) {
-
-			return dataFactory.getOWLNamedIndividual(iri);
 		}
 
 		private void addAxiom(OWLAxiom axiom) {
@@ -131,14 +147,19 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 		}
 	}
 
-	ExpressionRenderer(ReasoningModel reasoningModel) {
+	ExpressionRenderer(ReasoningModel reasoningModel, boolean individualsQuery) {
 
-		this(reasoningModel, null);
+		this(reasoningModel, null, individualsQuery);
 	}
 
-	ExpressionRenderer(ReasoningModel reasoningModel, StringValueProxies stringValueProxies) {
+	ExpressionRenderer(
+		ReasoningModel reasoningModel,
+		StringValueProxies stringValueProxies,
+		boolean individualsQuery) {
 
 		super(reasoningModel, stringValueProxies);
+
+		this.individualsQuery = individualsQuery;
 
 		model = reasoningModel.getModel();
 		dataFactory = model.getDataFactory();

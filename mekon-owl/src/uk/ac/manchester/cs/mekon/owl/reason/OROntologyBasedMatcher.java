@@ -44,7 +44,9 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 public abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	private String instanceFileName = null;
+
 	private StringValueProxies stringValueProxies;
+	private ExpressionRenderer expressionRenderer;
 
 	/**
 	 * Sets the open/closed world semantics that are to be embodied
@@ -125,6 +127,8 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 		initialise(parentConfigNode);
 	}
 
+	abstract boolean individualsMatcher();
+
 	abstract List<IRI> matchInOWLStore(ConceptExpression queryExpr);
 
 	abstract boolean matchesInOWL(ConceptExpression queryExpr, NNode instance);
@@ -136,7 +140,7 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 
 	ConceptExpression createConceptExpression(NNode node) {
 
-		return new ConceptExpression(getReasoningModel(), stringValueProxies, node);
+		return new ConceptExpression(getModel(), expressionRenderer, node);
 	}
 
 	StringValueProxies getStringValueProxies() {
@@ -153,6 +157,15 @@ public abstract class OROntologyBasedMatcher extends ORMatcher {
 	private void initialise() {
 
 		stringValueProxies = new StringValueProxies(getModel());
+		expressionRenderer = createExpressionRenderer();
+	}
+
+	private ExpressionRenderer createExpressionRenderer() {
+
+		return new ExpressionRenderer(
+						getReasoningModel(),
+						stringValueProxies,
+						individualsMatcher());
 	}
 
 	private void checkInstancePersistence(KConfigNode parentConfigNode) {

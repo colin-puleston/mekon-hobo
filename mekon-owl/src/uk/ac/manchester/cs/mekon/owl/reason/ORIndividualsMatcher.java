@@ -122,6 +122,11 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 		storeRenderer.removeGroup(iri);
 	}
 
+	boolean individualsMatcher() {
+
+		return true;
+	}
+
 	List<IRI> matchInOWLStore(ConceptExpression queryExpr) {
 
 		List<IRI> matches = new ArrayList<IRI>();
