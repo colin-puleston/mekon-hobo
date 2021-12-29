@@ -72,9 +72,9 @@ public abstract class CValueTest<V extends CValue<?>> {
 	private String getSubsumptionTestFailMessage(
 						V subsumer,
 						V subsumed,
-						boolean expectedSubsumtion) {
+						boolean expectedSubsumption) {
 
-		String modifier = expectedSubsumtion ? "" : "non-";
+		String modifier = expectedSubsumption ? "" : "non-";
 
 		return "Expected " + modifier + "subsumption fails: "
 					+ "\nSubsumer: " + subsumer
