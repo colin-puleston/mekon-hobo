@@ -102,7 +102,6 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 	protected void addToOWLStore(NNode instance, IRI iri) {
 
 		addConceptDefinition(addConcept(iri), createConceptDefinition(instance));
-		getModel().updateReasoner();
 	}
 
 	/**
