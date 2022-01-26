@@ -186,8 +186,18 @@ class IndividualsRenderer {
 
 			private void addAxiom(OWLAxiom axiom) {
 
-				model.addInstanceAxiom(axiom);
-				axioms.add(axiom);
+				if (!isAxiom(axiom)) {
+
+					model.addInstanceAxiom(axiom);
+					axioms.add(axiom);
+				}
+			}
+
+			private boolean isAxiom(OWLAxiom axiom) {
+
+				OWLOntology ontology = model.getInstanceOntology();
+
+				return OWLAPIVersion.getAxioms(ontology).contains(axiom);
 			}
 
 			private IRI getIRI() {
