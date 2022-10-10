@@ -101,7 +101,7 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 	 */
 	protected void addToOWLStore(NNode instance, IRI iri) {
 
-		addConceptDefinition(addConcept(iri), createConceptDefinition(instance));
+		addConceptDescription(addConcept(iri), createConceptDescription(instance));
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 		return queryExpr.subsumes(createConceptExpression(instance));
 	}
 
-	private OWLClassExpression createConceptDefinition(NNode node) {
+	private OWLClassExpression createConceptDescription(NNode node) {
 
 		return createConceptExpression(node).getOWLConstruct();
 	}
@@ -140,9 +140,9 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 		return concept;
 	}
 
-	private void addConceptDefinition(OWLClass concept, OWLClassExpression definiton) {
+	private void addConceptDescription(OWLClass concept, OWLClassExpression description) {
 
-		addAxiom(getDataFactory().getOWLEquivalentClassesAxiom(concept, definiton));
+		addAxiom(getDataFactory().getOWLSubClassOfAxiom(concept, description));
 	}
 
 	private void addAxiom(OWLAxiom axiom) {
