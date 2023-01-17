@@ -39,6 +39,9 @@ public interface CConfigVocab {
 	static public final String INSTANCE_UPDATING_ID = "InstanceUpdating";
 	static public final String INSTANCE_UPDATE_DEFAULT_OPS_ID = "DefaultOperations";
 	static public final String GENERAL_MATCHER_ID = "GeneralMatcher";
+	static public final String CFRAME_SLOT_ORDERS_ID = "CFrameSlotOrders";
+	static public final String SLOT_ORDERED_CFRAME_ID = "CFrame";
+	static public final String ORDERED_CFRAME_SLOT_ID = "CSlot";
 
 	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
 	static public final String SECTION_BLDER_CLASS_ATTR = "builder";
@@ -52,4 +55,6 @@ public interface CConfigVocab {
 	static public final String INSTANCE_UPDATE_SLOTS_ATTR = "slots";
 	static public final String INSTANCE_UPDATE_SLOT_VALUES_ATTR = "slotValues";
 	static public final String GENERAL_MATCHER_CLASS_ATTR = "matcher";
+	static public final String SLOT_ORDERED_CFRAME_ID_ATTR = "frameId";
+	static public final String ORDERED_CFRAME_SLOT_ID_ATTR = "slotId";
 }

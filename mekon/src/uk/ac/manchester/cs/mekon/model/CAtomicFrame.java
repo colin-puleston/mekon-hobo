@@ -408,6 +408,11 @@ class CAtomicFrame extends CFrame {
 		return true;
 	}
 
+	void setReorderedSlots(CSlots reorderedSlots) {
+
+		slots = reorderedSlots;
+	}
+
 	void addSlotValue(CIdentity slotId, CValue<?> value) {
 
 		if (slotValues == CSlotValues.INERT_INSTANCE) {

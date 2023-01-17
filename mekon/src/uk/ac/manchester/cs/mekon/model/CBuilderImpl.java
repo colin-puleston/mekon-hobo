@@ -37,6 +37,7 @@ import uk.ac.manchester.cs.mekon_util.*;
 class CBuilderImpl implements CBuilder {
 
 	private CModel model;
+	private CFrameSlotOrdersImpl frameSlotOrders;
 
 	private List<CSectionBuilder> sectionBuilders = new ArrayList<CSectionBuilder>();
 
@@ -127,6 +128,11 @@ class CBuilderImpl implements CBuilder {
 		frame.asAtomicFrame().setIReasoner(iReasoner);
 	}
 
+	public CFrameSlotOrders getFrameSlotOrders() {
+
+		return frameSlotOrders;
+	}
+
 	public List<CSectionBuilder> getAllSectionBuilders() {
 
 		return sectionBuilders;
@@ -193,6 +199,8 @@ class CBuilderImpl implements CBuilder {
 		buildSections();
 		model.completeInitialisation();
 
+		frameSlotOrders.setAll();
+
 		return model;
 	}
 
@@ -204,6 +212,8 @@ class CBuilderImpl implements CBuilder {
 	CBuilderImpl(CModel model) {
 
 		this.model = model;
+
+		frameSlotOrders = new CFrameSlotOrdersImpl(model.getFrames());
 	}
 
 	CModel getModel() {

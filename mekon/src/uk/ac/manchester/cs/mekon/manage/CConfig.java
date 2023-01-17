@@ -73,6 +73,7 @@ class CConfig implements CConfigVocab {
 		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
 		loadGeneralMatchers(builder);
+		loadCFrameSlotOrders(builder);
 	}
 
 	private void setQueriesEnabling(CBuilder builder) {
@@ -173,6 +174,16 @@ class CConfig implements CConfigVocab {
 		builder.addSectionBuilder(adder);
 	}
 
+	private void loadCFrameSlotOrders(CBuilder builder) {
+
+		KConfigNode ordersNode = rootNode.getChildOrNull(CFRAME_SLOT_ORDERS_ID);
+
+		if (ordersNode != null) {
+
+			loadCFrameSlotOrders(builder.getFrameSlotOrders(), ordersNode);
+		}
+	}
+
 	private String getDiskStoreDirNameOrNull(KConfigNode node) {
 
 		return node.getString(INSTANCE_DISK_STORE_DIR_ATTR, null);
@@ -230,6 +241,33 @@ class CConfig implements CConfigVocab {
 	private Class<? extends IMatcher> getGeneralMatcherClass(KConfigNode matcherNode) {
 
 		return matcherNode.getClass(GENERAL_MATCHER_CLASS_ATTR, IMatcher.class);
+	}
+
+	private void loadCFrameSlotOrders(CFrameSlotOrders orders, KConfigNode ordersNode) {
+
+		for (KConfigNode frameNode : ordersNode.getChildren(SLOT_ORDERED_CFRAME_ID)) {
+
+			CIdentity frameId = getIdentityNoLabel(frameNode, SLOT_ORDERED_CFRAME_ID_ATTR);
+
+			orders.add(frameId, getOrderedCFrameSlotIds(frameNode));
+		}
+	}
+
+	private List<CIdentity> getOrderedCFrameSlotIds(KConfigNode frameNode) {
+
+		List<CIdentity> orderedIds = new ArrayList<CIdentity>();
+
+		for (KConfigNode slotNode : frameNode.getChildren(ORDERED_CFRAME_SLOT_ID)) {
+
+			orderedIds.add(getIdentityNoLabel(slotNode, ORDERED_CFRAME_SLOT_ID_ATTR));
+		}
+
+		return orderedIds;
+	}
+
+	private CIdentity getIdentityNoLabel(KConfigNode node, String attr) {
+
+		return new CIdentity(node.getString(attr));
 	}
 
 	private File getConfigFileDir() {

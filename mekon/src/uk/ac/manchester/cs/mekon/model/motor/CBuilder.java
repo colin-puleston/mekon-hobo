@@ -150,6 +150,15 @@ public interface CBuilder {
 	public void setIReasoner(CFrame frame, IReasoner iReasoner);
 
 	/**
+	 * Provides the object for defining the required ordering, for
+	 * purposes of presentaion to an end-user, of the slots associated
+	 * with specific atomic-frames.
+	 *
+	 * @return Object for defining frame-slot orderings
+	 */
+	public CFrameSlotOrders getFrameSlotOrders();
+
+	/**
 	 * Retrieves all section-building mechanisms that will be used
 	 * in creating the model.
 	 *
