@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
@@ -45,12 +47,15 @@ abstract class InstanceSubGroup {
 
 		rootType = group.getRootType();
 		targetStore = getTargetStore();
-		rootInstanceIds = createInstanceIdsList(rootType);
 
-		for (CIdentity storeId : rootInstanceIds.getEntities()) {
+		List<CIdentity> storeIds = targetStore.getInstanceIds(rootType);
+
+		for (CIdentity storeId : storeIds) {
 
 			onAddition(storeId);
 		}
+
+		rootInstanceIds = createInstanceIdsList(storeIds);
 	}
 
 	InstanceGroup getGroup() {
@@ -91,17 +96,7 @@ abstract class InstanceSubGroup {
 
 	InstanceIdsList createInstanceIdsList(CFrame type) {
 
-		InstanceIdsList idsList = createEmptyIdsList();
-
-		for (CIdentity storeId : targetStore.getInstanceIds(type)) {
-
-			if (subGroupInstance(storeId)) {
-
-				idsList.addId(storeId);
-			}
-		}
-
-		return idsList;
+		return createInstanceIdsList(targetStore.getInstanceIds(type));
 	}
 
 	boolean checkAdd(IFrame instance, CIdentity storeId, boolean asNewId) {
@@ -172,6 +167,21 @@ abstract class InstanceSubGroup {
 	abstract boolean subGroupInstance(CIdentity storeId);
 
 	abstract String createInstanceNameDefault(CFrame type, CIdentity refingId);
+
+	private InstanceIdsList createInstanceIdsList(List<CIdentity> storeIds) {
+
+		InstanceIdsList idsList = createEmptyIdsList();
+
+		for (CIdentity storeId : storeIds) {
+
+			if (subGroupInstance(storeId)) {
+
+				idsList.addId(storeId);
+			}
+		}
+
+		return idsList;
+	}
 
 	private void onAddition(CIdentity storeId) {
 

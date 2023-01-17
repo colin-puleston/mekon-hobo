@@ -157,19 +157,29 @@ class InstanceDisplayOps {
 
 	CIdentity checkCreateAndDisplay(CFrame rootType, CIdentity refingId) {
 
+		CIdentity storeId = null;
 		CFrame type = checkDetermineType(rootType);
 
 		if (type != null) {
 
-			CIdentity storeId = checkObtainStoreId(type, refingId, null);
+			storeId = checkObtainStoreId(type, refingId, null);
 
 			if (storeId != null) {
 
-				return createAndDisplay(type, storeId);
+				IFrame instance = instantiate(type, storeId);
+
+				if (instance.getSlots().isEmpty()) {
+
+					subGroup.checkAdd(instance, storeId, true);
+				}
+				else {
+
+					new CreatedInstanceDisplayer(storeId).display(instance);
+				}
 			}
 		}
 
-		return null;
+		return storeId;
 	}
 
 	void loadAndDisplay(CIdentity storeId, boolean asCopy) {
@@ -214,11 +224,6 @@ class InstanceDisplayOps {
 	CIdentity checkObtainNewStoreId(CFrame type) {
 
 		return checkObtainStoreId(type, null, null);
-	}
-
-	private CIdentity createAndDisplay(CFrame type, CIdentity storeId) {
-
-		return new CreatedInstanceDisplayer(storeId).display(instantiate(type, storeId));
 	}
 
 	private CIdentity checkResolveAsCopy(IFrame instance) {

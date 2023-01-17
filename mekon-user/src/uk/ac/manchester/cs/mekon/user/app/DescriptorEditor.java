@@ -330,12 +330,12 @@ class DescriptorEditor {
 
 		private InstanceDisplayOps createInstanceDisplayOps() {
 
-			return new InstanceDisplayOps(instanceTree, instantiator.getSubGroup());
+			return new InstanceDisplayOps(instanceTree, getAssertionSubGroup());
 		}
 
-		private InstanceGroup getGroup() {
+		private InstanceSubGroup getAssertionSubGroup() {
 
-			return getController().getInstanceGroup(valueType);
+			return getController().getInstanceGroup(valueType).getAssertionSubGroup();
 		}
 	}
 
