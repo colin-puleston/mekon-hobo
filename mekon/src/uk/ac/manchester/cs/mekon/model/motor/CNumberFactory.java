@@ -30,8 +30,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.zlink.*;
 
 /**
- * Represents a numeric value-type, defined via a primitive Java
- * <code>Number</code> type and specific numeric range.
+ * Factory for {@link CNumber} objects.
  *
  * @author Colin Puleston
  */
