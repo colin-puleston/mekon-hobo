@@ -36,16 +36,6 @@ abstract class InstanceNode extends GNode {
 
 	private InstanceTree tree;
 
-	protected boolean autoExpand() {
-
-		return true;
-	}
-
-	protected boolean orderedChildren() {
-
-		return false;
-	}
-
 	InstanceNode(InstanceTree tree) {
 
 		super(tree);

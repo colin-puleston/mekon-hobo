@@ -74,6 +74,11 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 				}
 			}
 
+			protected boolean autoExpand() {
+
+				return getNodeLevel() == 0;
+			}
+
 			protected GNodeAction getPositiveAction1() {
 
 				return new SelectionAction();

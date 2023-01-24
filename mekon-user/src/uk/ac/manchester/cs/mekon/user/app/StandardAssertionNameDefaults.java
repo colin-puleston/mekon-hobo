@@ -42,6 +42,7 @@ public class StandardAssertionNameDefaults implements AssertionNameDefaults {
 
 	private boolean baseNamesEnabled = false;
 	private boolean referencedNamesEnabled = false;
+	private boolean referencedNamesWithRefPrefixes = false;
 
 	public StandardAssertionNameDefaults(IStore store, Customiser customiser) {
 
@@ -55,9 +56,10 @@ public class StandardAssertionNameDefaults implements AssertionNameDefaults {
 		baseNamesEnabled = true;
 	}
 
-	public void enableReferencedNames() {
+	public void enableReferencedNames(boolean withRefPrefixes) {
 
 		referencedNamesEnabled = true;
+		referencedNamesWithRefPrefixes = withRefPrefixes;
 	}
 
 	public String getNextBase(CFrame assertionType) {
@@ -77,14 +79,21 @@ public class StandardAssertionNameDefaults implements AssertionNameDefaults {
 			return "";
 		}
 
-		return generator.getNext(createCompoundNameBody(assertionType, refingId));
+		return generator.getNext(createReferencedNameBody(assertionType, refingId));
 	}
 
-	private String createCompoundNameBody(CFrame assertionType, CIdentity refingId) {
+	private String createReferencedNameBody(CFrame assertionType, CIdentity refingId) {
 
-		String basicNameBody = createBasicNameBody(assertionType);
+		String basicBody = createBasicNameBody(assertionType);
 
-		return String.format(COMPOUND_NAME_BODY_FORMAT, refingId, basicNameBody);
+		return referencedNamesWithRefPrefixes
+				? createCompoundNameBody(basicBody, refingId.getLabel())
+				: basicBody;
+	}
+
+	private String createCompoundNameBody(String prefix, String basicBody) {
+
+		return String.format(COMPOUND_NAME_BODY_FORMAT, prefix, basicBody);
 	}
 
 	private String createBasicNameBody(CFrame assertionType) {
