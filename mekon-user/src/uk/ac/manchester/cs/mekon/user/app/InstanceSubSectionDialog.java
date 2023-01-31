@@ -100,7 +100,7 @@ class InstanceSubSectionDialog extends InstanceTreeDialog {
 
 		this.enableReplace = enableReplace;
 
-		initialise(rootFrame, parentTree.summaryInstance(), parentTree.getMode());
+		initialise(rootFrame, parentTree.summaryInstance(), parentTree.getDisplayMode());
 	}
 
 	boolean clearSelected() {

@@ -125,7 +125,7 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 
 	ControlsPanel checkCreateControlsPanel() {
 
-		if (!editAllowed()) {
+		if (getEditMode() == InstanceEditMode.NONE) {
 
 			return null;
 		}
@@ -135,15 +135,15 @@ abstract class InstanceDialog extends InstanceTreeDialog {
 		InstanceSubGroup subGroup = getDefaultSubGroup();
 		InstanceSubGroup altSubGroup = subGroup.getAlternativeSubGroupOrNull();
 
-		boolean altSubGroupEditable = altSubGroup != null && altSubGroup.editable();
+		boolean isAltSubGroup = altSubGroup != null;
 
 		if (subGroup.editable()) {
 
 			panel.addControl(new StoreButton());
-			panel.addControl(new StoreAsButton(subGroup, altSubGroup != null));
+			panel.addControl(new StoreAsButton(subGroup, isAltSubGroup));
 		}
 
-		if (altSubGroupEditable) {
+		if (isAltSubGroup && altSubGroup.editable()) {
 
 			panel.addControl(new StoreAsButton(altSubGroup, true));
 		}

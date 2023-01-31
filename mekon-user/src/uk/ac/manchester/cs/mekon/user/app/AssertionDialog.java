@@ -50,7 +50,7 @@ class AssertionDialog extends InstanceDialog {
 			initialise(getRootSummaryFrame(), true, InstanceDisplayMode.VIEW);
 		}
 
-		boolean fixedMode() {
+		boolean fixedDisplayMode() {
 
 			return true;
 		}

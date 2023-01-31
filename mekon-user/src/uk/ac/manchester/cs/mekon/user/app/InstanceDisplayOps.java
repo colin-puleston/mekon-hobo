@@ -50,13 +50,10 @@ class InstanceDisplayOps {
 
 		CIdentity display(IFrame instance) {
 
-			InstanceDialog dialog = createDialog(instance);
+			Instantiator instantiator = createInstantiator(instance);
+			InstanceDialog dialog = createDialog(instantiator);
 
-			if (disableEdit()) {
-
-				dialog.disableEdit();
-			}
-
+			dialog.setEditMode(getEditMode(instantiator));
 			dialog.display();
 
 			return dialog.instanceStored() ? dialog.getStoreId() : null;
@@ -64,11 +61,17 @@ class InstanceDisplayOps {
 
 		abstract InstanceDisplayMode startMode();
 
-		abstract boolean disableEdit();
+		boolean fullEditMode(Instantiator instantiator) {
 
-		private InstanceDialog createDialog(IFrame instance) {
+			return !assertion() || instantiator.editableInstance();
+		}
 
-			Instantiator instantiator = createInstantiator(instance);
+		InstanceEditMode getRestrictedEditMode() {
+
+			return InstanceEditMode.NONE;
+		}
+
+		private InstanceDialog createDialog(Instantiator instantiator) {
 
 			if (assertion()) {
 
@@ -81,6 +84,13 @@ class InstanceDisplayOps {
 		private Instantiator createInstantiator(IFrame instance) {
 
 			return new Instantiator(subGroup, storeId, instance);
+		}
+
+		private InstanceEditMode getEditMode(Instantiator instantiator) {
+
+			return fullEditMode(instantiator)
+					? InstanceEditMode.FULL
+					: getRestrictedEditMode();
 		}
 	}
 
@@ -96,9 +106,9 @@ class InstanceDisplayOps {
 			return InstanceDisplayMode.EDIT;
 		}
 
-		boolean disableEdit() {
+		InstanceEditMode getRestrictedEditMode() {
 
-			return false;
+			return InstanceEditMode.SAVE_ONLY;
 		}
 	}
 
@@ -114,9 +124,11 @@ class InstanceDisplayOps {
 			return InstanceDisplayMode.VIEW;
 		}
 
-		boolean disableEdit() {
+		InstanceEditMode getEditMode(Instantiator instantiator) {
 
-			return false;
+			return instantiator.editableInstance()
+					? InstanceEditMode.FULL
+					: InstanceEditMode.NONE;
 		}
 	}
 
@@ -136,9 +148,9 @@ class InstanceDisplayOps {
 			return InstanceDisplayMode.VIEW;
 		}
 
-		boolean disableEdit() {
+		boolean fullEditMode(Instantiator instantiator) {
 
-			return !copy;
+			return copy;
 		}
 	}
 

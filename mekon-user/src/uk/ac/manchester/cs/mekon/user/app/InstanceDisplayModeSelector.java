@@ -58,7 +58,7 @@ abstract class InstanceDisplayModeSelector extends JPanel {
 
 			if (isSelected()) {
 
-				instanceTree.setMode(mode);
+				instanceTree.setDisplayMode(mode);
 
 				selected.setSelected(false);
 				selected = this;
@@ -104,6 +104,6 @@ abstract class InstanceDisplayModeSelector extends JPanel {
 
 	private boolean startMode(InstanceDisplayMode mode) {
 
-		return mode == instanceTree.getMode();
+		return mode == instanceTree.getDisplayMode();
 	}
 }

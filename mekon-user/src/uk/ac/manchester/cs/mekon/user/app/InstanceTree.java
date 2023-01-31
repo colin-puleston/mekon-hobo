@@ -43,7 +43,7 @@ class InstanceTree extends GActionTree {
 	private boolean summaryInstance;
 	private boolean instanceSubSection;
 
-	private InstanceDisplayMode mode;
+	private InstanceDisplayMode displayMode;
 	private boolean updatingTree = false;
 
 	private class MouseLocator extends MouseMotionAdapter {
@@ -76,12 +76,12 @@ class InstanceTree extends GActionTree {
 		Instantiator instantiator,
 		IFrame rootFrame,
 		boolean summaryInstance,
-		InstanceDisplayMode startMode) {
+		InstanceDisplayMode startDisplayMode) {
 
 		this.instantiator = instantiator;
 		this.summaryInstance = summaryInstance;
 
-		mode = startMode;
+		displayMode = startDisplayMode;
 		rootNode = new RootInstanceNode(this, rootFrame);
 		instanceSubSection = instanceSubSection(rootFrame);
 
@@ -95,11 +95,11 @@ class InstanceTree extends GActionTree {
 		rootNode.initialiseExpansion();
 	}
 
-	void setMode(InstanceDisplayMode newMode) {
+	void setDisplayMode(InstanceDisplayMode newDisplayMode) {
 
-		if (newMode != mode) {
+		if (newDisplayMode != displayMode) {
 
-			mode = newMode;
+			displayMode = newDisplayMode;
 
 			updateTree();
 		}
@@ -117,17 +117,17 @@ class InstanceTree extends GActionTree {
 
 	boolean viewOnly() {
 
-		return mode != InstanceDisplayMode.EDIT;
+		return displayMode != InstanceDisplayMode.EDIT;
 	}
 
 	boolean showQuerySemantics() {
 
-		return mode == InstanceDisplayMode.SEMANTICS;
+		return displayMode == InstanceDisplayMode.SEMANTICS;
 	}
 
-	InstanceDisplayMode getMode() {
+	InstanceDisplayMode getDisplayMode() {
 
-		return mode;
+		return displayMode;
 	}
 
 	Instantiator getInstantiator() {

@@ -76,8 +76,7 @@ class InstanceTreeDialog extends GDialog {
 	private Instantiator instantiator;
 	private InstanceTree tree = null;
 
-	private boolean editDisabled = false;
-
+	private InstanceEditMode editMode = InstanceEditMode.FULL;
 	private List<EditButton> editButtons = new ArrayList<EditButton>();
 
 	abstract class EditListener extends GTreeListener {
@@ -155,9 +154,9 @@ class InstanceTreeDialog extends GDialog {
 		tree = new InstanceTree(instantiator, rootFrame, summaryInstance, startMode);
 	}
 
-	void disableEdit() {
+	void setEditMode(InstanceEditMode editMode) {
 
-		editDisabled = true;
+		this.editMode = editMode;
 	}
 
 	void addEditListener(EditListener editListener) {
@@ -185,24 +184,19 @@ class InstanceTreeDialog extends GDialog {
 		return tree;
 	}
 
-	boolean editDisabled() {
+	InstanceDisplayMode getDisplayMode() {
 
-		return editDisabled;
+		return tree.getDisplayMode();
 	}
 
-	boolean editAllowed() {
+	InstanceEditMode getEditMode() {
 
-		return !editDisabled() && instantiator.editableInstance();
+		return editMode;
 	}
 
-	boolean fixedMode() {
+	boolean fixedDisplayMode() {
 
 		return getSelectableDisplayModes().size() == 1;
-	}
-
-	InstanceDisplayMode getMode() {
-
-		return tree.getMode();
 	}
 
 	boolean viewOnly() {
@@ -244,7 +238,7 @@ class InstanceTreeDialog extends GDialog {
 
 	private JPanel checkCreateHeaderPanel() {
 
-		ModeSelector modeSelector = fixedMode() ? null : new ModeSelector();
+		ModeSelector modeSelector = fixedDisplayMode() ? null : new ModeSelector();
 		GButton altViewButton = checkCreateAlternativeViewButton();
 
 		if (modeSelector == null && altViewButton == null) {
@@ -271,7 +265,7 @@ class InstanceTreeDialog extends GDialog {
 
 		List<InstanceDisplayMode> modes = new ArrayList<InstanceDisplayMode>();
 
-		if (editAllowed()) {
+		if (editMode == InstanceEditMode.FULL) {
 
 			modes.add(InstanceDisplayMode.EDIT);
 		}
