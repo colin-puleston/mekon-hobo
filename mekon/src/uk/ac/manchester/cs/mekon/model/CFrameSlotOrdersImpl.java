@@ -84,7 +84,7 @@ class CFrameSlotOrdersImpl implements CFrameSlotOrders {
 
 		CFrame frame = allFrames.getOrNull(frameId);
 
-		if (allFrames != null) {
+		if (frame != null) {
 
 			return frame.asAtomicFrame();
 		}
