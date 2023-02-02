@@ -110,7 +110,7 @@ abstract class InstanceNode extends GNode {
 
 	private boolean initialExpansionRequired() {
 
-		return queryInstance() || summaryInstance() || getNodeLevel() <= 1;
+		return queryInstance() || summaryInstance() || getNodeLevel() == 0;
 	}
 
 	private void updateIndividualChildren() {

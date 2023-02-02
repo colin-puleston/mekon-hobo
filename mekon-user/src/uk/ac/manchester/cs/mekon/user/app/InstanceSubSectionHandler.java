@@ -33,19 +33,15 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 class InstanceSubSectionHandler {
 
-	static private class Displayer {
+	static private class EditDisplayer {
 
-		private InstanceTree instanceTree;
-
+		private InstanceTree tree;
 		private IFrame rootFrame;
 		private ISlot containerSlot;
 
-		Displayer(
-			InstanceTree instanceTree,
-			IFrame rootFrame,
-			ISlot containerSlot) {
+		EditDisplayer(InstanceTree tree, IFrame rootFrame, ISlot containerSlot) {
 
-			this.instanceTree = instanceTree;
+			this.tree = tree;
 			this.rootFrame = rootFrame;
 			this.containerSlot = containerSlot;
 		}
@@ -71,17 +67,17 @@ class InstanceSubSectionHandler {
 
 		private InstanceSubSectionDialog createDialog() {
 
-			return new InstanceSubSectionDialog(instanceTree, rootFrame, replacableValue());
-		}
-
-		private void removeValue() {
-
-			containerSlot.getValuesEditor().remove(rootFrame);
+			return new InstanceSubSectionDialog(tree, rootFrame, replacableValue());
 		}
 
 		private boolean replacableValue() {
 
 			return !getSlotValueTypeFrame().getSubs(CVisibility.EXPOSED).isEmpty();
+		}
+
+		private void removeValue() {
+
+			containerSlot.getValuesEditor().remove(rootFrame);
 		}
 
 		private CFrame getSlotValueTypeFrame() {
@@ -90,30 +86,62 @@ class InstanceSubSectionHandler {
 		}
 	}
 
-	static boolean checkDisplay(InstanceTree instanceTree, ISlot containerSlot) {
+	static boolean checkDisplayForEdit(InstanceTree tree, ISlot frameValueSlot) {
 
-		List<IValue> values = containerSlot.getValues().asList();
+		IFrame rootFrame = getStructuredFrameValueOrNull(frameValueSlot);
 
-		if (values.size() == 1) {
+		if (rootFrame != null) {
 
-			IFrame rootFrame = (IFrame)values.get(0);
-
-			return new Displayer(instanceTree, rootFrame, containerSlot).display();
+			return new EditDisplayer(tree, rootFrame, frameValueSlot).display();
 		}
 
 		return false;
 	}
 
-	static boolean checkDisplay(InstanceTree instanceTree, Descriptor descriptor) {
+	static boolean checkDisplayForEdit(InstanceTree tree, Descriptor descriptor) {
 
-		if (descriptor.hasStructuredValue()) {
+		IFrame rootFrame = getStructuredFrameValueOrNull(descriptor);
 
-			IFrame rootFrame = (IFrame)descriptor.getValue();
-			ISlot containerSlot = descriptor.getSlot();
+		if (rootFrame != null) {
 
-			return new Displayer(instanceTree, rootFrame, containerSlot).display();
+			return new EditDisplayer(tree, rootFrame, descriptor.getSlot()).display();
 		}
 
 		return false;
+	}
+
+	static void checkDisplayForView(InstanceTree tree, Descriptor descriptor) {
+
+		IFrame rootFrame = getStructuredFrameValueOrNull(descriptor);
+
+		if (rootFrame != null) {
+
+			displayForView(tree, rootFrame);
+		}
+	}
+
+	static IFrame getStructuredFrameValueOrNull(ISlot frameValueSlot) {
+
+		List<IValue> values = frameValueSlot.getValues().asList();
+
+		return values.size() == 1 ? (IFrame)values.get(0) : null;
+	}
+
+	static IFrame getStructuredFrameValueOrNull(Descriptor descriptor) {
+
+		return descriptor.hasStructuredValue() ? (IFrame)descriptor.getValue() : null;
+	}
+
+	static private void displayForView(InstanceTree tree, IFrame rootFrame) {
+
+		if (!getCustomiser(tree).performStructuredValueViewAction(rootFrame)) {
+
+			new InstanceSubSectionDialog(tree, rootFrame, false).display();
+		}
+	}
+
+	static private Customiser getCustomiser(InstanceTree tree) {
+
+		return tree.getInstantiator().getCustomiser();
 	}
 }

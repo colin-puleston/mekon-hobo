@@ -89,16 +89,9 @@ public class DefaultCustomiser implements Customiser {
 		return value.getDisplayLabel();
 	}
 
-	public String getFrameDisplayLabel(IFrame frame) {
+	public boolean performStructuredValueViewAction(IFrame value) {
 
-		IFrameCategory category = frame.getCategory();
-
-		if (category.disjunction()) {
-
-			return getDisjunctionFrameDisplayLabel(frame);
-		}
-
-		return frame.getDisplayLabel();
+		return false;
 	}
 
 	protected DefaultCustomiser(IStore centralStore) {
@@ -121,6 +114,18 @@ public class DefaultCustomiser implements Customiser {
 	protected QueryNameDefaults createQueryNameDefaults(IStore store, boolean localQueries) {
 
 		return new StandardQueryNameDefaults(store, this, localQueries);
+	}
+
+	protected String getFrameDisplayLabel(IFrame frame) {
+
+		IFrameCategory category = frame.getCategory();
+
+		if (category.disjunction()) {
+
+			return getDisjunctionFrameDisplayLabel(frame);
+		}
+
+		return frame.getDisplayLabel();
 	}
 
 	private String getDisjunctionFrameDisplayLabel(IFrame disjunction) {

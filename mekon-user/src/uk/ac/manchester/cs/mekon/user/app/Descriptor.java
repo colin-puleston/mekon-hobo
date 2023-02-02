@@ -293,11 +293,6 @@ class Descriptor {
 
 	private Customiser getCustomiser() {
 
-		return getController().getCustomiser();
-	}
-
-	private Controller getController() {
-
-		return instantiator.getController();
+		return instantiator.getCustomiser();
 	}
 }

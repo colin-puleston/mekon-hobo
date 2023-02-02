@@ -287,7 +287,7 @@ class DescriptorEditor {
 
 			if (startPerformAlternativeAbstractEdit()) {
 
-				InstanceSubSectionHandler.checkDisplay(instanceTree, slot);
+				InstanceSubSectionHandler.checkDisplayForEdit(instanceTree, slot);
 
 				return true;
 			}
@@ -468,7 +468,7 @@ class DescriptorEditor {
 
 	private boolean checkDisplayInstanceSubSection() {
 
-		return InstanceSubSectionHandler.checkDisplay(instanceTree, descriptor);
+		return InstanceSubSectionHandler.checkDisplayForEdit(instanceTree, descriptor);
 	}
 
 	private void addValue(IValue value) {

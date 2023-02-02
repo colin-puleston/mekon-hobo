@@ -39,6 +39,7 @@ class RootInstanceNode extends InstanceNode {
 	private DescriptorChildNodes childNodes;
 
 	private ExpandAllAction expandAllAction = new ExpandAllAction();
+	private CollapseAllAction collapseAllAction = new CollapseAllAction();
 
 	private class CellDisplay extends InstanceCellDisplay {
 
@@ -76,6 +77,14 @@ class RootInstanceNode extends InstanceNode {
 		}
 	}
 
+	private class CollapseAllAction extends GNodeAction {
+
+		protected void perform() {
+
+			getTree().getRootNode().collapseAllDescendants();
+		}
+	}
+
 	protected void addInitialChildren() {
 
 		childNodes.addInitialChildren();
@@ -94,6 +103,11 @@ class RootInstanceNode extends InstanceNode {
 	protected GNodeAction getPositiveAction1() {
 
 		return expandAllAction;
+	}
+
+	protected GNodeAction getNegativeAction1() {
+
+		return collapseAllAction;
 	}
 
 	RootInstanceNode(InstanceTree tree, IFrame rootFrame) {

@@ -97,7 +97,7 @@ class DescriptorNode extends InstanceNode {
 
 	void performViewAction() {
 
-		InstanceSubSectionHandler.checkDisplay(getInstanceTree(), descriptor);
+		InstanceSubSectionHandler.checkDisplayForView(getInstanceTree(), descriptor);
 	}
 
 	Descriptor getDescriptor() {
