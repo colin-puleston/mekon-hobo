@@ -207,6 +207,10 @@ public abstract class GNode extends GMutableTreeNode {
 	public void expandAll() {
 
 		expand();
+		expandAllDescendants();
+	}
+
+	public void expandAllDescendants() {
 
 		for (GNode child : getChildren()) {
 
@@ -221,7 +225,11 @@ public abstract class GNode extends GMutableTreeNode {
 
 	public void collapseAll() {
 
+		collapseAllDescendants();
 		collapse();
+	}
+
+	public void collapseAllDescendants() {
 
 		for (GNode child : getChildren()) {
 
