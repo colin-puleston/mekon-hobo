@@ -62,7 +62,12 @@ abstract class InstancesPanel extends JPanel {
 
 		boolean enableIfSelection() {
 
-			return instanceActionsEnabled(idsList.getSelectedEntity());
+			return !potentialEditOp() || allowPotentialEditOp(idsList.getSelectedEntity());
+		}
+
+		boolean potentialEditOp() {
+
+			return true;
 		}
 	}
 
@@ -93,6 +98,11 @@ abstract class InstancesPanel extends JPanel {
 		void doInstanceThing(CIdentity storeId) {
 
 			loadAndDisplay(storeId, true);
+		}
+
+		boolean potentialEditOp() {
+
+			return false;
 		}
 	}
 
@@ -232,7 +242,7 @@ abstract class InstancesPanel extends JPanel {
 		throw new Error("Method should never be invoked!");
 	}
 
-	boolean instanceActionsEnabled(CIdentity storeId) {
+	boolean allowPotentialEditOp(CIdentity storeId) {
 
 		return true;
 	}

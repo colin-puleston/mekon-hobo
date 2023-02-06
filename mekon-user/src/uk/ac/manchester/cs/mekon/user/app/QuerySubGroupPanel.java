@@ -59,7 +59,7 @@ class QuerySubGroupPanel extends InstanceSubGroupPanel {
 		queryExecutions.addListener(new ExecutionsChangeDrivenDeselector());
 	}
 
-	boolean instanceActionsEnabled(CIdentity storeId) {
+	boolean allowPotentialEditOp(CIdentity storeId) {
 
 		return !queryExecutions.executed(storeId);
 	}
