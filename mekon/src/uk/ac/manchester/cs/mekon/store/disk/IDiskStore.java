@@ -29,6 +29,7 @@ import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.motor.*;
 
@@ -43,7 +44,9 @@ class IDiskStore implements IStore {
 	private LogFile logFile;
 
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
-	private IDirectMatcher defaultMatcher = new IDirectMatcher();
+	private NDirectMatcher defaultMatcher = new NDirectMatcher();
+
+	private boolean regexMatchEnabled;
 
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private Map<CIdentity, IRegenType> regenTypes = new HashMap<CIdentity, IRegenType>();
@@ -75,6 +78,7 @@ class IDiskStore implements IStore {
 		private void initialiseMatcher(IMatcher matcher) {
 
 			matcher.initialise(IDiskStore.this, indexes);
+			matcher.setRegexMatchEnabled(regexMatchEnabled);
 		}
 
 		private void reloadInstances() {
@@ -251,6 +255,11 @@ class IDiskStore implements IStore {
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
+	}
+
+	void setRegexMatchEnabled(boolean value) {
+
+		regexMatchEnabled = value;
 	}
 
 	void initialisePostRegistration() {

@@ -49,6 +49,8 @@ public class IDiskStoreBuilder {
 	private StoreStructureBuilder structureBldr = new StoreStructureBuilder();
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
+	private boolean regexMatchEnabled = false;
+
 	/**
 	 * Sets the directory for instance-store serialisation.
 	 * Defaults to the default-named directory within the current
@@ -165,6 +167,18 @@ public class IDiskStoreBuilder {
 	}
 
 	/**
+	 * Sets whether regular-expression matching is to be enabled
+	 * for string-valued slots in query-matching.
+	 *
+	 * @param enabled True if regular-expression matching to be
+	 * enabled
+	 */
+	public void setRegexMatchEnabled(boolean enabled) {
+
+		regexMatchEnabled = enabled;
+	}
+
+	/**
 	 * Provides the directory for instance-store serialisation.
 	 *
 	 * @return Relevant serialisation directory
@@ -192,10 +206,13 @@ public class IDiskStoreBuilder {
 	 */
 	public IStore build() {
 
-		IDiskStore store = new IDiskStore(model, buildStructure());
+		IDiskStore store = new IDiskStore(model, structureBldr.build(model));
 
 		store.addMatchers(matchers);
+		store.setRegexMatchEnabled(regexMatchEnabled);
+
 		StoreRegister.add(store);
+
 		store.initialisePostRegistration();
 
 		return store;
@@ -204,10 +221,5 @@ public class IDiskStoreBuilder {
 	IDiskStoreBuilder(CModel model) {
 
 		this.model = model;
-	}
-
-	private StoreStructure buildStructure() {
-
-		return structureBldr.build(model);
 	}
 }

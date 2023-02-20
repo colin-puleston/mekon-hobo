@@ -58,7 +58,6 @@ import uk.ac.manchester.cs.mekon.network.*;
 	IDiskStoreAccessTest.class,
 	IDiskStoreStructureTest.class,
 	IInstanceSerialiseTest.class,
-	IDirectMatcherTest.class,
 	NDirectMatcherTest.class,
 	RemoteIFrameTest.class,
 	RemoteISlotValuesTest.class,

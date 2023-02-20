@@ -49,6 +49,7 @@ public interface CConfigVocab {
 	static public final String INSTANCE_DISK_SUBSTORE_NAME_ATTR = "name";
 	static public final String INSTANCE_DISK_SUBSTORE_SPLIT_ATTR = "splitByFunction";
 	static public final String INSTANCE_DISK_GROUP_ROOT_TYPE_ATTR = "rootType";
+	static public final String INSTANCE_DISK_STORE_REGEX_MATCH_ENABLED_ATTR = "regexMatchEnabled";
 	static public final String INSTANCE_AUTO_UPDATE_ATTR = "autoUpdate";
 	static public final String INSTANCE_UPDATE_INFERREDS_ATTR = "inferredTypes";
 	static public final String INSTANCE_UPDATE_SUGGESTEDS_ATTR = "suggestedTypes";

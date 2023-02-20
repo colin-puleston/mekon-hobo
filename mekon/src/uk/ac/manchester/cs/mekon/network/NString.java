@@ -49,15 +49,6 @@ public class NString extends NDataFeature<String> {
 		super(type, iSlot);
 	}
 
-	NString copy() {
-
-		NString copy = new NString(getType(), getISlot());
-
-		copy.addValue(getValue());
-
-		return copy;
-	}
-
 	NString copyNoValues() {
 
 		return new NString(getType(), getISlot());

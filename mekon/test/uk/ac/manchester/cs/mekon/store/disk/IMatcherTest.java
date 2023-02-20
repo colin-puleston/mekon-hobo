@@ -68,6 +68,7 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	static private final IString BOB_NAME = createIString("Bob Bell");
 	static private final IString BOB_ADDRESS = createIString("66 Bob Street, Bobsville");
 	static private final IString BOBS_LODGER_NAME = createIString("Jim the lodger");
+	static private final IString BOB_OR_LODGER_NAMES_REGEX = createIString("Bob Bell|Jim the lodger");
 
 	static private CIdentity createInstanceId(String name) {
 
@@ -334,6 +335,18 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 		testMatching(
 			createPersonalAddressQuery(BOB_ADDRESS),
+			BOB_ID,
+			BOBS_LODGER_ID);
+
+		matcher.setRegexMatchEnabled(false);
+
+		testMatching(
+			createPersonalNameQuery(BOB_OR_LODGER_NAMES_REGEX));
+
+		matcher.setRegexMatchEnabled(true);
+
+		testMatching(
+			createPersonalNameQuery(BOB_OR_LODGER_NAMES_REGEX),
 			BOB_ID,
 			BOBS_LODGER_ID);
 	}

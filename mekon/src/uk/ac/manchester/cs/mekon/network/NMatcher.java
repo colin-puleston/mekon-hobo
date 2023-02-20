@@ -24,8 +24,11 @@
 
 package uk.ac.manchester.cs.mekon.network;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 
 /**
@@ -45,16 +48,253 @@ import uk.ac.manchester.cs.mekon.store.disk.*;
  */
 public abstract class NMatcher implements IMatcher {
 
+	private IStore store;
+
 	private IMatchInstanceRefExpander instanceRefExpander = null;
 
 	private NetworkCreator networkCreator = new NetworkCreator();
+	private MatcherOps matcherOps = new StandardMatcherOps();
+
+	private abstract class MatcherOps {
+
+		abstract MatcherOps update(boolean regexMatchEnabled);
+
+		abstract IMatches match(NNode query);
+
+		abstract boolean matches(NNode query, NNode instance);
+	}
+
+	private class StandardMatcherOps extends MatcherOps {
+
+		MatcherOps update(boolean regexMatchEnabled) {
+
+			return regexMatchEnabled ? new RegexEnhancedMatcherOps(store) : this;
+		}
+
+		IMatches match(NNode query) {
+
+			return NMatcher.this.match(query);
+		}
+
+		boolean matches(NNode query, NNode instance) {
+
+			return NMatcher.this.matches(query, instance);
+		}
+	}
+
+	private class RegexEnhancedMatcherOps extends MatcherOps {
+
+		private IStore store;
+
+		private QueryStringRemover queryStringRemover = new QueryStringRemover();
+		private QueryStringRetainer queryStringRetainer = new QueryStringRetainer();
+
+		private abstract class QueryCopyPruner  {
+
+			NNode copyAndPrune(NNode query) {
+
+				NNode copy = query.copy();
+
+				prune(copy);
+
+				return copy;
+			}
+
+			boolean prune(NNode node) {
+
+				node.removeFeatures(getPrunableDataFeatures(node));
+
+				List<NLink> links = node.getLinks();
+
+				return links.isEmpty() ? prunableNodes() : prune(links);
+			}
+
+			abstract boolean prunableNodes();
+
+			abstract List<? extends NFeature<?>> getPrunableDataFeatures(NNode node);
+
+			private boolean prune(List<NLink> links) {
+
+				boolean retainedValues = false;
+
+				for (NLink link : links) {
+
+					for (NNode value : link.getValues()) {
+
+						if (prune(value)) {
+
+							link.removeValue(value);
+						}
+						else {
+
+							retainedValues = true;
+						}
+					}
+				}
+
+				return !retainedValues;
+			}
+		}
+
+		private class QueryStringRemover extends QueryCopyPruner {
+
+			boolean prunableNodes() {
+
+				return false;
+			}
+
+			List<? extends NFeature<?>> getPrunableDataFeatures(NNode node) {
+
+				return node.getStrings();
+			}
+		}
+
+		private class QueryStringRetainer extends QueryCopyPruner {
+
+			boolean prune(NNode node) {
+
+				return super.prune(node) && node.getStrings().isEmpty();
+			}
+
+			boolean prunableNodes() {
+
+				return true;
+			}
+
+			List<? extends NFeature<?>> getPrunableDataFeatures(NNode node) {
+
+				return node.getNumbers();
+			}
+		}
+
+		private class SplitQuery  {
+
+			private NNode coreQuery;
+			private NNode strQuery;
+
+			SplitQuery(NNode query) {
+
+				coreQuery = queryStringRemover.copyAndPrune(query);
+				strQuery = queryStringRetainer.copyAndPrune(query);
+			}
+
+			IMatches match() {
+
+				IMatches coreMatches = NMatcher.this.match(coreQuery);
+
+				if (coreMatches.anyMatches()) {
+
+					if (coreMatches.ranked()) {
+
+						return filterRankedMatches(coreMatches);
+					}
+
+					return filterUnrankedMatches(coreMatches);
+				}
+
+				return coreMatches;
+			}
+
+			boolean matches(NNode instance) {
+
+				return NMatcher.this.matches(coreQuery, instance) & matchesStrings(instance);
+			}
+
+			private IMatches filterRankedMatches(IMatches coreMatches) {
+
+				IRankedMatches filtered = new IRankedMatches();
+
+				for (IMatchesRank rank : coreMatches.getRanks()) {
+
+					List<CIdentity> rankFiltered = filterMatches(rank.getMatches());
+
+					if (!rankFiltered.isEmpty()) {
+
+						filtered.addRank(rankFiltered, rank.getRankingValue());
+					}
+				}
+
+				return filtered;
+			}
+
+			private IMatches filterUnrankedMatches(IMatches coreMatches) {
+
+				return new IUnrankedMatches(filterMatches(coreMatches.getAllMatches()));
+			}
+
+			private List<CIdentity> filterMatches(List<CIdentity> coreMatches) {
+
+				List<CIdentity> filtered = new ArrayList<CIdentity>();
+
+				for (CIdentity id : coreMatches) {
+
+					if (matchesStrings(getInstanceNode(id))) {
+
+						filtered.add(id);
+					}
+				}
+
+				return filtered;
+			}
+
+			private boolean matchesStrings(NNode instance) {
+
+				return strQuery.subsumesStructure(instance, true);
+			}
+
+			private NNode getInstanceNode(CIdentity id) {
+
+				return new NNetwork(store.get(id).getRootFrame()).getRootNode();
+			}
+		}
+
+		RegexEnhancedMatcherOps(IStore store) {
+
+			this.store = store;
+		}
+
+		MatcherOps update(boolean regexMatchEnabled) {
+
+			return regexMatchEnabled ? this : new StandardMatcherOps();
+		}
+
+		IMatches match(NNode query) {
+
+			return new SplitQuery(query).match();
+		}
+
+		boolean matches(NNode query, NNode instance) {
+
+			return new SplitQuery(query).matches(instance);
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void initialise(IStore store, IMatcherIndexes indexes) {
 
+		this.store = store;
+
 		instanceRefExpander = new IMatchInstanceRefExpander(store);
+	}
+
+	/**
+	 * Sets whether regular-expression matching is to be enabled
+	 * for string-valued slots in query-matching. If enabled via this
+	 * particular implementation of the method (rather than any
+	 * overriding implementations) then results will be achieved by
+	 * stripping of any string-valued fields from provided queries,
+	 * invoking the relevant query-matching method on the string-free
+	 * queries, then filtering the results for string-matching,
+	 * including regular-expression matching.
+	 *
+	 * @param enabled True if regular-expression matching to be
+	 * enabled
+	 */
+	public void setRegexMatchEnabled(boolean enabled) {
+
+		matcherOps = matcherOps.update(enabled);
 	}
 
 	/**
@@ -94,7 +334,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return match(queryToNetwork(query));
+		return matcherOps.match(queryToNetwork(query));
 	}
 
 	/**
@@ -109,7 +349,7 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return matches(queryToNetwork(query), instanceToNetwork(instance));
+		return matcherOps.matches(queryToNetwork(query), instanceToNetwork(instance));
 	}
 
 	/**

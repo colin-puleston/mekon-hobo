@@ -142,7 +142,7 @@ public class NNode extends NEntity {
 	}
 
 	/**
-	 * Adds an feature to the node.
+	 * Adds a feature to the node.
 	 *
 	 * @param feature Feature to add
 	 */
@@ -152,13 +152,23 @@ public class NNode extends NEntity {
 	}
 
 	/**
-	 * Removes an feature from the node.
+	 * Removes a feature from the node.
 	 *
 	 * @param feature Feature to remove
 	 */
 	public void removeFeature(NFeature<?> feature) {
 
 		features.remove(feature);
+	}
+
+	/**
+	 * Removes a set of features from the node.
+	 *
+	 * @param features Features to remove
+	 */
+	public void removeFeatures(Collection<? extends NFeature<?>> features) {
+
+		this.features.removeAll(features);
 	}
 
 	/**
@@ -307,12 +317,12 @@ public class NNode extends NEntity {
 	 *
 	 * @param other Node to test for structure-subsumption by this
 	 * one
-	 * @return true if this nodes structure subsumes that of other
-	 * node
+	 * @param regexMatch True if regular-expression matching is to
+	 * be enabled for string-valued features
 	 */
-	public boolean subsumesStructure(NNode other) {
+	public boolean subsumesStructure(NNode other, boolean regexMatch) {
 
-		return new StructureSubsumptionTester().subsumption(this, other);
+		return new StructureSubsumptionTester(regexMatch).subsumption(this, other);
 	}
 
 	NNode(CFrame cFrame) {

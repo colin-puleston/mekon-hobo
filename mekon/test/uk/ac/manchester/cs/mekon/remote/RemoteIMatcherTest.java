@@ -26,12 +26,12 @@ package uk.ac.manchester.cs.mekon.remote;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.disk.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * @author Colin Puleston
  */
-public class RemoteIMatcherTest extends IDirectMatcherTest {
+public class RemoteIMatcherTest extends NDirectMatcherTest {
 
 	private MekonRemoteTestModel remoteModel = null;
 

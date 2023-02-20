@@ -69,8 +69,8 @@ class CConfig implements CConfigVocab {
 	void configure(CBuilder builder) {
 
 		setQueriesEnabling(builder);
-		setDiskStoreStructure(builder);
 		setInstanceUpdating(builder);
+		configureDiskStoreBuilder(builder);
 		loadSectionBuilders(builder);
 		loadGeneralMatchers(builder);
 		loadCFrameSlotOrders(builder);
@@ -81,7 +81,28 @@ class CConfig implements CConfigVocab {
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
 	}
 
-	private void setDiskStoreStructure(CBuilder builder) {
+	private void setInstanceUpdating(CBuilder builder) {
+
+		KConfigNode node = rootNode.getChild(INSTANCE_UPDATING_ID);
+
+		builder.setAutoUpdate(node.getBoolean(INSTANCE_AUTO_UPDATE_ATTR));
+		setUpdateOpEnabling(builder, node.getChild(INSTANCE_UPDATE_DEFAULT_OPS_ID));
+	}
+
+	private void setUpdateOpEnabling(CBuilder builder, KConfigNode opsNode) {
+
+		for (Map.Entry<String, IUpdateOp> entry : updateOpsByAttr.entrySet()) {
+
+			String attrName = entry.getKey();
+			IUpdateOp op = entry.getValue();
+
+			Boolean enabled = opsNode.getBoolean(attrName, true);
+
+			builder.setDefaultUpdateOp(op, enabled);
+		}
+	}
+
+	private void configureDiskStoreBuilder(CBuilder builder) {
 
 		IDiskStoreBuilder storeBldr = IDiskStoreManager.getBuilder(builder);
 		KConfigNode node = rootNode.getChildOrNull(INSTANCE_DISK_STORE_ID);
@@ -100,6 +121,7 @@ class CConfig implements CConfigVocab {
 			}
 
 			addDiskSubStores(storeBldr, node);
+			setDiskStoreRegexMatchEnabled(storeBldr, node);
 		}
 		else {
 
@@ -128,25 +150,11 @@ class CConfig implements CConfigVocab {
 		storeBldr.addSubStore(name, split, getDiskSubStoreGroupRootTypes(node));
 	}
 
-	private void setInstanceUpdating(CBuilder builder) {
+	private void setDiskStoreRegexMatchEnabled(
+					IDiskStoreBuilder storeBldr,
+					KConfigNode node) {
 
-		KConfigNode node = rootNode.getChild(INSTANCE_UPDATING_ID);
-
-		builder.setAutoUpdate(node.getBoolean(INSTANCE_AUTO_UPDATE_ATTR));
-		setUpdateOpEnabling(builder, node.getChild(INSTANCE_UPDATE_DEFAULT_OPS_ID));
-	}
-
-	private void setUpdateOpEnabling(CBuilder builder, KConfigNode opsNode) {
-
-		for (Map.Entry<String, IUpdateOp> entry : updateOpsByAttr.entrySet()) {
-
-			String attrName = entry.getKey();
-			IUpdateOp op = entry.getValue();
-
-			Boolean enabled = opsNode.getBoolean(attrName, true);
-
-			builder.setDefaultUpdateOp(op, enabled);
-		}
+		storeBldr.setRegexMatchEnabled(getDiskStoreRegexMatchEnabled(node));
 	}
 
 	private void loadSectionBuilders(CBuilder builder) {
@@ -217,6 +225,11 @@ class CConfig implements CConfigVocab {
 	private CIdentity getDiskSubStoreGroupRootType(KConfigNode node) {
 
 		return new CIdentity(node.getString(INSTANCE_DISK_GROUP_ROOT_TYPE_ATTR));
+	}
+
+	private boolean getDiskStoreRegexMatchEnabled(KConfigNode node) {
+
+		return node.getBoolean(INSTANCE_DISK_STORE_REGEX_MATCH_ENABLED_ATTR, false);
 	}
 
 	private CSectionBuilder createSectionBuilder(KConfigNode sectionNode) {

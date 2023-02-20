@@ -24,9 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.network;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
+import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
+
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * Provides an implementation of the reasoning mechanisms defined
@@ -41,20 +46,60 @@ import uk.ac.manchester.cs.mekon.store.disk.*;
  */
 public class NDirectMatcher extends NMatcher {
 
-	static private class Core extends ISimpleMatcherCore<NNode> {
+	private boolean regexMatchEnabled = false;
 
-		protected CFrame getTypeOrNull(NNode instance) {
+	private Map<CFrame, InstanceGroup> instanceGroups
+					= new HashMap<CFrame, InstanceGroup>();
 
-			return instance.getCFrame();
+	private class InstanceGroup {
+
+		private CFrame rootFrameType;
+		private Map<CIdentity, NNode> instances = new HashMap<CIdentity, NNode>();
+
+		InstanceGroup(CFrame rootFrameType) {
+
+			this.rootFrameType = rootFrameType;
 		}
 
-		protected boolean subsumesStructure(NNode query, NNode instance) {
+		void add(NNode instance, CIdentity identity) {
 
-			return query.subsumesStructure(instance);
+			instances.put(identity, instance);
+		}
+
+		boolean checkRemove(CIdentity identity) {
+
+			return instances.remove(identity) != null;
+		}
+
+		void collectMatches(NNode query, List<CIdentity> matches) {
+
+			if (getType(query).subsumes(rootFrameType)) {
+
+				for (Map.Entry<CIdentity, NNode> entry : instances.entrySet()) {
+
+					if (subsumesStructure(query, entry.getValue())) {
+
+						matches.add(entry.getKey());
+					}
+				}
+			}
 		}
 	}
 
-	private Core core = new Core();
+	/**
+	 * Sets whether regular-expression matching is to be enabled
+	 * for string-valued slots in query-matching. Overrides the
+	 * base-class implementation to directly use the built-in
+	 * regular-expression matching mechanism provided by the
+	 * network-based representation.
+	 *
+	 * @param enabled True if regular-expression matching to be
+	 * enabled
+	 */
+	public void setRegexMatchEnabled(boolean enabled) {
+
+		regexMatchEnabled = enabled;
+	}
 
 	/**
 	 * Returns true indicating that the matcher handles any type of
@@ -74,7 +119,16 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public void add(NNode instance, CIdentity identity) {
 
-		core.add(instance, identity);
+		CFrame rootFrameType = getType(instance);
+		InstanceGroup group = instanceGroups.get(rootFrameType);
+
+		if (group == null) {
+
+			group = new InstanceGroup(rootFrameType);
+			instanceGroups.put(rootFrameType, group);
+		}
+
+		group.add(instance, identity);
 	}
 
 	/**
@@ -82,7 +136,13 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public void remove(CIdentity identity) {
 
-		core.remove(identity);
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			if (group.checkRemove(identity)) {
+
+				break;
+			}
+		}
 	}
 
 	/**
@@ -90,7 +150,14 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public IMatches match(NNode query) {
 
-		return core.match(query);
+		List<CIdentity> matches = new ArrayList<CIdentity>();
+
+		for (InstanceGroup group : instanceGroups.values()) {
+
+			group.collectMatches(query, matches);
+		}
+
+		return new IUnrankedMatches(matches);
 	}
 
 	/**
@@ -98,7 +165,7 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public boolean matches(NNode query, NNode instance) {
 
-		return core.matches(query, instance);
+		return subsumesStructure(query, instance);
 	}
 
 	/**
@@ -116,5 +183,25 @@ public class NDirectMatcher extends NMatcher {
 	protected boolean expandInstanceRefs() {
 
 		return true;
+	}
+
+	private boolean subsumesStructure(NNode query, NNode instance) {
+
+		return query.subsumesStructure(instance, regexMatchEnabled);
+	}
+
+	private CFrame getType(NNode instance) {
+
+		CFrame type = instance.getCFrame();
+
+		if (type == null) {
+
+			throw new KSystemConfigException(
+						"Cannot handle instance/query that "
+						+ "cannot provide a CFrame representation "
+						+ "of the root-entity type: " + instance);
+		}
+
+		return type;
 	}
 }

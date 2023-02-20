@@ -34,6 +34,8 @@ import uk.ac.manchester.cs.mekon_util.*;
  */
 class StructureSubsumptionTester {
 
+	private boolean regexMatch;
+
 	private LinksTester linksTester = new LinksTester();
 	private NumbersTester numbersTester = new NumbersTester();
 	private StringsTester stringsTester = new StringsTester();
@@ -190,8 +192,13 @@ class StructureSubsumptionTester {
 
 		boolean valueSubsumption(String value1, String value2) {
 
-			return value1.equals(value2);
+			return regexMatch ? value2.matches(value1) : value1.equals(value2);
 		}
+	}
+
+	StructureSubsumptionTester(boolean regexMatch) {
+
+		this.regexMatch = regexMatch;
 	}
 
 	boolean subsumption(NNode node1, NNode node2) {

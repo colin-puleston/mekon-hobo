@@ -53,6 +53,15 @@ public interface IMatcher {
 	public void initialise(IStore store, IMatcherIndexes indexes);
 
 	/**
+	 * Sets whether regular-expression matching is to be enabled
+	 * for string-valued slots in query-matching.
+	 *
+	 * @param enabled True if regular-expression matching to be
+	 * enabled
+	 */
+	public void setRegexMatchEnabled(boolean enabled);
+
+	/**
 	 * Checks whether the matcher handles instance-level frames
 	 * of the specified type.
 	 *
