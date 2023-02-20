@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 import uk.ac.manchester.cs.mekon.manage.*;
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
@@ -203,7 +204,7 @@ public abstract class DMatcherCustomiserTest extends DemoModelBasedTest {
 
 	private DCustomMatcher createCustomMatcher(DModel model) {
 
-		IMatcher core = new IDirectMatcher();
+		IMatcher core = new NDirectMatcher();
 		DCustomMatcher custom = new DCustomMatcher(core);
 
 		custom.addCustomiser(createCustomiser(model, custom));

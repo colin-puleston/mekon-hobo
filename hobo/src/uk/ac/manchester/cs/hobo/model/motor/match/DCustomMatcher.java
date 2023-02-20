@@ -87,6 +87,19 @@ public class DCustomMatcher implements IMatcher {
 	}
 
 	/**
+	 * Invokes the corresponding method on the core-matcher to set
+	 * whether regular-expression matching is to be enabled for
+	 * string-valued slots in query-matching.
+	 *
+	 * @param enabled True if regular-expression matching to be
+	 * enabled
+	 */
+	public void setRegexMatchEnabled(boolean enabled) {
+
+		coreMatcher.setRegexMatchEnabled(enabled);
+	}
+
+	/**
 	 * Checks whether the core-matcher handles instance-level
 	 * frames of the specified type by invoking the corresponding
 	 * method on that matcher.
