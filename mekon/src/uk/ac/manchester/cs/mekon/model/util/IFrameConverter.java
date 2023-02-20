@@ -317,10 +317,7 @@ public abstract class IFrameConverter<FTC, FC, SC> {
 
 		for (ISlot slot : frame.getSlots().asList()) {
 
-			if (!slot.getValues().isEmpty()) {
-
-				new ISlotConverter(slot, frameConversion);
-			}
+			new ISlotConverter(slot, frameConversion);
 		}
 	}
 }
