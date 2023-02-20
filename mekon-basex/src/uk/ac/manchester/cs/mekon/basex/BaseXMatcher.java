@@ -111,9 +111,7 @@ public class BaseXMatcher extends NMatcher {
 	}
 
 	/**
-	 * Converts the specified instance-level instance frame to the
-	 * network-based representation, runs any registered pre-processors
-	 * over the resulting network, then adds it to the XML database.
+	 * Adds the specified instance to the XML database.
 	 *
 	 * @param instance Instance to be added
 	 * @param identity Unique identity for instance
@@ -134,10 +132,8 @@ public class BaseXMatcher extends NMatcher {
 	}
 
 	/**
-	 * Converts the specified instance-level query frame to the
-	 * network-based representation, runs any registered pre-processors
-	 * over the resulting network, then performs the query-matching
-	 * operation by executing an <i>XQuery</i> over the XML database.
+	 * Finds all instances that match the specified query by executing
+	 * an <i>XQuery</i> over the XML database.
 	 *
 	 * @param query Query to be matched
 	 * @return Unique identities of all matching instances
@@ -148,8 +144,9 @@ public class BaseXMatcher extends NMatcher {
 	}
 
 	/**
-	 * Performs a single query-matching test via the {@link
-	 * NNode#subsumesStructure} method.
+	 * Performs a single query-matching test by executing an
+	 * <i>XQuery</i> over a temporary XML database containing only a
+	 * single entry representing the specified instance.
 	 *
 	 * @param query Query to be matched
 	 * @param instance Instance to test for matching
