@@ -90,11 +90,11 @@ public class BaseXMatcher extends NMatcher {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initialise(IStore store, IMatcherIndexes indexes) {
+	public void initialise(IMatcherConfig config) {
 
-		super.initialise(store, indexes);
+		super.initialise(config);
 
-		this.indexes = indexes;
+		indexes = config.getIndexes();
 	}
 
 	/**

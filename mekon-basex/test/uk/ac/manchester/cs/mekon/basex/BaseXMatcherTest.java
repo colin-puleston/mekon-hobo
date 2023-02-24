@@ -24,14 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.basex;
 
-import uk.ac.manchester.cs.mekon.store.disk.*;
+import uk.ac.manchester.cs.mekon.network.*;
 
 /**
  * @author Colin Puleston
  */
-public class BaseXMatcherTest extends IMatcherTest {
+public class BaseXMatcherTest extends NMatcherTest {
 
-	protected IMatcher createMatcher() {
+	protected NMatcher createNMatcher() {
 
 		return new BaseXMatcher();
 	}
