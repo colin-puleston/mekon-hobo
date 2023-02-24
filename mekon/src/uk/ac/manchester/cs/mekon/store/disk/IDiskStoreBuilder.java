@@ -47,9 +47,11 @@ public class IDiskStoreBuilder {
 	private CModel model;
 
 	private StoreStructureBuilder structureBldr = new StoreStructureBuilder();
+
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
-	private boolean regexMatchEnabled = false;
+	private List<IValueMatchCustomiser> valueMatchCustomisers
+							= new ArrayList<IValueMatchCustomiser>();
 
 	/**
 	 * Sets the directory for instance-store serialisation.
@@ -167,15 +169,14 @@ public class IDiskStoreBuilder {
 	}
 
 	/**
-	 * Sets whether regular-expression matching is to be enabled
-	 * for string-valued slots in query-matching.
+	 * Adds a customiser that provides custom query matching for a
+ 	 * particular set of applicable slot-types.
 	 *
-	 * @param enabled True if regular-expression matching to be
-	 * enabled
+	 * @param customiser Relevant query-match customiser
 	 */
-	public void setRegexMatchEnabled(boolean enabled) {
+	public void addValueMatchCustomiser(IValueMatchCustomiser customiser) {
 
-		regexMatchEnabled = enabled;
+		valueMatchCustomisers.add(customiser);
 	}
 
 	/**
@@ -208,12 +209,10 @@ public class IDiskStoreBuilder {
 
 		IDiskStore store = new IDiskStore(model, structureBldr.build(model));
 
-		store.addMatchers(matchers);
-		store.setRegexMatchEnabled(regexMatchEnabled);
-
 		StoreRegister.add(store);
 
-		store.initialisePostRegistration();
+		store.addMatchers(matchers);
+		store.initialisePostRegistration(valueMatchCustomisers);
 
 		return store;
 	}

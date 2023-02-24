@@ -22,20 +22,37 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.network;
+package uk.ac.manchester.cs.mekon.manage;
+
+import java.util.*;
+
+import uk.ac.manchester.cs.mekon.model.motor.*;
+import uk.ac.manchester.cs.mekon.store.disk.*;
 
 /**
  * @author Colin Puleston
  */
-public class NDirectMatcherTest extends NMatcherTest {
+class GeneralMatcherSectionBuilder implements CSectionBuilder {
 
-	protected NMatcher createNMatcher() {
+	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
-		return new NDirectMatcher();
+	public boolean supportsIncrementalBuild() {
+
+		return false;
 	}
 
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
+	public void build(CBuilder builder) {
 
-		return true;
+		IDiskStoreBuilder iStoreBuilder = IDiskStoreManager.getBuilder(builder);
+
+		for (IMatcher matcher : matchers) {
+
+			iStoreBuilder.addMatcher(matcher);
+		}
+	}
+
+	void add(IMatcher matcher) {
+
+		matchers.add(matcher);
 	}
 }

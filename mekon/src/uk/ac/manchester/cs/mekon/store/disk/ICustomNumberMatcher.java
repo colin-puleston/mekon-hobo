@@ -22,20 +22,29 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.network;
+package uk.ac.manchester.cs.mekon.store.disk;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Interface whose implementations will provide customised query
+ * matching for specified number-valued slot-types, to override
+ * the default subsumption-based matching provided by the
+ * {@link IMatcher} implementations. For example, a particular
+ * implementation may provide matching based on overlapping,
+ * rather than subsumed, value-ranges.
+ *
  * @author Colin Puleston
  */
-public class NDirectMatcherTest extends NMatcherTest {
+public interface ICustomNumberMatcher extends ICustomValueMatcher {
 
-	protected NMatcher createNMatcher() {
-
-		return new NDirectMatcher();
-	}
-
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
-
-		return true;
-	}
+	/**
+	 * Provides the customised query-matching mechanism.
+	 *
+	 * @param queryValue Query-value number to be matched
+	 * @param instanceValue Instance-value number to be tested
+	 * for matching
+	 * @return true if query-value matches instance-value
+	 */
+	public boolean matches(INumber queryValue, INumber instanceValue);
 }

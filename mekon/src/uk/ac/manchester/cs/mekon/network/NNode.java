@@ -251,6 +251,21 @@ public class NNode extends NEntity {
 	}
 
 	/**
+	 * Provides all data-valued features on the node.
+	 *
+	 * @return All data-valued features on node
+	 */
+	public List<NDataFeature<?>> getDataFeatures() {
+
+		List<NDataFeature<?>> collected = new ArrayList<NDataFeature<?>>();
+
+		collectTypeFeatures(collected, NNumber.class);
+		collectTypeFeatures(collected, NString.class);
+
+		return collected;
+	}
+
+	/**
 	 * Provides all number-valued features on the node.
 	 *
 	 * @return All number-valued features on node
@@ -306,25 +321,6 @@ public class NNode extends NEntity {
 		return new CycleTester(this).leadsToCycle();
 	}
 
-	/**
-	 * Tests whether the type and the current feature-values of this
-	 * node subsume those of another node. For link features,
-	 * value-subsumption testing involves a recursive invocation of
-	 * the same node-subsumption testing operation. For number-valued
-	 * features, value-subsumption is determinied via invocation of
-	 * the {@link CNumber#subsumes} method, and for string-valued
-	 * features subsumption means string-equality.
-	 *
-	 * @param other Node to test for structure-subsumption by this
-	 * one
-	 * @param regexMatch True if regular-expression matching is to
-	 * be enabled for string-valued features
-	 */
-	public boolean subsumesStructure(NNode other, boolean regexMatch) {
-
-		return new StructureSubsumptionTester(regexMatch).subsumption(this, other);
-	}
-
 	NNode(CFrame cFrame) {
 
 		this(getTypeDisjuncts(cFrame));
@@ -359,16 +355,23 @@ public class NNode extends NEntity {
 
 	private <F extends NFeature<?>>List<F> getTypeFeatures(Class<F> type) {
 
-		List<F> typeFeatures = new ArrayList<F>();
+		List<F> collected = new ArrayList<F>();
+
+		collectTypeFeatures(collected, type);
+
+		return collected;
+	}
+
+	private <F extends NFeature<?>>void collectTypeFeatures(
+											List<F> collected,
+											Class<? extends F> type) {
 
 		for (NFeature<?> feature : features) {
 
 			if (feature.getClass() == type) {
 
-				typeFeatures.add(type.cast(feature));
+				collected.add(type.cast(feature));
 			}
 		}
-
-		return typeFeatures;
 	}
 }

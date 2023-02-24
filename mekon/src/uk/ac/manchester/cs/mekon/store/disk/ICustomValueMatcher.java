@@ -22,20 +22,16 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.network;
+package uk.ac.manchester.cs.mekon.store.disk;
 
 /**
+ * Base-interface for value-type specific interfaces whose
+ * implementations will provide customised query matching for
+ * the relevant value-types for specified slot-types, to
+ * override the default subsumption-based matching provided
+ * by the {@link IMatcher} implementations.
+ *
  * @author Colin Puleston
  */
-public class NDirectMatcherTest extends NMatcherTest {
-
-	protected NMatcher createNMatcher() {
-
-		return new NDirectMatcher();
-	}
-
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
-
-		return true;
-	}
+public interface ICustomValueMatcher {
 }

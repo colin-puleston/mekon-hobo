@@ -46,8 +46,6 @@ class IDiskStore implements IStore {
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
 	private NDirectMatcher defaultMatcher = new NDirectMatcher();
 
-	private boolean regexMatchEnabled;
-
 	private List<CIdentity> identities = new ArrayList<CIdentity>();
 	private Map<CIdentity, IRegenType> regenTypes = new HashMap<CIdentity, IRegenType>();
 	private InstanceIndexes indexes = new InstanceIndexes();
@@ -57,28 +55,22 @@ class IDiskStore implements IStore {
 
 	private class Initialiser {
 
-		Initialiser() {
+		Initialiser(IMatcherConfig matcherConfig) {
 
-			initialiseMatchers();
+			initialiseMatchers(matcherConfig);
 			reloadInstances();
 
 			indexes.reinitialiseFreeIndexes();
 		}
 
-		private void initialiseMatchers() {
+		private void initialiseMatchers(IMatcherConfig matcherConfig) {
 
 			for (IMatcher matcher : matchers) {
 
-				initialiseMatcher(matcher);
+				matcher.initialise(matcherConfig);
 			}
 
-			initialiseMatcher(defaultMatcher);
-		}
-
-		private void initialiseMatcher(IMatcher matcher) {
-
-			matcher.initialise(IDiskStore.this, indexes);
-			matcher.setRegexMatchEnabled(regexMatchEnabled);
+			defaultMatcher.initialise(matcherConfig);
 		}
 
 		private void reloadInstances() {
@@ -257,14 +249,14 @@ class IDiskStore implements IStore {
 		matchers.add(matcher);
 	}
 
-	void setRegexMatchEnabled(boolean value) {
-
-		regexMatchEnabled = value;
-	}
-
 	void initialisePostRegistration() {
 
-		new Initialiser();
+		initialisePostRegistration(Collections.emptyList());
+	}
+
+	void initialisePostRegistration(List<IValueMatchCustomiser> valueMatchCustomisers) {
+
+		new Initialiser(new IMatcherConfig(this, indexes, valueMatchCustomisers));
 	}
 
 	void stop() {

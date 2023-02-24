@@ -46,8 +46,6 @@ import uk.ac.manchester.cs.mekon_util.config.*;
  */
 public class NDirectMatcher extends NMatcher {
 
-	private boolean regexMatchEnabled = false;
-
 	private Map<CFrame, InstanceGroup> instanceGroups
 					= new HashMap<CFrame, InstanceGroup>();
 
@@ -77,28 +75,13 @@ public class NDirectMatcher extends NMatcher {
 
 				for (Map.Entry<CIdentity, NNode> entry : instances.entrySet()) {
 
-					if (subsumesStructure(query, entry.getValue())) {
+					if (matches(query, entry.getValue())) {
 
 						matches.add(entry.getKey());
 					}
 				}
 			}
 		}
-	}
-
-	/**
-	 * Sets whether regular-expression matching is to be enabled
-	 * for string-valued slots in query-matching. Overrides the
-	 * base-class implementation to directly use the built-in
-	 * regular-expression matching mechanism provided by the
-	 * network-based representation.
-	 *
-	 * @param enabled True if regular-expression matching to be
-	 * enabled
-	 */
-	public void setRegexMatchEnabled(boolean enabled) {
-
-		regexMatchEnabled = enabled;
 	}
 
 	/**
@@ -165,7 +148,7 @@ public class NDirectMatcher extends NMatcher {
 	 */
 	public boolean matches(NNode query, NNode instance) {
 
-		return subsumesStructure(query, instance);
+		return matchesDirect(query, instance);
 	}
 
 	/**
@@ -183,11 +166,6 @@ public class NDirectMatcher extends NMatcher {
 	protected boolean expandInstanceRefs() {
 
 		return true;
-	}
-
-	private boolean subsumesStructure(NNode query, NNode instance) {
-
-		return query.subsumesStructure(instance, regexMatchEnabled);
 	}
 
 	private CFrame getType(NNode instance) {

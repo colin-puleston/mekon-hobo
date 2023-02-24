@@ -33,15 +33,17 @@ package uk.ac.manchester.cs.mekon.manage;
 public interface CConfigVocab {
 
 	static public final String MODEL_SECTION_ID = "ModelSection";
-	static public final String INSTANCE_DISK_STORE_ID = "InstanceDiskStore";
-	static public final String INSTANCE_DISK_SUBSTORE_ID = "SubStore";
-	static public final String INSTANCE_DISK_GROUP_ID = "InstanceGroup";
 	static public final String INSTANCE_UPDATING_ID = "InstanceUpdating";
 	static public final String INSTANCE_UPDATE_DEFAULT_OPS_ID = "DefaultOperations";
-	static public final String GENERAL_MATCHER_ID = "GeneralMatcher";
 	static public final String CFRAME_SLOT_ORDERS_ID = "CFrameSlotOrders";
 	static public final String SLOT_ORDERED_CFRAME_ID = "CFrame";
 	static public final String ORDERED_CFRAME_SLOT_ID = "CSlot";
+	static public final String INSTANCE_DISK_STORE_ID = "InstanceDiskStore";
+	static public final String INSTANCE_DISK_SUBSTORE_ID = "SubStore";
+	static public final String INSTANCE_DISK_GROUP_ID = "InstanceGroup";
+	static public final String GENERAL_MATCHER_ID = "GeneralMatcher";
+	static public final String VALUE_MATCH_CUSTOMISER_ID = "ValueMatchCustomiser";
+	static public final String VALUE_MATCH_CUSTOMISER_SLOT_TYPE_ID = "SlotType";
 
 	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
 	static public final String SECTION_BLDER_CLASS_ATTR = "builder";
@@ -49,13 +51,14 @@ public interface CConfigVocab {
 	static public final String INSTANCE_DISK_SUBSTORE_NAME_ATTR = "name";
 	static public final String INSTANCE_DISK_SUBSTORE_SPLIT_ATTR = "splitByFunction";
 	static public final String INSTANCE_DISK_GROUP_ROOT_TYPE_ATTR = "rootType";
-	static public final String INSTANCE_DISK_STORE_REGEX_MATCH_ENABLED_ATTR = "regexMatchEnabled";
 	static public final String INSTANCE_AUTO_UPDATE_ATTR = "autoUpdate";
 	static public final String INSTANCE_UPDATE_INFERREDS_ATTR = "inferredTypes";
 	static public final String INSTANCE_UPDATE_SUGGESTEDS_ATTR = "suggestedTypes";
 	static public final String INSTANCE_UPDATE_SLOTS_ATTR = "slots";
 	static public final String INSTANCE_UPDATE_SLOT_VALUES_ATTR = "slotValues";
-	static public final String GENERAL_MATCHER_CLASS_ATTR = "matcher";
 	static public final String SLOT_ORDERED_CFRAME_ID_ATTR = "frameId";
 	static public final String ORDERED_CFRAME_SLOT_ID_ATTR = "slotId";
+	static public final String GENERAL_MATCHER_CLASS_ATTR = "matcher";
+	static public final String VALUE_MATCH_CUSTOMISER_SLOT_ID_ATTR = "slotId";
+	static public final String CUSTOM_VALUE_MATCHER_CLASS_ATTR = "matcher";
 }

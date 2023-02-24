@@ -22,37 +22,30 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.manage;
-
-import java.util.*;
-
-import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.store.disk.*;
+package uk.ac.manchester.cs.mekon.network;
 
 /**
  * @author Colin Puleston
  */
-class GeneralMatcherAdder implements CSectionBuilder {
 
-	private List<IMatcher> matchers = new ArrayList<IMatcher>();
+class CustomisedQuery  {
 
-	public boolean supportsIncrementalBuild() {
+	private NNode coreQuery;
+	private NNode customQuery;
 
-		return false;
+	CustomisedQuery(NNode coreQuery, NNode customQuery) {
+
+		this.coreQuery = coreQuery;
+		this.customQuery = customQuery;
 	}
 
-	public void build(CBuilder builder) {
+	NNode getCoreQuery() {
 
-		IDiskStoreBuilder iStoreBuilder = IDiskStoreManager.getBuilder(builder);
-
-		for (IMatcher matcher : matchers) {
-
-			iStoreBuilder.addMatcher(matcher);
-		}
+		return coreQuery;
 	}
 
-	void add(IMatcher matcher) {
+	NNode getCustomQuery() {
 
-		matchers.add(matcher);
+		return customQuery;
 	}
 }

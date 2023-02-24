@@ -53,248 +53,106 @@ public abstract class NMatcher implements IMatcher {
 	private IMatchInstanceRefExpander instanceRefExpander = null;
 
 	private NetworkCreator networkCreator = new NetworkCreator();
-	private MatcherOps matcherOps = new StandardMatcherOps();
+	private QueryCustomiser queryCustomiser = null;
 
-	private abstract class MatcherOps {
+	private class CustomisedQueryNodeMatcher  {
 
-		abstract MatcherOps update(boolean regexMatchEnabled);
+		private CustomisedQuery query;
 
-		abstract IMatches match(NNode query);
+		CustomisedQueryNodeMatcher(CustomisedQuery query) {
 
-		abstract boolean matches(NNode query, NNode instance);
-	}
-
-	private class StandardMatcherOps extends MatcherOps {
-
-		MatcherOps update(boolean regexMatchEnabled) {
-
-			return regexMatchEnabled ? new RegexEnhancedMatcherOps(store) : this;
+			this.query = query;
 		}
 
-		IMatches match(NNode query) {
+		IMatches match() {
 
-			return NMatcher.this.match(query);
-		}
+			IMatches coreMatches = coreMatch();
 
-		boolean matches(NNode query, NNode instance) {
+			if (coreMatches.anyMatches()) {
 
-			return NMatcher.this.matches(query, instance);
-		}
-	}
+				if (coreMatches.ranked()) {
 
-	private class RegexEnhancedMatcherOps extends MatcherOps {
-
-		private IStore store;
-
-		private QueryStringRemover queryStringRemover = new QueryStringRemover();
-		private QueryStringRetainer queryStringRetainer = new QueryStringRetainer();
-
-		private abstract class QueryCopyPruner  {
-
-			NNode copyAndPrune(NNode query) {
-
-				NNode copy = query.copy();
-
-				prune(copy);
-
-				return copy;
-			}
-
-			boolean prune(NNode node) {
-
-				node.removeFeatures(getPrunableDataFeatures(node));
-
-				List<NLink> links = node.getLinks();
-
-				return links.isEmpty() ? prunableNodes() : prune(links);
-			}
-
-			abstract boolean prunableNodes();
-
-			abstract List<? extends NFeature<?>> getPrunableDataFeatures(NNode node);
-
-			private boolean prune(List<NLink> links) {
-
-				boolean retainedValues = false;
-
-				for (NLink link : links) {
-
-					for (NNode value : link.getValues()) {
-
-						if (prune(value)) {
-
-							link.removeValue(value);
-						}
-						else {
-
-							retainedValues = true;
-						}
-					}
+					return filterRankedMatches(coreMatches);
 				}
 
-				return !retainedValues;
+				return filterUnrankedMatches(coreMatches);
 			}
+
+			return coreMatches;
 		}
 
-		private class QueryStringRemover extends QueryCopyPruner {
+		boolean matches(NNode instance) {
 
-			boolean prunableNodes() {
-
-				return false;
-			}
-
-			List<? extends NFeature<?>> getPrunableDataFeatures(NNode node) {
-
-				return node.getStrings();
-			}
+			return coreMatches(instance) && customMatches(instance);
 		}
 
-		private class QueryStringRetainer extends QueryCopyPruner {
+		private IMatches filterRankedMatches(IMatches coreMatches) {
 
-			boolean prune(NNode node) {
+			IRankedMatches filtered = new IRankedMatches();
 
-				return super.prune(node) && node.getStrings().isEmpty();
-			}
+			for (IMatchesRank rank : coreMatches.getRanks()) {
 
-			boolean prunableNodes() {
+				List<CIdentity> rankFiltered = filterMatches(rank.getMatches());
 
-				return true;
-			}
+				if (!rankFiltered.isEmpty()) {
 
-			List<? extends NFeature<?>> getPrunableDataFeatures(NNode node) {
-
-				return node.getNumbers();
-			}
-		}
-
-		private class SplitQuery  {
-
-			private NNode coreQuery;
-			private NNode strQuery;
-
-			SplitQuery(NNode query) {
-
-				coreQuery = queryStringRemover.copyAndPrune(query);
-				strQuery = queryStringRetainer.copyAndPrune(query);
-			}
-
-			IMatches match() {
-
-				IMatches coreMatches = NMatcher.this.match(coreQuery);
-
-				if (coreMatches.anyMatches()) {
-
-					if (coreMatches.ranked()) {
-
-						return filterRankedMatches(coreMatches);
-					}
-
-					return filterUnrankedMatches(coreMatches);
+					filtered.addRank(rankFiltered, rank.getRankingValue());
 				}
-
-				return coreMatches;
 			}
 
-			boolean matches(NNode instance) {
+			return filtered;
+		}
 
-				return NMatcher.this.matches(coreQuery, instance) & matchesStrings(instance);
-			}
+		private IMatches filterUnrankedMatches(IMatches coreMatches) {
 
-			private IMatches filterRankedMatches(IMatches coreMatches) {
+			return new IUnrankedMatches(filterMatches(coreMatches.getAllMatches()));
+		}
 
-				IRankedMatches filtered = new IRankedMatches();
+		private List<CIdentity> filterMatches(List<CIdentity> coreMatches) {
 
-				for (IMatchesRank rank : coreMatches.getRanks()) {
+			List<CIdentity> filtered = new ArrayList<CIdentity>();
 
-					List<CIdentity> rankFiltered = filterMatches(rank.getMatches());
+			for (CIdentity id : coreMatches) {
 
-					if (!rankFiltered.isEmpty()) {
+				if (customMatches(getInstanceNode(id))) {
 
-						filtered.addRank(rankFiltered, rank.getRankingValue());
-					}
+					filtered.add(id);
 				}
-
-				return filtered;
 			}
 
-			private IMatches filterUnrankedMatches(IMatches coreMatches) {
-
-				return new IUnrankedMatches(filterMatches(coreMatches.getAllMatches()));
-			}
-
-			private List<CIdentity> filterMatches(List<CIdentity> coreMatches) {
-
-				List<CIdentity> filtered = new ArrayList<CIdentity>();
-
-				for (CIdentity id : coreMatches) {
-
-					if (matchesStrings(getInstanceNode(id))) {
-
-						filtered.add(id);
-					}
-				}
-
-				return filtered;
-			}
-
-			private boolean matchesStrings(NNode instance) {
-
-				return strQuery.subsumesStructure(instance, true);
-			}
-
-			private NNode getInstanceNode(CIdentity id) {
-
-				return new NNetwork(store.get(id).getRootFrame()).getRootNode();
-			}
+			return filtered;
 		}
 
-		RegexEnhancedMatcherOps(IStore store) {
+		private IMatches coreMatch() {
 
-			this.store = store;
+			return NMatcher.this.match(query.getCoreQuery());
 		}
 
-		MatcherOps update(boolean regexMatchEnabled) {
+		private boolean coreMatches(NNode instance) {
 
-			return regexMatchEnabled ? this : new StandardMatcherOps();
+			return NMatcher.this.matches(query.getCoreQuery(), instance);
 		}
 
-		IMatches match(NNode query) {
+		private boolean customMatches(NNode instance) {
 
-			return new SplitQuery(query).match();
+			return matchesDirect(query.getCustomQuery(), instance);
 		}
 
-		boolean matches(NNode query, NNode instance) {
+		private NNode getInstanceNode(CIdentity id) {
 
-			return new SplitQuery(query).matches(instance);
+			return new NNetwork(store.get(id).getRootFrame()).getRootNode();
 		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initialise(IStore store, IMatcherIndexes indexes) {
+	public void initialise(IMatcherConfig config) {
 
-		this.store = store;
+		store = config.getStore();
 
 		instanceRefExpander = new IMatchInstanceRefExpander(store);
-	}
-
-	/**
-	 * Sets whether regular-expression matching is to be enabled
-	 * for string-valued slots in query-matching. If enabled via this
-	 * particular implementation of the method (rather than any
-	 * overriding implementations) then results will be achieved by
-	 * stripping of any string-valued fields from provided queries,
-	 * invoking the relevant query-matching method on the string-free
-	 * queries, then filtering the results for string-matching,
-	 * including regular-expression matching.
-	 *
-	 * @param enabled True if regular-expression matching to be
-	 * enabled
-	 */
-	public void setRegexMatchEnabled(boolean enabled) {
-
-		matcherOps = matcherOps.update(enabled);
+		queryCustomiser = new QueryCustomiser(config.getValueMatchCustomisers());
 	}
 
 	/**
@@ -334,7 +192,16 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public IMatches match(IFrame query) {
 
-		return matcherOps.match(queryToNetwork(query));
+		NNode nQuery = queryToNetwork(query);
+
+		CustomisedQuery cnQuery = queryCustomiser.checkCustomise(nQuery);
+
+		if (cnQuery == null) {
+
+			return match(nQuery);
+		}
+
+		return new CustomisedQueryNodeMatcher(cnQuery).match();
 	}
 
 	/**
@@ -349,7 +216,17 @@ public abstract class NMatcher implements IMatcher {
 	 */
 	public boolean matches(IFrame query, IFrame instance) {
 
-		return matcherOps.matches(queryToNetwork(query), instanceToNetwork(instance));
+		NNode nQuery = queryToNetwork(query);
+		NNode nInstance = instanceToNetwork(instance);
+
+		CustomisedQuery cnQuery = queryCustomiser.checkCustomise(nQuery);
+
+		if (cnQuery == null) {
+
+			return matches(nQuery, nInstance);
+		}
+
+		return new CustomisedQueryNodeMatcher(cnQuery).matches(nInstance);
 	}
 
 	/**
@@ -388,6 +265,16 @@ public abstract class NMatcher implements IMatcher {
 	 * @return True if referenced instances are to be expanded
 	 */
 	protected abstract boolean expandInstanceRefs();
+
+	void addValueMatchCustomiser(IValueMatchCustomiser customiser) {
+
+		queryCustomiser.addValueMatchCustomiser(customiser);
+	}
+
+	boolean matchesDirect(NNode query, NNode instance) {
+
+		return new QueryNodeDirectMatcher(queryCustomiser).matches(query, instance);
+	}
 
 	private NNode instanceToNetwork(IFrame instance) {
 

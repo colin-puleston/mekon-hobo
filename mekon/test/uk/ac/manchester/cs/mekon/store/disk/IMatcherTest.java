@@ -70,6 +70,22 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	static private final IString BOBS_LODGER_NAME = createIString("Jim the lodger");
 	static private final IString BOB_OR_LODGER_NAMES_REGEX = createIString("Bob Bell|Jim the lodger");
 
+	static class RegexStringMatcher implements ICustomStringMatcher {
+
+		public boolean matches(String queryValue, String instanceValue) {
+
+			return instanceValue.matches(queryValue);
+		}
+	}
+
+	static class ComplementNumberMatcher implements ICustomNumberMatcher {
+
+		public boolean matches(INumber queryValue, INumber instanceValue) {
+
+			return !queryValue.getType().subsumes(instanceValue.getType());
+		}
+	}
+
 	static private CIdentity createInstanceId(String name) {
 
 		return new CIdentity(name + "Id", name);
@@ -337,18 +353,41 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 			createPersonalAddressQuery(BOB_ADDRESS),
 			BOB_ID,
 			BOBS_LODGER_ID);
+	}
 
-		matcher.setRegexMatchEnabled(false);
-
-		testMatching(
-			createPersonalNameQuery(BOB_OR_LODGER_NAMES_REGEX));
-
-		matcher.setRegexMatchEnabled(true);
+	@Test
+	public void test_customStringMatchQueries() {
 
 		testMatching(
-			createPersonalNameQuery(BOB_OR_LODGER_NAMES_REGEX),
+			createPersonalNameAddressQuery(BOB_OR_LODGER_NAMES_REGEX, BOB_ADDRESS));
+
+		addValueMatchCustomiser(NAME_PROPERTY, new RegexStringMatcher());
+
+		testMatching(
+			createPersonalNameAddressQuery(BOB_OR_LODGER_NAMES_REGEX, BOB_ADDRESS),
 			BOB_ID,
 			BOBS_LODGER_ID);
+	}
+
+	@Test
+	public void test_customNumberMatchQueries() {
+
+		setHourlyRate(undergradTeachingJob, LOW_PAY_RATE);
+		setHourlyRate(postgradTeachingJob, MID_PAY_RATE);
+		setHourlyRate(academicResearchJob, MID_PAY_RATE);
+		setHourlyRate(doctoringJob, HIGH_PAY_RATE);
+
+		testMatching(
+			createPayRateQuery(MIN_PAY_RATE, HIGH_PAY_RATE - 1),
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID,
+			ACADEMIC_RESEARCHING_JOB_ID);
+
+		addValueMatchCustomiser(PAY_RATE_PROPERTY, new ComplementNumberMatcher());
+
+		testMatching(
+			createPayRateQuery(MIN_PAY_RATE, HIGH_PAY_RATE - 1),
+			DOCTORING_JOB_ID);
 	}
 
 	protected CSectionBuilder createSectionBuilder() {
@@ -358,11 +397,18 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 
 	protected abstract IMatcher createMatcher();
 
+	protected abstract void addValueMatchCustomiser(IValueMatchCustomiser customiser);
+
 	protected abstract boolean handlesInstanceDisjunctionBasedQueries();
 
 	protected IMatcher getMatcher() {
 
 		return matcher;
+	}
+
+	private void addValueMatchCustomiser(CIdentity slotId, ICustomValueMatcher matcher) {
+
+		addValueMatchCustomiser(new IValueMatchCustomiser(matcher, slotId));
 	}
 
 	private IFrame addUndergradTeachingJob() {

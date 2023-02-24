@@ -46,20 +46,9 @@ public interface IMatcher {
 	 * Initialisation method that will be called at some point
 	 * prior to the first access of any of the other defined methods.
 	 *
-	 * @param store Instance store to which matcher is attached
-	 * @param indexes Mappings between unique instance identities
- 	 * and corresponding unique index values
+	 * @param config Relevant configuration information
 	 */
-	public void initialise(IStore store, IMatcherIndexes indexes);
-
-	/**
-	 * Sets whether regular-expression matching is to be enabled
-	 * for string-valued slots in query-matching.
-	 *
-	 * @param enabled True if regular-expression matching to be
-	 * enabled
-	 */
-	public void setRegexMatchEnabled(boolean enabled);
+	public void initialise(IMatcherConfig config);
 
 	/**
 	 * Checks whether the matcher handles instance-level frames

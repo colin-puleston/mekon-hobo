@@ -54,10 +54,7 @@ public class IDiskStoreAccessTest extends IStoreAccessTest {
 
 		private CFrame type;
 
-		public void initialise(IStore store, IMatcherIndexes indexes) {
-		}
-
-		public void setRegexMatchEnabled(boolean enabled) {
+		public void initialise(IMatcherConfig config) {
 		}
 
 		public boolean handlesType(CFrame type) {

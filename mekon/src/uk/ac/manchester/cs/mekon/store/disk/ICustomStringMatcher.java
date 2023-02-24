@@ -22,20 +22,30 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.mekon.network;
+package uk.ac.manchester.cs.mekon.store.disk;
+
+import uk.ac.manchester.cs.mekon.model.*;
 
 /**
+ * Interface whose implementations will provide customised query
+ * matching for specific string-valued slot-types, to override
+ * the default subsumption-based matching provided by the
+ * {@link IMatcher} implementations (which for string-valued
+ * slot-types means simple equality checking). For example, a
+ * particular implementation may provide regular-expression
+ * based matching.
+ *
  * @author Colin Puleston
  */
-public class NDirectMatcherTest extends NMatcherTest {
+public interface ICustomStringMatcher extends ICustomValueMatcher {
 
-	protected NMatcher createNMatcher() {
-
-		return new NDirectMatcher();
-	}
-
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
-
-		return true;
-	}
+	/**
+	 * Provides the customised query-matching mechanism.
+	 *
+	 * @param queryValue Query-value string to be matched
+	 * @param instanceValue Instance-value string to be tested
+	 * for matching
+	 * @return true if query-value matches instance-value
+	 */
+	public boolean matches(String queryValue, String instanceValue);
 }

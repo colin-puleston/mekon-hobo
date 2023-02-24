@@ -24,18 +24,32 @@
 
 package uk.ac.manchester.cs.mekon.network;
 
+import uk.ac.manchester.cs.mekon.store.disk.*;
+
 /**
  * @author Colin Puleston
  */
-public class NDirectMatcherTest extends NMatcherTest {
+public abstract class NMatcherTest extends IMatcherTest {
 
-	protected NMatcher createNMatcher() {
+	static public void addValueMatchCustomiser(NMatcher matcher, IValueMatchCustomiser customiser) {
 
-		return new NDirectMatcher();
+		matcher.addValueMatchCustomiser(customiser);
 	}
 
-	protected boolean handlesInstanceDisjunctionBasedQueries() {
+	protected IMatcher createMatcher() {
 
-		return true;
+		return createNMatcher();
+	}
+
+	protected abstract NMatcher createNMatcher();
+
+	protected void addValueMatchCustomiser(IValueMatchCustomiser customiser) {
+
+		getNMatcher().addValueMatchCustomiser(customiser);
+	}
+
+	private NMatcher getNMatcher() {
+
+		return (NMatcher)getMatcher();
 	}
 }
