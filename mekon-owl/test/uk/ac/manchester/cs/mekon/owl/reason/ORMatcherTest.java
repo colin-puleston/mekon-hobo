@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.model.motor.*;
-import uk.ac.manchester.cs.mekon.store.disk.*;
+import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.demomodel.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.build.*;
@@ -37,7 +37,7 @@ import uk.ac.manchester.cs.mekon.owl.build.*;
 /**
  * @author Colin Puleston
  */
-public abstract class ORMatcherTest extends IMatcherTest {
+public abstract class ORMatcherTest extends NMatcherTest {
 
 	static private final CIdentity OWL_TYPE = JOB;
 	static private final CIdentity NON_OWL_TYPE = new CIdentity("NON-OWL-TYPE");
@@ -87,7 +87,7 @@ public abstract class ORMatcherTest extends IMatcherTest {
 		return new ORMatcherSectionBuilder();
 	}
 
-	protected IMatcher createMatcher() {
+	protected NMatcher createNMatcher() {
 
 		return createMatcher(oModel);
 	}
