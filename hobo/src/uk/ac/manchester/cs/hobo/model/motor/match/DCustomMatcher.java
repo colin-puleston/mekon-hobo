@@ -76,27 +76,12 @@ public class DCustomMatcher implements IMatcher {
 	 * could not be performed until after the store has been created
 	 * and registered.
 	 *
-	 * @param store Instance store to which matcher is attached
-	 * @param indexes Mappings between unique instance identities
- 	 * and corresponding unique index values
+	 * @param config Relevant configuration information
 	 */
-	public void initialise(IStore store, IMatcherIndexes indexes) {
+	public void initialise(IMatcherConfig config) {
 
-		coreMatcher.initialise(store, indexes);
+		coreMatcher.initialise(config);
 		customisers.initialisePostStoreBuild();
-	}
-
-	/**
-	 * Invokes the corresponding method on the core-matcher to set
-	 * whether regular-expression matching is to be enabled for
-	 * string-valued slots in query-matching.
-	 *
-	 * @param enabled True if regular-expression matching to be
-	 * enabled
-	 */
-	public void setRegexMatchEnabled(boolean enabled) {
-
-		coreMatcher.setRegexMatchEnabled(enabled);
 	}
 
 	/**
