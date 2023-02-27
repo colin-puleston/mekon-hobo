@@ -165,7 +165,25 @@ class QueryNodeDirectMatcher {
 
 		boolean valueMatch(CIdentity featureType, NNode qValue, NNode iValue) {
 
+			ICustomFrameMatcher matcher = lookForCustomMatcher(featureType);
+
+			if (matcher != null) {
+
+				IFrame qFrame = qValue.getIFrame();
+				IFrame iFrame = iValue.getIFrame();
+
+				if (qFrame != null && iFrame != null ) {
+
+					return matcher.matches(qFrame, iFrame);
+				}
+			}
+
 			return QueryNodeDirectMatcher.this.matches(qValue, iValue);
+		}
+
+		private ICustomFrameMatcher lookForCustomMatcher(CIdentity featureType) {
+
+			return lookForCustomValueMatcher(featureType, ICustomFrameMatcher.class);
 		}
 	}
 
@@ -190,7 +208,7 @@ class QueryNodeDirectMatcher {
 
 		private ICustomNumberMatcher lookForCustomMatcher(CIdentity featureType) {
 
-			return queryCustomiser.lookForCustomNumberMatcher(featureType);
+			return lookForCustomValueMatcher(featureType, ICustomNumberMatcher.class);
 		}
 	}
 
@@ -215,7 +233,7 @@ class QueryNodeDirectMatcher {
 
 		private ICustomStringMatcher lookForCustomMatcher(CIdentity featureType) {
 
-			return queryCustomiser.lookForCustomStringMatcher(featureType);
+			return lookForCustomValueMatcher(featureType, ICustomStringMatcher.class);
 		}
 	}
 
@@ -280,5 +298,12 @@ class QueryNodeDirectMatcher {
 		}
 
 		return instance.getTypeDisjuncts().containsAll(query.getTypeDisjuncts());
+	}
+
+	private <M extends ICustomValueMatcher>M lookForCustomValueMatcher(
+													CIdentity featureType,
+													Class<M> expectClass) {
+
+		return queryCustomiser.lookForCustomValueMatcher(featureType, expectClass);
 	}
 }

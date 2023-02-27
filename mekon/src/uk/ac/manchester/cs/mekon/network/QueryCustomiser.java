@@ -171,19 +171,9 @@ class QueryCustomiser {
 		return null;
 	}
 
-	ICustomNumberMatcher lookForCustomNumberMatcher(CIdentity slotId) {
-
-		return lookForCustomValueMatcher(slotId, ICustomNumberMatcher.class);
-	}
-
-	ICustomStringMatcher lookForCustomStringMatcher(CIdentity slotId) {
-
-		return lookForCustomValueMatcher(slotId, ICustomStringMatcher.class);
-	}
-
-	private <M extends ICustomValueMatcher>M lookForCustomValueMatcher(
-													CIdentity slotId,
-													Class<M> expectClass) {
+	<M extends ICustomValueMatcher>M lookForCustomValueMatcher(
+											CIdentity slotId,
+											Class<M> expectClass) {
 
 		IValueMatchCustomiser customiser = valueMatchCustomisers.get(slotId);
 

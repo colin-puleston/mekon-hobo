@@ -78,6 +78,14 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		}
 	}
 
+	static class ComplementFrameMatcher implements ICustomFrameMatcher {
+
+		public boolean matches(IFrame queryValue, IFrame instanceValue) {
+
+			return !queryValue.getType().subsumes(instanceValue.getType());
+		}
+	}
+
 	static class ComplementNumberMatcher implements ICustomNumberMatcher {
 
 		public boolean matches(INumber queryValue, INumber instanceValue) {
@@ -356,17 +364,19 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 	}
 
 	@Test
-	public void test_customStringMatchQueries() {
+	public void test_customFrameMatchQueries() {
 
 		testMatching(
-			createPersonalNameAddressQuery(BOB_OR_LODGER_NAMES_REGEX, BOB_ADDRESS));
+			createAcademiaQuery(),
+			UNDERGRAD_TEACHING_JOB_ID,
+			POSTGRAD_TEACHING_JOB_ID,
+			ACADEMIC_RESEARCHING_JOB_ID);
 
-		addValueMatchCustomiser(NAME_PROPERTY, new RegexStringMatcher());
+		addValueMatchCustomiser(INDUSTRY_PROPERTY, new ComplementFrameMatcher());
 
 		testMatching(
-			createPersonalNameAddressQuery(BOB_OR_LODGER_NAMES_REGEX, BOB_ADDRESS),
-			BOB_ID,
-			BOBS_LODGER_ID);
+			createAcademiaQuery(),
+			DOCTORING_JOB_ID);
 	}
 
 	@Test
@@ -388,6 +398,20 @@ public abstract class IMatcherTest extends DemoModelBasedTest {
 		testMatching(
 			createPayRateQuery(MIN_PAY_RATE, HIGH_PAY_RATE - 1),
 			DOCTORING_JOB_ID);
+	}
+
+	@Test
+	public void test_customStringMatchQueries() {
+
+		testMatching(
+			createPersonalNameAddressQuery(BOB_OR_LODGER_NAMES_REGEX, BOB_ADDRESS));
+
+		addValueMatchCustomiser(NAME_PROPERTY, new RegexStringMatcher());
+
+		testMatching(
+			createPersonalNameAddressQuery(BOB_OR_LODGER_NAMES_REGEX, BOB_ADDRESS),
+			BOB_ID,
+			BOBS_LODGER_ID);
 	}
 
 	protected CSectionBuilder createSectionBuilder() {
