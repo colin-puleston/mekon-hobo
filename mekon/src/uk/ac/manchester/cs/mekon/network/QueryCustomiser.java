@@ -75,13 +75,13 @@ class QueryCustomiser {
 			return !retainedValues;
 		}
 
-		boolean removeDataFeatures(NNode node, boolean customMatch) {
+		boolean pruneFeatures(NNode node, boolean removeCustomMatchFeatures) {
 
 			boolean anyRemovals = false;
 
-			for (NDataFeature<?> feature : node.getDataFeatures()) {
+			for (NFeature<?> feature : node.getFeatures()) {
 
-				if (customValueMatchFeature(feature) == customMatch) {
+				if (customMatchFeature(feature) == removeCustomMatchFeatures) {
 
 					node.removeFeature(feature);
 
@@ -99,7 +99,7 @@ class QueryCustomiser {
 
 		boolean prune(NNode node) {
 
-			if (removeDataFeatures(node, true) && !anyRemovals) {
+			if (pruneFeatures(node, true) && !anyRemovals) {
 
 				anyRemovals = true;
 			}
@@ -121,18 +121,18 @@ class QueryCustomiser {
 
 		boolean prune(NNode node) {
 
-			removeDataFeatures(node, false);
+			pruneFeatures(node, false);
 
 			List<NLink> links = node.getLinks();
 
-			return links.isEmpty() && !anyNonMatchDataFeatures(node);
+			return links.isEmpty() && !anyNonMatchFeatures(node);
 		}
 
-		private boolean anyNonMatchDataFeatures(NNode node) {
+		private boolean anyNonMatchFeatures(NNode node) {
 
-			for (NDataFeature<?> feature : node.getDataFeatures()) {
+			for (NFeature<?> feature : node.getFeatures()) {
 
-				if (!customValueMatchFeature(feature)) {
+				if (!customMatchFeature(feature)) {
 
 					return true;
 				}
@@ -185,7 +185,7 @@ class QueryCustomiser {
 		return castCustomValueMatcher(customiser.getMatcher(), slotId, expectClass);
 	}
 
-	private boolean customValueMatchFeature(NDataFeature<?> feature) {
+	private boolean customMatchFeature(NFeature<?> feature) {
 
 		return valueMatchCustomisers.keySet().contains(feature.getType());
 	}
