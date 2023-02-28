@@ -123,7 +123,10 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			inputHandler.clearIncompatibleFields();
 
-			updateInputValidity();
+			if (!removeValidityPreventingInputChar()) {
+
+				updateInputValidity();
+			}
 		}
 
 		protected void onFieldExited(String text) {
@@ -206,6 +209,20 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			return false;
 		}
+
+		private boolean removeValidityPreventingInputChar() {
+
+			String text = getText();
+
+			if (text.isEmpty() || potentiallyValidInputText(text)) {
+
+				return false;
+			}
+
+			setText(text.substring(0, text.length() - 1));
+
+			return true;
+		}
 	}
 
 	private class WindowCloseListener extends WindowAdapter {
@@ -248,6 +265,8 @@ public abstract class TextInputter<I> extends Inputter<I> {
 	protected abstract I resolveInput();
 
 	protected abstract boolean validInputText(String text);
+
+	protected abstract boolean potentiallyValidInputText(String text);
 
 	protected abstract I convertInputValue(String text);
 

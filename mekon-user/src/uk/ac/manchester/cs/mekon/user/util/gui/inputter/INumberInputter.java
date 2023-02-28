@@ -59,6 +59,11 @@ public abstract class INumberInputter extends TextInputter<INumber> {
 		return validInputValue(parseValue(text, true));
 	}
 
+	protected boolean potentiallyValidInputText(String text) {
+
+		return validInputValue(parseValue(text, false));
+	}
+
 	protected INumber convertInputValue(String text) {
 
 		return parseValue(text, false);

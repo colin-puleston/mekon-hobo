@@ -70,6 +70,11 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		return super.validInputText(text) && checkValidStoreName(text);
 	}
 
+	protected boolean potentiallyValidInputText(String text) {
+
+		return validInputText(text);
+	}
+
 	StoreIdInputter(JComponent parent, Controller controller, IFrameFunction function) {
 
 		super(parent, createTitle(function), false);

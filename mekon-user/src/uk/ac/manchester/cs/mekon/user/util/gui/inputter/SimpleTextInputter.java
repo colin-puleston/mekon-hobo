@@ -57,6 +57,11 @@ public abstract class SimpleTextInputter<I> extends TextInputter<I> {
 		return !text.isEmpty();
 	}
 
+	protected boolean potentiallyValidInputText(String text) {
+
+		return validInputText(text);
+	}
+
 	protected boolean validCurrentInput() {
 
 		return !emptyValue(inputHandler.getValue());
