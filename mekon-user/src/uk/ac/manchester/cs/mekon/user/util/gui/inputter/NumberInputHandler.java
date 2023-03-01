@@ -31,16 +31,6 @@ import uk.ac.manchester.cs.mekon.model.*;
  */
 public class NumberInputHandler extends TextInputHandler<INumber> {
 
-	public NumberInputHandler(INumberInputter inputter) {
-
-		super(inputter);
-	}
-
-	public NumberInputHandler(String title, INumberInputter inputter) {
-
-		super(title, inputter);
-	}
-
 	public boolean hasValue() {
 
 		return getValue() != INumberInputter.NO_VALUE;

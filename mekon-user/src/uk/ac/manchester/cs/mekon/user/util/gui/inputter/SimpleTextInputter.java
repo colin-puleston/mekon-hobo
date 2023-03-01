@@ -29,11 +29,11 @@ import javax.swing.*;
 /**
  * @author Colin Puleston
  */
-public abstract class SimpleTextInputter<I> extends TextInputter<I> {
+public abstract class SimpleTextInputter<I> extends StandardTextInputter<I> {
 
 	static private final long serialVersionUID = -1;
 
-	private TextInputHandler<I> inputHandler = new TextInputHandler<I>(this);
+	private TextInputHandler<I> inputHandler = new TextInputHandler<I>();
 
 	public void setInitialStringValue(String value) {
 
@@ -45,6 +45,8 @@ public abstract class SimpleTextInputter<I> extends TextInputter<I> {
 	protected SimpleTextInputter(JComponent parent, String title, boolean canClear) {
 
 		super(parent, title, true, canClear);
+
+		addInputField(inputHandler);
 	}
 
 	protected I resolveInput() {

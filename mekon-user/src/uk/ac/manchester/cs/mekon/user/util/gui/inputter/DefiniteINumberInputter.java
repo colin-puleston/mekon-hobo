@@ -50,11 +50,13 @@ public class DefiniteINumberInputter extends INumberInputter {
 		return limit.equals(absLimit) ? "?" : limit.getDisplayLabel();
 	}
 
-	private NumberInputHandler inputHandler = new NumberInputHandler(this);
+	private NumberInputHandler inputHandler = new NumberInputHandler();
 
 	public DefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
 
 		super(parent, type, createTitle(type), canClear);
+
+		addInputField(inputHandler);
 	}
 
 	protected INumber resolveInput(CNumber type) {

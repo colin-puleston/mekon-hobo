@@ -41,10 +41,10 @@ public class IndefiniteINumberInputter extends INumberInputter {
 	static private final String MIN_VALUE_LABEL = "Minimum";
 	static private final String MAX_VALUE_LABEL = "Maximum";
 
-	private NumberInputHandler exactHandler = new NumberInputHandler(EXACT_VALUE_LABEL, this);
+	private NumberInputHandler exactHandler = new NumberInputHandler();
 
-	private LimitInputHandler minHandler = new LimitInputHandler(MIN_VALUE_LABEL);
-	private LimitInputHandler maxHandler = new LimitInputHandler(MAX_VALUE_LABEL);
+	private LimitInputHandler minHandler = new LimitInputHandler();
+	private LimitInputHandler maxHandler = new LimitInputHandler();
 
 	private class LimitInputHandler extends NumberInputHandler {
 
@@ -64,14 +64,10 @@ public class IndefiniteINumberInputter extends INumberInputter {
 			return true;
 		}
 
-		LimitInputHandler(String title) {
-
-			super(title, IndefiniteINumberInputter.this);
-		}
-
 		void setOtherLimit(LimitInputHandler otherLimit) {
 
 			this.otherLimit = otherLimit;
+
 			otherLimit.otherLimit = this;
 		}
 	}
@@ -79,6 +75,10 @@ public class IndefiniteINumberInputter extends INumberInputter {
 	public IndefiniteINumberInputter(JComponent parent, CNumber type, boolean canClear) {
 
 		super(parent, type, TITLE, canClear);
+
+		addInputField(EXACT_VALUE_LABEL, exactHandler);
+		addInputField(MIN_VALUE_LABEL, minHandler);
+		addInputField(MAX_VALUE_LABEL, maxHandler);
 
 		exactHandler.setIncompatibleField(minHandler);
 		exactHandler.setIncompatibleField(maxHandler);

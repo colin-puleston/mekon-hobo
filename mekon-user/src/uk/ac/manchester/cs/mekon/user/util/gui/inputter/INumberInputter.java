@@ -31,7 +31,7 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public abstract class INumberInputter extends TextInputter<INumber> {
+public abstract class INumberInputter extends StandardTextInputter<INumber> {
 
 	static private final long serialVersionUID = -1;
 

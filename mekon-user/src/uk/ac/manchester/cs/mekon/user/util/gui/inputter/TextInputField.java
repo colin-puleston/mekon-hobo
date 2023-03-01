@@ -24,12 +24,14 @@
 
 package uk.ac.manchester.cs.mekon.user.util.gui.inputter;
 
-import javax.swing.*;
+import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class InputFieldProxy<I> {
+abstract class TextInputField<I> extends GTextField {
+
+	static private final long serialVersionUID = -1;
 
 	abstract void setValueAsText(String text);
 
@@ -38,6 +40,4 @@ abstract class InputFieldProxy<I> {
 	abstract I getValue();
 
 	abstract String getValueAsText();
-
-	abstract JComponent getFieldComponent();
 }
