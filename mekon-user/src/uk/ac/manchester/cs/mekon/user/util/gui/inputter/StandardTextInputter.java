@@ -45,7 +45,6 @@ public abstract class StandardTextInputter<I> extends TextInputter<I> {
 
 	private JPanel inputFieldsPanel = new JPanel();
 
-	private int inputFieldCount = 0;
 	private int windowHeight = WINDOW_HEIGHT_BASE;
 
 	public I getInput() {
@@ -98,7 +97,6 @@ public abstract class StandardTextInputter<I> extends TextInputter<I> {
 	private void addInputComponent(JComponent fieldComponent, int height) {
 
 		inputFieldsPanel.add(fieldComponent);
-		inputFieldCount++;
 
 		windowHeight += height;
 	}
