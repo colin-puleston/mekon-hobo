@@ -38,7 +38,7 @@ public abstract class GButton extends JButton implements ActionListener {
 
 		super(label);
 
-		GFonts.setMedium(this);
+		setMediumFont();
 		addActionListener(this);
 	}
 
@@ -57,9 +57,28 @@ public abstract class GButton extends JButton implements ActionListener {
 		setMargin(new Insets(size, size, size, size));
 	}
 
+	public void setHorizontalMargin(int size) {
+
+		Insets m = getMargin();
+
+		setMargin(new Insets(m.top, size, m.bottom, size));
+	}
+
+	public void setVerticalMargin(int size) {
+
+		Insets m = getMargin();
+
+		setMargin(new Insets(size, m.left, size, m.right));
+	}
+
 	public void setSmallFont() {
 
 		GFonts.setSmall(this);
+	}
+
+	public void setMediumFont() {
+
+		GFonts.setMedium(this);
 	}
 
 	public void setLargeFont() {
