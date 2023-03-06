@@ -2,21 +2,26 @@ package uk.ac.manchester.cs.hobo.user.app.basic;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.user.util.gui.inputter.*;
 
+import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 
 /**
  * @author Colin Puleston
  */
-class CalendarDateValuesHandler extends CustomValuesHandler<CalendarDate, CalendarDateInputter> {
+class CalendarDateValuesHandler extends CustomValuesHandler<CalendarDate, String> {
 
 	CalendarDateValuesHandler(DModel model) {
 
 		super(model);
 	}
 
-	CalendarDateInputter createValueInputter(JComponent parent, CalendarDate currentValueObj) {
+	Inputter<String> createValueInputter(
+						JComponent parent,
+						IFrameFunction function,
+						CalendarDate currentValueObj) {
 
 		return new CalendarDateInputter(parent);
 	}
@@ -26,9 +31,9 @@ class CalendarDateValuesHandler extends CustomValuesHandler<CalendarDate, Calend
 		return CalendarDate.class;
 	}
 
-	void configureValueObject(CalendarDateInputter valueInputter, CalendarDate value) {
+	void configureValueObject(CalendarDate valueObj, String inputValue) {
 
-		valueInputter.configureValueObject(value);
+		valueObj.setDate(inputValue);
 	}
 
 	String getValueObjectDisplayLabel(CalendarDate valueObj) {

@@ -11,14 +11,14 @@ import uk.ac.manchester.cs.hobo.model.*;
 /**
  * @author Colin Puleston
  */
-abstract class CustomValuesHandler<V extends DObject, I extends Inputter<?>> {
+abstract class CustomValuesHandler<V extends DObject, IV> {
 
 	private DModel model;
 
-	private class SlotValueObtainer implements ValueObtainer {
+	private class GeneralValueObtainer implements ValueObtainer {
 
 		private IFrameFunction function;
-		private I inputter;
+		private Inputter<IV> inputter;
 
 		public EditStatus getEditStatus() {
 
@@ -29,15 +29,17 @@ abstract class CustomValuesHandler<V extends DObject, I extends Inputter<?>> {
 
 			V valueObj = createValueObject(function);
 
-			configureValueObject(inputter, valueObj);
+			configureValueObject(valueObj, inputter.getInput());
 
 			return valueObj.getFrame();
 		}
 
-		SlotValueObtainer(JComponent parent, ISlot slot) {
+		GeneralValueObtainer(JComponent parent, ISlot slot) {
+
+			V valueObj = lookForCurrentValueObject(slot);
 
 			function = slot.getContainer().getFunction();
-			inputter = createValueInputter(parent, lookForCurrentValueObject(slot));
+			inputter = createValueInputter(parent, function, valueObj);
 		}
 	}
 
@@ -53,7 +55,7 @@ abstract class CustomValuesHandler<V extends DObject, I extends Inputter<?>> {
 
 	ValueObtainer createValueObtainer(JComponent parent, ISlot slot) {
 
-		return new SlotValueObtainer(parent, slot);
+		return new GeneralValueObtainer(parent, slot);
 	}
 
 	String getValueDisplayLabel(IFrame value) {
@@ -66,11 +68,14 @@ abstract class CustomValuesHandler<V extends DObject, I extends Inputter<?>> {
 		return displayValueObjectInDialog(toValueObject(value));
 	}
 
-	abstract I createValueInputter(JComponent parent, V currentValueObj);
+	abstract Inputter<IV> createValueInputter(
+								JComponent parent,
+								IFrameFunction function,
+								V currentValueObj);
 
 	abstract Class<V> getValueObjectClass();
 
-	abstract void configureValueObject(I valueInputter, V valueObj);
+	abstract void configureValueObject(V valueObj, IV inputValue);
 
 	abstract String getValueObjectDisplayLabel(V valueObj);
 

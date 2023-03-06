@@ -61,9 +61,4 @@ class TextBlockInputter extends Inputter<String> {
 
 		new InputValidityUpdater();
 	}
-
-	void configureValueObject(TextBlock valueObj) {
-
-		valueObj.text.set(getInput());
-	}
 }

@@ -34,9 +34,4 @@ class CalendarDateInputter extends SimpleTextInputter<String> {
 
 		super(parent, TITLE, true);
 	}
-
-	void configureValueObject(CalendarDate valueObj) {
-
-		valueObj.setDate(getInput());
-	}
 }

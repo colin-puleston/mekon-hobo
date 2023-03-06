@@ -2,21 +2,31 @@ package uk.ac.manchester.cs.hobo.user.app.basic;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.user.util.gui.inputter.*;
 
+import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 
 /**
  * @author Colin Puleston
  */
-class TextBlockValuesHandler extends CustomValuesHandler<TextBlock, TextBlockInputter> {
+class TextBlockValuesHandler extends CustomValuesHandler<TextBlock, String> {
 
 	TextBlockValuesHandler(DModel model) {
 
 		super(model);
 	}
 
-	TextBlockInputter createValueInputter(JComponent parent, TextBlock currentValueObj) {
+	Inputter<String> createValueInputter(
+						JComponent parent,
+						IFrameFunction function,
+						TextBlock currentValueObj) {
+
+		if (function.query()) {
+
+			return new TextBlockQueryInputter(parent, currentValueObj);
+		}
 
 		return new TextBlockInputter(parent, currentValueObj);
 	}
@@ -26,9 +36,9 @@ class TextBlockValuesHandler extends CustomValuesHandler<TextBlock, TextBlockInp
 		return TextBlock.class;
 	}
 
-	void configureValueObject(TextBlockInputter valueInputter, TextBlock valueObj) {
+	void configureValueObject(TextBlock valueObj, String inputValue) {
 
-		valueInputter.configureValueObject(valueObj);
+		valueObj.text.set(inputValue);
 	}
 
 	String getValueObjectDisplayLabel(TextBlock valueObj) {
