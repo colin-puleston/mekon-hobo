@@ -39,7 +39,7 @@ public abstract class SimpleTextInputter<I> extends StandardTextInputter<I> {
 
 		inputHandler.setValueAsText(value);
 
-		updateInputValidity();
+		setValidInput(validCurrentInput());
 	}
 
 	protected SimpleTextInputter(JComponent parent, String title, boolean canClear) {

@@ -78,11 +78,11 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 		protected void onCharEntered(char enteredChar) {
 
-			inputHandler.clearIncompatibleFields();
-
 			if (!removeValidityPreventingInputChar()) {
 
-				updateInputValidity();
+				inputHandler.handleTextChange();
+
+				setValidInput(validCurrentInput());
 			}
 		}
 
@@ -107,6 +107,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 			this.inputHandler = inputHandler;
 
 			inputHandler.setField(this);
+			GFonts.setMedium(this);
 
 			new CustomInputFieldFocusRemover();
 		}
@@ -141,7 +142,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 				if (valueEntered) {
 
-					inputHandler.clearIncompatibleFields();
+					inputHandler.handleTextChange();
 				}
 
 				setText(text);
@@ -238,11 +239,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 	protected abstract I convertInputValue(String text);
 
 	protected abstract boolean validCurrentInput();
-
-	protected void updateInputValidity() {
-
-		setValidInput(validCurrentInput());
-	}
 
 	protected boolean customTextInput() {
 

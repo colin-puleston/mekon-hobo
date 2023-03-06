@@ -57,6 +57,11 @@ public class TextInputHandler<I> {
 		return field.getValue();
 	}
 
+	public boolean hasTextValue() {
+
+		return !getValueAsText().isEmpty();
+	}
+
 	public String getValueAsText() {
 
 		return field.getValueAsText();
@@ -78,6 +83,9 @@ public class TextInputHandler<I> {
 		return true;
 	}
 
+	protected void onTextChange() {
+	}
+
 	void setField(TextInputField<I> field) {
 
 		this.field = field;
@@ -85,7 +93,13 @@ public class TextInputHandler<I> {
 		fieldComponent = field;
 	}
 
-	void clearIncompatibleFields() {
+	void handleTextChange() {
+
+		clearIncompatibleFields();
+		onTextChange();
+	}
+
+	private void clearIncompatibleFields() {
 
 		for (TextInputHandler<I> incompatible : incompatibles) {
 
