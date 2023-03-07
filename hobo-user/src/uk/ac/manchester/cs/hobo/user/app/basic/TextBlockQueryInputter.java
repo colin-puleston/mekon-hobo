@@ -37,8 +37,8 @@ class TextBlockQueryInputter extends TextInputter<String> {
 	static private final int DISJUNCT_LABEL_BORDER_SIZE = 4;
 	static private final int DISJUNCT_ADD_BUTTON_BORDER_SIZE = 0;
 
-	static private final int DEFAULT_DISPLAYED_CONJUNCTS_COUNT = 3;
-	static private final int DEFAULT_DISPLAYED_DISJUNCTS_COUNT = 2;
+	static private final int MIN_DISPLAYED_CONJUNCTS_COUNT = 3;
+	static private final int MIN_DISPLAYED_DISJUNCTS_COUNT = 2;
 
 	static private final TextExpression EMPTY_EXPRESSION = new TextExpression();
 	static private final TextDisjunction EMPTY_DISJUNCTION = new TextDisjunction();
@@ -70,9 +70,9 @@ class TextBlockQueryInputter extends TextInputter<String> {
 
 					valuePresent = nowValuePresent;
 
-					if (!valuePresent) {
+					if (!valuePresent && redundantDisplay()) {
 
-						checkPurgeRedundantDisjunctFields();
+						resetExpressionDisplay();
 					}
 
 					disjunctAddButton.updateEnabling();
@@ -106,7 +106,7 @@ class TextBlockQueryInputter extends TextInputter<String> {
 
 			protected void doButtonThing() {
 
-				incrementDisplayedDisjunctsCount();
+				shiftDisplayedDisjunctsCount(1);
 				updateExpressionDisplay();
 			}
 
@@ -218,28 +218,14 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			return firstDisjunct ? FIRST_DISJUNCT_LABEL : FOLLOWING_DISJUNCT_LABEL;
 		}
 
-		private void checkPurgeRedundantDisjunctFields() {
+		private boolean redundantDisplay() {
 
-			if (multiUnpopulatedDisjunctFields()) {
-
-				removeAllUnpopulatedDisjunctFields();
-				incrementDisplayedDisjunctsCount();
-
-				updateExpressionDisplay();
-			}
+			return redundantDisjunctFields() || expressionPanel.redundantConjunctPanels();
 		}
 
-		private void removeAllUnpopulatedDisjunctFields() {
+		private boolean redundantDisjunctFields() {
 
-			for (DisjunctHandler handler : new ArrayList<DisjunctHandler>(disjunctHandlers)) {
-
-				if (!handler.hasTextValue()) {
-
-					disjunctHandlers.remove(handler);
-				}
-			}
-
-			setDisplayedDisjunctsCount(disjunctHandlers.size());
+			return !minDisplayedDisjuncts() && multiUnpopulatedDisjunctFields();
 		}
 
 		private boolean allDisjunctFieldsPopulated() {
@@ -267,9 +253,14 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			return false;
 		}
 
-		private void incrementDisplayedDisjunctsCount() {
+		private boolean minDisplayedDisjuncts() {
 
-			setDisplayedDisjunctsCount(getDisplayedDisjunctsCount() + 1);
+			return getDisplayedDisjunctsCount() == MIN_DISPLAYED_DISJUNCTS_COUNT;
+		}
+
+		private void shiftDisplayedDisjunctsCount(int shiftBy) {
+
+			setDisplayedDisjunctsCount(getDisplayedDisjunctsCount() + shiftBy);
 		}
 
 		private void setDisplayedDisjunctsCount(int count) {
@@ -297,7 +288,7 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			protected void doButtonThing() {
 
 				displayedConjunctsCount++;
-				displayedDisjunctsCounts.add(DEFAULT_DISPLAYED_DISJUNCTS_COUNT);
+				displayedDisjunctsCounts.add(MIN_DISPLAYED_DISJUNCTS_COUNT);
 
 				updateExpressionDisplay();
 			}
@@ -335,6 +326,11 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			add(createConjunctAddButtonPanel());
 
 			conjunctAddButton.updateEnabling();
+		}
+
+		boolean redundantConjunctPanels() {
+
+			return !minDisplayedConjuncts() && multiUnpopulatedConjunctPanels();
 		}
 
 		void updateButtonEnabling() {
@@ -408,15 +404,37 @@ class TextBlockQueryInputter extends TextInputter<String> {
 
 		private boolean allConjunctPanelsPopulated() {
 
+			return !unpopulatedConjunctPanels(1);
+		}
+
+		private boolean multiUnpopulatedConjunctPanels() {
+
+			return unpopulatedConjunctPanels(2);
+		}
+
+		private boolean unpopulatedConjunctPanels(int required) {
+
+			int count = 0;
+
 			for (ConjunctPanel conjunctPanel : conjunctPanels) {
 
-				if (!conjunctPanel.anyDisjunctFieldsPopulated()) {
+				if (!populatedConjunctPanel(conjunctPanel) && ++count == required) {
 
-					return false;
+					return true;
 				}
 			}
 
-			return true;
+			return false;
+		}
+
+		private boolean populatedConjunctPanel(ConjunctPanel conjunctPanel) {
+
+			return conjunctPanel.anyDisjunctFieldsPopulated();
+		}
+
+		private boolean minDisplayedConjuncts() {
+
+			return displayedConjunctsCount == MIN_DISPLAYED_CONJUNCTS_COUNT;
 		}
 	}
 
@@ -472,45 +490,27 @@ class TextBlockQueryInputter extends TextInputter<String> {
 
 		super(parent, TITLE, true, true);
 
-		TextExpression expression = getInitialExpression(currentValueObj);
-
-		displayedConjunctsCount = getInitialDisplayedConjunctsCount(expression);
-
-		setInitialDisplayedDisjunctsCounts(expression);
-		setExpressionDisplay(expression);
+		setNewExpressionDisplay(getInitialExpression(currentValueObj));
 	}
 
-	private int getInitialDisplayedConjunctsCount(TextExpression expression) {
+	private void resetExpressionDisplay() {
 
-		int inExpr = expression.getConjuncts().size();
+		displayedDisjunctsCounts.clear();
 
-		return Math.max(inExpr, DEFAULT_DISPLAYED_CONJUNCTS_COUNT);
-	}
-
-	private void setInitialDisplayedDisjunctsCounts(TextExpression expression) {
-
-		Iterator<TextDisjunction> cjs = expression.getConjuncts().iterator();
-
-		for (int i = 0 ; i < displayedConjunctsCount ; i++) {
-
-			int c = cjs.hasNext()
-						? getInitialDisplayedDisjunctsCount(cjs.next())
-						: DEFAULT_DISPLAYED_DISJUNCTS_COUNT;
-
-			displayedDisjunctsCounts.add(c);
-		}
-	}
-
-	private int getInitialDisplayedDisjunctsCount(TextDisjunction conjunct) {
-
-		int inConjunct = conjunct.getDisjuncts().size();
-
-		return Math.max(inConjunct, DEFAULT_DISPLAYED_DISJUNCTS_COUNT);
+		setNewExpressionDisplay(expressionPanel.getCurrentExpression());
 	}
 
 	private void updateExpressionDisplay() {
 
 		setExpressionDisplay(expressionPanel.getCurrentExpression());
+	}
+
+	private void setNewExpressionDisplay(TextExpression expression) {
+
+		displayedConjunctsCount = getNewDisplayedConjunctsCount(expression);
+
+		setNewDisplayedDisjunctsCounts(expression);
+		setExpressionDisplay(expression);
 	}
 
 	private void setExpressionDisplay(TextExpression expression) {
@@ -525,6 +525,40 @@ class TextBlockQueryInputter extends TextInputter<String> {
 		return currentValueObj != null
 				? currentValueObj.getQueryExpression()
 				: EMPTY_EXPRESSION;
+	}
+
+	private int getNewDisplayedConjunctsCount(TextExpression expression) {
+
+		int inExpr = expression.getConjuncts().size();
+
+		return Math.max(inExpr, MIN_DISPLAYED_CONJUNCTS_COUNT);
+	}
+
+	private void setNewDisplayedDisjunctsCounts(TextExpression expression) {
+
+		Iterator<TextDisjunction> cjs = expression.getConjuncts().iterator();
+
+		for (int i = 0 ; i < displayedConjunctsCount ; i++) {
+
+			displayedDisjunctsCounts.add(getNewDisplayedDisjunctsCount(cjs));
+		}
+	}
+
+	private int getNewDisplayedDisjunctsCount(Iterator<TextDisjunction> conjuncts) {
+
+		if (conjuncts.hasNext()) {
+
+			return getNewDisplayedDisjunctsCount(conjuncts.next());
+		}
+
+		return MIN_DISPLAYED_DISJUNCTS_COUNT;
+	}
+
+	private int getNewDisplayedDisjunctsCount(TextDisjunction conjunct) {
+
+		int inConjunct = conjunct.getDisjuncts().size();
+
+		return Math.max(inConjunct, MIN_DISPLAYED_DISJUNCTS_COUNT);
 	}
 
 	private void setComponentBorder(JComponent component, int size) {
