@@ -33,7 +33,7 @@ public abstract class SimpleTextInputter<I> extends StandardTextInputter<I> {
 
 	static private final long serialVersionUID = -1;
 
-	private TextInputHandler<I> inputHandler = new TextInputHandler<I>();
+	private TextInputHandler<I> inputHandler = new TextInputHandler<I>(this);
 
 	public void setInitialStringValue(String value) {
 

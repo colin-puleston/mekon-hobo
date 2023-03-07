@@ -65,7 +65,7 @@ public abstract class StandardTextInputter<I> extends TextInputter<I> {
 
 	protected GTextField addInputField(TextInputHandler<I> inputHandler) {
 
-		GTextField field = createInputField(inputHandler);
+		GTextField field = inputHandler.getField();
 
 		addInputComponent(field, PLAIN_INPUT_HEIGHT);
 
@@ -74,7 +74,7 @@ public abstract class StandardTextInputter<I> extends TextInputter<I> {
 
 	protected GTextField addInputField(String title, TextInputHandler<I> inputHandler) {
 
-		GTextField field = createInputField(inputHandler);
+		GTextField field = inputHandler.getField();
 		JComponent fieldComponent = createTitledFieldComponent(title, field);
 
 		inputHandler.resetFieldComponent(fieldComponent);

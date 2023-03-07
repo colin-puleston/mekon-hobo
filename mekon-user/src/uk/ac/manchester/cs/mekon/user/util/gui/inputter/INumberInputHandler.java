@@ -29,7 +29,12 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-public class NumberInputHandler extends TextInputHandler<INumber> {
+public class INumberInputHandler extends TextInputHandler<INumber> {
+
+	public INumberInputHandler(TextInputter<INumber> inputter) {
+
+		super(inputter);
+	}
 
 	public boolean hasValue() {
 

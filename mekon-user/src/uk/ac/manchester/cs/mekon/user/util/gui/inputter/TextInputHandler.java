@@ -37,6 +37,12 @@ public class TextInputHandler<I> {
 
 	private Set<TextInputHandler<I>> incompatibles = new HashSet<TextInputHandler<I>>();
 
+	public TextInputHandler(TextInputter<I> inputter) {
+
+		field = inputter.createInputField(this);
+		fieldComponent = field;
+	}
+
 	public void resetFieldComponent(JComponent fieldComponent) {
 
 		this.fieldComponent = fieldComponent;
@@ -67,6 +73,11 @@ public class TextInputHandler<I> {
 		return field.getValueAsText();
 	}
 
+	public TextInputField<I> getField() {
+
+		return field;
+	}
+
 	public JComponent getFieldComponent() {
 
 		return fieldComponent;
@@ -84,13 +95,6 @@ public class TextInputHandler<I> {
 	}
 
 	protected void onTextChange() {
-	}
-
-	void setField(TextInputField<I> field) {
-
-		this.field = field;
-
-		fieldComponent = field;
 	}
 
 	void handleTextChange() {

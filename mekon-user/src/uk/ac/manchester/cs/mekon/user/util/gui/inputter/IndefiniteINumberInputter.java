@@ -41,12 +41,12 @@ public class IndefiniteINumberInputter extends INumberInputter {
 	static private final String MIN_VALUE_LABEL = "Minimum";
 	static private final String MAX_VALUE_LABEL = "Maximum";
 
-	private NumberInputHandler exactHandler = new NumberInputHandler();
+	private INumberInputHandler exactHandler = new INumberInputHandler(this);
 
 	private LimitInputHandler minHandler = new LimitInputHandler();
 	private LimitInputHandler maxHandler = new LimitInputHandler();
 
-	private class LimitInputHandler extends NumberInputHandler {
+	private class LimitInputHandler extends INumberInputHandler {
 
 		static private final long serialVersionUID = -1;
 
@@ -62,6 +62,11 @@ public class IndefiniteINumberInputter extends INumberInputter {
 			}
 
 			return true;
+		}
+
+		LimitInputHandler() {
+
+			super(IndefiniteINumberInputter.this);
 		}
 
 		void setOtherLimit(LimitInputHandler otherLimit) {

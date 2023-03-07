@@ -106,7 +106,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			this.inputHandler = inputHandler;
 
-			inputHandler.setField(this);
 			GFonts.setMedium(this);
 
 			new CustomInputFieldFocusRemover();
@@ -220,11 +219,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 		addWindowListener(new WindowCloseListener());
 	}
 
-	protected GTextField createInputField(TextInputHandler<I> inputHandler) {
-
-		return new InputField(inputHandler);
-	}
-
 	protected void setCustomTextInputter(CustomTextInputter<I> inputter) {
 
 		customTextInputter = inputter;
@@ -243,6 +237,11 @@ public abstract class TextInputter<I> extends Inputter<I> {
 	protected boolean customTextInput() {
 
 		return customTextInputter != null;
+	}
+
+	TextInputField<I> createInputField(TextInputHandler<I> inputHandler) {
+
+		return new InputField(inputHandler);
 	}
 }
 
