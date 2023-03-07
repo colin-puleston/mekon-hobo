@@ -42,6 +42,8 @@ class QueryCustomiser {
 
 	private abstract class QueryModifier  {
 
+		private boolean anyPrunings = false;
+
 		NNode modify(NNode query) {
 
 			NNode copy = query.copy();
@@ -51,94 +53,70 @@ class QueryCustomiser {
 			return copy;
 		}
 
-		abstract boolean prune(NNode node);
+		boolean anyPrunings() {
 
-		boolean prune(List<NLink> links) {
+			return anyPrunings;
+		}
 
-			boolean retainedValues = false;
+		abstract void prune(NNode node);
 
-			for (NLink link : links) {
+		void pruneLinkValues(NNode node) {
+
+			for (NLink link : node.getLinks()) {
 
 				for (NNode value : link.getValues()) {
 
-					if (prune(value)) {
-
-						link.removeValue(value);
-					}
-					else {
-
-						retainedValues = true;
-					}
+					prune(value);
 				}
 			}
-
-			return !retainedValues;
 		}
 
-		boolean pruneFeatures(NNode node, boolean removeCustomMatchFeatures) {
-
-			boolean anyRemovals = false;
+		void pruneFeatures(NNode node) {
 
 			for (NFeature<?> feature : node.getFeatures()) {
 
-				if (customMatchFeature(feature) == removeCustomMatchFeatures) {
+				if (prunableFeature(feature)) {
 
 					node.removeFeature(feature);
 
-					anyRemovals |= true;
+					anyPrunings |= true;
 				}
 			}
-
-			return anyRemovals;
 		}
+
+		abstract boolean prunableFeature(NFeature<?> feature);
 	}
 
 	private class CustomValueRemover extends QueryModifier {
 
-		private boolean anyRemovals = false;
+		void prune(NNode node) {
 
-		boolean prune(NNode node) {
-
-			if (pruneFeatures(node, true) && !anyRemovals) {
-
-				anyRemovals = true;
-			}
-
-			prune(node.getLinks());
-
-			return false;
+			pruneFeatures(node);
+			pruneLinkValues(node);
 		}
 
-		boolean anyRemovals() {
+		boolean prunableFeature(NFeature<?> feature) {
 
-			return anyRemovals;
+			return customMatchFeature(feature);
 		}
 	}
 
 	private class CustomValueRetainer extends QueryModifier {
 
-		private boolean pruned = false;
+		void prune(NNode node) {
 
-		boolean prune(NNode node) {
-
-			pruneFeatures(node, false);
-
-			List<NLink> links = node.getLinks();
-
-			return links.isEmpty() && !anyNonMatchFeatures(node);
+			pruneLinkValues(node);
+			pruneFeatures(node);
 		}
 
-		private boolean anyNonMatchFeatures(NNode node) {
+		boolean prunableFeature(NFeature<?> feature) {
 
-			for (NFeature<?> feature : node.getFeatures()) {
+			return !populatedLink(feature) && !customMatchFeature(feature);
+		}
 
-				if (!customMatchFeature(feature)) {
+		private boolean populatedLink(NFeature<?> feature) {
 
-					return true;
-				}
-			}
-
-			return false;
+			return feature instanceof NLink && ((NLink)feature).hasValues();
 		}
 	}
 
@@ -163,7 +141,7 @@ class QueryCustomiser {
 		CustomValueRemover remover = new CustomValueRemover();
 		NNode coreQuery = remover.modify(query);
 
-		if (remover.anyRemovals()) {
+		if (remover.anyPrunings()) {
 
 			return new CustomisedQuery(coreQuery, customValueRetainer.modify(query));
 		}
