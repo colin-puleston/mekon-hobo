@@ -80,6 +80,18 @@ class TextBlockQueryInputter extends TextInputter<String> {
 				}
 			}
 
+			DisjunctHandler(String disjunct) {
+
+				super(TextBlockQueryInputter.this);
+
+				if (!disjunct.isEmpty()) {
+
+					setInitialValue(disjunct);
+				}
+
+				disjunctHandlers.add(this);
+			}
+
 			void setInitialValue(String disjunct) {
 
 				setValueAsText(disjunct);
@@ -103,6 +115,8 @@ class TextBlockQueryInputter extends TextInputter<String> {
 				super(DISJUNCT_ADD_LABEL);
 
 				setHorizontalMargin(DISJUNCT_ADD_BUTTON_BORDER_SIZE);
+
+				updateEnabling();
 			}
 
 			void updateEnabling() {
@@ -117,12 +131,12 @@ class TextBlockQueryInputter extends TextInputter<String> {
 
 			this.conjunctIndex = conjunctIndex;
 
+			createDisjunctHandlers(conjunct);
+
 			disjunctAddButton = new DisjunctAddButton();
 
-			add(createDisjunctsPanel(conjunct), BorderLayout.CENTER);
+			add(createDisjunctsPanel(), BorderLayout.CENTER);
 			add(disjunctAddButton, BorderLayout.EAST);
-
-			disjunctAddButton.updateEnabling();
 		}
 
 		TextDisjunction getCurrentConjunct() {
@@ -155,36 +169,37 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			return false;
 		}
 
-		private JPanel createDisjunctsPanel(TextDisjunction conjunct) {
-
-			JPanel panel = new JPanel();
-
-			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		private void createDisjunctHandlers(TextDisjunction conjunct) {
 
 			Iterator<String> djs = conjunct.getDisjuncts().iterator();
 
 			for (int i = 0 ; i < getDisplayedDisjunctsCount() ; i++) {
 
-				panel.add(createDisjunctPanel(djs.hasNext() ? djs.next() : "", i == 0));
+				new DisjunctHandler(djs.hasNext() ? djs.next() : "");
+			}
+		}
+
+		private JPanel createDisjunctsPanel() {
+
+			JPanel panel = new JPanel();
+			int i = 0;
+
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+			for (DisjunctHandler handler : disjunctHandlers) {
+
+				panel.add(createDisjunctPanel(handler, i++ == 0));
 			}
 
 			return panel;
 		}
 
-		private JPanel createDisjunctPanel(String disjunct, boolean firstDisjunct) {
+		private JPanel createDisjunctPanel(DisjunctHandler handler, boolean firstDisjunct) {
 
 			JPanel panel = new JPanel(new BorderLayout());
-			DisjunctHandler handler = new DisjunctHandler();
-
-			disjunctHandlers.add(handler);
 
 			panel.add(createDisjunctLabel(firstDisjunct), BorderLayout.WEST);
-			panel.add(createInputField(handler), BorderLayout.CENTER);
-
-			if (!disjunct.isEmpty()) {
-
-				handler.setInitialValue(disjunct);
-			}
+			panel.add(handler.getField(), BorderLayout.CENTER);
 
 			return panel;
 		}
