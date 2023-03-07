@@ -16,7 +16,7 @@ public class TextExpression {
 	static private final String DISPLAY_AND_SYMBOL = " AND ";
 	static private final String DISPLAY_OR_SYMBOL = " OR ";
 
-	static TextExpression fromQueryString(String queryString) {
+	static public TextExpression fromQueryString(String queryString) {
 
 		TextExpression expr = new TextExpression();
 
