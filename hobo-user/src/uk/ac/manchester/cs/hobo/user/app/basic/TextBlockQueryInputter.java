@@ -1,5 +1,6 @@
 package uk.ac.manchester.cs.hobo.user.app.basic;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.util.*;
@@ -36,6 +37,9 @@ class TextBlockQueryInputter extends TextInputter<String> {
 	static private final int CONJUNCT_ADD_BUTTON_SEPARATOR_SIZE = 10;
 	static private final int DISJUNCT_LABEL_BORDER_SIZE = 4;
 	static private final int DISJUNCT_ADD_BUTTON_BORDER_SIZE = 0;
+
+	static private final Color ENBLED_FIELD_COLOUR = Color.WHITE;
+	static private final Color DISABLED_FIELD_COLOUR = UIManager.getColor("Panel.background");
 
 	static private final int MIN_DISPLAYED_CONJUNCTS_COUNT = 3;
 	static private final int MIN_DISPLAYED_DISJUNCTS_COUNT = 2;
@@ -76,7 +80,7 @@ class TextBlockQueryInputter extends TextInputter<String> {
 					}
 
 					disjunctAddButton.updateEnabling();
-					expressionPanel.updateButtonEnabling();
+					expressionPanel.updateEnabling();
 				}
 			}
 
@@ -97,6 +101,17 @@ class TextBlockQueryInputter extends TextInputter<String> {
 				setValueAsText(disjunct);
 
 				valuePresent = true;
+			}
+
+			void setFieldEnabled(boolean enable) {
+
+				getField().setEnabled(enable);
+				getField().setBackground(getFieldColour(enable));
+			}
+
+			private Color getFieldColour(boolean enabled) {
+
+				return enabled ? ENBLED_FIELD_COLOUR : DISABLED_FIELD_COLOUR;
 			}
 		}
 
@@ -154,6 +169,15 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			}
 
 			return conjunct;
+		}
+
+		boolean updateFieldEnabling(boolean allPreviousPopulated) {
+
+			boolean populated = anyDisjunctFieldsPopulated();
+
+			enableFields(populated || allPreviousPopulated);
+
+			return populated && allPreviousPopulated;
 		}
 
 		boolean anyDisjunctFieldsPopulated() {
@@ -216,6 +240,20 @@ class TextBlockQueryInputter extends TextInputter<String> {
 		private String getDisjunctLabelText(boolean firstDisjunct) {
 
 			return firstDisjunct ? FIRST_DISJUNCT_LABEL : FOLLOWING_DISJUNCT_LABEL;
+		}
+
+		private void enableFields(boolean allowEnabledUnpopulated) {
+
+			boolean enabledUnpopulated = false;
+
+			for (DisjunctHandler handler : disjunctHandlers) {
+
+				boolean populated = handler.hasTextValue();
+
+				handler.setFieldEnabled(populated || allowEnabledUnpopulated);
+
+				allowEnabledUnpopulated &= populated;
+			}
 		}
 
 		private boolean redundantDisplay() {
@@ -325,17 +363,7 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			add(Box.createVerticalStrut(CONJUNCT_ADD_BUTTON_SEPARATOR_SIZE));
 			add(createConjunctAddButtonPanel());
 
-			conjunctAddButton.updateEnabling();
-		}
-
-		boolean redundantConjunctPanels() {
-
-			return !minDisplayedConjuncts() && multiUnpopulatedConjunctPanels();
-		}
-
-		void updateButtonEnabling() {
-
-			conjunctAddButton.updateEnabling();
+			updateEnabling();
 		}
 
 		boolean currentExpression() {
@@ -358,6 +386,18 @@ class TextBlockQueryInputter extends TextInputter<String> {
 			}
 
 			return expression;
+		}
+
+		void updateEnabling() {
+
+			conjunctAddButton.updateEnabling();
+
+			updateFieldEnabling();
+		}
+
+		boolean redundantConjunctPanels() {
+
+			return !minDisplayedConjuncts() && multiUnpopulatedConjunctPanels();
 		}
 
 		private ConjunctPanel createConjunctPanel(TextDisjunction conjunct, int index) {
@@ -400,6 +440,16 @@ class TextBlockQueryInputter extends TextInputter<String> {
 		private String getConjunctLabelText(boolean firstConjunct) {
 
 			return firstConjunct ? FIRST_CONJUNCT_LABEL : FOLLOWING_CONJUNCT_LABEL;
+		}
+
+		private void updateFieldEnabling() {
+
+			boolean allPopulated = true;
+
+			for (ConjunctPanel conjunctPanel : conjunctPanels) {
+
+				allPopulated = conjunctPanel.updateFieldEnabling(allPopulated);
+			}
 		}
 
 		private boolean allConjunctPanelsPopulated() {
