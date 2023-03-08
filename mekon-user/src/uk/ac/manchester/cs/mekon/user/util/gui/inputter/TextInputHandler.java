@@ -27,6 +27,8 @@ package uk.ac.manchester.cs.mekon.user.util.gui.inputter;
 import java.util.*;
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon_util.gui.*;
+
 /**
  * @author Colin Puleston
  */
@@ -66,7 +68,7 @@ public class TextInputHandler<I> {
 		return field.getValueAsText();
 	}
 
-	public TextInputField<I> getField() {
+	public GTextField getField() {
 
 		return field;
 	}
