@@ -33,19 +33,12 @@ import javax.swing.*;
 public class TextInputHandler<I> {
 
 	private TextInputField<I> field = null;
-	private JComponent fieldComponent = null;
 
 	private Set<TextInputHandler<I>> incompatibles = new HashSet<TextInputHandler<I>>();
 
 	public TextInputHandler(TextInputter<I> inputter) {
 
 		field = inputter.createInputField(this);
-		fieldComponent = field;
-	}
-
-	public void resetFieldComponent(JComponent fieldComponent) {
-
-		this.fieldComponent = fieldComponent;
 	}
 
 	public void setValueAsText(String text) {
@@ -76,11 +69,6 @@ public class TextInputHandler<I> {
 	public TextInputField<I> getField() {
 
 		return field;
-	}
-
-	public JComponent getFieldComponent() {
-
-		return fieldComponent;
 	}
 
 	public void setIncompatibleField(TextInputHandler<I> incompatible) {
