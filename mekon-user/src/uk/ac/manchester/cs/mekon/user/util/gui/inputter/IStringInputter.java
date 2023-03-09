@@ -60,11 +60,6 @@ public class IStringInputter extends SimpleTextInputter<IString> {
 
 		return type.validValueText(text) ? type.instantiate(text) : IString.EMPTY_STRING;
 	}
-
-	protected boolean emptyValue(IString value) {
-
-		return value.get().length() == 0;
-	}
 }
 
 

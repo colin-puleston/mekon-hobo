@@ -60,11 +60,6 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		return text;
 	}
 
-	protected boolean emptyValue(String value) {
-
-		return value.length() == 0;
-	}
-
 	protected boolean validInputText(String text) {
 
 		return super.validInputText(text) && checkValidStoreName(text);
