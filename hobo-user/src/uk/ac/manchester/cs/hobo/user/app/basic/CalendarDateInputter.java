@@ -20,14 +20,19 @@ class CalendarDateInputter extends SimpleTextInputter<String> {
 
 	static private final String TITLE = "Enter Date: (dd/mm/yyyy)";
 
-	protected String convertInputValue(String text) {
+	protected boolean validInputText(String text) {
 
-		return CalendarDate.validDateString(text) ? text : "";
+		return CalendarDate.validDateString(text);
 	}
 
-	protected boolean emptyValue(String value) {
+	protected boolean potentiallyValidInputText(String text) {
 
-		return value.length() == 0;
+		return CalendarDate.partiallyValidDateStringFormat(text);
+	}
+
+	protected String convertInputValue(String text) {
+
+		return validInputText(text) ? text : "";
 	}
 
 	CalendarDateInputter(JComponent parent) {

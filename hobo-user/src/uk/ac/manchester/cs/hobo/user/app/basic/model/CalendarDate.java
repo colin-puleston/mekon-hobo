@@ -15,31 +15,133 @@ public class CalendarDate extends DObjectShell {
 
 	static private final String DATE_STRING_FORMAT = "%d/%d/%d";
 
-	static private class DateParse {
+	static private class DateParseException extends RuntimeException {
 
-		final boolean parseOk;
+		static private final long serialVersionUID = -1;
+	}
 
-		private int day = -1;
-		private int month = -1;
-		private int year = -1;
+	static private abstract class DateParse {
 
-		DateParse(String dateString) {
+		class Parser {
 
-			String[] sections = dateString.split("/");
+			private String[] sections;
+			private boolean emptyFinalSection;
 
-			if (sections.length == 3) {
+			Parser(String dateString) {
+
+				sections = dateString.split("/");
+				emptyFinalSection = dateString.endsWith("/");
+			}
+
+			boolean parse() {
+
+				return validFormat(this) && parseSections();
+			}
+
+			boolean validCompletedFormat() {
+
+				return sections.length == 3 && !emptyFinalSection;
+			}
+
+			boolean validPartialFormat() {
+
+				return sections.length <= (emptyFinalSection ? 2 : 3);
+			}
+
+			private boolean parseSections() {
 
 				try {
 
-					day = parseSection(sections[0], 1);
-					month = parseSection(sections[1], 1);
-					year = parseSection(sections[2], 0);
+					if (sections.length > 0) {
+
+						parseDay();
+
+						if (sections.length > 1) {
+
+							parseMonth();
+
+							if (sections.length == 3) {
+
+								parseYear();
+							}
+						}
+					}
 				}
-				catch (NumberFormatException e) {
+				catch (DateParseException e) {
+
+					return false;
 				}
+
+				return true;
 			}
 
-			parseOk = year != -1;
+			private void parseDay() {
+
+				onParsedDay(parseSection(0, 2, 1, 31));
+			}
+
+			private void parseMonth() {
+
+				onParsedMonth(parseSection(1, 2, 1, 12));
+			}
+
+			private void parseYear() {
+
+				onParsedYear(parseSection(2, 4, 0, 9999));
+			}
+
+			private int parseSection(int index, int maxLength, int minValue, int maxValue) {
+
+				String section = sections[index];
+
+				if (section.length() <= maxLength) {
+
+					try {
+
+						int i = Integer.parseInt(section.trim());
+
+						if (i >= minValue && i <= maxValue) {
+
+							return i;
+						}
+
+					}
+					catch (NumberFormatException e) {
+					}
+				}
+
+				throw new DateParseException();
+			}
+		}
+
+		boolean parse(String dateString) {
+
+			return new Parser(dateString).parse();
+		}
+
+		abstract boolean validFormat(Parser parser);
+
+		void onParsedDay(int value) {
+		}
+
+		void onParsedMonth(int value) {
+		}
+
+		void onParsedYear(int value) {
+		}
+	}
+
+	static private class CompletedDateParse extends DateParse {
+
+		final boolean parseOk;
+
+		private int day;
+		private int month;
+		private int year;
+
+		CompletedDateParse(String dateString) {
+
+			parseOk = parse(dateString);
 		}
 
 		boolean validDate() {
@@ -52,27 +154,55 @@ public class CalendarDate extends DObjectShell {
 			return parseOk && cd.setDate(year, month, day);
 		}
 
-		private int parseSection(String section, int min) {
+		boolean validFormat(Parser parser) {
 
-			int i = Integer.parseInt(section.trim());
+			return parser.validCompletedFormat();
+		}
 
-			if (i < min) {
+		void onParsedDay(int value) {
 
-				throw new NumberFormatException();
-			}
+			day = value;
+		}
 
-			return i;
+		void onParsedMonth(int value) {
+
+			month = value;
+		}
+
+		void onParsedYear(int value) {
+
+			year = value;
+		}
+	}
+
+	static private class PartialDateParse extends DateParse {
+
+		final boolean parseOk;
+
+		PartialDateParse(String dateString) {
+
+			parseOk = parse(dateString);
+		}
+
+		boolean validFormat(Parser parser) {
+
+			return parser.validPartialFormat();
 		}
 	}
 
 	static public boolean validDateStringFormat(String dateString) {
 
-		return new DateParse(dateString).parseOk;
+		return new CompletedDateParse(dateString).parseOk;
+	}
+
+	static public boolean partiallyValidDateStringFormat(String dateString) {
+
+		return new PartialDateParse(dateString).parseOk;
 	}
 
 	static public boolean validDateString(String dateString) {
 
-		return new DateParse(dateString).validDate();
+		return new CompletedDateParse(dateString).validDate();
 	}
 
 	static private Long toDateValueOrNull(int year, int month, int day) {
@@ -139,7 +269,7 @@ public class CalendarDate extends DObjectShell {
 
 	public boolean setDate(String dateString) {
 
-		return new DateParse(dateString).setDate(this);
+		return new CompletedDateParse(dateString).setDate(this);
 	}
 
 	public String toDisplayString() {

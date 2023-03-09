@@ -531,11 +531,6 @@ class TextBlockQueryInputter extends TextInputter<String> {
 		return expressionPanel.currentExpression();
 	}
 
-	protected boolean validCompletedInput() {
-
-		return expressionPanel.currentExpression();
-	}
-
 	TextBlockQueryInputter(JComponent parent, TextBlock currentValueObj) {
 
 		super(parent, TITLE, true, true);
