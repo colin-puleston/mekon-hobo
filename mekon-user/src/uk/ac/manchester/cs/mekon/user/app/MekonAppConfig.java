@@ -36,9 +36,10 @@ class MekonAppConfig {
 
 	static private final String INSTANCE_GROUP_ID = "InstanceGroup";
 
-	static private final String TITLE_ATTR = "title";
+	static private final String APP_TITLE_ATTR = "title";
 	static private final String INSTANCE_GROUP_ROOT_ATTR = "rootType";
 	static private final String INSTANCE_GROUP_EDIT_ATTR = "editable";
+	static private final String INSTANCE_GROUP_DEFAULT_ASSERT_NAMES_ATTR = "defaultAssertionNames";
 
 	private MekonApp app;
 	private KConfigNode rootNode;
@@ -54,13 +55,13 @@ class MekonAppConfig {
 
 		rootNode = configFile.getRootNode();
 
-		checkReadTitle();
+		checkReadAppTitle();
 		readInstanceGroups();
 	}
 
-	private void checkReadTitle() {
+	private void checkReadAppTitle() {
 
-		String title = rootNode.getString(TITLE_ATTR, null);
+		String title = rootNode.getString(APP_TITLE_ATTR, null);
 
 		if (title != null) {
 
@@ -70,17 +71,22 @@ class MekonAppConfig {
 
 	private void readInstanceGroups() {
 
-		for (KConfigNode typeNode : rootNode.getChildren(INSTANCE_GROUP_ID)) {
+		for (KConfigNode groupNode : rootNode.getChildren(INSTANCE_GROUP_ID)) {
 
-			app.addInstanceGroup(
-				getInstanceGroup(typeNode),
-				editableInstanceGroup(typeNode));
+			readInstanceGroup(groupNode);
 		}
 	}
 
-	private CFrame getInstanceGroup(KConfigNode node) {
+	private void readInstanceGroup(KConfigNode node) {
 
-		return app.getModel().getFrames().get(getInstanceGroupRootId(node));
+		CIdentity rootId = getInstanceGroupRootId(node);
+
+		app.addInstanceGroup(rootId, editableInstanceGroup(node));
+
+		if (instanceGroupDefaultAssertionNames(node)) {
+
+			checkEnableAssertionNameDefaults(rootId);
+		}
 	}
 
 	private CIdentity getInstanceGroupRootId(KConfigNode node) {
@@ -91,5 +97,33 @@ class MekonAppConfig {
 	private boolean editableInstanceGroup(KConfigNode node) {
 
 		return node.getBoolean(INSTANCE_GROUP_EDIT_ATTR, true);
+	}
+
+	private boolean instanceGroupDefaultAssertionNames(KConfigNode node) {
+
+		return node.getBoolean(INSTANCE_GROUP_DEFAULT_ASSERT_NAMES_ATTR, false);
+	}
+
+	private void checkEnableAssertionNameDefaults(CIdentity rootId) {
+
+		StandardAssertionNameDefaults defs = checkForStandardAssertionNameDefaults();
+
+		if (defs != null) {
+
+			defs.enableBaseNames(rootId);
+			defs.enableReferencedNames(rootId, false);
+		}
+	}
+
+	private StandardAssertionNameDefaults checkForStandardAssertionNameDefaults() {
+
+		AssertionNameDefaults defs =  app.getCustomiser().getAssertionNameDefaults();
+
+		if (defs instanceof StandardAssertionNameDefaults) {
+
+			return (StandardAssertionNameDefaults)defs;
+		}
+
+		return null;
 	}
 }

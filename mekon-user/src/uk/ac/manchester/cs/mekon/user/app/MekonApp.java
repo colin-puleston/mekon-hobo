@@ -220,6 +220,16 @@ public class MekonApp extends GFrame {
 		return centralStore;
 	}
 
+	public Customiser getCustomiser() {
+
+		if (customiser == null) {
+
+			customiser = new DefaultCustomiser(centralStore, localQueryStore);
+		}
+
+		return customiser;
+	}
+
 	private JPanel createMainPanel() {
 
 		JPanel panel = new JPanel(new BorderLayout());
@@ -237,12 +247,7 @@ public class MekonApp extends GFrame {
 
 	private Controller createController() {
 
-		if (customiser == null) {
-
-			customiser = createDefaultCustomiser();
-		}
-
-		Controller controller = new Controller(wrapStore(centralStore), customiser);
+		Controller controller = new Controller(wrapStore(centralStore), getCustomiser());
 
 		if (localQueryStore != null) {
 
@@ -252,14 +257,9 @@ public class MekonApp extends GFrame {
 		return controller;
 	}
 
-	private Customiser createDefaultCustomiser() {
-
-		return new DefaultCustomiser(centralStore, localQueryStore);
-	}
-
 	private Store wrapStore(IStore iStore) {
 
-		return new Store(iStore, customiser);
+		return new Store(iStore, getCustomiser());
 	}
 
 	private void displayConfigError(String message) {
