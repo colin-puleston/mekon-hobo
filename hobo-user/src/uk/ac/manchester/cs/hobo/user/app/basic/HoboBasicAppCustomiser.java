@@ -46,16 +46,6 @@ class HoboBasicAppCustomiser extends DefaultCustomiser {
 		return false;
 	}
 
-	protected AssertionNameDefaults createAssertionNameDefaults(IStore store) {
-
-		StandardAssertionNameDefaults defs = new StandardAssertionNameDefaults(store, this);
-
-		defs.enableBaseNames();
-		defs.enableReferencedNames(false);
-
-		return defs;
-	}
-
 	protected String getFrameDisplayLabel(IFrame frame) {
 
 		if (customValuesManager.handlesValue(frame)) {
