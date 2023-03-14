@@ -9,7 +9,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public abstract class AutoIdentifiedEntity extends DObjectShell {
+public class AutoIdentifiedEntity extends DObjectShell {
 
 	private DEditor dEditor;
 
@@ -22,16 +22,85 @@ public abstract class AutoIdentifiedEntity extends DObjectShell {
 
 	public void setId(String id) {
 
-		DCell<String> cell = getIdCell();
+		ISlot idSlot = findIdSlot();
+		AutoIdentity valueObj = createIdSlotValueObject(idSlot);
 
-		cell.set(id);
-		getSlotEditor(cell).setEditability(IEditability.NONE);
+		setSlotValue(idSlot, valueObj.getFrame());
+		setSlotValue(valueObj.identifier.getSlot(), id);
+
+		if (valueObj.fixedValue()) {
+
+			setNonEditabileSlot(idSlot);
+		}
 	}
 
-	protected abstract DCell<String> getIdCell();
+	private ISlot findIdSlot() {
 
-	private ISlotEditor getSlotEditor(DField<?> field) {
+		ISlot idSlot = null;
 
-		return dEditor.getIEditor().getSlotEditor(field.getSlot());
+		for (ISlot slot : getFrame().getSlots().asList()) {
+
+			if (isIdSlot(slot)) {
+
+				checkMultiIdSlotsError(idSlot);
+
+				idSlot = slot;
+			}
+		}
+
+		checkNoIdSlotsError(idSlot);
+
+		return idSlot;
+	}
+
+	private AutoIdentity createIdSlotValueObject(ISlot idSlot) {
+
+		return getAutoIdentityConcept((CFrame)idSlot.getValueType()).instantiate();
+	}
+
+	private boolean isIdSlot(ISlot slot) {
+
+		return getAutoIdentityConcept().getFrame().subsumes(slot.getValueType());
+	}
+
+	private DConcept<AutoIdentity> getAutoIdentityConcept() {
+
+		return getModel().getConcept(AutoIdentity.class);
+	}
+
+	private DConcept<? extends AutoIdentity> getAutoIdentityConcept(CFrame type) {
+
+		return getModel().getConcept(AutoIdentity.class, type);
+	}
+
+	private void setSlotValue(ISlot slot, String value) {
+
+		setSlotValue(slot, CString.FREE.instantiate(value));
+	}
+
+	private void setSlotValue(ISlot slot, IValue value) {
+
+		slot.getValuesEditor().add(value);
+	}
+
+	private void setNonEditabileSlot(ISlot slot) {
+
+		dEditor.getIEditor().getSlotEditor(slot).setEditability(IEditability.NONE);
+	}
+
+	private void checkMultiIdSlotsError(ISlot priorIdSlot) {
+
+		if (priorIdSlot != null) {
+
+			throw new HoboBasicAppModelException("Multiple instance-id slots found!");
+		}
+	}
+
+	private void checkNoIdSlotsError(ISlot foundIdSlot) {
+
+		if (foundIdSlot == null) {
+
+			throw new HoboBasicAppModelException("No instance-id slot found!");
+		}
 	}
 }

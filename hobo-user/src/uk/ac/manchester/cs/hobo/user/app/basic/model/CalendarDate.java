@@ -2,16 +2,13 @@ package uk.ac.manchester.cs.hobo.user.app.basic.model;
 
 import java.util.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.model.motor.*;
-
 import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.modeller.*;
 
 /**
  * @author Colin Puleston
  */
-public class CalendarDate extends DObjectShell {
+public class CalendarDate extends CustomValue {
 
 	static private final String DATE_STRING_FORMAT = "%d/%d/%d";
 
@@ -224,33 +221,13 @@ public class CalendarDate extends DObjectShell {
 
 	public final DCell<Long> dateValue;
 
-	private class ValueSlotDecativator implements DObjectInitialiser {
-
-		private DEditor dEditor;
-
-		public void initialise() {
-
-			getValueSlotEditor().setActivation(CActivation.ACTIVE_HIDDEN);
-		}
-
-		ValueSlotDecativator(DEditor dEditor) {
-
-			this.dEditor = dEditor;
-		}
-
-		private ISlotEditor getValueSlotEditor() {
-
-			return dEditor.getIEditor().getSlotEditor(dateValue.getSlot());
-		}
-	}
-
 	public CalendarDate(DObjectBuilder builder) {
 
 		super(builder);
 
 		dateValue = builder.addNumberCell(DNumberRange.LONG);
 
-		builder.addInitialiser(new ValueSlotDecativator(builder.getEditor()));
+		initialise(builder, dateValue);
 	}
 
 	public boolean setDate(int year, int month, int day) {

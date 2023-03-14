@@ -7,11 +7,12 @@ import uk.ac.manchester.cs.mekon.user.app.*;
 import uk.ac.manchester.cs.mekon.user.util.gui.inputter.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
+import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 
 /**
  * @author Colin Puleston
  */
-abstract class CustomValuesHandler<V extends DObject, IV> {
+abstract class CustomValuesHandler<V extends CustomValue, IV> {
 
 	private DModel model;
 
@@ -60,7 +61,7 @@ abstract class CustomValuesHandler<V extends DObject, IV> {
 
 	String getValueDisplayLabel(IFrame value) {
 
-		return getValueObjectDisplayLabel(toValueObject(value));
+		return toValueObject(value).toDisplayString();
 	}
 
 	boolean displayValueInDialog(IFrame value) {
@@ -76,8 +77,6 @@ abstract class CustomValuesHandler<V extends DObject, IV> {
 	abstract Class<V> getValueObjectClass();
 
 	abstract void configureValueObject(V valueObj, IV inputValue);
-
-	abstract String getValueObjectDisplayLabel(V valueObj);
 
 	abstract boolean displayValueObjectInDialog(V valueObj);
 

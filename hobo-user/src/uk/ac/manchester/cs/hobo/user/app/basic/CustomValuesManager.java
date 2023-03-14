@@ -33,6 +33,8 @@ class CustomValuesManager {
 
 	CustomValuesManager(DModel model) {
 
+		valuesHandlers.add(new AutoIdentityFixedValuesHandler(model));
+		valuesHandlers.add(new AutoIdentityDefaultValuesHandler(model));
 		valuesHandlers.add(new CalendarDateValuesHandler(model));
 		valuesHandlers.add(new TextBlockValuesHandler(model));
 	}

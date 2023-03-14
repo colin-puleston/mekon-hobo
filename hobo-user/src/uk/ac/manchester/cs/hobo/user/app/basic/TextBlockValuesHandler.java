@@ -41,11 +41,6 @@ class TextBlockValuesHandler extends CustomValuesHandler<TextBlock, String> {
 		valueObj.text.set(inputValue);
 	}
 
-	String getValueObjectDisplayLabel(TextBlock valueObj) {
-
-		return valueObj.toDisplayString();
-	}
-
 	boolean displayValueObjectInDialog(TextBlock valueObj) {
 
 		new TextBlockViewer(valueObj);

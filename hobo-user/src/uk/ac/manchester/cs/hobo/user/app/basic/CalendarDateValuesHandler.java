@@ -36,11 +36,6 @@ class CalendarDateValuesHandler extends CustomValuesHandler<CalendarDate, String
 		valueObj.setDate(inputValue);
 	}
 
-	String getValueObjectDisplayLabel(CalendarDate valueObj) {
-
-		return valueObj.toDisplayString();
-	}
-
 	boolean displayValueObjectInDialog(CalendarDate valueObj) {
 
 		return false;
