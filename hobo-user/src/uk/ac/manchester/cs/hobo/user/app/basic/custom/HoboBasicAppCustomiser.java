@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.hobo.user.app.basic;
+package uk.ac.manchester.cs.hobo.user.app.basic.custom;
 
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.*;
@@ -11,12 +11,22 @@ import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 /**
  * @author Colin Puleston
  */
-class HoboBasicAppCustomiser extends DefaultCustomiser {
+public class HoboBasicAppCustomiser extends DefaultCustomiser {
 
 	private DModel model;
 
 	private CustomValuesManager customValuesManager;
 	private ValueObtainerFactory valueObtainerFactory;
+
+	public HoboBasicAppCustomiser(DModel model, IStore store) {
+
+		super(store);
+
+		this.model = model;
+
+		customValuesManager = new CustomValuesManager(model);
+		valueObtainerFactory = customValuesManager.createValueObtainerFactory();
+	}
 
 	public ValueObtainerFactory getValueObtainerFactory() {
 
@@ -54,16 +64,6 @@ class HoboBasicAppCustomiser extends DefaultCustomiser {
 		}
 
 		return super.getFrameDisplayLabel(frame);
-	}
-
-	HoboBasicAppCustomiser(DModel model, IStore store) {
-
-		super(store);
-
-		this.model = model;
-
-		customValuesManager = new CustomValuesManager(model);
-		valueObtainerFactory = customValuesManager.createValueObtainerFactory();
 	}
 
 	private IFrame checkSetStoreId(IFrame instance, CIdentity storeId) {

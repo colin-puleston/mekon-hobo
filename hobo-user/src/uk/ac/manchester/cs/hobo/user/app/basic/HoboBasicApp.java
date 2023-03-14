@@ -2,6 +2,8 @@ package uk.ac.manchester.cs.hobo.user.app.basic;
 
 import uk.ac.manchester.cs.hobo.user.app.*;
 
+import uk.ac.manchester.cs.hobo.user.app.basic.custom.*;
+
 /**
  * @author Colin Puleston
  */

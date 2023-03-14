@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.hobo.user.app.basic;
+package uk.ac.manchester.cs.hobo.user.app.basic.custom;
 
 import java.awt.Color;
 import java.awt.Dimension;

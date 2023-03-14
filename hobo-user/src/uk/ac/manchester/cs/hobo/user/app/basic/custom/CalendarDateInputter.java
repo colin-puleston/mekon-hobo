@@ -3,7 +3,7 @@
  *
  * Bio Health Informatics Group
  */
-package uk.ac.manchester.cs.hobo.user.app.basic;
+package uk.ac.manchester.cs.hobo.user.app.basic.custom;
 
 import javax.swing.*;
 
