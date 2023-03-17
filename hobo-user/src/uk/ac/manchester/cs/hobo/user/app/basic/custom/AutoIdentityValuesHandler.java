@@ -7,21 +7,16 @@ import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
  * @author Colin Puleston
  */
 abstract class AutoIdentityValuesHandler
-					<A extends AutoIdentity>
-					extends CustomValuesHandler<A, String> {
+					<V extends AutoIdentity>
+					extends CustomValuesHandler<V, String> {
 
 	AutoIdentityValuesHandler(DModel model) {
 
 		super(model);
 	}
 
-	void configureValueObject(A valueObj, String inputValue) {
+	void configureValueObject(V valueObj, String inputValue) {
 
 		valueObj.identifier.set(inputValue);
-	}
-
-	boolean displayValueObjectInDialog(A valueObj) {
-
-		return false;
 	}
 }

@@ -2,7 +2,6 @@ package uk.ac.manchester.cs.hobo.user.app.basic.custom;
 
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.user.util.gui.inputter.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
@@ -11,24 +10,11 @@ import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 /**
  * @author Colin Puleston
  */
-class TextBlockValuesHandler extends CustomValuesHandler<TextBlock, String> {
+class TextBlockValuesHandler extends TextEntityValuesHandler<TextBlock> {
 
 	TextBlockValuesHandler(DModel model) {
 
 		super(model);
-	}
-
-	Inputter<String> createValueInputter(
-						JComponent parent,
-						IFrameFunction function,
-						TextBlock currentValueObj) {
-
-		if (function.query()) {
-
-			return new TextBlockQueryInputter(parent, currentValueObj);
-		}
-
-		return new TextBlockInputter(parent, currentValueObj);
 	}
 
 	Class<TextBlock> getValueObjectClass() {
@@ -36,9 +22,11 @@ class TextBlockValuesHandler extends CustomValuesHandler<TextBlock, String> {
 		return TextBlock.class;
 	}
 
-	void configureValueObject(TextBlock valueObj, String inputValue) {
+	Inputter<String> createAssertionValueInputter(
+						JComponent parent,
+						TextBlock currentValueObj) {
 
-		valueObj.text.set(inputValue);
+		return new TextBlockInputter(parent, currentValueObj);
 	}
 
 	boolean displayValueObjectInDialog(TextBlock valueObj) {

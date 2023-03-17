@@ -15,7 +15,7 @@ import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 /**
  * @author Colin Puleston
  */
-class TextBlockQueryInputter extends TextInputter<String> {
+class TextEntityQueryInputter extends TextInputter<String> {
 
 	static private final long serialVersionUID = -1;
 
@@ -86,7 +86,7 @@ class TextBlockQueryInputter extends TextInputter<String> {
 
 			DisjunctHandler(String disjunct) {
 
-				super(TextBlockQueryInputter.this);
+				super(TextEntityQueryInputter.this);
 
 				if (!disjunct.isEmpty()) {
 
@@ -531,7 +531,7 @@ class TextBlockQueryInputter extends TextInputter<String> {
 		return expressionPanel.currentExpression();
 	}
 
-	TextBlockQueryInputter(JComponent parent, TextBlock currentValueObj) {
+	TextEntityQueryInputter(JComponent parent, TextEntity currentValueObj) {
 
 		super(parent, TITLE, true, true);
 
@@ -565,7 +565,7 @@ class TextBlockQueryInputter extends TextInputter<String> {
 		expressionScrollPane.getViewport().setView(expressionPanel);
 	}
 
-	private TextExpression getInitialExpression(TextBlock currentValueObj) {
+	private TextExpression getInitialExpression(TextEntity currentValueObj) {
 
 		return currentValueObj != null
 				? currentValueObj.getQueryExpression()

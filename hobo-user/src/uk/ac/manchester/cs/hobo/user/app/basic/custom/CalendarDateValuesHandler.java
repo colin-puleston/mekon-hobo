@@ -18,6 +18,11 @@ class CalendarDateValuesHandler extends CustomValuesHandler<CalendarDate, String
 		super(model);
 	}
 
+	Class<CalendarDate> getValueObjectClass() {
+
+		return CalendarDate.class;
+	}
+
 	Inputter<String> createValueInputter(
 						JComponent parent,
 						IFrameFunction function,
@@ -26,18 +31,8 @@ class CalendarDateValuesHandler extends CustomValuesHandler<CalendarDate, String
 		return new CalendarDateInputter(parent);
 	}
 
-	Class<CalendarDate> getValueObjectClass() {
-
-		return CalendarDate.class;
-	}
-
 	void configureValueObject(CalendarDate valueObj, String inputValue) {
 
 		valueObj.setDate(inputValue);
-	}
-
-	boolean displayValueObjectInDialog(CalendarDate valueObj) {
-
-		return false;
 	}
 }

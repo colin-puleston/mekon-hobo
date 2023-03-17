@@ -22,16 +22,16 @@ class AutoIdentityDefaultValuesHandler
 		super(model);
 	}
 
+	Class<AutoIdentityDefault> getValueObjectClass() {
+
+		return AutoIdentityDefault.class;
+	}
+
 	Inputter<String> createValueInputter(
 						JComponent parent,
 						IFrameFunction function,
 						AutoIdentityDefault currentValueObj) {
 
 		return new StringInputter(parent, INPUTTER_TITLE, false);
-	}
-
-	Class<AutoIdentityDefault> getValueObjectClass() {
-
-		return AutoIdentityDefault.class;
 	}
 }

@@ -69,16 +69,19 @@ abstract class CustomValuesHandler<V extends CustomValue, IV> {
 		return displayValueObjectInDialog(toValueObject(value));
 	}
 
+	abstract Class<V> getValueObjectClass();
+
 	abstract Inputter<IV> createValueInputter(
 								JComponent parent,
 								IFrameFunction function,
 								V currentValueObj);
 
-	abstract Class<V> getValueObjectClass();
-
 	abstract void configureValueObject(V valueObj, IV inputValue);
 
-	abstract boolean displayValueObjectInDialog(V valueObj);
+	boolean displayValueObjectInDialog(V valueObj) {
+
+		return false;
+	}
 
 	private CFrame getValueType() {
 

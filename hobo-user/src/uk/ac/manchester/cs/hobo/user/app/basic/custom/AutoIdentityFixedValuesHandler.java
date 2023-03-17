@@ -20,16 +20,16 @@ class AutoIdentityFixedValuesHandler
 		super(model);
 	}
 
+	Class<AutoIdentityFixed> getValueObjectClass() {
+
+		return AutoIdentityFixed.class;
+	}
+
 	Inputter<String> createValueInputter(
 						JComponent parent,
 						IFrameFunction function,
 						AutoIdentityFixed currentValueObj) {
 
 		throw new Error("Method should never be invoked!");
-	}
-
-	Class<AutoIdentityFixed> getValueObjectClass() {
-
-		return AutoIdentityFixed.class;
 	}
 }

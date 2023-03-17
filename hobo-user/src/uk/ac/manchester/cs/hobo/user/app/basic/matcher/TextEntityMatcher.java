@@ -7,7 +7,7 @@ import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 /**
  * @author Colin Puleston
  */
-public class TextBlockMatcher implements ICustomStringMatcher {
+public class TextEntityMatcher implements ICustomStringMatcher {
 
 	public boolean matches(String queryValue, String instanceValue) {
 
