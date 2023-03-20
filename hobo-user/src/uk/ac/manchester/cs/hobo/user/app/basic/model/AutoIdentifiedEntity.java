@@ -13,11 +13,29 @@ public class AutoIdentifiedEntity extends DObjectShell {
 
 	private DEditor dEditor;
 
+	private class QueryIdSlotDeactivator implements DObjectInitialiser {
+
+		public void initialise() {
+
+			if (getFrame().getFunction().query()) {
+
+				setInactiveSlot(findIdSlot());
+			}
+		}
+
+		QueryIdSlotDeactivator(DObjectBuilder builder) {
+
+			builder.addInitialiser(this);
+		}
+	}
+
 	public AutoIdentifiedEntity(DObjectBuilder builder) {
 
 		super(builder);
 
 		dEditor = builder.getEditor();
+
+		new QueryIdSlotDeactivator(builder);
 	}
 
 	public void setId(String id) {
@@ -83,9 +101,19 @@ public class AutoIdentifiedEntity extends DObjectShell {
 		slot.getValuesEditor().add(value);
 	}
 
+	private void setInactiveSlot(ISlot slot) {
+
+		getSlotEditor(slot).setActivation(CActivation.INACTIVE);
+	}
+
 	private void setNonEditabileSlot(ISlot slot) {
 
-		dEditor.getIEditor().getSlotEditor(slot).setEditability(IEditability.NONE);
+		getSlotEditor(slot).setEditability(IEditability.NONE);
+	}
+
+	private ISlotEditor getSlotEditor(ISlot slot) {
+
+		return dEditor.getIEditor().getSlotEditor(slot);
 	}
 
 	private void checkMultiIdSlotsError(ISlot priorIdSlot) {
