@@ -32,7 +32,9 @@ package uk.ac.manchester.cs.hobo.manage;
  */
 public interface DConfigVocab {
 
-	static public final String DIRECT_SECTION_ID = "DirectModelSection";
+	static public final String DIRECT_MODEL_ID = "DirectModel";
+	static public final String SECTIONS_ID = "Sections";
+	static public final String SECTION_ID = "Section";
 	static public final String MAPPINGS_ID = "Mappings";
 	static public final String CLASS_MAP_ID = "ClassMap";
 	static public final String FIELD_MAP_ID = "FieldMap";

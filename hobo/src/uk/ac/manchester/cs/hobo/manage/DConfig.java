@@ -36,27 +36,42 @@ import uk.ac.manchester.cs.hobo.model.motor.*;
  */
 class DConfig implements DConfigVocab {
 
-	private KConfigNode rootNode;
+	private KConfigNode directModelNode;
 
 	DConfig(KConfigNode rootNode) {
 
-		this.rootNode = rootNode;
+		directModelNode = rootNode.getChild(DIRECT_MODEL_ID);
 	}
 
 	void configure(DBuilder builder) {
 
-		loadModelMap(builder);
 		loadDirectPackages(builder);
+		loadMappings(builder);
 	}
 
-	private void loadModelMap(DBuilder builder) {
+	private void loadDirectPackages(DBuilder builder) {
+
+		KConfigNode sectionsNode = directModelNode.getChild(SECTIONS_ID);
+
+		for (KConfigNode sectionNode : sectionsNode.getChildren(SECTION_ID)) {
+
+			loadDirectPackages(builder, sectionNode);
+		}
+	}
+
+	private void loadDirectPackages(DBuilder builder, KConfigNode sectionNode) {
+
+		builder.addDClasses(sectionNode.getString(TOP_LEVEL_PACKAGE_ATTR));
+	}
+
+	private void loadMappings(DBuilder builder) {
 
 		DModelMap modelMap = builder.getModelMap();
 
 		modelMap.setLabelsFromDirectClasses(labelsFromDirectClasses());
 		modelMap.setLabelsFromDirectFields(labelsFromDirectFields());
 
-		KConfigNode mapsNode = rootNode.getChildOrNull(MAPPINGS_ID);
+		KConfigNode mapsNode = directModelNode.getChildOrNull(MAPPINGS_ID);
 
 		if (mapsNode != null) {
 
@@ -67,12 +82,12 @@ class DConfig implements DConfigVocab {
 
 	private boolean labelsFromDirectClasses() {
 
-		return rootNode.getBoolean(DIRECT_CLASS_LABELS_ATTR, false);
+		return directModelNode.getBoolean(DIRECT_CLASS_LABELS_ATTR, false);
 	}
 
 	private boolean labelsFromDirectFields() {
 
-		return rootNode.getBoolean(DIRECT_FIELD_LABELS_ATTR, false);
+		return directModelNode.getBoolean(DIRECT_FIELD_LABELS_ATTR, false);
 	}
 
 	private void loadClassMappers(DModelMap modelMap, KConfigNode mapsNode) {
@@ -156,18 +171,5 @@ class DConfig implements DConfigVocab {
 		String slotId = fieldMapNode.getString(FIELD_MAP_EXTERNAL_ID_ATTR);
 
 		classMap.addFieldMap(fieldName, slotId);
-	}
-
-	private void loadDirectPackages(DBuilder builder) {
-
-		for (KConfigNode sectionNode : rootNode.getChildren(DIRECT_SECTION_ID)) {
-
-			loadDirectPackages(builder, sectionNode);
-		}
-	}
-
-	private void loadDirectPackages(DBuilder builder, KConfigNode sectionNode) {
-
-		builder.addDClasses(sectionNode.getString(TOP_LEVEL_PACKAGE_ATTR));
 	}
 }
