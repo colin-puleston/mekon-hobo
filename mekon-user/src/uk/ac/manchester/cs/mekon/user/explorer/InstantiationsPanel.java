@@ -76,7 +76,7 @@ class InstantiationsPanel extends JPanel {
 
 			super(QUERY_BUTTON_LABEL);
 
-			setEnabled(queriesEnabled() && frameHasSlots());
+			setEnabled(frameHasSlots());
 		}
 	}
 
@@ -136,10 +136,5 @@ class InstantiationsPanel extends JPanel {
 	private boolean frameHasSlots() {
 
 		return !frame.instantiate().getSlots().isEmpty();
-	}
-
-	private boolean queriesEnabled() {
-
-		return frame.getModel().queriesEnabled();
 	}
 }
