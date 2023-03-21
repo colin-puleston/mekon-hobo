@@ -1,55 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<HOBOModel
-	labelsFromDirectClasses="FALSE"
-	labelsFromDirectFields="FALSE"
-	queriesEnabled="TRUE">
-
-	<!--
-		Specification of disk-based instance store structure.
-		Main store directory to be specified sub-directory of
-		directory in which this config file is located, with
-		instances of specified types stored in specific named
-		sub-stores contained in sub-directories of main store
-		directory.
-	-->
-	<InstanceDiskStore
-		directory="instance-store">
-		<SubStore
-			name="citizen"
-			splitByFunction="TRUE">
-			<InstanceGroup rootType="http://mekon/demo.owl#Citizen"/>
-		</SubStore>
-		<SubStore
-			name="travel"
-			splitByFunction="TRUE">
-			<InstanceGroup rootType="http://mekon/demo.owl#Travel"/>
-		</SubStore>
-	</InstanceDiskStore>
-
-	<!--
-		Specification of types of reasoning-related update
-		operations to be performed on instance-level frames.
-	-->
-	<InstanceUpdating
-		autoUpdate="TRUE">
-		<DefaultOperations
-			inferredTypes="TRUE"
-			suggestedTypes="TRUE"
-			slots="TRUE"
-			slotValues="TRUE"/>
-	</InstanceUpdating>
-
-	<!--
-		Specification of Object Model - will load all classes
-		that implement the DObject interface from specified
-		package and any sub-packages.
-
-		(Comment out this line to create frames-based model
-		derived entirely from the ontology, with no associated
-		Object Model.)
-	-->
-	<DirectModelSection topLevelPackage="uk.ac.manchester.cs.hobo.demo.model"/>
+<HOBOModel>
 
 	<!--
 		Specification of ontology to be loaded. Can be multiple such
@@ -77,6 +28,7 @@
 		</OWLModel>
 
 		<!-- Reasoner options...
+			reasonerFactory="uk.ac.manchester.cs.rekon.RekonReasonerFactory"
 			reasonerFactory="org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
@@ -219,74 +171,143 @@
 	</ModelSection>
 
 	<!--
-		Configuration information for general matcher to be used
-		for matching of any instance-level frames whose types are
-		not handled by any matchers specified in the section-builder
-		configuration section. Multiple general matchers can be
-		provided and, where appropriate, should be listed in order
-		of precedence.
-	<GeneralMatcher
-		matcher="uk.ac.manchester.cs.mekon.basex.BaseXMatcher">
-		<BaseXMatcher/>
-	</GeneralMatcher>
+		Specification of location of Object Model and required mappings
+		between entities from the Object Model and relevant entities
+		from the ontology.
 	-->
+	<DirectModel
+		labelsFromDirectClasses="FALSE"
+		labelsFromDirectFields="FALSE">
+
+		<!--
+			Specification of (single) Object Model section - will load
+			all classes that implement the DObject interface from specified
+			package and any sub-packages.
+
+			(Comment out this line to create frames-based model
+			derived entirely from the ontology, with no associated
+			Object Model)
+		-->
+		<Sections>
+			<Section topLevelPackage="uk.ac.manchester.cs.hobo.demo.model"/>
+		</Sections>
+
+		<!--
+			Mappings between Java classes/fields from the Object Model
+			and classes/properties from the ontology.
+		-->
+		<Mappings>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Citizen"
+				externalId="http://mekon/demo.owl#Citizen">
+				<FieldMap fieldName="personal" externalId="http://mekon/demo.owl#personal"/>
+				<FieldMap fieldName="employment" externalId="http://mekon/demo.owl#employment"/>
+				<FieldMap fieldName="tax" externalId="http://mekon/demo.owl#taxPaid"/>
+				<FieldMap fieldName="benefits" externalId="http://mekon/demo.owl#benefitReceived"/>
+				<FieldMap fieldName="travel" externalId="http://mekon/demo.owl#travel"/>
+			</ClassMap>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Personal"
+				externalId="http://mekon/demo.owl#Personal">
+			</ClassMap>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Employment"
+				externalId="http://mekon/demo.owl#Employment">
+				<FieldMap fieldName="jobs" externalId="http://mekon/demo.owl#job"/>
+				<FieldMap fieldName="jobCount" externalId="http://mekon/demo.owl#jobCount"/>
+			</ClassMap>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Job"
+				externalId="http://mekon/demo.owl#Job">
+				<FieldMap fieldName="hourlyPay" externalId="http://mekon/demo.owl#hourlyPay"/>
+				<FieldMap fieldName="weeklyPay" externalId="http://mekon/demo.owl#weeklyPay"/>
+				<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/demo.owl#hoursPerWeek"/>
+			</ClassMap>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Tax"
+				externalId="http://mekon/demo.owl#Tax"/>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.StandardTax"
+				externalId="http://mekon/demo.owl#StandardTax"/>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.SuperTax"
+				externalId="http://mekon/demo.owl#SuperTax"/>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Benefit"
+				externalId="http://mekon/demo.owl#Benefit"/>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.UnemploymentBenefit"
+				externalId="http://mekon/demo.owl#UnemploymentBenefit"/>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Travel"
+				externalId="http://mekon/demo.owl#Travel">
+			</ClassMap>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.Trip"
+				externalId="http://mekon/demo.owl#Trip"/>
+			<ClassMap
+				javaClass="uk.ac.manchester.cs.hobo.demo.model.summary.PropertyRef"
+				externalId="http://mekon/demo.owl#refedInterContentProperty"/>
+		</Mappings>
+	</DirectModel>
 
 	<!--
-		Mappings between Java classes/fields from the Object Model
-		and classes/properties from the ontology.
+		Specification of types of reasoning-related update
+		operations to be performed on instance-level frames.
 	-->
-	<Mappings>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Citizen"
-			externalId="http://mekon/demo.owl#Citizen">
-			<FieldMap fieldName="personal" externalId="http://mekon/demo.owl#personal"/>
-			<FieldMap fieldName="employment" externalId="http://mekon/demo.owl#employment"/>
-			<FieldMap fieldName="tax" externalId="http://mekon/demo.owl#taxPaid"/>
-			<FieldMap fieldName="benefits" externalId="http://mekon/demo.owl#benefitReceived"/>
-			<FieldMap fieldName="travel" externalId="http://mekon/demo.owl#travel"/>
-		</ClassMap>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Personal"
-			externalId="http://mekon/demo.owl#Personal">
-		</ClassMap>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Employment"
-			externalId="http://mekon/demo.owl#Employment">
-			<FieldMap fieldName="jobs" externalId="http://mekon/demo.owl#job"/>
-			<FieldMap fieldName="jobCount" externalId="http://mekon/demo.owl#jobCount"/>
-		</ClassMap>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Job"
-			externalId="http://mekon/demo.owl#Job">
-			<FieldMap fieldName="hourlyPay" externalId="http://mekon/demo.owl#hourlyPay"/>
-			<FieldMap fieldName="weeklyPay" externalId="http://mekon/demo.owl#weeklyPay"/>
-			<FieldMap fieldName="hoursPerWeek" externalId="http://mekon/demo.owl#hoursPerWeek"/>
-		</ClassMap>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Tax"
-			externalId="http://mekon/demo.owl#Tax"/>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.StandardTax"
-			externalId="http://mekon/demo.owl#StandardTax"/>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.SuperTax"
-			externalId="http://mekon/demo.owl#SuperTax"/>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Benefit"
-			externalId="http://mekon/demo.owl#Benefit"/>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.UnemploymentBenefit"
-			externalId="http://mekon/demo.owl#UnemploymentBenefit"/>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Travel"
-			externalId="http://mekon/demo.owl#Travel">
-		</ClassMap>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.Trip"
-			externalId="http://mekon/demo.owl#Trip"/>
-		<ClassMap
-			javaClass="uk.ac.manchester.cs.hobo.demo.model.summary.PropertyRef"
-			externalId="http://mekon/demo.owl#refedInterContentProperty"/>
-	</Mappings>
+	<InstanceUpdating
+		autoUpdate="TRUE">
+		<DefaultOperations
+			inferredTypes="TRUE"
+			suggestedTypes="TRUE"
+			slots="TRUE"
+			slotValues="TRUE"/>
+	</InstanceUpdating>
+
+	<!--
+		Configuration of disk-based instance store and any associated
+		section-independent instance-matching mechanisms.
+	-->
+	<InstanceStore>
+		<!--
+			Specification of disk-based instance store structure.
+			Main store directory to be specified sub-directory of
+			directory in which this config file is located, with
+			instances of specified types stored in specific named
+			sub-stores contained in sub-directories of main store
+			directory.
+		-->
+		<DiskStore
+			directory="instance-store">
+			<SubStore
+				name="citizen"
+				splitByFunction="TRUE">
+				<InstanceGroup rootType="http://mekon/demo.owl#Citizen"/>
+			</SubStore>
+			<SubStore
+				name="travel"
+				splitByFunction="TRUE">
+				<InstanceGroup rootType="http://mekon/demo.owl#Travel"/>
+			</SubStore>
+		</DiskStore>
+
+		<SectionIndependentMatching>
+			<!--
+				Configuration information for general matcher to be used
+				for matching of any instance-level frames whose types are
+				not handled by any matchers specified in the section-builder
+				configuration section. Multiple general matchers can be
+				provided and, where appropriate, should be listed in order
+				of precedence.
+
+			<GeneralMatcher
+				matcher="uk.ac.manchester.cs.mekon.basex.BaseXMatcher">
+				<BaseXMatcher
+					rebuildStore="TRUE"
+					persistStore="FALSE"/>
+			</GeneralMatcher>
+			-->
+		</SectionIndependentMatching>
+	</InstanceStore>
 
 </HOBOModel>
