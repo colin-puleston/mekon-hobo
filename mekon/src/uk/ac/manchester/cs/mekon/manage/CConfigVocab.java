@@ -33,14 +33,16 @@ package uk.ac.manchester.cs.mekon.manage;
 public interface CConfigVocab {
 
 	static public final String MODEL_SECTION_ID = "ModelSection";
-	static public final String INSTANCE_UPDATING_ID = "InstanceUpdating";
-	static public final String INSTANCE_UPDATE_DEFAULT_OPS_ID = "DefaultOperations";
-	static public final String CFRAME_SLOT_ORDERS_ID = "CFrameSlotOrders";
+	static public final String CFRAME_SLOT_ORDERS_ID = "SlotOrders";
 	static public final String SLOT_ORDERED_CFRAME_ID = "CFrame";
 	static public final String ORDERED_CFRAME_SLOT_ID = "CSlot";
-	static public final String INSTANCE_DISK_STORE_ID = "InstanceDiskStore";
+	static public final String INSTANCE_UPDATING_ID = "InstanceUpdating";
+	static public final String INSTANCE_UPDATE_DEFAULT_OPS_ID = "DefaultOperations";
+	static public final String INSTANCE_STORE_ID = "InstanceStore";
+	static public final String INSTANCE_DISK_STORE_ID = "DiskStore";
 	static public final String INSTANCE_DISK_SUBSTORE_ID = "SubStore";
 	static public final String INSTANCE_DISK_GROUP_ID = "InstanceGroup";
+	static public final String SECTION_INDEPENDENT_MATCHING_ID = "SectionIndependentMatching";
 	static public final String GENERAL_MATCHER_ID = "GeneralMatcher";
 	static public final String VALUE_MATCH_CUSTOMISER_ID = "ValueMatchCustomiser";
 	static public final String VALUE_MATCH_CUSTOMISER_SLOT_TYPE_ID = "SlotType";

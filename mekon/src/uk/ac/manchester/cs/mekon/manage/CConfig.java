@@ -71,13 +71,65 @@ class CConfig implements CConfigVocab {
 		setQueriesEnabling(builder);
 		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
-		loadCFrameSlotOrders(builder);
-		loadDiskStoreConfiguration(builder);
+		loadSlotOrders(builder);
+		loadInstanceStoreConfig(builder);
 	}
 
 	private void setQueriesEnabling(CBuilder builder) {
 
 		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
+	}
+
+	private void loadSectionBuilders(CBuilder builder) {
+
+		for (KConfigNode sectionNode : rootNode.getChildren(MODEL_SECTION_ID)) {
+
+			builder.addSectionBuilder(createSectionBuilder(sectionNode));
+		}
+	}
+
+	private CSectionBuilder createSectionBuilder(KConfigNode node) {
+
+		Class<? extends CSectionBuilder> type = getSectionBuilderClass(node);
+
+		return new KConfigObjectConstructor<CSectionBuilder>(type).construct(node);
+	}
+
+	private Class<? extends CSectionBuilder> getSectionBuilderClass(KConfigNode node) {
+
+		return node.getClass(SECTION_BLDER_CLASS_ATTR, CSectionBuilder.class);
+	}
+
+	private void loadSlotOrders(CBuilder builder) {
+
+		KConfigNode node = rootNode.getChildOrNull(CFRAME_SLOT_ORDERS_ID);
+
+		if (node != null) {
+
+			loadSlotOrders(builder.getFrameSlotOrders(), node);
+		}
+	}
+
+	private void loadSlotOrders(CFrameSlotOrders orders, KConfigNode node) {
+
+		for (KConfigNode frameNode : node.getChildren(SLOT_ORDERED_CFRAME_ID)) {
+
+			CIdentity frameId = getIdentity(frameNode, SLOT_ORDERED_CFRAME_ID_ATTR);
+
+			orders.add(frameId, getOrderedSlotIds(frameNode));
+		}
+	}
+
+	private List<CIdentity> getOrderedSlotIds(KConfigNode node) {
+
+		List<CIdentity> orderedIds = new ArrayList<CIdentity>();
+
+		for (KConfigNode slotNode : node.getChildren(ORDERED_CFRAME_SLOT_ID)) {
+
+			orderedIds.add(getIdentity(slotNode, ORDERED_CFRAME_SLOT_ID_ATTR));
+		}
+
+		return orderedIds;
 	}
 
 	private void setInstanceUpdating(CBuilder builder) {
@@ -101,85 +153,45 @@ class CConfig implements CConfigVocab {
 		}
 	}
 
-	private void loadSectionBuilders(CBuilder builder) {
-
-		for (KConfigNode sectionNode : rootNode.getChildren(MODEL_SECTION_ID)) {
-
-			builder.addSectionBuilder(createSectionBuilder(sectionNode));
-		}
-	}
-
-	private CSectionBuilder createSectionBuilder(KConfigNode node) {
-
-		Class<? extends CSectionBuilder> type = getSectionBuilderClass(node);
-
-		return new KConfigObjectConstructor<CSectionBuilder>(type).construct(node);
-	}
-
-	private Class<? extends CSectionBuilder> getSectionBuilderClass(KConfigNode node) {
-
-		return node.getClass(SECTION_BLDER_CLASS_ATTR, CSectionBuilder.class);
-	}
-
-	private void loadCFrameSlotOrders(CBuilder builder) {
-
-		KConfigNode node = rootNode.getChildOrNull(CFRAME_SLOT_ORDERS_ID);
-
-		if (node != null) {
-
-			loadCFrameSlotOrders(builder.getFrameSlotOrders(), node);
-		}
-	}
-
-	private void loadCFrameSlotOrders(CFrameSlotOrders orders, KConfigNode node) {
-
-		for (KConfigNode frameNode : node.getChildren(SLOT_ORDERED_CFRAME_ID)) {
-
-			CIdentity frameId = getIdentity(frameNode, SLOT_ORDERED_CFRAME_ID_ATTR);
-
-			orders.add(frameId, getOrderedCFrameSlotIds(frameNode));
-		}
-	}
-
-	private List<CIdentity> getOrderedCFrameSlotIds(KConfigNode node) {
-
-		List<CIdentity> orderedIds = new ArrayList<CIdentity>();
-
-		for (KConfigNode slotNode : node.getChildren(ORDERED_CFRAME_SLOT_ID)) {
-
-			orderedIds.add(getIdentity(slotNode, ORDERED_CFRAME_SLOT_ID_ATTR));
-		}
-
-		return orderedIds;
-	}
-
-	private void loadDiskStoreConfiguration(CBuilder builder) {
+	private void loadInstanceStoreConfig(CBuilder builder) {
 
 		IDiskStoreBuilder storeBldr = IDiskStoreManager.getBuilder(builder);
-		KConfigNode node = rootNode.getChildOrNull(INSTANCE_DISK_STORE_ID);
+
+		KConfigNode node = rootNode.getChildOrNull(INSTANCE_STORE_ID);
+		KConfigNode diskStoreNode = null;
 
 		if (node != null) {
-
-			String dirName = getDiskStoreDirNameOrNull(node);
-
-			if (dirName != null) {
-
-				storeBldr.setStoreDirectory(getDiskStoreDir(dirName));
-			}
-			else {
-
-				setDefaultDiskStoreDir(storeBldr);
-			}
-
-			addDiskSubStores(storeBldr, node);
 
 			addGeneralMatchersSectionBuilder(builder, node);
 			addValueMatchCustomisers(storeBldr, node);
+
+			diskStoreNode = rootNode.getChildOrNull(INSTANCE_DISK_STORE_ID);
+		}
+
+		if (diskStoreNode != null) {
+
+			loadDiskStoreConfig(storeBldr, diskStoreNode);
 		}
 		else {
 
 			setDefaultDiskStoreDir(storeBldr);
 		}
+	}
+
+	private void loadDiskStoreConfig(IDiskStoreBuilder storeBldr, KConfigNode node) {
+
+		String dirName = getDiskStoreDirNameOrNull(node);
+
+		if (dirName != null) {
+
+			storeBldr.setStoreDirectory(getDiskStoreDir(dirName));
+		}
+		else {
+
+			setDefaultDiskStoreDir(storeBldr);
+		}
+
+		addDiskSubStores(storeBldr, node);
 	}
 
 	private void setDefaultDiskStoreDir(IDiskStoreBuilder storeBldr) {
