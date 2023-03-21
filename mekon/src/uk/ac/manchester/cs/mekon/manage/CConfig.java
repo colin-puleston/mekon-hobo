@@ -159,7 +159,7 @@ class CConfig implements CConfigVocab {
 			addGeneralMatchersSectionBuilder(builder, node);
 			addValueMatchCustomisers(storeBldr, node);
 
-			diskStoreNode = rootNode.getChildOrNull(INSTANCE_DISK_STORE_ID);
+			diskStoreNode = node.getChildOrNull(INSTANCE_DISK_STORE_ID);
 		}
 
 		if (diskStoreNode != null) {
