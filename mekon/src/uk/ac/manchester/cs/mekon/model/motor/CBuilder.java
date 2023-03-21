@@ -38,13 +38,6 @@ import uk.ac.manchester.cs.mekon_util.*;
 public interface CBuilder {
 
 	/**
-	 * Sets the {@link CModel#queriesEnabled} flag.
-	 *
-	 * @param enabled True if query-instances are to be allowed
-	 */
-	public void setQueriesEnabled(boolean enabled);
-
-	/**
 	 * Enables or disables the {@link IUpdating#autoUpdate} facility
 	 * for the model. By default auto-update will be enabled.
 	 *

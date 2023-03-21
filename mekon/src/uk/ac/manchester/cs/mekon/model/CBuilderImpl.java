@@ -41,11 +41,6 @@ class CBuilderImpl implements CBuilder {
 
 	private List<CSectionBuilder> sectionBuilders = new ArrayList<CSectionBuilder>();
 
-	public void setQueriesEnabled(boolean enabled) {
-
-		model.setQueriesEnabled(enabled);
-	}
-
 	public void setAutoUpdate(boolean autoUpdate) {
 
 		model.getIUpdating().setAutoUpdate(autoUpdate);

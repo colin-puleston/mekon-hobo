@@ -284,7 +284,6 @@ public abstract class RClientModel {
 
 		CBuilder cBuilder = CManager.createEmptyBuilder();
 
-		cBuilder.setQueriesEnabled(true);
 		cBuilder.addSectionBuilder(createSectionBuilder(hierarchy));
 
 		return cBuilder;

@@ -68,16 +68,10 @@ class CConfig implements CConfigVocab {
 
 	void configure(CBuilder builder) {
 
-		setQueriesEnabling(builder);
-		setInstanceUpdating(builder);
 		loadSectionBuilders(builder);
 		loadSlotOrders(builder);
+		setInstanceUpdating(builder);
 		loadInstanceStoreConfig(builder);
-	}
-
-	private void setQueriesEnabling(CBuilder builder) {
-
-		builder.setQueriesEnabled(rootNode.getBoolean(QUERIES_ENABLED_ATTR, false));
 	}
 
 	private void loadSectionBuilders(CBuilder builder) {

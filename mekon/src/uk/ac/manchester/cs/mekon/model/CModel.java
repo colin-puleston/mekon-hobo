@@ -58,23 +58,9 @@ public class CModel implements CAnnotatable {
 	private IEditor iEditor = new IEditorImpl(this);
 	private IUpdating iUpdating = new IUpdating(this);
 
-	private boolean queriesEnabled = false;
 	private boolean initialised = false;
 
 	private CBuildListeners buildListeners = new CBuildListeners();
-
-	/**
-	 * Specifies whether query-instances are allowed (see {@link
-	 * IFrameFunction}.
-	 * <p>
-	 * By default query-instances will not be allowed.
-	 *
-	 * @return True if query-instances are allowed
-	 */
-	public boolean queriesEnabled() {
-
-		return queriesEnabled;
-	}
 
 	/**
 	 * Provides configuration information concerning the nature
@@ -134,11 +120,6 @@ public class CModel implements CAnnotatable {
 	CModel() {
 
 		builder = new CBuilderImpl(this);
-	}
-
-	void setQueriesEnabled(boolean enabled) {
-
-		queriesEnabled = enabled;
 	}
 
 	CAtomicFrame addFrame(CIdentity identity, boolean hidden) {

@@ -136,8 +136,6 @@ public abstract class CFrame
 
 		IFrame instantiate(IFrameFunction function) {
 
-			checkInstantiable(function);
-
 			IFrame instance = createCategoryFrame(function);
 
 			instance.completeInitialInstantiation();
@@ -146,11 +144,6 @@ public abstract class CFrame
 		}
 
 		abstract IFrame createCategoryFrame(IFrameFunction function);
-
-		private void checkInstantiable(IFrameFunction function) {
-
-			function.checkInstantiable(getModel());
-		}
 	}
 
 	private class AtomicFrameInstantiator extends Instantiator {

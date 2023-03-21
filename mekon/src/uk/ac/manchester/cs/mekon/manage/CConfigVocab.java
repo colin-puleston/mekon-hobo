@@ -47,7 +47,6 @@ public interface CConfigVocab {
 	static public final String VALUE_MATCH_CUSTOMISER_ID = "ValueMatchCustomiser";
 	static public final String VALUE_MATCH_CUSTOMISER_SLOT_TYPE_ID = "SlotType";
 
-	static public final String QUERIES_ENABLED_ATTR = "queriesEnabled";
 	static public final String SECTION_BLDER_CLASS_ATTR = "builder";
 	static public final String INSTANCE_DISK_STORE_DIR_ATTR = "directory";
 	static public final String INSTANCE_DISK_SUBSTORE_NAME_ATTR = "name";

@@ -46,7 +46,6 @@ public abstract class DemoModelBasedTest extends DemoModelIds {
 
 		CBuilder cBuilder = CManager.createEmptyBuilder();
 
-		cBuilder.setQueriesEnabled(true);
 		cBuilder.addSectionBuilder(sectionBuilder);
 
 		serverModel = cBuilder.build();

@@ -74,9 +74,6 @@ public class TestCModel {
 
 		serverCFrames = new TestCFrames(serverModel, iReasoner);
 		clientCFrames = serverCFrames;
-
-		serverModel.setQueriesEnabled(true);
-		clientModel.setQueriesEnabled(true);
 	}
 
 	public void setClientModel(CModel clientModel) {

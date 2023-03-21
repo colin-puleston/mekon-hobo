@@ -24,8 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.model;
 
-import uk.ac.manchester.cs.mekon_util.*;
-
 /**
  * Represents the general function of an {@link IFrame}.
  *
@@ -41,16 +39,7 @@ public enum IFrameFunction {
 	/**
 	 * Frame represents a query.
 	 */
-	QUERY {
-
-		void checkInstantiable(CModel model) {
-
-			if (!model.queriesEnabled()) {
-
-				throw new KAccessException("Query-instances not enabled for model");
-			}
-		}
-	};
+	QUERY;
 
 	/**
 	 * States whether frame is of type {@link #ASSERTION}.
@@ -70,8 +59,5 @@ public enum IFrameFunction {
 	public boolean query() {
 
 		return this == QUERY;
-	}
-
-	void checkInstantiable(CModel model) {
 	}
 }
