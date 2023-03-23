@@ -77,7 +77,7 @@ public class IRankedMatches implements IMatches {
 	 */
 	public void addRank(List<CIdentity> matches, int rankingValue) {
 
-		ranks.addAll(ranks);
+		ranks.add(new Rank(matches, rankingValue));
 	}
 
 	/**
