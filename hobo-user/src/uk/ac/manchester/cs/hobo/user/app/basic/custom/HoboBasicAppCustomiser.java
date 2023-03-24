@@ -5,7 +5,6 @@ import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.user.app.*;
 
 import uk.ac.manchester.cs.hobo.model.*;
-
 import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 
 /**
@@ -70,7 +69,12 @@ public class HoboBasicAppCustomiser extends DefaultCustomiser {
 
 		if (instance.getFunction().assertion()) {
 
-			toDObject(instance, AutoIdentifiedEntity.class).setId(storeId.getLabel());
+			AutoIdentifiedEntity ai = toDObjectOrNull(instance, AutoIdentifiedEntity.class);
+
+			if (ai != null) {
+
+				ai.setId(storeId.getLabel());
+			}
 		}
 
 		return instance;

@@ -1,8 +1,9 @@
 package uk.ac.manchester.cs.hobo.user.app.basic;
 
+import uk.ac.manchester.cs.hobo.model.*;
 import uk.ac.manchester.cs.hobo.user.app.*;
-
 import uk.ac.manchester.cs.hobo.user.app.basic.custom.*;
+import uk.ac.manchester.cs.hobo.user.app.basic.model.*;
 
 /**
  * @author Colin Puleston
@@ -18,7 +19,10 @@ public class HoboBasicApp extends HoboApp {
 
 	public HoboBasicApp() {
 
-		setCustomiser(new HoboBasicAppCustomiser(getDModel(), getCentralStore()));
+		DModel model = getDModel();
+
+		ModelLoadChecker.checkLoaded(model);
+		setCustomiser(new HoboBasicAppCustomiser(model, getCentralStore()));
 
 		configureFromFile();
 		display();
