@@ -87,6 +87,18 @@ public class DModel {
 	}
 
 	/**
+	 * Tests whether the specified OM class has been loaded as part of
+	 * the direct model.
+	 *
+	 * @param dClass OM class to test
+	 * @return True if class is part of direct model.
+	 */
+	public boolean loadedDClass(Class<? extends DObject> dClass) {
+
+		return bindings.getOrNull(dClass) != null;
+	}
+
+	/**
 	 * Tests whether there is an OM class that is bound to the
 	 * specified concept-level frame.
 	 *
