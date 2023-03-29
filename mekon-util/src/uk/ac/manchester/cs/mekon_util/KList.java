@@ -408,8 +408,8 @@ public abstract class KList<V> {
 		List<V> removedValues = removeOldValues(latestValues);
 		List<V> addedValues = addNewValues(latestValues);
 
-		pollListenersForAdded(addedValues);
 		pollListenersForRemoved(removedValues);
+		pollListenersForAdded(addedValues);
 
 		if (!addedValues.isEmpty() || !removedValues.isEmpty()) {
 
