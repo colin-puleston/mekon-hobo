@@ -98,7 +98,7 @@ class IDisjunction extends IFrame {
 		return disjunctsSlot;
 	}
 
-	IFrame copyEmpty(boolean freeInstance) {
+	IFrame copyEmpty(IFrameFunction copyFunction, boolean freeInstance) {
 
 		return new IDisjunction(getType(), freeInstance);
 	}

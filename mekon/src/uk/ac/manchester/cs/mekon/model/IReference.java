@@ -89,9 +89,9 @@ class IReference extends IFrame {
 		return slot;
 	}
 
-	IFrame copyEmpty(boolean freeInstance) {
+	IFrame copyEmpty(IFrameFunction copyFunction, boolean freeInstance) {
 
-		return new IReference(getType(), referenceId, getFunction(), freeInstance);
+		return new IReference(getType(), referenceId, copyFunction, freeInstance);
 	}
 
 	void autoUpdate(Set<IFrame> visited) {

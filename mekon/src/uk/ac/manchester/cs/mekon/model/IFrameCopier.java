@@ -29,6 +29,11 @@ package uk.ac.manchester.cs.mekon.model;
  */
 class IFrameCopier extends IFrameCopierAbstract {
 
+	IFrameCopier(IFrameFunction copyFunction) {
+
+		super(copyFunction);
+	}
+
 	void initialiseCopy(IFrame template, IFrame copy) {
 
 		super.initialiseCopy(template, copy);

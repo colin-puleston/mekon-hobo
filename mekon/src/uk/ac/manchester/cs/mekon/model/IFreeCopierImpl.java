@@ -33,6 +33,11 @@ class IFreeCopierImpl extends IFreeCopier {
 
 	private class OneTimeCopier extends IFrameCopierAbstract {
 
+		OneTimeCopier(IFrameFunction copyFunction) {
+
+			super(copyFunction);
+		}
+
 		ISlot addSlot(IFrame container, CSlot slotType) {
 
 			return container.addSlotInternal(createFreeSlotTypeCopy(container, slotType));
@@ -46,7 +51,12 @@ class IFreeCopierImpl extends IFreeCopier {
 
 	public IFrame createFreeCopy(IFrame sourceInstance) {
 
-		return new OneTimeCopier().copy(sourceInstance);
+		return createFreeCopy(sourceInstance, sourceInstance.getFunction());
+	}
+
+	public IFrame createFreeCopy(IFrame sourceInstance, IFrameFunction copyFunction) {
+
+		return new OneTimeCopier(copyFunction).copy(sourceInstance);
 	}
 
 	private CSlot createFreeSlotTypeCopy(IFrame container, CSlot slotType) {

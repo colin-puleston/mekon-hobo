@@ -62,6 +62,7 @@ public abstract class IFreeCopier {
 
 	/**
 	 * Generates a free-instance version of the specified source
+	 * instance, with the same {@link IFrameFunction} as the source
 	 * instance.
 	 *
 	 * @param sourceInstance Instance of which free-instance version
@@ -69,4 +70,17 @@ public abstract class IFreeCopier {
 	 * @return Generated free-instance
 	 */
 	public abstract IFrame createFreeCopy(IFrame sourceInstance);
+
+	/**
+	 * Generates a free-instance version of the specified source
+	 * instance.
+	 *
+	 * @param sourceInstance Instance of which free-instance version
+	 * is required
+	 * @param function Required function of generated instance
+	 * @return Generated free-instance
+	 */
+	public abstract IFrame createFreeCopy(
+								IFrame sourceInstance,
+								IFrameFunction copyFunction);
 }

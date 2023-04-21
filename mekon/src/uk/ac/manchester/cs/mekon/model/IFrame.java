@@ -204,13 +204,26 @@ public abstract class IFrame implements IEntity, IValue {
 
 	/**
 	 * Creates a deep copy of this frame and all recursively
-	 * referenced frames.
+	 * referenced frames, each with the same {@link IFrameFunction}
+	 * as this frame.
 	 *
 	 * @return Copy of this frame
 	 */
 	public IFrame copy() {
 
-		return new IFrameCopier().copy(this);
+		return copy(function);
+	}
+
+	/**
+	 * Creates a deep copy of this frame and all recursively
+	 * referenced frames
+	 *
+	 * @param function Required function for all frame copies
+	 * @return Copy of this frame
+	 */
+	public IFrame copy(IFrameFunction function) {
+
+		return new IFrameCopier(function).copy(this);
 	}
 
 	/**
@@ -661,7 +674,7 @@ public abstract class IFrame implements IEntity, IValue {
 		throw createCategoryRetrievalException("editor");
 	}
 
-	abstract IFrame copyEmpty(boolean freeInstance);
+	abstract IFrame copyEmpty(IFrameFunction copyFunction, boolean freeInstance);
 
 	abstract void autoUpdate(Set<IFrame> visited);
 

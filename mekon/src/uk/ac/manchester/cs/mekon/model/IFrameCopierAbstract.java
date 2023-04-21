@@ -31,11 +31,17 @@ import java.util.*;
  */
 abstract class IFrameCopierAbstract {
 
+	private IFrameFunction copyFunction;
 	private Map<IFrame, IFrame> copies = new HashMap<IFrame, IFrame>();
+
+	IFrameCopierAbstract(IFrameFunction copyFunction) {
+
+		this.copyFunction = copyFunction;
+	}
 
 	IFrame copy(IFrame template) {
 
-		IFrame copy = template.copyEmpty(freeInstance());
+		IFrame copy = template.copyEmpty(copyFunction, freeInstance());
 
 		copies.put(template, copy);
 

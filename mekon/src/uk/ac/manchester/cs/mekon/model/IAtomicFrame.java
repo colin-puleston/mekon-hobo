@@ -293,9 +293,9 @@ class IAtomicFrame extends IFrame {
 		return slot;
 	}
 
-	IFrame copyEmpty(boolean freeInstance) {
+	IFrame copyEmpty(IFrameFunction copyFunction, boolean freeInstance) {
 
-		return new IAtomicFrame(getType(), getFunction(), freeInstance);
+		return new IAtomicFrame(getType(), copyFunction, freeInstance);
 	}
 
 	void autoUpdate(Set<IFrame> visited) {
