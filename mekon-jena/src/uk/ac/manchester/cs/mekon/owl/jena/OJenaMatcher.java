@@ -32,6 +32,7 @@ import org.apache.jena.ontology.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 import uk.ac.manchester.cs.mekon_util.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * <i>Jena</i>-specific extension of {@link OTMatcher}.
@@ -50,6 +51,17 @@ public class OJenaMatcher extends OTMatcher {
 		super(model);
 
 		initialise(new OJenaFactory(createJenaModel()));
+	}
+
+	/**
+	 * Constructs matcher for specified model and configuration.
+	 *
+	 * @param model Model over which matcher is to operate
+	 * @param config Configuration for matcher
+	 */
+	public OJenaMatcher(OModel model, KConfigNode parentConfigNode) {
+
+		this(model);
 	}
 
 	/**
