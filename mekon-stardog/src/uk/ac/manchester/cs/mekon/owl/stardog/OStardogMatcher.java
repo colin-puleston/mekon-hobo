@@ -63,24 +63,10 @@ public class OStardogMatcher extends OTMatcher {
 
 		super(model);
 
-		initialise(config);
-	}
+		persistStore = config.persistStore();
+		server = createServer(config.getDatabaseName());
 
-	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node.
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	public OStardogMatcher(KConfigNode parentConfigNode) {
-
-		initialise(parentConfigNode);
+		initialise(new OStardogFactory(server.getConnection()));
 	}
 
 	/**
@@ -96,9 +82,7 @@ public class OStardogMatcher extends OTMatcher {
 	 */
 	public OStardogMatcher(OModel model, KConfigNode parentConfigNode) {
 
-		super(model);
-
-		initialise(parentConfigNode);
+		this(model, new OStardogConfig(parentConfigNode));
 	}
 
 	/**
@@ -109,20 +93,6 @@ public class OStardogMatcher extends OTMatcher {
 	public void stop() {
 
 		server.stop(persistStore);
-	}
-
-	private void initialise(KConfigNode parentConfigNode) {
-
-		initialise(new OStardogConfig(parentConfigNode));
-	}
-
-	private void initialise(OStardogConfig config) {
-
-		persistStore = config.persistStore();
-
-		server = createServer(config.getDatabaseName());
-
-		initialise(new OStardogFactory(server.getConnection()));
 	}
 
 	private OStardogServer createServer(String databaseName) {
