@@ -30,9 +30,9 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 /**
  * @author Colin Puleston
  */
-public class OJenaMatcherTest extends ORMatcherTest {
+public class OJenaMatcherTest extends OROntologyLinkedMatcherTest {
 
-	protected ORMatcher createMatcher(OModel oModel) {
+	protected OROntologyLinkedMatcher createMatcher(OModel oModel) {
 
 		return new OJenaMatcher(oModel);
 	}

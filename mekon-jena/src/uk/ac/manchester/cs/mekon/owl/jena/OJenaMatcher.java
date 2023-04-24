@@ -32,7 +32,6 @@ import org.apache.jena.ontology.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.triples.*;
 import uk.ac.manchester.cs.mekon_util.*;
-import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * <i>Jena</i>-specific extension of {@link OTMatcher}.
@@ -50,44 +49,7 @@ public class OJenaMatcher extends OTMatcher {
 
 		super(model);
 
-		initialise();
-	}
-
-	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node.
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	public OJenaMatcher(KConfigNode parentConfigNode) {
-
-		super(parentConfigNode);
-
-		initialise();
-	}
-
-	/**
-	 * Constructs matcher for specified model, with the configuration
-	 * defined via the appropriately-tagged child of the specified parent
-	 * configuration-node.
-	 *
-	 * @param model Model over which matcher is to operate
-	 * @param parentConfigNode Parent configuration-node
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	public OJenaMatcher(OModel model, KConfigNode parentConfigNode) {
-
-		super(model, parentConfigNode);
-
-		initialise();
+		initialise(new OJenaFactory(createJenaModel()));
 	}
 
 	/**
@@ -95,11 +57,6 @@ public class OJenaMatcher extends OTMatcher {
 	 * of store.
 	 */
 	public void stop() {
-	}
-
-	private void initialise() {
-
-		initialise(new OJenaFactory(createJenaModel()));
 	}
 
 	private OntModel createJenaModel() {
