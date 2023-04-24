@@ -89,17 +89,13 @@
 		<!--
 		<OWLMatcher
 			matcher="uk.ac.manchester.cs.mekon.owl.stardog.OStardogMatcher"
-			database="MEKON-DEMO"
-			reasoningType="EL"
-			loggingMode="DISABLED">
+			database="MEKON-DEMO">
 		</OWLMatcher>
 		-->
 
 		<!--
 		<OWLMatcher
-			matcher="uk.ac.manchester.cs.mekon.owl.jena.OJenaMatcher"
-			reasoningType="RDFS"
-			loggingMode="DISABLED">
+			matcher="uk.ac.manchester.cs.mekon.owl.jena.OJenaMatcher">
 		</OWLMatcher>
 		-->
 
