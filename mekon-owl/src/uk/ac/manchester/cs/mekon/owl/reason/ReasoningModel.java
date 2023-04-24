@@ -53,12 +53,14 @@ class ReasoningModel {
 		this.semantics = semantics;
 	}
 
-	void ensureLocalModel() {
+	OModel ensureLocalModel() {
 
 		if (model == sourceModel) {
 
 			model = copyModel();
 		}
+
+		return model;
 	}
 
 	OModel getModel() {

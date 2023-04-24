@@ -39,11 +39,6 @@ class ORMatcherCreator implements ORConfigVocab {
 		this.parentConfigNode = parentConfigNode;
 	}
 
-	ORMatcher create() {
-
-		return getConstructor().construct(parentConfigNode);
-	}
-
 	ORMatcher create(OModel model) {
 
 		return getConstructor().construct(model, parentConfigNode);

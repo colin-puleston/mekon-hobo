@@ -77,11 +77,6 @@ public class ORClassifier extends NClassifier {
 		return ORClassifierConfig.configNodeExists(parentConfigNode);
 	}
 
-	static private OModel createModel(KConfigNode parentConfigNode) {
-
-		return new OModelBuilder(parentConfigNode).create(true);
-	}
-
 	static private ReasoningModel createReasoningModel(
 									OModel model,
 									KConfigNode parentConfigNode) {
@@ -107,23 +102,6 @@ public class ORClassifier extends NClassifier {
 	public ORClassifier(OModel model) {
 
 		this(new ReasoningModel(model));
-	}
-
-	/**
-	 * Constructs classifier, with the configuration for both the
-	 * classifier itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node.
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist
-	 * or does not contain correctly specified configuration
-	 * information
-	 */
-	public ORClassifier(KConfigNode parentConfigNode) {
-
-		this(createModel(parentConfigNode), parentConfigNode);
 	}
 
 	/**

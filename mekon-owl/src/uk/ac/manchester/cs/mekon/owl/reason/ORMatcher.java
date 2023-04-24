@@ -57,24 +57,6 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 	}
 
 	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node.
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @return Created object
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	static public ORMatcher create(KConfigNode parentConfigNode) {
-
-		return new ORMatcherCreator(parentConfigNode).create();
-	}
-
-	/**
 	 * Constructs matcher, with the configuration defined via the
 	 * appropriately-tagged child of the specified parent
 	 * configuration-node.
@@ -90,11 +72,6 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 	static public ORMatcher create(OModel model, KConfigNode parentConfigNode) {
 
 		return new ORMatcherCreator(parentConfigNode).create(model);
-	}
-
-	static private OModel createModel(KConfigNode parentConfigNode) {
-
-		return new OModelBuilder(parentConfigNode).create(true);
 	}
 
 	private ReasoningModel reasoningModel;
@@ -164,17 +141,12 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 
 	ORMatcher(OModel model) {
 
-		initialise(new ReasoningModel(model), false);
-	}
-
-	ORMatcher(KConfigNode parentConfigNode) {
-
-		initialise(configure(parentConfigNode), true);
+		initialise(new ReasoningModel(model));
 	}
 
 	ORMatcher(OModel model, KConfigNode parentConfigNode) {
 
-		initialise(configure(model, parentConfigNode), false);
+		initialise(configure(model, parentConfigNode));
 	}
 
 	abstract boolean individualsMatcher();
@@ -198,28 +170,6 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 		return stringValueProxies;
 	}
 
-	private void initialise(ReasoningModel reasoningModel, boolean localModel) {
-
-		this.reasoningModel = reasoningModel;
-
-		if (!localModel) {
-
-			reasoningModel.ensureLocalModel();
-		}
-
-		OModel model = reasoningModel.getModel();
-
-		initialiseLinkedMatcher(model);
-
-		stringValueProxies = new StringValueProxies(model);
-		expressionRenderer = createExpressionRenderer();
-	}
-
-	private ReasoningModel configure(KConfigNode parentConfigNode) {
-
-		return configure(createModel(parentConfigNode), parentConfigNode);
-	}
-
 	private ReasoningModel configure(OModel model, KConfigNode parentConfigNode) {
 
 		ORMatcherConfig config = new ORMatcherConfig(model, parentConfigNode);
@@ -227,6 +177,18 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 		config.checkConfigPersistentInstances(this);
 
 		return config.getReasoningModel();
+	}
+
+	private void initialise(ReasoningModel reasoningModel) {
+
+		this.reasoningModel = reasoningModel;
+
+		OModel model = reasoningModel.ensureLocalModel();
+
+		initialiseLinkedMatcher(model);
+
+		stringValueProxies = new StringValueProxies(model);
+		expressionRenderer = createExpressionRenderer();
 	}
 
 	private ExpressionRenderer createExpressionRenderer() {

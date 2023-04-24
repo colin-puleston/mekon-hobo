@@ -62,25 +62,6 @@ public class ORIndividualsMatcher extends ORMatcher {
 	}
 
 	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node.
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	public ORIndividualsMatcher(KConfigNode parentConfigNode) {
-
-		super(parentConfigNode);
-
-		initialise();
-	}
-
-	/**
 	 * Constructs matcher for specified model, with the configuration
 	 * defined via the appropriately-tagged child of the specified parent
 	 * configuration-node.
