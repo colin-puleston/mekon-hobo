@@ -30,11 +30,11 @@ import uk.ac.manchester.cs.mekon.owl.reason.*;
 /**
  * @author Colin Puleston
  */
-public class OStardogMatcherTest extends ORMatcherTest {
+public class OStardogMatcherTest extends OROntologyLinkedMatcherTest {
 
 	static private final String DB_NAME = "TEST-DB";
 
-	protected ORMatcher createMatcher(OModel oModel) {
+	protected OROntologyLinkedMatcher createMatcher(OModel oModel) {
 
 		return new OStardogMatcher(oModel, createConfig());
 	}

@@ -80,8 +80,6 @@ public class OStardogMatcher extends OTMatcher {
 	 */
 	public OStardogMatcher(KConfigNode parentConfigNode) {
 
-		super(parentConfigNode);
-
 		initialise(parentConfigNode);
 	}
 
@@ -98,7 +96,7 @@ public class OStardogMatcher extends OTMatcher {
 	 */
 	public OStardogMatcher(OModel model, KConfigNode parentConfigNode) {
 
-		super(model, parentConfigNode);
+		super(model);
 
 		initialise(parentConfigNode);
 	}
