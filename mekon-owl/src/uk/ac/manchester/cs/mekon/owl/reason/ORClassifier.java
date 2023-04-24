@@ -77,7 +77,20 @@ public class ORClassifier extends NClassifier {
 		return ORClassifierConfig.configNodeExists(parentConfigNode);
 	}
 
+	static private OModel createModel(KConfigNode parentConfigNode) {
+
+		return new OModelBuilder(parentConfigNode).create(true);
+	}
+
+	static private ReasoningModel createReasoningModel(
+									OModel model,
+									KConfigNode parentConfigNode) {
+
+		return new ORClassifierConfig(model, parentConfigNode).getReasoningModel();
+	}
+
 	private ReasoningModel reasoningModel;
+	private OntologyEntityResolver entityResolver;
 
 	private ExpressionRenderer expressionRenderer;
 	private IndividualsRenderer individualsRenderer;
@@ -85,6 +98,16 @@ public class ORClassifier extends NClassifier {
 	private ODynamicInstanceIRIs individualRootIRIs = new ODynamicInstanceIRIs();
 
 	private boolean forceIndividualBasedClassification = false;
+
+	/**
+	 * Constructs classifier for specified model.
+	 *
+	 * @param model Model over which classifier is to operate
+	 */
+	public ORClassifier(OModel model) {
+
+		this(new ReasoningModel(model));
+	}
 
 	/**
 	 * Constructs classifier, with the configuration for both the
@@ -100,7 +123,7 @@ public class ORClassifier extends NClassifier {
 	 */
 	public ORClassifier(KConfigNode parentConfigNode) {
 
-		this(new OModelBuilder(parentConfigNode).create(true), parentConfigNode);
+		this(createModel(parentConfigNode), parentConfigNode);
 	}
 
 	/**
@@ -117,22 +140,7 @@ public class ORClassifier extends NClassifier {
 	 */
 	public ORClassifier(OModel model, KConfigNode parentConfigNode) {
 
-		this(model);
-
-		new ORClassifierConfig(reasoningModel, parentConfigNode);
-	}
-
-	/**
-	 * Constructs classifier for specified model.
-	 *
-	 * @param model Model over which classifier is to operate
-	 */
-	public ORClassifier(OModel model) {
-
-		reasoningModel = new ReasoningModel(model);
-
-		expressionRenderer = new ExpressionRenderer(reasoningModel, false);
-		individualsRenderer = new IndividualsRenderer(reasoningModel);
+		this(createReasoningModel(model, parentConfigNode));
 	}
 
 	/**
@@ -169,7 +177,7 @@ public class ORClassifier extends NClassifier {
 	 */
 	protected IClassification classify(NNode instance, IClassifierOps ops) {
 
-		reasoningModel.resolveOntologyEntities(instance);
+		entityResolver.resolve(instance);
 
 		InstanceConstruct construct = createInstanceConstruct(instance);
 		OWLObject owlConstruct = construct.getOWLConstruct();
@@ -199,6 +207,16 @@ public class ORClassifier extends NClassifier {
 	void setForceIndividualBasedClassification(boolean value) {
 
 		forceIndividualBasedClassification = value;
+	}
+
+	private ORClassifier(ReasoningModel reasoningModel) {
+
+		this.reasoningModel = reasoningModel;
+
+		entityResolver = new OntologyEntityResolver(getModel());
+
+		expressionRenderer = new ExpressionRenderer(reasoningModel, false);
+		individualsRenderer = new IndividualsRenderer(reasoningModel);
 	}
 
 	private List<CIdentity> getInferredTypes(

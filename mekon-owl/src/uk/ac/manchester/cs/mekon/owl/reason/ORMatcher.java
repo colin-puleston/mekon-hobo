@@ -29,40 +29,19 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.store.*;
-import uk.ac.manchester.cs.mekon.store.motor.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
-import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
- * Abstract base-class for OWL-based implementations of the matching
- * mechanisms defined by {@link IMatcher}.
- * <p>
- * This class is an abstract extention of {@link NMatcher}, and hence
- * operates on pre-processable instantiations of the network-based
- * representations. These network-based instantiations are passed to
- * appropriate abstract methods, whose implementations will convert
- * them to appropriate OWL constructs and perform the required
- * reasoning operations.
- * <p>
- * Before being passed on to the abstract methods, the network-based
- * instantiations are pre-processed to ensure "ontology-compliance".
- * This ensures that they will only contain entities for which
- * equivalents exist in, or for which substitutions can be made from,
- * the relevant ontology. Hence, any nodes whose associated concepts
- * do not have equivalents in the ontology, will either be modified to
- * reference appropriate ancestor-concepts (as determined by looking
- * at the frames model), or else removed from the network. Also, any
- * links whose associated properties do not have equivalents in the
- * ontology will be removed from the network.
+ * Base-class for {@link OROntologyLinkedMatcher}-extensions that
+ * represent the instances directly as constructs in the ontology.
  *
  * @author Colin Puleston
  */
-public abstract class ORMatcher extends NMatcher {
+public abstract class ORMatcher extends OROntologyLinkedMatcher {
 
 	/**
 	 * Test whether an appropriately-tagged child of the specified
@@ -119,207 +98,157 @@ public abstract class ORMatcher extends NMatcher {
 	}
 
 	private ReasoningModel reasoningModel;
-	private OStoredInstanceIRIs instanceIRIs = new OStoredInstanceIRIs();
+
+	private StringValueProxies stringValueProxies;
+	private ExpressionRenderer expressionRenderer;
+
+	private String instanceFileName = null;
 
 	/**
-	 * Provides the model over which the matcher is operating.
+	 * Sets the open/closed world semantics that are to be embodied
+	 * by the OWL constructs that will be created and classified.
 	 *
-	 * @return Model over which matcher is operating
+	 * @param semantics Required semantics
 	 */
-	public OModel getModel() {
+	public void setSemantics(ORSemantics semantics) {
 
-		return reasoningModel.getModel();
+		reasoningModel.setSemantics(semantics);
 	}
 
 	/**
-	 * Checks whether the matcher handles instance-level frames
-	 * of the specified type, by testing whether that type or any
-	 * of it's ancestors corresponds to a class in the OWL model.
+	 * Specifies that the OWL constructs representing the instances
+	 * should, on termination of the matcher, be saved to a file of
+	 * the specified name, located in the same directory as the OWL
+	 * file from which the main entry-point ontology was originally
+	 * loaded.
 	 *
-	 * @param type Relevant frame-type
-	 * @return True if type or any ancestor corresponds to OWL class
+	 * @param fileName Name of file in which constructs representing
+	 * the instances will be stored
 	 */
-	public boolean handlesType(CFrame type) {
+	public void setPersistentInstances(String fileName) {
 
-		return reasoningModel.canResolveOntologyEntities(type);
+		instanceFileName = fileName;
 	}
 
 	/**
-	 * Processes the specified network-based instance representation
-	 * to ensure ontology-compliance (see above), converts the
-	 * specified instance-identity to an appropriate <code>IRI</code>
-	 * then invokes {@link #addToOWLStore} to perform the add operation.
-	 *
-	 * @param instance Instance to be added
-	 * @param identity Unique identity for instance
-	 */
-	public void add(NNode instance, CIdentity identity) {
-
-		reasoningModel.resolveOntologyEntities(instance);
-
-		addToOWLStore(instance, instanceIRIs.mapToIRI(identity));
-	}
-
-	/**
-	 * Converts the specified instance-identity to the appropriate
-	 * <code>IRI</code> then invokes {@link #removeFromOWLStore} to
-	 * perform the remove operation.
-	 *
-	 * @param identity Unique identity of instance to be removed
-	 */
-	public void remove(CIdentity identity) {
-
-		removeFromOWLStore(instanceIRIs.mapToIRI(identity));
-	}
-
-	/**
-	 * Processes the specified network-based query representation
-	 * to ensure ontology-compliance (see above), then invokes
-	 * {@link #matchInOWLStore} to perform the matching operation.
-	 *
-	 * @param query Query to be matched
-	 * @return Unique identities of all matching instances
-	 */
-	public IMatches match(NNode query) {
-
-		reasoningModel.resolveOntologyEntities(query);
-
-		List<IRI> iris = matchInOWLStore(query);
-
-		return new IUnrankedMatches(instanceIRIs.getMappedIds(iris));
-	}
-
-	/**
-	 * Processes the specified network-based query and instance
-	 * representations to ensure ontology-compliance (see above),
-	 * then invokes {@link #matchesInOWL} to perform the match-testing
-	 * operation.
-	 *
-	 * @param query Query to be matched
-	 * @param instance Instance to test for matching
-	 * @return True if query matched by instance
-	 */
-	public boolean matches(NNode query, NNode instance) {
-
-		reasoningModel.resolveOntologyEntities(query);
-		reasoningModel.resolveOntologyEntities(instance);
-
-		return matchesInOWL(query, instance);
-	}
-
-	/**
-	 * Does nothing since no clear-ups are required for this type
-	 * of store.
+	 * Stores the OWL constructs representing the instances to file,
+	 * if applicable (See #setPersistentInstances).
 	 */
 	public void stop() {
+
+		if (instanceFileName != null) {
+
+			getModel().renderInstancesToFile(instanceFileName);
+		}
 	}
 
-	/**
-	 * Constructs matcher for specified model and reasoning-type.
-	 *
-	 * @param model Model over which matcher is to operate
-	 */
-	protected ORMatcher(OModel model) {
+	protected List<IRI> matchInOntologyLinkedStore(NNode query) {
 
-		this(model, false, null);
+		ConceptExpression expr = createConceptExpression(query);
+		OWLObject owlConstruct = expr.getOWLConstruct();
+
+		ORMonitor.pollForMatcherRequest(getModel(), owlConstruct);
+
+		List<IRI> matches = purgeMatches(match(expr));
+
+		ORMonitor.pollForMatchesFound(getModel(), matches);
+		ORMonitor.pollForMatcherDone(getModel(), owlConstruct);
+
+		return matches;
 	}
 
-	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node.
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	protected ORMatcher(KConfigNode parentConfigNode) {
+	protected boolean matchesWithRespectToOntology(NNode query, NNode instance) {
 
-		this(createModel(parentConfigNode), true, parentConfigNode);
+		return matches(createConceptExpression(query), instance);
 	}
 
-	/**
-	 * Constructs matcher for specified model, with the configuration
-	 * defined via the appropriately-tagged child of the specified parent
-	 * configuration-node.
-	 *
-	 * @param model Model over which matcher is to operate
-	 * @param parentConfigNode Parent configuration-node
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	protected ORMatcher(OModel model, KConfigNode parentConfigNode) {
+	ORMatcher(OModel model) {
 
-		this(model, false, parentConfigNode);
+		initialise(new ReasoningModel(model), false);
 	}
 
-	/**
-	 * Adds an instance to the OWL store. It can be assumed that this
-	 * method will only be invoked when it is known that an instance
-	 * with the specified IRI is not already present.
-	 *
-	 * @param instance Representation of instance to be added
-	 * @param iri IRI of instance to be added
-	 */
-	protected abstract void addToOWLStore(NNode instance, IRI iri);
+	ORMatcher(KConfigNode parentConfigNode) {
 
-	/**
-	 * Removes an instance from the OWL store. It can be assumed that
-	 * this method will only be invoked when it is known that an
-	 * instance with the specified IRI is currently present.
-	 *
-	 * @param iri IRI of instance to be removed
-	 */
-	protected abstract void removeFromOWLStore(IRI iri);
+		initialise(configure(parentConfigNode), true);
+	}
 
-	/**
-	 * Performs the matching operation against the OWL store.
-	 *
-	 * @param query Representation of query
-	 * @return Unique identities of all matching instances
-	 */
-	protected abstract List<IRI> matchInOWLStore(NNode query);
+	ORMatcher(OModel model, KConfigNode parentConfigNode) {
 
-	/**
-	 * Performs the matching test using the OWL reasoner.
-	 *
-	 * @param query Representation of query
-	 * @param instance Representation of instance
-	 * @return True if instance matched by query
-	 */
-	protected abstract boolean matchesInOWL(NNode query, NNode instance);
+		initialise(configure(model, parentConfigNode), false);
+	}
+
+	abstract boolean individualsMatcher();
+
+	abstract List<IRI> match(ConceptExpression queryExpr);
+
+	abstract boolean matches(ConceptExpression queryExpr, NNode instance);
+
+	ConceptExpression createConceptExpression(NNode node) {
+
+		return new ConceptExpression(getModel(), expressionRenderer, node);
+	}
 
 	ReasoningModel getReasoningModel() {
 
 		return reasoningModel;
 	}
 
-	boolean instanceIRI(IRI iri) {
+	StringValueProxies getStringValueProxies() {
 
-		return instanceIRIs.mappedIRI(iri);
+		return stringValueProxies;
 	}
 
-	boolean requireLocalModel() {
+	private void initialise(ReasoningModel reasoningModel, boolean localModel) {
 
-		return false;
-	}
+		this.reasoningModel = reasoningModel;
 
-	private ORMatcher(OModel model, boolean localModel, KConfigNode parentConfigNode) {
-
-		reasoningModel = new ReasoningModel(model);
-
-		if (parentConfigNode != null) {
-
-			new ORMatcherConfig(reasoningModel, parentConfigNode);
-		}
-
-		if (requireLocalModel() && !localModel) {
+		if (!localModel) {
 
 			reasoningModel.ensureLocalModel();
 		}
+
+		OModel model = reasoningModel.getModel();
+
+		initialiseLinkedMatcher(model);
+
+		stringValueProxies = new StringValueProxies(model);
+		expressionRenderer = createExpressionRenderer();
+	}
+
+	private ReasoningModel configure(KConfigNode parentConfigNode) {
+
+		return configure(createModel(parentConfigNode), parentConfigNode);
+	}
+
+	private ReasoningModel configure(OModel model, KConfigNode parentConfigNode) {
+
+		ORMatcherConfig config = new ORMatcherConfig(model, parentConfigNode);
+
+		config.checkConfigPersistentInstances(this);
+
+		return config.getReasoningModel();
+	}
+
+	private ExpressionRenderer createExpressionRenderer() {
+
+		return new ExpressionRenderer(
+						reasoningModel,
+						stringValueProxies,
+						individualsMatcher());
+	}
+
+	private List<IRI> purgeMatches(List<IRI> matches) {
+
+		List<IRI> purged = new ArrayList<IRI>();
+
+		for (IRI match : matches) {
+
+			if (instanceIRI(match)) {
+
+				purged.add(match);
+			}
+		}
+
+		return purged;
 	}
 }

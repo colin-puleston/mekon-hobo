@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
+import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
@@ -36,9 +37,19 @@ class ORMatcherConfig extends ORConfig {
 		return parentConfigNode.getChildOrNull(MATCHER_ROOT_ID) != null;
 	}
 
-	ORMatcherConfig(ReasoningModel reasoningModel, KConfigNode parentConfigNode) {
+	ORMatcherConfig(OModel model, KConfigNode parentConfigNode) {
 
-		super(reasoningModel, parentConfigNode);
+		super(model, parentConfigNode);
+	}
+
+	void checkConfigPersistentInstances(ORMatcher matcher) {
+
+		String file = getInstancePersistenceFileOrNull();
+
+		if (file != null) {
+
+			matcher.setPersistentInstances(file);
+		}
 	}
 
 	String getRootId() {
@@ -49,5 +60,17 @@ class ORMatcherConfig extends ORConfig {
 	ORLogger getLogger() {
 
 		return ORMatcherLogger.get();
+	}
+
+	private String getInstancePersistenceFileOrNull() {
+
+		KConfigNode node = getInstancePersistenceNodeOrNull();
+
+		return node != null ? node.getString(INSTANCES_FILE_NAME_ATTR) : null;
+	}
+
+	private KConfigNode getInstancePersistenceNodeOrNull() {
+
+		return getConfigNode().getChildOrNull(INSTANCE_PERSISTENCE_ID);
 	}
 }

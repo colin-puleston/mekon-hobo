@@ -29,9 +29,9 @@ import java.net.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
-import uk.ac.manchester.cs.mekon_util.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.util.*;
+import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
  * @author Colin Puleston
@@ -41,24 +41,33 @@ abstract class ORConfig implements ORConfigVocab {
 	private ReasoningModel reasoningModel;
 	private KConfigNode configNode;
 
-	ORConfig(ReasoningModel reasoningModel, KConfigNode parentConfigNode) {
+	ORConfig(OModel model, KConfigNode parentConfigNode) {
 
-		this.reasoningModel = reasoningModel;
+		reasoningModel = new ReasoningModel(model);
 
 		configNode = parentConfigNode.getChild(getRootId());
 
-		checkUpdateReasoning();
+		checkUpdateReasoning(model);
 		checkSetSemantics();
 		setLoggingMode();
+	}
+
+	ReasoningModel getReasoningModel() {
+
+		return reasoningModel;
 	}
 
 	abstract String getRootId();
 
 	abstract ORLogger getLogger();
 
-	private void checkUpdateReasoning() {
+	KConfigNode getConfigNode() {
 
-		OModel model = reasoningModel.getModel();
+		return configNode;
+	}
+
+	private void checkUpdateReasoning(OModel model) {
+
 		OModelCopier copier = new OModelCopier(model);
 
 		boolean update = false;
@@ -69,7 +78,7 @@ abstract class ORConfig implements ORConfigVocab {
 
 		if (update) {
 
-			reasoningModel.setModel(copier.create(true));
+			reasoningModel.resetModel(copier.create(true));
 		}
 	}
 

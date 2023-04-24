@@ -29,9 +29,9 @@ import uk.ac.manchester.cs.mekon.owl.*;
 /**
  * @author Colin Puleston
  */
-public class ORIndividualsMatcherTest extends ORMatcherTest {
+public class ORIndividualsMatcherTest extends OROntologyLinkedMatcherTest {
 
-	protected ORMatcher createMatcher(OModel oModel) {
+	protected OROntologyLinkedMatcher createMatcher(OModel oModel) {
 
 		return new ORIndividualsMatcher(oModel);
 	}

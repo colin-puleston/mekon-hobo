@@ -24,13 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import java.util.*;
-
-import org.semanticweb.owlapi.model.*;
-
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.network.*;
-import uk.ac.manchester.cs.mekon_util.config.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
@@ -42,20 +35,17 @@ class ReasoningModel {
 	private OModel sourceModel;
 
 	private ORSemantics semantics = new ORSemantics();
-	private OntologyEntityResolver ontologyEntities;
 
 	ReasoningModel(OModel model) {
 
-		setModel(model);
+		this.model = model;
 
 		sourceModel = model;
 	}
 
-	void setModel(OModel model) {
+	void resetModel(OModel model) {
 
 		this.model = model;
-
-		ontologyEntities = new OntologyEntityResolver(model);
 	}
 
 	void setSemantics(ORSemantics semantics) {
@@ -67,7 +57,7 @@ class ReasoningModel {
 
 		if (model == sourceModel) {
 
-			setModel(copyModel());
+			model = copyModel();
 		}
 	}
 
@@ -79,16 +69,6 @@ class ReasoningModel {
 	ORSemantics getSemantics() {
 
 		return semantics;
-	}
-
-	boolean canResolveOntologyEntities(CFrame rootType) {
-
-		return ontologyEntities.canResolve(rootType);
-	}
-
-	void resolveOntologyEntities(NNode rootNode) {
-
-		ontologyEntities.resolve(rootNode);
 	}
 
 	private OModel copyModel() {

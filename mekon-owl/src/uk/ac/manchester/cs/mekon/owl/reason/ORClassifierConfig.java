@@ -24,6 +24,7 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
+import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
@@ -36,9 +37,9 @@ class ORClassifierConfig extends ORConfig {
 		return parentConfigNode.getChildOrNull(CLASSIFIER_ROOT_ID) != null;
 	}
 
-	ORClassifierConfig(ReasoningModel reasoningModel, KConfigNode parentConfigNode) {
+	ORClassifierConfig(OModel model, KConfigNode parentConfigNode) {
 
-		super(reasoningModel, parentConfigNode);
+		super(model, parentConfigNode);
 	}
 
 	String getRootId() {

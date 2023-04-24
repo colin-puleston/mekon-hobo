@@ -42,7 +42,7 @@ import uk.ac.manchester.cs.mekon_util.config.*;
  *
  * @author Colin Puleston
  */
-public class ORConceptsMatcher extends OROntologyBasedMatcher {
+public class ORConceptsMatcher extends ORMatcher {
 
 	/**
 	 * Constructs matcher for specified model.
@@ -99,14 +99,14 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected void addToOWLStore(NNode instance, IRI iri) {
+	protected void addToOntologyLinkedStore(NNode instance, IRI iri) {
 
 		addConceptDescription(addConcept(iri), createConceptDescription(instance));
 	}
 
 	/**
 	 */
-	protected void removeFromOWLStore(IRI iri) {
+	protected void removeFromOntologyLinkedStore(IRI iri) {
 
 		removeAxioms(getConceptAxioms(iri));
 	}
@@ -116,12 +116,12 @@ public class ORConceptsMatcher extends OROntologyBasedMatcher {
 		return false;
 	}
 
-	List<IRI> matchInOWLStore(ConceptExpression queryExpr) {
+	List<IRI> match(ConceptExpression queryExpr) {
 
 		return queryExpr.getMatchingConcepts();
 	}
 
-	boolean matchesInOWL(ConceptExpression queryExpr, NNode instance) {
+	boolean matches(ConceptExpression queryExpr, NNode instance) {
 
 		return queryExpr.subsumes(createConceptExpression(instance));
 	}

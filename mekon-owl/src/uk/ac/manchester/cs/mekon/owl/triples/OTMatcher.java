@@ -28,18 +28,15 @@ import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
 
-import uk.ac.manchester.cs.mekon.store.disk.*;
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
 import uk.ac.manchester.cs.mekon.owl.reason.*;
-import uk.ac.manchester.cs.mekon_util.*;
-import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
- * Extension of {@link ORMatcher} that represents the instances
- * via sets of triples in an RDF triple store, and the queries as
- * <i>SPARQL</i> queries over that store. The store will be
- * dynamically populated, and possibly created, on start-up, and
+ * Extension of {@link OROntologyLinkedMatcher} that represents the
+ * instances via sets of triples in an RDF triple store, and the
+ * queries as <i>SPARQL</i> queries over that store. The store will
+ * be  dynamically populated, and possibly created, on start-up, and
  * emptied or removed on termination.
  * <p>
  * This is an abstract class each of whose extensions will provide
@@ -47,7 +44,7 @@ import uk.ac.manchester.cs.mekon_util.config.*;
  *
  * @author Colin Puleston
  */
-public abstract class OTMatcher extends ORMatcher {
+public abstract class OTMatcher extends OROntologyLinkedMatcher {
 
 	private Store store = null;
 
@@ -62,39 +59,6 @@ public abstract class OTMatcher extends ORMatcher {
 	}
 
 	/**
-	 * Constructs matcher, with the configuration for both the
-	 * matcher itself, and the model over which it is to operate,
-	 * defined via the appropriately-tagged child of the specified
-	 * parent configuration-node.
-	 *
-	 * @param parentConfigNode Parent of configuration node defining
-	 * appropriate configuration information
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	protected OTMatcher(KConfigNode parentConfigNode) {
-
-		super(parentConfigNode);
-	}
-
-	/**
-	 * Constructs matcher for specified model, with the configuration
-	 * defined via the appropriately-tagged child of the specified parent
-	 * configuration-node.
-	 *
-	 * @param model Model over which matcher is to operate
-	 * @param parentConfigNode Parent configuration-node
-	 * @throws KConfigException if required child-node does not exist,
-	 * or exists but does not contain correctly specified configuration
-	 * information
-	 */
-	protected OTMatcher(OModel model, KConfigNode parentConfigNode) {
-
-		super(model, parentConfigNode);
-	}
-
-	/**
 	 * Specifies that referenced instances are not to be expanded.
 	 *
 	 * @return False since referenced instances are not to be expanded
@@ -106,28 +70,28 @@ public abstract class OTMatcher extends ORMatcher {
 
 	/**
 	 */
-	protected void addToOWLStore(NNode instance, IRI iri) {
+	protected void addToOntologyLinkedStore(NNode instance, IRI iri) {
 
 		store.add(instance, iri);
 	}
 
 	/**
 	 */
-	protected void removeFromOWLStore(IRI iri) {
+	protected void removeFromOntologyLinkedStore(IRI iri) {
 
 		store.remove(iri);
 	}
 
 	/**
 	 */
-	protected List<IRI> matchInOWLStore(NNode query) {
+	protected List<IRI> matchInOntologyLinkedStore(NNode query) {
 
 		return store.match(query);
 	}
 
 	/**
 	 */
-	protected boolean matchesInOWL(NNode query, NNode instance) {
+	protected boolean matchesWithRespectToOntology(NNode query, NNode instance) {
 
 		return store.matches(query, instance);
 	}

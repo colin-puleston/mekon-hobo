@@ -42,7 +42,7 @@ import uk.ac.manchester.cs.mekon_util.config.*;
  *
  * @author Colin Puleston
  */
-public class ORIndividualsMatcher extends OROntologyBasedMatcher {
+public class ORIndividualsMatcher extends ORMatcher {
 
 	private IndividualsRenderer storeRenderer;
 	private IndividualsRenderer dynamicRenderer;
@@ -110,14 +110,14 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 
 	/**
 	 */
-	protected void addToOWLStore(NNode instance, IRI iri) {
+	protected void addToOntologyLinkedStore(NNode instance, IRI iri) {
 
 		storeRenderer.render(instance, iri);
 	}
 
 	/**
 	 */
-	protected void removeFromOWLStore(IRI iri) {
+	protected void removeFromOntologyLinkedStore(IRI iri) {
 
 		storeRenderer.removeGroup(iri);
 	}
@@ -127,7 +127,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 		return true;
 	}
 
-	List<IRI> matchInOWLStore(ConceptExpression queryExpr) {
+	List<IRI> match(ConceptExpression queryExpr) {
 
 		List<IRI> matches = new ArrayList<IRI>();
 
@@ -142,7 +142,7 @@ public class ORIndividualsMatcher extends OROntologyBasedMatcher {
 		return matches;
 	}
 
-	boolean matchesInOWL(ConceptExpression queryExpr, NNode instance) {
+	boolean matches(ConceptExpression queryExpr, NNode instance) {
 
 		IndividualNetwork network = createNetwork(instance);
 		boolean result = network.matches(queryExpr);
