@@ -63,7 +63,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 			if (refIRI != null) {
 
-				return renderInstanceRef(refIRI);
+				return ensureRefedInstance(refIRI);
 			}
 
 			startRecurse(node);
@@ -113,17 +113,17 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 			return null;
 		}
 
-		private OWLClassExpression renderInstanceRef(IRI iri) {
+		private OWLClassExpression ensureRefedInstance(IRI iri) {
 
 			if (individualsQuery) {
 
-				return renderIndividualInstanceRef(iri);
+				return ensureRefedIndividualInstance(iri);
 			}
 
-			return renderConceptInstanceRef(iri);
+			return ensureRefedConceptInstance(iri);
 		}
 
-		private OWLClassExpression renderConceptInstanceRef(IRI iri) {
+		private OWLClassExpression ensureRefedConceptInstance(IRI iri) {
 
 			OWLClass concept = dataFactory.getOWLClass(iri);
 
@@ -132,7 +132,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 			return concept;
 		}
 
-		private OWLClassExpression renderIndividualInstanceRef(IRI iri) {
+		private OWLClassExpression ensureRefedIndividualInstance(IRI iri) {
 
 			OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(iri);
 
