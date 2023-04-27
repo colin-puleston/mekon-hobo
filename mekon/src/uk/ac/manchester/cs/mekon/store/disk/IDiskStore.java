@@ -99,7 +99,7 @@ class IDiskStore implements IStore {
 
 			if (regen.getStatus() != IRegenStatus.FULLY_INVALID) {
 
-				addToMatcher(identity, regen.getRootFrame());
+				addToMatcher(regen.getRootFrame(), identity);
 			}
 		}
 
@@ -117,11 +117,6 @@ class IDiskStore implements IStore {
 					regenReport.addPartiallyValidRegenId(identity);
 					break;
 			}
-		}
-
-		private void addToMatcher(CIdentity identity, IFrame instance) {
-
-			getMatcher(instance).add(createFreeCopy(instance), identity);
 		}
 	}
 
@@ -273,7 +268,7 @@ class IDiskStore implements IStore {
 
 		int index = indexes.getIndex(identity);
 
-		removeFromMatcher(instance.getType(), identity);
+		removeFromMatcher(instance, identity);
 
 		serialiser.remove(index);
 		serialiser.write(instance, identity, index);
@@ -303,7 +298,7 @@ class IDiskStore implements IStore {
 
 		if (removed != null) {
 
-			removeFromMatcher(removed.getType(), identity);
+			removeFromMatcher(removed, identity);
 		}
 
 		serialiser.remove(index);
@@ -339,9 +334,9 @@ class IDiskStore implements IStore {
 		getMatcher(instance).add(createFreeCopy(instance), identity);
 	}
 
-	private void removeFromMatcher(CFrame type, CIdentity identity) {
+	private void removeFromMatcher(IFrame instance, CIdentity identity) {
 
-		getMatcher(type).remove(identity);
+		getMatcher(instance).remove(identity);
 	}
 
 	private IMatcher getMatcher(IFrame frame) {
