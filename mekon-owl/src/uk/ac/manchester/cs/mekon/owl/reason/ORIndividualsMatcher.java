@@ -49,6 +49,8 @@ public class ORIndividualsMatcher extends ORMatcher {
 
 	private ODynamicInstanceIRIs dynamicRootIRIs = new ODynamicInstanceIRIs();
 
+	private ExpressionRenderer queryRenderer;
+
 	/**
 	 * Constructs matcher for specified model.
 	 *
@@ -103,7 +105,7 @@ public class ORIndividualsMatcher extends ORMatcher {
 		storeRenderer.removeGroup(iri);
 	}
 
-	boolean individualsMatcher() {
+	boolean requiresLocalModel() {
 
 		return true;
 	}
@@ -133,13 +135,19 @@ public class ORIndividualsMatcher extends ORMatcher {
 		return result;
 	}
 
+	ExpressionRenderer getQueryRenderer() {
+
+		return queryRenderer;
+	}
+
 	private void initialise() {
 
 		ReasoningModel reasoningModel = getReasoningModel();
-		StringValueProxies stringValueProxies = getStringValueProxies();
 
-		storeRenderer = new IndividualsRenderer(reasoningModel, stringValueProxies);
-		dynamicRenderer = new IndividualsRenderer(reasoningModel, stringValueProxies);
+		storeRenderer = new IndividualsRenderer(reasoningModel);
+		dynamicRenderer = new IndividualsRenderer(reasoningModel);
+
+		queryRenderer = new IndividualsQueryRenderer(reasoningModel);
 	}
 
 	private IndividualNetwork createNetwork(NNode node) {

@@ -24,63 +24,24 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import uk.ac.manchester.cs.mekon.owl.*;
+import org.semanticweb.owlapi.model.*;
 
 /**
  * @author Colin Puleston
  */
-class ReasoningModel {
+class IndividualsQueryRenderer extends ExpressionRenderer {
 
-	private OModel model;
-	private OModel sourceModel;
+	IndividualsQueryRenderer(ReasoningModel reasoningModel) {
 
-	private ORSemantics semantics = new ORSemantics();
-	private StringValueProxies stringValueProxies = null;
-
-	ReasoningModel(OModel model) {
-
-		this.model = model;
-
-		sourceModel = model;
+		super(reasoningModel);
 	}
 
-	void resetModel(OModel model) {
+	OWLClassExpression ensureRefedInstance(OWLDataFactory dataFactory, IRI iri) {
 
-		this.model = model;
-	}
+		OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(iri);
 
-	void setSemantics(ORSemantics semantics) {
+		addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
 
-		this.semantics = semantics;
-	}
-
-	void configureForInstanceMatching(boolean ensureLocalModel) {
-
-		if (ensureLocalModel && model == sourceModel) {
-
-			model = copyModel();
-		}
-
-		stringValueProxies = new StringValueProxies(model);
-	}
-
-	OModel getModel() {
-
-		return model;
-	}
-
-	ORSemantics getSemantics() {
-
-		return semantics;
-	}
-
-	StringValueProxies checkForStringValueProxies() {
-
-		return stringValueProxies;
-	}
-
-	private OModel copyModel() {
-
-		return new OModelCopier(model).create(true);
+		return dataFactory.getOWLObjectOneOf(ind);
 	}
 }

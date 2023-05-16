@@ -27,6 +27,9 @@ package uk.ac.manchester.cs.mekon.owl.reason;
 import java.util.*;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
+
+import rekon.owl.*;
 
 import uk.ac.manchester.cs.mekon.network.*;
 import uk.ac.manchester.cs.mekon.owl.*;
@@ -35,15 +38,16 @@ import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.config.*;
 
 /**
- * Extension of {@link ORMatcher} that represents the instances
- * as appropriately-defined OWL classes, which are added to an
- * in-memory version of the ontology, and that represents queries
- * as anonymous class-expressions.
+ * Extension of {@link ORMatcher} that operates via the
+ * <i>Instance Box</i> mechanisms associated with the <i>Rekon</i>
+ * reasoner. Hence, expects to be provided with an instance of the
+ * <i>Rekon</i> reasoner.
  *
  * @author Colin Puleston
  */
-public class ORConceptsMatcher extends ORMatcher {
+public class ORRekonMatcher extends ORMatcher {
 
+	private RekonInstanceBox instanceBox;
 	private ExpressionRenderer expressionRenderer;
 
 	/**
@@ -51,11 +55,11 @@ public class ORConceptsMatcher extends ORMatcher {
 	 *
 	 * @param model Model over which matcher is to operate
 	 */
-	public ORConceptsMatcher(OModel model) {
+	public ORRekonMatcher(OModel model) {
 
 		super(model);
 
-		expressionRenderer = createExpressionRenderer();
+		initialise();
 	}
 
 	/**
@@ -69,21 +73,21 @@ public class ORConceptsMatcher extends ORMatcher {
 	 * or exists but does not contain correctly specified configuration
 	 * information
 	 */
-	public ORConceptsMatcher(OModel model, KConfigNode parentConfigNode) {
+	public ORRekonMatcher(OModel model, KConfigNode parentConfigNode) {
 
 		super(model, parentConfigNode);
 
-		expressionRenderer = createExpressionRenderer();
+		initialise();
 	}
 
 	/**
-	 * Specifies that referenced instances are to be expanded.
+	 * Specifies that referenced instances are not to be expanded.
 	 *
-	 * @return True since referenced instances are to be expanded
+	 * @return False since referenced instances are not to be expanded
 	 */
 	protected boolean expandInstanceRefs() {
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -92,29 +96,33 @@ public class ORConceptsMatcher extends ORMatcher {
 
 		ConceptExpression instExpr = createConceptExpression(instance);
 
-		addConceptDescription(addConcept(iri), instExpr.getOWLConstruct());
+		instanceBox.add(iri, instExpr.getOWLConstruct());
 	}
 
 	/**
 	 */
 	protected void removeFromOntologyLinkedStore(IRI iri) {
 
-		removeAxioms(getConceptAxioms(iri));
+		instanceBox.remove(iri);
 	}
 
 	boolean requiresLocalModel() {
 
-		return true;
+		return false;
 	}
 
 	List<IRI> match(ConceptExpression queryExpr) {
 
-		return queryExpr.getMatchingConcepts();
+		return instanceBox.match(queryExpr.getOWLConstruct());
 	}
 
 	boolean matches(ConceptExpression queryExpr, NNode instance) {
 
-		return queryExpr.subsumes(createConceptExpression(instance));
+		ConceptExpression instExpr = createConceptExpression(instance);
+
+		return instanceBox.matches(
+					queryExpr.getOWLConstruct(),
+					instExpr.getOWLConstruct());
 	}
 
 	ExpressionRenderer getQueryRenderer() {
@@ -122,57 +130,38 @@ public class ORConceptsMatcher extends ORMatcher {
 		return expressionRenderer;
 	}
 
+	private void initialise() {
+
+		instanceBox = createInstanceBox();
+		expressionRenderer = createExpressionRenderer();
+	}
+
+	private RekonInstanceBox createInstanceBox() {
+
+		return getRekonReasoner().createInstanceBox();
+	}
+
+	private RekonReasoner getRekonReasoner() {
+
+		OWLReasoner r = getModel().getReasoner();
+
+		if (r instanceof RekonReasoner) {
+
+			return (RekonReasoner)r;
+		}
+
+		throw new KSystemConfigException(
+					"Expected reasoner of type: " + RekonReasoner.class
+					+ ", Found type: " + r.getClass());
+	}
+
 	private ExpressionRenderer createExpressionRenderer() {
 
-		return new ExpressionRenderer(getReasoningModel());
+		return new RekonExpressionRenderer(getReasoningModel(), instanceBox);
 	}
 
 	private ConceptExpression createConceptExpression(NNode node) {
 
 		return new ConceptExpression(getModel(), expressionRenderer, node);
-	}
-
-	private OWLClass addConcept(IRI iri) {
-
-		OWLClass concept = getConcept(iri);
-
-		addAxiom(getDataFactory().getOWLDeclarationAxiom(concept));
-
-		return concept;
-	}
-
-	private void addConceptDescription(OWLClass concept, OWLClassExpression description) {
-
-		addAxiom(getDataFactory().getOWLSubClassOfAxiom(concept, description));
-	}
-
-	private void addAxiom(OWLAxiom axiom) {
-
-		getModel().addInstanceAxiom(axiom);
-	}
-
-	private void removeAxioms(Set<? extends OWLAxiom> axioms) {
-
-		getModel().removeInstanceAxioms(axioms);
-	}
-
-	private OWLClass getConcept(IRI iri) {
-
-		return getDataFactory().getOWLClass(iri);
-	}
-
-	private Set<? extends OWLAxiom> getConceptAxioms(IRI iri) {
-
-		return OWLAPIVersion.getAxioms(getInstanceOntology(), getConcept(iri));
-	}
-
-	private OWLOntology getInstanceOntology() {
-
-		return getModel().getInstanceOntology();
-	}
-
-	private OWLDataFactory getDataFactory() {
-
-		return getModel().getDataFactory();
 	}
 }

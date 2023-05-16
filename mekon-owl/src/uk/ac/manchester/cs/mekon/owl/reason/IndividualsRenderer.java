@@ -38,9 +38,7 @@ import uk.ac.manchester.cs.mekon.owl.util.*;
 class IndividualsRenderer {
 
 	private OModel model;
-
 	private ReasoningModel reasoningModel;
-	private StringValueProxies stringValueProxies;
 
 	private Map<IRI, OWLNamedIndividual> rootIndividualsByIRI
 							= new HashMap<IRI, OWLNamedIndividual>();
@@ -208,7 +206,7 @@ class IndividualsRenderer {
 
 		GroupRenderer(NNode rootNode, IRI rootIRI) {
 
-			super(reasoningModel, stringValueProxies);
+			super(reasoningModel);
 
 			this.rootNode = rootNode;
 			this.rootIRI = rootIRI;
@@ -245,15 +243,9 @@ class IndividualsRenderer {
 
 	IndividualsRenderer(ReasoningModel reasoningModel) {
 
-		this(reasoningModel, null);
-	}
-
-	IndividualsRenderer(ReasoningModel reasoningModel, StringValueProxies stringValueProxies) {
-
 		model = reasoningModel.getModel();
 
 		this.reasoningModel = reasoningModel;
-		this.stringValueProxies = stringValueProxies;
 	}
 
 	OWLNamedIndividual render(NNode node, IRI rootIRI) {

@@ -41,6 +41,7 @@ import uk.ac.manchester.cs.mekon.owl.generate.*;
 	ORClassifierTest.class,
 	ORConceptsMatcherTest.class,
 	ORIndividualsMatcherTest.class,
+	ORRekonMatcherTest.class,
 	OGGeneratorTest.class})
 public class MekonOWLTestSuite {
 }

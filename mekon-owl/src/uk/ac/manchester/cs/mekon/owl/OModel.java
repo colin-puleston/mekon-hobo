@@ -90,11 +90,6 @@ public class OModel {
 
 		private OWLReasoner create() {
 
-			return new ThreadSafeOWLReasoner(createWrapped());
-		}
-
-		private OWLReasoner createWrapped() {
-
 			return reasonerFactory.createReasoner(instanceOntology);
 		}
 	}

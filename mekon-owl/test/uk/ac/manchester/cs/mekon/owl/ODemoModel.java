@@ -44,20 +44,21 @@ public class ODemoModel extends DemoModelIds {
 	static public final File OWL_FILE = getFileFromClasspath("demo.owl");
 	static public final File RESOURCE_DIR = OWL_FILE.getParentFile();
 
-	static private final Class<? extends OWLReasonerFactory> REASONER_FACTORY_CLASS = FaCTPlusPlusReasonerFactory.class;
+	static private Class<? extends OWLReasonerFactory> DEFAULT_REASONER_FACTORY
+												= FaCTPlusPlusReasonerFactory.class;
 
 	static public OModel create() {
 
-		OModelBuilder bldr = createBuilder();
+		return create(DEFAULT_REASONER_FACTORY);
+	}
+
+	static public OModel create(Class<? extends OWLReasonerFactory> reasonerFactory) {
+
+		OModelBuilder bldr = new OModelBuilder(OWL_FILE, reasonerFactory);
 
 		bldr.setIndirectNumericProperty(toIRI(NUMERIC_PROPERTY));
 
 		return bldr.create(true);
-	}
-
-	static private OModelBuilder createBuilder() {
-
-		return new OModelBuilder(OWL_FILE, REASONER_FACTORY_CLASS);
 	}
 
 	static private File getFileFromClasspath(String name) {

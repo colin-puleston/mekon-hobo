@@ -24,63 +24,22 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
+import rekon.owl.*;
+
 import uk.ac.manchester.cs.mekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
-class ReasoningModel {
+public class ORRekonMatcherTest extends OROntologyLinkedMatcherTest {
 
-	private OModel model;
-	private OModel sourceModel;
+	protected OROntologyLinkedMatcher createMatcher(OModel oModel) {
 
-	private ORSemantics semantics = new ORSemantics();
-	private StringValueProxies stringValueProxies = null;
-
-	ReasoningModel(OModel model) {
-
-		this.model = model;
-
-		sourceModel = model;
+		return new ORRekonMatcher(oModel);
 	}
 
-	void resetModel(OModel model) {
+	OModel createDemoModel() {
 
-		this.model = model;
-	}
-
-	void setSemantics(ORSemantics semantics) {
-
-		this.semantics = semantics;
-	}
-
-	void configureForInstanceMatching(boolean ensureLocalModel) {
-
-		if (ensureLocalModel && model == sourceModel) {
-
-			model = copyModel();
-		}
-
-		stringValueProxies = new StringValueProxies(model);
-	}
-
-	OModel getModel() {
-
-		return model;
-	}
-
-	ORSemantics getSemantics() {
-
-		return semantics;
-	}
-
-	StringValueProxies checkForStringValueProxies() {
-
-		return stringValueProxies;
-	}
-
-	private OModel copyModel() {
-
-		return new OModelCopier(model).create(true);
+		return ODemoModel.create(RekonReasonerFactory.class);
 	}
 }

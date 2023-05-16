@@ -43,8 +43,6 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 	private ArrayDeque<NNode> nodeStack = new ArrayDeque<NNode>();
 
-	private boolean individualsQuery;
-
 	private class NodeToExpressionRenderer extends NodeRenderer {
 
 		private NNode node;
@@ -63,7 +61,7 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 			if (refIRI != null) {
 
-				return ensureRefedInstance(refIRI);
+				return ensureRefedInstance(dataFactory, refIRI);
 			}
 
 			startRecurse(node);
@@ -112,54 +110,11 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 
 			return null;
 		}
-
-		private OWLClassExpression ensureRefedInstance(IRI iri) {
-
-			if (individualsQuery) {
-
-				return ensureRefedIndividualInstance(iri);
-			}
-
-			return ensureRefedConceptInstance(iri);
-		}
-
-		private OWLClassExpression ensureRefedConceptInstance(IRI iri) {
-
-			OWLClass concept = dataFactory.getOWLClass(iri);
-
-			addAxiom(dataFactory.getOWLDeclarationAxiom(concept));
-
-			return concept;
-		}
-
-		private OWLClassExpression ensureRefedIndividualInstance(IRI iri) {
-
-			OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(iri);
-
-			addAxiom(dataFactory.getOWLDeclarationAxiom(ind));
-
-			return dataFactory.getOWLObjectOneOf(ind);
-		}
-
-		private void addAxiom(OWLAxiom axiom) {
-
-			model.addInstanceAxiom(axiom);
-		}
 	}
 
-	ExpressionRenderer(ReasoningModel reasoningModel, boolean individualsQuery) {
+	ExpressionRenderer(ReasoningModel reasoningModel) {
 
-		this(reasoningModel, null, individualsQuery);
-	}
-
-	ExpressionRenderer(
-		ReasoningModel reasoningModel,
-		StringValueProxies stringValueProxies,
-		boolean individualsQuery) {
-
-		super(reasoningModel, stringValueProxies);
-
-		this.individualsQuery = individualsQuery;
+		super(reasoningModel);
 
 		model = reasoningModel.getModel();
 		dataFactory = model.getDataFactory();
@@ -185,6 +140,20 @@ class ExpressionRenderer extends Renderer<OWLClassExpression> {
 	OWLClassExpression renderUnion(Set<OWLClassExpression> operands) {
 
 		return dataFactory.getOWLObjectUnionOf(operands);
+	}
+
+	OWLClassExpression ensureRefedInstance(OWLDataFactory dataFactory, IRI iri) {
+
+		OWLClass concept = dataFactory.getOWLClass(iri);
+
+		addAxiom(dataFactory.getOWLDeclarationAxiom(concept));
+
+		return concept;
+	}
+
+	void addAxiom(OWLAxiom axiom) {
+
+		model.addInstanceAxiom(axiom);
 	}
 
 	private void startRecurse(NNode node) {

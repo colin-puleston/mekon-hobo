@@ -193,7 +193,7 @@ public class ORClassifier extends NClassifier {
 
 		entityResolver = new OntologyEntityResolver(getModel());
 
-		expressionRenderer = new ExpressionRenderer(reasoningModel, false);
+		expressionRenderer = new ExpressionRenderer(reasoningModel);
 		individualsRenderer = new IndividualsRenderer(reasoningModel);
 	}
 

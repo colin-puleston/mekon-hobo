@@ -43,8 +43,6 @@ abstract class Renderer<NR extends OWLObject> {
 	private OWLDataFactory dataFactory;
 	private NumberRenderer indirectNumberRenderer;
 
-	private StringValueProxies stringValueProxies = null;
-
 	abstract class NodeRenderer {
 
 		private NNode node;
@@ -68,11 +66,13 @@ abstract class Renderer<NR extends OWLObject> {
 				createNumberValuesRenderer(number).render();
 			}
 
-			if (stringValueProxies != null) {
+			StringValueProxies valueProxies = reasoningModel.checkForStringValueProxies();
+
+			if (valueProxies != null) {
 
 				for (NString string : node.getStrings()) {
 
-					new StringValuesRenderer(this, string).render();
+					new StringValuesRenderer(this, string, valueProxies).render();
 				}
 			}
 		}
@@ -339,10 +339,16 @@ abstract class Renderer<NR extends OWLObject> {
 	private class StringValuesRenderer extends ValuesRenderer<String> {
 
 		private DirectNumberValuesRenderCore core;
+		private StringValueProxies valueProxies;
 
-		StringValuesRenderer(NodeRenderer nodeRenderer, NString string) {
+		StringValuesRenderer(
+			NodeRenderer nodeRenderer,
+			NString string,
+			StringValueProxies valueProxies) {
 
 			super(string);
+
+			this.valueProxies = valueProxies;
 
 			core = new DirectNumberValuesRenderCore(nodeRenderer, getProxyProperty());
 		}
@@ -359,7 +365,7 @@ abstract class Renderer<NR extends OWLObject> {
 
 		private OWLDataProperty getProxyProperty() {
 
-			return stringValueProxies.toProxyProperty(getDataProperty());
+			return valueProxies.toProxyProperty(getDataProperty());
 		}
 
 		private Set<INumber> toProxyValues(Set<String> values) {
@@ -368,17 +374,16 @@ abstract class Renderer<NR extends OWLObject> {
 
 			for (String value : values) {
 
-				proxyValues.add(stringValueProxies.toProxyValue(value));
+				proxyValues.add(valueProxies.toProxyValue(value));
 			}
 
 			return proxyValues;
 		}
 	}
 
-	Renderer(ReasoningModel reasoningModel, StringValueProxies stringValueProxies) {
+	Renderer(ReasoningModel reasoningModel) {
 
 		this.reasoningModel = reasoningModel;
-		this.stringValueProxies = stringValueProxies;
 
 		model = reasoningModel.getModel();
 		dataFactory = model.getDataFactory();

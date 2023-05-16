@@ -24,63 +24,26 @@
 
 package uk.ac.manchester.cs.mekon.owl.reason;
 
-import uk.ac.manchester.cs.mekon.owl.*;
+import org.semanticweb.owlapi.model.*;
+
+import rekon.owl.*;
 
 /**
  * @author Colin Puleston
  */
-class ReasoningModel {
+class RekonExpressionRenderer extends ExpressionRenderer {
 
-	private OModel model;
-	private OModel sourceModel;
+	private RekonInstanceBox instanceBox;
 
-	private ORSemantics semantics = new ORSemantics();
-	private StringValueProxies stringValueProxies = null;
+	RekonExpressionRenderer(ReasoningModel reasoningModel, RekonInstanceBox instanceBox) {
 
-	ReasoningModel(OModel model) {
+		super(reasoningModel);
 
-		this.model = model;
-
-		sourceModel = model;
+		this.instanceBox = instanceBox;
 	}
 
-	void resetModel(OModel model) {
+	OWLClassExpression ensureRefedInstance(OWLDataFactory dataFactory, IRI iri) {
 
-		this.model = model;
-	}
-
-	void setSemantics(ORSemantics semantics) {
-
-		this.semantics = semantics;
-	}
-
-	void configureForInstanceMatching(boolean ensureLocalModel) {
-
-		if (ensureLocalModel && model == sourceModel) {
-
-			model = copyModel();
-		}
-
-		stringValueProxies = new StringValueProxies(model);
-	}
-
-	OModel getModel() {
-
-		return model;
-	}
-
-	ORSemantics getSemantics() {
-
-		return semantics;
-	}
-
-	StringValueProxies checkForStringValueProxies() {
-
-		return stringValueProxies;
-	}
-
-	private OModel copyModel() {
-
-		return new OModelCopier(model).create(true);
+		return instanceBox.createInstanceRef(iri);
 	}
 }

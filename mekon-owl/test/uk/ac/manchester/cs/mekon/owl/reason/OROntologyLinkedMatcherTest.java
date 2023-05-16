@@ -43,6 +43,8 @@ public abstract class OROntologyLinkedMatcherTest extends NMatcherTest {
 	static private final CIdentity NON_OWL_TYPE = new CIdentity("NON-OWL-TYPE");
 	static private final CIdentity NON_OWL_BUT_OWL_SUBSUMED_TYPE = new CIdentity("NON-OWL-BUT-OWL-SUBSUMED-TYPE");
 
+	private OModel oModel = createDemoModel();
+
 	private class ORMatcherSectionBuilder extends OBSectionBuilder {
 
 		private class ModelEnhancer extends DemoModelBuilder {
@@ -72,8 +74,6 @@ public abstract class OROntologyLinkedMatcherTest extends NMatcherTest {
 		}
 	}
 
-	private OModel oModel = ODemoModel.create();
-
 	@Test
 	public void test_handlesType() {
 
@@ -97,6 +97,11 @@ public abstract class OROntologyLinkedMatcherTest extends NMatcherTest {
 	protected boolean handlesInstanceDisjunctionBasedQueries() {
 
 		return true;
+	}
+
+	OModel createDemoModel() {
+
+		return ODemoModel.create();
 	}
 
 	private void testHandlesType(CIdentity typeId, boolean shouldHandle) {

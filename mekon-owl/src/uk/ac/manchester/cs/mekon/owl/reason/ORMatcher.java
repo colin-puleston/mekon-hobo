@@ -76,9 +76,6 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 
 	private ReasoningModel reasoningModel;
 
-	private StringValueProxies stringValueProxies;
-	private ExpressionRenderer expressionRenderer;
-
 	private String instanceFileName = null;
 
 	/**
@@ -121,22 +118,22 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 
 	protected List<IRI> matchInOntologyLinkedStore(NNode query) {
 
-		ConceptExpression expr = createConceptExpression(query);
-		OWLObject owlConstruct = expr.getOWLConstruct();
+		ConceptExpression queryExpr = createQueryExpression(query);
+		OWLObject owlQueryExpr = queryExpr.getOWLConstruct();
 
-		ORMonitor.pollForMatcherRequest(getModel(), owlConstruct);
+		ORMonitor.pollForMatcherRequest(getModel(), owlQueryExpr);
 
-		List<IRI> matches = purgeMatches(match(expr));
+		List<IRI> matches = purgeMatches(match(queryExpr));
 
 		ORMonitor.pollForMatchesFound(getModel(), matches);
-		ORMonitor.pollForMatcherDone(getModel(), owlConstruct);
+		ORMonitor.pollForMatcherDone(getModel(), owlQueryExpr);
 
 		return matches;
 	}
 
 	protected boolean matchesWithRespectToOntology(NNode query, NNode instance) {
 
-		return matches(createConceptExpression(query), instance);
+		return matches(createQueryExpression(query), instance);
 	}
 
 	ORMatcher(OModel model) {
@@ -149,25 +146,17 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 		initialise(configure(model, parentConfigNode));
 	}
 
-	abstract boolean individualsMatcher();
+	abstract boolean requiresLocalModel();
 
 	abstract List<IRI> match(ConceptExpression queryExpr);
 
 	abstract boolean matches(ConceptExpression queryExpr, NNode instance);
 
-	ConceptExpression createConceptExpression(NNode node) {
-
-		return new ConceptExpression(getModel(), expressionRenderer, node);
-	}
+	abstract ExpressionRenderer getQueryRenderer();
 
 	ReasoningModel getReasoningModel() {
 
 		return reasoningModel;
-	}
-
-	StringValueProxies getStringValueProxies() {
-
-		return stringValueProxies;
 	}
 
 	private ReasoningModel configure(OModel model, KConfigNode parentConfigNode) {
@@ -183,20 +172,14 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 
 		this.reasoningModel = reasoningModel;
 
-		OModel model = reasoningModel.ensureLocalModel();
+		reasoningModel.configureForInstanceMatching(requiresLocalModel());
 
-		initialiseLinkedMatcher(model);
-
-		stringValueProxies = new StringValueProxies(model);
-		expressionRenderer = createExpressionRenderer();
+		initialiseLinkedMatcher(reasoningModel.getModel());
 	}
 
-	private ExpressionRenderer createExpressionRenderer() {
+	private ConceptExpression createQueryExpression(NNode node) {
 
-		return new ExpressionRenderer(
-						reasoningModel,
-						stringValueProxies,
-						individualsMatcher());
+		return new ConceptExpression(getModel(), getQueryRenderer(), node);
 	}
 
 	private List<IRI> purgeMatches(List<IRI> matches) {
