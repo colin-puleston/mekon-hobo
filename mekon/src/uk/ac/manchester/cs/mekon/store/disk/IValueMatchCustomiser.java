@@ -59,7 +59,7 @@ public class IValueMatchCustomiser {
 	 *
 	 * @param matcher Specific matcher-implementation for relevant
 	 * value-type
-	 * @param slotId Set of slot-types to which the matcher is applicable
+	 * @param slotIds Set of slot-types to which the matcher is applicable
 	 */
 	public IValueMatchCustomiser(
 				ICustomValueMatcher matcher,
