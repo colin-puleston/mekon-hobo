@@ -102,11 +102,6 @@ public class ORConceptsMatcher extends ORMatcher {
 		removeAxioms(getConceptAxioms(iri));
 	}
 
-	boolean requiresLocalModel() {
-
-		return true;
-	}
-
 	List<IRI> match(ConceptExpression queryExpr) {
 
 		return queryExpr.getMatchingConcepts();

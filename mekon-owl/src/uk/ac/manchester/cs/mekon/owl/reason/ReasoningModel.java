@@ -54,9 +54,9 @@ class ReasoningModel {
 		this.semantics = semantics;
 	}
 
-	void configureForInstanceMatching(boolean ensureLocalModel) {
+	void configureForInstanceMatching() {
 
-		if (ensureLocalModel && model == sourceModel) {
+		if (model == sourceModel) {
 
 			model = copyModel();
 		}

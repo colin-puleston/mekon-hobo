@@ -105,11 +105,6 @@ public class ORIndividualsMatcher extends ORMatcher {
 		storeRenderer.removeGroup(iri);
 	}
 
-	boolean requiresLocalModel() {
-
-		return true;
-	}
-
 	List<IRI> match(ConceptExpression queryExpr) {
 
 		List<IRI> matches = new ArrayList<IRI>();

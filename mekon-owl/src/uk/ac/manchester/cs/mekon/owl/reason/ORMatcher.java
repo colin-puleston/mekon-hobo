@@ -147,8 +147,6 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 		initialise(configure(model, parentConfigNode));
 	}
 
-	abstract boolean requiresLocalModel();
-
 	abstract List<IRI> match(ConceptExpression queryExpr);
 
 	abstract boolean matches(ConceptExpression queryExpr, NNode instance);
@@ -173,7 +171,7 @@ public abstract class ORMatcher extends OROntologyLinkedMatcher {
 
 		this.reasoningModel = reasoningModel;
 
-		reasoningModel.configureForInstanceMatching(requiresLocalModel());
+		reasoningModel.configureForInstanceMatching();
 
 		initialiseLinkedMatcher(reasoningModel.getModel());
 	}

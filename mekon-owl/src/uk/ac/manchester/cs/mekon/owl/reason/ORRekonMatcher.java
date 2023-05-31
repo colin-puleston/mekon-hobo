@@ -106,11 +106,6 @@ public class ORRekonMatcher extends ORMatcher {
 		instanceBox.remove(iri);
 	}
 
-	boolean requiresLocalModel() {
-
-		return false;
-	}
-
 	List<IRI> match(ConceptExpression queryExpr) {
 
 		return instanceBox.match(queryExpr.getOWLConstruct());
