@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.mekon.stats.store;
+package uk.ac.manchester.cs.mekon.stats;
 
 import java.lang.management.*;
 
