@@ -315,7 +315,19 @@ abstract class Renderer<NR extends OWLObject> {
 
 		private OWLClassExpression renderValueUnion(Set<INumber> values) {
 
-			return dataFactory.getOWLObjectUnionOf(renderValues(values));
+			if (values.isEmpty()) {
+
+				return dataFactory.getOWLNothing();
+			}
+
+			Set<OWLClassExpression> renderings = renderValues(values);
+
+			if (renderings.size() == 1) {
+
+				return renderings.iterator().next();
+			}
+
+			return dataFactory.getOWLObjectUnionOf(renderings);
 		}
 
 		private Set<OWLClassExpression> renderValues(Set<INumber> values) {
