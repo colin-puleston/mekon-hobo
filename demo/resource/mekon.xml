@@ -22,13 +22,13 @@
 		-->
 		<OWLModel
 			owlFile="demo.owl"
-			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
+			reasonerFactory="rekon.owl.RekonReasonerFactory"
 			indirectNumericProperty="http://mekon/demo.owl#numericValue"
 			instanceOntology="http://mekon/demo-instances.owl">
 		</OWLModel>
 
 		<!-- Reasoner options...
-			reasonerFactory="uk.ac.manchester.cs.rekon.RekonReasonerFactory"
+			reasonerFactory="rekon.owl.RekonReasonerFactory"
 			reasonerFactory="org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			reasonerFactory="uk.ac.manchester.cs.jfact.JFactFactory"
