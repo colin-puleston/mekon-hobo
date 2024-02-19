@@ -24,57 +24,44 @@
 
 package uk.ac.manchester.cs.mekon.owl;
 
-import java.io.File;
-import java.net.URL;
-
-import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
-import uk.ac.manchester.cs.mekon.model.*;
-import uk.ac.manchester.cs.mekon.demomodel.*;
-import uk.ac.manchester.cs.mekon.owl.*;
+import uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory;
 
 /**
  * @author Colin Puleston
  */
-public class ODemoModel extends DemoModelIds {
+class DefaultTestReasoner {
 
-	static public final File OWL_FILE = getFileFromClasspath("demo.owl");
-	static public final File RESOURCE_DIR = OWL_FILE.getParentFile();
+	static private final String OVERRIDE_PROPERTY = "mekon.test.default-reasoner";
 
-	static public OModel create() {
+	static private Class<? extends OWLReasonerFactory> factoryClass
+									= FaCTPlusPlusReasonerFactory.class;
 
-		return create(DefaultTestReasoner.getFactoryClass());
-	}
+	static {
 
-	static public OModel create(Class<? extends OWLReasonerFactory> reasonerFactory) {
+		String className = System.getProperty(OVERRIDE_PROPERTY);
 
-		OModelBuilder bldr = new OModelBuilder(OWL_FILE, reasonerFactory);
+		if (className != null) {
 
-		bldr.setIndirectNumericProperty(toIRI(NUMERIC_PROPERTY));
-
-		return bldr.create(true);
-	}
-
-	static private File getFileFromClasspath(String name) {
-
-		URL url = getClassLoader().getResource(name);
-
-		if (url == null) {
-
-			throw new RuntimeException("Cannot access file: " + name);
+			factoryClass = toFactoryClass(className);
 		}
-
-		return new File(url.getFile());
 	}
 
-	static private ClassLoader getClassLoader() {
+	static Class<? extends OWLReasonerFactory> getFactoryClass() {
 
-		return Thread.currentThread().getContextClassLoader();
+		return factoryClass;
 	}
 
-	static private IRI toIRI(CIdentity id) {
+	static private Class<? extends OWLReasonerFactory> toFactoryClass(String className) {
 
-		return IRI.create(id.getIdentifier());
+		try {
+
+			return Class.forName(className).asSubclass(OWLReasonerFactory.class);
+		}
+		catch (ClassNotFoundException e) {
+
+			throw new RuntimeException("Cannot find class: " + className);
+		}
 	}
 }
