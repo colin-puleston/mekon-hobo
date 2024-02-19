@@ -25,7 +25,10 @@
 	<property name="debug" value="true"/>
 
 	<!-- java options -->
-	<property name="java.opts" value="-Xmx768M -Xss16M -XX:+UseSerialGC -Djava.library.path=${build.lib.rel}"/>
+	<property name="java.opts.memory" value="-Xmx768M -Xss16M -XX:+UseSerialGC"/>
+	<property name="java.opts.libpath" value="-Djava.library.path=${build.lib.rel}"/>
+	<property name="java.opts.test.reasoner" value="-Dmekon.test.default-reasoner=uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"/>
+	<property name="java.opts" value="${java.opts.memory} ${java.opts.libpath} ${java.opts.test.reasoner}"/>
 
 	<!-- class-path -->
 	<path id="classpath">
