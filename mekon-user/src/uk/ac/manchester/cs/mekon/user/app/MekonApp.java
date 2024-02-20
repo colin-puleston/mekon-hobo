@@ -142,7 +142,7 @@ public class MekonApp extends GFrame {
 		this.model = model;
 		this.centralStore = centralStore;
 
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
 	public void setLocalQueryStore(IStore localQueryStore) {

@@ -153,7 +153,7 @@ public class MekonModelExplorer extends GFrame {
 
 		super(MAIN_TITLE, FRAME_WIDTH, FRAME_HEIGHT);
 
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		addWindowListener(new ModelClearUpper(model));
 
 		display(new Initialiser(model, store).createTopLevelComponent());
