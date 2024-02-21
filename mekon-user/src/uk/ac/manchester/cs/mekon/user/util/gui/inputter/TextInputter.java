@@ -46,6 +46,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 		static private final long serialVersionUID = -1;
 
 		private TextInputHandler<I> inputHandler;
+		private String currentValidPartialText = "";
 
 		private class CustomInputFieldFocusRemover extends FocusAdapter {
 
@@ -188,12 +189,14 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 			String text = getText();
 
-			if (text.isEmpty() || potentiallyValidInputText(text)) {
+			if (text.isEmpty() || validPartialText(text)) {
+
+				currentValidPartialText = text;
 
 				return false;
 			}
 
-			setText(text.substring(0, text.length() - 1));
+			setText(currentValidPartialText);
 
 			return true;
 		}
@@ -228,7 +231,7 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 	protected abstract boolean validInputText(String text);
 
-	protected abstract boolean potentiallyValidInputText(String text);
+	protected abstract boolean validPartialText(String text);
 
 	protected abstract I convertInputValue(String text);
 

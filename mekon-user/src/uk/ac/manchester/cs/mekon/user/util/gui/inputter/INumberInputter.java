@@ -56,25 +56,47 @@ public abstract class INumberInputter extends StandardTextInputter<INumber> {
 
 	protected boolean validInputText(String text) {
 
-		return validInputValue(parseValue(text, true));
+		if (text.length() == 0) {
+
+			return false;
+		}
+
+		if (validNumberValueText(text)) {
+
+			return true;
+		}
+
+		JOptionPane.showMessageDialog(null, "Invalid Input!");
+
+		return false;
 	}
 
-	protected boolean potentiallyValidInputText(String text) {
+	protected boolean validPartialText(String text) {
 
-		return validInputValue(parseValue(text, false));
+		if (text.length() == 0) {
+
+			return false;
+		}
+
+		if (text.charAt(0) == '-') {
+
+			if (text.length() == 1) {
+
+				return true;
+			}
+
+			if (type.getMin().asInteger() >= 0) {
+
+				return false;
+			}
+
+			text = text.substring(1);
+		}
+
+		return validPositiveNumber(text);
 	}
 
 	protected INumber convertInputValue(String text) {
-
-		return parseValue(text, false);
-	}
-
-	protected boolean validNumberValueText(String text) {
-
-		return type.validNumberValue(text);
-	}
-
-	private INumber parseValue(String text, boolean showErrorIfInvalid) {
 
 		if (text.length() == 0) {
 
@@ -86,17 +108,36 @@ public abstract class INumberInputter extends StandardTextInputter<INumber> {
 			return new INumber(getNumberType(), text);
 		}
 
-		if (showErrorIfInvalid) {
-
-			JOptionPane.showMessageDialog(null, "Invalid Input!");
-		}
-
 		return INVALID_VALUE;
 	}
 
-	private boolean validInputValue(INumber value) {
+	protected boolean validNumberValueText(String text) {
 
-		return value != NO_VALUE && value != INVALID_VALUE;
+		return type.validNumberValue(text);
+	}
+
+	private boolean validPositiveNumber(String text) {
+
+		try {
+
+			if (decimalNumberType()) {
+
+				return Double.parseDouble(text) >= 0;
+			}
+
+			return Long.parseLong(text) >= 0;
+		}
+		catch (NumberFormatException e) {
+
+			return false;
+		}
+	}
+
+	private boolean decimalNumberType() {
+
+		Class<? extends Number> numType = type.getNumberType();
+
+		return numType == Float.class || numType == Double.class;
 	}
 
 	private Class<? extends Number> getNumberType() {

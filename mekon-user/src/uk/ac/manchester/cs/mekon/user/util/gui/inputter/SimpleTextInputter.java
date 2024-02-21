@@ -59,9 +59,9 @@ public abstract class SimpleTextInputter<I> extends StandardTextInputter<I> {
 		return !text.isEmpty();
 	}
 
-	protected boolean potentiallyValidInputText(String text) {
+	protected boolean validPartialText(String text) {
 
-		return validInputText(text);
+		return true;
 	}
 
 	protected boolean validCurrentInput() {
