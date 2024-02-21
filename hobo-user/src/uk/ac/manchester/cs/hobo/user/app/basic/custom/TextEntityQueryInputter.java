@@ -540,7 +540,7 @@ class TextEntityQueryInputter extends TextInputter<String> {
 		return true;
 	}
 
-	protected boolean potentiallyValidInputText(String text) {
+	protected boolean validPartialText(String text) {
 
 		return validInputText(text);
 	}

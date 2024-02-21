@@ -49,7 +49,7 @@ class CalendarDateInputter extends SimpleTextInputter<String> {
 		return CalendarDate.validDateString(text);
 	}
 
-	protected boolean potentiallyValidInputText(String text) {
+	protected boolean validPartialText(String text) {
 
 		return CalendarDate.partiallyValidDateStringFormat(text);
 	}
