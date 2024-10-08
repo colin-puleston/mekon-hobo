@@ -38,7 +38,7 @@ class RDFSChecker extends TransitiveChecker {
 		return singleton;
 	}
 
-	private RDFSChecker() {
+	RDFSChecker() {
 
 		addValidAxiomType(OWLObjectPropertyDomainAxiom.class);
 		addValidAxiomType(OWLObjectPropertyRangeAxiom.class);

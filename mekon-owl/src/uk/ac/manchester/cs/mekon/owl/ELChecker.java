@@ -29,7 +29,7 @@ import org.semanticweb.owlapi.model.*;
 /**
  * @author Colin Puleston
  */
-class ELChecker extends ReasoningTypeChecker {
+class ELChecker extends RDFSChecker {
 
 	static private final ELChecker singleton = new ELChecker();
 
