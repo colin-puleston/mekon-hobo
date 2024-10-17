@@ -160,30 +160,32 @@ public abstract class GNode extends GMutableTreeNode {
 
 				child.checkExpanded();
 			}
-		}
 
-		tree.registerNodeAdded(child, initialised);
+			tree.registerNodeAdded(child, initialised);
+		}
 	}
 
 	public void clearChildren() {
 
 		for (GNode child : new ArrayList<GNode>(getChildren())) {
 
-			child.remove();
+			removeChild(child, false);
 		}
+
+		getTreeModel().nodeStructureChanged(this);
 	}
 
 	public void remove() {
 
 		if (parent != null) {
 
-			parent.removeChild(this);
+			parent.removeChild(this, true);
 		}
 	}
 
 	public void removeChild(int index) {
 
-		removeChild(childList.get(index));
+		removeChild(childList.get(index), true);
 	}
 
 	public void checkExpanded() {
@@ -418,12 +420,12 @@ public abstract class GNode extends GMutableTreeNode {
 
 	void reinitialiseSubTree() {
 
-		clearChildren();
-
 		childList = null;
 		initialised = false;
 
 		initialiseSubTree();
+
+		getTreeModel().nodeStructureChanged(this);
 	}
 
 	void updateSubTreeNodeDisplays() {
@@ -436,7 +438,7 @@ public abstract class GNode extends GMutableTreeNode {
 		}
 	}
 
-	private void removeChild(GNode child) {
+	private void removeChild(GNode child, boolean notifyTreeModel) {
 
 		int[] oldIndex = new int[]{getIndex(child)};
 		Object[] oldChild = new Object[]{child};
@@ -445,7 +447,10 @@ public abstract class GNode extends GMutableTreeNode {
 		child.parent = null;
 		getChildList().performRemoval(child);
 
-		getTreeModel().nodesWereRemoved(this, oldIndex, oldChild);
+		if (notifyTreeModel) {
+
+			getTreeModel().nodesWereRemoved(this, oldIndex, oldChild);
+		}
 
 		tree.registerNodeRemoved(child);
 	}
