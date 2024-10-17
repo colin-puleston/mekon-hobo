@@ -167,10 +167,7 @@ public abstract class GNode extends GMutableTreeNode {
 
 	public void clearChildren() {
 
-		for (GNode child : new ArrayList<GNode>(getChildren())) {
-
-			removeChild(child, false);
-		}
+		childList.clear();
 
 		getTreeModel().nodeStructureChanged(this);
 	}
