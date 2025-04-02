@@ -56,19 +56,7 @@ public abstract class INumberInputter extends StandardTextInputter<INumber> {
 
 	protected boolean validInputText(String text) {
 
-		if (text.length() == 0) {
-
-			return false;
-		}
-
-		if (validNumberValueText(text)) {
-
-			return true;
-		}
-
-		JOptionPane.showMessageDialog(null, "Invalid Input!");
-
-		return false;
+		return validNumberValueText(text);
 	}
 
 	protected boolean validPartialText(String text) {

@@ -56,6 +56,11 @@ public class IStringInputter extends SimpleTextInputter<IString> {
 		this.type = type;
 	}
 
+	protected boolean validInputText(String text) {
+
+		return type.validValueText(text);
+	}
+
 	protected IString convertInputValue(String text) {
 
 		return type.validValueText(text) ? type.instantiate(text) : IString.EMPTY_STRING;

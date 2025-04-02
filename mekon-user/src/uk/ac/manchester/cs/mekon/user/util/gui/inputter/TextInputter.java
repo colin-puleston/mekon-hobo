@@ -39,7 +39,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 	private CustomTextInputter<I> customTextInputter = null;
 
 	private boolean checkingInput = false;
-	private boolean windowClosing = false;
 
 	private class InputField extends TextInputField<I> {
 
@@ -87,19 +86,18 @@ public abstract class TextInputter<I> extends Inputter<I> {
 			}
 		}
 
-		protected void onFieldExited(String text) {
-
-			if (!customTextInput() && !windowClosing) {
-
-				checkInput(text);
-			}
-		}
-
 		protected void onTextEntered(String text) {
 
-			if (!customTextInput() && checkInput(text)) {
+			if (!customTextInput() && !checkingInput) {
 
-				exitOnCompletedInput();
+				checkingInput = true;
+
+				if (checkInput(text)) {
+
+					exitOnCompletedInput();
+				}
+
+				checkingInput = false;
 			}
 		}
 
@@ -154,33 +152,17 @@ public abstract class TextInputter<I> extends Inputter<I> {
 
 		private boolean checkInput(String text) {
 
-			boolean ok = false;
+			if (text.length() != 0) {
 
-			if (!checkingInput) {
-
-				checkingInput = true;
-				ok = performInputCheck(text);
-				checkingInput = false;
-			}
-
-			return ok;
-		}
-
-		private boolean performInputCheck(String text) {
-
-			if (validInputText(text)) {
-
-				if (inputHandler.checkConsistentInput()) {
+				if (validInputText(text) && inputHandler.checkConsistentInput()) {
 
 					return true;
 				}
 
-				setValidInput(false);
+				JOptionPane.showMessageDialog(null, "Invalid Input!");
 			}
-			else {
 
-				setText("");
-			}
+			setValidInput(false);
 
 			return false;
 		}
@@ -202,14 +184,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 		}
 	}
 
-	private class WindowCloseListener extends WindowAdapter {
-
-		public void windowClosing(WindowEvent e) {
-
-			windowClosing = true;
-		}
-	}
-
 	public I getInput() {
 
 		return resolveInput();
@@ -218,8 +192,6 @@ public abstract class TextInputter<I> extends Inputter<I> {
 	protected TextInputter(JComponent parent, String title, boolean canOk, boolean canClear) {
 
 		super(parent, title, canOk, canClear);
-
-		addWindowListener(new WindowCloseListener());
 	}
 
 	protected void setCustomTextInputter(CustomTextInputter<I> inputter) {
