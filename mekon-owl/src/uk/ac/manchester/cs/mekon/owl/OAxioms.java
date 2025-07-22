@@ -39,32 +39,42 @@ class OAxioms {
 	private OModel model;
 	private OWLOntology ontology;
 
-	private AxiomAdder adder = new AxiomAdder();
-	private AxiomRemover remover = new AxiomRemover();
-
 	private abstract class AxiomProcessor {
+
+		private boolean reasonerUpdateRequired = false;
 
 		void processAll(Set<? extends OWLAxiom> axioms) {
 
 			for (OWLAxiom axiom : axioms) {
 
-				updateOntology(axiom);
+				processAxiom(axiom);
 			}
 
-			updateReasoner();
+			checkUpdateReasoner();
 		}
 
 		void process(OWLAxiom axiom) {
 
-			updateOntology(axiom);
-			updateReasoner();
+			processAxiom(axiom);
+
+			checkUpdateReasoner();
 		}
 
 		abstract void updateOntology(OWLAxiom axiom);
 
-		private void updateReasoner() {
+		private void processAxiom(OWLAxiom axiom) {
 
-			model.getReasoner().flush();
+			updateOntology(axiom);
+
+			reasonerUpdateRequired |= !(axiom instanceof OWLDeclarationAxiom);
+		}
+
+		private void checkUpdateReasoner() {
+
+			if (reasonerUpdateRequired) {
+
+				model.updateReasoner();
+			}
 		}
 	}
 
@@ -170,22 +180,22 @@ class OAxioms {
 
 	synchronized void add(OWLAxiom axiom) {
 
-		adder.process(axiom);
+		new AxiomAdder().process(axiom);
 	}
 
 	void addAll(Set<? extends OWLAxiom> axioms) {
 
-		adder.processAll(axioms);
+		new AxiomAdder().processAll(axioms);
 	}
 
 	synchronized void remove(OWLAxiom axiom) {
 
-		remover.process(axiom);
+		new AxiomRemover().process(axiom);
 	}
 
 	void removeAll(Set<? extends OWLAxiom> axioms) {
 
-		remover.processAll(axioms);
+		new AxiomRemover().processAll(axioms);
 	}
 
 	void purge(OAxiomPurgeSpec purgeSpec) {
