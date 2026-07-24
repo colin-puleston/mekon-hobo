@@ -39,18 +39,18 @@ public enum OBFrameSlotsPolicy {
 	UNSPECIFIED,
 
 	/**
-	 * All frame-valued slots are to {@link IFrame}-valued.
+	 * All frame-valued slots are to be {@link IFrame}-valued.
 	 */
 	IFRAME_VALUED_ONLY,
 
 	/**
-	 * All frame-valued slots are to {@link CFrame}-valued.
+	 * All frame-valued slots are to be {@link CFrame}-valued.
 	 */
 	CFRAME_VALUED_ONLY,
 
 	/**
-	 * Frame-valued slots are to {@link CFrame}-valued when
-	 * there are no slots attached any of the frames within the
+	 * Frame-valued slots are to be {@link CFrame}-valued if
+	 * there are no slots attached to any of the frames within the
 	 * section of hierarchy that defines the possible slot
 	 * values. Otherwise they are to be {@link IFrame}-valued.
 	 */
