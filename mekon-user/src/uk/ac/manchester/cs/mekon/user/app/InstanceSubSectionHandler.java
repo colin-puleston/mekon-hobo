@@ -120,14 +120,14 @@ class InstanceSubSectionHandler {
 		}
 	}
 
-	static IFrame getStructuredFrameValueOrNull(ISlot frameValueSlot) {
+	static private IFrame getStructuredFrameValueOrNull(ISlot frameValueSlot) {
 
 		List<IValue> values = frameValueSlot.getValues().asList();
 
 		return values.size() == 1 ? (IFrame)values.get(0) : null;
 	}
 
-	static IFrame getStructuredFrameValueOrNull(Descriptor descriptor) {
+	static private IFrame getStructuredFrameValueOrNull(Descriptor descriptor) {
 
 		return descriptor.hasStructuredValue() ? (IFrame)descriptor.getValue() : null;
 	}

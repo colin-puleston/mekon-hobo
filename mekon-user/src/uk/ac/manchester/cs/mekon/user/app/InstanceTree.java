@@ -41,7 +41,6 @@ class InstanceTree extends GActionTree {
 	private RootInstanceNode rootNode;
 
 	private boolean summaryInstance;
-	private boolean instanceSubSection;
 
 	private InstanceDisplayMode displayMode;
 	private boolean updatingTree = false;
@@ -83,7 +82,6 @@ class InstanceTree extends GActionTree {
 
 		displayMode = startDisplayMode;
 		rootNode = new RootInstanceNode(this, rootFrame);
-		instanceSubSection = instanceSubSection(rootFrame);
 
 		setRootVisible(true);
 		setShowsRootHandles(false);
@@ -105,6 +103,16 @@ class InstanceTree extends GActionTree {
 		}
 	}
 
+	Instantiator getInstantiator() {
+
+		return instantiator;
+	}
+
+	boolean queryInstance() {
+
+		return getInstantiator().queryInstance();
+	}
+
 	boolean summaryInstance() {
 
 		return summaryInstance;
@@ -112,7 +120,7 @@ class InstanceTree extends GActionTree {
 
 	boolean instanceSubSection() {
 
-		return instanceSubSection;
+		return !instantiator.getGroup().groupRootType(rootNode.getRootFrame().getType());
 	}
 
 	boolean viewOnly() {
@@ -130,11 +138,6 @@ class InstanceTree extends GActionTree {
 		return displayMode;
 	}
 
-	Instantiator getInstantiator() {
-
-		return instantiator;
-	}
-
 	boolean updatingTree() {
 
 		return updatingTree;
@@ -150,10 +153,5 @@ class InstanceTree extends GActionTree {
 
 		updatingTree = false;
 		endCompoundUpdate();
-	}
-
-	private boolean instanceSubSection(IFrame rootFrame) {
-
-		return !instantiator.getGroup().groupRootType(rootFrame.getType());
 	}
 }

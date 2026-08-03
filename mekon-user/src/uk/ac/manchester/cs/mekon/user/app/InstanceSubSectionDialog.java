@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceSubSectionDialog extends InstanceTreeDialog {
+class InstanceSubSectionDialog extends InstanceTreeEditDialog {
 
 	static private final long serialVersionUID = -1;
 

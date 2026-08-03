@@ -24,7 +24,6 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import java.util.*;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import javax.swing.*;
@@ -35,7 +34,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class InstanceTreeDialog extends GDialog {
+abstract class InstanceTreeDialog extends GDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -47,7 +46,7 @@ class InstanceTreeDialog extends GDialog {
 
 	static private final int FRAME_WIDTH = 600;
 
-	static String createTitle(Instantiator instantiator, String suffix) {
+	static private String createTitle(Instantiator instantiator, String suffix) {
 
 		String type = getTypeLabel(instantiator);
 		String function = getFunctionLabel(instantiator);
@@ -73,64 +72,8 @@ class InstanceTreeDialog extends GDialog {
 		return instantiator.queryInstance() ? QUERY_FUNCTION_LABEL : ASSERTION_FUNCTION_LABEL;
 	}
 
-	private Instantiator instantiator;
 	private InstanceTree tree = null;
-
-	private InstanceEditMode editMode = InstanceEditMode.FULL;
-	private List<EditButton> editButtons = new ArrayList<EditButton>();
-
-	abstract class EditListener extends GTreeListener {
-
-		protected void onNodeAdded(GNode node) {
-
-			onTreeEdited();
-		}
-
-		protected void onNodeRemoved(GNode node) {
-
-			onTreeEdited();
-		}
-
-		abstract void onTreeEdited();
-	}
-
-	abstract class EditButton extends GButton {
-
-		static private final long serialVersionUID = -1;
-
-		EditButton(String label) {
-
-			super(label);
-
-			editButtons.add(this);
-			updateEnabling();
-		}
-
-		void updateEnabling() {
-
-			setEnabled(enableButton());
-		}
-
-		boolean enableButton() {
-
-			return !viewOnly();
-		}
-	}
-
-	private class ModeSelector extends InstanceDisplayModeSelector {
-
-		static private final long serialVersionUID = -1;
-
-		ModeSelector() {
-
-			super(tree, getSelectableDisplayModes());
-		}
-
-		void onModeUpdate() {
-
-			updateEditButtonEnabling();
-		}
-	}
+	private Instantiator instantiator;
 
 	public Dimension getPreferredSize() {
 
@@ -154,19 +97,14 @@ class InstanceTreeDialog extends GDialog {
 		tree = new InstanceTree(instantiator, rootFrame, summaryInstance, startMode);
 	}
 
-	void setEditMode(InstanceEditMode editMode) {
-
-		this.editMode = editMode;
-	}
-
-	void addEditListener(EditListener editListener) {
-
-		tree.addTreeListener(editListener);
-	}
-
 	void display() {
 
 		display(createDisplay());
+	}
+
+	InstanceTree getTree() {
+
+		return tree;
 	}
 
 	Instantiator getInstantiator() {
@@ -179,37 +117,17 @@ class InstanceTreeDialog extends GDialog {
 		return instantiator.getGroup();
 	}
 
-	InstanceTree getTree() {
+	boolean queryInstance() {
 
-		return tree;
+		return instantiator.queryInstance();
 	}
 
-	InstanceDisplayMode getDisplayMode() {
-
-		return tree.getDisplayMode();
-	}
-
-	InstanceEditMode getEditMode() {
-
-		return editMode;
-	}
-
-	boolean fixedDisplayMode() {
-
-		return getSelectableDisplayModes().size() == 1;
-	}
-
-	boolean viewOnly() {
-
-		return tree.viewOnly();
-	}
-
-	ControlsPanel checkCreateControlsPanel() {
+	JPanel checkCreateHeaderPanel() {
 
 		return null;
 	}
 
-	GButton checkCreateAlternativeViewButton() {
+	ControlsPanel checkCreateControlsPanel() {
 
 		return null;
 	}
@@ -234,58 +152,6 @@ class InstanceTreeDialog extends GDialog {
 		}
 
 		return panel;
-	}
-
-	private JPanel checkCreateHeaderPanel() {
-
-		ModeSelector modeSelector = fixedDisplayMode() ? null : new ModeSelector();
-		GButton altViewButton = checkCreateAlternativeViewButton();
-
-		if (modeSelector == null && altViewButton == null) {
-
-			return null;
-		}
-
-		JPanel panel = new JPanel(new BorderLayout());
-
-		if (modeSelector != null) {
-
-			panel.add(modeSelector, BorderLayout.WEST);
-		}
-
-		if (altViewButton != null) {
-
-			panel.add(altViewButton, BorderLayout.EAST);
-		}
-
-		return panel;
-	}
-
-	private List<InstanceDisplayMode> getSelectableDisplayModes() {
-
-		List<InstanceDisplayMode> modes = new ArrayList<InstanceDisplayMode>();
-
-		if (editMode == InstanceEditMode.FULL) {
-
-			modes.add(InstanceDisplayMode.EDIT);
-		}
-
-		modes.add(InstanceDisplayMode.VIEW);
-
-		if (instantiator.queryInstance()) {
-
-			modes.add(InstanceDisplayMode.SEMANTICS);
-		}
-
-		return modes;
-	}
-
-	private void updateEditButtonEnabling() {
-
-		for (EditButton editButton : editButtons) {
-
-			editButton.updateEnabling();
-		}
 	}
 
 	private int getPreferredHeight() {

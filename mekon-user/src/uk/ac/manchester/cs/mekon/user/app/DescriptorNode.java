@@ -34,6 +34,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class DescriptorNode extends InstanceNode {
 
+	private InstanceTree tree;
 	private Descriptor descriptor;
 
 	private GNodeAction action;
@@ -62,7 +63,7 @@ class DescriptorNode extends InstanceNode {
 
 			if (editor.performEditAction()) {
 
-				getInstanceTree().updateAllNodeDisplays();
+				tree.updateAllNodeDisplays();
 			}
 		}
 	}
@@ -89,6 +90,7 @@ class DescriptorNode extends InstanceNode {
 
 		super(tree);
 
+		this.tree = tree;
 		this.descriptor = descriptor;
 
 		action = createAction();
@@ -97,7 +99,14 @@ class DescriptorNode extends InstanceNode {
 
 	void performViewAction() {
 
-		InstanceSubSectionHandler.checkDisplayForView(getInstanceTree(), descriptor);
+		if (descriptor.hasInstanceRefValue()) {
+
+			displayInstanceRefValue((IFrame)descriptor.getValue());
+		}
+		else {
+
+			InstanceSubSectionHandler.checkDisplayForView(tree, descriptor);
+		}
 	}
 
 	Descriptor getDescriptor() {
@@ -112,6 +121,11 @@ class DescriptorNode extends InstanceNode {
 
 	private DescriptorEditor createEditor() {
 
-		return new DescriptorEditor(getInstanceTree(), descriptor);
+		return new DescriptorEditor(tree, descriptor);
+	}
+
+	private void displayInstanceRefValue(IFrame refFrame) {
+
+		new InstanceRefHandler(tree, refFrame).displayRefValue();
 	}
 }

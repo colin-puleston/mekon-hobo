@@ -39,11 +39,11 @@ class InstanceDisplayOps {
 	private InstanceGroup group;
 	private InstanceSubGroup subGroup;
 
-	private abstract class InstanceDisplayer {
+	private abstract class InstanceEditDisplayer {
 
 		private CIdentity storeId;
 
-		InstanceDisplayer(CIdentity storeId) {
+		InstanceEditDisplayer(CIdentity storeId) {
 
 			this.storeId = storeId;
 		}
@@ -94,9 +94,9 @@ class InstanceDisplayOps {
 		}
 	}
 
-	private class CreatedInstanceDisplayer extends InstanceDisplayer {
+	private class CreatedInstanceEditDisplayer extends InstanceEditDisplayer {
 
-		CreatedInstanceDisplayer(CIdentity storeId) {
+		CreatedInstanceEditDisplayer(CIdentity storeId) {
 
 			super(storeId);
 		}
@@ -112,9 +112,9 @@ class InstanceDisplayOps {
 		}
 	}
 
-	private class LoadedInstanceDisplayer extends InstanceDisplayer {
+	private class LoadedInstanceEditDisplayer extends InstanceEditDisplayer {
 
-		LoadedInstanceDisplayer(CIdentity storeId) {
+		LoadedInstanceEditDisplayer(CIdentity storeId) {
 
 			super(storeId);
 		}
@@ -123,16 +123,9 @@ class InstanceDisplayOps {
 
 			return InstanceDisplayMode.VIEW;
 		}
-
-		InstanceEditMode getEditMode(Instantiator instantiator) {
-
-			return instantiator.editableInstance()
-					? InstanceEditMode.FULL
-					: InstanceEditMode.NONE;
-		}
 	}
 
-	private class ExecutedQueryDisplayer extends InstanceDisplayer {
+	private class ExecutedQueryDisplayer extends InstanceEditDisplayer {
 
 		private boolean copy;
 
@@ -186,7 +179,7 @@ class InstanceDisplayOps {
 				}
 				else {
 
-					new CreatedInstanceDisplayer(storeId).display(instance);
+					new CreatedInstanceEditDisplayer(storeId).display(instance);
 				}
 			}
 		}
@@ -205,8 +198,16 @@ class InstanceDisplayOps {
 
 		if (storeId != null) {
 
-			new LoadedInstanceDisplayer(storeId).display(instance);
+			new LoadedInstanceEditDisplayer(storeId).display(instance);
 		}
+	}
+
+	void loadAndDisplayViewOnly(CIdentity storeId) {
+
+		IFrame instance = subGroup.get(storeId);
+		Instantiator instantiator = new Instantiator(subGroup, storeId, instance);
+
+		new InstanceTreeViewDialog(parent, instantiator).display();
 	}
 
 	void displayExecutedQuery(CIdentity storeId, IFrame query) {

@@ -39,7 +39,7 @@ class AssertionDialog extends InstanceDialog {
 	static private final String SHOW_SUMMARY_BUTTON_LABEL = "Summary...";
 	static private final String SUMMARY_DIALOG_TITLE_SUFFIX = "SUMMARY VIEW";
 
-	private class SummaryDialog extends InstanceTreeDialog {
+	private class SummaryDialog extends InstanceTreeEditDialog {
 
 		static private final long serialVersionUID = -1;
 

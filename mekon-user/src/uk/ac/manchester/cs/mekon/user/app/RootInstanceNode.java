@@ -119,6 +119,11 @@ class RootInstanceNode extends InstanceNode {
 		childNodes = new DescriptorChildNodes(this, rootFrame);
 	}
 
+	IFrame getRootFrame() {
+
+		return rootFrame;
+	}
+
 	void updateChildList() {
 
 		childNodes.update();
