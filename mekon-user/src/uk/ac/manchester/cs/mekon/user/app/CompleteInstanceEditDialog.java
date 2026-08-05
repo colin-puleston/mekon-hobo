@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class CompleteInstanceDialog extends InstanceTreeEditDialog {
+abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -94,7 +94,7 @@ abstract class CompleteInstanceDialog extends InstanceTreeEditDialog {
 		}
 	}
 
-	CompleteInstanceDialog(JComponent parent, Instance instance, String titleSuffix) {
+	CompleteInstanceEditDialog(JComponent parent, Instance instance, String titleSuffix) {
 
 		super(parent, instance, titleSuffix);
 

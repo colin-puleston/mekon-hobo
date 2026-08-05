@@ -48,7 +48,7 @@ class InstanceSubSectionHandler {
 
 		boolean display() {
 
-			InstanceSubSectionDialog dialog = createDialog();
+			InstanceSubSectionEditDialog dialog = createDialog();
 
 			dialog.display();
 
@@ -65,9 +65,9 @@ class InstanceSubSectionHandler {
 			return true;
 		}
 
-		private InstanceSubSectionDialog createDialog() {
+		private InstanceSubSectionEditDialog createDialog() {
 
-			return new InstanceSubSectionDialog(tree, rootFrame, replacableValue());
+			return new InstanceSubSectionEditDialog(tree, rootFrame, replacableValue());
 		}
 
 		private boolean replacableValue() {
@@ -136,7 +136,7 @@ class InstanceSubSectionHandler {
 
 		if (!getCustomiser(tree).performStructuredValueViewAction(rootFrame)) {
 
-			new InstanceSubSectionDialog(tree, rootFrame, false).display();
+			new InstanceSubSectionEditDialog(tree, rootFrame, false).display();
 		}
 	}
 

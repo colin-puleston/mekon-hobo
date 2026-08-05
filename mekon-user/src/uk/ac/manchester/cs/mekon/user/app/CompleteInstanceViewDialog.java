@@ -29,11 +29,11 @@ import javax.swing.*;
 /**
  * @author Colin Puleston
  */
-class InstanceTreeViewDialog extends InstanceTreeDialog {
+class CompleteInstanceViewDialog extends InstanceTreeDialog {
 
 	static private final long serialVersionUID = -1;
 
-	InstanceTreeViewDialog(JComponent parent, Instance instance) {
+	CompleteInstanceViewDialog(JComponent parent, Instance instance) {
 
 		super(parent, instance, null);
 

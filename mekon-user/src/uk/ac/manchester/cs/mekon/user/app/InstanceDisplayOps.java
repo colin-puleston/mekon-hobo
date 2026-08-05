@@ -51,7 +51,7 @@ class InstanceDisplayOps {
 		CIdentity display(IFrame rootFrame) {
 
 			Instance instance = createInstance(rootFrame);
-			CompleteInstanceDialog dialog = createDialog(instance);
+			CompleteInstanceEditDialog dialog = createDialog(instance);
 
 			dialog.setEditMode(getEditMode(instance));
 			dialog.display();
@@ -71,7 +71,7 @@ class InstanceDisplayOps {
 			return InstanceEditMode.NONE;
 		}
 
-		private CompleteInstanceDialog createDialog(Instance instance) {
+		private CompleteInstanceEditDialog createDialog(Instance instance) {
 
 			if (assertion()) {
 
@@ -205,7 +205,7 @@ class InstanceDisplayOps {
 		IFrame rootFrame = subGroup.get(storeId);
 		Instance instance = new Instance(subGroup, storeId, rootFrame);
 
-		new InstanceTreeViewDialog(parent, instance).display();
+		new CompleteInstanceViewDialog(parent, instance).display();
 	}
 
 	void displayExecutedQuery(CIdentity storeId, IFrame query) {

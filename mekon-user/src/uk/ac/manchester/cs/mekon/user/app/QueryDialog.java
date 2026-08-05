@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class QueryDialog extends CompleteInstanceDialog {
+class QueryDialog extends CompleteInstanceEditDialog {
 
 	static private final long serialVersionUID = -1;
 
