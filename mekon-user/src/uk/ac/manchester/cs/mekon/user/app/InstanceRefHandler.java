@@ -62,6 +62,6 @@ class InstanceRefHandler {
 
 	private Controller getController() {
 
-		return parentTree.getInstantiator().getController();
+		return parentTree.getInstance().getController();
 	}
 }

@@ -33,9 +33,9 @@ class InstanceTreeViewDialog extends InstanceTreeDialog {
 
 	static private final long serialVersionUID = -1;
 
-	InstanceTreeViewDialog(JComponent parent, Instantiator instantiator) {
+	InstanceTreeViewDialog(JComponent parent, Instance instance) {
 
-		super(parent, instantiator, null);
+		super(parent, instance, null);
 
 		initialise(false, InstanceDisplayMode.VIEW);
 	}

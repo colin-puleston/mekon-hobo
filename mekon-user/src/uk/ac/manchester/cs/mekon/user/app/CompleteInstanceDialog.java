@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-abstract class InstanceDialog extends InstanceTreeEditDialog {
+abstract class CompleteInstanceDialog extends InstanceTreeEditDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -55,7 +55,7 @@ abstract class InstanceDialog extends InstanceTreeEditDialog {
 		return STORE_AS_DEFAULT_BUTTON_LABEL;
 	}
 
-	private Instantiator instantiator;
+	private Instance instance;
 
 	private CIdentity storeId;
 	private boolean instanceStored = false;
@@ -94,23 +94,23 @@ abstract class InstanceDialog extends InstanceTreeEditDialog {
 		}
 	}
 
-	InstanceDialog(JComponent parent, Instantiator instantiator, String titleSuffix) {
+	CompleteInstanceDialog(JComponent parent, Instance instance, String titleSuffix) {
 
-		super(parent, instantiator, titleSuffix);
+		super(parent, instance, titleSuffix);
 
-		this.instantiator = instantiator;
+		this.instance = instance;
 
-		storeId = instantiator.getStoreId();
+		storeId = instance.getStoreId();
 	}
 
 	InstanceSubGroup getDefaultSubGroup() {
 
-		return instantiator.getSubGroup();
+		return instance.getSubGroup();
 	}
 
-	IFrame getInstance() {
+	IFrame getRootFrame() {
 
-		return instantiator.getInstance();
+		return instance.getRootFrame();
 	}
 
 	CIdentity getStoreId() {
@@ -194,7 +194,7 @@ abstract class InstanceDialog extends InstanceTreeEditDialog {
 
 	private CIdentity checkObtainNewStoreId(InstanceSubGroup targetSubGroup) {
 
-		return createDisplayOps(targetSubGroup).checkObtainNewStoreId(getInstance().getType());
+		return createDisplayOps(targetSubGroup).checkObtainNewStoreId(getRootFrame().getType());
 	}
 
 	private InstanceDisplayOps createDisplayOps(InstanceSubGroup targetSubGroup) {

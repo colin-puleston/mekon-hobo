@@ -46,11 +46,11 @@ abstract class InstanceTreeDialog extends GDialog {
 
 	static private final int FRAME_WIDTH = 600;
 
-	static private String createTitle(Instantiator instantiator, String suffix) {
+	static private String createTitle(Instance instance, String suffix) {
 
-		String type = getTypeLabel(instantiator);
-		String function = getFunctionLabel(instantiator);
-		String storeId = instantiator.getStoreId().getLabel();
+		String type = getTypeLabel(instance);
+		String function = getFunctionLabel(instance);
+		String storeId = instance.getStoreId().getLabel();
 
 		String title = String.format(TITLE_FORMAT, type, function, storeId);
 
@@ -62,39 +62,39 @@ abstract class InstanceTreeDialog extends GDialog {
 		return String.format(SUFFIXED_TITLE_FORMAT, title, suffix);
 	}
 
-	static private String getTypeLabel(Instantiator instantiator) {
+	static private String getTypeLabel(Instance instance) {
 
-		return instantiator.getInstance().getType().getIdentity().getLabel();
+		return instance.getRootFrame().getType().getIdentity().getLabel();
 	}
 
-	static private String getFunctionLabel(Instantiator instantiator) {
+	static private String getFunctionLabel(Instance instance) {
 
-		return instantiator.queryInstance() ? QUERY_FUNCTION_LABEL : ASSERTION_FUNCTION_LABEL;
+		return instance.queryInstance() ? QUERY_FUNCTION_LABEL : ASSERTION_FUNCTION_LABEL;
 	}
 
 	private InstanceTree tree = null;
-	private Instantiator instantiator;
+	private Instance instance;
 
 	public Dimension getPreferredSize() {
 
 		return new Dimension(FRAME_WIDTH, getPreferredHeight());
 	}
 
-	InstanceTreeDialog(JComponent parent, Instantiator instantiator, String titleSuffix) {
+	InstanceTreeDialog(JComponent parent, Instance instance, String titleSuffix) {
 
-		super(parent, createTitle(instantiator, titleSuffix), true);
+		super(parent, createTitle(instance, titleSuffix), true);
 
-		this.instantiator = instantiator;
+		this.instance = instance;
 	}
 
 	void initialise(boolean summaryInstance, InstanceDisplayMode startMode) {
 
-		initialise(instantiator.getInstance(), summaryInstance, startMode);
+		initialise(instance.getRootFrame(), summaryInstance, startMode);
 	}
 
-	void initialise(IFrame rootFrame, boolean summaryInstance, InstanceDisplayMode startMode) {
+	void initialise(IFrame displayRootFrame, boolean summaryInstance, InstanceDisplayMode startMode) {
 
-		tree = new InstanceTree(instantiator, rootFrame, summaryInstance, startMode);
+		tree = new InstanceTree(instance, displayRootFrame, summaryInstance, startMode);
 	}
 
 	void display() {
@@ -107,19 +107,19 @@ abstract class InstanceTreeDialog extends GDialog {
 		return tree;
 	}
 
-	Instantiator getInstantiator() {
+	Instance getInstance() {
 
-		return instantiator;
+		return instance;
 	}
 
 	InstanceGroup getGroup() {
 
-		return instantiator.getGroup();
+		return instance.getGroup();
 	}
 
 	boolean queryInstance() {
 
-		return instantiator.queryInstance();
+		return instance.queryInstance();
 	}
 
 	JPanel checkCreateHeaderPanel() {

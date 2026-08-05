@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.mekon.user.util.gui.inputter.*;
 class DescriptorEditor {
 
 	private InstanceTree instanceTree;
-	private Instantiator instantiator;
+	private Instance instance;
 
 	private Descriptor descriptor;
 	private ISlot slot;
@@ -153,7 +153,7 @@ class DescriptorEditor {
 
 			public IValue getValue() {
 
-				return instantiator.instantiate(valueType);
+				return instance.instantiate(valueType);
 			}
 		}
 
@@ -198,7 +198,7 @@ class DescriptorEditor {
 
 		Inputter<CFrame> createInputter(boolean canClear) {
 
-			boolean query = instantiator.queryInstance();
+			boolean query = instance.queryInstance();
 			Customiser cust = getCustomiser();
 
 			if (abstractEditableSlot()) {
@@ -224,7 +224,7 @@ class DescriptorEditor {
 
 		IFrame inputToValue(CFrame input) {
 
-			return instantiator.instantiate(input);
+			return instance.instantiate(input);
 		}
 	}
 
@@ -255,7 +255,7 @@ class DescriptorEditor {
 
 			refSelector = new InstanceRefSelector(
 									instanceTree,
-									instantiator,
+									instance,
 									valueType,
 									canClear,
 									abstractEditableSlot());
@@ -299,7 +299,7 @@ class DescriptorEditor {
 
 			if (fixedValueType(valueType)) {
 
-				addValue(instantiator.instantiate(valueType));
+				addValue(instance.instantiate(valueType));
 
 				return true;
 			}
@@ -313,7 +313,7 @@ class DescriptorEditor {
 
 			if (refId != null) {
 
-				addValue(instantiator.instantiateRef(valueType, refId));
+				addValue(instance.instantiateRef(valueType, refId));
 
 				return true;
 			}
@@ -325,7 +325,7 @@ class DescriptorEditor {
 
 			InstanceDisplayOps displayOps = createInstanceDisplayOps();
 
-			return displayOps.checkCreateAndDisplay(valueType, instantiator.getStoreId());
+			return displayOps.checkCreateAndDisplay(valueType, instance.getStoreId());
 		}
 
 		private InstanceDisplayOps createInstanceDisplayOps() {
@@ -430,7 +430,7 @@ class DescriptorEditor {
 		this.instanceTree = instanceTree;
 		this.descriptor = descriptor;
 
-		instantiator = instanceTree.getInstantiator();
+		instance = instanceTree.getInstance();
 		slot = descriptor.getSlot();
 
 		checkSetCustomTypeHandler();
@@ -503,11 +503,11 @@ class DescriptorEditor {
 
 	private Customiser getCustomiser() {
 
-		return instantiator.getCustomiser();
+		return instance.getCustomiser();
 	}
 
 	private Controller getController() {
 
-		return instantiator.getController();
+		return instance.getController();
 	}
 }

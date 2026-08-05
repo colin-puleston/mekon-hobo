@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class AssertionDialog extends InstanceDialog {
+class AssertionDialog extends CompleteInstanceDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -43,9 +43,9 @@ class AssertionDialog extends InstanceDialog {
 
 		static private final long serialVersionUID = -1;
 
-		SummaryDialog(JComponent parent, Instantiator instantiator) {
+		SummaryDialog(JComponent parent, Instance instance) {
 
-			super(parent, instantiator, SUMMARY_DIALOG_TITLE_SUFFIX);
+			super(parent, instance, SUMMARY_DIALOG_TITLE_SUFFIX);
 
 			initialise(getRootSummaryFrame(), true, InstanceDisplayMode.VIEW);
 		}
@@ -62,7 +62,7 @@ class AssertionDialog extends InstanceDialog {
 
 		protected void doButtonThing() {
 
-			new SummaryDialog(getTree(), getInstantiator()).display();
+			new SummaryDialog(getTree(), getInstance()).display();
 		}
 
 		ShowSummaryButton() {
@@ -75,10 +75,10 @@ class AssertionDialog extends InstanceDialog {
 
 	AssertionDialog(
 		JComponent parent,
-		Instantiator instantiator,
+		Instance instance,
 		InstanceDisplayMode startMode) {
 
-		super(parent, instantiator, null);
+		super(parent, instance, null);
 
 		initialise(false, startMode);
 	}
@@ -90,7 +90,7 @@ class AssertionDialog extends InstanceDialog {
 
 	IFrame resolveInstanceForStoring() {
 
-		return getInstance();
+		return getRootFrame();
 	}
 
 	boolean disposeOnStoring() {
@@ -100,11 +100,11 @@ class AssertionDialog extends InstanceDialog {
 
 	private IFrame getRootSummaryFrame() {
 
-		return getSummariser().toSummary(getInstance());
+		return getSummariser().toSummary(getRootFrame());
 	}
 
 	private InstanceSummariser getSummariser() {
 
-		return getInstantiator().getCustomiser().getInstanceSummariser();
+		return getInstance().getCustomiser().getInstanceSummariser();
 	}
 }

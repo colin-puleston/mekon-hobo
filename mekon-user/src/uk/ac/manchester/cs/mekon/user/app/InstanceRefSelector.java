@@ -40,7 +40,7 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 	static private final String CREATE_LABEL_FORMAT = "Create %s...";
 	static private final String DESCRIBE_LABEL_FORMAT = "Describe %s...";
 
-	private Instantiator instantiator;
+	private Instance instance;
 	private CFrame type;
 
 	private boolean alternativeEditSelected = false;
@@ -66,14 +66,14 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	InstanceRefSelector(
 		JComponent parent,
-		Instantiator instantiator,
+		Instance instance,
 		CFrame type,
 		boolean canClear,
 		boolean abstractEdit) {
 
 		super(parent, getTypeName(type), canClear);
 
-		this.instantiator = instantiator;
+		this.instance = instance;
 		this.type = type;
 
 		addExtraControlButton(new AlternativeEditButton(abstractEdit));
@@ -91,7 +91,7 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	private InstanceRefSelectionOptions createOptions() {
 
-		return new InstanceRefSelectionOptions(this, instantiator, type);
+		return new InstanceRefSelectionOptions(this, instance, type);
 	}
 
 	private String getAltEditLabel(boolean abstractEdit) {
@@ -108,7 +108,7 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	private Color getAltEditColour() {
 
-		if (instantiator.assertionInstance()) {
+		if (instance.assertionInstance()) {
 
 			return MekonAppIcons.ASSERT_CLR;
 		}
@@ -123,6 +123,6 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 	private InstanceSummariser getSummariser() {
 
-		return instantiator.getCustomiser().getInstanceSummariser();
+		return instance.getCustomiser().getInstanceSummariser();
 	}
 }

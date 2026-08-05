@@ -37,7 +37,7 @@ class InstanceTree extends GActionTree {
 
 	static private final long serialVersionUID = -1;
 
-	private Instantiator instantiator;
+	private Instance instance;
 	private RootInstanceNode rootNode;
 
 	private boolean summaryInstance;
@@ -72,16 +72,16 @@ class InstanceTree extends GActionTree {
 	}
 
 	InstanceTree(
-		Instantiator instantiator,
-		IFrame rootFrame,
+		Instance instance,
+		IFrame displayRootFrame,
 		boolean summaryInstance,
 		InstanceDisplayMode startDisplayMode) {
 
-		this.instantiator = instantiator;
+		this.instance = instance;
 		this.summaryInstance = summaryInstance;
 
 		displayMode = startDisplayMode;
-		rootNode = new RootInstanceNode(this, rootFrame);
+		rootNode = new RootInstanceNode(this, displayRootFrame);
 
 		setRootVisible(true);
 		setShowsRootHandles(false);
@@ -103,14 +103,14 @@ class InstanceTree extends GActionTree {
 		}
 	}
 
-	Instantiator getInstantiator() {
+	Instance getInstance() {
 
-		return instantiator;
+		return instance;
 	}
 
 	boolean queryInstance() {
 
-		return getInstantiator().queryInstance();
+		return getInstance().queryInstance();
 	}
 
 	boolean summaryInstance() {
@@ -120,7 +120,7 @@ class InstanceTree extends GActionTree {
 
 	boolean instanceSubSection() {
 
-		return !instantiator.getGroup().groupRootType(rootNode.getRootFrame().getType());
+		return !instance.getGroup().groupRootType(rootNode.getRootFrame().getType());
 	}
 
 	boolean viewOnly() {

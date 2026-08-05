@@ -242,12 +242,12 @@ class DescriptorChildNodes {
 
 	private FrameDescriptors createFrameDescriptors() {
 
-		return new FrameDescriptors(getInstantiator(), container, viewOnly());
+		return new FrameDescriptors(getInstance(), container, viewOnly());
 	}
 
-	private Instantiator getInstantiator() {
+	private Instance getInstance() {
 
-		return parentNode.getInstantiator();
+		return parentNode.getInstance();
 	}
 
 	private boolean viewOnly() {

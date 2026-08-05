@@ -37,7 +37,7 @@ class Descriptor {
 
 	static private final String NO_EFFECTIVE_VALUE_DEFAULT_LABEL = " - ";
 
-	private Instantiator instantiator;
+	private Instance instance;
 
 	private ISlot slot;
 	private CValue<?> valueType;
@@ -58,17 +58,17 @@ class Descriptor {
 		return slot.hashCode() + valueType.hashCode() + getStateMatcher().hashCode();
 	}
 
-	Descriptor(Instantiator instantiator, ISlot slot) {
+	Descriptor(Instance instance, ISlot slot) {
 
-		this.instantiator = instantiator;
+		this.instance = instance;
 		this.slot = slot;
 
 		valueType = slot.getValueType();
 	}
 
-	Descriptor(Instantiator instantiator, ISlot slot, IValue value) {
+	Descriptor(Instance instance, ISlot slot, IValue value) {
 
-		this(instantiator, slot);
+		this(instance, slot);
 
 		this.value = value;
 
@@ -82,7 +82,7 @@ class Descriptor {
 
 	boolean instanceGroupLink() {
 
-		return instantiator.instanceGroupLinkSlot(slot);
+		return instance.instanceGroupLinkSlot(slot);
 	}
 
 	boolean hasValueType(Class<? extends CValue<?>> testType) {
@@ -293,6 +293,6 @@ class Descriptor {
 
 	private Customiser getCustomiser() {
 
-		return instantiator.getCustomiser();
+		return instance.getCustomiser();
 	}
 }

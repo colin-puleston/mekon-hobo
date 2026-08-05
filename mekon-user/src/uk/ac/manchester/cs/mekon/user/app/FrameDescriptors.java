@@ -38,13 +38,13 @@ class FrameDescriptors {
 
 	private class Initialiser {
 
-		private Instantiator instantiator;
+		private Instance instance;
 		private IFrame frame;
 		private boolean viewOnly;
 
-		Initialiser(Instantiator instantiator, IFrame frame, boolean viewOnly) {
+		Initialiser(Instance instance, IFrame frame, boolean viewOnly) {
 
-			this.instantiator = instantiator;
+			this.instance = instance;
 			this.frame = frame;
 			this.viewOnly = viewOnly;
 
@@ -75,13 +75,13 @@ class FrameDescriptors {
 
 		private SlotDescriptors createSlotDescriptors(ISlot slot) {
 
-			return new SlotDescriptors(instantiator, slot, viewOnly);
+			return new SlotDescriptors(instance, slot, viewOnly);
 		}
 	}
 
-	FrameDescriptors(Instantiator instantiator, IFrame frame, boolean viewOnly) {
+	FrameDescriptors(Instance instance, IFrame frame, boolean viewOnly) {
 
-		new Initialiser(instantiator, frame, viewOnly);
+		new Initialiser(instance, frame, viewOnly);
 	}
 
 	boolean anyDescriptors() {

@@ -94,12 +94,9 @@ class InstanceTreeEditDialog extends InstanceTreeDialog {
 		}
 	}
 
-	InstanceTreeEditDialog(
-		JComponent parent,
-		Instantiator instantiator,
-		String titleSuffix) {
+	InstanceTreeEditDialog(JComponent parent, Instance instance, String titleSuffix) {
 
-		super(parent, instantiator, titleSuffix);
+		super(parent, instance, titleSuffix);
 	}
 
 	void setEditMode(InstanceEditMode editMode) {

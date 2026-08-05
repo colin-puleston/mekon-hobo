@@ -34,7 +34,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
-	private Instantiator instantiator;
+	private Instance instance;
 	private CFrame selectionType;
 
 	private InstanceIdsList refIdOptionsList;
@@ -57,12 +57,12 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	InstanceRefSelectionOptions(
 		EntitySelector<IFrame> selector,
-		Instantiator instantiator,
+		Instance instance,
 		CFrame selectionType) {
 
 		super(selector);
 
-		this.instantiator = instantiator;
+		this.instance = instance;
 		this.selectionType = selectionType;
 
 		refIdOptionsList = createOptionsList();
@@ -90,7 +90,7 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private InstanceGroup getGroup(CFrame standardType) {
 
-		return instantiator.getController().getInstanceGroup(standardType);
+		return instance.getController().getInstanceGroup(standardType);
 	}
 
 	private CFrame resolveStandardType() {
@@ -107,11 +107,11 @@ class InstanceRefSelectionOptions extends EntitySelectionOptions<IFrame> {
 
 	private InstanceSummariser getSummariser() {
 
-		return instantiator.getCustomiser().getInstanceSummariser();
+		return instance.getCustomiser().getInstanceSummariser();
 	}
 
 	private IFrame createRef(CIdentity refId) {
 
-		return instantiator.instantiateRef(selectionType, refId);
+		return instance.instantiateRef(selectionType, refId);
 	}
 }

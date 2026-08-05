@@ -40,12 +40,12 @@ class SlotDescriptors {
 
 	private class Initialiser {
 
-		private Instantiator instantiator;
+		private Instance instance;
 		private boolean viewOnly;
 
-		Initialiser(Instantiator instantiator, boolean viewOnly) {
+		Initialiser(Instance instance, boolean viewOnly) {
 
-			this.instantiator = instantiator;
+			this.instance = instance;
 			this.viewOnly = viewOnly;
 
 			populatedMultiValueSlot = multiValueSlot() && slotHasValues();
@@ -58,7 +58,7 @@ class SlotDescriptors {
 
 			for (IValue value : slot.getValues().asList()) {
 
-				Descriptor descriptor = new Descriptor(instantiator, slot, value);
+				Descriptor descriptor = new Descriptor(instance, slot, value);
 
 				if (!viewOnly || descriptor.anyEffectiveValues()) {
 
@@ -71,7 +71,7 @@ class SlotDescriptors {
 
 			if (valueEntryDescriptorRequired()) {
 
-				descriptors.add(new Descriptor(instantiator, slot));
+				descriptors.add(new Descriptor(instance, slot));
 			}
 		}
 
@@ -139,7 +139,7 @@ class SlotDescriptors {
 
 		private boolean structuredValues(CFrame valueType) {
 
-			return !instantiator.instantiate(valueType).getSlots().isEmpty();
+			return !instance.instantiate(valueType).getSlots().isEmpty();
 		}
 
 		private boolean slotHasValues() {
@@ -158,11 +158,11 @@ class SlotDescriptors {
 		return populatedMultiValueSlot ? slot.hashCode() : descriptors.hashCode();
 	}
 
-	SlotDescriptors(Instantiator instantiator, ISlot slot, boolean viewOnly) {
+	SlotDescriptors(Instance instance, ISlot slot, boolean viewOnly) {
 
 		this.slot = slot;
 
-		new Initialiser(instantiator, viewOnly);
+		new Initialiser(instance, viewOnly);
 	}
 
 	ISlot getSlot() {

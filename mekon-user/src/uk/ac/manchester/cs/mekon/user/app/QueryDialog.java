@@ -32,7 +32,7 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
 /**
  * @author Colin Puleston
  */
-class QueryDialog extends InstanceDialog {
+class QueryDialog extends CompleteInstanceDialog {
 
 	static private final long serialVersionUID = -1;
 
@@ -44,19 +44,19 @@ class QueryDialog extends InstanceDialog {
 
 	static private class Creator {
 
-		private Instantiator instantiator;
+		private Instance instance;
 		private InstanceSummariser summariser;
 
 		private IFrame rootFrame;
 
-		Creator(Instantiator instantiator) {
+		Creator(Instance instance) {
 
-			this(instantiator, null);
+			this(instance, null);
 		}
 
-		Creator(Instantiator instantiator, IFrame requiredRootFrame) {
+		Creator(Instance instance, IFrame requiredRootFrame) {
 
-			this.instantiator = instantiator;
+			this.instance = instance;
 
 			summariser = getSummariser();
 			rootFrame = resolveRootFrame(requiredRootFrame);
@@ -66,7 +66,7 @@ class QueryDialog extends InstanceDialog {
 
 			return new QueryDialog(
 							parent,
-							instantiator,
+							instance,
 							summariser,
 							rootFrame,
 							startMode,
@@ -80,7 +80,7 @@ class QueryDialog extends InstanceDialog {
 				return requiredRoot;
 			}
 
-			IFrame expandedRoot = instantiator.getInstance();
+			IFrame expandedRoot = instance.getRootFrame();
 
 			if (summariesEnabled() && summariser.reversiblySummarisable(expandedRoot)) {
 
@@ -97,26 +97,26 @@ class QueryDialog extends InstanceDialog {
 
 		private boolean displayCompressed() {
 
-			return rootFrame != instantiator.getInstance();
+			return rootFrame != instance.getRootFrame();
 		}
 
 		private boolean summariesEnabled() {
 
-			return instantiator.getGroup().summariesEnabled();
+			return instance.getGroup().summariesEnabled();
 		}
 
 		private InstanceSummariser getSummariser() {
 
-			return instantiator.getCustomiser().getInstanceSummariser();
+			return instance.getCustomiser().getInstanceSummariser();
 		}
 	}
 
 	static QueryDialog create(
 						JComponent parent,
-						Instantiator instantiator,
+						Instance instance,
 						InstanceDisplayMode startMode) {
 
-		return new Creator(instantiator).create(parent, startMode);
+		return new Creator(instance).create(parent, startMode);
 	}
 
 	private JComponent parent;
@@ -232,40 +232,40 @@ class QueryDialog extends InstanceDialog {
 
 	private QueryDialog(
 				JComponent parent,
-				Instantiator instantiator,
+				Instance instance,
 				InstanceSummariser summariser,
 				IFrame rootFrame,
 				InstanceDisplayMode startMode,
 				String titleSuffix) {
 
-		super(parent, instantiator, titleSuffix);
+		super(parent, instance, titleSuffix);
 
 		this.parent = parent;
 		this.summariser = summariser;
 		this.rootFrame = rootFrame;
 
-		queryExecutions = instantiator.getGroup().getQueryExecutions();
+		queryExecutions = instance.getGroup().getQueryExecutions();
 
 		initialise(rootFrame, displayingCompressed(), startMode);
 	}
 
 	private void switchToCompressedDisplay() {
 
-		switchDisplay(getInstantiator(), compressExpanded());
+		switchDisplay(getInstance(), compressExpanded());
 	}
 
 	private void switchToExpandedDisplay() {
 
 		IFrame expanded = expandCompressed();
 
-		switchDisplay(getInstantiator().deriveInstantiator(expanded), expanded);
+		switchDisplay(getInstance().deriveInstance(expanded), expanded);
 	}
 
-	private void switchDisplay(Instantiator newInstantiator, IFrame newRootFrame) {
+	private void switchDisplay(Instance newInstance, IFrame newRootFrame) {
 
 		dispose();
 
-		Creator creator = new Creator(newInstantiator, newRootFrame);
+		Creator creator = new Creator(newInstance, newRootFrame);
 		QueryDialog switched = creator.create(parent, getDisplayMode());
 
 		switched.setEditMode(getEditMode());
@@ -301,6 +301,6 @@ class QueryDialog extends InstanceDialog {
 
 	private boolean displayingCompressed() {
 
-		return rootFrame != getInstance();
+		return rootFrame != getRootFrame();
 	}
 }

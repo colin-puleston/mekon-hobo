@@ -29,31 +29,31 @@ import uk.ac.manchester.cs.mekon.model.*;
 /**
  * @author Colin Puleston
  */
-class Instantiator {
+class Instance {
 
 	private InstanceGroup group;
 	private InstanceSubGroup subGroup;
 
 	private CIdentity storeId;
-	private IFrame instance;
+	private IFrame rootFrame;
 
-	Instantiator(InstanceSubGroup subGroup, CIdentity storeId, IFrame instance) {
+	Instance(InstanceSubGroup subGroup, CIdentity storeId, IFrame rootFrame) {
 
 		this.subGroup = subGroup;
 		this.storeId = storeId;
-		this.instance = instance;
+		this.rootFrame = rootFrame;
 
 		group = subGroup.getGroup();
 	}
 
-	Instantiator deriveInstantiator(IFrame currentInstance) {
+	Instance deriveInstance(IFrame newRootFrame) {
 
-		if (currentInstance == instance) {
+		if (newRootFrame == rootFrame) {
 
 			return this;
 		}
 
-		return new Instantiator(subGroup, storeId, currentInstance);
+		return new Instance(subGroup, storeId, newRootFrame);
 	}
 
 	Controller getController() {
@@ -81,9 +81,9 @@ class Instantiator {
 		return storeId;
 	}
 
-	IFrame getInstance() {
+	IFrame getRootFrame() {
 
-		return instance;
+		return rootFrame;
 	}
 
 	boolean editableInstance() {
@@ -103,7 +103,7 @@ class Instantiator {
 
 	IFrameFunction getFunction() {
 
-		return instance.getFunction();
+		return rootFrame.getFunction();
 	}
 
 	boolean assertionInstance() {
@@ -130,6 +130,6 @@ class Instantiator {
 
 	private boolean anyUserEditableSlots() {
 
-		return getController().anyUserEditableSlots(instance);
+		return getController().anyUserEditableSlots(rootFrame);
 	}
 }

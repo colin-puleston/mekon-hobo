@@ -48,12 +48,12 @@ class InstanceDisplayOps {
 			this.storeId = storeId;
 		}
 
-		CIdentity display(IFrame instance) {
+		CIdentity display(IFrame rootFrame) {
 
-			Instantiator instantiator = createInstantiator(instance);
-			InstanceDialog dialog = createDialog(instantiator);
+			Instance instance = createInstance(rootFrame);
+			CompleteInstanceDialog dialog = createDialog(instance);
 
-			dialog.setEditMode(getEditMode(instantiator));
+			dialog.setEditMode(getEditMode(instance));
 			dialog.display();
 
 			return dialog.instanceStored() ? dialog.getStoreId() : null;
@@ -61,9 +61,9 @@ class InstanceDisplayOps {
 
 		abstract InstanceDisplayMode startMode();
 
-		boolean fullEditMode(Instantiator instantiator) {
+		boolean fullEditMode(Instance instance) {
 
-			return !assertion() || instantiator.editableInstance();
+			return !assertion() || instance.editableInstance();
 		}
 
 		InstanceEditMode getRestrictedEditMode() {
@@ -71,26 +71,24 @@ class InstanceDisplayOps {
 			return InstanceEditMode.NONE;
 		}
 
-		private InstanceDialog createDialog(Instantiator instantiator) {
+		private CompleteInstanceDialog createDialog(Instance instance) {
 
 			if (assertion()) {
 
-				return new AssertionDialog(parent, instantiator, startMode());
+				return new AssertionDialog(parent, instance, startMode());
 			}
 
-			return QueryDialog.create(parent, instantiator, startMode());
+			return QueryDialog.create(parent, instance, startMode());
 		}
 
-		private Instantiator createInstantiator(IFrame instance) {
+		private Instance createInstance(IFrame instance) {
 
-			return new Instantiator(subGroup, storeId, instance);
+			return new Instance(subGroup, storeId, instance);
 		}
 
-		private InstanceEditMode getEditMode(Instantiator instantiator) {
+		private InstanceEditMode getEditMode(Instance instance) {
 
-			return fullEditMode(instantiator)
-					? InstanceEditMode.FULL
-					: getRestrictedEditMode();
+			return fullEditMode(instance) ? InstanceEditMode.FULL : getRestrictedEditMode();
 		}
 	}
 
@@ -141,7 +139,7 @@ class InstanceDisplayOps {
 			return InstanceDisplayMode.VIEW;
 		}
 
-		boolean fullEditMode(Instantiator instantiator) {
+		boolean fullEditMode(Instance instance) {
 
 			return copy;
 		}
@@ -204,10 +202,10 @@ class InstanceDisplayOps {
 
 	void loadAndDisplayViewOnly(CIdentity storeId) {
 
-		IFrame instance = subGroup.get(storeId);
-		Instantiator instantiator = new Instantiator(subGroup, storeId, instance);
+		IFrame rootFrame = subGroup.get(storeId);
+		Instance instance = new Instance(subGroup, storeId, rootFrame);
 
-		new InstanceTreeViewDialog(parent, instantiator).display();
+		new InstanceTreeViewDialog(parent, instance).display();
 	}
 
 	void displayExecutedQuery(CIdentity storeId, IFrame query) {

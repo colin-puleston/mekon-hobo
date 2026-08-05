@@ -94,13 +94,13 @@ class InstanceSubSectionDialog extends InstanceTreeEditDialog {
 		}
 	}
 
-	InstanceSubSectionDialog(InstanceTree parentTree, IFrame rootFrame, boolean enableReplace) {
+	InstanceSubSectionDialog(InstanceTree parentTree, IFrame subRootFrame, boolean enableReplace) {
 
-		super(parentTree, parentTree.getInstantiator(), TITLE_SUFFIX);
+		super(parentTree, parentTree.getInstance(), TITLE_SUFFIX);
 
 		this.enableReplace = enableReplace;
 
-		initialise(rootFrame, parentTree.summaryInstance(), parentTree.getDisplayMode());
+		initialise(subRootFrame, parentTree.summaryInstance(), parentTree.getDisplayMode());
 	}
 
 	boolean clearSelected() {
@@ -115,7 +115,7 @@ class InstanceSubSectionDialog extends InstanceTreeEditDialog {
 
 	ControlsPanel checkCreateControlsPanel() {
 
-		if (!getInstantiator().editableInstance()) {
+		if (!getInstance().editableInstance()) {
 
 			return null;
 		}

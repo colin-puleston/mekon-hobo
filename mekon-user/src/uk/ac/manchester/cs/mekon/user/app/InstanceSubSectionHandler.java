@@ -142,6 +142,6 @@ class InstanceSubSectionHandler {
 
 	static private Customiser getCustomiser(InstanceTree tree) {
 
-		return tree.getInstantiator().getCustomiser();
+		return tree.getInstance().getCustomiser();
 	}
 }
