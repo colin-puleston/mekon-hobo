@@ -22,7 +22,7 @@
 		-->
 		<OWLModel
 			owlFile="demo.owl"
-			reasonerFactory="rekon.owl.RekonReasonerFactory"
+			reasonerFactory="uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory"
 			indirectNumericProperty="http://mekon/demo.owl#numericValue"
 			instanceOntology="http://mekon/demo-instances.owl">
 		</OWLModel>
