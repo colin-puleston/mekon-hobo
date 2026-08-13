@@ -273,23 +273,23 @@ class InstanceDisplayOps {
 		return new AtomicFrameSelector(parent, rootType, query(), false, getCustomiser());
 	}
 
-	private CIdentity checkObtainReplacementStoreId(CIdentity replacingId) {
+	private CIdentity checkObtainReplacementStoreId(CIdentity currentId) {
 
-		return checkObtainStoreId(group.getType(replacingId), null, replacingId);
+		return checkObtainStoreId(group.getType(currentId), null, currentId);
 	}
 
-	private CIdentity checkObtainStoreId(CFrame type, CIdentity refingId, CIdentity replacingId) {
+	private CIdentity checkObtainStoreId(CFrame type, CIdentity refingId, CIdentity currentId) {
 
 		StoreIdInputter inputter = new StoreIdInputter(parent, getController(), getFunction());
 
 		if (query()) {
 
-			inputter.setInMemoryIds(getExecutedQueryIds());
+			inputter.setInMemoryQueryIds(getExecutedQueryIds());
 		}
 
-		if (replacingId != null) {
+		if (currentId != null) {
 
-			inputter.setReplacingIdValue(replacingId);
+			inputter.setCurrentIdValue(currentId);
 		}
 		else {
 

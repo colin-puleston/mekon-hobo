@@ -52,8 +52,8 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 	private Controller controller;
 	private IFrameFunction function;
 
-	private CIdentity replacingStoreId = null;
-	private Set<CIdentity> inMemoryIds = new HashSet<CIdentity>();
+	private String currentStoreName = null;
+	private Set<CIdentity> inMemoryQueryIds = new HashSet<CIdentity>();
 
 	protected String convertInputValue(String text) {
 
@@ -73,16 +73,16 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 		this.function = function;
 	}
 
-	void setInMemoryIds(Collection<CIdentity> inMemoryIds) {
+	void setInMemoryQueryIds(Collection<CIdentity> ids) {
 
-		this.inMemoryIds.addAll(inMemoryIds);
+		inMemoryQueryIds.addAll(ids);
 	}
 
-	void setReplacingIdValue(CIdentity replacingStoreId) {
+	void setCurrentIdValue(CIdentity currentId) {
 
-		this.replacingStoreId = replacingStoreId;
+		currentStoreName = MekonAppStoreId.toStoreName(currentId);
 
-		setInitialStringValue(MekonAppStoreId.toStoreName(replacingStoreId));
+		setInitialStringValue(currentStoreName);
 	}
 
 	CIdentity getIdInput() {
@@ -102,16 +102,14 @@ class StoreIdInputter extends SimpleTextInputter<String> {
 
 	private boolean checkValidStoreName(String storeName) {
 
-		CIdentity storeId = storeNameToId(storeName);
-
-		if (storeId.equals(replacingStoreId)) {
-
-			showMessage("Supplied name identical to current name");
+		if (storeName.equals(currentStoreName)) {
 
 			return false;
 		}
 
-		if (inMemoryIds.contains(storeId) || idStored(storeId)) {
+		CIdentity storeId = storeNameToId(storeName);
+
+		if (inMemoryQueryIds.contains(storeId) || idStored(storeId)) {
 
 			showMessage(getStoreNameExistsMessage(storeName));
 
