@@ -54,6 +54,16 @@ public interface IStore {
 	public IFrame add(IFrame instance, CIdentity identity);
 
 	/**
+	 * Provides new identity for instance in the store.
+	 *
+	 * @param identity Current unique identity of instance
+	 * @param newIdentity New unique identity for instance
+	 * @return True if instanceidentity replaced, false if instance
+	 * with specified identity not present
+	 */
+	public boolean rename(CIdentity identity, CIdentity newIdentity);
+
+	/**
 	 * Removes an instance from the store.
 	 *
 	 * @param identity Unique identity of instance

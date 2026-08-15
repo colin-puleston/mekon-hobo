@@ -68,6 +68,16 @@ public abstract class XClientStore extends XClientEntity {
 			return performInstanceOrNullResponseAction(request);
 		}
 
+		public boolean rename(CIdentity identity, CIdentity newIdentity) {
+
+			XRequestRenderer request = new XRequestRenderer(RStoreActionType.RENAME);
+
+			request.addParameter(identity);
+			request.addParameter(newIdentity);
+
+			return performBooleanResponseAction(request);
+		}
+
 		public boolean remove(CIdentity identity) {
 
 			XRequestRenderer request = new XRequestRenderer(RStoreActionType.REMOVE);

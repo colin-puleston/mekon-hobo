@@ -37,6 +37,11 @@ public enum RStoreActionType {
 	ADD,
 
 	/**
+	 * Specifies an instance renaming action
+	 */
+	RENAME,
+
+	/**
 	 * Specifies an instance removal action
 	 */
 	REMOVE,

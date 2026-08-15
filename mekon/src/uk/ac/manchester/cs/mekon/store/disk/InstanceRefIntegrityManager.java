@@ -41,6 +41,80 @@ class InstanceRefIntegrityManager {
 
 	private KSetMap<CIdentity, CIdentity> referencingIds = new KSetMap<CIdentity, CIdentity>();
 
+	private class RefValueRemover {
+
+		private CIdentity refedId;
+
+		RefValueRemover(CIdentity refedId) {
+
+			this.refedId = refedId;
+		}
+
+		void forRefingId(CIdentity refingId) {
+
+			IFrame refingInstance = store.regenOrNull(refingId, false);
+
+			if (refingInstance != null) {
+
+				removeAllFrom(refingInstance);
+
+				store.update(refingInstance, refingId);
+			}
+		}
+
+		void onRemoved(ISlotValuesEditor valuesEd, IFrame valueFrame) {
+		}
+
+		private void removeAllFrom(IFrame frame) {
+
+			for (ISlot slot : frame.getSlots().activesAsList()) {
+
+				if (slot.getValueType() instanceof CFrame) {
+
+					for (IValue value : slot.getValues().asList()) {
+
+						removeAllFrom(slot, (IFrame)value);
+					}
+				}
+			}
+		}
+
+		private void removeAllFrom(ISlot slot, IFrame valueFrame) {
+
+			if (valueFrame.getCategory().reference()) {
+
+				if (valueFrame.getReferenceId().equals(refedId)) {
+
+					ISlotValuesEditor valuesEd = iEditor.getSlotValuesEditor(slot);
+
+					valuesEd.remove(valueFrame);
+					onRemoved(valuesEd, valueFrame);
+				}
+			}
+			else {
+
+				removeAllFrom(valueFrame);
+			}
+		}
+	}
+
+	private class RefValueReplacer extends RefValueRemover {
+
+		private CIdentity newRefedId;
+
+		RefValueReplacer(CIdentity refedId, CIdentity newRefedId) {
+
+			super(refedId);
+
+			this.newRefedId = newRefedId;
+		}
+
+		void onRemoved(ISlotValuesEditor valuesEd, IFrame valueFrame) {
+
+			valuesEd.add(valueFrame.getType().instantiateRef(newRefedId));
+		}
+	}
+
 	InstanceRefIntegrityManager(IDiskStore store) {
 
 		this.store = store;
@@ -52,7 +126,7 @@ class InstanceRefIntegrityManager {
 
 		referencingIds.removeFromAll(identity);
 
-		addInstanceRefs(identity, instance.getAllReferenceIds());
+		addInstanceRefs(instance, identity);
 	}
 
 	void onReloadedInstance(CIdentity identity, IInstanceProfile profile) {
@@ -60,62 +134,45 @@ class InstanceRefIntegrityManager {
 		addInstanceRefs(identity, profile.getReferenceIdentites());
 	}
 
+	void onRenamedInstance(IFrame instance, CIdentity identity, CIdentity newIdentity) {
+
+		for (CIdentity refingId : referencingIds.getSet(identity)) {
+
+			new RefValueReplacer(identity, newIdentity).forRefingId(refingId);
+
+			referencingIds.add(newIdentity, refingId);
+		}
+
+		removeInstanceRefs(identity);
+		addInstanceRefs(instance, newIdentity);
+	}
+
 	void onRemovedInstance(CIdentity identity) {
 
 		for (CIdentity refingId : referencingIds.getSet(identity)) {
 
-			removeReferenceId(refingId, identity);
+			new RefValueRemover(identity).forRefingId(refingId);
 		}
+
+		removeInstanceRefs(identity);
+	}
+
+	private void addInstanceRefs(IFrame instance, CIdentity identity) {
+
+		addInstanceRefs(identity, instance.getAllReferenceIds());
+	}
+
+	private void addInstanceRefs(CIdentity refingId, List<CIdentity> referencedIds) {
+
+		for (CIdentity refedId : referencedIds) {
+
+			referencingIds.add(refedId, refingId);
+		}
+	}
+
+	private void removeInstanceRefs(CIdentity identity) {
 
 		referencingIds.removeAll(identity);
 		referencingIds.removeFromAll(identity);
-	}
-
-	private void addInstanceRefs(CIdentity identity, List<CIdentity> referenceIds) {
-
-		for (CIdentity refedId : referenceIds) {
-
-			referencingIds.add(refedId, identity);
-		}
-	}
-
-	private void removeReferenceId(CIdentity refingId, CIdentity refedId) {
-
-		IFrame refingInstance = store.regenOrNull(refingId, false);
-
-		if (refingInstance != null) {
-
-			removeAllReferenceId(refingInstance, refedId);
-			store.update(refingInstance, refingId);
-		}
-	}
-
-	private void removeAllReferenceId(IFrame frame, CIdentity refId) {
-
-		for (ISlot slot : frame.getSlots().activesAsList()) {
-
-			if (slot.getValueType() instanceof CFrame) {
-
-				for (IValue value : slot.getValues().asList()) {
-
-					removeAllReferenceId(slot, (IFrame)value, refId);
-				}
-			}
-		}
-	}
-
-	private void removeAllReferenceId(ISlot slot, IFrame valueFrame, CIdentity refId) {
-
-		if (valueFrame.getCategory().reference()) {
-
-			if (valueFrame.getReferenceId().equals(refId)) {
-
-				iEditor.getSlotValuesEditor(slot).remove(valueFrame);
-			}
-		}
-		else {
-
-			removeAllReferenceId(valueFrame, refId);
-		}
 	}
 }

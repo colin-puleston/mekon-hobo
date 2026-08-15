@@ -122,23 +122,35 @@ class IDiskStore implements IStore {
 
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
-		IFrame previous = checkRemove(identity);
-		int index = indexes.assignIndex(identity);
+		IFrame previous = removePreIntegrityUpdates(identity);
 
-		identities.add(identity);
-		regenTypes.put(identity, createRegenType(instance));
-
-		serialiser.write(instance, identity, index);
-
+		addPreIntegrityUpdates(instance, identity, indexes.assignIndex(identity));
 		refIntegrityManager.onAddedInstance(instance, identity);
-		addToMatcher(instance, identity);
 
 		return previous;
 	}
 
+	public synchronized boolean rename(CIdentity identity, CIdentity newIdentity) {
+
+		int index = indexes.getIndex(identity);
+		IFrame instance = removePreIntegrityUpdates(identity, index);
+
+		if (instance != null) {
+
+			indexes.reassignIndex(newIdentity, index);
+
+			addPreIntegrityUpdates(instance, newIdentity, index);
+			refIntegrityManager.onRenamedInstance(instance, identity, newIdentity);
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public synchronized boolean remove(CIdentity identity) {
 
-		if (checkRemove(identity) != null) {
+		if (removePreIntegrityUpdates(identity) != null) {
 
 			refIntegrityManager.onRemovedInstance(identity);
 
@@ -283,28 +295,41 @@ class IDiskStore implements IStore {
 		return index != null ? regenOrNull(identity, index, freeInstance) : null;
 	}
 
-	private IFrame checkRemove(CIdentity identity) {
+	private void addPreIntegrityUpdates(IFrame instance, CIdentity identity, int index) {
 
-		if (!indexes.hasIndex(identity)) {
+		identities.add(identity);
+		addRegenType(instance, identity);
+		serialiser.write(instance, identity, index);
 
-			return null;
+		addToMatcher(instance, identity);
+
+		refIntegrityManager.onAddedInstance(instance, identity);
+	}
+
+	private IFrame removePreIntegrityUpdates(CIdentity identity) {
+
+		if (indexes.hasIndex(identity)) {
+
+			return removePreIntegrityUpdates(identity, indexes.freeIndex(identity));
 		}
+
+		return null;
+	}
+
+	private IFrame removePreIntegrityUpdates(CIdentity identity, int index) {
+
+		IFrame instance = regenOrNull(identity, index, false);
 
 		identities.remove(identity);
 		regenTypes.remove(identity);
+		serialiser.remove(index);
 
-		int index = indexes.getIndex(identity);
-		IFrame removed = regenOrNull(identity, index, false);
+		if (instance != null) {
 
-		if (removed != null) {
-
-			removeFromMatcher(removed, identity);
+			removeFromMatcher(instance, identity);
 		}
 
-		serialiser.remove(index);
-		indexes.freeIndex(identity);
-
-		return removed;
+		return instance;
 	}
 
 	private IFrame regenOrNull(CIdentity identity, int index, boolean freeInstance) {
@@ -355,6 +380,11 @@ class IDiskStore implements IStore {
 		}
 
 		return defaultMatcher;
+	}
+
+	private IRegenType addRegenType(IFrame instance, CIdentity identity) {
+
+		return regenTypes.put(identity, createRegenType(instance));
 	}
 
 	private IRegenType createRegenType(IFrame instance) {

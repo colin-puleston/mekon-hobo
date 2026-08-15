@@ -54,6 +54,22 @@ class StoreActions extends ServerActions<RStoreActionType> {
 		}
 	}
 
+	private class RenameAction extends Action {
+
+		RStoreActionType getActionType() {
+
+			return RStoreActionType.RENAME;
+		}
+
+		void perform(XRequestParser request, XResponseRenderer response) {
+
+			CIdentity id = request.getIdentityParameter(0);
+			CIdentity newId = request.getIdentityParameter(1);
+
+			response.setBooleanResponse(store.rename(id, newId));
+		}
+	}
+
 	private class RemoveAction extends Action {
 
 		RStoreActionType getActionType() {
@@ -69,7 +85,7 @@ class StoreActions extends ServerActions<RStoreActionType> {
 		}
 	}
 
-	private class ClearsAction extends Action {
+	private class ClearAction extends Action {
 
 		RStoreActionType getActionType() {
 
@@ -182,8 +198,9 @@ class StoreActions extends ServerActions<RStoreActionType> {
 		parameterParser = new RServerInstanceParser(store.getModel());
 
 		new AddAction();
+		new RenameAction();
 		new RemoveAction();
-		new ClearsAction();
+		new ClearAction();
 		new ContainsAction();
 		new GetTypeAction();
 		new GetAction();
