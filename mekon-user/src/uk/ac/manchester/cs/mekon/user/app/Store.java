@@ -86,8 +86,7 @@ class Store {
 				instance = customiser.onRenamingInstance(instance, id, newId);
 			}
 
-			store.remove(id);
-			store.add(instance, newId);
+			store.rename(id, newId);
 
 			showRenamedMessage(id, newId);
 
