@@ -84,6 +84,20 @@ public abstract class KIndexes<E> {
 	}
 
 	/**
+	 * Re-assigns a previously assigned index to a different element.
+	 *
+	 * @param newElement New element for which index is to be re-assigned
+	 * @param index Index to be re-assigned
+	 */
+	public void reassignIndex(E newElement, int index) {
+
+		E element = getElement(index);
+
+		removeFromMaps(element, index);
+		addToMaps(newElement, index);
+	}
+
+	/**
 	 * Either retrieves the currently assigned index for an element,
 	 * or if no index currently assigned for that element, assigns
 	 * it a unique index.
@@ -109,23 +123,29 @@ public abstract class KIndexes<E> {
 
 		Integer index = getIndex(element);
 
-		elementsToIndexes.remove(element);
-		indexesToElements.remove(index);
-
+		removeFromMaps(element, index);
 		freeIndex(index);
 
 		return index;
 	}
 
 	/**
-	 * Frees up a unique index that was previously assigned to an
-	 * unspecified element.
+	 * Frees up a unique index.
 	 *
 	 * @param index Index to be freed
+	 * @return Element to which index was assigned, or null if not
+	 * currently assigned
 	 */
-	public void freeIndex(int index) {
+	public E freeIndex(int index) {
 
-		freeIndexes.add(index);
+		E element = indexesToElements.get(index);
+
+		if (element != null) {
+
+			freeIndexes.add(index);
+		}
+
+		return element;
 	}
 
 	/**
@@ -247,5 +267,11 @@ public abstract class KIndexes<E> {
 		indexesToElements.put(index, element);
 
 		return index;
+	}
+
+	private void removeFromMaps(E element, int index) {
+
+		elementsToIndexes.remove(element);
+		indexesToElements.remove(index);
 	}
 }
