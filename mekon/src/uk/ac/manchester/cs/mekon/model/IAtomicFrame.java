@@ -151,6 +151,11 @@ class IAtomicFrame extends IFrame {
 			pollListenersForSlotRemoved(slot);
 		}
 
+		public void ensureSlotOrder(List<ISlot> orderedSlots) {
+
+			slots.reorder(orderedSlots);
+		}
+
 		public void setAutoUpdateEnabled(boolean enabled) {
 
 			autoUpdateEnabled = enabled;

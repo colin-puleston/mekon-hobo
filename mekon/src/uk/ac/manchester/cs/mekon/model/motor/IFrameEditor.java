@@ -93,6 +93,14 @@ public interface IFrameEditor {
 	public void removeSlot(ISlot slot);
 
 	/**
+	 * Ensures that the slots on the frame have the specified
+	 * ordering.
+	 *
+	 * @param orderedSlots Required slot ordering
+	 */
+	public void ensureSlotOrder(List<ISlot> orderedSlots);
+
+	/**
 	 * Sets the auto-update status of all slots on the the frame,
 	 * which determines whether or not any automatic updates can
 	 * occur when slot-values are updated.
