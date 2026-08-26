@@ -318,12 +318,21 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 	void configureFields(DObject containerObj) {
 
+		List<ISlot> fieldSlots = new ArrayList<ISlot>();
+
 		for (DField<?> field : fields) {
 
-			field.setSlot(getFieldSlot(field).resolveSlot(containerObj));
+			ISlot slot = getFieldSlot(field).resolveSlot(containerObj);
+
+			field.setSlot(slot);
+			fieldSlots.add(slot);
 		}
 
-		if (!model.initialised()) {
+		if (model.initialised()) {
+
+			reorderSlots(fieldSlots);
+		}
+		else {
 
 			new SlotTypeReorderer();
 		}
@@ -335,6 +344,20 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 			initialiser.initialise();
 		}
+	}
+
+	private void reorderSlots(List<ISlot> fieldSlots) {
+
+		List<ISlot> preordered = frame.getSlots().asList();
+
+		preordered.removeAll(fieldSlots);
+
+		List<ISlot> reordered = new ArrayList<ISlot>();
+
+		reordered.addAll(fieldSlots);
+		reordered.addAll(preordered);
+
+		getFrameEditor().ensureSlotOrder(reordered);
 	}
 
 	private <D extends DObject>DCell<DConcept<D>> createConceptCell(Class<D> valueClass) {
@@ -412,5 +435,10 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		}
 
 		return model.getFrame(dClass);
+	}
+
+	private IFrameEditor getFrameEditor() {
+
+		return model.getIEditor().getFrameEditor(frame);
 	}
 }
