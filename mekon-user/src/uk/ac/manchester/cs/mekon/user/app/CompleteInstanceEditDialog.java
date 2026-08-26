@@ -27,6 +27,8 @@ package uk.ac.manchester.cs.mekon.user.app;
 import javax.swing.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.model.util.*;
+import uk.ac.manchester.cs.mekon_util.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -64,6 +66,36 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 
 		static private final long serialVersionUID = -1;
 
+		private class Enabler implements KUpdateListener {
+
+			private class Propagator extends ISlotUpdateListenerPropagator {
+
+				protected boolean targetSlot(ISlot slot) {
+
+					return true;
+				}
+
+				Propagator() {
+
+					super(Enabler.this);
+
+					propagateFrom(getRootFrame());
+				}
+			}
+
+			public void onUpdated() {
+
+				setEnabled(true);
+			}
+
+			Enabler() {
+
+				setEnabled(false);
+
+				new Propagator();
+			}
+		}
+
 		protected void doButtonThing() {
 
 			perfomStoreAction(getDefaultSubGroup(), storeId);
@@ -72,6 +104,8 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 		StoreButton() {
 
 			super(STORE_BUTTON_LABEL);
+
+			new Enabler();
 		}
 	}
 
