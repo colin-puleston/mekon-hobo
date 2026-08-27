@@ -330,7 +330,10 @@ class DObjectBuilderImpl implements DObjectBuilder {
 
 		if (model.initialised()) {
 
-			reorderSlots(fieldSlots);
+			if (frame.getCategory().atomic()) {
+
+				reorderAtomicFrameSlots(fieldSlots);
+			}
 		}
 		else {
 
@@ -346,7 +349,7 @@ class DObjectBuilderImpl implements DObjectBuilder {
 		}
 	}
 
-	private void reorderSlots(List<ISlot> fieldSlots) {
+	private void reorderAtomicFrameSlots(List<ISlot> fieldSlots) {
 
 		List<ISlot> preordered = frame.getSlots().asList();
 
