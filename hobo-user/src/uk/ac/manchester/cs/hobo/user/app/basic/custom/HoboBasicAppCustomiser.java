@@ -56,15 +56,15 @@ public class HoboBasicAppCustomiser extends DefaultCustomiser {
 		return valueObtainerFactory;
 	}
 
-	public IFrame onNewInstance(IFrame instance, CIdentity storeId) {
+	public boolean onNewInstance(IFrame instance, CIdentity storeId) {
 
 		return checkSetStoreId(instance, storeId);
 	}
 
-	public IFrame onRenamingInstance(
-					IFrame instance,
-					CIdentity storeId,
-					CIdentity newStoreId) {
+	public boolean onRenamingInstance(
+						IFrame instance,
+						CIdentity storeId,
+						CIdentity newStoreId) {
 
 		return checkSetStoreId(instance, newStoreId);
 	}
@@ -89,7 +89,7 @@ public class HoboBasicAppCustomiser extends DefaultCustomiser {
 		return super.getFrameDisplayLabel(frame);
 	}
 
-	private IFrame checkSetStoreId(IFrame instance, CIdentity storeId) {
+	private boolean checkSetStoreId(IFrame instance, CIdentity storeId) {
 
 		if (instance.getFunction().assertion()) {
 
@@ -98,10 +98,12 @@ public class HoboBasicAppCustomiser extends DefaultCustomiser {
 			if (ai != null) {
 
 				ai.setId(storeId.getLabel());
+
+				return true;
 			}
 		}
 
-		return instance;
+		return false;
 	}
 
 	private <D extends DObject>D toDObject(IFrame frame, Class<D> type) {
