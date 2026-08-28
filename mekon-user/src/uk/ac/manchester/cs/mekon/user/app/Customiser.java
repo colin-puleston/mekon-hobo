@@ -41,9 +41,9 @@ public interface Customiser {
 
 	public ValueObtainerFactory getValueObtainerFactory();
 
-	public IFrame onNewInstance(IFrame instance, CIdentity storeId);
+	public boolean onNewInstance(IFrame instance, CIdentity storeId);
 
-	public IFrame onRenamingInstance(
+	public boolean onRenamingInstance(
 						IFrame instance,
 						CIdentity storeId,
 						CIdentity newStoreId);

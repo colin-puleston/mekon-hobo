@@ -50,7 +50,7 @@ class Store {
 
 			if (asNewId) {
 
-				instance = customiser.onNewInstance(instance, id);
+				customiser.onNewInstance(instance, id);
 			}
 
 			store.add(instance, id);
@@ -79,14 +79,17 @@ class Store {
 
 		if (confirmRename(id, newId)) {
 
-			IFrame instance = get(id);
+			store.rename(id, newId);
 
 			if (assertionId(id)) {
 
-				instance = customiser.onRenamingInstance(instance, id, newId);
-			}
+				IFrame instance = get(newId);
 
-			store.rename(id, newId);
+				if (customiser.onRenamingInstance(instance, id, newId)) {
+
+					store.add(instance, newId);
+				}
+			}
 
 			showRenamedMessage(id, newId);
 

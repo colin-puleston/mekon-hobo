@@ -58,6 +58,7 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 	}
 
 	private Instance instance;
+	private boolean editsOccurred = false;
 
 	private CIdentity storeId;
 	private boolean instanceStored = false;
@@ -65,36 +66,6 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 	private class StoreButton extends GButton {
 
 		static private final long serialVersionUID = -1;
-
-		private class Enabler implements KUpdateListener {
-
-			private class Propagator extends ISlotUpdateListenerPropagator {
-
-				protected boolean targetSlot(ISlot slot) {
-
-					return true;
-				}
-
-				Propagator() {
-
-					super(Enabler.this);
-
-					propagateFrom(getRootFrame());
-				}
-			}
-
-			public void onUpdated() {
-
-				setEnabled(true);
-			}
-
-			Enabler() {
-
-				setEnabled(false);
-
-				new Propagator();
-			}
-		}
 
 		protected void doButtonThing() {
 
@@ -105,7 +76,10 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 
 			super(STORE_BUTTON_LABEL);
 
-			new Enabler();
+			if (!editsOccurred) {
+
+				setEnabled(false);
+			}
 		}
 	}
 
@@ -128,12 +102,54 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 		}
 	}
 
-	CompleteInstanceEditDialog(JComponent parent, Instance instance, String titleSuffix) {
+	private class EditMonitor implements KUpdateListener {
+
+		private StoreButton storeButton;
+
+		private class Propagator extends ISlotUpdateListenerPropagator {
+
+			protected boolean targetSlot(ISlot slot) {
+
+				return true;
+			}
+
+			Propagator() {
+
+				super(EditMonitor.this);
+
+				propagateFrom(getRootFrame());
+			}
+		}
+
+		public void onUpdated() {
+
+			if (!editsOccurred) {
+
+				storeButton.setEnabled(true);
+
+				editsOccurred = true;
+			}
+		}
+
+		EditMonitor(StoreButton storeButton) {
+
+			this.storeButton = storeButton;
+
+			new Propagator();
+		}
+	}
+
+	CompleteInstanceEditDialog(
+		JComponent parent,
+		Instance instance,
+		boolean preEdited,
+		String titleSuffix) {
 
 		super(parent, instance, titleSuffix);
 
 		this.instance = instance;
 
+		editsOccurred = preEdited;
 		storeId = instance.getStoreId();
 	}
 
@@ -150,6 +166,11 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 	CIdentity getStoreId() {
 
 		return storeId;
+	}
+
+	boolean editsOccurred() {
+
+		return editsOccurred;
 	}
 
 	boolean instanceStored() {
@@ -173,8 +194,12 @@ abstract class CompleteInstanceEditDialog extends InstanceTreeEditDialog {
 
 		if (subGroup.editable()) {
 
-			panel.addControl(new StoreButton());
+			StoreButton storeButton = new StoreButton();
+
+			panel.addControl(storeButton);
 			panel.addControl(new StoreAsButton(subGroup, isAltSubGroup));
+
+			new EditMonitor(storeButton);
 		}
 
 		if (isAltSubGroup && altSubGroup.editable()) {

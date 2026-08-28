@@ -62,7 +62,7 @@ class QueryDialog extends CompleteInstanceEditDialog {
 			rootFrame = resolveRootFrame(requiredRootFrame);
 		}
 
-		QueryDialog create(JComponent parent, InstanceDisplayMode startMode) {
+		QueryDialog create(JComponent parent, InstanceDisplayMode startMode, boolean preEdited) {
 
 			return new QueryDialog(
 							parent,
@@ -70,6 +70,7 @@ class QueryDialog extends CompleteInstanceEditDialog {
 							summariser,
 							rootFrame,
 							startMode,
+							preEdited,
 							getTitleSuffix());
 		}
 
@@ -114,9 +115,10 @@ class QueryDialog extends CompleteInstanceEditDialog {
 	static QueryDialog create(
 						JComponent parent,
 						Instance instance,
-						InstanceDisplayMode startMode) {
+						InstanceDisplayMode startMode,
+						boolean preEdited) {
 
-		return new Creator(instance).create(parent, startMode);
+		return new Creator(instance).create(parent, startMode, preEdited);
 	}
 
 	private JComponent parent;
@@ -236,9 +238,10 @@ class QueryDialog extends CompleteInstanceEditDialog {
 				InstanceSummariser summariser,
 				IFrame rootFrame,
 				InstanceDisplayMode startMode,
+				boolean preEdited,
 				String titleSuffix) {
 
-		super(parent, instance, titleSuffix);
+		super(parent, instance, preEdited, titleSuffix);
 
 		this.parent = parent;
 		this.summariser = summariser;
@@ -266,7 +269,7 @@ class QueryDialog extends CompleteInstanceEditDialog {
 		dispose();
 
 		Creator creator = new Creator(newInstance, newRootFrame);
-		QueryDialog switched = creator.create(parent, getDisplayMode());
+		QueryDialog switched = creator.create(parent, getDisplayMode(), editsOccurred());
 
 		switched.setEditMode(getEditMode());
 		switched.display();

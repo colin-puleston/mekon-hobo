@@ -59,26 +59,21 @@ class InstanceDisplayOps {
 			return dialog.instanceStored() ? dialog.getStoreId() : null;
 		}
 
-		abstract InstanceDisplayMode startMode();
+		boolean newInstance() {
 
-		boolean fullEditMode(Instance instance) {
-
-			return !assertion() || instance.editableInstance();
+			return false;
 		}
 
-		InstanceEditMode getRestrictedEditMode() {
-
-			return InstanceEditMode.NONE;
-		}
+		abstract InstanceEditMode getEditMode(boolean nonEditableAssertion);
 
 		private CompleteInstanceEditDialog createDialog(Instance instance) {
 
 			if (assertion()) {
 
-				return new AssertionDialog(parent, instance, startMode());
+				return new AssertionDialog(parent, instance, getStartMode(), newInstance());
 			}
 
-			return QueryDialog.create(parent, instance, startMode());
+			return QueryDialog.create(parent, instance, getStartMode(), newInstance());
 		}
 
 		private Instance createInstance(IFrame instance) {
@@ -86,27 +81,37 @@ class InstanceDisplayOps {
 			return new Instance(subGroup, storeId, instance);
 		}
 
+		private InstanceDisplayMode getStartMode() {
+
+			return newInstance() ? InstanceDisplayMode.EDIT : InstanceDisplayMode.VIEW;
+		}
+
 		private InstanceEditMode getEditMode(Instance instance) {
 
-			return fullEditMode(instance) ? InstanceEditMode.FULL : getRestrictedEditMode();
+			return getEditMode(nonEditableAssertion(instance));
+		}
+
+		private boolean nonEditableAssertion(Instance instance) {
+
+			return assertion() && !instance.editableInstance();
 		}
 	}
 
-	private class CreatedInstanceEditDisplayer extends InstanceEditDisplayer {
+	private class NewInstanceEditDisplayer extends InstanceEditDisplayer {
 
-		CreatedInstanceEditDisplayer(CIdentity storeId) {
+		NewInstanceEditDisplayer(CIdentity storeId) {
 
 			super(storeId);
 		}
 
-		InstanceDisplayMode startMode() {
+		boolean newInstance() {
 
-			return InstanceDisplayMode.EDIT;
+			return true;
 		}
 
-		InstanceEditMode getRestrictedEditMode() {
+		InstanceEditMode getEditMode(boolean nonEditableAssertion) {
 
-			return InstanceEditMode.SAVE_ONLY;
+			return nonEditableAssertion ? InstanceEditMode.SAVE_ONLY : InstanceEditMode.FULL;
 		}
 	}
 
@@ -117,9 +122,9 @@ class InstanceDisplayOps {
 			super(storeId);
 		}
 
-		InstanceDisplayMode startMode() {
+		InstanceEditMode getEditMode(boolean nonEditableAssertion) {
 
-			return InstanceDisplayMode.VIEW;
+			return nonEditableAssertion ? InstanceEditMode.NONE : InstanceEditMode.FULL;
 		}
 	}
 
@@ -134,14 +139,9 @@ class InstanceDisplayOps {
 			this.copy = copy;
 		}
 
-		InstanceDisplayMode startMode() {
+		InstanceEditMode getEditMode(boolean nonEditableAssertion) {
 
-			return InstanceDisplayMode.VIEW;
-		}
-
-		boolean fullEditMode(Instance instance) {
-
-			return copy;
+			return copy ? InstanceEditMode.FULL : InstanceEditMode.NONE;
 		}
 	}
 
@@ -173,11 +173,11 @@ class InstanceDisplayOps {
 
 				if (instance.getSlots().isEmpty()) {
 
-					subGroup.checkAdd(instance, storeId, true);
+					subGroup.checkAdd(instance, storeId, false);
 				}
 				else {
 
-					new CreatedInstanceEditDisplayer(storeId).display(instance);
+					new NewInstanceEditDisplayer(storeId).display(instance);
 				}
 			}
 		}
@@ -306,12 +306,16 @@ class InstanceDisplayOps {
 
 	private IFrame instantiate(CFrame type, CIdentity storeId) {
 
-		return customise(type.instantiate(getFunction()), storeId);
+		IFrame instance = type.instantiate(getFunction());
+
+		customise(instance, storeId);
+
+		return instance;
 	}
 
-	private IFrame customise(IFrame instance, CIdentity storeId) {
+	private void customise(IFrame instance, CIdentity storeId) {
 
-		return getCustomiser().onNewInstance(instance, storeId);
+		getCustomiser().onNewInstance(instance, storeId);
 	}
 
 	private boolean assertion() {

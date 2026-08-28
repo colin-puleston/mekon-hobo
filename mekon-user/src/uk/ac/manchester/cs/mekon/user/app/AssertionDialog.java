@@ -76,9 +76,10 @@ class AssertionDialog extends CompleteInstanceEditDialog {
 	AssertionDialog(
 		JComponent parent,
 		Instance instance,
-		InstanceDisplayMode startMode) {
+		InstanceDisplayMode startMode,
+		boolean preEdited) {
 
-		super(parent, instance, null);
+		super(parent, instance, preEdited, null);
 
 		initialise(false, startMode);
 	}
