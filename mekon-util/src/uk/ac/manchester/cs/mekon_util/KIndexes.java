@@ -33,10 +33,6 @@ import java.util.*;
  */
 public abstract class KIndexes<E> {
 
-	private int maxIndex = -1;
-
-	private List<Integer> freeIndexes = new ArrayList<Integer>();
-
 	private Map<E, Integer> elementsToIndexes = new HashMap<E, Integer>();
 	private Map<Integer, E> indexesToElements = new HashMap<Integer, E>();
 
@@ -47,7 +43,19 @@ public abstract class KIndexes<E> {
 	 */
 	public int assignIndex() {
 
-		return freeIndexes.isEmpty() ? ++maxIndex : freeIndexes.remove(0);
+		int index = 0;
+
+		while (true) {
+
+			if (!indexesToElements.keySet().contains(index)) {
+
+				break;
+			}
+
+			index++;
+		}
+
+		return index;
 	}
 
 	/**
@@ -76,11 +84,6 @@ public abstract class KIndexes<E> {
 		}
 
 		addToMaps(element, index);
-
-		if (index > maxIndex) {
-
-			maxIndex = index;
-		}
 	}
 
 	/**
@@ -142,26 +145,10 @@ public abstract class KIndexes<E> {
 
 		if (element != null) {
 
-			freeIndexes.add(index);
+			removeFromMaps(element, index);
 		}
 
 		return element;
-	}
-
-	/**
-	 * Reinitialises the set of free unique indexes after a set
-	 * of explicit assignments have been made via the {@link
-	 * #assignIndex(Object, int)} method.
-	 */
-	public void reinitialiseFreeIndexes() {
-
-		for (int i = 0 ; i < maxIndex ; i++) {
-
-			if (!indexesToElements.containsKey(i)) {
-
-				freeIndex(i);
-			}
-		}
 	}
 
 	/**
