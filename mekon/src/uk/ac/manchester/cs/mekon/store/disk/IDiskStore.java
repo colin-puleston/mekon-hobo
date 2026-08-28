@@ -59,8 +59,6 @@ class IDiskStore implements IStore {
 
 			initialiseMatchers(matcherConfig);
 			reloadInstances();
-
-			indexes.reinitialiseFreeIndexes();
 		}
 
 		private void initialiseMatchers(IMatcherConfig matcherConfig) {
