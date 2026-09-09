@@ -61,17 +61,13 @@ public class DefaultCustomiser implements Customiser {
 		return InertValueObtainerFactory.SINGLETON;
 	}
 
-	public boolean onNewInstance(IFrame instance, CIdentity storeId) {
-
-		return false;
+	public void onNewInstance(IFrame instance, CIdentity storeId) {
 	}
 
-	public boolean onRenamingInstance(
-						IFrame instance,
-						CIdentity storeId,
-						CIdentity newStoreId) {
+	public void onRenamingInstance(IFrame instance, CIdentity storeId, CIdentity newStoreId) {
+	}
 
-		return false;
+	public void onRetrievingInstance(IFrame instance, CIdentity storeId) {
 	}
 
 	public String getTypeDisplayLabel(CValue<?> type) {

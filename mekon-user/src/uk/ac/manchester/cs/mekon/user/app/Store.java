@@ -83,12 +83,11 @@ class Store {
 
 			if (assertionId(id)) {
 
-				IFrame instance = get(newId);
+				IFrame instance = store.get(id).getRootFrame();
 
-				if (customiser.onRenamingInstance(instance, id, newId)) {
+				customiser.onRenamingInstance(instance, id, newId);
 
-					store.add(instance, newId);
-				}
+				store.add(instance, newId);
 			}
 
 			showRenamedMessage(id, newId);
@@ -106,7 +105,11 @@ class Store {
 
 	IFrame get(CIdentity id) {
 
-		return store.get(id).getRootFrame();
+		IFrame instance = store.get(id).getRootFrame();
+
+		customiser.onRetrievingInstance(instance, id);
+
+		return instance;
 	}
 
 	CFrame getType(CIdentity id) {

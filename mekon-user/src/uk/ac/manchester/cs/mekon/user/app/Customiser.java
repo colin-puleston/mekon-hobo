@@ -41,12 +41,11 @@ public interface Customiser {
 
 	public ValueObtainerFactory getValueObtainerFactory();
 
-	public boolean onNewInstance(IFrame instance, CIdentity storeId);
+	public void onNewInstance(IFrame instance, CIdentity storeId);
 
-	public boolean onRenamingInstance(
-						IFrame instance,
-						CIdentity storeId,
-						CIdentity newStoreId);
+	public void onRenamingInstance(IFrame instance, CIdentity storeId, CIdentity newStoreId);
+
+	public void onRetrievingInstance(IFrame instance, CIdentity storeId);
 
 	public String getTypeDisplayLabel(CValue<?> type);
 
