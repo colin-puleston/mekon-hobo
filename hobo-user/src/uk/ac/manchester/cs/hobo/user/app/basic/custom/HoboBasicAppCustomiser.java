@@ -66,6 +66,11 @@ public class HoboBasicAppCustomiser extends DefaultCustomiser {
 		checkSetStoreId(instance, newStoreId);
 	}
 
+	public void onRetrievingInstance(IFrame instance, CIdentity storeId) {
+
+		checkSetStoreId(instance, storeId);
+	}
+
 	public boolean performStructuredValueViewAction(IFrame value) {
 
 		if (customValuesManager.handlesValue(value)) {
