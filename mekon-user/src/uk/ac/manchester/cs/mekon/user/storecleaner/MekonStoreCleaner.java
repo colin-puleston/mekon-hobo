@@ -63,7 +63,12 @@ public class MekonStoreCleaner extends GFrame {
 
 		cBuilder.build();
 
-		new MekonStoreCleaner(IDiskStoreManager.getBuilder(cBuilder).build());
+		new MekonStoreCleaner(loadStore(cBuilder)).run();
+	}
+
+	static private IStore loadStore(CBuilder cBuilder) {
+
+		return IDiskStoreManager.getBuilder(cBuilder).build();
 	}
 
 	static private GIcon createIcon(Color clr) {
@@ -173,7 +178,7 @@ public class MekonStoreCleaner extends GFrame {
 
 		void performCleanOp(CIdentity instanceId) {
 
-			store.add(store.get(instanceId).getRootFrame(), instanceId);
+			resaveInstance(instanceId);
 		}
 	}
 
@@ -211,6 +216,9 @@ public class MekonStoreCleaner extends GFrame {
 		super(MAIN_TITLE);
 
 		this.store = store;
+	}
+
+	public void run() {
 
 		IStoreRegenReport regenReport = store.getRegenReport();
 
@@ -223,6 +231,9 @@ public class MekonStoreCleaner extends GFrame {
 		addWindowListener(new InitialCheckInvoker());
 
 		display(createMainPanel(regenReport));
+	}
+
+	protected void onResavingInstance(CIdentity storeId, IFrame instance) {
 	}
 
 	private JPanel createMainPanel(IStoreRegenReport regenReport) {
@@ -249,13 +260,23 @@ public class MekonStoreCleaner extends GFrame {
 
 	private void resaveValidInstances() {
 
-		for (CIdentity identity : store.getAllIdentities()) {
+		for (CIdentity storeId : store.getAllIdentities()) {
 
-			if (valid(identity)) {
+			if (valid(storeId)) {
 
-				store.add(store.get(identity).getRootFrame(), identity);
+				resaveInstance(storeId);
 			}
 		}
+	}
+
+	private void resaveInstance(CIdentity storeId) {
+
+		IRegenInstance regen = store.get(storeId);
+		IFrame instance = regen.getRootFrame();
+
+		onResavingInstance(storeId, instance);
+
+		store.add(instance, storeId);
 	}
 
 	private void performInitialCheck() {
@@ -272,19 +293,19 @@ public class MekonStoreCleaner extends GFrame {
 		return fullyInvalidIds.isEmpty() && partiallyValidIds.isEmpty();
 	}
 
-	private boolean valid(CIdentity identity) {
+	private boolean valid(CIdentity storeId) {
 
-		return !fullyInvalid(identity) && !partiallyValid(identity);
+		return !fullyInvalid(storeId) && !partiallyValid(storeId);
 	}
 
-	private boolean fullyInvalid(CIdentity identity) {
+	private boolean fullyInvalid(CIdentity storeId) {
 
-		return fullyInvalidIds.contains(identity);
+		return fullyInvalidIds.contains(storeId);
 	}
 
-	private boolean partiallyValid(CIdentity identity) {
+	private boolean partiallyValid(CIdentity storeId) {
 
-		return partiallyValidIds.contains(identity);
+		return partiallyValidIds.contains(storeId);
 	}
 
 	private void reportNoIssues() {
