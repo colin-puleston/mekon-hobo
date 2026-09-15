@@ -156,8 +156,13 @@ class CConfig implements CConfigVocab {
 
 		if (node != null) {
 
-			addGeneralMatchersSectionBuilder(builder, node);
-			addValueMatchCustomisers(storeBldr, node);
+			KConfigNode indepMatchNode = node.getChildOrNull(SECTION_INDEPENDENT_MATCHING_ID);
+
+			if (indepMatchNode != null) {
+
+				addGeneralMatchersSectionBuilder(builder, indepMatchNode);
+				addValueMatchCustomisers(storeBldr, indepMatchNode);
+			}
 
 			diskStoreNode = node.getChildOrNull(INSTANCE_DISK_STORE_ID);
 		}
