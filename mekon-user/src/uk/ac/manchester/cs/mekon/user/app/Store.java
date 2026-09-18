@@ -83,11 +83,9 @@ class Store {
 
 			if (assertionId(id)) {
 
-				IFrame instance = store.get(id).getRootFrame();
+				IFrame instance = store.get(newId).getRootFrame();
 
 				customiser.onRenamingInstance(instance, id, newId);
-
-				store.add(instance, newId);
 			}
 
 			showRenamedMessage(id, newId);
