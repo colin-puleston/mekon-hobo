@@ -33,7 +33,7 @@ import uk.ac.manchester.cs.hobo.modeller.*;
 /**
  * @author Colin Puleston
  */
-public class AutoIdentifiedEntity extends DObjectShell {
+public class AutoIdentifiedEntity extends HoboBasicAppEntity {
 
 	private DEditor dEditor;
 
