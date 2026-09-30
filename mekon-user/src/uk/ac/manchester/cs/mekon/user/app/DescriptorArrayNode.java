@@ -24,8 +24,10 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.util.*;
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
@@ -33,8 +35,49 @@ import uk.ac.manchester.cs.mekon_util.gui.*;
  */
 class DescriptorArrayNode extends InstanceNode {
 
+	private ISlot slot;
 	private SlotDescriptors slotDescriptors;
+
 	private ChildNodeCreator childNodeCreator;
+	private GNodeAction reorderAction = new ReorderAction();
+
+	private Customiser customiser;
+
+	private class ReorderAction extends GNodeAction {
+
+		protected void perform() {
+
+			if (reorderable()) {
+
+				List<IValue> newVals = checkReorder(slot.getValues().asList());
+
+				if (newVals != null) {
+
+					ISlotValuesEditor ed = slot.getValuesEditor();
+
+					ed.clear();
+					ed.addAll(newVals);
+				}
+			}
+		}
+
+		private List<IValue> checkReorder(List<IValue> oldVals) {
+
+			if (slotValueCount() == 2) {
+
+				return swap2Values(oldVals);
+			}
+
+			ArrayReorderDialog dlg = new ArrayReorderDialog(customiser, oldVals);
+
+			return dlg.reordered() ? dlg.getCurrentOrder() : null;
+		}
+
+		private List<IValue> swap2Values(List<IValue> oldVals) {
+
+			return Arrays.asList(new IValue[]{oldVals.get(1), oldVals.get(0)});
+		}
+	}
 
 	protected void addInitialChildren() {
 
@@ -49,13 +92,20 @@ class DescriptorArrayNode extends InstanceNode {
 		return new GCellDisplay(getDisplayLabel(), getIcon());
 	}
 
+	protected GNodeAction getPositiveAction1() {
+
+		return reorderAction;
+	}
+
 	DescriptorArrayNode(InstanceTree tree, SlotDescriptors slotDescriptors) {
 
 		super(tree);
 
 		this.slotDescriptors = slotDescriptors;
 
+		slot = slotDescriptors.getSlot();
 		childNodeCreator = new ChildNodeCreator(tree);
+		customiser = tree.getInstance().getCustomiser();
 	}
 
 	void checkUpdateArray(SlotDescriptors newSlotDescriptors) {
@@ -113,11 +163,33 @@ class DescriptorArrayNode extends InstanceNode {
 
 	private String getDisplayLabel() {
 
-		return DescriptorLabels.forArrayHeader(slotDescriptors.getSlot());
+		return DescriptorLabels.forArrayHeader(slot);
 	}
 
 	private Icon getIcon() {
 
-		return MekonAppIcons.ARRAY_ICONS.forTree(this, false);
+		return reorderable()
+				? InstanceTreeIcons.REORDERABLE_ARRAY
+				: InstanceTreeIcons.VALUES.forTree(this, false);
+	}
+
+	private boolean reorderable() {
+
+		return editableAssertion() && slotValueCount() > 1;
+	}
+
+	private boolean editableAssertion() {
+
+		return assertionInstance() && editableSlot() && !viewOnly();
+	}
+
+	private boolean editableSlot() {
+
+		return slot.getEditability().editable();
+	}
+
+	private int slotValueCount() {
+
+		return slot.getValues().size();
 	}
 }

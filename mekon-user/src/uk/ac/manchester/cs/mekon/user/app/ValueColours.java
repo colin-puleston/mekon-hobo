@@ -24,22 +24,18 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
-import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Colin Puleston
  */
-class QueryIdsList extends InstanceIdsList {
+class ValueColours {
 
-	static private final long serialVersionUID = -1;
+	static final Color ASSERT = new Color(49,130,189);
+	static final Color ASSERT_SUMMARY = new Color(158,202,225);
+	static final Color QUERY = new Color(49,163,84);
+	static final Color QUERY_SUMMARY = new Color(161,217,155);
 
-	QueryIdsList(InstanceGroup group) {
-
-		super(group);
-	}
-
-	Icon getInstanceIcon() {
-
-		return InstanceListIcons.QUERY;
-	}
+	static final Color VALUE_ENTRY = Color.WHITE;
+	static final Color ARRAY_REORDER = Color.WHITE;
 }

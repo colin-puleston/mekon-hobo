@@ -85,6 +85,11 @@ abstract class InstanceNode extends GNode {
 		return tree.getInstance();
 	}
 
+	boolean assertionInstance() {
+
+		return getInstance().assertionInstance();
+	}
+
 	boolean queryInstance() {
 
 		return getInstance().queryInstance();

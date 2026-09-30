@@ -69,7 +69,7 @@ class AssertionDialog extends CompleteInstanceEditDialog {
 
 			super(SHOW_SUMMARY_BUTTON_LABEL);
 
-			setBackground(MekonAppIcons.ASSERT_SUMMARY_CLR);
+			setBackground(ValueColours.ASSERT_SUMMARY);
 		}
 	}
 

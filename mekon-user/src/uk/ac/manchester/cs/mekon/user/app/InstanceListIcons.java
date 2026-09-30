@@ -24,72 +24,23 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.awt.*;
 import javax.swing.*;
 
-import uk.ac.manchester.cs.mekon_util.gui.*;
+import uk.ac.manchester.cs.mekon_util.gui.icon.*;
 
 /**
  * @author Colin Puleston
  */
-class DescriptorCellDisplay extends InstanceCellDisplay {
+class InstanceListIcons {
 
-	private DescriptorNode node;
-	private Descriptor descriptor;
+	static private final int DIMENSION = 10;
 
-	DescriptorCellDisplay(DescriptorNode node, Descriptor descriptor) {
+	static final Icon ASSERT = create(ValueColours.ASSERT);
+	static final Icon QUERY = create(ValueColours.QUERY);
 
-		super(node);
+	static private GIcon create(Color clr) {
 
-		this.node = node;
-		this.descriptor = descriptor;
-	}
-
-	GCellDisplay createDefault() {
-
-		GCellDisplay display = new GCellDisplay(getIdentityLabel());
-
-		if (descriptor.hasValue()) {
-
-			display.addModifier(createForValue());
-		}
-
-		return display;
-	}
-
-	Icon getIcon() {
-
-		return descriptor.hasValue() ? getValueIcon() : InstanceTreeIcons.VALUE_ENTRY;
-	}
-
-	private GCellDisplay createForValue() {
-
-		return createForValue(descriptor.getValueDisjunctLabels());
-	}
-
-	private String getIdentityLabel() {
-
-		return descriptor.getIdentityLabel(!node.showQuerySemantics());
-	}
-
-	private Icon getValueIcon() {
-
-		return getValueIcons().forTree(node, editable());
-	}
-
-	private InstanceTreeIcons.IconSet getValueIcons() {
-
-		return descriptor.hasInstanceRefValue()
-				? InstanceTreeIcons.REFS
-				: InstanceTreeIcons.VALUES;
-	}
-
-	private boolean editable() {
-
-		return descriptor.userEditable() && !viewOnly();
-	}
-
-	private boolean viewOnly() {
-
-		return node.getInstanceTree().viewOnly();
+		return new GIcon(new GOvalRenderer(clr, DIMENSION));
 	}
 }

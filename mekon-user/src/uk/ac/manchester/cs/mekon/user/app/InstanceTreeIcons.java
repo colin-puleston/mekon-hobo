@@ -32,27 +32,19 @@ import uk.ac.manchester.cs.mekon_util.gui.icon.*;
 /**
  * @author Colin Puleston
  */
-class MekonAppIcons {
+class InstanceTreeIcons {
 
-	static private final int LIST_ICON_DIMENSION = 10;
-	static private final int TREE_ICON_DIMENSION = 12;
+	static private final int VALUE_DIMENSION = 12;
+	static private final int VALUE_ENTRY_DIMENSION = 12;
+	static private final int ARRAY_REORDER_DIMENSION = 12;
 
-	static final Color ASSERT_CLR = new Color(49,130,189);
-	static final Color QUERY_CLR = new Color(49,163,84);
-	static final Color ASSERT_SUMMARY_CLR = new Color(158,202,225);
-	static final Color QUERY_SUMMARY_CLR = new Color(161,217,155);
-	static final Color VALUE_ENTRY_CLR = Color.WHITE;
-
-	static final TreeIcons VALUE_ICONS = new ValueIcons();
-	static final TreeIcons ARRAY_ICONS = new ArrayIcons();
-	static final TreeIcons REF_ICONS = new RefIcons();
+	static final IconSet VALUES = new ValueIcons();
+	static final IconSet REFS = new RefIcons();
 
 	static final Icon VALUE_ENTRY = createValueEntryIcon();
+	static final Icon REORDERABLE_ARRAY = createReorderableArrayIcon();
 
-	static final Icon ASSERT_LIST = createListIcon(ASSERT_CLR);
-	static final Icon QUERY_LIST = createListIcon(QUERY_CLR);
-
-	static abstract class TreeIcons {
+	static abstract class IconSet {
 
 		private FunctionIcons editIcons = new FunctionIcons(true);
 		private FunctionIcons noEditIcons = new FunctionIcons(false);
@@ -67,11 +59,11 @@ class MekonAppIcons {
 
 			FunctionIcons(boolean edit) {
 
-				assertIcon = createIcon(edit, ASSERT_CLR);
-				queryIcon = createIcon(edit, QUERY_CLR);
+				assertIcon = createIcon(edit, ValueColours.ASSERT);
+				queryIcon = createIcon(edit, ValueColours.QUERY);
 
-				assertSummaryIcon = createIcon(edit, ASSERT_SUMMARY_CLR);
-				querySummaryIcon = createIcon(edit, QUERY_SUMMARY_CLR);
+				assertSummaryIcon = createIcon(edit, ValueColours.ASSERT_SUMMARY);
+				querySummaryIcon = createIcon(edit, ValueColours.QUERY_SUMMARY);
 			}
 
 			Icon get(boolean query, boolean summary) {
@@ -105,12 +97,12 @@ class MekonAppIcons {
 			return get(query, false, false);
 		}
 
-		abstract GIconRenderer createValueRenderer(Color clr);
-
-		private Icon get(boolean query, boolean summary, boolean edit) {
+		Icon get(boolean query, boolean summary, boolean edit) {
 
 			return (edit ? editIcons : noEditIcons).get(query, summary);
 		}
+
+		abstract GIconRenderer createValueRenderer(Color clr);
 
 		private Icon createIcon(boolean edit, Color clr) {
 
@@ -121,9 +113,9 @@ class MekonAppIcons {
 
 			GIconRenderer valueRenderer = createValueRenderer(clr);
 
-			valueRenderer.setXOffset(TREE_ICON_DIMENSION);
+			valueRenderer.setXOffset(VALUE_DIMENSION);
 
-			return new GIcon(createValueEntryIconRenderer(), valueRenderer);
+			return new GIcon(createValueEntryRenderer(), valueRenderer);
 		}
 
 		private GIcon createNoEditIcon(Color clr) {
@@ -132,43 +124,55 @@ class MekonAppIcons {
 		}
 	}
 
-	static private class ValueIcons extends TreeIcons {
+	static private class ValueIcons extends IconSet {
 
 		GIconRenderer createValueRenderer(Color clr) {
 
-			return new GDiamondRenderer(clr, TREE_ICON_DIMENSION);
+			return createDirectValueRenderer(clr);
 		}
 	}
 
-	static private class ArrayIcons extends TreeIcons {
+	static private class RefIcons extends IconSet {
 
 		GIconRenderer createValueRenderer(Color clr) {
 
-			return new GDiamondRenderer(clr, TREE_ICON_DIMENSION);
+			return createRightTriangleRenderer(clr, VALUE_DIMENSION);
 		}
-	}
-
-	static private class RefIcons extends TreeIcons {
-
-		GIconRenderer createValueRenderer(Color clr) {
-
-			return createRightTriangleRenderer(clr, TREE_ICON_DIMENSION);
-		}
-	}
-
-	static private GIcon createListIcon(Color clr) {
-
-		return new GIcon(new GOvalRenderer(clr, LIST_ICON_DIMENSION));
 	}
 
 	static private GIcon createValueEntryIcon() {
 
-		return new GIcon(createValueEntryIconRenderer());
+		return new GIcon(createValueEntryRenderer());
 	}
 
-	static private GIconRenderer createValueEntryIconRenderer() {
+	static private GIcon createReorderableArrayIcon() {
 
-		return createRightTriangleRenderer(VALUE_ENTRY_CLR, TREE_ICON_DIMENSION);
+		GIconRenderer valueRenderer = createReorderableArrayValueRenderer();
+		GIconRenderer reorderRenderer = createArrayReorderRenderer();
+
+		reorderRenderer.setXOffset(VALUE_DIMENSION);
+
+		return new GIcon(valueRenderer, reorderRenderer);
+	}
+
+	static private GIconRenderer createValueEntryRenderer() {
+
+		return createRightTriangleRenderer(ValueColours.VALUE_ENTRY, VALUE_ENTRY_DIMENSION);
+	}
+
+	static private GIconRenderer createReorderableArrayValueRenderer() {
+
+		return createDirectValueRenderer(ValueColours.ASSERT);
+	}
+
+	static private GIconRenderer createArrayReorderRenderer() {
+
+		return new GDiamondRenderer(ValueColours.ARRAY_REORDER, ARRAY_REORDER_DIMENSION);
+	}
+
+	static private GIconRenderer createDirectValueRenderer(Color clr) {
+
+		return new GDiamondRenderer(clr, VALUE_DIMENSION);
 	}
 
 	static private GIconRenderer createRightTriangleRenderer(Color clr, int dim) {

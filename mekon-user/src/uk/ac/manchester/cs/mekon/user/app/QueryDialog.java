@@ -160,7 +160,7 @@ class QueryDialog extends CompleteInstanceEditDialog {
 
 			super(TO_COMPRESSED_BUTTON_LABEL);
 
-			setBackground(MekonAppIcons.QUERY_SUMMARY_CLR);
+			setBackground(ValueColours.QUERY_SUMMARY);
 
 			new Enabler();
 		}
@@ -179,7 +179,7 @@ class QueryDialog extends CompleteInstanceEditDialog {
 
 			super(TO_EXPANDED_BUTTON_LABEL);
 
-			setBackground(MekonAppIcons.QUERY_CLR);
+			setBackground(ValueColours.QUERY);
 		}
 	}
 

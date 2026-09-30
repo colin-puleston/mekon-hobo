@@ -110,10 +110,10 @@ class InstanceRefSelector extends AtomicEntitySelector<IFrame> {
 
 		if (instance.assertionInstance()) {
 
-			return MekonAppIcons.ASSERT_CLR;
+			return ValueColours.ASSERT;
 		}
 
-		return summaryType() ? MekonAppIcons.QUERY_SUMMARY_CLR : MekonAppIcons.QUERY_CLR;
+		return summaryType() ? ValueColours.QUERY_SUMMARY : ValueColours.QUERY;
 	}
 
 	private boolean summaryType() {

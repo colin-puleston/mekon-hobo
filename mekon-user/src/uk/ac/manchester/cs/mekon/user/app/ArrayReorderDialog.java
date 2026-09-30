@@ -24,72 +24,41 @@
 
 package uk.ac.manchester.cs.mekon.user.app;
 
+import java.util.*;
+import java.awt.Dimension;
 import javax.swing.*;
 
+import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon_util.gui.*;
 
 /**
  * @author Colin Puleston
  */
-class DescriptorCellDisplay extends InstanceCellDisplay {
+class ArrayReorderDialog extends GListReorderDialog<IValue> {
 
-	private DescriptorNode node;
-	private Descriptor descriptor;
+	static private final long serialVersionUID = -1;
 
-	DescriptorCellDisplay(DescriptorNode node, Descriptor descriptor) {
+	static private final String TITLE = "Reorder Value List";
+	static private final Dimension WINDOW_SIZE = new Dimension(600, 400);
 
-		super(node);
+	static private final Icon LIST_ICON = InstanceTreeIcons.VALUES.get(false, false, false);
 
-		this.node = node;
-		this.descriptor = descriptor;
+	private Customiser customiser;
+
+	protected GCellDisplay createEntityDisplay(IValue entity) {
+
+		return new GCellDisplay(customiser.getValueDisplayLabel(entity), LIST_ICON);
 	}
 
-	GCellDisplay createDefault() {
+	ArrayReorderDialog(Customiser customiser, List<IValue> initialOrder) {
 
-		GCellDisplay display = new GCellDisplay(getIdentityLabel());
+		super(TITLE, initialOrder);
 
-		if (descriptor.hasValue()) {
+		this.customiser = customiser;
 
-			display.addModifier(createForValue());
-		}
+		setPreferredSize(WINDOW_SIZE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		return display;
-	}
-
-	Icon getIcon() {
-
-		return descriptor.hasValue() ? getValueIcon() : InstanceTreeIcons.VALUE_ENTRY;
-	}
-
-	private GCellDisplay createForValue() {
-
-		return createForValue(descriptor.getValueDisjunctLabels());
-	}
-
-	private String getIdentityLabel() {
-
-		return descriptor.getIdentityLabel(!node.showQuerySemantics());
-	}
-
-	private Icon getValueIcon() {
-
-		return getValueIcons().forTree(node, editable());
-	}
-
-	private InstanceTreeIcons.IconSet getValueIcons() {
-
-		return descriptor.hasInstanceRefValue()
-				? InstanceTreeIcons.REFS
-				: InstanceTreeIcons.VALUES;
-	}
-
-	private boolean editable() {
-
-		return descriptor.userEditable() && !viewOnly();
-	}
-
-	private boolean viewOnly() {
-
-		return node.getInstanceTree().viewOnly();
+		display();
 	}
 }

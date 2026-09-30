@@ -34,19 +34,57 @@ class ControlsPanel extends JPanel {
 
 	static private final long serialVersionUID = -1;
 
-	ControlsPanel(boolean horizontal) {
+	static private final int STRUT_SIZE = 10;
 
-		setLayout(new BoxLayout(this, getAxis(horizontal)));
+	public static ControlsPanel horizontal(JComponent... control) {
+
+		return new ControlsPanel(true, control);
 	}
 
-	void addControl(JComponent control) {
+	public static ControlsPanel vertical(JComponent... control) {
+
+		return new ControlsPanel(false, control);
+	}
+
+	private boolean horizontal;
+
+	public ControlsPanel(boolean horizontal) {
+
+		this.horizontal = horizontal;
+
+		setLayout(new BoxLayout(this, getAxis()));
+	}
+
+	public ControlsPanel(boolean horizontal, JComponent... controls) {
+
+		this(horizontal);
+
+		for (JComponent control : controls) {
+
+			addControl(control);
+		}
+	}
+
+	public void addControl(JComponent control) {
+
+		if (getComponentCount() != 0) {
+
+			add(createStrut());
+		}
 
 		add(createControlPanel(control));
 	}
 
-	private int getAxis(boolean horizontal) {
+	private int getAxis() {
 
 		return horizontal ? BoxLayout.X_AXIS : BoxLayout.Y_AXIS;
+	}
+
+	private Component createStrut() {
+
+		return horizontal
+				? Box.createHorizontalStrut(STRUT_SIZE)
+				: Box.createVerticalStrut(STRUT_SIZE);
 	}
 
 	private JComponent createControlPanel(JComponent control) {

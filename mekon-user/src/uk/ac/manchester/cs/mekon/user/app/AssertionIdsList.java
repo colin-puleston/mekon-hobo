@@ -40,6 +40,6 @@ class AssertionIdsList extends InstanceIdsList {
 
 	Icon getInstanceIcon() {
 
-		return MekonAppIcons.ASSERT_LIST;
+		return InstanceListIcons.ASSERT;
 	}
 }
