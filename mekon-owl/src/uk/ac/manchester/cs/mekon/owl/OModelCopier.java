@@ -30,6 +30,7 @@ import java.util.*;
 import org.semanticweb.owlapi.model.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.owl.util.*;
 
 /**
  * Responsible for copying the model represented by an {@link OModel}
@@ -58,21 +59,27 @@ public class OModelCopier extends OModelCreator {
 		setInstanceOntologyIRI(getInstanceOntologyIRI());
 	}
 
-	OWLOntology createModelOntology(OWLOntologyManager manager) {
+	OModel construct() {
 
-		OWLOntology modelSource = sourceModel.getModelOntology();
-		IRI ontIRI = getOntologyIRI(modelSource);
-		Set<OWLOntology> modelSources = ontologyAsSet(modelSource);
+		OModel model = super.construct();
+		OWLOntology ontology = model.getModelOntology();
 
-		return createOntology(manager, ontIRI, modelSources);
+		if (weakeningReasoningType()) {
+
+			addReasoningFilteredSourceAxioms(ontology);
+			assertExternallyInferableHierarchy(model);
+		}
+		else {
+
+			addAllSourceAxioms(ontology);
+		}
+
+		return model;
 	}
 
-	void assertExternallyInferableHierarchy(OModel model) {
+	OWLOntology createModelOntology(OWLOntologyManager manager) {
 
-		if (sourceInferableHierarchy(model)) {
-
-			model.ensureAssertedHierarchy(new InferredConceptHierarchy(sourceModel));
-		}
+		return createOntology(manager, getOntologyIRI(getSourceModelOntology()));
 	}
 
 	File getMainSourceFile() {
@@ -90,19 +97,49 @@ public class OModelCopier extends OModelCreator {
 		return null;
 	}
 
+	private void addAllSourceAxioms(OWLOntology ontology) {
+
+		OWLAPIVersion.addAxioms(ontology, getAllSourceAxioms());
+	}
+
+	private void addReasoningFilteredSourceAxioms(OWLOntology ontology) {
+
+		OReasoningType reasoningType = getReasoningType();
+
+		for (OWLAxiom axiom : getAllSourceAxioms()) {
+
+			if (reasoningType.requiredAxiom(axiom)) {
+
+				OWLAPIVersion.addAxiom(ontology, axiom);
+			}
+		}
+	}
+
+	private void assertExternallyInferableHierarchy(OModel model) {
+
+		model.ensureAssertedHierarchy(new InferredConceptHierarchy(sourceModel));
+	}
+
+	private Set<OWLAxiom> getAllSourceAxioms() {
+
+		return OWLAPIVersion.getAxioms(getSourceModelOntology());
+	}
+
+	private OWLOntology getSourceModelOntology() {
+
+		return sourceModel.getModelOntology();
+	}
+
 	private IRI getInstanceOntologyIRI() {
 
 		return getOntologyIRI(sourceModel.getInstanceOntology());
 	}
 
-	private OWLOntology createOntology(
-							OWLOntologyManager manager,
-							IRI ontologyIRI,
-							Set<OWLOntology> sources) {
+	private OWLOntology createOntology(OWLOntologyManager manager, IRI ontologyIRI) {
 
 		try {
 
-			return manager.createOntology(ontologyIRI, sources, false);
+			return manager.createOntology(ontologyIRI);
 		}
 		catch (OWLOntologyCreationException e) {
 
@@ -110,16 +147,8 @@ public class OModelCopier extends OModelCreator {
 		}
 	}
 
-	private Set<OWLOntology> ontologyAsSet(OWLOntology ontology) {
+	private boolean weakeningReasoningType() {
 
-		return Collections.<OWLOntology>singleton(ontology);
-	}
-
-	private boolean sourceInferableHierarchy(OModel model) {
-
-		OReasoningType srcReasonType = sourceModel.getReasoningType();
-		OReasoningType copyReasonType = model.getReasoningType();
-
-		return srcReasonType.morePowerfullThan(copyReasonType);
+		return sourceModel.getReasoningType().morePowerfullThan(getReasoningType());
 	}
 }

@@ -151,9 +151,6 @@ public class OModelBuilder extends OModelCreator {
 		return model;
 	}
 
-	void assertExternallyInferableHierarchy(OModel model) {
-	}
-
 	void setMainSourceFile(FileProvider provider) {
 
 		mainSourceFileProvider = provider;

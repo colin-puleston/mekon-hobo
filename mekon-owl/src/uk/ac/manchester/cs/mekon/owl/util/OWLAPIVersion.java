@@ -41,6 +41,11 @@ public class OWLAPIVersion {
 		ontology.getOWLOntologyManager().addAxiom(ontology, axiom);
 	}
 
+	static public void addAxioms(OWLOntology ontology, Set<? extends OWLAxiom> axioms) {
+
+		ontology.getOWLOntologyManager().addAxioms(ontology, axioms);
+	}
+
 	static public void removeAxiom(OWLOntology ontology, OWLAxiom axiom) {
 
 		ontology.getOWLOntologyManager().removeAxiom(ontology, axiom);

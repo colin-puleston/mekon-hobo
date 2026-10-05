@@ -144,7 +144,7 @@ public abstract class OModelCreator {
 
 		OModel model = construct();
 
-		configure(model);
+		checkSetIndirectNumericProperty(model);
 
 		if (startReasoner) {
 
@@ -169,15 +169,14 @@ public abstract class OModelCreator {
 
 	abstract OWLOntology createModelOntology(OWLOntologyManager manager);
 
-	abstract void assertExternallyInferableHierarchy(OModel model);
-
 	abstract File getMainSourceFile();
 
 	abstract IRI getIndirectNumericProperty();
 
-	private OModel construct() {
+	OModel construct() {
 
 		File file = getMainSourceFile();
+
 		OWLOntologyManager man = createManager();
 		OWLOntology modOnt = createModelOntology(man);
 		OWLOntology instOnt = createInstanceOntology(man);
@@ -187,11 +186,9 @@ public abstract class OModelCreator {
 		return new OModel(file, man, modOnt, instOnt, reasoner, reasoningType);
 	}
 
-	private void configure(OModel model) {
+	OReasoningType getReasoningType() {
 
-		model.purgeForReasoningType();
-		assertExternallyInferableHierarchy(model);
-		checkSetIndirectNumericProperty(model);
+		return reasoningType;
 	}
 
 	private OWLOntology createInstanceOntology(OWLOntologyManager manager) {

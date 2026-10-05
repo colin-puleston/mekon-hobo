@@ -718,20 +718,6 @@ public class OModel {
 		indirectNumericProperty = getIndirectNumericProperty(iri);
 	}
 
-	void purgeForReasoningType() {
-
-		if (reasoningType.axiomPurgeRequired()) {
-
-			for (OWLAxiom axiom : OWLAPIVersion.getAxioms(modelOntology)) {
-
-				if (!reasoningType.requiredAxiom(axiom)) {
-
-					modelAxioms.remove(axiom);
-				}
-			}
-		}
-	}
-
 	void ensureAssertedHierarchy(InferredConceptHierarchy hierarchy) {
 
 		KSetMap<OWLClass, OWLClass> subConcepts = hierarchy.getSubConceptsMap();
