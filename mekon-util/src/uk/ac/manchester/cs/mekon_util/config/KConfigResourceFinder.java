@@ -96,18 +96,13 @@ public class KConfigResourceFinder {
 
 		private File getContainerJar(URL containedURL) {
 
-			String path = containedURL.getPath();
-			String containerURL = path.substring(0, path.indexOf('!'));
-
 			try {
 
-				return new File(new URL(containerURL).toURI());
-			}
-			catch (MalformedURLException e) {
+				JarURLConnection con = (JarURLConnection)containedURL.openConnection();
 
-				throw new Error(e);
+				return new File(con.getJarFileURL().getFile());
 			}
-			catch (URISyntaxException e) {
+			catch (IOException e) {
 
 				throw new Error(e);
 			}
