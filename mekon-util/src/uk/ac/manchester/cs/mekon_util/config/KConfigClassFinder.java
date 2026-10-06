@@ -39,7 +39,6 @@ import java.lang.reflect.*;
  */
 public class KConfigClassFinder<T> {
 
-	static private final String JAR_EXTENSION = ".jar";
 	static private final String CLASS_EXTENSION = ".class";
 
 	private Class<T> baseClass;
@@ -101,61 +100,26 @@ public class KConfigClassFinder<T> {
 	private class JarSearcher {
 
 		private String basePackageName;
+		private JarInputStream jarInput;
 
-		JarSearcher(String basePackageName) {
+		JarSearcher(String basePackageName, File jarFile) {
 
 			this.basePackageName = basePackageName;
 
-			findClassFilesInJars();
+			jarInput = openJar(jarFile);
+
+			findAllInJar();
 		}
 
-		private void findClassFilesInJars() {
+		private void findAllInJar() {
 
-			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-
-			while (classloader instanceof URLClassLoader) {
-
-				findClassFilesInJars((URLClassLoader)classloader);
-
-				classloader = classloader.getParent();
-			}
-		}
-
-		private void findClassFilesInJars(URLClassLoader classloader) {
-
-			for (URL url: classloader.getURLs()) {
-
-				File jarFile = checkGetJarFile(url);
-
-				if (jarFile != null) {
-
-					findClassFilesInJar(jarFile);
-				}
-			}
-		}
-
-		private File checkGetJarFile(URL fileURL) {
-
-			File file = URLToFileConverter.convert(fileURL);
-
-			if (file.getPath().endsWith(JAR_EXTENSION) && file.exists()) {
-
-				return file;
-			}
-
-			return null;
-		}
-
-		private void findClassFilesInJar(File jarFile) {
-
-			JarInputStream jarInput = openJarFile(jarFile);
-			JarEntry jarEntry = getNextJarEntry(jarInput);
+			JarEntry jarEntry = getNextJarEntry();
 
 			while (jarEntry != null) {
 
 				checkAddClassFromJar(jarEntry);
 
-				jarEntry = getNextJarEntry(jarInput);
+				jarEntry = getNextJarEntry();
 			}
 		}
 
@@ -175,7 +139,7 @@ public class KConfigClassFinder<T> {
 			}
 		}
 
-		private JarInputStream openJarFile(File jarFile) {
+		private JarInputStream openJar(File jarFile) {
 
 			try {
 
@@ -187,7 +151,7 @@ public class KConfigClassFinder<T> {
 			}
 		}
 
-		private JarEntry getNextJarEntry(JarInputStream jarInput) {
+		private JarEntry getNextJarEntry() {
 
 			try {
 
@@ -220,8 +184,15 @@ public class KConfigClassFinder<T> {
 
 			new DirectorySearcher(basePackageName, directory);
 		}
+		else {
 
-		new JarSearcher(basePackageName);
+			File jar = lookForJar(basePackageName);
+
+			if (jar != null) {
+
+				new JarSearcher(basePackageName, jar);
+			}
+		}
 	}
 
 	/**
@@ -288,6 +259,13 @@ public class KConfigClassFinder<T> {
 		return KConfigResourceFinder.DIRS.lookForResource(path);
 	}
 
+	private File lookForJar(String packageName) {
+
+		String path = getDirectoryPath(packageName);
+
+		return KConfigResourceFinder.lookForJarContainingResource(path);
+	}
+
 	private String getDirectoryPath(String packageName) {
 
 		return packageName.replace('.', '/');
@@ -303,3 +281,4 @@ public class KConfigClassFinder<T> {
 		return packageName + "." + leafName;
 	}
 }
+

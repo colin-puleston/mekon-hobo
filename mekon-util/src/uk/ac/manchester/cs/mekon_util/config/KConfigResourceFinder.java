@@ -50,15 +50,14 @@ public class KConfigResourceFinder {
 	static public final KConfigResourceFinder DIRS
 						= new KConfigResourceFinder(null, true);
 
-	private FileFinder fileFinder;
-	private boolean expectDir;
+	static private final ContainerJarFinder containerJarFinder = new ContainerJarFinder();
 
-	private abstract class FileFinder {
+	static private abstract class FileFinder {
 
 		abstract File lookFor(String path);
 	}
 
-	private class BaseDirFileFinder extends FileFinder {
+	static private class BaseDirFileFinder extends FileFinder {
 
 		private File baseDir;
 
@@ -73,23 +72,67 @@ public class KConfigResourceFinder {
 		}
 	}
 
-	private class ClassPathFileFinder extends FileFinder {
+	static private class ClassPathFileFinder extends FileFinder {
 
 		File lookFor(String path) {
 
 			return URLToFileConverter.convert(getURLOrNull(path));
 		}
+	}
 
-		private URL getURLOrNull(String path) {
+	static private class ContainerJarFinder extends FileFinder {
 
-			return getClassLoader().getResource(path);
+		File lookFor(String path) {
+
+			URL containedURL = getURLOrNull(path);
+
+			if (containedURL != null) {
+
+				return getContainerJar(containedURL);
+			}
+
+			return null;
 		}
 
-		private ClassLoader getClassLoader() {
+		private File getContainerJar(URL containedURL) {
 
-			return Thread.currentThread().getContextClassLoader();
+			String path = containedURL.getPath();
+			String containerURL = path.substring(0, path.indexOf('!'));
+
+			try {
+
+				return new File(new URL(containerURL).toURI());
+			}
+			catch (MalformedURLException e) {
+
+				throw new Error(e);
+			}
+			catch (URISyntaxException e) {
+
+				throw new Error(e);
+			}
 		}
 	}
+
+	/**
+	 * Provides a JAR file containing the specified resource if such
+	 * a JAR exists on the class-path.
+	 *
+	 * @param path Path to required resource
+	 * @return JAR file containing required resource, or null if not found
+	 */
+	static public File lookForJarContainingResource(String path) {
+
+		return containerJarFinder.lookFor(path);
+	}
+
+	static private URL getURLOrNull(String path) {
+
+		return Thread.currentThread().getContextClassLoader().getResource(path);
+	}
+
+	private FileFinder fileFinder;
+	private boolean expectDir;
 
 	/**
 	 * Constructs finder for locating resources with paths relative
