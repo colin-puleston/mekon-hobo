@@ -308,7 +308,7 @@ class IDiskStore implements IStore {
 
 		if (indexes.hasIndex(identity)) {
 
-			return removePreIntegrityUpdates(identity, indexes.freeIndex(identity));
+			return removePreIntegrityUpdates(identity, indexes.getIndex(identity));
 		}
 
 		return null;
@@ -318,14 +318,16 @@ class IDiskStore implements IStore {
 
 		IFrame instance = regenOrNull(identity, index, false);
 
-		identities.remove(identity);
-		regenTypes.remove(identity);
-		serialiser.remove(index);
-
 		if (instance != null) {
 
 			removeFromMatcher(instance, identity);
 		}
+
+		identities.remove(identity);
+		regenTypes.remove(identity);
+		serialiser.remove(index);
+
+		indexes.freeIndex(identity);
 
 		return instance;
 	}
