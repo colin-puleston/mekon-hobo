@@ -263,7 +263,7 @@ public class KConfigClassFinder<T> {
 
 		String path = getDirectoryPath(packageName);
 
-		return KConfigResourceFinder.lookForJarContainingResource(path);
+		return KConfigResourceFinder.JARS.lookForResource(path);
 	}
 
 	private String getDirectoryPath(String packageName) {

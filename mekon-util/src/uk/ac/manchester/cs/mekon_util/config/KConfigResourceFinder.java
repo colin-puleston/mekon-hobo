@@ -41,48 +41,113 @@ public class KConfigResourceFinder {
 	 * class-path.
 	 */
 	static public final KConfigResourceFinder FILES
-						= new KConfigResourceFinder(null, false);
+							= new KConfigResourceFinder(
+									new ClassPathFinder(false));
 
 	/**
 	 * Finder for locating directories relative to some location on
 	 * the class-path.
 	 */
 	static public final KConfigResourceFinder DIRS
-						= new KConfigResourceFinder(null, true);
+							= new KConfigResourceFinder(
+									new ClassPathFinder(true));
 
-	static private final ContainerJarFinder containerJarFinder = new ContainerJarFinder();
+	/**
+	 * Finder for locating JAR files locatated on the class-path
+	 * that contain specified resources.
+	 */
+	static public final KConfigResourceFinder JARS
+							= new KConfigResourceFinder(
+									new ContainerJarFinder());
 
-	static private abstract class FileFinder {
+	static private abstract class Finder {
 
-		abstract File lookFor(String path);
+		private boolean expectDir;
+
+		Finder(boolean expectDir) {
+
+			this.expectDir = expectDir;
+		}
+
+		File get(String path) {
+
+			File file = lookFor(path);
+
+			if (file == null || !file.exists()) {
+
+				throw new KSystemConfigException("Cannot find resource: " + path);
+			}
+
+			if (!requiredResourceType(file)) {
+
+				throw new KSystemConfigException(
+								"Resource is not a "
+								+ (expectDir ? "directory" : "file")
+								+ ": "
+								+ file);
+			}
+
+			return file;
+		}
+
+		File lookFor(String path) {
+
+			File file = lookForFile(path);
+
+			return file != null && requiredResource(file) ? file : null;
+		}
+
+		abstract File lookForFile(String path);
+
+		private boolean requiredResource(File file) {
+
+			return file.exists() && requiredResourceType(file);
+		}
+
+		private boolean requiredResourceType(File file) {
+
+			return file.isDirectory() == expectDir;
+		}
 	}
 
-	static private class BaseDirFileFinder extends FileFinder {
+	static private class BaseDirFinder extends Finder {
 
 		private File baseDir;
 
-		BaseDirFileFinder(File baseDir) {
+		BaseDirFinder(File baseDir, boolean expectDir) {
+
+			super(expectDir);
 
 			this.baseDir = baseDir;
 		}
 
-		File lookFor(String path) {
+		File lookForFile(String path) {
 
 			return new File(baseDir, path);
 		}
 	}
 
-	static private class ClassPathFileFinder extends FileFinder {
+	static private class ClassPathFinder extends Finder {
 
-		File lookFor(String path) {
+		ClassPathFinder(boolean expectDir) {
+
+			super(expectDir);
+		}
+
+		File lookForFile(String path) {
 
 			return URLToFileConverter.convert(getURLOrNull(path));
 		}
 	}
 
-	static private class ContainerJarFinder extends FileFinder {
+	static private class ContainerJarFinder extends Finder {
 
-		File lookFor(String path) {
+		ContainerJarFinder() {
+
+			super(false);
+		}
+
+		File lookForFile(String path) {
 
 			URL containedURL = getURLOrNull(path);
 
@@ -109,25 +174,12 @@ public class KConfigResourceFinder {
 		}
 	}
 
-	/**
-	 * Provides a JAR file containing the specified resource if such
-	 * a JAR exists on the class-path.
-	 *
-	 * @param path Path to required resource
-	 * @return JAR file containing required resource, or null if not found
-	 */
-	static public File lookForJarContainingResource(String path) {
-
-		return containerJarFinder.lookFor(path);
-	}
-
 	static private URL getURLOrNull(String path) {
 
 		return Thread.currentThread().getContextClassLoader().getResource(path);
 	}
 
-	private FileFinder fileFinder;
-	private boolean expectDir;
+	private Finder finder;
 
 	/**
 	 * Constructs finder for locating resources with paths relative
@@ -149,9 +201,7 @@ public class KConfigResourceFinder {
 	 */
 	public KConfigResourceFinder(File baseDir, boolean expectDir) {
 
-		fileFinder = createFileFinder(baseDir);
-
-		this.expectDir = expectDir;
+		this(new BaseDirFinder(baseDir, expectDir));
 	}
 
 	/**
@@ -163,7 +213,7 @@ public class KConfigResourceFinder {
 	 */
 	public boolean resourceExists(String path) {
 
-		return lookForResource(path) != null;
+		return finder.lookFor(path) != null;
 	}
 
 	/**
@@ -176,23 +226,7 @@ public class KConfigResourceFinder {
 	 */
 	public File getResource(String path) {
 
-		File file = fileFinder.lookFor(path);
-
-		if (file == null || !file.exists()) {
-
-			throw new KSystemConfigException("Cannot find resource: " + path);
-		}
-
-		if (!requiredResourceType(file)) {
-
-			throw new KSystemConfigException(
-							"Resource is not a "
-							+ (expectDir ? "directory" : "file")
-							+ ": "
-							+ file);
-		}
-
-		return file;
+		return finder.get(path);
 	}
 
 	/**
@@ -205,23 +239,11 @@ public class KConfigResourceFinder {
 	 */
 	public File lookForResource(String path) {
 
-		File file = fileFinder.lookFor(path);
-
-		return file != null && requiredResource(file) ? file : null;
+		return finder.lookFor(path);
 	}
 
-	private FileFinder createFileFinder(File baseDir) {
+	private KConfigResourceFinder(Finder finder) {
 
-		return baseDir != null ? new BaseDirFileFinder(baseDir) : new ClassPathFileFinder();
-	}
-
-	private boolean requiredResource(File file) {
-
-		return file.exists() && requiredResourceType(file);
-	}
-
-	private boolean requiredResourceType(File file) {
-
-		return file.isDirectory() == expectDir;
+		this.finder = finder;
 	}
 }
