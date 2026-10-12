@@ -135,7 +135,7 @@ class IDiskStore implements IStore {
 
 		if (instance != null) {
 
-			indexes.reassignIndex(newIdentity, index);
+			indexes.assignIndex(newIdentity, index);
 
 			addPreIntegrityUpdates(instance, newIdentity, index);
 			refIntegrityManager.onRenamedInstance(instance, identity, newIdentity);
