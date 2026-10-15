@@ -104,13 +104,10 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 			}
 		}
 
-		OptionsTree() {
-
-			setRootVisible(false);
-			setShowsRootHandles(true);
-		}
-
 		void initialise() {
+
+			setRootVisible(structuredRootFrame());
+			setShowsRootHandles(true);
 
 			initialise(new FrameNode(rootFrame));
 		}
@@ -118,6 +115,11 @@ class FrameSelectionOptions extends EntitySelectionOptions<CFrame> {
 		CFrame getSelection() {
 
 			return ((FrameNode)getSelectedNode()).frame;
+		}
+
+		private boolean structuredRootFrame() {
+
+			return !rootFrame.getSlots().isEmpty();
 		}
 	}
 
