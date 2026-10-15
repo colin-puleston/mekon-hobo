@@ -84,6 +84,17 @@ public enum CCardinality {
 	}
 
 	/**
+	 * Specifes whether slot values must be of repeatable-types - equal
+	 * to {@link #REPEATABLE_TYPES}.
+	 *
+	 * @return True if unique-types
+	 */
+	public boolean repeatableTypes() {
+
+		return this == REPEATABLE_TYPES;
+	}
+
+	/**
 	 * Specifes whether slot values must be of unique-types - equal
 	 * to {@link #UNIQUE_TYPES} or, trivially, to {@link #SINGLE_VALUE}.
 	 *

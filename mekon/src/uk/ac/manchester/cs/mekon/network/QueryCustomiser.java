@@ -38,85 +38,221 @@ class QueryCustomiser {
 	private Map<CIdentity, IValueMatchCustomiser> valueMatchCustomisers
 							= new HashMap<CIdentity, IValueMatchCustomiser>();
 
-	private CustomValueRetainer customValueRetainer = new CustomValueRetainer();
-
 	private abstract class QueryModifier  {
 
-		private boolean anyPrunings = false;
+		final NNode modifiedQuery;
 
-		NNode modify(NNode query) {
+		QueryModifier(NNode query) {
 
-			NNode copy = query.copy();
-
-			prune(copy);
-
-			return copy;
+			modifiedQuery = query.copy();
 		}
 
-		boolean anyPrunings() {
+		boolean processFromRoot() {
 
-			return anyPrunings;
+			return processFromNode(modifiedQuery);
 		}
 
-		abstract void prune(NNode node);
+		boolean processFromFeature(NNode node, NFeature<?> feature) {
 
-		void pruneLinkValues(NNode node) {
+			return feature instanceof NLink && processFromLink((NLink)feature);
+		}
 
-			for (NLink link : node.getLinks()) {
+		boolean processFromLink(NLink link) {
 
-				for (NNode value : link.getValues()) {
+			boolean anyCustomValues = false;
 
-					prune(value);
-				}
+			for (NNode value : link.getValues()) {
+
+				anyCustomValues |= processFromNode(value);
 			}
+
+			return anyCustomValues;
 		}
 
-		void pruneFeatures(NNode node) {
+		abstract void onCustomValueFound(NNode node, NFeature<?> feature);
+
+		private boolean processFromNode(NNode node) {
+
+			boolean anyCustomValues = false;
 
 			for (NFeature<?> feature : node.getFeatures()) {
 
-				if (prunableFeature(feature)) {
+				if (hasCustomValue(feature)) {
 
-					node.removeFeature(feature);
+					anyCustomValues |= true;
 
-					anyPrunings |= true;
+					onCustomValueFound(node, feature);
 				}
+
+				anyCustomValues |= processFromFeature(node, feature);
 			}
+
+			return anyCustomValues;
 		}
 
-		abstract boolean prunableFeature(NFeature<?> feature);
+		private boolean hasCustomValue(NFeature<?> feature) {
+
+			return feature.hasValues() && customMatchFeature(feature);
+		}
+
+		private boolean customMatchFeature(NFeature<?> feature) {
+
+			return valueMatchCustomisers.keySet().contains(feature.getType());
+		}
 	}
 
 	private class CustomValueRemover extends QueryModifier {
 
-		void prune(NNode node) {
+		CustomValueRemover(NNode query) {
 
-			pruneFeatures(node);
-			pruneLinkValues(node);
+			super(query);
 		}
 
-		boolean prunableFeature(NFeature<?> feature) {
+		NNode checkModify() {
 
-			return customMatchFeature(feature);
+			return processFromRoot() ? modifiedQuery : null;
+		}
+
+		void onCustomValueFound(NNode node, NFeature<?> feature) {
+
+			node.removeFeature(feature);
 		}
 	}
 
 	private class CustomValueRetainer extends QueryModifier {
 
-		void prune(NNode node) {
+		private PassProcessor passProcessor = new Pass1Processor();
+		private Set<NFeature<?>> requiredFeatures = new HashSet<NFeature<?>>();
 
-			pruneLinkValues(node);
-			pruneFeatures(node);
+		private abstract class PassProcessor {
+
+			boolean processFromFeature(NNode node, NFeature<?> feature) {
+
+				return processFromFeatureDefault(node, feature);
+			}
+
+			boolean processFromLink(NLink link) {
+
+				return processFromLinkDefault(link);
+			}
+
+			void onCustomValueFound(NFeature<?> feature) {
+			}
 		}
 
-		boolean prunableFeature(NFeature<?> feature) {
+		private class Pass1Processor extends PassProcessor {
 
-			return !populatedLink(feature) && !customMatchFeature(feature);
+			boolean processFromLink(NLink link) {
+
+				if (processFromLinkDefault(link)) {
+
+					requiredFeatures.add(link);
+
+					return true;
+				}
+
+				return false;
+			}
+
+			void onCustomValueFound(NFeature<?> feature) {
+
+				requiredFeatures.add(feature);
+			}
 		}
 
-		private boolean populatedLink(NFeature<?> feature) {
+		private class Pass2Processor extends PassProcessor {
 
-			return feature instanceof NLink && ((NLink)feature).hasValues();
+			private boolean allRequired = false;
+
+			boolean processFromFeature(NNode node, NFeature<?> feature) {
+
+				if (allRequired) {
+
+					requiredFeatures.add(feature);
+				}
+
+				return processFromFeatureDefault(node, feature);
+			}
+
+			boolean processFromLink(NLink link) {
+
+				if (!allRequired && allRequiredFrom(link)) {
+
+					allRequired = true;
+					processFromLinkDefault(link);
+					allRequired = false;
+
+					return true;
+				}
+
+				return processFromLinkDefault(link);
+			}
+
+			private boolean allRequiredFrom(NLink link) {
+
+				return repeatableTypesLink(link) && requiredFeatures.contains(link);
+			}
+
+			private boolean repeatableTypesLink(NLink link) {
+
+				return link.getCSlot().getCardinality().repeatableTypes();
+			}
+		}
+
+		private class Pass3Processor extends PassProcessor {
+
+			boolean processFromFeature(NNode node, NFeature<?> feature) {
+
+				if (requiredFeatures.contains(feature)) {
+
+					return processFromFeatureDefault(node, feature);
+				}
+
+				node.removeFeature(feature);
+
+				return true;
+			}
+		}
+
+		CustomValueRetainer(NNode query) {
+
+			super(query);
+		}
+
+		NNode modify() {
+
+			processFromRoot();
+			passProcessor = new Pass2Processor();
+			processFromRoot();
+			passProcessor = new Pass3Processor();
+			processFromRoot();
+
+			return modifiedQuery;
+		}
+
+		boolean processFromFeature(NNode node, NFeature<?> feature) {
+
+			return passProcessor.processFromFeature(node, feature);
+		}
+
+		boolean processFromLink(NLink link) {
+
+			return passProcessor.processFromLink(link);
+		}
+
+		void onCustomValueFound(NNode node, NFeature<?> feature) {
+
+			passProcessor.onCustomValueFound(feature);
+		}
+
+		private boolean processFromFeatureDefault(NNode node, NFeature<?> feature) {
+
+			return super.processFromFeature(node, feature);
+		}
+
+		private boolean processFromLinkDefault(NLink link) {
+
+			return super.processFromLink(link);
 		}
 	}
 
@@ -138,12 +274,13 @@ class QueryCustomiser {
 
 	CustomisedQuery checkCustomise(NNode query) {
 
-		CustomValueRemover remover = new CustomValueRemover();
-		NNode coreQuery = remover.modify(query);
+		NNode coreQuery = new CustomValueRemover(query).checkModify();
 
-		if (remover.anyPrunings()) {
+		if (coreQuery != null) {
 
-			return new CustomisedQuery(coreQuery, customValueRetainer.modify(query));
+			NNode customQuery = new CustomValueRetainer(query).modify();
+
+			return new CustomisedQuery(coreQuery, customQuery);
 		}
 
 		return null;
@@ -161,11 +298,6 @@ class QueryCustomiser {
 		}
 
 		return castCustomValueMatcher(customiser.getMatcher(), slotId, expectClass);
-	}
-
-	private boolean customMatchFeature(NFeature<?> feature) {
-
-		return valueMatchCustomisers.keySet().contains(feature.getType());
 	}
 
 	private <M extends ICustomValueMatcher>M castCustomValueMatcher(

@@ -27,6 +27,7 @@ package uk.ac.manchester.cs.mekon.network;
 import java.util.*;
 
 import uk.ac.manchester.cs.mekon.model.*;
+import uk.ac.manchester.cs.mekon.store.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 
 import uk.ac.manchester.cs.mekon_util.*;
@@ -36,6 +37,7 @@ import uk.ac.manchester.cs.mekon_util.*;
  */
 class QueryNodeDirectMatcher {
 
+	private IStore store;
 	private QueryCustomiser queryCustomiser;
 
 	private LinksMatcher linksMatcher = new LinksMatcher();
@@ -237,12 +239,13 @@ class QueryNodeDirectMatcher {
 		}
 	}
 
-	QueryNodeDirectMatcher(QueryCustomiser queryCustomiser) {
+	QueryNodeDirectMatcher(IStore store, QueryCustomiser queryCustomiser) {
 
+		this.store = store;
 		this.queryCustomiser = queryCustomiser;
 	}
 
-	boolean matches(NNode query, NNode instance) {
+	synchronized boolean matches(NNode query, NNode instance) {
 
 		if (testing.getSet(query).contains(instance)) {
 
@@ -273,12 +276,17 @@ class QueryNodeDirectMatcher {
 
 		if (query.instanceRef()) {
 
-			if (!instance.instanceRef()) {
+			if (instance.instanceRef()) {
 
-				return false;
+				return query.getInstanceRef().equals(instance.getInstanceRef());
 			}
 
-			return query.getInstanceRef().equals(instance.getInstanceRef());
+			return false;
+		}
+
+		if (instance.instanceRef()) {
+
+			instance = getInstanceNode(instance.getInstanceRef());
 		}
 
 		return typeSubsumption(query, instance)
@@ -298,6 +306,11 @@ class QueryNodeDirectMatcher {
 		}
 
 		return instance.getTypeDisjuncts().containsAll(query.getTypeDisjuncts());
+	}
+
+	private NNode getInstanceNode(CIdentity id) {
+
+		return new NNetwork(store.get(id).getRootFrame()).getRootNode();
 	}
 
 	private <M extends ICustomValueMatcher>M lookForCustomValueMatcher(

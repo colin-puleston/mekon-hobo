@@ -273,7 +273,7 @@ public abstract class NMatcher implements IMatcher {
 
 	boolean matchesDirect(NNode query, NNode instance) {
 
-		return new QueryNodeDirectMatcher(queryCustomiser).matches(query, instance);
+		return new QueryNodeDirectMatcher(store, queryCustomiser).matches(query, instance);
 	}
 
 	private NNode instanceToNetwork(IFrame instance) {
