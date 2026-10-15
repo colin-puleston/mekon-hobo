@@ -38,12 +38,8 @@ class InstanceSubSectionEditDialog extends InstanceTreeEditDialog {
 
 	static private final String OK_BUTTON_LABEL = "Ok";
 	static private final String CLEAR_BUTTON_LABEL = "Clear";
-	static private final String REPLACE_BUTTON_LABEL = "Replace...";
-
-	private boolean enableReplace;
 
 	private boolean clearSelected = false;
-	private boolean replaceSelected = false;
 
 	private class OkButton extends GButton {
 
@@ -77,28 +73,9 @@ class InstanceSubSectionEditDialog extends InstanceTreeEditDialog {
 		}
 	}
 
-	private class ReplaceButton extends EditButton {
-
-		static private final long serialVersionUID = -1;
-
-		protected void doButtonThing() {
-
-			replaceSelected = true;
-
-			dispose();
-		}
-
-		ReplaceButton() {
-
-			super(REPLACE_BUTTON_LABEL);
-		}
-	}
-
-	InstanceSubSectionEditDialog(InstanceTree parentTree, IFrame subRootFrame, boolean enableReplace) {
+	InstanceSubSectionEditDialog(InstanceTree parentTree, IFrame subRootFrame) {
 
 		super(parentTree, parentTree.getInstance(), TITLE_SUFFIX);
-
-		this.enableReplace = enableReplace;
 
 		initialise(subRootFrame, parentTree.summaryInstance(), parentTree.getDisplayMode());
 	}
@@ -106,11 +83,6 @@ class InstanceSubSectionEditDialog extends InstanceTreeEditDialog {
 	boolean clearSelected() {
 
 		return clearSelected;
-	}
-
-	boolean replaceSelected() {
-
-		return replaceSelected;
 	}
 
 	ControlsPanel checkCreateControlsPanel() {
@@ -124,11 +96,6 @@ class InstanceSubSectionEditDialog extends InstanceTreeEditDialog {
 
 		panel.addControl(new OkButton());
 		panel.addControl(new ClearButton());
-
-		if (enableReplace) {
-
-			panel.addControl(new ReplaceButton());
-		}
 
 		return panel;
 	}

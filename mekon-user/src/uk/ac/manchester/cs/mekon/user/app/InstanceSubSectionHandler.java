@@ -52,11 +52,6 @@ class InstanceSubSectionHandler {
 
 			dialog.display();
 
-			if (dialog.replaceSelected()) {
-
-				return false;
-			}
-
 			if (dialog.clearSelected()) {
 
 				removeValue();
@@ -67,22 +62,12 @@ class InstanceSubSectionHandler {
 
 		private InstanceSubSectionEditDialog createDialog() {
 
-			return new InstanceSubSectionEditDialog(tree, rootFrame, replacableValue());
-		}
-
-		private boolean replacableValue() {
-
-			return !getSlotValueTypeFrame().getSubs(CVisibility.EXPOSED).isEmpty();
+			return new InstanceSubSectionEditDialog(tree, rootFrame);
 		}
 
 		private void removeValue() {
 
 			containerSlot.getValuesEditor().remove(rootFrame);
-		}
-
-		private CFrame getSlotValueTypeFrame() {
-
-			return (CFrame)containerSlot.getValueType();
 		}
 	}
 
@@ -92,7 +77,9 @@ class InstanceSubSectionHandler {
 
 		if (rootFrame != null) {
 
-			return new EditDisplayer(tree, rootFrame, frameValueSlot).display();
+			new EditDisplayer(tree, rootFrame, frameValueSlot).display();
+
+			return true;
 		}
 
 		return false;
@@ -136,7 +123,7 @@ class InstanceSubSectionHandler {
 
 		if (!getCustomiser(tree).performStructuredValueViewAction(rootFrame)) {
 
-			new InstanceSubSectionEditDialog(tree, rootFrame, false).display();
+			new InstanceSubSectionEditDialog(tree, rootFrame).display();
 		}
 	}
 
