@@ -45,7 +45,6 @@ class QueryNodeDirectMatcher {
 	private StringsMatcher stringsMatcher = new StringsMatcher();
 
 	private KSetMap<NNode, NNode> testing = new KSetMap<NNode, NNode>();
-	private KSetMap<NNode, NNode> matches = new KSetMap<NNode, NNode>();
 
 	private abstract class FeaturesMatcher<V, F extends NFeature<V>> {
 
@@ -245,14 +244,9 @@ class QueryNodeDirectMatcher {
 		this.queryCustomiser = queryCustomiser;
 	}
 
-	synchronized boolean matches(NNode query, NNode instance) {
+	boolean matches(NNode query, NNode instance) {
 
 		if (testing.getSet(query).contains(instance)) {
-
-			return true;
-		}
-
-		if (matches.getSet(query).contains(instance)) {
 
 			return true;
 		}
@@ -264,7 +258,6 @@ class QueryNodeDirectMatcher {
 		if (nodeMatch(query, instance)) {
 
 			subsumption = true;
-			matches.add(query, instance);
 		}
 
 		testing.remove(query, instance);
