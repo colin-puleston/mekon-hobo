@@ -38,18 +38,25 @@ class QueryCustomiser {
 	private Map<CIdentity, IValueMatchCustomiser> valueMatchCustomisers
 							= new HashMap<CIdentity, IValueMatchCustomiser>();
 
-	private abstract class QueryModifier  {
+	private abstract class QueryProcessor  {
 
-		final NNode modifiedQuery;
+		boolean processFromNode(NNode node) {
 
-		QueryModifier(NNode query) {
+			boolean anyCustomValues = false;
 
-			modifiedQuery = query.copy();
-		}
+			for (NFeature<?> feature : node.getFeatures()) {
 
-		boolean processFromRoot() {
+				if (hasCustomValue(feature)) {
 
-			return processFromNode(modifiedQuery);
+					anyCustomValues |= true;
+
+					onCustomValueFound(node, feature);
+				}
+
+				anyCustomValues |= processFromFeature(node, feature);
+			}
+
+			return anyCustomValues;
 		}
 
 		boolean processFromFeature(NNode node, NFeature<?> feature) {
@@ -69,25 +76,7 @@ class QueryCustomiser {
 			return anyCustomValues;
 		}
 
-		abstract void onCustomValueFound(NNode node, NFeature<?> feature);
-
-		private boolean processFromNode(NNode node) {
-
-			boolean anyCustomValues = false;
-
-			for (NFeature<?> feature : node.getFeatures()) {
-
-				if (hasCustomValue(feature)) {
-
-					anyCustomValues |= true;
-
-					onCustomValueFound(node, feature);
-				}
-
-				anyCustomValues |= processFromFeature(node, feature);
-			}
-
-			return anyCustomValues;
+		void onCustomValueFound(NNode node, NFeature<?> feature) {
 		}
 
 		private boolean hasCustomValue(NFeature<?> feature) {
@@ -101,16 +90,18 @@ class QueryCustomiser {
 		}
 	}
 
-	private class CustomValueRemover extends QueryModifier {
+	private class CustomValueRemover extends QueryProcessor {
+
+		private NNode modifiedQuery;
 
 		CustomValueRemover(NNode query) {
 
-			super(query);
+			modifiedQuery = query.copy();
 		}
 
 		NNode checkModify() {
 
-			return processFromRoot() ? modifiedQuery : null;
+			return processFromNode(modifiedQuery) ? modifiedQuery : null;
 		}
 
 		void onCustomValueFound(NNode node, NFeature<?> feature) {
@@ -119,32 +110,24 @@ class QueryCustomiser {
 		}
 	}
 
-	private class CustomValueRetainer extends QueryModifier {
+	private class CustomValueRetainer {
 
-		private PassProcessor passProcessor = new Pass1Processor();
+		private NNode modifiedQuery;
 		private Set<NFeature<?>> requiredFeatures = new HashSet<NFeature<?>>();
 
-		private abstract class PassProcessor {
+		private class Pass extends QueryProcessor {
 
-			boolean processFromFeature(NNode node, NFeature<?> feature) {
+			Pass() {
 
-				return processFromFeatureDefault(node, feature);
-			}
-
-			boolean processFromLink(NLink link) {
-
-				return processFromLinkDefault(link);
-			}
-
-			void onCustomValueFound(NFeature<?> feature) {
+				processFromNode(modifiedQuery);
 			}
 		}
 
-		private class Pass1Processor extends PassProcessor {
+		private class Pass1 extends Pass {
 
 			boolean processFromLink(NLink link) {
 
-				if (processFromLinkDefault(link)) {
+				if (super.processFromLink(link)) {
 
 					requiredFeatures.add(link);
 
@@ -154,13 +137,13 @@ class QueryCustomiser {
 				return false;
 			}
 
-			void onCustomValueFound(NFeature<?> feature) {
+			void onCustomValueFound(NNode node, NFeature<?> feature) {
 
 				requiredFeatures.add(feature);
 			}
 		}
 
-		private class Pass2Processor extends PassProcessor {
+		private class Pass2 extends Pass {
 
 			private boolean allRequired = false;
 
@@ -171,7 +154,7 @@ class QueryCustomiser {
 					requiredFeatures.add(feature);
 				}
 
-				return processFromFeatureDefault(node, feature);
+				return super.processFromFeature(node, feature);
 			}
 
 			boolean processFromLink(NLink link) {
@@ -179,13 +162,13 @@ class QueryCustomiser {
 				if (!allRequired && allRequiredFrom(link)) {
 
 					allRequired = true;
-					processFromLinkDefault(link);
+					super.processFromLink(link);
 					allRequired = false;
 
 					return true;
 				}
 
-				return processFromLinkDefault(link);
+				return super.processFromLink(link);
 			}
 
 			private boolean allRequiredFrom(NLink link) {
@@ -199,13 +182,13 @@ class QueryCustomiser {
 			}
 		}
 
-		private class Pass3Processor extends PassProcessor {
+		private class Pass3 extends Pass {
 
 			boolean processFromFeature(NNode node, NFeature<?> feature) {
 
 				if (requiredFeatures.contains(feature)) {
 
-					return processFromFeatureDefault(node, feature);
+					return super.processFromFeature(node, feature);
 				}
 
 				node.removeFeature(feature);
@@ -216,43 +199,16 @@ class QueryCustomiser {
 
 		CustomValueRetainer(NNode query) {
 
-			super(query);
+			modifiedQuery = query.copy();
 		}
 
 		NNode modify() {
 
-			processFromRoot();
-			passProcessor = new Pass2Processor();
-			processFromRoot();
-			passProcessor = new Pass3Processor();
-			processFromRoot();
+			new Pass1();
+			new Pass2();
+			new Pass3();
 
 			return modifiedQuery;
-		}
-
-		boolean processFromFeature(NNode node, NFeature<?> feature) {
-
-			return passProcessor.processFromFeature(node, feature);
-		}
-
-		boolean processFromLink(NLink link) {
-
-			return passProcessor.processFromLink(link);
-		}
-
-		void onCustomValueFound(NNode node, NFeature<?> feature) {
-
-			passProcessor.onCustomValueFound(feature);
-		}
-
-		private boolean processFromFeatureDefault(NNode node, NFeature<?> feature) {
-
-			return super.processFromFeature(node, feature);
-		}
-
-		private boolean processFromLinkDefault(NLink link) {
-
-			return super.processFromLink(link);
 		}
 	}
 
