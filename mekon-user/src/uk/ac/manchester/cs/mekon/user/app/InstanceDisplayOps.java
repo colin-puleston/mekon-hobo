@@ -177,7 +177,7 @@ class InstanceDisplayOps {
 				}
 				else {
 
-					new NewInstanceEditDisplayer(storeId).display(instance);
+					storeId = new NewInstanceEditDisplayer(storeId).display(instance);
 				}
 			}
 		}
