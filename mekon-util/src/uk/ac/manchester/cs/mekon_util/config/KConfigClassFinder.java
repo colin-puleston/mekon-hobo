@@ -100,26 +100,27 @@ public class KConfigClassFinder<T> {
 	private class JarSearcher {
 
 		private String basePackageName;
-		private JarInputStream jarInput;
 
-		JarSearcher(String basePackageName, File jarFile) {
+		JarSearcher(String basePackageName) {
 
 			this.basePackageName = basePackageName;
 
-			jarInput = openJar(jarFile);
+			for (File jarFile : getAllJars(basePackageName)) {
 
-			findAllInJar();
+				findAllInJar(jarFile);
+			}
 		}
 
-		private void findAllInJar() {
+		private void findAllInJar(File jarFile) {
 
-			JarEntry jarEntry = getNextJarEntry();
+			JarInputStream jarInput = openJar(jarFile);
+			JarEntry jarEntry = getNextJarEntry(jarInput);
 
 			while (jarEntry != null) {
 
 				checkAddClassFromJar(jarEntry);
 
-				jarEntry = getNextJarEntry();
+				jarEntry = getNextJarEntry(jarInput);
 			}
 		}
 
@@ -151,7 +152,7 @@ public class KConfigClassFinder<T> {
 			}
 		}
 
-		private JarEntry getNextJarEntry() {
+		private JarEntry getNextJarEntry(JarInputStream jarInput) {
 
 			try {
 
@@ -186,12 +187,7 @@ public class KConfigClassFinder<T> {
 		}
 		else {
 
-			File jar = lookForJar(basePackageName);
-
-			if (jar != null) {
-
-				new JarSearcher(basePackageName, jar);
-			}
+			new JarSearcher(basePackageName);
 		}
 	}
 
@@ -259,11 +255,11 @@ public class KConfigClassFinder<T> {
 		return KConfigResourceFinder.DIRS.lookForResource(path);
 	}
 
-	private File lookForJar(String packageName) {
+	private List<File> getAllJars(String packageName) {
 
 		String path = getDirectoryPath(packageName);
 
-		return KConfigResourceFinder.JARS.lookForResource(path);
+		return KConfigResourceFinder.JARS.getResources(path);
 	}
 
 	private String getDirectoryPath(String packageName) {

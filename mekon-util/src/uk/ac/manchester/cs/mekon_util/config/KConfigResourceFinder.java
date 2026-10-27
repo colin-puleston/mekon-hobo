@@ -26,6 +26,7 @@ package uk.ac.manchester.cs.mekon_util.config;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 /**
  * Responsible for finding resources (files or directories) with
@@ -62,16 +63,25 @@ public class KConfigResourceFinder {
 
 	static private abstract class Finder {
 
+		abstract File get(String path);
+
+		abstract List<File> getAll(String path);
+
+		abstract File lookFor(String path);
+	}
+
+	static private abstract class DirectResourceFinder extends Finder {
+
 		private boolean expectDir;
 
-		Finder(boolean expectDir) {
+		DirectResourceFinder(boolean expectDir) {
 
 			this.expectDir = expectDir;
 		}
 
 		File get(String path) {
 
-			File file = lookFor(path);
+			File file = lookForFile(path);
 
 			if (file == null || !file.exists()) {
 
@@ -88,6 +98,13 @@ public class KConfigResourceFinder {
 			}
 
 			return file;
+		}
+
+		List<File> getAll(String path) {
+
+			File file = lookFor(path);
+
+			return file != null ? Collections.singletonList(file) : Collections.emptyList();
 		}
 
 		File lookFor(String path) {
@@ -110,7 +127,7 @@ public class KConfigResourceFinder {
 		}
 	}
 
-	static private class BaseDirFinder extends Finder {
+	static private class BaseDirFinder extends DirectResourceFinder {
 
 		private File baseDir;
 
@@ -127,7 +144,7 @@ public class KConfigResourceFinder {
 		}
 	}
 
-	static private class ClassPathFinder extends Finder {
+	static private class ClassPathFinder extends DirectResourceFinder {
 
 		ClassPathFinder(boolean expectDir) {
 
@@ -142,21 +159,35 @@ public class KConfigResourceFinder {
 
 	static private class ContainerJarFinder extends Finder {
 
-		ContainerJarFinder() {
+		File get(String path) {
 
-			super(false);
+			File file = lookFor(path);
+
+			if (file == null) {
+
+				throw new KSystemConfigException("Cannot find resource: " + path);
+			}
+
+			return file;
 		}
 
-		File lookForFile(String path) {
+		List<File> getAll(String path) {
+
+			List<File> files = new ArrayList<File>();
+
+			for (URL containedURL : getAllURLs(path)) {
+
+				files.add(getContainerJar(containedURL));
+			}
+
+			return files;
+		}
+
+		File lookFor(String path) {
 
 			URL containedURL = getURLOrNull(path);
 
-			if (containedURL != null) {
-
-				return getContainerJar(containedURL);
-			}
-
-			return null;
+			return containedURL != null ? getContainerJar(containedURL) : null;
 		}
 
 		private File getContainerJar(URL containedURL) {
@@ -176,7 +207,24 @@ public class KConfigResourceFinder {
 
 	static private URL getURLOrNull(String path) {
 
-		return Thread.currentThread().getContextClassLoader().getResource(path);
+		return getClassLoader().getResource(path);
+	}
+
+	static private List<URL> getAllURLs(String path) {
+
+		try {
+
+			return Collections.list(getClassLoader().getResources(path));
+		}
+		catch (IOException e) {
+
+			throw new Error(e);
+		}
+	}
+
+	static private ClassLoader getClassLoader() {
+
+		return Thread.currentThread().getContextClassLoader();
 	}
 
 	private Finder finder;
@@ -227,6 +275,21 @@ public class KConfigResourceFinder {
 	public File getResource(String path) {
 
 		return finder.get(path);
+	}
+
+	/**
+	 * Provides the specified resource(s) if any exist and are of
+	 * the correct type. If this method is being accessed via the
+	 * {@link #JARS} constant then there may be multiple such instances,
+	 * otherwise there will always be at most a single instance.
+	 *
+	 * @param path Path to required resource(s)
+	 * @return Required resource(s), or empty enumeration if none of
+	 * required type found
+	 */
+	public List<File> getResources(String path) {
+
+		return finder.getAll(path);
 	}
 
 	/**
