@@ -64,7 +64,9 @@ public class DefaultCustomiser implements Customiser {
 	public void onNewInstance(IFrame instance, CIdentity storeId) {
 	}
 
-	public void onRenamingInstance(IFrame instance, CIdentity storeId, CIdentity newStoreId) {
+	public boolean onRenamingInstance(IFrame instance, CIdentity storeId, CIdentity newStoreId) {
+
+		return false;
 	}
 
 	public void onRetrievingInstance(IFrame instance, CIdentity storeId) {
