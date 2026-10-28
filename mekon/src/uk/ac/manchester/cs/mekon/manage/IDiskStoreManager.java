@@ -73,7 +73,7 @@ public class IDiskStoreManager {
 	 * @param model Relevant model
 	 * @return Instance-store for model
 	 */
-	static public synchronized IStore getStore(CModel model) {
+	static public IStore getStore(CModel model) {
 
 		return storeAccessor.getStore(model);
 	}

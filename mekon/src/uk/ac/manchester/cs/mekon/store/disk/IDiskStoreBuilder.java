@@ -49,7 +49,8 @@ public class IDiskStoreBuilder {
 	private StoreStructureBuilder structureBldr = new StoreStructureBuilder();
 
 	private List<IMatcher> matchers = new ArrayList<IMatcher>();
-
+	private List<IReverseRefType> refTypeHandlers
+							= new ArrayList<IReverseRefType>();
 	private List<IValueMatchCustomiser> valueMatchCustomisers
 							= new ArrayList<IValueMatchCustomiser>();
 
@@ -180,6 +181,18 @@ public class IDiskStoreBuilder {
 	}
 
 	/**
+	 * Adds a type of reverse-direction reference between instances of
+	 * specific types, occurences of which are to be maintained as relevant
+	 * updates are made to the instance-store.
+	 *
+	 * @param refType Reverse-direction reference type to be maintained
+	 */
+	public void addReverseRefType(IReverseRefType refType) {
+
+		refTypeHandlers.add(refType);
+	}
+
+	/**
 	 * Provides the directory for instance-store serialisation.
 	 *
 	 * @return Relevant serialisation directory
@@ -212,6 +225,7 @@ public class IDiskStoreBuilder {
 		StoreRegister.add(store);
 
 		store.addMatchers(matchers);
+		store.addReverseRefTypes(refTypeHandlers);
 		store.initialisePostRegistration(valueMatchCustomisers);
 
 		return store;

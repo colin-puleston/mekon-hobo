@@ -52,6 +52,7 @@ class IDiskStore implements IStore {
 
 	private IStoreActiveRegenReport regenReport;
 	private InstanceRefIntegrityManager refIntegrityManager;
+	private ReverseInstanceRefsManager reverseRefsManager;
 
 	private class Initialiser {
 
@@ -120,9 +121,24 @@ class IDiskStore implements IStore {
 
 	public synchronized IFrame add(IFrame instance, CIdentity identity) {
 
-		IFrame previous = removePreIntegrityUpdates(identity);
+		IFrame previous = null;
 
-		addPreIntegrityUpdates(instance, identity, indexes.assignIndex(identity));
+		if (indexes.hasIndex(identity)) {
+
+			previous = performCoreRemoveOps(identity, indexes.getIndex(identity));
+		}
+
+		performCoreAddOps(instance, identity, indexes.assignIndex(identity));
+
+		if (previous != null) {
+
+			reverseRefsManager.onReplacedInstance(previous, instance);
+		}
+		else {
+
+			reverseRefsManager.onNewInstance(instance);
+		}
+
 		refIntegrityManager.onAddedInstance(instance, identity);
 
 		return previous;
@@ -130,17 +146,20 @@ class IDiskStore implements IStore {
 
 	public synchronized boolean rename(CIdentity identity, CIdentity newIdentity) {
 
-		int index = indexes.getIndex(identity);
-		IFrame instance = removePreIntegrityUpdates(identity, index);
+		if (indexes.hasIndex(identity)) {
 
-		if (instance != null) {
+			int index = indexes.getIndex(identity);
+			IFrame instance = performCoreRemoveOps(identity, index);
 
-			indexes.assignIndex(newIdentity, index);
+			if (instance != null) {
 
-			addPreIntegrityUpdates(instance, newIdentity, index);
-			refIntegrityManager.onRenamedInstance(instance, identity, newIdentity);
+				indexes.assignIndex(newIdentity, index);
 
-			return true;
+				performCoreAddOps(instance, newIdentity, index);
+				refIntegrityManager.onRenamedInstance(instance, identity, newIdentity);
+
+				return true;
+			}
 		}
 
 		return false;
@@ -148,11 +167,18 @@ class IDiskStore implements IStore {
 
 	public synchronized boolean remove(CIdentity identity) {
 
-		if (removePreIntegrityUpdates(identity) != null) {
+		if (indexes.hasIndex(identity)) {
 
-			refIntegrityManager.onRemovedInstance(identity);
+			int index = indexes.getIndex(identity);
+			IFrame instance = performCoreRemoveOps(identity, index);
 
-			return true;
+			if (instance != null) {
+
+				reverseRefsManager.onRemovedInstance(instance);
+				refIntegrityManager.onRemovedInstance(identity);
+
+				return true;
+			}
 		}
 
 		return false;
@@ -242,6 +268,7 @@ class IDiskStore implements IStore {
 		logFile = new LogFile(structure.getMainDirectory());
 		regenReport = new IStoreActiveRegenReport(logFile.getFile());
 		refIntegrityManager = new InstanceRefIntegrityManager(this);
+		reverseRefsManager = new ReverseInstanceRefsManager(this);
 	}
 
 	void addMatchers(Collection<IMatcher> matchers) {
@@ -252,6 +279,11 @@ class IDiskStore implements IStore {
 	void addMatcher(IMatcher matcher) {
 
 		matchers.add(matcher);
+	}
+
+	void addReverseRefTypes(Collection<IReverseRefType> refTypes) {
+
+		reverseRefsManager.addRefTypes(refTypes);
 	}
 
 	void initialisePostRegistration() {
@@ -293,28 +325,16 @@ class IDiskStore implements IStore {
 		return index != null ? regenOrNull(identity, index, freeInstance) : null;
 	}
 
-	private void addPreIntegrityUpdates(IFrame instance, CIdentity identity, int index) {
+	private void performCoreAddOps(IFrame instance, CIdentity identity, int index) {
 
 		identities.add(identity);
 		addRegenType(instance, identity);
 		serialiser.write(instance, identity, index);
 
 		addToMatcher(instance, identity);
-
-		refIntegrityManager.onAddedInstance(instance, identity);
 	}
 
-	private IFrame removePreIntegrityUpdates(CIdentity identity) {
-
-		if (indexes.hasIndex(identity)) {
-
-			return removePreIntegrityUpdates(identity, indexes.getIndex(identity));
-		}
-
-		return null;
-	}
-
-	private IFrame removePreIntegrityUpdates(CIdentity identity, int index) {
+	private IFrame performCoreRemoveOps(CIdentity identity, int index) {
 
 		IFrame instance = regenOrNull(identity, index, false);
 
