@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package uk.ac.manchester.cs.hobo.user.app.basic.matcher;
+package uk.ac.manchester.cs.hobo.user.app.basic.store.disk;
 
 import uk.ac.manchester.cs.mekon.store.disk.*;
 
