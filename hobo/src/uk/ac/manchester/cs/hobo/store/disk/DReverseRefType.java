@@ -24,6 +24,8 @@
 
 package uk.ac.manchester.cs.hobo.store.disk;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 import uk.ac.manchester.cs.mekon.store.disk.*;
 
@@ -61,31 +63,44 @@ public abstract class DReverseRefType
 	/**
 	 * {@inheritDoc}
 	 */
-	public IFrame lookForForwardRefValue(IFrame forwardRefer) {
+	public Collection<IFrame> getAllForwardRefValues(IFrame forwardRefer) {
 
-		R obj = lookForForwardRefValue(asForwardReferObj(forwardRefer));
+		List<IFrame> refValues = new ArrayList<IFrame>();
 
-		return obj != null ? obj.getFrame() : null;
+		for (R refValueObj : getAllForwardRefValues(asForwardReferObj(forwardRefer))) {
+
+			refValues.add(refValueObj.getFrame());
+		}
+
+		return refValues;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean checkAddReverseRef(IFrame forwardRefer, IFrame reverseRefer) {
+	public boolean checkAddReverseRef(
+						IFrame forwardRefer,
+						IFrame reverseRefer,
+						CIdentity reverseRef) {
 
 		return checkAddReverseRef(
 					asForwardReferObj(forwardRefer),
-					asReverseReferObj(reverseRefer));
+					asReverseReferObj(reverseRefer),
+					reverseRef);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean checkRemoveReverseRef(IFrame forwardRefer, IFrame reverseRefer) {
+	public boolean checkRemoveReverseRef(
+						IFrame forwardRefer,
+						IFrame reverseRefer,
+						CIdentity reverseRef) {
 
 		return checkRemoveReverseRef(
 					asForwardReferObj(forwardRefer),
-					asReverseReferObj(reverseRefer));
+					asReverseReferObj(reverseRefer),
+					reverseRef);
 	}
 
 	/**
@@ -124,19 +139,25 @@ public abstract class DReverseRefType
 	 * HOBO object-based version of the {@link IReverseRefType#lookForForwardRefValue}
 	 * method.
 	 */
-	protected abstract R lookForForwardRefValue(F forwardRefer);
+	protected abstract Collection<R> getAllForwardRefValues(F forwardRefer);
 
 	/**
 	 * HOBO object-based version of the {@link IReverseRefType#checkAddReverseRef}
 	 * method.
 	 */
-	protected abstract boolean checkAddReverseRef(F forwardRefer, R reverseRefer);
+	protected abstract boolean checkAddReverseRef(
+									F forwardRefer,
+									R reverseRefer,
+									CIdentity reverseRef);
 
 	/**
 	 * HOBO object-based version of the {@link IReverseRefType#checkRemoveReverseRef}
 	 * method.
 	 */
-	protected abstract boolean checkRemoveReverseRef(F forwardRefer, R reverseRefer);
+	protected abstract boolean checkRemoveReverseRef(
+									F forwardRefer,
+									R reverseRefer,
+									CIdentity reverseRef);
 
 	/**
 	 * HOBO object-based version of the {@link IReverseRefType#alignReverseRefs}
