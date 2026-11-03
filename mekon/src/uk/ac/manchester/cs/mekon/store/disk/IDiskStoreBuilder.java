@@ -34,6 +34,15 @@ import uk.ac.manchester.cs.mekon.store.disk.zlink.*;
 /**
  * Provides mechanisms for building a disk-based instance-store, as
  * represented by an {@link IStore} object.
+ * <p>
+ * NOTE: The created instance-store will be thread-safe for access
+ * operations (instance retrieval, query execution, etc.), but not
+ * necessarily for edit operations (instance addition, removal or
+ * renaming). This is specifically the case where edit operations may
+ * involve secondary edits to other referenced/referencing instances.
+ * Such edits will be handled by the store, but not in a thread-safe
+ * manner. Hence, where relevant, it is the responsibility of the
+ * client to handle the relevant thread-coordination.
  *
  * @author Colin Puleston
  */

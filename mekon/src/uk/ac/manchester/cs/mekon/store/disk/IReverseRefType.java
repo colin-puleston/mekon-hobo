@@ -24,13 +24,18 @@
 
 package uk.ac.manchester.cs.mekon.store.disk;
 
+import java.util.*;
+
 import uk.ac.manchester.cs.mekon.model.*;
 
 /**
  * Interface implemented by classes representing specific types of
  * reverse-direction references between instances of specific types,
  * occurences of which are to be maintained as relevant updates are
- * made to the instance-store.
+ * made to the instance-store. In general, the instances containing the
+ * forward-direction references may contain multiple such references,
+ * whilst the corresponding instances containing the reverse-direction
+ * references will each contain only one such reference.
  *
  * @author Colin Puleston
  */
@@ -56,40 +61,47 @@ public interface IReverseRefType {
 	public CFrame getReverseReferType();
 
 	/**
-	 * Provides the frame-value of the specific slot within a particular
-	 * instance of the forward-direction reference type that represents
-	 * the value of the actual forward-direction reference, if such a
-	 * value currently exists.
+	 * Provides all slot values within a particular instance of the
+	 * relevant type that represent the actual forward-direction references.
 	 *
-	 * @param forwardRefer Forward-direction reference type instance
-	 * @return Relevant reference value within instance, or null if value
-	 * does not currently exist
+	 * @param forwardRefer Instance of type that may contain forward-direction
+	 * references
+	 * @return All relevant reference values within instance
 	 */
-	public IFrame lookForForwardRefValue(IFrame forwardRefer);
+	public Collection<IFrame> getAllForwardRefValues(IFrame forwardRefer);
 
 	/**
 	 * Adds a particular reverse-direction reference value to the relevant
 	 * slot within a particular instance, if that slot currently exists.
 	 *
-	 * @param forwardRefer Instance to be added as reference value
-	 * @param reverseRefer Instance to which reference value is to be added
+	 * @param forwardRefer Instance containing forward-direction reference
+	 * @param reverseRefer Instance from which reverse-direction reference
+	 * value is to be added
+	 * @param reverseRef Reference value to be added
 	 */
-	public boolean checkAddReverseRef(IFrame forwardRefer, IFrame reverseRefer);
+	public boolean checkAddReverseRef(
+						IFrame forwardRefer,
+						IFrame reverseRefer,
+						CIdentity reverseRef);
 
 	/**
 	 * Removes a particular reverse-direction reference value from the
 	 * relevant slot within a particular instance, if that slot currently
 	 * exists.
 	 *
-	 * @param forwardRefer Instance to be removed as reference value
-	 * @param reverseRefer Instance from which reference value is to be
-	 * removed
+	 * @param forwardRefer Instance containing forward-direction reference
+	 * @param reverseRefer Instance from which reverse-direction reference
+	 * value is to be removed
+	 * @param reverseRef Reference value to be removed
 	 */
-	public boolean checkRemoveReverseRef(IFrame forwardRefer, IFrame reverseRefer);
+	public boolean checkRemoveReverseRef(
+						IFrame forwardRefer,
+						IFrame reverseRefer,
+						CIdentity reverseRef);
 
 	/**
 	 * Aligns the reverse-direction references within a new instance of
-	 * the relevant type with those of an instance for which it a direct
+	 * the relevant type with those of an instance for which it is a direct
 	 * replacement.
 	 *
 	 * @param oldReverseRefer Instance to be aligned with

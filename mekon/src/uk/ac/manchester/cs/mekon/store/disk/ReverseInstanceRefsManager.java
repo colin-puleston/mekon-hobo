@@ -36,138 +36,117 @@ class ReverseInstanceRefsManager {
 
 	private IDiskStore store;
 
-	private List<RefTypeProcessor> refTypeProcessors = new ArrayList<RefTypeProcessor>();
+	private List<IReverseRefType> reverseRefTypes = new ArrayList<IReverseRefType>();
 
-	private class RefTypeProcessor {
+	private abstract class RefTypesProcessor {
 
-		private IReverseRefType refType;
+		void processAll(CFrame testReferType) {
 
-		private ReverseRefsAdder reverseRefsAdder = new ReverseRefsAdder();
-		private ReverseRefsRemover reverseRefsRemover = new ReverseRefsRemover();
+			for (IReverseRefType refType : reverseRefTypes) {
 
-		private abstract class ReverseRefsUpdater {
+				if (getProcessReferType(refType).subsumes(testReferType)) {
 
-			void checkUpdateInStore(IFrame forwardRefer) {
-
-				CIdentity reverseReferId = getReverseReferIdOrNull(forwardRefer);
-
-				if (reverseReferId != null) {
-
-					checkUpdateInStore(forwardRefer, reverseReferId);
-				}
-			}
-
-			abstract boolean checkUpdateReverseRef(IFrame forwardRefer, IFrame reverseRefer);
-
-			private void checkUpdateInStore(IFrame forwardRefer, CIdentity reverseReferId) {
-
-				IFrame reverseRefer = store.regenOrNull(reverseReferId, false);
-
-				if (reverseRefer != null) {
-
-					if (checkUpdateReverseRef(forwardRefer, reverseRefer)) {
-
-						store.update(reverseRefer, reverseReferId);
-					}
+					updateForMatchingRefType(refType);
 				}
 			}
 		}
 
-		private class ReverseRefsAdder extends ReverseRefsUpdater {
+		abstract void updateForMatchingRefType(IReverseRefType refType);
 
-			boolean checkUpdateReverseRef(IFrame forwardRefer, IFrame reverseRefer) {
+		abstract CFrame getProcessReferType(IReverseRefType refType);
 
-				return refType.checkAddReverseRef(forwardRefer, reverseRefer);
-			}
-		}
-
-		private class ReverseRefsRemover extends ReverseRefsUpdater {
-
-			boolean checkUpdateReverseRef(IFrame forwardRefer, IFrame reverseRefer) {
-
-				return refType.checkRemoveReverseRef(forwardRefer, reverseRefer);
-			}
-		}
-
-		RefTypeProcessor(IReverseRefType refType) {
-
-			this.refType = refType;
-
-			refTypeProcessors.add(this);
-		}
-
-		boolean checkHandleUpdate(IFrame oldAssertion, IFrame newAssertion) {
-
-			if (checkHandleForwardReferUpdate(oldAssertion, newAssertion)) {
-
-				return true;
-			}
-
-			if (oldAssertion != null && newAssertion != null) {
-
-				if (checkHandleReverseReferReplace(oldAssertion, newAssertion)) {
-
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private boolean checkHandleForwardReferUpdate(IFrame oldAssertion, IFrame newAssertion) {
-
-			boolean removed = checkHandleForwardReferUpdate(oldAssertion, reverseRefsRemover);
-			boolean added = checkHandleForwardReferUpdate(newAssertion, reverseRefsAdder);
-
-			return removed || added;
-		}
-
-		private boolean checkHandleForwardReferUpdate(
-							IFrame assertion,
-							ReverseRefsUpdater updater) {
-
-			if (existsWithForwardReferType(assertion)) {
-
-				updater.checkUpdateInStore(assertion);
-
-				return true;
-			}
-
-			return false;
-		}
-
-		private boolean checkHandleReverseReferReplace(IFrame oldAssertion, IFrame newAssertion) {
-
-			if (hasReverseReferType(oldAssertion)) {
-
-				refType.alignReverseRefs(oldAssertion, newAssertion);
-
-				return true;
-			}
-
-			return false;
-		}
-
-		private CIdentity getReverseReferIdOrNull(IFrame forwardRefer) {
-
-			IFrame ref = refType.lookForForwardRefValue(forwardRefer);
-
-			return ref != null ? ref.getReferenceId() : null;
-		}
-
-		private boolean existsWithForwardReferType(IFrame assertion) {
-
-			return assertion != null && hasType(assertion, refType.getForwardReferType());
-		}
-
-		private boolean hasReverseReferType(IFrame assertion) {
-
-			return hasType(assertion, refType.getReverseReferType());
-		}
-
-		private boolean hasType(IFrame assertion, CFrame type) {
+		private boolean hasTargetValueType(IFrame assertion, CFrame type) {
 
 			return type.subsumes(assertion.getType());
+		}
+	}
+
+	private abstract class ForwardReferProcessor extends RefTypesProcessor {
+
+		final IFrame testForwardRefer;
+		final CIdentity testForwardReferId;
+
+		ForwardReferProcessor(IFrame testForwardRefer, CIdentity testForwardReferId) {
+
+			this.testForwardRefer = testForwardRefer;
+			this.testForwardReferId = testForwardReferId;
+
+			processAll(testForwardRefer.getType());
+		}
+
+		void updateForMatchingRefType(IReverseRefType refType) {
+
+			for (IFrame ref : refType.getAllForwardRefValues(testForwardRefer)) {
+
+				checkUpdateInStore(refType, ref.getReferenceId());
+			}
+		}
+
+		CFrame getProcessReferType(IReverseRefType refType) {
+
+			return refType.getForwardReferType();
+		}
+
+		abstract boolean checkUpdateReverseRef(IReverseRefType refType, IFrame reverseRefer);
+
+		private void checkUpdateInStore(IReverseRefType refType, CIdentity reverseReferId) {
+
+			IFrame reverseRefer = store.regenOrNull(reverseReferId, false);
+
+			if (reverseRefer != null && checkUpdateReverseRef(refType, reverseRefer)) {
+
+				store.update(reverseRefer, reverseReferId);
+			}
+		}
+	}
+
+	private class ForwardReferAddProcessor extends ForwardReferProcessor {
+
+		ForwardReferAddProcessor(IFrame testForwardRefer, CIdentity testForwardReferId) {
+
+			super(testForwardRefer, testForwardReferId);
+		}
+
+		boolean checkUpdateReverseRef(IReverseRefType refType, IFrame reverseRefer) {
+
+			return refType.checkAddReverseRef(testForwardRefer, reverseRefer, testForwardReferId);
+		}
+	}
+
+	private class ForwardReferRemoveProcessor extends ForwardReferProcessor {
+
+		ForwardReferRemoveProcessor(IFrame testForwardRefer, CIdentity testForwardReferId) {
+
+			super(testForwardRefer, testForwardReferId);
+		}
+
+		boolean checkUpdateReverseRef(IReverseRefType refType, IFrame reverseRefer) {
+
+			return refType.checkRemoveReverseRef(testForwardRefer, reverseRefer, testForwardReferId);
+		}
+	}
+
+	private class ReverseReferReplaceProcessor extends RefTypesProcessor {
+
+		private IFrame testOldReverseRefer;
+		private IFrame testNewReverseRefer;
+
+		ReverseReferReplaceProcessor(IFrame testOldReverseRefer, IFrame testNewReverseRefer) {
+
+			this.testOldReverseRefer = testOldReverseRefer;
+			this.testNewReverseRefer = testNewReverseRefer;
+
+			processAll(testOldReverseRefer.getType());
+		}
+
+		void updateForMatchingRefType(IReverseRefType refType) {
+
+			refType.alignReverseRefs(testOldReverseRefer, testNewReverseRefer);
+		}
+
+		CFrame getProcessReferType(IReverseRefType refType) {
+
+			return refType.getReverseReferType();
 		}
 	}
 
@@ -176,63 +155,40 @@ class ReverseInstanceRefsManager {
 		this.store = store;
 	}
 
-	void addRefTypes(Collection<IReverseRefType> refTypes) {
+	void addReverseRefTypes(Collection<IReverseRefType> refTypes) {
 
-		for (IReverseRefType refType : refTypes) {
+		reverseRefTypes.addAll(refTypes);
+	}
 
-			new RefTypeProcessor(refType);
+	void onAddedInstance(IFrame newInstance, CIdentity identity) {
+
+		if (assertion(newInstance)) {
+
+			new ForwardReferAddProcessor(newInstance, identity);
 		}
 	}
 
-	void onNewInstance(IFrame newInstance) {
+	void onRemovedInstance(IFrame oldInstance, CIdentity identity) {
 
-		IFrame newAssertion = getAssertionOrNull(newInstance);
+		if (assertion(oldInstance)) {
 
-		if (newAssertion != null) {
-
-			checkHandleUpdate(null, newAssertion);
+			new ForwardReferRemoveProcessor(oldInstance, identity);
 		}
 	}
 
-	void onReplacedInstance(IFrame oldInstance, IFrame newInstance) {
+	void onReplacedInstance(IFrame oldInstance, IFrame newInstance, CIdentity identity) {
 
-		IFrame oldAssertion = getAssertionOrNull(oldInstance);
-		IFrame newAssertion = getAssertionOrNull(newInstance);
+		onRemovedInstance(oldInstance, identity);
+		onAddedInstance(newInstance, identity);
 
-		if (oldAssertion != null && newAssertion != null) {
+		if (assertion(oldInstance) && assertion(newInstance)) {
 
-			checkHandleUpdate(oldAssertion, newAssertion);
+			new ReverseReferReplaceProcessor(oldInstance, newInstance);
 		}
 	}
 
-	void onRemovedInstance(IFrame oldInstance) {
+	private boolean assertion(IFrame instance) {
 
-		IFrame oldAssertion = getAssertionOrNull(oldInstance);
-
-		if (oldAssertion != null) {
-
-			checkHandleUpdate(oldAssertion, null);
-		}
-	}
-
-	private void checkHandleUpdate(IFrame oldAssertion, IFrame newAssertion) {
-
-		for (RefTypeProcessor processor : refTypeProcessors) {
-
-			if (processor.checkHandleUpdate(oldAssertion, newAssertion)) {
-
-				break;
-			}
-		}
-	}
-
-	private IFrame getAssertionOrNull(IFrame instance) {
-
-		if (instance != null && instance.getFunction().assertion()) {
-
-			return instance;
-		}
-
-		return null;
+		return instance.getFunction().assertion();
 	}
 }

@@ -132,11 +132,11 @@ class IDiskStore implements IStore {
 
 		if (previous != null) {
 
-			reverseRefsManager.onReplacedInstance(previous, instance);
+			reverseRefsManager.onReplacedInstance(previous, instance, identity);
 		}
 		else {
 
-			reverseRefsManager.onNewInstance(instance);
+			reverseRefsManager.onAddedInstance(instance, identity);
 		}
 
 		refIntegrityManager.onAddedInstance(instance, identity);
@@ -174,7 +174,7 @@ class IDiskStore implements IStore {
 
 			if (instance != null) {
 
-				reverseRefsManager.onRemovedInstance(instance);
+				reverseRefsManager.onRemovedInstance(instance, identity);
 				refIntegrityManager.onRemovedInstance(identity);
 
 				return true;
@@ -283,7 +283,7 @@ class IDiskStore implements IStore {
 
 	void addReverseRefTypes(Collection<IReverseRefType> refTypes) {
 
-		reverseRefsManager.addRefTypes(refTypes);
+		reverseRefsManager.addReverseRefTypes(refTypes);
 	}
 
 	void initialisePostRegistration() {
