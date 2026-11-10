@@ -52,7 +52,7 @@ class InstanceRefIntegrityManager {
 
 		void forRefingId(CIdentity refingId) {
 
-			IFrame refingInstance = store.regenOrNull(refingId, false);
+			IFrame refingInstance = store.checkRegen(refingId, false);
 
 			if (refingInstance != null) {
 
@@ -102,9 +102,9 @@ class InstanceRefIntegrityManager {
 
 		private CIdentity newRefedId;
 
-		RefValueReplacer(CIdentity refedId, CIdentity newRefedId) {
+		RefValueReplacer(CIdentity oldRefedId, CIdentity newRefedId) {
 
-			super(refedId);
+			super(oldRefedId);
 
 			this.newRefedId = newRefedId;
 		}
@@ -122,10 +122,14 @@ class InstanceRefIntegrityManager {
 		iEditor = ZCModelAccessor.get().getIEditor(store.getModel());
 	}
 
-	void onAddedInstance(IFrame instance, CIdentity identity) {
+	void onAddingInstance(IFrame instance, CIdentity identity) {
+
+		addInstanceRefs(instance, identity);
+	}
+
+	void onReplacingInstance(IFrame instance, CIdentity identity) {
 
 		referencingIds.removeFromAll(identity);
-
 		addInstanceRefs(instance, identity);
 	}
 
@@ -134,16 +138,16 @@ class InstanceRefIntegrityManager {
 		addInstanceRefs(identity, profile.getReferenceIdentites());
 	}
 
-	void onRenamedInstance(IFrame instance, CIdentity identity, CIdentity newIdentity) {
+	void onRenamedInstance(IFrame instance, CIdentity oldIdentity, CIdentity newIdentity) {
 
-		for (CIdentity refingId : referencingIds.getSet(identity)) {
+		for (CIdentity refingId : referencingIds.getSet(oldIdentity)) {
 
-			new RefValueReplacer(identity, newIdentity).forRefingId(refingId);
+			new RefValueReplacer(oldIdentity, newIdentity).forRefingId(refingId);
 
 			referencingIds.add(newIdentity, refingId);
 		}
 
-		removeInstanceRefs(identity);
+		removeInstanceRefs(oldIdentity);
 		addInstanceRefs(instance, newIdentity);
 	}
 

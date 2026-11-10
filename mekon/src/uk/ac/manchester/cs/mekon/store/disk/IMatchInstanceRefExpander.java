@@ -129,7 +129,7 @@ public class IMatchInstanceRefExpander {
 
 	private void checkExpand(ISlot slot, CIdentity refId) {
 
-		IFrame refed = store.regenOrNull(refId, true);
+		IFrame refed = store.checkRegen(refId, true);
 
 		if (refed != null && canExpand(refed)) {
 

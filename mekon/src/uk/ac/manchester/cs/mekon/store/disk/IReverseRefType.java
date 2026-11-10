@@ -71,6 +71,17 @@ public interface IReverseRefType {
 	public Collection<IFrame> getAllForwardRefValues(IFrame forwardRefer);
 
 	/**
+	 * Checks whether the slot for the reverse-ref values is currently present
+	 * within a particular reverse-referencer type instance.
+	 *
+	 * @param reverseRefer Instance of type that may contain reverse-direction
+	 * references
+	 * @return True if slot for relevant reverse-ref values is currently
+	 * present
+	 */
+	public boolean reverseRefSlotPresent(IFrame reverseRefer);
+
+	/**
 	 * Adds a particular reverse-direction reference value to the relevant
 	 * slot within a particular instance, if that slot currently exists.
 	 *

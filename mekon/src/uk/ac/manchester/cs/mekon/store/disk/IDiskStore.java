@@ -76,45 +76,30 @@ class IDiskStore implements IStore {
 
 			for (IInstanceProfile profile : serialiser.resolveStoredProfiles()) {
 
-				reloadInstance(profile);
+				checkReloadInstance(profile);
 			}
 		}
 
-		private void reloadInstance(IInstanceProfile profile) {
+		private void checkReloadInstance(IInstanceProfile profile) {
 
 			CIdentity identity = profile.getInstanceIdentity();
-			IRegenType regenType = createRegenType(profile.getTypeIdentity());
 			int index = profile.getIndex();
 
-			indexes.assignIndex(identity, index);
-			identities.add(identity);
-			regenTypes.put(identity, regenType);
+			IFrame instance = checkRegen(identity, index, false, true);
 
-			refIntegrityManager.onReloadedInstance(identity, profile);
+			if (instance != null) {
 
-			IRegenInstance regen = load(identity, index, false);
+				indexes.assignIndex(identity, index);
+				identities.add(identity);
 
-			logRegen(identity, regen);
+				addValidRegenType(instance, identity);
+				addToMatcher(instance, identity);
 
-			if (regen.getStatus() != IRegenStatus.FULLY_INVALID) {
-
-				addToMatcher(regen.getRootFrame(), identity);
+				onReloadedInstance(identity, profile);
 			}
-		}
+			else {
 
-		private void logRegen(CIdentity identity, IRegenInstance regen) {
-
-			logFile.logParsedInstance(identity, regen);
-
-			switch (regen.getStatus()) {
-
-				case FULLY_INVALID:
-					regenReport.addFullyInvalidRegenId(identity);
-					return;
-
-				case PARTIALLY_VALID:
-					regenReport.addPartiallyValidRegenId(identity);
-					break;
+				addInvalidRegenType(profile.getTypeIdentity(), identity);
 			}
 		}
 	}
@@ -128,18 +113,9 @@ class IDiskStore implements IStore {
 			previous = performCoreRemoveOps(identity, indexes.getIndex(identity));
 		}
 
+		onAddingInstance(instance, previous, identity);
+
 		performCoreAddOps(instance, identity, indexes.assignIndex(identity));
-
-		if (previous != null) {
-
-			reverseRefsManager.onReplacedInstance(previous, instance, identity);
-		}
-		else {
-
-			reverseRefsManager.onAddedInstance(instance, identity);
-		}
-
-		refIntegrityManager.onAddedInstance(instance, identity);
 
 		return previous;
 	}
@@ -156,7 +132,7 @@ class IDiskStore implements IStore {
 				indexes.assignIndex(newIdentity, index);
 
 				performCoreAddOps(instance, newIdentity, index);
-				refIntegrityManager.onRenamedInstance(instance, identity, newIdentity);
+				onRenamedInstance(instance, identity, newIdentity);
 
 				return true;
 			}
@@ -174,8 +150,7 @@ class IDiskStore implements IStore {
 
 			if (instance != null) {
 
-				reverseRefsManager.onRemovedInstance(instance, identity);
-				refIntegrityManager.onRemovedInstance(identity);
+				onRemovedInstance(instance, identity);
 
 				return true;
 			}
@@ -318,25 +293,25 @@ class IDiskStore implements IStore {
 		addToMatcher(instance, identity);
 	}
 
-	IFrame regenOrNull(CIdentity identity, boolean freeInstance) {
+	IFrame checkRegen(CIdentity identity, boolean freeInstance) {
 
 		Integer index = indexes.getIndexOrNull(identity);
 
-		return index != null ? regenOrNull(identity, index, freeInstance) : null;
+		return index != null ? checkRegen(identity, index, freeInstance, false) : null;
 	}
 
 	private void performCoreAddOps(IFrame instance, CIdentity identity, int index) {
 
 		identities.add(identity);
-		addRegenType(instance, identity);
 		serialiser.write(instance, identity, index);
 
+		addValidRegenType(instance, identity);
 		addToMatcher(instance, identity);
 	}
 
 	private IFrame performCoreRemoveOps(CIdentity identity, int index) {
 
-		IFrame instance = regenOrNull(identity, index, false);
+		IFrame instance = checkRegen(identity, index, false, false);
 
 		if (instance != null) {
 
@@ -352,9 +327,44 @@ class IDiskStore implements IStore {
 		return instance;
 	}
 
-	private IFrame regenOrNull(CIdentity identity, int index, boolean freeInstance) {
+	private void onAddingInstance(IFrame instance, IFrame previous, CIdentity identity) {
+
+		if (previous != null) {
+
+			refIntegrityManager.onReplacingInstance(instance, identity);
+			reverseRefsManager.onReplacingInstance(previous, instance, identity);
+		}
+		else {
+
+			refIntegrityManager.onAddingInstance(instance, identity);
+			reverseRefsManager.onAddingInstance(instance, identity);
+		}
+	}
+
+	private void onReloadedInstance(CIdentity identity, IInstanceProfile profile) {
+
+		refIntegrityManager.onReloadedInstance(identity, profile);
+	}
+
+	private void onRenamedInstance(IFrame instance, CIdentity identity, CIdentity newIdentity) {
+
+		refIntegrityManager.onRenamedInstance(instance, identity, newIdentity);
+	}
+
+	private void onRemovedInstance(IFrame instance, CIdentity identity) {
+
+		refIntegrityManager.onRemovedInstance(identity);
+		reverseRefsManager.onRemovedInstance(instance, identity);
+	}
+
+	private IFrame checkRegen(CIdentity identity, int index, boolean freeInstance, boolean log) {
 
 		IRegenInstance regen = load(identity, index, freeInstance);
+
+		if (log) {
+
+			logRegen(identity, regen);
+		}
 
 		if (regen.getStatus() == IRegenStatus.FULLY_INVALID) {
 
@@ -362,6 +372,22 @@ class IDiskStore implements IStore {
 		}
 
 		return regen.getRootFrame();
+	}
+
+	private void logRegen(CIdentity identity, IRegenInstance regen) {
+
+		logFile.logParsedInstance(identity, regen);
+
+		switch (regen.getStatus()) {
+
+			case FULLY_INVALID:
+				regenReport.addFullyInvalidRegenId(identity);
+				return;
+
+			case PARTIALLY_VALID:
+				regenReport.addPartiallyValidRegenId(identity);
+				break;
+		}
 	}
 
 	private IRegenInstance load(CIdentity identity, boolean freeInstance) {
@@ -402,21 +428,14 @@ class IDiskStore implements IStore {
 		return defaultMatcher;
 	}
 
-	private IRegenType addRegenType(IFrame instance, CIdentity identity) {
+	private IRegenType addValidRegenType(IFrame instance, CIdentity instanceId) {
 
-		return regenTypes.put(identity, createRegenType(instance));
+		return regenTypes.put(instanceId, new IRegenValidType(instance.getType()));
 	}
 
-	private IRegenType createRegenType(IFrame instance) {
+	private IRegenType addInvalidRegenType(CIdentity typeId, CIdentity instanceId) {
 
-		return new IRegenValidType(instance.getType());
-	}
-
-	private IRegenType createRegenType(CIdentity typeId) {
-
-		CFrame type = model.getFrames().getOrNull(typeId);
-
-		return type != null ? new IRegenValidType(type) : new IRegenInvalidType(typeId);
+		return regenTypes.put(instanceId, new IRegenInvalidType(typeId));
 	}
 
 	private IFrame createFreeCopy(IFrame instance) {

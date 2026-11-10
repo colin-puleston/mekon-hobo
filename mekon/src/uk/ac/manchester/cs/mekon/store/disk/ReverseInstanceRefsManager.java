@@ -91,7 +91,7 @@ class ReverseInstanceRefsManager {
 
 		private void checkUpdateInStore(IReverseRefType refType, CIdentity reverseReferId) {
 
-			IFrame reverseRefer = store.regenOrNull(reverseReferId, false);
+			IFrame reverseRefer = store.checkRegen(reverseReferId, false);
 
 			if (reverseRefer != null && checkUpdateReverseRef(refType, reverseRefer)) {
 
@@ -141,12 +141,42 @@ class ReverseInstanceRefsManager {
 
 		void updateForMatchingRefType(IReverseRefType refType) {
 
-			refType.alignReverseRefs(testOldReverseRefer, testNewReverseRefer);
+			if (refType.reverseRefSlotPresent(testNewReverseRefer)) {
+
+				if (refType.reverseRefSlotPresent(testOldReverseRefer)) {
+
+					refType.alignReverseRefs(testOldReverseRefer, testNewReverseRefer);
+				}
+				else {
+
+					checkUpdateForwardRefers(refType);
+				}
+			}
 		}
 
 		CFrame getProcessReferType(IReverseRefType refType) {
 
 			return refType.getReverseReferType();
+		}
+
+		private void checkUpdateForwardRefers(IReverseRefType refType) {
+
+			for (CIdentity testFRId : findPotentialForwardRefers(refType)) {
+
+				IFrame testFR = store.checkRegen(testFRId, false);
+
+				refType.checkAddReverseRef(testFR, testNewReverseRefer, testFRId);
+			}
+		}
+
+		private List<CIdentity> findPotentialForwardRefers(IReverseRefType refType) {
+
+			return store.match(createPotentialForwardRefersQuery(refType)).getAllMatches();
+		}
+
+		private IFrame createPotentialForwardRefersQuery(IReverseRefType refType) {
+
+			return refType.getForwardReferType().instantiateQuery();
 		}
 	}
 
@@ -160,11 +190,22 @@ class ReverseInstanceRefsManager {
 		reverseRefTypes.addAll(refTypes);
 	}
 
-	void onAddedInstance(IFrame newInstance, CIdentity identity) {
+	void onAddingInstance(IFrame newInstance, CIdentity identity) {
 
 		if (assertion(newInstance)) {
 
 			new ForwardReferAddProcessor(newInstance, identity);
+		}
+	}
+
+	void onReplacingInstance(IFrame oldInstance, IFrame newInstance, CIdentity identity) {
+
+		onRemovedInstance(oldInstance, identity);
+		onAddingInstance(newInstance, identity);
+
+		if (assertion(oldInstance) && assertion(newInstance)) {
+
+			new ReverseReferReplaceProcessor(oldInstance, newInstance);
 		}
 	}
 
@@ -173,17 +214,6 @@ class ReverseInstanceRefsManager {
 		if (assertion(oldInstance)) {
 
 			new ForwardReferRemoveProcessor(oldInstance, identity);
-		}
-	}
-
-	void onReplacedInstance(IFrame oldInstance, IFrame newInstance, CIdentity identity) {
-
-		onRemovedInstance(oldInstance, identity);
-		onAddedInstance(newInstance, identity);
-
-		if (assertion(oldInstance) && assertion(newInstance)) {
-
-			new ReverseReferReplaceProcessor(oldInstance, newInstance);
 		}
 	}
 
