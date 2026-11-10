@@ -78,6 +78,14 @@ public abstract class DReverseRefType
 	/**
 	 * {@inheritDoc}
 	 */
+	public boolean reverseRefSlotPresent(IFrame reverseRefer) {
+
+		return reverseRefFieldPresent(asReverseReferObj(reverseRefer));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean checkAddReverseRef(
 						IFrame forwardRefer,
 						IFrame reverseRefer,
@@ -140,6 +148,12 @@ public abstract class DReverseRefType
 	 * method.
 	 */
 	protected abstract Collection<R> getAllForwardRefValues(F forwardRefer);
+
+	/**
+	 * HOBO object-based version of the {@link IReverseRefType#reverseRefSlotPresent}
+	 * method.
+	 */
+	protected abstract boolean reverseRefFieldPresent(R reverseRefer);
 
 	/**
 	 * HOBO object-based version of the {@link IReverseRefType#checkAddReverseRef}
