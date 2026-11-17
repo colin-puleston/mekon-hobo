@@ -39,13 +39,56 @@ class InstanceRefIntegrityManager {
 	private IDiskStore store;
 	private IEditor iEditor;
 
+	private List<CIdentity> currentStoredIds;
 	private KSetMap<CIdentity, CIdentity> referencingIds = new KSetMap<CIdentity, CIdentity>();
 
-	private class RefValueRemover {
+	private ObsoleteRefValueRemover obsoleteRefValueRemover = new ObsoleteRefValueRemover();
+
+	private abstract class RefValueRemover {
+
+		void removeAllFrom(IFrame frame) {
+
+			for (ISlot slot : frame.getSlots().activesAsList()) {
+
+				if (slot.getValueType() instanceof CFrame) {
+
+					for (IValue value : slot.getValues().asList()) {
+
+						removeAllFrom(slot, (IFrame)value);
+					}
+				}
+			}
+		}
+
+		void onRemoved(ISlotValuesEditor valuesEd, IFrame valueFrame) {
+		}
+
+		abstract boolean requiresRemoval(CIdentity testId);
+
+		private void removeAllFrom(ISlot slot, IFrame valueFrame) {
+
+			if (valueFrame.getCategory().reference()) {
+
+				if (requiresRemoval(valueFrame.getReferenceId())) {
+
+					ISlotValuesEditor valuesEd = iEditor.getSlotValuesEditor(slot);
+
+					valuesEd.remove(valueFrame);
+					onRemoved(valuesEd, valueFrame);
+				}
+			}
+			else {
+
+				removeAllFrom(valueFrame);
+			}
+		}
+	}
+
+	private class StoredRefValueRemover extends RefValueRemover {
 
 		private CIdentity refedId;
 
-		RefValueRemover(CIdentity refedId) {
+		StoredRefValueRemover(CIdentity refedId) {
 
 			this.refedId = refedId;
 		}
@@ -62,47 +105,17 @@ class InstanceRefIntegrityManager {
 			}
 		}
 
-		void onRemoved(ISlotValuesEditor valuesEd, IFrame valueFrame) {
-		}
+		boolean requiresRemoval(CIdentity testId) {
 
-		private void removeAllFrom(IFrame frame) {
-
-			for (ISlot slot : frame.getSlots().activesAsList()) {
-
-				if (slot.getValueType() instanceof CFrame) {
-
-					for (IValue value : slot.getValues().asList()) {
-
-						removeAllFrom(slot, (IFrame)value);
-					}
-				}
-			}
-		}
-
-		private void removeAllFrom(ISlot slot, IFrame valueFrame) {
-
-			if (valueFrame.getCategory().reference()) {
-
-				if (valueFrame.getReferenceId().equals(refedId)) {
-
-					ISlotValuesEditor valuesEd = iEditor.getSlotValuesEditor(slot);
-
-					valuesEd.remove(valueFrame);
-					onRemoved(valuesEd, valueFrame);
-				}
-			}
-			else {
-
-				removeAllFrom(valueFrame);
-			}
+			return testId.equals(refedId);
 		}
 	}
 
-	private class RefValueReplacer extends RefValueRemover {
+	private class StoredRefValueReplacer extends StoredRefValueRemover {
 
 		private CIdentity newRefedId;
 
-		RefValueReplacer(CIdentity oldRefedId, CIdentity newRefedId) {
+		StoredRefValueReplacer(CIdentity oldRefedId, CIdentity newRefedId) {
 
 			super(oldRefedId);
 
@@ -115,14 +128,25 @@ class InstanceRefIntegrityManager {
 		}
 	}
 
-	InstanceRefIntegrityManager(IDiskStore store) {
+	private class ObsoleteRefValueRemover extends RefValueRemover {
+
+		boolean requiresRemoval(CIdentity testId) {
+
+			return !currentStoredIds.contains(testId);
+		}
+	}
+
+	InstanceRefIntegrityManager(IDiskStore store, List<CIdentity> currentStoredIds) {
 
 		this.store = store;
+		this.currentStoredIds = currentStoredIds;
 
 		iEditor = ZCModelAccessor.get().getIEditor(store.getModel());
 	}
 
 	void onAddingInstance(IFrame instance, CIdentity identity) {
+
+		obsoleteRefValueRemover.removeAllFrom(instance);
 
 		addInstanceRefs(instance, identity);
 	}
@@ -130,7 +154,8 @@ class InstanceRefIntegrityManager {
 	void onReplacingInstance(IFrame instance, CIdentity identity) {
 
 		referencingIds.removeFromAll(identity);
-		addInstanceRefs(instance, identity);
+
+		onAddingInstance(instance, identity);
 	}
 
 	void onReloadedInstance(CIdentity identity, IInstanceProfile profile) {
@@ -142,7 +167,7 @@ class InstanceRefIntegrityManager {
 
 		for (CIdentity refingId : referencingIds.getSet(oldIdentity)) {
 
-			new RefValueReplacer(oldIdentity, newIdentity).forRefingId(refingId);
+			new StoredRefValueReplacer(oldIdentity, newIdentity).forRefingId(refingId);
 
 			referencingIds.add(newIdentity, refingId);
 		}
@@ -155,7 +180,7 @@ class InstanceRefIntegrityManager {
 
 		for (CIdentity refingId : referencingIds.getSet(identity)) {
 
-			new RefValueRemover(identity).forRefingId(refingId);
+			new StoredRefValueRemover(identity).forRefingId(refingId);
 		}
 
 		removeInstanceRefs(identity);

@@ -242,7 +242,7 @@ class IDiskStore implements IStore {
 		serialiser = new StoreSerialiser(model, structure);
 		logFile = new LogFile(structure.getMainDirectory());
 		regenReport = new IStoreActiveRegenReport(logFile.getFile());
-		refIntegrityManager = new InstanceRefIntegrityManager(this);
+		refIntegrityManager = new InstanceRefIntegrityManager(this, identities);
 		reverseRefsManager = new ReverseInstanceRefsManager(this);
 	}
 
